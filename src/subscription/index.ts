@@ -1,8 +1,9 @@
 import {Filter as NostrFilter, Sub} from 'nostr-tools';
-import EventEmitter from 'events';
+import EventEmitter from 'eventemitter3';
 import {Relay} from '../relay';
 import {RelaySet} from '../relay/sets/';
-import {EventId, Event} from '../events/';
+import {EventId} from '../events/';
+import Event from '../events/';
 
 export type Filter = NostrFilter;
 
@@ -14,16 +15,17 @@ export class Subscription extends EventEmitter {
     readonly subId: string;
     readonly filter: Filter;
     readonly relaySet: RelaySet;
-    readonly opts: SubscriptionOptions;
+    readonly opts?: SubscriptionOptions;
     public relaySubscriptions: Map<Relay, Sub>;
 
     public constructor(
         filter: Filter,
         relaySet: RelaySet,
-        opts: SubscriptionOptions
+        opts?: SubscriptionOptions,
+        subId?: string
     ) {
         super();
-        this.subId = (Math.random() * 1000).toString();
+        this.subId = subId || Math.floor(Math.random() * 9999991000).toString();
         this.filter = filter;
         this.relaySet = relaySet;
         this.opts = opts;
@@ -57,7 +59,7 @@ export class Subscription extends EventEmitter {
     private eoseTimeout: ReturnType<typeof setTimeout> | undefined;
 
     public eoseReceived(relay: Relay): void {
-        if (this.opts.closeOnEose) {
+        if (this.opts?.closeOnEose) {
             this.relaySubscriptions.get(relay)?.unsub();
         }
 

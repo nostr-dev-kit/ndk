@@ -1,6 +1,6 @@
 import NDK from '../../';
 import {Relay} from '../';
-import {Event} from '../../events/';
+import Event from '../../events/';
 import {RelaySet} from './';
 import {Filter} from '../../subscription/';
 
@@ -15,7 +15,7 @@ import {Filter} from '../../subscription/';
 export function calculateRelaySetFromEvent(ndk: NDK, event: Event): RelaySet {
     const relays: Set<Relay> = new Set();
 
-    ndk.relayPool.relays.forEach(relay => relays.add(relay));
+    ndk.relayPool?.relays.forEach(relay => relays.add(relay));
 
     return new RelaySet(relays);
 }
@@ -32,7 +32,7 @@ export function calculateRelaySetFromFilter(
 ): RelaySet {
     const relays: Set<Relay> = new Set();
 
-    ndk.relayPool.relays.forEach(relay => relays.add(relay));
+    ndk.relayPool?.relays.forEach(relay => relays.add(relay));
 
     return new RelaySet(relays);
 }

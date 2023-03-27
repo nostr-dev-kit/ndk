@@ -6,6 +6,13 @@
   "module": "dist/esm/index.js",
   "umd:main": "dist/umd/index.js",
   "types": "dist/types/index.d.js",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js",
+      "default": "./dist/umd/index.js"
+    }
+  },
   "scripts": {
     "build": "npm run build:cjs && npm run build:esm && npm run build:types",
     "build:cjs": "node tools/cleanup cjs && tsc -p config/tsconfig.cjs.json",
@@ -31,6 +38,7 @@
     "typescript": "~4.7.0"
   },
   "dependencies": {
+    "eventemitter3": "^5.0.0",
     "nostr-tools": "^1.6.0",
     "websocket-polyfill": "^0.0.3"
   }

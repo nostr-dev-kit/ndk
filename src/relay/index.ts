@@ -1,9 +1,11 @@
 import 'websocket-polyfill';
-import {relayInit, Event, Sub} from 'nostr-tools';
+import {relayInit, Sub} from 'nostr-tools';
+import type {Event as SignedEvent} from 'nostr-tools';
 import User from '../user';
 import {RelayScore} from './score';
 import {Subscription} from '../subscription/';
-import EventEmitter from 'events';
+import Event, {NostrEvent} from '../events/';
+import EventEmitter from 'eventemitter3';
 
 export class Relay extends EventEmitter {
     readonly url: string;
@@ -30,8 +32,8 @@ export class Relay extends EventEmitter {
     public async connect(): Promise<void> {
         try {
             await this.relay.connect();
-        } catch (e) {
-        }
+            // eslint-disable-next-line no-empty
+        } catch (e) {}
     }
 
     async handleNotice(notice: string) {
@@ -45,8 +47,9 @@ export class Relay extends EventEmitter {
             id: subscription.subId,
         });
 
-        sub.on('event', (event: Event) => {
-            subscription.eventReceived(event, this);
+        sub.on('event', (event: NostrEvent) => {
+            const e = event as unknown;
+            subscription.eventReceived(e as Event, this);
         });
 
         sub.on('eose', () => {
@@ -57,7 +60,8 @@ export class Relay extends EventEmitter {
     }
 
     public async publish(event: Event): Promise<void> {
-        this.relay.publish(event);
+        const nostrEvent = (await event.toNostrEvent()) as SignedEvent;
+        this.relay.publish(nostrEvent);
     }
 
     /**

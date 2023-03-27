@@ -1,5 +1,5 @@
 import {Relay} from '../';
-import {Event} from '../../events/';
+import Event from '../../events/';
 import {Subscription, SubscriptionOptions, Filter} from '../../subscription/';
 
 /**
@@ -16,7 +16,7 @@ export class RelaySet {
         this.relays = relays;
     }
 
-    public subscribe(filter: Filter, opts: SubscriptionOptions): Subscription {
+    public subscribe(filter: Filter, opts?: SubscriptionOptions): Subscription {
         const subscription = new Subscription(filter, this, opts);
 
         this.relays.forEach(relay => {
@@ -34,7 +34,7 @@ export class RelaySet {
         this.relays.forEach(async relay => {
             try {
                 // TODO: if relay is not connected, don't try to send, but rather attach
-                // to connected event and send it at that moment
+                // to `connected` event and send it at that moment
                 await relay.publish(event);
             } catch (e) {
                 console.log(e);

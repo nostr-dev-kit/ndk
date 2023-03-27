@@ -1,6 +1,6 @@
 import {nip05, nip19} from 'nostr-tools';
-import {Event} from '../events/';
-import UserProfile from './profile';
+import Event from '../events/';
+import {UserProfile, mergeEvent} from './profile';
 import NDK from '../';
 
 export interface UserParams {
@@ -49,7 +49,7 @@ export default class User {
     public async fetchProfile(): Promise<Set<Event> | null> {
         if (!this.ndk) throw new Error('NDK not set');
 
-        if (!this.profile) this.profile = new UserProfile();
+        if (!this.profile) this.profile = {};
 
         const setMetadataEvents = await this.ndk.fetchEvents({
             kinds: [0],
@@ -59,12 +59,14 @@ export default class User {
         if (setMetadataEvents) {
             // sort setMetadataEvents by created_at in ascending order
             const sortedSetMetadataEvents = Array.from(setMetadataEvents).sort(
-                (a, b) => a.created_at - b.created_at
+                (a, b) => (a.created_at as number) - (b.created_at as number)
             );
 
-            sortedSetMetadataEvents.forEach(event =>
-                this.profile?.mergeEvent(event)
-            );
+            sortedSetMetadataEvents.forEach(event => {
+                console.log(event);
+
+                this.profile = mergeEvent(event, this.profile!);
+            });
         }
 
         return setMetadataEvents;
@@ -82,7 +84,7 @@ export default class User {
             const contactList = new Set<User>();
 
             contactListEvents.forEach(event => {
-                event.tags.forEach(tag => {
+                event.tags.forEach((tag: string[]) => {
                     if (tag[0] === 'p') {
                         const user = new User({hexpubkey: tag[1]});
                         user.ndk = this.ndk;

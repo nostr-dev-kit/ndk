@@ -1,5 +1,5 @@
 import 'websocket-polyfill';
-import NDK from './ndk';
+import NDK from './ndk/';
 import NDKUser from './ndk/user';
 import {Queue} from './queue';
 
@@ -34,7 +34,7 @@ if (pablo) {
 }
 
 function setupDynamicDelay(ndk: NDK, queue: Queue) {
-    ndk.relayPool.on('notice', (relay, notice) => {
+    ndk.relayPool?.on('notice', (relay, notice) => {
         if (notice.includes('too fast') && queue.delayBetweenRequests < 5000) {
             queue.delayBetweenRequests += 500;
             console.log(`⚠️ Increasing delay to ${queue.delayBetweenRequests}`);

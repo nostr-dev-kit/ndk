@@ -1,6 +1,6 @@
 {
   "name": "ndk",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Nostr Development Kit",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",

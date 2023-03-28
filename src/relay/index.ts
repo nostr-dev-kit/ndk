@@ -48,8 +48,8 @@ export class Relay extends EventEmitter {
         });
 
         sub.on('event', (event: NostrEvent) => {
-            const e = event as unknown;
-            subscription.eventReceived(e as Event, this);
+            const e = new Event(undefined, event);
+            subscription.eventReceived(e, this);
         });
 
         sub.on('eose', () => {

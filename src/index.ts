@@ -13,8 +13,11 @@ import EventEmitter from 'eventemitter3';
 
 export {Event as NDKEvent};
 export {User as NDKUser};
+export {Filter as NDKFilter};
 export {UserProfile as NDKUserProfile};
 export {Nip07Signer as NDKNip07Signer} from './signers/nip07/';
+export {ZapInvoice as NDKZapInvoice} from './zap/invoice';
+export {zapInvoiceFromEvent} from './zap/invoice';
 
 export interface NDKConstructorParams {
     explicitRelayUrls?: string[];
@@ -70,15 +73,29 @@ export default class NDK extends EventEmitter {
 
     public async publish(event: Event): Promise<void> {
         const relaySet = await calculateRelaySetFromEvent(this, event);
-        console.log('publish', relaySet);
 
         return relaySet.publish(event);
     }
 
     /**
+     * Fetch a single event
+     */
+    public async fetchEvent(filter: Filter): Promise<Event> {
+        const relaySet = await calculateRelaySetFromFilter(this, filter);
+
+        return new Promise(resolve => {
+            const s = this.subscribe(filter, relaySet, {closeOnEose: true});
+            s.on('event', event => {
+                event.ndk = this;
+                resolve(event);
+            });
+        });
+    }
+
+    /**
      * Fetch events
      */
-    public async fetchEvents(filter: Filter): Promise<Set<Event> | null> {
+    public async fetchEvents(filter: Filter): Promise<Set<Event>> {
         const relaySet = await calculateRelaySetFromFilter(this, filter);
 
         return new Promise(resolve => {

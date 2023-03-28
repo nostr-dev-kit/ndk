@@ -1,5 +1,5 @@
 {
-  "name": "nostrdevkit",
+  "name": "nostr-dev-kit",
   "version": "0.0.2",
   "description": "NDK - Nostr Development Kit",
   "main": "dist/cjs/index.js",

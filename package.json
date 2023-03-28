@@ -1,11 +1,12 @@
 {
-  "name": "ndk",
+  "name": "nostrdevkit",
   "version": "0.0.2",
-  "description": "Nostr Development Kit",
+  "description": "NDK - Nostr Development Kit",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "umd:main": "dist/umd/index.js",
   "types": "dist/types/index.d.js",
+  "homepage": "https://github.com/pablof7z/ndk",
   "exports": {
     ".": {
       "import": "./dist/esm/index.js",
@@ -19,10 +20,8 @@
     "build:esm": "node tools/cleanup esm && tsc -p config/tsconfig.esm.json",
     "build:types": "node tools/cleanup types && tsc -p config/tsconfig.types.json",
     "package": "npm run build && npm pack",
-    "lint": "gts lint",
-    "clean": "gts clean",
+    "clean": "node tools/cleanup cjs && node tools/cleanup esm && node tools/cleanup types",
     "compile": "tsc",
-    "fix": "gts fix",
     "prepare": "npm run compile",
     "pretest": "npm run compile",
     "posttest": "npm run lint"

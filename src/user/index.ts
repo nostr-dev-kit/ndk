@@ -63,8 +63,6 @@ export default class User {
             );
 
             sortedSetMetadataEvents.forEach(event => {
-                console.log(event);
-
                 this.profile = mergeEvent(event, this.profile!);
             });
         }

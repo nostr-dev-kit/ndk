@@ -3,9 +3,8 @@ import EventEmitter from 'eventemitter3';
 import Event from "../events";
 import type {NostrEvent} from "../events";
 import User from "../user";
-import axios from "axios";
 import {nip57} from "nostr-tools";
-
+import {bech32} from '@scure/base'
 interface ZapConstructorParams {
     ndk?: NDK;
     zappedEvent?: Event;
@@ -29,8 +28,10 @@ export default class Zap extends EventEmitter {
     }
 
     public async getZapEndpoint(): Promise<string|undefined> {
+        let lud06: string | undefined;
         let lud16: string | undefined;
         let zapEndpoint: string | undefined;
+        let zapEndpointCallback: string | undefined;
 
         // check if event has zap tag
         // otherwise use the user's zap endpoint
@@ -40,6 +41,7 @@ export default class Zap extends EventEmitter {
 
             if (zapTag) {
                 switch (zapTag[2]) {
+                    case "lud06": lud06 = zapTag[1]; break;
                     case 'lud16': lud16 = zapTag[1]; break;
                     default:
                         throw new Error(`Unknown zap tag ${zapTag}`);
@@ -53,24 +55,32 @@ export default class Zap extends EventEmitter {
                 await this.zappedUser.fetchProfile();
             }
 
+            lud06 = (this.zappedUser.profile || {}).lud06;
             lud16 = (this.zappedUser.profile || {}).lud16;
-
-            console.log('this.zappedUser.profile', this.zappedUser.profile);
         }
 
         if (lud16) {
             let [name, domain] = lud16.split('@')
             zapEndpoint = `https://${domain}/.well-known/lnurlp/${name}`
-
-            const response = await axios.get(zapEndpoint);
-            console.log('response', response);
-
-            if (response?.data?.allowNostr && response?.data?.nostrPubkey) {
-                zapEndpoint = response?.data?.callback;
-            }
+        } else if (lud06) {
+            let {words} = bech32.decode(lud06, 1000);
+            let data = bech32.fromWords(words);
+            const utf8Decoder = new TextDecoder('utf-8');
+            zapEndpoint = utf8Decoder.decode(data);
         }
 
-        return zapEndpoint;
+        if (!zapEndpoint) {
+            throw new Error('No zap endpoint found');
+        }
+
+        const response = await fetch(zapEndpoint);
+        const body: any = await response.json();
+
+        if (body?.allowsNostr && body?.nostrPubkey) {
+            zapEndpointCallback = body.callback;
+        }
+
+        return zapEndpointCallback;
     }
 
     public async createZapRequest(amount: number, comment?: string): Promise<string|null> {
@@ -85,26 +95,20 @@ export default class Zap extends EventEmitter {
             event: this.zappedEvent?.id!,
             amount,
             comment: comment!,
-            relays: ['wss://nos.lol'],
+            relays: ['wss://nos.lol', 'wss://relay.nostr.band', 'wss://relay.f7z.io', 'wss://relay.damus.io', 'wss://nostr.mom', 'wss://no.str.cr'],
         })
 
-        // sign
         const zapRequestEvent = new Event(this.ndk, zapRequest as NostrEvent);
         await zapRequestEvent.sign();
+        const zapRequestNostrEvent = await zapRequestEvent.toNostrEvent();
 
-        console.log('zapRequestEvent', await zapRequestEvent.toNostrEvent());
+        const response = await fetch(`${zapEndpoint}?` + new URLSearchParams({
+                amount: amount.toString(),
+                nostr: JSON.stringify(zapRequestNostrEvent),
+            })
+        );
+        const body: any = await response.json();
 
-
-        // get with axios on zapEndpoint adding to querystring amount=amount and nostr with a URI encoded zapRequest
-        const response = await axios.get(zapEndpoint, {
-            params: {
-                amount,
-                nostr: JSON.stringify(await zapRequestEvent.toNostrEvent()),
-            }
-        });
-
-        console.log('response', response);
-
-        return response.data?.pr;
+        return body.pr;
     }
 }

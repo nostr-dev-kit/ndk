@@ -12,14 +12,16 @@
         - [ ] IndexDB
 - [ ] NIP-26: Event delegation
 - [ ] NIP-41: Relay authentication
-- [ ] NIP-57: Zaps
+- [x] NIP-57: Zaps
+    - [x] LUD06
+    - [x] LUD16
 - [ ] NIP-65: Contacts' Relay list
 * Subscription Management
     - [ ] Buffered queries
-    - [ ] Auto-closing subscriptions
+    - [x] Auto-closing subscriptions
 - [ ] Signing Adapters
     - [ ] Private key
-    - [ ] NIP-07
+    - [x] NIP-07
     - [ ] NIP-26
     - [ ] NIP-46
 - [ ] Relay discovery
@@ -110,7 +112,7 @@ ndk.subscription({kinds:[0], authors:['...']}, { autoclose: true })
 
 ## Convenience classes
 
-```javascript
+```ts
 const ndk = new NDK({ explicitRelays, privateKey });
 const pablo = ndk.getProfile('npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft')
 ```

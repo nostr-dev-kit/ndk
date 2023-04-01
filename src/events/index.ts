@@ -28,6 +28,7 @@ export default class Event extends EventEmitter {
     public id = "";
     public sig?: string;
     public pubkey = '';
+    public _event?: NostrEvent;
 
     constructor(ndk?: NDK, event?: NostrEvent) {
         super();
@@ -39,10 +40,13 @@ export default class Event extends EventEmitter {
         this.id = event?.id || '';
         this.sig = event?.sig;
         this.pubkey = event?.pubkey || '';
-        event?.kind && (this.kind = event?.kind);
+        if (event?.kind) this.kind = event?.kind;
+        this._event = event;
     }
 
     async toNostrEvent(pubkey?: string): Promise<NostrEvent> {
+        if (this._event) return this._event;
+
         if (!pubkey) pubkey = await this.ndk?.signer?.user?.hexpubkey();
 
         const nostrEvent: NostrEvent = {
@@ -50,7 +54,8 @@ export default class Event extends EventEmitter {
             content: this.content,
             tags: this.tags,
             kind: this.kind || 0,
-            pubkey: pubkey || '',
+            pubkey: pubkey || this.pubkey,
+            id: this.id,
         };
 
         this.generateTags();

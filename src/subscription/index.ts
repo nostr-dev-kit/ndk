@@ -23,13 +23,16 @@ export interface NDKSubscriptionOptions {
 
 export enum NDKSubscriptionCacheUsage {
     // Only use cache, don't subscribe to relays
-    ONLY = 'ONLY',
+    ONLY_CACHE = 'ONLY_CACHE',
 
-    // Skip cache, don't use it
-    SKIP = 'SKIP',
+    // Use cache, if no matches, use relays
+    CACHE_FIRST = 'CACHE_FIRST',
 
-    // Only write to cache, don't read from it
-    WRITE_ONLY = 'WRITE_ONLY',
+    // Use cache in addition to relays
+    PARALLEL = 'PARALLEL',
+
+    // Skip cache, don't query it
+    ONLY_RELAY = 'ONLY_RELAY',
 }
 
 export class NDKSubscription extends EventEmitter {
@@ -39,6 +42,7 @@ export class NDKSubscription extends EventEmitter {
     public relaySet?: NDKRelaySet;
     public ndk: NDK;
     public relaySubscriptions: Map<NDKRelay, Sub>;
+    private debug: debug.Debugger;
 
     public constructor(
         ndk: NDK,
@@ -54,27 +58,77 @@ export class NDKSubscription extends EventEmitter {
         this.relaySet = relaySet;
         this.opts = opts;
         this.relaySubscriptions = new Map<NDKRelay, Sub>();
+        this.debug = ndk.debug.extend('subscription');
+
+        // validate that the caller is not expecting a persistent
+        // subscription is using an option that might only hit the cache
+        if (
+            opts?.cacheUsage === NDKSubscriptionCacheUsage.ONLY_CACHE ||
+            opts?.cacheUsage === NDKSubscriptionCacheUsage.CACHE_FIRST
+        ) {
+            throw new Error(
+                'Cannot use cache-only options with a persistent subscription'
+            );
+        }
+
+    }
+
+    private shouldQueryCache(): boolean {
+        return (
+            this.opts?.cacheUsage !== NDKSubscriptionCacheUsage.ONLY_RELAY
+        );
+    }
+
+    private shouldQueryRelays(): boolean {
+        return (
+            this.opts?.cacheUsage !== NDKSubscriptionCacheUsage.ONLY_CACHE
+        )
     }
 
     /**
      * Start the subscription. This is the main method that should be called
      * after creating a subscription.
      */
-    public start(): NDKSubscription {
-        if (this.opts?.cacheUsage !== NDKSubscriptionCacheUsage.SKIP) {
-            this.startWithCache();
+    public async start(): Promise<void> {
+        let cachePromise;
+
+        if (this.shouldQueryCache()) {
+            cachePromise = this.startWithCache();
+
+            const shouldWaitForCache = (
+                this.ndk.cacheAdapter?.locking &&
+                this.shouldQueryRelays() &&
+                this.opts?.cacheUsage !== NDKSubscriptionCacheUsage.PARALLEL
+            );
+
+            if (shouldWaitForCache) {
+                this.debug('waiting for cache to finish');
+                await cachePromise;
+
+                // if the cache has a hit, return early
+                if (this.events.size > 0) {
+                    this.debug('cache hit, skipping relay query');
+                    this.emit('eose');
+                    return;
+                }
+            }
         }
 
-        if (this.opts?.cacheUsage !== NDKSubscriptionCacheUsage.ONLY) {
+        if (this.shouldQueryRelays()) {
             this.startWithRelaySet();
         }
 
-        return this;
+        return;
     }
 
-    private startWithCache(): void {
+    private async startWithCache(): Promise<void> {
         if (this.ndk.cacheAdapter?.query) {
-            this.ndk.cacheAdapter.query(this);
+            this.debug('querying cache');
+            const promise = this.ndk.cacheAdapter.query(this);
+
+            if (this.ndk.cacheAdapter.locking) {
+                await promise;
+            }
         }
     }
 
@@ -84,6 +138,7 @@ export class NDKSubscription extends EventEmitter {
         }
 
         if (this.relaySet) {
+            this.debug('querying relays');
             this.relaySet.subscribe(this);
         }
     }
@@ -92,8 +147,8 @@ export class NDKSubscription extends EventEmitter {
     private eventFirstSeen = new Map<NDKEventId, number>();
     private events = new Map<NDKEventId, NDKEvent>();
 
-    public eventReceived(event: NDKEvent, relay: NDKRelay, fromCache = false) {
-        if (fromCache) {
+    public eventReceived(event: NDKEvent, relay: NDKRelay | undefined, fromCache = false) {
+        if (!fromCache && relay) {
             const eventAlreadySeen = this.events.has(event.id);
 
             if (eventAlreadySeen) {
@@ -106,9 +161,14 @@ export class NDKSubscription extends EventEmitter {
                 return;
             }
 
+            if (this.ndk.cacheAdapter) {
+                this.ndk.cacheAdapter.setEvent(event, this.filter);
+            }
+
             this.eventFirstSeen.set(event.id, Date.now());
-            this.events.set(event.id, event);
         }
+
+        this.events.set(event.id, event);
 
         this.emit('event', event, relay);
     }

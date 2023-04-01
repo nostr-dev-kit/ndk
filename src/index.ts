@@ -11,6 +11,7 @@ import {
     calculateRelaySetFromEvent,
 } from './relay/sets/calculate';
 import EventEmitter from 'eventemitter3';
+import debug from 'debug';
 
 export {
     NDKEvent,
@@ -18,6 +19,7 @@ export {
     NDKFilter,
     NDKUserProfile,
     NDKCacheAdapter,
+    NDKSubscription
 };
 export {NDKNip07Signer} from './signers/nip07/';
 export {NDKZapInvoice} from './zap/invoice';
@@ -27,6 +29,7 @@ export interface NDKConstructorParams {
     explicitRelayUrls?: string[];
     signer?: NDKSigner;
     cacheAdapter?: NDKCacheAdapter;
+    debug?: debug.Debugger;
 }
 export interface GetUserParams extends NDKUserParams {
     npub?: string;
@@ -37,6 +40,7 @@ export default class NDK extends EventEmitter {
     public relayPool?: NDKPool;
     public signer?: NDKSigner;
     public cacheAdapter?: NDKCacheAdapter;
+    public debug: debug.Debugger;
 
     public constructor(opts: NDKConstructorParams) {
         super();
@@ -44,9 +48,18 @@ export default class NDK extends EventEmitter {
         if (opts.explicitRelayUrls)
             this.relayPool = new NDKPool(opts.explicitRelayUrls);
         this.signer = opts.signer;
+        this.cacheAdapter = opts.cacheAdapter;
+        this.debug = opts.debug || debug('ndk');
+
+        this.debug('initialized', {
+            relays: opts.explicitRelayUrls,
+            signer: opts.signer?.constructor.name || 'none',
+            cacheAdapter: opts.cacheAdapter?.constructor.name || 'none',
+        });
     }
 
     public async connect(): Promise<void> {
+        this.debug('Connecting to relays');
         return this.relayPool?.connect();
     }
 
@@ -67,7 +80,7 @@ export default class NDK extends EventEmitter {
         opts?: NDKSubscriptionOptions
     ): NDKSubscription {
         const subscription = new NDKSubscription(this, filter, opts)
-            .start();
+        subscription.start();
 
         return subscription;
     }
@@ -101,10 +114,6 @@ export default class NDK extends EventEmitter {
             const relaySetSubscription = this.subscribe(filter, {closeOnEose: true});
 
             relaySetSubscription.on('event', (event: NDKEvent) => {
-                if (this.cacheAdapter) {
-                    this.cacheAdapter.setEvent(event);
-                }
-
                 events.add(event);
             });
             relaySetSubscription.on('eose', () => {

@@ -3,9 +3,9 @@
 ## Features
 - [ ] NIP-01
     - [ ]
-- [ ] Caching adapters
+- [x] Caching adapters
     * Server-side
-        - [ ] Redis
+        - [x] [Redis](https://github.com/pablof7z/ndk-cache-redis)
         - [ ] In-memory
     * Client-side
         - [ ] LocalStorage

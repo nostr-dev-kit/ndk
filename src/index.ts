@@ -12,10 +12,13 @@ import {
 } from './relay/sets/calculate';
 import EventEmitter from 'eventemitter3';
 
-export {NDKEvent};
-export {NDKUser};
-export {NDKFilter};
-export {NDKUserProfile};
+export {
+    NDKEvent,
+    NDKUser,
+    NDKFilter,
+    NDKUserProfile,
+    NDKCacheAdapter,
+};
 export {NDKNip07Signer} from './signers/nip07/';
 export {NDKZapInvoice} from './zap/invoice';
 export {zapInvoiceFromEvent} from './zap/invoice';
@@ -37,6 +40,7 @@ export default class NDK extends EventEmitter {
 
     public constructor(opts: NDKConstructorParams) {
         super();
+
         if (opts.explicitRelayUrls)
             this.relayPool = new NDKPool(opts.explicitRelayUrls);
         this.signer = opts.signer;
@@ -60,18 +64,12 @@ export default class NDK extends EventEmitter {
 
     public subscribe(
         filter: NDKFilter,
-        relaySet?: NDKRelaySet,
         opts?: NDKSubscriptionOptions
     ): NDKSubscription {
-        if (!relaySet) {
-            relaySet = calculateRelaySetFromFilter(this, filter);
-        }
+        const subscription = new NDKSubscription(this, filter, opts)
+            .start();
 
-        if (!relaySet) {
-            throw new Error('No relay set');
-        }
-
-        return relaySet.subscribe(filter, opts);
+        return subscription;
     }
 
     public async publish(event: NDKEvent): Promise<void> {
@@ -84,10 +82,8 @@ export default class NDK extends EventEmitter {
      * Fetch a single event
      */
     public async fetchEvent(filter: NDKFilter): Promise<NDKEvent> {
-        const relaySet = calculateRelaySetFromFilter(this, filter);
-
         return new Promise(resolve => {
-            const s = this.subscribe(filter, relaySet, {closeOnEose: true});
+            const s = this.subscribe(filter, {closeOnEose: true});
             s.on('event', event => {
                 event.ndk = this;
                 resolve(event);
@@ -99,21 +95,19 @@ export default class NDK extends EventEmitter {
      * Fetch events
      */
     public async fetchEvents(filter: NDKFilter, opts?: NDKFilterOptions): Promise<Set<NDKEvent>> {
-        // check for cached event
-        if (!opts?.skipCache && this.cacheAdapter) {
-            const cachedEvents = await this.cacheAdapter.getEvents(filter);
-        }
-
-        const relaySet = await calculateRelaySetFromFilter(this, filter);
-
         return new Promise(resolve => {
             const events: Set<NDKEvent> = new Set();
-            const s = this.subscribe(filter, relaySet, {closeOnEose: true});
 
-            s.on('event', (event: NDKEvent) => {
+            const relaySetSubscription = this.subscribe(filter, {closeOnEose: true});
+
+            relaySetSubscription.on('event', (event: NDKEvent) => {
+                if (this.cacheAdapter) {
+                    this.cacheAdapter.setEvent(event);
+                }
+
                 events.add(event);
             });
-            s.on('eose', () => {
+            relaySetSubscription.on('eose', () => {
                 resolve(events);
             });
         });

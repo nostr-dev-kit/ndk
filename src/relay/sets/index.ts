@@ -16,9 +16,7 @@ export class NDKRelaySet {
         this.relays = relays;
     }
 
-    public subscribe(filter: NDKFilter, opts?: NDKSubscriptionOptions): NDKSubscription {
-        const subscription = new NDKSubscription(filter, this, opts);
-
+    public subscribe(subscription: NDKSubscription): NDKSubscription {
         this.relays.forEach(relay => {
             // TODO: if relay is not connected, don't try to send, but rather attach
             // to connected event and send it at that moment if this subscription hasn't

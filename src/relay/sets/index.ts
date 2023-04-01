@@ -1,6 +1,6 @@
-import {Relay} from '../';
+import {NDKRelay} from '../';
 import Event from '../../events/';
-import {Subscription, SubscriptionOptions, Filter} from '../../subscription/';
+import {NDKSubscription, NDKSubscriptionOptions, NDKFilter} from '../../subscription/';
 
 /**
  * A relay set is a group of relays. This grouping can be short-living, for a single
@@ -9,15 +9,15 @@ import {Subscription, SubscriptionOptions, Filter} from '../../subscription/';
  *
  * Requests to relays should be sent through this interface.
  */
-export class RelaySet {
-    readonly relays: Set<Relay>;
+export class NDKRelaySet {
+    readonly relays: Set<NDKRelay>;
 
-    public constructor(relays: Set<Relay>) {
+    public constructor(relays: Set<NDKRelay>) {
         this.relays = relays;
     }
 
-    public subscribe(filter: Filter, opts?: SubscriptionOptions): Subscription {
-        const subscription = new Subscription(filter, this, opts);
+    public subscribe(filter: NDKFilter, opts?: NDKSubscriptionOptions): NDKSubscription {
+        const subscription = new NDKSubscription(filter, this, opts);
 
         this.relays.forEach(relay => {
             // TODO: if relay is not connected, don't try to send, but rather attach

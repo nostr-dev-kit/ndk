@@ -1,17 +1,18 @@
-import { getEventHash, Kind } from "nostr-tools";
+import { getEventHash, Kind, UnsignedEvent } from "nostr-tools";
 import EventEmitter from "eventemitter3";
 import NDK from "../";
 import Zap from '../zap';
 
-export type EventId = string;
-export type Tag = string[];
+export type NDKEventId = string;
+export type NDKTag = string[];
+export type NDKKind = Kind;
 
 export type NostrEvent = {
     created_at: number;
     content: string;
     subject?: string;
     tags: string[][];
-    kind: Kind;
+    kind?: NDKKind;
     pubkey: string;
     id?: string;
     sig?: string;
@@ -22,8 +23,8 @@ export default class Event extends EventEmitter {
     public created_at?: number;
     public content = '';
     public subject: string | undefined;
-    public tags: Tag[] = [];
-    public kind: Kind = -1;
+    public tags: NDKTag[] = [];
+    public kind?: NDKKind;
     public id = "";
     public sig?: string;
     public pubkey = '';
@@ -35,10 +36,10 @@ export default class Event extends EventEmitter {
         this.content = event?.content || '';
         this.subject = event?.subject;
         this.tags = event?.tags || [];
-        this.kind = event?.kind || -1;
         this.id = event?.id || '';
         this.sig = event?.sig;
         this.pubkey = event?.pubkey || '';
+        event?.kind && (this.kind = event?.kind);
     }
 
     async toNostrEvent(pubkey?: string): Promise<NostrEvent> {
@@ -57,7 +58,7 @@ export default class Event extends EventEmitter {
         if (this.subject) nostrEvent.subject = this.subject;
 
         try {
-            nostrEvent.id = getEventHash(nostrEvent);
+            nostrEvent.id = getEventHash(nostrEvent as UnsignedEvent);
             // eslint-disable-next-line no-empty
         } catch (e) {}
 
@@ -69,7 +70,7 @@ export default class Event extends EventEmitter {
     /**
      * Get all tags with the given name
      */
-    getMatchingTags(tagName: string): Tag[] {
+    getMatchingTags(tagName: string): NDKTag[] {
         return this.tags.filter((tag) => tag[0] === tagName);
     }
 
@@ -88,7 +89,7 @@ export default class Event extends EventEmitter {
 
     async generateTags() {
         // if this is a paramterized repleacable event, check there's a d tag, if not, generate it
-        if (this.kind >= 30000 && this.kind <= 40000) {
+        if (this.kind && this.kind >= 30000 && this.kind <= 40000) {
             const dTag = this.getMatchingTags('d')[0];
             if (!dTag) {
                 this.tags.push(['d', ""]);
@@ -102,11 +103,13 @@ export default class Event extends EventEmitter {
     }
 
     async zap(amount: number, comment?: string): Promise<string|null> {
-        this.ndk?.assertSigner();
+        if (!this.ndk) throw new Error('No NDK instance found');
+
+        this.ndk.assertSigner();
 
         const zap = new Zap({
             ndk: this.ndk,
-            zappedEvent: this
+            zappedEvent: this,
         });
 
         const paymentRequest = await zap.createZapRequest(amount, comment);

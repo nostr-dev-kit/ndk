@@ -1,12 +1,12 @@
 import EventEmitter from 'eventemitter3';
-import {Relay} from '../';
+import {NDKRelay} from '../';
 
-export class Pool extends EventEmitter {
-    public relays = new Map<string, Relay>();
+export class NDKPool extends EventEmitter {
+    public relays = new Map<string, NDKRelay>();
     public constructor(relayUrls: string[] = []) {
         super();
         relayUrls.forEach(relayUrl => {
-            const relay = new Relay(relayUrl);
+            const relay = new NDKRelay(relayUrl);
             relay.on('notice', (relay, notice) => {
                 this.emit('notice', relay, notice);
             });

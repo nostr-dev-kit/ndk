@@ -1,31 +1,31 @@
 import {Filter as NostrFilter, Sub} from 'nostr-tools';
 import EventEmitter from 'eventemitter3';
-import {Relay} from '../relay';
-import {RelaySet} from '../relay/sets/';
-import {EventId} from '../events/';
-import Event from '../events/';
+import {NDKRelay} from '../relay';
+import {NDKRelaySet} from '../relay/sets/';
+import {NDKEventId} from '../events/';
+import NDKEvent from '../events/';
 
-export type Filter = NostrFilter;
+export type NDKFilter = NostrFilter;
 
-export interface FilterOptions {
+export interface NDKFilterOptions {
     skipCache?: boolean;
 }
 
-export interface SubscriptionOptions {
+export interface NDKSubscriptionOptions {
     closeOnEose: boolean;
 }
 
-export class Subscription extends EventEmitter {
+export class NDKSubscription extends EventEmitter {
     readonly subId: string;
-    readonly filter: Filter;
-    readonly relaySet: RelaySet;
-    readonly opts?: SubscriptionOptions;
-    public relaySubscriptions: Map<Relay, Sub>;
+    readonly filter: NDKFilter;
+    readonly relaySet: NDKRelaySet;
+    readonly opts?: NDKSubscriptionOptions;
+    public relaySubscriptions: Map<NDKRelay, Sub>;
 
     public constructor(
-        filter: Filter,
-        relaySet: RelaySet,
-        opts?: SubscriptionOptions,
+        filter: NDKFilter,
+        relaySet: NDKRelaySet,
+        opts?: NDKSubscriptionOptions,
         subId?: string
     ) {
         super();
@@ -33,14 +33,14 @@ export class Subscription extends EventEmitter {
         this.filter = filter;
         this.relaySet = relaySet;
         this.opts = opts;
-        this.relaySubscriptions = new Map<Relay, Sub>();
+        this.relaySubscriptions = new Map<NDKRelay, Sub>();
     }
 
     // EVENT handling
-    private eventFirstSeen = new Map<EventId, number>();
-    private events = new Map<EventId, Event>();
+    private eventFirstSeen = new Map<NDKEventId, number>();
+    private events = new Map<NDKEventId, NDKEvent>();
 
-    public eventReceived(event: Event, relay: Relay) {
+    public eventReceived(event: NDKEvent, relay: NDKRelay) {
         const eventAlreadySeen = this.events.has(event.id);
 
         if (eventAlreadySeen) {
@@ -59,10 +59,10 @@ export class Subscription extends EventEmitter {
     }
 
     // EOSE handling
-    private eosesSeen = new Set<Relay>();
+    private eosesSeen = new Set<NDKRelay>();
     private eoseTimeout: ReturnType<typeof setTimeout> | undefined;
 
-    public eoseReceived(relay: Relay): void {
+    public eoseReceived(relay: NDKRelay): void {
         if (this.opts?.closeOnEose) {
             this.relaySubscriptions.get(relay)?.unsub();
         }

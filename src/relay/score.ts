@@ -1,2 +1,2 @@
 // TODO this will probably get more sophisticated
-export type RelayScore = number;
+export type NDKRelayScore = number;

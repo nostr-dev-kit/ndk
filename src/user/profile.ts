@@ -1,6 +1,6 @@
-import Event from '../events/';
+import NDKEvent from '../events/';
 
-export interface UserProfile {
+export interface NDKUserProfile {
     name?: string;
     displayName?: string;
     image?: string;
@@ -13,7 +13,7 @@ export interface UserProfile {
     zapService?: string;
 }
 
-export function mergeEvent(event: Event, profile: UserProfile): UserProfile {
+export function mergeEvent(event: NDKEvent, profile: NDKUserProfile): NDKUserProfile {
     const payload = JSON.parse(event.content);
 
     if (payload.name) profile.name = payload.name;

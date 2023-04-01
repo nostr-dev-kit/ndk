@@ -2,21 +2,21 @@ import 'websocket-polyfill';
 import {relayInit, Sub} from 'nostr-tools';
 import type {Event as SignedEvent} from 'nostr-tools';
 import User from '../user';
-import {RelayScore} from './score';
-import {Subscription} from '../subscription/';
-import Event, {NostrEvent} from '../events/';
+import {NDKRelayScore} from './score';
+import {NDKSubscription} from '../subscription/';
+import NDKEvent, {NostrEvent} from '../events/';
 import EventEmitter from 'eventemitter3';
 
-export class Relay extends EventEmitter {
+export class NDKRelay extends EventEmitter {
     readonly url: string;
-    readonly scores: Map<User, RelayScore>;
+    readonly scores: Map<User, NDKRelayScore>;
     private relay;
 
     public constructor(url: string) {
         super();
         this.url = url;
         this.relay = relayInit(url);
-        this.scores = new Map<User, RelayScore>();
+        this.scores = new Map<User, NDKRelayScore>();
 
         this.relay.on('connect', () => {
             this.emit('connect');
@@ -40,7 +40,7 @@ export class Relay extends EventEmitter {
         this.emit('notice', this, notice);
     }
 
-    public subscribe(subscription: Subscription): Sub {
+    public subscribe(subscription: NDKSubscription): Sub {
         const {filter} = subscription;
 
         const sub = this.relay.sub([filter], {
@@ -48,7 +48,7 @@ export class Relay extends EventEmitter {
         });
 
         sub.on('event', (event: NostrEvent) => {
-            const e = new Event(undefined, event);
+            const e = new NDKEvent(undefined, event);
             subscription.eventReceived(e, this);
         });
 
@@ -59,7 +59,7 @@ export class Relay extends EventEmitter {
         return sub;
     }
 
-    public async publish(event: Event): Promise<void> {
+    public async publish(event: NDKEvent): Promise<void> {
         const nostrEvent = (await event.toNostrEvent()) as SignedEvent;
         this.relay.publish(nostrEvent);
     }

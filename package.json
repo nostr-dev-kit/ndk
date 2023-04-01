@@ -1,6 +1,6 @@
 {
   "name": "@nostr-dev-kit/ndk",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "description": "NDK - Nostr Development Kit",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -19,16 +19,18 @@
     }
   },
   "scripts": {
-    "build": "npm run build:cjs && npm run build:esm && npm run build:types",
+    "dev": "node tools/cleanup esm && tsc -w -p config/tsconfig.esm.json",
+    "build": "pnpm build:cjs && pnpm build:esm && pnpm build:types",
     "build:cjs": "node tools/cleanup cjs && tsc -p config/tsconfig.cjs.json",
     "build:esm": "node tools/cleanup esm && tsc -p config/tsconfig.esm.json",
     "build:types": "node tools/cleanup types && tsc -p config/tsconfig.types.json",
-    "package": "npm run build && npm pack",
+    "package": "pnpm build && pnpm pack",
     "clean": "node tools/cleanup cjs && node tools/cleanup esm && node tools/cleanup types && find src -iname '*.js' -delete",
+    "lint": "eslint src/**/*.ts",
     "compile": "tsc",
-    "prepare": "npm run compile",
-    "pretest": "npm run compile",
-    "posttest": "npm run lint"
+    "prepare": "pnpm compile",
+    "pretest": "pnpm compile",
+    "posttest": "pnpm lint"
   },
   "keywords": [
     "nostr"
@@ -43,6 +45,11 @@
     "typescript": "~4.7.0"
   },
   "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.57.0",
+    "@typescript-eslint/parser": "^5.57.0",
+    "eslint": "^8.37.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-import": "^2.27.5",
     "eventemitter3": "^5.0.0",
     "light-bolt11-decoder": "^3.0.0",
     "node-fetch": "^3.3.1",

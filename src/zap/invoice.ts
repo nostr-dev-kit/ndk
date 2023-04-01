@@ -1,8 +1,8 @@
-import Event, {type EventId, type NostrEvent} from '../events/';
+import NDKEvent, {type NDKEventId, type NostrEvent} from '../events/';
 import lightningPayReq from 'light-bolt11-decoder';
 
-export interface ZapInvoice {
-    id?: EventId;
+export interface NDKZapInvoice {
+    id?: NDKEventId;
     zapper: string; // pubkey of zapper app
     zappee: string; // pubkey of user sending zap
     zapped: string; // pubkey of user receiving zap
@@ -11,10 +11,9 @@ export interface ZapInvoice {
     comment?: string;
 }
 
-export function zapInvoiceFromEvent(event: Event): ZapInvoice | null {
-    let zap;
-    let description = event.getMatchingTags('description')[0];
-    let bolt11 = event.getMatchingTags('bolt11')[0];
+export function zapInvoiceFromEvent(event: NDKEvent): NDKZapInvoice | null {
+    const description = event.getMatchingTags('description')[0];
+    const bolt11 = event.getMatchingTags('bolt11')[0];
     let decodedInvoice;
     let zapRequest: NostrEvent;
 
@@ -30,13 +29,13 @@ export function zapInvoiceFromEvent(event: Event): ZapInvoice | null {
         if (zapRequestPayload === "") { return null; }
 
         zapRequest = JSON.parse(zapRequestPayload);
-        decodedInvoice = lightningPayReq.decode(bolt11[1])
+        decodedInvoice = lightningPayReq.decode(bolt11[1]);
     } catch (e) {
         // console.log(e, {description, event});
         return null;
     }
 
-    const amountSection = decodedInvoice.sections.find((s: any) => s.name === 'amount')
+    const amountSection = decodedInvoice.sections.find((s: any) => s.name === 'amount');
     if (!amountSection) { return null; }
 
     const amount = parseInt(amountSection.value) / 1000;
@@ -52,7 +51,7 @@ export function zapInvoiceFromEvent(event: Event): ZapInvoice | null {
     // ignore self-zaps (TODO: configurable?)
     // if (sender === recipient) { return null; } XXX
 
-    const zapInvoice: ZapInvoice = {
+    const zapInvoice: NDKZapInvoice = {
         id: event.id,
         zapper: event.pubkey,
         zappee: sender,
@@ -60,7 +59,7 @@ export function zapInvoiceFromEvent(event: Event): ZapInvoice | null {
         zappedEvent: zappedEventId,
         amount,
         comment: content,
-    }
+    };
 
     return zapInvoice;
 }

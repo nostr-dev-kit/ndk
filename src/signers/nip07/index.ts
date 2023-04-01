@@ -1,9 +1,9 @@
-import {Signer} from '../';
+import {NDKSigner} from '../';
 import type {NostrEvent} from '../../events';
-import User from '../../user';
+import NDKUser from '../../user';
 
-export class Nip07Signer implements Signer {
-    public user: User | undefined;
+export class NDKNip07Signer implements NDKSigner {
+    public user: NDKUser | undefined;
     private window: any;
 
     public constructor() {}
@@ -12,7 +12,7 @@ export class Nip07Signer implements Signer {
         this.window = window;
 
         const pubkey = await this.window.nostr?.getPublicKey();
-        this.user = new User({hexpubkey: pubkey});
+        this.user = new NDKUser({hexpubkey: pubkey});
 
         return this.user;
     }

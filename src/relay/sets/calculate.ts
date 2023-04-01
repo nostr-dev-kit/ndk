@@ -1,40 +1,40 @@
 import NDK from '../../';
-import {Relay} from '../';
+import {NDKRelay} from '../';
 import Event from '../../events/';
-import {RelaySet} from './';
-import {Filter} from '../../subscription/';
+import {NDKRelaySet} from './';
+import {NDKFilter} from '../../subscription/';
 
 /**
- * Creates a RelaySet for the specified event.
+ * Creates a NDKRelaySet for the specified event.
  * TODO: account for relays where tagged pubkeys or hashtags
  * tend to write to.
  * @param ndk {NDK}
  * @param event {Event}
- * @returns Promise<RelaySet>
+ * @returns Promise<NDKRelaySet>
  */
-export function calculateRelaySetFromEvent(ndk: NDK, event: Event): RelaySet {
-    const relays: Set<Relay> = new Set();
+export function calculateRelaySetFromEvent(ndk: NDK, event: Event): NDKRelaySet {
+    const relays: Set<NDKRelay> = new Set();
 
     ndk.relayPool?.relays.forEach(relay => relays.add(relay));
 
-    return new RelaySet(relays);
+    return new NDKRelaySet(relays);
 }
 
 /**
- * Creates a RelaySet for the specified filter
+ * Creates a NDKRelaySet for the specified filter
  * @param ndk
  * @param filter
- * @returns Promise<RelaySet>
+ * @returns Promise<NDKRelaySet>
  */
 export function calculateRelaySetFromFilter(
     ndk: NDK,
-    filter: Filter
-): RelaySet {
-    const relays: Set<Relay> = new Set();
+    filter: NDKFilter
+): NDKRelaySet {
+    const relays: Set<NDKRelay> = new Set();
 
     ndk.relayPool?.relays.forEach(relay => relays.add(relay));
 
-    return new RelaySet(relays);
+    return new NDKRelaySet(relays);
 }
 
 /**
@@ -44,9 +44,9 @@ export function calculateRelaySetFromFilter(
  */
 export function calculateRelaySetsFromFilters(
     ndk: NDK,
-    filters: Filter[]
-): Map<Filter, RelaySet> {
-    const sets: Map<Filter, RelaySet> = new Map();
+    filters: NDKFilter[]
+): Map<NDKFilter, NDKRelaySet> {
+    const sets: Map<NDKFilter, NDKRelaySet> = new Map();
 
     filters.forEach(filter => {
         const set = calculateRelaySetFromFilter(ndk, filter);

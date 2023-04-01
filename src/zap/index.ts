@@ -4,27 +4,26 @@ import Event from "../events";
 import type {NostrEvent} from "../events";
 import User from "../user";
 import {nip57} from "nostr-tools";
-import {bech32} from '@scure/base'
+import {bech32} from '@scure/base';
 interface ZapConstructorParams {
-    ndk?: NDK;
+    ndk: NDK;
     zappedEvent?: Event;
     zappedUser?: User;
 }
+
+type ZapConstructorParamsRequired = Required<Pick<ZapConstructorParams, 'zappedEvent'>> & Pick<ZapConstructorParams, 'zappedUser'> & ZapConstructorParams;
 
 export default class Zap extends EventEmitter {
     public ndk?: NDK;
     public zappedEvent?: Event;
     public zappedUser: User;
 
-    public constructor(args: ZapConstructorParams) {
+    public constructor(args: ZapConstructorParamsRequired) {
         super();
         this.ndk = args.ndk;
         this.zappedEvent = args.zappedEvent;
-        this.zappedUser = args.zappedUser!;
 
-        if (!this.zappedUser && this.zappedEvent) {
-            this.zappedUser = this.ndk?.getUser({hexpubkey: this.zappedEvent.pubkey})!;
-        }
+        this.zappedUser = args.zappedUser || this.ndk.getUser({hexpubkey: this.zappedEvent.pubkey});
     }
 
     public async getZapEndpoint(): Promise<string|undefined> {
@@ -33,9 +32,6 @@ export default class Zap extends EventEmitter {
         let zapEndpoint: string | undefined;
         let zapEndpointCallback: string | undefined;
 
-        // check if event has zap tag
-        // otherwise use the user's zap endpoint
-        // if no zap endpoint, throw error
         if (this.zappedEvent) {
             const zapTag = (await this.zappedEvent.getMatchingTags('zap'))[0];
 
@@ -60,11 +56,11 @@ export default class Zap extends EventEmitter {
         }
 
         if (lud16) {
-            let [name, domain] = lud16.split('@')
-            zapEndpoint = `https://${domain}/.well-known/lnurlp/${name}`
+            const [name, domain] = lud16.split('@');
+            zapEndpoint = `https://${domain}/.well-known/lnurlp/${name}`;
         } else if (lud06) {
-            let {words} = bech32.decode(lud06, 1000);
-            let data = bech32.fromWords(words);
+            const {words} = bech32.decode(lud06, 1000);
+            const data = bech32.fromWords(words);
             const utf8Decoder = new TextDecoder('utf-8');
             zapEndpoint = utf8Decoder.decode(data);
         }
@@ -74,7 +70,7 @@ export default class Zap extends EventEmitter {
         }
 
         const response = await fetch(zapEndpoint);
-        const body: any = await response.json();
+        const body = await response.json();
 
         if (body?.allowsNostr && body?.nostrPubkey) {
             zapEndpointCallback = body.callback;
@@ -84,19 +80,21 @@ export default class Zap extends EventEmitter {
     }
 
     public async createZapRequest(amount: number, comment?: string): Promise<string|null> {
-        const zapEndpoint = await this.getZapEndpoint()
+        const zapEndpoint = await this.getZapEndpoint();
 
         if (!zapEndpoint) {
             throw new Error('No zap endpoint found');
         }
 
+        if (!this.zappedEvent) throw new Error('No zapped event found');
+
         const zapRequest = nip57.makeZapRequest({
             profile: this.zappedUser.hexpubkey(),
-            event: this.zappedEvent?.id!,
+            event: this.zappedEvent?.id,
             amount,
-            comment: comment!,
-            relays: ['wss://nos.lol', 'wss://relay.nostr.band', 'wss://relay.f7z.io', 'wss://relay.damus.io', 'wss://nostr.mom', 'wss://no.str.cr'],
-        })
+            comment: comment || '',
+            relays: ['wss://nos.lol', 'wss://relay.nostr.band', 'wss://relay.f7z.io', 'wss://relay.damus.io', 'wss://nostr.mom', 'wss://no.str.cr'], // TODO: fix this
+        });
 
         const zapRequestEvent = new Event(this.ndk, zapRequest as NostrEvent);
         await zapRequestEvent.sign();
@@ -107,7 +105,7 @@ export default class Zap extends EventEmitter {
                 nostr: JSON.stringify(zapRequestNostrEvent),
             })
         );
-        const body: any = await response.json();
+        const body = await response.json();
 
         return body.pr;
     }

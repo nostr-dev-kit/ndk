@@ -1,9 +1,9 @@
 import {nip05, nip19} from 'nostr-tools';
 import Event from '../events/';
-import {UserProfile, mergeEvent} from './profile';
+import {NDKUserProfile, mergeEvent} from './profile';
 import NDK from '../';
 
-export interface UserParams {
+export interface NDKUserParams {
     npub?: string;
     hexpubkey?: string;
     nip05?: string;
@@ -13,13 +13,13 @@ export interface UserParams {
 /**
  * Represents a pubkey.
  */
-export default class User {
+export default class NDKUser {
     public ndk: NDK | undefined;
-    public profile?: UserProfile;
+    public profile?: NDKUserProfile;
     readonly npub: string = '';
     readonly relayUrls: string[] = [];
 
-    public constructor(opts: UserParams) {
+    public constructor(opts: NDKUserParams) {
         if (opts.npub) this.npub = opts.npub;
 
         if (opts.hexpubkey) {
@@ -31,11 +31,11 @@ export default class User {
         }
     }
 
-    static async fromNip05(nip05Id: string): Promise<User | undefined> {
+    static async fromNip05(nip05Id: string): Promise<NDKUser | undefined> {
         const profile = await nip05.queryProfile(nip05Id);
 
         if (profile) {
-            return new User({
+            return new NDKUser({
                 hexpubkey: profile.pubkey,
                 relayUrls: profile.relays,
             });
@@ -70,7 +70,7 @@ export default class User {
         return setMetadataEvents;
     }
 
-    public async follows(): Promise<Set<User>> {
+    public async follows(): Promise<Set<NDKUser>> {
         if (!this.ndk) throw new Error('NDK not set');
 
         const contactListEvents = await this.ndk.fetchEvents({
@@ -79,12 +79,12 @@ export default class User {
         });
 
         if (contactListEvents) {
-            const contactList = new Set<User>();
+            const contactList = new Set<NDKUser>();
 
             contactListEvents.forEach(event => {
                 event.tags.forEach((tag: string[]) => {
                     if (tag[0] === 'p') {
-                        const user = new User({hexpubkey: tag[1]});
+                        const user = new NDKUser({hexpubkey: tag[1]});
                         user.ndk = this.ndk;
                         contactList.add(user);
                     }
@@ -94,7 +94,7 @@ export default class User {
             return contactList;
         }
 
-        return new Set<User>();
+        return new Set<NDKUser>();
     }
 
     public async relayList(): Promise<Set<Event>> {

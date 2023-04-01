@@ -2,3 +2,8 @@
 **/build
 **/dist
 **/.vscode
+pnpm-lock.yaml
+**/*.js
+**/*.d.ts
+**/*.d.ts.map
+*.tgz

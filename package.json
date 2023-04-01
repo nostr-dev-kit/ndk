@@ -1,6 +1,6 @@
 {
-  "name": "nostr-dev-kit",
-  "version": "0.0.3",
+  "name": "@nostr-dev-kit/ndk",
+  "version": "0.0.4",
   "description": "NDK - Nostr Development Kit",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -24,7 +24,7 @@
     "build:esm": "node tools/cleanup esm && tsc -p config/tsconfig.esm.json",
     "build:types": "node tools/cleanup types && tsc -p config/tsconfig.types.json",
     "package": "npm run build && npm pack",
-    "clean": "node tools/cleanup cjs && node tools/cleanup esm && node tools/cleanup types",
+    "clean": "node tools/cleanup cjs && node tools/cleanup esm && node tools/cleanup types && find src -iname '*.js' -delete",
     "compile": "tsc",
     "prepare": "npm run compile",
     "pretest": "npm run compile",

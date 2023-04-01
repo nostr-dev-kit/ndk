@@ -4,7 +4,7 @@ import type {SignerType} from './signers/';
 import User, {UserParams} from './user/';
 import {UserProfile} from './user/profile';
 import {RelaySet} from './relay/sets/';
-import {Filter, Subscription, SubscriptionOptions} from './subscription/';
+import {Filter, FilterOptions, Subscription, SubscriptionOptions} from './subscription/';
 import {
     calculateRelaySetFromFilter,
     calculateRelaySetFromEvent,
@@ -22,15 +22,21 @@ export {zapInvoiceFromEvent} from './zap/invoice';
 export interface NDKConstructorParams {
     explicitRelayUrls?: string[];
     signer?: SignerType;
+    cacheAdapter?: NDKCacheAdapter;
 }
 export interface GetUserParams extends UserParams {
     npub?: string;
     hexpubkey?: string;
 }
 
+export interface NDKCacheAdapter {
+    getEvents(filter: Filter): Promise<Set<Event>>;
+}
+
 export default class NDK extends EventEmitter {
     public relayPool?: Pool;
     public signer?: SignerType;
+    public cacheAdapter?: NDKCacheAdapter;
 
     public constructor(opts: NDKConstructorParams) {
         super();
@@ -95,7 +101,12 @@ export default class NDK extends EventEmitter {
     /**
      * Fetch events
      */
-    public async fetchEvents(filter: Filter): Promise<Set<Event>> {
+    public async fetchEvents(filter: Filter, opts?: FilterOptions): Promise<Set<Event>> {
+        // check for cached event
+        if (!opts?.skipCache && this.cacheAdapter) {
+            const cachedEvents = await this.cacheAdapter.getEvents(filter);
+        }
+
         const relaySet = await calculateRelaySetFromFilter(this, filter);
 
         return new Promise(resolve => {

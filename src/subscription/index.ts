@@ -7,6 +7,10 @@ import Event from '../events/';
 
 export type Filter = NostrFilter;
 
+export interface FilterOptions {
+    skipCache?: boolean;
+}
+
 export interface SubscriptionOptions {
     closeOnEose: boolean;
 }

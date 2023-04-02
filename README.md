@@ -1,5 +1,13 @@
 # NDK
 
+NDK is a development kit that seeks to make the experience of building Nostr-related applications, whether
+they are relays, clients, or anything in between, better, more reliable and overall nicer to work with than
+existing solutions.
+
+Behind the scenes, NDK seeks to do work to increase the decentralizing tendencies of nostr tooling, so there
+is a lot of emphasis in it's goal designs to bridge the gap of user, notes, tags, relays discoverability without
+depending on any one central point of coordination (such as large relays)
+
 ## Installation
 
 ```sh
@@ -11,8 +19,7 @@ npm add @nostr-dev-kit/ndk
 [NDK NIP-28 group chat](https://app.coracle.social/chat/note15m6rdfvlmd0z836hk83sg7r59xtv23qnmamhsslq5uc6744fdm4qfkeat3)
 
 ## Features
-- [ ] NIP-01
-    - [ ]
+- [x] NIP-01
 - [x] Caching adapters
     * Server-side
         - [x] [Redis](https://github.com/pablof7z/ndk-cache-redis)
@@ -29,8 +36,8 @@ npm add @nostr-dev-kit/ndk
 * Subscription Management
     - [ ] Buffered queries
     - [x] Auto-closing subscriptions
-- [ ] Signing Adapters
-    - [ ] Private key
+- * Signing Adapters
+    - [x] Private key
     - [x] NIP-07
     - [ ] NIP-26
     - [ ] NIP-46
@@ -40,6 +47,27 @@ npm add @nostr-dev-kit/ndk
     - [ ] implicit relays discovery following `t` tag usage
     - [ ] explicit relays blacklist
 - [ ] nostr-tools/SimplePool drop-in replacement interface
+
+## Signers
+NDK uses signers *optionally* passed in to sign events. Note that it is possible to use NDK without signing events
+(e.g. [to get someone's profile](https://github.com/nostr-dev-kit/ndk-cli/blob/master/src/commands/profile.ts)).
+
+Signer adapters can be passed in when NDK is instantiated or later during runtime.
+
+### Using a NIP-07 browser extension (e.g. getalby, nos2x)
+```ts
+const nip07signer = new NDKNip07Signer();
+const ndk = new NDK({ signer: nip07signer });
+```
+
+Now NDK can sign events using your users' NIP-07 extension.
+
+```ts
+const ndkEvent = new NDKEvent(ndk);
+ndkEvent.kind = 1;
+ndkEvent.content = 'Hello, world!';
+ndkEvent.publish();
+```
 
 ## Caching
 NDK provides out-of-the-box database-agnostic caching functionality to improve the

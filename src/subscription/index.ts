@@ -79,7 +79,7 @@ export class NDKSubscription extends EventEmitter {
     private shouldQueryRelays(): boolean {
         return (
             this.opts?.cacheUsage !== NDKSubscriptionCacheUsage.ONLY_CACHE
-        )
+        );
     }
 
     /**

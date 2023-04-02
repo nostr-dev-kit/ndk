@@ -2,6 +2,7 @@ import { getEventHash, Kind, UnsignedEvent } from "nostr-tools";
 import EventEmitter from "eventemitter3";
 import NDK from "../index";
 import Zap from '../zap/index';
+import { generateContentTags } from "./content-tagger";
 
 export type NDKEventId = string;
 export type NDKTag = string[];
@@ -11,7 +12,7 @@ export type NostrEvent = {
     created_at: number;
     content: string;
     subject?: string;
-    tags: string[][];
+    tags: NDKTag[];
     kind?: NDKKind;
     pubkey: string;
     id?: string;
@@ -47,7 +48,10 @@ export default class Event extends EventEmitter {
     async toNostrEvent(pubkey?: string): Promise<NostrEvent> {
         if (this._event) return this._event;
 
-        if (!pubkey) pubkey = await this.ndk?.signer?.user?.hexpubkey();
+        if (!pubkey) {
+            const user = await this.ndk?.signer?.user();
+            pubkey = user?.hexpubkey();
+        }
 
         const nostrEvent: NostrEvent = {
             created_at: this.created_at || Math.floor(Date.now() / 1000),
@@ -75,15 +79,15 @@ export default class Event extends EventEmitter {
     /**
      * Get all tags with the given name
      */
-    getMatchingTags(tagName: string): NDKTag[] {
+    public getMatchingTags(tagName: string): NDKTag[] {
         return this.tags.filter((tag) => tag[0] === tagName);
     }
 
-    async toString() {
+    public async toString() {
         return await this.toNostrEvent();
     }
 
-    async sign() {
+    public async sign() {
         this.ndk?.assertSigner();
 
         await this.generateTags();
@@ -92,8 +96,14 @@ export default class Event extends EventEmitter {
         this.sig = await this.ndk?.signer?.sign(nostrEvent);
     }
 
-    async generateTags() {
-        // if this is a paramterized repleacable event, check there's a d tag, if not, generate it
+    public async publish() : Promise<void> {
+        if (!this.sig) await this.sign();
+
+        return this.ndk?.publish(this);
+    }
+
+    private async generateTags() {
+        // if this is a paramterized repleacable event, check if there's a d tag, if not, generate it
         if (this.kind && this.kind >= 30000 && this.kind <= 40000) {
             const dTag = this.getMatchingTags('d')[0];
             if (!dTag) {
@@ -105,8 +115,14 @@ export default class Event extends EventEmitter {
         if (this.tags.length > 0) return;
 
         // split content in words
+        const { content, tags } = generateContentTags(this.content, this.tags);
+        this.content = content;
+        this.tags = tags;
     }
 
+    /**
+     * Create a zap request for an existing event
+     */
     async zap(amount: number, comment?: string): Promise<string|null> {
         if (!this.ndk) throw new Error('No NDK instance found');
 

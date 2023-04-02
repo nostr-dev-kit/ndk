@@ -74,7 +74,7 @@ export default class NDK extends EventEmitter {
         filter: NDKFilter,
         opts?: NDKSubscriptionOptions
     ): NDKSubscription {
-        const subscription = new NDKSubscription(this, filter, opts)
+        const subscription = new NDKSubscription(this, filter, opts);
         subscription.start();
 
         return subscription;

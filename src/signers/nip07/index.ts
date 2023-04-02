@@ -1,6 +1,6 @@
-import {NDKSigner} from '../';
-import type {NostrEvent} from '../../events';
-import NDKUser from '../../user';
+import {NDKSigner} from '../index';
+import type {NostrEvent} from '../../events/index';
+import NDKUser from '../../user/index';
 
 export class NDKNip07Signer implements NDKSigner {
     public user: NDKUser | undefined;

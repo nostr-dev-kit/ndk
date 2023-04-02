@@ -1,6 +1,6 @@
-import {NDKRelay} from '../';
-import Event from '../../events/';
-import {NDKSubscription, NDKSubscriptionOptions, NDKFilter} from '../../subscription/';
+import {NDKRelay} from '../index';
+import Event from '../../events/index';
+import {NDKSubscription} from '../../subscription/index';
 
 /**
  * A relay set is a group of relays. This grouping can be short-living, for a single

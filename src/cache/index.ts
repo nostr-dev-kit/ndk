@@ -1,5 +1,5 @@
-import {NDKFilter, NDKSubscription} from '../subscription/';
-import NDKEvent from '../events/';
+import {NDKFilter, NDKSubscription} from '../subscription/index';
+import NDKEvent from '../events/index';
 
 export interface NDKCacheAdapter {
     /**

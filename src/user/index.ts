@@ -1,7 +1,7 @@
 import {nip05, nip19} from 'nostr-tools';
-import Event from '../events/';
+import Event from '../events/index';
 import {NDKUserProfile, mergeEvent} from './profile';
-import NDK from '../';
+import NDK from '../index';
 
 export interface NDKUserParams {
     npub?: string;
@@ -70,6 +70,9 @@ export default class NDKUser {
         return setMetadataEvents;
     }
 
+    /**
+     * Returns a set of users that this user follows.
+     */
     public async follows(): Promise<Set<NDKUser>> {
         if (!this.ndk) throw new Error('NDK not set');
 

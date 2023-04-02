@@ -1,14 +1,11 @@
-import NDK from '../';
+import NDK from '../index';
 import {Filter as NostrFilter, Sub} from 'nostr-tools';
 import EventEmitter from 'eventemitter3';
 import {NDKRelay} from '../relay';
-import {NDKRelaySet} from '../relay/sets/';
-import {NDKEventId} from '../events/';
-import NDKEvent from '../events/';
-import {
-    calculateRelaySetFromFilter,
-    calculateRelaySetFromEvent,
-} from '../relay/sets/calculate';
+import {NDKRelaySet} from '../relay/sets/index';
+import {NDKEventId} from '../events/index';
+import NDKEvent from '../events/index';
+import { calculateRelaySetFromFilter } from '../relay/sets/calculate';
 
 export type NDKFilter = NostrFilter;
 

@@ -1,15 +1,11 @@
-import NDKEvent from './events/';
-import {NDKPool} from './relay/pool/';
-import type {NDKSigner} from './signers/';
-import NDKUser, {NDKUserParams} from './user/';
+import NDKEvent from './events/index';
+import {NDKPool} from './relay/pool/index';
+import type {NDKSigner} from './signers/index';
+import NDKUser, {NDKUserParams} from './user/index';
 import {NDKUserProfile} from './user/profile';
-import {NDKRelaySet} from './relay/sets/';
-import {NDKFilter, NDKFilterOptions, NDKSubscription, NDKSubscriptionOptions} from './subscription/';
-import { NDKCacheAdapter } from './cache';
-import {
-    calculateRelaySetFromFilter,
-    calculateRelaySetFromEvent,
-} from './relay/sets/calculate';
+import {NDKFilter, NDKFilterOptions, NDKSubscription, NDKSubscriptionOptions} from './subscription/index';
+import { NDKCacheAdapter } from './cache/index';
+import { calculateRelaySetFromEvent } from './relay/sets/calculate';
 import EventEmitter from 'eventemitter3';
 import debug from 'debug';
 
@@ -21,9 +17,8 @@ export {
     NDKCacheAdapter,
     NDKSubscription
 };
-export {NDKNip07Signer} from './signers/nip07/';
-export {NDKZapInvoice} from './zap/invoice';
-export {zapInvoiceFromEvent} from './zap/invoice';
+export {NDKNip07Signer} from './signers/nip07/index';
+export {NDKZapInvoice, zapInvoiceFromEvent} from './zap/invoice';
 
 export interface NDKConstructorParams {
     explicitRelayUrls?: string[];

@@ -1,5 +1,15 @@
 # NDK
 
+## Installation
+
+```sh
+npm add @nostr-dev-kit/ndk
+```
+
+## Support
+
+[NDK NIP-28 group chat](https://app.coracle.social/chat/note15m6rdfvlmd0z836hk83sg7r59xtv23qnmamhsslq5uc6744fdm4qfkeat3)
+
 ## Features
 - [ ] NIP-01
     - [ ]

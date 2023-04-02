@@ -1,8 +1,8 @@
-import NDK from '../../';
-import {NDKRelay} from '../';
-import Event from '../../events/';
-import {NDKRelaySet} from './';
-import {NDKFilter} from '../../subscription/';
+import NDK from '../../index';
+import {NDKRelay} from '../index';
+import Event from '../../events/index';
+import {NDKRelaySet} from './index';
+import {NDKFilter} from '../../subscription/index';
 
 /**
  * Creates a NDKRelaySet for the specified event.

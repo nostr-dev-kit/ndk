@@ -37,7 +37,7 @@ export default class NDK extends EventEmitter {
     public cacheAdapter?: NDKCacheAdapter;
     public debug: debug.Debugger;
 
-    public constructor(opts: NDKConstructorParams) {
+    public constructor(opts: NDKConstructorParams = {}) {
         super();
 
         if (opts.explicitRelayUrls)

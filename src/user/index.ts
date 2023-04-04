@@ -2,6 +2,7 @@ import {nip05, nip19} from 'nostr-tools';
 import Event from '../events/index.js';
 import {NDKUserProfile, mergeEvent} from './profile';
 import NDK from '../index.js';
+import { follows } from './follows.js';
 
 export interface NDKUserParams {
     npub?: string;
@@ -73,32 +74,7 @@ export default class NDKUser {
     /**
      * Returns a set of users that this user follows.
      */
-    public async follows(): Promise<Set<NDKUser>> {
-        if (!this.ndk) throw new Error('NDK not set');
-
-        const contactListEvents = await this.ndk.fetchEvents({
-            kinds: [3],
-            authors: [this.hexpubkey()],
-        });
-
-        if (contactListEvents) {
-            const contactList = new Set<NDKUser>();
-
-            contactListEvents.forEach(event => {
-                event.tags.forEach((tag: string[]) => {
-                    if (tag[0] === 'p') {
-                        const user = new NDKUser({hexpubkey: tag[1]});
-                        user.ndk = this.ndk;
-                        contactList.add(user);
-                    }
-                });
-            });
-
-            return contactList;
-        }
-
-        return new Set<NDKUser>();
-    }
+    public follows = follows.bind(this);
 
     public async relayList(): Promise<Set<Event>> {
         if (!this.ndk) throw new Error('NDK not set');

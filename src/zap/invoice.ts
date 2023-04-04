@@ -1,5 +1,5 @@
 import NDKEvent, {type NDKEventId, type NostrEvent} from '../events/index.js';
-import lightningPayReq from 'light-bolt11-decoder';
+import {decode} from 'light-bolt11-decoder';
 
 export interface NDKZapInvoice {
     id?: NDKEventId;
@@ -29,7 +29,7 @@ export function zapInvoiceFromEvent(event: NDKEvent): NDKZapInvoice | null {
         if (zapRequestPayload === "") { return null; }
 
         zapRequest = JSON.parse(zapRequestPayload);
-        decodedInvoice = lightningPayReq.decode(bolt11[1]);
+        decodedInvoice = decode(bolt11[1]);
     } catch (e) {
         // console.log(e, {description, event});
         return null;

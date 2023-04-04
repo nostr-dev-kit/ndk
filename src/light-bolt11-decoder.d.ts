@@ -1,3 +1,3 @@
 declare module 'light-bolt11-decoder' {
-    function decode(paymentRequest: string): any;
+    export function decode(bolt11: string): any;
 }

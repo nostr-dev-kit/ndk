@@ -106,8 +106,10 @@ export default class Event extends EventEmitter {
         // if this is a paramterized repleacable event, check if there's a d tag, if not, generate it
         if (this.kind && this.kind >= 30000 && this.kind <= 40000) {
             const dTag = this.getMatchingTags('d')[0];
+            // generate a string of 32 random bytes
             if (!dTag) {
-                this.tags.push(['d', ""]);
+                const str = [...Array(16)].map(() => Math.random().toString(36)[2]).join('');
+                this.tags.push(['d', str]);
             }
         }
 

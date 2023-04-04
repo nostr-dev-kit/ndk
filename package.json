@@ -1,34 +1,27 @@
 {
   "name": "@nostr-dev-kit/ndk",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "NDK - Nostr Development Kit",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
-  "umd:main": "dist/umd/index.js",
-  "types": "dist/types/index.d.ts",
   "homepage": "https://ndk.fyi",
   "repository": {
     "type": "git",
     "url": "https://github.com/nostr-dev-kit/ndk"
   },
+  "types": "./lib/src/index.d.ts",
+  "main": "lib/ndk.cjs.js",
+  "module": "lib/esm/ndk.mjs",
   "exports": {
-    ".": {
-      "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.js",
-      "default": "./dist/umd/index.js"
-    }
+    "import": "./lib/esm/ndk.mjs",
+    "require": "./lib/ndk.cjs.js"
   },
   "files": [
-    "dist",
+    "lib",
     "README.md"
   ],
   "scripts": {
     "dev": "node tools/cleanup esm && tsc -w -p config/tsconfig.esm.json",
-    "build": "npm run build:cjs && npm run build:esm && npm run build:types",
-    "build:cjs": "node tools/cleanup cjs && tsc -p config/tsconfig.cjs.json",
-    "build:esm": "node tools/cleanup esm && tsc -p config/tsconfig.esm.json",
-    "build:types": "node tools/cleanup types && tsc -p config/tsconfig.types.json",
-    "clean": "node tools/cleanup cjs && node tools/cleanup esm && node tools/cleanup types && find src -iname '*.js' -delete",
+    "build": "rm -rf lib && node build.js && tsc",
+    "clean": "rm -rf lib",
     "test": "jest",
     "lint": "eslint src/**/*.ts",
     "compile": "tsc",
@@ -56,13 +49,17 @@
     "@typescript-eslint/eslint-plugin": "^5.57.0",
     "@typescript-eslint/parser": "^5.57.0",
     "debug": "^4.3.4",
+    "esbuild": "^0.17.15",
+    "esbuild-plugin-alias": "^0.2.1",
     "eslint": "^8.37.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-import": "^2.27.5",
+    "esm-loader-typescript": "^1.0.4",
     "eventemitter3": "^5.0.0",
     "light-bolt11-decoder": "^3.0.0",
     "node-fetch": "^3.3.1",
     "nostr-tools": "^1.8.1",
+    "tsd": "^0.28.1",
     "utf8-buffer": "^1.0.0",
     "websocket-polyfill": "^0.0.3"
   }

@@ -1,6 +1,6 @@
-import { NDKSigner } from '../index';
-import type { NostrEvent } from '../../events/index';
-import NDKUser from '../../user/index';
+import { NDKSigner } from '../index.js';
+import type { NostrEvent } from '../../events/index.js';
+import NDKUser from '../../user/index.js';
 
 /**
  * NDKNip07Signer implements the NDKSigner interface for signing Nostr events

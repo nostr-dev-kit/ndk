@@ -1,7 +1,7 @@
 import { signEvent, generatePrivateKey, getPublicKey } from 'nostr-tools';
 import type { UnsignedEvent } from 'nostr-tools';
-import type { NostrEvent } from '../../events/index';
-import { NDKSigner } from '../index';
+import type { NostrEvent } from '../../events/index.js';
+import { NDKSigner } from '../index.js';
 import User from '../../user';
 
 export default class PrivateKeySigner implements NDKSigner {

@@ -1,8 +1,8 @@
 import { getEventHash, Kind, UnsignedEvent } from "nostr-tools";
 import EventEmitter from "eventemitter3";
-import NDK from "../index";
-import Zap from '../zap/index';
-import { generateContentTags } from "./content-tagger";
+import NDK from "../index.js";
+import Zap from '../zap/index.js';
+import { generateContentTags } from "./content-tagger.js";
 
 export type NDKEventId = string;
 export type NDKTag = string[];

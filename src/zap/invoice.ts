@@ -1,4 +1,4 @@
-import NDKEvent, {type NDKEventId, type NostrEvent} from '../events/index';
+import NDKEvent, {type NDKEventId, type NostrEvent} from '../events/index.js';
 import lightningPayReq from 'light-bolt11-decoder';
 
 export interface NDKZapInvoice {

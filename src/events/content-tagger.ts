@@ -1,5 +1,5 @@
 import {nip19} from 'nostr-tools';
-import { NDKTag } from './index';
+import { NDKTag } from './index.js';
 import { EventPointer, ProfilePointer } from 'nostr-tools/lib/nip19';
 
 export function generateContentTags(content: string, tags: NDKTag[] = []): {content: string; tags: NDKTag[]} {

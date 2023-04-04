@@ -1,6 +1,7 @@
 **/node_modules
 **/build
 **/dist
+**/lib
 **/.vscode
 pnpm-lock.yaml
 **/*.js

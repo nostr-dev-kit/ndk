@@ -1,10 +1,10 @@
 import 'websocket-polyfill';
 import {relayInit, Sub} from 'nostr-tools';
 import type {Event as SignedEvent} from 'nostr-tools';
-import User from '../user/index';
+import User from '../user/index.js';
 import {NDKRelayScore} from './score';
-import {NDKSubscription} from '../subscription/index';
-import NDKEvent, {NostrEvent} from '../events/index';
+import {NDKSubscription} from '../subscription/index.js';
+import NDKEvent, {NostrEvent} from '../events/index.js';
 import EventEmitter from 'eventemitter3';
 
 export class NDKRelay extends EventEmitter {

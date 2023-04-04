@@ -1,7 +1,7 @@
 import {nip05, nip19} from 'nostr-tools';
-import Event from '../events/index';
+import Event from '../events/index.js';
 import {NDKUserProfile, mergeEvent} from './profile';
-import NDK from '../index';
+import NDK from '../index.js';
 
 export interface NDKUserParams {
     npub?: string;

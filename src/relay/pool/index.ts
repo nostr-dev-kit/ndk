@@ -1,5 +1,5 @@
 import EventEmitter from 'eventemitter3';
-import {NDKRelay} from '../index';
+import {NDKRelay} from '../index.js';
 
 export class NDKPool extends EventEmitter {
     public relays = new Map<string, NDKRelay>();

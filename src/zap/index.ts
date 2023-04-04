@@ -1,8 +1,8 @@
-import NDK from "../index";
+import NDK from "../index.js";
 import EventEmitter from 'eventemitter3';
-import Event from "../events/index";
-import type {NostrEvent} from "../events/index";
-import User from "../user/index";
+import Event from "../events/index.js";
+import type {NostrEvent} from "../events/index.js";
+import User from "../user/index.js";
 import {nip57} from "nostr-tools";
 import {bech32} from '@scure/base';
 interface ZapConstructorParams {

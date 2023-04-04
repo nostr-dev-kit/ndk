@@ -1,11 +1,11 @@
-import NDKEvent from './events/index';
-import {NDKPool} from './relay/pool/index';
-import type {NDKSigner} from './signers/index';
-import NDKUser, {NDKUserParams} from './user/index';
-import {NDKUserProfile} from './user/profile';
-import {NDKFilter, NDKFilterOptions, NDKSubscription, NDKSubscriptionOptions} from './subscription/index';
-import { NDKCacheAdapter } from './cache/index';
-import { calculateRelaySetFromEvent } from './relay/sets/calculate';
+import NDKEvent from './events/index.js';
+import {NDKPool} from './relay/pool/index.js';
+import type {NDKSigner} from './signers/index.js';
+import NDKUser, {NDKUserParams} from './user/index.js';
+import {NDKUserProfile} from './user/profile.js';
+import {NDKFilter, NDKFilterOptions, NDKSubscription, NDKSubscriptionOptions} from './subscription/index.js';
+import { NDKCacheAdapter } from './cache/index.js';
+import { calculateRelaySetFromEvent } from './relay/sets/calculate.js';
 import EventEmitter from 'eventemitter3';
 import debug from 'debug';
 
@@ -17,8 +17,8 @@ export {
     NDKCacheAdapter,
     NDKSubscription
 };
-export {NDKNip07Signer} from './signers/nip07/index';
-export {NDKZapInvoice, zapInvoiceFromEvent} from './zap/invoice';
+export {NDKNip07Signer} from './signers/nip07/index.js';
+export {NDKZapInvoice, zapInvoiceFromEvent} from './zap/invoice.js';
 
 export interface NDKConstructorParams {
     explicitRelayUrls?: string[];
@@ -109,6 +109,7 @@ export default class NDK extends EventEmitter {
             const relaySetSubscription = this.subscribe(filter, {closeOnEose: true});
 
             relaySetSubscription.on('event', (event: NDKEvent) => {
+                event.ndk = this;
                 events.add(event);
             });
             relaySetSubscription.on('eose', () => {

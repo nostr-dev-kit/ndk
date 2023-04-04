@@ -1,5 +1,5 @@
 import NDKUser from '../user';
-import type { NostrEvent } from '../events/index';
+import type { NostrEvent } from '../events/index.js';
 
 export interface NDKSigner {
     /**

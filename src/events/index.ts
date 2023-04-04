@@ -3,17 +3,17 @@ import EventEmitter from "eventemitter3";
 import NDK from "../index.js";
 import Zap from '../zap/index.js';
 import { generateContentTags } from "./content-tagger.js";
+import { NDKKind } from "./kind.js";
 
 export type NDKEventId = string;
 export type NDKTag = string[];
-export type NDKKind = Kind;
 
 export type NostrEvent = {
     created_at: number;
     content: string;
     subject?: string;
     tags: NDKTag[];
-    kind?: NDKKind;
+    kind?: NDKKind | number;
     pubkey: string;
     id?: string;
     sig?: string;

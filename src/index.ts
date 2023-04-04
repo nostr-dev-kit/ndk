@@ -17,6 +17,7 @@ export {
     NDKCacheAdapter,
     NDKSubscription
 };
+export {NDKKind} from './events/kind.js';
 export {NDKNip07Signer} from './signers/nip07/index.js';
 export {NDKZapInvoice, zapInvoiceFromEvent} from './zap/invoice.js';
 

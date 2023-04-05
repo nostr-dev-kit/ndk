@@ -1,4 +1,4 @@
-import { getEventHash, Kind, UnsignedEvent } from "nostr-tools";
+import { getEventHash, UnsignedEvent } from "nostr-tools";
 import EventEmitter from "eventemitter3";
 import NDK from "../index.js";
 import Zap from '../zap/index.js';
@@ -19,7 +19,7 @@ export type NostrEvent = {
     sig?: string;
 };
 
-export default class Event extends EventEmitter {
+export default class NDKEvent extends EventEmitter {
     public ndk?: NDK;
     public created_at?: number;
     public content = '';
@@ -120,6 +120,27 @@ export default class Event extends EventEmitter {
         const { content, tags } = generateContentTags(this.content, this.tags);
         this.content = content;
         this.tags = tags;
+    }
+
+    /**
+     * Get the tag that can be used to reference this event from another event
+     * @example
+     *     event = new NDKEvent(ndk, { kind: 30000, pubkey: 'pubkey', tags: [ ["d", "d-code"] ] });
+     *     event.tagReference(); // ["a", "30000:pubkey:d-code"]
+     *
+     *     event = new NDKEvent(ndk, { kind: 1, pubkey: 'pubkey', id: "eventid" });
+     *     event.tagReference(); // ["e", "eventid"]
+     */
+    tagReference() {
+        // NIP-33
+        if (this.kind && this.kind >= 30000 && this.kind <= 40000) {
+            const dTag = this.getMatchingTags('d')[0];
+            const dTagId = dTag ? dTag[1] : '';
+
+            return ["d", `${this.kind}:${this.pubkey}:${dTagId}`];
+        }
+
+        return ["e", this.id];
     }
 
     /**

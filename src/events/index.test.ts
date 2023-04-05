@@ -1,5 +1,5 @@
-import NDK from "../index";
-import NDKEvent from "./index";
+import NDK, { NDKEvent, NDKSubscription } from "../index";
+import EventEmitter from "eventemitter3";
 
 describe("NDKEvent", () => {
     let ndk: NDK;
@@ -8,6 +8,33 @@ describe("NDKEvent", () => {
     beforeEach(() => {
         ndk = new NDK();
         event = new NDKEvent(ndk);
+    });
+
+    describe("fetchEvents", () => {
+        it("correctly handles a relay sending old replaced events", async () => {
+            const eventData = { kind: 300001, tags: [ ["d", "" ] ], content: "", pubkey: ""};
+            const event1 = new NDKEvent(ndk, { ...eventData, created_at: (Date.now()/1000)-3600 });
+            const event2 = new NDKEvent(ndk, { ...eventData, created_at: (Date.now()/1000) });
+
+            ndk.subscribe = jest.fn((filter, opts?): NDKSubscription => {
+                const sub = new NDKSubscription(ndk, filter, opts);
+
+                setTimeout(() => {
+                    sub.emit('event', event1);
+                    sub.emit('event', event2);
+                    sub.emit('eose');
+                }, 100);
+
+                return sub;
+            });
+
+            const events = await ndk.fetchEvents({ kinds: [30001] });
+
+            expect(events.size).toBe(1);
+            const dedupedEvent = events.values().next().value;
+
+            expect(dedupedEvent).toEqual(event2);
+        });
     });
 
     describe("toNostrEvent", () => {
@@ -29,7 +56,7 @@ describe("NDKEvent", () => {
                 content: "",
                 kind: 30000,
                 pubkey: "pubkey",
-                tags: [["e", "d-code"]],
+                tags: [["d", "d-code"]],
             });
 
             const event2 = new NDKEvent(ndk, {

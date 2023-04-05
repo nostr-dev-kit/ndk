@@ -6,6 +6,7 @@ import {NDKUserProfile} from './user/profile.js';
 import {NDKFilter, NDKFilterOptions, NDKSubscription, NDKSubscriptionOptions} from './subscription/index.js';
 import { NDKCacheAdapter } from './cache/index.js';
 import { calculateRelaySetFromEvent } from './relay/sets/calculate.js';
+import dedupEvent from './events/dedup.js';
 import EventEmitter from 'eventemitter3';
 import debug from 'debug';
 
@@ -105,16 +106,21 @@ export default class NDK extends EventEmitter {
      */
     public async fetchEvents(filter: NDKFilter, opts?: NDKFilterOptions): Promise<Set<NDKEvent>> {
         return new Promise(resolve => {
-            const events: Set<NDKEvent> = new Set();
+            const events: Map<string, NDKEvent> = new Map();
 
             const relaySetSubscription = this.subscribe(filter, {closeOnEose: true});
 
             relaySetSubscription.on('event', (event: NDKEvent) => {
+                const existingEvent = events.get(event.tagId());
+                if (existingEvent) {
+                    event = dedupEvent(existingEvent, event);
+                }
+
                 event.ndk = this;
-                events.add(event);
+                events.set(event.tagId(), event);
             });
             relaySetSubscription.on('eose', () => {
-                resolve(events);
+                resolve(new Set(events.values()));
             });
         });
     }

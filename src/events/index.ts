@@ -29,7 +29,6 @@ export default class NDKEvent extends EventEmitter {
     public id = "";
     public sig?: string;
     public pubkey = '';
-    public _event?: NostrEvent;
 
     constructor(ndk?: NDK, event?: NostrEvent) {
         super();
@@ -42,12 +41,9 @@ export default class NDKEvent extends EventEmitter {
         this.sig = event?.sig;
         this.pubkey = event?.pubkey || '';
         if (event?.kind) this.kind = event?.kind;
-        this._event = event;
     }
 
     async toNostrEvent(pubkey?: string): Promise<NostrEvent> {
-        if (this._event) return this._event;
-
         if (!pubkey) {
             const user = await this.ndk?.signer?.user();
             pubkey = user?.hexpubkey();
@@ -123,6 +119,21 @@ export default class NDKEvent extends EventEmitter {
     }
 
     /**
+     * @returns the id of the event, or if it's a parameterized event, the id of the event with the d tag
+     */
+    tagId() {
+        // NIP-33
+        if (this.kind && this.kind >= 30000 && this.kind <= 40000) {
+            const dTag = this.getMatchingTags('d')[0];
+            const dTagId = dTag ? dTag[1] : '';
+
+            return `${this.kind}:${this.pubkey}:${dTagId}`;
+        }
+
+        return this.id;
+    }
+
+    /**
      * Get the tag that can be used to reference this event from another event
      * @example
      *     event = new NDKEvent(ndk, { kind: 30000, pubkey: 'pubkey', tags: [ ["d", "d-code"] ] });
@@ -134,13 +145,10 @@ export default class NDKEvent extends EventEmitter {
     tagReference() {
         // NIP-33
         if (this.kind && this.kind >= 30000 && this.kind <= 40000) {
-            const dTag = this.getMatchingTags('d')[0];
-            const dTagId = dTag ? dTag[1] : '';
-
-            return ["a", `${this.kind}:${this.pubkey}:${dTagId}`];
+            return ["a", this.tagId()];
         }
 
-        return ["e", this.id];
+        return ["e", this.tagId()];
     }
 
     /**

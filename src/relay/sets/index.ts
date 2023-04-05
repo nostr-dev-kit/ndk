@@ -1,5 +1,5 @@
 import {NDKRelay} from '../index.js';
-import Event from '../../events/index.js';
+import NDKEvent from '../../events/index.js';
 import {NDKSubscription} from '../../subscription/index.js';
 
 /**
@@ -28,15 +28,13 @@ export class NDKRelaySet {
         return subscription;
     }
 
-    public async publish(event: Event): Promise<void> {
+    public async publish(event: NDKEvent): Promise<void> {
         this.relays.forEach(async relay => {
             try {
                 // TODO: if relay is not connected, don't try to send, but rather attach
                 // to `connected` event and send it at that moment
                 await relay.publish(event);
-            } catch (e) {
-                console.log(e);
-            }
+            } catch (e) {}
         });
     }
 

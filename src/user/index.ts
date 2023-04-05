@@ -64,7 +64,9 @@ export default class NDKUser {
             );
 
             sortedSetMetadataEvents.forEach(event => {
-                this.profile = mergeEvent(event, this.profile!);
+                try {
+                    this.profile = mergeEvent(event, this.profile!);
+                } catch (e) {}
             });
         }
 

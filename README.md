@@ -264,7 +264,7 @@ event.content = "PV Nostr! 🤙🏼";
 await ndk.publish(event);
 ```
 
-### Reacting to (Liking) an event
+### Reacting to an event
 
 ```ts
 // Find the first event from @jack, and react/like it.

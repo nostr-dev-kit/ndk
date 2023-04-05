@@ -29,7 +29,7 @@ describe("NDKEvent", () => {
                 content: "",
                 kind: 30000,
                 pubkey: "pubkey",
-                tags: [["d", "d-code"]],
+                tags: [["e", "d-code"]],
             });
 
             const event2 = new NDKEvent(ndk, {
@@ -41,7 +41,7 @@ describe("NDKEvent", () => {
                 id: "eventid",
             });
 
-            expect(event1.tagReference()).toEqual(["d", "30000:pubkey:d-code"]);
+            expect(event1.tagReference()).toEqual(["a", "30000:pubkey:d-code"]);
             expect(event2.tagReference()).toEqual(["e", "eventid"]);
         });
     });

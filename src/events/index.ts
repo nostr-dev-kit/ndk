@@ -137,7 +137,7 @@ export default class NDKEvent extends EventEmitter {
             const dTag = this.getMatchingTags('d')[0];
             const dTagId = dTag ? dTag[1] : '';
 
-            return ["d", `${this.kind}:${this.pubkey}:${dTagId}`];
+            return ["a", `${this.kind}:${this.pubkey}:${dTagId}`];
         }
 
         return ["e", this.id];

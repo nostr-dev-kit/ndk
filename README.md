@@ -1,8 +1,6 @@
 # NDK
 
-NDK is a Nostr development kit that makes the experience of building Nostr-related applications, whether
-they are relays, clients, or anything in between, better, more reliable and overall nicer to work with than
-existing solutions.
+NDK is a Nostr development kit that makes the experience of building Nostr-related applications, whether they are relays, clients, or anything in between, better, more reliable and overall nicer to work with than existing solutions.
 
 Besides improving the developer experience, the core goal of NDK is to improve the decentralization of Nostr via intelligent conventions and data discovery features without depending on any one central point of coordination (such as large relays or centralized search providers).
 

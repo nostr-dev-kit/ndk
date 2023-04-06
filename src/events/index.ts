@@ -6,7 +6,6 @@ import { generateContentTags } from "./content-tagger.js";
 import { NDKKind } from "./kind.js";
 import { isParamReplaceable, isReplaceable } from "./kind.js";
 import { encode } from "./nip19.js";
-import { type } from "os";
 
 export type NDKEventId = string;
 export type NDKTag = string[];
@@ -28,7 +27,7 @@ export default class NDKEvent extends EventEmitter {
     public content = '';
     public subject: string | undefined;
     public tags: NDKTag[] = [];
-    public kind?: NDKKind;
+    public kind?: NDKKind | number;
     public id = "";
     public sig?: string;
     public pubkey = '';
@@ -106,23 +105,25 @@ export default class NDKEvent extends EventEmitter {
     }
 
     private async generateTags() {
+        // don't autogenerate if there currently are tags
+        if (this.tags.length > 0) {
+            const { content, tags } = generateContentTags(this.content, this.tags);
+            this.content = content;
+            this.tags = tags;
+        }
+
         // if this is a paramterized repleacable event, check if there's a d tag, if not, generate it
         if (this.kind && this.kind >= 30000 && this.kind <= 40000) {
             const dTag = this.getMatchingTags('d')[0];
             // generate a string of 32 random bytes
             if (!dTag) {
+                console.log('generating d tag', this)
                 const str = [...Array(16)].map(() => Math.random().toString(36)[2]).join('');
                 this.tags.push(['d', str]);
+            } else {
+                console.log('d tag already exists', this.tags);
             }
         }
-
-        // don't autogenerate if there currently are tags
-        if (this.tags.length > 0) return;
-
-        // split content in words
-        const { content, tags } = generateContentTags(this.content, this.tags);
-        this.content = content;
-        this.tags = tags;
     }
 
     /**

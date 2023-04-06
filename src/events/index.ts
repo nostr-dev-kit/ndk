@@ -4,6 +4,9 @@ import NDK from "../index.js";
 import Zap from '../zap/index.js';
 import { generateContentTags } from "./content-tagger.js";
 import { NDKKind } from "./kind.js";
+import { isParamReplaceable, isReplaceable } from "./kind.js";
+import { encode } from "./nip19.js";
+import { type } from "os";
 
 export type NDKEventId = string;
 export type NDKTag = string[];
@@ -71,6 +74,10 @@ export default class NDKEvent extends EventEmitter {
 
         return nostrEvent;
     }
+
+    public isReplaceable = isReplaceable.bind(this);
+    public isParamReplaceable = isParamReplaceable.bind(this);
+    public encode = encode.bind(this);
 
     /**
      * Get all tags with the given name

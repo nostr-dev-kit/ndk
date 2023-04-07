@@ -3,6 +3,7 @@
   "version": "0.0.24",
   "description": "NDK - Nostr Development Kit",
   "homepage": "https://ndk.fyi",
+  "documentation": "https://github.com/nostr-dev-kit/ndk/blob/master/docs/modules.md",
   "repository": {
     "type": "git",
     "url": "https://github.com/nostr-dev-kit/ndk"

@@ -7,33 +7,49 @@ import {NDKSubscription} from '../subscription/index.js';
 import NDKEvent, {NostrEvent} from '../events/index.js';
 import EventEmitter from 'eventemitter3';
 
+export enum NDKRelayStatus {
+    CONNECTING,
+    CONNECTED,
+    DISCONNECTED,
+    ERROR,
+    RECONNECTING,
+};
+
 export class NDKRelay extends EventEmitter {
     readonly url: string;
     readonly scores: Map<User, NDKRelayScore>;
     private relay;
+    private _status: NDKRelayStatus;
 
     public constructor(url: string) {
         super();
         this.url = url;
         this.relay = relayInit(url);
         this.scores = new Map<User, NDKRelayScore>();
+        this._status = NDKRelayStatus.DISCONNECTED;
 
         this.relay.on('connect', () => {
             this.emit('connect');
+            this._status = NDKRelayStatus.CONNECTED;
         });
 
         this.relay.on('disconnect', () => {
             this.emit('disconnect');
+            this._status = NDKRelayStatus.DISCONNECTED;
         });
 
         this.relay.on('notice', (notice: string) => this.handleNotice(notice));
     }
 
+    get status(): NDKRelayStatus {
+        return this._status;
+    }
+
     public async connect(): Promise<void> {
         try {
+            this._status = NDKRelayStatus.CONNECTING;
             await this.relay.connect();
-            // eslint-disable-next-line no-empty
-        } catch (e) {}
+        } catch (e) { /* empty */ }
     }
 
     async handleNotice(notice: string) {

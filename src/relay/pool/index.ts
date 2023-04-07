@@ -1,7 +1,13 @@
 import EventEmitter from 'eventemitter3';
-import {NDKRelay} from '../index.js';
+import {NDKRelay, NDKRelayStatus} from '../index.js';
 import NDK from '../../index.js';
 
+export type NDKPoolStats = {
+    total: number,
+    connected: number,
+    disconnected: number,
+    connecting: number,
+};
 export class NDKPool extends EventEmitter {
     public relays = new Map<string, NDKRelay>();
     private debug: debug.Debugger;
@@ -11,9 +17,9 @@ export class NDKPool extends EventEmitter {
         this.debug = ndk.debug.extend('pool');
         relayUrls.forEach(relayUrl => {
             const relay = new NDKRelay(relayUrl);
-            relay.on('notice', (relay, notice) => {
-                this.emit('notice', relay, notice);
-            });
+            relay.on('notice', (relay, notice) => this.emit('notice', relay, notice));
+            relay.on('connect', () => this.emit('connect', relay));
+            relay.on('disconnect', () => this.emit('disconnect', relay));
             this.relays.set(relayUrl, relay);
         });
     }
@@ -53,9 +59,33 @@ export class NDKPool extends EventEmitter {
         await Promise.all(promises);
     }
 
-
-
     public size(): number {
         return this.relays.size;
+    }
+
+    /**
+     * Returns the status of each relay in the pool.
+     * @returns {NDKPoolStats} An object containing the number of relays in each status.
+     */
+    public stats(): NDKPoolStats {
+        const stats: NDKPoolStats = {
+            total: 0,
+            connected: 0,
+            disconnected: 0,
+            connecting: 0,
+        };
+
+        for (const relay of this.relays.values()) {
+            stats.total++;
+            if (relay.status === NDKRelayStatus.CONNECTED) {
+                stats.connected++;
+            } else if (relay.status === NDKRelayStatus.DISCONNECTED) {
+                stats.disconnected++;
+            } else if (relay.status === NDKRelayStatus.CONNECTING) {
+                stats.connecting++;
+            }
+        }
+
+        return stats;
     }
 }

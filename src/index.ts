@@ -1,5 +1,6 @@
 import NDKEvent from './events/index.js';
 import {NDKPool} from './relay/pool/index.js';
+import {NDKRelay} from './relay/index.js';
 import type {NDKSigner} from './signers/index.js';
 import NDKUser, {NDKUserParams} from './user/index.js';
 import {NDKUserProfile} from './user/profile.js';
@@ -34,7 +35,7 @@ export interface GetUserParams extends NDKUserParams {
 }
 
 export default class NDK extends EventEmitter {
-    public relayPool: NDKPool;
+    public pool: NDKPool;
     public signer?: NDKSigner;
     public cacheAdapter?: NDKCacheAdapter;
     public debug: debug.Debugger;
@@ -43,7 +44,7 @@ export default class NDK extends EventEmitter {
         super();
 
         this.debug = opts.debug || debug('ndk');
-        this.relayPool = new NDKPool(opts.explicitRelayUrls||[], this);
+        this.pool = new NDKPool(opts.explicitRelayUrls||[], this);
         this.signer = opts.signer;
         this.cacheAdapter = opts.cacheAdapter;
 
@@ -60,7 +61,7 @@ export default class NDK extends EventEmitter {
      */
     public async connect(timeoutMs?: number): Promise<void> {
         this.debug('Connecting to relays');
-        return this.relayPool.connect(timeoutMs);
+        return this.pool.connect(timeoutMs);
     }
 
     /**

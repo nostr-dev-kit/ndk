@@ -15,7 +15,7 @@ import {NDKFilter} from '../../subscription/index.js';
 export function calculateRelaySetFromEvent(ndk: NDK, event: Event): NDKRelaySet {
     const relays: Set<NDKRelay> = new Set();
 
-    ndk.relayPool?.relays.forEach(relay => relays.add(relay));
+    ndk.pool?.relays.forEach(relay => relays.add(relay));
 
     return new NDKRelaySet(relays);
 }
@@ -32,7 +32,7 @@ export function calculateRelaySetFromFilter(
 ): NDKRelaySet {
     const relays: Set<NDKRelay> = new Set();
 
-    ndk.relayPool?.relays.forEach(relay => relays.add(relay));
+    ndk.pool?.relays.forEach(relay => relays.add(relay));
 
     return new NDKRelaySet(relays);
 }

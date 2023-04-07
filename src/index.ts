@@ -34,7 +34,7 @@ export interface GetUserParams extends NDKUserParams {
 }
 
 export default class NDK extends EventEmitter {
-    public relayPool?: NDKPool;
+    public relayPool: NDKPool;
     public signer?: NDKSigner;
     public cacheAdapter?: NDKCacheAdapter;
     public debug: debug.Debugger;
@@ -42,11 +42,10 @@ export default class NDK extends EventEmitter {
     public constructor(opts: NDKConstructorParams = {}) {
         super();
 
-        if (opts.explicitRelayUrls)
-            this.relayPool = new NDKPool(opts.explicitRelayUrls);
+        this.debug = opts.debug || debug('ndk');
+        this.relayPool = new NDKPool(opts.explicitRelayUrls||[], this);
         this.signer = opts.signer;
         this.cacheAdapter = opts.cacheAdapter;
-        this.debug = opts.debug || debug('ndk');
 
         this.debug('initialized', {
             relays: opts.explicitRelayUrls,
@@ -55,9 +54,13 @@ export default class NDK extends EventEmitter {
         });
     }
 
-    public async connect(): Promise<void> {
+    /**
+     * Connect to relays with optional timeout.
+     * If the timeout is reached, the connection will be continued to be established in the background.
+     */
+    public async connect(timeoutMs?: number): Promise<void> {
         this.debug('Connecting to relays');
-        return this.relayPool?.connect();
+        return this.relayPool.connect(timeoutMs);
     }
 
     /**
@@ -91,9 +94,9 @@ export default class NDK extends EventEmitter {
     /**
      * Fetch a single event
      */
-    public async fetchEvent(filter: NDKFilter): Promise<NDKEvent> {
+    public async fetchEvent(filter: NDKFilter, opts: NDKFilterOptions = {}): Promise<NDKEvent> {
         return new Promise(resolve => {
-            const s = this.subscribe(filter, {closeOnEose: true});
+            const s = this.subscribe(filter, {...opts, closeOnEose: true});
             s.on('event', event => {
                 event.ndk = this;
                 resolve(event);
@@ -104,11 +107,11 @@ export default class NDK extends EventEmitter {
     /**
      * Fetch events
      */
-    public async fetchEvents(filter: NDKFilter, opts?: NDKFilterOptions): Promise<Set<NDKEvent>> {
+    public async fetchEvents(filter: NDKFilter, opts: NDKFilterOptions = {}): Promise<Set<NDKEvent>> {
         return new Promise(resolve => {
             const events: Map<string, NDKEvent> = new Map();
 
-            const relaySetSubscription = this.subscribe(filter, {closeOnEose: true});
+            const relaySetSubscription = this.subscribe(filter, {...opts, closeOnEose: true});
 
             relaySetSubscription.on('event', (event: NDKEvent) => {
                 const existingEvent = events.get(event.tagId());

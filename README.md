@@ -1,5 +1,7 @@
 # NDK
 
+<img src="https://raw.githubusercontent.com/nvk/ndk.fyi/master/ndk.svg" alt="drawing" width="200"/>
+
 NDK is a Nostr development kit that makes the experience of building Nostr-related applications, whether they are relays, clients, or anything in between, better, more reliable and overall nicer to work with than existing solutions.
 
 Besides improving the developer experience, the core goal of NDK is to improve the decentralization of Nostr via intelligent conventions and data discovery features without depending on any one central point of coordination (such as large relays or centralized search providers).
@@ -12,40 +14,41 @@ npm add @nostr-dev-kit/ndk
 
 ## Support
 
--   [NDK NIP-28 group chat](https://app.coracle.social/chat/note15m6rdfvlmd0z836hk83sg7r59xtv23qnmamhsslq5uc6744fdm4qfkeat3) (Note, Coracle is the only client so far that has implemented NIP-28 group chat.)
+### NDK NIP-28 group chat
+ * note15m6rdfvlmd0z836hk83sg7r59xtv23qnmamhsslq5uc6744fdm4qfkeat3
+    * [Coracle](https://app.coracle.social/chat/note15m6rdfvlmd0z836hk83sg7r59xtv23qnmamhsslq5uc6744fdm4qfkeat3)
+    * [Nostrchat](https://www.nostrchat.io/channel/a6f436a59fdb5e23c757b1e30478742996c54413df777843e0a731af56a96eea)
 
 ## Features
 
--   [x] NIP-01
--   [x] Caching adapters
-    -   Server-side
-        -   [x] [Redis](https://github.com/pablof7z/ndk-cache-redis)
-        -   [ ] In-memory
-    -   Client-side
-        -   [ ] LocalStorage
-        -   [ ] IndexDB
--   [ ] NIP-26: Event delegation
--   [ ] NIP-41: Relay authentication
--   [x] NIP-57: Zaps
-    -   [x] LUD06
-    -   [x] LUD16
--   [ ] NIP-65: Contacts' Relay list
-
-*   Subscription Management
-    -   [ ] Buffered queries
-    -   [x] Auto-closing subscriptions
-
--   -   Signing Adapters
-        -   [x] Private key
-        -   [x] NIP-07
-        -   [ ] NIP-26
-        -   [ ] NIP-46
--   [ ] Relay discovery
-    -   [ ] Gossip-model (NIP-65)
-    -   [ ] Implicit relays discovery following pubkey usage
-    -   [ ] Implicit relays discovery following `t` tag usage
-    -   [ ] Explicit relays blacklist
--   [ ] nostr-tools/SimplePool drop-in replacement interface
+- [x] NIP-01
+- [x] Caching adapters
+    * Server-side
+        - [x] [Redis](https://github.com/pablof7z/ndk-cache-redis)
+        - [ ] In-memory
+    * Client-side
+        - [ ] LocalStorage
+        - [ ] IndexDB
+- [ ] NIP-26: Event delegation
+- [ ] NIP-41: Relay authentication
+- [x] NIP-57: Zaps
+    - [x] LUD06
+    - [x] LUD16
+- [ ] NIP-65: Contacts' Relay list
+- Subscription Management
+    - [ ] Buffered queries
+    - [x] Auto-closing subscriptions
+- Signing Adapters
+    - [x] Private key
+    - [x] NIP-07
+    - [ ] NIP-26
+    - [ ] NIP-46
+- Relay discovery
+    - [ ] Gossip-model (NIP-65)
+    - [ ] Implicit relays discovery following pubkey usage
+    - [ ] Implicit relays discovery following `t` tag usage
+    - [ ] Explicit relays blacklist
+- [ ] nostr-tools/SimplePool drop-in replacement interface
 
 ## Instantiate an NDK instance
 
@@ -265,7 +268,7 @@ events = await ndk.fetchEvents(filter);
 
 ```ts
 const ndk = new NDK({ explicitRelays, signer });
-const event = new NDKEvent();
+const event = new NDKEvent(ndk);
 event.kind = 1;
 event.content = "PV Nostr! 🤙🏼";
 await ndk.publish(event);
@@ -275,7 +278,7 @@ await ndk.publish(event);
 
 ```ts
 // Find the first event from @jack, and react/like it.
-const event = await ndk.events({ author: "jack@cashapp.com" })[0];
+const event = await ndk.fetchEvent({ author: "jack@cashapp.com" })[0];
 await event.react("🤙");
 ```
 
@@ -283,7 +286,7 @@ await event.react("🤙");
 
 ```ts
 // Find the first event from @jack, and zap it.
-const event = await ndk.events({ author: "jack@cashapp.com" })[0];
+const event = await ndk.fetchEvent({ author: "jack@cashapp.com" })[0];
 await event.zap(1337, "Zapping your post!"); // Returns a zap request
 ```
 

@@ -29,7 +29,7 @@ NDKUserParams.hexpubkey
 
 #### Defined in
 
-[src/index.ts:33](https://github.com/nostr-dev-kit/ndk/blob/ca80fef/src/index.ts#L33)
+[src/index.ts:34](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/index.ts#L34)
 
 ___
 
@@ -43,7 +43,7 @@ NDKUserParams.nip05
 
 #### Defined in
 
-[src/user/index.ts:10](https://github.com/nostr-dev-kit/ndk/blob/ca80fef/src/user/index.ts#L10)
+[src/user/index.ts:10](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/user/index.ts#L10)
 
 ___
 
@@ -57,7 +57,7 @@ NDKUserParams.npub
 
 #### Defined in
 
-[src/index.ts:32](https://github.com/nostr-dev-kit/ndk/blob/ca80fef/src/index.ts#L32)
+[src/index.ts:33](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/index.ts#L33)
 
 ___
 
@@ -71,4 +71,4 @@ NDKUserParams.relayUrls
 
 #### Defined in
 
-[src/user/index.ts:11](https://github.com/nostr-dev-kit/ndk/blob/ca80fef/src/user/index.ts#L11)
+[src/user/index.ts:11](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/user/index.ts#L11)

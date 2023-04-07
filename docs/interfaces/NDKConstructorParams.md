@@ -19,7 +19,7 @@
 
 #### Defined in
 
-[src/index.ts:28](https://github.com/nostr-dev-kit/ndk/blob/ca80fef/src/index.ts#L28)
+[src/index.ts:29](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/index.ts#L29)
 
 ___
 
@@ -29,7 +29,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:29](https://github.com/nostr-dev-kit/ndk/blob/ca80fef/src/index.ts#L29)
+[src/index.ts:30](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/index.ts#L30)
 
 ___
 
@@ -39,7 +39,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:26](https://github.com/nostr-dev-kit/ndk/blob/ca80fef/src/index.ts#L26)
+[src/index.ts:27](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/index.ts#L27)
 
 ___
 
@@ -49,4 +49,4 @@ ___
 
 #### Defined in
 
-[src/index.ts:27](https://github.com/nostr-dev-kit/ndk/blob/ca80fef/src/index.ts#L27)
+[src/index.ts:28](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/index.ts#L28)

@@ -29,7 +29,7 @@ with a NIP-07 browser extension (e.g., getalby, nos2x).
 
 #### Defined in
 
-[src/signers/nip07/index.ts:12](https://github.com/nostr-dev-kit/ndk/blob/ca80fef/src/signers/nip07/index.ts#L12)
+[src/signers/nip07/index.ts:12](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/signers/nip07/index.ts#L12)
 
 ## Methods
 
@@ -47,7 +47,7 @@ NDKSigner.blockUntilReady
 
 #### Defined in
 
-[src/signers/nip07/index.ts:18](https://github.com/nostr-dev-kit/ndk/blob/ca80fef/src/signers/nip07/index.ts#L18)
+[src/signers/nip07/index.ts:18](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/signers/nip07/index.ts#L18)
 
 ___
 
@@ -79,7 +79,7 @@ NDKSigner.sign
 
 #### Defined in
 
-[src/signers/nip07/index.ts:47](https://github.com/nostr-dev-kit/ndk/blob/ca80fef/src/signers/nip07/index.ts#L47)
+[src/signers/nip07/index.ts:47](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/signers/nip07/index.ts#L47)
 
 ___
 
@@ -101,4 +101,4 @@ NDKSigner.user
 
 #### Defined in
 
-[src/signers/nip07/index.ts:33](https://github.com/nostr-dev-kit/ndk/blob/ca80fef/src/signers/nip07/index.ts#L33)
+[src/signers/nip07/index.ts:33](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/signers/nip07/index.ts#L33)

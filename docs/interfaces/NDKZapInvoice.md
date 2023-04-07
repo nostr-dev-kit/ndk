@@ -22,7 +22,7 @@
 
 #### Defined in
 
-[src/zap/invoice.ts:10](https://github.com/nostr-dev-kit/ndk/blob/ca80fef/src/zap/invoice.ts#L10)
+[src/zap/invoice.ts:10](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/zap/invoice.ts#L10)
 
 ___
 
@@ -32,7 +32,7 @@ ___
 
 #### Defined in
 
-[src/zap/invoice.ts:11](https://github.com/nostr-dev-kit/ndk/blob/ca80fef/src/zap/invoice.ts#L11)
+[src/zap/invoice.ts:11](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/zap/invoice.ts#L11)
 
 ___
 
@@ -42,7 +42,7 @@ ___
 
 #### Defined in
 
-[src/zap/invoice.ts:5](https://github.com/nostr-dev-kit/ndk/blob/ca80fef/src/zap/invoice.ts#L5)
+[src/zap/invoice.ts:5](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/zap/invoice.ts#L5)
 
 ___
 
@@ -52,7 +52,7 @@ ___
 
 #### Defined in
 
-[src/zap/invoice.ts:8](https://github.com/nostr-dev-kit/ndk/blob/ca80fef/src/zap/invoice.ts#L8)
+[src/zap/invoice.ts:8](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/zap/invoice.ts#L8)
 
 ___
 
@@ -62,7 +62,7 @@ ___
 
 #### Defined in
 
-[src/zap/invoice.ts:9](https://github.com/nostr-dev-kit/ndk/blob/ca80fef/src/zap/invoice.ts#L9)
+[src/zap/invoice.ts:9](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/zap/invoice.ts#L9)
 
 ___
 
@@ -72,7 +72,7 @@ ___
 
 #### Defined in
 
-[src/zap/invoice.ts:7](https://github.com/nostr-dev-kit/ndk/blob/ca80fef/src/zap/invoice.ts#L7)
+[src/zap/invoice.ts:7](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/zap/invoice.ts#L7)
 
 ___
 
@@ -82,4 +82,4 @@ ___
 
 #### Defined in
 
-[src/zap/invoice.ts:6](https://github.com/nostr-dev-kit/ndk/blob/ca80fef/src/zap/invoice.ts#L6)
+[src/zap/invoice.ts:6](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/zap/invoice.ts#L6)

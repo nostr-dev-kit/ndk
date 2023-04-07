@@ -57,6 +57,8 @@ You can pass an object with several options to a newly created instance of NDK.
 -   `debug` - boolean true/false to turn on degbugging
 
 ```ts
+// Import the package
+import NDK from "@nostr-dev-kit/ndk";
 // Create a new NDK instance with explicit relays
 ndk = new NDK({ explicitRelayUrls: ["wss://a.relay", "wss://another.relay"] });
 ```
@@ -68,6 +70,8 @@ Note: In normal client use, it's best practice to instantiate NDK as a singleton
 After you've instatiated NDK, you need to tell it to connect before you'll be able to interact with any relays.
 
 ```ts
+// Import the package
+import NDK from "@nostr-dev-kit/ndk";
 // Create a new NDK instance with explicit relays
 ndk = new NDK({ explicitRelayUrls: ["wss://a.relay", "wss://another.relay"] });
 
@@ -86,6 +90,9 @@ Signing adapters can be passed in when NDK is instantiated or later during runti
 Instatiate NDK with a NIP-07 signer
 
 ```ts
+// Import the package, NIP-07 signer and NDK event
+import NDK, { NDKNip07Signer, NDKEvent } from "@nostr-dev-kit/ndk";
+
 const nip07signer = new NDKNip07Signer();
 const ndk = new NDK({ signer: nip07signer });
 ```

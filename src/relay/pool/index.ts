@@ -42,7 +42,7 @@ export class NDKPool extends EventEmitter {
                         relay.connect(),
                         timeoutPromise,
                     ]).catch((e) => {
-                        console.log(`Failed to connect to relay ${relay.url}: ${e}`);
+                        this.debug(`Failed to connect to relay ${relay.url}: ${e}`);
                     })
                 );
             } else {

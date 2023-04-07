@@ -32,6 +32,22 @@ export enum NDKSubscriptionCacheUsage {
     ONLY_RELAY = 'ONLY_RELAY',
 }
 
+/**
+ * Represents a subscription to an NDK event stream.
+ *
+ * @event NDKSubscription#event
+ * Emitted when an event is received by the subscription.
+ * @param {NDKEvent} event - The event received by the subscription.
+ * @param {NDKRelay} relay - The relay that received the event.
+ *
+ * @event NDKSubscription#event:dup
+ * Emitted when a duplicate event is received by the subscription.
+ * @param {NDKEvent} event - The duplicate event received by the subscription.
+ * @param {NDKRelay} relay - The relay that received the event.
+ * @param {number} timeSinceFirstSeen - The time elapsed since the first time the event was seen.
+ *
+ * @event NDKSubscription#eose - Emitted when all relays have reached the end of the event stream.
+ */
 export class NDKSubscription extends EventEmitter {
     readonly subId: string;
     readonly filter: NDKFilter;
@@ -144,16 +160,21 @@ export class NDKSubscription extends EventEmitter {
     private eventFirstSeen = new Map<NDKEventId, number>();
     private events = new Map<NDKEventId, NDKEvent>();
 
+    /**
+     * Called when an event is received from a relay or the cache
+     * @param event
+     * @param relay
+     * @param fromCache Whether the event was received from the cache
+     */
     public eventReceived(event: NDKEvent, relay: NDKRelay | undefined, fromCache = false) {
         if (!fromCache && relay) {
             const eventAlreadySeen = this.events.has(event.id);
 
             if (eventAlreadySeen) {
-                if (this.eventFirstSeen.get(event.id)) {
-                    const timeSinceFirstSeen =
-                        Date.now() - (this.eventFirstSeen.get(event.id) || 0);
-                    relay.scoreSlowerEvent(timeSinceFirstSeen);
-                }
+                const timeSinceFirstSeen = Date.now() - (this.eventFirstSeen.get(event.id) || 0);
+                relay.scoreSlowerEvent(timeSinceFirstSeen);
+
+                this.emit('event:dup', event, relay, timeSinceFirstSeen);
 
                 return;
             }

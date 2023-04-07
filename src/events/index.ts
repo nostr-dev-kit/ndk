@@ -117,11 +117,8 @@ export default class NDKEvent extends EventEmitter {
             const dTag = this.getMatchingTags('d')[0];
             // generate a string of 32 random bytes
             if (!dTag) {
-                console.log('generating d tag', this)
                 const str = [...Array(16)].map(() => Math.random().toString(36)[2]).join('');
                 this.tags.push(['d', str]);
-            } else {
-                console.log('d tag already exists', this.tags);
             }
         }
     }

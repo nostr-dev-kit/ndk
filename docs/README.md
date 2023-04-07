@@ -1,3 +1,5 @@
+NDK / [Exports](modules.md)
+
 # NDK
 
 <img src="https://raw.githubusercontent.com/nvk/ndk.fyi/master/ndk.svg" alt="drawing" width="200"/>
@@ -18,7 +20,6 @@ npm add @nostr-dev-kit/ndk
  * note15m6rdfvlmd0z836hk83sg7r59xtv23qnmamhsslq5uc6744fdm4qfkeat3
     * [Coracle](https://app.coracle.social/chat/note15m6rdfvlmd0z836hk83sg7r59xtv23qnmamhsslq5uc6744fdm4qfkeat3)
     * [Nostrchat](https://www.nostrchat.io/channel/a6f436a59fdb5e23c757b1e30478742996c54413df777843e0a731af56a96eea)
- * [WIP documentation](https://github.com/nostr-dev-kit/ndk/blob/master/docs/modules.md)
 
 ## Features
 

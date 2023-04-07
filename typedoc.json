@@ -1,0 +1,11 @@
+{
+    "entryPoints": ["src/index.ts"],
+    "out": "docs",
+    "name": "NDK",
+    "exclude": ["**/*.test.ts"],
+    "plugin": ["typedoc-plugin-markdown"],
+    "theme": "default",
+    "excludeExternals": true,
+    "excludePrivate": true,
+    "excludeProtected": true
+}

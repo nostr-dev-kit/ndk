@@ -3,6 +3,7 @@
   "version": "0.0.24",
   "description": "NDK - Nostr Development Kit",
   "homepage": "https://ndk.fyi",
+  "documentation": "https://github.com/nostr-dev-kit/ndk/blob/master/docs/modules.md",
   "repository": {
     "type": "git",
     "url": "https://github.com/nostr-dev-kit/ndk"
@@ -25,7 +26,8 @@
     "test": "jest",
     "lint": "eslint src/**/*.ts",
     "compile": "tsc",
-    "prepare": "pnpm compile",
+    "prepare": "pnpm build && pnpm typedoc",
+    "publish": "pnpm prepare && pnpm publish",
     "pretest": "pnpm compile",
     "posttest": "pnpm lint"
   },
@@ -42,6 +44,8 @@
     "jest": "^29.5.0",
     "prettier-plugin-organize-imports": "^3.2.2",
     "ts-jest": "^29.1.0",
+    "typedoc": "^0.23.28",
+    "typedoc-plugin-markdown": "^3.14.0",
     "typescript": "~4.7.0"
   },
   "dependencies": {

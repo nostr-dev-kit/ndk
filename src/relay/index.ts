@@ -94,8 +94,6 @@ export class NDKRelay extends EventEmitter {
         const stdDev = Math.sqrt(variance);
         const isFlapping = stdDev < 1000;
 
-        console.log(this.relay.url, { sum, avg, variance, stdDev, isFlapping });
-
         return isFlapping;
     }
 

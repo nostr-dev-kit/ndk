@@ -12,6 +12,7 @@
 
 - [NDKEvent](classes/NDKEvent.md)
 - [NDKNip07Signer](classes/NDKNip07Signer.md)
+- [NDKRelay](classes/NDKRelay.md)
 - [NDKUser](classes/NDKUser.md)
 - [default](classes/default.md)
 
@@ -43,7 +44,7 @@
 
 #### Defined in
 
-[src/subscription/index.ts:10](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/subscription/index.ts#L10)
+[src/subscription/index.ts:10](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/subscription/index.ts#L10)
 
 ## Functions
 
@@ -63,4 +64,4 @@
 
 #### Defined in
 
-[src/zap/invoice.ts:14](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/zap/invoice.ts#L14)
+[src/zap/invoice.ts:14](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/zap/invoice.ts#L14)

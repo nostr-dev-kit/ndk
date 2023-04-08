@@ -81,7 +81,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/subscription/index.ts:60](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/subscription/index.ts#L60)
+[src/subscription/index.ts:60](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/subscription/index.ts#L60)
 
 ## Properties
 
@@ -91,7 +91,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/subscription/index.ts:53](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/subscription/index.ts#L53)
+[src/subscription/index.ts:53](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/subscription/index.ts#L53)
 
 ___
 
@@ -101,7 +101,7 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:56](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/subscription/index.ts#L56)
+[src/subscription/index.ts:56](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/subscription/index.ts#L56)
 
 ___
 
@@ -111,7 +111,7 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:54](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/subscription/index.ts#L54)
+[src/subscription/index.ts:54](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/subscription/index.ts#L54)
 
 ___
 
@@ -121,17 +121,17 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:55](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/subscription/index.ts#L55)
+[src/subscription/index.ts:55](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/subscription/index.ts#L55)
 
 ___
 
 ### relaySubscriptions
 
-• **relaySubscriptions**: `Map`<`NDKRelay`, `Sub`\>
+• **relaySubscriptions**: `Map`<[`NDKRelay`](NDKRelay.md), `Sub`\>
 
 #### Defined in
 
-[src/subscription/index.ts:57](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/subscription/index.ts#L57)
+[src/subscription/index.ts:57](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/subscription/index.ts#L57)
 
 ___
 
@@ -141,7 +141,7 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:52](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/subscription/index.ts#L52)
+[src/subscription/index.ts:52](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/subscription/index.ts#L52)
 
 ## Methods
 
@@ -153,7 +153,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `relay` | `NDKRelay` |
+| `relay` | [`NDKRelay`](NDKRelay.md) |
 
 #### Returns
 
@@ -161,7 +161,7 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:198](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/subscription/index.ts#L198)
+[src/subscription/index.ts:198](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/subscription/index.ts#L198)
 
 ___
 
@@ -176,7 +176,7 @@ Called when an event is received from a relay or the cache
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
 | `event` | [`NDKEvent`](NDKEvent.md) | `undefined` |  |
-| `relay` | `undefined` \| `NDKRelay` | `undefined` |  |
+| `relay` | `undefined` \| [`NDKRelay`](NDKRelay.md) | `undefined` |  |
 | `fromCache` | `boolean` | `false` | Whether the event was received from the cache |
 
 #### Returns
@@ -185,7 +185,7 @@ Called when an event is received from a relay or the cache
 
 #### Defined in
 
-[src/subscription/index.ts:169](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/subscription/index.ts#L169)
+[src/subscription/index.ts:169](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/subscription/index.ts#L169)
 
 ___
 
@@ -202,4 +202,4 @@ after creating a subscription.
 
 #### Defined in
 
-[src/subscription/index.ts:105](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/subscription/index.ts#L105)
+[src/subscription/index.ts:105](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/subscription/index.ts#L105)

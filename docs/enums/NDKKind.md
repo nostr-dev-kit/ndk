@@ -43,7 +43,7 @@
 
 #### Defined in
 
-[src/events/kind.ts:31](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/events/kind.ts#L31)
+[src/events/kind.ts:31](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/events/kind.ts#L31)
 
 ___
 
@@ -53,7 +53,7 @@ ___
 
 #### Defined in
 
-[src/events/kind.ts:30](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/events/kind.ts#L30)
+[src/events/kind.ts:30](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/events/kind.ts#L30)
 
 ___
 
@@ -63,7 +63,7 @@ ___
 
 #### Defined in
 
-[src/events/kind.ts:12](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/events/kind.ts#L12)
+[src/events/kind.ts:12](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/events/kind.ts#L12)
 
 ___
 
@@ -73,7 +73,7 @@ ___
 
 #### Defined in
 
-[src/events/kind.ts:29](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/events/kind.ts#L29)
+[src/events/kind.ts:29](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/events/kind.ts#L29)
 
 ___
 
@@ -83,7 +83,7 @@ ___
 
 #### Defined in
 
-[src/events/kind.ts:27](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/events/kind.ts#L27)
+[src/events/kind.ts:27](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/events/kind.ts#L27)
 
 ___
 
@@ -93,7 +93,7 @@ ___
 
 #### Defined in
 
-[src/events/kind.ts:26](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/events/kind.ts#L26)
+[src/events/kind.ts:26](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/events/kind.ts#L26)
 
 ___
 
@@ -103,7 +103,7 @@ ___
 
 #### Defined in
 
-[src/events/kind.ts:13](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/events/kind.ts#L13)
+[src/events/kind.ts:13](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/events/kind.ts#L13)
 
 ___
 
@@ -113,7 +113,7 @@ ___
 
 #### Defined in
 
-[src/events/kind.ts:16](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/events/kind.ts#L16)
+[src/events/kind.ts:16](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/events/kind.ts#L16)
 
 ___
 
@@ -123,7 +123,7 @@ ___
 
 #### Defined in
 
-[src/events/kind.ts:15](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/events/kind.ts#L15)
+[src/events/kind.ts:15](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/events/kind.ts#L15)
 
 ___
 
@@ -133,7 +133,7 @@ ___
 
 #### Defined in
 
-[src/events/kind.ts:14](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/events/kind.ts#L14)
+[src/events/kind.ts:14](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/events/kind.ts#L14)
 
 ___
 
@@ -143,7 +143,7 @@ ___
 
 #### Defined in
 
-[src/events/kind.ts:17](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/events/kind.ts#L17)
+[src/events/kind.ts:17](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/events/kind.ts#L17)
 
 ___
 
@@ -153,7 +153,7 @@ ___
 
 #### Defined in
 
-[src/events/kind.ts:24](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/events/kind.ts#L24)
+[src/events/kind.ts:24](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/events/kind.ts#L24)
 
 ___
 
@@ -163,7 +163,7 @@ ___
 
 #### Defined in
 
-[src/events/kind.ts:7](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/events/kind.ts#L7)
+[src/events/kind.ts:7](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/events/kind.ts#L7)
 
 ___
 
@@ -173,7 +173,7 @@ ___
 
 #### Defined in
 
-[src/events/kind.ts:8](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/events/kind.ts#L8)
+[src/events/kind.ts:8](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/events/kind.ts#L8)
 
 ___
 
@@ -183,7 +183,7 @@ ___
 
 #### Defined in
 
-[src/events/kind.ts:9](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/events/kind.ts#L9)
+[src/events/kind.ts:9](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/events/kind.ts#L9)
 
 ___
 
@@ -193,7 +193,7 @@ ___
 
 #### Defined in
 
-[src/events/kind.ts:4](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/events/kind.ts#L4)
+[src/events/kind.ts:4](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/events/kind.ts#L4)
 
 ___
 
@@ -203,7 +203,7 @@ ___
 
 #### Defined in
 
-[src/events/kind.ts:21](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/events/kind.ts#L21)
+[src/events/kind.ts:21](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/events/kind.ts#L21)
 
 ___
 
@@ -213,7 +213,7 @@ ___
 
 #### Defined in
 
-[src/events/kind.ts:25](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/events/kind.ts#L25)
+[src/events/kind.ts:25](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/events/kind.ts#L25)
 
 ___
 
@@ -223,7 +223,7 @@ ___
 
 #### Defined in
 
-[src/events/kind.ts:22](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/events/kind.ts#L22)
+[src/events/kind.ts:22](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/events/kind.ts#L22)
 
 ___
 
@@ -233,7 +233,7 @@ ___
 
 #### Defined in
 
-[src/events/kind.ts:28](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/events/kind.ts#L28)
+[src/events/kind.ts:28](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/events/kind.ts#L28)
 
 ___
 
@@ -243,7 +243,7 @@ ___
 
 #### Defined in
 
-[src/events/kind.ts:11](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/events/kind.ts#L11)
+[src/events/kind.ts:11](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/events/kind.ts#L11)
 
 ___
 
@@ -253,7 +253,7 @@ ___
 
 #### Defined in
 
-[src/events/kind.ts:6](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/events/kind.ts#L6)
+[src/events/kind.ts:6](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/events/kind.ts#L6)
 
 ___
 
@@ -263,7 +263,7 @@ ___
 
 #### Defined in
 
-[src/events/kind.ts:23](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/events/kind.ts#L23)
+[src/events/kind.ts:23](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/events/kind.ts#L23)
 
 ___
 
@@ -273,7 +273,7 @@ ___
 
 #### Defined in
 
-[src/events/kind.ts:18](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/events/kind.ts#L18)
+[src/events/kind.ts:18](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/events/kind.ts#L18)
 
 ___
 
@@ -283,7 +283,7 @@ ___
 
 #### Defined in
 
-[src/events/kind.ts:10](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/events/kind.ts#L10)
+[src/events/kind.ts:10](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/events/kind.ts#L10)
 
 ___
 
@@ -293,7 +293,7 @@ ___
 
 #### Defined in
 
-[src/events/kind.ts:5](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/events/kind.ts#L5)
+[src/events/kind.ts:5](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/events/kind.ts#L5)
 
 ___
 
@@ -303,7 +303,7 @@ ___
 
 #### Defined in
 
-[src/events/kind.ts:20](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/events/kind.ts#L20)
+[src/events/kind.ts:20](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/events/kind.ts#L20)
 
 ___
 
@@ -313,4 +313,4 @@ ___
 
 #### Defined in
 
-[src/events/kind.ts:19](https://github.com/nostr-dev-kit/ndk/blob/e1d90e2/src/events/kind.ts#L19)
+[src/events/kind.ts:19](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/events/kind.ts#L19)

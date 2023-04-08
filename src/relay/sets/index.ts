@@ -1,4 +1,4 @@
-import {NDKRelay} from '../index.js';
+import {NDKRelay, NDKRelayStatus} from '../index.js';
 import NDKEvent from '../../events/index.js';
 import {NDKSubscription} from '../../subscription/index.js';
 
@@ -16,13 +16,21 @@ export class NDKRelaySet {
         this.relays = relays;
     }
 
+    private subscribeOnRelay(relay: NDKRelay, subscription: NDKSubscription) {
+        const sub = relay.subscribe(subscription);
+        subscription.relaySubscriptions.set(relay, sub);
+    }
+
     public subscribe(subscription: NDKSubscription): NDKSubscription {
         this.relays.forEach(relay => {
-            // TODO: if relay is not connected, don't try to send, but rather attach
-            // to connected event and send it at that moment if this subscription hasn't
-            // been destroyed
-            const sub = relay.subscribe(subscription);
-            subscription.relaySubscriptions.set(relay, sub);
+            if (relay.status === NDKRelayStatus.CONNECTED) {
+                this.subscribeOnRelay(relay, subscription);
+            }
+        });
+
+        this.relays.forEach(relay => {
+            // TODO need to remove this listener when the subscription is closed
+            relay.on('connect', () => this.subscribeOnRelay(relay, subscription));
         });
 
         return subscription;

@@ -10,12 +10,12 @@ import EventEmitter from 'eventemitter3';
 export enum NDKRelayStatus {
     CONNECTING,
     CONNECTED,
+    DISCONNECTING,
     DISCONNECTED,
-    ERROR,
     RECONNECTING,
 };
 
-interface NDKRelayConnectionStats {
+export interface NDKRelayConnectionStats {
     /**
      * The number of times a connection has been attempted.
      */
@@ -74,22 +74,53 @@ export class NDKRelay extends EventEmitter {
             if (this._status === NDKRelayStatus.CONNECTED) {
                 this._status = NDKRelayStatus.DISCONNECTED;
 
-                // if the last connection was less than 5 seconds ago, wait some time before trying to reconnect
-                if (this.connectedAt && Date.now() - this.connectedAt < 5000) {
-                    setTimeout(() => this.connect(), 60000);
-                } else {
-                    this.connect();
-                }
+                this.handleReconnection();
             }
         });
 
         this.relay.on('notice', (notice: string) => this.handleNotice(notice));
     }
 
+    /**
+     * Evaluates the connection stats to determine if the relay is flapping.
+     */
+    private isFlapping(): boolean {
+        const durations = this._connectionStats.durations;
+        if (durations.length < 10) return false;
+
+        const sum = durations.reduce((a, b) => a + b, 0);
+        const avg = sum / durations.length;
+        const variance = durations.map((x) => Math.pow(x - avg, 2)).reduce((a, b) => a + b, 0) / durations.length;
+        const stdDev = Math.sqrt(variance);
+        const isFlapping = stdDev < 1000;
+
+        console.log(this.relay.url, { sum, avg, variance, stdDev, isFlapping });
+
+        return isFlapping;
+    }
+
+    /**
+     * Called when the relay is unexpectedly disconnected.
+     */
+    private handleReconnection() {
+        if (this.isFlapping()) {
+            this.emit('flapping', this, this._connectionStats);
+        }
+
+        if (this.connectedAt && Date.now() - this.connectedAt < 5000) {
+            setTimeout(() => this.connect(), 60000);
+        } else {
+            this.connect();
+        }
+    }
+
     get status(): NDKRelayStatus {
         return this._status;
     }
 
+    /**
+     * Connects to the relay.
+     */
     public async connect(): Promise<void> {
         try {
             this.updateConnectionStats.attempt();
@@ -98,10 +129,21 @@ export class NDKRelay extends EventEmitter {
         } catch (e) { /* empty */ }
     }
 
+    /**
+     * Disconnects from the relay.
+     */
+    public disconnect(): void {
+        this._status = NDKRelayStatus.DISCONNECTING;
+        this.relay.close();
+    }
+
     async handleNotice(notice: string) {
         this.emit('notice', this, notice);
     }
 
+    /**
+     * Subscribes to a subscription.
+     */
     public subscribe(subscription: NDKSubscription): Sub {
         const {filter} = subscription;
 
@@ -121,6 +163,9 @@ export class NDKRelay extends EventEmitter {
         return sub;
     }
 
+    /**
+     * Publishes an event to the relay.
+     */
     public async publish(event: NDKEvent): Promise<void> {
         const nostrEvent = (await event.toNostrEvent()) as SignedEvent;
         this.relay.publish(nostrEvent);
@@ -162,7 +207,7 @@ export class NDKRelay extends EventEmitter {
     };
 
     /**
-     * Number of times this relay has been successfully connected to.
+     * Returns the connection stats.
      */
     get connectionStats(): NDKRelayConnectionStats {
         return this._connectionStats;

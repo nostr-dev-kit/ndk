@@ -44,7 +44,7 @@
 
 #### Defined in
 
-[src/subscription/index.ts:10](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/subscription/index.ts#L10)
+[src/subscription/index.ts:10](https://github.com/nostr-dev-kit/ndk/blob/e085a7c/src/subscription/index.ts#L10)
 
 ## Functions
 
@@ -64,4 +64,4 @@
 
 #### Defined in
 
-[src/zap/invoice.ts:14](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/zap/invoice.ts#L14)
+[src/zap/invoice.ts:14](https://github.com/nostr-dev-kit/ndk/blob/e085a7c/src/zap/invoice.ts#L14)

@@ -49,6 +49,7 @@ NDKRelay#eose
 ### Methods
 
 - [connect](NDKRelay.md#connect)
+- [disconnect](NDKRelay.md#disconnect)
 - [handleNotice](NDKRelay.md#handlenotice)
 - [publish](NDKRelay.md#publish)
 - [scoreSlowerEvent](NDKRelay.md#scoreslowerevent)
@@ -72,7 +73,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/relay/index.ts:57](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/relay/index.ts#L57)
+[src/relay/index.ts:57](https://github.com/nostr-dev-kit/ndk/blob/e085a7c/src/relay/index.ts#L57)
 
 ## Properties
 
@@ -82,7 +83,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/relay/index.ts:51](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/relay/index.ts#L51)
+[src/relay/index.ts:51](https://github.com/nostr-dev-kit/ndk/blob/e085a7c/src/relay/index.ts#L51)
 
 ___
 
@@ -92,7 +93,7 @@ ___
 
 #### Defined in
 
-[src/relay/index.ts:50](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/relay/index.ts#L50)
+[src/relay/index.ts:50](https://github.com/nostr-dev-kit/ndk/blob/e085a7c/src/relay/index.ts#L50)
 
 ## Accessors
 
@@ -100,7 +101,7 @@ ___
 
 • `get` **connectionStats**(): `NDKRelayConnectionStats`
 
-Number of times this relay has been successfully connected to.
+Returns the connection stats.
 
 #### Returns
 
@@ -108,7 +109,7 @@ Number of times this relay has been successfully connected to.
 
 #### Defined in
 
-[src/relay/index.ts:167](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/relay/index.ts#L167)
+[src/relay/index.ts:212](https://github.com/nostr-dev-kit/ndk/blob/e085a7c/src/relay/index.ts#L212)
 
 ___
 
@@ -122,7 +123,7 @@ ___
 
 #### Defined in
 
-[src/relay/index.ts:89](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/relay/index.ts#L89)
+[src/relay/index.ts:117](https://github.com/nostr-dev-kit/ndk/blob/e085a7c/src/relay/index.ts#L117)
 
 ## Methods
 
@@ -130,13 +131,31 @@ ___
 
 ▸ **connect**(): `Promise`<`void`\>
 
+Connects to the relay.
+
 #### Returns
 
 `Promise`<`void`\>
 
 #### Defined in
 
-[src/relay/index.ts:93](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/relay/index.ts#L93)
+[src/relay/index.ts:124](https://github.com/nostr-dev-kit/ndk/blob/e085a7c/src/relay/index.ts#L124)
+
+___
+
+### disconnect
+
+▸ **disconnect**(): `void`
+
+Disconnects from the relay.
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[src/relay/index.ts:135](https://github.com/nostr-dev-kit/ndk/blob/e085a7c/src/relay/index.ts#L135)
 
 ___
 
@@ -156,13 +175,15 @@ ___
 
 #### Defined in
 
-[src/relay/index.ts:101](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/relay/index.ts#L101)
+[src/relay/index.ts:140](https://github.com/nostr-dev-kit/ndk/blob/e085a7c/src/relay/index.ts#L140)
 
 ___
 
 ### publish
 
 ▸ **publish**(`event`): `Promise`<`void`\>
+
+Publishes an event to the relay.
 
 #### Parameters
 
@@ -176,7 +197,7 @@ ___
 
 #### Defined in
 
-[src/relay/index.ts:124](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/relay/index.ts#L124)
+[src/relay/index.ts:169](https://github.com/nostr-dev-kit/ndk/blob/e085a7c/src/relay/index.ts#L169)
 
 ___
 
@@ -199,13 +220,15 @@ wasn't the fastest one.
 
 #### Defined in
 
-[src/relay/index.ts:135](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/relay/index.ts#L135)
+[src/relay/index.ts:180](https://github.com/nostr-dev-kit/ndk/blob/e085a7c/src/relay/index.ts#L180)
 
 ___
 
 ### subscribe
 
 ▸ **subscribe**(`subscription`): `Sub`
+
+Subscribes to a subscription.
 
 #### Parameters
 
@@ -219,4 +242,4 @@ ___
 
 #### Defined in
 
-[src/relay/index.ts:105](https://github.com/nostr-dev-kit/ndk/blob/5bceb9f/src/relay/index.ts#L105)
+[src/relay/index.ts:147](https://github.com/nostr-dev-kit/ndk/blob/e085a7c/src/relay/index.ts#L147)

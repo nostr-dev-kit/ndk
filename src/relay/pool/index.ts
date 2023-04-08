@@ -20,6 +20,7 @@ export class NDKPool extends EventEmitter {
             relay.on('notice', (relay, notice) => this.emit('notice', relay, notice));
             relay.on('connect', () => this.emit('connect', relay));
             relay.on('disconnect', () => this.emit('disconnect', relay));
+            relay.on('flapping', () => this.handleFlapping(relay));
             this.relays.set(relayUrl, relay);
         });
     }
@@ -57,6 +58,14 @@ export class NDKPool extends EventEmitter {
         }
 
         await Promise.all(promises);
+    }
+
+    private handleFlapping(relay: NDKRelay) {
+        this.debug(`Relay ${relay.url} is flapping`);
+
+        // TODO: Be smarter about this.
+        this.relays.delete(relay.url);
+        this.emit('flapping', relay);
     }
 
     public size(): number {

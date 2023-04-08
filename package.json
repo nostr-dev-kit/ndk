@@ -1,6 +1,6 @@
 {
   "name": "@nostr-dev-kit/ndk",
-  "version": "0.0.25",
+  "version": "0.0.26",
   "description": "NDK - Nostr Development Kit",
   "homepage": "https://ndk.fyi",
   "documentation": "https://github.com/nostr-dev-kit/ndk/blob/master/docs/modules.md",
@@ -22,7 +22,7 @@
   "scripts": {
     "dev": "node tools/cleanup esm && tsc -w -p config/tsconfig.esm.json",
     "build": "rm -rf lib && node build.js && tsc",
-    "clean": "rm -rf lib",
+    "clean": "rm -rf lib docs",
     "test": "jest",
     "lint": "eslint src/**/*.ts",
     "compile": "tsc",

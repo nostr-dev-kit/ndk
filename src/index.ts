@@ -1,6 +1,5 @@
 import NDKEvent from './events/index.js';
 import {NDKPool} from './relay/pool/index.js';
-import {NDKRelay} from './relay/index.js';
 import type {NDKSigner} from './signers/index.js';
 import NDKUser, {NDKUserParams} from './user/index.js';
 import {NDKUserProfile} from './user/profile.js';
@@ -19,6 +18,7 @@ export {
     NDKCacheAdapter,
     NDKSubscription
 };
+export {NDKRelay} from './relay/index.js';
 export {NDKKind} from './events/kind.js';
 export {NDKNip07Signer} from './signers/nip07/index.js';
 export {NDKZapInvoice, zapInvoiceFromEvent} from './zap/invoice.js';

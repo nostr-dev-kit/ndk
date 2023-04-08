@@ -2,7 +2,7 @@ import 'websocket-polyfill';
 import {relayInit, Sub} from 'nostr-tools';
 import type {Event as SignedEvent} from 'nostr-tools';
 import User from '../user/index.js';
-import {NDKRelayScore} from './score';
+import {NDKRelayScore} from './score.js';
 import {NDKSubscription} from '../subscription/index.js';
 import NDKEvent, {NostrEvent} from '../events/index.js';
 import EventEmitter from 'eventemitter3';
@@ -15,11 +15,44 @@ export enum NDKRelayStatus {
     RECONNECTING,
 };
 
+interface NDKRelayConnectionStats {
+    /**
+     * The number of times a connection has been attempted.
+     */
+    attempts: number;
+
+    /**
+     * The number of times a connection has been successfully established.
+     */
+    success: number;
+
+    /**
+     * The durations of the last 100 connections in milliseconds.
+     */
+    durations: number[];
+
+    /**
+     * The time the current connection was established in milliseconds.
+     */
+    connectedAt?: number;
+}
+
+/**
+ * The NDKRelay class represents a connection to a relay.
+ *
+ * @emits NDKRelay#connect
+ * @emits NDKRelay#disconnect
+ * @emits NDKRelay#notice
+ * @emits NDKRelay#event
+ * @emits NDKRelay#eose
+ */
 export class NDKRelay extends EventEmitter {
     readonly url: string;
     readonly scores: Map<User, NDKRelayScore>;
     private relay;
     private _status: NDKRelayStatus;
+    private connectedAt?: number;
+    private _connectionStats: NDKRelayConnectionStats = {attempts: 0, success: 0, durations: []};
 
     public constructor(url: string) {
         super();
@@ -29,13 +62,25 @@ export class NDKRelay extends EventEmitter {
         this._status = NDKRelayStatus.DISCONNECTED;
 
         this.relay.on('connect', () => {
+            this.updateConnectionStats.connected();
             this.emit('connect');
             this._status = NDKRelayStatus.CONNECTED;
         });
 
         this.relay.on('disconnect', () => {
+            this.updateConnectionStats.disconnected();
             this.emit('disconnect');
-            this._status = NDKRelayStatus.DISCONNECTED;
+
+            if (this._status === NDKRelayStatus.CONNECTED) {
+                this._status = NDKRelayStatus.DISCONNECTED;
+
+                // if the last connection was less than 5 seconds ago, wait some time before trying to reconnect
+                if (this.connectedAt && Date.now() - this.connectedAt < 5000) {
+                    setTimeout(() => this.connect(), 60000);
+                } else {
+                    this.connect();
+                }
+            }
         });
 
         this.relay.on('notice', (notice: string) => this.handleNotice(notice));
@@ -47,6 +92,7 @@ export class NDKRelay extends EventEmitter {
 
     public async connect(): Promise<void> {
         try {
+            this.updateConnectionStats.attempt();
             this._status = NDKRelayStatus.CONNECTING;
             await this.relay.connect();
         } catch (e) { /* empty */ }
@@ -88,5 +134,37 @@ export class NDKRelay extends EventEmitter {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public scoreSlowerEvent(timeDiffInMs: number): void {
         // TODO
+    }
+
+    /**
+     * Utility functions to update the connection stats.
+     */
+    private updateConnectionStats = {
+        connected: () => {
+            this._connectionStats.success++;
+            this._connectionStats.connectedAt = Date.now();
+        },
+
+        disconnected: () => {
+            if (this._connectionStats.connectedAt) {
+                this._connectionStats.durations.push(Date.now() - this._connectionStats.connectedAt);
+
+                if (this._connectionStats.durations.length > 100) {
+                    this._connectionStats.durations.shift();
+                }
+            }
+            this._connectionStats.connectedAt = undefined;
+        },
+
+        attempt: () => {
+            this._connectionStats.attempts++;
+        }
+    };
+
+    /**
+     * Number of times this relay has been successfully connected to.
+     */
+    get connectionStats(): NDKRelayConnectionStats {
+        return this._connectionStats;
     }
 }

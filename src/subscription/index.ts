@@ -119,7 +119,7 @@ export class NDKSubscription extends EventEmitter {
                 await cachePromise;
 
                 // if the cache has a hit, return early
-                if (this.events.size > 0) {
+                if (this.eventIds.size > 0) {
                     this.debug('cache hit, skipping relay query');
                     this.emit('eose');
                     return;
@@ -158,7 +158,7 @@ export class NDKSubscription extends EventEmitter {
 
     // EVENT handling
     private eventFirstSeen = new Map<NDKEventId, number>();
-    private events = new Map<NDKEventId, NDKEvent>();
+    private eventIds = new Set<NDKEventId>();
 
     /**
      * Called when an event is received from a relay or the cache
@@ -168,7 +168,7 @@ export class NDKSubscription extends EventEmitter {
      */
     public eventReceived(event: NDKEvent, relay: NDKRelay | undefined, fromCache = false) {
         if (!fromCache && relay) {
-            const eventAlreadySeen = this.events.has(event.id);
+            const eventAlreadySeen = this.eventIds.has(event.id);
 
             if (eventAlreadySeen) {
                 const timeSinceFirstSeen = Date.now() - (this.eventFirstSeen.get(event.id) || 0);
@@ -186,7 +186,7 @@ export class NDKSubscription extends EventEmitter {
             this.eventFirstSeen.set(event.id, Date.now());
         }
 
-        this.events.set(event.id, event);
+        this.eventIds.add(event.id);
 
         this.emit('event', event, relay);
     }

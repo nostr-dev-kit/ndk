@@ -59,6 +59,10 @@ export default class NDKEvent extends EventEmitter {
         };
     }
 
+    /**
+     * Return a NostrEvent object, trying to fill in missing fields
+     * when possible.
+     */
     async toNostrEvent(pubkey?: string): Promise<NostrEvent> {
         if (!pubkey) {
             const user = await this.ndk?.signer?.user();

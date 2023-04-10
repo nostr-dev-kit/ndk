@@ -18,7 +18,8 @@ export {
     NDKCacheAdapter,
     NDKSubscription
 };
-export {NDKRelay} from './relay/index.js';
+export {NDKRelay, NDKRelayStatus} from './relay/index.js';
+export {NDKRelaySet} from './relay/sets/index.js';
 export {NDKKind} from './events/kind.js';
 export {NDKNip07Signer} from './signers/nip07/index.js';
 export {NDKZapInvoice, zapInvoiceFromEvent} from './zap/invoice.js';

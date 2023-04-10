@@ -22,15 +22,15 @@ export class NDKRelaySet {
     }
 
     public subscribe(subscription: NDKSubscription): NDKSubscription {
+        // If the relay is connected, send the subscription
+        // If the relay is not connected, wait for it to connect (during the lifetime of the subscription)
         this.relays.forEach(relay => {
             if (relay.status === NDKRelayStatus.CONNECTED) {
                 this.subscribeOnRelay(relay, subscription);
+            // } else {
+            //     relay.on('connect', () => this.subscribeOnRelay(relay, subscription), this.relaysetContext);
+            //     relay.off('connect')
             }
-        });
-
-        this.relays.forEach(relay => {
-            // TODO need to remove this listener when the subscription is closed
-            relay.on('connect', () => this.subscribeOnRelay(relay, subscription));
         });
 
         return subscription;

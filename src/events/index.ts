@@ -45,6 +45,20 @@ export default class NDKEvent extends EventEmitter {
         if (event?.kind) this.kind = event?.kind;
     }
 
+    /**
+     * Returns the event as is.
+     */
+    public rawEvent(): NostrEvent {
+        return {
+            created_at: this.created_at!,
+            content: this.content,
+            tags: this.tags,
+            kind: this.kind,
+            pubkey: this.pubkey,
+            id: this.id,
+        };
+    }
+
     async toNostrEvent(pubkey?: string): Promise<NostrEvent> {
         if (!pubkey) {
             const user = await this.ndk?.signer?.user();

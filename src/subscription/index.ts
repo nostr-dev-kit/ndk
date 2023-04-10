@@ -47,6 +47,9 @@ export enum NDKSubscriptionCacheUsage {
  * @param {number} timeSinceFirstSeen - The time elapsed since the first time the event was seen.
  *
  * @event NDKSubscription#eose - Emitted when all relays have reached the end of the event stream.
+ *
+ * @event NDKSubscription#close - Emitted when the subscription is closed.
+ * @param {NDKSubscription} subscription - The subscription that was closed.
  */
 export class NDKSubscription extends EventEmitter {
     readonly subId: string;
@@ -119,7 +122,7 @@ export class NDKSubscription extends EventEmitter {
                 await cachePromise;
 
                 // if the cache has a hit, return early
-                if (this.eventIds.size > 0) {
+                if (this.eventFirstSeen.size > 0) {
                     this.debug('cache hit, skipping relay query');
                     this.emit('eose');
                     return;
@@ -132,6 +135,12 @@ export class NDKSubscription extends EventEmitter {
         }
 
         return;
+    }
+
+    public stop(): void {
+        this.relaySubscriptions.forEach((sub) => sub.unsub());
+        this.relaySubscriptions.clear();
+        this.emit('close', this);
     }
 
     private async startWithCache(): Promise<void> {
@@ -158,7 +167,6 @@ export class NDKSubscription extends EventEmitter {
 
     // EVENT handling
     private eventFirstSeen = new Map<NDKEventId, number>();
-    private eventIds = new Set<NDKEventId>();
 
     /**
      * Called when an event is received from a relay or the cache
@@ -168,7 +176,7 @@ export class NDKSubscription extends EventEmitter {
      */
     public eventReceived(event: NDKEvent, relay: NDKRelay | undefined, fromCache = false) {
         if (!fromCache && relay) {
-            const eventAlreadySeen = this.eventIds.has(event.id);
+            const eventAlreadySeen = this.eventFirstSeen.has(event.id);
 
             if (eventAlreadySeen) {
                 const timeSinceFirstSeen = Date.now() - (this.eventFirstSeen.get(event.id) || 0);
@@ -183,10 +191,10 @@ export class NDKSubscription extends EventEmitter {
                 this.ndk.cacheAdapter.setEvent(event, this.filter);
             }
 
-            this.eventFirstSeen.set(event.id, Date.now());
+            this.eventFirstSeen.set(`${event.id}`, Date.now());
+        } else {
+            this.eventFirstSeen.set(`${event.id}`, 0);
         }
-
-        this.eventIds.add(event.id);
 
         this.emit('event', event, relay);
     }

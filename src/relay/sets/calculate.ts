@@ -32,7 +32,13 @@ export function calculateRelaySetFromFilter(
 ): NDKRelaySet {
     const relays: Set<NDKRelay> = new Set();
 
-    ndk.pool?.relays.forEach(relay => relays.add(relay));
+    ndk.pool?.relays.forEach(relay => {
+        if (!relay.complaining) {
+            relays.add(relay);
+        } else {
+            console.log(`Relay ${relay.url} is complaining, not adding to set`);
+        }
+    });
 
     return new NDKRelaySet(relays);
 }

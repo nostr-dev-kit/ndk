@@ -53,6 +53,7 @@ export class NDKRelay extends EventEmitter {
     private _status: NDKRelayStatus;
     private connectedAt?: number;
     private _connectionStats: NDKRelayConnectionStats = {attempts: 0, success: 0, durations: []};
+    public complaining = false;
 
     public constructor(url: string) {
         super();
@@ -136,6 +137,19 @@ export class NDKRelay extends EventEmitter {
     }
 
     async handleNotice(notice: string) {
+        // This is a prototype; if the relay seems to be complaining
+        // remove it from relay set selection for a minute.
+        if (notice.includes('oo many') || notice.includes('aximum')) {
+            this.disconnect();
+            setTimeout(() => this.connect(), 2000);
+            console.log(this.relay.url, 'Relay complaining?', notice);
+            // this.complaining = true;
+            // setTimeout(() => {
+            //     this.complaining = false;
+            //     console.log(this.relay.url, 'Reactivate relay');
+            // }, 60000);
+        }
+
         this.emit('notice', this, notice);
     }
 

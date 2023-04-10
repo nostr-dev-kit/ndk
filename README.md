@@ -106,9 +106,9 @@ NDK can now ask for permission, via their NIP-07 extension, to...
 **Read the user's public key**
 
 ```ts
-signer.user().then(async (user) => {
+nip07signer.user().then(async (user) => {
     if (!!user.npub) {
-        console.log("Permission granted to read their public key.");
+        console.log("Permission granted to read their public key:", user.npub);
     }
 });
 ```

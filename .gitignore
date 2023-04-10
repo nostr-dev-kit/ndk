@@ -3,6 +3,7 @@
 **/dist
 **/lib
 **/.vscode
+justfile
 pnpm-lock.yaml
 **/*.js
 **/*.d.ts

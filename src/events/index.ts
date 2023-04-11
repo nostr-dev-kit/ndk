@@ -42,7 +42,7 @@ export default class NDKEvent extends EventEmitter {
         this.id = event?.id || '';
         this.sig = event?.sig;
         this.pubkey = event?.pubkey || '';
-        if (event?.kind) this.kind = event?.kind;
+        this.kind = event?.kind;
     }
 
     /**
@@ -73,7 +73,7 @@ export default class NDKEvent extends EventEmitter {
             created_at: this.created_at || Math.floor(Date.now() / 1000),
             content: this.content,
             tags: this.tags,
-            kind: this.kind || 0,
+            kind: this.kind,
             pubkey: pubkey || this.pubkey,
             id: this.id,
         };

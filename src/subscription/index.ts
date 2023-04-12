@@ -39,14 +39,17 @@ export enum NDKSubscriptionCacheUsage {
  * Emitted when an event is received by the subscription.
  * @param {NDKEvent} event - The event received by the subscription.
  * @param {NDKRelay} relay - The relay that received the event.
+ * @param {NDKSubscription} subscription - The subscription that received the event.
  *
  * @event NDKSubscription#event:dup
  * Emitted when a duplicate event is received by the subscription.
  * @param {NDKEvent} event - The duplicate event received by the subscription.
  * @param {NDKRelay} relay - The relay that received the event.
  * @param {number} timeSinceFirstSeen - The time elapsed since the first time the event was seen.
+ * @param {NDKSubscription} subscription - The subscription that received the event.
  *
  * @event NDKSubscription#eose - Emitted when all relays have reached the end of the event stream.
+ * @param {NDKSubscription} subscription - The subscription that received EOSE.
  *
  * @event NDKSubscription#close - Emitted when the subscription is closed.
  * @param {NDKSubscription} subscription - The subscription that was closed.
@@ -124,7 +127,7 @@ export class NDKSubscription extends EventEmitter {
                 // if the cache has a hit, return early
                 if (this.eventFirstSeen.size > 0) {
                     this.debug('cache hit, skipping relay query');
-                    this.emit('eose');
+                    this.emit('eose', this);
                     return;
                 }
             }
@@ -182,7 +185,7 @@ export class NDKSubscription extends EventEmitter {
                 const timeSinceFirstSeen = Date.now() - (this.eventFirstSeen.get(event.id) || 0);
                 relay.scoreSlowerEvent(timeSinceFirstSeen);
 
-                this.emit('event:dup', event, relay, timeSinceFirstSeen);
+                this.emit('event:dup', event, relay, timeSinceFirstSeen, this);
 
                 return;
             }
@@ -196,7 +199,7 @@ export class NDKSubscription extends EventEmitter {
             this.eventFirstSeen.set(`${event.id}`, 0);
         }
 
-        this.emit('event', event, relay);
+        this.emit('event', event, relay, this);
     }
 
     // EOSE handling

@@ -16,10 +16,10 @@ export {
     NDKFilter,
     NDKUserProfile,
     NDKCacheAdapter,
-    NDKSubscription
 };
-export {NDKRelay, NDKRelayStatus} from './relay/index.js';
-export {NDKRelaySet} from './relay/sets/index.js';
+export * from './subscription/index.js';
+export * from './relay/index.js';
+export * from './relay/sets/index.js';
 export {NDKKind} from './events/kind.js';
 export {NDKNip07Signer} from './signers/nip07/index.js';
 export {NDKZapInvoice, zapInvoiceFromEvent} from './zap/invoice.js';

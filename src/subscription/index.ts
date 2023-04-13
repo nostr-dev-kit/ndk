@@ -209,6 +209,12 @@ export class NDKSubscription extends EventEmitter {
     public eoseReceived(relay: NDKRelay): void {
         if (this.opts?.closeOnEose) {
             this.relaySubscriptions.get(relay)?.unsub();
+            this.relaySubscriptions.delete(relay);
+
+            // if this was the last relay that needed to EOSE, emit that this subscription is closed
+            if (this.relaySubscriptions.size === 0) {
+                this.emit('close', this);
+            }
         }
 
         this.eosesSeen.add(relay);

@@ -15,6 +15,10 @@ The event received by the subscription.
 
 The relay that received the event.
 
+**`Param`**
+
+The subscription that received the event.
+
  NDKSubscription#event:dup
 Emitted when a duplicate event is received by the subscription.
 
@@ -30,7 +34,21 @@ The relay that received the event.
 
 The time elapsed since the first time the event was seen.
 
+**`Param`**
+
+The subscription that received the event.
+
  NDKSubscription#eose - Emitted when all relays have reached the end of the event stream.
+
+**`Param`**
+
+The subscription that received EOSE.
+
+ NDKSubscription#close - Emitted when the subscription is closed.
+
+**`Param`**
+
+The subscription that was closed.
 
 ## Hierarchy
 
@@ -58,6 +76,7 @@ The time elapsed since the first time the event was seen.
 - [eoseReceived](NDKSubscription.md#eosereceived)
 - [eventReceived](NDKSubscription.md#eventreceived)
 - [start](NDKSubscription.md#start)
+- [stop](NDKSubscription.md#stop)
 
 ## Constructors
 
@@ -71,8 +90,8 @@ The time elapsed since the first time the event was seen.
 | :------ | :------ |
 | `ndk` | [`default`](default.md) |
 | `filter` | `Filter` |
-| `opts?` | `NDKSubscriptionOptions` |
-| `relaySet?` | `NDKRelaySet` |
+| `opts?` | [`NDKSubscriptionOptions`](../interfaces/NDKSubscriptionOptions.md) |
+| `relaySet?` | [`NDKRelaySet`](NDKRelaySet.md) |
 | `subId?` | `string` |
 
 #### Overrides
@@ -81,7 +100,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/subscription/index.ts:60](https://github.com/nostr-dev-kit/ndk/blob/e085a7c/src/subscription/index.ts#L60)
+[src/subscription/index.ts:66](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/subscription/index.ts#L66)
 
 ## Properties
 
@@ -91,7 +110,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/subscription/index.ts:53](https://github.com/nostr-dev-kit/ndk/blob/e085a7c/src/subscription/index.ts#L53)
+[src/subscription/index.ts:59](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/subscription/index.ts#L59)
 
 ___
 
@@ -101,27 +120,27 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:56](https://github.com/nostr-dev-kit/ndk/blob/e085a7c/src/subscription/index.ts#L56)
+[src/subscription/index.ts:62](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/subscription/index.ts#L62)
 
 ___
 
 ### opts
 
-• `Optional` `Readonly` **opts**: `NDKSubscriptionOptions`
+• `Optional` `Readonly` **opts**: [`NDKSubscriptionOptions`](../interfaces/NDKSubscriptionOptions.md)
 
 #### Defined in
 
-[src/subscription/index.ts:54](https://github.com/nostr-dev-kit/ndk/blob/e085a7c/src/subscription/index.ts#L54)
+[src/subscription/index.ts:60](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/subscription/index.ts#L60)
 
 ___
 
 ### relaySet
 
-• `Optional` **relaySet**: `NDKRelaySet`
+• `Optional` **relaySet**: [`NDKRelaySet`](NDKRelaySet.md)
 
 #### Defined in
 
-[src/subscription/index.ts:55](https://github.com/nostr-dev-kit/ndk/blob/e085a7c/src/subscription/index.ts#L55)
+[src/subscription/index.ts:61](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/subscription/index.ts#L61)
 
 ___
 
@@ -131,7 +150,7 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:57](https://github.com/nostr-dev-kit/ndk/blob/e085a7c/src/subscription/index.ts#L57)
+[src/subscription/index.ts:63](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/subscription/index.ts#L63)
 
 ___
 
@@ -141,7 +160,7 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:52](https://github.com/nostr-dev-kit/ndk/blob/e085a7c/src/subscription/index.ts#L52)
+[src/subscription/index.ts:58](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/subscription/index.ts#L58)
 
 ## Methods
 
@@ -161,7 +180,7 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:198](https://github.com/nostr-dev-kit/ndk/blob/e085a7c/src/subscription/index.ts#L198)
+[src/subscription/index.ts:209](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/subscription/index.ts#L209)
 
 ___
 
@@ -185,7 +204,7 @@ Called when an event is received from a relay or the cache
 
 #### Defined in
 
-[src/subscription/index.ts:169](https://github.com/nostr-dev-kit/ndk/blob/e085a7c/src/subscription/index.ts#L169)
+[src/subscription/index.ts:180](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/subscription/index.ts#L180)
 
 ___
 
@@ -202,4 +221,18 @@ after creating a subscription.
 
 #### Defined in
 
-[src/subscription/index.ts:105](https://github.com/nostr-dev-kit/ndk/blob/e085a7c/src/subscription/index.ts#L105)
+[src/subscription/index.ts:111](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/subscription/index.ts#L111)
+
+___
+
+### stop
+
+▸ **stop**(): `void`
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[src/subscription/index.ts:143](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/subscription/index.ts#L143)

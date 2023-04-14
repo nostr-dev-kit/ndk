@@ -7,12 +7,16 @@
 ### Enumerations
 
 - [NDKKind](enums/NDKKind.md)
+- [NDKRelayStatus](enums/NDKRelayStatus.md)
+- [NDKSubscriptionCacheUsage](enums/NDKSubscriptionCacheUsage.md)
 
 ### Classes
 
 - [NDKEvent](classes/NDKEvent.md)
 - [NDKNip07Signer](classes/NDKNip07Signer.md)
+- [NDKPrivateKeySigner](classes/NDKPrivateKeySigner.md)
 - [NDKRelay](classes/NDKRelay.md)
+- [NDKRelaySet](classes/NDKRelaySet.md)
 - [NDKUser](classes/NDKUser.md)
 - [default](classes/default.md)
 
@@ -25,6 +29,9 @@
 - [GetUserParams](interfaces/GetUserParams.md)
 - [NDKCacheAdapter](interfaces/NDKCacheAdapter.md)
 - [NDKConstructorParams](interfaces/NDKConstructorParams.md)
+- [NDKFilterOptions](interfaces/NDKFilterOptions.md)
+- [NDKRelayConnectionStats](interfaces/NDKRelayConnectionStats.md)
+- [NDKSubscriptionOptions](interfaces/NDKSubscriptionOptions.md)
 - [NDKUserProfile](interfaces/NDKUserProfile.md)
 - [NDKZapInvoice](interfaces/NDKZapInvoice.md)
 
@@ -44,7 +51,7 @@
 
 #### Defined in
 
-[src/subscription/index.ts:10](https://github.com/nostr-dev-kit/ndk/blob/e085a7c/src/subscription/index.ts#L10)
+[src/subscription/index.ts:10](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/subscription/index.ts#L10)
 
 ## Functions
 
@@ -64,4 +71,4 @@
 
 #### Defined in
 
-[src/zap/invoice.ts:14](https://github.com/nostr-dev-kit/ndk/blob/e085a7c/src/zap/invoice.ts#L14)
+[src/zap/invoice.ts:14](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/zap/invoice.ts#L14)

@@ -38,6 +38,8 @@ NDKRelay#eose
 
 ### Properties
 
+- [activeSubscriptions](NDKRelay.md#activesubscriptions)
+- [complaining](NDKRelay.md#complaining)
 - [scores](NDKRelay.md#scores)
 - [url](NDKRelay.md#url)
 
@@ -73,9 +75,31 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/relay/index.ts:57](https://github.com/nostr-dev-kit/ndk/blob/e085a7c/src/relay/index.ts#L57)
+[src/relay/index.ts:63](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/relay/index.ts#L63)
 
 ## Properties
+
+### activeSubscriptions
+
+• **activeSubscriptions**: `Set`<[`NDKSubscription`](NDKSubscription.md)\>
+
+Active subscriptions this relay is connected to
+
+#### Defined in
+
+[src/relay/index.ts:61](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/relay/index.ts#L61)
+
+___
+
+### complaining
+
+• **complaining**: `boolean` = `false`
+
+#### Defined in
+
+[src/relay/index.ts:56](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/relay/index.ts#L56)
+
+___
 
 ### scores
 
@@ -83,7 +107,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/relay/index.ts:51](https://github.com/nostr-dev-kit/ndk/blob/e085a7c/src/relay/index.ts#L51)
+[src/relay/index.ts:51](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/relay/index.ts#L51)
 
 ___
 
@@ -93,37 +117,37 @@ ___
 
 #### Defined in
 
-[src/relay/index.ts:50](https://github.com/nostr-dev-kit/ndk/blob/e085a7c/src/relay/index.ts#L50)
+[src/relay/index.ts:50](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/relay/index.ts#L50)
 
 ## Accessors
 
 ### connectionStats
 
-• `get` **connectionStats**(): `NDKRelayConnectionStats`
+• `get` **connectionStats**(): [`NDKRelayConnectionStats`](../interfaces/NDKRelayConnectionStats.md)
 
 Returns the connection stats.
 
 #### Returns
 
-`NDKRelayConnectionStats`
+[`NDKRelayConnectionStats`](../interfaces/NDKRelayConnectionStats.md)
 
 #### Defined in
 
-[src/relay/index.ts:212](https://github.com/nostr-dev-kit/ndk/blob/e085a7c/src/relay/index.ts#L212)
+[src/relay/index.ts:234](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/relay/index.ts#L234)
 
 ___
 
 ### status
 
-• `get` **status**(): `NDKRelayStatus`
+• `get` **status**(): [`NDKRelayStatus`](../enums/NDKRelayStatus.md)
 
 #### Returns
 
-`NDKRelayStatus`
+[`NDKRelayStatus`](../enums/NDKRelayStatus.md)
 
 #### Defined in
 
-[src/relay/index.ts:117](https://github.com/nostr-dev-kit/ndk/blob/e085a7c/src/relay/index.ts#L117)
+[src/relay/index.ts:121](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/relay/index.ts#L121)
 
 ## Methods
 
@@ -139,7 +163,7 @@ Connects to the relay.
 
 #### Defined in
 
-[src/relay/index.ts:124](https://github.com/nostr-dev-kit/ndk/blob/e085a7c/src/relay/index.ts#L124)
+[src/relay/index.ts:128](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/relay/index.ts#L128)
 
 ___
 
@@ -155,7 +179,7 @@ Disconnects from the relay.
 
 #### Defined in
 
-[src/relay/index.ts:135](https://github.com/nostr-dev-kit/ndk/blob/e085a7c/src/relay/index.ts#L135)
+[src/relay/index.ts:139](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/relay/index.ts#L139)
 
 ___
 
@@ -175,7 +199,7 @@ ___
 
 #### Defined in
 
-[src/relay/index.ts:140](https://github.com/nostr-dev-kit/ndk/blob/e085a7c/src/relay/index.ts#L140)
+[src/relay/index.ts:144](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/relay/index.ts#L144)
 
 ___
 
@@ -197,7 +221,7 @@ Publishes an event to the relay.
 
 #### Defined in
 
-[src/relay/index.ts:169](https://github.com/nostr-dev-kit/ndk/blob/e085a7c/src/relay/index.ts#L169)
+[src/relay/index.ts:191](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/relay/index.ts#L191)
 
 ___
 
@@ -220,7 +244,7 @@ wasn't the fastest one.
 
 #### Defined in
 
-[src/relay/index.ts:180](https://github.com/nostr-dev-kit/ndk/blob/e085a7c/src/relay/index.ts#L180)
+[src/relay/index.ts:202](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/relay/index.ts#L202)
 
 ___
 
@@ -242,4 +266,4 @@ Subscribes to a subscription.
 
 #### Defined in
 
-[src/relay/index.ts:147](https://github.com/nostr-dev-kit/ndk/blob/e085a7c/src/relay/index.ts#L147)
+[src/relay/index.ts:164](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/relay/index.ts#L164)

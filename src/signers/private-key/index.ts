@@ -4,20 +4,20 @@ import type { NostrEvent } from '../../events/index.js';
 import { NDKSigner } from '../index.js';
 import User from '../../user';
 
-export default class PrivateKeySigner implements NDKSigner {
+export class NDKPrivateKeySigner implements NDKSigner {
     private _user: User | undefined;
     privateKey?: string;
 
     public constructor(privateKey?: string) {
         if (privateKey) {
-        this.privateKey = privateKey;
-        this._user = new User({ hexpubkey: getPublicKey(this.privateKey) });
+            this.privateKey = privateKey;
+            this._user = new User({ hexpubkey: getPublicKey(this.privateKey) });
         }
     }
 
-    static generate() {
+    public static generate() {
         const privateKey = generatePrivateKey();
-        return new PrivateKeySigner(privateKey);
+        return new NDKPrivateKeySigner(privateKey);
     }
 
     public async blockUntilReady(): Promise<User> {

@@ -55,6 +55,11 @@ export class NDKRelay extends EventEmitter {
     private _connectionStats: NDKRelayConnectionStats = {attempts: 0, success: 0, durations: []};
     public complaining = false;
 
+    /**
+     * Active subscriptions this relay is connected to
+     */
+    public activeSubscriptions = new Set<NDKSubscription>();
+
     public constructor(url: string) {
         super();
         this.url = url;
@@ -170,6 +175,11 @@ export class NDKRelay extends EventEmitter {
 
         sub.on('eose', () => {
             subscription.eoseReceived(this);
+        });
+
+        this.activeSubscriptions.add(subscription);
+        subscription.on('close', () => {
+            this.activeSubscriptions.delete(subscription);
         });
 
         return sub;

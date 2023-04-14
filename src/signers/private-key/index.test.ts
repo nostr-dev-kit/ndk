@@ -1,24 +1,24 @@
-import PrivateKeySigner from './index';
+import {NDKPrivateKeySigner} from './index';
 import { NostrEvent } from '../../events/index';
 import User from '../../user';
 
-describe('PrivateKeySigner', () => {
-    it('generates a new PrivateKeySigner instance with a private key', () => {
-        const signer = PrivateKeySigner.generate();
-        expect(signer).toBeInstanceOf(PrivateKeySigner);
+describe('NDKPrivateKeySigner', () => {
+    it('generates a new NDKPrivateKeySigner instance with a private key', () => {
+        const signer = NDKPrivateKeySigner.generate();
+        expect(signer).toBeInstanceOf(NDKPrivateKeySigner);
         expect(signer.privateKey).toBeDefined();
     });
 
-    it('creates a new PrivateKeySigner instance with a provided private key', () => {
+    it('creates a new NDKPrivateKeySigner instance with a provided private key', () => {
         const privateKey = '00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff';
-        const signer = new PrivateKeySigner(privateKey);
-        expect(signer).toBeInstanceOf(PrivateKeySigner);
+        const signer = new NDKPrivateKeySigner(privateKey);
+        expect(signer).toBeInstanceOf(NDKPrivateKeySigner);
         expect(signer.privateKey).toBe(privateKey);
     });
 
     it('returns a user instance with a public key corresponding to the private key', async () => {
         const privateKey = 'e8eb7464168139c6ccb9111f768777f332fa1289dff11244ccfe89970ff776d4';
-        const signer = new PrivateKeySigner(privateKey);
+        const signer = new NDKPrivateKeySigner(privateKey);
         const user = await signer.user();
         expect(user).toBeInstanceOf(User);
         expect(user.hexpubkey()).toBe('07f61c41b44a923952db82e6e7bcd184b059fe087f58f9d9a918da391f38d503');
@@ -26,7 +26,7 @@ describe('PrivateKeySigner', () => {
 
     it('signs a NostrEvent with the private key', async () => {
         const privateKey = '00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff';
-        const signer = new PrivateKeySigner(privateKey);
+        const signer = new NDKPrivateKeySigner(privateKey);
 
         const event: NostrEvent = {
             pubkey: '07f61c41b44a923952db82e6e7bcd184b059fe087f58f9d9a918da391f38d503',

@@ -64,9 +64,9 @@ export default class NDKEvent extends EventEmitter {
      * when possible.
      */
     async toNostrEvent(pubkey?: string): Promise<NostrEvent> {
-        if (!pubkey) {
+        if (!pubkey && this.pubkey === '') {
             const user = await this.ndk?.signer?.user();
-            pubkey = user?.hexpubkey();
+            this.pubkey = user?.hexpubkey() || '';
         }
 
         const nostrEvent: NostrEvent = {
@@ -74,7 +74,7 @@ export default class NDKEvent extends EventEmitter {
             content: this.content,
             tags: this.tags,
             kind: this.kind,
-            pubkey: pubkey || this.pubkey,
+            pubkey: this.pubkey,
             id: this.id,
         };
 

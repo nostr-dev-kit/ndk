@@ -142,13 +142,26 @@ export default class NDKEvent extends EventEmitter {
     }
 
     /**
+     * @returns the `d` tag of a parameterized replaceable event
+     */
+    replaceableDTag() {
+        if (this.kind && this.kind >= 30000 && this.kind <= 40000) {
+            const dTag = this.getMatchingTags('d')[0];
+            const dTagId = dTag ? dTag[1] : '';
+
+            return dTagId;
+        }
+
+        throw new Error('Event is not a parameterized replaceable event');
+    }
+
+    /**
      * @returns the id of the event, or if it's a parameterized event, the id of the event with the d tag
      */
     tagId() {
         // NIP-33
         if (this.kind && this.kind >= 30000 && this.kind <= 40000) {
-            const dTag = this.getMatchingTags('d')[0];
-            const dTagId = dTag ? dTag[1] : '';
+            const dTagId = this.replaceableDTag();
 
             return `${this.kind}:${this.pubkey}:${dTagId}`;
         }

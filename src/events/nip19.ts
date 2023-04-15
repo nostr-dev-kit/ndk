@@ -8,5 +8,7 @@ export function encode(this: NDKEvent) {
             pubkey: this.pubkey,
             identifier: this.tagId()
         });
+    } else {
+        return nip19.noteEncode(this.tagId());
     }
 }

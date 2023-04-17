@@ -1,6 +1,9 @@
 import NDKUser from '../user';
 import type { NostrEvent } from '../events/index.js';
 
+/**
+ * Interface for NDK signers.
+ */
 export interface NDKSigner {
     /**
      * Blocks until the signer is ready and returns the associated NDKUser.

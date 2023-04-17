@@ -13,11 +13,6 @@ export interface NDKFilterOptions {
     skipCache?: boolean;
 }
 
-export interface NDKSubscriptionOptions {
-    closeOnEose: boolean;
-    cacheUsage?: NDKSubscriptionCacheUsage;
-}
-
 export enum NDKSubscriptionCacheUsage {
     // Only use cache, don't subscribe to relays
     ONLY_CACHE = 'ONLY_CACHE',
@@ -31,6 +26,33 @@ export enum NDKSubscriptionCacheUsage {
     // Skip cache, don't query it
     ONLY_RELAY = 'ONLY_RELAY',
 }
+
+export interface NDKSubscriptionOptions {
+    closeOnEose: boolean;
+    cacheUsage?: NDKSubscriptionCacheUsage;
+
+    /**
+     * Groupable subscriptions are created with a slight time
+     * delayed to allow similar filters to be grouped together.
+     */
+    groupable?: boolean;
+
+    /**
+     * The delay to use when grouping subscriptions, specified in milliseconds.
+     * @default 100
+     */
+    groupableDelay?: number;
+}
+
+/**
+ * Default subscription options.
+ */
+export const defaultOpts: NDKSubscriptionOptions = {
+    closeOnEose: true,
+    cacheUsage: NDKSubscriptionCacheUsage.CACHE_FIRST,
+    groupable: true,
+    groupableDelay: 100,
+};
 
 /**
  * Represents a subscription to an NDK event stream.
@@ -57,7 +79,7 @@ export enum NDKSubscriptionCacheUsage {
 export class NDKSubscription extends EventEmitter {
     readonly subId: string;
     readonly filter: NDKFilter;
-    readonly opts?: NDKSubscriptionOptions;
+    readonly opts: NDKSubscriptionOptions;
     public relaySet?: NDKRelaySet;
     public ndk: NDK;
     public relaySubscriptions: Map<NDKRelay, Sub>;
@@ -75,7 +97,7 @@ export class NDKSubscription extends EventEmitter {
         this.subId = subId || Math.floor(Math.random() * 9999991000).toString(); // TODO: use UUID
         this.filter = filter;
         this.relaySet = relaySet;
-        this.opts = opts;
+        this.opts = opts || defaultOpts;
         this.relaySubscriptions = new Map<NDKRelay, Sub>();
         this.debug = ndk.debug.extend('subscription');
 
@@ -89,7 +111,30 @@ export class NDKSubscription extends EventEmitter {
                 'Cannot use cache-only options with a persistent subscription'
             );
         }
+    }
 
+    /**
+     * Calculates the groupable ID for this subscription.
+     *
+     * @returns The groupable ID, or null if the subscription is not groupable.
+     */
+    public groupableId(): string | null {
+        if (!this.opts?.groupable) {
+            return null;
+        }
+
+        // Check if there is a kind and no time-based filters
+        if (
+            (this.filter.kinds?.length||0) > 0 &&
+            !this.filter.since &&
+            !this.filter.until
+        ) {
+            const id = this.filter.kinds!.join(',');
+            this.debug(`groupable ID: ${id}`);
+            return id;
+        }
+
+        return null;
     }
 
     private shouldQueryCache(): boolean {

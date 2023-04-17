@@ -8,6 +8,8 @@
 
 - [cacheUsage](NDKSubscriptionOptions.md#cacheusage)
 - [closeOnEose](NDKSubscriptionOptions.md#closeoneose)
+- [groupable](NDKSubscriptionOptions.md#groupable)
+- [groupableDelay](NDKSubscriptionOptions.md#groupabledelay)
 
 ## Properties
 
@@ -17,7 +19,7 @@
 
 #### Defined in
 
-[src/subscription/index.ts:18](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/subscription/index.ts#L18)
+[src/subscription/index.ts:32](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/subscription/index.ts#L32)
 
 ___
 
@@ -27,4 +29,33 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:17](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/subscription/index.ts#L17)
+[src/subscription/index.ts:31](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/subscription/index.ts#L31)
+
+___
+
+### groupable
+
+• `Optional` **groupable**: `boolean`
+
+Groupable subscriptions are created with a slight time
+delayed to allow similar filters to be grouped together.
+
+#### Defined in
+
+[src/subscription/index.ts:38](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/subscription/index.ts#L38)
+
+___
+
+### groupableDelay
+
+• `Optional` **groupableDelay**: `number`
+
+The delay to use when grouping subscriptions, specified in milliseconds.
+
+**`Default`**
+
+100
+
+#### Defined in
+
+[src/subscription/index.ts:44](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/subscription/index.ts#L44)

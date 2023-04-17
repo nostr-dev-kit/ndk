@@ -39,6 +39,10 @@
 
 - [NDKFilter](modules.md#ndkfilter)
 
+### Variables
+
+- [defaultOpts](modules.md#defaultopts)
+
 ### Functions
 
 - [zapInvoiceFromEvent](modules.md#zapinvoicefromevent)
@@ -51,7 +55,19 @@
 
 #### Defined in
 
-[src/subscription/index.ts:10](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/subscription/index.ts#L10)
+[src/subscription/index.ts:10](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/subscription/index.ts#L10)
+
+## Variables
+
+### defaultOpts
+
+• `Const` **defaultOpts**: [`NDKSubscriptionOptions`](interfaces/NDKSubscriptionOptions.md)
+
+Default subscription options.
+
+#### Defined in
+
+[src/subscription/index.ts:50](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/subscription/index.ts#L50)
 
 ## Functions
 
@@ -71,4 +87,4 @@
 
 #### Defined in
 
-[src/zap/invoice.ts:14](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/zap/invoice.ts#L14)
+[src/zap/invoice.ts:14](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/zap/invoice.ts#L14)

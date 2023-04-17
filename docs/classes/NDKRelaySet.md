@@ -28,17 +28,18 @@ Requests to relays should be sent through this interface.
 
 ### constructor
 
-• **new NDKRelaySet**(`relays`)
+• **new NDKRelaySet**(`relays`, `debug`)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `relays` | `Set`<[`NDKRelay`](NDKRelay.md)\> |
+| `debug` | `Debugger` |
 
 #### Defined in
 
-[src/relay/sets/index.ts:15](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/relay/sets/index.ts#L15)
+[src/relay/sets/index.ts:17](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/relay/sets/index.ts#L17)
 
 ## Properties
 
@@ -48,7 +49,7 @@ Requests to relays should be sent through this interface.
 
 #### Defined in
 
-[src/relay/sets/index.ts:13](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/relay/sets/index.ts#L13)
+[src/relay/sets/index.ts:13](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/relay/sets/index.ts#L13)
 
 ## Methods
 
@@ -68,7 +69,7 @@ Requests to relays should be sent through this interface.
 
 #### Defined in
 
-[src/relay/sets/index.ts:39](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/relay/sets/index.ts#L39)
+[src/relay/sets/index.ts:88](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/relay/sets/index.ts#L88)
 
 ___
 
@@ -82,13 +83,15 @@ ___
 
 #### Defined in
 
-[src/relay/sets/index.ts:49](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/relay/sets/index.ts#L49)
+[src/relay/sets/index.ts:98](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/relay/sets/index.ts#L98)
 
 ___
 
 ### subscribe
 
 ▸ **subscribe**(`subscription`): [`NDKSubscription`](NDKSubscription.md)
+
+Add a subscription to this relay set
 
 #### Parameters
 
@@ -102,4 +105,4 @@ ___
 
 #### Defined in
 
-[src/relay/sets/index.ts:24](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/relay/sets/index.ts#L24)
+[src/relay/sets/index.ts:31](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/relay/sets/index.ts#L31)

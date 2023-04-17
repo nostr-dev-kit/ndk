@@ -75,6 +75,7 @@ The subscription that was closed.
 
 - [eoseReceived](NDKSubscription.md#eosereceived)
 - [eventReceived](NDKSubscription.md#eventreceived)
+- [groupableId](NDKSubscription.md#groupableid)
 - [start](NDKSubscription.md#start)
 - [stop](NDKSubscription.md#stop)
 
@@ -100,7 +101,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/subscription/index.ts:66](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/subscription/index.ts#L66)
+[src/subscription/index.ts:88](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/subscription/index.ts#L88)
 
 ## Properties
 
@@ -110,7 +111,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/subscription/index.ts:59](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/subscription/index.ts#L59)
+[src/subscription/index.ts:81](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/subscription/index.ts#L81)
 
 ___
 
@@ -120,17 +121,17 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:62](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/subscription/index.ts#L62)
+[src/subscription/index.ts:84](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/subscription/index.ts#L84)
 
 ___
 
 ### opts
 
-• `Optional` `Readonly` **opts**: [`NDKSubscriptionOptions`](../interfaces/NDKSubscriptionOptions.md)
+• `Readonly` **opts**: [`NDKSubscriptionOptions`](../interfaces/NDKSubscriptionOptions.md)
 
 #### Defined in
 
-[src/subscription/index.ts:60](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/subscription/index.ts#L60)
+[src/subscription/index.ts:82](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/subscription/index.ts#L82)
 
 ___
 
@@ -140,7 +141,7 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:61](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/subscription/index.ts#L61)
+[src/subscription/index.ts:83](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/subscription/index.ts#L83)
 
 ___
 
@@ -150,7 +151,7 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:63](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/subscription/index.ts#L63)
+[src/subscription/index.ts:85](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/subscription/index.ts#L85)
 
 ___
 
@@ -160,7 +161,7 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:58](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/subscription/index.ts#L58)
+[src/subscription/index.ts:80](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/subscription/index.ts#L80)
 
 ## Methods
 
@@ -180,7 +181,7 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:209](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/subscription/index.ts#L209)
+[src/subscription/index.ts:254](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/subscription/index.ts#L254)
 
 ___
 
@@ -204,7 +205,25 @@ Called when an event is received from a relay or the cache
 
 #### Defined in
 
-[src/subscription/index.ts:180](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/subscription/index.ts#L180)
+[src/subscription/index.ts:225](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/subscription/index.ts#L225)
+
+___
+
+### groupableId
+
+▸ **groupableId**(): ``null`` \| `string`
+
+Calculates the groupable ID for this subscription.
+
+#### Returns
+
+``null`` \| `string`
+
+The groupable ID, or null if the subscription is not groupable.
+
+#### Defined in
+
+[src/subscription/index.ts:121](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/subscription/index.ts#L121)
 
 ___
 
@@ -221,7 +240,7 @@ after creating a subscription.
 
 #### Defined in
 
-[src/subscription/index.ts:111](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/subscription/index.ts#L111)
+[src/subscription/index.ts:156](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/subscription/index.ts#L156)
 
 ___
 
@@ -235,4 +254,4 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:143](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/subscription/index.ts#L143)
+[src/subscription/index.ts:188](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/subscription/index.ts#L188)

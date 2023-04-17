@@ -11,9 +11,13 @@ import {NDKSubscription} from '../../subscription/index.js';
  */
 export class NDKRelaySet {
     readonly relays: Set<NDKRelay>;
+    private delayedSubscriptions: Map<string, NDKSubscription[]>;
+    private debug: debug.Debugger;
 
-    public constructor(relays: Set<NDKRelay>) {
+    public constructor(relays: Set<NDKRelay>, debug: debug.Debugger) {
         this.relays = relays;
+        this.delayedSubscriptions = new Map();
+        this.debug = debug.extend('ndk:relayset');
     }
 
     private subscribeOnRelay(relay: NDKRelay, subscription: NDKSubscription) {
@@ -21,7 +25,52 @@ export class NDKRelaySet {
         subscription.relaySubscriptions.set(relay, sub);
     }
 
+    /**
+     * Add a subscription to this relay set
+     */
     public subscribe(subscription: NDKSubscription): NDKSubscription {
+        const groupableId = subscription.groupableId();
+
+        if (!groupableId) {
+            this.executeSubscription(subscription);
+            return subscription;
+        }
+
+        const delayedSubscription = this.delayedSubscriptions.get(groupableId);
+        if (delayedSubscription) {
+            this.debug('Adding to existing subscription', {groupableId});
+
+            delayedSubscription.push(subscription);
+        } else {
+            this.debug('New subscription timeout', {groupableId});
+
+            setTimeout(() => {
+                this.executeDelayedSubscription(groupableId);
+            }, subscription.opts.groupableDelay);
+
+            this.delayedSubscriptions.set(groupableId, [subscription]);
+        }
+
+        return subscription;
+    }
+
+    private executeDelayedSubscription(groupableId: string) {
+        const subscriptions = this.delayedSubscriptions.get(groupableId);
+        this.debug('Creating subscriptions', {groupableId, count: subscriptions?.length});
+        this.delayedSubscriptions.delete(groupableId);
+
+        if (subscriptions) {
+            this.executeSubscriptions(subscriptions);
+        }
+    }
+
+    private executeSubscriptions(subscriptions: NDKSubscription[]) {
+        for (const subscription of subscriptions) {
+            this.executeSubscription(subscription);
+        }
+    }
+
+    private executeSubscription(subscription: NDKSubscription): NDKSubscription {
         // If the relay is connected, send the subscription
         // If the relay is not connected, wait for it to connect (during the lifetime of the subscription)
         this.relays.forEach(relay => {

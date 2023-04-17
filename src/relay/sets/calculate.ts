@@ -17,7 +17,7 @@ export function calculateRelaySetFromEvent(ndk: NDK, event: Event): NDKRelaySet 
 
     ndk.pool?.relays.forEach(relay => relays.add(relay));
 
-    return new NDKRelaySet(relays);
+    return new NDKRelaySet(relays, ndk.debug);
 }
 
 /**
@@ -40,7 +40,7 @@ export function calculateRelaySetFromFilter(
         }
     });
 
-    return new NDKRelaySet(relays);
+    return new NDKRelaySet(relays, ndk.debug);
 }
 
 /**

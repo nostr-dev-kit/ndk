@@ -49,7 +49,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/index.ts:45](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/index.ts#L45)
+[src/index.ts:45](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/index.ts#L45)
 
 ## Properties
 
@@ -59,7 +59,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/index.ts:42](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/index.ts#L42)
+[src/index.ts:42](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/index.ts#L42)
 
 ___
 
@@ -69,7 +69,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:43](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/index.ts#L43)
+[src/index.ts:43](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/index.ts#L43)
 
 ___
 
@@ -79,7 +79,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:40](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/index.ts#L40)
+[src/index.ts:40](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/index.ts#L40)
 
 ___
 
@@ -89,7 +89,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:41](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/index.ts#L41)
+[src/index.ts:41](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/index.ts#L41)
 
 ## Methods
 
@@ -105,7 +105,7 @@ Ensures that a signer is available to sign an event.
 
 #### Defined in
 
-[src/index.ts:137](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/index.ts#L137)
+[src/index.ts:137](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/index.ts#L137)
 
 ___
 
@@ -128,7 +128,7 @@ If the timeout is reached, the connection will be continued to be established in
 
 #### Defined in
 
-[src/index.ts:64](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/index.ts#L64)
+[src/index.ts:64](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/index.ts#L64)
 
 ___
 
@@ -151,7 +151,7 @@ Fetch a single event
 
 #### Defined in
 
-[src/index.ts:100](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/index.ts#L100)
+[src/index.ts:100](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/index.ts#L100)
 
 ___
 
@@ -174,7 +174,7 @@ Fetch events
 
 #### Defined in
 
-[src/index.ts:113](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/index.ts#L113)
+[src/index.ts:113](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/index.ts#L113)
 
 ___
 
@@ -196,7 +196,7 @@ Get a NDKUser object
 
 #### Defined in
 
-[src/index.ts:75](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/index.ts#L75)
+[src/index.ts:75](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/index.ts#L75)
 
 ___
 
@@ -216,7 +216,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:91](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/index.ts#L91)
+[src/index.ts:91](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/index.ts#L91)
 
 ___
 
@@ -237,4 +237,4 @@ ___
 
 #### Defined in
 
-[src/index.ts:81](https://github.com/nostr-dev-kit/ndk/blob/4e41494/src/index.ts#L81)
+[src/index.ts:81](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/index.ts#L81)

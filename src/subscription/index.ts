@@ -1,5 +1,5 @@
 import NDK from '../index.js';
-import {Filter as NostrFilter, Sub} from 'nostr-tools';
+import {Filter as NostrFilter, Sub, matchFilter} from 'nostr-tools';
 import EventEmitter from 'eventemitter3';
 import {NDKRelay} from '../relay';
 import {NDKRelaySet} from '../relay/sets/index.js';
@@ -307,23 +307,57 @@ export class NDKSubscriptionGroup extends NDKSubscription {
             mergedFilters: this.filter
         });
 
-        // forward events to each subscription
-        // TODO: This functions should only forward events to the
-        // specific subscription that it is for.
+        // forward events to the matching subscriptions
         this.on('event', this.forwardEvent);
         this.on('event:dup', this.forwardEventDup);
         this.on('eose', this.forwardEose);
         this.on('close', this.forwardClose);
     }
 
+    private isEventForSubscription(event: NDKEvent, subscription: NDKSubscription): boolean {
+        const {filter} = subscription;
+
+        if (!filter) return false;
+
+        return matchFilter(filter, event.rawEvent() as any);
+
+        // check if there is a filter whose key begins with '#'; if there is, check if the event has a tag with the same key on the first position
+        // of the tags array of arrays and the same value in the second position
+        // for (const key in filter) {
+        //     if (key === 'kinds' && filter.kinds!.includes(event.kind!)) return false;
+        //     else if (key === 'authors' && filter.authors!.includes(event.pubkey)) return false;
+        //     else if (key.startsWith('#')) {
+        //         const tagKey = key.slice(1);
+        //         const tagValue = filter[key];
+
+        //         if (event.tags) {
+        //             for (const tag of event.tags) {
+        //                 if (tag[0] === tagKey && tag[1] === tagValue) {
+        //                     return false;
+        //                 }
+        //             }
+        //         }
+        //     }
+
+        // return true;
+    }
+
     private forwardEvent(event: NDKEvent, relay: NDKRelay) {
         for (const subscription of this.subscriptions) {
+            if (!this.isEventForSubscription(event, subscription)) {
+                continue;
+            }
+
             subscription.emit('event', event, relay, subscription);
         }
     }
 
     private forwardEventDup(event: NDKEvent, relay: NDKRelay, timeSinceFirstSeen: number) {
         for (const subscription of this.subscriptions) {
+            if (!this.isEventForSubscription(event, subscription)) {
+                continue;
+            }
+
             subscription.emit('event:dup', event, relay, timeSinceFirstSeen, subscription);
         }
     }

@@ -37,7 +37,7 @@
 
 #### Defined in
 
-[src/signers/private-key/index.ts:11](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/signers/private-key/index.ts#L11)
+[src/signers/private-key/index.ts:11](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/signers/private-key/index.ts#L11)
 
 ## Properties
 
@@ -47,7 +47,7 @@
 
 #### Defined in
 
-[src/signers/private-key/index.ts:9](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/signers/private-key/index.ts#L9)
+[src/signers/private-key/index.ts:9](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/signers/private-key/index.ts#L9)
 
 ## Methods
 
@@ -65,7 +65,7 @@ NDKSigner.blockUntilReady
 
 #### Defined in
 
-[src/signers/private-key/index.ts:23](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/signers/private-key/index.ts#L23)
+[src/signers/private-key/index.ts:23](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/signers/private-key/index.ts#L23)
 
 ___
 
@@ -89,7 +89,7 @@ NDKSigner.sign
 
 #### Defined in
 
-[src/signers/private-key/index.ts:35](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/signers/private-key/index.ts#L35)
+[src/signers/private-key/index.ts:35](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/signers/private-key/index.ts#L35)
 
 ___
 
@@ -107,7 +107,7 @@ NDKSigner.user
 
 #### Defined in
 
-[src/signers/private-key/index.ts:30](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/signers/private-key/index.ts#L30)
+[src/signers/private-key/index.ts:30](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/signers/private-key/index.ts#L30)
 
 ___
 
@@ -121,4 +121,4 @@ ___
 
 #### Defined in
 
-[src/signers/private-key/index.ts:18](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/signers/private-key/index.ts#L18)
+[src/signers/private-key/index.ts:18](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/signers/private-key/index.ts#L18)

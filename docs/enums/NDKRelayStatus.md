@@ -20,7 +20,7 @@
 
 #### Defined in
 
-[src/relay/index.ts:12](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/relay/index.ts#L12)
+[src/relay/index.ts:12](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/relay/index.ts#L12)
 
 ___
 
@@ -30,7 +30,7 @@ ___
 
 #### Defined in
 
-[src/relay/index.ts:11](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/relay/index.ts#L11)
+[src/relay/index.ts:11](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/relay/index.ts#L11)
 
 ___
 
@@ -40,7 +40,7 @@ ___
 
 #### Defined in
 
-[src/relay/index.ts:14](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/relay/index.ts#L14)
+[src/relay/index.ts:14](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/relay/index.ts#L14)
 
 ___
 
@@ -50,7 +50,7 @@ ___
 
 #### Defined in
 
-[src/relay/index.ts:13](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/relay/index.ts#L13)
+[src/relay/index.ts:13](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/relay/index.ts#L13)
 
 ___
 
@@ -60,4 +60,4 @@ ___
 
 #### Defined in
 
-[src/relay/index.ts:15](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/relay/index.ts#L15)
+[src/relay/index.ts:15](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/relay/index.ts#L15)

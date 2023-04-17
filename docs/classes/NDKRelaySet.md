@@ -40,7 +40,7 @@ Requests to relays should be sent through this interface.
 
 #### Defined in
 
-[src/relay/sets/index.ts:20](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/relay/sets/index.ts#L20)
+[src/relay/sets/index.ts:20](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/relay/sets/index.ts#L20)
 
 ## Properties
 
@@ -50,7 +50,7 @@ Requests to relays should be sent through this interface.
 
 #### Defined in
 
-[src/relay/sets/index.ts:16](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/relay/sets/index.ts#L16)
+[src/relay/sets/index.ts:16](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/relay/sets/index.ts#L16)
 
 ## Methods
 
@@ -66,7 +66,7 @@ Calculates an ID of this specific combination of relays.
 
 #### Defined in
 
-[src/relay/sets/index.ts:34](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/relay/sets/index.ts#L34)
+[src/relay/sets/index.ts:34](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/relay/sets/index.ts#L34)
 
 ___
 
@@ -86,7 +86,7 @@ ___
 
 #### Defined in
 
-[src/relay/sets/index.ts:108](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/relay/sets/index.ts#L108)
+[src/relay/sets/index.ts:108](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/relay/sets/index.ts#L108)
 
 ___
 
@@ -100,7 +100,7 @@ ___
 
 #### Defined in
 
-[src/relay/sets/index.ts:118](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/relay/sets/index.ts#L118)
+[src/relay/sets/index.ts:118](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/relay/sets/index.ts#L118)
 
 ___
 
@@ -122,4 +122,4 @@ Add a subscription to this relay set
 
 #### Defined in
 
-[src/relay/sets/index.ts:43](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/relay/sets/index.ts#L43)
+[src/relay/sets/index.ts:43](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/relay/sets/index.ts#L43)

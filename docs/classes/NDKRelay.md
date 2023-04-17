@@ -75,7 +75,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/relay/index.ts:63](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/relay/index.ts#L63)
+[src/relay/index.ts:63](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/relay/index.ts#L63)
 
 ## Properties
 
@@ -87,7 +87,7 @@ Active subscriptions this relay is connected to
 
 #### Defined in
 
-[src/relay/index.ts:61](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/relay/index.ts#L61)
+[src/relay/index.ts:61](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/relay/index.ts#L61)
 
 ___
 
@@ -97,7 +97,7 @@ ___
 
 #### Defined in
 
-[src/relay/index.ts:56](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/relay/index.ts#L56)
+[src/relay/index.ts:56](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/relay/index.ts#L56)
 
 ___
 
@@ -107,7 +107,7 @@ ___
 
 #### Defined in
 
-[src/relay/index.ts:51](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/relay/index.ts#L51)
+[src/relay/index.ts:51](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/relay/index.ts#L51)
 
 ___
 
@@ -117,7 +117,7 @@ ___
 
 #### Defined in
 
-[src/relay/index.ts:50](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/relay/index.ts#L50)
+[src/relay/index.ts:50](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/relay/index.ts#L50)
 
 ## Accessors
 
@@ -133,7 +133,7 @@ Returns the connection stats.
 
 #### Defined in
 
-[src/relay/index.ts:234](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/relay/index.ts#L234)
+[src/relay/index.ts:234](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/relay/index.ts#L234)
 
 ___
 
@@ -147,7 +147,7 @@ ___
 
 #### Defined in
 
-[src/relay/index.ts:121](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/relay/index.ts#L121)
+[src/relay/index.ts:121](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/relay/index.ts#L121)
 
 ## Methods
 
@@ -163,7 +163,7 @@ Connects to the relay.
 
 #### Defined in
 
-[src/relay/index.ts:128](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/relay/index.ts#L128)
+[src/relay/index.ts:128](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/relay/index.ts#L128)
 
 ___
 
@@ -179,7 +179,7 @@ Disconnects from the relay.
 
 #### Defined in
 
-[src/relay/index.ts:139](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/relay/index.ts#L139)
+[src/relay/index.ts:139](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/relay/index.ts#L139)
 
 ___
 
@@ -199,7 +199,7 @@ ___
 
 #### Defined in
 
-[src/relay/index.ts:144](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/relay/index.ts#L144)
+[src/relay/index.ts:144](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/relay/index.ts#L144)
 
 ___
 
@@ -221,7 +221,7 @@ Publishes an event to the relay.
 
 #### Defined in
 
-[src/relay/index.ts:191](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/relay/index.ts#L191)
+[src/relay/index.ts:191](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/relay/index.ts#L191)
 
 ___
 
@@ -244,7 +244,7 @@ wasn't the fastest one.
 
 #### Defined in
 
-[src/relay/index.ts:202](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/relay/index.ts#L202)
+[src/relay/index.ts:202](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/relay/index.ts#L202)
 
 ___
 
@@ -266,4 +266,4 @@ Subscribes to a subscription.
 
 #### Defined in
 
-[src/relay/index.ts:164](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/relay/index.ts#L164)
+[src/relay/index.ts:164](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/relay/index.ts#L164)

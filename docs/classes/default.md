@@ -18,6 +18,7 @@
 
 - [cacheAdapter](default.md#cacheadapter)
 - [debug](default.md#debug)
+- [delayedSubscriptions](default.md#delayedsubscriptions)
 - [pool](default.md#pool)
 - [signer](default.md#signer)
 
@@ -49,7 +50,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/index.ts:45](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/index.ts#L45)
+[src/index.ts:48](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/index.ts#L48)
 
 ## Properties
 
@@ -59,7 +60,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/index.ts:42](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/index.ts#L42)
+[src/index.ts:43](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/index.ts#L43)
 
 ___
 
@@ -69,7 +70,17 @@ ___
 
 #### Defined in
 
-[src/index.ts:43](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/index.ts#L43)
+[src/index.ts:44](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/index.ts#L44)
+
+___
+
+### delayedSubscriptions
+
+• **delayedSubscriptions**: `Map`<`string`, [`NDKSubscription`](NDKSubscription.md)[]\>
+
+#### Defined in
+
+[src/index.ts:46](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/index.ts#L46)
 
 ___
 
@@ -79,7 +90,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:40](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/index.ts#L40)
+[src/index.ts:41](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/index.ts#L41)
 
 ___
 
@@ -89,7 +100,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:41](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/index.ts#L41)
+[src/index.ts:42](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/index.ts#L42)
 
 ## Methods
 
@@ -105,7 +116,7 @@ Ensures that a signer is available to sign an event.
 
 #### Defined in
 
-[src/index.ts:137](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/index.ts#L137)
+[src/index.ts:141](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/index.ts#L141)
 
 ___
 
@@ -128,7 +139,7 @@ If the timeout is reached, the connection will be continued to be established in
 
 #### Defined in
 
-[src/index.ts:64](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/index.ts#L64)
+[src/index.ts:68](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/index.ts#L68)
 
 ___
 
@@ -151,7 +162,7 @@ Fetch a single event
 
 #### Defined in
 
-[src/index.ts:100](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/index.ts#L100)
+[src/index.ts:104](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/index.ts#L104)
 
 ___
 
@@ -174,7 +185,7 @@ Fetch events
 
 #### Defined in
 
-[src/index.ts:113](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/index.ts#L113)
+[src/index.ts:117](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/index.ts#L117)
 
 ___
 
@@ -196,7 +207,7 @@ Get a NDKUser object
 
 #### Defined in
 
-[src/index.ts:75](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/index.ts#L75)
+[src/index.ts:79](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/index.ts#L79)
 
 ___
 
@@ -216,7 +227,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:91](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/index.ts#L91)
+[src/index.ts:95](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/index.ts#L95)
 
 ___
 
@@ -237,4 +248,4 @@ ___
 
 #### Defined in
 
-[src/index.ts:81](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/index.ts#L81)
+[src/index.ts:85](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/index.ts#L85)

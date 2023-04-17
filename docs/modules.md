@@ -17,6 +17,7 @@
 - [NDKPrivateKeySigner](classes/NDKPrivateKeySigner.md)
 - [NDKRelay](classes/NDKRelay.md)
 - [NDKRelaySet](classes/NDKRelaySet.md)
+- [NDKSubscriptionGroup](classes/NDKSubscriptionGroup.md)
 - [NDKUser](classes/NDKUser.md)
 - [default](classes/default.md)
 
@@ -45,6 +46,8 @@
 
 ### Functions
 
+- [mergeEvent](modules.md#mergeevent)
+- [mergeFilters](modules.md#mergefilters)
 - [zapInvoiceFromEvent](modules.md#zapinvoicefromevent)
 
 ## Type Aliases
@@ -55,7 +58,7 @@
 
 #### Defined in
 
-[src/subscription/index.ts:10](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/subscription/index.ts#L10)
+[src/subscription/index.ts:10](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/subscription/index.ts#L10)
 
 ## Variables
 
@@ -67,9 +70,53 @@ Default subscription options.
 
 #### Defined in
 
-[src/subscription/index.ts:50](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/subscription/index.ts#L50)
+[src/subscription/index.ts:50](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/subscription/index.ts#L50)
 
 ## Functions
+
+### mergeEvent
+
+▸ **mergeEvent**(`event`, `profile`): [`NDKUserProfile`](interfaces/NDKUserProfile.md)
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `event` | [`NDKEvent`](classes/NDKEvent.md) |
+| `profile` | [`NDKUserProfile`](interfaces/NDKUserProfile.md) |
+
+#### Returns
+
+[`NDKUserProfile`](interfaces/NDKUserProfile.md)
+
+#### Defined in
+
+[src/user/profile.ts:16](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/user/profile.ts#L16)
+
+___
+
+### mergeFilters
+
+▸ **mergeFilters**(`filters`): [`NDKFilter`](modules.md#ndkfilter)
+
+Go through all the passed filters, which should be
+relatively similar, and merge them.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `filters` | `Filter`[] |
+
+#### Returns
+
+[`NDKFilter`](modules.md#ndkfilter)
+
+#### Defined in
+
+[src/subscription/index.ts:348](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/subscription/index.ts#L348)
+
+___
 
 ### zapInvoiceFromEvent
 
@@ -87,4 +134,4 @@ Default subscription options.
 
 #### Defined in
 
-[src/zap/invoice.ts:14](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/zap/invoice.ts#L14)
+[src/zap/invoice.ts:14](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/zap/invoice.ts#L14)

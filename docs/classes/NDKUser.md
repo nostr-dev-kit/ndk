@@ -39,7 +39,7 @@ Represents a pubkey.
 
 #### Defined in
 
-[src/user/index.ts:23](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/user/index.ts#L23)
+[src/user/index.ts:24](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/user/index.ts#L24)
 
 ## Properties
 
@@ -65,7 +65,7 @@ Returns a set of users that this user follows.
 
 #### Defined in
 
-[src/user/index.ts:79](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/user/index.ts#L79)
+[src/user/index.ts:80](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/user/index.ts#L80)
 
 ___
 
@@ -75,7 +75,7 @@ ___
 
 #### Defined in
 
-[src/user/index.ts:18](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/user/index.ts#L18)
+[src/user/index.ts:19](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/user/index.ts#L19)
 
 ___
 
@@ -85,7 +85,7 @@ ___
 
 #### Defined in
 
-[src/user/index.ts:20](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/user/index.ts#L20)
+[src/user/index.ts:21](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/user/index.ts#L21)
 
 ___
 
@@ -95,7 +95,7 @@ ___
 
 #### Defined in
 
-[src/user/index.ts:19](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/user/index.ts#L19)
+[src/user/index.ts:20](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/user/index.ts#L20)
 
 ___
 
@@ -105,13 +105,19 @@ ___
 
 #### Defined in
 
-[src/user/index.ts:21](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/user/index.ts#L21)
+[src/user/index.ts:22](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/user/index.ts#L22)
 
 ## Methods
 
 ### fetchProfile
 
-▸ **fetchProfile**(): `Promise`<``null`` \| `Set`<[`NDKEvent`](NDKEvent.md)\>\>
+▸ **fetchProfile**(`opts?`): `Promise`<``null`` \| `Set`<[`NDKEvent`](NDKEvent.md)\>\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `opts?` | [`NDKFilterOptions`](../interfaces/NDKFilterOptions.md) |
 
 #### Returns
 
@@ -119,7 +125,7 @@ ___
 
 #### Defined in
 
-[src/user/index.ts:50](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/user/index.ts#L50)
+[src/user/index.ts:51](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/user/index.ts#L51)
 
 ___
 
@@ -133,7 +139,7 @@ ___
 
 #### Defined in
 
-[src/user/index.ts:46](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/user/index.ts#L46)
+[src/user/index.ts:47](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/user/index.ts#L47)
 
 ___
 
@@ -147,7 +153,7 @@ ___
 
 #### Defined in
 
-[src/user/index.ts:81](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/user/index.ts#L81)
+[src/user/index.ts:82](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/user/index.ts#L82)
 
 ___
 
@@ -167,4 +173,4 @@ ___
 
 #### Defined in
 
-[src/user/index.ts:35](https://github.com/nostr-dev-kit/ndk/blob/bdedd0e/src/user/index.ts#L35)
+[src/user/index.ts:36](https://github.com/nostr-dev-kit/ndk/blob/2bb66fa/src/user/index.ts#L36)

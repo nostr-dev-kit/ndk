@@ -3,6 +3,7 @@ import Event from '../events/index.js';
 import {NDKUserProfile, mergeEvent} from './profile';
 import NDK from '../index.js';
 import { follows } from './follows.js';
+import { NDKFilterOptions } from '../subscription/index.js';
 
 export interface NDKUserParams {
     npub?: string;
@@ -47,7 +48,7 @@ export default class NDKUser {
         return nip19.decode(this.npub).data as string;
     }
 
-    public async fetchProfile(): Promise<Set<Event> | null> {
+    public async fetchProfile(opts?: NDKFilterOptions): Promise<Set<Event> | null> {
         if (!this.ndk) throw new Error('NDK not set');
 
         if (!this.profile) this.profile = {};
@@ -55,7 +56,7 @@ export default class NDKUser {
         const setMetadataEvents = await this.ndk.fetchEvents({
             kinds: [0],
             authors: [this.hexpubkey()],
-        });
+        }, opts);
 
         if (setMetadataEvents) {
             // sort setMetadataEvents by created_at in ascending order

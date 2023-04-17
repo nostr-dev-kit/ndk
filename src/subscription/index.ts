@@ -97,16 +97,14 @@ export class NDKSubscription extends EventEmitter {
         this.subId = subId || Math.floor(Math.random() * 9999991000).toString(); // TODO: use UUID
         this.filter = filter;
         this.relaySet = relaySet;
-        this.opts = opts || defaultOpts;
+        this.opts = { ...defaultOpts, ...(opts||{}) };
         this.relaySubscriptions = new Map<NDKRelay, Sub>();
         this.debug = ndk.debug.extend('subscription');
 
         // validate that the caller is not expecting a persistent
-        // subscription is using an option that might only hit the cache
-        if (
-            opts?.cacheUsage === NDKSubscriptionCacheUsage.ONLY_CACHE ||
-            opts?.cacheUsage === NDKSubscriptionCacheUsage.CACHE_FIRST
-        ) {
+        // subscription while using an option that will only hit the cache
+
+        if (this.opts.cacheUsage === NDKSubscriptionCacheUsage.ONLY_CACHE && !this.opts.closeOnEose) {
             throw new Error(
                 'Cannot use cache-only options with a persistent subscription'
             );
@@ -124,13 +122,12 @@ export class NDKSubscription extends EventEmitter {
         }
 
         // Check if there is a kind and no time-based filters
-        if (
-            (this.filter.kinds?.length||0) > 0 &&
-            !this.filter.since &&
-            !this.filter.until
-        ) {
+        const hasKind = (this.filter.kinds?.length||0) > 0;
+        const noTimeConstraints = (!this.filter.since && !this.filter.until);
+        const noLimit = !this.filter.limit;
+
+        if (hasKind && noTimeConstraints && noLimit) {
             const id = this.filter.kinds!.join(',');
-            this.debug(`groupable ID: ${id}`);
             return id;
         }
 
@@ -278,4 +275,92 @@ export class NDKSubscription extends EventEmitter {
             }, 500);
         }
     }
+}
+
+/**
+ * Represents a group of subscriptions.
+ *
+ * Events emitted from the group will be emitted from each subscription.
+ */
+export class NDKSubscriptionGroup extends NDKSubscription {
+    private subscriptions: NDKSubscription[];
+
+    constructor(
+        ndk: NDK,
+        subscriptions: NDKSubscription[]
+    ) {
+        const debug = ndk.debug.extend('subscription-group');
+
+        const filters = mergeFilters(subscriptions.map(s => s.filter));
+
+        super(
+            ndk,
+            filters,
+            subscriptions[0].opts,    // TODO: This should be merged
+            subscriptions[0].relaySet // TODO: This should be merged
+        );
+
+        this.subscriptions = subscriptions;
+
+        debug('merged filters', {
+            count: subscriptions.length,
+            mergedFilters: this.filter
+        });
+
+        // forward events to each subscription
+        // TODO: This functions should only forward events to the
+        // specific subscription that it is for.
+        this.on('event', this.forwardEvent);
+        this.on('event:dup', this.forwardEventDup);
+        this.on('eose', this.forwardEose);
+        this.on('close', this.forwardClose);
+    }
+
+    private forwardEvent(event: NDKEvent, relay: NDKRelay) {
+        for (const subscription of this.subscriptions) {
+            subscription.emit('event', event, relay, subscription);
+        }
+    }
+
+    private forwardEventDup(event: NDKEvent, relay: NDKRelay, timeSinceFirstSeen: number) {
+        for (const subscription of this.subscriptions) {
+            subscription.emit('event:dup', event, relay, timeSinceFirstSeen, subscription);
+        }
+    }
+
+    private forwardEose() {
+        for (const subscription of this.subscriptions) {
+            subscription.emit('eose', subscription);
+        }
+    }
+
+    private forwardClose() {
+        for (const subscription of this.subscriptions) {
+            subscription.emit('close', subscription);
+        }
+    }
+}
+
+/**
+ * Go through all the passed filters, which should be
+ * relatively similar, and merge them.
+ */
+export function mergeFilters(filters: NDKFilter[]): NDKFilter {
+    const result: any = {};
+
+    filters.forEach(filter => {
+        Object.entries(filter).forEach(([key, value]) => {
+            if (Array.isArray(value)) {
+                if (result[key] === undefined) {
+                    result[key] = [...value];
+                } else {
+                    result[key] = Array.from(new Set([...result[key], ...value]));
+                }
+            } else {
+                result[key] = value;
+            }
+        });
+    });
+
+    return result as NDKFilter;
 }

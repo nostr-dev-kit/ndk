@@ -17,6 +17,7 @@ export {
     NDKUserProfile,
     NDKCacheAdapter,
 };
+export * from './user/profile.js';
 export * from './subscription/index.js';
 export * from './relay/index.js';
 export * from './relay/sets/index.js';
@@ -42,6 +43,8 @@ export default class NDK extends EventEmitter {
     public cacheAdapter?: NDKCacheAdapter;
     public debug: debug.Debugger;
 
+    public delayedSubscriptions: Map<string, NDKSubscription[]>;
+
     public constructor(opts: NDKConstructorParams = {}) {
         super();
 
@@ -49,6 +52,7 @@ export default class NDK extends EventEmitter {
         this.pool = new NDKPool(opts.explicitRelayUrls||[], this);
         this.signer = opts.signer;
         this.cacheAdapter = opts.cacheAdapter;
+        this.delayedSubscriptions = new Map();
 
         this.debug('initialized', {
             relays: opts.explicitRelayUrls,
@@ -62,7 +66,7 @@ export default class NDK extends EventEmitter {
      * If the timeout is reached, the connection will be continued to be established in the background.
      */
     public async connect(timeoutMs?: number): Promise<void> {
-        this.debug('Connecting to relays');
+        this.debug('Connecting to relays', {timeoutMs});
         return this.pool.connect(timeoutMs);
     }
 

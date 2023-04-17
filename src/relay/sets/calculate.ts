@@ -17,7 +17,7 @@ export function calculateRelaySetFromEvent(ndk: NDK, event: Event): NDKRelaySet 
 
     ndk.pool?.relays.forEach(relay => relays.add(relay));
 
-    return new NDKRelaySet(relays, ndk.debug);
+    return new NDKRelaySet(relays, ndk);
 }
 
 /**
@@ -36,11 +36,11 @@ export function calculateRelaySetFromFilter(
         if (!relay.complaining) {
             relays.add(relay);
         } else {
-            console.log(`Relay ${relay.url} is complaining, not adding to set`);
+            ndk.debug(`Relay ${relay.url} is complaining, not adding to set`);
         }
     });
 
-    return new NDKRelaySet(relays, ndk.debug);
+    return new NDKRelaySet(relays, ndk);
 }
 
 /**

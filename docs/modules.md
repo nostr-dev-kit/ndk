@@ -58,7 +58,7 @@
 
 #### Defined in
 
-[src/subscription/index.ts:10](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/subscription/index.ts#L10)
+[src/subscription/index.ts:10](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/subscription/index.ts#L10)
 
 ## Variables
 
@@ -70,7 +70,7 @@ Default subscription options.
 
 #### Defined in
 
-[src/subscription/index.ts:50](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/subscription/index.ts#L50)
+[src/subscription/index.ts:50](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/subscription/index.ts#L50)
 
 ## Functions
 
@@ -91,7 +91,7 @@ Default subscription options.
 
 #### Defined in
 
-[src/user/profile.ts:16](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/user/profile.ts#L16)
+[src/user/profile.ts:16](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/user/profile.ts#L16)
 
 ___
 
@@ -114,7 +114,7 @@ relatively similar, and merge them.
 
 #### Defined in
 
-[src/subscription/index.ts:384](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/subscription/index.ts#L384)
+[src/subscription/index.ts:382](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/subscription/index.ts#L382)
 
 ___
 
@@ -134,4 +134,4 @@ ___
 
 #### Defined in
 
-[src/zap/invoice.ts:14](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/zap/invoice.ts#L14)
+[src/zap/invoice.ts:14](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/zap/invoice.ts#L14)

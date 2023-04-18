@@ -19,7 +19,7 @@
 
 #### Defined in
 
-[src/subscription/index.ts:32](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/subscription/index.ts#L32)
+[src/subscription/index.ts:32](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/subscription/index.ts#L32)
 
 ___
 
@@ -29,7 +29,7 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:31](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/subscription/index.ts#L31)
+[src/subscription/index.ts:31](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/subscription/index.ts#L31)
 
 ___
 
@@ -42,7 +42,7 @@ delayed to allow similar filters to be grouped together.
 
 #### Defined in
 
-[src/subscription/index.ts:38](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/subscription/index.ts#L38)
+[src/subscription/index.ts:38](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/subscription/index.ts#L38)
 
 ___
 
@@ -58,4 +58,4 @@ The delay to use when grouping subscriptions, specified in milliseconds.
 
 #### Defined in
 
-[src/subscription/index.ts:44](https://github.com/nostr-dev-kit/ndk/blob/701d68d/src/subscription/index.ts#L44)
+[src/subscription/index.ts:44](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/subscription/index.ts#L44)

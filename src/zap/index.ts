@@ -1,13 +1,13 @@
 import NDK from "../index.js";
 import EventEmitter from 'eventemitter3';
-import Event from "../events/index.js";
+import NDKEvent, { NDKTag } from "../events/index.js";
 import type {NostrEvent} from "../events/index.js";
 import User from "../user/index.js";
 import {nip57} from "nostr-tools";
 import {bech32} from '@scure/base';
 interface ZapConstructorParams {
     ndk: NDK;
-    zappedEvent?: Event;
+    zappedEvent?: NDKEvent;
     zappedUser?: User;
 }
 
@@ -15,7 +15,7 @@ type ZapConstructorParamsRequired = Required<Pick<ZapConstructorParams, 'zappedE
 
 export default class Zap extends EventEmitter {
     public ndk?: NDK;
-    public zappedEvent?: Event;
+    public zappedEvent?: NDKEvent;
     public zappedUser: User;
 
     public constructor(args: ZapConstructorParamsRequired) {
@@ -79,7 +79,7 @@ export default class Zap extends EventEmitter {
         return zapEndpointCallback;
     }
 
-    public async createZapRequest(amount: number, comment?: string): Promise<string|null> {
+    public async createZapRequest(amount: number, comment?: string, extraTags?: NDKTag[]): Promise<string|null> {
         const zapEndpoint = await this.getZapEndpoint();
 
         if (!zapEndpoint) {
@@ -96,7 +96,11 @@ export default class Zap extends EventEmitter {
             relays: ['wss://nos.lol', 'wss://relay.nostr.band', 'wss://relay.f7z.io', 'wss://relay.damus.io', 'wss://nostr.mom', 'wss://no.str.cr'], // TODO: fix this
         });
 
-        const zapRequestEvent = new Event(this.ndk, zapRequest as NostrEvent);
+        const zapRequestEvent = new NDKEvent(this.ndk, zapRequest as NostrEvent);
+        if (extraTags) {
+            zapRequestEvent.tags = zapRequestEvent.tags.concat(extraTags);
+        }
+
         await zapRequestEvent.sign();
         const zapRequestNostrEvent = await zapRequestEvent.toNostrEvent();
 

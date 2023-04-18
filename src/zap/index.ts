@@ -90,11 +90,21 @@ export default class Zap extends EventEmitter {
 
         const zapRequest = nip57.makeZapRequest({
             profile: this.zappedUser.hexpubkey(),
-            event: this.zappedEvent?.id,
+
+            // set the event to null since nostr-tools doesn't support nip-33 zaps
+            event: null,
             amount,
             comment: comment || '',
             relays: ['wss://nos.lol', 'wss://relay.nostr.band', 'wss://relay.f7z.io', 'wss://relay.damus.io', 'wss://nostr.mom', 'wss://no.str.cr'], // TODO: fix this
         });
+
+        // add the event tag if it exists; this supports both 'e' and 'a' tags
+        if (this.zappedEvent) {
+            const tag = this.zappedEvent.tagReference();
+            if (tag) {
+                zapRequest.tags.push(tag);
+            }
+        }
 
         const zapRequestEvent = new NDKEvent(this.ndk, zapRequest as NostrEvent);
         if (extraTags) {

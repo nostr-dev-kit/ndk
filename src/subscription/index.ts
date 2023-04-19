@@ -127,7 +127,11 @@ export class NDKSubscription extends EventEmitter {
         const noLimit = !this.filter.limit;
 
         if (hasKind && noTimeConstraints && noLimit) {
-            const id = this.filter.kinds!.join(',');
+            let id = this.filter.kinds!.join(',');
+            const keys = Object.keys(this.filter||{}).sort().join('-');
+            id += `-${keys}`;
+            console.log({ groupableId: id, filter: this.filter});
+
             return id;
         }
 

@@ -50,13 +50,13 @@ export default class NDKEvent extends EventEmitter {
      */
     public rawEvent(): NostrEvent {
         return {
-            created_at: this.created_at!,
+            created_at: this.created_at,
             content: this.content,
             tags: this.tags,
             kind: this.kind,
             pubkey: this.pubkey,
             id: this.id,
-        };
+        } as NostrEvent;
     }
 
     /**
@@ -69,15 +69,9 @@ export default class NDKEvent extends EventEmitter {
             this.pubkey = user?.hexpubkey() || '';
         }
 
-        const nostrEvent: NostrEvent = {
-            created_at: this.created_at || Math.floor(Date.now() / 1000),
-            content: this.content,
-            tags: this.tags,
-            kind: this.kind,
-            pubkey: this.pubkey,
-            id: this.id,
-        };
+        if (!this.created_at) this.created_at = Math.floor(Date.now() / 1000);
 
+        const nostrEvent = this.rawEvent();
         this.generateTags();
 
         if (this.subject) nostrEvent.subject = this.subject;

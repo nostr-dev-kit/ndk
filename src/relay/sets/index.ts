@@ -88,19 +88,26 @@ export class NDKRelaySet {
     }
 
     private executeSubscription(subscription: NDKSubscription): NDKSubscription {
-        // If the relay is connected, send the subscription
-        // If the relay is not connected, wait for it to connect (during the lifetime of the subscription)
-
         this.debug('subscribing', {filter: subscription.filter});
 
-        this.relays.forEach(relay => {
+        for (const relay of this.relays) {
             if (relay.status === NDKRelayStatus.CONNECTED) {
+                // If the relay is already connected, subscribe immediately
                 this.subscribeOnRelay(relay, subscription);
-            // } else {
-            //     relay.on('connect', () => this.subscribeOnRelay(relay, subscription), this.relaysetContext);
-            //     relay.off('connect')
+            } else {
+                // If the relay is not connected, add a one-time listener to wait for the 'connected' event
+                const connectedListener = () => {
+                    this.debug('new relay coming online for active subscription', { relay: relay.url, filter: subscription.filter });
+                    this.subscribeOnRelay(relay, subscription);
+                };
+                relay.once('connect', connectedListener);
+
+                // Add a one-time listener to remove the connectedListener when the subscription stops
+                subscription.once('close', () => {
+                    relay.removeListener('connect', connectedListener);
+                });
             }
-        });
+        }
 
         return subscription;
     }

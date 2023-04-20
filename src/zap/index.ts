@@ -72,7 +72,7 @@ export default class Zap extends EventEmitter {
         const response = await fetch(zapEndpoint);
         const body = await response.json();
 
-        if (body?.allowsNostr && body?.nostrPubkey) {
+        if (body?.allowsNostr && (body?.nostrPubkey || body?.nostrPubKey)) {
             zapEndpointCallback = body.callback;
         }
 

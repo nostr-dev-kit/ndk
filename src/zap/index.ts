@@ -45,7 +45,7 @@ export default class Zap extends EventEmitter {
             }
         }
 
-        if (this.zappedUser) {
+        if (this.zappedUser && !lud06 && !lud16) {
             // check if user has a profile, otherwise request it
             if (!this.zappedUser.profile) {
                 await this.zappedUser.fetchProfile();

@@ -116,7 +116,7 @@ export default class Zap extends EventEmitter {
 
         const response = await fetch(`${zapEndpoint}?` + new URLSearchParams({
                 amount: amount.toString(),
-                nostr: JSON.stringify(zapRequestNostrEvent),
+                nostr: encodeURIComponent(JSON.stringify(zapRequestNostrEvent)),
             })
         );
         const body = await response.json();

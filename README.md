@@ -45,6 +45,7 @@ localStorage.debug = 'ndk:*'
     * Client-side
         - [ ] LocalStorage
         - [ ] IndexDB
+- [~] NIP-04: Encryption support
 - [ ] NIP-26: Event delegation
 - [ ] NIP-41: Relay authentication
 - [x] NIP-57: Zaps

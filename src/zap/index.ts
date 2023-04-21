@@ -106,6 +106,8 @@ export default class Zap extends EventEmitter {
             }
         }
 
+        zapRequest.tags.push(['lnurl', zapEndpoint]);
+
         const zapRequestEvent = new NDKEvent(this.ndk, zapRequest as NostrEvent);
         if (extraTags) {
             zapRequestEvent.tags = zapRequestEvent.tags.concat(extraTags);

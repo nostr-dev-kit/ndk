@@ -52,6 +52,15 @@ export class NDKNip07Signer implements NDKSigner {
         const signedEvent = await window.nostr.signEvent(event);
         return signedEvent.sig;
     }
+
+    public async encrypt(value: string, recipient: NDKUser): Promise<string> {
+        if (!window.nostr) {
+            throw new Error('NIP-07 extension not available');
+        }
+
+        const recipientHexPubKey = recipient.hexpubkey();
+        return window.nostr.nip04.encrypt(value, recipientHexPubKey);
+    }
 }
 
 declare global {
@@ -59,6 +68,9 @@ declare global {
         nostr?: {
             getPublicKey(): Promise<string>;
             signEvent(event: NostrEvent): Promise<{ sig: string }>;
+            nip04: {
+                encrypt(value: string, recipientHexPubKey: string): Promise<string>;
+            }
         };
     }
 }

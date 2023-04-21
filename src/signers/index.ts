@@ -23,4 +23,11 @@ export interface NDKSigner {
      * @returns A promise that resolves to the signature of the signed event.
      */
     sign(event: NostrEvent): Promise<string>;
+
+    /**
+     * Encrypts the given Nostr event for the given recipient.
+     * @param value - The value to be encrypted.
+     * @param recipient - The recipient of the encrypted value.
+     */
+    encrypt(value: string, recipient: NDKUser): Promise<string>;
 }

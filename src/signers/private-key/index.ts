@@ -40,12 +40,21 @@ export class NDKPrivateKeySigner implements NDKSigner {
         return signEvent(event as UnsignedEvent, this.privateKey);
     }
 
-    public async encrypt(value: string, recipient: User): Promise<string> {
+    public async encrypt(recipient: User, value: string): Promise<string> {
         if (!this.privateKey) {
             throw Error('Attempted to encrypt without a private key');
         }
 
         const recipientHexPubKey = recipient.hexpubkey();
-        return await nip04.encrypt(this.privateKey, value, recipientHexPubKey);
+        return await nip04.encrypt(this.privateKey, recipientHexPubKey, value);
+    }
+
+    public async decrypt(sender: User, value: string): Promise<string> {
+        if (!this.privateKey) {
+            throw Error('Attempted to decrypt without a private key');
+        }
+
+        const senderHexPubKey = sender.hexpubkey();
+        return await nip04.decrypt(this.privateKey, senderHexPubKey, value);
     }
 }

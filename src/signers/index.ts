@@ -29,5 +29,11 @@ export interface NDKSigner {
      * @param value - The value to be encrypted.
      * @param recipient - The recipient of the encrypted value.
      */
-    encrypt(value: string, recipient: NDKUser): Promise<string>;
+    encrypt(recipient: NDKUser, value: string): Promise<string>;
+
+    /**
+     * Decrypts the given value.
+     * @param value
+     */
+    decrypt(sender: NDKUser, value: string): Promise<string>;
 }

@@ -57,6 +57,7 @@ export default class NDKEvent extends EventEmitter {
             kind: this.kind,
             pubkey: this.pubkey,
             id: this.id,
+            sig: this.sig,
         } as NostrEvent;
     }
 
@@ -91,6 +92,7 @@ export default class NDKEvent extends EventEmitter {
     public isParamReplaceable = isParamReplaceable.bind(this);
     public encode = encode.bind(this);
     public encrypt = encrypt.bind(this);
+    public decrypt = decrypt.bind(this);
 
     /**
      * Get all tags with the given name

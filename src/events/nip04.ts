@@ -13,5 +13,19 @@ export async function encrypt(this: NDKEvent, recipient: NDKUser, signer?: NDKSi
         signer = this.ndk.signer!;
     }
 
-    this.content = await signer.encrypt(this.content, recipient);
+    this.content = await signer.encrypt(recipient, this.content);
+}
+
+export async function decrypt(this: NDKEvent, sender: NDKUser, signer?: NDKSigner) {
+    if (!signer) {
+        if (!this.ndk) {
+            throw new Error('No signer available');
+        }
+
+        await this.ndk.assertSigner();
+
+        signer = this.ndk.signer!;
+    }
+
+    this.content = await signer.decrypt(sender, this.content);
 }

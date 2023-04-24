@@ -6,7 +6,7 @@ import { generateContentTags } from "./content-tagger.js";
 import { NDKKind } from "./kind.js";
 import { isParamReplaceable, isReplaceable } from "./kind.js";
 import { encode } from "./nip19.js";
-import { encrypt } from "./nip04.js";
+import { encrypt, decrypt } from "./nip04.js";
 
 export type NDKEventId = string;
 export type NDKTag = string[];

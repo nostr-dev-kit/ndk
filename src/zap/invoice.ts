@@ -44,7 +44,11 @@ export function zapInvoiceFromEvent(event: NDKEvent): NDKZapInvoice | null {
     const sender = zapRequest.pubkey;
     const recipientTag = event.getMatchingTags('p')[0];
     const recipient = recipientTag[1];
-    const zappedEvent = event.getMatchingTags('e')[0];
+    let zappedEvent = event.getMatchingTags('e')[0];
+    if (!zappedEvent) {
+        zappedEvent = event.getMatchingTags('a')[0];
+    }
+
     const zappedEventId = zappedEvent ? zappedEvent[1] : undefined;
 
     // ignore self-zaps (TODO: configurable?)

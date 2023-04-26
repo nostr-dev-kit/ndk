@@ -130,7 +130,6 @@ export class NDKSubscription extends EventEmitter {
             let id = this.filter.kinds!.join(',');
             const keys = Object.keys(this.filter||{}).sort().join('-');
             id += `-${keys}`;
-            console.log({ groupableId: id, filter: this.filter});
 
             return id;
         }

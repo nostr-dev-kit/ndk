@@ -79,10 +79,11 @@ export default class NDKEvent extends EventEmitter {
         if (this.subject) nostrEvent.subject = this.subject;
 
         try {
-            nostrEvent.id = getEventHash(nostrEvent as UnsignedEvent);
+            this.id = getEventHash(nostrEvent as UnsignedEvent);
             // eslint-disable-next-line no-empty
         } catch (e) {}
 
+        if (this.id) nostrEvent.id = this.id;
         if (this.sig) nostrEvent.sig = this.sig;
 
         return nostrEvent;

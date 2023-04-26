@@ -106,10 +106,20 @@ export default class NDKEvent extends EventEmitter {
         return await this.toNostrEvent();
     }
 
+    /**
+     * Sign the event if a signer is present.
+     *
+     * It will generate tags.
+     * Repleacable events will have their created_at field set to the current time.
+     */
     public async sign() {
         this.ndk?.assertSigner();
 
         await this.generateTags();
+
+        if (this.isReplaceable()) {
+            this.created_at = Math.floor(Date.now() / 1000);
+        }
 
         const nostrEvent = await this.toNostrEvent();
         this.sig = await this.ndk?.signer?.sign(nostrEvent);

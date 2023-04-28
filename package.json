@@ -25,6 +25,7 @@
     "clean": "rm -rf lib docs",
     "test": "jest",
     "lint": "eslint src/**/*.ts",
+    "format": "prettier --write \"**/*.{js,jsx,json,yml,yaml,css,ts,tsx,md,mdx}\"",
     "compile": "tsc",
     "prepare": "pnpm build",
     "pretest": "pnpm compile",

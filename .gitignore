@@ -4,7 +4,6 @@
 **/lib
 **/.vscode
 justfile
-pnpm-lock.yaml
 **/*.js
 **/*.d.ts
 **/*.d.ts.map

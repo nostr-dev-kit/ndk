@@ -19,6 +19,7 @@
     "lib",
     "README.md"
   ],
+  "packageManager": "pnpm@8.3.1",
   "scripts": {
     "dev": "node tools/cleanup esm && tsc -w -p config/tsconfig.esm.json",
     "build": "rm -rf lib && node build.js && tsc",

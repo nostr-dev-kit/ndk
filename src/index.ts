@@ -17,6 +17,8 @@ export {
     NDKUserProfile,
     NDKCacheAdapter,
 };
+export * from './events/index.js';
+export * from './signers/index.js';
 export * from './user/profile.js';
 export * from './subscription/index.js';
 export * from './relay/index.js';

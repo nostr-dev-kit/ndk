@@ -7,6 +7,7 @@ import { NDKKind } from "./kind.js";
 import { isParamReplaceable, isReplaceable } from "./kind.js";
 import { encode } from "./nip19.js";
 import { encrypt, decrypt } from "./nip04.js";
+import { NDKSigner } from "../signers/index.js";
 
 export type NDKEventId = string;
 export type NDKTag = string[];
@@ -112,8 +113,8 @@ export default class NDKEvent extends EventEmitter {
      * It will generate tags.
      * Repleacable events will have their created_at field set to the current time.
      */
-    public async sign() {
-        this.ndk?.assertSigner();
+    public async sign(signer?: NDKSigner) {
+        signer || this.ndk?.assertSigner();
 
         await this.generateTags();
 
@@ -122,7 +123,8 @@ export default class NDKEvent extends EventEmitter {
         }
 
         const nostrEvent = await this.toNostrEvent();
-        this.sig = await this.ndk?.signer?.sign(nostrEvent);
+        const _signer = signer || this.ndk?.signer;
+        this.sig = await _signer!.sign(nostrEvent);
     }
 
     public async publish() : Promise<void> {

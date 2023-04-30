@@ -59,7 +59,7 @@ localStorage.debug = 'ndk:*'
     - [x] Private key
     - [x] NIP-07
     - [ ] NIP-26
-    - [ ] NIP-46
+    - [x] NIP-46
 - Relay discovery
     - [ ] Gossip-model (NIP-65)
     - [ ] Implicit relays discovery following pubkey usage

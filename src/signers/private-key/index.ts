@@ -2,16 +2,16 @@ import { signEvent, generatePrivateKey, getPublicKey, nip04 } from 'nostr-tools'
 import type { UnsignedEvent } from 'nostr-tools';
 import type { NostrEvent } from '../../events/index.js';
 import { NDKSigner } from '../index.js';
-import User from '../../user';
+import NDKUser from '../../user';
 
 export class NDKPrivateKeySigner implements NDKSigner {
-    private _user: User | undefined;
+    private _user: NDKUser | undefined;
     privateKey?: string;
 
     public constructor(privateKey?: string) {
         if (privateKey) {
             this.privateKey = privateKey;
-            this._user = new User({ hexpubkey: getPublicKey(this.privateKey) });
+            this._user = new NDKUser({ hexpubkey: getPublicKey(this.privateKey) });
         }
     }
 
@@ -20,16 +20,16 @@ export class NDKPrivateKeySigner implements NDKSigner {
         return new NDKPrivateKeySigner(privateKey);
     }
 
-    public async blockUntilReady(): Promise<User> {
+    public async blockUntilReady(): Promise<NDKUser> {
         if (!this._user) {
-        throw new Error('User not initialized');
+        throw new Error('NDKUser not initialized');
         }
         return this._user;
     }
 
-    public async user(): Promise<User> {
+    public async user(): Promise<NDKUser> {
         await this.blockUntilReady();
-        return this._user as User;
+        return this._user as NDKUser;
     }
 
     public async sign(event: NostrEvent): Promise<string> {
@@ -40,7 +40,7 @@ export class NDKPrivateKeySigner implements NDKSigner {
         return signEvent(event as UnsignedEvent, this.privateKey);
     }
 
-    public async encrypt(recipient: User, value: string): Promise<string> {
+    public async encrypt(recipient: NDKUser, value: string): Promise<string> {
         if (!this.privateKey) {
             throw Error('Attempted to encrypt without a private key');
         }
@@ -49,7 +49,7 @@ export class NDKPrivateKeySigner implements NDKSigner {
         return await nip04.encrypt(this.privateKey, recipientHexPubKey, value);
     }
 
-    public async decrypt(sender: User, value: string): Promise<string> {
+    public async decrypt(sender: NDKUser, value: string): Promise<string> {
         if (!this.privateKey) {
             throw Error('Attempted to decrypt without a private key');
         }

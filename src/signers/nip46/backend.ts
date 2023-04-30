@@ -1,7 +1,7 @@
 import NDK, { NDKEvent, NDKPrivateKeySigner, NDKUser } from "../../index.js";
 import { NDKNostrRpc } from "./rpc.js";
 
-export type Nip46PermitCallback = (pubkey: string, method: string, param?: any) => boolean;
+export type Nip46PermitCallback = (pubkey: string, method: string, param?: any) => Promise<boolean>;
 
 /**
  * This class implements a NIP-46 backend, meaning that it will hold a private key
@@ -48,34 +48,64 @@ export class NDKNip46Backend {
     private async handleIncomingEvent(event: NDKEvent) {
         const { id, method, params } = await this.rpc.parseEvent(event) as any;
         const remotePubkey = event.pubkey;
+        let response: string | undefined;
 
         this.debug('incoming event', {id, method, params});
 
         switch (method) {
             case 'connect':
-                this.handleConnect(id, params);
+                response = await this.handleConnect(id, params);
                 break;
             case 'sign_event':
-                this.handleSignEvent(id, remotePubkey, params);
+                response = await this.handleSignEvent(id, remotePubkey, params);
+                break;
+            case 'publish_event':
+                response = await this.handlePublishEvent(id, remotePubkey, params);
+                break;
+            case 'get_public_key':
+                response = await this.handleGetPublicKey();
+                break;
+            case 'describe':
+                response = await this.handleDescribe();
                 break;
             default:
                 this.debug('unsupported method', {method, params});
                 break;
         }
+
+        if (response) {
+            this.rpc.sendResponse(id, remotePubkey, response);
+        }
     };
 
-    private handleConnect(id: string, params: string[]) {
+    private async handleDescribe() {
+        return JSON.stringify([
+            'describe',
+            'get_public_key',
+            'sign_event',
+            'publish_event',
+            'connect',
+            // 'nip04_encrypt',
+            // 'nip04_decrypt'
+        ]);
+    }
+
+    private async handleGetPublicKey() {
+        return this.localUser?.hexpubkey();
+    }
+
+    private async handleConnect(id: string, params: string[]) {
         const [ pubkey ] = params;
 
         this.debug(`connection request from ${pubkey}`);
 
-        if (this.pubkeyAllowed(pubkey, 'connect')) {
+        if (await this.pubkeyAllowed(pubkey, 'connect')) {
             this.debug(`connection request from ${pubkey} allowed`);
-            this.rpc.sendResponse(id, pubkey, 'ack');
+            return 'ack';
         }
     }
 
-    private async handleSignEvent(id: string, remotePubkey: string, params: string[]) {
+    private async signEvent(remotePubkey: string, params: string[]): Promise<NDKEvent|undefined> {
         const [ eventString ] = params;
 
         this.debug(`sign event request from ${remotePubkey}`);
@@ -84,19 +114,35 @@ export class NDKNip46Backend {
 
         this.debug('event to sign', event.rawEvent());
 
-        if (!this.pubkeyAllowed(remotePubkey, 'sign_event', event)) {
+        if (!await this.pubkeyAllowed(remotePubkey, 'sign_event', event)) {
             this.debug(`sign event request from ${remotePubkey} rejected`);
+            return undefined;
         }
 
         await event.sign(this.signer);
-        this.rpc.sendResponse(id, remotePubkey, JSON.stringify(await event.toNostrEvent()));
+    }
+
+    private async handleSignEvent(id: string, remotePubkey: string, params: string[]) {
+        const event = await this.signEvent(remotePubkey, params);
+        if (!event) return undefined;
+
+        return JSON.stringify(await event.toNostrEvent());
+    }
+
+    private async handlePublishEvent(id: string, remotePubkey: string, params: string[]) {
+        const event = await this.signEvent(remotePubkey, params);
+        if (!event) return undefined;
+
+        this.ndk.publish(event);
+
+        return JSON.stringify(await event.toNostrEvent());
     }
 
     /**
      * This method should be overriden by the user to allow or reject incoming
      * connections.
      */
-    private pubkeyAllowed(pubkey: string, method: string, params?: any): boolean {
+    private async pubkeyAllowed(pubkey: string, method: string, params?: any): Promise<boolean> {
         return this.permitCallback(pubkey, method, params);
     }
 }

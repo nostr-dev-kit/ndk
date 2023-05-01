@@ -27,7 +27,7 @@ export * from './signers/index.js';
 export * from './signers/private-key/index.js';
 export * from './signers/nip07/index.js';
 export * from './signers/nip46/index.js';
-export * from './signers/nip46/backend.js';
+export * from './signers/nip46/backend/index.js';
 export {NDKKind} from './events/kind.js';
 export {NDKZapInvoice, zapInvoiceFromEvent} from './zap/invoice.js';
 

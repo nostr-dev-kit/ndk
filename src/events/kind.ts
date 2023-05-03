@@ -32,7 +32,7 @@ export declare enum NDKKind {
 }
 
 export function isReplaceable(this: NDKEvent): boolean {
-    if (!this.kind) throw new Error('Kind not set');
+    if (this.kind === undefined) throw new Error('Kind not set');
     return (
         this.kind >= 10000 &&
         this.kind <= 30000
@@ -40,7 +40,7 @@ export function isReplaceable(this: NDKEvent): boolean {
 }
 
 export function isParamReplaceable(this: NDKEvent): boolean {
-    if (!this.kind) throw new Error('Kind not set');
+    if (this.kind === undefined) throw new Error('Kind not set');
     return (
         this.kind >= 30000 &&
         this.kind <= 40000

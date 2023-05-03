@@ -8,6 +8,16 @@ export type NDKPoolStats = {
     disconnected: number,
     connecting: number,
 };
+
+/**
+ * Handles connections to all relays. A single pool should be used per NDK instance.
+ *
+ * @emit connect - Emitted when all relays in the pool are connected.
+ * @emit notice - Emitted when a relay in the pool sends a notice.
+ * @emit flapping - Emitted when a relay in the pool is flapping.
+ * @emit relay:connect - Emitted when a relay in the pool connects.
+ * @emit relay:disconnect - Emitted when a relay in the pool disconnects.
+ */
 export class NDKPool extends EventEmitter {
     public relays = new Map<string, NDKRelay>();
     private debug: debug.Debugger;
@@ -18,11 +28,21 @@ export class NDKPool extends EventEmitter {
         relayUrls.forEach(relayUrl => {
             const relay = new NDKRelay(relayUrl);
             relay.on('notice', (relay, notice) => this.emit('notice', relay, notice));
-            relay.on('connect', () => this.emit('connect', relay));
-            relay.on('disconnect', () => this.emit('disconnect', relay));
+            relay.on('connect', (r) => this.handleRelayConnect(r));
+            relay.on('disconnect', () => this.emit('relay:disconnect', relay));
             relay.on('flapping', () => this.handleFlapping(relay));
             this.relays.set(relayUrl, relay);
         });
+    }
+
+    private handleRelayConnect(relay: NDKRelay) {
+        this.debug(`Relay ${relay.url} connected`);
+        this.emit('relay:connect', relay);
+
+        // if all relays are connected, emit a 'connect' event
+        if (this.stats().connected === this.relays.size) {
+            this.emit('connect');
+        }
     }
 
     /**

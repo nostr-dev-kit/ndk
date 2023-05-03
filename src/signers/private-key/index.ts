@@ -22,7 +22,7 @@ export class NDKPrivateKeySigner implements NDKSigner {
 
     public async blockUntilReady(): Promise<NDKUser> {
         if (!this._user) {
-        throw new Error('NDKUser not initialized');
+            throw new Error('NDKUser not initialized');
         }
         return this._user;
     }

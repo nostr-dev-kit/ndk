@@ -21,7 +21,7 @@ The number of times a connection has been attempted.
 
 #### Defined in
 
-[src/relay/index.ts:22](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/relay/index.ts#L22)
+[src/relay/index.ts:22](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/relay/index.ts#L22)
 
 ___
 
@@ -33,7 +33,7 @@ The time the current connection was established in milliseconds.
 
 #### Defined in
 
-[src/relay/index.ts:37](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/relay/index.ts#L37)
+[src/relay/index.ts:37](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/relay/index.ts#L37)
 
 ___
 
@@ -45,7 +45,7 @@ The durations of the last 100 connections in milliseconds.
 
 #### Defined in
 
-[src/relay/index.ts:32](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/relay/index.ts#L32)
+[src/relay/index.ts:32](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/relay/index.ts#L32)
 
 ___
 
@@ -57,4 +57,4 @@ The number of times a connection has been successfully established.
 
 #### Defined in
 
-[src/relay/index.ts:27](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/relay/index.ts#L27)
+[src/relay/index.ts:27](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/relay/index.ts#L27)

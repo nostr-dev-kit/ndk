@@ -1,8 +1,9 @@
-[NDK](../README.md) / [Exports](../modules.md) / NDKPrivateKeySigner
+[NDK](../README.md) / [Exports](../modules.md) / NDKNip46Signer
 
-# Class: NDKPrivateKeySigner
+# Class: NDKNip46Signer
 
-Interface for NDK signers.
+This NDKSigner implements NIP-46, which allows remote signing of events.
+This class is meant to be used client-side, paired with the NDKNip46Backend or a NIP-46 backend (like Nostr-Connect)
 
 ## Implements
 
@@ -12,46 +13,58 @@ Interface for NDK signers.
 
 ### Constructors
 
-- [constructor](NDKPrivateKeySigner.md#constructor)
+- [constructor](NDKNip46Signer.md#constructor)
 
 ### Properties
 
-- [privateKey](NDKPrivateKeySigner.md#privatekey)
+- [localSigner](NDKNip46Signer.md#localsigner)
+- [remotePubkey](NDKNip46Signer.md#remotepubkey)
 
 ### Methods
 
-- [blockUntilReady](NDKPrivateKeySigner.md#blockuntilready)
-- [decrypt](NDKPrivateKeySigner.md#decrypt)
-- [encrypt](NDKPrivateKeySigner.md#encrypt)
-- [sign](NDKPrivateKeySigner.md#sign)
-- [user](NDKPrivateKeySigner.md#user)
-- [generate](NDKPrivateKeySigner.md#generate)
+- [blockUntilReady](NDKNip46Signer.md#blockuntilready)
+- [decrypt](NDKNip46Signer.md#decrypt)
+- [encrypt](NDKNip46Signer.md#encrypt)
+- [sign](NDKNip46Signer.md#sign)
+- [user](NDKNip46Signer.md#user)
 
 ## Constructors
 
 ### constructor
 
-• **new NDKPrivateKeySigner**(`privateKey?`)
+• **new NDKNip46Signer**(`ndk`, `remotePubkey`, `localSigner?`)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `privateKey?` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `ndk` | [`default`](default.md) | The NDK instance to use |
+| `remotePubkey` | `string` | The public key of the npub that wants to be published as |
+| `localSigner?` | [`NDKSigner`](../interfaces/NDKSigner.md) | The signer that will be used to request events to be signed |
 
 #### Defined in
 
-[src/signers/private-key/index.ts:11](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/private-key/index.ts#L11)
+[src/signers/nip46/index.ts:21](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/nip46/index.ts#L21)
 
 ## Properties
 
-### privateKey
+### localSigner
 
-• `Optional` **privateKey**: `string`
+• **localSigner**: [`NDKSigner`](../interfaces/NDKSigner.md)
 
 #### Defined in
 
-[src/signers/private-key/index.ts:9](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/private-key/index.ts#L9)
+[src/signers/nip46/index.ts:11](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/nip46/index.ts#L11)
+
+___
+
+### remotePubkey
+
+• **remotePubkey**: `string`
+
+#### Defined in
+
+[src/signers/nip46/index.ts:10](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/nip46/index.ts#L10)
 
 ## Methods
 
@@ -73,7 +86,7 @@ A promise that resolves to the NDKUser instance.
 
 #### Defined in
 
-[src/signers/private-key/index.ts:23](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/private-key/index.ts#L23)
+[src/signers/nip46/index.ts:39](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/nip46/index.ts#L39)
 
 ___
 
@@ -100,7 +113,7 @@ Decrypts the given value.
 
 #### Defined in
 
-[src/signers/private-key/index.ts:52](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/private-key/index.ts#L52)
+[src/signers/nip46/index.ts:70](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/nip46/index.ts#L70)
 
 ___
 
@@ -127,7 +140,7 @@ Encrypts the given Nostr event for the given recipient.
 
 #### Defined in
 
-[src/signers/private-key/index.ts:43](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/private-key/index.ts#L43)
+[src/signers/nip46/index.ts:66](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/nip46/index.ts#L66)
 
 ___
 
@@ -155,7 +168,7 @@ A promise that resolves to the signature of the signed event.
 
 #### Defined in
 
-[src/signers/private-key/index.ts:35](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/private-key/index.ts#L35)
+[src/signers/nip46/index.ts:74](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/nip46/index.ts#L74)
 
 ___
 
@@ -177,18 +190,4 @@ A promise that resolves to the NDKUser instance.
 
 #### Defined in
 
-[src/signers/private-key/index.ts:30](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/private-key/index.ts#L30)
-
-___
-
-### generate
-
-▸ `Static` **generate**(): [`NDKPrivateKeySigner`](NDKPrivateKeySigner.md)
-
-#### Returns
-
-[`NDKPrivateKeySigner`](NDKPrivateKeySigner.md)
-
-#### Defined in
-
-[src/signers/private-key/index.ts:18](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/private-key/index.ts#L18)
+[src/signers/nip46/index.ts:35](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/nip46/index.ts#L35)

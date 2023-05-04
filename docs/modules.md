@@ -14,6 +14,8 @@
 
 - [NDKEvent](classes/NDKEvent.md)
 - [NDKNip07Signer](classes/NDKNip07Signer.md)
+- [NDKNip46Backend](classes/NDKNip46Backend.md)
+- [NDKNip46Signer](classes/NDKNip46Signer.md)
 - [NDKPrivateKeySigner](classes/NDKPrivateKeySigner.md)
 - [NDKRelay](classes/NDKRelay.md)
 - [NDKRelaySet](classes/NDKRelaySet.md)
@@ -21,24 +23,26 @@
 - [NDKUser](classes/NDKUser.md)
 - [default](classes/default.md)
 
-### Events
-
-- [NDKSubscription](classes/NDKSubscription.md)
-
 ### Interfaces
 
 - [GetUserParams](interfaces/GetUserParams.md)
+- [IEventHandlingStrategy](interfaces/IEventHandlingStrategy.md)
 - [NDKCacheAdapter](interfaces/NDKCacheAdapter.md)
 - [NDKConstructorParams](interfaces/NDKConstructorParams.md)
 - [NDKFilterOptions](interfaces/NDKFilterOptions.md)
 - [NDKRelayConnectionStats](interfaces/NDKRelayConnectionStats.md)
+- [NDKSigner](interfaces/NDKSigner.md)
 - [NDKSubscriptionOptions](interfaces/NDKSubscriptionOptions.md)
 - [NDKUserProfile](interfaces/NDKUserProfile.md)
 - [NDKZapInvoice](interfaces/NDKZapInvoice.md)
 
 ### Type Aliases
 
+- [NDKEventId](modules.md#ndkeventid)
 - [NDKFilter](modules.md#ndkfilter)
+- [NDKTag](modules.md#ndktag)
+- [Nip46PermitCallback](modules.md#nip46permitcallback)
+- [NostrEvent](modules.md#nostrevent)
 
 ### Variables
 
@@ -50,7 +54,21 @@
 - [mergeFilters](modules.md#mergefilters)
 - [zapInvoiceFromEvent](modules.md#zapinvoicefromevent)
 
+### Events
+
+- [NDKSubscription](classes/NDKSubscription.md)
+
 ## Type Aliases
+
+### NDKEventId
+
+Ƭ **NDKEventId**: `string`
+
+#### Defined in
+
+[src/events/index.ts:12](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/events/index.ts#L12)
+
+___
 
 ### NDKFilter
 
@@ -58,7 +76,66 @@
 
 #### Defined in
 
-[src/subscription/index.ts:10](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/subscription/index.ts#L10)
+[src/subscription/index.ts:10](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/subscription/index.ts#L10)
+
+___
+
+### NDKTag
+
+Ƭ **NDKTag**: `string`[]
+
+#### Defined in
+
+[src/events/index.ts:13](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/events/index.ts#L13)
+
+___
+
+### Nip46PermitCallback
+
+Ƭ **Nip46PermitCallback**: (`pubkey`: `string`, `method`: `string`, `params?`: `any`) => `Promise`<`boolean`\>
+
+#### Type declaration
+
+▸ (`pubkey`, `method`, `params?`): `Promise`<`boolean`\>
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `pubkey` | `string` |
+| `method` | `string` |
+| `params?` | `any` |
+
+##### Returns
+
+`Promise`<`boolean`\>
+
+#### Defined in
+
+[src/signers/nip46/backend/index.ts:8](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/nip46/backend/index.ts#L8)
+
+___
+
+### NostrEvent
+
+Ƭ **NostrEvent**: `Object`
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `content` | `string` |
+| `created_at` | `number` |
+| `id?` | `string` |
+| `kind?` | [`NDKKind`](enums/NDKKind.md) \| `number` |
+| `pubkey` | `string` |
+| `sig?` | `string` |
+| `subject?` | `string` |
+| `tags` | [`NDKTag`](modules.md#ndktag)[] |
+
+#### Defined in
+
+[src/events/index.ts:15](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/events/index.ts#L15)
 
 ## Variables
 
@@ -70,7 +147,7 @@ Default subscription options.
 
 #### Defined in
 
-[src/subscription/index.ts:50](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/subscription/index.ts#L50)
+[src/subscription/index.ts:50](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/subscription/index.ts#L50)
 
 ## Functions
 
@@ -91,7 +168,7 @@ Default subscription options.
 
 #### Defined in
 
-[src/user/profile.ts:16](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/user/profile.ts#L16)
+[src/user/profile.ts:16](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/user/profile.ts#L16)
 
 ___
 
@@ -114,7 +191,7 @@ relatively similar, and merge them.
 
 #### Defined in
 
-[src/subscription/index.ts:382](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/subscription/index.ts#L382)
+[src/subscription/index.ts:385](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/subscription/index.ts#L385)
 
 ___
 
@@ -134,4 +211,4 @@ ___
 
 #### Defined in
 
-[src/zap/invoice.ts:14](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/zap/invoice.ts#L14)
+[src/zap/invoice.ts:14](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/zap/invoice.ts#L14)

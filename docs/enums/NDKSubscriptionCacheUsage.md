@@ -19,7 +19,7 @@
 
 #### Defined in
 
-[src/subscription/index.ts:21](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/subscription/index.ts#L21)
+[src/subscription/index.ts:21](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/subscription/index.ts#L21)
 
 ___
 
@@ -29,7 +29,7 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:18](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/subscription/index.ts#L18)
+[src/subscription/index.ts:18](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/subscription/index.ts#L18)
 
 ___
 
@@ -39,7 +39,7 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:27](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/subscription/index.ts#L27)
+[src/subscription/index.ts:27](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/subscription/index.ts#L27)
 
 ___
 
@@ -49,4 +49,4 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:24](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/subscription/index.ts#L24)
+[src/subscription/index.ts:24](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/subscription/index.ts#L24)

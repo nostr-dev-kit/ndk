@@ -18,7 +18,9 @@
 
 - [content](NDKEvent.md#content)
 - [created\_at](NDKEvent.md#created_at)
+- [decrypt](NDKEvent.md#decrypt)
 - [encode](NDKEvent.md#encode)
+- [encrypt](NDKEvent.md#encrypt)
 - [id](NDKEvent.md#id)
 - [isParamReplaceable](NDKEvent.md#isparamreplaceable)
 - [isReplaceable](NDKEvent.md#isreplaceable)
@@ -53,7 +55,7 @@
 | Name | Type |
 | :------ | :------ |
 | `ndk?` | [`default`](default.md) |
-| `event?` | `NostrEvent` |
+| `event?` | [`NostrEvent`](../modules.md#nostrevent) |
 
 #### Overrides
 
@@ -61,7 +63,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/events/index.ts:35](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/events/index.ts#L35)
+[src/events/index.ts:37](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/events/index.ts#L37)
 
 ## Properties
 
@@ -71,7 +73,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/events/index.ts:27](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/events/index.ts#L27)
+[src/events/index.ts:29](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/events/index.ts#L29)
 
 ___
 
@@ -81,7 +83,31 @@ ___
 
 #### Defined in
 
-[src/events/index.ts:26](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/events/index.ts#L26)
+[src/events/index.ts:28](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/events/index.ts#L28)
+
+___
+
+### decrypt
+
+• **decrypt**: (...`args`: [sender: NDKUser, signer?: NDKSigner]) => `Promise`<`void`\>
+
+#### Type declaration
+
+▸ (`...args`): `Promise`<`void`\>
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `...args` | [sender: NDKUser, signer?: NDKSigner] |
+
+##### Returns
+
+`Promise`<`void`\>
+
+#### Defined in
+
+[src/events/index.ts:97](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/events/index.ts#L97)
 
 ___
 
@@ -105,7 +131,31 @@ ___
 
 #### Defined in
 
-[src/events/index.ts:97](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/events/index.ts#L97)
+[src/events/index.ts:95](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/events/index.ts#L95)
+
+___
+
+### encrypt
+
+• **encrypt**: (...`args`: [recipient: NDKUser, signer?: NDKSigner]) => `Promise`<`void`\>
+
+#### Type declaration
+
+▸ (`...args`): `Promise`<`void`\>
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `...args` | [recipient: NDKUser, signer?: NDKSigner] |
+
+##### Returns
+
+`Promise`<`void`\>
+
+#### Defined in
+
+[src/events/index.ts:96](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/events/index.ts#L96)
 
 ___
 
@@ -115,7 +165,7 @@ ___
 
 #### Defined in
 
-[src/events/index.ts:31](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/events/index.ts#L31)
+[src/events/index.ts:33](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/events/index.ts#L33)
 
 ___
 
@@ -139,7 +189,7 @@ ___
 
 #### Defined in
 
-[src/events/index.ts:96](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/events/index.ts#L96)
+[src/events/index.ts:94](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/events/index.ts#L94)
 
 ___
 
@@ -163,7 +213,7 @@ ___
 
 #### Defined in
 
-[src/events/index.ts:95](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/events/index.ts#L95)
+[src/events/index.ts:93](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/events/index.ts#L93)
 
 ___
 
@@ -173,7 +223,7 @@ ___
 
 #### Defined in
 
-[src/events/index.ts:30](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/events/index.ts#L30)
+[src/events/index.ts:32](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/events/index.ts#L32)
 
 ___
 
@@ -183,7 +233,7 @@ ___
 
 #### Defined in
 
-[src/events/index.ts:25](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/events/index.ts#L25)
+[src/events/index.ts:27](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/events/index.ts#L27)
 
 ___
 
@@ -193,7 +243,7 @@ ___
 
 #### Defined in
 
-[src/events/index.ts:33](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/events/index.ts#L33)
+[src/events/index.ts:35](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/events/index.ts#L35)
 
 ___
 
@@ -203,7 +253,7 @@ ___
 
 #### Defined in
 
-[src/events/index.ts:32](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/events/index.ts#L32)
+[src/events/index.ts:34](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/events/index.ts#L34)
 
 ___
 
@@ -213,23 +263,23 @@ ___
 
 #### Defined in
 
-[src/events/index.ts:28](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/events/index.ts#L28)
+[src/events/index.ts:30](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/events/index.ts#L30)
 
 ___
 
 ### tags
 
-• **tags**: `NDKTag`[] = `[]`
+• **tags**: [`NDKTag`](../modules.md#ndktag)[] = `[]`
 
 #### Defined in
 
-[src/events/index.ts:29](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/events/index.ts#L29)
+[src/events/index.ts:31](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/events/index.ts#L31)
 
 ## Methods
 
 ### getMatchingTags
 
-▸ **getMatchingTags**(`tagName`): `NDKTag`[]
+▸ **getMatchingTags**(`tagName`): [`NDKTag`](../modules.md#ndktag)[]
 
 Get all tags with the given name
 
@@ -241,11 +291,11 @@ Get all tags with the given name
 
 #### Returns
 
-`NDKTag`[]
+[`NDKTag`](../modules.md#ndktag)[]
 
 #### Defined in
 
-[src/events/index.ts:102](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/events/index.ts#L102)
+[src/events/index.ts:102](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/events/index.ts#L102)
 
 ___
 
@@ -259,23 +309,23 @@ ___
 
 #### Defined in
 
-[src/events/index.ts:119](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/events/index.ts#L119)
+[src/events/index.ts:130](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/events/index.ts#L130)
 
 ___
 
 ### rawEvent
 
-▸ **rawEvent**(): `NostrEvent`
+▸ **rawEvent**(): [`NostrEvent`](../modules.md#nostrevent)
 
 Returns the event as is.
 
 #### Returns
 
-`NostrEvent`
+[`NostrEvent`](../modules.md#nostrevent)
 
 #### Defined in
 
-[src/events/index.ts:51](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/events/index.ts#L51)
+[src/events/index.ts:53](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/events/index.ts#L53)
 
 ___
 
@@ -291,13 +341,24 @@ the `d` tag of a parameterized replaceable event
 
 #### Defined in
 
-[src/events/index.ts:147](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/events/index.ts#L147)
+[src/events/index.ts:158](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/events/index.ts#L158)
 
 ___
 
 ### sign
 
-▸ **sign**(): `Promise`<`void`\>
+▸ **sign**(`signer?`): `Promise`<`void`\>
+
+Sign the event if a signer is present.
+
+It will generate tags.
+Repleacable events will have their created_at field set to the current time.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `signer?` | [`NDKSigner`](../interfaces/NDKSigner.md) |
 
 #### Returns
 
@@ -305,7 +366,7 @@ ___
 
 #### Defined in
 
-[src/events/index.ts:110](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/events/index.ts#L110)
+[src/events/index.ts:116](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/events/index.ts#L116)
 
 ___
 
@@ -321,7 +382,7 @@ the id of the event, or if it's a parameterized event, the id of the event with 
 
 #### Defined in
 
-[src/events/index.ts:161](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/events/index.ts#L161)
+[src/events/index.ts:172](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/events/index.ts#L172)
 
 ___
 
@@ -347,13 +408,13 @@ event = new NDKEvent(ndk, { kind: 30000, pubkey: 'pubkey', tags: [ ["d", "d-code
 
 #### Defined in
 
-[src/events/index.ts:181](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/events/index.ts#L181)
+[src/events/index.ts:192](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/events/index.ts#L192)
 
 ___
 
 ### toNostrEvent
 
-▸ **toNostrEvent**(`pubkey?`): `Promise`<`NostrEvent`\>
+▸ **toNostrEvent**(`pubkey?`): `Promise`<[`NostrEvent`](../modules.md#nostrevent)\>
 
 Return a NostrEvent object, trying to fill in missing fields
 when possible.
@@ -366,25 +427,25 @@ when possible.
 
 #### Returns
 
-`Promise`<`NostrEvent`\>
+`Promise`<[`NostrEvent`](../modules.md#nostrevent)\>
 
 #### Defined in
 
-[src/events/index.ts:66](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/events/index.ts#L66)
+[src/events/index.ts:69](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/events/index.ts#L69)
 
 ___
 
 ### toString
 
-▸ **toString**(): `Promise`<`NostrEvent`\>
+▸ **toString**(): `Promise`<[`NostrEvent`](../modules.md#nostrevent)\>
 
 #### Returns
 
-`Promise`<`NostrEvent`\>
+`Promise`<[`NostrEvent`](../modules.md#nostrevent)\>
 
 #### Defined in
 
-[src/events/index.ts:106](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/events/index.ts#L106)
+[src/events/index.ts:106](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/events/index.ts#L106)
 
 ___
 
@@ -400,7 +461,7 @@ Create a zap request for an existing event
 | :------ | :------ | :------ |
 | `amount` | `number` | The amount to zap |
 | `comment?` | `string` | A comment to add to the zap request |
-| `extraTags?` | `NDKTag`[] | Extra tags to add to the zap request |
+| `extraTags?` | [`NDKTag`](../modules.md#ndktag)[] | Extra tags to add to the zap request |
 
 #### Returns
 
@@ -408,4 +469,4 @@ Create a zap request for an existing event
 
 #### Defined in
 
-[src/events/index.ts:197](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/events/index.ts#L197)
+[src/events/index.ts:208](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/events/index.ts#L208)

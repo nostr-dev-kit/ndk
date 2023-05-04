@@ -16,4 +16,4 @@
 
 #### Defined in
 
-[src/subscription/index.ts:13](https://github.com/nostr-dev-kit/ndk/blob/7898849/src/subscription/index.ts#L13)
+[src/subscription/index.ts:13](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/subscription/index.ts#L13)

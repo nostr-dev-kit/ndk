@@ -14,6 +14,21 @@ Besides improving the developer experience, the core goal of NDK is to improve t
 npm add @nostr-dev-kit/ndk
 ```
 
+## Debugging
+
+NDK uses the `debug` package to assist in understanding what's happening behind the hood. If you are building a package
+that runs on the server define the `DEBUG` envionment variable like
+
+```
+export DEBUG='ndk:*'
+```
+
+or in the browser enable it by writing in the DevTools console
+
+```
+localStorage.debug = 'ndk:*'
+```
+
 ## Support
 
 ### NDK NIP-28 group chat
@@ -32,6 +47,7 @@ npm add @nostr-dev-kit/ndk
     * Client-side
         - [ ] LocalStorage
         - [ ] IndexDB
+- [~] NIP-04: Encryption support
 - [ ] NIP-26: Event delegation
 - [ ] NIP-41: Relay authentication
 - [x] NIP-57: Zaps
@@ -39,13 +55,13 @@ npm add @nostr-dev-kit/ndk
     - [x] LUD16
 - [ ] NIP-65: Contacts' Relay list
 - Subscription Management
-    - [ ] Buffered queries
+    - [x] Auto-grouping queries
     - [x] Auto-closing subscriptions
 - Signing Adapters
     - [x] Private key
     - [x] NIP-07
     - [ ] NIP-26
-    - [ ] NIP-46
+    - [x] NIP-46
 - Relay discovery
     - [ ] Gossip-model (NIP-65)
     - [ ] Implicit relays discovery following pubkey usage

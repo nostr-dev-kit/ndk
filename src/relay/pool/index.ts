@@ -25,19 +25,19 @@ export class NDKPool extends EventEmitter {
     public constructor(relayUrls: string[] = [], ndk: NDK) {
         super();
         this.debug = ndk.debug.extend('pool');
-        relayUrls.forEach(relayUrl => {
+        for (const relayUrl of relayUrls) {
             const relay = new NDKRelay(relayUrl);
             relay.on('notice', (relay, notice) => this.emit('notice', relay, notice));
-            relay.on('connect', (r) => this.handleRelayConnect(r));
+            relay.on('connect', () => this.handleRelayConnect(relayUrl));
             relay.on('disconnect', () => this.emit('relay:disconnect', relay));
             relay.on('flapping', () => this.handleFlapping(relay));
             this.relays.set(relayUrl, relay);
-        });
+        }
     }
 
-    private handleRelayConnect(relay: NDKRelay) {
-        this.debug(`Relay ${relay.url} connected`);
-        this.emit('relay:connect', relay);
+    private handleRelayConnect(relayUrl: string) {
+        this.debug(`Relay ${relayUrl} connected`);
+        this.emit('relay:connect', this.relays.get(relayUrl));
 
         // if all relays are connected, emit a 'connect' event
         if (this.stats().connected === this.relays.size) {

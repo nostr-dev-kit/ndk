@@ -3,29 +3,37 @@ import { NDKTag } from './index.js';
 import { EventPointer, ProfilePointer } from 'nostr-tools/lib/nip19';
 
 export function generateContentTags(content: string, tags: NDKTag[] = []): {content: string; tags: NDKTag[]} {
-    const tagRegex = /@(npub|nprofile|note)[a-zA-Z0-9]+/g;
+    const tagRegex = /(@|nostr:)(npub|nprofile|note|nevent)[a-zA-Z0-9]+/g;
 
     content = content.replace(tagRegex, (tag) => {
         try {
-            const {type, data} = nip19.decode(tag.slice(1));
-            const tagIndex = tags.length;
+            const entity = tag.split(/(?<=@|nostr:)/)[1];
+            const {type, data} = nip19.decode(entity);
+            let t: NDKTag;
 
             switch (type) {
                 case 'npub':
-                    tags.push(['p', data as string]);
+                    t = ['p', data as string];
                     break;
                 case 'nprofile':
-                    tags.push(['p', (data as ProfilePointer).pubkey as string]);
+                    t = ['p', (data as ProfilePointer).pubkey as string];
                     break;
                 case 'nevent':
-                    tags.push(['e', (data as EventPointer).id as string]);
+                    t = ['e', (data as EventPointer).id as string];
                     break;
                 case 'note':
-                    tags.push(['e', data as string]);
+                    t = ['e', data as string];
                     break;
+                default:
+                    return tag;
             }
 
-            return `#[${tagIndex}]`;
+            if (!tags.find((t) => t[0] === t[0] && t[1] === t[1])) {
+                tags.push(t);
+            }
+
+            return `nostr:${entity}`;
+
         } catch (error) {
             return tag;
         }

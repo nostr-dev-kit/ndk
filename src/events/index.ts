@@ -15,7 +15,6 @@ export type NDKTag = string[];
 export type NostrEvent = {
     created_at: number;
     content: string;
-    subject?: string;
     tags: NDKTag[];
     kind?: NDKKind | number;
     pubkey: string;
@@ -23,11 +22,19 @@ export type NostrEvent = {
     sig?: string;
 };
 
+type ContentTag = {
+    tags: NDKTag[];
+    content: string;
+}
+
+/**
+ * NDKEvent is the basic building block of NDK; most things
+ * you do with NDK will revolve around writing or consuming NDKEvents.
+ */
 export default class NDKEvent extends EventEmitter {
     public ndk?: NDK;
     public created_at?: number;
     public content = '';
-    public subject: string | undefined;
     public tags: NDKTag[] = [];
     public kind?: NDKKind | number;
     public id = "";
@@ -39,7 +46,6 @@ export default class NDKEvent extends EventEmitter {
         this.ndk = ndk;
         this.created_at = event?.created_at;
         this.content = event?.content || '';
-        this.subject = event?.subject;
         this.tags = event?.tags || [];
         this.id = event?.id || '';
         this.sig = event?.sig;
@@ -64,7 +70,7 @@ export default class NDKEvent extends EventEmitter {
 
     /**
      * Return a NostrEvent object, trying to fill in missing fields
-     * when possible.
+     * when possible, adding tags when necessary.
      */
     async toNostrEvent(pubkey?: string): Promise<NostrEvent> {
         if (!pubkey && this.pubkey === '') {
@@ -75,9 +81,9 @@ export default class NDKEvent extends EventEmitter {
         if (!this.created_at) this.created_at = Math.floor(Date.now() / 1000);
 
         const nostrEvent = this.rawEvent();
-        this.generateTags();
-
-        if (this.subject) nostrEvent.subject = this.subject;
+        const {content, tags} = this.generateTags();
+        nostrEvent.content = content || "";
+        nostrEvent.tags = tags;
 
         try {
             this.id = getEventHash(nostrEvent as UnsignedEvent);
@@ -133,23 +139,25 @@ export default class NDKEvent extends EventEmitter {
         return this.ndk?.publish(this);
     }
 
-    private async generateTags() {
-        // don't autogenerate if there currently are tags
-        if (this.tags.length > 0) {
-            const { content, tags } = generateContentTags(this.content, this.tags);
-            this.content = content;
-            this.tags = tags;
-        }
+    private generateTags(): ContentTag {
+        let tags: NDKTag[] = [];
 
-        // if this is a paramterized repleacable event, check if there's a d tag, if not, generate it
+        // don't autogenerate if there currently are tags
+        const g = generateContentTags(this.content, this.tags);
+        const content = g.content;
+        tags = g.tags;
+
+        // if this is a parameterized replaceable event, check if there's a d tag, if not, generate it
         if (this.kind && this.kind >= 30000 && this.kind <= 40000) {
             const dTag = this.getMatchingTags('d')[0];
             // generate a string of 32 random bytes
             if (!dTag) {
                 const str = [...Array(16)].map(() => Math.random().toString(36)[2]).join('');
-                this.tags.push(['d', str]);
+                tags.push(['d', str]);
             }
         }
+
+        return { content: content || "", tags };
     }
 
     /**

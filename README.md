@@ -83,7 +83,7 @@ import NDK from "@nostr-dev-kit/ndk";
 ndk = new NDK({ explicitRelayUrls: ["wss://a.relay", "wss://another.relay"] });
 ```
 
-Note: In normal client use, it's best practice to instantiate NDK as a singleton class. [See more below](#architecture).
+Note: In normal client use, it's best practice to instantiate NDK as a singleton class. [See more below](#architecture-decisions--suggestions).
 
 ## Connecting
 

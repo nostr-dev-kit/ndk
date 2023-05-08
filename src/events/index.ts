@@ -133,7 +133,6 @@ export default class NDKEvent extends EventEmitter {
         this.sig = await _signer!.sign(nostrEvent);
     }
 
-
     public async publish(relaySet?: NDKRelaySet) : Promise<void> {
         if (!this.sig) await this.sign();
 

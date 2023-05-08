@@ -35,7 +35,7 @@ export {NDKZapInvoice, zapInvoiceFromEvent} from './zap/invoice.js';
 
 export interface NDKConstructorParams {
     explicitRelayUrls?: string[];
-    explicitWriteRelayUrls?: string[];
+    devWriteRelayUrls?: string[];
     signer?: NDKSigner;
     cacheAdapter?: NDKCacheAdapter;
     debug?: debug.Debugger;
@@ -50,6 +50,7 @@ export default class NDK extends EventEmitter {
     public signer?: NDKSigner;
     public cacheAdapter?: NDKCacheAdapter;
     public debug: debug.Debugger;
+    public devWriteRelaySet?: NDKRelaySet;
 
     public delayedSubscriptions: Map<string, NDKSubscription[]>;
 
@@ -62,11 +63,9 @@ export default class NDK extends EventEmitter {
         this.cacheAdapter = opts.cacheAdapter;
         this.delayedSubscriptions = new Map();
 
-        this.debug('initialized', {
-            relays: opts.explicitRelayUrls,
-            signer: opts.signer?.constructor.name || 'none',
-            cacheAdapter: opts.cacheAdapter?.constructor.name || 'none',
-        });
+        if (opts.devWriteRelayUrls) {
+            this.devWriteRelaySet = NDKRelaySet.fromRelayUrls(opts.devWriteRelayUrls, this);
+        }
     }
 
     /**
@@ -103,14 +102,16 @@ export default class NDK extends EventEmitter {
     /**
      * Publish an event
      * @param event event to publish
-     * @param relaySet
      * @returns
      */
     public async publish(
         event: NDKEvent,
         relaySet?: NDKRelaySet
     ): Promise<void> {
-        if (!relaySet) relaySet = calculateRelaySetFromEvent(this, event);
+        if (!relaySet) {
+            // If we have a devWriteRelaySet, use it to publish all events
+            relaySet = this.devWriteRelaySet || calculateRelaySetFromEvent(this, event);
+        }
 
         return relaySet.publish(event);
     }

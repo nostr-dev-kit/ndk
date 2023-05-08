@@ -1,6 +1,6 @@
 import { getEventHash, UnsignedEvent } from "nostr-tools";
 import EventEmitter from "eventemitter3";
-import NDK from "../index.js";
+import NDK, { NDKRelaySet } from "../index.js";
 import Zap from '../zap/index.js';
 import { generateContentTags } from "./content-tagger.js";
 import { NDKKind } from "./kind.js";
@@ -133,10 +133,11 @@ export default class NDKEvent extends EventEmitter {
         this.sig = await _signer!.sign(nostrEvent);
     }
 
-    public async publish() : Promise<void> {
+
+    public async publish(relaySet?: NDKRelaySet) : Promise<void> {
         if (!this.sig) await this.sign();
 
-        return this.ndk?.publish(this);
+        return this.ndk?.publish(this, relaySet);
     }
 
     private generateTags(): ContentTag {

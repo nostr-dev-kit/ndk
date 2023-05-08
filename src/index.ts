@@ -9,6 +9,8 @@ import { calculateRelaySetFromEvent } from './relay/sets/calculate.js';
 import dedupEvent from './events/dedup.js';
 import EventEmitter from 'eventemitter3';
 import debug from 'debug';
+import { NDKRelay } from './relay/index.js';
+import { NDKRelaySet } from './relay/sets/index.js';
 
 export {
     NDKEvent,
@@ -33,6 +35,7 @@ export {NDKZapInvoice, zapInvoiceFromEvent} from './zap/invoice.js';
 
 export interface NDKConstructorParams {
     explicitRelayUrls?: string[];
+    explicitWriteRelayUrls?: string[];
     signer?: NDKSigner;
     cacheAdapter?: NDKCacheAdapter;
     debug?: debug.Debugger;
@@ -97,8 +100,17 @@ export default class NDK extends EventEmitter {
         return subscription;
     }
 
-    public async publish(event: NDKEvent): Promise<void> {
-        const relaySet = calculateRelaySetFromEvent(this, event);
+    /**
+     * Publish an event
+     * @param event event to publish
+     * @param relaySet
+     * @returns
+     */
+    public async publish(
+        event: NDKEvent,
+        relaySet?: NDKRelaySet
+    ): Promise<void> {
+        if (!relaySet) relaySet = calculateRelaySetFromEvent(this, event);
 
         return relaySet.publish(event);
     }

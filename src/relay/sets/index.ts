@@ -23,6 +23,28 @@ export class NDKRelaySet {
         this.debug = ndk.debug.extend('relayset');
     }
 
+    /**
+     * Creates a relay set from a list of relay URLs.
+     *
+     * This is useful for testing in development to pass a local relay
+     * to publish methods.
+     *
+     * @param relayUrls - list of relay URLs to include in this set
+     * @param ndk
+     * @returns NDKRelaySet
+     */
+    static fromRelayUrls(relayUrls: string[], ndk: NDK): NDKRelaySet {
+        const relays = new Set<NDKRelay>();
+        for (const url of relayUrls) {
+            const relay = ndk.pool.relays.get(url);
+            if (relay) {
+                relays.add(relay);
+            }
+        }
+
+        return new NDKRelaySet(new Set(relays), ndk);
+    }
+
     private subscribeOnRelay(relay: NDKRelay, subscription: NDKSubscription) {
         const sub = relay.subscribe(subscription);
         subscription.relaySubscriptions.set(relay, sub);

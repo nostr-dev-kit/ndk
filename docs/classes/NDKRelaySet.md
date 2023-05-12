@@ -24,6 +24,7 @@ Requests to relays should be sent through this interface.
 - [publish](NDKRelaySet.md#publish)
 - [size](NDKRelaySet.md#size)
 - [subscribe](NDKRelaySet.md#subscribe)
+- [fromRelayUrls](NDKRelaySet.md#fromrelayurls)
 
 ## Constructors
 
@@ -40,7 +41,7 @@ Requests to relays should be sent through this interface.
 
 #### Defined in
 
-[src/relay/sets/index.ts:20](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/relay/sets/index.ts#L20)
+[src/relay/sets/index.ts:20](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/relay/sets/index.ts#L20)
 
 ## Properties
 
@@ -50,7 +51,7 @@ Requests to relays should be sent through this interface.
 
 #### Defined in
 
-[src/relay/sets/index.ts:16](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/relay/sets/index.ts#L16)
+[src/relay/sets/index.ts:16](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/relay/sets/index.ts#L16)
 
 ## Methods
 
@@ -66,7 +67,7 @@ Calculates an ID of this specific combination of relays.
 
 #### Defined in
 
-[src/relay/sets/index.ts:34](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/relay/sets/index.ts#L34)
+[src/relay/sets/index.ts:56](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/relay/sets/index.ts#L56)
 
 ___
 
@@ -86,7 +87,7 @@ ___
 
 #### Defined in
 
-[src/relay/sets/index.ts:115](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/relay/sets/index.ts#L115)
+[src/relay/sets/index.ts:137](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/relay/sets/index.ts#L137)
 
 ___
 
@@ -100,7 +101,7 @@ ___
 
 #### Defined in
 
-[src/relay/sets/index.ts:125](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/relay/sets/index.ts#L125)
+[src/relay/sets/index.ts:147](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/relay/sets/index.ts#L147)
 
 ___
 
@@ -122,4 +123,32 @@ Add a subscription to this relay set
 
 #### Defined in
 
-[src/relay/sets/index.ts:43](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/relay/sets/index.ts#L43)
+[src/relay/sets/index.ts:65](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/relay/sets/index.ts#L65)
+
+___
+
+### fromRelayUrls
+
+▸ `Static` **fromRelayUrls**(`relayUrls`, `ndk`): [`NDKRelaySet`](NDKRelaySet.md)
+
+Creates a relay set from a list of relay URLs.
+
+This is useful for testing in development to pass a local relay
+to publish methods.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `relayUrls` | `string`[] | list of relay URLs to include in this set |
+| `ndk` | [`default`](default.md) |  |
+
+#### Returns
+
+[`NDKRelaySet`](NDKRelaySet.md)
+
+NDKRelaySet
+
+#### Defined in
+
+[src/relay/sets/index.ts:36](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/relay/sets/index.ts#L36)

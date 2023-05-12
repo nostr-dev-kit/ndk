@@ -44,7 +44,7 @@ should run client-side, where the user wants to sign events from.
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:37](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/nip46/backend/index.ts#L37)
+[src/signers/nip46/backend/index.ts:37](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/backend/index.ts#L37)
 
 ## Properties
 
@@ -54,7 +54,7 @@ should run client-side, where the user wants to sign events from.
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:29](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/nip46/backend/index.ts#L29)
+[src/signers/nip46/backend/index.ts:29](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/backend/index.ts#L29)
 
 ___
 
@@ -68,7 +68,7 @@ ___
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:60](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/nip46/backend/index.ts#L60)
+[src/signers/nip46/backend/index.ts:60](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/backend/index.ts#L60)
 
 ___
 
@@ -78,7 +78,7 @@ ___
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:28](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/nip46/backend/index.ts#L28)
+[src/signers/nip46/backend/index.ts:28](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/backend/index.ts#L28)
 
 ___
 
@@ -88,7 +88,7 @@ ___
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:26](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/nip46/backend/index.ts#L26)
+[src/signers/nip46/backend/index.ts:26](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/backend/index.ts#L26)
 
 ## Methods
 
@@ -113,7 +113,7 @@ connections.
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:120](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/nip46/backend/index.ts#L120)
+[src/signers/nip46/backend/index.ts:120](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/backend/index.ts#L120)
 
 ___
 
@@ -136,7 +136,7 @@ Enables the user to set a custom strategy for handling incoming events.
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:72](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/nip46/backend/index.ts#L72)
+[src/signers/nip46/backend/index.ts:72](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/backend/index.ts#L72)
 
 ___
 
@@ -157,7 +157,7 @@ ___
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:96](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/nip46/backend/index.ts#L96)
+[src/signers/nip46/backend/index.ts:96](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/backend/index.ts#L96)
 
 ___
 
@@ -174,4 +174,4 @@ requests.
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:49](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/nip46/backend/index.ts#L49)
+[src/signers/nip46/backend/index.ts:49](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/backend/index.ts#L49)

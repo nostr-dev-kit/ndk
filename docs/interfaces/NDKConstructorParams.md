@@ -8,6 +8,7 @@
 
 - [cacheAdapter](NDKConstructorParams.md#cacheadapter)
 - [debug](NDKConstructorParams.md#debug)
+- [devWriteRelayUrls](NDKConstructorParams.md#devwriterelayurls)
 - [explicitRelayUrls](NDKConstructorParams.md#explicitrelayurls)
 - [signer](NDKConstructorParams.md#signer)
 
@@ -19,7 +20,7 @@
 
 #### Defined in
 
-[src/index.ts:37](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/index.ts#L37)
+[src/index.ts:40](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/index.ts#L40)
 
 ___
 
@@ -29,7 +30,17 @@ ___
 
 #### Defined in
 
-[src/index.ts:38](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/index.ts#L38)
+[src/index.ts:41](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/index.ts#L41)
+
+___
+
+### devWriteRelayUrls
+
+• `Optional` **devWriteRelayUrls**: `string`[]
+
+#### Defined in
+
+[src/index.ts:38](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/index.ts#L38)
 
 ___
 
@@ -39,7 +50,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:35](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/index.ts#L35)
+[src/index.ts:37](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/index.ts#L37)
 
 ___
 
@@ -49,4 +60,4 @@ ___
 
 #### Defined in
 
-[src/index.ts:36](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/index.ts#L36)
+[src/index.ts:39](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/index.ts#L39)

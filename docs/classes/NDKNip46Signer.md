@@ -44,7 +44,7 @@ This class is meant to be used client-side, paired with the NDKNip46Backend or a
 
 #### Defined in
 
-[src/signers/nip46/index.ts:21](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/nip46/index.ts#L21)
+[src/signers/nip46/index.ts:21](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/index.ts#L21)
 
 ## Properties
 
@@ -54,7 +54,7 @@ This class is meant to be used client-side, paired with the NDKNip46Backend or a
 
 #### Defined in
 
-[src/signers/nip46/index.ts:11](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/nip46/index.ts#L11)
+[src/signers/nip46/index.ts:11](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/index.ts#L11)
 
 ___
 
@@ -64,7 +64,7 @@ ___
 
 #### Defined in
 
-[src/signers/nip46/index.ts:10](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/nip46/index.ts#L10)
+[src/signers/nip46/index.ts:10](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/index.ts#L10)
 
 ## Methods
 
@@ -86,7 +86,7 @@ A promise that resolves to the NDKUser instance.
 
 #### Defined in
 
-[src/signers/nip46/index.ts:39](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/nip46/index.ts#L39)
+[src/signers/nip46/index.ts:39](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/index.ts#L39)
 
 ___
 
@@ -113,7 +113,7 @@ Decrypts the given value.
 
 #### Defined in
 
-[src/signers/nip46/index.ts:70](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/nip46/index.ts#L70)
+[src/signers/nip46/index.ts:70](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/index.ts#L70)
 
 ___
 
@@ -140,7 +140,7 @@ Encrypts the given Nostr event for the given recipient.
 
 #### Defined in
 
-[src/signers/nip46/index.ts:66](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/nip46/index.ts#L66)
+[src/signers/nip46/index.ts:66](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/index.ts#L66)
 
 ___
 
@@ -168,7 +168,7 @@ A promise that resolves to the signature of the signed event.
 
 #### Defined in
 
-[src/signers/nip46/index.ts:74](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/nip46/index.ts#L74)
+[src/signers/nip46/index.ts:74](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/index.ts#L74)
 
 ___
 
@@ -190,4 +190,4 @@ A promise that resolves to the NDKUser instance.
 
 #### Defined in
 
-[src/signers/nip46/index.ts:35](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/nip46/index.ts#L35)
+[src/signers/nip46/index.ts:35](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/index.ts#L35)

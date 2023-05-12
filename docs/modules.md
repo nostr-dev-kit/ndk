@@ -66,7 +66,7 @@
 
 #### Defined in
 
-[src/events/index.ts:12](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/events/index.ts#L12)
+[src/events/index.ts:12](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/events/index.ts#L12)
 
 ___
 
@@ -76,7 +76,7 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:10](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/subscription/index.ts#L10)
+[src/subscription/index.ts:10](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/subscription/index.ts#L10)
 
 ___
 
@@ -86,7 +86,7 @@ ___
 
 #### Defined in
 
-[src/events/index.ts:13](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/events/index.ts#L13)
+[src/events/index.ts:13](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/events/index.ts#L13)
 
 ___
 
@@ -112,7 +112,7 @@ ___
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:8](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/nip46/backend/index.ts#L8)
+[src/signers/nip46/backend/index.ts:8](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/backend/index.ts#L8)
 
 ___
 
@@ -130,12 +130,11 @@ ___
 | `kind?` | [`NDKKind`](enums/NDKKind.md) \| `number` |
 | `pubkey` | `string` |
 | `sig?` | `string` |
-| `subject?` | `string` |
 | `tags` | [`NDKTag`](modules.md#ndktag)[] |
 
 #### Defined in
 
-[src/events/index.ts:15](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/events/index.ts#L15)
+[src/events/index.ts:15](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/events/index.ts#L15)
 
 ## Variables
 
@@ -147,7 +146,7 @@ Default subscription options.
 
 #### Defined in
 
-[src/subscription/index.ts:50](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/subscription/index.ts#L50)
+[src/subscription/index.ts:50](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/subscription/index.ts#L50)
 
 ## Functions
 
@@ -168,7 +167,7 @@ Default subscription options.
 
 #### Defined in
 
-[src/user/profile.ts:16](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/user/profile.ts#L16)
+[src/user/profile.ts:16](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/user/profile.ts#L16)
 
 ___
 
@@ -191,7 +190,7 @@ relatively similar, and merge them.
 
 #### Defined in
 
-[src/subscription/index.ts:385](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/subscription/index.ts#L385)
+[src/subscription/index.ts:385](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/subscription/index.ts#L385)
 
 ___
 
@@ -211,4 +210,4 @@ ___
 
 #### Defined in
 
-[src/zap/invoice.ts:14](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/zap/invoice.ts#L14)
+[src/zap/invoice.ts:14](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/zap/invoice.ts#L14)

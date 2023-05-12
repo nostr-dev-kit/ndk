@@ -36,7 +36,7 @@ A promise that resolves to the NDKUser instance.
 
 #### Defined in
 
-[src/signers/index.ts:12](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/index.ts#L12)
+[src/signers/index.ts:12](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/index.ts#L12)
 
 ___
 
@@ -59,7 +59,7 @@ Decrypts the given value.
 
 #### Defined in
 
-[src/signers/index.ts:38](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/index.ts#L38)
+[src/signers/index.ts:38](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/index.ts#L38)
 
 ___
 
@@ -82,7 +82,7 @@ Encrypts the given Nostr event for the given recipient.
 
 #### Defined in
 
-[src/signers/index.ts:32](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/index.ts#L32)
+[src/signers/index.ts:32](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/index.ts#L32)
 
 ___
 
@@ -106,7 +106,7 @@ A promise that resolves to the signature of the signed event.
 
 #### Defined in
 
-[src/signers/index.ts:25](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/index.ts#L25)
+[src/signers/index.ts:25](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/index.ts#L25)
 
 ___
 
@@ -124,4 +124,4 @@ A promise that resolves to the NDKUser instance.
 
 #### Defined in
 
-[src/signers/index.ts:18](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/index.ts#L18)
+[src/signers/index.ts:18](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/index.ts#L18)

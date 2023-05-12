@@ -4,9 +4,13 @@ NDK / [Exports](modules.md)
 
 <img src="https://raw.githubusercontent.com/nvk/ndk.fyi/master/ndk.svg" alt="drawing" width="200"/>
 
-NDK is a Nostr development kit that makes the experience of building Nostr-related applications, whether they are relays, clients, or anything in between, better, more reliable and overall nicer to work with than existing solutions.
+NDK is a [nostr]([url](https://github.com/nostr-protocol/nostr)) development kit that makes the experience of building Nostr-related applications, whether they are relays, clients, or anything in between, better, more reliable and overall nicer to work with than existing solutions.
 
-Besides improving the developer experience, the core goal of NDK is to improve the decentralization of Nostr via intelligent conventions and data discovery features without depending on any one central point of coordination (such as large relays or centralized search providers).
+## NDK Objectives
+
+1. The core goal of NDK is to improve the decentralization of Nostr via intelligent conventions and data discovery features without depending on any one central point of coordination (such as large relays or centralized search providers).
+2. NDK team aims to have new to nostr devs get set up, and reading a NIP-01 event within 10 minutes. 
+3. NDK's objective is to serve prospective, and current nostr devs as clients. If you have friction with the NDK developer experience, please open issues, and ask for help from the NDK team! Devs are encouraged to search through existing, and/or create new github issues when experiencing friction with NDK.
 
 ## Installation
 
@@ -85,7 +89,7 @@ import NDK from "@nostr-dev-kit/ndk";
 ndk = new NDK({ explicitRelayUrls: ["wss://a.relay", "wss://another.relay"] });
 ```
 
-Note: In normal client use, it's best practice to instantiate NDK as a singleton class. [See more below](#architecture).
+Note: In normal client use, it's best practice to instantiate NDK as a singleton class. [See more below](#architecture-decisions--suggestions).
 
 ## Connecting
 

@@ -41,7 +41,7 @@ Interface for NDK signers.
 
 #### Defined in
 
-[src/signers/private-key/index.ts:11](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/private-key/index.ts#L11)
+[src/signers/private-key/index.ts:11](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/private-key/index.ts#L11)
 
 ## Properties
 
@@ -51,7 +51,7 @@ Interface for NDK signers.
 
 #### Defined in
 
-[src/signers/private-key/index.ts:9](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/private-key/index.ts#L9)
+[src/signers/private-key/index.ts:9](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/private-key/index.ts#L9)
 
 ## Methods
 
@@ -73,7 +73,7 @@ A promise that resolves to the NDKUser instance.
 
 #### Defined in
 
-[src/signers/private-key/index.ts:23](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/private-key/index.ts#L23)
+[src/signers/private-key/index.ts:23](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/private-key/index.ts#L23)
 
 ___
 
@@ -100,7 +100,7 @@ Decrypts the given value.
 
 #### Defined in
 
-[src/signers/private-key/index.ts:52](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/private-key/index.ts#L52)
+[src/signers/private-key/index.ts:52](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/private-key/index.ts#L52)
 
 ___
 
@@ -127,7 +127,7 @@ Encrypts the given Nostr event for the given recipient.
 
 #### Defined in
 
-[src/signers/private-key/index.ts:43](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/private-key/index.ts#L43)
+[src/signers/private-key/index.ts:43](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/private-key/index.ts#L43)
 
 ___
 
@@ -155,7 +155,7 @@ A promise that resolves to the signature of the signed event.
 
 #### Defined in
 
-[src/signers/private-key/index.ts:35](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/private-key/index.ts#L35)
+[src/signers/private-key/index.ts:35](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/private-key/index.ts#L35)
 
 ___
 
@@ -177,7 +177,7 @@ A promise that resolves to the NDKUser instance.
 
 #### Defined in
 
-[src/signers/private-key/index.ts:30](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/private-key/index.ts#L30)
+[src/signers/private-key/index.ts:30](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/private-key/index.ts#L30)
 
 ___
 
@@ -191,4 +191,4 @@ ___
 
 #### Defined in
 
-[src/signers/private-key/index.ts:18](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/signers/private-key/index.ts#L18)
+[src/signers/private-key/index.ts:18](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/private-key/index.ts#L18)

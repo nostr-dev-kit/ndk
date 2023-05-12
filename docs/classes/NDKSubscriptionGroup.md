@@ -54,7 +54,7 @@ Events emitted from the group will be emitted from each subscription.
 
 #### Defined in
 
-[src/subscription/index.ts:291](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/subscription/index.ts#L291)
+[src/subscription/index.ts:291](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/subscription/index.ts#L291)
 
 ## Properties
 
@@ -68,7 +68,7 @@ Events emitted from the group will be emitted from each subscription.
 
 #### Defined in
 
-[src/subscription/index.ts:81](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/subscription/index.ts#L81)
+[src/subscription/index.ts:81](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/subscription/index.ts#L81)
 
 ___
 
@@ -82,7 +82,7 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:84](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/subscription/index.ts#L84)
+[src/subscription/index.ts:84](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/subscription/index.ts#L84)
 
 ___
 
@@ -96,7 +96,7 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:82](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/subscription/index.ts#L82)
+[src/subscription/index.ts:82](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/subscription/index.ts#L82)
 
 ___
 
@@ -110,7 +110,7 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:83](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/subscription/index.ts#L83)
+[src/subscription/index.ts:83](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/subscription/index.ts#L83)
 
 ___
 
@@ -124,7 +124,7 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:85](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/subscription/index.ts#L85)
+[src/subscription/index.ts:85](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/subscription/index.ts#L85)
 
 ___
 
@@ -138,7 +138,7 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:80](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/subscription/index.ts#L80)
+[src/subscription/index.ts:80](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/subscription/index.ts#L80)
 
 ## Methods
 
@@ -162,7 +162,7 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:254](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/subscription/index.ts#L254)
+[src/subscription/index.ts:254](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/subscription/index.ts#L254)
 
 ___
 
@@ -190,7 +190,7 @@ Called when an event is received from a relay or the cache
 
 #### Defined in
 
-[src/subscription/index.ts:225](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/subscription/index.ts#L225)
+[src/subscription/index.ts:225](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/subscription/index.ts#L225)
 
 ___
 
@@ -212,7 +212,7 @@ The groupable ID, or null if the subscription is not groupable.
 
 #### Defined in
 
-[src/subscription/index.ts:119](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/subscription/index.ts#L119)
+[src/subscription/index.ts:119](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/subscription/index.ts#L119)
 
 ___
 
@@ -233,7 +233,7 @@ after creating a subscription.
 
 #### Defined in
 
-[src/subscription/index.ts:156](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/subscription/index.ts#L156)
+[src/subscription/index.ts:156](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/subscription/index.ts#L156)
 
 ___
 
@@ -251,4 +251,4 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:188](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/subscription/index.ts#L188)
+[src/subscription/index.ts:188](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/subscription/index.ts#L188)

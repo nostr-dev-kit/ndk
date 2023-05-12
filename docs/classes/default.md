@@ -19,6 +19,7 @@
 - [cacheAdapter](default.md#cacheadapter)
 - [debug](default.md#debug)
 - [delayedSubscriptions](default.md#delayedsubscriptions)
+- [devWriteRelaySet](default.md#devwriterelayset)
 - [pool](default.md#pool)
 - [signer](default.md#signer)
 
@@ -50,7 +51,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/index.ts:53](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/index.ts#L53)
+[src/index.ts:57](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/index.ts#L57)
 
 ## Properties
 
@@ -60,7 +61,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/index.ts:48](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/index.ts#L48)
+[src/index.ts:51](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/index.ts#L51)
 
 ___
 
@@ -70,7 +71,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:49](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/index.ts#L49)
+[src/index.ts:52](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/index.ts#L52)
 
 ___
 
@@ -80,7 +81,17 @@ ___
 
 #### Defined in
 
-[src/index.ts:51](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/index.ts#L51)
+[src/index.ts:55](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/index.ts#L55)
+
+___
+
+### devWriteRelaySet
+
+• `Optional` **devWriteRelaySet**: [`NDKRelaySet`](NDKRelaySet.md)
+
+#### Defined in
+
+[src/index.ts:53](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/index.ts#L53)
 
 ___
 
@@ -90,7 +101,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:46](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/index.ts#L46)
+[src/index.ts:49](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/index.ts#L49)
 
 ___
 
@@ -100,7 +111,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:47](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/index.ts#L47)
+[src/index.ts:50](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/index.ts#L50)
 
 ## Methods
 
@@ -116,7 +127,7 @@ Ensures that a signer is available to sign an event.
 
 #### Defined in
 
-[src/index.ts:146](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/index.ts#L146)
+[src/index.ts:169](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/index.ts#L169)
 
 ___
 
@@ -139,7 +150,7 @@ If the timeout is reached, the connection will be continued to be established in
 
 #### Defined in
 
-[src/index.ts:73](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/index.ts#L73)
+[src/index.ts:75](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/index.ts#L75)
 
 ___
 
@@ -162,7 +173,7 @@ Fetch a single event
 
 #### Defined in
 
-[src/index.ts:109](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/index.ts#L109)
+[src/index.ts:132](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/index.ts#L132)
 
 ___
 
@@ -185,7 +196,7 @@ Fetch events
 
 #### Defined in
 
-[src/index.ts:122](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/index.ts#L122)
+[src/index.ts:145](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/index.ts#L145)
 
 ___
 
@@ -207,19 +218,22 @@ Get a NDKUser object
 
 #### Defined in
 
-[src/index.ts:84](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/index.ts#L84)
+[src/index.ts:86](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/index.ts#L86)
 
 ___
 
 ### publish
 
-▸ **publish**(`event`): `Promise`<`void`\>
+▸ **publish**(`event`, `relaySet?`): `Promise`<`void`\>
+
+Publish an event
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `event` | [`NDKEvent`](NDKEvent.md) |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `event` | [`NDKEvent`](NDKEvent.md) | event to publish |
+| `relaySet?` | [`NDKRelaySet`](NDKRelaySet.md) | - |
 
 #### Returns
 
@@ -227,25 +241,31 @@ ___
 
 #### Defined in
 
-[src/index.ts:100](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/index.ts#L100)
+[src/index.ts:117](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/index.ts#L117)
 
 ___
 
 ### subscribe
 
-▸ **subscribe**(`filter`, `opts?`): [`NDKSubscription`](NDKSubscription.md)
+▸ **subscribe**(`filter`, `opts?`, `relaySet?`): [`NDKSubscription`](NDKSubscription.md)
+
+Create a new subscription. Subscriptions automatically start and finish when all relays
+on the set send back an EOSE. (set `opts.closeOnEose` to `false` in order avoid this)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `filter` | `Filter` |
-| `opts?` | [`NDKSubscriptionOptions`](../interfaces/NDKSubscriptionOptions.md) |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `filter` | `Filter` |  |
+| `opts?` | [`NDKSubscriptionOptions`](../interfaces/NDKSubscriptionOptions.md) |  |
+| `relaySet?` | [`NDKRelaySet`](NDKRelaySet.md) | explicit relay set to use |
 
 #### Returns
 
 [`NDKSubscription`](NDKSubscription.md)
 
+NDKSubscription
+
 #### Defined in
 
-[src/index.ts:90](https://github.com/nostr-dev-kit/ndk/blob/fece2d0/src/index.ts#L90)
+[src/index.ts:101](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/index.ts#L101)

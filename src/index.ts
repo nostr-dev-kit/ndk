@@ -89,11 +89,21 @@ export default class NDK extends EventEmitter {
         return user;
     }
 
+    /**
+     * Create a new subscription. Subscriptions automatically start and finish when all relays
+     * on the set send back an EOSE. (set `opts.closeOnEose` to `false` in order avoid this)
+     *
+     * @param filter
+     * @param opts
+     * @param relaySet explicit relay set to use
+     * @returns NDKSubscription
+     */
     public subscribe(
         filter: NDKFilter,
-        opts?: NDKSubscriptionOptions
+        opts?: NDKSubscriptionOptions,
+        relaySet?: NDKRelaySet
     ): NDKSubscription {
-        const subscription = new NDKSubscription(this, filter, opts);
+        const subscription = new NDKSubscription(this, filter, opts, relaySet);
         subscription.start();
 
         return subscription;

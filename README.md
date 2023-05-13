@@ -163,7 +163,7 @@ NDK will eventually allow you to use multiple caches simultaneously and allow fo
 
 ### Where to look is more important that long-term storage
 
-The most important data to cache is _where_ a user or note might be found. UX suffers profoundly when this type of data cannot be found. By design, the Nostr protocol leaves beadcrums of where a user or note might be found and NDK does it's best to store this data automatically and use it when you query for events.
+The most important data to cache is _where_ a user or note might be found. UX suffers profoundly when this type of data cannot be found. By design, the Nostr protocol leaves breadcrumbs of where a user or note might be found and NDK does it's best to store this data automatically and use it when you query for events.
 
 ### Instantiating and using a cache adapter
 

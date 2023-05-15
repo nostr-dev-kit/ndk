@@ -1,9 +1,9 @@
-import {NDKRelay, NDKRelayStatus} from '../index.js';
-import NDKEvent from '../../events/index.js';
-import {NDKSubscription, NDKSubscriptionGroup} from '../../subscription/index.js';
-import * as secp256k1 from '@noble/secp256k1';
-import {sha256} from '@noble/hashes/sha256';
-import type NDK from '../../index.js';
+import { sha256 } from "@noble/hashes/sha256";
+import * as secp256k1 from "@noble/secp256k1";
+import NDKEvent from "../../events/index.js";
+import type NDK from "../../index.js";
+import { NDKSubscription, NDKSubscriptionGroup } from "../../subscription/index.js";
+import { NDKRelay, NDKRelayStatus } from "../index.js";
 
 /**
  * A relay set is a group of relays. This grouping can be short-living, for a single
@@ -20,7 +20,7 @@ export class NDKRelaySet {
     public constructor(relays: Set<NDKRelay>, ndk: NDK) {
         this.relays = relays;
         this.ndk = ndk;
-        this.debug = ndk.debug.extend('relayset');
+        this.debug = ndk.debug.extend("relayset");
     }
 
     /**
@@ -54,8 +54,8 @@ export class NDKRelaySet {
      * Calculates an ID of this specific combination of relays.
      */
     public getId() {
-        const urls = Array.from(this.relays).map(r => r.url);
-        const urlString  = urls.sort().join(',');
+        const urls = Array.from(this.relays).map((r) => r.url);
+        const urlString = urls.sort().join(",");
         return secp256k1.utils.bytesToHex(sha256(urlString));
     }
 
@@ -110,7 +110,7 @@ export class NDKRelaySet {
     }
 
     private executeSubscription(subscription: NDKSubscription): NDKSubscription {
-        this.debug('subscribing', {filter: subscription.filter});
+        this.debug("subscribing", { filter: subscription.filter });
 
         for (const relay of this.relays) {
             if (relay.status === NDKRelayStatus.CONNECTED) {
@@ -119,14 +119,17 @@ export class NDKRelaySet {
             } else {
                 // If the relay is not connected, add a one-time listener to wait for the 'connected' event
                 const connectedListener = () => {
-                    this.debug('new relay coming online for active subscription', { relay: relay.url, filter: subscription.filter });
+                    this.debug("new relay coming online for active subscription", {
+                        relay: relay.url,
+                        filter: subscription.filter
+                    });
                     this.subscribeOnRelay(relay, subscription);
                 };
-                relay.once('connect', connectedListener);
+                relay.once("connect", connectedListener);
 
                 // Add a one-time listener to remove the connectedListener when the subscription stops
-                subscription.once('close', () => {
-                    relay.removeListener('connect', connectedListener);
+                subscription.once("close", () => {
+                    relay.removeListener("connect", connectedListener);
                 });
             }
         }
@@ -135,7 +138,7 @@ export class NDKRelaySet {
     }
 
     public async publish(event: NDKEvent): Promise<void> {
-        this.relays.forEach(async relay => {
+        this.relays.forEach(async (relay) => {
             try {
                 // TODO: if relay is not connected, don't try to send, but rather attach
                 // to `connected` event and send it at that moment

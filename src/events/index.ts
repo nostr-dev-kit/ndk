@@ -1,13 +1,12 @@
-import { getEventHash, UnsignedEvent } from "nostr-tools";
 import EventEmitter from "eventemitter3";
+import { getEventHash, UnsignedEvent } from "nostr-tools";
 import NDK, { NDKRelaySet } from "../index.js";
-import Zap from '../zap/index.js';
-import { generateContentTags } from "./content-tagger.js";
-import { NDKKind } from "./kind.js";
-import { isParamReplaceable, isReplaceable } from "./kind.js";
-import { encode } from "./nip19.js";
-import { encrypt, decrypt } from "./nip04.js";
 import { NDKSigner } from "../signers/index.js";
+import Zap from "../zap/index.js";
+import { generateContentTags } from "./content-tagger.js";
+import { isParamReplaceable, isReplaceable, NDKKind } from "./kind.js";
+import { decrypt, encrypt } from "./nip04.js";
+import { encode } from "./nip19.js";
 
 export type NDKEventId = string;
 export type NDKTag = string[];
@@ -25,7 +24,7 @@ export type NostrEvent = {
 type ContentTag = {
     tags: NDKTag[];
     content: string;
-}
+};
 
 /**
  * NDKEvent is the basic building block of NDK; most things
@@ -34,22 +33,22 @@ type ContentTag = {
 export default class NDKEvent extends EventEmitter {
     public ndk?: NDK;
     public created_at?: number;
-    public content = '';
+    public content = "";
     public tags: NDKTag[] = [];
     public kind?: NDKKind | number;
     public id = "";
     public sig?: string;
-    public pubkey = '';
+    public pubkey = "";
 
     constructor(ndk?: NDK, event?: NostrEvent) {
         super();
         this.ndk = ndk;
         this.created_at = event?.created_at;
-        this.content = event?.content || '';
+        this.content = event?.content || "";
         this.tags = event?.tags || [];
-        this.id = event?.id || '';
+        this.id = event?.id || "";
         this.sig = event?.sig;
-        this.pubkey = event?.pubkey || '';
+        this.pubkey = event?.pubkey || "";
         this.kind = event?.kind;
     }
 
@@ -64,7 +63,7 @@ export default class NDKEvent extends EventEmitter {
             kind: this.kind,
             pubkey: this.pubkey,
             id: this.id,
-            sig: this.sig,
+            sig: this.sig
         } as NostrEvent;
     }
 
@@ -73,15 +72,15 @@ export default class NDKEvent extends EventEmitter {
      * when possible, adding tags when necessary.
      */
     async toNostrEvent(pubkey?: string): Promise<NostrEvent> {
-        if (!pubkey && this.pubkey === '') {
+        if (!pubkey && this.pubkey === "") {
             const user = await this.ndk?.signer?.user();
-            this.pubkey = user?.hexpubkey() || '';
+            this.pubkey = user?.hexpubkey() || "";
         }
 
         if (!this.created_at) this.created_at = Math.floor(Date.now() / 1000);
 
         const nostrEvent = this.rawEvent();
-        const {content, tags} = this.generateTags();
+        const { content, tags } = this.generateTags();
         nostrEvent.content = content || "";
         nostrEvent.tags = tags;
 
@@ -133,7 +132,7 @@ export default class NDKEvent extends EventEmitter {
         this.sig = await _signer!.sign(nostrEvent);
     }
 
-    public async publish(relaySet?: NDKRelaySet) : Promise<void> {
+    public async publish(relaySet?: NDKRelaySet): Promise<void> {
         if (!this.sig) await this.sign();
 
         return this.ndk?.publish(this, relaySet);
@@ -149,11 +148,11 @@ export default class NDKEvent extends EventEmitter {
 
         // if this is a parameterized replaceable event, check if there's a d tag, if not, generate it
         if (this.kind && this.kind >= 30000 && this.kind <= 40000) {
-            const dTag = this.getMatchingTags('d')[0];
+            const dTag = this.getMatchingTags("d")[0];
             // generate a string of 32 random bytes
             if (!dTag) {
-                const str = [...Array(16)].map(() => Math.random().toString(36)[2]).join('');
-                tags.push(['d', str]);
+                const str = [...Array(16)].map(() => Math.random().toString(36)[2]).join("");
+                tags.push(["d", str]);
             }
         }
 
@@ -165,13 +164,13 @@ export default class NDKEvent extends EventEmitter {
      */
     replaceableDTag() {
         if (this.kind && this.kind >= 30000 && this.kind <= 40000) {
-            const dTag = this.getMatchingTags('d')[0];
-            const dTagId = dTag ? dTag[1] : '';
+            const dTag = this.getMatchingTags("d")[0];
+            const dTagId = dTag ? dTag[1] : "";
 
             return dTagId;
         }
 
-        throw new Error('Event is not a parameterized replaceable event');
+        throw new Error("Event is not a parameterized replaceable event");
     }
 
     /**
@@ -213,14 +212,14 @@ export default class NDKEvent extends EventEmitter {
      * @param comment A comment to add to the zap request
      * @param extraTags Extra tags to add to the zap request
      */
-    async zap(amount: number, comment?: string, extraTags?: NDKTag[]): Promise<string|null> {
-        if (!this.ndk) throw new Error('No NDK instance found');
+    async zap(amount: number, comment?: string, extraTags?: NDKTag[]): Promise<string | null> {
+        if (!this.ndk) throw new Error("No NDK instance found");
 
         this.ndk.assertSigner();
 
         const zap = new Zap({
             ndk: this.ndk,
-            zappedEvent: this,
+            zappedEvent: this
         });
 
         const paymentRequest = await zap.createZapRequest(amount, comment, extraTags);

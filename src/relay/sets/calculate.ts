@@ -1,8 +1,8 @@
-import NDK from '../../index.js';
-import {NDKRelay} from '../index.js';
-import Event from '../../events/index.js';
-import {NDKRelaySet} from './index.js';
-import {NDKFilter} from '../../subscription/index.js';
+import Event from "../../events/index.js";
+import NDK from "../../index.js";
+import { NDKFilter } from "../../subscription/index.js";
+import { NDKRelay } from "../index.js";
+import { NDKRelaySet } from "./index.js";
 
 /**
  * Creates a NDKRelaySet for the specified event.
@@ -15,7 +15,7 @@ import {NDKFilter} from '../../subscription/index.js';
 export function calculateRelaySetFromEvent(ndk: NDK, event: Event): NDKRelaySet {
     const relays: Set<NDKRelay> = new Set();
 
-    ndk.pool?.relays.forEach(relay => relays.add(relay));
+    ndk.pool?.relays.forEach((relay) => relays.add(relay));
 
     return new NDKRelaySet(relays, ndk);
 }
@@ -26,13 +26,10 @@ export function calculateRelaySetFromEvent(ndk: NDK, event: Event): NDKRelaySet 
  * @param filter
  * @returns Promise<NDKRelaySet>
  */
-export function calculateRelaySetFromFilter(
-    ndk: NDK,
-    filter: NDKFilter
-): NDKRelaySet {
+export function calculateRelaySetFromFilter(ndk: NDK, filter: NDKFilter): NDKRelaySet {
     const relays: Set<NDKRelay> = new Set();
 
-    ndk.pool?.relays.forEach(relay => {
+    ndk.pool?.relays.forEach((relay) => {
         if (!relay.complaining) {
             relays.add(relay);
         } else {
@@ -54,7 +51,7 @@ export function calculateRelaySetsFromFilters(
 ): Map<NDKFilter, NDKRelaySet> {
     const sets: Map<NDKFilter, NDKRelaySet> = new Map();
 
-    filters.forEach(filter => {
+    filters.forEach((filter) => {
         const set = calculateRelaySetFromFilter(ndk, filter);
         sets.set(filter, set);
     });

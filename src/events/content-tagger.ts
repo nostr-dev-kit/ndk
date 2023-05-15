@@ -1,28 +1,31 @@
-import {nip19} from 'nostr-tools';
-import { NDKTag } from './index.js';
-import { EventPointer, ProfilePointer } from 'nostr-tools/lib/nip19';
+import { nip19 } from "nostr-tools";
+import { EventPointer, ProfilePointer } from "nostr-tools/lib/nip19";
+import { NDKTag } from "./index.js";
 
-export function generateContentTags(content: string, tags: NDKTag[] = []): {content: string; tags: NDKTag[]} {
+export function generateContentTags(
+    content: string,
+    tags: NDKTag[] = []
+): { content: string; tags: NDKTag[] } {
     const tagRegex = /(@|nostr:)(npub|nprofile|note|nevent)[a-zA-Z0-9]+/g;
 
     content = content.replace(tagRegex, (tag) => {
         try {
             const entity = tag.split(/(?<=@|nostr:)/)[1];
-            const {type, data} = nip19.decode(entity);
+            const { type, data } = nip19.decode(entity);
             let t: NDKTag;
 
             switch (type) {
-                case 'npub':
-                    t = ['p', data as string];
+                case "npub":
+                    t = ["p", data as string];
                     break;
-                case 'nprofile':
-                    t = ['p', (data as ProfilePointer).pubkey as string];
+                case "nprofile":
+                    t = ["p", (data as ProfilePointer).pubkey as string];
                     break;
-                case 'nevent':
-                    t = ['e', (data as EventPointer).id as string];
+                case "nevent":
+                    t = ["e", (data as EventPointer).id as string];
                     break;
-                case 'note':
-                    t = ['e', data as string];
+                case "note":
+                    t = ["e", data as string];
                     break;
                 default:
                     return tag;
@@ -33,11 +36,10 @@ export function generateContentTags(content: string, tags: NDKTag[] = []): {cont
             }
 
             return `nostr:${entity}`;
-
         } catch (error) {
             return tag;
         }
     });
 
-    return {content, tags};
+    return { content, tags };
 }

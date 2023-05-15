@@ -1,5 +1,5 @@
-import NDK, { NDKEvent, NDKFilter, NDKSigner, NostrEvent } from '../../index.js';
-import EventEmitter from 'eventemitter3';
+import EventEmitter from "eventemitter3";
+import NDK, { NDKEvent, NDKFilter, NDKSigner, NostrEvent } from "../../index.js";
 
 export interface NDKRpcRequest {
     id: string;
@@ -22,19 +22,19 @@ export class NDKNostrRpc extends EventEmitter {
         super();
         this.ndk = ndk;
         this.signer = signer;
-        this.debug = debug.extend('rpc');
+        this.debug = debug.extend("rpc");
     }
 
     public subscribe(filter: NDKFilter) {
         const sub = this.ndk.subscribe(filter, { closeOnEose: false });
 
-        sub.on('event', async (event: NDKEvent) => {
-            this.debug('received event', await event.toNostrEvent());
+        sub.on("event", async (event: NDKEvent) => {
+            this.debug("received event", await event.toNostrEvent());
             const parsedEvent = await this.parseEvent(event);
-            this.debug('parsed event', parsedEvent);
+            this.debug("parsed event", parsedEvent);
 
             if ((parsedEvent as NDKRpcRequest).method) {
-                this.emit('request', parsedEvent);
+                this.emit("request", parsedEvent);
             } else {
                 this.emit(`response-${parsedEvent.id}`, parsedEvent);
             }
@@ -53,26 +53,26 @@ export class NDKNostrRpc extends EventEmitter {
         } else {
             return { id, result, error };
         }
-    };
+    }
 
     public async sendResponse(id: string, remotePubkey: string, result: string, error?: string) {
         const res = { id, result } as NDKRpcResponse;
-        if (error) { res.error = error; }
+        if (error) {
+            res.error = error;
+        }
 
         const localUser = await this.signer.user();
         const remoteUser = this.ndk.getUser({ hexpubkey: remotePubkey });
         const event = new NDKEvent(this.ndk, {
             kind: 24133,
             content: JSON.stringify(res),
-            tags: [
-                ['p', remotePubkey],
-            ],
-            pubkey: localUser.hexpubkey(),
+            tags: [["p", remotePubkey]],
+            pubkey: localUser.hexpubkey()
         } as NostrEvent);
 
         event.content = await this.signer.encrypt(remoteUser, event.content);
         await event.sign(this.signer);
-        this.debug('sending response', await event.toNostrEvent());
+        this.debug("sending response", await event.toNostrEvent());
 
         await this.ndk.publish(event);
     }
@@ -86,15 +86,13 @@ export class NDKNostrRpc extends EventEmitter {
         const event = new NDKEvent(this.ndk, {
             kind: 24133,
             content: JSON.stringify(request),
-            tags: [
-                ['p', remotePubkey],
-            ],
-            pubkey: localUser.hexpubkey(),
+            tags: [["p", remotePubkey]],
+            pubkey: localUser.hexpubkey()
         } as NostrEvent);
 
         event.content = await this.signer.encrypt(remoteUser, event.content);
         await event.sign(this.signer);
-        this.debug('sending request to', remotePubkey);
+        this.debug("sending request to", remotePubkey);
 
         await this.ndk.publish(event);
     }

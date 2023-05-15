@@ -1,8 +1,8 @@
-import { signEvent, generatePrivateKey, getPublicKey, nip04 } from 'nostr-tools';
-import type { UnsignedEvent } from 'nostr-tools';
-import type { NostrEvent } from '../../events/index.js';
-import { NDKSigner } from '../index.js';
-import NDKUser from '../../user';
+import type { UnsignedEvent } from "nostr-tools";
+import { generatePrivateKey, getPublicKey, nip04, signEvent } from "nostr-tools";
+import type { NostrEvent } from "../../events/index.js";
+import NDKUser from "../../user";
+import { NDKSigner } from "../index.js";
 
 export class NDKPrivateKeySigner implements NDKSigner {
     private _user: NDKUser | undefined;
@@ -22,7 +22,7 @@ export class NDKPrivateKeySigner implements NDKSigner {
 
     public async blockUntilReady(): Promise<NDKUser> {
         if (!this._user) {
-            throw new Error('NDKUser not initialized');
+            throw new Error("NDKUser not initialized");
         }
         return this._user;
     }
@@ -34,7 +34,7 @@ export class NDKPrivateKeySigner implements NDKSigner {
 
     public async sign(event: NostrEvent): Promise<string> {
         if (!this.privateKey) {
-            throw Error('Attempted to sign without a private key');
+            throw Error("Attempted to sign without a private key");
         }
 
         return signEvent(event as UnsignedEvent, this.privateKey);
@@ -42,7 +42,7 @@ export class NDKPrivateKeySigner implements NDKSigner {
 
     public async encrypt(recipient: NDKUser, value: string): Promise<string> {
         if (!this.privateKey) {
-            throw Error('Attempted to encrypt without a private key');
+            throw Error("Attempted to encrypt without a private key");
         }
 
         const recipientHexPubKey = recipient.hexpubkey();
@@ -51,7 +51,7 @@ export class NDKPrivateKeySigner implements NDKSigner {
 
     public async decrypt(sender: NDKUser, value: string): Promise<string> {
         if (!this.privateKey) {
-            throw Error('Attempted to decrypt without a private key');
+            throw Error("Attempted to decrypt without a private key");
         }
 
         const senderHexPubKey = sender.hexpubkey();

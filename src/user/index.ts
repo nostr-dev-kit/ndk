@@ -1,9 +1,9 @@
-import {nip05, nip19} from 'nostr-tools';
-import Event from '../events/index.js';
-import {NDKUserProfile, mergeEvent} from './profile';
-import NDK from '../index.js';
-import { follows } from './follows.js';
-import { NDKFilterOptions } from '../subscription/index.js';
+import { nip05, nip19 } from "nostr-tools";
+import Event from "../events/index.js";
+import NDK from "../index.js";
+import { NDKFilterOptions } from "../subscription/index.js";
+import { follows } from "./follows.js";
+import { mergeEvent, NDKUserProfile } from "./profile";
 
 export interface NDKUserParams {
     npub?: string;
@@ -18,7 +18,7 @@ export interface NDKUserParams {
 export default class NDKUser {
     public ndk: NDK | undefined;
     public profile?: NDKUserProfile;
-    readonly npub: string = '';
+    readonly npub: string = "";
     readonly relayUrls: string[] = [];
 
     public constructor(opts: NDKUserParams) {
@@ -39,7 +39,7 @@ export default class NDKUser {
         if (profile) {
             return new NDKUser({
                 hexpubkey: profile.pubkey,
-                relayUrls: profile.relays,
+                relayUrls: profile.relays
             });
         }
     }
@@ -49,14 +49,17 @@ export default class NDKUser {
     }
 
     public async fetchProfile(opts?: NDKFilterOptions): Promise<Set<Event> | null> {
-        if (!this.ndk) throw new Error('NDK not set');
+        if (!this.ndk) throw new Error("NDK not set");
 
         if (!this.profile) this.profile = {};
 
-        const setMetadataEvents = await this.ndk.fetchEvents({
-            kinds: [0],
-            authors: [this.hexpubkey()],
-        }, opts);
+        const setMetadataEvents = await this.ndk.fetchEvents(
+            {
+                kinds: [0],
+                authors: [this.hexpubkey()]
+            },
+            opts
+        );
 
         if (setMetadataEvents) {
             // sort setMetadataEvents by created_at in ascending order
@@ -64,7 +67,7 @@ export default class NDKUser {
                 (a, b) => (a.created_at as number) - (b.created_at as number)
             );
 
-            sortedSetMetadataEvents.forEach(event => {
+            sortedSetMetadataEvents.forEach((event) => {
                 try {
                     this.profile = mergeEvent(event, this.profile!);
                 } catch (e) {}
@@ -80,11 +83,11 @@ export default class NDKUser {
     public follows = follows.bind(this);
 
     public async relayList(): Promise<Set<Event>> {
-        if (!this.ndk) throw new Error('NDK not set');
+        if (!this.ndk) throw new Error("NDK not set");
 
         const relayListEvents = await this.ndk.fetchEvents({
             kinds: [10002],
-            authors: [this.hexpubkey()],
+            authors: [this.hexpubkey()]
         });
 
         if (relayListEvents) {

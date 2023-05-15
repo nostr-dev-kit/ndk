@@ -1,4 +1,4 @@
-import NDKEvent from '../events/index.js';
+import NDKEvent from "../events/index.js";
 
 export interface NDKUserProfile {
     name?: string;

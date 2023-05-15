@@ -1,17 +1,19 @@
-import NDK from "../index.js";
-import EventEmitter from 'eventemitter3';
+import { bech32 } from "@scure/base";
+import EventEmitter from "eventemitter3";
+import { nip57 } from "nostr-tools";
+import type { NostrEvent } from "../events/index.js";
 import NDKEvent, { NDKTag } from "../events/index.js";
-import type {NostrEvent} from "../events/index.js";
+import NDK from "../index.js";
 import User from "../user/index.js";
-import {nip57} from "nostr-tools";
-import {bech32} from '@scure/base';
 interface ZapConstructorParams {
     ndk: NDK;
     zappedEvent?: NDKEvent;
     zappedUser?: User;
 }
 
-type ZapConstructorParamsRequired = Required<Pick<ZapConstructorParams, 'zappedEvent'>> & Pick<ZapConstructorParams, 'zappedUser'> & ZapConstructorParams;
+type ZapConstructorParamsRequired = Required<Pick<ZapConstructorParams, "zappedEvent">> &
+    Pick<ZapConstructorParams, "zappedUser"> &
+    ZapConstructorParams;
 
 export default class Zap extends EventEmitter {
     public ndk?: NDK;
@@ -23,22 +25,27 @@ export default class Zap extends EventEmitter {
         this.ndk = args.ndk;
         this.zappedEvent = args.zappedEvent;
 
-        this.zappedUser = args.zappedUser || this.ndk.getUser({hexpubkey: this.zappedEvent.pubkey});
+        this.zappedUser =
+            args.zappedUser || this.ndk.getUser({ hexpubkey: this.zappedEvent.pubkey });
     }
 
-    public async getZapEndpoint(): Promise<string|undefined> {
+    public async getZapEndpoint(): Promise<string | undefined> {
         let lud06: string | undefined;
         let lud16: string | undefined;
         let zapEndpoint: string | undefined;
         let zapEndpointCallback: string | undefined;
 
         if (this.zappedEvent) {
-            const zapTag = (await this.zappedEvent.getMatchingTags('zap'))[0];
+            const zapTag = (await this.zappedEvent.getMatchingTags("zap"))[0];
 
             if (zapTag) {
                 switch (zapTag[2]) {
-                    case "lud06": lud06 = zapTag[1]; break;
-                    case 'lud16': lud16 = zapTag[1]; break;
+                    case "lud06":
+                        lud06 = zapTag[1];
+                        break;
+                    case "lud16":
+                        lud16 = zapTag[1];
+                        break;
                     default:
                         throw new Error(`Unknown zap tag ${zapTag}`);
                 }
@@ -56,17 +63,17 @@ export default class Zap extends EventEmitter {
         }
 
         if (lud16) {
-            const [name, domain] = lud16.split('@');
+            const [name, domain] = lud16.split("@");
             zapEndpoint = `https://${domain}/.well-known/lnurlp/${name}`;
         } else if (lud06) {
-            const {words} = bech32.decode(lud06, 1000);
+            const { words } = bech32.decode(lud06, 1000);
             const data = bech32.fromWords(words);
-            const utf8Decoder = new TextDecoder('utf-8');
+            const utf8Decoder = new TextDecoder("utf-8");
             zapEndpoint = utf8Decoder.decode(data);
         }
 
         if (!zapEndpoint) {
-            throw new Error('No zap endpoint found');
+            throw new Error("No zap endpoint found");
         }
 
         const response = await fetch(zapEndpoint);
@@ -79,14 +86,18 @@ export default class Zap extends EventEmitter {
         return zapEndpointCallback;
     }
 
-    public async createZapRequest(amount: number, comment?: string, extraTags?: NDKTag[]): Promise<string|null> {
+    public async createZapRequest(
+        amount: number,
+        comment?: string,
+        extraTags?: NDKTag[]
+    ): Promise<string | null> {
         const zapEndpoint = await this.getZapEndpoint();
 
         if (!zapEndpoint) {
-            throw new Error('No zap endpoint found');
+            throw new Error("No zap endpoint found");
         }
 
-        if (!this.zappedEvent) throw new Error('No zapped event found');
+        if (!this.zappedEvent) throw new Error("No zapped event found");
 
         const zapRequest = nip57.makeZapRequest({
             profile: this.zappedUser.hexpubkey(),
@@ -94,8 +105,15 @@ export default class Zap extends EventEmitter {
             // set the event to null since nostr-tools doesn't support nip-33 zaps
             event: null,
             amount,
-            comment: comment || '',
-            relays: ['wss://nos.lol', 'wss://relay.nostr.band', 'wss://relay.f7z.io', 'wss://relay.damus.io', 'wss://nostr.mom', 'wss://no.str.cr'], // TODO: fix this
+            comment: comment || "",
+            relays: [
+                "wss://nos.lol",
+                "wss://relay.nostr.band",
+                "wss://relay.f7z.io",
+                "wss://relay.damus.io",
+                "wss://nostr.mom",
+                "wss://no.str.cr"
+            ] // TODO: fix this
         });
 
         // add the event tag if it exists; this supports both 'e' and 'a' tags
@@ -106,7 +124,7 @@ export default class Zap extends EventEmitter {
             }
         }
 
-        zapRequest.tags.push(['lnurl', zapEndpoint]);
+        zapRequest.tags.push(["lnurl", zapEndpoint]);
 
         const zapRequestEvent = new NDKEvent(this.ndk, zapRequest as NostrEvent);
         if (extraTags) {
@@ -116,10 +134,12 @@ export default class Zap extends EventEmitter {
         await zapRequestEvent.sign();
         const zapRequestNostrEvent = await zapRequestEvent.toNostrEvent();
 
-        const response = await fetch(`${zapEndpoint}?` + new URLSearchParams({
-                amount: amount.toString(),
-                nostr: JSON.stringify(zapRequestNostrEvent),
-            })
+        const response = await fetch(
+            `${zapEndpoint}?` +
+                new URLSearchParams({
+                    amount: amount.toString(),
+                    nostr: JSON.stringify(zapRequestNostrEvent)
+                })
         );
         const body = await response.json();
 

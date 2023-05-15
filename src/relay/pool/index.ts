@@ -1,12 +1,12 @@
-import EventEmitter from 'eventemitter3';
-import {NDKRelay, NDKRelayStatus} from '../index.js';
-import NDK from '../../index.js';
+import EventEmitter from "eventemitter3";
+import NDK from "../../index.js";
+import { NDKRelay, NDKRelayStatus } from "../index.js";
 
 export type NDKPoolStats = {
-    total: number,
-    connected: number,
-    disconnected: number,
-    connecting: number,
+    total: number;
+    connected: number;
+    disconnected: number;
+    connecting: number;
 };
 
 /**
@@ -24,24 +24,24 @@ export class NDKPool extends EventEmitter {
 
     public constructor(relayUrls: string[] = [], ndk: NDK) {
         super();
-        this.debug = ndk.debug.extend('pool');
+        this.debug = ndk.debug.extend("pool");
         for (const relayUrl of relayUrls) {
             const relay = new NDKRelay(relayUrl);
-            relay.on('notice', (relay, notice) => this.emit('notice', relay, notice));
-            relay.on('connect', () => this.handleRelayConnect(relayUrl));
-            relay.on('disconnect', () => this.emit('relay:disconnect', relay));
-            relay.on('flapping', () => this.handleFlapping(relay));
+            relay.on("notice", (relay, notice) => this.emit("notice", relay, notice));
+            relay.on("connect", () => this.handleRelayConnect(relayUrl));
+            relay.on("disconnect", () => this.emit("relay:disconnect", relay));
+            relay.on("flapping", () => this.handleFlapping(relay));
             this.relays.set(relayUrl, relay);
         }
     }
 
     private handleRelayConnect(relayUrl: string) {
         this.debug(`Relay ${relayUrl} connected`);
-        this.emit('relay:connect', this.relays.get(relayUrl));
+        this.emit("relay:connect", this.relays.get(relayUrl));
 
         // if all relays are connected, emit a 'connect' event
         if (this.stats().connected === this.relays.size) {
-            this.emit('connect');
+            this.emit("connect");
         }
     }
 
@@ -56,7 +56,11 @@ export class NDKPool extends EventEmitter {
     public async connect(timeoutMs?: number): Promise<void> {
         const promises: Promise<void>[] = [];
 
-        this.debug(`Connecting to ${this.relays.size} relays${timeoutMs ? `, timeout ${timeoutMs}...` : ''}`);
+        this.debug(
+            `Connecting to ${this.relays.size} relays${
+                timeoutMs ? `, timeout ${timeoutMs}...` : ""
+            }`
+        );
 
         for (const relay of this.relays.values()) {
             if (timeoutMs) {
@@ -65,10 +69,7 @@ export class NDKPool extends EventEmitter {
                 });
 
                 promises.push(
-                    Promise.race([
-                        relay.connect(),
-                        timeoutPromise,
-                    ]).catch((e) => {
+                    Promise.race([relay.connect(), timeoutPromise]).catch((e) => {
                         this.debug(`Failed to connect to relay ${relay.url}: ${e}`);
                     })
                 );
@@ -85,7 +86,7 @@ export class NDKPool extends EventEmitter {
 
         // TODO: Be smarter about this.
         this.relays.delete(relay.url);
-        this.emit('flapping', relay);
+        this.emit("flapping", relay);
     }
 
     public size(): number {
@@ -101,7 +102,7 @@ export class NDKPool extends EventEmitter {
             total: 0,
             connected: 0,
             disconnected: 0,
-            connecting: 0,
+            connecting: 0
         };
 
         for (const relay of this.relays.values()) {

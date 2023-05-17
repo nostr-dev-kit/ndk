@@ -1,4 +1,4 @@
-import NDKEvent from './index.js';
+import NDKEvent from "./index.js";
 
 export declare enum NDKKind {
     Metadata = 0,
@@ -32,17 +32,11 @@ export declare enum NDKKind {
 }
 
 export function isReplaceable(this: NDKEvent): boolean {
-    if (this.kind === undefined) throw new Error('Kind not set');
-    return (
-        this.kind >= 10000 &&
-        this.kind <= 30000
-    );
+    if (this.kind === undefined) throw new Error("Kind not set");
+    return this.kind >= 10000 && this.kind <= 30000;
 }
 
 export function isParamReplaceable(this: NDKEvent): boolean {
-    if (this.kind === undefined) throw new Error('Kind not set');
-    return (
-        this.kind >= 30000 &&
-        this.kind <= 40000
-    );
+    if (this.kind === undefined) throw new Error("Kind not set");
+    return this.kind >= 30000 && this.kind <= 40000;
 }

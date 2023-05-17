@@ -1,18 +1,22 @@
 import NDK, { NDKEvent, NDKPrivateKeySigner, NDKUser } from "../../../index.js";
 import { NDKNostrRpc } from "../rpc.js";
 import ConnectEventHandlingStrategy from "./connect.js";
-import SignEventHandlingStrategy from "./sign-event.js";
-import GetPublicKeyHandlingStrategy from "./get-public-key.js";
 import DescribeEventHandlingStrategy from "./describe.js";
+import GetPublicKeyHandlingStrategy from "./get-public-key.js";
+import SignEventHandlingStrategy from "./sign-event.js";
 
-export type Nip46PermitCallback = (pubkey: string, method: string, params?: any) => Promise<boolean>;
+export type Nip46PermitCallback = (
+    pubkey: string,
+    method: string,
+    params?: any
+) => Promise<boolean>;
 
 export interface IEventHandlingStrategy {
     handle(
         backend: NDKNip46Backend,
         remotePubkey: string,
         params: string[]
-    ): Promise<string|undefined>;
+    ): Promise<string | undefined>;
 }
 
 /**
@@ -37,7 +41,7 @@ export class NDKNip46Backend {
     public constructor(ndk: NDK, privateKey: string, permitCallback: Nip46PermitCallback) {
         this.ndk = ndk;
         this.signer = new NDKPrivateKeySigner(privateKey);
-        this.debug = ndk.debug.extend('nip46:backend');
+        this.debug = ndk.debug.extend("nip46:backend");
         this.rpc = new NDKNostrRpc(ndk, this.signer, this.debug);
         this.permitCallback = permitCallback;
     }
@@ -49,19 +53,22 @@ export class NDKNip46Backend {
     public async start() {
         this.localUser = await this.signer.user();
 
-        const sub = this.ndk.subscribe({
-            kinds: [24133],
-            '#p': [ this.localUser.hexpubkey() ]
-        }, { closeOnEose: false });
+        const sub = this.ndk.subscribe(
+            {
+                kinds: [24133],
+                "#p": [this.localUser.hexpubkey()]
+            },
+            { closeOnEose: false }
+        );
 
-        sub.on('event', (e) => this.handleIncomingEvent(e));
+        sub.on("event", (e) => this.handleIncomingEvent(e));
     }
 
     public handlers: { [method: string]: IEventHandlingStrategy } = {
-        'connect': new ConnectEventHandlingStrategy(),
-        'sign_event': new SignEventHandlingStrategy(),
-        'get_public_key': new GetPublicKeyHandlingStrategy(),
-        'describe': new DescribeEventHandlingStrategy(),
+        connect: new ConnectEventHandlingStrategy(),
+        sign_event: new SignEventHandlingStrategy(),
+        get_public_key: new GetPublicKeyHandlingStrategy(),
+        describe: new DescribeEventHandlingStrategy()
     };
 
     /**
@@ -74,35 +81,35 @@ export class NDKNip46Backend {
     }
 
     protected async handleIncomingEvent(event: NDKEvent) {
-        const { id, method, params } = await this.rpc.parseEvent(event) as any;
+        const { id, method, params } = (await this.rpc.parseEvent(event)) as any;
         const remotePubkey = event.pubkey;
         let response: string | undefined;
 
-        this.debug('incoming event', {id, method, params});
+        this.debug("incoming event", { id, method, params });
 
         const strategy = this.handlers[method];
         if (strategy) {
             response = await strategy.handle(this, remotePubkey, params);
         } else {
-            this.debug('unsupported method', {method, params});
+            this.debug("unsupported method", { method, params });
         }
 
         if (response) {
             this.debug(`sending response to ${remotePubkey}`, response);
             this.rpc.sendResponse(id, remotePubkey, response);
         }
-    };
+    }
 
-    public async signEvent(remotePubkey: string, params: string[]): Promise<NDKEvent|undefined> {
-        const [ eventString ] = params;
+    public async signEvent(remotePubkey: string, params: string[]): Promise<NDKEvent | undefined> {
+        const [eventString] = params;
 
         this.debug(`sign event request from ${remotePubkey}`);
 
         const event = new NDKEvent(this.ndk, JSON.parse(eventString));
 
-        this.debug('event to sign', event.rawEvent());
+        this.debug("event to sign", event.rawEvent());
 
-        if (!await this.pubkeyAllowed(remotePubkey, 'sign_event', event)) {
+        if (!(await this.pubkeyAllowed(remotePubkey, "sign_event", event))) {
             this.debug(`sign event request from ${remotePubkey} rejected`);
             return undefined;
         }

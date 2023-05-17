@@ -1,0 +1,9 @@
+{
+  "importOrder": ["^[./]"],
+  "tabWidth": 4,
+  "useTabs": false,
+  "trailingComma": "none",
+  "printWidth": 100,
+  "singleQuote": false,
+  "semi": true
+}

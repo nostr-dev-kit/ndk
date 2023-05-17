@@ -1,5 +1,5 @@
-import NDKUser from '../user';
-import type { NostrEvent } from '../events/index.js';
+import type { NostrEvent } from "../events/index.js";
+import NDKUser from "../user";
 
 /**
  * Interface for NDK signers.

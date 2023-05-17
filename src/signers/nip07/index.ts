@@ -1,6 +1,6 @@
-import { NDKSigner } from '../index.js';
-import type { NostrEvent } from '../../events/index.js';
-import NDKUser from '../../user/index.js';
+import type { NostrEvent } from "../../events/index.js";
+import NDKUser from "../../user/index.js";
+import { NDKSigner } from "../index.js";
 
 /**
  * NDKNip07Signer implements the NDKSigner interface for signing Nostr events
@@ -11,7 +11,7 @@ export class NDKNip07Signer implements NDKSigner {
 
     public constructor() {
         if (!window.nostr) {
-            throw new Error('NIP-07 extension not available');
+            throw new Error("NIP-07 extension not available");
         }
     }
 
@@ -20,7 +20,7 @@ export class NDKNip07Signer implements NDKSigner {
 
         // If the user rejects granting access, error out
         if (!pubkey) {
-            throw new Error('User rejected access');
+            throw new Error("User rejected access");
         }
 
         return new NDKUser({ hexpubkey: pubkey });
@@ -46,7 +46,7 @@ export class NDKNip07Signer implements NDKSigner {
      */
     public async sign(event: NostrEvent): Promise<string> {
         if (!window.nostr) {
-            throw new Error('NIP-07 extension not available');
+            throw new Error("NIP-07 extension not available");
         }
 
         const signedEvent = await window.nostr.signEvent(event);
@@ -55,7 +55,7 @@ export class NDKNip07Signer implements NDKSigner {
 
     public async encrypt(recipient: NDKUser, value: string): Promise<string> {
         if (!window.nostr) {
-            throw new Error('NIP-07 extension not available');
+            throw new Error("NIP-07 extension not available");
         }
 
         const recipientHexPubKey = recipient.hexpubkey();
@@ -64,7 +64,7 @@ export class NDKNip07Signer implements NDKSigner {
 
     public async decrypt(sender: NDKUser, value: string): Promise<string> {
         if (!window.nostr) {
-            throw new Error('NIP-07 extension not available');
+            throw new Error("NIP-07 extension not available");
         }
 
         const senderHexPubKey = sender.hexpubkey();
@@ -80,7 +80,7 @@ declare global {
             nip04: {
                 encrypt(recipientHexPubKey: string, value: string): Promise<string>;
                 decrypt(senderHexPubKey: string, value: string): Promise<string>;
-            }
+            };
         };
     }
 }

@@ -1,19 +1,19 @@
-import 'websocket-polyfill';
-import {relayInit, Sub} from 'nostr-tools';
-import type {Event as SignedEvent} from 'nostr-tools';
-import User from '../user/index.js';
-import {NDKRelayScore} from './score.js';
-import {NDKSubscription} from '../subscription/index.js';
-import NDKEvent, {NostrEvent} from '../events/index.js';
-import EventEmitter from 'eventemitter3';
+import EventEmitter from "eventemitter3";
+import type { Event as SignedEvent } from "nostr-tools";
+import { relayInit, Sub } from "nostr-tools";
+import "websocket-polyfill";
+import NDKEvent, { NostrEvent } from "../events/index.js";
+import { NDKSubscription } from "../subscription/index.js";
+import User from "../user/index.js";
+import { NDKRelayScore } from "./score.js";
 
 export enum NDKRelayStatus {
     CONNECTING,
     CONNECTED,
     DISCONNECTING,
     DISCONNECTED,
-    RECONNECTING,
-};
+    RECONNECTING
+}
 
 export interface NDKRelayConnectionStats {
     /**
@@ -52,7 +52,7 @@ export class NDKRelay extends EventEmitter {
     private relay;
     private _status: NDKRelayStatus;
     private connectedAt?: number;
-    private _connectionStats: NDKRelayConnectionStats = {attempts: 0, success: 0, durations: []};
+    private _connectionStats: NDKRelayConnectionStats = { attempts: 0, success: 0, durations: [] };
     public complaining = false;
 
     /**
@@ -67,15 +67,15 @@ export class NDKRelay extends EventEmitter {
         this.scores = new Map<User, NDKRelayScore>();
         this._status = NDKRelayStatus.DISCONNECTED;
 
-        this.relay.on('connect', () => {
+        this.relay.on("connect", () => {
             this.updateConnectionStats.connected();
-            this.emit('connect');
+            this.emit("connect");
             this._status = NDKRelayStatus.CONNECTED;
         });
 
-        this.relay.on('disconnect', () => {
+        this.relay.on("disconnect", () => {
             this.updateConnectionStats.disconnected();
-            this.emit('disconnect');
+            this.emit("disconnect");
 
             if (this._status === NDKRelayStatus.CONNECTED) {
                 this._status = NDKRelayStatus.DISCONNECTED;
@@ -84,7 +84,7 @@ export class NDKRelay extends EventEmitter {
             }
         });
 
-        this.relay.on('notice', (notice: string) => this.handleNotice(notice));
+        this.relay.on("notice", (notice: string) => this.handleNotice(notice));
     }
 
     /**
@@ -96,7 +96,9 @@ export class NDKRelay extends EventEmitter {
 
         const sum = durations.reduce((a, b) => a + b, 0);
         const avg = sum / durations.length;
-        const variance = durations.map((x) => Math.pow(x - avg, 2)).reduce((a, b) => a + b, 0) / durations.length;
+        const variance =
+            durations.map((x) => Math.pow(x - avg, 2)).reduce((a, b) => a + b, 0) /
+            durations.length;
         const stdDev = Math.sqrt(variance);
         const isFlapping = stdDev < 1000;
 
@@ -108,7 +110,7 @@ export class NDKRelay extends EventEmitter {
      */
     private handleReconnection() {
         if (this.isFlapping()) {
-            this.emit('flapping', this, this._connectionStats);
+            this.emit("flapping", this, this._connectionStats);
         }
 
         if (this.connectedAt && Date.now() - this.connectedAt < 5000) {
@@ -130,7 +132,9 @@ export class NDKRelay extends EventEmitter {
             this.updateConnectionStats.attempt();
             this._status = NDKRelayStatus.CONNECTING;
             await this.relay.connect();
-        } catch (e) { /* empty */ }
+        } catch (e) {
+            /* empty */
+        }
     }
 
     /**
@@ -144,10 +148,10 @@ export class NDKRelay extends EventEmitter {
     async handleNotice(notice: string) {
         // This is a prototype; if the relay seems to be complaining
         // remove it from relay set selection for a minute.
-        if (notice.includes('oo many') || notice.includes('aximum')) {
+        if (notice.includes("oo many") || notice.includes("aximum")) {
             this.disconnect();
             setTimeout(() => this.connect(), 2000);
-            console.log(this.relay.url, 'Relay complaining?', notice);
+            console.log(this.relay.url, "Relay complaining?", notice);
             // this.complaining = true;
             // setTimeout(() => {
             //     this.complaining = false;
@@ -155,30 +159,30 @@ export class NDKRelay extends EventEmitter {
             // }, 60000);
         }
 
-        this.emit('notice', this, notice);
+        this.emit("notice", this, notice);
     }
 
     /**
      * Subscribes to a subscription.
      */
     public subscribe(subscription: NDKSubscription): Sub {
-        const {filter} = subscription;
+        const { filter } = subscription;
 
         const sub = this.relay.sub([filter], {
-            id: subscription.subId,
+            id: subscription.subId
         });
 
-        sub.on('event', (event: NostrEvent) => {
+        sub.on("event", (event: NostrEvent) => {
             const e = new NDKEvent(undefined, event);
             subscription.eventReceived(e, this);
         });
 
-        sub.on('eose', () => {
+        sub.on("eose", () => {
             subscription.eoseReceived(this);
         });
 
         this.activeSubscriptions.add(subscription);
-        subscription.on('close', () => {
+        subscription.on("close", () => {
             this.activeSubscriptions.delete(subscription);
         });
 
@@ -214,7 +218,9 @@ export class NDKRelay extends EventEmitter {
 
         disconnected: () => {
             if (this._connectionStats.connectedAt) {
-                this._connectionStats.durations.push(Date.now() - this._connectionStats.connectedAt);
+                this._connectionStats.durations.push(
+                    Date.now() - this._connectionStats.connectedAt
+                );
 
                 if (this._connectionStats.durations.length > 100) {
                     this._connectionStats.durations.shift();

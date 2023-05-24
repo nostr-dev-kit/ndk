@@ -1,3 +1,5 @@
+import { nip19 } from "nostr-tools";
+
 import NDKUser from "./index.js";
 
 export async function follows(this: NDKUser): Promise<Set<NDKUser>> {
@@ -9,15 +11,14 @@ export async function follows(this: NDKUser): Promise<Set<NDKUser>> {
     });
 
     if (contactListEvents) {
-        const contactList = new Set<NDKUser>();
+        const npubs = new Set<string>();
 
         contactListEvents.forEach((event) => {
             event.tags.forEach((tag: string[]) => {
                 if (tag[0] === "p") {
                     try {
-                        const user = new NDKUser({ hexpubkey: tag[1] });
-                        user.ndk = this.ndk;
-                        contactList.add(user);
+                        const npub = nip19.npubEncode(tag[1]);
+                        npubs.add(npub);
                     } catch (e) {
                         /* empty */
                     }
@@ -25,7 +26,12 @@ export async function follows(this: NDKUser): Promise<Set<NDKUser>> {
             });
         });
 
-        return contactList;
+        return [...npubs].reduce((acc: Set<NDKUser>, npub: string) => {
+            const user = new NDKUser({ npub });
+            user.ndk = this.ndk;
+            acc.add(user);
+            return acc;
+        }, new Set<NDKUser>());
     }
 
     return new Set<NDKUser>();

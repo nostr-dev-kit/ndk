@@ -1,6 +1,6 @@
 import EventEmitter from "eventemitter3";
 import { getEventHash, UnsignedEvent } from "nostr-tools";
-import NDK, { NDKRelaySet } from "../index.js";
+import NDK, { NDKRelaySet, NDKUser } from "../index.js";
 import { NDKSigner } from "../signers/index.js";
 import Zap from "../zap/index.js";
 import { generateContentTags } from "./content-tagger.js";
@@ -65,6 +65,15 @@ export default class NDKEvent extends EventEmitter {
             id: this.id,
             sig: this.sig
         } as NostrEvent;
+    }
+
+    /**
+     * Returns an NDKUser for the author of the event.
+     */
+    public author(): NDKUser {
+        const user = new NDKUser({ hexpubkey: this.pubkey });
+        user.ndk = this.ndk;
+        return user;
     }
 
     /**

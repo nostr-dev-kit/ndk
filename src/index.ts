@@ -123,12 +123,16 @@ export default class NDK extends EventEmitter {
     /**
      * Fetch a single event
      */
-    public async fetchEvent(filter: NDKFilter, opts: NDKFilterOptions = {}): Promise<NDKEvent> {
+    public async fetchEvent(filter: NDKFilter, opts: NDKFilterOptions = {}): Promise<NDKEvent | null> {
         return new Promise((resolve) => {
             const s = this.subscribe(filter, { ...opts, closeOnEose: true });
             s.on("event", (event) => {
                 event.ndk = this;
                 resolve(event);
+            });
+
+            s.on("eose", () => {
+                resolve(null);
             });
         });
     }

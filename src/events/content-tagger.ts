@@ -10,7 +10,7 @@ export function generateContentTags(
 
     content = content.replace(tagRegex, (tag) => {
         try {
-            const entity = tag.split(/(?<=@|nostr:)/)[1];
+            const entity = tag.split(/(@|nostr:)/)[2];
             const { type, data } = nip19.decode(entity);
             let t: NDKTag;
 

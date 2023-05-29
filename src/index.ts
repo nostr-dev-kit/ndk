@@ -23,6 +23,7 @@ export * from "./relay/sets/index.js";
 export * from "./signers/index.js";
 export * from "./signers/nip07/index.js";
 export * from "./signers/nip46/backend/index.js";
+export * from "./signers/nip46/rpc.js";
 export * from "./signers/nip46/index.js";
 export * from "./signers/private-key/index.js";
 export * from "./subscription/index.js";

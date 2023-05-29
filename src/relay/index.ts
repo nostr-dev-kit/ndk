@@ -6,6 +6,7 @@ import NDKEvent, { NostrEvent } from "../events/index.js";
 import { NDKSubscription } from "../subscription/index.js";
 import User from "../user/index.js";
 import { NDKRelayScore } from "./score.js";
+import debug from "debug";
 
 export enum NDKRelayStatus {
     CONNECTING,
@@ -54,6 +55,7 @@ export class NDKRelay extends EventEmitter {
     private connectedAt?: number;
     private _connectionStats: NDKRelayConnectionStats = { attempts: 0, success: 0, durations: [] };
     public complaining = false;
+    private debug: debug.Debugger;
 
     /**
      * Active subscriptions this relay is connected to
@@ -66,6 +68,7 @@ export class NDKRelay extends EventEmitter {
         this.relay = relayInit(url);
         this.scores = new Map<User, NDKRelayScore>();
         this._status = NDKRelayStatus.DISCONNECTED;
+        this.debug = debug(`ndk:relay:${url}`);
 
         this.relay.on("connect", () => {
             this.updateConnectionStats.connected();
@@ -133,7 +136,9 @@ export class NDKRelay extends EventEmitter {
             this._status = NDKRelayStatus.CONNECTING;
             await this.relay.connect();
         } catch (e) {
-            /* empty */
+            this.debug("Failed to connect", e);
+            this._status = NDKRelayStatus.DISCONNECTED;
+            throw e;
         }
     }
 
@@ -171,6 +176,7 @@ export class NDKRelay extends EventEmitter {
         const sub = this.relay.sub([filter], {
             id: subscription.subId
         });
+        this.debug(`Subscribed to ${JSON.stringify(filter)}`);
 
         sub.on("event", (event: NostrEvent) => {
             const e = new NDKEvent(undefined, event);
@@ -194,7 +200,16 @@ export class NDKRelay extends EventEmitter {
      */
     public async publish(event: NDKEvent): Promise<void> {
         const nostrEvent = (await event.toNostrEvent()) as SignedEvent;
-        this.relay.publish(nostrEvent);
+        const a = this.relay.publish(nostrEvent);
+        a.on('failed', (err: any) => {
+            this.debug('Publish failed', err, event.rawEvent());
+        });
+
+        a.on('ok', () => {
+            this.debug('Publish ok', event.rawEvent());
+        });
+
+        this.debug(`Published event ${event.id}`, event.rawEvent());
     }
 
     /**

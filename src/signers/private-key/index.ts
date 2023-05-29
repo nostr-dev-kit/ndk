@@ -1,5 +1,5 @@
 import type { UnsignedEvent } from "nostr-tools";
-import { generatePrivateKey, getPublicKey, nip04, signEvent } from "nostr-tools";
+import { generatePrivateKey, getPublicKey, nip04, getSignature } from "nostr-tools";
 import type { NostrEvent } from "../../events/index.js";
 import NDKUser from "../../user";
 import { NDKSigner } from "../index.js";
@@ -37,7 +37,7 @@ export class NDKPrivateKeySigner implements NDKSigner {
             throw Error("Attempted to sign without a private key");
         }
 
-        return signEvent(event as UnsignedEvent, this.privateKey);
+        return getSignature(event as UnsignedEvent, this.privateKey);
     }
 
     public async encrypt(recipient: NDKUser, value: string): Promise<string> {

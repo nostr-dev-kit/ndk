@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/ndk",
-    "version": "0.3.23",
+    "version": "0.3.25",
     "description": "NDK - Nostr Development Kit",
     "homepage": "https://ndk.fyi",
     "documentation": "https://github.com/nostr-dev-kit/ndk/blob/master/docs/modules.md",
@@ -27,7 +27,6 @@
         "lint": "eslint src/**/*.ts",
         "format": "prettier --write \"**/*.{js,jsx,json,yml,yaml,css,ts,tsx,md,mdx}\"",
         "compile": "tsc",
-        "prepare": "pnpm build",
         "pretest": "pnpm compile",
         "posttest": "pnpm lint"
     },
@@ -45,7 +44,7 @@
         "prettier-plugin-organize-imports": "^3.2.2",
         "ts-jest": "^29.1.0",
         "typedoc-plugin-markdown": "^3.14.0",
-        "typescript": "~4.7.0"
+        "typescript": "^5.0.4"
     },
     "dependencies": {
         "@scure/base": "^1.1.1",
@@ -61,7 +60,7 @@
         "eventemitter3": "^5.0.0",
         "light-bolt11-decoder": "^3.0.0",
         "node-fetch": "^3.3.1",
-        "nostr-tools": "^1.8.1",
+        "nostr-tools": "^1.11.1",
         "tsd": "^0.28.1",
         "typedoc": "^0.24.6",
         "utf8-buffer": "^1.0.0",

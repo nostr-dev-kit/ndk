@@ -42,7 +42,7 @@ export class NDKNip46Signer implements NDKSigner {
 
         // Generates subscription, single subscription for the lifetime of our connection
         await this.rpc.subscribe({
-            kinds: [24133],
+            kinds: [24133 as number],
             "#p": [localUser.hexpubkey()],
         });
 

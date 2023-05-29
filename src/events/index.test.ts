@@ -30,7 +30,7 @@ describe("NDKEvent", () => {
                 return sub;
             });
 
-            const events = await ndk.fetchEvents({ kinds: [30001] });
+            const events = await ndk.fetchEvents({ kinds: [30001 as number] });
 
             expect(events.size).toBe(1);
             const dedupedEvent = events.values().next().value;

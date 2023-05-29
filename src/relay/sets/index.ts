@@ -1,5 +1,5 @@
 import { sha256 } from "@noble/hashes/sha256";
-import * as secp256k1 from "@noble/secp256k1";
+import {bytesToHex} from '@noble/hashes/utils';
 import NDKEvent from "../../events/index.js";
 import type NDK from "../../index.js";
 import { NDKSubscription, NDKSubscriptionGroup } from "../../subscription/index.js";
@@ -56,7 +56,7 @@ export class NDKRelaySet {
     public getId() {
         const urls = Array.from(this.relays).map((r) => r.url);
         const urlString = urls.sort().join(",");
-        return secp256k1.utils.bytesToHex(sha256(urlString));
+        return bytesToHex(sha256(urlString));
     }
 
     /**

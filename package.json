@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/ndk",
-    "version": "0.3.25",
+    "version": "0.3.26",
     "description": "NDK - Nostr Development Kit",
     "homepage": "https://ndk.fyi",
     "documentation": "https://github.com/nostr-dev-kit/ndk/blob/master/docs/modules.md",
@@ -47,6 +47,7 @@
         "typescript": "^5.0.4"
     },
     "dependencies": {
+        "@noble/secp256k1": "^2.0.0",
         "@scure/base": "^1.1.1",
         "@typescript-eslint/eslint-plugin": "^5.57.0",
         "@typescript-eslint/parser": "^5.57.0",

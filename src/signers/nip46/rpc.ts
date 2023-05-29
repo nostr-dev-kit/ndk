@@ -1,16 +1,19 @@
 import EventEmitter from "eventemitter3";
-import NDK, { NDKEvent, NDKFilter, NDKSigner, NostrEvent } from "../../index.js";
+import NDK, { NDKEvent, NDKFilter, NDKSigner, NDKSubscription, NostrEvent } from "../../index.js";
 
 export interface NDKRpcRequest {
     id: string;
+    pubkey: string;
     method: string;
     params: string[];
+    event: NDKEvent;
 }
 
 export interface NDKRpcResponse {
     id: string;
     result: string;
     error?: string;
+    event: NDKEvent;
 }
 
 export class NDKNostrRpc extends EventEmitter {
@@ -25,19 +28,27 @@ export class NDKNostrRpc extends EventEmitter {
         this.debug = debug.extend("rpc");
     }
 
-    public subscribe(filter: NDKFilter) {
+    /**
+     * Subscribe to a filter. This function will resolve once the subscription is ready.
+     */
+    public async subscribe(filter: NDKFilter): Promise<NDKSubscription> {
         const sub = this.ndk.subscribe(filter, { closeOnEose: false });
 
         sub.on("event", async (event: NDKEvent) => {
-            this.debug("received event", await event.toNostrEvent());
-            const parsedEvent = await this.parseEvent(event);
-            this.debug("parsed event", parsedEvent);
-
-            if ((parsedEvent as NDKRpcRequest).method) {
-                this.emit("request", parsedEvent);
-            } else {
-                this.emit(`response-${parsedEvent.id}`, parsedEvent);
+            try {
+                const parsedEvent = await this.parseEvent(event);
+                if ((parsedEvent as NDKRpcRequest).method) {
+                    this.emit("request", parsedEvent);
+                } else {
+                    this.emit(`response-${parsedEvent.id}`, parsedEvent);
+                }
+            } catch (e) {
+                this.debug("error parsing event", e, event);
             }
+        });
+
+        return new Promise((resolve, reject) => {
+            sub.on('eose', () => resolve(sub));
         });
     }
 
@@ -49,13 +60,13 @@ export class NDKNostrRpc extends EventEmitter {
         const { id, method, params, result, error } = parsedContent;
 
         if (method) {
-            return { id, method, params };
+            return { id, pubkey: event.pubkey, method, params, event };
         } else {
-            return { id, result, error };
+            return { id, result, error, event };
         }
     }
 
-    public async sendResponse(id: string, remotePubkey: string, result: string, error?: string) {
+    public async sendResponse(id: string, remotePubkey: string, result: string, kind = 24133, error?: string) {
         const res = { id, result } as NDKRpcResponse;
         if (error) {
             res.error = error;
@@ -64,7 +75,7 @@ export class NDKNostrRpc extends EventEmitter {
         const localUser = await this.signer.user();
         const remoteUser = this.ndk.getUser({ hexpubkey: remotePubkey });
         const event = new NDKEvent(this.ndk, {
-            kind: 24133,
+            kind,
             content: JSON.stringify(res),
             tags: [["p", remotePubkey]],
             pubkey: localUser.hexpubkey()
@@ -72,19 +83,34 @@ export class NDKNostrRpc extends EventEmitter {
 
         event.content = await this.signer.encrypt(remoteUser, event.content);
         await event.sign(this.signer);
-        this.debug("sending response", await event.toNostrEvent());
-
         await this.ndk.publish(event);
     }
 
-    public async sendRequest(remotePubkey: string, method: string, params: string[], id?: string) {
+    /**
+     * Sends a request.
+     * @param remotePubkey
+     * @param method
+     * @param params
+     * @param kind
+     * @param id
+     */
+    public async sendRequest(
+        remotePubkey: string,
+        method: string,
+        params: string[] = [],
+        kind = 24133,
+        cb?: (res: NDKRpcResponse) => void
+    ) {
+        const id = Math.random().toString(36).substring(7);
         const localUser = await this.signer.user();
         const remoteUser = this.ndk.getUser({ hexpubkey: remotePubkey });
-        const randomId = Math.random().toString(36).substring(7);
-        const request = { id: id || randomId, method, params };
+        const request = { id, method, params };
+        const promise = new Promise<NDKRpcResponse>(resolve => {
+            if (cb) this.once(`response-${id}`, cb);
+        });
 
         const event = new NDKEvent(this.ndk, {
-            kind: 24133,
+            kind,
             content: JSON.stringify(request),
             tags: [["p", remotePubkey]],
             pubkey: localUser.hexpubkey()
@@ -95,5 +121,7 @@ export class NDKNostrRpc extends EventEmitter {
         this.debug("sending request to", remotePubkey);
 
         await this.ndk.publish(event);
+
+        return promise;
     }
 }

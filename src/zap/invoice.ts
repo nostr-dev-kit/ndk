@@ -7,10 +7,17 @@ export interface NDKZapInvoice {
     zappee: string; // pubkey of user sending zap
     zapped: string; // pubkey of user receiving zap
     zappedEvent?: string; // event zapped
-    amount: number;
+    amount: number; // amount zapped in millisatoshis
     comment?: string;
 }
 
+/**
+ * Parses a zap invoice from a kind 9735 event
+ *
+ * @param event The event to parse
+ *
+ * @returns NDKZapInvoice | null
+ */
 export function zapInvoiceFromEvent(event: NDKEvent): NDKZapInvoice | null {
     const description = event.getMatchingTags("description")[0];
     const bolt11 = event.getMatchingTags("bolt11")[0];
@@ -41,7 +48,7 @@ export function zapInvoiceFromEvent(event: NDKEvent): NDKZapInvoice | null {
         return null;
     }
 
-    const amount = parseInt(amountSection.value) / 1000;
+    const amount = parseInt(amountSection.value);
     if (!amount) {
         return null;
     }

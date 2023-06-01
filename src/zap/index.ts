@@ -87,7 +87,7 @@ export default class Zap extends EventEmitter {
     }
 
     public async createZapRequest(
-        amount: number,
+        amount: number, // amount to zap in millisatoshis
         comment?: string,
         extraTags?: NDKTag[]
     ): Promise<string | null> {

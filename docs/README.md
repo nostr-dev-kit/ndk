@@ -9,7 +9,7 @@ NDK is a [nostr]([url](https://github.com/nostr-protocol/nostr)) development kit
 ## NDK Objectives
 
 1. The core goal of NDK is to improve the decentralization of Nostr via intelligent conventions and data discovery features without depending on any one central point of coordination (such as large relays or centralized search providers).
-2. NDK team aims to have new to nostr devs get set up, and reading a NIP-01 event within 10 minutes. 
+2. NDK team aims to have new to nostr devs get set up, and reading a NIP-01 event within 10 minutes.
 3. NDK's objective is to serve prospective, and current nostr devs as clients. If you have friction with the NDK developer experience, please open issues, and ask for help from the NDK team! Devs are encouraged to search through existing, and/or create new github issues when experiencing friction with NDK.
 
 ## Installation
@@ -301,16 +301,16 @@ await ndk.publish(event);
 
 ```ts
 // Find the first event from @jack, and react/like it.
-const event = await ndk.fetchEvent({ author: "jack@cashapp.com" })[0];
+const event = await ndk.fetchEvent({ authors: ["82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2"] });
 await event.react("🤙");
 ```
 
 ### Zap an event
 
 ```ts
-// Find the first event from @jack, and zap it.
-const event = await ndk.fetchEvent({ author: "jack@cashapp.com" })[0];
-await event.zap(1337, "Zapping your post!"); // Returns a zap request
+// Find the first event from @jack, and zap it. First param is amount in millisatoshis.
+const event = await ndk.fetchEvent({ authors: ["82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2"] });
+await event.zap(1337000, "Zapping your post!"); // Returns a zap request
 ```
 
 ## Architecture decisions & suggestions

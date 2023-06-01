@@ -457,7 +457,7 @@ Create a zap request for an existing event
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `amount` | `number` | The amount to zap |
+| `amount` | `number` | The amount to zap in millisatoshis |
 | `comment?` | `string` | A comment to add to the zap request |
 | `extraTags?` | [`NDKTag`](../modules.md#ndktag)[] | Extra tags to add to the zap request |
 

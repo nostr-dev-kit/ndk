@@ -7,6 +7,7 @@ import { NDKNostrRpc, NDKRpcResponse } from "./rpc.js";
  */
 export class NDKNip46Signer implements NDKSigner {
     private ndk: NDK;
+    public remoteUser: NDKUser;
     public remotePubkey: string;
     public localSigner: NDKSigner;
     private rpc: NDKNostrRpc;
@@ -23,6 +24,8 @@ export class NDKNip46Signer implements NDKSigner {
         this.remotePubkey = remotePubkey;
         this.debug = ndk.debug.extend("nip46:signer");
 
+        this.remoteUser = new NDKUser({ hexpubkey: remotePubkey });
+
         if (!localSigner) {
             this.localSigner = NDKPrivateKeySigner.generate();
         } else {
@@ -32,8 +35,11 @@ export class NDKNip46Signer implements NDKSigner {
         this.rpc = new NDKNostrRpc(ndk, this.localSigner, this.debug);
     }
 
+    /**
+     * Get the user that is being published as
+     */
     public async user(): Promise<NDKUser> {
-        return this.localSigner.user();
+        return this.remoteUser;
     }
 
     public async blockUntilReady(): Promise<NDKUser> {

@@ -38,7 +38,7 @@ export class NDKNip46Signer implements NDKSigner {
 
     public async blockUntilReady(): Promise<NDKUser> {
         const localUser = await this.localSigner.user();
-        const user = await this.ndk.getUser({ npub: localUser.npub });
+        const user = this.ndk.getUser({ npub: localUser.npub });
 
         // Generates subscription, single subscription for the lifetime of our connection
         await this.rpc.subscribe({
@@ -47,19 +47,24 @@ export class NDKNip46Signer implements NDKSigner {
         });
 
         return new Promise((resolve, reject) => {
-            this.rpc.sendRequest(
-                this.remotePubkey,
-                "connect",
-                [localUser.hexpubkey()],
-                24133,
-                (response: NDKRpcResponse) => {
-                    if (response.result === "ack") {
-                        resolve(user);
-                    } else {
-                        reject(response.error);
+            // There is a race condition between the subscription and sending the request;
+            // introducing a small delay here to give a clear priority to the subscription
+            // to happen first
+            setTimeout(() => {
+                this.rpc.sendRequest(
+                    this.remotePubkey,
+                    "connect",
+                    [localUser.hexpubkey()],
+                    24133,
+                    (response: NDKRpcResponse) => {
+                        if (response.result === "ack") {
+                            resolve(user);
+                        } else {
+                            reject(response.error);
+                        }
                     }
-                }
-            );
+                );
+            }, 100);
         });
     }
 

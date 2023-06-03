@@ -93,7 +93,12 @@ export class NDKNip46Backend {
 
         const strategy = this.handlers[method];
         if (strategy) {
-            response = await strategy.handle(this, remotePubkey, params);
+            try {
+                response = await strategy.handle(this, remotePubkey, params);
+            } catch (e) {
+                this.debug("error handling event", e, { id, method, params });
+                console.error(`error handling event ${id} ${method}`, e);
+            }
         } else {
             this.debug("unsupported method", { method, params });
         }

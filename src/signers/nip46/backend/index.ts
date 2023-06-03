@@ -4,6 +4,8 @@ import ConnectEventHandlingStrategy from "./connect.js";
 import DescribeEventHandlingStrategy from "./describe.js";
 import GetPublicKeyHandlingStrategy from "./get-public-key.js";
 import SignEventHandlingStrategy from "./sign-event.js";
+import Nip04DecryptHandlingStrategy from "./nip04-decrypt.js";
+import Nip04EncryptHandlingStrategy from "./nip04-encrypt.js";
 
 export type Nip46PermitCallback = (
     pubkey: string,
@@ -28,7 +30,7 @@ export interface IEventHandlingStrategy {
  */
 export class NDKNip46Backend {
     readonly ndk: NDK;
-    private signer: NDKPrivateKeySigner;
+    readonly signer: NDKPrivateKeySigner;
     public localUser?: NDKUser;
     readonly debug: debug.Debugger;
     private rpc: NDKNostrRpc;
@@ -67,6 +69,8 @@ export class NDKNip46Backend {
     public handlers: { [method: string]: IEventHandlingStrategy } = {
         connect: new ConnectEventHandlingStrategy(),
         sign_event: new SignEventHandlingStrategy(),
+        nip04_encrypt: new Nip04EncryptHandlingStrategy(),
+        nip04_decrypt: new Nip04DecryptHandlingStrategy(),
         get_public_key: new GetPublicKeyHandlingStrategy(),
         describe: new DescribeEventHandlingStrategy()
     };
@@ -98,6 +102,24 @@ export class NDKNip46Backend {
             this.debug(`sending response to ${remotePubkey}`, response);
             this.rpc.sendResponse(id, remotePubkey, response);
         }
+    }
+
+    public async decrypt(remotePubkey: string, senderUser: NDKUser, payload: string) {
+        if (!(await this.pubkeyAllowed(remotePubkey, "decrypt", payload))) {
+            this.debug(`decrypt request from ${remotePubkey} rejected`);
+            return undefined;
+        }
+
+        return await this.signer.decrypt(senderUser, payload);
+    }
+
+    public async encrypt(remotePubkey: string, recipientUser: NDKUser, payload: string) {
+        if (!(await this.pubkeyAllowed(remotePubkey, "encrypt", payload))) {
+            this.debug(`encrypt request from ${remotePubkey} rejected`);
+            return undefined;
+        }
+
+        return await this.signer.encrypt(recipientUser, payload);
     }
 
     public async signEvent(remotePubkey: string, params: string[]): Promise<NDKEvent | undefined> {

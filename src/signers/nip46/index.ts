@@ -75,11 +75,48 @@ export class NDKNip46Signer implements NDKSigner {
     }
 
     public async encrypt(recipient: NDKUser, value: string): Promise<string> {
-        throw new Error("not implemented");
+        this.debug("asking for encryption");
+
+        const promise = new Promise<string>((resolve, reject) => {
+            this.rpc.sendRequest(
+                this.remotePubkey,
+                "nip04_encrypt",
+                [recipient.hexpubkey(), value],
+                24133,
+                (response: NDKRpcResponse) => {
+                    if (!response.error) {
+                        resolve(response.result);
+                    } else {
+                        reject(response.error);
+                    }
+                }
+            );
+        });
+
+        return promise;
     }
 
     public async decrypt(sender: NDKUser, value: string): Promise<string> {
-        throw new Error("not implemented");
+        this.debug("asking for decryption");
+
+        const promise = new Promise<string>((resolve, reject) => {
+            this.rpc.sendRequest(
+                this.remotePubkey,
+                "nip04_decrypt",
+                [sender.hexpubkey(), value],
+                24133,
+                (response: NDKRpcResponse) => {
+                    if (!response.error) {
+                        const value = JSON.parse(response.result);
+                        resolve(value[0]);
+                    } else {
+                        reject(response.error);
+                    }
+                }
+            );
+        });
+
+        return promise;
     }
 
     public async sign(event: NostrEvent): Promise<string> {

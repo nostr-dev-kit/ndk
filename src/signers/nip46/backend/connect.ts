@@ -6,12 +6,17 @@ export default class ConnectEventHandlingStrategy implements IEventHandlingStrat
         remotePubkey: string,
         params: string[]
     ): Promise<string | undefined> {
-        const [pubkey] = params;
+        const [pubkey, token] = params;
         const debug = backend.debug.extend("connect");
 
         debug(`connection request from ${pubkey}`);
 
-        if (await backend.pubkeyAllowed(pubkey, "connect")) {
+        if (token && backend.applyToken) {
+            debug(`applying token`);
+            await backend.applyToken(pubkey, token);
+        }
+
+        if (await backend.pubkeyAllowed(pubkey, "connect", token)) {
             debug(`connection request from ${pubkey} allowed`);
             return "ack";
         } else {

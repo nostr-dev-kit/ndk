@@ -13,6 +13,11 @@ export type Nip46PermitCallback = (
     params?: any
 ) => Promise<boolean>;
 
+export type Nip46ApplyTokenCallback = (
+    pubkey: string,
+    token: string
+) => Promise<void>;
+
 export interface IEventHandlingStrategy {
     handle(
         backend: NDKNip46Backend,
@@ -84,6 +89,16 @@ export class NDKNip46Backend {
         this.handlers[method] = strategy;
     }
 
+    /**
+     * Overload this method to apply tokens, which can
+     * wrap permission sets to be applied to a pubkey.
+     * @param pubkey public key to apply token to
+     * @param token token to apply
+     */
+    async applyToken(pubkey: string, token: string): Promise<void> {
+        throw new Error("connection token not supported");
+    }
+
     protected async handleIncomingEvent(event: NDKEvent) {
         const { id, method, params } = (await this.rpc.parseEvent(event)) as any;
         const remotePubkey = event.pubkey;
@@ -95,9 +110,9 @@ export class NDKNip46Backend {
         if (strategy) {
             try {
                 response = await strategy.handle(this, remotePubkey, params);
-            } catch (e) {
+            } catch (e: any) {
                 this.debug("error handling event", e, { id, method, params });
-                console.error(`error handling event ${id} ${method}`, e);
+                this.rpc.sendResponse(id, remotePubkey, "error", undefined, e.message);
             }
         } else {
             this.debug("unsupported method", { method, params });

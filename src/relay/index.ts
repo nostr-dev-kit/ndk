@@ -13,7 +13,8 @@ export enum NDKRelayStatus {
     CONNECTED,
     DISCONNECTING,
     DISCONNECTED,
-    RECONNECTING
+    RECONNECTING,
+    FLAPPING,
 }
 
 export interface NDKRelayConnectionStats {
@@ -114,6 +115,7 @@ export class NDKRelay extends EventEmitter {
     private handleReconnection() {
         if (this.isFlapping()) {
             this.emit("flapping", this, this._connectionStats);
+            this._status = NDKRelayStatus.FLAPPING;
         }
 
         if (this.connectedAt && Date.now() - this.connectedAt < 5000) {

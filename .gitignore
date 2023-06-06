@@ -4,7 +4,10 @@
 **/lib
 **/.vscode
 justfile
+package-lock.json
 pnpm-lock.yaml
+**/*.js
+!jest.config.js
 **/*.d.ts
 **/*.d.ts.map
 *.tgz

@@ -84,6 +84,21 @@ export class NDKSubscription extends EventEmitter {
     public relaySubscriptions: Map<NDKRelay, Sub>;
     private debug: debug.Debugger;
 
+    /**
+     * Events that have been seen by the subscription, with the time they were first seen.
+     */
+    public eventFirstSeen = new Map<NDKEventId, number>();
+
+    /**
+     * Relays that have sent an EOSE.
+     */
+    public eosesSeen = new Set<NDKRelay>();
+
+    /**
+     * Events that have been seen by the subscription per relay.
+     */
+    public eventsPerRelay: Map<NDKRelay, Set<NDKEventId>> = new Map();
+
     public constructor(
         ndk: NDK,
         filter: NDKFilter,
@@ -211,7 +226,7 @@ export class NDKSubscription extends EventEmitter {
     }
 
     // EVENT handling
-    private eventFirstSeen = new Map<NDKEventId, number>();
+
 
     /**
      * Called when an event is received from a relay or the cache
@@ -221,6 +236,17 @@ export class NDKSubscription extends EventEmitter {
      */
     public eventReceived(event: NDKEvent, relay: NDKRelay | undefined, fromCache = false) {
         if (!fromCache && relay) {
+            // track the event per relay
+            let events = this.eventsPerRelay.get(relay);
+
+            if (!events) {
+                events = new Set();
+                this.eventsPerRelay.set(relay, events);
+            }
+
+            events.add(event.id);
+
+            // mark the event as seen
             const eventAlreadySeen = this.eventFirstSeen.has(event.id);
 
             if (eventAlreadySeen) {
@@ -245,7 +271,6 @@ export class NDKSubscription extends EventEmitter {
     }
 
     // EOSE handling
-    private eosesSeen = new Set<NDKRelay>();
     private eoseTimeout: ReturnType<typeof setTimeout> | undefined;
 
     public eoseReceived(relay: NDKRelay): void {

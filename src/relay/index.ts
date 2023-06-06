@@ -182,6 +182,7 @@ export class NDKRelay extends EventEmitter {
 
         sub.on("event", (event: NostrEvent) => {
             const e = new NDKEvent(undefined, event);
+            e.relay = this;
             subscription.eventReceived(e, this);
         });
 

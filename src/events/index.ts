@@ -1,6 +1,6 @@
 import EventEmitter from "eventemitter3";
 import { getEventHash, UnsignedEvent } from "nostr-tools";
-import NDK, { NDKRelaySet, NDKUser } from "../index.js";
+import NDK, { NDKRelay, NDKRelaySet, NDKUser } from "../index.js";
 import { NDKSigner } from "../signers/index.js";
 import Zap from "../zap/index.js";
 import { generateContentTags } from "./content-tagger.js";
@@ -40,6 +40,11 @@ export default class NDKEvent extends EventEmitter {
     public sig?: string;
     public pubkey = "";
 
+    /**
+     * The relay that this event was first received from.
+     */
+    public relay: NDKRelay | undefined;
+
     constructor(ndk?: NDK, event?: NostrEvent) {
         super();
         this.ndk = ndk;
@@ -67,13 +72,50 @@ export default class NDKEvent extends EventEmitter {
         } as NostrEvent;
     }
 
+    set author(user: NDKUser) {
+        this.pubkey = user.hexpubkey();
+    }
+
     /**
      * Returns an NDKUser for the author of the event.
      */
-    public author(): NDKUser {
+    get author(): NDKUser {
         const user = new NDKUser({ hexpubkey: this.pubkey });
         user.ndk = this.ndk;
         return user;
+    }
+
+    /**
+     * Tag a user with an optional marker.
+     * @param user The user to tag.
+     * @param marker The marker to use in the tag.
+     */
+    public tag(user: NDKUser, marker?: string): void;
+
+    /**
+     * Tag a user with an optional marker.
+     * @param event The event to tag.
+     * @param marker The marker to use in the tag.
+     * @example
+     * ```typescript
+     * reply.tag(opEvent, "reply");
+     * // reply.tags => [["e", <id>, <relay>, "reply"]]
+     * ```
+     */
+    public tag(event: NDKEvent, marker?: string): void;
+    public tag(userOrEvent: NDKUser | NDKEvent, marker?: string): void {
+        const tag = userOrEvent.tagReference();
+        if (marker) tag.push(marker);
+        this.tags.push(tag);
+
+        if (userOrEvent instanceof NDKEvent) {
+            const tagEventAuthor = userOrEvent.author;
+
+            // If it's not tagged event author is not the same as the user signing this event, tag the author
+            if (tagEventAuthor && this.pubkey !== tagEventAuthor.hexpubkey()) {
+                this.tag(tagEventAuthor);
+            }
+        }
     }
 
     /**

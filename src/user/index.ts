@@ -1,5 +1,5 @@
 import { nip05, nip19 } from "nostr-tools";
-import Event from "../events/index.js";
+import Event, { NDKTag } from "../events/index.js";
 import NDK from "../index.js";
 import { NDKFilterOptions } from "../subscription/index.js";
 import { follows } from "./follows.js";
@@ -95,5 +95,13 @@ export default class NDKUser {
         }
 
         return new Set<Event>();
+    }
+
+    /**
+     * Get the tag that can be used to reference this user in an event
+     * @returns
+     */
+    public tagReference(): NDKTag {
+        return ['p', this.hexpubkey()];
     }
 }

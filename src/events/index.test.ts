@@ -1,12 +1,58 @@
-import NDK, { NDKEvent, NDKSubscription } from "../index";
+import NDK, { NDKEvent, NDKSubscription, NDKUser, NostrEvent } from "../index";
 
 describe("NDKEvent", () => {
     let ndk: NDK;
     let event: NDKEvent;
+    let user1: NDKUser;
+    let user2: NDKUser;
 
     beforeEach(() => {
         ndk = new NDK();
+        user1 = new NDKUser({ npub: 'npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft' });
+        user2 = new NDKUser({ npub: 'npub12262qa4uhw7u8gdwlgmntqtv7aye8vdcmvszkqwgs0zchel6mz7s6cgrkj' });
         event = new NDKEvent(ndk);
+        event.author = user1;
+    });
+
+    describe("tag", () => {
+        it("tags a user without a marker", () => {
+            event.tag(user2);
+            expect(event.tags).toEqual([ ["p", user2.hexpubkey()] ]);
+        });
+
+        it("tags a user with a marker", () => {
+            event.tag(user2, "author");
+            expect(event.tags).toEqual([ ["p", user2.hexpubkey(), "author" ] ]);
+        });
+
+        it("tags an event without a marker", () => {
+            const otherEvent = new NDKEvent(ndk, { id: '123'} as NostrEvent);
+            otherEvent.author = user1;
+
+            event.tag(otherEvent);
+            expect(event.tags).toEqual([ ["e", otherEvent.id] ]);
+        });
+
+        it("tags an event with a marker", () => {
+            const otherEvent = new NDKEvent(ndk, { id: '123'} as NostrEvent);
+            otherEvent.author = user1;
+            event.tag(otherEvent, "marker");
+            expect(event.tags).toEqual([ ["e", otherEvent.id, "marker"] ]);
+        });
+
+        it("tags an event author when it's different from the signing user", () => {
+            const otherEvent = new NDKEvent(ndk);
+            otherEvent.author = user2;
+            event.tag(otherEvent);
+            expect(event.tags).toEqual([ ["e", otherEvent.id], ["p", user2.hexpubkey()] ]);
+        });
+
+        it("does not tag an event author when it's the same as the signing user", () => {
+            const otherEvent = new NDKEvent(ndk);
+            otherEvent.author = user1;
+            event.tag(otherEvent);
+            expect(event.tags).toEqual([ ["e", otherEvent.id] ]);
+        });
     });
 
     describe("fetchEvents", () => {

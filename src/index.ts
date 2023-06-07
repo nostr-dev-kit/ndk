@@ -11,7 +11,8 @@ import {
     NDKFilter,
     NDKFilterOptions,
     NDKSubscription,
-    NDKSubscriptionOptions
+    NDKSubscriptionOptions,
+    filterFromId
 } from "./subscription/index.js";
 import NDKUser, { NDKUserParams } from "./user/index.js";
 import { NDKUserProfile } from "./user/profile.js";
@@ -124,7 +125,21 @@ export default class NDK extends EventEmitter {
     /**
      * Fetch a single event
      */
-    public async fetchEvent(filter: NDKFilter, opts: NDKFilterOptions = {}): Promise<NDKEvent | null> {
+    public async fetchEvent(id: string) : Promise<NDKEvent | null>;
+    public async fetchEvent(filter: NDKFilter, opts: NDKFilterOptions) : Promise<NDKEvent | null>;
+    public async fetchEvent(idOrFilter: string|NDKFilter, opts: NDKFilterOptions = {}) : Promise<NDKEvent | null> {
+        let filter: NDKFilter;
+
+        if (typeof idOrFilter === "string") {
+            filter = filterFromId(idOrFilter);
+        } else {
+            filter = idOrFilter;
+        }
+
+        if (!filter) {
+            throw new Error(`Invalid filter: ${JSON.stringify(idOrFilter)}`);
+        }
+
         return new Promise((resolve) => {
             const s = this.subscribe(filter, { ...opts, closeOnEose: true });
             s.on("event", (event) => {

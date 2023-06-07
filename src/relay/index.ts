@@ -190,6 +190,13 @@ export class NDKRelay extends EventEmitter {
             subscription.eoseReceived(this);
         });
 
+        const unsub = sub.unsub;
+        sub.unsub = () => {
+            this.debug(`Unsubscribing from ${JSON.stringify(filter)}`);
+            this.activeSubscriptions.delete(subscription);
+            unsub();
+        };
+
         this.activeSubscriptions.add(subscription);
         subscription.on("close", () => {
             this.activeSubscriptions.delete(subscription);

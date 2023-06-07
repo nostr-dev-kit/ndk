@@ -1,6 +1,6 @@
 import NDKEvent from "./index.js";
 
-export declare enum NDKKind {
+export enum NDKKind {
     Metadata = 0,
     Text = 1,
     RecommendRelay = 2,

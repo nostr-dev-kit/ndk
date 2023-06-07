@@ -159,6 +159,25 @@ export default class NDKEvent extends EventEmitter {
         return this.tags.filter((tag) => tag[0] === tagName);
     }
 
+    /**
+     * Get the first tag with the given name
+     * @param tagName Tag name to search for
+     * @returns The value of the first tag with the given name, or undefined if no such tag exists
+     */
+    public tagValue(tagName: string): string | undefined {
+        const tags = this.getMatchingTags(tagName);
+        if (tags.length === 0) return undefined;
+        return tags[0][1];
+    }
+
+    /**
+     * Remove all tags with the given name
+     * @param tagName Tag name to search for
+     */
+    public removeTag(tagName: string): void {
+        this.tags = this.tags.filter((tag) => tag[0] !== tagName);
+    }
+
     public async toString() {
         return await this.toNostrEvent();
     }
@@ -277,5 +296,26 @@ export default class NDKEvent extends EventEmitter {
 
         // await zap.publish(amount);
         return paymentRequest;
+    }
+
+    /**
+     * Generates a deletion event of the current event
+     *
+     * @param reason The reason for the deletion
+     * @returns The deletion event
+     */
+    async delete(reason?: string): Promise<NDKEvent> {
+        if (!this.ndk) throw new Error("No NDK instance found");
+
+        this.ndk.assertSigner();
+
+        const e = new NDKEvent(this.ndk, {
+            kind: NDKKind.EventDeletion,
+            content: reason || "",
+        } as NostrEvent);
+        e.tag(this);
+        await e.publish();
+
+        return e;
     }
 }

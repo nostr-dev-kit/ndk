@@ -1,5 +1,5 @@
 import EventEmitter from "eventemitter3";
-import { Filter as NostrFilter, matchFilter, Sub } from "nostr-tools";
+import { Filter as NostrFilter, matchFilter, Sub, nip19 } from "nostr-tools";
 import NDKEvent, { NDKEventId } from "../events/index.js";
 import NDK from "../index.js";
 import { NDKRelay } from "../relay";
@@ -419,4 +419,28 @@ export function mergeFilters(filters: NDKFilter[]): NDKFilter {
     });
 
     return result as NDKFilter;
+}
+
+/**
+ * Creates a valid nostr filter from an event id or a NIP-19 bech32.
+ */
+export function filterFromId(id: string): NDKFilter {
+    let decoded;
+
+    try {
+        decoded = nip19.decode(id);
+
+        switch (decoded.type) {
+            case 'nevent': return {ids: [decoded.data.id]};
+            case 'note': return {ids: [decoded.data]};
+            case 'naddr': return {
+                authors: [decoded.data.pubkey],
+                "#d": [decoded.data.identifier],
+                kinds: [decoded.data.kind]
+            };
+        }
+    } catch (e) {
+    }
+
+    return {ids: [id]};
 }

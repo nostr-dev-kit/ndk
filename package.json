@@ -8,26 +8,26 @@
         "type": "git",
         "url": "https://github.com/nostr-dev-kit/ndk"
     },
-    "types": "./lib/src/index.d.ts",
-    "main": "lib/ndk.cjs.js",
-    "module": "lib/esm/ndk.mjs",
+    "types": "./dist/index.d.ts",
+    "main": "./dist/index.js",
+    "module": "./dist/index.mjs",
     "exports": {
-        "import": "./lib/esm/ndk.mjs",
-        "require": "./lib/ndk.cjs.js"
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.js"
     },
     "files": [
-        "lib",
+        "dist",
         "README.md"
     ],
     "scripts": {
-        "dev": "node tools/cleanup esm && tsc -w -p config/tsconfig.esm.json",
-        "build": "rm -rf lib && node build.js && tsc",
-        "clean": "rm -rf lib docs",
+        "dev": "pnpm build --watch",
+        "build": "tsup src/index.ts --format cjs,esm --dts",
+        "clean": "rm -rf dist docs",
         "test": "jest",
         "lint": "eslint src/**/*.ts",
-        "format": "prettier --write \"**/*.{js,jsx,json,yml,yaml,css,ts,tsx,md,mdx}\"",
         "compile": "tsc",
-        "pretest": "pnpm compile",
+        "prepare": "pnpm build",
+        "pretest": "pnpm build",
         "posttest": "pnpm lint"
     },
     "keywords": [
@@ -43,6 +43,8 @@
         "jest": "^29.5.0",
         "prettier-plugin-organize-imports": "^3.2.2",
         "ts-jest": "^29.1.0",
+        "tsup": "^6.7.0",
+        "typedoc": "^0.24.6",
         "typedoc-plugin-markdown": "^3.14.0",
         "typescript": "^5.0.4"
     },
@@ -61,9 +63,8 @@
         "eventemitter3": "^5.0.0",
         "light-bolt11-decoder": "^3.0.0",
         "node-fetch": "^3.3.1",
-        "nostr-tools": "^1.11.1",
+        "nostr-tools": "^1.11.2",
         "tsd": "^0.28.1",
-        "typedoc": "^0.24.6",
         "utf8-buffer": "^1.0.0",
         "websocket-polyfill": "^0.0.3"
     }

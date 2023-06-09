@@ -119,6 +119,7 @@ export default class NDKEvent extends EventEmitter {
             // tag p-tags in the event if they are not the same as the user signing this event
             for (const pTag of userOrEvent.getMatchingTags("p")) {
                 if (pTag[1] === this.pubkey) continue;
+                if (this.tags.find((t) => t[0] === 'p' && t[1] === pTag[1])) continue;
 
                 this.tags.push(["p", pTag[1]]);
             }

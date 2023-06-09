@@ -111,9 +111,16 @@ export default class NDKEvent extends EventEmitter {
         if (userOrEvent instanceof NDKEvent) {
             const tagEventAuthor = userOrEvent.author;
 
-            // If it's not tagged event author is not the same as the user signing this event, tag the author
+            // If event author is not the same as the user signing this event, tag the author
             if (tagEventAuthor && this.pubkey !== tagEventAuthor.hexpubkey()) {
                 this.tag(tagEventAuthor);
+            }
+
+            // tag p-tags in the event if they are not the same as the user signing this event
+            for (const pTag of userOrEvent.getMatchingTags("p")) {
+                if (pTag[1] === this.pubkey) continue;
+
+                this.tags.push(["p", pTag[1]]);
             }
         }
     }

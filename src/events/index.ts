@@ -326,4 +326,23 @@ export default class NDKEvent extends EventEmitter {
 
         return e;
     }
+
+    /**
+     * NIP-18
+     * Repost event.
+     */
+    async repost(): Promise<NDKEvent> {
+        if (!this.ndk) throw new Error("No NDK instance found");
+
+        this.ndk.assertSigner();
+
+        const e = new NDKEvent(this.ndk, {
+            kind: NDKKind.Repost,
+            content: "",
+        } as NostrEvent);
+        e.tag(this);
+        await e.publish();
+
+        return e;
+    }
 }

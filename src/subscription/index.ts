@@ -5,6 +5,7 @@ import NDK from "../index.js";
 import { NDKRelay } from "../relay";
 import { calculateRelaySetFromFilter } from "../relay/sets/calculate";
 import { NDKRelaySet } from "../relay/sets/index.js";
+import { queryFullyFilled } from "./utils.js";
 
 export type NDKFilter = NostrFilter;
 
@@ -41,6 +42,11 @@ export interface NDKSubscriptionOptions {
      * @default 100
      */
     groupableDelay?: number;
+
+    /**
+     * The subscription ID to use for the subscription.
+     */
+    subId?: string;
 }
 
 /**
@@ -108,12 +114,12 @@ export class NDKSubscription extends EventEmitter {
     ) {
         super();
         this.ndk = ndk;
-        this.subId = subId || Math.floor(Math.random() * 9999991000).toString(); // TODO: use UUID
+        this.opts = { ...defaultOpts, ...(opts || {}) };
+        this.subId = subId || opts?.subId || generateFilterId(filter);
         this.filter = filter;
         this.relaySet = relaySet;
-        this.opts = { ...defaultOpts, ...(opts || {}) };
         this.relaySubscriptions = new Map<NDKRelay, Sub>();
-        this.debug = ndk.debug.extend("subscription");
+        this.debug = ndk.debug.extend(`subscription:${this.subId}`);
 
         // validate that the caller is not expecting a persistent
         // subscription while using an option that will only hit the cache
@@ -162,6 +168,26 @@ export class NDKSubscription extends EventEmitter {
         return this.opts?.cacheUsage !== NDKSubscriptionCacheUsage.ONLY_CACHE;
     }
 
+    private shouldWaitForCache(): boolean {
+        return (
+            // Must want to close on EOSE; subscriptions
+            // that want to receive further updates must
+            // always hit the relay
+            this.opts.closeOnEose &&
+
+            // Cache adapter must claim to be fast
+            !!this.ndk.cacheAdapter?.locking &&
+
+            // If we don't have to query relays there's no need
+            // to wait for the cache
+            this.shouldQueryRelays() &&
+
+            // If explicitly told to run in parallel, then
+            // we should not wait for the cache
+            this.opts.cacheUsage !== NDKSubscriptionCacheUsage.PARALLEL
+        );
+    }
+
     /**
      * Start the subscription. This is the main method that should be called
      * after creating a subscription.
@@ -172,18 +198,14 @@ export class NDKSubscription extends EventEmitter {
         if (this.shouldQueryCache()) {
             cachePromise = this.startWithCache();
 
-            const shouldWaitForCache =
-                this.ndk.cacheAdapter?.locking &&
-                this.shouldQueryRelays() &&
-                this.opts?.cacheUsage !== NDKSubscriptionCacheUsage.PARALLEL;
 
-            if (shouldWaitForCache) {
+            if (this.shouldWaitForCache()) {
                 this.debug("waiting for cache to finish");
                 await cachePromise;
 
                 // if the cache has a hit, return early
-                if (this.eventFirstSeen.size > 0) {
-                    this.debug("cache hit, skipping relay query");
+                if (queryFullyFilled(this)) {
+                    this.debug("cache hit, fully filled: skipping relay query");
                     this.emit("eose", this);
                     return;
                 }
@@ -443,4 +465,13 @@ export function filterFromId(id: string): NDKFilter {
     }
 
     return {ids: [id]};
+}
+
+/**
+ * Generates a random filter id, based on the filter keys.
+ */
+function generateFilterId(filter: NDKFilter) {
+    const id = Object.keys(filter)||[];
+    id.push(Math.floor(Math.random() * 999999).toString());
+    return id.join('-');
 }

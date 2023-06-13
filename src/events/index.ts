@@ -1,10 +1,11 @@
 import EventEmitter from "eventemitter3";
 import { getEventHash, UnsignedEvent } from "nostr-tools";
-import NDK, { NDKRelay, NDKRelaySet, NDKUser } from "../index.js";
+import NDK, { NDKFilter, NDKRelay, NDKRelaySet, NDKUser } from "../index.js";
 import { NDKSigner } from "../signers/index.js";
 import Zap from "../zap/index.js";
 import { generateContentTags } from "./content-tagger.js";
-import { isParamReplaceable, isReplaceable, NDKKind } from "./kind.js";
+import { isParamReplaceable, isReplaceable } from "./kind.js";
+import { NDKKind } from "./kinds/index.js";
 import { decrypt, encrypt } from "./nip04.js";
 import { encode } from "./nip19.js";
 
@@ -276,11 +277,22 @@ export default class NDKEvent extends EventEmitter {
      */
     tagReference() {
         // NIP-33
-        if (this.kind && this.kind >= 30000 && this.kind <= 40000) {
+        if (this.isParamReplaceable()) {
             return ["a", this.tagId()];
         }
 
         return ["e", this.tagId()];
+    }
+
+    /**
+     * Provides the filter that will return matching events for this event.
+     */
+    filter(): NDKFilter {
+        if (this.isParamReplaceable()) {
+            return { "#a": [this.tagId()] };
+        } else {
+            return { "#e": [this.tagId()] };
+        }
     }
 
     /**

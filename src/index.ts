@@ -18,7 +18,7 @@ import NDKUser, { NDKUserParams } from "./user/index.js";
 import { NDKUserProfile } from "./user/profile.js";
 
 export * from "./events/index.js";
-export { NDKKind } from "./events/kind.js";
+export * from "./events/kinds/index.js";
 export * from "./relay/index.js";
 export * from "./relay/sets/index.js";
 export * from "./signers/index.js";

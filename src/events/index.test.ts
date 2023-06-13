@@ -26,7 +26,7 @@ describe("NDKEvent", () => {
         });
 
         it("tags an event without a marker", () => {
-            const otherEvent = new NDKEvent(ndk, { id: '123'} as NostrEvent);
+            const otherEvent = new NDKEvent(ndk, { id: '123', kind: 1} as NostrEvent);
             otherEvent.author = user1;
 
             event.tag(otherEvent);
@@ -34,21 +34,21 @@ describe("NDKEvent", () => {
         });
 
         it("tags an event with a marker", () => {
-            const otherEvent = new NDKEvent(ndk, { id: '123'} as NostrEvent);
+            const otherEvent = new NDKEvent(ndk, { id: '123', kind: 1} as NostrEvent);
             otherEvent.author = user1;
             event.tag(otherEvent, "marker");
             expect(event.tags).toEqual([ ["e", otherEvent.id, "marker"] ]);
         });
 
         it("tags an event author when it's different from the signing user", () => {
-            const otherEvent = new NDKEvent(ndk);
+            const otherEvent = new NDKEvent(ndk, { kind: 1 } as NostrEvent);
             otherEvent.author = user2;
             event.tag(otherEvent);
             expect(event.tags).toEqual([ ["e", otherEvent.id], ["p", user2.hexpubkey()] ]);
         });
 
         it("does not tag an event author when it's the same as the signing user", () => {
-            const otherEvent = new NDKEvent(ndk);
+            const otherEvent = new NDKEvent(ndk, { kind: 1 } as NostrEvent);
             otherEvent.author = user1;
             event.tag(otherEvent);
             expect(event.tags).toEqual([ ["e", otherEvent.id] ]);

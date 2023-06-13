@@ -31,6 +31,8 @@ export function generateContentTags(
                     return tag;
             }
 
+            console.log({tag});
+
             if (!tags.find((t) => t[0] === t[0] && t[1] === t[1])) {
                 tags.push(t);
             }

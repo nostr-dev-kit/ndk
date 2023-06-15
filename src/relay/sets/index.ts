@@ -66,7 +66,7 @@ export class NDKRelaySet {
         const subGroupableId = subscription.groupableId();
         const groupableId = `${this.getId()}:${subGroupableId}`;
 
-        if (!groupableId) {
+        if (!subGroupableId) {
             this.executeSubscription(subscription);
             return subscription;
         }

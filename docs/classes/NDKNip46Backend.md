@@ -48,7 +48,7 @@ should run client-side, where the user wants to sign events from.
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:48](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/backend/index.ts#L48)
+[src/signers/nip46/backend/index.ts:48](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/backend/index.ts#L48)
 
 ## Properties
 
@@ -58,7 +58,7 @@ should run client-side, where the user wants to sign events from.
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:40](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/backend/index.ts#L40)
+[src/signers/nip46/backend/index.ts:40](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/backend/index.ts#L40)
 
 ___
 
@@ -72,7 +72,7 @@ ___
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:74](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/backend/index.ts#L74)
+[src/signers/nip46/backend/index.ts:74](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/backend/index.ts#L74)
 
 ___
 
@@ -82,7 +82,7 @@ ___
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:39](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/backend/index.ts#L39)
+[src/signers/nip46/backend/index.ts:39](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/backend/index.ts#L39)
 
 ___
 
@@ -92,7 +92,7 @@ ___
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:37](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/backend/index.ts#L37)
+[src/signers/nip46/backend/index.ts:37](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/backend/index.ts#L37)
 
 ___
 
@@ -102,7 +102,7 @@ ___
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:38](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/backend/index.ts#L38)
+[src/signers/nip46/backend/index.ts:38](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/backend/index.ts#L38)
 
 ## Methods
 
@@ -126,7 +126,7 @@ wrap permission sets to be applied to a pubkey.
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:98](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/backend/index.ts#L98)
+[src/signers/nip46/backend/index.ts:98](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/backend/index.ts#L98)
 
 ___
 
@@ -148,7 +148,7 @@ ___
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:127](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/backend/index.ts#L127)
+[src/signers/nip46/backend/index.ts:127](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/backend/index.ts#L127)
 
 ___
 
@@ -170,7 +170,7 @@ ___
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:136](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/backend/index.ts#L136)
+[src/signers/nip46/backend/index.ts:136](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/backend/index.ts#L136)
 
 ___
 
@@ -195,7 +195,7 @@ connections.
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:169](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/backend/index.ts#L169)
+[src/signers/nip46/backend/index.ts:169](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/backend/index.ts#L169)
 
 ___
 
@@ -218,7 +218,7 @@ Enables the user to set a custom strategy for handling incoming events.
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:88](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/backend/index.ts#L88)
+[src/signers/nip46/backend/index.ts:88](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/backend/index.ts#L88)
 
 ___
 
@@ -239,7 +239,7 @@ ___
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:145](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/backend/index.ts#L145)
+[src/signers/nip46/backend/index.ts:145](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/backend/index.ts#L145)
 
 ___
 
@@ -256,4 +256,4 @@ requests.
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:60](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/backend/index.ts#L60)
+[src/signers/nip46/backend/index.ts:60](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/backend/index.ts#L60)

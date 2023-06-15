@@ -20,7 +20,7 @@
 
 #### Defined in
 
-[src/signers/nip46/rpc.ts:9](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/rpc.ts#L9)
+[src/signers/nip46/rpc.ts:9](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/rpc.ts#L9)
 
 ___
 
@@ -30,7 +30,7 @@ ___
 
 #### Defined in
 
-[src/signers/nip46/rpc.ts:5](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/rpc.ts#L5)
+[src/signers/nip46/rpc.ts:5](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/rpc.ts#L5)
 
 ___
 
@@ -40,7 +40,7 @@ ___
 
 #### Defined in
 
-[src/signers/nip46/rpc.ts:7](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/rpc.ts#L7)
+[src/signers/nip46/rpc.ts:7](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/rpc.ts#L7)
 
 ___
 
@@ -50,7 +50,7 @@ ___
 
 #### Defined in
 
-[src/signers/nip46/rpc.ts:8](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/rpc.ts#L8)
+[src/signers/nip46/rpc.ts:8](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/rpc.ts#L8)
 
 ___
 
@@ -60,4 +60,4 @@ ___
 
 #### Defined in
 
-[src/signers/nip46/rpc.ts:6](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/rpc.ts#L6)
+[src/signers/nip46/rpc.ts:6](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/rpc.ts#L6)

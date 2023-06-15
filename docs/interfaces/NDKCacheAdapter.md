@@ -25,7 +25,7 @@ When this is false, the cache will be queried in addition to the relays.
 
 #### Defined in
 
-[src/cache/index.ts:10](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/cache/index.ts#L10)
+[src/cache/index.ts:10](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/cache/index.ts#L10)
 
 ## Methods
 
@@ -45,7 +45,7 @@ When this is false, the cache will be queried in addition to the relays.
 
 #### Defined in
 
-[src/cache/index.ts:12](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/cache/index.ts#L12)
+[src/cache/index.ts:12](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/cache/index.ts#L12)
 
 ___
 
@@ -66,4 +66,4 @@ ___
 
 #### Defined in
 
-[src/cache/index.ts:13](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/cache/index.ts#L13)
+[src/cache/index.ts:13](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/cache/index.ts#L13)

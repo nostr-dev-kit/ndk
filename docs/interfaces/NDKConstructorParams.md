@@ -2,6 +2,8 @@
 
 # Interface: NDKConstructorParams
 
+Params object used to create a new NDK instance
+
 ## Table of contents
 
 ### Properties
@@ -20,7 +22,7 @@
 
 #### Defined in
 
-[src/index.ts:39](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L39)
+[src/index.ts:42](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/index.ts#L42)
 
 ___
 
@@ -30,7 +32,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:40](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L40)
+[src/index.ts:43](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/index.ts#L43)
 
 ___
 
@@ -40,7 +42,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:37](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L37)
+[src/index.ts:40](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/index.ts#L40)
 
 ___
 
@@ -50,7 +52,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:36](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L36)
+[src/index.ts:39](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/index.ts#L39)
 
 ___
 
@@ -60,4 +62,4 @@ ___
 
 #### Defined in
 
-[src/index.ts:38](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L38)
+[src/index.ts:41](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/index.ts#L41)

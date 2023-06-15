@@ -66,7 +66,7 @@ localStorage.debug = 'ndk:*'
     -   [x] NIP-07
     -   [ ] NIP-26
     -   [x] NIP-46
-        - [x] Permission tokens
+        -   [x] Permission tokens
 -   Relay discovery
     -   [ ] Gossip-model (NIP-65)
     -   [ ] Implicit relays discovery following pubkey usage
@@ -302,16 +302,20 @@ await ndk.publish(event);
 
 ```ts
 // Find the first event from @jack, and react/like it.
-const event = await ndk.fetchEvent({ author: "jack@cashapp.com" })[0];
+const event = await ndk.fetchEvent({
+    authors: ["82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2"]
+});
 await event.react("🤙");
 ```
 
 ### Zap an event
 
 ```ts
-// Find the first event from @jack, and zap it.
-const event = await ndk.fetchEvent({ author: "jack@cashapp.com" })[0];
-await event.zap(1337, "Zapping your post!"); // Returns a zap request
+// Find the first event from @jack, and zap it. First param is amount in millisatoshis.
+const event = await ndk.fetchEvent({
+    authors: ["82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2"]
+});
+await event.zap(1337000, "Zapping your post!"); // Returns a zap request
 ```
 
 ## Architecture decisions & suggestions

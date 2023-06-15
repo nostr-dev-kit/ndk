@@ -57,7 +57,7 @@ Events emitted from the group will be emitted from each subscription.
 
 #### Defined in
 
-[src/subscription/index.ts:335](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L335)
+[src/subscription/index.ts:335](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/subscription/index.ts#L335)
 
 ## Properties
 
@@ -73,7 +73,7 @@ Relays that have sent an EOSE.
 
 #### Defined in
 
-[src/subscription/index.ts:101](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L101)
+[src/subscription/index.ts:101](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/subscription/index.ts#L101)
 
 ___
 
@@ -89,7 +89,7 @@ Events that have been seen by the subscription, with the time they were first se
 
 #### Defined in
 
-[src/subscription/index.ts:96](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L96)
+[src/subscription/index.ts:96](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/subscription/index.ts#L96)
 
 ___
 
@@ -105,7 +105,7 @@ Events that have been seen by the subscription per relay.
 
 #### Defined in
 
-[src/subscription/index.ts:106](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L106)
+[src/subscription/index.ts:106](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/subscription/index.ts#L106)
 
 ___
 
@@ -119,7 +119,7 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:86](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L86)
+[src/subscription/index.ts:86](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/subscription/index.ts#L86)
 
 ___
 
@@ -133,7 +133,7 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:89](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L89)
+[src/subscription/index.ts:89](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/subscription/index.ts#L89)
 
 ___
 
@@ -147,7 +147,7 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:87](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L87)
+[src/subscription/index.ts:87](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/subscription/index.ts#L87)
 
 ___
 
@@ -161,7 +161,7 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:88](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L88)
+[src/subscription/index.ts:88](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/subscription/index.ts#L88)
 
 ___
 
@@ -175,7 +175,7 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:90](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L90)
+[src/subscription/index.ts:90](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/subscription/index.ts#L90)
 
 ___
 
@@ -189,7 +189,7 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:85](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L85)
+[src/subscription/index.ts:85](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/subscription/index.ts#L85)
 
 ## Methods
 
@@ -213,7 +213,7 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:298](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L298)
+[src/subscription/index.ts:298](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/subscription/index.ts#L298)
 
 ___
 
@@ -241,7 +241,7 @@ Called when an event is received from a relay or the cache
 
 #### Defined in
 
-[src/subscription/index.ts:259](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L259)
+[src/subscription/index.ts:259](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/subscription/index.ts#L259)
 
 ___
 
@@ -263,7 +263,7 @@ The groupable ID, or null if the subscription is not groupable.
 
 #### Defined in
 
-[src/subscription/index.ts:140](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L140)
+[src/subscription/index.ts:140](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/subscription/index.ts#L140)
 
 ___
 
@@ -284,7 +284,7 @@ after creating a subscription.
 
 #### Defined in
 
-[src/subscription/index.ts:195](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L195)
+[src/subscription/index.ts:195](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/subscription/index.ts#L195)
 
 ___
 
@@ -302,4 +302,4 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:222](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L222)
+[src/subscription/index.ts:222](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/subscription/index.ts#L222)

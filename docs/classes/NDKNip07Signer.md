@@ -31,7 +31,7 @@ with a NIP-07 browser extension (e.g., getalby, nos2x).
 
 #### Defined in
 
-[src/signers/nip07/index.ts:12](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip07/index.ts#L12)
+[src/signers/nip07/index.ts:12](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip07/index.ts#L12)
 
 ## Methods
 
@@ -53,7 +53,7 @@ A promise that resolves to the NDKUser instance.
 
 #### Defined in
 
-[src/signers/nip07/index.ts:18](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip07/index.ts#L18)
+[src/signers/nip07/index.ts:18](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip07/index.ts#L18)
 
 ___
 
@@ -80,7 +80,7 @@ Decrypts the given value.
 
 #### Defined in
 
-[src/signers/nip07/index.ts:65](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip07/index.ts#L65)
+[src/signers/nip07/index.ts:65](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip07/index.ts#L65)
 
 ___
 
@@ -107,7 +107,7 @@ Encrypts the given Nostr event for the given recipient.
 
 #### Defined in
 
-[src/signers/nip07/index.ts:56](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip07/index.ts#L56)
+[src/signers/nip07/index.ts:56](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip07/index.ts#L56)
 
 ___
 
@@ -139,7 +139,7 @@ The signature of the signed event.
 
 #### Defined in
 
-[src/signers/nip07/index.ts:47](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip07/index.ts#L47)
+[src/signers/nip07/index.ts:47](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip07/index.ts#L47)
 
 ___
 
@@ -161,4 +161,4 @@ The NDKUser instance.
 
 #### Defined in
 
-[src/signers/nip07/index.ts:33](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip07/index.ts#L33)
+[src/signers/nip07/index.ts:33](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip07/index.ts#L33)

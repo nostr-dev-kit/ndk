@@ -40,7 +40,7 @@ Represents a pubkey.
 
 #### Defined in
 
-[src/user/index.ts:24](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/user/index.ts#L24)
+[src/user/index.ts:24](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/user/index.ts#L24)
 
 ## Properties
 
@@ -66,7 +66,7 @@ Returns a set of users that this user follows.
 
 #### Defined in
 
-[src/user/index.ts:83](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/user/index.ts#L83)
+[src/user/index.ts:83](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/user/index.ts#L83)
 
 ___
 
@@ -76,7 +76,7 @@ ___
 
 #### Defined in
 
-[src/user/index.ts:19](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/user/index.ts#L19)
+[src/user/index.ts:19](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/user/index.ts#L19)
 
 ___
 
@@ -86,7 +86,7 @@ ___
 
 #### Defined in
 
-[src/user/index.ts:21](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/user/index.ts#L21)
+[src/user/index.ts:21](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/user/index.ts#L21)
 
 ___
 
@@ -96,7 +96,7 @@ ___
 
 #### Defined in
 
-[src/user/index.ts:20](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/user/index.ts#L20)
+[src/user/index.ts:20](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/user/index.ts#L20)
 
 ___
 
@@ -106,7 +106,7 @@ ___
 
 #### Defined in
 
-[src/user/index.ts:22](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/user/index.ts#L22)
+[src/user/index.ts:22](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/user/index.ts#L22)
 
 ## Methods
 
@@ -126,7 +126,7 @@ ___
 
 #### Defined in
 
-[src/user/index.ts:51](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/user/index.ts#L51)
+[src/user/index.ts:51](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/user/index.ts#L51)
 
 ___
 
@@ -140,7 +140,7 @@ ___
 
 #### Defined in
 
-[src/user/index.ts:47](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/user/index.ts#L47)
+[src/user/index.ts:47](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/user/index.ts#L47)
 
 ___
 
@@ -154,7 +154,7 @@ ___
 
 #### Defined in
 
-[src/user/index.ts:85](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/user/index.ts#L85)
+[src/user/index.ts:85](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/user/index.ts#L85)
 
 ___
 
@@ -170,7 +170,7 @@ Get the tag that can be used to reference this user in an event
 
 #### Defined in
 
-[src/user/index.ts:104](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/user/index.ts#L104)
+[src/user/index.ts:104](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/user/index.ts#L104)
 
 ___
 
@@ -190,4 +190,4 @@ ___
 
 #### Defined in
 
-[src/user/index.ts:36](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/user/index.ts#L36)
+[src/user/index.ts:36](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/user/index.ts#L36)

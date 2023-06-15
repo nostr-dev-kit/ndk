@@ -41,7 +41,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/signers/nip46/rpc.ts:24](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/rpc.ts#L24)
+[src/signers/nip46/rpc.ts:24](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/rpc.ts#L24)
 
 ## Methods
 
@@ -61,7 +61,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/signers/nip46/rpc.ts:55](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/rpc.ts#L55)
+[src/signers/nip46/rpc.ts:55](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/rpc.ts#L55)
 
 ___
 
@@ -87,7 +87,7 @@ Sends a request.
 
 #### Defined in
 
-[src/signers/nip46/rpc.ts:97](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/rpc.ts#L97)
+[src/signers/nip46/rpc.ts:97](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/rpc.ts#L97)
 
 ___
 
@@ -111,7 +111,7 @@ ___
 
 #### Defined in
 
-[src/signers/nip46/rpc.ts:69](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/rpc.ts#L69)
+[src/signers/nip46/rpc.ts:69](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/rpc.ts#L69)
 
 ___
 
@@ -133,4 +133,4 @@ Subscribe to a filter. This function will resolve once the subscription is ready
 
 #### Defined in
 
-[src/signers/nip46/rpc.ts:34](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/rpc.ts#L34)
+[src/signers/nip46/rpc.ts:34](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/rpc.ts#L34)

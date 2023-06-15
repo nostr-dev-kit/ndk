@@ -75,7 +75,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/relay/index.ts:90](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/relay/index.ts#L90)
+[src/relay/index.ts:90](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/relay/index.ts#L90)
 
 ## Properties
 
@@ -87,7 +87,7 @@ Active subscriptions this relay is connected to
 
 #### Defined in
 
-[src/relay/index.ts:88](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/relay/index.ts#L88)
+[src/relay/index.ts:88](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/relay/index.ts#L88)
 
 ___
 
@@ -97,7 +97,7 @@ ___
 
 #### Defined in
 
-[src/relay/index.ts:82](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/relay/index.ts#L82)
+[src/relay/index.ts:82](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/relay/index.ts#L82)
 
 ___
 
@@ -107,7 +107,7 @@ ___
 
 #### Defined in
 
-[src/relay/index.ts:77](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/relay/index.ts#L77)
+[src/relay/index.ts:77](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/relay/index.ts#L77)
 
 ___
 
@@ -117,7 +117,7 @@ ___
 
 #### Defined in
 
-[src/relay/index.ts:76](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/relay/index.ts#L76)
+[src/relay/index.ts:76](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/relay/index.ts#L76)
 
 ## Accessors
 
@@ -131,9 +131,11 @@ Returns the connection stats.
 
 [`NDKRelayConnectionStats`](../interfaces/NDKRelayConnectionStats.md)
 
+NDKRelayConnectionStats object
+
 #### Defined in
 
-[src/relay/index.ts:289](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/relay/index.ts#L289)
+[src/relay/index.ts:165](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/relay/index.ts#L165)
 
 ___
 
@@ -141,13 +143,17 @@ ___
 
 • `get` **status**(): [`NDKRelayStatus`](../enums/NDKRelayStatus.md)
 
+Returns the current status of the relay.
+
 #### Returns
 
 [`NDKRelayStatus`](../enums/NDKRelayStatus.md)
 
+NDKRelayStatus enum
+
 #### Defined in
 
-[src/relay/index.ts:152](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/relay/index.ts#L152)
+[src/relay/index.ts:157](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/relay/index.ts#L157)
 
 ## Methods
 
@@ -161,9 +167,11 @@ Connects to the relay.
 
 `Promise`<`void`\>
 
+Promise<void>
+
 #### Defined in
 
-[src/relay/index.ts:159](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/relay/index.ts#L159)
+[src/relay/index.ts:173](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/relay/index.ts#L173)
 
 ___
 
@@ -177,9 +185,11 @@ Disconnects from the relay.
 
 `void`
 
+void
+
 #### Defined in
 
-[src/relay/index.ts:174](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/relay/index.ts#L174)
+[src/relay/index.ts:189](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/relay/index.ts#L189)
 
 ___
 
@@ -187,19 +197,23 @@ ___
 
 ▸ **handleNotice**(`notice`): `Promise`<`void`\>
 
+Handles notices returned by relays.
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `notice` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `notice` | `string` | The notice string returned from a relay |
 
 #### Returns
 
 `Promise`<`void`\>
 
+Promise<void>
+
 #### Defined in
 
-[src/relay/index.ts:179](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/relay/index.ts#L179)
+[src/relay/index.ts:199](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/relay/index.ts#L199)
 
 ___
 
@@ -211,17 +225,19 @@ Publishes an event to the relay.
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `event` | [`NDKEvent`](NDKEvent.md) |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `event` | [`NDKEvent`](NDKEvent.md) | The NDKEvent to be published |
 
 #### Returns
 
 `Promise`<`void`\>
 
+Promise<void>
+
 #### Defined in
 
-[src/relay/index.ts:235](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/relay/index.ts#L235)
+[src/relay/index.ts:259](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/relay/index.ts#L259)
 
 ___
 
@@ -242,9 +258,11 @@ wasn't the fastest one.
 
 `void`
 
+void
+
 #### Defined in
 
-[src/relay/index.ts:255](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/relay/index.ts#L255)
+[src/relay/index.ts:280](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/relay/index.ts#L280)
 
 ___
 
@@ -252,13 +270,17 @@ ___
 
 ▸ **subscribe**(`subscription`): `Sub`
 
-Subscribes to a subscription.
+Subscribes to an NDKSubscription.
+
+**`Retuns`**
+
+nostr-tools subscription object
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `subscription` | [`NDKSubscription`](NDKSubscription.md) |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `subscription` | [`NDKSubscription`](NDKSubscription.md) | The NDKSubscription to subscribe to. |
 
 #### Returns
 
@@ -266,4 +288,4 @@ Subscribes to a subscription.
 
 #### Defined in
 
-[src/relay/index.ts:199](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/relay/index.ts#L199)
+[src/relay/index.ts:221](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/relay/index.ts#L221)

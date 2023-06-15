@@ -46,7 +46,7 @@ This class is meant to be used client-side, paired with the NDKNip46Backend or a
 
 #### Defined in
 
-[src/signers/nip46/index.ts:23](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/index.ts#L23)
+[src/signers/nip46/index.ts:23](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/index.ts#L23)
 
 • **new NDKNip46Signer**(`ndk`, `remoteNpub`, `localSigner?`)
 
@@ -60,7 +60,7 @@ This class is meant to be used client-side, paired with the NDKNip46Backend or a
 
 #### Defined in
 
-[src/signers/nip46/index.ts:30](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/index.ts#L30)
+[src/signers/nip46/index.ts:30](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/index.ts#L30)
 
 • **new NDKNip46Signer**(`ndk`, `remotePubkey`, `localSigner?`)
 
@@ -74,7 +74,7 @@ This class is meant to be used client-side, paired with the NDKNip46Backend or a
 
 #### Defined in
 
-[src/signers/nip46/index.ts:37](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/index.ts#L37)
+[src/signers/nip46/index.ts:37](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/index.ts#L37)
 
 ## Properties
 
@@ -84,7 +84,7 @@ This class is meant to be used client-side, paired with the NDKNip46Backend or a
 
 #### Defined in
 
-[src/signers/nip46/index.ts:13](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/index.ts#L13)
+[src/signers/nip46/index.ts:13](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/index.ts#L13)
 
 ___
 
@@ -94,7 +94,7 @@ ___
 
 #### Defined in
 
-[src/signers/nip46/index.ts:11](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/index.ts#L11)
+[src/signers/nip46/index.ts:11](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/index.ts#L11)
 
 ___
 
@@ -104,7 +104,7 @@ ___
 
 #### Defined in
 
-[src/signers/nip46/index.ts:10](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/index.ts#L10)
+[src/signers/nip46/index.ts:10](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/index.ts#L10)
 
 ___
 
@@ -114,7 +114,7 @@ ___
 
 #### Defined in
 
-[src/signers/nip46/index.ts:12](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/index.ts#L12)
+[src/signers/nip46/index.ts:12](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/index.ts#L12)
 
 ## Methods
 
@@ -136,7 +136,7 @@ A promise that resolves to the NDKUser instance.
 
 #### Defined in
 
-[src/signers/nip46/index.ts:81](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/index.ts#L81)
+[src/signers/nip46/index.ts:81](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/index.ts#L81)
 
 ___
 
@@ -163,7 +163,7 @@ Decrypts the given value.
 
 #### Defined in
 
-[src/signers/nip46/index.ts:141](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/index.ts#L141)
+[src/signers/nip46/index.ts:141](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/index.ts#L141)
 
 ___
 
@@ -190,7 +190,7 @@ Encrypts the given Nostr event for the given recipient.
 
 #### Defined in
 
-[src/signers/nip46/index.ts:119](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/index.ts#L119)
+[src/signers/nip46/index.ts:119](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/index.ts#L119)
 
 ___
 
@@ -218,7 +218,7 @@ A promise that resolves to the signature of the signed event.
 
 #### Defined in
 
-[src/signers/nip46/index.ts:164](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/index.ts#L164)
+[src/signers/nip46/index.ts:164](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/index.ts#L164)
 
 ___
 
@@ -238,4 +238,4 @@ Get the user that is being published as
 
 #### Defined in
 
-[src/signers/nip46/index.ts:77](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/index.ts#L77)
+[src/signers/nip46/index.ts:77](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/index.ts#L77)

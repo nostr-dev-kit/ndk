@@ -71,7 +71,7 @@
 
 #### Defined in
 
-[src/events/index.ts:12](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L12)
+[src/events/index.ts:12](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L12)
 
 ___
 
@@ -81,7 +81,7 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:10](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L10)
+[src/subscription/index.ts:10](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/subscription/index.ts#L10)
 
 ___
 
@@ -91,7 +91,7 @@ ___
 
 #### Defined in
 
-[src/events/index.ts:13](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L13)
+[src/events/index.ts:13](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L13)
 
 ___
 
@@ -116,7 +116,7 @@ ___
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:16](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/backend/index.ts#L16)
+[src/signers/nip46/backend/index.ts:16](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/backend/index.ts#L16)
 
 ___
 
@@ -142,7 +142,7 @@ ___
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:10](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/backend/index.ts#L10)
+[src/signers/nip46/backend/index.ts:10](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/backend/index.ts#L10)
 
 ___
 
@@ -164,7 +164,7 @@ ___
 
 #### Defined in
 
-[src/events/index.ts:15](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L15)
+[src/events/index.ts:15](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L15)
 
 ## Variables
 
@@ -176,7 +176,7 @@ Default subscription options.
 
 #### Defined in
 
-[src/subscription/index.ts:55](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L55)
+[src/subscription/index.ts:55](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/subscription/index.ts#L55)
 
 ## Functions
 
@@ -198,7 +198,7 @@ Creates a valid nostr filter from an event id or a NIP-19 bech32.
 
 #### Defined in
 
-[src/subscription/index.ts:449](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L449)
+[src/subscription/index.ts:449](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/subscription/index.ts#L449)
 
 ___
 
@@ -219,7 +219,7 @@ ___
 
 #### Defined in
 
-[src/user/profile.ts:16](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/user/profile.ts#L16)
+[src/user/profile.ts:16](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/user/profile.ts#L16)
 
 ___
 
@@ -242,7 +242,7 @@ relatively similar, and merge them.
 
 #### Defined in
 
-[src/subscription/index.ts:426](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L426)
+[src/subscription/index.ts:426](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/subscription/index.ts#L426)
 
 ___
 
@@ -266,4 +266,4 @@ NDKZapInvoice | null
 
 #### Defined in
 
-[src/zap/invoice.ts:21](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/zap/invoice.ts#L21)
+[src/zap/invoice.ts:21](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/zap/invoice.ts#L21)

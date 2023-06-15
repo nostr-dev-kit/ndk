@@ -28,4 +28,4 @@
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:22](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/backend/index.ts#L22)
+[src/signers/nip46/backend/index.ts:22](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/signers/nip46/backend/index.ts#L22)

@@ -2,6 +2,8 @@
 
 # Interface: GetUserParams
 
+Params object passed to getUser method
+
 ## Hierarchy
 
 - `NDKUserParams`
@@ -29,7 +31,7 @@ NDKUserParams.hexpubkey
 
 #### Defined in
 
-[src/index.ts:44](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L44)
+[src/index.ts:50](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/index.ts#L50)
 
 ___
 
@@ -43,7 +45,7 @@ NDKUserParams.nip05
 
 #### Defined in
 
-[src/user/index.ts:11](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/user/index.ts#L11)
+[src/user/index.ts:11](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/user/index.ts#L11)
 
 ___
 
@@ -57,7 +59,7 @@ NDKUserParams.npub
 
 #### Defined in
 
-[src/index.ts:43](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L43)
+[src/index.ts:49](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/index.ts#L49)
 
 ___
 
@@ -71,4 +73,4 @@ NDKUserParams.relayUrls
 
 #### Defined in
 
-[src/user/index.ts:12](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/user/index.ts#L12)
+[src/user/index.ts:12](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/user/index.ts#L12)

@@ -2,6 +2,9 @@
 
 # Class: default
 
+The base NDK class, contains several helper
+methods to help access common use cases faster.
+
 ## Hierarchy
 
 - `EventEmitter`
@@ -51,7 +54,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/index.ts:56](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L56)
+[src/index.ts:65](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/index.ts#L65)
 
 ## Properties
 
@@ -61,7 +64,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/index.ts:50](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L50)
+[src/index.ts:59](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/index.ts#L59)
 
 ___
 
@@ -71,7 +74,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:51](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L51)
+[src/index.ts:60](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/index.ts#L60)
 
 ___
 
@@ -81,7 +84,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:54](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L54)
+[src/index.ts:63](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/index.ts#L63)
 
 ___
 
@@ -91,7 +94,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:52](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L52)
+[src/index.ts:61](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/index.ts#L61)
 
 ___
 
@@ -101,7 +104,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:48](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L48)
+[src/index.ts:57](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/index.ts#L57)
 
 ___
 
@@ -111,7 +114,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:49](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L49)
+[src/index.ts:58](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/index.ts#L58)
 
 ## Methods
 
@@ -127,7 +130,7 @@ Ensures that a signer is available to sign an event.
 
 #### Defined in
 
-[src/index.ts:186](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L186)
+[src/index.ts:205](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/index.ts#L205)
 
 ___
 
@@ -140,9 +143,9 @@ If the timeout is reached, the connection will be continued to be established in
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `timeoutMs?` | `number` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `timeoutMs?` | `number` | an optional timeout in milliseconds |
 
 #### Returns
 
@@ -150,7 +153,7 @@ If the timeout is reached, the connection will be continued to be established in
 
 #### Defined in
 
-[src/index.ts:74](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L74)
+[src/index.ts:84](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/index.ts#L84)
 
 ___
 
@@ -158,21 +161,24 @@ ___
 
 ▸ **fetchEvent**(`id`): `Promise`<``null`` \| [`NDKEvent`](NDKEvent.md)\>
 
-Fetch a single event
+Fetch a single event. There are two ways to use this method. You can either pass
+a nip-19 id (e.g. note1...) or you can pass a filter and filter options.
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `id` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | A nip-19 id. |
 
 #### Returns
 
 `Promise`<``null`` \| [`NDKEvent`](NDKEvent.md)\>
 
+Promise<NDKEvent | null> will resolve to null if no event is found from the specified relays.
+
 #### Defined in
 
-[src/index.ts:128](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L128)
+[src/index.ts:141](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/index.ts#L141)
 
 ▸ **fetchEvent**(`filter`, `opts`): `Promise`<``null`` \| [`NDKEvent`](NDKEvent.md)\>
 
@@ -189,7 +195,7 @@ Fetch a single event
 
 #### Defined in
 
-[src/index.ts:129](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L129)
+[src/index.ts:142](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/index.ts#L142)
 
 ___
 
@@ -197,22 +203,24 @@ ___
 
 ▸ **fetchEvents**(`filter`, `opts?`): `Promise`<`Set`<[`NDKEvent`](NDKEvent.md)\>\>
 
-Fetch events
+Fetch all events based on a filter. Will disconnect upon receiving EOSE from relays.
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `filter` | [`NDKFilter`](../modules.md#ndkfilter) |
-| `opts` | [`NDKFilterOptions`](../interfaces/NDKFilterOptions.md) |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `filter` | [`NDKFilter`](../modules.md#ndkfilter) | An NDKFilter object |
+| `opts` | [`NDKFilterOptions`](../interfaces/NDKFilterOptions.md) | An NDKFilterOptions object |
 
 #### Returns
 
 `Promise`<`Set`<[`NDKEvent`](NDKEvent.md)\>\>
 
+Promise<Set<NDKEvent>>
+
 #### Defined in
 
-[src/index.ts:159](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L159)
+[src/index.ts:178](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/index.ts#L178)
 
 ___
 
@@ -224,17 +232,19 @@ Get a NDKUser object
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `opts` | [`GetUserParams`](../interfaces/GetUserParams.md) |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `opts` | [`GetUserParams`](../interfaces/GetUserParams.md) | A GetUserParams object |
 
 #### Returns
 
 [`NDKUser`](NDKUser.md)
 
+NDKUser object
+
 #### Defined in
 
-[src/index.ts:85](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L85)
+[src/index.ts:94](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/index.ts#L94)
 
 ___
 
@@ -248,16 +258,18 @@ Publish an event
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `event` | [`NDKEvent`](NDKEvent.md) | event to publish |
+| `event` | [`NDKEvent`](NDKEvent.md) | an NDKE object of the event to publish |
 | `relaySet?` | [`NDKRelaySet`](NDKRelaySet.md) | - |
 
 #### Returns
 
 `Promise`<`void`\>
 
+Promise<void>
+
 #### Defined in
 
-[src/index.ts:116](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L116)
+[src/index.ts:124](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/index.ts#L124)
 
 ___
 
@@ -266,14 +278,14 @@ ___
 ▸ **subscribe**(`filter`, `opts?`, `relaySet?`): [`NDKSubscription`](NDKSubscription.md)
 
 Create a new subscription. Subscriptions automatically start and finish when all relays
-on the set send back an EOSE. (set `opts.closeOnEose` to `false` in order avoid this)
+on the set send back an EOSE (set `opts.closeOnEose` to `false` in order avoid this).
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `filter` | [`NDKFilter`](../modules.md#ndkfilter) |  |
-| `opts?` | [`NDKSubscriptionOptions`](../interfaces/NDKSubscriptionOptions.md) |  |
+| `filter` | [`NDKFilter`](../modules.md#ndkfilter) | NDKFilter object |
+| `opts?` | [`NDKSubscriptionOptions`](../interfaces/NDKSubscriptionOptions.md) | NDKSubscriptionOptions object |
 | `relaySet?` | [`NDKRelaySet`](NDKRelaySet.md) | explicit relay set to use |
 
 #### Returns
@@ -284,4 +296,4 @@ NDKSubscription
 
 #### Defined in
 
-[src/index.ts:100](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L100)
+[src/index.ts:108](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/index.ts#L108)

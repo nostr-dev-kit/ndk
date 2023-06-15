@@ -25,7 +25,7 @@ The relay is connected.
 
 #### Defined in
 
-[src/relay/index.ts:22](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/relay/index.ts#L22)
+[src/relay/index.ts:22](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/relay/index.ts#L22)
 
 ___
 
@@ -37,7 +37,7 @@ The relay is attempting to connect.
 
 #### Defined in
 
-[src/relay/index.ts:18](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/relay/index.ts#L18)
+[src/relay/index.ts:18](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/relay/index.ts#L18)
 
 ___
 
@@ -49,7 +49,7 @@ The relay has disconnected.
 
 #### Defined in
 
-[src/relay/index.ts:30](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/relay/index.ts#L30)
+[src/relay/index.ts:30](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/relay/index.ts#L30)
 
 ___
 
@@ -61,7 +61,7 @@ The relay is attempting to disconnect.
 
 #### Defined in
 
-[src/relay/index.ts:26](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/relay/index.ts#L26)
+[src/relay/index.ts:26](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/relay/index.ts#L26)
 
 ___
 
@@ -73,7 +73,7 @@ The relay is having issues responding.
 
 #### Defined in
 
-[src/relay/index.ts:38](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/relay/index.ts#L38)
+[src/relay/index.ts:38](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/relay/index.ts#L38)
 
 ___
 
@@ -85,4 +85,4 @@ The relay is attempting to reconnect.
 
 #### Defined in
 
-[src/relay/index.ts:34](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/relay/index.ts#L34)
+[src/relay/index.ts:34](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/relay/index.ts#L34)

@@ -76,7 +76,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/events/index.ts:49](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L49)
+[src/events/index.ts:49](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L49)
 
 ## Properties
 
@@ -86,7 +86,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/events/index.ts:37](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L37)
+[src/events/index.ts:37](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L37)
 
 ___
 
@@ -96,7 +96,7 @@ ___
 
 #### Defined in
 
-[src/events/index.ts:36](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L36)
+[src/events/index.ts:36](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L36)
 
 ___
 
@@ -120,7 +120,7 @@ ___
 
 #### Defined in
 
-[src/events/index.ts:162](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L162)
+[src/events/index.ts:162](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L162)
 
 ___
 
@@ -144,7 +144,7 @@ ___
 
 #### Defined in
 
-[src/events/index.ts:160](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L160)
+[src/events/index.ts:160](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L160)
 
 ___
 
@@ -168,7 +168,7 @@ ___
 
 #### Defined in
 
-[src/events/index.ts:161](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L161)
+[src/events/index.ts:161](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L161)
 
 ___
 
@@ -178,7 +178,7 @@ ___
 
 #### Defined in
 
-[src/events/index.ts:40](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L40)
+[src/events/index.ts:40](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L40)
 
 ___
 
@@ -202,7 +202,7 @@ ___
 
 #### Defined in
 
-[src/events/index.ts:159](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L159)
+[src/events/index.ts:159](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L159)
 
 ___
 
@@ -226,7 +226,7 @@ ___
 
 #### Defined in
 
-[src/events/index.ts:158](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L158)
+[src/events/index.ts:158](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L158)
 
 ___
 
@@ -236,7 +236,7 @@ ___
 
 #### Defined in
 
-[src/events/index.ts:39](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L39)
+[src/events/index.ts:39](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L39)
 
 ___
 
@@ -246,7 +246,7 @@ ___
 
 #### Defined in
 
-[src/events/index.ts:35](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L35)
+[src/events/index.ts:35](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L35)
 
 ___
 
@@ -256,7 +256,7 @@ ___
 
 #### Defined in
 
-[src/events/index.ts:42](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L42)
+[src/events/index.ts:42](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L42)
 
 ___
 
@@ -268,7 +268,7 @@ The relay that this event was first received from.
 
 #### Defined in
 
-[src/events/index.ts:47](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L47)
+[src/events/index.ts:47](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L47)
 
 ___
 
@@ -278,7 +278,7 @@ ___
 
 #### Defined in
 
-[src/events/index.ts:41](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L41)
+[src/events/index.ts:41](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L41)
 
 ___
 
@@ -288,7 +288,7 @@ ___
 
 #### Defined in
 
-[src/events/index.ts:38](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L38)
+[src/events/index.ts:38](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L38)
 
 ## Accessors
 
@@ -304,7 +304,7 @@ Returns an NDKUser for the author of the event.
 
 #### Defined in
 
-[src/events/index.ts:83](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L83)
+[src/events/index.ts:83](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L83)
 
 • `set` **author**(`user`): `void`
 
@@ -320,7 +320,7 @@ Returns an NDKUser for the author of the event.
 
 #### Defined in
 
-[src/events/index.ts:76](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L76)
+[src/events/index.ts:76](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L76)
 
 ## Methods
 
@@ -344,7 +344,7 @@ The deletion event
 
 #### Defined in
 
-[src/events/index.ts:327](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L327)
+[src/events/index.ts:327](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L327)
 
 ___
 
@@ -360,7 +360,7 @@ Provides the filter that will return matching events for this event.
 
 #### Defined in
 
-[src/events/index.ts:290](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L290)
+[src/events/index.ts:290](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L290)
 
 ___
 
@@ -382,7 +382,7 @@ Get all tags with the given name
 
 #### Defined in
 
-[src/events/index.ts:167](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L167)
+[src/events/index.ts:167](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L167)
 
 ___
 
@@ -402,7 +402,7 @@ ___
 
 #### Defined in
 
-[src/events/index.ts:214](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L214)
+[src/events/index.ts:214](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L214)
 
 ___
 
@@ -418,7 +418,7 @@ Returns the event as is.
 
 #### Defined in
 
-[src/events/index.ts:64](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L64)
+[src/events/index.ts:64](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L64)
 
 ___
 
@@ -440,7 +440,7 @@ Remove all tags with the given name
 
 #### Defined in
 
-[src/events/index.ts:186](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L186)
+[src/events/index.ts:186](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L186)
 
 ___
 
@@ -456,7 +456,7 @@ the `d` tag of a parameterized replaceable event
 
 #### Defined in
 
-[src/events/index.ts:244](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L244)
+[src/events/index.ts:244](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L244)
 
 ___
 
@@ -473,7 +473,7 @@ Repost event.
 
 #### Defined in
 
-[src/events/index.ts:346](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L346)
+[src/events/index.ts:346](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L346)
 
 ___
 
@@ -498,7 +498,7 @@ Repleacable events will have their created_at field set to the current time.
 
 #### Defined in
 
-[src/events/index.ts:200](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L200)
+[src/events/index.ts:200](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L200)
 
 ___
 
@@ -521,7 +521,7 @@ Tag a user with an optional marker.
 
 #### Defined in
 
-[src/events/index.ts:94](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L94)
+[src/events/index.ts:94](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L94)
 
 ▸ **tag**(`event`, `marker?`): `void`
 
@@ -547,7 +547,7 @@ reply.tag(opEvent, "reply");
 
 #### Defined in
 
-[src/events/index.ts:106](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L106)
+[src/events/index.ts:106](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L106)
 
 ___
 
@@ -563,7 +563,7 @@ the id of the event, or if it's a parameterized event, the id of the event with 
 
 #### Defined in
 
-[src/events/index.ts:258](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L258)
+[src/events/index.ts:258](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L258)
 
 ___
 
@@ -589,7 +589,7 @@ event = new NDKEvent(ndk, { kind: 30000, pubkey: 'pubkey', tags: [ ["d", "d-code
 
 #### Defined in
 
-[src/events/index.ts:278](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L278)
+[src/events/index.ts:278](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L278)
 
 ___
 
@@ -613,7 +613,7 @@ The value of the first tag with the given name, or undefined if no such tag exis
 
 #### Defined in
 
-[src/events/index.ts:176](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L176)
+[src/events/index.ts:176](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L176)
 
 ___
 
@@ -636,7 +636,7 @@ when possible, adding tags when necessary.
 
 #### Defined in
 
-[src/events/index.ts:134](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L134)
+[src/events/index.ts:134](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L134)
 
 ___
 
@@ -650,7 +650,7 @@ ___
 
 #### Defined in
 
-[src/events/index.ts:190](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L190)
+[src/events/index.ts:190](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L190)
 
 ___
 
@@ -674,4 +674,4 @@ Create a zap request for an existing event
 
 #### Defined in
 
-[src/events/index.ts:305](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L305)
+[src/events/index.ts:305](https://github.com/nostr-dev-kit/ndk/blob/4b9fbc9/src/events/index.ts#L305)

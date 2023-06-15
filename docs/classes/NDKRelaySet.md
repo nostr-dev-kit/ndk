@@ -41,7 +41,7 @@ Requests to relays should be sent through this interface.
 
 #### Defined in
 
-[src/relay/sets/index.ts:20](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/relay/sets/index.ts#L20)
+[src/relay/sets/index.ts:20](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/relay/sets/index.ts#L20)
 
 ## Properties
 
@@ -51,7 +51,7 @@ Requests to relays should be sent through this interface.
 
 #### Defined in
 
-[src/relay/sets/index.ts:16](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/relay/sets/index.ts#L16)
+[src/relay/sets/index.ts:16](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/relay/sets/index.ts#L16)
 
 ## Methods
 
@@ -67,7 +67,7 @@ Calculates an ID of this specific combination of relays.
 
 #### Defined in
 
-[src/relay/sets/index.ts:56](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/relay/sets/index.ts#L56)
+[src/relay/sets/index.ts:56](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/relay/sets/index.ts#L56)
 
 ___
 
@@ -87,7 +87,7 @@ ___
 
 #### Defined in
 
-[src/relay/sets/index.ts:137](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/relay/sets/index.ts#L137)
+[src/relay/sets/index.ts:140](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/relay/sets/index.ts#L140)
 
 ___
 
@@ -101,7 +101,7 @@ ___
 
 #### Defined in
 
-[src/relay/sets/index.ts:147](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/relay/sets/index.ts#L147)
+[src/relay/sets/index.ts:150](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/relay/sets/index.ts#L150)
 
 ___
 
@@ -123,7 +123,7 @@ Add a subscription to this relay set
 
 #### Defined in
 
-[src/relay/sets/index.ts:65](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/relay/sets/index.ts#L65)
+[src/relay/sets/index.ts:65](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/relay/sets/index.ts#L65)
 
 ___
 
@@ -151,4 +151,4 @@ NDKRelaySet
 
 #### Defined in
 
-[src/relay/sets/index.ts:36](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/relay/sets/index.ts#L36)
+[src/relay/sets/index.ts:36](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/relay/sets/index.ts#L36)

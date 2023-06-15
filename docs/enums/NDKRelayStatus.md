@@ -2,6 +2,8 @@
 
 # Enumeration: NDKRelayStatus
 
+The current status of a relay.
+
 ## Table of contents
 
 ### Enumeration Members
@@ -10,6 +12,7 @@
 - [CONNECTING](NDKRelayStatus.md#connecting)
 - [DISCONNECTED](NDKRelayStatus.md#disconnected)
 - [DISCONNECTING](NDKRelayStatus.md#disconnecting)
+- [FLAPPING](NDKRelayStatus.md#flapping)
 - [RECONNECTING](NDKRelayStatus.md#reconnecting)
 
 ## Enumeration Members
@@ -18,9 +21,11 @@
 
 • **CONNECTED** = ``1``
 
+The relay is connected.
+
 #### Defined in
 
-[src/relay/index.ts:12](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/relay/index.ts#L12)
+[src/relay/index.ts:22](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/relay/index.ts#L22)
 
 ___
 
@@ -28,9 +33,11 @@ ___
 
 • **CONNECTING** = ``0``
 
+The relay is attempting to connect.
+
 #### Defined in
 
-[src/relay/index.ts:11](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/relay/index.ts#L11)
+[src/relay/index.ts:18](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/relay/index.ts#L18)
 
 ___
 
@@ -38,9 +45,11 @@ ___
 
 • **DISCONNECTED** = ``3``
 
+The relay has disconnected.
+
 #### Defined in
 
-[src/relay/index.ts:14](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/relay/index.ts#L14)
+[src/relay/index.ts:30](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/relay/index.ts#L30)
 
 ___
 
@@ -48,9 +57,23 @@ ___
 
 • **DISCONNECTING** = ``2``
 
+The relay is attempting to disconnect.
+
 #### Defined in
 
-[src/relay/index.ts:13](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/relay/index.ts#L13)
+[src/relay/index.ts:26](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/relay/index.ts#L26)
+
+___
+
+### FLAPPING
+
+• **FLAPPING** = ``5``
+
+The relay is having issues responding.
+
+#### Defined in
+
+[src/relay/index.ts:38](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/relay/index.ts#L38)
 
 ___
 
@@ -58,6 +81,8 @@ ___
 
 • **RECONNECTING** = ``4``
 
+The relay is attempting to reconnect.
+
 #### Defined in
 
-[src/relay/index.ts:15](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/relay/index.ts#L15)
+[src/relay/index.ts:34](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/relay/index.ts#L34)

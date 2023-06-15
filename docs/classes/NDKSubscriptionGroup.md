@@ -20,6 +20,9 @@ Events emitted from the group will be emitted from each subscription.
 
 ### Properties
 
+- [eosesSeen](NDKSubscriptionGroup.md#eosesseen)
+- [eventFirstSeen](NDKSubscriptionGroup.md#eventfirstseen)
+- [eventsPerRelay](NDKSubscriptionGroup.md#eventsperrelay)
 - [filter](NDKSubscriptionGroup.md#filter)
 - [ndk](NDKSubscriptionGroup.md#ndk)
 - [opts](NDKSubscriptionGroup.md#opts)
@@ -54,13 +57,61 @@ Events emitted from the group will be emitted from each subscription.
 
 #### Defined in
 
-[src/subscription/index.ts:291](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/subscription/index.ts#L291)
+[src/subscription/index.ts:335](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L335)
 
 ## Properties
 
+### eosesSeen
+
+• **eosesSeen**: `Set`<[`NDKRelay`](NDKRelay.md)\>
+
+Relays that have sent an EOSE.
+
+#### Inherited from
+
+[NDKSubscription](NDKSubscription.md).[eosesSeen](NDKSubscription.md#eosesseen)
+
+#### Defined in
+
+[src/subscription/index.ts:101](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L101)
+
+___
+
+### eventFirstSeen
+
+• **eventFirstSeen**: `Map`<`string`, `number`\>
+
+Events that have been seen by the subscription, with the time they were first seen.
+
+#### Inherited from
+
+[NDKSubscription](NDKSubscription.md).[eventFirstSeen](NDKSubscription.md#eventfirstseen)
+
+#### Defined in
+
+[src/subscription/index.ts:96](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L96)
+
+___
+
+### eventsPerRelay
+
+• **eventsPerRelay**: `Map`<[`NDKRelay`](NDKRelay.md), `Set`<`string`\>\>
+
+Events that have been seen by the subscription per relay.
+
+#### Inherited from
+
+[NDKSubscription](NDKSubscription.md).[eventsPerRelay](NDKSubscription.md#eventsperrelay)
+
+#### Defined in
+
+[src/subscription/index.ts:106](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L106)
+
+___
+
 ### filter
 
-• `Readonly` **filter**: `Filter`
+• `Readonly` **filter**: [`NDKFilter`](../modules.md#ndkfilter)
 
 #### Inherited from
 
@@ -68,7 +119,7 @@ Events emitted from the group will be emitted from each subscription.
 
 #### Defined in
 
-[src/subscription/index.ts:81](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/subscription/index.ts#L81)
+[src/subscription/index.ts:86](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L86)
 
 ___
 
@@ -82,7 +133,7 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:84](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/subscription/index.ts#L84)
+[src/subscription/index.ts:89](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L89)
 
 ___
 
@@ -96,7 +147,7 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:82](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/subscription/index.ts#L82)
+[src/subscription/index.ts:87](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L87)
 
 ___
 
@@ -110,7 +161,7 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:83](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/subscription/index.ts#L83)
+[src/subscription/index.ts:88](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L88)
 
 ___
 
@@ -124,7 +175,7 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:85](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/subscription/index.ts#L85)
+[src/subscription/index.ts:90](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L90)
 
 ___
 
@@ -138,7 +189,7 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:80](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/subscription/index.ts#L80)
+[src/subscription/index.ts:85](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L85)
 
 ## Methods
 
@@ -162,7 +213,7 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:254](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/subscription/index.ts#L254)
+[src/subscription/index.ts:298](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L298)
 
 ___
 
@@ -190,7 +241,7 @@ Called when an event is received from a relay or the cache
 
 #### Defined in
 
-[src/subscription/index.ts:225](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/subscription/index.ts#L225)
+[src/subscription/index.ts:259](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L259)
 
 ___
 
@@ -212,7 +263,7 @@ The groupable ID, or null if the subscription is not groupable.
 
 #### Defined in
 
-[src/subscription/index.ts:119](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/subscription/index.ts#L119)
+[src/subscription/index.ts:140](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L140)
 
 ___
 
@@ -233,7 +284,7 @@ after creating a subscription.
 
 #### Defined in
 
-[src/subscription/index.ts:156](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/subscription/index.ts#L156)
+[src/subscription/index.ts:195](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L195)
 
 ___
 
@@ -251,4 +302,4 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:188](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/subscription/index.ts#L188)
+[src/subscription/index.ts:222](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L222)

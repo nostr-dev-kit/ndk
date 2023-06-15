@@ -51,7 +51,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/index.ts:57](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/index.ts#L57)
+[src/index.ts:56](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L56)
 
 ## Properties
 
@@ -61,7 +61,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/index.ts:51](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/index.ts#L51)
+[src/index.ts:50](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L50)
 
 ___
 
@@ -71,7 +71,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:52](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/index.ts#L52)
+[src/index.ts:51](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L51)
 
 ___
 
@@ -81,7 +81,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:55](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/index.ts#L55)
+[src/index.ts:54](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L54)
 
 ___
 
@@ -91,7 +91,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:53](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/index.ts#L53)
+[src/index.ts:52](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L52)
 
 ___
 
@@ -101,7 +101,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:49](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/index.ts#L49)
+[src/index.ts:48](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L48)
 
 ___
 
@@ -111,7 +111,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:50](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/index.ts#L50)
+[src/index.ts:49](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L49)
 
 ## Methods
 
@@ -127,7 +127,7 @@ Ensures that a signer is available to sign an event.
 
 #### Defined in
 
-[src/index.ts:169](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/index.ts#L169)
+[src/index.ts:186](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L186)
 
 ___
 
@@ -150,13 +150,13 @@ If the timeout is reached, the connection will be continued to be established in
 
 #### Defined in
 
-[src/index.ts:75](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/index.ts#L75)
+[src/index.ts:74](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L74)
 
 ___
 
 ### fetchEvent
 
-▸ **fetchEvent**(`filter`, `opts?`): `Promise`<[`NDKEvent`](NDKEvent.md)\>
+▸ **fetchEvent**(`id`): `Promise`<``null`` \| [`NDKEvent`](NDKEvent.md)\>
 
 Fetch a single event
 
@@ -164,16 +164,32 @@ Fetch a single event
 
 | Name | Type |
 | :------ | :------ |
-| `filter` | `Filter` |
+| `id` | `string` |
+
+#### Returns
+
+`Promise`<``null`` \| [`NDKEvent`](NDKEvent.md)\>
+
+#### Defined in
+
+[src/index.ts:128](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L128)
+
+▸ **fetchEvent**(`filter`, `opts`): `Promise`<``null`` \| [`NDKEvent`](NDKEvent.md)\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `filter` | [`NDKFilter`](../modules.md#ndkfilter) |
 | `opts` | [`NDKFilterOptions`](../interfaces/NDKFilterOptions.md) |
 
 #### Returns
 
-`Promise`<[`NDKEvent`](NDKEvent.md)\>
+`Promise`<``null`` \| [`NDKEvent`](NDKEvent.md)\>
 
 #### Defined in
 
-[src/index.ts:132](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/index.ts#L132)
+[src/index.ts:129](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L129)
 
 ___
 
@@ -187,7 +203,7 @@ Fetch events
 
 | Name | Type |
 | :------ | :------ |
-| `filter` | `Filter` |
+| `filter` | [`NDKFilter`](../modules.md#ndkfilter) |
 | `opts` | [`NDKFilterOptions`](../interfaces/NDKFilterOptions.md) |
 
 #### Returns
@@ -196,7 +212,7 @@ Fetch events
 
 #### Defined in
 
-[src/index.ts:145](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/index.ts#L145)
+[src/index.ts:159](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L159)
 
 ___
 
@@ -218,7 +234,7 @@ Get a NDKUser object
 
 #### Defined in
 
-[src/index.ts:86](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/index.ts#L86)
+[src/index.ts:85](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L85)
 
 ___
 
@@ -241,7 +257,7 @@ Publish an event
 
 #### Defined in
 
-[src/index.ts:117](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/index.ts#L117)
+[src/index.ts:116](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L116)
 
 ___
 
@@ -256,7 +272,7 @@ on the set send back an EOSE. (set `opts.closeOnEose` to `false` in order avoid 
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `filter` | `Filter` |  |
+| `filter` | [`NDKFilter`](../modules.md#ndkfilter) |  |
 | `opts?` | [`NDKSubscriptionOptions`](../interfaces/NDKSubscriptionOptions.md) |  |
 | `relaySet?` | [`NDKRelaySet`](NDKRelaySet.md) | explicit relay set to use |
 
@@ -268,4 +284,4 @@ NDKSubscription
 
 #### Defined in
 
-[src/index.ts:101](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/index.ts#L101)
+[src/index.ts:100](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/index.ts#L100)

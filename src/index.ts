@@ -32,6 +32,9 @@ export * from "./user/profile.js";
 export { NDKZapInvoice, zapInvoiceFromEvent } from "./zap/invoice.js";
 export { NDKEvent, NDKUser, NDKFilter, NDKUserProfile, NDKCacheAdapter };
 
+/**
+ * Params object used to create a new NDK instance
+ */
 export interface NDKConstructorParams {
     explicitRelayUrls?: string[];
     devWriteRelayUrls?: string[];
@@ -39,11 +42,17 @@ export interface NDKConstructorParams {
     cacheAdapter?: NDKCacheAdapter;
     debug?: debug.Debugger;
 }
+/**
+ * Params object passed to getUser method
+ */
 export interface GetUserParams extends NDKUserParams {
     npub?: string;
     hexpubkey?: string;
 }
-
+/**
+ * The base NDK class, contains several helper
+ * methods to help access common use cases faster.
+ */
 export default class NDK extends EventEmitter {
     public pool: NDKPool;
     public signer?: NDKSigner;
@@ -70,6 +79,7 @@ export default class NDK extends EventEmitter {
     /**
      * Connect to relays with optional timeout.
      * If the timeout is reached, the connection will be continued to be established in the background.
+     * @param timeoutMs an optional timeout in milliseconds
      */
     public async connect(timeoutMs?: number): Promise<void> {
         this.debug("Connecting to relays", { timeoutMs });
@@ -78,9 +88,8 @@ export default class NDK extends EventEmitter {
 
     /**
      * Get a NDKUser object
-     *
-     * @param opts
-     * @returns
+     * @param opts A GetUserParams object
+     * @returns NDKUser object
      */
     public getUser(opts: GetUserParams): NDKUser {
         const user = new NDKUser(opts);
@@ -90,10 +99,9 @@ export default class NDK extends EventEmitter {
 
     /**
      * Create a new subscription. Subscriptions automatically start and finish when all relays
-     * on the set send back an EOSE. (set `opts.closeOnEose` to `false` in order avoid this)
-     *
-     * @param filter
-     * @param opts
+     * on the set send back an EOSE (set `opts.closeOnEose` to `false` in order avoid this).
+     * @param filter NDKFilter object
+     * @param opts NDKSubscriptionOptions object
      * @param relaySet explicit relay set to use
      * @returns NDKSubscription
      */
@@ -110,8 +118,8 @@ export default class NDK extends EventEmitter {
 
     /**
      * Publish an event
-     * @param event event to publish
-     * @returns
+     * @param event an NDKE object of the event to publish
+     * @returns Promise<void>
      */
     public async publish(event: NDKEvent, relaySet?: NDKRelaySet): Promise<void> {
         if (!relaySet) {
@@ -123,11 +131,19 @@ export default class NDK extends EventEmitter {
     }
 
     /**
-     * Fetch a single event
+     * Fetch a single event. There are two ways to use this method. You can either pass
+     * a nip-19 id (e.g. note1...) or you can pass a filter and filter options.
+     * @param id A nip-19 id.
+     * @param filter An NDKFilter object
+     * @param opts NDKFilterOptions object
+     * @returns Promise<NDKEvent | null> will resolve to null if no event is found from the specified relays.
      */
-    public async fetchEvent(id: string) : Promise<NDKEvent | null>;
-    public async fetchEvent(filter: NDKFilter, opts: NDKFilterOptions) : Promise<NDKEvent | null>;
-    public async fetchEvent(idOrFilter: string|NDKFilter, opts: NDKFilterOptions = {}) : Promise<NDKEvent | null> {
+    public async fetchEvent(id: string): Promise<NDKEvent | null>;
+    public async fetchEvent(filter: NDKFilter, opts: NDKFilterOptions): Promise<NDKEvent | null>;
+    public async fetchEvent(
+        idOrFilter: string | NDKFilter,
+        opts: NDKFilterOptions = {}
+    ): Promise<NDKEvent | null> {
         let filter: NDKFilter;
 
         if (typeof idOrFilter === "string") {
@@ -154,7 +170,10 @@ export default class NDK extends EventEmitter {
     }
 
     /**
-     * Fetch events
+     * Fetch all events based on a filter. Will disconnect upon receiving EOSE from relays.
+     * @param filter An NDKFilter object
+     * @param opts An NDKFilterOptions object
+     * @returns Promise<Set<NDKEvent>>
      */
     public async fetchEvents(
         filter: NDKFilter,

@@ -19,6 +19,8 @@ This class is meant to be used client-side, paired with the NDKNip46Backend or a
 
 - [localSigner](NDKNip46Signer.md#localsigner)
 - [remotePubkey](NDKNip46Signer.md#remotepubkey)
+- [remoteUser](NDKNip46Signer.md#remoteuser)
+- [token](NDKNip46Signer.md#token)
 
 ### Methods
 
@@ -32,6 +34,34 @@ This class is meant to be used client-side, paired with the NDKNip46Backend or a
 
 ### constructor
 
+• **new NDKNip46Signer**(`ndk`, `token`, `localSigner?`)
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `ndk` | [`default`](default.md) | The NDK instance to use |
+| `token` | `string` | connection token, in the form "npub#otp" |
+| `localSigner?` | [`NDKSigner`](../interfaces/NDKSigner.md) | The signer that will be used to request events to be signed |
+
+#### Defined in
+
+[src/signers/nip46/index.ts:23](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/index.ts#L23)
+
+• **new NDKNip46Signer**(`ndk`, `remoteNpub`, `localSigner?`)
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `ndk` | [`default`](default.md) | The NDK instance to use |
+| `remoteNpub` | `string` | The npub that wants to be published as |
+| `localSigner?` | [`NDKSigner`](../interfaces/NDKSigner.md) | The signer that will be used to request events to be signed |
+
+#### Defined in
+
+[src/signers/nip46/index.ts:30](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/index.ts#L30)
+
 • **new NDKNip46Signer**(`ndk`, `remotePubkey`, `localSigner?`)
 
 #### Parameters
@@ -44,7 +74,7 @@ This class is meant to be used client-side, paired with the NDKNip46Backend or a
 
 #### Defined in
 
-[src/signers/nip46/index.ts:21](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/index.ts#L21)
+[src/signers/nip46/index.ts:37](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/index.ts#L37)
 
 ## Properties
 
@@ -54,7 +84,7 @@ This class is meant to be used client-side, paired with the NDKNip46Backend or a
 
 #### Defined in
 
-[src/signers/nip46/index.ts:11](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/index.ts#L11)
+[src/signers/nip46/index.ts:13](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/index.ts#L13)
 
 ___
 
@@ -64,7 +94,27 @@ ___
 
 #### Defined in
 
-[src/signers/nip46/index.ts:10](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/index.ts#L10)
+[src/signers/nip46/index.ts:11](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/index.ts#L11)
+
+___
+
+### remoteUser
+
+• **remoteUser**: [`NDKUser`](NDKUser.md)
+
+#### Defined in
+
+[src/signers/nip46/index.ts:10](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/index.ts#L10)
+
+___
+
+### token
+
+• **token**: `undefined` \| `string`
+
+#### Defined in
+
+[src/signers/nip46/index.ts:12](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/index.ts#L12)
 
 ## Methods
 
@@ -86,7 +136,7 @@ A promise that resolves to the NDKUser instance.
 
 #### Defined in
 
-[src/signers/nip46/index.ts:39](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/index.ts#L39)
+[src/signers/nip46/index.ts:81](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/index.ts#L81)
 
 ___
 
@@ -113,7 +163,7 @@ Decrypts the given value.
 
 #### Defined in
 
-[src/signers/nip46/index.ts:70](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/index.ts#L70)
+[src/signers/nip46/index.ts:141](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/index.ts#L141)
 
 ___
 
@@ -140,7 +190,7 @@ Encrypts the given Nostr event for the given recipient.
 
 #### Defined in
 
-[src/signers/nip46/index.ts:66](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/index.ts#L66)
+[src/signers/nip46/index.ts:119](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/index.ts#L119)
 
 ___
 
@@ -168,7 +218,7 @@ A promise that resolves to the signature of the signed event.
 
 #### Defined in
 
-[src/signers/nip46/index.ts:74](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/index.ts#L74)
+[src/signers/nip46/index.ts:164](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/index.ts#L164)
 
 ___
 
@@ -176,13 +226,11 @@ ___
 
 ▸ **user**(): `Promise`<[`NDKUser`](NDKUser.md)\>
 
-Getter for the user property.
+Get the user that is being published as
 
 #### Returns
 
 `Promise`<[`NDKUser`](NDKUser.md)\>
-
-A promise that resolves to the NDKUser instance.
 
 #### Implementation of
 
@@ -190,4 +238,4 @@ A promise that resolves to the NDKUser instance.
 
 #### Defined in
 
-[src/signers/nip46/index.ts:35](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/index.ts#L35)
+[src/signers/nip46/index.ts:77](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/index.ts#L77)

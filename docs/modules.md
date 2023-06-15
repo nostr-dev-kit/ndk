@@ -16,6 +16,7 @@
 - [NDKNip07Signer](classes/NDKNip07Signer.md)
 - [NDKNip46Backend](classes/NDKNip46Backend.md)
 - [NDKNip46Signer](classes/NDKNip46Signer.md)
+- [NDKNostrRpc](classes/NDKNostrRpc.md)
 - [NDKPrivateKeySigner](classes/NDKPrivateKeySigner.md)
 - [NDKRelay](classes/NDKRelay.md)
 - [NDKRelaySet](classes/NDKRelaySet.md)
@@ -31,6 +32,8 @@
 - [NDKConstructorParams](interfaces/NDKConstructorParams.md)
 - [NDKFilterOptions](interfaces/NDKFilterOptions.md)
 - [NDKRelayConnectionStats](interfaces/NDKRelayConnectionStats.md)
+- [NDKRpcRequest](interfaces/NDKRpcRequest.md)
+- [NDKRpcResponse](interfaces/NDKRpcResponse.md)
 - [NDKSigner](interfaces/NDKSigner.md)
 - [NDKSubscriptionOptions](interfaces/NDKSubscriptionOptions.md)
 - [NDKUserProfile](interfaces/NDKUserProfile.md)
@@ -41,6 +44,7 @@
 - [NDKEventId](modules.md#ndkeventid)
 - [NDKFilter](modules.md#ndkfilter)
 - [NDKTag](modules.md#ndktag)
+- [Nip46ApplyTokenCallback](modules.md#nip46applytokencallback)
 - [Nip46PermitCallback](modules.md#nip46permitcallback)
 - [NostrEvent](modules.md#nostrevent)
 
@@ -50,6 +54,7 @@
 
 ### Functions
 
+- [filterFromId](modules.md#filterfromid)
 - [mergeEvent](modules.md#mergeevent)
 - [mergeFilters](modules.md#mergefilters)
 - [zapInvoiceFromEvent](modules.md#zapinvoicefromevent)
@@ -66,7 +71,7 @@
 
 #### Defined in
 
-[src/events/index.ts:12](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/events/index.ts#L12)
+[src/events/index.ts:12](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L12)
 
 ___
 
@@ -76,7 +81,7 @@ ___
 
 #### Defined in
 
-[src/subscription/index.ts:10](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/subscription/index.ts#L10)
+[src/subscription/index.ts:10](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L10)
 
 ___
 
@@ -86,7 +91,32 @@ ___
 
 #### Defined in
 
-[src/events/index.ts:13](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/events/index.ts#L13)
+[src/events/index.ts:13](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L13)
+
+___
+
+### Nip46ApplyTokenCallback
+
+Ƭ **Nip46ApplyTokenCallback**: (`pubkey`: `string`, `token`: `string`) => `Promise`<`void`\>
+
+#### Type declaration
+
+▸ (`pubkey`, `token`): `Promise`<`void`\>
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `pubkey` | `string` |
+| `token` | `string` |
+
+##### Returns
+
+`Promise`<`void`\>
+
+#### Defined in
+
+[src/signers/nip46/backend/index.ts:16](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/backend/index.ts#L16)
 
 ___
 
@@ -112,7 +142,7 @@ ___
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:8](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/backend/index.ts#L8)
+[src/signers/nip46/backend/index.ts:10](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/backend/index.ts#L10)
 
 ___
 
@@ -134,7 +164,7 @@ ___
 
 #### Defined in
 
-[src/events/index.ts:15](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/events/index.ts#L15)
+[src/events/index.ts:15](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/events/index.ts#L15)
 
 ## Variables
 
@@ -146,9 +176,31 @@ Default subscription options.
 
 #### Defined in
 
-[src/subscription/index.ts:50](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/subscription/index.ts#L50)
+[src/subscription/index.ts:55](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L55)
 
 ## Functions
+
+### filterFromId
+
+▸ **filterFromId**(`id`): [`NDKFilter`](modules.md#ndkfilter)
+
+Creates a valid nostr filter from an event id or a NIP-19 bech32.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `id` | `string` |
+
+#### Returns
+
+[`NDKFilter`](modules.md#ndkfilter)
+
+#### Defined in
+
+[src/subscription/index.ts:449](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L449)
+
+___
 
 ### mergeEvent
 
@@ -167,7 +219,7 @@ Default subscription options.
 
 #### Defined in
 
-[src/user/profile.ts:16](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/user/profile.ts#L16)
+[src/user/profile.ts:16](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/user/profile.ts#L16)
 
 ___
 
@@ -182,7 +234,7 @@ relatively similar, and merge them.
 
 | Name | Type |
 | :------ | :------ |
-| `filters` | `Filter`[] |
+| `filters` | [`NDKFilter`](modules.md#ndkfilter)[] |
 
 #### Returns
 
@@ -190,7 +242,7 @@ relatively similar, and merge them.
 
 #### Defined in
 
-[src/subscription/index.ts:385](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/subscription/index.ts#L385)
+[src/subscription/index.ts:426](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/subscription/index.ts#L426)
 
 ___
 
@@ -198,16 +250,20 @@ ___
 
 ▸ **zapInvoiceFromEvent**(`event`): [`NDKZapInvoice`](interfaces/NDKZapInvoice.md) \| ``null``
 
+Parses a zap invoice from a kind 9735 event
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `event` | [`NDKEvent`](classes/NDKEvent.md) |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `event` | [`NDKEvent`](classes/NDKEvent.md) | The event to parse |
 
 #### Returns
 
 [`NDKZapInvoice`](interfaces/NDKZapInvoice.md) \| ``null``
 
+NDKZapInvoice | null
+
 #### Defined in
 
-[src/zap/invoice.ts:14](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/zap/invoice.ts#L14)
+[src/zap/invoice.ts:21](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/zap/invoice.ts#L21)

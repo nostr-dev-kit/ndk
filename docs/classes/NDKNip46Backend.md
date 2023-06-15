@@ -20,9 +20,13 @@ should run client-side, where the user wants to sign events from.
 - [handlers](NDKNip46Backend.md#handlers)
 - [localUser](NDKNip46Backend.md#localuser)
 - [ndk](NDKNip46Backend.md#ndk)
+- [signer](NDKNip46Backend.md#signer)
 
 ### Methods
 
+- [applyToken](NDKNip46Backend.md#applytoken)
+- [decrypt](NDKNip46Backend.md#decrypt)
+- [encrypt](NDKNip46Backend.md#encrypt)
 - [pubkeyAllowed](NDKNip46Backend.md#pubkeyallowed)
 - [setStrategy](NDKNip46Backend.md#setstrategy)
 - [signEvent](NDKNip46Backend.md#signevent)
@@ -44,7 +48,7 @@ should run client-side, where the user wants to sign events from.
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:37](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/backend/index.ts#L37)
+[src/signers/nip46/backend/index.ts:48](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/backend/index.ts#L48)
 
 ## Properties
 
@@ -54,7 +58,7 @@ should run client-side, where the user wants to sign events from.
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:29](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/backend/index.ts#L29)
+[src/signers/nip46/backend/index.ts:40](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/backend/index.ts#L40)
 
 ___
 
@@ -68,7 +72,7 @@ ___
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:60](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/backend/index.ts#L60)
+[src/signers/nip46/backend/index.ts:74](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/backend/index.ts#L74)
 
 ___
 
@@ -78,7 +82,7 @@ ___
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:28](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/backend/index.ts#L28)
+[src/signers/nip46/backend/index.ts:39](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/backend/index.ts#L39)
 
 ___
 
@@ -88,9 +92,87 @@ ___
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:26](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/backend/index.ts#L26)
+[src/signers/nip46/backend/index.ts:37](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/backend/index.ts#L37)
+
+___
+
+### signer
+
+• `Readonly` **signer**: [`NDKPrivateKeySigner`](NDKPrivateKeySigner.md)
+
+#### Defined in
+
+[src/signers/nip46/backend/index.ts:38](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/backend/index.ts#L38)
 
 ## Methods
+
+### applyToken
+
+▸ **applyToken**(`pubkey`, `token`): `Promise`<`void`\>
+
+Overload this method to apply tokens, which can
+wrap permission sets to be applied to a pubkey.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `pubkey` | `string` | public key to apply token to |
+| `token` | `string` | token to apply |
+
+#### Returns
+
+`Promise`<`void`\>
+
+#### Defined in
+
+[src/signers/nip46/backend/index.ts:98](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/backend/index.ts#L98)
+
+___
+
+### decrypt
+
+▸ **decrypt**(`remotePubkey`, `senderUser`, `payload`): `Promise`<`undefined` \| `string`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `remotePubkey` | `string` |
+| `senderUser` | [`NDKUser`](NDKUser.md) |
+| `payload` | `string` |
+
+#### Returns
+
+`Promise`<`undefined` \| `string`\>
+
+#### Defined in
+
+[src/signers/nip46/backend/index.ts:127](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/backend/index.ts#L127)
+
+___
+
+### encrypt
+
+▸ **encrypt**(`remotePubkey`, `recipientUser`, `payload`): `Promise`<`undefined` \| `string`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `remotePubkey` | `string` |
+| `recipientUser` | [`NDKUser`](NDKUser.md) |
+| `payload` | `string` |
+
+#### Returns
+
+`Promise`<`undefined` \| `string`\>
+
+#### Defined in
+
+[src/signers/nip46/backend/index.ts:136](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/backend/index.ts#L136)
+
+___
 
 ### pubkeyAllowed
 
@@ -113,7 +195,7 @@ connections.
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:120](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/backend/index.ts#L120)
+[src/signers/nip46/backend/index.ts:169](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/backend/index.ts#L169)
 
 ___
 
@@ -136,7 +218,7 @@ Enables the user to set a custom strategy for handling incoming events.
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:72](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/backend/index.ts#L72)
+[src/signers/nip46/backend/index.ts:88](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/backend/index.ts#L88)
 
 ___
 
@@ -157,7 +239,7 @@ ___
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:96](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/backend/index.ts#L96)
+[src/signers/nip46/backend/index.ts:145](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/backend/index.ts#L145)
 
 ___
 
@@ -174,4 +256,4 @@ requests.
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:49](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/backend/index.ts#L49)
+[src/signers/nip46/backend/index.ts:60](https://github.com/nostr-dev-kit/ndk/blob/0aa26c2/src/signers/nip46/backend/index.ts#L60)

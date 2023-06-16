@@ -95,15 +95,17 @@ export default class NDK extends EventEmitter {
      * @param filter
      * @param opts
      * @param relaySet explicit relay set to use
+     * @param autoStart automatically start the subscription
      * @returns NDKSubscription
      */
     public subscribe(
         filter: NDKFilter,
         opts?: NDKSubscriptionOptions,
-        relaySet?: NDKRelaySet
+        relaySet?: NDKRelaySet,
+        autoStart = true
     ): NDKSubscription {
         const subscription = new NDKSubscription(this, filter, opts, relaySet);
-        subscription.start();
+        if (autoStart) subscription.start();
 
         return subscription;
     }
@@ -141,7 +143,7 @@ export default class NDK extends EventEmitter {
         }
 
         return new Promise((resolve) => {
-            const s = this.subscribe(filter, { ...opts, closeOnEose: true });
+            const s = this.subscribe(filter, { ...opts, closeOnEose: true }, undefined, false);
             s.on("event", (event) => {
                 event.ndk = this;
                 resolve(event);
@@ -150,6 +152,8 @@ export default class NDK extends EventEmitter {
             s.on("eose", () => {
                 resolve(null);
             });
+
+            s.start();
         });
     }
 
@@ -163,7 +167,7 @@ export default class NDK extends EventEmitter {
         return new Promise((resolve) => {
             const events: Map<string, NDKEvent> = new Map();
 
-            const relaySetSubscription = this.subscribe(filter, { ...opts, closeOnEose: true });
+            const relaySetSubscription = this.subscribe(filter, { ...opts, closeOnEose: true }, undefined, false);
 
             relaySetSubscription.on("event", (event: NDKEvent) => {
                 const existingEvent = events.get(event.tagId());
@@ -177,6 +181,8 @@ export default class NDK extends EventEmitter {
             relaySetSubscription.on("eose", () => {
                 resolve(new Set(events.values()));
             });
+
+            relaySetSubscription.start();
         });
     }
 

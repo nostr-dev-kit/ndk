@@ -286,6 +286,15 @@ export default class NDKEvent extends EventEmitter {
 
     /**
      * Provides the filter that will return matching events for this event.
+     *
+     * @example
+     *    event = new NDKEvent(ndk, { kind: 30000, pubkey: 'pubkey', tags: [ ["d", "d-code"] ] });
+     *    event.filter(); // { "#a": ["30000:pubkey:d-code"] }
+     * @example
+     *    event = new NDKEvent(ndk, { kind: 1, pubkey: 'pubkey', id: "eventid" });
+     *    event.filter(); // { "#e": ["eventid"] }
+     *
+     * @returns The filter that will return matching events for this event
      */
     filter(): NDKFilter {
         if (this.isParamReplaceable()) {

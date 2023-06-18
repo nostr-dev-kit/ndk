@@ -129,7 +129,7 @@ export default class NDK extends EventEmitter {
      */
     public async fetchEvent(id: string) : Promise<NDKEvent | null>;
     public async fetchEvent(filter: NDKFilter, opts: NDKFilterOptions) : Promise<NDKEvent | null>;
-    public async fetchEvent(idOrFilter: string|NDKFilter, opts: NDKFilterOptions = {}) : Promise<NDKEvent | null> {
+    public async fetchEvent(idOrFilter: string|NDKFilter, opts: NDKFilterOptions = {}, relaySet?: NDKRelaySet) : Promise<NDKEvent | null> {
         let filter: NDKFilter;
 
         if (typeof idOrFilter === "string") {
@@ -143,7 +143,7 @@ export default class NDK extends EventEmitter {
         }
 
         return new Promise((resolve) => {
-            const s = this.subscribe(filter, { ...opts, closeOnEose: true }, undefined, false);
+            const s = this.subscribe(filter, { ...opts, closeOnEose: true }, relaySet, false);
             s.on("event", (event) => {
                 event.ndk = this;
                 resolve(event);
@@ -162,12 +162,13 @@ export default class NDK extends EventEmitter {
      */
     public async fetchEvents(
         filter: NDKFilter,
-        opts: NDKFilterOptions = {}
+        opts: NDKFilterOptions = {},
+        relaySet?: NDKRelaySet,
     ): Promise<Set<NDKEvent>> {
         return new Promise((resolve) => {
             const events: Map<string, NDKEvent> = new Map();
 
-            const relaySetSubscription = this.subscribe(filter, { ...opts, closeOnEose: true }, undefined, false);
+            const relaySetSubscription = this.subscribe(filter, { ...opts, closeOnEose: true }, relaySet, false);
 
             relaySetSubscription.on("event", (event: NDKEvent) => {
                 const existingEvent = events.get(event.tagId());

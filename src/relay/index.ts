@@ -31,7 +31,11 @@ export enum NDKRelayStatus {
     /**
      * The relay is attempting to reconnect.
      */
-    RECONNECTING
+    RECONNECTING,
+    /**
+     * The relay is having issues.
+     */
+    FLAPPING
 }
 
 /**

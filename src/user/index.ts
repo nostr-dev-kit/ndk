@@ -5,6 +5,9 @@ import { NDKFilterOptions } from "../subscription/index.js";
 import { follows } from "./follows.js";
 import { mergeEvent, NDKUserProfile } from "./profile";
 
+/**
+ * The params used to create a new NDKUser
+ */
 export interface NDKUserParams {
     npub?: string;
     hexpubkey?: string;
@@ -102,6 +105,6 @@ export default class NDKUser {
      * @returns
      */
     public tagReference(): NDKTag {
-        return ['p', this.hexpubkey()];
+        return ["p", this.hexpubkey()];
     }
 }

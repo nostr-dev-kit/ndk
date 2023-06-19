@@ -29,6 +29,7 @@ export * from "./signers/nip46/index.js";
 export * from "./signers/private-key/index.js";
 export * from "./subscription/index.js";
 export * from "./user/profile.js";
+export * from "./zap/index.js";
 export { NDKZapInvoice, zapInvoiceFromEvent } from "./zap/invoice.js";
 export { NDKEvent, NDKUser, NDKFilter, NDKUserProfile, NDKCacheAdapter };
 

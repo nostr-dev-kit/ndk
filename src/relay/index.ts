@@ -8,15 +8,35 @@ import User from "../user/index.js";
 import { NDKRelayScore } from "./score.js";
 import debug from "debug";
 
+/**
+ * The current status of a relay.
+ */
 export enum NDKRelayStatus {
+    /**
+     * The relay is attempting to connect.
+     */
     CONNECTING,
+    /**
+     * The relay is connected.
+     */
     CONNECTED,
+    /**
+     * The relay is attempting to disconnect.
+     */
     DISCONNECTING,
+    /**
+     * The relay has disconnected.
+     */
     DISCONNECTED,
-    RECONNECTING,
-    FLAPPING,
+    /**
+     * The relay is attempting to reconnect.
+     */
+    RECONNECTING
 }
 
+/**
+ * The NDKRelayConnectionStats interface holds basic stats about a relay connection.
+ */
 export interface NDKRelayConnectionStats {
     /**
      * The number of times a connection has been attempted.
@@ -93,6 +113,7 @@ export class NDKRelay extends EventEmitter {
 
     /**
      * Evaluates the connection stats to determine if the relay is flapping.
+     * @returns Boolean value whether the relay is flapping or not.
      */
     private isFlapping(): boolean {
         const durations = this._connectionStats.durations;
@@ -125,12 +146,25 @@ export class NDKRelay extends EventEmitter {
         }
     }
 
+    /**
+     * Returns the current status of the relay.
+     * @returns NDKRelayStatus enum
+     */
     get status(): NDKRelayStatus {
         return this._status;
     }
 
     /**
+     * Returns the connection stats.
+     * @returns NDKRelayConnectionStats object
+     */
+    get connectionStats(): NDKRelayConnectionStats {
+        return this._connectionStats;
+    }
+
+    /**
      * Connects to the relay.
+     * @returns Promise<void>
      */
     public async connect(): Promise<void> {
         try {
@@ -146,13 +180,19 @@ export class NDKRelay extends EventEmitter {
 
     /**
      * Disconnects from the relay.
+     * @returns void
      */
     public disconnect(): void {
         this._status = NDKRelayStatus.DISCONNECTING;
         this.relay.close();
     }
 
-    async handleNotice(notice: string) {
+    /**
+     * Handles notices returned by relays.
+     * @param notice The notice string returned from a relay
+     * @returns Promise<void>
+     */
+    async handleNotice(notice: string): Promise<void> {
         // This is a prototype; if the relay seems to be complaining
         // remove it from relay set selection for a minute.
         if (notice.includes("oo many") || notice.includes("aximum")) {
@@ -170,7 +210,9 @@ export class NDKRelay extends EventEmitter {
     }
 
     /**
-     * Subscribes to a subscription.
+     * Subscribes to an NDKSubscription.
+     * @param subscription The NDKSubscription to subscribe to.
+     * @retuns nostr-tools subscription object
      */
     public subscribe(subscription: NDKSubscription): Sub {
         const { filter } = subscription;
@@ -207,16 +249,18 @@ export class NDKRelay extends EventEmitter {
 
     /**
      * Publishes an event to the relay.
+     * @param event The NDKEvent to be published
+     * @returns Promise<void>
      */
     public async publish(event: NDKEvent): Promise<void> {
         const nostrEvent = (await event.toNostrEvent()) as SignedEvent;
         const a = this.relay.publish(nostrEvent);
-        a.on('failed', (err: any) => {
-            this.debug('Publish failed', err, event.rawEvent());
+        a.on("failed", (err: any) => {
+            this.debug("Publish failed", err, event.rawEvent());
         });
 
-        a.on('ok', () => {
-            this.debug('Publish ok', event.rawEvent());
+        a.on("ok", () => {
+            this.debug("Publish ok", event.rawEvent());
         });
 
         this.debug(`Published event ${event.id}`, event.rawEvent());
@@ -226,6 +270,7 @@ export class NDKRelay extends EventEmitter {
      * Called when this relay has responded with an event but
      * wasn't the fastest one.
      * @param timeDiffInMs The time difference in ms between the fastest and this relay in milliseconds
+     * @returns void
      */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public scoreSlowerEvent(timeDiffInMs: number): void {
@@ -258,11 +303,4 @@ export class NDKRelay extends EventEmitter {
             this._connectionStats.attempts++;
         }
     };
-
-    /**
-     * Returns the connection stats.
-     */
-    get connectionStats(): NDKRelayConnectionStats {
-        return this._connectionStats;
-    }
 }

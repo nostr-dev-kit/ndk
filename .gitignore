@@ -11,3 +11,4 @@ pnpm-lock.yaml
 **/*.d.ts
 **/*.d.ts.map
 *.tgz
+.DS_STORE

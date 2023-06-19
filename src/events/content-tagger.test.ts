@@ -55,4 +55,17 @@ describe("generateContentTags", () => {
             ["e", "6ab77c8baf6d0542131cc70b59ba3ece904fd58efe91d612dc3e870bdaf93034"]
         ]);
     });
+
+    it("does not replace an event without a nostr: or @ prefix", async() => {
+        const content = "note13jgf85r2yxjmww8f6gweque5g388agfztrppmgenur7zvh8e929s4cptur " +
+            "@note13jgf85r2yxjmww8f6gweque5g388agfztrppmgenur7zvh8e929s4cptur";
+
+        const { content: processedContent, tags: processedTags } = generateContentTags( content, []);
+
+        expect(processedContent).toEqual("note13jgf85r2yxjmww8f6gweque5g388agfztrppmgenur7zvh8e929s4cptur " +
+        "nostr:note13jgf85r2yxjmww8f6gweque5g388agfztrppmgenur7zvh8e929s4cptur");
+        expect(processedTags).toEqual([
+            [ "e", "8c9093d06a21a5b738e9d21d907334444e7ea12258c21da333e0fc265cf92a8b" ]
+        ]);
+    });
 });

@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/ndk",
-    "version": "0.5.4",
+    "version": "0.5.5",
     "description": "NDK - Nostr Development Kit",
     "homepage": "https://ndk.fyi",
     "documentation": "https://github.com/nostr-dev-kit/ndk/blob/master/docs/modules.md",
@@ -36,6 +36,7 @@
     "author": "pablof7z",
     "license": "MIT",
     "devDependencies": {
+        "@appium/typedoc-plugin-appium": "^0.6.5",
         "@types/debug": "^4.1.7",
         "@types/jest": "^29.5.0",
         "@types/node": "^14.11.2",

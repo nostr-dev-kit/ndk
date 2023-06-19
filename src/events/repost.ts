@@ -30,7 +30,7 @@ export async function repost(this: NDKEvent, publish = true, signer?: NDKSigner)
     e.tag(this);
 
     if (e.kind === NDKKind.GenericRepost) {
-        e.tags.push(['k', this.kind!.toString()]);
+        e.tags.push(['k', `${this.kind}`]);
     }
 
     await e.sign(signer);

@@ -8,6 +8,7 @@ import { isParamReplaceable, isReplaceable } from "./kind.js";
 import { NDKKind } from "./kinds/index.js";
 import { decrypt, encrypt } from "./nip04.js";
 import { encode } from "./nip19.js";
+import { repost } from "./repost.js";
 
 export type NDKEventId = string;
 export type NDKTag = string[];
@@ -349,21 +350,11 @@ export default class NDKEvent extends EventEmitter {
     }
 
     /**
-     * NIP-18
-     * Repost event.
+     * NIP-18 reposting event.
+     *
+     * @param publish Whether to publish the reposted event automatically
+     * @param signer The signer to use for signing the reposted event
+     * @returns The reposted event
      */
-    async repost(): Promise<NDKEvent> {
-        if (!this.ndk) throw new Error("No NDK instance found");
-
-        this.ndk.assertSigner();
-
-        const e = new NDKEvent(this.ndk, {
-            kind: NDKKind.Repost,
-            content: "",
-        } as NostrEvent);
-        e.tag(this);
-        await e.publish();
-
-        return e;
-    }
+    public repost = repost.bind(this);
 }

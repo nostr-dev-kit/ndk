@@ -471,7 +471,18 @@ export function filterFromId(id: string): NDKFilter {
  * Generates a random filter id, based on the filter keys.
  */
 function generateFilterId(filter: NDKFilter) {
-    const id = Object.keys(filter)||[];
-    id.push(Math.floor(Math.random() * 999999).toString());
-    return id.join('-');
+    const keys = Object.keys(filter)||[];
+    const subId = [];
+
+    for (const key of keys) {
+        if (key === 'kinds') {
+            const v = [key, filter.kinds!.join(',')];
+            subId.push(v.join(':'));
+        } else {
+            subId.push(key);
+        }
+    }
+
+    subId.push(Math.floor(Math.random() * 999999999).toString());
+    return subId.join('-');
 }

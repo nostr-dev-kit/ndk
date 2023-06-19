@@ -1,12 +1,10 @@
-[NDK](../README.md) / [Exports](../modules.md) / IEventHandlingStrategy
-
 # Interface: IEventHandlingStrategy
 
 ## Table of contents
 
 ### Methods
 
-- [handle](IEventHandlingStrategy.md#handle)
+- [handle](../wiki/IEventHandlingStrategy#handle)
 
 ## Methods
 
@@ -18,7 +16,7 @@
 
 | Name | Type |
 | :------ | :------ |
-| `backend` | [`NDKNip46Backend`](../classes/NDKNip46Backend.md) |
+| `backend` | [`NDKNip46Backend`](../wiki/NDKNip46Backend) |
 | `remotePubkey` | `string` |
 | `params` | `string`[] |
 
@@ -28,4 +26,4 @@
 
 #### Defined in
 
-[src/signers/nip46/backend/index.ts:11](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/signers/nip46/backend/index.ts#L11)
+[src/signers/nip46/backend/index.ts:22](https://github.com/nostr-dev-kit/ndk/blob/1f6f222/src/signers/nip46/backend/index.ts#L22)

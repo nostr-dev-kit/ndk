@@ -1,10 +1,8 @@
-NDK / [Exports](modules.md)
-
 # NDK
 
 <img src="https://raw.githubusercontent.com/nvk/ndk.fyi/master/ndk.svg" alt="drawing" width="200"/>
 
-NDK is a [nostr]([url](https://github.com/nostr-protocol/nostr)) development kit that makes the experience of building Nostr-related applications, whether they are relays, clients, or anything in between, better, more reliable and overall nicer to work with than existing solutions.
+NDK is a [nostr](<[url](https://github.com/nostr-protocol/nostr)>) development kit that makes the experience of building Nostr-related applications, whether they are relays, clients, or anything in between, better, more reliable and overall nicer to work with than existing solutions.
 
 ## NDK Objectives
 
@@ -36,42 +34,45 @@ localStorage.debug = 'ndk:*'
 ## Support
 
 ### NDK NIP-28 group chat
- * note15m6rdfvlmd0z836hk83sg7r59xtv23qnmamhsslq5uc6744fdm4qfkeat3
-    * [Coracle](https://app.coracle.social/chat/note15m6rdfvlmd0z836hk83sg7r59xtv23qnmamhsslq5uc6744fdm4qfkeat3)
-    * [Nostrchat](https://www.nostrchat.io/channel/a6f436a59fdb5e23c757b1e30478742996c54413df777843e0a731af56a96eea)
- * [WIP documentation](https://github.com/nostr-dev-kit/ndk/blob/master/docs/modules.md)
+
+-   note15m6rdfvlmd0z836hk83sg7r59xtv23qnmamhsslq5uc6744fdm4qfkeat3
+    -   [Coracle](https://app.coracle.social/chat/note15m6rdfvlmd0z836hk83sg7r59xtv23qnmamhsslq5uc6744fdm4qfkeat3)
+    -   [Nostrchat](https://www.nostrchat.io/channel/a6f436a59fdb5e23c757b1e30478742996c54413df777843e0a731af56a96eea)
+-   [WIP documentation](https://github.com/nostr-dev-kit/ndk/blob/master/docs/modules.md)
 
 ## Features
 
-- [x] NIP-01
-- [x] Caching adapters
-    * Server-side
-        - [x] [Redis](https://github.com/pablof7z/ndk-cache-redis)
-        - [ ] In-memory
-    * Client-side
-        - [ ] LocalStorage
-        - [ ] IndexDB
-- [~] NIP-04: Encryption support
-- [ ] NIP-26: Event delegation
-- [ ] NIP-41: Relay authentication
-- [x] NIP-57: Zaps
-    - [x] LUD06
-    - [x] LUD16
-- [ ] NIP-65: Contacts' Relay list
-- Subscription Management
-    - [x] Auto-grouping queries
-    - [x] Auto-closing subscriptions
-- Signing Adapters
-    - [x] Private key
-    - [x] NIP-07
-    - [ ] NIP-26
-    - [x] NIP-46
-- Relay discovery
-    - [ ] Gossip-model (NIP-65)
-    - [ ] Implicit relays discovery following pubkey usage
-    - [ ] Implicit relays discovery following `t` tag usage
-    - [ ] Explicit relays blacklist
-- [ ] nostr-tools/SimplePool drop-in replacement interface
+-   [x] NIP-01
+-   [x] Caching adapters
+    -   Server-side
+        -   [x] [Redis](https://github.com/pablof7z/ndk-cache-redis)
+        -   [ ] In-memory
+    -   Client-side
+        -   [ ] LocalStorage
+        -   [ ] IndexDB
+-   [~] NIP-04: Encryption support
+-   [x] NIP-18: Repost
+-   [ ] NIP-26: Event delegation
+-   [ ] NIP-41: Relay authentication
+-   [x] NIP-57: Zaps
+    -   [x] LUD06
+    -   [x] LUD16
+-   [ ] NIP-65: Contacts' Relay list
+-   Subscription Management
+    -   [x] Auto-grouping queries
+    -   [x] Auto-closing subscriptions
+-   Signing Adapters
+    -   [x] Private key
+    -   [x] NIP-07
+    -   [ ] NIP-26
+    -   [x] NIP-46
+        - [x] Permission tokens
+-   Relay discovery
+    -   [ ] Gossip-model (NIP-65)
+    -   [ ] Implicit relays discovery following pubkey usage
+    -   [ ] Implicit relays discovery following `t` tag usage
+    -   [ ] Explicit relays blacklist
+-   [ ] nostr-tools/SimplePool drop-in replacement interface
 
 ## Instantiate an NDK instance
 
@@ -163,7 +164,7 @@ NDK will eventually allow you to use multiple caches simultaneously and allow fo
 
 ### Where to look is more important that long-term storage
 
-The most important data to cache is _where_ a user or note might be found. UX suffers profoundly when this type of data cannot be found. By design, the Nostr protocol leaves beadcrums of where a user or note might be found and NDK does it's best to store this data automatically and use it when you query for events.
+The most important data to cache is _where_ a user or note might be found. UX suffers profoundly when this type of data cannot be found. By design, the Nostr protocol leaves breadcrumbs of where a user or note might be found and NDK does it's best to store this data automatically and use it when you query for events.
 
 ### Instantiating and using a cache adapter
 
@@ -301,16 +302,16 @@ await ndk.publish(event);
 
 ```ts
 // Find the first event from @jack, and react/like it.
-const event = await ndk.fetchEvent({ authors: ["82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2"] });
+const event = await ndk.fetchEvent({ author: "jack@cashapp.com" })[0];
 await event.react("🤙");
 ```
 
 ### Zap an event
 
 ```ts
-// Find the first event from @jack, and zap it. First param is amount in millisatoshis.
-const event = await ndk.fetchEvent({ authors: ["82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2"] });
-await event.zap(1337000, "Zapping your post!"); // Returns a zap request
+// Find the first event from @jack, and zap it.
+const event = await ndk.fetchEvent({ author: "jack@cashapp.com" })[0];
+await event.zap(1337, "Zapping your post!"); // Returns a zap request
 ```
 
 ## Architecture decisions & suggestions

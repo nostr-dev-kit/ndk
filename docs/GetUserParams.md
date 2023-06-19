@@ -1,5 +1,3 @@
-[NDK](../README.md) / [Exports](../modules.md) / GetUserParams
-
 # Interface: GetUserParams
 
 ## Hierarchy
@@ -12,10 +10,10 @@
 
 ### Properties
 
-- [hexpubkey](GetUserParams.md#hexpubkey)
-- [nip05](GetUserParams.md#nip05)
-- [npub](GetUserParams.md#npub)
-- [relayUrls](GetUserParams.md#relayurls)
+- [hexpubkey](../wiki/GetUserParams#hexpubkey)
+- [nip05](../wiki/GetUserParams#nip05)
+- [npub](../wiki/GetUserParams#npub)
+- [relayUrls](../wiki/GetUserParams#relayurls)
 
 ## Properties
 
@@ -29,7 +27,7 @@ NDKUserParams.hexpubkey
 
 #### Defined in
 
-[src/index.ts:45](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/index.ts#L45)
+[src/index.ts:44](https://github.com/nostr-dev-kit/ndk/blob/1f6f222/src/index.ts#L44)
 
 ___
 
@@ -43,7 +41,7 @@ NDKUserParams.nip05
 
 #### Defined in
 
-[src/user/index.ts:11](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/user/index.ts#L11)
+[src/user/index.ts:11](https://github.com/nostr-dev-kit/ndk/blob/1f6f222/src/user/index.ts#L11)
 
 ___
 
@@ -57,7 +55,7 @@ NDKUserParams.npub
 
 #### Defined in
 
-[src/index.ts:44](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/index.ts#L44)
+[src/index.ts:43](https://github.com/nostr-dev-kit/ndk/blob/1f6f222/src/index.ts#L43)
 
 ___
 
@@ -71,4 +69,4 @@ NDKUserParams.relayUrls
 
 #### Defined in
 
-[src/user/index.ts:12](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/user/index.ts#L12)
+[src/user/index.ts:12](https://github.com/nostr-dev-kit/ndk/blob/1f6f222/src/user/index.ts#L12)

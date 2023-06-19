@@ -1,17 +1,15 @@
-[NDK](../README.md) / [Exports](../modules.md) / NDKCacheAdapter
-
 # Interface: NDKCacheAdapter
 
 ## Table of contents
 
 ### Properties
 
-- [locking](NDKCacheAdapter.md#locking)
+- [locking](../wiki/NDKCacheAdapter#locking)
 
 ### Methods
 
-- [query](NDKCacheAdapter.md#query)
-- [setEvent](NDKCacheAdapter.md#setevent)
+- [query](../wiki/NDKCacheAdapter#query)
+- [setEvent](../wiki/NDKCacheAdapter#setevent)
 
 ## Properties
 
@@ -25,7 +23,7 @@ When this is false, the cache will be queried in addition to the relays.
 
 #### Defined in
 
-[src/cache/index.ts:10](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/cache/index.ts#L10)
+[src/cache/index.ts:10](https://github.com/nostr-dev-kit/ndk/blob/1f6f222/src/cache/index.ts#L10)
 
 ## Methods
 
@@ -37,7 +35,7 @@ When this is false, the cache will be queried in addition to the relays.
 
 | Name | Type |
 | :------ | :------ |
-| `subscription` | [`NDKSubscription`](../classes/NDKSubscription.md) |
+| `subscription` | [`NDKSubscription`](../wiki/NDKSubscription) |
 
 #### Returns
 
@@ -45,7 +43,7 @@ When this is false, the cache will be queried in addition to the relays.
 
 #### Defined in
 
-[src/cache/index.ts:12](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/cache/index.ts#L12)
+[src/cache/index.ts:12](https://github.com/nostr-dev-kit/ndk/blob/1f6f222/src/cache/index.ts#L12)
 
 ___
 
@@ -57,8 +55,8 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `event` | [`NDKEvent`](../classes/NDKEvent.md) |
-| `filter` | `Filter` |
+| `event` | [`NDKEvent`](../wiki/NDKEvent) |
+| `filter` | [`NDKFilter`](../wiki/Exports#ndkfilter) |
 
 #### Returns
 
@@ -66,4 +64,4 @@ ___
 
 #### Defined in
 
-[src/cache/index.ts:13](https://github.com/nostr-dev-kit/ndk/blob/db9bb3b/src/cache/index.ts#L13)
+[src/cache/index.ts:13](https://github.com/nostr-dev-kit/ndk/blob/1f6f222/src/cache/index.ts#L13)

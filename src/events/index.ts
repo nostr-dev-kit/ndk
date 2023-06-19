@@ -355,6 +355,8 @@ export default class NDKEvent extends EventEmitter {
      * @param publish Whether to publish the reposted event automatically
      * @param signer The signer to use for signing the reposted event
      * @returns The reposted event
+     *
+     * @function
      */
     public repost = repost.bind(this);
 }

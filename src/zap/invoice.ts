@@ -1,21 +1,44 @@
 import { decode } from "light-bolt11-decoder";
 import NDKEvent, { type NDKEventId, type NostrEvent } from "../events/index.js";
 
+/**
+ * NDKZapInvoice is a parsed representation of a kind 9735 event
+ */
 export interface NDKZapInvoice {
+    /**
+     * The id of the event
+     */
     id?: NDKEventId;
-    zapper: string; // pubkey of zapper app
-    zappee: string; // pubkey of user sending zap
-    zapped: string; // pubkey of user receiving zap
-    zappedEvent?: string; // event zapped
-    amount: number; // amount zapped in millisatoshis
+    /**
+     * The pubkey of the zapper app
+     */
+    zapper: string;
+    /**
+     * The pubkey of the user sending the zap
+     */
+    zappee: string;
+    /**
+     * The pubkey of the user receiving the zap
+     */
+    zapped: string;
+    /**
+     * The nip-19 event id of the event zapped
+     */
+    zappedEvent?: string;
+    /**
+     * The amount zapped in millisatoshis
+     */
+    amount: number;
+    /**
+     * The optional comment included with the zap
+     */
     comment?: string;
 }
 
 /**
  * Parses a zap invoice from a kind 9735 event
  *
- * @param event The event to parse
- *
+ * @param event The NDKEvent to parse
  * @returns NDKZapInvoice | null
  */
 export function zapInvoiceFromEvent(event: NDKEvent): NDKZapInvoice | null {

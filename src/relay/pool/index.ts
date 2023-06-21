@@ -2,6 +2,9 @@ import EventEmitter from "eventemitter3";
 import NDK from "../../index.js";
 import { NDKRelay, NDKRelayStatus } from "../index.js";
 
+/**
+ * An object containing stats of the NDKPool
+ */
 export type NDKPoolStats = {
     total: number;
     connected: number;

@@ -5,6 +5,10 @@ import type { NostrEvent } from "../events/index.js";
 import NDKEvent, { NDKTag } from "../events/index.js";
 import NDK from "../index.js";
 import User from "../user/index.js";
+
+/**
+ * Params object used to create a new Zap object
+ */
 interface ZapConstructorParams {
     ndk: NDK;
     zappedEvent?: NDKEvent;
@@ -15,6 +19,9 @@ type ZapConstructorParamsRequired = Required<Pick<ZapConstructorParams, "zappedE
     Pick<ZapConstructorParams, "zappedUser"> &
     ZapConstructorParams;
 
+/**
+ * Represents a zap
+ */
 export default class Zap extends EventEmitter {
     public ndk?: NDK;
     public zappedEvent?: NDKEvent;
@@ -29,6 +36,10 @@ export default class Zap extends EventEmitter {
             args.zappedUser || this.ndk.getUser({ hexpubkey: this.zappedEvent.pubkey });
     }
 
+    /**
+     * Parses a zap and returns the right endpoint for payment
+     * @returns {Promise<string>} The endpoint where payment should be handled
+     */
     public async getZapEndpoint(): Promise<string | undefined> {
         let lud06: string | undefined;
         let lud16: string | undefined;
@@ -86,6 +97,13 @@ export default class Zap extends EventEmitter {
         return zapEndpointCallback;
     }
 
+    /**
+     * Creates a zap request
+     * @param amount The amount to be zapped in millisatoshis
+     * @param comment An optional comment to include with the zap
+     * @param extraTags Extra tags to add to the zap request event
+     * @returns {Promise<string | null>}
+     */
     public async createZapRequest(
         amount: number, // amount to zap in millisatoshis
         comment?: string,

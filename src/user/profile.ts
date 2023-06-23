@@ -1,5 +1,8 @@
 import NDKEvent from "../events/index.js";
 
+/**
+ * NDKUserProfile represents a user's kind 0 profile metadata
+ */
 export interface NDKUserProfile {
     name?: string;
     displayName?: string;
@@ -11,6 +14,7 @@ export interface NDKUserProfile {
     lud16?: string;
     about?: string;
     zapService?: string;
+    website?: string;
 }
 
 export function mergeEvent(event: NDKEvent, profile: NDKUserProfile): NDKUserProfile {
@@ -28,6 +32,7 @@ export function mergeEvent(event: NDKEvent, profile: NDKUserProfile): NDKUserPro
     if (payload.lud16) profile.lud16 = payload.lud16;
     if (payload.about) profile.about = payload.about;
     if (payload.zapService) profile.zapService = payload.zapService;
+    if (payload.website) profile.website = payload.website;
 
     return profile;
 }

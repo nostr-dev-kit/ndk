@@ -4,6 +4,7 @@ import NDKEvent from "../events/index.js";
  * NDKUserProfile represents a user's kind 0 profile metadata
  */
 export interface NDKUserProfile {
+    [key: string]: string | undefined; // allows custom fields
     name?: string;
     displayName?: string;
     image?: string;

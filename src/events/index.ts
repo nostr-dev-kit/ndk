@@ -121,7 +121,7 @@ export default class NDKEvent extends EventEmitter {
             // tag p-tags in the event if they are not the same as the user signing this event
             for (const pTag of userOrEvent.getMatchingTags("p")) {
                 if (pTag[1] === this.pubkey) continue;
-                if (this.tags.find((t) => t[0] === 'p' && t[1] === pTag[1])) continue;
+                if (this.tags.find((t) => t[0] === "p" && t[1] === pTag[1])) continue;
 
                 this.tags.push(["p", pTag[1]]);
             }
@@ -131,6 +131,8 @@ export default class NDKEvent extends EventEmitter {
     /**
      * Return a NostrEvent object, trying to fill in missing fields
      * when possible, adding tags when necessary.
+     * @param pubkey {string} The pubkey of the user who the event belongs to.
+     * @returns {Promise<NostrEvent>} A promise that resolves to a NostrEvent.
      */
     async toNostrEvent(pubkey?: string): Promise<NostrEvent> {
         if (!pubkey && this.pubkey === "") {
@@ -164,6 +166,8 @@ export default class NDKEvent extends EventEmitter {
 
     /**
      * Get all tags with the given name
+     * @param tagName {string} The name of the tag to search for
+     * @returns {NDKTag[]} An array of the matching tags
      */
     public getMatchingTags(tagName: string): NDKTag[] {
         return this.tags.filter((tag) => tag[0] === tagName);
@@ -181,15 +185,12 @@ export default class NDKEvent extends EventEmitter {
     }
 
     /**
-     * Remove all tags with the given name
-     * @param tagName Tag name to search for
+     * Remove all tags with the given name (e.g. "d", "a", "p")
+     * @param tagName Tag name to search for and remove
+     * @returns {void}
      */
     public removeTag(tagName: string): void {
         this.tags = this.tags.filter((tag) => tag[0] !== tagName);
-    }
-
-    public async toString() {
-        return await this.toNostrEvent();
     }
 
     /**
@@ -197,6 +198,8 @@ export default class NDKEvent extends EventEmitter {
      *
      * It will generate tags.
      * Repleacable events will have their created_at field set to the current time.
+     * @param signer {NDKSigner} The NDKSigner to use to sign the event
+     * @returns {Promise<string>} A Promise that resolves to the signature of the signed event.
      */
     public async sign(signer?: NDKSigner) {
         signer || this.ndk?.assertSigner();
@@ -212,12 +215,22 @@ export default class NDKEvent extends EventEmitter {
         this.sig = await _signer!.sign(nostrEvent);
     }
 
+    /**
+     * Attempt to sign and then publish an NDKEvent to a given relaySet
+     * @param relaySet {NDKRelaySet} The relaySet to publish the even to.
+     * @returns {Promise<void>}
+     */
     public async publish(relaySet?: NDKRelaySet): Promise<void> {
         if (!this.sig) await this.sign();
 
         return this.ndk?.publish(this, relaySet);
     }
 
+    /**
+     * Generates tags for users, notes, and other events tagged in content.
+     * Will also generate random "d" tag for parameterized replaceable events where needed.
+     * @returns {ContentTag} The tags and content of the event.
+     */
     private generateTags(): ContentTag {
         let tags: NDKTag[] = [];
 
@@ -240,7 +253,9 @@ export default class NDKEvent extends EventEmitter {
     }
 
     /**
-     * @returns the `d` tag of a parameterized replaceable event
+     * Returns the "d" tag of a parameterized replaceable event or throws an error if the event isn't
+     * a parameterized replaceable event.
+     * @returns {string} the "d" tag of the event.
      */
     replaceableDTag() {
         if (this.kind && this.kind >= 30000 && this.kind <= 40000) {
@@ -254,9 +269,10 @@ export default class NDKEvent extends EventEmitter {
     }
 
     /**
-     * @returns the id of the event, or if it's a parameterized event, the id of the event with the d tag
+     * Returns the id of the event or, if it's a parameterized event, the generated id of the event using "d" tag, pubkey, and kind.
+     * @returns {string} The id
      */
-    tagId() {
+    tagId(): string {
         // NIP-33
         if (this.kind && this.kind >= 30000 && this.kind <= 40000) {
             const dTagId = this.replaceableDTag();
@@ -275,8 +291,9 @@ export default class NDKEvent extends EventEmitter {
      *
      *     event = new NDKEvent(ndk, { kind: 1, pubkey: 'pubkey', id: "eventid" });
      *     event.tagReference(); // ["e", "eventid"]
+     * @returns {NDKTag} The NDKTag object referencing this event
      */
-    tagReference() {
+    tagReference(): NDKTag {
         // NIP-33
         if (this.isParamReplaceable()) {
             return ["a", this.tagId()];
@@ -341,7 +358,7 @@ export default class NDKEvent extends EventEmitter {
 
         const e = new NDKEvent(this.ndk, {
             kind: NDKKind.EventDeletion,
-            content: reason || "",
+            content: reason || ""
         } as NostrEvent);
         e.tag(this);
         await e.publish();

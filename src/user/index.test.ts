@@ -12,17 +12,6 @@ jest.mock("nostr-tools", () => ({
     }
 }));
 
-// jest.mock("../index.js", () => {
-//     return {
-//         __esModule: true,
-//         default: jest.fn().mockImplementation(() => {
-//             return {
-//                 fetchEvents: jest.fn()
-//             };
-//         })
-//     };
-// });
-
 describe("NDKUser", () => {
     beforeEach(() => {
         jest.clearAllMocks();

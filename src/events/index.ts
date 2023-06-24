@@ -121,7 +121,7 @@ export default class NDKEvent extends EventEmitter {
             // tag p-tags in the event if they are not the same as the user signing this event
             for (const pTag of userOrEvent.getMatchingTags("p")) {
                 if (pTag[1] === this.pubkey) continue;
-                if (this.tags.find((t) => t[0] === 'p' && t[1] === pTag[1])) continue;
+                if (this.tags.find((t) => t[0] === "p" && t[1] === pTag[1])) continue;
 
                 this.tags.push(["p", pTag[1]]);
             }
@@ -254,13 +254,23 @@ export default class NDKEvent extends EventEmitter {
     }
 
     /**
-     * @returns the id of the event, or if it's a parameterized event, the id of the event with the d tag
+     * Returns the id of the event in `<kind>:<pubkey>`, `<kind>:<pubkey>:<d-tag>`, or hashed formats
+     * @returns {string} The id
      */
-    tagId() {
-        // NIP-33
-        if (this.kind && this.kind >= 30000 && this.kind <= 40000) {
-            const dTagId = this.replaceableDTag();
+    tagId(): string {
+        const onlyLatestKinds = [NDKKind.Metadata, NDKKind.Contacts];
 
+        if (onlyLatestKinds.includes(this.kind as number) || this.isReplaceable()) {
+            return `${this.kind}:${this.pubkey}`;
+        }
+
+        if (this.isReplaceable()) {
+            return `${this.kind}:${this.pubkey}`;
+        }
+
+        // NIP-33
+        if (this.isParamReplaceable()) {
+            const dTagId = this.replaceableDTag();
             return `${this.kind}:${this.pubkey}:${dTagId}`;
         }
 
@@ -341,7 +351,7 @@ export default class NDKEvent extends EventEmitter {
 
         const e = new NDKEvent(this.ndk, {
             kind: NDKKind.EventDeletion,
-            content: reason || "",
+            content: reason || ""
         } as NostrEvent);
         e.tag(this);
         await e.publish();

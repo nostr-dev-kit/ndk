@@ -200,7 +200,6 @@ export class NDKSubscription extends EventEmitter {
 
 
             if (this.shouldWaitForCache()) {
-                this.debug("waiting for cache to finish");
                 await cachePromise;
 
                 // if the cache has a hit, return early
@@ -227,7 +226,6 @@ export class NDKSubscription extends EventEmitter {
 
     private async startWithCache(): Promise<void> {
         if (this.ndk.cacheAdapter?.query) {
-            this.debug("querying cache");
             const promise = this.ndk.cacheAdapter.query(this);
 
             if (this.ndk.cacheAdapter.locking) {
@@ -242,7 +240,6 @@ export class NDKSubscription extends EventEmitter {
         }
 
         if (this.relaySet) {
-            this.debug("querying relays");
             this.relaySet.subscribe(this);
         }
     }

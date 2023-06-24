@@ -33,6 +33,11 @@ export default class NDKUser {
         }
     }
 
+    /**
+     * Instantiate an NDKUser from a NIP-05 string
+     * @param nip05Id {string} The user's NIP-05
+     * @returns {NDKUser | undefined} An NDKUser if one is found for the given NIP-05, undefined otherwise.
+     */
     static async fromNip05(nip05Id: string): Promise<NDKUser | undefined> {
         const profile = await nip05.queryProfile(nip05Id);
 
@@ -44,10 +49,19 @@ export default class NDKUser {
         }
     }
 
+    /**
+     * Get the hexpubkey for a user
+     * @returns {string} The user's hexpubkey
+     */
     public hexpubkey(): string {
         return nip19.decode(this.npub).data as string;
     }
 
+    /**
+     * Fetch a user's kind 0 metadata events and merge the events in a single up-to-date profile
+     * @param opts {NDKFilterOptions} A set of NDKFilterOptions
+     * @returns {Promise<Set<Event>>} A set of all NDKEvents events returned for the given user
+     */
     public async fetchProfile(opts?: NDKFilterOptions): Promise<Set<Event> | null> {
         if (!this.ndk) throw new Error("NDK not set");
 
@@ -82,6 +96,10 @@ export default class NDKUser {
      */
     public follows = follows.bind(this);
 
+    /**
+     * Returns a set of relay list events for a user.
+     * @returns {Promise<Set<Event>>} A set of NDKEvents returned for the given user.
+     */
     public async relayList(): Promise<Set<Event>> {
         if (!this.ndk) throw new Error("NDK not set");
 
@@ -99,9 +117,9 @@ export default class NDKUser {
 
     /**
      * Get the tag that can be used to reference this user in an event
-     * @returns
+     * @returns {NDKTag} an NDKTag
      */
     public tagReference(): NDKTag {
-        return ['p', this.hexpubkey()];
+        return ["p", this.hexpubkey()];
     }
 }

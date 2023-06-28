@@ -5,6 +5,16 @@ import type { NostrEvent } from "../events/index.js";
 import NDKEvent, { NDKTag } from "../events/index.js";
 import NDK from "../index.js";
 import User from "../user/index.js";
+
+const DEFAULT_RELAYS = [
+    "wss://nos.lol",
+    "wss://relay.nostr.band",
+    "wss://relay.f7z.io",
+    "wss://relay.damus.io",
+    "wss://nostr.mom",
+    "wss://no.str.cr"
+];
+
 interface ZapConstructorParams {
     ndk: NDK;
     zappedEvent?: NDKEvent;
@@ -86,10 +96,19 @@ export default class Zap extends EventEmitter {
         return zapEndpointCallback;
     }
 
+    /**
+     * Generates a kind:9734 zap request and returns the payment request
+     * @param amount amount to zap in millisatoshis
+     * @param comment optional comment to include in the zap request
+     * @param extraTags optional extra tags to include in the zap request
+     * @param relays optional relays to ask zapper to publish the zap to
+     * @returns the payment request
+     */
     public async createZapRequest(
         amount: number, // amount to zap in millisatoshis
         comment?: string,
-        extraTags?: NDKTag[]
+        extraTags?: NDKTag[],
+        relays?: string[]
     ): Promise<string | null> {
         const zapEndpoint = await this.getZapEndpoint();
 
@@ -106,14 +125,7 @@ export default class Zap extends EventEmitter {
             event: null,
             amount,
             comment: comment || "",
-            relays: [
-                "wss://nos.lol",
-                "wss://relay.nostr.band",
-                "wss://relay.f7z.io",
-                "wss://relay.damus.io",
-                "wss://nostr.mom",
-                "wss://no.str.cr"
-            ] // TODO: fix this
+            relays: relays ?? this.relays()
         });
 
         // add the event tag if it exists; this supports both 'e' and 'a' tags
@@ -144,5 +156,22 @@ export default class Zap extends EventEmitter {
         const body = await response.json();
 
         return body.pr;
+    }
+
+    /**
+     * @returns the relays to use for the zap request
+     */
+    private relays(): string[] {
+        let r: string[] = [];
+
+        if (this.ndk?.pool?.relays) {
+            r = this.ndk.pool.urls();
+        }
+
+        if (!r.length) {
+            r = DEFAULT_RELAYS;
+        }
+
+        return r;
     }
 }

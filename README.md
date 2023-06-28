@@ -271,7 +271,6 @@ await pablo.fetchProfile();
 const pabloFullProfile = pablo.profile;
 
 pablo.profile.name = "Pablo";
-// COMING SOON
 await pablo.publish(); // Triggers signing via signer
 ```
 

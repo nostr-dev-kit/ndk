@@ -1,9 +1,10 @@
 import { nip05, nip19 } from "nostr-tools";
-import Event, { NDKTag } from "../events/index.js";
-import NDK from "../index.js";
+import Event, { NDKTag, NostrEvent } from "../events/index.js";
+import NDK, { NDKKind } from "../index.js";
 import { NDKFilterOptions } from "../subscription/index.js";
 import { follows } from "./follows.js";
 import { mergeEvent, NDKUserProfile } from "./profile";
+import NDKEvent from "../events/index.js";
 
 export interface NDKUserParams {
     npub?: string;
@@ -121,5 +122,57 @@ export default class NDKUser {
      */
     public tagReference(): NDKTag {
         return ["p", this.hexpubkey()];
+    }
+
+    /**
+     * Publishes the current profile.
+     */
+    public async publish() {
+        if (!this.ndk) throw new Error("No NDK instance found");
+
+        this.ndk.assertSigner();
+
+        const event = new NDKEvent(this.ndk, {
+            kind: 0,
+            content: JSON.stringify(this.profile),
+        } as NostrEvent);
+        await event.publish();
+    }
+
+    /**
+     * Add a follow to this user's contact list
+     *
+     * @param newFollow {NDKUser} The user to follow
+     * @param currentFollowList {Set<NDKUser>} The current follow list
+     * @returns {Promise<boolean>} True if the follow was added, false if the follow already exists
+     */
+    public async follow(
+        newFollow: NDKUser,
+        currentFollowList?: Set<NDKUser>
+    ): Promise<boolean> {
+        if (!this.ndk) throw new Error("No NDK instance found");
+
+        this.ndk.assertSigner();
+
+        if (!currentFollowList) {
+            currentFollowList = await this.follows();
+        }
+
+        if (currentFollowList.has(newFollow)) {
+            return false;
+        }
+
+        currentFollowList.add(newFollow);
+
+        const event = new NDKEvent(this.ndk, { kind: NDKKind.Contacts } as NostrEvent);
+
+        // This is a horrible hack and I need to fix it
+        for (const follow of currentFollowList) {
+            event.tag(follow);
+        }
+
+        await event.publish();
+
+        return true;
     }
 }

@@ -37,7 +37,6 @@
     "author": "pablof7z",
     "license": "MIT",
     "devDependencies": {
-        "@appium/typedoc-plugin-appium": "^0.6.5",
         "@types/debug": "^4.1.7",
         "@types/jest": "^29.5.0",
         "@types/node": "^14.11.2",
@@ -46,9 +45,8 @@
         "prettier-plugin-organize-imports": "^3.2.2",
         "ts-jest": "^29.1.0",
         "tsup": "^6.7.0",
-        "typedoc": "^0.24.6",
-        "typedoc-github-wiki-theme": "^1.1.0",
-        "typedoc-plugin-markdown": "^3.15.3",
+        "typedoc": "^0.24.8",
+        "typedoc-plugin-rename-defaults": "^0.6.5",
         "typescript": "^5.0.4"
     },
     "dependencies": {

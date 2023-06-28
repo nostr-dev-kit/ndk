@@ -86,6 +86,7 @@ You can pass an object with several options to a newly created instance of NDK.
 ```ts
 // Import the package
 import NDK from "@nostr-dev-kit/ndk";
+
 // Create a new NDK instance with explicit relays
 ndk = new NDK({ explicitRelayUrls: ["wss://a.relay", "wss://another.relay"] });
 ```
@@ -99,6 +100,7 @@ After you've instatiated NDK, you need to tell it to connect before you'll be ab
 ```ts
 // Import the package
 import NDK from "@nostr-dev-kit/ndk";
+
 // Create a new NDK instance with explicit relays
 ndk = new NDK({ explicitRelayUrls: ["wss://a.relay", "wss://another.relay"] });
 
@@ -173,21 +175,20 @@ const redisAdapter = new RedisAdapter(redisUrl);
 const ndk = new NDK({ cacheAdapter: redisAdapter });
 ```
 
-## Buffered queries (COMING SOON)
-
+## Groupable queries
 Clients often need to load data (e.g. profile data) from individual components at once (e.g. initial page render). This typically causes multiple subscriptions to be submitted fetching the same information and causing poor performance or getting rate-limited/maxed out by relays.
 
 NDK implements a convenient subscription model, _buffered queries_, where a named subscription will be created after a customizable amount of time, so that multiple components can append queries.
 
 ```ts
 // Component 1
-ndk.bufferedSubscription({ kinds: [0], authors: ["pubkey-1"] }, "profiles", 500);
+ndk.subscribe({ kinds: [0], authors: ["pubkey-1"] });
 
 // Component 2
-ndk.bufferedSubscription({ kinds: [0], authors: ["pubkey-2"] }, "profiles", 500);
+ndk.subscribe({ kinds: [0], authors: ["pubkey-2"] });
 ```
 
-In this example, NDK will wait 500ms before creating a subscription with the filter:
+In this example, NDK will wait 100ms (default `groupableDelay`) before creating a subscription with the filter:
 
 ```ts
 {kinds: [0], authors: ['pubkey-1', 'pubkey-2'] }
@@ -230,12 +231,13 @@ But if NDK has observed that `npub-B` tends to write to `wss://userb.xyz` and
 ## Auto-closing subscriptions
 
 Often, clients need to fetch data but don't need to maintain an open connection to the relay. This is true of profile metadata requests especially.
+*NDK defaults to having the `closeOnEose` flag set to `true`, to make permanent subscriptions explicit in the codebase; if you want your
+subscription to remain active beyond `EOSE`, you should set it to `false`.*
 
--   The `autoclose` flag will make the connection close immediately after EOSE is seen.
--   An integer `autoclose` will close the connection after that amount of ms after EOSE is seen.
+-   The `closeOnEose` flag will make the connection close immediately after EOSE is seen.
 
 ```ts
-ndk.subscription({ kinds: [0], authors: ["..."] }, { autoclose: true });
+ndk.subscription({ kinds: [0], authors: ["..."] }, { closeOnEose: false });
 ```
 
 ## Convenience methods
@@ -258,7 +260,7 @@ const jeff = ndk.getUser({
 
 ### Fetch a user's profile and publish updates
 
-You can easily fetch a user's profile data from `kind: 0` events on relays. Calling `.fetchProfile()` will update the `profile` attribute on the user object instead of returning the profile directly. NDK then makes it trivial to update values and publish those updates back to relays.
+You can easily fetch a user's profile data from `kind:0` events on relays. Calling `.fetchProfile()` will update the `profile` attribute on the user object instead of returning the profile directly. NDK then makes it trivial to update values and publish those updates back to relays.
 
 ```ts
 const pablo = ndk.getUser({
@@ -319,5 +321,5 @@ await event.zap(1337, "Zapping your post!"); // Returns a zap request
 -   Users of NDK should instantiate a single NDK instance.
 -   That instance tracks state with all relays connected, explicit and otherwise.
 -   All relays are tracked in a single pool that handles connection errors/reconnection logic.
--   RelaySets are assembled ad-hoc as needed depending on the queries set, although some RelaySets might be long-lasting, like the `explicitRelays` specified by the user.
+-   RelaySets are assembled ad-hoc as needed depending on the queries set, although some RelaySets might be long-lasting, like the `explicitRelayUrls` specified by the user.
 -   RelaySets are always a subset of the pool of all available relays.

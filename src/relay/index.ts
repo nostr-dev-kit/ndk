@@ -2,7 +2,7 @@ import EventEmitter from "eventemitter3";
 import type { Event as SignedEvent } from "nostr-tools";
 import { relayInit, Sub } from "nostr-tools";
 import "websocket-polyfill";
-import NDKEvent, { NostrEvent } from "../events/index.js";
+import NDKEvent, { NDKTag, NostrEvent } from "../events/index.js";
 import { NDKSubscription } from "../subscription/index.js";
 import User from "../user/index.js";
 import { NDKRelayScore } from "./score.js";
@@ -264,5 +264,13 @@ export class NDKRelay extends EventEmitter {
      */
     get connectionStats(): NDKRelayConnectionStats {
         return this._connectionStats;
+    }
+
+    public tagReference(marker?: string): NDKTag {
+        const tag = [ 'r', this.relay.url ];
+
+        if (marker) { tag.push(marker); }
+
+        return tag;
     }
 }

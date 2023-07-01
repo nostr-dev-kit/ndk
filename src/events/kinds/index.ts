@@ -24,10 +24,9 @@ export enum NDKKind {
     NostrConnect = 24133,
     CategorizedPeopleList = 30000,
     CategorizedBookmarkList = 30001,
+    CategorizedRelayList = 30022,
     ProfileBadge = 30008,
     BadgeDefinition = 30009,
     Article = 30023,
     AppSpecificData = 30078
 }
-
-// export * from './article.js';

@@ -19,6 +19,8 @@ import { NDKUserProfile } from "./user/profile.js";
 
 export * from "./events/index.js";
 export * from "./events/kinds/index.js";
+export * from './events/kinds/article.js';
+export * from './events/kinds/lists/index.js';
 export * from "./relay/index.js";
 export * from "./relay/sets/index.js";
 export * from "./signers/index.js";
@@ -65,6 +67,10 @@ export default class NDK extends EventEmitter {
         if (opts.devWriteRelayUrls) {
             this.devWriteRelaySet = NDKRelaySet.fromRelayUrls(opts.devWriteRelayUrls, this);
         }
+    }
+
+    public toJSON(): string {
+        return {relayCount: this.pool.relays.size}.toString();
     }
 
     /**

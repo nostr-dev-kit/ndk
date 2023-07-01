@@ -14,7 +14,6 @@ export class NDKNip46Signer implements NDKSigner {
     private rpc: NDKNostrRpc;
     private debug: debug.Debugger;
 
-
     /**
      * @param ndk - The NDK instance to use
      * @param token - connection token, in the form "npub#otp"

@@ -7,6 +7,21 @@ export type NDKListItem = NDKRelay | NDKUser | NDKEvent;
 /**
  * Represents any NIP-33 list kind.
  *
+ * This class provides some helper methods to manage the list, particularly
+ * a CRUD interface to list items.
+ *
+ * List items can be encrypted or not. Encrypted items are JSON-encoded and
+ * self-signed by the user's key.
+ *
+ * @example Adding an event to the list.
+ * const event1 = new NDKEvent(...);
+ * const list = new NDKList();
+ * list.addItem(event1);
+ *
+ * @example Adding an encrypted `p` tag to the list with a "person" mark.
+ * const secretFollow = new NDKUser(...);
+ * list.addItem(secretFollow, 'person', true);
+ *
  * @emits NDKList#change
  */
 export class NDKList extends NDKEvent {

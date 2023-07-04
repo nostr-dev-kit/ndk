@@ -39,7 +39,6 @@ export class NDKPool extends EventEmitter {
         this.debug(`Relay ${relayUrl} connected`);
         this.emit("relay:connect", this.relays.get(relayUrl));
 
-        // if all relays are connected, emit a 'connect' event
         if (this.stats().connected === this.relays.size) {
             this.emit("connect");
         }

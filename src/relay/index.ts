@@ -73,19 +73,19 @@ export class NDKRelay extends EventEmitter {
 
         this.relay.on("connect", () => {
             this.updateConnectionStats.connected();
-            this.emit("connect");
             this._status = NDKRelayStatus.CONNECTED;
+            this.emit("connect");
         });
 
         this.relay.on("disconnect", () => {
             this.updateConnectionStats.disconnected();
-            this.emit("disconnect");
 
             if (this._status === NDKRelayStatus.CONNECTED) {
                 this._status = NDKRelayStatus.DISCONNECTED;
 
                 this.handleReconnection();
             }
+            this.emit("disconnect");
         });
 
         this.relay.on("notice", (notice: string) => this.handleNotice(notice));

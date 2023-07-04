@@ -201,8 +201,12 @@ export default class NDKEvent extends EventEmitter {
      * @param signer {NDKSigner} The NDKSigner to use to sign the event
      * @returns {Promise<string>} A Promise that resolves to the signature of the signed event.
      */
-    public async sign(signer?: NDKSigner) {
-        signer || this.ndk?.assertSigner();
+    public async sign(signer?: NDKSigner): Promise<string> {
+        if (!signer) {
+            this.ndk?.assertSigner();
+
+            signer = this.ndk!.signer!;
+        }
 
         await this.generateTags();
 
@@ -211,8 +215,10 @@ export default class NDKEvent extends EventEmitter {
         }
 
         const nostrEvent = await this.toNostrEvent();
-        const _signer = signer || this.ndk?.signer;
-        this.sig = await _signer!.sign(nostrEvent);
+
+        this.sig = await signer.sign(nostrEvent);
+
+        return this.sig;
     }
 
     /**

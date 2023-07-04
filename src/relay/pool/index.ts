@@ -12,7 +12,7 @@ export type NDKPoolStats = {
 /**
  * Handles connections to all relays. A single pool should be used per NDK instance.
  *
- * @emit connect - Emitted when all relays in the pool are connected.
+ * @emit connect - Emitted when all relays in the pool are connected, or when the specified timeout has elapsed, and some relays are connected.
  * @emit notice - Emitted when a relay in the pool sends a notice.
  * @emit flapping - Emitted when a relay in the pool is flapping.
  * @emit relay:connect - Emitted when a relay in the pool connects.
@@ -76,6 +76,19 @@ export class NDKPool extends EventEmitter {
             } else {
                 promises.push(relay.connect());
             }
+        }
+
+        // If we are running with a timeout, check if we need to emit a `connect` event
+        // in case some, but not all, relays were connected
+        if (timeoutMs) {
+            setTimeout(() => {
+                const allConnected = this.stats().connected === this.relays.size;
+                const someConnected = this.stats().connected > 0;
+
+                if (!allConnected && someConnected) {
+                    this.emit("connect");
+                }
+            }, timeoutMs);
         }
 
         await Promise.all(promises);

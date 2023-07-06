@@ -6,6 +6,7 @@ import GetPublicKeyHandlingStrategy from "./get-public-key.js";
 import SignEventHandlingStrategy from "./sign-event.js";
 import Nip04DecryptHandlingStrategy from "./nip04-decrypt.js";
 import Nip04EncryptHandlingStrategy from "./nip04-encrypt.js";
+import { verifySignature, Event } from 'nostr-tools';
 
 export type Nip46PermitCallback = (
     pubkey: string,
@@ -106,6 +107,12 @@ export class NDKNip46Backend {
 
         this.debug("incoming event", { id, method, params });
 
+        // validate signature explicitly
+        if (!verifySignature(event.rawEvent() as Event<any>)) {
+            this.debug("invalid signature", event.rawEvent());
+            return;
+        }
+
         const strategy = this.handlers[method];
         if (strategy) {
             try {
@@ -121,6 +128,8 @@ export class NDKNip46Backend {
         if (response) {
             this.debug(`sending response to ${remotePubkey}`, response);
             this.rpc.sendResponse(id, remotePubkey, response);
+        } else {
+            this.rpc.sendResponse(id, remotePubkey, "error", undefined, "Not authorized");
         }
     }
 

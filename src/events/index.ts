@@ -275,14 +275,23 @@ export default class NDKEvent extends EventEmitter {
     }
 
     /**
-     * Returns the id of the event or, if it's a parameterized event, the generated id of the event using "d" tag, pubkey, and kind.
+     * Returns the id of the event in `<kind>:<pubkey>`, `<kind>:<pubkey>:<d-tag>`, or hashed formats
      * @returns {string} The id
      */
     tagId(): string {
-        // NIP-33
-        if (this.kind && this.kind >= 30000 && this.kind <= 40000) {
-            const dTagId = this.replaceableDTag();
+        const onlyLatestKinds = [NDKKind.Metadata, NDKKind.Contacts];
 
+        if (onlyLatestKinds.includes(this.kind as number) || this.isReplaceable()) {
+            return `${this.kind}:${this.pubkey}`;
+        }
+
+        if (this.isReplaceable()) {
+            return `${this.kind}:${this.pubkey}`;
+        }
+
+        // NIP-33
+        if (this.isParamReplaceable()) {
+            const dTagId = this.replaceableDTag();
             return `${this.kind}:${this.pubkey}:${dTagId}`;
         }
 

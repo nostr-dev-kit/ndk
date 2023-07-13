@@ -137,14 +137,34 @@ export class NDKRelaySet {
         return subscription;
     }
 
-    public async publish(event: NDKEvent): Promise<void> {
-        this.relays.forEach(async (relay) => {
-            try {
-                // TODO: if relay is not connected, don't try to send, but rather attach
-                // to `connected` event and send it at that moment
-                await relay.publish(event);
-            } catch (e) {}
+    /**
+     * Publish an event to all relays in this set. Returns the number of relays that have received the event.
+     * @param event
+     * @param timeoutMs - timeout in milliseconds for each publish operation and connection operation
+     */
+    public async publish(
+        event: NDKEvent,
+        timeoutMs?: number
+    ): Promise<number> {
+        let successfulPublications = 0;
+
+        // go through each relay and publish the event
+        const promises: Promise<void>[] = Array.from(this.relays).map((relay: NDKRelay) => {
+            return new Promise<void>((resolve) => {
+                relay.publish(event, timeoutMs).then(() => {
+                    successfulPublications++;
+                    resolve();
+                });
+            });
         });
+
+        await Promise.all(promises);
+
+        if (successfulPublications === 0) {
+            throw new Error('No relay was able to receive the event');
+        }
+
+        return successfulPublications;
     }
 
     public size(): number {

@@ -1,5 +1,4 @@
 import EventEmitter from "eventemitter3";
-import type { Event as SignedEvent } from "nostr-tools";
 import { relayInit, Sub } from "nostr-tools";
 import "websocket-polyfill";
 import NDKEvent, { NDKTag, NostrEvent } from "../events/index.js";
@@ -46,6 +45,7 @@ export interface NDKRelayConnectionStats {
  * @emits NDKRelay#disconnect
  * @emits NDKRelay#notice
  * @emits NDKRelay#event
+ * @emits NDKRelay#published when an event is published to the relay
  * @emits NDKRelay#eose
  */
 export class NDKRelay extends EventEmitter {
@@ -206,20 +206,69 @@ export class NDKRelay extends EventEmitter {
     }
 
     /**
-     * Publishes an event to the relay.
+     * Publishes an event to the relay with an optional timeout.
+     *
+     * If the relay is not connected, the event will be published when the relay connects,
+     * unless the timeout is reached before the relay connects.
+     *
+     * @param event The event to publish
+     * @param timeoutMs The timeout for the publish operation in milliseconds
+     * @returns A promise that resolves when the event has been published or rejects if the operation times out
      */
-    public async publish(event: NDKEvent): Promise<void> {
-        const nostrEvent = (await event.toNostrEvent()) as SignedEvent;
-        const a = this.relay.publish(nostrEvent);
-        a.on('failed', (err: any) => {
-            this.debug('Publish failed', err, event.rawEvent());
+    public async publish(
+        event: NDKEvent,
+        timeoutMs = 2500
+    ): Promise<boolean> {
+        if (this.status === NDKRelayStatus.CONNECTED) {
+            return this.publishEvent(event, timeoutMs);
+        } else {
+            this.once('connect', () => {
+                this.publishEvent(event, timeoutMs);
+            });
+            return true;
+        }
+    }
+
+    private async publishEvent(
+        event: NDKEvent,
+        timeoutMs?: number
+    ): Promise<boolean> {
+        const nostrEvent = (await event.toNostrEvent());
+        const a = this.relay.publish(nostrEvent as any);
+        let publishTimeout: NodeJS.Timeout;
+
+        const publishPromise = new Promise<boolean>((resolve, reject) => {
+            a.on('failed', (err: any) => {
+                clearTimeout(publishTimeout);
+                this.debug('Publish failed', err, event.rawEvent());
+                reject(err);
+            });
+
+            a.on('ok', () => {
+                clearTimeout(publishTimeout);
+                this.debug('Publish ok', event.rawEvent());
+                this.emit('published', event);
+                resolve(true);
+            });
+
+            this.debug(`Published event ${event.id}`, event.rawEvent());
         });
 
-        a.on('ok', () => {
-            this.debug('Publish ok', event.rawEvent());
+        // If no timeout is specified, just return the publish promise
+        if (!timeoutMs) {
+            return publishPromise;
+        }
+
+        // Create a promise that rejects after timeoutMs milliseconds
+        const timeoutPromise = new Promise<boolean>((_, reject) => {
+            publishTimeout = setTimeout(() => {
+                this.debug('Publish timed out', event.rawEvent());
+                reject(new Error('Publish operation timed out'));
+            }, timeoutMs);
         });
 
-        this.debug(`Published event ${event.id}`, event.rawEvent());
+        // wait for either the publish operation to complete or the timeout to occur
+        return Promise.race([publishPromise, timeoutPromise]);
     }
 
     /**

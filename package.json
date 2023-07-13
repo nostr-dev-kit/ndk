@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/ndk",
-    "version": "0.7.5",
+    "version": "0.7.6",
     "description": "NDK - Nostr Development Kit",
     "homepage": "https://ndk.fyi",
     "documentation": "https://github.com/nostr-dev-kit/ndk/blob/master/docs/modules.md",
@@ -62,7 +62,7 @@
         "eslint-config-prettier": "^8.8.0",
         "eslint-plugin-import": "^2.27.5",
         "esm-loader-typescript": "^1.0.4",
-        "eventemitter3": "^5.0.0",
+        "eventemitter3": "^5.0.1",
         "light-bolt11-decoder": "^3.0.0",
         "node-fetch": "^3.3.1",
         "nostr-tools": "^1.11.2",

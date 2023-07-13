@@ -117,17 +117,23 @@ export default class NDK extends EventEmitter {
     }
 
     /**
-     * Publish an event
+     * Publish an event to a relay
      * @param event event to publish
-     * @returns
+     * @param relaySet explicit relay set to use
+     * @param timeoutMs timeout in milliseconds to wait for the event to be published
+     * @returns The number of relays the event was published to
      */
-    public async publish(event: NDKEvent, relaySet?: NDKRelaySet): Promise<void> {
+    public async publish(
+        event: NDKEvent,
+        relaySet?: NDKRelaySet,
+        timeoutMs?: number
+    ): Promise<number> {
         if (!relaySet) {
             // If we have a devWriteRelaySet, use it to publish all events
             relaySet = this.devWriteRelaySet || calculateRelaySetFromEvent(this, event);
         }
 
-        return relaySet.publish(event);
+        return relaySet.publish(event, timeoutMs);
     }
 
     /**

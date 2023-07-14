@@ -225,12 +225,12 @@ export default class NDKEvent extends EventEmitter {
      * Attempt to sign and then publish an NDKEvent to a given relaySet.
      * If no relaySet is provided, the relaySet will be calculated by NDK.
      * @param relaySet {NDKRelaySet} The relaySet to publish the even to.
-     * @returns A promise that resolves to the number of relays the event was published to.
+     * @returns A promise that resolves to the relays the event was published to.
      */
     public async publish(
         relaySet?: NDKRelaySet,
         timeoutMs?: number
-    ): Promise<number> {
+    ): Promise<Set<NDKRelay>> {
         if (!this.sig) await this.sign();
         if (!this.ndk) throw new Error("NDKEvent must be associated with an NDK instance to publish");
 

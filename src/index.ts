@@ -16,6 +16,7 @@ import {
 } from "./subscription/index.js";
 import NDKUser, { NDKUserParams } from "./user/index.js";
 import { NDKUserProfile } from "./user/profile.js";
+import type { NDKRelay } from "./relay/index.js";
 
 export * from "./events/index.js";
 export * from "./events/kinds/index.js";
@@ -121,13 +122,13 @@ export default class NDK extends EventEmitter {
      * @param event event to publish
      * @param relaySet explicit relay set to use
      * @param timeoutMs timeout in milliseconds to wait for the event to be published
-     * @returns The number of relays the event was published to
+     * @returns The relays the event was published to
      */
     public async publish(
         event: NDKEvent,
         relaySet?: NDKRelaySet,
         timeoutMs?: number
-    ): Promise<number> {
+    ): Promise<Set<NDKRelay>> {
         if (!relaySet) {
             // If we have a devWriteRelaySet, use it to publish all events
             relaySet = this.devWriteRelaySet || calculateRelaySetFromEvent(this, event);

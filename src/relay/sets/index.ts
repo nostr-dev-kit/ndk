@@ -141,18 +141,22 @@ export class NDKRelaySet {
      * Publish an event to all relays in this set. Returns the number of relays that have received the event.
      * @param event
      * @param timeoutMs - timeout in milliseconds for each publish operation and connection operation
+     * @returns A set where the event was successfully published to
      */
     public async publish(
         event: NDKEvent,
         timeoutMs?: number
-    ): Promise<number> {
-        let successfulPublications = 0;
+    ): Promise<Set<NDKRelay>> {
+        const publishedToRelays: Set<NDKRelay>= new Set();
 
         // go through each relay and publish the event
         const promises: Promise<void>[] = Array.from(this.relays).map((relay: NDKRelay) => {
             return new Promise<void>((resolve) => {
                 relay.publish(event, timeoutMs).then(() => {
-                    successfulPublications++;
+                    publishedToRelays.add(relay);
+                    resolve();
+                }).catch((err) => {
+                    this.debug("error publishing to relay", { relay: relay.url, err });
                     resolve();
                 });
             });
@@ -160,11 +164,11 @@ export class NDKRelaySet {
 
         await Promise.all(promises);
 
-        if (successfulPublications === 0) {
+        if (publishedToRelays.size === 0) {
             throw new Error('No relay was able to receive the event');
         }
 
-        return successfulPublications;
+        return publishedToRelays;
     }
 
     public size(): number {

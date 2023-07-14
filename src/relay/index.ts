@@ -46,6 +46,7 @@ export interface NDKRelayConnectionStats {
  * @emits NDKRelay#notice
  * @emits NDKRelay#event
  * @emits NDKRelay#published when an event is published to the relay
+ * @emits NDKRelay#publish:failed when an event fails to publish to the relay
  * @emits NDKRelay#eose
  */
 export class NDKRelay extends EventEmitter {
@@ -157,8 +158,10 @@ export class NDKRelay extends EventEmitter {
         // remove it from relay set selection for a minute.
         if (notice.includes("oo many") || notice.includes("aximum")) {
             this.disconnect();
+
+            // fixme
             setTimeout(() => this.connect(), 2000);
-            console.log(this.relay.url, "Relay complaining?", notice);
+            this.debug(this.relay.url, "Relay complaining?", notice);
             // this.complaining = true;
             // setTimeout(() => {
             //     this.complaining = false;
@@ -240,18 +243,16 @@ export class NDKRelay extends EventEmitter {
         const publishPromise = new Promise<boolean>((resolve, reject) => {
             a.on('failed', (err: any) => {
                 clearTimeout(publishTimeout);
-                this.debug('Publish failed', err, event.rawEvent());
+                this.debug('Publish failed', err, event.id);
+                this.emit('publish:failed', event, err);
                 reject(err);
             });
 
             a.on('ok', () => {
                 clearTimeout(publishTimeout);
-                this.debug('Publish ok', event.rawEvent());
                 this.emit('published', event);
                 resolve(true);
             });
-
-            this.debug(`Published event ${event.id}`, event.rawEvent());
         });
 
         // If no timeout is specified, just return the publish promise
@@ -263,6 +264,7 @@ export class NDKRelay extends EventEmitter {
         const timeoutPromise = new Promise<boolean>((_, reject) => {
             publishTimeout = setTimeout(() => {
                 this.debug('Publish timed out', event.rawEvent());
+                this.emit('publish:failed', event, "Timeout");
                 reject(new Error('Publish operation timed out'));
             }, timeoutMs);
         });

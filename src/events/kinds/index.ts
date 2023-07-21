@@ -27,6 +27,8 @@ export enum NDKKind {
     CategorizedRelayList = 30022,
     ProfileBadge = 30008,
     BadgeDefinition = 30009,
+    MarketStall = 30017,
+    MarketProduct = 30018,
     Article = 30023,
     AppSpecificData = 30078
 }

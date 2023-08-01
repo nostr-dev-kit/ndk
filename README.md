@@ -312,7 +312,7 @@ await event.react("🤙");
 ```ts
 // Find the first event from @jack, and zap it.
 const event = await ndk.fetchEvent({ author: "jack@cashapp.com" })[0];
-await event.zap(1337, "Zapping your post!"); // Returns a zap request
+await event.zap(1337, "Zapping your post!"); // Returns a bolt11 payment request
 ```
 
 ## Architecture decisions & suggestions

@@ -64,7 +64,7 @@ localStorage.debug = 'ndk:*'
 -   Signing Adapters
     -   [x] Private key
     -   [x] NIP-07
-    -   [ ] NIP-26
+    -   [!] ~~NIP-26~~ Won't add / NIP-26 is dead
     -   [x] NIP-46
         - [x] Permission tokens
 -   Relay discovery
@@ -73,6 +73,10 @@ localStorage.debug = 'ndk:*'
     -   [ ] Implicit relays discovery following `t` tag usage
     -   [ ] Explicit relays blacklist
 -   [ ] nostr-tools/SimplePool drop-in replacement interface
+
+## Read-world uses of NDK
+
+See [REFERENCES.md](./REFERENCES.md) for a list of projects using NDK to see how others are using it.
 
 ## Instantiate an NDK instance
 

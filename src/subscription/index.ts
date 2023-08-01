@@ -213,6 +213,8 @@ export class NDKSubscription extends EventEmitter {
 
         if (this.shouldQueryRelays()) {
             this.startWithRelaySet();
+        } else {
+            this.emit("eose", this);
         }
 
         return;

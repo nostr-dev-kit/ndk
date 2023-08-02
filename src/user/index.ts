@@ -1,10 +1,11 @@
 import { nip05, nip19 } from "nostr-tools";
 import Event, { NDKTag, NostrEvent } from "../events/index.js";
 import NDK, { NDKKind } from "../index.js";
-import { NDKFilterOptions } from "../subscription/index.js";
+import { NDKSubscriptionCacheUsage } from "../subscription/index.js";
 import { follows } from "./follows.js";
 import { mergeEvent, NDKUserProfile } from "./profile";
 import NDKEvent from "../events/index.js";
+import { NDKSubscriptionOptions } from "../../dist/index.js";
 
 export interface NDKUserParams {
     npub?: string;
@@ -60,21 +61,48 @@ export default class NDKUser {
 
     /**
      * Fetch a user's kind 0 metadata events and merge the events in a single up-to-date profile
-     * @param opts {NDKFilterOptions} A set of NDKFilterOptions
+     * @param opts {NDKSubscriptionOptions} A set of NDKSubscriptionOptions
      * @returns {Promise<Set<Event>>} A set of all NDKEvents events returned for the given user
      */
-    public async fetchProfile(opts?: NDKFilterOptions): Promise<Set<Event> | null> {
+    public async fetchProfile(opts?: NDKSubscriptionOptions): Promise<Set<Event> | null> {
         if (!this.ndk) throw new Error("NDK not set");
 
         if (!this.profile) this.profile = {};
 
-        const setMetadataEvents = await this.ndk.fetchEvents(
-            {
+        let setMetadataEvents: Set<Event> | null = null;
+
+        // if no options have been set and we have a cache, try to load from cache with no grouping
+        // This is done in favour of simply using NDKSubscriptionCacheUsage.CACHE_FIRST since
+        // we want to avoid depending on the grouping, arguably, all queries should go through this
+        // type of behavior when we have a locking cache
+        if (!opts && // if no options have been set
+            this.ndk.cacheAdapter && // and we have a cache
+            this.ndk.cacheAdapter.locking // and the cache identifies itself as fast 😂
+        ) {
+            setMetadataEvents = await this.ndk.fetchEvents({
                 kinds: [0],
                 authors: [this.hexpubkey()]
-            },
-            opts
-        );
+            }, {
+                cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE,
+                closeOnEose: true,
+                groupable: false
+            });
+
+            opts = {
+                cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY,
+                closeOnEose: true
+            };
+        }
+
+        if (!setMetadataEvents || setMetadataEvents.size === 0) {
+            setMetadataEvents = await this.ndk.fetchEvents(
+                {
+                    kinds: [0],
+                    authors: [this.hexpubkey()]
+                },
+                opts
+            );
+        }
 
         if (setMetadataEvents) {
             // sort setMetadataEvents by created_at in ascending order

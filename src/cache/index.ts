@@ -1,4 +1,5 @@
 import NDKEvent from "../events/index.js";
+import { NDKRelay } from "../relay/index.js";
 import { NDKFilter, NDKSubscription } from "../subscription/index.js";
 
 export interface NDKCacheAdapter {
@@ -10,5 +11,9 @@ export interface NDKCacheAdapter {
     locking: boolean;
 
     query(subscription: NDKSubscription): Promise<void>;
-    setEvent(event: NDKEvent, filter: NDKFilter): Promise<void>;
+    setEvent(
+        event: NDKEvent,
+        filter: NDKFilter,
+        relay?: NDKRelay
+    ): Promise<void>;
 }

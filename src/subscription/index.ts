@@ -9,10 +9,6 @@ import { queryFullyFilled } from "./utils.js";
 
 export type NDKFilter = NostrFilter;
 
-export interface NDKFilterOptions {
-    skipCache?: boolean;
-}
-
 export enum NDKSubscriptionCacheUsage {
     // Only use cache, don't subscribe to relays
     ONLY_CACHE = "ONLY_CACHE",
@@ -83,7 +79,7 @@ export const defaultOpts: NDKSubscriptionOptions = {
  */
 export class NDKSubscription extends EventEmitter {
     readonly subId: string;
-    readonly filter: NDKFilter;
+    readonly filters: NDKFilter[];
     readonly opts: NDKSubscriptionOptions;
     public relaySet?: NDKRelaySet;
     public ndk: NDK;
@@ -107,7 +103,7 @@ export class NDKSubscription extends EventEmitter {
 
     public constructor(
         ndk: NDK,
-        filter: NDKFilter,
+        filters: NDKFilter | NDKFilter[],
         opts?: NDKSubscriptionOptions,
         relaySet?: NDKRelaySet,
         subId?: string
@@ -115,8 +111,9 @@ export class NDKSubscription extends EventEmitter {
         super();
         this.ndk = ndk;
         this.opts = { ...defaultOpts, ...(opts || {}) };
-        this.subId = subId || opts?.subId || generateFilterId(filter);
-        this.filter = filter;
+        this.filters = filters instanceof Array ? filters : [filters];
+        this.subId = subId || opts?.subId || generateFilterId(this.filters[0]);
+
         this.relaySet = relaySet;
         this.relaySubscriptions = new Map<NDKRelay, Sub>();
         this.debug = ndk.debug.extend(`subscription:${this.subId}`);
@@ -133,23 +130,33 @@ export class NDKSubscription extends EventEmitter {
     }
 
     /**
+     * Provides access to the first filter of the subscription for
+     * backwards compatibility.
+     */
+    get filter(): NDKFilter {
+        return this.filters[0];
+    }
+
+    /**
      * Calculates the groupable ID for this subscription.
      *
      * @returns The groupable ID, or null if the subscription is not groupable.
      */
     public groupableId(): string | null {
-        if (!this.opts?.groupable) {
+        if (!this.opts?.groupable || this.filters.length > 1) {
             return null;
         }
 
+        const filter = this.filters[0];
+
         // Check if there is a kind and no time-based filters
-        const hasKind = (this.filter.kinds?.length || 0) > 0;
-        const noTimeConstraints = !this.filter.since && !this.filter.until;
-        const noLimit = !this.filter.limit;
+        const hasKind = (filter.kinds?.length || 0) > 0;
+        const noTimeConstraints = !filter.since && !filter.until;
+        const noLimit = !filter.limit;
 
         if (hasKind && noTimeConstraints && noLimit) {
-            let id = this.filter.kinds!.join(",");
-            const keys = Object.keys(this.filter || {})
+            let id = filter.kinds!.join(",");
+            const keys = Object.keys(filter || {})
                 .sort()
                 .join("-");
             id += `-${keys}`;
@@ -178,10 +185,6 @@ export class NDKSubscription extends EventEmitter {
             // Cache adapter must claim to be fast
             !!this.ndk.cacheAdapter?.locking &&
 
-            // If we don't have to query relays there's no need
-            // to wait for the cache
-            this.shouldQueryRelays() &&
-
             // If explicitly told to run in parallel, then
             // we should not wait for the cache
             this.opts.cacheUsage !== NDKSubscriptionCacheUsage.PARALLEL
@@ -198,13 +201,11 @@ export class NDKSubscription extends EventEmitter {
         if (this.shouldQueryCache()) {
             cachePromise = this.startWithCache();
 
-
             if (this.shouldWaitForCache()) {
                 await cachePromise;
 
                 // if the cache has a hit, return early
                 if (queryFullyFilled(this)) {
-                    this.debug("cache hit, fully filled: skipping relay query");
                     this.emit("eose", this);
                     return;
                 }
@@ -238,7 +239,7 @@ export class NDKSubscription extends EventEmitter {
 
     private startWithRelaySet(): void {
         if (!this.relaySet) {
-            this.relaySet = calculateRelaySetFromFilter(this.ndk, this.filter);
+            this.relaySet = calculateRelaySetFromFilter(this.ndk, this.filters[0]);
         }
 
         if (this.relaySet) {
@@ -280,7 +281,7 @@ export class NDKSubscription extends EventEmitter {
             }
 
             if (this.ndk.cacheAdapter) {
-                this.ndk.cacheAdapter.setEvent(event, this.filter);
+                this.ndk.cacheAdapter.setEvent(event, this.filters[0], relay);
             }
 
             this.eventFirstSeen.set(`${event.id}`, Date.now());
@@ -334,7 +335,7 @@ export class NDKSubscriptionGroup extends NDKSubscription {
     constructor(ndk: NDK, subscriptions: NDKSubscription[]) {
         const debug = ndk.debug.extend("subscription-group");
 
-        const filters = mergeFilters(subscriptions.map((s) => s.filter));
+        const filters = mergeFilters(subscriptions.map((s) => s.filters[0]));
 
         super(
             ndk,
@@ -347,7 +348,7 @@ export class NDKSubscriptionGroup extends NDKSubscription {
 
         debug("merged filters", {
             count: subscriptions.length,
-            mergedFilters: this.filter
+            mergedFilters: this.filters[0]
         });
 
         // forward events to the matching subscriptions
@@ -358,11 +359,11 @@ export class NDKSubscriptionGroup extends NDKSubscription {
     }
 
     private isEventForSubscription(event: NDKEvent, subscription: NDKSubscription): boolean {
-        const { filter } = subscription;
+        const { filters } = subscription;
 
-        if (!filter) return false;
+        if (!filters) return false;
 
-        return matchFilter(filter, event.rawEvent() as any);
+        return matchFilter(filters[0], event.rawEvent() as any);
 
         // check if there is a filter whose key begins with '#'; if there is, check if the event has a tag with the same key on the first position
         // of the tags array of arrays and the same value in the second position

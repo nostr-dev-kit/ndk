@@ -176,12 +176,12 @@ export class NDKRelay extends EventEmitter {
      * Subscribes to a subscription.
      */
     public subscribe(subscription: NDKSubscription): Sub {
-        const { filter } = subscription;
+        const { filters } = subscription;
 
-        const sub = this.relay.sub([filter], {
+        const sub = this.relay.sub(filters, {
             id: subscription.subId
         });
-        this.debug(`Subscribed to ${JSON.stringify(filter)}`);
+        this.debug(`Subscribed to ${JSON.stringify(filters)}`);
 
         sub.on("event", (event: NostrEvent) => {
             const e = new NDKEvent(undefined, event);
@@ -195,7 +195,7 @@ export class NDKRelay extends EventEmitter {
 
         const unsub = sub.unsub;
         sub.unsub = () => {
-            this.debug(`Unsubscribing from ${JSON.stringify(filter)}`);
+            this.debug(`Unsubscribing from ${JSON.stringify(filters)}`);
             this.activeSubscriptions.delete(subscription);
             unsub();
         };
@@ -242,7 +242,7 @@ export class NDKRelay extends EventEmitter {
 
         const publishPromise = new Promise<boolean>((resolve, reject) => {
             a.on('failed', (err: any) => {
-                clearTimeout(publishTimeout);
+                clearTimeout(publishTimeout as NodeJS.Timeout);
                 this.debug('Publish failed', err, event.id);
                 this.emit('publish:failed', event, err);
                 reject(err);

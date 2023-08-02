@@ -110,7 +110,7 @@ export class NDKRelaySet {
     }
 
     private executeSubscription(subscription: NDKSubscription): NDKSubscription {
-        this.debug("subscribing", { filter: subscription.filter });
+        this.debug("subscribing", { filters: subscription.filters });
 
         for (const relay of this.relays) {
             if (relay.status === NDKRelayStatus.CONNECTED) {
@@ -121,7 +121,7 @@ export class NDKRelaySet {
                 const connectedListener = () => {
                     this.debug("new relay coming online for active subscription", {
                         relay: relay.url,
-                        filter: subscription.filter
+                        filters: subscription.filters
                     });
                     this.subscribeOnRelay(relay, subscription);
                 };

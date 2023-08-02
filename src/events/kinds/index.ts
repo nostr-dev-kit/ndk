@@ -17,6 +17,7 @@ export enum NDKKind {
     Report = 1984,
     ZapRequest = 9734,
     Zap = 9735,
+    Highlight = 9802,
     MuteList = 10000,
     PinList = 10001,
     RelayList = 10002,
@@ -30,5 +31,11 @@ export enum NDKKind {
     MarketStall = 30017,
     MarketProduct = 30018,
     Article = 30023,
-    AppSpecificData = 30078
+    AppSpecificData = 30078,
+    CategorizedHighlightList = 39802,
+
+    // NIP-90: Data Vending Machines
+    DVMJobFeedback = 65000,
+    DVMJobResult = 65001,
+    DVMJobRequestTranscription = 65002,
 }

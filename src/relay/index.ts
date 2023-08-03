@@ -1,5 +1,5 @@
 import EventEmitter from "eventemitter3";
-import { relayInit, Sub } from "nostr-tools";
+import { Relay, relayInit, Sub } from "nostr-tools";
 import "websocket-polyfill";
 import NDKEvent, { NDKTag, NostrEvent } from "../events/index.js";
 import { NDKSubscription } from "../subscription/index.js";
@@ -52,7 +52,7 @@ export interface NDKRelayConnectionStats {
 export class NDKRelay extends EventEmitter {
     readonly url: string;
     readonly scores: Map<User, NDKRelayScore>;
-    private relay;
+    private relay: Relay;
     private _status: NDKRelayStatus;
     private connectedAt?: number;
     private _connectionStats: NDKRelayConnectionStats = { attempts: 0, success: 0, durations: [] };
@@ -237,21 +237,19 @@ export class NDKRelay extends EventEmitter {
         timeoutMs?: number
     ): Promise<boolean> {
         const nostrEvent = (await event.toNostrEvent());
-        const a = this.relay.publish(nostrEvent as any);
+        const publish = this.relay.publish(nostrEvent as any);
         let publishTimeout: NodeJS.Timeout;
 
         const publishPromise = new Promise<boolean>((resolve, reject) => {
-            a.on('failed', (err: any) => {
+            publish.then(() => {
+                clearTimeout(publishTimeout);
+                this.emit('published', event);
+                resolve(true);
+            }).catch((err) => {
                 clearTimeout(publishTimeout as NodeJS.Timeout);
                 this.debug('Publish failed', err, event.id);
                 this.emit('publish:failed', event, err);
                 reject(err);
-            });
-
-            a.on('ok', () => {
-                clearTimeout(publishTimeout);
-                this.emit('published', event);
-                resolve(true);
             });
         });
 
@@ -281,6 +279,7 @@ export class NDKRelay extends EventEmitter {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public scoreSlowerEvent(timeDiffInMs: number): void {
         // TODO
+
     }
 
     /**

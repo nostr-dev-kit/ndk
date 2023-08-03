@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/ndk",
-    "version": "0.8.0",
+    "version": "0.8.1",
     "description": "NDK - Nostr Development Kit",
     "homepage": "https://ndk.fyi",
     "documentation": "https://github.com/nostr-dev-kit/ndk/blob/master/docs/modules.md",
@@ -65,7 +65,7 @@
         "eventemitter3": "^5.0.1",
         "light-bolt11-decoder": "^3.0.0",
         "node-fetch": "^3.3.1",
-        "nostr-tools": "^1.11.2",
+        "nostr-tools": "^1.14.0",
         "tsd": "^0.28.1",
         "utf8-buffer": "^1.0.0",
         "websocket-polyfill": "^0.0.3"

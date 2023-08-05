@@ -12,6 +12,10 @@ export class NDKDVMJobResult extends NDKEvent {
         this.kind = NDKKind.DVMJobResult;
     }
 
+    static from(event: NDKEvent) {
+        return new NDKDVMJobResult(event.ndk, event.rawEvent());
+    }
+
     set result(result: string | undefined) {
         if (result === undefined) {
             this.content = "";

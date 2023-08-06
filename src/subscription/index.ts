@@ -1,5 +1,6 @@
 import EventEmitter from "eventemitter3";
 import { Filter as NostrFilter, matchFilter, Sub, nip19 } from "nostr-tools";
+import { EventPointer } from "nostr-tools/lib/nip19";
 import NDKEvent, { NDKEventId } from "../events/index.js";
 import NDK from "../index.js";
 import { NDKRelay } from "../relay";
@@ -465,6 +466,27 @@ export function filterFromId(id: string): NDKFilter {
     }
 
     return {ids: [id]};
+}
+
+/**
+ * Returns the specified relays from a NIP-19 bech32.
+ *
+ * @param bech32 The NIP-19 bech32.
+ */
+export function relaysFromBech32(bech32: string): NDKRelay[] {
+    try {
+        const decoded = nip19.decode(bech32);
+
+        if (['naddr', 'nevent'].includes(decoded?.type)) {
+            const data = decoded.data as unknown as EventPointer;
+
+            if (data?.relays) {
+                return data.relays.map((r: string) => new NDKRelay(r));
+            }
+        }
+    } catch (e) { /* empty */ }
+
+    return [];
 }
 
 /**

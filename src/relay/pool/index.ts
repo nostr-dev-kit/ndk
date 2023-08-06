@@ -22,18 +22,97 @@ export type NDKPoolStats = {
 export class NDKPool extends EventEmitter {
     public relays = new Map<string, NDKRelay>();
     private debug: debug.Debugger;
+    private temporaryRelayTimers = new Map<string, NodeJS.Timeout>();
 
     public constructor(relayUrls: string[] = [], ndk: NDK) {
         super();
         this.debug = ndk.debug.extend("pool");
         for (const relayUrl of relayUrls) {
             const relay = new NDKRelay(relayUrl);
-            relay.on("notice", (relay, notice) => this.emit("notice", relay, notice));
-            relay.on("connect", () => this.handleRelayConnect(relayUrl));
-            relay.on("disconnect", () => this.emit("relay:disconnect", relay));
-            relay.on("flapping", () => this.handleFlapping(relay));
-            this.relays.set(relayUrl, relay);
+            this.addRelay(relay, false);
         }
+    }
+
+    /**
+     * Adds a relay to the pool, and sets a timer to remove it if it is not used within the specified time.
+     * @param relay - The relay to add to the pool.
+     * @param removeIfUnusedAfter - The time in milliseconds to wait before removing the relay from the pool after it is no longer used.
+     */
+    public useTemporaryRelay(
+        relay: NDKRelay,
+        removeIfUnusedAfter = 10000,
+    ) {
+        const relayAlreadyInPool = this.relays.has(relay.url);
+
+        // check if the relay is already in the pool
+        if (!relayAlreadyInPool) {
+            this.addRelay(relay);
+        }
+
+        // check if the relay already has a disconnecting timer
+        const existingTimer = this.temporaryRelayTimers.get(relay.url);
+        if (existingTimer) {
+            clearTimeout(existingTimer);
+        }
+
+        // add a disconnecting timer only if the relay was not already in the pool
+        // or if it had an existing timer
+        // this prevents explicit relays from being removed from the pool
+        if (!relayAlreadyInPool || existingTimer) {
+            // set a timer to remove the relay from the pool if it is not used within the specified time
+            const timer = setTimeout(() => {
+                this.removeRelay(relay.url);
+            }, removeIfUnusedAfter);
+
+            this.temporaryRelayTimers.set(relay.url, timer);
+        }
+    }
+
+    /**
+     * Adds a relay to the pool.
+     *
+     * @param relay - The relay to add to the pool.
+     * @param connect - Whether or not to connect to the relay.
+     */
+    public addRelay(
+        relay: NDKRelay,
+        connect = true,
+    ) {
+        const relayUrl = relay.url;
+
+        relay.on("notice", (relay, notice) => this.emit("notice", relay, notice));
+        relay.on("connect", () => this.handleRelayConnect(relayUrl));
+        relay.on("disconnect", () => this.emit("relay:disconnect", relay));
+        relay.on("flapping", () => this.handleFlapping(relay));
+        this.relays.set(relayUrl, relay);
+
+        if (connect) {
+            relay.connect();
+        }
+    }
+
+    /**
+     * Removes a relay from the pool.
+     * @param relayUrl - The URL of the relay to remove.
+     * @returns {boolean} True if the relay was removed, false if it was not found.
+     */
+    public removeRelay(relayUrl: string): boolean {
+        const relay = this.relays.get(relayUrl);
+        if (relay) {
+            relay.disconnect();
+            this.relays.delete(relayUrl);
+            this.emit("relay:disconnect", relay);
+            return true;
+        }
+
+        // remove the relay from the temporary relay timers
+        const existingTimer = this.temporaryRelayTimers.get(relayUrl);
+        if (existingTimer) {
+            clearTimeout(existingTimer);
+            this.temporaryRelayTimers.delete(relayUrl);
+        }
+
+        return false;
     }
 
     private handleRelayConnect(relayUrl: string) {
@@ -130,6 +209,12 @@ export class NDKPool extends EventEmitter {
         }
 
         return stats;
+    }
+
+    public connectedRelays(): NDKRelay[] {
+        return Array.from(this.relays.values()).filter(
+            (relay) => relay.status === NDKRelayStatus.CONNECTED
+        );
     }
 
     /**

@@ -44,10 +44,24 @@ export class NDKDVMJobResult extends NDKEvent {
         return this.tagValue('status');
     }
 
-    set jobRequest(event: NDKEvent) {
-        this.tags.push([
-            'request', JSON.stringify(event.rawEvent())
-        ]);
-        this.tag(event);
+    set jobRequest(event: NDKEvent | undefined) {
+        this.removeTag('request');
+
+        if (event) {
+            this.tags.push([
+                'request', JSON.stringify(event.rawEvent())
+            ]);
+            this.tag(event);
+        }
+    }
+
+    get jobRequest(): NDKEvent | undefined {
+        const tag = this.tagValue('request');
+
+        if (tag === undefined) {
+            return undefined;
+        }
+
+        return new NDKEvent(this.ndk, JSON.parse(tag));
     }
 }

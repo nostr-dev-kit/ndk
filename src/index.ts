@@ -11,11 +11,13 @@ import {
     NDKFilter,
     NDKSubscription,
     NDKSubscriptionOptions,
-    filterFromId
+    filterFromId,
+    relaysFromBech32
 } from "./subscription/index.js";
 import NDKUser, { NDKUserParams } from "./user/index.js";
 import { NDKUserProfile } from "./user/profile.js";
 import type { NDKRelay } from "./relay/index.js";
+import { correctRelaySet } from "./relay/sets/utils.js";
 
 export * from "./events/index.js";
 export * from "./events/kinds/index.js";
@@ -112,6 +114,14 @@ export default class NDK extends EventEmitter {
         autoStart = true
     ): NDKSubscription {
         const subscription = new NDKSubscription(this, filters, opts, relaySet);
+
+        // Signal to the relays that they are explicitly being used
+        if (relaySet) {
+            for (const relay of relaySet.relays) {
+                this.pool.useTemporaryRelay(relay);
+            }
+        }
+
         if (autoStart) subscription.start();
 
         return subscription;
@@ -138,12 +148,30 @@ export default class NDK extends EventEmitter {
     }
 
     /**
-     * Fetch a single event
+     * Fetch a single event.
+     *
+     * @param idOrFilter event id in bech32 format or filter
+     * @param opts subscription options
+     * @param relaySet explicit relay set to use
      */
-    public async fetchEvent(id: string) : Promise<NDKEvent | null>;
-    public async fetchEvent(filter: NDKFilter, opts?: NDKSubscriptionOptions) : Promise<NDKEvent | null>;
-    public async fetchEvent(idOrFilter: string|NDKFilter, opts?: NDKSubscriptionOptions, relaySet?: NDKRelaySet) : Promise<NDKEvent | null> {
+    public async fetchEvent(
+        idOrFilter: string|NDKFilter,
+        opts?: NDKSubscriptionOptions,
+        relaySet?: NDKRelaySet
+    ) : Promise<NDKEvent | null> {
         let filter: NDKFilter;
+
+        // if no relayset has been provided, try to get one from the event id
+        if (!relaySet && typeof idOrFilter === "string") {
+            const relays = relaysFromBech32(idOrFilter);
+
+            if (relays.length > 0) {
+                relaySet = new NDKRelaySet(new Set<NDKRelay>(relays), this);
+
+                // Make sure we have connected relays in this set
+                relaySet = correctRelaySet(relaySet, this.pool);
+            }
+        }
 
         if (typeof idOrFilter === "string") {
             filter = filterFromId(idOrFilter);

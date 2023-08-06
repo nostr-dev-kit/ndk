@@ -24,6 +24,13 @@ export class NDKRelaySet {
     }
 
     /**
+     * Adds a relay to this set.
+     */
+    public addRelay(relay: NDKRelay) {
+        this.relays.add(relay);
+    }
+
+    /**
      * Creates a relay set from a list of relay URLs.
      *
      * This is useful for testing in development to pass a local relay

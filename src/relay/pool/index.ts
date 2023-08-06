@@ -40,7 +40,7 @@ export class NDKPool extends EventEmitter {
      */
     public useTemporaryRelay(
         relay: NDKRelay,
-        removeIfUnusedAfter = 10000,
+        removeIfUnusedAfter = 600000,
     ) {
         const relayAlreadyInPool = this.relays.has(relay.url);
 

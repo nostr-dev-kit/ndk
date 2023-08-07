@@ -1,12 +1,12 @@
-import NDK from '../../index.js';
-import { type NostrEvent } from '../index.js';
-import NDKEvent from '../index.js';
+import NDK from "../../index.js";
+import { type NostrEvent } from "../index.js";
+import NDKEvent from "../index.js";
 import { NDKKind } from "./index.js";
 
 /**
  * Represents a NIP-23 article.
  */
-class NDKArticle extends NDKEvent {
+export class NDKArticle extends NDKEvent {
     constructor(ndk: NDK | undefined, rawEvent?: NostrEvent) {
         super(ndk, rawEvent);
         this.kind = NDKKind.Article;
@@ -23,26 +23,26 @@ class NDKArticle extends NDKEvent {
     }
 
     get title(): string | undefined {
-        return this.tagValue('title');
+        return this.tagValue("title");
     }
 
     set title(title: string | undefined) {
         if (title) {
-            this.tags.push(['title', title]);
+            this.tags.push(["title", title]);
         } else {
-            this.removeTag('title');
+            this.removeTag("title");
         }
     }
 
     get url(): string | undefined {
-        return this.tagValue('url');
+        return this.tagValue("url");
     }
 
     set url(url: string | undefined) {
         if (url) {
-            this.tags.push(['url', url]);
+            this.tags.push(["url", url]);
         } else {
-            this.removeTag('url');
+            this.removeTag("url");
         }
     }
 }

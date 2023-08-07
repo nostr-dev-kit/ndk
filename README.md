@@ -74,7 +74,7 @@ localStorage.debug = 'ndk:*'
     -   [ ] Explicit relays blacklist
 -   [ ] nostr-tools/SimplePool drop-in replacement interface
 
-## Read-world uses of NDK
+## Real-world uses of NDK
 
 See [REFERENCES.md](./REFERENCES.md) for a list of projects using NDK to see how others are using it.
 

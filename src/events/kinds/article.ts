@@ -1,5 +1,5 @@
 import NDK from '../../index.js';
-import { type NostrEvent } from '../index.js';
+import { ContentTag, type NostrEvent } from '../index.js';
 import NDKEvent from '../index.js';
 import { NDKKind } from "./index.js";
 
@@ -22,10 +22,20 @@ class NDKArticle extends NDKEvent {
         return new NDKArticle(event.ndk, event.rawEvent());
     }
 
+    /**
+     * Getter for the article title.
+     *
+     * @returns {string | undefined} - The article title if available, otherwise undefined.
+     */
     get title(): string | undefined {
         return this.tagValue('title');
     }
 
+    /**
+     * Setter for the article title.
+     *
+     * @param {string | undefined} title - The title to set for the article.
+     */
     set title(title: string | undefined) {
         if (title) {
             this.tags.push(['title', title]);
@@ -34,10 +44,64 @@ class NDKArticle extends NDKEvent {
         }
     }
 
+    /**
+     * Getter for the article's publication timestamp.
+     *
+     * @returns {number | undefined} - The Unix timestamp of when the article was published or undefined.
+     */
+    get published_at(): number | undefined {
+        const tag = this.tagValue('published_at');
+        if (tag) {
+            return parseInt(tag);
+        }
+        return undefined;
+    }
+
+    /**
+     * Setter for the article's publication timestamp.
+     *
+     * @param {number | undefined} timestamp - The Unix timestamp to set for the article's publication date.
+     */
+    set published_at(timestamp: number | undefined) {
+        this.removeTag('published_at'); // Removes any existing 'published_at' tag.
+
+        if (timestamp !== undefined) {
+            this.tags.push(['published_at', timestamp.toString()]);
+        }
+    }
+
+    /**
+     * Generates content tags for the article.
+     *
+     * This method first checks and sets the publication date if not available,
+     * and then generates content tags based on the base NDKEvent class.
+     *
+     * @returns {ContentTag} - The generated content tags.
+     */
+    protected generateTags(): ContentTag {
+        super.generateTags();
+
+        if (!this.published_at) {
+            this.published_at = this.created_at;
+        }
+
+        return super.generateTags();
+    }
+
+    /**
+     * Getter for the article's URL.
+     *
+     * @returns {string | undefined} - The article's URL if available, otherwise undefined.
+     */
     get url(): string | undefined {
         return this.tagValue('url');
     }
 
+    /**
+     * Setter for the article's URL.
+     *
+     * @param {string | undefined} url - The URL to set for the article.
+     */
     set url(url: string | undefined) {
         if (url) {
             this.tags.push(['url', url]);

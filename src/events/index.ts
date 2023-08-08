@@ -23,7 +23,7 @@ export type NostrEvent = {
     sig?: string;
 };
 
-type ContentTag = {
+export type ContentTag = {
     tags: NDKTag[];
     content: string;
 };
@@ -242,7 +242,7 @@ export default class NDKEvent extends EventEmitter {
      * Will also generate random "d" tag for parameterized replaceable events where needed.
      * @returns {ContentTag} The tags and content of the event.
      */
-    private generateTags(): ContentTag {
+    protected generateTags(): ContentTag {
         let tags: NDKTag[] = [];
 
         // don't autogenerate if there currently are tags

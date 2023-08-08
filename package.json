@@ -29,7 +29,8 @@
         "compile": "tsc",
         "prepare": "pnpm build",
         "pretest": "pnpm build",
-        "posttest": "pnpm lint"
+        "posttest": "pnpm lint",
+        "prettify": "prettier --write ."
     },
     "keywords": [
         "nostr"
@@ -42,6 +43,7 @@
         "@types/node": "^14.11.2",
         "gts": "^3.1.1",
         "jest": "^29.5.0",
+        "prettier": "^3.0.1",
         "prettier-plugin-organize-imports": "^3.2.2",
         "ts-jest": "^29.1.0",
         "tsup": "^6.7.0",

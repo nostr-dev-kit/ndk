@@ -264,6 +264,9 @@ export class NDKSubscription extends EventEmitter {
         relay: NDKRelay | undefined,
         fromCache = false
     ) {
+        if (relay) event.relay = relay;
+        if (!relay) relay = event.relay;
+
         if (!fromCache && relay) {
             // track the event per relay
             let events = this.eventsPerRelay.get(relay);

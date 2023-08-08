@@ -6,7 +6,7 @@ import { NDKKind } from "./index.js";
 /**
  * Represents a NIP-23 article.
  */
-class NDKArticle extends NDKEvent {
+export class NDKArticle extends NDKEvent {
     constructor(ndk: NDK | undefined, rawEvent?: NostrEvent) {
         super(ndk, rawEvent);
         this.kind = NDKKind.Article;
@@ -110,5 +110,3 @@ class NDKArticle extends NDKEvent {
         }
     }
 }
-
-export default NDKArticle;

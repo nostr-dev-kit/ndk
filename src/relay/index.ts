@@ -1,3 +1,4 @@
+import debug from "debug";
 import EventEmitter from "eventemitter3";
 import { Relay, relayInit, Sub } from "nostr-tools";
 import "websocket-polyfill";
@@ -5,7 +6,6 @@ import NDKEvent, { NDKTag, NostrEvent } from "../events/index.js";
 import { NDKSubscription } from "../subscription/index.js";
 import User from "../user/index.js";
 import { NDKRelayScore } from "./score.js";
-import debug from "debug";
 
 export enum NDKRelayStatus {
     CONNECTING,
@@ -55,7 +55,11 @@ export class NDKRelay extends EventEmitter {
     private relay: Relay;
     private _status: NDKRelayStatus;
     private connectedAt?: number;
-    private _connectionStats: NDKRelayConnectionStats = { attempts: 0, success: 0, durations: [] };
+    private _connectionStats: NDKRelayConnectionStats = {
+        attempts: 0,
+        success: 0,
+        durations: [],
+    };
     public complaining = false;
     private debug: debug.Debugger;
 
@@ -102,8 +106,9 @@ export class NDKRelay extends EventEmitter {
         const sum = durations.reduce((a, b) => a + b, 0);
         const avg = sum / durations.length;
         const variance =
-            durations.map((x) => Math.pow(x - avg, 2)).reduce((a, b) => a + b, 0) /
-            durations.length;
+            durations
+                .map((x) => Math.pow(x - avg, 2))
+                .reduce((a, b) => a + b, 0) / durations.length;
         const stdDev = Math.sqrt(variance);
         const isFlapping = stdDev < 1000;
 
@@ -179,7 +184,7 @@ export class NDKRelay extends EventEmitter {
         const { filters } = subscription;
 
         const sub = this.relay.sub(filters, {
-            id: subscription.subId
+            id: subscription.subId,
         });
         this.debug(`Subscribed to ${JSON.stringify(filters)}`);
 
@@ -218,14 +223,11 @@ export class NDKRelay extends EventEmitter {
      * @param timeoutMs The timeout for the publish operation in milliseconds
      * @returns A promise that resolves when the event has been published or rejects if the operation times out
      */
-    public async publish(
-        event: NDKEvent,
-        timeoutMs = 2500
-    ): Promise<boolean> {
+    public async publish(event: NDKEvent, timeoutMs = 2500): Promise<boolean> {
         if (this.status === NDKRelayStatus.CONNECTED) {
             return this.publishEvent(event, timeoutMs);
         } else {
-            this.once('connect', () => {
+            this.once("connect", () => {
                 this.publishEvent(event, timeoutMs);
             });
             return true;
@@ -236,21 +238,23 @@ export class NDKRelay extends EventEmitter {
         event: NDKEvent,
         timeoutMs?: number
     ): Promise<boolean> {
-        const nostrEvent = (await event.toNostrEvent());
+        const nostrEvent = await event.toNostrEvent();
         const publish = this.relay.publish(nostrEvent as any);
         let publishTimeout: NodeJS.Timeout;
 
         const publishPromise = new Promise<boolean>((resolve, reject) => {
-            publish.then(() => {
-                clearTimeout(publishTimeout);
-                this.emit('published', event);
-                resolve(true);
-            }).catch((err) => {
-                clearTimeout(publishTimeout as NodeJS.Timeout);
-                this.debug('Publish failed', err, event.id);
-                this.emit('publish:failed', event, err);
-                reject(err);
-            });
+            publish
+                .then(() => {
+                    clearTimeout(publishTimeout);
+                    this.emit("published", event);
+                    resolve(true);
+                })
+                .catch((err) => {
+                    clearTimeout(publishTimeout as NodeJS.Timeout);
+                    this.debug("Publish failed", err, event.id);
+                    this.emit("publish:failed", event, err);
+                    reject(err);
+                });
         });
 
         // If no timeout is specified, just return the publish promise
@@ -261,9 +265,9 @@ export class NDKRelay extends EventEmitter {
         // Create a promise that rejects after timeoutMs milliseconds
         const timeoutPromise = new Promise<boolean>((_, reject) => {
             publishTimeout = setTimeout(() => {
-                this.debug('Publish timed out', event.rawEvent());
-                this.emit('publish:failed', event, "Timeout");
-                reject(new Error('Publish operation timed out'));
+                this.debug("Publish timed out", event.rawEvent());
+                this.emit("publish:failed", event, "Timeout");
+                reject(new Error("Publish operation timed out"));
             }, timeoutMs);
         });
 
@@ -279,7 +283,6 @@ export class NDKRelay extends EventEmitter {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public scoreSlowerEvent(timeDiffInMs: number): void {
         // TODO
-
     }
 
     /**
@@ -306,7 +309,7 @@ export class NDKRelay extends EventEmitter {
 
         attempt: () => {
             this._connectionStats.attempts++;
-        }
+        },
     };
 
     /**
@@ -317,9 +320,11 @@ export class NDKRelay extends EventEmitter {
     }
 
     public tagReference(marker?: string): NDKTag {
-        const tag = [ 'r', this.relay.url ];
+        const tag = ["r", this.relay.url];
 
-        if (marker) { tag.push(marker); }
+        if (marker) {
+            tag.push(marker);
+        }
 
         return tag;
     }

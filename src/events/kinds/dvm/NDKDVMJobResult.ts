@@ -1,6 +1,6 @@
-import { NDKKind } from "../index.js";
-import NDKEvent, { NostrEvent } from "../../index.js";
 import NDK from "../../../index.js";
+import NDKEvent, { NostrEvent } from "../../index.js";
+import { NDKKind } from "../index.js";
 
 /**
  * This event is published by Data Vending Machines when
@@ -33,30 +33,28 @@ export class NDKDVMJobResult extends NDKEvent {
     }
 
     set status(status: string | undefined) {
-        this.removeTag('status');
+        this.removeTag("status");
 
         if (status !== undefined) {
-            this.tags.push(['status', status]);
+            this.tags.push(["status", status]);
         }
     }
 
     get status(): string | undefined {
-        return this.tagValue('status');
+        return this.tagValue("status");
     }
 
     set jobRequest(event: NDKEvent | undefined) {
-        this.removeTag('request');
+        this.removeTag("request");
 
         if (event) {
-            this.tags.push([
-                'request', JSON.stringify(event.rawEvent())
-            ]);
+            this.tags.push(["request", JSON.stringify(event.rawEvent())]);
             this.tag(event);
         }
     }
 
     get jobRequest(): NDKEvent | undefined {
-        const tag = this.tagValue('request');
+        const tag = this.tagValue("request");
 
         if (tag === undefined) {
             return undefined;

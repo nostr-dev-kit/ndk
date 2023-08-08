@@ -1,15 +1,15 @@
 import { nip19 } from "nostr-tools";
-import NDKUser, { NDKUserParams } from "./index.js";
 import NDK, { NDKEvent, NDKSubscription } from "../index.js";
+import NDKUser, { NDKUserParams } from "./index.js";
 
 jest.mock("nostr-tools", () => ({
     nip05: {
-        queryProfile: jest.fn()
+        queryProfile: jest.fn(),
     },
     nip19: {
         npubEncode: jest.fn(),
-        decode: jest.fn()
-    }
+        decode: jest.fn(),
+    },
 }));
 
 describe("NDKUser", () => {
@@ -20,7 +20,7 @@ describe("NDKUser", () => {
     describe("constructor", () => {
         it("sets npub from provided npub", () => {
             const opts: NDKUserParams = {
-                npub: "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft"
+                npub: "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft",
             };
 
             const user = new NDKUser(opts);
@@ -32,7 +32,8 @@ describe("NDKUser", () => {
 
         it("sets npub from provided hexpubkey", () => {
             const opts: NDKUserParams = {
-                hexpubkey: "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"
+                hexpubkey:
+                    "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52",
             };
 
             (nip19.npubEncode as jest.Mock).mockReturnValue("encoded_npub");
@@ -47,7 +48,7 @@ describe("NDKUser", () => {
 
         it("sets relayUrls from provided relayUrls", () => {
             const opts: NDKUserParams = {
-                relayUrls: ["url1", "url2"]
+                relayUrls: ["url1", "url2"],
             };
 
             const user = new NDKUser(opts);
@@ -59,10 +60,12 @@ describe("NDKUser", () => {
     describe("hexpubkey", () => {
         it("returns the decoded hexpubkey", () => {
             const user = new NDKUser({
-                npub: "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft"
+                npub: "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft",
             });
 
-            (nip19.decode as jest.Mock).mockReturnValue({ data: "decoded_hexpubkey" });
+            (nip19.decode as jest.Mock).mockReturnValue({
+                data: "decoded_hexpubkey",
+            });
 
             const hexpubkey = user.hexpubkey();
 
@@ -78,10 +81,12 @@ describe("NDKUser", () => {
         let newEvent: NDKEvent;
         let oldEvent: NDKEvent;
         const user = new NDKUser({
-            npub: "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft"
+            npub: "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft",
         });
         user.ndk = ndk;
-        (nip19.decode as jest.Mock).mockReturnValue({ data: "decoded_hexpubkey" });
+        (nip19.decode as jest.Mock).mockReturnValue({
+            data: "decoded_hexpubkey",
+        });
         const pubkey = user.hexpubkey();
 
         it("Returns updated fields", async () => {
@@ -100,8 +105,8 @@ describe("NDKUser", () => {
                     lud06: "lud06value",
                     lud16: "lud16value",
                     about: "About jeff",
-                    zapService: "Zapservice details"
-                })
+                    zapService: "Zapservice details",
+                }),
             });
 
             oldEvent = new NDKEvent(ndk, {
@@ -119,8 +124,8 @@ describe("NDKUser", () => {
                     lud06: "lud06value OLD",
                     lud16: "lud16value OLD",
                     about: "About jeff OLD",
-                    zapService: "Zapservice details OLD"
-                })
+                    zapService: "Zapservice details OLD",
+                }),
             });
 
             ndk.subscribe = jest.fn((filter, opts?): NDKSubscription => {
@@ -157,8 +162,8 @@ describe("NDKUser", () => {
                 created_at: Date.now() / 1000 - 3600,
                 content: JSON.stringify({
                     displayName: "JeffG",
-                    display_name: "James"
-                })
+                    display_name: "James",
+                }),
             });
 
             oldEvent = new NDKEvent(ndk, {
@@ -167,8 +172,8 @@ describe("NDKUser", () => {
                 tags: [],
                 created_at: Date.now() / 1000 - 7200,
                 content: JSON.stringify({
-                    displayName: "Bob"
-                })
+                    displayName: "Bob",
+                }),
             });
 
             ndk.subscribe = jest.fn((filter, opts?): NDKSubscription => {
@@ -195,8 +200,8 @@ describe("NDKUser", () => {
                 tags: [],
                 created_at: Date.now() / 1000 - 3600,
                 content: JSON.stringify({
-                    picture: "https://set-from-picture-field.url"
-                })
+                    picture: "https://set-from-picture-field.url",
+                }),
             });
 
             oldEvent = new NDKEvent(ndk, {
@@ -205,8 +210,8 @@ describe("NDKUser", () => {
                 tags: [],
                 created_at: Date.now() / 1000 - 7200,
                 content: JSON.stringify({
-                    image: "https://set-from-image-field.url"
-                })
+                    image: "https://set-from-image-field.url",
+                }),
             });
 
             ndk.subscribe = jest.fn((filter, opts?): NDKSubscription => {
@@ -222,7 +227,9 @@ describe("NDKUser", () => {
             });
 
             await user.fetchProfile();
-            expect(user.profile?.image).toEqual("https://set-from-picture-field.url");
+            expect(user.profile?.image).toEqual(
+                "https://set-from-picture-field.url"
+            );
         });
 
         it("Allows for arbitrary values to be set on user profiles", async () => {
@@ -232,8 +239,8 @@ describe("NDKUser", () => {
                 tags: [],
                 created_at: Date.now() / 1000 - 3600,
                 content: JSON.stringify({
-                    customField: "custom NEW"
-                })
+                    customField: "custom NEW",
+                }),
             });
 
             oldEvent = new NDKEvent(ndk, {
@@ -242,8 +249,8 @@ describe("NDKUser", () => {
                 tags: [],
                 created_at: Date.now() / 1000 - 7200,
                 content: JSON.stringify({
-                    customField: "custom OLD"
-                })
+                    customField: "custom OLD",
+                }),
             });
 
             ndk.subscribe = jest.fn((filter, opts?): NDKSubscription => {

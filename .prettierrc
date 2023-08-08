@@ -1,9 +1,10 @@
 {
-  "importOrder": ["^[./]"],
-  "tabWidth": 4,
-  "useTabs": false,
-  "trailingComma": "none",
-  "printWidth": 100,
-  "singleQuote": false,
-  "semi": true
+    "plugins": ["@trivago/prettier-plugin-sort-imports"],
+    "importOrder": ["^[./]"],
+    "tabWidth": 4,
+    "useTabs": false,
+    "trailingComma": "es5",
+    "printWidth": 80,
+    "singleQuote": false,
+    "semi": true
 }

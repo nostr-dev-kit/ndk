@@ -8,8 +8,12 @@ describe("NDKEvent", () => {
 
     beforeEach(() => {
         ndk = new NDK();
-        user1 = new NDKUser({ npub: 'npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft' });
-        user2 = new NDKUser({ npub: 'npub12262qa4uhw7u8gdwlgmntqtv7aye8vdcmvszkqwgs0zchel6mz7s6cgrkj' });
+        user1 = new NDKUser({
+            npub: "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft",
+        });
+        user2 = new NDKUser({
+            npub: "npub12262qa4uhw7u8gdwlgmntqtv7aye8vdcmvszkqwgs0zchel6mz7s6cgrkj",
+        });
         event = new NDKEvent(ndk);
         event.author = user1;
     });
@@ -17,52 +21,69 @@ describe("NDKEvent", () => {
     describe("tag", () => {
         it("tags a user without a marker", () => {
             event.tag(user2);
-            expect(event.tags).toEqual([ ["p", user2.hexpubkey()] ]);
+            expect(event.tags).toEqual([["p", user2.hexpubkey()]]);
         });
 
         it("tags a user with a marker", () => {
             event.tag(user2, "author");
-            expect(event.tags).toEqual([ ["p", user2.hexpubkey(), "author" ] ]);
+            expect(event.tags).toEqual([["p", user2.hexpubkey(), "author"]]);
         });
 
         it("tags an event without a marker", () => {
-            const otherEvent = new NDKEvent(ndk, { id: '123', kind: 1} as NostrEvent);
+            const otherEvent = new NDKEvent(ndk, {
+                id: "123",
+                kind: 1,
+            } as NostrEvent);
             otherEvent.author = user1;
 
             event.tag(otherEvent);
-            expect(event.tags).toEqual([ ["e", otherEvent.id] ]);
+            expect(event.tags).toEqual([["e", otherEvent.id]]);
         });
 
         it("tags an event with a marker", () => {
-            const otherEvent = new NDKEvent(ndk, { id: '123', kind: 1} as NostrEvent);
+            const otherEvent = new NDKEvent(ndk, {
+                id: "123",
+                kind: 1,
+            } as NostrEvent);
             otherEvent.author = user1;
             event.tag(otherEvent, "marker");
-            expect(event.tags).toEqual([ ["e", otherEvent.id, "marker"] ]);
+            expect(event.tags).toEqual([["e", otherEvent.id, "marker"]]);
         });
 
         it("tags an event author when it's different from the signing user", () => {
             const otherEvent = new NDKEvent(ndk, { kind: 1 } as NostrEvent);
             otherEvent.author = user2;
             event.tag(otherEvent);
-            expect(event.tags).toEqual([ ["e", otherEvent.id], ["p", user2.hexpubkey()] ]);
+            expect(event.tags).toEqual([
+                ["e", otherEvent.id],
+                ["p", user2.hexpubkey()],
+            ]);
         });
 
         it("does not tag an event author when it's the same as the signing user", () => {
             const otherEvent = new NDKEvent(ndk, { kind: 1 } as NostrEvent);
             otherEvent.author = user1;
             event.tag(otherEvent);
-            expect(event.tags).toEqual([ ["e", otherEvent.id] ]);
+            expect(event.tags).toEqual([["e", otherEvent.id]]);
         });
     });
 
     describe("fetchEvents", () => {
         it("correctly handles a relay sending old replaced events", async () => {
-            const eventData = { kind: 300001, tags: [["d", ""]], content: "", pubkey: "" };
+            const eventData = {
+                kind: 300001,
+                tags: [["d", ""]],
+                content: "",
+                pubkey: "",
+            };
             const event1 = new NDKEvent(ndk, {
                 ...eventData,
-                created_at: Date.now() / 1000 - 3600
+                created_at: Date.now() / 1000 - 3600,
             });
-            const event2 = new NDKEvent(ndk, { ...eventData, created_at: Date.now() / 1000 });
+            const event2 = new NDKEvent(ndk, {
+                ...eventData,
+                created_at: Date.now() / 1000,
+            });
 
             ndk.subscribe = jest.fn((filter, opts?): NDKSubscription => {
                 const sub = new NDKSubscription(ndk, filter, opts);
@@ -104,7 +125,8 @@ describe("NDKEvent", () => {
                 const mentionTag = nostrEvent.tags.find(
                     (t) =>
                         t[0] === "p" &&
-                        t[1] === "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"
+                        t[1] ===
+                            "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"
                 );
                 expect(mentionTag).toBeTruthy();
             });
@@ -118,7 +140,7 @@ describe("NDKEvent", () => {
                 content: "",
                 kind: 30000,
                 pubkey: "pubkey",
-                tags: [["d", "d-code"]]
+                tags: [["d", "d-code"]],
             });
 
             const event2 = new NDKEvent(ndk, {
@@ -127,7 +149,7 @@ describe("NDKEvent", () => {
                 tags: [],
                 kind: 1,
                 pubkey: "pubkey",
-                id: "eventid"
+                id: "eventid",
             });
 
             expect(event1.tagReference()).toEqual(["a", "30000:pubkey:d-code"]);

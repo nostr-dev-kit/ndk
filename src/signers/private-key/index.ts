@@ -1,5 +1,10 @@
 import type { UnsignedEvent } from "nostr-tools";
-import { generatePrivateKey, getPublicKey, nip04, getSignature } from "nostr-tools";
+import {
+    generatePrivateKey,
+    getPublicKey,
+    nip04,
+    getSignature,
+} from "nostr-tools";
 import type { NostrEvent } from "../../events/index.js";
 import NDKUser from "../../user";
 import { NDKSigner } from "../index.js";
@@ -11,7 +16,9 @@ export class NDKPrivateKeySigner implements NDKSigner {
     public constructor(privateKey?: string) {
         if (privateKey) {
             this.privateKey = privateKey;
-            this._user = new NDKUser({ hexpubkey: getPublicKey(this.privateKey) });
+            this._user = new NDKUser({
+                hexpubkey: getPublicKey(this.privateKey),
+            });
         }
     }
 

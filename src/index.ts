@@ -3,27 +3,27 @@ import EventEmitter from "eventemitter3";
 import { NDKCacheAdapter } from "./cache/index.js";
 import dedupEvent from "./events/dedup.js";
 import NDKEvent from "./events/index.js";
+import type { NDKRelay } from "./relay/index.js";
 import { NDKPool } from "./relay/pool/index.js";
 import { calculateRelaySetFromEvent } from "./relay/sets/calculate.js";
 import { NDKRelaySet } from "./relay/sets/index.js";
+import { correctRelaySet } from "./relay/sets/utils.js";
 import type { NDKSigner } from "./signers/index.js";
 import {
     NDKFilter,
     NDKSubscription,
     NDKSubscriptionOptions,
     filterFromId,
-    relaysFromBech32
+    relaysFromBech32,
 } from "./subscription/index.js";
 import NDKUser, { NDKUserParams } from "./user/index.js";
 import { NDKUserProfile } from "./user/profile.js";
-import type { NDKRelay } from "./relay/index.js";
-import { correctRelaySet } from "./relay/sets/utils.js";
 
 export * from "./events/index.js";
 export * from "./events/kinds/index.js";
-export * from './events/kinds/article.js';
+export * from "./events/kinds/article.js";
 export * from "./events/kinds/dvm/index.js";
-export * from './events/kinds/lists/index.js';
+export * from "./events/kinds/lists/index.js";
 export * from "./relay/index.js";
 export * from "./relay/sets/index.js";
 export * from "./signers/index.js";
@@ -68,12 +68,15 @@ export default class NDK extends EventEmitter {
         this.delayedSubscriptions = new Map();
 
         if (opts.devWriteRelayUrls) {
-            this.devWriteRelaySet = NDKRelaySet.fromRelayUrls(opts.devWriteRelayUrls, this);
+            this.devWriteRelaySet = NDKRelaySet.fromRelayUrls(
+                opts.devWriteRelayUrls,
+                this
+            );
         }
     }
 
     public toJSON(): string {
-        return {relayCount: this.pool.relays.size}.toString();
+        return { relayCount: this.pool.relays.size }.toString();
     }
 
     /**
@@ -141,7 +144,9 @@ export default class NDK extends EventEmitter {
     ): Promise<Set<NDKRelay>> {
         if (!relaySet) {
             // If we have a devWriteRelaySet, use it to publish all events
-            relaySet = this.devWriteRelaySet || calculateRelaySetFromEvent(this, event);
+            relaySet =
+                this.devWriteRelaySet ||
+                calculateRelaySetFromEvent(this, event);
         }
 
         return relaySet.publish(event, timeoutMs);
@@ -155,10 +160,10 @@ export default class NDK extends EventEmitter {
      * @param relaySet explicit relay set to use
      */
     public async fetchEvent(
-        idOrFilter: string|NDKFilter,
+        idOrFilter: string | NDKFilter,
         opts?: NDKSubscriptionOptions,
         relaySet?: NDKRelaySet
-    ) : Promise<NDKEvent | null> {
+    ): Promise<NDKEvent | null> {
         let filter: NDKFilter;
 
         // if no relayset has been provided, try to get one from the event id
@@ -184,7 +189,12 @@ export default class NDK extends EventEmitter {
         }
 
         return new Promise((resolve) => {
-            const s = this.subscribe(filter, { ...(opts||{}), closeOnEose: true }, relaySet, false);
+            const s = this.subscribe(
+                filter,
+                { ...(opts || {}), closeOnEose: true },
+                relaySet,
+                false
+            );
             s.on("event", (event) => {
                 event.ndk = this;
                 resolve(event);
@@ -204,12 +214,17 @@ export default class NDK extends EventEmitter {
     public async fetchEvents(
         filter: NDKFilter,
         opts?: NDKSubscriptionOptions,
-        relaySet?: NDKRelaySet,
+        relaySet?: NDKRelaySet
     ): Promise<Set<NDKEvent>> {
         return new Promise((resolve) => {
             const events: Map<string, NDKEvent> = new Map();
 
-            const relaySetSubscription = this.subscribe(filter, { ...(opts||{}), closeOnEose: true }, relaySet, false);
+            const relaySetSubscription = this.subscribe(
+                filter,
+                { ...(opts || {}), closeOnEose: true },
+                relaySet,
+                false
+            );
 
             relaySetSubscription.on("event", (event: NDKEvent) => {
                 const existingEvent = events.get(event.tagId());

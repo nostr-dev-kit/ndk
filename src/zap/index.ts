@@ -12,7 +12,7 @@ const DEFAULT_RELAYS = [
     "wss://relay.f7z.io",
     "wss://relay.damus.io",
     "wss://nostr.mom",
-    "wss://no.str.cr"
+    "wss://no.str.cr",
 ];
 
 interface ZapConstructorParams {
@@ -21,7 +21,9 @@ interface ZapConstructorParams {
     zappedUser?: User;
 }
 
-type ZapConstructorParamsRequired = Required<Pick<ZapConstructorParams, "zappedEvent">> &
+type ZapConstructorParamsRequired = Required<
+    Pick<ZapConstructorParams, "zappedEvent">
+> &
     Pick<ZapConstructorParams, "zappedUser"> &
     ZapConstructorParams;
 
@@ -36,7 +38,8 @@ export default class Zap extends EventEmitter {
         this.zappedEvent = args.zappedEvent;
 
         this.zappedUser =
-            args.zappedUser || this.ndk.getUser({ hexpubkey: this.zappedEvent.pubkey });
+            args.zappedUser ||
+            this.ndk.getUser({ hexpubkey: this.zappedEvent.pubkey });
     }
 
     public async getZapEndpoint(): Promise<string | undefined> {
@@ -125,7 +128,7 @@ export default class Zap extends EventEmitter {
             event: null,
             amount,
             comment: comment || "",
-            relays: relays ?? this.relays()
+            relays: relays ?? this.relays(),
         });
 
         // add the event tag if it exists; this supports both 'e' and 'a' tags
@@ -138,7 +141,10 @@ export default class Zap extends EventEmitter {
 
         zapRequest.tags.push(["lnurl", zapEndpoint]);
 
-        const zapRequestEvent = new NDKEvent(this.ndk, zapRequest as NostrEvent);
+        const zapRequestEvent = new NDKEvent(
+            this.ndk,
+            zapRequest as NostrEvent
+        );
         if (extraTags) {
             zapRequestEvent.tags = zapRequestEvent.tags.concat(extraTags);
         }
@@ -150,7 +156,7 @@ export default class Zap extends EventEmitter {
             `${zapEndpoint}?` +
                 new URLSearchParams({
                     amount: amount.toString(),
-                    nostr: JSON.stringify(zapRequestNostrEvent)
+                    nostr: JSON.stringify(zapRequestNostrEvent),
                 })
         );
         const body = await response.json();

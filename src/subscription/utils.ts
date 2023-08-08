@@ -19,14 +19,11 @@ export function queryFullyFilled(subscription: NDKSubscription): boolean {
 }
 
 function filterIncludesIds(filter: NDKFilter): boolean {
-    return !!filter['ids'];
+    return !!filter["ids"];
 }
 
 function resultHasAllRequestedIds(subscription: NDKSubscription): boolean {
-    const ids = subscription.filter['ids'];
+    const ids = subscription.filter["ids"];
 
-    return (
-        !!ids &&
-        ids.length === subscription.eventFirstSeen.size
-    );
+    return !!ids && ids.length === subscription.eventFirstSeen.size;
 }

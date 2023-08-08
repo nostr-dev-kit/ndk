@@ -43,7 +43,9 @@ export function zapInvoiceFromEvent(event: NDKEvent): NDKZapInvoice | null {
         return null;
     }
 
-    const amountSection = decodedInvoice.sections.find((s: any) => s.name === "amount");
+    const amountSection = decodedInvoice.sections.find(
+        (s: any) => s.name === "amount"
+    );
     if (!amountSection) {
         return null;
     }
@@ -74,7 +76,7 @@ export function zapInvoiceFromEvent(event: NDKEvent): NDKZapInvoice | null {
         zapped: recipient,
         zappedEvent: zappedEventId,
         amount,
-        comment: content
+        comment: content,
     };
 
     return zapInvoice;

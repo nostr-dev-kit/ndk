@@ -91,7 +91,13 @@ export class NDKNip07Signer implements NDKSigner {
         value: string
     ): Promise<string> {
         return new Promise((resolve, reject) => {
-            this.nip04Queue.push({ type, counterpartyHexpubkey, value, resolve, reject });
+            this.nip04Queue.push({
+                type,
+                counterpartyHexpubkey,
+                value,
+                resolve,
+                reject,
+            });
 
             if (!this.nip04Processing) {
                 this.processNip04Queue();
@@ -99,32 +105,54 @@ export class NDKNip07Signer implements NDKSigner {
         });
     }
 
-    private async processNip04Queue(item?: Nip04QueueItem, retries = 0): Promise<void> {
+    private async processNip04Queue(
+        item?: Nip04QueueItem,
+        retries = 0
+    ): Promise<void> {
         if (!item && this.nip04Queue.length === 0) {
             this.nip04Processing = false;
             return;
         }
 
         this.nip04Processing = true;
-        const { type, counterpartyHexpubkey, value, resolve, reject } = item || this.nip04Queue.shift()!;
+        const { type, counterpartyHexpubkey, value, resolve, reject } =
+            item || this.nip04Queue.shift()!;
 
-        this.debug("Processing encryption queue item", { type, counterpartyHexpubkey, value });
+        this.debug("Processing encryption queue item", {
+            type,
+            counterpartyHexpubkey,
+            value,
+        });
 
         try {
             let result;
 
             if (type === "encrypt") {
-                result = await window.nostr!.nip04.encrypt(counterpartyHexpubkey, value);
+                result = await window.nostr!.nip04.encrypt(
+                    counterpartyHexpubkey,
+                    value
+                );
             } else {
-                result = await window.nostr!.nip04.decrypt(counterpartyHexpubkey, value);
+                result = await window.nostr!.nip04.decrypt(
+                    counterpartyHexpubkey,
+                    value
+                );
             }
 
             resolve(result);
         } catch (error: any) {
             // retry a few times if the call is already executing
-            if (error.message && error.message.includes("call already executing")) {
+            if (
+                error.message &&
+                error.message.includes("call already executing")
+            ) {
                 if (retries < 5) {
-                    this.debug("Retrying encryption queue item", { type, counterpartyHexpubkey, value, retries });
+                    this.debug("Retrying encryption queue item", {
+                        type,
+                        counterpartyHexpubkey,
+                        value,
+                        retries,
+                    });
                     setTimeout(() => {
                         this.processNip04Queue(item, retries + 1);
                     }, 50 * retries);
@@ -145,8 +173,14 @@ declare global {
             getPublicKey(): Promise<string>;
             signEvent(event: NostrEvent): Promise<{ sig: string }>;
             nip04: {
-                encrypt(recipientHexPubKey: string, value: string): Promise<string>;
-                decrypt(senderHexPubKey: string, value: string): Promise<string>;
+                encrypt(
+                    recipientHexPubKey: string,
+                    value: string
+                ): Promise<string>;
+                decrypt(
+                    senderHexPubKey: string,
+                    value: string
+                ): Promise<string>;
             };
         };
     }

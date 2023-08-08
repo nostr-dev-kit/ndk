@@ -10,10 +10,7 @@ export class NDKDVMRequest extends NDKEvent {
         super(ndk, event);
 
         if (ndk) {
-            this.tags.push([
-                'relays',
-                ...ndk.pool.urls()
-            ]);
+            this.tags.push(["relays", ...ndk.pool.urls()]);
         }
     }
 
@@ -33,14 +30,14 @@ export class NDKDVMRequest extends NDKEvent {
 
     set bid(msatAmount: number | undefined) {
         if (msatAmount === undefined) {
-            this.removeTag('bid');
+            this.removeTag("bid");
         } else {
-            this.tags.push(['bid', msatAmount.toString()]);
+            this.tags.push(["bid", msatAmount.toString()]);
         }
     }
 
     get bid(): number | undefined {
-        const v = this.tagValue('bid');
+        const v = this.tagValue("bid");
 
         if (v === undefined) return undefined;
 
@@ -52,27 +49,27 @@ export class NDKDVMRequest extends NDKEvent {
      * @param args The arguments to the input
      */
     addInput(...args: string[]): void {
-        this.tags.push(['i', ...args]);
+        this.tags.push(["i", ...args]);
     }
 
     /**
      * Adds a new parameter to the job
      */
     addParam(...args: string[]): void {
-        this.tags.push(['param', ...args]);
+        this.tags.push(["param", ...args]);
     }
 
     set output(output: string | string[] | undefined) {
         if (output === undefined) {
-            this.removeTag('output');
+            this.removeTag("output");
         } else {
-            if (typeof output === 'string') output = [output];
-            this.tags.push(['output', ...output]);
+            if (typeof output === "string") output = [output];
+            this.tags.push(["output", ...output]);
         }
     }
 
     get output(): string[] | undefined {
-        const outputTag = this.getMatchingTags('output')[0];
+        const outputTag = this.getMatchingTags("output")[0];
         return outputTag ? outputTag.slice(1) : undefined;
     }
 }

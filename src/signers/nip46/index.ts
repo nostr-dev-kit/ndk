@@ -1,4 +1,9 @@
-import NDK, { NDKPrivateKeySigner, NDKSigner, NDKUser, NostrEvent } from "../../index.js";
+import NDK, {
+    NDKPrivateKeySigner,
+    NDKSigner,
+    NDKUser,
+    NostrEvent,
+} from "../../index.js";
 import { NDKNostrRpc, NDKRpcResponse } from "./rpc.js";
 
 /**
@@ -40,16 +45,22 @@ export class NDKNip46Signer implements NDKSigner {
      * @param tokenOrRemotePubkey - The public key, or a connection token, of the npub that wants to be published as
      * @param localSigner - The signer that will be used to request events to be signed
      */
-    public constructor(ndk: NDK, tokenOrRemotePubkey: string, localSigner?: NDKSigner) {
+    public constructor(
+        ndk: NDK,
+        tokenOrRemotePubkey: string,
+        localSigner?: NDKSigner
+    ) {
         let remotePubkey: string;
         let token: string | undefined;
 
         if (tokenOrRemotePubkey.includes("#")) {
             const parts = tokenOrRemotePubkey.split("#");
-            remotePubkey = (new NDKUser({ npub: parts[0] })).hexpubkey();
+            remotePubkey = new NDKUser({ npub: parts[0] }).hexpubkey();
             token = parts[1];
         } else if (tokenOrRemotePubkey.startsWith("npub")) {
-            remotePubkey = (new NDKUser({ npub: tokenOrRemotePubkey })).hexpubkey();
+            remotePubkey = new NDKUser({
+                npub: tokenOrRemotePubkey,
+            }).hexpubkey();
         } else {
             remotePubkey = tokenOrRemotePubkey;
         }

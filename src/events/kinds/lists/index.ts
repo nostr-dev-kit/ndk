@@ -1,5 +1,5 @@
-import NDKEvent from '../../index.js';
 import NDK, { NDKKind, NDKRelay, NDKUser } from "../../../index.js";
+import NDKEvent from "../../index.js";
 import { NDKTag, NostrEvent } from "../../index.js";
 
 export type NDKListItem = NDKRelay | NDKUser | NDKEvent;
@@ -49,19 +49,19 @@ export class NDKList extends NDKEvent {
      * Returns the name of the list.
      */
     get name(): string | undefined {
-        return this.tagValue('name') ?? this.tagValue('d');
+        return this.tagValue("name") ?? this.tagValue("d");
     }
 
     /**
      * Sets the name of the list.
      */
     set name(name: string | undefined) {
-        this.removeTag('name');
+        this.removeTag("name");
 
         if (name) {
-            this.tags.push(['name', name]);
+            this.tags.push(["name", name]);
         } else {
-            throw new Error('Name cannot be empty');
+            throw new Error("Name cannot be empty");
         }
     }
 
@@ -69,7 +69,7 @@ export class NDKList extends NDKEvent {
      * Returns the description of the list.
      */
     get description(): string | undefined {
-        return this.tagValue('description');
+        return this.tagValue("description");
     }
 
     /**
@@ -77,14 +77,17 @@ export class NDKList extends NDKEvent {
      */
     set description(name: string | undefined) {
         if (name) {
-            this.tags.push(['description', name]);
+            this.tags.push(["description", name]);
         } else {
-            this.removeTag('description');
+            this.removeTag("description");
         }
     }
 
     private isEncryptedTagsCacheValid(): boolean {
-        return !!(this._encryptedTags && this.encryptedTagsLength === this.content.length);
+        return !!(
+            this._encryptedTags &&
+            this.encryptedTagsLength === this.content.length
+        );
     }
 
     /**
@@ -94,22 +97,25 @@ export class NDKList extends NDKEvent {
         if (useCache && this.isEncryptedTagsCacheValid())
             return this._encryptedTags!;
 
-        if (!this.ndk) throw new Error('NDK instance not set');
-        if (!this.ndk.signer) throw new Error('NDK signer not set');
+        if (!this.ndk) throw new Error("NDK instance not set");
+        if (!this.ndk.signer) throw new Error("NDK signer not set");
 
         const user = await this.ndk.signer.user();
 
         try {
             if (this.content.length > 0) {
                 try {
-                    const decryptedContent = await this.ndk.signer.decrypt(user, this.content);
+                    const decryptedContent = await this.ndk.signer.decrypt(
+                        user,
+                        this.content
+                    );
                     const a = JSON.parse(decryptedContent);
                     if (a && a[0]) {
                         this.encryptedTagsLength = this.content.length;
-                        return this._encryptedTags = a;
+                        return (this._encryptedTags = a);
                     }
                     this.encryptedTagsLength = this.content.length;
-                    return this._encryptedTags = [];
+                    return (this._encryptedTags = []);
                 } catch (e) {
                     console.log(`error decrypting ${this.content}`);
                 }
@@ -136,7 +142,7 @@ export class NDKList extends NDKEvent {
      */
     get items(): NDKTag[] {
         return this.tags.filter((t) => {
-            return !['d', 'name', 'description'].includes(t[0]);
+            return !["d", "name", "description"].includes(t[0]);
         });
     }
 
@@ -151,8 +157,8 @@ export class NDKList extends NDKEvent {
         mark: string | undefined = undefined,
         encrypted = false
     ): Promise<void> {
-        if (!this.ndk) throw new Error('NDK instance not set');
-        if (!this.ndk.signer) throw new Error('NDK signer not set');
+        if (!this.ndk) throw new Error("NDK instance not set");
+        if (!this.ndk.signer) throw new Error("NDK signer not set");
 
         let tag;
 
@@ -166,7 +172,7 @@ export class NDKList extends NDKEvent {
             // NDKTag
             tag = item;
         } else {
-            throw new Error('Invalid object type');
+            throw new Error("Invalid object type");
         }
 
         if (mark) tag.push(mark);
@@ -187,7 +193,7 @@ export class NDKList extends NDKEvent {
 
         this.created_at = Math.floor(Date.now() / 1000);
 
-        this.emit('change');
+        this.emit("change");
     }
 
     /**
@@ -197,8 +203,8 @@ export class NDKList extends NDKEvent {
      * @param encrypted Whether to remove from the encrypted list or not.
      */
     async removeItem(index: number, encrypted: boolean): Promise<NDKList> {
-        if (!this.ndk) throw new Error('NDK instance not set');
-        if (!this.ndk.signer) throw new Error('NDK signer not set');
+        if (!this.ndk) throw new Error("NDK instance not set");
+        if (!this.ndk.signer) throw new Error("NDK signer not set");
 
         if (encrypted) {
             const user = await this.ndk.signer.user();
@@ -215,7 +221,7 @@ export class NDKList extends NDKEvent {
 
         this.created_at = Math.floor(Date.now() / 1000);
 
-        this.emit('change');
+        this.emit("change");
 
         return this;
     }

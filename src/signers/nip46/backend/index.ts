@@ -1,12 +1,12 @@
+import { verifySignature, Event } from "nostr-tools";
 import NDK, { NDKEvent, NDKPrivateKeySigner, NDKUser } from "../../../index.js";
 import { NDKNostrRpc } from "../rpc.js";
 import ConnectEventHandlingStrategy from "./connect.js";
 import DescribeEventHandlingStrategy from "./describe.js";
 import GetPublicKeyHandlingStrategy from "./get-public-key.js";
-import SignEventHandlingStrategy from "./sign-event.js";
 import Nip04DecryptHandlingStrategy from "./nip04-decrypt.js";
 import Nip04EncryptHandlingStrategy from "./nip04-encrypt.js";
-import { verifySignature, Event } from 'nostr-tools';
+import SignEventHandlingStrategy from "./sign-event.js";
 
 export type Nip46PermitCallback = (
     pubkey: string,
@@ -46,7 +46,11 @@ export class NDKNip46Backend {
      * @param ndk The NDK instance to use
      * @param privateKey The private key of the npub that wants to be published as
      */
-    public constructor(ndk: NDK, privateKey: string, permitCallback: Nip46PermitCallback) {
+    public constructor(
+        ndk: NDK,
+        privateKey: string,
+        permitCallback: Nip46PermitCallback
+    ) {
         this.ndk = ndk;
         this.signer = new NDKPrivateKeySigner(privateKey);
         this.debug = ndk.debug.extend("nip46:backend");
@@ -64,7 +68,7 @@ export class NDKNip46Backend {
         const sub = this.ndk.subscribe(
             {
                 kinds: [24133 as number],
-                "#p": [this.localUser.hexpubkey()]
+                "#p": [this.localUser.hexpubkey()],
             },
             { closeOnEose: false }
         );
@@ -78,7 +82,7 @@ export class NDKNip46Backend {
         nip04_encrypt: new Nip04EncryptHandlingStrategy(),
         nip04_decrypt: new Nip04DecryptHandlingStrategy(),
         get_public_key: new GetPublicKeyHandlingStrategy(),
-        describe: new DescribeEventHandlingStrategy()
+        describe: new DescribeEventHandlingStrategy(),
     };
 
     /**
@@ -101,7 +105,9 @@ export class NDKNip46Backend {
     }
 
     protected async handleIncomingEvent(event: NDKEvent) {
-        const { id, method, params } = (await this.rpc.parseEvent(event)) as any;
+        const { id, method, params } = (await this.rpc.parseEvent(
+            event
+        )) as any;
         const remotePubkey = event.pubkey;
         let response: string | undefined;
 
@@ -119,7 +125,13 @@ export class NDKNip46Backend {
                 response = await strategy.handle(this, remotePubkey, params);
             } catch (e: any) {
                 this.debug("error handling event", e, { id, method, params });
-                this.rpc.sendResponse(id, remotePubkey, "error", undefined, e.message);
+                this.rpc.sendResponse(
+                    id,
+                    remotePubkey,
+                    "error",
+                    undefined,
+                    e.message
+                );
             }
         } else {
             this.debug("unsupported method", { method, params });
@@ -129,11 +141,21 @@ export class NDKNip46Backend {
             this.debug(`sending response to ${remotePubkey}`, response);
             this.rpc.sendResponse(id, remotePubkey, response);
         } else {
-            this.rpc.sendResponse(id, remotePubkey, "error", undefined, "Not authorized");
+            this.rpc.sendResponse(
+                id,
+                remotePubkey,
+                "error",
+                undefined,
+                "Not authorized"
+            );
         }
     }
 
-    public async decrypt(remotePubkey: string, senderUser: NDKUser, payload: string) {
+    public async decrypt(
+        remotePubkey: string,
+        senderUser: NDKUser,
+        payload: string
+    ) {
         if (!(await this.pubkeyAllowed(remotePubkey, "decrypt", payload))) {
             this.debug(`decrypt request from ${remotePubkey} rejected`);
             return undefined;
@@ -142,7 +164,11 @@ export class NDKNip46Backend {
         return await this.signer.decrypt(senderUser, payload);
     }
 
-    public async encrypt(remotePubkey: string, recipientUser: NDKUser, payload: string) {
+    public async encrypt(
+        remotePubkey: string,
+        recipientUser: NDKUser,
+        payload: string
+    ) {
         if (!(await this.pubkeyAllowed(remotePubkey, "encrypt", payload))) {
             this.debug(`encrypt request from ${remotePubkey} rejected`);
             return undefined;
@@ -151,7 +177,10 @@ export class NDKNip46Backend {
         return await this.signer.encrypt(recipientUser, payload);
     }
 
-    public async signEvent(remotePubkey: string, params: string[]): Promise<NDKEvent | undefined> {
+    public async signEvent(
+        remotePubkey: string,
+        params: string[]
+    ): Promise<NDKEvent | undefined> {
         const [eventString] = params;
 
         this.debug(`sign event request from ${remotePubkey}`);
@@ -175,7 +204,11 @@ export class NDKNip46Backend {
      * This method should be overriden by the user to allow or reject incoming
      * connections.
      */
-    public async pubkeyAllowed(pubkey: string, method: string, params?: any): Promise<boolean> {
+    public async pubkeyAllowed(
+        pubkey: string,
+        method: string,
+        params?: any
+    ): Promise<boolean> {
         return this.permitCallback(pubkey, method, params);
     }
 }

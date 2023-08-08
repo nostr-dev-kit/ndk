@@ -1,7 +1,7 @@
+import debug from "debug";
 import EventEmitter from "eventemitter3";
 import NDK from "../../index.js";
 import { NDKRelay, NDKRelayStatus } from "../index.js";
-import debug from "debug";
 
 export type NDKPoolStats = {
     total: number;
@@ -38,10 +38,7 @@ export class NDKPool extends EventEmitter {
      * @param relay - The relay to add to the pool.
      * @param removeIfUnusedAfter - The time in milliseconds to wait before removing the relay from the pool after it is no longer used.
      */
-    public useTemporaryRelay(
-        relay: NDKRelay,
-        removeIfUnusedAfter = 600000,
-    ) {
+    public useTemporaryRelay(relay: NDKRelay, removeIfUnusedAfter = 600000) {
         const relayAlreadyInPool = this.relays.has(relay.url);
 
         // check if the relay is already in the pool
@@ -74,13 +71,12 @@ export class NDKPool extends EventEmitter {
      * @param relay - The relay to add to the pool.
      * @param connect - Whether or not to connect to the relay.
      */
-    public addRelay(
-        relay: NDKRelay,
-        connect = true,
-    ) {
+    public addRelay(relay: NDKRelay, connect = true) {
         const relayUrl = relay.url;
 
-        relay.on("notice", (relay, notice) => this.emit("notice", relay, notice));
+        relay.on("notice", (relay, notice) =>
+            this.emit("notice", relay, notice)
+        );
         relay.on("connect", () => this.handleRelayConnect(relayUrl));
         relay.on("disconnect", () => this.emit("relay:disconnect", relay));
         relay.on("flapping", () => this.handleFlapping(relay));
@@ -144,13 +140,20 @@ export class NDKPool extends EventEmitter {
         for (const relay of this.relays.values()) {
             if (timeoutMs) {
                 const timeoutPromise = new Promise<void>((_, reject) => {
-                    setTimeout(() => reject(`Timed out after ${timeoutMs}ms`), timeoutMs);
+                    setTimeout(
+                        () => reject(`Timed out after ${timeoutMs}ms`),
+                        timeoutMs
+                    );
                 });
 
                 promises.push(
-                    Promise.race([relay.connect(), timeoutPromise]).catch((e) => {
-                        this.debug(`Failed to connect to relay ${relay.url}: ${e}`);
-                    })
+                    Promise.race([relay.connect(), timeoutPromise]).catch(
+                        (e) => {
+                            this.debug(
+                                `Failed to connect to relay ${relay.url}: ${e}`
+                            );
+                        }
+                    )
                 );
             } else {
                 promises.push(relay.connect());
@@ -161,7 +164,8 @@ export class NDKPool extends EventEmitter {
         // in case some, but not all, relays were connected
         if (timeoutMs) {
             setTimeout(() => {
-                const allConnected = this.stats().connected === this.relays.size;
+                const allConnected =
+                    this.stats().connected === this.relays.size;
                 const someConnected = this.stats().connected > 0;
 
                 if (!allConnected && someConnected) {
@@ -194,7 +198,7 @@ export class NDKPool extends EventEmitter {
             total: 0,
             connected: 0,
             disconnected: 0,
-            connecting: 0
+            connecting: 0,
         };
 
         for (const relay of this.relays.values()) {

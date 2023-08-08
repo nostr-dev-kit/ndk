@@ -1,5 +1,4 @@
 import { nip19 } from "nostr-tools";
-
 import NDKUser from "./index.js";
 
 export async function follows(this: NDKUser): Promise<Set<NDKUser>> {
@@ -7,7 +6,7 @@ export async function follows(this: NDKUser): Promise<Set<NDKUser>> {
 
     const contactListEvents = await this.ndk.fetchEvents({
         kinds: [3],
-        authors: [this.hexpubkey()]
+        authors: [this.hexpubkey()],
     });
 
     if (contactListEvents) {

@@ -10,14 +10,16 @@ describe("NDKPrivateKeySigner", () => {
     });
 
     it("creates a new NDKPrivateKeySigner instance with a provided private key", () => {
-        const privateKey = "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff";
+        const privateKey =
+            "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff";
         const signer = new NDKPrivateKeySigner(privateKey);
         expect(signer).toBeInstanceOf(NDKPrivateKeySigner);
         expect(signer.privateKey).toBe(privateKey);
     });
 
     it("returns a user instance with a public key corresponding to the private key", async () => {
-        const privateKey = "e8eb7464168139c6ccb9111f768777f332fa1289dff11244ccfe89970ff776d4";
+        const privateKey =
+            "e8eb7464168139c6ccb9111f768777f332fa1289dff11244ccfe89970ff776d4";
         const signer = new NDKPrivateKeySigner(privateKey);
         const user = await signer.user();
         expect(user).toBeInstanceOf(User);
@@ -27,7 +29,8 @@ describe("NDKPrivateKeySigner", () => {
     });
 
     it("signs a NostrEvent with the private key", async () => {
-        const privateKey = "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff";
+        const privateKey =
+            "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff";
         const signer = new NDKPrivateKeySigner(privateKey);
 
         const event: NostrEvent = {
@@ -35,7 +38,7 @@ describe("NDKPrivateKeySigner", () => {
             created_at: Math.floor(Date.now() / 1000),
             tags: [],
             content: "Test content",
-            kind: 1
+            kind: 1,
         };
 
         const signature = await signer.sign(event);

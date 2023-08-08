@@ -1,11 +1,11 @@
 import { nip05, nip19 } from "nostr-tools";
+import { NDKSubscriptionOptions } from "../../dist/index.js";
 import Event, { NDKTag, NostrEvent } from "../events/index.js";
+import NDKEvent from "../events/index.js";
 import NDK, { NDKKind } from "../index.js";
 import { NDKSubscriptionCacheUsage } from "../subscription/index.js";
 import { follows } from "./follows.js";
 import { mergeEvent, NDKUserProfile } from "./profile";
-import NDKEvent from "../events/index.js";
-import { NDKSubscriptionOptions } from "../../dist/index.js";
 
 export interface NDKUserParams {
     npub?: string;
@@ -46,7 +46,7 @@ export default class NDKUser {
         if (profile) {
             return new NDKUser({
                 hexpubkey: profile.pubkey,
-                relayUrls: profile.relays
+                relayUrls: profile.relays,
             });
         }
     }
@@ -64,7 +64,9 @@ export default class NDKUser {
      * @param opts {NDKSubscriptionOptions} A set of NDKSubscriptionOptions
      * @returns {Promise<Set<Event>>} A set of all NDKEvents events returned for the given user
      */
-    public async fetchProfile(opts?: NDKSubscriptionOptions): Promise<Set<Event> | null> {
+    public async fetchProfile(
+        opts?: NDKSubscriptionOptions
+    ): Promise<Set<Event> | null> {
         if (!this.ndk) throw new Error("NDK not set");
 
         if (!this.profile) this.profile = {};
@@ -75,22 +77,26 @@ export default class NDKUser {
         // This is done in favour of simply using NDKSubscriptionCacheUsage.CACHE_FIRST since
         // we want to avoid depending on the grouping, arguably, all queries should go through this
         // type of behavior when we have a locking cache
-        if (!opts && // if no options have been set
+        if (
+            !opts && // if no options have been set
             this.ndk.cacheAdapter && // and we have a cache
             this.ndk.cacheAdapter.locking // and the cache identifies itself as fast 😂
         ) {
-            setMetadataEvents = await this.ndk.fetchEvents({
-                kinds: [0],
-                authors: [this.hexpubkey()]
-            }, {
-                cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE,
-                closeOnEose: true,
-                groupable: false
-            });
+            setMetadataEvents = await this.ndk.fetchEvents(
+                {
+                    kinds: [0],
+                    authors: [this.hexpubkey()],
+                },
+                {
+                    cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE,
+                    closeOnEose: true,
+                    groupable: false,
+                }
+            );
 
             opts = {
                 cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY,
-                closeOnEose: true
+                closeOnEose: true,
             };
         }
 
@@ -98,7 +104,7 @@ export default class NDKUser {
             setMetadataEvents = await this.ndk.fetchEvents(
                 {
                     kinds: [0],
-                    authors: [this.hexpubkey()]
+                    authors: [this.hexpubkey()],
                 },
                 opts
             );
@@ -134,7 +140,7 @@ export default class NDKUser {
 
         const relayListEvents = await this.ndk.fetchEvents({
             kinds: [10002],
-            authors: [this.hexpubkey()]
+            authors: [this.hexpubkey()],
         });
 
         if (relayListEvents) {
@@ -192,7 +198,9 @@ export default class NDKUser {
 
         currentFollowList.add(newFollow);
 
-        const event = new NDKEvent(this.ndk, { kind: NDKKind.Contacts } as NostrEvent);
+        const event = new NDKEvent(this.ndk, {
+            kind: NDKKind.Contacts,
+        } as NostrEvent);
 
         // This is a horrible hack and I need to fix it
         for (const follow of currentFollowList) {

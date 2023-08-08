@@ -12,7 +12,10 @@ import { NDKRelaySet } from "./index.js";
  * @param event {Event}
  * @returns Promise<NDKRelaySet>
  */
-export function calculateRelaySetFromEvent(ndk: NDK, event: Event): NDKRelaySet {
+export function calculateRelaySetFromEvent(
+    ndk: NDK,
+    event: Event
+): NDKRelaySet {
     const relays: Set<NDKRelay> = new Set();
 
     ndk.pool?.relays.forEach((relay) => relays.add(relay));
@@ -26,7 +29,10 @@ export function calculateRelaySetFromEvent(ndk: NDK, event: Event): NDKRelaySet 
  * @param filter
  * @returns Promise<NDKRelaySet>
  */
-export function calculateRelaySetFromFilter(ndk: NDK, filter: NDKFilter): NDKRelaySet {
+export function calculateRelaySetFromFilter(
+    ndk: NDK,
+    filter: NDKFilter
+): NDKRelaySet {
     const relays: Set<NDKRelay> = new Set();
 
     ndk.pool?.relays.forEach((relay) => {

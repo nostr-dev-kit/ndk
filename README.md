@@ -66,7 +66,7 @@ localStorage.debug = 'ndk:*'
     -   [x] NIP-07
     -   [!] ~~NIP-26~~ Won't add / NIP-26 is dead
     -   [x] NIP-46
-        - [x] Permission tokens
+        -   [x] Permission tokens
 -   Relay discovery
     -   [ ] Gossip-model (NIP-65)
     -   [ ] Implicit relays discovery following pubkey usage
@@ -180,6 +180,7 @@ const ndk = new NDK({ cacheAdapter: redisAdapter });
 ```
 
 ## Groupable queries
+
 Clients often need to load data (e.g. profile data) from individual components at once (e.g. initial page render). This typically causes multiple subscriptions to be submitted fetching the same information and causing poor performance or getting rate-limited/maxed out by relays.
 
 NDK implements a convenient subscription model, _buffered queries_, where a named subscription will be created after a customizable amount of time, so that multiple components can append queries.
@@ -235,8 +236,8 @@ But if NDK has observed that `npub-B` tends to write to `wss://userb.xyz` and
 ## Auto-closing subscriptions
 
 Often, clients need to fetch data but don't need to maintain an open connection to the relay. This is true of profile metadata requests especially.
-*NDK defaults to having the `closeOnEose` flag set to `true`, to make permanent subscriptions explicit in the codebase; if you want your
-subscription to remain active beyond `EOSE`, you should set it to `false`.*
+_NDK defaults to having the `closeOnEose` flag set to `true`, to make permanent subscriptions explicit in the codebase; if you want your
+subscription to remain active beyond `EOSE`, you should set it to `false`._
 
 -   The `closeOnEose` flag will make the connection close immediately after EOSE is seen.
 
@@ -254,11 +255,12 @@ This is a handy method for instantiating a new `NDKUser` and associating the cur
 
 ```ts
 const pablo = ndk.getUser({
-    npub: "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft"
+    npub: "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft",
 });
 
 const jeff = ndk.getUser({
-    hexpubkey: "1739d937dc8c0c7370aa27585938c119e25c41f6c441a5d34c6d38503e3136ef"
+    hexpubkey:
+        "1739d937dc8c0c7370aa27585938c119e25c41f6c441a5d34c6d38503e3136ef",
 });
 ```
 
@@ -268,7 +270,7 @@ You can easily fetch a user's profile data from `kind:0` events on relays. Calli
 
 ```ts
 const pablo = ndk.getUser({
-    npub: "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft"
+    npub: "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft",
 });
 await pablo.fetchProfile();
 

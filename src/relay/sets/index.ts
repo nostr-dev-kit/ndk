@@ -1,8 +1,11 @@
 import { sha256 } from "@noble/hashes/sha256";
-import {bytesToHex} from '@noble/hashes/utils';
+import { bytesToHex } from "@noble/hashes/utils";
 import NDKEvent from "../../events/index.js";
 import type NDK from "../../index.js";
-import { NDKSubscription, NDKSubscriptionGroup } from "../../subscription/index.js";
+import {
+    NDKSubscription,
+    NDKSubscriptionGroup,
+} from "../../subscription/index.js";
 import { NDKRelay, NDKRelayStatus } from "../index.js";
 
 /**
@@ -78,7 +81,8 @@ export class NDKRelaySet {
             return subscription;
         }
 
-        const delayedSubscription = this.ndk.delayedSubscriptions.get(groupableId);
+        const delayedSubscription =
+            this.ndk.delayedSubscriptions.get(groupableId);
         if (delayedSubscription) {
             delayedSubscription.push(subscription);
         } else {
@@ -116,7 +120,9 @@ export class NDKRelaySet {
         this.executeSubscription(subGroup);
     }
 
-    private executeSubscription(subscription: NDKSubscription): NDKSubscription {
+    private executeSubscription(
+        subscription: NDKSubscription
+    ): NDKSubscription {
         this.debug("subscribing", { filters: subscription.filters });
 
         for (const relay of this.relays) {
@@ -126,10 +132,13 @@ export class NDKRelaySet {
             } else {
                 // If the relay is not connected, add a one-time listener to wait for the 'connected' event
                 const connectedListener = () => {
-                    this.debug("new relay coming online for active subscription", {
-                        relay: relay.url,
-                        filters: subscription.filters
-                    });
+                    this.debug(
+                        "new relay coming online for active subscription",
+                        {
+                            relay: relay.url,
+                            filters: subscription.filters,
+                        }
+                    );
                     this.subscribeOnRelay(relay, subscription);
                 };
                 relay.once("connect", connectedListener);
@@ -154,25 +163,33 @@ export class NDKRelaySet {
         event: NDKEvent,
         timeoutMs?: number
     ): Promise<Set<NDKRelay>> {
-        const publishedToRelays: Set<NDKRelay>= new Set();
+        const publishedToRelays: Set<NDKRelay> = new Set();
 
         // go through each relay and publish the event
-        const promises: Promise<void>[] = Array.from(this.relays).map((relay: NDKRelay) => {
-            return new Promise<void>((resolve) => {
-                relay.publish(event, timeoutMs).then(() => {
-                    publishedToRelays.add(relay);
-                    resolve();
-                }).catch((err) => {
-                    this.debug("error publishing to relay", { relay: relay.url, err });
-                    resolve();
+        const promises: Promise<void>[] = Array.from(this.relays).map(
+            (relay: NDKRelay) => {
+                return new Promise<void>((resolve) => {
+                    relay
+                        .publish(event, timeoutMs)
+                        .then(() => {
+                            publishedToRelays.add(relay);
+                            resolve();
+                        })
+                        .catch((err) => {
+                            this.debug("error publishing to relay", {
+                                relay: relay.url,
+                                err,
+                            });
+                            resolve();
+                        });
                 });
-            });
-        });
+            }
+        );
 
         await Promise.all(promises);
 
         if (publishedToRelays.size === 0) {
-            throw new Error('No relay was able to receive the event');
+            throw new Error("No relay was able to receive the event");
         }
 
         return publishedToRelays;

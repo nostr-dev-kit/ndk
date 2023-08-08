@@ -7,9 +7,9 @@ jest.mock("../index.js", () => {
         __esModule: true,
         default: jest.fn().mockImplementation(() => {
             return {
-                fetchEvents: jest.fn()
+                fetchEvents: jest.fn(),
             };
-        })
+        }),
     };
 });
 
@@ -17,7 +17,8 @@ describe("follows", () => {
     it("skips tags on the contact list with invalid pubkeys", async () => {
         const ndk = new NDK();
         const user = new NDKUser({
-            hexpubkey: "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"
+            hexpubkey:
+                "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52",
         });
         user.ndk = ndk;
 
@@ -45,7 +46,8 @@ describe("follows", () => {
     it("dedupes followed users", async () => {
         const ndk = new NDK();
         const user = new NDKUser({
-            hexpubkey: "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"
+            hexpubkey:
+                "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52",
         });
         user.ndk = ndk;
 

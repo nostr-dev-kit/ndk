@@ -22,7 +22,7 @@ export class NDKTranscriptionDVM extends NDKDVMRequest {
      * Returns the original source of the transcription
      */
     get url(): string | undefined {
-        const inputTags = this.getMatchingTags('i');
+        const inputTags = this.getMatchingTags("i");
 
         if (inputTags.length !== 1) {
             return undefined;
@@ -35,17 +35,17 @@ export class NDKTranscriptionDVM extends NDKDVMRequest {
      * Getter for the title tag
      */
     get title(): string | undefined {
-        return this.tagValue('title');
+        return this.tagValue("title");
     }
 
     /**
      * Setter for the title tag
      */
     set title(value: string | undefined) {
-        this.removeTag('title');
+        this.removeTag("title");
 
         if (value) {
-            this.tags.push(['title', value]);
+            this.tags.push(["title", value]);
         }
     }
 
@@ -53,17 +53,17 @@ export class NDKTranscriptionDVM extends NDKDVMRequest {
      * Getter for the image tag
      */
     get image(): string | undefined {
-        return this.tagValue('image');
+        return this.tagValue("image");
     }
 
     /**
      * Setter for the image tag
      */
     set image(value: string | undefined) {
-        this.removeTag('image');
+        this.removeTag("image");
 
         if (value) {
-            this.tags.push(['image', value]);
+            this.tags.push(["image", value]);
         }
     }
 }

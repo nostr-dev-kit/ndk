@@ -21,7 +21,7 @@ export enum NDKSubscriptionCacheUsage {
     PARALLEL = "PARALLEL",
 
     // Skip cache, don't query it
-    ONLY_RELAY = "ONLY_RELAY"
+    ONLY_RELAY = "ONLY_RELAY",
 }
 
 export interface NDKSubscriptionOptions {
@@ -53,7 +53,7 @@ export const defaultOpts: NDKSubscriptionOptions = {
     closeOnEose: true,
     cacheUsage: NDKSubscriptionCacheUsage.CACHE_FIRST,
     groupable: true,
-    groupableDelay: 100
+    groupableDelay: 100,
 };
 
 /**
@@ -126,7 +126,9 @@ export class NDKSubscription extends EventEmitter {
             this.opts.cacheUsage === NDKSubscriptionCacheUsage.ONLY_CACHE &&
             !this.opts.closeOnEose
         ) {
-            throw new Error("Cannot use cache-only options with a persistent subscription");
+            throw new Error(
+                "Cannot use cache-only options with a persistent subscription"
+            );
         }
     }
 
@@ -182,10 +184,8 @@ export class NDKSubscription extends EventEmitter {
             // that want to receive further updates must
             // always hit the relay
             this.opts.closeOnEose &&
-
             // Cache adapter must claim to be fast
             !!this.ndk.cacheAdapter?.locking &&
-
             // If explicitly told to run in parallel, then
             // we should not wait for the cache
             this.opts.cacheUsage !== NDKSubscriptionCacheUsage.PARALLEL
@@ -240,7 +240,10 @@ export class NDKSubscription extends EventEmitter {
 
     private startWithRelaySet(): void {
         if (!this.relaySet) {
-            this.relaySet = calculateRelaySetFromFilter(this.ndk, this.filters[0]);
+            this.relaySet = calculateRelaySetFromFilter(
+                this.ndk,
+                this.filters[0]
+            );
         }
 
         if (this.relaySet) {
@@ -250,14 +253,17 @@ export class NDKSubscription extends EventEmitter {
 
     // EVENT handling
 
-
     /**
      * Called when an event is received from a relay or the cache
      * @param event
      * @param relay
      * @param fromCache Whether the event was received from the cache
      */
-    public eventReceived(event: NDKEvent, relay: NDKRelay | undefined, fromCache = false) {
+    public eventReceived(
+        event: NDKEvent,
+        relay: NDKRelay | undefined,
+        fromCache = false
+    ) {
         if (!fromCache && relay) {
             // track the event per relay
             let events = this.eventsPerRelay.get(relay);
@@ -273,7 +279,8 @@ export class NDKSubscription extends EventEmitter {
             const eventAlreadySeen = this.eventFirstSeen.has(event.id);
 
             if (eventAlreadySeen) {
-                const timeSinceFirstSeen = Date.now() - (this.eventFirstSeen.get(event.id) || 0);
+                const timeSinceFirstSeen =
+                    Date.now() - (this.eventFirstSeen.get(event.id) || 0);
                 relay.scoreSlowerEvent(timeSinceFirstSeen);
 
                 this.emit("event:dup", event, relay, timeSinceFirstSeen, this);
@@ -349,7 +356,7 @@ export class NDKSubscriptionGroup extends NDKSubscription {
 
         debug("merged filters", {
             count: subscriptions.length,
-            mergedFilters: this.filters[0]
+            mergedFilters: this.filters[0],
         });
 
         // forward events to the matching subscriptions
@@ -359,7 +366,10 @@ export class NDKSubscriptionGroup extends NDKSubscription {
         this.on("close", this.forwardClose);
     }
 
-    private isEventForSubscription(event: NDKEvent, subscription: NDKSubscription): boolean {
+    private isEventForSubscription(
+        event: NDKEvent,
+        subscription: NDKSubscription
+    ): boolean {
         const { filters } = subscription;
 
         if (!filters) return false;
@@ -397,13 +407,23 @@ export class NDKSubscriptionGroup extends NDKSubscription {
         }
     }
 
-    private forwardEventDup(event: NDKEvent, relay: NDKRelay, timeSinceFirstSeen: number) {
+    private forwardEventDup(
+        event: NDKEvent,
+        relay: NDKRelay,
+        timeSinceFirstSeen: number
+    ) {
         for (const subscription of this.subscriptions) {
             if (!this.isEventForSubscription(event, subscription)) {
                 continue;
             }
 
-            subscription.emit("event:dup", event, relay, timeSinceFirstSeen, subscription);
+            subscription.emit(
+                "event:dup",
+                event,
+                relay,
+                timeSinceFirstSeen,
+                subscription
+            );
         }
     }
 
@@ -433,7 +453,9 @@ export function mergeFilters(filters: NDKFilter[]): NDKFilter {
                 if (result[key] === undefined) {
                     result[key] = [...value];
                 } else {
-                    result[key] = Array.from(new Set([...result[key], ...value]));
+                    result[key] = Array.from(
+                        new Set([...result[key], ...value])
+                    );
                 }
             } else {
                 result[key] = value;
@@ -454,18 +476,20 @@ export function filterFromId(id: string): NDKFilter {
         decoded = nip19.decode(id);
 
         switch (decoded.type) {
-            case 'nevent': return {ids: [decoded.data.id]};
-            case 'note': return {ids: [decoded.data]};
-            case 'naddr': return {
-                authors: [decoded.data.pubkey],
-                "#d": [decoded.data.identifier],
-                kinds: [decoded.data.kind]
-            };
+            case "nevent":
+                return { ids: [decoded.data.id] };
+            case "note":
+                return { ids: [decoded.data] };
+            case "naddr":
+                return {
+                    authors: [decoded.data.pubkey],
+                    "#d": [decoded.data.identifier],
+                    kinds: [decoded.data.kind],
+                };
         }
-    } catch (e) {
-    }
+    } catch (e) {}
 
-    return {ids: [id]};
+    return { ids: [id] };
 }
 
 /**
@@ -477,14 +501,16 @@ export function relaysFromBech32(bech32: string): NDKRelay[] {
     try {
         const decoded = nip19.decode(bech32);
 
-        if (['naddr', 'nevent'].includes(decoded?.type)) {
+        if (["naddr", "nevent"].includes(decoded?.type)) {
             const data = decoded.data as unknown as EventPointer;
 
             if (data?.relays) {
                 return data.relays.map((r: string) => new NDKRelay(r));
             }
         }
-    } catch (e) { /* empty */ }
+    } catch (e) {
+        /* empty */
+    }
 
     return [];
 }
@@ -493,18 +519,18 @@ export function relaysFromBech32(bech32: string): NDKRelay[] {
  * Generates a random filter id, based on the filter keys.
  */
 function generateFilterId(filter: NDKFilter) {
-    const keys = Object.keys(filter)||[];
+    const keys = Object.keys(filter) || [];
     const subId = [];
 
     for (const key of keys) {
-        if (key === 'kinds') {
-            const v = [key, filter.kinds!.join(',')];
-            subId.push(v.join(':'));
+        if (key === "kinds") {
+            const v = [key, filter.kinds!.join(",")];
+            subId.push(v.join(":"));
         } else {
             subId.push(key);
         }
     }
 
     subId.push(Math.floor(Math.random() * 999999999).toString());
-    return subId.join('-');
+    return subId.join("-");
 }

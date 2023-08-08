@@ -1,6 +1,6 @@
-import NDK from '../../index.js';
-import { ContentTag, type NostrEvent } from '../index.js';
-import NDKEvent from '../index.js';
+import NDK from "../../index.js";
+import { ContentTag, type NostrEvent } from "../index.js";
+import NDKEvent from "../index.js";
 import { NDKKind } from "./index.js";
 
 /**
@@ -28,7 +28,7 @@ class NDKArticle extends NDKEvent {
      * @returns {string | undefined} - The article title if available, otherwise undefined.
      */
     get title(): string | undefined {
-        return this.tagValue('title');
+        return this.tagValue("title");
     }
 
     /**
@@ -38,9 +38,9 @@ class NDKArticle extends NDKEvent {
      */
     set title(title: string | undefined) {
         if (title) {
-            this.tags.push(['title', title]);
+            this.tags.push(["title", title]);
         } else {
-            this.removeTag('title');
+            this.removeTag("title");
         }
     }
 
@@ -50,7 +50,7 @@ class NDKArticle extends NDKEvent {
      * @returns {number | undefined} - The Unix timestamp of when the article was published or undefined.
      */
     get published_at(): number | undefined {
-        const tag = this.tagValue('published_at');
+        const tag = this.tagValue("published_at");
         if (tag) {
             return parseInt(tag);
         }
@@ -63,10 +63,10 @@ class NDKArticle extends NDKEvent {
      * @param {number | undefined} timestamp - The Unix timestamp to set for the article's publication date.
      */
     set published_at(timestamp: number | undefined) {
-        this.removeTag('published_at'); // Removes any existing 'published_at' tag.
+        this.removeTag("published_at"); // Removes any existing "published_at" tag.
 
         if (timestamp !== undefined) {
-            this.tags.push(['published_at', timestamp.toString()]);
+            this.tags.push(["published_at", timestamp.toString()]);
         }
     }
 
@@ -94,7 +94,7 @@ class NDKArticle extends NDKEvent {
      * @returns {string | undefined} - The article's URL if available, otherwise undefined.
      */
     get url(): string | undefined {
-        return this.tagValue('url');
+        return this.tagValue("url");
     }
 
     /**
@@ -104,9 +104,9 @@ class NDKArticle extends NDKEvent {
      */
     set url(url: string | undefined) {
         if (url) {
-            this.tags.push(['url', url]);
+            this.tags.push(["url", url]);
         } else {
-            this.removeTag('url');
+            this.removeTag("url");
         }
     }
 }

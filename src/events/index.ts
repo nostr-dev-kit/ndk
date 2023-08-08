@@ -70,7 +70,7 @@ export default class NDKEvent extends EventEmitter {
             kind: this.kind,
             pubkey: this.pubkey,
             id: this.id,
-            sig: this.sig
+            sig: this.sig,
         } as NostrEvent;
     }
 
@@ -121,7 +121,8 @@ export default class NDKEvent extends EventEmitter {
             // tag p-tags in the event if they are not the same as the user signing this event
             for (const pTag of userOrEvent.getMatchingTags("p")) {
                 if (pTag[1] === this.pubkey) continue;
-                if (this.tags.find((t) => t[0] === "p" && t[1] === pTag[1])) continue;
+                if (this.tags.find((t) => t[0] === "p" && t[1] === pTag[1]))
+                    continue;
 
                 this.tags.push(["p", pTag[1]]);
             }
@@ -205,6 +206,7 @@ export default class NDKEvent extends EventEmitter {
         if (!signer) {
             this.ndk?.assertSigner();
 
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             signer = this.ndk!.signer!;
         }
 
@@ -232,7 +234,10 @@ export default class NDKEvent extends EventEmitter {
         timeoutMs?: number
     ): Promise<Set<NDKRelay>> {
         if (!this.sig) await this.sign();
-        if (!this.ndk) throw new Error("NDKEvent must be associated with an NDK instance to publish");
+        if (!this.ndk)
+            throw new Error(
+                "NDKEvent must be associated with an NDK instance to publish"
+            );
 
         return this.ndk.publish(this, relaySet, timeoutMs);
     }
@@ -255,7 +260,9 @@ export default class NDKEvent extends EventEmitter {
             const dTag = this.getMatchingTags("d")[0];
             // generate a string of 32 random bytes
             if (!dTag) {
-                const str = [...Array(16)].map(() => Math.random().toString(36)[2]).join("");
+                const str = [...Array(16)]
+                    .map(() => Math.random().toString(36)[2])
+                    .join("");
                 tags.push(["d", str]);
             }
         }
@@ -340,17 +347,25 @@ export default class NDKEvent extends EventEmitter {
      * @param comment A comment to add to the zap request
      * @param extraTags Extra tags to add to the zap request
      */
-    async zap(amount: number, comment?: string, extraTags?: NDKTag[]): Promise<string | null> {
+    async zap(
+        amount: number,
+        comment?: string,
+        extraTags?: NDKTag[]
+    ): Promise<string | null> {
         if (!this.ndk) throw new Error("No NDK instance found");
 
         this.ndk.assertSigner();
 
         const zap = new Zap({
             ndk: this.ndk,
-            zappedEvent: this
+            zappedEvent: this,
         });
 
-        const paymentRequest = await zap.createZapRequest(amount, comment, extraTags);
+        const paymentRequest = await zap.createZapRequest(
+            amount,
+            comment,
+            extraTags
+        );
 
         // await zap.publish(amount);
         return paymentRequest;
@@ -369,7 +384,7 @@ export default class NDKEvent extends EventEmitter {
 
         const e = new NDKEvent(this.ndk, {
             kind: NDKKind.EventDeletion,
-            content: reason || ""
+            content: reason || "",
         } as NostrEvent);
         e.tag(this);
         await e.publish();

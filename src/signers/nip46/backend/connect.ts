@@ -1,6 +1,8 @@
 import { IEventHandlingStrategy, NDKNip46Backend } from "./index.js";
 
-export default class ConnectEventHandlingStrategy implements IEventHandlingStrategy {
+export default class ConnectEventHandlingStrategy
+    implements IEventHandlingStrategy
+{
     async handle(
         backend: NDKNip46Backend,
         remotePubkey: string,

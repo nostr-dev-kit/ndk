@@ -136,12 +136,16 @@ export default class NDK extends EventEmitter {
      * @param relaySet explicit relay set to use
      * @param timeoutMs timeout in milliseconds to wait for the event to be published
      * @returns The relays the event was published to
+     *
+     * @deprecated Use `event.publish()` instead
      */
     public async publish(
         event: NDKEvent,
         relaySet?: NDKRelaySet,
         timeoutMs?: number
     ): Promise<Set<NDKRelay>> {
+        this.debug("Deprecated: Use `event.publish()` instead");
+
         if (!relaySet) {
             // If we have a devWriteRelaySet, use it to publish all events
             relaySet =

@@ -1,11 +1,17 @@
 import { nip05, nip19 } from "nostr-tools";
-import { NDKSubscriptionOptions } from "../../dist/index.js";
-import Event, { NDKTag, NostrEvent } from "../events/index.js";
-import NDKEvent from "../events/index.js";
+import {
+    default as Event,
+    default as NDKEvent,
+    NDKTag,
+    NostrEvent,
+} from "../events/index.js";
 import NDK, { NDKKind } from "../index.js";
-import { NDKSubscriptionCacheUsage } from "../subscription/index.js";
+import {
+    NDKSubscriptionCacheUsage,
+    NDKSubscriptionOptions,
+} from "../subscription/index.js";
 import { follows } from "./follows.js";
-import { mergeEvent, NDKUserProfile } from "./profile";
+import { NDKUserProfile, mergeEvent } from "./profile";
 
 export interface NDKUserParams {
     npub?: string;

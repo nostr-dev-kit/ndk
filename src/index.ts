@@ -19,8 +19,13 @@ import {
 import NDKUser, { NDKUserParams } from "./user/index.js";
 import { NDKUserProfile } from "./user/profile.js";
 
+export { NDKEvent, NDKUser, NDKFilter, NDKUserProfile, NDKCacheAdapter };
 export * from "./events/index.js";
 export * from "./events/kinds/index.js";
+export * from "./events/kinds/article.js";
+export * from "./events/kinds/dvm/index.js";
+export * from "./events/kinds/lists/index.js";
+export * from "./events/kinds/repost.js";
 export * from "./relay/index.js";
 export * from "./relay/sets/index.js";
 export * from "./signers/index.js";
@@ -32,7 +37,6 @@ export * from "./signers/private-key/index.js";
 export * from "./subscription/index.js";
 export * from "./user/profile.js";
 export { NDKZapInvoice, zapInvoiceFromEvent } from "./zap/invoice.js";
-export { NDKEvent, NDKUser, NDKFilter, NDKUserProfile, NDKCacheAdapter };
 
 export interface NDKConstructorParams {
     explicitRelayUrls?: string[];

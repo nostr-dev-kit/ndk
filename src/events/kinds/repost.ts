@@ -25,10 +25,10 @@ export class NDKRepost<T> extends NDKEvent {
      * @param klass Optional class to convert the events to.
      * @returns
      */
-    async repostedEvents(klass?: classWithConvertFunction<T>): Promise<(T|NDKEvent)[]> {
-        const items: (T|NDKEvent)[] = [];
+    async repostedEvents(klass?: classWithConvertFunction<T>): Promise<T[]> {
+        const items: T[] = [];
 
-        if (!this.ndk) throw new Error('NDK instance not set');
+        if (!this.ndk) throw new Error("NDK instance not set");
 
         if (this._repostedEvents !== undefined) return this._repostedEvents;
 
@@ -37,9 +37,7 @@ export class NDKRepost<T> extends NDKEvent {
             const event = await this.ndk.fetchEvent(filter);
 
             if (event) {
-                items.push(
-                    klass ? klass.from(event) : event
-                );
+                items.push(klass ? klass.from(event) : (event as T));
             }
         }
 
@@ -50,18 +48,20 @@ export class NDKRepost<T> extends NDKEvent {
      * Returns the reposted event IDs.
      */
     repostedEventIds(): string[] {
-        return this.tags.filter(
-            (t: NDKTag) => t[0] === 'e' || t[0] === 'a'
-        ).map(
-            (t: NDKTag) => t[1]
-        );
+        return this.tags
+            .filter((t: NDKTag) => t[0] === "e" || t[0] === "a")
+            .map((t: NDKTag) => t[1]);
     }
 }
 
 function filterForId(id: string): NDKFilter {
     if (id.match(/:/)) {
-        const [kind, pubkey, identifier] = id.split(':');
-        return { kinds: [parseInt(kind)], authors: [pubkey], '#d': [identifier] };
+        const [kind, pubkey, identifier] = id.split(":");
+        return {
+            kinds: [parseInt(kind)],
+            authors: [pubkey],
+            "#d": [identifier],
+        };
     } else {
         return { ids: [id] };
     }

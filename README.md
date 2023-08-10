@@ -92,7 +92,7 @@ You can pass an object with several options to a newly created instance of NDK.
 import NDK from "@nostr-dev-kit/ndk";
 
 // Create a new NDK instance with explicit relays
-ndk = new NDK({ explicitRelayUrls: ["wss://a.relay", "wss://another.relay"] });
+const ndk = new NDK({ explicitRelayUrls: ["wss://a.relay", "wss://another.relay"] });
 ```
 
 Note: In normal client use, it's best practice to instantiate NDK as a singleton class. [See more below](#architecture-decisions--suggestions).
@@ -106,7 +106,7 @@ After you've instatiated NDK, you need to tell it to connect before you'll be ab
 import NDK from "@nostr-dev-kit/ndk";
 
 // Create a new NDK instance with explicit relays
-ndk = new NDK({ explicitRelayUrls: ["wss://a.relay", "wss://another.relay"] });
+const ndk = new NDK({ explicitRelayUrls: ["wss://a.relay", "wss://another.relay"] });
 
 // Now connect to specified relays
 await ndk.connect();
@@ -242,7 +242,7 @@ subscription to remain active beyond `EOSE`, you should set it to `false`._
 -   The `closeOnEose` flag will make the connection close immediately after EOSE is seen.
 
 ```ts
-ndk.subscription({ kinds: [0], authors: ["..."] }, { closeOnEose: false });
+ndk.subscribe({ kinds: [0], authors: ["..."] }, { closeOnEose: false });
 ```
 
 ## Convenience methods

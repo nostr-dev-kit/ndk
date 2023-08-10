@@ -242,7 +242,7 @@ subscription to remain active beyond `EOSE`, you should set it to `false`._
 -   The `closeOnEose` flag will make the connection close immediately after EOSE is seen.
 
 ```ts
-ndk.subscription({ kinds: [0], authors: ["..."] }, { closeOnEose: false });
+ndk.subscribe({ kinds: [0], authors: ["..."] }, { closeOnEose: false });
 ```
 
 ## Convenience methods

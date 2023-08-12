@@ -1,8 +1,4 @@
-import NDK, {
-    NDKEvent,
-    NDKRelay,
-    NostrEvent,
-} from "../index";
+import NDK, { NDKEvent, NDKRelay, NostrEvent } from "../index";
 
 let ndk: NDK;
 

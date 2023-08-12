@@ -42,7 +42,9 @@ describe("NDKEvent", () => {
 
         it("returns parameterized tagId for kinds between 30k and 40k", () => {
             event.kind = 35000;
-            const spy = jest.spyOn(event, "tagId").mockReturnValue("parameterizedTagId");
+            const spy = jest
+                .spyOn(event, "tagId")
+                .mockReturnValue("parameterizedTagId");
             const result = event.deduplicationKey();
             expect(result).toEqual("parameterizedTagId");
             expect(spy).toHaveBeenCalled();

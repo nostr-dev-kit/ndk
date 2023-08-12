@@ -59,7 +59,7 @@ export class NDKPool extends EventEmitter {
             // set a timer to remove the relay from the pool if it is not used within the specified time
             const timer = setTimeout(() => {
                 this.removeRelay(relay.url);
-            }, removeIfUnusedAfter);
+            }, removeIfUnusedAfter) as unknown as NodeJS.Timeout;
 
             this.temporaryRelayTimers.set(relay.url, timer);
         }

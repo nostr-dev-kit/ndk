@@ -240,12 +240,12 @@ export class NDKRelay extends EventEmitter {
     ): Promise<boolean> {
         const nostrEvent = await event.toNostrEvent();
         const publish = this.relay.publish(nostrEvent as any);
-        let publishTimeout: NodeJS.Timeout;
+        let publishTimeout: NodeJS.Timeout | number;
 
         const publishPromise = new Promise<boolean>((resolve, reject) => {
             publish
                 .then(() => {
-                    clearTimeout(publishTimeout);
+                    clearTimeout(publishTimeout as unknown as NodeJS.Timeout);
                     this.emit("published", event);
                     resolve(true);
                 })

@@ -217,7 +217,7 @@ export default class NDK extends EventEmitter {
      * Fetch events
      */
     public async fetchEvents(
-        filter: NDKFilter,
+        filters: NDKFilter | NDKFilter[],
         opts?: NDKSubscriptionOptions,
         relaySet?: NDKRelaySet
     ): Promise<Set<NDKEvent>> {
@@ -225,7 +225,7 @@ export default class NDK extends EventEmitter {
             const events: Map<string, NDKEvent> = new Map();
 
             const relaySetSubscription = this.subscribe(
-                filter,
+                filters,
                 { ...(opts || {}), closeOnEose: true },
                 relaySet,
                 false

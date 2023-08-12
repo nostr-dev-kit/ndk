@@ -1,10 +1,5 @@
 import { nip05, nip19 } from "nostr-tools";
-import {
-    default as Event,
-    default as NDKEvent,
-    NDKTag,
-    NostrEvent,
-} from "../events/index.js";
+import { default as NDKEvent, NDKTag, NostrEvent } from "../events/index.js";
 import NDK, { NDKKind } from "../index.js";
 import {
     NDKSubscriptionCacheUsage,
@@ -68,16 +63,16 @@ export default class NDKUser {
     /**
      * Fetch a user's kind 0 metadata events and merge the events in a single up-to-date profile
      * @param opts {NDKSubscriptionOptions} A set of NDKSubscriptionOptions
-     * @returns {Promise<Set<Event>>} A set of all NDKEvents events returned for the given user
+     * @returns {Promise<Set<NDKEvent>>} A set of all NDKEvents events returned for the given user
      */
     public async fetchProfile(
         opts?: NDKSubscriptionOptions
-    ): Promise<Set<Event> | null> {
+    ): Promise<Set<NDKEvent> | null> {
         if (!this.ndk) throw new Error("NDK not set");
 
         if (!this.profile) this.profile = {};
 
-        let setMetadataEvents: Set<Event> | null = null;
+        let setMetadataEvents: Set<NDKEvent> | null = null;
 
         // if no options have been set and we have a cache, try to load from cache with no grouping
         // This is done in favour of simply using NDKSubscriptionCacheUsage.CACHE_FIRST since
@@ -139,9 +134,9 @@ export default class NDKUser {
 
     /**
      * Returns a set of relay list events for a user.
-     * @returns {Promise<Set<Event>>} A set of NDKEvents returned for the given user.
+     * @returns {Promise<Set<NDKEvent>>} A set of NDKEvents returned for the given user.
      */
-    public async relayList(): Promise<Set<Event>> {
+    public async relayList(): Promise<Set<NDKEvent>> {
         if (!this.ndk) throw new Error("NDK not set");
 
         const relayListEvents = await this.ndk.fetchEvents({
@@ -153,7 +148,7 @@ export default class NDKUser {
             return relayListEvents;
         }
 
-        return new Set<Event>();
+        return new Set<NDKEvent>();
     }
 
     /**

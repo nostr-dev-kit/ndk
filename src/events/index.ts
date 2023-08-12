@@ -293,6 +293,21 @@ export default class NDKEvent extends EventEmitter {
     }
 
     /**
+     * Provides a deduplication key for the event.
+     *
+     * For kinds 0, 3, 10k-20k this will be the event <kind>:<pubkey>
+     * For kinds 30k-40k this will be the event <kind>:<pubkey>:<d-tag>
+     * For all other kinds this will be the event id
+     */
+    deduplicationKey(): string {
+        if (this.kind === 0 || this.kind === 3) {
+            return `${this.kind}:${this.pubkey}`;
+        } else {
+            return this.tagId();
+        }
+    }
+
+    /**
      * Returns the id of the event or, if it's a parameterized event, the generated id of the event using "d" tag, pubkey, and kind.
      * @returns {string} The id
      */

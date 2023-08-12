@@ -18,6 +18,38 @@ describe("NDKEvent", () => {
         event.author = user1;
     });
 
+    describe("deduplicationKey", () => {
+        it("returns <kind>:<pubkey> for kinds 0", () => {
+            event.kind = 0;
+            const result = event.deduplicationKey();
+            expect(result).toEqual(`0:${user1.hexpubkey()}`);
+        });
+
+        it("returns <kind>:<pubkey> for kinds 3", () => {
+            event.kind = 3;
+            const result = event.deduplicationKey();
+            expect(result).toEqual(`3:${user1.hexpubkey()}`);
+        });
+
+        it("returns tagId for other kinds", () => {
+            event.kind = 2;
+            const spy = jest.spyOn(event, "tagId").mockReturnValue("mockTagId");
+            const result = event.deduplicationKey();
+            expect(result).toEqual("mockTagId");
+            expect(spy).toHaveBeenCalled();
+            spy.mockRestore();
+        });
+
+        it("returns parameterized tagId for kinds between 30k and 40k", () => {
+            event.kind = 35000;
+            const spy = jest.spyOn(event, "tagId").mockReturnValue("parameterizedTagId");
+            const result = event.deduplicationKey();
+            expect(result).toEqual("parameterizedTagId");
+            expect(spy).toHaveBeenCalled();
+            spy.mockRestore();
+        });
+    });
+
     describe("tag", () => {
         it("tags a user without a marker", () => {
             event.tag(user2);

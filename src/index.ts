@@ -231,15 +231,23 @@ export default class NDK extends EventEmitter {
                 false
             );
 
-            relaySetSubscription.on("event", (event: NDKEvent) => {
-                const existingEvent = events.get(event.tagId());
+            const onEvent = (event: NDKEvent) => {
+                const dedupKey = event.deduplicationKey();
+
+                const existingEvent = events.get(dedupKey);
                 if (existingEvent) {
                     event = dedupEvent(existingEvent, event);
                 }
 
                 event.ndk = this;
-                events.set(event.tagId(), event);
-            });
+                events.set(dedupKey, event);
+            };
+
+            // We want to inspect duplicated events
+            // so we can dedup them
+            relaySetSubscription.on("event", onEvent);
+            relaySetSubscription.on("event:dup", onEvent);
+
             relaySetSubscription.on("eose", () => {
                 resolve(new Set(events.values()));
             });

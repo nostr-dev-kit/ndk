@@ -1,5 +1,4 @@
-import { NostrEvent } from "../../events/index";
-import User from "../../user";
+import { NDKUser, NostrEvent } from "../../index.js";
 import { NDKPrivateKeySigner } from "./index";
 
 describe("NDKPrivateKeySigner", () => {
@@ -22,7 +21,7 @@ describe("NDKPrivateKeySigner", () => {
             "e8eb7464168139c6ccb9111f768777f332fa1289dff11244ccfe89970ff776d4";
         const signer = new NDKPrivateKeySigner(privateKey);
         const user = await signer.user();
-        expect(user).toBeInstanceOf(User);
+        expect(user).toBeInstanceOf(NDKUser);
         expect(user.hexpubkey()).toBe(
             "07f61c41b44a923952db82e6e7bcd184b059fe087f58f9d9a918da391f38d503"
         );

@@ -153,12 +153,11 @@ export class NDKSubscription extends EventEmitter {
         const filter = this.filters[0];
 
         // Check if there is a kind and no time-based filters
-        const hasKind = (filter.kinds?.length || 0) > 0;
         const noTimeConstraints = !filter.since && !filter.until;
         const noLimit = !filter.limit;
 
-        if (hasKind && noTimeConstraints && noLimit) {
-            let id = filter.kinds!.join(",");
+        if (noTimeConstraints && noLimit) {
+            let id = filter.kinds ? filter.kinds.join(",") : "";
             const keys = Object.keys(filter || {})
                 .sort()
                 .join("-");

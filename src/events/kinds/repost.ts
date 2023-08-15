@@ -1,3 +1,4 @@
+import { NDKSubscriptionOptions } from "../../subscription/index.js";
 import NDK, { NDKFilter } from "../../index.js";
 import NDKEvent, { NDKTag, NostrEvent } from "../index.js";
 
@@ -25,7 +26,10 @@ export class NDKRepost<T> extends NDKEvent {
      * @param klass Optional class to convert the events to.
      * @returns
      */
-    async repostedEvents(klass?: classWithConvertFunction<T>): Promise<T[]> {
+    async repostedEvents(
+        klass?: classWithConvertFunction<T>,
+        opts?: NDKSubscriptionOptions
+    ): Promise<T[]> {
         const items: T[] = [];
 
         if (!this.ndk) throw new Error("NDK instance not set");
@@ -34,7 +38,10 @@ export class NDKRepost<T> extends NDKEvent {
 
         for (const eventId of this.repostedEventIds()) {
             const filter = filterForId(eventId);
-            const event = await this.ndk.fetchEvent(filter);
+            const event = await this.ndk.fetchEvent(
+                filter,
+                opts
+            );
 
             if (event) {
                 items.push(klass ? klass.from(event) : (event as T));

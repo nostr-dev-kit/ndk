@@ -15,7 +15,7 @@ export class NDKArticle extends NDKEvent {
     /**
      * Creates a NDKArticle from an existing NDKEvent.
      *
-     * @param event NDKEVent to create the NDKArticle from.
+     * @param event NDKEvent to create the NDKArticle from.
      * @returns NDKArticle
      */
     static from(event: NDKEvent) {

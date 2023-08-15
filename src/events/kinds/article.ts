@@ -37,11 +37,29 @@ export class NDKArticle extends NDKEvent {
      * @param {string | undefined} title - The title to set for the article.
      */
     set title(title: string | undefined) {
-        if (title) {
-            this.tags.push(["title", title]);
-        } else {
-            this.removeTag("title");
-        }
+        this.removeTag("title");
+
+        if (title) this.tags.push(["title", title]);
+    }
+
+    /**
+     * Getter for the article image.
+     *
+     * @returns {string | undefined} - The article image if available, otherwise undefined.
+     */
+    get image(): string | undefined {
+        return this.tagValue("image");
+    }
+
+    /**
+     * Setter for the article image.
+     *
+     * @param {string | undefined} image - The image to set for the article.
+     */
+    set image(image: string | undefined) {
+        this.removeTag("image");
+
+        if (image) this.tags.push(["image", image]);
     }
 
     /**

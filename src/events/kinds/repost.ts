@@ -1,5 +1,5 @@
-import { NDKSubscriptionOptions } from "../../subscription/index.js";
 import NDK, { NDKFilter } from "../../index.js";
+import { NDKSubscriptionOptions } from "../../subscription/index.js";
 import NDKEvent, { NDKTag, NostrEvent } from "../index.js";
 
 type classWithConvertFunction<T> = {
@@ -38,10 +38,7 @@ export class NDKRepost<T> extends NDKEvent {
 
         for (const eventId of this.repostedEventIds()) {
             const filter = filterForId(eventId);
-            const event = await this.ndk.fetchEvent(
-                filter,
-                opts
-            );
+            const event = await this.ndk.fetchEvent(filter, opts);
 
             if (event) {
                 items.push(klass ? klass.from(event) : (event as T));

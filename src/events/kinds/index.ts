@@ -32,6 +32,7 @@ export enum NDKKind {
     MarketProduct = 30018,
     Article = 30023,
     AppSpecificData = 30078,
+    Classified = 30402,
     CategorizedHighlightList = 39802,
 
     // NIP-90: Data Vending Machines

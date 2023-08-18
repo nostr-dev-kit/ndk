@@ -92,7 +92,9 @@ You can pass an object with several options to a newly created instance of NDK.
 import NDK from "@nostr-dev-kit/ndk";
 
 // Create a new NDK instance with explicit relays
-const ndk = new NDK({ explicitRelayUrls: ["wss://a.relay", "wss://another.relay"] });
+const ndk = new NDK({
+    explicitRelayUrls: ["wss://a.relay", "wss://another.relay"],
+});
 ```
 
 Note: In normal client use, it's best practice to instantiate NDK as a singleton class. [See more below](#architecture-decisions--suggestions).
@@ -106,7 +108,9 @@ After you've instatiated NDK, you need to tell it to connect before you'll be ab
 import NDK from "@nostr-dev-kit/ndk";
 
 // Create a new NDK instance with explicit relays
-const ndk = new NDK({ explicitRelayUrls: ["wss://a.relay", "wss://another.relay"] });
+const ndk = new NDK({
+    explicitRelayUrls: ["wss://a.relay", "wss://another.relay"],
+});
 
 // Now connect to specified relays
 await ndk.connect();

@@ -1,13 +1,13 @@
 import NDK from "../../index.js";
 import { ContentTag, type NostrEvent } from "../index.js";
 import NDKEvent from "../index.js";
-import { NDKKind } from "./index.js";
 import { NDKTag } from "../index.js";
+import { NDKKind } from "./index.js";
 
 interface NDKClassifiedPriceTag {
-  amount: number;
-  currency?: string;
-  frequency?: string;
+    amount: number;
+    currency?: string;
+    frequency?: string;
 }
 
 /**
@@ -44,11 +44,9 @@ export class NDKClassified extends NDKEvent {
      * @param {string | undefined} title - The title to set for the classified.
      */
     set title(title: string | undefined) {
-        if (title) {
-            this.tags.push(["title", title]);
-        } else {
-            this.removeTag("title");
-        }
+        this.removeTag("title");
+
+        if (title) this.tags.push(["title", title]);
     }
 
     /**
@@ -57,116 +55,124 @@ export class NDKClassified extends NDKEvent {
      * @returns {string | undefined} - The classified summary if available, otherwise undefined.
      */
     get summary(): string | undefined {
-      return this.tagValue("summary");
-  }
-
-  /**
-   * Setter for the classified summary.
-   *
-   * @param {string | undefined} summary - The summary to set for the classified.
-   */
-  set summary(summary: string | undefined) {
-      if (summary) {
-          this.tags.push(["summary", summary]);
-      } else {
-          this.removeTag("summary");
-      }
-  }
-
-  /**
-   * Getter for the classified's publication timestamp.
-   *
-   * @returns {number | undefined} - The Unix timestamp of when the classified was published or undefined.
-   */
-  get published_at(): number | undefined {
-      const tag = this.tagValue("published_at");
-      if (tag) {
-          return parseInt(tag);
-      }
-      return undefined;
-  }
-
-  /**
-   * Setter for the classified's publication timestamp.
-   *
-   * @param {number | undefined} timestamp - The Unix timestamp to set for the classified's publication date.
-   */
-  set published_at(timestamp: number | undefined) {
-      this.removeTag("published_at"); // Removes any existing "published_at" tag.
-
-      if (timestamp !== undefined) {
-          this.tags.push(["published_at", timestamp.toString()]);
-      }
-  }
-
-  /**
-   * Getter for the classified location.
-   *
-   * @returns {string | undefined} - The classified location if available, otherwise undefined.
-   */
-  get location(): string | undefined {
-    return this.tagValue("location");
-  }
-
-  /**
-   * Setter for the classified location.
-   *
-   * @param {string | undefined} location - The location to set for the classified.
-   */
-  set location(location: string | undefined) {
-      if (location) {
-          this.tags.push(["location", location]);
-      } else {
-          this.removeTag("location");
-      }
-  }
-
-  /**
-   * Getter for the classified price.
-   *
-   * @returns {NDKClassifiedPriceTag | undefined} - The classified price if available, otherwise undefined.
-   */
-  get price(): NDKClassifiedPriceTag | undefined {
-    const priceTag = this.tags.find((tag) => tag[0] === 'price');
-    if (priceTag) {
-      return {amount: parseFloat(priceTag[1]), currency: priceTag[2], frequency: priceTag[3]};
-    } else {
-      return undefined;
+        return this.tagValue("summary");
     }
-  }
 
-  /**
-   * Setter for the classified price.
-   *
-   * @param {NDKClassifiedPriceTag | undefined} price - The price to set for the classified.
-   */
-  set price(priceTag: NDKClassifiedPriceTag | undefined) {
-      if (priceTag?.amount) {
-          const tag: NDKTag = ["price", priceTag.amount.toString()];
-          if(priceTag.currency) tag.push(priceTag.currency);
-          if(priceTag.frequency) tag.push(priceTag.frequency);
+    /**
+     * Setter for the classified summary.
+     *
+     * @param {string | undefined} summary - The summary to set for the classified.
+     */
+    set summary(summary: string | undefined) {
+        this.removeTag("summary");
 
-          this.tags.push(tag);
-      } else {
-          this.removeTag("price");
-      }
-  }
+        if (summary) this.tags.push(["summary", summary]);
+    }
 
-  /**
-   * Generates content tags for the classified.
-   *
-   * This method first checks and sets the publication date if not available,
-   * and then generates content tags based on the base NDKEvent class.
-   *
-   * @returns {ContentTag} - The generated content tags.
-   */
-  protected generateTags(): ContentTag {
-      super.generateTags();
+    /**
+     * Getter for the classified's publication timestamp.
+     *
+     * @returns {number | undefined} - The Unix timestamp of when the classified was published or undefined.
+     */
+    get published_at(): number | undefined {
+        const tag = this.tagValue("published_at");
 
-      if (!this.published_at) {
-          this.published_at = this.created_at;
-      }
+        if (tag) {
+            return parseInt(tag);
+        }
 
-      return super.generateTags();
-  }
+        return undefined;
+    }
+
+    /**
+     * Setter for the classified's publication timestamp.
+     *
+     * @param {number | undefined} timestamp - The Unix timestamp to set for the classified's publication date.
+     */
+    set published_at(timestamp: number | undefined) {
+        this.removeTag("published_at");
+
+        if (timestamp !== undefined) {
+            this.tags.push(["published_at", timestamp.toString()]);
+        }
+    }
+
+    /**
+     * Getter for the classified location.
+     *
+     * @returns {string | undefined} - The classified location if available, otherwise undefined.
+     */
+    get location(): string | undefined {
+        return this.tagValue("location");
+    }
+
+    /**
+     * Setter for the classified location.
+     *
+     * @param {string | undefined} location - The location to set for the classified.
+     */
+    set location(location: string | undefined) {
+        this.removeTag("location");
+
+        if (location) this.tags.push(["location", location]);
+    }
+
+    /**
+     * Getter for the classified price.
+     *
+     * @returns {NDKClassifiedPriceTag | undefined} - The classified price if available, otherwise undefined.
+     */
+    get price(): NDKClassifiedPriceTag | undefined {
+        const priceTag = this.tags.find((tag) => tag[0] === "price");
+        if (priceTag) {
+            return {
+                amount: parseFloat(priceTag[1]),
+                currency: priceTag[2],
+                frequency: priceTag[3],
+            };
+        } else {
+            return undefined;
+        }
+    }
+
+    /**
+     * Setter for the classified price.
+     *
+     * @param price - The price to set for the classified.
+     */
+    set price(priceTag: NDKClassifiedPriceTag | string | undefined) {
+        if (typeof priceTag === "string") {
+            priceTag = {
+                amount: parseFloat(priceTag),
+            };
+        }
+
+        if (priceTag?.amount) {
+            const tag: NDKTag = ["price", priceTag.amount.toString()];
+            if (priceTag.currency) tag.push(priceTag.currency);
+            if (priceTag.frequency) tag.push(priceTag.frequency);
+
+            this.tags.push(tag);
+        } else {
+            this.removeTag("price");
+        }
+    }
+
+    /**
+     * Generates content tags for the classified.
+     *
+     * This method first checks and sets the publication date if not available,
+     * and then generates content tags based on the base NDKEvent class.
+     *
+     * @returns {ContentTag} - The generated content tags.
+     */
+    protected generateTags(): ContentTag {
+        super.generateTags();
+
+        if (!this.published_at) {
+            this.published_at = this.created_at;
+        }
+
+        return super.generateTags();
+    }
 }

@@ -49,7 +49,14 @@ export class NDKList extends NDKEvent {
      * Returns the name of the list.
      */
     get name(): string | undefined {
-        return this.tagValue("name") ?? this.tagValue("d");
+        const nameTag = this.tagValue("name");
+        if (this.kind === NDKKind.MuteList && !nameTag) {
+            return "Mute";
+        } else if (this.kind === NDKKind.PinList && !nameTag) {
+            return "Pin";
+        } else {
+            return nameTag ?? this.tagValue("d");
+        }
     }
 
     /**

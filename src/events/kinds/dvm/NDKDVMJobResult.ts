@@ -16,6 +16,14 @@ export class NDKDVMJobResult extends NDKEvent {
         return new NDKDVMJobResult(event.ndk, event.rawEvent());
     }
 
+    setAmount(msat: number, invoice?: string) {
+        this.removeTag("amount");
+
+        const tag = ["amount", msat.toString()];
+        if (invoice) tag.push(invoice);
+        this.tags.push(tag);
+    }
+
     set result(result: string | undefined) {
         if (result === undefined) {
             this.content = "";

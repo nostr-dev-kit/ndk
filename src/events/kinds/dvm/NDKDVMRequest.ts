@@ -1,4 +1,8 @@
 import NDK, { NDKDVMJobResult, NDKEvent, NostrEvent } from "../../../index.js";
+import {
+    NDKDVMJobFeedback,
+    NDKDvmJobFeedbackStatus,
+} from "./NDKDVMJobFeedback.js";
 
 /**
  * NIP-90: Data vending machine
@@ -16,6 +20,17 @@ export class NDKDVMRequest extends NDKEvent {
 
     static from(event: NDKEvent) {
         return new NDKDVMRequest(event.ndk, event.rawEvent());
+    }
+
+    /**
+     * Create a new job feedback for this request
+     */
+    public createFeedback(status: NDKDvmJobFeedbackStatus | string) {
+        const feedback = new NDKDVMJobFeedback(this.ndk);
+        feedback.status = status;
+        feedback.tag(this, "job");
+
+        return feedback;
     }
 
     /**

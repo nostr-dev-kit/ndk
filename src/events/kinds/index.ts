@@ -33,6 +33,11 @@ export enum NDKKind {
     Article = 30023,
     AppSpecificData = 30078,
     Classified = 30402,
+
+    // NIP-89: App Metadata
+    AppRecommendation = 31989,
+    AppHandler = 31990,
+
     CategorizedHighlightList = 39802,
 
     // NIP-90: Data Vending Machines

@@ -26,6 +26,7 @@ export * from "./events/kinds/article.js";
 export * from "./events/kinds/dvm/index.js";
 export * from "./events/kinds/lists/index.js";
 export * from "./events/kinds/repost.js";
+export * from "./events/kinds/nip89/NDKAppHandler.js";
 export * from "./relay/index.js";
 export * from "./relay/sets/index.js";
 export * from "./signers/index.js";

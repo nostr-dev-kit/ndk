@@ -1,6 +1,6 @@
-import { NDKKind } from "../index.js";
-import NDKEvent, { NostrEvent } from "../../index.js";
 import NDK, { NDKUserProfile } from "../../../index.js";
+import NDKEvent, { NostrEvent } from "../../index.js";
+import { NDKKind } from "../index.js";
 
 /**
  * This is a NIP-89 app handler wrapper.
@@ -43,9 +43,12 @@ export class NDKAppHandlerEvent extends NDKEvent {
 
         return new Promise((resolve, reject) => {
             const author = this.author;
-            author.fetchProfile().then(() => {
-                resolve(author.profile);
-            }).catch(reject);
+            author
+                .fetchProfile()
+                .then(() => {
+                    resolve(author.profile);
+                })
+                .catch(reject);
         });
     }
 }

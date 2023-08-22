@@ -1,5 +1,6 @@
 import EventEmitter from "eventemitter3";
-import { Filter as NostrFilter, matchFilter, Sub, nip19 } from "nostr-tools";
+import { matchFilter, Sub, nip19 } from "nostr-tools";
+import { NDKKind } from "../events/kinds/index.js";
 import { EventPointer } from "nostr-tools/lib/nip19";
 import NDKEvent, { NDKEventId } from "../events/index.js";
 import NDK from "../index.js";
@@ -8,7 +9,16 @@ import { calculateRelaySetFromFilter } from "../relay/sets/calculate";
 import { NDKRelaySet } from "../relay/sets/index.js";
 import { queryFullyFilled } from "./utils.js";
 
-export type NDKFilter = NostrFilter;
+export type NDKFilter<K extends number = NDKKind> = {
+    ids?: string[];
+    kinds?: K[];
+    authors?: string[];
+    since?: number;
+    until?: number;
+    limit?: number;
+    search?: string;
+    [key: `#${string}`]: string[];
+};
 
 export enum NDKSubscriptionCacheUsage {
     // Only use cache, don't subscribe to relays

@@ -45,19 +45,21 @@ localStorage.debug = 'ndk:*'
 -   [x] NIP-01
 -   [x] Caching adapters
     -   Server-side
-        -   [x] [Redis](https://github.com/pablof7z/ndk-cache-redis)
+        -   [x] [Redis](https://github.com/nostr-dev-kit/ndk-cache-redis)
         -   [ ] In-memory
     -   Client-side
         -   [ ] LocalStorage
-        -   [ ] IndexDB
+        -   [x] IndexD ([Dexie](https://github.com/nostr-dev-kit/ndk-cache-dexie))
 -   [~] NIP-04: Encryption support
 -   [x] NIP-18: Repost
--   [ ] NIP-26: Event delegation
+-   [ ] ~~NIP-26~~ Won't add / NIP-26 is dead
 -   [ ] NIP-41: Relay authentication
 -   [x] NIP-57: Zaps
     -   [x] LUD06
     -   [x] LUD16
 -   [ ] NIP-65: Contacts' Relay list
+-   [x] NIP-89: Application Handlers
+-   [x] NIP-90: Data Vending Machines
 -   Subscription Management
     -   [x] Auto-grouping queries
     -   [x] Auto-closing subscriptions
@@ -68,7 +70,7 @@ localStorage.debug = 'ndk:*'
     -   [x] NIP-46
         -   [x] Permission tokens
 -   Relay discovery
-    -   [ ] Gossip-model (NIP-65)
+    -   [ ] Outbox-model (NIP-65)
     -   [ ] Implicit relays discovery following pubkey usage
     -   [ ] Implicit relays discovery following `t` tag usage
     -   [ ] Explicit relays blacklist

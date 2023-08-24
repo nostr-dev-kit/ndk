@@ -15,6 +15,10 @@ export class NDKDVMJobFeedback extends NDKEvent {
         this.kind ??= NDKKind.DVMJobFeedback;
     }
 
+    static from(event: NDKEvent) {
+        return new NDKDVMJobFeedback(event.ndk, event.rawEvent());
+    }
+
     get status(): NDKDvmJobFeedbackStatus | string | undefined {
         return this.tagValue("status");
     }

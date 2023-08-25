@@ -11,3 +11,4 @@ package-lock.json
 **/*.d.ts.map
 *.tgz
 .DS_Store
+.turbo

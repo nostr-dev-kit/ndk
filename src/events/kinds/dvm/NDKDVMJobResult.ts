@@ -9,7 +9,7 @@ import { NDKKind } from "../index.js";
 export class NDKDVMJobResult extends NDKEvent {
     constructor(ndk?: NDK, event?: NostrEvent) {
         super(ndk, event);
-        this.kind = NDKKind.DVMJobResult;
+        this.kind ??= NDKKind.DVMJobResult;
     }
 
     static from(event: NDKEvent) {

@@ -2,4 +2,5 @@ packages:
   - 'apps/*'
   - 'packages/*'
   - 'ndk/**'
+  - 'ndk-cache-dexie/**'
 

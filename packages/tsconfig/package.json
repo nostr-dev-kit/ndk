@@ -5,6 +5,8 @@
     "license": "MIT",
     "files": [
       "base.json",
+      "ndk.json",
+      "ndk-svelte.json",
       "svelte.json"
     ],
     "publishConfig": {

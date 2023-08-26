@@ -9,6 +9,9 @@ package-lock.json
 !jest.config.js
 **/*.d.ts
 **/*.d.ts.map
+!light-bolt11-decoder.d.ts
 *.tgz
 .DS_Store
 .turbo
+_local_
+justfile

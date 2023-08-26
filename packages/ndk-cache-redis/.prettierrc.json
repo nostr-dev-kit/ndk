@@ -1,7 +1,0 @@
-{
-  "importOrder": ["^[./]"],
-  "importOrderSeparation": true,
-  "tabWidth": 4,
-  "useTabs": false,
-  "semi": true
-}

@@ -2,11 +2,15 @@
 **/build
 **/dist
 **/lib
+!ndk-svelte-components/src/lib/
 **/.vscode
 justfile
 package-lock.json
 **/*.js
 !jest.config.js
+!svelte.config.js
+!tailwind.config.js
+!postcss.config.js
 **/*.d.ts
 **/*.d.ts.map
 !light-bolt11-decoder.d.ts
@@ -15,3 +19,4 @@ package-lock.json
 .turbo
 _local_
 justfile
+.svelte-kit/

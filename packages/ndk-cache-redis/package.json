@@ -1,0 +1,45 @@
+{
+    "name": "@nostr-dev-kit/ndk-cache-redis",
+    "version": "1.8.0",
+    "description": "NDK cache adapter for redis.",
+    "main": "dist/cjs/index.js",
+    "module": "dist/esm/index.js",
+    "umd:main": "dist/umd/index.js",
+    "types": "dist/types/index.d.js",
+    "scripts": {
+        "dev": "node tools/cleanup esm && tsc -w -p config/tsconfig.esm.json",
+        "build": "npm run build:cjs && npm run build:esm && npm run build:types",
+        "build:cjs": "node tools/cleanup cjs && tsc -p config/tsconfig.cjs.json",
+        "build:esm": "node tools/cleanup esm && tsc -p config/tsconfig.esm.json",
+        "build:types": "node tools/cleanup types && tsc -p config/tsconfig.types.json",
+        "lint": "eslint src/**/*.ts"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/nostr-dev-kit/ndk-cache-redis.git"
+    },
+    "keywords": [
+        "nostr"
+    ],
+    "author": "pablof7z",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/nostr-dev-kit/ndk-cache-redis/issues"
+    },
+    "homepage": "https://github.com/nostr-dev-kit/ndk-cache-redis#readme",
+    "devDependencies": {
+        "@types/debug": "^4.1.7",
+        "@types/node": "^18.15.11",
+        "@typescript-eslint/eslint-plugin": "^5.57.0",
+        "@typescript-eslint/parser": "^5.57.0",
+        "eslint": "^8.37.0",
+        "eslint-config-prettier": "^8.8.0",
+        "eslint-plugin-import": "^2.27.5",
+        "typescript": "^5.0.3"
+    },
+    "dependencies": {
+        "@nostr-dev-kit/ndk": "^0.8.7",
+        "debug": "^4.3.4",
+        "ioredis": "^5.3.1"
+    }
+}

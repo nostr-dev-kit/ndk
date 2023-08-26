@@ -1,0 +1,11 @@
+:root {
+    --color-shadow: rgba(0, 0, 0, 0.2);
+    --color-border: #eaeaea;
+
+    --color-primary: #0070f3;
+}
+
+a {
+    color: var(--color-primary);
+    text-decoration: none;
+}

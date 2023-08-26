@@ -6,6 +6,8 @@
     "files": [
       "base.json",
       "ndk.json",
+      "ndk-cache-dexie.json",
+      "ndk-cahce-redis.json",
       "ndk-svelte.json",
       "svelte.json"
     ],

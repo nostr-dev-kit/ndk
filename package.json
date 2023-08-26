@@ -23,6 +23,7 @@
     "packages/*",
     "ndk/*",
     "ndk-cache-dexie/*",
-    "ndk-cache-redis/*"
+    "ndk-cache-redis/*",
+    "ndk-svelte/*"
   ]
 }

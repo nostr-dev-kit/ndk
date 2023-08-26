@@ -4,6 +4,16 @@
 
 NDK is a [nostr](<[url](https://github.com/nostr-protocol/nostr)>) development kit that makes the experience of building Nostr-related applications, whether they are relays, clients, or anything in between, better, more reliable and overall nicer to work with than existing solutions.
 
+## Monorepo
+
+This repository contains multiple packages:
+
+-   [@nostr-dev-kit/ndk](./packages/ndk) – The core NDK package
+-   [@nostr-dev-kit/ndk-cache-dexie](./packages/ndk-cache-dexie) – A caching adapter for the browser using [Dexie](https://dexie.org/)
+-   [@nostr-dev-kit/ndk-cache-redis](./packages/ndk-cache-redis) – A caching adapter for the server using [Redis](https://redis.io/)
+-   [@nostr-dev-kit/ndk-svelte](./packages/ndk-svelte) – Convenience functionalities to make using Svelte+NDK nicer.
+-   [@nostr-dev-kit/ndk-svelte-components](./packages/ndk-svelte-components) – Minimally styled Svelte components for common NDK use cases.
+
 ## NDK Objectives
 
 1. The core goal of NDK is to improve the decentralization of Nostr via intelligent conventions and data discovery features without depending on any one central point of coordination (such as large relays or centralized search providers).

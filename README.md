@@ -8,11 +8,11 @@ NDK is a [nostr](<[url](https://github.com/nostr-protocol/nostr)>) development k
 
 This repository contains multiple packages:
 
--   [@nostr-dev-kit/ndk](./packages/ndk) – The core NDK package
--   [@nostr-dev-kit/ndk-cache-dexie](./packages/ndk-cache-dexie) – A caching adapter for the browser using [Dexie](https://dexie.org/)
--   [@nostr-dev-kit/ndk-cache-redis](./packages/ndk-cache-redis) – A caching adapter for the server using [Redis](https://redis.io/)
--   [@nostr-dev-kit/ndk-svelte](./packages/ndk-svelte) – Convenience functionalities to make using Svelte+NDK nicer.
--   [@nostr-dev-kit/ndk-svelte-components](./packages/ndk-svelte-components) – Minimally styled Svelte components for common NDK use cases.
+-   [@nostr-dev-kit/ndk](./ndk) – The core NDK package
+-   [@nostr-dev-kit/ndk-cache-dexie](./ndk-cache-dexie) – A caching adapter for the browser using [Dexie](https://dexie.org/)
+-   [@nostr-dev-kit/ndk-cache-redis](./ndk-cache-redis) – A caching adapter for the server using [Redis](https://redis.io/)
+-   [@nostr-dev-kit/ndk-svelte](./ndk-svelte) – Convenience functionalities to make using Svelte+NDK nicer.
+-   [@nostr-dev-kit/ndk-svelte-components](./ndk-svelte-components) – Minimally styled Svelte components for common NDK use cases.
 
 ## NDK Objectives
 

@@ -1,7 +1,6 @@
 import debug from "debug";
 import EventEmitter from "eventemitter3";
 import { Relay, relayInit, Sub } from "nostr-tools";
-import "websocket-polyfill";
 import NDKEvent, { NDKTag, NostrEvent } from "../events/index.js";
 import { NDKSubscription } from "../subscription/index.js";
 import User from "../user/index.js";

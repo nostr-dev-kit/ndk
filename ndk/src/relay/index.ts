@@ -132,7 +132,8 @@ export class NDKRelay extends EventEmitter {
             this.connect()
                 .then(() => {
                     this.debug("Reconnected");
-                }).catch((err) => {
+                })
+                .catch((err) => {
                     this.debug("Reconnect failed", err);
 
                     if (attempt < 5) {

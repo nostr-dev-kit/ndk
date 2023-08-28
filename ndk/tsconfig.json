@@ -3,4 +3,3 @@
     "include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.ts"],
     "exclude": ["dist", "build", "node_modules"]
 }
-  

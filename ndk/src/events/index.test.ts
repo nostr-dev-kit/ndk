@@ -235,7 +235,9 @@ describe("NDKEvent", () => {
             });
 
             expect(event1.replaceableDTag()).toEqual("d-code");
-            expect(() => event2.replaceableDTag()).toThrowError("Event is not a parameterized replaceable event");
+            expect(() => event2.replaceableDTag()).toThrowError(
+                "Event is not a parameterized replaceable event"
+            );
         });
     });
 });

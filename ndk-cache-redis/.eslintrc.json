@@ -1,0 +1,27 @@
+{
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "prettier"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "sourceType": "module",
+        "ecmaVersion": 2021
+    },
+    "plugins": ["@typescript-eslint"],
+    "env": {
+        "jest": true
+    },
+    "rules": {
+        "@typescript-eslint/no-unused-vars": ["warn", { "args": "none" }], // No warnings for unused function arguments, which might be used in the future.
+        "no-constant-binary-expression": "error",
+        "semi": ["error", "always"]
+    },
+    "globals": {
+        "Buffer": true,
+        "expect": true,
+        "process": true,
+        "test": true
+    }
+}

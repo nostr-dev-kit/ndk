@@ -1,4 +1,6 @@
 {
+    "$schema": "https://json.schemastore.org/tsconfig",
+    "display": "NDK",
     "compilerOptions": {
         "module": "esnext",
         "target": "esnext",

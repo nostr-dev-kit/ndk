@@ -1,0 +1,13 @@
+**/node_modules
+**/build
+**/dist
+**/lib
+**/.vscode
+justfile
+package-lock.json
+**/*.js
+!jest.config.js
+**/*.d.ts
+**/*.d.ts.map
+*.tgz
+.DS_Store

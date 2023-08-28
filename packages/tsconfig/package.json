@@ -1,0 +1,17 @@
+{
+    "name": "@nostr-dev-kit/tsconfig",
+    "version": "0.0.0",
+    "private": true,
+    "license": "MIT",
+    "files": [
+      "base.json",
+      "ndk.json",
+      "ndk-cache-dexie.json",
+      "ndk-cahce-redis.json",
+      "ndk-svelte.json",
+      "svelte.json"
+    ],
+    "publishConfig": {
+      "access": "public"
+    }
+  }

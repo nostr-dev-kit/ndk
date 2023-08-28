@@ -117,17 +117,33 @@ export class NDKRelay extends EventEmitter {
     /**
      * Called when the relay is unexpectedly disconnected.
      */
-    private handleReconnection() {
+    private handleReconnection(attempt = 0): void {
         if (this.isFlapping()) {
             this.emit("flapping", this, this._connectionStats);
             this._status = NDKRelayStatus.FLAPPING;
         }
 
-        if (this.connectedAt && Date.now() - this.connectedAt < 5000) {
-            setTimeout(() => this.connect(), 60000);
-        } else {
-            this.connect();
-        }
+        const reconnectDelay = this.connectedAt
+            ? Math.max(0, 60000 - (Date.now() - this.connectedAt))
+            : 0;
+
+        setTimeout(() => {
+            this._status = NDKRelayStatus.RECONNECTING;
+            this.connect()
+                .then(() => {
+                    this.debug("Reconnected");
+                }).catch((err) => {
+                    this.debug("Reconnect failed", err);
+
+                    if (attempt < 5) {
+                        setTimeout(() => {
+                            this.handleReconnection(attempt + 1);
+                        }, 60000);
+                    } else {
+                        this.debug("Reconnect failed after 5 attempts");
+                    }
+                });
+        }, reconnectDelay);
     }
 
     get status(): NDKRelayStatus {
@@ -142,6 +158,7 @@ export class NDKRelay extends EventEmitter {
             this.updateConnectionStats.attempt();
             this._status = NDKRelayStatus.CONNECTING;
             await this.relay.connect();
+            console.log(`after this.relay.connect`);
         } catch (e) {
             this.debug("Failed to connect", e);
             this._status = NDKRelayStatus.DISCONNECTED;

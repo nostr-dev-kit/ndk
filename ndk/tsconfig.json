@@ -1,0 +1,6 @@
+{
+    "extends": "@nostr-dev-kit/tsconfig/ndk.json",
+    "include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.ts"],
+    "exclude": ["dist", "build", "node_modules"]
+}
+  

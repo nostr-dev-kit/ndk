@@ -1,0 +1,37 @@
+{
+  "name": "@nostr-dev-kit/ndk-svelte",
+  "version": "0.8.21-1",
+  "description": "This package provides convenience functionalities to make usage of NDK with Svelte nicer.",
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "exports": {
+    "import": "./dist/index.mjs",
+    "require": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "nostr",
+    "nostr-dev-kit",
+    "ndk",
+    "svelte"
+  ],
+  "author": "pablof7z",
+  "license": "MIT",
+  "dependencies": {
+    "@nostr-dev-kit/ndk": "*",
+    "svelte": "^4.1.2",
+    "typescript": "^5.1.6"
+  },
+  "devDependencies": {
+    "@nostr-dev-kit/tsconfig": "*",
+    "tsup": "^7.2.0"
+  }
+}

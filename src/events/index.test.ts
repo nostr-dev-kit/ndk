@@ -190,4 +190,52 @@ describe("NDKEvent", () => {
             expect(event2.tagReference()).toEqual(["e", "eventid"]);
         });
     });
+
+    describe("tagId", () => {
+        it("returns the correct tagId for a given event", () => {
+            const event1 = new NDKEvent(ndk, {
+                created_at: Date.now() / 1000,
+                content: "",
+                kind: 30000,
+                pubkey: "pubkey",
+                tags: [["d", "d-code"]],
+            });
+
+            const event2 = new NDKEvent(ndk, {
+                created_at: Date.now() / 1000,
+                content: "",
+                tags: [],
+                kind: 1,
+                pubkey: "pubkey",
+                id: "eventid",
+            });
+
+            expect(event1.tagId()).toEqual("30000:pubkey:d-code");
+            expect(event2.tagId()).toEqual("eventid");
+        });
+    });
+
+    describe("replacableDTag", () => {
+        it("returns the correct tagId for a given event", () => {
+            const event1 = new NDKEvent(ndk, {
+                created_at: Date.now() / 1000,
+                content: "",
+                kind: 30000,
+                pubkey: "pubkey",
+                tags: [["d", "d-code"]],
+            });
+
+            const event2 = new NDKEvent(ndk, {
+                created_at: Date.now() / 1000,
+                content: "",
+                tags: [],
+                kind: 1,
+                pubkey: "pubkey",
+                id: "eventid",
+            });
+
+            expect(event1.replaceableDTag()).toEqual("d-code");
+            expect(() => event2.replaceableDTag()).toThrowError("Event is not a parameterized replaceable event");
+        });
+    });
 });

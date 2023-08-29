@@ -19,7 +19,7 @@
   ],
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build && npm run package",
+    "build": "vite build && pnpm run package",
     "preview": "vite preview",
     "package": "svelte-kit sync && svelte-package && publint",
     "prepublishOnly": "npm run package",
@@ -48,7 +48,7 @@
     "@storybook/testing-library": "^0.2.0",
     "@storybook/theming": "^7.3.1",
     "@sveltejs/adapter-auto": "^2.1.0",
-    "@sveltejs/kit": "^1.22.6",
+    "@sveltejs/kit": "^1.24.0",
     "@sveltejs/package": "^2.2.1",
     "@types/ramda": "^0.29.3",
     "@typescript-eslint/eslint-plugin": "^6.4.0",

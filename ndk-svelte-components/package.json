@@ -41,7 +41,7 @@
         "@storybook/addon-essentials": "^7.3.1",
         "@storybook/addon-interactions": "^7.3.1",
         "@storybook/addon-links": "^7.3.1",
-        "@storybook/addon-mdx-gfm": "^7.3.1",
+        "@storybook/addon-mdx-gfm": "^7.4.0",
         "@storybook/blocks": "^7.3.1",
         "@storybook/manager-api": "^7.3.1",
         "@storybook/svelte": "^7.3.1",

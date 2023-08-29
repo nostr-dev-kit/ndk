@@ -1,5 +1,5 @@
 <script lang="ts">
-    export let value;
+    export let value: any;
     export let showMedia = false;
 
     const isImage = value.url.match(/^.*\.(jpg|jpeg|png|webp|gif|avif|svg)/gi);
@@ -13,18 +13,19 @@
     {#if isImage}
         <img src={value.url} alt={value.url} />
     {:else if isVideo}
-        <video key={value.url} src={value.url} controls />
+        <!-- svelte-ignore a11y-media-has-caption -->
+        <video src={value.url} controls />
     {:else if isAudio}
         <audio src={value.url} controls>
-            <a href={value.url}>{value.url.replace(/https?:\/\/(www\.)?/, '')}</a>
+            <a href={value.url}>{value.url.replace(/https?:\/\/(www\.)?/, "")}</a>
         </audio>
     {:else}
         <a href={value.url}>
-            {value.url.replace(/https?:\/\/(www\.)?/, '')}
+            {value.url.replace(/https?:\/\/(www\.)?/, "")}
         </a>
     {/if}
 {:else}
     <a href={value.url}>
-        {value.url.replace(/https?:\/\/(www\.)?/, '')}
+        {value.url.replace(/https?:\/\/(www\.)?/, "")}
     </a>
 {/if}

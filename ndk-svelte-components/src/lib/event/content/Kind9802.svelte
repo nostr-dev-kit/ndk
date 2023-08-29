@@ -5,7 +5,6 @@
     import { urlIsMedia } from "$lib/utils/notes";
     import DOMPurify from "isomorphic-dompurify";
 
-    export let ndk: NDK;
     export let event: NDKEvent;
     // export const showMedia = false; // Unused so far
 
@@ -13,7 +12,7 @@
     let context = event?.tagValue("context");
     context = context?.replace(
         event?.content as string,
-        `<span class='highlight--content'>${event?.content}</span>`,
+        `<span class='highlight--content'>${event?.content}</span>`
     );
 </script>
 

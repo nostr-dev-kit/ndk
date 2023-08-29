@@ -18,7 +18,7 @@
     "!dist/**/*.spec.*"
   ],
   "scripts": {
-    "dev": "vite dev",
+    "dev": "pnpm build --watch",
     "build": "vite build && npm run package",
     "preview": "vite preview",
     "package": "svelte-kit sync && svelte-package && publint",
@@ -41,6 +41,7 @@
     "@storybook/addon-essentials": "^7.3.1",
     "@storybook/addon-interactions": "^7.3.1",
     "@storybook/addon-links": "^7.3.1",
+    "@storybook/addon-mdx-gfm": "^7.3.1",
     "@storybook/blocks": "^7.3.1",
     "@storybook/manager-api": "^7.3.1",
     "@storybook/svelte": "^7.3.1",

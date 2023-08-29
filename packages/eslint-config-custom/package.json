@@ -1,4 +1,5 @@
 {
+  "private": true,
   "name": "@nostr-dev-kit/eslint-config-custom",
   "version": "0.0.0",
   "main": "index.js",

@@ -28,7 +28,7 @@
 {:else if event.kind === 1985}
     <!-- <Kind1985 {event} {anchorId} {maxLength} {showEntire} /> -->
 {:else if event.kind === 9802}
-    <Kind9802 {ndk} {event} />
+    <Kind9802 {event} />
 {:else if event.kind === 30000}
     <Kind30000 {ndk} list={NDKList.from(event)} />
 {:else if event.kind === 30001}

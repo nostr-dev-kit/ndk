@@ -55,9 +55,10 @@
 
 <span class="name">
     {#await fetchProfilePromise}
+        <span class="nip05 {$$props.class}" style={$$props.style}></span>
     {:then userProfile}
         <span class="nip05 {$$props.class}" style={$$props.style}>
-            {prettifyNip05(userProfile)}
+            {userProfile.nip05 ? prettifyNip05(userProfile.nip05) : ""}
         </span>
     {:catch error}
         <span class="nip05--error {$$props.class}" style={$$props.style}>

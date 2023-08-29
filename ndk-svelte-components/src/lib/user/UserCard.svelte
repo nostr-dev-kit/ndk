@@ -58,7 +58,7 @@
     .userCard {
         display: flex;
         flex-direction: row;
-        align-items: start;
+        align-items: flex-start;
         gap: 1rem;
         padding: 1rem;
         border: 1px solid var(--color-border);

@@ -40,6 +40,7 @@
 
     {#if open}
         <ul class="event-card--dropdown-menu">
+            <slot />
             <li>
                 <button on:click={() => dispatch("open")} class="flex flex-row items-center gap-3">
                     <Link size="16" />

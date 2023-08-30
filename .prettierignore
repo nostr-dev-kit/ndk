@@ -2,3 +2,5 @@ dist
 docs
 lib
 coverage
+**/.changeset
+**/.svelte-kit

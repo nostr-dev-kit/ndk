@@ -2,12 +2,12 @@
     "$schema": "https://json.schemastore.org/tsconfig",
     "display": "NDK Cache Dexie",
     "compilerOptions": {
-        "target": "esnext", 
+        "target": "esnext",
         "declaration": true,
         "declarationMap": true,
         "strict": true,
         "moduleResolution": "node",
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true
-	  }
-  }
+    }
+}

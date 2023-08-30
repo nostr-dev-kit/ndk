@@ -3,23 +3,23 @@
     "display": "NDK Svelte Components",
     "extends": "./base.json",
     "compilerOptions": {
-		"moduleResolution": "node",
-		"module": "es2020",
-		"lib": ["es2020", "DOM"],
-		"target": "es2020",
-		"isolatedModules": true,
-		"resolveJsonModule": true,
-		"sourceMap": true,
-		"esModuleInterop": true,
-		"skipLibCheck": true,
-		"forceConsistentCasingInFileNames": true,
-		"baseUrl": ".",
-		"allowJs": true,
-		"checkJs": true,
-		"paths": {
-			"$lib": ["src/lib"],
-			"$lib/*": ["src/lib/*"]
-		},
+        "moduleResolution": "node",
+        "module": "es2020",
+        "lib": ["es2020", "DOM"],
+        "target": "es2020",
+        "isolatedModules": true,
+        "resolveJsonModule": true,
+        "sourceMap": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "baseUrl": ".",
+        "allowJs": true,
+        "checkJs": true,
+        "paths": {
+            "$lib": ["src/lib"],
+            "$lib/*": ["src/lib/*"]
+        },
         "strict": false
-	}
-  }
+    }
+}

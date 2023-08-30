@@ -1,5 +1,5 @@
 {
-  "extends": "@nostr-dev-kit/tsconfig/ndk-cache-redis.json",
-  "include": ["src/**/*"],
-  "exclude": ["dist", "build", "node_modules"]
+    "extends": "@nostr-dev-kit/tsconfig/ndk-cache-redis.json",
+    "include": ["src/**/*"],
+    "exclude": ["dist", "build", "node_modules"]
 }

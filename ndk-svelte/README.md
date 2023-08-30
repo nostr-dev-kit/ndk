@@ -16,10 +16,10 @@ when events arrive.
 Events in the store will appear in a set ordered by `created_at`.
 
 ```typescript
-import NDKSvelte from '@nostr-dev-kit/ndk-svelte';
+import NDKSvelte from "@nostr-dev-kit/ndk-svelte";
 
 const ndk = new NDKSvelte({
-    explicitRelayUrls: ['wss://relay.f7z.io'],
+    explicitRelayUrls: ["wss://relay.f7z.io"],
 });
 ```
 
@@ -61,11 +61,11 @@ NDK-svelte introduces a reference counting mechanism through the ref and unref m
 
 ### Benefits:
 
- * **Optimized Lifecycle**: Instead of starting a new subscription every time a component mounts, and ending it when it unmounts, you can reuse an existing subscription if another component is already using it.
+-   **Optimized Lifecycle**: Instead of starting a new subscription every time a component mounts, and ending it when it unmounts, you can reuse an existing subscription if another component is already using it.
 
- * **Resource Efficiency**: By preventing redundant subscriptions, you save both network bandwidth and processing power.
+-   **Resource Efficiency**: By preventing redundant subscriptions, you save both network bandwidth and processing power.
 
- * **Synchronization**: Ensures that multiple components referencing the same data are synchronized with a single data source.
+-   **Synchronization**: Ensures that multiple components referencing the same data are synchronized with a single data source.
 
 ### How to use:
 
@@ -92,10 +92,11 @@ onDestroy(() => {
 You can mount this component as many times as you want, and the subscription will only be started once. When the last component unmounts, the subscription will be terminated.
 
 # Notes
+
 If you are interested in NDK and Svelte you might want to checkout the
 [ndk-svelte-components](https://github.com/nostr-dev-kit/ndk-svelte-components) package
 which provides some components to make it easier to build nostr apps with Svelte.
 
 # Authors
 
-* [@pablof7z](https://nostr.com/npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft)
+-   [@pablof7z](https://nostr.com/npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft)

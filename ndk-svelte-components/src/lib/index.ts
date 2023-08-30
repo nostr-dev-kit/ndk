@@ -4,6 +4,7 @@ import EventContent from "./event/content/EventContent.svelte";
 import RelayList from "./relay/RelayList.svelte";
 import Avatar from "./user/Avatar.svelte";
 import Name from "./user/Name.svelte";
+import Nip05 from "./user/Nip05.svelte";
 import UserCard from "./user/UserCard.svelte";
 
 export * from "./utils";
@@ -17,6 +18,7 @@ export {
     // User
     Avatar,
     Name,
+    Nip05,
     UserCard,
 
     // Relay

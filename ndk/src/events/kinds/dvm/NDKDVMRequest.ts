@@ -1,4 +1,4 @@
-import NDK, { NDKDVMJobResult, NDKEvent, NostrEvent } from "../../../index.js";
+import NDK, { NDKDVMJobResult, NDKEvent, NDKTag, NostrEvent } from "../../../index.js";
 import {
     NDKDVMJobFeedback,
     NDKDvmJobFeedbackStatus,
@@ -86,5 +86,17 @@ export class NDKDVMRequest extends NDKEvent {
     get output(): string[] | undefined {
         const outputTag = this.getMatchingTags("output")[0];
         return outputTag ? outputTag.slice(1) : undefined;
+    }
+
+    get params(): string[][] {
+        const paramTags = this.getMatchingTags("param");
+        return paramTags.map((t: NDKTag) => t.slice(1));
+    }
+
+    public getParam(name: string): string | undefined {
+        const paramTag = this.getMatchingTags("param").find(
+            (t: NDKTag) => t[1] === name
+        );
+        return paramTag ? paramTag[2] : undefined;
     }
 }

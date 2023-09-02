@@ -9,6 +9,7 @@ import { NDKKind } from "./kinds/index.js";
 import { decrypt, encrypt } from "./nip04.js";
 import { encode } from "./nip19.js";
 import { repost } from "./repost.js";
+import { calculateRelaySetFromEvent } from "../relay/sets/calculate.js";
 
 export type NDKEventId = string;
 export type NDKTag = string[];
@@ -245,7 +246,14 @@ export default class NDKEvent extends EventEmitter {
                 "NDKEvent must be associated with an NDK instance to publish"
             );
 
-        return this.ndk.publish(this, relaySet, timeoutMs);
+        if (!relaySet) {
+            // If we have a devWriteRelaySet, use it to publish all events
+            relaySet =
+                this.ndk.devWriteRelaySet ||
+                calculateRelaySetFromEvent(this.ndk, this);
+        }
+
+        return relaySet.publish(this, timeoutMs);
     }
 
     /**

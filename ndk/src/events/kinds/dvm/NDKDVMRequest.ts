@@ -1,13 +1,10 @@
-import NDK, {
-    NDKDVMJobResult,
-    NDKEvent,
-    NDKTag,
-    NostrEvent,
-} from "../../../index.js";
+import { NDK } from "../../../ndk/index.js";
+import { NDKEvent, NostrEvent, NDKTag } from "../../index.js";
 import {
     NDKDVMJobFeedback,
     NDKDvmJobFeedbackStatus,
 } from "./NDKDVMJobFeedback.js";
+import { NDKDVMJobResult } from "./NDKDVMJobResult.js";
 
 /**
  * NIP-90: Data vending machine

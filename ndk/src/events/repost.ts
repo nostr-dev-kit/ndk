@@ -29,7 +29,7 @@ export async function repost(
     const e = new NDKEvent(this.ndk, {
         kind: getKind(this),
         content: "",
-        pubkey: user.hexpubkey(),
+        pubkey: user.hexpubkey,
     } as NostrEvent);
     e.tag(this);
 

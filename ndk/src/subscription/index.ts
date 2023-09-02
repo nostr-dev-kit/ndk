@@ -3,11 +3,11 @@ import { matchFilter, Sub, nip19 } from "nostr-tools";
 import { EventPointer } from "nostr-tools/lib/nip19";
 import { NDKEvent, NDKEventId } from "../events/index.js";
 import { NDKKind } from "../events/kinds/index.js";
-import NDK from "../index.js";
 import { NDKRelay } from "../relay";
 import { calculateRelaySetFromFilter } from "../relay/sets/calculate";
 import { NDKRelaySet } from "../relay/sets/index.js";
 import { queryFullyFilled } from "./utils.js";
+import { NDK } from "../ndk/index.js";
 
 export type NDKFilter<K extends number = NDKKind> = {
     ids?: string[];

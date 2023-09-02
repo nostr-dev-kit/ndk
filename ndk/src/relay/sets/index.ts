@@ -1,12 +1,12 @@
 import { sha256 } from "@noble/hashes/sha256";
 import { bytesToHex } from "@noble/hashes/utils";
 import { NDKEvent } from "../../events/index.js";
-import type NDK from "../../index.js";
 import {
     NDKSubscription,
     NDKSubscriptionGroup,
 } from "../../subscription/index.js";
 import { NDKRelay, NDKRelayStatus } from "../index.js";
+import { NDK } from "../../ndk/index.js";
 
 /**
  * A relay set is a group of relays. This grouping can be short-living, for a single

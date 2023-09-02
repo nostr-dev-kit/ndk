@@ -1,11 +1,8 @@
 import EventEmitter from "eventemitter3";
-import NDK, {
-    NDKEvent,
-    NDKFilter,
-    NDKSigner,
-    NDKSubscription,
-    NostrEvent,
-} from "../../index.js";
+import { NDKSigner } from "..";
+import { NDKEvent, NostrEvent } from "../../events";
+import { NDK } from "../../ndk";
+import { NDKFilter, NDKSubscription } from "../../subscription";
 
 export interface NDKRpcRequest {
     id: string;
@@ -95,7 +92,7 @@ export class NDKNostrRpc extends EventEmitter {
             kind,
             content: JSON.stringify(res),
             tags: [["p", remotePubkey]],
-            pubkey: localUser.hexpubkey(),
+            pubkey: localUser.hexpubkey,
         } as NostrEvent);
 
         event.content = await this.signer.encrypt(remoteUser, event.content);
@@ -130,7 +127,7 @@ export class NDKNostrRpc extends EventEmitter {
             kind,
             content: JSON.stringify(request),
             tags: [["p", remotePubkey]],
-            pubkey: localUser.hexpubkey(),
+            pubkey: localUser.hexpubkey,
         } as NostrEvent);
 
         event.content = await this.signer.encrypt(remoteUser, event.content);

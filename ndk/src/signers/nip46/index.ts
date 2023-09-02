@@ -1,9 +1,8 @@
-import NDK, {
-    NDKPrivateKeySigner,
-    NDKSigner,
-    NDKUser,
-    NostrEvent,
-} from "../../index.js";
+import { NostrEvent } from "../../events/index.js";
+import { NDK } from "../../ndk/index.js";
+import { NDKUser } from "../../user/index.js";
+import { NDKSigner } from "../index.js";
+import { NDKPrivateKeySigner } from "../private-key/index.js";
 import { NDKNostrRpc, NDKRpcResponse } from "./rpc.js";
 
 /**
@@ -55,12 +54,12 @@ export class NDKNip46Signer implements NDKSigner {
 
         if (tokenOrRemotePubkey.includes("#")) {
             const parts = tokenOrRemotePubkey.split("#");
-            remotePubkey = new NDKUser({ npub: parts[0] }).hexpubkey();
+            remotePubkey = new NDKUser({ npub: parts[0] }).hexpubkey;
             token = parts[1];
         } else if (tokenOrRemotePubkey.startsWith("npub")) {
             remotePubkey = new NDKUser({
                 npub: tokenOrRemotePubkey,
-            }).hexpubkey();
+            }).hexpubkey;
         } else {
             remotePubkey = tokenOrRemotePubkey;
         }
@@ -95,7 +94,7 @@ export class NDKNip46Signer implements NDKSigner {
         // Generates subscription, single subscription for the lifetime of our connection
         await this.rpc.subscribe({
             kinds: [24133 as number],
-            "#p": [localUser.hexpubkey()],
+            "#p": [localUser.hexpubkey],
         });
 
         return new Promise((resolve, reject) => {
@@ -103,7 +102,7 @@ export class NDKNip46Signer implements NDKSigner {
             // introducing a small delay here to give a clear priority to the subscription
             // to happen first
             setTimeout(() => {
-                const connectParams = [localUser.hexpubkey()];
+                const connectParams = [localUser.hexpubkey];
 
                 if (this.token) {
                     connectParams.push(this.token);
@@ -133,7 +132,7 @@ export class NDKNip46Signer implements NDKSigner {
             this.rpc.sendRequest(
                 this.remotePubkey,
                 "nip04_encrypt",
-                [recipient.hexpubkey(), value],
+                [recipient.hexpubkey, value],
                 24133,
                 (response: NDKRpcResponse) => {
                     if (!response.error) {
@@ -155,7 +154,7 @@ export class NDKNip46Signer implements NDKSigner {
             this.rpc.sendRequest(
                 this.remotePubkey,
                 "nip04_decrypt",
-                [sender.hexpubkey(), value],
+                [sender.hexpubkey, value],
                 24133,
                 (response: NDKRpcResponse) => {
                     if (!response.error) {

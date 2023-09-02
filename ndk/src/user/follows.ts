@@ -1,12 +1,19 @@
 import { nip19 } from "nostr-tools";
-import NDKUser from "./index.js";
+import {NDKUser} from "./index.js";
 
-export async function follows(this: NDKUser): Promise<Set<NDKUser>> {
+/**
+ * @param outbox - Enables outbox data fetching for the returned users (if the NDK instance has outbox enabled)
+ * @returns
+ */
+export async function follows(
+    this: NDKUser,
+    outbox?: boolean
+): Promise<Set<NDKUser>> {
     if (!this.ndk) throw new Error("NDK not set");
 
     const contactListEvents = await this.ndk.fetchEvents({
         kinds: [3],
-        authors: [this.hexpubkey()],
+        authors: [this.hexpubkey],
     });
 
     if (contactListEvents) {

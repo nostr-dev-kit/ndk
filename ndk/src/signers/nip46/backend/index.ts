@@ -1,5 +1,4 @@
 import { verifySignature, Event } from "nostr-tools";
-import NDK, { NDKEvent, NDKPrivateKeySigner, NDKUser } from "../../../index.js";
 import { NDKNostrRpc } from "../rpc.js";
 import ConnectEventHandlingStrategy from "./connect.js";
 import DescribeEventHandlingStrategy from "./describe.js";
@@ -7,6 +6,10 @@ import GetPublicKeyHandlingStrategy from "./get-public-key.js";
 import Nip04DecryptHandlingStrategy from "./nip04-decrypt.js";
 import Nip04EncryptHandlingStrategy from "./nip04-encrypt.js";
 import SignEventHandlingStrategy from "./sign-event.js";
+import { NDK } from "../../../ndk/index.js";
+import { NDKEvent } from "../../../events/index.js";
+import { NDKUser } from "../../../user/index.js";
+import { NDKPrivateKeySigner } from "../../private-key/index.js";
 
 export type Nip46PermitCallback = (
     pubkey: string,
@@ -68,7 +71,7 @@ export class NDKNip46Backend {
         const sub = this.ndk.subscribe(
             {
                 kinds: [24133 as number],
-                "#p": [this.localUser.hexpubkey()],
+                "#p": [this.localUser.hexpubkey],
             },
             { closeOnEose: false }
         );

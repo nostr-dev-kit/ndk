@@ -1,5 +1,5 @@
-import NDK, { NDKFilter } from "../../index.js";
-import { NDKSubscriptionOptions } from "../../subscription/index.js";
+import { NDK } from "../../ndk/index.js";
+import { NDKFilter, NDKSubscriptionOptions } from "../../subscription/index.js";
 import { NDKEvent, NDKTag, NostrEvent } from "../index.js";
 
 type classWithConvertFunction<T> = {

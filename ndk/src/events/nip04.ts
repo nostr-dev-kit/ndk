@@ -1,5 +1,5 @@
 import { NDKSigner } from "../signers";
-import NDKUser from "../user";
+import {NDKUser} from "../user";
 import { NDKEvent } from "./index.js";
 
 export async function encrypt(

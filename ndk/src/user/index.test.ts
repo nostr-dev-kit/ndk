@@ -1,6 +1,8 @@
 import { nip19 } from "nostr-tools";
-import NDK, { NDKEvent, NDKSubscription } from "../index.js";
-import NDKUser, { NDKUserParams } from "./index.js";
+import { NDKUser, NDKUserParams } from "./index.js";
+import { NDKEvent } from "../events/index.js";
+import { NDK } from "../ndk/index.js";
+import { NDKSubscription } from "../subscription/index.js";
 
 jest.mock("nostr-tools", () => ({
     nip05: {
@@ -67,7 +69,7 @@ describe("NDKUser", () => {
                 data: "decoded_hexpubkey",
             });
 
-            const hexpubkey = user.hexpubkey();
+            const hexpubkey = user.hexpubkey;
 
             expect(nip19.decode).toHaveBeenCalledWith(
                 "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft"
@@ -87,7 +89,7 @@ describe("NDKUser", () => {
         (nip19.decode as jest.Mock).mockReturnValue({
             data: "decoded_hexpubkey",
         });
-        const pubkey = user.hexpubkey();
+        const pubkey = user.hexpubkey;
 
         it("Returns updated fields", async () => {
             newEvent = new NDKEvent(ndk, {

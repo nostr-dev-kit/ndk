@@ -1,12 +1,13 @@
 import { nip05, nip19 } from "nostr-tools";
 import { NDKEvent, NDKTag, NostrEvent } from "../events/index.js";
-import NDK, { NDKKind } from "../index.js";
+import {NDK} from "../ndk/index.js";
 import {
     NDKSubscriptionCacheUsage,
     NDKSubscriptionOptions,
 } from "../subscription/index.js";
 import { follows } from "./follows.js";
 import { NDKUserProfile, mergeEvent } from "./profile.js";
+import { NDKKind } from "../events/kinds/index.js";
 
 export type Hexpubkey = string;
 
@@ -105,7 +106,7 @@ export class NDKUser {
             setMetadataEvents = await this.ndk.fetchEvents(
                 {
                     kinds: [0],
-                    authors: [this.hexpubkey()],
+                    authors: [this.hexpubkey],
                 },
                 {
                     cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE,
@@ -124,7 +125,7 @@ export class NDKUser {
             setMetadataEvents = await this.ndk.fetchEvents(
                 {
                     kinds: [0],
-                    authors: [this.hexpubkey()],
+                    authors: [this.hexpubkey],
                 },
                 opts
             );
@@ -160,7 +161,7 @@ export class NDKUser {
 
         const relayListEvents = await this.ndk.fetchEvents({
             kinds: [10002],
-            authors: [this.hexpubkey()],
+            authors: [this.hexpubkey],
         });
 
         if (relayListEvents) {
@@ -175,7 +176,7 @@ export class NDKUser {
      * @returns {NDKTag} an NDKTag
      */
     public tagReference(): NDKTag {
-        return ["p", this.hexpubkey()];
+        return ["p", this.hexpubkey];
     }
 
     /**

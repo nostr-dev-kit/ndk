@@ -1,5 +1,5 @@
 import { NDKEvent } from "../../events/index.js";
-import NDK from "../../index.js";
+import { NDK } from "../../ndk/index.js";
 import { NDKFilter } from "../../subscription/index.js";
 import { NDKRelay } from "../index.js";
 import { NDKRelaySet } from "./index.js";
@@ -20,7 +20,7 @@ export function calculateRelaySetFromEvent(
 
     // try to fetch all tagged events from the cache
 
-    ndk.pool?.relays.forEach((relay) => relays.add(relay));
+    ndk.pool?.relays.forEach((relay: NDKRelay) => relays.add(relay));
 
     return new NDKRelaySet(relays, ndk);
 }

@@ -3,8 +3,10 @@ import EventEmitter from "eventemitter3";
 import { Relay, relayInit, Sub } from "nostr-tools";
 import { NDKEvent, NDKTag, NostrEvent } from "../events/index.js";
 import { NDKSubscription } from "../subscription/index.js";
-import User from "../user/index.js";
+import {NDKUser} from "../user/index.js";
 import { NDKRelayScore } from "./score.js";
+
+export type RelayUrl = string;
 
 export enum NDKRelayStatus {
     CONNECTING,
@@ -49,8 +51,8 @@ export interface NDKRelayConnectionStats {
  * @emits NDKRelay#eose
  */
 export class NDKRelay extends EventEmitter {
-    readonly url: string;
-    readonly scores: Map<User, NDKRelayScore>;
+    readonly url: RelayUrl;
+    readonly scores: Map<NDKUser, NDKRelayScore>;
     private relay: Relay;
     private _status: NDKRelayStatus;
     private connectedAt?: number;
@@ -67,11 +69,11 @@ export class NDKRelay extends EventEmitter {
      */
     public activeSubscriptions = new Set<NDKSubscription>();
 
-    public constructor(url: string) {
+    public constructor(url: RelayUrl) {
         super();
         this.url = url;
         this.relay = relayInit(url);
-        this.scores = new Map<User, NDKRelayScore>();
+        this.scores = new Map<NDKUser, NDKRelayScore>();
         this._status = NDKRelayStatus.DISCONNECTED;
         this.debug = debug(`ndk:relay:${url}`);
 

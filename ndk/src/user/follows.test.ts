@@ -1,4 +1,4 @@
-import NDKEvent from "../events/index";
+import { NDKEvent } from "../events/index";
 import NDK from "../index";
 import NDKUser from "./index";
 

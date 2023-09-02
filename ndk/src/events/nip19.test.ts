@@ -1,3 +1,4 @@
+import "websocket-polyfill";
 import NDK, { NDKEvent, NDKRelay, NostrEvent } from "../index";
 
 let ndk: NDK;

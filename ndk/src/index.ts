@@ -5,7 +5,6 @@ import dedupEvent from "./events/dedup.js";
 import { NDKEvent } from "./events/index.js";
 import type { NDKRelay } from "./relay/index.js";
 import { NDKPool } from "./relay/pool/index.js";
-import { calculateRelaySetFromEvent } from "./relay/sets/calculate.js";
 import { NDKRelaySet } from "./relay/sets/index.js";
 import { correctRelaySet } from "./relay/sets/utils.js";
 import type { NDKSigner } from "./signers/index.js";
@@ -40,10 +39,34 @@ export * from "./user/profile.js";
 export { NDKZapInvoice, zapInvoiceFromEvent } from "./zap/invoice.js";
 
 export interface NDKConstructorParams {
+    /**
+     * Relays we should explicitly connect to
+     */
     explicitRelayUrls?: string[];
+
+    /**
+     * Relays we should never connect to
+     */
+    blacklistRelayUrls?: string[];
+
+    /**
+     * When this is set, we always write only to this relays.
+     */
     devWriteRelayUrls?: string[];
+
+    /**
+     * Signer to use for signing events by default
+     */
     signer?: NDKSigner;
+
+    /**
+     * Cache adapter to use for caching events
+     */
     cacheAdapter?: NDKCacheAdapter;
+
+    /**
+     * Debug instance to use
+     */
     debug?: debug.Debugger;
 }
 export interface GetUserParams extends NDKUserParams {
@@ -64,7 +87,11 @@ export default class NDK extends EventEmitter {
         super();
 
         this.debug = opts.debug || debug("ndk");
-        this.pool = new NDKPool(opts.explicitRelayUrls || [], this);
+        this.pool = new NDKPool(
+            opts.explicitRelayUrls || [],
+            opts.blacklistRelayUrls,
+            this
+        );
         this.signer = opts.signer;
         this.cacheAdapter = opts.cacheAdapter;
         this.delayedSubscriptions = new Map();

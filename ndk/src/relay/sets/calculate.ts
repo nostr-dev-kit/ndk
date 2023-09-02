@@ -14,9 +14,11 @@ import { NDKRelaySet } from "./index.js";
  */
 export function calculateRelaySetFromEvent(
     ndk: NDK,
-    event: Event
+    event: NDKEvent
 ): NDKRelaySet {
     const relays: Set<NDKRelay> = new Set();
+
+    // try to fetch all tagged events from the cache
 
     ndk.pool?.relays.forEach((relay) => relays.add(relay));
 

@@ -21,16 +21,26 @@ export type NDKPoolStats = {
  */
 export class NDKPool extends EventEmitter {
     public relays = new Map<string, NDKRelay>();
+    public blacklistRelayUrls: Set<string>;
     private debug: debug.Debugger;
     private temporaryRelayTimers = new Map<string, NodeJS.Timeout>();
+    private relayMap: Map<string, Set<NDKRelay>>;
 
-    public constructor(relayUrls: string[] = [], ndk: NDK) {
+    public constructor(
+        relayUrls: string[] = [],
+        blacklistedRelayUrls: string[] = [],
+        ndk: NDK
+    ) {
         super();
         this.debug = ndk.debug.extend("pool");
+        this.relayMap = new Map();
+
         for (const relayUrl of relayUrls) {
             const relay = new NDKRelay(relayUrl);
             this.addRelay(relay, false);
         }
+
+        this.blacklistRelayUrls = new Set(blacklistedRelayUrls);
     }
 
     /**
@@ -73,6 +83,12 @@ export class NDKPool extends EventEmitter {
      */
     public addRelay(relay: NDKRelay, connect = true) {
         const relayUrl = relay.url;
+
+        // check if the relay is blacklisted
+        if (this.blacklistRelayUrls.has(relayUrl)) {
+            this.debug(`Relay ${relayUrl} is blacklisted`);
+            return;
+        }
 
         relay.on("notice", (relay, notice) =>
             this.emit("notice", relay, notice)

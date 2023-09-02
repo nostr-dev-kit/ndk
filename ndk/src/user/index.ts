@@ -8,9 +8,13 @@ import {
 import { follows } from "./follows.js";
 import { NDKUserProfile, mergeEvent } from "./profile.js";
 
+export type Hexpubkey = string;
+
+export type Npub = string;
+
 export interface NDKUserParams {
-    npub?: string;
-    hexpubkey?: string;
+    npub?: Npub;
+    hexpubkey?: Hexpubkey;
     nip05?: string;
     relayUrls?: string[];
 }
@@ -18,22 +22,45 @@ export interface NDKUserParams {
 /**
  * Represents a pubkey.
  */
-export default class NDKUser {
+export class NDKUser {
     public ndk: NDK | undefined;
     public profile?: NDKUserProfile;
-    readonly npub: string = "";
+    private _npub?: Npub;
+    private _hexpubkey?: Hexpubkey;
     readonly relayUrls: string[] = [];
 
     public constructor(opts: NDKUserParams) {
-        if (opts.npub) this.npub = opts.npub;
+        if (opts.npub) this._npub = opts.npub;
 
-        if (opts.hexpubkey) {
-            this.npub = nip19.npubEncode(opts.hexpubkey);
-        }
+        if (opts.hexpubkey) this._hexpubkey = opts.hexpubkey;
 
         if (opts.relayUrls) {
             this.relayUrls = opts.relayUrls;
         }
+    }
+
+    get npub(): string {
+        if (!this._npub) {
+            this._npub = nip19.npubEncode(this.hexpubkey);
+        }
+
+        return this._npub;
+    }
+
+    set npub(npub: Npub) {
+        this._npub = npub;
+    }
+
+    get hexpubkey(): Hexpubkey {
+        if (!this._hexpubkey) {
+            this._hexpubkey = nip19.decode(this.npub).data as Hexpubkey;
+        }
+
+        return this._hexpubkey;
+    }
+
+    set hexpubkey(hexpubkey: Hexpubkey) {
+        this._hexpubkey = hexpubkey;
     }
 
     /**
@@ -50,14 +77,6 @@ export default class NDKUser {
                 relayUrls: profile.relays,
             });
         }
-    }
-
-    /**
-     * Get the hexpubkey for a user
-     * @returns {string} The user's hexpubkey
-     */
-    public hexpubkey(): string {
-        return nip19.decode(this.npub).data as string;
     }
 
     /**

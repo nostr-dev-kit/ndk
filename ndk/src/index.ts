@@ -2,7 +2,7 @@ import debug from "debug";
 import EventEmitter from "eventemitter3";
 import { NDKCacheAdapter } from "./cache/index.js";
 import dedupEvent from "./events/dedup.js";
-import NDKEvent from "./events/index.js";
+import { NDKEvent } from "./events/index.js";
 import type { NDKRelay } from "./relay/index.js";
 import { NDKPool } from "./relay/pool/index.js";
 import { calculateRelaySetFromEvent } from "./relay/sets/calculate.js";

@@ -1,6 +1,7 @@
 import EventEmitter from "eventemitter3";
 import { getEventHash, UnsignedEvent } from "nostr-tools";
 import NDK, { NDKFilter, NDKRelay, NDKRelaySet, NDKUser } from "../index.js";
+import { calculateRelaySetFromEvent } from "../relay/sets/calculate.js";
 import { NDKSigner } from "../signers/index.js";
 import Zap from "../zap/index.js";
 import { generateContentTags } from "./content-tagger.js";
@@ -9,7 +10,6 @@ import { NDKKind } from "./kinds/index.js";
 import { decrypt, encrypt } from "./nip04.js";
 import { encode } from "./nip19.js";
 import { repost } from "./repost.js";
-import { calculateRelaySetFromEvent } from "../relay/sets/calculate.js";
 
 export type NDKEventId = string;
 export type NDKTag = string[];
@@ -33,7 +33,7 @@ export type ContentTag = {
  * NDKEvent is the basic building block of NDK; most things
  * you do with NDK will revolve around writing or consuming NDKEvents.
  */
-export default class NDKEvent extends EventEmitter {
+export class NDKEvent extends EventEmitter {
     public ndk?: NDK;
     public created_at?: number;
     public content = "";

@@ -1,4 +1,4 @@
-import NDKEvent from "../events/index.js";
+import { NDKEvent } from "../events/index.js";
 import { NDKRelay } from "../relay/index.js";
 import { NDKFilter, NDKSubscription } from "../subscription/index.js";
 

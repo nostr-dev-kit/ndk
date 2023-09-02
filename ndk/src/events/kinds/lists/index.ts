@@ -1,5 +1,5 @@
 import NDK, { NDKKind, NDKRelay, NDKUser } from "../../../index.js";
-import NDKEvent from "../../index.js";
+import { NDKEvent } from "../../index.js";
 import { NDKTag, NostrEvent } from "../../index.js";
 
 export type NDKListItem = NDKRelay | NDKUser | NDKEvent;

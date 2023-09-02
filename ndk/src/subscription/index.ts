@@ -1,7 +1,7 @@
 import EventEmitter from "eventemitter3";
 import { matchFilter, Sub, nip19 } from "nostr-tools";
 import { EventPointer } from "nostr-tools/lib/nip19";
-import NDKEvent, { NDKEventId } from "../events/index.js";
+import { NDKEvent, NDKEventId } from "../events/index.js";
 import { NDKKind } from "../events/kinds/index.js";
 import NDK from "../index.js";
 import { NDKRelay } from "../relay";

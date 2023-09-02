@@ -1,6 +1,6 @@
 import { NDKKind } from "..";
-import NDKEvent, { NostrEvent } from "../..";
 import NDK from "../../..";
+import { NDKEvent, NostrEvent } from "../../index.js";
 import { NDKDVMRequest } from "./NDKDVMRequest";
 
 /**

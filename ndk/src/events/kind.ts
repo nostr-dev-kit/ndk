@@ -1,4 +1,4 @@
-import NDKEvent from "./index.js";
+import { NDKEvent } from "./index.js";
 
 export function isReplaceable(this: NDKEvent): boolean {
     if (this.kind === undefined) throw new Error("Kind not set");

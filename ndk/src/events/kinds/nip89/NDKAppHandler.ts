@@ -1,5 +1,5 @@
 import NDK, { NDKUserProfile } from "../../../index.js";
-import NDKEvent, { NostrEvent } from "../../index.js";
+import { NDKEvent, NostrEvent } from "../../index.js";
 import { NDKKind } from "../index.js";
 
 /**

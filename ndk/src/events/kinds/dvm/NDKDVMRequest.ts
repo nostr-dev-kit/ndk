@@ -1,4 +1,9 @@
-import NDK, { NDKDVMJobResult, NDKEvent, NDKTag, NostrEvent } from "../../../index.js";
+import NDK, {
+    NDKDVMJobResult,
+    NDKEvent,
+    NDKTag,
+    NostrEvent,
+} from "../../../index.js";
 import {
     NDKDVMJobFeedback,
     NDKDvmJobFeedbackStatus,

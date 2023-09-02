@@ -1,6 +1,6 @@
 import { sha256 } from "@noble/hashes/sha256";
 import { bytesToHex } from "@noble/hashes/utils";
-import NDKEvent from "../../events/index.js";
+import { NDKEvent } from "../../events/index.js";
 import type NDK from "../../index.js";
 import {
     NDKSubscription,

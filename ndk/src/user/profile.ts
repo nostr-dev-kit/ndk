@@ -1,4 +1,4 @@
-import NDKEvent from "../events/index.js";
+import { NDKEvent } from "../events/index.js";
 
 /**
  * NDKUserProfile represents a user's kind 0 profile metadata

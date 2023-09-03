@@ -19,26 +19,38 @@ export class NDKRelayList extends NDKEvent {
     }
 
     get readRelayUrls(): NDKRelayUrl[] {
-        const relays = new Set<NDKRelayUrl>();
+        return this.getMatchingTags("r")
+            .filter(tag => !tag[2] || (tag[2] && tag[2] === READ_MARKER))
+            .map(tag => tag[1]);
+    }
 
-        for (const tag of this.getMatchingTags("r")) {
-            if (tag[2] && tag[2] === READ_MARKER) {
-                relays.add(tag[1]);
-            }
+    set readRelayUrls(relays: NDKRelayUrl[]) {
+        for (const relay of relays) {
+            this.tags.push(["r", relay, READ_MARKER]);
         }
-
-        return Array.from(relays);
     }
 
     get writeRelayUrls(): NDKRelayUrl[] {
-        const relays = new Set<NDKRelayUrl>();
+        return this.getMatchingTags("r")
+            .filter(tag => !tag[2] || (tag[2] && tag[2] === WRITE_MARKER))
+            .map(tag => tag[1]);
+    }
 
-        for (const tag of this.getMatchingTags("r")) {
-            if (tag[2] && tag[2] === WRITE_MARKER) {
-                relays.add(tag[1]);
-            }
+    set writeRelayUrls(relays: NDKRelayUrl[]) {
+        for (const relay of relays) {
+            this.tags.push(["r", relay, WRITE_MARKER]);
         }
+    }
 
-        return Array.from(relays);
+    get bothRelayUrls(): NDKRelayUrl[] {
+        return this.getMatchingTags("r")
+            .filter(tag => !tag[2])
+            .map(tag => tag[1]);
+    }
+
+    set bothRelayUrls(relays: NDKRelayUrl[]) {
+        for (const relay of relays) {
+            this.tags.push(["r", relay]);
+        }
     }
 }

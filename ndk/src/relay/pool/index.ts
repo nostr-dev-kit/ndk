@@ -1,6 +1,6 @@
 import debug from "debug";
 import EventEmitter from "eventemitter3";
-import { NDKRelay, NDKRelayStatus, RelayUrl } from "../index.js";
+import { NDKRelay, NDKRelayStatus, NDKRelayUrl } from "../index.js";
 import { NDK } from "../../ndk/index.js";
 
 export type NDKPoolStats = {
@@ -20,14 +20,14 @@ export type NDKPoolStats = {
  * @emit relay:disconnect - Emitted when a relay in the pool disconnects.
  */
 export class NDKPool extends EventEmitter {
-    public relays = new Map<RelayUrl, NDKRelay>();
-    public blacklistRelayUrls: Set<RelayUrl>;
+    public relays = new Map<NDKRelayUrl, NDKRelay>();
+    public blacklistRelayUrls: Set<NDKRelayUrl>;
     private debug: debug.Debugger;
-    private temporaryRelayTimers = new Map<RelayUrl, NodeJS.Timeout>();
+    private temporaryRelayTimers = new Map<NDKRelayUrl, NodeJS.Timeout>();
 
     public constructor(
-        relayUrls: RelayUrl[] = [],
-        blacklistedRelayUrls: RelayUrl[] = [],
+        relayUrls: NDKRelayUrl[] = [],
+        blacklistedRelayUrls: NDKRelayUrl[] = [],
         ndk: NDK
     ) {
         super();
@@ -130,7 +130,7 @@ export class NDKPool extends EventEmitter {
      *
      * New relays will be attempted to be connected.
      */
-    public getRelay(url: RelayUrl): NDKRelay {
+    public getRelay(url: NDKRelayUrl): NDKRelay {
         let relay = this.relays.get(url);
 
         if (!relay) {

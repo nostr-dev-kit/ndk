@@ -8,6 +8,7 @@ import {
 import { follows } from "./follows.js";
 import { NDKUserProfile, mergeEvent } from "./profile.js";
 import { NDKKind } from "../events/kinds/index.js";
+import { NDKRelayList } from "../events/kinds/NDKRelayList.js";
 
 export type Hexpubkey = string;
 
@@ -156,19 +157,20 @@ export class NDKUser {
      * Returns a set of relay list events for a user.
      * @returns {Promise<Set<NDKEvent>>} A set of NDKEvents returned for the given user.
      */
-    public async relayList(): Promise<Set<NDKEvent>> {
+    public async relayList(): Promise<NDKRelayList|undefined> {
         if (!this.ndk) throw new Error("NDK not set");
 
-        const relayListEvents = await this.ndk.fetchEvents({
+        const pool = this.ndk.outboxPool || this.ndk.pool;
+
+        const event = await this.ndk.fetchEvent({
             kinds: [10002],
             authors: [this.hexpubkey],
-        });
+        }, { closeOnEose: true, pool });
 
-        if (relayListEvents) {
-            return relayListEvents;
-        }
+        if (event)
+            return NDKRelayList.from(event);
 
-        return new Set<NDKEvent>();
+        return undefined;
     }
 
     /**

@@ -1,4 +1,3 @@
-import { RelayUrl } from ".";
 import { NDKFilter } from "../subscription";
 
 export type NDKRelayFilters = NDKFilter[];

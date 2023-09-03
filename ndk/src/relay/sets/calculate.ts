@@ -1,7 +1,7 @@
 import { NDKEvent } from "../../events/index.js";
 import { NDK } from "../../ndk/index.js";
 import { NDKFilter } from "../../subscription/index.js";
-import { NDKRelay, RelayUrl } from "../index.js";
+import { NDKRelay, NDKRelayUrl } from "../index.js";
 import { NDKRelaySet } from "./index.js";
 import { Hexpubkey } from "../../user/index.js";
 import { Relay } from "nostr-tools";
@@ -29,7 +29,7 @@ export function calculateRelaySetFromEvent(
     return new NDKRelaySet(relays, ndk);
 }
 
-export function getWriteRelaysFor(author: Hexpubkey): Set<RelayUrl> | undefined {
+export function getWriteRelaysFor(author: Hexpubkey): Set<NDKRelayUrl> | undefined {
     // if the first character is between 'a' and 'f', return a set with 'relay1'
     if (author === 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52') {
         return new Set(["wss://relay.damus.com"]);
@@ -51,8 +51,8 @@ export function getWriteRelaysFor(author: Hexpubkey): Set<RelayUrl> | undefined 
 export function calculateRelaySetsFromFilter(
     ndk: NDK,
     filters: NDKFilter[]
-): Map<RelayUrl, NDKRelayFilters> {
-    const result = new Map<RelayUrl, NDKRelayFilters>();
+): Map<NDKRelayUrl, NDKRelayFilters> {
+    const result = new Map<NDKRelayUrl, NDKRelayFilters>();
     const authors = new Set<Hexpubkey>();
 
     filters.forEach((filter) => {
@@ -64,7 +64,7 @@ export function calculateRelaySetsFromFilter(
     // if this filter has authors, get write relays for each
     // one of them and add them to the map
     if (authors.size > 0) {
-        const authorToRelaysMap = new Map<RelayUrl, Hexpubkey[]>();
+        const authorToRelaysMap = new Map<NDKRelayUrl, Hexpubkey[]>();
 
         // Go through each pubkey in `authors`
         for (const author of authors) {
@@ -81,7 +81,7 @@ export function calculateRelaySetsFromFilter(
                 });
             } else {
                 // If we don't, add the explicit relays
-                ndk.explicitRelayUrls?.forEach((relay: RelayUrl) => {
+                ndk.explicitRelayUrls?.forEach((relay: NDKRelayUrl) => {
                     const authorsInRelay = authorToRelaysMap.get(relay) || [];
                     authorsInRelay.push(author);
                     authorToRelaysMap.set(relay, authorsInRelay);
@@ -111,7 +111,7 @@ export function calculateRelaySetsFromFilter(
         }
     } else {
         // If we don't, add the explicit relays
-        ndk.explicitRelayUrls?.forEach((relay: RelayUrl) => {
+        ndk.explicitRelayUrls?.forEach((relay: NDKRelayUrl) => {
             result.set(relay, filters);
         });
     }
@@ -127,6 +127,6 @@ export function calculateRelaySetsFromFilter(
 export function calculateRelaySetsFromFilters(
     ndk: NDK,
     filters: NDKFilter[]
-): Map<RelayUrl, NDKRelayFilters> {
+): Map<NDKRelayUrl, NDKRelayFilters> {
     return calculateRelaySetsFromFilter(ndk, filters);
 }

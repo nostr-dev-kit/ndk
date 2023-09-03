@@ -3,12 +3,13 @@ import { matchFilter, Sub, nip19 } from "nostr-tools";
 import { EventPointer } from "nostr-tools/lib/nip19";
 import { NDKEvent, NDKEventId } from "../events/index.js";
 import { NDKKind } from "../events/kinds/index.js";
-import { NDKRelay, RelayUrl } from "../relay";
+import { NDKRelay, NDKRelayUrl } from "../relay";
 import { calculateRelaySetsFromFilters } from "../relay/sets/calculate";
 import { NDKRelaySet } from "../relay/sets/index.js";
 import { queryFullyFilled } from "./utils.js";
 import { NDK } from "../ndk/index.js";
 import { NDKRelayFilters } from "../relay/filter.js";
+import { NDKPool } from "../relay/pool/index.js";
 
 export type NDKFilter<K extends number = NDKKind> = {
     ids?: string[];
@@ -55,6 +56,11 @@ export interface NDKSubscriptionOptions {
      * The subscription ID to use for the subscription.
      */
     subId?: string;
+
+    /**
+     * Pool to use
+     */
+    pool?: NDKPool;
 }
 
 /**
@@ -93,11 +99,12 @@ export class NDKSubscription extends EventEmitter {
     readonly subId: string;
     readonly filters: NDKFilter[];
     readonly opts: NDKSubscriptionOptions;
+    readonly pool: NDKPool;
 
     /**
      * Tracks the filters as they are executed on each relay
      */
-    public relayFilters?: Map<RelayUrl, NDKRelayFilters>;
+    public relayFilters?: Map<NDKRelayUrl, NDKRelayFilters>;
     public relaySets: Map<NDKFilter[], NDKRelaySet>;
     public ndk: NDK;
     public relaySubscriptions: Map<NDKRelay, Sub>;
@@ -127,6 +134,7 @@ export class NDKSubscription extends EventEmitter {
     ) {
         super();
         this.ndk = ndk;
+        this.pool = opts?.pool || ndk.pool;
         this.opts = { ...defaultOpts, ...(opts || {}) };
         this.filters = filters instanceof Array ? filters : [filters];
         this.subId = subId || opts?.subId || generateFilterId(this.filters[0]);
@@ -283,7 +291,7 @@ export class NDKSubscription extends EventEmitter {
 
         // iterate through the this.relayFilters
         for (const [relayUrl, filters] of this.relayFilters) {
-            const relay = this.ndk.pool.getRelay(relayUrl);
+            const relay = this.pool.getRelay(relayUrl);
 
             relay.subscribe(this, filters);
         }

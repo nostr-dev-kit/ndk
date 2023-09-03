@@ -7,7 +7,7 @@ import {NDKUser} from "../user/index.js";
 import { NDKRelayScore } from "./score.js";
 import { NDKRelayFilters } from "./filter.js";
 
-export type RelayUrl = string;
+export type NDKRelayUrl = string;
 
 export enum NDKRelayStatus {
     CONNECTING,
@@ -52,7 +52,7 @@ export interface NDKRelayConnectionStats {
  * @emits NDKRelay#eose
  */
 export class NDKRelay extends EventEmitter {
-    readonly url: RelayUrl;
+    readonly url: NDKRelayUrl;
     readonly scores: Map<NDKUser, NDKRelayScore>;
     private relay: Relay;
     private _status: NDKRelayStatus;
@@ -70,7 +70,7 @@ export class NDKRelay extends EventEmitter {
      */
     public activeSubscriptions = new Set<NDKSubscription>();
 
-    public constructor(url: RelayUrl) {
+    public constructor(url: NDKRelayUrl) {
         super();
         this.url = url;
         this.relay = relayInit(url);

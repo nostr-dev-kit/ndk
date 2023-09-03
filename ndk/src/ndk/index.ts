@@ -167,6 +167,17 @@ export class NDK extends EventEmitter {
             }
         }
 
+        // if we have an authors filter and we are using the outbox pool,
+        // we want to track the authors in the outbox tracker
+        if (this.outboxPool && subscription.hasAuthorsFilter()) {
+            const authors: string[] = subscription.filters
+                .filter((filter) => filter.authors && filter.authors?.length > 0)
+                .map((filter) => filter.authors!)
+                .flat();
+
+            this.outboxTracker?.trackUsers(authors);
+        }
+
         if (autoStart) subscription.start();
 
         return subscription;

@@ -3,11 +3,12 @@ import { matchFilter, Sub, nip19 } from "nostr-tools";
 import { EventPointer } from "nostr-tools/lib/nip19";
 import { NDKEvent, NDKEventId } from "../events/index.js";
 import { NDKKind } from "../events/kinds/index.js";
-import { NDKRelay } from "../relay";
-import { calculateRelaySetFromFilter } from "../relay/sets/calculate";
+import { NDKRelay, RelayUrl } from "../relay";
+import { calculateRelaySetsFromFilters } from "../relay/sets/calculate";
 import { NDKRelaySet } from "../relay/sets/index.js";
 import { queryFullyFilled } from "./utils.js";
 import { NDK } from "../ndk/index.js";
+import { NDKRelayFilters } from "../relay/filter.js";
 
 export type NDKFilter<K extends number = NDKKind> = {
     ids?: string[];
@@ -92,7 +93,12 @@ export class NDKSubscription extends EventEmitter {
     readonly subId: string;
     readonly filters: NDKFilter[];
     readonly opts: NDKSubscriptionOptions;
-    public relaySet?: NDKRelaySet;
+
+    /**
+     * Tracks the filters as they are executed on each relay
+     */
+    public relayFilters?: Map<RelayUrl, NDKRelayFilters>;
+    public relaySets: Map<NDKFilter[], NDKRelaySet>;
     public ndk: NDK;
     public relaySubscriptions: Map<NDKRelay, Sub>;
     private debug: debug.Debugger;
@@ -116,7 +122,7 @@ export class NDKSubscription extends EventEmitter {
         ndk: NDK,
         filters: NDKFilter | NDKFilter[],
         opts?: NDKSubscriptionOptions,
-        relaySet?: NDKRelaySet,
+        relaySets?: NDKRelaySet | Map<NDKFilter[], NDKRelaySet>,
         subId?: string
     ) {
         super();
@@ -125,7 +131,13 @@ export class NDKSubscription extends EventEmitter {
         this.filters = filters instanceof Array ? filters : [filters];
         this.subId = subId || opts?.subId || generateFilterId(this.filters[0]);
 
-        this.relaySet = relaySet;
+        if (relaySets && relaySets instanceof Map) {
+            this.relaySets = relaySets;
+        } else if (relaySets && relaySets instanceof Array) {
+            this.relaySets = new Map([[this.filters, relaySets]]);
+        } else {
+            this.relaySets = new Map();
+        }
         this.relaySubscriptions = new Map<NDKRelay, Sub>();
         this.debug = ndk.debug.extend(`subscription:${this.subId}`);
 
@@ -223,7 +235,7 @@ export class NDKSubscription extends EventEmitter {
         }
 
         if (this.shouldQueryRelays()) {
-            this.startWithRelaySet();
+            this.startWithRelays();
         } else {
             this.emit("eose", this);
         }
@@ -237,6 +249,13 @@ export class NDKSubscription extends EventEmitter {
         this.emit("close", this);
     }
 
+    /**
+     * @returns Whether the subscription has an authors filter.
+     */
+    public hasAuthorsFilter(): boolean {
+        return this.filters.some((f) => f.authors?.length);
+    }
+
     private async startWithCache(): Promise<void> {
         if (this.ndk.cacheAdapter?.query) {
             const promise = this.ndk.cacheAdapter.query(this);
@@ -247,16 +266,26 @@ export class NDKSubscription extends EventEmitter {
         }
     }
 
-    private startWithRelaySet(): void {
-        if (!this.relaySet) {
-            this.relaySet = calculateRelaySetFromFilter(
-                this.ndk,
-                this.filters[0]
-            );
-        }
+    /**
+     * Send REQ to relays
+     */
+    private startWithRelays(): void {
+        this.relayFilters = calculateRelaySetsFromFilters(
+            this.ndk,
+            this.filters
+        );
+        // if (this.relaySets.size === 0) {
+        //     this.relaySets = calculateRelaySetsFromFilters(
+        //         this.ndk,
+        //         this.filters
+        //     );
+        // }
 
-        if (this.relaySet) {
-            this.relaySet.subscribe(this);
+        // iterate through the this.relayFilters
+        for (const [relayUrl, filters] of this.relayFilters) {
+            const relay = this.ndk.pool.getRelay(relayUrl);
+
+            relay.subscribe(this, filters);
         }
     }
 
@@ -328,7 +357,7 @@ export class NDKSubscription extends EventEmitter {
 
         this.eosesSeen.add(relay);
 
-        const hasSeenAllEoses = this.eosesSeen.size === this.relaySet?.size();
+        const hasSeenAllEoses = this.eosesSeen.size === this.relaySets?.size;
 
         if (hasSeenAllEoses) {
             this.emit("eose");
@@ -361,7 +390,7 @@ export class NDKSubscriptionGroup extends NDKSubscription {
             ndk,
             filters,
             subscriptions[0].opts, // TODO: This should be merged
-            subscriptions[0].relaySet // TODO: This should be merged
+            subscriptions[0].relaySets // TODO: This should be merged
         );
 
         this.subscriptions = subscriptions;

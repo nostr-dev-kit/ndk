@@ -49,6 +49,9 @@ export class OutboxTracker extends EventEmitter {
         this.data = new LRUCache({
             maxSize: 5,
             entryExpirationTimeInMS: 5000,
+            onEntryMarkedAsMostRecentlyUsed: ({key}) => {
+                console.log("entry marked as most recently used", key);
+            },
         });
     }
 

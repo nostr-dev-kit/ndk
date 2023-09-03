@@ -5,6 +5,7 @@ import { NDKEvent, NDKTag, NostrEvent } from "../events/index.js";
 import { NDKSubscription } from "../subscription/index.js";
 import {NDKUser} from "../user/index.js";
 import { NDKRelayScore } from "./score.js";
+import { NDKRelayFilters } from "./filter.js";
 
 export type RelayUrl = string;
 
@@ -198,9 +199,10 @@ export class NDKRelay extends EventEmitter {
     /**
      * Subscribes to a subscription.
      */
-    public subscribe(subscription: NDKSubscription): Sub {
-        const { filters } = subscription;
-
+    public subscribe(
+        subscription: NDKSubscription,
+        filters: NDKRelayFilters
+    ): Sub {
         const sub = this.relay.sub(filters, {
             id: subscription.subId,
         });

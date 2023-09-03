@@ -1,10 +1,6 @@
 import { sha256 } from "@noble/hashes/sha256";
 import { bytesToHex } from "@noble/hashes/utils";
 import { NDKEvent } from "../../events/index.js";
-import {
-    NDKSubscription,
-    NDKSubscriptionGroup,
-} from "../../subscription/index.js";
 import { NDKRelay, NDKRelayStatus } from "../index.js";
 import { NDK } from "../../ndk/index.js";
 
@@ -55,10 +51,10 @@ export class NDKRelaySet {
         return new NDKRelaySet(new Set(relays), ndk);
     }
 
-    private subscribeOnRelay(relay: NDKRelay, subscription: NDKSubscription) {
-        const sub = relay.subscribe(subscription);
-        subscription.relaySubscriptions.set(relay, sub);
-    }
+    // private subscribeOnRelay(relay: NDKRelay, subscription: NDKSubscription) {
+    //     const sub = relay.subscribe(subscription);
+    //     subscription.relaySubscriptions.set(relay, sub);
+    // }
 
     /**
      * Calculates an ID of this specific combination of relays.
@@ -72,86 +68,89 @@ export class NDKRelaySet {
     /**
      * Add a subscription to this relay set
      */
-    public subscribe(subscription: NDKSubscription): NDKSubscription {
-        const subGroupableId = subscription.groupableId();
-        const groupableId = `${this.getId()}:${subGroupableId}`;
+    // public subscribe(subscription: NDKSubscription): NDKSubscription {
+    //     const subGroupableId = subscription.groupableId();
+    //     const groupableId = `${this.getId()}:${subGroupableId}`;
 
-        if (!subGroupableId) {
-            this.executeSubscription(subscription);
-            return subscription;
-        }
+    //     if (!subGroupableId) {
+    //         this.executeSubscription(subscription);
+    //         return subscription;
+    //     }
 
-        const delayedSubscription =
-            this.ndk.delayedSubscriptions.get(groupableId);
-        if (delayedSubscription) {
-            delayedSubscription.push(subscription);
-        } else {
-            setTimeout(() => {
-                this.executeDelayedSubscription(groupableId);
-            }, subscription.opts.groupableDelay);
+    //     const delayedSubscription =
+    //         this.ndk.delayedSubscriptions.get(groupableId);
+    //     if (delayedSubscription) {
+    //         delayedSubscription.push(subscription);
+    //     } else {
+    //         setTimeout(() => {
+    //             this.executeDelayedSubscription(groupableId);
+    //         }, subscription.opts.groupableDelay);
 
-            this.ndk.delayedSubscriptions.set(groupableId, [subscription]);
-        }
+    //         this.ndk.delayedSubscriptions.set(groupableId, [subscription]);
+    //     }
 
-        return subscription;
-    }
+    //     return subscription;
+    // }
 
-    private executeDelayedSubscription(groupableId: string) {
-        const subscriptions = this.ndk.delayedSubscriptions.get(groupableId);
-        this.ndk.delayedSubscriptions.delete(groupableId);
+    // private executeDelayedSubscription(groupableId: string) {
+    //     const subscriptions = this.ndk.delayedSubscriptions.get(groupableId);
+    //     this.ndk.delayedSubscriptions.delete(groupableId);
 
-        if (subscriptions) {
-            if (subscriptions.length > 1) {
-                this.executeSubscriptions(subscriptions);
-            } else {
-                this.executeSubscription(subscriptions[0]);
-            }
-        }
-    }
+    //     if (subscriptions) {
+    //         if (subscriptions.length > 1) {
+    //             this.executeSubscriptions(subscriptions);
+    //         } else {
+    //             this.executeSubscription(subscriptions[0]);
+    //         }
+    //     }
+    // }
 
     /**
      * This function takes a similar group of subscriptions, merges the filters
      * and sends a single subscription to the relay.
      */
-    private executeSubscriptions(subscriptions: NDKSubscription[]) {
-        const ndk = subscriptions[0].ndk;
-        const subGroup = new NDKSubscriptionGroup(ndk, subscriptions);
+    // private executeSubscriptions(
+    //     subscriptions: NDKSubscription[],
+    // ) {
+    //     const ndk = subscriptions[0].ndk;
+    //     const subGroup = new NDKSubscriptionGroup(ndk, subscriptions);
 
-        this.executeSubscription(subGroup);
-    }
+    //     this.executeSubscription(subGroup, filters);
+    // }
 
-    private executeSubscription(
-        subscription: NDKSubscription
-    ): NDKSubscription {
-        this.debug("subscribing", { filters: subscription.filters });
+    // private executeSubscription(
+    //     subscription: NDKSubscription,
+    //     filters: NDKFilter[]
+    // ): NDKSubscription {
+    //     this.debug("subscribing", { filters: filters });
 
-        for (const relay of this.relays) {
-            if (relay.status === NDKRelayStatus.CONNECTED) {
-                // If the relay is already connected, subscribe immediately
-                this.subscribeOnRelay(relay, subscription);
-            } else {
-                // If the relay is not connected, add a one-time listener to wait for the 'connected' event
-                const connectedListener = () => {
-                    this.debug(
-                        "new relay coming online for active subscription",
-                        {
-                            relay: relay.url,
-                            filters: subscription.filters,
-                        }
-                    );
-                    this.subscribeOnRelay(relay, subscription);
-                };
-                relay.once("connect", connectedListener);
+    //     for (const relay of this.relays) {
+    //         if (relay.status === NDKRelayStatus.CONNECTED) {
+    //             // If the relay is already connected, subscribe immediately
+    //             this.subscribeOnRelay(relay, subscription);
+    //         } else {
+    //             // If the relay is not connected, add a one-time listener to wait for the 'connected' event
+    //             const connectedListener = () => {
+    //                 this.debug(
+    //                     "new relay coming online for active subscription",
+    //                     {
+    //                         relay: relay.url,
+    //                         filters
+    //                     }
+    //                 );
+    //                 this.subscribeOnRelay(relay, subscription);
+    //             };
+    //             relay.once("connect", connectedListener);
 
-                // Add a one-time listener to remove the connectedListener when the subscription stops
-                subscription.once("close", () => {
-                    relay.removeListener("connect", connectedListener);
-                });
-            }
-        }
+    //             // Add a one-time listener to remove the connectedListener when the subscription stops
+    //             subscription.once("close", () => {
+    //                 relay.removeListener("connect", connectedListener);
+    //             });
+    //         }
+    //     }
 
-        return subscription;
-    }
+    //     return subscription;
+    // }
 
     /**
      * Publish an event to all relays in this set. Returns the number of relays that have received the event.

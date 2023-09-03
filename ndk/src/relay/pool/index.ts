@@ -1,6 +1,6 @@
 import debug from "debug";
 import EventEmitter from "eventemitter3";
-import { NDKRelay, NDKRelayStatus } from "../index.js";
+import { NDKRelay, NDKRelayStatus, RelayUrl } from "../index.js";
 import { NDK } from "../../ndk/index.js";
 
 export type NDKPoolStats = {
@@ -20,20 +20,18 @@ export type NDKPoolStats = {
  * @emit relay:disconnect - Emitted when a relay in the pool disconnects.
  */
 export class NDKPool extends EventEmitter {
-    public relays = new Map<string, NDKRelay>();
-    public blacklistRelayUrls: Set<string>;
+    public relays = new Map<RelayUrl, NDKRelay>();
+    public blacklistRelayUrls: Set<RelayUrl>;
     private debug: debug.Debugger;
-    private temporaryRelayTimers = new Map<string, NodeJS.Timeout>();
-    private relayMap: Map<string, Set<NDKRelay>>;
+    private temporaryRelayTimers = new Map<RelayUrl, NodeJS.Timeout>();
 
     public constructor(
-        relayUrls: string[] = [],
-        blacklistedRelayUrls: string[] = [],
+        relayUrls: RelayUrl[] = [],
+        blacklistedRelayUrls: RelayUrl[] = [],
         ndk: NDK
     ) {
         super();
         this.debug = ndk.debug.extend("pool");
-        this.relayMap = new Map();
 
         for (const relayUrl of relayUrls) {
             const relay = new NDKRelay(relayUrl);
@@ -85,7 +83,7 @@ export class NDKPool extends EventEmitter {
         const relayUrl = relay.url;
 
         // check if the relay is blacklisted
-        if (this.blacklistRelayUrls.has(relayUrl)) {
+        if (this.blacklistRelayUrls?.has(relayUrl)) {
             this.debug(`Relay ${relayUrl} is blacklisted`);
             return;
         }
@@ -125,6 +123,22 @@ export class NDKPool extends EventEmitter {
         }
 
         return false;
+    }
+
+    /**
+     * Fetches a relay from the pool, or creates a new one if it does not exist.
+     *
+     * New relays will be attempted to be connected.
+     */
+    public getRelay(url: RelayUrl): NDKRelay {
+        let relay = this.relays.get(url);
+
+        if (!relay) {
+            relay = new NDKRelay(url);
+            this.addRelay(relay);
+        }
+
+        return relay;
     }
 
     private handleRelayConnect(relayUrl: string) {

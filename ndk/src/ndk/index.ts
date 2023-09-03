@@ -5,7 +5,7 @@ import { NDKCacheAdapter } from "../cache/index.js";
 import dedupEvent from "../events/dedup.js";
 import { NDKEvent } from "../events/index.js";
 import { OutboxTracker } from "../outbox/tracker.js";
-import { NDKRelay } from "../relay/index.js";
+import { NDKRelay, RelayUrl } from "../relay/index.js";
 import { NDKRelaySet } from "../relay/sets/index.js";
 import { correctRelaySet } from "../relay/sets/utils.js";
 import { NDKSigner } from "../signers/index.js";
@@ -65,6 +65,7 @@ export const DEFAULT_OUTBOX_RELAYS =[
 ];
 
 export class NDK extends EventEmitter {
+    public explicitRelayUrls?: RelayUrl[];
     public pool: NDKPool;
     public outboxPool?: NDKPool;
     public signer?: NDKSigner;
@@ -79,6 +80,7 @@ export class NDK extends EventEmitter {
         super();
 
         this.debug = opts.debug || debug("ndk");
+        this.explicitRelayUrls = opts.explicitRelayUrls;
         this.pool = new NDKPool(
             opts.explicitRelayUrls || [],
             opts.blacklistRelayUrls,

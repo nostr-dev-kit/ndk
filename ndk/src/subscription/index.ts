@@ -37,7 +37,11 @@ export enum NDKSubscriptionCacheUsage {
 }
 
 export interface NDKSubscriptionOptions {
-    closeOnEose: boolean;
+    /**
+     * Whether to close the subscription when all relays have reached the end of the event stream.
+     * @default true
+     */
+    closeOnEose?: boolean;
     cacheUsage?: NDKSubscriptionCacheUsage;
 
     /**
@@ -105,7 +109,7 @@ export class NDKSubscription extends EventEmitter {
      * Tracks the filters as they are executed on each relay
      */
     public relayFilters?: Map<NDKRelayUrl, NDKRelayFilters>;
-    public relaySets: Map<NDKFilter[], NDKRelaySet>;
+    public relaySet?: NDKRelaySet;
     public ndk: NDK;
     public relaySubscriptions: Map<NDKRelay, Sub>;
     private debug: debug.Debugger;
@@ -129,7 +133,7 @@ export class NDKSubscription extends EventEmitter {
         ndk: NDK,
         filters: NDKFilter | NDKFilter[],
         opts?: NDKSubscriptionOptions,
-        relaySets?: NDKRelaySet | Map<NDKFilter[], NDKRelaySet>,
+        relaySet?: NDKRelaySet,
         subId?: string
     ) {
         super();
@@ -138,14 +142,7 @@ export class NDKSubscription extends EventEmitter {
         this.opts = { ...defaultOpts, ...(opts || {}) };
         this.filters = filters instanceof Array ? filters : [filters];
         this.subId = subId || opts?.subId || generateFilterId(this.filters[0]);
-
-        if (relaySets && relaySets instanceof Map) {
-            this.relaySets = relaySets;
-        } else if (relaySets && relaySets instanceof Array) {
-            this.relaySets = new Map([[this.filters, relaySets]]);
-        } else {
-            this.relaySets = new Map();
-        }
+        this.relaySet = relaySet;
         this.relaySubscriptions = new Map<NDKRelay, Sub>();
         this.debug = ndk.debug.extend(`subscription:${this.subId}`);
 
@@ -212,7 +209,7 @@ export class NDKSubscription extends EventEmitter {
             // Must want to close on EOSE; subscriptions
             // that want to receive further updates must
             // always hit the relay
-            this.opts.closeOnEose &&
+            this.opts.closeOnEose! &&
             // Cache adapter must claim to be fast
             !!this.ndk.cacheAdapter?.locking &&
             // If explicitly told to run in parallel, then
@@ -278,21 +275,21 @@ export class NDKSubscription extends EventEmitter {
      * Send REQ to relays
      */
     private startWithRelays(): void {
-        this.relayFilters = calculateRelaySetsFromFilters(
-            this.ndk,
-            this.filters
-        );
-        // if (this.relaySets.size === 0) {
-        //     this.relaySets = calculateRelaySetsFromFilters(
-        //         this.ndk,
-        //         this.filters
-        //     );
-        // }
+        if (!this.relaySet) {
+            this.relayFilters = calculateRelaySetsFromFilters(
+                this.ndk,
+                this.filters
+            );
+        } else {
+            this.relayFilters = new Map();
+            for (const relay of this.relaySet.relays) {
+                this.relayFilters.set(relay.url, this.filters);
+            }
+        }
 
         // iterate through the this.relayFilters
         for (const [relayUrl, filters] of this.relayFilters) {
             const relay = this.pool.getRelay(relayUrl);
-
             relay.subscribe(this, filters);
         }
     }
@@ -365,7 +362,7 @@ export class NDKSubscription extends EventEmitter {
 
         this.eosesSeen.add(relay);
 
-        const hasSeenAllEoses = this.eosesSeen.size === this.relaySets?.size;
+        const hasSeenAllEoses = this.eosesSeen.size === this.relayFilters?.size;
 
         if (hasSeenAllEoses) {
             this.emit("eose");
@@ -398,7 +395,7 @@ export class NDKSubscriptionGroup extends NDKSubscription {
             ndk,
             filters,
             subscriptions[0].opts, // TODO: This should be merged
-            subscriptions[0].relaySets // TODO: This should be merged
+            subscriptions[0].relaySet // TODO: This should be merged
         );
 
         this.subscriptions = subscriptions;

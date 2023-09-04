@@ -9,6 +9,8 @@ import { follows } from "./follows.js";
 import { NDKUserProfile, mergeEvent } from "./profile.js";
 import { NDKKind } from "../events/kinds/index.js";
 import { NDKRelayList } from "../events/kinds/NDKRelayList.js";
+import { NDKRelaySet } from "../relay/sets/index.js";
+import { NDKRelay } from "../relay/index.js";
 
 export type Hexpubkey = string;
 
@@ -161,11 +163,24 @@ export class NDKUser {
         if (!this.ndk) throw new Error("NDK not set");
 
         const pool = this.ndk.outboxPool || this.ndk.pool;
+        const set = new Set<NDKRelay>();
+
+        this.ndk.debug(`relayList`, {outboxPoolRelays: pool.relays.keys()});
+        for (const relay of pool.relays.values()) set.add(relay);
+
+        if (set.size === 3) {
+            process.exit(1);
+        }
+
+        const relaySet = new NDKRelaySet(set, this.ndk);
+
+        this.ndk.debug(`relaySet from relayList for fetchEvent`, {relaySetRelays: Array.from(relaySet.relays).map((relay) => relay.url)});
 
         const event = await this.ndk.fetchEvent({
             kinds: [10002],
             authors: [this.hexpubkey],
-        }, { closeOnEose: true, pool });
+        }, { closeOnEose: true, pool, groupable: true },
+        relaySet);
 
         if (event)
             return NDKRelayList.from(event);

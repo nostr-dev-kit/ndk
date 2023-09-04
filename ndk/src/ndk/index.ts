@@ -5,7 +5,7 @@ import { NDKCacheAdapter } from "../cache/index.js";
 import dedupEvent from "../events/dedup.js";
 import { NDKEvent } from "../events/index.js";
 import { OutboxTracker } from "../outbox/tracker.js";
-import { NDKRelay, RelayUrl } from "../relay/index.js";
+import { NDKRelay, NDKRelayUrl } from "../relay/index.js";
 import { NDKRelaySet } from "../relay/sets/index.js";
 import { correctRelaySet } from "../relay/sets/utils.js";
 import { NDKSigner } from "../signers/index.js";
@@ -65,7 +65,7 @@ export const DEFAULT_OUTBOX_RELAYS =[
 ];
 
 export class NDK extends EventEmitter {
-    public explicitRelayUrls?: RelayUrl[];
+    public explicitRelayUrls?: NDKRelayUrl[];
     public pool: NDKPool;
     public outboxPool?: NDKPool;
     public signer?: NDKSigner;
@@ -91,10 +91,11 @@ export class NDK extends EventEmitter {
             this.outboxPool = new NDKPool(
                 opts.outboxRelayUrls || DEFAULT_OUTBOX_RELAYS,
                 opts.blacklistRelayUrls,
-                this
+                this,
+                this.debug.extend("outbox-pool")
             );
 
-            this.outboxTracker = new OutboxTracker();
+            this.outboxTracker = new OutboxTracker(this);
         }
 
         this.signer = opts.signer;
@@ -217,6 +218,12 @@ export class NDK extends EventEmitter {
         relaySet?: NDKRelaySet
     ): Promise<NDKEvent | null> {
         let filter: NDKFilter;
+
+        if (relaySet) {
+            this.debug(`fetchEvent`, idOrFilter, Array.from(relaySet?.relays).map((relay) => relay.url));
+        } else {
+            this.debug(`fetchEvent`, idOrFilter, "no relayset");
+        }
 
         // if no relayset has been provided, try to get one from the event id
         if (!relaySet && typeof idOrFilter === "string") {

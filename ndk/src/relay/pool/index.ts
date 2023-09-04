@@ -2,6 +2,7 @@ import debug from "debug";
 import EventEmitter from "eventemitter3";
 import { NDKRelay, NDKRelayStatus, NDKRelayUrl } from "../index.js";
 import { NDK } from "../../ndk/index.js";
+import { NDKRelaySet } from "../sets/index.js";
 
 export type NDKPoolStats = {
     total: number;
@@ -28,10 +29,11 @@ export class NDKPool extends EventEmitter {
     public constructor(
         relayUrls: NDKRelayUrl[] = [],
         blacklistedRelayUrls: NDKRelayUrl[] = [],
-        ndk: NDK
+        ndk: NDK,
+        debug?: debug.Debugger
     ) {
         super();
-        this.debug = ndk.debug.extend("pool");
+        this.debug = debug ?? ndk.debug.extend("pool");
 
         for (const relayUrl of relayUrls) {
             const relay = new NDKRelay(relayUrl);
@@ -81,6 +83,10 @@ export class NDKPool extends EventEmitter {
      */
     public addRelay(relay: NDKRelay, connect = true) {
         const relayUrl = relay.url;
+
+        if (this.relays.size === 3) {
+            process.exit(0);
+        }
 
         // check if the relay is blacklisted
         if (this.blacklistRelayUrls?.has(relayUrl)) {

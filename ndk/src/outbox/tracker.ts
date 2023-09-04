@@ -1,7 +1,9 @@
 import EventEmitter from "eventemitter3";
-import { RelayUrl } from "../relay/index.js";
+import { NDKRelayUrl } from "../relay/index.js";
 import { Hexpubkey, NDKUser } from "../user/index.js";
 import { LRUCache } from "typescript-lru-cache";
+import { NDK } from "../ndk/index.js";
+import { NDKRelayList } from "../events/kinds/NDKRelayList.js";
 
 export type OutboxItemType = "user" | "kind";
 
@@ -20,13 +22,16 @@ export class OutboxItem {
     /**
      * The relay URLs that are of interest to this item
      */
-    public relayUrlScores: Map<RelayUrl, number>;
+    public relayUrlScores: Map<NDKRelayUrl, number>;
 
-    public lastTimeQueried: number | undefined;
+    public readRelays: Set<NDKRelayUrl>;
+    public writeRelays: Set<NDKRelayUrl>;
 
     constructor(type: OutboxItemType) {
         this.type = type;
         this.relayUrlScores = new Map();
+        this.readRelays = new Set();
+        this.writeRelays = new Set();
     }
 }
 
@@ -42,22 +47,38 @@ export class OutboxItem {
  */
 export class OutboxTracker extends EventEmitter {
     public data: LRUCache<Hexpubkey, OutboxItem>;
+    private ndk: NDK;
 
-    constructor() {
+    constructor(ndk: NDK) {
         super();
+
+        this.ndk = ndk;
 
         this.data = new LRUCache({
             maxSize: 5,
             entryExpirationTimeInMS: 5000,
-            onEntryMarkedAsMostRecentlyUsed: ({key}) => {
-                console.log("entry marked as most recently used", key);
-            },
         });
     }
 
     public trackUsers(items: NDKUser[] | Hexpubkey[]) {
         items.forEach((item) => {
-            this.track(item, "user");
+            if (this.data.has(getKeyFromItem(item))) return;
+
+            const outboxItem = this.track(item, "user");
+
+            const user = item instanceof NDKUser ? item : new NDKUser({ hexpubkey: item });
+            user.ndk = this.ndk;
+
+            user.relayList().then((relayList: NDKRelayList | undefined) => {
+                if (relayList) {
+                    outboxItem.readRelays = new Set(relayList.readRelayUrls);
+                    outboxItem.writeRelays = new Set(relayList.writeRelayUrls);
+
+                    this.ndk.debug(`OutboxTracker: ${user.hexpubkey} has ${relayList.readRelayUrls.length} read relays and ${relayList.writeRelayUrls.length} write relays`);
+                } else {
+                    this.ndk.debug(`OutboxTracker: ${user.hexpubkey} has no relays`);
+                }
+            });
         });
     }
 
@@ -69,7 +90,7 @@ export class OutboxTracker extends EventEmitter {
     public track(
         item: NDKUser | Hexpubkey,
         type?: OutboxItemType,
-    ) {
+    ): OutboxItem {
         const key = getKeyFromItem(item);
         type ??= getTypeFromItem(item);
         let outboxItem = this.data.get(key);
@@ -77,6 +98,8 @@ export class OutboxTracker extends EventEmitter {
         if (!outboxItem) outboxItem = new OutboxItem(type);
 
         this.data.set(key, outboxItem);
+
+        return outboxItem;
     }
 }
 

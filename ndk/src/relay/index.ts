@@ -1,11 +1,13 @@
 import debug from "debug";
 import EventEmitter from "eventemitter3";
-import { Relay, relayInit, Sub } from "nostr-tools";
-import { NDKEvent, NDKTag, NostrEvent } from "../events/index.js";
+import { NDKEvent, NDKTag } from "../events/index.js";
 import { NDKSubscription } from "../subscription/index.js";
 import {NDKUser} from "../user/index.js";
 import { NDKRelayScore } from "./score.js";
 import { NDKRelayFilters } from "./filter.js";
+import { NDKRelayConnectivity } from "./connectivity.js";
+import { NDKRelaySubscriptions } from "./subscriptions.js";
+import { NDKRelayPublisher } from "./publisher.js";
 
 export type NDKRelayUrl = string;
 
@@ -54,183 +56,60 @@ export interface NDKRelayConnectionStats {
 export class NDKRelay extends EventEmitter {
     readonly url: NDKRelayUrl;
     readonly scores: Map<NDKUser, NDKRelayScore>;
-    private relay: Relay;
-    private _status: NDKRelayStatus;
-    private connectedAt?: number;
-    private _connectionStats: NDKRelayConnectionStats = {
-        attempts: 0,
-        success: 0,
-        durations: [],
-    };
-    public complaining = false;
-    private debug: debug.Debugger;
+    public connectivity: NDKRelayConnectivity;
+    private subs: NDKRelaySubscriptions;
+    private publisher: NDKRelayPublisher;
 
-    /**
-     * Active subscriptions this relay is connected to
-     */
-    public activeSubscriptions = new Set<NDKSubscription>();
+
+    public complaining = false;
+    readonly debug: debug.Debugger;
+
+
 
     public constructor(url: NDKRelayUrl) {
         super();
         this.url = url;
-        this.relay = relayInit(url);
         this.scores = new Map<NDKUser, NDKRelayScore>();
-        this._status = NDKRelayStatus.DISCONNECTED;
+        this.connectivity = new NDKRelayConnectivity(this);
+        this.subs = new NDKRelaySubscriptions(this);
+        this.publisher = new NDKRelayPublisher(this);
         this.debug = debug(`ndk:relay:${url}`);
-
-        this.relay.on("connect", () => {
-            this.updateConnectionStats.connected();
-            this._status = NDKRelayStatus.CONNECTED;
-            this.emit("connect");
-        });
-
-        this.relay.on("disconnect", () => {
-            this.updateConnectionStats.disconnected();
-
-            if (this._status === NDKRelayStatus.CONNECTED) {
-                this._status = NDKRelayStatus.DISCONNECTED;
-
-                this.handleReconnection();
-            }
-            this.emit("disconnect");
-        });
-
-        this.relay.on("notice", (notice: string) => this.handleNotice(notice));
-    }
-
-    /**
-     * Evaluates the connection stats to determine if the relay is flapping.
-     */
-    private isFlapping(): boolean {
-        const durations = this._connectionStats.durations;
-        if (durations.length < 10) return false;
-
-        const sum = durations.reduce((a, b) => a + b, 0);
-        const avg = sum / durations.length;
-        const variance =
-            durations
-                .map((x) => Math.pow(x - avg, 2))
-                .reduce((a, b) => a + b, 0) / durations.length;
-        const stdDev = Math.sqrt(variance);
-        const isFlapping = stdDev < 1000;
-
-        return isFlapping;
-    }
-
-    /**
-     * Called when the relay is unexpectedly disconnected.
-     */
-    private handleReconnection(attempt = 0): void {
-        if (this.isFlapping()) {
-            this.emit("flapping", this, this._connectionStats);
-            this._status = NDKRelayStatus.FLAPPING;
-        }
-
-        const reconnectDelay = this.connectedAt
-            ? Math.max(0, 60000 - (Date.now() - this.connectedAt))
-            : 0;
-
-        setTimeout(() => {
-            this._status = NDKRelayStatus.RECONNECTING;
-            this.connect()
-                .then(() => {
-                    this.debug("Reconnected");
-                })
-                .catch((err) => {
-                    this.debug("Reconnect failed", err);
-
-                    if (attempt < 5) {
-                        setTimeout(() => {
-                            this.handleReconnection(attempt + 1);
-                        }, 60000);
-                    } else {
-                        this.debug("Reconnect failed after 5 attempts");
-                    }
-                });
-        }, reconnectDelay);
     }
 
     get status(): NDKRelayStatus {
-        return this._status;
+        return this.connectivity.status;
+    }
+
+    get connectionStats(): NDKRelayConnectionStats {
+        return this.connectivity.connectionStats;
     }
 
     /**
      * Connects to the relay.
      */
     public async connect(): Promise<void> {
-        try {
-            this.updateConnectionStats.attempt();
-            this._status = NDKRelayStatus.CONNECTING;
-            await this.relay.connect();
-        } catch (e) {
-            this.debug("Failed to connect", e);
-            this._status = NDKRelayStatus.DISCONNECTED;
-            throw e;
-        }
+        return this.connectivity.connect();
     }
 
     /**
      * Disconnects from the relay.
      */
     public disconnect(): void {
-        this._status = NDKRelayStatus.DISCONNECTING;
-        this.relay.close();
-    }
-
-    async handleNotice(notice: string) {
-        // This is a prototype; if the relay seems to be complaining
-        // remove it from relay set selection for a minute.
-        if (notice.includes("oo many") || notice.includes("aximum")) {
-            this.disconnect();
-
-            // fixme
-            setTimeout(() => this.connect(), 2000);
-            this.debug(this.relay.url, "Relay complaining?", notice);
-            // this.complaining = true;
-            // setTimeout(() => {
-            //     this.complaining = false;
-            //     console.log(this.relay.url, 'Reactivate relay');
-            // }, 60000);
-        }
-
-        this.emit("notice", this, notice);
+        this.disconnect();
     }
 
     /**
-     * Subscribes to a subscription.
+     * Queues or executes the subscription of a specific set of filters
+     * within this relay.
+     *
+     * @param subscription NDKSubscription this filters belong to.
+     * @param filters Filters to execute
      */
     public subscribe(
         subscription: NDKSubscription,
-        filters: NDKRelayFilters
-    ): Sub {
-        const sub = this.relay.sub(filters, {
-            id: subscription.subId,
-        });
-        this.debug(`Subscribed to ${JSON.stringify(filters)}`);
-
-        sub.on("event", (event: NostrEvent) => {
-            const e = new NDKEvent(undefined, event);
-            e.relay = this;
-            subscription.eventReceived(e, this);
-        });
-
-        sub.on("eose", () => {
-            subscription.eoseReceived(this);
-        });
-
-        const unsub = sub.unsub;
-        sub.unsub = () => {
-            this.debug(`Unsubscribing from ${JSON.stringify(filters)}`);
-            this.activeSubscriptions.delete(subscription);
-            unsub();
-        };
-
-        this.activeSubscriptions.add(subscription);
-        subscription.on("close", () => {
-            this.activeSubscriptions.delete(subscription);
-        });
-
-        return sub;
+        filters: NDKRelayFilters,
+    ): void {
+        this.subs.subscribe(subscription, filters);
     }
 
     /**
@@ -244,55 +123,7 @@ export class NDKRelay extends EventEmitter {
      * @returns A promise that resolves when the event has been published or rejects if the operation times out
      */
     public async publish(event: NDKEvent, timeoutMs = 2500): Promise<boolean> {
-        if (this.status === NDKRelayStatus.CONNECTED) {
-            return this.publishEvent(event, timeoutMs);
-        } else {
-            this.once("connect", () => {
-                this.publishEvent(event, timeoutMs);
-            });
-            return true;
-        }
-    }
-
-    private async publishEvent(
-        event: NDKEvent,
-        timeoutMs?: number
-    ): Promise<boolean> {
-        const nostrEvent = await event.toNostrEvent();
-        const publish = this.relay.publish(nostrEvent as any);
-        let publishTimeout: NodeJS.Timeout | number;
-
-        const publishPromise = new Promise<boolean>((resolve, reject) => {
-            publish
-                .then(() => {
-                    clearTimeout(publishTimeout as unknown as NodeJS.Timeout);
-                    this.emit("published", event);
-                    resolve(true);
-                })
-                .catch((err) => {
-                    clearTimeout(publishTimeout as NodeJS.Timeout);
-                    this.debug("Publish failed", err, event.id);
-                    this.emit("publish:failed", event, err);
-                    reject(err);
-                });
-        });
-
-        // If no timeout is specified, just return the publish promise
-        if (!timeoutMs) {
-            return publishPromise;
-        }
-
-        // Create a promise that rejects after timeoutMs milliseconds
-        const timeoutPromise = new Promise<boolean>((_, reject) => {
-            publishTimeout = setTimeout(() => {
-                this.debug("Publish timed out", event.rawEvent());
-                this.emit("publish:failed", event, "Timeout");
-                reject(new Error("Publish operation timed out"));
-            }, timeoutMs);
-        });
-
-        // wait for either the publish operation to complete or the timeout to occur
-        return Promise.race([publishPromise, timeoutPromise]);
+        return this.publisher.publish(event, timeoutMs);
     }
 
     /**
@@ -305,42 +136,8 @@ export class NDKRelay extends EventEmitter {
         // TODO
     }
 
-    /**
-     * Utility functions to update the connection stats.
-     */
-    private updateConnectionStats = {
-        connected: () => {
-            this._connectionStats.success++;
-            this._connectionStats.connectedAt = Date.now();
-        },
-
-        disconnected: () => {
-            if (this._connectionStats.connectedAt) {
-                this._connectionStats.durations.push(
-                    Date.now() - this._connectionStats.connectedAt
-                );
-
-                if (this._connectionStats.durations.length > 100) {
-                    this._connectionStats.durations.shift();
-                }
-            }
-            this._connectionStats.connectedAt = undefined;
-        },
-
-        attempt: () => {
-            this._connectionStats.attempts++;
-        },
-    };
-
-    /**
-     * Returns the connection stats.
-     */
-    get connectionStats(): NDKRelayConnectionStats {
-        return this._connectionStats;
-    }
-
     public tagReference(marker?: string): NDKTag {
-        const tag = ["r", this.relay.url];
+        const tag = ["r", this.url];
 
         if (marker) {
             tag.push(marker);

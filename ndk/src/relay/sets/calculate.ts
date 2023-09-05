@@ -5,8 +5,8 @@ import { NDKRelay, NDKRelayUrl } from "../index.js";
 import { NDKRelaySet } from "./index.js";
 import { Hexpubkey } from "../../user/index.js";
 import { Relay } from "nostr-tools";
-import { NDKRelayFilters } from "../filter.js";
 import debug from "debug";
+import { NDKRelayFilters } from "../subscriptions.js";
 
 /**
  * Creates a NDKRelaySet for the specified event.

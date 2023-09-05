@@ -1,11 +1,16 @@
-import { Relay, Sub, matchFilter } from "nostr-tools";
+import { Sub, matchFilter } from "nostr-tools";
 import { NDKRelay } from ".";
 import { NDKFilter, NDKSubscription } from "../subscription";
-import { NDKFilterGroupingId, calculateGroupableId, mergeFilters } from "../subscription/grouping";
-import { NDKRelayFilters } from "./filter";
+import { NDKFilterGroupingId, calculateGroupableId, mergeFilters } from "../subscription/grouping.js";
 import { NDKEvent, NostrEvent } from "../events";
 import { generateSubId } from "../subscription/utils";
-import { NDKRelayConnectivity } from "./connectivity";
+import { NDKRelayConnectivity } from "./connectivity.js";
+
+/**
+ * Represents filters that might have been fragmented
+ * from a broader filter requested by a subscription.
+ */
+export type NDKRelayFilters = NDKFilter[];
 
 /**
  * Maintains an association of which filters belong to which subscription
@@ -13,7 +18,7 @@ import { NDKRelayConnectivity } from "./connectivity";
  */
 class NDKRelaySubscriptionFilters {
     public subscription: NDKSubscription;
-    public filters: NDKFilter[] = [];
+    public filters: NDKRelayFilters = [];
 
     public constructor(subscription: NDKSubscription, filters: NDKFilter[]) {
         this.subscription = subscription;
@@ -33,6 +38,52 @@ class NDKRelaySubscriptionFilters {
     }
 }
 
+export function compareFilter(
+    filter1: NDKFilter,
+    filter2: NDKFilter,
+) {
+    // Make sure the filters have the same number of keys
+    if (Object.keys(filter1).length !== Object.keys(filter2).length) return false;
+
+    for (const [key, value] of Object.entries(filter1)) {
+        const valuesInFilter2 = filter2[key as keyof NDKFilter] as string[];
+
+        if (!valuesInFilter2) return false;
+
+        if (Array.isArray(value) && Array.isArray(valuesInFilter2)) {
+            // make sure all values in the filter are in the other filter
+            for (const valueInFilter1 of value) {
+                const val: string = valueInFilter1 as string;
+                if (!valuesInFilter2.includes(val)) {
+                    return false;
+                }
+            }
+        } else {
+            if (valuesInFilter2 !== value) return false;
+        }
+    }
+
+    return true;
+}
+
+function findMatchingActiveSubscriptions(
+    activeSubscriptions: NDKRelaySubscriptionFilters[],
+    filters: NDKRelayFilters,
+) {
+    for (const subscriptionFilter of activeSubscriptions) {
+        // must have the same number of filters
+        if (subscriptionFilter.filters.length !== filters.length) continue;
+
+        for (let i = 0; i < subscriptionFilter.filters.length; i++) {
+            if (!compareFilter(filters[i], subscriptionFilter.filters[i])) {
+                break;
+            }
+        }
+    }
+
+    return undefined;
+}
+
 /**
  * @ignore
  */
@@ -45,6 +96,7 @@ export class NDKRelaySubscriptions {
      * Active subscriptions this relay is connected to
      */
     private activeSubscriptions: Map<Sub, NDKRelaySubscriptionFilters[]> = new Map();
+    private activeSubscriptionsByGroupId: Map<NDKFilterGroupingId, NDKRelaySubscriptionFilters[]> = new Map();
     private debug: debug.Debugger;
     private groupingDebug: debug.Debugger;
     private conn: NDKRelayConnectivity;
@@ -56,6 +108,9 @@ export class NDKRelaySubscriptions {
         this.groupingDebug = ndkRelay.debug.extend("grouping");
     }
 
+    /**
+     * Creates or queues a subscription to the relay.
+     */
     public subscribe(
         subscription: NDKSubscription,
         filters: NDKRelayFilters,
@@ -69,6 +124,17 @@ export class NDKRelaySubscriptions {
                 filters
             );
             return;
+        }
+
+        // If there is an active subscription that could be used, use it
+        const activeSubscriptions = this.activeSubscriptionsByGroupId.get(filterGroupableId);
+        if (activeSubscriptions) {
+            const matchingSubscription = findMatchingActiveSubscriptions(activeSubscriptions, filters);
+
+            if (matchingSubscription) {
+                this.debug("Could use existing subscription", filterGroupableId, filters);
+                // return;
+            }
         }
 
         const delayedItem = this.delayedItems.get(filterGroupableId);

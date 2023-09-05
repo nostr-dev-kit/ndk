@@ -8,8 +8,8 @@ import { calculateRelaySetsFromFilters } from "../relay/sets/calculate";
 import { NDKRelaySet } from "../relay/sets/index.js";
 import { queryFullyFilled } from "./utils.js";
 import { NDK } from "../ndk/index.js";
-import { NDKRelayFilters } from "../relay/filter.js";
 import { NDKPool } from "../relay/pool/index.js";
+import { NDKRelayFilters } from "../relay/subscriptions.js";
 
 export type NDKFilter<K extends number = NDKKind> = {
     ids?: string[];

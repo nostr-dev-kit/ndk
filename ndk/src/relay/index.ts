@@ -4,9 +4,8 @@ import { NDKEvent, NDKTag } from "../events/index.js";
 import { NDKSubscription } from "../subscription/index.js";
 import {NDKUser} from "../user/index.js";
 import { NDKRelayScore } from "./score.js";
-import { NDKRelayFilters } from "./filter.js";
 import { NDKRelayConnectivity } from "./connectivity.js";
-import { NDKRelaySubscriptions } from "./subscriptions.js";
+import { NDKRelayFilters, NDKRelaySubscriptions } from "./subscriptions.js";
 import { NDKRelayPublisher } from "./publisher.js";
 
 export type NDKRelayUrl = string;

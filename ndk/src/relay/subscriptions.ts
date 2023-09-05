@@ -19,15 +19,17 @@ export type NDKRelayFilters = NDKFilter[];
 class NDKRelaySubscriptionFilters {
     public subscription: NDKSubscription;
     public filters: NDKRelayFilters = [];
+    private ndkRelay: NDKRelay;
 
-    public constructor(subscription: NDKSubscription, filters: NDKFilter[]) {
+    public constructor(subscription: NDKSubscription, filters: NDKFilter[], ndkRelay: NDKRelay) {
         this.subscription = subscription;
         this.filters = filters;
+        this.ndkRelay = ndkRelay;
     }
 
     public eventReceived(event: NDKEvent) {
         if (!this.eventMatchesLocalFilter(event)) return;
-        this.subscription.emit("event", event);
+        this.subscription.eventReceived(event, this.ndkRelay, false);
     }
 
     private eventMatchesLocalFilter(
@@ -51,10 +53,11 @@ export function compareFilter(
         if (!valuesInFilter2) return false;
 
         if (Array.isArray(value) && Array.isArray(valuesInFilter2)) {
+            const v: string[] = value as string[];
             // make sure all values in the filter are in the other filter
-            for (const valueInFilter1 of value) {
-                const val: string = valueInFilter1 as string;
-                if (!valuesInFilter2.includes(val)) {
+            for (const valueInFilter2 of valuesInFilter2) {
+                const val: string = valueInFilter2 as string;
+                if (!v.includes(val)) {
                     return false;
                 }
             }
@@ -67,22 +70,26 @@ export function compareFilter(
 }
 
 function findMatchingActiveSubscriptions(
-    activeSubscriptions: NDKRelaySubscriptionFilters[],
+    activeSubscriptions: NDKRelayFilters,
     filters: NDKRelayFilters,
 ) {
-    for (const subscriptionFilter of activeSubscriptions) {
-        // must have the same number of filters
-        if (subscriptionFilter.filters.length !== filters.length) continue;
+    if (activeSubscriptions.length !== filters.length) return false;
 
-        for (let i = 0; i < subscriptionFilter.filters.length; i++) {
-            if (!compareFilter(filters[i], subscriptionFilter.filters[i])) {
-                break;
-            }
+    for (let i = 0; i < activeSubscriptions.length; i++) {
+        if (!compareFilter(activeSubscriptions[i], filters[i])) {
+            break;
         }
+
+        return activeSubscriptions[i];
     }
 
     return undefined;
 }
+
+type FiltersSub = {
+    filters: NDKRelayFilters,
+    sub: Sub
+};
 
 /**
  * @ignore
@@ -96,7 +103,7 @@ export class NDKRelaySubscriptions {
      * Active subscriptions this relay is connected to
      */
     private activeSubscriptions: Map<Sub, NDKRelaySubscriptionFilters[]> = new Map();
-    private activeSubscriptionsByGroupId: Map<NDKFilterGroupingId, NDKRelaySubscriptionFilters[]> = new Map();
+    private activeSubscriptionsByGroupId: Map<NDKFilterGroupingId, FiltersSub> = new Map();
     private debug: debug.Debugger;
     private groupingDebug: debug.Debugger;
     private conn: NDKRelayConnectivity;
@@ -115,63 +122,66 @@ export class NDKRelaySubscriptions {
         subscription: NDKSubscription,
         filters: NDKRelayFilters,
     ): void {
-        const filterGroupableId = calculateGroupableId(filters);
+        const groupableId = calculateGroupableId(filters);
 
-        if (!filterGroupableId || !subscription.isGroupable()) {
+        if (!groupableId || !subscription.isGroupable()) {
             this.groupingDebug("No groupable ID for filters", filters);
             this.executeSubscriptions(
-                [new NDKRelaySubscriptionFilters(subscription, filters)],
+                groupableId,
+                [new NDKRelaySubscriptionFilters(subscription, filters, this.ndkRelay)],
                 filters
             );
             return;
         }
 
         // If there is an active subscription that could be used, use it
-        const activeSubscriptions = this.activeSubscriptionsByGroupId.get(filterGroupableId);
+        const activeSubscriptions = this.activeSubscriptionsByGroupId.get(groupableId);
         if (activeSubscriptions) {
-            const matchingSubscription = findMatchingActiveSubscriptions(activeSubscriptions, filters);
+            const matchingSubscription = findMatchingActiveSubscriptions(activeSubscriptions.filters, filters);
 
             if (matchingSubscription) {
-                this.debug("Could use existing subscription", filterGroupableId, filters);
-                // return;
+                const activeSubscription = this.activeSubscriptions.get(activeSubscriptions.sub);
+                activeSubscription?.push(new NDKRelaySubscriptionFilters(subscription, filters, this.ndkRelay));
+
+                return;
             }
         }
 
-        const delayedItem = this.delayedItems.get(filterGroupableId);
-        const subscriptionFilters = new NDKRelaySubscriptionFilters(subscription, filters);
+        const delayedItem = this.delayedItems.get(groupableId);
+        const subscriptionFilters = new NDKRelaySubscriptionFilters(subscription, filters, this.ndkRelay);
 
         if (!delayedItem) {
-            // this.debug("New delayed subscription with ID", filterGroupableId, filters);
-            this.delayedItems.set(filterGroupableId, [subscriptionFilters]);
+            // this.debug("New delayed subscription with ID", groupableId, filters);
+            this.delayedItems.set(groupableId, [subscriptionFilters]);
         } else {
-            // this.debug("Adding filters to delayed subscription", filterGroupableId, filters);
+            // this.debug("Adding filters to delayed subscription", groupableId, filters);
             delayedItem.push(subscriptionFilters);
         }
 
         subscription.once("close", () => {
-            const delayedItem = this.delayedItems.get(filterGroupableId);
+            const delayedItem = this.delayedItems.get(groupableId);
             if (!delayedItem) return;
 
             // remove item from delayedItem that has subscription
             delayedItem.splice(delayedItem.findIndex(i => i.subscription === subscription), 1);
 
-            if (this.delayedItems.get(filterGroupableId)?.length === 0) {
-                this.delayedItems.delete(filterGroupableId);
+            if (this.delayedItems.get(groupableId)?.length === 0) {
+                this.delayedItems.delete(groupableId);
             }
         });
 
-        // this.debug(`${filterGroupableId} has ${this.delayedItems.get(filterGroupableId)?.length} subscriptions`);
+        // this.debug(`${groupableId} has ${this.delayedItems.get(groupableId)?.length} subscriptions`);
 
         const timeout = setTimeout(() => {
-            this.executeGroup(filterGroupableId, subscription);
+            this.executeGroup(groupableId, subscription);
         }, subscription.opts.groupableDelay);
 
-        if (this.delayedTimers.has(filterGroupableId)) {
-            this.delayedTimers.get(filterGroupableId)!.push(timeout);
+        if (this.delayedTimers.has(groupableId)) {
+            this.delayedTimers.get(groupableId)!.push(timeout);
         } else {
-            this.delayedTimers.set(filterGroupableId, [timeout]);
+            this.delayedTimers.set(groupableId, [timeout]);
         }
-        // this.debug(`there are ${this.delayedTimers.get(filterGroupableId)!.length} delayed items`);
+        // this.debug(`there are ${this.delayedTimers.get(groupableId)!.length} delayed items`);
     }
 
     /**
@@ -205,7 +215,11 @@ export class NDKRelaySubscriptions {
 
             // this.groupingDebug("Merged filters", groupableId, JSON.stringify(mergedFilters), delayedItem.map((di) => di.filters[0]));
 
-            this.executeSubscriptions(delayedItem, mergedFilters);
+            this.executeSubscriptions(
+                groupableId,
+                delayedItem,
+                mergedFilters
+            );
         }
     }
 
@@ -219,6 +233,7 @@ export class NDKRelaySubscriptions {
      * @param filters The filters as they should be sent to the relay
      */
     private executeSubscriptions(
+        groupableId: NDKFilterGroupingId | null,
         subscriptionFilters: NDKRelaySubscriptionFilters[],
         mergedFilters: NDKFilter[],
     ): Sub {
@@ -233,44 +248,55 @@ export class NDKRelaySubscriptions {
         this.debug(`Subscribed to ${JSON.stringify(mergedFilters)}`);
 
         this.activeSubscriptions.set(sub, subscriptionFilters);
+        if (groupableId) {
+            this.activeSubscriptionsByGroupId.set(groupableId, { filters: mergedFilters, sub });
+        }
 
         sub.on("event", (event: NostrEvent) => {
             const e = new NDKEvent(undefined, event);
             e.relay = this.ndkRelay;
 
-            subscriptionFilters.forEach((sf) => sf.eventReceived(e));
+            const subFilters = this.activeSubscriptions.get(sub);
+            subFilters?.forEach((sf) => sf.eventReceived(e));
         });
 
         sub.on("eose", () => {
-            subscriptionFilters.forEach((sf) => sf.subscription.eoseReceived(this.ndkRelay));
+            const subFilters = this.activeSubscriptions.get(sub);
+            subFilters?.forEach((sf) => sf.subscription.eoseReceived(this.ndkRelay));
         });
 
         // When an NDKSubscription unsubscribes, remove it from the active subscriptions
         for (const {subscription} of subscriptionFilters) {
-            subscription.once("close", () => {
-                const activeFilters = this.activeSubscriptions.get(sub);
-
-                // remove item from activeFilters that has subscription
-                activeFilters?.splice(activeFilters.findIndex(i => i.subscription === subscription), 1);
-
-                // if there are no more active filters, remove the subscription
-                if (activeFilters?.length === 0) {
-                    this.activeSubscriptions.delete(sub);
-                    sub.unsub();
-                }
-            });
+            this.onSubscriptionClose(subscription, sub);
         }
 
-        // sub.unsub = () => {
-        //     this.debug(`Unsubscribing from ${JSON.stringify(filters)}`);
-        //     this.activeSubscriptions.delete(subscription);
-        // };
+        sub.unsub = () => {
+            this.debug(`Unsubscribing from ${JSON.stringify(mergedFilters)}`);
+            this.activeSubscriptions.delete(sub);
 
-        // this.activeSubscriptions.add(subscription);
-        // subscription.on("close", () => {
-        //     this.activeSubscriptions.delete(subscription);
-        // });
+            if (groupableId) {
+                this.activeSubscriptionsByGroupId.delete(groupableId!);
+            }
+        };
 
         return sub;
+    }
+
+    private onSubscriptionClose(
+        subscription: NDKSubscription,
+        sub: Sub
+    ) {
+        subscription.once("close", () => {
+            const activeFilters = this.activeSubscriptions.get(sub);
+
+            // remove item from activeFilters that has subscription
+            activeFilters?.splice(activeFilters.findIndex(i => i.subscription === subscription), 1);
+
+            // if there are no more active filters, remove the subscription
+            if (activeFilters?.length === 0) {
+                this.activeSubscriptions.delete(sub);
+                sub.unsub();
+            }
+        });
     }
 }

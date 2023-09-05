@@ -312,9 +312,9 @@ export class NDKSubscription extends EventEmitter {
                 this.ndk.cacheAdapter.setEvent(event, this.filters[0], relay);
             }
 
-            this.eventFirstSeen.set(`${event.id}`, Date.now());
+            this.eventFirstSeen.set(event.id, Date.now());
         } else {
-            this.eventFirstSeen.set(`${event.id}`, 0);
+            this.eventFirstSeen.set(event.id, 0);
         }
 
         this.emit("event", event, relay, this);

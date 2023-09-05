@@ -46,8 +46,8 @@ export function generateSubId(
     const filterNonKindKeys = new Set<string>();
     const filterKinds = new Set<number>();
 
-    if (subIds.length > 0 && subIds.length < 3) {
-        subIdParts.push(subIds.join(','));
+    if (subIds.length > 0) {
+        subIdParts.push(Array.from(new Set(subIds)).join(','));
     } else {
         for (const filter of filters) {
             for (const key of Object.keys(filter)) {

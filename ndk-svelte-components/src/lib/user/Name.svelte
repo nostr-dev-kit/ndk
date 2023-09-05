@@ -61,7 +61,11 @@
     {#if userProfile}
         {chooseNameFromDisplay(userProfile)}
     {:else if user}
-        {#await user.fetchProfile({subId: "name-fetch-profile"})}
+        {#await user.fetchProfile({
+            closeOnEose: true,
+            groupable: true,
+            groupableDelay: 200,
+        })}
             {chooseNameFromDisplay()}
         {:then value}
             {chooseNameFromDisplay(user.profile)}

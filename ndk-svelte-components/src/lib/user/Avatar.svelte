@@ -41,7 +41,9 @@
             resolve(userProfile);
         } else if (user) {
             user.fetchProfile({
-                subId: "avatar-fetch-profile"
+                closeOnEose: true,
+                groupable: true,
+                groupableDelay: 200,
             }).then(() => {
                 userProfile = user!.profile;
                 if (!userProfile) {

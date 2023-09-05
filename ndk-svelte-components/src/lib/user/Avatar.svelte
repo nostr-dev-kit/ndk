@@ -40,7 +40,9 @@
         if (userProfile) {
             resolve(userProfile);
         } else if (user) {
-            user.fetchProfile().then(() => {
+            user.fetchProfile({
+                subId: "avatar-fetch-profile"
+            }).then(() => {
                 userProfile = user!.profile;
                 if (!userProfile) {
                     reject(`no profile`);

@@ -42,12 +42,12 @@ export function generateSubId(
     filters: NDKFilter[]
 ): string {
     const subIds = subscriptions.map(sub => sub.subId).filter(Boolean);
-    let resultingSubId: string = "";
+    const subIdParts: string[] = [];
     const filterNonKindKeys = new Set<string>();
     const filterKinds = new Set<number>();
 
-    if (subIds.length > 0) {
-        resultingSubId = subIds.join(',');
+    if (subIds.length > 0 && subIds.length < 3) {
+        subIdParts.push(subIds.join(','));
     } else {
         for (const filter of filters) {
             for (const key of Object.keys(filter)) {
@@ -60,16 +60,18 @@ export function generateSubId(
         }
 
         if (filterKinds.size > 0) {
-            resultingSubId = "kinds:" + Array.from(filterKinds).join(',');
+            subIdParts.push("kinds:" + Array.from(filterKinds).join(','));
         }
 
         if (filterNonKindKeys.size > 0) {
-            resultingSubId += '-' + Array.from(filterNonKindKeys).join(',');
+            subIdParts.push(Array.from(filterNonKindKeys).join(','));
         }
     }
 
-    // Add the random string to the resulting subId
-    resultingSubId += "-" + Math.floor(Math.random() * 999).toString();
+    if (subIds.length !== 1) {
+        // Add the random string to the resulting subId
+        subIdParts.push(Math.floor(Math.random() * 999).toString());
+    }
 
-    return resultingSubId;
+    return subIdParts.join("-");
 }

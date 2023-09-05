@@ -121,6 +121,8 @@ export class NDKUser {
             opts = {
                 cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY,
                 closeOnEose: true,
+                groupable: true,
+                groupableDelay: 250
             };
         }
 

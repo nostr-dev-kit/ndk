@@ -61,7 +61,7 @@
     {#if userProfile}
         {chooseNameFromDisplay(userProfile)}
     {:else if user}
-        {#await user.fetchProfile()}
+        {#await user.fetchProfile({subId: "name-fetch-profile"})}
             {chooseNameFromDisplay()}
         {:then value}
             {chooseNameFromDisplay(user.profile)}

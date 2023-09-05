@@ -18,7 +18,7 @@ export * from "./signers/nip46/index.js";
 export * from "./signers/private-key/index.js";
 export * from "./subscription/index.js";
 export * from "./user/profile.js";
-export { NDK as default } from "./ndk/index.js";
+export { NDK as default, NDKConstructorParams } from "./ndk/index.js";
 export { NDKZapInvoice, zapInvoiceFromEvent } from "./zap/invoice.js";
 
 

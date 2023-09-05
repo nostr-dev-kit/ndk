@@ -70,10 +70,10 @@ export class NDKRelay extends EventEmitter {
         super();
         this.url = url;
         this.scores = new Map<NDKUser, NDKRelayScore>();
+        this.debug = debug(`ndk:relay:${url}`);
         this.connectivity = new NDKRelayConnectivity(this);
         this.subs = new NDKRelaySubscriptions(this);
         this.publisher = new NDKRelayPublisher(this);
-        this.debug = debug(`ndk:relay:${url}`);
     }
 
     get status(): NDKRelayStatus {

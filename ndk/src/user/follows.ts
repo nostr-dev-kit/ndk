@@ -25,7 +25,9 @@ export async function follows(
             if (tag[0] === "p") {
                 try {
                     pubkeys.add(tag[1]);
-                    this.ndk?.outboxTracker?.trackUsers([tag[1]]);
+                    if (outbox) {
+                        this.ndk?.outboxTracker?.trackUsers([tag[1]]);
+                    }
                 } catch (e) {
                     /* empty */
                 }

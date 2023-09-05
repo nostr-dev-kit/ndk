@@ -1,5 +1,5 @@
 import { calculateRelaySetsFromFilters, getWriteRelaysFor } from './calculate.js';
-import { RelayUrl } from "..";
+import { NDKRelayUrl } from "..";
 import { Hexpubkey } from "../../user";
 import { NDK } from '../../ndk/index.js';
 

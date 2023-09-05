@@ -33,7 +33,9 @@ export function getWriteRelaysFor(
     ndk: NDK,
     author: Hexpubkey
 ): Set<NDKRelayUrl> | undefined {
-    return ndk.outboxTracker!.data.get(author)?.writeRelays;
+    if (!ndk.outboxTracker) return undefined;
+
+    return ndk.outboxTracker.data.get(author)?.writeRelays;
 
     // if the first character is between 'a' and 'f', return a set with 'relay1'
     if (author === 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52') {

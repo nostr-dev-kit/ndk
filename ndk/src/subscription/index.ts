@@ -100,7 +100,7 @@ export const defaultOpts: NDKSubscriptionOptions = {
  * @param {NDKSubscription} subscription - The subscription that was closed.
  */
 export class NDKSubscription extends EventEmitter {
-    readonly subId: string;
+    readonly subId?: string;
     readonly filters: NDKFilter[];
     readonly opts: NDKSubscriptionOptions;
     readonly pool: NDKPool;
@@ -112,7 +112,7 @@ export class NDKSubscription extends EventEmitter {
     public relaySet?: NDKRelaySet;
     public ndk: NDK;
     public relaySubscriptions: Map<NDKRelay, Sub>;
-    private debug: debug.Debugger;
+    public debug: debug.Debugger;
 
     /**
      * Events that have been seen by the subscription, with the time they were first seen.
@@ -141,14 +141,13 @@ export class NDKSubscription extends EventEmitter {
         this.pool = opts?.pool || ndk.pool;
         this.opts = { ...defaultOpts, ...(opts || {}) };
         this.filters = filters instanceof Array ? filters : [filters];
-        this.subId = subId || opts?.subId || generateFilterId(this.filters[0]);
+        this.subId = subId || opts?.subId;
         this.relaySet = relaySet;
         this.relaySubscriptions = new Map<NDKRelay, Sub>();
-        this.debug = ndk.debug.extend(`subscription:${this.subId}`);
+        this.debug = ndk.debug.extend(`subscription`);
 
         // validate that the caller is not expecting a persistent
         // subscription while using an option that will only hit the cache
-
         if (
             this.opts.cacheUsage === NDKSubscriptionCacheUsage.ONLY_CACHE &&
             !this.opts.closeOnEose
@@ -167,33 +166,8 @@ export class NDKSubscription extends EventEmitter {
         return this.filters[0];
     }
 
-    /**
-     * Calculates the groupable ID for this subscription.
-     *
-     * @returns The groupable ID, or null if the subscription is not groupable.
-     */
-    public groupableId(): string | null {
-        if (!this.opts?.groupable || this.filters.length > 1) {
-            return null;
-        }
-
-        const filter = this.filters[0];
-
-        // Check if there is a kind and no time-based filters
-        const noTimeConstraints = !filter.since && !filter.until;
-        const noLimit = !filter.limit;
-
-        if (noTimeConstraints && noLimit) {
-            let id = filter.kinds ? filter.kinds.join(",") : "";
-            const keys = Object.keys(filter || {})
-                .sort()
-                .join("-");
-            id += `-${keys}`;
-
-            return id;
-        }
-
-        return null;
+    public isGroupable(): boolean {
+        return this.opts?.groupable || false;
     }
 
     private shouldQueryCache(): boolean {
@@ -379,140 +353,6 @@ export class NDKSubscription extends EventEmitter {
 }
 
 /**
- * Represents a group of subscriptions.
- *
- * Events emitted from the group will be emitted from each subscription.
- */
-export class NDKSubscriptionGroup extends NDKSubscription {
-    private subscriptions: NDKSubscription[];
-
-    constructor(ndk: NDK, subscriptions: NDKSubscription[]) {
-        const debug = ndk.debug.extend("subscription-group");
-
-        const filters = mergeFilters(subscriptions.map((s) => s.filters[0]));
-
-        super(
-            ndk,
-            filters,
-            subscriptions[0].opts, // TODO: This should be merged
-            subscriptions[0].relaySet // TODO: This should be merged
-        );
-
-        this.subscriptions = subscriptions;
-
-        debug("merged filters", {
-            count: subscriptions.length,
-            mergedFilters: this.filters[0],
-        });
-
-        // forward events to the matching subscriptions
-        this.on("event", this.forwardEvent);
-        this.on("event:dup", this.forwardEventDup);
-        this.on("eose", this.forwardEose);
-        this.on("close", this.forwardClose);
-    }
-
-    private isEventForSubscription(
-        event: NDKEvent,
-        subscription: NDKSubscription
-    ): boolean {
-        const { filters } = subscription;
-
-        if (!filters) return false;
-
-        return matchFilter(filters[0], event.rawEvent() as any);
-
-        // check if there is a filter whose key begins with '#'; if there is, check if the event has a tag with the same key on the first position
-        // of the tags array of arrays and the same value in the second position
-        // for (const key in filter) {
-        //     if (key === 'kinds' && filter.kinds!.includes(event.kind!)) return false;
-        //     else if (key === 'authors' && filter.authors!.includes(event.pubkey)) return false;
-        //     else if (key.startsWith('#')) {
-        //         const tagKey = key.slice(1);
-        //         const tagValue = filter[key];
-
-        //         if (event.tags) {
-        //             for (const tag of event.tags) {
-        //                 if (tag[0] === tagKey && tag[1] === tagValue) {
-        //                     return false;
-        //                 }
-        //             }
-        //         }
-        //     }
-
-        // return true;
-    }
-
-    private forwardEvent(event: NDKEvent, relay: NDKRelay) {
-        for (const subscription of this.subscriptions) {
-            if (!this.isEventForSubscription(event, subscription)) {
-                continue;
-            }
-
-            subscription.emit("event", event, relay, subscription);
-        }
-    }
-
-    private forwardEventDup(
-        event: NDKEvent,
-        relay: NDKRelay,
-        timeSinceFirstSeen: number
-    ) {
-        for (const subscription of this.subscriptions) {
-            if (!this.isEventForSubscription(event, subscription)) {
-                continue;
-            }
-
-            subscription.emit(
-                "event:dup",
-                event,
-                relay,
-                timeSinceFirstSeen,
-                subscription
-            );
-        }
-    }
-
-    private forwardEose() {
-        for (const subscription of this.subscriptions) {
-            subscription.emit("eose", subscription);
-        }
-    }
-
-    private forwardClose() {
-        for (const subscription of this.subscriptions) {
-            subscription.emit("close", subscription);
-        }
-    }
-}
-
-/**
- * Go through all the passed filters, which should be
- * relatively similar, and merge them.
- */
-export function mergeFilters(filters: NDKFilter[]): NDKFilter {
-    const result: any = {};
-
-    filters.forEach((filter) => {
-        Object.entries(filter).forEach(([key, value]) => {
-            if (Array.isArray(value)) {
-                if (result[key] === undefined) {
-                    result[key] = [...value];
-                } else {
-                    result[key] = Array.from(
-                        new Set([...result[key], ...value])
-                    );
-                }
-            } else {
-                result[key] = value;
-            }
-        });
-    });
-
-    return result as NDKFilter;
-}
-
-/**
  * Creates a valid nostr filter from an event id or a NIP-19 bech32.
  */
 export function filterFromId(id: string): NDKFilter {
@@ -561,22 +401,3 @@ export function relaysFromBech32(bech32: string): NDKRelay[] {
     return [];
 }
 
-/**
- * Generates a random filter id, based on the filter keys.
- */
-function generateFilterId(filter: NDKFilter) {
-    const keys = Object.keys(filter) || [];
-    const subId = [];
-
-    for (const key of keys) {
-        if (key === "kinds") {
-            const v = [key, filter.kinds!.join(",")];
-            subId.push(v.join(":"));
-        } else {
-            subId.push(key);
-        }
-    }
-
-    subId.push(Math.floor(Math.random() * 999999999).toString());
-    return subId.join("-");
-}

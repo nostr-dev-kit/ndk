@@ -1,5 +1,5 @@
-import { NDKKind } from ".";
 import { NDKEvent, NostrEvent } from "..";
+import { NDKKind } from ".";
 import { NDK } from "../../ndk";
 import { NDKRelayUrl } from "../../relay";
 

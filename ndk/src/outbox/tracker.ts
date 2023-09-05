@@ -48,21 +48,24 @@ export class OutboxItem {
 export class OutboxTracker extends EventEmitter {
     public data: LRUCache<Hexpubkey, OutboxItem>;
     private ndk: NDK;
+    private debug: debug.Debugger;
 
     constructor(ndk: NDK) {
         super();
 
         this.ndk = ndk;
+        this.debug = ndk.debug.extend("outbox-tracker");
 
         this.data = new LRUCache({
-            maxSize: 5,
+            maxSize: 100000,
             entryExpirationTimeInMS: 5000,
         });
     }
 
     public trackUsers(items: NDKUser[] | Hexpubkey[]) {
-        items.forEach((item) => {
-            if (this.data.has(getKeyFromItem(item))) return;
+        for (const item of items) {
+            const itemKey = getKeyFromItem(item);
+            if (this.data.has(itemKey)) continue;
 
             const outboxItem = this.track(item, "user");
 
@@ -74,12 +77,28 @@ export class OutboxTracker extends EventEmitter {
                     outboxItem.readRelays = new Set(relayList.readRelayUrls);
                     outboxItem.writeRelays = new Set(relayList.writeRelayUrls);
 
-                    this.ndk.debug(`OutboxTracker: ${user.hexpubkey} has ${relayList.readRelayUrls.length} read relays and ${relayList.writeRelayUrls.length} write relays`);
-                } else {
-                    this.ndk.debug(`OutboxTracker: ${user.hexpubkey} has no relays`);
+                    // remove all blacklisted relays
+                    for (const relayUrl of outboxItem.readRelays) {
+                        if (this.ndk.pool.blacklistRelayUrls.has(relayUrl)) {
+                            this.debug(`removing blacklisted relay ${relayUrl} from read relays`);
+                            outboxItem.readRelays.delete(relayUrl);
+                        }
+                    }
+
+                    // remove all blacklisted relays
+                    for (const relayUrl of outboxItem.writeRelays) {
+                        if (this.ndk.pool.blacklistRelayUrls.has(relayUrl)) {
+                            this.debug(`removing blacklisted relay ${relayUrl} from write relays`);
+                            outboxItem.writeRelays.delete(relayUrl);
+                        }
+                    }
+
+                    this.data.set(itemKey, outboxItem);
+
+                    this.debug(`Adding ${outboxItem.readRelays.size} read relays and ${outboxItem.writeRelays.size} write relays for ${user.hexpubkey}`);
                 }
             });
-        });
+        }
     }
 
     /**

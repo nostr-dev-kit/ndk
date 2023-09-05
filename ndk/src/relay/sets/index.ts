@@ -51,47 +51,6 @@ export class NDKRelaySet {
         return new NDKRelaySet(new Set(relays), ndk);
     }
 
-    // private subscribeOnRelay(relay: NDKRelay, subscription: NDKSubscription) {
-    //     const sub = relay.subscribe(subscription);
-    //     subscription.relaySubscriptions.set(relay, sub);
-    // }
-
-    /**
-     * Calculates an ID of this specific combination of relays.
-     */
-    public getId() {
-        const urls = Array.from(this.relays).map((r) => r.url);
-        const urlString = urls.sort().join(",");
-        return bytesToHex(sha256(urlString));
-    }
-
-    /**
-     * Add a subscription to this relay set
-     */
-    // public subscribe(subscription: NDKSubscription): NDKSubscription {
-    //     const subGroupableId = subscription.groupableId();
-    //     const groupableId = `${this.getId()}:${subGroupableId}`;
-
-    //     if (!subGroupableId) {
-    //         this.executeSubscription(subscription);
-    //         return subscription;
-    //     }
-
-    //     const delayedSubscription =
-    //         this.ndk.delayedSubscriptions.get(groupableId);
-    //     if (delayedSubscription) {
-    //         delayedSubscription.push(subscription);
-    //     } else {
-    //         setTimeout(() => {
-    //             this.executeDelayedSubscription(groupableId);
-    //         }, subscription.opts.groupableDelay);
-
-    //         this.ndk.delayedSubscriptions.set(groupableId, [subscription]);
-    //     }
-
-    //     return subscription;
-    // }
-
     // private executeDelayedSubscription(groupableId: string) {
     //     const subscriptions = this.ndk.delayedSubscriptions.get(groupableId);
     //     this.ndk.delayedSubscriptions.delete(groupableId);

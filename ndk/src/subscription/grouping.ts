@@ -28,5 +28,31 @@ export function calculateGroupableId(filters: NDKFilter[]): NDKFilterGroupingId 
         elements.push(keys);
     }
 
-    return elements.join("-");
+    return elements.join("|");
+}
+
+/**
+ * Go through all the passed filters, which should be
+ * relatively similar, and merge them.
+ */
+export function mergeFilters(filters: NDKFilter[]): NDKFilter {
+    const result: any = {};
+
+    filters.forEach((filter) => {
+        Object.entries(filter).forEach(([key, value]) => {
+            if (Array.isArray(value)) {
+                if (result[key] === undefined) {
+                    result[key] = [...value];
+                } else {
+                    result[key] = Array.from(
+                        new Set([...result[key], ...value])
+                    );
+                }
+            } else {
+                result[key] = value;
+            }
+        });
+    });
+
+    return result as NDKFilter;
 }

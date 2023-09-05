@@ -21,6 +21,7 @@ export type NDKPoolStats = {
  * @emit relay:disconnect - Emitted when a relay in the pool disconnects.
  */
 export class NDKPool extends EventEmitter {
+    // TODO: This should probably be an LRU cache
     public relays = new Map<NDKRelayUrl, NDKRelay>();
     public blacklistRelayUrls: Set<NDKRelayUrl>;
     private debug: debug.Debugger;
@@ -83,10 +84,6 @@ export class NDKPool extends EventEmitter {
      */
     public addRelay(relay: NDKRelay, connect = true) {
         const relayUrl = relay.url;
-
-        if (this.relays.size === 3) {
-            process.exit(0);
-        }
 
         // check if the relay is blacklisted
         if (this.blacklistRelayUrls?.has(relayUrl)) {
@@ -186,7 +183,7 @@ export class NDKPool extends EventEmitter {
                     Promise.race([relay.connect(), timeoutPromise]).catch(
                         (e) => {
                             this.debug(
-                                `Failed to connect to relay ${relay.url}: ${e}`
+                                `Failed to connect to relay ${relay.url}: ${e??"No reason specified"}`
                             );
                         }
                     )

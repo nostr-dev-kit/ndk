@@ -168,14 +168,7 @@ export class NDKUser {
         this.ndk.debug(`relayList`, {outboxPoolRelays: pool.relays.keys()});
         for (const relay of pool.relays.values()) set.add(relay);
 
-        if (set.size === 3) {
-            process.exit(1);
-        }
-
         const relaySet = new NDKRelaySet(set, this.ndk);
-
-        this.ndk.debug(`relaySet from relayList for fetchEvent`, {relaySetRelays: Array.from(relaySet.relays).map((relay) => relay.url)});
-
         const event = await this.ndk.fetchEvent({
             kinds: [10002],
             authors: [this.hexpubkey],

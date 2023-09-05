@@ -74,8 +74,6 @@ export class NDK extends EventEmitter {
     public devWriteRelaySet?: NDKRelaySet;
     public outboxTracker?: OutboxTracker;
 
-    public delayedSubscriptions: Map<string, NDKSubscription[]>;
-
     public constructor(opts: NDKConstructorParams = {}) {
         super();
 
@@ -86,6 +84,8 @@ export class NDK extends EventEmitter {
             opts.blacklistRelayUrls,
             this
         );
+
+        this.debug(`Starting with explicit relays: ${JSON.stringify(this.explicitRelayUrls)}`);
 
         if (opts.enableOutboxModel) {
             this.outboxPool = new NDKPool(
@@ -100,7 +100,6 @@ export class NDK extends EventEmitter {
 
         this.signer = opts.signer;
         this.cacheAdapter = opts.cacheAdapter;
-        this.delayedSubscriptions = new Map();
 
         if (opts.devWriteRelayUrls) {
             this.devWriteRelaySet = NDKRelaySet.fromRelayUrls(
@@ -218,12 +217,6 @@ export class NDK extends EventEmitter {
         relaySet?: NDKRelaySet
     ): Promise<NDKEvent | null> {
         let filter: NDKFilter;
-
-        if (relaySet) {
-            this.debug(`fetchEvent`, idOrFilter, Array.from(relaySet?.relays).map((relay) => relay.url));
-        } else {
-            this.debug(`fetchEvent`, idOrFilter, "no relayset");
-        }
 
         // if no relayset has been provided, try to get one from the event id
         if (!relaySet && typeof idOrFilter === "string") {

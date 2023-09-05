@@ -39,6 +39,7 @@ class NDKRelaySubscriptionFilters {
 export class NDKRelaySubscriptions {
     private ndkRelay: NDKRelay;
     private delayedItems: Map<NDKFilterGroupingId, NDKRelaySubscriptionFilters[]> = new Map();
+    private delayedTimers: Map<NDKFilterGroupingId, number[]> = new Map();
 
     /**
      * Active subscriptions this relay is connected to
@@ -95,18 +96,35 @@ export class NDKRelaySubscriptions {
 
         // this.debug(`${filterGroupableId} has ${this.delayedItems.get(filterGroupableId)?.length} subscriptions`);
 
-        setTimeout(() => {
-            this.executeGroup(filterGroupableId);
+        const timeout = setTimeout(() => {
+            this.executeGroup(filterGroupableId, subscription);
         }, subscription.opts.groupableDelay);
+
+        if (this.delayedTimers.has(filterGroupableId)) {
+            this.delayedTimers.get(filterGroupableId)!.push(timeout);
+        } else {
+            this.delayedTimers.set(filterGroupableId, [timeout]);
+        }
+        // this.debug(`there are ${this.delayedTimers.get(filterGroupableId)!.length} delayed items`);
     }
 
     /**
      * Executes a delayed subscription via its groupable ID.
      * @param groupableId
      */
-    private executeGroup(groupableId: NDKFilterGroupingId) {
+    private executeGroup(groupableId: NDKFilterGroupingId, triggeredBy: NDKSubscription) {
         const delayedItem = this.delayedItems.get(groupableId);
         this.delayedItems.delete(groupableId);
+
+        const timeouts = this.delayedTimers.get(groupableId);
+        // this.groupingDebug("Executing group", groupableId, "triggered by", triggeredBy, `which has ${timeouts?.length} timeouts`);
+
+        // clear all timeouts
+        if (timeouts) {
+            for (const timeout of timeouts) {
+                clearTimeout(timeout);
+            }
+        }
 
         if (delayedItem) {
             // Go through each index of one of the delayed item's filters so we can merge each items' index with the filters in the same index. The groupable ID guarantees that the filters will be mergable at the index level
@@ -119,7 +137,7 @@ export class NDKRelaySubscriptions {
                 mergedFilters.push(mergeFilters(allFiltersAtIndex));
             }
 
-            // this.groupingDebug("Merged filters", mergedFilters);
+            // this.groupingDebug("Merged filters", groupableId, JSON.stringify(mergedFilters), delayedItem.map((di) => di.filters[0]));
 
             this.executeSubscriptions(delayedItem, mergedFilters);
         }

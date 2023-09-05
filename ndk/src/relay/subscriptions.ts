@@ -134,7 +134,7 @@ export class NDKRelaySubscriptions {
             return;
         }
 
-        // If there is an active subscription that could be used, use it
+        /* Check if there is an existing connection we can hook into */
         const activeSubscriptions = this.activeSubscriptionsByGroupId.get(groupableId);
         if (activeSubscriptions) {
             const matchingSubscription = findMatchingActiveSubscriptions(activeSubscriptions.filters, filters);

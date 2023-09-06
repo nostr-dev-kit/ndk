@@ -11,16 +11,19 @@ import EventEmitter from "eventemitter3";
  * Represents a collection of NDKSubscriptions (through NDKRelqySubscriptionFilters)
  * that are grouped together to be sent to a relay as a single REQ.
  *
- * @emits closed It monitors the contained subscriptions and when all subscriptions are closed it emits "closed".
+ * @emits closed It monitors the contained subscriptions and when all subscriptions are closed it emits "close".
  */
 class NDKGroupedSubscriptions extends EventEmitter implements Iterable<NDKSubscriptionFilters> {
     public subscriptions: NDKSubscriptionFilters[];
+    public debug: debug.Debugger;
 
     public constructor(
         subscriptions: NDKSubscriptionFilters[],
+        debug?: debug.Debugger,
     ) {
         super();
         this.subscriptions = subscriptions;
+        this.debug = debug || this.subscriptions[0].subscription.debug.extend("grouped");
 
         for (const subscription of subscriptions) {
             this.handleSubscriptionClosure(subscription);
@@ -32,6 +35,7 @@ class NDKGroupedSubscriptions extends EventEmitter implements Iterable<NDKSubscr
      * @param subscription
      */
     public addSubscription(subscription: NDKSubscriptionFilters) {
+        // this.debug(`adding subscription`, subscription);
         this.subscriptions.push(subscription);
 
         this.handleSubscriptionClosure(subscription);
@@ -44,18 +48,27 @@ class NDKGroupedSubscriptions extends EventEmitter implements Iterable<NDKSubscr
     }
 
     public eoseReceived(relay: NDKRelay) {
-        for (const subscription of this.subscriptions) {
+        // this.debug(`received EOSE from ${relay.url}, will send it to ${this.subscriptions.length} subscriptions`);
+
+        // Loop through a copy since the "close" handler will modify the subscriptions array
+        const subscriptionsToInform = Array.from(this.subscriptions);
+        subscriptionsToInform.forEach(async (subscription) => {
+            // this.debug(`sending EOSE to subscription ${subscription.subscription.internalId}`);
             subscription.subscription.eoseReceived(relay);
-        }
+        });
     }
 
     private handleSubscriptionClosure(subscription: NDKSubscriptionFilters) {
-        subscription.subscription.once("close", () => {
+        subscription.subscription.on("close", () => {
+            // this.debug(`going to remove subscription ${subscription.subscription.internalId} from grouped subscriptions, before removing there are ${this.subscriptions.length} subscriptions`, this.subscriptions);
             const index = this.subscriptions.findIndex(i => i.subscription === subscription.subscription);
             this.subscriptions.splice(index, 1);
 
+            // this.debug(`there are ${this.subscriptions.length} subscriptions left`);
+
             if (this.subscriptions.length <= 0) {
-                this.emit("closed");
+                // this.debug(`going to emit close`);
+                this.emit("close");
             }
         });
     }
@@ -249,8 +262,7 @@ export class NDKRelaySubscriptions {
         }
 
         if (delayedItem) {
-            // Go through each index of one of the delayed item's filters so we can merge each items' index with the filters in the same index. The groupable ID guarantees that the filters will be mergable at the index level
-            // and that all filters have the same number of filters.
+            // Go through each index of one of the delayed item's filters so we can merge each items' index with the filters in the same index. The groupable ID guarantees that the filters will be mergable at the index level and that all filters have the same number of filters.
             const filterCount = delayedItem.subscriptions[0].filters.length;
             const mergedFilters: NDKFilter[] = [];
 
@@ -346,11 +358,12 @@ export class NDKRelaySubscriptions {
 
         sub.on("eose", () => {
             const subFilters = this.activeSubscriptions.get(sub);
+            // this.debug(`Received EOSE from ${this.ndkRelay.url} for subscription ${subId} with filter ${JSON.stringify(mergedFilters)}}`, {subFilters});
             subFilters?.eoseReceived(this.ndkRelay);
         });
 
-        groupedSubscriptions.once("closed", () => {
-            this.debug(`Disconnecting from relay ${this.ndkRelay.url} for subscription ${subId}`);
+        groupedSubscriptions.once("close", () => {
+            // this.debug(`Closing subscription ${this.ndkRelay.url} for subscription ${subId}`);
             sub.unsub();
             this.activeSubscriptions.delete(sub);
             if (groupableId) {

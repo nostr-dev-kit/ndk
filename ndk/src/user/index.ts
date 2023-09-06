@@ -167,7 +167,6 @@ export class NDKUser {
         const pool = this.ndk.outboxPool || this.ndk.pool;
         const set = new Set<NDKRelay>();
 
-        this.ndk.debug(`relayList`, {outboxPoolRelays: pool.relays.keys()});
         for (const relay of pool.relays.values()) set.add(relay);
 
         const relaySet = new NDKRelaySet(set, this.ndk);

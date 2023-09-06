@@ -111,6 +111,7 @@ export class NDKSubscription extends EventEmitter {
     public relaySet?: NDKRelaySet;
     public ndk: NDK;
     public debug: debug.Debugger;
+    public eoseDebug: debug.Debugger;
 
     /**
      * Events that have been seen by the subscription, with the time they were first seen.
@@ -148,6 +149,7 @@ export class NDKSubscription extends EventEmitter {
         this.subId = subId || opts?.subId;
         this.relaySet = relaySet;
         this.debug = ndk.debug.extend(`subscription`);
+        this.eoseDebug = this.debug.extend("eose");
 
         // validate that the caller is not expecting a persistent
         // subscription while using an option that will only hit the cache
@@ -330,12 +332,21 @@ export class NDKSubscription extends EventEmitter {
     public eoseReceived(relay: NDKRelay): void {
         this.eosesSeen.add(relay);
 
+        this.eoseDebug(`received from ${relay.url}`);
+
         let lastEventSeen = this.lastEventReceivedAt ? Date.now() - this.lastEventReceivedAt : undefined;
 
         const hasSeenAllEoses = this.eosesSeen.size === this.relayFilters?.size;
+        const queryFilled = queryFullyFilled(this);
 
-        if (hasSeenAllEoses) {
+        if (queryFilled) {
             this.emit("eose");
+            this.eoseDebug(`Query fully filled`);
+
+            if (this.opts?.closeOnEose) this.stop();
+        } else if (hasSeenAllEoses) {
+            this.emit("eose");
+            this.eoseDebug(`All EOSEs seen`);
 
             if (this.opts?.closeOnEose) this.stop();
         } else {
@@ -363,6 +374,7 @@ export class NDKSubscription extends EventEmitter {
                     if (lastEventSeen !== undefined && lastEventSeen < 20) {
                         this.eoseTimeout = setTimeout(sendEoseTimeout, timeToWaitForNextEose);
                     } else {
+                        this.eoseDebug(`Timeout with last event seen ${lastEventSeen} and ${this.eosesSeen.size} of ${this.relayFilters?.size} EOSEs seen`);
                         this.emit("eose");
                         if (this.opts?.closeOnEose) this.stop();
                     }

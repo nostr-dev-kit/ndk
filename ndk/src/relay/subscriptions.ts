@@ -350,6 +350,7 @@ export class NDKRelaySubscriptions {
         });
 
         groupedSubscriptions.once("closed", () => {
+            this.debug(`Disconnecting from relay ${this.ndkRelay.url} for subscription ${subId}`);
             sub.unsub();
             this.activeSubscriptions.delete(sub);
             if (groupableId) {

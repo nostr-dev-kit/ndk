@@ -214,7 +214,7 @@ Queries submitted by the client might be broken into different queries if NDK co
 For example, say npub-A follows npub-B and npub-C. If the NDK client uses:
 
 ```ts
-const ndk = new NDK({ explicitRelays: ["wss://nos.lol"] });
+const ndk = new NDK({ explicitRelayUrls: ["wss://nos.lol"] });
 const npubA = ndk.getUser("npub-A");
 const feedEvents = await npubA.feed();
 ```
@@ -304,7 +304,7 @@ events = await ndk.fetchEvents(filter);
 ### Creating & publishing events
 
 ```ts
-const ndk = new NDK({ explicitRelays, signer });
+const ndk = new NDK({ explicitRelayUrls, signer });
 const event = new NDKEvent(ndk);
 event.kind = 1;
 event.content = "PV Nostr! 🤙🏼";

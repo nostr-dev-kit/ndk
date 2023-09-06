@@ -110,7 +110,6 @@ export class NDKSubscription extends EventEmitter {
     public relayFilters?: Map<NDKRelayUrl, NDKFilter[]>;
     public relaySet?: NDKRelaySet;
     public ndk: NDK;
-    public relaySubscriptions: Map<NDKRelay, Sub>;
     public debug: debug.Debugger;
 
     /**
@@ -128,6 +127,12 @@ export class NDKSubscription extends EventEmitter {
      */
     public eventsPerRelay: Map<NDKRelay, Set<NDKEventId>> = new Map();
 
+    /**
+     * The time the last event was received by the subscription.
+     * This is used to calculate when EOSE should be emitted.
+     */
+    private lastEventReceivedAt: number | undefined;
+
     public constructor(
         ndk: NDK,
         filters: NDKFilter | NDKFilter[],
@@ -142,7 +147,6 @@ export class NDKSubscription extends EventEmitter {
         this.filters = filters instanceof Array ? filters : [filters];
         this.subId = subId || opts?.subId;
         this.relaySet = relaySet;
-        this.relaySubscriptions = new Map<NDKRelay, Sub>();
         this.debug = ndk.debug.extend(`subscription`);
 
         // validate that the caller is not expecting a persistent
@@ -224,8 +228,6 @@ export class NDKSubscription extends EventEmitter {
     }
 
     public stop(): void {
-        this.relaySubscriptions.forEach((sub) => sub.unsub());
-        this.relaySubscriptions.clear();
         this.emit("close", this);
     }
 
@@ -261,9 +263,6 @@ export class NDKSubscription extends EventEmitter {
                 this.relayFilters.set(relay.url, this.filters);
             }
         }
-
-        const relayUrls = Array.from(this.relayFilters.keys());
-        this.debug(`Using relays ${JSON.stringify(this.filters)} ${relayUrls.join(', ')}`);
 
         // iterate through the this.relayFilters
         for (const [relayUrl, filters] of this.relayFilters) {
@@ -322,36 +321,55 @@ export class NDKSubscription extends EventEmitter {
         }
 
         this.emit("event", event, relay, this);
+        this.lastEventReceivedAt = Date.now();
     }
 
     // EOSE handling
     private eoseTimeout: ReturnType<typeof setTimeout> | undefined;
 
     public eoseReceived(relay: NDKRelay): void {
-        if (this.opts?.closeOnEose) {
-            this.relaySubscriptions.get(relay)?.unsub();
-            this.relaySubscriptions.delete(relay);
-
-            // if this was the last relay that needed to EOSE, emit that this subscription is closed
-            if (this.relaySubscriptions.size === 0) {
-                this.emit("close", this);
-            }
-        }
-
         this.eosesSeen.add(relay);
+
+        let lastEventSeen = this.lastEventReceivedAt ? Date.now() - this.lastEventReceivedAt : undefined;
 
         const hasSeenAllEoses = this.eosesSeen.size === this.relayFilters?.size;
 
         if (hasSeenAllEoses) {
             this.emit("eose");
-        } else {
-            if (this.eoseTimeout) {
-                clearTimeout(this.eoseTimeout);
-            }
 
-            this.eoseTimeout = setTimeout(() => {
-                this.emit("eose");
-            }, 500);
+            if (this.opts?.closeOnEose) this.stop();
+        } else {
+            let timeToWaitForNextEose = 1000;
+
+            // Reduce the number of ms to wait based on the percentage of relays
+            // that have already sent an EOSE, the more
+            // relays that have sent an EOSE, the less time we should wait
+            // for the next one
+            const percentageOfRelaysThatHaveSentEose = this.eosesSeen.size / this.relayFilters!.size;
+
+            // If less than 50% of relays have EOSEd don't add a timeout yet
+            if (percentageOfRelaysThatHaveSentEose >= 0.5) {
+                timeToWaitForNextEose = timeToWaitForNextEose * (1 - percentageOfRelaysThatHaveSentEose);
+
+                if (this.eoseTimeout) {
+                    clearTimeout(this.eoseTimeout);
+                }
+
+                const sendEoseTimeout = () => {
+                    lastEventSeen = this.lastEventReceivedAt ? Date.now() - this.lastEventReceivedAt : undefined;
+
+                    // If we have seen an event in the past 20ms don't emit an EOSE due to a timeout, events
+                    // are still being received
+                    if (lastEventSeen !== undefined && lastEventSeen < 20) {
+                        this.eoseTimeout = setTimeout(sendEoseTimeout, timeToWaitForNextEose);
+                    } else {
+                        this.emit("eose");
+                        if (this.opts?.closeOnEose) this.stop();
+                    }
+                };
+
+                this.eoseTimeout = setTimeout(sendEoseTimeout, timeToWaitForNextEose);
+            }
         }
     }
 }

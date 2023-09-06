@@ -1,6 +1,7 @@
 packages:
     - "apps/*"
     - "packages/*"
+    - "examples/*"
     - "ndk"
     - "ndk-cache-dexie"
     - "ndk-cache-redis"

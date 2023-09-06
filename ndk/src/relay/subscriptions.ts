@@ -330,7 +330,6 @@ export class NDKRelaySubscriptions {
 
         const subId = generateSubId(subscriptions, mergedFilters);
         const sub = this.conn.relay.sub(mergedFilters, { id: subId });
-        this.debug(`Subscribed to ${JSON.stringify(mergedFilters)}`);
 
         this.activeSubscriptions.set(sub, groupedSubscriptions);
         if (groupableId) {
@@ -351,6 +350,7 @@ export class NDKRelaySubscriptions {
         });
 
         groupedSubscriptions.once("closed", () => {
+            sub.unsub();
             this.activeSubscriptions.delete(sub);
             if (groupableId) {
                 this.activeSubscriptionsByGroupId.delete(groupableId);

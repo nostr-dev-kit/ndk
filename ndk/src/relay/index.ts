@@ -243,10 +243,16 @@ export class NDKRelay extends EventEmitter {
         if (this.status === NDKRelayStatus.CONNECTED) {
             return this.publishEvent(event, timeoutMs);
         } else {
-            this.once("connect", () => {
-                this.publishEvent(event, timeoutMs);
-            });
-            return true;
+            return new Promise < boolean > ((resolve, reject) => {
+                this.once("connect", async () => {
+                  try {
+                    const result = await this.publishEvent(event, timeoutMs);
+                    resolve(result);
+                  } catch (err) {
+                    reject(err);
+                  }
+                });
+              });
         }
     }
 

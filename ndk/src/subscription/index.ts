@@ -39,7 +39,7 @@ export enum NDKSubscriptionCacheUsage {
 export interface NDKSubscriptionOptions {
     /**
      * Whether to close the subscription when all relays have reached the end of the event stream.
-     * @default true
+     * @default false
      */
     closeOnEose?: boolean;
     cacheUsage?: NDKSubscriptionCacheUsage;
@@ -71,7 +71,7 @@ export interface NDKSubscriptionOptions {
  * Default subscription options.
  */
 export const defaultOpts: NDKSubscriptionOptions = {
-    closeOnEose: true,
+    closeOnEose: false,
     cacheUsage: NDKSubscriptionCacheUsage.CACHE_FIRST,
     groupable: true,
     groupableDelay: 100,

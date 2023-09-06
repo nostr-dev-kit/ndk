@@ -145,8 +145,7 @@ export class NDK extends EventEmitter {
     }
 
     /**
-     * Create a new subscription. Subscriptions automatically start and finish when all relays
-     * on the set send back an EOSE. (set `opts.closeOnEose` to `false` in order avoid this)
+     * Create a new subscription. Subscriptions automatically start, you can make them automatically close when all relays send back an EOSE by setting `opts.closeOnEose` to `true`)
      *
      * @param filters
      * @param opts

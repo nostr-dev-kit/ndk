@@ -1,11 +1,11 @@
 import debug from "debug";
 import EventEmitter from "eventemitter3";
 import { NDKEvent, NDKTag } from "../events/index.js";
-import { NDKSubscription } from "../subscription/index.js";
+import { NDKFilter, NDKSubscription } from "../subscription/index.js";
 import {NDKUser} from "../user/index.js";
 import { NDKRelayScore } from "./score.js";
 import { NDKRelayConnectivity } from "./connectivity.js";
-import { NDKRelayFilters, NDKRelaySubscriptions } from "./subscriptions.js";
+import { NDKRelaySubscriptions } from "./subscriptions.js";
 import { NDKRelayPublisher } from "./publisher.js";
 
 export type NDKRelayUrl = string;
@@ -94,7 +94,7 @@ export class NDKRelay extends EventEmitter {
      * Disconnects from the relay.
      */
     public disconnect(): void {
-        this.disconnect();
+        this.connectivity.disconnect();
     }
 
     /**
@@ -106,7 +106,7 @@ export class NDKRelay extends EventEmitter {
      */
     public subscribe(
         subscription: NDKSubscription,
-        filters: NDKRelayFilters,
+        filters: NDKFilter[],
     ): void {
         this.subs.subscribe(subscription, filters);
     }

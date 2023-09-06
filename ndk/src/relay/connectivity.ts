@@ -19,13 +19,17 @@ export class NDKRelayConnectivity {
         this.relay = relayInit(this.ndkRelay.url);
         this.debug = this.ndkRelay.debug.extend("connectivity");
 
-        this.relay.on("connect", () => {
+        this.relay.on("notice", (notice: string) => this.handleNotice(notice));
+    }
+
+    public async connect(): Promise<void> {
+        const connectHandler = () => {
             this.updateConnectionStats.connected();
             this._status = NDKRelayStatus.CONNECTED;
             this.ndkRelay.emit("connect");
-        });
+        };
 
-        this.relay.on("disconnect", () => {
+        const disconnectHandler = () => {
             this.updateConnectionStats.disconnected();
 
             if (this._status === NDKRelayStatus.CONNECTED) {
@@ -34,16 +38,19 @@ export class NDKRelayConnectivity {
                 this.handleReconnection();
             }
             this.ndkRelay.emit("disconnect");
-        });
+        };
 
-        this.relay.on("notice", (notice: string) => this.handleNotice(notice));
-    }
-
-    public async connect(): Promise<void> {
         try {
             this.updateConnectionStats.attempt();
             this._status = NDKRelayStatus.CONNECTING;
+
+            this.relay.off("connect", connectHandler);
+            this.relay.off("disconnect", disconnectHandler);
+            this.relay.on("connect", connectHandler);
+            this.relay.on("disconnect", disconnectHandler);
+
             await this.relay.connect();
+
         } catch (e) {
             this.debug("Failed to connect", e);
             this._status = NDKRelayStatus.DISCONNECTED;
@@ -60,12 +67,18 @@ export class NDKRelayConnectivity {
         return this._status;
     }
 
+    public isAvailable(): boolean {
+        return (
+            this._status === NDKRelayStatus.CONNECTED
+        );
+    }
+
     /**
      * Evaluates the connection stats to determine if the relay is flapping.
      */
     private isFlapping(): boolean {
         const durations = this._connectionStats.durations;
-        if (durations.length < 10) return false;
+        if (durations.length % 3 !== 0) return false;
 
         const sum = durations.reduce((a, b) => a + b, 0);
         const avg = sum / durations.length;
@@ -105,6 +118,7 @@ export class NDKRelayConnectivity {
         if (this.isFlapping()) {
             this.ndkRelay.emit("flapping", this, this._connectionStats);
             this._status = NDKRelayStatus.FLAPPING;
+            return;
         }
 
         const reconnectDelay = this.connectedAt

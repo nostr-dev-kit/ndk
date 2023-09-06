@@ -26,6 +26,9 @@ export class NDKPool extends EventEmitter {
     public blacklistRelayUrls: Set<NDKRelayUrl>;
     private debug: debug.Debugger;
     private temporaryRelayTimers = new Map<NDKRelayUrl, NodeJS.Timeout>();
+    private flappingRelays: Set<NDKRelayUrl> = new Set();
+    // A map to store timeouts for each flapping relay.
+    private backoffTimes: Map<string, number> = new Map();
 
     public constructor(
         relayUrls: NDKRelayUrl[] = [],
@@ -210,11 +213,36 @@ export class NDKPool extends EventEmitter {
         await Promise.all(promises);
     }
 
+    private checkOnFlappingRelays() {
+        const flappingRelaysCount = this.flappingRelays.size;
+        const totalRelays = this.relays.size;
+
+        if (flappingRelaysCount / totalRelays >= 0.8) {
+            // Likely an issue on our end. Reset the backoff for all relays.
+            for (const relayUrl of this.flappingRelays) {
+                this.backoffTimes.set(relayUrl, 0);
+            }
+        }
+    }
+
     private handleFlapping(relay: NDKRelay) {
         this.debug(`Relay ${relay.url} is flapping`);
 
-        // TODO: Be smarter about this.
-        this.relays.delete(relay.url);
+         // Increment the backoff time for this relay, starting with 5 seconds.
+        let currentBackoff = this.backoffTimes.get(relay.url) || 5000;
+        currentBackoff = currentBackoff * 2;
+        this.backoffTimes.set(relay.url, currentBackoff);
+
+        this.debug(`Backoff time for ${relay.url} is ${currentBackoff}ms`);
+
+        setTimeout(() => {
+            this.debug(`Attempting to reconnect to ${relay.url}`);
+            relay.connect();
+            this.checkOnFlappingRelays();
+        }, currentBackoff);
+
+        relay.disconnect();
+
         this.emit("flapping", relay);
     }
 

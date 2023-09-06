@@ -12,10 +12,16 @@ export class NDKRelayPublisher {
         if (this.ndkRelay.status === NDKRelayStatus.CONNECTED) {
             return this.publishEvent(event, timeoutMs);
         } else {
-            this.ndkRelay.once("connect", () => {
-                this.publishEvent(event, timeoutMs);
+            return new Promise<boolean>((resolve, reject) => {
+                this.ndkRelay.once("connect", async () => {
+                    try {
+                        const result = await this.publishEvent(event, timeoutMs);
+                        resolve(result);
+                    } catch (err) {
+                        reject(err);
+                    }
+                });
             });
-            return true;
         }
     }
 

@@ -18,6 +18,49 @@ export function queryFullyFilled(subscription: NDKSubscription): boolean {
     return false;
 }
 
+/**
+ * Compares whether a filter includes another filter.
+ * @param filter1 Filter to compare from
+ * @param filter2 Filter to compare to
+ * @example
+ * const filter1 = { authors: ["a", "b"] };
+ * const filter2 = { authors: ["a", "b", "c"] };
+ * compareFilter(filter1, filter2); // true
+ *
+ * const filter1 = { authors: ["a", "b"] };
+ * const filter2 = { authors: ["a", "c"] };
+ * compareFilter(filter1, filter2); // false
+ * @returns
+ */
+export function compareFilter(
+    filter1: NDKFilter,
+    filter2: NDKFilter,
+) {
+    // Make sure the filters have the same number of keys
+    if (Object.keys(filter1).length !== Object.keys(filter2).length) return false;
+
+    for (const [key, value] of Object.entries(filter1)) {
+        const valuesInFilter2 = filter2[key as keyof NDKFilter] as string[];
+
+        if (!valuesInFilter2) return false;
+
+        if (Array.isArray(value) && Array.isArray(valuesInFilter2)) {
+            const v: string[] = value as string[];
+            // make sure all values in the filter are in the other filter
+            for (const valueInFilter2 of valuesInFilter2) {
+                const val: string = valueInFilter2 as string;
+                if (!v.includes(val)) {
+                    return false;
+                }
+            }
+        } else {
+            if (valuesInFilter2 !== value) return false;
+        }
+    }
+
+    return true;
+}
+
 function filterIncludesIds(filter: NDKFilter): boolean {
     return !!filter["ids"];
 }

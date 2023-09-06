@@ -1,5 +1,5 @@
 import EventEmitter from "eventemitter3";
-import { matchFilter, Sub, nip19 } from "nostr-tools";
+import { Sub, nip19 } from "nostr-tools";
 import { EventPointer } from "nostr-tools/lib/nip19";
 import { NDKEvent, NDKEventId } from "../events/index.js";
 import { NDKKind } from "../events/kinds/index.js";
@@ -9,7 +9,6 @@ import { NDKRelaySet } from "../relay/sets/index.js";
 import { queryFullyFilled } from "./utils.js";
 import { NDK } from "../ndk/index.js";
 import { NDKPool } from "../relay/pool/index.js";
-import { NDKRelayFilters } from "../relay/subscriptions.js";
 
 export type NDKFilter<K extends number = NDKKind> = {
     ids?: string[];
@@ -108,7 +107,7 @@ export class NDKSubscription extends EventEmitter {
     /**
      * Tracks the filters as they are executed on each relay
      */
-    public relayFilters?: Map<NDKRelayUrl, NDKRelayFilters>;
+    public relayFilters?: Map<NDKRelayUrl, NDKFilter[]>;
     public relaySet?: NDKRelaySet;
     public ndk: NDK;
     public relaySubscriptions: Map<NDKRelay, Sub>;
@@ -199,6 +198,8 @@ export class NDKSubscription extends EventEmitter {
     public async start(): Promise<void> {
         let cachePromise;
 
+        this.debug(`Starting subscription`, JSON.stringify(this.filters));
+
         if (this.shouldQueryCache()) {
             cachePromise = this.startWithCache();
 
@@ -260,6 +261,9 @@ export class NDKSubscription extends EventEmitter {
                 this.relayFilters.set(relay.url, this.filters);
             }
         }
+
+        const relayUrls = Array.from(this.relayFilters.keys());
+        this.debug(`Using relays ${JSON.stringify(this.filters)} ${relayUrls.join(', ')}`);
 
         // iterate through the this.relayFilters
         for (const [relayUrl, filters] of this.relayFilters) {

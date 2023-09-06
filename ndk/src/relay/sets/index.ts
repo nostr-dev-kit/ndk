@@ -51,66 +51,6 @@ export class NDKRelaySet {
         return new NDKRelaySet(new Set(relays), ndk);
     }
 
-    // private executeDelayedSubscription(groupableId: string) {
-    //     const subscriptions = this.ndk.delayedSubscriptions.get(groupableId);
-    //     this.ndk.delayedSubscriptions.delete(groupableId);
-
-    //     if (subscriptions) {
-    //         if (subscriptions.length > 1) {
-    //             this.executeSubscriptions(subscriptions);
-    //         } else {
-    //             this.executeSubscription(subscriptions[0]);
-    //         }
-    //     }
-    // }
-
-    /**
-     * This function takes a similar group of subscriptions, merges the filters
-     * and sends a single subscription to the relay.
-     */
-    // private executeSubscriptions(
-    //     subscriptions: NDKSubscription[],
-    // ) {
-    //     const ndk = subscriptions[0].ndk;
-    //     const subGroup = new NDKSubscriptionGroup(ndk, subscriptions);
-
-    //     this.executeSubscription(subGroup, filters);
-    // }
-
-    // private executeSubscription(
-    //     subscription: NDKSubscription,
-    //     filters: NDKFilter[]
-    // ): NDKSubscription {
-    //     this.debug("subscribing", { filters: filters });
-
-    //     for (const relay of this.relays) {
-    //         if (relay.status === NDKRelayStatus.CONNECTED) {
-    //             // If the relay is already connected, subscribe immediately
-    //             this.subscribeOnRelay(relay, subscription);
-    //         } else {
-    //             // If the relay is not connected, add a one-time listener to wait for the 'connected' event
-    //             const connectedListener = () => {
-    //                 this.debug(
-    //                     "new relay coming online for active subscription",
-    //                     {
-    //                         relay: relay.url,
-    //                         filters
-    //                     }
-    //                 );
-    //                 this.subscribeOnRelay(relay, subscription);
-    //             };
-    //             relay.once("connect", connectedListener);
-
-    //             // Add a one-time listener to remove the connectedListener when the subscription stops
-    //             subscription.once("close", () => {
-    //                 relay.removeListener("connect", connectedListener);
-    //             });
-    //         }
-    //     }
-
-    //     return subscription;
-    // }
-
     /**
      * Publish an event to all relays in this set. Returns the number of relays that have received the event.
      * @param event

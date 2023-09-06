@@ -4,9 +4,6 @@ import { NDKFilter } from "../../subscription/index.js";
 import { NDKRelay, NDKRelayUrl } from "../index.js";
 import { NDKRelaySet } from "./index.js";
 import { Hexpubkey } from "../../user/index.js";
-import { Relay } from "nostr-tools";
-import debug from "debug";
-import { NDKRelayFilters } from "../subscriptions.js";
 
 /**
  * Creates a NDKRelaySet for the specified event.
@@ -36,15 +33,6 @@ export function getWriteRelaysFor(
     if (!ndk.outboxTracker) return undefined;
 
     return ndk.outboxTracker.data.get(author)?.writeRelays;
-
-    // if the first character is between 'a' and 'f', return a set with 'relay1'
-    if (author === 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52') {
-        return new Set(["wss://relay.damus.com"]);
-    } else if (author === 'ee11a5dff40c19a555f41fe42b48f00e618c91225622ae37b6c2bb67b76c4e49') {
-        return new Set(["wss://relay.snort.social"]);
-    } else {
-        return undefined;
-    }
 }
 
 /**
@@ -58,8 +46,8 @@ export function getWriteRelaysFor(
 export function calculateRelaySetsFromFilter(
     ndk: NDK,
     filters: NDKFilter[]
-): Map<NDKRelayUrl, NDKRelayFilters> {
-    const result = new Map<NDKRelayUrl, NDKRelayFilters>();
+): Map<NDKRelayUrl, NDKFilter[]> {
+    const result = new Map<NDKRelayUrl, NDKFilter[]>();
     const authors = new Set<Hexpubkey>();
 
     filters.forEach((filter) => {
@@ -134,6 +122,6 @@ export function calculateRelaySetsFromFilter(
 export function calculateRelaySetsFromFilters(
     ndk: NDK,
     filters: NDKFilter[]
-): Map<NDKRelayUrl, NDKRelayFilters> {
+): Map<NDKRelayUrl, NDKFilter[]> {
     return calculateRelaySetsFromFilter(ndk, filters);
 }

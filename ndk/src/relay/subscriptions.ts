@@ -3,22 +3,95 @@ import { NDKRelay } from ".";
 import { NDKFilter, NDKSubscription } from "../subscription";
 import { NDKFilterGroupingId, calculateGroupableId, mergeFilters } from "../subscription/grouping.js";
 import { NDKEvent, NostrEvent } from "../events";
-import { generateSubId } from "../subscription/utils";
+import { compareFilter, generateSubId } from "../subscription/utils";
 import { NDKRelayConnectivity } from "./connectivity.js";
+import EventEmitter from "eventemitter3";
 
 /**
- * Represents filters that might have been fragmented
- * from a broader filter requested by a subscription.
+ * Represents a collection of NDKSubscriptions (through NDKRelqySubscriptionFilters)
+ * that are grouped together to be sent to a relay as a single REQ.
+ *
+ * @emits closed It monitors the contained subscriptions and when all subscriptions are closed it emits "closed".
  */
-export type NDKRelayFilters = NDKFilter[];
+class NDKGroupedSubscriptions extends EventEmitter implements Iterable<NDKSubscriptionFilters> {
+    public subscriptions: NDKSubscriptionFilters[];
+
+    public constructor(
+        subscriptions: NDKSubscriptionFilters[],
+    ) {
+        super();
+        this.subscriptions = subscriptions;
+
+        for (const subscription of subscriptions) {
+            this.handleSubscriptionClosure(subscription);
+        }
+    }
+
+    /**
+     * Adds a subscription to this group.
+     * @param subscription
+     */
+    public addSubscription(subscription: NDKSubscriptionFilters) {
+        this.subscriptions.push(subscription);
+
+        this.handleSubscriptionClosure(subscription);
+    }
+
+    public eventReceived(event: NDKEvent) {
+        for (const subscription of this.subscriptions) {
+            subscription.eventReceived(event);
+        }
+    }
+
+    public eoseReceived(relay: NDKRelay) {
+        for (const subscription of this.subscriptions) {
+            subscription.subscription.eoseReceived(relay);
+        }
+    }
+
+    private handleSubscriptionClosure(subscription: NDKSubscriptionFilters) {
+        subscription.subscription.once("close", () => {
+            const index = this.subscriptions.findIndex(i => i.subscription === subscription.subscription);
+            this.subscriptions.splice(index, 1);
+
+            if (this.subscriptions.length <= 0) {
+                this.emit("closed");
+            }
+        });
+    }
+
+    /**
+     * Maps each subscription through a transformation function.
+     * @param fn - The transformation function.
+     * @returns A new array with each subscription transformed by fn.
+     */
+    public map<T>(fn: (sub: NDKSubscriptionFilters, index: number, array: NDKSubscriptionFilters[]) => T): T[] {
+        return this.subscriptions.map(fn);
+    }
+
+    [Symbol.iterator](): Iterator<NDKSubscriptionFilters> {
+        let index = 0;
+        const subscriptions = this.subscriptions;
+
+        return {
+            next(): IteratorResult<NDKSubscriptionFilters> {
+                if (index < subscriptions.length) {
+                    return { value: subscriptions[index++], done: false };
+                } else {
+                    return { value: null, done: true };
+                }
+            }
+        };
+    }
+}
 
 /**
  * Maintains an association of which filters belong to which subscription
  * as sent to this particular relay.
  */
-class NDKRelaySubscriptionFilters {
+class NDKSubscriptionFilters {
     public subscription: NDKSubscription;
-    public filters: NDKRelayFilters = [];
+    public filters: NDKFilter[] = [];
     private ndkRelay: NDKRelay;
 
     public constructor(subscription: NDKSubscription, filters: NDKFilter[], ndkRelay: NDKRelay) {
@@ -40,38 +113,9 @@ class NDKRelaySubscriptionFilters {
     }
 }
 
-export function compareFilter(
-    filter1: NDKFilter,
-    filter2: NDKFilter,
-) {
-    // Make sure the filters have the same number of keys
-    if (Object.keys(filter1).length !== Object.keys(filter2).length) return false;
-
-    for (const [key, value] of Object.entries(filter1)) {
-        const valuesInFilter2 = filter2[key as keyof NDKFilter] as string[];
-
-        if (!valuesInFilter2) return false;
-
-        if (Array.isArray(value) && Array.isArray(valuesInFilter2)) {
-            const v: string[] = value as string[];
-            // make sure all values in the filter are in the other filter
-            for (const valueInFilter2 of valuesInFilter2) {
-                const val: string = valueInFilter2 as string;
-                if (!v.includes(val)) {
-                    return false;
-                }
-            }
-        } else {
-            if (valuesInFilter2 !== value) return false;
-        }
-    }
-
-    return true;
-}
-
 function findMatchingActiveSubscriptions(
-    activeSubscriptions: NDKRelayFilters,
-    filters: NDKRelayFilters,
+    activeSubscriptions: NDKFilter[],
+    filters: NDKFilter[],
 ) {
     if (activeSubscriptions.length !== filters.length) return false;
 
@@ -87,7 +131,7 @@ function findMatchingActiveSubscriptions(
 }
 
 type FiltersSub = {
-    filters: NDKRelayFilters,
+    filters: NDKFilter[],
     sub: Sub
 };
 
@@ -96,13 +140,13 @@ type FiltersSub = {
  */
 export class NDKRelaySubscriptions {
     private ndkRelay: NDKRelay;
-    private delayedItems: Map<NDKFilterGroupingId, NDKRelaySubscriptionFilters[]> = new Map();
+    private delayedItems: Map<NDKFilterGroupingId, NDKGroupedSubscriptions> = new Map();
     private delayedTimers: Map<NDKFilterGroupingId, number[]> = new Map();
 
     /**
      * Active subscriptions this relay is connected to
      */
-    private activeSubscriptions: Map<Sub, NDKRelaySubscriptionFilters[]> = new Map();
+    private activeSubscriptions: Map<Sub, NDKGroupedSubscriptions> = new Map();
     private activeSubscriptionsByGroupId: Map<NDKFilterGroupingId, FiltersSub> = new Map();
     private debug: debug.Debugger;
     private groupingDebug: debug.Debugger;
@@ -120,57 +164,58 @@ export class NDKRelaySubscriptions {
      */
     public subscribe(
         subscription: NDKSubscription,
-        filters: NDKRelayFilters,
+        filters: NDKFilter[],
     ): void {
         const groupableId = calculateGroupableId(filters);
+        const subscriptionFilters = new NDKSubscriptionFilters(subscription, filters, this.ndkRelay);
 
+        // If this subscription is not groupable, execute it immediately
         if (!groupableId || !subscription.isGroupable()) {
             this.groupingDebug("No groupable ID for filters", filters);
             this.executeSubscriptions(
                 groupableId,
-                [new NDKRelaySubscriptionFilters(subscription, filters, this.ndkRelay)],
+                // hacky
+                new NDKGroupedSubscriptions([subscriptionFilters]),
                 filters
             );
             return;
         }
 
         /* Check if there is an existing connection we can hook into */
+        // TODO: Need a way to allow developers to opt out from this in case they want to receive before EOSE
+        // events
         const activeSubscriptions = this.activeSubscriptionsByGroupId.get(groupableId);
         if (activeSubscriptions) {
             const matchingSubscription = findMatchingActiveSubscriptions(activeSubscriptions.filters, filters);
 
             if (matchingSubscription) {
                 const activeSubscription = this.activeSubscriptions.get(activeSubscriptions.sub);
-                activeSubscription?.push(new NDKRelaySubscriptionFilters(subscription, filters, this.ndkRelay));
+                activeSubscription?.addSubscription(new NDKSubscriptionFilters(subscription, filters, this.ndkRelay));
 
                 return;
             }
         }
 
-        const delayedItem = this.delayedItems.get(groupableId);
-        const subscriptionFilters = new NDKRelaySubscriptionFilters(subscription, filters, this.ndkRelay);
+        let delayedItem = this.delayedItems.get(groupableId);
 
         if (!delayedItem) {
+            // No similar subscription exists, create a new delayed subscription
             // this.debug("New delayed subscription with ID", groupableId, filters);
-            this.delayedItems.set(groupableId, [subscriptionFilters]);
-        } else {
-            // this.debug("Adding filters to delayed subscription", groupableId, filters);
-            delayedItem.push(subscriptionFilters);
-        }
+            delayedItem = new NDKGroupedSubscriptions([subscriptionFilters]);
+            this.delayedItems.set(groupableId, delayedItem);
 
-        subscription.once("close", () => {
-            const delayedItem = this.delayedItems.get(groupableId);
-            if (!delayedItem) return;
-
-            // remove item from delayedItem that has subscription
-            delayedItem.splice(delayedItem.findIndex(i => i.subscription === subscription), 1);
-
-            if (this.delayedItems.get(groupableId)?.length === 0) {
+            // When the subscription closes, remove it from the delayed items
+            // XXX Need to remove this listener when the delayed item is executed
+            delayedItem.once("close", () => {
+                const delayedItem = this.delayedItems.get(groupableId);
+                if (!delayedItem) return;
                 this.delayedItems.delete(groupableId);
-            }
-        });
-
-        // this.debug(`${groupableId} has ${this.delayedItems.get(groupableId)?.length} subscriptions`);
+            });
+        } else {
+            // A similar subscription exists, add this subscription to the delayed subscription
+            // this.debug("Adding filters to delayed subscription", groupableId, filters);
+            delayedItem.addSubscription(subscriptionFilters);
+        }
 
         const timeout = setTimeout(() => {
             this.executeGroup(groupableId, subscription);
@@ -206,7 +251,7 @@ export class NDKRelaySubscriptions {
         if (delayedItem) {
             // Go through each index of one of the delayed item's filters so we can merge each items' index with the filters in the same index. The groupable ID guarantees that the filters will be mergable at the index level
             // and that all filters have the same number of filters.
-            const filterCount = delayedItem[0].filters.length;
+            const filterCount = delayedItem.subscriptions[0].filters.length;
             const mergedFilters: NDKFilter[] = [];
 
             for (let i = 0; i < filterCount; i++) {
@@ -227,20 +272,59 @@ export class NDKRelaySubscriptions {
     /**
      * Executes one or more subscriptions.
      *
+     * If the relay is not connected, subscriptions will be queued
+     * until the relay connects.
+     *
+     * @param groupableId
+     * @param subscriptionFilters
+     * @param mergedFilters
+     */
+    private executeSubscriptions(
+        groupableId: NDKFilterGroupingId | null,
+        groupedSubscriptions: NDKGroupedSubscriptions,
+        mergedFilters: NDKFilter[],
+    ) {
+        if (this.conn.isAvailable()) {
+            this.executeSubscriptionsConnected(groupableId, groupedSubscriptions, mergedFilters);
+        } else {
+            // If the relay is not connected, add a one-time listener to wait for the 'connected' event
+            const connectedListener = () => {
+                this.debug(
+                    "new relay coming online for active subscription",
+                    {
+                        relay: this.ndkRelay.url,
+                        mergeFilters
+                    }
+                );
+                this.executeSubscriptionsConnected(groupableId, groupedSubscriptions, mergedFilters);
+            };
+            this.ndkRelay.once("connect", connectedListener);
+
+            // Add a one-time listener to remove the connectedListener when the subscription stops
+            // in case it was stopped before the relay ever becamse available
+            groupedSubscriptions.once("close", () => {
+                this.ndkRelay.removeListener("connect", connectedListener);
+            });
+        }
+    }
+
+    /**
+     * Executes one or more subscriptions.
+     *
      * When there are more than one subscription, results
      * will be sent to the right subscription
      *
      * @param subscriptions
      * @param filters The filters as they should be sent to the relay
      */
-    private executeSubscriptions(
+    private executeSubscriptionsConnected(
         groupableId: NDKFilterGroupingId | null,
-        subscriptionFilters: NDKRelaySubscriptionFilters[],
+        groupedSubscriptions: NDKGroupedSubscriptions,
         mergedFilters: NDKFilter[],
     ): Sub {
         const subscriptions: NDKSubscription[] = [];
 
-        for (const {subscription} of subscriptionFilters) {
+        for (const {subscription} of groupedSubscriptions) {
             subscriptions.push(subscription);
         }
 
@@ -248,7 +332,7 @@ export class NDKRelaySubscriptions {
         const sub = this.conn.relay.sub(mergedFilters, { id: subId });
         this.debug(`Subscribed to ${JSON.stringify(mergedFilters)}`);
 
-        this.activeSubscriptions.set(sub, subscriptionFilters);
+        this.activeSubscriptions.set(sub, groupedSubscriptions);
         if (groupableId) {
             this.activeSubscriptionsByGroupId.set(groupableId, { filters: mergedFilters, sub });
         }
@@ -258,56 +342,21 @@ export class NDKRelaySubscriptions {
             e.relay = this.ndkRelay;
 
             const subFilters = this.activeSubscriptions.get(sub);
-            subFilters?.forEach((sf) => sf.eventReceived(e));
+            subFilters?.eventReceived(e);
         });
 
         sub.on("eose", () => {
             const subFilters = this.activeSubscriptions.get(sub);
-            subFilters?.forEach((sf) => {
-                sf.subscription.eoseReceived(this.ndkRelay);
-
-                if (sf.subscription.opts?.closeOnEose) {
-                    this.removeSubscriptionFromActiveSubscriptions(sub, sf.subscription);
-                }
-            });
+            subFilters?.eoseReceived(this.ndkRelay);
         });
 
-        // When an NDKSubscription unsubscribes, remove it from the active subscriptions
-        for (const {subscription} of subscriptionFilters) {
-            this.onSubscriptionClose(sub, subscription);
-        }
+        groupedSubscriptions.once("closed", () => {
+            this.activeSubscriptions.delete(sub);
+            if (groupableId) {
+                this.activeSubscriptionsByGroupId.delete(groupableId);
+            }
+        });
 
         return sub;
-    }
-
-    private removeSubscriptionFromActiveSubscriptions(
-        sub: Sub,
-        subscription: NDKSubscription
-    ) {
-        const activeFilters = this.activeSubscriptions.get(sub);
-
-        if (!activeFilters) return;
-
-        const index = activeFilters.findIndex(i => i.subscription === subscription);
-
-        // this.debug(`remove: Removing subscription from active subscriptions`, index, subscription.opts.subId);
-
-        // remove item from activeFilters that has subscription
-        activeFilters?.splice(index, 1);
-
-        // if there are no more active filters, remove the subscription
-        if (activeFilters?.length <= 0) {
-            sub.unsub();
-            this.activeSubscriptions.delete(sub);
-        }
-    }
-
-    private onSubscriptionClose(
-        sub: Sub,
-        subscription: NDKSubscription
-    ) {
-        subscription.once("close", () => {
-            this.removeSubscriptionFromActiveSubscriptions(sub, subscription);
-        });
     }
 }

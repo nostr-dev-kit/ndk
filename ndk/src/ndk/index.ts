@@ -63,6 +63,9 @@ export const DEFAULT_OUTBOX_RELAYS =[
     "wss://purplepag.es",
     "wss://relay.snort.social",
 ];
+
+export const DEFAULT_BLACKLISTED_RELAYS = [
+    "wss://brb.io" // BRB
 ];
 
 export class NDK extends EventEmitter {
@@ -91,7 +94,7 @@ export class NDK extends EventEmitter {
         if (opts.enableOutboxModel) {
             this.outboxPool = new NDKPool(
                 opts.outboxRelayUrls || DEFAULT_OUTBOX_RELAYS,
-                opts.blacklistRelayUrls,
+                opts.blacklistRelayUrls || DEFAULT_BLACKLISTED_RELAYS,
                 this,
                 this.debug.extend("outbox-pool")
             );

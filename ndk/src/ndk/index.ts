@@ -60,8 +60,9 @@ export interface GetUserParams extends NDKUserParams {
 }
 
 export const DEFAULT_OUTBOX_RELAYS =[
-    "https://purplepag.es",
-    "https://relay.snort.social",
+    "wss://purplepag.es",
+    "wss://relay.snort.social",
+];
 ];
 
 export class NDK extends EventEmitter {

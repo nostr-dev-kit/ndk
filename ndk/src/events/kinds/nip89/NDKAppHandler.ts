@@ -1,6 +1,7 @@
-import NDK, { NDKUserProfile } from "../../../index.js";
-import NDKEvent, { NostrEvent } from "../../index.js";
 import { NDKKind } from "../index.js";
+import { NDKEvent, NostrEvent } from "../../index.js";
+import { NDK } from "../../../ndk/index.js";
+import { NDKUserProfile } from "../../../user/profile";
 
 /**
  * This is a NIP-89 app handler wrapper.

@@ -1,7 +1,8 @@
 import debug from "debug";
 import EventEmitter from "eventemitter3";
-import NDK from "../../index.js";
-import { NDKRelay, NDKRelayStatus } from "../index.js";
+import { NDKRelay, NDKRelayStatus, NDKRelayUrl } from "../index.js";
+import { NDK } from "../../ndk/index.js";
+import { NDKRelaySet } from "../sets/index.js";
 
 export type NDKPoolStats = {
     total: number;
@@ -20,17 +21,30 @@ export type NDKPoolStats = {
  * @emit relay:disconnect - Emitted when a relay in the pool disconnects.
  */
 export class NDKPool extends EventEmitter {
-    public relays = new Map<string, NDKRelay>();
+    // TODO: This should probably be an LRU cache
+    public relays = new Map<NDKRelayUrl, NDKRelay>();
+    public blacklistRelayUrls: Set<NDKRelayUrl>;
     private debug: debug.Debugger;
-    private temporaryRelayTimers = new Map<string, NodeJS.Timeout>();
+    private temporaryRelayTimers = new Map<NDKRelayUrl, NodeJS.Timeout>();
+    private flappingRelays: Set<NDKRelayUrl> = new Set();
+    // A map to store timeouts for each flapping relay.
+    private backoffTimes: Map<string, number> = new Map();
 
-    public constructor(relayUrls: string[] = [], ndk: NDK) {
+    public constructor(
+        relayUrls: NDKRelayUrl[] = [],
+        blacklistedRelayUrls: NDKRelayUrl[] = [],
+        ndk: NDK,
+        debug?: debug.Debugger
+    ) {
         super();
-        this.debug = ndk.debug.extend("pool");
+        this.debug = debug ?? ndk.debug.extend("pool");
+
         for (const relayUrl of relayUrls) {
             const relay = new NDKRelay(relayUrl);
             this.addRelay(relay, false);
         }
+
+        this.blacklistRelayUrls = new Set(blacklistedRelayUrls);
     }
 
     /**
@@ -74,6 +88,12 @@ export class NDKPool extends EventEmitter {
     public addRelay(relay: NDKRelay, connect = true) {
         const relayUrl = relay.url;
 
+        // check if the relay is blacklisted
+        if (this.blacklistRelayUrls?.has(relayUrl)) {
+            this.debug(`Relay ${relayUrl} is blacklisted`);
+            return;
+        }
+
         relay.on("notice", (relay, notice) =>
             this.emit("notice", relay, notice)
         );
@@ -109,6 +129,22 @@ export class NDKPool extends EventEmitter {
         }
 
         return false;
+    }
+
+    /**
+     * Fetches a relay from the pool, or creates a new one if it does not exist.
+     *
+     * New relays will be attempted to be connected.
+     */
+    public getRelay(url: NDKRelayUrl): NDKRelay {
+        let relay = this.relays.get(url);
+
+        if (!relay) {
+            relay = new NDKRelay(url);
+            this.addRelay(relay);
+        }
+
+        return relay;
     }
 
     private handleRelayConnect(relayUrl: string) {
@@ -150,7 +186,7 @@ export class NDKPool extends EventEmitter {
                     Promise.race([relay.connect(), timeoutPromise]).catch(
                         (e) => {
                             this.debug(
-                                `Failed to connect to relay ${relay.url}: ${e}`
+                                `Failed to connect to relay ${relay.url}: ${e??"No reason specified"}`
                             );
                         }
                     )
@@ -177,11 +213,36 @@ export class NDKPool extends EventEmitter {
         await Promise.all(promises);
     }
 
+    private checkOnFlappingRelays() {
+        const flappingRelaysCount = this.flappingRelays.size;
+        const totalRelays = this.relays.size;
+
+        if (flappingRelaysCount / totalRelays >= 0.8) {
+            // Likely an issue on our end. Reset the backoff for all relays.
+            for (const relayUrl of this.flappingRelays) {
+                this.backoffTimes.set(relayUrl, 0);
+            }
+        }
+    }
+
     private handleFlapping(relay: NDKRelay) {
         this.debug(`Relay ${relay.url} is flapping`);
 
-        // TODO: Be smarter about this.
-        this.relays.delete(relay.url);
+         // Increment the backoff time for this relay, starting with 5 seconds.
+        let currentBackoff = this.backoffTimes.get(relay.url) || 5000;
+        currentBackoff = currentBackoff * 2;
+        this.backoffTimes.set(relay.url, currentBackoff);
+
+        this.debug(`Backoff time for ${relay.url} is ${currentBackoff}ms`);
+
+        setTimeout(() => {
+            this.debug(`Attempting to reconnect to ${relay.url}`);
+            relay.connect();
+            this.checkOnFlappingRelays();
+        }, currentBackoff);
+
+        relay.disconnect();
+
         this.emit("flapping", relay);
     }
 

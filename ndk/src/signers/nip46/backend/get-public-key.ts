@@ -8,6 +8,6 @@ export default class GetPublicKeyHandlingStrategy
         remotePubkey: string,
         params: string[]
     ): Promise<string | undefined> {
-        return backend.localUser?.hexpubkey();
+        return backend.localUser?.hexpubkey;
     }
 }

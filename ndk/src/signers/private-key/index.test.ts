@@ -22,7 +22,7 @@ describe("NDKPrivateKeySigner", () => {
         const signer = new NDKPrivateKeySigner(privateKey);
         const user = await signer.user();
         expect(user).toBeInstanceOf(NDKUser);
-        expect(user.hexpubkey()).toBe(
+        expect(user.hexpubkey).toBe(
             "07f61c41b44a923952db82e6e7bcd184b059fe087f58f9d9a918da391f38d503"
         );
     });

@@ -1,4 +1,7 @@
-import NDK, { NDKEvent, NDKSubscription, NDKUser, NostrEvent } from "../index";
+import { NDKEvent, NostrEvent } from ".";
+import { NDK } from "../ndk";
+import { NDKSubscription } from "../subscription";
+import { NDKUser } from "../user";
 
 describe("NDKEvent", () => {
     let ndk: NDK;
@@ -22,13 +25,13 @@ describe("NDKEvent", () => {
         it("returns <kind>:<pubkey> for kinds 0", () => {
             event.kind = 0;
             const result = event.deduplicationKey();
-            expect(result).toEqual(`0:${user1.hexpubkey()}`);
+            expect(result).toEqual(`0:${user1.hexpubkey}`);
         });
 
         it("returns <kind>:<pubkey> for kinds 3", () => {
             event.kind = 3;
             const result = event.deduplicationKey();
-            expect(result).toEqual(`3:${user1.hexpubkey()}`);
+            expect(result).toEqual(`3:${user1.hexpubkey}`);
         });
 
         it("returns tagId for other kinds", () => {
@@ -55,12 +58,12 @@ describe("NDKEvent", () => {
     describe("tag", () => {
         it("tags a user without a marker", () => {
             event.tag(user2);
-            expect(event.tags).toEqual([["p", user2.hexpubkey()]]);
+            expect(event.tags).toEqual([["p", user2.hexpubkey]]);
         });
 
         it("tags a user with a marker", () => {
             event.tag(user2, "author");
-            expect(event.tags).toEqual([["p", user2.hexpubkey(), "author"]]);
+            expect(event.tags).toEqual([["p", user2.hexpubkey, "author"]]);
         });
 
         it("tags an event without a marker", () => {
@@ -90,7 +93,7 @@ describe("NDKEvent", () => {
             event.tag(otherEvent);
             expect(event.tags).toEqual([
                 ["e", otherEvent.id],
-                ["p", user2.hexpubkey()],
+                ["p", user2.hexpubkey],
             ]);
         });
 

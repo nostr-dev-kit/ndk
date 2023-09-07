@@ -2,9 +2,9 @@ import { bech32 } from "@scure/base";
 import EventEmitter from "eventemitter3";
 import { nip57 } from "nostr-tools";
 import type { NostrEvent } from "../events/index.js";
-import NDKEvent, { NDKTag } from "../events/index.js";
-import NDK from "../index.js";
-import User from "../user/index.js";
+import { NDKEvent, NDKTag } from "../events/index.js";
+import { NDKUser } from "../user/index.js";
+import { NDK } from "../ndk/index.js";
 
 const DEFAULT_RELAYS = [
     "wss://nos.lol",
@@ -18,7 +18,7 @@ const DEFAULT_RELAYS = [
 interface ZapConstructorParams {
     ndk: NDK;
     zappedEvent?: NDKEvent;
-    zappedUser?: User;
+    zappedUser?: NDKUser;
 }
 
 type ZapConstructorParamsRequired = Required<
@@ -30,7 +30,7 @@ type ZapConstructorParamsRequired = Required<
 export default class Zap extends EventEmitter {
     public ndk?: NDK;
     public zappedEvent?: NDKEvent;
-    public zappedUser: User;
+    public zappedUser: NDKUser;
 
     public constructor(args: ZapConstructorParamsRequired) {
         super();
@@ -122,7 +122,7 @@ export default class Zap extends EventEmitter {
         if (!this.zappedEvent) throw new Error("No zapped event found");
 
         const zapRequest = nip57.makeZapRequest({
-            profile: this.zappedUser.hexpubkey(),
+            profile: this.zappedUser.hexpubkey,
 
             // set the event to null since nostr-tools doesn't support nip-33 zaps
             event: null,

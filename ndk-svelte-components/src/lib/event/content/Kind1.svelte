@@ -24,8 +24,9 @@
     export let anchorId:string | null = null;
     export let showEntire = false;
     export let showMedia = true;
+    export let content = event.content;
 
-    const fullContent = parseContent(event);
+    const fullContent = parseContent({ ...event, content });
     const shortContent = truncateContent(fullContent, { maxLength, showEntire, showMedia });
     const links = getLinks(shortContent);
     const extraLinks = without(links, getLinks(fullContent));

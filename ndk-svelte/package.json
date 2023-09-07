@@ -14,7 +14,8 @@
         "README.md"
     ],
     "scripts": {
-        "build": "tsup src/index.ts --format cjs,esm --dts",
+        "clean": "rm -rf dist",
+        "build": "pnpm clean && tsup src/index.ts --format cjs,esm --dts",
         "dev": "tsup --watch src src/index.ts --format cjs,esm --dts",
         "test": "echo \"Error: no test specified\" && exit 1"
     },

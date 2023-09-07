@@ -19,7 +19,8 @@
     ],
     "scripts": {
         "dev": "pnpm build --watch",
-        "build": "vite build && pnpm run package",
+        "clean": "rm -rf dist",
+        "build": "pnpm clean && vite build && pnpm run package",
         "preview": "vite preview",
         "package": "svelte-kit sync && svelte-package && publint",
         "prepublishOnly": "pnpm run package",

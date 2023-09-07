@@ -21,7 +21,7 @@
     "packageManager": "pnpm@8.6.12",
     "scripts": {
         "dev": "pnpm build --watch",
-        "build": "tsup src/index.ts --format cjs,esm --dts",
+        "build": "pnpm clean && tsup src/index.ts --format cjs,esm --dts",
         "clean": "rm -rf dist",
         "lint": "eslint src/**/*.ts",
         "prettify": "prettier . --write --config .prettierrc"

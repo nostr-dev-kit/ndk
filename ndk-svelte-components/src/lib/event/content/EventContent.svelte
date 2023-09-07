@@ -17,10 +17,15 @@
     export let maxLength: number = 700;
     export let showEntire: boolean = true;
     export let showMedia: boolean = true;
+
+    /**
+     * Optional content to use instead of the one from the event
+     */
+    export let content = event.content;
 </script>
 
 {#if event.kind === 1}
-    <Kind1 {ndk} {event} {anchorId} {maxLength} {showEntire} {showMedia} on:click />
+    <Kind1 {ndk} {content} {event} {anchorId} {maxLength} {showEntire} {showMedia} on:click />
 {:else if event.kind === 40}
     <!-- <Kind40 {event} /> -->
 {:else if event.kind === 1063}

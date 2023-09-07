@@ -18,7 +18,7 @@
         "!dist/**/*.spec.*"
     ],
     "scripts": {
-        "dev": "pnpm build --watch",
+        "dev": "vite build --watch",
         "build": "vite build && pnpm run package",
         "preview": "vite preview",
         "package": "svelte-kit sync && svelte-package && publint",

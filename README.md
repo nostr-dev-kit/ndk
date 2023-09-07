@@ -67,7 +67,7 @@ localStorage.debug = 'ndk:*'
 -   [x] NIP-57: Zaps
     -   [x] LUD06
     -   [x] LUD16
--   [ ] NIP-65: Contacts' Relay list
+-   [x] NIP-65: Contacts' Relay list
 -   [x] NIP-89: Application Handlers
 -   [x] NIP-90: Data Vending Machines
 -   Subscription Management
@@ -80,10 +80,10 @@ localStorage.debug = 'ndk:*'
     -   [x] NIP-46
         -   [x] Permission tokens
 -   Relay discovery
-    -   [ ] Outbox-model (NIP-65)
+    -   [x] Outbox-model (NIP-65)
     -   [ ] Implicit relays discovery following pubkey usage
     -   [ ] Implicit relays discovery following `t` tag usage
-    -   [ ] Explicit relays blacklist
+    -   [x] Explicit relays blacklist
 -   [ ] nostr-tools/SimplePool drop-in replacement interface
 
 ## Real-world uses of NDK
@@ -213,6 +213,25 @@ In this example, NDK will wait 100ms (default `groupableDelay`) before creating 
 ```ts
 {kinds: [0], authors: ['pubkey-1', 'pubkey-2'] }
 ```
+
+## Outbox model (formerly known as *gossip-protocol*)
+
+When instantiating NDK, you can pass a set of outboxRelays, which will be used exclusively to consult outbox-model
+related events:
+
+```ts
+const ndk = new NDK({
+    explicitRelayUrls: ["wss://a.relay", "wss://another.relay"],
+    outboxRelayUrls: ["wss://purplepag.es"],
+    enableOutboxModel: true,
+});
+```
+
+When you request information about a user (i.e. explicitly using a user's pubkey in an `authors` filter), NDK will
+automatically query the user's outbox relays and subsequent queries will favour using those relays for queries with that
+user's pubkey.
+
+[OUTBOX.md](./OUTBOX.md) contains more information about the outbox model. *WIP*
 
 ## Intelligent relay selection
 

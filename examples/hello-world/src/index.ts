@@ -29,13 +29,8 @@ await ndk.connect(6000);
 const eventsPerRelay = new Map<string, number>();
 const eventIds = new Set();
 
-const user = ndk.getUser({hexpubkey: "dc4cd086cd7ce5b1832adf4fdd1211289880d2c7e295bcb0e684c01acee77c06"});
-const sub = await ndk.subscribe({ kinds: [0], limit: 100 }, { closeOnEose: true });
-sub.on("eose", () => console.log(`eose`));
-sub.on("event", (event) => {
-    eventIds.add(event.id);
-    eventsPerRelay.set(event.relay!.url, (eventsPerRelay.get(event.relay!.url) || 0) + 1);
-});
+const sub = await ndk.fetchEvent("note179s867lx0d4sgze4x969anszcjmg90p6dukjadpct8cwmssq9vksjmqdve");
+console.log(sub?.rawEvent());
 
 setInterval(() => {
     console.log(`distinct events: ${eventIds.size}`);

@@ -1,5 +1,5 @@
-import NDK from "../../../index.js";
-import NDKEvent, { NostrEvent } from "../../index.js";
+import {NDK} from "../../../ndk/index.js";
+import { NDKEvent, NostrEvent } from "../../index.js";
 import { NDKKind } from "../index.js";
 
 /**

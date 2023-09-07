@@ -1,13 +1,14 @@
 import EventEmitter from "eventemitter3";
-import { matchFilter, Sub, nip19 } from "nostr-tools";
+import { Sub, nip19 } from "nostr-tools";
 import { EventPointer } from "nostr-tools/lib/nip19";
-import NDKEvent, { NDKEventId } from "../events/index.js";
+import { NDKEvent, NDKEventId } from "../events/index.js";
 import { NDKKind } from "../events/kinds/index.js";
-import NDK from "../index.js";
-import { NDKRelay } from "../relay";
-import { calculateRelaySetFromFilter } from "../relay/sets/calculate";
+import { NDKRelay, NDKRelayUrl } from "../relay";
+import { calculateRelaySetsFromFilters } from "../relay/sets/calculate";
 import { NDKRelaySet } from "../relay/sets/index.js";
 import { queryFullyFilled } from "./utils.js";
+import { NDK } from "../ndk/index.js";
+import { NDKPool } from "../relay/pool/index.js";
 
 export type NDKFilter<K extends number = NDKKind> = {
     ids?: string[];
@@ -35,7 +36,11 @@ export enum NDKSubscriptionCacheUsage {
 }
 
 export interface NDKSubscriptionOptions {
-    closeOnEose: boolean;
+    /**
+     * Whether to close the subscription when all relays have reached the end of the event stream.
+     * @default false
+     */
+    closeOnEose?: boolean;
     cacheUsage?: NDKSubscriptionCacheUsage;
 
     /**
@@ -54,13 +59,18 @@ export interface NDKSubscriptionOptions {
      * The subscription ID to use for the subscription.
      */
     subId?: string;
+
+    /**
+     * Pool to use
+     */
+    pool?: NDKPool;
 }
 
 /**
  * Default subscription options.
  */
 export const defaultOpts: NDKSubscriptionOptions = {
-    closeOnEose: true,
+    closeOnEose: false,
     cacheUsage: NDKSubscriptionCacheUsage.CACHE_FIRST,
     groupable: true,
     groupableDelay: 100,
@@ -89,13 +99,19 @@ export const defaultOpts: NDKSubscriptionOptions = {
  * @param {NDKSubscription} subscription - The subscription that was closed.
  */
 export class NDKSubscription extends EventEmitter {
-    readonly subId: string;
+    readonly subId?: string;
     readonly filters: NDKFilter[];
     readonly opts: NDKSubscriptionOptions;
+    readonly pool: NDKPool;
+
+    /**
+     * Tracks the filters as they are executed on each relay
+     */
+    public relayFilters?: Map<NDKRelayUrl, NDKFilter[]>;
     public relaySet?: NDKRelaySet;
     public ndk: NDK;
-    public relaySubscriptions: Map<NDKRelay, Sub>;
-    private debug: debug.Debugger;
+    public debug: debug.Debugger;
+    public eoseDebug: debug.Debugger;
 
     /**
      * Events that have been seen by the subscription, with the time they were first seen.
@@ -112,6 +128,14 @@ export class NDKSubscription extends EventEmitter {
      */
     public eventsPerRelay: Map<NDKRelay, Set<NDKEventId>> = new Map();
 
+    /**
+     * The time the last event was received by the subscription.
+     * This is used to calculate when EOSE should be emitted.
+     */
+    private lastEventReceivedAt: number | undefined;
+
+    public internalId: string;
+
     public constructor(
         ndk: NDK,
         filters: NDKFilter | NDKFilter[],
@@ -121,17 +145,26 @@ export class NDKSubscription extends EventEmitter {
     ) {
         super();
         this.ndk = ndk;
+        this.pool = opts?.pool || ndk.pool;
         this.opts = { ...defaultOpts, ...(opts || {}) };
         this.filters = filters instanceof Array ? filters : [filters];
-        this.subId = subId || opts?.subId || generateFilterId(this.filters[0]);
-
+        this.subId = subId || opts?.subId;
+        this.internalId = Math.random().toString(36).substring(7);
         this.relaySet = relaySet;
-        this.relaySubscriptions = new Map<NDKRelay, Sub>();
-        this.debug = ndk.debug.extend(`subscription:${this.subId}`);
+        this.debug = ndk.debug.extend(`subscription[${this.internalId}]`);
+        this.eoseDebug = this.debug.extend("eose");
+
+        if (!this.opts.closeOnEose) {
+            this.debug(`Creating a permanent subscription`, this.opts, JSON.stringify(this.filters));
+            // console.trace(this);
+        }
+
+        // if (this.filters[0].authors && this.filters[0].authors[0] === 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52') {
+        //     console.trace(`creating a subscription with a filter for pablo`, this);
+        // }
 
         // validate that the caller is not expecting a persistent
         // subscription while using an option that will only hit the cache
-
         if (
             this.opts.cacheUsage === NDKSubscriptionCacheUsage.ONLY_CACHE &&
             !this.opts.closeOnEose
@@ -150,33 +183,8 @@ export class NDKSubscription extends EventEmitter {
         return this.filters[0];
     }
 
-    /**
-     * Calculates the groupable ID for this subscription.
-     *
-     * @returns The groupable ID, or null if the subscription is not groupable.
-     */
-    public groupableId(): string | null {
-        if (!this.opts?.groupable || this.filters.length > 1) {
-            return null;
-        }
-
-        const filter = this.filters[0];
-
-        // Check if there is a kind and no time-based filters
-        const noTimeConstraints = !filter.since && !filter.until;
-        const noLimit = !filter.limit;
-
-        if (noTimeConstraints && noLimit) {
-            let id = filter.kinds ? filter.kinds.join(",") : "";
-            const keys = Object.keys(filter || {})
-                .sort()
-                .join("-");
-            id += `-${keys}`;
-
-            return id;
-        }
-
-        return null;
+    public isGroupable(): boolean {
+        return this.opts?.groupable || false;
     }
 
     private shouldQueryCache(): boolean {
@@ -192,7 +200,7 @@ export class NDKSubscription extends EventEmitter {
             // Must want to close on EOSE; subscriptions
             // that want to receive further updates must
             // always hit the relay
-            this.opts.closeOnEose &&
+            this.opts.closeOnEose! &&
             // Cache adapter must claim to be fast
             !!this.ndk.cacheAdapter?.locking &&
             // If explicitly told to run in parallel, then
@@ -223,7 +231,7 @@ export class NDKSubscription extends EventEmitter {
         }
 
         if (this.shouldQueryRelays()) {
-            this.startWithRelaySet();
+            this.startWithRelays();
         } else {
             this.emit("eose", this);
         }
@@ -232,9 +240,15 @@ export class NDKSubscription extends EventEmitter {
     }
 
     public stop(): void {
-        this.relaySubscriptions.forEach((sub) => sub.unsub());
-        this.relaySubscriptions.clear();
+        // this.debug(`running stop ${this.internalId}`);
         this.emit("close", this);
+    }
+
+    /**
+     * @returns Whether the subscription has an authors filter.
+     */
+    public hasAuthorsFilter(): boolean {
+        return this.filters.some((f) => f.authors?.length);
     }
 
     private async startWithCache(): Promise<void> {
@@ -247,16 +261,29 @@ export class NDKSubscription extends EventEmitter {
         }
     }
 
-    private startWithRelaySet(): void {
+    /**
+     * Send REQ to relays
+     */
+    private startWithRelays(): void {
         if (!this.relaySet) {
-            this.relaySet = calculateRelaySetFromFilter(
+            this.relayFilters = calculateRelaySetsFromFilters(
                 this.ndk,
-                this.filters[0]
+                this.filters
             );
+        } else {
+            this.relayFilters = new Map();
+            for (const relay of this.relaySet.relays) {
+                this.relayFilters.set(relay.url, this.filters);
+            }
         }
 
-        if (this.relaySet) {
-            this.relaySet.subscribe(this);
+        // const relayUrls = Array.from(this.relayFilters.keys());
+        // this.debug(`Starting subscription`, JSON.stringify(this.filters), this.opts, relayUrls);
+
+        // iterate through the this.relayFilters
+        for (const [relayUrl, filters] of this.relayFilters) {
+            const relay = this.pool.getRelay(relayUrl);
+            relay.subscribe(this, filters);
         }
     }
 
@@ -304,178 +331,82 @@ export class NDKSubscription extends EventEmitter {
                 this.ndk.cacheAdapter.setEvent(event, this.filters[0], relay);
             }
 
-            this.eventFirstSeen.set(`${event.id}`, Date.now());
+            this.eventFirstSeen.set(event.id, Date.now());
         } else {
-            this.eventFirstSeen.set(`${event.id}`, 0);
+            this.eventFirstSeen.set(event.id, 0);
         }
 
         this.emit("event", event, relay, this);
+        this.lastEventReceivedAt = Date.now();
     }
 
     // EOSE handling
     private eoseTimeout: ReturnType<typeof setTimeout> | undefined;
 
     public eoseReceived(relay: NDKRelay): void {
-        if (this.opts?.closeOnEose) {
-            this.relaySubscriptions.get(relay)?.unsub();
-            this.relaySubscriptions.delete(relay);
-
-            // if this was the last relay that needed to EOSE, emit that this subscription is closed
-            if (this.relaySubscriptions.size === 0) {
-                this.emit("close", this);
-            }
-        }
-
         this.eosesSeen.add(relay);
 
-        const hasSeenAllEoses = this.eosesSeen.size === this.relaySet?.size();
+        this.eoseDebug(`received from ${relay.url}`);
 
-        if (hasSeenAllEoses) {
+        let lastEventSeen = this.lastEventReceivedAt ? Date.now() - this.lastEventReceivedAt : undefined;
+
+        const hasSeenAllEoses = this.eosesSeen.size === this.relayFilters?.size;
+        const queryFilled = queryFullyFilled(this);
+
+        if (queryFilled) {
             this.emit("eose");
-        } else {
-            if (this.eoseTimeout) {
-                clearTimeout(this.eoseTimeout);
-            }
+            this.eoseDebug(`Query fully filled`);
 
-            this.eoseTimeout = setTimeout(() => {
-                this.emit("eose");
-            }, 500);
-        }
-    }
-}
-
-/**
- * Represents a group of subscriptions.
- *
- * Events emitted from the group will be emitted from each subscription.
- */
-export class NDKSubscriptionGroup extends NDKSubscription {
-    private subscriptions: NDKSubscription[];
-
-    constructor(ndk: NDK, subscriptions: NDKSubscription[]) {
-        const debug = ndk.debug.extend("subscription-group");
-
-        const filters = mergeFilters(subscriptions.map((s) => s.filters[0]));
-
-        super(
-            ndk,
-            filters,
-            subscriptions[0].opts, // TODO: This should be merged
-            subscriptions[0].relaySet // TODO: This should be merged
-        );
-
-        this.subscriptions = subscriptions;
-
-        debug("merged filters", {
-            count: subscriptions.length,
-            mergedFilters: this.filters[0],
-        });
-
-        // forward events to the matching subscriptions
-        this.on("event", this.forwardEvent);
-        this.on("event:dup", this.forwardEventDup);
-        this.on("eose", this.forwardEose);
-        this.on("close", this.forwardClose);
-    }
-
-    private isEventForSubscription(
-        event: NDKEvent,
-        subscription: NDKSubscription
-    ): boolean {
-        const { filters } = subscription;
-
-        if (!filters) return false;
-
-        return matchFilter(filters[0], event.rawEvent() as any);
-
-        // check if there is a filter whose key begins with '#'; if there is, check if the event has a tag with the same key on the first position
-        // of the tags array of arrays and the same value in the second position
-        // for (const key in filter) {
-        //     if (key === 'kinds' && filter.kinds!.includes(event.kind!)) return false;
-        //     else if (key === 'authors' && filter.authors!.includes(event.pubkey)) return false;
-        //     else if (key.startsWith('#')) {
-        //         const tagKey = key.slice(1);
-        //         const tagValue = filter[key];
-
-        //         if (event.tags) {
-        //             for (const tag of event.tags) {
-        //                 if (tag[0] === tagKey && tag[1] === tagValue) {
-        //                     return false;
-        //                 }
-        //             }
-        //         }
-        //     }
-
-        // return true;
-    }
-
-    private forwardEvent(event: NDKEvent, relay: NDKRelay) {
-        for (const subscription of this.subscriptions) {
-            if (!this.isEventForSubscription(event, subscription)) {
-                continue;
-            }
-
-            subscription.emit("event", event, relay, subscription);
-        }
-    }
-
-    private forwardEventDup(
-        event: NDKEvent,
-        relay: NDKRelay,
-        timeSinceFirstSeen: number
-    ) {
-        for (const subscription of this.subscriptions) {
-            if (!this.isEventForSubscription(event, subscription)) {
-                continue;
-            }
-
-            subscription.emit(
-                "event:dup",
-                event,
-                relay,
-                timeSinceFirstSeen,
-                subscription
-            );
-        }
-    }
-
-    private forwardEose() {
-        for (const subscription of this.subscriptions) {
-            subscription.emit("eose", subscription);
-        }
-    }
-
-    private forwardClose() {
-        for (const subscription of this.subscriptions) {
-            subscription.emit("close", subscription);
-        }
-    }
-}
-
-/**
- * Go through all the passed filters, which should be
- * relatively similar, and merge them.
- */
-export function mergeFilters(filters: NDKFilter[]): NDKFilter {
-    const result: any = {};
-
-    filters.forEach((filter) => {
-        Object.entries(filter).forEach(([key, value]) => {
-            if (Array.isArray(value)) {
-                if (result[key] === undefined) {
-                    result[key] = [...value];
-                } else {
-                    result[key] = Array.from(
-                        new Set([...result[key], ...value])
-                    );
-                }
+            if (this.opts?.closeOnEose) {
+                this.stop();
             } else {
-                result[key] = value;
+                // this.debug(`not running stop`);
             }
-        });
-    });
+        } else if (hasSeenAllEoses) {
+            this.emit("eose");
+            this.eoseDebug(`All EOSEs seen`);
 
-    return result as NDKFilter;
+            if (this.opts?.closeOnEose) {
+                // this.eoseDebug(`closing on eose`, this.opts);
+                this.stop();
+            } else {
+                // this.eoseDebug(`doesn't need to close on eose`, this.opts);
+            }
+        } else {
+            let timeToWaitForNextEose = 1000;
+
+            // Reduce the number of ms to wait based on the percentage of relays
+            // that have already sent an EOSE, the more
+            // relays that have sent an EOSE, the less time we should wait
+            // for the next one
+            const percentageOfRelaysThatHaveSentEose = this.eosesSeen.size / this.relayFilters!.size;
+
+            // If less than 5 and 50% of relays have EOSEd don't add a timeout yet
+            if (this.eosesSeen.size < 5 && percentageOfRelaysThatHaveSentEose >= 0.5) {
+                timeToWaitForNextEose = timeToWaitForNextEose * (1 - percentageOfRelaysThatHaveSentEose);
+
+                if (this.eoseTimeout) {
+                    clearTimeout(this.eoseTimeout);
+                }
+
+                const sendEoseTimeout = () => {
+                    lastEventSeen = this.lastEventReceivedAt ? Date.now() - this.lastEventReceivedAt : undefined;
+
+                    // If we have seen an event in the past 20ms don't emit an EOSE due to a timeout, events
+                    // are still being received
+                    if (lastEventSeen !== undefined && lastEventSeen < 20) {
+                        this.eoseTimeout = setTimeout(sendEoseTimeout, timeToWaitForNextEose);
+                    } else {
+                        // this.eoseDebug(`Timeout with last event seen ${lastEventSeen}ms ago and ${this.eosesSeen.size} of ${this.relayFilters?.size} EOSEs seen`);
+                        this.emit("eose");
+                        if (this.opts?.closeOnEose) this.stop();
+                    }
+                };
+
+                this.eoseTimeout = setTimeout(sendEoseTimeout, timeToWaitForNextEose);
+            }
+        }
+    }
 }
 
 /**
@@ -527,22 +458,3 @@ export function relaysFromBech32(bech32: string): NDKRelay[] {
     return [];
 }
 
-/**
- * Generates a random filter id, based on the filter keys.
- */
-function generateFilterId(filter: NDKFilter) {
-    const keys = Object.keys(filter) || [];
-    const subId = [];
-
-    for (const key of keys) {
-        if (key === "kinds") {
-            const v = [key, filter.kinds!.join(",")];
-            subId.push(v.join(":"));
-        } else {
-            subId.push(key);
-        }
-    }
-
-    subId.push(Math.floor(Math.random() * 999999999).toString());
-    return subId.join("-");
-}

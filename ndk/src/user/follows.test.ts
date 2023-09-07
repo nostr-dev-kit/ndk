@@ -1,6 +1,6 @@
-import NDKEvent from "../events/index";
-import NDK from "../index";
-import NDKUser from "./index";
+import { NDKUser } from ".";
+import { NDKEvent } from "../events/index";
+import { NDK } from "../ndk";
 
 jest.mock("../index.js", () => {
     return {
@@ -38,7 +38,7 @@ describe("follows", () => {
 
         for (const followedUser of followedUsers) {
             expect(followedUser).toBeInstanceOf(NDKUser);
-            expect(followedUser.hexpubkey()).toBe(followedHexpubkey);
+            expect(followedUser.hexpubkey).toBe(followedHexpubkey);
             expect(followedUser.ndk).toBe(user.ndk);
         }
     });
@@ -68,7 +68,7 @@ describe("follows", () => {
 
         for (const followedUser of followedUsers) {
             expect(followedUser).toBeInstanceOf(NDKUser);
-            expect(followedUser.hexpubkey()).toBe(followedHexpubkey);
+            expect(followedUser.hexpubkey).toBe(followedHexpubkey);
             expect(followedUser.ndk).toBe(user.ndk);
         }
     });

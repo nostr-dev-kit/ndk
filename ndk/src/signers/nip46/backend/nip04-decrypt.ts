@@ -1,4 +1,4 @@
-import NDKUser from "../../../user/index.js";
+import {NDKUser} from "../../../user/index.js";
 import { IEventHandlingStrategy, NDKNip46Backend } from "./index.js";
 
 export default class Nip04DecryptHandlingStrategy

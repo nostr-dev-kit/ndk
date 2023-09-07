@@ -6,7 +6,7 @@ import {
     getSignature,
 } from "nostr-tools";
 import type { NostrEvent } from "../../events/index.js";
-import NDKUser from "../../user";
+import {NDKUser} from "../../user";
 import { NDKSigner } from "../index.js";
 
 export class NDKPrivateKeySigner implements NDKSigner {
@@ -52,7 +52,7 @@ export class NDKPrivateKeySigner implements NDKSigner {
             throw Error("Attempted to encrypt without a private key");
         }
 
-        const recipientHexPubKey = recipient.hexpubkey();
+        const recipientHexPubKey = recipient.hexpubkey;
         return await nip04.encrypt(this.privateKey, recipientHexPubKey, value);
     }
 
@@ -61,7 +61,7 @@ export class NDKPrivateKeySigner implements NDKSigner {
             throw Error("Attempted to decrypt without a private key");
         }
 
-        const senderHexPubKey = sender.hexpubkey();
+        const senderHexPubKey = sender.hexpubkey;
         return await nip04.decrypt(this.privateKey, senderHexPubKey, value);
     }
 }

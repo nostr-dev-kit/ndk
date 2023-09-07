@@ -1,6 +1,6 @@
 import EventEmitter from "eventemitter3";
 import { getEventHash, UnsignedEvent } from "nostr-tools";
-import NDK, { NDKFilter, NDKRelay, NDKRelaySet, NDKUser } from "../index.js";
+import { calculateRelaySetFromEvent } from "../relay/sets/calculate.js";
 import { NDKSigner } from "../signers/index.js";
 import Zap from "../zap/index.js";
 import { generateContentTags } from "./content-tagger.js";
@@ -9,7 +9,11 @@ import { NDKKind } from "./kinds/index.js";
 import { decrypt, encrypt } from "./nip04.js";
 import { encode } from "./nip19.js";
 import { repost } from "./repost.js";
-import { calculateRelaySetFromEvent } from "../relay/sets/calculate.js";
+import { NDK } from "../ndk/index.js";
+import { NDKRelay } from "../relay/index.js";
+import { NDKRelaySet } from "../relay/sets/index.js";
+import { NDKFilter } from "../subscription/index.js";
+import { NDKUser } from "../user/index.js";
 
 export type NDKEventId = string;
 export type NDKTag = string[];
@@ -33,7 +37,7 @@ export type ContentTag = {
  * NDKEvent is the basic building block of NDK; most things
  * you do with NDK will revolve around writing or consuming NDKEvents.
  */
-export default class NDKEvent extends EventEmitter {
+export class NDKEvent extends EventEmitter {
     public ndk?: NDK;
     public created_at?: number;
     public content = "";
@@ -76,7 +80,7 @@ export default class NDKEvent extends EventEmitter {
     }
 
     set author(user: NDKUser) {
-        this.pubkey = user.hexpubkey();
+        this.pubkey = user.hexpubkey;
     }
 
     /**
@@ -115,7 +119,7 @@ export default class NDKEvent extends EventEmitter {
             const tagEventAuthor = userOrEvent.author;
 
             // If event author is not the same as the user signing this event, tag the author
-            if (tagEventAuthor && this.pubkey !== tagEventAuthor.hexpubkey()) {
+            if (tagEventAuthor && this.pubkey !== tagEventAuthor.hexpubkey) {
                 this.tag(tagEventAuthor);
             }
 
@@ -139,7 +143,7 @@ export default class NDKEvent extends EventEmitter {
     async toNostrEvent(pubkey?: string): Promise<NostrEvent> {
         if (!pubkey && this.pubkey === "") {
             const user = await this.ndk?.signer?.user();
-            this.pubkey = user?.hexpubkey() || "";
+            this.pubkey = user?.hexpubkey || "";
         }
 
         if (!this.created_at) this.created_at = Math.floor(Date.now() / 1000);

@@ -1,6 +1,6 @@
 import debug from "debug";
 import type { NostrEvent } from "../../events/index.js";
-import NDKUser from "../../user/index.js";
+import {NDKUser} from "../../user/index.js";
 import { NDKSigner } from "../index.js";
 
 type Nip04QueueItem = {
@@ -72,7 +72,7 @@ export class NDKNip07Signer implements NDKSigner {
             throw new Error("NIP-07 extension not available");
         }
 
-        const recipientHexPubKey = recipient.hexpubkey();
+        const recipientHexPubKey = recipient.hexpubkey;
         return this.queueNip04("encrypt", recipientHexPubKey, value);
     }
 
@@ -81,7 +81,7 @@ export class NDKNip07Signer implements NDKSigner {
             throw new Error("NIP-07 extension not available");
         }
 
-        const senderHexPubKey = sender.hexpubkey();
+        const senderHexPubKey = sender.hexpubkey;
         return this.queueNip04("decrypt", senderHexPubKey, value);
     }
 

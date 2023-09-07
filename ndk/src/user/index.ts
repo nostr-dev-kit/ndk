@@ -1,16 +1,24 @@
 import { nip05, nip19 } from "nostr-tools";
-import { default as NDKEvent, NDKTag, NostrEvent } from "../events/index.js";
-import NDK, { NDKKind } from "../index.js";
+import { NDKEvent, NDKTag, NostrEvent } from "../events/index.js";
+import {NDK} from "../ndk/index.js";
 import {
     NDKSubscriptionCacheUsage,
     NDKSubscriptionOptions,
 } from "../subscription/index.js";
 import { follows } from "./follows.js";
-import { NDKUserProfile, mergeEvent } from "./profile";
+import { NDKUserProfile, mergeEvent } from "./profile.js";
+import { NDKKind } from "../events/kinds/index.js";
+import { NDKRelayList } from "../events/kinds/NDKRelayList.js";
+import { NDKRelaySet } from "../relay/sets/index.js";
+import { NDKRelay } from "../relay/index.js";
+
+export type Hexpubkey = string;
+
+export type Npub = string;
 
 export interface NDKUserParams {
-    npub?: string;
-    hexpubkey?: string;
+    npub?: Npub;
+    hexpubkey?: Hexpubkey;
     nip05?: string;
     relayUrls?: string[];
 }
@@ -18,22 +26,45 @@ export interface NDKUserParams {
 /**
  * Represents a pubkey.
  */
-export default class NDKUser {
+export class NDKUser {
     public ndk: NDK | undefined;
     public profile?: NDKUserProfile;
-    readonly npub: string = "";
+    private _npub?: Npub;
+    private _hexpubkey?: Hexpubkey;
     readonly relayUrls: string[] = [];
 
     public constructor(opts: NDKUserParams) {
-        if (opts.npub) this.npub = opts.npub;
+        if (opts.npub) this._npub = opts.npub;
 
-        if (opts.hexpubkey) {
-            this.npub = nip19.npubEncode(opts.hexpubkey);
-        }
+        if (opts.hexpubkey) this._hexpubkey = opts.hexpubkey;
 
         if (opts.relayUrls) {
             this.relayUrls = opts.relayUrls;
         }
+    }
+
+    get npub(): string {
+        if (!this._npub) {
+            this._npub = nip19.npubEncode(this.hexpubkey);
+        }
+
+        return this._npub;
+    }
+
+    set npub(npub: Npub) {
+        this._npub = npub;
+    }
+
+    get hexpubkey(): Hexpubkey {
+        if (!this._hexpubkey) {
+            this._hexpubkey = nip19.decode(this.npub).data as Hexpubkey;
+        }
+
+        return this._hexpubkey;
+    }
+
+    set hexpubkey(hexpubkey: Hexpubkey) {
+        this._hexpubkey = hexpubkey;
     }
 
     /**
@@ -50,14 +81,6 @@ export default class NDKUser {
                 relayUrls: profile.relays,
             });
         }
-    }
-
-    /**
-     * Get the hexpubkey for a user
-     * @returns {string} The user's hexpubkey
-     */
-    public hexpubkey(): string {
-        return nip19.decode(this.npub).data as string;
     }
 
     /**
@@ -86,7 +109,7 @@ export default class NDKUser {
             setMetadataEvents = await this.ndk.fetchEvents(
                 {
                     kinds: [0],
-                    authors: [this.hexpubkey()],
+                    authors: [this.hexpubkey],
                 },
                 {
                     cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE,
@@ -98,6 +121,8 @@ export default class NDKUser {
             opts = {
                 cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY,
                 closeOnEose: true,
+                groupable: true,
+                groupableDelay: 250
             };
         }
 
@@ -105,7 +130,7 @@ export default class NDKUser {
             setMetadataEvents = await this.ndk.fetchEvents(
                 {
                     kinds: [0],
-                    authors: [this.hexpubkey()],
+                    authors: [this.hexpubkey],
                 },
                 opts
             );
@@ -136,19 +161,25 @@ export default class NDKUser {
      * Returns a set of relay list events for a user.
      * @returns {Promise<Set<NDKEvent>>} A set of NDKEvents returned for the given user.
      */
-    public async relayList(): Promise<Set<NDKEvent>> {
+    public async relayList(): Promise<NDKRelayList|undefined> {
         if (!this.ndk) throw new Error("NDK not set");
 
-        const relayListEvents = await this.ndk.fetchEvents({
+        const pool = this.ndk.outboxPool || this.ndk.pool;
+        const set = new Set<NDKRelay>();
+
+        for (const relay of pool.relays.values()) set.add(relay);
+
+        const relaySet = new NDKRelaySet(set, this.ndk);
+        const event = await this.ndk.fetchEvent({
             kinds: [10002],
-            authors: [this.hexpubkey()],
-        });
+            authors: [this.hexpubkey],
+        }, { closeOnEose: true, pool, groupable: true },
+        relaySet);
 
-        if (relayListEvents) {
-            return relayListEvents;
-        }
+        if (event)
+            return NDKRelayList.from(event);
 
-        return new Set<NDKEvent>();
+        return undefined;
     }
 
     /**
@@ -156,7 +187,7 @@ export default class NDKUser {
      * @returns {NDKTag} an NDKTag
      */
     public tagReference(): NDKTag {
-        return ["p", this.hexpubkey()];
+        return ["p", this.hexpubkey];
     }
 
     /**

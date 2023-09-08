@@ -1,6 +1,5 @@
 <script lang="ts">
     import type { NDKEvent } from "@nostr-dev-kit/ndk";
-    import type NDK from "@nostr-dev-kit/ndk";
     import NoteContentLink from "./NoteContentLink.svelte";
     import { urlIsMedia } from "$lib/utils/notes";
     import DOMPurify from "isomorphic-dompurify";
@@ -12,7 +11,7 @@
     let context = event?.tagValue("context");
     context = context?.replace(
         event?.content as string,
-        `<span class='highlight--content'>${event?.content}</span>`
+        `<mark>${event?.content}</mark>`
     );
 </script>
 
@@ -27,20 +26,3 @@
         <NoteContentLink showMedia={false} value={{ url: ref, isMedia: urlIsMedia(ref) }} />
     </div>
 {/if}
-
-<style lang="postcss">
-    * > :global(.highlight--content) {
-        /* Bitcoin orange */
-        background-color: rgba(242, 169, 0, 0.4);
-    }
-
-    .highlight--blockquote {
-        border-left: 0.25rem solid #ccc;
-        margin-left: 0;
-        padding: 0.25rem 0 0.25rem 1rem;
-    }
-
-    .highlight--reference {
-        margin-top: 1rem;
-    }
-</style>

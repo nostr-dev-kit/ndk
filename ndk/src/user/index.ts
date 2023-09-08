@@ -45,7 +45,7 @@ export class NDKUser {
 
     get npub(): string {
         if (!this._npub) {
-            if (!this.hexpubkey) throw new Error("hexpubkey not set");
+            if (!this._hexpubkey) throw new Error("hexpubkey not set");
             this._npub = nip19.npubEncode(this.hexpubkey);
         }
 
@@ -58,7 +58,7 @@ export class NDKUser {
 
     get hexpubkey(): Hexpubkey {
         if (!this._hexpubkey) {
-            if (!this.npub) throw new Error("npub not set");
+            if (!this._npub) throw new Error("npub not set");
             this._hexpubkey = nip19.decode(this.npub).data as Hexpubkey;
         }
 

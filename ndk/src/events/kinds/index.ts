@@ -15,6 +15,7 @@ export enum NDKKind {
     ChannelHideMessage = 43,
     ChannelMuteUser = 44,
     Report = 1984,
+    Label = 1985,
     ZapRequest = 9734,
     Zap = 9735,
     Highlight = 9802,

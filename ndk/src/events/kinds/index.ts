@@ -45,4 +45,5 @@ export enum NDKKind {
     DVMJobFeedback = 65000,
     DVMJobResult = 65001,
     DVMJobRequestTranscription = 65002,
+    DVMNostrContentRecommendation = 65008,
 }

@@ -52,6 +52,16 @@ export class NDKDVMJobResult extends NDKEvent {
         return this.tagValue("status");
     }
 
+    get jobRequestId(): string | undefined {
+        for (const eTag of this.getMatchingTags("e")) {
+            if (eTag[2] === 'job') return eTag[1];
+        }
+
+        if (this.jobRequest) return this.jobRequest.id;
+
+        return undefined;
+    }
+
     set jobRequest(event: NDKEvent | undefined) {
         this.removeTag("request");
 

@@ -55,13 +55,17 @@
 
 <span class="name">
     {#await fetchProfilePromise}
-        <span class="nip05 {$$props.class}" style={$$props.style}></span>
+        <span class="nip05 {$$props.class}" style={$$props.style}>
+            <slot name="badge" />
+        </span>
     {:then userProfile}
         <span class="nip05 {$$props.class}" style={$$props.style}>
+            <slot name="badge" />
             {userProfile.nip05 ? prettifyNip05(userProfile.nip05) : ""}
         </span>
     {:catch error}
         <span class="nip05--error {$$props.class}" style={$$props.style}>
+            <slot name="badge" />
             Error loading user profile
         </span>
     {/await}

@@ -7,6 +7,8 @@ import Nip05 from "../../lib/user/Nip05.svelte";
  *
  * If a user's NIP-05 starts with an `_` (underscore), only the domain will be rendered.
  *
+ * This component has a named slot called "badge", that you can use to pass in an icon, image or anything else you want.
+ *
  * As with all components, you can pass `class` or `style` props to the component.
  * If no `class` or `style` prop is passed, default styles will render the name as normal text.
  */

@@ -14,7 +14,7 @@
     export let npub: string | undefined = undefined;
 
     /**
-     * The hexpubkey of the user you want to display a NIP-05 for
+     * The hexpubkey of the user you want to display a NIP-05 for, required in order to validate nip-05.
      */
     export let pubkey: string | undefined = undefined;
 
@@ -28,7 +28,7 @@
      */
     export let userProfile: NDKUserProfile | undefined = undefined;
 
-    let nip05Valid: boolean | undefined;
+    let nip05Valid: boolean | undefined = undefined;
 
     if (!userProfile && !user) {
         let opts = npub ? { npub } : { hexpubkey: pubkey };
@@ -39,9 +39,9 @@
         }
     }
 
-    async function validNip05(pubkey: string, nip05: string | undefined): Promise<boolean | undefined> {
-        // Return undefined for no nip-05
-        if(!nip05) return undefined;
+    async function validNip05(pubkey: string | undefined, nip05: string | undefined): Promise<boolean | undefined> {
+        // Return undefined if we can't validate
+        if(!pubkey || !nip05) return undefined;
 
         let name: string | undefined = undefined;
         let domain: string | undefined = undefined;
@@ -78,19 +78,20 @@
         return validOrNot;
     }
 
-    // Ppdate NIP-05 validity as soon as possible
-    $: if (user && userProfile) validNip05(user?.hexpubkey, user.profile?.nip05).then((value) => (nip05Valid = value))
-
-    const fetchProfilePromise = new Promise<NDKUserProfile>((resolve, reject) => {
+    const fetchProfilePromise = new Promise<NDKUserProfile>(async (resolve, reject) => {
         if (userProfile) {
+            nip05Valid = await validNip05(pubkey, userProfile.nip05);
             resolve(userProfile);
         } else if (user) {
             user.fetchProfile()
-                .then(() => {
+                .then(async () => {
                     userProfile = user!.profile;
+                    nip05Valid = await validNip05(pubkey, userProfile?.nip05);
                     resolve(userProfile!);
                 })
-                .catch(reject);
+                .catch(() => {
+                    reject
+                });
         } else {
             reject(`no user`);
         }
@@ -100,16 +101,16 @@
 <span class="name">
     {#await fetchProfilePromise}
         <span class="nip05 {$$props.class}" style={$$props.style}>
-            <slot name="badge" valid={nip05Valid} />
+            <slot name="badge" nip05Valid={nip05Valid} />
         </span>
     {:then userProfile}
         <span class="nip05 {$$props.class}" style={$$props.style}>
-            <slot name="badge" valid={nip05Valid} />
+            <slot name="badge" nip05Valid={nip05Valid} />
             {userProfile.nip05 ? prettifyNip05(userProfile.nip05) : ""}
         </span>
     {:catch error}
         <span class="nip05--error {$$props.class}" style={$$props.style}>
-            <slot name="badge" valid={nip05Valid} />
+            <slot name="badge" nip05Valid={nip05Valid} />
             Error loading user profile
         </span>
     {/await}

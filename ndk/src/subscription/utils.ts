@@ -1,3 +1,6 @@
+import { nip19 } from "nostr-tools";
+import { EventPointer } from "nostr-tools/lib/nip19.js";
+import { NDKRelay } from "../relay/index.js";
 import { NDKFilter, NDKSubscription } from "./index.js";
 
 /**
@@ -117,4 +120,75 @@ export function generateSubId(
     }
 
     return subIdParts.join("-");
+}
+
+/**
+ * Creates a valid nostr filter from an event id or a NIP-19 bech32.
+ */
+export function filterFromId(id: string): NDKFilter {
+    let decoded;
+
+    if (id.match(NIP33_A_REGEX)) {
+        const [kind, pubkey, identifier] = id.split(":");
+
+        const filter: NDKFilter = {
+            authors: [pubkey],
+            kinds: [parseInt(kind)]
+        }
+
+        if (identifier) { filter["#d"] = [identifier]; }
+
+        return filter;
+    }
+
+    try {
+        decoded = nip19.decode(id);
+
+        switch (decoded.type) {
+            case "nevent":
+                return { ids: [decoded.data.id] };
+            case "note":
+                return { ids: [decoded.data] };
+            case "naddr":
+                return {
+                    authors: [decoded.data.pubkey],
+                    "#d": [decoded.data.identifier],
+                    kinds: [decoded.data.kind],
+                };
+        }
+    } catch (e) {}
+
+    return { ids: [id] };
+}
+
+export function isNip33AValue(value: string): boolean {
+    return value.match(NIP33_A_REGEX) !== null;
+}
+
+/**
+ * Matches an `a` tag of a NIP-33 (kind:pubkey:[identifier])
+ */
+export const NIP33_A_REGEX = /^(\d+):([0-9A-Fa-f]+)(?::(.*))?$/;
+
+/**
+ * Returns the specified relays from a NIP-19 bech32.
+ *
+ * @param bech32 The NIP-19 bech32.
+ */
+export function relaysFromBech32(bech32: string): NDKRelay[] {
+    try {
+        const decoded = nip19.decode(bech32);
+
+        if (["naddr", "nevent"].includes(decoded?.type)) {
+            const data = decoded.data as unknown as EventPointer;
+
+            if (data?.relays) {
+                return data.relays.map((r: string) => new NDKRelay(r));
+            }
+        }
+    } catch (e) {
+        /* empty */
+    }
+
+    return [];
 }

@@ -9,8 +9,9 @@ import { NDKRelay, NDKRelayUrl } from "../relay/index.js";
 import { NDKRelaySet } from "../relay/sets/index.js";
 import { correctRelaySet } from "../relay/sets/utils.js";
 import { NDKSigner } from "../signers/index.js";
-import { NDKSubscription, NDKFilter, NDKSubscriptionOptions, relaysFromBech32, filterFromId } from "../subscription/index.js";
+import { NDKSubscription, NDKFilter, NDKSubscriptionOptions } from "../subscription/index.js";
 import { NDKUser, NDKUserParams } from "../user/index.js";
+import { isNip33AValue, relaysFromBech32, filterFromId } from "../subscription/utils.js";
 
 export interface NDKConstructorParams {
     /**
@@ -223,13 +224,16 @@ export class NDK extends EventEmitter {
 
         // if no relayset has been provided, try to get one from the event id
         if (!relaySet && typeof idOrFilter === "string") {
-            const relays = relaysFromBech32(idOrFilter);
+            /* Check if this is a NIP-33 */
+            if (!isNip33AValue(idOrFilter)) {
+                const relays = relaysFromBech32(idOrFilter);
 
-            if (relays.length > 0) {
-                relaySet = new NDKRelaySet(new Set<NDKRelay>(relays), this);
+                if (relays.length > 0) {
+                    relaySet = new NDKRelaySet(new Set<NDKRelay>(relays), this);
 
-                // Make sure we have connected relays in this set
-                relaySet = correctRelaySet(relaySet, this.pool);
+                    // Make sure we have connected relays in this set
+                    relaySet = correctRelaySet(relaySet, this.pool);
+                }
             }
         }
 

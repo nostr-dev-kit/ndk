@@ -1,5 +1,5 @@
 import { writable, type Unsubscriber, type Writable } from 'svelte/store';
-import NDK, { NDKConstructorParams, NDKEvent, NDKFilter, NDKSubscriptionOptions, NDKRepost, NDKSubscription, NDKKind } from "@nostr-dev-kit/ndk";
+import NDK, { NDKConstructorParams, NDKEvent, NDKFilter, NDKSubscriptionOptions, NDKRepost, NDKSubscription, NDKKind, NDKRelaySet, NDKRelay } from "@nostr-dev-kit/ndk";
 
 /**
  * Type for NDKEvent classes that have a static `from` method like NDKHighlight.
@@ -41,6 +41,11 @@ type NDKSubscribeOptions = NDKSubscriptionOptions & {
      * Wait this amount of ms before unsubscribing when there are zero refs.
      */
     unrefUnsubscribeTimeout?: number;
+
+    /**
+     * Relay set to use for the subscription
+     */
+    relaySet?: NDKRelaySet;
 };
 
 class NDKSvelte extends NDK {
@@ -87,6 +92,7 @@ class NDKSvelte extends NDK {
             Array.isArray(filters) ? filters : [filters]
         );
         const autoStart = opts?.autoStart ?? true;
+        const relaySet = opts?.relaySet;
 
         /**
          * Called when a repost event is identified. It either adds the repost event
@@ -145,6 +151,7 @@ class NDKSvelte extends NDK {
             let e = event;
             if (klass) {
                 e = klass.from(event);
+                e.relay = event.relay;
             }
             e.ndk = this;
 
@@ -238,9 +245,9 @@ class NDKSvelte extends NDK {
                 filters.push(...opts.repostsFilters);
             }
 
-            store.subscription = this.subscribe(filters, opts);
+            store.subscription = this.subscribe(filters, opts, relaySet);
 
-            store.subscription.on('event', (event: NDKEvent) => {
+            store.subscription.on('event', (event: NDKEvent, relay?: NDKRelay) => {
                 handleEvent(event);
             });
 

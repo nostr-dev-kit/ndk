@@ -40,11 +40,21 @@ export class NDKHighlight extends NDKEvent {
     }
 
     /**
+     * Will return the article URL or NDKEvent if they have already been
+     * set (it won't attempt to load remote events)
+     */
+    get article(): NDKEvent | string | undefined {
+        return this._article;
+    }
+
+    /**
      * Article the highlight is coming from.
      *
      * @param article Article URL or NDKEvent.
      */
     set article(article: NDKEvent | string) {
+        this._article = article;
+
         if (typeof article === 'string') {
             this.tags.push(['r', article]);
         } else {

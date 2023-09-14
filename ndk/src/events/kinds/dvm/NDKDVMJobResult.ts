@@ -59,7 +59,7 @@ export class NDKDVMJobResult extends NDKEvent {
 
         if (this.jobRequest) return this.jobRequest.id;
 
-        return undefined;
+        return this.tagValue("e");
     }
 
     set jobRequest(event: NDKEvent | undefined) {

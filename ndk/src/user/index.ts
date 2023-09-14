@@ -6,7 +6,7 @@ import {
     NDKSubscriptionOptions,
 } from "../subscription/index.js";
 import { follows } from "./follows.js";
-import { NDKUserProfile, mergeEvent } from "./profile.js";
+import { NDKUserProfile, profileFromEvent } from "./profile.js";
 import { NDKKind } from "../events/kinds/index.js";
 import { NDKRelayList } from "../events/kinds/NDKRelayList.js";
 import { NDKRelaySet } from "../relay/sets/index.js";
@@ -86,18 +86,31 @@ export class NDKUser {
     }
 
     /**
-     * Fetch a user's kind 0 metadata events and merge the events in a single up-to-date profile
+     * Fetch a user's profile
      * @param opts {NDKSubscriptionOptions} A set of NDKSubscriptionOptions
-     * @returns {Promise<Set<NDKEvent>>} A set of all NDKEvents events returned for the given user
+     * @returns User Profile
      */
     public async fetchProfile(
         opts?: NDKSubscriptionOptions
-    ): Promise<Set<NDKEvent> | null> {
+    ): Promise<NDKUserProfile | null> {
         if (!this.ndk) throw new Error("NDK not set");
 
         if (!this.profile) this.profile = {};
 
         let setMetadataEvents: Set<NDKEvent> | null = null;
+
+        if (
+            this.ndk.cacheAdapter &&
+            this.ndk.cacheAdapter.fetchProfile &&
+            opts?.cacheUsage !== NDKSubscriptionCacheUsage.ONLY_RELAY
+        ) {
+            const profile = await this.ndk.cacheAdapter.fetchProfile(this.hexpubkey);
+
+            if (profile) {
+                this.profile = profile;
+                return profile;
+            }
+        }
 
         // if no options have been set and we have a cache, try to load from cache with no grouping
         // This is done in favour of simply using NDKSubscriptionCacheUsage.CACHE_FIRST since
@@ -138,20 +151,18 @@ export class NDKUser {
             );
         }
 
-        if (setMetadataEvents) {
-            // sort setMetadataEvents by created_at in ascending order
-            const sortedSetMetadataEvents = Array.from(setMetadataEvents).sort(
-                (a, b) => (a.created_at as number) - (b.created_at as number)
-            );
+        const sortedSetMetadataEvents = Array.from(setMetadataEvents).sort(
+            (a, b) => (a.created_at as number) - (b.created_at as number)
+        );
 
-            sortedSetMetadataEvents.forEach((event) => {
-                try {
-                    this.profile = mergeEvent(event, this.profile!);
-                } catch (e) {}
-            });
+        // return the most recent profile
+        this.profile = profileFromEvent(sortedSetMetadataEvents[0]);
+
+        if (this.profile && this.ndk.cacheAdapter && this.ndk.cacheAdapter.saveProfile) {
+            this.ndk.cacheAdapter.saveProfile(this.hexpubkey, this.profile);
         }
 
-        return setMetadataEvents;
+        return this.profile;
     }
 
     /**

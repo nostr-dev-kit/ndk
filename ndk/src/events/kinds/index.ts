@@ -26,6 +26,7 @@ export enum NDKKind {
     NostrConnect = 24133,
     CategorizedPeopleList = 30000,
     CategorizedBookmarkList = 30001,
+    InterestsList = 30015,
     CategorizedRelayList = 30022,
     ProfileBadge = 30008,
     BadgeDefinition = 30009,

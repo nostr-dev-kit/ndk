@@ -1,6 +1,8 @@
 import { NDKEvent } from "../events/index.js";
 import { NDKRelay } from "../relay/index.js";
 import { NDKFilter, NDKSubscription } from "../subscription/index.js";
+import { Hexpubkey } from "../user/index.js";
+import { NDKUserProfile } from "../user/profile.js";
 
 export interface NDKCacheAdapter {
     /**
@@ -16,4 +18,10 @@ export interface NDKCacheAdapter {
         filter: NDKFilter,
         relay?: NDKRelay
     ): Promise<void>;
+
+    /**
+     * Special purpose
+     */
+    fetchProfile?(pubkey: Hexpubkey): Promise<NDKUserProfile | null>;
+    saveProfile?(pubkey: Hexpubkey, profile: NDKUserProfile): void;
 }

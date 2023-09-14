@@ -1,19 +1,10 @@
+import { NDKUserProfile } from "@nostr-dev-kit/ndk";
 import Dexie, { type Table } from "dexie";
 
 interface User {
     pubkey: string;
-    npub: string;
-    name?: string;
-    displayName?: string;
-    image?: string;
-    banner?: string;
-    bio?: string;
-    nip05?: string;
-    lud06?: string;
-    lud16?: string;
-    about?: string;
-    zapService?: string;
-    event: string;
+    profile: NDKUserProfile;
+    createdAt: number;
 }
 
 interface Event {
@@ -41,8 +32,8 @@ export class Database extends Dexie {
 
     constructor(name: string) {
         super(name);
-        this.version(2).stores({
-            users: "&pubkey, npub, name, displayName, image, banner, bio, nip05, lud06, lud16, about, zapService, event",
+        this.version(4).stores({
+            users: "&pubkey, profile, createdAt",
             events: "&id, pubkey, content, kind, createdAt, relay, [kind+pubkey]",
             eventTags: "id, tagValue, tag, value, eventId",
         });

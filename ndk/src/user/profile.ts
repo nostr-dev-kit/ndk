@@ -18,10 +18,10 @@ export type NDKUserProfile = {
     website?: string;
 };
 
-export function mergeEvent(
+export function profileFromEvent(
     event: NDKEvent,
-    profile: NDKUserProfile
 ): NDKUserProfile {
+    const profile: NDKUserProfile = {};
     const payload = JSON.parse(event.content);
 
     Object.keys(payload).forEach((key) => {

@@ -1,7 +1,8 @@
 import { NDKCacheAdapter, NDKFilter, NDKRelay, NDKUser, NDKUserProfile } from "@nostr-dev-kit/ndk";
-import { NDKEvent, NDKSubscription } from "@nostr-dev-kit/ndk";
+import { NDKEvent, NDKSubscription, Hexpubkey } from "@nostr-dev-kit/ndk";
 import _debug from "debug";
 import { matchFilter } from "nostr-tools";
+import { LRUCache } from "typescript-lru-cache";
 
 import { createDatabase, db } from "./db";
 
@@ -23,24 +24,64 @@ interface NDKCacheAdapterDexieOptions {
      * Defaults to 3600 seconds (1 hour)
      */
     expirationTime?: number;
+
+    /**
+     * Number of profiles to keep in an LRU cache
+     */
+    profileCacheSize?: number | 'disabled';
 }
 
 export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
     public debug: debug.Debugger;
     private expirationTime;
     readonly locking;
+    private profiles?: LRUCache<Hexpubkey, NDKUserProfile>;
+    private dirtyProfiles: Set<Hexpubkey> = new Set();
 
     constructor(opts: NDKCacheAdapterDexieOptions = {}) {
         createDatabase(opts.dbName || "ndk");
         this.debug = opts.debug || _debug("ndk:dexie-adapter");
         this.locking = true;
         this.expirationTime = opts.expirationTime || 3600;
+
+
+        if (opts.profileCacheSize !== 'disabled') {
+            this.profiles = new LRUCache({
+                maxSize: opts.profileCacheSize || 100000,
+            });
+
+            setInterval(() => {this.dumpProfiles()}, 1000 * 10);
+        }
     }
 
     public async query(subscription: NDKSubscription): Promise<void> {
         Promise.allSettled(
             subscription.filters.map((filter) => this.processFilter(filter, subscription))
         );
+    }
+
+    public async fetchProfile(pubkey: Hexpubkey) {
+        if (!this.profiles) return null;
+
+        let profile = this.profiles.get(pubkey);
+
+        if (!profile) {
+            const user = await db.users.get({ pubkey });
+            if (user) {
+                profile = user.profile;
+                this.profiles.set(pubkey, profile);
+            }
+        }
+
+        return profile;
+    }
+
+    public saveProfile(pubkey: Hexpubkey, profile: NDKUserProfile) {
+        if (!this.profiles) return;
+
+        this.profiles.set(pubkey, profile);
+
+        this.dirtyProfiles.add(pubkey);
     }
 
     private async processFilter(filter: NDKFilter, subscription: NDKSubscription): Promise<void> {
@@ -58,27 +99,8 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
     }
 
     public async setEvent(event: NDKEvent, _filter: NDKFilter, relay?: NDKRelay): Promise<void> {
-        if (false) {
-            // This is a user profile event, create/update a user.
-            const user = new NDKUser({ hexpubkey: event.pubkey });
-            const profile = profileFromEvent(event, {});
-
-            db.users.put({
-                pubkey: event.pubkey,
-                npub: user.npub,
-                name: profile.name,
-                displayName: profile.displayName,
-                image: profile.image,
-                banner: profile.banner,
-                bio: profile.bio,
-                nip05: profile.nip05,
-                lud06: profile.lud06,
-                lud16: profile.lud16,
-                about: profile.about,
-                zapService: profile.zapService,
-                event: JSON.stringify(event.rawEvent()),
-            });
-        } else {
+        // Kind 0s should be stored via saveProfile
+        if (event.kind !== 0) {
             let addEvent = true;
 
             if (event.isParamReplaceable()) {
@@ -377,26 +399,28 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
 
         return retEvents;
     }
-}
 
-/**
- * Constructs a UserProfile from kind 0 event
- */
-function profileFromEvent(event: NDKEvent, profile: NDKUserProfile): NDKUserProfile {
-    const payload = JSON.parse(event.content);
+    private async dumpProfiles() {
+        const profiles = [];
 
-    if (payload.name) profile.name = payload.name;
-    if (payload.display_name) profile.displayName = payload.display_name;
-    if (payload.displayName) profile.displayName = payload.displayName;
-    if (payload.image) profile.image = payload.image;
-    if (payload.picture) profile.image = payload.picture;
-    if (payload.banner) profile.banner = payload.banner;
-    if (payload.bio) profile.bio = payload.bio;
-    if (payload.nip05) profile.nip05 = payload.nip05;
-    if (payload.lud06) profile.lud06 = payload.lud06;
-    if (payload.lud16) profile.lud16 = payload.lud16;
-    if (payload.about) profile.about = payload.about;
-    if (payload.zapService) profile.zapService = payload.zapService;
+        if (!this.profiles) return;
 
-    return profile;
+        for (const pubkey of this.dirtyProfiles) {
+            const profile = this.profiles.get(pubkey);
+
+            if (!profile) continue;
+
+            profiles.push({
+                pubkey,
+                profile,
+                createdAt: Date.now(),
+            });
+        }
+
+        if (profiles.length) {
+            await db.users.bulkPut(profiles);
+        }
+
+        this.dirtyProfiles.clear();
+    }
 }

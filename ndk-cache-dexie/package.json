@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/ndk-cache-dexie",
-    "version": "0.8.21-1",
+    "version": "1.2.0",
     "description": "NDK Dexie Cache Adapter",
     "license": "MIT",
     "bugs": {
@@ -52,6 +52,7 @@
         "@nostr-dev-kit/ndk": "*",
         "debug": "^4.3.4",
         "dexie": "^3.2.4",
-        "nostr-tools": "^1.14.0"
+        "nostr-tools": "^1.14.0",
+        "typescript-lru-cache": "^2.0.0"
     }
 }

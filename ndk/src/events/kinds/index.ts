@@ -47,3 +47,10 @@ export enum NDKKind {
     DVMJobRequestTranscription = 65002,
     DVMNostrContentRecommendation = 65008,
 }
+
+export const NDKListKinds = [
+    NDKKind.CategorizedPeopleList,
+    NDKKind.CategorizedBookmarkList,
+    NDKKind.CategorizedHighlightList,
+    NDKKind.CategorizedRelayList,
+];

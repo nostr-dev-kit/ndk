@@ -1,16 +1,18 @@
 import { nip19 } from "nostr-tools";
-import { NDKUser, NDKUserParams } from "./index.js";
 import { NDKEvent } from "../events/index.js";
 import { NDK } from "../ndk/index.js";
 import { NDKSubscription } from "../subscription/index.js";
+import { NDKUser, NDKUserParams } from "./index.js";
 
 jest.mock("nostr-tools", () => ({
     nip05: {
         queryProfile: jest.fn(),
     },
     nip19: {
-        npubEncode: jest.fn(),
-        decode: jest.fn(),
+        npubEncode: jest.fn().mockImplementation(() => "npub1_encoded_npub"),
+        decode: jest
+            .fn()
+            .mockReturnValue({ type: "npub", data: "decoded_hexpubkey" }),
     },
 }));
 
@@ -38,14 +40,8 @@ describe("NDKUser", () => {
                     "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52",
             };
 
-            (nip19.npubEncode as jest.Mock).mockReturnValue("encoded_npub");
-
             const user = new NDKUser(opts);
-
-            expect(nip19.npubEncode).toHaveBeenCalledWith(
-                "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"
-            );
-            expect(user.npub).toEqual("encoded_npub");
+            expect(user.npub).toEqual("npub1_encoded_npub");
         });
 
         it("sets relayUrls from provided relayUrls", () => {

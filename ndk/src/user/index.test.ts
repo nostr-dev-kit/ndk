@@ -267,4 +267,17 @@ describe("NDKUser", () => {
             expect(user.profile?.customField).toEqual("custom NEW");
         });
     });
+    describe("validateNip05", async () => {
+        const ndk = new NDK();
+        const user = ndk.getUser({
+            npub: "npub1zuuajd7u3sx8xu92yav9jwxpr839cs0kc3q6t56vd5u9q033xmhsk6c2uc",
+        });
+        const validNip05 = "_@jeffg.fyi";
+        const invalidNip05 = "_@f7z.io";
+        const randomNip05 = "bobby@globalhypermeganet.com";
+
+        expect(await user.validateNip05(validNip05)).toEqual(true);
+        expect(await user.validateNip05(invalidNip05)).toEqual(false);
+        expect(await user.validateNip05(randomNip05)).toEqual(null);
+    });
 });

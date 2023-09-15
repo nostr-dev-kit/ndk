@@ -14,7 +14,7 @@
     export let npub: string | undefined = undefined;
 
     /**
-     * The hexpubkey of the user you want to display a NIP-05 for
+     * The hexpubkey of the user you want to display a NIP-05 for, required in order to validate nip-05.
      */
     export let pubkey: string | undefined = undefined;
 
@@ -28,7 +28,9 @@
      */
     export let userProfile: NDKUserProfile | undefined = undefined;
 
-    if (!userProfile && !user) {
+    let nip05Valid: boolean | null = null;
+
+    if (!user) {
         let opts = npub ? { npub } : { hexpubkey: pubkey };
         try {
             user = ndk.getUser(opts);
@@ -37,16 +39,21 @@
         }
     }
 
-    const fetchProfilePromise = new Promise<NDKUserProfile>((resolve, reject) => {
-        if (userProfile) {
+    const fetchProfilePromise = new Promise<NDKUserProfile>(async (resolve, reject) => {
+        if (userProfile && userProfile.nip05) {
+            nip05Valid = await user!.validateNip05(userProfile.nip05);
             resolve(userProfile);
         } else if (user) {
             user.fetchProfile()
-                .then(() => {
+                .then(async () => {
                     userProfile = user!.profile;
+                    if(!userProfile?.nip05) reject;
+                    nip05Valid = await user!.validateNip05(userProfile?.nip05!);
                     resolve(userProfile!);
                 })
-                .catch(reject);
+                .catch(() => {
+                    reject
+                });
         } else {
             reject(`no user`);
         }
@@ -55,13 +62,17 @@
 
 <span class="name">
     {#await fetchProfilePromise}
-        <span class="nip05 {$$props.class}" style={$$props.style}></span>
+        <span class="nip05 {$$props.class}" style={$$props.style}>
+            <slot name="badge" nip05Valid={nip05Valid} />
+        </span>
     {:then userProfile}
         <span class="nip05 {$$props.class}" style={$$props.style}>
+            <slot name="badge" nip05Valid={nip05Valid} />
             {userProfile.nip05 ? prettifyNip05(userProfile.nip05) : ""}
         </span>
     {:catch error}
         <span class="nip05--error {$$props.class}" style={$$props.style}>
+            <slot name="badge" nip05Valid={nip05Valid} />
             Error loading user profile
         </span>
     {/await}

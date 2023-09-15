@@ -1,4 +1,5 @@
 import { nip05, nip19 } from "nostr-tools";
+import { ProfilePointer } from "nostr-tools/lib/nip19.js";
 import { NDKEvent, NDKTag, NostrEvent } from "../events/index.js";
 import { NDKRelayList } from "../events/kinds/NDKRelayList.js";
 import { NDKKind } from "../events/kinds/index.js";
@@ -263,5 +264,23 @@ export class NDKUser {
         await event.publish();
 
         return true;
+    }
+
+    /**
+     * Validate a user's NIP-05 identifier (usually fetched from their kind:0 profile data)
+     *
+     * @param nip05Id The NIP-05 string to validate
+     * @returns {Promise<boolean | null>} True if the NIP-05 is found and matches this user's hexpubkey,
+     * False if the NIP-05 is found but doesn't match this user's hexpubkey,
+     * null if the NIP-05 isn't found on the domain or we're unable to verify (because of network issues, etc.)
+     */
+    public async validateNip05(nip05Id: string): Promise<boolean | null> {
+        if (!this.ndk) throw new Error("No NDK instance found");
+
+        const profilePointer: ProfilePointer | null =
+            await nip05.queryProfile(nip05Id);
+
+        if (profilePointer === null) return null;
+        return profilePointer.pubkey === this.hexpubkey;
     }
 }

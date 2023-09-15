@@ -4,10 +4,9 @@ import { NDK } from "../ndk/index.js";
 import { NDKSubscription } from "../subscription/index.js";
 import { NDKUser, NDKUserParams } from "./index.js";
 
+
 jest.mock("nostr-tools", () => ({
-    nip05: {
-        queryProfile: jest.fn(),
-    },
+    ...jest.requireActual("nostr-tools"),
     nip19: {
         npubEncode: jest.fn().mockImplementation(() => "npub1_encoded_npub"),
         decode: jest
@@ -265,6 +264,24 @@ describe("NDKUser", () => {
 
             await user.fetchProfile();
             expect(user.profile?.customField).toEqual("custom NEW");
+        });
+    });
+
+    describe("validateNip05", () => {
+        it("validates the NIP-05 for users", async () => {
+            const ndk = new NDK();
+            const user = ndk.getUser({
+                hexpubkey:
+                    "1739d937dc8c0c7370aa27585938c119e25c41f6c441a5d34c6d38503e3136ef",
+            });
+
+            const validNip05 = "_@jeffg.fyi";
+            const invalidNip05 = "_@f7z.io";
+            const randomNip05 = "bobby@globalhypermeganet.com";
+
+            expect(await user.validateNip05(validNip05)).toEqual(true);
+            expect(await user.validateNip05(invalidNip05)).toEqual(false);
+            expect(await user.validateNip05(randomNip05)).toEqual(null);
         });
     });
 });

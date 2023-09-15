@@ -59,11 +59,8 @@ export class NDKRelay extends EventEmitter {
     private subs: NDKRelaySubscriptions;
     private publisher: NDKRelayPublisher;
 
-
     public complaining = false;
     readonly debug: debug.Debugger;
-
-
 
     public constructor(url: NDKRelayUrl) {
         super();
@@ -143,5 +140,9 @@ export class NDKRelay extends EventEmitter {
         }
 
         return tag;
+    }
+
+    public activeSubscriptions(): Map<NDKFilter[], NDKSubscription[]> {
+        return this.subs.executedFilters();
     }
 }

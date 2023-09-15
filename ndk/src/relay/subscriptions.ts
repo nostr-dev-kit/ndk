@@ -15,6 +15,7 @@ import EventEmitter from "eventemitter3";
  */
 class NDKGroupedSubscriptions extends EventEmitter implements Iterable<NDKSubscriptionFilters> {
     public subscriptions: NDKSubscriptionFilters[];
+    public req?: NDKFilter[];
     public debug: debug.Debugger;
 
     public constructor(
@@ -159,7 +160,7 @@ export class NDKRelaySubscriptions {
     /**
      * Active subscriptions this relay is connected to
      */
-    private activeSubscriptions: Map<Sub, NDKGroupedSubscriptions> = new Map();
+    readonly activeSubscriptions: Map<Sub, NDKGroupedSubscriptions> = new Map();
     private activeSubscriptionsByGroupId: Map<NDKFilterGroupingId, FiltersSub> = new Map();
     private debug: debug.Debugger;
     private groupingDebug: debug.Debugger;
@@ -341,6 +342,7 @@ export class NDKRelaySubscriptions {
         }
 
         const subId = generateSubId(subscriptions, mergedFilters);
+        groupedSubscriptions.req = mergedFilters;
         const sub = this.conn.relay.sub(mergedFilters, { id: subId });
 
         this.activeSubscriptions.set(sub, groupedSubscriptions);
@@ -372,5 +374,15 @@ export class NDKRelaySubscriptions {
         });
 
         return sub;
+    }
+
+    public executedFilters(): Map<NDKFilter[], NDKSubscription[]> {
+        const ret = new Map<NDKFilter[], NDKSubscription[]>();
+
+        for (const [, groupedSubscriptions] of this.activeSubscriptions) {
+            ret.set(groupedSubscriptions.req!, groupedSubscriptions.map((sub) => sub.subscription));
+        }
+
+        return ret;
     }
 }

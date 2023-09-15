@@ -1,4 +1,4 @@
-import NDK from "@nostr-dev-kit/ndk";
+import NDK, { type NDKEvent } from "@nostr-dev-kit/ndk";
 import type { Meta, StoryObj } from "@storybook/svelte";
 import EventContent from "../../lib/event/content/EventContent.svelte";
 
@@ -31,12 +31,13 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const ndk = new NDK({ explicitRelayUrls: ["wss://nos.lol"] });
-await ndk.connect();
+ndk.connect();
 
-const event = await ndk.fetchEvent(
+let event: NDKEvent;
+
+ndk.fetchEvent(
     "note194n247lecqgcskk5rmmfgrapt4jx7ppq64xec0eca3s4ta3hwkrsex7pxa"
-);
-event.relay = undefined;
+).then(e => event = e!)
 
 export const Kind1Event: Story = {
     args: {

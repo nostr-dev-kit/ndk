@@ -69,17 +69,17 @@
                     <span class="relay-status relay-status--flapping" />
                 {/if}
                 <span class="relay-name"><RelayName {relay} /></span>
-                {#if relay.activeSubscriptions.size > 0}
+                {#if relay.activeSubscriptions().size > 0}
                     <div class="relay-subscriptions">
-                        {relay.activeSubscriptions.size}
-                        {relay.activeSubscriptions.size === 1 ? 'subscription' : 'subscriptions'}
+                        {relay.activeSubscriptions().size}
+                        {relay.activeSubscriptions().size === 1 ? 'subscription' : 'subscriptions'}
                     </div>
                 {/if}
             </button>
 
             {#if notices.has(relay)}
                 <ul>
-                    {#each notices.get(relay) as notice}
+                    {#each notices.get(relay)??[] as notice}
                         <li class="relay-notice">{notice}</li>
                     {/each}
                 </ul>
@@ -87,18 +87,16 @@
 
             {#if expandSubscriptionList[relay.url]}
                 <ul>
-                    {#each Array.from(relay.activeSubscriptions) as subscription}
+                    {#each relay.activeSubscriptions().entries() as [filters, subscriptions]}
                         <li>
                             <div class="relay-subscription-filter">
-                                {JSON.stringify(subscription.filter)}
+                                {JSON.stringify(filters)}
                             </div>
                             <span class="relay-subscription--event-count">
-                                {subscription.eventsPerRelay.get(relay)?.size ?? 0} events
+                                {#if subscriptions.length > 1}
+                                    {subscriptions.length} subscriptions grouped
+                                {/if}
                             </span>
-
-                            {#if subscription.eosesSeen.has(relay)}
-                                <span class="small-note">EOSE received</span>
-                            {/if}
                         </li>
                     {/each}
                 </ul>

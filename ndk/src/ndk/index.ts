@@ -1,16 +1,22 @@
-import EventEmitter from "eventemitter3";
-import { NDKPool } from "../relay/pool/index.js";
 import debug from "debug";
-import { NDKCacheAdapter } from "../cache/index.js";
+import EventEmitter from "eventemitter3";
+import type { NDKCacheAdapter } from "../cache/index.js";
 import dedupEvent from "../events/dedup.js";
-import { NDKEvent } from "../events/index.js";
+import type { NDKEvent } from "../events/index.js";
 import { OutboxTracker } from "../outbox/tracker.js";
-import { NDKRelay, NDKRelayUrl } from "../relay/index.js";
+import type { NDKRelay, NDKRelayUrl } from "../relay/index.js";
+import { NDKPool } from "../relay/pool/index.js";
 import { NDKRelaySet } from "../relay/sets/index.js";
 import { correctRelaySet } from "../relay/sets/utils.js";
-import { NDKSigner } from "../signers/index.js";
-import { NDKSubscription, NDKFilter, NDKSubscriptionOptions, relaysFromBech32, filterFromId } from "../subscription/index.js";
-import { NDKUser, NDKUserParams } from "../user/index.js";
+import type { NDKSigner } from "../signers/index.js";
+import {
+    NDKSubscription,
+    type NDKFilter,
+    type NDKSubscriptionOptions,
+    relaysFromBech32,
+    filterFromId,
+} from "../subscription/index.js";
+import { NDKUser, type NDKUserParams } from "../user/index.js";
 
 export interface NDKConstructorParams {
     /**
@@ -52,20 +58,20 @@ export interface NDKConstructorParams {
      * Debug instance to use
      */
     debug?: debug.Debugger;
-};
+}
 
 export interface GetUserParams extends NDKUserParams {
     npub?: string;
     hexpubkey?: string;
 }
 
-export const DEFAULT_OUTBOX_RELAYS =[
+export const DEFAULT_OUTBOX_RELAYS = [
     "wss://purplepag.es",
     "wss://relay.snort.social",
 ];
 
 export const DEFAULT_BLACKLISTED_RELAYS = [
-    "wss://brb.io" // BRB
+    "wss://brb.io", // BRB
 ];
 
 export class NDK extends EventEmitter {
@@ -89,7 +95,11 @@ export class NDK extends EventEmitter {
             this
         );
 
-        this.debug(`Starting with explicit relays: ${JSON.stringify(this.explicitRelayUrls)}`);
+        this.debug(
+            `Starting with explicit relays: ${JSON.stringify(
+                this.explicitRelayUrls
+            )}`
+        );
 
         if (opts.enableOutboxModel) {
             this.outboxPool = new NDKPool(
@@ -122,9 +132,7 @@ export class NDK extends EventEmitter {
      * If the timeout is reached, the connection will be continued to be established in the background.
      */
     public async connect(timeoutMs?: number): Promise<void> {
-        const connections = [
-            this.pool.connect(timeoutMs)
-        ];
+        const connections = [this.pool.connect(timeoutMs)];
 
         if (this.outboxPool) {
             connections.push(this.outboxPool.connect(timeoutMs));
@@ -176,7 +184,9 @@ export class NDK extends EventEmitter {
         // we want to track the authors in the outbox tracker
         if (this.outboxPool && subscription.hasAuthorsFilter()) {
             const authors: string[] = subscription.filters
-                .filter((filter) => filter.authors && filter.authors?.length > 0)
+                .filter(
+                    (filter) => filter.authors && filter.authors?.length > 0
+                )
                 .map((filter) => filter.authors!)
                 .flat();
 

@@ -1,9 +1,9 @@
 import { NDKEvent } from "../../events/index.js";
 import { NDK } from "../../ndk/index.js";
 import { NDKFilter } from "../../subscription/index.js";
+import { Hexpubkey } from "../../user/index.js";
 import { NDKRelay, NDKRelayUrl } from "../index.js";
 import { NDKRelaySet } from "./index.js";
-import { Hexpubkey } from "../../user/index.js";
 
 /**
  * Creates a NDKRelaySet for the specified event.
@@ -68,7 +68,9 @@ export function calculateRelaySetsFromFilter(
 
             // If we have relays for this user, add them to the map
             if (userWriteRelays && userWriteRelays.size > 0) {
-                ndk.debug(`Adding ${userWriteRelays.size} relays for ${author}`);
+                ndk.debug(
+                    `Adding ${userWriteRelays.size} relays for ${author}`
+                );
                 userWriteRelays.forEach((relay) => {
                     const authorsInRelay = authorToRelaysMap.get(relay) || [];
                     authorsInRelay.push(author);
@@ -95,7 +97,10 @@ export function calculateRelaySetsFromFilter(
             if (filter.authors) {
                 // replace authors with the authors for each relay
                 for (const [relayUrl, authors] of authorToRelaysMap.entries()) {
-                    result.set(relayUrl, [...result.get(relayUrl)!, {...filter, authors}]);
+                    result.set(relayUrl, [
+                        ...result.get(relayUrl)!,
+                        { ...filter, authors },
+                    ]);
                 }
             } else {
                 // if the filter doesn't have authors, add it to all relays

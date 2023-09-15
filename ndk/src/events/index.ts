@@ -1,7 +1,12 @@
 import EventEmitter from "eventemitter3";
-import { getEventHash, UnsignedEvent } from "nostr-tools";
+import { getEventHash, type UnsignedEvent } from "nostr-tools";
+import type { NDK } from "../ndk/index.js";
+import type { NDKRelay } from "../relay/index.js";
 import { calculateRelaySetFromEvent } from "../relay/sets/calculate.js";
-import { NDKSigner } from "../signers/index.js";
+import type { NDKRelaySet } from "../relay/sets/index.js";
+import type { NDKSigner } from "../signers/index.js";
+import type { NDKFilter } from "../subscription/index.js";
+import type { NDKUser } from "../user/index.js";
 import Zap from "../zap/index.js";
 import { generateContentTags } from "./content-tagger.js";
 import { isParamReplaceable, isReplaceable } from "./kind.js";
@@ -9,11 +14,6 @@ import { NDKKind } from "./kinds/index.js";
 import { decrypt, encrypt } from "./nip04.js";
 import { encode } from "./nip19.js";
 import { repost } from "./repost.js";
-import { NDK } from "../ndk/index.js";
-import { NDKRelay } from "../relay/index.js";
-import { NDKRelaySet } from "../relay/sets/index.js";
-import { NDKFilter } from "../subscription/index.js";
-import { NDKUser } from "../user/index.js";
 
 export type NDKEventId = string;
 export type NDKTag = string[];
@@ -87,8 +87,8 @@ export class NDKEvent extends EventEmitter {
      * Returns an NDKUser for the author of the event.
      */
     get author(): NDKUser {
-        const user = new NDKUser({ hexpubkey: this.pubkey });
-        user.ndk = this.ndk;
+        if (!this.ndk) throw new Error("No NDK instance found");
+        const user = this.ndk.getUser({ hexpubkey: this.pubkey });
         return user;
     }
 

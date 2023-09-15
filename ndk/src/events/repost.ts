@@ -1,5 +1,5 @@
-import { NDKSigner } from "../signers/index.js";
-import { NDKEvent, NostrEvent } from "./index.js";
+import type { NDKSigner } from "../signers/index.js";
+import { NDKEvent, type NostrEvent } from "./index.js";
 import { NDKKind } from "./kinds/index.js";
 
 /**

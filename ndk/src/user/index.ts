@@ -1,16 +1,16 @@
 import { nip05, nip19 } from "nostr-tools";
-import { NDKEvent, NDKTag, NostrEvent } from "../events/index.js";
-import {NDK} from "../ndk/index.js";
+import { NDKEvent, type NDKTag, type NostrEvent } from "../events/index.js";
+import { NDKRelayList } from "../events/kinds/NDKRelayList.js";
+import { NDKKind } from "../events/kinds/index.js";
+import type { NDK } from "../ndk/index.js";
+import type { NDKRelay } from "../relay/index.js";
+import { NDKRelaySet } from "../relay/sets/index.js";
 import {
     NDKSubscriptionCacheUsage,
-    NDKSubscriptionOptions,
+    type NDKSubscriptionOptions,
 } from "../subscription/index.js";
 import { follows } from "./follows.js";
 import { NDKUserProfile, mergeEvent } from "./profile.js";
-import { NDKKind } from "../events/kinds/index.js";
-import { NDKRelayList } from "../events/kinds/NDKRelayList.js";
-import { NDKRelaySet } from "../relay/sets/index.js";
-import { NDKRelay } from "../relay/index.js";
 
 export type Hexpubkey = string;
 
@@ -124,7 +124,7 @@ export class NDKUser {
                 cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY,
                 closeOnEose: true,
                 groupable: true,
-                groupableDelay: 250
+                groupableDelay: 250,
             };
         }
 
@@ -147,7 +147,9 @@ export class NDKUser {
             sortedSetMetadataEvents.forEach((event) => {
                 try {
                     this.profile = mergeEvent(event, this.profile!);
-                } catch (e) {}
+                } catch (e) {
+                    /* empty */
+                }
             });
         }
 
@@ -163,7 +165,7 @@ export class NDKUser {
      * Returns a set of relay list events for a user.
      * @returns {Promise<Set<NDKEvent>>} A set of NDKEvents returned for the given user.
      */
-    public async relayList(): Promise<NDKRelayList|undefined> {
+    public async relayList(): Promise<NDKRelayList | undefined> {
         if (!this.ndk) throw new Error("NDK not set");
 
         const pool = this.ndk.outboxPool || this.ndk.pool;
@@ -172,14 +174,16 @@ export class NDKUser {
         for (const relay of pool.relays.values()) set.add(relay);
 
         const relaySet = new NDKRelaySet(set, this.ndk);
-        const event = await this.ndk.fetchEvent({
-            kinds: [10002],
-            authors: [this.hexpubkey],
-        }, { closeOnEose: true, pool, groupable: true },
-        relaySet);
+        const event = await this.ndk.fetchEvent(
+            {
+                kinds: [10002],
+                authors: [this.hexpubkey],
+            },
+            { closeOnEose: true, pool, groupable: true },
+            relaySet
+        );
 
-        if (event)
-            return NDKRelayList.from(event);
+        if (event) return NDKRelayList.from(event);
 
         return undefined;
     }

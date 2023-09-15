@@ -1,8 +1,8 @@
-import { NDK } from "../../../ndk/index.js";
+import type { NDK } from "../../../ndk/index.js";
 import { NDKRelay } from "../../../relay/index.js";
 import { NDKUser } from "../../../user/index.js";
 import { NDKEvent } from "../../index.js";
-import { NDKTag, NostrEvent } from "../../index.js";
+import type { NDKTag, NostrEvent } from "../../index.js";
 import { NDKKind } from "../index.js";
 
 export type NDKListItem = NDKRelay | NDKUser | NDKEvent;
@@ -105,6 +105,7 @@ export class NDKList extends NDKEvent {
      */
     async encryptedTags(useCache = true): Promise<NDKTag[]> {
         if (useCache && this.isEncryptedTagsCacheValid())
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             return this._encryptedTags!;
 
         if (!this.ndk) throw new Error("NDK instance not set");

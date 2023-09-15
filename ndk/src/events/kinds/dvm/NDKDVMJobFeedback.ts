@@ -1,5 +1,5 @@
-import {NDK} from "../../../ndk/index.js";
-import { NDKEvent, NostrEvent } from "../../index.js";
+import type { NDK } from "../../../ndk/index.js";
+import { NDKEvent, type NostrEvent } from "../../index.js";
 import { NDKKind } from "../index.js";
 
 export enum NDKDvmJobFeedbackStatus {

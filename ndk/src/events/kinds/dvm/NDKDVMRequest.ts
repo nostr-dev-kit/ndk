@@ -1,8 +1,8 @@
 import { NDK } from "../../../ndk/index.js";
-import { NDKEvent, NostrEvent, NDKTag } from "../../index.js";
+import { NDKEvent, type NostrEvent, type NDKTag } from "../../index.js";
 import {
     NDKDVMJobFeedback,
-    NDKDvmJobFeedbackStatus,
+    type NDKDvmJobFeedbackStatus,
 } from "./NDKDVMJobFeedback.js";
 import { NDKDVMJobResult } from "./NDKDVMJobResult.js";
 

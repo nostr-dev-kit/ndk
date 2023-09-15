@@ -1,19 +1,17 @@
-import { NDKSigner } from "../signers";
-import {NDKUser} from "../user";
-import { NDKEvent } from "./index.js";
+import type { NDKSigner } from "../signers";
+import type { NDKUser } from "../user";
+import type { NDKEvent } from "./index.js";
 
 export async function encrypt(
     this: NDKEvent,
     recipient?: NDKUser,
     signer?: NDKSigner
 ) {
+    if (!this.ndk) throw new Error("No NDK instance found!");
     if (!signer) {
-        if (!this.ndk) {
-            throw new Error("No signer available");
-        }
-
         await this.ndk.assertSigner();
 
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         signer = this.ndk.signer!;
     }
 
@@ -26,8 +24,7 @@ export async function encrypt(
             );
         }
 
-        recipient = new NDKUser({ hexpubkey: pTags[0][1] });
-        recipient.ndk = this.ndk;
+        recipient = this.ndk.getUser({ hexpubkey: pTags[0][1] });
     }
 
     this.content = await signer.encrypt(recipient, this.content);
@@ -38,13 +35,11 @@ export async function decrypt(
     sender?: NDKUser,
     signer?: NDKSigner
 ) {
+    if (!this.ndk) throw new Error("No NDK instance found!");
     if (!signer) {
-        if (!this.ndk) {
-            throw new Error("No signer available");
-        }
-
         await this.ndk.assertSigner();
 
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         signer = this.ndk.signer!;
     }
 

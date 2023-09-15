@@ -15,8 +15,7 @@
     ],
     "scripts": {
         "build": "tsup src/index.ts --format cjs,esm --dts",
-        "dev": "tsup --watch src src/index.ts --format cjs,esm --dts",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "dev": "tsup --watch src src/index.ts --format cjs,esm --dts"
     },
     "keywords": [
         "nostr",

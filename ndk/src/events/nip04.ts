@@ -1,5 +1,5 @@
 import { NDKSigner } from "../signers";
-import {NDKUser} from "../user";
+import { NDKUser } from "../user";
 import { NDKEvent } from "./index.js";
 
 export async function encrypt(
@@ -7,16 +7,11 @@ export async function encrypt(
     recipient?: NDKUser,
     signer?: NDKSigner
 ) {
+    if (!this.ndk) throw new Error("No NDK instance found!");
     if (!signer) {
-        if (!this.ndk) {
-            throw new Error("No signer available");
-        }
-
         await this.ndk.assertSigner();
-
-        signer = this.ndk.signer!;
+        signer = this.ndk.signer;
     }
-
     if (!recipient) {
         const pTags = this.getMatchingTags("p");
 
@@ -26,11 +21,10 @@ export async function encrypt(
             );
         }
 
-        recipient = new NDKUser({ hexpubkey: pTags[0][1] });
-        recipient.ndk = this.ndk;
+        recipient = this.ndk.getUser({ hexpubkey: pTags[0][1] });
     }
 
-    this.content = await signer.encrypt(recipient, this.content);
+    this.content = (await signer?.encrypt(recipient, this.content)) as string;
 }
 
 export async function decrypt(
@@ -38,19 +32,14 @@ export async function decrypt(
     sender?: NDKUser,
     signer?: NDKSigner
 ) {
+    if (!this.ndk) throw new Error("No NDK instance found!");
     if (!signer) {
-        if (!this.ndk) {
-            throw new Error("No signer available");
-        }
-
         await this.ndk.assertSigner();
-
-        signer = this.ndk.signer!;
+        signer = this.ndk.signer;
     }
-
     if (!sender) {
         sender = this.author;
     }
 
-    this.content = await signer.decrypt(sender, this.content);
+    this.content = (await signer?.decrypt(sender, this.content)) as string;
 }

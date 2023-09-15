@@ -1,16 +1,16 @@
 import { nip05, nip19 } from "nostr-tools";
 import { NDKEvent, NDKTag, NostrEvent } from "../events/index.js";
-import {NDK} from "../ndk/index.js";
+import { NDKRelayList } from "../events/kinds/NDKRelayList.js";
+import { NDKKind } from "../events/kinds/index.js";
+import { NDK } from "../ndk/index.js";
+import { NDKRelay } from "../relay/index.js";
+import { NDKRelaySet } from "../relay/sets/index.js";
 import {
     NDKSubscriptionCacheUsage,
     NDKSubscriptionOptions,
 } from "../subscription/index.js";
 import { follows } from "./follows.js";
 import { NDKUserProfile, profileFromEvent } from "./profile.js";
-import { NDKKind } from "../events/kinds/index.js";
-import { NDKRelayList } from "../events/kinds/NDKRelayList.js";
-import { NDKRelaySet } from "../relay/sets/index.js";
-import { NDKRelay } from "../relay/index.js";
 
 export type Hexpubkey = string;
 
@@ -104,7 +104,9 @@ export class NDKUser {
             this.ndk.cacheAdapter.fetchProfile &&
             opts?.cacheUsage !== NDKSubscriptionCacheUsage.ONLY_RELAY
         ) {
-            const profile = await this.ndk.cacheAdapter.fetchProfile(this.hexpubkey);
+            const profile = await this.ndk.cacheAdapter.fetchProfile(
+                this.hexpubkey
+            );
 
             if (profile) {
                 this.profile = profile;
@@ -137,7 +139,7 @@ export class NDKUser {
                 cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY,
                 closeOnEose: true,
                 groupable: true,
-                groupableDelay: 250
+                groupableDelay: 250,
             };
         }
 
@@ -158,7 +160,11 @@ export class NDKUser {
         // return the most recent profile
         this.profile = profileFromEvent(sortedSetMetadataEvents[0]);
 
-        if (this.profile && this.ndk.cacheAdapter && this.ndk.cacheAdapter.saveProfile) {
+        if (
+            this.profile &&
+            this.ndk.cacheAdapter &&
+            this.ndk.cacheAdapter.saveProfile
+        ) {
             this.ndk.cacheAdapter.saveProfile(this.hexpubkey, this.profile);
         }
 
@@ -174,7 +180,7 @@ export class NDKUser {
      * Returns a set of relay list events for a user.
      * @returns {Promise<Set<NDKEvent>>} A set of NDKEvents returned for the given user.
      */
-    public async relayList(): Promise<NDKRelayList|undefined> {
+    public async relayList(): Promise<NDKRelayList | undefined> {
         if (!this.ndk) throw new Error("NDK not set");
 
         const pool = this.ndk.outboxPool || this.ndk.pool;
@@ -183,14 +189,16 @@ export class NDKUser {
         for (const relay of pool.relays.values()) set.add(relay);
 
         const relaySet = new NDKRelaySet(set, this.ndk);
-        const event = await this.ndk.fetchEvent({
-            kinds: [10002],
-            authors: [this.hexpubkey],
-        }, { closeOnEose: true, pool, groupable: true },
-        relaySet);
+        const event = await this.ndk.fetchEvent(
+            {
+                kinds: [10002],
+                authors: [this.hexpubkey],
+            },
+            { closeOnEose: true, pool, groupable: true },
+            relaySet
+        );
 
-        if (event)
-            return NDKRelayList.from(event);
+        if (event) return NDKRelayList.from(event);
 
         return undefined;
     }

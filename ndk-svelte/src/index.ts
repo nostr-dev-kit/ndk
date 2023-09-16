@@ -81,6 +81,12 @@ class NDKSvelte extends NDK {
         ].includes(event.kind!);
     }
 
+    private eventIsLabel(event: NDKEvent): boolean {
+        return [
+            NDKKind.Label,
+        ].includes(event.kind!);
+    }
+
     public storeSubscribe<T extends NDKEvent>(
         filters: NDKFilter | NDKFilter[],
         opts?: NDKSubscribeOptions,
@@ -93,6 +99,11 @@ class NDKSvelte extends NDK {
         );
         const autoStart = opts?.autoStart ?? true;
         const relaySet = opts?.relaySet;
+
+        const handleEventLabel = (event: NDKEvent) => {
+            console.log(`handle event label`, event.rawEvent())
+            handleEventReposts(event);
+        }
 
         /**
          * Called when a repost event is identified. It either adds the repost event
@@ -145,6 +156,11 @@ class NDKSvelte extends NDK {
             if (store.filters && this.eventIsRepost(event)) {
                 // Check if we already have the repost event
                 handleEventReposts(event);
+                return;
+            }
+
+            if (this.eventIsLabel(event)) {
+                handleEventLabel(event);
                 return;
             }
 

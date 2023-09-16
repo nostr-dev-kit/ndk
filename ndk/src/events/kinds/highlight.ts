@@ -12,7 +12,7 @@ export class NDKHighlight extends NDKEvent {
 
     constructor(ndk?: NDK, rawEvent?: NostrEvent) {
         super(ndk, rawEvent);
-        this.kind = NDKKind.Highlight;
+        this.kind ??= NDKKind.Highlight;
     }
 
     static from(event: NDKEvent) {

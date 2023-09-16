@@ -15,7 +15,7 @@ interface NDKClassifiedPriceTag {
 export class NDKClassified extends NDKEvent {
     constructor(ndk: NDK | undefined, rawEvent?: NostrEvent) {
         super(ndk, rawEvent);
-        this.kind = NDKKind.Classified;
+        this.kind ??= NDKKind.Classified;
     }
 
     /**

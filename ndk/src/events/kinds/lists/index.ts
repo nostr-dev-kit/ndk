@@ -38,7 +38,7 @@ export class NDKList extends NDKEvent {
 
     constructor(ndk?: NDK, rawEvent?: NostrEvent) {
         super(ndk, rawEvent);
-        if (!this.kind) this.kind = NDKKind.CategorizedBookmarkList;
+        this.kind ??= NDKKind.CategorizedBookmarkList;
     }
 
     /**

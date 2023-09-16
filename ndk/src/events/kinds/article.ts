@@ -61,6 +61,10 @@ export class NDKArticle extends NDKEvent {
         if (image) this.tags.push(["image", image]);
     }
 
+    get summary(): string | undefined {
+        return this.tagValue("summary");
+    }
+
     /**
      * Getter for the article's publication timestamp.
      *

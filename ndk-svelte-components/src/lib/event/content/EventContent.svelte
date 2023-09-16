@@ -39,7 +39,7 @@
 {:else if event.kind === 30001}
     <Kind30001 {ndk} list={NDKList.from(event)} />
 {:else if event.kind === 30023}
-    <Kind30023 {ndk} article={NDKArticle.from(event)} {showMedia} on:click />
+    <Kind30023 {ndk} {content} article={NDKArticle.from(event)} {showMedia} on:click />
 {:else}
-    <Kind30023 {ndk} article={NDKArticle.from(event)} {anchorId} {showMedia} on:click />
+    <Kind30023 {ndk} {content} article={NDKArticle.from(event)} {anchorId} {showMedia} on:click />
 {/if}

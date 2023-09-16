@@ -14,8 +14,9 @@
     export let article: NDKArticle;
     export let showMedia: boolean = true;
     export let anchorId: string | null = null;
+    export let content = article.content;
 
-    const htmlContent = markdownToHtml(article.content);
+    const htmlContent = markdownToHtml(content);
     const parsed = parseContent({ content: htmlContent, tags: article.tags, html: true });
 </script>
 

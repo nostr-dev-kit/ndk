@@ -383,7 +383,8 @@ export class NDKEvent extends EventEmitter {
     async zap(
         amount: number,
         comment?: string,
-        extraTags?: NDKTag[]
+        extraTags?: NDKTag[],
+        recipient?: NDKUser,
     ): Promise<string | null> {
         if (!this.ndk) throw new Error("No NDK instance found");
 
@@ -392,6 +393,7 @@ export class NDKEvent extends EventEmitter {
         const zap = new Zap({
             ndk: this.ndk,
             zappedEvent: this,
+            zappedUser: recipient
         });
 
         const paymentRequest = await zap.createZapRequest(

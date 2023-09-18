@@ -57,6 +57,8 @@ export class NDKList extends NDKEvent {
             return "Mute";
         } else if (this.kind === NDKKind.PinList && !nameTag) {
             return "Pin";
+        } else if (this.kind === NDKKind.RelayList && !nameTag) {
+            return "Relay Metadata";
         } else {
             return nameTag ?? this.tagValue("d");
         }

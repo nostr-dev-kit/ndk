@@ -1,6 +1,7 @@
 import "websocket-polyfill";
 import { NDK } from "../../ndk/index.js";
 import { NDKRelay } from "../index.js";
+import { NDKRelaySet } from "../sets/index.js";
 
 const ndk = new NDK();
 
@@ -14,5 +15,14 @@ describe("NDKPool", () => {
         pool.addRelay(blacklistedRelay);
 
         expect(pool.relays.size).toEqual(0);
+    });
+
+    it("connects to relays temporarily when creating relay sets", async () => {
+        const ndk = new NDK({});
+        const { pool } = ndk;
+        const set = NDKRelaySet.fromRelayUrls(["wss://purplepag.es"], ndk);
+
+        expect(set.size()).toEqual(1);
+        expect(pool.relays.size).toEqual(1);
     });
 });

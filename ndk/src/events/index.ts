@@ -312,7 +312,7 @@ export class NDKEvent extends EventEmitter {
      * For all other kinds this will be the event id
      */
     deduplicationKey(): string {
-        if (this.kind === 0 || this.kind === 3) {
+        if (this.kind === 0 || this.kind === 3 || (this.kind && this.kind >= 10000 && this.kind < 20000)) {
             return `${this.kind}:${this.pubkey}`;
         } else {
             return this.tagId();

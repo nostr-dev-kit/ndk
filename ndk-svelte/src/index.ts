@@ -171,19 +171,20 @@ class NDKSvelte extends NDK {
             }
             e.ndk = this;
 
-            const id = event.tagId();
-            if (eventIds.has(id)) {
-                const prevEvent = events.find((e) => e.tagId() === id);
+            const dedupKey = event.deduplicationKey();
+
+            if (eventIds.has(dedupKey)) {
+                const prevEvent = events.find((e) => e.deduplicationKey() === dedupKey);
 
                 if (prevEvent && prevEvent.created_at! < event.created_at!) {
                     // remove the previous event
-                    const index = events.findIndex((e) => e.tagId() === id);
+                    const index = events.findIndex((e) => e.deduplicationKey() === dedupKey);
                     events.splice(index, 1);
                 } else {
                     return;
                 }
             }
-            eventIds.add(id);
+            eventIds.add(dedupKey);
 
             const index = events.findIndex((e) => e.created_at! < event.created_at!);
             if (index === -1) {

@@ -187,8 +187,7 @@
         overflow: auto;
     }
 
-    .relay-subscription--event-count,
-    .small-note {
+    .relay-subscription--event-count {
         font-size: 0.8em;
         font-weight: 300;
         margin-left: 5px;

@@ -32,8 +32,8 @@ export class NDKRelaySet {
     /**
      * Creates a relay set from a list of relay URLs.
      *
-     * This is useful for testing in development to pass a local relay
-     * to publish methods.
+     * If no connection to the relay is found in the pool it will temporarily
+     * connect to it.
      *
      * @param relayUrls - list of relay URLs to include in this set
      * @param ndk
@@ -45,6 +45,10 @@ export class NDKRelaySet {
             const relay = ndk.pool.relays.get(url);
             if (relay) {
                 relays.add(relay);
+            } else {
+                const temporaryRelay = new NDKRelay(url);
+                ndk.pool.useTemporaryRelay(temporaryRelay);
+                relays.add(temporaryRelay);
             }
         }
 

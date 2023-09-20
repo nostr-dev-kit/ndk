@@ -48,24 +48,7 @@ export default class Zap extends EventEmitter {
         let zapEndpoint: string | undefined;
         let zapEndpointCallback: string | undefined;
 
-        if (this.zappedEvent) {
-            const zapTag = (await this.zappedEvent.getMatchingTags("zap"))[0];
-
-            if (zapTag) {
-                switch (zapTag[2]) {
-                    case "lud06":
-                        lud06 = zapTag[1];
-                        break;
-                    case "lud16":
-                        lud16 = zapTag[1];
-                        break;
-                    default:
-                        throw new Error(`Unknown zap tag ${zapTag}`);
-                }
-            }
-        }
-
-        if (this.zappedUser && !lud06 && !lud16) {
+        if (this.zappedUser) {
             // check if user has a profile, otherwise request it
             if (!this.zappedUser.profile) {
                 await this.zappedUser.fetchProfile();
@@ -75,7 +58,7 @@ export default class Zap extends EventEmitter {
             lud16 = (this.zappedUser.profile || {}).lud16;
         }
 
-        if (lud16) {
+        if (lud16 && !lud16.startsWith('LNURL')) {
             const [name, domain] = lud16.split("@");
             zapEndpoint = `https://${domain}/.well-known/lnurlp/${name}`;
         } else if (lud06) {

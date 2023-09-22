@@ -12,7 +12,8 @@
         "build:cjs": "node tools/cleanup cjs && tsc -p config/tsconfig.cjs.json",
         "build:esm": "node tools/cleanup esm && tsc -p config/tsconfig.esm.json",
         "build:types": "node tools/cleanup types && tsc -p config/tsconfig.types.json",
-        "lint": "eslint src/**/*.ts"
+        "lint": "prettier --check . && eslint .",
+        "format": "prettier --write ."
     },
     "repository": {
         "type": "git",

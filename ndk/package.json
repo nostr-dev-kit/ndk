@@ -25,12 +25,12 @@
         "build": "tsup src/index.ts --format cjs,esm --dts",
         "clean": "rm -rf dist docs",
         "test": "jest",
-        "lint": "eslint src/**/*.ts",
+        "lint": "prettier --check . && eslint .",
         "compile": "tsc",
         "prepare": "pnpm build",
         "pretest": "pnpm build",
         "posttest": "pnpm lint",
-        "prettify": "prettier --write ."
+        "format": "prettier --write ."
     },
     "keywords": [
         "nostr"

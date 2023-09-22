@@ -15,7 +15,9 @@
     ],
     "scripts": {
         "build": "tsup src/index.ts --format cjs,esm --dts",
-        "dev": "tsup --watch src src/index.ts --format cjs,esm --dts"
+        "dev": "tsup --watch src src/index.ts --format cjs,esm --dts",
+        "lint": "prettier --check . && eslint .",
+        "format": "prettier --write ."
     },
     "keywords": [
         "nostr",

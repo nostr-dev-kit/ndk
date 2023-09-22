@@ -5,11 +5,13 @@
     "main": "index.js",
     "license": "MIT",
     "dependencies": {
-        "@typescript-eslint/eslint-plugin": "^5.27.0",
-        "@typescript-eslint/parser": "^5.27.0",
-        "eslint-config-prettier": "^8.3.0",
+        "@typescript-eslint/eslint-plugin": "^6.7.2",
+        "@typescript-eslint/parser": "^6.7.2",
+        "eslint-config-prettier": "^9.0.0",
+        "@vercel/style-guide": "^5.0.1",
         "eslint-config-turbo": "latest",
-        "eslint-plugin-svelte3": "^4.0.0"
+        "eslint-plugin-svelte": "^2.33.2",
+        "typescript": "^5.2.2"
     },
     "publishConfig": {
         "access": "public"

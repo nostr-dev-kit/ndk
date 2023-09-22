@@ -95,7 +95,9 @@ export class OutboxTracker extends EventEmitter {
 
                     this.data.set(itemKey, outboxItem);
 
-                    this.debug(`Adding ${outboxItem.readRelays.size} read relays and ${outboxItem.writeRelays.size} write relays for ${user.hexpubkey}`);
+                    this.debug(
+                        `Adding ${outboxItem.readRelays.size} read relays and ${outboxItem.writeRelays.size} write relays for ${user.hexpubkey}`
+                    );
                 }
             });
         }
@@ -106,10 +108,7 @@ export class OutboxTracker extends EventEmitter {
      * @param key
      * @param score
      */
-    public track(
-        item: NDKUser | Hexpubkey,
-        type?: OutboxItemType,
-    ): OutboxItem {
+    public track(item: NDKUser | Hexpubkey, type?: OutboxItemType): OutboxItem {
         const key = getKeyFromItem(item);
         type ??= getTypeFromItem(item);
         let outboxItem = this.data.get(key);
@@ -130,9 +129,7 @@ function getKeyFromItem(item: NDKUser | Hexpubkey): Hexpubkey {
     }
 }
 
-function getTypeFromItem(
-    item: NDKUser | Hexpubkey,
-): OutboxItemType {
+function getTypeFromItem(item: NDKUser | Hexpubkey): OutboxItemType {
     if (item instanceof NDKUser) {
         return "user";
     } else {

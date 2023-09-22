@@ -21,9 +21,7 @@ interface ZapConstructorParams {
     zappedUser?: NDKUser;
 }
 
-type ZapConstructorParamsRequired = Required<
-    Pick<ZapConstructorParams, "zappedEvent">
-> &
+type ZapConstructorParamsRequired = Required<Pick<ZapConstructorParams, "zappedEvent">> &
     Pick<ZapConstructorParams, "zappedUser"> &
     ZapConstructorParams;
 
@@ -38,8 +36,7 @@ export default class Zap extends EventEmitter {
         this.zappedEvent = args.zappedEvent;
 
         this.zappedUser =
-            args.zappedUser ||
-            this.ndk.getUser({ hexpubkey: this.zappedEvent.pubkey });
+            args.zappedUser || this.ndk.getUser({ hexpubkey: this.zappedEvent.pubkey });
     }
 
     public async getZapEndpoint(): Promise<string | undefined> {
@@ -58,7 +55,7 @@ export default class Zap extends EventEmitter {
             lud16 = (this.zappedUser.profile || {}).lud16;
         }
 
-        if (lud16 && !lud16.startsWith('LNURL')) {
+        if (lud16 && !lud16.startsWith("LNURL")) {
             const [name, domain] = lud16.split("@");
             zapEndpoint = `https://${domain}/.well-known/lnurlp/${name}`;
         } else if (lud06) {
@@ -124,10 +121,7 @@ export default class Zap extends EventEmitter {
 
         zapRequest.tags.push(["lnurl", zapEndpoint]);
 
-        const zapRequestEvent = new NDKEvent(
-            this.ndk,
-            zapRequest as NostrEvent
-        );
+        const zapRequestEvent = new NDKEvent(this.ndk, zapRequest as NostrEvent);
         if (extraTags) {
             zapRequestEvent.tags = zapRequestEvent.tags.concat(extraTags);
         }

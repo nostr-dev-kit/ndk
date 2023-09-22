@@ -126,8 +126,7 @@ export class NDKEvent extends EventEmitter {
             // tag p-tags in the event if they are not the same as the user signing this event
             for (const pTag of userOrEvent.getMatchingTags("p")) {
                 if (pTag[1] === this.pubkey) continue;
-                if (this.tags.find((t) => t[0] === "p" && t[1] === pTag[1]))
-                    continue;
+                if (this.tags.find((t) => t[0] === "p" && t[1] === pTag[1])) continue;
 
                 this.tags.push(["p", pTag[1]]);
             }
@@ -240,21 +239,14 @@ export class NDKEvent extends EventEmitter {
      * @param relaySet {NDKRelaySet} The relaySet to publish the even to.
      * @returns A promise that resolves to the relays the event was published to.
      */
-    public async publish(
-        relaySet?: NDKRelaySet,
-        timeoutMs?: number
-    ): Promise<Set<NDKRelay>> {
+    public async publish(relaySet?: NDKRelaySet, timeoutMs?: number): Promise<Set<NDKRelay>> {
         if (!this.sig) await this.sign();
         if (!this.ndk)
-            throw new Error(
-                "NDKEvent must be associated with an NDK instance to publish"
-            );
+            throw new Error("NDKEvent must be associated with an NDK instance to publish");
 
         if (!relaySet) {
             // If we have a devWriteRelaySet, use it to publish all events
-            relaySet =
-                this.ndk.devWriteRelaySet ||
-                calculateRelaySetFromEvent(this.ndk, this);
+            relaySet = this.ndk.devWriteRelaySet || calculateRelaySetFromEvent(this.ndk, this);
         }
 
         return relaySet.publish(this, timeoutMs);
@@ -278,9 +270,7 @@ export class NDKEvent extends EventEmitter {
             const dTag = this.getMatchingTags("d")[0];
             // generate a string of 32 random bytes
             if (!dTag) {
-                const str = [...Array(16)]
-                    .map(() => Math.random().toString(36)[2])
-                    .join("");
+                const str = [...Array(16)].map(() => Math.random().toString(36)[2]).join("");
                 tags.push(["d", str]);
             }
         }
@@ -312,7 +302,11 @@ export class NDKEvent extends EventEmitter {
      * For all other kinds this will be the event id
      */
     deduplicationKey(): string {
-        if (this.kind === 0 || this.kind === 3 || (this.kind && this.kind >= 10000 && this.kind < 20000)) {
+        if (
+            this.kind === 0 ||
+            this.kind === 3 ||
+            (this.kind && this.kind >= 10000 && this.kind < 20000)
+        ) {
             return `${this.kind}:${this.pubkey}`;
         } else {
             return this.tagId();
@@ -384,7 +378,7 @@ export class NDKEvent extends EventEmitter {
         amount: number,
         comment?: string,
         extraTags?: NDKTag[],
-        recipient?: NDKUser,
+        recipient?: NDKUser
     ): Promise<string | null> {
         if (!this.ndk) throw new Error("No NDK instance found");
 
@@ -393,14 +387,10 @@ export class NDKEvent extends EventEmitter {
         const zap = new Zap({
             ndk: this.ndk,
             zappedEvent: this,
-            zappedUser: recipient
+            zappedUser: recipient,
         });
 
-        const paymentRequest = await zap.createZapRequest(
-            amount,
-            comment,
-            extraTags
-        );
+        const paymentRequest = await zap.createZapRequest(amount, comment, extraTags);
 
         // await zap.publish(amount);
         return paymentRequest;

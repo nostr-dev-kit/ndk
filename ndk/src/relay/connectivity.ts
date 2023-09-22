@@ -50,7 +50,6 @@ export class NDKRelayConnectivity {
             this.relay.on("disconnect", disconnectHandler);
 
             await this.relay.connect();
-
         } catch (e) {
             this.debug("Failed to connect", e);
             this._status = NDKRelayStatus.DISCONNECTED;
@@ -68,9 +67,7 @@ export class NDKRelayConnectivity {
     }
 
     public isAvailable(): boolean {
-        return (
-            this._status === NDKRelayStatus.CONNECTED
-        );
+        return this._status === NDKRelayStatus.CONNECTED;
     }
 
     /**
@@ -83,9 +80,8 @@ export class NDKRelayConnectivity {
         const sum = durations.reduce((a, b) => a + b, 0);
         const avg = sum / durations.length;
         const variance =
-            durations
-                .map((x) => Math.pow(x - avg, 2))
-                .reduce((a, b) => a + b, 0) / durations.length;
+            durations.map((x) => Math.pow(x - avg, 2)).reduce((a, b) => a + b, 0) /
+            durations.length;
         const stdDev = Math.sqrt(variance);
         const isFlapping = stdDev < 1000;
 

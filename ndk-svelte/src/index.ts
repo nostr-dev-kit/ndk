@@ -1,5 +1,15 @@
-import { writable, type Unsubscriber, type Writable } from 'svelte/store';
-import NDK, { NDKConstructorParams, NDKEvent, NDKFilter, NDKSubscriptionOptions, NDKRepost, NDKSubscription, NDKKind, NDKRelaySet, NDKRelay } from "@nostr-dev-kit/ndk";
+import { writable, type Unsubscriber, type Writable } from "svelte/store";
+import NDK, {
+    NDKConstructorParams,
+    NDKEvent,
+    NDKFilter,
+    NDKSubscriptionOptions,
+    NDKRepost,
+    NDKSubscription,
+    NDKKind,
+    NDKRelaySet,
+    NDKRelay,
+} from "@nostr-dev-kit/ndk";
 
 /**
  * Type for NDKEvent classes that have a static `from` method like NDKHighlight.
@@ -10,7 +20,7 @@ type ClassWithConvertFunction<T extends NDKEvent> = {
 
 export type ExtendedBaseType<T extends NDKEvent> = T & {
     repostedByEvents?: NDKEvent[];
-}
+};
 
 export type NDKEventStore<T extends NDKEvent> = Writable<ExtendedBaseType<T>[]> & {
     filters: NDKFilter[] | undefined;
@@ -53,9 +63,7 @@ class NDKSvelte extends NDK {
         super(opts);
     }
 
-    private createEventStore<T extends NDKEvent>(
-        filters?: NDKFilter[],
-    ): NDKEventStore<T> {
+    private createEventStore<T extends NDKEvent>(filters?: NDKFilter[]): NDKEventStore<T> {
         const store = writable<T[]>([]) as NDKEventStore<T>;
         return {
             refCount: 0,
@@ -66,25 +74,30 @@ class NDKSvelte extends NDK {
             subscribe: store.subscribe,
             unsubscribe: () => {},
             onEose: (cb) => {},
-            startSubscription: () => { throw new Error('not implemented') },
-            ref: () => { throw new Error('not implemented') },
-            unref: () => { throw new Error('not implemented') },
-            empty: () => { throw new Error('not implemented') },
-            changeFilters: (filters: NDKFilter[]) => { throw new Error('not implemented') }
+            startSubscription: () => {
+                throw new Error("not implemented");
+            },
+            ref: () => {
+                throw new Error("not implemented");
+            },
+            unref: () => {
+                throw new Error("not implemented");
+            },
+            empty: () => {
+                throw new Error("not implemented");
+            },
+            changeFilters: (filters: NDKFilter[]) => {
+                throw new Error("not implemented");
+            },
         };
     }
 
     private eventIsRepost(event: NDKEvent): boolean {
-        return [
-            NDKKind.Repost,
-            NDKKind.GenericRepost
-        ].includes(event.kind!);
+        return [NDKKind.Repost, NDKKind.GenericRepost].includes(event.kind!);
     }
 
     private eventIsLabel(event: NDKEvent): boolean {
-        return [
-            NDKKind.Label,
-        ].includes(event.kind!);
+        return [NDKKind.Label].includes(event.kind!);
     }
 
     public storeSubscribe<T extends NDKEvent>(
@@ -101,9 +114,9 @@ class NDKSvelte extends NDK {
         const relaySet = opts?.relaySet;
 
         const handleEventLabel = (event: NDKEvent) => {
-            console.log(`handle event label`, event.rawEvent())
+            console.log(`handle event label`, event.rawEvent());
             handleEventReposts(event);
-        }
+        };
 
         /**
          * Called when a repost event is identified. It either adds the repost event
@@ -124,7 +137,7 @@ class NDKSvelte extends NDK {
                 }
 
                 store.set(events);
-            }
+            };
 
             for (const repostedEventId of _repostEvent.repostedEventIds()) {
                 const repostedEvent = events.find((e) => e.id === repostedEventId);
@@ -211,16 +224,14 @@ class NDKSvelte extends NDK {
          * Decrements the ref count and unsubscribes if it's the last
          */
         store.unref = () => {
-            if (--store.refCount !== 0)
-                return store.refCount;
+            if (--store.refCount !== 0) return store.refCount;
 
             if (opts?.unrefUnsubscribeTimeout) {
                 setTimeout(() => {
                     if (store.refCount === 0) {
                         store.unsubscribe();
                     }
-                }
-                , opts.unrefUnsubscribeTimeout!);
+                }, opts.unrefUnsubscribeTimeout!);
             } else {
                 store.unsubscribe();
             }
@@ -244,8 +255,7 @@ class NDKSvelte extends NDK {
             store.empty();
 
             // only start the subscription if we have a ref
-            if (store.refCount > 0)
-                store.startSubscription();
+            if (store.refCount > 0) store.startSubscription();
         };
 
         /**
@@ -253,7 +263,7 @@ class NDKSvelte extends NDK {
          */
         store.startSubscription = () => {
             if (!store.filters) {
-                throw new Error('no filters');
+                throw new Error("no filters");
             }
 
             const filters: NDKFilter[] = store.filters;
@@ -264,7 +274,7 @@ class NDKSvelte extends NDK {
 
             store.subscription = this.subscribe(filters, opts, relaySet);
 
-            store.subscription.on('event', (event: NDKEvent, relay?: NDKRelay) => {
+            store.subscription.on("event", (event: NDKEvent, relay?: NDKRelay) => {
                 handleEvent(event);
             });
 
@@ -274,9 +284,9 @@ class NDKSvelte extends NDK {
             };
 
             store.onEose = (cb) => {
-                store.subscription?.on('eose', cb);
+                store.subscription?.on("eose", cb);
             };
-        }
+        };
 
         if (autoStart) {
             store.startSubscription();

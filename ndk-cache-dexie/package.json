@@ -18,7 +18,6 @@
         "dist",
         "README.md"
     ],
-    "packageManager": "pnpm@8.6.12",
     "scripts": {
         "dev": "pnpm build --watch",
         "build": "tsup src/index.ts --format cjs,esm --dts",
@@ -36,16 +35,15 @@
         "erskingardner"
     ],
     "devDependencies": {
-        "@nostr-dev-kit/tsconfig": "*",
-        "eslint-config-custom": "*",
+        "@nostr-dev-kit/tsconfig": "workspace:*",
+        "@nostr-dev-kit/eslint-config-custom": "workspace:*",
         "@types/debug": "^4.1.8",
         "@types/node": "^20.5.0",
         "prettier": "^3.0.1",
-        "tsup": "^7.2.0",
-        "typescript": "^5.1.6"
+        "tsup": "^7.2.0"
     },
     "dependencies": {
-        "@nostr-dev-kit/ndk": "*",
+        "@nostr-dev-kit/ndk": "workspace:*",
         "debug": "^4.3.4",
         "dexie": "^3.2.4",
         "nostr-tools": "^1.14.0",

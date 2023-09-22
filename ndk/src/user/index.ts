@@ -6,10 +6,7 @@ import { NDKKind } from "../events/kinds/index.js";
 import { NDK } from "../ndk/index.js";
 import { NDKRelay } from "../relay/index.js";
 import { NDKRelaySet } from "../relay/sets/index.js";
-import {
-    NDKSubscriptionCacheUsage,
-    NDKSubscriptionOptions,
-} from "../subscription/index.js";
+import { NDKSubscriptionCacheUsage, NDKSubscriptionOptions } from "../subscription/index.js";
 import { follows } from "./follows.js";
 import { NDKUserProfile, profileFromEvent } from "./profile.js";
 
@@ -91,9 +88,7 @@ export class NDKUser {
      * @param opts {NDKSubscriptionOptions} A set of NDKSubscriptionOptions
      * @returns User Profile
      */
-    public async fetchProfile(
-        opts?: NDKSubscriptionOptions
-    ): Promise<NDKUserProfile | null> {
+    public async fetchProfile(opts?: NDKSubscriptionOptions): Promise<NDKUserProfile | null> {
         if (!this.ndk) throw new Error("NDK not set");
 
         if (!this.profile) this.profile = {};
@@ -105,9 +100,7 @@ export class NDKUser {
             this.ndk.cacheAdapter.fetchProfile &&
             opts?.cacheUsage !== NDKSubscriptionCacheUsage.ONLY_RELAY
         ) {
-            const profile = await this.ndk.cacheAdapter.fetchProfile(
-                this.hexpubkey
-            );
+            const profile = await this.ndk.cacheAdapter.fetchProfile(this.hexpubkey);
 
             if (profile) {
                 this.profile = profile;
@@ -161,11 +154,7 @@ export class NDKUser {
         // return the most recent profile
         this.profile = profileFromEvent(sortedSetMetadataEvents[0]);
 
-        if (
-            this.profile &&
-            this.ndk.cacheAdapter &&
-            this.ndk.cacheAdapter.saveProfile
-        ) {
+        if (this.profile && this.ndk.cacheAdapter && this.ndk.cacheAdapter.saveProfile) {
             this.ndk.cacheAdapter.saveProfile(this.hexpubkey, this.profile);
         }
 
@@ -234,10 +223,7 @@ export class NDKUser {
      * @param currentFollowList {Set<NDKUser>} The current follow list
      * @returns {Promise<boolean>} True if the follow was added, false if the follow already exists
      */
-    public async follow(
-        newFollow: NDKUser,
-        currentFollowList?: Set<NDKUser>
-    ): Promise<boolean> {
+    public async follow(newFollow: NDKUser, currentFollowList?: Set<NDKUser>): Promise<boolean> {
         if (!this.ndk) throw new Error("No NDK instance found");
 
         this.ndk.assertSigner();
@@ -277,8 +263,7 @@ export class NDKUser {
     public async validateNip05(nip05Id: string): Promise<boolean | null> {
         if (!this.ndk) throw new Error("No NDK instance found");
 
-        const profilePointer: ProfilePointer | null =
-            await nip05.queryProfile(nip05Id);
+        const profilePointer: ProfilePointer | null = await nip05.queryProfile(nip05Id);
 
         if (profilePointer === null) return null;
         return profilePointer.pubkey === this.hexpubkey;

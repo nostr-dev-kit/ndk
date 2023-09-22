@@ -264,8 +264,7 @@ const pablo = ndk.getUser({
 });
 
 const jeff = ndk.getUser({
-    hexpubkey:
-        "1739d937dc8c0c7370aa27585938c119e25c41f6c441a5d34c6d38503e3136ef",
+    hexpubkey: "1739d937dc8c0c7370aa27585938c119e25c41f6c441a5d34c6d38503e3136ef",
 });
 ```
 

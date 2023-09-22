@@ -2,9 +2,7 @@ import { NDK } from "../../../ndk";
 import { NDKUser } from "../../../user";
 import NDKList from ".";
 
-
 describe("NDKList", () => {
-
     let ndk: NDK;
     let list: NDKList;
     let user1: NDKUser;
@@ -17,7 +15,6 @@ describe("NDKList", () => {
         list = new NDKList(ndk);
         list.author = user1;
     });
-
 
     describe("name", () => {
         it("allows you to set and get the name of the list", () => {

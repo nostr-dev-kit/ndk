@@ -3,7 +3,7 @@ import { NDKKind } from ".";
 import { NDK } from "../../ndk";
 import { NDKRelayUrl } from "../../relay";
 
-const READ_MARKER = 'read';
+const READ_MARKER = "read";
 const WRITE_MARKER = "write";
 
 export class NDKRelayList extends NDKEvent {
@@ -20,8 +20,8 @@ export class NDKRelayList extends NDKEvent {
 
     get readRelayUrls(): NDKRelayUrl[] {
         return this.getMatchingTags("r")
-            .filter(tag => !tag[2] || (tag[2] && tag[2] === READ_MARKER))
-            .map(tag => tag[1]);
+            .filter((tag) => !tag[2] || (tag[2] && tag[2] === READ_MARKER))
+            .map((tag) => tag[1]);
     }
 
     set readRelayUrls(relays: NDKRelayUrl[]) {
@@ -32,8 +32,8 @@ export class NDKRelayList extends NDKEvent {
 
     get writeRelayUrls(): NDKRelayUrl[] {
         return this.getMatchingTags("r")
-            .filter(tag => !tag[2] || (tag[2] && tag[2] === WRITE_MARKER))
-            .map(tag => tag[1]);
+            .filter((tag) => !tag[2] || (tag[2] && tag[2] === WRITE_MARKER))
+            .map((tag) => tag[1]);
     }
 
     set writeRelayUrls(relays: NDKRelayUrl[]) {
@@ -44,8 +44,8 @@ export class NDKRelayList extends NDKEvent {
 
     get bothRelayUrls(): NDKRelayUrl[] {
         return this.getMatchingTags("r")
-            .filter(tag => !tag[2])
-            .map(tag => tag[1]);
+            .filter((tag) => !tag[2])
+            .map((tag) => tag[1]);
     }
 
     set bothRelayUrls(relays: NDKRelayUrl[]) {

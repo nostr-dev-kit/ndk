@@ -55,15 +55,10 @@ export class NDKNostrRpc extends EventEmitter {
         });
     }
 
-    public async parseEvent(
-        event: NDKEvent
-    ): Promise<NDKRpcRequest | NDKRpcResponse> {
+    public async parseEvent(event: NDKEvent): Promise<NDKRpcRequest | NDKRpcResponse> {
         const remoteUser = this.ndk.getUser({ hexpubkey: event.pubkey });
         remoteUser.ndk = this.ndk;
-        const decryptedContent = await this.signer.decrypt(
-            remoteUser,
-            event.content
-        );
+        const decryptedContent = await this.signer.decrypt(remoteUser, event.content);
         const parsedContent = JSON.parse(decryptedContent);
         const { id, method, params, result, error } = parsedContent;
 

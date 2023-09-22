@@ -53,20 +53,17 @@ export interface NDKConstructorParams {
      * Debug instance to use
      */
     debug?: debug.Debugger;
-};
+}
 
 export interface GetUserParams extends NDKUserParams {
     npub?: string;
     hexpubkey?: string;
 }
 
-export const DEFAULT_OUTBOX_RELAYS =[
-    "wss://purplepag.es",
-    "wss://relay.snort.social",
-];
+export const DEFAULT_OUTBOX_RELAYS = ["wss://purplepag.es", "wss://relay.snort.social"];
 
 export const DEFAULT_BLACKLISTED_RELAYS = [
-    "wss://brb.io" // BRB
+    "wss://brb.io", // BRB
 ];
 
 export class NDK extends EventEmitter {
@@ -84,11 +81,7 @@ export class NDK extends EventEmitter {
 
         this.debug = opts.debug || debug("ndk");
         this.explicitRelayUrls = opts.explicitRelayUrls;
-        this.pool = new NDKPool(
-            opts.explicitRelayUrls || [],
-            opts.blacklistRelayUrls,
-            this
-        );
+        this.pool = new NDKPool(opts.explicitRelayUrls || [], opts.blacklistRelayUrls, this);
 
         this.debug(`Starting with explicit relays: ${JSON.stringify(this.explicitRelayUrls)}`);
 
@@ -107,10 +100,7 @@ export class NDK extends EventEmitter {
         this.cacheAdapter = opts.cacheAdapter;
 
         if (opts.devWriteRelayUrls) {
-            this.devWriteRelaySet = NDKRelaySet.fromRelayUrls(
-                opts.devWriteRelayUrls,
-                this
-            );
+            this.devWriteRelaySet = NDKRelaySet.fromRelayUrls(opts.devWriteRelayUrls, this);
         }
     }
 
@@ -123,9 +113,7 @@ export class NDK extends EventEmitter {
      * If the timeout is reached, the connection will be continued to be established in the background.
      */
     public async connect(timeoutMs?: number): Promise<void> {
-        const connections = [
-            this.pool.connect(timeoutMs)
-        ];
+        const connections = [this.pool.connect(timeoutMs)];
 
         if (this.outboxPool) {
             connections.push(this.outboxPool.connect(timeoutMs));

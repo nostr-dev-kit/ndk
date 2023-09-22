@@ -16,13 +16,18 @@ describe("NDKRelay", () => {
             let sub: NDKSubscription;
 
             beforeEach(() => {
-                sub = new NDKSubscription(ndk, {
-                    kinds: [1], authors: ["author1"],
-                }, { groupableDelay: 1000 });
+                sub = new NDKSubscription(
+                    ndk,
+                    {
+                        kinds: [1],
+                        authors: ["author1"],
+                    },
+                    { groupableDelay: 1000 }
+                );
             });
 
             it("groups the subscription", () => {
-                ndk.subscribe({kinds:[1]});
+                ndk.subscribe({ kinds: [1] });
             });
         });
     });

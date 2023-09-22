@@ -1,7 +1,11 @@
 import { Sub, matchFilter } from "nostr-tools";
 import { NDKRelay } from ".";
 import { NDKFilter, NDKSubscription } from "../subscription";
-import { NDKFilterGroupingId, calculateGroupableId, mergeFilters } from "../subscription/grouping.js";
+import {
+    NDKFilterGroupingId,
+    calculateGroupableId,
+    mergeFilters,
+} from "../subscription/grouping.js";
 import { NDKEvent, NostrEvent } from "../events";
 import { compareFilter, generateSubId } from "../subscription/utils";
 import { NDKRelayConnectivity } from "./connectivity.js";
@@ -18,10 +22,7 @@ class NDKGroupedSubscriptions extends EventEmitter implements Iterable<NDKSubscr
     public req?: NDKFilter[];
     public debug: debug.Debugger;
 
-    public constructor(
-        subscriptions: NDKSubscriptionFilters[],
-        debug?: debug.Debugger,
-    ) {
+    public constructor(subscriptions: NDKSubscriptionFilters[], debug?: debug.Debugger) {
         super();
         this.subscriptions = subscriptions;
         this.debug = debug || this.subscriptions[0].subscription.debug.extend("grouped");
@@ -62,7 +63,9 @@ class NDKGroupedSubscriptions extends EventEmitter implements Iterable<NDKSubscr
     private handleSubscriptionClosure(subscription: NDKSubscriptionFilters) {
         subscription.subscription.on("close", () => {
             // this.debug(`going to remove subscription ${subscription.subscription.internalId} from grouped subscriptions, before removing there are ${this.subscriptions.length} subscriptions`, this.subscriptions);
-            const index = this.subscriptions.findIndex(i => i.subscription === subscription.subscription);
+            const index = this.subscriptions.findIndex(
+                (i) => i.subscription === subscription.subscription
+            );
             this.subscriptions.splice(index, 1);
 
             // this.debug(`there are ${this.subscriptions.length} subscriptions left`);
@@ -79,7 +82,9 @@ class NDKGroupedSubscriptions extends EventEmitter implements Iterable<NDKSubscr
      * @param fn - The transformation function.
      * @returns A new array with each subscription transformed by fn.
      */
-    public map<T>(fn: (sub: NDKSubscriptionFilters, index: number, array: NDKSubscriptionFilters[]) => T): T[] {
+    public map<T>(
+        fn: (sub: NDKSubscriptionFilters, index: number, array: NDKSubscriptionFilters[]) => T
+    ): T[] {
         return this.subscriptions.map(fn);
     }
 
@@ -94,7 +99,7 @@ class NDKGroupedSubscriptions extends EventEmitter implements Iterable<NDKSubscr
                 } else {
                     return { value: null, done: true };
                 }
-            }
+            },
         };
     }
 }
@@ -119,18 +124,13 @@ class NDKSubscriptionFilters {
         this.subscription.eventReceived(event, this.ndkRelay, false);
     }
 
-    private eventMatchesLocalFilter(
-        event: NDKEvent,
-    ): boolean {
+    private eventMatchesLocalFilter(event: NDKEvent): boolean {
         const rawEvent = event.rawEvent();
         return this.filters.some((filter) => matchFilter(filter, rawEvent as any));
     }
 }
 
-function findMatchingActiveSubscriptions(
-    activeSubscriptions: NDKFilter[],
-    filters: NDKFilter[],
-) {
+function findMatchingActiveSubscriptions(activeSubscriptions: NDKFilter[], filters: NDKFilter[]) {
     if (activeSubscriptions.length !== filters.length) return false;
 
     for (let i = 0; i < activeSubscriptions.length; i++) {
@@ -145,8 +145,8 @@ function findMatchingActiveSubscriptions(
 }
 
 type FiltersSub = {
-    filters: NDKFilter[],
-    sub: Sub
+    filters: NDKFilter[];
+    sub: Sub;
 };
 
 /**
@@ -176,12 +176,13 @@ export class NDKRelaySubscriptions {
     /**
      * Creates or queues a subscription to the relay.
      */
-    public subscribe(
-        subscription: NDKSubscription,
-        filters: NDKFilter[],
-    ): void {
+    public subscribe(subscription: NDKSubscription, filters: NDKFilter[]): void {
         const groupableId = calculateGroupableId(filters);
-        const subscriptionFilters = new NDKSubscriptionFilters(subscription, filters, this.ndkRelay);
+        const subscriptionFilters = new NDKSubscriptionFilters(
+            subscription,
+            filters,
+            this.ndkRelay
+        );
 
         // If this subscription is not groupable, execute it immediately
         if (!groupableId || !subscription.isGroupable()) {
@@ -200,11 +201,16 @@ export class NDKRelaySubscriptions {
         // events
         const activeSubscriptions = this.activeSubscriptionsByGroupId.get(groupableId);
         if (activeSubscriptions) {
-            const matchingSubscription = findMatchingActiveSubscriptions(activeSubscriptions.filters, filters);
+            const matchingSubscription = findMatchingActiveSubscriptions(
+                activeSubscriptions.filters,
+                filters
+            );
 
             if (matchingSubscription) {
                 const activeSubscription = this.activeSubscriptions.get(activeSubscriptions.sub);
-                activeSubscription?.addSubscription(new NDKSubscriptionFilters(subscription, filters, this.ndkRelay));
+                activeSubscription?.addSubscription(
+                    new NDKSubscriptionFilters(subscription, filters, this.ndkRelay)
+                );
 
                 return;
             }
@@ -274,11 +280,7 @@ export class NDKRelaySubscriptions {
 
             // this.groupingDebug("Merged filters", groupableId, JSON.stringify(mergedFilters), delayedItem.map((di) => di.filters[0]));
 
-            this.executeSubscriptions(
-                groupableId,
-                delayedItem,
-                mergedFilters
-            );
+            this.executeSubscriptions(groupableId, delayedItem, mergedFilters);
         }
     }
 
@@ -295,21 +297,22 @@ export class NDKRelaySubscriptions {
     private executeSubscriptions(
         groupableId: NDKFilterGroupingId | null,
         groupedSubscriptions: NDKGroupedSubscriptions,
-        mergedFilters: NDKFilter[],
+        mergedFilters: NDKFilter[]
     ) {
         if (this.conn.isAvailable()) {
             this.executeSubscriptionsConnected(groupableId, groupedSubscriptions, mergedFilters);
         } else {
             // If the relay is not connected, add a one-time listener to wait for the 'connected' event
             const connectedListener = () => {
-                this.debug(
-                    "new relay coming online for active subscription",
-                    {
-                        relay: this.ndkRelay.url,
-                        mergeFilters
-                    }
+                this.debug("new relay coming online for active subscription", {
+                    relay: this.ndkRelay.url,
+                    mergeFilters,
+                });
+                this.executeSubscriptionsConnected(
+                    groupableId,
+                    groupedSubscriptions,
+                    mergedFilters
                 );
-                this.executeSubscriptionsConnected(groupableId, groupedSubscriptions, mergedFilters);
             };
             this.ndkRelay.once("connect", connectedListener);
 
@@ -333,11 +336,11 @@ export class NDKRelaySubscriptions {
     private executeSubscriptionsConnected(
         groupableId: NDKFilterGroupingId | null,
         groupedSubscriptions: NDKGroupedSubscriptions,
-        mergedFilters: NDKFilter[],
+        mergedFilters: NDKFilter[]
     ): Sub {
         const subscriptions: NDKSubscription[] = [];
 
-        for (const {subscription} of groupedSubscriptions) {
+        for (const { subscription } of groupedSubscriptions) {
             subscriptions.push(subscription);
         }
 
@@ -380,7 +383,10 @@ export class NDKRelaySubscriptions {
         const ret = new Map<NDKFilter[], NDKSubscription[]>();
 
         for (const [, groupedSubscriptions] of this.activeSubscriptions) {
-            ret.set(groupedSubscriptions.req!, groupedSubscriptions.map((sub) => sub.subscription));
+            ret.set(
+                groupedSubscriptions.req!,
+                groupedSubscriptions.map((sub) => sub.subscription)
+            );
         }
 
         return ret;

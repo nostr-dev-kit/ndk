@@ -28,7 +28,7 @@ interface NDKCacheAdapterDexieOptions {
     /**
      * Number of profiles to keep in an LRU cache
      */
-    profileCacheSize?: number | 'disabled';
+    profileCacheSize?: number | "disabled";
 }
 
 export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
@@ -44,13 +44,14 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         this.locking = true;
         this.expirationTime = opts.expirationTime || 3600;
 
-
-        if (opts.profileCacheSize !== 'disabled') {
+        if (opts.profileCacheSize !== "disabled") {
             this.profiles = new LRUCache({
                 maxSize: opts.profileCacheSize || 100000,
             });
 
-            setInterval(() => {this.dumpProfiles()}, 1000 * 10);
+            setInterval(() => {
+                this.dumpProfiles();
+            }, 1000 * 10);
         }
     }
 
@@ -87,7 +88,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
     private async processFilter(filter: NDKFilter, subscription: NDKSubscription): Promise<void> {
         const _filter = filter;
         delete _filter.limit;
-        const filterKeys = Object.keys(_filter || {}).sort()
+        const filterKeys = Object.keys(_filter || {}).sort();
 
         try {
             (await this.byKindAndAuthor(filterKeys, filter, subscription)) ||

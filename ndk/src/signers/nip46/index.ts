@@ -44,11 +44,7 @@ export class NDKNip46Signer implements NDKSigner {
      * @param tokenOrRemotePubkey - The public key, or a connection token, of the npub that wants to be published as
      * @param localSigner - The signer that will be used to request events to be signed
      */
-    public constructor(
-        ndk: NDK,
-        tokenOrRemotePubkey: string,
-        localSigner?: NDKSigner
-    ) {
+    public constructor(ndk: NDK, tokenOrRemotePubkey: string, localSigner?: NDKSigner) {
         let remotePubkey: string;
         let token: string | undefined;
 

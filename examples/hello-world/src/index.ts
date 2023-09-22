@@ -6,13 +6,13 @@ const ndk = new NDK({
         "wss://pablof7z.nostr1.com",
         "wss://offchain.pub",
         "wss://relay.f7z.io",
-        'wss://relay.damus.io',
-        'wss://relay.snort.social',
-        'wss://offchain.pub/',
-        'wss://nostr.mom',
-        'wss://nostr-pub.wellorder.net',
+        "wss://relay.damus.io",
+        "wss://relay.snort.social",
+        "wss://offchain.pub/",
+        "wss://nostr.mom",
+        "wss://nostr-pub.wellorder.net",
         "wss://purplepag.es",
-        "wss://brb.io/"
+        "wss://brb.io/",
     ],
     // outboxRelayUrls: [
     //     "wss://purplepag.es",
@@ -21,7 +21,7 @@ const ndk = new NDK({
     //     "wss://relay.snort.social",
     //     "wss://no.str.cr"
     // ],
-    enableOutboxModel: false
+    enableOutboxModel: false,
 });
 
 await ndk.connect(6000);
@@ -40,11 +40,12 @@ setInterval(() => {
     }
 }, 10000);
 
-
 setInterval(async () => {
     console.log(`Starting it over`);
-    const user = ndk.getUser({hexpubkey: "dc4cd086cd7ce5b1832adf4fdd1211289880d2c7e295bcb0e684c01acee77c06"});
-    const sub = await ndk.subscribe({ kinds: [0]}, { closeOnEose: true });
+    const user = ndk.getUser({
+        hexpubkey: "dc4cd086cd7ce5b1832adf4fdd1211289880d2c7e295bcb0e684c01acee77c06",
+    });
+    const sub = await ndk.subscribe({ kinds: [0] }, { closeOnEose: true });
     sub.on("eose", () => console.log(`eose`));
 }, 60000);
 // console.log(user.profile);
@@ -79,7 +80,6 @@ setInterval(async () => {
 //         kinds: [0], authors: ["2d5b6404df532de082d9e77f7f4257a6f43fb79bb9de8dd3ac7df5e6d4b500b0"],
 //     }, { groupable: true, groupableDelay: 100 });
 // }, 100);
-
 
 // first.on("event", (e) => console.log(`first`, e.id));
 // second.on("event", (e) => console.log(`second`, e.id));

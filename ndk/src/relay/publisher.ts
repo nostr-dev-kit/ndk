@@ -25,10 +25,7 @@ export class NDKRelayPublisher {
         }
     }
 
-    private async publishEvent(
-        event: NDKEvent,
-        timeoutMs?: number
-    ): Promise<boolean> {
+    private async publishEvent(event: NDKEvent, timeoutMs?: number): Promise<boolean> {
         const nostrEvent = await event.toNostrEvent();
         const publish = this.ndkRelay.connectivity.relay.publish(nostrEvent as any);
         let publishTimeout: NodeJS.Timeout | number;

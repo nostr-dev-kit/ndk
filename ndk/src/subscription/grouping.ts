@@ -44,9 +44,7 @@ export function mergeFilters(filters: NDKFilter[]): NDKFilter {
                 if (result[key] === undefined) {
                     result[key] = [...value];
                 } else {
-                    result[key] = Array.from(
-                        new Set([...result[key], ...value])
-                    );
+                    result[key] = Array.from(new Set([...result[key], ...value]));
                 }
             } else {
                 result[key] = value;

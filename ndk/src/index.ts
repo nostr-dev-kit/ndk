@@ -26,5 +26,3 @@ export * from "./user/profile.js";
 
 export { NDK as default, NDKConstructorParams } from "./ndk/index.js";
 export { NDKZapInvoice, zapInvoiceFromEvent } from "./zap/invoice.js";
-
-

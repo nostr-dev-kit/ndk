@@ -13,7 +13,7 @@ export const NOSTR_NPUB = "nostr:npub";
 export const NOSTR_NPROFILE = "nostr:nprofile";
 export const NOSTR_NADDR = "nostr:naddr";
 
-const first = (list: any) => list ? list[0] : undefined
+const first = (list: any) => (list ? list[0] : undefined);
 
 export const fromNostrURI = (s: string) => s.replace(/^[\w+]+:\/?\/?/, "");
 

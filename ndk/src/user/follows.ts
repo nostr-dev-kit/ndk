@@ -1,5 +1,5 @@
 import { nip19 } from "nostr-tools";
-import {Hexpubkey, NDKUser} from "./index.js";
+import { Hexpubkey, NDKUser } from "./index.js";
 import { NDKSubscription, NDKSubscriptionOptions } from "../subscription/index.js";
 
 /**
@@ -13,10 +13,13 @@ export async function follows(
 ): Promise<Set<NDKUser>> {
     if (!this.ndk) throw new Error("NDK not set");
 
-    const contactListEvent = await this.ndk.fetchEvent({
-        kinds: [3],
-        authors: [this.hexpubkey],
-    }, opts || { groupable: false });
+    const contactListEvent = await this.ndk.fetchEvent(
+        {
+            kinds: [3],
+            authors: [this.hexpubkey],
+        },
+        opts || { groupable: false }
+    );
 
     if (contactListEvent) {
         const pubkeys = new Set<Hexpubkey>();

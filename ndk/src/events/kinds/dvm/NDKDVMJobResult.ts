@@ -1,4 +1,4 @@
-import {NDK} from "../../../ndk/index.js";
+import { NDK } from "../../../ndk/index.js";
 import { NDKEvent, NostrEvent } from "../../index.js";
 import { NDKKind } from "../index.js";
 
@@ -54,7 +54,7 @@ export class NDKDVMJobResult extends NDKEvent {
 
     get jobRequestId(): string | undefined {
         for (const eTag of this.getMatchingTags("e")) {
-            if (eTag[2] === 'job') return eTag[1];
+            if (eTag[2] === "job") return eTag[1];
         }
 
         if (this.jobRequest) return this.jobRequest.id;

@@ -2,11 +2,7 @@ import { NDKSigner } from "../signers";
 import { NDKUser } from "../user";
 import { NDKEvent } from "./index.js";
 
-export async function encrypt(
-    this: NDKEvent,
-    recipient?: NDKUser,
-    signer?: NDKSigner
-) {
+export async function encrypt(this: NDKEvent, recipient?: NDKUser, signer?: NDKSigner) {
     if (!this.ndk) throw new Error("No NDK instance found!");
     if (!signer) {
         await this.ndk.assertSigner();
@@ -27,11 +23,7 @@ export async function encrypt(
     this.content = (await signer?.encrypt(recipient, this.content)) as string;
 }
 
-export async function decrypt(
-    this: NDKEvent,
-    sender?: NDKUser,
-    signer?: NDKSigner
-) {
+export async function decrypt(this: NDKEvent, sender?: NDKUser, signer?: NDKSigner) {
     if (!this.ndk) throw new Error("No NDK instance found!");
     if (!signer) {
         await this.ndk.assertSigner();

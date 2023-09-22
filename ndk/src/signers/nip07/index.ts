@@ -1,6 +1,6 @@
 import debug from "debug";
 import type { NostrEvent } from "../../events/index.js";
-import {NDKUser} from "../../user/index.js";
+import { NDKUser } from "../../user/index.js";
 import { NDKSigner } from "../index.js";
 
 type Nip04QueueItem = {
@@ -105,10 +105,7 @@ export class NDKNip07Signer implements NDKSigner {
         });
     }
 
-    private async processNip04Queue(
-        item?: Nip04QueueItem,
-        retries = 0
-    ): Promise<void> {
+    private async processNip04Queue(item?: Nip04QueueItem, retries = 0): Promise<void> {
         if (!item && this.nip04Queue.length === 0) {
             this.nip04Processing = false;
             return;
@@ -128,24 +125,15 @@ export class NDKNip07Signer implements NDKSigner {
             let result;
 
             if (type === "encrypt") {
-                result = await window.nostr!.nip04.encrypt(
-                    counterpartyHexpubkey,
-                    value
-                );
+                result = await window.nostr!.nip04.encrypt(counterpartyHexpubkey, value);
             } else {
-                result = await window.nostr!.nip04.decrypt(
-                    counterpartyHexpubkey,
-                    value
-                );
+                result = await window.nostr!.nip04.decrypt(counterpartyHexpubkey, value);
             }
 
             resolve(result);
         } catch (error: any) {
             // retry a few times if the call is already executing
-            if (
-                error.message &&
-                error.message.includes("call already executing")
-            ) {
+            if (error.message && error.message.includes("call already executing")) {
                 if (retries < 5) {
                     this.debug("Retrying encryption queue item", {
                         type,
@@ -173,14 +161,8 @@ declare global {
             getPublicKey(): Promise<string>;
             signEvent(event: NostrEvent): Promise<{ sig: string }>;
             nip04: {
-                encrypt(
-                    recipientHexPubKey: string,
-                    value: string
-                ): Promise<string>;
-                decrypt(
-                    senderHexPubKey: string,
-                    value: string
-                ): Promise<string>;
+                encrypt(recipientHexPubKey: string, value: string): Promise<string>;
+                decrypt(senderHexPubKey: string, value: string): Promise<string>;
             };
         };
     }

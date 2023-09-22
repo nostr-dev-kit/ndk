@@ -18,7 +18,7 @@ const first = (list: any) => (list ? list[0] : undefined);
 export const fromNostrURI = (s: string) => s.replace(/^[\w+]+:\/?\/?/, "");
 
 export const urlIsMedia = (url: string) =>
-    !url.match(/\.(apk|docx|xlsx|csv|dmg)/) && last(url.split("://")).includes("/");
+    !url.match(/\.(apk|docx|xlsx|csv|dmg)/) && last(url.split("://"))?.includes("/");
 
 type ContentArgs = {
     content: string;

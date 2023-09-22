@@ -1,9 +1,5 @@
 {
-    "extends": [
-        "eslint:recommended",
-        "plugin:@typescript-eslint/recommended",
-        "prettier"
-    ],
+    "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended", "prettier"],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "sourceType": "module",
@@ -14,14 +10,16 @@
         "jest": true
     },
     "rules": {
-        "@typescript-eslint/no-unused-vars": ["warn", { "args": "none" }], // No warnings for unused function arguments, which might be used in the future.
+        "@typescript-eslint/no-unused-vars": ["warn", { "args": "none" }],
         "no-constant-binary-expression": "error",
-        "semi": ["error", "always"]
+        "semi": ["error", "always"],
+        "no-useless-escape": "warn"
     },
     "globals": {
         "Buffer": true,
         "expect": true,
         "process": true,
         "test": true
-    }
+    },
+    "ignorePatterns": ["dist/", "node_modules/"]
 }

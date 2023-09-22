@@ -1,9 +1,14 @@
-import { NDKCacheAdapter, NDKFilter, NDKRelay, NDKUser, NDKUserProfile } from "@nostr-dev-kit/ndk";
-import { NDKEvent, NDKSubscription, Hexpubkey } from "@nostr-dev-kit/ndk";
+import { NDKRelay, NDKEvent } from "@nostr-dev-kit/ndk";
+import type {
+    NDKCacheAdapter,
+    NDKFilter,
+    NDKUserProfile,
+    NDKSubscription,
+    Hexpubkey,
+} from "@nostr-dev-kit/ndk";
 import _debug from "debug";
 import { matchFilter } from "nostr-tools";
 import { LRUCache } from "typescript-lru-cache";
-
 import { createDatabase, db } from "./db";
 
 export { db } from "./db";
@@ -124,8 +129,8 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
                     id: event.tagId(),
                     pubkey: event.pubkey,
                     content: event.content,
-                    kind: event.kind as number,
-                    createdAt: event.created_at as number,
+                    kind: event.kind!,
+                    createdAt: event.created_at!,
                     relay: relay?.url,
                     event: JSON.stringify(event.rawEvent()),
                 });
@@ -354,7 +359,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         const kinds = filter.kinds as number[];
 
         for (const event of events) {
-            if (!kinds?.includes(event.kind as number)) continue;
+            if (!kinds?.includes(event.kind!)) continue;
 
             subscription.eventReceived(event, undefined, true);
         }
@@ -404,7 +409,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         return retEvents;
     }
 
-    private async dumpProfiles() {
+    private async dumpProfiles(): Promise<void> {
         const profiles = [];
 
         if (!this.profiles) return;

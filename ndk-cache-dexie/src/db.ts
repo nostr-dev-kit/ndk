@@ -1,4 +1,4 @@
-import { NDKUserProfile } from "@nostr-dev-kit/ndk";
+import type { NDKUserProfile } from "@nostr-dev-kit/ndk";
 import Dexie, { type Table } from "dexie";
 
 interface User {
@@ -47,6 +47,6 @@ export let db: Database;
  *
  * @param name - Database name
  */
-export function createDatabase(name: string) {
+export function createDatabase(name: string): void {
     db = new Database(name);
 }

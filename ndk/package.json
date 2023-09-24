@@ -40,7 +40,7 @@
         "@nostr-dev-kit/eslint-config-custom": "workspace:*",
         "@nostr-dev-kit/tsconfig": "workspace:*",
         "@types/debug": "^4.1.7",
-        "@types/jest": "^29.5.0",
+        "@types/jest": "^29.5.5",
         "@types/node": "^14.11.2",
         "esbuild": "^0.17.15",
         "esbuild-plugin-alias": "^0.2.1",

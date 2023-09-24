@@ -378,8 +378,8 @@ export class NDKSubscription extends EventEmitter {
             const percentageOfRelaysThatHaveSentEose =
                 this.eosesSeen.size / this.relayFilters!.size;
 
-            // If less than 5 and 50% of relays have EOSEd don't add a timeout yet
-            if (this.eosesSeen.size < 5 && percentageOfRelaysThatHaveSentEose >= 0.5) {
+            // If less than 2 and 50% of relays have EOSEd don't add a timeout yet
+            if (this.eosesSeen.size >= 2 && percentageOfRelaysThatHaveSentEose >= 0.5) {
                 timeToWaitForNextEose =
                     timeToWaitForNextEose * (1 - percentageOfRelaysThatHaveSentEose);
 
@@ -397,7 +397,6 @@ export class NDKSubscription extends EventEmitter {
                     if (lastEventSeen !== undefined && lastEventSeen < 20) {
                         this.eoseTimeout = setTimeout(sendEoseTimeout, timeToWaitForNextEose);
                     } else {
-                        // this.eoseDebug(`Timeout with last event seen ${lastEventSeen}ms ago and ${this.eosesSeen.size} of ${this.relayFilters?.size} EOSEs seen`);
                         this.emit("eose");
                         if (this.opts?.closeOnEose) this.stop();
                     }

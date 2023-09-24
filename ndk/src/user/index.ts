@@ -151,6 +151,8 @@ export class NDKUser {
             (a, b) => (a.created_at as number) - (b.created_at as number)
         );
 
+        if (sortedSetMetadataEvents.length === 0) return null;
+
         // return the most recent profile
         this.profile = profileFromEvent(sortedSetMetadataEvents[0]);
 

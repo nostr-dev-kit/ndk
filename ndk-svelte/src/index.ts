@@ -105,8 +105,8 @@ class NDKSvelte extends NDK {
         opts?: NDKSubscribeOptions,
         klass?: ClassWithConvertFunction<T>
     ): NDKEventStore<ExtendedBaseType<T>> {
-        const eventIds: Set<string> = new Set();
-        const events: ExtendedBaseType<T>[] = [];
+        let eventIds: Set<string> = new Set();
+        let events: ExtendedBaseType<T>[] = [];
         const store = this.createEventStore<ExtendedBaseType<T>>(
             Array.isArray(filters) ? filters : [filters]
         );
@@ -244,6 +244,8 @@ class NDKSvelte extends NDK {
          */
         store.empty = () => {
             store.set([]);
+            events = [];
+            eventIds = new Set();
             store.unsubscribe();
         };
 

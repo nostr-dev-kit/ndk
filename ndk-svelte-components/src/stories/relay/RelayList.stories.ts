@@ -1,5 +1,6 @@
 import NDK from "@nostr-dev-kit/ndk";
 import type { Meta, StoryObj } from "@storybook/svelte";
+
 import RelayList from "../../lib/relay/RelayList.svelte";
 
 const meta = {

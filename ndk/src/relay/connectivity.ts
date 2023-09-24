@@ -1,5 +1,6 @@
 import type { Relay } from "nostr-tools";
 import { relayInit } from "nostr-tools";
+
 import type { NDKRelay, NDKRelayConnectionStats } from ".";
 import { NDKRelayStatus } from ".";
 

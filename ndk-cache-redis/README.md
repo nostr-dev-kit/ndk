@@ -17,6 +17,7 @@ npm add @nostr-dev-kit/ndk-cache-redis
 
 ```ts
 import NDKRedisCacheAdapter from "@nostr-dev-kit/ndk-cache-redis";
+
 const cacheAdapter = new NDKRedisCacheAdapter();
 const ndk = new NDK({ cacheAdapter });
 ```

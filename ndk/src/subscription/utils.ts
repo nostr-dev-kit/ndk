@@ -1,5 +1,6 @@
 import { nip19 } from "nostr-tools";
 import type { EventPointer } from "nostr-tools/lib/nip19.js";
+
 import { NDKRelay } from "../relay/index.js";
 import type { NDKFilter, NDKSubscription } from "./index.js";
 

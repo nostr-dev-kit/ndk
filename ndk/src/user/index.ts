@@ -1,5 +1,6 @@
 import { nip05, nip19 } from "nostr-tools";
 import type { ProfilePointer } from "nostr-tools/lib/nip19.js";
+
 import { NDKEvent, type NDKTag, type NostrEvent } from "../events/index.js";
 import { NDKRelayList } from "../events/kinds/NDKRelayList.js";
 import { NDKKind } from "../events/kinds/index.js";

@@ -1,6 +1,6 @@
-import { OutboxTracker } from "./tracker.js";
-import { NDKUser } from "../user/index.js";
 import { NDK } from "../ndk/index.js";
+import { NDKUser } from "../user/index.js";
+import { OutboxTracker } from "./tracker.js";
 
 const ndk = new NDK();
 

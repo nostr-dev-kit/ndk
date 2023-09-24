@@ -1,4 +1,5 @@
 import EventEmitter from "eventemitter3";
+
 import type { NDKSigner } from "..";
 import type { NostrEvent } from "../../events";
 import { NDKEvent } from "../../events";

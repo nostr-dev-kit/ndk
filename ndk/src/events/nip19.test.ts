@@ -1,4 +1,5 @@
 import "websocket-polyfill";
+
 import type { NostrEvent } from ".";
 import { NDKEvent } from ".";
 import { NDK } from "../ndk";

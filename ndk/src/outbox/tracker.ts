@@ -1,10 +1,11 @@
 import EventEmitter from "eventemitter3";
+import { LRUCache } from "typescript-lru-cache";
+
+import type { NDKRelayList } from "../events/kinds/NDKRelayList.js";
+import type { NDK } from "../ndk/index.js";
 import type { NDKRelayUrl } from "../relay/index.js";
 import type { Hexpubkey } from "../user/index.js";
 import { NDKUser } from "../user/index.js";
-import { LRUCache } from "typescript-lru-cache";
-import type { NDK } from "../ndk/index.js";
-import type { NDKRelayList } from "../events/kinds/NDKRelayList.js";
 
 export type OutboxItemType = "user" | "kind";
 

@@ -1,5 +1,6 @@
 import NDK, { type NDKEvent } from "@nostr-dev-kit/ndk";
 import type { Meta, StoryObj } from "@storybook/svelte";
+
 import EventContent from "../../lib/event/content/EventContent.svelte";
 
 /**

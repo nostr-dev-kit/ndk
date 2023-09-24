@@ -1,4 +1,5 @@
 import debug from "debug";
+
 import type { NostrEvent } from "../../events/index.js";
 import { NDKUser } from "../../user/index.js";
 import type { NDKSigner } from "../index.js";

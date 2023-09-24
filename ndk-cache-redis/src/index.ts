@@ -1,7 +1,7 @@
-import { NDKCacheAdapter, NDKFilter } from "@nostr-dev-kit/ndk";
-import { NDKSubscription, NDKEvent } from "@nostr-dev-kit/ndk";
-import Redis from "ioredis";
+import type { NDKCacheAdapter, NDKFilter } from "@nostr-dev-kit/ndk";
+import { NDKEvent, type NDKSubscription } from "@nostr-dev-kit/ndk";
 import _debug from "debug";
+import Redis from "ioredis";
 
 interface RedisAdapterOptions {
     /**

@@ -1,15 +1,15 @@
-import { writable, type Unsubscriber, type Writable } from "svelte/store";
 import NDK, {
-    NDKConstructorParams,
+    type NDKConstructorParams,
     NDKEvent,
-    NDKFilter,
-    NDKSubscriptionOptions,
-    NDKRepost,
-    NDKSubscription,
+    type NDKFilter,
     NDKKind,
-    NDKRelaySet,
-    NDKRelay,
+    type NDKRelay,
+    type NDKRelaySet,
+    NDKRepost,
+    type NDKSubscription,
+    type NDKSubscriptionOptions,
 } from "@nostr-dev-kit/ndk";
+import { type Unsubscriber, type Writable, writable } from "svelte/store";
 
 /**
  * Type for NDKEvent classes that have a static `from` method like NDKHighlight.

@@ -1,6 +1,6 @@
 import type { NDKEvent } from "../../events/index.js";
-import { NDKRelay } from "../index.js";
 import type { NDK } from "../../ndk/index.js";
+import { NDKRelay } from "../index.js";
 
 /**
  * A relay set is a group of relays. This grouping can be short-living, for a single

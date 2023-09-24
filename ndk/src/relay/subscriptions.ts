@@ -1,14 +1,15 @@
+import EventEmitter from "eventemitter3";
 import type { Sub } from "nostr-tools";
 import { matchFilter } from "nostr-tools";
+
 import type { NDKRelay } from ".";
+import type { NostrEvent } from "../events";
+import { NDKEvent } from "../events";
 import type { NDKFilter, NDKSubscription } from "../subscription";
 import type { NDKFilterGroupingId } from "../subscription/grouping.js";
 import { calculateGroupableId, mergeFilters } from "../subscription/grouping.js";
-import type { NostrEvent } from "../events";
-import { NDKEvent } from "../events";
 import { compareFilter, generateSubId } from "../subscription/utils";
 import type { NDKRelayConnectivity } from "./connectivity.js";
-import EventEmitter from "eventemitter3";
 
 /**
  * Represents a collection of NDKSubscriptions (through NDKRelqySubscriptionFilters)

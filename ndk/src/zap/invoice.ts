@@ -1,4 +1,5 @@
 import { decode } from "light-bolt11-decoder";
+
 import type { NDKEvent, NDKEventId, NostrEvent } from "../events/index.js";
 
 export interface NDKZapInvoice {

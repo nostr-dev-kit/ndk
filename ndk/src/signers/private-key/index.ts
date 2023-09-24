@@ -1,5 +1,6 @@
 import type { UnsignedEvent } from "nostr-tools";
-import { generatePrivateKey, getPublicKey, nip04, getSignature } from "nostr-tools";
+import { generatePrivateKey, getPublicKey, getSignature, nip04 } from "nostr-tools";
+
 import type { NostrEvent } from "../../events/index.js";
 import { NDKUser } from "../../user";
 import type { NDKSigner } from "../index.js";

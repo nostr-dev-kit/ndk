@@ -1,9 +1,10 @@
-import { NDKKind } from "./index.js";
 import { nip19 } from "nostr-tools";
+
+import type { NDK } from "../../ndk/index.js";
 import type { NDKTag, NostrEvent } from "../index.js";
 import { NDKEvent } from "../index.js";
-import type { NDK } from "../../ndk/index.js";
 import { NDKArticle } from "./article.js";
+import { NDKKind } from "./index.js";
 
 /**
  * Highlight as defined by NIP-84 (kind:9802).

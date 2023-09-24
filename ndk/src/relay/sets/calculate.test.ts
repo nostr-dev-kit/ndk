@@ -1,5 +1,5 @@
-import { calculateRelaySetsFromFilters } from "./calculate.js";
 import { NDK } from "../../ndk/index.js";
+import { calculateRelaySetsFromFilters } from "./calculate.js";
 
 const explicitRelayUrl = "wss://explicit-relay.com";
 const ndk = new NDK({ explicitRelayUrls: [explicitRelayUrl] });

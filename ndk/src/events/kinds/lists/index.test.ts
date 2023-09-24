@@ -1,6 +1,6 @@
+import NDKList from ".";
 import { NDK } from "../../../ndk";
 import { NDKUser } from "../../../user";
-import NDKList from ".";
 
 describe("NDKList", () => {
     let ndk: NDK;

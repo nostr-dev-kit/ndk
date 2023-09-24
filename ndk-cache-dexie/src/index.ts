@@ -1,14 +1,15 @@
-import { NDKRelay, NDKEvent } from "@nostr-dev-kit/ndk";
+import { NDKEvent, NDKRelay } from "@nostr-dev-kit/ndk";
 import type {
+    Hexpubkey,
     NDKCacheAdapter,
     NDKFilter,
-    NDKUserProfile,
     NDKSubscription,
-    Hexpubkey,
+    NDKUserProfile,
 } from "@nostr-dev-kit/ndk";
 import _debug from "debug";
 import { matchFilter } from "nostr-tools";
 import { LRUCache } from "typescript-lru-cache";
+
 import { createDatabase, db } from "./db";
 
 export { db } from "./db";

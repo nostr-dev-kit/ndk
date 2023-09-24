@@ -1,6 +1,7 @@
 import EventEmitter from "eventemitter3";
 import type { UnsignedEvent } from "nostr-tools";
 import { getEventHash } from "nostr-tools";
+
 import type { NDK } from "../ndk/index.js";
 import type { NDKRelay } from "../relay/index.js";
 import { calculateRelaySetFromEvent } from "../relay/sets/calculate.js";

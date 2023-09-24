@@ -1,5 +1,5 @@
 import { nip19 } from "nostr-tools";
-import { last, pluck, identity } from "ramda";
+import { identity, last, pluck } from "ramda";
 
 export const NEWLINE = "newline";
 export const TEXT = "text";

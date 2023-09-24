@@ -1,8 +1,9 @@
 import type debug from "debug";
 import EventEmitter from "eventemitter3";
+
+import type { NDK } from "../../ndk/index.js";
 import type { NDKRelayUrl } from "../index.js";
 import { NDKRelay, NDKRelayStatus } from "../index.js";
-import type { NDK } from "../../ndk/index.js";
 
 export type NDKPoolStats = {
     total: number;

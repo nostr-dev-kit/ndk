@@ -92,7 +92,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
     }
 
     private async processFilter(filter: NDKFilter, subscription: NDKSubscription): Promise<void> {
-        const _filter = {...filter};
+        const _filter = { ...filter };
         delete _filter.limit;
         const filterKeys = Object.keys(_filter || {}).sort();
 

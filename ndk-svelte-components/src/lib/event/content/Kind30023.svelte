@@ -9,6 +9,7 @@
     import NoteContentPerson from "./NoteContentPerson.svelte";
     import { LINK, HTML, NEWLINE, TOPIC, parseContent } from "../../utils/notes.js";
     import { markdownToHtml } from "$lib/utils/markdown";
+    import sanitizeHtml from 'sanitize-html'
 
     export let ndk: NDK;
     export let article: NDKArticle;
@@ -21,11 +22,12 @@
 </script>
 
 <div class="article">
-    {#each parsed as { type, value }, i}
+    {#each parsed as { type, value }}
         {#if type === NEWLINE}
             <NoteContentNewline {value} />
         {:else if type === HTML}
-            {@html value}
+            <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+            {@html sanitizeHtml(value)}
         {:else if type === TOPIC}
             <NoteContentTopic {value} />
         {:else if type === LINK}
@@ -37,7 +39,8 @@
         {:else if type.startsWith("nostr:")}
             <!-- <NoteContentEntity {value} /> -->
         {:else}
-            {@html value}
+            <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+            {@html sanitizeHtml(value)}
         {/if}
     {/each}
 </div>

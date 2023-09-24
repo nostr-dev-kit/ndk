@@ -38,19 +38,19 @@
 
 {#await user?.fetchProfile()}
     <div class="userCard--loading {$$props.class}" style={$$props.style}>Loading user...</div>
-{:then value}
+{:then userProfile}
     <div class="userCard {$$props.class}" style={$$props.style}>
         <div class="userCard--avatar">
-            <Avatar {ndk} userProfile={user?.profile} class="userCard--avatar-img" />
+            <Avatar {ndk} userProfile={userProfile || undefined} class="userCard--avatar-img" />
         </div>
         <div class="userCard--details">
-            <Name {ndk} userProfile={user?.profile} class="userCard--name" />
-            <Nip05 {ndk} userProfile={user?.profile} class="userCard--nip05" />
+            <Name {ndk} userProfile={userProfile || undefined} class="userCard--name" />
+            <Nip05 {ndk} userProfile={userProfile || undefined} class="userCard--nip05" />
             <Npub {ndk} {npub} {pubkey} {user} class="userCard--npub" />
-            <div class="userCard--bio">{user?.profile?.bio || user?.profile?.about}</div>
+            <div class="userCard--bio">{userProfile?.bio || userProfile?.about}</div>
         </div>
     </div>
-{:catch error}
+{:catch}
     <div class="userCard--error {$$props.class}" style={$$props.style}>Error fetching user</div>
 {/await}
 

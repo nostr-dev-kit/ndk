@@ -14,6 +14,7 @@
 
 <div>
     <blockquote class="highlight--blockquote">
+        <!-- eslint-disable-next-line svelte/no-at-html-tags -->
         {@html sanitizeHtml(context || "")}
     </blockquote>
 </div>

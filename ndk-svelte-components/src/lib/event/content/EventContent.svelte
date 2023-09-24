@@ -12,7 +12,7 @@
     import Kind30023 from "./Kind30023.svelte";
 
     export let ndk: NDK;
-    export let event: NDKEvent;
+    export let event: NDKEvent | null | undefined;
     export let anchorId: string | null = null;
     export let maxLength: number = 700;
     export let showEntire: boolean = true;
@@ -21,25 +21,27 @@
     /**
      * Optional content to use instead of the one from the event
      */
-    export let content = event.content;
+    export let content = event?.content;
 </script>
 
-{#if event.kind === 1}
-    <Kind1 {ndk} {content} {event} {anchorId} {maxLength} {showEntire} {showMedia} on:click />
-{:else if event.kind === 40}
-    <!-- <Kind40 {event} /> -->
-{:else if event.kind === 1063}
-    <Kind1063 {event} {showMedia} />
-{:else if event.kind === 1985}
-    <!-- <Kind1985 {event} {anchorId} {maxLength} {showEntire} /> -->
-{:else if event.kind === 9802}
-    <Kind9802 {event} />
-{:else if event.kind === 30000}
-    <Kind30000 {ndk} list={NDKList.from(event)} />
-{:else if event.kind === 30001}
-    <Kind30001 {ndk} list={NDKList.from(event)} />
-{:else if event.kind === 30023}
-    <Kind30023 {ndk} {content} article={NDKArticle.from(event)} {showMedia} on:click />
-{:else}
-    <Kind30023 {ndk} {content} article={NDKArticle.from(event)} {anchorId} {showMedia} on:click />
+{#if event}
+    {#if event.kind === 1}
+        <Kind1 {ndk} {content} {event} {anchorId} {maxLength} {showEntire} {showMedia} on:click />
+    {:else if event.kind === 40}
+        <!-- <Kind40 {event} /> -->
+    {:else if event.kind === 1063}
+        <Kind1063 {event} {showMedia} />
+    {:else if event.kind === 1985}
+        <!-- <Kind1985 {event} {anchorId} {maxLength} {showEntire} /> -->
+    {:else if event.kind === 9802}
+        <Kind9802 {event} />
+    {:else if event.kind === 30000}
+        <Kind30000 {ndk} list={NDKList.from(event)} />
+    {:else if event.kind === 30001}
+        <Kind30001 {ndk} list={NDKList.from(event)} />
+    {:else if event.kind === 30023}
+        <Kind30023 {ndk} {content} article={NDKArticle.from(event)} {showMedia} on:click />
+    {:else}
+        <Kind30023 {ndk} {content} article={NDKArticle.from(event)} {anchorId} {showMedia} on:click />
+    {/if}
 {/if}

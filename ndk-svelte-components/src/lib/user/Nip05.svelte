@@ -38,7 +38,8 @@
             console.error(`error trying to get user`, { opts }, e);
         }
     }
-
+    
+    // eslint-disable-next-line no-async-promise-executor
     const fetchProfilePromise = new Promise<NDKUserProfile>(async (resolve, reject) => {
         if (userProfile && userProfile.nip05) {
             nip05Valid = await user!.validateNip05(userProfile.nip05);
@@ -48,7 +49,7 @@
                 .then(async () => {
                     userProfile = user!.profile;
                     if(!userProfile?.nip05) reject;
-                    nip05Valid = await user!.validateNip05(userProfile?.nip05!);
+                    nip05Valid = await user!.validateNip05(userProfile?.nip05 as string);
                     resolve(userProfile!);
                 })
                 .catch(() => {
@@ -70,7 +71,7 @@
             <slot name="badge" nip05Valid={nip05Valid} />
             {userProfile.nip05 ? prettifyNip05(userProfile.nip05) : ""}
         </span>
-    {:catch error}
+    {:catch}
         <span class="nip05--error {$$props.class}" style={$$props.style}>
             <slot name="badge" nip05Valid={nip05Valid} />
             Error loading user profile

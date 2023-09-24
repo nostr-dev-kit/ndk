@@ -28,4 +28,5 @@ module.exports = {
             },
         },
     ],
+    ignorePatterns: ["dist/", ".storybook/"],
 };

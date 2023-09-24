@@ -1,5 +1,7 @@
-import { Relay, relayInit } from "nostr-tools";
-import { NDKRelay, NDKRelayConnectionStats, NDKRelayStatus } from ".";
+import type { Relay } from "nostr-tools";
+import { relayInit } from "nostr-tools";
+import type { NDKRelay, NDKRelayConnectionStats } from ".";
+import { NDKRelayStatus } from ".";
 
 export class NDKRelayConnectivity {
     private ndkRelay: NDKRelay;

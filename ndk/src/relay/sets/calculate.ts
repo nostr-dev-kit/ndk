@@ -1,9 +1,9 @@
-import { NDKEvent } from "../../events/index.js";
-import { NDK } from "../../ndk/index.js";
-import { NDKFilter } from "../../subscription/index.js";
-import { NDKRelay, NDKRelayUrl } from "../index.js";
+import type { NDKEvent } from "../../events/index.js";
+import type { NDK } from "../../ndk/index.js";
+import type { NDKFilter } from "../../subscription/index.js";
+import type { NDKRelay, NDKRelayUrl } from "../index.js";
 import { NDKRelaySet } from "./index.js";
-import { Hexpubkey } from "../../user/index.js";
+import type { Hexpubkey } from "../../user/index.js";
 
 /**
  * Creates a NDKRelaySet for the specified event.

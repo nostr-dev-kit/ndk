@@ -1,5 +1,6 @@
-import { NDK } from "../../ndk/index.js";
-import { ContentTag, NDKEvent, type NostrEvent } from "../index.js";
+import type { NDK } from "../../ndk/index.js";
+import type { ContentTag } from "../index.js";
+import { NDKEvent, type NostrEvent } from "../index.js";
 import { NDKKind } from "./index.js";
 
 /**

@@ -1,5 +1,6 @@
-import { NDKRelay, NDKRelayStatus } from ".";
-import { NDKEvent } from "../events";
+import type { NDKRelay } from ".";
+import { NDKRelayStatus } from ".";
+import type { NDKEvent } from "../events";
 
 export class NDKRelayPublisher {
     private ndkRelay: NDKRelay;
@@ -27,6 +28,7 @@ export class NDKRelayPublisher {
 
     private async publishEvent(event: NDKEvent, timeoutMs?: number): Promise<boolean> {
         const nostrEvent = await event.toNostrEvent();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const publish = this.ndkRelay.connectivity.relay.publish(nostrEvent as any);
         let publishTimeout: NodeJS.Timeout | number;
 

@@ -1,4 +1,5 @@
-import { NDKUser, NostrEvent } from "../../index.js";
+import type { NostrEvent } from "../../index.js";
+import { NDKUser } from "../../index.js";
 import { NDKPrivateKeySigner } from "./index";
 
 describe("NDKPrivateKeySigner", () => {

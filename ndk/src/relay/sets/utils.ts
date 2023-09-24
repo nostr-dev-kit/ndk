@@ -1,5 +1,5 @@
-import { NDKPool } from "../../relay/pool/index.js";
-import { NDKRelaySet } from "../../relay/sets/index.js";
+import type { NDKPool } from "../../relay/pool/index.js";
+import type { NDKRelaySet } from "../../relay/sets/index.js";
 
 /**
  * If the provided relay set does not include connected relays in the pool

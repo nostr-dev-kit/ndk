@@ -1,7 +1,8 @@
 import { NDKKind } from "./index.js";
 import { nip19 } from "nostr-tools";
-import { NDKEvent, NDKTag, NostrEvent } from "../index.js";
-import { NDK } from "../../ndk/index.js";
+import type { NDKTag, NostrEvent } from "../index.js";
+import { NDKEvent } from "../index.js";
+import type { NDK } from "../../ndk/index.js";
 import { NDKArticle } from "./article.js";
 
 /**
@@ -81,6 +82,7 @@ export class NDKHighlight extends NDKEvent {
 
         switch (articleTag[0]) {
             case "a":
+                // eslint-disable-next-line no-case-declarations
                 const [kind, pubkey, identifier] = articleTag[1].split(":");
                 taggedBech32 = nip19.naddrEncode({ kind: parseInt(kind), pubkey, identifier });
                 break;

@@ -1,6 +1,6 @@
-import { NDKSigner } from "../signers";
-import { NDKUser } from "../user";
-import { NDKEvent } from "./index.js";
+import type { NDKSigner } from "../signers";
+import type { NDKUser } from "../user";
+import type { NDKEvent } from "./index.js";
 
 export async function encrypt(this: NDKEvent, recipient?: NDKUser, signer?: NDKSigner) {
     if (!this.ndk) throw new Error("No NDK instance found!");

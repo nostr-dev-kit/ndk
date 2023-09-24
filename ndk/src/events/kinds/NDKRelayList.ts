@@ -1,7 +1,8 @@
-import { NDKEvent, NostrEvent } from "..";
+import type { NostrEvent } from "..";
+import { NDKEvent } from "..";
 import { NDKKind } from ".";
-import { NDK } from "../../ndk";
-import { NDKRelayUrl } from "../../relay";
+import type { NDK } from "../../ndk";
+import type { NDKRelayUrl } from "../../relay";
 
 const READ_MARKER = "read";
 const WRITE_MARKER = "write";

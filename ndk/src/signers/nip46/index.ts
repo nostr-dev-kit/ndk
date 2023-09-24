@@ -1,9 +1,10 @@
-import { NostrEvent } from "../../events/index.js";
-import { NDK } from "../../ndk/index.js";
+import type { NostrEvent } from "../../events/index.js";
+import type { NDK } from "../../ndk/index.js";
 import { NDKUser } from "../../user/index.js";
-import { NDKSigner } from "../index.js";
+import type { NDKSigner } from "../index.js";
 import { NDKPrivateKeySigner } from "../private-key/index.js";
-import { NDKNostrRpc, NDKRpcResponse } from "./rpc.js";
+import type { NDKRpcResponse } from "./rpc.js";
+import { NDKNostrRpc } from "./rpc.js";
 
 /**
  * This NDKSigner implements NIP-46, which allows remote signing of events.

@@ -1,7 +1,7 @@
 import debug from "debug";
 import type { NostrEvent } from "../../events/index.js";
 import { NDKUser } from "../../user/index.js";
-import { NDKSigner } from "../index.js";
+import type { NDKSigner } from "../index.js";
 
 type Nip04QueueItem = {
     type: "encrypt" | "decrypt";
@@ -131,6 +131,7 @@ export class NDKNip07Signer implements NDKSigner {
             }
 
             resolve(result);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             // retry a few times if the call is already executing
             if (error.message && error.message.includes("call already executing")) {

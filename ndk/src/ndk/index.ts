@@ -1,16 +1,18 @@
 import EventEmitter from "eventemitter3";
 import { NDKPool } from "../relay/pool/index.js";
 import debug from "debug";
-import { NDKCacheAdapter } from "../cache/index.js";
+import type { NDKCacheAdapter } from "../cache/index.js";
 import dedupEvent from "../events/dedup.js";
-import { NDKEvent } from "../events/index.js";
+import type { NDKEvent } from "../events/index.js";
 import { OutboxTracker } from "../outbox/tracker.js";
-import { NDKRelay, NDKRelayUrl } from "../relay/index.js";
+import type { NDKRelay, NDKRelayUrl } from "../relay/index.js";
 import { NDKRelaySet } from "../relay/sets/index.js";
 import { correctRelaySet } from "../relay/sets/utils.js";
-import { NDKSigner } from "../signers/index.js";
-import { NDKSubscription, NDKFilter, NDKSubscriptionOptions } from "../subscription/index.js";
-import { NDKUser, NDKUserParams } from "../user/index.js";
+import type { NDKSigner } from "../signers/index.js";
+import type { NDKFilter, NDKSubscriptionOptions } from "../subscription/index.js";
+import { NDKSubscription } from "../subscription/index.js";
+import type { NDKUserParams } from "../user/index.js";
+import { NDKUser } from "../user/index.js";
 import { isNip33AValue, relaysFromBech32, filterFromId } from "../subscription/utils.js";
 
 export interface NDKConstructorParams {

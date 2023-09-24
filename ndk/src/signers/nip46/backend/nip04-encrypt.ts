@@ -1,5 +1,5 @@
 import { NDKUser } from "../../../user/index.js";
-import { IEventHandlingStrategy, NDKNip46Backend } from "./index.js";
+import type { IEventHandlingStrategy, NDKNip46Backend } from "./index.js";
 
 export default class Nip04EncryptHandlingStrategy implements IEventHandlingStrategy {
     async handle(

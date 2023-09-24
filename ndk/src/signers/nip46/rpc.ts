@@ -1,8 +1,9 @@
 import EventEmitter from "eventemitter3";
-import { NDKSigner } from "..";
-import { NDKEvent, NostrEvent } from "../../events";
-import { NDK } from "../../ndk";
-import { NDKFilter, NDKSubscription } from "../../subscription";
+import type { NDKSigner } from "..";
+import type { NostrEvent } from "../../events";
+import { NDKEvent } from "../../events";
+import type { NDK } from "../../ndk";
+import type { NDKFilter, NDKSubscription } from "../../subscription";
 
 export interface NDKRpcRequest {
     id: string;

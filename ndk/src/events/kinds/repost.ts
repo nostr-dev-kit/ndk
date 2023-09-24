@@ -1,6 +1,7 @@
-import { NDK } from "../../ndk/index.js";
-import { NDKFilter, NDKSubscriptionOptions } from "../../subscription/index.js";
-import { NDKEvent, NDKTag, NostrEvent } from "../index.js";
+import type { NDK } from "../../ndk/index.js";
+import type { NDKFilter, NDKSubscriptionOptions } from "../../subscription/index.js";
+import type { NDKTag, NostrEvent } from "../index.js";
+import { NDKEvent } from "../index.js";
 
 type classWithConvertFunction<T> = {
     from: (event: NDKEvent) => T;

@@ -1,14 +1,13 @@
-import { Sub, matchFilter } from "nostr-tools";
-import { NDKRelay } from ".";
-import { NDKFilter, NDKSubscription } from "../subscription";
-import {
-    NDKFilterGroupingId,
-    calculateGroupableId,
-    mergeFilters,
-} from "../subscription/grouping.js";
-import { NDKEvent, NostrEvent } from "../events";
+import type { Sub } from "nostr-tools";
+import { matchFilter } from "nostr-tools";
+import type { NDKRelay } from ".";
+import type { NDKFilter, NDKSubscription } from "../subscription";
+import type { NDKFilterGroupingId } from "../subscription/grouping.js";
+import { calculateGroupableId, mergeFilters } from "../subscription/grouping.js";
+import type { NostrEvent } from "../events";
+import { NDKEvent } from "../events";
 import { compareFilter, generateSubId } from "../subscription/utils";
-import { NDKRelayConnectivity } from "./connectivity.js";
+import type { NDKRelayConnectivity } from "./connectivity.js";
 import EventEmitter from "eventemitter3";
 
 /**
@@ -126,6 +125,7 @@ class NDKSubscriptionFilters {
 
     private eventMatchesLocalFilter(event: NDKEvent): boolean {
         const rawEvent = event.rawEvent();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return this.filters.some((filter) => matchFilter(filter, rawEvent as any));
     }
 }

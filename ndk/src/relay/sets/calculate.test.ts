@@ -1,6 +1,4 @@
-import { calculateRelaySetsFromFilters, getWriteRelaysFor } from "./calculate.js";
-import { NDKRelayUrl } from "..";
-import { Hexpubkey } from "../../user";
+import { calculateRelaySetsFromFilters } from "./calculate.js";
 import { NDK } from "../../ndk/index.js";
 
 const explicitRelayUrl = "wss://explicit-relay.com";

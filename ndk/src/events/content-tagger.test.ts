@@ -1,5 +1,5 @@
 import { generateContentTags } from "./content-tagger";
-import { NDKTag } from "./index.js";
+import type { NDKTag } from "./index.js";
 
 describe("generateContentTags", () => {
     it("should replace valid tags and store decoded data in the tags array", () => {

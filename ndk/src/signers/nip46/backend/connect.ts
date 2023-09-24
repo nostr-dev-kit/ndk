@@ -1,4 +1,4 @@
-import { IEventHandlingStrategy, NDKNip46Backend } from "./index.js";
+import type { IEventHandlingStrategy, NDKNip46Backend } from "./index.js";
 
 export default class ConnectEventHandlingStrategy implements IEventHandlingStrategy {
     async handle(

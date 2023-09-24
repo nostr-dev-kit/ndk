@@ -1,4 +1,5 @@
-import { NDKEvent, NostrEvent } from ".";
+import type { NostrEvent } from ".";
+import { NDKEvent } from ".";
 import { NDK } from "../ndk";
 import { NDKSubscription } from "../subscription";
 import { NDKUser } from "../user";

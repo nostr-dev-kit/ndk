@@ -1,4 +1,5 @@
-import { verifySignature, Event } from "nostr-tools";
+import type { Event } from "nostr-tools";
+import { verifySignature } from "nostr-tools";
 import { NDKNostrRpc } from "../rpc.js";
 import ConnectEventHandlingStrategy from "./connect.js";
 import DescribeEventHandlingStrategy from "./describe.js";
@@ -6,14 +7,15 @@ import GetPublicKeyHandlingStrategy from "./get-public-key.js";
 import Nip04DecryptHandlingStrategy from "./nip04-decrypt.js";
 import Nip04EncryptHandlingStrategy from "./nip04-encrypt.js";
 import SignEventHandlingStrategy from "./sign-event.js";
-import { NDK } from "../../../ndk/index.js";
+import type { NDK } from "../../../ndk/index.js";
 import { NDKEvent } from "../../../events/index.js";
-import { NDKUser } from "../../../user/index.js";
+import type { NDKUser } from "../../../user/index.js";
 import { NDKPrivateKeySigner } from "../../private-key/index.js";
 
 export type Nip46PermitCallback = (
     pubkey: string,
     method: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     params?: any
 ) => Promise<boolean>;
 
@@ -101,6 +103,7 @@ export class NDKNip46Backend {
     }
 
     protected async handleIncomingEvent(event: NDKEvent) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const { id, method, params } = (await this.rpc.parseEvent(event)) as any;
         const remotePubkey = event.pubkey;
         let response: string | undefined;
@@ -108,6 +111,7 @@ export class NDKNip46Backend {
         this.debug("incoming event", { id, method, params });
 
         // validate signature explicitly
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         if (!verifySignature(event.rawEvent() as Event<any>)) {
             this.debug("invalid signature", event.rawEvent());
             return;
@@ -117,6 +121,7 @@ export class NDKNip46Backend {
         if (strategy) {
             try {
                 response = await strategy.handle(this, remotePubkey, params);
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (e: any) {
                 this.debug("error handling event", e, { id, method, params });
                 this.rpc.sendResponse(id, remotePubkey, "error", undefined, e.message);
@@ -175,6 +180,7 @@ export class NDKNip46Backend {
      * This method should be overriden by the user to allow or reject incoming
      * connections.
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     public async pubkeyAllowed(pubkey: string, method: string, params?: any): Promise<boolean> {
         return this.permitCallback(pubkey, method, params);
     }

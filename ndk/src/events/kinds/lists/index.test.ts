@@ -1,10 +1,8 @@
+import NDKList from ".";
 import { NDK } from "../../../ndk";
 import { NDKUser } from "../../../user";
-import NDKList from ".";
-
 
 describe("NDKList", () => {
-
     let ndk: NDK;
     let list: NDKList;
     let user1: NDKUser;
@@ -18,12 +16,16 @@ describe("NDKList", () => {
         list.author = user1;
     });
 
-
     describe("name", () => {
         it("allows you to set and get the name of the list", () => {
             expect(list.name).toEqual(undefined);
             list.name = "My list";
             expect(list.name).toEqual("My list");
+        });
+
+        it("defaults to `Contacts` for kind 3 events", () => {
+            list.kind = 3;
+            expect(list.name).toEqual("Contacts");
         });
 
         it("defaults to `Mute` for kind 10000 events", () => {

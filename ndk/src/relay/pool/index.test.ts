@@ -3,8 +3,6 @@ import { NDK } from "../../ndk/index.js";
 import { NDKRelay } from "../index.js";
 import { NDKRelaySet } from "../sets/index.js";
 
-const ndk = new NDK();
-
 describe("NDKPool", () => {
     it("refuses connecting to blacklisted relays", async () => {
         const blacklistedRelay = new NDKRelay("wss://url1");

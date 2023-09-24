@@ -53,6 +53,12 @@ const meta = {
             description:
                 "An NDKUserProfile object. Only one of `npub`, `pubkey`, `user`, or `userProfile` is required.",
         },
+        nip05MaxLength: {
+            control: "number",
+            type: "number",
+            table: { type: { summary: "number" } },
+            description: "The max length of the nip-05",
+        },
         class: {
             control: "text",
             type: "string",

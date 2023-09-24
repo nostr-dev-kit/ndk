@@ -1,8 +1,8 @@
 <script lang="ts">
-    import type { NDKUser, NDKUserProfile } from '@nostr-dev-kit/ndk';
-    import type NDK from '@nostr-dev-kit/ndk';
-    import { prettifyNip05 } from '$lib/utils/user';
-    import { truncatedBech32 } from '$lib/utils';
+    import type { NDKUser, NDKUserProfile } from "@nostr-dev-kit/ndk";
+    import type NDK from "@nostr-dev-kit/ndk";
+    import { prettifyNip05 } from "$lib/utils/user";
+    import { truncatedBech32 } from "$lib/utils";
 
     /**
      * The NDK instance you want to use
@@ -51,9 +51,9 @@
         return (
             profile?.displayName ||
             profile?.name ||
-            (profile?.nip05 && prettifyNip05(profile.nip05)) ||
+            (profile?.nip05 && prettifyNip05(profile.nip05, undefined)) ||
             truncatedNpub
-        )
+        );
     }
 </script>
 
@@ -61,19 +61,12 @@
     {#if userProfile}
         {chooseNameFromDisplay(userProfile)}
     {:else if user}
-        {#await user.fetchProfile({
-            closeOnEose: true,
-            groupable: true,
-            groupableDelay: 200,
-        })}
+        {#await user.fetchProfile({ closeOnEose: true, groupable: true, groupableDelay: 200 })}
             {chooseNameFromDisplay()}
         {:then value}
             {chooseNameFromDisplay(user.profile)}
         {:catch error}
-            <span
-                class="name--error {$$props.class}"
-                data-error={error}
-            >
+            <span class="name--error {$$props.class}" data-error={error}>
                 {truncatedNpub}
             </span>
         {/await}

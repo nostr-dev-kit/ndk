@@ -23,6 +23,11 @@ describe("NDKList", () => {
             expect(list.name).toEqual("My list");
         });
 
+        it("defaults to `Contacts` for kind 3 events", () => {
+            list.kind = 3;
+            expect(list.name).toEqual("Contacts");
+        });
+
         it("defaults to `Mute` for kind 10000 events", () => {
             list.kind = 10000;
             expect(list.name).toEqual("Mute");

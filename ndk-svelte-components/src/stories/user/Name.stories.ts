@@ -8,7 +8,7 @@ import Name from "../../lib/user/Name.svelte";
  * 1. `user.userProfile.displayName`
  * 2. `user.userProfile.name`
  * 3. `user.userProfile.nip05`
- * 4. `npub` truncated to the first 9 characters, ending in `...`
+ * 4. `npub` optionally truncated with the npubMaxLength param
  *
  * As with all components, you can pass `class` or `style` props to the component.
  * If no `class` or `style` prop is passed, default styles will render the name as normal text.
@@ -53,6 +53,12 @@ const meta = {
             table: { type: { summary: "NDKUserProfile" } },
             description:
                 "An NDKUserProfile object. Only one of `npub`, `pubkey`, `user`, or `userProfile` is required.",
+        },
+        npubMaxLength: {
+            control: "number",
+            type: "number",
+            table: { type: { summary: "number" } },
+            description: "The max length of the npub",
         },
         class: {
             control: "text",

@@ -1,9 +1,10 @@
-import { NostrEvent } from "../../events/index.js";
-import { NDK } from "../../ndk/index.js";
+import type { NostrEvent } from "../../events/index.js";
+import type { NDK } from "../../ndk/index.js";
 import { NDKUser } from "../../user/index.js";
-import { NDKSigner } from "../index.js";
+import type { NDKSigner } from "../index.js";
 import { NDKPrivateKeySigner } from "../private-key/index.js";
-import { NDKNostrRpc, NDKRpcResponse } from "./rpc.js";
+import type { NDKRpcResponse } from "./rpc.js";
+import { NDKNostrRpc } from "./rpc.js";
 
 /**
  * This NDKSigner implements NIP-46, which allows remote signing of events.
@@ -44,11 +45,7 @@ export class NDKNip46Signer implements NDKSigner {
      * @param tokenOrRemotePubkey - The public key, or a connection token, of the npub that wants to be published as
      * @param localSigner - The signer that will be used to request events to be signed
      */
-    public constructor(
-        ndk: NDK,
-        tokenOrRemotePubkey: string,
-        localSigner?: NDKSigner
-    ) {
+    public constructor(ndk: NDK, tokenOrRemotePubkey: string, localSigner?: NDKSigner) {
         let remotePubkey: string;
         let token: string | undefined;
 

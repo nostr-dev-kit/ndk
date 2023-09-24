@@ -1,9 +1,7 @@
-import {NDKUser} from "../../../user/index.js";
-import { IEventHandlingStrategy, NDKNip46Backend } from "./index.js";
+import { NDKUser } from "../../../user/index.js";
+import type { IEventHandlingStrategy, NDKNip46Backend } from "./index.js";
 
-export default class Nip04EncryptHandlingStrategy
-    implements IEventHandlingStrategy
-{
+export default class Nip04EncryptHandlingStrategy implements IEventHandlingStrategy {
     async handle(
         backend: NDKNip46Backend,
         remotePubkey: string,
@@ -11,11 +9,7 @@ export default class Nip04EncryptHandlingStrategy
     ): Promise<string | undefined> {
         const [recipientPubkey, payload] = params;
         const recipientUser = new NDKUser({ hexpubkey: recipientPubkey });
-        const decryptedPayload = await backend.encrypt(
-            remotePubkey,
-            recipientUser,
-            payload
-        );
+        const decryptedPayload = await backend.encrypt(remotePubkey, recipientUser, payload);
 
         return decryptedPayload;
     }

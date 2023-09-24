@@ -9,6 +9,7 @@
     export const relays: string[] | undefined = undefined;
     export let event: NDKEvent | null | undefined = undefined;
 
+    // eslint-disable-next-line no-async-promise-executor
     const eventPromise = new Promise(async (resolve, reject) => {
         if (event) {
             resolve(event);

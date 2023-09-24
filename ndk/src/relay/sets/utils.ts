@@ -1,14 +1,11 @@
-import { NDKPool } from "../../relay/pool/index.js";
-import { NDKRelaySet } from "../../relay/sets/index.js";
+import type { NDKPool } from "../../relay/pool/index.js";
+import type { NDKRelaySet } from "../../relay/sets/index.js";
 
 /**
  * If the provided relay set does not include connected relays in the pool
  * the relaySet will have the connected relays added to it.
  */
-export function correctRelaySet(
-    relaySet: NDKRelaySet,
-    pool: NDKPool
-): NDKRelaySet {
+export function correctRelaySet(relaySet: NDKRelaySet, pool: NDKPool): NDKRelaySet {
     const connectedRelays = pool.connectedRelays();
     const includesConnectedRelay = Array.from(relaySet.relays).some((relay) => {
         return connectedRelays.map((r) => r.url).includes(relay.url);

@@ -1,14 +1,13 @@
 import EventEmitter from "eventemitter3";
-import { Sub, nip19 } from "nostr-tools";
-import { EventPointer } from "nostr-tools/lib/nip19";
-import { NDKEvent, NDKEventId } from "../events/index.js";
-import { NDKKind } from "../events/kinds/index.js";
-import { NDKRelay, NDKRelayUrl } from "../relay";
+
+import type { NDKEvent, NDKEventId } from "../events/index.js";
+import type { NDKKind } from "../events/kinds/index.js";
+import type { NDK } from "../ndk/index.js";
+import type { NDKRelay, NDKRelayUrl } from "../relay";
+import type { NDKPool } from "../relay/pool/index.js";
 import { calculateRelaySetsFromFilters } from "../relay/sets/calculate";
-import { NDKRelaySet } from "../relay/sets/index.js";
+import type { NDKRelaySet } from "../relay/sets/index.js";
 import { queryFullyFilled } from "./utils.js";
-import { NDK } from "../ndk/index.js";
-import { NDKPool } from "../relay/pool/index.js";
 
 export type NDKFilter<K extends number = NDKKind> = {
     ids?: string[];
@@ -155,7 +154,11 @@ export class NDKSubscription extends EventEmitter {
         this.eoseDebug = this.debug.extend("eose");
 
         if (!this.opts.closeOnEose) {
-            this.debug(`Creating a permanent subscription`, this.opts, JSON.stringify(this.filters));
+            this.debug(
+                `Creating a permanent subscription`,
+                this.opts,
+                JSON.stringify(this.filters)
+            );
             // console.trace(this);
         }
 
@@ -169,9 +172,7 @@ export class NDKSubscription extends EventEmitter {
             this.opts.cacheUsage === NDKSubscriptionCacheUsage.ONLY_CACHE &&
             !this.opts.closeOnEose
         ) {
-            throw new Error(
-                "Cannot use cache-only options with a persistent subscription"
-            );
+            throw new Error("Cannot use cache-only options with a persistent subscription");
         }
     }
 
@@ -266,10 +267,7 @@ export class NDKSubscription extends EventEmitter {
      */
     private startWithRelays(): void {
         if (!this.relaySet) {
-            this.relayFilters = calculateRelaySetsFromFilters(
-                this.ndk,
-                this.filters
-            );
+            this.relayFilters = calculateRelaySetsFromFilters(this.ndk, this.filters);
         } else {
             this.relayFilters = new Map();
             for (const relay of this.relaySet.relays) {
@@ -295,11 +293,7 @@ export class NDKSubscription extends EventEmitter {
      * @param relay
      * @param fromCache Whether the event was received from the cache
      */
-    public eventReceived(
-        event: NDKEvent,
-        relay: NDKRelay | undefined,
-        fromCache = false
-    ) {
+    public eventReceived(event: NDKEvent, relay: NDKRelay | undefined, fromCache = false) {
         if (relay) event.relay = relay;
         if (!relay) relay = event.relay;
 
@@ -318,8 +312,7 @@ export class NDKSubscription extends EventEmitter {
             const eventAlreadySeen = this.eventFirstSeen.has(event.id);
 
             if (eventAlreadySeen) {
-                const timeSinceFirstSeen =
-                    Date.now() - (this.eventFirstSeen.get(event.id) || 0);
+                const timeSinceFirstSeen = Date.now() - (this.eventFirstSeen.get(event.id) || 0);
                 relay.scoreSlowerEvent(timeSinceFirstSeen);
 
                 this.emit("event:dup", event, relay, timeSinceFirstSeen, this);
@@ -348,7 +341,9 @@ export class NDKSubscription extends EventEmitter {
 
         this.eoseDebug(`received from ${relay.url}`);
 
-        let lastEventSeen = this.lastEventReceivedAt ? Date.now() - this.lastEventReceivedAt : undefined;
+        let lastEventSeen = this.lastEventReceivedAt
+            ? Date.now() - this.lastEventReceivedAt
+            : undefined;
 
         const hasSeenAllEoses = this.eosesSeen.size === this.relayFilters?.size;
         const queryFilled = queryFullyFilled(this);
@@ -379,18 +374,22 @@ export class NDKSubscription extends EventEmitter {
             // that have already sent an EOSE, the more
             // relays that have sent an EOSE, the less time we should wait
             // for the next one
-            const percentageOfRelaysThatHaveSentEose = this.eosesSeen.size / this.relayFilters!.size;
+            const percentageOfRelaysThatHaveSentEose =
+                this.eosesSeen.size / this.relayFilters!.size;
 
             // If less than 5 and 50% of relays have EOSEd don't add a timeout yet
             if (this.eosesSeen.size < 5 && percentageOfRelaysThatHaveSentEose >= 0.5) {
-                timeToWaitForNextEose = timeToWaitForNextEose * (1 - percentageOfRelaysThatHaveSentEose);
+                timeToWaitForNextEose =
+                    timeToWaitForNextEose * (1 - percentageOfRelaysThatHaveSentEose);
 
                 if (this.eoseTimeout) {
                     clearTimeout(this.eoseTimeout);
                 }
 
                 const sendEoseTimeout = () => {
-                    lastEventSeen = this.lastEventReceivedAt ? Date.now() - this.lastEventReceivedAt : undefined;
+                    lastEventSeen = this.lastEventReceivedAt
+                        ? Date.now() - this.lastEventReceivedAt
+                        : undefined;
 
                     // If we have seen an event in the past 20ms don't emit an EOSE due to a timeout, events
                     // are still being received

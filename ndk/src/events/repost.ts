@@ -1,5 +1,6 @@
-import { NDKSigner } from "../signers/index.js";
-import { NDKEvent, NostrEvent } from "./index.js";
+import type { NDKSigner } from "../signers/index.js";
+import type { NostrEvent } from "./index.js";
+import { NDKEvent } from "./index.js";
 import { NDKKind } from "./kinds/index.js";
 
 /**
@@ -9,11 +10,7 @@ import { NDKKind } from "./kinds/index.js";
  * @param signer The signer to use for signing the reposted event
  * @returns The reposted event
  */
-export async function repost(
-    this: NDKEvent,
-    publish = true,
-    signer?: NDKSigner
-) {
+export async function repost(this: NDKEvent, publish = true, signer?: NDKSigner) {
     if (!signer) {
         if (!this.ndk) throw new Error("No NDK instance found");
         this.ndk.assertSigner();

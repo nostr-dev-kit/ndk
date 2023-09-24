@@ -1,17 +1,15 @@
 import { nip19 } from "nostr-tools";
+
 import { NDKEvent } from "../events/index.js";
 import { NDK } from "../ndk/index.js";
 import { NDKSubscription } from "../subscription/index.js";
-import { NDKUser, NDKUserParams } from "./index.js";
-
+import { NDKUser, type NDKUserParams } from "./index.js";
 
 jest.mock("nostr-tools", () => ({
     ...jest.requireActual("nostr-tools"),
     nip19: {
         npubEncode: jest.fn().mockImplementation(() => "npub1_encoded_npub"),
-        decode: jest
-            .fn()
-            .mockReturnValue({ type: "npub", data: "decoded_hexpubkey" }),
+        decode: jest.fn().mockReturnValue({ type: "npub", data: "decoded_hexpubkey" }),
     },
 }));
 
@@ -35,8 +33,7 @@ describe("NDKUser", () => {
 
         it("sets npub from provided hexpubkey", () => {
             const opts: NDKUserParams = {
-                hexpubkey:
-                    "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52",
+                hexpubkey: "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52",
             };
 
             const user = new NDKUser(opts);
@@ -224,9 +221,7 @@ describe("NDKUser", () => {
             });
 
             await user.fetchProfile();
-            expect(user.profile?.image).toEqual(
-                "https://set-from-picture-field.url"
-            );
+            expect(user.profile?.image).toEqual("https://set-from-picture-field.url");
         });
 
         it("Allows for arbitrary values to be set on user profiles", async () => {
@@ -271,8 +266,7 @@ describe("NDKUser", () => {
         it("validates the NIP-05 for users", async () => {
             const ndk = new NDK();
             const user = ndk.getUser({
-                hexpubkey:
-                    "1739d937dc8c0c7370aa27585938c119e25c41f6c441a5d34c6d38503e3136ef",
+                hexpubkey: "1739d937dc8c0c7370aa27585938c119e25c41f6c441a5d34c6d38503e3136ef",
             });
 
             const validNip05 = "_@jeffg.fyi";

@@ -1,9 +1,11 @@
 import EventEmitter from "eventemitter3";
-import { NDKRelayUrl } from "../relay/index.js";
-import { Hexpubkey, NDKUser } from "../user/index.js";
 import { LRUCache } from "typescript-lru-cache";
-import { NDK } from "../ndk/index.js";
-import { NDKRelayList } from "../events/kinds/NDKRelayList.js";
+
+import type { NDKRelayList } from "../events/kinds/NDKRelayList.js";
+import type { NDK } from "../ndk/index.js";
+import type { NDKRelayUrl } from "../relay/index.js";
+import type { Hexpubkey } from "../user/index.js";
+import { NDKUser } from "../user/index.js";
 
 export type OutboxItemType = "user" | "kind";
 
@@ -95,7 +97,9 @@ export class OutboxTracker extends EventEmitter {
 
                     this.data.set(itemKey, outboxItem);
 
-                    this.debug(`Adding ${outboxItem.readRelays.size} read relays and ${outboxItem.writeRelays.size} write relays for ${user.hexpubkey}`);
+                    this.debug(
+                        `Adding ${outboxItem.readRelays.size} read relays and ${outboxItem.writeRelays.size} write relays for ${user.hexpubkey}`
+                    );
                 }
             });
         }
@@ -106,10 +110,7 @@ export class OutboxTracker extends EventEmitter {
      * @param key
      * @param score
      */
-    public track(
-        item: NDKUser | Hexpubkey,
-        type?: OutboxItemType,
-    ): OutboxItem {
+    public track(item: NDKUser | Hexpubkey, type?: OutboxItemType): OutboxItem {
         const key = getKeyFromItem(item);
         type ??= getTypeFromItem(item);
         let outboxItem = this.data.get(key);
@@ -130,9 +131,7 @@ function getKeyFromItem(item: NDKUser | Hexpubkey): Hexpubkey {
     }
 }
 
-function getTypeFromItem(
-    item: NDKUser | Hexpubkey,
-): OutboxItemType {
+function getTypeFromItem(item: NDKUser | Hexpubkey): OutboxItemType {
     if (item instanceof NDKUser) {
         return "user";
     } else {

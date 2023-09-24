@@ -1,4 +1,10 @@
-import { verifySignature, Event } from "nostr-tools";
+import type { Event } from "nostr-tools";
+import { verifySignature } from "nostr-tools";
+
+import { NDKEvent } from "../../../events/index.js";
+import type { NDK } from "../../../ndk/index.js";
+import type { NDKUser } from "../../../user/index.js";
+import { NDKPrivateKeySigner } from "../../private-key/index.js";
 import { NDKNostrRpc } from "../rpc.js";
 import ConnectEventHandlingStrategy from "./connect.js";
 import DescribeEventHandlingStrategy from "./describe.js";
@@ -6,21 +12,15 @@ import GetPublicKeyHandlingStrategy from "./get-public-key.js";
 import Nip04DecryptHandlingStrategy from "./nip04-decrypt.js";
 import Nip04EncryptHandlingStrategy from "./nip04-encrypt.js";
 import SignEventHandlingStrategy from "./sign-event.js";
-import { NDK } from "../../../ndk/index.js";
-import { NDKEvent } from "../../../events/index.js";
-import { NDKUser } from "../../../user/index.js";
-import { NDKPrivateKeySigner } from "../../private-key/index.js";
 
 export type Nip46PermitCallback = (
     pubkey: string,
     method: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     params?: any
 ) => Promise<boolean>;
 
-export type Nip46ApplyTokenCallback = (
-    pubkey: string,
-    token: string
-) => Promise<void>;
+export type Nip46ApplyTokenCallback = (pubkey: string, token: string) => Promise<void>;
 
 export interface IEventHandlingStrategy {
     handle(
@@ -49,11 +49,7 @@ export class NDKNip46Backend {
      * @param ndk The NDK instance to use
      * @param privateKey The private key of the npub that wants to be published as
      */
-    public constructor(
-        ndk: NDK,
-        privateKey: string,
-        permitCallback: Nip46PermitCallback
-    ) {
+    public constructor(ndk: NDK, privateKey: string, permitCallback: Nip46PermitCallback) {
         this.ndk = ndk;
         this.signer = new NDKPrivateKeySigner(privateKey);
         this.debug = ndk.debug.extend("nip46:backend");
@@ -108,15 +104,15 @@ export class NDKNip46Backend {
     }
 
     protected async handleIncomingEvent(event: NDKEvent) {
-        const { id, method, params } = (await this.rpc.parseEvent(
-            event
-        )) as any;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { id, method, params } = (await this.rpc.parseEvent(event)) as any;
         const remotePubkey = event.pubkey;
         let response: string | undefined;
 
         this.debug("incoming event", { id, method, params });
 
         // validate signature explicitly
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         if (!verifySignature(event.rawEvent() as Event<any>)) {
             this.debug("invalid signature", event.rawEvent());
             return;
@@ -126,15 +122,10 @@ export class NDKNip46Backend {
         if (strategy) {
             try {
                 response = await strategy.handle(this, remotePubkey, params);
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (e: any) {
                 this.debug("error handling event", e, { id, method, params });
-                this.rpc.sendResponse(
-                    id,
-                    remotePubkey,
-                    "error",
-                    undefined,
-                    e.message
-                );
+                this.rpc.sendResponse(id, remotePubkey, "error", undefined, e.message);
             }
         } else {
             this.debug("unsupported method", { method, params });
@@ -144,21 +135,11 @@ export class NDKNip46Backend {
             this.debug(`sending response to ${remotePubkey}`, response);
             this.rpc.sendResponse(id, remotePubkey, response);
         } else {
-            this.rpc.sendResponse(
-                id,
-                remotePubkey,
-                "error",
-                undefined,
-                "Not authorized"
-            );
+            this.rpc.sendResponse(id, remotePubkey, "error", undefined, "Not authorized");
         }
     }
 
-    public async decrypt(
-        remotePubkey: string,
-        senderUser: NDKUser,
-        payload: string
-    ) {
+    public async decrypt(remotePubkey: string, senderUser: NDKUser, payload: string) {
         if (!(await this.pubkeyAllowed(remotePubkey, "decrypt", payload))) {
             this.debug(`decrypt request from ${remotePubkey} rejected`);
             return undefined;
@@ -167,11 +148,7 @@ export class NDKNip46Backend {
         return await this.signer.decrypt(senderUser, payload);
     }
 
-    public async encrypt(
-        remotePubkey: string,
-        recipientUser: NDKUser,
-        payload: string
-    ) {
+    public async encrypt(remotePubkey: string, recipientUser: NDKUser, payload: string) {
         if (!(await this.pubkeyAllowed(remotePubkey, "encrypt", payload))) {
             this.debug(`encrypt request from ${remotePubkey} rejected`);
             return undefined;
@@ -180,10 +157,7 @@ export class NDKNip46Backend {
         return await this.signer.encrypt(recipientUser, payload);
     }
 
-    public async signEvent(
-        remotePubkey: string,
-        params: string[]
-    ): Promise<NDKEvent | undefined> {
+    public async signEvent(remotePubkey: string, params: string[]): Promise<NDKEvent | undefined> {
         const [eventString] = params;
 
         this.debug(`sign event request from ${remotePubkey}`);
@@ -207,11 +181,8 @@ export class NDKNip46Backend {
      * This method should be overriden by the user to allow or reject incoming
      * connections.
      */
-    public async pubkeyAllowed(
-        pubkey: string,
-        method: string,
-        params?: any
-    ): Promise<boolean> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    public async pubkeyAllowed(pubkey: string, method: string, params?: any): Promise<boolean> {
         return this.permitCallback(pubkey, method, params);
     }
 }

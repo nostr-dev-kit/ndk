@@ -18,13 +18,12 @@
         "dist",
         "README.md"
     ],
-    "packageManager": "pnpm@8.6.12",
     "scripts": {
         "dev": "pnpm build --watch",
         "build": "tsup src/index.ts --format cjs,esm --dts",
         "clean": "rm -rf dist",
-        "lint": "eslint src/**/*.ts",
-        "prettify": "prettier . --write --config .prettierrc"
+        "lint": "prettier --check . && eslint .",
+        "format": "prettier --write ."
     },
     "keywords": [
         "nostr",
@@ -36,20 +35,15 @@
         "erskingardner"
     ],
     "devDependencies": {
-        "@nostr-dev-kit/tsconfig": "*",
-        "@trivago/prettier-plugin-sort-imports": "^4.2.0",
+        "@nostr-dev-kit/tsconfig": "workspace:*",
+        "@nostr-dev-kit/eslint-config-custom": "workspace:*",
         "@types/debug": "^4.1.8",
         "@types/node": "^20.5.0",
-        "@typescript-eslint/eslint-plugin": "^6.4.0",
-        "@typescript-eslint/parser": "^6.4.0",
-        "eslint": "^8.47.0",
-        "eslint-config-prettier": "^9.0.0",
         "prettier": "^3.0.1",
-        "tsup": "^7.2.0",
-        "typescript": "^5.1.6"
+        "tsup": "^7.2.0"
     },
     "dependencies": {
-        "@nostr-dev-kit/ndk": "*",
+        "@nostr-dev-kit/ndk": "workspace:*",
         "debug": "^4.3.4",
         "dexie": "^3.2.4",
         "nostr-tools": "^1.14.0",

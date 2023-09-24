@@ -1,4 +1,4 @@
-import { NDKFilter } from "../index.js";
+import type { NDKFilter } from "../index.js";
 
 export type NDKFilterGroupingId = string;
 
@@ -36,6 +36,7 @@ export function calculateGroupableId(filters: NDKFilter[]): NDKFilterGroupingId 
  * relatively similar, and merge them.
  */
 export function mergeFilters(filters: NDKFilter[]): NDKFilter {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result: any = {};
 
     filters.forEach((filter) => {
@@ -44,9 +45,7 @@ export function mergeFilters(filters: NDKFilter[]): NDKFilter {
                 if (result[key] === undefined) {
                     result[key] = [...value];
                 } else {
-                    result[key] = Array.from(
-                        new Set([...result[key], ...value])
-                    );
+                    result[key] = Array.from(new Set([...result[key], ...value]));
                 }
             } else {
                 result[key] = value;

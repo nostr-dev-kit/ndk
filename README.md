@@ -214,7 +214,7 @@ In this example, NDK will wait 100ms (default `groupableDelay`) before creating 
 {kinds: [0], authors: ['pubkey-1', 'pubkey-2'] }
 ```
 
-## Outbox model (formerly known as *gossip-protocol*)
+## Outbox model (formerly known as _gossip-protocol_)
 
 When instantiating NDK, you can pass a set of outboxRelays, which will be used exclusively to consult outbox-model
 related events:
@@ -231,7 +231,7 @@ When you request information about a user (i.e. explicitly using a user's pubkey
 automatically query the user's outbox relays and subsequent queries will favour using those relays for queries with that
 user's pubkey.
 
-[OUTBOX.md](./OUTBOX.md) contains more information about the outbox model. *WIP*
+[OUTBOX.md](./OUTBOX.md) contains more information about the outbox model. _WIP_
 
 ## Intelligent relay selection
 
@@ -293,8 +293,7 @@ const pablo = ndk.getUser({
 });
 
 const jeff = ndk.getUser({
-    hexpubkey:
-        "1739d937dc8c0c7370aa27585938c119e25c41f6c441a5d34c6d38503e3136ef",
+    hexpubkey: "1739d937dc8c0c7370aa27585938c119e25c41f6c441a5d34c6d38503e3136ef",
 });
 ```
 

@@ -1,5 +1,11 @@
-import { NDKCacheAdapter, NDKFilter, NDKRelay, NDKUser, NDKUserProfile } from "@nostr-dev-kit/ndk";
-import { NDKEvent, NDKSubscription, Hexpubkey } from "@nostr-dev-kit/ndk";
+import { NDKEvent, NDKRelay } from "@nostr-dev-kit/ndk";
+import type {
+    Hexpubkey,
+    NDKCacheAdapter,
+    NDKFilter,
+    NDKSubscription,
+    NDKUserProfile,
+} from "@nostr-dev-kit/ndk";
 import _debug from "debug";
 import { matchFilter } from "nostr-tools";
 import { LRUCache } from "typescript-lru-cache";
@@ -28,7 +34,7 @@ interface NDKCacheAdapterDexieOptions {
     /**
      * Number of profiles to keep in an LRU cache
      */
-    profileCacheSize?: number | 'disabled';
+    profileCacheSize?: number | "disabled";
 }
 
 export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
@@ -44,13 +50,14 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         this.locking = true;
         this.expirationTime = opts.expirationTime || 3600;
 
-
-        if (opts.profileCacheSize !== 'disabled') {
+        if (opts.profileCacheSize !== "disabled") {
             this.profiles = new LRUCache({
                 maxSize: opts.profileCacheSize || 100000,
             });
 
-            setInterval(() => {this.dumpProfiles()}, 1000 * 10);
+            setInterval(() => {
+                this.dumpProfiles();
+            }, 1000 * 10);
         }
     }
 
@@ -87,7 +94,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
     private async processFilter(filter: NDKFilter, subscription: NDKSubscription): Promise<void> {
         const _filter = {...filter};
         delete _filter.limit;
-        const filterKeys = Object.keys(_filter || {}).sort()
+        const filterKeys = Object.keys(_filter || {}).sort();
 
         try {
             (await this.byKindAndAuthor(filterKeys, filter, subscription)) ||
@@ -123,8 +130,8 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
                     id: event.tagId(),
                     pubkey: event.pubkey,
                     content: event.content,
-                    kind: event.kind as number,
-                    createdAt: event.created_at as number,
+                    kind: event.kind!,
+                    createdAt: event.created_at!,
                     relay: relay?.url,
                     event: JSON.stringify(event.rawEvent()),
                 });
@@ -353,7 +360,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         const kinds = filter.kinds as number[];
 
         for (const event of events) {
-            if (!kinds?.includes(event.kind as number)) continue;
+            if (!kinds?.includes(event.kind!)) continue;
 
             subscription.eventReceived(event, undefined, true);
         }
@@ -403,7 +410,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         return retEvents;
     }
 
-    private async dumpProfiles() {
+    private async dumpProfiles(): Promise<void> {
         const profiles = [];
 
         if (!this.profiles) return;

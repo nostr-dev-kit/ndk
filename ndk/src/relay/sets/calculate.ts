@@ -1,9 +1,9 @@
-import { NDKEvent } from "../../events/index.js";
-import { NDK } from "../../ndk/index.js";
-import { NDKFilter } from "../../subscription/index.js";
-import { NDKRelay, NDKRelayUrl } from "../index.js";
+import type { NDKEvent } from "../../events/index.js";
+import type { NDK } from "../../ndk/index.js";
+import type { NDKFilter } from "../../subscription/index.js";
+import type { Hexpubkey } from "../../user/index.js";
+import type { NDKRelay, NDKRelayUrl } from "../index.js";
 import { NDKRelaySet } from "./index.js";
-import { Hexpubkey } from "../../user/index.js";
 
 /**
  * Creates a NDKRelaySet for the specified event.
@@ -13,10 +13,7 @@ import { Hexpubkey } from "../../user/index.js";
  * @param event {Event}
  * @returns Promise<NDKRelaySet>
  */
-export function calculateRelaySetFromEvent(
-    ndk: NDK,
-    event: NDKEvent
-): NDKRelaySet {
+export function calculateRelaySetFromEvent(ndk: NDK, event: NDKEvent): NDKRelaySet {
     const relays: Set<NDKRelay> = new Set();
 
     // try to fetch all tagged events from the cache
@@ -26,10 +23,7 @@ export function calculateRelaySetFromEvent(
     return new NDKRelaySet(relays, ndk);
 }
 
-export function getWriteRelaysFor(
-    ndk: NDK,
-    author: Hexpubkey
-): Set<NDKRelayUrl> | undefined {
+export function getWriteRelaysFor(ndk: NDK, author: Hexpubkey): Set<NDKRelayUrl> | undefined {
     if (!ndk.outboxTracker) return undefined;
 
     return ndk.outboxTracker.data.get(author)?.writeRelays;
@@ -95,7 +89,7 @@ export function calculateRelaySetsFromFilter(
             if (filter.authors) {
                 // replace authors with the authors for each relay
                 for (const [relayUrl, authors] of authorToRelaysMap.entries()) {
-                    result.set(relayUrl, [...result.get(relayUrl)!, {...filter, authors}]);
+                    result.set(relayUrl, [...result.get(relayUrl)!, { ...filter, authors }]);
                 }
             } else {
                 // if the filter doesn't have authors, add it to all relays

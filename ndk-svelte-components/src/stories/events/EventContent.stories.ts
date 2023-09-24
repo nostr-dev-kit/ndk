@@ -1,5 +1,6 @@
 import NDK, { type NDKEvent } from "@nostr-dev-kit/ndk";
 import type { Meta, StoryObj } from "@storybook/svelte";
+
 import EventContent from "../../lib/event/content/EventContent.svelte";
 
 /**
@@ -35,9 +36,9 @@ ndk.connect();
 
 let event: NDKEvent;
 
-ndk.fetchEvent(
-    "note194n247lecqgcskk5rmmfgrapt4jx7ppq64xec0eca3s4ta3hwkrsex7pxa"
-).then(e => event = e!)
+ndk.fetchEvent("note194n247lecqgcskk5rmmfgrapt4jx7ppq64xec0eca3s4ta3hwkrsex7pxa").then(
+    (e) => (event = e!)
+);
 
 export const Kind1Event: Story = {
     args: {

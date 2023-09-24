@@ -1,12 +1,13 @@
 import debug from "debug";
 import EventEmitter from "eventemitter3";
-import { NDKEvent, NDKTag } from "../events/index.js";
-import { NDKFilter, NDKSubscription } from "../subscription/index.js";
-import {NDKUser} from "../user/index.js";
-import { NDKRelayScore } from "./score.js";
+
+import type { NDKEvent, NDKTag } from "../events/index.js";
+import type { NDKFilter, NDKSubscription } from "../subscription/index.js";
+import type { NDKUser } from "../user/index.js";
 import { NDKRelayConnectivity } from "./connectivity.js";
-import { NDKRelaySubscriptions } from "./subscriptions.js";
 import { NDKRelayPublisher } from "./publisher.js";
+import type { NDKRelayScore } from "./score.js";
+import { NDKRelaySubscriptions } from "./subscriptions.js";
 
 export type NDKRelayUrl = string;
 
@@ -101,10 +102,7 @@ export class NDKRelay extends EventEmitter {
      * @param subscription NDKSubscription this filters belong to.
      * @param filters Filters to execute
      */
-    public subscribe(
-        subscription: NDKSubscription,
-        filters: NDKFilter[],
-    ): void {
+    public subscribe(subscription: NDKSubscription, filters: NDKFilter[]): void {
         this.subs.subscribe(subscription, filters);
     }
 

@@ -1,5 +1,6 @@
 import { decode } from "light-bolt11-decoder";
-import { NDKEvent, type NDKEventId, type NostrEvent } from "../events/index.js";
+
+import type { NDKEvent, NDKEventId, NostrEvent } from "../events/index.js";
 
 export interface NDKZapInvoice {
     id?: NDKEventId;
@@ -43,9 +44,8 @@ export function zapInvoiceFromEvent(event: NDKEvent): NDKZapInvoice | null {
         return null;
     }
 
-    const amountSection = decodedInvoice.sections.find(
-        (s: any) => s.name === "amount"
-    );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const amountSection = decodedInvoice.sections.find((s: any) => s.name === "amount");
     if (!amountSection) {
         return null;
     }

@@ -1,7 +1,7 @@
-import { NDKCacheAdapter, NDKFilter } from "@nostr-dev-kit/ndk";
-import { NDKSubscription, NDKEvent } from "@nostr-dev-kit/ndk";
-import Redis from "ioredis";
+import type { NDKCacheAdapter, NDKFilter } from "@nostr-dev-kit/ndk";
+import { NDKEvent, type NDKSubscription } from "@nostr-dev-kit/ndk";
 import _debug from "debug";
+import Redis from "ioredis";
 
 interface RedisAdapterOptions {
     /**
@@ -52,10 +52,7 @@ export default class RedisAdapter implements NDKCacheAdapter {
                     const event = await this.redis.get(result.event);
 
                     if (event) {
-                        const ndkEvent = new NDKEvent(
-                            subscription.ndk,
-                            JSON.parse(event)
-                        );
+                        const ndkEvent = new NDKEvent(subscription.ndk, JSON.parse(event));
                         this.debug("hit", ndkEvent.id);
                         subscription.eventReceived(ndkEvent, undefined, true);
                     }
@@ -75,12 +72,7 @@ export default class RedisAdapter implements NDKCacheAdapter {
             // and store the filter that was used to find the event on an hset where the key is the filter and the value is the event id
             // run both at the same time and resolve when both complete
             Promise.all([
-                this.redis.set(
-                    event.id,
-                    JSON.stringify(nostrEvent),
-                    "EX",
-                    this.expirationTime
-                ),
+                this.redis.set(event.id, JSON.stringify(nostrEvent), "EX", this.expirationTime),
                 this.redis.hset(key, "event", event.id),
                 this.redis.expire(key, this.expirationTime),
             ]).then(() => resolve());

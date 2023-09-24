@@ -1,6 +1,5 @@
-import { nip19 } from "nostr-tools";
-import {Hexpubkey, NDKUser} from "./index.js";
-import { NDKSubscription, NDKSubscriptionOptions } from "../subscription/index.js";
+import type { NDKSubscriptionOptions } from "../subscription/index.js";
+import { type Hexpubkey, NDKUser } from "./index.js";
 
 /**
  * @param outbox - Enables outbox data fetching for the returned users (if the NDK instance has outbox enabled)
@@ -13,10 +12,13 @@ export async function follows(
 ): Promise<Set<NDKUser>> {
     if (!this.ndk) throw new Error("NDK not set");
 
-    const contactListEvent = await this.ndk.fetchEvent({
-        kinds: [3],
-        authors: [this.hexpubkey],
-    }, opts || { groupable: false });
+    const contactListEvent = await this.ndk.fetchEvent(
+        {
+            kinds: [3],
+            authors: [this.hexpubkey],
+        },
+        opts || { groupable: false }
+    );
 
     if (contactListEvent) {
         const pubkeys = new Set<Hexpubkey>();

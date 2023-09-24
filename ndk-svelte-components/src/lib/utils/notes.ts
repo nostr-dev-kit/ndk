@@ -1,5 +1,5 @@
 import { nip19 } from "nostr-tools";
-import { last, pluck, identity } from "ramda";
+import { identity, last, pluck } from "ramda";
 
 export const NEWLINE = "newline";
 export const TEXT = "text";
@@ -13,12 +13,13 @@ export const NOSTR_NPUB = "nostr:npub";
 export const NOSTR_NPROFILE = "nostr:nprofile";
 export const NOSTR_NADDR = "nostr:naddr";
 
-const first = (list: any) => list ? list[0] : undefined
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const first = (list: any) => (list ? list[0] : undefined);
 
 export const fromNostrURI = (s: string) => s.replace(/^[\w+]+:\/?\/?/, "");
 
 export const urlIsMedia = (url: string) =>
-    !url.match(/\.(apk|docx|xlsx|csv|dmg)/) && last(url.split("://")).includes("/");
+    !url.match(/\.(apk|docx|xlsx|csv|dmg)/) && last(url.split("://"))?.includes("/");
 
 type ContentArgs = {
     content: string;
@@ -28,6 +29,7 @@ type ContentArgs = {
 
 type ParsedPart = {
     type: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any;
 };
 
@@ -116,9 +118,7 @@ export const parseContent = ({ content, tags = [], html = false }: ContentArgs):
 
     const parseUrl = () => {
         if (html) return;
-        const raw = first(
-            text.match(/^([a-z\+:]{2,30}:\/\/)?[^\s]+\.[a-z]{2,6}[^\s]*[^\.!?,:\s]/gi)
-        );
+        const raw = first(text.match(/^([a-z+:]{2,30}:\/\/)?[^\s]+\.[a-z]{2,6}[^\s]*[^.!?,:\s]/gi));
 
         // Skip url if it's just the end of a filepath
         if (raw) {

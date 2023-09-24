@@ -1,8 +1,6 @@
-import { sha256 } from "@noble/hashes/sha256";
-import { bytesToHex } from "@noble/hashes/utils";
-import { NDKEvent } from "../../events/index.js";
-import { NDKRelay, NDKRelayStatus } from "../index.js";
-import { NDK } from "../../ndk/index.js";
+import type { NDKEvent } from "../../events/index.js";
+import type { NDK } from "../../ndk/index.js";
+import { NDKRelay } from "../index.js";
 
 /**
  * A relay set is a group of relays. This grouping can be short-living, for a single
@@ -61,32 +59,27 @@ export class NDKRelaySet {
      * @param timeoutMs - timeout in milliseconds for each publish operation and connection operation
      * @returns A set where the event was successfully published to
      */
-    public async publish(
-        event: NDKEvent,
-        timeoutMs?: number
-    ): Promise<Set<NDKRelay>> {
+    public async publish(event: NDKEvent, timeoutMs?: number): Promise<Set<NDKRelay>> {
         const publishedToRelays: Set<NDKRelay> = new Set();
 
         // go through each relay and publish the event
-        const promises: Promise<void>[] = Array.from(this.relays).map(
-            (relay: NDKRelay) => {
-                return new Promise<void>((resolve) => {
-                    relay
-                        .publish(event, timeoutMs)
-                        .then(() => {
-                            publishedToRelays.add(relay);
-                            resolve();
-                        })
-                        .catch((err) => {
-                            this.debug("error publishing to relay", {
-                                relay: relay.url,
-                                err,
-                            });
-                            resolve();
+        const promises: Promise<void>[] = Array.from(this.relays).map((relay: NDKRelay) => {
+            return new Promise<void>((resolve) => {
+                relay
+                    .publish(event, timeoutMs)
+                    .then(() => {
+                        publishedToRelays.add(relay);
+                        resolve();
+                    })
+                    .catch((err) => {
+                        this.debug("error publishing to relay", {
+                            relay: relay.url,
+                            err,
                         });
-                });
-            }
-        );
+                        resolve();
+                    });
+            });
+        });
 
         await Promise.all(promises);
 

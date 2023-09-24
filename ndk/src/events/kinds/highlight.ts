@@ -1,8 +1,10 @@
-import { NDKKind } from './index.js';
-import { nip19 } from 'nostr-tools';
-import { NDKEvent, NDKTag, NostrEvent } from '../index.js';
-import { NDK } from '../../ndk/index.js';
-import { NDKArticle } from './article.js';
+import { nip19 } from "nostr-tools";
+
+import type { NDK } from "../../ndk/index.js";
+import type { NDKTag, NostrEvent } from "../index.js";
+import { NDKEvent } from "../index.js";
+import { NDKArticle } from "./article.js";
+import { NDKKind } from "./index.js";
 
 /**
  * Highlight as defined by NIP-84 (kind:9802).
@@ -20,7 +22,7 @@ export class NDKHighlight extends NDKEvent {
     }
 
     get url(): string | undefined {
-        return this.tagValue('r');
+        return this.tagValue("r");
     }
 
     /**
@@ -28,15 +30,15 @@ export class NDKHighlight extends NDKEvent {
      */
     set context(context: string | undefined) {
         if (context === undefined) {
-            this.tags = this.tags.filter(([tag, value]) => tag !== 'context');
+            this.tags = this.tags.filter(([tag, value]) => tag !== "context");
         } else {
-            this.tags = this.tags.filter(([tag, value]) => tag !== 'context');
-            this.tags.push(['context', context]);
+            this.tags = this.tags.filter(([tag, value]) => tag !== "context");
+            this.tags.push(["context", context]);
         }
     }
 
     get context(): string | undefined {
-        return this.tags.find(([tag, value]) => tag === 'context')?.[1] ?? undefined;
+        return this.tags.find(([tag, value]) => tag === "context")?.[1] ?? undefined;
     }
 
     /**
@@ -55,15 +57,19 @@ export class NDKHighlight extends NDKEvent {
     set article(article: NDKEvent | string) {
         this._article = article;
 
-        if (typeof article === 'string') {
-            this.tags.push(['r', article]);
+        if (typeof article === "string") {
+            this.tags.push(["r", article]);
         } else {
             this.tag(article);
         }
     }
 
     getArticleTag(): NDKTag | undefined {
-        return this.getMatchingTags('a')[0] || this.getMatchingTags('e')[0] || this.getMatchingTags('r')[0];
+        return (
+            this.getMatchingTags("a")[0] ||
+            this.getMatchingTags("e")[0] ||
+            this.getMatchingTags("r")[0]
+        );
     }
 
     async getArticle(): Promise<NDKArticle | NDKEvent | string | undefined> {
@@ -76,14 +82,15 @@ export class NDKHighlight extends NDKEvent {
         if (!articleTag) return undefined;
 
         switch (articleTag[0]) {
-            case 'a':
-                const [kind, pubkey, identifier] = articleTag[1].split(':');
+            case "a":
+                // eslint-disable-next-line no-case-declarations
+                const [kind, pubkey, identifier] = articleTag[1].split(":");
                 taggedBech32 = nip19.naddrEncode({ kind: parseInt(kind), pubkey, identifier });
                 break;
-            case 'e':
+            case "e":
                 taggedBech32 = nip19.noteEncode(articleTag[1]);
                 break;
-            case 'r':
+            case "r":
                 this._article = articleTag[1];
                 break;
         }

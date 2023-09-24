@@ -1,7 +1,8 @@
 import { nip19 } from "nostr-tools";
-import { EventPointer } from "nostr-tools/lib/nip19.js";
+import type { EventPointer } from "nostr-tools/lib/nip19.js";
+
 import { NDKRelay } from "../relay/index.js";
-import { NDKFilter, NDKSubscription } from "./index.js";
+import type { NDKFilter, NDKSubscription } from "./index.js";
 
 /**
  * Checks if a subscription is fully guaranteed to have been filled.
@@ -35,10 +36,7 @@ export function queryFullyFilled(subscription: NDKSubscription): boolean {
  * compareFilter(filter1, filter2); // false
  * @returns
  */
-export function compareFilter(
-    filter1: NDKFilter,
-    filter2: NDKFilter,
-) {
+export function compareFilter(filter1: NDKFilter, filter2: NDKFilter) {
     // Make sure the filters have the same number of keys
     if (Object.keys(filter1).length !== Object.keys(filter2).length) return false;
 
@@ -83,22 +81,19 @@ function resultHasAllRequestedIds(subscription: NDKSubscription): boolean {
  * If none of the subscriptions specify a subId, a subId is generated
  * by joining all the filter keys, and expanding the kinds with the requested kinds.
  */
-export function generateSubId(
-    subscriptions: NDKSubscription[],
-    filters: NDKFilter[]
-): string {
-    const subIds = subscriptions.map(sub => sub.subId).filter(Boolean);
+export function generateSubId(subscriptions: NDKSubscription[], filters: NDKFilter[]): string {
+    const subIds = subscriptions.map((sub) => sub.subId).filter(Boolean);
     const subIdParts: string[] = [];
     const filterNonKindKeys = new Set<string>();
     const filterKinds = new Set<number>();
 
     if (subIds.length > 0) {
-        subIdParts.push(Array.from(new Set(subIds)).join(','));
+        subIdParts.push(Array.from(new Set(subIds)).join(","));
     } else {
         for (const filter of filters) {
             for (const key of Object.keys(filter)) {
                 if (key === "kinds") {
-                    filter.kinds?.forEach(k => filterKinds.add(k));
+                    filter.kinds?.forEach((k) => filterKinds.add(k));
                 } else {
                     filterNonKindKeys.add(key);
                 }
@@ -106,11 +101,11 @@ export function generateSubId(
         }
 
         if (filterKinds.size > 0) {
-            subIdParts.push("kinds:" + Array.from(filterKinds).join(','));
+            subIdParts.push("kinds:" + Array.from(filterKinds).join(","));
         }
 
         if (filterNonKindKeys.size > 0) {
-            subIdParts.push(Array.from(filterNonKindKeys).join(','));
+            subIdParts.push(Array.from(filterNonKindKeys).join(","));
         }
     }
 
@@ -133,10 +128,12 @@ export function filterFromId(id: string): NDKFilter {
 
         const filter: NDKFilter = {
             authors: [pubkey],
-            kinds: [parseInt(kind)]
-        }
+            kinds: [parseInt(kind)],
+        };
 
-        if (identifier) { filter["#d"] = [identifier]; }
+        if (identifier) {
+            filter["#d"] = [identifier];
+        }
 
         return filter;
     }
@@ -156,7 +153,9 @@ export function filterFromId(id: string): NDKFilter {
                     kinds: [decoded.data.kind],
                 };
         }
-    } catch (e) {}
+    } catch (e) {
+        // Empty
+    }
 
     return { ids: [id] };
 }

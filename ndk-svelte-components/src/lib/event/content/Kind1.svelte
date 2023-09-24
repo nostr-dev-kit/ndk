@@ -1,11 +1,11 @@
 <script lang="ts">
-    import { without } from 'ramda';
+    // import { without } from 'ramda';
     import {
         parseContent,
-        getLinks,
+        // getLinks,
         truncateContent,
         LINK,
-        INVOICE,
+        // INVOICE,
         NEWLINE,
         TOPIC
     } from '../../utils/notes.js';
@@ -28,8 +28,8 @@
 
     const fullContent = parseContent({ ...event, content });
     const shortContent = truncateContent(fullContent, { maxLength, showEntire, showMedia });
-    const links = getLinks(shortContent);
-    const extraLinks = without(links, getLinks(fullContent));
+    // const links = getLinks(shortContent);
+    // const extraLinks = without(links, getLinks(fullContent));
 
     export const isNewline = (i: number) => !shortContent[i] || shortContent[i].type === NEWLINE;
 

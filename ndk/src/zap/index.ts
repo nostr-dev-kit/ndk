@@ -1,10 +1,11 @@
 import { bech32 } from "@scure/base";
 import EventEmitter from "eventemitter3";
 import { nip57 } from "nostr-tools";
+
 import type { NostrEvent } from "../events/index.js";
-import { NDKEvent, NDKTag } from "../events/index.js";
-import { NDKUser } from "../user/index.js";
-import { NDK } from "../ndk/index.js";
+import { NDKEvent, type NDKTag } from "../events/index.js";
+import type { NDK } from "../ndk/index.js";
+import type { NDKUser } from "../user/index.js";
 
 const DEFAULT_RELAYS = [
     "wss://nos.lol",
@@ -21,9 +22,7 @@ interface ZapConstructorParams {
     zappedUser?: NDKUser;
 }
 
-type ZapConstructorParamsRequired = Required<
-    Pick<ZapConstructorParams, "zappedEvent">
-> &
+type ZapConstructorParamsRequired = Required<Pick<ZapConstructorParams, "zappedEvent">> &
     Pick<ZapConstructorParams, "zappedUser"> &
     ZapConstructorParams;
 
@@ -38,8 +37,7 @@ export default class Zap extends EventEmitter {
         this.zappedEvent = args.zappedEvent;
 
         this.zappedUser =
-            args.zappedUser ||
-            this.ndk.getUser({ hexpubkey: this.zappedEvent.pubkey });
+            args.zappedUser || this.ndk.getUser({ hexpubkey: this.zappedEvent.pubkey });
     }
 
     public async getZapEndpoint(): Promise<string | undefined> {
@@ -58,7 +56,7 @@ export default class Zap extends EventEmitter {
             lud16 = (this.zappedUser.profile || {}).lud16;
         }
 
-        if (lud16 && !lud16.startsWith('LNURL')) {
+        if (lud16 && !lud16.startsWith("LNURL")) {
             const [name, domain] = lud16.split("@");
             zapEndpoint = `https://${domain}/.well-known/lnurlp/${name}`;
         } else if (lud06) {
@@ -124,10 +122,7 @@ export default class Zap extends EventEmitter {
 
         zapRequest.tags.push(["lnurl", zapEndpoint]);
 
-        const zapRequestEvent = new NDKEvent(
-            this.ndk,
-            zapRequest as NostrEvent
-        );
+        const zapRequestEvent = new NDKEvent(this.ndk, zapRequest as NostrEvent);
         if (extraTags) {
             zapRequestEvent.tags = zapRequestEvent.tags.concat(extraTags);
         }

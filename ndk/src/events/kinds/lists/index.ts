@@ -1,8 +1,8 @@
-import { NDK } from "../../../ndk/index.js";
+import type { NDK } from "../../../ndk/index.js";
 import { NDKRelay } from "../../../relay/index.js";
 import { NDKUser } from "../../../user/index.js";
 import { NDKEvent } from "../../index.js";
-import { NDKTag, NostrEvent } from "../../index.js";
+import type { NDKTag, NostrEvent } from "../../index.js";
 import { NDKKind } from "../index.js";
 
 export type NDKListItem = NDKRelay | NDKUser | NDKEvent;
@@ -98,18 +98,14 @@ export class NDKList extends NDKEvent {
     }
 
     private isEncryptedTagsCacheValid(): boolean {
-        return !!(
-            this._encryptedTags &&
-            this.encryptedTagsLength === this.content.length
-        );
+        return !!(this._encryptedTags && this.encryptedTagsLength === this.content.length);
     }
 
     /**
      * Returns the decrypted content of the list.
      */
     async encryptedTags(useCache = true): Promise<NDKTag[]> {
-        if (useCache && this.isEncryptedTagsCacheValid())
-            return this._encryptedTags!;
+        if (useCache && this.isEncryptedTagsCacheValid()) return this._encryptedTags!;
 
         if (!this.ndk) throw new Error("NDK instance not set");
         if (!this.ndk.signer) throw new Error("NDK signer not set");
@@ -119,10 +115,7 @@ export class NDKList extends NDKEvent {
         try {
             if (this.content.length > 0) {
                 try {
-                    const decryptedContent = await this.ndk.signer.decrypt(
-                        user,
-                        this.content
-                    );
+                    const decryptedContent = await this.ndk.signer.decrypt(user, this.content);
                     const a = JSON.parse(decryptedContent);
                     if (a && a[0]) {
                         this.encryptedTagsLength = this.content.length;

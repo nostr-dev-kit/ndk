@@ -1,4 +1,5 @@
-import { NDKUser, NostrEvent } from "../../index.js";
+import type { NostrEvent } from "../../index.js";
+import { NDKUser } from "../../index.js";
 import { NDKPrivateKeySigner } from "./index";
 
 describe("NDKPrivateKeySigner", () => {
@@ -9,16 +10,14 @@ describe("NDKPrivateKeySigner", () => {
     });
 
     it("creates a new NDKPrivateKeySigner instance with a provided private key", () => {
-        const privateKey =
-            "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff";
+        const privateKey = "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff";
         const signer = new NDKPrivateKeySigner(privateKey);
         expect(signer).toBeInstanceOf(NDKPrivateKeySigner);
         expect(signer.privateKey).toBe(privateKey);
     });
 
     it("returns a user instance with a public key corresponding to the private key", async () => {
-        const privateKey =
-            "e8eb7464168139c6ccb9111f768777f332fa1289dff11244ccfe89970ff776d4";
+        const privateKey = "e8eb7464168139c6ccb9111f768777f332fa1289dff11244ccfe89970ff776d4";
         const signer = new NDKPrivateKeySigner(privateKey);
         const user = await signer.user();
         expect(user).toBeInstanceOf(NDKUser);
@@ -28,8 +27,7 @@ describe("NDKPrivateKeySigner", () => {
     });
 
     it("signs a NostrEvent with the private key", async () => {
-        const privateKey =
-            "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff";
+        const privateKey = "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff";
         const signer = new NDKPrivateKeySigner(privateKey);
 
         const event: NostrEvent = {

@@ -1,4 +1,4 @@
-import { NDKEvent } from "../events/index.js";
+import type { NDKEvent } from "../events/index.js";
 
 /**
  * NDKUserProfile represents a user's kind 0 profile metadata
@@ -18,9 +18,7 @@ export type NDKUserProfile = {
     website?: string;
 };
 
-export function profileFromEvent(
-    event: NDKEvent,
-): NDKUserProfile {
+export function profileFromEvent(event: NDKEvent): NDKUserProfile {
     const profile: NDKUserProfile = {};
     const payload = JSON.parse(event.content);
 
@@ -31,8 +29,7 @@ export function profileFromEvent(
                 break;
             case "display_name":
             case "displayName":
-                profile.displayName =
-                    payload.displayName || payload.display_name;
+                profile.displayName = payload.displayName || payload.display_name;
                 break;
             case "image":
             case "picture":

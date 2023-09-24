@@ -10,14 +10,16 @@
         "jest": true
     },
     "rules": {
-        "@typescript-eslint/no-unused-vars": ["warn", { "args": "none" }], // No warnings for unused function arguments, which might be used in the future.
-        "no-constant-binary-expression": "error",
-        "semi": ["error", "always"]
+        "@typescript-eslint/no-unused-vars": ["warn", { "args": "none" }],
+        "semi": ["error", "always"],
+        "no-useless-escape": "warn",
+        "@typescript-eslint/consistent-type-imports": "error"
     },
     "globals": {
         "Buffer": true,
         "expect": true,
         "process": true,
         "test": true
-    }
+    },
+    "ignorePatterns": ["dist/", "node_modules/"]
 }

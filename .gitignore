@@ -7,7 +7,7 @@
 justfile
 package-lock.json
 **/*.js
-!jest.config.js
+!.eslintrc.js
 !svelte.config.js
 !tailwind.config.js
 !postcss.config.js

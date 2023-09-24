@@ -1,6 +1,7 @@
 import { nip19 } from "nostr-tools";
-import { EventPointer, ProfilePointer } from "nostr-tools/lib/nip19";
-import { NDKTag } from "./index.js";
+import type { EventPointer, ProfilePointer } from "nostr-tools/lib/nip19";
+
+import type { NDKTag } from "./index.js";
 
 export function generateContentTags(
     content: string,

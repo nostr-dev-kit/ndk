@@ -1,5 +1,6 @@
 import { nip19 } from "nostr-tools";
-import { NDKEvent } from "./index.js";
+
+import type { NDKEvent } from "./index.js";
 
 export function encode(this: NDKEvent) {
     if (this.isParamReplaceable()) {

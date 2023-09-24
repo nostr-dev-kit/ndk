@@ -1,8 +1,10 @@
 import EventEmitter from "eventemitter3";
-import { NDKSigner } from "..";
-import { NDKEvent, NostrEvent } from "../../events";
-import { NDK } from "../../ndk";
-import { NDKFilter, NDKSubscription } from "../../subscription";
+
+import type { NDKSigner } from "..";
+import type { NostrEvent } from "../../events";
+import { NDKEvent } from "../../events";
+import type { NDK } from "../../ndk";
+import type { NDKFilter, NDKSubscription } from "../../subscription";
 
 export interface NDKRpcRequest {
     id: string;
@@ -55,15 +57,10 @@ export class NDKNostrRpc extends EventEmitter {
         });
     }
 
-    public async parseEvent(
-        event: NDKEvent
-    ): Promise<NDKRpcRequest | NDKRpcResponse> {
+    public async parseEvent(event: NDKEvent): Promise<NDKRpcRequest | NDKRpcResponse> {
         const remoteUser = this.ndk.getUser({ hexpubkey: event.pubkey });
         remoteUser.ndk = this.ndk;
-        const decryptedContent = await this.signer.decrypt(
-            remoteUser,
-            event.content
-        );
+        const decryptedContent = await this.signer.decrypt(remoteUser, event.content);
         const parsedContent = JSON.parse(decryptedContent);
         const { id, method, params, result, error } = parsedContent;
 

@@ -1,8 +1,9 @@
-import debug from "debug";
+import type debug from "debug";
 import EventEmitter from "eventemitter3";
-import { NDKRelay, NDKRelayStatus, NDKRelayUrl } from "../index.js";
-import { NDK } from "../../ndk/index.js";
-import { NDKRelaySet } from "../sets/index.js";
+
+import type { NDK } from "../../ndk/index.js";
+import type { NDKRelayUrl } from "../index.js";
+import { NDKRelay, NDKRelayStatus } from "../index.js";
 
 export type NDKPoolStats = {
     total: number;
@@ -94,9 +95,7 @@ export class NDKPool extends EventEmitter {
             return;
         }
 
-        relay.on("notice", (relay, notice) =>
-            this.emit("notice", relay, notice)
-        );
+        relay.on("notice", (relay, notice) => this.emit("notice", relay, notice));
         relay.on("connect", () => this.handleRelayConnect(relayUrl));
         relay.on("disconnect", () => this.emit("relay:disconnect", relay));
         relay.on("flapping", () => this.handleFlapping(relay));
@@ -176,20 +175,15 @@ export class NDKPool extends EventEmitter {
         for (const relay of this.relays.values()) {
             if (timeoutMs) {
                 const timeoutPromise = new Promise<void>((_, reject) => {
-                    setTimeout(
-                        () => reject(`Timed out after ${timeoutMs}ms`),
-                        timeoutMs
-                    );
+                    setTimeout(() => reject(`Timed out after ${timeoutMs}ms`), timeoutMs);
                 });
 
                 promises.push(
-                    Promise.race([relay.connect(), timeoutPromise]).catch(
-                        (e) => {
-                            this.debug(
-                                `Failed to connect to relay ${relay.url}: ${e??"No reason specified"}`
-                            );
-                        }
-                    )
+                    Promise.race([relay.connect(), timeoutPromise]).catch((e) => {
+                        this.debug(
+                            `Failed to connect to relay ${relay.url}: ${e ?? "No reason specified"}`
+                        );
+                    })
                 );
             } else {
                 promises.push(relay.connect());
@@ -200,8 +194,7 @@ export class NDKPool extends EventEmitter {
         // in case some, but not all, relays were connected
         if (timeoutMs) {
             setTimeout(() => {
-                const allConnected =
-                    this.stats().connected === this.relays.size;
+                const allConnected = this.stats().connected === this.relays.size;
                 const someConnected = this.stats().connected > 0;
 
                 if (!allConnected && someConnected) {
@@ -228,7 +221,7 @@ export class NDKPool extends EventEmitter {
     private handleFlapping(relay: NDKRelay) {
         this.debug(`Relay ${relay.url} is flapping`);
 
-         // Increment the backoff time for this relay, starting with 5 seconds.
+        // Increment the backoff time for this relay, starting with 5 seconds.
         let currentBackoff = this.backoffTimes.get(relay.url) || 5000;
         currentBackoff = currentBackoff * 2;
         this.backoffTimes.set(relay.url, currentBackoff);

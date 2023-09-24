@@ -1,4 +1,4 @@
-import { NDKEvent } from "../index.js";
+import type { NDKEvent } from "../index.js";
 
 /**
  * Receives two events and returns the "correct" event to use.

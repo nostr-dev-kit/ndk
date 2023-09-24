@@ -1,6 +1,5 @@
-import { nip19 } from "nostr-tools";
-import { Hexpubkey, NDKUser } from "./index.js";
-import { NDKSubscription, NDKSubscriptionOptions } from "../subscription/index.js";
+import { type Hexpubkey, NDKUser } from "./index.js";
+import type { NDKSubscriptionOptions } from "../subscription/index.js";
 
 /**
  * @param outbox - Enables outbox data fetching for the returned users (if the NDK instance has outbox enabled)

@@ -1,7 +1,7 @@
 import { nip19 } from "nostr-tools";
-import { EventPointer } from "nostr-tools/lib/nip19.js";
+import type { EventPointer } from "nostr-tools/lib/nip19.js";
 import { NDKRelay } from "../relay/index.js";
-import { NDKFilter, NDKSubscription } from "./index.js";
+import type { NDKFilter, NDKSubscription } from "./index.js";
 
 /**
  * Checks if a subscription is fully guaranteed to have been filled.
@@ -152,7 +152,9 @@ export function filterFromId(id: string): NDKFilter {
                     kinds: [decoded.data.kind],
                 };
         }
-    } catch (e) {}
+    } catch (e) {
+        // Empty
+    }
 
     return { ids: [id] };
 }

@@ -1,3 +1,4 @@
 {
-    "extends": "@nostr-dev-kit/tsconfig/base.json"
+    "extends": "@nostr-dev-kit/tsconfig/base.json",
+    "rootDir": "."
 }

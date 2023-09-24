@@ -2,9 +2,9 @@ import { bech32 } from "@scure/base";
 import EventEmitter from "eventemitter3";
 import { nip57 } from "nostr-tools";
 import type { NostrEvent } from "../events/index.js";
-import { NDKEvent, NDKTag } from "../events/index.js";
-import { NDKUser } from "../user/index.js";
-import { NDK } from "../ndk/index.js";
+import { NDKEvent, type NDKTag } from "../events/index.js";
+import type { NDKUser } from "../user/index.js";
+import type { NDK } from "../ndk/index.js";
 
 const DEFAULT_RELAYS = [
     "wss://nos.lol",

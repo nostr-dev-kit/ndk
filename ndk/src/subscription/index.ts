@@ -1,14 +1,12 @@
 import EventEmitter from "eventemitter3";
-import { Sub, nip19 } from "nostr-tools";
-import { EventPointer } from "nostr-tools/lib/nip19";
-import { NDKEvent, NDKEventId } from "../events/index.js";
-import { NDKKind } from "../events/kinds/index.js";
-import { NDKRelay, NDKRelayUrl } from "../relay";
+import type { NDKEvent, NDKEventId } from "../events/index.js";
+import type { NDKKind } from "../events/kinds/index.js";
+import type { NDKRelay, NDKRelayUrl } from "../relay";
 import { calculateRelaySetsFromFilters } from "../relay/sets/calculate";
-import { NDKRelaySet } from "../relay/sets/index.js";
+import type { NDKRelaySet } from "../relay/sets/index.js";
 import { queryFullyFilled } from "./utils.js";
-import { NDK } from "../ndk/index.js";
-import { NDKPool } from "../relay/pool/index.js";
+import type { NDK } from "../ndk/index.js";
+import type { NDKPool } from "../relay/pool/index.js";
 
 export type NDKFilter<K extends number = NDKKind> = {
     ids?: string[];

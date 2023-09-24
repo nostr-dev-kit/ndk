@@ -1,8 +1,8 @@
-import { NDKEvent } from "../events/index.js";
-import { NDKRelay } from "../relay/index.js";
-import { NDKFilter, NDKSubscription } from "../subscription/index.js";
-import { Hexpubkey } from "../user/index.js";
-import { NDKUserProfile } from "../user/profile.js";
+import type { NDKEvent } from "../events/index.js";
+import type { NDKRelay } from "../relay/index.js";
+import type { NDKFilter, NDKSubscription } from "../subscription/index.js";
+import type { Hexpubkey } from "../user/index.js";
+import type { NDKUserProfile } from "../user/profile.js";
 
 export interface NDKCacheAdapter {
     /**

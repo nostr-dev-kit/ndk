@@ -1,5 +1,5 @@
 import { calculateGroupableId } from "./grouping.js";
-import { NDKFilter } from "./index.js";
+import type { NDKFilter } from "./index.js";
 
 describe("calculateGroupableId", () => {
     it("includes filters in the ID", () => {

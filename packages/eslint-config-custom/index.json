@@ -11,9 +11,9 @@
     },
     "rules": {
         "@typescript-eslint/no-unused-vars": ["warn", { "args": "none" }],
-        "no-constant-binary-expression": "error",
         "semi": ["error", "always"],
-        "no-useless-escape": "warn"
+        "no-useless-escape": "warn",
+        "@typescript-eslint/consistent-type-imports": "error"
     },
     "globals": {
         "Buffer": true,

@@ -1,14 +1,14 @@
 import { nip05, nip19 } from "nostr-tools";
-import { ProfilePointer } from "nostr-tools/lib/nip19.js";
-import { NDKEvent, NDKTag, NostrEvent } from "../events/index.js";
+import type { ProfilePointer } from "nostr-tools/lib/nip19.js";
+import { NDKEvent, type NDKTag, type NostrEvent } from "../events/index.js";
 import { NDKRelayList } from "../events/kinds/NDKRelayList.js";
 import { NDKKind } from "../events/kinds/index.js";
-import { NDK } from "../ndk/index.js";
-import { NDKRelay } from "../relay/index.js";
+import type { NDK } from "../ndk/index.js";
+import type { NDKRelay } from "../relay/index.js";
 import { NDKRelaySet } from "../relay/sets/index.js";
-import { NDKSubscriptionCacheUsage, NDKSubscriptionOptions } from "../subscription/index.js";
+import { NDKSubscriptionCacheUsage, type NDKSubscriptionOptions } from "../subscription/index.js";
 import { follows } from "./follows.js";
-import { NDKUserProfile, profileFromEvent } from "./profile.js";
+import { type NDKUserProfile, profileFromEvent } from "./profile.js";
 
 export type Hexpubkey = string;
 

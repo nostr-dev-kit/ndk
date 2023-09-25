@@ -1,52 +1,52 @@
 {
-    "name": "@nostr-dev-kit/ndk-cache-dexie",
-    "version": "1.2.0",
-    "description": "NDK Dexie Cache Adapter",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/nostr-dev-kit/ndk-cache-dexie/issues"
-    },
-    "homepage": "https://github.com/nostr-dev-kit/ndk-cache-dexie#readme",
-    "types": "./dist/index.d.ts",
-    "main": "./dist/index.js",
-    "module": "./dist/index.mjs",
-    "exports": {
-        "import": "./dist/index.mjs",
-        "require": "./dist/index.js"
-    },
-    "files": [
-        "dist",
-        "README.md"
-    ],
-    "scripts": {
-        "dev": "pnpm build --watch",
-        "build": "tsup src/index.ts --format cjs,esm --dts",
-        "clean": "rm -rf dist",
-        "lint": "prettier --check . && eslint .",
-        "format": "prettier --write ."
-    },
-    "keywords": [
-        "nostr",
-        "dexie",
-        "cache"
-    ],
-    "authors": [
-        "pablof7z",
-        "erskingardner"
-    ],
-    "devDependencies": {
-        "@nostr-dev-kit/tsconfig": "workspace:*",
-        "@nostr-dev-kit/eslint-config-custom": "workspace:*",
-        "@types/debug": "^4.1.8",
-        "@types/node": "^20.5.0",
-        "prettier": "^3.0.1",
-        "tsup": "^7.2.0"
-    },
-    "dependencies": {
-        "@nostr-dev-kit/ndk": "workspace:*",
-        "debug": "^4.3.4",
-        "dexie": "^3.2.4",
-        "nostr-tools": "^1.14.0",
-        "typescript-lru-cache": "^2.0.0"
-    }
+  "name": "@nostr-dev-kit/ndk-cache-dexie",
+  "version": "1.2.3",
+  "description": "NDK Dexie Cache Adapter",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nostr-dev-kit/ndk-cache-dexie/issues"
+  },
+  "homepage": "https://github.com/nostr-dev-kit/ndk-cache-dexie#readme",
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "exports": {
+    "import": "./dist/index.mjs",
+    "require": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "dev": "pnpm build --watch",
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "clean": "rm -rf dist",
+    "lint": "prettier --check . && eslint .",
+    "format": "prettier --write ."
+  },
+  "keywords": [
+    "nostr",
+    "dexie",
+    "cache"
+  ],
+  "authors": [
+    "pablof7z",
+    "erskingardner"
+  ],
+  "devDependencies": {
+    "@nostr-dev-kit/tsconfig": "workspace:*",
+    "@nostr-dev-kit/eslint-config-custom": "workspace:*",
+    "@types/debug": "^4.1.8",
+    "@types/node": "^20.5.0",
+    "prettier": "^3.0.1",
+    "tsup": "^7.2.0"
+  },
+  "dependencies": {
+    "@nostr-dev-kit/ndk": "workspace:*",
+    "debug": "^4.3.4",
+    "dexie": "^3.2.4",
+    "nostr-tools": "^1.14.0",
+    "typescript-lru-cache": "^2.0.0"
+  }
 }

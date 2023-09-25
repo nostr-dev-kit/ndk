@@ -9,7 +9,7 @@ import type { NDKRelay } from "../relay/index.js";
 import { NDKRelaySet } from "../relay/sets/index.js";
 import { NDKSubscriptionCacheUsage, type NDKSubscriptionOptions } from "../subscription/index.js";
 import { follows } from "./follows.js";
-import { type NDKUserProfile, profileFromEvent } from "./profile.js";
+import { type NDKUserProfile, profileFromEvent, serializeProfile } from "./profile.js";
 
 export type Hexpubkey = string;
 
@@ -209,12 +209,13 @@ export class NDKUser {
      */
     public async publish() {
         if (!this.ndk) throw new Error("No NDK instance found");
+        if (!this.profile) throw new Error("No profile available");
 
         this.ndk.assertSigner();
 
         const event = new NDKEvent(this.ndk, {
             kind: 0,
-            content: JSON.stringify(this.profile),
+            content: serializeProfile(this.profile),
         } as NostrEvent);
         await event.publish();
     }

@@ -210,7 +210,7 @@ export class NDKUser {
                 const readRelays = new Set<string>();
                 const writeRelays = new Set<string>();
 
-                for (const [key, config ] of Object.entries(content)) {
+                for (const [key, config] of Object.entries(content)) {
                     if (!config) {
                         readRelays.add(key);
                         writeRelays.add(key);

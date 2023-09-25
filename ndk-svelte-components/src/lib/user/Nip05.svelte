@@ -53,11 +53,12 @@
             user.fetchProfile()
                 .then(async () => {
                     userProfile = user!.profile;
-                    if (!userProfile?.nip05) reject;
-                    // we check for the presence of a NIP-05 one line above
-                    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-                    nip05Valid = await user!.validateNip05(userProfile?.nip05!);
-                    resolve(userProfile!);
+                    if (!userProfile || !userProfile?.nip05) {
+                        reject;
+                    } else {
+                        nip05Valid = await user!.validateNip05(userProfile.nip05);
+                        resolve(userProfile);
+                    }
                 })
                 .catch(() => {
                     reject;

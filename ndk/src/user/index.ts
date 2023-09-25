@@ -193,6 +193,41 @@ export class NDKUser {
 
         if (event) return NDKRelayList.from(event);
 
+        return await this.relayListFromKind3();
+    }
+
+    private async relayListFromKind3(): Promise<NDKRelayList | undefined> {
+        if (!this.ndk) throw new Error("NDK not set");
+
+        const followList = await this.ndk.fetchEvent({
+            kinds: [3],
+            authors: [this.hexpubkey],
+        });
+        if (followList) {
+            try {
+                const content = JSON.parse(followList.content);
+                const relayList = new NDKRelayList(this.ndk);
+                const readRelays = new Set<string>();
+                const writeRelays = new Set<string>();
+
+                for (const [key, config ] of Object.entries(content)) {
+                    if (!config) {
+                        readRelays.add(key);
+                        writeRelays.add(key);
+                    } else {
+                        const relayConfig: { read?: boolean; write?: boolean } = config;
+                        if (relayConfig.write) writeRelays.add(key);
+                        if (relayConfig.read) readRelays.add(key);
+                    }
+                }
+
+                relayList.readRelayUrls = Array.from(readRelays);
+                relayList.writeRelayUrls = Array.from(writeRelays);
+
+                return relayList;
+            } catch (e) {}
+        }
+
         return undefined;
     }
 

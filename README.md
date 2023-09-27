@@ -231,7 +231,7 @@ When you request information about a user (i.e. explicitly using a user's pubkey
 automatically query the user's outbox relays and subsequent queries will favour using those relays for queries with that
 user's pubkey.
 
-[OUTBOX.md](./OUTBOX.md) contains more information about the outbox model. _WIP_
+[OUTBOX.md](./ndk/OUTBOX.md) contains more information about the outbox model. _WIP_
 
 ## Intelligent relay selection
 

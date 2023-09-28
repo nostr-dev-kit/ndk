@@ -24,8 +24,8 @@ export class NDKRelayPublisher {
             return new Promise<boolean>((resolve, reject) => {
                 try {
                     this.publishEvent(event, timeoutMs)
-                        .then(result => resolve(result))
-                        .catch(err => reject(err));
+                        .then((result) => resolve(result))
+                        .catch((err) => reject(err));
                 } catch (err) {
                     reject(err);
                 }
@@ -38,18 +38,15 @@ export class NDKRelayPublisher {
 
         const onConnectHandler = () => {
             publishWhenConnected()
-                .then(result => connectResolve(result))
-                .catch(err => connectReject(err));
+                .then((result) => connectResolve(result))
+                .catch((err) => connectReject(err));
         };
 
         let connectResolve: (value: boolean | PromiseLike<boolean>) => void;
         let connectReject: (reason?: any) => void;
 
         if (this.ndkRelay.status === NDKRelayStatus.CONNECTED) {
-            return Promise.race([
-                publishWhenConnected(),
-                timeoutPromise
-            ]);
+            return Promise.race([publishWhenConnected(), timeoutPromise]);
         } else {
             return Promise.race([
                 new Promise<boolean>((resolve, reject) => {
@@ -57,7 +54,7 @@ export class NDKRelayPublisher {
                     connectReject = reject;
                     this.ndkRelay.once("connect", onConnectHandler);
                 }),
-                timeoutPromise
+                timeoutPromise,
             ]).finally(() => {
                 // Remove the event listener to avoid memory leaks
                 this.ndkRelay.removeListener("connect", onConnectHandler);

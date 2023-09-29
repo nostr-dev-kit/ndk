@@ -8,7 +8,7 @@
 </script>
 
 {#each list.items as tag (tag[1])}
-    <div class='list-item'>
+    <div class='list-item {$$props.class??""}'>
         <EventCard {ndk} id={tag[1]} />
     </div>
 {/each}

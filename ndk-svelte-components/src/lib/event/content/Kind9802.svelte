@@ -12,7 +12,7 @@
     context = context?.replace(event?.content as string, `<mark>${event?.content}</mark>`);
 </script>
 
-<div>
+<div class="{$$props.class??""}">
     <blockquote class="highlight--blockquote">
         <!-- eslint-disable-next-line svelte/no-at-html-tags -->
         {@html sanitizeHtml(context || "")}

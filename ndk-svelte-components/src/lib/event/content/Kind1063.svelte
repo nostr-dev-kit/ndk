@@ -30,7 +30,7 @@
     const dim: string = dimTags.length > 0 ? dimTags[0][1] : "";
 </script>
 
-<div class="kind1063--content">
+<div class="kind1063--content {$$props.class??""}">
     <h3>File metadata</h3>
     <div><span class="kind1063-label">Description:</span> {event.content}</div>
     <div>

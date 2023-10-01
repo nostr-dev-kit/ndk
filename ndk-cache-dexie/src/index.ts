@@ -1,4 +1,4 @@
-import { NDKEvent, NDKRelay } from "@nostr-dev-kit/ndk";
+import { NDKEvent, NDKRelay, profileFromEvent } from "@nostr-dev-kit/ndk";
 import type {
     Hexpubkey,
     NDKCacheAdapter,
@@ -41,7 +41,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
     public debug: debug.Debugger;
     private expirationTime;
     readonly locking;
-    private profiles?: LRUCache<Hexpubkey, NDKUserProfile>;
+    public profiles?: LRUCache<Hexpubkey, NDKUserProfile>;
     private dirtyProfiles: Set<Hexpubkey> = new Set();
 
     constructor(opts: NDKCacheAdapterDexieOptions = {}) {
@@ -109,8 +109,12 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
     }
 
     public async setEvent(event: NDKEvent, _filter: NDKFilter, relay?: NDKRelay): Promise<void> {
-        // Kind 0s should be stored via saveProfile
-        if (event.kind !== 0) {
+        if (event.kind === 0) {
+            if (!this.profiles) return;
+
+            const profile: NDKUserProfile = profileFromEvent(event);
+            this.profiles.set(event.pubkey, profile);
+        } else {
             let addEvent = true;
 
             if (event.isParamReplaceable()) {

@@ -1,6 +1,6 @@
 {
   "name": "@nostr-dev-kit/ndk-cache-dexie",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "description": "NDK Dexie Cache Adapter",
   "license": "MIT",
   "bugs": {

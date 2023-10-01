@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk-cache-dexie
 
+## 1.3.2
+
+### Patch Changes
+
+-   Add kind:0 to LRU cache regardless of how they are fetched
+
 ## 1.3.1
 
 ### Patch Changes

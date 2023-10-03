@@ -22,22 +22,18 @@ interface ZapConstructorParams {
     zappedUser?: NDKUser;
 }
 
-type ZapConstructorParamsRequired = Required<Pick<ZapConstructorParams, "zappedEvent">> &
-    Pick<ZapConstructorParams, "zappedUser"> &
-    ZapConstructorParams;
-
 export default class Zap extends EventEmitter {
     public ndk?: NDK;
     public zappedEvent?: NDKEvent;
     public zappedUser: NDKUser;
 
-    public constructor(args: ZapConstructorParamsRequired) {
+    public constructor(args: ZapConstructorParams) {
         super();
         this.ndk = args.ndk;
         this.zappedEvent = args.zappedEvent;
 
         this.zappedUser =
-            args.zappedUser || this.ndk.getUser({ hexpubkey: this.zappedEvent.pubkey });
+            args.zappedUser || this.ndk.getUser({ hexpubkey: this.zappedEvent?.pubkey });
     }
 
     public async getZapEndpoint(): Promise<string | undefined> {

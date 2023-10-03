@@ -375,6 +375,7 @@ export class NDKEvent extends EventEmitter {
      * @param amount The amount to zap in millisatoshis
      * @param comment A comment to add to the zap request
      * @param extraTags Extra tags to add to the zap request
+     * @param recipient The zap recipient (optional for events)
      */
     async zap(
         amount: number,
@@ -393,8 +394,6 @@ export class NDKEvent extends EventEmitter {
         });
 
         const paymentRequest = await zap.createZapRequest(amount, comment, extraTags);
-
-        // await zap.publish(amount);
         return paymentRequest;
     }
 

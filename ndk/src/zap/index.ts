@@ -96,7 +96,7 @@ export default class Zap extends EventEmitter {
             throw new Error("No zap endpoint found");
         }
 
-        if (!this.zappedEvent) throw new Error("No zapped event found");
+        if (!this.zappedEvent && !this.zappedUser) throw new Error("No zapped event or user found");
 
         const zapRequest = nip57.makeZapRequest({
             profile: this.zappedUser.hexpubkey,

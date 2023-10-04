@@ -49,7 +49,40 @@ export class NDKList extends NDKEvent {
     }
 
     /**
+     * Returns the title of the list. Falls back on fetching the name tag value.
+     */
+    get title(): string | undefined {
+        const titleTag = this.tagValue("title") || this.tagValue("name");
+        if (this.kind === NDKKind.Contacts && !titleTag) {
+            return "Contacts";
+        } else if (this.kind === NDKKind.MuteList && !titleTag) {
+            return "Mute";
+        } else if (this.kind === NDKKind.PinList && !titleTag) {
+            return "Pin";
+        } else if (this.kind === NDKKind.RelayList && !titleTag) {
+            return "Relay Metadata";
+        } else {
+            return titleTag ?? this.tagValue("d");
+        }
+    }
+
+    /**
+     * Sets the title of the list.
+     */
+    set title(title: string | undefined) {
+        this.removeTag("title");
+        this.removeTag("name");
+
+        if (title) {
+            this.tags.push(["title", title]);
+        } else {
+            throw new Error("Title cannot be empty");
+        }
+    }
+
+    /**
      * Returns the name of the list.
+     * @deprecated Please use "title" instead.
      */
     get name(): string | undefined {
         const nameTag = this.tagValue("name");
@@ -68,6 +101,7 @@ export class NDKList extends NDKEvent {
 
     /**
      * Sets the name of the list.
+     * @deprecated Please use "title" instead.
      */
     set name(name: string | undefined) {
         this.removeTag("name");

@@ -129,9 +129,9 @@ export class NDKNostrRpc extends EventEmitter {
 
         event.content = await this.signer.encrypt(remoteUser, event.content);
         await event.sign(this.signer);
-        this.debug("sending request to", remotePubkey);
+        this.debug(`sending ${method} request to`, remotePubkey);
 
-        await this.ndk.publish(event);
+        await event.publish();
 
         return promise;
     }

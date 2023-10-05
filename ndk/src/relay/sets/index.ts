@@ -73,10 +73,12 @@ export class NDKRelaySet {
                         resolve();
                     })
                     .catch((err) => {
-                        this.debug("error publishing to relay", {
-                            relay: relay.url,
-                            err,
-                        });
+                        if (!isEphemeral) {
+                            this.debug("error publishing to relay", {
+                                relay: relay.url,
+                                err,
+                            });
+                        }
                         resolve();
                     });
             });

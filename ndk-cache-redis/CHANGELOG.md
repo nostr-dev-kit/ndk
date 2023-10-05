@@ -1,5 +1,12 @@
 # @nostr-dev-kit/ndk-cache-redis
 
+## 1.8.3
+
+### Patch Changes
+
+-   Updated dependencies [b3561af]
+    -   @nostr-dev-kit/ndk@1.3.2
+
 ## 1.8.2
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk
 
+## 1.3.2
+
+### Patch Changes
+
+-   b3561af: Don't wait for OK on ephemeral events
+
 ## 1.3.1
 
 ### Patch Changes

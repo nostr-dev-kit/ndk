@@ -61,6 +61,7 @@ export class NDKRelaySet {
      */
     public async publish(event: NDKEvent, timeoutMs?: number): Promise<Set<NDKRelay>> {
         const publishedToRelays: Set<NDKRelay> = new Set();
+        const isEphemeral = event.isEphemeral();
 
         // go through each relay and publish the event
         const promises: Promise<void>[] = Array.from(this.relays).map((relay: NDKRelay) => {
@@ -84,7 +85,11 @@ export class NDKRelaySet {
         await Promise.all(promises);
 
         if (publishedToRelays.size === 0) {
-            throw new Error("No relay was able to receive the event");
+            // Ephemeral events are not acknowledged by the relay, so we don't
+            // throw an error if no relay was able to receive the event.
+            if (!isEphemeral) {
+                throw new Error("No relay was able to receive the event");
+            }
         }
 
         return publishedToRelays;

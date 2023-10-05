@@ -11,7 +11,7 @@ import type { NDKFilter } from "../subscription/index.js";
 import type { NDKUser } from "../user/index.js";
 import Zap from "../zap/index.js";
 import { generateContentTags } from "./content-tagger.js";
-import { isParamReplaceable, isReplaceable } from "./kind.js";
+import { isEphemeral, isParamReplaceable, isReplaceable } from "./kind.js";
 import { NDKKind } from "./kinds/index.js";
 import { decrypt, encrypt } from "./nip04.js";
 import { encode } from "./nip19.js";
@@ -166,6 +166,7 @@ export class NDKEvent extends EventEmitter {
     }
 
     public isReplaceable = isReplaceable.bind(this);
+    public isEphemeral = isEphemeral.bind(this);
     public isParamReplaceable = isParamReplaceable.bind(this);
 
     /**

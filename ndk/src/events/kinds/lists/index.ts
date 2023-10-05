@@ -101,13 +101,13 @@ export class NDKList extends NDKEvent {
 
     /**
      * Sets the name of the list.
-     * @deprecated Please use "title" instead.
+     * @deprecated Please use "title" instead. This method will use the `title` tag instead.
      */
     set name(name: string | undefined) {
         this.removeTag("name");
 
         if (name) {
-            this.tags.push(["name", name]);
+            this.tags.push(["title", name]);
         } else {
             throw new Error("Name cannot be empty");
         }

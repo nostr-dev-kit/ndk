@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk
 
+## 1.4.0
+
+### Minor Changes
+
+-   add hashtag support to content tagger
+
 ## 1.3.2
 
 ### Patch Changes

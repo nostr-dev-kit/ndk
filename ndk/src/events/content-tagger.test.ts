@@ -71,4 +71,38 @@ describe("generateContentTags", () => {
             ["e", "8c9093d06a21a5b738e9d21d907334444e7ea12258c21da333e0fc265cf92a8b"],
         ]);
     });
+
+    it("finds and store #tags in the tags array", () => {
+        const content = "This is a sample content with #tag1 and #tag2.";
+        const tags: NDKTag[] = [];
+
+        const { content: processedContent, tags: processedTags } = generateContentTags(
+            content,
+            tags
+        );
+
+        expect(processedContent).toEqual("This is a sample content with #tag1 and #tag2.");
+        expect(processedTags.length).toEqual(2);
+        expect(processedTags).toEqual([
+            ["t", "tag1"],
+            ["t", "tag2"],
+        ]);
+    });
+
+    it("handles mixed types of tags", () => {
+        const content = "This is a sample content with #tag1 and @npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft.";
+        const tags: NDKTag[] = [];
+
+        const { content: processedContent, tags: processedTags } = generateContentTags(
+            content,
+            tags
+        );
+
+        expect(processedContent).toEqual("This is a sample content with #tag1 and nostr:npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft.");
+        expect(processedTags.length).toEqual(2);
+        expect(processedTags).toEqual([
+            ["p", "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"],
+            ["t", "tag1"],
+        ]);
+    });
 });

@@ -4,6 +4,13 @@
 
 ### Patch Changes
 
+-   Updated dependencies
+    -   @nostr-dev-kit/ndk@1.4.0
+
+## 1.3.3
+
+### Patch Changes
+
 -   Updated dependencies [b3561af]
     -   @nostr-dev-kit/ndk@1.3.2
 

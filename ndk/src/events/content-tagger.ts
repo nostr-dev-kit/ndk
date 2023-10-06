@@ -8,6 +8,7 @@ export function generateContentTags(
     tags: NDKTag[] = []
 ): { content: string; tags: NDKTag[] } {
     const tagRegex = /(@|nostr:)(npub|nprofile|note|nevent)[a-zA-Z0-9]+/g;
+    const hashtagRegex = /#(\w+)/g;
 
     content = content.replace(tagRegex, (tag) => {
         try {
@@ -40,6 +41,14 @@ export function generateContentTags(
         } catch (error) {
             return tag;
         }
+    });
+
+    content = content.replace(hashtagRegex, (tag, word) => {
+        const t: NDKTag = ["t", word];
+        if (!tags.find((t2) => t2[0] === t[0] && t2[1] === t[1])) {
+            tags.push(t);
+        }
+        return tag; // keep the original tag in the content
     });
 
     return { content, tags };

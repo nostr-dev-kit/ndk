@@ -231,12 +231,21 @@ export class NDKUser {
         return undefined;
     }
 
+    /** @deprecated Use referenceTags instead. */
     /**
      * Get the tag that can be used to reference this user in an event
      * @returns {NDKTag} an NDKTag
      */
     public tagReference(): NDKTag {
         return ["p", this.hexpubkey];
+    }
+
+    /**
+     * Get the tags that can be used to reference this user in an event
+     * @returns {NDKTag[]} an array of NDKTag
+     */
+    public referenceTags(): NDKTag[] {
+        return [["p", this.hexpubkey]];
     }
 
     /**

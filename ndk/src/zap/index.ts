@@ -114,10 +114,8 @@ export default class Zap extends EventEmitter {
 
         // add the event tag if it exists; this supports both 'e' and 'a' tags
         if (this.zappedEvent) {
-            const tag = this.zappedEvent.tagReference();
-            if (tag) {
-                zapRequest.tags.push(tag);
-            }
+            const tags = this.zappedEvent.referenceTags();
+            zapRequest.tags.push(...tags);
         }
 
         zapRequest.tags.push(["lnurl", zapEndpoint]);

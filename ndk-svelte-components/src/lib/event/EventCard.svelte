@@ -36,7 +36,7 @@
 </script>
 
 {#await eventPromise then}
-    <div class="event-card">
+    <div class="event-card {$$props.class??""}">
         <div class="event-card--header">
             <div class="event-card--header--author">
                 <Avatar

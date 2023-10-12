@@ -6,6 +6,7 @@ import type { NostrEvent } from "../events/index.js";
 import { NDKEvent, type NDKTag } from "../events/index.js";
 import type { NDK } from "../ndk/index.js";
 import type { NDKUser } from "../user/index.js";
+import { NDKSigner } from "../signers/index.js";
 
 const DEFAULT_RELAYS = [
     "wss://nos.lol",
@@ -92,7 +93,8 @@ export default class Zap extends EventEmitter {
         amount: number, // amount to zap in millisatoshis
         comment?: string,
         extraTags?: NDKTag[],
-        relays?: string[]
+        relays?: string[],
+        signer?: NDKSigner
     ): Promise<string | null> {
         const zapEndpoint = await this.getZapEndpoint();
 
@@ -127,7 +129,7 @@ export default class Zap extends EventEmitter {
             zapRequestEvent.tags = zapRequestEvent.tags.concat(extraTags);
         }
 
-        await zapRequestEvent.sign();
+        await zapRequestEvent.sign(signer);
         const zapRequestNostrEvent = await zapRequestEvent.toNostrEvent();
 
         const response = await fetch(

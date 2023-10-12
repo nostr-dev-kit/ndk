@@ -383,19 +383,24 @@ export class NDKEvent extends EventEmitter {
         amount: number,
         comment?: string,
         extraTags?: NDKTag[],
-        recipient?: NDKUser
+        recipient?: NDKUser,
+        signer?: NDKSigner
     ): Promise<string | null> {
         if (!this.ndk) throw new Error("No NDK instance found");
 
-        this.ndk.assertSigner();
+        if (!signer) {
+            this.ndk.assertSigner();
+        }
 
         const zap = new Zap({
             ndk: this.ndk,
             zappedEvent: this,
-            zappedUser: recipient,
+            zappedUser: recipient
         });
 
-        const paymentRequest = await zap.createZapRequest(amount, comment, extraTags);
+        const relays = Array.from(this.ndk.pool.relays.keys());
+
+        const paymentRequest = await zap.createZapRequest(amount, comment, extraTags, relays, signer);
 
         // await zap.publish(amount);
         return paymentRequest;

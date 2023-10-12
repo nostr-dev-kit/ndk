@@ -221,6 +221,8 @@ export class NDKEvent extends EventEmitter {
 
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             signer = this.ndk!.signer!;
+        } else {
+            this.author = await signer.user();
         }
 
         await this.generateTags();

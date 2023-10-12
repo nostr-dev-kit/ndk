@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk
 
+## 1.4.1
+
+### Patch Changes
+
+-   Automatically fetch main users relays and connect to them
+
 ## 1.4.0
 
 ### Minor Changes

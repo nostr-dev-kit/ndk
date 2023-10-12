@@ -244,6 +244,9 @@ importers:
       '@nostr-dev-kit/eslint-config-custom':
         specifier: workspace:*
         version: link:../packages/eslint-config-custom
+      '@nostr-dev-kit/ndk-svelte':
+        specifier: workspace:*
+        version: link:../ndk-svelte
       '@nostr-dev-kit/tailwind-config':
         specifier: workspace:*
         version: link:../packages/tailwind-config

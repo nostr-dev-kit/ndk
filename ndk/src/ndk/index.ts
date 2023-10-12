@@ -5,7 +5,7 @@ import type { NDKCacheAdapter } from "../cache/index.js";
 import dedupEvent from "../events/dedup.js";
 import type { NDKEvent } from "../events/index.js";
 import { OutboxTracker } from "../outbox/tracker.js";
-import type { NDKRelay, NDKRelayUrl } from "../relay/index.js";
+import { NDKRelay, NDKRelayUrl } from "../relay/index.js";
 import { NDKPool } from "../relay/pool/index.js";
 import { NDKRelaySet } from "../relay/sets/index.js";
 import { correctRelaySet } from "../relay/sets/utils.js";
@@ -43,6 +43,14 @@ export interface NDKConstructorParams {
     enableOutboxModel?: boolean;
 
     /**
+     * Auto-connect to main user's relays. The "main" user is determined
+     * by the presence of a signer. Upon connection to the explicit relays,
+     * the user's relays will be fetched and connected to if this is set to true.
+     * @default true
+     */
+    autoConnectUserRelays?: boolean;
+
+    /**
      * Signer to use for signing events by default
      */
     signer?: NDKSigner;
@@ -73,11 +81,14 @@ export class NDK extends EventEmitter {
     public explicitRelayUrls?: NDKRelayUrl[];
     public pool: NDKPool;
     public outboxPool?: NDKPool;
-    public signer?: NDKSigner;
+    private _signer?: NDKSigner;
+    private _activeUser?: NDKUser;
     public cacheAdapter?: NDKCacheAdapter;
     public debug: debug.Debugger;
     public devWriteRelaySet?: NDKRelaySet;
     public outboxTracker?: OutboxTracker;
+
+    private autoConnectUserRelays = true;
 
     public constructor(opts: NDKConstructorParams = {}) {
         super();
@@ -87,6 +98,8 @@ export class NDK extends EventEmitter {
         this.pool = new NDKPool(opts.explicitRelayUrls || [], opts.blacklistRelayUrls, this);
 
         this.debug(`Starting with explicit relays: ${JSON.stringify(this.explicitRelayUrls)}`);
+
+        this.autoConnectUserRelays = opts.autoConnectUserRelays ?? true;
 
         if (opts.enableOutboxModel) {
             this.outboxPool = new NDKPool(
@@ -109,6 +122,66 @@ export class NDK extends EventEmitter {
 
     public toJSON(): string {
         return { relayCount: this.pool.relays.size }.toString();
+    }
+
+    public get activeUser(): NDKUser | undefined {
+        return this._activeUser;
+    }
+
+    public set activeUser(user: NDKUser | undefined) {
+        const differentUser = this._activeUser !== user;
+
+        this._activeUser = user;
+
+        if (
+            this.autoConnectUserRelays &&
+            user && differentUser
+        ) {
+            const connectToUserRelays = async (user: NDKUser) => {
+                const relayList = await user.relayList();
+
+                if (!relayList) {
+                    this.debug("No relay list found for user", { npub: user.npub });
+                    return;
+                }
+
+                this.debug("Connecting to user relays", { npub: user.npub, relays: relayList.relays });
+                for (const url of relayList.relays) {
+                    let relay = this.pool.relays.get(url);
+                    if (!relay) {
+                        relay = new NDKRelay(url);
+                        this.pool.addRelay(relay);
+                    }
+                }
+            }
+
+            const pool = this.outboxPool || this.pool;
+
+            if (pool.connectedRelays.length > 0) {
+                connectToUserRelays(user);
+            } else {
+                this.debug("Waiting for connection to main relays");
+                pool.once("relay:connect", (relay: NDKRelay) => {
+                    this.debug("New relay came online", relay);
+                    connectToUserRelays(user);
+                });
+            }
+        }
+    }
+
+    public get signer(): NDKSigner | undefined {
+        return this._signer;
+    }
+
+    public set signer(newSigner: NDKSigner | undefined) {
+        this._signer = newSigner;
+
+        this.debug(`setting signer`, this.autoConnectUserRelays);
+
+        newSigner?.user().then((user) => {
+            user.ndk = this;
+            this.activeUser = user;
+        });
     }
 
     /**

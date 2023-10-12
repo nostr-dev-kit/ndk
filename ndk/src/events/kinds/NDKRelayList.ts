@@ -8,8 +8,6 @@ const READ_MARKER = "read";
 const WRITE_MARKER = "write";
 
 export class NDKRelayList extends NDKEvent {
-    public relays: Set<NDKRelayUrl> = new Set();
-
     constructor(ndk?: NDK, rawEvent?: NostrEvent) {
         super(ndk, rawEvent);
         this.kind ??= NDKKind.RelayList;
@@ -48,10 +46,14 @@ export class NDKRelayList extends NDKEvent {
             .filter((tag) => !tag[2])
             .map((tag) => tag[1]);
     }
-
     set bothRelayUrls(relays: NDKRelayUrl[]) {
         for (const relay of relays) {
             this.tags.push(["r", relay]);
         }
+    }
+
+    get relays(): NDKRelayUrl[] {
+        return this.getMatchingTags("r")
+            .map((tag) => tag[1]);
     }
 }

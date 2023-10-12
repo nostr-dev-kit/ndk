@@ -55,7 +55,30 @@ export class NDKUser {
         this._npub = npub;
     }
 
+    /**
+     * Get the user's hexpubkey
+     * @returns {Hexpubkey} The user's hexpubkey
+     *
+     * @deprecated Use `pubkey` instead
+     */
     get hexpubkey(): Hexpubkey {
+        return this.pubkey;
+    }
+
+    /**
+     * Set the user's hexpubkey
+     * @param pubkey {Hexpubkey} The user's hexpubkey
+     * @deprecated Use `pubkey` instead
+     */
+    set hexpubkey(pubkey: Hexpubkey) {
+        this._hexpubkey = pubkey;
+    }
+
+    /**
+     * Get the user's pubkey
+     * @returns {string} The user's pubkey
+     */
+    get pubkey(): string {
         if (!this._hexpubkey) {
             if (!this._npub) throw new Error("npub not set");
             this._hexpubkey = nip19.decode(this.npub).data as Hexpubkey;
@@ -64,8 +87,12 @@ export class NDKUser {
         return this._hexpubkey;
     }
 
-    set hexpubkey(hexpubkey: Hexpubkey) {
-        this._hexpubkey = hexpubkey;
+    /**
+     * Set the user's pubkey
+     * @param pubkey {string} The user's pubkey
+     */
+    set pubkey(pubkey: string) {
+        this._hexpubkey = pubkey;
     }
 
     /**
@@ -187,7 +214,7 @@ export class NDKUser {
                 kinds: [10002],
                 authors: [this.hexpubkey],
             },
-            { closeOnEose: true, pool, groupable: true },
+            { closeOnEose: true, pool, groupable: true, subId: `relay-list-${this.hexpubkey.slice(0, 6)}` },
             relaySet
         );
 

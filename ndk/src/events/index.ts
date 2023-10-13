@@ -406,12 +406,18 @@ export class NDKEvent extends EventEmitter {
         const zap = new Zap({
             ndk: this.ndk,
             zappedEvent: this,
-            zappedUser: recipient
+            zappedUser: recipient,
         });
 
         const relays = Array.from(this.ndk.pool.relays.keys());
 
-        const paymentRequest = await zap.createZapRequest(amount, comment, extraTags, relays, signer);
+        const paymentRequest = await zap.createZapRequest(
+            amount,
+            comment,
+            extraTags,
+            relays,
+            signer
+        );
 
         // await zap.publish(amount);
         return paymentRequest;

@@ -26,9 +26,7 @@ export class NDKNip07Signer implements NDKSigner {
     /**
      * @param waitTimeout - The timeout in milliseconds to wait for the NIP-07 to become available
      */
-    public constructor(
-        waitTimeout: number = 1000
-    ) {
+    public constructor(waitTimeout: number = 1000) {
         this.debug = debug("ndk:nip07");
         this.waitTimeout = waitTimeout;
     }
@@ -176,7 +174,7 @@ export class NDKNip07Signer implements NDKSigner {
             // Set a timer to reject the promise if window.nostr is not available within the timeout
             timerId = setTimeout(() => {
                 clearInterval(intervalId);
-                reject(new Error('NIP-07 extension not available'));
+                reject(new Error("NIP-07 extension not available"));
             }, this.waitTimeout);
         });
     }

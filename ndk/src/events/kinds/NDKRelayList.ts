@@ -53,7 +53,6 @@ export class NDKRelayList extends NDKEvent {
     }
 
     get relays(): NDKRelayUrl[] {
-        return this.getMatchingTags("r")
-            .map((tag) => tag[1]);
+        return this.getMatchingTags("r").map((tag) => tag[1]);
     }
 }

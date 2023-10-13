@@ -168,7 +168,10 @@ export class NDK extends EventEmitter {
                     return;
                 }
 
-                this.debug("Connecting to user relays", { npub: user.npub, relays: relayList.relays });
+                this.debug("Connecting to user relays", {
+                    npub: user.npub,
+                    relays: relayList.relays,
+                });
                 for (const url of relayList.relays) {
                     let relay = this.pool.relays.get(url);
                     if (!relay) {
@@ -176,13 +179,18 @@ export class NDK extends EventEmitter {
                         this.pool.addRelay(relay);
                     }
                 }
-            }
+            };
 
             const fetchUserMuteList = async (user: NDKUser) => {
                 const muteLists = await this.fetchEvents([
-                    { kinds: [NDKKind.MuteList], authors: [user.pubkey]},
-                    { kinds: [NDKKind.CategorizedPeopleList], authors: [user.pubkey], "#d": [ "mute" ], limit: 1 }
-                ])
+                    { kinds: [NDKKind.MuteList], authors: [user.pubkey] },
+                    {
+                        kinds: [NDKKind.CategorizedPeopleList],
+                        authors: [user.pubkey],
+                        "#d": ["mute"],
+                        limit: 1,
+                    },
+                ]);
 
                 if (!muteLists) {
                     this.debug("No mute list found for user", { npub: user.npub });
@@ -196,7 +204,7 @@ export class NDK extends EventEmitter {
                         this.mutedIds.set(item[1], item[0]);
                     }
                 }
-            }
+            };
 
             const userFunctions: ((user: NDKUser) => Promise<void>)[] = [];
 
@@ -207,7 +215,7 @@ export class NDK extends EventEmitter {
                 for (const fn of userFunctions) {
                     await fn(user);
                 }
-            }
+            };
 
             const pool = this.outboxPool || this.pool;
 

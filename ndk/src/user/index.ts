@@ -214,7 +214,12 @@ export class NDKUser {
                 kinds: [10002],
                 authors: [this.hexpubkey],
             },
-            { closeOnEose: true, pool, groupable: true, subId: `relay-list-${this.hexpubkey.slice(0, 6)}` },
+            {
+                closeOnEose: true,
+                pool,
+                groupable: true,
+                subId: `relay-list-${this.hexpubkey.slice(0, 6)}`,
+            },
             relaySet
         );
 

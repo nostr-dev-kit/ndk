@@ -244,6 +244,9 @@ importers:
       '@nostr-dev-kit/eslint-config-custom':
         specifier: workspace:*
         version: link:../packages/eslint-config-custom
+      '@nostr-dev-kit/ndk-cache-dexie':
+        specifier: workspace:*
+        version: link:../ndk-cache-dexie
       '@nostr-dev-kit/ndk-svelte':
         specifier: workspace:*
         version: link:../ndk-svelte

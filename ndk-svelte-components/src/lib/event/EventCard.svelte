@@ -73,7 +73,6 @@
         padding: 1rem;
         border: 1px solid var(--color-border);
         background-color: var(--color-bg);
-        box-shadow: 0 0 0.5rem var(--color-shadow);
     }
 
     .event-card--header {
@@ -94,5 +93,9 @@
         gap: 0.25rem;
         width: 100%;
         padding: 0;
+    }
+
+    .event-card--header--time {
+        white-space: nowrap;
     }
 </style>

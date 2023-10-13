@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk-svelte-components
 
+## 1.4.0
+
+### Minor Changes
+
+-   New EventThread component to finally and easily properly display threads and replies.
+
 ## 1.3.4
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk
 
+## 1.4.2
+
+### Patch Changes
+
+-   Make NIP-07 signer handle better a not-yet-loaded signing extension
+
 ## 1.4.1
 
 ### Patch Changes

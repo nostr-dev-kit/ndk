@@ -1,5 +1,12 @@
 # @nostr-dev-kit/ndk-cache-dexie
 
+## 1.3.5
+
+### Patch Changes
+
+-   Updated dependencies
+    -   @nostr-dev-kit/ndk@1.4.2
+
 ## 1.3.4
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/ndk",
-    "version": "1.4.1",
+    "version": "1.4.2",
     "description": "NDK - Nostr Development Kit",
     "homepage": "https://ndk.fyi",
     "documentation": "https://github.com/nostr-dev-kit/ndk/blob/master/docs/modules.md",

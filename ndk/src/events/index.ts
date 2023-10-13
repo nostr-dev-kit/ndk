@@ -283,6 +283,17 @@ export class NDKEvent extends EventEmitter {
         return { content: content || "", tags };
     }
 
+    public muted(): string | null {
+        const authorMutedEntry = this.ndk?.mutedIds.get(this.pubkey);
+        if (authorMutedEntry && authorMutedEntry === "p") return "author";
+
+        const eventTagReference = this.tagReference();
+        const eventMutedEntry = this.ndk?.mutedIds.get(eventTagReference[1]);
+        if (eventMutedEntry && eventMutedEntry === eventTagReference[0]) return "event";
+
+        return null;
+    }
+
     /**
      * Returns the "d" tag of a parameterized replaceable event or throws an error if the event isn't
      * a parameterized replaceable event.

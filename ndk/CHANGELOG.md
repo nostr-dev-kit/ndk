@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk
 
+## 2.0.0
+
+### Major Changes
+
+-   Load and flag muted events
+
 ## 1.4.2
 
 ### Patch Changes

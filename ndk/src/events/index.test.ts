@@ -168,7 +168,7 @@ describe("NDKEvent", () => {
         });
     });
 
-    describe("tagReference", () => {
+    describe("referenceTags", () => {
         it("returns the correct tag for referencing the event", () => {
             const event1 = new NDKEvent(ndk, {
                 created_at: Date.now() / 1000,
@@ -176,6 +176,7 @@ describe("NDKEvent", () => {
                 kind: 30000,
                 pubkey: "pubkey",
                 tags: [["d", "d-code"]],
+                id: "eventid1",
             });
 
             const event2 = new NDKEvent(ndk, {
@@ -184,11 +185,14 @@ describe("NDKEvent", () => {
                 tags: [],
                 kind: 1,
                 pubkey: "pubkey",
-                id: "eventid",
+                id: "eventid2",
             });
 
-            expect(event1.tagReference()).toEqual(["a", "30000:pubkey:d-code"]);
-            expect(event2.tagReference()).toEqual(["e", "eventid"]);
+            expect(event1.referenceTags()).toEqual([
+                ["a", "30000:pubkey:d-code"],
+                ["e", "eventid1"],
+            ]);
+            expect(event2.referenceTags()).toEqual([["e", "eventid2"]]);
         });
     });
 

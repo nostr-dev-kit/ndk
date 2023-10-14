@@ -130,6 +130,7 @@ export class NDKRelay extends EventEmitter {
         // TODO
     }
 
+    /** @deprecated Use referenceTags instead. */
     public tagReference(marker?: string): NDKTag {
         const tag = ["r", this.url];
 
@@ -138,6 +139,10 @@ export class NDKRelay extends EventEmitter {
         }
 
         return tag;
+    }
+
+    public referenceTags(): NDKTag[] {
+        return [["r", this.url]];
     }
 
     public activeSubscriptions(): Map<NDKFilter[], NDKSubscription[]> {

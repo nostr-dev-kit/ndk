@@ -201,35 +201,35 @@ export class NDKList extends NDKEvent {
         if (!this.ndk) throw new Error("NDK instance not set");
         if (!this.ndk.signer) throw new Error("NDK signer not set");
 
-        let tag;
+        let tags: NDKTag[];
 
         if (item instanceof NDKEvent) {
-            tag = item.tagReference();
+            tags = item.referenceTags();
         } else if (item instanceof NDKUser) {
-            tag = item.tagReference();
+            tags = item.referenceTags();
         } else if (item instanceof NDKRelay) {
-            tag = item.tagReference();
+            tags = item.referenceTags();
         } else if (Array.isArray(item)) {
             // NDKTag
-            tag = item;
+            tags = [item];
         } else {
             throw new Error("Invalid object type");
         }
 
-        if (mark) tag.push(mark);
+        if (mark) tags[0].push(mark);
 
         if (encrypted) {
             const user = await this.ndk.signer.user();
             const currentList = await this.encryptedTags();
 
-            currentList.push(tag);
+            currentList.push(...tags);
 
             this._encryptedTags = currentList;
             this.encryptedTagsLength = this.content.length;
             this.content = JSON.stringify(currentList);
             await this.encrypt(user);
         } else {
-            this.tags.push(tag);
+            this.tags.push(...tags);
         }
 
         this.created_at = Math.floor(Date.now() / 1000);

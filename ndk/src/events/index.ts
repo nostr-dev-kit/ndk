@@ -113,9 +113,9 @@ export class NDKEvent extends EventEmitter {
      */
     public tag(event: NDKEvent, marker?: string): void;
     public tag(userOrEvent: NDKUser | NDKEvent, marker?: string): void {
-        const tag = userOrEvent.tagReference();
-        if (marker) tag.push(marker);
-        this.tags.push(tag);
+        const tags = userOrEvent.referenceTags();
+        if (marker) tags[0].push(marker);
+        this.tags.push(...tags);
 
         if (userOrEvent instanceof NDKEvent) {
             const tagEventAuthor = userOrEvent.author;
@@ -335,15 +335,26 @@ export class NDKEvent extends EventEmitter {
      */
     tagId(): string {
         // NIP-33
-        if (this.kind && this.kind >= 30000 && this.kind <= 40000) {
-            const dTagId = this.replaceableDTag();
-
-            return `${this.kind}:${this.pubkey}:${dTagId}`;
+        if (this.isParamReplaceable()) {
+            return this.tagAddress();
         }
 
         return this.id;
     }
 
+    /**
+     * Returns the "reference" value ("<kind>:<author-pubkey>:<d-tag>") for this replaceable event.
+     * @returns {string} The id
+     */
+    tagAddress(): string {
+        if (!this.isParamReplaceable()) {
+            throw new Error("This must only be called on replaceable events");
+        }
+        const dTagId = this.replaceableDTag();
+        return `${this.kind}:${this.pubkey}:${dTagId}`;
+    }
+
+    /** @deprecated Use referenceTags instead. */
     /**
      * Get the tag that can be used to reference this event from another event
      * @example
@@ -357,10 +368,32 @@ export class NDKEvent extends EventEmitter {
     tagReference(): NDKTag {
         // NIP-33
         if (this.isParamReplaceable()) {
-            return ["a", this.tagId()];
+            return ["a", this.tagAddress()];
         }
 
         return ["e", this.tagId()];
+    }
+
+    /**
+     * Get the tags that can be used to reference this event from another event
+     * @example
+     *     event = new NDKEvent(ndk, { kind: 30000, pubkey: 'pubkey', tags: [ ["d", "d-code"] ] });
+     *     event.referenceTags(); // [["a", "30000:pubkey:d-code"], ["e", "parent-id"]]
+     *
+     *     event = new NDKEvent(ndk, { kind: 1, pubkey: 'pubkey', id: "eventid" });
+     *     event.referenceTags(); // [["e", "parent-id"]]
+     * @returns {NDKTag} The NDKTag object referencing this event
+     */
+    referenceTags(): NDKTag[] {
+        // NIP-33
+        if (this.isParamReplaceable()) {
+            return [
+                ["a", this.tagAddress()],
+                ["e", this.id],
+            ];
+        }
+
+        return [["e", this.id]];
     }
 
     /**

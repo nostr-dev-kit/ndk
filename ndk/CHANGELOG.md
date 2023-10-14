@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk
 
+## 2.0.2
+
+### Patch Changes
+
+-   Static references for replaceable events
+
 ## 2.0.0
 
 ### Major Changes

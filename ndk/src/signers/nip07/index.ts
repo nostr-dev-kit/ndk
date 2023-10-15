@@ -160,7 +160,7 @@ export class NDKNip07Signer implements NDKSigner {
                 return;
             }
 
-            let timerId: NodeJS.Timeout;
+            let timerId: NodeJS.Timeout | number;
 
             // Create an interval to repeatedly check for window.nostr
             const intervalId = setInterval(() => {

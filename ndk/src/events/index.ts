@@ -225,7 +225,7 @@ export class NDKEvent extends EventEmitter {
             this.author = await signer.user();
         }
 
-        await this.generateTags();
+        this.generateTags();
 
         if (this.isReplaceable()) {
             this.created_at = Math.floor(Date.now() / 1000);
@@ -487,4 +487,24 @@ export class NDKEvent extends EventEmitter {
      * @function
      */
     public repost = repost.bind(this);
+
+    /**
+     * React to an existing event
+     *
+     * @param content The content of the reaction
+     */
+    async react(content: string): Promise<NDKEvent> {
+        if (!this.ndk) throw new Error("No NDK instance found");
+
+        this.ndk.assertSigner();
+
+        const e = new NDKEvent(this.ndk, {
+            kind: NDKKind.Reaction,
+            content,
+        } as NostrEvent);
+        e.tag(this);
+        await e.publish();
+
+        return e;
+    }
 }

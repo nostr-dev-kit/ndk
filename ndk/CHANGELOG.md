@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk
 
+## 2.0.3
+
+### Patch Changes
+
+-   add react method to events
+
 ## 2.0.2
 
 ### Patch Changes

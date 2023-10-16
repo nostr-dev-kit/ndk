@@ -1,5 +1,13 @@
 # @nostr-dev-kit/ndk-svelte-components
 
+## 2.0.3
+
+### Patch Changes
+
+-   375e62f: Display NIP-23 titles
+-   Updated dependencies
+    -   @nostr-dev-kit/ndk@2.0.3
+
 ## 2.0.2
 
 ### Patch Changes

@@ -194,6 +194,27 @@ describe("NDKEvent", () => {
             ]);
             expect(event2.referenceTags()).toEqual([["e", "eventid2"]]);
         });
+
+        it("adds a marker to the reference tag if provided", () => {
+            const nip33event = new NDKEvent(ndk, {
+                kind: 30000,
+                pubkey: "pubkey",
+                tags: [["d", "d-code"]],
+                id: "eventid1",
+            } as NostrEvent);
+
+            const event = new NDKEvent(ndk, {
+                kind: 1,
+                pubkey: "pubkey",
+                id: "eventid2",
+            } as NostrEvent);
+
+            expect(nip33event.referenceTags("marker")).toEqual([
+                ["a", "30000:pubkey:d-code", "marker"],
+                ["e", "eventid1", "marker"],
+            ]);
+            expect(event.referenceTags("marker")).toEqual([["e", "eventid2", "marker"]]);
+        });
     });
 
     describe("tagId", () => {

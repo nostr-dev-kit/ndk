@@ -1,5 +1,5 @@
 import type { NDK } from "../../ndk/index.js";
-import type { ContentTag } from "../index.js";
+import { ContentTag } from "../content-tagger.js";
 import { NDKEvent, type NostrEvent } from "../index.js";
 import { NDKKind } from "./index.js";
 
@@ -100,7 +100,7 @@ export class NDKArticle extends NDKEvent {
      *
      * @returns {ContentTag} - The generated content tags.
      */
-    protected generateTags(): ContentTag {
+    protected async generateTags(): Promise<ContentTag> {
         super.generateTags();
 
         if (!this.published_at) {

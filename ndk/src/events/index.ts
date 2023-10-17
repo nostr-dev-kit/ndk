@@ -10,7 +10,7 @@ import type { NDKSigner } from "../signers/index.js";
 import type { NDKFilter } from "../subscription/index.js";
 import type { NDKUser } from "../user/index.js";
 import Zap from "../zap/index.js";
-import { generateContentTags } from "./content-tagger.js";
+import { ContentTag, generateContentTags } from "./content-tagger.js";
 import { isEphemeral, isParamReplaceable, isReplaceable } from "./kind.js";
 import { NDKKind } from "./kinds/index.js";
 import { decrypt, encrypt } from "./nip04.js";
@@ -28,11 +28,6 @@ export type NostrEvent = {
     pubkey: string;
     id?: string;
     sig?: string;
-};
-
-export type ContentTag = {
-    tags: NDKTag[];
-    content: string;
 };
 
 /**
@@ -150,7 +145,7 @@ export class NDKEvent extends EventEmitter {
         if (!this.created_at) this.created_at = Math.floor(Date.now() / 1000);
 
         const nostrEvent = this.rawEvent();
-        const { content, tags } = this.generateTags();
+        const { content, tags } = await this.generateTags();
         nostrEvent.content = content || "";
         nostrEvent.tags = tags;
 
@@ -225,7 +220,7 @@ export class NDKEvent extends EventEmitter {
             this.author = await signer.user();
         }
 
-        this.generateTags();
+        await this.generateTags();
 
         if (this.isReplaceable()) {
             this.created_at = Math.floor(Date.now() / 1000);
@@ -262,11 +257,11 @@ export class NDKEvent extends EventEmitter {
      * Will also generate random "d" tag for parameterized replaceable events where needed.
      * @returns {ContentTag} The tags and content of the event.
      */
-    protected generateTags(): ContentTag {
+    protected async generateTags(): Promise<ContentTag> {
         let tags: NDKTag[] = [];
 
         // don't autogenerate if there currently are tags
-        const g = generateContentTags(this.content, this.tags);
+        const g = await generateContentTags(this.content, this.tags);
         const content = g.content;
         tags = g.tags;
 
@@ -376,6 +371,7 @@ export class NDKEvent extends EventEmitter {
 
     /**
      * Get the tags that can be used to reference this event from another event
+     * @param marker The marker to use in the tag
      * @example
      *     event = new NDKEvent(ndk, { kind: 30000, pubkey: 'pubkey', tags: [ ["d", "d-code"] ] });
      *     event.referenceTags(); // [["a", "30000:pubkey:d-code"], ["e", "parent-id"]]
@@ -384,16 +380,30 @@ export class NDKEvent extends EventEmitter {
      *     event.referenceTags(); // [["e", "parent-id"]]
      * @returns {NDKTag} The NDKTag object referencing this event
      */
-    referenceTags(): NDKTag[] {
+    referenceTags(marker?: string): NDKTag[] {
         // NIP-33
         if (this.isParamReplaceable()) {
-            return [
+            const tags: NDKTag[] = [
                 ["a", this.tagAddress()],
                 ["e", this.id],
             ];
+
+            if (marker) {
+                tags.forEach(tag => tag.push(marker)); // Add the marker to both "a" and "e" tags
+            }
+
+            return tags;
         }
 
-        return [["e", this.id]];
+        const tags: NDKTag[] = [
+            ["e", this.id],
+        ];
+
+        if (marker) {
+            tags[0].push(marker); // Add the marker to the "e" tag
+        }
+
+        return tags;
     }
 
     /**

@@ -1,5 +1,13 @@
 # @nostr-dev-kit/ndk
 
+## 2.0.4
+
+### Patch Changes
+
+-   -   Improves content tagging
+    -   adds mention and relay URL tags
+    -   adds replaceable event mention tagging
+
 ## 2.0.3
 
 ### Patch Changes

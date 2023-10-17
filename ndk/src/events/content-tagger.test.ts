@@ -92,7 +92,8 @@ describe("await generateContentTags", () => {
             "Hello world, nostr:naddr1qqrrywpn8y6rvq3qvwymuey3u7mf860ndrkw3r7dz30s0srg6tqmhtjzg7umtm6rn5eqxpqqqp65wnen4nu"
         );
         expect(processedTags).toEqual([
-            [ "a", "30023:6389be6491e7b693e9f368ece88fcd145f07c068d2c1bbae4247b9b5ef439d32:283946", "", "mention" ]
+            [ "a", "30023:6389be6491e7b693e9f368ece88fcd145f07c068d2c1bbae4247b9b5ef439d32:283946", "", "mention" ],
+            [ "p", "6389be6491e7b693e9f368ece88fcd145f07c068d2c1bbae4247b9b5ef439d32" ]
         ]);
     });
 
@@ -104,7 +105,8 @@ describe("await generateContentTags", () => {
             "Hello nostr:nevent1qqsykmtd4zplclt56wfkkzjwplyw6q8a2p0fqf8p46wedlqayct0uhqppemhxue69uhkummn9ekx7mp0qgstryqhtnh5qlze8utuz42gpmdp5th87myyx78w7r5hx5lc0mjexqqrqsqqqqqpyazpkc"
         );
         expect(processedTags).toEqual([
-            ["e", "4b6d6da883fc7d74d3936b0a4e0fc8ed00fd505e9024e1ae9d96fc1d2616fe5c", "wss://nos.lol/", "mention"]
+            ["e", "4b6d6da883fc7d74d3936b0a4e0fc8ed00fd505e9024e1ae9d96fc1d2616fe5c", "wss://nos.lol/", "mention"],
+            ["p", "b190175cef407c593f17c155480eda1a2ee7f6c84378eef0e97353f87ee59300" ]
         ]);
     });
 
@@ -116,7 +118,8 @@ describe("await generateContentTags", () => {
             "Hello nostr:naddr1qqrrywpn8y6rvqgdwaehxw309ahx7uewd3hkcq3qvwymuey3u7mf860ndrkw3r7dz30s0srg6tqmhtjzg7umtm6rn5eqxpqqqp65wj55zc8"
         );
         expect(processedTags).toEqual([
-            ["a", "30023:6389be6491e7b693e9f368ece88fcd145f07c068d2c1bbae4247b9b5ef439d32:283946", "wss://nos.lol", "mention"]
+            ["a", "30023:6389be6491e7b693e9f368ece88fcd145f07c068d2c1bbae4247b9b5ef439d32:283946", "wss://nos.lol", "mention"],
+            ["p", "6389be6491e7b693e9f368ece88fcd145f07c068d2c1bbae4247b9b5ef439d32" ]
         ]);
     });
 

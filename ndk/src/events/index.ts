@@ -266,9 +266,9 @@ export class NDKEvent extends EventEmitter {
         tags = g.tags;
 
         // if this is a parameterized replaceable event, check if there's a d tag, if not, generate it
-        if (this.kind && this.kind >= 30000 && this.kind <= 40000) {
+        if (this.kind && this.isParamReplaceable()) {
             const dTag = this.getMatchingTags("d")[0];
-            // generate a string of 32 random bytes
+            // generate a string of 16 random bytes
             if (!dTag) {
                 const str = [...Array(16)].map(() => Math.random().toString(36)[2]).join("");
                 tags.push(["d", str]);
@@ -381,27 +381,23 @@ export class NDKEvent extends EventEmitter {
      * @returns {NDKTag} The NDKTag object referencing this event
      */
     referenceTags(marker?: string): NDKTag[] {
+        let tags: NDKTag[] = [];
+
         // NIP-33
         if (this.isParamReplaceable()) {
-            const tags: NDKTag[] = [
+            tags = [
                 ["a", this.tagAddress()],
                 ["e", this.id],
             ];
-
-            if (marker) {
-                tags.forEach(tag => tag.push(marker)); // Add the marker to both "a" and "e" tags
-            }
-
-            return tags;
+        } else {
+            tags = [ ["e", this.id] ];
         }
-
-        const tags: NDKTag[] = [
-            ["e", this.id],
-        ];
 
         if (marker) {
-            tags[0].push(marker); // Add the marker to the "e" tag
+            tags.forEach(tag => tag.push(marker)); // Add the marker to both "a" and "e" tags
         }
+
+        tags.push(...this.author.referenceTags());
 
         return tags;
     }

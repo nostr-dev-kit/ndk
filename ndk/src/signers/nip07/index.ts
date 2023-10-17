@@ -165,7 +165,7 @@ export class NDKNip07Signer implements NDKSigner {
             // Create an interval to repeatedly check for window.nostr
             const intervalId = setInterval(() => {
                 if (window.nostr) {
-                    clearTimeout(timerId);
+                    clearTimeout(timerId as number);
                     clearInterval(intervalId);
                     resolve();
                 }

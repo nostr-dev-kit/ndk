@@ -3,6 +3,7 @@ import debug from "debug";
 import type { NostrEvent } from "../../events/index.js";
 import { NDKUser } from "../../user/index.js";
 import type { NDKSigner } from "../index.js";
+import { NDKRelay } from "../../relay/index.js";
 
 type Nip04QueueItem = {
     type: "encrypt" | "decrypt";
@@ -74,6 +75,21 @@ export class NDKNip07Signer implements NDKSigner {
 
         const signedEvent = await window.nostr!.signEvent(event);
         return signedEvent.sig;
+    }
+
+    public async relays(): Promise<NDKRelay[]> {
+        await this.waitForExtension();
+
+        const relays = await window.nostr!.getRelays?.() || {};
+
+        const activeRelays = [];
+        for (const url in Object.keys(relays)) {
+            // Currently only respects relays that are both readable and writable.
+            if (relays[url].read && relays[url].write) {
+                activeRelays.push(url);
+            }
+        }
+        return activeRelays;
     }
 
     public async encrypt(recipient: NDKUser, value: string): Promise<string> {

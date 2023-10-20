@@ -12,6 +12,13 @@ type Nip04QueueItem = {
     reject: (reason?: Error) => void;
 };
 
+type Nip07RelayMap = {
+    [key: string]: {
+        read: boolean;
+        write: boolean;
+    };
+};
+
 /**
  * NDKNip07Signer implements the NDKSigner interface for signing Nostr events
  * with a NIP-07 browser extension (e.g., getalby, nos2x).
@@ -185,6 +192,7 @@ declare global {
         nostr?: {
             getPublicKey(): Promise<string>;
             signEvent(event: NostrEvent): Promise<{ sig: string }>;
+            getRelays(): Promise<Nip07RelayMap>;
             nip04: {
                 encrypt(recipientHexPubKey: string, value: string): Promise<string>;
                 decrypt(senderHexPubKey: string, value: string): Promise<string>;

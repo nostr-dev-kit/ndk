@@ -192,8 +192,8 @@ declare global {
         nostr?: {
             getPublicKey(): Promise<string>;
             signEvent(event: NostrEvent): Promise<{ sig: string }>;
-            getRelays(): Promise<Nip07RelayMap>;
-            nip04: {
+            getRelays?: () => Promise<Nip07RelayMap>;
+            nip04?: {
                 encrypt(recipientHexPubKey: string, value: string): Promise<string>;
                 decrypt(senderHexPubKey: string, value: string): Promise<string>;
             };

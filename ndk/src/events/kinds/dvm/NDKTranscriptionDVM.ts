@@ -11,7 +11,7 @@ import { NDKDVMRequest } from "./NDKDVMRequest";
 export class NDKTranscriptionDVM extends NDKDVMRequest {
     constructor(ndk: NDK | undefined, event?: NostrEvent) {
         super(ndk, event);
-        this.kind = NDKKind.DVMJobRequestTranscription;
+        this.kind = NDKKind.DVMReqTextExtraction;
     }
 
     static from(event: NDKEvent) {

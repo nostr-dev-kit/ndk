@@ -44,6 +44,8 @@ export class NDKEvent extends EventEmitter {
     public sig?: string;
     public pubkey = "";
 
+    private _author: NDKUser | undefined = undefined;
+
     /**
      * The relay that this event was first received from.
      */
@@ -78,14 +80,20 @@ export class NDKEvent extends EventEmitter {
 
     set author(user: NDKUser) {
         this.pubkey = user.hexpubkey;
+
+        this._author = undefined;
     }
 
     /**
      * Returns an NDKUser for the author of the event.
      */
     get author(): NDKUser {
+        if (this._author) return this._author;
+        
         if (!this.ndk) throw new Error("No NDK instance found");
+        
         const user = this.ndk.getUser({ hexpubkey: this.pubkey });
+        this._author = user;
         return user;
     }
 

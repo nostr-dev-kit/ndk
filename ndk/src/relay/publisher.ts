@@ -84,7 +84,8 @@ export class NDKRelayPublisher {
         });
 
         // If no timeout is specified, just return the publish promise
-        if (!timeoutMs) {
+        // or if this is an ephemeral event, don't wait for the publish to complete
+        if (!timeoutMs || event.isEphemeral()) {
             return publishPromise;
         }
 

@@ -13,6 +13,10 @@ interface RedisAdapterOptions {
      * The number of seconds to store events in redis before they expire.
      */
     expirationTime?: number;
+    /**
+    * Redis instance connection path
+    */
+    path?: string
 }
 
 export default class RedisAdapter implements NDKCacheAdapter {
@@ -22,7 +26,7 @@ export default class RedisAdapter implements NDKCacheAdapter {
     readonly locking;
 
     constructor(opts: RedisAdapterOptions = {}) {
-        this.redis = new Redis();
+        this.redis = opts.path ? new Redis(opts.path) : new Redis();
         this.debug = opts.debug || _debug("ndk:redis-adapter");
         this.locking = true;
         this.expirationTime = opts.expirationTime || 3600;

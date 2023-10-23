@@ -330,6 +330,8 @@ export class NDKSubscription extends EventEmitter {
             this.eventFirstSeen.set(event.id, 0);
         }
 
+        if (!event.ndk) event.ndk = this.ndk;
+
         this.emit("event", event, relay, this);
         this.lastEventReceivedAt = Date.now();
     }

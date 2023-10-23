@@ -4,7 +4,7 @@
     export let showMedia = false;
 
     const isImage = value.url.match(/^.*\.(jpg|jpeg|png|webp|gif|avif|svg)/gi);
-    const isVideo = value.url.match(/^.*\.(mov|mkv|avi|m4v|webm)/gi);
+    const isVideo = value.url.match(/^.*\.(mov|mkv|mp4|avi|m4v|webm)/gi);
     const isAudio = value.url.match(/^.*\.(ogg|mp3|wav)/gi);
 </script>
 

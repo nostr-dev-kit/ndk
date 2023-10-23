@@ -16,31 +16,31 @@ describe("NDKList", () => {
         list.author = user1;
     });
 
-    describe("name", () => {
-        it("allows you to set and get the name of the list", () => {
-            expect(list.name).toEqual(undefined);
-            list.name = "My list";
-            expect(list.name).toEqual("My list");
+    describe("title", () => {
+        it("allows you to set and get the title of the list", () => {
+            expect(list.title).toEqual(undefined);
+            list.title = "My list";
+            expect(list.title).toEqual("My list");
         });
 
         it("defaults to `Contacts` for kind 3 events", () => {
             list.kind = 3;
-            expect(list.name).toEqual("Contacts");
+            expect(list.title).toEqual("Contacts");
         });
 
         it("defaults to `Mute` for kind 10000 events", () => {
             list.kind = 10000;
-            expect(list.name).toEqual("Mute");
+            expect(list.title).toEqual("Mute");
         });
 
         it("defaults to `Pin` for kind 10001 events", () => {
             list.kind = 10001;
-            expect(list.name).toEqual("Pin");
+            expect(list.title).toEqual("Pin");
         });
 
         it("defaults to `Relay Metadata` for kind 10002 events", () => {
             list.kind = 10002;
-            expect(list.name).toEqual("Relay Metadata");
+            expect(list.title).toEqual("Relay Metadata");
         });
     });
 });

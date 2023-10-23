@@ -16,6 +16,24 @@ export enum NDKKind {
     ChannelMuteUser = 44,
     Report = 1984,
     Label = 1985,
+
+    // NIP-90: Data Vending Machines
+    // Text: 5000-5099
+    DVMReqTextExtraction = 5000,
+    DVMReqTextSummarization = 5001,
+    DVMReqTextTranslation = 5002,
+    DVMReqTextGeneration = 5050,
+
+    // Image: 5100-5199
+    DVMReqImageGeneration = 5100,
+
+    // Discovery
+    DVMReqDiscoveryNostrContent = 5300,
+    DVMReqDiscoveryNostrPeople = 5301,
+
+    // Feedback
+    DVMJobFeedback = 7000,
+
     ZapRequest = 9734,
     Zap = 9735,
     Highlight = 9802,
@@ -41,12 +59,6 @@ export enum NDKKind {
     AppHandler = 31990,
 
     CategorizedHighlightList = 39802,
-
-    // NIP-90: Data Vending Machines
-    DVMJobFeedback = 65000,
-    DVMJobResult = 65001,
-    DVMJobRequestTranscription = 65002,
-    DVMNostrContentRecommendation = 65008,
 }
 
 export const NDKListKinds = [

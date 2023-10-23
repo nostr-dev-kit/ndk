@@ -1,5 +1,55 @@
 # @nostr-dev-kit/ndk
 
+## 2.0.4
+
+### Patch Changes
+
+-   -   Improves content tagging
+    -   adds mention and relay URL tags
+    -   adds replaceable event mention tagging
+
+## 2.0.3
+
+### Patch Changes
+
+-   add react method to events
+
+## 2.0.2
+
+### Patch Changes
+
+-   Static references for replaceable events
+
+## 2.0.0
+
+### Major Changes
+
+-   Load and flag muted events
+
+## 1.4.2
+
+### Patch Changes
+
+-   Make NIP-07 signer handle better a not-yet-loaded signing extension
+
+## 1.4.1
+
+### Patch Changes
+
+-   Automatically fetch main users relays and connect to them
+
+## 1.4.0
+
+### Minor Changes
+
+-   add hashtag support to content tagger
+
+## 1.3.2
+
+### Patch Changes
+
+-   b3561af: Don't wait for OK on ephemeral events
+
 ## 1.3.1
 
 ### Patch Changes

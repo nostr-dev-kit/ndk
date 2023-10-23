@@ -102,7 +102,9 @@ export class NDKPool extends EventEmitter {
         this.relays.set(relayUrl, relay);
 
         if (connect) {
-            relay.connect();
+            relay.connect().catch((e) => {
+                this.debug(`Failed to connect to relay ${relayUrl}`, e);
+            });
         }
     }
 

@@ -49,7 +49,40 @@ export class NDKList extends NDKEvent {
     }
 
     /**
+     * Returns the title of the list. Falls back on fetching the name tag value.
+     */
+    get title(): string | undefined {
+        const titleTag = this.tagValue("title") || this.tagValue("name");
+        if (this.kind === NDKKind.Contacts && !titleTag) {
+            return "Contacts";
+        } else if (this.kind === NDKKind.MuteList && !titleTag) {
+            return "Mute";
+        } else if (this.kind === NDKKind.PinList && !titleTag) {
+            return "Pin";
+        } else if (this.kind === NDKKind.RelayList && !titleTag) {
+            return "Relay Metadata";
+        } else {
+            return titleTag ?? this.tagValue("d");
+        }
+    }
+
+    /**
+     * Sets the title of the list.
+     */
+    set title(title: string | undefined) {
+        this.removeTag("title");
+        this.removeTag("name");
+
+        if (title) {
+            this.tags.push(["title", title]);
+        } else {
+            throw new Error("Title cannot be empty");
+        }
+    }
+
+    /**
      * Returns the name of the list.
+     * @deprecated Please use "title" instead.
      */
     get name(): string | undefined {
         const nameTag = this.tagValue("name");
@@ -68,12 +101,13 @@ export class NDKList extends NDKEvent {
 
     /**
      * Sets the name of the list.
+     * @deprecated Please use "title" instead. This method will use the `title` tag instead.
      */
     set name(name: string | undefined) {
         this.removeTag("name");
 
         if (name) {
-            this.tags.push(["name", name]);
+            this.tags.push(["title", name]);
         } else {
             throw new Error("Name cannot be empty");
         }
@@ -167,35 +201,35 @@ export class NDKList extends NDKEvent {
         if (!this.ndk) throw new Error("NDK instance not set");
         if (!this.ndk.signer) throw new Error("NDK signer not set");
 
-        let tag;
+        let tags: NDKTag[];
 
         if (item instanceof NDKEvent) {
-            tag = item.tagReference();
+            tags = item.referenceTags();
         } else if (item instanceof NDKUser) {
-            tag = item.tagReference();
+            tags = item.referenceTags();
         } else if (item instanceof NDKRelay) {
-            tag = item.tagReference();
+            tags = item.referenceTags();
         } else if (Array.isArray(item)) {
             // NDKTag
-            tag = item;
+            tags = [item];
         } else {
             throw new Error("Invalid object type");
         }
 
-        if (mark) tag.push(mark);
+        if (mark) tags[0].push(mark);
 
         if (encrypted) {
             const user = await this.ndk.signer.user();
             const currentList = await this.encryptedTags();
 
-            currentList.push(tag);
+            currentList.push(...tags);
 
             this._encryptedTags = currentList;
             this.encryptedTagsLength = this.content.length;
             this.content = JSON.stringify(currentList);
             await this.encrypt(user);
         } else {
-            this.tags.push(tag);
+            this.tags.push(...tags);
         }
 
         this.created_at = Math.floor(Date.now() / 1000);

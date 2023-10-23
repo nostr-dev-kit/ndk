@@ -281,7 +281,7 @@ ndk.subscribe({ kinds: [0], authors: ["..."] }, { closeOnEose: false });
 
 ## Convenience methods
 
-NDK implements several conveience methods for common queries.
+NDK implements several convenience methods for common queries.
 
 ### Instantiate a user by npub or hex pubkey
 

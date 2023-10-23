@@ -10,7 +10,6 @@ import { NDKKind } from "../index.js";
 export class NDKDVMJobResult extends NDKEvent {
     constructor(ndk?: NDK, event?: NostrEvent) {
         super(ndk, event);
-        this.kind ??= NDKKind.DVMJobResult;
     }
 
     static from(event: NDKEvent) {
@@ -67,6 +66,7 @@ export class NDKDVMJobResult extends NDKEvent {
         this.removeTag("request");
 
         if (event) {
+            this.kind = event.kind! + 1000;
             this.tags.push(["request", JSON.stringify(event.rawEvent())]);
             this.tag(event);
         }

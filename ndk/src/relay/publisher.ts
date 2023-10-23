@@ -9,19 +9,55 @@ export class NDKRelayPublisher {
         this.ndkRelay = ndkRelay;
     }
 
+    /**
+     * Published an event to the relay; if the relay is not connected, it will
+     * wait for the relay to connect before publishing the event.
+     *
+     * If the relay does not connect within the timeout, the publish operation
+     * will fail.
+     * @param event  The event to publish
+     * @param timeoutMs  The timeout for the publish operation in milliseconds
+     * @returns A promise that resolves when the event has been published or rejects if the operation times out
+     */
     public async publish(event: NDKEvent, timeoutMs = 2500): Promise<boolean> {
-        if (this.ndkRelay.status === NDKRelayStatus.CONNECTED) {
-            return this.publishEvent(event, timeoutMs);
-        } else {
+        const publishWhenConnected = () => {
             return new Promise<boolean>((resolve, reject) => {
-                this.ndkRelay.once("connect", async () => {
-                    try {
-                        const result = await this.publishEvent(event, timeoutMs);
-                        resolve(result);
-                    } catch (err) {
-                        reject(err);
-                    }
-                });
+                try {
+                    this.publishEvent(event, timeoutMs)
+                        .then((result) => resolve(result))
+                        .catch((err) => reject(err));
+                } catch (err) {
+                    reject(err);
+                }
+            });
+        };
+
+        const timeoutPromise = new Promise<boolean>((_, reject) => {
+            setTimeout(() => reject(new Error("Timeout")), timeoutMs);
+        });
+
+        const onConnectHandler = () => {
+            publishWhenConnected()
+                .then((result) => connectResolve(result))
+                .catch((err) => connectReject(err));
+        };
+
+        let connectResolve: (value: boolean | PromiseLike<boolean>) => void;
+        let connectReject: (reason?: any) => void;
+
+        if (this.ndkRelay.status === NDKRelayStatus.CONNECTED) {
+            return Promise.race([publishWhenConnected(), timeoutPromise]);
+        } else {
+            return Promise.race([
+                new Promise<boolean>((resolve, reject) => {
+                    connectResolve = resolve;
+                    connectReject = reject;
+                    this.ndkRelay.once("connect", onConnectHandler);
+                }),
+                timeoutPromise,
+            ]).finally(() => {
+                // Remove the event listener to avoid memory leaks
+                this.ndkRelay.removeListener("connect", onConnectHandler);
             });
         }
     }
@@ -48,7 +84,8 @@ export class NDKRelayPublisher {
         });
 
         // If no timeout is specified, just return the publish promise
-        if (!timeoutMs) {
+        // or if this is an ephemeral event, don't wait for the publish to complete
+        if (!timeoutMs || event.isEphemeral()) {
             return publishPromise;
         }
 

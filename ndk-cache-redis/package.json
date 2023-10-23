@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/ndk-cache-redis",
-    "version": "1.8.0",
+    "version": "2.0.4",
     "description": "NDK cache adapter for redis.",
     "main": "dist/cjs/index.js",
     "module": "dist/esm/index.js",

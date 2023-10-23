@@ -21,17 +21,20 @@ export class NDKNip07Signer implements NDKSigner {
     public nip04Queue: Nip04QueueItem[] = [];
     private nip04Processing = false;
     private debug: debug.Debugger;
+    private waitTimeout: number;
 
-    public constructor() {
-        if (!window.nostr) {
-            throw new Error("NIP-07 extension not available");
-        }
-
+    /**
+     * @param waitTimeout - The timeout in milliseconds to wait for the NIP-07 to become available
+     */
+    public constructor(waitTimeout: number = 1000) {
         this.debug = debug("ndk:nip07");
+        this.waitTimeout = waitTimeout;
     }
 
     public async blockUntilReady(): Promise<NDKUser> {
-        const pubkey = await window.nostr?.getPublicKey();
+        await this.waitForExtension();
+
+        const pubkey = await window.nostr!.getPublicKey();
 
         // If the user rejects granting access, error out
         if (!pubkey) {
@@ -60,27 +63,21 @@ export class NDKNip07Signer implements NDKSigner {
      * @throws Error if the NIP-07 is not available on the window object.
      */
     public async sign(event: NostrEvent): Promise<string> {
-        if (!window.nostr) {
-            throw new Error("NIP-07 extension not available");
-        }
+        await this.waitForExtension();
 
-        const signedEvent = await window.nostr.signEvent(event);
+        const signedEvent = await window.nostr!.signEvent(event);
         return signedEvent.sig;
     }
 
     public async encrypt(recipient: NDKUser, value: string): Promise<string> {
-        if (!window.nostr) {
-            throw new Error("NIP-07 extension not available");
-        }
+        await this.waitForExtension();
 
         const recipientHexPubKey = recipient.hexpubkey;
         return this.queueNip04("encrypt", recipientHexPubKey, value);
     }
 
     public async decrypt(sender: NDKUser, value: string): Promise<string> {
-        if (!window.nostr) {
-            throw new Error("NIP-07 extension not available");
-        }
+        await this.waitForExtension();
 
         const senderHexPubKey = sender.hexpubkey;
         return this.queueNip04("decrypt", senderHexPubKey, value);
@@ -154,6 +151,32 @@ export class NDKNip07Signer implements NDKSigner {
         }
 
         this.processNip04Queue();
+    }
+
+    private waitForExtension(): Promise<void> {
+        return new Promise((resolve, reject) => {
+            if (window.nostr) {
+                resolve();
+                return;
+            }
+
+            let timerId: NodeJS.Timeout | number;
+
+            // Create an interval to repeatedly check for window.nostr
+            const intervalId = setInterval(() => {
+                if (window.nostr) {
+                    clearTimeout(timerId as number);
+                    clearInterval(intervalId);
+                    resolve();
+                }
+            }, 100);
+
+            // Set a timer to reject the promise if window.nostr is not available within the timeout
+            timerId = setTimeout(() => {
+                clearInterval(intervalId);
+                reject(new Error("NIP-07 extension not available"));
+            }, this.waitTimeout);
+        });
     }
 }
 

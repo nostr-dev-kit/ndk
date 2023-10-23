@@ -9,7 +9,7 @@ import type { NDKRelay } from "../relay/index.js";
 import { NDKRelaySet } from "../relay/sets/index.js";
 import { NDKSubscriptionCacheUsage, type NDKSubscriptionOptions } from "../subscription/index.js";
 import { follows } from "./follows.js";
-import { type NDKUserProfile, profileFromEvent } from "./profile.js";
+import { type NDKUserProfile, profileFromEvent, serializeProfile } from "./profile.js";
 
 export type Hexpubkey = string;
 
@@ -55,7 +55,30 @@ export class NDKUser {
         this._npub = npub;
     }
 
+    /**
+     * Get the user's hexpubkey
+     * @returns {Hexpubkey} The user's hexpubkey
+     *
+     * @deprecated Use `pubkey` instead
+     */
     get hexpubkey(): Hexpubkey {
+        return this.pubkey;
+    }
+
+    /**
+     * Set the user's hexpubkey
+     * @param pubkey {Hexpubkey} The user's hexpubkey
+     * @deprecated Use `pubkey` instead
+     */
+    set hexpubkey(pubkey: Hexpubkey) {
+        this._hexpubkey = pubkey;
+    }
+
+    /**
+     * Get the user's pubkey
+     * @returns {string} The user's pubkey
+     */
+    get pubkey(): string {
         if (!this._hexpubkey) {
             if (!this._npub) throw new Error("npub not set");
             this._hexpubkey = nip19.decode(this.npub).data as Hexpubkey;
@@ -64,8 +87,12 @@ export class NDKUser {
         return this._hexpubkey;
     }
 
-    set hexpubkey(hexpubkey: Hexpubkey) {
-        this._hexpubkey = hexpubkey;
+    /**
+     * Set the user's pubkey
+     * @param pubkey {string} The user's pubkey
+     */
+    set pubkey(pubkey: string) {
+        this._hexpubkey = pubkey;
     }
 
     /**
@@ -187,15 +214,56 @@ export class NDKUser {
                 kinds: [10002],
                 authors: [this.hexpubkey],
             },
-            { closeOnEose: true, pool, groupable: true },
+            {
+                closeOnEose: true,
+                pool,
+                groupable: true,
+                subId: `relay-list-${this.hexpubkey.slice(0, 6)}`,
+            },
             relaySet
         );
 
         if (event) return NDKRelayList.from(event);
 
+        return await this.relayListFromKind3();
+    }
+
+    private async relayListFromKind3(): Promise<NDKRelayList | undefined> {
+        if (!this.ndk) throw new Error("NDK not set");
+
+        const followList = await this.ndk.fetchEvent({
+            kinds: [3],
+            authors: [this.hexpubkey],
+        });
+        if (followList) {
+            try {
+                const content = JSON.parse(followList.content);
+                const relayList = new NDKRelayList(this.ndk);
+                const readRelays = new Set<string>();
+                const writeRelays = new Set<string>();
+
+                for (const [key, config] of Object.entries(content)) {
+                    if (!config) {
+                        readRelays.add(key);
+                        writeRelays.add(key);
+                    } else {
+                        const relayConfig: { read?: boolean; write?: boolean } = config;
+                        if (relayConfig.write) writeRelays.add(key);
+                        if (relayConfig.read) readRelays.add(key);
+                    }
+                }
+
+                relayList.readRelayUrls = Array.from(readRelays);
+                relayList.writeRelayUrls = Array.from(writeRelays);
+
+                return relayList;
+            } catch (e) {}
+        }
+
         return undefined;
     }
 
+    /** @deprecated Use referenceTags instead. */
     /**
      * Get the tag that can be used to reference this user in an event
      * @returns {NDKTag} an NDKTag
@@ -205,16 +273,25 @@ export class NDKUser {
     }
 
     /**
+     * Get the tags that can be used to reference this user in an event
+     * @returns {NDKTag[]} an array of NDKTag
+     */
+    public referenceTags(): NDKTag[] {
+        return [["p", this.hexpubkey]];
+    }
+
+    /**
      * Publishes the current profile.
      */
     public async publish() {
         if (!this.ndk) throw new Error("No NDK instance found");
+        if (!this.profile) throw new Error("No profile available");
 
         this.ndk.assertSigner();
 
         const event = new NDKEvent(this.ndk, {
             kind: 0,
-            content: JSON.stringify(this.profile),
+            content: serializeProfile(this.profile),
         } as NostrEvent);
         await event.publish();
     }

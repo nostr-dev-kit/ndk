@@ -237,10 +237,19 @@ importers:
       svelte-preprocess:
         specifier: ^5.0.4
         version: 5.0.4(@babel/core@7.22.20)(postcss@8.4.30)(svelte@4.2.1)(typescript@5.2.2)
+      svelte-time:
+        specifier: ^0.8.0
+        version: 0.8.0
     devDependencies:
       '@nostr-dev-kit/eslint-config-custom':
         specifier: workspace:*
         version: link:../packages/eslint-config-custom
+      '@nostr-dev-kit/ndk-cache-dexie':
+        specifier: workspace:*
+        version: link:../ndk-cache-dexie
+      '@nostr-dev-kit/ndk-svelte':
+        specifier: workspace:*
+        version: link:../ndk-svelte
       '@nostr-dev-kit/tailwind-config':
         specifier: workspace:*
         version: link:../packages/tailwind-config
@@ -360,7 +369,7 @@ importers:
         version: 9.0.0(eslint@8.50.0)
       eslint-config-turbo:
         specifier: latest
-        version: 1.10.14(eslint@8.50.0)
+        version: 1.10.15(eslint@8.50.0)
       eslint-plugin-svelte:
         specifier: ^2.33.2
         version: 2.33.2(eslint@8.50.0)
@@ -6110,6 +6119,10 @@ packages:
     engines: {node: '>= 12'}
     dev: false
 
+  /dayjs@1.11.10:
+    resolution: {integrity: sha512-vjAczensTgRcqDERK0SR2XMwsF/tSvnvlv6VcF2GIhg6Sx4yOIt/irsr1RDJsKiIyBzJDpCoXiWWq28MqH2cnQ==}
+    dev: false
+
   /debug@2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
     peerDependencies:
@@ -6738,13 +6751,13 @@ packages:
       eslint: 8.50.0
     dev: false
 
-  /eslint-config-turbo@1.10.14(eslint@8.50.0):
-    resolution: {integrity: sha512-ZeB+IcuFXy1OICkLuAplVa0euoYbhK+bMEQd0nH9+Lns18lgZRm33mVz/iSoH9VdUzl/1ZmFmoK+RpZc+8R80A==}
+  /eslint-config-turbo@1.10.15(eslint@8.50.0):
+    resolution: {integrity: sha512-76mpx2x818JZE26euen14utYcFDxOahZ9NaWA+6Xa4pY2ezVKVschuOxS96EQz3o3ZRSmcgBOapw/gHbN+EKxQ==}
     peerDependencies:
       eslint: '>6.6.0'
     dependencies:
       eslint: 8.50.0
-      eslint-plugin-turbo: 1.10.14(eslint@8.50.0)
+      eslint-plugin-turbo: 1.10.15(eslint@8.50.0)
     dev: false
 
   /eslint-formatter-pretty@4.1.0:
@@ -6847,8 +6860,8 @@ packages:
       - ts-node
     dev: false
 
-  /eslint-plugin-turbo@1.10.14(eslint@8.50.0):
-    resolution: {integrity: sha512-sBdBDnYr9AjT1g4lR3PBkZDonTrMnR4TvuGv5W0OiF7z9az1rI68yj2UHJZvjkwwcGu5mazWA1AfB0oaagpmfg==}
+  /eslint-plugin-turbo@1.10.15(eslint@8.50.0):
+    resolution: {integrity: sha512-Tv4QSKV/U56qGcTqS/UgOvb9HcKFmWOQcVh3HEaj7of94lfaENgfrtK48E2CckQf7amhKs1i+imhCsNCKjkQyA==}
     peerDependencies:
       eslint: '>6.6.0'
     dependencies:
@@ -11783,6 +11796,12 @@ packages:
       strip-indent: 3.0.0
       svelte: 4.2.1
       typescript: 5.2.2
+
+  /svelte-time@0.8.0:
+    resolution: {integrity: sha512-V0LBpJhYV2Q+jqiJ94ITAo51P6RIhrHQpDt3LCSk8PXfL2UMvSMlDzkqHq8mdKqmBCRZURnXhpynN03GQa/G/A==}
+    dependencies:
+      dayjs: 1.11.10
+    dev: false
 
   /svelte2tsx@0.6.22(svelte@4.2.1)(typescript@5.2.2):
     resolution: {integrity: sha512-eFCfz0juaWeanbwGeQV21kPMwH3LKhfrUYRy1PqRmlieuHvJs8VeK7CaoHJdpBZWCXba2cltHVdywJmwOGhbww==}

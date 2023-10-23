@@ -3,9 +3,9 @@ import EventEmitter from "eventemitter3";
 
 import type { NDKCacheAdapter } from "../cache/index.js";
 import dedupEvent from "../events/dedup.js";
-import type { NDKEvent } from "../events/index.js";
+import type { NDKEvent, NDKEventId } from "../events/index.js";
 import { OutboxTracker } from "../outbox/tracker.js";
-import type { NDKRelay, NDKRelayUrl } from "../relay/index.js";
+import { NDKRelay, NDKRelayUrl } from "../relay/index.js";
 import { NDKPool } from "../relay/pool/index.js";
 import { NDKRelaySet } from "../relay/sets/index.js";
 import { correctRelaySet } from "../relay/sets/utils.js";
@@ -13,8 +13,10 @@ import type { NDKSigner } from "../signers/index.js";
 import type { NDKFilter, NDKSubscriptionOptions } from "../subscription/index.js";
 import { NDKSubscription } from "../subscription/index.js";
 import { filterFromId, isNip33AValue, relaysFromBech32 } from "../subscription/utils.js";
-import type { NDKUserParams } from "../user/index.js";
+import type { Hexpubkey, NDKUserParams } from "../user/index.js";
 import { NDKUser } from "../user/index.js";
+import { NDKKind } from "../events/kinds/index.js";
+import NDKList from "../events/kinds/lists/index.js";
 
 export interface NDKConstructorParams {
     /**
@@ -43,6 +45,20 @@ export interface NDKConstructorParams {
     enableOutboxModel?: boolean;
 
     /**
+     * Auto-connect to main user's relays. The "main" user is determined
+     * by the presence of a signer. Upon connection to the explicit relays,
+     * the user's relays will be fetched and connected to if this is set to true.
+     * @default true
+     */
+    autoConnectUserRelays?: boolean;
+
+    /**
+     * Automatically fetch user's mutelist
+     * @default true
+     */
+    autoFetchUserMutelist?: boolean;
+
+    /**
      * Signer to use for signing events by default
      */
     signer?: NDKSigner;
@@ -56,6 +72,11 @@ export interface NDKConstructorParams {
      * Debug instance to use
      */
     debug?: debug.Debugger;
+
+    /**
+     * Muted pubkeys and eventIds
+     */
+    mutedIds?: Map<Hexpubkey | NDKEventId, string>;
 }
 
 export interface GetUserParams extends NDKUserParams {
@@ -73,11 +94,16 @@ export class NDK extends EventEmitter {
     public explicitRelayUrls?: NDKRelayUrl[];
     public pool: NDKPool;
     public outboxPool?: NDKPool;
-    public signer?: NDKSigner;
+    private _signer?: NDKSigner;
+    private _activeUser?: NDKUser;
     public cacheAdapter?: NDKCacheAdapter;
     public debug: debug.Debugger;
     public devWriteRelaySet?: NDKRelaySet;
     public outboxTracker?: OutboxTracker;
+    public mutedIds: Map<Hexpubkey | NDKEventId, string>;
+
+    private autoConnectUserRelays = true;
+    private autoFetchUserMutelist = true;
 
     public constructor(opts: NDKConstructorParams = {}) {
         super();
@@ -87,6 +113,9 @@ export class NDK extends EventEmitter {
         this.pool = new NDKPool(opts.explicitRelayUrls || [], opts.blacklistRelayUrls, this);
 
         this.debug(`Starting with explicit relays: ${JSON.stringify(this.explicitRelayUrls)}`);
+
+        this.autoConnectUserRelays = opts.autoConnectUserRelays ?? true;
+        this.autoFetchUserMutelist = opts.autoFetchUserMutelist ?? true;
 
         if (opts.enableOutboxModel) {
             this.outboxPool = new NDKPool(
@@ -101,6 +130,7 @@ export class NDK extends EventEmitter {
 
         this.signer = opts.signer;
         this.cacheAdapter = opts.cacheAdapter;
+        this.mutedIds = opts.mutedIds || new Map();
 
         if (opts.devWriteRelayUrls) {
             this.devWriteRelaySet = NDKRelaySet.fromRelayUrls(opts.devWriteRelayUrls, this);
@@ -109,6 +139,114 @@ export class NDK extends EventEmitter {
 
     public toJSON(): string {
         return { relayCount: this.pool.relays.size }.toString();
+    }
+
+    public get activeUser(): NDKUser | undefined {
+        return this._activeUser;
+    }
+
+    /**
+     * Sets the active user for this NDK instance, typically this will be
+     * called when assigning a signer to the NDK instance.
+     *
+     * This function will automatically connect to the user's relays if
+     * `autoConnectUserRelays` is set to true.
+     *
+     * It will also fetch the user's mutelist if `autoFetchUserMutelist` is set to true.
+     */
+    public set activeUser(user: NDKUser | undefined) {
+        const differentUser = this._activeUser !== user;
+
+        this._activeUser = user;
+
+        if (user && differentUser) {
+            const connectToUserRelays = async (user: NDKUser) => {
+                const relayList = await user.relayList();
+
+                if (!relayList) {
+                    this.debug("No relay list found for user", { npub: user.npub });
+                    return;
+                }
+
+                this.debug("Connecting to user relays", {
+                    npub: user.npub,
+                    relays: relayList.relays,
+                });
+                for (const url of relayList.relays) {
+                    let relay = this.pool.relays.get(url);
+                    if (!relay) {
+                        relay = new NDKRelay(url);
+                        this.pool.addRelay(relay);
+                    }
+                }
+            };
+
+            const fetchUserMuteList = async (user: NDKUser) => {
+                const muteLists = await this.fetchEvents([
+                    { kinds: [NDKKind.MuteList], authors: [user.pubkey] },
+                    {
+                        kinds: [NDKKind.CategorizedPeopleList],
+                        authors: [user.pubkey],
+                        "#d": ["mute"],
+                        limit: 1,
+                    },
+                ]);
+
+                if (!muteLists) {
+                    this.debug("No mute list found for user", { npub: user.npub });
+                    return;
+                }
+
+                for (const muteList of muteLists) {
+                    const list = NDKList.from(muteList);
+
+                    for (const item of list.items) {
+                        this.mutedIds.set(item[1], item[0]);
+                    }
+                }
+            };
+
+            const userFunctions: ((user: NDKUser) => Promise<void>)[] = [];
+
+            if (this.autoConnectUserRelays) userFunctions.push(connectToUserRelays);
+            if (this.autoFetchUserMutelist) userFunctions.push(fetchUserMuteList);
+
+            const runUserFunctions = async (user: NDKUser) => {
+                for (const fn of userFunctions) {
+                    await fn(user);
+                }
+            };
+
+            const pool = this.outboxPool || this.pool;
+
+            if (pool.connectedRelays.length > 0) {
+                runUserFunctions(user);
+            } else {
+                this.debug("Waiting for connection to main relays");
+                pool.once("relay:connect", (relay: NDKRelay) => {
+                    this.debug("New relay came online", relay);
+                    runUserFunctions(user);
+                });
+            }
+        } else if (!user) {
+            // reset mutedIds
+            this.mutedIds = new Map();
+        }
+    }
+
+    public get signer(): NDKSigner | undefined {
+        return this._signer;
+    }
+
+    public set signer(newSigner: NDKSigner | undefined) {
+        this._signer = newSigner;
+
+        this.debug(`setting signer`, this.autoConnectUserRelays);
+
+        newSigner?.user().then((user) => {
+            user.ndk = this;
+            this.activeUser = user;
+        });
     }
 
     /**
@@ -304,7 +442,7 @@ export class NDK extends EventEmitter {
     /**
      * Ensures that a signer is available to sign an event.
      */
-    public async assertSigner() {
+    public assertSigner() {
         if (!this.signer) {
             this.emit("signerRequired");
             throw new Error("Signer required");

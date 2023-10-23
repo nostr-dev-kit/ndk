@@ -9,7 +9,7 @@
 </script>
 
 {#each list.items as tag (tag[1])}
-    <div class="list-item">
+    <div class="list-item {$$props.class??""}">
         <Avatar ndk={ndk} pubkey={tag[1]} class="list-item--avatar" />
         <Name ndk={ndk} pubkey={tag[1]} class="list-item--name" />
     </div>

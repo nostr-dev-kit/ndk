@@ -21,7 +21,7 @@
     const parsed = parseContent({ content: htmlContent, tags: article.tags, html: true });
 </script>
 
-<div class="article">
+<div class="article {$$props.class??""}">
     {#each parsed as { type, value }}
         {#if type === NEWLINE}
             <NoteContentNewline {value} />

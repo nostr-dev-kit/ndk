@@ -10,6 +10,7 @@ import { NDKRelaySet } from "../relay/sets/index.js";
 import { NDKSubscriptionCacheUsage, type NDKSubscriptionOptions } from "../subscription/index.js";
 import { follows } from "./follows.js";
 import { type NDKUserProfile, profileFromEvent, serializeProfile } from "./profile.js";
+import type { NDKSigner } from "../signers/index.js";
 import Zap from "../zap/index.js";
 
 export type Hexpubkey = string;
@@ -358,18 +359,34 @@ export class NDKUser {
      * @param amount The amount to zap in millisatoshis
      * @param comment A comment to add to the zap request
      * @param extraTags Extra tags to add to the zap request
+     * @param signer The signer to use (will default to the NDK instance's signer)
      */
-    async zap(amount: number, comment?: string, extraTags?: NDKTag[]): Promise<string | null> {
+    async zap(
+        amount: number,
+        comment?: string,
+        extraTags?: NDKTag[],
+        signer?: NDKSigner
+    ): Promise<string | null> {
         if (!this.ndk) throw new Error("No NDK instance found");
 
-        this.ndk.assertSigner();
+        if (!signer) {
+            this.ndk.assertSigner();
+        }
 
         const zap = new Zap({
             ndk: this.ndk,
             zappedUser: this,
         });
 
-        const paymentRequest = await zap.createZapRequest(amount, comment, extraTags);
+        const relays = Array.from(this.ndk.pool.relays.keys());
+
+        const paymentRequest = await zap.createZapRequest(
+            amount,
+            comment,
+            extraTags,
+            relays,
+            signer
+        );
         return paymentRequest;
     }
 }

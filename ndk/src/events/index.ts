@@ -437,6 +437,7 @@ export class NDKEvent extends EventEmitter {
      * @param comment A comment to add to the zap request
      * @param extraTags Extra tags to add to the zap request
      * @param recipient The zap recipient (optional for events)
+     * @param signer The signer to use (will default to the NDK instance's signer)
      */
     async zap(
         amount: number,

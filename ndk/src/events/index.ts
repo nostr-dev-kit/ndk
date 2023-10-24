@@ -10,7 +10,7 @@ import type { NDKSigner } from "../signers/index.js";
 import type { NDKFilter } from "../subscription/index.js";
 import type { NDKUser } from "../user/index.js";
 import Zap from "../zap/index.js";
-import { ContentTag, generateContentTags } from "./content-tagger.js";
+import { type ContentTag, generateContentTags } from "./content-tagger.js";
 import { isEphemeral, isParamReplaceable, isReplaceable } from "./kind.js";
 import { NDKKind } from "./kinds/index.js";
 import { decrypt, encrypt } from "./nip04.js";
@@ -89,9 +89,9 @@ export class NDKEvent extends EventEmitter {
      */
     get author(): NDKUser {
         if (this._author) return this._author;
-        
+
         if (!this.ndk) throw new Error("No NDK instance found");
-        
+
         const user = this.ndk.getUser({ hexpubkey: this.pubkey });
         this._author = user;
         return user;
@@ -398,11 +398,11 @@ export class NDKEvent extends EventEmitter {
                 ["e", this.id],
             ];
         } else {
-            tags = [ ["e", this.id] ];
+            tags = [["e", this.id]];
         }
 
         if (marker) {
-            tags.forEach(tag => tag.push(marker)); // Add the marker to both "a" and "e" tags
+            tags.forEach((tag) => tag.push(marker)); // Add the marker to both "a" and "e" tags
         }
 
         tags.push(...this.author.referenceTags());
@@ -436,6 +436,8 @@ export class NDKEvent extends EventEmitter {
      * @param amount The amount to zap in millisatoshis
      * @param comment A comment to add to the zap request
      * @param extraTags Extra tags to add to the zap request
+     * @param recipient The zap recipient (optional for events)
+     * @param signer The signer to use (will default to the NDK instance's signer)
      */
     async zap(
         amount: number,

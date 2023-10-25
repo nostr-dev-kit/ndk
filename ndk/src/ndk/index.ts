@@ -81,7 +81,12 @@ export interface NDKConstructorParams {
 
 export interface GetUserParams extends NDKUserParams {
     npub?: string;
+
+    /**
+     * @deprecated Use `pubkey` instead
+     */
     hexpubkey?: string;
+    pubkey?: string;
 }
 
 export const DEFAULT_OUTBOX_RELAYS = ["wss://purplepag.es", "wss://relay.snort.social"];

@@ -20,6 +20,7 @@ export type Npub = string;
 export interface NDKUserParams {
     npub?: Npub;
     hexpubkey?: Hexpubkey;
+    pubkey?: Hexpubkey;
     nip05?: string;
     relayUrls?: string[];
 }
@@ -31,13 +32,14 @@ export class NDKUser {
     public ndk: NDK | undefined;
     public profile?: NDKUserProfile;
     private _npub?: Npub;
-    private _hexpubkey?: Hexpubkey;
+    private _pubkey?: Hexpubkey;
     readonly relayUrls: string[] = [];
 
     public constructor(opts: NDKUserParams) {
         if (opts.npub) this._npub = opts.npub;
 
-        if (opts.hexpubkey) this._hexpubkey = opts.hexpubkey;
+        if (opts.hexpubkey) this._pubkey = opts.hexpubkey;
+        if (opts.pubkey) this._pubkey = opts.pubkey;
 
         if (opts.relayUrls) {
             this.relayUrls = opts.relayUrls;
@@ -46,7 +48,7 @@ export class NDKUser {
 
     get npub(): string {
         if (!this._npub) {
-            if (!this._hexpubkey) throw new Error("hexpubkey not set");
+            if (!this._pubkey) throw new Error("hexpubkey not set");
             this._npub = nip19.npubEncode(this.hexpubkey);
         }
 
@@ -73,7 +75,7 @@ export class NDKUser {
      * @deprecated Use `pubkey` instead
      */
     set hexpubkey(pubkey: Hexpubkey) {
-        this._hexpubkey = pubkey;
+        this._pubkey = pubkey;
     }
 
     /**
@@ -81,12 +83,12 @@ export class NDKUser {
      * @returns {string} The user's pubkey
      */
     get pubkey(): string {
-        if (!this._hexpubkey) {
+        if (!this._pubkey) {
             if (!this._npub) throw new Error("npub not set");
-            this._hexpubkey = nip19.decode(this.npub).data as Hexpubkey;
+            this._pubkey = nip19.decode(this.npub).data as Hexpubkey;
         }
 
-        return this._hexpubkey;
+        return this._pubkey;
     }
 
     /**
@@ -94,7 +96,7 @@ export class NDKUser {
      * @param pubkey {string} The user's pubkey
      */
     set pubkey(pubkey: string) {
-        this._hexpubkey = pubkey;
+        this._pubkey = pubkey;
     }
 
     /**

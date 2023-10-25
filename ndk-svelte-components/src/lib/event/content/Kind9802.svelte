@@ -15,7 +15,7 @@
 <div class="{$$props.class??""}">
     <blockquote class="highlight--blockquote">
         <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-        {@html sanitizeHtml(context || "")}
+        {@html sanitizeHtml(context || event.content)}
     </blockquote>
 </div>
 

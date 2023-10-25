@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { NDKUser } from "@nostr-dev-kit/ndk";
+    import type { NDKUser, NDKUserProfile } from "@nostr-dev-kit/ndk";
     import type NDK from "@nostr-dev-kit/ndk";
     import Avatar from "./Avatar.svelte";
     import Name from "./Name.svelte";
@@ -26,7 +26,12 @@
      */
     export let user: NDKUser | undefined = undefined;
 
-    if (!user) {
+    /**
+     * An NDKUserProfile object for the user you want to display a name for
+     */
+    export let userProfile: NDKUserProfile | undefined = undefined;
+
+    if (!userProfile && !user) {
         let opts = npub ? { npub } : { hexpubkey: pubkey };
         try {
             user = ndk.getUser(opts);
@@ -34,18 +39,39 @@
             console.error(`error trying to get user`, { opts }, e);
         }
     }
+
+    const fetchProfilePromise = new Promise<NDKUserProfile>((resolve, reject) => {
+        if (userProfile) {
+            resolve(userProfile);
+        } else if (user) {
+            user.fetchProfile({
+                closeOnEose: true,
+                groupable: true,
+                groupableDelay: 200,
+            }).then(() => {
+                userProfile = user!.profile;
+                if (!userProfile) {
+                    reject(`no profile`);
+                } else {
+                    resolve(userProfile);
+                }
+            }).catch(reject);
+        } else {
+            reject(`no user`);
+        }
+    });
 </script>
 
-{#await user?.fetchProfile()}
+{#await fetchProfilePromise}
     <div class="userCard--loading {$$props.class}" style={$$props.style}>Loading user...</div>
 {:then userProfile}
     <div class="userCard {$$props.class}" style={$$props.style}>
         <div class="userCard--avatar">
-            <Avatar {ndk} userProfile={userProfile || undefined} class="userCard--avatar-img" />
+            <Avatar {ndk} {npub} {pubkey} {user} userProfile={userProfile || undefined} class="userCard--avatar-img" />
         </div>
         <div class="userCard--details">
-            <Name {ndk} userProfile={userProfile || undefined} class="userCard--name" />
-            <Nip05 {ndk} userProfile={userProfile || undefined} class="userCard--nip05" />
+            <Name {ndk} {npub} {pubkey} {user} userProfile={userProfile || undefined} class="userCard--name" />
+            <Nip05 {ndk} {npub} {pubkey} {user} userProfile={userProfile || undefined} class="userCard--nip05" />
             <Npub {ndk} {npub} {pubkey} {user} class="userCard--npub" />
             <div class="userCard--bio">{userProfile?.bio || userProfile?.about}</div>
         </div>

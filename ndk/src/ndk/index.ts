@@ -1,5 +1,5 @@
 import debug from "debug";
-import EventEmitter from "eventemitter3";
+import { EventEmitter } from "tseep";
 
 import type { NDKCacheAdapter } from "../cache/index.js";
 import dedupEvent from "../events/dedup.js";

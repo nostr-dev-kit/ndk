@@ -1,5 +1,5 @@
 import { bech32 } from "@scure/base";
-import EventEmitter from "eventemitter3";
+import { EventEmitter } from "tseep";
 import { nip57 } from "nostr-tools";
 
 import type { NostrEvent } from "../events/index.js";

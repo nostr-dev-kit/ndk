@@ -1,4 +1,4 @@
-import EventEmitter from "eventemitter3";
+import { EventEmitter } from "tseep";
 import { LRUCache } from "typescript-lru-cache";
 
 import type { NDKRelayList } from "../events/kinds/NDKRelayList.js";

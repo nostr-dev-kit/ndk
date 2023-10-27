@@ -1,4 +1,4 @@
-import EventEmitter from "eventemitter3";
+import { EventEmitter } from "tseep";
 
 import type { NDKEvent, NDKEventId } from "../events/index.js";
 import type { NDKKind } from "../events/kinds/index.js";

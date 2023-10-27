@@ -33,8 +33,6 @@
      */
     export let nip05MaxLength: number | undefined = undefined;
 
-    let nip05Valid: boolean | null = null;
-
     if (!user) {
         let opts = npub ? { npub } : { hexpubkey: pubkey };
         try {
@@ -43,43 +41,59 @@
             console.error(`error trying to get user`, { opts }, e);
         }
     }
-    
-    // eslint-disable-next-line no-async-promise-executor
-    const fetchProfilePromise = new Promise<NDKUserProfile>(async (resolve, reject) => {
-        if (userProfile && userProfile.nip05) {
-            nip05Valid = await user!.validateNip05(userProfile.nip05);
-            resolve(userProfile);
-        } else if (user) {
-            user.fetchProfile()
-                .then(async () => {
-                    userProfile = user!.profile;
-                    if (!userProfile?.nip05) reject;
-                    nip05Valid = await user!.validateNip05(userProfile?.nip05!);
-                    resolve(userProfile!);
-                })
-                .catch(() => {
-                    reject;
-                });
+
+    interface validationResponse {
+        valid: boolean | null,
+        userProfile: NDKUserProfile | null
+    }
+
+    async function fetchAndValidate(): Promise<validationResponse> {
+        // If we have a user profile and a NIP-05 value, validate.
+        if(userProfile && userProfile.nip05) {
+            return {
+                valid: await user!.validateNip05(userProfile.nip05), 
+                userProfile
+            }
+        // If we have a user, got get a profile and try to validate.
+        } else if(user) {
+            const profile = await user.fetchProfile();
+            if(profile && profile.nip05) {
+                return {
+                    valid: await user!.validateNip05(profile.nip05), 
+                    userProfile: profile
+                }
+            } else {
+                return {
+                    valid: null,
+                    userProfile: profile
+                }
+            }
+        // Otherwise fail gracefully
         } else {
-            reject(`no user`);
+            return {
+                valid: null,
+                userProfile: null
+            }
         }
-    });
+    }
 </script>
 
 <span class="name">
-    {#await fetchProfilePromise}
+    {#await fetchAndValidate()}
         <span class="nip05 {$$props.class}" style={$$props.style}>
-            <slot name="badge" {nip05Valid} />
+            <slot name="badge" nip05Valid={null} />
         </span>
-    {:then userProfile}
+    {:then validationResponse}
         <span class="nip05 {$$props.class}" style={$$props.style}>
-            <slot name="badge" {nip05Valid} />
-            {userProfile.nip05 ? prettifyNip05(userProfile.nip05, nip05MaxLength) : ""}
+            <slot name="badge" nip05Valid={validationResponse.valid} />
+            <span class="truncate">
+                {validationResponse.userProfile?.nip05 ? prettifyNip05(validationResponse.userProfile.nip05, nip05MaxLength) : ""}
+            </span>
         </span>
     {:catch}
         <span class="nip05--error {$$props.class}" style={$$props.style}>
-            <slot name="badge" {nip05Valid} />
-            Error loading user profile
+            <slot name="badge" nip05Valid={null} />
+            <span class="truncate">Error loading user profile</span>
         </span>
     {/await}
 </span>

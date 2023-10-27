@@ -1,5 +1,5 @@
 import type debug from "debug";
-import EventEmitter from "eventemitter3";
+import { EventEmitter } from "tseep";
 
 import type { NDK } from "../../ndk/index.js";
 import type { NDKRelayUrl } from "../index.js";

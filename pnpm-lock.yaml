@@ -44,9 +44,6 @@ importers:
       debug:
         specifier: ^4.3.4
         version: 4.3.4
-      eventemitter3:
-        specifier: ^5.0.1
-        version: 5.0.1
       light-bolt11-decoder:
         specifier: ^3.0.0
         version: 3.0.0
@@ -56,6 +53,9 @@ importers:
       nostr-tools:
         specifier: ^1.15.0
         version: 1.15.0(typescript@5.2.2)
+      tseep:
+        specifier: ^1.1.1
+        version: 1.1.1
       typescript-lru-cache:
         specifier: ^2.0.0
         version: 2.0.0
@@ -7150,10 +7150,6 @@ packages:
     engines: {node: '>= 0.6'}
     dev: true
 
-  /eventemitter3@5.0.1:
-    resolution: {integrity: sha512-GWkBvjiSZK87ELrYOSESUYeVIc9mvLLf/nXalMOS5dYrgZq9o5OVkbZAVM06CVxYsCwH9BDZFPlQTlPA1j4ahA==}
-    dev: false
-
   /execa@5.1.1:
     resolution: {integrity: sha512-8uSpZZocAZRBAPIEINJj3Lo9HyGitllczc27Eh5YYojjMFMn8yHMDMaUHE2Jqfq05D/wucwI4JGURyXt1vchyg==}
     engines: {node: '>=10'}
@@ -12161,6 +12157,10 @@ packages:
       path-exists: 4.0.0
       read-pkg-up: 7.0.1
     dev: true
+
+  /tseep@1.1.1:
+    resolution: {integrity: sha512-w2MjaqNWGDeliT5/W+/lhhnR0URiVwXXsXbkAZjQVywrOpdKhQAOL1ycyHfNOV1QBjouC7FawNmJePet1sGesw==}
+    dev: false
 
   /tslib@1.14.1:
     resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}

@@ -103,7 +103,7 @@ You can pass an object with several options to a newly created instance of NDK.
 // Import the package
 import NDK from "@nostr-dev-kit/ndk";
 
-/ Create a new NDK instance with explicit relays
+// Create a new NDK instance with explicit relays
 const ndk = new NDK({
     explicitRelayUrls: ["wss://a.relay", "wss://another.relay"],
 });
@@ -119,11 +119,11 @@ After you've instatiated NDK, you need to tell it to connect before you'll be ab
 // Import the package
 import NDK from "@nostr-dev-kit/ndk";
 
-/ Create a new NDK instance with explicit relays
+// Create a new NDK instance with explicit relays
 const ndk = new NDK({
     explicitRelayUrls: ["wss://a.relay", "wss://another.relay"],
 });
-/ Now connect to specified relays
+// Now connect to specified relays
 await ndk.connect();
 ```
 

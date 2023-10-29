@@ -342,7 +342,8 @@ await ndk.publish(event);
 
 ```ts
 // Find the first event from @jack, and react/like it.
-const event = await ndk.fetchEvent({ author: "jack@cashapp.com" })[0];
+const jackHexPubKey = "82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2"
+const event = await ndk.fetchEvent({ authors: [jackHexPubKey] });
 await event.react("🤙");
 ```
 
@@ -350,7 +351,8 @@ await event.react("🤙");
 
 ```ts
 // Find the first event from @jack, and zap it.
-const event = await ndk.fetchEvent({ author: "jack@cashapp.com" })[0];
+const jackHexPubKey = "82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2"
+const event = await ndk.fetchEvent({ authors: [jackHexPubKey] });
 await event.zap(1337, "Zapping your post!"); // Returns a bolt11 payment request
 ```
 

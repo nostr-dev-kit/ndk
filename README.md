@@ -17,8 +17,8 @@ This repository contains multiple packages:
 ## NDK Objectives
 
 1. The core goal of NDK is to improve the decentralization of Nostr via intelligent conventions and data discovery features without depending on any one central point of coordination (such as large relays or centralized search providers).
-2. NDK team aims to have new to nostr devs get set up, and reading a NIP-01 event within 10 minutes.
-3. NDK's objective is to serve prospective, and current nostr devs as clients. If you have friction with the NDK developer experience, please open issues, and ask for help from the NDK team! Devs are encouraged to search through existing, and/or create new github issues when experiencing friction with NDK.
+2. NDK team aims to have new to nostr devs get set up, and read a NIP-01 event within 10 minutes.
+3. NDK's objective is to serve prospective, and current nostr devs as clients. If you have friction with the NDK developer experience, please open issues, and ask for help from the NDK team! Devs are encouraged to search through existing, and/or create new GitHub issues when experiencing friction with NDK.
 
 ## Installation
 
@@ -29,7 +29,7 @@ npm add @nostr-dev-kit/ndk
 ## Debugging
 
 NDK uses the `debug` package to assist in understanding what's happening behind the hood. If you are building a package
-that runs on the server define the `DEBUG` environment variable like
+that runs on the server defines the `DEBUG` environment variable like
 
 ```
 export DEBUG='ndk:*'
@@ -113,7 +113,7 @@ Note: In normal client use, it's best practice to instantiate NDK as a singleton
 
 ## Connecting
 
-After you've instatiated NDK, you need to tell it to connect before you'll be able to interact with any relays.
+After you've instantiated NDK, you need to tell it to connect before you'll be able to interact with any relays.
 
 ```ts
 // Import the package
@@ -135,7 +135,7 @@ Signing adapters can be passed in when NDK is instantiated or later during runti
 
 ### Using a NIP-07 browser extension (e.g. Alby, nos2x)
 
-Instatiate NDK with a NIP-07 signer
+Instantiate NDK with a NIP-07 signer
 
 ```ts
 // Import the package, NIP-07 signer and NDK event
@@ -183,9 +183,9 @@ NDK provides database-agnostic caching functionality out-of-the-box to improve t
 
 NDK will eventually allow you to use multiple caches simultaneously and allow for selective storage of data in the cache store that makes the most sense for your application.
 
-### Where to look is more important that long-term storage
+### Where to look is more important than long-term storage
 
-The most important data to cache is _where_ a user or note might be found. UX suffers profoundly when this type of data cannot be found. By design, the Nostr protocol leaves breadcrumbs of where a user or note might be found and NDK does it's best to store this data automatically and use it when you query for events.
+The most important data to cache is _where_ a user or note might be found. UX suffers profoundly when this type of data cannot be found. By design, the Nostr protocol leaves breadcrumbs of where a user or note might be found and NDK does its best to store this data automatically and use it when you query for events.
 
 ### Instantiating and using a cache adapter
 
@@ -198,7 +198,7 @@ const ndk = new NDK({ cacheAdapter: redisAdapter });
 
 Clients often need to load data (e.g. profile data) from individual components at once (e.g. initial page render). This typically causes multiple subscriptions to be submitted fetching the same information and causing poor performance or getting rate-limited/maxed out by relays.
 
-NDK implements a convenient subscription model, _buffered queries_, where a named subscription will be created after a customizable amount of time, so that multiple components can append queries.
+NDK implements a convenient subscription model, _buffered queries_, where a named subscription will be created after a customizable amount of time so that multiple components can append queries.
 
 ```ts
 // Component 1

@@ -2,7 +2,7 @@
 
 <img src="https://raw.githubusercontent.com/nvk/ndk.fyi/master/ndk.svg" alt="drawing" width="200"/>
 
-NDK is a [nostr](<[url](https://github.com/nostr-protocol/nostr)>) development kit that makes the experience of building Nostr-related applications, whether they are relays, clients, or anything in between, better, more reliable and overall nicer to work with than existing solutions.
+NDK is a [nostr](<[url](https://github.com/nostr-protocol/nostr)>) development kit that makes the experience of building Nostr-related applications, whether they are relays, clients, or anything in between, better, more reliable, and overall nicer to work with than existing solutions.
 
 ## Monorepo
 
@@ -35,7 +35,7 @@ that runs on the server defines the `DEBUG` environment variable like
 export DEBUG='ndk:*'
 ```
 
-or in the browser enable it by writing in the DevTools console
+or in the browser, enable it by writing in the DevTools console
 
 ```
 localStorage.debug = 'ndk:*'
@@ -129,7 +129,7 @@ await ndk.connect();
 
 ## Signers
 
-NDK uses signers _optionally_ passed in to sign events. Note that it is possible to use NDK without signing events (e.g. [to get someone's profile](https://github.com/nostr-dev-kit/ndk-cli/blob/master/src/commands/profile.ts)).
+NDK uses signers _optionally_ who are passed in to sign events. Note that it is possible to use NDK without signing events (e.g. [to get someone's profile](https://github.com/nostr-dev-kit/ndk-cli/blob/master/src/commands/profile.ts)).
 
 Signing adapters can be passed in when NDK is instantiated or later during runtime.
 
@@ -361,5 +361,5 @@ await event.zap(1337, "Zapping your post!"); // Returns a bolt11 payment request
 -   Users of NDK should instantiate a single NDK instance.
 -   That instance tracks state with all relays connected, explicit and otherwise.
 -   All relays are tracked in a single pool that handles connection errors/reconnection logic.
--   RelaySets are assembled ad-hoc as needed depending on the queries set, although some RelaySets might be long-lasting, like the `explicitRelayUrls` specified by the user.
+-   RelaySets are assembled ad-hoc as needed depending on the query set, although some RelaySets might be long-lasting, like the `explicitRelayUrls` specified by the user.
 -   RelaySets are always a subset of the pool of all available relays.

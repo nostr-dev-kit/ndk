@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk
 
+## 2.0.5
+
+### Patch Changes
+
+-   d45d962: update DVM job kinds
+
 ## 2.0.4
 
 ### Patch Changes

@@ -1,3 +1,4 @@
+import EventEmitter from "eventemitter3";
 import type { NostrEvent } from "../../events/index.js";
 import type { NDK } from "../../ndk/index.js";
 import { NDKUser } from "../../user/index.js";
@@ -9,8 +10,12 @@ import { NDKNostrRpc } from "./rpc.js";
 /**
  * This NDKSigner implements NIP-46, which allows remote signing of events.
  * This class is meant to be used client-side, paired with the NDKNip46Backend or a NIP-46 backend (like Nostr-Connect)
+ *
+ * @emits authUrl -- Emitted when the user should take an action in certain URL.
+ *                   When a client receives this event, it should direct the user
+ *                   to go to that URL to authorize the application.
  */
-export class NDKNip46Signer implements NDKSigner {
+export class NDKNip46Signer extends EventEmitter implements NDKSigner {
     private ndk: NDK;
     public remoteUser: NDKUser;
     public remotePubkey: string;
@@ -46,6 +51,8 @@ export class NDKNip46Signer implements NDKSigner {
      * @param localSigner - The signer that will be used to request events to be signed
      */
     public constructor(ndk: NDK, tokenOrRemotePubkey: string, localSigner?: NDKSigner) {
+        super();
+
         let remotePubkey: string;
         let token: string | undefined;
 
@@ -75,6 +82,7 @@ export class NDKNip46Signer implements NDKSigner {
         }
 
         this.rpc = new NDKNostrRpc(ndk, this.localSigner, this.debug);
+        this.rpc.on("authUrl", (...props) => this.emit("authUrl", ...props));
     }
 
     /**

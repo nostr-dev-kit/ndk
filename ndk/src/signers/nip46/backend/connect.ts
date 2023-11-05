@@ -1,8 +1,16 @@
 import type { IEventHandlingStrategy, NDKNip46Backend } from "./index.js";
 
+/**
+ * "connect" method handler.
+ *
+ * This method receives a:
+ * * pubkey -- this is the client pubkey that is requesting permission ("local pubkey")
+ * * token -- An optional OTP token
+ */
 export default class ConnectEventHandlingStrategy implements IEventHandlingStrategy {
     async handle(
         backend: NDKNip46Backend,
+        id: string,
         remotePubkey: string,
         params: string[]
     ): Promise<string | undefined> {
@@ -16,7 +24,7 @@ export default class ConnectEventHandlingStrategy implements IEventHandlingStrat
             await backend.applyToken(pubkey, token);
         }
 
-        if (await backend.pubkeyAllowed(pubkey, "connect", token)) {
+        if (await backend.pubkeyAllowed(backend, id, pubkey, "connect", token)) {
             debug(`connection request from ${pubkey} allowed`);
             return "ack";
         } else {

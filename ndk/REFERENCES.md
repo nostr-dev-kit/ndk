@@ -29,3 +29,4 @@ to this list.
 -   [Stemstr](https://github.com/stemstr/Client) - By [@stemstr](https://njump.me/npub1stemstrls4f5plqeqkeq43gtjhtycuqd9w25v5r5z5ygaq2n2sjsd6mul5)
 -   [Audgit.ai](https://github.com/ArcadeLabsInc/audgit.ai) - By [@ArcadeLabsInc](https://njump.me/npub1tlv67m7xvlyplzexuynmfpguvyet0sjffce3y8vu0suuyuwgzauqjk7fdm)
 -   [Swarmstr](https://github.com/ptrio42/swarmstr.com) - By [@pitiunited](https://njump.me/npub178umpxtdflcm7a08nexvs4mu384kx0ngg9w8ltm5eut6q7lcp0vq05qrg4)
+-   [zapddit](https://github.com/vivganes/zapddit) - By [@vivganes](https://njump.me/npub1ltx67888tz7lqnxlrg06x234vjnq349tcfyp52r0lstclp548mcqnuz40t)

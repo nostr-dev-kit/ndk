@@ -40,6 +40,13 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
 
     /**
      * @param ndk - The NDK instance to use
+     * @param remoteNip05 - The nip05 that wants to be published as
+     * @param localSigner - The signer that will be used to request events to be signed
+     */
+    public constructor(ndk: NDK, remoteNip05: string, localSigner?: NDKSigner);
+
+    /**
+     * @param ndk - The NDK instance to use
      * @param remotePubkey - The public key of the npub that wants to be published as
      * @param localSigner - The signer that will be used to request events to be signed
      */
@@ -47,33 +54,40 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
 
     /**
      * @param ndk - The NDK instance to use
-     * @param tokenOrRemotePubkey - The public key, or a connection token, of the npub that wants to be published as
+     * @param tokenOrRemoteUser - The public key, or a connection token, of the npub that wants to be published as
      * @param localSigner - The signer that will be used to request events to be signed
      */
-    public constructor(ndk: NDK, tokenOrRemotePubkey: string, localSigner?: NDKSigner) {
+    public constructor(ndk: NDK, tokenOrRemoteUser: string, localSigner?: NDKSigner) {
         super();
 
-        let remotePubkey: string;
+        let remotePubkey: string | undefined;
         let token: string | undefined;
 
-        if (tokenOrRemotePubkey.includes("#")) {
-            const parts = tokenOrRemotePubkey.split("#");
-            remotePubkey = new NDKUser({ npub: parts[0] }).hexpubkey;
+        if (tokenOrRemoteUser.includes("#")) {
+            const parts = tokenOrRemoteUser.split("#");
+            remotePubkey = new NDKUser({ npub: parts[0] }).pubkey;
             token = parts[1];
-        } else if (tokenOrRemotePubkey.startsWith("npub")) {
+        } else if (tokenOrRemoteUser.startsWith("npub")) {
             remotePubkey = new NDKUser({
-                npub: tokenOrRemotePubkey,
-            }).hexpubkey;
+                npub: tokenOrRemoteUser,
+            }).pubkey;
+        } else if (tokenOrRemoteUser.match(/\./)) {
+            NDKUser.fromNip05(tokenOrRemoteUser).then((user) => {
+                if (user) {
+                    this.remoteUser = user;
+                    this.remotePubkey = user.pubkey;
+                }
+            });
         } else {
-            remotePubkey = tokenOrRemotePubkey;
+            remotePubkey = tokenOrRemoteUser;
         }
 
         this.ndk = ndk;
-        this.remotePubkey = remotePubkey;
+        if (remotePubkey) this.remotePubkey = remotePubkey;
         this.token = token;
         this.debug = ndk.debug.extend("nip46:signer");
 
-        this.remoteUser = new NDKUser({ hexpubkey: remotePubkey });
+        this.remoteUser = new NDKUser({ pubkey: remotePubkey });
 
         if (!localSigner) {
             this.localSigner = NDKPrivateKeySigner.generate();
@@ -99,7 +113,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
         // Generates subscription, single subscription for the lifetime of our connection
         await this.rpc.subscribe({
             kinds: [24133 as number],
-            "#p": [localUser.hexpubkey],
+            "#p": [localUser.pubkey],
         });
 
         return new Promise((resolve, reject) => {
@@ -107,7 +121,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
             // introducing a small delay here to give a clear priority to the subscription
             // to happen first
             setTimeout(() => {
-                const connectParams = [localUser.hexpubkey];
+                const connectParams = [localUser.pubkey];
 
                 if (this.token) {
                     connectParams.push(this.token);
@@ -137,7 +151,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
             this.rpc.sendRequest(
                 this.remotePubkey,
                 "nip04_encrypt",
-                [recipient.hexpubkey, value],
+                [recipient.pubkey, value],
                 24133,
                 (response: NDKRpcResponse) => {
                     if (!response.error) {
@@ -159,7 +173,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
             this.rpc.sendRequest(
                 this.remotePubkey,
                 "nip04_decrypt",
-                [sender.hexpubkey, value],
+                [sender.pubkey, value],
                 24133,
                 (response: NDKRpcResponse) => {
                     if (!response.error) {

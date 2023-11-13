@@ -56,7 +56,11 @@
                 />
             </div>
         </div>
-        <EventContent {ndk} {event} />
+        {#if !$$slots.default}
+            <EventContent {ndk} {event} />
+        {:else}
+            <slot />
+        {/if}
     </div>
 {:catch error}
     <div class="event-card">

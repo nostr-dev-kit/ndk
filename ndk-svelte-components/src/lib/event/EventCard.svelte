@@ -1,5 +1,6 @@
 <script lang="ts">
     import { EventContent, Name } from '$lib';
+    import EventCardDropdownMenu from './EventCardDropdownMenu.svelte';
     import Avatar from '$lib/user/Avatar.svelte';
     import type { NDKEvent } from '@nostr-dev-kit/ndk';
     import type NDK from '@nostr-dev-kit/ndk';
@@ -48,7 +49,10 @@
                 <Name {ndk} user={event?.author} class="event-card--name" />
             </div>
 
-            <div class="event-card--header--time">
+            <div class="event-card--header--time flex flex-row gap-2">
+                {#if event}
+                    <EventCardDropdownMenu {event} />
+                {/if}
                 <Time
                     relative={useRelativeTime()}
                     live={true}

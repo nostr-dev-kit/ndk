@@ -49,7 +49,7 @@ export enum NDKKind {
     InterestsList = 30015,
     MarketStall = 30017,
     MarketProduct = 30018,
-    CategorizedRelayList = 30022,
+    CategorizedRelayList = 30002,
     Article = 30023,
     AppSpecificData = 30078,
     Classified = 30402,

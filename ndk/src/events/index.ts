@@ -283,6 +283,10 @@ export class NDKEvent extends EventEmitter {
             }
         }
 
+        if (this.ndk?.client && !this.tagValue("client")) {
+            tags.push(["client", this.ndk.client]);
+        }
+
         return { content: content || "", tags };
     }
 

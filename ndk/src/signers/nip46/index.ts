@@ -104,7 +104,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
 
     public async blockUntilReady(): Promise<NDKUser> {
         const localUser = await this.localSigner.user();
-        const user = this.ndk.getUser({ npub: localUser.npub });
+        const remoteUser = this.ndk.getUser({ pubkey: this.remotePubkey });
 
         if (this.nip05 && !this.remotePubkey) {
             const remoteUser = NDKUser.fromNip05(this.nip05).then((user) => {
@@ -143,7 +143,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
                     24133,
                     (response: NDKRpcResponse) => {
                         if (response.result === "ack") {
-                            resolve(user);
+                            resolve(remoteUser);
                         } else {
                             reject(response.error);
                         }

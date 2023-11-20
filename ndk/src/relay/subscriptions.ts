@@ -156,7 +156,7 @@ type FiltersSub = {
 export class NDKRelaySubscriptions {
     private ndkRelay: NDKRelay;
     private delayedItems: Map<NDKFilterGroupingId, NDKGroupedSubscriptions> = new Map();
-    private delayedTimers: Map<NDKFilterGroupingId, number[]> = new Map();
+    private delayedTimers: Map<NDKFilterGroupingId, (NodeJS.Timeout | number)[]> = new Map();
 
     /**
      * Active subscriptions this relay is connected to

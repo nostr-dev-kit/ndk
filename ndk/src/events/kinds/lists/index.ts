@@ -58,9 +58,23 @@ export class NDKList extends NDKEvent {
         } else if (this.kind === NDKKind.MuteList && !titleTag) {
             return "Mute";
         } else if (this.kind === NDKKind.PinList && !titleTag) {
-            return "Pin";
+            return "Pinned Notes";
         } else if (this.kind === NDKKind.RelayList && !titleTag) {
             return "Relay Metadata";
+        } else if (this.kind === NDKKind.BookmarkList && !titleTag) {
+            return "Bookmarks";
+        } else if (this.kind === NDKKind.CommunityList && !titleTag) {
+            return "Communities";
+        } else if (this.kind === NDKKind.PublicChatList && !titleTag) {
+            return "Public Chats";
+        } else if (this.kind === NDKKind.BlockRelayList && !titleTag) {
+            return "Blocked Relays";
+        } else if (this.kind === NDKKind.SearchRelayList && !titleTag) {
+            return "Search Relays";
+        } else if (this.kind === NDKKind.InterestList && !titleTag) {
+            return "Interests";
+        } else if (this.kind === NDKKind.EmojiList && !titleTag) {
+            return "Emojis";
         } else {
             return titleTag ?? this.tagValue("d");
         }
@@ -91,9 +105,23 @@ export class NDKList extends NDKEvent {
         } else if (this.kind === NDKKind.MuteList && !nameTag) {
             return "Mute";
         } else if (this.kind === NDKKind.PinList && !nameTag) {
-            return "Pin";
+            return "Pinned Notes";
         } else if (this.kind === NDKKind.RelayList && !nameTag) {
             return "Relay Metadata";
+        } else if (this.kind === NDKKind.BookmarkList && !nameTag) {
+            return "Bookmarks";
+        } else if (this.kind === NDKKind.CommunityList && !nameTag) {
+            return "Communities";
+        } else if (this.kind === NDKKind.PublicChatList && !nameTag) {
+            return "Public Chats";
+        } else if (this.kind === NDKKind.BlockRelayList && !nameTag) {
+            return "Blocked Relays";
+        } else if (this.kind === NDKKind.SearchRelayList && !nameTag) {
+            return "Search Relays";
+        } else if (this.kind === NDKKind.InterestList && !nameTag) {
+            return "Interests";
+        } else if (this.kind === NDKKind.EmojiList && !nameTag) {
+            return "Emojis";
         } else {
             return nameTag ?? this.tagValue("d");
         }

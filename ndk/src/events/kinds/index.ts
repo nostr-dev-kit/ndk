@@ -34,22 +34,37 @@ export enum NDKKind {
     // Feedback
     DVMJobFeedback = 7000,
 
-    ZapRequest = 9734,
-    Zap = 9735,
-    Highlight = 9802,
+    // Lists and Sets
     MuteList = 10000,
     PinList = 10001,
     RelayList = 10002,
+    BookmarkList = 10003,
+    CommunityList = 10004,
+    PublicChatList = 10005,
+    BlockRelayList = 10006,
+    SearchRelayList = 10007,
+    InterestList = 10015,
+    EmojiList = 10030,
+
+    FollowSet = 30000,
+    CategorizedBookmarkList = 30001, // Deprecated but left for backwards compatibility
+    RelaySet = 30002,
+    BookmarkSet = 30003,
+    CurationSet = 30004,
+    InterestSet = 30015,
+    EmojiSet = 30030,
+    HighlightSet = 39802,
+    CategorizedHighlightList = NDKKind.HighlightSet, // Backwards compatibility
+
+    ZapRequest = 9734,
+    Zap = 9735,
+    Highlight = 9802,
     ClientAuth = 22242,
     NostrConnect = 24133,
-    CategorizedPeopleList = 30000,
-    CategorizedBookmarkList = 30001,
     ProfileBadge = 30008,
     BadgeDefinition = 30009,
-    InterestsList = 30015,
     MarketStall = 30017,
     MarketProduct = 30018,
-    CategorizedRelayList = 30002,
     Article = 30023,
     AppSpecificData = 30078,
     Classified = 30402,
@@ -57,14 +72,25 @@ export enum NDKKind {
     // NIP-89: App Metadata
     AppRecommendation = 31989,
     AppHandler = 31990,
-
-    CategorizedHighlightList = 39802,
 }
 
 export const NDKListKinds = [
-    NDKKind.CategorizedPeopleList,
-    NDKKind.CategorizedBookmarkList,
-    NDKKind.CategorizedHighlightList,
-    NDKKind.CategorizedRelayList,
-    NDKKind.InterestsList,
+    NDKKind.MuteList,
+    NDKKind.PinList,
+    NDKKind.RelayList,
+    NDKKind.BookmarkList,
+    NDKKind.CommunityList,
+    NDKKind.PublicChatList,
+    NDKKind.BlockRelayList,
+    NDKKind.SearchRelayList,
+    NDKKind.InterestList,
+    NDKKind.EmojiList,
+    NDKKind.FollowSet,
+    NDKKind.BookmarkSet,
+    NDKKind.CategorizedBookmarkList, // Backwards compatibility
+    NDKKind.RelaySet,
+    NDKKind.CurationSet,
+    NDKKind.InterestSet,
+    NDKKind.EmojiSet,
+    NDKKind.HighlightSet,
 ];

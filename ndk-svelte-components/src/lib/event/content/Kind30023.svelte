@@ -9,7 +9,7 @@
     import NoteContentPerson from "./NoteContentPerson.svelte";
     import { LINK, HTML, NEWLINE, TOPIC, parseContent } from "../../utils/notes.js";
     import { markdownToHtml } from "$lib/utils/markdown";
-    import sanitizeHtml from 'sanitize-html'
+    import sanitizeHtml from "sanitize-html";
 
     export let ndk: NDK;
     export let article: NDKArticle;
@@ -21,7 +21,7 @@
     const parsed = parseContent({ content: htmlContent, tags: article.tags, html: true });
 </script>
 
-<div class="article {$$props.class??""}">
+<div class="article {$$props.class ?? ''}">
     {#each parsed as { type, value }}
         {#if type === NEWLINE}
             <NoteContentNewline {value} />

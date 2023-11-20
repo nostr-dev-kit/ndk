@@ -26,7 +26,17 @@
 
 {#if event}
     {#if event.kind === 1}
-        <Kind1 {ndk} {content} {event} {anchorId} {maxLength} {showEntire} {showMedia} on:click class={$$props.class} />
+        <Kind1
+            {ndk}
+            {content}
+            {event}
+            {anchorId}
+            {maxLength}
+            {showEntire}
+            {showMedia}
+            on:click
+            class={$$props.class}
+        />
     {:else if event.kind === 40}
         <!-- <Kind40 {event} /> -->
     {:else if event.kind === 1063}
@@ -40,8 +50,23 @@
     {:else if event.kind === 30001}
         <Kind30001 {ndk} list={NDKList.from(event)} class={$$props.class} />
     {:else if event.kind === 30023}
-        <Kind30023 {ndk} {content} article={NDKArticle.from(event)} {showMedia} on:click class={$$props.class} />
+        <Kind30023
+            {ndk}
+            {content}
+            article={NDKArticle.from(event)}
+            {showMedia}
+            on:click
+            class={$$props.class}
+        />
     {:else}
-        <Kind30023 {ndk} {content} article={NDKArticle.from(event)} {anchorId} {showMedia} on:click class={$$props.class} />
+        <Kind30023
+            {ndk}
+            {content}
+            article={NDKArticle.from(event)}
+            {anchorId}
+            {showMedia}
+            on:click
+            class={$$props.class}
+        />
     {/if}
 {/if}

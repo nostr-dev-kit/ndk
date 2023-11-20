@@ -7,9 +7,5 @@
 </script>
 
 <span>
-    <Name
-        {ndk}
-        pubkey={value.pubkey}
-        on:click
-    />
+    <Name {ndk} pubkey={value.pubkey} on:click />
 </span>

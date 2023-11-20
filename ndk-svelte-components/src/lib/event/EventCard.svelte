@@ -1,9 +1,9 @@
 <script lang="ts">
-    import { EventContent, Name } from '$lib';
-    import EventCardDropdownMenu from './EventCardDropdownMenu.svelte';
-    import Avatar from '$lib/user/Avatar.svelte';
-    import type { NDKEvent } from '@nostr-dev-kit/ndk';
-    import type NDK from '@nostr-dev-kit/ndk';
+    import { EventContent, Name } from "$lib";
+    import EventCardDropdownMenu from "./EventCardDropdownMenu.svelte";
+    import Avatar from "$lib/user/Avatar.svelte";
+    import type { NDKEvent } from "@nostr-dev-kit/ndk";
+    import type NDK from "@nostr-dev-kit/ndk";
     import Time from "svelte-time";
 
     export let ndk: NDK;
@@ -19,12 +19,12 @@
         } else if (id) {
             event = await ndk.fetchEvent(id);
 
-            if (!event) reject('Event not found');
+            if (!event) reject("Event not found");
             else resolve(event);
         }
     });
 
-    export let timeAgoCutoff: number = 60*60*24;
+    export let timeAgoCutoff: number = 60 * 60 * 24;
 
     function useRelativeTime() {
         if (!relativeTimeAllowed || !event) return false;
@@ -37,7 +37,7 @@
 </script>
 
 {#await eventPromise then}
-    <div class="event-card {$$props.class??""}">
+    <div class="event-card {$$props.class ?? ''}">
         <div class="event-card--header">
             <div class="event-card--header--author">
                 <Avatar

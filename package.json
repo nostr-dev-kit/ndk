@@ -11,12 +11,12 @@
         "release": "turbo build --filter=docs^... && changeset publish"
     },
     "devDependencies": {
-        "@changesets/cli": "^2.22.0",
+        "@changesets/cli": "^2.26.2",
         "@nostr-dev-kit/eslint-config-custom": "workspace:*",
         "@nostr-dev-kit/tsconfig": "workspace:*",
-        "eslint": "^8.49.0",
-        "prettier": "^3.0.3",
-        "turbo": "^1.10.14",
+        "eslint": "^8.54.0",
+        "prettier": "^3.1.0",
+        "turbo": "^1.10.16",
         "typescript": "^5.2.2"
     },
     "packageManager": "pnpm@8.7.6"

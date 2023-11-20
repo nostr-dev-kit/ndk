@@ -1,14 +1,14 @@
 <script lang="ts">
     import type { NDKList } from "@nostr-dev-kit/ndk";
-    import type NDK from '@nostr-dev-kit/ndk';
+    import type NDK from "@nostr-dev-kit/ndk";
     import EventCard from "../EventCard.svelte";
 
-    export let ndk:NDK;
+    export let ndk: NDK;
     export let list: NDKList;
 </script>
 
 {#each list.items as tag (tag[1])}
-    <div class='list-item {$$props.class??""}'>
+    <div class="list-item {$$props.class ?? ''}">
         <EventCard {ndk} id={tag[1]} />
     </div>
 {/each}

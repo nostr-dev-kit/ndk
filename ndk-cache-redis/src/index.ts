@@ -14,9 +14,9 @@ interface RedisAdapterOptions {
      */
     expirationTime?: number;
     /**
-    * Redis instance connection path
-    */
-    path?: string
+     * Redis instance connection path
+     */
+    path?: string;
 }
 
 export default class RedisAdapter implements NDKCacheAdapter {

@@ -44,14 +44,16 @@
                 closeOnEose: true,
                 groupable: true,
                 groupableDelay: 200,
-            }).then(() => {
-                userProfile = user!.profile;
-                if (!userProfile) {
-                    reject(`no profile`);
-                } else {
-                    resolve(userProfile);
-                }
-            }).catch(reject);
+            })
+                .then(() => {
+                    userProfile = user!.profile;
+                    if (!userProfile) {
+                        reject(`no profile`);
+                    } else {
+                        resolve(userProfile);
+                    }
+                })
+                .catch(reject);
         } else {
             reject(`no user`);
         }
@@ -62,7 +64,7 @@
     <img alt="" class="avatar avatar--loading {$$props.class}" style={$$props.style} />
 {:then userProfile}
     <img
-        src={userProfile?.image??""}
+        src={userProfile?.image ?? ""}
         alt=""
         class="avatar avatar--image {$$props.class}"
         style={$$props.style}

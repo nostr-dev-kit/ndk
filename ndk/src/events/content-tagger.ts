@@ -1,7 +1,7 @@
 import { nip19 } from "nostr-tools";
 
 import type { NDKTag } from "./index.js";
-import { EventPointer, ProfilePointer } from "../user/index.js";
+import type { EventPointer, ProfilePointer } from "../user/index.js";
 
 export type ContentTag = {
     tags: NDKTag[];
@@ -14,13 +14,13 @@ export async function generateContentTags(
 ): Promise<ContentTag> {
     const tagRegex = /(@|nostr:)(npub|nprofile|note|nevent|naddr)[a-zA-Z0-9]+/g;
     const hashtagRegex = /#(\w+)/g;
-    let promises: Promise<void>[] = [];
+    const promises: Promise<void>[] = [];
 
     const addTagIfNew = (t: NDKTag) => {
         if (!tags.find((t2) => t2[0] === t[0] && t2[1] === t[1])) {
             tags.push(t);
         }
-    }
+    };
 
     content = content.replace(tagRegex, (tag) => {
         try {
@@ -38,45 +38,56 @@ export async function generateContentTags(
                     break;
 
                 case "note":
-                    promises.push(new Promise(async (resolve) => {
-                        addTagIfNew(["e", data, await maybeGetEventRelayUrl(entity), "mention"]);
-                        resolve();
-                    }));
+                    promises.push(
+                        // eslint-disable-next-line no-async-promise-executor
+                        new Promise(async (resolve) => {
+                            addTagIfNew([
+                                "e",
+                                data,
+                                await maybeGetEventRelayUrl(entity),
+                                "mention",
+                            ]);
+                            resolve();
+                        })
+                    );
                     break;
 
                 case "nevent":
-                    promises.push(new Promise(async (resolve) => {
-                        let { id, relays, author } = data as EventPointer;
+                    promises.push(
+                        // eslint-disable-next-line no-async-promise-executor
+                        new Promise(async (resolve) => {
+                            // eslint-disable-next-line prefer-const
+                            let { id, relays, author } = data as EventPointer;
 
-                        // If the nevent doesn't have a relay specified, try to get one
-                        if (!relays || relays.length === 0) {
-                            relays = [
-                                await maybeGetEventRelayUrl(entity)
-                            ];
-                        }
+                            // If the nevent doesn't have a relay specified, try to get one
+                            if (!relays || relays.length === 0) {
+                                relays = [await maybeGetEventRelayUrl(entity)];
+                            }
 
-                        addTagIfNew(["e", id, relays[0], "mention"]);
-                        if (author) addTagIfNew(["p", author]);
-                        resolve();
-                    }));
+                            addTagIfNew(["e", id, relays[0], "mention"]);
+                            if (author) addTagIfNew(["p", author]);
+                            resolve();
+                        })
+                    );
                     break;
 
                 case "naddr":
-                    promises.push(new Promise(async (resolve) => {
-                        const id = [data.kind, data.pubkey, data.identifier].join(":");
-                        let relays = data.relays ?? [];
+                    promises.push(
+                        // eslint-disable-next-line no-async-promise-executor
+                        new Promise(async (resolve) => {
+                            const id = [data.kind, data.pubkey, data.identifier].join(":");
+                            let relays = data.relays ?? [];
 
-                        // If the naddr doesn't have a relay specified, try to get one
-                        if (relays.length === 0) {
-                            relays = [
-                                await maybeGetEventRelayUrl(entity)
-                            ];
-                        }
+                            // If the naddr doesn't have a relay specified, try to get one
+                            if (relays.length === 0) {
+                                relays = [await maybeGetEventRelayUrl(entity)];
+                            }
 
-                        addTagIfNew(["a", id, relays[0], "mention"]);
-                        addTagIfNew(["p", data.pubkey]);
-                        resolve();
-                    }));
+                            addTagIfNew(["a", id, relays[0], "mention"]);
+                            addTagIfNew(["p", data.pubkey]);
+                            resolve();
+                        })
+                    );
                     break;
                 default:
                     return tag;

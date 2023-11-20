@@ -8,7 +8,7 @@
 
     const dispatch = createEventDispatcher();
 
-    export let event: NDKEvent
+    export let event: NDKEvent;
     export let open = false;
 
     let copiedEventId = false;
@@ -33,8 +33,16 @@
     }
 </script>
 
-<div class="event-card--dropdown-button {open ? "event-card--dropdown-button---opened" : "event-card--dropdown-button---closed"}">
-    <button on:click={() => { open = !open}}>
+<div
+    class="event-card--dropdown-button {open
+        ? 'event-card--dropdown-button---opened'
+        : 'event-card--dropdown-button---closed'}"
+>
+    <button
+        on:click={() => {
+            open = !open;
+        }}
+    >
         <MoreVertical size="16" />
     </button>
 
@@ -51,14 +59,16 @@
             <li>
                 <button class="flex flex-row items-center gap-3" on:click={copyId}>
                     <Copy size="16" />
-                    <span class="whitespace-nowrap">{copiedEventId ? 'Copied!' : 'Copy ID'}</span>
+                    <span class="whitespace-nowrap">{copiedEventId ? "Copied!" : "Copy ID"}</span>
                 </button>
             </li>
 
             <li>
                 <button class="flex flex-row items-center gap-3" on:click={copyJSON}>
                     <Copy size="16" />
-                    <span class="whitespace-nowrap">{copiedEventJSON ? 'Copied!' : 'Copy Event JSON'}</span>
+                    <span class="whitespace-nowrap"
+                        >{copiedEventJSON ? "Copied!" : "Copy Event JSON"}</span
+                    >
                 </button>
             </li>
         </ul>

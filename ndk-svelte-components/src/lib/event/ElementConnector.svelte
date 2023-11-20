@@ -8,15 +8,15 @@
     let topOfContainer: number = 0;
 
     $: if (from) {
-		bottomOfFrom = from.getBoundingClientRect().bottom;
-	}
+        bottomOfFrom = from.getBoundingClientRect().bottom;
+    }
 
-	$: if (container) {
-		topOfContainer = container.getBoundingClientRect().top;
-	}
+    $: if (container) {
+        topOfContainer = container.getBoundingClientRect().top;
+    }
 
     // when the window is resized, recalculate the positions
-    window.addEventListener('resize', () => {
+    window.addEventListener("resize", () => {
         if (from) {
             bottomOfFrom = from.getBoundingClientRect().bottom;
         }
@@ -26,28 +26,28 @@
         }
     });
 
-	setInterval(() => {
-		if (from) {
-			bottomOfFrom = from.getBoundingClientRect().bottom;
-		}
+    setInterval(() => {
+        if (from) {
+            bottomOfFrom = from.getBoundingClientRect().bottom;
+        }
 
-		if (container) {
-			topOfContainer = container.getBoundingClientRect().top;
-		}
-	}, 2000);
+        if (container) {
+            topOfContainer = container.getBoundingClientRect().top;
+        }
+    }, 2000);
 </script>
 
-<div
-    class={$$props.class || ``}
-    bind:this={container}
->
-    <div class="
+<div class={$$props.class || ``} bind:this={container}>
+    <div
+        class="
         connector
-    " style="
+    "
+        style="
         border-bottom-left-radius: 1rem;
         height: {topOfContainer - bottomOfFrom + topOffset}px;
         margin-top: -{topOfContainer - bottomOfFrom}px;
-    "></div>
+    "
+    ></div>
     <slot />
 </div>
 

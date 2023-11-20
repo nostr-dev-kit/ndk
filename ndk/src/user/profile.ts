@@ -68,6 +68,7 @@ export function profileFromEvent(event: NDKEvent): NDKUserProfile {
 }
 
 export function serializeProfile(profile: NDKUserProfile): string {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const payload: any = {};
 
     // Remap some keys from bad clients into good ones per NIP-24

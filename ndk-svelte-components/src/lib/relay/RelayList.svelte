@@ -1,9 +1,9 @@
 <script lang="ts">
-    import type { NDKRelay } from '@nostr-dev-kit/ndk';
-    import type NDK from '@nostr-dev-kit/ndk';
-    import { NDKRelayStatus } from '@nostr-dev-kit/ndk';
-    import { onMount } from 'svelte';
-    import RelayName from './RelayName.svelte';
+    import type { NDKRelay } from "@nostr-dev-kit/ndk";
+    import type NDK from "@nostr-dev-kit/ndk";
+    import { NDKRelayStatus } from "@nostr-dev-kit/ndk";
+    import { onMount } from "svelte";
+    import RelayName from "./RelayName.svelte";
 
     export let ndk: NDK;
 
@@ -12,16 +12,16 @@
 
     onMount(() => {
         update();
-        ndk.pool.on('connect', () => {
+        ndk.pool.on("connect", () => {
             update();
         });
-        ndk.pool.on('relay:connect', () => {
+        ndk.pool.on("relay:connect", () => {
             update();
         });
-        ndk.pool.on('disconnect', () => {
+        ndk.pool.on("disconnect", () => {
             update();
         });
-        ndk.pool.on('notice', relayNotice);
+        ndk.pool.on("notice", relayNotice);
     });
 
     function relayNotice(relay: NDKRelay, notice: string) {
@@ -72,14 +72,14 @@
                 {#if relay.activeSubscriptions().size > 0}
                     <div class="relay-subscriptions">
                         {relay.activeSubscriptions().size}
-                        {relay.activeSubscriptions().size === 1 ? 'subscription' : 'subscriptions'}
+                        {relay.activeSubscriptions().size === 1 ? "subscription" : "subscriptions"}
                     </div>
                 {/if}
             </button>
 
             {#if notices.has(relay)}
                 <ul>
-                    {#each notices.get(relay)??[] as notice}
+                    {#each notices.get(relay) ?? [] as notice}
                         <li class="relay-notice">{notice}</li>
                     {/each}
                 </ul>
@@ -159,7 +159,7 @@
     }
 
     .relay-status--flapping::after {
-        content: 'flapping';
+        content: "flapping";
         color: white;
         font-weight: 500;
         font-size: 0.6em;

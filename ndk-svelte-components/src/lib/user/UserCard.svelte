@@ -48,14 +48,16 @@
                 closeOnEose: true,
                 groupable: true,
                 groupableDelay: 200,
-            }).then(() => {
-                userProfile = user!.profile;
-                if (!userProfile) {
-                    reject(`no profile`);
-                } else {
-                    resolve(userProfile);
-                }
-            }).catch(reject);
+            })
+                .then(() => {
+                    userProfile = user!.profile;
+                    if (!userProfile) {
+                        reject(`no profile`);
+                    } else {
+                        resolve(userProfile);
+                    }
+                })
+                .catch(reject);
         } else {
             reject(`no user`);
         }
@@ -67,11 +69,32 @@
 {:then userProfile}
     <div class="userCard {$$props.class}" style={$$props.style}>
         <div class="userCard--avatar">
-            <Avatar {ndk} {npub} {pubkey} {user} userProfile={userProfile || undefined} class="userCard--avatar-img" />
+            <Avatar
+                {ndk}
+                {npub}
+                {pubkey}
+                {user}
+                userProfile={userProfile || undefined}
+                class="userCard--avatar-img"
+            />
         </div>
         <div class="userCard--details">
-            <Name {ndk} {npub} {pubkey} {user} userProfile={userProfile || undefined} class="userCard--name" />
-            <Nip05 {ndk} {npub} {pubkey} {user} userProfile={userProfile || undefined} class="userCard--nip05" />
+            <Name
+                {ndk}
+                {npub}
+                {pubkey}
+                {user}
+                userProfile={userProfile || undefined}
+                class="userCard--name"
+            />
+            <Nip05
+                {ndk}
+                {npub}
+                {pubkey}
+                {user}
+                userProfile={userProfile || undefined}
+                class="userCard--nip05"
+            />
             <Npub {ndk} {npub} {pubkey} {user} class="userCard--npub" />
             <div class="userCard--bio">{userProfile?.bio || userProfile?.about}</div>
         </div>

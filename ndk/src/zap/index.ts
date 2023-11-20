@@ -6,7 +6,7 @@ import type { NostrEvent } from "../events/index.js";
 import { NDKEvent, type NDKTag } from "../events/index.js";
 import type { NDK } from "../ndk/index.js";
 import type { NDKUser } from "../user/index.js";
-import { NDKSigner } from "../signers/index.js";
+import type { NDKSigner } from "../signers/index.js";
 
 const DEFAULT_RELAYS = [
     "wss://nos.lol",

@@ -7,21 +7,21 @@
         LINK,
         // INVOICE,
         NEWLINE,
-        TOPIC
-    } from '../../utils/notes.js';
+        TOPIC,
+    } from "../../utils/notes.js";
     // import MediaSet from "src/partials/MediaSet.svelte"
     // import QRCode from "src/partials/QRCode.svelte"
-    import NoteContentNewline from './NoteContentNewline.svelte';
-    import NoteContentTopic from './NoteContentTopic.svelte';
-    import NoteContentLink from './NoteContentLink.svelte';
-    import NoteContentPerson from './NoteContentPerson.svelte';
-    import type NDK from '@nostr-dev-kit/ndk';
-    import EventCard from '../EventCard.svelte';
+    import NoteContentNewline from "./NoteContentNewline.svelte";
+    import NoteContentTopic from "./NoteContentTopic.svelte";
+    import NoteContentLink from "./NoteContentLink.svelte";
+    import NoteContentPerson from "./NoteContentPerson.svelte";
+    import type NDK from "@nostr-dev-kit/ndk";
+    import EventCard from "../EventCard.svelte";
     // import NoteContentEntity from "./NoteContentEntity.svelte"
 
     export let event, maxLength;
     export let ndk: NDK;
-    export let anchorId:string | null = null;
+    export let anchorId: string | null = null;
     export let showEntire = false;
     export let showMedia = true;
     export let content = event.content;
@@ -36,7 +36,7 @@
     export const isStartOrEnd = (i: number) => isNewline(i - 1) || isNewline(i + 1);
 </script>
 
-<div class="event-content flex flex-col gap-2 overflow-hidden text-ellipsis {$$props.class??""}">
+<div class="event-content flex flex-col gap-2 overflow-hidden text-ellipsis {$$props.class ?? ''}">
     <p>
         {#each shortContent as { type, value }, i}
             {#if type === NEWLINE}
@@ -51,14 +51,14 @@
                 <NoteContentLink {value} showMedia={showMedia && isStartOrEnd(i)} />
             {:else if type.match(/^nostr:np(rofile|ub)$/)}
                 <NoteContentPerson {ndk} {value} on:click />
-            {:else if type.startsWith('nostr:') && showMedia && isStartOrEnd(i) && value.id !== anchorId}
+            {:else if type.startsWith("nostr:") && showMedia && isStartOrEnd(i) && value.id !== anchorId}
                 <EventCard {ndk} id={value.id} relays={value.relays} />
-            {:else if type.startsWith('nostr:')}
+            {:else if type.startsWith("nostr:")}
                 <!-- <NoteContentEntity {value} /> -->
             {:else}
                 {value}
             {/if}
-            {' '}
+            {" "}
         {/each}
     </p>
     <!-- {#if showMedia && extraLinks.length > 0}

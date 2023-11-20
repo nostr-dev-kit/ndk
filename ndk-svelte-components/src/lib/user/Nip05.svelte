@@ -43,37 +43,37 @@
     }
 
     interface validationResponse {
-        valid: boolean | null,
-        userProfile: NDKUserProfile | null
+        valid: boolean | null;
+        userProfile: NDKUserProfile | null;
     }
 
     async function fetchAndValidate(): Promise<validationResponse> {
         // If we have a user profile and a NIP-05 value, validate.
-        if(userProfile && userProfile.nip05) {
+        if (userProfile && userProfile.nip05) {
             return {
-                valid: await user!.validateNip05(userProfile.nip05), 
-                userProfile
-            }
-        // If we have a user, got get a profile and try to validate.
-        } else if(user) {
+                valid: await user!.validateNip05(userProfile.nip05),
+                userProfile,
+            };
+            // If we have a user, got get a profile and try to validate.
+        } else if (user) {
             const profile = await user.fetchProfile();
-            if(profile && profile.nip05) {
+            if (profile && profile.nip05) {
                 return {
-                    valid: await user!.validateNip05(profile.nip05), 
-                    userProfile: profile
-                }
+                    valid: await user!.validateNip05(profile.nip05),
+                    userProfile: profile,
+                };
             } else {
                 return {
                     valid: null,
-                    userProfile: profile
-                }
+                    userProfile: profile,
+                };
             }
-        // Otherwise fail gracefully
+            // Otherwise fail gracefully
         } else {
             return {
                 valid: null,
-                userProfile: null
-            }
+                userProfile: null,
+            };
         }
     }
 </script>
@@ -87,7 +87,9 @@
         <span class="nip05 {$$props.class}" style={$$props.style}>
             <slot name="badge" nip05Valid={validationResponse.valid} />
             <span class="truncate">
-                {validationResponse.userProfile?.nip05 ? prettifyNip05(validationResponse.userProfile.nip05, nip05MaxLength) : ""}
+                {validationResponse.userProfile?.nip05
+                    ? prettifyNip05(validationResponse.userProfile.nip05, nip05MaxLength)
+                    : ""}
             </span>
         </span>
     {:catch}

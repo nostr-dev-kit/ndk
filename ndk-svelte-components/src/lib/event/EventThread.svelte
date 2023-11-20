@@ -1,7 +1,12 @@
 <script lang="ts">
-    import { NDKSubscriptionCacheUsage, type Hexpubkey, type NDKEvent, type NDKEventId } from "@nostr-dev-kit/ndk";
-    import type { Readable } from 'svelte/store';
-    import { fade } from 'svelte/transition';
+    import {
+        NDKSubscriptionCacheUsage,
+        type Hexpubkey,
+        type NDKEvent,
+        type NDKEventId,
+    } from "@nostr-dev-kit/ndk";
+    import type { Readable } from "svelte/store";
+    import { fade } from "svelte/transition";
     import { SvelteComponent, onDestroy } from "svelte";
     import EventCard from "./EventCard.svelte";
     import ElementConnector from "./ElementConnector.svelte";
@@ -9,15 +14,17 @@
 
     type ExtraItem = {
         component: typeof SvelteComponent;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         props: any;
-    }
+    };
     type ExtraItemFetcher = (event: NDKEvent) => Readable<ExtraItem[]>;
 
     export let ndk: NDKSvelte;
     export let event: NDKEvent;
     export let skipEvent = false;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     export let eventComponent: any = EventCard;
-    export let eventComponentProps: Object = {};
+    export let eventComponentProps: object = {};
     export let whitelistPubkeys: Set<Hexpubkey> | undefined = undefined;
     export let useWhitelist = false;
     export let extraItemsFetcher: ExtraItemFetcher | undefined = undefined;
@@ -40,10 +47,17 @@
         extraItems = extraItemsFetcher(event);
     }
 
-    let replies = ndk.storeSubscribe({
-        kinds: [1],
-        "#e": Array.from(threadIds.keys())
-    }, { closeOnEose: false, groupableDelay: 100, cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY });
+    let replies = ndk.storeSubscribe(
+        {
+            kinds: [1],
+            "#e": Array.from(threadIds.keys()),
+        },
+        {
+            closeOnEose: false,
+            groupableDelay: 100,
+            cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY,
+        }
+    );
 
     $: {
         const threadIdCountBefore = threadIds.size;
@@ -51,29 +65,29 @@
 
         // Update eventsByAuthor
         for (const taggedEvent of $replies) {
-            if (taggedEvent.pubkey === event.pubkey)
-                eventsByAuthor.add(taggedEvent.id);
+            if (taggedEvent.pubkey === event.pubkey) eventsByAuthor.add(taggedEvent.id);
         }
 
         // Find threaded events and replies
         for (const taggedEvent of $replies) {
-            if (eventIsPartOfThread(taggedEvent))
-                threadIds.set(taggedEvent.id, taggedEvent);
+            if (eventIsPartOfThread(taggedEvent)) threadIds.set(taggedEvent.id, taggedEvent);
         }
 
         for (const taggedEvent of $replies) {
             if (threadIds.has(taggedEvent.id)) continue;
-            if (eventIsReply(taggedEvent))
-                replyIds.set(taggedEvent.id, taggedEvent);
+            if (eventIsReply(taggedEvent)) replyIds.set(taggedEvent.id, taggedEvent);
         }
 
         // Do we need to redo our filter?
         if (threadIdCountBefore < threadIds.size) {
             replies.unsubscribe();
-            replies = ndk.storeSubscribe({
-                kinds: [1],
-                "#e": Array.from(threadIds.keys())
-            }, { closeOnEose: false, groupableDelay: 100, subId: "thread-filter" });
+            replies = ndk.storeSubscribe(
+                {
+                    kinds: [1],
+                    "#e": Array.from(threadIds.keys()),
+                },
+                { closeOnEose: false, groupableDelay: 100, subId: "thread-filter" }
+            );
             threadIds = threadIds;
         }
 
@@ -87,8 +101,10 @@
         if (event.pubkey !== e.pubkey) return false;
 
         // Check if all tagged events are by the original author
-        const taggedEventIds = e.getMatchingTags("e").map(tag => tag[1]);
-        const allTaggedEventsAreByOriginalAuthor = taggedEventIds.every(id => eventsByAuthor.has(id));
+        const taggedEventIds = e.getMatchingTags("e").map((tag) => tag[1]);
+        const allTaggedEventsAreByOriginalAuthor = taggedEventIds.every((id) =>
+            eventsByAuthor.has(id)
+        );
 
         return allTaggedEventsAreByOriginalAuthor;
     }
@@ -99,30 +115,27 @@
 
     onDestroy(() => {
         replies.unsubscribe();
-    })
+    });
 
     function isReply(e: NDKEvent): boolean {
-        const replyMarker = e.tags.find(tag => {
-            return (
-                threadIds.has(tag[1]) &&
-                tag[3] === 'reply'
-            );
-        })
+        const replyMarker = e.tags.find((tag) => {
+            return threadIds.has(tag[1]) && tag[3] === "reply";
+        });
 
         if (replyMarker) return true;
 
         // check if the event has valid markers, if it does and we don't have an explicit reply, this was
         // probably a reply to a reply or a mention
-        const hasMarker = !!e.tags.find(tag => ["reply", "mention"].includes(tag[3]));
+        const hasMarker = !!e.tags.find((tag) => ["reply", "mention"].includes(tag[3]));
         if (hasMarker) return false;
 
         // if we don't have markers, check if there are tags for other events that the main event
         // does not have
-        const expectedTags = event.getMatchingTags("e").map(tag => tag[1]);
+        const expectedTags = event.getMatchingTags("e").map((tag) => tag[1]);
         expectedTags.push(event.id);
 
         // return true if there are no unexpected e tags
-        return e.getMatchingTags("e").every(tag => expectedTags.includes(tag[1]));
+        return e.getMatchingTags("e").every((tag) => expectedTags.includes(tag[1]));
     }
 
     function sortThread(a: NDKEvent, b: NDKEvent): number {
@@ -144,7 +157,8 @@
                     this={eventComponent}
                     {event}
                     ...eventComponentProps
-                    class="{$$props.eventComponentClass??""} border border-base-300 w-full join-item"
+                    class="{$$props.eventComponentClass ??
+                        ''} border border-base-300 w-full join-item"
                 />
             {/each}
         </div>
@@ -152,23 +166,15 @@
 
     {#if replyIds.size > 0 || $extraItems}
         <div class="event-thread--indent">
-            {#each $extraItems??[] as item (item.props.key)}
-                <ElementConnector
-                    from={eventContainer}
-                    topOffset={80}
-                >
-                    <svelte:component this={item.component}
-                        {...item.props}
-                    />
+            {#each $extraItems ?? [] as item (item.props.key)}
+                <ElementConnector from={eventContainer} topOffset={80}>
+                    <svelte:component this={item.component} {...item.props} />
                 </ElementConnector>
             {/each}
 
             {#each Array.from(replyIds.values()).sort(sortReplies) as reply (reply.id)}
                 {#if !whitelistPubkeys || !useWhitelist || whitelistPubkeys.has(reply.pubkey)}
-                    <ElementConnector
-                        from={eventContainer}
-                        topOffset={80}
-                    >
+                    <ElementConnector from={eventContainer} topOffset={80}>
                         <svelte:self
                             {ndk}
                             event={reply}
@@ -184,8 +190,13 @@
                 {:else if whitelistPubkeys && useWhitelist && !whitelistPubkeys.has(reply.pubkey)}
                     <div class="flex flex-col gap-4">
                         <div class="flex flex-row gap-2 items-center">
-                            <span class="text-base-content flex-grow ui-common-font-light">This reply was hidden</span>
-                            <button class="btn btn-sm bg-base-300 capitalize" on:click={() => useWhitelist = false}>Show anyway</button>
+                            <span class="text-base-content flex-grow ui-common-font-light"
+                                >This reply was hidden</span
+                            >
+                            <button
+                                class="btn btn-sm bg-base-300 capitalize"
+                                on:click={() => (useWhitelist = false)}>Show anyway</button
+                            >
                         </div>
                     </div>
                 {/if}

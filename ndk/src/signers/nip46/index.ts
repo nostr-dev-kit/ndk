@@ -18,9 +18,10 @@ import { NDKNostrRpc } from "./rpc.js";
 export class NDKNip46Signer extends EventEmitter implements NDKSigner {
     private ndk: NDK;
     public remoteUser: NDKUser;
-    public remotePubkey: string;
+    public remotePubkey: string | undefined;
     public token: string | undefined;
     public localSigner: NDKSigner;
+    private nip05?: string;
     private rpc: NDKNostrRpc;
     private debug: debug.Debugger;
 
@@ -72,12 +73,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
                 npub: tokenOrRemoteUser,
             }).pubkey;
         } else if (tokenOrRemoteUser.match(/\./)) {
-            NDKUser.fromNip05(tokenOrRemoteUser).then((user) => {
-                if (user) {
-                    this.remoteUser = user;
-                    this.remotePubkey = user.pubkey;
-                }
-            });
+            this.nip05 = tokenOrRemoteUser;
         } else {
             remotePubkey = tokenOrRemoteUser;
         }
@@ -110,6 +106,19 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
         const localUser = await this.localSigner.user();
         const user = this.ndk.getUser({ npub: localUser.npub });
 
+        if (this.nip05 && !this.remotePubkey) {
+            const remoteUser = NDKUser.fromNip05(this.nip05).then((user) => {
+                if (user) {
+                    this.remoteUser = user;
+                    this.remotePubkey = user.pubkey;
+                }
+            });
+        }
+
+        if (!this.remotePubkey) {
+            throw new Error("Remote pubkey not set");
+        }
+
         // Generates subscription, single subscription for the lifetime of our connection
         await this.rpc.subscribe({
             kinds: [24133 as number],
@@ -128,7 +137,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
                 }
 
                 this.rpc.sendRequest(
-                    this.remotePubkey,
+                    this.remotePubkey!,
                     "connect",
                     connectParams,
                     24133,
@@ -149,7 +158,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
 
         const promise = new Promise<string>((resolve, reject) => {
             this.rpc.sendRequest(
-                this.remotePubkey,
+                this.remotePubkey!,
                 "nip04_encrypt",
                 [recipient.pubkey, value],
                 24133,
@@ -171,7 +180,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
 
         const promise = new Promise<string>((resolve, reject) => {
             this.rpc.sendRequest(
-                this.remotePubkey,
+                this.remotePubkey!,
                 "nip04_decrypt",
                 [sender.pubkey, value],
                 24133,
@@ -194,7 +203,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
 
         const promise = new Promise<string>((resolve, reject) => {
             this.rpc.sendRequest(
-                this.remotePubkey,
+                this.remotePubkey!,
                 "sign_event",
                 [JSON.stringify(event)],
                 24133,

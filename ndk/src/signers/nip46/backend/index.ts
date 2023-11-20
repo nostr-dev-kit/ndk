@@ -12,22 +12,23 @@ import Nip04DecryptHandlingStrategy from "./nip04-decrypt.js";
 import Nip04EncryptHandlingStrategy from "./nip04-encrypt.js";
 import SignEventHandlingStrategy from "./sign-event.js";
 
-export type Nip46PermitCallback = (
-    /**
-     * The backend
-     */
-    backend: NDKNip46Backend,
+export type NIP46Method = "connect" | "sign_event" | "encrypt" | "decrypt";
 
+export type Nip46PermitCallbackParams = {
     /**
      * ID of the request
      */
     id: string,
 
     pubkey: string,
-    method: string,
+
+    method: NIP46Method,
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     params?: any
-) => Promise<boolean>;
+};
+
+export type Nip46PermitCallback = (params: Nip46PermitCallbackParams) => Promise<boolean>;
 
 export type Nip46ApplyTokenCallback = (pubkey: string, token: string) => Promise<void>;
 
@@ -153,13 +154,7 @@ export class NDKNip46Backend {
      * connections.
      */
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public async pubkeyAllowed(
-        backend: NDKNip46Backend,
-        id: string,
-        pubkey: string,
-        method: string,
-        params?: any
-    ): Promise<boolean> {
-        return this.permitCallback(backend, id, pubkey, method, params);
+    public async pubkeyAllowed(params: Nip46PermitCallbackParams): Promise<boolean> {
+        return this.permitCallback(params);
     }
 }

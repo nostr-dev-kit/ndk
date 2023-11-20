@@ -24,7 +24,7 @@ export default class ConnectEventHandlingStrategy implements IEventHandlingStrat
             await backend.applyToken(pubkey, token);
         }
 
-        if (await backend.pubkeyAllowed(backend, id, pubkey, "connect", token)) {
+        if (await backend.pubkeyAllowed({ id, pubkey, method: "connect", params: token })) {
             debug(`connection request from ${pubkey} allowed`);
             return "ack";
         } else {

@@ -23,7 +23,7 @@ async function encrypt(
     recipientUser: NDKUser,
     payload: string
 ) {
-    if (!(await backend.pubkeyAllowed(backend, id, remotePubkey, "encrypt", payload))) {
+    if (!(await backend.pubkeyAllowed({ id, pubkey: remotePubkey, method: "encrypt", payload }))) {
         backend.debug(`encrypt request from ${remotePubkey} rejected`);
         return undefined;
     }

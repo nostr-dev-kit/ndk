@@ -29,7 +29,7 @@ async function signEvent(
 
     backend.debug("event to sign", event.rawEvent());
 
-    if (!(await backend.pubkeyAllowed(backend, id, remotePubkey, "sign_event", event))) {
+    if (!(await backend.pubkeyAllowed({ id, pubkey: remotePubkey, method: "sign_event", params: event }))) {
         backend.debug(`sign event request from ${remotePubkey} rejected`);
         return undefined;
     }

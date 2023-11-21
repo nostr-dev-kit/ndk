@@ -213,6 +213,8 @@ export class NDKList extends NDKEvent {
         return this.tags.filter((t) => {
             return ![
                 "d",
+                "L",
+                "l",
                 "title",
                 "name",
                 "description",

@@ -1,4 +1,4 @@
-//import "websocket-polyfill";
+import "websocket-polyfill";
 
 import { NDK } from "../../ndk/index.js";
 import { NDKRelay } from "../index.js";

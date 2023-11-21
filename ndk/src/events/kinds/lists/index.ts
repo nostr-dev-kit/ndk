@@ -211,7 +211,18 @@ export class NDKList extends NDKEvent {
      */
     get items(): NDKTag[] {
         return this.tags.filter((t) => {
-            return !["d", "name", "description"].includes(t[0]);
+            return ![
+                "d",
+                "title",
+                "name",
+                "description",
+                "summary",
+                "image",
+                "thumb",
+                "alt",
+                "expiration",
+                "subject",
+            ].includes(t[0]);
         });
     }
 

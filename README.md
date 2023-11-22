@@ -363,3 +363,9 @@ await event.zap(1337, "Zapping your post!"); // Returns a bolt11 payment request
 -   All relays are tracked in a single pool that handles connection errors/reconnection logic.
 -   RelaySets are assembled ad-hoc as needed depending on the queries set, although some RelaySets might be long-lasting, like the `explicitRelayUrls` specified by the user.
 -   RelaySets are always a subset of the pool of all available relays.
+
+## Wall of Contributors
+
+<a href="https://github.com/nostr-dev-kit/ndk/graphs/contributors">
+<img src="https://contrib.rocks/image?repo=nostr-dev-kit/ndk" />
+</a>

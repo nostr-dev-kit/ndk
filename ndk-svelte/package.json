@@ -1,6 +1,6 @@
 {
   "name": "@nostr-dev-kit/ndk-svelte",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "This package provides convenience functionalities to make usage of NDK with Svelte nicer.",
   "types": "./dist/index.d.ts",
   "main": "./dist/index.js",

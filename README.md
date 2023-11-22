@@ -59,7 +59,7 @@ localStorage.debug = 'ndk:*'
         -   [ ] In-memory
     -   Client-side
         -   [ ] LocalStorage
-        -   [x] IndexD ([Dexie](https://github.com/nostr-dev-kit/ndk-cache-dexie))
+        -   [x] IndexedDB ([Dexie](https://github.com/nostr-dev-kit/ndk-cache-dexie))
 -   [~] NIP-04: Encryption support
 -   [x] NIP-18: Repost
 -   [ ] ~~NIP-26~~ Won't add / NIP-26 is dead

@@ -198,7 +198,7 @@ export class NDK extends EventEmitter {
                 const muteLists = await this.fetchEvents([
                     { kinds: [NDKKind.MuteList], authors: [user.pubkey] },
                     {
-                        kinds: [NDKKind.CategorizedPeopleList],
+                        kinds: [NDKKind.FollowSet],
                         authors: [user.pubkey],
                         "#d": ["mute"],
                         limit: 1,

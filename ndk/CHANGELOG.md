@@ -4,6 +4,7 @@
 
 ### Patch Changes
 
+-   Update names to new NIP-51
 -   d45d962: update DVM job kinds
 
 ## 2.0.4

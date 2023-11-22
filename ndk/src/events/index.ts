@@ -361,9 +361,11 @@ export class NDKEvent extends EventEmitter {
         return `${this.kind}:${this.pubkey}:${dTagId}`;
     }
 
-    /** @deprecated Use referenceTags instead. */
     /**
-     * Get the tag that can be used to reference this event from another event
+     * Get the tag that can be used to reference this event from another event.
+     *
+     * Consider using referenceTags() instead (unless you have a good reason to use this)
+     *
      * @example
      *     event = new NDKEvent(ndk, { kind: 30000, pubkey: 'pubkey', tags: [ ["d", "d-code"] ] });
      *     event.tagReference(); // ["a", "30000:pubkey:d-code"]
@@ -372,13 +374,28 @@ export class NDKEvent extends EventEmitter {
      *     event.tagReference(); // ["e", "eventid"]
      * @returns {NDKTag} The NDKTag object referencing this event
      */
-    tagReference(): NDKTag {
+    tagReference(marker?: string): NDKTag {
+        let tag: NDKTag;
+
         // NIP-33
         if (this.isParamReplaceable()) {
-            return ["a", this.tagAddress()];
+            tag = ["a", this.tagAddress()];
+        } else {
+            tag = ["e", this.tagId()];
         }
 
-        return ["e", this.tagId()];
+
+        if (this.relay) {
+            tag.push(this.relay.url);
+        } else {
+            tag.push("");
+        }
+
+        if (marker) {
+            tag.push(marker);
+        }
+
+        return tag;
     }
 
     /**
@@ -403,6 +420,19 @@ export class NDKEvent extends EventEmitter {
             ];
         } else {
             tags = [["e", this.id]];
+        }
+
+        // Add the relay url to all tags
+        if (this.relay?.url) {
+            tags = tags.map((tag) => {
+                tag.push(this.relay?.url!);
+                return tag;
+            });
+        } else if (marker) {
+            tags = tags.map((tag) => {
+                tag.push("");
+                return tag;
+            });
         }
 
         if (marker) {

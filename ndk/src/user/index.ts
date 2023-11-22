@@ -60,7 +60,7 @@ export class NDKUser {
     get npub(): string {
         if (!this._npub) {
             if (!this._pubkey) throw new Error("hexpubkey not set");
-            this._npub = nip19.npubEncode(this.hexpubkey);
+            this._npub = nip19.npubEncode(this.pubkey);
         }
 
         return this._npub;
@@ -120,7 +120,7 @@ export class NDKUser {
 
         if (profile) {
             return new NDKUser({
-                hexpubkey: profile.pubkey,
+                pubkey: profile.pubkey,
                 relayUrls: profile.relays,
             });
         }
@@ -143,7 +143,7 @@ export class NDKUser {
             this.ndk.cacheAdapter.fetchProfile &&
             opts?.cacheUsage !== NDKSubscriptionCacheUsage.ONLY_RELAY
         ) {
-            const profile = await this.ndk.cacheAdapter.fetchProfile(this.hexpubkey);
+            const profile = await this.ndk.cacheAdapter.fetchProfile(this.pubkey);
 
             if (profile) {
                 this.profile = profile;
@@ -163,7 +163,7 @@ export class NDKUser {
             setMetadataEvents = await this.ndk.fetchEvents(
                 {
                     kinds: [0],
-                    authors: [this.hexpubkey],
+                    authors: [this.pubkey],
                 },
                 {
                     cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE,
@@ -184,7 +184,7 @@ export class NDKUser {
             setMetadataEvents = await this.ndk.fetchEvents(
                 {
                     kinds: [0],
-                    authors: [this.hexpubkey],
+                    authors: [this.pubkey],
                 },
                 opts
             );
@@ -200,7 +200,7 @@ export class NDKUser {
         this.profile = profileFromEvent(sortedSetMetadataEvents[0]);
 
         if (this.profile && this.ndk.cacheAdapter && this.ndk.cacheAdapter.saveProfile) {
-            this.ndk.cacheAdapter.saveProfile(this.hexpubkey, this.profile);
+            this.ndk.cacheAdapter.saveProfile(this.pubkey, this.profile);
         }
 
         return this.profile;
@@ -227,13 +227,13 @@ export class NDKUser {
         const event = await this.ndk.fetchEvent(
             {
                 kinds: [10002],
-                authors: [this.hexpubkey],
+                authors: [this.pubkey],
             },
             {
                 closeOnEose: true,
                 pool,
                 groupable: true,
-                subId: `relay-list-${this.hexpubkey.slice(0, 6)}`,
+                subId: `relay-list-${this.pubkey.slice(0, 6)}`,
             },
             relaySet
         );
@@ -248,7 +248,7 @@ export class NDKUser {
 
         const followList = await this.ndk.fetchEvent({
             kinds: [3],
-            authors: [this.hexpubkey],
+            authors: [this.pubkey],
         });
         if (followList) {
             try {
@@ -286,7 +286,7 @@ export class NDKUser {
      * @returns {NDKTag} an NDKTag
      */
     public tagReference(): NDKTag {
-        return ["p", this.hexpubkey];
+        return ["p", this.pubkey];
     }
 
     /**
@@ -294,7 +294,7 @@ export class NDKUser {
      * @returns {NDKTag[]} an array of NDKTag
      */
     public referenceTags(): NDKTag[] {
-        return [["p", this.hexpubkey]];
+        return [["p", this.pubkey]];
     }
 
     /**
@@ -353,8 +353,8 @@ export class NDKUser {
      * Validate a user's NIP-05 identifier (usually fetched from their kind:0 profile data)
      *
      * @param nip05Id The NIP-05 string to validate
-     * @returns {Promise<boolean | null>} True if the NIP-05 is found and matches this user's hexpubkey,
-     * False if the NIP-05 is found but doesn't match this user's hexpubkey,
+     * @returns {Promise<boolean | null>} True if the NIP-05 is found and matches this user's pubkey,
+     * False if the NIP-05 is found but doesn't match this user's pubkey,
      * null if the NIP-05 isn't found on the domain or we're unable to verify (because of network issues, etc.)
      */
     public async validateNip05(nip05Id: string): Promise<boolean | null> {
@@ -363,7 +363,7 @@ export class NDKUser {
         const profilePointer: ProfilePointer | null = await nip05.queryProfile(nip05Id);
 
         if (profilePointer === null) return null;
-        return profilePointer.pubkey === this.hexpubkey;
+        return profilePointer.pubkey === this.pubkey;
     }
 
     /**

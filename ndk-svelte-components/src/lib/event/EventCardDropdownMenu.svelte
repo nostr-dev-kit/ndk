@@ -64,3 +64,14 @@
         </ul>
     {/if}
 </div>
+
+<style lang="postcss">
+    .event-card--dropdown-button {
+        position: relative;
+    }
+
+    ul {
+        position: absolute;
+        top: 10px;
+    }
+</style>

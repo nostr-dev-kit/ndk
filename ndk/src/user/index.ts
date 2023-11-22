@@ -1,5 +1,4 @@
 import { nip05, nip19 } from "nostr-tools";
-import type { ProfilePointer } from "nostr-tools/lib/nip19.js";
 
 import { NDKEvent, type NDKTag, type NostrEvent } from "../events/index.js";
 import { NDKRelayList } from "../events/kinds/NDKRelayList.js";
@@ -16,6 +15,18 @@ import Zap from "../zap/index.js";
 export type Hexpubkey = string;
 
 export type Npub = string;
+
+export type ProfilePointer = {
+    pubkey: string;
+    relays?: string[];
+};
+
+export type EventPointer = {
+    id: string;
+    relays?: string[];
+    author?: string;
+    kind?: number;
+};
 
 export interface NDKUserParams {
     npub?: Npub;

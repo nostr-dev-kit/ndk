@@ -59,7 +59,7 @@ localStorage.debug = 'ndk:*'
         -   [ ] In-memory
     -   Client-side
         -   [ ] LocalStorage
-        -   [x] IndexD ([Dexie](https://github.com/nostr-dev-kit/ndk-cache-dexie))
+        -   [x] IndexedDB ([Dexie](https://github.com/nostr-dev-kit/ndk-cache-dexie))
 -   [~] NIP-04: Encryption support
 -   [x] NIP-18: Repost
 -   [ ] ~~NIP-26~~ Won't add / NIP-26 is dead
@@ -88,7 +88,7 @@ localStorage.debug = 'ndk:*'
 
 ## Real-world uses of NDK
 
-See [REFERENCES.md](./REFERENCES.md) for a list of projects using NDK to see how others are using it.
+See [REFERENCES.md](./ndk/REFERENCES.md) for a list of projects using NDK to see how others are using it.
 
 ## Instantiate an NDK instance
 
@@ -342,7 +342,7 @@ await ndk.publish(event);
 
 ```ts
 // Find the first event from @jack, and react/like it.
-const jackHexPubKey = "82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2"
+const jackHexPubKey = "82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2";
 const event = await ndk.fetchEvent({ authors: [jackHexPubKey] });
 await event.react("🤙");
 ```
@@ -351,7 +351,7 @@ await event.react("🤙");
 
 ```ts
 // Find the first event from @jack, and zap it.
-const jackHexPubKey = "82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2"
+const jackHexPubKey = "82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2";
 const event = await ndk.fetchEvent({ authors: [jackHexPubKey] });
 await event.zap(1337, "Zapping your post!"); // Returns a bolt11 payment request
 ```
@@ -363,3 +363,9 @@ await event.zap(1337, "Zapping your post!"); // Returns a bolt11 payment request
 -   All relays are tracked in a single pool that handles connection errors/reconnection logic.
 -   RelaySets are assembled ad-hoc as needed depending on the queries set, although some RelaySets might be long-lasting, like the `explicitRelayUrls` specified by the user.
 -   RelaySets are always a subset of the pool of all available relays.
+
+## Wall of Contributors
+
+<a href="https://github.com/nostr-dev-kit/ndk/graphs/contributors">
+<img src="https://contrib.rocks/image?repo=nostr-dev-kit/ndk" />
+</a>

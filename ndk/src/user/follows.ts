@@ -12,13 +12,13 @@ export async function follows(
 ): Promise<Set<NDKUser>> {
     if (!this.ndk) throw new Error("NDK not set");
 
-    const contactListEvent = await this.ndk.fetchEvent(
+    const contactListEvent = Array.from(await this.ndk.fetchEvents(
         {
             kinds: [3],
-            authors: [this.hexpubkey],
+            authors: [this.pubkey],
         },
         opts || { groupable: false }
-    );
+    ))[0];
 
     if (contactListEvent) {
         const pubkeys = new Set<Hexpubkey>();
@@ -36,8 +36,8 @@ export async function follows(
             }
         });
 
-        return [...pubkeys].reduce((acc: Set<NDKUser>, hexpubkey: Hexpubkey) => {
-            const user = new NDKUser({ hexpubkey });
+        return [...pubkeys].reduce((acc: Set<NDKUser>, pubkey: Hexpubkey) => {
+            const user = new NDKUser({ pubkey });
             user.ndk = this.ndk;
             acc.add(user);
             return acc;

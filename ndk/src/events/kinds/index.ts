@@ -47,14 +47,17 @@ export enum NDKKind {
     EmojiList = 10030,
 
     FollowSet = 30000,
+    CategorizedPeopleList = NDKKind.FollowSet, // Deprecated but left for backwards compatibility
     CategorizedBookmarkList = 30001, // Deprecated but left for backwards compatibility
     RelaySet = 30002,
+    CategorizedRelayList = NDKKind.RelaySet, // Deprecated but left for backwards compatibility
     BookmarkSet = 30003,
     CurationSet = 30004,
     InterestSet = 30015,
+    InterestsList = NDKKind.InterestSet, // Deprecated but left for backwards compatibility
     EmojiSet = 30030,
     HighlightSet = 39802,
-    CategorizedHighlightList = NDKKind.HighlightSet, // Backwards compatibility
+    CategorizedHighlightList = NDKKind.HighlightSet, // Deprecated but left for backwards compatibility
 
     ZapRequest = 9734,
     Zap = 9735,

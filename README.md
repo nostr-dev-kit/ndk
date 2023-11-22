@@ -88,7 +88,7 @@ localStorage.debug = 'ndk:*'
 
 ## Real-world uses of NDK
 
-See [REFERENCES.md](./REFERENCES.md) for a list of projects using NDK to see how others are using it.
+See [REFERENCES.md](./ndk/REFERENCES.md) for a list of projects using NDK to see how others are using it.
 
 ## Instantiate an NDK instance
 

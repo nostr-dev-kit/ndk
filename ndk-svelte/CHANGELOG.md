@@ -4,7 +4,6 @@
 
 ### Patch Changes
 
--   Updated dependencies
 -   Updated dependencies [d45d962]
     -   @nostr-dev-kit/ndk@2.0.5
 

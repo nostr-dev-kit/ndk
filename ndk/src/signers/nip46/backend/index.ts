@@ -18,14 +18,14 @@ export type Nip46PermitCallbackParams = {
     /**
      * ID of the request
      */
-    id: string,
+    id: string;
 
-    pubkey: string,
+    pubkey: string;
 
-    method: NIP46Method,
+    method: NIP46Method;
 
     // eslint-disable-next-line @t  ypescript-eslint/no-explicit-any
-    params?: any
+    params?: any;
 };
 
 export type Nip46PermitCallback = (params: Nip46PermitCallbackParams) => Promise<boolean>;

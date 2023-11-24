@@ -92,7 +92,9 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
         }
 
         this.rpc = new NDKNostrRpc(ndk, this.localSigner, this.debug);
-        this.rpc.on("authUrl", (...props) => this.emit("authUrl", ...props));
+        this.rpc.on("authUrl", (...props) => {
+            this.emit("authUrl", ...props);
+        });
     }
 
     /**

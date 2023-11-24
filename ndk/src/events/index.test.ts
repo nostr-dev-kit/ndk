@@ -206,11 +206,11 @@ describe("NDKEvent", () => {
             expect(event1.referenceTags()).toEqual([
                 ["a", "30000:pubkey:d-code"],
                 ["e", "eventid1"],
-                ["p", "pubkey"]
+                ["p", "pubkey"],
             ]);
             expect(event2.referenceTags()).toEqual([
                 ["e", "eventid2"],
-                ["p", "pubkey"]
+                ["p", "pubkey"],
             ]);
         });
 
@@ -231,11 +231,11 @@ describe("NDKEvent", () => {
             expect(nip33event.referenceTags("marker")).toEqual([
                 ["a", "30000:pubkey:d-code", "", "marker"],
                 ["e", "eventid1", "", "marker"],
-                ["p", "pubkey"]
+                ["p", "pubkey"],
             ]);
             expect(event.referenceTags("marker")).toEqual([
                 ["e", "eventid2", "", "marker"],
-                ["p", "pubkey"]
+                ["p", "pubkey"],
             ]);
         });
 
@@ -258,11 +258,11 @@ describe("NDKEvent", () => {
             expect(nip33event.referenceTags("marker")).toEqual([
                 ["a", "30000:pubkey:d-code", "wss://relay.nos.dev", "marker"],
                 ["e", "eventid1", "wss://relay.nos.dev", "marker"],
-                ["p", "pubkey"]
+                ["p", "pubkey"],
             ]);
             expect(event.referenceTags("marker")).toEqual([
                 ["e", "eventid2", "", "marker"],
-                ["p", "pubkey"]
+                ["p", "pubkey"],
             ]);
         });
     });

@@ -269,10 +269,10 @@ export class NDK extends EventEmitter {
     public async connect(timeoutMs?: number): Promise<void> {
         if (this._signer && this.autoConnectUserRelays) {
             this.debug("Attempting to connect to user relays specified by signer");
-            
+
             if (this._signer.relays) {
                 const relays = await this._signer.relays();
-                relays.forEach(relay => this.pool.addRelay(relay));
+                relays.forEach((relay) => this.pool.addRelay(relay));
             }
         }
 

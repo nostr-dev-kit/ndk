@@ -1,5 +1,5 @@
+import { NDKEvent } from "../../../events/index.js";
 import type { IEventHandlingStrategy, NDKNip46Backend } from "./index.js";
-import { NDKEvent } from "@nostr-dev-kit/ndk";
 
 export default class SignEventHandlingStrategy implements IEventHandlingStrategy {
     async handle(
@@ -29,7 +29,14 @@ async function signEvent(
 
     backend.debug("event to sign", event.rawEvent());
 
-    if (!(await backend.pubkeyAllowed({ id, pubkey: remotePubkey, method: "sign_event", params: event }))) {
+    if (
+        !(await backend.pubkeyAllowed({
+            id,
+            pubkey: remotePubkey,
+            method: "sign_event",
+            params: event,
+        }))
+    ) {
         backend.debug(`sign event request from ${remotePubkey} rejected`);
         return undefined;
     }

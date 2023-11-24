@@ -11,6 +11,7 @@ import { follows } from "./follows.js";
 import { type NDKUserProfile, profileFromEvent, serializeProfile } from "./profile.js";
 import type { NDKSigner } from "../signers/index.js";
 import Zap from "../zap/index.js";
+import { pin } from "./pin.js";
 
 export type Hexpubkey = string;
 
@@ -210,6 +211,11 @@ export class NDKUser {
      * Returns a set of users that this user follows.
      */
     public follows = follows.bind(this);
+
+    /**
+     * Pins a user or an event
+     */
+    public pin = pin.bind(this);
 
     /**
      * Returns a set of relay list events for a user.

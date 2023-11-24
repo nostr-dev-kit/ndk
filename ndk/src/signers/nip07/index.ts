@@ -80,7 +80,7 @@ export class NDKNip07Signer implements NDKSigner {
     public async relays(): Promise<NDKRelay[]> {
         await this.waitForExtension();
 
-        const relays = await window.nostr!.getRelays?.() || {};
+        const relays = (await window.nostr!.getRelays?.()) || {};
 
         const activeRelays = [];
         for (const url in Object.keys(relays)) {
@@ -89,7 +89,7 @@ export class NDKNip07Signer implements NDKSigner {
                 activeRelays.push(url);
             }
         }
-        return activeRelays;
+        return activeRelays.map((url) => new NDKRelay(url));
     }
 
     public async encrypt(recipient: NDKUser, value: string): Promise<string> {
@@ -146,9 +146,9 @@ export class NDKNip07Signer implements NDKSigner {
             let result;
 
             if (type === "encrypt") {
-                result = await window.nostr!.nip04.encrypt(counterpartyHexpubkey, value);
+                result = await window.nostr!.nip04!.encrypt(counterpartyHexpubkey, value);
             } else {
-                result = await window.nostr!.nip04.decrypt(counterpartyHexpubkey, value);
+                result = await window.nostr!.nip04!.decrypt(counterpartyHexpubkey, value);
             }
 
             resolve(result);

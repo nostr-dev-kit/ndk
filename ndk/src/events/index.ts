@@ -378,7 +378,6 @@ export class NDKEvent extends EventEmitter {
             tag = ["e", this.tagId()];
         }
 
-
         if (this.relay) {
             tag.push(this.relay.url);
         } else {
@@ -433,8 +432,7 @@ export class NDKEvent extends EventEmitter {
             tags.forEach((tag) => tag.push(marker)); // Add the marker to both "a" and "e" tags
         }
 
-        if (!skipAuthorTag)
-            tags.push(...this.author.referenceTags());
+        if (!skipAuthorTag) tags.push(...this.author.referenceTags());
 
         return tags;
     }

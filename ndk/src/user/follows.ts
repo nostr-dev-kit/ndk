@@ -12,13 +12,15 @@ export async function follows(
 ): Promise<Set<NDKUser>> {
     if (!this.ndk) throw new Error("NDK not set");
 
-    const contactListEvent = Array.from(await this.ndk.fetchEvents(
-        {
-            kinds: [3],
-            authors: [this.pubkey],
-        },
-        opts || { groupable: false }
-    ))[0];
+    const contactListEvent = Array.from(
+        await this.ndk.fetchEvents(
+            {
+                kinds: [3],
+                authors: [this.pubkey],
+            },
+            opts || { groupable: false }
+        )
+    )[0];
 
     if (contactListEvent) {
         const pubkeys = new Set<Hexpubkey>();

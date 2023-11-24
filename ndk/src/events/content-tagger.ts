@@ -12,7 +12,7 @@ export function mergeTags(tags1: NDKTag[], tags2: NDKTag[]): NDKTag[] {
     const tagMap = new Map<string, NDKTag>();
 
     // Function to generate a key for the hashmap
-    const generateKey = (tag: NDKTag) => tag.join(',');
+    const generateKey = (tag: NDKTag) => tag.join(",");
 
     // Function to determine if a tag is contained in another
     const isContained = (smaller: NDKTag, larger: NDKTag) => {
@@ -53,9 +53,11 @@ export function uniqueTag(a: NDKTag, b: NDKTag): NDKTag[] {
 
     // If sa    un length
     if (sameLength) {
-        if (a.every((v, i) => v === b[i])) { // and same values (regardless of length), return one
+        if (a.every((v, i) => v === b[i])) {
+            // and same values (regardless of length), return one
             return [a];
-        } else { // and different values, return both
+        } else {
+            // and different values, return both
             return [a, b];
         }
     } else if (aLength > bLength && a.every((v, i) => v === b[i])) {
@@ -81,7 +83,7 @@ export async function generateContentTags(
         if (!tags.find((t2) => t2[0] === t[0] && t2[1] === t[1])) {
             tags.push(t);
         }
-    }
+    };
 
     content = content.replace(tagRegex, (tag) => {
         try {
@@ -99,45 +101,52 @@ export async function generateContentTags(
                     break;
 
                 case "note":
-                    promises.push(new Promise(async (resolve) => {
-                        addTagIfNew(["e", data, await maybeGetEventRelayUrl(entity), "mention"]);
-                        resolve();
-                    }));
+                    promises.push(
+                        new Promise(async (resolve) => {
+                            addTagIfNew([
+                                "e",
+                                data,
+                                await maybeGetEventRelayUrl(entity),
+                                "mention",
+                            ]);
+                            resolve();
+                        })
+                    );
                     break;
 
                 case "nevent":
-                    promises.push(new Promise(async (resolve) => {
-                        let { id, relays, author } = data as EventPointer;
+                    promises.push(
+                        new Promise(async (resolve) => {
+                            let { id, relays, author } = data as EventPointer;
 
-                        // If the nevent doesn't have a relay specified, try to get one
-                        if (!relays || relays.length === 0) {
-                            relays = [
-                                await maybeGetEventRelayUrl(entity)
-                            ];
-                        }
+                            // If the nevent doesn't have a relay specified, try to get one
+                            if (!relays || relays.length === 0) {
+                                relays = [await maybeGetEventRelayUrl(entity)];
+                            }
 
-                        addTagIfNew(["e", id, relays[0], "mention"]);
-                        if (author) addTagIfNew(["p", author]);
-                        resolve();
-                    }));
+                            addTagIfNew(["e", id, relays[0], "mention"]);
+                            if (author) addTagIfNew(["p", author]);
+                            resolve();
+                        })
+                    );
                     break;
 
                 case "naddr":
-                    promises.push(new Promise(async (resolve) => {
-                        const id = [data.kind, data.pubkey, data.identifier].join(":");
-                        let relays = data.relays ?? [];
+                    promises.push(
+                        new Promise(async (resolve) => {
+                            const id = [data.kind, data.pubkey, data.identifier].join(":");
+                            let relays = data.relays ?? [];
 
-                        // If the naddr doesn't have a relay specified, try to get one
-                        if (relays.length === 0) {
-                            relays = [
-                                await maybeGetEventRelayUrl(entity)
-                            ];
-                        }
+                            // If the naddr doesn't have a relay specified, try to get one
+                            if (relays.length === 0) {
+                                relays = [await maybeGetEventRelayUrl(entity)];
+                            }
 
-                        addTagIfNew(["a", id, relays[0], "mention"]);
-                        addTagIfNew(["p", data.pubkey]);
-                        resolve();
-                    }));
+                            addTagIfNew(["a", id, relays[0], "mention"]);
+                            addTagIfNew(["p", data.pubkey]);
+                            resolve();
+                        })
+                    );
                     break;
                 default:
                     return tag;

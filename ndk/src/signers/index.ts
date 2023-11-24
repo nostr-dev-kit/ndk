@@ -29,7 +29,7 @@ export interface NDKSigner {
      * Getter for the preferred relays.
      * @returns A promise containing a simple map of preferred relays and their read/write policies.
      */
-    relays(): Promise<NDKRelay[]>;
+    relays?(): Promise<NDKRelay[]>;
 
     /**
      * Encrypts the given Nostr event for the given recipient.

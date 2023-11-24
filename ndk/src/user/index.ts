@@ -293,8 +293,13 @@ export class NDKUser {
      * Get the tags that can be used to reference this user in an event
      * @returns {NDKTag[]} an array of NDKTag
      */
-    public referenceTags(): NDKTag[] {
-        return [["p", this.pubkey]];
+    public referenceTags(marker?: string): NDKTag[] {
+        const tag = [["p", this.pubkey]];
+        if (!marker) return tag;
+
+        // TODO: Locate this pubkey's relay
+        tag[0].push("", marker);
+        return tag;
     }
 
     /**

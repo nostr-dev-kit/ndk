@@ -10,7 +10,7 @@ import type { NDKSigner } from "../signers/index.js";
 import type { NDKFilter } from "../subscription/index.js";
 import type { NDKUser } from "../user/index.js";
 import Zap from "../zap/index.js";
-import { type ContentTag, generateContentTags } from "./content-tagger.js";
+import { type ContentTag, generateContentTags, mergeTags } from "./content-tagger.js";
 import { isEphemeral, isParamReplaceable, isReplaceable } from "./kind.js";
 import { NDKKind } from "./kinds/index.js";
 import { decrypt, encrypt } from "./nip04.js";
@@ -116,18 +116,12 @@ export class NDKEvent extends EventEmitter {
      */
     public tag(event: NDKEvent, marker?: string): void;
     public tag(userOrEvent: NDKUser | NDKEvent, marker?: string): void {
-        const tags = userOrEvent.referenceTags();
-        if (marker) tags[0].push(marker);
-        this.tags.push(...tags);
+        const skipAuthorTag = userOrEvent?.pubkey === this.pubkey;
+        const tags = userOrEvent.referenceTags(marker, skipAuthorTag);
+
+        this.tags = mergeTags(this.tags, tags);
 
         if (userOrEvent instanceof NDKEvent) {
-            const tagEventAuthor = userOrEvent.author;
-
-            // If event author is not the same as the user signing this event, tag the author
-            if (tagEventAuthor && this.pubkey !== tagEventAuthor.hexpubkey) {
-                this.tag(tagEventAuthor);
-            }
-
             // tag p-tags in the event if they are not the same as the user signing this event
             for (const pTag of userOrEvent.getMatchingTags("p")) {
                 if (pTag[1] === this.pubkey) continue;
@@ -409,7 +403,7 @@ export class NDKEvent extends EventEmitter {
      *     event.referenceTags(); // [["e", "parent-id"]]
      * @returns {NDKTag} The NDKTag object referencing this event
      */
-    referenceTags(marker?: string): NDKTag[] {
+    referenceTags(marker?: string, skipAuthorTag?: boolean): NDKTag[] {
         let tags: NDKTag[] = [];
 
         // NIP-33
@@ -439,7 +433,8 @@ export class NDKEvent extends EventEmitter {
             tags.forEach((tag) => tag.push(marker)); // Add the marker to both "a" and "e" tags
         }
 
-        tags.push(...this.author.referenceTags());
+        if (!skipAuthorTag)
+            tags.push(...this.author.referenceTags());
 
         return tags;
     }

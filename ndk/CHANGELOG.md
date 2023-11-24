@@ -1,5 +1,12 @@
 # @nostr-dev-kit/ndk
 
+## 2.0.6
+
+### Patch Changes
+
+-   Add relay hint to tagging via tagReference
+-   fix tagging and add more tests
+
 ## 2.0.5
 
 ### Patch Changes

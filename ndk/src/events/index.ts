@@ -1,4 +1,4 @@
-import EventEmitter from "eventemitter3";
+import { EventEmitter } from "tseep";
 import type { UnsignedEvent } from "nostr-tools";
 import { getEventHash } from "nostr-tools";
 

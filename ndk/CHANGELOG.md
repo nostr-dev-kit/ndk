@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk
 
+## 2.1.0
+
+### Minor Changes
+
+-   New NIP-46 implementation with auth_url flow
+
 ## 2.0.6
 
 ### Patch Changes

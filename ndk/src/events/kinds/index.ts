@@ -31,6 +31,9 @@ export enum NDKKind {
     DVMReqDiscoveryNostrContent = 5300,
     DVMReqDiscoveryNostrPeople = 5301,
 
+    // Event Timestamping
+    DVMReqTimestamping = 5900,
+
     // Feedback
     DVMJobFeedback = 7000,
 

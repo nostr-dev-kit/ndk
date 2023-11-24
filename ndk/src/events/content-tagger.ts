@@ -8,6 +8,67 @@ export type ContentTag = {
     content: string;
 };
 
+export function mergeTags(tags1: NDKTag[], tags2: NDKTag[]): NDKTag[] {
+    const tagMap = new Map<string, NDKTag>();
+
+    // Function to generate a key for the hashmap
+    const generateKey = (tag: NDKTag) => tag.join(',');
+
+    // Function to determine if a tag is contained in another
+    const isContained = (smaller: NDKTag, larger: NDKTag) => {
+        return smaller.every((value, index) => value === larger[index]);
+    };
+
+    // Function to process and add a tag
+    const processTag = (tag: NDKTag) => {
+        for (let [key, existingTag] of tagMap) {
+            if (isContained(existingTag, tag) || isContained(tag, existingTag)) {
+                // Replace with the longer or equal-length tag
+                if (tag.length >= existingTag.length) {
+                    tagMap.set(key, tag);
+                }
+                return;
+            }
+        }
+        // Add new tag if no containing relationship is found
+        tagMap.set(generateKey(tag), tag);
+    };
+
+    // Process all tags
+    tags1.concat(tags2).forEach(processTag);
+
+    return Array.from(tagMap.values());
+}
+
+/**
+ * Compares a tag to see if they are the same or if one is preferred
+ * over the other (i.e. it includes more information) and returns
+ * the tags that should be used.
+ * @returns
+ */
+export function uniqueTag(a: NDKTag, b: NDKTag): NDKTag[] {
+    const aLength = a.length;
+    const bLength = b.length;
+    const sameLength = aLength === bLength;
+
+    // If sa    un length
+    if (sameLength) {
+        if (a.every((v, i) => v === b[i])) { // and same values (regardless of length), return one
+            return [a];
+        } else { // and different values, return both
+            return [a, b];
+        }
+    } else if (aLength > bLength && a.every((v, i) => v === b[i])) {
+        // If different length but the longer contains the shorter, return the longer
+        return [a];
+    } else if (bLength > aLength && b.every((v, i) => v === a[i])) {
+        return [b];
+    }
+
+    // Otherwise, return both
+    return [a, b];
+}
+
 export async function generateContentTags(
     content: string,
     tags: NDKTag[] = []

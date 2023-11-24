@@ -5,6 +5,7 @@ import type { NostrEvent } from "../../events";
 import { NDKEvent } from "../../events";
 import type { NDK } from "../../ndk";
 import type { NDKFilter, NDKSubscription } from "../../subscription";
+import { NDKNip46Signer } from ".";
 
 export interface NDKRpcRequest {
     id: string;
@@ -36,8 +37,11 @@ export class NDKNostrRpc extends EventEmitter {
     /**
      * Subscribe to a filter. This function will resolve once the subscription is ready.
      */
-    public async subscribe(filter: NDKFilter): Promise<NDKSubscription> {
-        const sub = this.ndk.subscribe(filter, { closeOnEose: false });
+    public subscribe(filter: NDKFilter): Promise<NDKSubscription> {
+        const sub = this.ndk.subscribe(filter, {
+            closeOnEose: false,
+            groupable: false,
+        });
 
         sub.on("event", async (event: NDKEvent) => {
             try {
@@ -117,7 +121,16 @@ export class NDKNostrRpc extends EventEmitter {
         const remoteUser = this.ndk.getUser({ hexpubkey: remotePubkey });
         const request = { id, method, params };
         const promise = new Promise<NDKRpcResponse>((resolve) => {
-            if (cb) this.once(`response-${id}`, cb);
+            const responseHandler = (response: NDKRpcResponse) => {
+                if (response.result === "auth_url") {
+                    this.once(`response-${id}`, responseHandler);
+                    this.emit("authUrl", response.error);
+                } else if (cb) {
+                    cb(response);
+                }
+            };
+
+            this.once(`response-${id}`, responseHandler);
         });
 
         const event = new NDKEvent(this.ndk, {

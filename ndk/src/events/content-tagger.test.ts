@@ -2,7 +2,7 @@ import { generateContentTags } from "./content-tagger";
 import type { NDKTag } from "./index.js";
 
 describe("await generateContentTags", () => {
-    it("should replace valid tags and store decoded data in the tags array", async () => {
+    it("replaces valid tags and store decoded data in the tags array", async () => {
         const content =
             "This is a sample content with @npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft and @note1d2mheza0d5z5yycucu94nw37e6gyl4vwl6gavyku86rshkhexq6q30s0g7 tags.";
         const tags: NDKTag[] = [];
@@ -22,7 +22,7 @@ describe("await generateContentTags", () => {
         ]);
     });
 
-    it("should not replace invalid tags and leave the tags array unchanged", async () => {
+    it("does not replace invalid tags and leave the tags array unchanged", async () => {
         const content = "This is a sample content with an @invalidTag.";
         const tags: NDKTag[] = [];
 

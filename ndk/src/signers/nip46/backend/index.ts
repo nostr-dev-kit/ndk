@@ -24,7 +24,7 @@ export type Nip46PermitCallbackParams = {
 
     method: NIP46Method,
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @t  ypescript-eslint/no-explicit-any
     params?: any
 };
 
@@ -153,7 +153,6 @@ export class NDKNip46Backend {
      * This method should be overriden by the user to allow or reject incoming
      * connections.
      */
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     public async pubkeyAllowed(params: Nip46PermitCallbackParams): Promise<boolean> {
         return this.permitCallback(params);
     }

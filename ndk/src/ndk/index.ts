@@ -257,8 +257,10 @@ export class NDK extends EventEmitter {
         if (this._signer && this.autoConnectUserRelays) {
             this.debug("Attempting to connect to user relays specified by signer");
             
-            const relays = await this._signer.relays();
-            relays.forEach(relay => this.pool.addRelay(relay));
+            if (this._signer.relays) {
+                const relays = await this._signer.relays();
+                relays.forEach(relay => this.pool.addRelay(relay));
+            }
         }
 
         const connections = [this.pool.connect(timeoutMs)];

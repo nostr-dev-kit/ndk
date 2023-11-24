@@ -267,6 +267,15 @@ export class NDK extends EventEmitter {
      * If the timeout is reached, the connection will be continued to be established in the background.
      */
     public async connect(timeoutMs?: number): Promise<void> {
+        if (this._signer && this.autoConnectUserRelays) {
+            this.debug("Attempting to connect to user relays specified by signer");
+            
+            if (this._signer.relays) {
+                const relays = await this._signer.relays();
+                relays.forEach(relay => this.pool.addRelay(relay));
+            }
+        }
+
         const connections = [this.pool.connect(timeoutMs)];
 
         if (this.outboxPool) {

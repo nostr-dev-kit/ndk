@@ -1,4 +1,5 @@
 import type { NostrEvent } from "../events/index.js";
+import { NDKRelay } from "../relay/index.js";
 import type { NDKUser } from "../user";
 
 /**
@@ -23,6 +24,12 @@ export interface NDKSigner {
      * @returns A promise that resolves to the signature of the signed event.
      */
     sign(event: NostrEvent): Promise<string>;
+
+    /**
+     * Getter for the preferred relays.
+     * @returns A promise containing a simple map of preferred relays and their read/write policies.
+     */
+    relays?(): Promise<NDKRelay[]>;
 
     /**
      * Encrypts the given Nostr event for the given recipient.

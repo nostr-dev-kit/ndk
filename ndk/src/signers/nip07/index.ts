@@ -3,6 +3,7 @@ import debug from "debug";
 import type { NostrEvent } from "../../events/index.js";
 import { NDKUser } from "../../user/index.js";
 import type { NDKSigner } from "../index.js";
+import { NDKRelay } from "../../relay/index.js";
 
 type Nip04QueueItem = {
     type: "encrypt" | "decrypt";
@@ -10,6 +11,13 @@ type Nip04QueueItem = {
     value: string;
     resolve: (value: string) => void;
     reject: (reason?: Error) => void;
+};
+
+type Nip07RelayMap = {
+    [key: string]: {
+        read: boolean;
+        write: boolean;
+    };
 };
 
 /**
@@ -67,6 +75,21 @@ export class NDKNip07Signer implements NDKSigner {
 
         const signedEvent = await window.nostr!.signEvent(event);
         return signedEvent.sig;
+    }
+
+    public async relays(): Promise<NDKRelay[]> {
+        await this.waitForExtension();
+
+        const relays = await window.nostr!.getRelays?.() || {};
+
+        const activeRelays = [];
+        for (const url in Object.keys(relays)) {
+            // Currently only respects relays that are both readable and writable.
+            if (relays[url].read && relays[url].write) {
+                activeRelays.push(url);
+            }
+        }
+        return activeRelays;
     }
 
     public async encrypt(recipient: NDKUser, value: string): Promise<string> {
@@ -185,7 +208,8 @@ declare global {
         nostr?: {
             getPublicKey(): Promise<string>;
             signEvent(event: NostrEvent): Promise<{ sig: string }>;
-            nip04: {
+            getRelays?: () => Promise<Nip07RelayMap>;
+            nip04?: {
                 encrypt(recipientHexPubKey: string, value: string): Promise<string>;
                 decrypt(senderHexPubKey: string, value: string): Promise<string>;
             };

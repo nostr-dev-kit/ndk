@@ -1,5 +1,13 @@
 # @nostr-dev-kit/ndk
 
+## 2.1.2
+
+### Patch Changes
+
+-   default to creating nicer looking d-tags for nip-33 events with a title
+-   allow using a different kind to manage replaceable contact lists
+-   fix import
+
 ## 2.1.1
 
 ### Patch Changes

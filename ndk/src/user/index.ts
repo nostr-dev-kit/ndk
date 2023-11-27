@@ -329,15 +329,20 @@ export class NDKUser {
      *
      * @param newFollow {NDKUser} The user to follow
      * @param currentFollowList {Set<NDKUser>} The current follow list
+     * @param kind {NDKKind} The kind to use for this contact list (defaults to `3`)
      * @returns {Promise<boolean>} True if the follow was added, false if the follow already exists
      */
-    public async follow(newFollow: NDKUser, currentFollowList?: Set<NDKUser>): Promise<boolean> {
+    public async follow(
+        newFollow: NDKUser,
+        currentFollowList?: Set<NDKUser>,
+        kind = NDKKind.Contacts
+    ): Promise<boolean> {
         if (!this.ndk) throw new Error("No NDK instance found");
 
         this.ndk.assertSigner();
 
         if (!currentFollowList) {
-            currentFollowList = await this.follows();
+            currentFollowList = await this.follows(undefined, undefined, kind);
         }
 
         if (currentFollowList.has(newFollow)) {
@@ -346,9 +351,7 @@ export class NDKUser {
 
         currentFollowList.add(newFollow);
 
-        const event = new NDKEvent(this.ndk, {
-            kind: NDKKind.Contacts,
-        } as NostrEvent);
+        const event = new NDKEvent(this.ndk, { kind } as NostrEvent);
 
         // This is a horrible hack and I need to fix it
         for (const follow of currentFollowList) {
@@ -356,7 +359,6 @@ export class NDKUser {
         }
 
         await event.publish();
-
         return true;
     }
 

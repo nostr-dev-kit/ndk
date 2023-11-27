@@ -272,7 +272,14 @@ export class NDKEvent extends EventEmitter {
             const dTag = this.getMatchingTags("d")[0];
             // generate a string of 16 random bytes
             if (!dTag) {
-                const str = [...Array(16)].map(() => Math.random().toString(36)[2]).join("");
+                const title = this.tagValue("title");
+                const randLength = title ? 6 : 16;
+                let str = [...Array(randLength)].map(() => Math.random().toString(36)[2]).join("");
+
+                if (title && title.length > 0) {
+                    str = title.replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") + "-" + str;
+                }
+
                 tags.push(["d", str]);
             }
         }

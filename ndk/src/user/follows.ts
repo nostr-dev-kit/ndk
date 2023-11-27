@@ -1,3 +1,4 @@
+import { NDKKind } from "../events/kinds/index.js";
 import type { NDKSubscriptionOptions } from "../subscription/index.js";
 import { type Hexpubkey, NDKUser } from "./index.js";
 
@@ -8,14 +9,15 @@ import { type Hexpubkey, NDKUser } from "./index.js";
 export async function follows(
     this: NDKUser,
     opts?: NDKSubscriptionOptions,
-    outbox?: boolean
+    outbox?: boolean,
+    kind: number = NDKKind.Contacts
 ): Promise<Set<NDKUser>> {
     if (!this.ndk) throw new Error("NDK not set");
 
     const contactListEvent = Array.from(
         await this.ndk.fetchEvents(
             {
-                kinds: [3],
+                kinds: [kind],
                 authors: [this.pubkey],
             },
             opts || { groupable: false }

@@ -1,5 +1,18 @@
 # @nostr-dev-kit/ndk-svelte-components
 
+## 2.1.0
+
+### Minor Changes
+
+-   Improve how multiple media images can be handled
+
+### Patch Changes
+
+-   Updated dependencies
+-   Updated dependencies
+-   Updated dependencies
+    -   @nostr-dev-kit/ndk@2.1.2
+
 ## 2.0.8
 
 ### Patch Changes

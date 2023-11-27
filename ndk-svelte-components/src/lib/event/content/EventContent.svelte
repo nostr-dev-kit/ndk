@@ -10,6 +10,7 @@
     import Kind30000 from "./Kind30000.svelte";
     import Kind30001 from "./Kind30001.svelte";
     import Kind30023 from "./Kind30023.svelte";
+    import type { SvelteComponent } from "svelte";
 
     export let ndk: NDK;
     export let event: NDKEvent | null | undefined;
@@ -17,6 +18,7 @@
     export let maxLength: number = 700;
     export let showEntire: boolean = true;
     export let showMedia: boolean = true;
+    export let mediaCollectionComponent: typeof SvelteComponent | undefined = undefined;
 
     /**
      * Optional content to use instead of the one from the event
@@ -42,6 +44,6 @@
     {:else if event.kind === 30023}
         <Kind30023 {ndk} {content} article={NDKArticle.from(event)} {showMedia} on:click class={$$props.class} />
     {:else}
-        <Kind30023 {ndk} {content} article={NDKArticle.from(event)} {anchorId} {showMedia} on:click class={$$props.class} />
+        <Kind1 {ndk} {content} {event} {anchorId} {showMedia} on:click class={$$props.class} {maxLength} {showEntire} {mediaCollectionComponent} />
     {/if}
 {/if}

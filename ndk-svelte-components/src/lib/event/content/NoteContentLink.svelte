@@ -1,20 +1,18 @@
 <script lang="ts">
+    import { isAudio, isImage, isVideo } from "$lib/utils/notes";
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     export let value: any;
     export let showMedia = false;
-
-    const isImage = value.url.match(/^.*\.(jpg|jpeg|png|webp|gif|avif|svg)/gi);
-    const isVideo = value.url.match(/^.*\.(mov|mkv|mp4|avi|m4v|webm)/gi);
-    const isAudio = value.url.match(/^.*\.(ogg|mp3|wav)/gi);
 </script>
 
 {#if showMedia && value.isMedia}
-    {#if isImage}
+    {#if isImage(value.url)}
         <img src={value.url} alt={value.url} />
-    {:else if isVideo}
+    {:else if isVideo(value.url)}
         <!-- svelte-ignore a11y-media-has-caption -->
         <video src={value.url} controls />
-    {:else if isAudio}
+    {:else if isAudio(value.url)}
         <audio src={value.url} controls>
             <a href={value.url}>{value.url.replace(/https?:\/\/(www\.)?/, "")}</a>
         </audio>

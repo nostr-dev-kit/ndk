@@ -6,7 +6,6 @@
 
 -   default to creating nicer looking d-tags for nip-33 events with a title
 -   allow using a different kind to manage replaceable contact lists
--   fix import
 
 ## 2.1.1
 

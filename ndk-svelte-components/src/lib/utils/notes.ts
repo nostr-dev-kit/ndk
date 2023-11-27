@@ -5,6 +5,7 @@ export const NEWLINE = "newline";
 export const TEXT = "text";
 export const TOPIC = "topic";
 export const LINK = "link";
+export const LINKCOLLECTION = "link[]";
 export const HTML = "html";
 export const INVOICE = "invoice";
 export const NOSTR_NOTE = "nostr:note";
@@ -32,6 +33,66 @@ type ParsedPart = {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any;
 };
+
+export const isImage = (url: string) => url.match(/^.*\.(jpg|jpeg|png|webp|gif|avif|svg)/gi);
+export const isVideo = (url: string) => url.match(/^.*\.(mov|mkv|mp4|avi|m4v|webm)/gi);
+export const isAudio = (url: string) => url.match(/^.*\.(ogg|mp3|wav)/gi);
+
+/**
+ * Groups content parts into link collections when they are consecutive media links
+ */
+export function groupContent(parts: ParsedPart[]): ParsedPart[] {
+    // if there are multiple consecutive links, group them together, but if
+    const result: ParsedPart[] = [];
+    let buffer: ParsedPart | undefined;
+
+    const popBuffer = () => {
+        if (buffer) {
+            if (buffer.value.length > 1) {
+                result.push(buffer);
+            } else {
+                // If there is only one link in the buffer, just push the link to the result
+                result.push({
+                    type: LINK,
+                    value: buffer.value[0].value,
+                });
+            }
+            buffer = undefined;
+        }
+    }
+
+    parts.forEach((part, index) => {
+        if (part.type === LINK && (
+            isImage(part.value.url) ||
+            isVideo(part.value.url) ||
+            isAudio(part.value.url)
+        )) {
+            if (!buffer) {
+                buffer = {
+                    type: LINKCOLLECTION,
+                    value: [],
+                };
+            }
+
+            buffer.value.push(part);
+        } else {
+            const isNewline = part.type === NEWLINE;
+            const nextIsNotLink = parts[index + 1]?.type !== LINK;
+
+            // Only pop the buffer if this is not a newline and the next part is not a link
+            if (isNewline && nextIsNotLink) {
+                popBuffer();
+                result.push(part);
+            } else if (!buffer) {
+                result.push(part);
+            }
+        }
+    });
+
+    popBuffer();
+
+    return result;
+}
 
 export const parseContent = ({ content, tags = [], html = false }: ContentArgs): ParsedPart[] => {
     const result: ParsedPart[] = [];

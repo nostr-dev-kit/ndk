@@ -83,7 +83,7 @@ export class NDKNip07Signer implements NDKSigner {
         const relays = (await window.nostr!.getRelays?.()) || {};
 
         const activeRelays = [];
-        for (const url in Object.keys(relays)) {
+        for (const url of Object.keys(relays)) {
             // Currently only respects relays that are both readable and writable.
             if (relays[url].read && relays[url].write) {
                 activeRelays.push(url);

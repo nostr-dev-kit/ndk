@@ -259,7 +259,7 @@ export class NDKEvent extends EventEmitter {
      * Will also generate random "d" tag for parameterized replaceable events where needed.
      * @returns {ContentTag} The tags and content of the event.
      */
-    protected async generateTags(): Promise<ContentTag> {
+    async generateTags(): Promise<ContentTag> {
         let tags: NDKTag[] = [];
 
         // don't autogenerate if there currently are tags
@@ -277,15 +277,17 @@ export class NDKEvent extends EventEmitter {
                 let str = [...Array(randLength)].map(() => Math.random().toString(36)[2]).join("");
 
                 if (title && title.length > 0) {
-                    str = title.replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") + "-" + str;
+                    str = title.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "") + "-" + str;
                 }
 
                 tags.push(["d", str]);
             }
         }
 
-        if (this.ndk?.client && !this.tagValue("client")) {
-            tags.push(["client", this.ndk.client]);
+        if ((this.ndk?.clientName || this.ndk?.clientNip89) && !this.tagValue("client")) {
+            const clientTag: NDKTag = [ "client", this.ndk.clientName??"" ];
+            if (this.ndk.clientNip89) clientTag.push(this.ndk.clientNip89);
+            tags.push(clientTag);
         }
 
         return { content: content || "", tags };

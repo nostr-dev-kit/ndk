@@ -92,6 +92,39 @@ export default class Zap extends EventEmitter {
         relays?: string[],
         signer?: NDKSigner
     ): Promise<string | null> {
+        const res = await this.generateZapRequest(amount, comment, extraTags, relays);
+        if (!res) return null;
+        const {event, zapEndpoint} = res;
+
+        if (!event) {
+            throw new Error("No zap request event found");
+        }
+
+        await event.sign(signer);
+
+        return await this.getInvoice(event, amount, zapEndpoint);
+    }
+
+    public async getInvoice(event: NDKEvent, amount: number, zapEndpoint: string): Promise<string | null> {
+        const response = await fetch(
+            `${zapEndpoint}?` +
+                new URLSearchParams({
+                    amount: amount.toString(),
+                    nostr: JSON.stringify(event.rawEvent()),
+                })
+        );
+        const body = await response.json();
+
+        return body.pr;
+    }
+
+    public async generateZapRequest(
+        amount: number, // amount to zap in millisatoshis
+        comment?: string,
+        extraTags?: NDKTag[],
+        relays?: string[],
+        signer?: NDKSigner
+    ): Promise<{event: NDKEvent, zapEndpoint: string} | null> {
         const zapEndpoint = await this.getZapEndpoint();
 
         if (!zapEndpoint) {
@@ -101,7 +134,7 @@ export default class Zap extends EventEmitter {
         if (!this.zappedEvent && !this.zappedUser) throw new Error("No zapped event or user found");
 
         const zapRequest = nip57.makeZapRequest({
-            profile: this.zappedUser.hexpubkey,
+            profile: this.zappedUser.pubkey,
 
             // set the event to null since nostr-tools doesn't support nip-33 zaps
             event: null,
@@ -118,24 +151,12 @@ export default class Zap extends EventEmitter {
 
         zapRequest.tags.push(["lnurl", zapEndpoint]);
 
-        const zapRequestEvent = new NDKEvent(this.ndk, zapRequest as NostrEvent);
+        const event = new NDKEvent(this.ndk, zapRequest as NostrEvent);
         if (extraTags) {
-            zapRequestEvent.tags = zapRequestEvent.tags.concat(extraTags);
+            event.tags = event.tags.concat(extraTags);
         }
 
-        await zapRequestEvent.sign(signer);
-        const zapRequestNostrEvent = await zapRequestEvent.toNostrEvent();
-
-        const response = await fetch(
-            `${zapEndpoint}?` +
-                new URLSearchParams({
-                    amount: amount.toString(),
-                    nostr: JSON.stringify(zapRequestNostrEvent),
-                })
-        );
-        const body = await response.json();
-
-        return body.pr;
+        return {event, zapEndpoint};
     }
 
     /**

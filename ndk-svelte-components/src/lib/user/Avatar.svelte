@@ -5,7 +5,7 @@
     /**
      * The NDK instance you want to use
      */
-    export let ndk: NDK;
+    export let ndk: NDK | undefined = undefined;
 
     /**
      * The npub of the user you want to display an avatar for

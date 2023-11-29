@@ -7,7 +7,7 @@
     /**
      * The NDK instance you want to use
      */
-    export let ndk: NDK;
+    export let ndk: NDK | undefined = undefined;
 
     /**
      * The npub of the user you want to display a name for
@@ -34,7 +34,7 @@
      */
     export let npubMaxLength: number | undefined = undefined;
 
-    if (!userProfile && !user) {
+    if (!userProfile && !user && ndk) {
         let opts = npub ? { npub } : { hexpubkey: pubkey };
         try {
             user = ndk.getUser(opts);

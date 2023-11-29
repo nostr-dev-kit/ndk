@@ -1,5 +1,12 @@
 # @nostr-dev-kit/ndk
 
+## 2.1.3
+
+### Patch Changes
+
+-   180d774: update client tag to new format of NIP-89
+-   7f00c40: expose some internals and decouple zapping request generation
+
 ## 2.1.2
 
 ### Patch Changes

@@ -94,7 +94,7 @@ export default class Zap extends EventEmitter {
     ): Promise<string | null> {
         const res = await this.generateZapRequest(amount, comment, extraTags, relays);
         if (!res) return null;
-        const {event, zapEndpoint} = res;
+        const { event, zapEndpoint } = res;
 
         if (!event) {
             throw new Error("No zap request event found");
@@ -105,7 +105,11 @@ export default class Zap extends EventEmitter {
         return await this.getInvoice(event, amount, zapEndpoint);
     }
 
-    public async getInvoice(event: NDKEvent, amount: number, zapEndpoint: string): Promise<string | null> {
+    public async getInvoice(
+        event: NDKEvent,
+        amount: number,
+        zapEndpoint: string
+    ): Promise<string | null> {
         const response = await fetch(
             `${zapEndpoint}?` +
                 new URLSearchParams({
@@ -124,7 +128,7 @@ export default class Zap extends EventEmitter {
         extraTags?: NDKTag[],
         relays?: string[],
         signer?: NDKSigner
-    ): Promise<{event: NDKEvent, zapEndpoint: string} | null> {
+    ): Promise<{ event: NDKEvent; zapEndpoint: string } | null> {
         const zapEndpoint = await this.getZapEndpoint();
 
         if (!zapEndpoint) {
@@ -156,7 +160,7 @@ export default class Zap extends EventEmitter {
             event.tags = event.tags.concat(extraTags);
         }
 
-        return {event, zapEndpoint};
+        return { event, zapEndpoint };
     }
 
     /**

@@ -66,6 +66,12 @@ export class NDKArticle extends NDKEvent {
         return this.tagValue("summary");
     }
 
+    set summary(summary: string | undefined) {
+        this.removeTag("summary");
+
+        if (summary) this.tags.push(["summary", summary]);
+    }
+
     /**
      * Getter for the article's publication timestamp.
      *
@@ -100,7 +106,7 @@ export class NDKArticle extends NDKEvent {
      *
      * @returns {ContentTag} - The generated content tags.
      */
-    protected async generateTags(): Promise<ContentTag> {
+    async generateTags(): Promise<ContentTag> {
         super.generateTags();
 
         if (!this.published_at) {

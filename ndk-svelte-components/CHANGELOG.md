@@ -1,5 +1,14 @@
 # @nostr-dev-kit/ndk-svelte-components
 
+## 2.1.1
+
+### Patch Changes
+
+-   3bcbb59: allow Avatar and Name to work without an ndk instance
+-   Updated dependencies [180d774]
+-   Updated dependencies [7f00c40]
+    -   @nostr-dev-kit/ndk@2.1.3
+
 ## 2.1.0
 
 ### Minor Changes

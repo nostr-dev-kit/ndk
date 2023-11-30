@@ -38,14 +38,17 @@ describe("generateSubId", () => {
 
     it("it doesn't generate huge subscriptions ids", () => {
         const subscriptions: NDKSubscription[] = [];
-        const filter: NDKFilter = { kinds:[10002], authors: []};
+        const filter: NDKFilter = { kinds: [10002], authors: [] };
 
         for (let i = 0; i < 100; i++) {
             const id = `aaaaa${i}`;
-            subscriptions.push(new NDKSubscription(ndk,
-                { kinds: [10002], authors: [id] },
-                { groupable: true, subId: `relay-list-${id}` },
-            ))
+            subscriptions.push(
+                new NDKSubscription(
+                    ndk,
+                    { kinds: [10002], authors: [id] },
+                    { groupable: true, subId: `relay-list-${id}` }
+                )
+            );
             filter.authors?.push(id);
         }
 

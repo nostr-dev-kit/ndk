@@ -51,8 +51,8 @@ describe("NDKUser", () => {
         });
     });
 
-    describe("hexpubkey", () => {
-        it("returns the decoded hexpubkey", () => {
+    describe("pubkey", () => {
+        it("returns the decoded pubkey", () => {
             const user = new NDKUser({
                 npub: "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft",
             });
@@ -61,12 +61,12 @@ describe("NDKUser", () => {
                 data: "decoded_hexpubkey",
             });
 
-            const hexpubkey = user.hexpubkey;
+            const pubkey = user.pubkey;
 
             expect(nip19.decode).toHaveBeenCalledWith(
                 "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft"
             );
-            expect(hexpubkey).toEqual("decoded_hexpubkey");
+            expect(pubkey).toEqual("decoded_hexpubkey");
         });
     });
 
@@ -81,7 +81,7 @@ describe("NDKUser", () => {
         (nip19.decode as jest.Mock).mockReturnValue({
             data: "decoded_hexpubkey",
         });
-        const pubkey = user.hexpubkey;
+        const pubkey = user.pubkey;
 
         it("Returns updated fields", async () => {
             newEvent = new NDKEvent(ndk, {

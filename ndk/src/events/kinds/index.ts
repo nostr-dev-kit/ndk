@@ -9,8 +9,8 @@ export enum NDKKind {
     Reaction = 7,
     BadgeAward = 8,
 
-    GroupNote = 9,
-    GroupChat = 11,
+    GroupChat = 9,
+    GroupNote = 11,
 
     GenericRepost = 16,
     ChannelCreation = 40,

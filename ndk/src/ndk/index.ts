@@ -79,9 +79,14 @@ export interface NDKConstructorParams {
     mutedIds?: Map<Hexpubkey | NDKEventId, string>;
 
     /**
-     * Client ID to add to events' tag
+     * Client name to add to events' tag
      */
-    client?: string;
+    clientName?: string;
+
+    /**
+     * Client nip89 to add to events' tag
+     */
+    clientNip89?: string;
 }
 
 export interface GetUserParams extends NDKUserParams {
@@ -111,7 +116,8 @@ export class NDK extends EventEmitter {
     public devWriteRelaySet?: NDKRelaySet;
     public outboxTracker?: OutboxTracker;
     public mutedIds: Map<Hexpubkey | NDKEventId, string>;
-    readonly client?: string;
+    public clientName?: string;
+    public clientNip89?: string;
 
     private autoConnectUserRelays = true;
     private autoFetchUserMutelist = true;
@@ -128,7 +134,8 @@ export class NDK extends EventEmitter {
         this.autoConnectUserRelays = opts.autoConnectUserRelays ?? true;
         this.autoFetchUserMutelist = opts.autoFetchUserMutelist ?? true;
 
-        this.client = opts.client;
+        this.clientName = opts.clientName;
+        this.clientNip89 = opts.clientNip89;
 
         if (opts.enableOutboxModel) {
             this.outboxPool = new NDKPool(

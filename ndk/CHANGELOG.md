@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk
 
+## 2.2.0
+
+### Minor Changes
+
+-   fix long subscription IDs bug
+
 ## 2.1.3
 
 ### Patch Changes

@@ -5,6 +5,12 @@ import { NDKRelay } from "../relay/index.js";
 import type { NDKFilter, NDKSubscription } from "./index.js";
 
 /**
+ * Don't generate subscription Ids longer than this amount of characters
+ * (plus 4-chars random number)
+ */
+const MAX_SUBID_LENGTH = 20;
+
+/**
  * Checks if a subscription is fully guaranteed to have been filled.
  *
  * This is useful to determine if a cache hit fully satisfies a subscription.
@@ -109,12 +115,15 @@ export function generateSubId(subscriptions: NDKSubscription[], filters: NDKFilt
         }
     }
 
+    let subId = subIdParts.join("-");
+    if (subId.length > MAX_SUBID_LENGTH) subId = subId.substring(0, MAX_SUBID_LENGTH);
+
     if (subIds.length !== 1) {
         // Add the random string to the resulting subId
-        subIdParts.push(Math.floor(Math.random() * 999).toString());
+        subId += "-" + Math.floor(Math.random() * 999).toString();
     }
 
-    return subIdParts.join("-");
+    return subId;
 }
 
 /**

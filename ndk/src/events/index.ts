@@ -289,8 +289,12 @@ export class NDKEvent extends EventEmitter {
             (this.kind === NDKKind.Text || this.kind === NDKKind.Article) &&
             !this.tagValue("client")
         ) {
-            const clientTag: NDKTag = ["client", this.ndk.clientName ?? ""];
-            if (this.ndk.clientNip89) clientTag.push(this.ndk.clientNip89);
+            const clientTag: NDKTag = [
+                "client",
+                this.ndk.clientName ?? "",
+                this.ndk.clientNip89 ?? "",
+                this.relay?.url ?? "",
+            ];
             tags.push(clientTag);
         }
 

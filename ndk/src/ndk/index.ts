@@ -85,6 +85,7 @@ export interface NDKConstructorParams {
 
     /**
      * Client nip89 to add to events' tag
+     * @example "31990:app1-pubkey:<d-identifier>"
      */
     clientNip89?: string;
 }

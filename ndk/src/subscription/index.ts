@@ -151,7 +151,6 @@ export class NDKSubscription extends EventEmitter {
         this.internalId = Math.random().toString(36).substring(7);
         this.relaySet = relaySet;
         this.debug = ndk.debug.extend(`subscription[${opts?.subId ?? this.internalId}]`);
-        5;
         this.eoseDebug = this.debug.extend("eose");
 
         if (!this.opts.closeOnEose) {

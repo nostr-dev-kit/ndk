@@ -91,12 +91,12 @@ export interface NDKConstructorParams {
 
 export interface GetUserParams extends NDKUserParams {
     npub?: string;
+    pubkey?: string;
 
     /**
      * @deprecated Use `pubkey` instead
      */
     hexpubkey?: string;
-    pubkey?: string;
 }
 
 export const DEFAULT_OUTBOX_RELAYS = ["wss://purplepag.es", "wss://relay.snort.social"];
@@ -155,6 +155,11 @@ export class NDK extends EventEmitter {
         if (opts.devWriteRelayUrls) {
             this.devWriteRelaySet = NDKRelaySet.fromRelayUrls(opts.devWriteRelayUrls, this);
         }
+    }
+
+    public addExplicitRelay(url: string) {
+        this.pool.addRelay(new NDKRelay(url));
+        this.explicitRelayUrls?.push(url);
     }
 
     public toJSON(): string {
@@ -305,6 +310,15 @@ export class NDK extends EventEmitter {
         const user = new NDKUser(opts);
         user.ndk = this;
         return user;
+    }
+
+    /**
+     * Get a NDKUser from a NIP05
+     * @param nip05 NIP-05 ID
+     * @returns
+     */
+    async getUserFromNip05(nip05: string): Promise<NDKUser | undefined> {
+        return NDKUser.fromNip05(nip05, this);
     }
 
     /**

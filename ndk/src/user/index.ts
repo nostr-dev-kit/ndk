@@ -116,14 +116,35 @@ export class NDKUser {
      * @param nip05Id {string} The user's NIP-05
      * @returns {NDKUser | undefined} An NDKUser if one is found for the given NIP-05, undefined otherwise.
      */
-    static async fromNip05(nip05Id: string): Promise<NDKUser | undefined> {
+    static async fromNip05(nip05Id: string, ndk?: NDK): Promise<NDKUser | undefined> {
+        // If we have a cache, try to load from cache first
+        if (ndk?.cacheAdapter && ndk.cacheAdapter.loadNip05) {
+            const profile = await ndk.cacheAdapter.loadNip05(nip05Id);
+
+            if (profile) {
+                const user = new NDKUser({
+                    pubkey: profile.pubkey,
+                    relayUrls: profile.relays,
+                });
+                user.ndk = ndk;
+                return user;
+            }
+        }
+
         const profile = await nip05.queryProfile(nip05Id);
 
+        // Save the nip05 mapping
+        if (profile && ndk?.cacheAdapter && ndk.cacheAdapter.saveNip05) {
+            ndk?.cacheAdapter.saveNip05(nip05Id, profile);
+        }
+
         if (profile) {
-            return new NDKUser({
+            const user = new NDKUser({
                 pubkey: profile.pubkey,
                 relayUrls: profile.relays,
             });
+            user.ndk = ndk;
+            return user;
         }
     }
 

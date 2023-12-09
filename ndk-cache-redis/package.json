@@ -2,22 +2,24 @@
     "name": "@nostr-dev-kit/ndk-cache-redis",
     "version": "2.0.11",
     "description": "NDK cache adapter for redis.",
-    "main": "dist/cjs/index.js",
-    "module": "dist/esm/index.js",
-    "umd:main": "dist/umd/index.js",
-    "types": "dist/types/index.d.js",
+    "types": "./dist/index.d.ts",
+    "main": "./dist/index.js",
+    "module": "./dist/index.mjs",
+    "exports": {
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.js",
+        "types": "./dist/index.d.ts"
+    },
     "scripts": {
-        "dev": "node tools/cleanup esm && tsc -w -p config/tsconfig.esm.json",
-        "build": "npm run build:cjs && npm run build:esm && npm run build:types",
-        "build:cjs": "node tools/cleanup cjs && tsc -p config/tsconfig.cjs.json",
-        "build:esm": "node tools/cleanup esm && tsc -p config/tsconfig.esm.json",
-        "build:types": "node tools/cleanup types && tsc -p config/tsconfig.types.json",
+        "dev": "pnpm build --watch",
+        "build": "tsup src/index.ts --format cjs,esm --dts",
+        "test": "jest",
         "lint": "prettier --check . && eslint .",
         "format": "prettier --write ."
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/nostr-dev-kit/ndk-cache-redis.git"
+        "url": "git+https://github.com/nostr-dev-kit/ndk.git"
     },
     "keywords": [
         "nostr"
@@ -25,19 +27,22 @@
     "author": "pablof7z",
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/nostr-dev-kit/ndk-cache-redis/issues"
+        "url": "https://github.com/nostr-dev-kit/ndk/issues"
     },
-    "homepage": "https://github.com/nostr-dev-kit/ndk-cache-redis#readme",
+    "homepage": "https://github.com/nostr-dev-kit/ndk",
     "dependencies": {
         "@nostr-dev-kit/ndk": "workspace:*",
         "debug": "^4.3.4",
-        "ioredis": "^5.3.1"
+        "ioredis": "^5.3.2",
+        "typescript": "^5.2.2"
     },
     "devDependencies": {
         "@nostr-dev-kit/eslint-config-custom": "workspace:*",
         "@nostr-dev-kit/tsconfig": "workspace:*",
         "@types/debug": "^4.1.7",
         "@types/node": "^18.15.11",
+        "jest": "^29.5.0",
+        "ts-jest": "^29.1.0",
         "tsup": "^7.2.0"
     }
 }

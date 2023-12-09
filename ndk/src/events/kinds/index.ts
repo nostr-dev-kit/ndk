@@ -11,6 +11,7 @@ export enum NDKKind {
 
     GroupChat = 9,
     GroupNote = 11,
+    GroupReply = 12,
 
     GenericRepost = 16,
     ChannelCreation = 40,

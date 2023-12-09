@@ -285,6 +285,29 @@ export class NDKRelaySubscriptions {
         }
     }
 
+    private executeSubscriptionsWhenConnected(
+        groupableId: NDKFilterGroupingId | null,
+        groupedSubscriptions: NDKGroupedSubscriptions,
+        mergedFilters: NDKFilter[]
+    ) {
+        // If the relay is not connected, add a one-time listener to wait for the 'connected' event
+        const connectedListener = () => {
+            this.debug("new relay coming online for active subscription", {
+                relay: this.ndkRelay.url,
+                mergeFilters,
+            });
+            this.executeSubscriptionsConnected(groupableId, groupedSubscriptions, mergedFilters);
+        };
+
+        this.ndkRelay.once("connect", connectedListener);
+
+        // Add a one-time listener to remove the connectedListener when the subscription stops
+        // in case it was stopped before the relay ever becamse available
+        groupedSubscriptions.once("close", () => {
+            this.ndkRelay.removeListener("connect", connectedListener);
+        });
+    }
+
     /**
      * Executes one or more subscriptions.
      *
@@ -303,25 +326,11 @@ export class NDKRelaySubscriptions {
         if (this.conn.isAvailable()) {
             this.executeSubscriptionsConnected(groupableId, groupedSubscriptions, mergedFilters);
         } else {
-            // If the relay is not connected, add a one-time listener to wait for the 'connected' event
-            const connectedListener = () => {
-                this.debug("new relay coming online for active subscription", {
-                    relay: this.ndkRelay.url,
-                    mergeFilters,
-                });
-                this.executeSubscriptionsConnected(
-                    groupableId,
-                    groupedSubscriptions,
-                    mergedFilters
-                );
-            };
-            this.ndkRelay.once("connect", connectedListener);
-
-            // Add a one-time listener to remove the connectedListener when the subscription stops
-            // in case it was stopped before the relay ever becamse available
-            groupedSubscriptions.once("close", () => {
-                this.ndkRelay.removeListener("connect", connectedListener);
-            });
+            this.executeSubscriptionsWhenConnected(
+                groupableId,
+                groupedSubscriptions,
+                mergedFilters
+            );
         }
     }
 
@@ -334,7 +343,7 @@ export class NDKRelaySubscriptions {
      * @param subscriptions
      * @param filters The filters as they should be sent to the relay
      */
-    private executeSubscriptionsConnected(
+    public executeSubscriptionsConnected(
         groupableId: NDKFilterGroupingId | null,
         groupedSubscriptions: NDKGroupedSubscriptions,
         mergedFilters: NDKFilter[]
@@ -376,6 +385,8 @@ export class NDKRelaySubscriptions {
                 this.activeSubscriptionsByGroupId.delete(groupableId);
             }
         });
+
+        this.executeSubscriptionsWhenConnected(groupableId, groupedSubscriptions, mergedFilters);
 
         return sub;
     }

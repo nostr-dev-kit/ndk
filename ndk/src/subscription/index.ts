@@ -160,12 +160,7 @@ export class NDKSubscription extends EventEmitter {
                 this.opts,
                 JSON.stringify(this.filters)
             );
-            // console.trace(this);
         }
-
-        // if (this.filters[0].authors && this.filters[0].authors[0] === 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52') {
-        //     console.trace(`creating a subscription with a filter for pablo`, this);
-        // }
 
         // validate that the caller is not expecting a persistent
         // subscription while using an option that will only hit the cache
@@ -277,8 +272,14 @@ export class NDKSubscription extends EventEmitter {
             }
         }
 
+        // if relayset is empty, we can't start, log it
+        if (!this.relayFilters || this.relayFilters.size === 0) {
+            this.debug(`No relays to subscribe to`, this.ndk.explicitRelayUrls);
+            return;
+        }
+
         // const relayUrls = Array.from(this.relayFilters.keys());
-        // this.debug(`Starting subscription`, JSON.stringify(this.filters), this.opts, relayUrls);
+        // this.debug(`Starting subscription`, JSON.stringify(this.filters), this.opts, Array.from(this.relaySet?.relays!).map(r => r.url));
 
         // iterate through the this.relayFilters
         for (const [relayUrl, filters] of this.relayFilters) {
@@ -323,7 +324,7 @@ export class NDKSubscription extends EventEmitter {
             }
 
             if (this.ndk.cacheAdapter) {
-                this.ndk.cacheAdapter.setEvent(event, this.filters[0], relay);
+                this.ndk.cacheAdapter.setEvent(event, this.filters, relay);
             }
 
             this.eventFirstSeen.set(event.id, Date.now());

@@ -35,7 +35,7 @@ describe("NDKList", () => {
 
         it("defaults to `Pin` for kind 10001 events", () => {
             list.kind = 10001;
-            expect(list.title).toEqual("Pin");
+            expect(list.title).toEqual("Pinned Notes");
         });
 
         it("defaults to `Relay Metadata` for kind 10002 events", () => {

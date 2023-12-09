@@ -137,12 +137,12 @@ export class NDKPool extends EventEmitter {
      *
      * New relays will be attempted to be connected.
      */
-    public getRelay(url: NDKRelayUrl): NDKRelay {
+    public getRelay(url: NDKRelayUrl, connect = true): NDKRelay {
         let relay = this.relays.get(url);
 
         if (!relay) {
             relay = new NDKRelay(url);
-            this.addRelay(relay);
+            this.addRelay(relay, connect);
         }
 
         return relay;

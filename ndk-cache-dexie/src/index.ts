@@ -108,7 +108,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         }
     }
 
-    public async setEvent(event: NDKEvent, _filter: NDKFilter, relay?: NDKRelay): Promise<void> {
+    public async setEvent(event: NDKEvent, filters: NDKFilter[], relay?: NDKRelay): Promise<void> {
         if (event.kind === 0) {
             if (!this.profiles) return;
 

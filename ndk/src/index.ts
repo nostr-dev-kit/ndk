@@ -13,6 +13,7 @@ export * from "./events/kinds/repost.js";
 export * from "./events/kinds/nip89/NDKAppHandler.js";
 
 export * from "./relay/index.js";
+export * from "./relay/auth-policies.js";
 export * from "./relay/sets/index.js";
 export * from "./signers/index.js";
 export * from "./signers/nip07/index.js";

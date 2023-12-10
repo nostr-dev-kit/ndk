@@ -8,6 +8,7 @@ import { NDKRelayConnectivity } from "./connectivity.js";
 import { NDKRelayPublisher } from "./publisher.js";
 import type { NDKRelayScore } from "./score.js";
 import { NDKRelaySubscriptions } from "./subscriptions.js";
+import { NDKAuthPolicy } from "./auth-policies.js";
 
 export type NDKRelayUrl = string;
 
@@ -52,6 +53,7 @@ export interface NDKRelayConnectionStats {
  * @emits NDKRelay#published when an event is published to the relay
  * @emits NDKRelay#publish:failed when an event fails to publish to the relay
  * @emits NDKRelay#eose
+ * @emits NDKRelay#auth when the relay requires authentication
  */
 export class NDKRelay extends EventEmitter {
     readonly url: NDKRelayUrl;
@@ -59,11 +61,12 @@ export class NDKRelay extends EventEmitter {
     public connectivity: NDKRelayConnectivity;
     private subs: NDKRelaySubscriptions;
     private publisher: NDKRelayPublisher;
+    public authPolicy?: NDKAuthPolicy;
 
     public complaining = false;
     readonly debug: debug.Debugger;
 
-    public constructor(url: NDKRelayUrl) {
+    public constructor(url: NDKRelayUrl, authPolicy?: NDKAuthPolicy) {
         super();
         this.url = url;
         this.scores = new Map<NDKUser, NDKRelayScore>();
@@ -71,6 +74,7 @@ export class NDKRelay extends EventEmitter {
         this.connectivity = new NDKRelayConnectivity(this);
         this.subs = new NDKRelaySubscriptions(this);
         this.publisher = new NDKRelayPublisher(this);
+        this.authPolicy = authPolicy;
     }
 
     get status(): NDKRelayStatus {
@@ -92,6 +96,10 @@ export class NDKRelay extends EventEmitter {
      * Disconnects from the relay.
      */
     public disconnect(): void {
+        if (this.status === NDKRelayStatus.DISCONNECTED) {
+            return;
+        }
+
         this.connectivity.disconnect();
     }
 

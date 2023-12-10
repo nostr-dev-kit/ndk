@@ -43,6 +43,15 @@ export class NDKRelayConnectivity {
             this.ndkRelay.emit("disconnect");
         };
 
+        const authHandler = async (challenge: string) => {
+            this.debug("Relay requested authentication");
+            if (this.ndkRelay.authPolicy) {
+                await this.ndkRelay.authPolicy(this.ndkRelay, challenge);
+            } else {
+                await this.ndkRelay.emit("auth", challenge);
+            }
+        };
+
         try {
             this.updateConnectionStats.attempt();
             this._status = NDKRelayStatus.CONNECTING;
@@ -51,6 +60,7 @@ export class NDKRelayConnectivity {
             this.relay.off("disconnect", disconnectHandler);
             this.relay.on("connect", connectHandler);
             this.relay.on("disconnect", disconnectHandler);
+            this.relay.on("auth", authHandler);
 
             await this.relay.connect();
         } catch (e) {

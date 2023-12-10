@@ -17,6 +17,7 @@ import type { Hexpubkey, NDKUserParams } from "../user/index.js";
 import { NDKUser } from "../user/index.js";
 import { NDKKind } from "../events/kinds/index.js";
 import NDKList from "../events/kinds/lists/index.js";
+import { NDKAuthPolicy } from "../relay/auth-policies.js";
 
 export interface NDKConstructorParams {
     /**
@@ -87,6 +88,11 @@ export interface NDKConstructorParams {
      * Client nip89 to add to events' tag
      */
     clientNip89?: string;
+
+    /**
+     * Default relay-auth policy
+     */
+    relayAuthDefaultPolicy?: NDKAuthPolicy;
 }
 
 export interface GetUserParams extends NDKUserParams {
@@ -118,6 +124,7 @@ export class NDK extends EventEmitter {
     public mutedIds: Map<Hexpubkey | NDKEventId, string>;
     public clientName?: string;
     public clientNip89?: string;
+    public relayAuthDefaultPolicy?: NDKAuthPolicy;
 
     private autoConnectUserRelays = true;
     private autoFetchUserMutelist = true;
@@ -131,11 +138,19 @@ export class NDK extends EventEmitter {
 
         this.debug(`Starting with explicit relays: ${JSON.stringify(this.explicitRelayUrls)}`);
 
+        this.pool.on("relay:auth", async (relay: NDKRelay, challenge: string) => {
+            if (this.relayAuthDefaultPolicy) {
+                await this.relayAuthDefaultPolicy(relay, challenge);
+            }
+        });
+
         this.autoConnectUserRelays = opts.autoConnectUserRelays ?? true;
         this.autoFetchUserMutelist = opts.autoFetchUserMutelist ?? true;
 
         this.clientName = opts.clientName;
         this.clientNip89 = opts.clientNip89;
+
+        this.relayAuthDefaultPolicy = opts.relayAuthDefaultPolicy;
 
         if (opts.enableOutboxModel) {
             this.outboxPool = new NDKPool(
@@ -157,9 +172,12 @@ export class NDK extends EventEmitter {
         }
     }
 
-    public addExplicitRelay(url: string) {
-        this.pool.addRelay(new NDKRelay(url));
+    public addExplicitRelay(url: string, relayAuthPolicy?: NDKAuthPolicy): NDKRelay {
+        const relay = new NDKRelay(url, relayAuthPolicy);
+        this.pool.addRelay(relay);
         this.explicitRelayUrls?.push(url);
+
+        return relay;
     }
 
     public toJSON(): string {

@@ -1,8 +1,6 @@
-import exp from "constants";
 import { NDK } from "../ndk";
 import { NDKPrivateKeySigner } from "../signers/private-key";
 import { NDKRelayAuthPolicies } from "./auth-policies";
-import { NDKPool } from "./pool";
 import { NDKEvent } from "../events";
 
 const ndk = new NDK({
@@ -28,20 +26,19 @@ describe("sign in policy", () => {
         const policy = NDKRelayAuthPolicies.signIn({ signer });
         ndk.relayAuthDefaultPolicy = policy;
 
-        const relayPublish = jest.spyOn(relay, "publish").mockImplementation(
-            async (_: NDKEvent, _2: number | undefined): Promise<boolean> => {
-                console.log("calling mocked publish");
-                return true;
+        const relayAuth = jest.spyOn(relay, "auth").mockImplementation(
+            async (event: NDKEvent): Promise<void> => {
+                console.log("calling mocked auth");
             }
         );
 
         await relay.emit("auth", "1234-challenge");
         await new Promise((resolve) => { setTimeout(resolve, 100); });
 
-        expect(relayPublish).toHaveBeenCalled();
+        expect(relayAuth).toHaveBeenCalled();
 
         // evaluate the event that was published
-        const event = relayPublish.mock.calls[0][0];
+        const event = relayAuth.mock.calls[0][0];
         expect(event.tagValue("relay")).toBe(relay.url);
         expect(event.tagValue("challenge")).toBe("1234-challenge");
     });

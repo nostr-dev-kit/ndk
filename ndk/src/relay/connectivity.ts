@@ -46,7 +46,14 @@ export class NDKRelayConnectivity {
         const authHandler = async (challenge: string) => {
             this.debug("Relay requested authentication");
             if (this.ndkRelay.authPolicy) {
-                await this.ndkRelay.authPolicy(this.ndkRelay, challenge);
+                if (this._status !== NDKRelayStatus.AUTHENTICATING) {
+                    this._status = NDKRelayStatus.AUTHENTICATING;
+                    await this.ndkRelay.authPolicy(this.ndkRelay, challenge);
+
+                    if (this._status === NDKRelayStatus.AUTHENTICATING) {
+                        this._status = NDKRelayStatus.CONNECTED;
+                    }
+                }
             } else {
                 await this.ndkRelay.emit("auth", challenge);
             }

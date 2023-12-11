@@ -19,6 +19,7 @@ export enum NDKRelayStatus {
     DISCONNECTED,
     RECONNECTING,
     FLAPPING,
+    AUTHENTICATING,
 }
 
 export interface NDKRelayConnectionStats {
@@ -126,6 +127,10 @@ export class NDKRelay extends EventEmitter {
      */
     public async publish(event: NDKEvent, timeoutMs = 2500): Promise<boolean> {
         return this.publisher.publish(event, timeoutMs);
+    }
+
+    public async auth(event: NDKEvent): Promise<void> {
+        return this.publisher.auth(event);
     }
 
     /**

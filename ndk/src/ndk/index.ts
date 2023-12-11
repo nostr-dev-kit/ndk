@@ -172,9 +172,20 @@ export class NDK extends EventEmitter {
         }
     }
 
-    public addExplicitRelay(url: string, relayAuthPolicy?: NDKAuthPolicy): NDKRelay {
+    /**
+     * Adds an explicit relay to the pool.
+     * @param url
+     * @param relayAuthPolicy Authentication policy to use if different from the default
+     * @param connect Whether to connect to the relay automatically
+     * @returns
+     */
+    public addExplicitRelay(
+        url: string,
+        relayAuthPolicy?: NDKAuthPolicy,
+        connect = true
+    ): NDKRelay {
         const relay = new NDKRelay(url, relayAuthPolicy);
-        this.pool.addRelay(relay);
+        this.pool.addRelay(relay, connect);
         this.explicitRelayUrls?.push(url);
 
         return relay;
@@ -403,17 +414,25 @@ export class NDK extends EventEmitter {
      *
      * @param idOrFilter event id in bech32 format or filter
      * @param opts subscription options
-     * @param relaySet explicit relay set to use
+     * @param relaySetOrRelay explicit relay set to use
      */
     public async fetchEvent(
         idOrFilter: string | NDKFilter,
         opts?: NDKSubscriptionOptions,
-        relaySet?: NDKRelaySet
+        relaySetOrRelay?: NDKRelaySet | NDKRelay
     ): Promise<NDKEvent | null> {
         let filter: NDKFilter;
+        let relaySet: NDKRelaySet | undefined;
+
+        // Check if this relaySetOrRelay is an NDKRelay, if it is, make it a relaySet
+        if (relaySetOrRelay instanceof NDKRelay) {
+            relaySet = new NDKRelaySet(new Set([relaySetOrRelay]), this);
+        } else if (relaySetOrRelay instanceof NDKRelaySet) {
+            relaySet = relaySetOrRelay;
+        }
 
         // if no relayset has been provided, try to get one from the event id
-        if (!relaySet && typeof idOrFilter === "string") {
+        if (!relaySetOrRelay && typeof idOrFilter === "string") {
             /* Check if this is a NIP-33 */
             if (!isNip33AValue(idOrFilter)) {
                 const relays = relaysFromBech32(idOrFilter);

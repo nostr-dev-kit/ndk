@@ -19,6 +19,7 @@ export type NDKPoolStats = {
  * @emit notice - Emitted when a relay in the pool sends a notice.
  * @emit flapping - Emitted when a relay in the pool is flapping.
  * @emit relay:connect - Emitted when a relay in the pool connects.
+ * @emit relay:ready - Emitted when a relay in the pool is ready to serve requests.
  * @emit relay:disconnect - Emitted when a relay in the pool disconnects.
  */
 export class NDKPool extends EventEmitter {
@@ -97,6 +98,7 @@ export class NDKPool extends EventEmitter {
 
         relay.on("notice", async (relay, notice) => this.emit("notice", relay, notice));
         relay.on("connect", () => this.handleRelayConnect(relayUrl));
+        relay.on("ready", () => this.handleRelayReady(relay));
         relay.on("disconnect", async () => this.emit("relay:disconnect", relay));
         relay.on("flapping", () => this.handleFlapping(relay));
         relay.on("auth", async (challenge: string) => this.emit("relay:auth", relay, challenge));
@@ -156,6 +158,11 @@ export class NDKPool extends EventEmitter {
         if (this.stats().connected === this.relays.size) {
             this.emit("connect");
         }
+    }
+
+    private handleRelayReady(relay: NDKRelay) {
+        this.debug(`Relay ${relay.url} ready`);
+        this.emit("relay:ready", relay);
     }
 
     /**

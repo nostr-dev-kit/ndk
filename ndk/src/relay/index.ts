@@ -19,6 +19,7 @@ export enum NDKRelayStatus {
     DISCONNECTED,
     RECONNECTING,
     FLAPPING,
+    AUTH_REQUIRED,
     AUTHENTICATING,
 }
 
@@ -48,6 +49,7 @@ export interface NDKRelayConnectionStats {
  * The NDKRelay class represents a connection to a relay.
  *
  * @emits NDKRelay#connect
+ * @emits NDKRelay#ready
  * @emits NDKRelay#disconnect
  * @emits NDKRelay#notice
  * @emits NDKRelay#event
@@ -63,6 +65,7 @@ export class NDKRelay extends EventEmitter {
     private subs: NDKRelaySubscriptions;
     private publisher: NDKRelayPublisher;
     public authPolicy?: NDKAuthPolicy;
+    public authRequired = false;
 
     public complaining = false;
     readonly debug: debug.Debugger;

@@ -18,19 +18,19 @@ function disconnect(pool: NDKPool, debug?: debug.Debugger) {
         debug!(`Relay ${relay.url} requested authentication, disconnecting`);
 
         pool.removeRelay(relay.url);
-    }
+    };
 }
 
 type ISignIn = {
     ndk?: NDK;
     signer?: NDKSigner;
     debug?: debug.Debugger;
-}
+};
 
 function signIn({ ndk, signer, debug }: ISignIn = {}) {
     debug ??= createDebug("ndk:relay:auth-policies:signIn");
 
-    return async (relay: NDKRelay, challenge: string)  => {
+    return async (relay: NDKRelay, challenge: string) => {
         debug!(`Relay ${relay.url} requested authentication, signing in`);
 
         const event = new NDKEvent(ndk);
@@ -42,13 +42,13 @@ function signIn({ ndk, signer, debug }: ISignIn = {}) {
 
         try {
             await event.sign(signer);
-            await relay.auth(event)
+            await relay.auth(event);
         } catch (e) {
             debug!(`Failed to publish auth event to relay ${relay.url}`, e);
         }
 
         return event;
-    }
+    };
 }
 
 const NDKRelayAuthPolicies = {
@@ -56,7 +56,4 @@ const NDKRelayAuthPolicies = {
     signIn,
 };
 
-export {
-    NDKRelayAuthPolicies,
-    NDKAuthPolicy,
-};
+export { NDKRelayAuthPolicies, NDKAuthPolicy };

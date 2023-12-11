@@ -10,7 +10,7 @@ const pool = ndk.pool;
 const relay = pool.relays.get("ws://localhost")!;
 
 describe("disconnect policy", () => {
-    it('evicts the relay from the pool', () => {
+    it("evicts the relay from the pool", () => {
         const policy = NDKRelayAuthPolicies.disconnect(pool);
         ndk.relayAuthDefaultPolicy = policy;
         relay.emit("auth", "1234-challenge");
@@ -18,22 +18,23 @@ describe("disconnect policy", () => {
         // it should have been removed from the pool
         expect(pool.relays.size).toBe(0);
     });
-})
+});
 
 describe("sign in policy", () => {
-    it('signs in to the relay', async () => {
+    it("signs in to the relay", async () => {
         const signer = NDKPrivateKeySigner.generate();
         const policy = NDKRelayAuthPolicies.signIn({ signer });
         ndk.relayAuthDefaultPolicy = policy;
 
-        const relayAuth = jest.spyOn(relay, "auth").mockImplementation(
-            async (event: NDKEvent): Promise<void> => {
-                console.log("calling mocked auth");
-            }
-        );
+        const relayAuth = jest
+            .spyOn(relay, "auth")
+            .mockImplementation(async (event: NDKEvent): Promise<void> => {
+            });
 
         await relay.emit("auth", "1234-challenge");
-        await new Promise((resolve) => { setTimeout(resolve, 100); });
+        await new Promise((resolve) => {
+            setTimeout(resolve, 100);
+        });
 
         expect(relayAuth).toHaveBeenCalled();
 

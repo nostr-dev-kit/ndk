@@ -25,11 +25,34 @@ export class NDKRelayConnectivity {
         this.relay.on("notice", (notice: string) => this.handleNotice(notice));
     }
 
+    async initiateAuth(): Promise<void> {
+        this.debug("Initiating authentication");
+        const authSub = this.relay.sub([{ limit: 1 }], { id: "auth-test" });
+        authSub.on("eose", () => {
+            // we didn't need to authenticate
+            authSub.unsub();
+            this._status = NDKRelayStatus.CONNECTED;
+            this.ndkRelay.emit("ready");
+            this.debug("Authentication not required");
+            authSub.unsub();
+        });
+        this.debug("Authentication request started");
+    }
+
     public async connect(): Promise<void> {
         const connectHandler = () => {
             this.updateConnectionStats.connected();
-            this._status = NDKRelayStatus.CONNECTED;
-            this.ndkRelay.emit("connect");
+
+            if (!this.ndkRelay.authRequired) {
+                this.debug("Connected, auth was not explicitly required");
+                this._status = NDKRelayStatus.CONNECTED;
+                this.ndkRelay.emit("connect");
+                this.ndkRelay.emit("ready");
+            } else {
+                this._status = NDKRelayStatus.AUTH_REQUIRED;
+                this.ndkRelay.emit("connect");
+                this.initiateAuth();
+            }
         };
 
         const disconnectHandler = () => {
@@ -44,14 +67,18 @@ export class NDKRelayConnectivity {
         };
 
         const authHandler = async (challenge: string) => {
-            this.debug("Relay requested authentication");
+            this.debug("Relay requested authentication", {
+                havePolicy: !!this.ndkRelay.authPolicy,
+            });
             if (this.ndkRelay.authPolicy) {
                 if (this._status !== NDKRelayStatus.AUTHENTICATING) {
                     this._status = NDKRelayStatus.AUTHENTICATING;
                     await this.ndkRelay.authPolicy(this.ndkRelay, challenge);
 
                     if (this._status === NDKRelayStatus.AUTHENTICATING) {
+                        this.debug("Authentication policy finished");
                         this._status = NDKRelayStatus.CONNECTED;
+                        this.ndkRelay.emit("ready");
                     }
                 }
             } else {

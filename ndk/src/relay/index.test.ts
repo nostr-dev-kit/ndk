@@ -5,7 +5,7 @@ import { NDKRelaySet } from "./sets/index.js";
 
 const ndk = new NDK();
 
-const filter = {kinds:[9999]};
+const filter = { kinds: [9999] };
 const relay = new NDKRelay("ws://localhost");
 
 jest.spyOn(relay.connectivity, "connect").mockImplementation(async () => {
@@ -26,7 +26,7 @@ function mockReconnect(relay: NDKRelay) {
 }
 
 describe("NDKRelay", () => {
-    let relaySub: any
+    let relaySub: any;
 
     beforeEach(() => {
         relaySub = jest.spyOn(relay.connectivity.relay, "sub");
@@ -60,7 +60,7 @@ describe("NDKRelay", () => {
 
             it("calls the subscription execution method when it connects", () => {
                 expect(relaySub).toHaveBeenCalledTimes(1);
-            })
+            });
 
             describe("and the relay disconnects", () => {
                 it("resends the REQ when the relay reconnects", () => {
@@ -69,8 +69,6 @@ describe("NDKRelay", () => {
                     expect(relaySub).toHaveBeenCalledTimes(2);
                 });
             });
-        })
+        });
     });
-
-
 });

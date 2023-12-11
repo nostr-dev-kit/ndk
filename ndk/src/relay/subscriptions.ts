@@ -290,8 +290,8 @@ export class NDKRelaySubscriptions {
         groupedSubscriptions: NDKGroupedSubscriptions,
         mergedFilters: NDKFilter[]
     ) {
-        // If the relay is not connected, add a one-time listener to wait for the 'connected' event
-        const connectedListener = () => {
+        // If the relay is not ready, add a one-time listener to wait for the 'ready' event
+        const readyListener = () => {
             this.debug("new relay coming online for active subscription", {
                 relay: this.ndkRelay.url,
                 mergeFilters,
@@ -299,12 +299,12 @@ export class NDKRelaySubscriptions {
             this.executeSubscriptionsConnected(groupableId, groupedSubscriptions, mergedFilters);
         };
 
-        this.ndkRelay.once("connect", connectedListener);
+        this.ndkRelay.once("ready", readyListener);
 
-        // Add a one-time listener to remove the connectedListener when the subscription stops
+        // Add a one-time listener to remove the readyListener when the subscription stops
         // in case it was stopped before the relay ever becamse available
         groupedSubscriptions.once("close", () => {
-            this.ndkRelay.removeListener("connect", connectedListener);
+            this.ndkRelay.removeListener("ready", readyListener);
         });
     }
 

@@ -1,5 +1,20 @@
 # @nostr-dev-kit/ndk-cache-redis
 
+## 2.1.0
+
+### Minor Changes
+
+-   06c83ea: Aggressively cache all filters and their responses so the same filter can hit the cache
+
+### Patch Changes
+
+-   Updated dependencies [54cec78]
+-   Updated dependencies [ef61d83]
+-   Updated dependencies [98b77dd]
+-   Updated dependencies [46b0c77]
+-   Updated dependencies [082e243]
+    -   @nostr-dev-kit/ndk@2.3.0
+
 ## 2.0.11
 
 ### Patch Changes

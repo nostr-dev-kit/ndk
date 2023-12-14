@@ -1,5 +1,18 @@
 # @nostr-dev-kit/ndk
 
+## 2.3.0
+
+### Minor Changes
+
+-   46b0c77: AUTH policies to pre-program how NIP-42 requests should be handled
+
+### Patch Changes
+
+-   54cec78: Allow flagging a relay as auth_required and add "relay:ready" event
+-   ef61d83: Trust, don't verify -- Allow setting relays/subscriptions as trusted to skip signature verification
+-   98b77dd: fix bug of reconnecting subscriptions when the relay of an active subscription comes back
+-   082e243: NIP-05 cache
+
 ## 2.2.0
 
 ### Minor Changes

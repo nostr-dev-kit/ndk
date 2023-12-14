@@ -242,9 +242,9 @@ export class NDKRelaySubscriptions {
         }, subscription.opts.groupableDelay);
 
         if (this.delayedTimers.has(groupableId)) {
-            this.delayedTimers.get(groupableId)!.push(timeout);
+            this.delayedTimers.get(groupableId)!.push(timeout as unknown as number);
         } else {
-            this.delayedTimers.set(groupableId, [timeout]);
+            this.delayedTimers.set(groupableId, [timeout as unknown as number]);
         }
         // this.debug(`there are ${this.delayedTimers.get(groupableId)!.length} delayed items`);
     }

@@ -13,7 +13,7 @@
     "navigationLinks": {
         "Github": "https://github.com/nostr-dev-kit/ndk",
         "NDK CLI": "https://github.com/nostr-dev-kit/ndk-cli",
-        "NDK Svelte Components": "https://github.com/nostr-dev-kit/ndk-svelte-components",
+        "NDK Svelte Components": "https://github.com/nostr-dev-kit/ndk/ndk-svelte-components",
         "NDK React": "https://github.com/nostr-dev-kit/ndk-react"
     },
     "navigation": {

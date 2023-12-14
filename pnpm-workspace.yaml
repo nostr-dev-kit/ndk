@@ -6,3 +6,4 @@ packages:
     - "ndk-cache-redis"
     - "ndk-svelte"
     - "ndk-svelte-components"
+    - "demos"

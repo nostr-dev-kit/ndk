@@ -133,7 +133,7 @@ export class NDK extends EventEmitter {
         super();
 
         this.debug = opts.debug || debug("ndk");
-        this.explicitRelayUrls = opts.explicitRelayUrls;
+        this.explicitRelayUrls = opts.explicitRelayUrls || [];
         this.pool = new NDKPool(opts.explicitRelayUrls || [], opts.blacklistRelayUrls, this);
 
         this.debug(`Starting with explicit relays: ${JSON.stringify(this.explicitRelayUrls)}`);
@@ -180,13 +180,20 @@ export class NDK extends EventEmitter {
      * @returns
      */
     public addExplicitRelay(
-        url: string,
+        urlOrRelay: string | NDKRelay,
         relayAuthPolicy?: NDKAuthPolicy,
         connect = true
     ): NDKRelay {
-        const relay = new NDKRelay(url, relayAuthPolicy);
+        let relay: NDKRelay;
+
+        if (typeof urlOrRelay === "string") {
+            relay = new NDKRelay(urlOrRelay, relayAuthPolicy);
+        } else {
+            relay = urlOrRelay;
+        }
+
         this.pool.addRelay(relay, connect);
-        this.explicitRelayUrls?.push(url);
+        this.explicitRelayUrls!.push(relay.url);
 
         return relay;
     }

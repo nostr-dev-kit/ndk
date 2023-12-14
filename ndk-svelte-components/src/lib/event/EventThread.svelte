@@ -40,8 +40,8 @@
         extraItems = extraItemsFetcher(event);
     }
 
-    let replies = ndk.storeSubscribe({
-        kinds: [1],
+    export let replies: Readable<NDKEvent[]> = ndk.storeSubscribe({
+        kinds: [1, 12],
         "#e": Array.from(threadIds.keys())
     }, { closeOnEose: false, groupableDelay: 100, cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY });
 

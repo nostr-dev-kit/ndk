@@ -44,7 +44,6 @@ export class NDKRelayConnectivity {
             this.updateConnectionStats.connected();
 
             if (!this.ndkRelay.authRequired) {
-                this.debug("Connected, auth was not explicitly required");
                 this._status = NDKRelayStatus.CONNECTED;
                 this.ndkRelay.emit("connect");
                 this.ndkRelay.emit("ready");

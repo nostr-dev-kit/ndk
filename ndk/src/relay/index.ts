@@ -67,6 +67,13 @@ export class NDKRelay extends EventEmitter {
     public authPolicy?: NDKAuthPolicy;
     public authRequired = false;
 
+    /**
+     * Whether this relay is trusted.
+     *
+     * Trusted relay's events do not get their signature verified.
+     */
+    public trusted = false;
+
     public complaining = false;
     readonly debug: debug.Debugger;
 

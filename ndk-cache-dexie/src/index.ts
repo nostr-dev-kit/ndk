@@ -97,12 +97,14 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         const filterKeys = Object.keys(_filter || {}).sort();
 
         try {
-            (await this.byKindAndAuthor(filterKeys, filter, subscription)) ||
-                (await this.byAuthors(filterKeys, filter, subscription)) ||
-                (await this.byKinds(filterKeys, filter, subscription)) ||
-                (await this.byIdsQuery(filterKeys, filter, subscription)) ||
-                (await this.byNip33Query(filterKeys, filter, subscription)) ||
-                (await this.byTagsAndOptionallyKinds(filterKeys, filter, subscription));
+            await Promise.allSettled([
+                this.byKindAndAuthor(filterKeys, filter, subscription),
+                this.byAuthors(filterKeys, filter, subscription),
+                this.byKinds(filterKeys, filter, subscription),
+                this.byIdsQuery(filterKeys, filter, subscription),
+                this.byNip33Query(filterKeys, filter, subscription),
+                this.byTagsAndOptionallyKinds(filterKeys, filter, subscription)
+            ]);
         } catch (error) {
             console.error(error);
         }

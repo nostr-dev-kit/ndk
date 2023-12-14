@@ -8,12 +8,16 @@ const ndk = new NDK();
 const filter = { kinds: [9999] };
 const relay = new NDKRelay("ws://localhost");
 
+ndk.addExplicitRelay(relay, undefined, false);
+
 jest.spyOn(relay.connectivity, "connect").mockImplementation(async () => {
     relay.emit("connect");
+    relay.emit("ready");
 });
 
 function mockConnect(relay: NDKRelay) {
     relay.emit("connect");
+    relay.emit("ready");
 }
 
 function mockDisconnect(relay: NDKRelay) {
@@ -46,7 +50,7 @@ describe("NDKRelay", () => {
                 sub = ndk.subscribe(
                     filter,
                     { cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY, groupable: false },
-                    new NDKRelaySet(new Set([relay]), ndk),
+                    undefined,
                     false
                 );
 
@@ -67,6 +71,74 @@ describe("NDKRelay", () => {
                     expect(relaySub).toHaveBeenCalledTimes(1);
                     mockReconnect(relay);
                     expect(relaySub).toHaveBeenCalledTimes(2);
+                });
+            });
+        });
+
+        describe("when the relay is connected", () => {
+            let isAvailableCall: any;
+
+            beforeEach(() => {
+                isAvailableCall = jest
+                    .spyOn(relay.connectivity, "isAvailable")
+                    .mockReturnValue(true);
+            });
+
+            afterEach(() => {
+                isAvailableCall.mockRestore();
+            });
+
+            describe("verification skipping", () => {
+                describe("when the relay is trusted", () => {
+                    beforeEach(() => {
+                        relay.trusted = true;
+                    });
+
+                    afterEach(() => {
+                        relay.trusted = false;
+                    });
+
+                    it("skips verification on subscriptions", () => {
+                        ndk.subscribe(
+                            {},
+                            { cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY, groupable: false }
+                        );
+
+                        expect(relaySub).toHaveBeenCalledWith(
+                            [{}],
+                            expect.objectContaining({ skipVerification: true })
+                        );
+                    });
+                });
+
+                describe("when the relay is not trusted", () => {
+                    it("does not skips verification on subscriptions", () => {
+                        ndk.subscribe(
+                            {},
+                            { cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY, groupable: false }
+                        );
+
+                        expect(relaySub).toHaveBeenCalledWith(
+                            [{}],
+                            expect.not.objectContaining({ skipVerification: true })
+                        );
+                    });
+
+                    it("skips when the subscription is trusted", () => {
+                        ndk.subscribe(
+                            {},
+                            {
+                                cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY,
+                                groupable: false,
+                                skipVerification: true,
+                            }
+                        );
+
+                        expect(relaySub).toHaveBeenCalledWith(
+                            [{}],
+                            expect.objectContaining({ skipVerification: true })
+                        );
+                    });
                 });
             });
         });

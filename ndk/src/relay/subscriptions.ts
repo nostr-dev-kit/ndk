@@ -1,5 +1,5 @@
 import { EventEmitter } from "tseep";
-import type { Sub } from "nostr-tools";
+import type { Sub, SubscriptionOptions } from "nostr-tools";
 import { matchFilter } from "nostr-tools";
 
 import type { NDKRelay } from ".";
@@ -187,7 +187,6 @@ export class NDKRelaySubscriptions {
 
         // If this subscription is not groupable, execute it immediately
         if (!groupableId || !subscription.isGroupable()) {
-            this.groupingDebug("No groupable ID for filters", filters);
             this.executeSubscriptions(
                 groupableId,
                 // hacky
@@ -356,7 +355,13 @@ export class NDKRelaySubscriptions {
 
         const subId = generateSubId(subscriptions, mergedFilters);
         groupedSubscriptions.req = mergedFilters;
-        const sub = this.conn.relay.sub(mergedFilters, { id: subId });
+
+        const subOptions: SubscriptionOptions = { id: subId };
+        if (this.ndkRelay.trusted || subscriptions.every((sub) => sub.opts.skipVerification)) {
+            subOptions.skipVerification = true;
+        }
+
+        const sub = this.conn.relay.sub(mergedFilters, subOptions);
 
         this.activeSubscriptions.set(sub, groupedSubscriptions);
         if (groupableId) {

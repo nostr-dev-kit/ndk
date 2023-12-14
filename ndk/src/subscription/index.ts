@@ -63,6 +63,12 @@ export interface NDKSubscriptionOptions {
      * Pool to use
      */
     pool?: NDKPool;
+
+    /**
+     * Skip signature verification
+     * @default false
+     */
+    skipVerification?: boolean;
 }
 
 /**
@@ -102,6 +108,7 @@ export class NDKSubscription extends EventEmitter {
     readonly filters: NDKFilter[];
     readonly opts: NDKSubscriptionOptions;
     readonly pool: NDKPool;
+    readonly skipVerification: boolean = false;
 
     /**
      * Tracks the filters as they are executed on each relay
@@ -152,6 +159,7 @@ export class NDKSubscription extends EventEmitter {
         this.relaySet = relaySet;
         this.debug = ndk.debug.extend(`subscription[${opts?.subId ?? this.internalId}]`);
         this.eoseDebug = this.debug.extend("eose");
+        this.skipVerification = opts?.skipVerification || false;
 
         if (!this.opts.closeOnEose) {
             this.debug(

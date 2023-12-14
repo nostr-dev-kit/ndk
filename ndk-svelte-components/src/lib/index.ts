@@ -6,6 +6,7 @@ import Avatar from "./user/Avatar.svelte";
 import Name from "./user/Name.svelte";
 import Nip05 from "./user/Nip05.svelte";
 import UserCard from "./user/UserCard.svelte";
+import EventThread from "./event/EventThread.svelte";
 
 export * from "./utils";
 
@@ -14,6 +15,7 @@ export {
     EventContent,
     EventCard,
     EventCardDropdownMenu,
+    EventThread,
 
     // User
     Avatar,

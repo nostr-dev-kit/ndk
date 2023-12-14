@@ -6,6 +6,13 @@ import { NDKSigner } from "../signers";
 import { NDKPool } from "./pool";
 import createDebug from "debug";
 
+/**
+ * NDKAuthPolicies are functions that are called when a relay requests authentication
+ * so that you can define a behavior for your application.
+ *
+ * @param relay The relay that requested authentication.
+ * @param challenge The challenge that the relay sent.
+ */
 type NDKAuthPolicy = (relay: NDKRelay, challenge: string) => Promise<boolean | void | NDKEvent>;
 
 /**

@@ -17,11 +17,13 @@ export type Hexpubkey = string;
 
 export type Npub = string;
 
+// @ignore
 export type ProfilePointer = {
     pubkey: string;
     relays?: string[];
 };
 
+// @ignore
 export type EventPointer = {
     id: string;
     relays?: string[];

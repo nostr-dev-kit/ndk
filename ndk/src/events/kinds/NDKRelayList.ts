@@ -2,7 +2,6 @@ import { NDKKind } from ".";
 import type { NostrEvent } from "..";
 import { NDKEvent } from "..";
 import type { NDK } from "../../ndk";
-import type { NDKRelayUrl } from "../../relay";
 
 const READ_MARKER = "read";
 const WRITE_MARKER = "write";
@@ -17,42 +16,42 @@ export class NDKRelayList extends NDKEvent {
         return new NDKRelayList(ndkEvent.ndk, ndkEvent.rawEvent());
     }
 
-    get readRelayUrls(): NDKRelayUrl[] {
+    get readRelayUrls(): WebSocket["url"][] {
         return this.getMatchingTags("r")
             .filter((tag) => !tag[2] || (tag[2] && tag[2] === READ_MARKER))
             .map((tag) => tag[1]);
     }
 
-    set readRelayUrls(relays: NDKRelayUrl[]) {
+    set readRelayUrls(relays: WebSocket["url"][]) {
         for (const relay of relays) {
             this.tags.push(["r", relay, READ_MARKER]);
         }
     }
 
-    get writeRelayUrls(): NDKRelayUrl[] {
+    get writeRelayUrls(): WebSocket["url"][] {
         return this.getMatchingTags("r")
             .filter((tag) => !tag[2] || (tag[2] && tag[2] === WRITE_MARKER))
             .map((tag) => tag[1]);
     }
 
-    set writeRelayUrls(relays: NDKRelayUrl[]) {
+    set writeRelayUrls(relays: WebSocket["url"][]) {
         for (const relay of relays) {
             this.tags.push(["r", relay, WRITE_MARKER]);
         }
     }
 
-    get bothRelayUrls(): NDKRelayUrl[] {
+    get bothRelayUrls(): WebSocket["url"][] {
         return this.getMatchingTags("r")
             .filter((tag) => !tag[2])
             .map((tag) => tag[1]);
     }
-    set bothRelayUrls(relays: NDKRelayUrl[]) {
+    set bothRelayUrls(relays: WebSocket["url"][]) {
         for (const relay of relays) {
             this.tags.push(["r", relay]);
         }
     }
 
-    get relays(): NDKRelayUrl[] {
+    get relays(): WebSocket["url"][] {
         return this.getMatchingTags("r").map((tag) => tag[1]);
     }
 }

@@ -2,13 +2,17 @@
     "name": "@nostr-dev-kit/ndk-cache-redis",
     "version": "2.1.0",
     "description": "NDK cache adapter for redis.",
-    "types": "./dist/index.d.ts",
     "main": "./dist/index.js",
     "module": "./dist/index.mjs",
     "exports": {
-        "import": "./dist/index.mjs",
-        "require": "./dist/index.js",
-        "types": "./dist/index.d.ts"
+        "import": {
+            "types": "./dist/index.d.mts",
+            "default": "./dist/index.mjs"
+        },
+        "require": {
+            "types": "./dist/index.d.ts",
+            "default": "./dist/index.js"
+        }
     },
     "scripts": {
         "dev": "pnpm build --watch",

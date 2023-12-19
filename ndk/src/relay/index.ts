@@ -10,7 +10,8 @@ import type { NDKRelayScore } from "./score.js";
 import { NDKRelaySubscriptions } from "./subscriptions.js";
 import { NDKAuthPolicy } from "./auth-policies.js";
 
-export type NDKRelayUrl = string;
+/** @deprecated Use `WebSocket['url']` instead. */
+export type NDKRelayUrl = WebSocket["url"];
 
 export enum NDKRelayStatus {
     CONNECTING,
@@ -59,7 +60,7 @@ export interface NDKRelayConnectionStats {
  * @emits NDKRelay#auth when the relay requires authentication
  */
 export class NDKRelay extends EventEmitter {
-    readonly url: NDKRelayUrl;
+    readonly url: WebSocket["url"];
     readonly scores: Map<NDKUser, NDKRelayScore>;
     public connectivity: NDKRelayConnectivity;
     private subs: NDKRelaySubscriptions;
@@ -77,7 +78,7 @@ export class NDKRelay extends EventEmitter {
     public complaining = false;
     readonly debug: debug.Debugger;
 
-    public constructor(url: NDKRelayUrl, authPolicy?: NDKAuthPolicy) {
+    public constructor(url: WebSocket["url"], authPolicy?: NDKAuthPolicy) {
         super();
         this.url = url;
         this.scores = new Map<NDKUser, NDKRelayScore>();

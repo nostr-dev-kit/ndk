@@ -5,7 +5,7 @@ import type { NDKCacheAdapter } from "../cache/index.js";
 import dedupEvent from "../events/dedup.js";
 import type { NDKEvent, NDKEventId } from "../events/index.js";
 import { OutboxTracker } from "../outbox/tracker.js";
-import { NDKRelay, NDKRelayUrl } from "../relay/index.js";
+import { NDKRelay } from "../relay/index.js";
 import { NDKPool } from "../relay/pool/index.js";
 import { NDKRelaySet } from "../relay/sets/index.js";
 import { correctRelaySet } from "../relay/sets/utils.js";
@@ -112,7 +112,7 @@ export const DEFAULT_BLACKLISTED_RELAYS = [
 ];
 
 export class NDK extends EventEmitter {
-    public explicitRelayUrls?: NDKRelayUrl[];
+    public explicitRelayUrls?: WebSocket["url"][];
     public pool: NDKPool;
     public outboxPool?: NDKPool;
     private _signer?: NDKSigner;

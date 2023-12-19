@@ -3,7 +3,6 @@ import { LRUCache } from "typescript-lru-cache";
 
 import type { NDKRelayList } from "../events/kinds/NDKRelayList.js";
 import type { NDK } from "../ndk/index.js";
-import type { NDKRelayUrl } from "../relay/index.js";
 import type { Hexpubkey } from "../user/index.js";
 import { NDKUser } from "../user/index.js";
 
@@ -24,10 +23,10 @@ export class OutboxItem {
     /**
      * The relay URLs that are of interest to this item
      */
-    public relayUrlScores: Map<NDKRelayUrl, number>;
+    public relayUrlScores: Map<WebSocket["url"], number>;
 
-    public readRelays: Set<NDKRelayUrl>;
-    public writeRelays: Set<NDKRelayUrl>;
+    public readRelays: Set<WebSocket["url"]>;
+    public writeRelays: Set<WebSocket["url"]>;
 
     constructor(type: OutboxItemType) {
         this.type = type;

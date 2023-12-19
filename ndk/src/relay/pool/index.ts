@@ -2,7 +2,6 @@ import type debug from "debug";
 import { EventEmitter } from "tseep";
 
 import type { NDK } from "../../ndk/index.js";
-import type { NDKRelayUrl } from "../index.js";
 import { NDKRelay, NDKRelayStatus } from "../index.js";
 
 export type NDKPoolStats = {
@@ -24,17 +23,17 @@ export type NDKPoolStats = {
  */
 export class NDKPool extends EventEmitter {
     // TODO: This should probably be an LRU cache
-    public relays = new Map<NDKRelayUrl, NDKRelay>();
-    public blacklistRelayUrls: Set<NDKRelayUrl>;
+    public relays = new Map<WebSocket["url"], NDKRelay>();
+    public blacklistRelayUrls: Set<WebSocket["url"]>;
     private debug: debug.Debugger;
-    private temporaryRelayTimers = new Map<NDKRelayUrl, NodeJS.Timeout>();
-    private flappingRelays: Set<NDKRelayUrl> = new Set();
+    private temporaryRelayTimers = new Map<WebSocket["url"], NodeJS.Timeout>();
+    private flappingRelays: Set<WebSocket["url"]> = new Set();
     // A map to store timeouts for each flapping relay.
     private backoffTimes: Map<string, number> = new Map();
 
     public constructor(
-        relayUrls: NDKRelayUrl[] = [],
-        blacklistedRelayUrls: NDKRelayUrl[] = [],
+        relayUrls: WebSocket["url"][] = [],
+        blacklistedRelayUrls: WebSocket["url"][] = [],
         ndk: NDK,
         debug?: debug.Debugger
     ) {
@@ -140,7 +139,7 @@ export class NDKPool extends EventEmitter {
      *
      * New relays will be attempted to be connected.
      */
-    public getRelay(url: NDKRelayUrl, connect = true): NDKRelay {
+    public getRelay(url: WebSocket["url"], connect = true): NDKRelay {
         let relay = this.relays.get(url);
 
         if (!relay) {

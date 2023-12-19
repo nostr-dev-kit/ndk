@@ -8,13 +8,17 @@
         "type": "git",
         "url": "https://github.com/nostr-dev-kit/ndk"
     },
-    "types": "./dist/index.d.ts",
     "main": "./dist/index.js",
     "module": "./dist/index.mjs",
     "exports": {
-        "import": "./dist/index.mjs",
-        "require": "./dist/index.js",
-        "types": "./dist/index.d.ts"
+        "import": {
+            "types": "./dist/index.d.mts",
+            "default": "./dist/index.mjs"
+        },
+        "require": {
+            "types": "./dist/index.d.ts",
+            "default": "./dist/index.js"
+        }
     },
     "files": [
         "dist",
@@ -51,7 +55,7 @@
         "ts-jest": "^29.1.0",
         "ts-node": "^10.9.1",
         "tsd": "^0.28.1",
-        "tsup": "^6.7.0",
+        "tsup": "^8.0.1",
         "typedoc": "^0.25.1",
         "typedoc-plugin-rename-defaults": "^0.6.6"
     },

@@ -7,12 +7,17 @@
     "url": "https://github.com/nostr-dev-kit/ndk-cache-dexie/issues"
   },
   "homepage": "https://github.com/nostr-dev-kit/ndk-cache-dexie#readme",
-  "types": "./dist/index.d.ts",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "exports": {
-    "import": "./dist/index.mjs",
-    "require": "./dist/index.js"
+    "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+    },
+    "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+    }
   },
   "files": [
     "dist",

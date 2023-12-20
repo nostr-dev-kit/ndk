@@ -7,13 +7,14 @@ import type { NDKUser } from "../../../user/index.js";
 import { NDKPrivateKeySigner } from "../../private-key/index.js";
 import { NDKSigner } from "../../index.js";
 import { NDKNostrRpc } from "../rpc.js";
+import PingEventHandlingStrategy from "./ping.js";
 import ConnectEventHandlingStrategy from "./connect.js";
 import GetPublicKeyHandlingStrategy from "./get-public-key.js";
 import Nip04DecryptHandlingStrategy from "./nip04-decrypt.js";
 import Nip04EncryptHandlingStrategy from "./nip04-encrypt.js";
 import SignEventHandlingStrategy from "./sign-event.js";
 
-export type NIP46Method = "connect" | "sign_event" | "encrypt" | "decrypt";
+export type NIP46Method = "connect" | "sign_event" | "encrypt" | "decrypt" | "get_public_key" | "ping";
 
 export type Nip46PermitCallbackParams = {
     /**
@@ -115,6 +116,7 @@ export class NDKNip46Backend {
         nip04_encrypt: new Nip04EncryptHandlingStrategy(),
         nip04_decrypt: new Nip04DecryptHandlingStrategy(),
         get_public_key: new GetPublicKeyHandlingStrategy(),
+        ping: new PingEventHandlingStrategy(),
     };
 
     /**

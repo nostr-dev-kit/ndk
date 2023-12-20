@@ -72,6 +72,7 @@ export enum NDKKind {
     Highlight = 9802,
     ClientAuth = 22242,
     NostrConnect = 24133,
+    NostrConnectAdmin = 24134,
     ProfileBadge = 30008,
     BadgeDefinition = 30009,
     MarketStall = 30017,

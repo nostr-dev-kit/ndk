@@ -5,7 +5,7 @@ import type { NostrEvent } from "../../events";
 import { NDKEvent } from "../../events";
 import type { NDK } from "../../ndk";
 import type { NDKFilter, NDKSubscription } from "../../subscription";
-import { NDKNip46Signer } from ".";
+import { NDKKind } from "../../events/kinds";
 
 export interface NDKRpcRequest {
     id: string;
@@ -52,7 +52,7 @@ export class NDKNostrRpc extends EventEmitter {
                     this.emit(`response-${parsedEvent.id}`, parsedEvent);
                 }
             } catch (e) {
-                this.debug("error parsing event", e, event);
+                this.debug("error parsing event", e, event.rawEvent());
             }
         });
 
@@ -79,7 +79,7 @@ export class NDKNostrRpc extends EventEmitter {
         id: string,
         remotePubkey: string,
         result: string,
-        kind = 24133,
+        kind = NDKKind.NostrConnect,
         error?: string
     ) {
         const res = { id, result } as NDKRpcResponse;
@@ -137,7 +137,7 @@ export class NDKNostrRpc extends EventEmitter {
             kind,
             content: JSON.stringify(request),
             tags: [["p", remotePubkey]],
-            pubkey: localUser.hexpubkey,
+            pubkey: localUser.pubkey,
         } as NostrEvent);
 
         event.content = await this.signer.encrypt(remoteUser, event.content);

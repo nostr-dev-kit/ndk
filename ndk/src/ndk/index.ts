@@ -285,7 +285,7 @@ export class NDK extends EventEmitter {
             } else {
                 this.debug("Waiting for connection to main relays");
                 pool.once("relay:connect", (relay: NDKRelay) => {
-                    this.debug("New relay came online", relay);
+                    this.debug("New relay came online", relay?.url);
                     runUserFunctions(user);
                 });
             }

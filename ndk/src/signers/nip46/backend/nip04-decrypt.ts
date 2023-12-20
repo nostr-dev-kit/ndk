@@ -12,7 +12,7 @@ export default class Nip04DecryptHandlingStrategy implements IEventHandlingStrat
         const senderUser = new NDKUser({ hexpubkey: senderPubkey });
         const decryptedPayload = await decrypt(backend, id, remotePubkey, senderUser, payload);
 
-        return JSON.stringify([decryptedPayload]);
+        return decryptedPayload;
     }
 }
 

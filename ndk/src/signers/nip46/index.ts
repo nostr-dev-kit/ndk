@@ -1,11 +1,12 @@
 import { EventEmitter } from "tseep";
 import type { NostrEvent } from "../../events/index.js";
 import type { NDK } from "../../ndk/index.js";
-import { NDKUser } from "../../user/index.js";
+import { Hexpubkey, NDKUser } from "../../user/index.js";
 import type { NDKSigner } from "../index.js";
 import { NDKPrivateKeySigner } from "../private-key/index.js";
 import type { NDKRpcResponse } from "./rpc.js";
 import { NDKNostrRpc } from "./rpc.js";
+import { NDKKind } from "../../events/kinds/index.js";
 
 /**
  * This NDKSigner implements NIP-46, which allows remote signing of events.
@@ -22,7 +23,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
     public token: string | undefined;
     public localSigner: NDKSigner;
     private nip05?: string;
-    private rpc: NDKNostrRpc;
+    public rpc: NDKNostrRpc;
     private debug: debug.Debugger;
 
     /**
@@ -95,6 +96,14 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
         this.rpc.on("authUrl", (...props) => {
             this.emit("authUrl", ...props);
         });
+
+        // Generates subscription, single subscription for the lifetime of our connection
+        this.localSigner.user().then((localUser) => {
+            this.rpc.subscribe({
+                kinds: [NDKKind.NostrConnect, NDKKind.NostrConnectAdmin],
+                "#p": [localUser.pubkey],
+            });
+        });
     }
 
     /**
@@ -109,7 +118,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
         const remoteUser = this.ndk.getUser({ pubkey: this.remotePubkey });
 
         if (this.nip05 && !this.remotePubkey) {
-            const remoteUser = NDKUser.fromNip05(this.nip05).then((user) => {
+            NDKUser.fromNip05(this.nip05).then((user) => {
                 if (user) {
                     this.remoteUser = user;
                     this.remotePubkey = user.pubkey;
@@ -120,12 +129,6 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
         if (!this.remotePubkey) {
             throw new Error("Remote pubkey not set");
         }
-
-        // Generates subscription, single subscription for the lifetime of our connection
-        await this.rpc.subscribe({
-            kinds: [24133 as number],
-            "#p": [localUser.pubkey],
-        });
 
         return new Promise((resolve, reject) => {
             // There is a race condition between the subscription and sending the request;
@@ -223,4 +226,40 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
 
         return promise;
     }
+
+    /**
+     * Allows creating a new account on the remote server.
+     * @param username Desired username for the NIP-05
+     * @param domain Desired domain for the NIP-05
+     * @param email Email address to associate with this account -- Remote servers may use this for recovery
+     * @returns The public key of the newly created account
+     */
+    public async createAccount(username?: string, domain?: string, email?: string): Promise<Hexpubkey> {
+        this.debug("asking to create an account");
+        const req: string[] = [];
+
+        if (username) req.push(username);
+        if (domain) req.push(domain);
+        if (email) req.push(email);
+
+        return new Promise<Hexpubkey>((resolve, reject) => {
+            this.rpc.sendRequest(
+                this.remotePubkey!,
+                "create_account",
+                req,
+                NDKKind.NostrConnectAdmin,
+                (response: NDKRpcResponse) => {
+                    this.debug("got a response", response);
+                    if (!response.error) {
+                        const pubkey = response.result;
+                        resolve(pubkey);
+                    } else {
+                        reject(response.error);
+                    }
+                }
+            );
+        });
+    }
+
+
 }

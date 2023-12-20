@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk
 
+## 2.3.1
+
+### Patch Changes
+
+-   ece965f: Add support for NIP-46 create_account and bring NIP-46 into compliance with the rewritten NIP
+
 ## 2.3.0
 
 ### Minor Changes

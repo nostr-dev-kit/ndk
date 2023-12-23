@@ -32,3 +32,4 @@ to this list.
 -   [zapddit](https://github.com/vivganes/zapddit) - By [@vivganes](https://njump.me/npub1ltx67888tz7lqnxlrg06x234vjnq349tcfyp52r0lstclp548mcqnuz40t)
 -   [Nuxstr](https://github.com/Sebastix/nuxstr) - By [@Sebastix](https://njump.me/sebastian@sebastix.dev)
     -    Nuxt (Vue), frontend
+-   [magicCity h=n](https://github.com/tezosmiami/hicetnunc) - By [@hicetnunc2000](https://github.com/hicetnunc2000/), [@tezosmiami](https://njump.me/npub190rqwj0nud4uhvmaeg7cgn0gypu0s09j87vqjluhfhju0req2khsskh9w7)

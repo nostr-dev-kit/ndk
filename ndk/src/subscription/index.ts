@@ -17,7 +17,7 @@ export type NDKFilter<K extends number = NDKKind> = {
     until?: number;
     limit?: number;
     search?: string;
-    [key: `#${string}`]: string[];
+    [key: `#${string}`]: string[] | undefined;
 };
 
 export enum NDKSubscriptionCacheUsage {

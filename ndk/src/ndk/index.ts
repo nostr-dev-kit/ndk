@@ -18,6 +18,7 @@ import { NDKUser } from "../user/index.js";
 import { NDKKind } from "../events/kinds/index.js";
 import NDKList from "../events/kinds/lists/index.js";
 import { NDKAuthPolicy } from "../relay/auth-policies.js";
+import { Nip96 } from "../media/index.js";
 
 export interface NDKConstructorParams {
     /**
@@ -156,6 +157,18 @@ export class NDK extends EventEmitter {
      */
     public relayAuthDefaultPolicy?: NDKAuthPolicy;
 
+    /**
+     * Fetch function to use for HTTP requests.
+     *
+     * @example
+     * ```typescript
+     * import fetch from "node-fetch";
+     *
+     * ndk.httpFetch = fetch;
+     * ```
+     */
+    public httpFetch: typeof fetch | undefined;
+
     private autoConnectUserRelays = true;
     private autoFetchUserMutelist = true;
 
@@ -200,6 +213,10 @@ export class NDK extends EventEmitter {
         if (opts.devWriteRelayUrls) {
             this.devWriteRelaySet = NDKRelaySet.fromRelayUrls(opts.devWriteRelayUrls, this);
         }
+
+        try {
+            this.httpFetch = fetch
+        } catch {}
     }
 
     /**
@@ -563,5 +580,20 @@ export class NDK extends EventEmitter {
             this.emit("signerRequired");
             throw new Error("Signer required");
         }
+    }
+
+    /**
+     * Creates a new Nip96 instance for the given domain.
+     * @param domain Domain to use for nip96 uploads
+     * @example Upload a file to a NIP-96 enabled domain:
+     *
+     * ```typescript
+     * const blob = new Blob(["Hello, world!"], { type: "text/plain" });
+     * const nip96 = ndk.getNip96("nostrcheck.me");
+     * await nip96.upload(blob);
+     * ```
+     */
+    public getNip96(domain: string) {
+        return new Nip96(domain, this);
     }
 }

@@ -1,5 +1,13 @@
 # @nostr-dev-kit/ndk
 
+## 2.3.2
+
+### Patch Changes
+
+-   NIP-96 support
+-   4628481: Improve NIP-31 support
+-   Make zap more fault-tolerant
+
 ## 2.3.1
 
 ### Patch Changes

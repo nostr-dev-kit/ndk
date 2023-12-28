@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/ndk-cache-redis",
-    "version": "2.1.0",
+    "version": "2.1.2",
     "description": "NDK cache adapter for redis.",
     "main": "./dist/index.js",
     "module": "./dist/index.mjs",
@@ -38,6 +38,7 @@
         "@nostr-dev-kit/ndk": "workspace:*",
         "debug": "^4.3.4",
         "ioredis": "^5.3.2",
+        "nostr-tools": "^1.17.0",
         "typescript": "^5.2.2"
     },
     "devDependencies": {

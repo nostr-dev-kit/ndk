@@ -38,6 +38,8 @@ export default class RedisAdapter implements NDKCacheAdapter {
     }
 
     public async query(subscription: NDKSubscription): Promise<void> {
+        this.debug('query redis status', this.redis.status);
+	if (this.redis.status !== "connect") return;
         await Promise.all(
             subscription.filters.map((filter) => this.processFilter(filter, subscription))
         );
@@ -108,6 +110,8 @@ export default class RedisAdapter implements NDKCacheAdapter {
 
 
     public async setEvent(event: NDKEvent, filters: NDKFilter[], relay: NDKRelay): Promise<void> {
+        this.debug('setEvent redis status', this.redis.status);
+	if (this.redis.status !== "connect") return;
         const rawEvent = event.rawEvent();
 
         if (filters.length === 1) {
@@ -127,11 +131,15 @@ export default class RedisAdapter implements NDKCacheAdapter {
     }
 
     public async loadNip05?(nip05: string): Promise<ProfilePointer | null> {
+        this.debug('loadNip05 redis status', this.redis.status);
+	if (this.redis.status !== "connect") return null;
         const profile = await this.redis.get(this.nip05Key(nip05));
         return profile ? JSON.parse(profile) : null;
     }
 
     public saveNip05?(nip05: string, profile: ProfilePointer): void {
+        this.debug('saveNip05 redis status', this.redis.status);
+	if (this.redis.status !== "connect") return;
         this.redis.set(
             this.nip05Key(nip05),
             JSON.stringify(profile),

@@ -284,7 +284,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
                 if (!replaceableKind) continue;
 
                 for (const author of filter.authors) {
-                    for (const dTag of filter["#d"]) {
+                    for (const dTag of filter["#d"]!) {
                         const replaceableId = `${kind}:${author}:${dTag}`;
                         const event = await db.events.where({ id: replaceableId }).first();
                         if (!event) continue;

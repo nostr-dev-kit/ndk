@@ -75,6 +75,9 @@ localStorage.debug = 'ndk:*'
     -   [ ] Implicit relays discovery following `t` tag usage
     -   [ ] Explicit relays blacklist
 -   [ ] nostr-tools/SimplePool drop-in replacement interface
+-   [x] NIP-96: Media Uploads
+    -   [x] XMLHttpRequest (for progress reporting)
+    -   [x] Fetch API
 
 ## Real-world uses of NDK
 

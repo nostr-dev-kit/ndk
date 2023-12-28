@@ -144,7 +144,7 @@
                     this={eventComponent}
                     {event}
                     ...eventComponentProps
-                    class="{$$props.eventComponentClass??""} border border-base-300 w-full join-item"
+                    class="{$$props.eventComponentClass??""} w-full join-item"
                 />
             {/each}
         </div>

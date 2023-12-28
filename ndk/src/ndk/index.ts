@@ -111,6 +111,11 @@ export const DEFAULT_BLACKLISTED_RELAYS = [
     "wss://brb.io", // BRB
 ];
 
+/**
+ * The NDK class is the main entry point to the library.
+ *
+ * @emits signer:ready when a signer is ready
+ */
 export class NDK extends EventEmitter {
     public explicitRelayUrls?: WebSocket["url"][];
     public pool: NDKPool;
@@ -124,6 +129,31 @@ export class NDK extends EventEmitter {
     public mutedIds: Map<Hexpubkey | NDKEventId, string>;
     public clientName?: string;
     public clientNip89?: string;
+
+    /**
+     * Default relay-auth policy that will be used when a relay requests authentication,
+     * if no other policy is specified for that relay.
+     *
+     * @example Disconnect from relays that request authentication:
+     * ```typescript
+     * ndk.relayAuthDefaultPolicy = NDKAuthPolicies.disconnect(ndk.pool);
+     * ```
+     *
+     * @example Sign in to relays that request authentication:
+     * ```typescript
+     * ndk.relayAuthDefaultPolicy = NDKAuthPolicies.signIn({ndk})
+     * ```
+     *
+     * @example Sign in to relays that request authentication, asking the user for confirmation:
+     * ```typescript
+     * ndk.relayAuthDefaultPolicy = (relay: NDKRelay) => {
+     *     const signIn = NDKAuthPolicies.signIn({ndk});
+     *     if (confirm(`Relay ${relay.url} is requesting authentication, do you want to sign in?`)) {
+     *        signIn(relay);
+     *     }
+     * }
+     * ```
+     */
     public relayAuthDefaultPolicy?: NDKAuthPolicy;
 
     private autoConnectUserRelays = true;
@@ -284,8 +314,8 @@ export class NDK extends EventEmitter {
                 runUserFunctions(user);
             } else {
                 this.debug("Waiting for connection to main relays");
-                pool.once("relay:connect", (relay: NDKRelay) => {
-                    this.debug("New relay came online", relay?.url);
+                pool.once("relay:ready", (relay: NDKRelay) => {
+                    this.debug("New relay ready", relay?.url);
                     runUserFunctions(user);
                 });
             }
@@ -301,8 +331,7 @@ export class NDK extends EventEmitter {
 
     public set signer(newSigner: NDKSigner | undefined) {
         this._signer = newSigner;
-
-        this.debug(`setting signer`, this.autoConnectUserRelays);
+        this.emit("signer:ready", newSigner);
 
         newSigner?.user().then((user) => {
             user.ndk = this;

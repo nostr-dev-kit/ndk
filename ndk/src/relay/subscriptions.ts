@@ -185,8 +185,10 @@ export class NDKRelaySubscriptions {
             this.ndkRelay
         );
 
+        const isNotGroupable = !groupableId || !subscription.isGroupable();
+
         // If this subscription is not groupable, execute it immediately
-        if (!groupableId || !subscription.isGroupable()) {
+        if (isNotGroupable) {
             this.executeSubscriptions(
                 groupableId,
                 // hacky

@@ -25,9 +25,9 @@ export class NDKRelayConnectivity {
         this.relay.on("notice", (notice: string) => this.handleNotice(notice));
     }
 
-    async initiateAuth(): Promise<void> {
+    async initiateAuth(filter = { limit: 1 }): Promise<void> {
         this.debug("Initiating authentication");
-        const authSub = this.relay.sub([{ limit: 1 }], { id: "auth-test" });
+        const authSub = this.relay.sub([filter], { id: "auth-test" });
         authSub.on("eose", () => {
             // we didn't need to authenticate
             authSub.unsub();

@@ -545,7 +545,7 @@ export class NDKEvent extends EventEmitter {
      *
      * @param content The content of the reaction
      */
-    async react(content: string): Promise<NDKEvent> {
+    async react(content: string, publish: boolean = true): Promise<NDKEvent> {
         if (!this.ndk) throw new Error("No NDK instance found");
 
         this.ndk.assertSigner();
@@ -555,7 +555,11 @@ export class NDKEvent extends EventEmitter {
             content,
         } as NostrEvent);
         e.tag(this);
-        await e.publish();
+        if (publish) {
+            await e.publish();
+        } else {
+            await e.sign();
+        }
 
         return e;
     }

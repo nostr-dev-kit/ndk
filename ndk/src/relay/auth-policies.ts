@@ -34,10 +34,24 @@ type ISignIn = {
     debug?: debug.Debugger;
 };
 
-function signIn({ ndk, signer, debug }: ISignIn = {}) {
-    debug ??= createDebug("ndk:relay:auth-policies:signIn");
+async function signAndAuth(event: NDKEvent, relay: NDKRelay, signer: NDKSigner, debug: debug.Debugger, resolve: (event: NDKEvent) => void, reject: (event: NDKEvent) => void) {
+    try {
+        await event.sign(signer);
+        await relay.auth(event);
+        resolve(event);
+    } catch (e) {
+        debug!(`Failed to publish auth event to relay ${relay.url}`, e);
+        reject(event);
+    }
+}
 
-    return async (relay: NDKRelay, challenge: string) => {
+/**
+ * Uses the signer to sign an event and then authenticate with the relay. If no signer is provided the NDK signer will be used. If none is not available it will wait for one to be ready.
+ */
+function signIn({ ndk, signer, debug }: ISignIn = {}) {
+    debug ??= createDebug("ndk:auth-policies:signIn");
+
+    return async (relay: NDKRelay, challenge: string): Promise<NDKEvent> => {
         debug!(`Relay ${relay.url} requested authentication, signing in`);
 
         const event = new NDKEvent(ndk);
@@ -47,14 +61,18 @@ function signIn({ ndk, signer, debug }: ISignIn = {}) {
             ["challenge", challenge],
         ];
 
-        try {
-            await event.sign(signer);
-            await relay.auth(event);
-        } catch (e) {
-            debug!(`Failed to publish auth event to relay ${relay.url}`, e);
-        }
+        signer ??= ndk?.signer;
 
-        return event;
+        // If we dont have a signer, we need to wait for one to be ready
+        return new Promise(async (resolve, reject) => {
+            if (signer) {
+                await signAndAuth(event, relay, signer, debug!, resolve, reject);
+            } else {
+                ndk?.once("signer:ready", async (signer) => {
+                    await signAndAuth(event, relay, signer, debug!, resolve, reject);
+                });
+            }
+        });
     };
 }
 

@@ -20,7 +20,13 @@ export interface NDKUserProfile {
 
 export function profileFromEvent(event: NDKEvent): NDKUserProfile {
     const profile: NDKUserProfile = {};
-    const payload = JSON.parse(event.content);
+    let payload: NDKUserProfile;
+
+    try {
+        payload = JSON.parse(event.content);
+    } catch (error) {
+        throw new Error(`Failed to parse profile event: ${error}`);
+    }
 
     Object.keys(payload).forEach((key) => {
         switch (key) {

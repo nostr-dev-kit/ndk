@@ -196,6 +196,23 @@ export class NDKEvent extends EventEmitter {
     }
 
     /**
+     * Gets the NIP-31 "alt" tag of the event.
+     */
+    get alt(): string | undefined {
+        return this.tagValue("alt");
+    }
+
+    /**
+     * Sets the NIP-31 "alt" tag of the event. Use this to set an alt tag so
+     * clients that don't handle a particular event kind can display something
+     * useful for users.
+     */
+    set alt(alt: string | undefined) {
+        this.removeTag("alt");
+        if (alt) this.tags.push(["alt", alt]);
+    }
+
+    /**
      * Remove all tags with the given name (e.g. "d", "a", "p")
      * @param tagName Tag name to search for and remove
      * @returns {void}

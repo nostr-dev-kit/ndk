@@ -31,4 +31,6 @@ to this list.
 -   [Swarmstr](https://github.com/ptrio42/swarmstr.com) - By [@pitiunited](https://njump.me/npub178umpxtdflcm7a08nexvs4mu384kx0ngg9w8ltm5eut6q7lcp0vq05qrg4)
 -   [zapddit](https://github.com/vivganes/zapddit) - By [@vivganes](https://njump.me/npub1ltx67888tz7lqnxlrg06x234vjnq349tcfyp52r0lstclp548mcqnuz40t)
 -   [Nuxstr](https://github.com/Sebastix/nuxstr) - By [@Sebastix](https://njump.me/sebastian@sebastix.dev)
-    -    Nuxt (Vue), frontend
+    -   Nuxt (Vue), frontend
+-   [Flockstr](https://github.com/zmeyer44/flockstr) - By [@zach](https://njump.me/npub1zach44xjpc4yyhx6pgse2cj2pf98838kja03dv2e8ly8lfr094vqvm5dy5)
+-   [Flare.pub](https://github.com/zmeyer44/flare) - By [@zach](https://njump.me/npub1zach44xjpc4yyhx6pgse2cj2pf98838kja03dv2e8ly8lfr094vqvm5dy5)

@@ -234,7 +234,11 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
      * @param email Email address to associate with this account -- Remote servers may use this for recovery
      * @returns The public key of the newly created account
      */
-    public async createAccount(username?: string, domain?: string, email?: string): Promise<Hexpubkey> {
+    public async createAccount(
+        username?: string,
+        domain?: string,
+        email?: string
+    ): Promise<Hexpubkey> {
         this.debug("asking to create an account");
         const req: string[] = [];
 
@@ -260,6 +264,4 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
             );
         });
     }
-
-
 }

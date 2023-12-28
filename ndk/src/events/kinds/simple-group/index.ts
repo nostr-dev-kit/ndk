@@ -8,37 +8,33 @@ type AddUserOpts = {
     /**
      * Whether to publish the event.
      * @default true
-    */
-    publish?: boolean,
+     */
+    publish?: boolean;
 
     /**
      * Event to add the user to
      */
-    currentUserListEvent?: NDKEvent,
+    currentUserListEvent?: NDKEvent;
 
     /**
      * An additional marker to add to the user/group relationship.
      * (e.g. tier, role, etc.)
      */
-    marker?: string,
+    marker?: string;
 
     /**
      * Whether to skip the user list event.
      * @default false
      */
-    skipUserListEvent?: boolean,
-}
+    skipUserListEvent?: boolean;
+};
 
 export class NDKSimpleGroup {
     private ndk: NDK;
     readonly groupId: string;
     readonly relaySet: NDKRelaySet;
 
-    constructor(
-        ndk: NDK,
-        groupId: string,
-        relaySet: NDKRelaySet,
-    ) {
+    constructor(ndk: NDK, groupId: string, relaySet: NDKRelaySet) {
         this.ndk = ndk;
         this.groupId = groupId;
         this.relaySet = relaySet;
@@ -55,21 +51,19 @@ export class NDKSimpleGroup {
             publish: true,
             skipUserListEvent: false,
         }
-    ): Promise<{ addUserEvent: NDKEvent, currentUserListEvent?: NDKEvent }> {
+    ): Promise<{ addUserEvent: NDKEvent; currentUserListEvent?: NDKEvent }> {
         const addUserEvent = NDKSimpleGroup.generateAddUserEvent(user.pubkey, this.groupId);
         addUserEvent.ndk = this.ndk;
 
         let currentUserListEvent = opts.currentUserListEvent;
         if (!opts.skipUserListEvent) {
-            currentUserListEvent ??= (
-                await this.getMemberListEvent() ||
-                NDKSimpleGroup.generateUserListEvent(this.groupId)
-            );
+            currentUserListEvent ??=
+                (await this.getMemberListEvent()) ||
+                NDKSimpleGroup.generateUserListEvent(this.groupId);
             // Check if the user is already in the group
             currentUserListEvent.tags = currentUserListEvent.tags.filter(untagUser(user.pubkey));
             currentUserListEvent.tag(user, opts.marker);
         }
-
 
         if (opts?.publish ?? true) {
             const promises = [addUserEvent.publish(this.relaySet)];
@@ -84,14 +78,18 @@ export class NDKSimpleGroup {
         return {
             addUserEvent,
             currentUserListEvent,
-        }
+        };
     }
 
     async getMemberListEvent(): Promise<NDKEvent | null> {
-        const memberList = await this.ndk.fetchEvent({
-            kinds: [NDKKind.GroupMembers],
-            "#h": [this.groupId],
-        }, undefined, this.relaySet);
+        const memberList = await this.ndk.fetchEvent(
+            {
+                kinds: [NDKKind.GroupMembers],
+                "#h": [this.groupId],
+            },
+            undefined,
+            this.relaySet
+        );
 
         return memberList;
     }
@@ -105,9 +103,9 @@ export class NDKSimpleGroup {
         const event = new NDKEvent(undefined, {
             kind: NDKKind.GroupMembers,
             tags: [
-                [ "h", groupId ],
-                [ "alt", "Group Member List" ],
-            ]
+                ["h", groupId],
+                ["alt", "Group Member List"],
+            ],
         } as NostrEvent);
 
         return event;
@@ -120,16 +118,10 @@ export class NDKSimpleGroup {
      * @param alt optional description of the event
      * @returns
      */
-    static generateAddUserEvent(
-        userPubkey: string,
-        groupId: string,
-        alt?: string
-    ) {
+    static generateAddUserEvent(userPubkey: string, groupId: string, alt?: string) {
         const event = new NDKEvent(undefined, {
             kind: NDKKind.GroupAdminAddUser,
-            tags: [
-                [ "h", groupId ],
-            ]
+            tags: [["h", groupId]],
         } as NostrEvent);
 
         if (alt) event.alt = alt;
@@ -139,6 +131,4 @@ export class NDKSimpleGroup {
 }
 
 // Remove a p tag of a user
-const untagUser = (pubkey: Hexpubkey) =>
-    (tag: NDKTag) =>
-        !(tag[0] === "p" && tag[1] === pubkey);
+const untagUser = (pubkey: Hexpubkey) => (tag: NDKTag) => !(tag[0] === "p" && tag[1] === pubkey);

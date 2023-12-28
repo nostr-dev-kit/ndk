@@ -34,7 +34,14 @@ type ISignIn = {
     debug?: debug.Debugger;
 };
 
-async function signAndAuth(event: NDKEvent, relay: NDKRelay, signer: NDKSigner, debug: debug.Debugger, resolve: (event: NDKEvent) => void, reject: (event: NDKEvent) => void) {
+async function signAndAuth(
+    event: NDKEvent,
+    relay: NDKRelay,
+    signer: NDKSigner,
+    debug: debug.Debugger,
+    resolve: (event: NDKEvent) => void,
+    reject: (event: NDKEvent) => void
+) {
     try {
         await event.sign(signer);
         await relay.auth(event);

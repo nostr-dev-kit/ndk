@@ -39,13 +39,13 @@ export class Nip96 {
                 httpVerb,
                 blob
             );
-            headers = { 'Authorization': authorizationHeader };
+            headers = { Authorization: authorizationHeader };
         }
 
         return {
             url: this.spec.api_url,
-            headers
-        }
+            headers,
+        };
     }
 
     /**
@@ -67,14 +67,14 @@ export class Nip96 {
         const { url, headers } = await this.prepareUpload(blob, httpVerb);
 
         xhr.open(httpVerb, url, true);
-        if (headers['Authorization']) {
-            xhr.setRequestHeader('Authorization', headers['Authorization']);
+        if (headers["Authorization"]) {
+            xhr.setRequestHeader("Authorization", headers["Authorization"]);
         }
         const formData = new FormData();
-        formData.append('file', blob);
+        formData.append("file", blob);
 
         return new Promise<Nip96UploadResponse>((resolve, reject) => {
-            xhr.onload = function() {
+            xhr.onload = function () {
                 if (xhr.status >= 200 && xhr.status < 300) {
                     resolve(JSON.parse(xhr.responseText));
                 } else {
@@ -82,7 +82,7 @@ export class Nip96 {
                 }
             };
 
-            xhr.onerror = function() {
+            xhr.onerror = function () {
                 reject(new Error("Network Error"));
             };
 
@@ -105,23 +105,24 @@ export class Nip96 {
         const httpVerb = "POST";
         const { url, headers } = await this.prepareUpload(blob, httpVerb);
         const formData = new FormData();
-        formData.append('file', blob);
+        formData.append("file", blob);
 
         const res = await this.ndk.httpFetch!(this.spec!.api_url, {
             method: httpVerb,
             headers,
-            body: formData
+            body: formData,
         });
 
         if (res.status !== 200) throw new Error(`Failed to upload file to ${url}`);
-        const json = await res.json() as Nip96UploadResponse;
+        const json = (await res.json()) as Nip96UploadResponse;
         if (json.status !== "success") throw new Error(json.message);
         return json;
     }
 
     private validateHttpFetch() {
         if (!this.ndk) throw new Error("NDK is required to fetch NIP96 spec");
-        if (!this.ndk.httpFetch) throw new Error("NDK must have an httpFetch method to fetch NIP96 spec");
+        if (!this.ndk.httpFetch)
+            throw new Error("NDK must have an httpFetch method to fetch NIP96 spec");
     }
 
     public async fetchSpec() {
@@ -134,13 +135,17 @@ export class Nip96 {
         this.nip98Required = this.spec!.plans.free.is_nip98_required;
     }
 
-    public async generateNip98Header(requestUrl: string, httpMethod: string, blob: Blob): Promise<string> {
+    public async generateNip98Header(
+        requestUrl: string,
+        httpMethod: string,
+        blob: Blob
+    ): Promise<string> {
         const event = new NDKEvent(this.ndk, {
             kind: NDKKind.HttpAuth,
             tags: [
                 ["u", requestUrl],
-                ["method", httpMethod]
-            ]
+                ["method", httpMethod],
+            ],
         } as NostrEvent);
 
         if (["POST", "PUT", "PATCH"].includes(httpMethod)) {
@@ -150,14 +155,14 @@ export class Nip96 {
 
         await event.sign();
         const encodedEvent = btoa(JSON.stringify(event.rawEvent()));
-        return `Nostr ${encodedEvent}`
+        return `Nostr ${encodedEvent}`;
     }
 
     private async calculateSha256(blob: Blob): Promise<string> {
         const buffer = await blob.arrayBuffer();
         const hashBuffer = await crypto.subtle.digest("SHA-256", buffer);
         const hashArray = Array.from(new Uint8Array(hashBuffer));
-        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
         return hashHex;
     }
 }
@@ -184,7 +189,7 @@ export type Nip96Spec = {
 };
 
 type Nip96UploadResponse = {
-    status: 'success' | 'error';
+    status: "success" | "error";
     message: string;
     processing_url?: string;
     nip94_event?: {

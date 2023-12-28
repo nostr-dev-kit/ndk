@@ -14,7 +14,13 @@ import Nip04DecryptHandlingStrategy from "./nip04-decrypt.js";
 import Nip04EncryptHandlingStrategy from "./nip04-encrypt.js";
 import SignEventHandlingStrategy from "./sign-event.js";
 
-export type NIP46Method = "connect" | "sign_event" | "encrypt" | "decrypt" | "get_public_key" | "ping";
+export type NIP46Method =
+    | "connect"
+    | "sign_event"
+    | "encrypt"
+    | "decrypt"
+    | "get_public_key"
+    | "ping";
 
 export type Nip46PermitCallbackParams = {
     /**

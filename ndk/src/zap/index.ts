@@ -118,7 +118,7 @@ export default class Zap extends EventEmitter {
 
         try {
             invoice = await this.getInvoice(event, amount, zapEndpoint);
-        } catch(e) {
+        } catch (e) {
             throw new Error("Failed to get invoice: " + e);
         }
 

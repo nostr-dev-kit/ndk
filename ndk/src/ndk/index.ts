@@ -215,7 +215,7 @@ export class NDK extends EventEmitter {
         }
 
         try {
-            this.httpFetch = fetch
+            this.httpFetch = fetch;
         } catch {}
     }
 

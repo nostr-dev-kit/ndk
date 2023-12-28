@@ -48,6 +48,10 @@ export enum NDKKind {
     SubscriptionStart = 7001,
     SubscriptionStop = 7002,
 
+    // NIP-29
+    GroupAdminAddUser = 9000,
+    GroupAdminRemoveUser = 9001,
+
     // Lists and Sets
     MuteList = 10000,
     PinList = 10001,

@@ -263,7 +263,7 @@ export class NDK extends EventEmitter {
      * It will also fetch the user's mutelist if `autoFetchUserMutelist` is set to true.
      */
     public set activeUser(user: NDKUser | undefined) {
-        const differentUser = this._activeUser !== user;
+        const differentUser = this._activeUser?.pubkey !== user?.pubkey;
 
         this._activeUser = user;
 

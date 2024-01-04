@@ -92,13 +92,16 @@ export function calculateRelaySetsFromFilter(
                     const authorFilterAndRelayPubkeyIntersection = filter.authors.filter((author) =>
                         authors.includes(author)
                     );
-                    result.set(relayUrl, [...result.get(relayUrl)!, {
-                        ...filter,
+                    result.set(relayUrl, [
+                        ...result.get(relayUrl)!,
+                        {
+                            ...filter,
 
-                        // Overwrite authors sent to this relay with the authors that were
-                        // present in the filter and are also present in the relay
-                        authors: authorFilterAndRelayPubkeyIntersection
-                    }]);
+                            // Overwrite authors sent to this relay with the authors that were
+                            // present in the filter and are also present in the relay
+                            authors: authorFilterAndRelayPubkeyIntersection,
+                        },
+                    ]);
                 }
             } else {
                 // if the filter doesn't have authors, add it to all relays

@@ -15,6 +15,23 @@ import { NDKKind } from "../../events/kinds/index.js";
  * @emits authUrl -- Emitted when the user should take an action in certain URL.
  *                   When a client receives this event, it should direct the user
  *                   to go to that URL to authorize the application.
+ *
+ * @example Connect using a NIP-05 address
+ * const ndk = new NDK()
+ * const nip05 = await prompt("enter your nip-05")
+ * const privateKey = localStorage.getItem("nip46-local-key")
+ * const signer = new NDKNip46Signer(ndk, nip05, privateKey)
+ *
+ * // Save generated private key for future use
+ * localStorage.setItem("nip46-local-key", signer.localSigner.privateKey)
+ *
+ * // If the backend sends an auth_url event, open that URL as a popup so the user can authorize the app
+ * signer.on("authUrl", (url) => { window.open(url, "auth", "width=600,height=600") })
+ *
+ * // wait until the signer is ready
+ * const loggedinUser = await signer.blockUntilReady()
+ *
+ * alert("You are now logged in as " + loggedinUser.npub)
  */
 export class NDKNip46Signer extends EventEmitter implements NDKSigner {
     private ndk: NDK;
@@ -25,6 +42,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
     private nip05?: string;
     public rpc: NDKNostrRpc;
     private debug: debug.Debugger;
+    public relayUrls: string[] = [];
 
     /**
      * @param ndk - The NDK instance to use
@@ -122,6 +140,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
                 if (user) {
                     this.remoteUser = user;
                     this.remotePubkey = user.pubkey;
+                    this.relayUrls = user.nip46Urls;
                 }
             });
         }

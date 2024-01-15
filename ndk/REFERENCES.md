@@ -16,7 +16,7 @@ to this list.
     -   Typescript, backend
 -   [Nostr Chat Widget](https://github.com/pablof7z/nostr-chat-widget) - By [@pablof7z](https://njump.me/npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft)
     -   Svelte, Rollup, embeddable widget
--   [Zapstr](https://github.com/pablof7z/nostr-chat-widget) - By [@pablof7z](https://njump.me/npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft)
+-   [Zapstr](https://github.com/zapstr/zapstr) - By [@pablof7z](https://njump.me/npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft)
     -   Svelte, Frontend
 -   [Ostrich.work](https://github.com/erskingardner/ostrich.work) - By [@jeffg](https://njump.me/npub1zuuajd7u3sx8xu92yav9jwxpr839cs0kc3q6t56vd5u9q033xmhsk6c2uc)
     -   Svelte, frontend

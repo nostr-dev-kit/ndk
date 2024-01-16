@@ -51,8 +51,24 @@ export interface NDKSubscriptionOptions {
     /**
      * The delay to use when grouping subscriptions, specified in milliseconds.
      * @default 100
+     * @example
+     * const sub1 = ndk.subscribe({ kinds: [1], authors: ["alice"] }, { groupableDelay: 100 });
+     * const sub2 = ndk.subscribe({ kinds: [0], authors: ["alice"] }, { groupableDelay: 1000 });
+     * // sub1 and sub2 will be grouped together and executed 100ms after sub1 was created
      */
     groupableDelay?: number;
+
+    /**
+     * Specifies how this delay should be interpreted.
+     * "at-least" means "wait at least this long before sending the subscription"
+     * "at-most" means "wait at most this long before sending the subscription"
+     * @default "at-most"
+     * @example
+     * const sub1 = ndk.subscribe({ kinds: [1], authors: ["alice"] }, { groupableDelay: 100, groupableDelayType: "at-least" });
+     * const sub2 = ndk.subscribe({ kinds: [0], authors: ["alice"] }, { groupableDelay: 1000, groupableDelayType: "at-most" });
+     * // sub1 and sub2 will be grouped together and executed 1000ms after sub1 was created
+     */
+    groupableDelayType?: "at-least" | "at-most";
 
     /**
      * The subscription ID to use for the subscription.
@@ -79,6 +95,7 @@ export const defaultOpts: NDKSubscriptionOptions = {
     cacheUsage: NDKSubscriptionCacheUsage.CACHE_FIRST,
     groupable: true,
     groupableDelay: 100,
+    groupableDelayType: "at-most",
 };
 
 /**

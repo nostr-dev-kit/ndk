@@ -16,11 +16,11 @@ import { NDKKind } from "../../events/kinds/index.js";
  *                   When a client receives this event, it should direct the user
  *                   to go to that URL to authorize the application.
  *
- * @example Connect using a NIP-05 address
+ * @example
  * const ndk = new NDK()
- * const nip05 = await prompt("enter your nip-05")
- * const privateKey = localStorage.getItem("nip46-local-key")
- * const signer = new NDKNip46Signer(ndk, nip05, privateKey)
+ * const nip05 = await prompt("enter your nip-05") // Get a NIP-05 the user wants to login with
+ * const privateKey = localStorage.getItem("nip46-local-key") // If we have a private key previously saved, use it
+ * const signer = new NDKNip46Signer(ndk, nip05, privateKey) // Create a signer with (or without) a private key
  *
  * // Save generated private key for future use
  * localStorage.setItem("nip46-local-key", signer.localSigner.privateKey)

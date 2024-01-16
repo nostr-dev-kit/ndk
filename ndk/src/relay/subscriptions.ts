@@ -163,6 +163,7 @@ export class NDKRelaySubscriptions {
      */
     readonly activeSubscriptions: Map<Sub, NDKGroupedSubscriptions> = new Map();
     private activeSubscriptionsByGroupId: Map<NDKFilterGroupingId, FiltersSub> = new Map();
+    private executionTimeoutsByGroupId: Map<NDKFilterGroupingId, number> = new Map();
     private debug: debug.Debugger;
     private groupingDebug: debug.Debugger;
     private conn: NDKRelayConnectivity;
@@ -239,16 +240,23 @@ export class NDKRelaySubscriptions {
             delayedItem.addSubscription(subscriptionFilters);
         }
 
-        const timeout = setTimeout(() => {
-            this.executeGroup(groupableId, subscription);
-        }, subscription.opts.groupableDelay);
+        // Check if we have a timeout for this groupable ID
+        let timeout = this.executionTimeoutsByGroupId.get(groupableId);
+
+        // If we don't, or if this subscription's delay is marked as "at-most", then schedule the timeout too
+        // (it will empty the group when it runs so the race is not a problem)
+        if (!timeout || subscription.opts.groupableDelayType === "at-most") {
+            timeout = setTimeout(() => {
+                this.executeGroup(groupableId, subscription);
+            }, subscription.opts.groupableDelay);
+            this.executionTimeoutsByGroupId.set(groupableId, timeout as unknown as number);
+        }
 
         if (this.delayedTimers.has(groupableId)) {
             this.delayedTimers.get(groupableId)!.push(timeout as unknown as number);
         } else {
             this.delayedTimers.set(groupableId, [timeout as unknown as number]);
         }
-        // this.debug(`there are ${this.delayedTimers.get(groupableId)!.length} delayed items`);
     }
 
     /**

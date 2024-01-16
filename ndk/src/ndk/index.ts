@@ -397,10 +397,11 @@ export class NDK extends EventEmitter {
     /**
      * Get a NDKUser from a NIP05
      * @param nip05 NIP-05 ID
+     * @param skipCache Skip cache
      * @returns
      */
-    async getUserFromNip05(nip05: string): Promise<NDKUser | undefined> {
-        return NDKUser.fromNip05(nip05, this);
+    async getUserFromNip05(nip05: string, skipCache = false): Promise<NDKUser | undefined> {
+        return NDKUser.fromNip05(nip05, this, skipCache);
     }
 
     /**

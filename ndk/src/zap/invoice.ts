@@ -4,11 +4,35 @@ import type { NDKEvent, NDKEventId, NostrEvent } from "../events/index.js";
 
 export interface NDKZapInvoice {
     id?: NDKEventId;
-    zapper: string; // pubkey of zapper app
-    zappee: string; // pubkey of user sending zap
-    zapped: string; // pubkey of user receiving zap
-    zappedEvent?: string; // event zapped
-    amount: number; // amount zapped in millisatoshis
+
+    /**
+     * The pubkey of the zapper app
+     */
+    zapper: string;
+
+    /**
+     * The pubkey of the user sending the zap
+     */
+    zappee: string;
+
+    /**
+     * The pubkey of the user receiving the zap
+     */
+    zapped: string;
+
+    /**
+     * The event that was zapped
+     */
+    zappedEvent?: string;
+
+    /**
+     * The amount zapped in millisatoshis
+     */
+    amount: number;
+
+    /**
+     * A comment attached to the zap
+     */
     comment?: string;
 }
 

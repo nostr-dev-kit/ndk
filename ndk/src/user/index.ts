@@ -1,4 +1,4 @@
-import { nip05, nip19 } from "nostr-tools";
+import { nip19 } from "nostr-tools";
 
 import { NDKEvent, type NDKTag, type NostrEvent } from "../events/index.js";
 import { NDKRelayList } from "../events/kinds/NDKRelayList.js";
@@ -12,6 +12,7 @@ import { type NDKUserProfile, profileFromEvent, serializeProfile } from "./profi
 import type { NDKSigner } from "../signers/index.js";
 import Zap from "../zap/index.js";
 import { pin } from "./pin.js";
+import { getNip05For } from "./nip05.js";
 
 export type Hexpubkey = string;
 
@@ -21,6 +22,7 @@ export type Npub = string;
 export type ProfilePointer = {
     pubkey: string;
     relays?: string[];
+    nip46?: string[];
 };
 
 // @ignore
@@ -37,6 +39,7 @@ export interface NDKUserParams {
     pubkey?: Hexpubkey;
     nip05?: string;
     relayUrls?: string[];
+    nip46Urls?: string[];
 }
 
 /**
@@ -48,6 +51,7 @@ export class NDKUser {
     private _npub?: Npub;
     private _pubkey?: Hexpubkey;
     readonly relayUrls: string[] = [];
+    readonly nip46Urls: string[] = [];
 
     public constructor(opts: NDKUserParams) {
         if (opts.npub) this._npub = opts.npub;
@@ -55,9 +59,8 @@ export class NDKUser {
         if (opts.hexpubkey) this._pubkey = opts.hexpubkey;
         if (opts.pubkey) this._pubkey = opts.pubkey;
 
-        if (opts.relayUrls) {
-            this.relayUrls = opts.relayUrls;
-        }
+        if (opts.relayUrls) this.relayUrls = opts.relayUrls;
+        if (opts.nip46Urls) this.nip46Urls = opts.nip46Urls;
     }
 
     get npub(): string {
@@ -116,9 +119,15 @@ export class NDKUser {
     /**
      * Instantiate an NDKUser from a NIP-05 string
      * @param nip05Id {string} The user's NIP-05
+     * @param ndk {NDK} An NDK instance
+     * @param skipCache {boolean} Whether to skip the cache or not
      * @returns {NDKUser | undefined} An NDKUser if one is found for the given NIP-05, undefined otherwise.
      */
-    static async fromNip05(nip05Id: string, ndk?: NDK): Promise<NDKUser | undefined> {
+    static async fromNip05(
+        nip05Id: string,
+        ndk?: NDK,
+        skipCache = false
+    ): Promise<NDKUser | undefined> {
         // If we have a cache, try to load from cache first
         if (ndk?.cacheAdapter && ndk.cacheAdapter.loadNip05) {
             const profile = await ndk.cacheAdapter.loadNip05(nip05Id);
@@ -127,13 +136,17 @@ export class NDKUser {
                 const user = new NDKUser({
                     pubkey: profile.pubkey,
                     relayUrls: profile.relays,
+                    nip46Urls: profile.nip46,
                 });
                 user.ndk = ndk;
                 return user;
             }
         }
 
-        const profile = await nip05.queryProfile(nip05Id);
+        let opts: RequestInit = {};
+
+        if (skipCache) opts.cache = "no-cache";
+        const profile = await getNip05For(nip05Id, ndk?.httpFetch, opts);
 
         // Save the nip05 mapping
         if (profile && ndk?.cacheAdapter && ndk.cacheAdapter.saveNip05) {
@@ -144,6 +157,7 @@ export class NDKUser {
             const user = new NDKUser({
                 pubkey: profile.pubkey,
                 relayUrls: profile.relays,
+                nip46Urls: profile.nip46,
             });
             user.ndk = ndk;
             return user;
@@ -396,7 +410,7 @@ export class NDKUser {
     public async validateNip05(nip05Id: string): Promise<boolean | null> {
         if (!this.ndk) throw new Error("No NDK instance found");
 
-        const profilePointer: ProfilePointer | null = await nip05.queryProfile(nip05Id);
+        const profilePointer: ProfilePointer | null = await getNip05For(nip05Id);
 
         if (profilePointer === null) return null;
         return profilePointer.pubkey === this.pubkey;

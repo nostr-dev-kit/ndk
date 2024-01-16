@@ -19,3 +19,4 @@ package-lock.json
 .turbo
 _local_
 .svelte-kit/
+ndk/docs

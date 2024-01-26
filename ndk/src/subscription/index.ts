@@ -9,9 +9,9 @@ import { calculateRelaySetsFromFilters } from "../relay/sets/calculate";
 import type { NDKRelaySet } from "../relay/sets/index.js";
 import { queryFullyFilled } from "./utils.js";
 
-export type NDKFilter<K extends number | number[] = NDKKind> = {
+export type NDKFilter<K extends number = NDKKind> = {
     ids?: string[];
-    kinds?: K extends any[] ? K : K[];
+    kinds?: K[];
     authors?: string[];
     since?: number;
     until?: number;

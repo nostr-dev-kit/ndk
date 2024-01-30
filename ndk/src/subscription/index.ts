@@ -85,6 +85,12 @@ export interface NDKSubscriptionOptions {
      * @default false
      */
     skipVerification?: boolean;
+
+    /**
+     * Skip event validation
+     * @default false
+     */
+    skipValidation?: boolean;
 }
 
 /**
@@ -101,24 +107,43 @@ export const defaultOpts: NDKSubscriptionOptions = {
 /**
  * Represents a subscription to an NDK event stream.
  *
- * @event NDKSubscription#event
+ * @emits event
  * Emitted when an event is received by the subscription.
- * @param {NDKEvent} event - The event received by the subscription.
- * @param {NDKRelay} relay - The relay that received the event.
- * @param {NDKSubscription} subscription - The subscription that received the event.
+ * * ({NDKEvent} event - The event received by the subscription,
+ * * {NDKRelay} relay - The relay that received the event,
+ * * {NDKSubscription} subscription - The subscription that received the event.)
  *
- * @event NDKSubscription#event:dup
+ * @emits event:dup
  * Emitted when a duplicate event is received by the subscription.
- * @param {NDKEvent} event - The duplicate event received by the subscription.
- * @param {NDKRelay} relay - The relay that received the event.
- * @param {number} timeSinceFirstSeen - The time elapsed since the first time the event was seen.
- * @param {NDKSubscription} subscription - The subscription that received the event.
+ * * {NDKEvent} event - The duplicate event received by the subscription.
+ * * {NDKRelay} relay - The relay that received the event.
+ * * {number} timeSinceFirstSeen - The time elapsed since the first time the event was seen.
+ * * {NDKSubscription} subscription - The subscription that received the event.
  *
- * @event NDKSubscription#eose - Emitted when all relays have reached the end of the event stream.
- * @param {NDKSubscription} subscription - The subscription that received EOSE.
+ * @emits eose - Emitted when all relays have reached the end of the event stream.
+ * * {NDKSubscription} subscription - The subscription that received EOSE.
  *
- * @event NDKSubscription#close - Emitted when the subscription is closed.
- * @param {NDKSubscription} subscription - The subscription that was closed.
+ * @emits close - Emitted when the subscription is closed.
+ * * {NDKSubscription} subscription - The subscription that was closed.
+ *
+ * @example
+ * const sub = ndk.subscribe({ kinds: [1] }); // Get all kind:1s
+ * sub.on("event", (event) => console.log(event.content); // Show the content
+ * sub.on("eose", () => console.log("All relays have reached the end of the event stream"));
+ * sub.on("close", () => console.log("Subscription closed"));
+ * setTimeout(() => sub.stop(), 10000); // Stop the subscription after 10 seconds
+ *
+ * @description
+ * Subscriptions are created using {@link NDK.subscribe}.
+ *
+ * # Event validation
+ * By defaults, subscriptions will validate events to comply with the minimal requirement
+ * of each known NIP.
+ * This can be disabled by setting the `skipValidation` option to `true`.
+ *
+ * @example
+ * const sub = ndk.subscribe({ kinds: [1] }, { skipValidation: false });
+ * sub.on("event", (event) => console.log(event.content); // Only valid events will be received
  */
 export class NDKSubscription extends EventEmitter {
     readonly subId?: string;
@@ -126,6 +151,7 @@ export class NDKSubscription extends EventEmitter {
     readonly opts: NDKSubscriptionOptions;
     readonly pool: NDKPool;
     readonly skipVerification: boolean = false;
+    readonly skipValidation: boolean = false;
 
     /**
      * Tracks the filters as they are executed on each relay
@@ -177,6 +203,7 @@ export class NDKSubscription extends EventEmitter {
         this.debug = ndk.debug.extend(`subscription[${opts?.subId ?? this.internalId}]`);
         this.eoseDebug = this.debug.extend("eose");
         this.skipVerification = opts?.skipVerification || false;
+        this.skipValidation = opts?.skipValidation || false;
 
         if (!this.opts.closeOnEose) {
             this.debug(
@@ -323,6 +350,13 @@ export class NDKSubscription extends EventEmitter {
     public eventReceived(event: NDKEvent, relay: NDKRelay | undefined, fromCache = false) {
         if (relay) event.relay = relay;
         if (!relay) relay = event.relay;
+
+        if (!this.skipValidation) {
+            if (!event.isValid) {
+                this.debug(`Event failed validation`, event);
+                return;
+            }
+        }
 
         if (!fromCache && relay) {
             // track the event per relay

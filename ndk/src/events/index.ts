@@ -596,4 +596,16 @@ export class NDKEvent extends EventEmitter {
 
         return e;
     }
+
+    /**
+     * Checks whether the event is valid per underlying NIPs.
+     *
+     * This method is meant to be overridden by subclasses that implement specific NIPs
+     * to allow the enforcement of NIP-specific validation rules.
+     *
+     *
+     */
+    get isValid(): boolean {
+        return true;
+    }
 }

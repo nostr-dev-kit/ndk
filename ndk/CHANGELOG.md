@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk
 
+## 2.4.0
+
+### Minor Changes
+
+-   b9bbf1d: Safely embrace the chaos: event validation
+
 ## 2.3.3
 
 ### Patch Changes

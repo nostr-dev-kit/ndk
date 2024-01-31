@@ -41,6 +41,8 @@ export enum NDKKind {
     // Event Timestamping
     DVMReqTimestamping = 5900,
 
+    DVMEventSchedule = 5905,
+
     // Feedback
     DVMJobFeedback = 7000,
 
@@ -72,7 +74,13 @@ export enum NDKKind {
     RelaySet = 30002,
     CategorizedRelayList = NDKKind.RelaySet, // Deprecated but left for backwards compatibility
     BookmarkSet = 30003,
-    CurationSet = 30004,
+
+    /**
+     * @deprecated Use ArticleCurationSet instead
+     */
+    CurationSet = 30004, // Deprecated but left for backwards compatibility
+    ArticleCurationSet = 30004,
+    VideoCurationSet = 30005,
     InterestSet = 30015,
     InterestsList = NDKKind.InterestSet, // Deprecated but left for backwards compatibility
     EmojiSet = 30030,
@@ -120,7 +128,8 @@ export const NDKListKinds = [
     NDKKind.BookmarkSet,
     NDKKind.CategorizedBookmarkList, // Backwards compatibility
     NDKKind.RelaySet,
-    NDKKind.CurationSet,
+    NDKKind.ArticleCurationSet,
+    NDKKind.VideoCurationSet,
     NDKKind.InterestSet,
     NDKKind.EmojiSet,
     NDKKind.HighlightSet,

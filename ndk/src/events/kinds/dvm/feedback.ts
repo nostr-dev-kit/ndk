@@ -16,8 +16,12 @@ export class NDKDVMJobFeedback extends NDKEvent {
         this.kind ??= NDKKind.DVMJobFeedback;
     }
 
-    static from(event: NDKEvent) {
-        return new NDKDVMJobFeedback(event.ndk, event.rawEvent());
+    static async from(event: NDKEvent) {
+        const e = new NDKDVMJobFeedback(event.ndk, event.rawEvent());
+
+        if (e.encrypted) await e.dvmDecrypt();
+
+        return e;
     }
 
     get status(): NDKDvmJobFeedbackStatus | string | undefined {
@@ -30,5 +34,15 @@ export class NDKDVMJobFeedback extends NDKEvent {
         if (status !== undefined) {
             this.tags.push(["status", status]);
         }
+    }
+
+    get encrypted() {
+        return !!this.getMatchingTags("encrypted")[0];
+    }
+
+    async dvmDecrypt() {
+        await this.decrypt();
+        const decryptedContent = JSON.parse(this.content);
+        this.tags.push(...decryptedContent);
     }
 }

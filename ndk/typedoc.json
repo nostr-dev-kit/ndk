@@ -3,6 +3,7 @@
     "out": "docs",
     "name": "NDK",
     "exclude": ["**/*.test.ts"],
+    "plugin": ["typedoc-plugin-markdown"],
     // "plugin": ["typedoc-plugin-rename-defaults"],
     "theme": "default",
     "excludeExternals": true,

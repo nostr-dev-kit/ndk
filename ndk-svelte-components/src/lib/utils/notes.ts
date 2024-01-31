@@ -120,15 +120,17 @@ export const parseContent = ({ content, tags = [], html = false }: ContentArgs):
                 const relays = [url].filter(identity);
 
                 let type, data, entity;
-                if (tag === "p") {
-                    type = "nprofile";
-                    data = { pubkey: value, relays };
-                    entity = nip19.nprofileEncode(data);
-                } else {
-                    type = "nevent";
-                    data = { id: value, relays, pubkey: null };
-                    entity = nip19.neventEncode(data);
-                }
+                try {
+                    if (tag === "p") {
+                        type = "nprofile";
+                        data = { pubkey: value, relays };
+                        entity = nip19.nprofileEncode(data);
+                    } else {
+                        type = "nevent";
+                        data = { id: value, relays, pubkey: null };
+                        entity = nip19.neventEncode(data);
+                    }
+                } catch { /**/ }
 
                 return [`nostr:${type}`, mentionMatch[0], { ...data, entity }];
             }

@@ -8,7 +8,7 @@ import { calculateRelaySetFromEvent } from "../relay/sets/calculate.js";
 import type { NDKRelaySet } from "../relay/sets/index.js";
 import type { NDKSigner } from "../signers/index.js";
 import type { NDKFilter } from "../subscription/index.js";
-import { NDKUser } from "../user/index.js";
+import { type NDKUser } from "../user/index.js";
 import Zap from "../zap/index.js";
 import { type ContentTag, generateContentTags, mergeTags } from "./content-tagger.js";
 import { isEphemeral, isParamReplaceable, isReplaceable } from "./kind.js";
@@ -124,9 +124,10 @@ export class NDKEvent extends EventEmitter {
     public tag(event: NDKEvent, marker?: string): void;
     public tag(userOrTagOrEvent: NDKTag | NDKUser | NDKEvent, marker?: string): void {
         let tags: NDKTag[] = [];
+        const isNDKUser = (userOrTagOrEvent as NDKUser).fetchProfile !== undefined;
 
-        if (userOrTagOrEvent instanceof NDKUser) {
-            const tag = ["p", userOrTagOrEvent.pubkey];
+        if (isNDKUser) {
+            const tag = ["p", (userOrTagOrEvent as NDKUser).pubkey];
             if (marker) tag.push(marker);
             tags.push(tag);
         } else if (userOrTagOrEvent instanceof NDKEvent) {
@@ -141,8 +142,10 @@ export class NDKEvent extends EventEmitter {
 
                 this.tags.push(["p", pTag[1]]);
             }
+        } else if (Array.isArray(userOrTagOrEvent)) {
+            tags = [userOrTagOrEvent as NDKTag];
         } else {
-            tags = [userOrTagOrEvent];
+            throw new Error("Invalid argument", userOrTagOrEvent as any);
         }
 
         this.tags = mergeTags(this.tags, tags);
@@ -226,6 +229,21 @@ export class NDKEvent extends EventEmitter {
     set alt(alt: string | undefined) {
         this.removeTag("alt");
         if (alt) this.tags.push(["alt", alt]);
+    }
+
+    /**
+     * Gets the NIP-33 "d" tag of the event.
+     */
+    get dTag(): string | undefined {
+        return this.tagValue("d");
+    }
+
+    /**
+     * Sets the NIP-33 "d" tag of the event.
+     */
+    set dTag(value: string | undefined) {
+        this.removeTag("d");
+        if (value) this.tags.push(["d", value]);
     }
 
     /**
@@ -545,9 +563,10 @@ export class NDKEvent extends EventEmitter {
      * Generates a deletion event of the current event
      *
      * @param reason The reason for the deletion
+     * @param publish Whether to publish the deletion event automatically
      * @returns The deletion event
      */
-    async delete(reason?: string): Promise<NDKEvent> {
+    async delete(reason?: string, publish = true): Promise<NDKEvent> {
         if (!this.ndk) throw new Error("No NDK instance found");
 
         this.ndk.assertSigner();
@@ -557,7 +576,7 @@ export class NDKEvent extends EventEmitter {
             content: reason || "",
         } as NostrEvent);
         e.tag(this);
-        await e.publish();
+        if (publish) await e.publish();
 
         return e;
     }

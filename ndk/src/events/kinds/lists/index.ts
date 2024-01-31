@@ -1,8 +1,9 @@
 import type { NDK } from "../../../ndk/index.js";
 import { NDKRelay } from "../../../relay/index.js";
+import type { NDKFilter } from "../../../subscription/index.js";
 import { NDKUser } from "../../../user/index.js";
 import { NDKEvent } from "../../index.js";
-import type { NDKTag, NostrEvent } from "../../index.js";
+import type { NDKEventId, NDKTag, NostrEvent } from "../../index.js";
 import { NDKKind } from "../index.js";
 
 export type NDKListItem = NDKRelay | NDKUser | NDKEvent;
@@ -25,7 +26,7 @@ export type NDKListItem = NDKRelay | NDKUser | NDKEvent;
  * const secretFollow = new NDKUser(...);
  * list.addItem(secretFollow, 'person', true);
  *
- * @emits NDKList#change
+ * @emits change
  */
 export class NDKList extends NDKEvent {
     public _encryptedTags: NDKTag[] | undefined;
@@ -224,6 +225,7 @@ export class NDKList extends NDKEvent {
                 "alt",
                 "expiration",
                 "subject",
+                "client",
             ].includes(t[0]);
         });
     }
@@ -306,6 +308,51 @@ export class NDKList extends NDKEvent {
         this.emit("change");
 
         return this;
+    }
+
+    /**
+     * Creates a filter that will result in fetching
+     * the items of this list
+     * @example
+     * const list = new NDKList(...);
+     * const filters = list.filterForItems();
+     * const events = await ndk.fetchEvents(filters);
+     */
+    filterForItems(): NDKFilter[] {
+        const ids = new Set<NDKEventId>();
+        const nip33Queries = new Map<string, string[]>();
+        const filters: NDKFilter[] = [];
+
+        for (const tag of this.items) {
+            if (tag[0] === "e" && tag[1]) {
+                ids.add(tag[1]);
+            } else if (tag[0] === "a" && tag[1]) {
+                const [kind, pubkey, dTag] = tag[1].split(":");
+                if (!kind || !pubkey) continue;
+
+                const key = `${kind}:${pubkey}`;
+                const item = nip33Queries.get(key) || [];
+                item.push(dTag || "");
+                nip33Queries.set(key, item);
+            }
+        }
+
+        if (ids.size > 0) {
+            filters.push({ ids: Array.from(ids) });
+        }
+
+        if (nip33Queries.size > 0) {
+            for (const [key, values] of nip33Queries.entries()) {
+                const [kind, pubkey] = key.split(":");
+                filters.push({
+                    kinds: [parseInt(kind)],
+                    authors: [pubkey],
+                    "#d": values,
+                });
+            }
+        }
+
+        return filters;
     }
 }
 

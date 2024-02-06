@@ -9,6 +9,7 @@ export enum NDKKind {
     Reaction = 7,
     BadgeAward = 8,
 
+    // NIP-29
     GroupChat = 9,
     GroupNote = 11,
     GroupReply = 12,
@@ -19,6 +20,7 @@ export enum NDKKind {
     ChannelMessage = 42,
     ChannelHideMessage = 43,
     ChannelMuteUser = 44,
+    Media = 1063,
     Report = 1984,
     Label = 1985,
 
@@ -42,6 +44,14 @@ export enum NDKKind {
     // Feedback
     DVMJobFeedback = 7000,
 
+    // Recurring payments
+    SubscriptionStart = 7001,
+    SubscriptionStop = 7002,
+
+    // NIP-29
+    GroupAdminAddUser = 9000,
+    GroupAdminRemoveUser = 9001,
+
     // Lists and Sets
     MuteList = 10000,
     PinList = 10001,
@@ -53,6 +63,8 @@ export enum NDKKind {
     SearchRelayList = 10007,
     InterestList = 10015,
     EmojiList = 10030,
+    TierList = 17000,
+    SuperFollowList = 17001,
 
     FollowSet = 30000,
     CategorizedPeopleList = NDKKind.FollowSet, // Deprecated but left for backwards compatibility
@@ -65,6 +77,7 @@ export enum NDKKind {
     InterestsList = NDKKind.InterestSet, // Deprecated but left for backwards compatibility
     EmojiSet = 30030,
     HighlightSet = 39802,
+    SubscriptionTier = 37001,
     CategorizedHighlightList = NDKKind.HighlightSet, // Deprecated but left for backwards compatibility
 
     ZapRequest = 9734,
@@ -73,6 +86,9 @@ export enum NDKKind {
     ClientAuth = 22242,
     NostrConnect = 24133,
     NostrConnectAdmin = 24134,
+
+    HttpAuth = 27235,
+
     ProfileBadge = 30008,
     BadgeDefinition = 30009,
     MarketStall = 30017,
@@ -80,6 +96,9 @@ export enum NDKKind {
     Article = 30023,
     AppSpecificData = 30078,
     Classified = 30402,
+    HorizontalVideo = 34235,
+
+    GroupMembers = 39002, // NIP-29
 
     // NIP-89: App Metadata
     AppRecommendation = 31989,

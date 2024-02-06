@@ -2,6 +2,15 @@ import type { NDKEvent } from "../../events/index.js";
 import type { NDK } from "../../ndk/index.js";
 import { NDKRelay } from "../index.js";
 
+export class PublishError extends Error {
+    public errors: Map<NDKRelay, Error>;
+
+    public constructor(message: string, errors: Map<NDKRelay, Error>) {
+        super(message);
+        this.errors = errors;
+    }
+}
+
 /**
  * A relay set is a group of relays. This grouping can be short-living, for a single
  * REQ or can be long-lasting, for example for the explicit relay list the user
@@ -61,6 +70,7 @@ export class NDKRelaySet {
      */
     public async publish(event: NDKEvent, timeoutMs?: number): Promise<Set<NDKRelay>> {
         const publishedToRelays: Set<NDKRelay> = new Set();
+        const errors: Map<NDKRelay, Error> = new Map();
         const isEphemeral = event.isEphemeral();
 
         // go through each relay and publish the event
@@ -74,6 +84,7 @@ export class NDKRelaySet {
                     })
                     .catch((err) => {
                         if (!isEphemeral) {
+                            errors.set(relay, err);
                             this.debug("error publishing to relay", {
                                 relay: relay.url,
                                 err,
@@ -90,7 +101,7 @@ export class NDKRelaySet {
             // Ephemeral events are not acknowledged by the relay, so we don't
             // throw an error if no relay was able to receive the event.
             if (!isEphemeral) {
-                throw new Error("No relay was able to receive the event");
+                throw new PublishError("No relay was able to receive the event", errors);
             }
         }
 

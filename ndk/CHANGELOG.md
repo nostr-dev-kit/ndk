@@ -1,5 +1,27 @@
 # @nostr-dev-kit/ndk
 
+## 2.4.0
+
+### Minor Changes
+
+-   b9bbf1d: Safely embrace the chaos: event validation
+
+## 2.3.3
+
+### Patch Changes
+
+-   Introduce new concept of groupableDelayType which describes how the delay should be interpreted ("at least" or "at most")
+-   885b6c2: Add nip46 support to nip05 responses
+-   5666d56: Fix bug where authors where being added to rewritten filters who weren't included in the original filter
+
+## 2.3.2
+
+### Patch Changes
+
+-   NIP-96 support
+-   4628481: Improve NIP-31 support
+-   Make zap more fault-tolerant
+
 ## 2.3.1
 
 ### Patch Changes

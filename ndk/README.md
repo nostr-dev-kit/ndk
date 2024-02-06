@@ -53,7 +53,7 @@ localStorage.debug = 'ndk:*'
 -   [~] NIP-04: Encryption support
 -   [x] NIP-18: Repost
 -   [ ] ~~NIP-26~~ Won't add / NIP-26 is dead
--   [ ] NIP-41: Relay authentication
+-   [x] NIP-42: Relay authentication
 -   [x] NIP-57: Zaps
     -   [x] LUD06
     -   [x] LUD16
@@ -70,11 +70,14 @@ localStorage.debug = 'ndk:*'
     -   [x] NIP-46
         -   [x] Permission tokens
 -   Relay discovery
-    -   [ ] Outbox-model (NIP-65)
+    -   [x] Outbox-model (NIP-65)
     -   [ ] Implicit relays discovery following pubkey usage
     -   [ ] Implicit relays discovery following `t` tag usage
     -   [ ] Explicit relays blacklist
 -   [ ] nostr-tools/SimplePool drop-in replacement interface
+-   [x] NIP-96: Media Uploads
+    -   [x] XMLHttpRequest (for progress reporting)
+    -   [x] Fetch API
 
 ## Real-world uses of NDK
 
@@ -274,7 +277,7 @@ const pablo = ndk.getUser({
 });
 
 const jeff = ndk.getUser({
-    hexpubkey: "1739d937dc8c0c7370aa27585938c119e25c41f6c441a5d34c6d38503e3136ef",
+    pubkey: "1739d937dc8c0c7370aa27585938c119e25c41f6c441a5d34c6d38503e3136ef",
 });
 ```
 

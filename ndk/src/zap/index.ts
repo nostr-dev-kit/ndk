@@ -24,7 +24,7 @@ interface ZapConstructorParams {
 }
 
 export default class Zap extends EventEmitter {
-    public ndk?: NDK;
+    public ndk: NDK;
     public zappedEvent?: NDKEvent;
     public zappedUser: NDKUser;
 
@@ -46,7 +46,7 @@ export default class Zap extends EventEmitter {
         if (this.zappedUser) {
             // check if user has a profile, otherwise request it
             if (!this.zappedUser.profile) {
-                await this.zappedUser.fetchProfile();
+                await this.zappedUser.fetchProfile({ groupable: false });
             }
 
             lud06 = (this.zappedUser.profile || {}).lud06;
@@ -67,14 +67,26 @@ export default class Zap extends EventEmitter {
             throw new Error("No zap endpoint found");
         }
 
-        const response = await fetch(zapEndpoint);
-        const body = await response.json();
+        try {
+            const _fetch = this.ndk.httpFetch || fetch;
+            const response = await _fetch(zapEndpoint);
 
-        if (body?.allowsNostr && (body?.nostrPubkey || body?.nostrPubKey)) {
-            zapEndpointCallback = body.callback;
+            if (response.status !== 200) {
+                const text = await response.text();
+                throw new Error(`Unable to fetch zap endpoint ${zapEndpoint}: ${text}`);
+            }
+
+            const body = await response.json();
+
+            if (body?.allowsNostr && (body?.nostrPubkey || body?.nostrPubKey)) {
+                zapEndpointCallback = body.callback;
+            }
+
+            return zapEndpointCallback;
+        } catch (e) {
+            throw new Error(`Unable to fetch zap endpoint ${zapEndpoint}: ${e}`);
+            return;
         }
-
-        return zapEndpointCallback;
     }
 
     /**
@@ -102,7 +114,15 @@ export default class Zap extends EventEmitter {
 
         await event.sign(signer);
 
-        return await this.getInvoice(event, amount, zapEndpoint);
+        let invoice: string | null;
+
+        try {
+            invoice = await this.getInvoice(event, amount, zapEndpoint);
+        } catch (e) {
+            throw new Error("Failed to get invoice: " + e);
+        }
+
+        return invoice;
     }
 
     public async getInvoice(

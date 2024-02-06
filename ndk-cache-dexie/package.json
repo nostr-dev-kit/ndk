@@ -1,6 +1,6 @@
 {
   "name": "@nostr-dev-kit/ndk-cache-dexie",
-  "version": "2.2.1",
+  "version": "2.2.5",
   "description": "NDK Dexie Cache Adapter",
   "license": "MIT",
   "bugs": {
@@ -11,12 +11,12 @@
   "module": "./dist/index.mjs",
   "exports": {
     "import": {
-        "types": "./dist/index.d.mts",
-        "default": "./dist/index.mjs"
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
     },
     "require": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     }
   },
   "files": [

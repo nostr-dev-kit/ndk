@@ -8,7 +8,7 @@ import { calculateRelaySetFromEvent } from "../relay/sets/calculate.js";
 import type { NDKRelaySet } from "../relay/sets/index.js";
 import type { NDKSigner } from "../signers/index.js";
 import type { NDKFilter } from "../subscription/index.js";
-import type { NDKUser } from "../user/index.js";
+import { NDKUser } from "../user/index.js";
 import Zap from "../zap/index.js";
 import { type ContentTag, generateContentTags, mergeTags } from "./content-tagger.js";
 import { isEphemeral, isParamReplaceable, isReplaceable } from "./kind.js";
@@ -106,6 +106,13 @@ export class NDKEvent extends EventEmitter {
 
     /**
      * Tag a user with an optional marker.
+     * @param user The user to tag.
+     * @param marker The marker to use in the tag.
+     */
+    public tag(user: NDKUser, marker?: string): void;
+
+    /**
+     * Tag a user with an optional marker.
      * @param event The event to tag.
      * @param marker The marker to use in the tag.
      * @example
@@ -115,21 +122,30 @@ export class NDKEvent extends EventEmitter {
      * ```
      */
     public tag(event: NDKEvent, marker?: string): void;
-    public tag(userOrEvent: NDKUser | NDKEvent, marker?: string): void {
-        const skipAuthorTag = userOrEvent?.pubkey === this.pubkey;
-        const tags = userOrEvent.referenceTags(marker, skipAuthorTag);
+    public tag(userOrTagOrEvent: NDKTag | NDKUser | NDKEvent, marker?: string): void {
+        let tags: NDKTag[] = [];
 
-        this.tags = mergeTags(this.tags, tags);
+        if (userOrTagOrEvent instanceof NDKUser) {
+            const tag = ["p", userOrTagOrEvent.pubkey];
+            if (marker) tag.push(marker);
+            tags.push(tag);
+        } else if (userOrTagOrEvent instanceof NDKEvent) {
+            const event = userOrTagOrEvent as NDKEvent;
+            const skipAuthorTag = event?.pubkey === this.pubkey;
+            tags = event.referenceTags(marker, skipAuthorTag);
 
-        if (userOrEvent instanceof NDKEvent) {
             // tag p-tags in the event if they are not the same as the user signing this event
-            for (const pTag of userOrEvent.getMatchingTags("p")) {
+            for (const pTag of event.getMatchingTags("p")) {
                 if (pTag[1] === this.pubkey) continue;
                 if (this.tags.find((t) => t[0] === "p" && t[1] === pTag[1])) continue;
 
                 this.tags.push(["p", pTag[1]]);
             }
+        } else {
+            tags = [userOrTagOrEvent];
         }
+
+        this.tags = mergeTags(this.tags, tags);
     }
 
     /**
@@ -193,6 +209,23 @@ export class NDKEvent extends EventEmitter {
         const tags = this.getMatchingTags(tagName);
         if (tags.length === 0) return undefined;
         return tags[0][1];
+    }
+
+    /**
+     * Gets the NIP-31 "alt" tag of the event.
+     */
+    get alt(): string | undefined {
+        return this.tagValue("alt");
+    }
+
+    /**
+     * Sets the NIP-31 "alt" tag of the event. Use this to set an alt tag so
+     * clients that don't handle a particular event kind can display something
+     * useful for users.
+     */
+    set alt(alt: string | undefined) {
+        this.removeTag("alt");
+        if (alt) this.tags.push(["alt", alt]);
     }
 
     /**
@@ -545,7 +578,7 @@ export class NDKEvent extends EventEmitter {
      *
      * @param content The content of the reaction
      */
-    async react(content: string): Promise<NDKEvent> {
+    async react(content: string, publish: boolean = true): Promise<NDKEvent> {
         if (!this.ndk) throw new Error("No NDK instance found");
 
         this.ndk.assertSigner();
@@ -555,8 +588,24 @@ export class NDKEvent extends EventEmitter {
             content,
         } as NostrEvent);
         e.tag(this);
-        await e.publish();
+        if (publish) {
+            await e.publish();
+        } else {
+            await e.sign();
+        }
 
         return e;
+    }
+
+    /**
+     * Checks whether the event is valid per underlying NIPs.
+     *
+     * This method is meant to be overridden by subclasses that implement specific NIPs
+     * to allow the enforcement of NIP-specific validation rules.
+     *
+     *
+     */
+    get isValid(): boolean {
+        return true;
     }
 }

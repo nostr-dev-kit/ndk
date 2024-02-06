@@ -5,12 +5,16 @@ export * from "./events/index.js";
 // Kinds
 export * from "./events/kinds/index.js";
 export * from "./events/kinds/article.js";
+export * from "./events/kinds/video.js";
 export * from "./events/kinds/highlight.js";
 export * from "./events/kinds/NDKRelayList.js";
 export * from "./events/kinds/dvm/index.js";
 export * from "./events/kinds/lists/index.js";
 export * from "./events/kinds/repost.js";
 export * from "./events/kinds/nip89/NDKAppHandler.js";
+export * from "./events/kinds/subscriptions/tier.js";
+
+export * from "./events/kinds/simple-group/index.js";
 
 export * from "./relay/index.js";
 export * from "./relay/auth-policies.js";

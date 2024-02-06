@@ -14,7 +14,7 @@ export default class PingEventHandlingStrategy implements IEventHandlingStrategy
 
         debug(`ping request from ${remotePubkey}`);
 
-        if (await backend.pubkeyAllowed({ id, pubkey: remotePubkey, method: "ping"})) {
+        if (await backend.pubkeyAllowed({ id, pubkey: remotePubkey, method: "ping" })) {
             debug(`connection request from ${remotePubkey} allowed`);
             return "pong";
         } else {

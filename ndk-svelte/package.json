@@ -1,17 +1,17 @@
 {
   "name": "@nostr-dev-kit/ndk-svelte",
-  "version": "2.2.1",
+  "version": "2.2.5",
   "description": "This package provides convenience functionalities to make usage of NDK with Svelte nicer.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "exports": {
     "import": {
-        "types": "./dist/index.d.mts",
-        "default": "./dist/index.mjs"
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
     },
     "require": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     }
   },
   "files": [

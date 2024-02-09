@@ -9,7 +9,7 @@ import { NDKKind } from "./index.js";
 export class NDKArticle extends NDKEvent {
     constructor(ndk: NDK | undefined, rawEvent?: NostrEvent) {
         super(ndk, rawEvent);
-        this.kind = NDKKind.Article;
+        this.kind ??= NDKKind.Article;
     }
 
     /**

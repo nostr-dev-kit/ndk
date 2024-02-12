@@ -31,8 +31,16 @@ const ndk = new NDK({
     ],
 });
 ndk.connect();
+const pablo = ndk.getUser({npub: 'npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft'})
+// pablo.fetchProfile()
 
-ndk.subscribe({ limit: 10 }, { closeOnEose: false });
+const sub1 = ndk.subscribe({ limit: 10 }, { closeOnEose: false });
+const sub2 = ndk.subscribe({ authors: [pablo.pubkey], kinds:[1]}, { groupable: true, subId: 'pablo-kind-1s'})
+const sub3 = ndk.subscribe({ authors: [pablo.pubkey], kinds:[7]}, { groupable: true, subId: 'pablo-kind-7s'})
+
+setTimeout(() => sub1.stop(), 1000)
+setTimeout(() => sub2.stop(), 2000)
+setTimeout(() => sub3.stop(), 5000)
 
 export const Default: Story = {
     args: {

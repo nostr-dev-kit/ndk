@@ -4,7 +4,7 @@
     import { onMount } from "svelte";
 
     export let relay: NDKRelay;
-    export let expanded = true;
+    export let expanded = false;
 
     const notices: string[] = [];
     let activeSubCount = relay.activeSubscriptions().size
@@ -66,6 +66,8 @@
                                         <code>{sub.subId} </code>
                                     {/if}
                                 {/each}
+                            {:else if subscriptions.length === 1 && subscriptions[0].subId}
+                                <code>{subscriptions[0].subId}</code>
                             {/if}
                         </span>
                     </li>

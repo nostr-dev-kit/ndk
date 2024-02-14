@@ -4,6 +4,8 @@ import { NDK } from "../ndk";
 import { NDKRelay } from "../relay";
 import { NDKSubscription } from "../subscription";
 import { NDKUser } from "../user";
+import { NDKRelaySet } from "../relay/sets";
+import { NDKPrivateKeySigner } from "../signers/private-key";
 
 describe("NDKEvent", () => {
     let ndk: NDK;
@@ -22,6 +24,21 @@ describe("NDKEvent", () => {
         event = new NDKEvent(ndk);
         event.author = user1;
     });
+
+    describe("publish", () => {
+        it("stores the relays where the event was successfully published to", async () => {
+            const relay1 = new NDKRelay("wss://relay1.nos.dev");
+            const relay2 = new NDKRelay("wss://relay2.nos.dev");
+            const relay3 = new NDKRelay("wss://relay3.nos.dev");
+            const relaySet = new NDKRelaySet(new Set([relay1, relay2, relay3]), ndk);
+            relaySet.publish = jest.fn().mockResolvedValue(new Set([relay1, relay2]));
+
+            event.kind = 5;
+            await event.sign(NDKPrivateKeySigner.generate())
+            const result = await event.publish(relaySet);
+            expect(result).toEqual(new Set([relay1, relay2]));
+        })
+    })
 
     describe("deduplicationKey", () => {
         it("returns <kind>:<pubkey> for kinds 0", () => {

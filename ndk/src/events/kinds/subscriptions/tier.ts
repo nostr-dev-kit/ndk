@@ -3,7 +3,12 @@ import { type NostrEvent } from "../../index.js";
 import type { NDKEvent, NDKTag } from "../../index.js";
 import { NDKKind } from "../index.js";
 import { NDKArticle } from "../article.js";
-import { NDKIntervalFrequency, NDKSubscriptionAmount, newAmount, parseTagToSubscriptionAmount } from "./amount.js";
+import {
+    NDKIntervalFrequency,
+    NDKSubscriptionAmount,
+    newAmount,
+    parseTagToSubscriptionAmount,
+} from "./amount.js";
 
 /**
  * @description
@@ -59,7 +64,7 @@ export class NDKSubscriptionTier extends NDKArticle {
     get amounts(): NDKSubscriptionAmount[] {
         return this.getMatchingTags("amount")
             .map((tag) => parseTagToSubscriptionAmount(tag))
-            .filter(a => a !== undefined) as NDKSubscriptionAmount[];
+            .filter((a) => a !== undefined) as NDKSubscriptionAmount[];
     }
 
     /**
@@ -69,9 +74,7 @@ export class NDKSubscriptionTier extends NDKArticle {
      * @param term One of daily, weekly, monthly, quarterly, yearly
      */
     addAmount(amount: number, currency: string, term: NDKIntervalFrequency) {
-        this.tags.push(
-            newAmount(amount, currency, term)
-        );
+        this.tags.push(newAmount(amount, currency, term));
     }
 
     /**
@@ -117,4 +120,3 @@ export class NDKSubscriptionTier extends NDKArticle {
         );
     }
 }
-

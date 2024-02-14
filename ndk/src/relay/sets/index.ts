@@ -17,7 +17,7 @@ export class PublishError extends Error {
             errors.push(`${relay.url}: ${err}`);
         }
 
-        return errors.join('\n')
+        return errors.join("\n");
     }
 }
 

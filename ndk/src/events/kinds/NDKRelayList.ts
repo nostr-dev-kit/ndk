@@ -89,7 +89,6 @@ export class NDKRelayList extends NDKEvent {
     }
 }
 
-
 async function relayListFromKind3(user: NDKUser, ndk: NDK): Promise<NDKRelayList | undefined> {
     const followList = await ndk.fetchEvent({
         kinds: [3],

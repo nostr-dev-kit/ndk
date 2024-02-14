@@ -31,7 +31,6 @@ export function calculateTermDurationInSeconds(term: NDKIntervalFrequency): numb
     }
 }
 
-
 /**
  * Creates a new amount tag
  * @param amount Amount in base unit of the currency (e.g. cents, msats)
@@ -39,11 +38,7 @@ export function calculateTermDurationInSeconds(term: NDKIntervalFrequency): numb
  * @param term One of daily, weekly, monthly, quarterly, yearly
  * @returns
  */
-export function newAmount(
-    amount: number,
-    currency: string,
-    term: NDKIntervalFrequency
-): NDKTag {
+export function newAmount(amount: number, currency: string, term: NDKIntervalFrequency): NDKTag {
     return ["amount", amount.toString(), currency, term];
 }
 

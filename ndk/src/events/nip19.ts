@@ -16,7 +16,7 @@ export function encode(this: NDKEvent) {
             kind: this.kind as number,
             pubkey: this.pubkey,
             identifier: this.replaceableDTag(),
-            relays
+            relays,
         });
     } else if (relays.length > 0) {
         return nip19.neventEncode({

@@ -34,11 +34,11 @@ describe("NDKEvent", () => {
             relaySet.publish = jest.fn().mockResolvedValue(new Set([relay1, relay2]));
 
             event.kind = 5;
-            await event.sign(NDKPrivateKeySigner.generate())
+            await event.sign(NDKPrivateKeySigner.generate());
             const result = await event.publish(relaySet);
             expect(result).toEqual(new Set([relay1, relay2]));
-        })
-    })
+        });
+    });
 
     describe("deduplicationKey", () => {
         it("returns <kind>:<pubkey> for kinds 0", () => {

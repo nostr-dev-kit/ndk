@@ -68,8 +68,8 @@ export class NDKSubscriptionStart extends NDKEvent {
 
         this.tag(tier);
         this.removeTag("p");
-        this.tags.push([ "p", tier.pubkey ]);
-        this.tags.push([ "event", JSON.stringify(tier.rawEvent()) ]);
+        this.tags.push(["p", tier.pubkey]);
+        this.tags.push(["event", JSON.stringify(tier.rawEvent())]);
     }
 
     /**
@@ -82,7 +82,9 @@ export class NDKSubscriptionStart extends NDKEvent {
             try {
                 const parsedEvent = JSON.parse(eventTag);
                 return NDKSubscriptionTier.from(parsedEvent);
-            } catch { this.debug("Failed to parse event tag"); }
+            } catch {
+                this.debug("Failed to parse event tag");
+            }
         }
 
         const tierId = this.tierId;
@@ -118,4 +120,3 @@ export class NDKSubscriptionStart extends NDKEvent {
         return true;
     }
 }
-

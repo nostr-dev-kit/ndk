@@ -128,7 +128,11 @@ export class NDKEvent extends EventEmitter {
      * ```
      */
     public tag(event: NDKEvent, marker?: string, skipAuthorTag?: boolean): void;
-    public tag(userOrTagOrEvent: NDKTag | NDKUser | NDKEvent, marker?: string, skipAuthorTag?: boolean): void {
+    public tag(
+        userOrTagOrEvent: NDKTag | NDKUser | NDKEvent,
+        marker?: string,
+        skipAuthorTag?: boolean
+    ): void {
         let tags: NDKTag[] = [];
         const isNDKUser = (userOrTagOrEvent as NDKUser).fetchProfile !== undefined;
 

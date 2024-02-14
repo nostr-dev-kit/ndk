@@ -22,5 +22,5 @@ describe("NDKSubscriptionFilters", () => {
             expect(mockedEmit).toHaveBeenCalled();
             mockedEmit.mockRestore();
         });
-    })
-})
+    });
+});

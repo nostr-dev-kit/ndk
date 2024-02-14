@@ -88,7 +88,7 @@ export class NDKDVMRequest extends NDKEvent {
      * @param signer Signer to use for encryption
      */
     public async encryption(dvm: NDKUser, signer?: NDKSigner) {
-        const dvmTags = [ "i", "param", "output", "relays", "bid" ];
+        const dvmTags = ["i", "param", "output", "relays", "bid"];
         const tags = this.tags.filter((t) => dvmTags.includes(t[0]));
 
         // remove all tags that will be encrypted

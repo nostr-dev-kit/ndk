@@ -15,16 +15,14 @@ describe("NDKSubscriptionTier", () => {
         it("marks as valid tiers with an amount", () => {
             const tier = new NDKSubscriptionTier(undefined, {
                 kind: NDKKind.SubscriptionTier,
-                tags: [
-                    ["title", "Tier 1"],
-                ],
+                tags: [["title", "Tier 1"]],
             } as NostrEvent);
             tier.addAmount(100000, "msat", "monthly");
             expect(tier.isValid).toBe(true);
-        })
+        });
     });
 
-    describe('.amounts', () => {
+    describe(".amounts", () => {
         it("ignores amounts without amount", () => {
             const tier = new NDKSubscriptionTier(undefined, {
                 kind: NDKKind.SubscriptionTier,
@@ -74,5 +72,5 @@ describe("NDKSubscriptionTier", () => {
             } as NostrEvent);
             expect(tier.amounts.length).toBe(4);
         });
-    })
+    });
 });

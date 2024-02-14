@@ -71,7 +71,7 @@ export default class Zap extends EventEmitter {
         }
 
         if (!zapEndpoint) {
-            debug("No zap endpoint found", profile, {lud06, lud16});
+            debug("No zap endpoint found", profile, { lud06, lud16 });
             throw new Error("No zap endpoint found");
         }
 
@@ -139,11 +139,13 @@ export default class Zap extends EventEmitter {
         amount: number,
         zapEndpoint: string
     ): Promise<string | null> {
-        debug(`Fetching invoice from ${zapEndpoint}?` +
-            new URLSearchParams({
-                amount: amount.toString(),
-                nostr: encodeURIComponent(JSON.stringify(event.rawEvent())),
-            }));
+        debug(
+            `Fetching invoice from ${zapEndpoint}?` +
+                new URLSearchParams({
+                    amount: amount.toString(),
+                    nostr: encodeURIComponent(JSON.stringify(event.rawEvent())),
+                })
+        );
         const url = new URL(zapEndpoint);
         url.searchParams.append("amount", amount.toString());
         url.searchParams.append("nostr", JSON.stringify(event.rawEvent()));
@@ -155,7 +157,7 @@ export default class Zap extends EventEmitter {
                 status: response.status,
                 amount: amount,
                 nostr: JSON.stringify(event.rawEvent()),
-            })
+            });
             const text = await response.text();
             throw new Error(`Unable to fetch zap endpoint ${zapEndpoint}: ${text}`);
         }
@@ -192,7 +194,7 @@ export default class Zap extends EventEmitter {
         // add the event tag if it exists; this supports both 'e' and 'a' tags
         if (this.zappedEvent) {
             const tags = this.zappedEvent.referenceTags();
-            const nonPTags = tags.filter(tag => tag[0] !== "p");
+            const nonPTags = tags.filter((tag) => tag[0] !== "p");
             zapRequest.tags.push(...nonPTags);
         }
 

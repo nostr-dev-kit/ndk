@@ -81,7 +81,7 @@ export class NDKSimpleGroup {
 
             memberPubkeys.add(pubkey);
             try {
-                members.push(this.ndk.getUser({pubkey}));
+                members.push(this.ndk.getUser({ pubkey }));
             } catch {}
         }
 
@@ -114,7 +114,7 @@ export class NDKSimpleGroup {
     static generateAddUserEvent(userPubkey: string, groupId: string) {
         const event = new NDKEvent(undefined, {
             kind: NDKKind.GroupAdminAddUser,
-            tags: [ ["h", groupId] ],
+            tags: [["h", groupId]],
         } as NostrEvent);
         event.tags.push(["p", userPubkey]);
 

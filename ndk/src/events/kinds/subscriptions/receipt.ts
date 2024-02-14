@@ -4,7 +4,7 @@ import { NDKEvent, NDKTag, NostrEvent } from "../..";
 import { NDK } from "../../../ndk";
 import { NDKSubscriptionStart } from "./subscription-start";
 
-type ValidPeriod = {start: Date, end: Date};
+type ValidPeriod = { start: Date; end: Date };
 
 /**
  * A subscription receipt event.
@@ -44,10 +44,12 @@ export class NDKSubscriptionReceipt extends NDKEvent {
         if (!tag) return undefined;
         try {
             return {
-                start: new Date(parseInt(tag[1])*1000),
-                end: new Date(parseInt(tag[2])*1000),
-            }
-        } catch { return undefined; }
+                start: new Date(parseInt(tag[1]) * 1000),
+                end: new Date(parseInt(tag[2]) * 1000),
+            };
+        } catch {
+            return undefined;
+        }
     }
 
     set validPeriod(period: ValidPeriod | undefined) {
@@ -83,4 +85,3 @@ export class NDKSubscriptionReceipt extends NDKEvent {
         return true;
     }
 }
-

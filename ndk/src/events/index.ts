@@ -120,14 +120,15 @@ export class NDKEvent extends EventEmitter {
      * Tag a user with an optional marker.
      * @param event The event to tag.
      * @param marker The marker to use in the tag.
+     * @param skipAuthorTag Whether to explicitly skip adding the author tag of the event.
      * @example
      * ```typescript
      * reply.tag(opEvent, "reply");
      * // reply.tags => [["e", <id>, <relay>, "reply"]]
      * ```
      */
-    public tag(event: NDKEvent, marker?: string): void;
-    public tag(userOrTagOrEvent: NDKTag | NDKUser | NDKEvent, marker?: string): void {
+    public tag(event: NDKEvent, marker?: string, skipAuthorTag?: boolean): void;
+    public tag(userOrTagOrEvent: NDKTag | NDKUser | NDKEvent, marker?: string, skipAuthorTag?: boolean): void {
         let tags: NDKTag[] = [];
         const isNDKUser = (userOrTagOrEvent as NDKUser).fetchProfile !== undefined;
 
@@ -137,7 +138,7 @@ export class NDKEvent extends EventEmitter {
             tags.push(tag);
         } else if (userOrTagOrEvent instanceof NDKEvent) {
             const event = userOrTagOrEvent as NDKEvent;
-            const skipAuthorTag = event?.pubkey === this.pubkey;
+            skipAuthorTag ??= event?.pubkey === this.pubkey;
             tags = event.referenceTags(marker, skipAuthorTag);
 
             // tag p-tags in the event if they are not the same as the user signing this event
@@ -308,7 +309,12 @@ export class NDKEvent extends EventEmitter {
             relaySet = this.ndk.devWriteRelaySet || calculateRelaySetFromEvent(this.ndk, this);
         }
 
-        return relaySet.publish(this, timeoutMs);
+        this.ndk.debug(`publish to ${relaySet.size} relays`, this.rawEvent());
+
+        const relays = await relaySet.publish(this, timeoutMs);
+        this.onRelays = Array.from(relays);
+
+        return relays;
     }
 
     /**

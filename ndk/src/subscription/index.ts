@@ -288,7 +288,6 @@ export class NDKSubscription extends EventEmitter {
     }
 
     public stop(): void {
-        // this.debug(`running stop ${this.internalId}`);
         this.emit("close", this);
         this.removeAllListeners();
     }

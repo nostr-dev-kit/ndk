@@ -9,6 +9,16 @@ export class PublishError extends Error {
         super(message);
         this.errors = errors;
     }
+
+    get relayErrors(): string {
+        const errors: string[] = [];
+
+        for (const [relay, err] of this.errors) {
+            errors.push(`${relay.url}: ${err}`);
+        }
+
+        return errors.join('\n')
+    }
 }
 
 /**
@@ -67,6 +77,23 @@ export class NDKRelaySet {
      * @param event
      * @param timeoutMs - timeout in milliseconds for each publish operation and connection operation
      * @returns A set where the event was successfully published to
+     * @throws PublishError if no relay was able to receive the event
+     * @example
+     * ```typescript
+     * const event = new NDKEvent(ndk, {kinds: [NDKKind.Message], "#d": ["123"]});
+     * try {
+     *    const publishedToRelays = await relaySet.publish(event);
+     *    console.log(`published to ${publishedToRelays.size} relays`)
+     * } catch (error) {
+     *   console.error("error publishing to relays", error);
+     *
+     *   if (error instanceof PublishError) {
+     *      for (const [relay, err] of error.errors) {
+     *         console.error(`error publishing to relay ${relay.url}`, err);
+     *       }
+     *   }
+     * }
+     * ```
      */
     public async publish(event: NDKEvent, timeoutMs?: number): Promise<Set<NDKRelay>> {
         const publishedToRelays: Set<NDKRelay> = new Set();
@@ -78,7 +105,7 @@ export class NDKRelaySet {
             return new Promise<void>((resolve) => {
                 relay
                     .publish(event, timeoutMs)
-                    .then(() => {
+                    .then((e) => {
                         publishedToRelays.add(relay);
                         resolve();
                     })
@@ -108,7 +135,7 @@ export class NDKRelaySet {
         return publishedToRelays;
     }
 
-    public size(): number {
+    get size(): number {
         return this.relays.size;
     }
 }

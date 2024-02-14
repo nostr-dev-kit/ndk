@@ -150,7 +150,7 @@ export class NDKRelayConnectivity {
             // }, 60000);
         }
 
-        this.ndkRelay.emit("notice", this, notice);
+        this.ndkRelay.emit("notice", this.relay, notice);
     }
 
     /**

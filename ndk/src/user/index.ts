@@ -1,17 +1,13 @@
 import { nip19 } from "nostr-tools";
 
 import { NDKEvent, type NDKTag, type NostrEvent } from "../events/index.js";
-import { NDKRelayList } from "../events/kinds/NDKRelayList.js";
 import { NDKKind } from "../events/kinds/index.js";
 import type { NDK } from "../ndk/index.js";
-import type { NDKRelay } from "../relay/index.js";
-import { NDKRelaySet } from "../relay/sets/index.js";
 import { NDKSubscriptionCacheUsage, type NDKSubscriptionOptions } from "../subscription/index.js";
 import { follows } from "./follows.js";
 import { type NDKUserProfile, profileFromEvent, serializeProfile } from "./profile.js";
 import type { NDKSigner } from "../signers/index.js";
 import Zap from "../zap/index.js";
-import { pin } from "./pin.js";
 import { getNip05For } from "./nip05.js";
 
 export type Hexpubkey = string;
@@ -248,80 +244,6 @@ export class NDKUser {
      * Returns a set of users that this user follows.
      */
     public follows = follows.bind(this);
-
-    /**
-     * Pins a user or an event
-     */
-    public pin = pin.bind(this);
-
-    /**
-     * Returns a set of relay list events for a user.
-     * @returns {Promise<Set<NDKEvent>>} A set of NDKEvents returned for the given user.
-     */
-    public async relayList(): Promise<NDKRelayList | undefined> {
-        if (!this.ndk) throw new Error("NDK not set");
-
-        const pool = this.ndk.outboxPool || this.ndk.pool;
-        const set = new Set<NDKRelay>();
-
-        for (const relay of pool.relays.values()) set.add(relay);
-
-        const relaySet = new NDKRelaySet(set, this.ndk);
-        const event = await this.ndk.fetchEvent(
-            {
-                kinds: [10002],
-                authors: [this.pubkey],
-            },
-            {
-                closeOnEose: true,
-                pool,
-                groupable: true,
-                subId: `relay-list-${this.pubkey.slice(0, 6)}`,
-            },
-            relaySet
-        );
-
-        if (event) return NDKRelayList.from(event);
-
-        return await this.relayListFromKind3();
-    }
-
-    private async relayListFromKind3(): Promise<NDKRelayList | undefined> {
-        if (!this.ndk) throw new Error("NDK not set");
-
-        const followList = await this.ndk.fetchEvent({
-            kinds: [3],
-            authors: [this.pubkey],
-        });
-        if (followList) {
-            try {
-                const content = JSON.parse(followList.content);
-                const relayList = new NDKRelayList(this.ndk);
-                const readRelays = new Set<string>();
-                const writeRelays = new Set<string>();
-
-                for (const [key, config] of Object.entries(content)) {
-                    if (!config) {
-                        readRelays.add(key);
-                        writeRelays.add(key);
-                    } else {
-                        const relayConfig: { read?: boolean; write?: boolean } = config;
-                        if (relayConfig.write) writeRelays.add(key);
-                        if (relayConfig.read) readRelays.add(key);
-                    }
-                }
-
-                relayList.readRelayUrls = Array.from(readRelays);
-                relayList.writeRelayUrls = Array.from(writeRelays);
-
-                return relayList;
-            } catch (e) {
-                // Don't do anything
-            }
-        }
-
-        return undefined;
-    }
 
     /** @deprecated Use referenceTags instead. */
     /**

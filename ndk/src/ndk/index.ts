@@ -19,6 +19,7 @@ import { NDKKind } from "../events/kinds/index.js";
 import NDKList from "../events/kinds/lists/index.js";
 import { NDKAuthPolicy } from "../relay/auth-policies.js";
 import { Nip96 } from "../media/index.js";
+import { NDKRelayList } from "../events/kinds/NDKRelayList.js";
 
 export interface NDKConstructorParams {
     /**
@@ -269,7 +270,7 @@ export class NDK extends EventEmitter {
 
         if (user && differentUser) {
             const connectToUserRelays = async (user: NDKUser) => {
-                const relayList = await user.relayList();
+                const relayList = await NDKRelayList.forUser(user, this);
 
                 if (!relayList) {
                     this.debug("No relay list found for user", { npub: user.npub });

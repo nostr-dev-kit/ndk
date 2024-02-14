@@ -51,6 +51,11 @@ export class NDKEvent extends EventEmitter {
      */
     public relay: NDKRelay | undefined;
 
+    /**
+     * The relays that this event was received from and/or successfully published to.
+     */
+    public onRelays: NDKRelay[] = [];
+
     constructor(ndk?: NDK, event?: NostrEvent) {
         super();
         this.ndk = ndk;
@@ -128,7 +133,7 @@ export class NDKEvent extends EventEmitter {
 
         if (isNDKUser) {
             const tag = ["p", (userOrTagOrEvent as NDKUser).pubkey];
-            if (marker) tag.push(marker);
+            if (marker) tag.push(...["", marker]);
             tags.push(tag);
         } else if (userOrTagOrEvent instanceof NDKEvent) {
             const event = userOrTagOrEvent as NDKEvent;
@@ -188,6 +193,7 @@ export class NDKEvent extends EventEmitter {
     /**
      * Encodes a bech32 id.
      *
+     * @param relays {string[]} The relays to encode in the id
      * @returns {string} - Encoded naddr, note or nevent.
      */
     public encode = encode.bind(this);

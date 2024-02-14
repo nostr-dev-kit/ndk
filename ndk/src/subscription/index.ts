@@ -348,7 +348,10 @@ export class NDKSubscription extends EventEmitter {
      * @param fromCache Whether the event was received from the cache
      */
     public eventReceived(event: NDKEvent, relay: NDKRelay | undefined, fromCache = false) {
-        if (relay) event.relay = relay;
+        if (relay) {
+            event.relay ??= relay;
+            event.onRelays.push(relay);
+        }
         if (!relay) relay = event.relay;
 
         if (!this.skipValidation) {

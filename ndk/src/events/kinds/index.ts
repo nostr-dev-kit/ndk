@@ -47,12 +47,15 @@ export enum NDKKind {
     DVMJobFeedback = 7000,
 
     // Recurring payments
-    SubscriptionStart = 7001,
-    SubscriptionStop = 7002,
+    Subscribe = 7001,
+    Unsubscribe = 7002,
+    SubscriptionReceipt = 7003,
 
     // NIP-29
     GroupAdminAddUser = 9000,
     GroupAdminRemoveUser = 9001,
+    GroupAdminEditMetadata = 9002,
+    GroupAdminEditStatus = 9006,
 
     // Lists and Sets
     MuteList = 10000,
@@ -66,7 +69,6 @@ export enum NDKKind {
     InterestList = 10015,
     EmojiList = 10030,
     TierList = 17000,
-    SuperFollowList = 17001,
 
     FollowSet = 30000,
     CategorizedPeopleList = NDKKind.FollowSet, // Deprecated but left for backwards compatibility
@@ -106,6 +108,7 @@ export enum NDKKind {
     Classified = 30402,
     HorizontalVideo = 34235,
 
+    GroupMetadata = 39000, // NIP-29
     GroupMembers = 39002, // NIP-29
 
     // NIP-89: App Metadata

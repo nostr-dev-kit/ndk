@@ -13,6 +13,9 @@ export * from "./events/kinds/lists/index.js";
 export * from "./events/kinds/repost.js";
 export * from "./events/kinds/nip89/NDKAppHandler.js";
 export * from "./events/kinds/subscriptions/tier.js";
+export * from "./events/kinds/subscriptions/amount.js";
+export * from "./events/kinds/subscriptions/subscription-start.js";
+export * from "./events/kinds/subscriptions/receipt.js";
 export * from "./events/kinds/dvm/index.js";
 
 export * from "./events/kinds/simple-group/index.js";

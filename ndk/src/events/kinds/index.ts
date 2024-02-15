@@ -95,7 +95,6 @@ export enum NDKKind {
     Highlight = 9802,
     ClientAuth = 22242,
     NostrConnect = 24133,
-    NostrConnectAdmin = 24134,
 
     HttpAuth = 27235,
 

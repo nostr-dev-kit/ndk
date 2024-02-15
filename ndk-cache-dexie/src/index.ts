@@ -1,4 +1,3 @@
-import { NDKEvent, NDKRelay, profileFromEvent } from "@nostr-dev-kit/ndk";
 import type {
     Hexpubkey,
     NDKCacheAdapter,
@@ -6,8 +5,9 @@ import type {
     NDKSubscription,
     NDKUserProfile,
 } from "@nostr-dev-kit/ndk";
+import { NDKEvent, NDKRelay, profileFromEvent } from "@nostr-dev-kit/ndk";
 import createDebug from "debug";
-import { matchFilter } from "nostr-tools";
+import { Event, matchFilters } from "nostr-tools";
 import { LRUCache } from "typescript-lru-cache";
 
 import { createDatabase, db } from "./db";
@@ -71,11 +71,25 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         });
     }
 
-
     public async query(subscription: NDKSubscription): Promise<void> {
-        Promise.allSettled(
-            subscription.filters.map((filter) => this.processFilter(filter, subscription))
-        );
+        const events = await db.events.toArray();
+
+        for (const event of events) {
+            let rawEvent;
+
+            try {
+                rawEvent = JSON.parse(event.event) as Event;
+            } catch (e) {
+                console.log("failed to parse event", e);
+                continue;
+            }
+
+            if (matchFilters(subscription.filters, rawEvent) == false) continue;
+
+            const ndkEvent = new NDKEvent(undefined, rawEvent);
+            const relay = event.relay ? new NDKRelay(event.relay) : undefined;
+            subscription.eventReceived(ndkEvent, relay, true);
+        }
     }
 
     public async fetchProfile(pubkey: Hexpubkey) {
@@ -100,25 +114,6 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         this.profiles.set(pubkey, profile);
 
         this.dirtyProfiles.add(pubkey);
-    }
-
-    private async processFilter(filter: NDKFilter, subscription: NDKSubscription): Promise<void> {
-        const _filter = { ...filter };
-        delete _filter.limit;
-        const filterKeys = Object.keys(_filter || {}).sort();
-
-        try {
-            await Promise.allSettled([
-                this.byKindAndAuthor(filterKeys, filter, subscription),
-                this.byAuthors(filterKeys, filter, subscription),
-                this.byKinds(filterKeys, filter, subscription),
-                this.byIdsQuery(filterKeys, filter, subscription),
-                this.byNip33Query(filterKeys, filter, subscription),
-                this.byTagsAndOptionallyKinds(filterKeys, filter, subscription)
-            ]);
-        } catch (error) {
-            console.error(error);
-        }
     }
 
     public async setEvent(event: NDKEvent, filters: NDKFilter[], relay?: NDKRelay): Promise<void> {
@@ -172,261 +167,6 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
                 }
             }
         }
-    }
-
-    /**
-     * Searches by authors
-     */
-    private async byAuthors(
-        filterKeys: string[],
-        filter: NDKFilter,
-        subscription: NDKSubscription
-    ): Promise<boolean> {
-        const f = ["authors"];
-        const hasAllKeys = filterKeys.length === f.length && f.every((k) => filterKeys.includes(k));
-
-        let foundEvents = false;
-
-        if (hasAllKeys && filter.authors) {
-            for (const pubkey of filter.authors) {
-                const events = await db.events.where({ pubkey }).toArray();
-                for (const event of events) {
-                    let rawEvent;
-                    try {
-                        rawEvent = JSON.parse(event.event);
-                    } catch (e) {
-                        console.log("failed to parse event", e);
-                        continue;
-                    }
-
-                    const ndkEvent = new NDKEvent(undefined, rawEvent);
-                    const relay = event.relay ? new NDKRelay(event.relay) : undefined;
-                    subscription.eventReceived(ndkEvent, relay, true);
-                    foundEvents = true;
-                }
-            }
-        }
-        return foundEvents;
-    }
-
-    /**
-     * Searches by kinds
-     */
-    private async byKinds(
-        filterKeys: string[],
-        filter: NDKFilter,
-        subscription: NDKSubscription
-    ): Promise<boolean> {
-        const f = ["kinds"];
-        const hasAllKeys = filterKeys.length === f.length && f.every((k) => filterKeys.includes(k));
-
-        let foundEvents = false;
-
-        if (hasAllKeys && filter.kinds) {
-            for (const kind of filter.kinds) {
-                const events = await db.events.where({ kind }).toArray();
-                for (const event of events) {
-                    let rawEvent;
-                    try {
-                        rawEvent = JSON.parse(event.event);
-                    } catch (e) {
-                        console.log("failed to parse event", e);
-                        continue;
-                    }
-
-                    const ndkEvent = new NDKEvent(undefined, rawEvent);
-                    const relay = event.relay ? new NDKRelay(event.relay) : undefined;
-                    subscription.eventReceived(ndkEvent, relay, true);
-                    foundEvents = true;
-                }
-            }
-        }
-        return foundEvents;
-    }
-
-    /**
-     * Searches by ids
-     */
-    private async byIdsQuery(
-        filterKeys: string[],
-        filter: NDKFilter,
-        subscription: NDKSubscription
-    ): Promise<boolean> {
-        const f = ["ids"];
-        const hasAllKeys = filterKeys.length === f.length && f.every((k) => filterKeys.includes(k));
-
-        if (hasAllKeys && filter.ids) {
-            for (const id of filter.ids) {
-                const event = await db.events.where({ id }).first();
-                if (!event) continue;
-
-                let rawEvent;
-                try {
-                    rawEvent = JSON.parse(event.event);
-                } catch (e) {
-                    console.log("failed to parse event", e);
-                    continue;
-                }
-
-                const ndkEvent = new NDKEvent(undefined, rawEvent);
-                const relay = event.relay ? new NDKRelay(event.relay) : undefined;
-                subscription.eventReceived(ndkEvent, relay, true);
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Searches by NIP-33
-     */
-    private async byNip33Query(
-        filterKeys: string[],
-        filter: NDKFilter,
-        subscription: NDKSubscription
-    ): Promise<boolean> {
-        const f = ["#d", "authors", "kinds"];
-        const hasAllKeys = filterKeys.length === f.length && f.every((k) => filterKeys.includes(k));
-
-        if (hasAllKeys && filter.kinds && filter.authors) {
-            for (const kind of filter.kinds) {
-                const replaceableKind = kind >= 30000 && kind < 40000;
-
-                if (!replaceableKind) continue;
-
-                for (const author of filter.authors) {
-                    for (const dTag of filter["#d"]!) {
-                        const replaceableId = `${kind}:${author}:${dTag}`;
-                        const event = await db.events.where({ id: replaceableId }).first();
-                        if (!event) continue;
-
-                        let rawEvent;
-                        try {
-                            rawEvent = JSON.parse(event.event);
-                        } catch (e) {
-                            console.log("failed to parse event", e);
-                            continue;
-                        }
-
-                        const ndkEvent = new NDKEvent(undefined, rawEvent);
-                        const relay = event.relay ? new NDKRelay(event.relay) : undefined;
-                        subscription.eventReceived(ndkEvent, relay, true);
-                    }
-                }
-            }
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Searches by kind & author
-     */
-    private async byKindAndAuthor(
-        filterKeys: string[],
-        filter: NDKFilter,
-        subscription: NDKSubscription
-    ): Promise<boolean> {
-        const f = ["authors", "kinds"];
-        const hasAllKeys = filterKeys.length === f.length && f.every((k) => filterKeys.includes(k));
-        let foundEvents = false;
-
-        if (!hasAllKeys) return false;
-
-        if (filter.kinds && filter.authors) {
-            for (const kind of filter.kinds) {
-                for (const author of filter.authors) {
-                    const events = await db.events.where({ kind, pubkey: author }).toArray();
-
-                    for (const event of events) {
-                        let rawEvent;
-                        try {
-                            rawEvent = JSON.parse(event.event);
-                        } catch (e) {
-                            console.log("failed to parse event", e);
-                            continue;
-                        }
-
-                        const ndkEvent = new NDKEvent(undefined, rawEvent);
-                        const relay = event.relay ? new NDKRelay(event.relay) : undefined;
-                        subscription.eventReceived(ndkEvent, relay, true);
-                        foundEvents = true;
-                    }
-                }
-            }
-        }
-        return foundEvents;
-    }
-
-    /**
-     * Searches by tags and optionally filters by tags
-     */
-    private async byTagsAndOptionallyKinds(
-        filterKeys: string[],
-        filter: NDKFilter,
-        subscription: NDKSubscription
-    ): Promise<boolean> {
-        for (const filterKey of filterKeys) {
-            const isKind = filterKey === "kinds";
-            const isTag = filterKey.startsWith("#") && filterKey.length === 2;
-
-            if (!isKind && !isTag) return false;
-        }
-
-        const events = await this.filterByTag(filterKeys, filter);
-        const kinds = filter.kinds as number[];
-
-        for (const event of events) {
-            if (!kinds?.includes(event.kind!)) continue;
-
-            subscription.eventReceived(event, undefined, true);
-        }
-
-        return false;
-    }
-
-    private async filterByTag(filterKeys: string[], filter: NDKFilter): Promise<NDKEvent[]> {
-        const retEvents: NDKEvent[] = [];
-
-        for (const filterKey of filterKeys) {
-            if (filterKey.length !== 2) continue;
-            const tag = filterKey.slice(1);
-            // const values = filter[filterKey] as string[];
-            const values: string[] = [];
-            for (const [key, value] of Object.entries(filter)) {
-                if (key === filterKey) values.push(value as string);
-            }
-
-            for (const value of values) {
-                const eventTags = await db.eventTags.where({ tagValue: tag + value }).toArray();
-                if (!eventTags.length) continue;
-
-                const eventIds = eventTags.map((t) => t.eventId);
-
-                const events = await db.events.where("id").anyOf(eventIds).toArray();
-                for (const event of events) {
-                    let rawEvent;
-                    try {
-                        rawEvent = JSON.parse(event.event);
-
-                        // Make sure all passed filters match the event
-                        if (!matchFilter(filter, rawEvent)) continue;
-                    } catch (e) {
-                        console.log("failed to parse event", e);
-                        continue;
-                    }
-
-                    const ndkEvent = new NDKEvent(undefined, rawEvent);
-                    const relay = event.relay ? new NDKRelay(event.relay) : undefined;
-                    ndkEvent.relay = relay;
-                    retEvents.push(ndkEvent);
-                }
-            }
-        }
-
-        return retEvents;
     }
 
     private async dumpProfiles(): Promise<void> {

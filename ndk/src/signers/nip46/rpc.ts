@@ -121,10 +121,14 @@ export class NDKNostrRpc extends EventEmitter {
         const remoteUser = this.ndk.getUser({ hexpubkey: remotePubkey });
         const request = { id, method, params };
         const promise = new Promise<NDKRpcResponse>((resolve) => {
+            let gotAuth = false
             const responseHandler = (response: NDKRpcResponse) => {
                 if (response.result === "auth_url") {
                     this.once(`response-${id}`, responseHandler);
-                    this.emit("authUrl", response.error);
+                    if (!gotAuth) {
+                        gotAuth = true
+                        this.emit("authUrl", response.error);
+                    }
                 } else if (cb) {
                     cb(response);
                 }

@@ -85,6 +85,9 @@
     "svelte-preprocess": "^5.0.4",
     "svelte-time": "^0.8.0"
   },
+  "peerDependencies": {
+    "svelte": "^4.2.0"
+  },
   "publishConfig": {
     "access": "public"
   }

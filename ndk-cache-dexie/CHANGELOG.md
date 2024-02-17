@@ -1,5 +1,17 @@
 # @nostr-dev-kit/ndk-cache-dexie
 
+## 2.2.6
+
+### Patch Changes
+
+-   15bcc10: fix profile LRU Cache
+-   Updated dependencies [111c1ea]
+-   Updated dependencies [5c0ae51]
+-   Updated dependencies [6f5ea49]
+-   Updated dependencies [3738d39]
+-   Updated dependencies [d22239a]
+    -   @nostr-dev-kit/ndk@2.4.1
+
 ## 2.2.5
 
 ### Patch Changes

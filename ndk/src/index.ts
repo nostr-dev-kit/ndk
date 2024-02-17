@@ -17,6 +17,7 @@ export * from "./events/kinds/subscriptions/amount.js";
 export * from "./events/kinds/subscriptions/subscription-start.js";
 export * from "./events/kinds/subscriptions/receipt.js";
 export * from "./events/kinds/dvm/index.js";
+export * from "./nwc/index.js";
 
 export * from "./events/kinds/simple-group/index.js";
 

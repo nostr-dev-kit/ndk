@@ -68,6 +68,9 @@ export enum NDKKind {
     SearchRelayList = 10007,
     InterestList = 10015,
     EmojiList = 10030,
+
+    NostrWaletConnectInfo = 13194,
+
     TierList = 17000,
 
     FollowSet = 30000,
@@ -94,6 +97,11 @@ export enum NDKKind {
     Zap = 9735,
     Highlight = 9802,
     ClientAuth = 22242,
+
+    NostrWalletConnectReq = 23194,
+    NostrWalletConnectRes = 23195,
+
+
     NostrConnect = 24133,
 
     HttpAuth = 27235,

@@ -56,7 +56,7 @@ export interface NDKRelayConnectionStats {
  * @emits NDKRelay#event
  * @emits NDKRelay#published when an event is published to the relay
  * @emits NDKRelay#publish:failed when an event fails to publish to the relay
- * @emits NDKRelay#eose
+ * @emits NDKRelay#eose when the relay has reached the end of stored events
  * @emits NDKRelay#auth when the relay requires authentication
  */
 export class NDKRelay extends EventEmitter {
@@ -66,7 +66,6 @@ export class NDKRelay extends EventEmitter {
     private subs: NDKRelaySubscriptions;
     private publisher: NDKRelayPublisher;
     public authPolicy?: NDKAuthPolicy;
-    public authRequired = false;
 
     /**
      * Whether this relay is trusted.

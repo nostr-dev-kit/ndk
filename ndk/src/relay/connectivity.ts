@@ -25,33 +25,13 @@ export class NDKRelayConnectivity {
         this.relay.on("notice", (notice: string) => this.handleNotice(notice));
     }
 
-    async initiateAuth(filter = { limit: 1 }): Promise<void> {
-        this.debug("Initiating authentication");
-        const authSub = this.relay.sub([filter], { id: "auth-test" });
-        authSub.on("eose", () => {
-            // we didn't need to authenticate
-            authSub.unsub();
-            this._status = NDKRelayStatus.CONNECTED;
-            this.ndkRelay.emit("ready");
-            this.debug("Authentication not required");
-            authSub.unsub();
-        });
-        this.debug("Authentication request started");
-    }
-
     public async connect(): Promise<void> {
         const connectHandler = () => {
             this.updateConnectionStats.connected();
 
-            if (!this.ndkRelay.authRequired) {
-                this._status = NDKRelayStatus.CONNECTED;
-                this.ndkRelay.emit("connect");
-                this.ndkRelay.emit("ready");
-            } else {
-                this._status = NDKRelayStatus.AUTH_REQUIRED;
-                this.ndkRelay.emit("connect");
-                this.initiateAuth();
-            }
+            this._status = NDKRelayStatus.CONNECTED;
+            this.ndkRelay.emit("connect");
+            this.ndkRelay.emit("ready");
         };
 
         const disconnectHandler = () => {

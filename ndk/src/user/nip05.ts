@@ -64,7 +64,7 @@ function parseNIP05Result(json: any): NIP05Result {
 
     if (json.nip46) {
         result.nip46 = {};
-        for (const [pubkey, nip46] of Object.entries(json.relays)) {
+        for (const [pubkey, nip46] of Object.entries(json.nip46)) {
             if (typeof pubkey === "string" && Array.isArray(nip46)) {
                 result.nip46[pubkey] = nip46.filter((relay: unknown) => typeof relay === "string");
             }

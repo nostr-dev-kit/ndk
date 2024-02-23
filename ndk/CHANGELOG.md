@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk
 
+## 2.5.0
+
+### Minor Changes
+
+-   e08fc74: Nostr Wallet Connect support
+
 ## 2.4.1
 
 ### Patch Changes

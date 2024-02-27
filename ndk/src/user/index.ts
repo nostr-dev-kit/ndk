@@ -322,6 +322,44 @@ export class NDKUser {
     }
 
     /**
+     * Remove a follow from this user's contact list
+     *
+     * @param user {NDKUser} The user to unfollow
+     * @param currentFollowList {Set<NDKUser>} The current follow list
+     * @param kind {NDKKind} The kind to use for this contact list (defaults to `3`)
+     * @returns {Promise<boolean>} True if the follow was removed, false if the follow did not exist
+     */
+    public async unfollow(
+        user: NDKUser,
+        currentFollowList?: Set<NDKUser>,
+        kind = NDKKind.Contacts
+    ): Promise<boolean> {
+        if (!this.ndk) throw new Error("No NDK instance found");
+
+        this.ndk.assertSigner();
+
+        if (!currentFollowList) {
+            currentFollowList = await this.follows(undefined, undefined, kind);
+        }
+
+        if (!currentFollowList.has(user)) {
+            return false;
+        }
+
+        currentFollowList.delete(user);
+
+        const event = new NDKEvent(this.ndk, { kind } as NostrEvent);
+
+        // This is a horrible hack and I need to fix it
+        for (const follow of currentFollowList) {
+            event.tag(follow);
+        }
+
+        await event.publish();
+        return true;
+    }
+
+    /**
      * Validate a user's NIP-05 identifier (usually fetched from their kind:0 profile data)
      *
      * @param nip05Id The NIP-05 string to validate

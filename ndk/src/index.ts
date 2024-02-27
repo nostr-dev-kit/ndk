@@ -6,6 +6,7 @@ export * from "./events/index.js";
 // Kinds
 export * from "./events/kinds/index.js";
 export * from "./events/kinds/article.js";
+export * from "./events/kinds/classified.js";
 export * from "./events/kinds/video.js";
 export * from "./events/kinds/highlight.js";
 export * from "./events/kinds/NDKRelayList.js";

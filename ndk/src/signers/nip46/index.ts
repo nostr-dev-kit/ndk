@@ -154,7 +154,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
             // introducing a small delay here to give a clear priority to the subscription
             // to happen first
             setTimeout(() => {
-                const connectParams = [localUser.pubkey];
+                const connectParams = [this.remotePubkey!];
 
                 if (this.token) {
                     connectParams.push(this.token);

@@ -1,5 +1,12 @@
 # @nostr-dev-kit/ndk
 
+## 2.5.1
+
+### Patch Changes
+
+-   Use nicer reconnection timer
+-   Fixes fetching of nip46 relays in nip05 implementation (#186)
+
 ## 2.5.0
 
 ### Minor Changes

@@ -149,6 +149,7 @@ export class NDKRelayConnectivity {
 
         setTimeout(() => {
             this._status = NDKRelayStatus.RECONNECTING;
+            this.debug(`Reconnection attempt #${attempt}`)
             this.connect()
                 .then(() => {
                     this.debug("Reconnected");
@@ -156,12 +157,12 @@ export class NDKRelayConnectivity {
                 .catch((err) => {
                     this.debug("Reconnect failed", err);
 
-                    if (attempt < 5) {
+                    if (attempt < 10) {
                         setTimeout(() => {
                             this.handleReconnection(attempt + 1);
-                        }, 60000);
+                        }, 1000 * (attempt+1) ^ 2);
                     } else {
-                        this.debug("Reconnect failed after 5 attempts");
+                        this.debug("Reconnect failed after 10 attempts");
                     }
                 });
         }, reconnectDelay);

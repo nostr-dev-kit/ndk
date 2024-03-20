@@ -1,0 +1,555 @@
+import { NDKEvent } from "../../index.js";
+
+import type { NDK } from "../../../ndk/index.js";
+import type { NDKFilter } from "../../../subscription/index.js";
+import type { NDKTag, NostrEvent } from "../../index.js";
+
+export type Coords = DD | Geohash
+export type DD = { lat: number; lon: number }
+export type Geohash = string;
+
+type EventGeoCodedObject = Record<string, string | string[] | number | boolean>
+type EventGeoCodedCallback = (events: Set<EventGeoCoded>) => Promise<Set<EventGeoCoded>>;
+
+/**
+ * EventGeoCoded
+ * 
+ * This class represents a Nostr event with geospatial information.
+ * 
+ * @author sandwich.farm
+ * @extends NDKEvent
+ */
+export class EventGeoCoded extends NDKEvent {
+
+    private static readonly EARTH_RADIUS: number = 6371; // km
+    private static readonly GEOHASH_PRECISION: number = 12;
+    private _dd: DD | undefined;
+
+    constructor( ndk: NDK | undefined, rawEvent?: NostrEvent ) {
+        super(ndk, rawEvent);
+        if(typeof this.geohash === 'string'){
+            this.dd = this.geohash;
+        } 
+    }
+
+    static from(event: NDKEvent): EventGeoCoded {
+        return new EventGeoCoded(event.ndk, event.rawEvent());
+    }
+
+    static generateFilterableGeohash(fullGeohash: Geohash): Geohash[] {
+        const geohashes: Set<Geohash> = new Set();
+        const deref: Geohash = String(fullGeohash); 
+        for (let i = String(fullGeohash).length; i > 0; i--) {
+            const n = deref.substring(0, i);
+            geohashes.add(n);
+        }
+        return Array.from(geohashes);
+    }
+
+    static sortByLengthDesc(a: string, b: string): number {
+        return b.length - a.length;
+    }
+
+    protected get indexedTags(): NDKTag[] {
+        return this.tags.filter(tag => tag[0].length === 1);
+    }
+
+    // public rawEvent(): NostrEvent {
+    //     const rawEvent = super.rawEvent();
+    //     rawEvent.tags = rawEvent.tags.filter( (tag: NDKTag) => {
+    //         return ((tag[0] === 'g' && tag[2] !== 'lat') || (tag[0] === 'G' && tag[1] !== 'lat'))
+    //                &&
+    //                ((tag[0] === 'g' && tag[2] !== 'lon') || (tag[0] === 'G' && tag[1] !== 'lon'));
+    //     });
+    //     return rawEvent;
+    // }
+
+    /**
+     * Sets the geographical coordinates or geohash for the current instance, updating latitude, longitude, and geohash values accordingly.
+     * If a geohash string is provided, it decodes it into latitude and longitude. If coordinates are provided, it sets those directly and
+     * generates a corresponding geohash.
+     * 
+     * @param coords - The coordinates or geohash string to set. Can be undefined to perform no operation.
+     */
+    set dd(coords: Coords | undefined) {
+        if (!coords) return;
+        if (typeof coords === 'string') {
+            this.geohash = coords;
+            const { lat, lon } = EventGeoCoded.decodeGeohash(coords);
+            this.lat = lat;
+            this.lon = lon;
+        } else if ('lat' in coords && 'lon' in coords) {
+            this.lat = coords.lat;
+            this.lon = coords.lon;
+            this.geohash = EventGeoCoded.encodeGeohash(coords) as Geohash; // This updates geohash and geohashes based on lat & lon
+        }
+    }
+
+    /**
+     * Gets the current geographical coordinates (latitude and longitude) prioritizing direct coordinates if available.
+     * If coordinates are not directly set but a geohash is available, it returns the decoded coordinates from the geohash.
+     * 
+     * @returns The current geographical coordinates as a DD object or undefined if neither coordinates nor geohash are set.
+     */
+    get dd(): Coords | undefined {
+        if (typeof this.lat !== 'undefined' && typeof this.lon !== 'undefined') {
+            return { lat: this.lat, lon: this.lon } as DD;
+        }
+        if(this.geohash) {
+            return EventGeoCoded.parseGeohashDD(this.geohash as Geohash);
+        }
+        return undefined;
+    }    
+
+    /**
+     * Sets the primary geohash for the current instance and updates the list of geohashes with varying precision based on this value.
+     * This setter generates filterable geohashes from the provided value, sorts them by descending precision, and updates related class properties.
+     * 
+     * @param value - The geohash to set as the primary geohash.
+     */
+    set geohash(value: Geohash) {
+        const geohashes = 
+            EventGeoCoded
+                .generateFilterableGeohash(String(value))
+                .sort( EventGeoCoded.sortByLengthDesc );
+        this._updateGeohashesAndTags(geohashes);
+    }
+
+    /**
+     * Sets the list of geohashes for the current instance, ensuring no duplicates and updating related class properties accordingly.
+     * This setter accepts an array of geohashes, deduplicates them, and updates the instance's state.
+     * 
+     * @param values - An array of geohashes to set, potentially containing duplicates.
+     */
+    set geohashes(values: Geohash[]) {
+        this._removeGeoHashes();
+        this._updateGeohashesAndTags(Array.from(new Set<string>(values)));
+    }
+
+    /**
+     * Gets the current list of geohashes associated with the instance, sorted by descending precision.
+     * 
+     * @returns An array of geohashes sorted by descending precision.
+     */
+    get geohashes(): Geohash[] {
+        const geohashCondition = (tag: NDKTag) => tag[0] === 'g' && (tag[2] === "gh" || tag[2] === "geohash" || tag.length === 2);
+        return this.tags
+                    .filter(geohashCondition)
+                    .map(tag => tag[1])
+                    .sort( EventGeoCoded.sortByLengthDesc );
+    } 
+
+    /**
+     * Gets the the most precise geohash for the current instance, which is the first geohash in the list of geohashes sorted by descending precision.
+     * 
+     * @returns The primary (most precise) geohash if available, or undefined if no geohashes are set.
+     */
+    get geohash(): Geohash | undefined {
+        return this.geohashes?.[0];
+    }
+
+    get countryCode(): string[] | undefined {
+        return this.tagValuesByMarker("g", "countryCode");
+    }
+
+    set countryCode(values: string[]) {
+        this.removeTagByMarker("g", "countryCode");
+        values.forEach(value => {
+            this._setGeoTag("countryCode", value);
+        });
+    }
+
+    get countryName(): string | undefined {
+        return this.tagValueByMarker("g", "countryName");
+    }
+
+    set countryName(value: string) {
+        this._setGeoTag("countryName", value);
+    }
+
+    get regionCode(): string | undefined {
+        return this.tagValueByMarker("g", "regionCode");
+    }
+
+    set regionCode(value: string) {
+        this._setGeoTag("regionCode", value);
+    }
+    
+    set regionName(value: string) {
+        this._setGeoTag("regionName", value);
+    }
+
+    get regionName(): string | undefined {
+        return this.tagValueByMarker("g", "regionName");
+    }
+
+    set continentName(value: string) {
+        this._setGeoTag("continentName", value);
+    }
+
+    get continentName(): string | undefined {
+        return this.tagValueByMarker("g", "continentName");
+    }
+
+    get geo(): NDKTag[] {
+        return [...this.getMatchingTags("G"), ...this.getMatchingTags("g")];
+    }
+
+    set geo(tags: NDKTag[]) {
+        this.removeTag("G");
+        this.removeTag("g");
+        tags.forEach(tag => this.tags.push(tag));
+    }
+
+    private set lat(value: number) {
+        if(!this._dd) this._dd = { lat: 0, lon: 0 } as DD;
+        this._dd.lat = value;
+        // this._setGeoTag("lat", String(value));
+    }
+
+    private get lat(): number | undefined {
+        return this._dd?.lat;
+        // const lat = this.tagValueByMarker("g", "lat");
+        // if(!lat) return undefined;
+        // return parseFloat(lat);
+    }
+
+    private set lon(value: number) {
+        if(!this._dd) this._dd = { lat: 0, lon: 0 } as DD;
+        this._dd.lon = value;
+        // this._setGeoTag("lon", String(value));
+    }
+
+    private get lon(): number | undefined {
+        return this._dd?.lon;
+        // const lon = this.tagValueByMarker("g", "lon");
+        // if(!lon) return undefined;
+        // return parseFloat(lon);
+    }
+
+    /**
+     * Retrieves all geo tags from the event's tags.
+     * 
+     * @returns the first geotag if available, otherwise undefined.
+     */
+    public geoObject(): EventGeoCodedObject  {
+        const result: EventGeoCodedObject = {};
+        if(this.lat) result.lat = this.lat;
+        if(this.lon) result.lon = this.lon;
+        if(this.geohash) result.geohash = this.geohash;
+        if(this.geohashes) result._geohashes = this.geohashes;
+        if(this.countryCode) result.countryCode = this.countryCode;
+        if(this.countryName) result.countryName = this.countryName;
+        if(this.regionCode) result.regionCode = this.regionCode;
+        return result;
+    }
+
+    /**
+     * Fetches events and sorts by distance with a given geohash
+     * @param {string} geohash The geohash that represents the location to search for relays.
+     * @param {number} maxPrecision The maximum precision of the geohash to search for.
+     * @param {number} minPrecision The minimum precision of the geohash to search for.
+     * @param {number} minResults The minimum number of results to return.
+     * @param {boolean} recurse Recusively search for relays until results >= minResults
+     * @param {NDKFilter} filter An optional, additional filter to ammend to the default filter. 
+     * @returns Promise resolves to an array of `RelayListSet` objects.
+     * @public
+     */
+    public static async fetchNearby(ndk: NDK, geohash: string, filter?: NDKFilter, maxPrecision: number = 9, minPrecision: number = 4, minResults: number = 5, recurse: boolean = false, callbackFilter?: EventGeoCodedCallback): Promise<Set<EventGeoCoded>> {
+        try {
+            let events: Set<EventGeoCoded> = new Set();
+            const _geohash = String(geohash);
+
+            const _maybeRecurse = async (min: number, max: number): Promise<Set<EventGeoCoded>> => {
+                if (min < 1) return events;
+                const geohashes: string[] = [];
+                for (let i = max; i >= min; i--) {
+                    geohashes.push(geohash.slice(0, i));
+                }
+                const _filter: NDKFilter = { ...filter, "#g": geohashes };
+                const fetchedEvents = await ndk.fetchEvents(_filter);
+                fetchedEvents.forEach(event => events.add(event as EventGeoCoded));
+                if (callbackFilter) {
+                    events = await callbackFilter(events);
+                }
+                if (recurse && (events.size < minResults)) {
+                    return _maybeRecurse(min - 1, min);
+                }
+                return events;
+            };
+
+            if (_geohash.length < maxPrecision) {
+                maxPrecision = _geohash.length;
+                minPrecision = Math.min(_geohash.length, minPrecision);
+            }
+            events = await _maybeRecurse(minPrecision, maxPrecision);
+            if (!events.size) return new Set();
+            events = new Set(EventGeoCoded.sortGeospatial(geohash, events, true));
+            return events;
+        } catch (error) {
+            console.error(`fetchNearby: Error: ${error}`);
+            return new Set() as Set<EventGeoCoded>;
+        }
+    }
+
+    /**
+     * Sorts an array of `EventGeoCoded` instances based on their distance from a given latitude and longitude.
+     * 
+     * @param {Coords} coords An object containing the reference latitude (`lat`) and longitude (`lon`).
+     * @param {EventGeoCoded[]} geoCodedEvents An array of `EventGeoCoded` instances to be sorted.
+     * @param {boolean} asc Determines the sort order. `true` for ascending (default), `false` for descending.
+     * @returns A sorted array of `EventGeoCoded` instances.
+     * @throws {Error} If the latitude or longitude is not a finite number.
+     */
+    public static sortGeospatial = (coords: Coords, geoCodedEvents: Set<EventGeoCoded>, asc: boolean = true): Set<EventGeoCoded> => {
+        const events = Array.from(geoCodedEvents);
+        const {lat, lon} = EventGeoCoded.parseGeohashDD(coords);
+        if (isNaN(lat) || isNaN(lon) || !isFinite(lat) || !isFinite(lon)) 
+            throw new Error('(lat) and (lon), respectively, must be numbers and finite.');
+        events.sort((a, b) => {
+            if(!a?.lat || !a?.lon || !b?.lat || !b?.lon) return 0;
+            const distanceA = EventGeoCoded.distance({lat, lon} as DD, {lat: a.lat, lon: a.lon} as DD);
+            const distanceB = EventGeoCoded.distance({lat, lon} as DD, {lat: b.lat, lon: b.lon} as DD);
+            return asc ? distanceA - distanceB : distanceB - distanceA;
+        });
+        return new Set(events) as Set<EventGeoCoded>;
+    };
+
+    /**
+     * Encodes latitude and longitude into a geohash string.
+     * 
+     * @param {number} latitude The latitude to encode.
+     * @param {number} longitude The longitude to encode.
+     * @param {number} precision The desired precision of the geohash (length of the geohash string).
+     * @returns {string} The encoded geohash string.
+     */
+    public static encodeGeohash(coords: Coords, precision: number = this.GEOHASH_PRECISION): string {
+        const {lat: latitude, lon: longitude} = EventGeoCoded.parseGeohashDD(coords);
+        let isEven = true;
+        const latR: number[] = [-90.0, 90.0];
+        const lonR: number[] = [-180.0, 180.0];
+        const base32 = '0123456789bcdefghjkmnpqrstuvwxyz';
+        let bit = 0;
+        let ch = 0;
+        let geohash = '';
+
+        while (geohash.length < precision) {
+            let mid;
+            if (isEven) {
+                mid = (lonR[0] + lonR[1]) / 2;
+                if (longitude > mid) {
+                    ch |= (1 << (4 - bit));
+                    lonR[0] = mid;
+                } else {
+                    lonR[1] = mid;
+                }
+            } else {
+                mid = (latR[0] + latR[1]) / 2;
+                if (latitude > mid) {
+                    ch |= (1 << (4 - bit));
+                    latR[0] = mid;
+                } else {
+                    latR[1] = mid;
+                }
+            }
+            isEven = !isEven;
+
+            if (bit < 4) {
+                bit++;
+            } else {
+                geohash += base32.charAt(ch);
+                bit = 0;
+                ch = 0;
+            }
+        }
+
+        return geohash;
+    }
+
+
+    /**
+     * Decodes a geohash string into its latitude and longitude representation.
+     * 
+     * @param {string} hashString The geohash string to decode.
+     * @returns An object containing the decoded latitude (`lat`) and longitude (`lon`).
+     */
+    public static decodeGeohash(hashString: string): DD {
+        let isEven = true;
+        const latR: number[] = [-90.0, 90.0];
+        const lonR: number[] = [-180.0, 180.0];
+        const base32 = '0123456789bcdefghjkmnpqrstuvwxyz';
+        for (let i = 0; i < hashString.length; i++) {
+            const char = hashString.charAt(i).toLowerCase();
+            const charIndex = base32.indexOf(char);
+            for (let j = 0; j < 5; j++) {
+                const mask = 1 << (4 - j);
+                if (isEven) {
+                    EventGeoCoded.decodeIntRefine(lonR, charIndex, mask);
+                } else {
+                    EventGeoCoded.decodeIntRefine(latR, charIndex, mask);
+                }
+                isEven = !isEven;
+            }
+        }
+        const lat = (latR[0] + latR[1]) / 2;
+        const lon = (lonR[0] + lonR[1]) / 2;
+        return { lat, lon } as DD;
+    };
+    
+
+    /**
+     * Calculates the great-circle distance between two points on the Earth's surface given their latitudes and longitudes.
+     * This method is a helper for calculating distances using the Haversine formula.
+     * 
+     * @param {Coords} coords1 The DD or geohash of the first point
+     * @param {Coords} coords2 The DD or geohash of the second point.
+     * @returns {number} The distance between the two points in kilometers.
+     * @public
+     * @static
+     */
+    public static distance(coords1: Coords, coords2: Coords): number {
+        const {lat: lat1, lon: lon1} = EventGeoCoded.parseGeohashDD(coords1);
+        const {lat: lat2, lon: lon2} = EventGeoCoded.parseGeohashDD(coords2);
+        const radius: number = this.EARTH_RADIUS; //km
+        const latDeg: number = EventGeoCoded.toRadians(lat2 - lat1);
+        const lonDeg: number = EventGeoCoded.toRadians(lon2 - lon1);
+        const angle: number  =
+            Math.sin(latDeg / 2) * Math.sin(latDeg / 2) +
+            Math.cos(EventGeoCoded.toRadians(lat1)) * 
+            Math.cos(EventGeoCoded.toRadians(lat2)) * 
+            Math.sin(lonDeg / 2) * 
+            Math.sin(lonDeg / 2);
+        return radius * 2 * Math.atan2(Math.sqrt(angle), Math.sqrt(1 - angle));
+    }
+
+    /**
+     * Parses a Coords object, potentially a geohash, into a DD object
+     * 
+     * @param {Coords} coords 
+     * @returns A DD object
+     */
+    public static parseGeohashDD = (coords: Coords): DD => {
+        return (coords as DD)?.lat && (coords as DD)?.lon 
+            ? coords as DD 
+            : EventGeoCoded.decodeGeohash(coords as Geohash);
+    };
+
+    /**
+     * Converts an angle from degrees to radians.
+     * 
+     * @param {number} degrees The angle in degrees.
+     * @returns {number} The angle in radians.
+     * @public
+     * @static
+     */
+    public static toRadians(degrees: number): number {
+        return degrees*(Math.PI/180);
+    }
+
+        /**
+     * Refines the search interval for a geohash decoding process based on a character from the geohash.
+     * This method is part of the geohash decoding process, refining the latitude or longitude range.
+     * 
+     * @param {number[]} range The current range (latitude or longitude) being refined.
+     * @param {number} charIndex The index of the character in the base32 string.
+     * @param {number} bitMask The bitmask to apply for refining the range.
+     */
+    public static decodeIntRefine(range: number[], charIndex: number, bitMask: number): void {
+        const mid = (range[0] + range[1]) / 2;
+        if ((charIndex & bitMask) > 0) {
+            range[0] = mid;
+        } else {
+            range[1] = mid;
+        }
+    }
+    
+    /**
+     * Removes tags by their value (the value at position 1 in the tag array).
+     * 
+     * @param value The value to identify which tags to remove.
+     */
+    protected removeTagByKeyValue(value: string, key?: string){
+        this.tags = this.tags.filter(tag => tag[1] !== value);
+    }
+
+    // protected removeTagByKeyValue(value: string, key?: string){
+    //     const condition = (tag: NDKTag) => key? tag[0] === key && tag[1] === value : tag[1] === value;
+    //     this.tags = this.tags.filter(condition);
+    // }
+
+    /**
+     * Removes tags by marker (the value at last position in the tag array).
+     * 
+     * @param key The key to identify which tags to remove.
+     */
+    protected removeTagByMarker(key: string, marker: string) {
+        this.tags = this.tags.filter(tag => !(tag[0] === key && tag[tag.length-1] === marker));
+    }
+
+    /**
+     * Helper method to find the first tag value by its marker.
+     * 
+     * @param key The key to identify which tag value to find.
+     * @return The first value associated with the key, or undefined if not found.
+     */
+    protected tagValueByMarker(key: string, marker: string): string | undefined {
+        const tag = this.tags.find(tag => tag[0] === key && tag[tag.length-1] === marker);
+        return tag ? tag[1] : undefined;
+    }
+
+    /**
+     * Helper method to find the first tag value by its marker.
+     * 
+     * @param key The key to identify which tag value to find.
+     * @return The first value associated with the key, or undefined if not found.
+     */
+    protected tagValuesByMarker(key: string, marker: string): string[] | undefined {
+        const tags = this.tags.filter(tag => tag[0] === key && tag[tag.length-1] === marker).map(tag => tag[1]).flat();
+        return tags?.length ? tags : undefined;
+    }
+
+    /**
+     * Adds a geo tags to the event's tags, updating or removing existing tags as necessary.
+     * This method manages the insertion of geospatial information tags ('g' and 'G') into the event's tag array.
+     * 
+     * @param {string} key The geospatial information key (e.g., "lat", "lon", "countryCode").
+     * @param {string} value The value associated with the key.
+     * @private
+     */
+    private _setGeoTag(key: string, value: string){
+        this.removeTagByKeyValue(key);
+        this.removeTagByMarker("g", key);
+        this.tags.push(["G", key]);
+        this.tags.push(["g", value, key]);
+    }
+
+    /**
+     * Removes geohash tags ('gh') from the event's tags, cleaning up the tag array from geohash (gh) tags.
+     * Additionally, It filters out legacy 'g' tags that represent NIP-23 geohashes, maintaining other geospatial tags intact.
+     * 
+     * @private
+     */
+    private _removeGeoHashes(): void {
+        this.removeTagByKeyValue("gh", "G");
+        this.tags = this.tags.filter( tag => !(tag[0] === "g" && (tag?.[2] === "gh" || tag.length === 2)) ); //`g` tags with a length of 2 are NIP-23 geohashes
+    }
+
+    /**
+     * Updates the geohashes and corresponding tags for this instance.
+     * 
+     * This method is responsible for updating the internal tags to reflect a new set of geohashes. It first
+     * removes any existing geohash-related tags, then adds a generic tag indicating the presence of geohash data
+     * followed by individual tags for each geohash in the provided array.
+     * 
+     * @param geohashes - An array of geohash strings to be updated in the tags.
+     * 
+     * @private
+     */
+    private _updateGeohashesAndTags(geohashes: Geohash[]) {
+        this._removeGeoHashes();
+        this.tags.push(["G", "gh"]);
+        geohashes.forEach(gh => {
+            this.tags.push(["g", gh, "gh"]);
+        });
+    }
+}

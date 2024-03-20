@@ -132,6 +132,11 @@ export enum NDKKind {
     // NIP-89: App Metadata
     AppRecommendation = 31989,
     AppHandler = 31990,
+
+    // NIP-66: Relay Monitors, Metadata and Discovery 
+    RelayMonitor = 10166,
+    RelayMeta = 30066,
+    RelayDiscovery = 30166,
 }
 
 export const NDKListKinds = [

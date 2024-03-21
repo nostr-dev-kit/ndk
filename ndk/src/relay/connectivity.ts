@@ -3,11 +3,13 @@ import { relayInit } from "nostr-tools";
 
 import type { NDKRelay, NDKRelayConnectionStats } from ".";
 import { NDKRelayStatus } from ".";
+import { runWithTimeout } from "../utils/timeout";
 
 export class NDKRelayConnectivity {
     private ndkRelay: NDKRelay;
     private _status: NDKRelayStatus;
     public relay: Relay;
+    private timeoutMs?: number;
     private connectedAt?: number;
     private _connectionStats: NDKRelayConnectionStats = {
         attempts: 0,
@@ -15,6 +17,7 @@ export class NDKRelayConnectivity {
         durations: [],
     };
     private debug: debug.Debugger;
+    private reconnectTimeout: any;
 
     constructor(ndkRelay: NDKRelay) {
         this.ndkRelay = ndkRelay;
@@ -25,7 +28,15 @@ export class NDKRelayConnectivity {
         this.relay.on("notice", (notice: string) => this.handleNotice(notice));
     }
 
-    public async connect(): Promise<void> {
+    public async connect(timeoutMs?: number): Promise<void> {
+        if (this.reconnectTimeout) {
+            clearTimeout(this.reconnectTimeout);
+            this.reconnectTimeout = undefined;
+        }
+
+        timeoutMs ??= this.timeoutMs;
+        if (!this.timeoutMs && timeoutMs) this.timeoutMs = timeoutMs;
+
         const connectHandler = () => {
             this.updateConnectionStats.connected();
 
@@ -57,7 +68,7 @@ export class NDKRelayConnectivity {
                     if (this._status === NDKRelayStatus.AUTHENTICATING) {
                         this.debug("Authentication policy finished");
                         this._status = NDKRelayStatus.CONNECTED;
-                        this.ndkRelay.emit("ready");
+                        this.ndkRelay.emit("authed");
                     }
                 }
             } else {
@@ -67,7 +78,10 @@ export class NDKRelayConnectivity {
 
         try {
             this.updateConnectionStats.attempt();
-            this._status = NDKRelayStatus.CONNECTING;
+            if (this._status === NDKRelayStatus.DISCONNECTED)
+                this._status = NDKRelayStatus.CONNECTING;
+            else
+                this._status = NDKRelayStatus.RECONNECTING;
 
             this.relay.off("connect", connectHandler);
             this.relay.off("disconnect", disconnectHandler);
@@ -75,10 +89,15 @@ export class NDKRelayConnectivity {
             this.relay.on("disconnect", disconnectHandler);
             this.relay.on("auth", authHandler);
 
-            await this.relay.connect();
+            await runWithTimeout(
+                this.relay.connect,
+                timeoutMs,
+                "Timed out while connecting"
+            );
         } catch (e) {
             this.debug("Failed to connect", e);
             this._status = NDKRelayStatus.DISCONNECTED;
+            this.handleReconnection();
             throw e;
         }
     }
@@ -137,6 +156,9 @@ export class NDKRelayConnectivity {
      * Called when the relay is unexpectedly disconnected.
      */
     private handleReconnection(attempt = 0): void {
+        if (this.reconnectTimeout) return;
+        this.debug("Attempting to reconnect", { attempt });
+
         if (this.isFlapping()) {
             this.ndkRelay.emit("flapping", this, this._connectionStats);
             this._status = NDKRelayStatus.FLAPPING;
@@ -145,9 +167,10 @@ export class NDKRelayConnectivity {
 
         const reconnectDelay = this.connectedAt
             ? Math.max(0, 60000 - (Date.now() - this.connectedAt))
-            : 0;
+            : 5000 * (this._connectionStats.attempts+1);
 
-        setTimeout(() => {
+        this.reconnectTimeout = setTimeout(() => {
+            this.reconnectTimeout = undefined;
             this._status = NDKRelayStatus.RECONNECTING;
             this.debug(`Reconnection attempt #${attempt}`)
             this.connect()
@@ -166,6 +189,9 @@ export class NDKRelayConnectivity {
                     }
                 });
         }, reconnectDelay);
+
+        this.debug("Reconnecting in", reconnectDelay);
+        this._connectionStats.nextReconnectAt = Date.now() + reconnectDelay;
     }
 
     /**

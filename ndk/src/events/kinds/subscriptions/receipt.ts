@@ -3,11 +3,19 @@ import { NDKKind } from "..";
 import { NDKEvent, NDKTag, NostrEvent } from "../..";
 import { NDK } from "../../../ndk";
 import { NDKSubscriptionStart } from "./subscription-start";
+import { NDKUser } from "../../../user";
 
 type ValidPeriod = { start: Date; end: Date };
 
 /**
  * A subscription receipt event.
+ *
+ * @example
+ * const creator = new NDKUser;
+ * const subscriber = new NDKUser;
+ * const receipt = new NDKSubscriptionReceipt(ndk, event);
+ * event.recipient = creator;
+ * event.subscriber = subscriber;
  */
 export class NDKSubscriptionReceipt extends NDKEvent {
     private debug: debug.Debugger;
@@ -22,6 +30,40 @@ export class NDKSubscriptionReceipt extends NDKEvent {
         return new NDKSubscriptionReceipt(event.ndk, event.rawEvent());
     }
 
+    /**
+     * This is the person being subscribed to
+     */
+    get recipient(): NDKUser | undefined {
+        const pTag = this.getMatchingTags("p")?.[0];
+        if (!pTag) return undefined;
+
+        const user = new NDKUser({ pubkey: pTag[1] });
+        return user;
+    }
+
+    set recipient(user: NDKUser | undefined) {
+        this.removeTag("p");
+        if (!user) return;
+        this.tags.push(["p", user.pubkey]);
+    }
+
+    /**
+     * This is the person subscribing
+     */
+    get subscriber(): NDKUser | undefined {
+        const PTag = this.getMatchingTags("P")?.[0];
+        if (!PTag) return undefined;
+
+        const user = new NDKUser({ pubkey: PTag[1] });
+        return user;
+    }
+
+    set subscriber(user: NDKUser | undefined) {
+        this.removeTag("P");
+        if (!user) return;
+        this.tags.push(["P", user.pubkey]);
+    }
+
     set subscriptionStart(event: NDKSubscriptionStart) {
         // remove any existing subscription tags
         this.debug(`before setting subscription start: ${this.rawEvent}`);
@@ -30,11 +72,28 @@ export class NDKSubscriptionReceipt extends NDKEvent {
         this.debug(`after setting subscription start: ${this.rawEvent}`);
     }
 
+    get tierName(): string | undefined {
+        const tag = this.getMatchingTags("tier")?.[0];
+        return tag?.[1];
+    }
+
     get isValid(): boolean {
         const period = this.validPeriod;
-        if (!period) return false;
+        if (!period) {
+            return false;
+        }
 
-        if (period.start > period.end) return false;
+
+        if (period.start > period.end) {
+            return false;
+        }
+
+        // it must have exactly one p-tag and one P-tag
+        const pTags = this.getMatchingTags("p");
+        const PTags = this.getMatchingTags("P");
+        if (pTags.length !== 1 || PTags.length !== 1) {
+            return false;
+        }
 
         return true;
     }

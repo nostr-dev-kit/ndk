@@ -16,6 +16,7 @@ import { NDKKind } from "./kinds/index.js";
 import { decrypt, encrypt } from "./nip04.js";
 import { encode } from "./nip19.js";
 import { repost } from "./repost.js";
+import { pow } from "./nip13/nip13";
 
 export type NDKEventId = string;
 export type NDKTag = string[];
@@ -630,6 +631,16 @@ export class NDKEvent extends EventEmitter {
         }
 
         return e;
+    }
+
+    /**
+     * NIP-13 Proof of Work
+     * @param target The target to reach
+     */
+    async pow(target: number): Promise<NDKEvent> {
+        if (!this.ndk) throw new Error("No NDK instance found");
+
+        return pow.call(this, target);
     }
 
     /**

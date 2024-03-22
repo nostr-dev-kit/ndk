@@ -21,7 +21,21 @@ export type NDKPoolStats = {
  * @emit relay:ready - Emitted when a relay in the pool is ready to serve requests.
  * @emit relay:disconnect - Emitted when a relay in the pool disconnects.
  */
-export class NDKPool extends EventEmitter {
+export class NDKPool extends EventEmitter<{
+    notice: (relay: NDKRelay, notice: string) => void;
+    flapping: (relay: NDKRelay) => void;
+    connect: () => void;
+
+    /**
+     * Emitted when a relay in the pool connects.
+     * @param relay - The relay that connected.
+     */
+    "relay:connect": (relay: NDKRelay) => void;
+    "relay:ready": (relay: NDKRelay) => void;
+    "relay:disconnect": (relay: NDKRelay) => void;
+    "relay:auth": (relay: NDKRelay, challenge: string) => void;
+    "relay:authed": (relay: NDKRelay) => void;
+}> {
     // TODO: This should probably be an LRU cache
     public relays = new Map<WebSocket["url"], NDKRelay>();
     public blacklistRelayUrls: Set<WebSocket["url"]>;
@@ -153,7 +167,7 @@ export class NDKPool extends EventEmitter {
 
     private handleRelayConnect(relayUrl: string) {
         this.debug(`Relay ${relayUrl} connected`);
-        this.emit("relay:connect", this.relays.get(relayUrl));
+        this.emit("relay:connect", this.relays.get(relayUrl)!);
 
         if (this.stats().connected === this.relays.size) {
             this.emit("connect");

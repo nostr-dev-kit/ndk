@@ -314,7 +314,7 @@ export class NDKSubscription extends EventEmitter {
      */
     private startWithRelays(): void {
         if (!this.relaySet) {
-            this.relayFilters = calculateRelaySetsFromFilters(this.ndk, this.filters);
+            this.relayFilters = calculateRelaySetsFromFilters(this.ndk, this.filters, this.pool);
         } else {
             this.relayFilters = new Map();
             for (const relay of this.relaySet.relays) {
@@ -324,7 +324,7 @@ export class NDKSubscription extends EventEmitter {
 
         // if relayset is empty, we can't start, log it
         if (!this.relayFilters || this.relayFilters.size === 0) {
-            this.debug(`No relays to subscribe to`, this.ndk.explicitRelayUrls);
+            this.debug(`No relays to subscribe to`, this.pool.relays.size);
             return;
         }
 

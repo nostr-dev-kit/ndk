@@ -3,6 +3,7 @@ import type { NDK } from "../../ndk/index.js";
 import type { NDKFilter } from "../../subscription/index.js";
 import type { Hexpubkey } from "../../user/index.js";
 import type { NDKRelay } from "../index.js";
+import { NDKPool } from "../pool/index.js";
 import { NDKRelaySet } from "./index.js";
 
 /**
@@ -39,7 +40,8 @@ export function getWriteRelaysFor(ndk: NDK, author: Hexpubkey): Set<WebSocket["u
  */
 export function calculateRelaySetsFromFilter(
     ndk: NDK,
-    filters: NDKFilter[]
+    filters: NDKFilter[],
+    pool: NDKPool
 ): Map<WebSocket["url"], NDKFilter[]> {
     const result = new Map<WebSocket["url"], NDKFilter[]>();
     const authors = new Set<Hexpubkey>();
@@ -70,7 +72,7 @@ export function calculateRelaySetsFromFilter(
                 });
             } else {
                 // If we don't, add the explicit relays
-                ndk.explicitRelayUrls?.forEach((relay: WebSocket["url"]) => {
+                Array.from(pool.relays.keys()).forEach((relay: WebSocket["url"]) => {
                     const authorsInRelay = authorToRelaysMap.get(relay) || [];
                     authorsInRelay.push(author);
                     authorToRelaysMap.set(relay, authorsInRelay);
@@ -112,7 +114,7 @@ export function calculateRelaySetsFromFilter(
         }
     } else {
         // If we don't, add the explicit relays
-        ndk.explicitRelayUrls?.forEach((relay: WebSocket["url"]) => {
+        Array.from(pool.relays.keys()).forEach((relay: WebSocket["url"]) => {
             result.set(relay, filters);
         });
     }
@@ -127,7 +129,8 @@ export function calculateRelaySetsFromFilter(
  */
 export function calculateRelaySetsFromFilters(
     ndk: NDK,
-    filters: NDKFilter[]
+    filters: NDKFilter[],
+    pool: NDKPool
 ): Map<WebSocket["url"], NDKFilter[]> {
-    return calculateRelaySetsFromFilter(ndk, filters);
+    return calculateRelaySetsFromFilter(ndk, filters, pool);
 }

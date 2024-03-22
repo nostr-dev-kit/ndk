@@ -273,8 +273,7 @@ But if NDK has observed that `npub-B` tends to write to `wss://userb.xyz` and
 ## Auto-closing subscriptions
 
 Often, clients need to fetch data but don't need to maintain an open connection to the relay. This is true of profile metadata requests especially.
-_NDK defaults to having the `closeOnEose` flag set to `true`, to make permanent subscriptions explicit in the codebase; if you want your
-subscription to remain active beyond `EOSE`, you should set it to `false`._
+_NDK defaults to having the `closeOnEose` flag set to `false`; if you want your subscription to close after `EOSE`, you should set it to `true`._
 
 -   The `closeOnEose` flag will make the connection close immediately after EOSE is seen.
 
@@ -296,7 +295,7 @@ const pablo = ndk.getUser({
 });
 
 const jeff = ndk.getUser({
-    hexpubkey: "1739d937dc8c0c7370aa27585938c119e25c41f6c441a5d34c6d38503e3136ef",
+    pubkey: "1739d937dc8c0c7370aa27585938c119e25c41f6c441a5d34c6d38503e3136ef",
 });
 ```
 

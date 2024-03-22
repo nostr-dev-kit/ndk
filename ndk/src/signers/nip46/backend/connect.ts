@@ -4,7 +4,6 @@ import type { IEventHandlingStrategy, NDKNip46Backend } from "./index.js";
  * "connect" method handler.
  *
  * This method receives a:
- * * pubkey -- this is the client pubkey that is requesting permission ("local pubkey")
  * * token -- An optional OTP token
  */
 export default class ConnectEventHandlingStrategy implements IEventHandlingStrategy {
@@ -14,21 +13,21 @@ export default class ConnectEventHandlingStrategy implements IEventHandlingStrat
         remotePubkey: string,
         params: string[]
     ): Promise<string | undefined> {
-        const [pubkey, token] = params;
+        const [_, token] = params;
         const debug = backend.debug.extend("connect");
 
-        debug(`connection request from ${pubkey}`);
+        debug(`connection request from ${remotePubkey}`);
 
         if (token && backend.applyToken) {
             debug(`applying token`);
-            await backend.applyToken(pubkey, token);
+            await backend.applyToken(remotePubkey, token);
         }
 
-        if (await backend.pubkeyAllowed({ id, pubkey, method: "connect", params: token })) {
-            debug(`connection request from ${pubkey} allowed`);
+        if (await backend.pubkeyAllowed({ id, pubkey: remotePubkey, method: "connect", params: token })) {
+            debug(`connection request from ${remotePubkey} allowed`);
             return "ack";
         } else {
-            debug(`connection request from ${pubkey} rejected`);
+            debug(`connection request from ${remotePubkey} rejected`);
         }
 
         return undefined;

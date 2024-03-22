@@ -8,7 +8,7 @@ import { calculateRelaySetFromEvent } from "../relay/sets/calculate.js";
 import type { NDKRelaySet } from "../relay/sets/index.js";
 import type { NDKSigner } from "../signers/index.js";
 import type { NDKFilter } from "../subscription/index.js";
-import { NDKUser } from "../user/index.js";
+import { type NDKUser } from "../user/index.js";
 import Zap from "../zap/index.js";
 import { type ContentTag, generateContentTags, mergeTags } from "./content-tagger.js";
 import { isEphemeral, isParamReplaceable, isReplaceable } from "./kind.js";
@@ -50,6 +50,11 @@ export class NDKEvent extends EventEmitter {
      * The relay that this event was first received from.
      */
     public relay: NDKRelay | undefined;
+
+    /**
+     * The relays that this event was received from and/or successfully published to.
+     */
+    public onRelays: NDKRelay[] = [];
 
     constructor(ndk?: NDK, event?: NostrEvent) {
         super();
@@ -115,23 +120,29 @@ export class NDKEvent extends EventEmitter {
      * Tag a user with an optional marker.
      * @param event The event to tag.
      * @param marker The marker to use in the tag.
+     * @param skipAuthorTag Whether to explicitly skip adding the author tag of the event.
      * @example
      * ```typescript
      * reply.tag(opEvent, "reply");
      * // reply.tags => [["e", <id>, <relay>, "reply"]]
      * ```
      */
-    public tag(event: NDKEvent, marker?: string): void;
-    public tag(userOrTagOrEvent: NDKTag | NDKUser | NDKEvent, marker?: string): void {
+    public tag(event: NDKEvent, marker?: string, skipAuthorTag?: boolean): void;
+    public tag(
+        userOrTagOrEvent: NDKTag | NDKUser | NDKEvent,
+        marker?: string,
+        skipAuthorTag?: boolean
+    ): void {
         let tags: NDKTag[] = [];
+        const isNDKUser = (userOrTagOrEvent as NDKUser).fetchProfile !== undefined;
 
-        if (userOrTagOrEvent instanceof NDKUser) {
-            const tag = ["p", userOrTagOrEvent.pubkey];
-            if (marker) tag.push(marker);
+        if (isNDKUser) {
+            const tag = ["p", (userOrTagOrEvent as NDKUser).pubkey];
+            if (marker) tag.push(...["", marker]);
             tags.push(tag);
         } else if (userOrTagOrEvent instanceof NDKEvent) {
             const event = userOrTagOrEvent as NDKEvent;
-            const skipAuthorTag = event?.pubkey === this.pubkey;
+            skipAuthorTag ??= event?.pubkey === this.pubkey;
             tags = event.referenceTags(marker, skipAuthorTag);
 
             // tag p-tags in the event if they are not the same as the user signing this event
@@ -141,8 +152,10 @@ export class NDKEvent extends EventEmitter {
 
                 this.tags.push(["p", pTag[1]]);
             }
+        } else if (Array.isArray(userOrTagOrEvent)) {
+            tags = [userOrTagOrEvent as NDKTag];
         } else {
-            tags = [userOrTagOrEvent];
+            throw new Error("Invalid argument", userOrTagOrEvent as any);
         }
 
         this.tags = mergeTags(this.tags, tags);
@@ -185,6 +198,7 @@ export class NDKEvent extends EventEmitter {
     /**
      * Encodes a bech32 id.
      *
+     * @param relays {string[]} The relays to encode in the id
      * @returns {string} - Encoded naddr, note or nevent.
      */
     public encode = encode.bind(this);
@@ -226,6 +240,21 @@ export class NDKEvent extends EventEmitter {
     set alt(alt: string | undefined) {
         this.removeTag("alt");
         if (alt) this.tags.push(["alt", alt]);
+    }
+
+    /**
+     * Gets the NIP-33 "d" tag of the event.
+     */
+    get dTag(): string | undefined {
+        return this.tagValue("d");
+    }
+
+    /**
+     * Sets the NIP-33 "d" tag of the event.
+     */
+    set dTag(value: string | undefined) {
+        this.removeTag("d");
+        if (value) this.tags.push(["d", value]);
     }
 
     /**
@@ -284,7 +313,12 @@ export class NDKEvent extends EventEmitter {
             relaySet = this.ndk.devWriteRelaySet || calculateRelaySetFromEvent(this.ndk, this);
         }
 
-        return relaySet.publish(this, timeoutMs);
+        this.ndk.debug(`publish to ${relaySet.size} relays`, this.rawEvent());
+
+        const relays = await relaySet.publish(this, timeoutMs);
+        this.onRelays = Array.from(relays);
+
+        return relays;
     }
 
     /**
@@ -545,9 +579,10 @@ export class NDKEvent extends EventEmitter {
      * Generates a deletion event of the current event
      *
      * @param reason The reason for the deletion
+     * @param publish Whether to publish the deletion event automatically
      * @returns The deletion event
      */
-    async delete(reason?: string): Promise<NDKEvent> {
+    async delete(reason?: string, publish = true): Promise<NDKEvent> {
         if (!this.ndk) throw new Error("No NDK instance found");
 
         this.ndk.assertSigner();
@@ -557,7 +592,7 @@ export class NDKEvent extends EventEmitter {
             content: reason || "",
         } as NostrEvent);
         e.tag(this);
-        await e.publish();
+        if (publish) await e.publish();
 
         return e;
     }
@@ -595,5 +630,17 @@ export class NDKEvent extends EventEmitter {
         }
 
         return e;
+    }
+
+    /**
+     * Checks whether the event is valid per underlying NIPs.
+     *
+     * This method is meant to be overridden by subclasses that implement specific NIPs
+     * to allow the enforcement of NIP-specific validation rules.
+     *
+     *
+     */
+    get isValid(): boolean {
+        return true;
     }
 }

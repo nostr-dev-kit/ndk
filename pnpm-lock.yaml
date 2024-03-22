@@ -298,6 +298,9 @@ importers:
       '@nostr-dev-kit/ndk':
         specifier: workspace:*
         version: link:../ndk
+      '@sveu/extend':
+        specifier: ^1.0.0
+        version: 1.0.0
       classnames:
         specifier: ^2.3.2
         version: 2.3.2
@@ -316,6 +319,9 @@ importers:
       nostr-tools:
         specifier: ^1.15.0
         version: 1.15.0(typescript@5.3.3)
+      qrcode:
+        specifier: link:@sveu/extend/qrcode
+        version: link:@sveu/extend/qrcode
       ramda:
         specifier: ^0.29.0
         version: 0.29.0
@@ -5130,6 +5136,42 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /@sveu/extend@1.0.0:
+    resolution: {integrity: sha512-7o8i9h+V1hXiZrBXuK+ITclLG6Pg7icYF+Nif6xx9oW0XnLj/+d0ZT9+rnRf1gmvuls1ASIOTjXFyIyr9+5s1g==}
+    peerDependencies:
+      async-validator: '*'
+      change-case: '*'
+      firebase: '*'
+      fuse.js: '*'
+      idb-keyval: '*'
+      jwt-decode: '*'
+      qrcode: '*'
+      sortablejs: '*'
+    peerDependenciesMeta:
+      async-validator:
+        optional: true
+      change-case:
+        optional: true
+      firebase:
+        optional: true
+      fuse.js:
+        optional: true
+      idb-keyval:
+        optional: true
+      jwt-decode:
+        optional: true
+      qrcode:
+        optional: true
+      sortablejs:
+        optional: true
+    dependencies:
+      '@sveu/shared': 1.0.1
+    dev: false
+
+  /@sveu/shared@1.0.1:
+    resolution: {integrity: sha512-waMJ+UXD5NV/M7L6lmXigY9Ry9TwhcBz+QDbYsDcq92bL7nlRUeh3ckvvAnxw1Nzw0T2JeEgmvZZblHuAHJL9Q==}
+    dev: false
 
   /@tailwindcss/typography@0.5.10(tailwindcss@3.3.3):
     resolution: {integrity: sha512-Pe8BuPJQJd3FfRnm6H0ulKIGoMEQS+Vq01R6M5aCrFB/ccR/shT+0kXLjouGC1gFLm9hopTFN+DMP0pfwRWzPw==}

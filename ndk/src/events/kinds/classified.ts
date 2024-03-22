@@ -1,6 +1,7 @@
 import type { NDK } from "../../ndk/index.js";
-import { ContentTag } from "../content-tagger.js";
-import { NDKEvent, type NostrEvent } from "../index.js";
+import type { ContentTag } from "../content-tagger.js";
+import { NDKEvent } from "../index.js";
+import type { NostrEvent } from "../index.js";
 import type { NDKTag } from "../index.js";
 import { NDKKind } from "./index.js";
 
@@ -25,7 +26,7 @@ export class NDKClassified extends NDKEvent {
      * @param event NDKEvent to create the NDKClassified from.
      * @returns NDKClassified
      */
-    static from(event: NDKEvent) {
+    static from(event: NDKEvent): NDKClassified {
         return new NDKClassified(event.ndk, event.rawEvent());
     }
 

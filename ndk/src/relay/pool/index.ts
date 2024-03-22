@@ -101,6 +101,7 @@ export class NDKPool extends EventEmitter {
         relay.on("disconnect", async () => this.emit("relay:disconnect", relay));
         relay.on("flapping", () => this.handleFlapping(relay));
         relay.on("auth", async (challenge: string) => this.emit("relay:auth", relay, challenge));
+        relay.on("authed", async () => this.emit("relay:authed", relay));
         this.relays.set(relayUrl, relay);
 
         if (connect) {
@@ -195,7 +196,7 @@ export class NDKPool extends EventEmitter {
                     })
                 );
             } else {
-                promises.push(relay.connect());
+                promises.push(relay.connect(timeoutMs));
             }
         }
 

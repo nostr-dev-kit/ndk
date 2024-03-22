@@ -6,7 +6,7 @@ import type {
     NDKSubscription,
     NDKUserProfile,
 } from "@nostr-dev-kit/ndk";
-import _debug from "debug";
+import createDebug from "debug";
 import { matchFilter } from "nostr-tools";
 import { LRUCache } from "typescript-lru-cache";
 
@@ -42,11 +42,11 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
     private expirationTime;
     readonly locking;
     public profiles?: LRUCache<Hexpubkey, NDKUserProfile>;
-    private dirtyProfiles: Set<Hexpubkey> = new Set();
+    public dirtyProfiles: Set<Hexpubkey> = new Set();
 
     constructor(opts: NDKCacheAdapterDexieOptions = {}) {
         createDatabase(opts.dbName || "ndk");
-        this.debug = opts.debug || _debug("ndk:dexie-adapter");
+        this.debug = opts.debug || createDebug("ndk:dexie-adapter");
         this.locking = true;
         this.expirationTime = opts.expirationTime || 3600;
 
@@ -58,8 +58,19 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
             setInterval(() => {
                 this.dumpProfiles();
             }, 1000 * 10);
+
+            this.warmUpProfilesLRU();
         }
     }
+
+    private async warmUpProfilesLRU() {
+        if (!this.profiles) return;
+
+        db.users.each((user) => {
+            this.profiles!.set(user.pubkey, user.profile);
+        });
+    }
+
 
     public async query(subscription: NDKSubscription): Promise<void> {
         Promise.allSettled(
@@ -114,8 +125,10 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         if (event.kind === 0) {
             if (!this.profiles) return;
 
-            const profile: NDKUserProfile = profileFromEvent(event);
-            this.profiles.set(event.pubkey, profile);
+            try {
+                const profile: NDKUserProfile = profileFromEvent(event);
+                this.saveProfile(event.pubkey, profile);
+            } catch {}
         } else {
             let addEvent = true;
 
@@ -434,6 +447,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         }
 
         if (profiles.length) {
+            this.debug(`Saving ${profiles.length} profiles to database`);
             await db.users.bulkPut(profiles);
         }
 

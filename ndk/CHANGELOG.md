@@ -1,5 +1,34 @@
 # @nostr-dev-kit/ndk
 
+## 2.5.1
+
+### Patch Changes
+
+-   Use nicer reconnection timer
+-   Fixes fetching of nip46 relays in nip05 implementation (#186)
+
+## 2.5.0
+
+### Minor Changes
+
+-   e08fc74: Nostr Wallet Connect support
+
+## 2.4.1
+
+### Patch Changes
+
+-   111c1ea: Add DVM post scheduling
+-   5c0ae51: Track all relays the event is seen and encode multiple relays on nevents
+-   6f5ea49: bug fix: don't force Article kind
+-   3738d39: Big NIP-29 and NIP-88 changes
+-   d22239a: Add a way to get events inside a list
+
+## 2.4.0
+
+### Minor Changes
+
+-   b9bbf1d: Safely embrace the chaos: event validation
+
 ## 2.3.3
 
 ### Patch Changes

@@ -16,7 +16,7 @@ to this list.
     -   Typescript, backend
 -   [Nostr Chat Widget](https://github.com/pablof7z/nostr-chat-widget) - By [@pablof7z](https://njump.me/npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft)
     -   Svelte, Rollup, embeddable widget
--   [Zapstr](https://github.com/pablof7z/nostr-chat-widget) - By [@pablof7z](https://njump.me/npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft)
+-   [Zapstr](https://github.com/zapstr/zapstr) - By [@pablof7z](https://njump.me/npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft)
     -   Svelte, Frontend
 -   [Ostrich.work](https://github.com/erskingardner/ostrich.work) - By [@jeffg](https://njump.me/npub1zuuajd7u3sx8xu92yav9jwxpr839cs0kc3q6t56vd5u9q033xmhsk6c2uc)
     -   Svelte, frontend
@@ -34,3 +34,8 @@ to this list.
     -   Nuxt (Vue), frontend
 -   [Flockstr](https://github.com/zmeyer44/flockstr) - By [@zach](https://njump.me/npub1zach44xjpc4yyhx6pgse2cj2pf98838kja03dv2e8ly8lfr094vqvm5dy5)
 -   [Flare.pub](https://github.com/zmeyer44/flare) - By [@zach](https://njump.me/npub1zach44xjpc4yyhx6pgse2cj2pf98838kja03dv2e8ly8lfr094vqvm5dy5)
+-   [Pinstr.app](https://github.com/sepehr-safari/pinstr) - By [@sepehr](https://njump.me/nprofile1qqsru22d9lfnnwck54qr4phrvey50h2q33xc0gqxv5j03ftn4efu4rspr9mhxue69uhhyetvv9ujuumwdae8gtnnda3kjctv9uq3wamnwvaz7tmjwdekccte9ehx7um5wghx6mm99uq36amnwvaz7tmwdaehgu3wd46hg6tw09mkzmrvv46zucm0d5hsv6ffvh)
+    -   React, Nostr Web Client
+-   [Nostr-Hooks](https://github.com/ostyjs/nostr-hooks) - By [@sepehr](https://njump.me/nprofile1qqsru22d9lfnnwck54qr4phrvey50h2q33xc0gqxv5j03ftn4efu4rspr9mhxue69uhhyetvv9ujuumwdae8gtnnda3kjctv9uq3wamnwvaz7tmjwdekccte9ehx7um5wghx6mm99uq36amnwvaz7tmwdaehgu3wd46hg6tw09mkzmrvv46zucm0d5hsv6ffvh)
+    -   Stateful wrapper library of React hooks around NDK.
+-   [magicCity h=n](https://github.com/tezosmiami/hicetnunc) - By [@hicetnunc2000](https://github.com/hicetnunc2000/), [@tezosmiami](https://njump.me/npub190rqwj0nud4uhvmaeg7cgn0gypu0s09j87vqjluhfhju0req2khsskh9w7)

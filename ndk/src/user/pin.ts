@@ -4,28 +4,31 @@ import { NDKKind } from "../events/kinds";
 import NDKList from "../events/kinds/lists";
 import { NDKSubscriptionCacheUsage } from "../subscription";
 
-export async function pin(
-    this: NDKUser,
+/**
+ * Pins an event
+ */
+export async function pinEvent(
+    user: NDKUser,
     event: NDKEvent,
     pinEvent?: NDKEvent,
     publish?: boolean
 ): Promise<NDKEvent> {
     const kind = NDKKind.PinList;
-    if (!this.ndk) throw new Error("No NDK instance found");
+    if (!user.ndk) throw new Error("No NDK instance found");
 
-    this.ndk.assertSigner();
+    user.ndk.assertSigner();
 
     // If no pin event is provided, fetch the most recent pin event
     if (!pinEvent) {
-        const events: Set<NDKEvent> = await this.ndk.fetchEvents(
-            { kinds: [kind], authors: [this.pubkey] },
+        const events: Set<NDKEvent> = await user.ndk.fetchEvents(
+            { kinds: [kind], authors: [user.pubkey] },
             { cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY }
         );
 
         if (events.size > 0) {
             pinEvent = NDKList.from(Array.from(events)[0]);
         } else {
-            pinEvent = new NDKEvent(this.ndk, {
+            pinEvent = new NDKEvent(user.ndk, {
                 kind: kind,
             } as NostrEvent);
         }

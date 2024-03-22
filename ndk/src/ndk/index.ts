@@ -19,6 +19,8 @@ import { NDKKind } from "../events/kinds/index.js";
 import NDKList from "../events/kinds/lists/index.js";
 import { NDKAuthPolicy } from "../relay/auth-policies.js";
 import { Nip96 } from "../media/index.js";
+import { NDKRelayList } from "../events/kinds/NDKRelayList.js";
+import { NDKNwc } from "../nwc/index.js";
 
 export interface NDKConstructorParams {
     /**
@@ -269,7 +271,7 @@ export class NDK extends EventEmitter {
 
         if (user && differentUser) {
             const connectToUserRelays = async (user: NDKUser) => {
-                const relayList = await user.relayList();
+                const relayList = await NDKRelayList.forUser(user, this);
 
                 if (!relayList) {
                     this.debug("No relay list found for user", { npub: user.npub });
@@ -596,5 +598,21 @@ export class NDK extends EventEmitter {
      */
     public getNip96(domain: string) {
         return new Nip96(domain, this);
+    }
+
+    /**
+     * Creates a new Nostr Wallet Connect instance for the given URI and waits for it to be ready.
+     * @param uri WalletConnect URI
+     * @param connectTimeout Timeout in milliseconds to wait for the NWC to be ready. Set to `false` to avoid connecting.
+     * @example
+     * const nwc = await ndk.nwc("nostr+walletconnect://....")
+     * nwc.payInvoice("lnbc...")
+     */
+    public async nwc(uri: string, connectTimeout: number | false = 2000): Promise<NDKNwc> {
+        const nwc = await NDKNwc.fromURI(this, uri);
+        if (connectTimeout !== false) {
+            await nwc.blockUntilReady(connectTimeout);
+        }
+        return nwc;
     }
 }

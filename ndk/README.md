@@ -33,12 +33,7 @@ localStorage.debug = 'ndk:*'
 
 ## Support
 
-### NDK NIP-28 group chat
-
--   note15m6rdfvlmd0z836hk83sg7r59xtv23qnmamhsslq5uc6744fdm4qfkeat3
-    -   [Coracle](https://app.coracle.social/chat/note15m6rdfvlmd0z836hk83sg7r59xtv23qnmamhsslq5uc6744fdm4qfkeat3)
-    -   [Nostrchat](https://www.nostrchat.io/channel/a6f436a59fdb5e23c757b1e30478742996c54413df777843e0a731af56a96eea)
--   [WIP documentation](https://github.com/nostr-dev-kit/ndk/blob/master/docs/modules.md)
+-   [documentation](https://ndk.fyi/docs)
 
 ## Features
 
@@ -69,12 +64,14 @@ localStorage.debug = 'ndk:*'
     -   [!] ~~NIP-26~~ Won't add / NIP-26 is dead
     -   [x] NIP-46
         -   [x] Permission tokens
+        -   [x] OAuth flow
 -   Relay discovery
     -   [x] Outbox-model (NIP-65)
     -   [ ] Implicit relays discovery following pubkey usage
     -   [ ] Implicit relays discovery following `t` tag usage
-    -   [ ] Explicit relays blacklist
+    -   [x] Explicit relays blacklist
 -   [ ] nostr-tools/SimplePool drop-in replacement interface
+-   [x] NIP-47: Nostr Wallet Connect
 -   [x] NIP-96: Media Uploads
     -   [x] XMLHttpRequest (for progress reporting)
     -   [x] Fetch API
@@ -123,11 +120,11 @@ After you've instatiated NDK, you need to tell it to connect before you'll be ab
 // Import the package
 import NDK from "@nostr-dev-kit/ndk";
 
-/ Create a new NDK instance with explicit relays
+// Create a new NDK instance with explicit relays
 const ndk = new NDK({
     explicitRelayUrls: ["wss://a.relay", "wss://another.relay"],
 });
-/ Now connect to specified relays
+// Now connect to specified relays
 await ndk.connect();
 ```
 

@@ -44,6 +44,11 @@ export interface NDKRelayConnectionStats {
      * The time the current connection was established in milliseconds.
      */
     connectedAt?: number;
+
+    /**
+     * Timestamp of the next reconnection attempt.
+     */
+    nextReconnectAt?: number;
 }
 
 /**
@@ -56,8 +61,9 @@ export interface NDKRelayConnectionStats {
  * @emits NDKRelay#event
  * @emits NDKRelay#published when an event is published to the relay
  * @emits NDKRelay#publish:failed when an event fails to publish to the relay
- * @emits NDKRelay#eose
+ * @emits NDKRelay#eose when the relay has reached the end of stored events
  * @emits NDKRelay#auth when the relay requires authentication
+ * @emits NDKRelay#authed when the relay has authenticated
  */
 export class NDKRelay extends EventEmitter {
     readonly url: WebSocket["url"];
@@ -66,7 +72,6 @@ export class NDKRelay extends EventEmitter {
     private subs: NDKRelaySubscriptions;
     private publisher: NDKRelayPublisher;
     public authPolicy?: NDKAuthPolicy;
-    public authRequired = false;
 
     /**
      * Whether this relay is trusted.
@@ -100,8 +105,8 @@ export class NDKRelay extends EventEmitter {
     /**
      * Connects to the relay.
      */
-    public async connect(): Promise<void> {
-        return this.connectivity.connect();
+    public async connect(timeoutMs?: number): Promise<void> {
+        return this.connectivity.connect(timeoutMs);
     }
 
     /**

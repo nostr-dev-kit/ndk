@@ -7,6 +7,10 @@ import { NDKEvent, type NDKTag } from "../events/index.js";
 import type { NDK } from "../ndk/index.js";
 import type { NDKUser } from "../user/index.js";
 import { NDKSigner } from "../signers/index.js";
+import createDebug from "debug";
+import { NDKUserProfile } from "../user/profile.js";
+
+const debug = createDebug("ndk:zap");
 
 const DEFAULT_RELAYS = [
     "wss://nos.lol",
@@ -42,12 +46,15 @@ export default class Zap extends EventEmitter {
         let lud16: string | undefined;
         let zapEndpoint: string | undefined;
         let zapEndpointCallback: string | undefined;
+        let profile: NDKUserProfile | undefined;
 
         if (this.zappedUser) {
             // check if user has a profile, otherwise request it
             if (!this.zappedUser.profile) {
                 await this.zappedUser.fetchProfile({ groupable: false });
             }
+
+            profile = this.zappedUser.profile;
 
             lud06 = (this.zappedUser.profile || {}).lud06;
             lud16 = (this.zappedUser.profile || {}).lud16;
@@ -64,6 +71,7 @@ export default class Zap extends EventEmitter {
         }
 
         if (!zapEndpoint) {
+            debug("No zap endpoint found", profile, { lud06, lud16 });
             throw new Error("No zap endpoint found");
         }
 
@@ -117,6 +125,7 @@ export default class Zap extends EventEmitter {
         let invoice: string | null;
 
         try {
+            debug(`Getting invoice for zap request: ${zapEndpoint}`);
             invoice = await this.getInvoice(event, amount, zapEndpoint);
         } catch (e) {
             throw new Error("Failed to get invoice: " + e);
@@ -130,13 +139,28 @@ export default class Zap extends EventEmitter {
         amount: number,
         zapEndpoint: string
     ): Promise<string | null> {
-        const response = await fetch(
-            `${zapEndpoint}?` +
+        debug(
+            `Fetching invoice from ${zapEndpoint}?` +
                 new URLSearchParams({
                     amount: amount.toString(),
-                    nostr: JSON.stringify(event.rawEvent()),
+                    nostr: encodeURIComponent(JSON.stringify(event.rawEvent())),
                 })
         );
+        const url = new URL(zapEndpoint);
+        url.searchParams.append("amount", amount.toString());
+        url.searchParams.append("nostr", JSON.stringify(event.rawEvent()));
+        debug(`Fetching invoice from ${url.toString()}`);
+        const response = await fetch(url.toString());
+        debug(`Got response from zap endpoint: ${zapEndpoint}`, { status: response.status });
+        if (response.status !== 200) {
+            debug(`Received non-200 status from zap endpoint: ${zapEndpoint}`, {
+                status: response.status,
+                amount: amount,
+                nostr: JSON.stringify(event.rawEvent()),
+            });
+            const text = await response.text();
+            throw new Error(`Unable to fetch zap endpoint ${zapEndpoint}: ${text}`);
+        }
         const body = await response.json();
 
         return body.pr;
@@ -170,7 +194,8 @@ export default class Zap extends EventEmitter {
         // add the event tag if it exists; this supports both 'e' and 'a' tags
         if (this.zappedEvent) {
             const tags = this.zappedEvent.referenceTags();
-            zapRequest.tags.push(...tags);
+            const nonPTags = tags.filter((tag) => tag[0] !== "p");
+            zapRequest.tags.push(...nonPTags);
         }
 
         zapRequest.tags.push(["lnurl", zapEndpoint]);

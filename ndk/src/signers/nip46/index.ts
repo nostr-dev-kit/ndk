@@ -118,7 +118,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
         // Generates subscription, single subscription for the lifetime of our connection
         this.localSigner.user().then((localUser) => {
             this.rpc.subscribe({
-                kinds: [NDKKind.NostrConnect, NDKKind.NostrConnectAdmin],
+                kinds: [NDKKind.NostrConnect, NDKKind.NostrConnect + 1],
                 "#p": [localUser.pubkey],
             });
         });
@@ -154,7 +154,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
             // introducing a small delay here to give a clear priority to the subscription
             // to happen first
             setTimeout(() => {
-                const connectParams = [localUser.pubkey];
+                const connectParams = [this.remotePubkey!];
 
                 if (this.token) {
                     connectParams.push(this.token);
@@ -270,7 +270,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
                 this.remotePubkey!,
                 "create_account",
                 req,
-                NDKKind.NostrConnectAdmin,
+                NDKKind.NostrConnect,
                 (response: NDKRpcResponse) => {
                     this.debug("got a response", response);
                     if (!response.error) {

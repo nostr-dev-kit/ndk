@@ -108,7 +108,7 @@ export interface GetUserParams extends NDKUserParams {
     hexpubkey?: string;
 }
 
-export const DEFAULT_OUTBOX_RELAYS = ["wss://purplepag.es", "wss://relay.snort.social"];
+export const DEFAULT_OUTBOX_RELAYS = ["wss://purplepag.es", "wss://profiles.nos.social"];
 
 export const DEFAULT_BLACKLISTED_RELAYS = [
     "wss://brb.io", // BRB

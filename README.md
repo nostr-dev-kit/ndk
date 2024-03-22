@@ -116,6 +116,9 @@ Note: In normal client use, it's best practice to instantiate NDK as a singleton
 After you've instantiated NDK, you need to tell it to connect before you'll be able to interact with any relays.
 
 ```ts
+// On Node.js you need to import the websocket polyfill:
+import "websocket-polyfill";
+
 // Import the package
 import NDK from "@nostr-dev-kit/ndk";
 

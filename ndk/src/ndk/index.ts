@@ -513,19 +513,27 @@ export class NDK extends EventEmitter {
         }
 
         return new Promise((resolve) => {
+            let fetchedEvent: NDKEvent | null = null;
+
             const s = this.subscribe(
                 filter,
                 { ...(opts || {}), closeOnEose: true },
                 relaySet,
                 false
             );
-            s.on("event", (event) => {
+            s.on("event", (event: NDKEvent) => {
                 event.ndk = this;
-                resolve(event);
+
+                // We only emit immediately when the event is not replaceable
+                if (!event.isReplaceable()) {
+                    resolve(event);
+                } else if (!fetchedEvent || fetchedEvent.created_at! < event.created_at!) {
+                    fetchedEvent = event;
+                }
             });
 
             s.on("eose", () => {
-                resolve(null);
+                resolve(fetchedEvent);
             });
 
             s.start();

@@ -304,7 +304,6 @@ describe('EventGeoCoded', () => {
                 const cleanEventGeoCoded = new EventGeoCoded(ndk, {} as NostrEvent);
                 cleanEventGeoCoded.dd = { lat: 50.1109, lon: 8.6821 } as DD;
                 cleanEventGeoCoded['_removeGeoHashes']();
-                console.log('### geohashes', cleanEventGeoCoded.geohashes, cleanEventGeoCoded.tags.filter(tag => tag.includes('gh')));
                 expect(cleanEventGeoCoded.tags.some(tag => tag.includes('gh'))).toBeFalsy();
             });
         });

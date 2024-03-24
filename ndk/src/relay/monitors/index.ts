@@ -7,12 +7,12 @@ import type { NDKFilter } from "../../subscription/index.js";
 // import { NDKRelay } from '..';
 // import { NDKTag } from '../..';
 
-import { EventGeoCoded } from '../../events/kinds/nip66/EventGeoCoded';
+import { NDKEventGeoCoded } from '../../events/geocoded';
 
 import { RelayMonitorDiscoveryTags } from '../../events/kinds/nip66/relay-monitor';
 
 import type { RelayMonitor } from '../../events/kinds/nip66/relay-monitor';
-import type { Coords } from '../../events/kinds/nip66/EventGeoCoded';
+import type { Coords } from '../../events/geocoded';
 
 // import type { RelayDiscovery } from '../../events/kinds/nip66/relay-discovery';
 import type { RelayListSet, RelayMonitorSet, RelayMonitorDiscoveryFilters, RelayMonitorCriterias } from '../../events/kinds/nip66/relay-monitor';
@@ -285,14 +285,14 @@ export class NDKRelayMonitors {
         if(!this.ndk){
             return undefined;
         }
-        let cb = async (evs: Set<EventGeoCoded>) => evs;
+        let cb = async (evs: Set<NDKEventGeoCoded>) => evs;
         if(activeOnly){
-            cb = async (events: Set<EventGeoCoded>) => await NDKRelayMonitors.filterActiveMonitors(events as Set<RelayMonitor>) || new Set();
+            cb = async (events: Set<NDKEventGeoCoded>) => await NDKRelayMonitors.filterActiveMonitors(events as Set<RelayMonitor>) || new Set();
         }
         const kinds: NDKKind[] = [ NDKKind.RelayMonitor ];
         const _filter: NDKFilter = { ...filter, kinds };
-        const geocodedEvents = await EventGeoCoded.fetchNearby(this.ndk, geohash, _filter, maxPrecision, minPrecision, minResults, recurse, cb);
-        const events: RelayMonitorSet= new Set(Array.from(geocodedEvents || new Set()).map( (event: EventGeoCoded) => (event as RelayMonitor) ));
+        const geocodedEvents = await NDKEventGeoCoded.fetchNearby(this.ndk, geohash, _filter, maxPrecision, minPrecision, minResults, recurse, cb);
+        const events: RelayMonitorSet= new Set(Array.from(geocodedEvents || new Set()).map( (event: NDKEventGeoCoded) => (event as RelayMonitor) ));
         return events;
     }
 
@@ -333,7 +333,7 @@ export class NDKRelayMonitors {
      */
     static sortMonitorsByProximity( coords: Coords, monitors: RelayMonitorSet ): RelayMonitorSet | undefined {
         if(!monitors?.size) return undefined;
-        const monitorsSorted = EventGeoCoded.sortGeospatial( coords, monitors as Set<EventGeoCoded> );
+        const monitorsSorted = NDKEventGeoCoded.sortGeospatial( coords, monitors as Set<NDKEventGeoCoded> );
         return monitorsSorted as RelayMonitorSet;
     }
 

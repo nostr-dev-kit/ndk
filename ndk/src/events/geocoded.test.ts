@@ -1,6 +1,8 @@
-import { DD, EventGeoCoded } from './EventGeoCoded';
-import { NDK } from '../../../ndk/index.js';
-import { NostrEvent } from '../../..';
+import { NDKEventGeoCoded } from './geocoded';
+import { NDK } from '../ndk/index.js';
+
+import type { NostrEvent } from './';
+import type { DD } from './geocoded';
 
 // Sample Nostr events to use in tests
 const rawEvent = {
@@ -19,104 +21,40 @@ const geohashEvent = {
     kind: 1,
     content: 'Geohash content',
     tags: [
-      [
-          "G",
-          "gh"
-      ],
-      [
-          "g",
-          "u1422u57b",
-          "gh"
-      ],
-      [
-          "g",
-          "u1422u57",
-          "gh"
-      ],
-      [
-          "g",
-          "u1422u5",
-          "gh"
-      ],
-      [
-          "g",
-          "u1422u",
-          "gh"
-      ],
-      [
-          "g",
-          "u1422",
-          "gh"
-      ],
-      [
-          "g",
-          "u142",
-          "gh"
-      ],
-      [
-          "g",
-          "u14",
-          "gh"
-      ],
-      [
-          "g",
-          "u1",
-          "gh"
-      ],
-      [
-          "g",
-          "u",
-          "gh"
-      ],
-      [
-          "G",
-          "countryCode"
-      ],
-      [
-          "g",
-          "FR",
-          "countryCode"
-      ],
-      [
-          "g",
-          "FRA",
-          "countryCode"
-      ],
-      [
-          "G",
-          "countryName"
-      ],
-      [
-          "g",
-          "France",
-          "countryName"
-      ],
-      [
-          "G",
-          "regionCode"
-      ],
-      [
-          "g",
-          "FR-HDF",
-          "regionCode"
-      ]
-    ]
+        ["G", "gh"],
+        ["g", "u1422u57b", "gh"],
+        ["g", "u1422u57", "gh"],
+        ["g", "u1422u5", "gh"],
+        ["g", "u1422u", "gh"],
+        ["g", "u1422", "gh"],
+        ["g", "u142", "gh"],
+        ["g", "u14", "gh"],
+        ["g", "u1", "gh"],
+        ["g", "u", "gh"],
+        ["G", "countryCode"],
+        ["g", "FR", "countryCode"],
+        ["g", "FRA", "countryCode"],
+        ["G", "countryName"],
+        ["g", "France", "countryName"],
+        ["G", "regionCode"],
+        ["g", "FR-HDF", "regionCode"]
+      ]      
 };
 
-describe('EventGeoCoded', () => {
+describe('NDKEventGeoCoded', () => {
     let ndk: NDK;
-    let eventGeoCoded: EventGeoCoded;
-    let eventGeoCoded2: EventGeoCoded;
+    let eventGeoCoded: NDKEventGeoCoded;
+    let eventGeoCoded2: NDKEventGeoCoded;
 
     beforeEach(() => {
       ndk = new NDK();
-      eventGeoCoded = new EventGeoCoded(ndk, rawEvent);
-      eventGeoCoded2 = new EventGeoCoded(ndk, geohashEvent);
+      eventGeoCoded = new NDKEventGeoCoded(ndk, rawEvent);
+      eventGeoCoded2 = new NDKEventGeoCoded(ndk, geohashEvent);
     });
 
     describe('Initialization', () => {
         it('should instantiate correctly with dd (lat/lon)', () => {
-            expect(eventGeoCoded).toBeInstanceOf(EventGeoCoded);
+            expect(eventGeoCoded).toBeInstanceOf(NDKEventGeoCoded);
             const dd = eventGeoCoded.dd as DD;
             expect(dd?.lat).toBeDefined();
             expect(dd?.lon).toBeDefined();
@@ -127,7 +65,7 @@ describe('EventGeoCoded', () => {
             expect(dd).toEqual({ lat: 50.11090007610619, lon: 8.682099860161543 });
         });
         it('should instantiate correctly with a geohash', () => {
-            const geohashGeoCoded = new EventGeoCoded(ndk, geohashEvent);
+            const geohashGeoCoded = new NDKEventGeoCoded(ndk, geohashEvent);
             expect(geohashGeoCoded.geohashes).toEqual(expect.arrayContaining(['u1422u57b']));
         });
     });
@@ -204,10 +142,7 @@ describe('EventGeoCoded', () => {
             eventGeoCoded.dd = { lat: 48.137154, lon: 11.576124 }
             expect(eventGeoCoded?.dd.lat).toEqual(48.137154);
             expect(eventGeoCoded?.dd.lon).toEqual(11.576124);
-  
-            // const allGeoTags = eventGeoCoded.geo;
-            // expect(allGeoTags).toContainEqual(['G', 'lat']);
-            // expect(allGeoTags).toContainEqual(['G', 'lon']);
+
         });
     });
 
@@ -215,17 +150,17 @@ describe('EventGeoCoded', () => {
 
         beforeEach(() => {
            ndk = new NDK();
-            eventGeoCoded = new EventGeoCoded(ndk, rawEvent);
-            eventGeoCoded2 = new EventGeoCoded(ndk, geohashEvent);
+            eventGeoCoded = new NDKEventGeoCoded(ndk, rawEvent);
+            eventGeoCoded2 = new NDKEventGeoCoded(ndk, geohashEvent);
         });
 
         afterEach(() => {
-            jest.clearAllMocks(); // Clear any mocks to avoid test contamination
+            jest.clearAllMocks();
         });
 
         describe('encodeGeohash', () => {
             it('should encode latitude and longitude into a geohash string', () => {
-                const geohash = EventGeoCoded.encodeGeohash({ lat: 50.1109, lon: 8.6821} as DD);
+                const geohash = NDKEventGeoCoded.encodeGeohash({ lat: 50.1109, lon: 8.6821} as DD);
                 expect(geohash).toBeDefined();
                 expect(geohash.length).toBeGreaterThan(0);
             });
@@ -233,7 +168,7 @@ describe('EventGeoCoded', () => {
 
         describe('decodeGeohash', () => {
             it('should decode a geohash string into latitude and longitude', () => {
-                const { lat, lon }: DD = EventGeoCoded.decodeGeohash('u1hc230');
+                const { lat, lon }: DD = NDKEventGeoCoded.decodeGeohash('u1hc230');
                 expect(lat).toBeDefined();
                 expect(lon).toBeDefined();
             });
@@ -241,32 +176,32 @@ describe('EventGeoCoded', () => {
 
         describe('distance', () => {
             it('should calculate distance between two DD sets', () => {
-                const distance = EventGeoCoded.distance({lat: 50.1109, lon: 8.6821}, {lat: 52.5200, lon: 13.4050});
+                const distance = NDKEventGeoCoded.distance({lat: 50.1109, lon: 8.6821}, {lat: 52.5200, lon: 13.4050});
                 expect(Math.round(distance)).toBe(424);
             });
 
             it('should calculate distance between two geohashes', () => {
-                const distance = EventGeoCoded.distance('u0yjjd6j5sff', 'u1hc230');
+                const distance = NDKEventGeoCoded.distance('u0yjjd6j5sff', 'u1hc230');
                 expect(Math.round(distance)).toBe(163);
             });
 
             it('should calculate distance between a geohash and a DD', () => {
-                const distance = EventGeoCoded.distance('u1hc230', {lat: 52.5200, lon: 13.4050});
+                const distance = NDKEventGeoCoded.distance('u1hc230', {lat: 52.5200, lon: 13.4050});
                 expect(Math.round(distance)).toBe(498);
             });
         }); 
 
         describe('generateFilterableGeohash', () => {
             it('should generate a filterable geohash from a geohash', () => {
-                const filterableGeohash = EventGeoCoded.generateFilterableGeohash('u0yjjd6j5sff');
+                const filterableGeohash = NDKEventGeoCoded.generateFilterableGeohash('u0yjjd6j5sff');
                 expect(filterableGeohash).toBeDefined();
                 expect(filterableGeohash.length).toBeGreaterThan(1);
             });
         });
 
-        describe('sortByLengthDesc', () => {
+        describe('sortGeohashes', () => {
             it('should sort geohashes by length in descending order', () => {
-                const sorted = EventGeoCoded.generateFilterableGeohash('u0yjjd6j5sff').sort(EventGeoCoded.sortByLengthDesc);
+                const sorted = NDKEventGeoCoded.generateFilterableGeohash('u0yjjd6j5sff').sort(NDKEventGeoCoded.sortGeohashes);
                 expect(sorted).toEqual(expect.arrayContaining(['u0yjjd6j5sff', 'u0yjjd6j5sf', 'u0yjjd6j5s']));
             });
         });
@@ -274,10 +209,10 @@ describe('EventGeoCoded', () => {
         describe('fetchNearby', () => {
             it('should fetch events nearby a given geohash', async () => {
                 jest.spyOn(ndk, 'fetchEvents').mockImplementation(async (filter) => {
-                    return new Set([new EventGeoCoded(ndk, geohashEvent), new EventGeoCoded(ndk, rawEvent)]);
+                    return new Set([new NDKEventGeoCoded(ndk, geohashEvent), new NDKEventGeoCoded(ndk, rawEvent)]);
                 });
     
-                const nearbyEvents = await EventGeoCoded.fetchNearby(ndk, 'u0yjjd6j5sff');
+                const nearbyEvents = await NDKEventGeoCoded.fetchNearby(ndk, 'u0yjjd6j5sff');
                 expect(nearbyEvents).toBeInstanceOf(Set);
                 expect(nearbyEvents.size).toBeGreaterThan(0);
                 expect(Array.from(nearbyEvents)?.[0].geohash).toEqual('u0yjjd6j5sff');
@@ -288,11 +223,11 @@ describe('EventGeoCoded', () => {
             it('should correctly sort events based on distance from a given point', () => {
                 const coords = { lat: 50.1109, lon: 8.6821 }; // Reference point
                 const eventsToSort = new Set([
-                    new EventGeoCoded(ndk, { ...geohashEvent, tags: [['g', 'u1hcy2z', 'gh']] }), // Further away
+                    new NDKEventGeoCoded(ndk, { ...geohashEvent, tags: [['g', 'u1hcy2z', 'gh']] }), // Further away
                     eventGeoCoded // Closer to reference point
                 ]);
     
-                const sortedEvents = EventGeoCoded.sortGeospatial(coords, eventsToSort);
+                const sortedEvents = NDKEventGeoCoded.sortGeospatial(coords, eventsToSort);
                 const sortedArray = Array.from(sortedEvents);
                 expect(sortedArray[0].id).toEqual(rawEvent.id);
                 expect(sortedArray[1].id).toEqual(geohashEvent.id);
@@ -301,7 +236,7 @@ describe('EventGeoCoded', () => {
 
         describe('Manipulating Geospatial Tags', () => {
             it('should add and remove geospatial tags correctly', () => {
-                const cleanEventGeoCoded = new EventGeoCoded(ndk, {} as NostrEvent);
+                const cleanEventGeoCoded = new NDKEventGeoCoded(ndk, {} as NostrEvent);
                 cleanEventGeoCoded.dd = { lat: 50.1109, lon: 8.6821 } as DD;
                 cleanEventGeoCoded['_removeGeoHashes']();
                 expect(cleanEventGeoCoded.tags.some(tag => tag.includes('gh'))).toBeFalsy();

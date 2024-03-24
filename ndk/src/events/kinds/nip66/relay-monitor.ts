@@ -10,7 +10,7 @@ import type { NDKFilter } from "../../../subscription/index.js";
 import type { NDK } from "../../../ndk/index.js";
 import type { NDKUserProfile } from "../../../user/profile.js";
 
-import { EventGeoCoded } from "./EventGeoCoded.js";
+import { NDKEventGeoCoded } from "../../geocoded.js";
 
 import type { RelayMeta } from "./relay-meta.js";
 import type { RelayDiscovery, RelayDiscoveryFilters } from "./relay-discovery.js";
@@ -57,7 +57,7 @@ export type FetchRelaysOptions = {
  * A `RelayMonitor` event represents a NIP-66 Relay Monitor.
  * 
  * @author sandwich.farm
- * @extends EventGeoCoded
+ * @extends NDKEventGeoCoded
  * @summary Relay Monitor (NIP-66)
  * @implements NDKKind.RelayMonitor
  * @example
@@ -73,7 +73,7 @@ export type FetchRelaysOptions = {
  * console.log(online)
  * ```
  */
-export class RelayMonitor extends EventGeoCoded {
+export class RelayMonitor extends NDKEventGeoCoded {
 
     private _initialized: boolean = false;
     private _tolerance: number = 1.2;
@@ -488,8 +488,8 @@ export class RelayMonitor extends EventGeoCoded {
             return undefined;
         }
         const _filter: NDKFilter = this._nip66Filter([NDKKind.RelayDiscovery], filter);
-        const geocodedEvents = await EventGeoCoded.fetchNearby(this.ndk, geohash, _filter, maxPrecision, minPrecision, minResults, recurse);
-        const events: Set<RelayDiscovery> = new Set(Array.from(geocodedEvents || new Set()).map( (event: EventGeoCoded) => (event as RelayDiscovery) ));
+        const geocodedEvents = await NDKEventGeoCoded.fetchNearby(this.ndk, geohash, _filter, maxPrecision, minPrecision, minResults, recurse);
+        const events: Set<RelayDiscovery> = new Set(Array.from(geocodedEvents || new Set()).map( (event: NDKEventGeoCoded) => (event as RelayDiscovery) ));
         const relayList: RelayListSet = this._reduceRelayEventsToRelayStrings(events);
         return new Promise((resolve) => {
             resolve(relayList);

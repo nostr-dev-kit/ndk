@@ -1,11 +1,11 @@
 import { NDK } from '../../ndk/index';
 import { NDKRelayMonitors } from './NDKRelayMonitors';
-import { EventGeoCoded } from '../../events/kinds/nip66/EventGeoCoded';
+import { NDKEventGeoCoded } from '../../events/geocoded';
 
-// Mock EventGeoCoded and related methods
-jest.mock('../../events/kinds/nip66/EventGeoCoded', () => {
+// Mock NDKEventGeoCoded and related methods
+jest.mock('../../events/kinds/nip66/NDKEventGeoCoded', () => {
   return {
-    EventGeoCoded: jest.fn().mockImplementation(() => {
+    NDKEventGeoCoded: jest.fn().mockImplementation(() => {
       return {
         fetchNearby: jest.fn(),
         sortGeospatial: jest.fn()
@@ -30,7 +30,7 @@ describe("NDKRelayMonitors", () => {
     });
 
     it("should initialize monitors when populate is called", async () => {
-        // Mock any NDK or EventGeoCoded methods used in populate
+        // Mock any NDK or NDKEventGeoCoded methods used in populate
         const mockFetchEvents = jest.fn().mockResolvedValue(new Set());
         ndk.fetchEvents = mockFetchEvents;
 
@@ -89,7 +89,7 @@ describe("NDKRelayMonitors", () => {
     describe('aggregate', () => {
         it('should aggregate data based on the specified fetchAggregate method', async () => {
             const mockFetchOnlineRelays = jest.fn();
-            EventGeoCoded.prototype.fetchOnlineRelays = mockFetchOnlineRelays.mockResolvedValue(/* Mock data */);
+            NDKEventGeoCoded.prototype.fetchOnlineRelays = mockFetchOnlineRelays.mockResolvedValue(/* Mock data */);
 
             const fetchAggregate = 'onlineList'; // Example aggregate method
             const results = await relayMonitors.aggregate(fetchAggregate, options);

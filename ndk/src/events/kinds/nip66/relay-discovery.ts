@@ -2,7 +2,7 @@ import { NDKKind } from "../index.js";
 import type { NDKEvent } from "../../index.js";
 import type { NDK } from "../../../ndk/index.js";
 import type { NostrEvent } from "../../index.js";
-import { EventGeoCoded } from "./EventGeoCoded.js";
+import { NDKEventGeoCoded } from "../../geocoded.js";
 
 export enum RelayDiscoveryTags {
     network = "n",
@@ -37,7 +37,7 @@ export type RelayDiscoveryFilters = {
  * console.log($event.nips)
  * ```
  */
-export class RelayDiscovery extends EventGeoCoded {
+export class RelayDiscovery extends NDKEventGeoCoded {
     constructor(ndk: NDK | undefined, rawEvent?: NostrEvent) {
         super(ndk, rawEvent);
         this.kind ??= NDKKind.RelayDiscovery; 

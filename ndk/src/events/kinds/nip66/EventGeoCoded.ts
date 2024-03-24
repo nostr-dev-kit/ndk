@@ -12,12 +12,12 @@ type EventGeoCodedObject = Record<string, string | string[] | number | boolean>
 type EventGeoCodedCallback = (events: Set<EventGeoCoded>) => Promise<Set<EventGeoCoded>>;
 
 /**
- * EventGeoCoded
  * 
- * This class represents a Nostr event with geospatial information.
+ * This class represents a geocoded Nostr event.
  * 
  * @author sandwich.farm
  * @extends NDKEvent
+ * 
  */
 export class EventGeoCoded extends NDKEvent {
 
@@ -36,6 +36,10 @@ export class EventGeoCoded extends NDKEvent {
         return new EventGeoCoded(event.ndk, event.rawEvent());
     }
 
+    static sortByLengthDesc(a: string, b: string): number {
+        return b.length - a.length;
+    }
+
     static generateFilterableGeohash(fullGeohash: Geohash): Geohash[] {
         const geohashes: Set<Geohash> = new Set();
         const deref: Geohash = String(fullGeohash); 
@@ -44,14 +48,6 @@ export class EventGeoCoded extends NDKEvent {
             geohashes.add(n);
         }
         return Array.from(geohashes);
-    }
-
-    static sortByLengthDesc(a: string, b: string): number {
-        return b.length - a.length;
-    }
-
-    protected get indexedTags(): NDKTag[] {
-        return this.tags.filter(tag => tag[0].length === 1);
     }
 
     // public rawEvent(): NostrEvent {
@@ -96,7 +92,7 @@ export class EventGeoCoded extends NDKEvent {
             return { lat: this.lat, lon: this.lon } as DD;
         }
         if(this.geohash) {
-            return EventGeoCoded.parseGeohashDD(this.geohash as Geohash);
+            return EventGeoCoded.parseCoords(this.geohash as Geohash);
         }
         return undefined;
     }    
@@ -112,7 +108,7 @@ export class EventGeoCoded extends NDKEvent {
             EventGeoCoded
                 .generateFilterableGeohash(String(value))
                 .sort( EventGeoCoded.sortByLengthDesc );
-        this._updateGeohashesAndTags(geohashes);
+        this._updateGeohashTags(geohashes);
     }
 
     /**
@@ -123,7 +119,7 @@ export class EventGeoCoded extends NDKEvent {
      */
     set geohashes(values: Geohash[]) {
         this._removeGeoHashes();
-        this._updateGeohashesAndTags(Array.from(new Set<string>(values)));
+        this._updateGeohashTags(Array.from(new Set<string>(values)));
     }
 
     /**
@@ -204,27 +200,19 @@ export class EventGeoCoded extends NDKEvent {
     private set lat(value: number) {
         if(!this._dd) this._dd = { lat: 0, lon: 0 } as DD;
         this._dd.lat = value;
-        // this._setGeoTag("lat", String(value));
     }
 
     private get lat(): number | undefined {
         return this._dd?.lat;
-        // const lat = this.tagValueByMarker("g", "lat");
-        // if(!lat) return undefined;
-        // return parseFloat(lat);
     }
 
     private set lon(value: number) {
         if(!this._dd) this._dd = { lat: 0, lon: 0 } as DD;
         this._dd.lon = value;
-        // this._setGeoTag("lon", String(value));
     }
 
     private get lon(): number | undefined {
         return this._dd?.lon;
-        // const lon = this.tagValueByMarker("g", "lon");
-        // if(!lon) return undefined;
-        // return parseFloat(lon);
     }
 
     /**
@@ -295,7 +283,7 @@ export class EventGeoCoded extends NDKEvent {
     /**
      * Sorts an array of `EventGeoCoded` instances based on their distance from a given latitude and longitude.
      * 
-     * @param {Coords} coords An object containing the reference latitude (`lat`) and longitude (`lon`).
+     * @param {Coords} coords An object containing the reference latitude (`lat`) and longitude (`lon`) or a geohash.
      * @param {EventGeoCoded[]} geoCodedEvents An array of `EventGeoCoded` instances to be sorted.
      * @param {boolean} asc Determines the sort order. `true` for ascending (default), `false` for descending.
      * @returns A sorted array of `EventGeoCoded` instances.
@@ -303,7 +291,7 @@ export class EventGeoCoded extends NDKEvent {
      */
     public static sortGeospatial = (coords: Coords, geoCodedEvents: Set<EventGeoCoded>, asc: boolean = true): Set<EventGeoCoded> => {
         const events = Array.from(geoCodedEvents);
-        const {lat, lon} = EventGeoCoded.parseGeohashDD(coords);
+        const {lat, lon} = EventGeoCoded.parseCoords(coords);
         if (isNaN(lat) || isNaN(lon) || !isFinite(lat) || !isFinite(lon)) 
             throw new Error('(lat) and (lon), respectively, must be numbers and finite.');
         events.sort((a, b) => {
@@ -324,7 +312,7 @@ export class EventGeoCoded extends NDKEvent {
      * @returns {string} The encoded geohash string.
      */
     public static encodeGeohash(coords: Coords, precision: number = this.GEOHASH_PRECISION): string {
-        const {lat: latitude, lon: longitude} = EventGeoCoded.parseGeohashDD(coords);
+        const {lat: latitude, lon: longitude} = EventGeoCoded.parseCoords(coords);
         let isEven = true;
         const latR: number[] = [-90.0, 90.0];
         const lonR: number[] = [-180.0, 180.0];
@@ -408,8 +396,8 @@ export class EventGeoCoded extends NDKEvent {
      * @static
      */
     public static distance(coords1: Coords, coords2: Coords): number {
-        const {lat: lat1, lon: lon1} = EventGeoCoded.parseGeohashDD(coords1);
-        const {lat: lat2, lon: lon2} = EventGeoCoded.parseGeohashDD(coords2);
+        const {lat: lat1, lon: lon1} = EventGeoCoded.parseCoords(coords1);
+        const {lat: lat2, lon: lon2} = EventGeoCoded.parseCoords(coords2);
         const radius: number = this.EARTH_RADIUS; //km
         const latDeg: number = EventGeoCoded.toRadians(lat2 - lat1);
         const lonDeg: number = EventGeoCoded.toRadians(lon2 - lon1);
@@ -428,10 +416,10 @@ export class EventGeoCoded extends NDKEvent {
      * @param {Coords} coords 
      * @returns A DD object
      */
-    public static parseGeohashDD = (coords: Coords): DD => {
-        return (coords as DD)?.lat && (coords as DD)?.lon 
-            ? coords as DD 
-            : EventGeoCoded.decodeGeohash(coords as Geohash);
+    public static parseCoords = (coords: Coords): DD => {
+        return typeof coords === 'string'
+            ? EventGeoCoded.decodeGeohash(coords as Geohash)
+            : coords as DD;
     };
 
     /**
@@ -446,7 +434,7 @@ export class EventGeoCoded extends NDKEvent {
         return degrees*(Math.PI/180);
     }
 
-        /**
+    /**
      * Refines the search interval for a geohash decoding process based on a character from the geohash.
      * This method is part of the geohash decoding process, refining the latitude or longitude range.
      * 
@@ -508,6 +496,10 @@ export class EventGeoCoded extends NDKEvent {
         return tags?.length ? tags : undefined;
     }
 
+    protected get indexedTags(): NDKTag[] {
+        return this.tags.filter(tag => tag[0].length === 1);
+    }
+
     /**
      * Adds a geo tags to the event's tags, updating or removing existing tags as necessary.
      * This method manages the insertion of geospatial information tags ('g' and 'G') into the event's tag array.
@@ -545,7 +537,7 @@ export class EventGeoCoded extends NDKEvent {
      * 
      * @private
      */
-    private _updateGeohashesAndTags(geohashes: Geohash[]) {
+    private _updateGeohashTags(geohashes: Geohash[]) {
         this._removeGeoHashes();
         this.tags.push(["G", "gh"]);
         geohashes.forEach(gh => {

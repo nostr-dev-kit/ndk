@@ -1,5 +1,6 @@
 import type { NDKEvent } from "../../events/index.js";
 import type { NDK } from "../../ndk/index.js";
+import { getRelaysForFilterWithAuthors } from "../../outbox/read/with-authors.js";
 import type { NDKFilter } from "../../subscription/index.js";
 import type { Hexpubkey } from "../../user/index.js";
 import type { NDKRelay } from "../index.js";
@@ -22,12 +23,6 @@ export function calculateRelaySetFromEvent(ndk: NDK, event: NDKEvent): NDKRelayS
     ndk.pool?.relays.forEach((relay: NDKRelay) => relays.add(relay));
 
     return new NDKRelaySet(relays, ndk);
-}
-
-export function getWriteRelaysFor(ndk: NDK, author: Hexpubkey): Set<WebSocket["url"]> | undefined {
-    if (!ndk.outboxTracker) return undefined;
-
-    return ndk.outboxTracker.data.get(author)?.writeRelays;
 }
 
 /**
@@ -55,30 +50,7 @@ export function calculateRelaySetsFromFilter(
     // if this filter has authors, get write relays for each
     // one of them and add them to the map
     if (authors.size > 0) {
-        const authorToRelaysMap = new Map<WebSocket["url"], Hexpubkey[]>();
-
-        // Go through each pubkey in `authors`
-        for (const author of authors) {
-            // Get that pubkey's relays
-            const userWriteRelays = getWriteRelaysFor(ndk, author);
-
-            // If we have relays for this user, add them to the map
-            if (userWriteRelays && userWriteRelays.size > 0) {
-                ndk.debug(`Adding ${userWriteRelays.size} relays for ${author}`);
-                userWriteRelays.forEach((relay) => {
-                    const authorsInRelay = authorToRelaysMap.get(relay) || [];
-                    authorsInRelay.push(author);
-                    authorToRelaysMap.set(relay, authorsInRelay);
-                });
-            } else {
-                // If we don't, add the explicit relays
-                Array.from(pool.relays.keys()).forEach((relay: WebSocket["url"]) => {
-                    const authorsInRelay = authorToRelaysMap.get(relay) || [];
-                    authorsInRelay.push(author);
-                    authorToRelaysMap.set(relay, authorsInRelay);
-                });
-            }
-        }
+        const authorToRelaysMap = getRelaysForFilterWithAuthors(ndk, Array.from(authors), pool);
 
         // initialize all result with all the relayUrls we are going to return
         for (const relayUrl of authorToRelaysMap.keys()) {

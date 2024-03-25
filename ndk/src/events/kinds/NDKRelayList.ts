@@ -129,10 +129,7 @@ export class NDKRelayList extends NDKEvent {
     }
 }
 
-function relayListFromKind3(
-    ndk: NDK,
-    contactList: NDKEvent
-): NDKRelayList | undefined {
+function relayListFromKind3(ndk: NDK, contactList: NDKEvent): NDKRelayList | undefined {
     try {
         const content = JSON.parse(contactList.content);
         const relayList = new NDKRelayList(ndk);
@@ -160,7 +157,9 @@ function relayListFromKind3(
         relayList.writeRelayUrls = Array.from(writeRelays);
 
         return relayList;
-    } catch { /* */ }
+    } catch {
+        /* */
+    }
 
     return undefined;
 }

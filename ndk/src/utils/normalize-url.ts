@@ -1,4 +1,4 @@
-import normalizeUrl from 'normalize-url';
+import normalizeUrl from "normalize-url";
 
 export function normalizeRelayUrl(url: string): string {
     let r = normalizeUrl(url, {
@@ -8,8 +8,8 @@ export function normalizeRelayUrl(url: string): string {
     });
 
     // if it doesn't end with a slash, add it
-    if (!r.endsWith('/')) {
-        r += '/';
+    if (!r.endsWith("/")) {
+        r += "/";
     }
 
     return r;

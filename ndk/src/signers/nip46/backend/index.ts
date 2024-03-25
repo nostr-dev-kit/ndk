@@ -1,5 +1,5 @@
-import type { Event } from "nostr-tools";
-import { verifySignature } from "nostr-tools";
+import type { VerifiedEvent } from "nostr-tools";
+import { verifyEvent } from "nostr-tools";
 
 import { NDKEvent } from "../../../events/index.js";
 import type { NDK } from "../../../ndk/index.js";
@@ -13,6 +13,7 @@ import GetPublicKeyHandlingStrategy from "./get-public-key.js";
 import Nip04DecryptHandlingStrategy from "./nip04-decrypt.js";
 import Nip04EncryptHandlingStrategy from "./nip04-encrypt.js";
 import SignEventHandlingStrategy from "./sign-event.js";
+import { hexToBytes } from "@noble/hashes/utils";
 
 export type NIP46Method =
     | "connect"
@@ -76,7 +77,11 @@ export class NDKNip46Backend {
      * @param privateKey The private key of the npub that wants to be published as
      * @param permitCallback Callback executed when permission is requested
      */
-    public constructor(ndk: NDK, privateKey: string, permitCallback: Nip46PermitCallback);
+    public constructor(
+        ndk: NDK,
+        privateKey: Uint8Array | string,
+        permitCallback: Nip46PermitCallback
+    );
 
     /**
      * @param ndk The NDK instance to use
@@ -85,14 +90,21 @@ export class NDKNip46Backend {
      */
     public constructor(
         ndk: NDK,
-        privateKeyOrSigner: string | NDKSigner,
+        privateKeyOrSigner: string | Uint8Array | NDKSigner,
         permitCallback: Nip46PermitCallback
     ) {
         this.ndk = ndk;
-        this.signer =
-            typeof privateKeyOrSigner === "string"
-                ? new NDKPrivateKeySigner(privateKeyOrSigner)
-                : privateKeyOrSigner;
+
+        if (privateKeyOrSigner instanceof Uint8Array) {
+            this.signer = new NDKPrivateKeySigner(privateKeyOrSigner as Uint8Array);
+        } else if (privateKeyOrSigner instanceof String) {
+            this.signer = new NDKPrivateKeySigner(hexToBytes(privateKeyOrSigner as string));
+        } else if (privateKeyOrSigner instanceof NDKPrivateKeySigner) {
+            this.signer = privateKeyOrSigner as NDKPrivateKeySigner;
+        } else {
+            throw new Error("Invalid signer");
+        }
+
         this.debug = ndk.debug.extend("nip46:backend");
         this.rpc = new NDKNostrRpc(ndk, this.signer, this.debug);
         this.permitCallback = permitCallback;
@@ -108,7 +120,7 @@ export class NDKNip46Backend {
         const sub = this.ndk.subscribe(
             {
                 kinds: [24133 as number],
-                "#p": [this.localUser.hexpubkey],
+                "#p": [this.localUser.pubkey],
             },
             { closeOnEose: false }
         );
@@ -153,8 +165,7 @@ export class NDKNip46Backend {
         this.debug("incoming event", { id, method, params });
 
         // validate signature explicitly
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        if (!verifySignature(event.rawEvent() as Event<any>)) {
+        if (!verifyEvent(event.rawEvent() as VerifiedEvent)) {
             this.debug("invalid signature", event.rawEvent());
             return;
         }

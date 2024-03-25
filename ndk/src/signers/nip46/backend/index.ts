@@ -1,5 +1,5 @@
-import type { Event } from "nostr-tools";
-import { verifySignature } from "nostr-tools";
+import type { VerifiedEvent } from "nostr-tools";
+import { verifyEvent } from "nostr-tools";
 
 import { NDKEvent } from "../../../events/index.js";
 import type { NDK } from "../../../ndk/index.js";
@@ -90,7 +90,7 @@ export class NDKNip46Backend {
     ) {
         this.ndk = ndk;
         this.signer =
-            typeof privateKeyOrSigner === "string"
+            privateKeyOrSigner instanceof Uint8Array
                 ? new NDKPrivateKeySigner(privateKeyOrSigner)
                 : privateKeyOrSigner;
         this.debug = ndk.debug.extend("nip46:backend");
@@ -153,8 +153,7 @@ export class NDKNip46Backend {
         this.debug("incoming event", { id, method, params });
 
         // validate signature explicitly
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        if (!verifySignature(event.rawEvent() as Event<any>)) {
+        if (!verifyEvent(event.rawEvent() as VerifiedEvent)) {
             this.debug("invalid signature", event.rawEvent());
             return;
         }

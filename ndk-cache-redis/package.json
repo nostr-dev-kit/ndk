@@ -38,7 +38,7 @@
         "@nostr-dev-kit/ndk": "workspace:*",
         "debug": "^4.3.4",
         "ioredis": "^5.3.2",
-        "nostr-tools": "^1.17.0",
+        "nostr-tools": "^2.3.2",
         "typescript": "^5.2.2"
     },
     "devDependencies": {

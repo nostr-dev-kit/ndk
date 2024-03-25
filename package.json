@@ -16,7 +16,7 @@
         "@nostr-dev-kit/tsconfig": "workspace:*",
         "eslint": "^8.49.0",
         "prettier": "^3.0.3",
-        "turbo": "^1.10.14",
+        "turbo": "^1.13.0",
         "typescript": "^5.2.2"
     },
     "packageManager": "pnpm@8.7.6"

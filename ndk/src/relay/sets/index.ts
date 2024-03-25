@@ -42,7 +42,7 @@ export class NDKRelaySet {
     /**
      * Adds a relay to this set.
      */
-    public addRelay(relay: NDKRelay) {
+    public addRelay(relay: NDKRelay): void {
         this.relays.add(relay);
     }
 

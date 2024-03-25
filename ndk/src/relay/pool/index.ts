@@ -70,7 +70,7 @@ export class NDKPool extends EventEmitter<{
      * @param relay - The relay to add to the pool.
      * @param removeIfUnusedAfter - The time in milliseconds to wait before removing the relay from the pool after it is no longer used.
      */
-    public useTemporaryRelay(relay: NDKRelay, removeIfUnusedAfter = 600000) {
+    public useTemporaryRelay(relay: NDKRelay, removeIfUnusedAfter = 600000): void {
         const relayAlreadyInPool = this.relays.has(relay.url);
 
         // check if the relay is already in the pool
@@ -103,7 +103,7 @@ export class NDKPool extends EventEmitter<{
      * @param relay - The relay to add to the pool.
      * @param connect - Whether or not to connect to the relay.
      */
-    public addRelay(relay: NDKRelay, connect = true) {
+    public addRelay(relay: NDKRelay, connect = true): void {
         const relayUrl = relay.url;
 
         // check if the relay is blacklisted

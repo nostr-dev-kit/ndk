@@ -8,7 +8,7 @@ import { NDKRelayConnectivity } from "./connectivity.js";
 import { NDKRelayPublisher } from "./publisher.js";
 import type { NDKRelayScore } from "./score.js";
 import { NDKRelaySubscriptions } from "./subscriptions.js";
-import { NDKAuthPolicy } from "./auth-policies.js";
+import type { NDKAuthPolicy } from "./auth-policies.js";
 
 /** @deprecated Use `WebSocket['url']` instead. */
 export type NDKRelayUrl = WebSocket["url"];

@@ -2,8 +2,8 @@ import "websocket-polyfill";
 import NDK, { NDKRelay } from "@nostr-dev-kit/ndk";
 import { relaysFromArgs } from "./utils/relays-from-args";
 
-import chalk from 'chalk';
-import { verifySignature } from "nostr-tools";
+import chalk from "chalk";
+import { verifyEvent } from "nostr-tools";
 const log = console.log;
 const time = console.time;
 const timeEnd = console.timeEnd;
@@ -18,10 +18,12 @@ infoLog(`Starting perftest`);
 const relays = relaysFromArgs();
 
 const ndk = new NDK();
-ndk.pool.on("relay:connect", (r: NDKRelay) => { infoLog(`Connected to relay ${r.url}`); });
+ndk.pool.on("relay:connect", (r: NDKRelay) => {
+    infoLog(`Connected to relay ${r.url}`);
+});
 for (const relay of relays) {
     ndk.addExplicitRelay(relay, undefined, false);
-    log(relay.url)
+    log(relay.url);
 }
 await ndk.connect(2000);
 
@@ -35,12 +37,11 @@ async function fetchAndVerifyEvents(label: string, skipVerification: boolean) {
     timeEnd(info("fetchEvents"));
     infoLog(`Fetched ${events.size} events`);
 
-    const eventObjects = Array.from(events.values())
-        .map((e) => e.rawEvent());
+    const eventObjects = Array.from(events.values()).map((e) => e.rawEvent());
 
     time(info("verifySignature"));
     for (const event of eventObjects) {
-        verifySignature(event as any);
+        verifyEvent(event as any);
     }
     timeEnd(info("verifySignature"));
 }

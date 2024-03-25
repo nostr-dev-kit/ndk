@@ -14,6 +14,7 @@ export type NDKPoolStats = {
 /**
  * Handles connections to all relays. A single pool should be used per NDK instance.
  *
+ * @emit connecting - Emitted when a relay in the pool is connecting.
  * @emit connect - Emitted when all relays in the pool are connected, or when the specified timeout has elapsed, and some relays are connected.
  * @emit notice - Emitted when a relay in the pool sends a notice.
  * @emit flapping - Emitted when a relay in the pool is flapping.
@@ -25,6 +26,8 @@ export class NDKPool extends EventEmitter<{
     notice: (relay: NDKRelay, notice: string) => void;
     flapping: (relay: NDKRelay) => void;
     connect: () => void;
+
+    "relay:connecting": (relay: NDKRelay) => void;
 
     /**
      * Emitted when a relay in the pool connects.
@@ -119,6 +122,7 @@ export class NDKPool extends EventEmitter<{
         this.relays.set(relayUrl, relay);
 
         if (connect) {
+            this.emit("relay:connecting", relay);
             relay.connect().catch((e) => {
                 this.debug(`Failed to connect to relay ${relayUrl}`, e);
             });
@@ -197,20 +201,25 @@ export class NDKPool extends EventEmitter<{
         );
 
         for (const relay of this.relays.values()) {
+            const connectPromise = new Promise<void>((resolve, reject) => {
+                this.emit("relay:connecting", relay);
+                return relay.connect(timeoutMs).then(resolve).catch(reject);
+            });
+
             if (timeoutMs) {
                 const timeoutPromise = new Promise<void>((_, reject) => {
                     setTimeout(() => reject(`Timed out after ${timeoutMs}ms`), timeoutMs);
                 });
 
                 promises.push(
-                    Promise.race([relay.connect(), timeoutPromise]).catch((e) => {
+                    Promise.race([connectPromise, timeoutPromise]).catch((e) => {
                         this.debug(
                             `Failed to connect to relay ${relay.url}: ${e ?? "No reason specified"}`
                         );
                     })
                 );
             } else {
-                promises.push(relay.connect(timeoutMs));
+                promises.push(connectPromise);
             }
         }
 
@@ -254,6 +263,7 @@ export class NDKPool extends EventEmitter<{
 
         setTimeout(() => {
             this.debug(`Attempting to reconnect to ${relay.url}`);
+            this.emit("relay:connecting", relay);
             relay.connect();
             this.checkOnFlappingRelays();
         }, currentBackoff);

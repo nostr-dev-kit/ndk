@@ -2,7 +2,7 @@ import { NDKEventGeoCoded } from './geocoded';
 import { NDK } from '../ndk/index.js';
 
 import type { NostrEvent } from './';
-import type { DD } from './geocoded';
+import { DD, Coords } from './geocoded';
 
 // Sample Nostr events to use in tests
 const rawEvent = {
@@ -41,15 +41,28 @@ const geohashEvent = {
       ]      
 };
 
+const geohashEventNip23 = {
+    id: 'geohash-id',
+    pubkey: 'abcde937081142db0d50d29bf92792d4ee9b3d79a83c483453171a6004711832',
+    created_at: 1622505600,
+    kind: 1,
+    content: 'Legacy geohash content',
+    tags: [
+        ["g", "u1422u57b"],
+      ]      
+};
+
 describe('NDKEventGeoCoded', () => {
     let ndk: NDK;
     let eventGeoCoded: NDKEventGeoCoded;
     let eventGeoCoded2: NDKEventGeoCoded;
+    let eventGeoCodedNip23: NDKEventGeoCoded;
 
     beforeEach(() => {
-      ndk = new NDK();
-      eventGeoCoded = new NDKEventGeoCoded(ndk, rawEvent);
-      eventGeoCoded2 = new NDKEventGeoCoded(ndk, geohashEvent);
+        ndk = new NDK();
+        eventGeoCoded = new NDKEventGeoCoded(ndk, rawEvent);
+        eventGeoCoded2 = new NDKEventGeoCoded(ndk, geohashEvent);
+        eventGeoCodedNip23 = new NDKEventGeoCoded(ndk, geohashEventNip23);
     });
 
     describe('Initialization', () => {
@@ -71,6 +84,22 @@ describe('NDKEventGeoCoded', () => {
     });
 
     describe('getters', () => {
+        it('should get geohashes correctly', () => {
+            expect(eventGeoCoded2.geohashes).toEqual(expect.arrayContaining(['u1422u57b']));
+        });
+
+        it('should sort geohashes correctly', () => {
+            expect(eventGeoCoded2.geohash).toEqual('u1422u57b');
+        });
+
+        it('should get coords correctly', () => {
+            const dd = eventGeoCoded2?.dd as DD;
+            expect(typeof dd.lat).toBe('number');
+            expect(dd.lat).toBeGreaterThan(0);
+            expect(typeof dd.lon).toBe('number');
+            expect(dd.lon).toBeGreaterThan(0);
+        });
+
         it('should get countryName correctly', () => {
             expect(eventGeoCoded2.countryName).toEqual('France');
         });
@@ -81,21 +110,9 @@ describe('NDKEventGeoCoded', () => {
         it('should get regionCode correctly', () => {
             expect(eventGeoCoded2.regionCode).toEqual('FR-HDF');
         });
-        it('should get geohashes correctly', () => {
-            expect(eventGeoCoded2.geohashes).toEqual(expect.arrayContaining(['u1422u57b']));
-        });
-
-        it('should sort geohashes correctly', () => {
-            expect(eventGeoCoded2.geohash).toEqual('u1422u57b');
-        });
     });
 
     describe('setters', () => {
-        
-        it('should set countryName correctly', () => {
-            eventGeoCoded.countryName = 'Germany';
-            expect(eventGeoCoded.countryName).toEqual('Germany');
-        });
 
         it('should set geohashes correctly', () => {
             eventGeoCoded.geohashes = ['u1hc230'];
@@ -112,6 +129,12 @@ describe('NDKEventGeoCoded', () => {
             eventGeoCoded.countryCode = ['Germany'];
             expect(eventGeoCoded.countryCode).toEqual(['Germany']);      
         });
+        
+        it('should set countryName correctly', () => {
+            eventGeoCoded.countryName = 'Germany';
+            expect(eventGeoCoded.countryName).toEqual('Germany');
+        });
+
 
         it('should set regionCode correctly', () => {
             eventGeoCoded.regionCode = 'AB-CD';
@@ -121,12 +144,6 @@ describe('NDKEventGeoCoded', () => {
         it('should set regionName correctly', () => {
             eventGeoCoded.regionName = 'Region';
             expect(eventGeoCoded.regionName).toEqual('Region');      
-        });
-
-        it('should set coords correctly', () => {
-            expect(eventGeoCoded.dd).toEqual({ lat: 50.11090007610619, lon: 8.682099860161543 });
-            eventGeoCoded.geohash = 'u1422u57b';
-            expect(eventGeoCoded.geohashes).toEqual(expect.arrayContaining(['u1422u57b', 'u']));       
         });
 
         it('should correctly update and retrieve geo-related information', () => {
@@ -243,5 +260,37 @@ describe('NDKEventGeoCoded', () => {
             });
         });
 
+    });
+    describe('backwards compatibility [NIP-23]', () => {
+        describe('getters', () => {
+            it('should get geohashes correctly', () => {
+                expect(eventGeoCodedNip23.geohashes).toEqual(expect.arrayContaining(['u1422u57b']));
+            });
+    
+            it('should sort geohashes correctly', () => {
+                expect(eventGeoCodedNip23.geohash).toEqual('u1422u57b');
+            });
+        });
+        
+        describe('setters', () => {
+
+            it('should set geohash correctly', () => {
+                eventGeoCoded.geohash = 'u1hc230';
+                const geohashes = eventGeoCoded.geohashes;
+                expect(geohashes?.length).toBeGreaterThan(1);
+                expect(eventGeoCoded.geohashes).toEqual(expect.arrayContaining(['u1hc230']));
+            });
+
+            it('should directly set geohashes correctly', () => {
+                eventGeoCoded.geohashes = ['u1hc230', 'u1hc23'];
+                expect(eventGeoCoded.geohashes).toEqual(['u1hc230', 'u1hc23']);
+            });
+    
+            it('should set coords correctly', () => {
+                expect(eventGeoCoded.dd).toEqual({ lat: 50.11090007610619, lon: 8.682099860161543 });
+                eventGeoCoded.geohashes = ['u1422u57b'];
+                expect(eventGeoCoded.geohashes).toEqual(expect.arrayContaining(['u1422u57b']));       
+            });
+        });
     });
 });

@@ -80,8 +80,7 @@ export class NDKRelayConnectivity {
             this.updateConnectionStats.attempt();
             if (this._status === NDKRelayStatus.DISCONNECTED)
                 this._status = NDKRelayStatus.CONNECTING;
-            else
-                this._status = NDKRelayStatus.RECONNECTING;
+            else this._status = NDKRelayStatus.RECONNECTING;
 
             this.relay.off("connect", connectHandler);
             this.relay.off("disconnect", disconnectHandler);
@@ -89,11 +88,7 @@ export class NDKRelayConnectivity {
             this.relay.on("disconnect", disconnectHandler);
             this.relay.on("auth", authHandler);
 
-            await runWithTimeout(
-                this.relay.connect,
-                timeoutMs,
-                "Timed out while connecting"
-            );
+            await runWithTimeout(this.relay.connect, timeoutMs, "Timed out while connecting");
         } catch (e) {
             this.debug("Failed to connect", e);
             this._status = NDKRelayStatus.DISCONNECTED;
@@ -167,12 +162,12 @@ export class NDKRelayConnectivity {
 
         const reconnectDelay = this.connectedAt
             ? Math.max(0, 60000 - (Date.now() - this.connectedAt))
-            : 5000 * (this._connectionStats.attempts+1);
+            : 5000 * (this._connectionStats.attempts + 1);
 
         this.reconnectTimeout = setTimeout(() => {
             this.reconnectTimeout = undefined;
             this._status = NDKRelayStatus.RECONNECTING;
-            this.debug(`Reconnection attempt #${attempt}`)
+            this.debug(`Reconnection attempt #${attempt}`);
             this.connect()
                 .then(() => {
                     this.debug("Reconnected");
@@ -183,7 +178,7 @@ export class NDKRelayConnectivity {
                     if (attempt < 10) {
                         setTimeout(() => {
                             this.handleReconnection(attempt + 1);
-                        }, 1000 * (attempt+1) ^ 2);
+                        }, (1000 * (attempt + 1)) ^ 2);
                     } else {
                         this.debug("Reconnect failed after 10 attempts");
                     }

@@ -21,6 +21,12 @@ export class NDKRelayList extends NDKEvent {
         return new NDKRelayList(ndkEvent.ndk, ndkEvent.rawEvent());
     }
 
+    static async forUser(pubkey: Hexpubkey, ndk: NDK): Promise<NDKRelayList | undefined> {
+        // call forUsers with a single pubkey
+        const result = await this.forUsers([pubkey], ndk);
+        return result.get(pubkey);
+    }
+
     /**
      * Gathers a set of relay list events for a given set of users.
      * @returns A map of pubkeys to relay list.
@@ -37,6 +43,7 @@ export class NDKRelayList extends NDKEvent {
         const relaySet = new NDKRelaySet(set, ndk);
 
         await Promise.all([
+            // Fetch all kind 10002 events
             new Promise<void>(async (resolve) => {
                 const lists = await ndk.fetchEvents(
                     { kinds: [10002], authors: pubkeys },
@@ -50,11 +57,27 @@ export class NDKRelayList extends NDKEvent {
 
                 resolve();
             }),
+
+            // Also fetch all kind 3 events
+            new Promise<void>(async (resolve) => {
+                const lists = await ndk.fetchEvents(
+                    { kinds: [3], authors: pubkeys },
+                    { closeOnEose: true, pool, groupable: false },
+                    relaySet
+                );
+
+                for (const relayList of lists) {
+                    const list = relayListFromKind3(ndk, relayList);
+                    if (list) fromContactList.set(relayList.pubkey, list);
+                }
+
+                resolve();
+            }),
         ]);
 
         const result = new Map<Hexpubkey, NDKRelayList>();
 
-        // merge the two lists giving priority to the relay list
+        // Merge the results, kind 10002 takes priority
         for (const pubkey of pubkeys) {
             const relayList = relayLists.get(pubkey) ?? fromContactList.get(pubkey);
             if (relayList) result.set(pubkey, relayList);
@@ -106,54 +129,38 @@ export class NDKRelayList extends NDKEvent {
     }
 }
 
-async function relayListFromKind3(
-    pubkey: Hexpubkey,
+function relayListFromKind3(
     ndk: NDK,
-    contactList?: NDKEvent | null
-): Promise<NDKRelayList | undefined> {
-    contactList ??= await ndk.fetchEvent({
-        kinds: [3],
-        authors: [pubkey],
-    });
+    contactList: NDKEvent
+): NDKRelayList | undefined {
+    try {
+        const content = JSON.parse(contactList.content);
+        const relayList = new NDKRelayList(ndk);
+        const readRelays = new Set<string>();
+        const writeRelays = new Set<string>();
 
-    if (contactList) {
-        try {
-            const content = JSON.parse(contactList.content);
-            const relayList = new NDKRelayList(ndk);
-            const readRelays = new Set<string>();
-            const writeRelays = new Set<string>();
-
-            for (let [key, config] of Object.entries(content)) {
-                try {
-                    key = normalizeRelayUrl(key);
-                } catch {
-                    continue;
-                }
-
-                if (!config) {
-                    readRelays.add(key);
-                    writeRelays.add(key);
-                } else {
-                    const relayConfig: { read?: boolean; write?: boolean } = config;
-                    if (relayConfig.write) writeRelays.add(key);
-                    if (relayConfig.read) readRelays.add(key);
-                }
+        for (let [key, config] of Object.entries(content)) {
+            try {
+                key = normalizeRelayUrl(key);
+            } catch {
+                continue;
             }
 
-            if (writeRelays.size === 0) {
-                console.error("No write relays found for user", `https://njump.me/p/${pubkey}`);
+            if (!config) {
+                readRelays.add(key);
+                writeRelays.add(key);
+            } else {
+                const relayConfig: { read?: boolean; write?: boolean } = config;
+                if (relayConfig.write) writeRelays.add(key);
+                if (relayConfig.read) readRelays.add(key);
             }
-
-            relayList.readRelayUrls = Array.from(readRelays);
-            relayList.writeRelayUrls = Array.from(writeRelays);
-
-            return relayList;
-        } catch (e) {
-            // Don't do anything
         }
-    } else {
-        console.error("No contact list found for user", pubkey);
-    }
+
+        relayList.readRelayUrls = Array.from(readRelays);
+        relayList.writeRelayUrls = Array.from(writeRelays);
+
+        return relayList;
+    } catch { /* */ }
 
     return undefined;
 }

@@ -315,6 +315,11 @@ export class NDKEvent extends EventEmitter {
 
         this.ndk.debug(`publish to ${relaySet.size} relays`, this.rawEvent());
 
+        // If the published event is a delete event, notify the cache if there is one
+        if (this.kind === NDKKind.EventDeletion && this.ndk.cacheAdapter?.deleteEvent) {
+            this.ndk.cacheAdapter.deleteEvent(this);
+        }
+
         const relays = await relaySet.publish(this, timeoutMs);
         this.onRelays = Array.from(relays);
 

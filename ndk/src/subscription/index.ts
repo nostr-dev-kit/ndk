@@ -332,6 +332,8 @@ export class NDKSubscription extends EventEmitter {
         // this.debug(`Starting subscription`, JSON.stringify(this.filters), this.opts, Array.from(this.relaySet?.relays!).map(r => r.url));
 
         // iterate through the this.relayFilters
+        // console.log(this.relayFilters);
+        // console.log('start with relays', {relayFilters: this.relayFilters.values(), filters: JSON.stringify(this.filters), size: this.relayFilters.size});
         for (const [relayUrl, filters] of this.relayFilters) {
             const relay = this.pool.getRelay(relayUrl);
             relay.subscribe(this, filters);
@@ -404,7 +406,7 @@ export class NDKSubscription extends EventEmitter {
     public eoseReceived(relay: NDKRelay): void {
         this.eosesSeen.add(relay);
 
-        this.eoseDebug(`received from ${relay.url}`);
+        // this.eoseDebug(`received from ${relay.url}`);
 
         let lastEventSeen = this.lastEventReceivedAt
             ? Date.now() - this.lastEventReceivedAt

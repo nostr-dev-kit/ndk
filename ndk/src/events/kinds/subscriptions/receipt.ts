@@ -83,7 +83,6 @@ export class NDKSubscriptionReceipt extends NDKEvent {
             return false;
         }
 
-
         if (period.start > period.end) {
             return false;
         }

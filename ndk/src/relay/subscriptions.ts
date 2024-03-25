@@ -269,7 +269,7 @@ export class NDKRelaySubscriptions {
 
         const timeouts = this.delayedTimers.get(groupableId);
         this.delayedTimers.delete(groupableId);
-        // this.groupingDebug(`Executing group ${groupableId} triggered by which has ${timeouts?.length} timeouts, sub delay is ${triggeredBy.opts.groupableDelay}ms ${triggeredBy.opts.subId}`, triggeredBy);
+        // this.groupingDebug(`Executing group ${groupableId} triggered by which has ${timeouts?.length} timeouts, sub delay is ${triggeredBy.opts.groupableDelay}ms ${triggeredBy.opts.subId}`, JSON.stringify(triggeredBy.filters));
 
         // clear all timeouts
         if (timeouts) {
@@ -303,7 +303,7 @@ export class NDKRelaySubscriptions {
         const readyListener = () => {
             this.debug("new relay coming online for active subscription", {
                 relay: this.ndkRelay.url,
-                mergeFilters,
+                // mergedFilters: JSON.stringify(mergedFilters),
             });
             this.executeSubscriptionsConnected(groupableId, groupedSubscriptions, mergedFilters);
         };
@@ -388,7 +388,7 @@ export class NDKRelaySubscriptions {
 
         sub.on("eose", () => {
             const subFilters = this.activeSubscriptions.get(sub);
-            // this.debug(`Received EOSE from ${this.ndkRelay.url} for subscription ${subId} with filter ${JSON.stringify(mergedFilters)}}`, {subFilters});
+            // this.debug(`Received EOSE from ${this.ndkRelay.url} for subscription ${subId}`);
             subFilters?.eoseReceived(this.ndkRelay);
         });
 

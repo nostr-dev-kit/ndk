@@ -12,6 +12,8 @@ export async function runWithTimeout<T>(
         const timeout = setTimeout(() => {
             reject(new Error(timeoutMessage || `Timed out after ${timeoutMs}ms`));
         }, timeoutMs);
-        fn().then(resolve, reject).finally(() => clearTimeout(timeout));
+        fn()
+            .then(resolve, reject)
+            .finally(() => clearTimeout(timeout));
     });
 }

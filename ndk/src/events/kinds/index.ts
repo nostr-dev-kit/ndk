@@ -102,7 +102,6 @@ export enum NDKKind {
     NostrWalletConnectReq = 23194,
     NostrWalletConnectRes = 23195,
 
-
     NostrConnect = 24133,
 
     HttpAuth = 27235,

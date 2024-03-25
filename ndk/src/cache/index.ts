@@ -16,6 +16,13 @@ export interface NDKCacheAdapter {
     setEvent(event: NDKEvent, filters: NDKFilter[], relay?: NDKRelay): Promise<void>;
 
     /**
+     * Called when an event is deleted by the client.
+     * Cache adapters should remove the event from their cache.
+     * @param event - The event that was deleted.
+     */
+    deleteEvent?(event: NDKEvent): Promise<void>;
+
+    /**
      * Special purpose
      */
     fetchProfile?(pubkey: Hexpubkey): Promise<NDKUserProfile | null>;

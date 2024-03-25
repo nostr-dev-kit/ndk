@@ -1,5 +1,18 @@
 # @nostr-dev-kit/ndk
 
+## 2.6.0
+
+### Minor Changes
+
+-   Make outbox calculation great again
+
+### Patch Changes
+
+-   Refactor OutboxTracker to handle tracking users in batches
+-   c2db3c1: Support blocked relays
+-   c2db3c1: notify caches when events are deleted
+-   c2db3c1: URL normalization
+
 ## 2.5.1
 
 ### Patch Changes

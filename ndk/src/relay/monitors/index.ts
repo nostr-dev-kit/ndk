@@ -291,7 +291,7 @@ export class NDKRelayMonitors {
         }
         const kinds: NDKKind[] = [ NDKKind.RelayMonitor ];
         const _filter: NDKFilter = { ...filter, kinds };
-        const geocodedEvents = await NDKEventGeoCoded.fetchNearby(this.ndk, geohash, _filter, maxPrecision, minPrecision, minResults, recurse, cb);
+        const geocodedEvents = await NDKEventGeoCoded.fetchNearby(this.ndk, geohash, _filter, { maxPrecision, minPrecision, minResults, recurse, callbackFilter: cb });
         const events: RelayMonitorSet= new Set(Array.from(geocodedEvents || new Set()).map( (event: NDKEventGeoCoded) => (event as RelayMonitor) ));
         return events;
     }

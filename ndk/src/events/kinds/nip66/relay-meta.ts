@@ -30,6 +30,8 @@ const REGEX_GEOHASH: RegExp = /^[0-9b-hjkmnp-z]{1,12}$/;
  * @extends NDKEvent
  */
 export class RelayMeta extends NDKEvent {
+    static readonly groups = ['other', 'rtt', 'nip11', 'dns', 'geo', 'ssl', 'counts'];
+
     constructor(ndk: NDK | undefined, rawEvent?: NostrEvent) {
         super(ndk, rawEvent);
         this.kind ??= NDKKind.RelayMeta;
@@ -98,9 +100,22 @@ export class RelayMeta extends NDKEvent {
         this.setGroupedTag("ssl", values);
     }
 
+    get counts(): RelayMetaParsed {
+        return this.getGroupedTag("counts");
+    }
+
+    set counts(values: { [key: string]: RelayMetaData } ) {
+        this.setGroupedTag("counts", values);
+    }
+    
+    /**
+     * Retrieves all metadata grouped by their respective key.
+     * 
+     * @returns An object where each key is a metadata category (e.g., 'rtt', 'nip11', 'dns', 'geo', 'ssl', 'counts'), and the value is the parsed metadata for that category.
+     */
     get all(): RelayMetaParsedAll {
         const result: RelayMetaParsedAll = {};
-        ['rtt', 'nip11', 'dns', 'geo', 'ssl'].forEach(group => {
+        RelayMeta.groups.forEach(group => {
             const data = this.getGroupedTag(group);
             if(data){
                 result[group] = data;
@@ -109,6 +124,14 @@ export class RelayMeta extends NDKEvent {
         return result;
     }
 
+    /**
+     * Groups tags by a specific group and parses their values.
+     * 
+     * @param group The key sto group tags by.
+     * @returns An object where each key is a tag within the specified group and its value is either a single metadata value or an array of metadata values, all cast to their appropriate types.
+     * 
+     * @private
+     */
     private getGroupedTag( group: string ): RelayMetaParsed {
         const tags = this.tags.filter(tag => tag[0] === group);
         const data: RelayMetaParsed = {};
@@ -134,6 +157,14 @@ export class RelayMeta extends NDKEvent {
         return data;
     }
 
+    /**
+     * Sets or updates tags grouped by a specific group with provided values.
+     * 
+     * @param group The category of the tags to set or update.
+     * @param values An object where keys represent the tag names within the group, and the values are the data to be set for those tags.
+     * 
+     * @private
+     */
     private setGroupedTag(group: string, values: { [key: string]: RelayMetaData }) {
         this.removeTag(group); // Assuming this removes all tags starting with `group`
         Object.entries(values).forEach(([key, value]) => {
@@ -145,6 +176,15 @@ export class RelayMeta extends NDKEvent {
         });
     }
 
+    /**
+     * Casts a tag value to its appropriate type based on its content and optionally a key.
+     * 
+     * @param value The string value of the tag to cast.
+     * @param key Optionally, the key associated with the value, which may influence the casting (e.g., 'geohash').
+     * @returns The value cast to either a boolean, number, or string, or left as undefined if it cannot be reliably cast.
+     * 
+     * @private
+     */
     private castValue( value: string, key?: string ): RelayMetaDataValue {
         if (value.toLowerCase() === "true") {
             return true;
@@ -152,7 +192,7 @@ export class RelayMeta extends NDKEvent {
         if (value.toLowerCase() === "false") {
             return false;
         }
-        //don't accidentally cast IP as float
+        //don't cast IP as float
         if (REGEX_IPV4.test(value)) {
             return value;
         }

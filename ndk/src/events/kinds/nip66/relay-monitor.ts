@@ -12,6 +12,7 @@ import type { NDKUserProfile } from "../../../user/profile.js";
 
 import { NDKEventGeoCoded } from "../../geocoded.js";
 
+import type { FetchNearbyRelayOptions } from "../../geocoded.js";
 import type { RelayMeta } from "./relay-meta.js";
 import type { RelayDiscovery, RelayDiscoveryFilters } from "./relay-discovery.js";
 
@@ -36,18 +37,19 @@ export type RelayMonitorDiscoveryFilters = {
     [K in RelayMonitorDiscoveryTags as `#${K}`]?: string[];
 };
 
-type FetchNearbyRelayOptions = {
-    geohash: string;
-    maxPrecision?: number;
-    minPrecision?: number;
-    minResults?: number;
-    recurse?: boolean;
-    filter?: NDKFilter;
-}
+// type FetchNearbyRelayOptions = {
+//     geohash: string;
+//     maxPrecision?: number;
+//     minPrecision?: number;
+//     minResults?: number;
+//     recurse?: boolean;
+//     filter?: NDKFilter;
+// }
 
 export type FetchRelaysOptions = {
     filter?: NDKFilter;
     indexedTags?: RelayDiscoveryFilters;
+    geohash?: string,
     nearby?: FetchNearbyRelayOptions;
     activeOnly?: boolean;
     tolerance?: number;
@@ -488,7 +490,8 @@ export class RelayMonitor extends NDKEventGeoCoded {
             return undefined;
         }
         const _filter: NDKFilter = this._nip66Filter([NDKKind.RelayDiscovery], filter);
-        const geocodedEvents = await NDKEventGeoCoded.fetchNearby(this.ndk, geohash, _filter, maxPrecision, minPrecision, minResults, recurse);
+
+        const geocodedEvents = await NDKEventGeoCoded.fetchNearby(this.ndk, geohash, _filter, { maxPrecision, minPrecision, minResults, recurse } as FetchNearbyRelayOptions);
         const events: Set<RelayDiscovery> = new Set(Array.from(geocodedEvents || new Set()).map( (event: NDKEventGeoCoded) => (event as RelayDiscovery) ));
         const relayList: RelayListSet = this._reduceRelayEventsToRelayStrings(events);
         return new Promise((resolve) => {

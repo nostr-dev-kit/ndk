@@ -95,7 +95,7 @@ export class NDKRelayList extends NDKEvent {
 
     set readRelayUrls(relays: WebSocket["url"][]) {
         for (const relay of relays) {
-            this.tags.push(["relay", relay, READ_MARKER]);
+            this.tags.push(["r", relay, READ_MARKER]);
         }
     }
 
@@ -108,7 +108,7 @@ export class NDKRelayList extends NDKEvent {
 
     set writeRelayUrls(relays: WebSocket["url"][]) {
         for (const relay of relays) {
-            this.tags.push(["relay", relay, WRITE_MARKER]);
+            this.tags.push(["r", relay, WRITE_MARKER]);
         }
     }
 
@@ -120,7 +120,7 @@ export class NDKRelayList extends NDKEvent {
     }
     set bothRelayUrls(relays: WebSocket["url"][]) {
         for (const relay of relays) {
-            this.tags.push(["relay", relay]);
+            this.tags.push(["r", relay]);
         }
     }
 

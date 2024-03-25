@@ -271,60 +271,65 @@ export class NDKEventGeoCoded extends NDKEvent {
 
     /**
      * Fetches events and sorts by distance with a given geohash
+     * 
+     * @param {NDK} ndk An NDK instance
      * @param {string} geohash The geohash that represents the location to search for relays.
-     * @param {number} maxPrecision The maximum precision of the geohash to search for.
-     * @param {number} minPrecision The minimum precision of the geohash to search for.
-     * @param {number} minResults The minimum number of results to return.
-     * @param {boolean} recurse Recusively search for relays until results >= minResults
      * @param {NDKFilter} filter An optional, additional filter to ammend to the default filter. 
+     * @param {FetchNearbyRelayOptions} options An optional object containing options specific to fetchNearby
+     * 
      * @returns Promise resolves to an array of `RelayListSet` objects.
+     * 
      * @public
      */
     public static async fetchNearby(
-        ndk: NDK, 
-        geohash: string, 
-        filter?: NDKFilter, 
+        ndk: NDK,
+        geohash: string,
+        filter?: NDKFilter,
         options?: FetchNearbyRelayOptions
     ): Promise<Set<NDKEventGeoCoded>> {
-        options = {...fetchNearbyOptionDefaults, ...options};
-        const { minResults, recurse, callbackFilter } = options;
-        let { maxPrecision, minPrecision } = options;
-        maxPrecision = maxPrecision ?? fetchNearbyOptionDefaults.maxPrecision;
-        minPrecision = minPrecision ?? fetchNearbyOptionDefaults.minPrecision;  
+
+        const effectiveOptions: FetchNearbyRelayOptions = {
+            ...fetchNearbyOptionDefaults,
+            ...options
+        };
+    
+        let { maxPrecision, minPrecision, minResults, recurse, callbackFilter } = effectiveOptions;
+           
         let events: Set<NDKEventGeoCoded> = new Set();
+    
         try {
-            const _geohash = String(geohash);
-            const _maybeRecurse = async (min: number, max: number): Promise<Set<NDKEventGeoCoded>> => {
-                if (min < 1) return events;
-                const geohashes: string[] = [];
-                for (let i = max; i >= min; i--) {
-                    geohashes.push(geohash.slice(0, i));
-                }
+            maxPrecision = Math.min(maxPrecision as number, geohash.length);
+            minPrecision = Math.min(minPrecision as number, geohash.length);
+    
+            const fetchEventsRecursive = async (minPrecision: number, maxPrecision: number): Promise<void> => {
+                if (minPrecision < 1 || events.size >= (minResults as number)) return;
+    
+                const geohashes = Array.from({ length: maxPrecision - minPrecision + 1 }, (_, i) => geohash.slice(0, maxPrecision - i));
                 const _filter: NDKFilter = { ...filter, "#g": geohashes };
                 const fetchedEvents = await ndk.fetchEvents(_filter);
+    
                 fetchedEvents.forEach(event => events.add(event as NDKEventGeoCoded));
-                if (callbackFilter) {
-                    events = await callbackFilter(events);
+    
+                if (callbackFilter) events = await callbackFilter(events);
+    
+                if (recurse && events.size < (minResults as number)) {
+                    await fetchEventsRecursive(minPrecision - 1, minPrecision - 1);
                 }
-                if (recurse && (events.size < (minResults as number))) {
-                    return _maybeRecurse(min - 1, min);
-                }
-                return events;
             };
-
-            if (_geohash.length < (maxPrecision as number)) {
-                maxPrecision = _geohash.length;
-                minPrecision = Math.min(_geohash.length, minPrecision as number);
+    
+            await fetchEventsRecursive(minPrecision, maxPrecision);
+    
+            if (events.size) {
+                events = new Set([...NDKEventGeoCoded.sortGeospatial(geohash, events)]);
             }
-            events = await _maybeRecurse(minPrecision as number, maxPrecision as number);
-            if (!events.size) return new Set();
-            events = new Set(NDKEventGeoCoded.sortGeospatial(geohash, events, true));
+
             return events;
         } catch (error) {
             console.error(`fetchNearby: Error: ${error}`);
             return events;
         }
     }
+    
 
     /**
      * Sorts an array of `NDKEventGeoCoded` instances based on their distance from a given latitude and longitude.
@@ -447,8 +452,6 @@ export class NDKEventGeoCoded extends NDKEvent {
         }
         return true;
     }
-
-    
 
     /**
      * Calculates the great-circle distance between two points on the Earth's surface given their latitudes and longitudes.

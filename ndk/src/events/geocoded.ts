@@ -23,6 +23,7 @@ export class NDKEventGeoCoded extends NDKEvent {
 
     private static readonly EARTH_RADIUS: number = 6371; // km
     private static readonly GEOHASH_PRECISION: number = 12;
+    private static readonly geohashCondition = (tag: NDKTag) => tag[0] === 'g' && (tag[2] === "gh" || tag[2] === "geohash" || tag.length === 2);
 
     private _dd: DD | undefined;
 
@@ -30,7 +31,7 @@ export class NDKEventGeoCoded extends NDKEvent {
         super(ndk, rawEvent);
         if(typeof this.geohash === 'string'){
             this.dd = this.geohash;
-        } 
+        }
     }
 
     static from(event: NDKEvent): NDKEventGeoCoded {
@@ -104,8 +105,9 @@ export class NDKEventGeoCoded extends NDKEvent {
         if (typeof this.lat !== 'undefined' && typeof this.lon !== 'undefined') {
             return { lat: this.lat, lon: this.lon } as DD;
         }
-        if(this.geohash) {
-            return NDKEventGeoCoded.parseCoords(this.geohash as Geohash);
+        if(typeof this.geohash === 'string') {
+            this.dd = this.geohash;
+            return this.dd;
         }
         return undefined;
     }    
@@ -140,12 +142,8 @@ export class NDKEventGeoCoded extends NDKEvent {
      * 
      * @returns An array of geohashes sorted by descending precision.
      */
-    get geohashes(): Geohash[] {
-        const geohashCondition = (tag: NDKTag) => tag[0] === 'g' && (tag[2] === "gh" || tag[2] === "geohash" || tag.length === 2);
-        return this.tags
-                    .filter(geohashCondition)
-                    .map(tag => tag[1])
-                    .sort( NDKEventGeoCoded.sortGeohashes );
+    get geohashes(): Geohash[] | undefined {
+        return this._getGeohashesFromTags();
     } 
 
     /**
@@ -555,5 +553,30 @@ export class NDKEventGeoCoded extends NDKEvent {
         geohashes.forEach(gh => {
             this.tags.push(["g", gh, "gh"]);
         });
+    }
+
+    private _setupGeohashes(): void {
+        if(this._hasGeohash()) {
+            const geohashes: Geohash[] | undefined = this._getGeohashesFromTags();
+            if(geohashes){
+                this.geohash = geohashes[0];
+            }
+        }
+    }
+
+    private _getGeohashesFromTags(): string[] | undefined {
+        const tags = 
+            this.tags
+                .filter( NDKEventGeoCoded.geohashCondition )
+                .map( (tag: NDKTag) => tag[1] )
+                .sort( NDKEventGeoCoded.sortGeohashes );
+        if(!tags.length) return undefined;
+        return tags;
+    }
+
+    private _hasGeohash(): boolean {
+        const geohashes: Geohash[] | undefined = this._getGeohashesFromTags();
+        if(!geohashes) return false;
+        return true;
     }
 }

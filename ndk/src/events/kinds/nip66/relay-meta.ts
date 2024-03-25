@@ -3,8 +3,8 @@ import { NDKKind } from "../index.js";
 import type { NDK } from "../../../ndk/index.js";
 import type { NostrEvent } from "../../index.js";
 
-export type RelayMetaParsed = { [key: string]: RelayMetaData } | undefined 
-export type RelayMetaParsedAll = { [key: string]: RelayMetaParsed }
+export type RelayMetaParsed = Record<string, RelayMetaData> | undefined 
+export type RelayMetaParsedAll = Record<string, RelayMetaParsed>
 
 export type RelayMetaData =  RelayMetaDataArray | RelayMetaDataValue
 export type RelayMetaDataArray = RelayMetaDataValue[]
@@ -101,7 +101,10 @@ export class RelayMeta extends NDKEvent {
     get all(): RelayMetaParsedAll {
         const result: RelayMetaParsedAll = {};
         ['rtt', 'nip11', 'dns', 'geo', 'ssl'].forEach(group => {
-            result[group] = this.getGroupedTag(group);
+            const data = this.getGroupedTag(group);
+            if(data){
+                result[group] = data;
+            }
         });
         return result;
     }

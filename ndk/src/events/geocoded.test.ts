@@ -238,9 +238,9 @@ describe('NDKEventGeoCoded', () => {
             });
         });
 
-        describe('sortGeohashes', () => {
+        describe('sortGeohashesFn', () => {
             it('should sort geohashes by length in descending order', () => {
-                const sorted = NDKEventGeoCoded.generateFilterableGeohash('u0yjjd6j5sff').sort(NDKEventGeoCoded.sortGeohashes);
+                const sorted = NDKEventGeoCoded.generateFilterableGeohash('u0yjjd6j5sff').sort(NDKEventGeoCoded.sortGeohashesFn);
                 expect(sorted).toEqual(expect.arrayContaining(['u0yjjd6j5sff', 'u0yjjd6j5sf', 'u0yjjd6j5s']));
             });
         });

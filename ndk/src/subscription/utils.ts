@@ -1,5 +1,5 @@
 import { nip19 } from "nostr-tools";
-import type { EventPointer } from "nostr-tools/lib/nip19.js";
+import type { EventPointer } from "nostr-tools/lib/types/nip19.js";
 
 import { NDKRelay } from "../relay/index.js";
 import type { NDKFilter, NDKSubscription } from "./index.js";
@@ -40,9 +40,9 @@ export function queryFullyFilled(subscription: NDKSubscription): boolean {
  * const filter1 = { authors: ["a", "b"] };
  * const filter2 = { authors: ["a", "c"] };
  * compareFilter(filter1, filter2); // false
- * @returns
+ * @returns boolean
  */
-export function compareFilter(filter1: NDKFilter, filter2: NDKFilter) {
+export function compareFilter(filter1: NDKFilter, filter2: NDKFilter): boolean {
     // Make sure the filters have the same number of keys
     if (Object.keys(filter1).length !== Object.keys(filter2).length) return false;
 

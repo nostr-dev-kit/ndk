@@ -11,6 +11,7 @@ import { NostrWalletConnectMethod, sendReq } from "./req";
 import { NDKEvent } from "../events";
 import { getBalance, type GetBalanceResponse } from "./get_balance";
 import { getInfo, GetInfoResponse } from "./get_info";
+import { hexToBytes } from "@noble/hashes/utils";
 
 export type NDKNWcCommands =
     | "pay_invoice"
@@ -72,7 +73,7 @@ export class NDKNwc extends EventEmitter {
         ndk: NDK;
         pubkey: string;
         relayUrls: string[];
-        secret: string;
+        secret: string | Uint8Array;
     }) {
         super();
 
@@ -82,7 +83,9 @@ export class NDKNwc extends EventEmitter {
             new Set(relayUrls.map((url) => ndk.pool.getRelay(url))),
             ndk
         );
-        this.signer = new NDKPrivateKeySigner(secret);
+        this.signer = new NDKPrivateKeySigner(
+            secret instanceof Uint8Array ? secret : hexToBytes(secret)
+        );
         this.debug = ndk.debug.extend("nwc");
 
         this.debug(`Starting with wallet service ${this.walletService.npub}`);

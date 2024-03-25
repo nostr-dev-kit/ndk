@@ -122,7 +122,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
     }
 
     public async deleteEvent(event: NDKEvent): Promise<void> {
-        db.events.delete(event.tagId());
+        await db.events.where({ id: event.tagId() }).delete();
     }
 
     public async setEvent(event: NDKEvent, filters: NDKFilter[], relay?: NDKRelay): Promise<void> {

@@ -8,8 +8,25 @@ export type Coords = DD | Geohash
 export type DD = { lat: number; lon: number }
 export type Geohash = string;
 
-type EventGeoCodedObject = Record<string, string | string[] | number | boolean>
-type EventGeoCodedCallback = (events: Set<NDKEventGeoCoded>) => Promise<Set<NDKEventGeoCoded>>;
+export type EventGeoCodedObject = Record<string, string | string[] | number | boolean>
+export type EventGeoCodedCallback = (events: Set<NDKEventGeoCoded>) => Promise<Set<NDKEventGeoCoded>>;
+
+export type FetchNearbyRelayOptions = {
+    maxPrecision?: number;
+    minPrecision?: number;
+    minResults?: number;
+    recurse?: boolean;
+    callbackFilter?: EventGeoCodedCallback;
+}
+
+const eventGeoCodedCallbackDefault: EventGeoCodedCallback = async (evs: Set<NDKEventGeoCoded>)=>evs; 
+const fetchNearbyOptionDefaults: FetchNearbyRelayOptions = {
+    maxPrecision: 9, 
+    minPrecision: 4, 
+    recurse: false,
+    minResults: 5, 
+    callbackFilter: eventGeoCodedCallbackDefault
+};
 
 /**
  * 
@@ -23,13 +40,14 @@ export class NDKEventGeoCoded extends NDKEvent {
 
     private static readonly EARTH_RADIUS: number = 6371; // km
     private static readonly GEOHASH_PRECISION: number = 12;
-    private static readonly geohashCondition = (tag: NDKTag) => tag[0] === 'g' && (tag[2] === "gh" || tag[2] === "geohash" || tag.length === 2);
+    private static readonly BASE32: string = '0123456789bcdefghjkmnpqrstuvwxyz';  
+    private static readonly geohashFilterFn = (tag: NDKTag) => tag[0] === 'g' && (tag[2] === "gh" || tag[2] === "geohash" || tag.length === 2); //`g` tags with a length of 2 are NIP-52 geohashes
 
     private _dd: DD | undefined;
 
     constructor( ndk: NDK | undefined, rawEvent?: NostrEvent ) {
         super(ndk, rawEvent);
-        if(typeof this.geohash === 'string'){
+        if(NDKEventGeoCoded.isGeohash(this.geohash)){
             this.dd = this.geohash;
         }
     }
@@ -48,7 +66,7 @@ export class NDKEventGeoCoded extends NDKEvent {
      * 
      * @static
      */
-    static sortGeohashes(a: string, b: string): number {
+    static sortGeohashesFn(a: string, b: string): number {
         return b.length - a.length;
     }
 
@@ -119,10 +137,11 @@ export class NDKEventGeoCoded extends NDKEvent {
      * @param value The geohash to set as the primary geohash.
      */
     set geohash(value: Geohash) {
+        if(!NDKEventGeoCoded.isGeohash(value)) return;
         const geohashes = 
             NDKEventGeoCoded
                 .generateFilterableGeohash(String(value))
-                .sort( NDKEventGeoCoded.sortGeohashes );
+                .sort( NDKEventGeoCoded.sortGeohashesFn );
         this._updateGeohashTags(geohashes);
     }
 
@@ -133,6 +152,7 @@ export class NDKEventGeoCoded extends NDKEvent {
      * @param values An array of geohashes to set, potentially containing duplicates.
      */
     set geohashes(values: Geohash[]) {
+        values = values.filter(NDKEventGeoCoded.isGeohash);
         this._removeGeoHashes();
         this._updateGeohashTags(Array.from(new Set<string>(values)));
     }
@@ -143,7 +163,13 @@ export class NDKEventGeoCoded extends NDKEvent {
      * @returns An array of geohashes sorted by descending precision.
      */
     get geohashes(): Geohash[] | undefined {
-        return this._getGeohashesFromTags();
+        const tags = 
+            this.tags
+                .filter( NDKEventGeoCoded.geohashFilterFn )
+                .map( (tag: NDKTag) => tag[1] )
+                .sort( NDKEventGeoCoded.sortGeohashesFn );
+        if(!tags.length) return undefined;
+        return tags;
     } 
 
     /**
@@ -254,11 +280,20 @@ export class NDKEventGeoCoded extends NDKEvent {
      * @returns Promise resolves to an array of `RelayListSet` objects.
      * @public
      */
-    public static async fetchNearby(ndk: NDK, geohash: string, filter?: NDKFilter, maxPrecision: number = 9, minPrecision: number = 4, minResults: number = 5, recurse: boolean = false, callbackFilter?: EventGeoCodedCallback): Promise<Set<NDKEventGeoCoded>> {
+    public static async fetchNearby(
+        ndk: NDK, 
+        geohash: string, 
+        filter?: NDKFilter, 
+        options?: FetchNearbyRelayOptions
+    ): Promise<Set<NDKEventGeoCoded>> {
+        options = {...fetchNearbyOptionDefaults, ...options};
+        const { minResults, recurse, callbackFilter } = options;
+        let { maxPrecision, minPrecision } = options;
+        maxPrecision = maxPrecision ?? fetchNearbyOptionDefaults.maxPrecision;
+        minPrecision = minPrecision ?? fetchNearbyOptionDefaults.minPrecision;  
+        let events: Set<NDKEventGeoCoded> = new Set();
         try {
-            let events: Set<NDKEventGeoCoded> = new Set();
             const _geohash = String(geohash);
-
             const _maybeRecurse = async (min: number, max: number): Promise<Set<NDKEventGeoCoded>> => {
                 if (min < 1) return events;
                 const geohashes: string[] = [];
@@ -271,23 +306,23 @@ export class NDKEventGeoCoded extends NDKEvent {
                 if (callbackFilter) {
                     events = await callbackFilter(events);
                 }
-                if (recurse && (events.size < minResults)) {
+                if (recurse && (events.size < (minResults as number))) {
                     return _maybeRecurse(min - 1, min);
                 }
                 return events;
             };
 
-            if (_geohash.length < maxPrecision) {
+            if (_geohash.length < (maxPrecision as number)) {
                 maxPrecision = _geohash.length;
-                minPrecision = Math.min(_geohash.length, minPrecision);
+                minPrecision = Math.min(_geohash.length, minPrecision as number);
             }
-            events = await _maybeRecurse(minPrecision, maxPrecision);
+            events = await _maybeRecurse(minPrecision as number, maxPrecision as number);
             if (!events.size) return new Set();
             events = new Set(NDKEventGeoCoded.sortGeospatial(geohash, events, true));
             return events;
         } catch (error) {
             console.error(`fetchNearby: Error: ${error}`);
-            return new Set() as Set<NDKEventGeoCoded>;
+            return events;
         }
     }
 
@@ -300,7 +335,11 @@ export class NDKEventGeoCoded extends NDKEvent {
      * @returns A sorted array of `NDKEventGeoCoded` instances.
      * @throws {Error} If the latitude or longitude is not a finite number.
      */
-    public static sortGeospatial = (coords: Coords, geoCodedEvents: Set<NDKEventGeoCoded>, asc: boolean = true): Set<NDKEventGeoCoded> => {
+    public static sortGeospatial = (
+        coords: Coords, 
+        geoCodedEvents: Set<NDKEventGeoCoded>, 
+        asc: boolean = true
+    ): Set<NDKEventGeoCoded> => {
         const events = Array.from(geoCodedEvents);
         const {lat, lon} = NDKEventGeoCoded.parseCoords(coords);
         if (isNaN(lat) || isNaN(lon) || !isFinite(lat) || !isFinite(lon)) 
@@ -326,7 +365,6 @@ export class NDKEventGeoCoded extends NDKEvent {
         let isEven = true;
         const latR: number[] = [-90.0, 90.0];
         const lonR: number[] = [-180.0, 180.0];
-        const base32 = '0123456789bcdefghjkmnpqrstuvwxyz';
         let bit = 0;
         let ch = 0;
         let geohash = '';
@@ -355,7 +393,7 @@ export class NDKEventGeoCoded extends NDKEvent {
             if (bit < 4) {
                 bit++;
             } else {
-                geohash += base32.charAt(ch);
+                geohash += NDKEventGeoCoded.BASE32.charAt(ch);
                 bit = 0;
                 ch = 0;
             }
@@ -375,10 +413,9 @@ export class NDKEventGeoCoded extends NDKEvent {
         let isEven = true;
         const latR: number[] = [-90.0, 90.0];
         const lonR: number[] = [-180.0, 180.0];
-        const base32 = '0123456789bcdefghjkmnpqrstuvwxyz';
         for (let i = 0; i < hashString.length; i++) {
             const char = hashString.charAt(i).toLowerCase();
-            const charIndex = base32.indexOf(char);
+            const charIndex = NDKEventGeoCoded.BASE32.indexOf(char);
             for (let j = 0; j < 5; j++) {
                 const mask = 1 << (4 - j);
                 if (isEven) {
@@ -393,6 +430,24 @@ export class NDKEventGeoCoded extends NDKEvent {
         const lon = (lonR[0] + lonR[1]) / 2;
         return { lat, lon } as DD;
     };
+
+    /**
+     * Checks if a string is a valid geohash.
+     * 
+     * @param {string} str The string to check.
+     * @returns {boolean} True if the string is a valid geohash, false otherwise.
+     */
+    public static isGeohash(str: string | undefined): boolean {
+        if (!str || str === '') return false;
+        str = str.toLowerCase();
+        for (let i = 0; i < str.length; i++) {
+            if (NDKEventGeoCoded.BASE32.indexOf(str.charAt(i)) === -1) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     
 
     /**
@@ -466,14 +521,19 @@ export class NDKEventGeoCoded extends NDKEvent {
      * 
      * @param value The value to identify which tags to remove.
      */
-    protected removeTagByKeyValue(value: string, key?: string){
-        this.tags = this.tags.filter(tag => tag[1] !== value);
-    }
-
     // protected removeTagByKeyValue(value: string, key?: string){
-    //     const condition = (tag: NDKTag) => key? tag[0] === key && tag[1] === value : tag[1] === value;
-    //     this.tags = this.tags.filter(condition);
+    //     this.tags = this.tags.filter(tag => tag[1] !== value);
     // }
+
+    protected removeTagByKeyValue(value: string, key?: string){
+        const filterFn = 
+            (tag: NDKTag) => 
+                typeof key !== 'undefined'
+                    ? tag[0] !== key && tag[1] !== value
+                    : tag[1] !== value; 
+
+        this.tags = this.tags.filter(filterFn);
+    }
 
     /**
      * Removes tags by marker (the value at last position in the tag array).
@@ -505,7 +565,13 @@ export class NDKEventGeoCoded extends NDKEvent {
         const tags = this.tags.filter(tag => tag[0] === key && tag[tag.length-1] === marker).map(tag => tag[1]).flat();
         return tags?.length ? tags : undefined;
     }
-
+    /**
+     * Retrieves tags that are indexed, identified by having their first element's length equal to 1.
+     * 
+     * @returns An array of NDKTag, filtered to include only indexed tags.
+     * 
+     * @protected
+     */
     protected get indexedTags(): NDKTag[] {
         return this.tags.filter(tag => tag[0].length === 1);
     }
@@ -527,13 +593,13 @@ export class NDKEventGeoCoded extends NDKEvent {
 
     /**
      * Removes geohash tags ('gh') from the event's tags, cleaning up the tag array from geohash (gh) tags.
-     * Additionally, It filters out legacy 'g' tags that represent NIP-23 geohashes, maintaining other geospatial tags intact.
+     * Additionally, It filters out legacy 'g' tags that represent NIP-52 geohashes, maintaining other geospatial tags intact.
      * 
      * @private
      */
     private _removeGeoHashes(): void {
         this.removeTagByKeyValue("gh", "G");
-        this.tags = this.tags.filter( tag => !(tag[0] === "g" && (tag?.[2] === "gh" || tag.length === 2)) ); //`g` tags with a length of 2 are NIP-23 geohashes
+        this.tags = this.tags.filter( tag => !(NDKEventGeoCoded.geohashFilterFn(tag)) ); 
     }
 
     /**
@@ -554,29 +620,4 @@ export class NDKEventGeoCoded extends NDKEvent {
             this.tags.push(["g", gh, "gh"]);
         });
     }
-
-    private _setupGeohashes(): void {
-        if(this._hasGeohash()) {
-            const geohashes: Geohash[] | undefined = this._getGeohashesFromTags();
-            if(geohashes){
-                this.geohash = geohashes[0];
-            }
-        }
-    }
-
-    private _getGeohashesFromTags(): string[] | undefined {
-        const tags = 
-            this.tags
-                .filter( NDKEventGeoCoded.geohashCondition )
-                .map( (tag: NDKTag) => tag[1] )
-                .sort( NDKEventGeoCoded.sortGeohashes );
-        if(!tags.length) return undefined;
-        return tags;
-    }
-
-    private _hasGeohash(): boolean {
-        const geohashes: Geohash[] | undefined = this._getGeohashesFromTags();
-        if(!geohashes) return false;
-        return true;
-    }
-}
+};

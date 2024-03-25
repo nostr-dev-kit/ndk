@@ -1,5 +1,5 @@
 import { NDK } from '../../ndk/index';
-import { NDKRelayMonitors } from './NDKRelayMonitors';
+import { NDKRelayMonitors } from './';
 import { NDKEventGeoCoded } from '../../events/geocoded';
 
 // Mock NDKEventGeoCoded and related methods
@@ -54,15 +54,14 @@ describe("NDKRelayMonitors", () => {
 
             expect(filteredMonitors).toContain(activeMonitor);
             expect(filteredMonitors).not.toContain(inactiveMonitor);
-            });
+        });
 
-            it("should sort monitors by proximity correctly", async () => {
+        it("should sort monitors by proximity correctly", async () => {
 
             const coords = { lat: 0, lon: 0 };
             const monitors = new Set([{ lat: 1, lon: 1 }, { lat: -1, lon: -1 }]);
 
             const sortedMonitors = await NDKRelayMonitors.sortMonitorsByProximity(coords, monitors);
-
         });
     });
 

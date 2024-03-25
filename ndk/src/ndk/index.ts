@@ -108,10 +108,15 @@ export interface GetUserParams extends NDKUserParams {
     hexpubkey?: string;
 }
 
-export const DEFAULT_OUTBOX_RELAYS = ["wss://purplepag.es", "wss://profiles.nos.social"];
+export const DEFAULT_OUTBOX_RELAYS = ["wss://purplepag.es/", "wss://profiles.nos.social/"];
 
+/**
+ * TODO: Move this to a outbox policy
+ */
 export const DEFAULT_BLACKLISTED_RELAYS = [
-    "wss://brb.io", // BRB
+    "wss://brb.io/", // BRB
+    "wss://nostr.mutinywallet.com/", // Don't try to read from this relay since it's a write-only relay
+    "wss://purplepag.es/",
 ];
 
 /**
@@ -179,7 +184,11 @@ export class NDK extends EventEmitter {
 
         this.debug = opts.debug || debug("ndk");
         this.explicitRelayUrls = opts.explicitRelayUrls || [];
-        this.pool = new NDKPool(opts.explicitRelayUrls || [], opts.blacklistRelayUrls, this);
+        this.pool = new NDKPool(
+            opts.explicitRelayUrls || [],
+            opts.blacklistRelayUrls || DEFAULT_BLACKLISTED_RELAYS,
+            this
+        );
 
         this.debug(`Starting with explicit relays: ${JSON.stringify(this.explicitRelayUrls)}`);
 
@@ -271,7 +280,7 @@ export class NDK extends EventEmitter {
 
         if (user && differentUser) {
             const connectToUserRelays = async (user: NDKUser) => {
-                const relayList = await NDKRelayList.forUser(user, this);
+                const relayList = await NDKRelayList.forUser(user.pubkey, this);
 
                 if (!relayList) {
                     this.debug("No relay list found for user", { npub: user.npub });
@@ -291,23 +300,30 @@ export class NDK extends EventEmitter {
                 }
             };
 
-            const fetchUserMuteList = async (user: NDKUser) => {
-                const muteLists = await this.fetchEvents([
-                    { kinds: [NDKKind.MuteList], authors: [user.pubkey] },
-                    {
-                        kinds: [NDKKind.FollowSet],
-                        authors: [user.pubkey],
-                        "#d": ["mute"],
-                        limit: 1,
-                    },
-                ]);
+            const fetchBlockedRelays = async (user: NDKUser) => {
+                const blockedRelays = await this.fetchEvent({
+                    kinds: [NDKKind.BlockRelayList],
+                    authors: [user.pubkey],
+                });
 
-                if (!muteLists) {
-                    this.debug("No mute list found for user", { npub: user.npub });
-                    return;
+                if (blockedRelays) {
+                    const list = NDKList.from(blockedRelays);
+
+                    for (const item of list.items) {
+                        this.pool.blacklistRelayUrls.add(item[0]);
+                    }
                 }
 
-                for (const muteList of muteLists) {
+                this.debug("Blocked relays", { blockedRelays });
+            };
+
+            const fetchUserMuteList = async (user: NDKUser) => {
+                const muteList = await this.fetchEvent({
+                    kinds: [NDKKind.MuteList],
+                    authors: [user.pubkey],
+                });
+
+                if (muteList) {
                     const list = NDKList.from(muteList);
 
                     for (const item of list.items) {
@@ -316,7 +332,7 @@ export class NDK extends EventEmitter {
                 }
             };
 
-            const userFunctions: ((user: NDKUser) => Promise<void>)[] = [];
+            const userFunctions: ((user: NDKUser) => Promise<void>)[] = [fetchBlockedRelays];
 
             if (this.autoConnectUserRelays) userFunctions.push(connectToUserRelays);
             if (this.autoFetchUserMutelist) userFunctions.push(fetchUserMuteList);
@@ -333,8 +349,7 @@ export class NDK extends EventEmitter {
                 runUserFunctions(user);
             } else {
                 this.debug("Waiting for connection to main relays");
-                pool.once("relay:ready", (relay: NDKRelay) => {
-                    this.debug("New relay ready", relay?.url);
+                pool.once("connect", () => {
                     runUserFunctions(user);
                 });
             }

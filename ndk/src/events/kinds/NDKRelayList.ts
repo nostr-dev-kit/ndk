@@ -3,8 +3,10 @@ import type { NostrEvent } from "..";
 import { NDKEvent } from "../index.js";
 import type { NDK } from "../../ndk";
 import { NDKRelay } from "../../relay";
-import { NDKUser } from "../../user";
+import { Hexpubkey, NDKUser } from "../../user";
 import { NDKRelaySet } from "../../relay/sets";
+import { write } from "fs";
+import { normalizeRelayUrl } from "../../utils/normalize-url";
 
 const READ_MARKER = "read";
 const WRITE_MARKER = "write";
@@ -20,88 +22,114 @@ export class NDKRelayList extends NDKEvent {
     }
 
     /**
-     * Returns a set of relay list events for a user.
-     * @returns {Promise<Set<NDKEvent>>} A set of NDKEvents returned for the given user.
+     * Gathers a set of relay list events for a given set of users.
+     * @returns A map of pubkeys to relay list.
      */
-    static async forUser(user: NDKUser, ndk: NDK): Promise<NDKRelayList | undefined> {
+    static async forUsers(pubkeys: Hexpubkey[], ndk: NDK): Promise<Map<Hexpubkey, NDKRelayList>> {
         const pool = ndk.outboxPool || ndk.pool;
         const set = new Set<NDKRelay>();
 
         for (const relay of pool.relays.values()) set.add(relay);
 
+        const relayLists = new Map<Hexpubkey, NDKRelayList>();
+        const fromContactList = new Map<Hexpubkey, NDKRelayList>();
+
         const relaySet = new NDKRelaySet(set, ndk);
-        const event = await ndk.fetchEvent(
-            {
-                kinds: [10002],
-                authors: [user.pubkey],
-            },
-            {
-                closeOnEose: true,
-                pool,
-                groupable: true,
-                subId: `relay-list-${user.pubkey.slice(0, 6)}`,
-            },
-            relaySet
-        );
 
-        if (event) return NDKRelayList.from(event);
+        await Promise.all([
+            new Promise<void>(async (resolve) => {
+                const lists = await ndk.fetchEvents(
+                    { kinds: [10002], authors: pubkeys },
+                    { closeOnEose: true, pool, groupable: false },
+                    relaySet
+                );
 
-        return await relayListFromKind3(user, ndk);
+                for (const relayList of lists) {
+                    relayLists.set(relayList.pubkey, NDKRelayList.from(relayList));
+                }
+
+                resolve();
+            }),
+        ]);
+
+        const result = new Map<Hexpubkey, NDKRelayList>();
+
+        // merge the two lists giving priority to the relay list
+        for (const pubkey of pubkeys) {
+            const relayList = relayLists.get(pubkey) ?? fromContactList.get(pubkey);
+            if (relayList) result.set(pubkey, relayList);
+        }
+
+        return result;
     }
 
     get readRelayUrls(): WebSocket["url"][] {
-        return this.getMatchingTags("r")
+        return this.tags
+            .filter((tag) => tag[0] === "r" || tag[0] === "relay")
             .filter((tag) => !tag[2] || (tag[2] && tag[2] === READ_MARKER))
             .map((tag) => tag[1]);
     }
 
     set readRelayUrls(relays: WebSocket["url"][]) {
         for (const relay of relays) {
-            this.tags.push(["r", relay, READ_MARKER]);
+            this.tags.push(["relay", relay, READ_MARKER]);
         }
     }
 
     get writeRelayUrls(): WebSocket["url"][] {
-        return this.getMatchingTags("r")
+        return this.tags
+            .filter((tag) => tag[0] === "r" || tag[0] === "relay")
             .filter((tag) => !tag[2] || (tag[2] && tag[2] === WRITE_MARKER))
             .map((tag) => tag[1]);
     }
 
     set writeRelayUrls(relays: WebSocket["url"][]) {
         for (const relay of relays) {
-            this.tags.push(["r", relay, WRITE_MARKER]);
+            this.tags.push(["relay", relay, WRITE_MARKER]);
         }
     }
 
     get bothRelayUrls(): WebSocket["url"][] {
-        return this.getMatchingTags("r")
+        return this.tags
+            .filter((tag) => tag[0] === "r" || tag[0] === "relay")
             .filter((tag) => !tag[2])
             .map((tag) => tag[1]);
     }
     set bothRelayUrls(relays: WebSocket["url"][]) {
         for (const relay of relays) {
-            this.tags.push(["r", relay]);
+            this.tags.push(["relay", relay]);
         }
     }
 
     get relays(): WebSocket["url"][] {
-        return this.getMatchingTags("r").map((tag) => tag[1]);
+        return this.tags.filter((tag) => tag[0] === "r" || tag[0] === "relay").map((tag) => tag[1]);
     }
 }
 
-async function relayListFromKind3(user: NDKUser, ndk: NDK): Promise<NDKRelayList | undefined> {
-    const followList = await ndk.fetchEvent({
+async function relayListFromKind3(
+    pubkey: Hexpubkey,
+    ndk: NDK,
+    contactList?: NDKEvent | null
+): Promise<NDKRelayList | undefined> {
+    contactList ??= await ndk.fetchEvent({
         kinds: [3],
-        authors: [user.pubkey],
+        authors: [pubkey],
     });
-    if (followList) {
+
+    if (contactList) {
         try {
-            const content = JSON.parse(followList.content);
+            const content = JSON.parse(contactList.content);
             const relayList = new NDKRelayList(ndk);
             const readRelays = new Set<string>();
             const writeRelays = new Set<string>();
 
-            for (const [key, config] of Object.entries(content)) {
+            for (let [key, config] of Object.entries(content)) {
+                try {
+                    key = normalizeRelayUrl(key);
+                } catch {
+                    continue;
+                }
+
                 if (!config) {
                     readRelays.add(key);
                     writeRelays.add(key);
@@ -112,6 +140,10 @@ async function relayListFromKind3(user: NDKUser, ndk: NDK): Promise<NDKRelayList
                 }
             }
 
+            if (writeRelays.size === 0) {
+                console.error("No write relays found for user", `https://njump.me/p/${pubkey}`);
+            }
+
             relayList.readRelayUrls = Array.from(readRelays);
             relayList.writeRelayUrls = Array.from(writeRelays);
 
@@ -119,6 +151,8 @@ async function relayListFromKind3(user: NDKUser, ndk: NDK): Promise<NDKRelayList
         } catch (e) {
             // Don't do anything
         }
+    } else {
+        console.error("No contact list found for user", pubkey);
     }
 
     return undefined;

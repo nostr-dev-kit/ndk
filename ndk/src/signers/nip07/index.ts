@@ -183,12 +183,12 @@ export class NDKNip07Signer implements NDKSigner {
                 return;
             }
 
-            let timerId: Timer | number;
+            let timerId: ReturnType<typeof setTimeout>;
 
             // Create an interval to repeatedly check for window.nostr
             const intervalId = setInterval(() => {
                 if (window.nostr) {
-                    clearTimeout(timerId as number);
+                    clearTimeout(timerId);
                     clearInterval(intervalId);
                     resolve();
                 }

@@ -31,7 +31,6 @@ function safeInterrupt(data) {
   }, 2);
 }
 
-// called with the data needed to mine the next action in the chain
 function initiateMining(data) {
   // console.log('worker',threadID,'starting');
   let {

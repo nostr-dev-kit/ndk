@@ -38,7 +38,7 @@ export function profileFromEvent(event: NDKEvent): NDKUserProfile {
                 break;
             case "image":
             case "picture":
-                profile.image = payload.image || payload.picture;
+                profile.image = payload.picture || payload.image;
                 break;
             case "banner":
                 profile.banner = payload.banner;

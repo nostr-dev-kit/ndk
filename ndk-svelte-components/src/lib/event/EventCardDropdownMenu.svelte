@@ -2,7 +2,7 @@
     import { copyToClipboard } from "$lib/utils";
     import type { NDKEvent } from "@nostr-dev-kit/ndk";
 
-    import { Copy, Link, MoreVertical } from "lucide-svelte";
+    import { Copy, Link, MoreVertical, Trash } from "lucide-svelte";
 
     import { createEventDispatcher } from "svelte";
 
@@ -10,6 +10,7 @@
 
     export let event: NDKEvent
     export let open = false;
+    export let enableDelete = false;
 
     let copiedEventId = false;
     let copiedEventJSON = false;
@@ -33,7 +34,7 @@
     }
 </script>
 
-<div class="event-card--dropdown-button {open ? "event-card--dropdown-button---opened" : "event-card--dropdown-button---closed"}">
+<div class="event-card--dropdown-button {open ? "event-card--dropdown-button---opened" : "event-card--dropdown-button---closed"} {$$props.class??""}">
     <button on:click={() => { open = !open}}>
         <MoreVertical size="16" />
     </button>
@@ -61,6 +62,15 @@
                     <span class="whitespace-nowrap">{copiedEventJSON ? 'Copied!' : 'Copy Event JSON'}</span>
                 </button>
             </li>
+
+            {#if enableDelete}
+                <li>
+                    <button class="flex flex-row items-center gap-3" on:click={() => dispatch("delete")}>
+                        <Trash size="16" />
+                        Delete
+                    </button>
+                </li>
+            {/if}
         </ul>
     {/if}
 </div>

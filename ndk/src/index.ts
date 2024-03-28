@@ -32,6 +32,7 @@ export * from "./signers/nip46/rpc.js";
 export * from "./signers/nip46/index.js";
 export * from "./signers/private-key/index.js";
 export * from "./subscription/index.js";
+export * from "./subscription/utils.js";
 export * from "./subscription/grouping.js";
 export * from "./user/profile.js";
 

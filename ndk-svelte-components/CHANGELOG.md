@@ -1,5 +1,17 @@
 # @nostr-dev-kit/ndk-svelte-components
 
+## 2.2.9
+
+### Patch Changes
+
+-   c2db3c1: Add Delete to EventCardDropdownMenu
+-   Updated dependencies
+-   Updated dependencies [c2db3c1]
+-   Updated dependencies
+-   Updated dependencies [c2db3c1]
+-   Updated dependencies [c2db3c1]
+    -   @nostr-dev-kit/ndk@2.6.0
+
 ## 2.2.8
 
 ### Patch Changes

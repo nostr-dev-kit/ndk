@@ -121,6 +121,10 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         }
     }
 
+    public async deleteEvent(event: NDKEvent): Promise<void> {
+        await db.events.where({ id: event.tagId() }).delete();
+    }
+
     public async setEvent(event: NDKEvent, filters: NDKFilter[], relay?: NDKRelay): Promise<void> {
         if (event.kind === 0) {
             if (!this.profiles) return;
@@ -133,7 +137,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
             let addEvent = true;
 
             if (event.isParamReplaceable()) {
-                const replaceableId = `${event.kind}:${event.pubkey}:${event.tagId()}`;
+                const replaceableId = event.tagId();
                 const existingEvent = await db.events.where({ id: replaceableId }).first();
                 if (
                     existingEvent &&

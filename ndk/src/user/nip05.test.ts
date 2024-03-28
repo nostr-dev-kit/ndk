@@ -1,15 +1,12 @@
 import { getNip05For } from "./nip05";
 
 describe("nip05", () => {
-
     beforeEach(() => {
         jest.clearAllMocks();
     });
 
     describe("getNip05For", () => {
-
         it("should parse nip46 relays even without relays being specified ", async () => {
-
             const json = {
                 names: {
                     bob: "b0635d6a9851d3aed0cd6c495b282167acf761729078d975fc341b22650b07b9",

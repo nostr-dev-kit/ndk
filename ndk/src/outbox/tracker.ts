@@ -5,6 +5,7 @@ import { NDKRelayList } from "../events/kinds/NDKRelayList.js";
 import type { NDK } from "../ndk/index.js";
 import type { Hexpubkey } from "../user/index.js";
 import { NDKUser } from "../user/index.js";
+import { normalize } from "../utils/normalize-url.js";
 
 export type OutboxItemType = "user" | "kind";
 
@@ -64,43 +65,63 @@ export class OutboxTracker extends EventEmitter {
     }
 
     public trackUsers(items: NDKUser[] | Hexpubkey[]) {
-        for (const item of items) {
-            const itemKey = getKeyFromItem(item);
-            if (this.data.has(itemKey)) continue;
+        for (let i = 0; i < items.length; i += 400) {
+            const slice = items.slice(i, i + 400);
+            let pubkeys = slice.map((item) => getKeyFromItem(item));
 
-            const outboxItem = this.track(item, "user");
+            // filter out items that are already being tracked
+            pubkeys = pubkeys.filter((pubkey) => !this.data.has(pubkey));
 
-            const user = item instanceof NDKUser ? item : new NDKUser({ hexpubkey: item });
-            user.ndk = this.ndk;
+            // if all items are already being tracked, skip
+            if (pubkeys.length === 0) continue;
 
-            NDKRelayList.forUser(user, this.ndk).then((relayList: NDKRelayList | undefined) => {
-                if (relayList) {
-                    outboxItem.readRelays = new Set(relayList.readRelayUrls);
-                    outboxItem.writeRelays = new Set(relayList.writeRelayUrls);
+            const outboxItems = new Map<Hexpubkey, OutboxItem>();
 
-                    // remove all blacklisted relays
-                    for (const relayUrl of outboxItem.readRelays) {
-                        if (this.ndk.pool.blacklistRelayUrls.has(relayUrl)) {
-                            this.debug(`removing blacklisted relay ${relayUrl} from read relays`);
-                            outboxItem.readRelays.delete(relayUrl);
+            for (const pubkey of pubkeys) {
+                outboxItems.set(pubkey, this.track(pubkey, "user"));
+            }
+
+            NDKRelayList.forUsers(pubkeys, this.ndk).then(
+                (relayLists: Map<Hexpubkey, NDKRelayList>) => {
+                    for (const [pubkey, relayList] of relayLists) {
+                        const outboxItem = outboxItems.get(pubkey)!;
+
+                        const user = new NDKUser({ pubkey: pubkey });
+                        user.ndk = this.ndk;
+
+                        if (relayList) {
+                            outboxItem.readRelays = new Set(normalize(relayList.readRelayUrls));
+                            outboxItem.writeRelays = new Set(normalize(relayList.writeRelayUrls));
+
+                            // remove all blacklisted relays
+                            for (const relayUrl of outboxItem.readRelays) {
+                                if (this.ndk.pool.blacklistRelayUrls.has(relayUrl)) {
+                                    this.debug(
+                                        `removing blacklisted relay ${relayUrl} from read relays`
+                                    );
+                                    outboxItem.readRelays.delete(relayUrl);
+                                }
+                            }
+
+                            // remove all blacklisted relays
+                            for (const relayUrl of outboxItem.writeRelays) {
+                                if (this.ndk.pool.blacklistRelayUrls.has(relayUrl)) {
+                                    this.debug(
+                                        `removing blacklisted relay ${relayUrl} from write relays`
+                                    );
+                                    outboxItem.writeRelays.delete(relayUrl);
+                                }
+                            }
+
+                            this.data.set(pubkey, outboxItem);
+
+                            // this.debug(
+                            //     `Adding ${outboxItem.readRelays.size} read relays and ${outboxItem.writeRelays.size} write relays for ${user.pubkey}`
+                            // );
                         }
                     }
-
-                    // remove all blacklisted relays
-                    for (const relayUrl of outboxItem.writeRelays) {
-                        if (this.ndk.pool.blacklistRelayUrls.has(relayUrl)) {
-                            this.debug(`removing blacklisted relay ${relayUrl} from write relays`);
-                            outboxItem.writeRelays.delete(relayUrl);
-                        }
-                    }
-
-                    this.data.set(itemKey, outboxItem);
-
-                    this.debug(
-                        `Adding ${outboxItem.readRelays.size} read relays and ${outboxItem.writeRelays.size} write relays for ${user.hexpubkey}`
-                    );
                 }
-            });
+            );
         }
     }
 
@@ -124,7 +145,7 @@ export class OutboxTracker extends EventEmitter {
 
 function getKeyFromItem(item: NDKUser | Hexpubkey): Hexpubkey {
     if (item instanceof NDKUser) {
-        return item.hexpubkey;
+        return item.pubkey;
     } else {
         return item;
     }

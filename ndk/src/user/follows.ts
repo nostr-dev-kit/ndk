@@ -14,31 +14,21 @@ export async function follows(
 ): Promise<Set<NDKUser>> {
     if (!this.ndk) throw new Error("NDK not set");
 
-    const contactListEvent = Array.from(
-        await this.ndk.fetchEvents(
-            {
-                kinds: [kind],
-                authors: [this.pubkey],
-            },
-            opts || { groupable: false }
-        )
-    )[0];
+    const contactListEvent = await this.ndk.fetchEvent(
+        { kinds: [kind], authors: [this.pubkey] },
+        opts || { groupable: false }
+    );
 
     if (contactListEvent) {
         const pubkeys = new Set<Hexpubkey>();
 
         contactListEvent.tags.forEach((tag: string[]) => {
-            if (tag[0] === "p") {
-                try {
-                    pubkeys.add(tag[1]);
-                    if (outbox) {
-                        this.ndk?.outboxTracker?.trackUsers([tag[1]]);
-                    }
-                } catch (e) {
-                    /* empty */
-                }
-            }
+            if (tag[0] === "p") pubkeys.add(tag[1]);
         });
+
+        if (outbox) {
+            this.ndk?.outboxTracker?.trackUsers(Array.from(pubkeys));
+        }
 
         return [...pubkeys].reduce((acc: Set<NDKUser>, pubkey: Hexpubkey) => {
             const user = new NDKUser({ pubkey });

@@ -178,6 +178,9 @@ importers:
       jest:
         specifier: ^29.5.0
         version: 29.7.0(@types/node@14.18.63)(ts-node@10.9.1)
+      normalize-url:
+        specifier: ^8.0.1
+        version: 8.0.1
       ts-jest:
         specifier: ^29.1.0
         version: 29.1.1(@babel/core@7.23.5)(esbuild@0.17.19)(jest@29.7.0)(typescript@5.2.2)
@@ -298,9 +301,6 @@ importers:
       '@nostr-dev-kit/ndk':
         specifier: workspace:*
         version: link:../ndk
-      '@sveu/extend':
-        specifier: ^1.0.0
-        version: 1.0.0
       classnames:
         specifier: ^2.3.2
         version: 2.3.2
@@ -319,9 +319,6 @@ importers:
       nostr-tools:
         specifier: ^1.15.0
         version: 1.15.0(typescript@5.3.3)
-      qrcode:
-        specifier: link:@sveu/extend/qrcode
-        version: link:@sveu/extend/qrcode
       ramda:
         specifier: ^0.29.0
         version: 0.29.0
@@ -5137,42 +5134,6 @@ packages:
       - supports-color
     dev: true
 
-  /@sveu/extend@1.0.0:
-    resolution: {integrity: sha512-7o8i9h+V1hXiZrBXuK+ITclLG6Pg7icYF+Nif6xx9oW0XnLj/+d0ZT9+rnRf1gmvuls1ASIOTjXFyIyr9+5s1g==}
-    peerDependencies:
-      async-validator: '*'
-      change-case: '*'
-      firebase: '*'
-      fuse.js: '*'
-      idb-keyval: '*'
-      jwt-decode: '*'
-      qrcode: '*'
-      sortablejs: '*'
-    peerDependenciesMeta:
-      async-validator:
-        optional: true
-      change-case:
-        optional: true
-      firebase:
-        optional: true
-      fuse.js:
-        optional: true
-      idb-keyval:
-        optional: true
-      jwt-decode:
-        optional: true
-      qrcode:
-        optional: true
-      sortablejs:
-        optional: true
-    dependencies:
-      '@sveu/shared': 1.0.1
-    dev: false
-
-  /@sveu/shared@1.0.1:
-    resolution: {integrity: sha512-waMJ+UXD5NV/M7L6lmXigY9Ry9TwhcBz+QDbYsDcq92bL7nlRUeh3ckvvAnxw1Nzw0T2JeEgmvZZblHuAHJL9Q==}
-    dev: false
-
   /@tailwindcss/typography@0.5.10(tailwindcss@3.3.3):
     resolution: {integrity: sha512-Pe8BuPJQJd3FfRnm6H0ulKIGoMEQS+Vq01R6M5aCrFB/ccR/shT+0kXLjouGC1gFLm9hopTFN+DMP0pfwRWzPw==}
     peerDependencies:
@@ -9556,7 +9517,7 @@ packages:
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.9.1(@types/node@14.18.63)(typescript@5.3.3)
+      ts-node: 10.9.1(@types/node@14.18.63)(typescript@5.2.2)
     transitivePeerDependencies:
       - babel-plugin-macros
       - supports-color
@@ -9677,7 +9638,7 @@ packages:
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.9.1(@types/node@14.18.63)(typescript@5.3.3)
+      ts-node: 10.9.1(@types/node@14.18.63)(typescript@5.2.2)
     transitivePeerDependencies:
       - babel-plugin-macros
       - supports-color
@@ -11165,6 +11126,11 @@ packages:
   /normalize-range@0.1.2:
     resolution: {integrity: sha512-bdok/XvKII3nUpklnV6P2hxtMNrCboOjAcyBuQnWEhO665FwrSNRxU+AqpsyvO6LgGYPspN+lu5CLtw4jPRKNA==}
     engines: {node: '>=0.10.0'}
+    dev: true
+
+  /normalize-url@8.0.1:
+    resolution: {integrity: sha512-IO9QvjUMWxPQQhs60oOu10CRkWCiZzSUkzbXGGV9pviYl1fXYcvkzQ5jV9z8Y6un8ARoVRl4EtC6v6jNqbaJ/w==}
+    engines: {node: '>=14.16'}
     dev: true
 
   /nostr-tools@1.15.0(typescript@5.2.2):

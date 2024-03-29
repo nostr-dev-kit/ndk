@@ -5,7 +5,7 @@ import { NDK } from "../ndk";
 describe("follows", () => {
     const ndk = new NDK();
     const user = ndk.getUser({
-        hexpubkey: "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52",
+        pubkey: "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52",
     });
     user.ndk = ndk;
 
@@ -26,7 +26,7 @@ describe("follows", () => {
 
         for (const followedUser of followedUsers) {
             expect(followedUser).toBeInstanceOf(NDKUser);
-            expect(followedUser.hexpubkey).toBe(followedHexpubkey);
+            expect(followedUser.pubkey).toBe(followedHexpubkey);
             expect(followedUser.ndk).toBe(user.ndk);
         }
     });
@@ -45,7 +45,7 @@ describe("follows", () => {
 
         for (const followedUser of followedUsers) {
             expect(followedUser).toBeInstanceOf(NDKUser);
-            expect(followedUser.hexpubkey).toBe(followedHexpubkey);
+            expect(followedUser.pubkey).toBe(followedHexpubkey);
             expect(followedUser.ndk).toBe(user.ndk);
         }
     });

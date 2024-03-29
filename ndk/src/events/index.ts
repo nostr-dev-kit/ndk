@@ -1,6 +1,4 @@
 import { EventEmitter } from "tseep";
-import type { UnsignedEvent } from "nostr-tools";
-import { getEventHash } from "nostr-tools";
 
 import type { NDK } from "../ndk/index.js";
 import type { NDKRelay } from "../relay/index.js";
@@ -16,6 +14,8 @@ import { NDKKind } from "./kinds/index.js";
 import { decrypt, encrypt } from "./nip04.js";
 import { encode } from "./nip19.js";
 import { repost } from "./repost.js";
+import { serialize } from "./serializer.js";
+import { validate, verifySignature, getEventHash } from "./validation.js";
 
 export type NDKEventId = string;
 export type NDKTag = string[];
@@ -43,6 +43,7 @@ export class NDKEvent extends EventEmitter {
     public id = "";
     public sig?: string;
     public pubkey = "";
+    public signatureVerified?: boolean;
 
     private _author: NDKUser | undefined = undefined;
 
@@ -181,7 +182,7 @@ export class NDKEvent extends EventEmitter {
         nostrEvent.tags = tags;
 
         try {
-            this.id = getEventHash(nostrEvent as UnsignedEvent);
+            this.id = this.getEventHash();
             // eslint-disable-next-line no-empty
         } catch (e) {}
 
@@ -191,6 +192,10 @@ export class NDKEvent extends EventEmitter {
         return nostrEvent;
     }
 
+    public serialize = serialize.bind(this);
+    public getEventHash = getEventHash.bind(this);
+    public validate = validate.bind(this);
+    public verifySignature = verifySignature.bind(this);
     public isReplaceable = isReplaceable.bind(this);
     public isEphemeral = isEphemeral.bind(this);
     public isParamReplaceable = isParamReplaceable.bind(this);
@@ -643,9 +648,10 @@ export class NDKEvent extends EventEmitter {
      * This method is meant to be overridden by subclasses that implement specific NIPs
      * to allow the enforcement of NIP-specific validation rules.
      *
+     * Otherwise, it will only check for basic event properties.
      *
      */
     get isValid(): boolean {
-        return true;
+        return this.validate();
     }
 }

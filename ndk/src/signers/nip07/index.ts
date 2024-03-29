@@ -49,7 +49,7 @@ export class NDKNip07Signer implements NDKSigner {
             throw new Error("User rejected access");
         }
 
-        return new NDKUser({ hexpubkey: pubkey });
+        return new NDKUser({ pubkey: pubkey });
     }
 
     /**
@@ -95,14 +95,14 @@ export class NDKNip07Signer implements NDKSigner {
     public async encrypt(recipient: NDKUser, value: string): Promise<string> {
         await this.waitForExtension();
 
-        const recipientHexPubKey = recipient.hexpubkey;
+        const recipientHexPubKey = recipient.pubkey;
         return this.queueNip04("encrypt", recipientHexPubKey, value);
     }
 
     public async decrypt(sender: NDKUser, value: string): Promise<string> {
         await this.waitForExtension();
 
-        const senderHexPubKey = sender.hexpubkey;
+        const senderHexPubKey = sender.pubkey;
         return this.queueNip04("decrypt", senderHexPubKey, value);
     }
 

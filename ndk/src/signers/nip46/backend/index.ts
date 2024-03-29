@@ -108,7 +108,7 @@ export class NDKNip46Backend {
         const sub = this.ndk.subscribe(
             {
                 kinds: [24133 as number],
-                "#p": [this.localUser.hexpubkey],
+                "#p": [this.localUser.pubkey],
             },
             { closeOnEose: false }
         );

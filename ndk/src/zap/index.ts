@@ -2,13 +2,13 @@ import { bech32 } from "@scure/base";
 import { EventEmitter } from "tseep";
 import { nip57 } from "nostr-tools";
 
-import type { NostrEvent } from "../events/index.js";
-import { NDKEvent, type NDKTag } from "../events/index.js";
+import type { NostrEvent, NDKTag } from "../events/index.js";
+import { NDKEvent } from "../events/index.js";
 import type { NDK } from "../ndk/index.js";
 import type { NDKUser } from "../user/index.js";
-import { NDKSigner } from "../signers/index.js";
+import type { NDKSigner } from "../signers/index.js";
 import createDebug from "debug";
-import { NDKUserProfile } from "../user/profile.js";
+import type { NDKUserProfile } from "../user/profile.js";
 
 const debug = createDebug("ndk:zap");
 
@@ -37,8 +37,7 @@ export default class Zap extends EventEmitter {
         this.ndk = args.ndk;
         this.zappedEvent = args.zappedEvent;
 
-        this.zappedUser =
-            args.zappedUser || this.ndk.getUser({ hexpubkey: this.zappedEvent?.pubkey });
+        this.zappedUser = args.zappedUser || this.ndk.getUser({ pubkey: this.zappedEvent?.pubkey });
     }
 
     public async getZapEndpoint(): Promise<string | undefined> {

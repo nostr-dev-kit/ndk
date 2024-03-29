@@ -43,7 +43,7 @@ setInterval(() => {
 setInterval(async () => {
     console.log(`Starting it over`);
     const user = ndk.getUser({
-        hexpubkey: "dc4cd086cd7ce5b1832adf4fdd1211289880d2c7e295bcb0e684c01acee77c06",
+        pubkey: "dc4cd086cd7ce5b1832adf4fdd1211289880d2c7e295bcb0e684c01acee77c06",
     });
     const sub = await ndk.subscribe({ kinds: [0] }, { closeOnEose: true });
     sub.on("eose", () => console.log(`eose`));
@@ -88,14 +88,14 @@ setInterval(async () => {
 
 // const pablo = ndk.getUser({npub: "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft"});
 // ndk.subscribe({
-//     kinds: [1], authors: [ pablo.hexpubkey ], limit: 1
+//     kinds: [1], authors: [ pablo.pubkey ], limit: 1
 // }, { closeOnEose: true }).on("event", (e) => {
 //     console.log(`got event ${e.id} from ${e.relay?.url}`);
 // });
 
 // setTimeout(() => {
 //     ndk.subscribe({
-//         kinds: [1], authors: [ pablo.hexpubkey ], limit: 20
+//         kinds: [1], authors: [ pablo.pubkey ], limit: 20
 //     }, { closeOnEose: false }).on("event", (e) => {
 //         console.log(`got event ${e.id} from ${e.relay?.url}`);
 //     });
@@ -159,6 +159,6 @@ setInterval(async () => {
 // await ndk.fetchEvent({
 //     kinds:[0], authors:[
 //         "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52",
-//         mike.hexpubkey
+//         mike.pubkey
 //     ]
 // });

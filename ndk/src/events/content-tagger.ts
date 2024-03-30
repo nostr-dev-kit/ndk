@@ -76,7 +76,7 @@ export async function generateContentTags(
     tags: NDKTag[] = []
 ): Promise<ContentTag> {
     const tagRegex = /(@|nostr:)(npub|nprofile|note|nevent|naddr)[a-zA-Z0-9]+/g;
-    const hashtagRegex = /#(\w+)/g;
+    const hashtagRegex = /(?<=\s)(#[^\s!@#$%^&*()=+.\/,\[{\]};:'"?><]+)/g;
     let promises: Promise<void>[] = [];
 
     const addTagIfNew = (t: NDKTag) => {

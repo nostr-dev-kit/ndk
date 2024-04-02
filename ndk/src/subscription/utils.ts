@@ -1,9 +1,8 @@
-import { nip19 } from "nostr-tools";
-import type { EventPointer } from "nostr-tools/lib/types/nip19.js";
+import { decode } from "nostr-tools/nip19";
 
 import { NDKRelay } from "../relay/index.js";
 import type { NDKFilter, NDKSubscription } from "./index.js";
-import { EventPointer } from "../user/index.js";
+import type { EventPointer } from "../user/index.js";
 
 /**
  * Don't generate subscription Ids longer than this amount of characters
@@ -149,7 +148,7 @@ export function filterFromId(id: string): NDKFilter {
     }
 
     try {
-        decoded = nip19.decode(id);
+        decoded = decode(id);
 
         switch (decoded.type) {
             case "nevent":
@@ -186,7 +185,7 @@ export const NIP33_A_REGEX = /^(\d+):([0-9A-Fa-f]+)(?::(.*))?$/;
  */
 export function relaysFromBech32(bech32: string): NDKRelay[] {
     try {
-        const decoded = nip19.decode(bech32);
+        const decoded = decode(bech32);
 
         if (["naddr", "nevent"].includes(decoded?.type)) {
             const data = decoded.data as unknown as EventPointer;

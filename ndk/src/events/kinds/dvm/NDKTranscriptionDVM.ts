@@ -1,7 +1,7 @@
-import { NDKKind } from "..";
-import type { NDK } from "../../../ndk";
+import { NDKKind } from "../index.js";
+import type { NDK } from "../../../ndk/index.js";
 import type { NDKEvent, NostrEvent } from "../../index.js";
-import { NDKDVMRequest } from "./request";
+import { NDKDVMRequest } from "./request.js";
 
 /**
  * NIP-90

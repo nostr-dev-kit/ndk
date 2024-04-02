@@ -1,6 +1,6 @@
-import { NDKNwc, NDKNwcResponse } from ".";
-import { NDKEvent, NostrEvent } from "../events";
-import { NDKKind } from "../events/kinds";
+import type { NDKNwc, NDKNwcResponse } from "./index.js";
+import { NDKEvent, type NostrEvent } from "../events/index.js";
+import { NDKKind } from "../events/kinds/index.js";
 
 export type NostrWalletConnectMethod =
     | "pay_invoice"

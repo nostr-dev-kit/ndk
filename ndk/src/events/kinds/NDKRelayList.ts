@@ -1,12 +1,11 @@
-import { NDKKind } from ".";
-import type { NostrEvent } from "..";
+import { NDKKind } from "./index.js";
+import type { NostrEvent } from "../index.js";
 import { NDKEvent } from "../index.js";
-import type { NDK } from "../../ndk";
-import { NDKRelay } from "../../relay";
-import { Hexpubkey, NDKUser } from "../../user";
-import { NDKRelaySet } from "../../relay/sets";
-import { write } from "fs";
-import { normalizeRelayUrl } from "../../utils/normalize-url";
+import type { NDK } from "../../ndk/index.js";
+import type { NDKRelay } from "../../relay/index.js";
+import type { Hexpubkey } from "../../user/index.js";
+import { NDKRelaySet } from "../../relay/sets/index.js";
+import { normalizeRelayUrl } from "../../utils/normalize-url.js";
 
 const READ_MARKER = "read";
 const WRITE_MARKER = "write";

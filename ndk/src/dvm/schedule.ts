@@ -1,9 +1,9 @@
-import { NDKEvent, NostrEvent } from "../events";
-import { type NDKUser } from "../user";
-import { NDKKind } from "../events/kinds";
-import { NDKSubscription } from "../subscription";
-import { NDKDVMRequest } from "../events/kinds/dvm/request";
-import { NDKDVMJobFeedback } from "../events/kinds/dvm";
+import type { NDKEvent, NostrEvent } from "../events/index.js";
+import type { NDKUser } from "../user/index.js";
+import { NDKKind } from "../events/kinds/index.js";
+import type { NDKSubscription } from "../subscription/index.js";
+import { NDKDVMRequest } from "../events/kinds/dvm/request.js";
+import { NDKDVMJobFeedback } from "../events/kinds/dvm/index.js";
 
 function addRelays(event: NDKEvent, relays?: string[]) {
     const tags = [];

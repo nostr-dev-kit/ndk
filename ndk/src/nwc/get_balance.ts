@@ -1,4 +1,4 @@
-import type { NDKNwcResponse, NDKNwc } from ".";
+import type { NDKNwcResponse, NDKNwc } from "./index.js";
 
 export interface GetBalanceResponse {
     balance?: number;

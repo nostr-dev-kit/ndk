@@ -71,7 +71,6 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         });
     }
 
-
     public async query(subscription: NDKSubscription): Promise<void> {
         Promise.allSettled(
             subscription.filters.map((filter) => this.processFilter(filter, subscription))
@@ -114,7 +113,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
                 this.byKinds(filterKeys, filter, subscription),
                 this.byIdsQuery(filterKeys, filter, subscription),
                 this.byNip33Query(filterKeys, filter, subscription),
-                this.byTagsAndOptionallyKinds(filterKeys, filter, subscription)
+                this.byTagsAndOptionallyKinds(filterKeys, filter, subscription),
             ]);
         } catch (error) {
             console.error(error);

@@ -1,8 +1,8 @@
-import { NDKUser } from ".";
-import { NDKEvent, NostrEvent } from "../events";
-import { NDKKind } from "../events/kinds";
-import NDKList from "../events/kinds/lists";
-import { NDKSubscriptionCacheUsage } from "../subscription";
+import type { NDKUser } from "./index.js";
+import { NDKEvent, type NostrEvent } from "../events/index.js";
+import { NDKKind } from "../events/kinds/index.js";
+import NDKList from "../events/kinds/lists/index.js";
+import { NDKSubscriptionCacheUsage } from "../subscription/index.js";
 
 /**
  * Pins an event

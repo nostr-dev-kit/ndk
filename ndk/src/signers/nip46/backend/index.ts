@@ -1,8 +1,8 @@
-import { NDKEvent } from "../../../events/index.js";
+import type { NDKEvent } from "../../../events/index.js";
 import type { NDK } from "../../../ndk/index.js";
 import type { NDKUser } from "../../../user/index.js";
 import { NDKPrivateKeySigner } from "../../private-key/index.js";
-import { NDKSigner } from "../../index.js";
+import type { NDKSigner } from "../../index.js";
 import { NDKNostrRpc } from "../rpc.js";
 import PingEventHandlingStrategy from "./ping.js";
 import ConnectEventHandlingStrategy from "./connect.js";
@@ -30,7 +30,7 @@ export type Nip46PermitCallbackParams = {
 
     method: NIP46Method;
 
-    // eslint-disable-next-line @t  ypescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     params?: any;
 };
 
@@ -117,7 +117,7 @@ export class NDKNip46Backend {
         const sub = this.ndk.subscribe(
             {
                 kinds: [24133 as number],
-                "#p": [this.localUser.pubkey],
+                "#p": [this.localUser!.pubkey],
             },
             { closeOnEose: false }
         );

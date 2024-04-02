@@ -1,4 +1,4 @@
-import { nip19 } from "nostr-tools";
+import { nprofileEncode, neventEncode, decode } from "nostr-tools/lib/types/nip19";
 import { identity, last, pluck } from "ramda";
 
 export const NEWLINE = "newline";
@@ -59,14 +59,13 @@ export function groupContent(parts: ParsedPart[]): ParsedPart[] {
             }
             buffer = undefined;
         }
-    }
+    };
 
     parts.forEach((part, index) => {
-        if (part.type === LINK && (
-            isImage(part.value.url) ||
-            isVideo(part.value.url) ||
-            isAudio(part.value.url)
-        )) {
+        if (
+            part.type === LINK &&
+            (isImage(part.value.url) || isVideo(part.value.url) || isAudio(part.value.url))
+        ) {
             if (!buffer) {
                 buffer = {
                     type: LINKCOLLECTION,
@@ -124,13 +123,15 @@ export const parseContent = ({ content, tags = [], html = false }: ContentArgs):
                     if (tag === "p") {
                         type = "nprofile";
                         data = { pubkey: value, relays };
-                        entity = nip19.nprofileEncode(data);
+                        entity = nprofileEncode(data);
                     } else {
                         type = "nevent";
                         data = { id: value, relays, pubkey: null };
-                        entity = nip19.neventEncode(data);
+                        entity = neventEncode(data);
                     }
-                } catch { /**/ }
+                } catch {
+                    /**/
+                }
 
                 return [`nostr:${type}`, mentionMatch[0], { ...data, entity }];
             }
@@ -154,7 +155,7 @@ export const parseContent = ({ content, tags = [], html = false }: ContentArgs):
         if (bech32) {
             try {
                 const entity = fromNostrURI(bech32);
-                const { type, data } = nip19.decode(entity) as { type: string; data: object };
+                const { type, data } = decode(entity) as { type: string; data: object };
 
                 let value = data;
                 if (type === "note") {

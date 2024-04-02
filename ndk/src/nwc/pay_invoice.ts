@@ -1,4 +1,4 @@
-import type { NDKNwc, NDKNwcResponse } from ".";
+import type { NDKNwc, NDKNwcResponse } from "./index.js";
 
 export interface PayInvoiceResponse {
     preimage?: string;

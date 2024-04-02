@@ -1,4 +1,4 @@
-import { nip19 } from "nostr-tools";
+import { npubEncode, decode } from "nostr-tools/nip19";
 
 import { NDKEvent, type NDKTag, type NostrEvent } from "../events/index.js";
 import { NDKKind } from "../events/kinds/index.js";
@@ -62,7 +62,7 @@ export class NDKUser {
     get npub(): string {
         if (!this._npub) {
             if (!this._pubkey) throw new Error("hexpubkey not set");
-            this._npub = nip19.npubEncode(this.pubkey);
+            this._npub = npubEncode(this.pubkey);
         }
 
         return this._npub;
@@ -98,7 +98,7 @@ export class NDKUser {
     get pubkey(): string {
         if (!this._pubkey) {
             if (!this._npub) throw new Error("npub not set");
-            this._pubkey = nip19.decode(this.npub).data as Hexpubkey;
+            this._pubkey = decode(this.npub).data as Hexpubkey;
         }
 
         return this._pubkey;
@@ -139,7 +139,7 @@ export class NDKUser {
             }
         }
 
-        let opts: RequestInit = {};
+        const opts: RequestInit = {};
 
         if (skipCache) opts.cache = "no-cache";
         const profile = await getNip05For(nip05Id, ndk?.httpFetch, opts);

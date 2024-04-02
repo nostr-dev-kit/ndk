@@ -1,4 +1,4 @@
-import { nip19 } from "nostr-tools";
+import * as nip19 from "nostr-tools/nip19";
 
 import { NDKEvent } from "../events/index.js";
 import { NDK } from "../ndk/index.js";

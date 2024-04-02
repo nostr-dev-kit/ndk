@@ -1,9 +1,9 @@
-import { NDKRelay } from ".";
-import { NDKEvent } from "../events";
-import { NDKKind } from "../events/kinds";
-import { NDK } from "../ndk";
-import { NDKSigner } from "../signers";
-import { NDKPool } from "./pool";
+import type { NDKRelay } from "./index.js";
+import { NDKEvent } from "../events/index.js";
+import { NDKKind } from "../events/kinds/index.js";
+import type { NDK } from "../ndk/index.js";
+import type { NDKSigner } from "../signers/index.js";
+import type { NDKPool } from "./pool/index.js";
 import createDebug from "debug";
 
 /**

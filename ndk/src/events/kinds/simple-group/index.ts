@@ -1,8 +1,8 @@
-import { NDKKind } from "..";
-import { NDKEvent, NDKTag, NostrEvent } from "../..";
-import { NDK } from "../../../ndk";
-import { NDKRelaySet } from "../../../relay/sets";
-import { Hexpubkey, NDKUser } from "../../../user";
+import { NDKKind } from "../index.js";
+import { NDKEvent, type NDKTag, type NostrEvent } from "../../index.js";
+import type { NDK } from "../../../ndk/index.js";
+import type { NDKRelaySet } from "../../../relay/sets/index.js";
+import type { Hexpubkey, NDKUser } from "../../../user/index.js";
 
 type AddUserOpts = {
     /**

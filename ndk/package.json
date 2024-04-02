@@ -10,6 +10,7 @@
     },
     "main": "./dist/index.js",
     "module": "./dist/index.mjs",
+    "type": "module",
     "exports": {
         "import": {
             "types": "./dist/index.d.mts",

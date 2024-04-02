@@ -1,4 +1,4 @@
-import type { NDKEvent, NostrEvent } from ".";
+import type { NDKEvent } from "./index.js";
 import { sha256 } from "@noble/hashes/sha256";
 import { bytesToHex } from "@noble/hashes/utils";
 import { schnorr } from "@noble/curves/secp256k1";

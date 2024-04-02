@@ -1,14 +1,14 @@
 import { bech32 } from "@scure/base";
 import { EventEmitter } from "tseep";
-import { nip57 } from "nostr-tools";
+import { makeZapRequest } from "nostr-tools/nip57";
 
 import type { NostrEvent } from "../events/index.js";
 import { NDKEvent, type NDKTag } from "../events/index.js";
 import type { NDK } from "../ndk/index.js";
 import type { NDKUser } from "../user/index.js";
-import { NDKSigner } from "../signers/index.js";
+import type { NDKSigner } from "../signers/index.js";
 import createDebug from "debug";
-import { NDKUserProfile } from "../user/profile.js";
+import type { NDKUserProfile } from "../user/profile.js";
 
 const debug = createDebug("ndk:zap");
 
@@ -181,7 +181,7 @@ export default class Zap extends EventEmitter {
 
         if (!this.zappedEvent && !this.zappedUser) throw new Error("No zapped event or user found");
 
-        const zapRequest = nip57.makeZapRequest({
+        const zapRequest = makeZapRequest({
             profile: this.zappedUser.pubkey,
 
             // set the event to null since nostr-tools doesn't support nip-33 zaps

@@ -1,8 +1,7 @@
 import { Relay } from "nostr-tools";
-
-import type { NDKRelay, NDKRelayConnectionStats } from ".";
-import { NDKRelayStatus } from ".";
-import { runWithTimeout } from "../utils/timeout";
+import type { NDKRelay, NDKRelayConnectionStats } from "./index.js";
+import { NDKRelayStatus } from "./index.js";
+import { runWithTimeout } from "../utils/timeout.js";
 
 export class NDKRelayConnectivity {
     private ndkRelay: NDKRelay;
@@ -16,7 +15,7 @@ export class NDKRelayConnectivity {
         durations: [],
     };
     private debug: debug.Debugger;
-    private reconnectTimeout: any;
+    private reconnectTimeout: number | Timer | undefined;
 
     constructor(ndkRelay: NDKRelay) {
         this.ndkRelay = ndkRelay;

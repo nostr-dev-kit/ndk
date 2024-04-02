@@ -1,10 +1,10 @@
 import debug from "debug";
-import { NDKKind } from "..";
-import { NDKEvent, NostrEvent } from "../..";
-import { NDK } from "../../../ndk";
-import { NDKUser } from "../../../user";
-import { NDKSubscriptionAmount, newAmount, parseTagToSubscriptionAmount } from "./amount.js";
-import { NDKSubscriptionTier } from "./tier";
+import { NDKKind } from "../index.js";
+import { NDKEvent, type NostrEvent } from "../../index.js";
+import type { NDK } from "../../../ndk/index.js";
+import { NDKUser } from "../../../user/index.js";
+import { type NDKSubscriptionAmount, newAmount, parseTagToSubscriptionAmount } from "./amount.js";
+import { NDKSubscriptionTier } from "./tier.js";
 
 /**
  * Represents a subscription start event.

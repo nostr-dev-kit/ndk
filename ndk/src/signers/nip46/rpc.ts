@@ -1,11 +1,11 @@
 import { EventEmitter } from "tseep";
 
-import type { NDKSigner } from "..";
-import type { NostrEvent } from "../../events";
-import { NDKEvent } from "../../events";
-import type { NDK } from "../../ndk";
-import type { NDKFilter, NDKSubscription } from "../../subscription";
-import { NDKKind } from "../../events/kinds";
+import type { NDKSigner } from "../index.js";
+import type { NostrEvent } from "../../events/index.js";
+import { NDKEvent } from "../../events/index.js";
+import type { NDK } from "../../ndk/index.js";
+import type { NDKFilter, NDKSubscription } from "../../subscription/index.js";
+import { NDKKind } from "../../events/kinds/index.js";
 
 export interface NDKRpcRequest {
     id: string;

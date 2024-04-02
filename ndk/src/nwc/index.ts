@@ -1,16 +1,16 @@
 import { EventEmitter } from "tseep";
-import type { NDK } from "../ndk";
-import { PayInvoiceResponse, payInvoice } from "./pay_invoice";
-import { NDKRelaySet } from "../relay/sets";
-import { NDKSigner } from "../signers";
-import { NDKPrivateKeySigner } from "../signers/private-key";
-import { NDKKind } from "../events/kinds";
-import { Debugger } from "debug";
-import { NDKUser } from "../user";
-import { NostrWalletConnectMethod, sendReq } from "./req";
-import { NDKEvent } from "../events";
-import { getBalance, type GetBalanceResponse } from "./get_balance";
-import { getInfo, GetInfoResponse } from "./get_info";
+import type { NDK } from "../ndk/index.js";
+import { type PayInvoiceResponse, payInvoice } from "./pay_invoice.js";
+import { NDKRelaySet } from "../relay/sets/index.js";
+import type { NDKSigner } from "../signers/index.js";
+import { NDKPrivateKeySigner } from "../signers/private-key/index.js";
+import { NDKKind } from "../events/kinds/index.js";
+import type { Debugger } from "debug/index.js";
+import type { NDKUser } from "../user/index.js";
+import { type NostrWalletConnectMethod, sendReq } from "./req.js";
+import type { NDKEvent } from "../events/index.js";
+import { getBalance } from "./get_balance.js";
+import { getInfo, type GetInfoResponse } from "./get_info.js";
 import { hexToBytes } from "@noble/hashes/utils";
 
 export type NDKNWcCommands =

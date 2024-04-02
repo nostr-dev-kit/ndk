@@ -1,4 +1,4 @@
-import { nip19 } from "nostr-tools";
+import { decode } from "nostr-tools/nip19";
 
 import type { NDKTag } from "./index.js";
 import type { EventPointer, ProfilePointer } from "../user/index.js";
@@ -88,7 +88,7 @@ export async function generateContentTags(
     content = content.replace(tagRegex, (tag) => {
         try {
             const entity = tag.split(/(@|nostr:)/)[2];
-            const { type, data } = nip19.decode(entity);
+            const { type, data } = decode(entity);
             let t: NDKTag | undefined;
 
             switch (type) {

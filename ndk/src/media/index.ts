@@ -1,6 +1,6 @@
-import { NDKEvent, NDKTag, NostrEvent } from "../events";
-import { NDKKind } from "../events/kinds";
-import { NDK } from "../ndk";
+import { NDKEvent, type NDKTag, type NostrEvent } from "../events/index.js";
+import { NDKKind } from "../events/kinds/index.js";
+import type { NDK } from "../ndk/index.js";
 
 const SPEC_PATH = "/.well-known/nostr/nip96.json";
 

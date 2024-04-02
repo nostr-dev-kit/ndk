@@ -1,4 +1,4 @@
-import { NDKNWcCommands, NDKNwc, NDKNwcResponse } from ".";
+import type { NDKNWcCommands, NDKNwc, NDKNwcResponse } from "./index.js";
 
 export interface GetInfoResponse {
     alias?: string;

@@ -3,9 +3,9 @@ import { EventEmitter } from "tseep";
 import type { NDKEvent, NDKEventId } from "../events/index.js";
 import type { NDKKind } from "../events/kinds/index.js";
 import type { NDK } from "../ndk/index.js";
-import type { NDKRelay } from "../relay";
+import type { NDKRelay } from "../relay/index.js";
 import type { NDKPool } from "../relay/pool/index.js";
-import { calculateRelaySetsFromFilters } from "../relay/sets/calculate";
+import { calculateRelaySetsFromFilters } from "../relay/sets/calculate.js";
 import type { NDKRelaySet } from "../relay/sets/index.js";
 import { queryFullyFilled } from "./utils.js";
 

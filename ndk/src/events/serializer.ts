@@ -1,4 +1,4 @@
-import type { NostrEvent, NDKEvent } from ".";
+import type { NostrEvent, NDKEvent } from "./index.js";
 
 /**
  * Serializes an event object into a string representation.

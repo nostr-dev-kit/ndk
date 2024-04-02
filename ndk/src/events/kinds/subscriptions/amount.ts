@@ -1,4 +1,4 @@
-import { NDKTag } from "../..";
+import type { NDKTag } from "../../index.js";
 
 export type NDKIntervalFrequency = "daily" | "weekly" | "monthly" | "quarterly" | "yearly";
 

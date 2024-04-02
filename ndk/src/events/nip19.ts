@@ -1,4 +1,4 @@
-import { nip19 } from "nostr-tools";
+import { naddrEncode, neventEncode, noteEncode } from "nostr-tools/nip19";
 
 import type { NDKEvent } from "./index.js";
 
@@ -12,19 +12,19 @@ export function encode(this: NDKEvent): string {
     }
 
     if (this.isParamReplaceable()) {
-        return nip19.naddrEncode({
+        return naddrEncode({
             kind: this.kind as number,
             pubkey: this.pubkey,
             identifier: this.replaceableDTag(),
             relays,
         });
     } else if (relays.length > 0) {
-        return nip19.neventEncode({
+        return neventEncode({
             id: this.tagId(),
             relays,
             author: this.pubkey,
         });
     } else {
-        return nip19.noteEncode(this.tagId());
+        return noteEncode(this.tagId());
     }
 }

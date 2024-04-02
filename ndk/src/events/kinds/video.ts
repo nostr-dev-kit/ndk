@@ -1,8 +1,7 @@
-import { inherits } from "util";
-import { NDKKind } from ".";
-import { NDKEvent, NostrEvent } from "..";
-import { NDK } from "../../ndk";
-import { ContentTag } from "../content-tagger";
+import { NDKKind } from "../kinds/index.js";
+import { NDKEvent, type NostrEvent } from "../index.js";
+import type { NDK } from "../../ndk/index.js";
+import type { ContentTag } from "../content-tagger.js";
 
 export class NDKVideo extends NDKEvent {
     constructor(ndk: NDK | undefined, rawEvent?: NostrEvent) {

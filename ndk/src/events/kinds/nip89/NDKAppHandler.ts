@@ -1,5 +1,5 @@
 import type { NDK } from "../../../ndk/index.js";
-import type { NDKUserProfile } from "../../../user/profile";
+import type { NDKUserProfile } from "../../../user/profile.js";
 import type { NostrEvent } from "../../index.js";
 import { NDKEvent } from "../../index.js";
 import { NDKKind } from "../index.js";

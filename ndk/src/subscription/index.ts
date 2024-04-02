@@ -362,6 +362,13 @@ export class NDKSubscription extends EventEmitter {
             }
         }
 
+        if (!this.skipVerification) {
+            if (!event.verifySignature(true)) {
+                this.debug(`Event failed signature validation`, event);
+                return;
+            }
+        }
+
         if (!fromCache && relay) {
             // track the event per relay
             let events = this.eventsPerRelay.get(relay);

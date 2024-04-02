@@ -1,6 +1,3 @@
-import type { VerifiedEvent } from "nostr-tools";
-import { verifyEvent } from "nostr-tools";
-
 import { NDKEvent } from "../../../events/index.js";
 import type { NDK } from "../../../ndk/index.js";
 import type { NDKUser } from "../../../user/index.js";
@@ -164,8 +161,8 @@ export class NDKNip46Backend {
 
         this.debug("incoming event", { id, method, params });
 
-        // validate signature explicitly
-        if (!verifyEvent(event.rawEvent() as VerifiedEvent)) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        if (!event.verifySignature(false)) {
             this.debug("invalid signature", event.rawEvent());
             return;
         }

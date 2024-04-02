@@ -39,3 +39,5 @@ to this list.
 -   [Nostr-Hooks](https://github.com/ostyjs/nostr-hooks) - By [@sepehr](https://njump.me/nprofile1qqsru22d9lfnnwck54qr4phrvey50h2q33xc0gqxv5j03ftn4efu4rspr9mhxue69uhhyetvv9ujuumwdae8gtnnda3kjctv9uq3wamnwvaz7tmjwdekccte9ehx7um5wghx6mm99uq36amnwvaz7tmwdaehgu3wd46hg6tw09mkzmrvv46zucm0d5hsv6ffvh)
     -   Stateful wrapper library of React hooks around NDK.
 -   [magicCity h=n](https://github.com/tezosmiami/hicetnunc) - By [@hicetnunc2000](https://github.com/hicetnunc2000/), [@tezosmiami](https://njump.me/npub190rqwj0nud4uhvmaeg7cgn0gypu0s09j87vqjluhfhju0req2khsskh9w7)
+-   [notepress](https://github.com/utxo-one/notepress) - By [@utxo](httsp://njump.me/_@utxo.one)
+    - No frameworks! A very simple long-form (NIP-23) reader

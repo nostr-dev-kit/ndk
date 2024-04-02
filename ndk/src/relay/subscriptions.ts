@@ -2,13 +2,13 @@ import { EventEmitter } from "tseep";
 import type { Sub, SubscriptionOptions } from "nostr-tools";
 import { matchFilter } from "nostr-tools";
 
-import type { NDKRelay } from ".";
-import type { NostrEvent } from "../events";
-import { NDKEvent } from "../events";
-import type { NDKFilter, NDKSubscription } from "../subscription";
+import type { NDKRelay } from "./index.js";
+import type { NostrEvent } from "../events/index.js";
+import { NDKEvent } from "../events/index.js";
+import type { NDKFilter, NDKSubscription } from "../subscription/index.js";
 import type { NDKFilterGroupingId } from "../subscription/grouping.js";
 import { calculateGroupableId, mergeFilters } from "../subscription/grouping.js";
-import { compareFilter, generateSubId } from "../subscription/utils";
+import { compareFilter, generateSubId } from "../subscription/utils.js";
 import type { NDKRelayConnectivity } from "./connectivity.js";
 
 /**

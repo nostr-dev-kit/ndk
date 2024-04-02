@@ -1,6 +1,6 @@
-import { NDKFilter, NDKSubscription } from ".";
-import { NDK } from "../ndk";
-import { generateSubId } from "./utils";
+import { type NDKFilter, NDKSubscription } from "./index.js";
+import { NDK } from "../ndk/index.js";
+import { generateSubId } from "./utils.js";
 
 const ndk = new NDK();
 

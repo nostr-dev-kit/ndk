@@ -1,7 +1,6 @@
 import { NDKRelay } from "./index.js";
 import { NDK } from "../ndk/index.js";
-import { NDKSubscription, NDKSubscriptionCacheUsage } from "../subscription/index.js";
-import { NDKRelaySet } from "./sets/index.js";
+import { type NDKSubscription, NDKSubscriptionCacheUsage } from "../subscription/index.js";
 
 const ndk = new NDK();
 

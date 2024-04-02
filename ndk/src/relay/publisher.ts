@@ -1,6 +1,6 @@
-import type { NDKRelay } from ".";
-import { NDKRelayStatus } from ".";
-import type { NDKEvent } from "../events";
+import type { NDKRelay } from "./index.js";
+import { NDKRelayStatus } from "./index.js";
+import type { NDKEvent } from "../events/index.js";
 
 export class NDKRelayPublisher {
     private ndkRelay: NDKRelay;
@@ -102,7 +102,7 @@ export class NDKRelayPublisher {
         return Promise.race([publishPromise, timeoutPromise]);
     }
 
-    public async auth(event: NDKEvent): Promise<void> {
+    public async auth(event: NDKEvent) {
         return this.ndkRelay.connectivity.relay.auth(event.rawEvent() as any);
     }
 }

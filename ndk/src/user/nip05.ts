@@ -1,4 +1,4 @@
-import { Hexpubkey } from ".";
+import type { Hexpubkey } from "./index.js";
 
 export const NIP05_REGEX = /^(?:([\w.+-]+)@)?([\w.-]+)$/;
 

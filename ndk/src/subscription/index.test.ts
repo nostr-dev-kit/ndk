@@ -1,6 +1,6 @@
-import { NDKSubscription } from ".";
-import { NDKSubscriptionTier } from "../events/kinds/subscriptions/tier";
-import { NDK } from "../ndk";
+import { NDKSubscription } from "./index.js";
+import { NDKSubscriptionTier } from "../events/kinds/subscriptions/tier.js";
+import { NDK } from "../ndk/index.js";
 
 const ndk = new NDK();
 const invalidEvent = new NDKSubscriptionTier(ndk);

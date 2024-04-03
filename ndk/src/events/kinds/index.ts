@@ -66,6 +66,7 @@ export enum NDKKind {
     PublicChatList = 10005,
     BlockRelayList = 10006,
     SearchRelayList = 10007,
+    SimpleGroupList = 10009,
     InterestList = 10015,
     EmojiList = 10030,
 
@@ -100,7 +101,6 @@ export enum NDKKind {
 
     NostrWalletConnectReq = 23194,
     NostrWalletConnectRes = 23195,
-
 
     NostrConnect = 24133,
 

@@ -2,15 +2,24 @@ import { NDKNwc, NDKNwcResponse } from ".";
 import { NDKEvent, NostrEvent } from "../events";
 import { NDKKind } from "../events/kinds";
 
-export type NostrWalletConnectMethod = 'pay_invoice' | 'get_info' | 'get_balance' | 'get_transactions' | 'get_invoice' | 'get_invoices' | 'get_invoice_status';
+export type NostrWalletConnectMethod =
+    | "pay_invoice"
+    | "get_info"
+    | "get_balance"
+    | "get_transactions"
+    | "get_invoice"
+    | "get_invoices"
+    | "get_invoice_status";
 
-export async function sendReq<T>(this: NDKNwc, method: NostrWalletConnectMethod, params: any): Promise<NDKNwcResponse<T>> {
+export async function sendReq<T>(
+    this: NDKNwc,
+    method: NostrWalletConnectMethod,
+    params: any
+): Promise<NDKNwcResponse<T>> {
     const event = new NDKEvent(this.ndk, {
         kind: NDKKind.NostrWalletConnectReq,
-        tags: [
-            [ "p", this.walletService.pubkey ],
-        ],
-        content: JSON.stringify({ method, params  })
+        tags: [["p", this.walletService.pubkey]],
+        content: JSON.stringify({ method, params }),
     } as NostrEvent);
 
     this.debug("Sending request", event.content);
@@ -44,22 +53,26 @@ export async function sendReq<T>(this: NDKNwc, method: NostrWalletConnectMethod,
                         error: {
                             code: "failed_to_parse_response",
                             message: e.message,
-                        }
+                        },
                     });
                 }
             };
 
-            const sub = this.ndk.subscribe({
-                kinds: [NDKKind.NostrWalletConnectRes],
-                "#e": [eTag],
-                limit: 1,
-            }, { groupable: false, subId: `nwc-${method}` }, this.relaySet);
+            const sub = this.ndk.subscribe(
+                {
+                    kinds: [NDKKind.NostrWalletConnectRes],
+                    "#e": [eTag],
+                    limit: 1,
+                },
+                { groupable: false, subId: `nwc-${method}` },
+                this.relaySet
+            );
 
             sub.on("event", async (event: NDKEvent) => {
                 await event.decrypt(event.author, this.signer);
                 processEvent(event.content);
                 sub.stop();
-            })
+            });
             this.once(eTag, processEvent);
             this.once("event", processEvent);
 
@@ -73,7 +86,7 @@ export async function sendReq<T>(this: NDKNwc, method: NostrWalletConnectMethod,
                 error: {
                     code: "failed_to_send_request",
                     message: e.message,
-                }
+                },
             });
         }
     });

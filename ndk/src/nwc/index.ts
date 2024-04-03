@@ -12,16 +12,31 @@ import { NDKEvent } from "../events";
 import { getBalance, type GetBalanceResponse } from "./get_balance";
 import { getInfo, GetInfoResponse } from "./get_info";
 
-export type NDKNWcCommands = "pay_invoice" | "get_info" | "get_balance" | "get_transactions" | "get_invoice" | "get_invoices" | "get_invoice_status";
+export type NDKNWcCommands =
+    | "pay_invoice"
+    | "get_info"
+    | "get_balance"
+    | "get_transactions"
+    | "get_invoice"
+    | "get_invoices"
+    | "get_invoice_status";
 
 export interface NDKNwcResponse<T> {
     result_type: string;
     error?: {
-        code: "RATE_LIMITED" | "NOT_IMPLEMENTED" | "INSUFFICIENT_BALANCE" | "QUOTA_EXCEEDED" | "RESTRICTED" | "UNAUTHORIZED" | "INTERNAL" | "OTHER";
+        code:
+            | "RATE_LIMITED"
+            | "NOT_IMPLEMENTED"
+            | "INSUFFICIENT_BALANCE"
+            | "QUOTA_EXCEEDED"
+            | "RESTRICTED"
+            | "UNAUTHORIZED"
+            | "INTERNAL"
+            | "OTHER";
         message: string;
-    },
+    };
     result?: T;
-};
+}
 
 /**
  * Implements the Nostr Wallet Connect (NIP-47) protocol.
@@ -48,14 +63,27 @@ export class NDKNwc extends EventEmitter {
      * @param opts: NostrWalletConnectOptions
      * @returns NDKNwc
      */
-    constructor({ndk, pubkey, relayUrls, secret}: {ndk: NDK, pubkey: string, relayUrls: string[], secret: string}) {
+    constructor({
+        ndk,
+        pubkey,
+        relayUrls,
+        secret,
+    }: {
+        ndk: NDK;
+        pubkey: string;
+        relayUrls: string[];
+        secret: string;
+    }) {
         super();
 
         this.ndk = ndk;
-        this.walletService = ndk.getUser({pubkey});
-        this.relaySet = new NDKRelaySet(new Set(relayUrls.map((url) => ndk.pool.getRelay(url))), ndk);
+        this.walletService = ndk.getUser({ pubkey });
+        this.relaySet = new NDKRelaySet(
+            new Set(relayUrls.map((url) => ndk.pool.getRelay(url))),
+            ndk
+        );
         this.signer = new NDKPrivateKeySigner(secret);
-        this.debug = ndk.debug.extend('nwc');
+        this.debug = ndk.debug.extend("nwc");
 
         this.debug(`Starting with wallet service ${this.walletService.npub}`);
     }
@@ -64,15 +92,15 @@ export class NDKNwc extends EventEmitter {
         const u = new URL(uri);
 
         // validate protocol nostr+walletconnect
-        if (u.protocol !== 'nostr+walletconnect:') {
-            throw new Error('Invalid protocol');
+        if (u.protocol !== "nostr+walletconnect:") {
+            throw new Error("Invalid protocol");
         }
 
         const nwc = new NDKNwc({
             ndk,
             pubkey: u.host ?? u.pathname,
-            relayUrls: u.searchParams.getAll('relay') ?? [''],
-            secret: u.searchParams.get('secret') ?? '',
+            relayUrls: u.searchParams.getAll("relay") ?? [""],
+            secret: u.searchParams.get("secret") ?? "",
         });
 
         return nwc;
@@ -86,14 +114,22 @@ export class NDKNwc extends EventEmitter {
     async blockUntilReady(msTimeout?: number): Promise<void> {
         const signerUser = await this.signer.user();
 
-        const timeout = new Promise<void>((_, reject) => { setTimeout(() => { reject(new Error("Timeout")); }, msTimeout); });
+        const timeout = new Promise<void>((_, reject) => {
+            setTimeout(() => {
+                reject(new Error("Timeout"));
+            }, msTimeout);
+        });
 
         const subPromise = new Promise<void>((resolve) => {
-            const sub = this.ndk.subscribe({
-                kinds: [NDKKind.NostrWalletConnectRes],
-                "#p": [signerUser.pubkey],
-                limit: 1,
-            }, { groupable: false, subId: 'nwc' }, this.relaySet);
+            const sub = this.ndk.subscribe(
+                {
+                    kinds: [NDKKind.NostrWalletConnectRes],
+                    "#p": [signerUser.pubkey],
+                    limit: 1,
+                },
+                { groupable: false, subId: "nwc" },
+                this.relaySet
+            );
 
             sub.on("event", async (event: NDKEvent) => {
                 this.debug("received response", event.rawEvent());
@@ -113,7 +149,7 @@ export class NDKNwc extends EventEmitter {
                     this.debug("Failed to decrypt event", e);
                     return;
                 }
-            })
+            });
 
             sub.on("eose", () => {
                 this.debug("Subscription ready");
@@ -125,7 +161,7 @@ export class NDKNwc extends EventEmitter {
                 this.debug("Subscription closed");
                 this.active = false;
             });
-        })
+        });
 
         const promises: Promise<void>[] = [subPromise];
 
@@ -135,7 +171,7 @@ export class NDKNwc extends EventEmitter {
     }
 
     async sendReq<T>(method: NostrWalletConnectMethod, params: any): Promise<NDKNwcResponse<T>> {
-        return await sendReq.call(this, method, params) as NDKNwcResponse<T>;
+        return (await sendReq.call(this, method, params)) as NDKNwcResponse<T>;
     }
 
     async payInvoice(invoice: string): Promise<NDKNwcResponse<PayInvoiceResponse>> {

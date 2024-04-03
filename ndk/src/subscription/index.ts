@@ -314,7 +314,7 @@ export class NDKSubscription extends EventEmitter {
      */
     private startWithRelays(): void {
         if (!this.relaySet) {
-            this.relayFilters = calculateRelaySetsFromFilters(this.ndk, this.filters);
+            this.relayFilters = calculateRelaySetsFromFilters(this.ndk, this.filters, this.pool);
         } else {
             this.relayFilters = new Map();
             for (const relay of this.relaySet.relays) {
@@ -324,7 +324,7 @@ export class NDKSubscription extends EventEmitter {
 
         // if relayset is empty, we can't start, log it
         if (!this.relayFilters || this.relayFilters.size === 0) {
-            this.debug(`No relays to subscribe to`, this.ndk.explicitRelayUrls);
+            this.debug(`No relays to subscribe to`, this.pool.relays.size);
             return;
         }
 
@@ -332,6 +332,8 @@ export class NDKSubscription extends EventEmitter {
         // this.debug(`Starting subscription`, JSON.stringify(this.filters), this.opts, Array.from(this.relaySet?.relays!).map(r => r.url));
 
         // iterate through the this.relayFilters
+        // console.log(this.relayFilters);
+        // console.log('start with relays', {relayFilters: this.relayFilters.values(), filters: JSON.stringify(this.filters), size: this.relayFilters.size});
         for (const [relayUrl, filters] of this.relayFilters) {
             const relay = this.pool.getRelay(relayUrl);
             relay.subscribe(this, filters);
@@ -356,6 +358,13 @@ export class NDKSubscription extends EventEmitter {
         if (!this.skipValidation) {
             if (!event.isValid) {
                 this.debug(`Event failed validation`, event);
+                return;
+            }
+        }
+
+        if (!this.skipVerification) {
+            if (!event.verifySignature(true)) {
+                this.debug(`Event failed signature validation`, event);
                 return;
             }
         }
@@ -404,7 +413,7 @@ export class NDKSubscription extends EventEmitter {
     public eoseReceived(relay: NDKRelay): void {
         this.eosesSeen.add(relay);
 
-        this.eoseDebug(`received from ${relay.url}`);
+        // this.eoseDebug(`received from ${relay.url}`);
 
         let lastEventSeen = this.lastEventReceivedAt
             ? Date.now() - this.lastEventReceivedAt

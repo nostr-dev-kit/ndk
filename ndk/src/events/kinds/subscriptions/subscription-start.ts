@@ -8,6 +8,23 @@ import { NDKSubscriptionTier } from "./tier";
 
 /**
  * Represents a subscription start event.
+ * @example
+ * const creator = new NDKUser;
+ * const subscriber = new NDKUser;
+ *
+ * const subscriptionStart = new NDKSubscriptionStart(ndk);
+ * subscriptionStart.amount = { amount: 100, currency: "USD", term: "monthly" };
+ * subscriptionStart.recipient = creator;
+ * subscriptionStart.author = subscriber;
+ *
+ * // {
+ * //   kind: 7001,
+ * //   pubkey: "<subscriber-pubkey>"
+ * //   tags: [
+ * //     ["amount", "100", "USD", "monthly"],
+ * //     ["p", "<creator-pubkey>"]
+ * //   ]
+ * // }
  */
 export class NDKSubscriptionStart extends NDKEvent {
     private debug: debug.Debugger;
@@ -23,14 +40,20 @@ export class NDKSubscriptionStart extends NDKEvent {
     }
 
     /**
-     * Recipient of the subscription. I.e. THe author of this event subscribes to this user.
+     * Recipient of the subscription. I.e. The author of this event subscribes to this user.
      */
-    get targetUser(): NDKUser | undefined {
+    get recipient(): NDKUser | undefined {
         const pTag = this.getMatchingTags("p")?.[0];
         if (!pTag) return undefined;
 
         const user = new NDKUser({ pubkey: pTag[1] });
         return user;
+    }
+
+    set recipient(user: NDKUser | undefined) {
+        this.removeTag("p");
+        if (!user) return;
+        this.tags.push(["p", user.pubkey]);
     }
 
     /**
@@ -112,7 +135,7 @@ export class NDKSubscriptionStart extends NDKEvent {
             this.debug("Invalid # of p tag");
             return false;
         }
-        if (!this.targetUser) {
+        if (!this.recipient) {
             this.debug("Invalid p tag");
             return false;
         }

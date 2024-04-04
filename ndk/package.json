@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/ndk",
-    "version": "2.7.0",
+    "version": "2.7.1",
     "description": "NDK - Nostr Development Kit",
     "homepage": "https://ndk.fyi",
     "documentation": "https://github.com/nostr-dev-kit/ndk/blob/master/docs/modules.md",
@@ -61,6 +61,7 @@
         "typedoc-plugin-rename-defaults": "^0.6.6"
     },
     "dependencies": {
+        "@noble/curves": "^1.4.0",
         "@noble/hashes": "^1.3.1",
         "@noble/secp256k1": "^2.0.0",
         "@scure/base": "^1.1.1",

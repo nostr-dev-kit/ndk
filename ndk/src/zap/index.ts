@@ -25,6 +25,7 @@ interface ZapConstructorParams {
     ndk: NDK;
     zappedEvent?: NDKEvent;
     zappedUser?: NDKUser;
+    _fetch?: typeof fetch;
 }
 
 export type NDKLUD18ServicePayerData = Partial<{
@@ -59,11 +60,13 @@ export class NDKZap extends EventEmitter {
     public ndk: NDK;
     public zappedEvent?: NDKEvent;
     public zappedUser: NDKUser;
+    private fetch: typeof fetch = fetch
 
     public constructor(args: ZapConstructorParams) {
         super();
         this.ndk = args.ndk;
         this.zappedEvent = args.zappedEvent;
+        this.fetch = args._fetch || fetch;
 
         this.zappedUser =
             args.zappedUser || this.ndk.getUser({ hexpubkey: this.zappedEvent?.pubkey });
@@ -119,7 +122,7 @@ export class NDKZap extends EventEmitter {
         }
 
         try {
-            const _fetch = this.ndk.httpFetch || fetch;
+            const _fetch = this.fetch || this.ndk.httpFetch;
             const response = await _fetch(zapEndpoint);
 
             if (response.status !== 200) {

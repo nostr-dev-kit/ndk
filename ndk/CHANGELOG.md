@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk
 
+## 2.7.1
+
+### Patch Changes
+
+-   fix missing zap spec return
+
 ## 2.7.0
 
 ### Minor Changes

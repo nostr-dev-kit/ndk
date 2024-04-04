@@ -139,6 +139,8 @@ export class NDKUser {
             }
 
             if (!lnurlspec) return;
+
+            return lnurlspec;
         };
 
         return await ndk.queuesZapConfig.add({

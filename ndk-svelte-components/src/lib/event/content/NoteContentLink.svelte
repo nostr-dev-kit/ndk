@@ -4,11 +4,13 @@
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     export let value: any;
     export let showMedia = false;
+
+
 </script>
 
 {#if showMedia && value.isMedia}
-    {#if isImage(value.url)}
-        <img src={value.url} alt={value.url} />
+    {#if !!isImage(value.url)}
+        <img src={value.url} alt={""} />
     {:else if isVideo(value.url)}
         <!-- svelte-ignore a11y-media-has-caption -->
         <video src={value.url} controls />

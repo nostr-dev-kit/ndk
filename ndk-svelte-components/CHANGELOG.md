@@ -1,5 +1,22 @@
 # @nostr-dev-kit/ndk-svelte-components
 
+## 2.2.11
+
+### Patch Changes
+
+-   improve markdown rendering
+-   Updated dependencies
+-   Updated dependencies
+-   Updated dependencies
+    -   @nostr-dev-kit/ndk@2.7.0
+
+## 2.2.10
+
+### Patch Changes
+
+-   Updated dependencies
+    -   @nostr-dev-kit/ndk@2.6.1
+
 ## 2.2.9
 
 ### Patch Changes

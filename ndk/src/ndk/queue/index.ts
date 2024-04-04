@@ -9,7 +9,7 @@ type QueueItem<T> = {
      * @returns
      */
     func: () => Promise<T>;
-}
+};
 
 export class Queue<T> {
     private queue: QueueItem<T>[] = [];
@@ -30,18 +30,19 @@ export class Queue<T> {
         const promise = new Promise<T>((resolve, reject) => {
             this.queue.push({
                 ...item,
-                func: () => item.func().then(
-                    (result) => {
-                        resolve(result);
-                        return result; // Return the result to match the expected type.
-                    },
-                    (error) => {
-                        reject(error);
-                        // It's important to rethrow the error here to not accidentally resolve the promise.
-                        // However, since TypeScript 4.4, you can set "useUnknownInCatchVariables" to false if this line errors.
-                        throw error;
-                    }
-                )
+                func: () =>
+                    item.func().then(
+                        (result) => {
+                            resolve(result);
+                            return result; // Return the result to match the expected type.
+                        },
+                        (error) => {
+                            reject(error);
+                            // It's important to rethrow the error here to not accidentally resolve the promise.
+                            // However, since TypeScript 4.4, you can set "useUnknownInCatchVariables" to false if this line errors.
+                            throw error;
+                        }
+                    ),
             });
             this.process();
         });

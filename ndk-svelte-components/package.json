@@ -1,6 +1,6 @@
 {
   "name": "@nostr-dev-kit/ndk-svelte-components",
-  "version": "2.2.9",
+  "version": "2.2.11",
   "description": "",
   "license": "MIT",
   "type": "module",
@@ -32,10 +32,10 @@
   },
   "devDependencies": {
     "@nostr-dev-kit/eslint-config-custom": "workspace:*",
+    "@nostr-dev-kit/ndk-cache-dexie": "workspace:*",
+    "@nostr-dev-kit/ndk-svelte": "workspace:*",
     "@nostr-dev-kit/tailwind-config": "workspace:*",
     "@nostr-dev-kit/tsconfig": "workspace:*",
-    "@nostr-dev-kit/ndk-svelte": "workspace:*",
-    "@nostr-dev-kit/ndk-cache-dexie": "workspace:*",
     "@storybook/addon-essentials": "^7.4.0",
     "@storybook/addon-interactions": "^7.4.0",
     "@storybook/addon-links": "^7.4.0",
@@ -75,6 +75,7 @@
     "classnames": "^2.3.2",
     "lucide-svelte": "^0.279.0",
     "marked": "^9.0.0",
+    "marked-footnote": "^1.2.2",
     "marked-gfm-heading-id": "^3.0.8",
     "marked-mangle": "^1.1.4",
     "nostr-tools": "^1.15.0",

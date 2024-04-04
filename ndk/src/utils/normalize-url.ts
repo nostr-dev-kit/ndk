@@ -21,7 +21,9 @@ export function normalize(urls: string[]): string[] {
     for (const url of urls) {
         try {
             normalized.add(normalizeRelayUrl(url));
-        } catch {/**/}
+        } catch {
+            /**/
+        }
     }
 
     return Array.from(normalized);

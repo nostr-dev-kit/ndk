@@ -51,7 +51,6 @@ export async function getNip05For(
 
                 // Save the lookup to cache
                 if (ndk?.cacheAdapter && ndk.cacheAdapter.saveNip05) {
-
                     ndk.cacheAdapter.saveNip05(fullname, profile);
                 }
 
@@ -64,7 +63,7 @@ export async function getNip05For(
                 console.error("Failed to fetch NIP05 for", fullname, _e);
                 return null;
             }
-        }
+        },
     });
 }
 

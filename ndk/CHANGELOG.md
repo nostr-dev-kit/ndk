@@ -1,5 +1,22 @@
 # @nostr-dev-kit/ndk
 
+## 2.7.0
+
+### Minor Changes
+
+-   Aggregate, cache, deduplicate NIP-05 queries and Zap settings queries -- Massive performance improvement!
+
+### Patch Changes
+
+-   Add thread utility functions
+-   Provide utility functions to make threading events and reply chains way easier
+
+## 2.6.1
+
+### Patch Changes
+
+-   error handle url normalization
+
 ## 2.6.0
 
 ### Minor Changes

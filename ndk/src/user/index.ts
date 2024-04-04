@@ -139,12 +139,12 @@ export class NDKUser {
             }
 
             if (!lnurlspec) return;
-        }
+        };
 
         return await ndk.queuesZapConfig.add({
             id: this.pubkey,
             func: process,
-        })
+        });
     }
 
     /**

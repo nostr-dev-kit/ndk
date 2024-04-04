@@ -36,7 +36,8 @@ export type NDKLUD18ServicePayerData = Partial<{
         mandatory: boolean;
         k1: string;
     };
-}> & Record<string, unknown>;
+}> &
+    Record<string, unknown>;
 
 export type NDKLnUrlData = {
     tag: string;

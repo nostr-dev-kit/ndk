@@ -7,8 +7,9 @@ import { NDKSubscriptionCacheUsage, type NDKSubscriptionOptions } from "../subsc
 import { follows } from "./follows.js";
 import { type NDKUserProfile, profileFromEvent, serializeProfile } from "./profile.js";
 import type { NDKSigner } from "../signers/index.js";
-import Zap from "../zap/index.js";
+import { NDKLnUrlData } from "../zap/index.js";
 import { getNip05For } from "./nip05.js";
+import { NDKZap } from "../index.js";
 
 export type Hexpubkey = string;
 
@@ -113,6 +114,50 @@ export class NDKUser {
     }
 
     /**
+     * Retrieves the zapper this pubkey has designated as an issuer of zap receipts
+     */
+    async getZapConfiguration(ndk?: NDK): Promise<NDKLnUrlData | undefined> {
+        ndk ??= this.ndk;
+
+        if (!ndk) throw new Error("No NDK instance found");
+
+        const process = async (): Promise<NDKLnUrlData | undefined> => {
+            if (this.ndk?.cacheAdapter?.loadUsersLNURLDoc) {
+                const doc = await this.ndk.cacheAdapter.loadUsersLNURLDoc(this.pubkey);
+
+                if (doc !== "missing") {
+                    if (doc === null) return;
+                    if (doc) return doc;
+                }
+            }
+
+            const zap = new NDKZap({ ndk: ndk!, zappedUser: this });
+            const lnurlspec = await zap.getZapSpecWithoutCache();
+
+            if (this.ndk?.cacheAdapter?.saveUsersLNURLDoc) {
+                this.ndk.cacheAdapter.saveUsersLNURLDoc(this.pubkey, lnurlspec || null);
+            }
+
+            if (!lnurlspec) return;
+        }
+
+        return await ndk.queuesZapConfig.add({
+            id: this.pubkey,
+            func: process,
+        })
+    }
+
+    /**
+     * Fetches the zapper's pubkey for the zapped user
+     * @returns The zapper's pubkey if one can be found
+     */
+    async getZapperPubkey(): Promise<Hexpubkey | undefined> {
+        const zapConfig = await this.getZapConfiguration();
+
+        return zapConfig?.nostrPubkey;
+    }
+
+    /**
      * Instantiate an NDKUser from a NIP-05 string
      * @param nip05Id {string} The user's NIP-05
      * @param ndk {NDK} An NDK instance
@@ -124,30 +169,12 @@ export class NDKUser {
         ndk?: NDK,
         skipCache = false
     ): Promise<NDKUser | undefined> {
-        // If we have a cache, try to load from cache first
-        if (ndk?.cacheAdapter && ndk.cacheAdapter.loadNip05) {
-            const profile = await ndk.cacheAdapter.loadNip05(nip05Id);
-
-            if (profile) {
-                const user = new NDKUser({
-                    pubkey: profile.pubkey,
-                    relayUrls: profile.relays,
-                    nip46Urls: profile.nip46,
-                });
-                user.ndk = ndk;
-                return user;
-            }
-        }
+        if (!ndk) throw new Error("No NDK instance found");
 
         let opts: RequestInit = {};
 
         if (skipCache) opts.cache = "no-cache";
-        const profile = await getNip05For(nip05Id, ndk?.httpFetch, opts);
-
-        // Save the nip05 mapping
-        if (profile && ndk?.cacheAdapter && ndk.cacheAdapter.saveNip05) {
-            ndk?.cacheAdapter.saveNip05(nip05Id, profile);
-        }
+        const profile = await getNip05For(ndk, nip05Id, ndk?.httpFetch, opts);
 
         if (profile) {
             const user = new NDKUser({
@@ -370,7 +397,7 @@ export class NDKUser {
     public async validateNip05(nip05Id: string): Promise<boolean | null> {
         if (!this.ndk) throw new Error("No NDK instance found");
 
-        const profilePointer: ProfilePointer | null = await getNip05For(nip05Id);
+        const profilePointer: ProfilePointer | null = await getNip05For(this.ndk, nip05Id);
 
         if (profilePointer === null) return null;
         return profilePointer.pubkey === this.pubkey;
@@ -396,7 +423,7 @@ export class NDKUser {
             this.ndk.assertSigner();
         }
 
-        const zap = new Zap({
+        const zap = new NDKZap({
             ndk: this.ndk,
             zappedUser: this,
         });

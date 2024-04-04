@@ -5,7 +5,7 @@ import { nip57 } from "nostr-tools";
 import type { NostrEvent } from "../events/index.js";
 import { NDKEvent, type NDKTag } from "../events/index.js";
 import type { NDK } from "../ndk/index.js";
-import type { NDKUser } from "../user/index.js";
+import type { Hexpubkey, NDKUser } from "../user/index.js";
 import { NDKSigner } from "../signers/index.js";
 import createDebug from "debug";
 import { NDKUserProfile } from "../user/profile.js";
@@ -27,7 +27,34 @@ interface ZapConstructorParams {
     zappedUser?: NDKUser;
 }
 
-export default class Zap extends EventEmitter {
+export type NDKLUD18ServicePayerData = Partial<{
+    name: { mandatory: boolean };
+    pubkey: { mandatory: boolean };
+    identifier: { mandatory: boolean };
+    email: { mandatory: boolean };
+    auth: {
+        mandatory: boolean;
+        k1: string;
+    };
+}> & Record<string, unknown>;
+
+export type NDKLnUrlData = {
+    tag: string;
+    callback: string;
+    minSendable: number;
+    maxSendable: number;
+    metadata: string;
+    payerData?: NDKLUD18ServicePayerData;
+    commentAllowed?: number;
+
+    /**
+     * Pubkey of the zapper that should publish zap receipts for this user
+     */
+    nostrPubkey?: Hexpubkey;
+    allowsNostr?: boolean;
+};
+
+export class NDKZap extends EventEmitter {
     public ndk: NDK;
     public zappedEvent?: NDKEvent;
     public zappedUser: NDKUser;
@@ -41,11 +68,26 @@ export default class Zap extends EventEmitter {
             args.zappedUser || this.ndk.getUser({ hexpubkey: this.zappedEvent?.pubkey });
     }
 
-    public async getZapEndpoint(): Promise<string | undefined> {
+    /**
+     * Fetches the zapper's pubkey for the zapped user
+     */
+    static async getZapperPubkey(ndk: NDK, forUser: Hexpubkey): Promise<Hexpubkey | undefined> {
+        const zappedUser = ndk.getUser({ pubkey: forUser });
+        const zap = new NDKZap({ ndk, zappedUser });
+        const lnurlspec = await zap.getZapSpec();
+        return lnurlspec?.nostrPubkey;
+    }
+
+    public async getZapSpec(): Promise<NDKLnUrlData | undefined> {
+        if (!this.zappedUser) throw new Error("No user to zap was provided");
+
+        return this.zappedUser.getZapConfiguration(this.ndk);
+    }
+
+    public async getZapSpecWithoutCache(): Promise<NDKLnUrlData | undefined> {
         let lud06: string | undefined;
         let lud16: string | undefined;
         let zapEndpoint: string | undefined;
-        let zapEndpointCallback: string | undefined;
         let profile: NDKUserProfile | undefined;
 
         if (this.zappedUser) {
@@ -84,17 +126,23 @@ export default class Zap extends EventEmitter {
                 throw new Error(`Unable to fetch zap endpoint ${zapEndpoint}: ${text}`);
             }
 
-            const body = await response.json();
-
-            if (body?.allowsNostr && (body?.nostrPubkey || body?.nostrPubKey)) {
-                zapEndpointCallback = body.callback;
-            }
-
-            return zapEndpointCallback;
+            return await response.json();
         } catch (e) {
             throw new Error(`Unable to fetch zap endpoint ${zapEndpoint}: ${e}`);
-            return;
         }
+    }
+
+    public async getZapEndpoint(): Promise<string | undefined> {
+        const zapSpec = await this.getZapSpec();
+        if (!zapSpec) return;
+
+        let zapEndpointCallback: string | undefined;
+
+        if (zapSpec?.allowsNostr && (zapSpec?.nostrPubkey || zapSpec?.nostrPubkey)) {
+            zapEndpointCallback = zapSpec.callback;
+        }
+
+        return zapEndpointCallback;
     }
 
     /**

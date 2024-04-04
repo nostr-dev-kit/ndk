@@ -3,6 +3,7 @@ import type { NDKRelay } from "../relay/index.js";
 import type { NDKFilter, NDKSubscription } from "../subscription/index.js";
 import type { Hexpubkey, ProfilePointer } from "../user/index.js";
 import type { NDKUserProfile } from "../user/profile.js";
+import type { NDKLnUrlData } from "../zap/index.js";
 
 export interface NDKCacheAdapter {
     /**
@@ -28,6 +29,23 @@ export interface NDKCacheAdapter {
     fetchProfile?(pubkey: Hexpubkey): Promise<NDKUserProfile | null>;
     saveProfile?(pubkey: Hexpubkey, profile: NDKUserProfile): void;
 
-    loadNip05?(nip05: string): Promise<ProfilePointer | null>;
-    saveNip05?(nip05: string, profile: ProfilePointer): void;
+    loadNip05?(
+        nip05: string,
+        maxAgeForMissing?: number
+    ): Promise<ProfilePointer | null | "missing">;
+    saveNip05?(nip05: string, profile: ProfilePointer | null): void;
+
+    /**
+     * Fetches a user's LNURL data from the cache.
+     * @param pubkey The pubkey of the user to fetch the LNURL data for.
+     * @param maxAgeInSecs The maximum age of the data in seconds.
+     * @param maxAgeForMissing The maximum age of the data in seconds if it is missing before it returns that it should be refetched.
+     * @returns The LNURL data, null if it is not in the cache and under the maxAgeForMissing, or "missing" if it should be refetched.
+     */
+    loadUsersLNURLDoc?(
+        pubkey: Hexpubkey,
+        maxAgeInSecs?: number,
+        maxAgeForMissing?: number
+    ): Promise<NDKLnUrlData | null | "missing">;
+    saveUsersLNURLDoc?(pubkey: Hexpubkey, doc: NDKLnUrlData | null): void;
 }

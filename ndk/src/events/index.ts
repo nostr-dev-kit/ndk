@@ -7,7 +7,6 @@ import type { NDKRelaySet } from "../relay/sets/index.js";
 import type { NDKSigner } from "../signers/index.js";
 import type { NDKFilter } from "../subscription/index.js";
 import { type NDKUser } from "../user/index.js";
-import Zap from "../zap/index.js";
 import { type ContentTag, generateContentTags, mergeTags } from "./content-tagger.js";
 import { isEphemeral, isParamReplaceable, isReplaceable } from "./kind.js";
 import { NDKKind } from "./kinds/index.js";
@@ -16,6 +15,7 @@ import { encode } from "./nip19.js";
 import { repost } from "./repost.js";
 import { serialize } from "./serializer.js";
 import { validate, verifySignature, getEventHash } from "./validation.js";
+import { NDKZap } from "../zap/index.js";
 
 export type NDKEventId = string;
 export type NDKTag = string[];
@@ -565,7 +565,7 @@ export class NDKEvent extends EventEmitter {
             this.ndk.assertSigner();
         }
 
-        const zap = new Zap({
+        const zap = new NDKZap({
             ndk: this.ndk,
             zappedEvent: this,
             zappedUser: recipient,

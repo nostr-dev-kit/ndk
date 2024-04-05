@@ -102,7 +102,8 @@ export class NDKRelayPublisher {
         return Promise.race([publishPromise, timeoutPromise]);
     }
 
-    public async auth(event: NDKEvent) {
+    public async auth(event: NDKEvent): Promise<string> {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return this.ndkRelay.connectivity.relay.auth(event.rawEvent() as any);
     }
 }

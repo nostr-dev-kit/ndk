@@ -17,7 +17,7 @@
         ndk.pool.on('relay:connect', () => {
             update();
         });
-        ndk.pool.on('disconnect', () => {
+        ndk.pool.on('relay:disconnect', () => {
             update();
         });
     });

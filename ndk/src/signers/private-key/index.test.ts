@@ -1,4 +1,4 @@
-import { generateSecretKey } from "nostr-tools";
+import { generateSecretKey } from "nostr-tools/pure";
 import type { NostrEvent } from "../../index.js";
 import { NDKUser } from "../../index.js";
 import { NDKPrivateKeySigner } from "./index.js";

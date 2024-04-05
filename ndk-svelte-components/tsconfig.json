@@ -8,6 +8,9 @@
         "resolveJsonModule": true,
         "skipLibCheck": true,
         "sourceMap": true,
-        "strict": true
+        "strict": true,
+        "module": "Node16",
+        "target": "ESNext",
+        "moduleResolution": "NodeNext"
     }
 }

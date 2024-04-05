@@ -76,6 +76,7 @@ export interface NIP05Result {
     nip46?: { [pubkey: Hexpubkey]: string[] };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function parseNIP05Result(json: any): NIP05Result {
     const result: NIP05Result = {
         names: {},

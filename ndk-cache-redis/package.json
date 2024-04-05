@@ -4,6 +4,7 @@
     "description": "NDK cache adapter for redis.",
     "main": "./dist/index.js",
     "module": "./dist/index.mjs",
+    "type": "module",
     "exports": {
         "import": {
             "types": "./dist/index.d.mts",
@@ -38,7 +39,7 @@
         "@nostr-dev-kit/ndk": "workspace:*",
         "debug": "^4.3.4",
         "ioredis": "^5.3.2",
-        "nostr-tools": "^2.3.2",
+        "nostr-tools": "^2.4.0",
         "typescript": "^5.2.2"
     },
     "devDependencies": {

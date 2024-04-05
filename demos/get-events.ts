@@ -1,9 +1,8 @@
 import "websocket-polyfill";
-import NDK, { NDKRelay } from "@nostr-dev-kit/ndk";
+import NDK, { type NDKRelay } from "@nostr-dev-kit/ndk";
 import { relaysFromArgs } from "./utils/relays-from-args";
 
 import chalk from "chalk";
-import { verifyEvent } from "nostr-tools";
 const log = console.log;
 const time = console.time;
 const timeEnd = console.timeEnd;
@@ -37,11 +36,9 @@ async function fetchAndVerifyEvents(label: string, skipVerification: boolean) {
     timeEnd(info("fetchEvents"));
     infoLog(`Fetched ${events.size} events`);
 
-    const eventObjects = Array.from(events.values()).map((e) => e.rawEvent());
-
     time(info("verifySignature"));
-    for (const event of eventObjects) {
-        verifyEvent(event as any);
+    for (const event of events) {
+        event.verifySignature(false);
     }
     timeEnd(info("verifySignature"));
 }

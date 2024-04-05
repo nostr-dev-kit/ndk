@@ -7,6 +7,9 @@
         "paths": {
             "$lib": ["src/lib"],
             "$lib/*": ["src/lib/*"]
-        }
+        },
+        "module": "Node16",
+        "target": "ESNext",
+        "moduleResolution": "NodeNext"
     }
 }

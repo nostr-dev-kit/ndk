@@ -241,7 +241,8 @@ export class NDKRelaySubscriptions {
         }
 
         // Check if we have a timeout for this groupable ID
-        let timeout: any = this.executionTimeoutsByGroupId.get(groupableId);
+        let timeout: ReturnType<typeof setTimeout> | number | undefined =
+            this.executionTimeoutsByGroupId.get(groupableId);
 
         // If we don't, or if this subscription's delay is marked as "at-most", then schedule the timeout too
         // (it will empty the group when it runs so the race is not a problem)

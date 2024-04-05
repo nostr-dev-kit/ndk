@@ -1,4 +1,4 @@
-import { nprofileEncode, neventEncode, decode } from "nostr-tools/lib/types/nip19";
+import { nprofileEncode, neventEncode, decode } from "nostr-tools/nip19";
 import { identity, last, pluck } from "ramda";
 
 export const NEWLINE = "newline";
@@ -34,8 +34,7 @@ type ParsedPart = {
     value: any;
 };
 
-export const isEmbeddableMedia = (url: string) =>
-    isImage(url) || isVideo(url) || isAudio(url);
+export const isEmbeddableMedia = (url: string) => isImage(url) || isVideo(url) || isAudio(url);
 
 export const isImage = (url: string) => url.match(/^.*\.(jpg|jpeg|png|webp|gif|avif|svg)/gi);
 export const isVideo = (url: string) => url.match(/^.*\.(mov|mkv|mp4|avi|m4v|webm)/gi);
@@ -78,7 +77,7 @@ export function groupContent(parts: ParsedPart[]): ParsedPart[] {
 
             buffer.value.push(part);
         } else {
-            const isNewline = part.type === NEWLINE || (part.type === TEXT && part.value === '\n');
+            const isNewline = part.type === NEWLINE || (part.type === TEXT && part.value === "\n");
             const nextIsALink = parts[index + 1]?.type === LINK;
 
             // Only pop the buffer if this is not a newline and the next part is not a link

@@ -15,7 +15,7 @@ export class NDKRelayConnectivity {
         durations: [],
     };
     private debug: debug.Debugger;
-    private reconnectTimeout: number | Timer | undefined;
+    private reconnectTimeout: ReturnType<typeof setTimeout> | undefined;
 
     constructor(ndkRelay: NDKRelay) {
         this.ndkRelay = ndkRelay;
@@ -80,16 +80,12 @@ export class NDKRelayConnectivity {
                 this._status = NDKRelayStatus.CONNECTING;
             else this._status = NDKRelayStatus.RECONNECTING;
 
-            // ===========================
-            // TODO this needs to be fixed
-            // ===========================
-            // this.relay.off("connect", connectHandler);
-            // this.relay.off("disconnect", disconnectHandler);
-            // this.relay.on("connect", connectHandler);
             this.relay.onclose = disconnectHandler;
-            // this.relay.on("auth", authHandler);
+            this.relay._onauth = authHandler;
 
-            await runWithTimeout(this.relay.connect, timeoutMs, "Timed out while connecting");
+            await runWithTimeout(this.relay.connect, timeoutMs, "Timed out while connecting").then(
+                () => connectHandler()
+            );
         } catch (e) {
             this.debug("Failed to connect", e);
             this._status = NDKRelayStatus.DISCONNECTED;

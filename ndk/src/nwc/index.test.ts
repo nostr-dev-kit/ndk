@@ -1,6 +1,6 @@
 import "websocket-polyfill";
-import { NDK } from "../ndk";
-import { NDKNwc } from ".";
+import { NDK } from "../ndk/index.js";
+import { NDKNwc } from "./index.js";
 
 const ndk = new NDK();
 const nwcString = "<put a real nwc string here to test and replace xit() with it()>";

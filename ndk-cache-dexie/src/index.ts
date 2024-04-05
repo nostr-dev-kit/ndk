@@ -116,7 +116,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         // If the document is older than the max age, return missing
         if (nip.profile === null) {
             // If the document has been marked as missing and is older than the max age for missing, return missing
-            if ((nip.fetchedAt + maxAgeForMissing * 1000) < now) return "missing";
+            if (nip.fetchedAt + maxAgeForMissing * 1000 < now) return "missing";
 
             // Otherwise, return null
             return null;
@@ -151,10 +151,10 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         const now = Date.now();
 
         // If the document is older than the max age, return missing
-        if ((lnurl.fetchedAt + maxAgeInSecs * 1000) < now) return "missing";
+        if (lnurl.fetchedAt + maxAgeInSecs * 1000 < now) return "missing";
         if (lnurl.document === null) {
             // If the document has been marked as missing and is older than the max age for missing, return missing
-            if ((lnurl.fetchedAt + maxAgeForMissing * 1000) < now) return "missing";
+            if (lnurl.fetchedAt + maxAgeForMissing * 1000 < now) return "missing";
 
             // Otherwise, return null
             return null;
@@ -207,6 +207,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
             try {
                 const profile: NDKUserProfile = profileFromEvent(event);
                 this.saveProfile(event.pubkey, profile);
+                // eslint-disable-next-line no-empty
             } catch {}
         } else {
             let addEvent = true;

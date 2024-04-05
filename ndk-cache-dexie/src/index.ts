@@ -5,6 +5,8 @@ import type {
     NDKFilter,
     NDKSubscription,
     NDKUserProfile,
+    NDKLnUrlData,
+    ProfilePointer,
 } from "@nostr-dev-kit/ndk";
 import createDebug from "debug";
 import { matchFilter } from "nostr-tools";
@@ -99,6 +101,80 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         this.profiles.set(pubkey, profile);
 
         this.dirtyProfiles.add(pubkey);
+    }
+
+    public async loadNip05(
+        nip05: string,
+        maxAgeForMissing: number = 3600
+    ): Promise<ProfilePointer | null | "missing"> {
+        const nip = await db.nip05.get({ nip05 });
+
+        if (!nip) return "missing";
+
+        const now = Date.now();
+
+        // If the document is older than the max age, return missing
+        if (nip.profile === null) {
+            // If the document has been marked as missing and is older than the max age for missing, return missing
+            if ((nip.fetchedAt + maxAgeForMissing * 1000) < now) return "missing";
+
+            // Otherwise, return null
+            return null;
+        }
+
+        try {
+            return JSON.parse(nip.profile);
+        } catch (e) {
+            return "missing";
+        }
+    }
+
+    public async saveNip05(nip05: string, profile: ProfilePointer | null): Promise<void> {
+        try {
+            const document = profile ? JSON.stringify(profile) : null;
+
+            await db.nip05.put({ nip05, profile: document, fetchedAt: Date.now() });
+        } catch (error) {
+            console.error("Failed to save NIP-05 profile for nip05:", nip05, error);
+        }
+    }
+
+    public async loadUsersLNURLDoc?(
+        pubkey: Hexpubkey,
+        maxAgeInSecs: number = 86400,
+        maxAgeForMissing: number = 3600
+    ): Promise<NDKLnUrlData | null | "missing"> {
+        const lnurl = await db.lnurl.get({ pubkey });
+
+        if (!lnurl) return "missing";
+
+        const now = Date.now();
+
+        // If the document is older than the max age, return missing
+        if ((lnurl.fetchedAt + maxAgeInSecs * 1000) < now) return "missing";
+        if (lnurl.document === null) {
+            // If the document has been marked as missing and is older than the max age for missing, return missing
+            if ((lnurl.fetchedAt + maxAgeForMissing * 1000) < now) return "missing";
+
+            // Otherwise, return null
+            return null;
+        }
+
+        try {
+            return JSON.parse(lnurl.document);
+        } catch (e) {
+            return "missing";
+        }
+    }
+
+    public async saveUsersLNURLDoc(pubkey: Hexpubkey, doc: NDKLnUrlData | null): Promise<void> {
+        try {
+            const document = doc ? JSON.stringify(doc) : null;
+
+            await db.lnurl.put({ pubkey, document, fetchedAt: Date.now() });
+        } catch (error) {
+            console.error("Failed to save LNURL document for pubkey:", pubkey, error);
+        }
     }
 
     private async processFilter(filter: NDKFilter, subscription: NDKSubscription): Promise<void> {

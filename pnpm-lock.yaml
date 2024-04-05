@@ -114,6 +114,9 @@ importers:
 
   ndk:
     dependencies:
+      '@noble/curves':
+        specifier: ^1.4.0
+        version: 1.4.0
       '@noble/hashes':
         specifier: ^1.3.1
         version: 1.3.2
@@ -310,6 +313,9 @@ importers:
       marked:
         specifier: ^9.0.0
         version: 9.0.3
+      marked-footnote:
+        specifier: ^1.2.2
+        version: 1.2.2(marked@9.0.3)
       marked-gfm-heading-id:
         specifier: ^3.0.8
         version: 3.1.0(marked@9.0.3)
@@ -317,8 +323,8 @@ importers:
         specifier: ^1.1.4
         version: 1.1.4(marked@9.0.3)
       nostr-tools:
-        specifier: ^2.3.2
-        version: 2.3.2(typescript@5.3.3)
+        specifier: ^1.15.0
+        version: 1.17.0(typescript@5.3.3)
       ramda:
         specifier: ^0.29.0
         version: 0.29.0
@@ -3414,6 +3420,10 @@ packages:
       tar-fs: 2.1.1
     dev: true
 
+  /@noble/ciphers@0.2.0:
+    resolution: {integrity: sha512-6YBxJDAapHSdd3bLDv6x2wRPwq4QFMUaB3HvljNBUTThDd12eSm7/3F+2lnfzx2jvM+S6Nsy0jEt9QbPqSwqRw==}
+    dev: false
+
   /@noble/ciphers@0.5.1:
     resolution: {integrity: sha512-aNE06lbe36ifvMbbWvmmF/8jx6EQPu2HVg70V95T+iGjOuYwPpAccwAQc2HlXO2D0aiQ3zavbMga4jjWnrpiPA==}
     dev: false
@@ -3430,6 +3440,12 @@ packages:
       '@noble/hashes': 1.3.2
     dev: false
 
+  /@noble/curves@1.4.0:
+    resolution: {integrity: sha512-p+4cb332SFCrReJkCYe8Xzm0OWi4Jji5jVdIZRL/PmacmDkFNw6MrrV+gGpiPxLHbV+zKFRywUWbaseT+tZRXg==}
+    dependencies:
+      '@noble/hashes': 1.4.0
+    dev: false
+
   /@noble/hashes@1.3.1:
     resolution: {integrity: sha512-EbqwksQwz9xDRGfDST86whPBgM65E0OH/pCgqW0GBVzO22bNE+NuIbeTb714+IfSjU3aRk47EUvXIb5bTsenKA==}
     engines: {node: '>= 16'}
@@ -3437,6 +3453,11 @@ packages:
 
   /@noble/hashes@1.3.2:
     resolution: {integrity: sha512-MVC8EAQp7MvEcm30KWENFjgR+Mkmf+D189XJTkFIlwohU5hcBbn1ZkKq7KVTi2Hme3PMGF390DaL52beVrIihQ==}
+    engines: {node: '>= 16'}
+    dev: false
+
+  /@noble/hashes@1.4.0:
+    resolution: {integrity: sha512-V1JJ1WTRUqHHrOSh597hURcMqVKVGL/ea3kv0gSnEdsEZ0/+VyPghM1lMNGc00z7CIQorSvbKpuJkxvuHbvdbg==}
     engines: {node: '>= 16'}
     dev: false
 
@@ -10381,6 +10402,14 @@ packages:
       react: 18.2.0
     dev: true
 
+  /marked-footnote@1.2.2(marked@9.0.3):
+    resolution: {integrity: sha512-TFBEHwHLSSedub7P6XHHs+dMMOnDeNV5+kFDo4trU//gDd8iM57lg9jr9NGwDifPwLllHwKmFcRNp5uYvO2Fnw==}
+    peerDependencies:
+      marked: '>=7.0.0'
+    dependencies:
+      marked: 9.0.3
+    dev: false
+
   /marked-gfm-heading-id@3.1.0(marked@9.0.3):
     resolution: {integrity: sha512-PYgLXDbL64Ga6kCpvVuKVoIVsV6MKUtkOXnR8mIqyjiycAeKNhQxcGpO0mHEogOTzyY8A8TcK49k5VwYMUCCbg==}
     peerDependencies:
@@ -11138,6 +11167,23 @@ packages:
     resolution: {integrity: sha512-IO9QvjUMWxPQQhs60oOu10CRkWCiZzSUkzbXGGV9pviYl1fXYcvkzQ5jV9z8Y6un8ARoVRl4EtC6v6jNqbaJ/w==}
     engines: {node: '>=14.16'}
     dev: true
+
+  /nostr-tools@1.17.0(typescript@5.3.3):
+    resolution: {integrity: sha512-LZmR8GEWKZeElbFV5Xte75dOeE9EFUW/QLI1Ncn3JKn0kFddDKEfBbFN8Mu4TMs+L4HR/WTPha2l+PPuRnJcMw==}
+    peerDependencies:
+      typescript: '>=5.0.0'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+    dependencies:
+      '@noble/ciphers': 0.2.0
+      '@noble/curves': 1.1.0
+      '@noble/hashes': 1.3.1
+      '@scure/base': 1.1.1
+      '@scure/bip32': 1.3.1
+      '@scure/bip39': 1.2.1
+      typescript: 5.3.3
+    dev: false
 
   /nostr-tools@2.3.2(typescript@5.2.2):
     resolution: {integrity: sha512-8ceZ2ItkAGjR5b9+QOkkV9KWBOK0WPlpFrPPXmbWnNMcnlj9zB7rjdYPK2sV/OK4Ty9J3xL6+bvYKY77gup5EQ==}

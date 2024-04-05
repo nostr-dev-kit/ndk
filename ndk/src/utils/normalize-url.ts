@@ -16,5 +16,15 @@ export function normalizeRelayUrl(url: string): string {
 }
 
 export function normalize(urls: string[]): string[] {
-    return urls.map(normalizeRelayUrl);
+    const normalized = new Set<string>();
+
+    for (const url of urls) {
+        try {
+            normalized.add(normalizeRelayUrl(url));
+        } catch {
+            /**/
+        }
+    }
+
+    return Array.from(normalized);
 }

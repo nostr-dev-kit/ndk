@@ -13,7 +13,7 @@ import type { NDKSigner } from "../signers/index.js";
 import type { NDKFilter, NDKSubscriptionOptions } from "../subscription/index.js";
 import { NDKSubscription } from "../subscription/index.js";
 import { filterFromId, isNip33AValue, relaysFromBech32 } from "../subscription/utils.js";
-import type { Hexpubkey, NDKUserParams } from "../user/index.js";
+import type { Hexpubkey, NDKUserParams, ProfilePointer } from "../user/index.js";
 import { NDKUser } from "../user/index.js";
 import { NDKKind } from "../events/kinds/index.js";
 import NDKList from "../events/kinds/lists/index.js";
@@ -21,6 +21,8 @@ import { NDKAuthPolicy } from "../relay/auth-policies.js";
 import { Nip96 } from "../media/index.js";
 import { NDKRelayList } from "../events/kinds/NDKRelayList.js";
 import { NDKNwc } from "../nwc/index.js";
+import { NDKLnUrlData } from "../zap/index.js";
+import { Queue } from "./queue/index.js";
 
 export interface NDKConstructorParams {
     /**
@@ -116,7 +118,7 @@ export const DEFAULT_OUTBOX_RELAYS = ["wss://purplepag.es/", "wss://profiles.nos
 export const DEFAULT_BLACKLISTED_RELAYS = [
     "wss://brb.io/", // BRB
     "wss://nostr.mutinywallet.com/", // Don't try to read from this relay since it's a write-only relay
-    "wss://purplepag.es/",
+    "wss://purplepag.es/", // This is a hack, since this is a mostly read-only relay, but not fully. Once we have relay routing this can be removed so it only receives the supported kinds
 ];
 
 /**
@@ -137,6 +139,8 @@ export class NDK extends EventEmitter {
     public mutedIds: Map<Hexpubkey | NDKEventId, string>;
     public clientName?: string;
     public clientNip89?: string;
+    public queuesZapConfig: Queue<NDKLnUrlData | undefined>;
+    public queuesNip05: Queue<ProfilePointer | null>;
 
     /**
      * Default relay-auth policy that will be used when a relay requests authentication,
@@ -224,6 +228,9 @@ export class NDK extends EventEmitter {
         if (opts.devWriteRelayUrls) {
             this.devWriteRelaySet = NDKRelaySet.fromRelayUrls(opts.devWriteRelayUrls, this);
         }
+
+        this.queuesZapConfig = new Queue("zaps", 3);
+        this.queuesNip05 = new Queue("nip05", 10);
 
         try {
             this.httpFetch = fetch;

@@ -1,4 +1,4 @@
-import type { NDKUserProfile } from "@nostr-dev-kit/ndk";
+import type { NDKUserProfile, ProfilePointer } from "@nostr-dev-kit/ndk";
 import Dexie, { type Table } from "dexie";
 
 interface User {
@@ -25,17 +25,33 @@ interface EventTag {
     tagValue: string;
 }
 
+interface Nip05 {
+    nip05: string;
+    profile: string | null;
+    fetchedAt: number;
+}
+
+interface Lnurl {
+    pubkey: string;
+    document: string | null;
+    fetchedAt: number;
+}
+
 export class Database extends Dexie {
     users!: Table<User>;
     events!: Table<Event>;
     eventTags!: Table<EventTag>;
+    nip05!: Table<Nip05>;
+    lnurl!: Table<Lnurl>;
 
     constructor(name: string) {
         super(name);
-        this.version(4).stores({
+        this.version(6).stores({
             users: "&pubkey, profile, createdAt",
             events: "&id, pubkey, content, kind, createdAt, relay, [kind+pubkey]",
             eventTags: "id, tagValue, tag, value, eventId",
+            nip05: "&nip05, profile, fetchedAt",
+            lnurl: "&pubkey, document, fetchedAt",
         });
     }
 }

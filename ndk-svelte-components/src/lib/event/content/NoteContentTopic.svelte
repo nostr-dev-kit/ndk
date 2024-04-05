@@ -2,4 +2,4 @@
     export let value: string = '';
 </script>
 
-#{value}
+<a href="/t/{value}" on:click>#{value}</a>

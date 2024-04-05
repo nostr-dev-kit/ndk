@@ -45,6 +45,8 @@
             <span class="relay-status relay-status--connected" />
         {:else if relay.status === NDKRelayStatus.FLAPPING}
             <span class="relay-status relay-status--flapping" />
+        {:else if relay.status === NDKRelayStatus.AUTHENTICATING}
+            <span class="relay-status relay-status--authenticating" />
         {/if}
         <span class="relay-name"><RelayName {relay} /></span>
         {#if activeSubCount > 0}
@@ -145,6 +147,10 @@
 
     .relay-status--connecting {
         background-color: #f1c40f;
+    }
+
+    .relay-button--authenticating {
+        background-color: #aa4240;
     }
 
     .relay-status--disconnected {

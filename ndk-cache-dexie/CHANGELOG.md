@@ -1,5 +1,32 @@
 # @nostr-dev-kit/ndk-cache-dexie
 
+## 2.3.1
+
+### Patch Changes
+
+-   Updated dependencies
+    -   @nostr-dev-kit/ndk@2.7.1
+
+## 2.3.0
+
+### Minor Changes
+
+-   Cache NIP-05 and zap specs
+
+### Patch Changes
+
+-   Updated dependencies
+-   Updated dependencies
+-   Updated dependencies
+    -   @nostr-dev-kit/ndk@2.7.0
+
+## 2.2.10
+
+### Patch Changes
+
+-   Updated dependencies
+    -   @nostr-dev-kit/ndk@2.6.1
+
 ## 2.2.9
 
 ### Patch Changes

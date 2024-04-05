@@ -34,6 +34,9 @@ type ParsedPart = {
     value: any;
 };
 
+export const isEmbeddableMedia = (url: string) =>
+    isImage(url) || isVideo(url) || isAudio(url);
+
 export const isImage = (url: string) => url.match(/^.*\.(jpg|jpeg|png|webp|gif|avif|svg)/gi);
 export const isVideo = (url: string) => url.match(/^.*\.(mov|mkv|mp4|avi|m4v|webm)/gi);
 export const isAudio = (url: string) => url.match(/^.*\.(ogg|mp3|wav)/gi);
@@ -76,14 +79,18 @@ export function groupContent(parts: ParsedPart[]): ParsedPart[] {
 
             buffer.value.push(part);
         } else {
-            const isNewline = part.type === NEWLINE;
-            const nextIsNotLink = parts[index + 1]?.type !== LINK;
+            const isNewline = part.type === NEWLINE || (part.type === TEXT && part.value === '\n');
+            const nextIsALink = parts[index + 1]?.type === LINK;
 
             // Only pop the buffer if this is not a newline and the next part is not a link
-            if (isNewline && nextIsNotLink) {
-                popBuffer();
-                result.push(part);
-            } else if (!buffer) {
+            if (buffer) {
+                if (isNewline && nextIsALink) {
+                    // don't pop the buffer since the next part is a link
+                } else {
+                    popBuffer();
+                    result.push(part);
+                }
+            } else {
                 result.push(part);
             }
         }
@@ -180,7 +187,6 @@ export const parseContent = ({ content, tags = [], html = false }: ContentArgs):
     };
 
     const parseUrl = () => {
-        if (html) return;
         const raw = first(text.match(/^([a-z+:]{2,30}:\/\/)?[^\s]+\.[a-z]{2,6}[^\s]*[^.!?,:\s]/gi));
 
         // Skip url if it's just the end of a filepath

@@ -20,6 +20,8 @@ export * from "./events/kinds/subscriptions/receipt.js";
 export * from "./events/kinds/dvm/index.js";
 export * from "./nwc/index.js";
 
+export * from "./thread/index.js";
+
 export * from "./events/kinds/simple-group/index.js";
 
 export * from "./relay/index.js";
@@ -40,4 +42,4 @@ export * from "./dvm/schedule.js";
 
 export { NDK as default, NDKConstructorParams } from "./ndk/index.js";
 export { NDKZapInvoice, zapInvoiceFromEvent } from "./zap/invoice.js";
-export { default as NDKZap } from "./zap/index.js";
+export * from "./zap/index.js";

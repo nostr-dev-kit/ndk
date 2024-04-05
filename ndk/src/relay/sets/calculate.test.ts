@@ -1,4 +1,5 @@
 import { NDK } from "../../ndk/index.js";
+import type { NDKPool } from "../pool/index.js";
 import { calculateRelaySetsFromFilters } from "./calculate.js";
 
 const explicitRelayUrl = "wss://explicit-relay.com";
@@ -8,7 +9,7 @@ describe("calculateRelaySetsFromFilters", () => {
     it("chooses available write relays for each author", () => {
         const filters = [{ authors: ["a", "b", "c"], kinds: [0] }];
 
-        const sets = calculateRelaySetsFromFilters({} as NDK, filters);
+        const sets = calculateRelaySetsFromFilters({} as NDK, filters, {} as NDKPool);
 
         const relay1 = sets.get("relay1");
         const relay2 = sets.get("relay2");
@@ -22,8 +23,7 @@ describe("calculateRelaySetsFromFilters", () => {
     it("sends authors-less filters to all relays", () => {
         const filters = [{ authors: ["a", "b", "c"], kinds: [0] }, { kinds: [1] }];
 
-        const sets = calculateRelaySetsFromFilters({} as NDK, filters);
-
+        const sets = calculateRelaySetsFromFilters({} as NDK, filters, {} as NDKPool);
         const relay1 = sets.get("relay1");
         const relay2 = sets.get("relay2");
         const relay3 = sets.get("relay3");
@@ -36,7 +36,7 @@ describe("calculateRelaySetsFromFilters", () => {
     it("sends authors whose relay is unknown to the pool explicit relays", () => {
         const filters = [{ authors: ["a", "b", "c", "d"], kinds: [0] }];
 
-        const sets = calculateRelaySetsFromFilters(ndk, filters);
+        const sets = calculateRelaySetsFromFilters(ndk, filters, ndk.pool);
 
         const relay1 = sets.get("relay1");
         const relay2 = sets.get("relay2");
@@ -52,7 +52,7 @@ describe("calculateRelaySetsFromFilters", () => {
     it("sends filters with no authors to explicit relays", () => {
         const filters = [{ kinds: [0] }];
 
-        const sets = calculateRelaySetsFromFilters(ndk, filters);
+        const sets = calculateRelaySetsFromFilters(ndk, filters, ndk.pool);
 
         const relay1 = sets.get("relay1");
         const explicitRelay = sets.get(explicitRelayUrl);

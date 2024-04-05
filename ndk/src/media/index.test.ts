@@ -32,7 +32,6 @@ describe("Nip96", () => {
         expect(nip96.spec).toBeUndefined();
         await nip96.upload(blob);
         expect(nip96.spec).toBeDefined();
-        console.log(nip96.spec);
     });
 
     it("generates a NIP98 header", async () => {

@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk-svelte-components
 
+## 2.2.13
+
+### Patch Changes
+
+-   fix display of markdown
+
 ## 2.2.12
 
 ### Patch Changes

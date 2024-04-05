@@ -28,7 +28,7 @@ type ContentArgs = {
     html?: boolean;
 };
 
-type ParsedPart = {
+export type ParsedPart = {
     type: string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any;
@@ -212,7 +212,7 @@ export const parseContent = ({ content, tags = [], html = false }: ContentArgs):
         }
     };
 
-    const parseHtml = () => {
+    const parseHtml = (): any[] | undefined => {
         // Only parse out specific html tags
         const raw = first(text.match(/^<(pre|code)>.*?<\/\1>/gis));
 
@@ -222,15 +222,19 @@ export const parseContent = ({ content, tags = [], html = false }: ContentArgs):
     };
 
     while (text) {
-        // The order that this runs matters
-        const part =
-            parseHtml() ||
-            parseNewline() ||
-            parseMention() ||
-            parseTopic() ||
-            parseBech32() ||
-            parseUrl() ||
-            parseInvoice();
+        let part: any[] | undefined;
+
+        if (html) {
+            part = parseMention() || parseTopic() || parseBech32();
+        } else {
+            part = parseHtml() ||
+                parseNewline() ||
+                parseMention() ||
+                parseTopic() ||
+                parseBech32()
+                parseUrl() ||
+                parseInvoice();
+        }
 
         if (part) {
             if (buffer) {

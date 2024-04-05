@@ -13,12 +13,12 @@ export class NDKPrivateKeySigner implements NDKSigner {
         if (privateKey) {
             this.privateKey = privateKey;
             this._user = new NDKUser({
-                hexpubkey: getPublicKey(this.privateKey),
+                pubkey: getPublicKey(this.privateKey),
             });
         }
     }
 
-    public static generate() {
+    public static generate(): NDKPrivateKeySigner {
         const privateKey = generatePrivateKey();
         return new NDKPrivateKeySigner(privateKey);
     }
@@ -48,7 +48,7 @@ export class NDKPrivateKeySigner implements NDKSigner {
             throw Error("Attempted to encrypt without a private key");
         }
 
-        const recipientHexPubKey = recipient.hexpubkey;
+        const recipientHexPubKey = recipient.pubkey;
         return await nip04.encrypt(this.privateKey, recipientHexPubKey, value);
     }
 
@@ -57,7 +57,7 @@ export class NDKPrivateKeySigner implements NDKSigner {
             throw Error("Attempted to decrypt without a private key");
         }
 
-        const senderHexPubKey = sender.hexpubkey;
+        const senderHexPubKey = sender.pubkey;
         return await nip04.decrypt(this.privateKey, senderHexPubKey, value);
     }
 }

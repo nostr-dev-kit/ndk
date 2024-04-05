@@ -85,7 +85,7 @@ export class NDKEvent extends EventEmitter {
     }
 
     set author(user: NDKUser) {
-        this.pubkey = user.hexpubkey;
+        this.pubkey = user.pubkey;
 
         this._author = undefined;
     }
@@ -98,7 +98,7 @@ export class NDKEvent extends EventEmitter {
 
         if (!this.ndk) throw new Error("No NDK instance found");
 
-        const user = this.ndk.getUser({ hexpubkey: this.pubkey });
+        const user = this.ndk.getUser({ pubkey: this.pubkey });
         this._author = user;
         return user;
     }
@@ -171,7 +171,7 @@ export class NDKEvent extends EventEmitter {
     async toNostrEvent(pubkey?: string): Promise<NostrEvent> {
         if (!pubkey && this.pubkey === "") {
             const user = await this.ndk?.signer?.user();
-            this.pubkey = user?.hexpubkey || "";
+            this.pubkey = user?.pubkey || "";
         }
 
         if (!this.created_at) this.created_at = Math.floor(Date.now() / 1000);

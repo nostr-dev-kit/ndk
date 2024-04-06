@@ -1,4 +1,3 @@
-import { inherits } from "util";
 import { NDKKind } from ".";
 import { NDKEvent, NostrEvent } from "..";
 import { NDK } from "../../ndk";

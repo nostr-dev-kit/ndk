@@ -132,7 +132,10 @@ export class NDKUser {
             }
 
             const zap = new NDKZap({ ndk: ndk!, zappedUser: this });
-            const lnurlspec = await zap.getZapSpecWithoutCache();
+            let lnurlspec: NDKLnUrlData | undefined;
+            try {
+                lnurlspec = await zap.getZapSpecWithoutCache();
+            } catch { }
 
             if (this.ndk?.cacheAdapter?.saveUsersLNURLDoc) {
                 this.ndk.cacheAdapter.saveUsersLNURLDoc(this.pubkey, lnurlspec || null);

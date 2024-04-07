@@ -43,6 +43,7 @@ export class NDKRelayPublisher {
         };
 
         let connectResolve: (value: boolean | PromiseLike<boolean>) => void;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let connectReject: (reason?: any) => void;
 
         if (this.ndkRelay.status === NDKRelayStatus.CONNECTED) {

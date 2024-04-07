@@ -28,7 +28,9 @@ describe("sign in policy", () => {
 
         const relayAuth = jest
             .spyOn(relay, "auth")
-            .mockImplementation(async (event: NDKEvent): Promise<void> => {});
+            .mockImplementation(async (event: NDKEvent): Promise<string> => {
+                return "abc";
+            });
 
         await relay.emit("auth", "1234-challenge");
         await new Promise((resolve) => {

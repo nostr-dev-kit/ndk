@@ -45,6 +45,11 @@ export function normalize(urls: string[]): string[] {
     return Array.from(normalized);
 }
 
+/**
+ * The below is from the normalize-url package, with some modifications.
+ * The package itself is ESM only now and doesn't allow our test suite to work.
+ * We should try and add that package back in the future and remove the code below.
+ */
 // https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs
 const DATA_URL_DEFAULT_MIME_TYPE = "text/plain";
 const DATA_URL_DEFAULT_CHARSET = "us-ascii";

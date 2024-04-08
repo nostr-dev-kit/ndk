@@ -4,7 +4,6 @@ import { NDKEvent } from "../events/index.js";
 import { NDK } from "../ndk/index.js";
 import { NDKSubscription } from "../subscription/index.js";
 import { NDKUser, type NDKUserParams } from "./index.js";
-import { getNip05For } from "./nip05.js";
 
 jest.mock("nostr-tools/nip19", () => ({
     ...jest.requireActual("nostr-tools/nip19"),
@@ -32,7 +31,7 @@ describe("NDKUser", () => {
 
         it("sets npub from provided hexpubkey", () => {
             const opts: NDKUserParams = {
-                hexpubkey: "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52",
+                pubkey: "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52",
             };
 
             const user = new NDKUser(opts);
@@ -251,6 +250,23 @@ describe("NDKUser", () => {
 
             await user.fetchProfile();
             expect(user.profile?.customField).toEqual("custom NEW");
+        });
+    });
+
+    describe("validateNip05", () => {
+        it("validates the NIP-05 for users", async () => {
+            const ndk = new NDK();
+            const user = ndk.getUser({
+                pubkey: "1739d937dc8c0c7370aa27585938c119e25c41f6c441a5d34c6d38503e3136ef",
+            });
+
+            const validNip05 = "_@jeffg.fyi";
+            const invalidNip05 = "_@f7z.io";
+            const randomNip05 = "bobby@globalhypermeganet.com";
+
+            expect(await user.validateNip05(validNip05)).toEqual(true);
+            expect(await user.validateNip05(invalidNip05)).toEqual(false);
+            expect(await user.validateNip05(randomNip05)).toEqual(null);
         });
     });
 });

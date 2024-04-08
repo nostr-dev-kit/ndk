@@ -32,7 +32,7 @@
     export let userProfile: NDKUserProfile | undefined = undefined;
 
     if (!userProfile && !user) {
-        let opts = npub ? { npub } : { hexpubkey: pubkey };
+        let opts = npub ? { npub } : { pubkey };
         try {
             user = ndk.getUser(opts);
         } catch (e) {

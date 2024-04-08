@@ -35,9 +35,9 @@
     export let npubMaxLength: number | undefined = undefined;
 
     if (!userProfile && !user && ndk) {
-        let opts = npub ? { npub } : { hexpubkey: pubkey };
+        let opts = npub ? { npub } : { pubkey };
         try {
-            user = ndk.getUser(opts);
+            user = ndk?.getUser(opts);
             npub = user.npub;
         } catch (e) {
             console.error(`error trying to get user`, { opts }, e);

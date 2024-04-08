@@ -2,8 +2,8 @@ import { bech32 } from "@scure/base";
 import { EventEmitter } from "tseep";
 import { makeZapRequest } from "nostr-tools/nip57";
 
-import type { NostrEvent } from "../events/index.js";
-import { NDKEvent, type NDKTag } from "../events/index.js";
+import type { NostrEvent, NDKTag } from "../events/index.js";
+import { NDKEvent } from "../events/index.js";
 import type { NDK } from "../ndk/index.js";
 import type { Hexpubkey, NDKUser } from "../user/index.js";
 import type { NDKSigner } from "../signers/index.js";
@@ -68,8 +68,7 @@ export class NDKZap extends EventEmitter {
         this.zappedEvent = args.zappedEvent;
         this.fetch = args._fetch || fetch;
 
-        this.zappedUser =
-            args.zappedUser || this.ndk.getUser({ hexpubkey: this.zappedEvent?.pubkey });
+        this.zappedUser = args.zappedUser || this.ndk.getUser({ pubkey: this.zappedEvent?.pubkey });
     }
 
     /**

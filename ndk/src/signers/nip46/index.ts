@@ -210,8 +210,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
                 24133,
                 (response: NDKRpcResponse) => {
                     if (!response.error) {
-                        const value = JSON.parse(response.result);
-                        resolve(value[0]);
+                        resolve(response.result);
                     } else {
                         reject(response.error);
                     }

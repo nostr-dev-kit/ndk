@@ -62,7 +62,7 @@ export class NDKUser {
 
     get npub(): string {
         if (!this._npub) {
-            if (!this._pubkey) throw new Error("hexpubkey not set");
+            if (!this._pubkey) throw new Error("pubkey not set");
             this._npub = npubEncode(this.pubkey);
         }
 
@@ -132,7 +132,11 @@ export class NDKUser {
             }
 
             const zap = new NDKZap({ ndk: ndk!, zappedUser: this });
-            const lnurlspec = await zap.getZapSpecWithoutCache();
+            let lnurlspec: NDKLnUrlData | undefined;
+            try {
+                lnurlspec = await zap.getZapSpecWithoutCache();
+                // eslint-disable-next-line no-empty
+            } catch {}
 
             if (this.ndk?.cacheAdapter?.saveUsersLNURLDoc) {
                 this.ndk.cacheAdapter.saveUsersLNURLDoc(this.pubkey, lnurlspec || null);

@@ -62,7 +62,7 @@ export class NDKNostrRpc extends EventEmitter {
     }
 
     public async parseEvent(event: NDKEvent): Promise<NDKRpcRequest | NDKRpcResponse> {
-        const remoteUser = this.ndk.getUser({ hexpubkey: event.pubkey });
+        const remoteUser = this.ndk.getUser({ pubkey: event.pubkey });
         remoteUser.ndk = this.ndk;
         const decryptedContent = await this.signer.decrypt(remoteUser, event.content);
         const parsedContent = JSON.parse(decryptedContent);
@@ -81,19 +81,19 @@ export class NDKNostrRpc extends EventEmitter {
         result: string,
         kind = NDKKind.NostrConnect,
         error?: string
-    ) {
+    ): Promise<void> {
         const res = { id, result } as NDKRpcResponse;
         if (error) {
             res.error = error;
         }
 
         const localUser = await this.signer.user();
-        const remoteUser = this.ndk.getUser({ hexpubkey: remotePubkey });
+        const remoteUser = this.ndk.getUser({ pubkey: remotePubkey });
         const event = new NDKEvent(this.ndk, {
             kind,
             content: JSON.stringify(res),
             tags: [["p", remotePubkey]],
-            pubkey: localUser.hexpubkey,
+            pubkey: localUser.pubkey,
         } as NostrEvent);
 
         event.content = await this.signer.encrypt(remoteUser, event.content);
@@ -115,10 +115,10 @@ export class NDKNostrRpc extends EventEmitter {
         params: string[] = [],
         kind = 24133,
         cb?: (res: NDKRpcResponse) => void
-    ) {
+    ): Promise<NDKRpcResponse> {
         const id = Math.random().toString(36).substring(7);
         const localUser = await this.signer.user();
-        const remoteUser = this.ndk.getUser({ hexpubkey: remotePubkey });
+        const remoteUser = this.ndk.getUser({ pubkey: remotePubkey });
         const request = { id, method, params };
         const promise = new Promise<NDKRpcResponse>((resolve) => {
             const responseHandler = (response: NDKRpcResponse) => {

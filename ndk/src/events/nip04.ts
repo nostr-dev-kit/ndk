@@ -21,7 +21,7 @@ export async function encrypt(
             );
         }
 
-        recipient = this.ndk.getUser({ hexpubkey: pTags[0][1] });
+        recipient = this.ndk.getUser({ pubkey: pTags[0][1] });
     }
 
     this.content = (await signer?.encrypt(recipient, this.content)) as string;

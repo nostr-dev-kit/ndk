@@ -44,7 +44,7 @@ const convertEntities = (markdown: string) => {
             /**/
         }
 
-        markdown = markdown.replace(uri, `[${display}](${entity})`);
+        // markdown = markdown.replace(uri, `<b>${entity}</b>`)
     }
 
     return markdown;
@@ -58,11 +58,9 @@ export const markdownToHtml = (content: string): string => {
     const renderer = new marked.Renderer();
     renderer.link = (href, title, text) => {
         if (isEmbeddableMedia(href)) {
-            return href;
-        } else if (text.startsWith("nostr:") || text.match(/^@(npub|note1|naddr|nevent1)/)) {
-            return text;
+            return `<img src="${href}" alt="${text}" />`;
         } else {
-            return `<a href="${href}" title="${title}" target="_blank" rel="noopener noreferrer">${text}</a>`;
+            return `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`;
         }
     };
 
@@ -75,14 +73,9 @@ export const markdownToHtml = (content: string): string => {
     );
 
     // remove <p> from around URLs
-    html = html.replace(/<p>(https?:\/\/[^<]+)<\/p>/g, "$1");
+    html = html.replace(/(<p>)?(https?:\/\/[^<]+)(<\/p>)?/g, "$2");
 
-    return sanitizeHtml(html);
-
-    // return sanitizeHtml(
-    // eslint-disable-next-line no-misleading-character-class
-    return marked.parse(
-        convertEntities(content.replace(/^[\u200B\u200C\u200D\u200E\u200F\uFEFF]/, ""))
-    );
-    // );
+    return sanitizeHtml(html, {
+        allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img"]),
+    });
 };

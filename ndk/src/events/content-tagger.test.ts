@@ -1,4 +1,4 @@
-import { generateContentTags } from "./content-tagger";
+import { generateContentTags } from "./content-tagger.js";
 import type { NDKTag } from "./index.js";
 
 describe("await generateContentTags", () => {

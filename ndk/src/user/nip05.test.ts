@@ -1,5 +1,5 @@
-import { NDK } from "../ndk";
-import { getNip05For } from "./nip05";
+import { NDK } from "../ndk/index.js";
+import { getNip05For } from "./nip05.js";
 
 const ndk = new NDK();
 
@@ -24,6 +24,7 @@ describe("nip05", () => {
 
             const fetchMock = jest.fn(() =>
                 Promise.resolve({
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     json: (): Promise<any> => Promise.resolve(json),
                 } as Response)
             ) as jest.Mock;

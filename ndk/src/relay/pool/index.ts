@@ -92,8 +92,8 @@ export class NDKPool extends EventEmitter<{
             const timer = setTimeout(() => {
                 this.removeRelay(relay.url);
             }, removeIfUnusedAfter) as unknown as NodeJS.Timeout;
-
             this.temporaryRelayTimers.set(relay.url, timer);
+            timer.unref();
         }
     }
 

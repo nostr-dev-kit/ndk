@@ -4,7 +4,7 @@ import { getRelaysForFilterWithAuthors } from "../../outbox/read/with-authors.js
 import type { NDKFilter } from "../../subscription/index.js";
 import type { Hexpubkey } from "../../user/index.js";
 import type { NDKRelay } from "../index.js";
-import { NDKPool } from "../pool/index.js";
+import type { NDKPool } from "../pool/index.js";
 import { NDKRelaySet } from "./index.js";
 
 /**

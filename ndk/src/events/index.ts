@@ -156,6 +156,7 @@ export class NDKEvent extends EventEmitter {
         } else if (Array.isArray(userOrTagOrEvent)) {
             tags = [userOrTagOrEvent as NDKTag];
         } else {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             throw new Error("Invalid argument", userOrTagOrEvent as any);
         }
 
@@ -504,6 +505,7 @@ export class NDKEvent extends EventEmitter {
         // Add the relay url to all tags
         if (this.relay?.url) {
             tags = tags.map((tag) => {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
                 tag.push(this.relay?.url!);
                 return tag;
             });

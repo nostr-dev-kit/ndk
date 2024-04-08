@@ -1,6 +1,6 @@
 import { NDKKind } from "../index.js";
-import { type NostrEvent } from "../..";
-import { NDKSubscriptionTier } from "./tier";
+import { type NostrEvent } from "../../index.js";
+import { NDKSubscriptionTier } from "./tier.js";
 
 describe("NDKSubscriptionTier", () => {
     describe("isValid", () => {

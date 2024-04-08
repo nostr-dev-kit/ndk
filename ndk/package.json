@@ -8,6 +8,9 @@
         "type": "git",
         "url": "https://github.com/nostr-dev-kit/ndk"
     },
+    "engines": {
+        "node": ">=16"
+    },
     "main": "./dist/index.js",
     "module": "./dist/index.mjs",
     "type": "module",
@@ -29,7 +32,7 @@
         "dev": "pnpm build --watch",
         "build": "tsup src/index.ts --format cjs,esm --dts",
         "clean": "rm -rf dist docs",
-        "test": "jest",
+        "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --verbose",
         "lint": "prettier --check . && eslint .",
         "compile": "tsc",
         "prepare": "pnpm build",

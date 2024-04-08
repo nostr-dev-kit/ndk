@@ -234,7 +234,9 @@ export class NDK extends EventEmitter {
 
         try {
             this.httpFetch = fetch;
-        } catch {}
+        } catch {
+            this.debug("No fetch function available");
+        }
     }
 
     /**

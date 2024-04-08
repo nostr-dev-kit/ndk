@@ -14,7 +14,7 @@ export class NDKPrivateKeySigner implements NDKSigner {
         if (privateKey) {
             this.privateKey = privateKey;
             this._user = new NDKUser({
-                hexpubkey: getPublicKey(this.privateKey),
+                pubkey: getPublicKey(this.privateKey),
             });
         }
     }

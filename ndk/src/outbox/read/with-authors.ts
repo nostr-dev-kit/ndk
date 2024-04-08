@@ -1,7 +1,7 @@
-import { NDK } from "../../ndk";
-import { NDKPool } from "../../relay/pool";
-import { Hexpubkey } from "../../user";
-import { getTopRelaysForAuthors } from "../relay-ranking";
+import type { NDK } from "../../ndk/index.js";
+import type { NDKPool } from "../../relay/pool/index.js";
+import type { Hexpubkey } from "../../user/index.js";
+import { getTopRelaysForAuthors } from "../relay-ranking.js";
 
 export function getWriteRelaysFor(ndk: NDK, author: Hexpubkey): Set<WebSocket["url"]> | undefined {
     if (!ndk.outboxTracker) return undefined;

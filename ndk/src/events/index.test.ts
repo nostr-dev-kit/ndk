@@ -1,11 +1,11 @@
-import type { NostrEvent } from ".";
-import { NDKEvent } from ".";
-import { NDK } from "../ndk";
-import { NDKRelay } from "../relay";
-import { NDKSubscription } from "../subscription";
-import { NDKUser } from "../user";
-import { NDKRelaySet } from "../relay/sets";
-import { NDKPrivateKeySigner } from "../signers/private-key";
+import type { NostrEvent } from "./index.js";
+import { NDKEvent } from "./index.js";
+import { NDK } from "../ndk/index.js";
+import { NDKRelay } from "../relay/index.js";
+import { NDKSubscription } from "../subscription/index.js";
+import { NDKUser } from "../user/index.js";
+import { NDKRelaySet } from "../relay/sets/index.js";
+import { NDKPrivateKeySigner } from "../signers/private-key/index.js";
 
 describe("NDKEvent", () => {
     let ndk: NDK;

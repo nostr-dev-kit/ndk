@@ -7,7 +7,7 @@ import { NDKSubscriptionCacheUsage, type NDKSubscriptionOptions } from "../subsc
 import { follows } from "./follows.js";
 import { type NDKUserProfile, profileFromEvent, serializeProfile } from "./profile.js";
 import type { NDKSigner } from "../signers/index.js";
-import { NDKLnUrlData } from "../zap/index.js";
+import type { NDKLnUrlData } from "../zap/index.js";
 import { getNip05For } from "./nip05.js";
 import { NDKZap } from "../index.js";
 
@@ -392,7 +392,8 @@ export class NDKUser {
      * Validate a user's NIP-05 identifier (usually fetched from their kind:0 profile data)
      *
      * @param nip05Id The NIP-05 string to validate
-     * @returns {Promise<boolean | null>} True if the NIP-05 is found and matches this user's pubkey,
+     * @returns {Promise<boolean | null>}
+     * True if the NIP-05 is found and matches this user's pubkey,
      * False if the NIP-05 is found but doesn't match this user's pubkey,
      * null if the NIP-05 isn't found on the domain or we're unable to verify (because of network issues, etc.)
      */

@@ -1,6 +1,6 @@
-import NDKList from ".";
-import { NDK } from "../../../ndk";
-import { NDKUser } from "../../../user";
+import NDKList from "./index.js";
+import { NDK } from "../../../ndk/index.js";
+import { NDKUser } from "../../../user/index.js";
 
 describe("NDKList", () => {
     let ndk: NDK;

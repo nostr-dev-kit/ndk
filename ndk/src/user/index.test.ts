@@ -1,16 +1,15 @@
-import * as nip19 from "nostr-tools/nip19";
+import { decode } from "nostr-tools/nip19";
 
 import { NDKEvent } from "../events/index.js";
 import { NDK } from "../ndk/index.js";
 import { NDKSubscription } from "../subscription/index.js";
 import { NDKUser, type NDKUserParams } from "./index.js";
+import { getNip05For } from "./nip05.js";
 
-jest.mock("nostr-tools", () => ({
-    ...jest.requireActual("nostr-tools"),
-    nip19: {
-        npubEncode: jest.fn().mockImplementation(() => "npub1_encoded_npub"),
-        decode: jest.fn().mockReturnValue({ type: "npub", data: "decoded_hexpubkey" }),
-    },
+jest.mock("nostr-tools/nip19", () => ({
+    ...jest.requireActual("nostr-tools/nip19"),
+    npubEncode: jest.fn().mockImplementation(() => "npub1_encoded_npub"),
+    decode: jest.fn().mockReturnValue({ type: "npub", data: "decoded_hexpubkey" }),
 }));
 
 describe("NDKUser", () => {
@@ -57,13 +56,9 @@ describe("NDKUser", () => {
                 npub: "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft",
             });
 
-            (nip19.decode as jest.Mock).mockReturnValue({
-                data: "decoded_hexpubkey",
-            });
-
             const pubkey = user.pubkey;
 
-            expect(nip19.decode).toHaveBeenCalledWith(
+            expect(decode).toHaveBeenCalledWith(
                 "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft"
             );
             expect(pubkey).toEqual("decoded_hexpubkey");
@@ -78,9 +73,6 @@ describe("NDKUser", () => {
             npub: "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft",
         });
         user.ndk = ndk;
-        (nip19.decode as jest.Mock).mockReturnValue({
-            data: "decoded_hexpubkey",
-        });
         const pubkey = user.pubkey;
 
         it("Returns updated fields", async () => {
@@ -147,7 +139,7 @@ describe("NDKUser", () => {
             expect(user.profile?.zapService).toEqual("Zapservice details");
         });
 
-        // Both "display_name" and "displayName" are set to "displayName" field in the user profile
+        // "displayName" is ignored, we only look at the "display_name" field in the user profile
         it("Display name is set properly", async () => {
             newEvent = new NDKEvent(ndk, {
                 kind: 0,
@@ -183,7 +175,7 @@ describe("NDKUser", () => {
             });
 
             await user.fetchProfile();
-            expect(user.profile?.displayName).toEqual("JeffG");
+            expect(user.profile?.displayName).toEqual("James");
         });
 
         // Both "image" and "picture" are set to the "image" field in the user profile
@@ -259,23 +251,6 @@ describe("NDKUser", () => {
 
             await user.fetchProfile();
             expect(user.profile?.customField).toEqual("custom NEW");
-        });
-    });
-
-    describe("validateNip05", () => {
-        it("validates the NIP-05 for users", async () => {
-            const ndk = new NDK();
-            const user = ndk.getUser({
-                hexpubkey: "1739d937dc8c0c7370aa27585938c119e25c41f6c441a5d34c6d38503e3136ef",
-            });
-
-            const validNip05 = "_@jeffg.fyi";
-            const invalidNip05 = "_@f7z.io";
-            const randomNip05 = "bobby@globalhypermeganet.com";
-
-            expect(await user.validateNip05(validNip05)).toEqual(true);
-            expect(await user.validateNip05(invalidNip05)).toEqual(false);
-            expect(await user.validateNip05(randomNip05)).toEqual(null);
         });
     });
 });

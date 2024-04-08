@@ -1,6 +1,6 @@
-import { NDKUser } from ".";
-import { NDKEvent } from "../events/index";
-import { NDK } from "../ndk";
+import { NDKUser } from "./index.js";
+import { NDKEvent } from "../events/index.js";
+import { NDK } from "../ndk/index.js";
 
 describe("follows", () => {
     const ndk = new NDK();

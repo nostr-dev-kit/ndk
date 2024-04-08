@@ -181,9 +181,6 @@ importers:
       jest:
         specifier: ^29.5.0
         version: 29.7.0(@types/node@14.18.63)(ts-node@10.9.1)
-      normalize-url:
-        specifier: ^8.0.1
-        version: 8.0.1
       ts-jest:
         specifier: ^29.1.0
         version: 29.1.1(@babel/core@7.23.5)(esbuild@0.17.19)(jest@29.7.0)(typescript@5.2.2)
@@ -11257,11 +11254,6 @@ packages:
   /normalize-range@0.1.2:
     resolution: {integrity: sha512-bdok/XvKII3nUpklnV6P2hxtMNrCboOjAcyBuQnWEhO665FwrSNRxU+AqpsyvO6LgGYPspN+lu5CLtw4jPRKNA==}
     engines: {node: '>=0.10.0'}
-    dev: true
-
-  /normalize-url@8.0.1:
-    resolution: {integrity: sha512-IO9QvjUMWxPQQhs60oOu10CRkWCiZzSUkzbXGGV9pviYl1fXYcvkzQ5jV9z8Y6un8ARoVRl4EtC6v6jNqbaJ/w==}
-    engines: {node: '>=14.16'}
     dev: true
 
   /nostr-tools@2.4.0(typescript@5.2.2):

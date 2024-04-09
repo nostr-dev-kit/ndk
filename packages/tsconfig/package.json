@@ -7,9 +7,8 @@
         "base.json",
         "ndk.json",
         "ndk-cache-dexie.json",
-        "ndk-cahce-redis.json",
-        "ndk-svelte.json",
-        "svelte.json"
+        "ndk-cache-redis.json",
+        "ndk-svelte.json"
     ],
     "publishConfig": {
         "access": "public"

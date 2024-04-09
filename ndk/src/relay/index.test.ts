@@ -61,6 +61,9 @@ describe("NDKRelay", () => {
         });
     });
 
+    /**
+     * TODO: Need to refactor these tests
+     */
     // describe("subscribe", () => {
     //     describe("when the REQ is sent to the relay", () => {
     //         let sub: NDKSubscription;

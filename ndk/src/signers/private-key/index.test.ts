@@ -1,43 +1,52 @@
 import { generateSecretKey } from "nostr-tools";
 import type { NostrEvent } from "../../index.js";
-import { NDKUser } from "../../index.js";
 import { NDKPrivateKeySigner } from "./index";
 import { hexToBytes } from "@noble/hashes/utils";
+import { nip19 } from "nostr-tools";
 
 describe("NDKPrivateKeySigner", () => {
-    let privateKey: Uint8Array;
-    beforeAll(() => {
-        privateKey = generateSecretKey();
-    });
-
     it("generates a new NDKPrivateKeySigner instance with a private key", () => {
         const signer = NDKPrivateKeySigner.generate();
         expect(signer).toBeInstanceOf(NDKPrivateKeySigner);
         expect(signer.privateKey).toBeDefined();
     });
 
-    it("creates a new NDKPrivateKeySigner instance with a provided private key", () => {
+    it("creates a new NDKPrivateKeySigner instance with a provided Uint8Array private key", () => {
+        const privateKey = generateSecretKey();
         const signer = new NDKPrivateKeySigner(privateKey);
         expect(signer).toBeInstanceOf(NDKPrivateKeySigner);
         expect(signer.privateKey).toBe(privateKey);
         expect(signer.privateKey?.length).toBe(32);
     });
 
-    it("returns a user instance with a public key corresponding to the private key", async () => {
-        // Hex private key string
-        const privateKeyString = "72a14b14b51cd236c66ec77c872c3eed642c6f6970e0ca674ffa05f2a9d58268";
-        // Encode to Uint8Array
+    it("creates a new NDKPrivateKeySigner instance with a provided hex encoded private key", async () => {
+        const privateKeyString = "0277cc53c89ca9c8a441987265276fafa55bf5bed8a55b16fd640e0d6a0c21e2";
+        const signer = new NDKPrivateKeySigner(privateKeyString);
         const privateKey = hexToBytes(privateKeyString);
-
-        const signer = new NDKPrivateKeySigner(privateKey);
+        expect(signer).toBeInstanceOf(NDKPrivateKeySigner);
+        expect(signer.privateKey).toEqual(privateKey);
+        expect(signer.privateKey?.length).toBe(32);
         const user = await signer.user();
-        expect(user).toBeInstanceOf(NDKUser);
         expect(user.pubkey).toBe(
-            "7e48cebee13c9fb7780db830cebb6245ebfa4ec31a0cdf8f29cf7ee70d71055d"
+            "c44f2be1b2fb5371330386046e60207bbd84938d4812ee0c7a3c11be605a7585"
+        );
+    });
+
+    it("creates a new NDKPrivateKeySigner instance with a provided bech32 encoded private key", async () => {
+        const privateKeyString = "nsec1qfmuc57gnj5u3fzpnpex2fm047j4had7mzj4k9havs8q66svy83ql2sdnl";
+        const signer = new NDKPrivateKeySigner(privateKeyString);
+        const { data } = nip19.decode(privateKeyString);
+        expect(signer).toBeInstanceOf(NDKPrivateKeySigner);
+        expect(signer.privateKey).toEqual(data);
+        expect(signer.privateKey?.length).toBe(32);
+        const user = await signer.user();
+        expect(user.pubkey).toBe(
+            "c44f2be1b2fb5371330386046e60207bbd84938d4812ee0c7a3c11be605a7585"
         );
     });
 
     it("signs a NostrEvent with the private key", async () => {
+        const privateKey = generateSecretKey();
         const signer = new NDKPrivateKeySigner(privateKey);
 
         const event: NostrEvent = {

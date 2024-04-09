@@ -1,7 +1,7 @@
-import { NDK } from ".";
-import { NDKEvent, NDKTag } from "../events";
-import type { NDKRelaySet } from "../relay/sets";
-import { NDKSubscriptionOptions } from "../subscription";
+import type { NDK } from "./index.js";
+import type { NDKEvent, NDKTag } from "../events/index.js";
+import type { NDKRelaySet } from "../relay/sets/index.js";
+import type { NDKSubscriptionOptions } from "../subscription/index.js";
 
 /**
  * Options on how to handle when a relay hint doesn't respond

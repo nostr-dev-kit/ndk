@@ -1,5 +1,5 @@
-import { NDKEvent } from ".";
-import { getRootTag } from "../thread";
+import { NDKEvent } from "./index.js";
+import { getRootTag } from "../thread/index.js";
 
 export async function fetchTaggedEvent(
     this: NDKEvent,

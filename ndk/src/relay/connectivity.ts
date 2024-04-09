@@ -1,6 +1,4 @@
-import type { Relay } from "nostr-tools";
-import { relayInit } from "nostr-tools";
-
+import { Relay } from "nostr-tools";
 import type { NDKRelay, NDKRelayConnectionStats } from ".";
 import { NDKRelayStatus } from ".";
 import { runWithTimeout } from "../utils/timeout";
@@ -17,15 +15,15 @@ export class NDKRelayConnectivity {
         durations: [],
     };
     private debug: debug.Debugger;
-    private reconnectTimeout: any;
+    private reconnectTimeout: ReturnType<typeof setTimeout> | undefined;
 
     constructor(ndkRelay: NDKRelay) {
         this.ndkRelay = ndkRelay;
         this._status = NDKRelayStatus.DISCONNECTED;
-        this.relay = relayInit(this.ndkRelay.url);
+        this.relay = new Relay(this.ndkRelay.url);
         this.debug = this.ndkRelay.debug.extend("connectivity");
 
-        this.relay.on("notice", (notice: string) => this.handleNotice(notice));
+        this.relay.onnotice = (notice: string) => this.handleNotice(notice);    
     }
 
     public async connect(timeoutMs?: number): Promise<void> {
@@ -72,7 +70,7 @@ export class NDKRelayConnectivity {
                     }
                 }
             } else {
-                await this.ndkRelay.emit("auth", challenge);
+                this.ndkRelay.emit("auth", challenge);
             }
         };
 
@@ -82,13 +80,12 @@ export class NDKRelayConnectivity {
                 this._status = NDKRelayStatus.CONNECTING;
             else this._status = NDKRelayStatus.RECONNECTING;
 
-            this.relay.off("connect", connectHandler);
-            this.relay.off("disconnect", disconnectHandler);
-            this.relay.on("connect", connectHandler);
-            this.relay.on("disconnect", disconnectHandler);
-            this.relay.on("auth", authHandler);
+            this.relay.onclose = disconnectHandler;
+            this.relay._onauth = authHandler;
 
-            await runWithTimeout(this.relay.connect, timeoutMs, "Timed out while connecting");
+            await runWithTimeout(this.relay.connect, timeoutMs, "Timed out while connecting").then(
+                () => connectHandler()
+            );
         } catch (e) {
             this.debug("Failed to connect", e);
             this._status = NDKRelayStatus.DISCONNECTED;

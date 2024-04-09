@@ -1,7 +1,7 @@
 import { nip19 } from "nostr-tools";
 import { NDKEvent } from ".";
 import { NDKRelay } from "../relay";
-import { EventPointer } from "../user";
+import type { EventPointer } from "../user";
 import { NDKPrivateKeySigner } from "../signers/private-key";
 
 describe("event.encode", () => {

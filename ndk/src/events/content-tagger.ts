@@ -1,7 +1,7 @@
 import { nip19 } from "nostr-tools";
 
 import type { NDKTag } from "./index.js";
-import { EventPointer, ProfilePointer } from "../user/index.js";
+import type { EventPointer, ProfilePointer } from "../user/index.js";
 
 export type ContentTag = {
     tags: NDKTag[];
@@ -21,7 +21,7 @@ export function mergeTags(tags1: NDKTag[], tags2: NDKTag[]): NDKTag[] {
 
     // Function to process and add a tag
     const processTag = (tag: NDKTag) => {
-        for (let [key, existingTag] of tagMap) {
+        for (const [key, existingTag] of tagMap) {
             if (isContained(existingTag, tag) || isContained(tag, existingTag)) {
                 // Replace with the longer or equal-length tag
                 if (tag.length >= existingTag.length) {
@@ -76,8 +76,8 @@ export async function generateContentTags(
     tags: NDKTag[] = []
 ): Promise<ContentTag> {
     const tagRegex = /(@|nostr:)(npub|nprofile|note|nevent|naddr)[a-zA-Z0-9]+/g;
-    const hashtagRegex = /(?<=\s|^)(#[^\s!@#$%^&*()=+.\/,\[{\]};:'"?><]+)/g;
-    let promises: Promise<void>[] = [];
+    const hashtagRegex = /(?<=\s|^)(#[^\s!@#$%^&*()=+./,[{\]};:'"?><]+)/g;
+    const promises: Promise<void>[] = [];
 
     const addTagIfNew = (t: NDKTag) => {
         if (!tags.find((t2) => t2[0] === t[0] && t2[1] === t[1])) {
@@ -163,7 +163,7 @@ export async function generateContentTags(
     await Promise.all(promises);
 
     content = content.replace(hashtagRegex, (tag, word) => {
-        const t: NDKTag = ["t", word];
+        const t: NDKTag = ["t", word.slice(1)];
         if (!tags.find((t2) => t2[0] === t[0] && t2[1] === t[1])) {
             tags.push(t);
         }

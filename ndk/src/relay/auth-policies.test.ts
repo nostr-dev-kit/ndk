@@ -1,7 +1,7 @@
 import { NDK } from "../ndk";
 import { NDKPrivateKeySigner } from "../signers/private-key";
 import { NDKRelayAuthPolicies } from "./auth-policies";
-import { NDKEvent } from "../events";
+import type { NDKEvent } from "../events";
 
 const ndk = new NDK({
     explicitRelayUrls: ["ws://localhost"],
@@ -28,7 +28,9 @@ describe("sign in policy", () => {
 
         const relayAuth = jest
             .spyOn(relay, "auth")
-            .mockImplementation(async (event: NDKEvent): Promise<void> => {});
+            .mockImplementation(async (event: NDKEvent): Promise<string> => {
+                return "abc";
+            });
 
         await relay.emit("auth", "1234-challenge");
         await new Promise((resolve) => {

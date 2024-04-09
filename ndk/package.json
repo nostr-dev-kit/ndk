@@ -41,6 +41,10 @@
     ],
     "author": "pablof7z",
     "license": "MIT",
+    "engines": {
+        "node": ">=16"
+    },
+    "packageManager": "pnpm@8.15.6",
     "devDependencies": {
         "@nostr-dev-kit/eslint-config-custom": "workspace:*",
         "@nostr-dev-kit/tsconfig": "workspace:*",
@@ -52,7 +56,6 @@
         "esm-loader-typescript": "^1.0.4",
         "gts": "^3.1.1",
         "jest": "^29.5.0",
-        "normalize-url": "^8.0.1",
         "ts-jest": "^29.1.0",
         "ts-node": "^10.9.1",
         "tsd": "^0.28.1",
@@ -68,7 +71,7 @@
         "debug": "^4.3.4",
         "light-bolt11-decoder": "^3.0.0",
         "node-fetch": "^3.3.1",
-        "nostr-tools": "^1.15.0",
+        "nostr-tools": "^2.4.0",
         "tseep": "^1.1.1",
         "typescript-lru-cache": "^2.0.0",
         "utf8-buffer": "^1.0.0",

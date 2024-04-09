@@ -1,5 +1,5 @@
 import { eventIsPartOfThread, eventIsReply, eventThreads, eventsBySameAuthor } from ".";
-import { NDKEvent, NDKEventId } from "../events";
+import { NDKEvent, type NDKEventId } from "../events";
 
 const op = new NDKEvent(undefined, {
     id: "op",

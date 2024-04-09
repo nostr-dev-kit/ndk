@@ -1,4 +1,4 @@
-import { NDKFilter, NDKSubscription } from ".";
+import { type NDKFilter, NDKSubscription } from ".";
 import { NDK } from "../ndk";
 import { generateSubId } from "./utils";
 

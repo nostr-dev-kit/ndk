@@ -1,8 +1,8 @@
-import { Table } from "dexie";
-import { Database, User } from "../db";
-import { CacheHandler, WarmUpFunction } from "../lru-cache";
+import type { Table } from "dexie";
+import type { User } from "../db";
+import type { CacheHandler, WarmUpFunction } from "../lru-cache";
 import type { NDKUserProfile } from "@nostr-dev-kit/ndk";
-import { LRUCache } from "typescript-lru-cache";
+import type { LRUCache } from "typescript-lru-cache";
 export { db } from "../db.js";
 
 export function profilesWarmUp(users: Table<User>): WarmUpFunction<NDKUserProfile> {

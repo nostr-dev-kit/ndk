@@ -292,12 +292,6 @@ export class NDKEvent extends EventEmitter {
             this.author = await signer.user();
         }
 
-        await this.generateTags();
-
-        if (this.isReplaceable()) {
-            this.created_at = Math.floor(Date.now() / 1000);
-        }
-
         const nostrEvent = await this.toNostrEvent();
 
         this.sig = await signer.sign(nostrEvent);

@@ -60,7 +60,7 @@ export class OutboxTracker extends EventEmitter {
 
         this.data = new LRUCache({
             maxSize: 100000,
-            entryExpirationTimeInMS: 5000,
+            entryExpirationTimeInMS: 2 * 60 * 1000,
         });
     }
 

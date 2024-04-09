@@ -148,10 +148,7 @@ export function getRootEventId(
  * @param searchTags The tags to search for the root tag (default: ["a", "e"])
  * @returns The root tag or undefined if the event does not have a root tag
  */
-export function getRootTag(
-    event: NDKEvent,
-    searchTags: string[] = ["a", "e"]
-): NDKTag | undefined {
+export function getRootTag(event: NDKEvent, searchTags: string[] = ["a", "e"]): NDKTag | undefined {
     let rootEventTag = event.tags.find((tag) => searchTags.includes(tag[0]) && tag[3] === "root");
 
     if (!rootEventTag) {

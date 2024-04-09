@@ -17,7 +17,7 @@ export type NDKFetchFallbackOptions = {
      * If not provided, the normal NDK calculation is used (whether explicit relays or outbox calculation)
      * Default is `undefined`.
      */
-    relaySet?: NDKRelaySet,
+    relaySet?: NDKRelaySet;
 
     /**
      * Type of fallback to use when the hint relay doesn't respond.
@@ -26,14 +26,14 @@ export type NDKFetchFallbackOptions = {
      * - "none" will not fall back
      * Default is "timeout".
      */
-    type: "timeout" | "eose" | "none",
+    type: "timeout" | "eose" | "none";
 
     /**
      * Timeout in milliseconds for the fallback relay.
      * Default is 1500ms.
      */
-    timeout?: number,
-}
+    timeout?: number;
+};
 
 export async function fetchEventFromTag(
     this: NDK,

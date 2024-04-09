@@ -10,7 +10,6 @@ const config: Config = {
     moduleNameMapper: {
         "^(\\.{1,2}/.*)\\.js$": "$1",
     },
-    transformIgnorePatterns: ["node_modules/(?!normalize-url/.*)"],
 };
 
 export default config;

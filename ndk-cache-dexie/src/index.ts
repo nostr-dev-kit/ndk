@@ -264,7 +264,9 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
             try {
                 const profile: NDKUserProfile = profileFromEvent(event);
                 this.saveProfile(event.pubkey, profile);
-            } catch {}
+            } catch {
+                this.debug(`Failed to save profile for pubkey: ${event.pubkey}`);
+            }
         } else {
             let addEvent = true;
 

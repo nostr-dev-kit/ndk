@@ -1,8 +1,8 @@
-import { Table } from "dexie";
-import { CacheHandler } from "../lru-cache";
-import debug from "debug";
+import type { Table } from "dexie";
+import type { CacheHandler } from "../lru-cache";
+import type debug from "debug";
 import type { Nip05 } from "../db";
-import { LRUCache } from "typescript-lru-cache";
+import type { LRUCache } from "typescript-lru-cache";
 
 type Nip05CacheEntry = {
     profile: string | null;

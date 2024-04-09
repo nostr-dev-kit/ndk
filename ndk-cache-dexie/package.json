@@ -40,8 +40,8 @@
         "erskingardner"
     ],
     "devDependencies": {
-        "@nostr-dev-kit/tsconfig": "workspace:*",
         "@nostr-dev-kit/eslint-config-custom": "workspace:*",
+        "@nostr-dev-kit/tsconfig": "workspace:*",
         "@types/debug": "^4.1.8",
         "@types/node": "^20.5.0",
         "prettier": "^3.0.1",
@@ -51,7 +51,7 @@
         "@nostr-dev-kit/ndk": "workspace:*",
         "debug": "^4.3.4",
         "dexie": "^3.2.4",
-        "nostr-tools": "^1.14.0",
+        "nostr-tools": "^2.4.0",
         "typescript-lru-cache": "^2.0.0"
     }
 }

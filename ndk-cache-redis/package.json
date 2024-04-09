@@ -18,6 +18,7 @@
     "scripts": {
         "dev": "pnpm build --watch",
         "build": "tsup src/index.ts --format cjs,esm --dts",
+        "clean": "rm -rf dist",
         "test": "jest",
         "lint": "prettier --check . && eslint .",
         "format": "prettier --write ."

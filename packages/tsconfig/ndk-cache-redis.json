@@ -1,17 +1,5 @@
 {
     "$schema": "https://json.schemastore.org/tsconfig",
     "display": "NDK Cache Redis",
-    "extends": "./base.json",
-    "compilerOptions": {
-        "module": "Node16",
-        "target": "ESNext",
-        "lib": ["dom", "dom.iterable", "esnext"],
-        "declaration": true,
-        "strict": true,
-        "moduleResolution": "NodeNext",
-        "skipLibCheck": true,
-        "esModuleInterop": true,
-        "emitDeclarationOnly": true,
-        "outDir": "lib"
-    }
+    "extends": "./base.json"
 }

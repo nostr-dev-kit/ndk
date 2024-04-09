@@ -231,7 +231,7 @@ export const parseContent = ({ content, tags = [], html = false }: ContentArgs):
                 parseNewline() ||
                 parseMention() ||
                 parseTopic() ||
-                parseBech32()
+                parseBech32() ||
                 parseUrl() ||
                 parseInvoice();
         }

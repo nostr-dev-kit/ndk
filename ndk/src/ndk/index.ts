@@ -3,7 +3,7 @@ import { EventEmitter } from "tseep";
 
 import type { NDKCacheAdapter } from "../cache/index.js";
 import dedupEvent from "../events/dedup.js";
-import type { NDKEvent, NDKEventId } from "../events/index.js";
+import type { NDKEvent, NDKEventId, NDKTag } from "../events/index.js";
 import { OutboxTracker } from "../outbox/tracker.js";
 import { NDKRelay } from "../relay/index.js";
 import { NDKPool } from "../relay/pool/index.js";
@@ -16,6 +16,7 @@ import { filterFromId, isNip33AValue, relaysFromBech32 } from "../subscription/u
 import type { Hexpubkey, NDKUserParams, ProfilePointer } from "../user/index.js";
 import { NDKUser } from "../user/index.js";
 import { NDKKind } from "../events/kinds/index.js";
+import { fetchEventFromTag } from "./fetch-event-from-tag.js";
 import NDKList from "../events/kinds/lists/index.js";
 import { NDKAuthPolicy } from "../relay/auth-policies.js";
 import { Nip96 } from "../media/index.js";
@@ -488,6 +489,14 @@ export class NDK extends EventEmitter {
 
         return event.publish(relaySet, timeoutMs);
     }
+
+    /**
+     * Fetches event following a tag
+     * @param tag
+     * @param subOpts
+     * @returns
+     */
+    public fetchEventFromTag = fetchEventFromTag.bind(this);
 
     /**
      * Fetch a single event.

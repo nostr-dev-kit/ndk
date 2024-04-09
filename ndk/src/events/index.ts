@@ -13,6 +13,7 @@ import { NDKKind } from "./kinds/index.js";
 import { decrypt, encrypt } from "./nip04.js";
 import { encode } from "./nip19.js";
 import { repost } from "./repost.js";
+import { fetchRootEvent, fetchTaggedEvent } from "./fetch-tagged-event.js";
 import { serialize } from "./serializer.js";
 import { validate, verifySignature, getEventHash } from "./validation.js";
 import { NDKZap } from "../zap/index.js";
@@ -216,8 +217,10 @@ export class NDKEvent extends EventEmitter {
      * @param tagName {string} The name of the tag to search for
      * @returns {NDKTag[]} An array of the matching tags
      */
-    public getMatchingTags(tagName: string): NDKTag[] {
-        return this.tags.filter((tag) => tag[0] === tagName);
+    public getMatchingTags(tagName: string, marker?: string): NDKTag[] {
+        return this.tags
+            .filter((tag) => tag[0] === tagName)
+            .filter((tag) => !marker || tag[3] === marker);
     }
 
     /**
@@ -608,6 +611,28 @@ export class NDKEvent extends EventEmitter {
 
         return e;
     }
+
+    /**
+     * Fetch an event tagged with the given tag following relay hints if provided.
+     * @param tag The tag to search for
+     * @param marker The marker to use in the tag (e.g. "root")
+     * @returns The fetched event or null if no event was found, undefined if no matching tag was found in the event
+     * * @example
+     * const replyEvent = await ndk.fetchEvent("nevent1qqs8x8vnycyha73grv380gmvlury4wtmx0nr9a5ds2dngqwgu87wn6gpzemhxue69uhhyetvv9ujuurjd9kkzmpwdejhgq3ql2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqz4cwjd")
+     * const originalEvent = await replyEvent.fetchTaggedEvent("e", "reply");
+     * console.log(replyEvent.encode() + " is a reply to event " + originalEvent?.encode());
+     */
+    public fetchTaggedEvent = fetchTaggedEvent.bind(this);
+
+    /**
+     * Fetch the root event of the current event.
+     * @returns The fetched root event or null if no event was found
+     * @example
+     * const replyEvent = await ndk.fetchEvent("nevent1qqs8x8vnycyha73grv380gmvlury4wtmx0nr9a5ds2dngqwgu87wn6gpzemhxue69uhhyetvv9ujuurjd9kkzmpwdejhgq3ql2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqz4cwjd")
+     * const rootEvent = await replyEvent.fetchRootEvent();
+     * console.log(replyEvent.encode() + " is a reply in the thread " + rootEvent?.encode());
+     */
+    public fetchRootEvent = fetchRootEvent.bind(this);
 
     /**
      * NIP-18 reposting event.

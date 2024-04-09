@@ -1,13 +1,13 @@
 import type { NDKUserProfile, ProfilePointer } from "@nostr-dev-kit/ndk";
 import Dexie, { type Table } from "dexie";
 
-interface User {
+export interface User {
     pubkey: string;
     profile: NDKUserProfile;
     createdAt: number;
 }
 
-interface Event {
+export interface Event {
     id: string;
     pubkey: string;
     content: string;
@@ -17,7 +17,7 @@ interface Event {
     event: string;
 }
 
-interface EventTag {
+export interface EventTag {
     id: string;
     eventId: string;
     tag: string;
@@ -25,13 +25,13 @@ interface EventTag {
     tagValue: string;
 }
 
-interface Nip05 {
+export interface Nip05 {
     nip05: string;
     profile: string | null;
     fetchedAt: number;
 }
 
-interface Lnurl {
+export interface Lnurl {
     pubkey: string;
     document: string | null;
     fetchedAt: number;

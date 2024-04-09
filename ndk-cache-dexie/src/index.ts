@@ -10,9 +10,11 @@ import type {
 } from "@nostr-dev-kit/ndk";
 import createDebug from "debug";
 import { matchFilter } from "nostr-tools";
-import { LRUCache } from "typescript-lru-cache";
-
 import { createDatabase, db } from "./db";
+import { CacheHandler } from "./lru-cache";
+import { profilesDump, profilesWarmUp } from "./caches/profiles";
+import { zapperDump, zapperWarmUp } from "./caches/zapper";
+import { nip05Dump, nip05WarmUp } from "./caches/nip05";
 
 export { db } from "./db";
 
@@ -38,16 +40,26 @@ interface NDKCacheAdapterDexieOptions {
      */
     profileCacheSize?: number | "disabled";
     zapperCacheSize?: number | "disabled";
+    nip05CacheSize?: number | "disabled";
 }
+
+type ZapperCacheEntry = {
+    document: string | null;
+    fetchedAt: number;
+};
+
+type Nip05CacheEntry = {
+    profile: string | null;
+    fetchedAt: number;
+};
 
 export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
     public debug: debug.Debugger;
     private expirationTime;
     readonly locking;
-    public profiles?: LRUCache<Hexpubkey, NDKUserProfile>;
-    public dirtyProfiles: Set<Hexpubkey> = new Set();
-    public zapperCache?: LRUCache<string, { document: string | null; fetchedAt: number }>;
-    public dirtyZapperCache: Set<string> = new Set();
+    public profiles?: CacheHandler<NDKUserProfile>;
+    public zappers?: CacheHandler<ZapperCacheEntry>;
+    public nip05s?: CacheHandler<Nip05CacheEntry>;
 
     constructor(opts: NDKCacheAdapterDexieOptions = {}) {
         createDatabase(opts.dbName || "ndk");
@@ -56,47 +68,31 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         this.expirationTime = opts.expirationTime || 3600;
 
         if (opts.profileCacheSize !== "disabled") {
-            this.profiles = new LRUCache({
+            this.profiles = new CacheHandler<NDKUserProfile>({
                 maxSize: opts.profileCacheSize || 100000,
+                dump: profilesDump(db.users, this.debug),
+                debug: this.debug,
             });
-
-            setInterval(() => {
-                this.dumpProfiles();
-            }, 1000 * 10);
-
-            this.warmUpProfilesLRU();
+            this.profiles.warmUp = profilesWarmUp(db.users);
         }
 
         if (opts.zapperCacheSize !== "disabled") {
-            this.zapperCache = new LRUCache({
+            this.zappers = new CacheHandler<ZapperCacheEntry>({
                 maxSize: opts.zapperCacheSize || 200,
+                dump: zapperDump(db.lnurl, this.debug),
+                debug: this.debug,
             });
-
-            setInterval(() => {
-                this.dumpZapperCache();
-            }, 1000 * 10);
-
-            this.warmUpZapperCacheLRU();
+            this.zappers.warmUp = zapperWarmUp(db.lnurl);
         }
-    }
 
-    private async warmUpProfilesLRU() {
-        if (!this.profiles) return;
-
-        db.users.each((user) => {
-            this.profiles!.set(user.pubkey, user.profile);
-        });
-    }
-
-    private async warmUpZapperCacheLRU() {
-        if (!this.zapperCache) return;
-
-        db.lnurl.each((lnurl) => {
-            this.zapperCache!.set(lnurl.pubkey, {
-                document: lnurl.document,
-                fetchedAt: lnurl.fetchedAt,
+        if (opts.nip05CacheSize !== "disabled") {
+            this.nip05s = new CacheHandler<Nip05CacheEntry>({
+                maxSize: opts.nip05CacheSize || 1000,
+                dump: nip05Dump(db.nip05, this.debug),
+                debug: this.debug,
             });
-        });
+            this.nip05s.warmUp = nip05WarmUp(db.nip05);
+        }
     }
 
     public async query(subscription: NDKSubscription): Promise<void> {
@@ -118,21 +114,40 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
             }
         }
 
-        return profile;
+        return profile || null;
     }
 
     public saveProfile(pubkey: Hexpubkey, profile: NDKUserProfile) {
         if (!this.profiles) return;
 
         this.profiles.set(pubkey, profile);
-
-        this.dirtyProfiles.add(pubkey);
     }
 
     public async loadNip05(
         nip05: string,
         maxAgeForMissing: number = 3600
     ): Promise<ProfilePointer | null | "missing"> {
+        const cache = this.nip05s?.get(nip05);
+
+        if (cache) {
+            this.debug(`Found NIP-05 profile in LRU cache for nip05: ${nip05}`);
+            if (cache.profile === null) {
+                // If the profile has been marked as missing and is older than the max age for missing, return missing
+                if (cache.fetchedAt + maxAgeForMissing * 1000 < Date.now()) return "missing";
+
+                // Otherwise, return null
+                return null;
+            }
+
+            try {
+                return JSON.parse(cache.profile);
+            } catch (e) {
+                return "missing";
+            }
+        } else {
+            this.debug(`NIP-05 profile not found in LRU cache for nip05: ${nip05}`);
+        }
+
         const nip = await db.nip05.get({ nip05 });
 
         if (!nip) return "missing";
@@ -170,7 +185,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         maxAgeInSecs: number = 86400,
         maxAgeForMissing: number = 3600
     ): Promise<NDKLnUrlData | null | "missing"> {
-        const cache = this.zapperCache?.get(pubkey);
+        const cache = this.zappers?.get(pubkey);
         if (cache) {
             if (cache.document === null) {
                 // If the document has been marked as missing and is older than the max age for missing, return missing
@@ -213,9 +228,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
     public async saveUsersLNURLDoc(pubkey: Hexpubkey, doc: NDKLnUrlData | null): Promise<void> {
         try {
             const document = doc ? JSON.stringify(doc) : null;
-
-            this.dirtyZapperCache.add(pubkey);
-            this.zapperCache?.set(pubkey, { document, fetchedAt: Date.now() });
+            this.zappers?.set(pubkey, { document, fetchedAt: Date.now() });
         } catch (error) {
             console.error("Failed to save LNURL document for pubkey:", pubkey, error);
         }
@@ -551,53 +564,5 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         }
 
         return retEvents;
-    }
-
-    private async dumpProfiles(): Promise<void> {
-        const profiles = [];
-
-        if (!this.profiles) return;
-
-        for (const pubkey of this.dirtyProfiles) {
-            const profile = this.profiles.get(pubkey);
-
-            if (!profile) continue;
-
-            profiles.push({
-                pubkey,
-                profile,
-                createdAt: Date.now(),
-            });
-        }
-
-        if (profiles.length) {
-            this.debug(`Saving ${profiles.length} profiles to database`);
-            await db.users.bulkPut(profiles);
-        }
-
-        this.dirtyProfiles.clear();
-    }
-
-    private async dumpZapperCache(): Promise<void> {
-        const cache = [];
-
-        if (!this.zapperCache) return;
-
-        for (const pubkey of this.dirtyZapperCache) {
-            const { document, fetchedAt } = this.zapperCache.get(pubkey)!;
-
-            cache.push({
-                pubkey,
-                document,
-                fetchedAt,
-            });
-        }
-
-        if (cache.length) {
-            this.debug(`Saving ${cache.length} zapper cache entries to database`);
-            await db.lnurl.bulkPut(cache);
-        }
-
-        this.dirtyZapperCache.clear();
     }
 }

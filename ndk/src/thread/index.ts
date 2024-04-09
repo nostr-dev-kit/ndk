@@ -1,4 +1,4 @@
-import type { NDKEvent, NDKEventId } from "../events/index.js";
+import type { NDKEvent, NDKEventId, NDKTag } from "../events/index.js";
 
 export function eventsBySameAuthor(op: NDKEvent, events: NDKEvent[]) {
     const eventsByAuthor = new Map<NDKEventId, NDKEvent>();
@@ -18,7 +18,7 @@ export function eventsBySameAuthor(op: NDKEvent, events: NDKEvent[]) {
  * @param threadIds An optional map of all events in the thread
  * @returns True if the event is a reply, false otherwise
  */
-export function eventIsReply(op: NDKEvent, event: NDKEvent, threadIds: Set<NDKEventId>): boolean {
+export function eventIsReply(op: NDKEvent, event: NDKEvent, threadIds?: Set<NDKEventId>): boolean {
     if (!threadIds) threadIds = new Set<NDKEventId>();
 
     // Make sure we always have the original event in the threadIds
@@ -29,7 +29,7 @@ export function eventIsReply(op: NDKEvent, event: NDKEvent, threadIds: Set<NDKEv
 
     // The happy path: check if the event has a reply marker tagging an event in the thread
     const replyMarker = event.tags.find((tag) => {
-        return threadIds.has(tag[1]) && tag[3] === "reply";
+        return threadIds!.has(tag[1]) && tag[3] === "reply";
     });
 
     return !!replyMarker;
@@ -129,19 +129,42 @@ export function eventHasETagMarkers(event: NDKEvent): boolean {
 
 /**
  * Returns the root event ID of an event.
+ * @param event The event to get the root event ID from
+ * @param searchTags The tags to search for the root event ID (default: ["a", "e"])
+ * @returns The root event ID or undefined if the event does not have a root event ID
  */
-export function getRootEventId(event: NDKEvent): NDKEventId | null {
-    const rootEventTag = event.tags.find((tag) => tag[0] === "e" && tag[3] === "root");
+export function getRootEventId(
+    event: NDKEvent,
+    searchTags: string[] = ["a", "e"]
+): NDKEventId | null | undefined {
+    const rootEventTag = getRootTag(event, searchTags);
+
+    return rootEventTag?.[1];
+}
+
+/**
+ * Returns the root tag of an event.
+ * @param event The event to get the root tag from
+ * @param searchTags The tags to search for the root tag (default: ["a", "e"])
+ * @returns The root tag or undefined if the event does not have a root tag
+ */
+export function getRootTag(
+    event: NDKEvent,
+    searchTags: string[] = ["a", "e"]
+): NDKTag | undefined {
+    let rootEventTag = event.tags.find((tag) => searchTags.includes(tag[0]) && tag[3] === "root");
 
     if (!rootEventTag) {
         // If we don't have an explicit root marer, this event has no other e-tag markers
         // and we have a single e-tag, return that value
-        if (eventHasETagMarkers(event)) return null;
+        if (eventHasETagMarkers(event)) return;
 
-        if (event.getMatchingTags("e").length === 1) {
-            return event.getMatchingTags("e")[0][1];
+        for (const validTag of searchTags) {
+            if (event.getMatchingTags(validTag).length === 1) {
+                return event.getMatchingTags(validTag)[0];
+            }
         }
     }
 
-    return rootEventTag ? rootEventTag[1] : null;
+    return rootEventTag;
 }

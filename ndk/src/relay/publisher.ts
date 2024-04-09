@@ -63,6 +63,13 @@ export class NDKRelayPublisher {
         }
     }
 
+    /**
+     * Publishes an event to the NDK Relay.
+     *
+     * @param event - The event to be published.
+     * @param timeoutMs - The timeout value in milliseconds (optional).
+     * @returns A Promise that resolves to a boolean indicating whether the event was successfully published.
+     */
     private async publishEvent(event: NDKEvent, timeoutMs?: number): Promise<boolean> {
         const nostrEvent = await event.toNostrEvent();
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

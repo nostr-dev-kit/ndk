@@ -37,7 +37,7 @@ describe("NDKRelayPublisher", () => {
     });
 
     describe("publish", () => {
-        it("should publish an event to the relay when connected", async () => {
+        it("publishs an event to the relay when connected", async () => {
             jest.spyOn(ndkRelay, "status", "get").mockReturnValue(NDKRelayStatus.CONNECTED);
             const publishEventSpy = jest
                 .spyOn(ndkRelayPublisher as any, "publishEvent")
@@ -46,7 +46,7 @@ describe("NDKRelayPublisher", () => {
             expect(publishEventSpy).toHaveBeenCalled();
         });
 
-        // it("should try and connect to the relay if not connected", async () => {
+        // it("connect to the relay if not connected before publishing", async () => {
         //     expect(ndkRelay.status).toBe(NDKRelayStatus.DISCONNECTED);
         //     const publishEventSpy = jest
         //         .spyOn(ndkRelayPublisher as any, "publishEvent")

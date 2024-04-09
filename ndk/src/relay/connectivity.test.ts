@@ -16,7 +16,7 @@ describe("NDKRelayConnectivity", () => {
         jest.restoreAllMocks();
     });
 
-    it("should connect and disconnect from the relay", async () => {
+    it("connects and disconnects from the relay", async () => {
         // First connect
         await ndkRelayConnectivity.connect();
         expect(relayConnectSpy).toHaveBeenCalled();

@@ -175,7 +175,9 @@ export class NDKEvent extends EventEmitter {
             this.pubkey = user?.pubkey || "";
         }
 
-        if (!this.created_at) this.created_at = Math.floor(Date.now() / 1000);
+        if (!this.created_at || this.isReplaceable()) {
+            this.created_at = Math.floor(Date.now() / 1000);
+        }
 
         const nostrEvent = this.rawEvent();
         const { content, tags } = await this.generateTags();

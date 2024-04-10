@@ -1,4 +1,4 @@
-import type { NDKUserProfile, ProfilePointer } from "@nostr-dev-kit/ndk";
+import type { NDKUserProfile } from "@nostr-dev-kit/ndk";
 import Dexie, { type Table } from "dexie";
 
 export interface User {

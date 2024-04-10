@@ -175,7 +175,9 @@ export class NDKEvent extends EventEmitter {
             this.pubkey = user?.pubkey || "";
         }
 
-        if (!this.created_at) this.created_at = Math.floor(Date.now() / 1000);
+        if (!this.created_at || this.isReplaceable()) {
+            this.created_at = Math.floor(Date.now() / 1000);
+        }
 
         const nostrEvent = this.rawEvent();
         const { content, tags } = await this.generateTags();
@@ -290,12 +292,6 @@ export class NDKEvent extends EventEmitter {
             signer = this.ndk!.signer!;
         } else {
             this.author = await signer.user();
-        }
-
-        await this.generateTags();
-
-        if (this.isReplaceable()) {
-            this.created_at = Math.floor(Date.now() / 1000);
         }
 
         const nostrEvent = await this.toNostrEvent();

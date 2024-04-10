@@ -348,24 +348,26 @@ export class NDKSubscription extends EventEmitter {
      * @param relay
      * @param fromCache Whether the event was received from the cache
      */
-    public eventReceived(event: NDKEvent, relay: NDKRelay | undefined, fromCache = false) {
+    public eventReceived(event: NDKEvent, relay: NDKRelay | undefined, fromCache: boolean = false) {
         if (relay) {
             event.relay ??= relay;
             event.onRelays.push(relay);
         }
         if (!relay) relay = event.relay;
 
-        if (!this.skipValidation) {
-            if (!event.isValid) {
-                this.debug(`Event failed validation`, event);
-                return;
+        if (!fromCache) {
+            if (!this.skipValidation) {
+                if (!event.isValid) {
+                    this.debug(`Event failed validation`, event.rawEvent());
+                    return;
+                }
             }
-        }
 
-        if (!this.skipVerification) {
-            if (!event.verifySignature(true)) {
-                this.debug(`Event failed signature validation`, event);
-                return;
+            if (!this.skipVerification) {
+                if (!event.verifySignature(true)) {
+                    this.debug(`Event failed signature validation`, event);
+                    return;
+                }
             }
         }
 

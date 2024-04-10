@@ -40,6 +40,7 @@ export * from "./user/profile.js";
 
 export * from "./dvm/schedule.js";
 
+export { type NDKEventSerialized } from "./events/serializer.js";
 export { NDK as default, NDKConstructorParams } from "./ndk/index.js";
 export { NDKZapInvoice, zapInvoiceFromEvent } from "./zap/invoice.js";
 export * from "./zap/index.js";

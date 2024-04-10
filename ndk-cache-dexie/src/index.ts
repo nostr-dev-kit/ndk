@@ -1,4 +1,4 @@
-import { NDKEvent, NDKRelay, profileFromEvent } from "@nostr-dev-kit/ndk";
+import NDK, { NDKEvent, NDKRelay, profileFromEvent } from "@nostr-dev-kit/ndk";
 import type {
     Hexpubkey,
     NDKCacheAdapter,
@@ -10,7 +10,7 @@ import type {
 } from "@nostr-dev-kit/ndk";
 import createDebug from "debug";
 import { matchFilter } from "nostr-tools";
-import { createDatabase, db } from "./db";
+import { createDatabase, db, type Event } from "./db";
 import { CacheHandler } from "./lru-cache";
 import { profilesDump, profilesWarmUp } from "./caches/profiles";
 import { zapperDump, zapperWarmUp } from "./caches/zapper";
@@ -290,7 +290,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
                     kind: event.kind!,
                     createdAt: event.created_at!,
                     relay: relay?.url,
-                    event: JSON.stringify(event.rawEvent()),
+                    event: event.serialize(true)
                 });
 
                 // Don't cache contact lists as tags since it's expensive
@@ -323,28 +323,16 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         const f = ["authors"];
         const hasAllKeys = filterKeys.length === f.length && f.every((k) => filterKeys.includes(k));
 
-        let foundEvents = false;
+        let found = undefined;
 
         if (hasAllKeys && filter.authors) {
             for (const pubkey of filter.authors) {
                 const events = await db.events.where({ pubkey }).toArray();
-                for (const event of events) {
-                    let rawEvent;
-                    try {
-                        rawEvent = JSON.parse(event.event);
-                    } catch (e) {
-                        console.log("failed to parse event", e);
-                        continue;
-                    }
-
-                    const ndkEvent = new NDKEvent(undefined, rawEvent);
-                    const relay = event.relay ? new NDKRelay(event.relay) : undefined;
-                    subscription.eventReceived(ndkEvent, relay, true);
-                    foundEvents = true;
-                }
+                foundEvents(subscription, events);
+                found ??= events.length > 0;
             }
         }
-        return foundEvents;
+        return found ?? false;
     }
 
     /**
@@ -358,28 +346,16 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         const f = ["kinds"];
         const hasAllKeys = filterKeys.length === f.length && f.every((k) => filterKeys.includes(k));
 
-        let foundEvents = false;
+        let found = undefined;
 
         if (hasAllKeys && filter.kinds) {
             for (const kind of filter.kinds) {
                 const events = await db.events.where({ kind }).toArray();
-                for (const event of events) {
-                    let rawEvent;
-                    try {
-                        rawEvent = JSON.parse(event.event);
-                    } catch (e) {
-                        console.log("failed to parse event", e);
-                        continue;
-                    }
-
-                    const ndkEvent = new NDKEvent(undefined, rawEvent);
-                    const relay = event.relay ? new NDKRelay(event.relay) : undefined;
-                    subscription.eventReceived(ndkEvent, relay, true);
-                    foundEvents = true;
-                }
+                foundEvents(subscription, events);
+                found ??= events.length > 0;
             }
         }
-        return foundEvents;
+        return found ?? false;
     }
 
     /**
@@ -398,17 +374,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
                 const event = await db.events.where({ id }).first();
                 if (!event) continue;
 
-                let rawEvent;
-                try {
-                    rawEvent = JSON.parse(event.event);
-                } catch (e) {
-                    console.log("failed to parse event", e);
-                    continue;
-                }
-
-                const ndkEvent = new NDKEvent(undefined, rawEvent);
-                const relay = event.relay ? new NDKRelay(event.relay) : undefined;
-                subscription.eventReceived(ndkEvent, relay, true);
+                foundEvent(subscription, event, event.relay);
             }
 
             return true;
@@ -440,17 +406,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
                         const event = await db.events.where({ id: replaceableId }).first();
                         if (!event) continue;
 
-                        let rawEvent;
-                        try {
-                            rawEvent = JSON.parse(event.event);
-                        } catch (e) {
-                            console.log("failed to parse event", e);
-                            continue;
-                        }
-
-                        const ndkEvent = new NDKEvent(undefined, rawEvent);
-                        const relay = event.relay ? new NDKRelay(event.relay) : undefined;
-                        subscription.eventReceived(ndkEvent, relay, true);
+                        foundEvent(subscription, event, event.relay);
                     }
                 }
             }
@@ -469,7 +425,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
     ): Promise<boolean> {
         const f = ["authors", "kinds"];
         const hasAllKeys = filterKeys.length === f.length && f.every((k) => filterKeys.includes(k));
-        let foundEvents = false;
+        let found = undefined;
 
         if (!hasAllKeys) return false;
 
@@ -477,25 +433,12 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
             for (const kind of filter.kinds) {
                 for (const author of filter.authors) {
                     const events = await db.events.where({ kind, pubkey: author }).toArray();
-
-                    for (const event of events) {
-                        let rawEvent;
-                        try {
-                            rawEvent = JSON.parse(event.event);
-                        } catch (e) {
-                            console.log("failed to parse event", e);
-                            continue;
-                        }
-
-                        const ndkEvent = new NDKEvent(undefined, rawEvent);
-                        const relay = event.relay ? new NDKRelay(event.relay) : undefined;
-                        subscription.eventReceived(ndkEvent, relay, true);
-                        foundEvents = true;
-                    }
+                    foundEvents(subscription, events);
+                    found ??= events.length > 0;
                 }
             }
         }
-        return foundEvents;
+        return found ?? false;
     }
 
     /**
@@ -565,5 +508,29 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         }
 
         return retEvents;
+    }
+}
+
+export function foundEvents(
+    subscription: NDKSubscription,
+    events: Event[]
+) {
+    for (const event of events) {
+        foundEvent(subscription, event, event.relay);
+    }
+}
+
+export function foundEvent(
+    subscription: NDKSubscription,
+    event: Event,
+    relayUrl: WebSocket["url"] | undefined
+) {
+    try {
+        const ndk = subscription.ndk;
+        const e = NDKEvent.deserialize(ndk, event.event);
+        const relay = relayUrl ? ndk.pool.getRelay(relayUrl) : undefined;
+        e.id = event.id;
+        subscription.eventReceived(e, relay, true);
+    } catch (e) {
     }
 }

@@ -23,7 +23,7 @@ export class NDKRelayConnectivity {
         this.relay = new Relay(this.ndkRelay.url);
         this.debug = this.ndkRelay.debug.extend("connectivity");
 
-        this.relay.onnotice = (notice: string) => this.handleNotice(notice);    
+        this.relay.onnotice = (notice: string) => this.handleNotice(notice);
     }
 
     public async connect(timeoutMs?: number): Promise<void> {
@@ -83,9 +83,18 @@ export class NDKRelayConnectivity {
             this.relay.onclose = disconnectHandler;
             this.relay._onauth = authHandler;
 
-            await runWithTimeout(this.relay.connect, timeoutMs, "Timed out while connecting").then(
-                () => connectHandler()
-            );
+            // We have to call bind here otherwise the relay object isn't available in the runWithTimeout function
+            await runWithTimeout(
+                this.relay.connect.bind(this.relay),
+                timeoutMs,
+                "Timed out while connecting"
+            )
+                .then(() => {
+                    connectHandler();
+                })
+                .catch((e) => {
+                    this.debug("Failed to connect", this.relay.url, e);
+                });
         } catch (e) {
             this.debug("Failed to connect", e);
             this._status = NDKRelayStatus.DISCONNECTED;

@@ -11,22 +11,29 @@
     "main": "./dist/index.js",
     "module": "./dist/index.mjs",
     "exports": {
-        "import": {
-            "types": "./dist/index.d.mts",
-            "default": "./dist/index.mjs"
+        ".": {
+            "import": {
+                "types": "./dist/index.d.mts",
+                "default": "./dist/index.mjs"
+            },
+            "require": {
+                "types": "./dist/index.d.ts",
+                "default": "./dist/index.js"
+            }
         },
-        "require": {
-            "types": "./dist/index.d.ts",
-            "default": "./dist/index.js"
+        "./workers/sig-verification": {
+            "import": "./dist/workers/sig-verification.mjs",
+            "require": "./dist/workers/sig-verification.js"
         }
     },
     "files": [
         "dist",
+        "src",
         "README.md"
     ],
     "scripts": {
         "dev": "pnpm build --watch",
-        "build": "tsup src/index.ts --format cjs,esm --dts",
+        "build": "tsup src/index.ts --format cjs,esm --dts; tsup src/workers/sig-verification.ts --format cjs,esm --dts -d dist/workers",
         "clean": "rm -rf dist docs",
         "test": "jest",
         "lint": "prettier --check . && eslint .",

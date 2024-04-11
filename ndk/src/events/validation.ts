@@ -2,6 +2,7 @@ import type { NDKEvent, NostrEvent } from ".";
 import { sha256 } from "@noble/hashes/sha256";
 import { bytesToHex } from "@noble/hashes/utils";
 import { schnorr } from "@noble/curves/secp256k1";
+import { verifySignatureAsync } from "./signature";
 
 const PUBKEY_REGEX = /^[a-f0-9]{64}$/;
 
@@ -32,9 +33,9 @@ export function validate(this: NDKEvent): boolean {
 /**
  * This method verifies the signature of an event and optionally persists the result to the event.
  * @param event {NDKEvent} The event to verify
- * @returns {boolean}
+ * @returns {boolean | undefined} True if the signature is valid, false if it is invalid, and undefined if the signature has not been verified yet.
  */
-export function verifySignature(this: NDKEvent, persist: boolean): boolean {
+export function verifySignature(this: NDKEvent, persist: boolean): boolean | undefined {
     if (typeof this.signatureVerified === "boolean") return this.signatureVerified;
 
     const hash = this.getEventHash();
@@ -43,8 +44,21 @@ export function verifySignature(this: NDKEvent, persist: boolean): boolean {
     }
 
     try {
-        return (this.signatureVerified = schnorr.verify(this.sig as string, hash, this.pubkey));
+        if (this.ndk?.asyncSigVerification) {
+            verifySignatureAsync(this, persist).then((result) => {
+                if (persist) {
+                    this.signatureVerified = result;
+                }
+
+                if (!result) {
+                    this.ndk!.emit("event:invalid-sig", this);
+                }
+            });
+        } else {
+            return (this.signatureVerified = schnorr.verify(this.sig as string, hash, this.pubkey));
+        }
     } catch (err) {
+        console.error("Error verifying signature", this.rawEvent(), err);
         return (this.signatureVerified = false);
     }
 }

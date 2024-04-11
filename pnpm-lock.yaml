@@ -214,12 +214,6 @@ importers:
       dexie:
         specifier: ^4.0.2
         version: 4.0.2
-      fast-json:
-        specifier: ^3.0.0
-        version: 3.0.0
-      fast-json-parse:
-        specifier: ^1.0.3
-        version: 1.0.3
       nostr-tools:
         specifier: ^2.4.0
         version: 2.4.0(typescript@5.2.2)
@@ -8605,16 +8599,8 @@ packages:
       merge2: 1.4.1
       micromatch: 4.0.5
 
-  /fast-json-parse@1.0.3:
-    resolution: {integrity: sha512-FRWsaZRWEJ1ESVNbDWmsAlqDk96gPQezzLghafp5J4GUKjbCz3OkAHuZs5TuPEtkbVQERysLp9xv6c24fBm8Aw==}
-    dev: false
-
   /fast-json-stable-stringify@2.1.0:
     resolution: {integrity: sha512-lhd/wF+Lk98HZoTCtlVraHtfh5XYijIjalXck7saUtuanSDyLMxnHhSXEDJqHxD7msR8D0uCmqlkwjCV8xvwHw==}
-
-  /fast-json@3.0.0:
-    resolution: {integrity: sha512-wynsoqJZajN/aoEllPnbaYW+K2pkVhs7jD3oNUP+ndMjzUemFTLM4J42Z1OvcPG1iDallKaaeqqTWjpc2hM+GA==}
-    dev: false
 
   /fast-levenshtein@2.0.6:
     resolution: {integrity: sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==}

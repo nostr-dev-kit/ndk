@@ -355,6 +355,8 @@ export class NDKSubscription extends EventEmitter {
         }
         if (!relay) relay = event.relay;
 
+        event.ndk ??= this.ndk;
+
         if (!fromCache) {
             if (!this.skipValidation) {
                 if (!event.isValid) {
@@ -364,7 +366,7 @@ export class NDKSubscription extends EventEmitter {
             }
 
             if (!this.skipVerification) {
-                if (!event.verifySignature(true)) {
+                if (!event.verifySignature(true) && !this.ndk.asyncSigVerification) {
                     this.debug(`Event failed signature validation`, event);
                     return;
                 }
@@ -402,8 +404,6 @@ export class NDKSubscription extends EventEmitter {
         } else {
             this.eventFirstSeen.set(event.id, 0);
         }
-
-        if (!event.ndk) event.ndk = this.ndk;
 
         this.emit("event", event, relay, this);
         this.lastEventReceivedAt = Date.now();

@@ -136,13 +136,13 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
         const remoteUser = this.ndk.getUser({ pubkey: this.remotePubkey });
 
         if (this.nip05 && !this.remotePubkey) {
-            NDKUser.fromNip05(this.nip05).then((user) => {
-                if (user) {
-                    this.remoteUser = user;
-                    this.remotePubkey = user.pubkey;
-                    this.relayUrls = user.nip46Urls;
-                }
-            });
+            const user = await NDKUser.fromNip05(this.nip05, this.ndk);
+
+            if (user) {
+                this.remoteUser = user;
+                this.remotePubkey = user.pubkey;
+                this.relayUrls = user.nip46Urls;
+            }
         }
 
         if (!this.remotePubkey) {

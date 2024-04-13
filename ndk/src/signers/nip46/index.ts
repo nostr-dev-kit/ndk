@@ -42,7 +42,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
     private nip05?: string;
     public rpc: NDKNostrRpc;
     private debug: debug.Debugger;
-    public relayUrls: string[] = [];
+    public relayUrls: string[] | undefined;
 
     /**
      * @param ndk - The NDK instance to use
@@ -110,18 +110,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
             this.localSigner = localSigner;
         }
 
-        this.rpc = new NDKNostrRpc(ndk, this.localSigner, this.debug);
-        this.rpc.on("authUrl", (...props) => {
-            this.emit("authUrl", ...props);
-        });
-
-        // Generates subscription, single subscription for the lifetime of our connection
-        this.localSigner.user().then((localUser) => {
-            this.rpc.subscribe({
-                kinds: [NDKKind.NostrConnect, NDKKind.NostrConnect + 1],
-                "#p": [localUser.pubkey],
-            });
-        });
+        this.rpc = new NDKNostrRpc(this.ndk, this.localSigner, this.relayUrls, this.debug);
     }
 
     /**
@@ -133,7 +122,6 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
 
     public async blockUntilReady(): Promise<NDKUser> {
         const localUser = await this.localSigner.user();
-        const remoteUser = this.ndk.getUser({ pubkey: this.remotePubkey });
 
         if (this.nip05 && !this.remotePubkey) {
             const user = await NDKUser.fromNip05(this.nip05, this.ndk);
@@ -142,6 +130,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
                 this.remoteUser = user;
                 this.remotePubkey = user.pubkey;
                 this.relayUrls = user.nip46Urls;
+                this.rpc = new NDKNostrRpc(this.ndk, this.localSigner, this.relayUrls, this.debug);
             }
         }
 
@@ -149,31 +138,36 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
             throw new Error("Remote pubkey not set");
         }
 
+        this.rpc.on("authUrl", (...props) => {
+            this.emit("authUrl", ...props);
+        });
+
+        // using await here to ensure the subscription is ready before sending the request
+        await this.rpc.subscribe({
+            kinds: [NDKKind.NostrConnect, NDKKind.NostrConnect + 1],
+            "#p": [localUser.pubkey],
+        });
+
         return new Promise((resolve, reject) => {
-            // There is a race condition between the subscription and sending the request;
-            // introducing a small delay here to give a clear priority to the subscription
-            // to happen first
-            setTimeout(() => {
-                const connectParams = [this.remotePubkey!];
+            const connectParams = [this.remotePubkey!];
 
-                if (this.token) {
-                    connectParams.push(this.token);
-                }
+            if (this.token) {
+                connectParams.push(this.token);
+            }
 
-                this.rpc.sendRequest(
-                    this.remotePubkey!,
-                    "connect",
-                    connectParams,
-                    24133,
-                    (response: NDKRpcResponse) => {
-                        if (response.result === "ack") {
-                            resolve(remoteUser);
-                        } else {
-                            reject(response.error);
-                        }
+            this.rpc.sendRequest(
+                this.remotePubkey!,
+                "connect",
+                connectParams,
+                24133,
+                (response: NDKRpcResponse) => {
+                    if (response.result === "ack") {
+                        resolve(this.remoteUser);
+                    } else {
+                        reject(response.error);
                     }
-                );
-            }, 100);
+                }
+            );
         });
     }
 

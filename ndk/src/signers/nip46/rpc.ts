@@ -3,9 +3,14 @@ import { EventEmitter } from "tseep";
 import type { NDKSigner } from "..";
 import type { NostrEvent } from "../../events";
 import { NDKEvent } from "../../events";
-import type { NDK } from "../../ndk";
-import type { NDKFilter, NDKSubscription } from "../../subscription";
 import { NDKKind } from "../../events/kinds";
+import type { NDK } from "../../ndk";
+import { NDKRelaySet } from "../../relay/sets";
+import {
+    NDKSubscriptionCacheUsage,
+    type NDKFilter,
+    type NDKSubscription,
+} from "../../subscription";
 
 export interface NDKRpcRequest {
     id: string;
@@ -25,12 +30,19 @@ export interface NDKRpcResponse {
 export class NDKNostrRpc extends EventEmitter {
     private ndk: NDK;
     private signer: NDKSigner;
+    private relaySet: NDKRelaySet | undefined;
     private debug: debug.Debugger;
 
-    public constructor(ndk: NDK, signer: NDKSigner, debug: debug.Debugger) {
+    public constructor(
+        ndk: NDK,
+        signer: NDKSigner,
+        relayUrls: string[] | undefined,
+        debug: debug.Debugger
+    ) {
         super();
         this.ndk = ndk;
         this.signer = signer;
+        this.relaySet = relayUrls ? NDKRelaySet.fromRelayUrls(relayUrls, ndk) : undefined;
         this.debug = debug.extend("rpc");
     }
 
@@ -38,10 +50,15 @@ export class NDKNostrRpc extends EventEmitter {
      * Subscribe to a filter. This function will resolve once the subscription is ready.
      */
     public subscribe(filter: NDKFilter): Promise<NDKSubscription> {
-        const sub = this.ndk.subscribe(filter, {
-            closeOnEose: false,
-            groupable: false,
-        });
+        const sub = this.ndk.subscribe(
+            filter,
+            {
+                closeOnEose: false,
+                groupable: false,
+                cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY,
+            },
+            this.relaySet
+        );
 
         sub.on("event", async (event: NDKEvent) => {
             try {
@@ -56,7 +73,7 @@ export class NDKNostrRpc extends EventEmitter {
             }
         });
 
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             sub.on("eose", () => resolve(sub));
         });
     }
@@ -98,7 +115,7 @@ export class NDKNostrRpc extends EventEmitter {
 
         event.content = await this.signer.encrypt(remoteUser, event.content);
         await event.sign(this.signer);
-        await event.publish();
+        await event.publish(this.relaySet);
     }
 
     /**
@@ -120,7 +137,7 @@ export class NDKNostrRpc extends EventEmitter {
         const localUser = await this.signer.user();
         const remoteUser = this.ndk.getUser({ pubkey: remotePubkey });
         const request = { id, method, params };
-        const promise = new Promise<NDKRpcResponse>((resolve) => {
+        const promise = new Promise<NDKRpcResponse>(() => {
             const responseHandler = (response: NDKRpcResponse) => {
                 if (response.result === "auth_url") {
                     this.once(`response-${id}`, responseHandler);
@@ -144,7 +161,7 @@ export class NDKNostrRpc extends EventEmitter {
         await event.sign(this.signer);
         this.debug(`sending ${method} request to`, remotePubkey);
 
-        await event.publish();
+        await event.publish(this.relaySet);
 
         return promise;
     }

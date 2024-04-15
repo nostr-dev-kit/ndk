@@ -44,7 +44,7 @@
     const shortContent = truncateContent(fullContent, { maxLength, showEntire, showMedia });
     const groupedContent = groupContent(shortContent);
     const links = getLinks(shortContent);
-    const extraLinks = without(links, getLinks(fullContent));
+    // const extraLinks = without(links, getLinks(fullContent));
 
     export const isNewline = (i: number) => !shortContent[i] || shortContent[i].type === NEWLINE;
 
@@ -59,7 +59,7 @@
             {:else if type === TOPIC}
                 <NoteContentTopic {value} />
             {:else if type === LINK}
-                <NoteContentLink {value} showMedia={showMedia && isStartOrEnd(i)} />
+                <NoteContentLink {value} {showMedia} />
             {:else if type === LINKCOLLECTION}
                 {#if mediaCollectionComponent}
                     <svelte:component this={mediaCollectionComponent} links={value.map(v=>v.value.url)} />

@@ -28,7 +28,7 @@
 
 {#if event}
     {#if event.kind === 1}
-        <Kind1 {ndk} {content} {event} {anchorId} {maxLength} {showEntire} {showMedia} on:click class={$$props.class} />
+        <Kind1 {ndk} {content} {event} {anchorId} {maxLength} {showEntire} {showMedia} on:click class={$$props.class} {mediaCollectionComponent} />
     {:else if event.kind === 40}
         <!-- <Kind40 {event} /> -->
     {:else if event.kind === 1063}

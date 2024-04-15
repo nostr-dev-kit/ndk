@@ -452,6 +452,17 @@ export class NDKEvent extends EventEmitter {
     }
 
     /**
+     * Determines the type of tag that can be used to reference this event from another event.
+     * @returns {string} The tag type
+     * @example
+     * event = new NDKEvent(ndk, { kind: 30000, pubkey: 'pubkey', tags: [ ["d", "d-code"] ] });
+     * event.tagType(); // "a"
+     */
+    tagType(): "e" | "a" {
+        return this.isParamReplaceable() ? "a" : "e";
+    }
+
+    /**
      * Get the tag that can be used to reference this event from another event.
      *
      * Consider using referenceTags() instead (unless you have a good reason to use this)

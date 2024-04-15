@@ -10,10 +10,12 @@ export type NDKEventSerialized = string;
  */
 export function serialize(
     this: NDKEvent | NostrEvent,
-    includeSig = false
+    includeSig = false,
+    includeId = false
 ): NDKEventSerialized {
     const payload = [ 0, this.pubkey, this.created_at, this.kind, this.tags, this.content ];
     if (includeSig) payload.push(this.sig);
+    if (includeId) payload.push(this.id);
     return JSON.stringify(payload);
 }
 
@@ -33,6 +35,7 @@ export function deserialize(serializedEvent: NDKEventSerialized): NostrEvent {
     };
 
     if (eventArray.length === 7) ret.sig = eventArray[6];
+    if (eventArray.length === 8) ret.id = eventArray[7];
 
     return ret;
 }

@@ -16,7 +16,7 @@ export function profilesWarmUp(users: Table<User>): WarmUpFunction<NDKUserProfil
 
         // hack
         setTimeout(() => {
-            debug(`Warmed up ${cacheHandler.size} profiles`);
+            debug(`Warmed up ${cacheHandler.size()} profiles`);
         }, 2500);
     };
 }

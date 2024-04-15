@@ -9,7 +9,7 @@ import { type NDKUserProfile, profileFromEvent, serializeProfile } from "./profi
 import type { NDKSigner } from "../signers/index.js";
 import { NDKLnUrlData } from "../zap/index.js";
 import { getNip05For } from "./nip05.js";
-import { NDKZap } from "../index.js";
+import { NDKRelay, NDKZap } from "../index.js";
 
 export type Hexpubkey = string;
 
@@ -357,15 +357,15 @@ export class NDKUser {
      * Remove a follow from this user's contact list
      *
      * @param user {NDKUser} The user to unfollow
-     * @param currentFollowList {Set<NDKUser>} The current follow list
+     * @param currentFollowList {Set<Hexpubkey>} The current follow list
      * @param kind {NDKKind} The kind to use for this contact list (defaults to `3`)
-     * @returns {Promise<boolean>} True if the follow was removed, false if the follow did not exist
+     * @returns The relays were the follow list was published or false if the user wasn't found
      */
     public async unfollow(
         user: NDKUser,
         currentFollowList?: Set<NDKUser>,
         kind = NDKKind.Contacts
-    ): Promise<boolean> {
+    ): Promise<Set<NDKRelay> | boolean> {
         if (!this.ndk) throw new Error("No NDK instance found");
 
         this.ndk.assertSigner();
@@ -374,11 +374,17 @@ export class NDKUser {
             currentFollowList = await this.follows(undefined, undefined, kind);
         }
 
-        if (!currentFollowList.has(user)) {
-            return false;
+        // find the user that has the same pubkey
+        const newUserFollowList = new Set<NDKUser>();
+        let foundUser = false;
+        for (const follow of currentFollowList) {
+            if (follow.pubkey !== user.pubkey) {
+                newUserFollowList.add(follow);
+                foundUser = true;
+            }
         }
 
-        currentFollowList.delete(user);
+        if (!foundUser) return false;
 
         const event = new NDKEvent(this.ndk, { kind } as NostrEvent);
 
@@ -387,8 +393,7 @@ export class NDKUser {
             event.tag(follow);
         }
 
-        await event.publish();
-        return true;
+        return await event.publish();
     }
 
     /**

@@ -76,7 +76,7 @@ export class NDKEvent extends EventEmitter {
      * @param event
      * @returns
      */
-    static deserialize(ndk: NDK, event: NDKEventSerialized): NDKEvent {
+    static deserialize(ndk: NDK | undefined, event: NDKEventSerialized): NDKEvent {
         return new NDKEvent(ndk, deserialize(event));
     }
 

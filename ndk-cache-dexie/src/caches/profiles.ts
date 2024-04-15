@@ -5,20 +5,13 @@ import type { NDKUserProfile } from "@nostr-dev-kit/ndk";
 import type { LRUCache } from "typescript-lru-cache";
 export { db } from "../db.js";
 
-export function profilesWarmUp(users: Table<User>): WarmUpFunction<NDKUserProfile> {
-    return async (
-        cacheHandler: CacheHandler<NDKUserProfile>,
-        debug: debug.IDebugger
-    ): Promise<void> => {
-        users.each((user) => {
-            cacheHandler.set(user.pubkey, user.profile, false);
-        });
-
-        // hack
-        setTimeout(() => {
-            debug(`Warmed up ${cacheHandler.size()} profiles`);
-        }, 2500);
-    };
+export async function profilesWarmUp(
+    cacheHandler: CacheHandler<NDKUserProfile>,
+    users: Table<User>,
+): Promise<void> {
+    await users.each((user) => {
+        cacheHandler.set(user.pubkey, user.profile, false);
+    });
 }
 
 export const profilesDump = (users: Table<User>, debug: debug.IDebugger) => {

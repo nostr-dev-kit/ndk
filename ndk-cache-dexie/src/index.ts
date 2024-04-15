@@ -96,7 +96,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
     }
 
     public async query(subscription: NDKSubscription): Promise<void> {
-        Promise.allSettled(
+        await Promise.allSettled(
             subscription.filters.map((filter) => this.processFilter(filter, subscription))
         );
     }
@@ -290,7 +290,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
                     kind: event.kind!,
                     createdAt: event.created_at!,
                     relay: relay?.url,
-                    event: event.serialize(true)
+                    event: event.serialize(true, true)
                 });
 
                 // Don't cache contact lists as tags since it's expensive
@@ -529,7 +529,6 @@ export function foundEvent(
         const ndk = subscription.ndk;
         const e = NDKEvent.deserialize(ndk, event.event);
         const relay = relayUrl ? ndk.pool.getRelay(relayUrl) : undefined;
-        e.id = event.id;
         subscription.eventReceived(e, relay, true);
     } catch (e) {
     }

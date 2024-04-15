@@ -205,14 +205,6 @@ export class NDKSubscription extends EventEmitter {
         this.skipVerification = opts?.skipVerification || false;
         this.skipValidation = opts?.skipValidation || false;
 
-        if (!this.opts.closeOnEose) {
-            this.debug(
-                `Creating a permanent subscription`,
-                this.opts,
-                JSON.stringify(this.filters)
-            );
-        }
-
         // validate that the caller is not expecting a persistent
         // subscription while using an option that will only hit the cache
         if (
@@ -426,7 +418,6 @@ export class NDKSubscription extends EventEmitter {
 
         if (queryFilled) {
             this.emit("eose");
-            this.eoseDebug(`Query fully filled`);
 
             if (this.opts?.closeOnEose) {
                 this.stop();

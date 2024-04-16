@@ -349,6 +349,19 @@ export class NDKSubscription extends EventEmitter {
 
         event.ndk ??= this.ndk;
 
+        // mark the event as seen
+        // move here to avoid verifying signature of duplicate events
+        const eventAlreadySeen = this.eventFirstSeen.has(event.id);
+
+        if (eventAlreadySeen) {
+            const timeSinceFirstSeen = Date.now() - (this.eventFirstSeen.get(event.id) || 0);
+            if (relay) relay.scoreSlowerEvent(timeSinceFirstSeen);
+
+            this.emit("event:dup", event, relay, timeSinceFirstSeen, this);
+
+            return;
+        }
+
         if (!fromCache) {
             if (!this.skipValidation) {
                 if (!event.isValid) {
@@ -375,18 +388,6 @@ export class NDKSubscription extends EventEmitter {
             }
 
             events.add(event.id);
-
-            // mark the event as seen
-            const eventAlreadySeen = this.eventFirstSeen.has(event.id);
-
-            if (eventAlreadySeen) {
-                const timeSinceFirstSeen = Date.now() - (this.eventFirstSeen.get(event.id) || 0);
-                relay.scoreSlowerEvent(timeSinceFirstSeen);
-
-                this.emit("event:dup", event, relay, timeSinceFirstSeen, this);
-
-                return;
-            }
 
             if (this.ndk.cacheAdapter) {
                 this.ndk.cacheAdapter.setEvent(event, this.filters, relay);

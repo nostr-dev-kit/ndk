@@ -48,13 +48,13 @@ export async function fetchEventFromTag(
 
     let result: NDKEvent | null | undefined = undefined;
 
-    let relay = hint !== "" ? this.pool.getRelay(hint) : undefined;
+    let relay = (hint && hint !== "") ? this.pool.getRelay(hint) : undefined;
 
     /**
      * Fetch with (maybe) a relay hint.
      */
     const fetchMaybeWithRelayHint = new Promise<NDKEvent | null>((resolve) => {
-        d("fetching event with (maybe) relay hint", { hint, tag });
+        d("fetching event with (maybe) relay hint", { hint, tag, relay });
         this.fetchEvent(id, subOpts, relay).then((event) => {
             d("fetched event", event?.rawEvent());
             resolve(event);

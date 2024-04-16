@@ -7,6 +7,7 @@ import { NDKPrivateKeySigner } from "../private-key/index.js";
 import type { NDKRpcResponse } from "./rpc.js";
 import { NDKNostrRpc } from "./rpc.js";
 import { NDKKind } from "../../events/kinds/index.js";
+import { NDKSubscription } from "../../subscription/index.js";
 
 /**
  * This NDKSigner implements NIP-46, which allows remote signing of events.
@@ -43,6 +44,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
     public rpc: NDKNostrRpc;
     private debug: debug.Debugger;
     public relayUrls: string[] | undefined;
+    private subscription: NDKSubscription | undefined;
 
     /**
      * @param ndk - The NDK instance to use
@@ -110,7 +112,18 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
             this.localSigner = localSigner;
         }
 
-        this.rpc = new NDKNostrRpc(this.ndk, this.localSigner, this.relayUrls, this.debug);
+        this.rpc = new NDKNostrRpc(this.ndk, this.localSigner, this.debug, this.relayUrls);
+    }
+
+    private async startListening() {
+        if (this.subscription) return;
+
+        const localUser = await this.localSigner.user();
+
+        this.subscription = await this.rpc.subscribe({
+            kinds: [NDKKind.NostrConnect, NDKKind.NostrConnect + 1],
+            "#p": [localUser.pubkey],
+        });
     }
 
     /**
@@ -121,8 +134,6 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
     }
 
     public async blockUntilReady(): Promise<NDKUser> {
-        const localUser = await this.localSigner.user();
-
         if (this.nip05 && !this.remotePubkey) {
             const user = await NDKUser.fromNip05(this.nip05, this.ndk);
 
@@ -130,7 +141,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
                 this.remoteUser = user;
                 this.remotePubkey = user.pubkey;
                 this.relayUrls = user.nip46Urls;
-                this.rpc = new NDKNostrRpc(this.ndk, this.localSigner, this.relayUrls, this.debug);
+                this.rpc = new NDKNostrRpc(this.ndk, this.localSigner, this.debug, this.relayUrls);
             }
         }
 
@@ -138,14 +149,10 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
             throw new Error("Remote pubkey not set");
         }
 
+        await this.startListening();
+
         this.rpc.on("authUrl", (...props) => {
             this.emit("authUrl", ...props);
-        });
-
-        // using await here to ensure the subscription is ready before sending the request
-        await this.rpc.subscribe({
-            kinds: [NDKKind.NostrConnect, NDKKind.NostrConnect + 1],
-            "#p": [localUser.pubkey],
         });
 
         return new Promise((resolve, reject) => {
@@ -251,6 +258,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
         domain?: string,
         email?: string
     ): Promise<Hexpubkey> {
+        await this.startListening();
         this.debug("asking to create an account");
         const req: string[] = [];
 

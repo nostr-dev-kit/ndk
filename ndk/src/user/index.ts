@@ -171,7 +171,7 @@ export class NDKUser {
      */
     static async fromNip05(
         nip05Id: string,
-        ndk?: NDK,
+        ndk: NDK,
         skipCache = false
     ): Promise<NDKUser | undefined> {
         if (!ndk) throw new Error("No NDK instance found");

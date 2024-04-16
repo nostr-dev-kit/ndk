@@ -60,20 +60,21 @@ export class NDKNip46Backend {
     readonly debug: debug.Debugger;
     public rpc: NDKNostrRpc;
     private permitCallback: Nip46PermitCallback;
+    public relayUrls: WebSocket["url"][];
 
     /**
      * @param ndk The NDK instance to use
      * @param signer The signer for the private key that wants to be published as
      * @param permitCallback Callback executed when permission is requested
      */
-    public constructor(ndk: NDK, signer: NDKSigner, permitCallback: Nip46PermitCallback);
+    public constructor(ndk: NDK, signer: NDKSigner, permitCallback: Nip46PermitCallback, relayUrls?: WebSocket["url"][]);
 
     /**
      * @param ndk The NDK instance to use
      * @param privateKey The private key of the npub that wants to be published as
      * @param permitCallback Callback executed when permission is requested
      */
-    public constructor(ndk: NDK, privateKey: string, permitCallback: Nip46PermitCallback);
+    public constructor(ndk: NDK, privateKey: string, permitCallback: Nip46PermitCallback, relayUrls?: WebSocket["url"][]);
 
     /**
      * @param ndk The NDK instance to use
@@ -83,7 +84,8 @@ export class NDKNip46Backend {
     public constructor(
         ndk: NDK,
         privateKeyOrSigner: string | NDKSigner,
-        permitCallback: Nip46PermitCallback
+        permitCallback: Nip46PermitCallback,
+        relayUrls?: WebSocket["url"][]
     ) {
         this.ndk = ndk;
         this.signer =
@@ -91,7 +93,8 @@ export class NDKNip46Backend {
                 ? new NDKPrivateKeySigner(privateKeyOrSigner)
                 : privateKeyOrSigner;
         this.debug = ndk.debug.extend("nip46:backend");
-        this.rpc = new NDKNostrRpc(ndk, this.signer, this.debug);
+        this.relayUrls = relayUrls ?? Array.from(ndk.pool.relays.keys());
+        this.rpc = new NDKNostrRpc(ndk, this.signer, this.debug, this.relayUrls);
         this.permitCallback = permitCallback;
     }
 

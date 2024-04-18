@@ -11,42 +11,71 @@ export function eventsBySameAuthor(op: NDKEvent, events: NDKEvent[]) {
     return eventsByAuthor;
 }
 
+const hasMarkers = (event: NDKEvent, tagType: string): boolean => {
+    return event.getMatchingTags(tagType).some((tag) => tag[3] && tag[3] !== "");
+}
+
 /**
  * Checks if an event is a reply to an original post or to a thread.
  * @param op The original event
  * @param event The event to check
  * @param threadIds An optional map of all events in the thread
+ * @param tagType The tag type to search for (default: "e" for non-replaceable events and "a" for replaceable events)
  * @returns True if the event is a reply, false otherwise
  */
-export function eventIsReply(op: NDKEvent, event: NDKEvent, threadIds?: Set<NDKEventId>): boolean {
-    if (!threadIds) threadIds = new Set<NDKEventId>();
+export function eventIsReply(
+    op: NDKEvent,
+    event: NDKEvent,
+    threadIds: Set<NDKEventId> = new Set<NDKEventId>(),
+    tagType?: string
+): boolean {
+    tagType ??= op.tagType();
+
+    // Get all tags that we should evaluate
+    const tags = event.getMatchingTags(tagType);
 
     // Make sure we always have the original event in the threadIds
-    threadIds.add(op.id);
+    threadIds.add(op.tagId());
 
     // We never want to consider an event in the thread as a reply
-    if (threadIds.has(event.id)) return false;
+    if (threadIds.has(event.tagId())) return false;
 
-    // The happy path: check if the event has a reply marker tagging an event in the thread
-    const replyMarker = event.tags.find((tag) => {
-        return threadIds!.has(tag[1]) && tag[3] === "reply";
-    });
+    const heedExplicitReplyMarker = (): boolean | undefined => {
+        // We never want to consider an event that is not tagging the original event
+        // or if it's tagging something else as an explicit reply
+        let eventIsTagged: "root" | boolean = false;
+        for (const tag of tags) {
+            // If we find an explicit reply marker, we can return if we find the ID of an event in the thread
+            if (tag[3] === "reply") return threadIds.has(tag[1]);
 
-    return !!replyMarker;
+            // If we find the original event tagged without a marker, we can flag it
+            // if it's marked as something other than "reply" we don't consider this
+            // a reply unless it's a root marker and no other event has a reply marker
+            const markerIsEmpty = tag[3] === "" || tag[3] === undefined;
+            const markerIsRoot = tag[3] === "root";
+            if (tag[1] === op.tagId() && (markerIsEmpty || markerIsRoot)) {
+                eventIsTagged = markerIsRoot ? "root" : true;
+            }
+        }
 
-    // Let's only be compatible with well-behaved clients and shun clients that don't tag their replies
+        // If the event is not tagged, it's not a reply
+        if (!eventIsTagged) return false;
 
-    if (replyMarker) return true;
+        // If the event was marked as root and nothing else has a reply marker, mark it as a reply
+        if (eventIsTagged === "root") return true;
+    }
+
+    const explicitReplyMarker = heedExplicitReplyMarker();
+    if (explicitReplyMarker !== undefined) return explicitReplyMarker;
 
     // check if the event has valid markers, if it does and we don't have an explicit reply, this was
     // probably a reply to a reply or a mention
-    const hasMarker = !!event.tags.find((tag) => ["reply", "mention"].includes(tag[3]));
-    if (hasMarker) return false;
+    if (hasMarkers(event, tagType)) return false;
 
     // if we don't have markers, check if there are tags for other events that the main event
     // does not have
-    const expectedTags = event.getMatchingTags("e").map((tag) => tag[1]);
-    expectedTags.push(event.id);
+    const expectedTags = op.getMatchingTags("e").map((tag) => tag[1]);
+    expectedTags.push(op.id);
 
     // return true if there are no unexpected e tags
     return event.getMatchingTags("e").every((tag) => expectedTags.includes(tag[1]));

@@ -61,13 +61,19 @@ export class NDKNip46Backend {
     readonly debug: debug.Debugger;
     public rpc: NDKNostrRpc;
     private permitCallback: Nip46PermitCallback;
+    public relayUrls: WebSocket["url"][];
 
     /**
      * @param ndk The NDK instance to use
      * @param signer The signer for the private key that wants to be published as
      * @param permitCallback Callback executed when permission is requested
      */
-    public constructor(ndk: NDK, signer: NDKSigner, permitCallback: Nip46PermitCallback);
+    public constructor(
+        ndk: NDK,
+        signer: NDKSigner,
+        permitCallback: Nip46PermitCallback,
+        relayUrls?: WebSocket["url"][]
+    );
 
     /**
      * @param ndk The NDK instance to use
@@ -75,9 +81,10 @@ export class NDKNip46Backend {
      * @param permitCallback Callback executed when permission is requested
      */
     public constructor(
-        ndk: NDK, 
-        privateKey: Uint8Array | string, 
-        permitCallback: Nip46PermitCallback
+        ndk: NDK,
+        privateKey: string,
+        permitCallback: Nip46PermitCallback,
+        relayUrls?: WebSocket["url"][]
     );
 
     /**
@@ -87,11 +94,12 @@ export class NDKNip46Backend {
      */
     public constructor(
         ndk: NDK,
-        privateKeyOrSigner: string | Uint8Array | NDKSigner,
-        permitCallback: Nip46PermitCallback
+        privateKeyOrSigner: string | NDKSigner,
+        permitCallback: Nip46PermitCallback,
+        relayUrls?: WebSocket["url"][]
     ) {
         this.ndk = ndk;
-        
+
         if (privateKeyOrSigner instanceof Uint8Array) {
             this.signer = new NDKPrivateKeySigner(privateKeyOrSigner as Uint8Array);
         } else if (privateKeyOrSigner instanceof String) {
@@ -101,9 +109,10 @@ export class NDKNip46Backend {
         } else {
             throw new Error("Invalid signer");
         }
-        
+
         this.debug = ndk.debug.extend("nip46:backend");
-        this.rpc = new NDKNostrRpc(ndk, this.signer, this.debug);
+        this.relayUrls = relayUrls ?? Array.from(ndk.pool.relays.keys());
+        this.rpc = new NDKNostrRpc(ndk, this.signer, this.debug, this.relayUrls);
         this.permitCallback = permitCallback;
     }
 

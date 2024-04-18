@@ -14,7 +14,7 @@ import { decrypt, encrypt } from "./nip04.js";
 import { encode } from "./nip19.js";
 import { repost } from "./repost.js";
 import { fetchRootEvent, fetchTaggedEvent } from "./fetch-tagged-event.js";
-import { serialize } from "./serializer.js";
+import { NDKEventSerialized, deserialize, serialize } from "./serializer.js";
 import { validate, verifySignature, getEventHash } from "./validation.js";
 import { NDKZap } from "../zap/index.js";
 
@@ -68,6 +68,16 @@ export class NDKEvent extends EventEmitter {
         this.sig = event?.sig;
         this.pubkey = event?.pubkey || "";
         this.kind = event?.kind;
+    }
+
+    /**
+     * Deserialize an NDKEvent from a serialized payload.
+     * @param ndk
+     * @param event
+     * @returns
+     */
+    static deserialize(ndk: NDK | undefined, event: NDKEventSerialized): NDKEvent {
+        return new NDKEvent(ndk, deserialize(event));
     }
 
     /**
@@ -194,6 +204,7 @@ export class NDKEvent extends EventEmitter {
 
         return nostrEvent;
     }
+
 
     public serialize = serialize.bind(this);
     public getEventHash = getEventHash.bind(this);
@@ -438,6 +449,17 @@ export class NDKEvent extends EventEmitter {
         }
         const dTagId = this.replaceableDTag();
         return `${this.kind}:${this.pubkey}:${dTagId}`;
+    }
+
+    /**
+     * Determines the type of tag that can be used to reference this event from another event.
+     * @returns {string} The tag type
+     * @example
+     * event = new NDKEvent(ndk, { kind: 30000, pubkey: 'pubkey', tags: [ ["d", "d-code"] ] });
+     * event.tagType(); // "a"
+     */
+    tagType(): "e" | "a" {
+        return this.isParamReplaceable() ? "a" : "e";
     }
 
     /**

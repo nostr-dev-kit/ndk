@@ -24,6 +24,7 @@ import { NDKRelayList } from "../events/kinds/NDKRelayList.js";
 import { NDKNwc } from "../nwc/index.js";
 import { NDKLnUrlData } from "../zap/index.js";
 import { Queue } from "./queue/index.js";
+import { signatureVerificationInit } from "../events/signature.js";
 
 export interface NDKConstructorParams {
     /**
@@ -99,6 +100,24 @@ export interface NDKConstructorParams {
      * Default relay-auth policy
      */
     relayAuthDefaultPolicy?: NDKAuthPolicy;
+
+    /**
+     * Whether to verify signatures on events synchronously or asynchronously.
+     *
+     * @default undefined
+     *
+     * When set to true, the signature verification will processed in a web worker.
+     * You should listen for the `event:invalid-sig` event to handle invalid signatures.
+     *
+     * @example
+     * ```typescript
+     * const worker = new Worker("path/to/signature-verification.js");
+     * ndk.delayedSigVerification = worker;
+     * ndk.on("event:invalid-sig", (event) => {
+     *    console.error("Invalid signature", event);
+     * });
+     */
+    signatureVerificationWorker?: Worker | undefined;
 }
 
 export interface GetUserParams extends NDKUserParams {
@@ -126,8 +145,18 @@ export const DEFAULT_BLACKLISTED_RELAYS = [
  * The NDK class is the main entry point to the library.
  *
  * @emits signer:ready when a signer is ready
+ * @emits invalid-signature when an event with an invalid signature is received
  */
-export class NDK extends EventEmitter {
+export class NDK extends EventEmitter<{
+    "signer:ready": (signer: NDKSigner) => void;
+    "signer:required": () => void;
+
+    /**
+     * Emitted when an event with an invalid signature is received and the signature
+     * was processed asynchronously.
+     */
+    "event:invalid-sig": (event: NDKEvent) => void;
+}> {
     public explicitRelayUrls?: WebSocket["url"][];
     public pool: NDKPool;
     public outboxPool?: NDKPool;
@@ -142,6 +171,7 @@ export class NDK extends EventEmitter {
     public clientNip89?: string;
     public queuesZapConfig: Queue<NDKLnUrlData | undefined>;
     public queuesNip05: Queue<ProfilePointer | null>;
+    public asyncSigVerification: boolean = false;
 
     /**
      * Default relay-auth policy that will be used when a relay requests authentication,
@@ -233,9 +263,18 @@ export class NDK extends EventEmitter {
         this.queuesZapConfig = new Queue("zaps", 3);
         this.queuesNip05 = new Queue("nip05", 10);
 
+        this.signatureVerificationWorker = opts.signatureVerificationWorker;
+
         try {
             this.httpFetch = fetch;
         } catch {}
+    }
+
+    set signatureVerificationWorker(worker: Worker | undefined) {
+        this.asyncSigVerification = !!worker;
+        if (worker) {
+            signatureVerificationInit(worker);
+        }
     }
 
     /**
@@ -373,7 +412,7 @@ export class NDK extends EventEmitter {
 
     public set signer(newSigner: NDKSigner | undefined) {
         this._signer = newSigner;
-        this.emit("signer:ready", newSigner);
+        if (newSigner) this.emit("signer:ready", newSigner);
 
         newSigner?.user().then((user) => {
             user.ndk = this;
@@ -619,7 +658,7 @@ export class NDK extends EventEmitter {
      */
     public assertSigner() {
         if (!this.signer) {
-            this.emit("signerRequired");
+            this.emit("signer:required");
             throw new Error("Signer required");
         }
     }

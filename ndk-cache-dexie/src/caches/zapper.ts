@@ -4,32 +4,23 @@ import type debug from "debug";
 import type { Lnurl } from "../db";
 import type { LRUCache } from "typescript-lru-cache";
 
-type ZapperCacheEntry = {
+export type ZapperCacheEntry = {
     document: string | null;
     fetchedAt: number;
 };
 
-export const zapperWarmUp = (
-    lnurls: Table<Lnurl>
-): ((cacheHandler: CacheHandler<ZapperCacheEntry>, debug: debug.IDebugger) => Promise<void>) => {
-    return async (
-        cacheHandler: CacheHandler<ZapperCacheEntry>,
-        debug: debug.IDebugger
-    ): Promise<void> => {
-        await lnurls.each((lnurl) => {
-            cacheHandler.set(
-                lnurl.pubkey,
-                { document: lnurl.document, fetchedAt: lnurl.fetchedAt },
-                false
-            );
-        });
-
-        // Optional: Log warm-up completion or cache size
-        setTimeout(() => {
-            debug(`Warmed up ${cacheHandler.size()} zapper cache entries`);
-        }, 2500);
-    };
-};
+export async function zapperWarmUp(
+    cacheHandler: CacheHandler<ZapperCacheEntry>,
+    lnurls: Table<Lnurl>,
+) {
+    await lnurls.each((lnurl) => {
+        cacheHandler.set(
+            lnurl.pubkey,
+            { document: lnurl.document, fetchedAt: lnurl.fetchedAt },
+            false
+        );
+    });
+}
 
 export const zapperDump = (lnurls: Table<Lnurl>, debug: debug.IDebugger) => {
     return async (dirtyKeys: Set<string>, cache: LRUCache<string, ZapperCacheEntry>) => {

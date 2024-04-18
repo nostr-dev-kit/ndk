@@ -205,14 +205,6 @@ export class NDKSubscription extends EventEmitter {
         this.skipVerification = opts?.skipVerification || false;
         this.skipValidation = opts?.skipValidation || false;
 
-        if (!this.opts.closeOnEose) {
-            this.debug(
-                `Creating a permanent subscription`,
-                this.opts,
-                JSON.stringify(this.filters)
-            );
-        }
-
         // validate that the caller is not expecting a persistent
         // subscription while using an option that will only hit the cache
         if (
@@ -348,24 +340,41 @@ export class NDKSubscription extends EventEmitter {
      * @param relay
      * @param fromCache Whether the event was received from the cache
      */
-    public eventReceived(event: NDKEvent, relay: NDKRelay | undefined, fromCache = false) {
+    public eventReceived(event: NDKEvent, relay: NDKRelay | undefined, fromCache: boolean = false) {
         if (relay) {
             event.relay ??= relay;
             event.onRelays.push(relay);
         }
         if (!relay) relay = event.relay;
 
-        if (!this.skipValidation) {
-            if (!event.isValid) {
-                this.debug(`Event failed validation`, event);
-                return;
-            }
+        event.ndk ??= this.ndk;
+
+        // mark the event as seen
+        // move here to avoid verifying signature of duplicate events
+        const eventAlreadySeen = this.eventFirstSeen.has(event.id);
+
+        if (eventAlreadySeen) {
+            const timeSinceFirstSeen = Date.now() - (this.eventFirstSeen.get(event.id) || 0);
+            if (relay) relay.scoreSlowerEvent(timeSinceFirstSeen);
+
+            this.emit("event:dup", event, relay, timeSinceFirstSeen, this);
+
+            return;
         }
 
-        if (!this.skipVerification) {
-            if (!event.verifySignature(true)) {
-                this.debug(`Event failed signature validation`, event);
-                return;
+        if (!fromCache) {
+            if (!this.skipValidation) {
+                if (!event.isValid) {
+                    this.debug(`Event failed validation`, event.rawEvent());
+                    return;
+                }
+            }
+
+            if (!this.skipVerification) {
+                if (!event.verifySignature(true) && !this.ndk.asyncSigVerification) {
+                    this.debug(`Event failed signature validation`, event);
+                    return;
+                }
             }
         }
 
@@ -380,18 +389,6 @@ export class NDKSubscription extends EventEmitter {
 
             events.add(event.id);
 
-            // mark the event as seen
-            const eventAlreadySeen = this.eventFirstSeen.has(event.id);
-
-            if (eventAlreadySeen) {
-                const timeSinceFirstSeen = Date.now() - (this.eventFirstSeen.get(event.id) || 0);
-                relay.scoreSlowerEvent(timeSinceFirstSeen);
-
-                this.emit("event:dup", event, relay, timeSinceFirstSeen, this);
-
-                return;
-            }
-
             if (this.ndk.cacheAdapter) {
                 this.ndk.cacheAdapter.setEvent(event, this.filters, relay);
             }
@@ -400,8 +397,6 @@ export class NDKSubscription extends EventEmitter {
         } else {
             this.eventFirstSeen.set(event.id, 0);
         }
-
-        if (!event.ndk) event.ndk = this.ndk;
 
         this.emit("event", event, relay, this);
         this.lastEventReceivedAt = Date.now();
@@ -424,7 +419,6 @@ export class NDKSubscription extends EventEmitter {
 
         if (queryFilled) {
             this.emit("eose");
-            this.eoseDebug(`Query fully filled`);
 
             if (this.opts?.closeOnEose) {
                 this.stop();

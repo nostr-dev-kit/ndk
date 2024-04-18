@@ -7,6 +7,7 @@ import { NDKPrivateKeySigner } from "../private-key/index.js";
 import type { NDKRpcResponse } from "./rpc.js";
 import { NDKNostrRpc } from "./rpc.js";
 import { NDKKind } from "../../events/kinds/index.js";
+import { NDKSubscription } from "../../subscription/index.js";
 
 /**
  * This NDKSigner implements NIP-46, which allows remote signing of events.
@@ -42,7 +43,8 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
     private nip05?: string;
     public rpc: NDKNostrRpc;
     private debug: debug.Debugger;
-    public relayUrls: string[] = [];
+    public relayUrls: string[] | undefined;
+    private subscription: NDKSubscription | undefined;
 
     /**
      * @param ndk - The NDK instance to use
@@ -110,17 +112,17 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
             this.localSigner = localSigner;
         }
 
-        this.rpc = new NDKNostrRpc(ndk, this.localSigner, this.debug);
-        this.rpc.on("authUrl", (...props) => {
-            this.emit("authUrl", ...props);
-        });
+        this.rpc = new NDKNostrRpc(this.ndk, this.localSigner, this.debug, this.relayUrls);
+    }
 
-        // Generates subscription, single subscription for the lifetime of our connection
-        this.localSigner.user().then((localUser) => {
-            this.rpc.subscribe({
-                kinds: [NDKKind.NostrConnect, NDKKind.NostrConnect + 1],
-                "#p": [localUser.pubkey],
-            });
+    private async startListening() {
+        if (this.subscription) return;
+
+        const localUser = await this.localSigner.user();
+
+        this.subscription = await this.rpc.subscribe({
+            kinds: [NDKKind.NostrConnect, NDKKind.NostrConnect + 1],
+            "#p": [localUser.pubkey],
         });
     }
 
@@ -132,48 +134,47 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
     }
 
     public async blockUntilReady(): Promise<NDKUser> {
-        const localUser = await this.localSigner.user();
-        const remoteUser = this.ndk.getUser({ pubkey: this.remotePubkey });
-
         if (this.nip05 && !this.remotePubkey) {
-            NDKUser.fromNip05(this.nip05).then((user) => {
-                if (user) {
-                    this.remoteUser = user;
-                    this.remotePubkey = user.pubkey;
-                    this.relayUrls = user.nip46Urls;
-                }
-            });
+            const user = await NDKUser.fromNip05(this.nip05, this.ndk);
+
+            if (user) {
+                this.remoteUser = user;
+                this.remotePubkey = user.pubkey;
+                this.relayUrls = user.nip46Urls;
+                this.rpc = new NDKNostrRpc(this.ndk, this.localSigner, this.debug, this.relayUrls);
+            }
         }
 
         if (!this.remotePubkey) {
             throw new Error("Remote pubkey not set");
         }
 
+        await this.startListening();
+
+        this.rpc.on("authUrl", (...props) => {
+            this.emit("authUrl", ...props);
+        });
+
         return new Promise((resolve, reject) => {
-            // There is a race condition between the subscription and sending the request;
-            // introducing a small delay here to give a clear priority to the subscription
-            // to happen first
-            setTimeout(() => {
-                const connectParams = [this.remotePubkey!];
+            const connectParams = [this.remotePubkey!];
 
-                if (this.token) {
-                    connectParams.push(this.token);
-                }
+            if (this.token) {
+                connectParams.push(this.token);
+            }
 
-                this.rpc.sendRequest(
-                    this.remotePubkey!,
-                    "connect",
-                    connectParams,
-                    24133,
-                    (response: NDKRpcResponse) => {
-                        if (response.result === "ack") {
-                            resolve(remoteUser);
-                        } else {
-                            reject(response.error);
-                        }
+            this.rpc.sendRequest(
+                this.remotePubkey!,
+                "connect",
+                connectParams,
+                24133,
+                (response: NDKRpcResponse) => {
+                    if (response.result === "ack") {
+                        resolve(this.remoteUser);
+                    } else {
+                        reject(response.error);
                     }
-                );
-            }, 100);
+                }
+            );
         });
     }
 
@@ -257,6 +258,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
         domain?: string,
         email?: string
     ): Promise<Hexpubkey> {
+        await this.startListening();
         this.debug("asking to create an account");
         const req: string[] = [];
 

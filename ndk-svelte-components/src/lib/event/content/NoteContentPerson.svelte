@@ -7,9 +7,10 @@
 </script>
 
 <span>
-    <Name
+    @<Name
         {ndk}
         pubkey={value.pubkey}
+        attribute="name"
         on:click
     />
 </span>

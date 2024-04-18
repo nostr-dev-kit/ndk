@@ -34,6 +34,12 @@
      */
     export let npubMaxLength: number | undefined = undefined;
 
+    /**
+     * Optionally specify the attribute to use for the name
+     * @default 'display_name'
+     */
+    export let attribute: 'display_name' | 'name' | string = 'display_name';
+
     if (!userProfile && !user && ndk) {
         let opts = npub ? { npub } : { pubkey };
         try {
@@ -48,6 +54,8 @@
     const truncatedNpub = npubMaxLength ? truncatedBech32(_npub as string, npubMaxLength) : _npub;
 
     function chooseNameFromDisplay(profile?: NDKUserProfile) {
+        if (profile && profile[attribute]) return profile[attribute];
+
         return (
             profile?.displayName ||
             profile?.name ||

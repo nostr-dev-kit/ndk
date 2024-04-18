@@ -314,10 +314,11 @@ export class NDKRelaySubscriptions {
     ) {
         // If the relay is not ready, add a one-time listener to wait for the 'ready' event
         const readyListener = () => {
-            this.debug("new relay coming online for active subscription", {
-                relay: this.ndkRelay.url,
-                // mergedFilters: JSON.stringify(mergedFilters),
-            });
+            this.debug("new relay coming online for active subscription",
+                mergedFilters,
+                this.ndkRelay.url,
+                groupableId,
+            );
             this.executeSubscriptionsConnected(groupableId, groupedSubscriptions, mergedFilters);
         };
 

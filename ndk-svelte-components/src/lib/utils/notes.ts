@@ -79,17 +79,25 @@ export function groupContent(parts: ParsedPart[]): ParsedPart[] {
 
             buffer.value.push(part);
         } else {
-            const isNewline = part.type === NEWLINE || (part.type === TEXT && part.value === '\n');
-            const nextIsALink = parts[index + 1]?.type === LINK;
+            let nextPartsAreNoops: boolean | undefined = undefined;
 
-            // Only pop the buffer if this is not a newline and the next part is not a link
-            if (buffer) {
-                if (isNewline && nextIsALink) {
-                    // don't pop the buffer since the next part is a link
-                } else {
-                    popBuffer();
-                    result.push(part);
-                }
+            for (const nextPart of parts.slice(index + 1)) {
+                const isNewline = nextPart.type === NEWLINE;
+                const isBlankText = nextPart.type === TEXT && nextPart.value.trim() === '';
+                const isLink = nextPart.type === LINK;
+
+                // This is a noop, keep checking the next part
+                if (isNewline || isBlankText) continue;
+
+                nextPartsAreNoops = isLink;
+
+                break;
+            }
+
+            if (nextPartsAreNoops === false) {
+                // we found a non-noop part after the current part
+                popBuffer();
+                result.push(part);
             } else {
                 result.push(part);
             }

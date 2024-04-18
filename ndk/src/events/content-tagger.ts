@@ -80,7 +80,7 @@ export async function generateContentTags(
     const promises: Promise<void>[] = [];
 
     const addTagIfNew = (t: NDKTag) => {
-        if (!tags.find((t2) => t2[0] === t[0] && t2[1] === t[1])) {
+        if (!tags.find((t2) => ["q", t[0]].includes(t2[0]) && t2[1] === t[1])) {
             tags.push(t);
         }
     };

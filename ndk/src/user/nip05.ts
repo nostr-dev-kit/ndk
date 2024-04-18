@@ -25,7 +25,7 @@ export async function getNip05For(
                         });
                         user.ndk = ndk;
                         return user;
-                    } else {
+                    } else if (fetchOpts.cache !== "no-cache") {
                         return null;
                     }
                 }

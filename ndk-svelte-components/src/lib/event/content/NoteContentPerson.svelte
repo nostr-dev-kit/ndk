@@ -16,6 +16,7 @@
 <button on:click={clicked}>
     @<Name
         {ndk}
+        npubMaxLength={12}
         pubkey={value.pubkey}
         attribute="name"
     />

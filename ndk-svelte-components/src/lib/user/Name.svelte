@@ -51,7 +51,7 @@
     }
 
     const _npub = npub || user?.npub;
-    const truncatedNpub = npubMaxLength ? truncatedBech32(_npub as string, npubMaxLength) : _npub;
+    const truncatedNpub = (npubMaxLength && _npub) ? truncatedBech32(_npub as string, npubMaxLength) : _npub;
 
     function chooseNameFromDisplay(profile?: NDKUserProfile) {
         if (profile && profile[attribute]) return profile[attribute];
@@ -74,7 +74,7 @@
         {:then}
             {chooseNameFromDisplay(user.profile)}
         {:catch error}
-            <span class="name--error {$$props.class}" data-error={error}>
+            <span class="name--error {$$props.class}" data-error={error} title={_npub}>
                 {truncatedNpub}
             </span>
         {/await}

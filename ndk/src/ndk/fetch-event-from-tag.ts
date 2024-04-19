@@ -48,17 +48,13 @@ export async function fetchEventFromTag(
 
     let result: NDKEvent | null | undefined = undefined;
 
-    let relay = (hint && hint !== "") ? this.pool.getRelay(hint) : undefined;
+    let relay = (hint && hint !== "") ? this.pool.getRelay(hint, true, true, [{ids:[id]}]) : undefined;
 
     /**
      * Fetch with (maybe) a relay hint.
      */
     const fetchMaybeWithRelayHint = new Promise<NDKEvent | null>((resolve) => {
-        d("fetching event with (maybe) relay hint", { hint, tag, relay });
-        this.fetchEvent(id, subOpts, relay).then((event) => {
-            d("fetched event", event?.rawEvent());
-            resolve(event);
-        });
+        this.fetchEvent(id, subOpts, relay).then(resolve);
     });
 
     // if we don't have a relay hint we don't need to setup a fallback
@@ -76,20 +72,14 @@ export async function fetchEventFromTag(
         let timeoutPromise = new Promise<void>((resolve) => setTimeout(resolve, timeout));
 
         // if this is a timeout fallback, we need to wait for the timeout to resolve
-        if (fallback.type === "timeout") {
+        if (fallback.type === "timeout")
             await timeoutPromise;
-            d("timeout fallback triggered");
-        } else {
-            d("timeout fallback not needed", { type: fallback.type });
-        }
 
         if (result) {
-            d("fallback fetch not needed, result already found");
             resolve(result);
         } else {
             d("fallback fetch triggered");
             let fallbackEvent = await this.fetchEvent(id, subOpts, fallbackRelaySet);
-            d("fallback fetch result", fallbackEvent?.rawEvent());
             resolve(fallbackEvent);
         }
     });

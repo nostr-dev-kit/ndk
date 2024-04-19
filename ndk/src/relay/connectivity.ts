@@ -90,7 +90,7 @@ export class NDKRelayConnectivity {
 
             await runWithTimeout(this.relay.connect, timeoutMs, "Timed out while connecting");
         } catch (e) {
-            this.debug("Failed to connect", e);
+            // this.debug("Failed to connect", e);
             this._status = NDKRelayStatus.DISCONNECTED;
             this.handleReconnection();
             throw e;
@@ -167,20 +167,20 @@ export class NDKRelayConnectivity {
         this.reconnectTimeout = setTimeout(() => {
             this.reconnectTimeout = undefined;
             this._status = NDKRelayStatus.RECONNECTING;
-            this.debug(`Reconnection attempt #${attempt}`);
+            // this.debug(`Reconnection attempt #${attempt}`);
             this.connect()
                 .then(() => {
                     this.debug("Reconnected");
                 })
                 .catch((err) => {
-                    this.debug("Reconnect failed", err);
+                    // this.debug("Reconnect failed", err);
 
-                    if (attempt < 10) {
+                    if (attempt < 5) {
                         setTimeout(() => {
                             this.handleReconnection(attempt + 1);
-                        }, (1000 * (attempt + 1)) ^ 2);
+                        }, (1000 * (attempt + 1)) ^ 2.5);
                     } else {
-                        this.debug("Reconnect failed after 10 attempts");
+                        this.debug("Reconnect failed after 5 attempts");
                     }
                 });
         }, reconnectDelay);

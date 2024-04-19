@@ -185,6 +185,11 @@ export class NDKSubscription extends EventEmitter {
 
     public internalId: string;
 
+    /**
+     * Whether the subscription should close when all relays have reached the end of the event stream.
+     */
+    public closeOnEose: boolean;
+
     public constructor(
         ndk: NDK,
         filters: NDKFilter | NDKFilter[],
@@ -204,6 +209,7 @@ export class NDKSubscription extends EventEmitter {
         this.eoseDebug = this.debug.extend("eose");
         this.skipVerification = opts?.skipVerification || false;
         this.skipValidation = opts?.skipValidation || false;
+        this.closeOnEose = opts?.closeOnEose || false;
 
         // validate that the caller is not expecting a persistent
         // subscription while using an option that will only hit the cache
@@ -327,7 +333,7 @@ export class NDKSubscription extends EventEmitter {
         // console.log(this.relayFilters);
         // console.log('start with relays', {relayFilters: this.relayFilters.values(), filters: JSON.stringify(this.filters), size: this.relayFilters.size});
         for (const [relayUrl, filters] of this.relayFilters) {
-            const relay = this.pool.getRelay(relayUrl);
+            const relay = this.pool.getRelay(relayUrl, true, true, filters);
             relay.subscribe(this, filters);
         }
     }

@@ -43,9 +43,9 @@ class NDKGroupedSubscriptions extends EventEmitter implements Iterable<NDKSubscr
         this.handleSubscriptionClosure(subscription);
     }
 
-    public eventReceived(event: NDKEvent) {
+    public eventReceived(rawEvent: NostrEvent) {
         for (const subscription of this.subscriptions) {
-            subscription.eventReceived(event);
+            subscription.eventReceived(rawEvent);
         }
     }
 
@@ -119,13 +119,14 @@ class NDKSubscriptionFilters {
         this.ndkRelay = ndkRelay;
     }
 
-    public eventReceived(event: NDKEvent) {
-        if (!this.eventMatchesLocalFilter(event)) return;
+    public eventReceived(rawEvent: NostrEvent) {
+        if (!this.eventMatchesLocalFilter(rawEvent)) return;
+        const event = new NDKEvent(undefined, rawEvent);
+        event.relay = this.ndkRelay;
         this.subscription.eventReceived(event, this.ndkRelay, false);
     }
 
-    private eventMatchesLocalFilter(event: NDKEvent): boolean {
-        const rawEvent = event.rawEvent();
+    private eventMatchesLocalFilter(rawEvent: NostrEvent): boolean {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return this.filters.some((filter) => matchFilter(filter, rawEvent as any));
     }
@@ -179,7 +180,7 @@ export class NDKRelaySubscriptions {
      * Creates or queues a subscription to the relay.
      */
     public subscribe(subscription: NDKSubscription, filters: NDKFilter[]): void {
-        const groupableId = calculateGroupableId(filters);
+        const groupableId = calculateGroupableId(filters, subscription.closeOnEose);
         const subscriptionFilters = new NDKSubscriptionFilters(
             subscription,
             filters,
@@ -301,11 +302,11 @@ export class NDKRelaySubscriptions {
     ) {
         // If the relay is not ready, add a one-time listener to wait for the 'ready' event
         const readyListener = () => {
-            this.debug("new relay coming online for active subscription",
-                mergedFilters,
-                this.ndkRelay.url,
-                groupableId,
-            );
+            // this.debug("new relay coming online for active subscription",
+            //     mergedFilters,
+            //     this.ndkRelay.url,
+            //     groupableId,
+            // );
             this.executeSubscriptionsConnected(groupableId, groupedSubscriptions, mergedFilters);
         };
 
@@ -368,9 +369,10 @@ export class NDKRelaySubscriptions {
         groupedSubscriptions.req = mergedFilters;
 
         const subOptions: SubscriptionOptions = { id: subId };
-        if (this.ndkRelay.trusted || subscriptions.every((sub) => sub.opts.skipVerification)) {
-            subOptions.skipVerification = true;
-        }
+        // if (!this.ndkRelay.shouldValidateEvent() || subscriptions.every((sub) => sub.opts.skipVerification)) {
+        //     subOptions.skipVerification = true;
+        // }
+        subOptions.skipVerification = true;
 
         const sub = this.conn.relay.sub(mergedFilters, subOptions);
 
@@ -379,12 +381,9 @@ export class NDKRelaySubscriptions {
             this.activeSubscriptionsByGroupId.set(groupableId, { filters: mergedFilters, sub });
         }
 
-        sub.on("event", (event: NostrEvent) => {
-            const e = new NDKEvent(undefined, event);
-            e.relay = this.ndkRelay;
-
+        sub.on("event", (rawEvent: NostrEvent) => {
             const subFilters = this.activeSubscriptions.get(sub);
-            subFilters?.eventReceived(e);
+            subFilters?.eventReceived(rawEvent);
         });
 
         sub.on("eose", () => {

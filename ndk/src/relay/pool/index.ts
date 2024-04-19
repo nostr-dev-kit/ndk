@@ -3,6 +3,7 @@ import { EventEmitter } from "tseep";
 
 import type { NDK } from "../../ndk/index.js";
 import { NDKRelay, NDKRelayStatus } from "../index.js";
+import { NDKFilter } from "../../subscription/index.js";
 
 export type NDKPoolStats = {
     total: number;
@@ -70,7 +71,7 @@ export class NDKPool extends EventEmitter<{
      * @param relay - The relay to add to the pool.
      * @param removeIfUnusedAfter - The time in milliseconds to wait before removing the relay from the pool after it is no longer used.
      */
-    public useTemporaryRelay(relay: NDKRelay, removeIfUnusedAfter = 600000) {
+    public useTemporaryRelay(relay: NDKRelay, removeIfUnusedAfter = 30000) {
         const relayAlreadyInPool = this.relays.has(relay.url);
 
         // check if the relay is already in the pool
@@ -109,6 +110,12 @@ export class NDKPool extends EventEmitter<{
         // check if the relay is blacklisted
         if (this.blacklistRelayUrls?.has(relayUrl)) {
             this.debug(`Relay ${relayUrl} is blacklisted`);
+            return;
+        }
+
+        // check if the relay has an npub filter
+        if (relayUrl.includes("/npub1")) {
+            this.debug(`Relay ${relayUrl} is a filter relay`);
             return;
         }
 
@@ -158,19 +165,27 @@ export class NDKPool extends EventEmitter<{
      *
      * New relays will be attempted to be connected.
      */
-    public getRelay(url: WebSocket["url"], connect = true): NDKRelay {
+    public getRelay(
+        url: WebSocket["url"],
+        connect = true,
+        temporary = false,
+        filters?: NDKFilter[]
+    ): NDKRelay {
         let relay = this.relays.get(url);
 
         if (!relay) {
             relay = new NDKRelay(url);
-            this.addRelay(relay, connect);
+            if (temporary) {
+                this.useTemporaryRelay(relay);
+            } else {
+                this.addRelay(relay, connect);
+            }
         }
 
         return relay;
     }
 
     private handleRelayConnect(relayUrl: string) {
-        this.debug(`Relay ${relayUrl} connected`);
         this.emit("relay:connect", this.relays.get(relayUrl)!);
 
         if (this.stats().connected === this.relays.size) {
@@ -306,6 +321,13 @@ export class NDKPool extends EventEmitter<{
     public connectedRelays(): NDKRelay[] {
         return Array.from(this.relays.values()).filter(
             (relay) => relay.status === NDKRelayStatus.CONNECTED
+        );
+    }
+
+    public permanentAndConnectedRelays(): NDKRelay[] {
+        return Array.from(this.relays.values()).filter(
+            (relay) =>
+                relay.status === NDKRelayStatus.CONNECTED || !this.temporaryRelayTimers.has(relay.url)
         );
     }
 

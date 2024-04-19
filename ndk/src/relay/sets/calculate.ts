@@ -20,7 +20,7 @@ export function calculateRelaySetFromEvent(ndk: NDK, event: NDKEvent): NDKRelayS
 
     // try to fetch all tagged events from the cache
 
-    ndk.pool?.relays.forEach((relay: NDKRelay) => relays.add(relay));
+    ndk.pool?.permanentAndConnectedRelays().forEach((relay: NDKRelay) => relays.add(relay));
 
     return new NDKRelaySet(relays, ndk);
 }
@@ -86,8 +86,8 @@ export function calculateRelaySetsFromFilter(
         }
     } else {
         // If we don't, add the explicit relays
-        Array.from(pool.relays.keys()).forEach((relay: WebSocket["url"]) => {
-            result.set(relay, filters);
+        pool.permanentAndConnectedRelays().forEach((relay: NDKRelay) => {
+            result.set(relay.url, filters);
         });
     }
 

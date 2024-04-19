@@ -1,5 +1,27 @@
 # @nostr-dev-kit/ndk
 
+## 2.8.0
+
+### Minor Changes
+
+-   all-around massive performance improvements
+
+### Patch Changes
+
+-   91d873c: allow offloading signature verification to an async web worker
+-   6fd9ddc: threading utility functions
+-   0b8f331: fix unfollow function
+-   optimize serialization and avoid grouping subscriptions that will not close with those that do
+-   f2898ad: handle more reply cases
+-   9b92cd9: Increase performance of signature verification
+-   allow forcing a tag (for q tagging)
+-   6814f0c: fix event fetching from tag when there is no relay hint
+-   89b5b3f: nip46 fixes on create_account
+-   9b92cd9: fix incorrect tagging when quoting an event
+-   27b10cc: correct timestamp of bad events
+-   fix race condition when using synchronous cache
+-   ed7cdc4: avoid verifying signatures of cached events
+
 ## 2.7.1
 
 ### Patch Changes

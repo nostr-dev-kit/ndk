@@ -114,7 +114,6 @@ class NDKSvelte extends NDK {
         const relaySet = opts?.relaySet;
 
         const handleEventLabel = (event: NDKEvent) => {
-            console.log(`handle event label`, event.rawEvent());
             handleEventReposts(event);
         };
 
@@ -224,7 +223,7 @@ class NDKSvelte extends NDK {
          * Decrements the ref count and unsubscribes if it's the last
          */
         store.unref = () => {
-            if (--store.refCount !== 0) return store.refCount;
+            if (--store.refCount > 0) return store.refCount;
 
             if (opts?.unrefUnsubscribeTimeout) {
                 setTimeout(() => {
@@ -274,11 +273,13 @@ class NDKSvelte extends NDK {
                 filters.push(...opts.repostsFilters);
             }
 
-            store.subscription = this.subscribe(filters, opts, relaySet);
+            store.subscription = this.subscribe(filters, opts, relaySet, false);
 
             store.subscription.on("event", (event: NDKEvent, relay?: NDKRelay) => {
                 handleEvent(event);
             });
+
+            store.subscription.start();
 
             store.unsubscribe = () => {
                 store.subscription?.stop();

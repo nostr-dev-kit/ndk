@@ -14,7 +14,7 @@ export async function fetchTaggedEvent(
 
     const [_, id, hint] = t[0];
 
-    let relay = hint !== "" ? this.ndk.pool.getRelay(hint) : undefined;
+    let relay; //= hint !== "" ? this.ndk.pool.getRelay(hint) : undefined;
 
     // if we have a relay, attempt to use that first
     let event = await this.ndk.fetchEvent(id, {}, relay);

@@ -13,6 +13,11 @@ export interface NDKCacheAdapter {
      */
     locking: boolean;
 
+    /**
+     * Weather the cache is ready.
+     */
+    ready?: boolean;
+
     query(subscription: NDKSubscription): Promise<void>;
     setEvent(event: NDKEvent, filters: NDKFilter[], relay?: NDKRelay): Promise<void>;
 
@@ -48,4 +53,9 @@ export interface NDKCacheAdapter {
         maxAgeForMissing?: number
     ): Promise<NDKLnUrlData | null | "missing">;
     saveUsersLNURLDoc?(pubkey: Hexpubkey, doc: NDKLnUrlData | null): void;
+
+    /**
+     * Called when the cache is ready.
+     */
+    onReady?(callback: () => void): void;
 }

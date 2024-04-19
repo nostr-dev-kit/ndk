@@ -49,6 +49,12 @@ export interface NDKRelayConnectionStats {
      * Timestamp of the next reconnection attempt.
      */
     nextReconnectAt?: number;
+
+    /**
+     * Signature validation ratio for this relay.
+     * @see NDKRelayOptions.validationRatio
+     */
+    validationRatio?: number;
 }
 
 /**
@@ -72,6 +78,9 @@ export class NDKRelay extends EventEmitter {
     private subs: NDKRelaySubscriptions;
     private publisher: NDKRelayPublisher;
     public authPolicy?: NDKAuthPolicy;
+    public validationRatio?: number;
+    private validatedEventCount: number = 0;
+    private skippedEventCount: number = 0;
 
     /**
      * Whether this relay is trusted.
@@ -92,6 +101,7 @@ export class NDKRelay extends EventEmitter {
         this.subs = new NDKRelaySubscriptions(this);
         this.publisher = new NDKRelayPublisher(this);
         this.authPolicy = authPolicy;
+        this.validationRatio = undefined;
     }
 
     get status(): NDKRelayStatus {
@@ -176,5 +186,34 @@ export class NDKRelay extends EventEmitter {
 
     public activeSubscriptions(): Map<NDKFilter[], NDKSubscription[]> {
         return this.subs.executedFilters();
+    }
+
+    public addValidatedEvent(): void {
+        this.validatedEventCount++;
+    }
+
+    public addSkippedEvent(): void {
+        this.skippedEventCount++;
+    }
+
+    public getValidationRatio(): number {
+        if (this.skippedEventCount === 0) {
+            return 1;
+        }
+
+        return this.validatedEventCount / (this.validatedEventCount + this.skippedEventCount);
+    }
+
+    public shouldValidateEvent(): boolean {
+        if (this.trusted) {
+            return false;
+        }
+
+        if (this.validationRatio === undefined) {
+            return true;
+        }
+
+        // if the current validation ratio is below the threshold, validate the event
+        return this.getValidationRatio() < this.validationRatio;
     }
 }

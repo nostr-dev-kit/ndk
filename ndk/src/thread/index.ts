@@ -99,6 +99,7 @@ export function eventThreads(op: NDKEvent, events: NDKEvent[]) {
     const threadEvents = events.filter((event) => eventIsPartOfThread(op, event, eventsByAuthor));
 
     // Sort the events by their created_at
+    // TODO This is a hack, we should first filter according to tagging, not by created_at
     return threadEvents.sort((a, b) => a.created_at! - b.created_at!);
 }
 

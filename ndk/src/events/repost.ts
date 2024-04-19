@@ -29,6 +29,8 @@ export async function repost(
 
     if (e.kind === NDKKind.GenericRepost) {
         e.tags.push(["k", `${this.kind}`]);
+    } else {
+        e.content = JSON.stringify(this.rawEvent());
     }
 
     if (signer) await e.sign(signer);

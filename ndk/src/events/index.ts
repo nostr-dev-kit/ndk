@@ -133,29 +133,32 @@ export class NDKEvent extends EventEmitter {
      * @param event The event to tag.
      * @param marker The marker to use in the tag.
      * @param skipAuthorTag Whether to explicitly skip adding the author tag of the event.
+     * @param forceTag Force a specific tag to be used instead of the default "e" or "a" tag.
      * @example
      * ```typescript
      * reply.tag(opEvent, "reply");
      * // reply.tags => [["e", <id>, <relay>, "reply"]]
      * ```
      */
-    public tag(event: NDKEvent, marker?: string, skipAuthorTag?: boolean): void;
+    public tag(event: NDKEvent, marker?: string, skipAuthorTag?: boolean, forceTag?: string): void;
     public tag(
         userOrTagOrEvent: NDKTag | NDKUser | NDKEvent,
         marker?: string,
-        skipAuthorTag?: boolean
+        skipAuthorTag?: boolean,
+        forceTag?: string
     ): void {
         let tags: NDKTag[] = [];
         const isNDKUser = (userOrTagOrEvent as NDKUser).fetchProfile !== undefined;
 
         if (isNDKUser) {
-            const tag = ["p", (userOrTagOrEvent as NDKUser).pubkey];
+            forceTag ??= "p";
+            const tag = [forceTag, (userOrTagOrEvent as NDKUser).pubkey];
             if (marker) tag.push(...["", marker]);
             tags.push(tag);
         } else if (userOrTagOrEvent instanceof NDKEvent) {
             const event = userOrTagOrEvent as NDKEvent;
             skipAuthorTag ??= event?.pubkey === this.pubkey;
-            tags = event.referenceTags(marker, skipAuthorTag);
+            tags = event.referenceTags(marker, skipAuthorTag, forceTag);
 
             // tag p-tags in the event if they are not the same as the user signing this event
             for (const pTag of event.getMatchingTags("p")) {
@@ -501,6 +504,8 @@ export class NDKEvent extends EventEmitter {
     /**
      * Get the tags that can be used to reference this event from another event
      * @param marker The marker to use in the tag
+     * @param skipAuthorTag Whether to explicitly skip adding the author tag of the event
+     * @param forceTag Force a specific tag to be used instead of the default "e" or "a" tag
      * @example
      *     event = new NDKEvent(ndk, { kind: 30000, pubkey: 'pubkey', tags: [ ["d", "d-code"] ] });
      *     event.referenceTags(); // [["a", "30000:pubkey:d-code"], ["e", "parent-id"]]
@@ -509,17 +514,21 @@ export class NDKEvent extends EventEmitter {
      *     event.referenceTags(); // [["e", "parent-id"]]
      * @returns {NDKTag} The NDKTag object referencing this event
      */
-    referenceTags(marker?: string, skipAuthorTag?: boolean): NDKTag[] {
+    referenceTags(
+        marker?: string,
+        skipAuthorTag?: boolean,
+        forceTag?: string
+    ): NDKTag[] {
         let tags: NDKTag[] = [];
 
         // NIP-33
         if (this.isParamReplaceable()) {
             tags = [
-                ["a", this.tagAddress()],
-                ["e", this.id],
+                [forceTag??"a", this.tagAddress()],
+                [forceTag??"e", this.id],
             ];
         } else {
-            tags = [["e", this.id]];
+            tags = [[forceTag??"e", this.id]];
         }
 
         // Add the relay url to all tags
@@ -653,7 +662,7 @@ export class NDKEvent extends EventEmitter {
     /**
      * NIP-18 reposting event.
      *
-     * @param publish Whether to publish the reposted event automatically
+     * @param publish Whether to publish the reposted event automatically @default true
      * @param signer The signer to use for signing the reposted event
      * @returns The reposted event
      *

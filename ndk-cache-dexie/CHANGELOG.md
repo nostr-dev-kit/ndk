@@ -1,5 +1,14 @@
 # @nostr-dev-kit/ndk-cache-dexie
 
+## 2.4.1
+
+### Patch Changes
+
+-   e40312b: get all profiles that match a filter function from a cahce
+-   Updated dependencies [e40312b]
+-   Updated dependencies
+    -   @nostr-dev-kit/ndk@2.8.1
+
 ## 2.4.0
 
 ### Minor Changes

@@ -1,5 +1,12 @@
 # @nostr-dev-kit/ndk
 
+## 2.8.1
+
+### Patch Changes
+
+-   e40312b: get all profiles that match a filter function from a cahce
+-   support deprecated replies
+
 ## 2.8.0
 
 ### Minor Changes

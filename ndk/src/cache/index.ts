@@ -34,6 +34,19 @@ export interface NDKCacheAdapter {
     fetchProfile?(pubkey: Hexpubkey): Promise<NDKUserProfile | null>;
     saveProfile?(pubkey: Hexpubkey, profile: NDKUserProfile): void;
 
+    /**
+     * Fetches profiles that match the given filter.
+     * @param filter
+     * @returns NDKUserProfiles that match the filter.
+     * @example
+     * const searchFunc = (pubkey, profile) => profile.name.toLowerCase().includes("alice");
+     * const allAliceProfiles = await cache.getProfiles(searchFunc);
+     */
+    getProfiles?:(filter: (
+        pubkey: Hexpubkey,
+        profile: NDKUserProfile
+    ) => boolean) => Promise<Map<Hexpubkey, NDKUserProfile> | undefined>;
+
     loadNip05?(
         nip05: string,
         maxAgeForMissing?: number

@@ -35,6 +35,19 @@ export class CacheHandler<T> {
         return this.cache?.get(key) as Set<T> | null;
     }
 
+    /**
+     * Get all entries that match the filter.
+     */
+    public getAllWithFilter(filter: (key: string, val: T) => boolean): Map<string, T> {
+        const ret = new Map<string, T>();
+        this.cache?.forEach((val, key) => {
+            if (filter(key, val)) {
+                ret.set(key, val);
+            }
+        });
+        return ret;
+    }
+
     public get(key: string): T | null | undefined {
         return this.cache?.get(key);
     }

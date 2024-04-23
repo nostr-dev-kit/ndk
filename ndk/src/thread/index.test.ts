@@ -1,4 +1,4 @@
-import { eventIsPartOfThread, eventIsReply, eventThreads, eventsBySameAuthor } from ".";
+import { eventIsPartOfThread, eventIsReply, eventThreads, eventsBySameAuthor, getReplyTag, getRootTag } from ".";
 import { NDKEvent, NDKEventId } from "../events";
 
 const op = new NDKEvent(undefined, {
@@ -100,5 +100,22 @@ describe("Threads to make Gigi ⚡🧡 happy", () => {
 
             expect(eventIsReply(opEvent, replyToReplyEvent)).toBe(false);
         })
+
     });
+
+    describe("event with no markers", () => {
+        const eventWithNoMarkers = new NDKEvent(undefined, {"created_at":1713860015,"content":"There have been plenty of people who have expressed explicit distaste for it nostr:npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6 nostr:npub12262qa4uhw7u8gdwlgmntqtv7aye8vdcmvszkqwgs0zchel6mz7s6cgrkj nostr:npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft nostr:npub1qqqqqqyz0la2jjl752yv8h7wgs3v098mh9nztd4nr6gynaef6uqqt0n47m and probably more i’m forgetting. I think someone even tried to remove it as a nip if I remember correctly.","tags":[["e","280098061928d822887022b5dfadd4e18cc1710b4f4a01d531d41bcf4ab2d4ff"],["e","1c15684fe4258b06c0e49e25f38b4897e1bc47210ad3ab78c65e022e3ad36e0f"],["p","d0debf9fb12def81f43d7c69429bb784812ac1e4d2d53a202db6aac7ea4b466c"],["p","d0debf9fb12def81f43d7c69429bb784812ac1e4d2d53a202db6aac7ea4b466c"],["p","3bf0c63fcb93463407af97a5e5ee64fa883d107ef9e558472c4eb9aaaefa459d"],["p","52b4a076bcbbbdc3a1aefa3735816cf74993b1b8db202b01c883c58be7fad8bd"],["p","fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"],["p","00000000827ffaa94bfea288c3dfce4422c794fbb96625b6b31e9049f729d700"]],"kind":1,"pubkey":"32e1827635450ebb3c5a7d12c1f8e7b2b514439ac10a67eef3d9fd9c5c68e245","id":"24a4a28e4660593eacba285db8321d4660a1e83583b0ee8aec82e4de0e4ed21a"});
+
+        describe("getRootTag", () => {
+            it("properly handles events without markers", () => {
+                expect(getRootTag(eventWithNoMarkers)![1]).toBe("280098061928d822887022b5dfadd4e18cc1710b4f4a01d531d41bcf4ab2d4ff");
+            });
+        });
+
+        describe("getReplyTag", () => {
+            it("properly handles events without markers", () => {
+                expect(getReplyTag(eventWithNoMarkers)![1]).toBe("1c15684fe4258b06c0e49e25f38b4897e1bc47210ad3ab78c65e022e3ad36e0f");
+            });
+        });
+    })
 });

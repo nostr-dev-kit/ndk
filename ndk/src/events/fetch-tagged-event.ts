@@ -1,5 +1,5 @@
 import { NDKEvent } from ".";
-import { getRootTag } from "../thread";
+import { getReplyTag, getRootTag } from "../thread";
 
 export async function fetchTaggedEvent(
     this: NDKEvent,
@@ -27,4 +27,11 @@ export async function fetchRootEvent(this: NDKEvent): Promise<NDKEvent | null | 
     const rootTag = getRootTag(this);
     if (!rootTag) return undefined;
     return this.ndk.fetchEventFromTag(rootTag);
+}
+
+export async function fetchReplyEvent(this: NDKEvent): Promise<NDKEvent | null | undefined> {
+    if (!this.ndk) throw new Error("NDK instance not found");
+    const replyTag = getReplyTag(this);
+    if (!replyTag) return undefined;
+    return this.ndk.fetchEventFromTag(replyTag);
 }

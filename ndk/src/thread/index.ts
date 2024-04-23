@@ -160,14 +160,15 @@ export function eventHasETagMarkers(event: NDKEvent): boolean {
 /**
  * Returns the root event ID of an event.
  * @param event The event to get the root event ID from
- * @param searchTags The tags to search for the root event ID (default: ["a", "e"])
+ * @param searchTag The tags to search for the root event ID @default "a" or "e"
  * @returns The root event ID or undefined if the event does not have a root event ID
  */
 export function getRootEventId(
     event: NDKEvent,
-    searchTags: string[] = ["a", "e"]
+    searchTag?: string,
 ): NDKEventId | null | undefined {
-    const rootEventTag = getRootTag(event, searchTags);
+    searchTag ??= event.tagType();
+    const rootEventTag = getRootTag(event, searchTag);
 
     return rootEventTag?.[1];
 }
@@ -180,21 +181,42 @@ export function getRootEventId(
  */
 export function getRootTag(
     event: NDKEvent,
-    searchTags: string[] = ["a", "e"]
+    searchTag?: string,
 ): NDKTag | undefined {
-    let rootEventTag = event.tags.find((tag) => searchTags.includes(tag[0]) && tag[3] === "root");
+    searchTag ??= event.tagType();
+    let rootEventTag = event.tags.find((tag) => tag[3] === "root");
 
     if (!rootEventTag) {
         // If we don't have an explicit root marer, this event has no other e-tag markers
         // and we have a single e-tag, return that value
         if (eventHasETagMarkers(event)) return;
 
-        for (const validTag of searchTags) {
-            if (event.getMatchingTags(validTag).length === 1) {
-                return event.getMatchingTags(validTag)[0];
-            }
-        }
+        const matchingTags = event.getMatchingTags(searchTag);
+        if (matchingTags.length < 3) return matchingTags[0];
     }
 
     return rootEventTag;
+}
+
+export function getReplyTag(
+    event: NDKEvent,
+    searchTag?: string
+): NDKTag | undefined {
+    searchTag ??= event.tagType();
+
+    let replyTag = event.tags.find((tag) => tag[3] === "reply");
+
+    // Check with root tag
+    if (!replyTag) replyTag = event.tags.find((tag) => tag[3] === "root");
+
+    // If we don't have anything
+    if (!replyTag) {
+        // if we do have etag markers and no reply tag, then return undefined
+        if (eventHasETagMarkers(event)) return;
+
+        // If we only have one tag of the requested type
+        const matchingTags = event.getMatchingTags(searchTag);
+        if (matchingTags.length === 1) return matchingTags[0];
+        if (matchingTags.length === 2) return matchingTags[1];
+    }
 }

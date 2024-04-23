@@ -13,7 +13,7 @@ import { NDKKind } from "./kinds/index.js";
 import { decrypt, encrypt } from "./nip04.js";
 import { encode } from "./nip19.js";
 import { repost } from "./repost.js";
-import { fetchRootEvent, fetchTaggedEvent } from "./fetch-tagged-event.js";
+import { fetchReplyEvent, fetchRootEvent, fetchTaggedEvent } from "./fetch-tagged-event.js";
 import { NDKEventSerialized, deserialize, serialize } from "./serializer.js";
 import { validate, verifySignature, getEventHash } from "./validation.js";
 import { NDKZap } from "../zap/index.js";
@@ -658,6 +658,12 @@ export class NDKEvent extends EventEmitter {
      * console.log(replyEvent.encode() + " is a reply in the thread " + rootEvent?.encode());
      */
     public fetchRootEvent = fetchRootEvent.bind(this);
+
+    /**
+     * Fetch the event the current event is replying to.
+     * @returns The fetched reply event or null if no event was found
+     */
+    public fetchReplyEvent = fetchReplyEvent.bind(this);
 
     /**
      * NIP-18 reposting event.

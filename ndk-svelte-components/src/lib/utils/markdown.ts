@@ -46,7 +46,10 @@ const convertEntities = (markdown: string) => {
     return markdown
 }
 
-export const markdownToHtml = (content: string): string => {
+export const markdownToHtml = (
+    content: string,
+    sanitizeHtmlOptions?: sanitizeHtml.IOptions
+): string => {
     marked.use(mangle());
     marked.use(gfmHeadingId());
     marked.use(markedFootnote());
@@ -74,6 +77,7 @@ export const markdownToHtml = (content: string): string => {
     html = html.replace(/(<p>)?(https?:\/\/[^<]+)(<\/p>)?/g, "$2");
 
     return sanitizeHtml(html, {
-        allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img' ])
+        allowedTags: sanitizeHtml.defaults.allowedTags.concat([ 'img', 'mark' ]),
+        ...sanitizeHtmlOptions
     });
 };

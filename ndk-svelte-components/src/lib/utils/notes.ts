@@ -233,7 +233,7 @@ export const parseContent = ({ content, tags = [], html = false }: ContentArgs):
         let part: any[] | undefined;
 
         if (html) {
-            part = parseMention() || parseTopic() || parseBech32();
+            // part = parseMention() || parseTopic();
         } else {
             part = parseHtml() ||
                 parseNewline() ||

@@ -362,6 +362,7 @@ export class NDKSubscription extends EventEmitter {
         if (eventAlreadySeen) {
             const timeSinceFirstSeen = Date.now() - (this.eventFirstSeen.get(event.id) || 0);
             if (relay) relay.scoreSlowerEvent(timeSinceFirstSeen);
+            this.trackPerRelay(event, relay);
 
             this.emit("event:dup", event, relay, timeSinceFirstSeen, this);
 
@@ -385,15 +386,7 @@ export class NDKSubscription extends EventEmitter {
         }
 
         if (!fromCache && relay) {
-            // track the event per relay
-            let events = this.eventsPerRelay.get(relay);
-
-            if (!events) {
-                events = new Set();
-                this.eventsPerRelay.set(relay, events);
-            }
-
-            events.add(event.id);
+            this.trackPerRelay(event, relay);
 
             if (this.ndk.cacheAdapter) {
                 this.ndk.cacheAdapter.setEvent(event, this.filters, relay);
@@ -406,6 +399,17 @@ export class NDKSubscription extends EventEmitter {
 
         this.emit("event", event, relay, this);
         this.lastEventReceivedAt = Date.now();
+    }
+
+    private trackPerRelay(event, relay): void {
+        let events = this.eventsPerRelay.get(relay);
+
+        if (!events) {
+            events = new Set();
+            this.eventsPerRelay.set(relay, events);
+        }
+
+        events.add(event.id);
     }
 
     // EOSE handling

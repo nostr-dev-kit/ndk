@@ -104,10 +104,23 @@ export function eventThreads(op: NDKEvent, events: NDKEvent[]) {
 }
 
 export function getEventReplyIds(event: NDKEvent): NDKEventId[] {
-    return event
-        .getMatchingTags("e")
-        .filter((tag) => tag[3] === "reply")
-        .map((tag) => tag[1]);
+    if (hasMarkers(event, event.tagType())) {
+        let rootTag: NDKTag | undefined;
+        let replyTags: NDKTag[] = [];
+
+        event.getMatchingTags(event.tagType()).forEach((tag) => {
+            if (tag[3] === "root") rootTag = tag;
+            if (tag[3] === "reply") replyTags.push(tag);
+        });
+
+        if (replyTags.length === 0) {
+            if (rootTag) { replyTags.push(rootTag); }
+        }
+
+        return replyTags.map((tag) => tag[1]);
+    } else {
+        return event.getMatchingTags("e").map((tag) => tag[1]);
+    }
 }
 
 export function isEventOriginalPost(event: NDKEvent): boolean {
@@ -205,6 +218,8 @@ export function getReplyTag(
     searchTag ??= event.tagType();
 
     let replyTag = event.tags.find((tag) => tag[3] === "reply");
+
+    if (replyTag) return replyTag;
 
     // Check with root tag
     if (!replyTag) replyTag = event.tags.find((tag) => tag[3] === "root");

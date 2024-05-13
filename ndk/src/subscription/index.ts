@@ -355,6 +355,10 @@ export class NDKSubscription extends EventEmitter {
 
         event.ndk ??= this.ndk;
 
+        if (!fromCache && relay) {
+            this.ndk.emit("event", event, relay);
+        }
+
         // mark the event as seen
         // move here to avoid verifying signature of duplicate events
         const eventAlreadySeen = this.eventFirstSeen.has(event.id);
@@ -377,10 +381,12 @@ export class NDKSubscription extends EventEmitter {
                 }
             }
 
-            if (!this.skipVerification) {
-                if (!event.verifySignature(true) && !this.ndk.asyncSigVerification) {
-                    this.debug(`Event failed signature validation`, event);
-                    return;
+            if (event.relay?.shouldValidateEvent() !== false) {
+                if (!this.skipVerification) {
+                    if (!event.verifySignature(true) && !this.ndk.asyncSigVerification) {
+                        this.debug(`Event failed signature validation`, event);
+                        return;
+                    }
                 }
             }
         }

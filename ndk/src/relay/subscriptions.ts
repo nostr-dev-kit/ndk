@@ -369,9 +369,6 @@ export class NDKRelaySubscriptions {
         groupedSubscriptions.req = mergedFilters;
 
         const subOptions: SubscriptionOptions = { id: subId };
-        // if (!this.ndkRelay.shouldValidateEvent() || subscriptions.every((sub) => sub.opts.skipVerification)) {
-        //     subOptions.skipVerification = true;
-        // }
         subOptions.skipVerification = true;
 
         const sub = this.conn.relay.sub(mergedFilters, subOptions);

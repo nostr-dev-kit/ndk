@@ -365,8 +365,10 @@ export class NDKSubscription extends EventEmitter {
 
         if (eventAlreadySeen) {
             const timeSinceFirstSeen = Date.now() - (this.eventFirstSeen.get(event.id) || 0);
-            if (relay) relay.scoreSlowerEvent(timeSinceFirstSeen);
-            this.trackPerRelay(event, relay);
+            if (relay) {
+                relay.scoreSlowerEvent(timeSinceFirstSeen);
+                this.trackPerRelay(event, relay);
+            }
 
             this.emit("event:dup", event, relay, timeSinceFirstSeen, this);
 
@@ -407,7 +409,7 @@ export class NDKSubscription extends EventEmitter {
         this.lastEventReceivedAt = Date.now();
     }
 
-    private trackPerRelay(event, relay): void {
+    private trackPerRelay(event: NDKEvent, relay: NDKRelay): void {
         let events = this.eventsPerRelay.get(relay);
 
         if (!events) {

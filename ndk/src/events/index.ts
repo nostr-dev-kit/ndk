@@ -188,24 +188,23 @@ export class NDKEvent extends EventEmitter {
             this.pubkey = user?.pubkey || "";
         }
 
-        if (!this.created_at || this.isReplaceable()) {
+        if (!this.created_at) {
             this.created_at = Math.floor(Date.now() / 1000);
         }
 
-        const nostrEvent = this.rawEvent();
         const { content, tags } = await this.generateTags();
-        nostrEvent.content = content || "";
-        nostrEvent.tags = tags;
+        this.content = content || "";
+        this.tags = tags;
 
         try {
             this.id = this.getEventHash();
             // eslint-disable-next-line no-empty
         } catch (e) {}
 
-        if (this.id) nostrEvent.id = this.id;
-        if (this.sig) nostrEvent.sig = this.sig;
+        // if (this.id) nostrEvent.id = this.id;
+        // if (this.sig) nostrEvent.sig = this.sig;
 
-        return nostrEvent;
+        return this.rawEvent();
     }
 
 
@@ -309,6 +308,8 @@ export class NDKEvent extends EventEmitter {
         }
 
         const nostrEvent = await this.toNostrEvent();
+
+        console.log('signing', nostrEvent)
 
         this.sig = await signer.sign(nostrEvent);
 

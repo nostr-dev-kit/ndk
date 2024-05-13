@@ -73,9 +73,14 @@ export function verifySignature(this: NDKEvent, persist: boolean): boolean | und
 /**
  * This method returns the hash of an event.
  * @param event {NDKEvent} The event to hash
+ * @param serialized {string} The serialized event
  * @returns {string} Hex encoded sha256 event hash
  */
 export function getEventHash(this: NDKEvent): string {
-    const eventHash = sha256(new TextEncoder().encode(this.serialize()));
+    return getEventHashFromSerializedEvent(this.serialize());
+}
+
+export function getEventHashFromSerializedEvent(serializedEvent: string): string {
+    const eventHash = sha256(new TextEncoder().encode(serializedEvent));
     return bytesToHex(eventHash);
 }

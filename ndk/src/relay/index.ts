@@ -126,8 +126,8 @@ export class NDKRelay extends EventEmitter<{
     /**
      * Connects to the relay.
      */
-    public async connect(timeoutMs?: number): Promise<void> {
-        return this.connectivity.connect(timeoutMs);
+    public async connect(timeoutMs?: number, reconnect = true): Promise<void> {
+        return this.connectivity.connect(timeoutMs, reconnect);
     }
 
     /**

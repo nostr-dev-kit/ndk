@@ -1,5 +1,13 @@
 # @nostr-dev-kit/ndk-svelte
 
+## 2.2.15
+
+### Patch Changes
+
+-   Updated dependencies [0af033f]
+-   Updated dependencies
+    -   @nostr-dev-kit/ndk@2.8.2
+
 ## 2.2.14
 
 ### Patch Changes

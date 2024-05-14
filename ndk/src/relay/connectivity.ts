@@ -144,7 +144,7 @@ export class NDKRelayConnectivity {
             // }, 60000);
         }
 
-        this.ndkRelay.emit("notice", this.relay, notice);
+        this.ndkRelay.emit("notice", notice);
     }
 
     /**
@@ -155,7 +155,7 @@ export class NDKRelayConnectivity {
         this.debug("Attempting to reconnect", { attempt });
 
         if (this.isFlapping()) {
-            this.ndkRelay.emit("flapping", this, this._connectionStats);
+            this.ndkRelay.emit("flapping", this._connectionStats);
             this._status = NDKRelayStatus.FLAPPING;
             return;
         }
@@ -178,12 +178,14 @@ export class NDKRelayConnectivity {
                     if (attempt < 5) {
                         setTimeout(() => {
                             this.handleReconnection(attempt + 1);
-                        }, (1000 * (attempt + 1)) ^ 2.5);
+                        }, (1000 * (attempt + 1)) ^ 4);
                     } else {
                         this.debug("Reconnect failed after 5 attempts");
                     }
                 });
         }, reconnectDelay);
+
+        this.ndkRelay.emit("delayed-connect", reconnectDelay);
 
         this.debug("Reconnecting in", reconnectDelay);
         this._connectionStats.nextReconnectAt = Date.now() + reconnectDelay;

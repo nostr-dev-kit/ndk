@@ -8,16 +8,18 @@ import type {
     NDKLnUrlData,
     ProfilePointer,
     NostrEvent,
+    NDKCacheRelayInfo,
 } from "@nostr-dev-kit/ndk";
 import createDebug from "debug";
 import { matchFilter } from "nostr-tools";
-import { createDatabase, db, type Event } from "./db.js";
+import { RelayStatus, createDatabase, db, type Event } from "./db.js";
 import { CacheHandler } from "./lru-cache.js";
 import { profilesDump, profilesWarmUp } from "./caches/profiles.js";
 import { ZapperCacheEntry, zapperDump, zapperWarmUp } from "./caches/zapper.js";
 import { Nip05CacheEntry, nip05Dump, nip05WarmUp } from "./caches/nip05.js";
 import { EventCacheEntry, eventsDump, eventsWarmUp } from "./caches/events.js";
 import { EventTagCacheEntry, eventTagsDump, eventTagsWarmUp } from "./caches/event-tags.js";
+import { relayInfoDump, relayInfoWarmUp } from "./caches/relay-info.js";
 
 export { db } from "./db";
 
@@ -58,6 +60,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
     public nip05s: CacheHandler<Nip05CacheEntry>;
     public events: CacheHandler<EventCacheEntry>;
     public eventTags: CacheHandler<EventTagCacheEntry>;
+    public relayInfo: CacheHandler<RelayStatus>;
     private warmedUp: boolean = false;
     private warmUpPromise: Promise<any>;
     public devMode = false;
@@ -101,6 +104,12 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
             debug: this.debug,
         });
 
+        this.relayInfo = new CacheHandler<RelayStatus>({
+            maxSize: 500,
+            debug: this.debug,
+            dump: relayInfoDump(db.relayStatus, this.debug),
+        });
+
         const startTime = Date.now();
         this.warmUpPromise = Promise.allSettled([
             profilesWarmUp(this.profiles, db.users),
@@ -108,6 +117,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
             nip05WarmUp(this.nip05s, db.nip05),
             eventsWarmUp(this.events, db.events),
             eventTagsWarmUp(this.eventTags, db.eventTags),
+            relayInfoWarmUp(this.relayInfo, db.relayStatus),
         ]);
         this.warmUpPromise.then(() => {
             const endTime = Date.now();
@@ -334,6 +344,21 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
 
                     this.eventTags.add(tag[0] + tag[1], event.tagId());
                 });
+            }
+        }
+    }
+
+    public updateRelayStatus(url: string, info: NDKCacheRelayInfo): void {
+        const val = { url, updatedAt: Date.now(), ...info };
+        this.relayInfo.set(url, val);
+    }
+
+    public getRelayStatus(url: string): NDKCacheRelayInfo | undefined {
+        const a = this.relayInfo.get(url);
+        if (a) {
+            return {
+                lastConnectedAt: a.lastConnectedAt,
+                dontConnectBefore: a.dontConnectBefore,
             }
         }
     }

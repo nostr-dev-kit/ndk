@@ -2,13 +2,16 @@ import { NDKEvent, NDKEventId } from "./index.js";
 
 let worker: Worker | undefined;
 
-let processingQueue: Record<NDKEventId, { event: NDKEvent, resolves: ((result: boolean) => void)[] }> = {};
+let processingQueue: Record<
+    NDKEventId,
+    { event: NDKEvent; resolves: ((result: boolean) => void)[] }
+> = {};
 
 export function signatureVerificationInit(w: Worker) {
     worker = w;
 
     worker.onmessage = (msg: MessageEvent) => {
-        const [ eventId, result ] = msg.data as [ NDKEventId, boolean ];
+        const [eventId, result] = msg.data as [NDKEventId, boolean];
 
         const record = processingQueue[eventId];
 
@@ -41,10 +44,9 @@ export async function verifySignatureAsync(event: NDKEvent, persist: boolean): P
             serialized,
             id: event.id,
             sig: event.sig,
-            pubkey: event.pubkey
+            pubkey: event.pubkey,
         });
     });
-
 
     return promise;
 }

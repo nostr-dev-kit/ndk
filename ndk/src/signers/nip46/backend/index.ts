@@ -67,14 +67,24 @@ export class NDKNip46Backend {
      * @param signer The signer for the private key that wants to be published as
      * @param permitCallback Callback executed when permission is requested
      */
-    public constructor(ndk: NDK, signer: NDKSigner, permitCallback: Nip46PermitCallback, relayUrls?: WebSocket["url"][]);
+    public constructor(
+        ndk: NDK,
+        signer: NDKSigner,
+        permitCallback: Nip46PermitCallback,
+        relayUrls?: WebSocket["url"][]
+    );
 
     /**
      * @param ndk The NDK instance to use
      * @param privateKey The private key of the npub that wants to be published as
      * @param permitCallback Callback executed when permission is requested
      */
-    public constructor(ndk: NDK, privateKey: string, permitCallback: Nip46PermitCallback, relayUrls?: WebSocket["url"][]);
+    public constructor(
+        ndk: NDK,
+        privateKey: string,
+        permitCallback: Nip46PermitCallback,
+        relayUrls?: WebSocket["url"][]
+    );
 
     /**
      * @param ndk The NDK instance to use

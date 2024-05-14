@@ -158,10 +158,9 @@ export function filterFromId(id: string): NDKFilter {
                     const filter: NDKFilter = {
                         authors: [decoded.data.pubkey],
                         kinds: [decoded.data.kind],
-                    }
+                    };
 
-                    if (decoded.data.identifier)
-                        filter["#d"] = [decoded.data.identifier];
+                    if (decoded.data.identifier) filter["#d"] = [decoded.data.identifier];
 
                     return filter;
             }

@@ -33,21 +33,30 @@ export interface Lnurl {
     fetchedAt: number;
 }
 
+export interface RelayStatus {
+    url: string;
+    updatedAt: number;
+    lastConnectedAt?: number;
+    dontConnectBefore?: number;
+}
+
 export class Database extends Dexie {
     users!: Table<User>;
     events!: Table<Event>;
     eventTags!: Table<EventTag>;
     nip05!: Table<Nip05>;
     lnurl!: Table<Lnurl>;
+    relayStatus!: Table<RelayStatus>;
 
     constructor(name: string) {
         super(name);
-        this.version(10).stores({
+        this.version(11).stores({
             users: "&pubkey",
             events: "&id, kind",
             eventTags: "&tagValue",
             nip05: "&nip05",
             lnurl: "&pubkey",
+            relayStatus: "&url",
         });
     }
 }

@@ -158,8 +158,8 @@ export const DEFAULT_BLACKLISTED_RELAYS = [
  * @emits invalid-signature when an event with an invalid signature is received
  */
 export class NDK extends EventEmitter<{
-    "event": (event: NDKEvent, relay: NDKRelay) => void;
-    
+    event: (event: NDKEvent, relay: NDKRelay) => void;
+
     "signer:ready": (signer: NDKSigner) => void;
     "signer:required": () => void;
 

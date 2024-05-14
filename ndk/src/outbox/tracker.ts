@@ -67,7 +67,8 @@ export class OutboxTracker extends EventEmitter {
     public trackUsers(items: NDKUser[] | Hexpubkey[]) {
         for (let i = 0; i < items.length; i += 400) {
             const slice = items.slice(i, i + 400);
-            let pubkeys = slice.map((item) => getKeyFromItem(item))
+            let pubkeys = slice
+                .map((item) => getKeyFromItem(item))
                 .filter((pubkey) => !this.data.has(pubkey)); // filter out items that are already being tracked
 
             // if all items are already being tracked, skip

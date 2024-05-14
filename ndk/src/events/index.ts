@@ -207,7 +207,6 @@ export class NDKEvent extends EventEmitter {
         return this.rawEvent();
     }
 
-
     public serialize = serialize.bind(this);
     public getEventHash = getEventHash.bind(this);
     public validate = validate.bind(this);
@@ -309,7 +308,7 @@ export class NDKEvent extends EventEmitter {
 
         const nostrEvent = await this.toNostrEvent();
 
-        console.log('signing', nostrEvent)
+        console.log("signing", nostrEvent);
 
         this.sig = await signer.sign(nostrEvent);
 
@@ -515,21 +514,17 @@ export class NDKEvent extends EventEmitter {
      *     event.referenceTags(); // [["e", "parent-id"]]
      * @returns {NDKTag} The NDKTag object referencing this event
      */
-    referenceTags(
-        marker?: string,
-        skipAuthorTag?: boolean,
-        forceTag?: string
-    ): NDKTag[] {
+    referenceTags(marker?: string, skipAuthorTag?: boolean, forceTag?: string): NDKTag[] {
         let tags: NDKTag[] = [];
 
         // NIP-33
         if (this.isParamReplaceable()) {
             tags = [
-                [forceTag??"a", this.tagAddress()],
-                [forceTag??"e", this.id],
+                [forceTag ?? "a", this.tagAddress()],
+                [forceTag ?? "e", this.id],
             ];
         } else {
-            tags = [[forceTag??"e", this.id]];
+            tags = [[forceTag ?? "e", this.id]];
         }
 
         // Add the relay url to all tags

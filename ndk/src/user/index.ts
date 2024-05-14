@@ -135,7 +135,7 @@ export class NDKUser {
             let lnurlspec: NDKLnUrlData | undefined;
             try {
                 lnurlspec = await zap.getZapSpecWithoutCache();
-            } catch { }
+            } catch {}
 
             if (this.ndk?.cacheAdapter?.saveUsersLNURLDoc) {
                 this.ndk.cacheAdapter.saveUsersLNURLDoc(this.pubkey, lnurlspec || null);

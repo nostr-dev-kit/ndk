@@ -48,6 +48,7 @@ export class NDKPool extends EventEmitter<{
     private flappingRelays: Set<WebSocket["url"]> = new Set();
     // A map to store timeouts for each flapping relay.
     private backoffTimes: Map<string, number> = new Map();
+    private ndk: NDK;
 
     public constructor(
         relayUrls: WebSocket["url"][] = [],
@@ -57,6 +58,7 @@ export class NDKPool extends EventEmitter<{
     ) {
         super();
         this.debug = debug ?? ndk.debug.extend("pool");
+        this.ndk = ndk;
 
         for (const relayUrl of relayUrls) {
             const relay = new NDKRelay(relayUrl);
@@ -112,22 +114,54 @@ export class NDKPool extends EventEmitter<{
         const isAlreadyInPool = this.relays.has(relay.url);
         const isBlacklisted = this.blacklistRelayUrls?.has(relay.url);
         const isCustomRelayUrl = relay.url.includes("/npub1");
-        
+
         const relayUrl = relay.url;
 
-        if (isAlreadyInPool) { this.debug(`Refusing to add relay ${relayUrl}: already in the pool`); return; }
-        if (isBlacklisted) { this.debug(`Refusing to add relay ${relayUrl}: blacklisted`); return; }
-        if (isCustomRelayUrl) { this.debug(`Refusing to add relay ${relayUrl}: is a filter relay`); return; }
+        if (isAlreadyInPool) {
+            this.debug(`Refusing to add relay ${relayUrl}: already in the pool`);
+            return;
+        }
+        if (isBlacklisted) {
+            this.debug(`Refusing to add relay ${relayUrl}: blacklisted`);
+            return;
+        }
+        if (isCustomRelayUrl) {
+            this.debug(`Refusing to add relay ${relayUrl}: is a filter relay`);
+            return;
+        }
+
+        if (this.ndk.cacheAdapter?.getRelayStatus) {
+            const info = this.ndk.cacheAdapter.getRelayStatus(relayUrl);
+
+            // if we have info and the relay should not connect yet, set a delayed connect
+            if (info && info.dontConnectBefore && info.dontConnectBefore > Date.now()) {
+                const delay = info.dontConnectBefore - Date.now();
+                this.debug(`Refusing to add relay ${relayUrl}: delayed connect for ${delay}ms`);
+                setTimeout(() => {
+                    this.addRelay(relay, connect);
+                }, delay);
+                return;
+            }
+        }
 
         this.debug(`Adding relay ${relayUrl} to the pool`);
 
-        relay.on("notice", async (relay, notice) => this.emit("notice", relay, notice));
+        relay.on("notice", async (notice) => this.emit("notice", relay, notice));
         relay.on("connect", () => this.handleRelayConnect(relayUrl));
         relay.on("ready", () => this.handleRelayReady(relay));
         relay.on("disconnect", async () => this.emit("relay:disconnect", relay));
         relay.on("flapping", () => this.handleFlapping(relay));
         relay.on("auth", async (challenge: string) => this.emit("relay:auth", relay, challenge));
         relay.on("authed", async () => this.emit("relay:authed", relay));
+
+        // Update the cache adapter with the new relay status
+        relay.on("delayed-connect", (delay: number) => {
+            if (this.ndk.cacheAdapter?.updateRelayStatus) {
+                this.ndk.cacheAdapter.updateRelayStatus(relay.url, {
+                    dontConnectBefore: Date.now() + delay,
+                });
+            }
+        });
         this.relays.set(relayUrl, relay);
 
         if (connect) {
@@ -329,7 +363,8 @@ export class NDKPool extends EventEmitter<{
     public permanentAndConnectedRelays(): NDKRelay[] {
         return Array.from(this.relays.values()).filter(
             (relay) =>
-                relay.status === NDKRelayStatus.CONNECTED || !this.temporaryRelayTimers.has(relay.url)
+                relay.status === NDKRelayStatus.CONNECTED ||
+                !this.temporaryRelayTimers.has(relay.url)
         );
     }
 

@@ -71,8 +71,18 @@ export interface NDKRelayConnectionStats {
  * @emits NDKRelay#eose when the relay has reached the end of stored events
  * @emits NDKRelay#auth when the relay requires authentication
  * @emits NDKRelay#authed when the relay has authenticated
+ * @emits NDKRelay#delayed-connect when the relay will wait before reconnecting
  */
-export class NDKRelay extends EventEmitter {
+export class NDKRelay extends EventEmitter<{
+    connect: () => void;
+    ready: () => void;
+    disconnect: () => void;
+    flapping: (stats: NDKRelayConnectionStats) => void;
+    notice: (notice: string) => void;
+    auth: (challenge: string) => void;
+    authed: () => void;
+    "delayed-connect": (delayInMs: number) => void;
+}> {
     readonly url: WebSocket["url"];
     readonly scores: Map<NDKUser, NDKRelayScore>;
     public connectivity: NDKRelayConnectivity;

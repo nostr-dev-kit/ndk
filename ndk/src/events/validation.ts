@@ -31,7 +31,10 @@ export function validate(this: NDKEvent): boolean {
     return true;
 }
 
-const verifiedEvents = new LRUCache<string, boolean>({ maxSize: 1000, entryExpirationTimeInMS: 60000 });
+const verifiedEvents = new LRUCache<string, boolean>({
+    maxSize: 1000,
+    entryExpirationTimeInMS: 60000,
+});
 
 /**
  * This method verifies the signature of an event and optionally persists the result to the event.
@@ -43,7 +46,7 @@ export function verifySignature(this: NDKEvent, persist: boolean): boolean | und
 
     const prevVerification = verifiedEvents.get(this.id);
     if (prevVerification !== null) {
-        return this.signatureVerified = prevVerification;
+        return (this.signatureVerified = prevVerification);
     }
 
     try {

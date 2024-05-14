@@ -1,5 +1,14 @@
 # @nostr-dev-kit/ndk-cache-dexie
 
+## 2.4.2
+
+### Patch Changes
+
+-   cache relay reconnection status
+-   Updated dependencies [0af033f]
+-   Updated dependencies
+    -   @nostr-dev-kit/ndk@2.8.2
+
 ## 2.4.1
 
 ### Patch Changes

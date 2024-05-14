@@ -1,4 +1,4 @@
-import { Relay } from "nostr-tools";
+import { Relay } from "nostr-tools/relay";
 import type { NDKRelay, NDKRelayConnectionStats } from ".";
 import { NDKRelayStatus } from ".";
 import { runWithTimeout } from "../utils/timeout";

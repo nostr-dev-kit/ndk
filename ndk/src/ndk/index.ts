@@ -237,6 +237,7 @@ export class NDK extends EventEmitter<{
             opts.blacklistRelayUrls || DEFAULT_BLACKLISTED_RELAYS,
             this
         );
+        this.pool.name = "main";
 
         this.debug(`Starting with explicit relays: ${JSON.stringify(this.explicitRelayUrls)}`);
 
@@ -261,6 +262,7 @@ export class NDK extends EventEmitter<{
                 this,
                 this.debug.extend("outbox-pool")
             );
+            this.outboxPool.name = "outbox";
 
             this.outboxTracker = new OutboxTracker(this);
         }

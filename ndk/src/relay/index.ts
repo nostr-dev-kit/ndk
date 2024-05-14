@@ -9,6 +9,7 @@ import { NDKRelayPublisher } from "./publisher.js";
 import type { NDKRelayScore } from "./score.js";
 import { NDKRelaySubscriptions } from "./subscriptions.js";
 import { NDKAuthPolicy } from "./auth-policies.js";
+import { normalizeRelayUrl } from "../utils/normalize-url.js";
 
 /** @deprecated Use `WebSocket['url']` instead. */
 export type NDKRelayUrl = WebSocket["url"];
@@ -94,7 +95,7 @@ export class NDKRelay extends EventEmitter {
 
     public constructor(url: WebSocket["url"], authPolicy?: NDKAuthPolicy) {
         super();
-        this.url = url;
+        this.url = normalizeRelayUrl(url);
         this.scores = new Map<NDKUser, NDKRelayScore>();
         this.debug = debug(`ndk:relay:${url}`);
         this.connectivity = new NDKRelayConnectivity(this);

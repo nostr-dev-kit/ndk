@@ -66,6 +66,10 @@ export class NDKPool extends EventEmitter<{
         this.blacklistRelayUrls = new Set(blacklistedRelayUrls);
     }
 
+    set name(name: string) {
+        this.debug = this.debug.extend(name);
+    }
+
     /**
      * Adds a relay to the pool, and sets a timer to remove it if it is not used within the specified time.
      * @param relay - The relay to add to the pool.
@@ -105,19 +109,17 @@ export class NDKPool extends EventEmitter<{
      * @param connect - Whether or not to connect to the relay.
      */
     public addRelay(relay: NDKRelay, connect = true) {
+        const isAlreadyInPool = this.relays.has(relay.url);
+        const isBlacklisted = this.blacklistRelayUrls?.has(relay.url);
+        const isCustomRelayUrl = relay.url.includes("/npub1");
+        
         const relayUrl = relay.url;
 
-        // check if the relay is blacklisted
-        if (this.blacklistRelayUrls?.has(relayUrl)) {
-            this.debug(`Relay ${relayUrl} is blacklisted`);
-            return;
-        }
+        if (isAlreadyInPool) { this.debug(`Refusing to add relay ${relayUrl}: already in the pool`); return; }
+        if (isBlacklisted) { this.debug(`Refusing to add relay ${relayUrl}: blacklisted`); return; }
+        if (isCustomRelayUrl) { this.debug(`Refusing to add relay ${relayUrl}: is a filter relay`); return; }
 
-        // check if the relay has an npub filter
-        if (relayUrl.includes("/npub1")) {
-            this.debug(`Relay ${relayUrl} is a filter relay`);
-            return;
-        }
+        this.debug(`Adding relay ${relayUrl} to the pool`);
 
         relay.on("notice", async (relay, notice) => this.emit("notice", relay, notice));
         relay.on("connect", () => this.handleRelayConnect(relayUrl));

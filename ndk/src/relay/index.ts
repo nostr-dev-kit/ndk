@@ -166,7 +166,7 @@ export class NDKRelay extends EventEmitter<{
         return this.publisher.publish(event, timeoutMs);
     }
 
-    public async auth(event: NDKEvent): Promise<void> {
+    public async auth(event: NDKEvent): Promise<string> {
         return this.publisher.auth(event);
     }
 

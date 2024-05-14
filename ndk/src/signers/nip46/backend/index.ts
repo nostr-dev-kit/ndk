@@ -1,8 +1,8 @@
-import { NDKEvent } from "../../../events/index.js";
+import type { NDKEvent } from "../../../events/index.js";
 import type { NDK } from "../../../ndk/index.js";
 import type { NDKUser } from "../../../user/index.js";
 import { NDKPrivateKeySigner } from "../../private-key/index.js";
-import { NDKSigner } from "../../index.js";
+import type { NDKSigner } from "../../index.js";
 import { NDKNostrRpc } from "../rpc.js";
 import PingEventHandlingStrategy from "./ping.js";
 import ConnectEventHandlingStrategy from "./connect.js";
@@ -10,6 +10,7 @@ import GetPublicKeyHandlingStrategy from "./get-public-key.js";
 import Nip04DecryptHandlingStrategy from "./nip04-decrypt.js";
 import Nip04EncryptHandlingStrategy from "./nip04-encrypt.js";
 import SignEventHandlingStrategy from "./sign-event.js";
+import { hexToBytes } from "@noble/hashes/utils";
 
 export type NIP46Method =
     | "connect"
@@ -29,7 +30,7 @@ export type Nip46PermitCallbackParams = {
 
     method: NIP46Method;
 
-    // eslint-disable-next-line @t  ypescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     params?: any;
 };
 
@@ -98,10 +99,17 @@ export class NDKNip46Backend {
         relayUrls?: WebSocket["url"][]
     ) {
         this.ndk = ndk;
-        this.signer =
-            typeof privateKeyOrSigner === "string"
-                ? new NDKPrivateKeySigner(privateKeyOrSigner)
-                : privateKeyOrSigner;
+
+        if (privateKeyOrSigner instanceof Uint8Array) {
+            this.signer = new NDKPrivateKeySigner(privateKeyOrSigner as Uint8Array);
+        } else if (privateKeyOrSigner instanceof String) {
+            this.signer = new NDKPrivateKeySigner(hexToBytes(privateKeyOrSigner as string));
+        } else if (privateKeyOrSigner instanceof NDKPrivateKeySigner) {
+            this.signer = privateKeyOrSigner as NDKPrivateKeySigner;
+        } else {
+            throw new Error("Invalid signer");
+        }
+
         this.debug = ndk.debug.extend("nip46:backend");
         this.relayUrls = relayUrls ?? Array.from(ndk.pool.relays.keys());
         this.rpc = new NDKNostrRpc(ndk, this.signer, this.debug, this.relayUrls);

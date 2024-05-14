@@ -1,7 +1,7 @@
 import normalizeUrl from "normalize-url";
 
 export function normalizeRelayUrl(url: string): string {
-    let r = normalizeUrl(url, {
+    let r = normalizeUrl(url.toLowerCase(), {
         stripAuthentication: false,
         stripWWW: false,
         stripHash: true,

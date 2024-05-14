@@ -10,14 +10,17 @@
     import { LINK, HTML, NEWLINE, TOPIC, parseContent, LINKCOLLECTION } from "../../utils/notes.js";
     import { markdownToHtml } from "$lib/utils/markdown";
     import type { SvelteComponent } from "svelte";
+    import RenderHtml from "./RenderHtml.svelte";
+    import type sanitizeHtml from "sanitize-html";
 
     export let ndk: NDK;
     export let article: NDKArticle;
     export let showMedia: boolean = true;
     export let content = article.content;
     export let mediaCollectionComponent: typeof SvelteComponent | undefined = undefined;
+    export let sanitizeHtmlOptions: sanitizeHtml.IOptions | undefined = undefined;
 
-    const htmlContent = markdownToHtml(content);
+    const htmlContent = markdownToHtml(content, sanitizeHtmlOptions);
     const parsed = parseContent({ content: htmlContent, tags: article.tags, html: true });
 
     export const isNewline = (i: number) => !parsed[i] || parsed[i].type === NEWLINE;
@@ -55,7 +58,7 @@
             {/if}
         {:else}
             <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-            {@html value}
+            <RenderHtml {ndk} content={value} on:click />
         {/if}
     {/each}
 </div>

@@ -87,7 +87,11 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
 
         if (tokenOrRemoteUser.includes("#")) {
             const parts = tokenOrRemoteUser.split("#");
-            remotePubkey = new NDKUser({ npub: parts[0] }).pubkey;
+            if (parts[0].startsWith("npub")) {
+                remotePubkey = new NDKUser({ npub: parts[0] }).pubkey;
+            } else {
+                remotePubkey = parts[0];
+            }
             token = parts[1];
         } else if (tokenOrRemoteUser.startsWith("npub")) {
             remotePubkey = new NDKUser({

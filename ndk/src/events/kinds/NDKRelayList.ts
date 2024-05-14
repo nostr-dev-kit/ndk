@@ -6,6 +6,7 @@ import type { NDKRelay } from "../../relay";
 import type { Hexpubkey } from "../../user";
 import { NDKRelaySet } from "../../relay/sets";
 import { normalizeRelayUrl } from "../../utils/normalize-url";
+import { NDKSubscriptionCacheUsage } from "../../subscription";
 
 const READ_MARKER = "read";
 const WRITE_MARKER = "write";
@@ -40,6 +41,34 @@ export class NDKRelayList extends NDKEvent {
         const fromContactList = new Map<Hexpubkey, NDKRelayList>();
 
         const relaySet = new NDKRelaySet(set, ndk);
+
+        // get all kind 10002 events from cache if we have an adapter and is locking
+        if (ndk.cacheAdapter?.locking) {
+            const cachedList = await ndk.fetchEvents(
+                { kinds: [3, 10002], authors: pubkeys },
+                { cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE }
+            );
+
+            for (const relayList of cachedList) {
+                if (relayList.kind === 10002)
+                    relayLists.set(relayList.pubkey, NDKRelayList.from(relayList));
+            }
+
+            for (const relayList of cachedList) {
+                if (relayList.kind === 3) {
+                    const list = relayListFromKind3(ndk, relayList);
+                    if (list) fromContactList.set(relayList.pubkey, list);
+                }
+            }
+
+            // remove the pubkeys we found from the list
+            pubkeys = pubkeys.filter(
+                (pubkey) => !relayLists.has(pubkey) && !fromContactList.has(pubkey)
+            );
+        }
+
+        // if we have no pubkeys left, return the results
+        if (pubkeys.length === 0) return relayLists;
 
         await Promise.all([
             // Fetch all kind 10002 events

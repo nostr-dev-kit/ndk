@@ -104,7 +104,7 @@ export class NDKSubscriptionStart extends NDKEvent {
         if (eventTag) {
             try {
                 const parsedEvent = JSON.parse(eventTag);
-                return NDKSubscriptionTier.from(parsedEvent);
+                return new NDKSubscriptionTier(this.ndk, parsedEvent);
             } catch {
                 this.debug("Failed to parse event tag");
             }

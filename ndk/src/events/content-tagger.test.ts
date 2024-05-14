@@ -3,9 +3,10 @@ import type { NDKTag } from "./index.js";
 
 describe("await generateContentTags", () => {
     it("doesnt retag events that were quoted", async () => {
-        const content = "testing a quoted event nostr:note1d2mheza0d5z5yycucu94nw37e6gyl4vwl6gavyku86rshkhexq6q30s0g7";
+        const content =
+            "testing a quoted event nostr:note1d2mheza0d5z5yycucu94nw37e6gyl4vwl6gavyku86rshkhexq6q30s0g7";
         const tags: NDKTag[] = [];
-        tags.push(["q", "6ab77c8baf6d0542131cc70b59ba3ece904fd58efe91d612dc3e870bdaf93034"])
+        tags.push(["q", "6ab77c8baf6d0542131cc70b59ba3ece904fd58efe91d612dc3e870bdaf93034"]);
 
         const { content: processedContent, tags: processedTags } = await generateContentTags(
             content,
@@ -13,7 +14,7 @@ describe("await generateContentTags", () => {
         );
         expect(processedContent).toEqual(content);
         expect(processedTags).toEqual([
-            ["q", "6ab77c8baf6d0542131cc70b59ba3ece904fd58efe91d612dc3e870bdaf93034"]
+            ["q", "6ab77c8baf6d0542131cc70b59ba3ece904fd58efe91d612dc3e870bdaf93034"],
         ]);
     });
 

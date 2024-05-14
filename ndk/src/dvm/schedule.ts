@@ -36,25 +36,38 @@ function addRelays(event: NDKEvent, relays?: string[]) {
  * console.log(result.status); // "success"
  */
 export async function dvmSchedule(
-    event: NDKEvent,
+    events: NDKEvent | NDKEvent[],
     dvm: NDKUser,
     relays?: string[],
     encrypted = true,
     waitForConfirmationForMs?: number
 ) {
-    // check the event has a future date and that it's signed
-    if (!event.ndk) throw new Error("NDK not set");
-    if (!event.sig) throw new Error("Event not signed");
-    if (!event.created_at) throw new Error("Event has no date");
-    if (!dvm) throw new Error("No DVM specified");
-    if (event.created_at <= Date.now() / 1000) throw new Error("Event needs to be in the future");
+    if (!(events instanceof Array)) {
+        events = [events];
+    }
 
-    const scheduleEvent = new NDKDVMRequest(event.ndk, {
+    const ndk = events[0].ndk;
+
+    if (!ndk) throw new Error("NDK not set");
+
+    for (const event of events) {
+        // check the event has a future date and that it's signed
+        if (!event.sig) throw new Error("Event not signed");
+        if (!event.created_at) throw new Error("Event has no date");
+        if (!dvm) throw new Error("No DVM specified");
+        if (event.created_at <= Date.now() / 1000)
+            throw new Error("Event needs to be in the future");
+    }
+
+    const scheduleEvent = new NDKDVMRequest(ndk, {
         kind: NDKKind.DVMEventSchedule,
     } as NostrEvent);
 
-    scheduleEvent.addInput(JSON.stringify(event.rawEvent()), "text");
-    scheduleEvent.tags.push(...addRelays(event, relays));
+    for (const event of events) {
+        scheduleEvent.addInput(JSON.stringify(event.rawEvent()), "text");
+    }
+
+    scheduleEvent.tags.push(...addRelays(events[0], relays));
 
     if (encrypted) {
         await scheduleEvent.encryption(dvm);
@@ -67,7 +80,7 @@ export async function dvmSchedule(
     let res: NDKSubscription | undefined;
 
     if (waitForConfirmationForMs) {
-        res = event.ndk!.subscribe(
+        res = ndk.subscribe(
             {
                 kinds: [NDKKind.DVMEventSchedule + 1000, NDKKind.DVMJobFeedback],
                 ...scheduleEvent.filter(),

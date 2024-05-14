@@ -70,6 +70,8 @@ export enum NDKKind {
     InterestList = 10015,
     EmojiList = 10030,
 
+    BlossomList = 10063,
+
     NostrWaletConnectInfo = 13194,
 
     TierList = 17000,

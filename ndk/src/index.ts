@@ -44,3 +44,4 @@ export { type NDKEventSerialized, deserialize, serialize } from "./events/serial
 export { NDK as default, NDKConstructorParams } from "./ndk/index.js";
 export { NDKZapInvoice, zapInvoiceFromEvent } from "./zap/invoice.js";
 export * from "./zap/index.js";
+export * from "./utils/normalize-url.js";

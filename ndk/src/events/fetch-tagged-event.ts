@@ -1,5 +1,5 @@
 import { NDKEvent } from ".";
-import { getRootTag } from "../thread";
+import { getReplyTag, getRootTag } from "../thread";
 
 export async function fetchTaggedEvent(
     this: NDKEvent,
@@ -14,7 +14,7 @@ export async function fetchTaggedEvent(
 
     const [_, id, hint] = t[0];
 
-    let relay = hint !== "" ? this.ndk.pool.getRelay(hint) : undefined;
+    let relay; //= hint !== "" ? this.ndk.pool.getRelay(hint) : undefined;
 
     // if we have a relay, attempt to use that first
     let event = await this.ndk.fetchEvent(id, {}, relay);
@@ -27,4 +27,11 @@ export async function fetchRootEvent(this: NDKEvent): Promise<NDKEvent | null | 
     const rootTag = getRootTag(this);
     if (!rootTag) return undefined;
     return this.ndk.fetchEventFromTag(rootTag);
+}
+
+export async function fetchReplyEvent(this: NDKEvent): Promise<NDKEvent | null | undefined> {
+    if (!this.ndk) throw new Error("NDK instance not found");
+    const replyTag = getReplyTag(this);
+    if (!replyTag) return undefined;
+    return this.ndk.fetchEventFromTag(replyTag);
 }

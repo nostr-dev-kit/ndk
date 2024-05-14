@@ -17,6 +17,8 @@ export class CacheHandler<T> {
     private dirtyKeys: Set<string> = new Set();
     private options: CacheOptions<T>;
     private debug: debug.IDebugger;
+    public indexes: Map<string, LRUCache<string, Set<string>>>;
+    public isSet = false;
 
     constructor(options: CacheOptions<T>) {
         this.debug = options.debug;
@@ -25,6 +27,25 @@ export class CacheHandler<T> {
             this.cache = new LRUCache({ maxSize: options.maxSize });
             setInterval(() => this.dump(), 1000 * 10);
         }
+
+        this.indexes = new Map();
+    }
+
+    public getSet(key: string): Set<T> | null {
+        return this.cache?.get(key) as Set<T> | null;
+    }
+
+    /**
+     * Get all entries that match the filter.
+     */
+    public getAllWithFilter(filter: (key: string, val: T) => boolean): Map<string, T> {
+        const ret = new Map<string, T>();
+        this.cache?.forEach((val, key) => {
+            if (filter(key, val)) {
+                ret.set(key, val);
+            }
+        });
+        return ret;
     }
 
     public get(key: string): T | null | undefined {
@@ -54,7 +75,7 @@ export class CacheHandler<T> {
         }
 
         if (entries.length > 0) {
-            this.debug(`Cache hit for keys ${entries.length} and miss for ${missingKeys.length} keys`, missingKeys);
+            this.debug(`Cache hit for keys ${entries.length} and miss for ${missingKeys.length} keys`);
         }
 
         // get missing entries from the database
@@ -77,9 +98,27 @@ export class CacheHandler<T> {
         return entries;
     }
 
+    public add<K>(key: string, value: K, dirty = true) {
+        const existing = this.get(key) ?? new Set<K>();
+        (existing as Set<K>).add(value);
+        this.cache?.set(key, existing as T);
+
+        if (dirty) this.dirtyKeys.add(key);
+    }
+
     public set(key: string, value: T, dirty = true) {
         this.cache?.set(key, value);
         if (dirty) this.dirtyKeys.add(key);
+
+        // update indexes
+        for (const [attribute, index] of this.indexes.entries()) {
+            const indexKey = (value as any)[attribute] as string;
+            if (indexKey) {
+                const indexValue = index.get(indexKey) || new Set<string>();
+                indexValue.add(key);
+                index.set(indexKey, indexValue);
+            }
+        }
     }
 
     public size(): number {
@@ -96,5 +135,19 @@ export class CacheHandler<T> {
             await this.options.dump(this.dirtyKeys, this.cache!);
             this.dirtyKeys.clear();
         }
+    }
+
+    public addIndex<T>(attribute: string) {
+        this.indexes.set(attribute, new LRUCache({ maxSize: this.options.maxSize }));
+    }
+
+    public getFromIndex(attribute: string, key: string) {
+        const ret = new Set<T>();
+        this.indexes.get(attribute)?.get(key)?.forEach((key) => {
+            const entry = this.get(key);
+            if (entry) ret.add(entry as T);
+        });
+
+        return ret;
     }
 }

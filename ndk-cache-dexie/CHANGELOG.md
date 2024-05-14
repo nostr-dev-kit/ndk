@@ -1,5 +1,51 @@
 # @nostr-dev-kit/ndk-cache-dexie
 
+## 2.4.2
+
+### Patch Changes
+
+-   cache relay reconnection status
+-   Updated dependencies [0af033f]
+-   Updated dependencies
+    -   @nostr-dev-kit/ndk@2.8.2
+
+## 2.4.1
+
+### Patch Changes
+
+-   e40312b: get all profiles that match a filter function from a cahce
+-   Updated dependencies [e40312b]
+-   Updated dependencies
+    -   @nostr-dev-kit/ndk@2.8.1
+
+## 2.4.0
+
+### Minor Changes
+
+-   949d26a: Add LRU cache for zappers specs
+-   ba2a206: improve LRU caches -- refactor to make adding new caches easier
+-   bump
+
+### Patch Changes
+
+-   a602d0c: performance improvements on cache
+-   fcd41ba: fix bug where we are REQing events even if they were cached and the filter has completed
+-   Updated dependencies [91d873c]
+-   Updated dependencies [6fd9ddc]
+-   Updated dependencies [0b8f331]
+-   Updated dependencies
+-   Updated dependencies [f2898ad]
+-   Updated dependencies [9b92cd9]
+-   Updated dependencies
+-   Updated dependencies [6814f0c]
+-   Updated dependencies [89b5b3f]
+-   Updated dependencies [9b92cd9]
+-   Updated dependencies [27b10cc]
+-   Updated dependencies
+-   Updated dependencies
+-   Updated dependencies [ed7cdc4]
+    -   @nostr-dev-kit/ndk@2.8.0
+
 ## 2.3.1
 
 ### Patch Changes

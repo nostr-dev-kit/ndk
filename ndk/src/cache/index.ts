@@ -13,6 +13,11 @@ export interface NDKCacheAdapter {
      */
     locking: boolean;
 
+    /**
+     * Weather the cache is ready.
+     */
+    ready?: boolean;
+
     query(subscription: NDKSubscription): Promise<void>;
     setEvent(event: NDKEvent, filters: NDKFilter[], relay?: NDKRelay): Promise<void>;
 
@@ -28,6 +33,18 @@ export interface NDKCacheAdapter {
      */
     fetchProfile?(pubkey: Hexpubkey): Promise<NDKUserProfile | null>;
     saveProfile?(pubkey: Hexpubkey, profile: NDKUserProfile): void;
+
+    /**
+     * Fetches profiles that match the given filter.
+     * @param filter
+     * @returns NDKUserProfiles that match the filter.
+     * @example
+     * const searchFunc = (pubkey, profile) => profile.name.toLowerCase().includes("alice");
+     * const allAliceProfiles = await cache.getProfiles(searchFunc);
+     */
+    getProfiles?: (
+        filter: (pubkey: Hexpubkey, profile: NDKUserProfile) => boolean
+    ) => Promise<Map<Hexpubkey, NDKUserProfile> | undefined>;
 
     loadNip05?(
         nip05: string,
@@ -48,4 +65,24 @@ export interface NDKCacheAdapter {
         maxAgeForMissing?: number
     ): Promise<NDKLnUrlData | null | "missing">;
     saveUsersLNURLDoc?(pubkey: Hexpubkey, doc: NDKLnUrlData | null): void;
+
+    /**
+     * Updates information about the relay.
+     */
+    updateRelayStatus?(relayUrl: WebSocket["url"], info: NDKCacheRelayInfo): void;
+
+    /**
+     * Fetches information about the relay.
+     */
+    getRelayStatus?(relayUrl: WebSocket["url"]): NDKCacheRelayInfo | undefined;
+
+    /**
+     * Called when the cache is ready.
+     */
+    onReady?(callback: () => void): void;
 }
+
+export type NDKCacheRelayInfo = {
+    lastConnectedAt?: number;
+    dontConnectBefore?: number;
+};

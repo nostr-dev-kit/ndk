@@ -1,4 +1,5 @@
 import { NDK } from "../../ndk";
+import { NDKRelay } from "../../relay";
 import { NDKPool } from "../../relay/pool";
 import { Hexpubkey } from "../../user";
 import { getTopRelaysForAuthors } from "../relay-ranking";
@@ -71,6 +72,15 @@ export function getRelaysForFilterWithAuthors(
         let missingRelaysForThisAuthor = relayGoalPerAuthor;
 
         // Go through the relays for this author and add them to the relayToAuthorsMap until we have enough (relayGoalPerAuthor)
+        // If we are already connected to some of this user's relays, add those first
+        const connectedRelays = pool.connectedRelays();
+        for (const relay of connectedRelays) {
+            if (authorRelays.has(relay.url)) {
+                addAuthorToRelay(author, relay.url);
+                missingRelaysForThisAuthor--;
+            }
+        }
+
         for (const authorRelay of authorRelays) {
             if (relayToAuthorsMap.has(authorRelay)) {
                 addAuthorToRelay(author, authorRelay);
@@ -94,10 +104,10 @@ export function getRelaysForFilterWithAuthors(
 
     // For the authors that are missing relays, pool's relays
     for (const author of authorsMissingRelays) {
-        Array.from(pool.relays.keys()).forEach((relay: WebSocket["url"]) => {
-            const authorsInRelay = relayToAuthorsMap.get(relay) || [];
+        pool.permanentAndConnectedRelays().forEach((relay: NDKRelay) => {
+            const authorsInRelay = relayToAuthorsMap.get(relay.url) || [];
             authorsInRelay.push(author);
-            relayToAuthorsMap.set(relay, authorsInRelay);
+            relayToAuthorsMap.set(relay.url, authorsInRelay);
         });
     }
 

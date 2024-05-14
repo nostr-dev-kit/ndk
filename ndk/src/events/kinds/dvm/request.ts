@@ -3,6 +3,7 @@ import { NDKSigner } from "../../../signers/index.js";
 import { NDKUser } from "../../../user/index.js";
 import type { NDKTag, NostrEvent } from "../../index.js";
 import { NDKEvent } from "../../index.js";
+import { NDKDVMJobFeedback, NDKDvmJobFeedbackStatus } from "./feedback.js";
 // import type { NDKDvmJobFeedbackStatus } from "./NDKDVMJobFeedback.js";
 // import { NDKDVMJobFeedback } from "./NDKDVMJobFeedback.js";
 // import { NDKDVMJobResult } from "./NDKDVMJobResult.js";
@@ -80,6 +81,13 @@ export class NDKDVMRequest extends NDKEvent {
     public getParam(name: string): string | undefined {
         const paramTag = this.getMatchingTags("param").find((t: NDKTag) => t[1] === name);
         return paramTag ? paramTag[2] : undefined;
+    }
+
+    createFeedback(status: NDKDvmJobFeedbackStatus | string): NDKDVMJobFeedback {
+        const feedback = new NDKDVMJobFeedback(this.ndk);
+        feedback.tag(this, "job");
+        feedback.status = status;
+        return feedback;
     }
 
     /**

@@ -1,5 +1,42 @@
 # @nostr-dev-kit/ndk-svelte
 
+## 2.2.15
+
+### Patch Changes
+
+-   Updated dependencies [0af033f]
+-   Updated dependencies
+    -   @nostr-dev-kit/ndk@2.8.2
+
+## 2.2.14
+
+### Patch Changes
+
+-   Updated dependencies [e40312b]
+-   Updated dependencies
+    -   @nostr-dev-kit/ndk@2.8.1
+
+## 2.2.13
+
+### Patch Changes
+
+-   fix broken subscription unref
+-   Updated dependencies [91d873c]
+-   Updated dependencies [6fd9ddc]
+-   Updated dependencies [0b8f331]
+-   Updated dependencies
+-   Updated dependencies [f2898ad]
+-   Updated dependencies [9b92cd9]
+-   Updated dependencies
+-   Updated dependencies [6814f0c]
+-   Updated dependencies [89b5b3f]
+-   Updated dependencies [9b92cd9]
+-   Updated dependencies [27b10cc]
+-   Updated dependencies
+-   Updated dependencies
+-   Updated dependencies [ed7cdc4]
+    -   @nostr-dev-kit/ndk@2.8.0
+
 ## 2.2.12
 
 ### Patch Changes

@@ -10,7 +10,6 @@ export interface User {
 export interface Event {
     id: string;
     pubkey: string;
-    content: string;
     kind: number;
     createdAt: number;
     relay?: string;
@@ -18,10 +17,7 @@ export interface Event {
 }
 
 export interface EventTag {
-    id: string;
     eventId: string;
-    tag: string;
-    value: string;
     tagValue: string;
 }
 
@@ -37,21 +33,30 @@ export interface Lnurl {
     fetchedAt: number;
 }
 
+export interface RelayStatus {
+    url: string;
+    updatedAt: number;
+    lastConnectedAt?: number;
+    dontConnectBefore?: number;
+}
+
 export class Database extends Dexie {
     users!: Table<User>;
     events!: Table<Event>;
     eventTags!: Table<EventTag>;
     nip05!: Table<Nip05>;
     lnurl!: Table<Lnurl>;
+    relayStatus!: Table<RelayStatus>;
 
     constructor(name: string) {
         super(name);
-        this.version(6).stores({
-            users: "&pubkey, profile, createdAt",
-            events: "&id, pubkey, content, kind, createdAt, relay, [kind+pubkey]",
-            eventTags: "id, tagValue, tag, value, eventId",
-            nip05: "&nip05, profile, fetchedAt",
-            lnurl: "&pubkey, document, fetchedAt",
+        this.version(11).stores({
+            users: "&pubkey",
+            events: "&id, kind",
+            eventTags: "&tagValue",
+            nip05: "&nip05",
+            lnurl: "&pubkey",
+            relayStatus: "&url",
         });
     }
 }

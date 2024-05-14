@@ -45,7 +45,7 @@ export class OutboxItem {
  * an NDK instance.
  *
  * TODO: The state of this tracker needs to be added to cache adapters so that we
- * can rehydrae-it when a cache is present.
+ * can rehydrate-it when a cache is present.
  */
 export class OutboxTracker extends EventEmitter {
     public data: LRUCache<Hexpubkey, OutboxItem>;
@@ -67,27 +67,22 @@ export class OutboxTracker extends EventEmitter {
     public trackUsers(items: NDKUser[] | Hexpubkey[]) {
         for (let i = 0; i < items.length; i += 400) {
             const slice = items.slice(i, i + 400);
-            let pubkeys = slice.map((item) => getKeyFromItem(item));
-
-            // filter out items that are already being tracked
-            pubkeys = pubkeys.filter((pubkey) => !this.data.has(pubkey));
+            let pubkeys = slice
+                .map((item) => getKeyFromItem(item))
+                .filter((pubkey) => !this.data.has(pubkey)); // filter out items that are already being tracked
 
             // if all items are already being tracked, skip
             if (pubkeys.length === 0) continue;
 
-            const outboxItems = new Map<Hexpubkey, OutboxItem>();
-
+            // put a placeholder for all items
             for (const pubkey of pubkeys) {
-                outboxItems.set(pubkey, this.track(pubkey, "user"));
+                this.data.set(pubkey, new OutboxItem("user"));
             }
 
             NDKRelayList.forUsers(pubkeys, this.ndk).then(
                 (relayLists: Map<Hexpubkey, NDKRelayList>) => {
                     for (const [pubkey, relayList] of relayLists) {
-                        const outboxItem = outboxItems.get(pubkey)!;
-
-                        const user = new NDKUser({ pubkey: pubkey });
-                        user.ndk = this.ndk;
+                        const outboxItem = this.data.get(pubkey)!;
 
                         if (relayList) {
                             outboxItem.readRelays = new Set(normalize(relayList.readRelayUrls));
@@ -96,9 +91,9 @@ export class OutboxTracker extends EventEmitter {
                             // remove all blacklisted relays
                             for (const relayUrl of outboxItem.readRelays) {
                                 if (this.ndk.pool.blacklistRelayUrls.has(relayUrl)) {
-                                    this.debug(
-                                        `removing blacklisted relay ${relayUrl} from read relays`
-                                    );
+                                    // this.debug(
+                                    //     `removing blacklisted relay ${relayUrl} from read relays`
+                                    // );
                                     outboxItem.readRelays.delete(relayUrl);
                                 }
                             }
@@ -106,9 +101,9 @@ export class OutboxTracker extends EventEmitter {
                             // remove all blacklisted relays
                             for (const relayUrl of outboxItem.writeRelays) {
                                 if (this.ndk.pool.blacklistRelayUrls.has(relayUrl)) {
-                                    this.debug(
-                                        `removing blacklisted relay ${relayUrl} from write relays`
-                                    );
+                                    // this.debug(
+                                    //     `removing blacklisted relay ${relayUrl} from write relays`
+                                    // );
                                     outboxItem.writeRelays.delete(relayUrl);
                                 }
                             }
@@ -135,9 +130,12 @@ export class OutboxTracker extends EventEmitter {
         type ??= getTypeFromItem(item);
         let outboxItem = this.data.get(key);
 
-        if (!outboxItem) outboxItem = new OutboxItem(type);
-
-        this.data.set(key, outboxItem);
+        if (!outboxItem) {
+            outboxItem = new OutboxItem(type);
+            if (item instanceof NDKUser) {
+                this.trackUsers([item as NDKUser]);
+            }
+        }
 
         return outboxItem;
     }

@@ -118,6 +118,16 @@ export interface NDKConstructorParams {
      * });
      */
     signatureVerificationWorker?: Worker | undefined;
+
+    /**
+     * Specify a ratio of events that will be verified on a per relay basis.
+     * Relays will have a sample of events verified based on this ratio.
+     * When using this, you should definitely listen for event:invalid-sig events
+     * to handle invalid signatures and disconnect from evil relays.
+     *
+     * @default 1.0
+     */
+    validationRatio?: number;
 }
 
 export interface GetUserParams extends NDKUserParams {
@@ -138,7 +148,7 @@ export const DEFAULT_OUTBOX_RELAYS = ["wss://purplepag.es/", "wss://profiles.nos
 export const DEFAULT_BLACKLISTED_RELAYS = [
     "wss://brb.io/", // BRB
     "wss://nostr.mutinywallet.com/", // Don't try to read from this relay since it's a write-only relay
-    "wss://purplepag.es/", // This is a hack, since this is a mostly read-only relay, but not fully. Once we have relay routing this can be removed so it only receives the supported kinds
+    // "wss://purplepag.es/", // This is a hack, since this is a mostly read-only relay, but not fully. Once we have relay routing this can be removed so it only receives the supported kinds
 ];
 
 /**
@@ -148,6 +158,8 @@ export const DEFAULT_BLACKLISTED_RELAYS = [
  * @emits invalid-signature when an event with an invalid signature is received
  */
 export class NDK extends EventEmitter<{
+    event: (event: NDKEvent, relay: NDKRelay) => void;
+
     "signer:ready": (signer: NDKSigner) => void;
     "signer:required": () => void;
 
@@ -172,6 +184,7 @@ export class NDK extends EventEmitter<{
     public queuesZapConfig: Queue<NDKLnUrlData | undefined>;
     public queuesNip05: Queue<ProfilePointer | null>;
     public asyncSigVerification: boolean = false;
+    public validationRatio: number = 1.0;
 
     /**
      * Default relay-auth policy that will be used when a relay requests authentication,
@@ -224,6 +237,7 @@ export class NDK extends EventEmitter<{
             opts.blacklistRelayUrls || DEFAULT_BLACKLISTED_RELAYS,
             this
         );
+        this.pool.name = "main";
 
         this.debug(`Starting with explicit relays: ${JSON.stringify(this.explicitRelayUrls)}`);
 
@@ -248,6 +262,7 @@ export class NDK extends EventEmitter<{
                 this,
                 this.debug.extend("outbox-pool")
             );
+            this.outboxPool.name = "outbox";
 
             this.outboxTracker = new OutboxTracker(this);
         }
@@ -264,6 +279,8 @@ export class NDK extends EventEmitter<{
         this.queuesNip05 = new Queue("nip05", 10);
 
         this.signatureVerificationWorker = opts.signatureVerificationWorker;
+
+        this.validationRatio = opts.validationRatio || 1.0;
 
         try {
             this.httpFetch = fetch;
@@ -503,7 +520,9 @@ export class NDK extends EventEmitter<{
             this.outboxTracker?.trackUsers(authors);
         }
 
-        if (autoStart) subscription.start();
+        if (autoStart) {
+            setTimeout(() => subscription.start(), 0);
+        }
 
         return subscription;
     }

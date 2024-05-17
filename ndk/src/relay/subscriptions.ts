@@ -388,7 +388,7 @@ export class NDKRelaySubscriptions {
                 e.relay = this.ndkRelay;
 
                 const subFilters = this.activeSubscriptions.get(sub);
-                subFilters?.eventReceived(e);
+                subFilters?.eventReceived(e.rawEvent());
             },
             oneose: () => {
                 const subFilters = this.activeSubscriptions.get(sub);

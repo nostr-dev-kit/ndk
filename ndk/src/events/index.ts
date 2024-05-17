@@ -307,9 +307,6 @@ export class NDKEvent extends EventEmitter {
         }
 
         const nostrEvent = await this.toNostrEvent();
-
-        console.log("signing", nostrEvent);
-
         this.sig = await signer.sign(nostrEvent);
 
         return this.sig;

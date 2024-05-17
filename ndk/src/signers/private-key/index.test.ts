@@ -1,7 +1,7 @@
 import { generateSecretKey } from "nostr-tools";
 import type { NostrEvent } from "../../index.js";
 import { NDKPrivateKeySigner } from "./index";
-import { hexToBytes } from "@noble/hashes/utils";
+import { bytesToHex, hexToBytes } from "@noble/hashes/utils";
 import { nip19 } from "nostr-tools";
 
 describe("NDKPrivateKeySigner", () => {
@@ -15,17 +15,16 @@ describe("NDKPrivateKeySigner", () => {
         const privateKey = generateSecretKey();
         const signer = new NDKPrivateKeySigner(privateKey);
         expect(signer).toBeInstanceOf(NDKPrivateKeySigner);
-        expect(signer.privateKey).toBe(privateKey);
-        expect(signer.privateKey?.length).toBe(32);
+        expect(signer.privateKey).toBe(bytesToHex(privateKey));
+        expect(signer.privateKey?.length).toBe(64);
     });
 
     it("creates a new NDKPrivateKeySigner instance with a provided hex encoded private key", async () => {
         const privateKeyString = "0277cc53c89ca9c8a441987265276fafa55bf5bed8a55b16fd640e0d6a0c21e2";
         const signer = new NDKPrivateKeySigner(privateKeyString);
-        const privateKey = hexToBytes(privateKeyString);
         expect(signer).toBeInstanceOf(NDKPrivateKeySigner);
-        expect(signer.privateKey).toEqual(privateKey);
-        expect(signer.privateKey?.length).toBe(32);
+        expect(signer.privateKey).toEqual(privateKeyString);
+        expect(signer.privateKey?.length).toBe(64);
         const user = await signer.user();
         expect(user.pubkey).toBe(
             "c44f2be1b2fb5371330386046e60207bbd84938d4812ee0c7a3c11be605a7585"
@@ -37,8 +36,8 @@ describe("NDKPrivateKeySigner", () => {
         const signer = new NDKPrivateKeySigner(privateKeyString);
         const { data } = nip19.decode(privateKeyString);
         expect(signer).toBeInstanceOf(NDKPrivateKeySigner);
-        expect(signer.privateKey).toEqual(data);
-        expect(signer.privateKey?.length).toBe(32);
+        expect(signer.privateKey).toEqual(bytesToHex(data));
+        expect(signer.privateKey?.length).toBe(64);
         const user = await signer.user();
         expect(user.pubkey).toBe(
             "c44f2be1b2fb5371330386046e60207bbd84938d4812ee0c7a3c11be605a7585"

@@ -3,7 +3,7 @@ import { NDK } from "../ndk/index.js";
 import { NDKRelayStatus } from "./index.js";
 
 const ndk = new NDK();
-const relay = new NDKRelay("ws://localhost");
+const relay = new NDKRelay("ws://localhost/");
 ndk.addExplicitRelay(relay, undefined, false);
 
 // function mockConnect(relay: NDKRelay) {
@@ -37,7 +37,7 @@ describe("NDKRelay", () => {
     describe("constructor", () => {
         it("creates a new NDKRelay", () => {
             expect(relay).toBeInstanceOf(NDKRelay);
-            expect(relay.url).toBe("ws://localhost");
+            expect(relay.url).toBe("ws://localhost/");
             expect(relay.activeSubscriptions.length).toBe(0);
             expect(relay.status).toEqual(NDKRelayStatus.DISCONNECTED);
         });
@@ -57,7 +57,7 @@ describe("NDKRelay", () => {
 
     describe("referenceTags", () => {
         it("returns the right tag reference for the relay", () => {
-            expect(relay.referenceTags()).toEqual([["r", "ws://localhost"]]);
+            expect(relay.referenceTags()).toEqual([["r", "ws://localhost/"]]);
         });
     });
 

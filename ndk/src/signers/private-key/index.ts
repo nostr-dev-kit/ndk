@@ -4,12 +4,12 @@ import { generateSecretKey, getPublicKey, finalizeEvent, nip04 } from "nostr-too
 import type { NostrEvent } from "../../events/index.js";
 import { NDKUser } from "../../user";
 import type { NDKSigner } from "../index.js";
-import { hexToBytes } from "@noble/hashes/utils";
+import { bytesToHex, hexToBytes } from "@noble/hashes/utils";
 import { nip19 } from "nostr-tools";
 
 export class NDKPrivateKeySigner implements NDKSigner {
     private _user: NDKUser | undefined;
-    privateKey?: Uint8Array;
+    _privateKey?: Uint8Array;
 
     public constructor(privateKey?: Uint8Array | string) {
         if (privateKey) {
@@ -19,23 +19,28 @@ export class NDKPrivateKeySigner implements NDKSigner {
                 if (privateKey.startsWith("nsec1")) {
                     const { type, data } = nip19.decode(privateKey);
                     // console.log(type, data);
-                    if (type === "nsec") this.privateKey = data;
+                    if (type === "nsec") this._privateKey = data;
                 // If it's a hex encoded private key, convert to Uint8Array
                 } else if (privateKey.length === 64) {
-                    this.privateKey = hexToBytes(privateKey);
+                    this._privateKey = hexToBytes(privateKey);
                 } else {
                     throw new Error("Invalid private key provided.");
                 }
             } else {
-                this.privateKey = privateKey as Uint8Array;
+                this._privateKey = privateKey as Uint8Array;
             }
 
-            if (this.privateKey) {
+            if (this._privateKey) {
                 this._user = new NDKUser({
-                    pubkey: getPublicKey(this.privateKey),
+                    pubkey: getPublicKey(this._privateKey),
                 });
             }
         }
+    }
+
+    get privateKey(): string | undefined {
+        if (!this._privateKey) return undefined;
+        return bytesToHex(this._privateKey);
     }
 
     public static generate(): NDKPrivateKeySigner {
@@ -56,28 +61,28 @@ export class NDKPrivateKeySigner implements NDKSigner {
     }
 
     public async sign(event: NostrEvent): Promise<string> {
-        if (!this.privateKey) {
+        if (!this._privateKey) {
             throw Error("Attempted to sign without a private key");
         }
 
-        return finalizeEvent(event as UnsignedEvent, this.privateKey).sig;
+        return finalizeEvent(event as UnsignedEvent, this._privateKey).sig;
     }
 
     public async encrypt(recipient: NDKUser, value: string): Promise<string> {
-        if (!this.privateKey) {
+        if (!this._privateKey) {
             throw Error("Attempted to encrypt without a private key");
         }
 
         const recipientHexPubKey = recipient.pubkey;
-        return await nip04.encrypt(this.privateKey, recipientHexPubKey, value);
+        return await nip04.encrypt(this._privateKey, recipientHexPubKey, value);
     }
 
     public async decrypt(sender: NDKUser, value: string): Promise<string> {
-        if (!this.privateKey) {
+        if (!this._privateKey) {
             throw Error("Attempted to decrypt without a private key");
         }
 
         const senderHexPubKey = sender.pubkey;
-        return await nip04.decrypt(this.privateKey, senderHexPubKey, value);
+        return await nip04.decrypt(this._privateKey, senderHexPubKey, value);
     }
 }

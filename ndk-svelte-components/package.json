@@ -1,6 +1,6 @@
 {
   "name": "@nostr-dev-kit/ndk-svelte-components",
-  "version": "2.2.3",
+  "version": "2.2.16",
   "description": "",
   "license": "MIT",
   "type": "module",
@@ -32,10 +32,10 @@
   },
   "devDependencies": {
     "@nostr-dev-kit/eslint-config-custom": "workspace:*",
+    "@nostr-dev-kit/ndk-cache-dexie": "workspace:*",
+    "@nostr-dev-kit/ndk-svelte": "workspace:*",
     "@nostr-dev-kit/tailwind-config": "workspace:*",
     "@nostr-dev-kit/tsconfig": "workspace:*",
-    "@nostr-dev-kit/ndk-svelte": "workspace:*",
-    "@nostr-dev-kit/ndk-cache-dexie": "workspace:*",
     "@storybook/addon-essentials": "^7.4.0",
     "@storybook/addon-interactions": "^7.4.0",
     "@storybook/addon-links": "^7.4.0",
@@ -75,15 +75,19 @@
     "classnames": "^2.3.2",
     "lucide-svelte": "^0.279.0",
     "marked": "^9.0.0",
+    "marked-footnote": "^1.2.2",
     "marked-gfm-heading-id": "^3.0.8",
     "marked-mangle": "^1.1.4",
-    "nostr-tools": "^1.15.0",
+    "nostr-tools": "^2.4.0",
     "ramda": "^0.29.0",
     "rehype-autolink-headings": "^7.0.0",
     "rehype-slug": "^6.0.0",
     "sanitize-html": "^2.11.0",
     "svelte-preprocess": "^5.0.4",
-    "svelte-time": "^0.8.0"
+    "svelte-time": "^0.8.3"
+  },
+  "peerDependencies": {
+    "svelte": "^4.2.0"
   },
   "publishConfig": {
     "access": "public"

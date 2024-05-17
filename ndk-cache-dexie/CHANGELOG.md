@@ -1,5 +1,133 @@
 # @nostr-dev-kit/ndk-cache-dexie
 
+## 2.4.2
+
+### Patch Changes
+
+-   cache relay reconnection status
+-   Updated dependencies [0af033f]
+-   Updated dependencies
+    -   @nostr-dev-kit/ndk@2.8.2
+
+## 2.4.1
+
+### Patch Changes
+
+-   e40312b: get all profiles that match a filter function from a cahce
+-   Updated dependencies [e40312b]
+-   Updated dependencies
+    -   @nostr-dev-kit/ndk@2.8.1
+
+## 2.4.0
+
+### Minor Changes
+
+-   949d26a: Add LRU cache for zappers specs
+-   ba2a206: improve LRU caches -- refactor to make adding new caches easier
+-   bump
+
+### Patch Changes
+
+-   a602d0c: performance improvements on cache
+-   fcd41ba: fix bug where we are REQing events even if they were cached and the filter has completed
+-   Updated dependencies [91d873c]
+-   Updated dependencies [6fd9ddc]
+-   Updated dependencies [0b8f331]
+-   Updated dependencies
+-   Updated dependencies [f2898ad]
+-   Updated dependencies [9b92cd9]
+-   Updated dependencies
+-   Updated dependencies [6814f0c]
+-   Updated dependencies [89b5b3f]
+-   Updated dependencies [9b92cd9]
+-   Updated dependencies [27b10cc]
+-   Updated dependencies
+-   Updated dependencies
+-   Updated dependencies [ed7cdc4]
+    -   @nostr-dev-kit/ndk@2.8.0
+
+## 2.3.1
+
+### Patch Changes
+
+-   Updated dependencies
+    -   @nostr-dev-kit/ndk@2.7.1
+
+## 2.3.0
+
+### Minor Changes
+
+-   Cache NIP-05 and zap specs
+
+### Patch Changes
+
+-   Updated dependencies
+-   Updated dependencies
+-   Updated dependencies
+    -   @nostr-dev-kit/ndk@2.7.0
+
+## 2.2.10
+
+### Patch Changes
+
+-   Updated dependencies
+    -   @nostr-dev-kit/ndk@2.6.1
+
+## 2.2.9
+
+### Patch Changes
+
+-   c2db3c1: delete events from cache
+-   Updated dependencies
+-   Updated dependencies [c2db3c1]
+-   Updated dependencies
+-   Updated dependencies [c2db3c1]
+-   Updated dependencies [c2db3c1]
+    -   @nostr-dev-kit/ndk@2.6.0
+
+## 2.2.8
+
+### Patch Changes
+
+-   Updated dependencies
+-   Updated dependencies
+    -   @nostr-dev-kit/ndk@2.5.1
+
+## 2.2.7
+
+### Patch Changes
+
+-   Updated dependencies [e08fc74]
+    -   @nostr-dev-kit/ndk@2.5.0
+
+## 2.2.6
+
+### Patch Changes
+
+-   15bcc10: fix profile LRU Cache
+-   Updated dependencies [111c1ea]
+-   Updated dependencies [5c0ae51]
+-   Updated dependencies [6f5ea49]
+-   Updated dependencies [3738d39]
+-   Updated dependencies [d22239a]
+    -   @nostr-dev-kit/ndk@2.4.1
+
+## 2.2.5
+
+### Patch Changes
+
+-   Updated dependencies [b9bbf1d]
+    -   @nostr-dev-kit/ndk@2.4.0
+
+## 2.2.4
+
+### Patch Changes
+
+-   Updated dependencies
+-   Updated dependencies [885b6c2]
+-   Updated dependencies [5666d56]
+    -   @nostr-dev-kit/ndk@2.3.3
+
 ## 2.2.3
 
 ### Patch Changes

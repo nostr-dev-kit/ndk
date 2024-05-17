@@ -41,57 +41,51 @@ export class NDKSimpleGroup {
     }
 
     /**
-     * Adds a user to the group.
+     * Adds a user to the group using a kind:9000 event
      * @param user user to add
      * @param opts options
      */
-    async addUser(
-        user: NDKUser,
-        opts: AddUserOpts = {
-            publish: true,
-            skipUserListEvent: false,
-        }
-    ): Promise<{ addUserEvent: NDKEvent; currentUserListEvent?: NDKEvent }> {
+    async addUser(user: NDKUser): Promise<NDKEvent> {
         const addUserEvent = NDKSimpleGroup.generateAddUserEvent(user.pubkey, this.groupId);
         addUserEvent.ndk = this.ndk;
-
-        let currentUserListEvent = opts.currentUserListEvent;
-        if (!opts.skipUserListEvent) {
-            currentUserListEvent ??=
-                (await this.getMemberListEvent()) ||
-                NDKSimpleGroup.generateUserListEvent(this.groupId);
-            // Check if the user is already in the group
-            currentUserListEvent.tags = currentUserListEvent.tags.filter(untagUser(user.pubkey));
-            currentUserListEvent.tag(user, opts.marker);
-        }
-
-        if (opts?.publish ?? true) {
-            const promises = [addUserEvent.publish(this.relaySet)];
-
-            if (!opts.skipUserListEvent && currentUserListEvent) {
-                promises.push(currentUserListEvent.publish(this.relaySet));
-            }
-
-            await Promise.all(promises);
-        }
-
-        return {
-            addUserEvent,
-            currentUserListEvent,
-        };
+        const relays = await addUserEvent.publish(this.relaySet);
+        return addUserEvent;
     }
 
     async getMemberListEvent(): Promise<NDKEvent | null> {
         const memberList = await this.ndk.fetchEvent(
             {
                 kinds: [NDKKind.GroupMembers],
-                "#h": [this.groupId],
+                "#d": [this.groupId],
             },
             undefined,
             this.relaySet
         );
 
         return memberList;
+    }
+
+    /**
+     * Gets a list of users that belong to this group
+     */
+    async getMembers(): Promise<NDKUser[]> {
+        const members: NDKUser[] = [];
+        const memberPubkeys = new Set<Hexpubkey>();
+
+        const memberListEvent = await this.getMemberListEvent();
+        if (!memberListEvent) return [];
+
+        for (const pTag of memberListEvent.getMatchingTags("p")) {
+            const pubkey = pTag[1];
+            if (memberPubkeys.has(pubkey)) continue;
+
+            memberPubkeys.add(pubkey);
+            try {
+                members.push(this.ndk.getUser({ pubkey }));
+            } catch {}
+        }
+
+        return members;
     }
 
     /**
@@ -115,16 +109,14 @@ export class NDKSimpleGroup {
      * Generates an event that adds a user to a group.
      * @param userPubkey pubkey of the user to add
      * @param groupId group to add the user to
-     * @param alt optional description of the event
      * @returns
      */
-    static generateAddUserEvent(userPubkey: string, groupId: string, alt?: string) {
+    static generateAddUserEvent(userPubkey: string, groupId: string) {
         const event = new NDKEvent(undefined, {
             kind: NDKKind.GroupAdminAddUser,
             tags: [["h", groupId]],
         } as NostrEvent);
-
-        if (alt) event.alt = alt;
+        event.tags.push(["p", userPubkey]);
 
         return event;
     }

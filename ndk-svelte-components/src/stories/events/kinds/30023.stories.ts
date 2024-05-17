@@ -36,7 +36,7 @@ const ndk = new NDK({ explicitRelayUrls: ["wss://nos.lol"] });
 await ndk.connect();
 
 const id =
-    "naddr1qqxnzd3exymngwpnxu6nwwf4qgs9gymy7y9ejuzvgkhyysazy7f4yjlznanwtq66l5nry764wmm3t5srqsqqqa2893r5zw";
+    "naddr1qvzqqqr4gupzq6ksswfdrw4r7mlh49qfu2k9u4zrtpextk955kquvpna3r4rq9vyqyfhwumn8ghj7ur4wfcxcetsv9njuetn9uq32amnwvaz7tmjv4kxz7fwv3sk6atn9e5k7tcpzamhxue69uhhyetvv9ujumn0wd68ytnzv9hxgtcpz3mhxue69uhhyetvv9ukzcnvv5hx7un89uq3zamnwvaz7tmwdaehgu3wwa5kuef0qqv9yetkd9jhw6twvuk4yetkd9jhwuedd3cxjmncvv3euyg7";
 // Tony 'naddr1qqz82unvwvpzql6u9d8y3g8flm9x8frtz0xmsfyf7spq8xxkpgs8p2tge25p346aqvzqqqr4gupdy396';
 // Der Gigi 'naddr1qqxnzd3cxqmrzv3exgmr2wfeqgsxu35yyt0mwjjh8pcz4zprhxegz69t4wr9t74vk6zne58wzh0waycrqsqqqa28pjfdhz';
 const event = await ndk.fetchEvent(id);

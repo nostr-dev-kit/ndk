@@ -1,8 +1,9 @@
 import type { NDK } from "../../../ndk/index.js";
 import { NDKRelay } from "../../../relay/index.js";
+import type { NDKFilter } from "../../../subscription/index.js";
 import { NDKUser } from "../../../user/index.js";
 import { NDKEvent } from "../../index.js";
-import type { NDKTag, NostrEvent } from "../../index.js";
+import type { NDKEventId, NDKTag, NostrEvent } from "../../index.js";
 import { NDKKind } from "../index.js";
 
 export type NDKListItem = NDKRelay | NDKUser | NDKEvent;
@@ -25,7 +26,7 @@ export type NDKListItem = NDKRelay | NDKUser | NDKEvent;
  * const secretFollow = new NDKUser(...);
  * list.addItem(secretFollow, 'person', true);
  *
- * @emits NDKList#change
+ * @emits change
  */
 export class NDKList extends NDKEvent {
     public _encryptedTags: NDKTag[] | undefined;
@@ -206,6 +207,10 @@ export class NDKList extends NDKEvent {
         return true;
     }
 
+    getItems(type: string): NDKTag[] {
+        return this.tags.filter((tag) => tag[0] === type);
+    }
+
     /**
      * Returns the unecrypted items in this list.
      */
@@ -224,6 +229,7 @@ export class NDKList extends NDKEvent {
                 "alt",
                 "expiration",
                 "subject",
+                "client",
             ].includes(t[0]);
         });
     }
@@ -233,11 +239,13 @@ export class NDKList extends NDKEvent {
      * @param relay Relay to add
      * @param mark Optional mark to add to the item
      * @param encrypted Whether to encrypt the item
+     * @param position Where to add the item in the list (top or bottom)
      */
     async addItem(
         item: NDKListItem | NDKTag,
         mark: string | undefined = undefined,
-        encrypted = false
+        encrypted = false,
+        position: "top" | "bottom" = "bottom"
     ): Promise<void> {
         if (!this.ndk) throw new Error("NDK instance not set");
         if (!this.ndk.signer) throw new Error("NDK signer not set");
@@ -245,7 +253,7 @@ export class NDKList extends NDKEvent {
         let tags: NDKTag[];
 
         if (item instanceof NDKEvent) {
-            tags = item.referenceTags();
+            tags = [item.tagReference(mark)];
         } else if (item instanceof NDKUser) {
             tags = item.referenceTags();
         } else if (item instanceof NDKRelay) {
@@ -263,14 +271,16 @@ export class NDKList extends NDKEvent {
             const user = await this.ndk.signer.user();
             const currentList = await this.encryptedTags();
 
-            currentList.push(...tags);
+            if (position === "top") currentList.unshift(...tags);
+            else currentList.push(...tags);
 
             this._encryptedTags = currentList;
             this.encryptedTagsLength = this.content.length;
             this.content = JSON.stringify(currentList);
             await this.encrypt(user);
         } else {
-            this.tags.push(...tags);
+            if (position === "top") this.tags.unshift(...tags);
+            else this.tags.push(...tags);
         }
 
         this.created_at = Math.floor(Date.now() / 1000);
@@ -306,6 +316,51 @@ export class NDKList extends NDKEvent {
         this.emit("change");
 
         return this;
+    }
+
+    /**
+     * Creates a filter that will result in fetching
+     * the items of this list
+     * @example
+     * const list = new NDKList(...);
+     * const filters = list.filterForItems();
+     * const events = await ndk.fetchEvents(filters);
+     */
+    filterForItems(): NDKFilter[] {
+        const ids = new Set<NDKEventId>();
+        const nip33Queries = new Map<string, string[]>();
+        const filters: NDKFilter[] = [];
+
+        for (const tag of this.items) {
+            if (tag[0] === "e" && tag[1]) {
+                ids.add(tag[1]);
+            } else if (tag[0] === "a" && tag[1]) {
+                const [kind, pubkey, dTag] = tag[1].split(":");
+                if (!kind || !pubkey) continue;
+
+                const key = `${kind}:${pubkey}`;
+                const item = nip33Queries.get(key) || [];
+                item.push(dTag || "");
+                nip33Queries.set(key, item);
+            }
+        }
+
+        if (ids.size > 0) {
+            filters.push({ ids: Array.from(ids) });
+        }
+
+        if (nip33Queries.size > 0) {
+            for (const [key, values] of nip33Queries.entries()) {
+                const [kind, pubkey] = key.split(":");
+                filters.push({
+                    kinds: [parseInt(kind)],
+                    authors: [pubkey],
+                    "#d": values,
+                });
+            }
+        }
+
+        return filters;
     }
 }
 

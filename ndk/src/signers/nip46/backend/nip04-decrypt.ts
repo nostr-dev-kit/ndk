@@ -9,7 +9,7 @@ export default class Nip04DecryptHandlingStrategy implements IEventHandlingStrat
         params: string[]
     ): Promise<string | undefined> {
         const [senderPubkey, payload] = params;
-        const senderUser = new NDKUser({ hexpubkey: senderPubkey });
+        const senderUser = new NDKUser({ pubkey: senderPubkey });
         const decryptedPayload = await decrypt(backend, id, remotePubkey, senderUser, payload);
 
         return decryptedPayload;

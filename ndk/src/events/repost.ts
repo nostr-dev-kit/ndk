@@ -10,7 +10,11 @@ import { NDKKind } from "./kinds/index.js";
  * @param signer The signer to use for signing the reposted event
  * @returns The reposted event
  */
-export async function repost(this: NDKEvent, publish = true, signer?: NDKSigner) {
+export async function repost(
+    this: NDKEvent,
+    publish = true,
+    signer?: NDKSigner
+): Promise<NDKEvent> {
     if (!signer && publish) {
         if (!this.ndk) throw new Error("No NDK instance found");
         this.ndk.assertSigner();
@@ -25,6 +29,8 @@ export async function repost(this: NDKEvent, publish = true, signer?: NDKSigner)
 
     if (e.kind === NDKKind.GenericRepost) {
         e.tags.push(["k", `${this.kind}`]);
+    } else {
+        e.content = JSON.stringify(this.rawEvent());
     }
 
     if (signer) await e.sign(signer);

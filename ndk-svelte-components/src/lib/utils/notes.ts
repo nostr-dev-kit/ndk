@@ -28,11 +28,14 @@ type ContentArgs = {
     html?: boolean;
 };
 
-type ParsedPart = {
+export type ParsedPart = {
     type: string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any;
 };
+
+export const isEmbeddableMedia = (url: string) =>
+    isImage(url) || isVideo(url) || isAudio(url);
 
 export const isImage = (url: string) => url.match(/^.*\.(jpg|jpeg|png|webp|gif|avif|svg)/gi);
 export const isVideo = (url: string) => url.match(/^.*\.(mov|mkv|mp4|avi|m4v|webm)/gi);
@@ -76,14 +79,26 @@ export function groupContent(parts: ParsedPart[]): ParsedPart[] {
 
             buffer.value.push(part);
         } else {
-            const isNewline = part.type === NEWLINE;
-            const nextIsNotLink = parts[index + 1]?.type !== LINK;
+            let nextPartsAreNoops: boolean | undefined = undefined;
 
-            // Only pop the buffer if this is not a newline and the next part is not a link
-            if (isNewline && nextIsNotLink) {
+            for (const nextPart of parts.slice(index + 1)) {
+                const isNewline = nextPart.type === NEWLINE;
+                const isBlankText = nextPart.type === TEXT && nextPart.value.trim() === '';
+                const isLink = nextPart.type === LINK;
+
+                // This is a noop, keep checking the next part
+                if (isNewline || isBlankText) continue;
+
+                nextPartsAreNoops = isLink;
+
+                break;
+            }
+
+            if (nextPartsAreNoops === false) {
+                // we found a non-noop part after the current part
                 popBuffer();
                 result.push(part);
-            } else if (!buffer) {
+            } else {
                 result.push(part);
             }
         }
@@ -120,15 +135,17 @@ export const parseContent = ({ content, tags = [], html = false }: ContentArgs):
                 const relays = [url].filter(identity);
 
                 let type, data, entity;
-                if (tag === "p") {
-                    type = "nprofile";
-                    data = { pubkey: value, relays };
-                    entity = nip19.nprofileEncode(data);
-                } else {
-                    type = "nevent";
-                    data = { id: value, relays, pubkey: null };
-                    entity = nip19.neventEncode(data);
-                }
+                try {
+                    if (tag === "p") {
+                        type = "nprofile";
+                        data = { pubkey: value, relays };
+                        entity = nip19.nprofileEncode(data);
+                    } else {
+                        type = "nevent";
+                        data = { id: value, relays, pubkey: null };
+                        entity = nip19.neventEncode(data);
+                    }
+                } catch { /**/ }
 
                 return [`nostr:${type}`, mentionMatch[0], { ...data, entity }];
             }
@@ -178,7 +195,6 @@ export const parseContent = ({ content, tags = [], html = false }: ContentArgs):
     };
 
     const parseUrl = () => {
-        if (html) return;
         const raw = first(text.match(/^([a-z+:]{2,30}:\/\/)?[^\s]+\.[a-z]{2,6}[^\s]*[^.!?,:\s]/gi));
 
         // Skip url if it's just the end of a filepath
@@ -204,7 +220,7 @@ export const parseContent = ({ content, tags = [], html = false }: ContentArgs):
         }
     };
 
-    const parseHtml = () => {
+    const parseHtml = (): any[] | undefined => {
         // Only parse out specific html tags
         const raw = first(text.match(/^<(pre|code)>.*?<\/\1>/gis));
 
@@ -214,15 +230,19 @@ export const parseContent = ({ content, tags = [], html = false }: ContentArgs):
     };
 
     while (text) {
-        // The order that this runs matters
-        const part =
-            parseHtml() ||
-            parseNewline() ||
-            parseMention() ||
-            parseTopic() ||
-            parseBech32() ||
-            parseUrl() ||
-            parseInvoice();
+        let part: any[] | undefined;
+
+        if (html) {
+            // part = parseMention() || parseTopic();
+        } else {
+            part = parseHtml() ||
+                parseNewline() ||
+                parseMention() ||
+                parseTopic() ||
+                parseBech32() ||
+                parseUrl() ||
+                parseInvoice();
+        }
 
         if (part) {
             if (buffer) {

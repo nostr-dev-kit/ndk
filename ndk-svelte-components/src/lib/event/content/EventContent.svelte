@@ -19,6 +19,7 @@
     export let showEntire: boolean = true;
     export let showMedia: boolean = true;
     export let mediaCollectionComponent: typeof SvelteComponent | undefined = undefined;
+    export let eventCardComponent: typeof SvelteComponent | undefined = undefined;
 
     /**
      * Optional content to use instead of the one from the event
@@ -28,7 +29,7 @@
 
 {#if event}
     {#if event.kind === 1}
-        <Kind1 {ndk} {content} {event} {anchorId} {maxLength} {showEntire} {showMedia} on:click class={$$props.class} />
+        <Kind1 {ndk} {content} {event} {anchorId} {maxLength} {showEntire} {showMedia} on:click class={$$props.class} {mediaCollectionComponent} {eventCardComponent} />
     {:else if event.kind === 40}
         <!-- <Kind40 {event} /> -->
     {:else if event.kind === 1063}
@@ -42,8 +43,8 @@
     {:else if event.kind === 30001}
         <Kind30001 {ndk} list={NDKList.from(event)} class={$$props.class} />
     {:else if event.kind === 30023}
-        <Kind30023 {ndk} {content} article={NDKArticle.from(event)} {showMedia} on:click class={$$props.class} />
+        <Kind30023 {ndk} {content} {...$$props} article={NDKArticle.from(event)} {showMedia} on:click class={$$props.class} />
     {:else}
-        <Kind1 {ndk} {content} {event} {anchorId} {showMedia} on:click class={$$props.class} {maxLength} {showEntire} {mediaCollectionComponent} />
+        <Kind1 {ndk} {content} {event} {anchorId} {showMedia} on:click class={$$props.class} {maxLength} {showEntire} {mediaCollectionComponent} {eventCardComponent} />
     {/if}
 {/if}

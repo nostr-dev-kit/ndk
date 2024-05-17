@@ -1,17 +1,15 @@
-import { nip05, nip19 } from "nostr-tools";
+import { nip19 } from "nostr-tools";
 
 import { NDKEvent, type NDKTag, type NostrEvent } from "../events/index.js";
-import { NDKRelayList } from "../events/kinds/NDKRelayList.js";
 import { NDKKind } from "../events/kinds/index.js";
 import type { NDK } from "../ndk/index.js";
-import type { NDKRelay } from "../relay/index.js";
-import { NDKRelaySet } from "../relay/sets/index.js";
 import { NDKSubscriptionCacheUsage, type NDKSubscriptionOptions } from "../subscription/index.js";
 import { follows } from "./follows.js";
 import { type NDKUserProfile, profileFromEvent, serializeProfile } from "./profile.js";
 import type { NDKSigner } from "../signers/index.js";
-import Zap from "../zap/index.js";
-import { pin } from "./pin.js";
+import { NDKLnUrlData } from "../zap/index.js";
+import { getNip05For } from "./nip05.js";
+import { NDKRelay, NDKZap } from "../index.js";
 
 export type Hexpubkey = string;
 
@@ -21,6 +19,7 @@ export type Npub = string;
 export type ProfilePointer = {
     pubkey: string;
     relays?: string[];
+    nip46?: string[];
 };
 
 // @ignore
@@ -37,6 +36,7 @@ export interface NDKUserParams {
     pubkey?: Hexpubkey;
     nip05?: string;
     relayUrls?: string[];
+    nip46Urls?: string[];
 }
 
 /**
@@ -48,6 +48,7 @@ export class NDKUser {
     private _npub?: Npub;
     private _pubkey?: Hexpubkey;
     readonly relayUrls: string[] = [];
+    readonly nip46Urls: string[] = [];
 
     public constructor(opts: NDKUserParams) {
         if (opts.npub) this._npub = opts.npub;
@@ -55,14 +56,13 @@ export class NDKUser {
         if (opts.hexpubkey) this._pubkey = opts.hexpubkey;
         if (opts.pubkey) this._pubkey = opts.pubkey;
 
-        if (opts.relayUrls) {
-            this.relayUrls = opts.relayUrls;
-        }
+        if (opts.relayUrls) this.relayUrls = opts.relayUrls;
+        if (opts.nip46Urls) this.nip46Urls = opts.nip46Urls;
     }
 
     get npub(): string {
         if (!this._npub) {
-            if (!this._pubkey) throw new Error("hexpubkey not set");
+            if (!this._pubkey) throw new Error("pubkey not set");
             this._npub = nip19.npubEncode(this.pubkey);
         }
 
@@ -114,36 +114,78 @@ export class NDKUser {
     }
 
     /**
+     * Retrieves the zapper this pubkey has designated as an issuer of zap receipts
+     */
+    async getZapConfiguration(ndk?: NDK): Promise<NDKLnUrlData | undefined> {
+        ndk ??= this.ndk;
+
+        if (!ndk) throw new Error("No NDK instance found");
+
+        const process = async (): Promise<NDKLnUrlData | undefined> => {
+            if (this.ndk?.cacheAdapter?.loadUsersLNURLDoc) {
+                const doc = await this.ndk.cacheAdapter.loadUsersLNURLDoc(this.pubkey);
+
+                if (doc !== "missing") {
+                    if (doc === null) return;
+                    if (doc) return doc;
+                }
+            }
+
+            const zap = new NDKZap({ ndk: ndk!, zappedUser: this });
+            let lnurlspec: NDKLnUrlData | undefined;
+            try {
+                lnurlspec = await zap.getZapSpecWithoutCache();
+            } catch {}
+
+            if (this.ndk?.cacheAdapter?.saveUsersLNURLDoc) {
+                this.ndk.cacheAdapter.saveUsersLNURLDoc(this.pubkey, lnurlspec || null);
+            }
+
+            if (!lnurlspec) return;
+
+            return lnurlspec;
+        };
+
+        return await ndk.queuesZapConfig.add({
+            id: this.pubkey,
+            func: process,
+        });
+    }
+
+    /**
+     * Fetches the zapper's pubkey for the zapped user
+     * @returns The zapper's pubkey if one can be found
+     */
+    async getZapperPubkey(): Promise<Hexpubkey | undefined> {
+        const zapConfig = await this.getZapConfiguration();
+
+        return zapConfig?.nostrPubkey;
+    }
+
+    /**
      * Instantiate an NDKUser from a NIP-05 string
      * @param nip05Id {string} The user's NIP-05
+     * @param ndk {NDK} An NDK instance
+     * @param skipCache {boolean} Whether to skip the cache or not
      * @returns {NDKUser | undefined} An NDKUser if one is found for the given NIP-05, undefined otherwise.
      */
-    static async fromNip05(nip05Id: string, ndk?: NDK): Promise<NDKUser | undefined> {
-        // If we have a cache, try to load from cache first
-        if (ndk?.cacheAdapter && ndk.cacheAdapter.loadNip05) {
-            const profile = await ndk.cacheAdapter.loadNip05(nip05Id);
+    static async fromNip05(
+        nip05Id: string,
+        ndk: NDK,
+        skipCache = false
+    ): Promise<NDKUser | undefined> {
+        if (!ndk) throw new Error("No NDK instance found");
 
-            if (profile) {
-                const user = new NDKUser({
-                    pubkey: profile.pubkey,
-                    relayUrls: profile.relays,
-                });
-                user.ndk = ndk;
-                return user;
-            }
-        }
+        let opts: RequestInit = {};
 
-        const profile = await nip05.queryProfile(nip05Id);
-
-        // Save the nip05 mapping
-        if (profile && ndk?.cacheAdapter && ndk.cacheAdapter.saveNip05) {
-            ndk?.cacheAdapter.saveNip05(nip05Id, profile);
-        }
+        if (skipCache) opts.cache = "no-cache";
+        const profile = await getNip05For(ndk, nip05Id, ndk?.httpFetch, opts);
 
         if (profile) {
             const user = new NDKUser({
                 pubkey: profile.pubkey,
                 relayUrls: profile.relays,
+                nip46Urls: profile.nip46,
             });
             user.ndk = ndk;
             return user;
@@ -235,80 +277,6 @@ export class NDKUser {
      */
     public follows = follows.bind(this);
 
-    /**
-     * Pins a user or an event
-     */
-    public pin = pin.bind(this);
-
-    /**
-     * Returns a set of relay list events for a user.
-     * @returns {Promise<Set<NDKEvent>>} A set of NDKEvents returned for the given user.
-     */
-    public async relayList(): Promise<NDKRelayList | undefined> {
-        if (!this.ndk) throw new Error("NDK not set");
-
-        const pool = this.ndk.outboxPool || this.ndk.pool;
-        const set = new Set<NDKRelay>();
-
-        for (const relay of pool.relays.values()) set.add(relay);
-
-        const relaySet = new NDKRelaySet(set, this.ndk);
-        const event = await this.ndk.fetchEvent(
-            {
-                kinds: [10002],
-                authors: [this.pubkey],
-            },
-            {
-                closeOnEose: true,
-                pool,
-                groupable: true,
-                subId: `relay-list-${this.pubkey.slice(0, 6)}`,
-            },
-            relaySet
-        );
-
-        if (event) return NDKRelayList.from(event);
-
-        return await this.relayListFromKind3();
-    }
-
-    private async relayListFromKind3(): Promise<NDKRelayList | undefined> {
-        if (!this.ndk) throw new Error("NDK not set");
-
-        const followList = await this.ndk.fetchEvent({
-            kinds: [3],
-            authors: [this.pubkey],
-        });
-        if (followList) {
-            try {
-                const content = JSON.parse(followList.content);
-                const relayList = new NDKRelayList(this.ndk);
-                const readRelays = new Set<string>();
-                const writeRelays = new Set<string>();
-
-                for (const [key, config] of Object.entries(content)) {
-                    if (!config) {
-                        readRelays.add(key);
-                        writeRelays.add(key);
-                    } else {
-                        const relayConfig: { read?: boolean; write?: boolean } = config;
-                        if (relayConfig.write) writeRelays.add(key);
-                        if (relayConfig.read) readRelays.add(key);
-                    }
-                }
-
-                relayList.readRelayUrls = Array.from(readRelays);
-                relayList.writeRelayUrls = Array.from(writeRelays);
-
-                return relayList;
-            } catch (e) {
-                // Don't do anything
-            }
-        }
-
-        return undefined;
-    }
-
     /** @deprecated Use referenceTags instead. */
     /**
      * Get the tag that can be used to reference this user in an event
@@ -386,6 +354,49 @@ export class NDKUser {
     }
 
     /**
+     * Remove a follow from this user's contact list
+     *
+     * @param user {NDKUser} The user to unfollow
+     * @param currentFollowList {Set<Hexpubkey>} The current follow list
+     * @param kind {NDKKind} The kind to use for this contact list (defaults to `3`)
+     * @returns The relays were the follow list was published or false if the user wasn't found
+     */
+    public async unfollow(
+        user: NDKUser,
+        currentFollowList?: Set<NDKUser>,
+        kind = NDKKind.Contacts
+    ): Promise<Set<NDKRelay> | boolean> {
+        if (!this.ndk) throw new Error("No NDK instance found");
+
+        this.ndk.assertSigner();
+
+        if (!currentFollowList) {
+            currentFollowList = await this.follows(undefined, undefined, kind);
+        }
+
+        // find the user that has the same pubkey
+        const newUserFollowList = new Set<NDKUser>();
+        let foundUser = false;
+        for (const follow of currentFollowList) {
+            if (follow.pubkey !== user.pubkey) {
+                newUserFollowList.add(follow);
+                foundUser = true;
+            }
+        }
+
+        if (!foundUser) return false;
+
+        const event = new NDKEvent(this.ndk, { kind } as NostrEvent);
+
+        // This is a horrible hack and I need to fix it
+        for (const follow of currentFollowList) {
+            event.tag(follow);
+        }
+
+        return await event.publish();
+    }
+
+    /**
      * Validate a user's NIP-05 identifier (usually fetched from their kind:0 profile data)
      *
      * @param nip05Id The NIP-05 string to validate
@@ -396,7 +407,7 @@ export class NDKUser {
     public async validateNip05(nip05Id: string): Promise<boolean | null> {
         if (!this.ndk) throw new Error("No NDK instance found");
 
-        const profilePointer: ProfilePointer | null = await nip05.queryProfile(nip05Id);
+        const profilePointer: ProfilePointer | null = await getNip05For(this.ndk, nip05Id);
 
         if (profilePointer === null) return null;
         return profilePointer.pubkey === this.pubkey;
@@ -422,7 +433,7 @@ export class NDKUser {
             this.ndk.assertSigner();
         }
 
-        const zap = new Zap({
+        const zap = new NDKZap({
             ndk: this.ndk,
             zappedUser: this,
         });

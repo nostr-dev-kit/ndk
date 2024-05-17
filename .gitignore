@@ -19,7 +19,7 @@ package-lock.json
 .turbo
 _local_
 .svelte-kit/
-
+ndk/docs
 ## added because of devcontainer
 .pnpm-store
 ## end of added because of devcontainer

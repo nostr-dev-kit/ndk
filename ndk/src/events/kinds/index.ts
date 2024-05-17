@@ -41,16 +41,21 @@ export enum NDKKind {
     // Event Timestamping
     DVMReqTimestamping = 5900,
 
+    DVMEventSchedule = 5905,
+
     // Feedback
     DVMJobFeedback = 7000,
 
     // Recurring payments
-    SubscriptionStart = 7001,
-    SubscriptionStop = 7002,
+    Subscribe = 7001,
+    Unsubscribe = 7002,
+    SubscriptionReceipt = 7003,
 
     // NIP-29
     GroupAdminAddUser = 9000,
     GroupAdminRemoveUser = 9001,
+    GroupAdminEditMetadata = 9002,
+    GroupAdminEditStatus = 9006,
 
     // Lists and Sets
     MuteList = 10000,
@@ -61,10 +66,15 @@ export enum NDKKind {
     PublicChatList = 10005,
     BlockRelayList = 10006,
     SearchRelayList = 10007,
+    SimpleGroupList = 10009,
     InterestList = 10015,
     EmojiList = 10030,
+
+    BlossomList = 10063,
+
+    NostrWaletConnectInfo = 13194,
+
     TierList = 17000,
-    SuperFollowList = 17001,
 
     FollowSet = 30000,
     CategorizedPeopleList = NDKKind.FollowSet, // Deprecated but left for backwards compatibility
@@ -72,7 +82,13 @@ export enum NDKKind {
     RelaySet = 30002,
     CategorizedRelayList = NDKKind.RelaySet, // Deprecated but left for backwards compatibility
     BookmarkSet = 30003,
-    CurationSet = 30004,
+
+    /**
+     * @deprecated Use ArticleCurationSet instead
+     */
+    CurationSet = 30004, // Deprecated but left for backwards compatibility
+    ArticleCurationSet = 30004,
+    VideoCurationSet = 30005,
     InterestSet = 30015,
     InterestsList = NDKKind.InterestSet, // Deprecated but left for backwards compatibility
     EmojiSet = 30030,
@@ -84,8 +100,11 @@ export enum NDKKind {
     Zap = 9735,
     Highlight = 9802,
     ClientAuth = 22242,
+
+    NostrWalletConnectReq = 23194,
+    NostrWalletConnectRes = 23195,
+
     NostrConnect = 24133,
-    NostrConnectAdmin = 24134,
 
     HttpAuth = 27235,
 
@@ -98,6 +117,7 @@ export enum NDKKind {
     Classified = 30402,
     HorizontalVideo = 34235,
 
+    GroupMetadata = 39000, // NIP-29
     GroupMembers = 39002, // NIP-29
 
     // NIP-89: App Metadata
@@ -120,7 +140,8 @@ export const NDKListKinds = [
     NDKKind.BookmarkSet,
     NDKKind.CategorizedBookmarkList, // Backwards compatibility
     NDKKind.RelaySet,
-    NDKKind.CurationSet,
+    NDKKind.ArticleCurationSet,
+    NDKKind.VideoCurationSet,
     NDKKind.InterestSet,
     NDKKind.EmojiSet,
     NDKKind.HighlightSet,

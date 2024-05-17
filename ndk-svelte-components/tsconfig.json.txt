@@ -1,5 +1,0 @@
-{
-  "extends": "@nostr-dev-kit/tsconfig/ndk-svelte-components.json",
-	"include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.ts", "src/**/*.svelte", "src/**/*.css"],
-  "exclude": ["dist", "build", "node_modules"]
-}

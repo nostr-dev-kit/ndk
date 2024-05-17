@@ -51,8 +51,24 @@ export interface NDKSubscriptionOptions {
     /**
      * The delay to use when grouping subscriptions, specified in milliseconds.
      * @default 100
+     * @example
+     * const sub1 = ndk.subscribe({ kinds: [1], authors: ["alice"] }, { groupableDelay: 100 });
+     * const sub2 = ndk.subscribe({ kinds: [0], authors: ["alice"] }, { groupableDelay: 1000 });
+     * // sub1 and sub2 will be grouped together and executed 100ms after sub1 was created
      */
     groupableDelay?: number;
+
+    /**
+     * Specifies how this delay should be interpreted.
+     * "at-least" means "wait at least this long before sending the subscription"
+     * "at-most" means "wait at most this long before sending the subscription"
+     * @default "at-most"
+     * @example
+     * const sub1 = ndk.subscribe({ kinds: [1], authors: ["alice"] }, { groupableDelay: 100, groupableDelayType: "at-least" });
+     * const sub2 = ndk.subscribe({ kinds: [0], authors: ["alice"] }, { groupableDelay: 1000, groupableDelayType: "at-most" });
+     * // sub1 and sub2 will be grouped together and executed 1000ms after sub1 was created
+     */
+    groupableDelayType?: "at-least" | "at-most";
 
     /**
      * The subscription ID to use for the subscription.
@@ -69,6 +85,12 @@ export interface NDKSubscriptionOptions {
      * @default false
      */
     skipVerification?: boolean;
+
+    /**
+     * Skip event validation
+     * @default false
+     */
+    skipValidation?: boolean;
 }
 
 /**
@@ -79,29 +101,49 @@ export const defaultOpts: NDKSubscriptionOptions = {
     cacheUsage: NDKSubscriptionCacheUsage.CACHE_FIRST,
     groupable: true,
     groupableDelay: 100,
+    groupableDelayType: "at-most",
 };
 
 /**
  * Represents a subscription to an NDK event stream.
  *
- * @event NDKSubscription#event
+ * @emits event
  * Emitted when an event is received by the subscription.
- * @param {NDKEvent} event - The event received by the subscription.
- * @param {NDKRelay} relay - The relay that received the event.
- * @param {NDKSubscription} subscription - The subscription that received the event.
+ * * ({NDKEvent} event - The event received by the subscription,
+ * * {NDKRelay} relay - The relay that received the event,
+ * * {NDKSubscription} subscription - The subscription that received the event.)
  *
- * @event NDKSubscription#event:dup
+ * @emits event:dup
  * Emitted when a duplicate event is received by the subscription.
- * @param {NDKEvent} event - The duplicate event received by the subscription.
- * @param {NDKRelay} relay - The relay that received the event.
- * @param {number} timeSinceFirstSeen - The time elapsed since the first time the event was seen.
- * @param {NDKSubscription} subscription - The subscription that received the event.
+ * * {NDKEvent} event - The duplicate event received by the subscription.
+ * * {NDKRelay} relay - The relay that received the event.
+ * * {number} timeSinceFirstSeen - The time elapsed since the first time the event was seen.
+ * * {NDKSubscription} subscription - The subscription that received the event.
  *
- * @event NDKSubscription#eose - Emitted when all relays have reached the end of the event stream.
- * @param {NDKSubscription} subscription - The subscription that received EOSE.
+ * @emits eose - Emitted when all relays have reached the end of the event stream.
+ * * {NDKSubscription} subscription - The subscription that received EOSE.
  *
- * @event NDKSubscription#close - Emitted when the subscription is closed.
- * @param {NDKSubscription} subscription - The subscription that was closed.
+ * @emits close - Emitted when the subscription is closed.
+ * * {NDKSubscription} subscription - The subscription that was closed.
+ *
+ * @example
+ * const sub = ndk.subscribe({ kinds: [1] }); // Get all kind:1s
+ * sub.on("event", (event) => console.log(event.content); // Show the content
+ * sub.on("eose", () => console.log("All relays have reached the end of the event stream"));
+ * sub.on("close", () => console.log("Subscription closed"));
+ * setTimeout(() => sub.stop(), 10000); // Stop the subscription after 10 seconds
+ *
+ * @description
+ * Subscriptions are created using {@link NDK.subscribe}.
+ *
+ * # Event validation
+ * By defaults, subscriptions will validate events to comply with the minimal requirement
+ * of each known NIP.
+ * This can be disabled by setting the `skipValidation` option to `true`.
+ *
+ * @example
+ * const sub = ndk.subscribe({ kinds: [1] }, { skipValidation: false });
+ * sub.on("event", (event) => console.log(event.content); // Only valid events will be received
  */
 export class NDKSubscription extends EventEmitter {
     readonly subId?: string;
@@ -109,6 +151,7 @@ export class NDKSubscription extends EventEmitter {
     readonly opts: NDKSubscriptionOptions;
     readonly pool: NDKPool;
     readonly skipVerification: boolean = false;
+    readonly skipValidation: boolean = false;
 
     /**
      * Tracks the filters as they are executed on each relay
@@ -142,6 +185,11 @@ export class NDKSubscription extends EventEmitter {
 
     public internalId: string;
 
+    /**
+     * Whether the subscription should close when all relays have reached the end of the event stream.
+     */
+    public closeOnEose: boolean;
+
     public constructor(
         ndk: NDK,
         filters: NDKFilter | NDKFilter[],
@@ -160,14 +208,8 @@ export class NDKSubscription extends EventEmitter {
         this.debug = ndk.debug.extend(`subscription[${opts?.subId ?? this.internalId}]`);
         this.eoseDebug = this.debug.extend("eose");
         this.skipVerification = opts?.skipVerification || false;
-
-        if (!this.opts.closeOnEose) {
-            this.debug(
-                `Creating a permanent subscription`,
-                this.opts,
-                JSON.stringify(this.filters)
-            );
-        }
+        this.skipValidation = opts?.skipValidation || false;
+        this.closeOnEose = opts?.closeOnEose || false;
 
         // validate that the caller is not expecting a persistent
         // subscription while using an option that will only hit the cache
@@ -244,7 +286,6 @@ export class NDKSubscription extends EventEmitter {
     }
 
     public stop(): void {
-        // this.debug(`running stop ${this.internalId}`);
         this.emit("close", this);
         this.removeAllListeners();
     }
@@ -271,7 +312,7 @@ export class NDKSubscription extends EventEmitter {
      */
     private startWithRelays(): void {
         if (!this.relaySet) {
-            this.relayFilters = calculateRelaySetsFromFilters(this.ndk, this.filters);
+            this.relayFilters = calculateRelaySetsFromFilters(this.ndk, this.filters, this.pool);
         } else {
             this.relayFilters = new Map();
             for (const relay of this.relaySet.relays) {
@@ -281,7 +322,7 @@ export class NDKSubscription extends EventEmitter {
 
         // if relayset is empty, we can't start, log it
         if (!this.relayFilters || this.relayFilters.size === 0) {
-            this.debug(`No relays to subscribe to`, this.ndk.explicitRelayUrls);
+            this.debug(`No relays to subscribe to`, this.pool.relays.size);
             return;
         }
 
@@ -289,8 +330,10 @@ export class NDKSubscription extends EventEmitter {
         // this.debug(`Starting subscription`, JSON.stringify(this.filters), this.opts, Array.from(this.relaySet?.relays!).map(r => r.url));
 
         // iterate through the this.relayFilters
+        // console.log(this.relayFilters);
+        // console.log('start with relays', {relayFilters: this.relayFilters.values(), filters: JSON.stringify(this.filters), size: this.relayFilters.size});
         for (const [relayUrl, filters] of this.relayFilters) {
-            const relay = this.pool.getRelay(relayUrl);
+            const relay = this.pool.getRelay(relayUrl, true, true, filters);
             relay.subscribe(this, filters);
         }
     }
@@ -303,32 +346,55 @@ export class NDKSubscription extends EventEmitter {
      * @param relay
      * @param fromCache Whether the event was received from the cache
      */
-    public eventReceived(event: NDKEvent, relay: NDKRelay | undefined, fromCache = false) {
-        if (relay) event.relay = relay;
+    public eventReceived(event: NDKEvent, relay: NDKRelay | undefined, fromCache: boolean = false) {
+        if (relay) {
+            event.relay ??= relay;
+            event.onRelays.push(relay);
+        }
         if (!relay) relay = event.relay;
 
+        event.ndk ??= this.ndk;
+
         if (!fromCache && relay) {
-            // track the event per relay
-            let events = this.eventsPerRelay.get(relay);
+            this.ndk.emit("event", event, relay);
+        }
 
-            if (!events) {
-                events = new Set();
-                this.eventsPerRelay.set(relay, events);
-            }
+        // mark the event as seen
+        // move here to avoid verifying signature of duplicate events
+        const eventAlreadySeen = this.eventFirstSeen.has(event.id);
 
-            events.add(event.id);
-
-            // mark the event as seen
-            const eventAlreadySeen = this.eventFirstSeen.has(event.id);
-
-            if (eventAlreadySeen) {
-                const timeSinceFirstSeen = Date.now() - (this.eventFirstSeen.get(event.id) || 0);
+        if (eventAlreadySeen) {
+            const timeSinceFirstSeen = Date.now() - (this.eventFirstSeen.get(event.id) || 0);
+            if (relay) {
                 relay.scoreSlowerEvent(timeSinceFirstSeen);
-
-                this.emit("event:dup", event, relay, timeSinceFirstSeen, this);
-
-                return;
+                this.trackPerRelay(event, relay);
             }
+
+            this.emit("event:dup", event, relay, timeSinceFirstSeen, this);
+
+            return;
+        }
+
+        if (!fromCache) {
+            if (!this.skipValidation) {
+                if (!event.isValid) {
+                    this.debug(`Event failed validation`, event.rawEvent());
+                    return;
+                }
+            }
+
+            if (event.relay?.shouldValidateEvent() !== false) {
+                if (!this.skipVerification) {
+                    if (!event.verifySignature(true) && !this.ndk.asyncSigVerification) {
+                        this.debug(`Event failed signature validation`, event);
+                        return;
+                    }
+                }
+            }
+        }
+
+        if (!fromCache && relay) {
+            this.trackPerRelay(event, relay);
 
             if (this.ndk.cacheAdapter) {
                 this.ndk.cacheAdapter.setEvent(event, this.filters, relay);
@@ -339,10 +405,19 @@ export class NDKSubscription extends EventEmitter {
             this.eventFirstSeen.set(event.id, 0);
         }
 
-        if (!event.ndk) event.ndk = this.ndk;
-
         this.emit("event", event, relay, this);
         this.lastEventReceivedAt = Date.now();
+    }
+
+    private trackPerRelay(event: NDKEvent, relay: NDKRelay): void {
+        let events = this.eventsPerRelay.get(relay);
+
+        if (!events) {
+            events = new Set();
+            this.eventsPerRelay.set(relay, events);
+        }
+
+        events.add(event.id);
     }
 
     // EOSE handling
@@ -351,7 +426,7 @@ export class NDKSubscription extends EventEmitter {
     public eoseReceived(relay: NDKRelay): void {
         this.eosesSeen.add(relay);
 
-        this.eoseDebug(`received from ${relay.url}`);
+        // this.eoseDebug(`received from ${relay.url}`);
 
         let lastEventSeen = this.lastEventReceivedAt
             ? Date.now() - this.lastEventReceivedAt
@@ -362,7 +437,6 @@ export class NDKSubscription extends EventEmitter {
 
         if (queryFilled) {
             this.emit("eose");
-            this.eoseDebug(`Query fully filled`);
 
             if (this.opts?.closeOnEose) {
                 this.stop();

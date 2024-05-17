@@ -21,7 +21,7 @@ describe("NDKPool", () => {
         const { pool } = ndk;
         const set = NDKRelaySet.fromRelayUrls(["wss://purplepag.es"], ndk);
 
-        expect(set.size()).toEqual(1);
+        expect(set.size).toEqual(1);
         expect(pool.relays.size).toEqual(1);
     });
 });

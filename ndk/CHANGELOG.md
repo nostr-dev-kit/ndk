@@ -1,5 +1,114 @@
 # @nostr-dev-kit/ndk
 
+## 2.8.2
+
+### Patch Changes
+
+-   0af033f: allow scheduling more than one event
+-   cache relay reconnection status
+
+## 2.8.1
+
+### Patch Changes
+
+-   e40312b: get all profiles that match a filter function from a cahce
+-   support deprecated replies
+
+## 2.8.0
+
+### Minor Changes
+
+-   all-around massive performance improvements
+
+### Patch Changes
+
+-   91d873c: allow offloading signature verification to an async web worker
+-   6fd9ddc: threading utility functions
+-   0b8f331: fix unfollow function
+-   optimize serialization and avoid grouping subscriptions that will not close with those that do
+-   f2898ad: handle more reply cases
+-   9b92cd9: Increase performance of signature verification
+-   allow forcing a tag (for q tagging)
+-   6814f0c: fix event fetching from tag when there is no relay hint
+-   89b5b3f: nip46 fixes on create_account
+-   9b92cd9: fix incorrect tagging when quoting an event
+-   27b10cc: correct timestamp of bad events
+-   fix race condition when using synchronous cache
+-   ed7cdc4: avoid verifying signatures of cached events
+
+## 2.7.1
+
+### Patch Changes
+
+-   fix missing zap spec return
+
+## 2.7.0
+
+### Minor Changes
+
+-   Aggregate, cache, deduplicate NIP-05 queries and Zap settings queries -- Massive performance improvement!
+
+### Patch Changes
+
+-   Add thread utility functions
+-   Provide utility functions to make threading events and reply chains way easier
+
+## 2.6.1
+
+### Patch Changes
+
+-   error handle url normalization
+
+## 2.6.0
+
+### Minor Changes
+
+-   Make outbox calculation great again
+
+### Patch Changes
+
+-   Refactor OutboxTracker to handle tracking users in batches
+-   c2db3c1: Support blocked relays
+-   c2db3c1: notify caches when events are deleted
+-   c2db3c1: URL normalization
+
+## 2.5.1
+
+### Patch Changes
+
+-   Use nicer reconnection timer
+-   Fixes fetching of nip46 relays in nip05 implementation (#186)
+
+## 2.5.0
+
+### Minor Changes
+
+-   e08fc74: Nostr Wallet Connect support
+
+## 2.4.1
+
+### Patch Changes
+
+-   111c1ea: Add DVM post scheduling
+-   5c0ae51: Track all relays the event is seen and encode multiple relays on nevents
+-   6f5ea49: bug fix: don't force Article kind
+-   3738d39: Big NIP-29 and NIP-88 changes
+-   d22239a: Add a way to get events inside a list
+
+## 2.4.0
+
+### Minor Changes
+
+-   b9bbf1d: Safely embrace the chaos: event validation
+
+## 2.3.3
+
+### Patch Changes
+
+-   Introduce new concept of groupableDelayType which describes how the delay should be interpreted ("at least" or "at most")
+-   885b6c2: Add nip46 support to nip05 responses
+-   5666d56: Fix bug where authors where being added to rewritten filters who weren't included in the original filter
+
 ## 2.3.2
 
 ### Patch Changes

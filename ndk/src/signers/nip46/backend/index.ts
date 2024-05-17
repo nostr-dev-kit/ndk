@@ -1,11 +1,8 @@
-import type { Event } from "nostr-tools";
-import { verifySignature } from "nostr-tools";
-
-import { NDKEvent } from "../../../events/index.js";
+import type { NDKEvent } from "../../../events/index.js";
 import type { NDK } from "../../../ndk/index.js";
 import type { NDKUser } from "../../../user/index.js";
 import { NDKPrivateKeySigner } from "../../private-key/index.js";
-import { NDKSigner } from "../../index.js";
+import type { NDKSigner } from "../../index.js";
 import { NDKNostrRpc } from "../rpc.js";
 import PingEventHandlingStrategy from "./ping.js";
 import ConnectEventHandlingStrategy from "./connect.js";
@@ -13,6 +10,7 @@ import GetPublicKeyHandlingStrategy from "./get-public-key.js";
 import Nip04DecryptHandlingStrategy from "./nip04-decrypt.js";
 import Nip04EncryptHandlingStrategy from "./nip04-encrypt.js";
 import SignEventHandlingStrategy from "./sign-event.js";
+import { hexToBytes } from "@noble/hashes/utils";
 
 export type NIP46Method =
     | "connect"
@@ -32,7 +30,7 @@ export type Nip46PermitCallbackParams = {
 
     method: NIP46Method;
 
-    // eslint-disable-next-line @t  ypescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     params?: any;
 };
 
@@ -63,20 +61,31 @@ export class NDKNip46Backend {
     readonly debug: debug.Debugger;
     public rpc: NDKNostrRpc;
     private permitCallback: Nip46PermitCallback;
+    public relayUrls: WebSocket["url"][];
 
     /**
      * @param ndk The NDK instance to use
      * @param signer The signer for the private key that wants to be published as
      * @param permitCallback Callback executed when permission is requested
      */
-    public constructor(ndk: NDK, signer: NDKSigner, permitCallback: Nip46PermitCallback);
+    public constructor(
+        ndk: NDK,
+        signer: NDKSigner,
+        permitCallback: Nip46PermitCallback,
+        relayUrls?: WebSocket["url"][]
+    );
 
     /**
      * @param ndk The NDK instance to use
      * @param privateKey The private key of the npub that wants to be published as
      * @param permitCallback Callback executed when permission is requested
      */
-    public constructor(ndk: NDK, privateKey: string, permitCallback: Nip46PermitCallback);
+    public constructor(
+        ndk: NDK,
+        privateKey: string,
+        permitCallback: Nip46PermitCallback,
+        relayUrls?: WebSocket["url"][]
+    );
 
     /**
      * @param ndk The NDK instance to use
@@ -86,15 +95,24 @@ export class NDKNip46Backend {
     public constructor(
         ndk: NDK,
         privateKeyOrSigner: string | NDKSigner,
-        permitCallback: Nip46PermitCallback
+        permitCallback: Nip46PermitCallback,
+        relayUrls?: WebSocket["url"][]
     ) {
         this.ndk = ndk;
-        this.signer =
-            typeof privateKeyOrSigner === "string"
-                ? new NDKPrivateKeySigner(privateKeyOrSigner)
-                : privateKeyOrSigner;
+
+        if (privateKeyOrSigner instanceof Uint8Array) {
+            this.signer = new NDKPrivateKeySigner(privateKeyOrSigner as Uint8Array);
+        } else if (privateKeyOrSigner instanceof String) {
+            this.signer = new NDKPrivateKeySigner(hexToBytes(privateKeyOrSigner as string));
+        } else if (privateKeyOrSigner instanceof NDKPrivateKeySigner) {
+            this.signer = privateKeyOrSigner as NDKPrivateKeySigner;
+        } else {
+            throw new Error("Invalid signer");
+        }
+
         this.debug = ndk.debug.extend("nip46:backend");
-        this.rpc = new NDKNostrRpc(ndk, this.signer, this.debug);
+        this.relayUrls = relayUrls ?? Array.from(ndk.pool.relays.keys());
+        this.rpc = new NDKNostrRpc(ndk, this.signer, this.debug, this.relayUrls);
         this.permitCallback = permitCallback;
     }
 
@@ -108,7 +126,7 @@ export class NDKNip46Backend {
         const sub = this.ndk.subscribe(
             {
                 kinds: [24133 as number],
-                "#p": [this.localUser.hexpubkey],
+                "#p": [this.localUser.pubkey],
             },
             { closeOnEose: false }
         );
@@ -154,7 +172,7 @@ export class NDKNip46Backend {
 
         // validate signature explicitly
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        if (!verifySignature(event.rawEvent() as Event<any>)) {
+        if (!event.verifySignature(false)) {
             this.debug("invalid signature", event.rawEvent());
             return;
         }

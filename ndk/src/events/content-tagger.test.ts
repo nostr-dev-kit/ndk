@@ -3,9 +3,10 @@ import type { NDKTag } from "./index.js";
 
 describe("await generateContentTags", () => {
     it("doesnt retag events that were quoted", async () => {
-        const content = "testing a quoted event nostr:note1d2mheza0d5z5yycucu94nw37e6gyl4vwl6gavyku86rshkhexq6q30s0g7";
+        const content =
+            "testing a quoted event nostr:note1d2mheza0d5z5yycucu94nw37e6gyl4vwl6gavyku86rshkhexq6q30s0g7";
         const tags: NDKTag[] = [];
-        tags.push(["q", "6ab77c8baf6d0542131cc70b59ba3ece904fd58efe91d612dc3e870bdaf93034"])
+        tags.push(["q", "6ab77c8baf6d0542131cc70b59ba3ece904fd58efe91d612dc3e870bdaf93034"]);
 
         const { content: processedContent, tags: processedTags } = await generateContentTags(
             content,
@@ -13,7 +14,7 @@ describe("await generateContentTags", () => {
         );
         expect(processedContent).toEqual(content);
         expect(processedTags).toEqual([
-            ["q", "6ab77c8baf6d0542131cc70b59ba3ece904fd58efe91d612dc3e870bdaf93034"]
+            ["q", "6ab77c8baf6d0542131cc70b59ba3ece904fd58efe91d612dc3e870bdaf93034"],
         ]);
     });
 
@@ -55,7 +56,7 @@ describe("await generateContentTags", () => {
         expect(processedTags.length).toEqual(0);
     });
 
-    it("should handle existing tags and update indexes accordingly", async () => {
+    it("handles existing tags and update indexes accordingly", async () => {
         const content =
             "This is a sample content with @npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft and @note1d2mheza0d5z5yycucu94nw37e6gyl4vwl6gavyku86rshkhexq6q30s0g7 tags.";
         const tags: NDKTag[] = [["p", "existing_p"]];

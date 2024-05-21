@@ -188,26 +188,24 @@ export class NDKEvent extends EventEmitter {
             this.pubkey = user?.pubkey || "";
         }
 
-        if (!this.created_at || this.isReplaceable()) {
+        if (!this.created_at) {
             this.created_at = Math.floor(Date.now() / 1000);
         }
 
-        const nostrEvent = this.rawEvent();
         const { content, tags } = await this.generateTags();
-        nostrEvent.content = content || "";
-        nostrEvent.tags = tags;
+        this.content = content || "";
+        this.tags = tags;
 
         try {
             this.id = this.getEventHash();
             // eslint-disable-next-line no-empty
         } catch (e) {}
 
-        if (this.id) nostrEvent.id = this.id;
-        if (this.sig) nostrEvent.sig = this.sig;
+        // if (this.id) nostrEvent.id = this.id;
+        // if (this.sig) nostrEvent.sig = this.sig;
 
-        return nostrEvent;
+        return this.rawEvent();
     }
-
 
     public serialize = serialize.bind(this);
     public getEventHash = getEventHash.bind(this);
@@ -309,7 +307,6 @@ export class NDKEvent extends EventEmitter {
         }
 
         const nostrEvent = await this.toNostrEvent();
-
         this.sig = await signer.sign(nostrEvent);
 
         return this.sig;
@@ -514,21 +511,17 @@ export class NDKEvent extends EventEmitter {
      *     event.referenceTags(); // [["e", "parent-id"]]
      * @returns {NDKTag} The NDKTag object referencing this event
      */
-    referenceTags(
-        marker?: string,
-        skipAuthorTag?: boolean,
-        forceTag?: string
-    ): NDKTag[] {
+    referenceTags(marker?: string, skipAuthorTag?: boolean, forceTag?: string): NDKTag[] {
         let tags: NDKTag[] = [];
 
         // NIP-33
         if (this.isParamReplaceable()) {
             tags = [
-                [forceTag??"a", this.tagAddress()],
-                [forceTag??"e", this.id],
+                [forceTag ?? "a", this.tagAddress()],
+                [forceTag ?? "e", this.id],
             ];
         } else {
-            tags = [[forceTag??"e", this.id]];
+            tags = [[forceTag ?? "e", this.id]];
         }
 
         // Add the relay url to all tags

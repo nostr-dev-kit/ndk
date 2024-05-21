@@ -42,10 +42,9 @@ export interface NDKCacheAdapter {
      * const searchFunc = (pubkey, profile) => profile.name.toLowerCase().includes("alice");
      * const allAliceProfiles = await cache.getProfiles(searchFunc);
      */
-    getProfiles?:(filter: (
-        pubkey: Hexpubkey,
-        profile: NDKUserProfile
-    ) => boolean) => Promise<Map<Hexpubkey, NDKUserProfile> | undefined>;
+    getProfiles?: (
+        filter: (pubkey: Hexpubkey, profile: NDKUserProfile) => boolean
+    ) => Promise<Map<Hexpubkey, NDKUserProfile> | undefined>;
 
     loadNip05?(
         nip05: string,
@@ -68,7 +67,22 @@ export interface NDKCacheAdapter {
     saveUsersLNURLDoc?(pubkey: Hexpubkey, doc: NDKLnUrlData | null): void;
 
     /**
+     * Updates information about the relay.
+     */
+    updateRelayStatus?(relayUrl: WebSocket["url"], info: NDKCacheRelayInfo): void;
+
+    /**
+     * Fetches information about the relay.
+     */
+    getRelayStatus?(relayUrl: WebSocket["url"]): NDKCacheRelayInfo | undefined;
+
+    /**
      * Called when the cache is ready.
      */
     onReady?(callback: () => void): void;
 }
+
+export type NDKCacheRelayInfo = {
+    lastConnectedAt?: number;
+    dontConnectBefore?: number;
+};

@@ -33,12 +33,7 @@ export class NDKNostrRpc extends EventEmitter {
     private relaySet: NDKRelaySet | undefined;
     private debug: debug.Debugger;
 
-    public constructor(
-        ndk: NDK,
-        signer: NDKSigner,
-        debug: debug.Debugger,
-        relayUrls?: string[],
-    ) {
+    public constructor(ndk: NDK, signer: NDKSigner, debug: debug.Debugger, relayUrls?: string[]) {
         super();
         this.ndk = ndk;
         this.signer = signer;
@@ -156,7 +151,6 @@ export class NDKNostrRpc extends EventEmitter {
             tags: [["p", remotePubkey]],
             pubkey: localUser.pubkey,
         } as NostrEvent);
-
 
         event.content = await this.signer.encrypt(remoteUser, event.content);
         await event.sign(this.signer);

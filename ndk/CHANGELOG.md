@@ -1,5 +1,12 @@
 # @nostr-dev-kit/ndk
 
+## 2.8.2
+
+### Patch Changes
+
+-   0af033f: allow scheduling more than one event
+-   cache relay reconnection status
+
 ## 2.8.1
 
 ### Patch Changes

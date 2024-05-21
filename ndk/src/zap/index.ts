@@ -60,7 +60,7 @@ export class NDKZap extends EventEmitter {
     public ndk: NDK;
     public zappedEvent?: NDKEvent;
     public zappedUser: NDKUser;
-    private fetch: typeof fetch = fetch
+    private fetch: typeof fetch = fetch;
 
     public constructor(args: ZapConstructorParams) {
         super();

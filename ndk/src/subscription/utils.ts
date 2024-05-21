@@ -155,11 +155,14 @@ export function filterFromId(id: string): NDKFilter {
                 case "note":
                     return { ids: [decoded.data] };
                 case "naddr":
-                    return {
+                    const filter: NDKFilter = {
                         authors: [decoded.data.pubkey],
-                        "#d": [decoded.data.identifier],
                         kinds: [decoded.data.kind],
                     };
+
+                    if (decoded.data.identifier) filter["#d"] = [decoded.data.identifier];
+
+                    return filter;
             }
         } catch (e) {
             console.error("Error decoding", id, e);

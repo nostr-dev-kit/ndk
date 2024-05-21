@@ -1,6 +1,6 @@
 {
   "name": "@nostr-dev-kit/ndk-svelte-components",
-  "version": "2.2.15",
+  "version": "2.2.16",
   "description": "",
   "license": "MIT",
   "type": "module",
@@ -84,7 +84,7 @@
     "rehype-slug": "^6.0.0",
     "sanitize-html": "^2.11.0",
     "svelte-preprocess": "^5.0.4",
-    "svelte-time": "^0.8.0"
+    "svelte-time": "^0.8.3"
   },
   "peerDependencies": {
     "svelte": "^4.2.0"

@@ -34,6 +34,7 @@
     export let showMedia = true;
     export let content = event.content;
     export let mediaCollectionComponent: typeof SvelteComponent | undefined = undefined;
+    export let eventCardComponent: typeof SvelteComponent = EventCard;
 
     export const getLinks = (parts: any[]) => pluck(
         "value",
@@ -73,9 +74,9 @@
             {:else if type.match(/^nostr:np(rofile|ub)$/)}
                 <NoteContentPerson {ndk} {value} on:click />
             {:else if type.startsWith('nostr:') && showMedia && isStartOrEnd(i) && value.id !== anchorId}
-                <EventCard {ndk} id={value.id} relays={value.relays} />
+                <svelte:component this={eventCardComponent} {ndk} id={value.id} relays={value.relays} />
             {:else if type.startsWith('nostr:')}
-                <!-- <NoteContentEntity {value} /> -->
+                <svelte:component this={eventCardComponent} {ndk} id={value.id} relays={value.relays} />
             {:else}
                 {value}
             {/if}

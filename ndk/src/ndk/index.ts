@@ -158,6 +158,8 @@ export const DEFAULT_BLACKLISTED_RELAYS = [
  * @emits invalid-signature when an event with an invalid signature is received
  */
 export class NDK extends EventEmitter<{
+    event: (event: NDKEvent, relay: NDKRelay) => void;
+
     "signer:ready": (signer: NDKSigner) => void;
     "signer:required": () => void;
 
@@ -235,6 +237,7 @@ export class NDK extends EventEmitter<{
             opts.blacklistRelayUrls || DEFAULT_BLACKLISTED_RELAYS,
             this
         );
+        this.pool.name = "main";
 
         this.debug(`Starting with explicit relays: ${JSON.stringify(this.explicitRelayUrls)}`);
 
@@ -259,6 +262,7 @@ export class NDK extends EventEmitter<{
                 this,
                 this.debug.extend("outbox-pool")
             );
+            this.outboxPool.name = "outbox";
 
             this.outboxTracker = new OutboxTracker(this);
         }

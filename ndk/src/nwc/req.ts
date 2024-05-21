@@ -1,5 +1,5 @@
-import { NDKNwc, NDKNwcResponse } from ".";
-import { NDKEvent, NostrEvent } from "../events";
+import type { NDKNwc, NDKNwcResponse } from ".";
+import { NDKEvent, type NostrEvent } from "../events";
 import { NDKKind } from "../events/kinds";
 
 export type NostrWalletConnectMethod =

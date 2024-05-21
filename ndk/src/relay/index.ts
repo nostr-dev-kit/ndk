@@ -9,6 +9,7 @@ import { NDKRelayPublisher } from "./publisher.js";
 import type { NDKRelayScore } from "./score.js";
 import { NDKRelaySubscriptions } from "./subscriptions.js";
 import { NDKAuthPolicy } from "./auth-policies.js";
+import { normalizeRelayUrl } from "../utils/normalize-url.js";
 
 /** @deprecated Use `WebSocket['url']` instead. */
 export type NDKRelayUrl = WebSocket["url"];
@@ -70,8 +71,20 @@ export interface NDKRelayConnectionStats {
  * @emits NDKRelay#eose when the relay has reached the end of stored events
  * @emits NDKRelay#auth when the relay requires authentication
  * @emits NDKRelay#authed when the relay has authenticated
+ * @emits NDKRelay#delayed-connect when the relay will wait before reconnecting
  */
-export class NDKRelay extends EventEmitter {
+export class NDKRelay extends EventEmitter<{
+    connect: () => void;
+    ready: () => void;
+    disconnect: () => void;
+    flapping: (stats: NDKRelayConnectionStats) => void;
+    notice: (notice: string) => void;
+    auth: (challenge: string) => void;
+    authed: () => void;
+    published: (event: NDKEvent) => void;
+    "publish:failed": (event: NDKEvent, error: Error) => void;
+    "delayed-connect": (delayInMs: number) => void;
+}> {
     readonly url: WebSocket["url"];
     readonly scores: Map<NDKUser, NDKRelayScore>;
     public connectivity: NDKRelayConnectivity;
@@ -94,7 +107,7 @@ export class NDKRelay extends EventEmitter {
 
     public constructor(url: WebSocket["url"], authPolicy?: NDKAuthPolicy) {
         super();
-        this.url = url;
+        this.url = normalizeRelayUrl(url);
         this.scores = new Map<NDKUser, NDKRelayScore>();
         this.debug = debug(`ndk:relay:${url}`);
         this.connectivity = new NDKRelayConnectivity(this);
@@ -115,8 +128,8 @@ export class NDKRelay extends EventEmitter {
     /**
      * Connects to the relay.
      */
-    public async connect(timeoutMs?: number): Promise<void> {
-        return this.connectivity.connect(timeoutMs);
+    public async connect(timeoutMs?: number, reconnect = true): Promise<void> {
+        return this.connectivity.connect(timeoutMs, reconnect);
     }
 
     /**
@@ -155,7 +168,7 @@ export class NDKRelay extends EventEmitter {
         return this.publisher.publish(event, timeoutMs);
     }
 
-    public async auth(event: NDKEvent): Promise<void> {
+    public async auth(event: NDKEvent): Promise<string> {
         return this.publisher.auth(event);
     }
 

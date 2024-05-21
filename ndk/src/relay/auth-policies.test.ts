@@ -1,13 +1,13 @@
 import { NDK } from "../ndk";
 import { NDKPrivateKeySigner } from "../signers/private-key";
 import { NDKRelayAuthPolicies } from "./auth-policies";
-import { NDKEvent } from "../events";
+import type { NDKEvent } from "../events";
 
 const ndk = new NDK({
-    explicitRelayUrls: ["ws://localhost"],
+    explicitRelayUrls: ["ws://localhost/"],
 });
 const pool = ndk.pool;
-const relay = pool.relays.get("ws://localhost")!;
+const relay = pool.relays.get("ws://localhost/")!;
 
 describe("disconnect policy", () => {
     it("evicts the relay from the pool", () => {
@@ -28,7 +28,9 @@ describe("sign in policy", () => {
 
         const relayAuth = jest
             .spyOn(relay, "auth")
-            .mockImplementation(async (event: NDKEvent): Promise<void> => {});
+            .mockImplementation(async (event: NDKEvent): Promise<string> => {
+                return "abc";
+            });
 
         await relay.emit("auth", "1234-challenge");
         await new Promise((resolve) => {

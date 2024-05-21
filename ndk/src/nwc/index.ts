@@ -1,16 +1,17 @@
 import { EventEmitter } from "tseep";
 import type { NDK } from "../ndk";
-import { PayInvoiceResponse, payInvoice } from "./pay_invoice";
+import { type PayInvoiceResponse, payInvoice } from "./pay_invoice";
 import { NDKRelaySet } from "../relay/sets";
-import { NDKSigner } from "../signers";
+import type { NDKSigner } from "../signers";
 import { NDKPrivateKeySigner } from "../signers/private-key";
 import { NDKKind } from "../events/kinds";
-import { Debugger } from "debug";
-import { NDKUser } from "../user";
-import { NostrWalletConnectMethod, sendReq } from "./req";
-import { NDKEvent } from "../events";
-import { getBalance, type GetBalanceResponse } from "./get_balance";
-import { getInfo, GetInfoResponse } from "./get_info";
+import type { Debugger } from "debug";
+import type { NDKUser } from "../user";
+import { type NostrWalletConnectMethod, sendReq } from "./req";
+import type { NDKEvent } from "../events";
+import { getBalance } from "./get_balance";
+import { getInfo, type GetInfoResponse } from "./get_info";
+import { hexToBytes } from "@noble/hashes/utils";
 
 export type NDKNWcCommands =
     | "pay_invoice"
@@ -72,7 +73,7 @@ export class NDKNwc extends EventEmitter {
         ndk: NDK;
         pubkey: string;
         relayUrls: string[];
-        secret: string;
+        secret: string | Uint8Array;
     }) {
         super();
 
@@ -82,7 +83,9 @@ export class NDKNwc extends EventEmitter {
             new Set(relayUrls.map((url) => ndk.pool.getRelay(url))),
             ndk
         );
-        this.signer = new NDKPrivateKeySigner(secret);
+        this.signer = new NDKPrivateKeySigner(
+            secret instanceof Uint8Array ? secret : hexToBytes(secret)
+        );
         this.debug = ndk.debug.extend("nwc");
 
         this.debug(`Starting with wallet service ${this.walletService.npub}`);
@@ -169,7 +172,8 @@ export class NDKNwc extends EventEmitter {
 
         return await Promise.race(promises);
     }
-
+    
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async sendReq<T>(method: NostrWalletConnectMethod, params: any): Promise<NDKNwcResponse<T>> {
         return (await sendReq.call(this, method, params)) as NDKNwcResponse<T>;
     }

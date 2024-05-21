@@ -93,7 +93,7 @@ export class NDKRelayPublisher {
         const timeoutPromise = new Promise<boolean>((_, reject) => {
             publishTimeout = setTimeout(() => {
                 this.ndkRelay.debug("Publish timed out", event.rawEvent());
-                this.ndkRelay.emit("publish:failed", event, "Timeout");
+                this.ndkRelay.emit("publish:failed", event, new Error("Timeout"));
                 reject(new Error("Publish operation timed out"));
             }, timeoutMs);
         });
@@ -102,7 +102,8 @@ export class NDKRelayPublisher {
         return Promise.race([publishPromise, timeoutPromise]);
     }
 
-    public async auth(event: NDKEvent): Promise<void> {
+    public async auth(event: NDKEvent): Promise<string> {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return this.ndkRelay.connectivity.relay.auth(event.rawEvent() as any);
     }
 }

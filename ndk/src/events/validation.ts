@@ -31,7 +31,10 @@ export function validate(this: NDKEvent): boolean {
     return true;
 }
 
-const verifiedEvents = new LRUCache<string, boolean>({ maxSize: 1000, entryExpirationTimeInMS: 60000 });
+const verifiedEvents = new LRUCache<string, boolean>({
+    maxSize: 1000,
+    entryExpirationTimeInMS: 60000,
+});
 
 /**
  * This method verifies the signature of an event and optionally persists the result to the event.
@@ -43,7 +46,7 @@ export function verifySignature(this: NDKEvent, persist: boolean): boolean | und
 
     const prevVerification = verifiedEvents.get(this.id);
     if (prevVerification !== null) {
-        return this.signatureVerified = prevVerification;
+        return (this.signatureVerified = prevVerification);
     }
 
     try {
@@ -65,7 +68,6 @@ export function verifySignature(this: NDKEvent, persist: boolean): boolean | und
             return (this.signatureVerified = res);
         }
     } catch (err) {
-        console.error("Error verifying signature", this.rawEvent(), err);
         return (this.signatureVerified = false);
     }
 }
@@ -73,9 +75,14 @@ export function verifySignature(this: NDKEvent, persist: boolean): boolean | und
 /**
  * This method returns the hash of an event.
  * @param event {NDKEvent} The event to hash
+ * @param serialized {string} The serialized event
  * @returns {string} Hex encoded sha256 event hash
  */
 export function getEventHash(this: NDKEvent): string {
-    const eventHash = sha256(new TextEncoder().encode(this.serialize()));
+    return getEventHashFromSerializedEvent(this.serialize());
+}
+
+export function getEventHashFromSerializedEvent(serializedEvent: string): string {
+    const eventHash = sha256(new TextEncoder().encode(serializedEvent));
     return bytesToHex(eventHash);
 }

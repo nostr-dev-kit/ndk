@@ -10,22 +10,18 @@ export class NDKDVMEventSchedule extends NDKEvent {
         this.kind = NDKKind.DVMEventSchedule;
     }
 
-    static async from(event: NDKEvent) {
-        try {
-            const e = new NDKDVMEventSchedule(event.ndk, event.rawEvent());
+    static async from(event: NDKEvent): Promise<NDKDVMEventSchedule> {
+        const e = new NDKDVMEventSchedule(event.ndk, event.rawEvent());
+        if (e.encrypted) {
             const serviceProvider = new NDKUser({
                 pubkey: event.tagValue("p"),
             });
             await e.decrypt(serviceProvider);
-            return e;
-        } catch (error) {
-            console.error({ error });
         }
+        return e;
     }
 
-    async dvmDecrypt() {
-        await this.decrypt();
-        const decryptedContent = JSON.parse(this.content);
-        this.tags.push(...decryptedContent);
+    get encrypted(): boolean {
+        return !!this.getMatchingTags("encrypted")[0];
     }
 }

@@ -1,6 +1,7 @@
-import { NDKEvent, NostrEvent } from "../../index.js";
-import { NDK } from "../../../ndk/index.js";
+import type { NostrEvent } from "../../index.js";
+import type { NDK } from "../../../ndk/index.js";
 import { NDKKind } from "../index.js";
+import { NDKEvent } from "../../index.js";
 import { NDKUser } from "../../../user/index.js";
 
 export class NDKDVMEventSchedule extends NDKEvent {
@@ -10,12 +11,16 @@ export class NDKDVMEventSchedule extends NDKEvent {
     }
 
     static async from(event: NDKEvent) {
-        const e = new NDKDVMEventSchedule(event.ndk, event.rawEvent());
-        const serviceProvider = new NDKUser({
-            pubkey: event.tagValue("p")
-        });
-        await e.decrypt(serviceProvider);
-        return e;
+        try {
+            const e = new NDKDVMEventSchedule(event.ndk, event.rawEvent());
+            const serviceProvider = new NDKUser({
+                pubkey: event.tagValue("p"),
+            });
+            await e.decrypt(serviceProvider);
+            return e;
+        } catch (error) {
+            console.error({ error });
+        }
     }
 
     async dvmDecrypt() {

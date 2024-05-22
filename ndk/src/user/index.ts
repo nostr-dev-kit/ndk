@@ -357,7 +357,7 @@ export class NDKUser {
      * Remove a follow from this user's contact list
      *
      * @param user {NDKUser} The user to unfollow
-     * @param currentFollowList {Set<Hexpubkey>} The current follow list
+     * @param currentFollowList {Set<NDKUser>} The current follow list
      * @param kind {NDKKind} The kind to use for this contact list (defaults to `3`)
      * @returns The relays were the follow list was published or false if the user wasn't found
      */
@@ -380,6 +380,7 @@ export class NDKUser {
         for (const follow of currentFollowList) {
             if (follow.pubkey !== user.pubkey) {
                 newUserFollowList.add(follow);
+            } else {
                 foundUser = true;
             }
         }
@@ -388,8 +389,8 @@ export class NDKUser {
 
         const event = new NDKEvent(this.ndk, { kind } as NostrEvent);
 
-        // This is a horrible hack and I need to fix it
-        for (const follow of currentFollowList) {
+        // Tag users from the new follow list
+        for (const follow of newUserFollowList) {
             event.tag(follow);
         }
 

@@ -82,6 +82,6 @@
         "tseep": "^1.1.1",
         "typescript-lru-cache": "^2.0.0",
         "utf8-buffer": "^1.0.0",
-        "websocket-polyfill": "^0.0.3"
+        "websocket-polyfill": "^1.0.0"
     }
 }

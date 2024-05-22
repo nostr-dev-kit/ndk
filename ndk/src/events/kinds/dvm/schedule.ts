@@ -24,4 +24,13 @@ export class NDKDVMEventSchedule extends NDKEvent {
     get encrypted(): boolean {
         return !!this.getMatchingTags("encrypted")[0];
     }
+
+    static parseEventToPublish(scheduleEvent: NDKDVMEventSchedule): NDKEvent | undefined {
+        const parsed = JSON.parse(scheduleEvent.content);
+        const input = parsed.find((el: string[]) => el[0] === 'i');
+        if (!input) return;
+
+        const payload = JSON.parse(input[1]);
+        return new NDKEvent(scheduleEvent.ndk, payload);
+    }
 }

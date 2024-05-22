@@ -15,15 +15,17 @@ beforeAll(() => ndk = new NDK({ signer: SIGNER }));
 describe("creates an NDK event", () => {
     it("able to decrypt", async () => {
         const eventToPublish = await createTextEvent();
-        const mockEvent = await createScheduleEvent(eventToPublish);
+        const dmvInput = ["i", JSON.stringify(eventToPublish.rawEvent()), "text"];
+        const mockEvent = await createScheduleEvent(dmvInput);
         const event = await NDKDVMEventSchedule.from(mockEvent);
+        
         expect(event.created_at).toEqual(mockEvent.created_at);
-        expect(event.content).toEqual(JSON.stringify([["i", JSON.stringify(eventToPublish.rawEvent()), "text"]]));
+        expect(event.content).toEqual(dmvInput);
+        expect(event.kind).toBe(NDKKind.DVMEventSchedule);
     });
 });
 
-const createScheduleEvent = async (event: NDKEvent): Promise<NDKEvent> => {
-    const dvmInput = ["i", JSON.stringify(event.rawEvent()), "text"];
+const createScheduleEvent = async (dvmInput: string[]): Promise<NDKEvent> => {
     const scheduleNostrEvent: NostrEvent = {
         kind: NDKKind.DVMEventSchedule,
         created_at: Date.now() / 1000,

@@ -18,9 +18,9 @@ describe("creates an NDK event", () => {
         const dmvInput = ["i", JSON.stringify(eventToPublish.rawEvent()), "text"];
         const mockEvent = await createScheduleEvent(dmvInput);
         const event = await NDKDVMEventSchedule.from(mockEvent);
-        
+
         expect(event.created_at).toEqual(mockEvent.created_at);
-        expect(event.content).toEqual(dmvInput);
+        expect(JSON.parse(event.content)).toEqual([dmvInput]);
         expect(event.kind).toBe(NDKKind.DVMEventSchedule);
     });
 });

@@ -17,6 +17,7 @@ export interface NDKUserProfile {
     about?: string;
     zapService?: string;
     website?: string;
+    profileEvent?: string;
 }
 
 export function profileFromEvent(event: NDKEvent): NDKUserProfile {
@@ -70,6 +71,9 @@ export function profileFromEvent(event: NDKEvent): NDKUserProfile {
                 break;
         }
     });
+
+    // Store the event as a stringified JSON
+    profile.profileEvent = JSON.stringify(event);
 
     return profile;
 }

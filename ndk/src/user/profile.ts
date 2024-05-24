@@ -72,9 +72,6 @@ export function profileFromEvent(event: NDKEvent): NDKUserProfile {
         }
     });
 
-    // Store the event as a stringified JSON
-    profile.profileEvent = JSON.stringify(event);
-
     return profile;
 }
 

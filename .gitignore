@@ -19,5 +19,7 @@ package-lock.json
 .turbo
 _local_
 .svelte-kit/
+ndk/docs
+.pnpm-store
 ndk/docs/.vitepress/cache
 ndk/docs/.vitepress/dist

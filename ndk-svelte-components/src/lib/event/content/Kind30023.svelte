@@ -12,6 +12,7 @@
     import type { SvelteComponent } from "svelte";
     import RenderHtml from "./RenderHtml.svelte";
     import type sanitizeHtml from "sanitize-html";
+    import type { MarkedExtension } from "marked";
 
     export let ndk: NDK;
     export let article: NDKArticle;
@@ -19,8 +20,9 @@
     export let content = article.content;
     export let mediaCollectionComponent: typeof SvelteComponent | undefined = undefined;
     export let sanitizeHtmlOptions: sanitizeHtml.IOptions | undefined = undefined;
+    export let markedExtensions: MarkedExtension[] = [];
 
-    const htmlContent = markdownToHtml(content, sanitizeHtmlOptions);
+    const htmlContent = markdownToHtml(content, sanitizeHtmlOptions, markedExtensions);
     const parsed = parseContent({ content: htmlContent, tags: article.tags, html: true });
 
     export const isNewline = (i: number) => !parsed[i] || parsed[i].type === NEWLINE;

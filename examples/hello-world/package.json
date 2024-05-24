@@ -45,6 +45,6 @@
     "dependencies": {
         "@nostr-dev-kit/ndk": "workspace:*",
         "@types/debug": "^4.1.8",
-        "websocket-polyfill": "^0.0.3"
+        "websocket-polyfill": "^1.0.0"
     }
 }

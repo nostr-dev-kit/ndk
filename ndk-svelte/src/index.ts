@@ -56,6 +56,11 @@ type NDKSubscribeOptions = NDKSubscriptionOptions & {
      * Relay set to use for the subscription
      */
     relaySet?: NDKRelaySet;
+
+    /**
+     * Callback to be called when the subscription EOSEs
+     */
+    onEose?: () => void;
 };
 
 class NDKSvelte extends NDK {
@@ -182,9 +187,9 @@ class NDKSvelte extends NDK {
                 e.relay = event.relay;
             }
             e.ndk = this;
-
+            
             const dedupKey = event.deduplicationKey();
-
+            
             if (eventIds.has(dedupKey)) {
                 const prevEvent = events.find((e) => e.deduplicationKey() === dedupKey);
 
@@ -289,6 +294,10 @@ class NDKSvelte extends NDK {
             store.onEose = (cb) => {
                 store.subscription?.on("eose", cb);
             };
+
+            if (opts?.onEose) {
+                store.onEose(opts.onEose);
+            }
         };
 
         if (autoStart) {

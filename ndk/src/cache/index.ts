@@ -77,6 +77,13 @@ export interface NDKCacheAdapter {
     getRelayStatus?(relayUrl: WebSocket["url"]): NDKCacheRelayInfo | undefined;
 
     /**
+     * Tracks a publishing event.
+     * @param event 
+     * @param relayUrls List of relays that the event will be published to.
+     */
+    addUnpublishedEvent?(event: NDKEvent, relayUrls: WebSocket["url"][]): void;
+
+    /**
      * Called when the cache is ready.
      */
     onReady?(callback: () => void): void;

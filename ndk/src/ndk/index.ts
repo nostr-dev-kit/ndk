@@ -7,7 +7,7 @@ import type { NDKEvent, NDKEventId, NDKTag } from "../events/index.js";
 import { OutboxTracker } from "../outbox/tracker.js";
 import { NDKRelay } from "../relay/index.js";
 import { NDKPool } from "../relay/pool/index.js";
-import { NDKRelaySet } from "../relay/sets/index.js";
+import { NDKRelaySet, NDKPublishError } from "../relay/sets/index.js";
 import { correctRelaySet } from "../relay/sets/utils.js";
 import type { NDKSigner } from "../signers/index.js";
 import type { NDKFilter, NDKSubscriptionOptions } from "../subscription/index.js";
@@ -25,6 +25,7 @@ import { NDKNwc } from "../nwc/index.js";
 import { NDKLnUrlData } from "../zap/index.js";
 import { Queue } from "./queue/index.js";
 import { signatureVerificationInit } from "../events/signature.js";
+import { NDKSubscriptionManager } from "../subscription/manager.js";
 
 export interface NDKConstructorParams {
     /**
@@ -168,6 +169,12 @@ export class NDK extends EventEmitter<{
      * was processed asynchronously.
      */
     "event:invalid-sig": (event: NDKEvent) => void;
+
+    /**
+     * Emitted when an event fails to publish.
+     * @param event 
+     */
+    "event:publish-failed": (event: NDKEvent, error: NDKPublishError) => void;
 }> {
     public explicitRelayUrls?: WebSocket["url"][];
     public pool: NDKPool;
@@ -185,6 +192,9 @@ export class NDK extends EventEmitter<{
     public queuesNip05: Queue<ProfilePointer | null>;
     public asyncSigVerification: boolean = false;
     public validationRatio: number = 1.0;
+    public subManager: NDKSubscriptionManager;
+
+    public publishingFailureHandled = false;
 
     /**
      * Default relay-auth policy that will be used when a relay requests authentication,
@@ -281,6 +291,7 @@ export class NDK extends EventEmitter<{
         this.signatureVerificationWorker = opts.signatureVerificationWorker;
 
         this.validationRatio = opts.validationRatio || 1.0;
+        this.subManager = new NDKSubscriptionManager(this.debug);
 
         try {
             this.httpFetch = fetch;
@@ -501,6 +512,7 @@ export class NDK extends EventEmitter<{
         autoStart = true
     ): NDKSubscription {
         const subscription = new NDKSubscription(this, filters, opts, relaySet);
+        this.subManager.add(subscription);
 
         // Signal to the relays that they are explicitly being used
         if (relaySet) {

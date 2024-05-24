@@ -73,6 +73,7 @@ export class NDKRelayPublisher {
                 .then(() => {
                     clearTimeout(publishTimeout as unknown as NodeJS.Timeout);
                     this.ndkRelay.emit("published", event);
+                    event.emit("published", this.ndkRelay);
                     resolve(true);
                 })
                 .catch((err) => {

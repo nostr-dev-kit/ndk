@@ -139,7 +139,6 @@ class NDKSubscriptionFilters {
     }
 
     private eventMatchesLocalFilter(rawEvent: NostrEvent): boolean {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return this.filters.some((filter) => matchFilter(filter, rawEvent as any));
     }
 }

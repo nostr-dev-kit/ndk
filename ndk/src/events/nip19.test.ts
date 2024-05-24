@@ -32,7 +32,7 @@ describe("NDKEvent", () => {
                 pubkey: "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52",
                 tags: [["d", "1234"]],
             } as NostrEvent);
-            event.relay = new NDKRelay("wss://relay.f7z.io");
+            event.relay = new NDKRelay("wss://relay.f7z.io/");
 
             const a = event.encode();
             expect(a).toBe(
@@ -46,7 +46,7 @@ describe("NDKEvent", () => {
                 pubkey: "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52",
                 tags: [["d", "1234"]],
             } as NostrEvent);
-            event.relay = new NDKRelay("wss://relay.f7z.io");
+            event.relay = new NDKRelay("wss://relay.f7z.io/");
 
             const a = event.encode();
             expect(a).toBe(

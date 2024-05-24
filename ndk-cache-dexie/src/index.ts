@@ -12,7 +12,7 @@ import type {
 } from "@nostr-dev-kit/ndk";
 import createDebug from "debug";
 import { matchFilter } from "nostr-tools";
-import { RelayStatus, createDatabase, db, type Event } from "./db.js";
+import { RelayStatus, UnpublishedEvent, createDatabase, db, type Event } from "./db.js";
 import { CacheHandler } from "./lru-cache.js";
 import { profilesDump, profilesWarmUp } from "./caches/profiles.js";
 import { ZapperCacheEntry, zapperDump, zapperWarmUp } from "./caches/zapper.js";
@@ -20,6 +20,7 @@ import { Nip05CacheEntry, nip05Dump, nip05WarmUp } from "./caches/nip05.js";
 import { EventCacheEntry, eventsDump, eventsWarmUp } from "./caches/events.js";
 import { EventTagCacheEntry, eventTagsDump, eventTagsWarmUp } from "./caches/event-tags.js";
 import { relayInfoDump, relayInfoWarmUp } from "./caches/relay-info.js";
+import { addUnpublishedEvent, unpublishedEventsDump, unpublishedEventsWarmUp } from "./caches/unpublished-events.js";
 
 export { db } from "./db";
 
@@ -61,6 +62,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
     public events: CacheHandler<EventCacheEntry>;
     public eventTags: CacheHandler<EventTagCacheEntry>;
     public relayInfo: CacheHandler<RelayStatus>;
+    public unpublishedEvents: CacheHandler<UnpublishedEvent>;
     private warmedUp: boolean = false;
     private warmUpPromise: Promise<any>;
     public devMode = false;
@@ -92,7 +94,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
 
 
         this.events = new CacheHandler<EventCacheEntry>({
-            maxSize: opts.eventCacheSize || 150000,
+            maxSize: opts.eventCacheSize || 50000,
             dump: eventsDump(db.events, this.debug),
             debug: this.debug,
         });
@@ -110,6 +112,12 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
             dump: relayInfoDump(db.relayStatus, this.debug),
         });
 
+        this.unpublishedEvents = new CacheHandler<UnpublishedEvent>({
+            maxSize: 5000,
+            debug: this.debug,
+            dump: unpublishedEventsDump(db.unpublishedEvents, this.debug),
+        })
+
         const startTime = Date.now();
         this.warmUpPromise = Promise.allSettled([
             profilesWarmUp(this.profiles, db.users),
@@ -118,6 +126,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
             eventsWarmUp(this.events, db.events),
             eventTagsWarmUp(this.eventTags, db.eventTags),
             relayInfoWarmUp(this.relayInfo, db.relayStatus),
+            unpublishedEventsWarmUp(this.unpublishedEvents, db.unpublishedEvents),
         ]);
         this.warmUpPromise.then(() => {
             const endTime = Date.now();
@@ -302,6 +311,8 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         await db.events.where({ id: event.tagId() }).delete();
     }
 
+    public addUnpublishedEvent = addUnpublishedEvent.bind(this);
+    
     public async setEvent(event: NDKEvent, filters: NDKFilter[], relay?: NDKRelay): Promise<void> {
         if (event.kind === 0) {
             if (!this.profiles) return;
@@ -316,7 +327,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         let addEvent = true;
 
         if (event.isParamReplaceable()) {
-            const existingEvent = await this.events.get(event.tagId());
+            const existingEvent = this.events.get(event.tagId());
             if (
                 existingEvent &&
                 event.created_at &&
@@ -401,7 +412,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         if (filter.ids) {
             for (const id of filter.ids) {
                 const event = this.events.get(id);
-                if (event) foundEvent(subscription, event, event.relay);
+                if (event) foundEvent(subscription, event, event.relay, filter);
             }
 
             return true;
@@ -432,7 +443,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
                         const replaceableId = `${kind}:${author}:${dTag}`;
                         const event = this.events.get(replaceableId);
                         if (event)
-                            foundEvent(subscription, event, event.relay);
+                            foundEvent(subscription, event, event.relay, filter);
                     }
                 }
             }
@@ -469,7 +480,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
                     if (!event) return;
 
                     if (!filter.kinds || filter.kinds.includes(event.kind!)) {
-                        foundEvent(subscription, event, event.relay);
+                        foundEvent(subscription, event, event.relay, filter);
                     }
                 });
             }

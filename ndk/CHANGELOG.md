@@ -1,5 +1,15 @@
 # @nostr-dev-kit/ndk
 
+## 2.9.0
+
+### Minor Changes
+
+-   94018b4: add optimistic updates
+
+### Patch Changes
+
+-   548f4d8: add optimistic updates
+
 ## 2.8.2
 
 ### Patch Changes

@@ -74,9 +74,9 @@
             {:else if type.match(/^nostr:np(rofile|ub)$/)}
                 <NoteContentPerson {ndk} {value} on:click />
             {:else if type.startsWith('nostr:') && showMedia && isStartOrEnd(i) && value.id !== anchorId}
-                <svelte:component this={eventCardComponent} {ndk} id={value.id} relays={value.relays} />
+                <svelte:component this={eventCardComponent} {ndk} id={value.id??value.entity} relays={value.relays} />
             {:else if type.startsWith('nostr:')}
-                <svelte:component this={eventCardComponent} {ndk} id={value.id} relays={value.relays} />
+                <svelte:component this={eventCardComponent} {ndk} id={value.id??value.entity} relays={value.relays} />
             {:else}
                 {value}
             {/if}

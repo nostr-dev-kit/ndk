@@ -139,7 +139,6 @@ class NDKSubscriptionFilters {
     }
 
     private eventMatchesLocalFilter(rawEvent: NostrEvent): boolean {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return this.filters.some((filter) => matchFilter(filter, rawEvent as any));
     }
 }
@@ -388,7 +387,7 @@ export class NDKRelaySubscriptions {
                 e.relay = this.ndkRelay;
 
                 const subFilters = this.activeSubscriptions.get(sub);
-                subFilters?.eventReceived(e);
+                subFilters?.eventReceived(e.rawEvent());
             },
             oneose: () => {
                 const subFilters = this.activeSubscriptions.get(sub);

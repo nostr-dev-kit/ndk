@@ -4,10 +4,10 @@ import { NDKRelayAuthPolicies } from "./auth-policies";
 import type { NDKEvent } from "../events";
 
 const ndk = new NDK({
-    explicitRelayUrls: ["ws://localhost"],
+    explicitRelayUrls: ["ws://localhost/"],
 });
 const pool = ndk.pool;
-const relay = pool.relays.get("ws://localhost")!;
+const relay = pool.relays.get("ws://localhost/")!;
 
 describe("disconnect policy", () => {
     it("evicts the relay from the pool", () => {

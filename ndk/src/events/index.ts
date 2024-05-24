@@ -17,6 +17,7 @@ import { fetchReplyEvent, fetchRootEvent, fetchTaggedEvent } from "./fetch-tagge
 import { NDKEventSerialized, deserialize, serialize } from "./serializer.js";
 import { validate, verifySignature, getEventHash } from "./validation.js";
 import { NDKZap } from "../zap/index.js";
+import { matchFilter } from "nostr-tools";
 
 export type NDKEventId = string;
 export type NDKTag = string[];
@@ -58,6 +59,12 @@ export class NDKEvent extends EventEmitter {
      */
     public onRelays: NDKRelay[] = [];
 
+    /**
+     * The status of the publish operation.
+     */
+    public publishStatus?: "pending" | "success" | "error" = 'success';
+    public publishError?: Error;
+
     constructor(ndk?: NDK, event?: NostrEvent) {
         super();
         this.ndk = ndk;
@@ -97,8 +104,8 @@ export class NDKEvent extends EventEmitter {
 
     set author(user: NDKUser) {
         this.pubkey = user.pubkey;
-
-        this._author = undefined;
+        this._author = user;
+        this._author.ndk ??= this.ndk;
     }
 
     /**
@@ -307,21 +314,42 @@ export class NDKEvent extends EventEmitter {
         }
 
         const nostrEvent = await this.toNostrEvent();
-
-        console.log("signing", nostrEvent);
-
         this.sig = await signer.sign(nostrEvent);
 
         return this.sig;
     }
 
     /**
+     * 
+     * @param relaySet 
+     * @param timeoutMs 
+     * @param requiredRelayCount 
+     * @returns 
+     */
+    public async publishReplaceable(
+        relaySet?: NDKRelaySet,
+        timeoutMs?: number,
+        requiredRelayCount?: number
+    ) {
+        this.id = "";
+        this.created_at = Math.floor(Date.now() / 1000);
+        this.sig = "";
+        return this.publish(relaySet, timeoutMs, requiredRelayCount);
+    }
+
+    /**
      * Attempt to sign and then publish an NDKEvent to a given relaySet.
      * If no relaySet is provided, the relaySet will be calculated by NDK.
      * @param relaySet {NDKRelaySet} The relaySet to publish the even to.
+     * @param timeoutM {number} The timeout for the publish operation in milliseconds.
+     * @param requiredRelayCount The number of relays that must receive the event for the publish to be considered successful.
      * @returns A promise that resolves to the relays the event was published to.
      */
-    public async publish(relaySet?: NDKRelaySet, timeoutMs?: number): Promise<Set<NDKRelay>> {
+    public async publish(
+        relaySet?: NDKRelaySet,
+        timeoutMs?: number,
+        requiredRelayCount?: number
+    ): Promise<Set<NDKRelay>> {
         if (!this.sig) await this.sign();
         if (!this.ndk)
             throw new Error("NDKEvent must be associated with an NDK instance to publish");
@@ -331,17 +359,33 @@ export class NDKEvent extends EventEmitter {
             relaySet = this.ndk.devWriteRelaySet || calculateRelaySetFromEvent(this.ndk, this);
         }
 
-        this.ndk.debug(`publish to ${relaySet.size} relays`, this.rawEvent());
-
         // If the published event is a delete event, notify the cache if there is one
         if (this.kind === NDKKind.EventDeletion && this.ndk.cacheAdapter?.deleteEvent) {
             this.ndk.cacheAdapter.deleteEvent(this);
         }
 
-        const relays = await relaySet.publish(this, timeoutMs);
+        const rawEvent = this.rawEvent();
+        
+        // add to cache for optimistic updates
+        if (this.ndk.cacheAdapter?.addUnpublishedEvent) {
+            this.ndk.cacheAdapter.addUnpublishedEvent(this, relaySet.relayUrls)
+        }
+
+        // send to active subscriptions that want this event
+        this.ndk.subManager.subscriptions.forEach(sub => {
+            if (sub.filters.some(filter => matchFilter(filter, rawEvent as any))) {
+                sub.eventReceived(this, undefined, false, true);
+            }
+        })
+
+        const relays = await relaySet.publish(this, timeoutMs, requiredRelayCount);
         this.onRelays = Array.from(relays);
 
         return relays;
+    }
+
+    private optimisticUpdate() {
+        
     }
 
     /**

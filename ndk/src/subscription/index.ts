@@ -1,9 +1,9 @@
 import { EventEmitter } from "tseep";
 
-import type { NDKEvent, NDKEventId } from "../events/index.js";
+import { NDKEvent, NDKEventId } from "../events/index.js";
 import type { NDKKind } from "../events/kinds/index.js";
 import type { NDK } from "../ndk/index.js";
-import type { NDKRelay } from "../relay";
+import { NDKRelay } from "../relay";
 import type { NDKPool } from "../relay/pool/index.js";
 import { calculateRelaySetsFromFilters } from "../relay/sets/calculate";
 import type { NDKRelaySet } from "../relay/sets/index.js";
@@ -145,7 +145,12 @@ export const defaultOpts: NDKSubscriptionOptions = {
  * const sub = ndk.subscribe({ kinds: [1] }, { skipValidation: false });
  * sub.on("event", (event) => console.log(event.content); // Only valid events will be received
  */
-export class NDKSubscription extends EventEmitter {
+export class NDKSubscription extends EventEmitter<{
+    eose: (sub: NDKSubscription) => void;
+    close: (sub: NDKSubscription) => void;
+    "event:dup": (event: NDKEvent, relay: NDKRelay | undefined, timeSinceFirstSeen: number, sub: NDKSubscription) => void;
+    event: (event: NDKEvent, relay: NDKRelay | undefined, sub: NDKSubscription) => void;
+}> {
     readonly subId?: string;
     readonly filters: NDKFilter[];
     readonly opts: NDKSubscriptionOptions;
@@ -160,7 +165,6 @@ export class NDKSubscription extends EventEmitter {
     public relaySet?: NDKRelaySet;
     public ndk: NDK;
     public debug: debug.Debugger;
-    public eoseDebug: debug.Debugger;
 
     /**
      * Events that have been seen by the subscription, with the time they were first seen.
@@ -206,7 +210,6 @@ export class NDKSubscription extends EventEmitter {
         this.internalId = Math.random().toString(36).substring(7);
         this.relaySet = relaySet;
         this.debug = ndk.debug.extend(`subscription[${opts?.subId ?? this.internalId}]`);
-        this.eoseDebug = this.debug.extend("eose");
         this.skipVerification = opts?.skipVerification || false;
         this.skipValidation = opts?.skipValidation || false;
         this.closeOnEose = opts?.closeOnEose || false;
@@ -345,8 +348,14 @@ export class NDKSubscription extends EventEmitter {
      * @param event
      * @param relay
      * @param fromCache Whether the event was received from the cache
+     * @param optimisticPublish Whether this event is coming from an optimistic publish
      */
-    public eventReceived(event: NDKEvent, relay: NDKRelay | undefined, fromCache: boolean = false) {
+    public eventReceived(
+        event: NDKEvent,
+        relay: NDKRelay | undefined,
+        fromCache: boolean = false,
+        optimisticPublish: boolean = false
+    ) {
         if (relay) {
             event.relay ??= relay;
             event.onRelays.push(relay);
@@ -375,7 +384,7 @@ export class NDKSubscription extends EventEmitter {
             return;
         }
 
-        if (!fromCache) {
+        if (!fromCache && !optimisticPublish) {
             if (!this.skipValidation) {
                 if (!event.isValid) {
                     this.debug(`Event failed validation`, event.rawEvent());
@@ -393,7 +402,7 @@ export class NDKSubscription extends EventEmitter {
             }
         }
 
-        if (!fromCache && relay) {
+        if (!fromCache && !optimisticPublish && relay) {
             this.trackPerRelay(event, relay);
 
             if (this.ndk.cacheAdapter) {
@@ -426,8 +435,6 @@ export class NDKSubscription extends EventEmitter {
     public eoseReceived(relay: NDKRelay): void {
         this.eosesSeen.add(relay);
 
-        // this.eoseDebug(`received from ${relay.url}`);
-
         let lastEventSeen = this.lastEventReceivedAt
             ? Date.now() - this.lastEventReceivedAt
             : undefined;
@@ -436,22 +443,16 @@ export class NDKSubscription extends EventEmitter {
         const queryFilled = queryFullyFilled(this);
 
         if (queryFilled) {
-            this.emit("eose");
+            this.emit("eose", this);
 
             if (this.opts?.closeOnEose) {
                 this.stop();
-            } else {
-                // this.debug(`not running stop`);
             }
         } else if (hasSeenAllEoses) {
-            this.emit("eose");
-            this.eoseDebug(`All EOSEs seen`);
+            this.emit("eose", this);
 
             if (this.opts?.closeOnEose) {
-                // this.eoseDebug(`closing on eose`, this.opts);
                 this.stop();
-            } else {
-                // this.eoseDebug(`doesn't need to close on eose`, this.opts);
             }
         } else {
             let timeToWaitForNextEose = 1000;
@@ -482,7 +483,7 @@ export class NDKSubscription extends EventEmitter {
                     if (lastEventSeen !== undefined && lastEventSeen < 20) {
                         this.eoseTimeout = setTimeout(sendEoseTimeout, timeToWaitForNextEose);
                     } else {
-                        this.emit("eose");
+                        this.emit("eose", this);
                         if (this.opts?.closeOnEose) this.stop();
                     }
                 };

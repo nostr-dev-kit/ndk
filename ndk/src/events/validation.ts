@@ -68,7 +68,6 @@ export function verifySignature(this: NDKEvent, persist: boolean): boolean | und
             return (this.signatureVerified = res);
         }
     } catch (err) {
-        console.error("Error verifying signature", this.rawEvent(), err);
         return (this.signatureVerified = false);
     }
 }

@@ -1,4 +1,4 @@
-import type { NDKUserProfile } from "@nostr-dev-kit/ndk";
+import type { NDKEvent, NDKEventId, NDKUserProfile, NostrEvent } from "@nostr-dev-kit/ndk";
 import Dexie, { type Table } from "dexie";
 
 export interface User {
@@ -40,6 +40,12 @@ export interface RelayStatus {
     dontConnectBefore?: number;
 }
 
+export interface UnpublishedEvent {
+    event: NostrEvent;
+    relays: Record<WebSocket["url"], boolean>;
+    lastTryAt?: number;
+}
+
 export class Database extends Dexie {
     users!: Table<User>;
     events!: Table<Event>;
@@ -47,16 +53,18 @@ export class Database extends Dexie {
     nip05!: Table<Nip05>;
     lnurl!: Table<Lnurl>;
     relayStatus!: Table<RelayStatus>;
+    unpublishedEvents!: Table<UnpublishedEvent & {id: NDKEventId}>;
 
     constructor(name: string) {
         super(name);
-        this.version(11).stores({
+        this.version(12).stores({
             users: "&pubkey",
             events: "&id, kind",
             eventTags: "&tagValue",
             nip05: "&nip05",
             lnurl: "&pubkey",
             relayStatus: "&url",
+            unpublishedEvents: "&id",
         });
     }
 }

@@ -15,7 +15,6 @@ export async function eventTagsWarmUp(
     });
 }
 
-
 export const eventTagsDump = (eventTags: Table<EventTag>, debug: debug.IDebugger) => {
     return async (dirtyKeys: Set<string>, cache: LRUCache<string, EventTagCacheEntry>) => {
         const entries = [];

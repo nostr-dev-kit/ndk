@@ -20,6 +20,6 @@ package-lock.json
 _local_
 .svelte-kit/
 ndk/docs
-## added because of devcontainer
 .pnpm-store
-## end of added because of devcontainer
+ndk/docs/.vitepress/cache
+ndk/docs/.vitepress/dist

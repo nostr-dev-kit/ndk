@@ -1,4 +1,4 @@
-import { marked } from "marked";
+import { marked, type MarkedExtension } from "marked";
 import { gfmHeadingId } from "marked-gfm-heading-id";
 import { mangle } from "marked-mangle";
 import markedFootnote from 'marked-footnote'
@@ -48,11 +48,16 @@ const convertEntities = (markdown: string) => {
 
 export const markdownToHtml = (
     content: string,
-    sanitizeHtmlOptions?: sanitizeHtml.IOptions
+    sanitizeHtmlOptions?: sanitizeHtml.IOptions,
+    extraMarkedExtensions?: MarkedExtension[],
 ): string => {
     marked.use(mangle());
     marked.use(gfmHeadingId());
     marked.use(markedFootnote());
+
+    extraMarkedExtensions?.forEach((extension) => {
+        marked.use(extension);
+    });
 
     const renderer = new marked.Renderer();
     renderer.link = (href, title, text) => {

@@ -257,7 +257,7 @@ describe("NDKEvent", () => {
         });
 
         it("adds a marker to the reference tag if provided with relay if its set", () => {
-            const relay = new NDKRelay("wss://relay.nos.dev");
+            const relay = new NDKRelay("wss://relay.nos.dev/");
             const nip33event = new NDKEvent(ndk, {
                 kind: 30000,
                 pubkey: "pubkey",
@@ -273,8 +273,8 @@ describe("NDKEvent", () => {
             } as NostrEvent);
 
             expect(nip33event.referenceTags("marker")).toEqual([
-                ["a", "30000:pubkey:d-code", "wss://relay.nos.dev", "marker"],
-                ["e", "eventid1", "wss://relay.nos.dev", "marker"],
+                ["a", "30000:pubkey:d-code", "wss://relay.nos.dev/", "marker"],
+                ["e", "eventid1", "wss://relay.nos.dev/", "marker"],
                 ["p", "pubkey"],
             ]);
             expect(event.referenceTags("marker")).toEqual([

@@ -318,6 +318,10 @@ export class NDKList extends NDKEvent {
         return this;
     }
 
+    public has(item: string) {
+        return this.items.some((tag) => tag[1] === item);
+    }
+
     /**
      * Creates a filter that will result in fetching
      * the items of this list

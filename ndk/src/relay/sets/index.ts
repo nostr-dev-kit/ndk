@@ -2,12 +2,25 @@ import type { NDKEvent } from "../../events/index.js";
 import type { NDK } from "../../ndk/index.js";
 import { NDKRelay } from "../index.js";
 
-export class PublishError extends Error {
+export class NDKPublishError extends Error {
     public errors: Map<NDKRelay, Error>;
+    public publishedToRelays;
 
-    public constructor(message: string, errors: Map<NDKRelay, Error>) {
+    /**
+     * Intended relay set where the publishing was intended to happen.
+     */
+    public intendedRelaySet?: NDKRelaySet;
+
+    public constructor(
+        message: string,
+        errors: Map<NDKRelay, Error>,
+        publishedToRelays: Set<NDKRelay>,
+        intendedRelaySet?: NDKRelaySet,
+    ) {
         super(message);
         this.errors = errors;
+        this.publishedToRelays = publishedToRelays;
+        this.intendedRelaySet = intendedRelaySet;
     }
 
     get relayErrors(): string {
@@ -46,6 +59,10 @@ export class NDKRelaySet {
         this.relays.add(relay);
     }
 
+    get relayUrls(): WebSocket["url"][] {
+        return Array.from(this.relays).map(r => r.url);
+    }
+
     /**
      * Creates a relay set from a list of relay URLs.
      *
@@ -77,7 +94,7 @@ export class NDKRelaySet {
      * @param event
      * @param timeoutMs - timeout in milliseconds for each publish operation and connection operation
      * @returns A set where the event was successfully published to
-     * @throws PublishError if no relay was able to receive the event
+     * @throws NDKPublishError if no relay was able to receive the event
      * @example
      * ```typescript
      * const event = new NDKEvent(ndk, {kinds: [NDKKind.Message], "#d": ["123"]});
@@ -87,7 +104,7 @@ export class NDKRelaySet {
      * } catch (error) {
      *   console.error("error publishing to relays", error);
      *
-     *   if (error instanceof PublishError) {
+     *   if (error instanceof NDKPublishError) {
      *      for (const [relay, err] of error.errors) {
      *         console.error(`error publishing to relay ${relay.url}`, err);
      *       }
@@ -95,10 +112,16 @@ export class NDKRelaySet {
      * }
      * ```
      */
-    public async publish(event: NDKEvent, timeoutMs?: number): Promise<Set<NDKRelay>> {
+    public async publish(
+        event: NDKEvent,
+        timeoutMs?: number,
+        requiredRelayCount: number = 1
+    ): Promise<Set<NDKRelay>> {
         const publishedToRelays: Set<NDKRelay> = new Set();
         const errors: Map<NDKRelay, Error> = new Map();
         const isEphemeral = event.isEphemeral();
+
+        event.publishStatus = 'pending';
 
         // go through each relay and publish the event
         const promises: Promise<void>[] = Array.from(this.relays).map((relay: NDKRelay) => {
@@ -112,10 +135,6 @@ export class NDKRelaySet {
                     .catch((err) => {
                         if (!isEphemeral) {
                             errors.set(relay, err);
-                            this.debug("error publishing to relay", {
-                                relay: relay.url,
-                                err,
-                            });
                         }
                         resolve();
                     });
@@ -124,12 +143,28 @@ export class NDKRelaySet {
 
         await Promise.all(promises);
 
-        if (publishedToRelays.size === 0) {
+        if (publishedToRelays.size < requiredRelayCount) {
             // Ephemeral events are not acknowledged by the relay, so we don't
             // throw an error if no relay was able to receive the event.
             if (!isEphemeral) {
-                throw new PublishError("No relay was able to receive the event", errors);
+                const error = new NDKPublishError(
+                    "Not enough relays received the event",
+                    errors,
+                    publishedToRelays,
+                    this
+                );
+                event.publishStatus = 'error';
+                event.publishError = error;
+
+                this.ndk.emit("event:publish-failed", event, error);
+
+                // Only throw if we don't have an active handler for failed publish event
+                if (this.ndk.listeners("event:publish-failed").length === 0) {
+                    throw error;
+                }
             }
+        } else {
+            event.emit("published", {relaySet: this, publishedToRelays });
         }
 
         return publishedToRelays;

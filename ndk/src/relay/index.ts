@@ -81,6 +81,8 @@ export class NDKRelay extends EventEmitter<{
     notice: (notice: string) => void;
     auth: (challenge: string) => void;
     authed: () => void;
+    published: (event: NDKEvent) => void;
+    "publish:failed": (event: NDKEvent, error: Error) => void;
     "delayed-connect": (delayInMs: number) => void;
 }> {
     readonly url: WebSocket["url"];

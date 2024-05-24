@@ -2,7 +2,7 @@ import { NDK } from "../../ndk/index.js";
 import type { NDKPool } from "../pool/index.js";
 import { calculateRelaySetsFromFilters } from "./calculate.js";
 
-const explicitRelayUrl = "wss://explicit-relay.com";
+const explicitRelayUrl = "wss://explicit-relay.com/";
 const ndk = new NDK({ explicitRelayUrls: [explicitRelayUrl] });
 
 describe("calculateRelaySetsFromFilters", () => {

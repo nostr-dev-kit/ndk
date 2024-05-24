@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/ndk",
-    "version": "2.8.2",
+    "version": "2.9.0",
     "description": "NDK - Nostr Development Kit",
     "homepage": "https://ndk.fyi",
     "documentation": "https://github.com/nostr-dev-kit/ndk/blob/master/docs/modules.md",
@@ -68,7 +68,8 @@
         "tsd": "^0.28.1",
         "tsup": "^8.0.1",
         "typedoc": "^0.25.1",
-        "typedoc-plugin-rename-defaults": "^0.6.6"
+        "typedoc-plugin-rename-defaults": "^0.6.6",
+        "vitepress": "^1.2.2"
     },
     "dependencies": {
         "@noble/curves": "^1.4.0",
@@ -78,7 +79,7 @@
         "debug": "^4.3.4",
         "light-bolt11-decoder": "^3.0.0",
         "node-fetch": "^3.3.1",
-        "nostr-tools": "^2.4.0",
+        "nostr-tools": "^2.5.2",
         "tseep": "^1.1.1",
         "typescript-lru-cache": "^2.0.0",
         "utf8-buffer": "^1.0.0",

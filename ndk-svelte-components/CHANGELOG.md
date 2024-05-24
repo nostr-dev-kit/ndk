@@ -1,5 +1,14 @@
 # @nostr-dev-kit/ndk-svelte-components
 
+## 2.2.17
+
+### Patch Changes
+
+-   548f4d8: add optimistic updates
+-   Updated dependencies [94018b4]
+-   Updated dependencies [548f4d8]
+    -   @nostr-dev-kit/ndk@2.9.0
+
 ## 2.2.16
 
 ### Patch Changes

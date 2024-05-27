@@ -17,6 +17,7 @@ export interface NDKUserProfile {
     about?: string;
     zapService?: string;
     website?: string;
+    profileEvent?: string;
 }
 
 export function profileFromEvent(event: NDKEvent): NDKUserProfile {

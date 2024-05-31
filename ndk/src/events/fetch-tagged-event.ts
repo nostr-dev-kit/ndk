@@ -1,4 +1,5 @@
 import { NDKEvent } from ".";
+import { NDKSubscriptionOptions } from "../subscription";
 import { getReplyTag, getRootTag } from "../thread";
 
 export async function fetchTaggedEvent(
@@ -22,16 +23,16 @@ export async function fetchTaggedEvent(
     return event;
 }
 
-export async function fetchRootEvent(this: NDKEvent): Promise<NDKEvent | null | undefined> {
+export async function fetchRootEvent(this: NDKEvent, subOpts?: NDKSubscriptionOptions): Promise<NDKEvent | null | undefined> {
     if (!this.ndk) throw new Error("NDK instance not found");
     const rootTag = getRootTag(this);
     if (!rootTag) return undefined;
-    return this.ndk.fetchEventFromTag(rootTag);
+    return this.ndk.fetchEventFromTag(rootTag, subOpts);
 }
 
-export async function fetchReplyEvent(this: NDKEvent): Promise<NDKEvent | null | undefined> {
+export async function fetchReplyEvent(this: NDKEvent, subOpts?: NDKSubscriptionOptions): Promise<NDKEvent | null | undefined> {
     if (!this.ndk) throw new Error("NDK instance not found");
     const replyTag = getReplyTag(this);
     if (!replyTag) return undefined;
-    return this.ndk.fetchEventFromTag(replyTag);
+    return this.ndk.fetchEventFromTag(replyTag, subOpts);
 }

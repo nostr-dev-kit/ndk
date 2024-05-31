@@ -44,7 +44,6 @@ async function signAndAuth(
 ) {
     try {
         await event.sign(signer);
-        await relay.auth(event);
         resolve(event);
     } catch (e) {
         debug!(`Failed to publish auth event to relay ${relay.url}`, e);

@@ -9,9 +9,14 @@ export async function profilesWarmUp(
     cacheHandler: CacheHandler<NDKUserProfile>,
     users: Table<User>,
 ): Promise<void> {
-    await users.each((user) => {
-        cacheHandler.set(user.pubkey, user.profile, false);
-    });
+    const array = await users.limit(cacheHandler.maxSize).toArray();
+    for (const user of array) {
+        const obj = user.profile;
+        if (user.createdAt) {
+            obj.created_at = Math.floor(user.createdAt / 1000);
+        }
+        cacheHandler.set(user.pubkey, obj, false);
+    }
 }
 
 export const profilesDump = (users: Table<User>, debug: debug.IDebugger) => {

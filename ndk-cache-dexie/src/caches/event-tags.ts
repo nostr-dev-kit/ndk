@@ -10,9 +10,10 @@ export async function eventTagsWarmUp(
     cacheHandler: CacheHandler<EventTagCacheEntry>,
     eventTags: Table<EventTag>,
 ) {
-    await eventTags.each((event) => {
+    const array = await eventTags.limit(cacheHandler.maxSize).toArray();
+    for (const event of array) {
         cacheHandler.add(event.tagValue, event.eventId, false);
-    });
+    }
 }
 
 export const eventTagsDump = (eventTags: Table<EventTag>, debug: debug.IDebugger) => {

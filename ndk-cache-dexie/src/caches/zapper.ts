@@ -13,13 +13,14 @@ export async function zapperWarmUp(
     cacheHandler: CacheHandler<ZapperCacheEntry>,
     lnurls: Table<Lnurl>,
 ) {
-    await lnurls.each((lnurl) => {
+    const array = await lnurls.limit(cacheHandler.maxSize).toArray();
+    for (const lnurl of array) {
         cacheHandler.set(
             lnurl.pubkey,
             { document: lnurl.document, fetchedAt: lnurl.fetchedAt },
             false
         );
-    });
+    }
 }
 
 export const zapperDump = (lnurls: Table<Lnurl>, debug: debug.IDebugger) => {

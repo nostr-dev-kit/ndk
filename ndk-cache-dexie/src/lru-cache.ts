@@ -19,10 +19,12 @@ export class CacheHandler<T> {
     private debug: debug.IDebugger;
     public indexes: Map<string, LRUCache<string, Set<string>>>;
     public isSet = false;
+    public maxSize = 0;
 
     constructor(options: CacheOptions<T>) {
         this.debug = options.debug;
         this.options = options;
+        this.maxSize = options.maxSize;
         if (options.maxSize > 0) {
             this.cache = new LRUCache({ maxSize: options.maxSize });
             setInterval(() => this.dump(), 1000 * 10);
@@ -55,9 +57,9 @@ export class CacheHandler<T> {
     public async getWithFallback(key: string, table: Table) {
         let entry = this.get(key);
         if (!entry) {
-            this.debug(`Cache miss for key ${JSON.stringify(key)}`);
             entry = await table.get(key);
             if (entry) {
+                // this.debug(`Cache miss for key ${JSON.stringify(key)}`);
                 this.set(key, entry);
             }
         }

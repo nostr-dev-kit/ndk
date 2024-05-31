@@ -9,6 +9,7 @@ import type {
     ProfilePointer,
     NostrEvent,
     NDKCacheRelayInfo,
+    NDKTag,
 } from "@nostr-dev-kit/ndk";
 import createDebug from "debug";
 import { matchFilter } from "nostr-tools";
@@ -23,6 +24,8 @@ import { relayInfoDump, relayInfoWarmUp } from "./caches/relay-info.js";
 import { addUnpublishedEvent, unpublishedEventsDump, unpublishedEventsWarmUp } from "./caches/unpublished-events.js";
 
 export { db } from "./db";
+
+const INDEXABLE_TAGS_LIMIT = 10;
 
 interface NDKCacheAdapterDexieOptions {
     /**
@@ -118,15 +121,23 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
             dump: unpublishedEventsDump(db.unpublishedEvents, this.debug),
         })
 
+        const profile = (label: string, fn: () => Promise<void>) => {
+            const start = Date.now();
+            return fn().then(() => {
+                const end = Date.now();
+                this.debug(label, "took", end - start, "ms");
+            });
+        }
+
         const startTime = Date.now();
         this.warmUpPromise = Promise.allSettled([
-            profilesWarmUp(this.profiles, db.users),
-            zapperWarmUp(this.zappers, db.lnurl),
-            nip05WarmUp(this.nip05s, db.nip05),
-            eventsWarmUp(this.events, db.events),
-            eventTagsWarmUp(this.eventTags, db.eventTags),
-            relayInfoWarmUp(this.relayInfo, db.relayStatus),
-            unpublishedEventsWarmUp(this.unpublishedEvents, db.unpublishedEvents),
+            profile('profilesWarmUp', () => profilesWarmUp(this.profiles, db.users)),
+            profile('zapperWarmUp', () => zapperWarmUp(this.zappers, db.lnurl)),
+            profile('nip05WarmUp', () => nip05WarmUp(this.nip05s, db.nip05)),
+            profile('relayInfoWarmUp', () => relayInfoWarmUp(this.relayInfo, db.relayStatus)),
+            profile('unpublishedEventsWarmUp', () => unpublishedEventsWarmUp(this.unpublishedEvents, db.unpublishedEvents)),
+            profile('eventsWarmUp', () => eventsWarmUp(this.events, db.events)),
+            profile('eventTagsWarmUp', () => eventTagsWarmUp(this.eventTags, db.eventTags)),
         ]);
         this.warmUpPromise.then(() => {
             const endTime = Date.now();
@@ -349,12 +360,9 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
 
             // Don't cache contact lists as tags since it's expensive
             // and there is no use case for it
-            if (event.kind !== 3) {
-                event.tags.forEach((tag) => {
-                    if (tag[0].length !== 1) return;
-
-                    this.eventTags.add(tag[0] + tag[1], event.tagId());
-                });
+            const indexableTags = getIndexableTags(event);
+            for (const tag of indexableTags) {
+                this.eventTags.add(tag[0] + tag[1], event.tagId());
             }
         }
     }
@@ -542,4 +550,24 @@ export function foundEvent(
     } catch (e) {
         console.error("failed to deserialize event", e);
     }
+}
+
+/**
+ * Returns the tags that should be indexed, if an event has
+ * more indexable tags than the limit, none will be returned
+ */
+function getIndexableTags(event: NDKEvent): NDKTag[] {
+    let indexableTags: NDKTag[] = [];
+    
+    if (event.kind === 3) return [];
+    
+    for (const tag of event.tags) {
+        if (tag[0].length !== 1) continue;
+        
+        indexableTags.push(tag);
+
+        if (indexableTags.length >= INDEXABLE_TAGS_LIMIT) return [];
+    }
+
+    return indexableTags;
 }

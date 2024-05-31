@@ -8,14 +8,15 @@ export async function relayInfoWarmUp(
     cacheHandler: CacheHandler<RelayStatus>,
     relayStatus: Table<RelayStatus>,
 ) {
-    await relayStatus.each((entry) => {
+    const array = await relayStatus.limit(cacheHandler.maxSize).toArray();
+    for (const entry of array) {
         cacheHandler.set(entry.url, {
             url: entry.url,
             updatedAt: entry.updatedAt,
             lastConnectedAt: entry.lastConnectedAt,
             dontConnectBefore: entry.dontConnectBefore,
         }, false);
-    });
+    }
 }
 
 

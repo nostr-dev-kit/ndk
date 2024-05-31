@@ -13,9 +13,10 @@ export async function nip05WarmUp(
     cacheHandler: CacheHandler<Nip05CacheEntry>,
     nip05s: Table<Nip05>,
 ) {
-    await nip05s.each((nip05) => {
+    const array = await nip05s.limit(cacheHandler.maxSize).toArray();
+    for (const nip05 of array) {
         cacheHandler.set(nip05.nip05, nip05, false);
-    });
+    }
 }
 
 export const nip05Dump = (nip05s: Table<Nip05>, debug: debug.IDebugger) => {

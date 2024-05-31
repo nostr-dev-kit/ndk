@@ -26,6 +26,7 @@ export type NDKEventStore<T extends NDKEvent> = Writable<ExtendedBaseType<T>[]> 
     filters: NDKFilter[] | undefined;
     refCount: number;
     subscription: NDKSubscription | undefined;
+    eosed: boolean;
     startSubscription: () => void;
     unsubscribe: Unsubscriber;
     onEose: (cb: () => void) => void;
@@ -74,6 +75,7 @@ class NDKSvelte extends NDK {
             refCount: 0,
             filters,
             subscription: undefined,
+            eosed: false,
             set: store.set,
             update: store.update,
             subscribe: store.subscribe,
@@ -150,7 +152,10 @@ class NDKSvelte extends NDK {
                     addRepostToExistingEvent(repostedEvent);
                 } else {
                     // If we don't have the reposted event, fetch it and add it to the store
-                    _repostEvent.repostedEvents(klass).then((fetchedEvents: unknown[]) => {
+                    _repostEvent.repostedEvents(
+                        klass,
+                        { subId: 'reposted-event-fetch', groupable: true, groupableDelay: 1500, groupableDelayType: 'at-least' },
+                    ).then((fetchedEvents: unknown[]) => {
                         for (const e of fetchedEvents) {
                             if (e instanceof NDKEvent) {
                                 handleEvent(e);
@@ -170,7 +175,7 @@ class NDKSvelte extends NDK {
          */
         const handleEvent = (event: NDKEvent) => {
             // if we have a repostFilters and this event is a repost
-            if (store.filters && this.eventIsRepost(event)) {
+            if (opts?.repostsFilters && this.eventIsRepost(event)) {
                 // Check if we already have the repost event
                 handleEventReposts(event);
                 return;
@@ -292,7 +297,10 @@ class NDKSvelte extends NDK {
             };
 
             store.onEose = (cb) => {
-                store.subscription?.on("eose", cb);
+                store.subscription?.on("eose", () => {
+                    store.eosed = true;
+                    cb()
+                });
             };
 
             if (opts?.onEose) {

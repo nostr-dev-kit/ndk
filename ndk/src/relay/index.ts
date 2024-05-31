@@ -168,10 +168,6 @@ export class NDKRelay extends EventEmitter<{
         return this.publisher.publish(event, timeoutMs);
     }
 
-    public async auth(event: NDKEvent): Promise<string> {
-        return this.publisher.auth(event);
-    }
-
     /**
      * Called when this relay has responded with an event but
      * wasn't the fastest one.

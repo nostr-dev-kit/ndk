@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk
 
+## 2.9.1
+
+### Patch Changes
+
+-   when a root event is not marked, try to use a reply tag
+
 ## 2.9.0
 
 ### Minor Changes

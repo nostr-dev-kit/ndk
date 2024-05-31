@@ -1,5 +1,17 @@
 # @nostr-dev-kit/ndk-cache-dexie
 
+## 2.5.0
+
+### Minor Changes
+
+-   fix bug where we are indexing really events tags unrestricted
+-   control that we don't unnecessarily load more stuff into the LRU beyond it's max size
+
+### Patch Changes
+
+-   Updated dependencies
+    -   @nostr-dev-kit/ndk@2.9.1
+
 ## 2.4.3
 
 ### Patch Changes

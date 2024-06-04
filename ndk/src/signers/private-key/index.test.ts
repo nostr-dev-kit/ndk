@@ -1,5 +1,5 @@
 import { generateSecretKey } from "nostr-tools";
-import type { NostrEvent } from "../../index.js";
+import NDK, { NDKEvent, type NostrEvent } from "../../index.js";
 import { NDKPrivateKeySigner } from "./index";
 import { bytesToHex, hexToBytes } from "@noble/hashes/utils";
 import { nip19 } from "nostr-tools";
@@ -59,5 +59,28 @@ describe("NDKPrivateKeySigner", () => {
         const signature = await signer.sign(event);
         expect(signature).toBeDefined();
         expect(signature.length).toBe(128);
+    });
+
+    it("encrypts and decrypts an NDKEvent using Nip44", async () => {
+        const senderSigner = new NDKPrivateKeySigner("0277cc53c89ca9c8a441987265276fafa55bf5bed8a55b16fd640e0d6a0c21e2");
+        const senderUser = await senderSigner.user();
+        const recipientSigner = new NDKPrivateKeySigner("f04855b5887e20132a70c129ab67587d08733232307d337d82028ba6c81a9b0f");
+        const recipientUser = await recipientSigner.user();
+
+        const sendEvent: NDKEvent = new NDKEvent (new NDK(), {
+            pubkey: senderUser.pubkey,
+            created_at: Math.floor(Date.now() / 1000),
+            tags: [],
+            content: "Test content",
+            kind: 1,
+        });
+
+        const original = sendEvent.content
+        await sendEvent.encrypt(recipientUser, senderSigner,'nip44');
+        const recieveEvent = new NDKEvent(new NDK(), sendEvent.rawEvent())
+        await recieveEvent.decrypt(senderUser, recipientSigner,'nip44');
+        const decrypted = recieveEvent.content
+
+        expect(decrypted).toBe(original);
     });
 });

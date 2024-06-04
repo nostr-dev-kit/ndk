@@ -10,7 +10,7 @@ import { type NDKUser } from "../user/index.js";
 import { type ContentTag, generateContentTags, mergeTags } from "./content-tagger.js";
 import { isEphemeral, isParamReplaceable, isReplaceable } from "./kind.js";
 import { NDKKind } from "./kinds/index.js";
-import { decrypt, encrypt } from "./nip04.js";
+import { decrypt, encrypt } from "./encryption.js";
 import { encode } from "./nip19.js";
 import { repost } from "./repost.js";
 import { fetchReplyEvent, fetchRootEvent, fetchTaggedEvent } from "./fetch-tagged-event.js";

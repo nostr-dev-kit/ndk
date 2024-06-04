@@ -39,3 +39,4 @@ export async function decrypt(this: NDKEvent, sender?: NDKUser, signer?: NDKSign
 
     this.content = (await signer?.decrypt(sender, this.content)) as string;
 }
+

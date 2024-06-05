@@ -36,9 +36,10 @@ export interface NDKSigner {
     /**
      * Determine the types of encryption (by nip) that this signer can perform.
      * Implementing classes SHOULD return a value even for legacy (only nip04) third party signers.
+     * @nip Optionally returns an array with single supported nip or empty, to check for truthy or falsy.
      * @return A promised list of any (or none) of these strings  ['nip04', 'nip44'] 
      */
-    encryptionEnabled?(): Promise<EncryptionNip[]>
+    encryptionEnabled?(nip?:EncryptionNip): Promise<EncryptionNip[]>
 
     /**
      * Encrypts the given Nostr event for the given recipient.

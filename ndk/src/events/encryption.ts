@@ -7,6 +7,7 @@ import type { NDKUser } from "../user";
 import type { NDKEvent } from "./index.js";
 
 export type EncryptionNip = 'nip04' | 'nip44';
+export type EncryptionMethod = 'encrypt' | 'decrypt'
 
 // some clients may wish to set a default for message encryption...
 // TODO how should replies to 'nip04' encrypted messages be handled?
@@ -22,12 +23,13 @@ export async function encrypt(
     signer?: NDKSigner,
     nip : EncryptionNip | undefined = defaultEncryption
 ): Promise<void> {
-    let encrypted : string;
+    let encrypted : string | undefined;
     if (!this.ndk) throw new Error("No NDK instance found!");
     if (!signer) {
         await this.ndk.assertSigner();
         signer = this.ndk.signer;
     }
+    if(!signer) throw new Error('no NDK signer');
     if (!recipient) {
         const pTags = this.getMatchingTags("p");
 
@@ -41,12 +43,12 @@ export async function encrypt(
     }
 
     // support for encrypting events via legacy `nip04`. adapted from Coracle
-    if ((!nip || nip == 'nip04') && isNip04Enabled(signer)) {
+    if ((!nip || nip == 'nip04') && await isEncryptionEnabled(signer, 'nip04')) {
         try{
             encrypted = (await signer?.encrypt(recipient, this.content, 'nip04')) as string;
         }catch{}
     }
-    if ((!encrypted || nip == "nip44") && isNip44Enabled(signer)) {
+    if ((!encrypted || nip == "nip44") && await isEncryptionEnabled(signer, 'nip44')) {
             encrypted = (await signer?.encrypt(recipient, this.content, 'nip44')) as string;
     } 
     if(!encrypted) throw new Error('Failed to encrypt event.')
@@ -54,36 +56,31 @@ export async function encrypt(
     }
 
 export async function decrypt(this: NDKEvent, sender?: NDKUser, signer?: NDKSigner, nip: EncryptionNip | undefined = defaultEncryption): Promise<void> {
-    let decrypted : string;
+    let decrypted : string | undefined;
     if (!this.ndk) throw new Error("No NDK instance found!");
     if (!signer) {
         await this.ndk.assertSigner();
         signer = this.ndk.signer;
     }
+    if(!signer) throw new Error('no NDK signer');
     if (!sender) {
         sender = this.author;
     }
     // simple check for legacy `nip04` encrypted events. adapted from Coracle
-    if ((!nip || nip=='nip04') && isNip04Enabled(signer) && this.content.search("?iv=")) {
+    if ((!nip || nip=='nip04') && await isEncryptionEnabled(signer, 'nip04') && this.content.search("?iv=")) {
         try{ 
             decrypted = (await signer?.decrypt(sender, this.content, 'nip04')) as string;
         }catch{}
     }
-    if (!decrypted && isNip44Enabled(signer)) {
+    if (!decrypted && await isEncryptionEnabled(signer, 'nip44')) {
             decrypted = (await signer?.decrypt(sender, this.content, 'nip44')) as string;
     }
     if(!decrypted) throw new Error('Failed to decrypt event.')
     this.content = decrypted
 }
 
-async function isNip04Enabled(signer : NDKSigner){
-    let enabled = await signer.encryptionEnabled();
-    if(enabled.indexOf('nip04') != -1) return true;
-    return false;
-}
-
-async function isNip44Enabled(signer : NDKSigner){
-    let enabled = await signer.encryptionEnabled();
-    if(enabled.indexOf('nip44') != -1) return true;
-    return false;
+async function isEncryptionEnabled(signer : NDKSigner, nip? : EncryptionNip){
+    if(!signer.encryptionEnabled) return false;
+    if(!nip) return true;
+    return Boolean(await signer.encryptionEnabled(nip));
 }

@@ -69,8 +69,10 @@ export class NDKPrivateKeySigner implements NDKSigner {
         return finalizeEvent(event as UnsignedEvent, this._privateKey).sig;
     }
 
-    public async encryptionEnabled(): Promise<EncryptionNip[]>{
-        let enabled : EncryptionNip[] =  ['nip04', 'nip44']
+    public async encryptionEnabled(nip?:EncryptionNip): Promise<EncryptionNip[]>{
+        let enabled : EncryptionNip[] = []
+        if((!nip || nip == 'nip04')) enabled.push('nip04')
+        if((!nip || nip == 'nip44')) enabled.push('nip44')
         return enabled;
     }
 

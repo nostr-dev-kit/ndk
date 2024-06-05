@@ -1,6 +1,11 @@
 import type { NostrEvent } from "../events/index.js";
-import { NDKRelay } from "../relay/index.js";
+import type { NDKRelay } from "../relay/index.js";
 import type { NDKUser } from "../user";
+
+export enum EncryptionStrategy {
+    nip04 = "nip04",
+    nip44 = "nip44",
+}
 
 /**
  * Interface for NDK signers.
@@ -35,12 +40,14 @@ export interface NDKSigner {
      * Encrypts the given Nostr event for the given recipient.
      * @param value - The value to be encrypted.
      * @param recipient - The recipient of the encrypted value.
+     * @param strategy - The encryption strategy to use (nip04 or nip44). Defaults to nip04.
      */
-    encrypt(recipient: NDKUser, value: string): Promise<string>;
+    encrypt(recipient: NDKUser, value: string, strategy?: EncryptionStrategy): Promise<string>;
 
     /**
      * Decrypts the given value.
      * @param value
+     * @param strategy - The encryption strategy to use (nip04 or nip44). Defaults to nip04.
      */
-    decrypt(sender: NDKUser, value: string): Promise<string>;
+    decrypt(sender: NDKUser, value: string, strategy?: EncryptionStrategy): Promise<string>;
 }

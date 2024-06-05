@@ -3,6 +3,7 @@ import type { NostrEvent } from "../../events/index.js";
 import type { NDK } from "../../ndk/index.js";
 import { Hexpubkey, NDKUser } from "../../user/index.js";
 import type { NDKSigner } from "../index.js";
+import { EncryptionStrategy } from "../index.js";
 import { NDKPrivateKeySigner } from "../private-key/index.js";
 import type { NDKRpcResponse } from "./rpc.js";
 import { NDKNostrRpc } from "./rpc.js";
@@ -182,13 +183,23 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
         });
     }
 
-    public async encrypt(recipient: NDKUser, value: string): Promise<string> {
+    public async encrypt(
+        recipient: NDKUser,
+        value: string,
+        strategy?: EncryptionStrategy
+    ): Promise<string> {
         this.debug("asking for encryption");
+
+        let method = "nip04_encrypt";
+
+        if (strategy === EncryptionStrategy.nip44) {
+            method = "nip44_encrypt";
+        }
 
         const promise = new Promise<string>((resolve, reject) => {
             this.rpc.sendRequest(
                 this.remotePubkey!,
-                "nip04_encrypt",
+                method,
                 [recipient.pubkey, value],
                 24133,
                 (response: NDKRpcResponse) => {
@@ -204,13 +215,23 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
         return promise;
     }
 
-    public async decrypt(sender: NDKUser, value: string): Promise<string> {
+    public async decrypt(
+        sender: NDKUser,
+        value: string,
+        strategy?: EncryptionStrategy
+    ): Promise<string> {
         this.debug("asking for decryption");
+
+        let method = "nip04_decrypt";
+
+        if (strategy === EncryptionStrategy.nip44) {
+            method = "nip44_decrypt";
+        }
 
         const promise = new Promise<string>((resolve, reject) => {
             this.rpc.sendRequest(
                 this.remotePubkey!,
-                "nip04_decrypt",
+                method,
                 [sender.pubkey, value],
                 24133,
                 (response: NDKRpcResponse) => {

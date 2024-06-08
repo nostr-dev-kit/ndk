@@ -120,7 +120,12 @@ export class NDKRelayConnectivity {
 
     public disconnect(): void {
         this._status = NDKRelayStatus.DISCONNECTING;
-        this.relay.close();
+        try {
+            this.relay.close();
+        } catch (e) {
+            this.debug("Failed to disconnect", e);
+            this._status = NDKRelayStatus.DISCONNECTED;
+        }
     }
 
     get status(): NDKRelayStatus {

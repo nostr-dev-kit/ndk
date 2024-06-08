@@ -260,6 +260,7 @@ export class NDKRelaySubscriptions {
         // (it will empty the group when it runs so the race is not a problem)
         if (!timeout || subscription.opts.groupableDelayType === "at-most") {
             timeout = setTimeout(() => {
+                this.executionTimeoutsByGroupId.delete(groupableId);
                 this.executeGroup(groupableId, subscription);
             }, subscription.opts.groupableDelay);
             this.executionTimeoutsByGroupId.set(groupableId, timeout as unknown as number);

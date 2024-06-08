@@ -414,7 +414,7 @@ export class NDK extends EventEmitter<{
 
             const runUserFunctions = async (user: NDKUser) => {
                 for (const fn of userFunctions) {
-                    await fn(user);
+                    fn(user);
                 }
             };
 
@@ -423,7 +423,6 @@ export class NDK extends EventEmitter<{
             if (pool.connectedRelays.length > 0) {
                 runUserFunctions(user);
             } else {
-                this.debug("Waiting for connection to main relays");
                 pool.once("connect", () => {
                     runUserFunctions(user);
                 });
@@ -580,6 +579,7 @@ export class NDK extends EventEmitter<{
     ): Promise<NDKEvent | null> {
         let filter: NDKFilter;
         let relaySet: NDKRelaySet | undefined;
+        // console.log(`fetchEvent for `, idOrFilter);
 
         // Check if this relaySetOrRelay is an NDKRelay, if it is, make it a relaySet
         if (relaySetOrRelay instanceof NDKRelay) {
@@ -622,11 +622,27 @@ export class NDK extends EventEmitter<{
                 relaySet,
                 false
             );
+
+            let t = setInterval(() => {
+                const relaysMissingEose = s.relaysMissingEose();
+                console.log(`fetchEvent still running`, idOrFilter, { filters: s.filters, connectedRelays: this.pool.connectedRelays().map(r => r.url), relaysMissingEose })
+            }, 1500);
+
+            const t2 = setTimeout(() => {
+                clearInterval(t);
+                s.stop();
+                resolve(fetchedEvent);
+            }, 10000);
+            
+            
             s.on("event", (event: NDKEvent) => {
+                console.log('seeing event '+event.kind, event.rawEvent())
                 event.ndk = this;
 
                 // We only emit immediately when the event is not replaceable
                 if (!event.isReplaceable()) {
+                    clearInterval(t);
+                    clearTimeout(t2);
                     resolve(event);
                 } else if (!fetchedEvent || fetchedEvent.created_at! < event.created_at!) {
                     fetchedEvent = event;
@@ -634,6 +650,9 @@ export class NDK extends EventEmitter<{
             });
 
             s.on("eose", () => {
+                // console.log("eose " + JSON.stringify(idOrFilter))
+                clearInterval(t);
+                clearTimeout(t2);
                 resolve(fetchedEvent);
             });
 

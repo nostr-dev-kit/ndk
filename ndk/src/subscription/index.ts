@@ -225,6 +225,19 @@ export class NDKSubscription extends EventEmitter<{
     }
 
     /**
+     * Returns the relays that have not yet sent an EOSE.
+     */
+    public relaysMissingEose(): WebSocket["url"][] {
+        if (!this.relayFilters) return [];
+
+        const relaysMissingEose = Array.from(this.relayFilters!.keys()).filter(
+            (url) => !this.eosesSeen.has(this.pool.getRelay(url, false, false))
+        );
+
+        return relaysMissingEose;
+    }
+
+    /**
      * Provides access to the first filter of the subscription for
      * backwards compatibility.
      */
@@ -278,7 +291,7 @@ export class NDKSubscription extends EventEmitter<{
                 }
             }
         }
-
+        
         if (this.shouldQueryRelays()) {
             this.startWithRelays();
         } else {
@@ -328,9 +341,6 @@ export class NDKSubscription extends EventEmitter<{
             this.debug(`No relays to subscribe to`, this.pool.relays.size);
             return;
         }
-
-        // const relayUrls = Array.from(this.relayFilters.keys());
-        // this.debug(`Starting subscription`, JSON.stringify(this.filters), this.opts, Array.from(this.relaySet?.relays!).map(r => r.url));
 
         // iterate through the this.relayFilters
         // console.log(this.relayFilters);
@@ -457,12 +467,23 @@ export class NDKSubscription extends EventEmitter<{
         } else {
             let timeToWaitForNextEose = 1000;
 
+            const connectedRelays = new Set(this.pool.connectedRelays().map((r) => r.url));
+
+            let connectedRelaysWithFilters = Array.from(this.relayFilters!.keys()).filter(
+                (url) => connectedRelays.has(url)
+            );
+
+            // if we have no connected relays, wait for all relays to connect
+            if (connectedRelaysWithFilters.length === 0) {
+                return;
+            }
+
             // Reduce the number of ms to wait based on the percentage of relays
             // that have already sent an EOSE, the more
             // relays that have sent an EOSE, the less time we should wait
             // for the next one
             const percentageOfRelaysThatHaveSentEose =
-                this.eosesSeen.size / this.relayFilters!.size;
+                this.eosesSeen.size / connectedRelaysWithFilters.length;
 
             // If less than 2 and 50% of relays have EOSEd don't add a timeout yet
             if (this.eosesSeen.size >= 2 && percentageOfRelaysThatHaveSentEose >= 0.5) {

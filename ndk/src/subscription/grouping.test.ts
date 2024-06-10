@@ -24,13 +24,17 @@ describe("calculateGroupableId", () => {
         const filters1: NDKFilter[] = [{ kinds: [1], authors: ["author1"] }, { "#e": ["id1"] }];
         const filters2: NDKFilter[] = [{ kinds: [1] }, { authors: ["author2"], "#e": ["id2"] }];
 
-        expect(calculateGroupableId(filters1, false)).not.toEqual(calculateGroupableId(filters2, false));
+        expect(calculateGroupableId(filters1, false)).not.toEqual(
+            calculateGroupableId(filters2, false)
+        );
     });
 
     it("generates the same group IDs with multiple compatible filters", () => {
         const filters1: NDKFilter[] = [{ kinds: [1] }, { authors: ["author1"], "#e": ["id1"] }];
         const filters2: NDKFilter[] = [{ kinds: [1] }, { authors: ["author2"], "#e": ["id2"] }];
 
-        expect(calculateGroupableId(filters1, false)).toEqual(calculateGroupableId(filters2, false));
+        expect(calculateGroupableId(filters1, false)).toEqual(
+            calculateGroupableId(filters2, false)
+        );
     });
 });

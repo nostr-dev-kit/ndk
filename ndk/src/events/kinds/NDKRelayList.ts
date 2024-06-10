@@ -38,7 +38,7 @@ export class NDKRelayList extends NDKEvent {
         for (const relay of pool.relays.values()) set.add(relay);
 
         const relayLists = new Map<Hexpubkey, NDKRelayList>();
-        const fromContactList = new Map<Hexpubkey, NDKRelayList>();
+        const fromContactList = new Map<Hexpubkey, NDKEvent>();
 
         const relaySet = new NDKRelaySet(set, ndk);
 
@@ -46,9 +46,10 @@ export class NDKRelayList extends NDKEvent {
         if (ndk.cacheAdapter?.locking) {
             const cachedList = await ndk.fetchEvents(
                 { kinds: [3, 10002], authors: pubkeys },
-                { cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE }
+                { cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE },
             );
 
+            // get list of relay lists from cache
             for (const relayList of cachedList) {
                 if (relayList.kind === 10002)
                     relayLists.set(relayList.pubkey, NDKRelayList.from(relayList));
@@ -56,6 +57,8 @@ export class NDKRelayList extends NDKEvent {
 
             for (const relayList of cachedList) {
                 if (relayList.kind === 3) {
+                    // skip if we already have a relay list for this pubkey
+                    if (relayLists.has(relayList.pubkey)) continue;
                     const list = relayListFromKind3(ndk, relayList);
                     if (list) fromContactList.set(relayList.pubkey, list);
                 }
@@ -70,48 +73,51 @@ export class NDKRelayList extends NDKEvent {
         // if we have no pubkeys left, return the results
         if (pubkeys.length === 0) return relayLists;
 
-        await Promise.all([
-            // Fetch all kind 10002 events
-            new Promise<void>(async (resolve) => {
-                const lists = await ndk.fetchEvents(
-                    { kinds: [10002], authors: pubkeys },
-                    { closeOnEose: true, pool, groupable: false },
-                    relaySet
-                );
+        const relayListEvents = new Map<Hexpubkey, NDKEvent>();
+        const contactListEvents = new Map<Hexpubkey, NDKEvent>();
 
-                for (const relayList of lists) {
-                    relayLists.set(relayList.pubkey, NDKRelayList.from(relayList));
+        return new Promise<Map<Hexpubkey, NDKRelayList>>(async (resolve) => {
+            // Get from relays the missing pubkeys
+            const sub = ndk.subscribe(
+                { kinds: [3, 10002], authors: pubkeys },
+                { closeOnEose: true, pool, groupable: true, cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY, subId: 'ndk-relay-list-fetch' },
+                relaySet, false
+            );
+
+            /* Collect most recent version of events */
+            sub.on("event", (event) => {
+                if (event.kind === NDKKind.RelayList) {
+                    const existingEvent = relayListEvents.get(event.pubkey);
+                    if (existingEvent && existingEvent.created_at! > event.created_at!) return;
+                    relayListEvents.set(event.pubkey, event);
+                } else if (event.kind === NDKKind.Contacts) {
+                    const existingEvent = contactListEvents.get(event.pubkey);
+                    if (existingEvent && existingEvent.created_at! > event.created_at!) return;
+                    contactListEvents.set(event.pubkey, event);
+                }
+            });
+
+            sub.on("eose", () => {
+                // Get all kind 10002 events
+                for (const event of relayListEvents.values()) {
+                    relayLists.set(event.pubkey, NDKRelayList.from(event));
                 }
 
-                resolve();
-            }),
+                // Go through the pubkeys we don't have results for and get the from kind 3 events
+                for (const pubkey of pubkeys) {
+                    if (relayLists.has(pubkey)) continue;
+                    const contactList = contactListEvents.get(pubkey);
+                    if (!contactList) continue;
+                    const list = relayListFromKind3(ndk, contactList);
 
-            // Also fetch all kind 3 events
-            new Promise<void>(async (resolve) => {
-                const lists = await ndk.fetchEvents(
-                    { kinds: [3], authors: pubkeys },
-                    { closeOnEose: true, pool, groupable: false },
-                    relaySet
-                );
-
-                for (const relayList of lists) {
-                    const list = relayListFromKind3(ndk, relayList);
-                    if (list) fromContactList.set(relayList.pubkey, list);
+                    if (list) relayLists.set(pubkey, list);
                 }
+                
+                resolve(relayLists);
+            });
 
-                resolve();
-            }),
-        ]);
-
-        const result = new Map<Hexpubkey, NDKRelayList>();
-
-        // Merge the results, kind 10002 takes priority
-        for (const pubkey of pubkeys) {
-            const relayList = relayLists.get(pubkey) ?? fromContactList.get(pubkey);
-            if (relayList) result.set(pubkey, relayList);
-        }
-
-        return result;
+            sub.start();
+        });
     }
 
     get readRelayUrls(): WebSocket["url"][] {
@@ -154,6 +160,18 @@ export class NDKRelayList extends NDKEvent {
 
     get relays(): WebSocket["url"][] {
         return this.tags.filter((tag) => tag[0] === "r" || tag[0] === "relay").map((tag) => tag[1]);
+    }
+
+    /**
+     * Provides a relaySet for the relays in this list.
+     */
+    get relaySet(): NDKRelaySet {
+        if (!this.ndk) throw new Error("NDKRelayList has no NDK instance");
+
+        return new NDKRelaySet(
+            new Set(this.relays.map((u) => this.ndk!.pool.getRelay(u))),
+            this.ndk
+        );
     }
 }
 

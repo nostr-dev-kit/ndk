@@ -551,15 +551,6 @@ export class NDK extends EventEmitter<{
                 false
             );
 
-            let t = setInterval(() => {
-                const relaysMissingEose = s.relaysMissingEose();
-                console.log(`fetchEvent still running`, idOrFilter, {
-                    filters: s.filters,
-                    connectedRelays: this.pool.connectedRelays().map((r) => r.url),
-                    relaysMissingEose,
-                });
-            }, 1500);
-
             const t2 = setTimeout(() => {
                 clearInterval(t);
                 s.stop();

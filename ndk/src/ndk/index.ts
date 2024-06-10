@@ -551,8 +551,10 @@ export class NDK extends EventEmitter<{
                 false
             );
 
+            /** This is a workaround, for some reason we're leaking subscriptions that should EOSE and fetchEvent is not
+             * seeing them; this is a temporary fix until we find the bug.
+             */
             const t2 = setTimeout(() => {
-                clearInterval(t);
                 s.stop();
                 resolve(fetchedEvent);
             }, 10000);
@@ -562,7 +564,6 @@ export class NDK extends EventEmitter<{
 
                 // We only emit immediately when the event is not replaceable
                 if (!event.isReplaceable()) {
-                    clearInterval(t);
                     clearTimeout(t2);
                     resolve(event);
                 } else if (!fetchedEvent || fetchedEvent.created_at! < event.created_at!) {
@@ -571,7 +572,6 @@ export class NDK extends EventEmitter<{
             });
 
             s.on("eose", () => {
-                clearInterval(t);
                 clearTimeout(t2);
                 resolve(fetchedEvent);
             });

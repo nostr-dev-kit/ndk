@@ -21,6 +21,11 @@ export interface EventTag {
     tagValue: string;
 }
 
+export interface EventKind {
+    eventId: string;
+    kind: string;
+}
+
 export interface Nip05 {
     nip05: string;
     profile: string | null;
@@ -50,17 +55,19 @@ export class Database extends Dexie {
     users!: Table<User>;
     events!: Table<Event>;
     eventTags!: Table<EventTag>;
+    eventKinds!: Table<EventKind>;
     nip05!: Table<Nip05>;
     lnurl!: Table<Lnurl>;
     relayStatus!: Table<RelayStatus>;
-    unpublishedEvents!: Table<UnpublishedEvent & {id: NDKEventId}>;
+    unpublishedEvents!: Table<UnpublishedEvent & { id: NDKEventId }>;
 
     constructor(name: string) {
         super(name);
-        this.version(13).stores({
+        this.version(14).stores({
             users: "&pubkey",
             events: "&id, kind",
             eventTags: "&tagValue",
+            eventKinds: "&kind",
             nip05: "&nip05",
             lnurl: "&pubkey",
             relayStatus: "&url",

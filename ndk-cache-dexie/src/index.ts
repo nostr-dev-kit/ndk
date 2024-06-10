@@ -22,6 +22,7 @@ import { EventCacheEntry, eventsDump, eventsWarmUp } from "./caches/events.js";
 import { EventTagCacheEntry, eventTagsDump, eventTagsWarmUp } from "./caches/event-tags.js";
 import { relayInfoDump, relayInfoWarmUp } from "./caches/relay-info.js";
 import { addUnpublishedEvent, unpublishedEventsDump, unpublishedEventsWarmUp } from "./caches/unpublished-events.js";
+import { EventKindCacheEntry, eventKindsDump, eventKindsWarmUp } from "./caches/event-kinds.js";
 
 export { db } from "./db";
 
@@ -52,6 +53,7 @@ interface NDKCacheAdapterDexieOptions {
     nip05CacheSize?: number;
     eventCacheSize?: number;
     eventTagsCacheSize?: number;
+    eventKindsCacheSize?: number;
 }
 
 export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
@@ -64,6 +66,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
     public nip05s: CacheHandler<Nip05CacheEntry>;
     public events: CacheHandler<EventCacheEntry>;
     public eventTags: CacheHandler<EventTagCacheEntry>;
+    public eventKinds: CacheHandler<EventKindCacheEntry>;
     public relayInfo: CacheHandler<RelayStatus>;
     public unpublishedEvents: CacheHandler<UnpublishedEvent>;
     private warmedUp: boolean = false;
@@ -109,6 +112,12 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
             debug: this.debug,
         });
 
+        this.eventKinds = new CacheHandler<EventTagCacheEntry>({
+            maxSize: opts.eventKindsCacheSize || 100000,
+            dump: eventKindsDump(db.eventKinds, this.debug),
+            debug: this.debug,
+        });
+
         this.relayInfo = new CacheHandler<RelayStatus>({
             maxSize: 500,
             debug: this.debug,
@@ -138,6 +147,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
             profile('unpublishedEventsWarmUp', () => unpublishedEventsWarmUp(this.unpublishedEvents, db.unpublishedEvents)),
             profile('eventsWarmUp', () => eventsWarmUp(this.events, db.events)),
             profile('eventTagsWarmUp', () => eventTagsWarmUp(this.eventTags, db.eventTags)),
+            profile('eventKindsWarmUp', () => eventKindsWarmUp(this.eventKinds, db.eventKinds)),
         ]);
         this.warmUpPromise.then(() => {
             const endTime = Date.now();
@@ -312,6 +322,9 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
 
             // By tags
             if (this.byTags(filter, subscription)) return; // exit = true;
+
+            // By kinds
+            if (this.byKinds(filter, subscription)) return; // exit = true;
         } catch (error) {
             console.error(error);
         }
@@ -364,6 +377,8 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
             for (const tag of indexableTags) {
                 this.eventTags.add(tag[0] + tag[1], event.tagId());
             }
+            // dont index kind 0, 1, 3 to minimise index size
+            if ([0, 1, 3].indexOf(event.kind) === -1) this.eventKinds.add(event.kind.toString(), event.tagId());
         }
     }
 
@@ -496,6 +511,34 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
 
         return true;
     }
+
+    /**
+    * Searches by kinds
+    */
+    private byKinds(
+        filter: NDKFilter,
+        subscription: NDKSubscription
+    ): boolean {
+        if (!filter.kinds || filter.kinds.length === 0) return false;
+
+        // Go through each kind
+        for (const kind of filter.kinds) {
+            // Get all events with this kind
+            const eventIds = this.eventKinds.getSet(kind.toString());
+            if (!eventIds) continue;
+
+            // Go through each event that came back
+            eventIds.forEach((id) => {
+                const event = this.events.get(id);
+                if (!event) return;
+
+                foundEvent(subscription, event, event.relay, filter);
+            });
+        }
+
+        return true;
+    }
+
 }
 
 export function checkEventMatchesFilter(

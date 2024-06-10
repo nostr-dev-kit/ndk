@@ -76,7 +76,7 @@ export interface NDKRelayConnectionStats {
 export class NDKRelay extends EventEmitter<{
     connect: () => void;
     ready: () => void;
-    
+
     /**
      * Emitted when the relay has reached the end of stored events.
      */

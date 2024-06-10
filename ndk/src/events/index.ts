@@ -62,7 +62,7 @@ export class NDKEvent extends EventEmitter {
     /**
      * The status of the publish operation.
      */
-    public publishStatus?: "pending" | "success" | "error" = 'success';
+    public publishStatus?: "pending" | "success" | "error" = "success";
     public publishError?: Error;
 
     constructor(ndk?: NDK, event?: NostrEvent) {
@@ -320,11 +320,11 @@ export class NDKEvent extends EventEmitter {
     }
 
     /**
-     * 
-     * @param relaySet 
-     * @param timeoutMs 
-     * @param requiredRelayCount 
-     * @returns 
+     *
+     * @param relaySet
+     * @param timeoutMs
+     * @param requiredRelayCount
+     * @returns
      */
     public async publishReplaceable(
         relaySet?: NDKRelaySet,
@@ -365,18 +365,18 @@ export class NDKEvent extends EventEmitter {
         }
 
         const rawEvent = this.rawEvent();
-        
+
         // add to cache for optimistic updates
         if (this.ndk.cacheAdapter?.addUnpublishedEvent) {
-            this.ndk.cacheAdapter.addUnpublishedEvent(this, relaySet.relayUrls)
+            this.ndk.cacheAdapter.addUnpublishedEvent(this, relaySet.relayUrls);
         }
 
         // send to active subscriptions that want this event
-        this.ndk.subManager.subscriptions.forEach(sub => {
-            if (sub.filters.some(filter => matchFilter(filter, rawEvent as any))) {
+        this.ndk.subManager.subscriptions.forEach((sub) => {
+            if (sub.filters.some((filter) => matchFilter(filter, rawEvent as any))) {
                 sub.eventReceived(this, undefined, false, true);
             }
-        })
+        });
 
         const relays = await relaySet.publish(this, timeoutMs, requiredRelayCount);
         this.onRelays = Array.from(relays);
@@ -384,9 +384,6 @@ export class NDKEvent extends EventEmitter {
         return relays;
     }
 
-    private optimisticUpdate() {
-        
-    }
 
     /**
      * Generates tags for users, notes, and other events tagged in content.

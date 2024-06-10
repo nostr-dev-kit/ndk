@@ -148,7 +148,12 @@ export const defaultOpts: NDKSubscriptionOptions = {
 export class NDKSubscription extends EventEmitter<{
     eose: (sub: NDKSubscription) => void;
     close: (sub: NDKSubscription) => void;
-    "event:dup": (event: NDKEvent, relay: NDKRelay | undefined, timeSinceFirstSeen: number, sub: NDKSubscription) => void;
+    "event:dup": (
+        event: NDKEvent,
+        relay: NDKRelay | undefined,
+        timeSinceFirstSeen: number,
+        sub: NDKSubscription
+    ) => void;
     event: (event: NDKEvent, relay: NDKRelay | undefined, sub: NDKSubscription) => void;
 }> {
     readonly subId?: string;
@@ -291,7 +296,7 @@ export class NDKSubscription extends EventEmitter<{
                 }
             }
         }
-        
+
         if (this.shouldQueryRelays()) {
             this.startWithRelays();
         } else {
@@ -469,8 +474,8 @@ export class NDKSubscription extends EventEmitter<{
 
             const connectedRelays = new Set(this.pool.connectedRelays().map((r) => r.url));
 
-            let connectedRelaysWithFilters = Array.from(this.relayFilters!.keys()).filter(
-                (url) => connectedRelays.has(url)
+            let connectedRelaysWithFilters = Array.from(this.relayFilters!.keys()).filter((url) =>
+                connectedRelays.has(url)
             );
 
             // if we have no connected relays, wait for all relays to connect

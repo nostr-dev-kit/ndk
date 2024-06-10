@@ -15,7 +15,7 @@ export class NDKPublishError extends Error {
         message: string,
         errors: Map<NDKRelay, Error>,
         publishedToRelays: Set<NDKRelay>,
-        intendedRelaySet?: NDKRelaySet,
+        intendedRelaySet?: NDKRelaySet
     ) {
         super(message);
         this.errors = errors;
@@ -60,7 +60,7 @@ export class NDKRelaySet {
     }
 
     get relayUrls(): WebSocket["url"][] {
-        return Array.from(this.relays).map(r => r.url);
+        return Array.from(this.relays).map((r) => r.url);
     }
 
     /**
@@ -121,7 +121,7 @@ export class NDKRelaySet {
         const errors: Map<NDKRelay, Error> = new Map();
         const isEphemeral = event.isEphemeral();
 
-        event.publishStatus = 'pending';
+        event.publishStatus = "pending";
 
         // go through each relay and publish the event
         const promises: Promise<void>[] = Array.from(this.relays).map((relay: NDKRelay) => {
@@ -153,10 +153,10 @@ export class NDKRelaySet {
                     publishedToRelays,
                     this
                 );
-                event.publishStatus = 'error';
+                event.publishStatus = "error";
                 event.publishError = error;
 
-                this.ndk.emit("event:publish-failed", event, error);
+                this.ndk.emit("event:publish-failed", event, error, this.relayUrls);
 
                 // Only throw if we don't have an active handler for failed publish event
                 if (this.ndk.listeners("event:publish-failed").length === 0) {
@@ -164,7 +164,7 @@ export class NDKRelaySet {
                 }
             }
         } else {
-            event.emit("published", {relaySet: this, publishedToRelays });
+            event.emit("published", { relaySet: this, publishedToRelays });
         }
 
         return publishedToRelays;

@@ -182,7 +182,7 @@ export function getRootEventId(event: NDKEvent, searchTag?: string): NDKEventId 
     searchTag ??= event.tagType();
     const rootEventTag = getRootTag(event, searchTag);
     if (rootEventTag) return rootEventTag[1];
-    
+
     const replyTag = getReplyTag(event, searchTag);
 
     return replyTag?.[1];

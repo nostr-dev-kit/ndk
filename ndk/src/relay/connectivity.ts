@@ -29,10 +29,7 @@ export class NDKRelayConnectivity {
         this.relay.onnotice = (notice: string) => this.handleNotice(notice);
     }
 
-    public async connect(
-        timeoutMs?: number,
-        reconnect = true
-    ): Promise<void> {
+    public async connect(timeoutMs?: number, reconnect = true): Promise<void> {
         if (this.reconnectTimeout) {
             clearTimeout(this.reconnectTimeout);
             this.reconnectTimeout = undefined;
@@ -110,10 +107,8 @@ export class NDKRelayConnectivity {
         } catch (e) {
             // this.debug("Failed to connect", e);
             this._status = NDKRelayStatus.DISCONNECTED;
-            if (reconnect)
-                this.handleReconnection();
-            else
-                this.ndkRelay.emit("delayed-connect", 2 * 24 * 60 * 60 * 1000);
+            if (reconnect) this.handleReconnection();
+            else this.ndkRelay.emit("delayed-connect", 2 * 24 * 60 * 60 * 1000);
             throw e;
         }
     }

@@ -15,7 +15,7 @@ describe("calculateRelaySetsFromFilters", () => {
     /**
      *
      * The below tests aren't testing anything right now.
-     * TODO: We need to refactor/rewrite all the tests around relay selection 
+     * TODO: We need to refactor/rewrite all the tests around relay selection
      * and sorting.
      *
      **/

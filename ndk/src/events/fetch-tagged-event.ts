@@ -23,14 +23,20 @@ export async function fetchTaggedEvent(
     return event;
 }
 
-export async function fetchRootEvent(this: NDKEvent, subOpts?: NDKSubscriptionOptions): Promise<NDKEvent | null | undefined> {
+export async function fetchRootEvent(
+    this: NDKEvent,
+    subOpts?: NDKSubscriptionOptions
+): Promise<NDKEvent | null | undefined> {
     if (!this.ndk) throw new Error("NDK instance not found");
     const rootTag = getRootTag(this);
     if (!rootTag) return undefined;
     return this.ndk.fetchEventFromTag(rootTag, subOpts);
 }
 
-export async function fetchReplyEvent(this: NDKEvent, subOpts?: NDKSubscriptionOptions): Promise<NDKEvent | null | undefined> {
+export async function fetchReplyEvent(
+    this: NDKEvent,
+    subOpts?: NDKSubscriptionOptions
+): Promise<NDKEvent | null | undefined> {
     if (!this.ndk) throw new Error("NDK instance not found");
     const replyTag = getReplyTag(this);
     if (!replyTag) return undefined;

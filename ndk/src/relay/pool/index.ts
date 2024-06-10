@@ -162,7 +162,7 @@ export class NDKPool extends EventEmitter<{
         relay.off("flapping", flappingHandler);
         relay.off("auth", authHandler);
         relay.off("authed", authedHandler);
-        
+
         // add the handlers
         relay.on("notice", noticeHandler);
         relay.on("connect", connectHandler);

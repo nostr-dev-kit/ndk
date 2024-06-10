@@ -9,17 +9,14 @@ export class NDKSubscriptionManager {
 
     constructor(debug: debug.Debugger) {
         this.subscriptions = new Map();
-        this.debug = debug.extend('sub-manager');
+        this.debug = debug.extend("sub-manager");
     }
 
     public add(sub: NDKSubscription) {
-        this.subscriptions.set(
-            sub.internalId,
-            sub
-        )
+        this.subscriptions.set(sub.internalId, sub);
 
         sub.on("close", () => {
             this.subscriptions.delete(sub.internalId);
-        })
+        });
     }
 }

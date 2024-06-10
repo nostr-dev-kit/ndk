@@ -323,7 +323,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
     }
 
     public addUnpublishedEvent = addUnpublishedEvent.bind(this);
-    
+
     public async setEvent(event: NDKEvent, filters: NDKFilter[], relay?: NDKRelay): Promise<void> {
         if (event.kind === 0) {
             if (!this.profiles) return;
@@ -541,7 +541,7 @@ export function foundEvent(
     try {
         const deserializedEvent = deserialize(event.event);
 
-        if (filter && !matchFilter(filter, deserializedEvent as any)) return;
+        if (filter && !matchFilter(filter, event)) return;
 
         const ndkEvent = new NDKEvent(undefined, deserializedEvent);
         const relay = relayUrl ? subscription.pool.getRelay(relayUrl) : undefined;
@@ -558,12 +558,12 @@ export function foundEvent(
  */
 function getIndexableTags(event: NDKEvent): NDKTag[] {
     let indexableTags: NDKTag[] = [];
-    
+
     if (event.kind === 3) return [];
-    
+
     for (const tag of event.tags) {
         if (tag[0].length !== 1) continue;
-        
+
         indexableTags.push(tag);
 
         if (indexableTags.length >= INDEXABLE_TAGS_LIMIT) return [];

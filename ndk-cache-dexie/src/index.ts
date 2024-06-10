@@ -21,7 +21,7 @@ import { Nip05CacheEntry, nip05Dump, nip05WarmUp } from "./caches/nip05.js";
 import { EventCacheEntry, eventsDump, eventsWarmUp } from "./caches/events.js";
 import { EventTagCacheEntry, eventTagsDump, eventTagsWarmUp } from "./caches/event-tags.js";
 import { relayInfoDump, relayInfoWarmUp } from "./caches/relay-info.js";
-import { addUnpublishedEvent, unpublishedEventsDump, unpublishedEventsWarmUp } from "./caches/unpublished-events.js";
+import { addUnpublishedEvent, discardUnpublishedEvent, getUnpublishedEvents, unpublishedEventsDump, unpublishedEventsWarmUp } from "./caches/unpublished-events.js";
 
 export { db } from "./db";
 
@@ -323,6 +323,8 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
     }
 
     public addUnpublishedEvent = addUnpublishedEvent.bind(this);
+    public getUnpublishedEvents = () => getUnpublishedEvents(db.unpublishedEvents);
+    public discardUnpublishedEvent = (id: string) => discardUnpublishedEvent(db.unpublishedEvents, id);
     
     public async setEvent(event: NDKEvent, filters: NDKFilter[], relay?: NDKRelay): Promise<void> {
         if (event.kind === 0) {

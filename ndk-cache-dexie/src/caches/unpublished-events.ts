@@ -43,6 +43,29 @@ export function unpublishedEventsDump(
     };
 }
 
+export async function discardUnpublishedEvent(
+    unpublishedEvents: Table<UnpublishedEvent>,
+    eventId: NDKEventId
+): Promise<void> {
+    await unpublishedEvents.delete(eventId);
+}
+
+export async function getUnpublishedEvents(
+    unpublishedEvents: Table<UnpublishedEvent>
+): Promise<{ event: NDKEvent, relays: WebSocket["url"][], lastTryAt?: number }[]> {
+    const events: { event: NDKEvent, relays: WebSocket["url"][], lastTryAt?: number }[] = [];
+
+    await unpublishedEvents.each((unpublishedEvent) => {
+        events.push({
+            event: new NDKEvent(undefined, unpublishedEvent.event),
+            relays: Object.keys(unpublishedEvent.relays),
+            lastTryAt: unpublishedEvent.lastTryAt
+        });
+    })
+
+    return events;
+}
+
 export function addUnpublishedEvent(this: NDKCacheAdapterDexie, event: NDKEvent, relays: WebSocket["url"][]): void {
     const r: UnpublishedEvent["relays"] = {};
     relays.forEach(url => r[url] = false);

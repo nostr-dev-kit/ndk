@@ -1,4 +1,4 @@
-import type { NDKEvent } from "../events/index.js";
+import type { NDKEvent, NDKEventId } from "../events/index.js";
 import type { NDKRelay } from "../relay/index.js";
 import type { NDKFilter, NDKSubscription } from "../subscription/index.js";
 import type { Hexpubkey, ProfilePointer } from "../user/index.js";
@@ -78,10 +78,20 @@ export interface NDKCacheAdapter {
 
     /**
      * Tracks a publishing event.
-     * @param event 
+     * @param event
      * @param relayUrls List of relays that the event will be published to.
      */
     addUnpublishedEvent?(event: NDKEvent, relayUrls: WebSocket["url"][]): void;
+
+    /**
+     * Fetches all unpublished events.
+     */
+    getUnpublishedEvents?(): Promise<{ event: NDKEvent, relays?: WebSocket["url"][], lastTryAt?: number }[]>;
+
+    /**
+     * Removes an unpublished event.
+     */
+    discardUnpublishedEvent?(eventId: NDKEventId): void;
 
     /**
      * Called when the cache is ready.

@@ -30,7 +30,7 @@ export function unpublishedEventsDump(
         for (const eventId of dirtyKeys) {
             const entry = cache.get(eventId);
             if (entry) {
-                entries.push({...entry, id: entry.event.id! });
+                entries.push(entry);
             }
         }
 

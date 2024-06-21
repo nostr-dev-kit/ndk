@@ -13,10 +13,18 @@ export default defineConfig({
 
     sidebar: [
       {
+        text: "Getting Started",
+        items: [
+          { text: 'Introduction', link: '/getting-started/introduction' },
+          { text: 'Usage', link: '/getting-started/usage' },
+          { text: 'Signers', link: '/getting-started/signers' },
+        ]
+      },
+      {
         text: 'Tutorial',
         items: [
           { text: 'Local-first', link: '/tutorial/local-first' },
-          { text: 'Outbox model', link: '/tutorial/outbox' },
+          { text: 'Publishing', link: '/tutorial/publishing' },
         ]
       },
       {

@@ -3,23 +3,16 @@
 layout: home
 
 hero:
-  name: "NDK"
-  text: "NDK Docs"
-  tagline: My great project tagline
+  name: "NDK Documentation"
+  tagline: "Nostr Development Kit Docs"
   actions:
     - theme: brand
-      text: Markdown Examples
-      link: /markdown-examples
-    - theme: alt
-      text: API Examples
-      link: /api-examples
+      text: Getting Started
+      link: /getting-started/introduction.html
+    - theme: secondary
+      text: References
+      link: https://github.com/nostr-dev-kit/ndk/blob/master/REFERENCES.md
 
-features:
-  - title: Feature A
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature B
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature C
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
 ---
 
+NDK is a nostr development kit that makes the experience of building Nostr-related applications, whether they are relays, clients, or anything in between, better, more reliable and overall nicer to work with than existing solutions.

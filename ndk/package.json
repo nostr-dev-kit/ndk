@@ -68,8 +68,7 @@
         "tsd": "^0.28.1",
         "tsup": "^8.0.1",
         "typedoc": "^0.25.1",
-        "typedoc-plugin-rename-defaults": "^0.6.6",
-        "vitepress": "^1.2.2"
+        "typedoc-plugin-rename-defaults": "^0.6.6"
     },
     "dependencies": {
         "@noble/curves": "^1.4.0",

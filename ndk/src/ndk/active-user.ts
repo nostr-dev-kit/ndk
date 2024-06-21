@@ -7,13 +7,14 @@ import { NDKKind } from "../events/kinds/index.js";
 import { NDKEvent } from "../events/index.js";
 import NDKList from "../events/kinds/lists/index.js";
 import { NDKRelay } from "../relay/index.js";
+import { getRelayListForUser } from "../utils/get-users-relay-list.js";
 
 const debug = createDebug("ndk:active-user");
 
 async function getUserRelayList(this: NDK, user: NDKUser): Promise<NDKRelayList | undefined> {
     if (!this.autoConnectUserRelays) return;
 
-    const userRelays = await NDKRelayList.forUser(user.pubkey, this);
+    const userRelays = await getRelayListForUser(user.pubkey, this);
     if (!userRelays) return;
 
     for (const url of userRelays.relays) {

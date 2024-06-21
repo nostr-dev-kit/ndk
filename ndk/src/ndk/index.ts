@@ -3,7 +3,7 @@ import { EventEmitter } from "tseep";
 
 import type { NDKCacheAdapter } from "../cache/index.js";
 import dedupEvent from "../events/dedup.js";
-import type { NDKEvent, NDKEventId, NDKTag } from "../events/index.js";
+import { NDKEvent, NDKEventId, NDKTag } from "../events/index.js";
 import { OutboxTracker } from "../outbox/tracker.js";
 import { NDKRelay } from "../relay/index.js";
 import { NDKPool } from "../relay/pool/index.js";
@@ -19,7 +19,7 @@ import { fetchEventFromTag } from "./fetch-event-from-tag.js";
 import { NDKAuthPolicy } from "../relay/auth-policies.js";
 import { Nip96 } from "../media/index.js";
 import { NDKNwc } from "../nwc/index.js";
-import { NDKLnUrlData } from "../zap/index.js";
+import { NDKLnUrlData, NDKZap, ZapConstructorParams } from "../zap/index.js";
 import { Queue } from "./queue/index.js";
 import { signatureVerificationInit } from "../events/signature.js";
 import { NDKSubscriptionManager } from "../subscription/manager.js";
@@ -666,5 +666,47 @@ export class NDK extends EventEmitter<{
             await nwc.blockUntilReady(connectTimeout);
         }
         return nwc;
+    }
+
+    /**
+     * Create a zap request for an existing event
+     *
+     * @param amount The amount to zap in millisatoshis
+     * @param comment A comment to add to the zap request
+     * @param extraTags Extra tags to add to the zap request
+     * @param recipient The zap recipient (optional for events)
+     * @param signer The signer to use (will default to the NDK instance's signer)
+     */
+    public async zap(
+        eventOrUser: NDKEvent | NDKUser,
+        amount: number,
+        comment?: string,
+        extraTags?: NDKTag[],
+        recipient?: NDKUser,
+        signer?: NDKSigner
+    ): Promise<string | null> {
+        if (!signer) {
+            this.assertSigner();
+        }
+
+        let zapOpts: ZapConstructorParams;
+
+        if (eventOrUser instanceof NDKEvent) {
+            zapOpts = { ndk: this, zappedUser: eventOrUser.author, zappedEvent: eventOrUser };
+        } else if (eventOrUser instanceof NDKUser) {
+            zapOpts = { ndk: this, zappedUser: eventOrUser };
+        } else {
+            throw new Error("Invalid recipient");
+        }
+
+        const zap = new NDKZap(zapOpts);
+
+        return zap.createZapRequest(
+            amount,
+            comment,
+            extraTags,
+            undefined,
+            signer
+        );
     }
 }

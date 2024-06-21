@@ -46,3 +46,4 @@ export { NDK as default, NDKConstructorParams } from "./ndk/index.js";
 export { NDKZapInvoice, zapInvoiceFromEvent } from "./zap/invoice.js";
 export * from "./zap/index.js";
 export * from "./utils/normalize-url.js";
+export * from './utils/get-users-relay-list.js';

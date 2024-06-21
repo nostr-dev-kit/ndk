@@ -2,6 +2,7 @@ import { EventEmitter } from "tseep";
 import { LRUCache } from "typescript-lru-cache";
 
 import { NDKRelayList } from "../events/kinds/NDKRelayList.js";
+import { getRelayListForUsers } from "../utils/get-users-relay-list.js";
 import type { NDK } from "../ndk/index.js";
 import type { Hexpubkey } from "../user/index.js";
 import { NDKUser } from "../user/index.js";
@@ -79,7 +80,7 @@ export class OutboxTracker extends EventEmitter {
                 this.data.set(pubkey, new OutboxItem("user"));
             }
 
-            NDKRelayList.forUsers(pubkeys, this.ndk).then(
+            getRelayListForUsers(pubkeys, this.ndk).then(
                 (relayLists: Map<Hexpubkey, NDKRelayList>) => {
                     for (const [pubkey, relayList] of relayLists) {
                         const outboxItem = this.data.get(pubkey)!;

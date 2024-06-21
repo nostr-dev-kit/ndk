@@ -51,6 +51,7 @@ export class Queue<T> {
         promise.finally(() => {
             this.promises.delete(item.id);
             this.processing.delete(item.id);
+            this.process();
         });
 
         return promise;

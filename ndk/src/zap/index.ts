@@ -9,6 +9,7 @@ import type { Hexpubkey, NDKUser } from "../user/index.js";
 import { NDKSigner } from "../signers/index.js";
 import createDebug from "debug";
 import type { NDKUserProfile } from "../user/profile.js";
+import { getRelayListForUsers } from "../utils/get-users-relay-list.js";
 
 const debug = createDebug("ndk:zap");
 
@@ -21,7 +22,7 @@ const DEFAULT_RELAYS = [
     "wss://no.str.cr",
 ];
 
-interface ZapConstructorParams {
+export interface ZapConstructorParams {
     ndk: NDK;
     zappedEvent?: NDKEvent;
     zappedUser?: NDKUser;
@@ -61,6 +62,11 @@ export class NDKZap extends EventEmitter {
     public zappedEvent?: NDKEvent;
     public zappedUser: NDKUser;
     private fetch: typeof fetch = fetch;
+
+    /**
+     * The maximum number of relays to request the zapper to publish the zap receipt to.
+     */
+    public maxRelays = 3;
 
     public constructor(args: ZapConstructorParams) {
         super();
@@ -239,7 +245,7 @@ export class NDKZap extends EventEmitter {
             event: null,
             amount,
             comment: comment || "",
-            relays: relays ?? this.relays(),
+            relays: relays ?? await this.relays(),
         });
 
         // add the event tag if it exists; this supports both 'e' and 'a' tags
@@ -262,11 +268,34 @@ export class NDKZap extends EventEmitter {
     /**
      * @returns the relays to use for the zap request
      */
-    private relays(): string[] {
+    public async relays(): Promise<string[]> {
         let r: string[] = [];
 
-        if (this.ndk?.pool?.relays) {
-            r = this.ndk.pool.urls();
+        if (this.ndk?.activeUser) {
+            const relayLists = await getRelayListForUsers([
+                this.ndk.activeUser.pubkey,
+                this.zappedUser.pubkey,
+            ], this.ndk);
+
+            const relayScores = new Map<string, number>();
+
+            // go through the relay lists and try to get relays that are shared between the two users
+            for (const relayList of relayLists.values()) {
+                for (const url of relayList.readRelayUrls) {
+                    const score = relayScores.get(url) || 0;
+                    relayScores.set(url, score + 1);
+                }
+            }
+
+            // get the relays that are shared between the two users
+            r = Array.from(relayScores.entries())
+                .sort((a, b) => b[1] - a[1])
+                .map(([url]) => url)
+                .slice(0, this.maxRelays);
+        }
+        
+        if (this.ndk?.pool?.permanentAndConnectedRelays().length) {
+            r = this.ndk.pool.permanentAndConnectedRelays().map((relay) => relay.url);
         }
 
         if (!r.length) {

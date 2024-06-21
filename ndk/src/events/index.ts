@@ -16,7 +16,6 @@ import { repost } from "./repost.js";
 import { fetchReplyEvent, fetchRootEvent, fetchTaggedEvent } from "./fetch-tagged-event.js";
 import { NDKEventSerialized, deserialize, serialize } from "./serializer.js";
 import { validate, verifySignature, getEventHash } from "./validation.js";
-import { NDKZap } from "../zap/index.js";
 import { matchFilter } from "nostr-tools";
 
 export type NDKEventId = string;
@@ -607,48 +606,6 @@ export class NDKEvent extends EventEmitter {
         } else {
             return { "#e": [this.tagId()] };
         }
-    }
-
-    /**
-     * Create a zap request for an existing event
-     *
-     * @param amount The amount to zap in millisatoshis
-     * @param comment A comment to add to the zap request
-     * @param extraTags Extra tags to add to the zap request
-     * @param recipient The zap recipient (optional for events)
-     * @param signer The signer to use (will default to the NDK instance's signer)
-     */
-    async zap(
-        amount: number,
-        comment?: string,
-        extraTags?: NDKTag[],
-        recipient?: NDKUser,
-        signer?: NDKSigner
-    ): Promise<string | null> {
-        if (!this.ndk) throw new Error("No NDK instance found");
-
-        if (!signer) {
-            this.ndk.assertSigner();
-        }
-
-        const zap = new NDKZap({
-            ndk: this.ndk,
-            zappedEvent: this,
-            zappedUser: recipient,
-        });
-
-        const relays = Array.from(this.ndk.pool.relays.keys());
-
-        const paymentRequest = await zap.createZapRequest(
-            amount,
-            comment,
-            extraTags,
-            relays,
-            signer
-        );
-
-        // await zap.publish(amount);
-        return paymentRequest;
     }
 
     /**

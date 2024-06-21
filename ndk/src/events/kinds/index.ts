@@ -92,8 +92,9 @@ export enum NDKKind {
     InterestSet = 30015,
     InterestsList = NDKKind.InterestSet, // Deprecated but left for backwards compatibility
     EmojiSet = 30030,
-    HighlightSet = 39802,
+    Draft = 31234,
     SubscriptionTier = 37001,
+    HighlightSet = 39802,
     CategorizedHighlightList = NDKKind.HighlightSet, // Deprecated but left for backwards compatibility
 
     ZapRequest = 9734,

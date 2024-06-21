@@ -8,6 +8,7 @@ import { NDKKind } from "./index.js";
 
 /**
  * Highlight as defined by NIP-84 (kind:9802).
+ * @group Kind Wrapper
  */
 export class NDKHighlight extends NDKEvent {
     private _article: NDKEvent | string | undefined;

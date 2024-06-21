@@ -11,6 +11,7 @@ export * from "./events/kinds/video.js";
 export * from "./events/kinds/highlight.js";
 export * from "./events/kinds/NDKRelayList.js";
 export * from "./events/kinds/lists/index.js";
+export * from "./events/kinds/drafts.js";
 export * from "./events/kinds/repost.js";
 export * from "./events/kinds/nip89/NDKAppHandler.js";
 export * from "./events/kinds/subscriptions/tier.js";

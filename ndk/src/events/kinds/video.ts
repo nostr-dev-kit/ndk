@@ -3,6 +3,10 @@ import { NDKEvent, NostrEvent } from "..";
 import { NDK } from "../../ndk";
 import { ContentTag } from "../content-tagger";
 
+/**
+ * Represents a horizontal or vertical video.
+ * @group Kind Wrapper
+ */
 export class NDKVideo extends NDKEvent {
     constructor(ndk: NDK | undefined, rawEvent?: NostrEvent) {
         super(ndk, rawEvent);

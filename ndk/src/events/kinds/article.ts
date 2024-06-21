@@ -5,6 +5,8 @@ import { NDKKind } from "./index.js";
 
 /**
  * Represents a NIP-23 article.
+ * 
+ * @group Kind Wrapper
  */
 export class NDKArticle extends NDKEvent {
     constructor(ndk: NDK | undefined, rawEvent?: NostrEvent) {

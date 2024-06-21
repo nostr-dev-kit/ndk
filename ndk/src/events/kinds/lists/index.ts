@@ -9,7 +9,7 @@ import { NDKKind } from "../index.js";
 export type NDKListItem = NDKRelay | NDKUser | NDKEvent;
 
 /**
- * Represents any NIP-33 list kind.
+ * Represents any NIP-51 list kind.
  *
  * This class provides some helper methods to manage the list, particularly
  * a CRUD interface to list items.
@@ -27,6 +27,7 @@ export type NDKListItem = NDKRelay | NDKUser | NDKEvent;
  * list.addItem(secretFollow, 'person', true);
  *
  * @emits change
+ * @group Kind Wrapper
  */
 export class NDKList extends NDKEvent {
     public _encryptedTags: NDKTag[] | undefined;

@@ -9,7 +9,7 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: 'Home', link: '/' },
-      { text: 'Examples', link: '/markdown-examples' },
+      { text: 'API Reference', link: '/api' },
     ],
 
     sidebar: [
@@ -34,12 +34,6 @@ export default defineConfig({
           { text: 'Dexie Adapter', link: '/cache/dexie' },
         ]
       },
-      {
-        text: 'Signers',
-        items: [
-          { text: "Private key", link: '/signers/private-key' },
-        ]
-      }
     ],
 
     socialLinks: [

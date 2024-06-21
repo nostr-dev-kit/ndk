@@ -4,6 +4,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: "NDK",
   description: "NDK Docs",
+  base: "/ndk/",
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [

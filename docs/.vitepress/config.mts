@@ -9,7 +9,8 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: 'Home', link: '/' },
-      { text: 'API Reference', link: '/api/' },
+      { text: 'API Reference', link: '/api/', target: '_blank' },
+      { text: 'Wiki', link: 'https://wikifreedia.xyz/?c=NDK', target: '_blank' },
     ],
 
     sidebar: [
@@ -26,6 +27,7 @@ export default defineConfig({
         items: [
           { text: 'Local-first', link: '/tutorial/local-first' },
           { text: 'Publishing', link: '/tutorial/publishing' },
+          { text: "Subscription Management", link: '/tutorial/subscription-management' },
         ]
       },
       {

@@ -13,7 +13,7 @@ interface NDKClassifiedPriceTag {
 
 /**
  * Represents a NIP-99 Classified Listing.
- * 
+ *
  * @group Kind Wrapper
  */
 export class NDKClassified extends NDKEvent {

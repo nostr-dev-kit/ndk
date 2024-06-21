@@ -46,7 +46,7 @@ export class NDKRelayList extends NDKEvent {
         if (ndk.cacheAdapter?.locking) {
             const cachedList = await ndk.fetchEvents(
                 { kinds: [3, 10002], authors: pubkeys },
-                { cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE },
+                { cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE }
             );
 
             // get list of relay lists from cache
@@ -80,8 +80,15 @@ export class NDKRelayList extends NDKEvent {
             // Get from relays the missing pubkeys
             const sub = ndk.subscribe(
                 { kinds: [3, 10002], authors: pubkeys },
-                { closeOnEose: true, pool, groupable: true, cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY, subId: 'ndk-relay-list-fetch' },
-                relaySet, false
+                {
+                    closeOnEose: true,
+                    pool,
+                    groupable: true,
+                    cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY,
+                    subId: "ndk-relay-list-fetch",
+                },
+                relaySet,
+                false
             );
 
             /* Collect most recent version of events */
@@ -112,7 +119,7 @@ export class NDKRelayList extends NDKEvent {
 
                     if (list) relayLists.set(pubkey, list);
                 }
-                
+
                 resolve(relayLists);
             });
 

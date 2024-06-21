@@ -198,7 +198,10 @@ export class NDKUser {
      * @param storeProfileEvent {boolean} Whether to store the profile event or not
      * @returns User Profile
      */
-    public async fetchProfile(opts?: NDKSubscriptionOptions, storeProfileEvent: boolean = false): Promise<NDKUserProfile | null> {
+    public async fetchProfile(
+        opts?: NDKSubscriptionOptions,
+        storeProfileEvent: boolean = false
+    ): Promise<NDKUserProfile | null> {
         if (!this.ndk) throw new Error("NDK not set");
 
         if (!this.profile) this.profile = {};
@@ -265,7 +268,7 @@ export class NDKUser {
 
         // return the most recent profile
         this.profile = profileFromEvent(sortedSetMetadataEvents[0]);
-        
+
         if (storeProfileEvent) {
             // Store the event as a stringified JSON
             this.profile.profileEvent = JSON.stringify(sortedSetMetadataEvents[0]);

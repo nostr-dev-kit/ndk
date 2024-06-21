@@ -7,11 +7,11 @@ import { NDKKind } from "./index.js";
 /**
  * NIP-37 drafts.
  * @group Kind Wrapper
- * 
+ *
  * @example
  * const myArticle = new NDKArticle();
  * myArticle.content = "This is my artic"
- * 
+ *
  * const draft = new NDKDraft();
  * draft.event = myArticle;
  * draft.publish();
@@ -44,17 +44,15 @@ export class NDKDraft extends NDKEvent {
      * Event that is to be saved.
      */
     set event(e: NDKEvent | NostrEvent) {
-        if (e instanceof NDKEvent)
-            this._event = e.rawEvent();
-        else
-            this._event = e;
+        if (e instanceof NDKEvent) this._event = e.rawEvent();
+        else this._event = e;
 
         this.prepareEvent();
     }
 
     /**
      * Gets the event.
-     * @param param0 
+     * @param param0
      * @returns NDKEvent of the draft event or null if the draft event has been deleted (emptied).
      */
     async getEvent(signer?: NDKSigner) {
@@ -83,21 +81,25 @@ export class NDKDraft extends NDKEvent {
     private prepareEvent() {
         if (!this._event) throw new Error("No event has been provided");
         this.removeTag("k");
-        if (this._event.kind) this.tags.push(["k", this._event.kind.toString()])
+        if (this._event.kind) this.tags.push(["k", this._event.kind.toString()]);
 
         this.content = JSON.stringify(this._event);
     }
 
     /**
      * Generates draft event.
-     * 
+     *
      * @param signer: Optional signer to encrypt with
      * @param publish: Whether to publish, optionally specifying relaySet to publish to
      */
-    async save({signer, publish, relaySet}: {
-        signer?: NDKSigner,
-        publish?: boolean,
-        relaySet?: NDKRelaySet
+    async save({
+        signer,
+        publish,
+        relaySet,
+    }: {
+        signer?: NDKSigner;
+        publish?: boolean;
+        relaySet?: NDKRelaySet;
     }) {
         signer ??= this.ndk?.signer;
         if (!signer) throw new Error("No signer available");

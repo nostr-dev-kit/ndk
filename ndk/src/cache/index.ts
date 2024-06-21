@@ -86,7 +86,9 @@ export interface NDKCacheAdapter {
     /**
      * Fetches all unpublished events.
      */
-    getUnpublishedEvents?(): Promise<{ event: NDKEvent, relays?: WebSocket["url"][], lastTryAt?: number }[]>;
+    getUnpublishedEvents?(): Promise<
+        { event: NDKEvent; relays?: WebSocket["url"][]; lastTryAt?: number }[]
+    >;
 
     /**
      * Removes an unpublished event.

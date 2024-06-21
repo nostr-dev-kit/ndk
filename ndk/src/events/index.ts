@@ -384,7 +384,6 @@ export class NDKEvent extends EventEmitter {
         return relays;
     }
 
-
     /**
      * Generates tags for users, notes, and other events tagged in content.
      * Will also generate random "d" tag for parameterized replaceable events where needed.

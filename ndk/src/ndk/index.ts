@@ -174,7 +174,11 @@ export class NDK extends EventEmitter<{
      * @param error The error that caused the event to fail to publish
      * @param relays The relays that the event was attempted to be published to
      */
-    "event:publish-failed": (event: NDKEvent, error: NDKPublishError, relays: WebSocket["url"][]) => void;
+    "event:publish-failed": (
+        event: NDKEvent,
+        error: NDKPublishError,
+        relays: WebSocket["url"][]
+    ) => void;
 }> {
     public explicitRelayUrls?: WebSocket["url"][];
     public pool: NDKPool;
@@ -461,7 +465,7 @@ export class NDK extends EventEmitter<{
         }
 
         if (autoStart) {
-                setTimeout(() => subscription.start(), 0);
+            setTimeout(() => subscription.start(), 0);
         }
 
         return subscription;

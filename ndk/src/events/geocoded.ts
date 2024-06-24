@@ -185,6 +185,30 @@ export class NDKEventGeoCoded extends NDKEvent {
         return this.tagValuesByMarker("g", "countryCode");
     }
 
+    get countryCodeAlpha2(): string | undefined {
+        return this.tagValueByKeyAndLength("countryCode", 2)
+    }
+
+    get countryCodeAlpha3(): string | undefined {
+        return this.tagValueByKeyAndLength("countryCode", 3)
+    }
+
+    get countryCodeAlpha4(): string | undefined {
+        return this.tagValueByKeyAndLength("countryCode", 4)
+    }
+
+    get countryCodeNumeric(): string | undefined {
+        return this.tagValueByKeyAndIsNumber("countryCode")   
+    }
+
+    get regionCodeAlpha2(): string | undefined {
+        return this.tagValueByKeyAndLength("regionCode", 2)   
+    }
+
+    get regionCodeNumeric(): string | undefined {
+        return this.tagValueByKeyAndIsNumber("regionCode")   
+    }
+
     set countryCode(values: string[]) {
         this.removeTagByMarker("g", "countryCode");
         values.forEach(value => {
@@ -225,11 +249,10 @@ export class NDKEventGeoCoded extends NDKEvent {
     }
 
     get geo(): NDKTag[] {
-        return [...this.getMatchingTags("G"), ...this.getMatchingTags("g")];
+        return [...this.getMatchingTags("g")];
     }
 
     set geo(tags: NDKTag[]) {
-        this.removeTag("G");
         this.removeTag("g");
         tags.forEach(tag => this.tags.push(tag));
     }
@@ -518,25 +541,6 @@ export class NDKEventGeoCoded extends NDKEvent {
             range[1] = mid;
         }
     }
-    
-    /**
-     * Removes tags by their value (the value at position 1 in the tag array).
-     * 
-     * @param value The value to identify which tags to remove.
-     */
-    // protected removeTagByKeyValue(value: string, key?: string){
-    //     this.tags = this.tags.filter(tag => tag[1] !== value);
-    // }
-
-    protected removeTagByKeyValue(value: string, key?: string){
-        const filterFn = 
-            (tag: NDKTag) => 
-                typeof key !== 'undefined'
-                    ? tag[0] !== key && tag[1] !== value
-                    : tag[1] !== value; 
-
-        this.tags = this.tags.filter(filterFn);
-    }
 
     /**
      * Removes tags by marker (the value at last position in the tag array).
@@ -545,6 +549,28 @@ export class NDKEventGeoCoded extends NDKEvent {
      */
     protected removeTagByMarker(key: string, marker: string) {
         this.tags = this.tags.filter(tag => !(tag[0] === key && tag[tag.length-1] === marker));
+    }
+
+    /**
+     * Helper method to find a tag by its marker and length of its value.
+     * 
+     * @param key The key to identify which tag value to find.
+     * @return The first value associated with the key, or undefined if not found.
+     */
+    protected tagValueByKeyAndLength(key: string, length: number): string | undefined {
+        return this.tags.find(tag => tag[2] === key && tag[1].length === length)?.[1];
+    }
+
+    /**
+     * Helper method to find a tag by its marker and potential type of its value
+     * 
+     * @param key The key to identify which tag value to find.
+     * @return The first value associated with the key, or undefined if not found.
+     */
+    protected tagValueByKeyAndIsNumber(key: string): string | undefined {
+        const candidates = this.tags.filter(tag => tag[2] === key)
+        
+        return candidates.find(tag => !isNaN(Number(tag[1])))?.[1]
     }
 
     /**
@@ -559,7 +585,7 @@ export class NDKEventGeoCoded extends NDKEvent {
     }
 
     /**
-     * Helper method to find the first tag value by its marker.
+     * Helper method to find all tags by marker
      * 
      * @param key The key to identify which tag value to find.
      * @return The first value associated with the key, or undefined if not found.
@@ -568,6 +594,7 @@ export class NDKEventGeoCoded extends NDKEvent {
         const tags = this.tags.filter(tag => tag[0] === key && tag[tag.length-1] === marker).map(tag => tag[1]).flat();
         return tags?.length ? tags : undefined;
     }
+
     /**
      * Retrieves tags that are indexed, identified by having their first element's length equal to 1.
      * 
@@ -581,16 +608,14 @@ export class NDKEventGeoCoded extends NDKEvent {
 
     /**
      * Adds a geo tags to the event's tags, updating or removing existing tags as necessary.
-     * This method manages the insertion of geospatial information tags ('g' and 'G') into the event's tag array.
+     * This method manages the insertion of geospatial information tags ('g') into the event's tag array.
      * 
      * @param {string} key The geospatial information key (e.g., "lat", "lon", "countryCode").
      * @param {string} value The value associated with the key.
      * @private
      */
     private _setGeoTag(key: string, value: string){
-        this.removeTagByKeyValue(key);
         this.removeTagByMarker("g", key);
-        this.tags.push(["G", key]);
         this.tags.push(["g", value, key]);
     }
 
@@ -601,7 +626,6 @@ export class NDKEventGeoCoded extends NDKEvent {
      * @private
      */
     private _removeGeoHashes(): void {
-        this.removeTagByKeyValue("gh", "G");
         this.tags = this.tags.filter( tag => !(NDKEventGeoCoded.geohashFilterFn(tag)) ); 
     }
 
@@ -618,9 +642,8 @@ export class NDKEventGeoCoded extends NDKEvent {
      */
     private _updateGeohashTags(geohashes: Geohash[]) {
         this._removeGeoHashes();
-        this.tags.push(["G", "gh"]);
         geohashes.forEach(gh => {
-            this.tags.push(["g", gh, "gh"]);
+            this.tags.push(["g", gh]);
         });
     }
 };

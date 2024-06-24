@@ -123,14 +123,14 @@ export enum NDKKind {
     GroupMetadata = 39000, // NIP-29
     GroupMembers = 39002, // NIP-29
 
-    // NIP-89: App Metadata
-    AppRecommendation = 31989,
-    AppHandler = 31990,
-
     // NIP-66: Relay Monitors, Metadata and Discovery 
     RelayMonitor = 10166,
     RelayMeta = 30066,
     RelayDiscovery = 30166,
+
+    // NIP-89: App Metadata
+    AppRecommendation = 31989,
+    AppHandler = 31990,
 }
 
 export const NDKListKinds = [

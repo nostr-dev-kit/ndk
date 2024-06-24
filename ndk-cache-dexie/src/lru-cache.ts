@@ -27,7 +27,7 @@ export class CacheHandler<T> {
         this.maxSize = options.maxSize;
         if (options.maxSize > 0) {
             this.cache = new LRUCache({ maxSize: options.maxSize });
-            setInterval(() => this.dump(), 1000 * 10);
+            setInterval(() => this.dump().catch(console.error), 1000 * 10);
         }
 
         this.indexes = new Map();

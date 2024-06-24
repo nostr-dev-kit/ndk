@@ -7293,17 +7293,17 @@ packages:
       '@babel/core': 7.22.20
     dev: true
 
-  /babel-jest@29.7.0(@babel/core@7.24.5):
+  /babel-jest@29.7.0(@babel/core@7.23.5):
     resolution: {integrity: sha512-BrvGY3xZSwEcCzKvKsCi2GgHqDqsYkOP4/by5xCgIwGXQxIEh+8ew3gmrE1y7XRR6LHZIj6yLYnUi/mm2KXKBg==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     peerDependencies:
       '@babel/core': ^7.8.0
     dependencies:
-      '@babel/core': 7.24.5
+      '@babel/core': 7.23.5
       '@jest/transform': 29.7.0
       '@types/babel__core': 7.20.2
       babel-plugin-istanbul: 6.1.1
-      babel-preset-jest: 29.6.3(@babel/core@7.24.5)
+      babel-preset-jest: 29.6.3(@babel/core@7.23.5)
       chalk: 4.1.2
       graceful-fs: 4.2.11
       slash: 3.0.0
@@ -7390,15 +7390,15 @@ packages:
       '@babel/plugin-syntax-top-level-await': 7.14.5(@babel/core@7.24.5)
     dev: true
 
-  /babel-preset-jest@29.6.3(@babel/core@7.24.5):
+  /babel-preset-jest@29.6.3(@babel/core@7.23.5):
     resolution: {integrity: sha512-0B3bhxR6snWXJZtR/RliHTDPRgn1sNHOR0yVtq/IiQFyuOVjFS+wuio/R4gSNkyYmKmJB4wGZv2NZanmKmTnNA==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     peerDependencies:
       '@babel/core': ^7.0.0
     dependencies:
-      '@babel/core': 7.24.5
+      '@babel/core': 7.23.5
       babel-plugin-jest-hoist: 29.6.3
-      babel-preset-current-node-syntax: 1.0.1(@babel/core@7.24.5)
+      babel-preset-current-node-syntax: 1.0.1(@babel/core@7.23.5)
     dev: true
 
   /bail@2.0.2:
@@ -10676,11 +10676,11 @@ packages:
       ts-node:
         optional: true
     dependencies:
-      '@babel/core': 7.24.5
+      '@babel/core': 7.23.5
       '@jest/test-sequencer': 29.7.0
       '@jest/types': 29.6.3
       '@types/node': 14.18.63
-      babel-jest: 29.7.0(@babel/core@7.24.5)
+      babel-jest: 29.7.0(@babel/core@7.23.5)
       chalk: 4.1.2
       ci-info: 3.8.0
       deepmerge: 4.3.1
@@ -10717,11 +10717,11 @@ packages:
       ts-node:
         optional: true
     dependencies:
-      '@babel/core': 7.24.5
+      '@babel/core': 7.23.5
       '@jest/test-sequencer': 29.7.0
       '@jest/types': 29.6.3
       '@types/node': 18.17.19
-      babel-jest: 29.7.0(@babel/core@7.24.5)
+      babel-jest: 29.7.0(@babel/core@7.23.5)
       chalk: 4.1.2
       ci-info: 3.8.0
       deepmerge: 4.3.1
@@ -10758,11 +10758,11 @@ packages:
       ts-node:
         optional: true
     dependencies:
-      '@babel/core': 7.24.5
+      '@babel/core': 7.23.5
       '@jest/test-sequencer': 29.7.0
       '@jest/types': 29.6.3
       '@types/node': 20.6.4
-      babel-jest: 29.7.0(@babel/core@7.24.5)
+      babel-jest: 29.7.0(@babel/core@7.23.5)
       chalk: 4.1.2
       ci-info: 3.8.0
       deepmerge: 4.3.1
@@ -10839,11 +10839,11 @@ packages:
       ts-node:
         optional: true
     dependencies:
-      '@babel/core': 7.24.5
+      '@babel/core': 7.23.5
       '@jest/test-sequencer': 29.7.0
       '@jest/types': 29.6.3
       '@types/node': 20.6.4
-      babel-jest: 29.7.0(@babel/core@7.24.5)
+      babel-jest: 29.7.0(@babel/core@7.23.5)
       chalk: 4.1.2
       ci-info: 3.8.0
       deepmerge: 4.3.1

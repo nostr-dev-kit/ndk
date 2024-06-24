@@ -224,6 +224,7 @@ export class NDKList extends NDKEvent {
                 "title",
                 "name",
                 "description",
+                "published_at",
                 "summary",
                 "image",
                 "thumb",

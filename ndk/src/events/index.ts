@@ -237,9 +237,12 @@ export class NDKEvent extends EventEmitter {
      * @returns {NDKTag[]} An array of the matching tags
      */
     public getMatchingTags(tagName: string, marker?: string): NDKTag[] {
-        return this.tags
-            .filter((tag) => tag[0] === tagName)
-            .filter((tag) => !marker || tag[3] === marker);
+        const t = this.tags
+            .filter((tag) => tag[0] === tagName);
+        
+        if (marker !== undefined) return t;
+
+        return t.filter((tag) => tag[3] === marker);
     }
 
     /**
@@ -367,7 +370,11 @@ export class NDKEvent extends EventEmitter {
 
         // add to cache for optimistic updates
         if (this.ndk.cacheAdapter?.addUnpublishedEvent) {
-            this.ndk.cacheAdapter.addUnpublishedEvent(this, relaySet.relayUrls);
+            try {
+                this.ndk.cacheAdapter.addUnpublishedEvent(this, relaySet.relayUrls);
+            } catch (e) {
+                console.error("Error adding unpublished event to cache", e);
+            }
         }
 
         // send to active subscriptions that want this event
@@ -413,10 +420,12 @@ export class NDKEvent extends EventEmitter {
             }
         }
 
-        if ((this.ndk?.clientName || this.ndk?.clientNip89) && !this.tagValue("client")) {
-            const clientTag: NDKTag = ["client", this.ndk.clientName ?? ""];
-            if (this.ndk.clientNip89) clientTag.push(this.ndk.clientNip89);
-            tags.push(clientTag);
+        if ((this.ndk?.clientName || this.ndk?.clientNip89)) {
+            if (!this.tags.some((tag) => tag[0] === "client")) {
+                const clientTag: NDKTag = ["client", this.ndk.clientName ?? ""];
+                if (this.ndk.clientNip89) clientTag.push(this.ndk.clientNip89);
+                tags.push(clientTag);
+            }
         }
 
         return { content: content || "", tags };

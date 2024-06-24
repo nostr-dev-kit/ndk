@@ -1,5 +1,6 @@
 import type { NDKEvent } from "../../events/index.js";
 import type { NDK } from "../../ndk/index.js";
+import { normalizeRelayUrl } from "../../utils/normalize-url.js";
 import { NDKRelay } from "../index.js";
 
 export class NDKPublishError extends Error {
@@ -76,11 +77,11 @@ export class NDKRelaySet {
     static fromRelayUrls(relayUrls: string[], ndk: NDK): NDKRelaySet {
         const relays = new Set<NDKRelay>();
         for (const url of relayUrls) {
-            const relay = ndk.pool.relays.get(url);
+            const relay = ndk.pool.relays.get(normalizeRelayUrl(url));
             if (relay) {
                 relays.add(relay);
             } else {
-                const temporaryRelay = new NDKRelay(url);
+                const temporaryRelay = new NDKRelay(normalizeRelayUrl(url), undefined, ndk);
                 ndk.pool.useTemporaryRelay(temporaryRelay);
                 relays.add(temporaryRelay);
             }

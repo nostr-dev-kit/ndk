@@ -1,8 +1,9 @@
-import { EventTemplate, Relay, VerifiedEvent } from "nostr-tools";
+import { EventTemplate, NostrEvent, Relay, VerifiedEvent } from "nostr-tools";
 import type { NDKRelay, NDKRelayConnectionStats } from ".";
 import { NDKRelayStatus } from ".";
 import { runWithTimeout } from "../utils/timeout";
-import { NDKEvent } from "../events";
+import { NDKEvent } from "../events/index.js";
+import { NDK } from "../ndk/index.js";
 
 const MAX_RECONNECT_ATTEMPTS = 5;
 
@@ -19,12 +20,14 @@ export class NDKRelayConnectivity {
     };
     private debug: debug.Debugger;
     private reconnectTimeout: ReturnType<typeof setTimeout> | undefined;
+    private ndk?: NDK;
 
-    constructor(ndkRelay: NDKRelay) {
+    constructor(ndkRelay: NDKRelay, ndk?: NDK) {
         this.ndkRelay = ndkRelay;
         this._status = NDKRelayStatus.DISCONNECTED;
         this.relay = new Relay(this.ndkRelay.url);
         this.debug = this.ndkRelay.debug.extend("connectivity");
+        this.ndk = ndk;
 
         this.relay.onnotice = (notice: string) => this.handleNotice(notice);
     }
@@ -58,13 +61,17 @@ export class NDKRelayConnectivity {
         };
 
         const authHandler = async (challenge: string) => {
+            const authPolicy = this.ndkRelay.authPolicy ?? this.ndk?.relayAuthDefaultPolicy;
+            
             this.debug("Relay requested authentication", {
-                havePolicy: !!this.ndkRelay.authPolicy,
+                havePolicy: !!authPolicy,
             });
-            if (this.ndkRelay.authPolicy) {
+
+            if (authPolicy) {
                 if (this._status !== NDKRelayStatus.AUTHENTICATING) {
                     this._status = NDKRelayStatus.AUTHENTICATING;
-                    const res = await this.ndkRelay.authPolicy(this.ndkRelay, challenge);
+                    const res = await authPolicy(this.ndkRelay, challenge);
+                    this.debug("Authentication policy returned", res);
 
                     if (res instanceof NDKEvent) {
                         this.relay.auth(async (evt: EventTemplate): Promise<VerifiedEvent> => {
@@ -74,6 +81,11 @@ export class NDKRelayConnectivity {
 
                     if (this._status === NDKRelayStatus.AUTHENTICATING) {
                         this.debug("Authentication policy finished");
+                        this.relay.auth(async (evt: EventTemplate): Promise<VerifiedEvent> => {
+                            const event = new NDKEvent(this.ndk, evt as NostrEvent);
+                            await event.sign();
+                            return event.rawEvent() as VerifiedEvent;
+                        });
                         this._status = NDKRelayStatus.CONNECTED;
                         this.ndkRelay.emit("authed");
                     }

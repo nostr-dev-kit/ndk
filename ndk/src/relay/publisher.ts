@@ -63,7 +63,7 @@ export class NDKRelayPublisher {
     }
 
     private async publishEvent(event: NDKEvent, timeoutMs?: number): Promise<boolean> {
-        const nostrEvent = await event.toNostrEvent();
+        const nostrEvent = event.rawEvent();
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const publish = this.ndkRelay.connectivity.relay.publish(nostrEvent as any);
         let publishTimeout: NodeJS.Timeout | number;

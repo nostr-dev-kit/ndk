@@ -61,7 +61,7 @@ export class NDKPool extends EventEmitter<{
         this.ndk = ndk;
 
         for (const relayUrl of relayUrls) {
-            const relay = new NDKRelay(relayUrl);
+            const relay = new NDKRelay(relayUrl, undefined, this.ndk);
             this.addRelay(relay, false);
         }
 
@@ -97,6 +97,10 @@ export class NDKPool extends EventEmitter<{
         if (!relayAlreadyInPool || existingTimer) {
             // set a timer to remove the relay from the pool if it is not used within the specified time
             const timer = setTimeout(() => {
+                // check if this relay is in the explicit relays list, if it is, it was connected temporary first
+                // and then made explicit, so we shouldn't disconnect
+                if (this.ndk.explicitRelayUrls?.includes(relay.url)) return;
+                
                 this.removeRelay(relay.url);
             }, removeIfUnusedAfter) as unknown as NodeJS.Timeout;
 
@@ -228,7 +232,7 @@ export class NDKPool extends EventEmitter<{
         let relay = this.relays.get(url);
 
         if (!relay) {
-            relay = new NDKRelay(url);
+            relay = new NDKRelay(url, undefined, this.ndk);
             if (temporary) {
                 this.useTemporaryRelay(relay);
             } else {

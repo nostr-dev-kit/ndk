@@ -36,6 +36,12 @@ export default defineConfig({
           { text: 'Dexie Adapter', link: '/cache/dexie' },
         ]
       },
+      {
+        text: "Wrappers",
+        items: [
+          { text: 'NDK Svelte', link: '/wrappers/svelte' },
+        ]
+      },
     ],
 
     socialLinks: [

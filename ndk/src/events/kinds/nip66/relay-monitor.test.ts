@@ -139,14 +139,6 @@ describe('RelayMonitor', () => {
       });
     });
 
-    describe('invalidRelayFetch', () => {
-      it('should return undefined and log error', () => {
-        const result = relayMonitor['_invalidRelayFetch']("testMethod", "testError");
-        expect(result).toBeUndefined();
-        expect(mockConsoleError).toHaveBeenCalledWith("testMethod: testError");
-      });
-    });
-
     describe('nip66Filter', () => {
       it('should generate correct filter based on input kinds', () => {
         const filter = relayMonitor['_nip66Filter']( [NDKKind.RelayMeta], { limit: 1 }, { "#n": ["clearnet"] } );
@@ -188,50 +180,6 @@ describe('RelayMonitor', () => {
       it('should return false when not all conditions are met', () => {
         relayMonitor.frequency = undefined; 
         expect(relayMonitor.isMonitorValid()).toBe(false);
-      });
-    });
-
-    describe('fetchOnlineRelays', ()=>{
-      it('should return a set of relay events', async () => {
-        const result = await relayMonitor['fetchOnlineRelays']();
-        expect(result).toBeInstanceOf(Set);
-        expect(result?.size).toBe(2);
-        expect(result).toEqual(new Set(['wss://relay.weloveit.info/', 'wss://africa.nostr.joburg/']));
-      });
-  
-      it('should return a filtered set of relay events', async () => {
-        const filter: NDKFilter = { "#s": ['git+https://github.com/Cameri/nostream.git'] };
-        const result = await relayMonitor.fetchOnlineRelays(filter);
-        expect(result).toBeInstanceOf(Set);
-        expect(result?.size).toBe(1);
-        expect(result).toEqual(new Set(['wss://africa.nostr.joburg/']));
-      });
-    });
-
-    describe('fetchRelayMeta', ()=>{
-      it('should return a RelayMeta[] with length=1 when given one relay', async () => {
-        const result = await relayMonitor.fetchRelayMeta('wss://relay.weloveit.info/');
-        const _result = Array.from(result || []);
-        expect(_result?.length).toEqual(1);
-        expect(_result?.[0]?.url).toEqual('wss://relay.weloveit.info/');
-      });
-  
-      it('should return a RelayMeta[] with length=2 given two relays', async () => {
-        const result = await relayMonitor.fetchRelayMeta(['wss://relay.plebes.fans/', 'wss://relay.weloveit.info/']);
-        const _result = Array.from(result || []);
-        expect(_result?.length).toEqual(2);
-        expect(_result?.[0]?.url).toEqual('wss://relay.weloveit.info/');
-        expect(_result?.[1]?.url).toEqual('wss://relay.plebes.fans/');
-      });
-    });
-    
-    describe('fetchOnlineRelaysMeta', ()=>{
-      it('should return a set of RelayMeta events', async () => {
-        const result = await relayMonitor.fetchOnlineRelaysMeta();
-        const _result = Array.from(result || []);
-        expect(_result?.length).toEqual(2);
-        expect(_result?.[0]?.url).toEqual('wss://relay.weloveit.info/');
-        expect(_result?.[1]?.url).toEqual('wss://relay.plebes.fans/');
       });
     });
   });

@@ -15,7 +15,6 @@ import { NDKEventGeoCoded } from "../../geocoded.js";
 import type { FetchNearbyRelayOptions } from "../../geocoded.js";
 import type { RelayMeta } from "./relay-meta.js";
 import type { RelayDiscovery, RelayDiscoveryFilters } from "./relay-discovery.js";
-import { getRelayListForUser } from "../../../utils/get-users-relay-list.js";
 
 export type RelayListSet = Set<string> | undefined
 export type RelayMonitorSet = Set<RelayMonitor> | undefined

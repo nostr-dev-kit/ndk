@@ -2,7 +2,7 @@ import { NDKEventGeoCoded } from './geocoded';
 import { NDK } from '../ndk/index.js';
 
 import type { NostrEvent } from './';
-import type { DD, FetchNearbyRelayOptions } from './geocoded';
+import type { DD, Geohash, FetchNearbyRelayOptions } from './geocoded';
 
 // Sample Nostr events to use in tests
 const rawEvent = {
@@ -309,9 +309,25 @@ describe('NDKEventGeoCoded', () => {
         });
 
         describe('Manipulating Geospatial Tags', () => {
-            it('should add and remove geospatial tags correctly', () => {
+
+            it('should set geospatial tags (dd) from a geohash', () => {
+                eventGeoCoded.dd = 'u0yjjd6j5sff' as Geohash;
+                expect(eventGeoCoded.dd).toStrictEqual({ lat: 50.11090007610619, lon: 8.682099860161543 } as DD);
+            });
+
+            it('should set geospatial tags (dd) from a DD', () => {
+                eventGeoCoded.dd = { lat: 50.11090007610619, lon: 8.682099860161543 } as DD;
+                expect(eventGeoCoded.dd).toStrictEqual({ lat: 50.11090007610619, lon: 8.682099860161543 } as DD);
+                expect(eventGeoCoded.geohash).toStrictEqual('u0yjjd6j5sff' as Geohash);
+            });
+
+            it('should remove geospatial tags correctly', () => {
                 const cleanEventGeoCoded = new NDKEventGeoCoded(ndk, {} as NostrEvent);
                 cleanEventGeoCoded.dd = { lat: 50.1109, lon: 8.6821 } as DD;
+                cleanEventGeoCoded['_removeGeoHashes']();
+                expect(cleanEventGeoCoded.tags.some(tag => tag.includes('gh'))).toBeFalsy();
+                
+                cleanEventGeoCoded.dd = 'u0yjjd6j5sff' as Geohash;
                 cleanEventGeoCoded['_removeGeoHashes']();
                 expect(cleanEventGeoCoded.tags.some(tag => tag.includes('gh'))).toBeFalsy();
             });
@@ -326,27 +342,6 @@ describe('NDKEventGeoCoded', () => {
     
             it('should sort geohashes correctly', () => {
                 expect(eventGeoCodedNip23.geohash).toEqual('u1422u57b');
-            });
-        });
-        
-        describe('setters', () => {
-
-            it('should set geohash correctly', () => {
-                eventGeoCoded.geohash = 'u1hc230';
-                const geohashes = eventGeoCoded.geohashes;
-                expect(geohashes?.length).toBeGreaterThan(1);
-                expect(eventGeoCoded.geohashes).toEqual(expect.arrayContaining(['u1hc230']));
-            });
-
-            it('should directly set geohashes correctly', () => {
-                eventGeoCoded.geohashes = ['u1hc230', 'u1hc23'];
-                expect(eventGeoCoded.geohashes).toEqual(['u1hc230', 'u1hc23']);
-            });
-    
-            it('should set coords correctly', () => {
-                expect(eventGeoCoded.dd).toEqual({ lat: 50.11090007610619, lon: 8.682099860161543 });
-                eventGeoCoded.geohashes = ['u1422u57b'];
-                expect(eventGeoCoded.geohashes).toEqual(expect.arrayContaining(['u1422u57b']));       
             });
         });
     });

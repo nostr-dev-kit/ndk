@@ -351,7 +351,6 @@ export class NDK extends EventEmitter {
     public set signer(newSigner: NDKSigner | undefined) {
         this._signer = newSigner;
         this.emit("signer:ready", newSigner);
-
         newSigner?.user().then((user) => {
             user.ndk = this;
             this.activeUser = user;

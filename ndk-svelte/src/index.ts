@@ -30,6 +30,7 @@ export type NDKEventStore<T extends NDKEvent> = Writable<ExtendedBaseType<T>[]> 
     startSubscription: () => void;
     unsubscribe: Unsubscriber;
     onEose: (cb: () => void) => void;
+    onEvent: (cb: (event: NDKEvent, relay?: NDKRelay) => void) => void;
     ref: () => number;
     unref: () => number;
     empty: () => void;
@@ -62,6 +63,11 @@ type NDKSubscribeOptions = NDKSubscriptionOptions & {
      * Callback to be called when the subscription EOSEs
      */
     onEose?: () => void;
+
+    /**
+     * Callback to be called when a new event is received
+     */
+    onEvent?: (event: NDKEvent, relay?: NDKRelay) => void;
 };
 
 class NDKSvelte extends NDK {
@@ -81,6 +87,7 @@ class NDKSvelte extends NDK {
             subscribe: store.subscribe,
             unsubscribe: () => {},
             onEose: (cb) => {},
+            onEvent: (cb) => {},
             startSubscription: () => {
                 throw new Error("not implemented");
             },
@@ -287,6 +294,7 @@ class NDKSvelte extends NDK {
 
             store.subscription.on("event", (event: NDKEvent, relay?: NDKRelay) => {
                 handleEvent(event);
+                if (opts?.onEvent) opts.onEvent(event, relay);
             });
 
             store.subscription.start();
@@ -303,9 +311,7 @@ class NDKSvelte extends NDK {
                 });
             };
 
-            if (opts?.onEose) {
-                store.onEose(opts.onEose);
-            }
+            if (opts?.onEose) { store.onEose(opts.onEose); }
         };
 
         if (autoStart) {

@@ -4,21 +4,11 @@
 
 NDK is a [nostr](<[url](https://github.com/nostr-protocol/nostr)>) development kit that makes the experience of building Nostr-related applications, whether they are relays, clients, or anything in between, better, more reliable and overall nicer to work with than existing solutions.
 
-## Monorepo
-
-This repository contains multiple packages:
-
--   [@nostr-dev-kit/ndk](./ndk) – The core NDK package
--   [@nostr-dev-kit/ndk-cache-dexie](./ndk-cache-dexie) – A caching adapter for the browser using [Dexie](https://dexie.org/)
--   [@nostr-dev-kit/ndk-cache-redis](./ndk-cache-redis) – A caching adapter for the server using [Redis](https://redis.io/)
--   [@nostr-dev-kit/ndk-svelte](./ndk-svelte) – Convenience functionalities to make using Svelte+NDK nicer.
--   [@nostr-dev-kit/ndk-svelte-components](./ndk-svelte-components) – Minimally styled Svelte components for common NDK use cases.
-
 ## NDK Objectives
 
 1. The core goal of NDK is to improve the decentralization of Nostr via intelligent conventions and data discovery features without depending on any one central point of coordination (such as large relays or centralized search providers).
-2. NDK team aims to have new to nostr devs get set up, and read a NIP-01 event within 10 minutes.
-3. NDK's objective is to serve prospective, and current nostr devs as clients. If you have friction with the NDK developer experience, please open issues, and ask for help from the NDK team! Devs are encouraged to search through existing, and/or create new GitHub issues when experiencing friction with NDK.
+2. NDK team aims to have new to nostr devs get set up, and reading a NIP-01 event within 10 minutes.
+3. NDK's objective is to serve prospective, and current nostr devs as clients. If you have friction with the NDK developer experience, please open issues, and ask for help from the NDK team! Devs are encouraged to search through existing, and/or create new github issues when experiencing friction with NDK.
 
 ## Installation
 
@@ -29,7 +19,7 @@ npm add @nostr-dev-kit/ndk
 ## Debugging
 
 NDK uses the `debug` package to assist in understanding what's happening behind the hood. If you are building a package
-that runs on the server defines the `DEBUG` environment variable like
+that runs on the server define the `DEBUG` envionment variable like
 
 ```
 export DEBUG='ndk:*'
@@ -43,12 +33,7 @@ localStorage.debug = 'ndk:*'
 
 ## Support
 
-### NDK NIP-28 group chat
-
--   note15m6rdfvlmd0z836hk83sg7r59xtv23qnmamhsslq5uc6744fdm4qfkeat3
-    -   [Coracle](https://app.coracle.social/chat/note15m6rdfvlmd0z836hk83sg7r59xtv23qnmamhsslq5uc6744fdm4qfkeat3)
-    -   [Nostrchat](https://www.nostrchat.io/channel/a6f436a59fdb5e23c757b1e30478742996c54413df777843e0a731af56a96eea)
--   [WIP documentation](https://github.com/nostr-dev-kit/ndk/blob/master/docs/modules.md)
+-   [documentation](https://ndk.fyi/docs)
 
 ## Features
 
@@ -59,15 +44,15 @@ localStorage.debug = 'ndk:*'
         -   [ ] In-memory
     -   Client-side
         -   [ ] LocalStorage
-        -   [x] IndexedDB ([Dexie](https://github.com/nostr-dev-kit/ndk-cache-dexie))
+        -   [x] IndexD ([Dexie](https://github.com/nostr-dev-kit/ndk-cache-dexie))
 -   [~] NIP-04: Encryption support
 -   [x] NIP-18: Repost
 -   [ ] ~~NIP-26~~ Won't add / NIP-26 is dead
--   [ ] NIP-41: Relay authentication
+-   [x] NIP-42: Relay authentication
 -   [x] NIP-57: Zaps
     -   [x] LUD06
     -   [x] LUD16
--   [x] NIP-65: Contacts' Relay list
+-   [ ] NIP-65: Contacts' Relay list
 -   [x] NIP-89: Application Handlers
 -   [x] NIP-90: Data Vending Machines
 -   Subscription Management
@@ -79,16 +64,21 @@ localStorage.debug = 'ndk:*'
     -   [!] ~~NIP-26~~ Won't add / NIP-26 is dead
     -   [x] NIP-46
         -   [x] Permission tokens
+        -   [x] OAuth flow
 -   Relay discovery
     -   [x] Outbox-model (NIP-65)
     -   [ ] Implicit relays discovery following pubkey usage
     -   [ ] Implicit relays discovery following `t` tag usage
     -   [x] Explicit relays blacklist
 -   [ ] nostr-tools/SimplePool drop-in replacement interface
+-   [x] NIP-47: Nostr Wallet Connect
+-   [x] NIP-96: Media Uploads
+    -   [x] XMLHttpRequest (for progress reporting)
+    -   [x] Fetch API
 
 ## Real-world uses of NDK
 
-See [REFERENCES.md](./ndk/REFERENCES.md) for a list of projects using NDK to see how others are using it.
+See [REFERENCES.md](./REFERENCES.md) for a list of projects using NDK to see how others are using it.
 
 ## Instantiate an NDK instance
 
@@ -109,11 +99,22 @@ const ndk = new NDK({
 });
 ```
 
+If the signer implements the `getRelays()` method, NDK will use the relays returned by that method as the explicit relays.
+
+```ts
+// Import the package
+import NDK, { NDKNip07Signer } from "@nostr-dev-kit/ndk";
+
+// Create a new NDK instance with just a signer (provided the signer implements the getRelays() method)
+const nip07signer = new NDKNip07Signer();
+const ndk = new NDK({ signer: nip07signer });
+```
+
 Note: In normal client use, it's best practice to instantiate NDK as a singleton class. [See more below](#architecture-decisions--suggestions).
 
 ## Connecting
 
-After you've instantiated NDK, you need to tell it to connect before you'll be able to interact with any relays.
+After you've instatiated NDK, you need to tell it to connect before you'll be able to interact with any relays.
 
 ```ts
 // Import the package
@@ -135,11 +136,11 @@ Signing adapters can be passed in when NDK is instantiated or later during runti
 
 ### Using a NIP-07 browser extension (e.g. Alby, nos2x)
 
-Instantiate NDK with a NIP-07 signer
+Instatiate NDK with a NIP-07 signer
 
 ```ts
 // Import the package, NIP-07 signer and NDK event
-import NDK, { NDKNip07Signer, NDKEvent } from "@nostr-dev-kit/ndk";
+import NDK, { NDKEvent, NDKNip07Signer } from "@nostr-dev-kit/ndk";
 
 const nip07signer = new NDKNip07Signer();
 const ndk = new NDK({ signer: nip07signer });
@@ -183,9 +184,9 @@ NDK provides database-agnostic caching functionality out-of-the-box to improve t
 
 NDK will eventually allow you to use multiple caches simultaneously and allow for selective storage of data in the cache store that makes the most sense for your application.
 
-### Where to look is more important than long-term storage
+### Where to look is more important that long-term storage
 
-The most important data to cache is _where_ a user or note might be found. UX suffers profoundly when this type of data cannot be found. By design, the Nostr protocol leaves breadcrumbs of where a user or note might be found and NDK does its best to store this data automatically and use it when you query for events.
+The most important data to cache is _where_ a user or note might be found. UX suffers profoundly when this type of data cannot be found. By design, the Nostr protocol leaves breadcrumbs of where a user or note might be found and NDK does it's best to store this data automatically and use it when you query for events.
 
 ### Instantiating and using a cache adapter
 
@@ -198,7 +199,7 @@ const ndk = new NDK({ cacheAdapter: redisAdapter });
 
 Clients often need to load data (e.g. profile data) from individual components at once (e.g. initial page render). This typically causes multiple subscriptions to be submitted fetching the same information and causing poor performance or getting rate-limited/maxed out by relays.
 
-NDK implements a convenient subscription model, _buffered queries_, where a named subscription will be created after a customizable amount of time so that multiple components can append queries.
+NDK implements a convenient subscription model, _buffered queries_, where a named subscription will be created after a customizable amount of time, so that multiple components can append queries.
 
 ```ts
 // Component 1
@@ -213,25 +214,6 @@ In this example, NDK will wait 100ms (default `groupableDelay`) before creating 
 ```ts
 {kinds: [0], authors: ['pubkey-1', 'pubkey-2'] }
 ```
-
-## Outbox model (formerly known as _gossip-protocol_)
-
-When instantiating NDK, you can pass a set of outboxRelays, which will be used exclusively to consult outbox-model
-related events:
-
-```ts
-const ndk = new NDK({
-    explicitRelayUrls: ["wss://a.relay", "wss://another.relay"],
-    outboxRelayUrls: ["wss://purplepag.es"],
-    enableOutboxModel: true,
-});
-```
-
-When you request information about a user (i.e. explicitly using a user's pubkey in an `authors` filter), NDK will
-automatically query the user's outbox relays and subsequent queries will favour using those relays for queries with that
-user's pubkey.
-
-[OUTBOX.md](./ndk/OUTBOX.md) contains more information about the outbox model. _WIP_
 
 ## Intelligent relay selection
 
@@ -280,7 +262,7 @@ ndk.subscribe({ kinds: [0], authors: ["..."] }, { closeOnEose: false });
 
 ## Convenience methods
 
-NDK implements several convenience methods for common queries.
+NDK implements several conveience methods for common queries.
 
 ### Instantiate a user by npub or hex pubkey
 
@@ -341,8 +323,8 @@ await ndk.publish(event);
 
 ```ts
 // Find the first event from @jack, and react/like it.
-const jackHexPubKey = "82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2";
-const event = await ndk.fetchEvent({ authors: [jackHexPubKey] });
+const jack = await ndk.getUserFromNip05("jack@cashapp.com");
+const event = await ndk.fetchEvent({ authors: [jack.pubkey] })[0];
 await event.react("🤙");
 ```
 
@@ -350,9 +332,9 @@ await event.react("🤙");
 
 ```ts
 // Find the first event from @jack, and zap it.
-const jackHexPubKey = "82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2";
-const event = await ndk.fetchEvent({ authors: [jackHexPubKey] });
-await event.zap(1337, "Zapping your post!"); // Returns a bolt11 payment request
+const jack = await ndk.getUserFromNip05("jack@cashapp.com");
+const event = await ndk.fetchEvent({ authors: [jack.pubkey] })[0];
+await ndk.zap(event, 1337, "Zapping your post!"); // Returns a bolt11 payment request
 ```
 
 ## Architecture decisions & suggestions
@@ -362,9 +344,3 @@ await event.zap(1337, "Zapping your post!"); // Returns a bolt11 payment request
 -   All relays are tracked in a single pool that handles connection errors/reconnection logic.
 -   RelaySets are assembled ad-hoc as needed depending on the queries set, although some RelaySets might be long-lasting, like the `explicitRelayUrls` specified by the user.
 -   RelaySets are always a subset of the pool of all available relays.
-
-## Wall of Contributors
-
-<a href="https://github.com/nostr-dev-kit/ndk/graphs/contributors">
-<img src="https://contrib.rocks/image?repo=nostr-dev-kit/ndk" />
-</a>

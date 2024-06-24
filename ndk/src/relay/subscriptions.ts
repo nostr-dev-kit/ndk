@@ -1,5 +1,5 @@
 import { EventEmitter } from "tseep";
-import type { Sub, SubscriptionOptions } from "nostr-tools";
+import type { Subscription, SubscriptionParams } from "nostr-tools";
 import { matchFilter } from "nostr-tools";
 
 import type { NDKRelay } from ".";
@@ -11,8 +11,20 @@ import { calculateGroupableId, mergeFilters } from "../subscription/grouping.js"
 import { compareFilter, generateSubId } from "../subscription/utils";
 import type { NDKRelayConnectivity } from "./connectivity.js";
 
+export type CountPayload = {
+    count: number;
+};
+
+export type SubscriptionOptions = { id?: string } & SubscriptionParams;
+
+export type SubEvent = {
+    event: (event: NostrEvent) => void | Promise<void>;
+    count: (payload: CountPayload) => void | Promise<void>;
+    eose: () => void | Promise<void>;
+};
+
 /**
- * Represents a collection of NDKSubscriptions (through NDKRelqySubscriptionFilters)
+ * Represents a collection of NDKSubscriptions (through NDKRelaySubscriptionFilters)
  * that are grouped together to be sent to a relay as a single REQ.
  *
  * @emits closed It monitors the contained subscriptions and when all subscriptions are closed it emits "close".
@@ -43,9 +55,9 @@ class NDKGroupedSubscriptions extends EventEmitter implements Iterable<NDKSubscr
         this.handleSubscriptionClosure(subscription);
     }
 
-    public eventReceived(event: NDKEvent) {
+    public eventReceived(rawEvent: NostrEvent) {
         for (const subscription of this.subscriptions) {
-            subscription.eventReceived(event);
+            subscription.eventReceived(rawEvent);
         }
     }
 
@@ -119,14 +131,14 @@ class NDKSubscriptionFilters {
         this.ndkRelay = ndkRelay;
     }
 
-    public eventReceived(event: NDKEvent) {
-        if (!this.eventMatchesLocalFilter(event)) return;
+    public eventReceived(rawEvent: NostrEvent) {
+        if (!this.eventMatchesLocalFilter(rawEvent)) return;
+        const event = new NDKEvent(undefined, rawEvent);
+        event.relay = this.ndkRelay;
         this.subscription.eventReceived(event, this.ndkRelay, false);
     }
 
-    private eventMatchesLocalFilter(event: NDKEvent): boolean {
-        const rawEvent = event.rawEvent();
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    private eventMatchesLocalFilter(rawEvent: NostrEvent): boolean {
         return this.filters.some((filter) => matchFilter(filter, rawEvent as any));
     }
 }
@@ -147,7 +159,7 @@ function findMatchingActiveSubscriptions(activeSubscriptions: NDKFilter[], filte
 
 type FiltersSub = {
     filters: NDKFilter[];
-    sub: Sub;
+    sub: Subscription;
 };
 
 /**
@@ -161,7 +173,7 @@ export class NDKRelaySubscriptions {
     /**
      * Active subscriptions this relay is connected to
      */
-    readonly activeSubscriptions: Map<Sub, NDKGroupedSubscriptions> = new Map();
+    readonly activeSubscriptions: Map<Subscription, NDKGroupedSubscriptions> = new Map();
     private activeSubscriptionsByGroupId: Map<NDKFilterGroupingId, FiltersSub> = new Map();
     private executionTimeoutsByGroupId: Map<NDKFilterGroupingId, number> = new Map();
     private debug: debug.Debugger;
@@ -179,7 +191,7 @@ export class NDKRelaySubscriptions {
      * Creates or queues a subscription to the relay.
      */
     public subscribe(subscription: NDKSubscription, filters: NDKFilter[]): void {
-        const groupableId = calculateGroupableId(filters);
+        const groupableId = calculateGroupableId(filters, subscription.closeOnEose);
         const subscriptionFilters = new NDKSubscriptionFilters(
             subscription,
             filters,
@@ -241,12 +253,14 @@ export class NDKRelaySubscriptions {
         }
 
         // Check if we have a timeout for this groupable ID
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let timeout: any = this.executionTimeoutsByGroupId.get(groupableId);
 
         // If we don't, or if this subscription's delay is marked as "at-most", then schedule the timeout too
         // (it will empty the group when it runs so the race is not a problem)
         if (!timeout || subscription.opts.groupableDelayType === "at-most") {
             timeout = setTimeout(() => {
+                this.executionTimeoutsByGroupId.delete(groupableId);
                 this.executeGroup(groupableId, subscription);
             }, subscription.opts.groupableDelay);
             this.executionTimeoutsByGroupId.set(groupableId, timeout as unknown as number);
@@ -269,7 +283,7 @@ export class NDKRelaySubscriptions {
 
         const timeouts = this.delayedTimers.get(groupableId);
         this.delayedTimers.delete(groupableId);
-        // this.groupingDebug(`Executing group ${groupableId} triggered by which has ${timeouts?.length} timeouts, sub delay is ${triggeredBy.opts.groupableDelay}ms ${triggeredBy.opts.subId}`, triggeredBy);
+        // this.groupingDebug(`Executing group ${groupableId} triggered by which has ${timeouts?.length} timeouts, sub delay is ${triggeredBy.opts.groupableDelay}ms ${triggeredBy.opts.subId}`, JSON.stringify(triggeredBy.filters));
 
         // clear all timeouts
         if (timeouts) {
@@ -301,10 +315,11 @@ export class NDKRelaySubscriptions {
     ) {
         // If the relay is not ready, add a one-time listener to wait for the 'ready' event
         const readyListener = () => {
-            this.debug("new relay coming online for active subscription", {
-                relay: this.ndkRelay.url,
-                mergeFilters,
-            });
+            // this.debug("new relay coming online for active subscription",
+            //     mergedFilters,
+            //     this.ndkRelay.url,
+            //     groupableId,
+            // );
             this.executeSubscriptionsConnected(groupableId, groupedSubscriptions, mergedFilters);
         };
 
@@ -356,7 +371,7 @@ export class NDKRelaySubscriptions {
         groupableId: NDKFilterGroupingId | null,
         groupedSubscriptions: NDKGroupedSubscriptions,
         mergedFilters: NDKFilter[]
-    ): Sub {
+    ): Subscription {
         const subscriptions: NDKSubscription[] = [];
 
         for (const { subscription } of groupedSubscriptions) {
@@ -366,35 +381,42 @@ export class NDKRelaySubscriptions {
         const subId = generateSubId(subscriptions, mergedFilters);
         groupedSubscriptions.req = mergedFilters;
 
-        const subOptions: SubscriptionOptions = { id: subId };
-        if (this.ndkRelay.trusted || subscriptions.every((sub) => sub.opts.skipVerification)) {
-            subOptions.skipVerification = true;
-        }
+        const subOptions: SubscriptionOptions = {
+            id: subId,
+            onevent: (event: NostrEvent) => {
+                const e = new NDKEvent(undefined, event);
+                e.relay = this.ndkRelay;
 
-        const sub = this.conn.relay.sub(mergedFilters, subOptions);
+                const subFilters = this.activeSubscriptions.get(sub);
+                subFilters?.eventReceived(e.rawEvent());
+            },
+            oneose: () => {
+                const subFilters = this.activeSubscriptions.get(sub);
+                subFilters?.eoseReceived(this.ndkRelay);
+
+                // if we are supposed to close on EOSE, close the subscription
+                if (subscriptions.every((sub) => sub.closeOnEose)) {
+                    sub.close();
+                }
+            },
+            onclose: () => {},
+        };
+
+        // TODO: Looks like nostr-tools doesn't allow skipping verification anymore
+        // if (this.ndkRelay.trusted || subscriptions.every((sub) => sub.opts.skipVerification)) {
+        //     subOptions.skipVerification = true;
+        // }
+
+        const sub = this.conn.relay.subscribe(mergedFilters, subOptions);
 
         this.activeSubscriptions.set(sub, groupedSubscriptions);
         if (groupableId) {
             this.activeSubscriptionsByGroupId.set(groupableId, { filters: mergedFilters, sub });
         }
 
-        sub.on("event", (event: NostrEvent) => {
-            const e = new NDKEvent(undefined, event);
-            e.relay = this.ndkRelay;
-
-            const subFilters = this.activeSubscriptions.get(sub);
-            subFilters?.eventReceived(e);
-        });
-
-        sub.on("eose", () => {
-            const subFilters = this.activeSubscriptions.get(sub);
-            // this.debug(`Received EOSE from ${this.ndkRelay.url} for subscription ${subId} with filter ${JSON.stringify(mergedFilters)}}`, {subFilters});
-            subFilters?.eoseReceived(this.ndkRelay);
-        });
-
         groupedSubscriptions.once("close", () => {
             // this.debug(`Closing subscription ${this.ndkRelay.url} for subscription ${subId}`);
-            sub.unsub();
+            sub.close();
             this.activeSubscriptions.delete(sub);
             if (groupableId) {
                 this.activeSubscriptionsByGroupId.delete(groupableId);

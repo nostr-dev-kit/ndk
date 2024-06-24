@@ -1,6 +1,4 @@
 import { EventEmitter } from "tseep";
-import type { UnsignedEvent } from "nostr-tools";
-import { getEventHash } from "nostr-tools";
 
 import type { NDK } from "../ndk/index.js";
 import type { NDKRelay } from "../relay/index.js";
@@ -9,13 +7,16 @@ import type { NDKRelaySet } from "../relay/sets/index.js";
 import type { NDKSigner } from "../signers/index.js";
 import type { NDKFilter } from "../subscription/index.js";
 import { type NDKUser } from "../user/index.js";
-import Zap from "../zap/index.js";
 import { type ContentTag, generateContentTags, mergeTags } from "./content-tagger.js";
 import { isEphemeral, isParamReplaceable, isReplaceable } from "./kind.js";
 import { NDKKind } from "./kinds/index.js";
 import { decrypt, encrypt } from "./nip04.js";
 import { encode } from "./nip19.js";
 import { repost } from "./repost.js";
+import { fetchReplyEvent, fetchRootEvent, fetchTaggedEvent } from "./fetch-tagged-event.js";
+import { NDKEventSerialized, deserialize, serialize } from "./serializer.js";
+import { validate, verifySignature, getEventHash } from "./validation.js";
+import { matchFilter } from "nostr-tools";
 
 export type NDKEventId = string;
 export type NDKTag = string[];
@@ -43,6 +44,7 @@ export class NDKEvent extends EventEmitter {
     public id = "";
     public sig?: string;
     public pubkey = "";
+    public signatureVerified?: boolean;
 
     private _author: NDKUser | undefined = undefined;
 
@@ -56,6 +58,12 @@ export class NDKEvent extends EventEmitter {
      */
     public onRelays: NDKRelay[] = [];
 
+    /**
+     * The status of the publish operation.
+     */
+    public publishStatus?: "pending" | "success" | "error" = "success";
+    public publishError?: Error;
+
     constructor(ndk?: NDK, event?: NostrEvent) {
         super();
         this.ndk = ndk;
@@ -66,6 +74,16 @@ export class NDKEvent extends EventEmitter {
         this.sig = event?.sig;
         this.pubkey = event?.pubkey || "";
         this.kind = event?.kind;
+    }
+
+    /**
+     * Deserialize an NDKEvent from a serialized payload.
+     * @param ndk
+     * @param event
+     * @returns
+     */
+    static deserialize(ndk: NDK | undefined, event: NDKEventSerialized): NDKEvent {
+        return new NDKEvent(ndk, deserialize(event));
     }
 
     /**
@@ -84,9 +102,9 @@ export class NDKEvent extends EventEmitter {
     }
 
     set author(user: NDKUser) {
-        this.pubkey = user.hexpubkey;
-
-        this._author = undefined;
+        this.pubkey = user.pubkey;
+        this._author = user;
+        this._author.ndk ??= this.ndk;
     }
 
     /**
@@ -97,7 +115,7 @@ export class NDKEvent extends EventEmitter {
 
         if (!this.ndk) throw new Error("No NDK instance found");
 
-        const user = this.ndk.getUser({ hexpubkey: this.pubkey });
+        const user = this.ndk.getUser({ pubkey: this.pubkey });
         this._author = user;
         return user;
     }
@@ -121,29 +139,32 @@ export class NDKEvent extends EventEmitter {
      * @param event The event to tag.
      * @param marker The marker to use in the tag.
      * @param skipAuthorTag Whether to explicitly skip adding the author tag of the event.
+     * @param forceTag Force a specific tag to be used instead of the default "e" or "a" tag.
      * @example
      * ```typescript
      * reply.tag(opEvent, "reply");
      * // reply.tags => [["e", <id>, <relay>, "reply"]]
      * ```
      */
-    public tag(event: NDKEvent, marker?: string, skipAuthorTag?: boolean): void;
+    public tag(event: NDKEvent, marker?: string, skipAuthorTag?: boolean, forceTag?: string): void;
     public tag(
         userOrTagOrEvent: NDKTag | NDKUser | NDKEvent,
         marker?: string,
-        skipAuthorTag?: boolean
+        skipAuthorTag?: boolean,
+        forceTag?: string
     ): void {
         let tags: NDKTag[] = [];
         const isNDKUser = (userOrTagOrEvent as NDKUser).fetchProfile !== undefined;
 
         if (isNDKUser) {
-            const tag = ["p", (userOrTagOrEvent as NDKUser).pubkey];
+            forceTag ??= "p";
+            const tag = [forceTag, (userOrTagOrEvent as NDKUser).pubkey];
             if (marker) tag.push(...["", marker]);
             tags.push(tag);
         } else if (userOrTagOrEvent instanceof NDKEvent) {
             const event = userOrTagOrEvent as NDKEvent;
             skipAuthorTag ??= event?.pubkey === this.pubkey;
-            tags = event.referenceTags(marker, skipAuthorTag);
+            tags = event.referenceTags(marker, skipAuthorTag, forceTag);
 
             // tag p-tags in the event if they are not the same as the user signing this event
             for (const pTag of event.getMatchingTags("p")) {
@@ -170,27 +191,32 @@ export class NDKEvent extends EventEmitter {
     async toNostrEvent(pubkey?: string): Promise<NostrEvent> {
         if (!pubkey && this.pubkey === "") {
             const user = await this.ndk?.signer?.user();
-            this.pubkey = user?.hexpubkey || "";
+            this.pubkey = user?.pubkey || "";
         }
 
-        if (!this.created_at) this.created_at = Math.floor(Date.now() / 1000);
+        if (!this.created_at) {
+            this.created_at = Math.floor(Date.now() / 1000);
+        }
 
-        const nostrEvent = this.rawEvent();
         const { content, tags } = await this.generateTags();
-        nostrEvent.content = content || "";
-        nostrEvent.tags = tags;
+        this.content = content || "";
+        this.tags = tags;
 
         try {
-            this.id = getEventHash(nostrEvent as UnsignedEvent);
+            this.id = this.getEventHash();
             // eslint-disable-next-line no-empty
         } catch (e) {}
 
-        if (this.id) nostrEvent.id = this.id;
-        if (this.sig) nostrEvent.sig = this.sig;
+        // if (this.id) nostrEvent.id = this.id;
+        // if (this.sig) nostrEvent.sig = this.sig;
 
-        return nostrEvent;
+        return this.rawEvent();
     }
 
+    public serialize = serialize.bind(this);
+    public getEventHash = getEventHash.bind(this);
+    public validate = validate.bind(this);
+    public verifySignature = verifySignature.bind(this);
     public isReplaceable = isReplaceable.bind(this);
     public isEphemeral = isEphemeral.bind(this);
     public isParamReplaceable = isParamReplaceable.bind(this);
@@ -210,8 +236,10 @@ export class NDKEvent extends EventEmitter {
      * @param tagName {string} The name of the tag to search for
      * @returns {NDKTag[]} An array of the matching tags
      */
-    public getMatchingTags(tagName: string): NDKTag[] {
-        return this.tags.filter((tag) => tag[0] === tagName);
+    public getMatchingTags(tagName: string, marker?: string): NDKTag[] {
+        return this.tags
+            .filter((tag) => tag[0] === tagName)
+            .filter((tag) => !marker || tag[3] === marker);
     }
 
     /**
@@ -284,26 +312,43 @@ export class NDKEvent extends EventEmitter {
             this.author = await signer.user();
         }
 
-        await this.generateTags();
-
-        if (this.isReplaceable()) {
-            this.created_at = Math.floor(Date.now() / 1000);
-        }
-
         const nostrEvent = await this.toNostrEvent();
-
         this.sig = await signer.sign(nostrEvent);
 
         return this.sig;
     }
 
     /**
+     *
+     * @param relaySet
+     * @param timeoutMs
+     * @param requiredRelayCount
+     * @returns
+     */
+    public async publishReplaceable(
+        relaySet?: NDKRelaySet,
+        timeoutMs?: number,
+        requiredRelayCount?: number
+    ) {
+        this.id = "";
+        this.created_at = Math.floor(Date.now() / 1000);
+        this.sig = "";
+        return this.publish(relaySet, timeoutMs, requiredRelayCount);
+    }
+
+    /**
      * Attempt to sign and then publish an NDKEvent to a given relaySet.
      * If no relaySet is provided, the relaySet will be calculated by NDK.
      * @param relaySet {NDKRelaySet} The relaySet to publish the even to.
+     * @param timeoutM {number} The timeout for the publish operation in milliseconds.
+     * @param requiredRelayCount The number of relays that must receive the event for the publish to be considered successful.
      * @returns A promise that resolves to the relays the event was published to.
      */
-    public async publish(relaySet?: NDKRelaySet, timeoutMs?: number): Promise<Set<NDKRelay>> {
+    public async publish(
+        relaySet?: NDKRelaySet,
+        timeoutMs?: number,
+        requiredRelayCount?: number
+    ): Promise<Set<NDKRelay>> {
         if (!this.sig) await this.sign();
         if (!this.ndk)
             throw new Error("NDKEvent must be associated with an NDK instance to publish");
@@ -313,9 +358,26 @@ export class NDKEvent extends EventEmitter {
             relaySet = this.ndk.devWriteRelaySet || calculateRelaySetFromEvent(this.ndk, this);
         }
 
-        this.ndk.debug(`publish to ${relaySet.size} relays`, this.rawEvent());
+        // If the published event is a delete event, notify the cache if there is one
+        if (this.kind === NDKKind.EventDeletion && this.ndk.cacheAdapter?.deleteEvent) {
+            this.ndk.cacheAdapter.deleteEvent(this);
+        }
 
-        const relays = await relaySet.publish(this, timeoutMs);
+        const rawEvent = this.rawEvent();
+
+        // add to cache for optimistic updates
+        if (this.ndk.cacheAdapter?.addUnpublishedEvent) {
+            this.ndk.cacheAdapter.addUnpublishedEvent(this, relaySet.relayUrls);
+        }
+
+        // send to active subscriptions that want this event
+        this.ndk.subManager.subscriptions.forEach((sub) => {
+            if (sub.filters.some((filter) => matchFilter(filter, rawEvent as any))) {
+                sub.eventReceived(this, undefined, false, true);
+            }
+        });
+
+        const relays = await relaySet.publish(this, timeoutMs, requiredRelayCount);
         this.onRelays = Array.from(relays);
 
         return relays;
@@ -432,6 +494,17 @@ export class NDKEvent extends EventEmitter {
     }
 
     /**
+     * Determines the type of tag that can be used to reference this event from another event.
+     * @returns {string} The tag type
+     * @example
+     * event = new NDKEvent(ndk, { kind: 30000, pubkey: 'pubkey', tags: [ ["d", "d-code"] ] });
+     * event.tagType(); // "a"
+     */
+    tagType(): "e" | "a" {
+        return this.isParamReplaceable() ? "a" : "e";
+    }
+
+    /**
      * Get the tag that can be used to reference this event from another event.
      *
      * Consider using referenceTags() instead (unless you have a good reason to use this)
@@ -470,6 +543,8 @@ export class NDKEvent extends EventEmitter {
     /**
      * Get the tags that can be used to reference this event from another event
      * @param marker The marker to use in the tag
+     * @param skipAuthorTag Whether to explicitly skip adding the author tag of the event
+     * @param forceTag Force a specific tag to be used instead of the default "e" or "a" tag
      * @example
      *     event = new NDKEvent(ndk, { kind: 30000, pubkey: 'pubkey', tags: [ ["d", "d-code"] ] });
      *     event.referenceTags(); // [["a", "30000:pubkey:d-code"], ["e", "parent-id"]]
@@ -478,17 +553,17 @@ export class NDKEvent extends EventEmitter {
      *     event.referenceTags(); // [["e", "parent-id"]]
      * @returns {NDKTag} The NDKTag object referencing this event
      */
-    referenceTags(marker?: string, skipAuthorTag?: boolean): NDKTag[] {
+    referenceTags(marker?: string, skipAuthorTag?: boolean, forceTag?: string): NDKTag[] {
         let tags: NDKTag[] = [];
 
         // NIP-33
         if (this.isParamReplaceable()) {
             tags = [
-                ["a", this.tagAddress()],
-                ["e", this.id],
+                [forceTag ?? "a", this.tagAddress()],
+                [forceTag ?? "e", this.id],
             ];
         } else {
-            tags = [["e", this.id]];
+            tags = [[forceTag ?? "e", this.id]];
         }
 
         // Add the relay url to all tags
@@ -534,48 +609,6 @@ export class NDKEvent extends EventEmitter {
     }
 
     /**
-     * Create a zap request for an existing event
-     *
-     * @param amount The amount to zap in millisatoshis
-     * @param comment A comment to add to the zap request
-     * @param extraTags Extra tags to add to the zap request
-     * @param recipient The zap recipient (optional for events)
-     * @param signer The signer to use (will default to the NDK instance's signer)
-     */
-    async zap(
-        amount: number,
-        comment?: string,
-        extraTags?: NDKTag[],
-        recipient?: NDKUser,
-        signer?: NDKSigner
-    ): Promise<string | null> {
-        if (!this.ndk) throw new Error("No NDK instance found");
-
-        if (!signer) {
-            this.ndk.assertSigner();
-        }
-
-        const zap = new Zap({
-            ndk: this.ndk,
-            zappedEvent: this,
-            zappedUser: recipient,
-        });
-
-        const relays = Array.from(this.ndk.pool.relays.keys());
-
-        const paymentRequest = await zap.createZapRequest(
-            amount,
-            comment,
-            extraTags,
-            relays,
-            signer
-        );
-
-        // await zap.publish(amount);
-        return paymentRequest;
-    }
-
-    /**
      * Generates a deletion event of the current event
      *
      * @param reason The reason for the deletion
@@ -598,9 +631,37 @@ export class NDKEvent extends EventEmitter {
     }
 
     /**
+     * Fetch an event tagged with the given tag following relay hints if provided.
+     * @param tag The tag to search for
+     * @param marker The marker to use in the tag (e.g. "root")
+     * @returns The fetched event or null if no event was found, undefined if no matching tag was found in the event
+     * * @example
+     * const replyEvent = await ndk.fetchEvent("nevent1qqs8x8vnycyha73grv380gmvlury4wtmx0nr9a5ds2dngqwgu87wn6gpzemhxue69uhhyetvv9ujuurjd9kkzmpwdejhgq3ql2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqz4cwjd")
+     * const originalEvent = await replyEvent.fetchTaggedEvent("e", "reply");
+     * console.log(replyEvent.encode() + " is a reply to event " + originalEvent?.encode());
+     */
+    public fetchTaggedEvent = fetchTaggedEvent.bind(this);
+
+    /**
+     * Fetch the root event of the current event.
+     * @returns The fetched root event or null if no event was found
+     * @example
+     * const replyEvent = await ndk.fetchEvent("nevent1qqs8x8vnycyha73grv380gmvlury4wtmx0nr9a5ds2dngqwgu87wn6gpzemhxue69uhhyetvv9ujuurjd9kkzmpwdejhgq3ql2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqz4cwjd")
+     * const rootEvent = await replyEvent.fetchRootEvent();
+     * console.log(replyEvent.encode() + " is a reply in the thread " + rootEvent?.encode());
+     */
+    public fetchRootEvent = fetchRootEvent.bind(this);
+
+    /**
+     * Fetch the event the current event is replying to.
+     * @returns The fetched reply event or null if no event was found
+     */
+    public fetchReplyEvent = fetchReplyEvent.bind(this);
+
+    /**
      * NIP-18 reposting event.
      *
-     * @param publish Whether to publish the reposted event automatically
+     * @param publish Whether to publish the reposted event automatically @default true
      * @param signer The signer to use for signing the reposted event
      * @returns The reposted event
      *
@@ -638,9 +699,10 @@ export class NDKEvent extends EventEmitter {
      * This method is meant to be overridden by subclasses that implement specific NIPs
      * to allow the enforcement of NIP-specific validation rules.
      *
+     * Otherwise, it will only check for basic event properties.
      *
      */
     get isValid(): boolean {
-        return true;
+        return this.validate();
     }
 }

@@ -1,6 +1,6 @@
 <script lang="ts">
     import type NDK from "@nostr-dev-kit/ndk";
-    import { NDKList, type NDKEvent } from "@nostr-dev-kit/ndk";
+    import { NDKKind, NDKList, type NDKEvent } from "@nostr-dev-kit/ndk";
     import { NDKArticle } from "@nostr-dev-kit/ndk";
     import Kind1 from "./Kind1.svelte";
     // import Kind40 from "./Kind40.svelte"
@@ -10,7 +10,9 @@
     import Kind30000 from "./Kind30000.svelte";
     import Kind30001 from "./Kind30001.svelte";
     import Kind30023 from "./Kind30023.svelte";
+    // import Kind30818 from "./Kind30818.svelte";
     import type { SvelteComponent } from "svelte";
+    import type { MarkedExtension } from "marked";
 
     export let ndk: NDK;
     export let event: NDKEvent | null | undefined;
@@ -19,6 +21,12 @@
     export let showEntire: boolean = true;
     export let showMedia: boolean = true;
     export let mediaCollectionComponent: typeof SvelteComponent | undefined = undefined;
+    export let eventCardComponent: typeof SvelteComponent | undefined = undefined;
+
+    /**
+     * Markdown marked extensions to use
+     */
+    export let markedExtensions: MarkedExtension[] = [];
 
     /**
      * Optional content to use instead of the one from the event
@@ -28,7 +36,7 @@
 
 {#if event}
     {#if event.kind === 1}
-        <Kind1 {ndk} {content} {event} {anchorId} {maxLength} {showEntire} {showMedia} on:click class={$$props.class} />
+        <Kind1 {ndk} {content} {event} {anchorId} {maxLength} {showEntire} {showMedia} on:click class={$$props.class} {mediaCollectionComponent} {eventCardComponent} />
     {:else if event.kind === 40}
         <!-- <Kind40 {event} /> -->
     {:else if event.kind === 1063}
@@ -41,9 +49,18 @@
         <Kind30000 {ndk} list={NDKList.from(event)} class={$$props.class} />
     {:else if event.kind === 30001}
         <Kind30001 {ndk} list={NDKList.from(event)} class={$$props.class} />
-    {:else if event.kind === 30023}
-        <Kind30023 {ndk} {content} article={NDKArticle.from(event)} {showMedia} on:click class={$$props.class} />
+    {:else if event.kind === 30023 || event.kind === 30818}
+        <Kind30023
+            {ndk}
+            {content}
+            {...$$props}
+            article={NDKArticle.from(event)}
+            {showMedia}
+            on:click
+            class={$$props.class}
+            {markedExtensions}
+        />
     {:else}
-        <Kind1 {ndk} {content} {event} {anchorId} {showMedia} on:click class={$$props.class} {maxLength} {showEntire} {mediaCollectionComponent} />
+        <Kind1 {ndk} {content} {event} {anchorId} {showMedia} on:click class={$$props.class} {maxLength} {showEntire} {mediaCollectionComponent} {eventCardComponent} />
     {/if}
 {/if}

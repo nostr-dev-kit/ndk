@@ -1,4 +1,12 @@
-import NDK, { NDKEvent, NDKKind, NDKPrivateKeySigner, NDKSubscription, NostrEvent, type NDKUser, NDKSubscriptionCacheUsage, NDKRelay } from "@nostr-dev-kit/ndk";
+import NDK, { 
+    NDKEvent, 
+    NDKKind, 
+    NDKPrivateKeySigner, 
+    NDKSubscription, 
+    type NostrEvent, 
+    type NDKUser,
+    NDKSubscriptionCacheUsage, 
+    NDKRelay } from "@nostr-dev-kit/ndk";
 import NDKRedisCacheAdapter from ".";
 import Redis from "ioredis";
 
@@ -7,7 +15,7 @@ const ndk = new NDK({
     cacheAdapter: new NDKRedisCacheAdapter(),
     signer
 });
-const redis = new Redis()
+const redis = new Redis();
 const relay = new NDKRelay("ws://localhost");
 
 let user: NDKUser;
@@ -40,7 +48,7 @@ describe("setEvent", () => {
 
         const result = await redis.get(event.id);
         expect(result).toBeTruthy();
-    })
+    });
 
     it("finds the event", async () => {
         const sub = new NDKSubscription(ndk, {

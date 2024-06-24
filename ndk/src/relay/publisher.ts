@@ -73,6 +73,7 @@ export class NDKRelayPublisher {
                 .then(() => {
                     clearTimeout(publishTimeout as unknown as NodeJS.Timeout);
                     this.ndkRelay.emit("published", event);
+                    event.emit("published", this.ndkRelay);
                     resolve(true);
                 })
                 .catch((err) => {
@@ -93,16 +94,12 @@ export class NDKRelayPublisher {
         const timeoutPromise = new Promise<boolean>((_, reject) => {
             publishTimeout = setTimeout(() => {
                 this.ndkRelay.debug("Publish timed out", event.rawEvent());
-                this.ndkRelay.emit("publish:failed", event, "Timeout");
+                this.ndkRelay.emit("publish:failed", event, new Error("Timeout"));
                 reject(new Error("Publish operation timed out"));
             }, timeoutMs);
         });
 
         // wait for either the publish operation to complete or the timeout to occur
         return Promise.race([publishPromise, timeoutPromise]);
-    }
-
-    public async auth(event: NDKEvent): Promise<void> {
-        return this.ndkRelay.connectivity.relay.auth(event.rawEvent() as any);
     }
 }

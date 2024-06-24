@@ -1,8 +1,8 @@
 import { nip19 } from "nostr-tools";
-import type { EventPointer } from "nostr-tools/lib/nip19.js";
 
 import { NDKRelay } from "../relay/index.js";
 import type { NDKFilter, NDKSubscription } from "./index.js";
+import { EventPointer } from "../user/index.js";
 
 /**
  * Don't generate subscription Ids longer than this amount of characters
@@ -118,10 +118,8 @@ export function generateSubId(subscriptions: NDKSubscription[], filters: NDKFilt
     let subId = subIdParts.join("-");
     if (subId.length > MAX_SUBID_LENGTH) subId = subId.substring(0, MAX_SUBID_LENGTH);
 
-    if (subIds.length !== 1) {
-        // Add the random string to the resulting subId
-        subId += "-" + Math.floor(Math.random() * 999).toString();
-    }
+    // Add the random string to the resulting subId
+    subId += "-" + Math.floor(Math.random() * 999).toString();
 
     return subId;
 }
@@ -147,23 +145,29 @@ export function filterFromId(id: string): NDKFilter {
         return filter;
     }
 
-    try {
-        decoded = nip19.decode(id);
+    if (id.match(BECH32_REGEX)) {
+        try {
+            decoded = nip19.decode(id);
 
-        switch (decoded.type) {
-            case "nevent":
-                return { ids: [decoded.data.id] };
-            case "note":
-                return { ids: [decoded.data] };
-            case "naddr":
-                return {
-                    authors: [decoded.data.pubkey],
-                    "#d": [decoded.data.identifier],
-                    kinds: [decoded.data.kind],
-                };
+            switch (decoded.type) {
+                case "nevent":
+                    return { ids: [decoded.data.id] };
+                case "note":
+                    return { ids: [decoded.data] };
+                case "naddr":
+                    const filter: NDKFilter = {
+                        authors: [decoded.data.pubkey],
+                        kinds: [decoded.data.kind],
+                    };
+
+                    if (decoded.data.identifier) filter["#d"] = [decoded.data.identifier];
+
+                    return filter;
+            }
+        } catch (e) {
+            console.error("Error decoding", id, e);
+            // Empty
         }
-    } catch (e) {
-        // Empty
     }
 
     return { ids: [id] };
@@ -177,6 +181,8 @@ export function isNip33AValue(value: string): boolean {
  * Matches an `a` tag of a NIP-33 (kind:pubkey:[identifier])
  */
 export const NIP33_A_REGEX = /^(\d+):([0-9A-Fa-f]+)(?::(.*))?$/;
+
+export const BECH32_REGEX = /^n(event|ote|profile|pub|addr)1[\d\w]+$/;
 
 /**
  * Returns the specified relays from a NIP-19 bech32.

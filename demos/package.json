@@ -46,7 +46,7 @@
         "debug": "^4.3.4",
         "light-bolt11-decoder": "^3.0.0",
         "node-fetch": "^3.3.1",
-        "nostr-tools": "^1.15.0",
+        "nostr-tools": "^2.5.2",
         "typescript": "^5.2.2",
         "typescript-lru-cache": "^2.0.0",
         "utf8-buffer": "^1.0.0",

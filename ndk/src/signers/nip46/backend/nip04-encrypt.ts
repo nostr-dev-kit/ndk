@@ -9,7 +9,7 @@ export default class Nip04EncryptHandlingStrategy implements IEventHandlingStrat
         params: string[]
     ): Promise<string | undefined> {
         const [recipientPubkey, payload] = params;
-        const recipientUser = new NDKUser({ hexpubkey: recipientPubkey });
+        const recipientUser = new NDKUser({ pubkey: recipientPubkey });
         const encryptedPayload = await encrypt(backend, id, remotePubkey, recipientUser, payload);
 
         return encryptedPayload;
@@ -22,7 +22,7 @@ async function encrypt(
     remotePubkey: string,
     recipientUser: NDKUser,
     payload: string
-) {
+): Promise<string | undefined> {
     if (
         !(await backend.pubkeyAllowed({
             id,

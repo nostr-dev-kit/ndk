@@ -2,9 +2,11 @@ import { EventEmitter } from "tseep";
 import { LRUCache } from "typescript-lru-cache";
 
 import { NDKRelayList } from "../events/kinds/NDKRelayList.js";
+import { getRelayListForUsers } from "../utils/get-users-relay-list.js";
 import type { NDK } from "../ndk/index.js";
 import type { Hexpubkey } from "../user/index.js";
 import { NDKUser } from "../user/index.js";
+import { normalize } from "../utils/normalize-url.js";
 
 export type OutboxItemType = "user" | "kind";
 
@@ -44,7 +46,7 @@ export class OutboxItem {
  * an NDK instance.
  *
  * TODO: The state of this tracker needs to be added to cache adapters so that we
- * can rehydrae-it when a cache is present.
+ * can rehydrate-it when a cache is present.
  */
 export class OutboxTracker extends EventEmitter {
     public data: LRUCache<Hexpubkey, OutboxItem>;
@@ -59,48 +61,63 @@ export class OutboxTracker extends EventEmitter {
 
         this.data = new LRUCache({
             maxSize: 100000,
-            entryExpirationTimeInMS: 5000,
+            entryExpirationTimeInMS: 2 * 60 * 1000,
         });
     }
 
     public trackUsers(items: NDKUser[] | Hexpubkey[]) {
-        for (const item of items) {
-            const itemKey = getKeyFromItem(item);
-            if (this.data.has(itemKey)) continue;
+        for (let i = 0; i < items.length; i += 400) {
+            const slice = items.slice(i, i + 400);
+            let pubkeys = slice
+                .map((item) => getKeyFromItem(item))
+                .filter((pubkey) => !this.data.has(pubkey)); // filter out items that are already being tracked
 
-            const outboxItem = this.track(item, "user");
+            // if all items are already being tracked, skip
+            if (pubkeys.length === 0) continue;
 
-            const user = item instanceof NDKUser ? item : new NDKUser({ hexpubkey: item });
-            user.ndk = this.ndk;
+            // put a placeholder for all items
+            for (const pubkey of pubkeys) {
+                this.data.set(pubkey, new OutboxItem("user"));
+            }
 
-            NDKRelayList.forUser(user, this.ndk).then((relayList: NDKRelayList | undefined) => {
-                if (relayList) {
-                    outboxItem.readRelays = new Set(relayList.readRelayUrls);
-                    outboxItem.writeRelays = new Set(relayList.writeRelayUrls);
+            getRelayListForUsers(pubkeys, this.ndk).then(
+                (relayLists: Map<Hexpubkey, NDKRelayList>) => {
+                    for (const [pubkey, relayList] of relayLists) {
+                        const outboxItem = this.data.get(pubkey)!;
 
-                    // remove all blacklisted relays
-                    for (const relayUrl of outboxItem.readRelays) {
-                        if (this.ndk.pool.blacklistRelayUrls.has(relayUrl)) {
-                            this.debug(`removing blacklisted relay ${relayUrl} from read relays`);
-                            outboxItem.readRelays.delete(relayUrl);
+                        if (relayList) {
+                            outboxItem.readRelays = new Set(normalize(relayList.readRelayUrls));
+                            outboxItem.writeRelays = new Set(normalize(relayList.writeRelayUrls));
+
+                            // remove all blacklisted relays
+                            for (const relayUrl of outboxItem.readRelays) {
+                                if (this.ndk.pool.blacklistRelayUrls.has(relayUrl)) {
+                                    // this.debug(
+                                    //     `removing blacklisted relay ${relayUrl} from read relays`
+                                    // );
+                                    outboxItem.readRelays.delete(relayUrl);
+                                }
+                            }
+
+                            // remove all blacklisted relays
+                            for (const relayUrl of outboxItem.writeRelays) {
+                                if (this.ndk.pool.blacklistRelayUrls.has(relayUrl)) {
+                                    // this.debug(
+                                    //     `removing blacklisted relay ${relayUrl} from write relays`
+                                    // );
+                                    outboxItem.writeRelays.delete(relayUrl);
+                                }
+                            }
+
+                            this.data.set(pubkey, outboxItem);
+
+                            // this.debug(
+                            //     `Adding ${outboxItem.readRelays.size} read relays and ${outboxItem.writeRelays.size} write relays for ${user.pubkey}`
+                            // );
                         }
                     }
-
-                    // remove all blacklisted relays
-                    for (const relayUrl of outboxItem.writeRelays) {
-                        if (this.ndk.pool.blacklistRelayUrls.has(relayUrl)) {
-                            this.debug(`removing blacklisted relay ${relayUrl} from write relays`);
-                            outboxItem.writeRelays.delete(relayUrl);
-                        }
-                    }
-
-                    this.data.set(itemKey, outboxItem);
-
-                    this.debug(
-                        `Adding ${outboxItem.readRelays.size} read relays and ${outboxItem.writeRelays.size} write relays for ${user.hexpubkey}`
-                    );
                 }
-            });
+            );
         }
     }
 
@@ -114,9 +131,12 @@ export class OutboxTracker extends EventEmitter {
         type ??= getTypeFromItem(item);
         let outboxItem = this.data.get(key);
 
-        if (!outboxItem) outboxItem = new OutboxItem(type);
-
-        this.data.set(key, outboxItem);
+        if (!outboxItem) {
+            outboxItem = new OutboxItem(type);
+            if (item instanceof NDKUser) {
+                this.trackUsers([item as NDKUser]);
+            }
+        }
 
         return outboxItem;
     }
@@ -124,7 +144,7 @@ export class OutboxTracker extends EventEmitter {
 
 function getKeyFromItem(item: NDKUser | Hexpubkey): Hexpubkey {
     if (item instanceof NDKUser) {
-        return item.hexpubkey;
+        return item.pubkey;
     } else {
         return item;
     }

@@ -1,23 +1,32 @@
 {
-    "private": true,
-    "scripts": {
-        "build": "turbo build",
-        "dev": "turbo dev --no-cache --continue",
-        "lint": "turbo lint",
-        "clean": "turbo clean && rm -rf node_modules",
-        "format": "turbo format",
-        "changeset": "changeset",
-        "version-packages": "changeset version",
-        "release": "turbo build --filter=docs^... && changeset publish"
-    },
-    "devDependencies": {
-        "@changesets/cli": "^2.22.0",
-        "@nostr-dev-kit/eslint-config-custom": "workspace:*",
-        "@nostr-dev-kit/tsconfig": "workspace:*",
-        "eslint": "^8.49.0",
-        "prettier": "^3.0.3",
-        "turbo": "^1.10.14",
-        "typescript": "^5.2.2"
-    },
-    "packageManager": "pnpm@8.7.6"
+  "private": true,
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev --no-cache --continue",
+    "lint": "turbo lint",
+    "clean": "turbo clean && rm -rf node_modules",
+    "format": "turbo format",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "turbo build --filter=docs^... && changeset publish",
+    "docs:preview": "vitepress preview"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.22.0",
+    "@nostr-dev-kit/eslint-config-custom": "workspace:*",
+    "@nostr-dev-kit/tsconfig": "workspace:*",
+    "eslint": "^8.49.0",
+    "prettier": "^3.0.3",
+    "turbo": "^1.10.14",
+    "typescript": "^5.2.2"
+  },
+  "packageManager": "pnpm@8.15.6",
+  "engines": {
+    "node": ">=16.0"
+  },
+  "dependencies": {
+    "vitepress": "^1.2.3"
+  }
 }

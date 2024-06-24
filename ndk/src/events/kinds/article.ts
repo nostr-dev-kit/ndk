@@ -5,6 +5,8 @@ import { NDKKind } from "./index.js";
 
 /**
  * Represents a NIP-23 article.
+ *
+ * @group Kind Wrapper
  */
 export class NDKArticle extends NDKEvent {
     constructor(ndk: NDK | undefined, rawEvent?: NostrEvent) {
@@ -80,7 +82,14 @@ export class NDKArticle extends NDKEvent {
     get published_at(): number | undefined {
         const tag = this.tagValue("published_at");
         if (tag) {
-            return parseInt(tag);
+            let val = parseInt(tag);
+
+            // if val is timestamp in milliseconds, convert to seconds
+            if (val > 1000000000000) {
+                val = Math.floor(val / 1000);
+            }
+
+            return val;
         }
         return undefined;
     }

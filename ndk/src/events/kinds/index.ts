@@ -66,8 +66,11 @@ export enum NDKKind {
     PublicChatList = 10005,
     BlockRelayList = 10006,
     SearchRelayList = 10007,
+    SimpleGroupList = 10009,
     InterestList = 10015,
     EmojiList = 10030,
+
+    BlossomList = 10063,
 
     NostrWaletConnectInfo = 13194,
 
@@ -89,8 +92,9 @@ export enum NDKKind {
     InterestSet = 30015,
     InterestsList = NDKKind.InterestSet, // Deprecated but left for backwards compatibility
     EmojiSet = 30030,
-    HighlightSet = 39802,
+    Draft = 31234,
     SubscriptionTier = 37001,
+    HighlightSet = 39802,
     CategorizedHighlightList = NDKKind.HighlightSet, // Deprecated but left for backwards compatibility
 
     ZapRequest = 9734,
@@ -101,8 +105,9 @@ export enum NDKKind {
     NostrWalletConnectReq = 23194,
     NostrWalletConnectRes = 23195,
 
-
     NostrConnect = 24133,
+
+    BlossomUpload = 24242,
 
     HttpAuth = 27235,
 

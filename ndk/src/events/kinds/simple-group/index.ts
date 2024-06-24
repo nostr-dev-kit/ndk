@@ -29,6 +29,10 @@ type AddUserOpts = {
     skipUserListEvent?: boolean;
 };
 
+/**
+ * Represents a NIP-29 group.
+ * @catergory Kind Wrapper
+ */
 export class NDKSimpleGroup {
     private ndk: NDK;
     readonly groupId: string;

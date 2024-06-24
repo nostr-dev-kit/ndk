@@ -7,8 +7,9 @@ import { NDKSubscriptionCacheUsage, type NDKSubscriptionOptions } from "../subsc
 import { follows } from "./follows.js";
 import { type NDKUserProfile, profileFromEvent, serializeProfile } from "./profile.js";
 import type { NDKSigner } from "../signers/index.js";
-import Zap from "../zap/index.js";
+import { NDKLnUrlData } from "../zap/index.js";
 import { getNip05For } from "./nip05.js";
+import { NDKRelay, NDKZap } from "../index.js";
 
 export type Hexpubkey = string;
 
@@ -61,7 +62,7 @@ export class NDKUser {
 
     get npub(): string {
         if (!this._npub) {
-            if (!this._pubkey) throw new Error("hexpubkey not set");
+            if (!this._pubkey) throw new Error("pubkey not set");
             this._npub = nip19.npubEncode(this.pubkey);
         }
 
@@ -113,6 +114,55 @@ export class NDKUser {
     }
 
     /**
+     * Retrieves the zapper this pubkey has designated as an issuer of zap receipts
+     */
+    async getZapConfiguration(ndk?: NDK): Promise<NDKLnUrlData | undefined> {
+        ndk ??= this.ndk;
+
+        if (!ndk) throw new Error("No NDK instance found");
+
+        const process = async (): Promise<NDKLnUrlData | undefined> => {
+            if (this.ndk?.cacheAdapter?.loadUsersLNURLDoc) {
+                const doc = await this.ndk.cacheAdapter.loadUsersLNURLDoc(this.pubkey);
+
+                if (doc !== "missing") {
+                    if (doc === null) return;
+                    if (doc) return doc;
+                }
+            }
+
+            const zap = new NDKZap({ ndk: ndk!, zappedUser: this });
+            let lnurlspec: NDKLnUrlData | undefined;
+            try {
+                lnurlspec = await zap.getZapSpecWithoutCache();
+            } catch {}
+
+            if (this.ndk?.cacheAdapter?.saveUsersLNURLDoc) {
+                this.ndk.cacheAdapter.saveUsersLNURLDoc(this.pubkey, lnurlspec || null);
+            }
+
+            if (!lnurlspec) return;
+
+            return lnurlspec;
+        };
+
+        return await ndk.queuesZapConfig.add({
+            id: this.pubkey,
+            func: process,
+        });
+    }
+
+    /**
+     * Fetches the zapper's pubkey for the zapped user
+     * @returns The zapper's pubkey if one can be found
+     */
+    async getZapperPubkey(): Promise<Hexpubkey | undefined> {
+        const zapConfig = await this.getZapConfiguration();
+
+        return zapConfig?.nostrPubkey;
+    }
+
+    /**
      * Instantiate an NDKUser from a NIP-05 string
      * @param nip05Id {string} The user's NIP-05
      * @param ndk {NDK} An NDK instance
@@ -121,33 +171,15 @@ export class NDKUser {
      */
     static async fromNip05(
         nip05Id: string,
-        ndk?: NDK,
+        ndk: NDK,
         skipCache = false
     ): Promise<NDKUser | undefined> {
-        // If we have a cache, try to load from cache first
-        if (ndk?.cacheAdapter && ndk.cacheAdapter.loadNip05) {
-            const profile = await ndk.cacheAdapter.loadNip05(nip05Id);
-
-            if (profile) {
-                const user = new NDKUser({
-                    pubkey: profile.pubkey,
-                    relayUrls: profile.relays,
-                    nip46Urls: profile.nip46,
-                });
-                user.ndk = ndk;
-                return user;
-            }
-        }
+        if (!ndk) throw new Error("No NDK instance found");
 
         let opts: RequestInit = {};
 
         if (skipCache) opts.cache = "no-cache";
-        const profile = await getNip05For(nip05Id, ndk?.httpFetch, opts);
-
-        // Save the nip05 mapping
-        if (profile && ndk?.cacheAdapter && ndk.cacheAdapter.saveNip05) {
-            ndk?.cacheAdapter.saveNip05(nip05Id, profile);
-        }
+        const profile = await getNip05For(ndk, nip05Id, ndk?.httpFetch, opts);
 
         if (profile) {
             const user = new NDKUser({
@@ -163,9 +195,13 @@ export class NDKUser {
     /**
      * Fetch a user's profile
      * @param opts {NDKSubscriptionOptions} A set of NDKSubscriptionOptions
+     * @param storeProfileEvent {boolean} Whether to store the profile event or not
      * @returns User Profile
      */
-    public async fetchProfile(opts?: NDKSubscriptionOptions): Promise<NDKUserProfile | null> {
+    public async fetchProfile(
+        opts?: NDKSubscriptionOptions,
+        storeProfileEvent: boolean = false
+    ): Promise<NDKUserProfile | null> {
         if (!this.ndk) throw new Error("NDK not set");
 
         if (!this.profile) this.profile = {};
@@ -232,6 +268,11 @@ export class NDKUser {
 
         // return the most recent profile
         this.profile = profileFromEvent(sortedSetMetadataEvents[0]);
+
+        if (storeProfileEvent) {
+            // Store the event as a stringified JSON
+            this.profile.profileEvent = JSON.stringify(sortedSetMetadataEvents[0]);
+        }
 
         if (this.profile && this.ndk.cacheAdapter && this.ndk.cacheAdapter.saveProfile) {
             this.ndk.cacheAdapter.saveProfile(this.pubkey, this.profile);
@@ -327,13 +368,13 @@ export class NDKUser {
      * @param user {NDKUser} The user to unfollow
      * @param currentFollowList {Set<NDKUser>} The current follow list
      * @param kind {NDKKind} The kind to use for this contact list (defaults to `3`)
-     * @returns {Promise<boolean>} True if the follow was removed, false if the follow did not exist
+     * @returns The relays were the follow list was published or false if the user wasn't found
      */
     public async unfollow(
         user: NDKUser,
         currentFollowList?: Set<NDKUser>,
         kind = NDKKind.Contacts
-    ): Promise<boolean> {
+    ): Promise<Set<NDKRelay> | boolean> {
         if (!this.ndk) throw new Error("No NDK instance found");
 
         this.ndk.assertSigner();
@@ -342,21 +383,27 @@ export class NDKUser {
             currentFollowList = await this.follows(undefined, undefined, kind);
         }
 
-        if (!currentFollowList.has(user)) {
-            return false;
+        // find the user that has the same pubkey
+        const newUserFollowList = new Set<NDKUser>();
+        let foundUser = false;
+        for (const follow of currentFollowList) {
+            if (follow.pubkey !== user.pubkey) {
+                newUserFollowList.add(follow);
+            } else {
+                foundUser = true;
+            }
         }
 
-        currentFollowList.delete(user);
+        if (!foundUser) return false;
 
         const event = new NDKEvent(this.ndk, { kind } as NostrEvent);
 
-        // This is a horrible hack and I need to fix it
-        for (const follow of currentFollowList) {
+        // Tag users from the new follow list
+        for (const follow of newUserFollowList) {
             event.tag(follow);
         }
 
-        await event.publish();
-        return true;
+        return await event.publish();
     }
 
     /**
@@ -370,7 +417,7 @@ export class NDKUser {
     public async validateNip05(nip05Id: string): Promise<boolean | null> {
         if (!this.ndk) throw new Error("No NDK instance found");
 
-        const profilePointer: ProfilePointer | null = await getNip05For(nip05Id);
+        const profilePointer: ProfilePointer | null = await getNip05For(this.ndk, nip05Id);
 
         if (profilePointer === null) return null;
         return profilePointer.pubkey === this.pubkey;
@@ -396,7 +443,7 @@ export class NDKUser {
             this.ndk.assertSigner();
         }
 
-        const zap = new Zap({
+        const zap = new NDKZap({
             ndk: this.ndk,
             zappedUser: this,
         });

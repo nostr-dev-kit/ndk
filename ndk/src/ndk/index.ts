@@ -3,24 +3,27 @@ import { EventEmitter } from "tseep";
 
 import type { NDKCacheAdapter } from "../cache/index.js";
 import dedupEvent from "../events/dedup.js";
-import type { NDKEvent, NDKEventId } from "../events/index.js";
+import { NDKEvent, NDKEventId, NDKTag } from "../events/index.js";
 import { OutboxTracker } from "../outbox/tracker.js";
 import { NDKRelay } from "../relay/index.js";
 import { NDKPool } from "../relay/pool/index.js";
-import { NDKRelaySet } from "../relay/sets/index.js";
+import { NDKRelaySet, NDKPublishError } from "../relay/sets/index.js";
 import { correctRelaySet } from "../relay/sets/utils.js";
 import type { NDKSigner } from "../signers/index.js";
 import type { NDKFilter, NDKSubscriptionOptions } from "../subscription/index.js";
 import { NDKSubscription } from "../subscription/index.js";
 import { filterFromId, isNip33AValue, relaysFromBech32 } from "../subscription/utils.js";
-import type { Hexpubkey, NDKUserParams } from "../user/index.js";
+import type { Hexpubkey, NDKUserParams, ProfilePointer } from "../user/index.js";
 import { NDKUser } from "../user/index.js";
-import { NDKKind } from "../events/kinds/index.js";
-import NDKList from "../events/kinds/lists/index.js";
+import { fetchEventFromTag } from "./fetch-event-from-tag.js";
 import { NDKAuthPolicy } from "../relay/auth-policies.js";
 import { Nip96 } from "../media/index.js";
-import { NDKRelayList } from "../events/kinds/NDKRelayList.js";
 import { NDKNwc } from "../nwc/index.js";
+import { NDKLnUrlData, NDKZap, ZapConstructorParams } from "../zap/index.js";
+import { Queue } from "./queue/index.js";
+import { signatureVerificationInit } from "../events/signature.js";
+import { NDKSubscriptionManager } from "../subscription/manager.js";
+import { setActiveUser } from "./active-user.js";
 
 export interface NDKConstructorParams {
     /**
@@ -96,6 +99,34 @@ export interface NDKConstructorParams {
      * Default relay-auth policy
      */
     relayAuthDefaultPolicy?: NDKAuthPolicy;
+
+    /**
+     * Whether to verify signatures on events synchronously or asynchronously.
+     *
+     * @default undefined
+     *
+     * When set to true, the signature verification will processed in a web worker.
+     * You should listen for the `event:invalid-sig` event to handle invalid signatures.
+     *
+     * @example
+     * ```typescript
+     * const worker = new Worker("path/to/signature-verification.js");
+     * ndk.delayedSigVerification = worker;
+     * ndk.on("event:invalid-sig", (event) => {
+     *    console.error("Invalid signature", event);
+     * });
+     */
+    signatureVerificationWorker?: Worker | undefined;
+
+    /**
+     * Specify a ratio of events that will be verified on a per relay basis.
+     * Relays will have a sample of events verified based on this ratio.
+     * When using this, you should definitely listen for event:invalid-sig events
+     * to handle invalid signatures and disconnect from evil relays.
+     *
+     * @default 1.0
+     */
+    validationRatio?: number;
 }
 
 export interface GetUserParams extends NDKUserParams {
@@ -108,18 +139,47 @@ export interface GetUserParams extends NDKUserParams {
     hexpubkey?: string;
 }
 
-export const DEFAULT_OUTBOX_RELAYS = ["wss://purplepag.es", "wss://relay.snort.social"];
+export const DEFAULT_OUTBOX_RELAYS = ["wss://purplepag.es/", "wss://profiles.nos.social/"];
 
+/**
+ * TODO: Move this to a outbox policy
+ */
 export const DEFAULT_BLACKLISTED_RELAYS = [
-    "wss://brb.io", // BRB
+    "wss://brb.io/", // BRB
+    "wss://nostr.mutinywallet.com/", // Don't try to read from this relay since it's a write-only relay
+    // "wss://purplepag.es/", // This is a hack, since this is a mostly read-only relay, but not fully. Once we have relay routing this can be removed so it only receives the supported kinds
 ];
 
 /**
  * The NDK class is the main entry point to the library.
  *
  * @emits signer:ready when a signer is ready
+ * @emits invalid-signature when an event with an invalid signature is received
  */
-export class NDK extends EventEmitter {
+export class NDK extends EventEmitter<{
+    event: (event: NDKEvent, relay: NDKRelay) => void;
+
+    "signer:ready": (signer: NDKSigner) => void;
+    "signer:required": () => void;
+
+    /**
+     * Emitted when an event with an invalid signature is received and the signature
+     * was processed asynchronously.
+     */
+    "event:invalid-sig": (event: NDKEvent) => void;
+
+    /**
+     * Emitted when an event fails to publish.
+     * @param event The event that failed to publish
+     * @param error The error that caused the event to fail to publish
+     * @param relays The relays that the event was attempted to be published to
+     */
+    "event:publish-failed": (
+        event: NDKEvent,
+        error: NDKPublishError,
+        relays: WebSocket["url"][]
+    ) => void;
+}> {
     public explicitRelayUrls?: WebSocket["url"][];
     public pool: NDKPool;
     public outboxPool?: NDKPool;
@@ -132,6 +192,13 @@ export class NDK extends EventEmitter {
     public mutedIds: Map<Hexpubkey | NDKEventId, string>;
     public clientName?: string;
     public clientNip89?: string;
+    public queuesZapConfig: Queue<NDKLnUrlData | undefined>;
+    public queuesNip05: Queue<ProfilePointer | null>;
+    public asyncSigVerification: boolean = false;
+    public validationRatio: number = 1.0;
+    public subManager: NDKSubscriptionManager;
+
+    public publishingFailureHandled = false;
 
     /**
      * Default relay-auth policy that will be used when a relay requests authentication,
@@ -171,15 +238,20 @@ export class NDK extends EventEmitter {
      */
     public httpFetch: typeof fetch | undefined;
 
-    private autoConnectUserRelays = true;
-    private autoFetchUserMutelist = true;
+    public autoConnectUserRelays = true;
+    public autoFetchUserMutelist = true;
 
     public constructor(opts: NDKConstructorParams = {}) {
         super();
 
         this.debug = opts.debug || debug("ndk");
         this.explicitRelayUrls = opts.explicitRelayUrls || [];
-        this.pool = new NDKPool(opts.explicitRelayUrls || [], opts.blacklistRelayUrls, this);
+        this.pool = new NDKPool(
+            opts.explicitRelayUrls || [],
+            opts.blacklistRelayUrls || DEFAULT_BLACKLISTED_RELAYS,
+            this
+        );
+        this.pool.name = "main";
 
         this.debug(`Starting with explicit relays: ${JSON.stringify(this.explicitRelayUrls)}`);
 
@@ -204,6 +276,7 @@ export class NDK extends EventEmitter {
                 this,
                 this.debug.extend("outbox-pool")
             );
+            this.outboxPool.name = "outbox";
 
             this.outboxTracker = new OutboxTracker(this);
         }
@@ -216,9 +289,24 @@ export class NDK extends EventEmitter {
             this.devWriteRelaySet = NDKRelaySet.fromRelayUrls(opts.devWriteRelayUrls, this);
         }
 
+        this.queuesZapConfig = new Queue("zaps", 3);
+        this.queuesNip05 = new Queue("nip05", 10);
+
+        this.signatureVerificationWorker = opts.signatureVerificationWorker;
+
+        this.validationRatio = opts.validationRatio || 1.0;
+        this.subManager = new NDKSubscriptionManager(this.debug);
+
         try {
             this.httpFetch = fetch;
         } catch {}
+    }
+
+    set signatureVerificationWorker(worker: Worker | undefined) {
+        this.asyncSigVerification = !!worker;
+        if (worker) {
+            signatureVerificationInit(worker);
+        }
     }
 
     /**
@@ -270,74 +358,7 @@ export class NDK extends EventEmitter {
         this._activeUser = user;
 
         if (user && differentUser) {
-            const connectToUserRelays = async (user: NDKUser) => {
-                const relayList = await NDKRelayList.forUser(user, this);
-
-                if (!relayList) {
-                    this.debug("No relay list found for user", { npub: user.npub });
-                    return;
-                }
-
-                this.debug("Connecting to user relays", {
-                    npub: user.npub,
-                    relays: relayList.relays,
-                });
-                for (const url of relayList.relays) {
-                    let relay = this.pool.relays.get(url);
-                    if (!relay) {
-                        relay = new NDKRelay(url);
-                        this.pool.addRelay(relay);
-                    }
-                }
-            };
-
-            const fetchUserMuteList = async (user: NDKUser) => {
-                const muteLists = await this.fetchEvents([
-                    { kinds: [NDKKind.MuteList], authors: [user.pubkey] },
-                    {
-                        kinds: [NDKKind.FollowSet],
-                        authors: [user.pubkey],
-                        "#d": ["mute"],
-                        limit: 1,
-                    },
-                ]);
-
-                if (!muteLists) {
-                    this.debug("No mute list found for user", { npub: user.npub });
-                    return;
-                }
-
-                for (const muteList of muteLists) {
-                    const list = NDKList.from(muteList);
-
-                    for (const item of list.items) {
-                        this.mutedIds.set(item[1], item[0]);
-                    }
-                }
-            };
-
-            const userFunctions: ((user: NDKUser) => Promise<void>)[] = [];
-
-            if (this.autoConnectUserRelays) userFunctions.push(connectToUserRelays);
-            if (this.autoFetchUserMutelist) userFunctions.push(fetchUserMuteList);
-
-            const runUserFunctions = async (user: NDKUser) => {
-                for (const fn of userFunctions) {
-                    await fn(user);
-                }
-            };
-
-            const pool = this.outboxPool || this.pool;
-
-            if (pool.connectedRelays.length > 0) {
-                runUserFunctions(user);
-            } else {
-                this.debug("Waiting for connection to main relays");
-                pool.once("relay:ready", (relay: NDKRelay) => {
-                    this.debug("New relay ready", relay?.url);
-                    runUserFunctions(user);
-                });
-            }
+            setActiveUser.call(this, user);
         } else if (!user) {
             // reset mutedIds
             this.mutedIds = new Map();
@@ -350,7 +371,8 @@ export class NDK extends EventEmitter {
 
     public set signer(newSigner: NDKSigner | undefined) {
         this._signer = newSigner;
-        this.emit("signer:ready", newSigner);
+        if (newSigner) this.emit("signer:ready", newSigner);
+
         newSigner?.user().then((user) => {
             user.ndk = this;
             this.activeUser = user;
@@ -421,11 +443,13 @@ export class NDK extends EventEmitter {
         autoStart = true
     ): NDKSubscription {
         const subscription = new NDKSubscription(this, filters, opts, relaySet);
+        this.subManager.add(subscription);
 
         // Signal to the relays that they are explicitly being used
         if (relaySet) {
             for (const relay of relaySet.relays) {
                 this.pool.useTemporaryRelay(relay);
+                this.debug("Adding temporary relay %s for filters %o", relay.url, filters);
             }
         }
 
@@ -440,7 +464,9 @@ export class NDK extends EventEmitter {
             this.outboxTracker?.trackUsers(authors);
         }
 
-        if (autoStart) subscription.start();
+        if (autoStart) {
+            setTimeout(() => subscription.start(), 0);
+        }
 
         return subscription;
     }
@@ -463,6 +489,14 @@ export class NDK extends EventEmitter {
 
         return event.publish(relaySet, timeoutMs);
     }
+
+    /**
+     * Fetches event following a tag
+     * @param tag
+     * @param subOpts
+     * @returns
+     */
+    public fetchEventFromTag = fetchEventFromTag.bind(this);
 
     /**
      * Fetch a single event.
@@ -512,19 +546,38 @@ export class NDK extends EventEmitter {
         }
 
         return new Promise((resolve) => {
+            let fetchedEvent: NDKEvent | null = null;
+
             const s = this.subscribe(
                 filter,
                 { ...(opts || {}), closeOnEose: true },
                 relaySet,
                 false
             );
-            s.on("event", (event) => {
+
+            /** This is a workaround, for some reason we're leaking subscriptions that should EOSE and fetchEvent is not
+             * seeing them; this is a temporary fix until we find the bug.
+             */
+            const t2 = setTimeout(() => {
+                s.stop();
+                resolve(fetchedEvent);
+            }, 10000);
+
+            s.on("event", (event: NDKEvent) => {
                 event.ndk = this;
-                resolve(event);
+
+                // We only emit immediately when the event is not replaceable
+                if (!event.isReplaceable()) {
+                    clearTimeout(t2);
+                    resolve(event);
+                } else if (!fetchedEvent || fetchedEvent.created_at! < event.created_at!) {
+                    fetchedEvent = event;
+                }
             });
 
             s.on("eose", () => {
-                resolve(null);
+                clearTimeout(t2);
+                resolve(fetchedEvent);
             });
 
             s.start();
@@ -579,7 +632,7 @@ export class NDK extends EventEmitter {
      */
     public assertSigner() {
         if (!this.signer) {
-            this.emit("signerRequired");
+            this.emit("signer:required");
             throw new Error("Signer required");
         }
     }
@@ -613,5 +666,47 @@ export class NDK extends EventEmitter {
             await nwc.blockUntilReady(connectTimeout);
         }
         return nwc;
+    }
+
+    /**
+     * Create a zap request for an existing event
+     *
+     * @param amount The amount to zap in millisatoshis
+     * @param comment A comment to add to the zap request
+     * @param extraTags Extra tags to add to the zap request
+     * @param recipient The zap recipient (optional for events)
+     * @param signer The signer to use (will default to the NDK instance's signer)
+     */
+    public async zap(
+        eventOrUser: NDKEvent | NDKUser,
+        amount: number,
+        comment?: string,
+        extraTags?: NDKTag[],
+        recipient?: NDKUser,
+        signer?: NDKSigner
+    ): Promise<string | null> {
+        if (!signer) {
+            this.assertSigner();
+        }
+
+        let zapOpts: ZapConstructorParams;
+
+        if (eventOrUser instanceof NDKEvent) {
+            zapOpts = { ndk: this, zappedUser: eventOrUser.author, zappedEvent: eventOrUser };
+        } else if (eventOrUser instanceof NDKUser) {
+            zapOpts = { ndk: this, zappedUser: eventOrUser };
+        } else {
+            throw new Error("Invalid recipient");
+        }
+
+        const zap = new NDKZap(zapOpts);
+
+        return zap.createZapRequest(
+            amount,
+            comment,
+            extraTags,
+            undefined,
+            signer
+        );
     }
 }

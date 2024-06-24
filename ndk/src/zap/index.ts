@@ -2,13 +2,14 @@ import { bech32 } from "@scure/base";
 import { EventEmitter } from "tseep";
 import { nip57 } from "nostr-tools";
 
-import type { NostrEvent } from "../events/index.js";
-import { NDKEvent, type NDKTag } from "../events/index.js";
+import type { NostrEvent, NDKTag } from "../events/index.js";
+import { NDKEvent } from "../events/index.js";
 import type { NDK } from "../ndk/index.js";
-import type { NDKUser } from "../user/index.js";
+import type { Hexpubkey, NDKUser } from "../user/index.js";
 import { NDKSigner } from "../signers/index.js";
 import createDebug from "debug";
-import { NDKUserProfile } from "../user/profile.js";
+import type { NDKUserProfile } from "../user/profile.js";
+import { getRelayListForUsers } from "../utils/get-users-relay-list.js";
 
 const debug = createDebug("ndk:zap");
 
@@ -21,31 +22,81 @@ const DEFAULT_RELAYS = [
     "wss://no.str.cr",
 ];
 
-interface ZapConstructorParams {
+export interface ZapConstructorParams {
     ndk: NDK;
     zappedEvent?: NDKEvent;
     zappedUser?: NDKUser;
+    _fetch?: typeof fetch;
 }
 
-export default class Zap extends EventEmitter {
+export type NDKLUD18ServicePayerData = Partial<{
+    name: { mandatory: boolean };
+    pubkey: { mandatory: boolean };
+    identifier: { mandatory: boolean };
+    email: { mandatory: boolean };
+    auth: {
+        mandatory: boolean;
+        k1: string;
+    };
+}> &
+    Record<string, unknown>;
+
+export type NDKLnUrlData = {
+    tag: string;
+    callback: string;
+    minSendable: number;
+    maxSendable: number;
+    metadata: string;
+    payerData?: NDKLUD18ServicePayerData;
+    commentAllowed?: number;
+
+    /**
+     * Pubkey of the zapper that should publish zap receipts for this user
+     */
+    nostrPubkey?: Hexpubkey;
+    allowsNostr?: boolean;
+};
+
+export class NDKZap extends EventEmitter {
     public ndk: NDK;
     public zappedEvent?: NDKEvent;
     public zappedUser: NDKUser;
+    private fetch: typeof fetch = fetch;
+
+    /**
+     * The maximum number of relays to request the zapper to publish the zap receipt to.
+     */
+    public maxRelays = 3;
 
     public constructor(args: ZapConstructorParams) {
         super();
         this.ndk = args.ndk;
         this.zappedEvent = args.zappedEvent;
+        this.fetch = args._fetch || fetch;
 
-        this.zappedUser =
-            args.zappedUser || this.ndk.getUser({ hexpubkey: this.zappedEvent?.pubkey });
+        this.zappedUser = args.zappedUser || this.ndk.getUser({ pubkey: this.zappedEvent?.pubkey });
     }
 
-    public async getZapEndpoint(): Promise<string | undefined> {
+    /**
+     * Fetches the zapper's pubkey for the zapped user
+     */
+    static async getZapperPubkey(ndk: NDK, forUser: Hexpubkey): Promise<Hexpubkey | undefined> {
+        const zappedUser = ndk.getUser({ pubkey: forUser });
+        const zap = new NDKZap({ ndk, zappedUser });
+        const lnurlspec = await zap.getZapSpec();
+        return lnurlspec?.nostrPubkey;
+    }
+
+    public async getZapSpec(): Promise<NDKLnUrlData | undefined> {
+        if (!this.zappedUser) throw new Error("No user to zap was provided");
+
+        return this.zappedUser.getZapConfiguration(this.ndk);
+    }
+
+    public async getZapSpecWithoutCache(): Promise<NDKLnUrlData | undefined> {
         let lud06: string | undefined;
         let lud16: string | undefined;
         let zapEndpoint: string | undefined;
-        let zapEndpointCallback: string | undefined;
         let profile: NDKUserProfile | undefined;
 
         if (this.zappedUser) {
@@ -76,7 +127,7 @@ export default class Zap extends EventEmitter {
         }
 
         try {
-            const _fetch = this.ndk.httpFetch || fetch;
+            const _fetch = this.fetch || this.ndk.httpFetch;
             const response = await _fetch(zapEndpoint);
 
             if (response.status !== 200) {
@@ -84,17 +135,23 @@ export default class Zap extends EventEmitter {
                 throw new Error(`Unable to fetch zap endpoint ${zapEndpoint}: ${text}`);
             }
 
-            const body = await response.json();
-
-            if (body?.allowsNostr && (body?.nostrPubkey || body?.nostrPubKey)) {
-                zapEndpointCallback = body.callback;
-            }
-
-            return zapEndpointCallback;
+            return await response.json();
         } catch (e) {
             throw new Error(`Unable to fetch zap endpoint ${zapEndpoint}: ${e}`);
-            return;
         }
+    }
+
+    public async getZapEndpoint(): Promise<string | undefined> {
+        const zapSpec = await this.getZapSpec();
+        if (!zapSpec) return;
+
+        let zapEndpointCallback: string | undefined;
+
+        if (zapSpec?.allowsNostr && (zapSpec?.nostrPubkey || zapSpec?.nostrPubkey)) {
+            zapEndpointCallback = zapSpec.callback;
+        }
+
+        return zapEndpointCallback;
     }
 
     /**
@@ -188,7 +245,7 @@ export default class Zap extends EventEmitter {
             event: null,
             amount,
             comment: comment || "",
-            relays: relays ?? this.relays(),
+            relays: relays ?? await this.relays(),
         });
 
         // add the event tag if it exists; this supports both 'e' and 'a' tags
@@ -211,11 +268,34 @@ export default class Zap extends EventEmitter {
     /**
      * @returns the relays to use for the zap request
      */
-    private relays(): string[] {
+    public async relays(): Promise<string[]> {
         let r: string[] = [];
 
-        if (this.ndk?.pool?.relays) {
-            r = this.ndk.pool.urls();
+        if (this.ndk?.activeUser) {
+            const relayLists = await getRelayListForUsers([
+                this.ndk.activeUser.pubkey,
+                this.zappedUser.pubkey,
+            ], this.ndk);
+
+            const relayScores = new Map<string, number>();
+
+            // go through the relay lists and try to get relays that are shared between the two users
+            for (const relayList of relayLists.values()) {
+                for (const url of relayList.readRelayUrls) {
+                    const score = relayScores.get(url) || 0;
+                    relayScores.set(url, score + 1);
+                }
+            }
+
+            // get the relays that are shared between the two users
+            r = Array.from(relayScores.entries())
+                .sort((a, b) => b[1] - a[1])
+                .map(([url]) => url)
+                .slice(0, this.maxRelays);
+        }
+        
+        if (this.ndk?.pool?.permanentAndConnectedRelays().length) {
+            r = this.ndk.pool.permanentAndConnectedRelays().map((relay) => relay.url);
         }
 
         if (!r.length) {

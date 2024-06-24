@@ -11,9 +11,16 @@ export type NDKFilterGroupingId = string;
  * The different filters in the array are differentiated so that
  * filters can only be grouped with other filters that have the same signature
  *
+ * The calculated group ID uses a + prefix to avoid grouping subscriptions
+ * that intend to close immediately after EOSE and those that are probably
+ * going to be kept open.
+ *
  * @returns The groupable ID, or null if the filters are not groupable.
  */
-export function calculateGroupableId(filters: NDKFilter[]): NDKFilterGroupingId | null {
+export function calculateGroupableId(
+    filters: NDKFilter[],
+    closeOnEose: boolean
+): NDKFilterGroupingId | null {
     const elements: string[] = [];
 
     for (const filter of filters) {
@@ -28,7 +35,9 @@ export function calculateGroupableId(filters: NDKFilter[]): NDKFilterGroupingId 
         elements.push(keys);
     }
 
-    return elements.join("|");
+    let id = closeOnEose ? "+" : "";
+    id += elements.join("|");
+    return id;
 }
 
 /**

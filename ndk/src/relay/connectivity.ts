@@ -1,13 +1,16 @@
-import type { Relay } from "nostr-tools";
-import { relayInit } from "nostr-tools";
-
+import { EventTemplate, Relay, VerifiedEvent } from "nostr-tools";
 import type { NDKRelay, NDKRelayConnectionStats } from ".";
 import { NDKRelayStatus } from ".";
+import { runWithTimeout } from "../utils/timeout";
+import { NDKEvent } from "../events";
+
+const MAX_RECONNECT_ATTEMPTS = 5;
 
 export class NDKRelayConnectivity {
     private ndkRelay: NDKRelay;
     private _status: NDKRelayStatus;
     public relay: Relay;
+    private timeoutMs?: number;
     private connectedAt?: number;
     private _connectionStats: NDKRelayConnectionStats = {
         attempts: 0,
@@ -15,17 +18,26 @@ export class NDKRelayConnectivity {
         durations: [],
     };
     private debug: debug.Debugger;
+    private reconnectTimeout: ReturnType<typeof setTimeout> | undefined;
 
     constructor(ndkRelay: NDKRelay) {
         this.ndkRelay = ndkRelay;
         this._status = NDKRelayStatus.DISCONNECTED;
-        this.relay = relayInit(this.ndkRelay.url);
+        this.relay = new Relay(this.ndkRelay.url);
         this.debug = this.ndkRelay.debug.extend("connectivity");
 
-        this.relay.on("notice", (notice: string) => this.handleNotice(notice));
+        this.relay.onnotice = (notice: string) => this.handleNotice(notice);
     }
 
-    public async connect(): Promise<void> {
+    public async connect(timeoutMs?: number, reconnect = true): Promise<void> {
+        if (this.reconnectTimeout) {
+            clearTimeout(this.reconnectTimeout);
+            this.reconnectTimeout = undefined;
+        }
+
+        timeoutMs ??= this.timeoutMs;
+        if (!this.timeoutMs && timeoutMs) this.timeoutMs = timeoutMs;
+
         const connectHandler = () => {
             this.updateConnectionStats.connected();
 
@@ -52,40 +64,63 @@ export class NDKRelayConnectivity {
             if (this.ndkRelay.authPolicy) {
                 if (this._status !== NDKRelayStatus.AUTHENTICATING) {
                     this._status = NDKRelayStatus.AUTHENTICATING;
-                    await this.ndkRelay.authPolicy(this.ndkRelay, challenge);
+                    const res = await this.ndkRelay.authPolicy(this.ndkRelay, challenge);
+
+                    if (res instanceof NDKEvent) {
+                        this.relay.auth(async (evt: EventTemplate): Promise<VerifiedEvent> => {
+                            return res.rawEvent() as VerifiedEvent;
+                        });
+                    }
 
                     if (this._status === NDKRelayStatus.AUTHENTICATING) {
                         this.debug("Authentication policy finished");
                         this._status = NDKRelayStatus.CONNECTED;
-                        this.ndkRelay.emit("ready");
+                        this.ndkRelay.emit("authed");
                     }
                 }
             } else {
-                await this.ndkRelay.emit("auth", challenge);
+                this.ndkRelay.emit("auth", challenge);
             }
         };
 
         try {
             this.updateConnectionStats.attempt();
-            this._status = NDKRelayStatus.CONNECTING;
+            if (this._status === NDKRelayStatus.DISCONNECTED)
+                this._status = NDKRelayStatus.CONNECTING;
+            else this._status = NDKRelayStatus.RECONNECTING;
 
-            this.relay.off("connect", connectHandler);
-            this.relay.off("disconnect", disconnectHandler);
-            this.relay.on("connect", connectHandler);
-            this.relay.on("disconnect", disconnectHandler);
-            this.relay.on("auth", authHandler);
+            this.relay.onclose = disconnectHandler;
+            this.relay._onauth = authHandler;
 
-            await this.relay.connect();
+            // We have to call bind here otherwise the relay object isn't available in the runWithTimeout function
+            await runWithTimeout(
+                this.relay.connect.bind(this.relay),
+                timeoutMs,
+                "Timed out while connecting"
+            )
+                .then(() => {
+                    connectHandler();
+                })
+                .catch((e) => {
+                    this.debug("Failed to connect", this.relay.url, e);
+                });
         } catch (e) {
-            this.debug("Failed to connect", e);
+            // this.debug("Failed to connect", e);
             this._status = NDKRelayStatus.DISCONNECTED;
+            if (reconnect) this.handleReconnection();
+            else this.ndkRelay.emit("delayed-connect", 2 * 24 * 60 * 60 * 1000);
             throw e;
         }
     }
 
     public disconnect(): void {
         this._status = NDKRelayStatus.DISCONNECTING;
-        this.relay.close();
+        try {
+            this.relay.close();
+        } catch (e) {
+            this.debug("Failed to disconnect", e);
+            this._status = NDKRelayStatus.DISCONNECTED;
+        }
     }
 
     get status(): NDKRelayStatus {
@@ -130,42 +165,51 @@ export class NDKRelayConnectivity {
             // }, 60000);
         }
 
-        this.ndkRelay.emit("notice", this.relay, notice);
+        this.ndkRelay.emit("notice", notice);
     }
 
     /**
      * Called when the relay is unexpectedly disconnected.
      */
     private handleReconnection(attempt = 0): void {
+        if (this.reconnectTimeout) return;
+        this.debug("Attempting to reconnect", { attempt });
+
         if (this.isFlapping()) {
-            this.ndkRelay.emit("flapping", this, this._connectionStats);
+            this.ndkRelay.emit("flapping", this._connectionStats);
             this._status = NDKRelayStatus.FLAPPING;
             return;
         }
 
         const reconnectDelay = this.connectedAt
             ? Math.max(0, 60000 - (Date.now() - this.connectedAt))
-            : 0;
+            : 5000 * (this._connectionStats.attempts + 1);
 
-        setTimeout(() => {
+        this.reconnectTimeout = setTimeout(() => {
+            this.reconnectTimeout = undefined;
             this._status = NDKRelayStatus.RECONNECTING;
-            this.debug(`Reconnection attempt #${attempt}`)
+            // this.debug(`Reconnection attempt #${attempt}`);
             this.connect()
                 .then(() => {
                     this.debug("Reconnected");
                 })
                 .catch((err) => {
-                    this.debug("Reconnect failed", err);
+                    // this.debug("Reconnect failed", err);
 
-                    if (attempt < 10) {
+                    if (attempt < MAX_RECONNECT_ATTEMPTS) {
                         setTimeout(() => {
                             this.handleReconnection(attempt + 1);
-                        }, 1000 * (attempt+1) ^ 2);
+                        }, (1000 * (attempt + 1)) ^ 4);
                     } else {
-                        this.debug("Reconnect failed after 10 attempts");
+                        this.debug("Reconnect failed");
                     }
                 });
         }, reconnectDelay);
+
+        this.ndkRelay.emit("delayed-connect", reconnectDelay);
+
+        this.debug("Reconnecting in", reconnectDelay);
+        this._connectionStats.nextReconnectAt = Date.now() + reconnectDelay;
     }
 
     /**

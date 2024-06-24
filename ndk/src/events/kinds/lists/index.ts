@@ -9,7 +9,7 @@ import { NDKKind } from "../index.js";
 export type NDKListItem = NDKRelay | NDKUser | NDKEvent;
 
 /**
- * Represents any NIP-33 list kind.
+ * Represents any NIP-51 list kind.
  *
  * This class provides some helper methods to manage the list, particularly
  * a CRUD interface to list items.
@@ -27,6 +27,7 @@ export type NDKListItem = NDKRelay | NDKUser | NDKEvent;
  * list.addItem(secretFollow, 'person', true);
  *
  * @emits change
+ * @group Kind Wrapper
  */
 export class NDKList extends NDKEvent {
     public _encryptedTags: NDKTag[] | undefined;
@@ -207,6 +208,10 @@ export class NDKList extends NDKEvent {
         return true;
     }
 
+    getItems(type: string): NDKTag[] {
+        return this.tags.filter((tag) => tag[0] === type);
+    }
+
     /**
      * Returns the unecrypted items in this list.
      */
@@ -235,11 +240,13 @@ export class NDKList extends NDKEvent {
      * @param relay Relay to add
      * @param mark Optional mark to add to the item
      * @param encrypted Whether to encrypt the item
+     * @param position Where to add the item in the list (top or bottom)
      */
     async addItem(
         item: NDKListItem | NDKTag,
         mark: string | undefined = undefined,
-        encrypted = false
+        encrypted = false,
+        position: "top" | "bottom" = "bottom"
     ): Promise<void> {
         if (!this.ndk) throw new Error("NDK instance not set");
         if (!this.ndk.signer) throw new Error("NDK signer not set");
@@ -247,7 +254,7 @@ export class NDKList extends NDKEvent {
         let tags: NDKTag[];
 
         if (item instanceof NDKEvent) {
-            tags = item.referenceTags();
+            tags = [item.tagReference(mark)];
         } else if (item instanceof NDKUser) {
             tags = item.referenceTags();
         } else if (item instanceof NDKRelay) {
@@ -265,14 +272,16 @@ export class NDKList extends NDKEvent {
             const user = await this.ndk.signer.user();
             const currentList = await this.encryptedTags();
 
-            currentList.push(...tags);
+            if (position === "top") currentList.unshift(...tags);
+            else currentList.push(...tags);
 
             this._encryptedTags = currentList;
             this.encryptedTagsLength = this.content.length;
             this.content = JSON.stringify(currentList);
             await this.encrypt(user);
         } else {
-            this.tags.push(...tags);
+            if (position === "top") this.tags.unshift(...tags);
+            else this.tags.push(...tags);
         }
 
         this.created_at = Math.floor(Date.now() / 1000);
@@ -308,6 +317,10 @@ export class NDKList extends NDKEvent {
         this.emit("change");
 
         return this;
+    }
+
+    public has(item: string) {
+        return this.items.some((tag) => tag[1] === item);
     }
 
     /**

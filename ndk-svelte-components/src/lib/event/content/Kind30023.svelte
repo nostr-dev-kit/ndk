@@ -7,40 +7,60 @@
 
     import EventCard from "../EventCard.svelte";
     import NoteContentPerson from "./NoteContentPerson.svelte";
-    import { LINK, HTML, NEWLINE, TOPIC, parseContent } from "../../utils/notes.js";
+    import { LINK, HTML, NEWLINE, TOPIC, parseContent, LINKCOLLECTION } from "../../utils/notes.js";
     import { markdownToHtml } from "$lib/utils/markdown";
-    import sanitizeHtml from 'sanitize-html'
+    import type { SvelteComponent } from "svelte";
+    import RenderHtml from "./RenderHtml.svelte";
+    import type sanitizeHtml from "sanitize-html";
+    import type { MarkedExtension } from "marked";
 
     export let ndk: NDK;
     export let article: NDKArticle;
     export let showMedia: boolean = true;
-    export let anchorId: string | null = null;
     export let content = article.content;
+    export let mediaCollectionComponent: typeof SvelteComponent | undefined = undefined;
+    export let sanitizeHtmlOptions: sanitizeHtml.IOptions | undefined = undefined;
+    export let markedExtensions: MarkedExtension[] = [];
 
-    const htmlContent = markdownToHtml(content);
+    const htmlContent = markdownToHtml(content, sanitizeHtmlOptions, markedExtensions);
     const parsed = parseContent({ content: htmlContent, tags: article.tags, html: true });
+
+    export const isNewline = (i: number) => !parsed[i] || parsed[i].type === NEWLINE;
+    export const isStartOrEnd = (i: number) => isNewline(i - 1) || isNewline(i + 1);
 </script>
 
-<div class="article {$$props.class??""}">
-    {#each parsed as { type, value }}
+<div class="article {$$props.class??""}" on:click>
+    {#each parsed as { type, value }, i}
         {#if type === NEWLINE}
             <NoteContentNewline {value} />
         {:else if type === HTML}
             <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-            {@html sanitizeHtml(value)}
+            {@html value}
         {:else if type === TOPIC}
-            <NoteContentTopic {value} />
+            <NoteContentTopic {value} on:click />
         {:else if type === LINK}
-            <NoteContentLink {value} {showMedia} />
+            <NoteContentLink {value} {showMedia} on:click={() => alert(value)} />
+        {:else if type === LINKCOLLECTION}
+            {#if mediaCollectionComponent}
+                <svelte:component this={mediaCollectionComponent} links={value.map(v=>v.value.url)} />
+            {:else}
+                <div class="note-media--wrapper">
+                    {#each value as {type: _type, value: _value}, j}
+                        <NoteContentLink value={_value} {showMedia} />
+                    {/each}
+                </div>
+            {/if}
         {:else if type.match(/^nostr:np(rofile|ub)$/)}
             <NoteContentPerson {ndk} {value} on:click />
-        {:else if type.startsWith("nostr:") && showMedia && value.id !== anchorId}
-            <EventCard {ndk} id={value.id} relays={value.relays} />
-        {:else if type.startsWith("nostr:")}
-            <!-- <NoteContentEntity {value} /> -->
+        {:else if type.startsWith('nostr:')}
+            {#if showMedia}
+                <EventCard {ndk} id={value.id} relays={value.relays} />
+            {:else}
+                {value.entity}
+            {/if}
         {:else}
             <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-            {@html sanitizeHtml(value)}
+            <RenderHtml {ndk} content={value} on:click />
         {/if}
     {/each}
 </div>

@@ -1,5 +1,90 @@
 # @nostr-dev-kit/ndk-cache-redis
 
+## 2.1.16
+
+### Patch Changes
+
+-   Updated dependencies
+    -   @nostr-dev-kit/ndk@2.9.1
+
+## 2.1.15
+
+### Patch Changes
+
+-   Updated dependencies [94018b4]
+-   Updated dependencies [548f4d8]
+    -   @nostr-dev-kit/ndk@2.9.0
+
+## 2.1.14
+
+### Patch Changes
+
+-   Updated dependencies [0af033f]
+-   Updated dependencies
+    -   @nostr-dev-kit/ndk@2.8.2
+
+## 2.1.13
+
+### Patch Changes
+
+-   Updated dependencies [e40312b]
+-   Updated dependencies
+    -   @nostr-dev-kit/ndk@2.8.1
+
+## 2.1.12
+
+### Patch Changes
+
+-   Updated dependencies [91d873c]
+-   Updated dependencies [6fd9ddc]
+-   Updated dependencies [0b8f331]
+-   Updated dependencies
+-   Updated dependencies [f2898ad]
+-   Updated dependencies [9b92cd9]
+-   Updated dependencies
+-   Updated dependencies [6814f0c]
+-   Updated dependencies [89b5b3f]
+-   Updated dependencies [9b92cd9]
+-   Updated dependencies [27b10cc]
+-   Updated dependencies
+-   Updated dependencies
+-   Updated dependencies [ed7cdc4]
+    -   @nostr-dev-kit/ndk@2.8.0
+
+## 2.1.11
+
+### Patch Changes
+
+-   Updated dependencies
+    -   @nostr-dev-kit/ndk@2.7.1
+
+## 2.1.10
+
+### Patch Changes
+
+-   Updated dependencies
+-   Updated dependencies
+-   Updated dependencies
+    -   @nostr-dev-kit/ndk@2.7.0
+
+## 2.1.9
+
+### Patch Changes
+
+-   Updated dependencies
+    -   @nostr-dev-kit/ndk@2.6.1
+
+## 2.1.8
+
+### Patch Changes
+
+-   Updated dependencies
+-   Updated dependencies [c2db3c1]
+-   Updated dependencies
+-   Updated dependencies [c2db3c1]
+-   Updated dependencies [c2db3c1]
+    -   @nostr-dev-kit/ndk@2.6.0
+
 ## 2.1.7
 
 ### Patch Changes

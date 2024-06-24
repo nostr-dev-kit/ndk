@@ -4,7 +4,8 @@ import type { NDKEvent } from "../events/index.js";
  * NDKUserProfile represents a user's kind 0 profile metadata
  */
 export interface NDKUserProfile {
-    [key: string]: string | undefined; // allows custom fields
+    [key: string]: string | number | undefined; // allows custom fields
+    created_at?: number;
     name?: string;
     displayName?: string;
     image?: string;
@@ -16,6 +17,7 @@ export interface NDKUserProfile {
     about?: string;
     zapService?: string;
     website?: string;
+    profileEvent?: string;
 }
 
 export function profileFromEvent(event: NDKEvent): NDKUserProfile {
@@ -34,11 +36,11 @@ export function profileFromEvent(event: NDKEvent): NDKUserProfile {
                 profile.name = payload.name;
                 break;
             case "display_name":
-                profile.displayName = payload.display_name;
+                profile.displayName = payload.display_name as string;
                 break;
             case "image":
             case "picture":
-                profile.image = payload.image || payload.picture;
+                profile.image = (payload.picture || payload.image) as string;
                 break;
             case "banner":
                 profile.banner = payload.banner;
@@ -74,14 +76,14 @@ export function profileFromEvent(event: NDKEvent): NDKUserProfile {
 }
 
 export function serializeProfile(profile: NDKUserProfile): string {
-    const payload: any = {};
+    const payload: NDKUserProfile = {};
 
     // Remap some keys from bad clients into good ones per NIP-24
     for (const [key, val] of Object.entries(profile)) {
         switch (key) {
             case "username":
             case "name":
-                payload.name = val;
+                payload.name = val as string;
                 break;
             case "displayName":
                 payload.display_name = val;
@@ -92,7 +94,7 @@ export function serializeProfile(profile: NDKUserProfile): string {
                 break;
             case "bio":
             case "about":
-                payload.about = val;
+                payload.about = val as string;
                 break;
             default:
                 payload[key] = val;

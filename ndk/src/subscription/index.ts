@@ -1,9 +1,9 @@
 import { EventEmitter } from "tseep";
 
-import type { NDKEvent, NDKEventId } from "../events/index.js";
+import { NDKEvent, NDKEventId } from "../events/index.js";
 import type { NDKKind } from "../events/kinds/index.js";
 import type { NDK } from "../ndk/index.js";
-import type { NDKRelay } from "../relay";
+import { NDKRelay } from "../relay";
 import type { NDKPool } from "../relay/pool/index.js";
 import { calculateRelaySetsFromFilters } from "../relay/sets/calculate";
 import type { NDKRelaySet } from "../relay/sets/index.js";
@@ -145,7 +145,17 @@ export const defaultOpts: NDKSubscriptionOptions = {
  * const sub = ndk.subscribe({ kinds: [1] }, { skipValidation: false });
  * sub.on("event", (event) => console.log(event.content); // Only valid events will be received
  */
-export class NDKSubscription extends EventEmitter {
+export class NDKSubscription extends EventEmitter<{
+    eose: (sub: NDKSubscription) => void;
+    close: (sub: NDKSubscription) => void;
+    "event:dup": (
+        event: NDKEvent,
+        relay: NDKRelay | undefined,
+        timeSinceFirstSeen: number,
+        sub: NDKSubscription
+    ) => void;
+    event: (event: NDKEvent, relay: NDKRelay | undefined, sub: NDKSubscription) => void;
+}> {
     readonly subId?: string;
     readonly filters: NDKFilter[];
     readonly opts: NDKSubscriptionOptions;
@@ -160,7 +170,6 @@ export class NDKSubscription extends EventEmitter {
     public relaySet?: NDKRelaySet;
     public ndk: NDK;
     public debug: debug.Debugger;
-    public eoseDebug: debug.Debugger;
 
     /**
      * Events that have been seen by the subscription, with the time they were first seen.
@@ -185,6 +194,11 @@ export class NDKSubscription extends EventEmitter {
 
     public internalId: string;
 
+    /**
+     * Whether the subscription should close when all relays have reached the end of the event stream.
+     */
+    public closeOnEose: boolean;
+
     public constructor(
         ndk: NDK,
         filters: NDKFilter | NDKFilter[],
@@ -201,17 +215,9 @@ export class NDKSubscription extends EventEmitter {
         this.internalId = Math.random().toString(36).substring(7);
         this.relaySet = relaySet;
         this.debug = ndk.debug.extend(`subscription[${opts?.subId ?? this.internalId}]`);
-        this.eoseDebug = this.debug.extend("eose");
         this.skipVerification = opts?.skipVerification || false;
         this.skipValidation = opts?.skipValidation || false;
-
-        if (!this.opts.closeOnEose) {
-            this.debug(
-                `Creating a permanent subscription`,
-                this.opts,
-                JSON.stringify(this.filters)
-            );
-        }
+        this.closeOnEose = opts?.closeOnEose || false;
 
         // validate that the caller is not expecting a persistent
         // subscription while using an option that will only hit the cache
@@ -221,6 +227,19 @@ export class NDKSubscription extends EventEmitter {
         ) {
             throw new Error("Cannot use cache-only options with a persistent subscription");
         }
+    }
+
+    /**
+     * Returns the relays that have not yet sent an EOSE.
+     */
+    public relaysMissingEose(): WebSocket["url"][] {
+        if (!this.relayFilters) return [];
+
+        const relaysMissingEose = Array.from(this.relayFilters!.keys()).filter(
+            (url) => !this.eosesSeen.has(this.pool.getRelay(url, false, false))
+        );
+
+        return relaysMissingEose;
     }
 
     /**
@@ -314,7 +333,7 @@ export class NDKSubscription extends EventEmitter {
      */
     private startWithRelays(): void {
         if (!this.relaySet) {
-            this.relayFilters = calculateRelaySetsFromFilters(this.ndk, this.filters);
+            this.relayFilters = calculateRelaySetsFromFilters(this.ndk, this.filters, this.pool);
         } else {
             this.relayFilters = new Map();
             for (const relay of this.relaySet.relays) {
@@ -324,16 +343,15 @@ export class NDKSubscription extends EventEmitter {
 
         // if relayset is empty, we can't start, log it
         if (!this.relayFilters || this.relayFilters.size === 0) {
-            this.debug(`No relays to subscribe to`, this.ndk.explicitRelayUrls);
+            this.debug(`No relays to subscribe to`, this.pool.relays.size);
             return;
         }
 
-        // const relayUrls = Array.from(this.relayFilters.keys());
-        // this.debug(`Starting subscription`, JSON.stringify(this.filters), this.opts, Array.from(this.relaySet?.relays!).map(r => r.url));
-
         // iterate through the this.relayFilters
+        // console.log(this.relayFilters);
+        // console.log('start with relays', {relayFilters: this.relayFilters.values(), filters: JSON.stringify(this.filters), size: this.relayFilters.size});
         for (const [relayUrl, filters] of this.relayFilters) {
-            const relay = this.pool.getRelay(relayUrl);
+            const relay = this.pool.getRelay(relayUrl, true, true, filters);
             relay.subscribe(this, filters);
         }
     }
@@ -345,43 +363,62 @@ export class NDKSubscription extends EventEmitter {
      * @param event
      * @param relay
      * @param fromCache Whether the event was received from the cache
+     * @param optimisticPublish Whether this event is coming from an optimistic publish
      */
-    public eventReceived(event: NDKEvent, relay: NDKRelay | undefined, fromCache = false) {
+    public eventReceived(
+        event: NDKEvent,
+        relay: NDKRelay | undefined,
+        fromCache: boolean = false,
+        optimisticPublish: boolean = false
+    ) {
         if (relay) {
             event.relay ??= relay;
             event.onRelays.push(relay);
         }
         if (!relay) relay = event.relay;
 
-        if (!this.skipValidation) {
-            if (!event.isValid) {
-                this.debug(`Event failed validation`, event);
-                return;
+        event.ndk ??= this.ndk;
+
+        if (!fromCache && relay) {
+            this.ndk.emit("event", event, relay);
+        }
+
+        // mark the event as seen
+        // move here to avoid verifying signature of duplicate events
+        const eventAlreadySeen = this.eventFirstSeen.has(event.id);
+
+        if (eventAlreadySeen) {
+            const timeSinceFirstSeen = Date.now() - (this.eventFirstSeen.get(event.id) || 0);
+            if (relay) {
+                relay.scoreSlowerEvent(timeSinceFirstSeen);
+                this.trackPerRelay(event, relay);
+            }
+
+            this.emit("event:dup", event, relay, timeSinceFirstSeen, this);
+
+            return;
+        }
+
+        if (!fromCache && !optimisticPublish) {
+            if (!this.skipValidation) {
+                if (!event.isValid) {
+                    this.debug(`Event failed validation`, event.rawEvent());
+                    return;
+                }
+            }
+
+            if (event.relay?.shouldValidateEvent() !== false) {
+                if (!this.skipVerification) {
+                    if (!event.verifySignature(true) && !this.ndk.asyncSigVerification) {
+                        this.debug(`Event failed signature validation`, event);
+                        return;
+                    }
+                }
             }
         }
 
-        if (!fromCache && relay) {
-            // track the event per relay
-            let events = this.eventsPerRelay.get(relay);
-
-            if (!events) {
-                events = new Set();
-                this.eventsPerRelay.set(relay, events);
-            }
-
-            events.add(event.id);
-
-            // mark the event as seen
-            const eventAlreadySeen = this.eventFirstSeen.has(event.id);
-
-            if (eventAlreadySeen) {
-                const timeSinceFirstSeen = Date.now() - (this.eventFirstSeen.get(event.id) || 0);
-                relay.scoreSlowerEvent(timeSinceFirstSeen);
-
-                this.emit("event:dup", event, relay, timeSinceFirstSeen, this);
-
-                return;
-            }
+        if (!fromCache && !optimisticPublish && relay) {
+            this.trackPerRelay(event, relay);
 
             if (this.ndk.cacheAdapter) {
                 this.ndk.cacheAdapter.setEvent(event, this.filters, relay);
@@ -392,10 +429,19 @@ export class NDKSubscription extends EventEmitter {
             this.eventFirstSeen.set(event.id, 0);
         }
 
-        if (!event.ndk) event.ndk = this.ndk;
-
         this.emit("event", event, relay, this);
         this.lastEventReceivedAt = Date.now();
+    }
+
+    private trackPerRelay(event: NDKEvent, relay: NDKRelay): void {
+        let events = this.eventsPerRelay.get(relay);
+
+        if (!events) {
+            events = new Set();
+            this.eventsPerRelay.set(relay, events);
+        }
+
+        events.add(event.id);
     }
 
     // EOSE handling
@@ -403,8 +449,6 @@ export class NDKSubscription extends EventEmitter {
 
     public eoseReceived(relay: NDKRelay): void {
         this.eosesSeen.add(relay);
-
-        this.eoseDebug(`received from ${relay.url}`);
 
         let lastEventSeen = this.lastEventReceivedAt
             ? Date.now() - this.lastEventReceivedAt
@@ -414,33 +458,37 @@ export class NDKSubscription extends EventEmitter {
         const queryFilled = queryFullyFilled(this);
 
         if (queryFilled) {
-            this.emit("eose");
-            this.eoseDebug(`Query fully filled`);
+            this.emit("eose", this);
 
             if (this.opts?.closeOnEose) {
                 this.stop();
-            } else {
-                // this.debug(`not running stop`);
             }
         } else if (hasSeenAllEoses) {
-            this.emit("eose");
-            this.eoseDebug(`All EOSEs seen`);
+            this.emit("eose", this);
 
             if (this.opts?.closeOnEose) {
-                // this.eoseDebug(`closing on eose`, this.opts);
                 this.stop();
-            } else {
-                // this.eoseDebug(`doesn't need to close on eose`, this.opts);
             }
         } else {
             let timeToWaitForNextEose = 1000;
+
+            const connectedRelays = new Set(this.pool.connectedRelays().map((r) => r.url));
+
+            let connectedRelaysWithFilters = Array.from(this.relayFilters!.keys()).filter((url) =>
+                connectedRelays.has(url)
+            );
+
+            // if we have no connected relays, wait for all relays to connect
+            if (connectedRelaysWithFilters.length === 0) {
+                return;
+            }
 
             // Reduce the number of ms to wait based on the percentage of relays
             // that have already sent an EOSE, the more
             // relays that have sent an EOSE, the less time we should wait
             // for the next one
             const percentageOfRelaysThatHaveSentEose =
-                this.eosesSeen.size / this.relayFilters!.size;
+                this.eosesSeen.size / connectedRelaysWithFilters.length;
 
             // If less than 2 and 50% of relays have EOSEd don't add a timeout yet
             if (this.eosesSeen.size >= 2 && percentageOfRelaysThatHaveSentEose >= 0.5) {
@@ -461,7 +509,7 @@ export class NDKSubscription extends EventEmitter {
                     if (lastEventSeen !== undefined && lastEventSeen < 20) {
                         this.eoseTimeout = setTimeout(sendEoseTimeout, timeToWaitForNextEose);
                     } else {
-                        this.emit("eose");
+                        this.emit("eose", this);
                         if (this.opts?.closeOnEose) this.stop();
                     }
                 };

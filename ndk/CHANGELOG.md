@@ -1,5 +1,93 @@
 # @nostr-dev-kit/ndk
 
+## 2.9.1
+
+### Patch Changes
+
+-   when a root event is not marked, try to use a reply tag
+
+## 2.9.0
+
+### Minor Changes
+
+-   94018b4: add optimistic updates
+
+### Patch Changes
+
+-   548f4d8: add optimistic updates
+
+## 2.8.2
+
+### Patch Changes
+
+-   0af033f: allow scheduling more than one event
+-   cache relay reconnection status
+
+## 2.8.1
+
+### Patch Changes
+
+-   e40312b: get all profiles that match a filter function from a cahce
+-   support deprecated replies
+
+## 2.8.0
+
+### Minor Changes
+
+-   all-around massive performance improvements
+
+### Patch Changes
+
+-   91d873c: allow offloading signature verification to an async web worker
+-   6fd9ddc: threading utility functions
+-   0b8f331: fix unfollow function
+-   optimize serialization and avoid grouping subscriptions that will not close with those that do
+-   f2898ad: handle more reply cases
+-   9b92cd9: Increase performance of signature verification
+-   allow forcing a tag (for q tagging)
+-   6814f0c: fix event fetching from tag when there is no relay hint
+-   89b5b3f: nip46 fixes on create_account
+-   9b92cd9: fix incorrect tagging when quoting an event
+-   27b10cc: correct timestamp of bad events
+-   fix race condition when using synchronous cache
+-   ed7cdc4: avoid verifying signatures of cached events
+
+## 2.7.1
+
+### Patch Changes
+
+-   fix missing zap spec return
+
+## 2.7.0
+
+### Minor Changes
+
+-   Aggregate, cache, deduplicate NIP-05 queries and Zap settings queries -- Massive performance improvement!
+
+### Patch Changes
+
+-   Add thread utility functions
+-   Provide utility functions to make threading events and reply chains way easier
+
+## 2.6.1
+
+### Patch Changes
+
+-   error handle url normalization
+
+## 2.6.0
+
+### Minor Changes
+
+-   Make outbox calculation great again
+
+### Patch Changes
+
+-   Refactor OutboxTracker to handle tracking users in batches
+-   c2db3c1: Support blocked relays
+-   c2db3c1: notify caches when events are deleted
+-   c2db3c1: URL normalization
+
 ## 2.5.1
 
 ### Patch Changes

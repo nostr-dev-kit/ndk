@@ -20,3 +20,6 @@ package-lock.json
 _local_
 .svelte-kit/
 ndk/docs
+.pnpm-store
+docs/.vitepress/cache
+docs/.vitepress/dist

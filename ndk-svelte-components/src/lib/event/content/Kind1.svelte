@@ -34,6 +34,7 @@
     export let showMedia = true;
     export let content = event.content;
     export let mediaCollectionComponent: typeof SvelteComponent | undefined = undefined;
+    export let eventCardComponent: typeof SvelteComponent = EventCard;
 
     export const getLinks = (parts: any[]) => pluck(
         "value",
@@ -44,7 +45,7 @@
     const shortContent = truncateContent(fullContent, { maxLength, showEntire, showMedia });
     const groupedContent = groupContent(shortContent);
     const links = getLinks(shortContent);
-    const extraLinks = without(links, getLinks(fullContent));
+    // const extraLinks = without(links, getLinks(fullContent));
 
     export const isNewline = (i: number) => !shortContent[i] || shortContent[i].type === NEWLINE;
 
@@ -59,7 +60,7 @@
             {:else if type === TOPIC}
                 <NoteContentTopic {value} />
             {:else if type === LINK}
-                <NoteContentLink {value} showMedia={showMedia && isStartOrEnd(i)} />
+                <NoteContentLink {value} {showMedia} />
             {:else if type === LINKCOLLECTION}
                 {#if mediaCollectionComponent}
                     <svelte:component this={mediaCollectionComponent} links={value.map(v=>v.value.url)} />
@@ -73,9 +74,9 @@
             {:else if type.match(/^nostr:np(rofile|ub)$/)}
                 <NoteContentPerson {ndk} {value} on:click />
             {:else if type.startsWith('nostr:') && showMedia && isStartOrEnd(i) && value.id !== anchorId}
-                <EventCard {ndk} id={value.id} relays={value.relays} />
+                <svelte:component this={eventCardComponent} {ndk} id={value.id??value.entity} relays={value.relays} />
             {:else if type.startsWith('nostr:')}
-                <!-- <NoteContentEntity {value} /> -->
+                <svelte:component this={eventCardComponent} {ndk} id={value.id??value.entity} relays={value.relays} />
             {:else}
                 {value}
             {/if}

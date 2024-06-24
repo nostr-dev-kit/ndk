@@ -6,16 +6,29 @@
     export let relay: NDKRelay;
     export let expanded = false;
 
-    const notices: string[] = [];
+    let notices: string[] = [];
     let activeSubCount = relay.activeSubscriptions().size
 
     onMount(() => {
-        relay.on('notice', (_, notice) => { notices.push(notice); });
+        relay.on('notice', (_, notice) => { notices = [notice, ...notices] });
     });
 
     $: activeSubCount = relay.activeSubscriptions().size;
     setInterval(() => {
         activeSubCount = relay.activeSubscriptions().size;
+    }, 1000);
+
+    let nextReconnectIn: number | undefined;
+    let nextReconnectInterval: any;
+
+    setInterval(() => {
+        if (!relay.connectionStats.nextReconnectAt || relay.connectionStats.nextReconnectAt! < Date.now()) {
+            clearInterval(nextReconnectInterval);
+            nextReconnectIn = undefined;
+            return;
+        }
+
+        nextReconnectIn = Math.floor((relay.connectionStats.nextReconnectAt - Date.now()) / 1000);
     }, 1000);
 </script>
 
@@ -24,7 +37,7 @@
         class="relay-button"
         on:click={() => expanded = !expanded}
     >
-        {#if relay.status === NDKRelayStatus.CONNECTING}
+        {#if relay.status === NDKRelayStatus.CONNECTING || relay.status === NDKRelayStatus.RECONNECTING}
             <span class="relay-status relay-status--connecting" />
         {:else if relay.status === NDKRelayStatus.DISCONNECTED}
             <span class="relay-status relay-status--disconnected" />
@@ -32,6 +45,8 @@
             <span class="relay-status relay-status--connected" />
         {:else if relay.status === NDKRelayStatus.FLAPPING}
             <span class="relay-status relay-status--flapping" />
+        {:else if relay.status === NDKRelayStatus.AUTHENTICATING}
+            <span class="relay-status relay-status--authenticating" />
         {/if}
         <span class="relay-name"><RelayName {relay} /></span>
         {#if activeSubCount > 0}
@@ -41,6 +56,21 @@
             </div>
         {/if}
     </button>
+
+    {#if relay.connectionStats.attempts > 1 && relay.status !== NDKRelayStatus.CONNECTED}
+        <div class="relay-connectivity-info">
+            <span>
+                Reconnection attempts: {relay.connectionStats.attempts}
+            </span>
+
+            {#if nextReconnectIn}
+                <span>
+                    Next reconnect in
+                    {nextReconnectIn} seconds
+                </span>
+            {/if}
+        </div>
+    {/if}
 
     {#if notices.length > 0}
         <ul>
@@ -119,6 +149,10 @@
         background-color: #f1c40f;
     }
 
+    .relay-button--authenticating {
+        background-color: #aa4240;
+    }
+
     .relay-status--disconnected {
         background-color: #e74c3c;
     }
@@ -164,5 +198,11 @@
         font-size: 0.8em;
         font-weight: 300;
         margin-left: 5px;
+    }
+
+    .relay-connectivity-info {
+        font-size: 0.8em;
+        font-weight: 300;
+        margin-top: 5px;
     }
 </style>

@@ -69,7 +69,7 @@ export async function getUnpublishedEvents(
 export function addUnpublishedEvent(this: NDKCacheAdapterDexie, event: NDKEvent, relays: WebSocket["url"][]): void {
     const r: UnpublishedEvent["relays"] = {};
     relays.forEach(url => r[url] = false);
-    this.unpublishedEvents.set( event.id!, { event: event.rawEvent(), relays: r } )
+    this.unpublishedEvents.set( event.id!, { id: event.id, event: event.rawEvent(), relays: r } )
 
     const onPublished = (relay: NDKRelay) => {
         const url = relay.url;

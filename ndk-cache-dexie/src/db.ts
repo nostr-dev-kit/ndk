@@ -41,6 +41,7 @@ export interface RelayStatus {
 }
 
 export interface UnpublishedEvent {
+    id: NDKEventId;
     event: NostrEvent;
     relays: Record<WebSocket["url"], boolean>;
     lastTryAt?: number;
@@ -53,7 +54,7 @@ export class Database extends Dexie {
     nip05!: Table<Nip05>;
     lnurl!: Table<Lnurl>;
     relayStatus!: Table<RelayStatus>;
-    unpublishedEvents!: Table<UnpublishedEvent & {id: NDKEventId}>;
+    unpublishedEvents!: Table<UnpublishedEvent>;
 
     constructor(name: string) {
         super(name);

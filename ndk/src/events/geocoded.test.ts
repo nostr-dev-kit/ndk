@@ -45,7 +45,7 @@ const geohashEvent = {
       ]      
 };
 
-const geohashEventNip23 = {
+const geohashEventNip52 = {
     id: 'geohash-id',
     pubkey: 'abcde937081142db0d50d29bf92792d4ee9b3d79a83c483453171a6004711832',
     created_at: 1622505600,
@@ -60,13 +60,13 @@ describe('NDKEventGeoCoded', () => {
     let ndk: NDK;
     let eventGeoCoded: NDKEventGeoCoded;
     let eventGeoCoded2: NDKEventGeoCoded;
-    let eventGeoCodedNip23: NDKEventGeoCoded;
+    let eventGeoCodedNip52: NDKEventGeoCoded;
 
     beforeEach(() => {
         ndk = new NDK();
         eventGeoCoded = new NDKEventGeoCoded(ndk, rawEvent);
         eventGeoCoded2 = new NDKEventGeoCoded(ndk, geohashEvent);
-        eventGeoCodedNip23 = new NDKEventGeoCoded(ndk, geohashEventNip23);
+        eventGeoCodedNip52 = new NDKEventGeoCoded(ndk, geohashEventNip52);
     });
 
     describe('Initialization', () => {

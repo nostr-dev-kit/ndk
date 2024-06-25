@@ -65,7 +65,7 @@ export class OutboxTracker extends EventEmitter {
         });
     }
 
-    public trackUsers(items: NDKUser[] | Hexpubkey[]) {
+    public trackUsers(items: NDKUser[] | Hexpubkey[], skipCache = false) {
         for (let i = 0; i < items.length; i += 400) {
             const slice = items.slice(i, i + 400);
             let pubkeys = slice
@@ -80,7 +80,7 @@ export class OutboxTracker extends EventEmitter {
                 this.data.set(pubkey, new OutboxItem("user"));
             }
 
-            getRelayListForUsers(pubkeys, this.ndk).then(
+            getRelayListForUsers(pubkeys, this.ndk, skipCache).then(
                 (relayLists: Map<Hexpubkey, NDKRelayList>) => {
                     for (const [pubkey, relayList] of relayLists) {
                         const outboxItem = this.data.get(pubkey)!;
@@ -112,7 +112,7 @@ export class OutboxTracker extends EventEmitter {
                             this.data.set(pubkey, outboxItem);
 
                             // this.debug(
-                            //     `Adding ${outboxItem.readRelays.size} read relays and ${outboxItem.writeRelays.size} write relays for ${user.pubkey}`
+                            //     `Adding ${outboxItem.readRelays.size} read relays and ${outboxItem.writeRelays.size} write relays for ${pubkey}, %o`, relayList?.rawEvent()
                             // );
                         }
                     }
@@ -126,7 +126,7 @@ export class OutboxTracker extends EventEmitter {
      * @param key
      * @param score
      */
-    public track(item: NDKUser | Hexpubkey, type?: OutboxItemType): OutboxItem {
+    public track(item: NDKUser | Hexpubkey, type?: OutboxItemType, skipCache = true): OutboxItem {
         const key = getKeyFromItem(item);
         type ??= getTypeFromItem(item);
         let outboxItem = this.data.get(key);

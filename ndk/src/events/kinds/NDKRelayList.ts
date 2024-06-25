@@ -3,7 +3,7 @@ import type { NostrEvent } from "../index.js";
 import { NDKEvent } from "../index.js";
 import type { NDK } from "../../ndk/index.js";
 import { NDKRelaySet } from "../../relay/sets/index.js";
-import { normalizeRelayUrl } from "../../utils/normalize-url.js";
+import { normalizeRelayUrl, tryNormalizeRelayUrl } from "../../utils/normalize-url.js";
 
 const READ_MARKER = "read";
 const WRITE_MARKER = "write";
@@ -26,7 +26,8 @@ export class NDKRelayList extends NDKEvent {
         return this.tags
             .filter((tag) => tag[0] === "r" || tag[0] === "relay")
             .filter((tag) => !tag[2] || (tag[2] && tag[2] === READ_MARKER))
-            .map((tag) => normalizeRelayUrl(tag[1]));
+            .map((tag) => tryNormalizeRelayUrl(tag[1]))
+            .filter((url) => !!url) as WebSocket["url"][];
     }
 
     set readRelayUrls(relays: WebSocket["url"][]) {
@@ -39,7 +40,8 @@ export class NDKRelayList extends NDKEvent {
         return this.tags
             .filter((tag) => tag[0] === "r" || tag[0] === "relay")
             .filter((tag) => !tag[2] || (tag[2] && tag[2] === WRITE_MARKER))
-            .map((tag) => normalizeRelayUrl(tag[1]));
+            .map((tag) => tryNormalizeRelayUrl(tag[1]))
+            .filter((url) => !!url) as WebSocket["url"][];
     }
 
     set writeRelayUrls(relays: WebSocket["url"][]) {

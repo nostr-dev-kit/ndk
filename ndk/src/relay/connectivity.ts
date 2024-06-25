@@ -62,7 +62,7 @@ export class NDKRelayConnectivity {
 
         const authHandler = async (challenge: string) => {
             const authPolicy = this.ndkRelay.authPolicy ?? this.ndk?.relayAuthDefaultPolicy;
-            
+
             this.debug("Relay requested authentication", {
                 havePolicy: !!authPolicy,
             });
@@ -79,15 +79,19 @@ export class NDKRelayConnectivity {
                         });
                     }
 
-                    if (this._status === NDKRelayStatus.AUTHENTICATING) {
-                        this.debug("Authentication policy finished");
-                        this.relay.auth(async (evt: EventTemplate): Promise<VerifiedEvent> => {
-                            const event = new NDKEvent(this.ndk, evt as NostrEvent);
-                            await event.sign();
-                            return event.rawEvent() as VerifiedEvent;
-                        });
-                        this._status = NDKRelayStatus.CONNECTED;
-                        this.ndkRelay.emit("authed");
+                    if (res === true) {
+                        if (!this.ndk?.signer) {
+                            throw new Error("No signer available for authentication");
+                        } else if (this._status === NDKRelayStatus.AUTHENTICATING) {
+                            this.debug("Authentication policy finished");
+                            this.relay.auth(async (evt: EventTemplate): Promise<VerifiedEvent> => {
+                                const event = new NDKEvent(this.ndk, evt as NostrEvent);
+                                await event.sign();
+                                return event.rawEvent() as VerifiedEvent;
+                            });
+                            this._status = NDKRelayStatus.CONNECTED;
+                            this.ndkRelay.emit("authed");
+                        }
                     }
                 }
             } else {

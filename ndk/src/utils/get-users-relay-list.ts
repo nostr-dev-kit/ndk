@@ -14,11 +14,15 @@ export async function getRelayListForUser(pubkey: Hexpubkey, ndk: NDK): Promise<
 
 /**
  * Fetches a map of relay lists for a number of users
- * @param pubkeys 
- * @param ndk 
- * @returns 
+ * @param pubkeys
+ * @param ndk
+ * @returns
  */
-export async function getRelayListForUsers(pubkeys: Hexpubkey[], ndk: NDK): Promise<Map<Hexpubkey, NDKRelayList>> {
+export async function getRelayListForUsers(
+    pubkeys: Hexpubkey[],
+    ndk: NDK,
+    skipCache = false
+): Promise<Map<Hexpubkey, NDKRelayList>> {
     const pool = ndk.outboxPool || ndk.pool;
     const set = new Set<NDKRelay>();
 
@@ -30,7 +34,7 @@ export async function getRelayListForUsers(pubkeys: Hexpubkey[], ndk: NDK): Prom
     const relaySet = new NDKRelaySet(set, ndk);
 
     // get all kind 10002 events from cache if we have an adapter and is locking
-    if (ndk.cacheAdapter?.locking) {
+    if (ndk.cacheAdapter?.locking && !skipCache) {
         const cachedList = await ndk.fetchEvents(
             { kinds: [3, 10002], authors: pubkeys },
             { cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE }

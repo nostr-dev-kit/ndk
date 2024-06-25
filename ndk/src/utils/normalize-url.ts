@@ -2,6 +2,14 @@
 /* eslint-disable prefer-const */
 /* eslint-disable no-empty */
 
+export function tryNormalizeRelayUrl(url: string): string | undefined {
+    try {
+        return normalizeRelayUrl(url);
+    } catch {
+        return undefined;
+    }
+}
+
 /**
  * Normalizes a relay URL by removing authentication, www, and hash,
  * and ensures that it ends with a slash.

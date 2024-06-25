@@ -139,7 +139,7 @@ export interface GetUserParams extends NDKUserParams {
     hexpubkey?: string;
 }
 
-export const DEFAULT_OUTBOX_RELAYS = ["wss://purplepag.es/", "wss://profiles.nos.social/"];
+export const DEFAULT_OUTBOX_RELAYS = ["wss://purplepag.es/", "wss://nos.lol/"];
 
 /**
  * TODO: Move this to a outbox policy
@@ -491,9 +491,12 @@ export class NDK extends EventEmitter<{
     }
 
     /**
-     * Fetches event following a tag
-     * @param tag
-     * @param subOpts
+     * Attempts to fetch an event from a tag, following relay hints and
+     * other best practices.
+     * @param tag Tag to fetch the event from
+     * @param originalEvent Event where the tag came from
+     * @param subOpts Subscription options to use when fetching the event
+     * @param fallback Fallback options to use when the hint relay doesn't respond
      * @returns
      */
     public fetchEventFromTag = fetchEventFromTag.bind(this);
@@ -701,12 +704,6 @@ export class NDK extends EventEmitter<{
 
         const zap = new NDKZap(zapOpts);
 
-        return zap.createZapRequest(
-            amount,
-            comment,
-            extraTags,
-            undefined,
-            signer
-        );
+        return zap.createZapRequest(amount, comment, extraTags, undefined, signer);
     }
 }

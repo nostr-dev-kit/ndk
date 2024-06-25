@@ -245,7 +245,7 @@ export class NDKZap extends EventEmitter {
             event: null,
             amount,
             comment: comment || "",
-            relays: relays ?? await this.relays(),
+            relays: relays ?? (await this.relays()),
         });
 
         // add the event tag if it exists; this supports both 'e' and 'a' tags
@@ -272,10 +272,10 @@ export class NDKZap extends EventEmitter {
         let r: string[] = [];
 
         if (this.ndk?.activeUser) {
-            const relayLists = await getRelayListForUsers([
-                this.ndk.activeUser.pubkey,
-                this.zappedUser.pubkey,
-            ], this.ndk);
+            const relayLists = await getRelayListForUsers(
+                [this.ndk.activeUser.pubkey, this.zappedUser.pubkey],
+                this.ndk
+            );
 
             const relayScores = new Map<string, number>();
 
@@ -293,7 +293,7 @@ export class NDKZap extends EventEmitter {
                 .map(([url]) => url)
                 .slice(0, this.maxRelays);
         }
-        
+
         if (this.ndk?.pool?.permanentAndConnectedRelays().length) {
             r = this.ndk.pool.permanentAndConnectedRelays().map((relay) => relay.url);
         }

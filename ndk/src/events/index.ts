@@ -18,6 +18,8 @@ import { NDKEventSerialized, deserialize, serialize } from "./serializer.js";
 import { validate, verifySignature, getEventHash } from "./validation.js";
 import { matchFilter } from "nostr-tools";
 
+const skipClientTagOnKinds = [NDKKind.Contacts];
+
 export type NDKEventId = string;
 export type NDKTag = string[];
 
@@ -237,10 +239,9 @@ export class NDKEvent extends EventEmitter {
      * @returns {NDKTag[]} An array of the matching tags
      */
     public getMatchingTags(tagName: string, marker?: string): NDKTag[] {
-        const t = this.tags
-            .filter((tag) => tag[0] === tagName);
-        
-        if (marker !== undefined) return t;
+        const t = this.tags.filter((tag) => tag[0] === tagName);
+
+        if (marker === undefined) return t;
 
         return t.filter((tag) => tag[3] === marker);
     }
@@ -420,7 +421,10 @@ export class NDKEvent extends EventEmitter {
             }
         }
 
-        if ((this.ndk?.clientName || this.ndk?.clientNip89)) {
+        if (
+            (this.ndk?.clientName || this.ndk?.clientNip89) &&
+            skipClientTagOnKinds.includes(this.kind!)
+        ) {
             if (!this.tags.some((tag) => tag[0] === "client")) {
                 const clientTag: NDKTag = ["client", this.ndk.clientName ?? ""];
                 if (this.ndk.clientNip89) clientTag.push(this.ndk.clientNip89);

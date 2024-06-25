@@ -1,6 +1,8 @@
 import { NDK } from ".";
 import { NDKEvent, NDKTag } from "../events";
-import type { NDKRelaySet } from "../relay/sets";
+import { getWriteRelaysFor } from "../outbox/read/with-authors";
+import { NDKRelaySet } from "../relay/sets";
+import { calculateRelaySetsFromFilters } from "../relay/sets/calculate";
 import { NDKSubscriptionOptions } from "../subscription";
 
 /**
@@ -35,31 +37,98 @@ export type NDKFetchFallbackOptions = {
     timeout?: number;
 };
 
+function isValidHint(hint: string | undefined) {
+    if (!hint || hint === "") return false;
+
+    // Check if the hint is a valid URL
+    try {
+        new URL(hint);
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+function isRelayHintConnected(ndk: NDK, hint: string | undefined) {
+    if (!isValidHint(hint)) return false;
+
+    return ndk.pool.isRelayConnected(hint!);
+}
+
+/**
+ * @ignore
+ */
 export async function fetchEventFromTag(
     this: NDK,
     tag: NDKTag,
+    originalEvent: NDKEvent,
     subOpts?: NDKSubscriptionOptions,
     fallback: NDKFetchFallbackOptions = {
         type: "timeout",
     }
 ) {
     const d = this.debug.extend("fetch-event-from-tag");
-    const [tagType, id, hint] = tag;
+    const [_, id, hint] = tag;
+
+    // If we are supposed to stick to the cache, just go with that
+    // if (subOpts?.cacheUsage === NDKSubscriptionCacheUsage.ONLY_CACHE) {
+    //     return this.fetchEvent(id, subOpts);
+    // }
+
+    // XXXXX
+    subOpts = {};
+    if (!isValidHint(hint)) return;
+
+    console;
+    d("fetching event from tag", tag, subOpts, fallback);
+
+    // If we are connected to the relay hint, try exclusively from that relay
+    // if (isRelayHintConnected(this, hint)) {
+    //     d("fetching event from connected relay hint (%s)", normalizeRelayUrl(hint));
+    //     let event = await this.fetchEvent(id, subOpts, this.pool.getRelay(hint));
+    //     if (event) return event;
+    // }
+
+    // Check if we have a relay list for the author of the original event
+    // and prefer to use those relays
+    const authorRelays = getWriteRelaysFor(this, originalEvent.pubkey);
+    if (authorRelays && authorRelays.size > 0) {
+        d("fetching event from author relays %o", Array.from(authorRelays));
+        const relaySet = NDKRelaySet.fromRelayUrls(Array.from(authorRelays), this);
+        let event = await this.fetchEvent(id, subOpts, relaySet);
+        if (event) return event;
+    } else {
+        d("no author relays found for %s", originalEvent.pubkey, originalEvent);
+    }
+
+    // Attempt without relay hint on whatever NDK calculates
+    const relaySet = calculateRelaySetsFromFilters(this, [{ ids: [id] }], this.pool);
+    d("fetching event without relay hint", relaySet);
+    let event = await this.fetchEvent(id, subOpts);
+    if (event) return event;
+
+    // If we didn't get the event, try to fetch in the relay hint
+    if (hint && hint !== "") {
+        let event = await this.fetchEvent(
+            id,
+            subOpts,
+            this.pool.getRelay(hint, true, true, [{ ids: [id] }])
+        );
+        if (event) return event;
+    }
 
     let result: NDKEvent | null | undefined = undefined;
 
-    let relay =
-        hint && hint !== "" ? this.pool.getRelay(hint, true, true, [{ ids: [id] }]) : undefined;
+    let relay = isValidHint(hint)
+        ? this.pool.getRelay(hint, false, true, [{ ids: [id] }])
+        : undefined;
 
-    /**
-     * Fetch with (maybe) a relay hint.
-     */
     const fetchMaybeWithRelayHint = new Promise<NDKEvent | null>((resolve) => {
         this.fetchEvent(id, subOpts, relay).then(resolve);
     });
 
     // if we don't have a relay hint we don't need to setup a fallback
-    if (hint === "" || !hint || fallback.type === "none") {
+    if (!isValidHint(hint) || fallback.type === "none") {
         return fetchMaybeWithRelayHint;
     }
 

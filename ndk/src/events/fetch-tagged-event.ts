@@ -30,7 +30,7 @@ export async function fetchRootEvent(
     if (!this.ndk) throw new Error("NDK instance not found");
     const rootTag = getRootTag(this);
     if (!rootTag) return undefined;
-    return this.ndk.fetchEventFromTag(rootTag, subOpts);
+    return this.ndk.fetchEventFromTag(rootTag, this, subOpts);
 }
 
 export async function fetchReplyEvent(
@@ -40,5 +40,5 @@ export async function fetchReplyEvent(
     if (!this.ndk) throw new Error("NDK instance not found");
     const replyTag = getReplyTag(this);
     if (!replyTag) return undefined;
-    return this.ndk.fetchEventFromTag(replyTag, subOpts);
+    return this.ndk.fetchEventFromTag(replyTag, this, subOpts);
 }

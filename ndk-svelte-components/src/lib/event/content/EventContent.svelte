@@ -32,6 +32,8 @@
      * Optional content to use instead of the one from the event
      */
     export let content = event?.content;
+
+    const markdownKinds = [ NDKKind.Article, 30818, 30041 ]
 </script>
 
 {#if event}
@@ -49,7 +51,7 @@
         <Kind30000 {ndk} list={NDKList.from(event)} class={$$props.class} />
     {:else if event.kind === 30001}
         <Kind30001 {ndk} list={NDKList.from(event)} class={$$props.class} />
-    {:else if event.kind === 30023 || event.kind === 30818}
+    {:else if markdownKinds.includes(event.kind)}
         <Kind30023
             {ndk}
             {content}

@@ -110,11 +110,7 @@ export class NDKRelay extends EventEmitter<{
     public complaining = false;
     readonly debug: debug.Debugger;
 
-    public constructor(
-        url: WebSocket["url"],
-        authPolicy?: NDKAuthPolicy,
-        ndk?: NDK,
-    ) {
+    public constructor(url: WebSocket["url"], authPolicy?: NDKAuthPolicy, ndk?: NDK) {
         super();
         this.url = normalizeRelayUrl(url);
         this.scores = new Map<NDKUser, NDKRelayScore>();

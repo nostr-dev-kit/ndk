@@ -34,6 +34,7 @@ export default defineConfig({
         text: "Cache",
         items: [
           { text: 'Dexie Adapter', link: '/cache/dexie' },
+          { text: 'Nostr Relay Adapter', link: '/cache/nostr' },
         ]
       },
       {

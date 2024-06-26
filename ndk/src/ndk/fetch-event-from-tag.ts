@@ -1,6 +1,6 @@
 import { NDK } from ".";
 import { NDKEvent, NDKTag } from "../events";
-import { getWriteRelaysFor } from "../outbox/read/with-authors";
+import { getRelaysForSync } from "../outbox/write";
 import { NDKRelaySet } from "../relay/sets";
 import { calculateRelaySetsFromFilters } from "../relay/sets/calculate";
 import { NDKSubscriptionOptions } from "../subscription";
@@ -79,7 +79,6 @@ export async function fetchEventFromTag(
     subOpts = {};
     if (!isValidHint(hint)) return;
 
-    console;
     d("fetching event from tag", tag, subOpts, fallback);
 
     // If we are connected to the relay hint, try exclusively from that relay
@@ -91,7 +90,7 @@ export async function fetchEventFromTag(
 
     // Check if we have a relay list for the author of the original event
     // and prefer to use those relays
-    const authorRelays = getWriteRelaysFor(this, originalEvent.pubkey);
+    const authorRelays = getRelaysForSync(this, originalEvent.pubkey);
     if (authorRelays && authorRelays.size > 0) {
         d("fetching event from author relays %o", Array.from(authorRelays));
         const relaySet = NDKRelaySet.fromRelayUrls(Array.from(authorRelays), this);

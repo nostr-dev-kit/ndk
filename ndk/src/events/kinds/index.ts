@@ -34,6 +34,9 @@ export enum NDKKind {
     // Image: 5100-5199
     DVMReqImageGeneration = 5100,
 
+    // Text-to-Speech: 5200-5299
+    DVMReqTextToSpeech = 5250,
+
     // Discovery
     DVMReqDiscoveryNostrContent = 5300,
     DVMReqDiscoveryNostrPeople = 5301,
@@ -92,6 +95,9 @@ export enum NDKKind {
     InterestSet = 30015,
     InterestsList = NDKKind.InterestSet, // Deprecated but left for backwards compatibility
     EmojiSet = 30030,
+    ModularArticle = 30040,
+    ModularArticleItem = 30041,
+    Wiki = 30818,
     Draft = 31234,
     SubscriptionTier = 37001,
     HighlightSet = 39802,

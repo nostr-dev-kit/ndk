@@ -509,11 +509,11 @@ export class NDK extends EventEmitter<{
      * @param relaySetOrRelay explicit relay set to use
      */
     public async fetchEvent(
-        idOrFilter: string | NDKFilter,
+        idOrFilter: string | NDKFilter | NDKFilter[],
         opts?: NDKSubscriptionOptions,
         relaySetOrRelay?: NDKRelaySet | NDKRelay
     ): Promise<NDKEvent | null> {
-        let filter: NDKFilter;
+        let filters: NDKFilter[];
         let relaySet: NDKRelaySet | undefined;
 
         // Check if this relaySetOrRelay is an NDKRelay, if it is, make it a relaySet
@@ -539,12 +539,14 @@ export class NDK extends EventEmitter<{
         }
 
         if (typeof idOrFilter === "string") {
-            filter = filterFromId(idOrFilter);
+            filters = [filterFromId(idOrFilter)];
+        } else if (Array.isArray(idOrFilter)) {
+            filters = idOrFilter;
         } else {
-            filter = idOrFilter;
+            filters = [idOrFilter];
         }
 
-        if (!filter) {
+        if (filters.length === 0) {
             throw new Error(`Invalid filter: ${JSON.stringify(idOrFilter)}`);
         }
 
@@ -552,7 +554,7 @@ export class NDK extends EventEmitter<{
             let fetchedEvent: NDKEvent | null = null;
 
             const s = this.subscribe(
-                filter,
+                filters,
                 { ...(opts || {}), closeOnEose: true },
                 relaySet,
                 false

@@ -71,7 +71,7 @@ export class NDKRelayConnectivity {
                 if (this._status !== NDKRelayStatus.AUTHENTICATING) {
                     this._status = NDKRelayStatus.AUTHENTICATING;
                     const res = await authPolicy(this.ndkRelay, challenge);
-                    this.debug("Authentication policy returned", res);
+                    this.debug("Authentication policy returned", !!res);
 
                     if (res instanceof NDKEvent) {
                         this.relay.auth(async (evt: EventTemplate): Promise<VerifiedEvent> => {

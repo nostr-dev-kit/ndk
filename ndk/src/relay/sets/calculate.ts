@@ -1,11 +1,17 @@
 import type { NDKEvent } from "../../events/index.js";
 import type { NDK } from "../../ndk/index.js";
+import { chooseRelayCombinationForPubkeys } from "../../outbox/index.js";
 import { getRelaysForFilterWithAuthors } from "../../outbox/read/with-authors.js";
+import { getWriteRelaysFor } from "../../outbox/write.js";
 import type { NDKFilter } from "../../subscription/index.js";
 import type { Hexpubkey } from "../../user/index.js";
+import { normalizeRelayUrl } from "../../utils/normalize-url.js";
 import type { NDKRelay } from "../index.js";
 import { NDKPool } from "../pool/index.js";
 import { NDKRelaySet } from "./index.js";
+import createDebug from "debug";
+
+const d = createDebug("ndk:outbox:calculate");
 
 /**
  * Creates a NDKRelaySet for the specified event.
@@ -15,10 +21,56 @@ import { NDKRelaySet } from "./index.js";
  * @param event {Event}
  * @returns Promise<NDKRelaySet>
  */
-export function calculateRelaySetFromEvent(ndk: NDK, event: NDKEvent): NDKRelaySet {
+export async function calculateRelaySetFromEvent(ndk: NDK, event: NDKEvent): Promise<NDKRelaySet> {
     const relays: Set<NDKRelay> = new Set();
 
-    // try to fetch all tagged events from the cache
+    // get the author's write relays
+    const authorWriteRelays = await getWriteRelaysFor(ndk, event.pubkey);
+    if (authorWriteRelays) {
+        authorWriteRelays.forEach((relayUrl) => {
+            const relay = ndk.pool?.getRelay(relayUrl);
+            if (relay) {
+                d("Adding author write relay %s", relayUrl);
+                relays.add(relay);
+            }
+        });
+    }
+
+    // get all the hinted relays
+    let relayHints = event.tags
+        .filter(tag => ["a", "e"].includes(tag[0]))
+        .map(tag => tag[2])
+        // verify it's a valid URL
+        .filter((url: string | undefined) => url && url.startsWith("wss://"))
+        .filter((url: string) => { try { new URL(url); return true; } catch { return false; } })
+        .map((url: string) => normalizeRelayUrl(url));
+
+    // make unique
+    relayHints = Array.from(new Set(relayHints)).slice(0, 5);
+    relayHints.forEach((relayUrl) => {
+        const relay = ndk.pool?.getRelay(relayUrl, true, true);
+        if (relay) {
+            d("Adding relay hint %s", relayUrl);
+            relays.add(relay);
+        }
+    });
+
+    const pTags = event.getMatchingTags("p").map((tag) => tag[1]);
+
+    if (pTags.length < 5) {
+        const pTaggedRelays = Array.from(chooseRelayCombinationForPubkeys(ndk, pTags, "read", {
+            preferredRelays: new Set(authorWriteRelays),
+        }).keys())
+        pTaggedRelays.forEach((relayUrl) => {
+            const relay = ndk.pool?.getRelay(relayUrl, false, true);
+            if (relay) {
+                d("Adding p-tagged relay %s", relayUrl);
+                relays.add(relay);
+            }
+        });
+    } else {
+        d("Too many p-tags to consider %d", pTags.length);
+    }
 
     ndk.pool?.permanentAndConnectedRelays().forEach((relay: NDKRelay) => relays.add(relay));
 
@@ -50,7 +102,7 @@ export function calculateRelaySetsFromFilter(
     // if this filter has authors, get write relays for each
     // one of them and add them to the map
     if (authors.size > 0) {
-        const authorToRelaysMap = getRelaysForFilterWithAuthors(ndk, Array.from(authors), pool);
+        const authorToRelaysMap = getRelaysForFilterWithAuthors(ndk, Array.from(authors));
 
         // initialize all result with all the relayUrls we are going to return
         for (const relayUrl of authorToRelaysMap.keys()) {

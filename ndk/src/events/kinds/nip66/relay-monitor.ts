@@ -1,8 +1,8 @@
 
 import { NDKKind } from "../index.js";
 import { NDKUser } from "../../../user/index.js";
-import { NDKRelayList } from "../NDKRelayList.js";
-import { NDKRelay } from "../../../relay/index.js";
+import type { NDKRelayList } from "../NDKRelayList.js";
+// import { NDKRelay } from "../../../relay/index.js";
 
 import type { NDKEvent } from "../../index.js";
 import type { NostrEvent } from "../../index.js";
@@ -20,6 +20,13 @@ export type RelayListSet = Set<string> | undefined
 export type RelayMonitorSet = Set<RelayMonitor> | undefined
 export type RelayDiscoveryResult = Set<RelayDiscovery> | undefined
 export type RelayMetaSet = Set<RelayMeta> | undefined
+
+export const enum RelayLiveness {
+    All = 0,
+    Online = 1,
+    Offline = 2,
+    Dead = 3,
+}
 
 export type RelayMonitorCriterias = {
     kinds: number[], 
@@ -53,6 +60,8 @@ export type FetchRelaysOptions = {
     nearby?: FetchNearbyRelayOptions;
     activeOnly?: boolean;
     tolerance?: number;
+    offlineAfter?: number;
+    deadAfter?: number; 
 }
 
 /**
@@ -77,11 +86,12 @@ export type FetchRelaysOptions = {
  */
 export class RelayMonitor extends NDKEventGeoCoded {
 
-    private _initialized: boolean = false;
-    private _tolerance: number = 1.2;
-    private _active: boolean | undefined;
-    private _user: NDKUser;
-    private _relays: NDKRelayList | undefined;
+    protected _relays: NDKRelayList | undefined;
+    protected _tolerance: number = 1.2;
+    protected _offlineAfter: number = 24;
+    protected _deadAfter: number = 24*7;
+    protected _active: boolean | undefined;
+    protected _user: NDKUser;
 
     constructor( ndk: NDK | undefined, event?: NostrEvent ) {
         super(ndk, event);
@@ -91,10 +101,6 @@ export class RelayMonitor extends NDKEventGeoCoded {
 
     static from(event: NDKEvent): RelayMonitor {
         return new RelayMonitor(event.ndk, event.rawEvent());
-    }
-
-    get initialized(): boolean {    
-        return this._initialized;
     }
 
     get user(): NDKUser | undefined {
@@ -198,6 +204,28 @@ export class RelayMonitor extends NDKEventGeoCoded {
         return Math.round(Date.now()/1000)-this.frequency*this.tolerance;
     }
 
+    set offlineAfter( value: number ) {
+        this._offlineAfter = value;
+    }
+
+    get offlineTolerance(): number {
+        if(!this?.frequency) {
+            return 1;
+        }
+        return Math.round(Date.now()/1000)-this._offlineAfter;
+    }
+
+    set deadAfter( value: number ) {
+        this._deadAfter = value;
+    }
+
+    get deadTolerance(): number {
+        if(!this?.frequency) {
+            return 1;
+        }
+        return Math.round(Date.now()/1000)-this._deadAfter;
+    }
+
     get relays(): NDKRelayList | undefined {
         return this._relays;
     }
@@ -248,7 +276,7 @@ export class RelayMonitor extends NDKEventGeoCoded {
             kinds.push(NDKKind.RelayMeta);
         }
 
-        const filter: NDKFilter = this._nip66Filter(kinds, { limit: 1 } as NDKFilter);
+        const filter: NDKFilter = this.nip66Filter(kinds, { limit: 1 } as NDKFilter);
 
         return new Promise((resolve, reject) => {
             this.ndk?.fetchEvents(filter)
@@ -279,7 +307,7 @@ export class RelayMonitor extends NDKEventGeoCoded {
      * 
      * @protected
      */
-    protected _reduceRelayEventsToRelayStrings( events: Set<RelayDiscovery | RelayMeta | NDKEvent> ): RelayListSet {
+    protected reduceRelayEventsToRelayStrings( events: Set<RelayDiscovery | RelayMeta | NDKEvent> ): RelayListSet {
         if(typeof events === 'undefined') {
                 return new Set() as RelayListSet;
         }
@@ -299,7 +327,7 @@ export class RelayMonitor extends NDKEventGeoCoded {
      * 
      * @private
      */
-    protected _maybeWarnInvalid(): void {
+    protected maybeWarnInvalid(): void {
         if( !this.isMonitorValid() ) {
             console.warn(`[${this.pubkey}] RelayMonitor has not published a valid or complete "RelayMonitor" event.`);
         }
@@ -315,12 +343,27 @@ export class RelayMonitor extends NDKEventGeoCoded {
      * 
      * @private
      */
-    protected _nip66Filter( kinds: number[], prependFilter?: NDKFilter, appendFilter?: NDKFilter ): NDKFilter {
+    protected nip66Filter( kinds: number[], prependFilter?: NDKFilter, appendFilter?: NDKFilter, liveness: RelayLiveness = RelayLiveness.Online ): NDKFilter {
+        const timeframe: { since?: number, until?: number } = {};
+
+        if(liveness === RelayLiveness.Online) {
+            timeframe.since = this.onlineTolerance;
+        }
+
+        if(liveness === RelayLiveness.Offline) {
+            timeframe.since = this.deadTolerance;
+            timeframe.until = this.offlineTolerance;
+        }
+        
+        if(liveness === RelayLiveness.Dead) {
+            timeframe.until = this.deadTolerance;
+        }
+
         const _filter: NDKFilter = { 
             ...prependFilter,
             kinds,
             authors: [this?.pubkey], 
-            since: this.onlineTolerance,
+            ...timeframe,
             ...appendFilter
         };
         return _filter;

@@ -133,7 +133,7 @@ describe('RelayMonitor', () => {
 
     describe('reduceRelayEventsToRelayStrings', () => {
       it('should return a relay list', async () => {
-        const result = relayMonitor['_reduceRelayEventsToRelayStrings'](new Set([NDKEVENT_30166_1, NDKEVENT_30166_2]) as Set<NDKEvent>);
+        const result = relayMonitor['reduceRelayEventsToRelayStrings'](new Set([NDKEVENT_30166_1, NDKEVENT_30166_2]) as Set<NDKEvent>);
         expect(result).toBeInstanceOf(Set);
         expect(result).toEqual(new Set(['wss://relay.weloveit.info/', 'wss://africa.nostr.joburg/']));
       });
@@ -141,7 +141,7 @@ describe('RelayMonitor', () => {
 
     describe('nip66Filter', () => {
       it('should generate correct filter based on input kinds', () => {
-        const filter = relayMonitor['_nip66Filter']( [NDKKind.RelayMeta], { limit: 1 }, { "#n": ["clearnet"] } );
+        const filter = relayMonitor['nip66Filter']( [NDKKind.RelayMeta], { limit: 1 }, { "#n": ["clearnet"] } );
         expect(filter).toHaveProperty('kinds', expect.arrayContaining([NDKKind.RelayMeta]));
         expect(filter).toHaveProperty('limit', 1);
         expect(filter).toHaveProperty('#n', expect.arrayContaining(["clearnet"]));

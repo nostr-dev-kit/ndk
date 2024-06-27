@@ -125,7 +125,39 @@ export function generateSubId(subscriptions: NDKSubscription[], filters: NDKFilt
 }
 
 /**
+ * Creates a valid nostr filter to REQ events that are tagging a NIP-19 bech32
+ * @param id Bech32 of the event
+ * @example
+ * const bech32 = "nevent1qgs9kqvr4dkruv3t7n2pc6e6a7v9v2s5fprmwjv4gde8c4fe5y29v0spzamhxue69uhhyetvv9ujuurjd9kkzmpwdejhgtcqype6ycavy2e9zpx9mzeuekaahgw96ken0mzkcmgz40ljccwyrn88gxv2ewr"
+ * const filter = filterForEventsTaggingId(bech32);
+ * // filter => { "#e": [<id>] }
+ * 
+ * @example
+ * const bech32 = "naddr1qvzqqqr4gupzpjjwt0eqm6as279wf079c0j42jysp2t4s37u8pg5w2dfyktxgkntqqxnzde38yen2desxqmn2d3332u3ff";
+ * const filter = filterForEventsTaggingId(bech32);
+ * // filter => { "#a": ["30023:ca4e5bf20debb0578ae4bfc5c3e55548900a975847dc38514729a92596645a6b:1719357007561"]}
+ */
+export function filterForEventsTaggingId(id: string): NDKFilter | undefined {
+    try {
+        const decoded = nip19.decode(id);
+
+        switch (decoded.type) {
+            case 'naddr': return { "#a": [`${decoded.data.kind}:${decoded.data.pubkey}:${decoded.data.identifier}`] }
+            case 'nevent': return { "#e": [decoded.data.id] }
+            case 'note': return { "#e": [decoded.data] }
+            case 'nprofile': return { "#p": [decoded.data.pubkey] }
+            case 'npub': return { "#p": [decoded.data] }
+        }
+    } catch {}
+}
+
+/**
  * Creates a valid nostr filter from an event id or a NIP-19 bech32.
+ * 
+ * @example
+ * const bech32 = "nevent1qgs9kqvr4dkruv3t7n2pc6e6a7v9v2s5fprmwjv4gde8c4fe5y29v0spzamhxue69uhhyetvv9ujuurjd9kkzmpwdejhgtcqype6ycavy2e9zpx9mzeuekaahgw96ken0mzkcmgz40ljccwyrn88gxv2ewr"
+ * const filter = filterFromBech32(bech32);
+ * // filter => { ids: [...], authors: [...] }
  */
 export function filterFromId(id: string): NDKFilter {
     let decoded;
@@ -150,8 +182,12 @@ export function filterFromId(id: string): NDKFilter {
             decoded = nip19.decode(id);
 
             switch (decoded.type) {
-                case "nevent":
-                    return { ids: [decoded.data.id] };
+                case "nevent": {
+                    const filter: NDKFilter = { ids: [decoded.data.id] };
+                    if (decoded.data.author) filter.authors = [decoded.data.author];
+                    if (decoded.data.kind) filter.kinds = [decoded.data.kind];
+                    return filter;
+                }
                 case "note":
                     return { ids: [decoded.data] };
                 case "naddr":

@@ -343,7 +343,7 @@ export class NDKSubscription extends EventEmitter<{
 
         // if relayset is empty, we can't start, log it
         if (!this.relayFilters || this.relayFilters.size === 0) {
-            this.debug(`No relays to subscribe to`, this.pool.relays.size);
+            this.debug(`No relays to subscribe to (%d connected relays)`, this.pool.connectedRelays().length);
             return;
         }
 

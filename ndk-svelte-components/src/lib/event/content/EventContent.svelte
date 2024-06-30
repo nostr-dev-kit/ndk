@@ -10,7 +10,7 @@
     import Kind30000 from "./Kind30000.svelte";
     import Kind30001 from "./Kind30001.svelte";
     import Kind30023 from "./Kind30023.svelte";
-    // import Kind30818 from "./Kind30818.svelte";
+    import Kind30818 from "./Kind30818.svelte";
     import type { SvelteComponent } from "svelte";
     import type { MarkedExtension } from "marked";
 
@@ -33,7 +33,7 @@
      */
     export let content = event?.content;
 
-    const markdownKinds = [ NDKKind.Article, 30818, 30041 ]
+    const markdownKinds = [ NDKKind.Article, 30041 ]
 </script>
 
 {#if event}
@@ -61,6 +61,14 @@
             on:click
             class={$$props.class}
             {markedExtensions}
+        />
+    {:else if event.kind === 30818}
+        <Kind30818
+            {ndk}
+            {event}
+            {...$$props}
+            on:click
+            class={$$props.class}
         />
     {:else}
         <Kind1 {ndk} {content} {event} {anchorId} {showMedia} on:click class={$$props.class} {maxLength} {showEntire} {mediaCollectionComponent} {eventCardComponent} />

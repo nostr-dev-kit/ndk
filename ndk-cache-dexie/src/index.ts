@@ -518,12 +518,15 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         const f = ["kinds"];
         const hasAllKeys = filterKeys.size === f.length && f.every((k) => filterKeys.has(k));
 
+        let events: Event[] = [];
+
         if (!hasAllKeys) return false;
 
         for (const kind of filter.kinds) {
-            const events = Array.from(this.events.getFromIndex("kind", kind));
-            foundEvents(subscription, events, filter);
+            events = [ ...events, ...Array.from(this.events.getFromIndex("kind", kind))]
         }
+
+        foundEvents(subscription, events, filter);
 
         return true;
     }
@@ -558,6 +561,11 @@ export function foundEvents(
     events: Event[],
     filter?: NDKFilter
 ) {
+    // if we have a limit, sort and slice
+    if (filter?.limit && events.length > filter.limit) {
+        events = events.sort((a, b) => b.createdAt - a.createdAt).slice(0, filter.limit);
+    }
+    
     for (const event of events) {
         foundEvent(subscription, event, event.relay, filter);
     }
@@ -575,7 +583,7 @@ export function foundEvent(
         if (filter && !matchFilter(filter, deserializedEvent as any)) return;
 
         const ndkEvent = new NDKEvent(undefined, deserializedEvent);
-        const relay = relayUrl ? subscription.pool.getRelay(relayUrl) : undefined;
+        const relay = relayUrl ? subscription.pool.getRelay(relayUrl, false) : undefined;
         ndkEvent.relay = relay;
         subscription.eventReceived(ndkEvent, relay, true);
     } catch (e) {

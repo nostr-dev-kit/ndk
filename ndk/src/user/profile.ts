@@ -30,6 +30,9 @@ export function profileFromEvent(event: NDKEvent): NDKUserProfile {
         throw new Error(`Failed to parse profile event: ${error}`);
     }
 
+    profile.created_at = event.created_at;
+    profile.profileEvent = JSON.stringify(event.rawEvent());
+
     Object.keys(payload).forEach((key) => {
         switch (key) {
             case "name":

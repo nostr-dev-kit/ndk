@@ -17,7 +17,7 @@ export class CacheHandler<T> {
     private dirtyKeys: Set<string> = new Set();
     private options: CacheOptions<T>;
     private debug: debug.IDebugger;
-    public indexes: Map<string, LRUCache<string, Set<string>>>;
+    public indexes: Map<string | number, LRUCache<string | number, Set<string>>>;
     public isSet = false;
     public maxSize = 0;
 
@@ -26,7 +26,7 @@ export class CacheHandler<T> {
         this.options = options;
         this.maxSize = options.maxSize;
         if (options.maxSize > 0) {
-            this.cache = new LRUCache({ maxSize: options.maxSize });
+            this.cache = new LRUCache({ maxSize: options.maxSize});
             setInterval(() => this.dump().catch(console.error), 1000 * 10);
         }
 
@@ -139,11 +139,11 @@ export class CacheHandler<T> {
         }
     }
 
-    public addIndex<T>(attribute: string) {
+    public addIndex<T>(attribute: string | number) {
         this.indexes.set(attribute, new LRUCache({ maxSize: this.options.maxSize }));
     }
 
-    public getFromIndex(attribute: string, key: string) {
+    public getFromIndex(attribute: string, key: string | number) {
         const ret = new Set<T>();
         this.indexes.get(attribute)?.get(key)?.forEach((key) => {
             const entry = this.get(key);

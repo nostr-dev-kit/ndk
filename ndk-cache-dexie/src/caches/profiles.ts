@@ -1,42 +1,40 @@
 import type { Table } from "dexie";
-import type { User } from "../db";
-import type { CacheHandler, WarmUpFunction } from "../lru-cache";
-import type { NDKUserProfile } from "@nostr-dev-kit/ndk";
+import type { Profile } from "../db";
+import type { CacheHandler } from "../lru-cache";
 import type { LRUCache } from "typescript-lru-cache";
 export { db } from "../db.js";
+import createDebug from "debug";
+
+const d = createDebug("ndk:dexie-adapter:profiles");
 
 export async function profilesWarmUp(
-    cacheHandler: CacheHandler<NDKUserProfile>,
-    users: Table<User>,
+    cacheHandler: CacheHandler<Profile>,
+    profiles: Table<Profile>,
 ): Promise<void> {
-    const array = await users.limit(cacheHandler.maxSize).toArray();
+    const array = await profiles.limit(cacheHandler.maxSize).toArray();
     for (const user of array) {
-        const obj = user.profile;
-        if (user.createdAt) {
-            obj.created_at = Math.floor(user.createdAt / 1000);
-        }
+        const obj = user;
         cacheHandler.set(user.pubkey, obj, false);
     }
+
+    d("Loaded %d profiles from database", cacheHandler.size());
 }
 
-export const profilesDump = (users: Table<User>, debug: debug.IDebugger) => {
-    return async (dirtyKeys: Set<string>, cache: LRUCache<string, NDKUserProfile>) => {
-        const profiles = [];
+export const profilesDump = (profiles: Table<Profile>, debug: debug.IDebugger) => {
+    return async (dirtyKeys: Set<string>, cache: LRUCache<string, Profile>) => {
+        const entries = [];
 
         for (const pubkey of dirtyKeys) {
-            const profile = cache.get(pubkey);
-            if (profile) {
-                profiles.push({
-                    pubkey,
-                    profile,
-                    createdAt: Date.now(),
-                });
+            const entry = cache.get(pubkey);
+            if (entry) {
+                entries.push(entry);
             }
         }
 
-        if (profiles.length) {
-            debug(`Saving ${profiles.length} profiles to database`);
-            await users.bulkPut(profiles);
+        if (entries.length) {
+            debug(`Saving ${entries.length} users to database`);
+            
+            await profiles.bulkPut(entries);
         }
 
         dirtyKeys.clear();

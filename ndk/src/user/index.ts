@@ -267,11 +267,12 @@ export class NDKUser {
         if (sortedSetMetadataEvents.length === 0) return null;
 
         // return the most recent profile
-        this.profile = profileFromEvent(sortedSetMetadataEvents[0]);
+        const event = sortedSetMetadataEvents[0];
+        this.profile = profileFromEvent(event);
 
         if (storeProfileEvent) {
             // Store the event as a stringified JSON
-            this.profile.profileEvent = JSON.stringify(sortedSetMetadataEvents[0]);
+            this.profile.profileEvent = JSON.stringify(event);
         }
 
         if (this.profile && this.ndk.cacheAdapter && this.ndk.cacheAdapter.saveProfile) {

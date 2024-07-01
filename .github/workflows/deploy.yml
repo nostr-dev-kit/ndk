@@ -42,6 +42,8 @@ jobs:
         uses: actions/configure-pages@v4
       - name: Install dependencies
         run: pnpm install # or pnpm install / yarn install / bun install
+      - name: Build dexie typedoc
+        run: cd ndk-cache-dexie && pnpm typedoc && cat docs/interfaces/NDKCacheAdapterDexieOptions.md >> ../docs/cache/dexie.md
       - name: Build with VitePress
         run: pnpm docs:build # or pnpm docs:build / yarn docs:build / bun run docs:build
       - name: Build typedoc

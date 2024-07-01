@@ -29,3 +29,27 @@ describe("foundEvent", () => {
         expect(subscription.eventReceived).toBeCalledTimes(1);
     })
 })
+
+describe("by kind filter", () => {
+    beforeAll(async () => {
+        // save event
+        const event = new NDKEvent(ndk);
+        event.kind = 10002;
+        await event.sign();
+        ndk.cacheAdapter!.setEvent(event, []);
+    });
+
+    it("returns an event when fetching by kind", async () => {
+        const subscription = new NDKSubscription(ndk, [{kinds: [10002]}]);
+        jest.spyOn(subscription, "eventReceived");
+        await ndk.cacheAdapter!.query(subscription);
+        expect(subscription.eventReceived).toBeCalledTimes(1);
+    })
+
+    it("matches by kind even when there is a since filter", async () => {
+        const subscription = new NDKSubscription(ndk, [{kinds: [10002], since: 1000}]);
+        jest.spyOn(subscription, "eventReceived");
+        await ndk.cacheAdapter!.query(subscription);
+        expect(subscription.eventReceived).toBeCalledTimes(1);
+    })
+})

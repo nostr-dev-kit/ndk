@@ -9,6 +9,7 @@
     "excludeExternals": true,
     "excludePrivate": true,
     "excludeProtected": true,
+    "ignoreDeadLinks": true,
     "categorizeByGroup": true,
     "hideParameterTypesInTitle": false,
     "navigation": {

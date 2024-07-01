@@ -77,6 +77,8 @@ export class NDKRelayConnectivity {
                         this.relay.auth(async (evt: EventTemplate): Promise<VerifiedEvent> => {
                             return res.rawEvent() as VerifiedEvent;
                         });
+                        this._status = NDKRelayStatus.CONNECTED;
+                        this.ndkRelay.emit("authed");
                     }
 
                     if (res === true) {

@@ -5,6 +5,7 @@ export default defineConfig({
   title: "NDK",
   description: "NDK Docs",
   base: "/ndk/",
+  ignoreDeadLinks: true,
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [

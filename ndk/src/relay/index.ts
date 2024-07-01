@@ -72,6 +72,7 @@ export interface NDKRelayConnectionStats {
  * @emits NDKRelay#eose when the relay has reached the end of stored events
  * @emits NDKRelay#auth when the relay requires authentication
  * @emits NDKRelay#authed when the relay has authenticated
+ * @emits NDKRelay#authfail when the relay has rejected the authentication
  * @emits NDKRelay#delayed-connect when the relay will wait before reconnecting
  */
 export class NDKRelay extends EventEmitter<{
@@ -86,6 +87,7 @@ export class NDKRelay extends EventEmitter<{
     notice: (notice: string) => void;
     auth: (challenge: string) => void;
     authed: () => void;
+    authfail: () => void;
     published: (event: NDKEvent) => void;
     "publish:failed": (event: NDKEvent, error: Error) => void;
     "delayed-connect": (delayInMs: number) => void;

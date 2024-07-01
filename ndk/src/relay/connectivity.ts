@@ -74,11 +74,16 @@ export class NDKRelayConnectivity {
                     this.debug("Authentication policy returned", !!res);
 
                     if (res instanceof NDKEvent) {
-                        this.relay.auth(async (evt: EventTemplate): Promise<VerifiedEvent> => {
-                            return res.rawEvent() as VerifiedEvent;
-                        });
-                        this._status = NDKRelayStatus.CONNECTED;
-                        this.ndkRelay.emit("authed");
+                        try {
+                            await this.relay.auth(async (evt: EventTemplate): Promise<VerifiedEvent> => {
+                                return res.rawEvent() as VerifiedEvent;
+                            });
+                            this._status = NDKRelayStatus.CONNECTED;
+                            this.ndkRelay.emit("authed");
+                        } catch (e) {
+                            this.debug("Failed to authenticate", e);
+                            this.ndkRelay.emit("authfail");
+                        }
                     }
 
                     if (res === true) {

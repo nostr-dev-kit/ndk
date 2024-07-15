@@ -84,6 +84,17 @@ const noAuthRelays = ndk.fetchEvents(nearestMonitor.nip66Filter("30166", { "#R":
 const notPaidRelays = ndk.fetchEvents(nearestMonitor.nip66Filter("30166", { "#R": ["!payment"] }))
 ```
 
+## Relay Meta
+```js
+const promises = []
+paidRelays.forEach( relay => {
+  promises.push(ndk.fetchEvent(relay.url))
+})
+await Promise.allSettled(promises)
+const relayMetas = promises.map( ndkEvent => RelayMeta.from(ndkEvent))
+console.log(relayMetas[0]?.url, relayMeta[0]?.all)
+```
+
 ## Full Datasets
 Using NDK alone is not ideal for obtaining a full dataset. The reasoning here is that different relays have different max results, and the total dataset size is not only not known, but also often greater than most relay's max result limits. To get full datasets, for example "All Online Relays," you should instead use something like `nostr-fetch` with it's NDK adapter to fetch full datasets. Below is an example of how to use `nostr-fetch` with NDK to get a full dataset.
 

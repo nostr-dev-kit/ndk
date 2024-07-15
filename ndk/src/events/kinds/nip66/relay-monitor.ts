@@ -1,6 +1,10 @@
 
 import { NDKKind } from "../index.js";
+<<<<<<< HEAD
 import type { NDKUser } from "../../../user/index.js";
+=======
+import { NDKUser } from "../../../user/index.js";
+>>>>>>> 37a3c40e5f5691676f83b4b69d31bc1039ba9a12
 import type { NDKRelayList } from "../NDKRelayList.js";
 // import { NDKRelay } from "../../../relay/index.js";
 

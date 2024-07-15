@@ -29,9 +29,9 @@ export const enum RelayLiveness {
 }
 
 export type RelayMonitorCriterias = {
-    kinds: number[], 
+    kinds?: number[], 
     // operator: string[],
-    checks: string[]
+    checks?: string[]
 }
 
 export enum RelayMonitorDiscoveryTags {
@@ -92,17 +92,23 @@ export class RelayMonitor extends NDKEventGeoCoded {
     protected _deadAfter: number = 24*7;
     protected _active: boolean | undefined;
     protected _user: NDKUser | undefined;
+    private debug: debug.Debugger | undefined;
 
-    constructor( ndk: NDK | undefined, event?: NostrEvent ) {
+    constructor( ndk: NDK | undefined, event?: NostrEvent, debug?: debug.IDebugger ) {
         super(ndk, event);
         this.kind ??= NDKKind.RelayMonitor; 
-        if(ndk && this.pubkey) { 
+
+        if(!ndk) return;
+
+        this.debug = debug || ndk.debug.extend("relay-monitor");
+
+        if(this.pubkey) { 
             this._user = ndk.getUser({ pubkey: this.pubkey });
         }
     }
 
-    static from(event: NDKEvent): RelayMonitor {
-        return new RelayMonitor(event.ndk, event.rawEvent());
+    static from(event: NDKEvent, debug?: debug.IDebugger): RelayMonitor {
+        return new RelayMonitor(event.ndk, event.rawEvent(), debug);
     }
 
     get user(): NDKUser | undefined {
@@ -329,8 +335,8 @@ export class RelayMonitor extends NDKEventGeoCoded {
      * @protected
      */
     protected maybeWarnInvalid(): void {
-        if( !this.isMonitorValid() ) {
-            console.warn(`[${this.pubkey}] RelayMonitor has not published a valid or complete "RelayMonitor" event.`);
+        if( !this.isMonitorValid() && this?.debug ) {
+            this.debug(`[${this.pubkey}] RelayMonitor has not published a valid or complete "RelayMonitor" event.`);
         }
     }
 
@@ -344,8 +350,12 @@ export class RelayMonitor extends NDKEventGeoCoded {
      * 
      * @protected
      */
-    protected nip66Filter( kinds: number[], prependFilter?: NDKFilter, appendFilter?: NDKFilter, liveness: RelayLiveness = RelayLiveness.Online ): NDKFilter {
+    public nip66Filter( kinds?: number[], prependFilter?: NDKFilter, appendFilter?: NDKFilter, liveness: RelayLiveness = RelayLiveness.Online ): NDKFilter {
         const timeframe: { since?: number, until?: number } = {};
+
+        if(!kinds){
+            kinds = this.kinds;
+        }
 
         if(liveness === RelayLiveness.Online) {
             timeframe.since = this.onlineTolerance;
@@ -387,9 +397,6 @@ export class RelayMonitor extends NDKEventGeoCoded {
         if(criterias?.kinds) {
             meetsCriteria.push(criterias.kinds.every( kind => monitor.kinds.includes(kind)));
         }
-        // if(criterias?.operator) {
-        //     meetsCriteria.push(criterias.operator.every( operator => monitor.operator === operator));
-        // }
         if(criterias?.checks) {
             meetsCriteria.push(criterias.checks.every( check => monitor.checks.includes(check)));
         }

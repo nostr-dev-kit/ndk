@@ -368,7 +368,7 @@ export class NDKEventGeoCoded extends NDKEvent {
         geoCodedEvents: Set<NDKEventGeoCoded>, 
         asc: boolean = true
     ): Set<NDKEventGeoCoded> => {
-        const events = Array.from(geoCodedEvents);
+        const events = Array.from(geoCodedEvents).filter( (event: NDKEventGeoCoded) => event?.lat && event?.lon);
         const {lat, lon} = NDKEventGeoCoded.parseCoords(coords);
         if (isNaN(lat) || isNaN(lon) || !isFinite(lat) || !isFinite(lon)) 
             throw new Error('(lat) and (lon), respectively, must be numbers and finite.');

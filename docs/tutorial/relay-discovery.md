@@ -9,7 +9,7 @@ There are many approaches to using NIP-66. Below is a linear example of how to u
 
 ## Setup 
 ```js
-import { RelayMonitor, RelayDiscovery, RelayMeta } from '@nostr/relay-discovery'
+import { RelayMonitor, RelayDiscovery, RelayMeta } from '@nostr-dev-kit/ndk'
 ```
 
 ## Relay Monitors

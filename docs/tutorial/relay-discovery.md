@@ -8,21 +8,21 @@ Relay Discovery is made possible by Monitor Daemons/Agents publishing NIP-66 eve
 There are many approaches to using NIP-66. Below is a linear example of how to use all the event kinds in NIP-66. The below examples are not necessarily the best way to do things, but they demonstrate the basic idea and various ways to achieve goals. 
 
 ## Setup 
-```
+```js
 import { RelayMonitor, RelayDiscovery, RelayMeta } from '@nostr/relay-discovery'
 ```
 
 ## Relay Monitors
 
-### Find some monitors.
-```
+### Find monitors from the nostr.watch relay
+```js
 const ndk = new NDK({explicitRelayUrls: 'wss://history.nostr.watch'})
 await ndk.connect()
 const monitors = Array.from(await ndk.fetchEvents({kinds:10133})).map(e => RelayMonitor.from(e))
 ```
 
 ### Show some information about each monitor
-```
+```js
 monitors.forEach( monitor => {
   console.log(```
   pubkey: ${monitor.pubkey}
@@ -37,26 +37,20 @@ monitors.forEach( monitor => {
 ```
 
 ### Filter down to only active monitors 
-```
-monitors.forEach( monitor => {
-  console.log(```
-  pubkey: ${monitor.pubkey}
-  name: ${monitor.user.name? monitor.user?.name: 'unknown'}
-  geohash: ${monitor?.geohash? monitor.geohash: 'unknown'}
-  runs checks: ${monitor.checks}
-  publishes kinds: ${monitor.kinds}
-  active: ${await monitor.isActive()}
-  ```)
+```js
+const activeMonitors = [] 
+monitors.forEach( async (monitor) => {
+  if(await monitor.isActive()) activeMonitors.push(monitor)
 })
 ```
 
 ### Reduce list of monitors to only those that publish both `30166` and `30066`
-```
-const monitorsBothKinds = monitors.filter( monitor => monitor.meetsCriterias({kinds: [30166,30066]}))
+```js
+const monitorsBothKinds = activeMonitors.filter( monitor => monitor.meetsCriterias({kinds: [30166,30066]}))
 ```
 
 ### Select the nearest monitor 
-```
+```js
 const monitorsSortedByDistance = RelayMonitor.sortGeospatial("gbsuv", new Set(monitorsBothKinds))
 const nearestMonitor = Array.from(monitorsSortedByDistance)?.[0] || monitors?.[0] || null
 if(!nearestMonitor) throw new Error("No monitors found")  
@@ -65,35 +59,35 @@ if(!nearestMonitor) throw new Error("No monitors found")
 ## Relay Discovery
 
 ### Online Relays 
-```
+```js
 const onlineRelays = ndk.fetchEvents(nearestMonitor.nip66Filter("30166"))
 ```
 Please see (note)[#important] below for caveats. 
 
 ### Find some relays that support NIP-45
-```
+```js
 const nip45Relays = ndk.fetchEvents(nearestMonitor.nip66Filter("30166", { "#N": ["45"] }))
 ```
 
 ### Find paid relays 
-```
+```js
 const paidRelays = ndk.fetchEvents(nearestMonitor.nip66Filter("30166", { "#R": ["payment"] }))
 ```
 
-### Find relays without auth 
-```
+### Find relays without auth requirement
+```js
 const noAuthRelays = ndk.fetchEvents(nearestMonitor.nip66Filter("30166", { "#R": ["!auth"] }))
 ```
 
-### Find relays wtihout payment requirement
-```
+### Find relays without payment requirement
+```js
 const notPaidRelays = ndk.fetchEvents(nearestMonitor.nip66Filter("30166", { "#R": ["!payment"] }))
 ```
 
 ## Full Datasets
 Using NDK alone is not ideal for obtaining a full dataset. The reasoning here is that different relays have different max results, and the total dataset size is not only not known, but also often greater than most relay's max result limits. To get full datasets, for example "All Online Relays," you should instead use something like `nostr-fetch` with it's NDK adapter to fetch full datasets. Below is an example of how to use `nostr-fetch` with NDK to get a full dataset.
 
-```
+```js
 const fetcher = NostrFetcher.withCustomPool(ndkAdapter(ndk));
 const {since} = monitor.nip66Filter("30166")
 const onlineRelays = await fetcher.fetchAllEvents(

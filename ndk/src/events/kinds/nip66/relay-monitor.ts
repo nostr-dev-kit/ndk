@@ -1,6 +1,6 @@
 
 import { NDKKind } from "../index.js";
-import { NDKUser } from "../../../user/index.js";
+import type { NDKUser } from "../../../user/index.js";
 import type { NDKRelayList } from "../NDKRelayList.js";
 // import { NDKRelay } from "../../../relay/index.js";
 
@@ -30,13 +30,13 @@ export const enum RelayLiveness {
 
 export type RelayMonitorCriterias = {
     kinds: number[], 
-    operator: string[],
+    // operator: string[],
     checks: string[]
 }
 
 export enum RelayMonitorDiscoveryTags {
     kinds = "k",
-    operator = "o",
+    // operator = "o",
     checks = "c"
 }
 
@@ -91,12 +91,14 @@ export class RelayMonitor extends NDKEventGeoCoded {
     protected _offlineAfter: number = 24;
     protected _deadAfter: number = 24*7;
     protected _active: boolean | undefined;
-    protected _user: NDKUser;
+    protected _user: NDKUser | undefined;
 
     constructor( ndk: NDK | undefined, event?: NostrEvent ) {
         super(ndk, event);
         this.kind ??= NDKKind.RelayMonitor; 
-        this._user = new NDKUser({ pubkey: this.pubkey });
+        if(ndk && this.pubkey) { 
+            this._user = ndk.getUser({ pubkey: this.pubkey });
+        }
     }
 
     static from(event: NDKEvent): RelayMonitor {
@@ -122,24 +124,24 @@ export class RelayMonitor extends NDKEventGeoCoded {
         }
     }
 
-    get operator(): string | undefined {    
-        return this.tagValue("o");
-    }
+    // get operator(): string | undefined {    
+    //     return this.tagValue("o");
+    // }
 
-    set operator( value: string | undefined ) {
-        this.removeTag("o");
-        if (value) {
-            this.tags.push(["o", value]);
-        }
-    }
+    // set operator( value: string | undefined ) {
+    //     this.removeTag("o");
+    //     if (value) {
+    //         this.tags.push(["o", value]);
+    //     }
+    // }
 
-    get owner(): string | undefined {
-        return this.operator;
-    }
+    // get owner(): string | undefined {
+    //     return this.operator;
+    // }
 
-    set owner( value: string | undefined ) {
-        this.operator = value;
-    }
+    // set owner( value: string | undefined ) {
+    //     this.operator = value;
+    // }
 
     get kinds(): number[] {
         return this.tags.filter(tag => tag[0] === "k").map(tag => parseInt(tag[1]));
@@ -185,7 +187,7 @@ export class RelayMonitor extends NDKEventGeoCoded {
         return this._active;
     }
 
-    private set active( active: boolean ) {
+    set active( active: boolean ) {
         this._active = active;
     }
 
@@ -266,8 +268,7 @@ export class RelayMonitor extends NDKEventGeoCoded {
      * @async
     */
     async isMonitorActive(): Promise<boolean> {
-        if(typeof this.active !== 'undefined') return this.active;
-        
+        // if(typeof this.active !== 'undefined') return this.active;
         const kinds: NDKKind[] = [];
         if(this.kinds.includes(NDKKind.RelayDiscovery)) { 
             kinds.push(NDKKind.RelayDiscovery);
@@ -281,7 +282,7 @@ export class RelayMonitor extends NDKEventGeoCoded {
         return new Promise((resolve, reject) => {
             this.ndk?.fetchEvents(filter)
                 .then(events => {
-                    this.active = Array.from(events).length > 0;
+                    this.active = events.size > 0;
                     resolve(this.active);
                 })
                 .catch(reject);
@@ -325,7 +326,7 @@ export class RelayMonitor extends NDKEventGeoCoded {
      * 
      * @returns void
      * 
-     * @private
+     * @protected
      */
     protected maybeWarnInvalid(): void {
         if( !this.isMonitorValid() ) {
@@ -341,7 +342,7 @@ export class RelayMonitor extends NDKEventGeoCoded {
      * @param {NDKFilter} appendFilter An optional `NDKFilter` object to append to the filter.
      * @returns Always undefined, indicating an invalid operation.
      * 
-     * @private
+     * @protected
      */
     protected nip66Filter( kinds: number[], prependFilter?: NDKFilter, appendFilter?: NDKFilter, liveness: RelayLiveness = RelayLiveness.Online ): NDKFilter {
         const timeframe: { since?: number, until?: number } = {};
@@ -386,9 +387,9 @@ export class RelayMonitor extends NDKEventGeoCoded {
         if(criterias?.kinds) {
             meetsCriteria.push(criterias.kinds.every( kind => monitor.kinds.includes(kind)));
         }
-        if(criterias?.operator) {
-            meetsCriteria.push(criterias.operator.every( operator => monitor.operator === operator));
-        }
+        // if(criterias?.operator) {
+        //     meetsCriteria.push(criterias.operator.every( operator => monitor.operator === operator));
+        // }
         if(criterias?.checks) {
             meetsCriteria.push(criterias.checks.every( check => monitor.checks.includes(check)));
         }

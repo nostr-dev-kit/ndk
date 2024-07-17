@@ -1,7 +1,7 @@
 {
-    "name": "@nostr-dev-kit/ndk-cache-redis",
-    "version": "2.1.16",
-    "description": "NDK cache adapter for redis.",
+    "name": "@nostr-dev-kit/ndk-wallet",
+    "version": "0.1.0",
+    "description": "NDK Wallet",
     "main": "./dist/index.js",
     "module": "./dist/index.mjs",
     "exports": {
@@ -28,8 +28,8 @@
     },
     "keywords": [
         "nostr",
-        "redis",
-        "cache"
+        "cashu",
+        "ecash"
     ],
     "author": "pablof7z",
     "license": "MIT",
@@ -38,10 +38,9 @@
     },
     "homepage": "https://github.com/nostr-dev-kit/ndk",
     "dependencies": {
+        "@cashu/cashu-ts": "1.0.0-rc.9",
         "@nostr-dev-kit/ndk": "workspace:*",
-        "debug": "^4.3.4",
-        "ioredis": "^5.3.2",
-        "nostr-tools": "^2.4.0",
+        "tseep": "^1.1.1",
         "typescript": "^5.4.4"
     },
     "devDependencies": {
@@ -50,6 +49,7 @@
         "@types/debug": "^4.1.7",
         "@types/jest": "^29.5.5",
         "@types/node": "^18.15.11",
+        "debug": "^4.3.5",
         "jest": "^29.7.0",
         "ts-jest": "^29.1.2",
         "ts-node": "^10.9.2",

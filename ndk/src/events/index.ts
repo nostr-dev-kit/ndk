@@ -124,21 +124,7 @@ export class NDKEvent extends EventEmitter {
 
     /**
      * Tag a user with an optional marker.
-     * @param user The user to tag.
-     * @param marker The marker to use in the tag.
-     */
-    public tag(user: NDKUser, marker?: string): void;
-
-    /**
-     * Tag a user with an optional marker.
-     * @param user The user to tag.
-     * @param marker The marker to use in the tag.
-     */
-    public tag(user: NDKUser, marker?: string): void;
-
-    /**
-     * Tag a user with an optional marker.
-     * @param event The event to tag.
+     * @param target What is to be tagged. Can be an NDKUser, NDKEvent, or an NDKTag.
      * @param marker The marker to use in the tag.
      * @param skipAuthorTag Whether to explicitly skip adding the author tag of the event.
      * @param forceTag Force a specific tag to be used instead of the default "e" or "a" tag.
@@ -148,23 +134,22 @@ export class NDKEvent extends EventEmitter {
      * // reply.tags => [["e", <id>, <relay>, "reply"]]
      * ```
      */
-    public tag(event: NDKEvent, marker?: string, skipAuthorTag?: boolean, forceTag?: string): void;
     public tag(
-        userOrTagOrEvent: NDKTag | NDKUser | NDKEvent,
+        target: NDKTag | NDKUser | NDKEvent,
         marker?: string,
         skipAuthorTag?: boolean,
         forceTag?: string
     ): void {
         let tags: NDKTag[] = [];
-        const isNDKUser = (userOrTagOrEvent as NDKUser).fetchProfile !== undefined;
+        const isNDKUser = (target as NDKUser).fetchProfile !== undefined;
 
         if (isNDKUser) {
             forceTag ??= "p";
-            const tag = [forceTag, (userOrTagOrEvent as NDKUser).pubkey];
+            const tag = [forceTag, (target as NDKUser).pubkey];
             if (marker) tag.push(...["", marker]);
             tags.push(tag);
-        } else if (userOrTagOrEvent instanceof NDKEvent) {
-            const event = userOrTagOrEvent as NDKEvent;
+        } else if (target instanceof NDKEvent) {
+            const event = target as NDKEvent;
             skipAuthorTag ??= event?.pubkey === this.pubkey;
             tags = event.referenceTags(marker, skipAuthorTag, forceTag);
 
@@ -175,10 +160,10 @@ export class NDKEvent extends EventEmitter {
 
                 this.tags.push(["p", pTag[1]]);
             }
-        } else if (Array.isArray(userOrTagOrEvent)) {
-            tags = [userOrTagOrEvent as NDKTag];
+        } else if (Array.isArray(target)) {
+            tags = [target as NDKTag];
         } else {
-            throw new Error("Invalid argument", userOrTagOrEvent as any);
+            throw new Error("Invalid argument", target as any);
         }
 
         this.tags = mergeTags(this.tags, tags);

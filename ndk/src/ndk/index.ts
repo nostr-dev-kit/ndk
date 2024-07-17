@@ -19,11 +19,11 @@ import { fetchEventFromTag } from "./fetch-event-from-tag.js";
 import { NDKAuthPolicy } from "../relay/auth-policies.js";
 import { Nip96 } from "../media/index.js";
 import { NDKNwc } from "../nwc/index.js";
-import { NDKLnUrlData, NDKZap, ZapConstructorParams } from "../zap/index.js";
 import { Queue } from "./queue/index.js";
 import { signatureVerificationInit } from "../events/signature.js";
 import { NDKSubscriptionManager } from "../subscription/manager.js";
 import { setActiveUser } from "./active-user.js";
+import { NDKLnUrlData, NDKZapper } from "../zapper/index.js";
 
 export interface NDKConstructorParams {
     /**
@@ -683,29 +683,28 @@ export class NDK extends EventEmitter<{
      * @param signer The signer to use (will default to the NDK instance's signer)
      */
     public async zap(
-        eventOrUser: NDKEvent | NDKUser,
+        target: NDKEvent | NDKUser,
         amount: number,
         comment?: string,
         extraTags?: NDKTag[],
-        recipient?: NDKUser,
-        signer?: NDKSigner
-    ): Promise<string | null> {
+        unit: string = "msat",
+        signer?: NDKSigner,
+    ): Promise<NDKZapper> {
         if (!signer) {
             this.assertSigner();
         }
 
-        let zapOpts: ZapConstructorParams;
+        const zapper = new NDKZapper(
+            target,
+            amount,
+            comment,
+            unit,
+            this,
+            extraTags,
+            signer,
+        )
 
-        if (eventOrUser instanceof NDKEvent) {
-            zapOpts = { ndk: this, zappedUser: eventOrUser.author, zappedEvent: eventOrUser };
-        } else if (eventOrUser instanceof NDKUser) {
-            zapOpts = { ndk: this, zappedUser: eventOrUser };
-        } else {
-            throw new Error("Invalid recipient");
-        }
-
-        const zap = new NDKZap(zapOpts);
-
-        return zap.createZapRequest(amount, comment, extraTags, undefined, signer);
+        zapper.zap();
+        return zapper;
     }
 }

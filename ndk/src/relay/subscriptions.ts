@@ -1,5 +1,5 @@
 import { EventEmitter } from "tseep";
-import type { Subscription, SubscriptionParams } from "nostr-tools";
+import type { Subscription, SubscriptionParams } from "nostr-tools/lib/types/abstract-relay.js";
 import { matchFilter } from "nostr-tools";
 
 import type { NDKRelay } from ".";

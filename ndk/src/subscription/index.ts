@@ -297,6 +297,8 @@ export class NDKSubscription extends EventEmitter<{
             }
         }
 
+        console.log("start", { wait: this.shouldWaitForCache(), queryRelays: this.shouldQueryRelays(), filters: this.filters });
+
         if (this.shouldQueryRelays()) {
             this.startWithRelays();
         } else {
@@ -341,10 +343,14 @@ export class NDKSubscription extends EventEmitter<{
             }
         }
 
+        console.log("start with relays", { relayFilters: this.relayFilters, filters: this.filters });
+
         // if relayset is empty, we can't start, log it
         if (!this.relayFilters || this.relayFilters.size === 0) {
             this.debug(`No relays to subscribe to (%d connected relays)`, this.pool.connectedRelays().length);
             return;
+        } else {
+            this.debug(`Subscribing to %d relays`, this.relayFilters.size, this.filters);
         }
 
         // iterate through the this.relayFilters
@@ -354,6 +360,7 @@ export class NDKSubscription extends EventEmitter<{
             const relay = this.pool.getRelay(relayUrl, true, true, filters);
             relay.subscribe(this, filters);
         }
+        console.log("finished iterating on the filters")
     }
 
     // EVENT handling

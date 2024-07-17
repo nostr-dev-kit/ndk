@@ -19,6 +19,7 @@ export * from "./events/kinds/subscriptions/amount.js";
 export * from "./events/kinds/subscriptions/subscription-start.js";
 export * from "./events/kinds/subscriptions/receipt.js";
 export * from "./events/kinds/dvm/index.js";
+export * from "./events/kinds/nutzap/mint-list.js";
 export * from "./nwc/index.js";
 
 export * from "./thread/index.js";
@@ -45,5 +46,6 @@ export { type NDKEventSerialized, deserialize, serialize } from "./events/serial
 export { NDK as default, NDKConstructorParams } from "./ndk/index.js";
 export { NDKZapInvoice, zapInvoiceFromEvent } from "./zap/invoice.js";
 export * from "./zap/index.js";
+export * from "./zapper/index.js";
 export * from "./utils/normalize-url.js";
 export * from "./utils/get-users-relay-list.js";

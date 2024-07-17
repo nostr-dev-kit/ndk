@@ -1,5 +1,8 @@
 <script lang="ts">
+    import type { UrlFactory } from "$lib";
+
     export let value: string = '';
+    export let urlFactory: UrlFactory;
 </script>
 
-<a href="/t/{value}" on:click>#{value}</a>
+<a href={urlFactory("hashtag", value)} class="hashtag" on:click>#{value}</a>

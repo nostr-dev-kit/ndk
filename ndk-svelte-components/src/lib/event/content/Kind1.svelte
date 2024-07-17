@@ -25,6 +25,7 @@
     import EventCard from '../EventCard.svelte';
     import { pluck, values, without } from 'ramda';
     import type { SvelteComponent } from 'svelte';
+    import type { UrlFactory } from '$lib';
     // import NoteContentEntity from "./NoteContentEntity.svelte"
 
     export let event, maxLength;
@@ -35,6 +36,7 @@
     export let content = event.content;
     export let mediaCollectionComponent: typeof SvelteComponent | undefined = undefined;
     export let eventCardComponent: typeof SvelteComponent = EventCard;
+    export let urlFactory: UrlFactory;
 
     export const getLinks = (parts: any[]) => pluck(
         "value",
@@ -58,7 +60,7 @@
             {#if type === NEWLINE}
                 <NoteContentNewline {value} />
             {:else if type === TOPIC}
-                <NoteContentTopic {value} />
+                <NoteContentTopic {value} {urlFactory} />
             {:else if type === LINK}
                 <NoteContentLink {value} {showMedia} />
             {:else if type === LINKCOLLECTION}
@@ -72,7 +74,7 @@
                     </div>
                 {/if}
             {:else if type.match(/^nostr:np(rofile|ub)$/)}
-                <NoteContentPerson {ndk} {value} on:click />
+                <NoteContentPerson {urlFactory} {ndk} {value} on:click />
             {:else if type.startsWith('nostr:') && showMedia && isStartOrEnd(i) && value.id !== anchorId}
                 <svelte:component this={eventCardComponent} {ndk} id={value.id??value.entity} relays={value.relays} />
             {:else if type.startsWith('nostr:')}

@@ -62,6 +62,8 @@ export enum NDKKind {
     GroupAdminRemoveUser = 9001,
     GroupAdminEditMetadata = 9002,
     GroupAdminEditStatus = 9006,
+    GroupAdminCreateGroup = 9007,
+    GroupAdminRequestJoin = 9021,
 
     // Lists and Sets
     MuteList = 10000,
@@ -133,10 +135,12 @@ export enum NDKKind {
     AppSpecificData = 30078,
     Classified = 30402,
     HorizontalVideo = 34235,
+    VerticalVideo = 34236,
 
     CashuWallet = 37375,
 
     GroupMetadata = 39000, // NIP-29
+    GroupAdmins = 39001, // NIP-29
     GroupMembers = 39002, // NIP-29
 
     // NIP-89: App Metadata

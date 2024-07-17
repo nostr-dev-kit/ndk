@@ -1,7 +1,7 @@
 import type { NDKEvent } from "../../events/index.js";
 import type { NDK } from "../../ndk/index.js";
 import { normalizeRelayUrl } from "../../utils/normalize-url.js";
-import { NDKRelay } from "../index.js";
+import { NDKRelay, NDKRelayStatus } from "../index.js";
 
 export class NDKPublishError extends Error {
     public errors: Map<NDKRelay, Error>;
@@ -72,13 +72,22 @@ export class NDKRelaySet {
      *
      * @param relayUrls - list of relay URLs to include in this set
      * @param ndk
+     * @param connect - whether to connect to the relay immediately if it was already in the pool but not connected
      * @returns NDKRelaySet
      */
-    static fromRelayUrls(relayUrls: string[], ndk: NDK): NDKRelaySet {
+    static fromRelayUrls(
+        relayUrls: string[],
+        ndk: NDK,
+        connect = true
+    ): NDKRelaySet {
         const relays = new Set<NDKRelay>();
         for (const url of relayUrls) {
             const relay = ndk.pool.relays.get(normalizeRelayUrl(url));
             if (relay) {
+                if (relay.status < NDKRelayStatus.CONNECTED && connect) {
+                    relay.connect();
+                }
+                
                 relays.add(relay);
             } else {
                 const temporaryRelay = new NDKRelay(normalizeRelayUrl(url), undefined, ndk);

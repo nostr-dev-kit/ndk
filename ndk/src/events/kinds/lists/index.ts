@@ -291,6 +291,47 @@ export class NDKList extends NDKEvent {
     }
 
     /**
+     * Removes an item from the list from both the encrypted and unencrypted lists.
+     * @param value value of item to remove from the list
+     * @param publish whether to publish the change
+     * @returns 
+     */
+    async removeItemByValue(
+        value: string,
+        publish = true
+    ): Promise<Set<NDKRelay> | void> {
+        if (!this.ndk) throw new Error("NDK instance not set");
+        if (!this.ndk.signer) throw new Error("NDK signer not set");
+
+        // check in unecrypted tags
+        const index = this.tags.findIndex((tag) => tag[1] === value);
+        if (index >= 0) {
+            this.tags.splice(index, 1);
+        }
+
+        // check in encrypted tags
+        const user = await this.ndk.signer.user();
+        const encryptedTags = await this.encryptedTags();
+
+        const encryptedIndex = encryptedTags.findIndex((tag) => tag[1] === value);
+        if (encryptedIndex >= 0) {
+            encryptedTags.splice(encryptedIndex, 1);
+            this._encryptedTags = encryptedTags;
+            this.encryptedTagsLength = this.content.length;
+            this.content = JSON.stringify(encryptedTags);
+            await this.encrypt(user);
+        }
+
+        if (publish) {
+            return this.publishReplaceable();
+        } else {
+            this.created_at = Math.floor(Date.now() / 1000);
+        }
+
+        this.emit("change");
+    }
+
+    /**
      * Removes an item from the list.
      *
      * @param index The index of the item to remove.

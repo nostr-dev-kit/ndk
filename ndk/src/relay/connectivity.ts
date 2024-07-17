@@ -70,6 +70,7 @@ export class NDKRelayConnectivity {
             if (authPolicy) {
                 if (this._status !== NDKRelayStatus.AUTHENTICATING) {
                     this._status = NDKRelayStatus.AUTHENTICATING;
+                    this.debug("Authenticating with policy: %s", challenge);
                     const res = await authPolicy(this.ndkRelay, challenge);
                     this.debug("Authentication policy returned", !!res);
 
@@ -83,16 +84,23 @@ export class NDKRelayConnectivity {
                         if (!this.ndk?.signer) {
                             throw new Error("No signer available for authentication");
                         } else if (this._status === NDKRelayStatus.AUTHENTICATING) {
-                            this.debug("Authentication policy finished");
-                            this.relay.auth(async (evt: EventTemplate): Promise<VerifiedEvent> => {
-                                const event = new NDKEvent(this.ndk, evt as NostrEvent);
-                                await event.sign();
-                                return event.rawEvent() as VerifiedEvent;
-                            });
-                            this._status = NDKRelayStatus.CONNECTED;
-                            this.ndkRelay.emit("authed");
+                            try {
+                                this.debug("Authentication policy finished");
+                                this.relay.auth(async (evt: EventTemplate): Promise<VerifiedEvent> => {
+                                    const event = new NDKEvent(this.ndk, evt as NostrEvent);
+                                    await event.sign();
+                                    return event.rawEvent() as VerifiedEvent;
+                                });
+                                this._status = NDKRelayStatus.CONNECTED;
+                                this.ndkRelay.emit("authed");
+                            } catch (e) {
+                                this._status = NDKRelayStatus.DISCONNECTED;
+                                this.ndkRelay.emit("delayed-connect", 10000);
+                            }
                         }
                     }
+                } else {
+                    this.debug("Status is ", this._status);
                 }
             } else {
                 this.ndkRelay.emit("auth", challenge);

@@ -6,6 +6,7 @@ export * from "./events/index.js";
 // Kinds
 export * from "./events/kinds/index.js";
 export * from "./events/kinds/article.js";
+export * from "./events/kinds/wiki.js";
 export * from "./events/kinds/classified.js";
 export * from "./events/kinds/video.js";
 export * from "./events/kinds/highlight.js";
@@ -25,6 +26,8 @@ export * from "./nwc/index.js";
 export * from "./thread/index.js";
 
 export * from "./events/kinds/simple-group/index.js";
+export * from "./events/kinds/simple-group/meta-data.js";
+export * from "./events/kinds/simple-group/member-list.js";
 
 export * from "./relay/index.js";
 export * from "./relay/auth-policies.js";

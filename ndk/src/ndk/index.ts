@@ -399,7 +399,7 @@ export class NDK extends EventEmitter<{
             connections.push(this.outboxPool.connect(timeoutMs));
         }
 
-        this.debug("Connecting to relays", { timeoutMs });
+        this.debug("Connecting to relays %o", { timeoutMs });
 
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         return Promise.allSettled(connections).then(() => {});
@@ -448,8 +448,7 @@ export class NDK extends EventEmitter<{
         // Signal to the relays that they are explicitly being used
         if (relaySet) {
             for (const relay of relaySet.relays) {
-                this.pool.useTemporaryRelay(relay);
-                this.debug("Adding temporary relay %s for filters %o", relay.url, filters);
+                this.pool.useTemporaryRelay(relay, undefined, subscription.filters);
             }
         }
 

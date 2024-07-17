@@ -28,6 +28,9 @@ import {
  * tier.addPerk("Access to my private content");
  */
 export class NDKSubscriptionTier extends NDKArticle {
+    static kind = NDKKind.SubscriptionTier;
+    static kinds = [NDKKind.SubscriptionTier];
+    
     constructor(ndk: NDK | undefined, rawEvent?: NostrEvent) {
         super(ndk, rawEvent);
         this.kind ??= NDKKind.SubscriptionTier;

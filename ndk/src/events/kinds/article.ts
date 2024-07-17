@@ -9,6 +9,9 @@ import { NDKKind } from "./index.js";
  * @group Kind Wrapper
  */
 export class NDKArticle extends NDKEvent {
+    static kind = NDKKind.Article;
+    static kinds = [NDKKind.Article];
+    
     constructor(ndk: NDK | undefined, rawEvent?: NostrEvent) {
         super(ndk, rawEvent);
         this.kind ??= NDKKind.Article;

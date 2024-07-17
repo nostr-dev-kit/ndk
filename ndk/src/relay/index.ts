@@ -16,12 +16,12 @@ import { NDK } from "../ndk/index.js";
 export type NDKRelayUrl = WebSocket["url"];
 
 export enum NDKRelayStatus {
-    CONNECTING,
-    CONNECTED,
     DISCONNECTING,
     DISCONNECTED,
     RECONNECTING,
     FLAPPING,
+    CONNECTING,
+    CONNECTED,
     AUTH_REQUIRED,
     AUTHENTICATING,
 }

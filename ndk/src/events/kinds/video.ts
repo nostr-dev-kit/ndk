@@ -8,6 +8,9 @@ import { ContentTag } from "../content-tagger";
  * @group Kind Wrapper
  */
 export class NDKVideo extends NDKEvent {
+    static kind = NDKKind.HorizontalVideo;
+    static kinds = [NDKKind.HorizontalVideo, NDKKind.VerticalVideo];
+    
     constructor(ndk: NDK | undefined, rawEvent?: NostrEvent) {
         super(ndk, rawEvent);
         this.kind ??= NDKKind.HorizontalVideo;

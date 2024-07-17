@@ -10,6 +10,10 @@ import EventThread from "./event/EventThread.svelte";
 
 export * from "./utils";
 
+export type UrlType = "hashtag" | "mention";
+
+export type UrlFactory = (type: UrlType, value: string) => string;
+
 export {
     // Event
     EventContent,

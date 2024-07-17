@@ -85,6 +85,9 @@ export class NDKPool extends EventEmitter<{
         if (!relayAlreadyInPool) {
             // console.trace("adding relay to pool", relay.url, filters);
             this.addRelay(relay);
+            this.debug("Adding temporary relay %s for filters %o", relay.url, filters);
+        } else {
+            this.debug("Reusing existing relay %s for filters %o", relay.url, filters);
         }
 
         // check if the relay already has a disconnecting timer
@@ -242,7 +245,7 @@ export class NDKPool extends EventEmitter<{
         temporary = false,
         filters?: NDKFilter[]
     ): NDKRelay {
-        let relay = this.relays.get(url);
+        let relay = this.relays.get(normalizeRelayUrl(url));
 
         if (!relay) {
             relay = new NDKRelay(url, undefined, this.ndk);

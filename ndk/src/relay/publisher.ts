@@ -45,7 +45,12 @@ export class NDKRelayPublisher {
         let connectResolve: (value: boolean | PromiseLike<boolean>) => void;
         let connectReject: (reason?: any) => void;
 
-        if (this.ndkRelay.status === NDKRelayStatus.CONNECTED) {
+        const publishAllowedStates = [
+            NDKRelayStatus.CONNECTED,
+            NDKRelayStatus.AUTHENTICATING,
+        ];
+        
+        if (publishAllowedStates.includes(this.ndkRelay.status)) {
             return Promise.race([publishWhenConnected(), timeoutPromise]);
         } else {
             return Promise.race([

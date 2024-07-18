@@ -136,7 +136,7 @@ export class NDKUser {
             cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE, groupable: false
         });
 
-        if (events.size === 0) {
+        if (events.size < methods.length) {
             events = await this.ndk.fetchEvents({ kinds, authors: [this.pubkey] }, {
                 cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY
             });
@@ -149,6 +149,7 @@ export class NDKUser {
 
         if (nip61) {
             const mintList = NDKCashuMintList.from(nip61);
+            console.log("Mint list", mintList.rawEvent());
 
             if (mintList.mints.length > 0) {
                 res.push({
@@ -159,16 +160,22 @@ export class NDKUser {
 
             // if we are just getting one and already have one, go back
             if (!getAll) return res;
+        } else {
+            console.log("No NIP-61 found");
         }
 
         if (nip57) {
             const profile = profileFromEvent(nip57);
             const { lud06, lud16 } = profile;
             console.log("lud06", lud06, "lud16", lud16, profile, nip57.rawEvent());
-            const zapSpec = await getNip57ZapSpecFromLud({lud06, lud16}, this.ndk);
-
-            if (zapSpec) {
-                res.push({ type: "nip57", data: zapSpec });
+            try {
+                const zapSpec = await getNip57ZapSpecFromLud({lud06, lud16}, this.ndk);
+    
+                if (zapSpec) {
+                    res.push({ type: "nip57", data: zapSpec });
+                }
+            } catch (e) {
+                console.error("Error getting NIP-57 zap spec", e);
             }
         }
 
@@ -210,7 +217,7 @@ export class NDKUser {
                 await this.fetchProfile({ groupable: false });
                 if (this.profile) {
                     const { lud06, lud16 } = this.profile;
-                    lnurlspec = await getNip57ZapSpecFromLud({lud06, lud16}, ndk);
+                    lnurlspec = await getNip57ZapSpecFromLud({lud06, lud16}, ndk!);
                 }
             } catch {}
 

@@ -43,6 +43,12 @@ export class NDKCashuToken extends NDKEvent {
         return super.toNostrEvent(pubkey);
     }
 
+    get walletId(): string | undefined {
+        const aTag = this.tags.find(([tag]) => tag === "a");
+        if (!aTag) return;
+        return aTag[1]?.split(":")[2];
+    }
+
     set wallet(wallet: NDKCashuWallet) {
         this.tags.push(["a", wallet.tagId()])
     }

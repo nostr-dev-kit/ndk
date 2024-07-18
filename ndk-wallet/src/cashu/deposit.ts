@@ -12,7 +12,10 @@ function randomMint(wallet: NDKCashuWallet) {
     return mint;
 }
 
-export class NDKCashuDeposit extends EventEmitter {
+export class NDKCashuDeposit extends EventEmitter<{
+    success: (token: NDKCashuToken) => void,
+    error: (error: string) => void,
+}> {
     private mint: string;
     public amount: number;
     public quoteId: string | undefined;
@@ -21,17 +24,20 @@ export class NDKCashuDeposit extends EventEmitter {
     public checkTimeout: NodeJS.Timeout | undefined;
     public checkIntervalLength = 2500;
     public finalized = false;
+    public unit?: string;
     
     constructor(
         wallet: NDKCashuWallet,
         amount: number,
-        mint?: string
+        mint?: string,
+        unit?: string
     ) {
         super();
         this.wallet = wallet;
         this.mint = mint ?? randomMint(wallet);
         this.amount = amount;
-        this._wallet = new CashuWallet(new CashuMint(this.mint));
+        this.unit = unit;
+        this._wallet = new CashuWallet(new CashuMint(this.mint), { unit });
     }
 
     async start() {
@@ -86,7 +92,8 @@ export class NDKCashuDeposit extends EventEmitter {
             ret = await this._wallet.mintTokens(this.amount, this.quoteId);
             if (!ret?.proofs) return;
         } catch (e: any) {
-            console.log(e.message);
+            if (e.message.match(/not paid/i)) return;
+            d(e.message);
             return;
         }
 

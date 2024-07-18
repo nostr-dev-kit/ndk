@@ -1,10 +1,30 @@
-import NDK, { NDKCashuMintList, getRelayListForUser, NDKKind, NDKRelay, NDKRelaySet, NDKUser } from "@nostr-dev-kit/ndk";
+import NDK, { NDKCashuMintList, getRelayListForUser, NDKKind, NDKRelay, NDKRelaySet, NDKUser, NDKEvent, NDKSubscription, NDKEventId } from "@nostr-dev-kit/ndk";
 import {NDKCashuWallet} from "../cashu/wallet.js";
+import { EventEmitter } from "tseep";
+import createDebug from "debug";
+import NDKWalletLifecycle from "./lifecycle/index.js";
+import { MintUrl } from "../cashu/mint/utils.js";
+import { NDKCashuToken } from "../cashu/token.js";
 
-class NDKWallet {
+const d = createDebug("ndk-wallet:wallet");
+
+class NDKWallet extends EventEmitter<{
+    /**
+     * New default was has been established
+     * @param wallet 
+     */
+    "wallet:default": (wallet: NDKCashuWallet) => void,
+    "mintlist": (mintList: NDKCashuMintList) => void,
+    "wallet": (wallet: NDKCashuWallet) => void,
+    "wallets": () => void,
+    "wallet:balance": (wallet: NDKCashuWallet) => void,
+}> {
     private ndk: NDK;
+    
+    private lifecycle: NDKWalletLifecycle | undefined;
 
     constructor(ndk: NDK) {
+        super();
         this.ndk = ndk;
     }
 
@@ -12,65 +32,70 @@ class NDKWallet {
         return new NDKCashuWallet(this.ndk);
     }
 
-    public async fetchAllTokens() {
-        
+    /**
+     * Starts monitoring changes for the user's wallets
+     */
+    public start(user?: NDKUser) {
+        this.lifecycle = new NDKWalletLifecycle(this, this.ndk, user ?? this.ndk.activeUser!);
+        this.lifecycle.start();
     }
 
-    public async fetchUserWallets(user?: NDKUser) {
-        user ??= this.ndk.activeUser;
-        if (!user) throw new Error("No user provided or active user set.");
+    /**
+     * Publishes the mint list tying to a specific wallet
+     */
+    async setMintList(wallet: NDKCashuWallet) {
+        const mintList = new NDKCashuMintList(this.ndk);
+        mintList.relays = wallet.relays;
+        mintList.mints = wallet.mints;
+        mintList.p2pkPubkey = await wallet.getP2pk();
+        return mintList.publish();
+    }
 
-        // Fetch mint list for the user
-        const _event = await this.ndk.fetchEvent({
-            kinds: [NDKKind.CashuMintList],
-            authors: [user.pubkey],
-        });
-        let relaySet: NDKRelaySet | undefined;
-        let listEvent: NDKCashuMintList | undefined;
-        if (_event) {
-            listEvent = NDKCashuMintList.from(_event);
-            relaySet = listEvent.relaySet;
+    /**
+     * Get a list of the current wallets of this user.
+     */
+    get wallets(): NDKCashuWallet[] {
+        if (!this.lifecycle) return [];
+        return Array.from(this.lifecycle.wallets.values());
+    }
+
+    async transfer(
+        wallet: NDKCashuWallet,
+        fromMint: MintUrl,
+        toMint: MintUrl,
+    ) {
+        const balanceInMint = wallet.mintBalance(fromMint);
+
+        if (balanceInMint < 4) {
+            throw new Error("insufficient balance in mint:" + fromMint);
         }
+        
+        const deposit = wallet.deposit(balanceInMint-3, toMint);
 
-        const relayList = await getRelayListForUser(user.pubkey, this.ndk);
-        if (relayList && relayList.writeRelayUrls.length > 0) {
-            if (!relaySet) relaySet = new NDKRelaySet(new Set(), this.ndk);
+        return new Promise<NDKCashuToken>(async (resolve, reject) => {
+            d("starting deposit from %s to %s", fromMint, toMint);
+            deposit.on("success", (token: NDKCashuToken) => {
+                d("deposit success");
+                this.emit("wallet:balance", wallet);
+                resolve(token);
+            });
+            deposit.on("error", (error: string) => {
+                d("deposit error: %s", error);
+                reject(error);
+            });
             
-            for (const url of relayList.writeRelayUrls) {
-                const relay = this.ndk.pool.getRelay(url, true, true);
-                relaySet.addRelay(relay);
+            // generate pr
+            const pr = await deposit.start();
+            d("deposit pr: %s", pr);
+            if (!pr) {
+                reject("deposit failed to start");
+                return;
             }
-        }
 
-        // fetch all wallets from the discovered relay set
-        const wallets: NDKCashuWallet[] = [];
-        const walletEvents = await this.ndk.fetchEvents(
-            { kinds: [NDKKind.CashuWallet], authors: [user.pubkey]}, {
-                groupable: false,
-            }, relaySet
-        )
-
-        for (const event of walletEvents) {
-            const wallet = await NDKCashuWallet.from(event);
-            wallets.push(wallet);
-        }
-
-        // if we have a pubkey in the list, check which wallet has the corresponding pubkey and set that one as the first one
-        if (listEvent?.p2pkPubkey) {
-            console.log('reordering wallets based on pubkey', listEvent.p2pkPubkey);
-            for (const wallet of wallets) {
-                const p2pkPubkey = await wallet.getP2pk();
-                console.log('checking wallet', p2pkPubkey, listEvent.p2pkPubkey);
-                if (p2pkPubkey === listEvent.p2pkPubkey) {
-                    console.log('found wallet', wallet.dTag);
-                    wallets.splice(wallets.indexOf(wallet), 1);
-                    wallets.unshift(wallet);
-                    break;
-                }
-            }
-        }
-
-        return wallets;
+            const paymentRes = await wallet.lnPay(pr, fromMint);
+            d("payment result: %o", paymentRes);
+            
+        });
     }
 }
 

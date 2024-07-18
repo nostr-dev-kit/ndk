@@ -622,7 +622,7 @@ export class NDKEvent extends EventEmitter {
             kind: NDKKind.EventDeletion,
             content: reason || "",
         } as NostrEvent);
-        e.tag(this);
+        e.tag(this, undefined, true);
         if (publish) await e.publish();
 
         return e;

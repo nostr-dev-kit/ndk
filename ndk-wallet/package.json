@@ -41,7 +41,8 @@
         "@cashu/cashu-ts": "1.0.0-rc.9",
         "@nostr-dev-kit/ndk": "workspace:*",
         "tseep": "^1.1.1",
-        "typescript": "^5.4.4"
+        "typescript": "^5.4.4",
+        "debug": "^4.3.4"
     },
     "devDependencies": {
         "@nostr-dev-kit/eslint-config-custom": "workspace:*",
@@ -49,7 +50,6 @@
         "@types/debug": "^4.1.7",
         "@types/jest": "^29.5.5",
         "@types/node": "^18.15.11",
-        "debug": "^4.3.5",
         "jest": "^29.7.0",
         "ts-jest": "^29.1.2",
         "ts-node": "^10.9.2",

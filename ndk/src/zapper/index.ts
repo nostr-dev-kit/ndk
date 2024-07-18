@@ -170,6 +170,8 @@ class NDKZapper {
         const zapMethod = await this.getZapMethod(this.ndk, split.pubkey);
         let ret: NDKZapConfirmation;
 
+        d("Zapping to", split.pubkey, "with", split.amount, "msat using", zapMethod.type);
+
         switch (zapMethod.type) {
             case "nip61": {
                 const data = zapMethod.data as NutPaymentInfo;
@@ -232,7 +234,7 @@ class NDKZapper {
             event: null,
             amount,
             comment: comment || "",
-            relays
+            relays: relays.slice(0, 4)
         });
 
         // add the event tag if it exists; this supports both 'e' and 'a' tags
@@ -242,7 +244,7 @@ class NDKZapper {
             zapRequest.tags.push(...nonPTags);
         }
 
-        zapRequest.tags.push(["lnurl", zapEndpoint]);
+        // zapRequest.tags.push(["lnurl", zapEndpoint]);
 
         const event = new NDKEvent(this.ndk, zapRequest as NostrEvent);
         if (extraTags) {
@@ -336,6 +338,8 @@ class NDKZapper {
         if (this.onNutPay) methods.push("nip61")
         if (this.onLnPay) methods.push("nip57")
 
+        d("Available zap methods", methods);
+
         if (methods.length === 0) {
             d("No zap methods available");
             throw new Error("No zap methods available");
@@ -343,6 +347,8 @@ class NDKZapper {
         
         const user = ndk.getUser({pubkey})
         const zapInfo = await user.getZapInfo(false, methods);
+
+        d("Zap info", zapInfo);
         
         return zapInfo[0];
     }

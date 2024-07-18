@@ -40,7 +40,7 @@ async function payNutWithMintBalance(
 
     if (mintsWithEnoughBalance.length === 0) {
         pay.debug("no mints with enough balance to satisfy amount %d", amount);
-        return;
+        throw new Error("insufficient balance");
     }
 
     for (const mint of mintsWithEnoughBalance) {
@@ -49,6 +49,7 @@ async function payNutWithMintBalance(
 
         if (!selection) {
             pay.debug("failed to find proofs for amount %d", amount);
+            throw new Error("insufficient balance");
             continue;
         }
 
@@ -61,16 +62,14 @@ async function payNutWithMintBalance(
             rollOverProofs(selection, res.returnChange, mint, pay.wallet);
 
             return { proofs: res.send, mint };
-        } catch (e) {
-            pay.debug("failed to pay with mint %s using proofs %o", mint, selection.usedProofs);
+        } catch (e: any) {
+            pay.debug("failed to pay with mint %s using proofs %o: %s", mint, selection.usedProofs, e.message);
             rollOverProofs(selection, [], mint, pay.wallet);
+            throw new Error("failed to pay with mint " + e?.message);
             return;
         }
     }
 
     pay.debug("failed to pay with any mint");
-}
-
-export {
-
+    throw new Error("failed to find a mint with enough balance");
 }

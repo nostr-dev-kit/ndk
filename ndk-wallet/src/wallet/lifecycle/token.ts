@@ -3,20 +3,14 @@ import { NDKCashuToken } from "../../cashu/token";
 import NDKWalletLifecycle from ".";
 import { NDKCashuWallet } from "../../cashu/wallet";
 
-function handleToken(
+async function handleToken(
     this: NDKWalletLifecycle,
     event: NDKEvent
 ) {
     if (this.knownTokens.has(event.id)) return;
     this.knownTokens.add(event.id);
     
-    const token = NDKCashuToken.from(event);
-
-    for (const proof of token.proofs) {
-        if (proof.id === "9mlfd5vCzgG") {
-            console.log("👉 FOUND PROOF 9mlfd5vCzgG", event.rawEvent(), event.onRelays, event.relay)
-        }
-    }
+    const token = await NDKCashuToken.from(event);
     
     const walletId = token.walletId;
     let wallet: NDKCashuWallet | undefined;

@@ -1,13 +1,13 @@
 import { EventEmitter } from "tseep";
 
 import { NDKEvent, NDKEventId } from "../events/index.js";
-import type { NDKKind } from "../events/kinds/index.js";
 import type { NDK } from "../ndk/index.js";
 import { NDKRelay } from "../relay";
 import type { NDKPool } from "../relay/pool/index.js";
 import { calculateRelaySetsFromFilters } from "../relay/sets/calculate";
 import type { NDKRelaySet } from "../relay/sets/index.js";
 import { queryFullyFilled } from "./utils.js";
+import { NDKKind } from "../events/kinds/index.js";
 
 export type NDKFilter<K extends number = NDKKind> = {
     ids?: string[];

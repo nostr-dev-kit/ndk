@@ -44,7 +44,7 @@ export class NDKWalletChange extends NDKEvent {
         const unencryptedTags: NDKTag[] = [];
 
         for (const tag of this.tags) {
-            if (!this.shouldEncrypt(tag)) { unencryptedTags.push(tag); }
+            if (!this.shouldEncryptTag(tag)) { unencryptedTags.push(tag); }
             else { encryptedTags.push(tag); }
         }
 
@@ -58,7 +58,14 @@ export class NDKWalletChange extends NDKEvent {
         return super.toNostrEvent(pubkey) as unknown as NostrEvent;
     }
 
-    private shouldEncrypt(tag: NDKTag): boolean {
+    /**
+     * Whether this entry includes a redemption of a Nutzap
+     */
+    get hasNutzapRedemption(): boolean {
+        return this.getMatchingTags("e", MARKERS.REDEEMED).length > 0;
+    }
+
+    private shouldEncryptTag(tag: NDKTag): boolean {
         const unencryptedTagNames = [ "d", "client", "a" ];
         if (unencryptedTagNames.includes(tag[0])) { return false; }
 

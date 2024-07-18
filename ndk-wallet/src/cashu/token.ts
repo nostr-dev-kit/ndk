@@ -1,5 +1,5 @@
 import { MintKeys, type Proof } from "@cashu/cashu-ts";
-import NDK, { NDKEvent, NDKKind, NostrEvent } from "@nostr-dev-kit/ndk";
+import NDK, { NDKEvent, NDKKind, NDKRelay, NDKRelaySet, NostrEvent } from "@nostr-dev-kit/ndk";
 import { NDKCashuWallet } from "./wallet";
 
 export function proofsTotalBalance(proofs: Proof[]): number {
@@ -14,14 +14,22 @@ export function proofsTotalBalance(proofs: Proof[]): number {
 
 export class NDKCashuToken extends NDKEvent {
     public proofs: Proof[] = [];
+    private original: NDKEvent | undefined;
 
-    constructor(ndk?: NDK, event?: NostrEvent) {
+    constructor(ndk?: NDK, event?: NostrEvent | NDKEvent) {
         super(ndk, event);
         this.kind ??= NDKKind.CashuToken;
     }
 
-    static from(event: NDKEvent) {
-        const token = new NDKCashuToken(event.ndk, event.rawEvent());
+    static async from(event: NDKEvent) {
+        const token = new NDKCashuToken(event.ndk, event);
+
+        token.original = event;
+        try {
+            await token.decrypt();
+        } catch {
+            token.content = token.original.content;
+        }
 
         try {
             const content = JSON.parse(token.content);
@@ -40,6 +48,10 @@ export class NDKCashuToken extends NDKEvent {
         this.content = JSON.stringify({
             proofs: this.proofs
         });
+
+        const user = await this.ndk!.signer!.user();
+        await this.encrypt(user);
+        
         return super.toNostrEvent(pubkey);
     }
 
@@ -64,6 +76,18 @@ export class NDKCashuToken extends NDKEvent {
 
     get amount(): number {
         return proofsTotalBalance(this.proofs);
+    }
+
+    public async publish(
+        relaySet?: NDKRelaySet,
+        timeoutMs?: number,
+        requiredRelayCount?: number
+    ): Promise<Set<NDKRelay>> {
+        if (this.original) {
+            return this.original.publish(relaySet, timeoutMs, requiredRelayCount);
+        } else {
+            return super.publish(relaySet, timeoutMs, requiredRelayCount);
+        }
     }
 }
 

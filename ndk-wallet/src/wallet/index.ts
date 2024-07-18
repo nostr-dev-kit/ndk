@@ -35,7 +35,9 @@ class NDKWallet extends EventEmitter<{
     /**
      * Starts monitoring changes for the user's wallets
      */
-    public start(user?: NDKUser) {
+    public start(
+        user?: NDKUser
+    ) {
         this.lifecycle = new NDKWalletLifecycle(this, this.ndk, user ?? this.ndk.activeUser!);
         this.lifecycle.start();
     }

@@ -7,26 +7,32 @@ import handleEventDeletion from "./deletion.js";
 import { NDKCashuWallet } from "../../cashu/wallet.js";
 import { NDKCashuToken } from "../../cashu/token.js";
 import createDebug from "debug";
+import { NDKWalletChange } from "../../cashu/history.js";
+import NutzapHandler from "./nutzap.js";
 
 class NDKWalletLifecycle {
-    private wallet: NDKWallet;
+    public wallet: NDKWallet;
     private sub: NDKSubscription | undefined;
     public eosed = false;
-    private ndk: NDK;
+    public ndk: NDK;
     private user: NDKUser;
     public _mintList: NDKCashuMintList | undefined;
     public wallets = new Map<string, NDKCashuWallet>();
+    public walletsByP2pk = new Map<string, NDKCashuWallet>();
     public defaultWallet: NDKCashuWallet | undefined;
     private tokensSub: NDKSubscription | undefined;
     public orphanedTokens = new Map<string, NDKCashuToken>();
     public knownTokens = new Set<NDKEventId>();
     public tokensSubEosed = false;
     public debug = createDebug("ndk-wallet:lifecycle");
+
+    public nutzap: NutzapHandler;
     
     constructor(wallet: NDKWallet, ndk: NDK, user: NDKUser) {
         this.wallet = wallet;
         this.ndk = ndk;
         this.user = user;
+        this.nutzap = new NutzapHandler(this);
     }
 
     public start() {
@@ -61,6 +67,12 @@ class NDKWalletLifecycle {
                 break;
             case NDKKind.EventDeletion:
                 handleEventDeletion.bind(this, event).call(this);
+                break;
+            case NDKKind.Nutzap:
+                this.nutzap.addNutzap(event);
+                break;
+            case NDKKind.WalletChange:
+                NDKWalletChange.from(event).then((wc) => this.nutzap.addWalletChange(wc));
         }
     }
 
@@ -88,6 +100,8 @@ class NDKWalletLifecycle {
         this.tokensSub = this.ndk.subscribe([
             { kinds: [NDKKind.CashuToken], authors: [this.user!.pubkey] },
             { kinds: [NDKKind.EventDeletion], authors: [this.user!.pubkey], limit: 0 },
+            { kinds: [NDKKind.WalletChange], authors: [this.user!.pubkey], limit: 100 },
+            { kinds: [NDKKind.Nutzap], "#p": [this.user!.pubkey] },
         ], {
             subId: 'ndk-wallet-tokens',
             groupable: false,
@@ -100,6 +114,7 @@ class NDKWalletLifecycle {
 
     private tokensSubEose() {
         this.tokensSubEosed = true;
+        this.nutzap.eosed = true;
     }
 
     // private handleMintList = handleMintList.bind
@@ -118,6 +133,18 @@ class NDKWalletLifecycle {
             this.defaultWallet = w;
             this.emit("wallet:default", w);
         }
+    }
+
+    /**
+     * Track when is the most recently redeemed nutzap redemption
+     * so we know when to start processing nutzaps
+     */
+    public latestNutzapRedemptionAt: number = 0;
+
+    public addNutzapRedemption(event: NDKWalletChange) {
+        if (this.latestNutzapRedemptionAt && this.latestNutzapRedemptionAt > event.created_at!) return;
+
+        this.latestNutzapRedemptionAt = event.created_at!;
     }
 }
 

@@ -282,12 +282,17 @@ export class NDKCashuWallet extends NDKEvent {
 
         d("publishing nutzap %o", nutzapEvent.rawEvent());
         
-        nutzapEvent.publish();
+        nutzapEvent.publish().catch(e => {
+            console.error("failed to publish nutzap", e, nutzapEvent.rawEvent());
+        });
 
         if (relays.length > 0) {
             const relaySet = NDKRelaySet.fromRelayUrls(relays, this.ndk!);
             d("relaying nutzap to %o", relaySet);
-            nutzapEvent.publish(relaySet);
+            nutzapEvent.publish(relaySet)
+                .catch(e => {
+                    console.error("failed to relay nutzap to relay Set", e, nutzapEvent.rawEvent(), relaySet.relayUrls);
+                });
         }
     
         return nutzapEvent;
@@ -373,6 +378,44 @@ export class NDKCashuWallet extends NDKEvent {
         }
     }
 
+    /**
+     * Generates a new token event with proofs to be stored for this wallet
+     * @param proofs Proofs to be stored
+     * @param mint Mint URL
+     * @param nutzap Nutzap event if these proofs are redeemed from a nutzap
+     * @returns 
+     */
+    async saveProofs(
+        proofs: Proof[],
+        mint: MintUrl,
+        nutzap?: NDKEvent
+    ) {
+        const tokenEvent = new NDKCashuToken(this.ndk);
+        tokenEvent.proofs = proofs;
+        tokenEvent.mint = mint;
+        tokenEvent.wallet = this;
+        await tokenEvent.sign();
+
+        // we can add it to the wallet here
+        this.addToken(tokenEvent);
+        
+        tokenEvent.publish(this.relaySet)
+            .catch(e => {
+                console.error("failed to publish token", e, tokenEvent.rawEvent());
+            });
+        
+        if (nutzap) {
+            const historyEvent = new NDKWalletChange(this.ndk);
+            historyEvent.addRedeemedNutzap(nutzap);
+            historyEvent.tag(this);
+            historyEvent.tag(tokenEvent, NDKWalletChange.MARKERS.CREATED);
+            await historyEvent.sign();
+            historyEvent.publish(this.relaySet);
+        }
+            
+        return tokenEvent;
+    }
+
     public addToken(token: NDKCashuToken) {
         if (!this.knownTokens.has(token.id)) {
             d("received event %o", token.rawEvent());
@@ -408,7 +451,7 @@ export class NDKCashuWallet extends NDKEvent {
          * Add the token to the wallet if it's not already known
          */
         const handleTokenEvent = async (event: NDKEvent) => {
-            const token = NDKCashuToken.from(event);
+            const token = await NDKCashuToken.from(event);
             this.addToken(token);
         };
 
@@ -525,6 +568,5 @@ export class NDKCashuWallet extends NDKEvent {
     ) {
         const wallet = new CashuWallet(new CashuMint(mint));
         const quote = await wallet.mintQuote(amount);
-
     }
 }

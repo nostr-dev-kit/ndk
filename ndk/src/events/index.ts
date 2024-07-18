@@ -66,7 +66,7 @@ export class NDKEvent extends EventEmitter {
     public publishStatus?: "pending" | "success" | "error" = "success";
     public publishError?: Error;
 
-    constructor(ndk?: NDK, event?: NostrEvent) {
+    constructor(ndk?: NDK, event?: NostrEvent | NDKEvent) {
         super();
         this.ndk = ndk;
         this.created_at = event?.created_at;
@@ -76,6 +76,13 @@ export class NDKEvent extends EventEmitter {
         this.sig = event?.sig;
         this.pubkey = event?.pubkey || "";
         this.kind = event?.kind;
+
+        if (event instanceof NDKEvent) {
+            this.relay = event.relay;
+            this.onRelays = event.onRelays;
+            this.publishStatus = event.publishStatus;
+            this.publishError = event.publishError;
+        }
     }
 
     /**

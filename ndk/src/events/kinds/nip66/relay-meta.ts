@@ -1,7 +1,8 @@
-import { NDKEvent } from "../../index.js";
+import type { NDKEvent } from "../../index.js";
 import { NDKKind } from "../index.js";
 import type { NDK } from "../../../ndk/index.js";
 import type { NostrEvent } from "../../index.js";
+import { NDKRelayDiscovery } from "./relay-discovery.js";
 
 export type RelayMetaParsed = Record<string, RelayMetaData> | undefined 
 export type RelayMetaParsedAll = Record<string, RelayMetaParsed>
@@ -29,7 +30,7 @@ const REGEX_GEOHASH: RegExp = /^[0-9b-hjkmnp-z]{1,12}$/;
  * @summary NIP-66 NDKRelayMeta
  * @extends NDKEvent
  */
-export class NDKRelayMeta extends NDKEvent {
+export class NDKRelayMeta extends NDKRelayDiscovery {
     static readonly groups = ['other', 'rtt', 'nip11', 'dns', 'geo', 'ssl', 'counts'];
 
     constructor(ndk: NDK | undefined, rawEvent?: NostrEvent) {

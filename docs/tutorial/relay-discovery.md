@@ -95,7 +95,7 @@ const offline = await ndk.fetchEvents(nearestMonitor.nip66Filter(NDKKinds.RelayD
 _For filtering offline relays, the nip66Filter returns a filter that includes an `until` value that is the cutoff for what is considered "online" and a since value that is the cutoff for what is considered "dead"._
 
 ```js
-const offline = await ndk.fetchEvents(nearestMonitor.nip66Filter(NDKKinds.RelayDiscovery, undefined, undefined, "offline"))
+const offline = await ndk.fetchEvents(nearestMonitor.nip66Filter(NDKKinds.RelayDiscovery, undefined, undefined, "dead"))
 ```
 _For filtering dead relays, the nip66Filter returns a filter that includes an `until` value that is the cutoff for what is considered "offline"._
 

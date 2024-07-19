@@ -16,7 +16,7 @@ const fetchNearbyFilterDefault: FetchNearbyFilter = async (evs: Set<NDKEventGeoC
 
 const fetchNearbyOptionDefaults: FetchNearbyOptions = {
     maxPrecision: 7, 
-    minPrecision: 4, 
+    minPrecision: 3, 
     recurse: false,
     minResults: 5, 
     callbackFilter: fetchNearbyFilterDefault

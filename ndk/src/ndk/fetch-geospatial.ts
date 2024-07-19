@@ -15,7 +15,7 @@ export type FetchNearbyOptions = {
 const fetchNearbyFilterDefault: FetchNearbyFilter = async (evs: Set<NDKEventGeoCoded>)=>evs; 
 
 const fetchNearbyOptionDefaults: FetchNearbyOptions = {
-    maxPrecision: 9, 
+    maxPrecision: 7, 
     minPrecision: 4, 
     recurse: false,
     minResults: 5, 

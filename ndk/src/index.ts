@@ -26,7 +26,9 @@ export * from "./thread/index.js";
 export * from "./events/kinds/simple-group/index.js";
 
 export * from "./events/kinds/nip66/index.js";
+
 export * from "./events/geocoded.js";
+export * from "./utils/geohash.js";
 
 export * from "./relay/index.js";
 export * from "./relay/auth-policies.js";

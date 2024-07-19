@@ -130,9 +130,9 @@ export enum NDKKind {
     GroupMembers = 39002, // NIP-29
 
     // NIP-66: Relay Monitors, Metadata and Discovery 
-    RelayMonitor = 10166,
-    RelayMeta = 30066,
-    RelayDiscovery = 30166,
+    NDKRelayMonitor = 10166,
+    NDKRelayMeta = 30066,
+    NDKRelayDiscovery = 30166,
 
     // NIP-89: App Metadata
     AppRecommendation = 31989,

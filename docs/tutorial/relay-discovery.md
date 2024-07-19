@@ -9,16 +9,17 @@ There are many approaches to using NIP-66. Below is a linear example of how to u
 
 ## Setup 
 ```js
-import { RelayMonitor, RelayDiscovery, RelayMeta } from '@nostr-dev-kit/ndk'
+import { NDKRelayMonitor, NDKRelayDiscovery, NDKRelayMeta } from '@nostr-dev-kit/ndk'
 ```
 
 ## Relay Monitors
 
 ### Find monitors from the nostr.watch relay
 ```js
+import NDK, { NDKKind, NDKRelayMonitor, NDKRelayMeta, NDKRelayDiscovery } from '@nostr-dev-kit/ndk'
 const ndk = new NDK({explicitRelayUrls: 'wss://history.nostr.watch'})
 await ndk.connect()
-const monitors = Array.from(await ndk.fetchEvents({kinds:10133})).map(e => RelayMonitor.from(e))
+const monitors = Array.from(await ndk.fetchEvents({kinds:NDKKind.RelayMonitor})).map(e => NDKRelayMonitor.from(e))
 ```
 
 ### Show some information about each monitor
@@ -46,42 +47,87 @@ monitors.forEach( async (monitor) => {
 
 ### Reduce list of monitors to only those that publish both `30166` and `30066`
 ```js
-const monitorsBothKinds = activeMonitors.filter( monitor => monitor.meetsCriterias({kinds: [30166,30066]}))
+const monitorsBothKinds = activeMonitors.filter( monitor => monitor.meetsCriterias({kinds: [30166,30066], checks:['geo', 'nip11', 'rtt']}))
 ```
 
 ### Select the nearest monitor 
 ```js
-const monitorsSortedByDistance = RelayMonitor.sortGeospatial("gbsuv", new Set(monitorsBothKinds))
+const monitorsSortedByDistance = NDKRelayMonitor.sortGeospatial("gbsuv", new Set(monitorsBothKinds))
 const nearestMonitor = Array.from(monitorsSortedByDistance)?.[0] || monitors?.[0] || null
 if(!nearestMonitor) throw new Error("No monitors found")  
 ```
 
 ## Relay Discovery
+`NDKRelayDiscovery` provides a static helper function to generate a filter. This method exists to calculate since (and potentially until) values based on the monitor's publishing frequency. Events published within this frequency are considered "online".
 
 ### Online Relays 
 ```js
-const onlineRelays = ndk.fetchEvents(nearestMonitor.nip66Filter("30166"))
+const onlineRelays = await ndk.fetchEvents(nearestMonitor.nip66Filter(NDKKinds.RelayDiscovery))
 ```
 Please see (note)[#important] below for caveats. 
 
 ### Find some relays that support NIP-45
 ```js
-const nip45Relays = ndk.fetchEvents(nearestMonitor.nip66Filter("30166", { "#N": ["45"] }))
+const nip45Relays = await ndk.fetchEvents(nearestMonitor.nip66Filter(NDKKinds.RelayDiscovery, { "#N": ["45"] }))
 ```
 
 ### Find paid relays 
 ```js
-const paidRelays = ndk.fetchEvents(nearestMonitor.nip66Filter("30166", { "#R": ["payment"] }))
+const paidRelays = await ndk.fetchEvents(nearestMonitor.nip66Filter(NDKKinds.RelayDiscovery, { "#R": ["payment"] }))
 ```
 
 ### Find relays without auth requirement
 ```js
-const noAuthRelays = ndk.fetchEvents(nearestMonitor.nip66Filter("30166", { "#R": ["!auth"] }))
+const noAuthRelays = await ndk.fetchEvents(nearestMonitor.nip66Filter(NDKKinds.RelayDiscovery, { "#R": ["!auth"] }))
 ```
 
 ### Find relays without payment requirement
 ```js
-const notPaidRelays = ndk.fetchEvents(nearestMonitor.nip66Filter("30166", { "#R": ["!payment"] }))
+const notPaidRelays = await ndk.fetchEvents(nearestMonitor.nip66Filter(NDKKinds.RelayDiscovery, { "#R": ["!payment"] }))
+```
+
+### Offline and dead relays 
+The ability to identify which relays are offline and dead is made possible by the `liveness` argument of the `nip66Filter`. 
+
+```js
+const offline = await ndk.fetchEvents(nearestMonitor.nip66Filter(NDKKinds.RelayDiscovery, undefined, undefined, "offline"))
+```
+_For filtering offline relays, the nip66Filter returns a filter that includes an `until` value that is the cutoff for what is considered "online" and a since value that is the cutoff for what is considered "dead"._
+
+```js
+const offline = await ndk.fetchEvents(nearestMonitor.nip66Filter(NDKKinds.RelayDiscovery, undefined, undefined, "offline"))
+```
+_For filtering dead relays, the nip66Filter returns a filter that includes an `until` value that is the cutoff for what is considered "offline"._
+
+### Modifying liveness determination 
+You may adjust the timeframes for what constitutes "online", "offline" and "dead." 
+
+#### Online
+By default, the timeframe for what is considered "online" is set by the monitor's published `frequency`. You can adjust this value further, by setting a tolerance multiplier. This tolerance multiplier can make determination of "online" more or less sensitive. 
+
+```js
+monitor.tolerance = 0.25 
+```
+_In the above example, if the monitor publishes every hour (60 minutes), then any `30166` or `30066` event that has been published within the last 75 minutes is considered **online.**
+
+#### Dead 
+The determination of what constitutes "dead" is largely subjective, and can be set the implementation through the setter (accessor) `deadAfter`. The idea behind "dead" relays is to suggest that there is a low confidence that the relay will return online. 
+
+```js
+monitor.deadAfter = 1000 * 60 * 60 * 24 * 14 // 14 days
+```
+
+#### Offline 
+The determination of what consistutes "offline" is based on the monitor's publishing frequency multiplied by the monitor's tolerance for the `until` value and the value of `deadAfter`. Because of this, the value of `offlineAfter` cannot be directly set, and is instead calculated based on the values of `onlineTolerance` and `deadAfter`. 
+
+#### Debugging liveness 
+You can use the `livenessFilter` method on `NDKRelayMonitor` to get a filter that includes `since` and `until` for a given liveness. 
+
+```js
+this.livenessFilter('online') // returns: { since: `${Date.now()-(monitor.frequency*monitor.tolerance)}` }
+this.livenessFilter('dead') // returns: { until: `${Date.now()-(monitor.deadAfter)}` }
+this.livenessFilter('offline') // returns: { until: `${Date.now()-(monitor.frequency*monitor.tolerance)}`, since: `${Date.now()-(monitor.deadAfter)}`  }
+this.livenessFilter('all') //returns {}
 ```
 
 ## Relay Meta
@@ -91,24 +137,25 @@ paidRelays.forEach( relay => {
   promises.push(ndk.fetchEvent(relay.url))
 })
 await Promise.allSettled(promises)
-const relayMetas = promises.map( ndkEvent => RelayMeta.from(ndkEvent))
+const relayMetas = promises.map( ndkEvent => NDKRelayMeta.from(ndkEvent))
 console.log(relayMetas[0]?.url, relayMeta[0]?.all)
 ```
 
 ## Full Datasets
-Using NDK alone is not ideal for obtaining a full dataset. The reasoning here is that different relays have different max results, and the total dataset size is not only not known, but also often greater than most relay's max result limits. To get full datasets, for example "All Online Relays," you should instead use something like `nostr-fetch` with it's NDK adapter to fetch full datasets. Below is an example of how to use `nostr-fetch` with NDK to get a full dataset.
+In a case where you wish to fetch an "complete" dataset, you will need to utilize something similar to `nostr-fetch`. Below is an example of how to do this using `nostr-fetch` with its `ndk-adapter`. 
 
 ```js
 const fetcher = NostrFetcher.withCustomPool(ndkAdapter(ndk));
-const {since} = monitor.nip66Filter("30166")
+const {since} = monitor.nip66Filter(NDKKinds.RelayMeta) //nostr-fetch accepts since and until as a separate parameter instead of in the filter.
 const onlineRelays = await fetcher.fetchAllEvents(
                 this.ndk?.explicitRelayUrls,
-                {},
+                { authors: [monitor.pubkey], kinds: [NDKKinds.RelayMeta] },
                 since,
             );
 ```
 
 <a name="important"></a>
 ## Important Notes
-- Individual monitors could report a different number of relays online. There are too many reasons to list of this, as monitoring relays is more of an art than a science. 
-- Your use case informs how you should use NIP-66. For lite usage, you should probably use Relay Discovery Events. However, if you require more data about relays, or have a need for complete data sets across multiple monitors or aggregate data, you should probably use Relay Meta Events and a cache to store the data, and subsequently query from. 
+- Individual monitors could report a different number of relays online. 
+- Monitors could be malicious, so implementing a trust model or otherwise hardcoding specific monitors you personally trust is important (case dependent)
+- Your use case informs how you should use NIP-66. For lite usage, you should probably use Relay Discovery Events. However, if you require more data about relays, or have a need for complete data sets across multiple monitors or intended to aggregate data from many monitors, you should probably use Relay Meta Events and a cache to store the data, and to subsequently query from. 

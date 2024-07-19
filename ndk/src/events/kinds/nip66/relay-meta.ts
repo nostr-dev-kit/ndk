@@ -14,7 +14,7 @@ const REGEX_IPV4: RegExp = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/;
 const REGEX_GEOHASH: RegExp = /^[0-9b-hjkmnp-z]{1,12}$/;
 
 /**
- * RelayMeta [NIP-66]
+ * NDKRelayMeta [NIP-66]
  * 
  * Supports the following tags:
  * - d: url
@@ -26,19 +26,19 @@ const REGEX_GEOHASH: RegExp = /^[0-9b-hjkmnp-z]{1,12}$/;
  * - ssl: { [key: string]: RelayMetaData }
  * 
  * @author sandwichfarm 
- * @summary NIP-66 RelayMeta
+ * @summary NIP-66 NDKRelayMeta
  * @extends NDKEvent
  */
-export class RelayMeta extends NDKEvent {
+export class NDKRelayMeta extends NDKEvent {
     static readonly groups = ['other', 'rtt', 'nip11', 'dns', 'geo', 'ssl', 'counts'];
 
     constructor(ndk: NDK | undefined, rawEvent?: NostrEvent) {
         super(ndk, rawEvent);
-        this.kind ??= NDKKind.RelayMeta;
+        this.kind ??= NDKKind.NDKRelayMeta;
     }
 
-    static from(event: NDKEvent): RelayMeta {
-        return new RelayMeta(event.ndk, event.rawEvent());
+    static from(event: NDKEvent): NDKRelayMeta {
+        return new NDKRelayMeta(event.ndk, event.rawEvent());
     }
 
     get url(): string | undefined { 
@@ -115,7 +115,7 @@ export class RelayMeta extends NDKEvent {
      */
     get all(): RelayMetaParsedAll {
         const result: RelayMetaParsedAll = {};
-        RelayMeta.groups.forEach(group => {
+        NDKRelayMeta.groups.forEach(group => {
             const data = this.getGroupedTag(group);
             if(data){
                 result[group] = data;

@@ -26,7 +26,7 @@ export type RelayDiscoveryFilters = {
  * @implements kind:30166
  * @example 
  * ```typescript
- * let $event = new RelayDiscovery(ndk, rawEvent);
+ * let $event = new NDKRelayDiscovery(ndk, rawEvent);
  * $event.network = "clearnet";
  * $event.nips = [0,1,2,3,4,5,6,7,8,9,10,11];
  * $event.restrictions = ["!auth", "!payment"];
@@ -37,14 +37,14 @@ export type RelayDiscoveryFilters = {
  * console.log($event.nips)
  * ```
  */
-export class RelayDiscovery extends NDKEventGeoCoded {
+export class NDKRelayDiscovery extends NDKEventGeoCoded {
     constructor(ndk: NDK | undefined, rawEvent?: NostrEvent) {
         super(ndk, rawEvent);
-        this.kind ??= NDKKind.RelayDiscovery; 
+        this.kind ??= NDKKind.NDKRelayDiscovery; 
     }
 
-    static from(event: NDKEvent): RelayDiscovery {
-        return new RelayDiscovery(event.ndk, event.rawEvent());
+    static from(event: NDKEvent): NDKRelayDiscovery {
+        return new NDKRelayDiscovery(event.ndk, event.rawEvent());
     }
 
     get url(): string | undefined { 

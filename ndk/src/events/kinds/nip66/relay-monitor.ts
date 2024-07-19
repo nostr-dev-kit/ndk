@@ -1,10 +1,6 @@
 
 import { NDKKind } from "../index.js";
-<<<<<<< HEAD
 import type { NDKUser } from "../../../user/index.js";
-=======
-import { NDKUser } from "../../../user/index.js";
->>>>>>> 37a3c40e5f5691676f83b4b69d31bc1039ba9a12
 import type { NDKRelayList } from "../NDKRelayList.js";
 // import { NDKRelay } from "../../../relay/index.js";
 
@@ -16,31 +12,36 @@ import type { NDKUserProfile } from "../../../user/profile.js";
 
 import { NDKEventGeoCoded } from "../../geocoded.js";
 
-import type { FetchNearbyRelayOptions } from "../../geocoded.js";
-import type { RelayMeta } from "./relay-meta.js";
-import type { RelayDiscovery, RelayDiscoveryFilters } from "./relay-discovery.js";
+
+import type { NDKRelayMeta } from "./relay-meta.js";
+import type { NDKRelayDiscovery } from "./relay-discovery.js";
+// import type { FetchNearbyRelayOptions } from "../../geocoded.js";
+// import { FetchNearbyOptions } from "../../../ndk/fetch-geospatial.js";
 
 export type RelayListSet = Set<string> | undefined
-export type RelayMonitorSet = Set<RelayMonitor> | undefined
-export type RelayDiscoveryResult = Set<RelayDiscovery> | undefined
-export type RelayMetaSet = Set<RelayMeta> | undefined
+export type RelayMonitorSet = Set<NDKRelayMonitor> | undefined
+export type RelayDiscoveryResult = Set<NDKRelayDiscovery> | undefined
+export type RelayMetaSet = Set<NDKRelayMeta> | undefined
+
+export type LivenessFilter = { 
+    since?: number, 
+    until?: number 
+}
 
 export const enum RelayLiveness {
-    All = 0,
-    Online = 1,
-    Offline = 2,
-    Dead = 3,
+    All = "all",
+    Online = "online",
+    Offline = "offline",
+    Dead = "dead",
 }
 
 export type RelayMonitorCriterias = {
     kinds?: number[], 
-    // operator: string[],
     checks?: string[]
 }
 
 export enum RelayMonitorDiscoveryTags {
     kinds = "k",
-    // operator = "o",
     checks = "c"
 }
 
@@ -48,59 +49,50 @@ export type RelayMonitorDiscoveryFilters = {
     [K in RelayMonitorDiscoveryTags as `#${K}`]?: string[];
 };
 
-// type FetchNearbyRelayOptions = {
-//     geohash: string;
-//     maxPrecision?: number;
-//     minPrecision?: number;
-//     minResults?: number;
-//     recurse?: boolean;
+// export type FetchRelaysOptions = {
 //     filter?: NDKFilter;
+//     indexedTags?: RelayDiscoveryFilters;
+//     geohash?: string,
+//     nearby?: FetchNearbyOptions;
+//     activeOnly?: boolean;
+//     tolerance?: number;
+//     offlineAfter?: number;
+//     deadAfter?: number; 
 // }
 
-export type FetchRelaysOptions = {
-    filter?: NDKFilter;
-    indexedTags?: RelayDiscoveryFilters;
-    geohash?: string,
-    nearby?: FetchNearbyRelayOptions;
-    activeOnly?: boolean;
-    tolerance?: number;
-    offlineAfter?: number;
-    deadAfter?: number; 
-}
-
 /**
- * A `RelayMonitor` event represents a NIP-66 Relay Monitor.
+ * A `NDKRelayMonitor` event represents a NIP-66 Relay Monitor.
  * 
  * @author sandwich.farm
  * @extends NDKEventGeoCoded
  * @summary Relay Monitor (NIP-66)
- * @implements NDKKind.RelayMonitor
+ * @implements NDKKind.NDKRelayMonitor
  * @example
  * ```javascript
  * import { NDK } from "@nosplatform/ndk";
- * import { RelayMonitor } from "@nosplatform/ndk/dist/events/kinds/nip66/relay-monitor";
+ * import { NDKRelayMonitor } from "@nosplatform/ndk/dist/events/kinds/nip66/relay-monitor";
  * 
  * const ndk = new NDK();
  * const monitorEvent = {...}
- * const monitor = new RelayMonitor(ndk, monitorEvent);
+ * const monitor = new NDKRelayMonitor(ndk, monitorEvent);
  * const online = await monitor.fetchOnlineRelays();
  * 
  * console.log(online)
  * ```
  */
-export class RelayMonitor extends NDKEventGeoCoded {
+export class NDKRelayMonitor extends NDKEventGeoCoded {
 
     protected _relays: NDKRelayList | undefined;
     protected _tolerance: number = 1.2;
     protected _offlineAfter: number = 24;
-    protected _deadAfter: number = 24*7;
+    protected _deadAfter: number = 24*7*24*60*60*1000;  
     protected _active: boolean | undefined;
     protected _user: NDKUser | undefined;
     private debug: debug.Debugger | undefined;
 
     constructor( ndk: NDK | undefined, event?: NostrEvent, debug?: debug.IDebugger ) {
         super(ndk, event);
-        this.kind ??= NDKKind.RelayMonitor; 
+        this.kind ??= NDKKind.NDKRelayMonitor; 
 
         if(!ndk) return;
 
@@ -111,8 +103,8 @@ export class RelayMonitor extends NDKEventGeoCoded {
         }
     }
 
-    static from(event: NDKEvent, debug?: debug.IDebugger): RelayMonitor {
-        return new RelayMonitor(event.ndk, event.rawEvent(), debug);
+    static from(event: NDKEvent, debug?: debug.IDebugger): NDKRelayMonitor {
+        return new NDKRelayMonitor(event.ndk, event.rawEvent(), debug);
     }
 
     get user(): NDKUser | undefined {
@@ -133,25 +125,6 @@ export class RelayMonitor extends NDKEventGeoCoded {
             this.tags.push(["frequency", String(value)]);
         }
     }
-
-    // get operator(): string | undefined {    
-    //     return this.tagValue("o");
-    // }
-
-    // set operator( value: string | undefined ) {
-    //     this.removeTag("o");
-    //     if (value) {
-    //         this.tags.push(["o", value]);
-    //     }
-    // }
-
-    // get owner(): string | undefined {
-    //     return this.operator;
-    // }
-
-    // set owner( value: string | undefined ) {
-    //     this.operator = value;
-    // }
 
     get kinds(): number[] {
         return this.tags.filter(tag => tag[0] === "k").map(tag => parseInt(tag[1]));
@@ -224,7 +197,7 @@ export class RelayMonitor extends NDKEventGeoCoded {
         if(!this?.frequency) {
             return 1;
         }
-        return Math.round(Date.now()/1000)-this._offlineAfter;
+        return Math.round( (Date.now()-this._offlineAfter)/1000 );
     }
 
     set deadAfter( value: number ) {
@@ -235,7 +208,7 @@ export class RelayMonitor extends NDKEventGeoCoded {
         if(!this?.frequency) {
             return 1;
         }
-        return Math.round(Date.now()/1000)-this._deadAfter;
+        return Math.round( (Date.now()-this._deadAfter)/1000 );
     }
 
     get relays(): NDKRelayList | undefined {
@@ -251,12 +224,12 @@ export class RelayMonitor extends NDKEventGeoCoded {
     }
 
     /**
-     * Checks if this `RelayMonitor` event is valid. Monitors:
+     * Checks if this `NDKRelayMonitor` event is valid. Monitors:
      * - _**SHOULD**_ have `frequency` tag that parses as int 
      * - _**SHOULD**_ have at least one `check` 
      * - _**SHOULD**_ publish at least one `kind` 
      * 
-     * @returns {boolean} Promise resolves to a boolean indicating whether the `RelayMonitor` is active.
+     * @returns {boolean} Promise resolves to a boolean indicating whether the `NDKRelayMonitor` is active.
      * 
      * @public
     */
@@ -269,10 +242,10 @@ export class RelayMonitor extends NDKEventGeoCoded {
     }
 
     /**
-     * Checks if the current `RelayMonitor` instance is active based on whether it has published a single
+     * Checks if the current `NDKRelayMonitor` instance is active based on whether it has published a single
      * event within the criteria defined as "interval" in the Relay Monitor's registration event (kind: 10166) 
      * 
-     * @returns {Promise<boolean>} Promise resolves to a boolean indicating whether the `RelayMonitor` is active.
+     * @returns {Promise<boolean>} Promise resolves to a boolean indicating whether the `NDKRelayMonitor` is active.
      * 
      * @public
      * @async
@@ -280,11 +253,11 @@ export class RelayMonitor extends NDKEventGeoCoded {
     async isMonitorActive(): Promise<boolean> {
         // if(typeof this.active !== 'undefined') return this.active;
         const kinds: NDKKind[] = [];
-        if(this.kinds.includes(NDKKind.RelayDiscovery)) { 
-            kinds.push(NDKKind.RelayDiscovery);
+        if(this.kinds.includes(NDKKind.NDKRelayDiscovery)) { 
+            kinds.push(NDKKind.NDKRelayDiscovery);
         }
-        if(this.kinds.includes(NDKKind.RelayMeta)) { 
-            kinds.push(NDKKind.RelayMeta);
+        if(this.kinds.includes(NDKKind.NDKRelayMeta)) { 
+            kinds.push(NDKKind.NDKRelayMeta);
         }
 
         const filter: NDKFilter = this.nip66Filter(kinds, { limit: 1 } as NDKFilter);
@@ -307,18 +280,18 @@ export class RelayMonitor extends NDKEventGeoCoded {
      * @public
      */
     public meetsCriterias( criterias: RelayMonitorCriterias ): boolean {
-        return RelayMonitor.meetsCriterias(this, criterias);
+        return NDKRelayMonitor.meetsCriterias(this, criterias);
     }
 
     /**
      * @description Reduces a set of `NDKEvent` objects to a list of relay strings.
      * 
-     * @param {Set<RelayDiscovery | RelayMeta | NDKEvent>} events A set of `NDKEvent` objects.
+     * @param {Set<NDKRelayDiscovery | NDKRelayMeta | NDKEvent>} events A set of `NDKEvent` objects.
      * @returns Promise resolves to a list of relay strings or undefined.
      * 
      * @protected
      */
-    protected reduceRelayEventsToRelayStrings( events: Set<RelayDiscovery | RelayMeta | NDKEvent> ): RelayListSet {
+    protected reduceRelayEventsToRelayStrings( events: Set<NDKRelayDiscovery | NDKRelayMeta | NDKEvent> ): RelayListSet {
         if(typeof events === 'undefined') {
                 return new Set() as RelayListSet;
         }
@@ -340,8 +313,38 @@ export class RelayMonitor extends NDKEventGeoCoded {
      */
     protected maybeWarnInvalid(): void {
         if( !this.isMonitorValid() && this?.debug ) {
-            this.debug(`[${this.pubkey}] RelayMonitor has not published a valid or complete "RelayMonitor" event.`);
+            this.debug(`[${this.pubkey}] NDKRelayMonitor has not published a valid or complete "NDKRelayMonitor" event.`);
         }
+    }
+
+    /**
+     * Returns a filter based on provided liveness (default: "online")
+     * 
+     * @param liveness The options to filter the relays by.
+     * @returns Returns an NDKFilter containing `since`, `since` and `until` or empty object depending on provided `liveness`
+     * 
+     * @public
+     */
+    public livenessFilter(liveness: RelayLiveness = RelayLiveness.Online){
+        const timeframe: LivenessFilter = {};
+
+        if(liveness === RelayLiveness.Online) {
+            timeframe.since = this.onlineTolerance;
+            return timeframe;
+        }
+
+        if(liveness === RelayLiveness.Offline) {
+            timeframe.until = this.onlineTolerance;
+            timeframe.since = this.deadTolerance;
+            return timeframe;
+        }
+        
+        if(liveness === RelayLiveness.Dead) {
+            timeframe.until = this.deadTolerance;
+            return timeframe;
+        }
+
+        return timeframe; //all
     }
 
     /**
@@ -355,24 +358,13 @@ export class RelayMonitor extends NDKEventGeoCoded {
      * @protected
      */
     public nip66Filter( kinds?: number[], prependFilter?: NDKFilter, appendFilter?: NDKFilter, liveness: RelayLiveness = RelayLiveness.Online ): NDKFilter {
-        const timeframe: { since?: number, until?: number } = {};
+        // const timeframe: { since?: number, until?: number } = {};
 
         if(!kinds){
             kinds = this.kinds;
         }
 
-        if(liveness === RelayLiveness.Online) {
-            timeframe.since = this.onlineTolerance;
-        }
-
-        if(liveness === RelayLiveness.Offline) {
-            timeframe.since = this.deadTolerance;
-            timeframe.until = this.offlineTolerance;
-        }
-        
-        if(liveness === RelayLiveness.Dead) {
-            timeframe.until = this.deadTolerance;
-        }
+        const timeframe: LivenessFilter = this.livenessFilter(liveness);
 
         const _filter: NDKFilter = { 
             ...prependFilter,
@@ -391,12 +383,12 @@ export class RelayMonitor extends NDKEventGeoCoded {
      * This includes checking if the monitor supports specified kinds, is operated by a given operator,
      * and passes all specified checks.
      * 
-     * @param {RelayMonitor} monitor - The monitor to evaluate against the criteria.
+     * @param {NDKRelayMonitor} monitor - The monitor to evaluate against the criteria.
      * @param {RelayMonitorCriterias} criterias - The criteria including kinds, operator, and checks to match against the monitor's capabilities.
      * @returns {boolean} - True if the monitor meets all the specified criteria; otherwise, false.
      * @static
      */
-    static meetsCriterias( monitor: RelayMonitor, criterias: RelayMonitorCriterias ): boolean {
+    static meetsCriterias( monitor: NDKRelayMonitor, criterias: RelayMonitorCriterias ): boolean {
         const meetsCriteria = [];
         if(criterias?.kinds) {
             meetsCriteria.push(criterias.kinds.every( kind => monitor.kinds.includes(kind)));

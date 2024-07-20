@@ -530,6 +530,22 @@ importers:
         specifier: ^4.4.9
         version: 4.5.3
 
+  ndk-wallet:
+    dependencies:
+      '@nostr-dev-kit/ndk':
+        specifier: workspace:*
+        version: link:../ndk
+      light-bolt11-decoder:
+        specifier: ^3.0.0
+        version: 3.0.0
+    devDependencies:
+      '@nostr-dev-kit/eslint-config-custom':
+        specifier: workspace:*
+        version: link:../packages/eslint-config-custom
+      '@nostr-dev-kit/tsconfig':
+        specifier: workspace:*
+        version: link:../packages/tsconfig
+
   packages/eslint-config-custom:
     dependencies:
       '@typescript-eslint/eslint-plugin':

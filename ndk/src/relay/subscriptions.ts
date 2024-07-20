@@ -371,7 +371,7 @@ export class NDKRelaySubscriptions {
         groupableId: NDKFilterGroupingId | null,
         groupedSubscriptions: NDKGroupedSubscriptions,
         mergedFilters: NDKFilter[]
-    ): Subscription {
+    ): Subscription | undefined {
         const subscriptions: NDKSubscription[] = [];
 
         for (const { subscription } of groupedSubscriptions) {
@@ -407,7 +407,13 @@ export class NDKRelaySubscriptions {
         //     subOptions.skipVerification = true;
         // }
 
-        const sub = this.conn.relay.subscribe(mergedFilters, subOptions);
+        let sub: Subscription;
+        const connected = this.conn.relay.connected;
+        if (!connected) {
+            this.debug('was about to send to a disconnected relay', this.conn.relay.url, mergedFilters);
+            return;
+        }
+        sub = this.conn.relay.subscribe(mergedFilters, subOptions);
 
         this.activeSubscriptions.set(sub, groupedSubscriptions);
         if (groupableId) {
@@ -423,7 +429,7 @@ export class NDKRelaySubscriptions {
             }
         });
 
-        this.executeSubscriptionsWhenConnected(groupableId, groupedSubscriptions, mergedFilters);
+        // this.executeSubscriptionsWhenConnected(groupableId, groupedSubscriptions, mergedFilters);
 
         return sub;
     }

@@ -139,6 +139,8 @@ export class NDKRelayConnectivity {
 
     public disconnect(): void {
         this._status = NDKRelayStatus.DISCONNECTING;
+        if (!this.relay.connected) return;
+        
         try {
             this.relay.close();
         } catch (e) {
@@ -174,21 +176,6 @@ export class NDKRelayConnectivity {
     }
 
     private async handleNotice(notice: string) {
-        // This is a prototype; if the relay seems to be complaining
-        // remove it from relay set selection for a minute.
-        if (notice.includes("oo many") || notice.includes("aximum")) {
-            this.disconnect();
-
-            // fixme
-            setTimeout(() => this.connect(), 2000);
-            this.debug(this.relay.url, "Relay complaining?", notice);
-            // this.complaining = true;
-            // setTimeout(() => {
-            //     this.complaining = false;
-            //     console.log(this.relay.url, 'Reactivate relay');
-            // }, 60000);
-        }
-
         this.ndkRelay.emit("notice", notice);
     }
 

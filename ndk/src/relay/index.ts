@@ -156,7 +156,7 @@ export class NDKRelay extends EventEmitter<{
      * @param filters Filters to execute
      */
     public subscribe(subscription: NDKSubscription, filters: NDKFilter[]): void {
-        this.debug("Subscribing to %o", filters);
+        // this.debug("Subscribing to %o", filters);
         this.subs.subscribe(subscription, filters);
     }
 

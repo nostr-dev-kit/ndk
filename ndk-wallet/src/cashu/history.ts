@@ -1,4 +1,7 @@
 import NDK, { NDKEvent, NDKKind, NDKTag, NostrEvent } from "@nostr-dev-kit/ndk";
+import createDebug from "debug";
+
+const d = createDebug("ndk-wallet:wallet-change");
 
 const MARKERS = {
     REDEEMED: "redeemed",
@@ -12,25 +15,27 @@ export class NDKWalletChange extends NDKEvent {
     static kind = NDKKind.WalletChange;
     static kinds = [ NDKKind.WalletChange ];
     
-    constructor(ndk?: NDK, event?: NostrEvent) {
+    constructor(ndk?: NDK, event?: NostrEvent | NDKEvent) {
         super(ndk, event);
         this.kind ??= NDKKind.WalletChange;
     }
 
-    static async from(event: NDKEvent) {
-        const walletChange = new NDKWalletChange(event.ndk, event.rawEvent() as NostrEvent);
+    static async from(event: NDKEvent): Promise<NDKWalletChange | undefined> {
+        const walletChange = new NDKWalletChange(event.ndk, event);
 
         const prevContent = walletChange.content;
         try {
             await walletChange.decrypt();
-            console.log(event.content);
         } catch (e) {
-            console.error(e);
+            walletChange.content ??= prevContent;
         }
-        walletChange.content ??= prevContent;
 
-        const contentTags = JSON.parse(walletChange.content);
-        walletChange.tags = [...contentTags, ...walletChange.tags];
+        try {
+            const contentTags = JSON.parse(walletChange.content);
+            walletChange.tags = [...contentTags, ...walletChange.tags];
+        } catch (e) {
+            return;
+        }
         
         return walletChange;
     }

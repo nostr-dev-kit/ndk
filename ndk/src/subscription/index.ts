@@ -448,6 +448,7 @@ export class NDKSubscription extends EventEmitter<{
 
     // EOSE handling
     private eoseTimeout: ReturnType<typeof setTimeout> | undefined;
+    private eosed = false;
 
     public eoseReceived(relay: NDKRelay): void {
         this.eosesSeen.add(relay);
@@ -459,18 +460,17 @@ export class NDKSubscription extends EventEmitter<{
         const hasSeenAllEoses = this.eosesSeen.size === this.relayFilters?.size;
         const queryFilled = queryFullyFilled(this);
 
-        if (queryFilled) {
+        const performEose = () => {
+            if (this.eosed) return;
+            if (this.eoseTimeout) clearTimeout(this.eoseTimeout);
             this.emit("eose", this);
+            this.eosed = true;
 
-            if (this.opts?.closeOnEose) {
-                this.stop();
-            }
-        } else if (hasSeenAllEoses) {
-            this.emit("eose", this);
+            if (this.opts?.closeOnEose) this.stop();
+        }
 
-            if (this.opts?.closeOnEose) {
-                this.stop();
-            }
+        if (queryFilled || hasSeenAllEoses) {
+            performEose();
         } else {
             let timeToWaitForNextEose = 1000;
 
@@ -496,10 +496,13 @@ export class NDKSubscription extends EventEmitter<{
             if (this.eosesSeen.size >= 2 && percentageOfRelaysThatHaveSentEose >= 0.5) {
                 timeToWaitForNextEose =
                     timeToWaitForNextEose * (1 - percentageOfRelaysThatHaveSentEose);
-
-                if (this.eoseTimeout) {
-                    clearTimeout(this.eoseTimeout);
+                
+                if (timeToWaitForNextEose === 0) {
+                    performEose();
+                    return;
                 }
+
+                if (this.eoseTimeout) clearTimeout(this.eoseTimeout);
 
                 const sendEoseTimeout = () => {
                     lastEventSeen = this.lastEventReceivedAt
@@ -511,8 +514,7 @@ export class NDKSubscription extends EventEmitter<{
                     if (lastEventSeen !== undefined && lastEventSeen < 20) {
                         this.eoseTimeout = setTimeout(sendEoseTimeout, timeToWaitForNextEose);
                     } else {
-                        this.emit("eose", this);
-                        if (this.opts?.closeOnEose) this.stop();
+                        performEose();
                     }
                 };
 

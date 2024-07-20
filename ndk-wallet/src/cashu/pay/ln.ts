@@ -4,8 +4,6 @@ import { NDKCashuPay } from "../pay";
 import { TokenSelection, rollOverProofs, chooseProofsForPr } from "../proofs";
 import { MintUrl } from "../mint/utils";
 
-
-
 /**
  * 
  * @param useMint Forces the payment to use a specific mint
@@ -17,16 +15,18 @@ export async function payLn(
 ): Promise<string | undefined> {
     const mintBalances = this.wallet.mintBalances;
     let selections: TokenSelection[] = [];
-    const amount = this.getAmount();
+    let amount = this.getAmount();
     const data = this.info as LnPaymentInfo;
     if (!data.pr) throw new Error("missing pr");
+
+    amount /= 1000; // convert msat to sat
 
     let processingSelections = false;
     const processSelections = async (resolve: (value: string) => void, reject: () => void) => {
         processingSelections = true;
         for (const selection of selections) {
             const _wallet = new CashuWallet(new CashuMint(selection.mint));
-            this.debug("paying %d sats with proofs %o", selection.quote!.amount, selection.usedProofs);
+            this.debug("paying LN invoice for %d sats (%d in fees) with proofs %o, %s", selection.quote!.amount, selection.quote!.fee_reserve, selection.usedProofs, data.pr);
             try {
                 const result = await _wallet.payLnInvoice(data.pr, selection.usedProofs, selection.quote);
                 this.debug("payment result: %o", result);

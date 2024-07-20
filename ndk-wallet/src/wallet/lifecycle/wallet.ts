@@ -1,6 +1,6 @@
 import { NDKEvent } from "@nostr-dev-kit/ndk";
 import NDKWalletLifecycle from ".";
-import { NDKCashuWallet } from "../../cashu/wallet";
+import { NDKCashuWallet, NDKCashuWalletState } from "../../cashu/wallet";
 
 function removeDeletedWallet(this: NDKWalletLifecycle, walletId: string) {
     this.wallets.delete(walletId);
@@ -19,12 +19,21 @@ async function handleWalletEvent(
         removeDeletedWallet.bind(this, event.dTag!);
         return;
     } else {
-        this.debug("wallet event", wallet.walletId);
+        if (wallet.balance)
+            this.emit("wallet:balance", wallet)
     }
 
+    let walletUpdateDebounce: NodeJS.Timeout | undefined;
+
     wallet.on("balance", () => {
-        this.debug("wallet balance update", wallet.walletId);
+        if (wallet.state !== NDKCashuWalletState.READY) return
+
         this.emit("wallet:balance", wallet)
+
+        if (walletUpdateDebounce) clearTimeout(walletUpdateDebounce);
+        walletUpdateDebounce = setTimeout(() => {
+            wallet.updateBalance();
+        }, 5000);
     });
     const existingEvent = this.wallets.get(wallet.walletId);
     if (existingEvent && existingEvent.created_at! >= wallet.created_at!) return;

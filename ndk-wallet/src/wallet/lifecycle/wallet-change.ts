@@ -8,6 +8,8 @@ async function handleWalletChange(
 ) {
     const walletChange = await NDKWalletChange.from(event);
 
+    if (!walletChange) return;
+
     if (walletChange.hasNutzapRedemption) {
         this.addNutzapRedemption(walletChange);
     }

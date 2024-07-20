@@ -4,6 +4,7 @@ import createDebug from "debug";
 import { LnPaymentInfo } from "@nostr-dev-kit/ndk";
 import { NutPayment, payNut } from "./pay/nut.js";
 import { payLn } from "./pay/ln.js";
+import { decode as decodeBolt11 } from "light-bolt11-decoder";
 
 function correctP2pk(p2pk?: string) {
     if (p2pk) {
@@ -18,6 +19,7 @@ export class NDKCashuPay {
     public info: LnPaymentInfo | NutPayment;
     public type: "ln" | "nut" = "ln";
     public debug = createDebug("ndk-wallet:cashu:pay");
+    public unit: string = "sat";
     
     constructor(
         wallet: NDKCashuWallet,
@@ -43,6 +45,14 @@ export class NDKCashuPay {
 
     public getAmount() {
         if (this.type === 'ln') {
+            const bolt11 = (this.info as LnPaymentInfo).pr;
+            const {sections} = decodeBolt11(bolt11);
+            for (const section of sections) {
+                if (section.name === 'amount') {
+                    const { value } = section;
+                    return Number(value);
+                }
+            }
             // stab
             return 1;
         } else {

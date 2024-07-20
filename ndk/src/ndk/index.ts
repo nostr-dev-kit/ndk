@@ -23,7 +23,13 @@ import { Queue } from "./queue/index.js";
 import { signatureVerificationInit } from "../events/signature.js";
 import { NDKSubscriptionManager } from "../subscription/manager.js";
 import { setActiveUser } from "./active-user.js";
-import { NDKLnUrlData, NDKZapper } from "../zapper/index.js";
+import { LnPaymentInfo, NDKLnUrlData, NDKZapConfirmation, NDKZapDetails, NDKZapper, NutPaymentInfo } from "../zapper/index.js";
+
+export interface NDKWalletConfig {
+    onLnPay?: (payment: NDKZapDetails<LnPaymentInfo>) => Promise<NDKZapConfirmation>;
+    onNutPay?: (payment: NDKZapDetails<NutPaymentInfo>) => Promise<NDKZapConfirmation>;
+    onPaymentComplete?: (info: NDKZapConfirmation | Error) => void;
+}
 
 export interface NDKConstructorParams {
     /**
@@ -241,6 +247,8 @@ export class NDK extends EventEmitter<{
     public autoConnectUserRelays = true;
     public autoFetchUserMutelist = true;
 
+    public walletConfig?: NDKWalletConfig;
+
     public constructor(opts: NDKConstructorParams = {}) {
         super();
 
@@ -252,8 +260,6 @@ export class NDK extends EventEmitter<{
             this
         );
         this.pool.name = "main";
-
-        this.debug(`Starting with explicit relays: ${JSON.stringify(this.explicitRelayUrls)}`);
 
         this.pool.on("relay:auth", async (relay: NDKRelay, challenge: string) => {
             if (this.relayAuthDefaultPolicy) {
@@ -696,12 +702,18 @@ export class NDK extends EventEmitter<{
         const zapper = new NDKZapper(
             target,
             amount,
-            comment,
             unit,
+            comment,
             this,
             extraTags,
             signer,
         )
+
+        if (this.walletConfig) {
+            zapper.onLnPay = this.walletConfig.onLnPay;
+            zapper.onNutPay = this.walletConfig.onNutPay;
+            zapper.onComplete = this.walletConfig.onPaymentComplete;
+        }
 
         zapper.zap();
         return zapper;

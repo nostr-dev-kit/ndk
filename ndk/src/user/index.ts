@@ -6,9 +6,8 @@ import type { NDK } from "../ndk/index.js";
 import { NDKSubscriptionCacheUsage, type NDKSubscriptionOptions } from "../subscription/index.js";
 import { follows } from "./follows.js";
 import { type NDKUserProfile, profileFromEvent, serializeProfile } from "./profile.js";
-import type { NDKSigner } from "../signers/index.js";
 import { getNip05For } from "./nip05.js";
-import { LnPaymentInfo, NDKLnUrlData, NDKRelay, NDKZap, NDKZapMethod, NDKZapMethodInfo, NDKZapPaymentDetails, NDKZapper } from "../index.js";
+import { NDKLnUrlData, NDKRelay, NDKZap, NDKZapMethod, NDKZapMethodInfo } from "../index.js";
 import { NDKCashuMintList } from "../events/kinds/nutzap/mint-list.js";
 import { getNip57ZapSpecFromLud } from "../zapper/ln.js";
 
@@ -149,7 +148,6 @@ export class NDKUser {
 
         if (nip61) {
             const mintList = NDKCashuMintList.from(nip61);
-            console.log("Mint list", mintList.rawEvent());
 
             if (mintList.mints.length > 0) {
                 res.push({
@@ -160,8 +158,6 @@ export class NDKUser {
 
             // if we are just getting one and already have one, go back
             if (!getAll) return res;
-        } else {
-            console.log("No NIP-61 found");
         }
 
         if (nip57) {
@@ -506,49 +502,5 @@ export class NDKUser {
 
         if (profilePointer === null) return null;
         return profilePointer.pubkey === this.pubkey;
-    }
-
-    /**
-     * Zap a user
-     *
-     * @param amount The amount to zap in millisatoshis
-     * @param comment A comment to add to the zap request
-     * @param extraTags Extra tags to add to the zap request
-     * @param signer The signer to use (will default to the NDK instance's signer)
-     */
-    async zap(
-        amount: number,
-        comment?: string,
-        extraTags?: NDKTag[],
-        signer?: NDKSigner
-    ): Promise<string | null> {
-        if (!this.ndk) throw new Error("No NDK instance found");
-
-        if (!signer) {
-            this.ndk.assertSigner();
-        }
-
-        const zap = new NDKZapper(
-            this,
-            amount,
-            "msat",
-            comment,
-            this.ndk,
-            extraTags,
-            signer
-        );
-
-        return new Promise((resolve, reject) => {
-            zap.onLnPay = async (payment: NDKZapPaymentDetails) => {
-                resolve((payment.info as LnPaymentInfo).pr);
-                return false;
-            };
-            
-            zap.zap();
-        });
-
-        // const relays = Array.from(this.ndk.pool.relays.keys());
-
-        // zap.
     }
 }

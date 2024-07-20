@@ -5,9 +5,13 @@ import { chooseProofsForAmount, rollOverProofs } from "../proofs";
 
 export type NutPayment = { amount: number, unit: string, mints: MintUrl[], p2pk?: string };
 
+/**
+ * Generates proof to satisfy a payment.
+ * Note that this function doesn't send the proofs to the recipient.
+ */
 export async function payNut(
     this: NDKCashuPay,
-) {
+): Promise<{ proofs: Proof[], mint: MintUrl } | undefined> {
     const data = this.info as NutPayment;
     if (!data.mints) throw new Error("missing mints");
 
@@ -20,9 +24,53 @@ export async function payNut(
 
     if (mintsInCommon.length === 0) {
         this.debug("no mints in common between sender and recipient");
+        return await payNutWithMintTransfer(this);
     } else {
         return await payNutWithMintBalance(this, mintsInCommon);
     }
+}
+
+async function payNutWithMintTransfer(
+    pay: NDKCashuPay
+): Promise<{ proofs: Proof[], mint: MintUrl } | undefined> {
+    const quotes = [];
+    const {mints, p2pk}  = pay.info as NutPayment;
+    const amount = pay.getAmount();
+    
+    // get quotes from the mints the recipient has
+    const quotesPromises = mints.map(async mint => {
+        const wallet = new CashuWallet(new CashuMint(mint), { unit: pay.unit });
+        const quote = await wallet.mintQuote(amount);
+        return { quote, mint };
+    });
+
+    // get the first quote that is successful
+    const { quote, mint } = await Promise.any(quotesPromises);
+
+    if (!quote) {
+        pay.debug("failed to get quote from any mint");
+        throw new Error("failed to get quote from any mint");
+    }
+
+    pay.debug("quote from mint %s: %o", mint, quote);
+
+    const res = await pay.wallet.lnPay(quote.request);
+    pay.debug("payment result: %o", res);
+
+    if (!res) {
+        pay.debug("payment failed");
+        throw new Error("payment failed");
+    }
+
+    const wallet = new CashuWallet(new CashuMint(mint), { unit: pay.unit });
+
+    const { proofs } = await wallet.mintTokens(amount, quote.quote, {
+        pubkey: p2pk
+    });
+
+    pay.debug("minted tokens with proofs %o", proofs);
+
+    return { proofs, mint };
 }
 
 async function payNutWithMintBalance(
@@ -66,7 +114,6 @@ async function payNutWithMintBalance(
             pay.debug("failed to pay with mint %s using proofs %o: %s", mint, selection.usedProofs, e.message);
             rollOverProofs(selection, [], mint, pay.wallet);
             throw new Error("failed to pay with mint " + e?.message);
-            return;
         }
     }
 

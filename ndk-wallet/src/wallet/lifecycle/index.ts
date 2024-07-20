@@ -4,12 +4,16 @@ import handleMintList from "./mint-list.js";
 import handleWalletEvent from "./wallet.js";
 import handleTokenEvent from "./token.js";
 import handleEventDeletion from "./deletion.js";
-import { NDKCashuWallet } from "../../cashu/wallet.js";
+import { NDKCashuWallet, NDKCashuWalletState } from "../../cashu/wallet.js";
 import { NDKCashuToken } from "../../cashu/token.js";
 import createDebug from "debug";
 import { NDKWalletChange } from "../../cashu/history.js";
 import NutzapHandler from "./nutzap.js";
 
+/**
+ * This class is responsible for managing the lifecycle of a user wallets.
+ * It fetches the user wallets, tokens and nutzaps and keeps them up to date.
+ */
 class NDKWalletLifecycle {
     public wallet: NDKWallet;
     private sub: NDKSubscription | undefined;
@@ -25,6 +29,7 @@ class NDKWalletLifecycle {
     public knownTokens = new Set<NDKEventId>();
     public tokensSubEosed = false;
     public debug = createDebug("ndk-wallet:lifecycle");
+    public state: 'loading' | 'ready' = 'loading';
 
     public nutzap: NutzapHandler;
     
@@ -38,10 +43,8 @@ class NDKWalletLifecycle {
     public start() {
         this.debug("starting wallet lifecycle", this.user.pubkey);
         this.sub = this.ndk.subscribe([
-            { kinds: [
-                NDKKind.CashuMintList,
-                NDKKind.CashuWallet
-            ], authors: [this.user.pubkey] },
+            { kinds: [ NDKKind.CashuMintList, NDKKind.CashuWallet ], authors: [this.user.pubkey] },
+            { kinds: [NDKKind.WalletChange], authors: [this.user!.pubkey], limit: 10 },
         ], {
             subId: 'ndk-wallet',
             groupable: false,
@@ -72,13 +75,22 @@ class NDKWalletLifecycle {
                 this.nutzap.addNutzap(event);
                 break;
             case NDKKind.WalletChange:
-                NDKWalletChange.from(event).then((wc) => this.nutzap.addWalletChange(wc));
+                NDKWalletChange.from(event).then((wc) => {
+                    if (wc) {
+                        this.nutzap.addWalletChange(wc);
+                    }
+                });
         }
     }
 
     private eoseHandler() {
         this.debug("main sub eose")
         this.eosed = true;
+
+        if (this.tokensSub) {
+            this.debug("WE ALREADY HAVE TOKENS SUB!!!")
+            return;
+        }
 
         // if we don't have a default wallet, choose the first one if there is one
         const firstWallet = Array.from(this.wallets.values())[0];
@@ -97,11 +109,18 @@ class NDKWalletLifecycle {
             }
         }
 
+        let oldestWalletTimestamp = undefined;
+        for (const wallet of this.wallets.values()) {
+            if (!oldestWalletTimestamp || wallet.created_at! > oldestWalletTimestamp) {
+                oldestWalletTimestamp = wallet.created_at!;
+            }
+        }
+
         this.tokensSub = this.ndk.subscribe([
             { kinds: [NDKKind.CashuToken], authors: [this.user!.pubkey] },
             { kinds: [NDKKind.EventDeletion], authors: [this.user!.pubkey], limit: 0 },
-            { kinds: [NDKKind.WalletChange], authors: [this.user!.pubkey], limit: 100 },
-            { kinds: [NDKKind.Nutzap], "#p": [this.user!.pubkey] },
+            { kinds: [NDKKind.WalletChange], authors: [this.user!.pubkey] },
+            { kinds: [NDKKind.Nutzap], "#p": [this.user!.pubkey], since: oldestWalletTimestamp },
         ], {
             subId: 'ndk-wallet-tokens',
             groupable: false,
@@ -113,8 +132,18 @@ class NDKWalletLifecycle {
     }
 
     private tokensSubEose() {
+        this.state = 'ready';
+        console.log("EMITTING READY")
+        this.wallet.emit("ready");
         this.tokensSubEosed = true;
-        this.nutzap.eosed = true;
+        this.nutzap.eosed().then(() => {
+            // once we finish processing nutzaps
+            // we can update the wallet's cached balance
+            for (const wallet of this.wallets.values()) {
+                wallet.state = NDKCashuWalletState.READY;
+                wallet.updateBalance();
+            }
+        })
     }
 
     // private handleMintList = handleMintList.bind
@@ -142,6 +171,7 @@ class NDKWalletLifecycle {
     public latestNutzapRedemptionAt: number = 0;
 
     public addNutzapRedemption(event: NDKWalletChange) {
+        console.log('add nutzap redemption', event.created_at);
         if (this.latestNutzapRedemptionAt && this.latestNutzapRedemptionAt > event.created_at!) return;
 
         this.latestNutzapRedemptionAt = event.created_at!;

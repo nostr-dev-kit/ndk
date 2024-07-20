@@ -117,8 +117,7 @@ export async function rollOverProofs(
     tokenEvent.mint = mint;
     tokenEvent.wallet = wallet;
     await tokenEvent.sign();
-    const proofIds = tokenEvent.proofs.map(p => p.id);
-    d("saving %d new proofs (%o)", proofsToSave.length, proofIds);
+    d("saving %d new proofs", proofsToSave.length);
 
     wallet.addToken(tokenEvent);
     

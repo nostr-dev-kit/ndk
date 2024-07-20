@@ -5,6 +5,7 @@ import createDebug from "debug";
 import NDKWalletLifecycle from "./lifecycle/index.js";
 import { MintUrl } from "../cashu/mint/utils.js";
 import { NDKCashuToken } from "../cashu/token.js";
+import { NDKNutzap } from "../cashu/nutzap.js";
 
 const d = createDebug("ndk-wallet:wallet");
 
@@ -18,14 +19,24 @@ class NDKWallet extends EventEmitter<{
     "wallet": (wallet: NDKCashuWallet) => void,
     "wallets": () => void,
     "wallet:balance": (wallet: NDKCashuWallet) => void,
+
+    "nutzap:seen": (nutzap: NDKNutzap) => void,
+    "nutzap:redeemed": (nutzap: NDKNutzap) => void,
+    "nutzap:failed": (nutzap: NDKNutzap) => void,
+
+    "ready": () => void,
 }> {
-    private ndk: NDK;
+    public ndk: NDK;
     
     private lifecycle: NDKWalletLifecycle | undefined;
 
     constructor(ndk: NDK) {
         super();
         this.ndk = ndk;
+    }
+
+    get state() {
+        return this.lifecycle?.state ?? 'loading';
     }
 
     public createCashuWallet() {

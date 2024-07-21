@@ -1,11 +1,13 @@
 import type { UnsignedEvent } from "nostr-tools";
-import { generateSecretKey, getPublicKey, finalizeEvent, nip04 } from "nostr-tools";
+import { generateSecretKey, getPublicKey, finalizeEvent, nip04, nip44 } from "nostr-tools";
 
 import type { NostrEvent } from "../../events/index.js";
 import { NDKUser } from "../../user";
 import type { NDKSigner } from "../index.js";
 import { bytesToHex, hexToBytes } from "@noble/hashes/utils";
 import { nip19 } from "nostr-tools";
+import { EncryptionNip } from "../../events/encryption.js";
+
 
 export class NDKPrivateKeySigner implements NDKSigner {
     private _user: NDKUser | undefined;
@@ -37,7 +39,6 @@ export class NDKPrivateKeySigner implements NDKSigner {
             }
         }
     }
-
     get privateKey(): string | undefined {
         if (!this._privateKey) return undefined;
         return bytesToHex(this._privateKey);
@@ -68,21 +69,38 @@ export class NDKPrivateKeySigner implements NDKSigner {
         return finalizeEvent(event as UnsignedEvent, this._privateKey).sig;
     }
 
-    public async encrypt(recipient: NDKUser, value: string): Promise<string> {
-        if (!this._privateKey) {
+    public async encryptionEnabled(nip?:EncryptionNip): Promise<EncryptionNip[]>{
+        let enabled : EncryptionNip[] = []
+        if((!nip || nip == 'nip04')) enabled.push('nip04')
+        if((!nip || nip == 'nip44')) enabled.push('nip44')
+        return enabled;
+    }
+
+    public async encrypt(recipient: NDKUser, value: string, nip?: EncryptionNip): Promise<string> {
+        if (!this._privateKey || !this.privateKey) {
             throw Error("Attempted to encrypt without a private key");
         }
 
         const recipientHexPubKey = recipient.pubkey;
+        if(nip == 'nip44'){
+            // TODO Deriving shared secret is an expensive computation, should be cached.
+            let conversationKey = nip44.v2.utils.getConversationKey(this.privateKey, recipientHexPubKey);
+            return await nip44.v2.encrypt(value, conversationKey);
+        }
         return await nip04.encrypt(this._privateKey, recipientHexPubKey, value);
     }
 
-    public async decrypt(sender: NDKUser, value: string): Promise<string> {
-        if (!this._privateKey) {
+    public async decrypt(sender: NDKUser, value: string, nip?: EncryptionNip): Promise<string> {
+        if (!this._privateKey || !this.privateKey) {
             throw Error("Attempted to decrypt without a private key");
         }
 
         const senderHexPubKey = sender.pubkey;
+        if(nip == 'nip44'){
+            // TODO Deriving shared secret is an expensive computation, should be cached.
+            let conversationKey = nip44.v2.utils.getConversationKey(this.privateKey, senderHexPubKey);
+            return await nip44.v2.decrypt(value, conversationKey);
+        }
         return await nip04.decrypt(this._privateKey, senderHexPubKey, value);
     }
 }

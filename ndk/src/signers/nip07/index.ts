@@ -4,9 +4,11 @@ import type { NostrEvent } from "../../events/index.js";
 import { NDKUser } from "../../user/index.js";
 import type { NDKSigner } from "../index.js";
 import { NDKRelay } from "../../relay/index.js";
+import { EncryptionMethod, EncryptionNip } from "../../events/encryption.js";
 
-type Nip04QueueItem = {
-    type: "encrypt" | "decrypt";
+type EncryptionQueueItem = {
+    nip : EncryptionNip;
+    method: EncryptionMethod;
     counterpartyHexpubkey: string;
     value: string;
     resolve: (value: string) => void;
@@ -26,8 +28,8 @@ type Nip07RelayMap = {
  */
 export class NDKNip07Signer implements NDKSigner {
     private _userPromise: Promise<NDKUser> | undefined;
-    public nip04Queue: Nip04QueueItem[] = [];
-    private nip04Processing = false;
+    public encryptionQueue: EncryptionQueueItem[] = [];
+    private encryptionProcessing = false;
     private debug: debug.Debugger;
     private waitTimeout: number;
 
@@ -92,65 +94,69 @@ export class NDKNip07Signer implements NDKSigner {
         return activeRelays.map((url) => new NDKRelay(url));
     }
 
-    public async encrypt(recipient: NDKUser, value: string): Promise<string> {
+    public async encryptionEnabled(nip?:EncryptionNip): Promise<EncryptionNip[]>{
+        let enabled : EncryptionNip[] =  []
+        if((!nip || nip == 'nip04') && Boolean((window as any).nostr!.nip04)) enabled.push('nip04')
+        if((!nip || nip == 'nip44') && Boolean((window as any).nostr!.nip44)) enabled.push('nip44')
+        return enabled;
+    }
+
+    public async encrypt(recipient: NDKUser, value: string, nip:EncryptionNip = 'nip04'): Promise<string> {
+        if( !(await this.encryptionEnabled(nip)) ) throw new Error(nip + 'encryption is not available from your browser extension')
         await this.waitForExtension();
 
         const recipientHexPubKey = recipient.pubkey;
-        return this.queueNip04("encrypt", recipientHexPubKey, value);
+        return this.queueEncryption(nip, "encrypt", recipientHexPubKey, value);
     }
 
-    public async decrypt(sender: NDKUser, value: string): Promise<string> {
+    public async decrypt(sender: NDKUser, value: string, nip:EncryptionNip = 'nip04'): Promise<string> {
+        if( !(await this.encryptionEnabled(nip)) ) throw new Error(nip + 'encryption is not available from your browser extension')
         await this.waitForExtension();
 
         const senderHexPubKey = sender.pubkey;
-        return this.queueNip04("decrypt", senderHexPubKey, value);
+        return this.queueEncryption(nip, "decrypt", senderHexPubKey, value);
     }
 
-    private async queueNip04(
-        type: "encrypt" | "decrypt",
+    private async queueEncryption(
+        nip : EncryptionNip,
+        method: EncryptionMethod,
         counterpartyHexpubkey: string,
         value: string
     ): Promise<string> {
         return new Promise((resolve, reject) => {
-            this.nip04Queue.push({
-                type,
+            this.encryptionQueue.push({
+                nip,
+                method,
                 counterpartyHexpubkey,
                 value,
                 resolve,
                 reject,
             });
 
-            if (!this.nip04Processing) {
-                this.processNip04Queue();
+            if (!this.encryptionProcessing) {
+                this.processEncryptionQueue();
             }
         });
     }
 
-    private async processNip04Queue(item?: Nip04QueueItem, retries = 0): Promise<void> {
-        if (!item && this.nip04Queue.length === 0) {
-            this.nip04Processing = false;
+    private async processEncryptionQueue(item?: EncryptionQueueItem, retries = 0): Promise<void> {
+        if (!item && this.encryptionQueue.length === 0) {
+            this.encryptionProcessing = false;
             return;
         }
 
-        this.nip04Processing = true;
-        const { type, counterpartyHexpubkey, value, resolve, reject } =
-            item || this.nip04Queue.shift()!;
+        this.encryptionProcessing = true;
+        const {nip, method, counterpartyHexpubkey, value, resolve, reject } =
+            item || this.encryptionQueue.shift()!;
 
         this.debug("Processing encryption queue item", {
-            type,
+            method,
             counterpartyHexpubkey,
             value,
         });
 
         try {
-            let result;
-
-            if (type === "encrypt") {
-                result = await window.nostr!.nip04!.encrypt(counterpartyHexpubkey, value);
-            } else {
-                result = await window.nostr!.nip04!.decrypt(counterpartyHexpubkey, value);
-            }
-
+            let result = await window.nostr![nip]![method](counterpartyHexpubkey, value)
             resolve(result);
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
@@ -158,13 +164,13 @@ export class NDKNip07Signer implements NDKSigner {
             if (error.message && error.message.includes("call already executing")) {
                 if (retries < 5) {
                     this.debug("Retrying encryption queue item", {
-                        type,
+                        method,
                         counterpartyHexpubkey,
                         value,
                         retries,
                     });
                     setTimeout(() => {
-                        this.processNip04Queue(item, retries + 1);
+                        this.processEncryptionQueue(item, retries + 1);
                     }, 50 * retries);
 
                     return;
@@ -173,7 +179,7 @@ export class NDKNip07Signer implements NDKSigner {
             reject(error);
         }
 
-        this.processNip04Queue();
+        this.processEncryptionQueue();
     }
 
     private waitForExtension(): Promise<void> {
@@ -210,6 +216,10 @@ declare global {
             signEvent(event: NostrEvent): Promise<{ sig: string }>;
             getRelays?: () => Promise<Nip07RelayMap>;
             nip04?: {
+                encrypt(recipientHexPubKey: string, value: string): Promise<string>;
+                decrypt(senderHexPubKey: string, value: string): Promise<string>;
+            };
+            nip44?: {
                 encrypt(recipientHexPubKey: string, value: string): Promise<string>;
                 decrypt(senderHexPubKey: string, value: string): Promise<string>;
             };

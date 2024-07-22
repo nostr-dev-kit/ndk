@@ -23,6 +23,9 @@ export type NDKPoolStats = {
  * @emit relay:connect - Emitted when a relay in the pool connects.
  * @emit relay:ready - Emitted when a relay in the pool is ready to serve requests.
  * @emit relay:disconnect - Emitted when a relay in the pool disconnects.
+ * @emit relay:auth - Emitted when a relay requests authentication. 
+ * @emit relay:authed - Emitted when a successfully authenticated to a relay. 
+ * @emit relay:authfail - Emitted when a authentication to a relay has failed. 
  */
 export class NDKPool extends EventEmitter<{
     notice: (relay: NDKRelay, notice: string) => void;
@@ -40,6 +43,7 @@ export class NDKPool extends EventEmitter<{
     "relay:disconnect": (relay: NDKRelay) => void;
     "relay:auth": (relay: NDKRelay, challenge: string) => void;
     "relay:authed": (relay: NDKRelay) => void;
+    "relay:authfail": (relay: NDKRelay) => void;
 }> {
     // TODO: This should probably be an LRU cache
     public relays = new Map<WebSocket["url"], NDKRelay>();
@@ -159,6 +163,7 @@ export class NDKPool extends EventEmitter<{
         const flappingHandler = () => this.handleFlapping(relay);
         const authHandler = (challenge: string) => this.emit("relay:auth", relay, challenge);
         const authedHandler = () => this.emit("relay:authed", relay);
+        const authFailHandler = () => this.emit("relay:authfail", relay);
 
         // make sure to remove the old handlers before adding new ones
         relay.off("notice", noticeHandler);
@@ -168,6 +173,7 @@ export class NDKPool extends EventEmitter<{
         relay.off("flapping", flappingHandler);
         relay.off("auth", authHandler);
         relay.off("authed", authedHandler);
+        relay.off("authfail", authFailHandler);
 
         // add the handlers
         relay.on("notice", noticeHandler);
@@ -177,6 +183,7 @@ export class NDKPool extends EventEmitter<{
         relay.on("flapping", flappingHandler);
         relay.on("auth", authHandler);
         relay.on("authed", authedHandler);
+        relay.on("authfail", authFailHandler);
 
         // Update the cache adapter with the new relay status
         relay.on("delayed-connect", (delay: number) => {

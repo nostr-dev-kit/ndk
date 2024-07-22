@@ -18,7 +18,7 @@ type NDKAuthPolicy = (relay: NDKRelay, challenge: string) => Promise<boolean | v
 /**
  * This policy will disconnect from relays that request authentication.
  */
-function disconnect(pool: NDKPool, debug?: debug.Debugger): (relay: NDKRelay) => Promise<void> {
+function disconnect(pool: NDKPool, debug?: debug.Debugger) {
     debug ??= createDebug("ndk:relay:auth-policies:disconnect");
 
     return async (relay: NDKRelay) => {
@@ -41,7 +41,7 @@ async function signAndAuth(
     debug: debug.Debugger,
     resolve: (event: NDKEvent) => void,
     reject: (event: NDKEvent) => void
-): Promise<void> {
+) {
     try {
         await event.sign(signer);
         resolve(event);
@@ -56,10 +56,7 @@ async function signAndAuth(
  * If no signer is provided the NDK signer will be used.
  * If none is not available it will wait for one to be ready.
  */
-function signIn({ ndk, signer, debug }: ISignIn = {}): (
-    relay: NDKRelay,
-    challenge: string
-) => Promise<NDKEvent> {
+function signIn({ ndk, signer, debug }: ISignIn = {}) {
     debug ??= createDebug("ndk:auth-policies:signIn");
 
     return async (relay: NDKRelay, challenge: string): Promise<NDKEvent> => {

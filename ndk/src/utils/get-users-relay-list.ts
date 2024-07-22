@@ -74,7 +74,7 @@ export async function getRelayListForUsers(
             {
                 closeOnEose: true,
                 pool,
-                groupable: true,
+                groupable: false,
                 cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY,
                 subId: "ndk-relay-list-fetch",
             },

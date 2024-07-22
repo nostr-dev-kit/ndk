@@ -1,7 +1,6 @@
 import { EventEmitter } from "tseep";
 
 import type { NDKEvent, NDKEventId } from "../events/index.js";
-import type { NDKKind } from "../events/kinds/index.js";
 import type { NDK } from "../ndk/index.js";
 import type { NDKRelay } from "../relay";
 import type { NDKPool } from "../relay/pool/index.js";

@@ -9,6 +9,7 @@ import { NDKRelaySubscription, type SubscriptionParams } from "./subscriptions";
 import { matchFilters } from "nostr-tools";
 
 const MAX_RECONNECT_ATTEMPTS = 5;
+const FLAPPING_THRESHOLD_MS = 1000;
 
 export type CountResolver = {
     resolve: (count: number) => void;
@@ -63,51 +64,6 @@ export class NDKRelayConnectivity {
      * @returns A Promise that resolves when the connection is established, or rejects if the connection fails.
      */
     public async connect(timeoutMs?: number, reconnect = true): Promise<void> {
-        console.log('using websocket', WebSocket)
-        try {
-            AbstractRelay.connect(this.ndkRelay.url, { verifyEvent, websocketImplementation: WebSocket })
-                .then(async (relay) => {
-                    this.relay = relay;
-                    this.relay.onnotice = (notice: string) => this.handleNotice(notice);
-                    try {
-            this.updateConnectionStats.attempt();
-            if (this._status === NDKRelayStatus.DISCONNECTED)
-                this._status = NDKRelayStatus.CONNECTING;
-            else this._status = NDKRelayStatus.RECONNECTING;
-
-            this.relay!.onclose = disconnectHandler;
-            this.relay!._onauth = authHandler;
-
-            // We have to call bind here otherwise the relay object isn't available in the runWithTimeout function
-            await runWithTimeout(
-                this.relay!.connect.bind(this.relay),
-                timeoutMs,
-                "Timed out while connecting"
-            )
-                .then(() => {
-                    connectHandler();
-                })
-                .catch((e) => {
-                    this.debug("Failed to connect", this.relay!.url, e);
-                });
-        } catch (e) {
-            // this.debug("Failed to connect", e);
-            this._status = NDKRelayStatus.DISCONNECTED;
-            if (reconnect) this.handleReconnection();
-            else this.ndkRelay.emit("delayed-connect", 2 * 24 * 60 * 60 * 1000);
-            throw e;
-        }
-                })
-                .catch((e) => {
-                    console.log('error', e);
-                    this.debug("Failed to connect", e);
-                });
-        } catch (e) {
-            this.debug("Failed to connect", e);
-            throw e;
-        }
-        
-
         if (this.reconnectTimeout) {
             clearTimeout(this.reconnectTimeout);
             this.reconnectTimeout = undefined;
@@ -396,21 +352,6 @@ export class NDKRelayConnectivity {
      * @param notice - The notice text received from the NDK relay.
      */
     private async onNotice(notice: string) {
-        // This is a prototype; if the relay seems to be complaining
-        // remove it from relay set selection for a minute.
-        if (notice.includes("oo many") || notice.includes("aximum")) {
-            this.disconnect();
-
-            // fixme
-            setTimeout(() => this.connect(), 2000);
-            this.debug(this.ndkRelay.url, "Relay complaining?", notice);
-            // this.complaining = true;
-            // setTimeout(() => {
-            //     this.complaining = false;
-            //     console.log(this.relay.url, 'Reactivate relay');
-            // }, 60000);
-        }
-
         this.ndkRelay.emit("notice", notice);
     }
 

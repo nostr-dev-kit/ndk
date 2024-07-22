@@ -283,11 +283,12 @@ export class NDKEvent extends EventEmitter {
 
     /**
      * Remove all tags with the given name (e.g. "d", "a", "p")
-     * @param tagName Tag name to search for and remove
+     * @param tagName Tag name(s) to search for and remove
      * @returns {void}
      */
-    public removeTag(tagName: string): void {
-        this.tags = this.tags.filter((tag) => tag[0] !== tagName);
+    public removeTag(tagName: string | string[]): void {
+        const tagNames = Array.isArray(tagName) ? tagName : [tagName];
+        this.tags = this.tags.filter((tag) => !tagNames.includes(tag[0]));
     }
 
     /**

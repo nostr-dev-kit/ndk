@@ -12,7 +12,7 @@ export class NDKArticle extends NDKEvent {
     static kind = NDKKind.Article;
     static kinds = [NDKKind.Article];
     
-    constructor(ndk: NDK | undefined, rawEvent?: NostrEvent) {
+    constructor(ndk: NDK | undefined, rawEvent?: NostrEvent | NDKEvent) {
         super(ndk, rawEvent);
         this.kind ??= NDKKind.Article;
     }
@@ -24,7 +24,7 @@ export class NDKArticle extends NDKEvent {
      * @returns NDKArticle
      */
     static from(event: NDKEvent) {
-        return new NDKArticle(event.ndk, event.rawEvent());
+        return new NDKArticle(event.ndk, event);
     }
 
     /**

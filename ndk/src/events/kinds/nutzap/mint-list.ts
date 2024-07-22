@@ -8,13 +8,13 @@ export class NDKCashuMintList extends NDKEvent {
     static kinds = [NDKKind.CashuMintList];
     private _p2pkPubkey?: string;
 
-    constructor(ndk?: NDK, event?: NostrEvent) {
+    constructor(ndk?: NDK, event?: NostrEvent | NDKEvent) {
         super(ndk, event);
         this.kind ??= NDKKind.CashuMintList;
     }
 
     static from(event: NDKEvent) {
-        return new NDKCashuMintList(event.ndk, event.rawEvent());
+        return new NDKCashuMintList(event.ndk, event);
     }
 
     set relays(urls: WebSocket['url'][]) {

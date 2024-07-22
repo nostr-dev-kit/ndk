@@ -11,7 +11,6 @@ async function handleToken(
     this.knownTokens.add(event.id);
     
     const token = await NDKCashuToken.from(event);
-
     if (!token) return;
     
     const walletId = token.walletId;

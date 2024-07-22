@@ -21,7 +21,7 @@ export class NDKCashuToken extends NDKEvent {
         this.kind ??= NDKKind.CashuToken;
     }
 
-    static async from(event: NDKEvent) {
+    static async from(event: NDKEvent): Promise<NDKCashuToken | undefined> {
         const token = new NDKCashuToken(event.ndk, event);
 
         token.original = event;
@@ -34,11 +34,9 @@ export class NDKCashuToken extends NDKEvent {
         try {
             const content = JSON.parse(token.content);
             token.proofs = content.proofs;
-            if (!Array.isArray(token.proofs)) {
-                token.proofs = [];
-            }
+            if (!Array.isArray(token.proofs)) return;
         } catch (e) {
-            console.error("could not parse token content", token.content);
+            return;
         }
         
         return token;

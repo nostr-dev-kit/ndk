@@ -19,13 +19,13 @@ import { NDKKind } from "./index.js";
 export class NDKDraft extends NDKEvent {
     public _event: NostrEvent | undefined;
 
-    constructor(ndk: NDK | undefined, rawEvent?: NostrEvent) {
+    constructor(ndk: NDK | undefined, rawEvent?: NostrEvent | NDKEvent) {
         super(ndk, rawEvent);
         this.kind ??= NDKKind.Draft;
     }
 
     static from(event: NDKEvent) {
-        return new NDKDraft(event.ndk, event.rawEvent());
+        return new NDKDraft(event.ndk, event);
     }
 
     /**

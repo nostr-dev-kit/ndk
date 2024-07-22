@@ -12,7 +12,7 @@ export class NDKSimpleGroupMemberList extends NDKEvent {
     static kind = NDKKind.GroupMembers;
     static kinds = [NDKKind.GroupMembers];
     
-    constructor(ndk: NDK | undefined, rawEvent?: NostrEvent) {
+    constructor(ndk: NDK | undefined, rawEvent?: NostrEvent | NDKEvent) {
         super(ndk, rawEvent);
         this.kind ??= NDKKind.GroupMembers;
 
@@ -20,7 +20,7 @@ export class NDKSimpleGroupMemberList extends NDKEvent {
     }
 
     static from(event: NDKEvent) {
-        return new NDKSimpleGroupMemberList(event.ndk, event.rawEvent());
+        return new NDKSimpleGroupMemberList(event.ndk, event);
     }
 
     get members(): string[] {

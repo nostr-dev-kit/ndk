@@ -168,10 +168,7 @@ export class NDKRelaySet {
 
                 this.ndk.emit("event:publish-failed", event, error, this.relayUrls);
 
-                // Only throw if we don't have an active handler for failed publish event
-                if (this.ndk.listeners("event:publish-failed").length === 0) {
-                    throw error;
-                }
+                throw error;
             }
         } else {
             event.emit("published", { relaySet: this, publishedToRelays });

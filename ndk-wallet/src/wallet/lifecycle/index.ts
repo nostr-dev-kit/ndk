@@ -48,7 +48,7 @@ class NDKWalletLifecycle {
         ], {
             subId: 'ndk-wallet',
             groupable: false,
-            cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY
+            cacheUsage: NDKSubscriptionCacheUsage.PARALLEL
         }, undefined, false);
 
         this.sub.on("event", this.eventHandler.bind(this));

@@ -77,7 +77,6 @@ export async function fetchEventFromTag(
 
     // XXXXX
     subOpts = {};
-    if (!isValidHint(hint)) return;
 
     d("fetching event from tag", tag, subOpts, fallback);
 

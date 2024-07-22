@@ -48,6 +48,7 @@ export class NDKSimpleGroup {
     public adminList: NDKSimpleGroupMemberList | undefined;
 
     constructor(ndk: NDK, relaySet: NDKRelaySet, groupId?: string) {
+        console.log('creating a new simple group', relaySet.relays)
         this.ndk = ndk;
         this.groupId = groupId ?? randomId(24);
         this.relaySet = relaySet;

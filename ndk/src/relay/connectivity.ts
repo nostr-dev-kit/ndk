@@ -1,16 +1,22 @@
-import { EventTemplate, NostrEvent, Relay, VerifiedEvent } from "nostr-tools";
+import { AbstractRelay } from 'nostr-tools/abstract-relay';
+import type { Event, VerifiedEvent } from "nostr-tools/core";
+import { Nostr, EventTemplate, NostrEvent } from "nostr-tools";
 import type { NDKRelay, NDKRelayConnectionStats } from ".";
 import { NDKRelayStatus } from ".";
 import { runWithTimeout } from "../utils/timeout";
 import { NDKEvent } from "../events/index.js";
 import { NDK } from "../ndk/index.js";
 
+const verifyEvent = (event: Event): event is VerifiedEvent => {
+    return true;
+}
+
 const MAX_RECONNECT_ATTEMPTS = 5;
 
 export class NDKRelayConnectivity {
     private ndkRelay: NDKRelay;
     private _status: NDKRelayStatus;
-    public relay: Relay;
+    public relay?: AbstractRelay;
     private timeoutMs?: number;
     private connectedAt?: number;
     private _connectionStats: NDKRelayConnectionStats = {
@@ -25,14 +31,56 @@ export class NDKRelayConnectivity {
     constructor(ndkRelay: NDKRelay, ndk?: NDK) {
         this.ndkRelay = ndkRelay;
         this._status = NDKRelayStatus.DISCONNECTED;
-        this.relay = new Relay(this.ndkRelay.url);
         this.debug = this.ndkRelay.debug.extend("connectivity");
         this.ndk = ndk;
-
-        this.relay.onnotice = (notice: string) => this.handleNotice(notice);
     }
 
     public async connect(timeoutMs?: number, reconnect = true): Promise<void> {
+        console.log('using websocket', WebSocket)
+        try {
+            AbstractRelay.connect(this.ndkRelay.url, { verifyEvent, websocketImplementation: WebSocket })
+                .then(async (relay) => {
+                    this.relay = relay;
+                    this.relay.onnotice = (notice: string) => this.handleNotice(notice);
+                    try {
+            this.updateConnectionStats.attempt();
+            if (this._status === NDKRelayStatus.DISCONNECTED)
+                this._status = NDKRelayStatus.CONNECTING;
+            else this._status = NDKRelayStatus.RECONNECTING;
+
+            this.relay!.onclose = disconnectHandler;
+            this.relay!._onauth = authHandler;
+
+            // We have to call bind here otherwise the relay object isn't available in the runWithTimeout function
+            await runWithTimeout(
+                this.relay!.connect.bind(this.relay),
+                timeoutMs,
+                "Timed out while connecting"
+            )
+                .then(() => {
+                    connectHandler();
+                })
+                .catch((e) => {
+                    this.debug("Failed to connect", this.relay!.url, e);
+                });
+        } catch (e) {
+            // this.debug("Failed to connect", e);
+            this._status = NDKRelayStatus.DISCONNECTED;
+            if (reconnect) this.handleReconnection();
+            else this.ndkRelay.emit("delayed-connect", 2 * 24 * 60 * 60 * 1000);
+            throw e;
+        }
+                })
+                .catch((e) => {
+                    console.log('error', e);
+                    this.debug("Failed to connect", e);
+                });
+        } catch (e) {
+            this.debug("Failed to connect", e);
+            throw e;
+        }
+        
+
         if (this.reconnectTimeout) {
             clearTimeout(this.reconnectTimeout);
             this.reconnectTimeout = undefined;
@@ -75,7 +123,7 @@ export class NDKRelayConnectivity {
                     this.debug("Authentication policy returned", !!res);
 
                     if (res instanceof NDKEvent) {
-                        this.relay.auth(async (evt: EventTemplate): Promise<VerifiedEvent> => {
+                        this.relay!.auth(async (evt: EventTemplate): Promise<VerifiedEvent> => {
                             return res.rawEvent() as VerifiedEvent;
                         });
                     }
@@ -86,7 +134,7 @@ export class NDKRelayConnectivity {
                         } else if (this._status === NDKRelayStatus.AUTHENTICATING) {
                             try {
                                 this.debug("Authentication policy finished");
-                                this.relay.auth(async (evt: EventTemplate): Promise<VerifiedEvent> => {
+                                this.relay!.auth(async (evt: EventTemplate): Promise<VerifiedEvent> => {
                                     const event = new NDKEvent(this.ndk, evt as NostrEvent);
                                     await event.sign();
                                     return event.rawEvent() as VerifiedEvent;
@@ -106,43 +154,14 @@ export class NDKRelayConnectivity {
                 this.ndkRelay.emit("auth", challenge);
             }
         };
-
-        try {
-            this.updateConnectionStats.attempt();
-            if (this._status === NDKRelayStatus.DISCONNECTED)
-                this._status = NDKRelayStatus.CONNECTING;
-            else this._status = NDKRelayStatus.RECONNECTING;
-
-            this.relay.onclose = disconnectHandler;
-            this.relay._onauth = authHandler;
-
-            // We have to call bind here otherwise the relay object isn't available in the runWithTimeout function
-            await runWithTimeout(
-                this.relay.connect.bind(this.relay),
-                timeoutMs,
-                "Timed out while connecting"
-            )
-                .then(() => {
-                    connectHandler();
-                })
-                .catch((e) => {
-                    this.debug("Failed to connect", this.relay.url, e);
-                });
-        } catch (e) {
-            // this.debug("Failed to connect", e);
-            this._status = NDKRelayStatus.DISCONNECTED;
-            if (reconnect) this.handleReconnection();
-            else this.ndkRelay.emit("delayed-connect", 2 * 24 * 60 * 60 * 1000);
-            throw e;
-        }
     }
 
     public disconnect(): void {
         this._status = NDKRelayStatus.DISCONNECTING;
-        if (!this.relay.connected) return;
+        if (!this.relay!.connected) return;
         
         try {
-            this.relay.close();
+            this.relay!.close();
         } catch (e) {
             this.debug("Failed to disconnect", e);
             this._status = NDKRelayStatus.DISCONNECTED;

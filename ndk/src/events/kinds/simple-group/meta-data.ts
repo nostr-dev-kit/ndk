@@ -6,13 +6,13 @@ export class NDKSimpleGroupMetadata extends NDKEvent {
     static kind = NDKKind.GroupMetadata;
     static kinds = [NDKKind.GroupMetadata];
     
-    constructor(ndk: NDK | undefined, rawEvent?: NostrEvent) {
+    constructor(ndk: NDK | undefined, rawEvent?: NostrEvent | NDKEvent) {
         super(ndk, rawEvent);
         this.kind ??= NDKKind.GroupMetadata;
     }
 
     static from(event: NDKEvent) {
-        return new NDKSimpleGroupMetadata(event.ndk, event.rawEvent());
+        return new NDKSimpleGroupMetadata(event.ndk, event);
     }
 
     get name(): string | undefined {

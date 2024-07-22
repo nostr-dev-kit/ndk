@@ -1,9 +1,9 @@
-import { NDKRelay } from ".";
+import type { NDKRelay } from ".";
 import { NDKEvent } from "../events";
 import { NDKKind } from "../events/kinds";
-import { NDK } from "../ndk";
-import { NDKSigner } from "../signers";
-import { NDKPool } from "./pool";
+import type { NDK } from "../ndk";
+import type { NDKSigner } from "../signers";
+import type { NDKPool } from "./pool";
 import createDebug from "debug";
 
 /**
@@ -18,7 +18,7 @@ type NDKAuthPolicy = (relay: NDKRelay, challenge: string) => Promise<boolean | v
 /**
  * This policy will disconnect from relays that request authentication.
  */
-function disconnect(pool: NDKPool, debug?: debug.Debugger) {
+function disconnect(pool: NDKPool, debug?: debug.Debugger): (relay: NDKRelay) => Promise<void> {
     debug ??= createDebug("ndk:relay:auth-policies:disconnect");
 
     return async (relay: NDKRelay) => {
@@ -41,7 +41,7 @@ async function signAndAuth(
     debug: debug.Debugger,
     resolve: (event: NDKEvent) => void,
     reject: (event: NDKEvent) => void
-) {
+): Promise<void> {
     try {
         await event.sign(signer);
         resolve(event);
@@ -52,9 +52,14 @@ async function signAndAuth(
 }
 
 /**
- * Uses the signer to sign an event and then authenticate with the relay. If no signer is provided the NDK signer will be used. If none is not available it will wait for one to be ready.
+ * Uses the signer to sign an event and then authenticate with the relay.
+ * If no signer is provided the NDK signer will be used.
+ * If none is not available it will wait for one to be ready.
  */
-function signIn({ ndk, signer, debug }: ISignIn = {}) {
+function signIn({ ndk, signer, debug }: ISignIn = {}): (
+    relay: NDKRelay,
+    challenge: string
+) => Promise<NDKEvent> {
     debug ??= createDebug("ndk:auth-policies:signIn");
 
     return async (relay: NDKRelay, challenge: string): Promise<NDKEvent> => {
@@ -70,6 +75,7 @@ function signIn({ ndk, signer, debug }: ISignIn = {}) {
         signer ??= ndk?.signer;
 
         // If we dont have a signer, we need to wait for one to be ready
+        // eslint-disable-next-line no-async-promise-executor
         return new Promise(async (resolve, reject) => {
             if (signer) {
                 await signAndAuth(event, relay, signer, debug!, resolve, reject);

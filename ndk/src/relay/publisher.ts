@@ -43,6 +43,7 @@ export class NDKRelayPublisher {
         };
 
         let connectResolve: (value: boolean | PromiseLike<boolean>) => void;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let connectReject: (reason?: any) => void;
 
         if (this.ndkRelay.status === NDKRelayStatus.CONNECTED) {
@@ -65,7 +66,7 @@ export class NDKRelayPublisher {
     private async publishEvent(event: NDKEvent, timeoutMs?: number): Promise<boolean> {
         const nostrEvent = event.rawEvent();
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const publish = this.ndkRelay.connectivity.relay.publish(nostrEvent as any);
+        const publish = this.ndkRelay.connectivity.publish(nostrEvent as any);
         let publishTimeout: NodeJS.Timeout | number;
 
         const publishPromise = new Promise<boolean>((resolve, reject) => {

@@ -1,9 +1,9 @@
 import { EventEmitter } from "tseep";
 
-import { NDKEvent, NDKEventId } from "../events/index.js";
+import type { NDKEvent, NDKEventId } from "../events/index.js";
 import type { NDKKind } from "../events/kinds/index.js";
 import type { NDK } from "../ndk/index.js";
-import { NDKRelay } from "../relay";
+import type { NDKRelay } from "../relay";
 import type { NDKPool } from "../relay/pool/index.js";
 import { calculateRelaySetsFromFilters } from "../relay/sets/calculate";
 import type { NDKRelaySet } from "../relay/sets/index.js";
@@ -343,7 +343,10 @@ export class NDKSubscription extends EventEmitter<{
 
         // if relayset is empty, we can't start, log it
         if (!this.relayFilters || this.relayFilters.size === 0) {
-            this.debug(`No relays to subscribe to (%d connected relays)`, this.pool.connectedRelays().length);
+            this.debug(
+                `No relays to subscribe to (%d connected relays)`,
+                this.pool.connectedRelays().length
+            );
             return;
         }
 

@@ -14,7 +14,7 @@ import { decrypt, encrypt } from "./nip04.js";
 import { encode } from "./nip19.js";
 import { repost } from "./repost.js";
 import { fetchReplyEvent, fetchRootEvent, fetchTaggedEvent } from "./fetch-tagged-event.js";
-import { NDKEventSerialized, deserialize, serialize } from "./serializer.js";
+import { type NDKEventSerialized, deserialize, serialize } from "./serializer.js";
 import { validate, verifySignature, getEventHash } from "./validation.js";
 import { matchFilter } from "nostr-tools";
 
@@ -352,7 +352,8 @@ export class NDKEvent extends EventEmitter {
 
         if (!relaySet) {
             // If we have a devWriteRelaySet, use it to publish all events
-            relaySet = this.ndk.devWriteRelaySet || await calculateRelaySetFromEvent(this.ndk, this);
+            relaySet =
+                this.ndk.devWriteRelaySet || (await calculateRelaySetFromEvent(this.ndk, this));
         }
 
         // If the published event is a delete event, notify the cache if there is one

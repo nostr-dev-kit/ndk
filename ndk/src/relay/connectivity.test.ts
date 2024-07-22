@@ -1,67 +1,122 @@
-import { NDKRelayConnectivity } from "./connectivity.js";
-import { NDKRelay, NDKRelayStatus } from "./index.js";
+import { NDKRelayConnectivity } from "./connectivity";
+import { NDKRelay, NDKRelayStatus } from "./index";
+import { NDK } from "../ndk/index";
+
+jest.mock("ws");
+jest.useFakeTimers();
 
 describe("NDKRelayConnectivity", () => {
-    let ndkRelayConnectivity: NDKRelayConnectivity;
-    let ndkRelayMock: NDKRelay;
-    let relayConnectSpy: jest.SpyInstance;
-    let relayDisconnectSpy: jest.SpyInstance;
+    let ndk: NDK;
+    let relay: NDKRelay;
+    let connectivity: NDKRelayConnectivity;
 
-    beforeEach(async () => {
-        ndkRelayMock = new NDKRelay("ws://localhost");
-        ndkRelayConnectivity = new NDKRelayConnectivity(ndkRelayMock);
-        // Mock the connect method on nostr tools relay
-        relayConnectSpy = jest.spyOn(ndkRelayConnectivity.relay, "connect").mockResolvedValue();
-        // Mock the close method on the nostr tools relay
-        relayDisconnectSpy = jest.spyOn(ndkRelayConnectivity.relay, "close").mockReturnValue();
-        await ndkRelayConnectivity.connect();
+    beforeEach(() => {
+        ndk = new NDK();
+        relay = new NDKRelay("wss://test.relay");
+        connectivity = new NDKRelayConnectivity(relay, ndk);
     });
 
     afterEach(() => {
-        jest.restoreAllMocks();
+        jest.clearAllMocks();
     });
 
-    describe("connecting", () => {
-        it("calls connect() on the nostr-tools AbstractRelay instance", () => {
-            expect(relayConnectSpy).toHaveBeenCalled();
+    describe("connect", () => {
+        it("should set status to CONNECTING when disconnected", async () => {
+            await connectivity.connect();
+            expect(connectivity.status).toBe(NDKRelayStatus.CONNECTING);
         });
 
-        it("updates connected status properly", () => {
-            // Check that we updated our status
-            expect(ndkRelayConnectivity.status).toBe(NDKRelayStatus.CONNECTED);
-            // Check that we're available
-            expect(ndkRelayConnectivity.isAvailable()).toBe(true);
+        it("should set status to RECONNECTING when not disconnected", async () => {
+            connectivity["_status"] = NDKRelayStatus.CONNECTED;
+            await connectivity.connect();
+            expect(connectivity.status).toBe(NDKRelayStatus.RECONNECTING);
         });
 
-        it("updates connectionStats on connect", () => {
-            expect(ndkRelayConnectivity.connectionStats.attempts).toBe(1);
-            expect(ndkRelayConnectivity.connectionStats.connectedAt).toBeDefined();
+        it("should create a new WebSocket connection", async () => {
+            const mockWebSocket = jest.fn();
+            global.WebSocket = mockWebSocket as any;
+
+            await connectivity.connect();
+            expect(mockWebSocket).toHaveBeenCalledWith("wss://test.relay/");
         });
     });
 
-    // TODO: Test auth
-
-    describe("disconnecting", () => {
+    describe("disconnect", () => {
         beforeEach(() => {
-            ndkRelayConnectivity.disconnect();
+            connectivity["_status"] = NDKRelayStatus.CONNECTED;
+        });
+        it("should set status to DISCONNECTING", () => {
+            connectivity.disconnect();
+            expect(connectivity.status).toBe(NDKRelayStatus.DISCONNECTING);
         });
 
-        it("disconnects from the relay", async () => {
-            expect(relayDisconnectSpy).toHaveBeenCalled();
+        it("should close the WebSocket connection", () => {
+            const mockClose = jest.fn();
+            connectivity["ws"] = { close: mockClose } as any;
+            connectivity.disconnect();
+            expect(mockClose).toHaveBeenCalled();
         });
 
-        it("updates connected status properly", () => {
-            expect(ndkRelayConnectivity.status).toBe(NDKRelayStatus.DISCONNECTING);
-            expect(ndkRelayConnectivity.isAvailable()).toBe(false);
+        it("should handle disconnect error", () => {
+            const mockClose = jest.fn(() => {
+                throw new Error("Disconnect failed");
+            });
+            connectivity["ws"] = { close: mockClose } as any;
+            connectivity.disconnect();
+            expect(connectivity.status).toBe(NDKRelayStatus.DISCONNECTED);
+        });
+    });
+
+    describe("isAvailable", () => {
+        it("should return true when status is CONNECTED", () => {
+            connectivity["_status"] = NDKRelayStatus.CONNECTED;
+            expect(connectivity.isAvailable()).toBe(true);
         });
 
-        // Test that onclose callback was properly called
-        it.skip("updates the connectionStats for disconnect", () => {
-            expect(ndkRelayConnectivity.connectionStats.connectedAt).toBe(undefined);
-            expect(ndkRelayConnectivity.connectionStats.durations.length).toBe(1);
+        it("should return false when status is not CONNECTED", () => {
+            connectivity["_status"] = NDKRelayStatus.DISCONNECTED;
+            expect(connectivity.isAvailable()).toBe(false);
+        });
+    });
+
+    describe("send", () => {
+        it("should send message when connected and WebSocket is open", async () => {
+            const mockSend = jest.fn();
+            connectivity["_status"] = NDKRelayStatus.CONNECTED;
+            connectivity["ws"] = { readyState: WebSocket.OPEN, send: mockSend } as any;
+            await connectivity.send("test message");
+            expect(mockSend).toHaveBeenCalledWith("test message");
         });
 
-        // TODO: Can we test the emit on NDKRelay?
-        // TODO: Test reconnection logic (disconnect called from AbstractRelay)
+        it("should throw error when not connected", async () => {
+            connectivity["_status"] = NDKRelayStatus.DISCONNECTED;
+            await expect(connectivity.send("test message")).rejects.toThrow(
+                "Attempting to send on a closed relay connection"
+            );
+        });
+    });
+
+    describe("publish", () => {
+        it("should send EVENT message and return a promise", async () => {
+            const mockSend = jest.spyOn(connectivity, "send").mockResolvedValue(undefined);
+            const event = { id: "test-id", content: "test-content" };
+            const publishPromise = connectivity.publish(event as any);
+            expect(mockSend).toHaveBeenCalledWith(
+                '["EVENT",{"id":"test-id","content":"test-content"}]'
+            );
+            expect(publishPromise).toBeInstanceOf(Promise);
+        });
+    });
+
+    describe("count", () => {
+        it("should send COUNT message and return a promise", async () => {
+            const mockSend = jest.spyOn(connectivity, "send").mockResolvedValue(undefined);
+            const filters = [{ authors: ["test-author"] }];
+            const countPromise = connectivity.count(filters, {});
+            expect(mockSend).toHaveBeenCalledWith(
+                expect.stringMatching(/^\["COUNT","count:\d+",\{"authors":\["test-author"\]\}\]$/)
+            );
+            expect(countPromise).toBeInstanceOf(Promise);
+        });
     });
 });

@@ -1,8 +1,7 @@
 import { EventEmitter } from "tseep";
-import type { Subscription, SubscriptionParams } from "nostr-tools/lib/types/abstract-relay.js";
 import { matchFilter } from "nostr-tools";
 
-import type { NDKRelay } from ".";
+import { NDKRelayStatus, type NDKRelay } from ".";
 import type { NostrEvent } from "../events";
 import { NDKEvent } from "../events";
 import type { NDKFilter, NDKSubscription } from "../subscription";
@@ -17,11 +16,88 @@ export type CountPayload = {
 
 export type SubscriptionOptions = { id?: string } & SubscriptionParams;
 
+export type SubscriptionParams = {
+    onevent?: (evt: Event) => void;
+    oneose?: () => void;
+    onclose?: (reason: string) => void;
+    alreadyHaveEvent?: (id: string) => boolean;
+    receivedEvent?: (relay: NDKRelayConnectivity, id: string) => void;
+    eoseTimeout?: number;
+};
+
 export type SubEvent = {
     event: (event: NostrEvent) => void | Promise<void>;
     count: (payload: CountPayload) => void | Promise<void>;
     eose: () => void | Promise<void>;
 };
+
+export class NDKRelaySubscription {
+    public readonly relay: NDKRelayConnectivity;
+    public readonly id: string;
+
+    public closed: boolean = false;
+    public eosed: boolean = false;
+    public filters: NDKFilter[];
+    public alreadyHaveEvent: ((id: string) => boolean) | undefined;
+    public receivedEvent: ((relay: NDKRelayConnectivity, id: string) => void) | undefined;
+
+    public onevent: (evt: Event) => void;
+    public oneose: (() => void) | undefined;
+    public onclose: ((reason: string) => void) | undefined;
+
+    public eoseTimeout: number;
+    private eoseTimeoutHandle: ReturnType<typeof setTimeout> | undefined;
+
+    constructor(
+        relay: NDKRelayConnectivity,
+        id: string,
+        filters: NDKFilter[],
+        params: SubscriptionParams
+    ) {
+        this.relay = relay;
+        this.filters = filters;
+        this.id = id;
+        this.alreadyHaveEvent = params.alreadyHaveEvent;
+        this.receivedEvent = params.receivedEvent;
+        this.eoseTimeout = params.eoseTimeout || relay.baseEoseTimeout;
+
+        this.oneose = params.oneose;
+        this.onclose = params.onclose;
+        this.onevent =
+            params.onevent ||
+            ((event) => {
+                console.warn(
+                    `onevent() callback not defined for subscription '${this.id}' in relay ${this.relay.url}. event received:`,
+                    event
+                );
+            });
+    }
+
+    public fire() {
+        this.relay.send('["REQ","' + this.id + '",' + JSON.stringify(this.filters).substring(1));
+
+        // only now we start counting the eoseTimeout
+        this.eoseTimeoutHandle = setTimeout(this.receivedEose.bind(this), this.eoseTimeout);
+    }
+
+    public receivedEose() {
+        if (this.eosed) return;
+        clearTimeout(this.eoseTimeoutHandle);
+        this.eosed = true;
+        this.oneose?.();
+    }
+
+    public close(reason: string = "closed by caller") {
+        if (!this.closed && this.relay.status === NDKRelayStatus.CONNECTED) {
+            // if the connection was closed by the user calling .close() we will send a CLOSE message
+            // otherwise this._open will be already set to false so we will skip this
+            this.relay.send('["CLOSE",' + JSON.stringify(this.id) + "]");
+            this.closed = true;
+        }
+        this.relay.openSubs.delete(this.id);
+        this.onclose?.(reason);
+    }
+}
 
 /**
  * Represents a collection of NDKSubscriptions (through NDKRelaySubscriptionFilters)
@@ -159,7 +235,7 @@ function findMatchingActiveSubscriptions(activeSubscriptions: NDKFilter[], filte
 
 type FiltersSub = {
     filters: NDKFilter[];
-    sub: Subscription;
+    sub: NDKRelaySubscription;
 };
 
 /**
@@ -173,7 +249,7 @@ export class NDKRelaySubscriptions {
     /**
      * Active subscriptions this relay is connected to
      */
-    readonly activeSubscriptions: Map<Subscription, NDKGroupedSubscriptions> = new Map();
+    readonly activeSubscriptions: Map<NDKRelaySubscription, NDKGroupedSubscriptions> = new Map();
     private activeSubscriptionsByGroupId: Map<NDKFilterGroupingId, FiltersSub> = new Map();
     private executionTimeoutsByGroupId: Map<NDKFilterGroupingId, number> = new Map();
     private debug: debug.Debugger;
@@ -371,7 +447,7 @@ export class NDKRelaySubscriptions {
         groupableId: NDKFilterGroupingId | null,
         groupedSubscriptions: NDKGroupedSubscriptions,
         mergedFilters: NDKFilter[]
-    ): Subscription | undefined {
+    ): NDKRelaySubscription {
         const subscriptions: NDKSubscription[] = [];
 
         for (const { subscription } of groupedSubscriptions) {
@@ -383,7 +459,7 @@ export class NDKRelaySubscriptions {
 
         const subOptions: SubscriptionOptions = {
             id: subId,
-            onevent: (event: NostrEvent) => {
+            onevent: (event: any) => {
                 const e = new NDKEvent(undefined, event);
                 e.relay = this.ndkRelay;
 
@@ -407,13 +483,7 @@ export class NDKRelaySubscriptions {
         //     subOptions.skipVerification = true;
         // }
 
-        let sub: Subscription;
-        const connected = this.conn.relay.connected;
-        if (!connected) {
-            this.debug('was about to send to a disconnected relay', this.conn.relay.url, mergedFilters);
-            return;
-        }
-        sub = this.conn.relay.subscribe(mergedFilters, subOptions);
+        const sub = this.conn.subscribe(mergedFilters, subOptions);
 
         this.activeSubscriptions.set(sub, groupedSubscriptions);
         if (groupableId) {

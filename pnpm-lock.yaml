@@ -141,7 +141,7 @@ importers:
         version: 3.3.2
       nostr-tools:
         specifier: ^2.7.1
-        version: link:../../../../../../nostr-tools
+        version: 2.7.1(typescript@5.2.2)
       tseep:
         specifier: ^1.1.1
         version: 1.1.1
@@ -5304,15 +5304,15 @@ packages:
     resolution: {integrity: sha512-osvveYtyzdEVbt3OfwwXFr4P2iVBL5u1Q3q4ONBfDY/UpOuXmOlbgwc1xECEboY8wIays8Yt6onaWMUdUbfl0A==}
     dependencies:
       '@noble/curves': 1.1.0
-      '@noble/hashes': 1.3.1
-      '@scure/base': 1.1.1
+      '@noble/hashes': 1.3.2
+      '@scure/base': 1.1.3
     dev: false
 
   /@scure/bip39@1.2.1:
     resolution: {integrity: sha512-Z3/Fsz1yr904dduJD0NpiyRHhRYHdcnyh73FZWiV+/qhWi83wNJ3NWolYqCEN+ZWsUz2TWwajJggcRE9r1zUYg==}
     dependencies:
-      '@noble/hashes': 1.3.1
-      '@scure/base': 1.1.1
+      '@noble/hashes': 1.3.2
+      '@scure/base': 1.1.3
     dev: false
 
   /@shikijs/core@1.10.0:
@@ -12975,6 +12975,25 @@ packages:
       '@scure/bip32': 1.3.1
       '@scure/bip39': 1.2.1
       typescript: 5.3.3
+    optionalDependencies:
+      nostr-wasm: 0.1.0
+    dev: false
+
+  /nostr-tools@2.7.1(typescript@5.2.2):
+    resolution: {integrity: sha512-4qAvlHSqBAA8lQMwRWE6dalSNdQT77Xut9lPiJZgEcb9RAlR69wR2+KVBAgnZVaabVYH7FJ7gOQXLw/jQBAYBg==}
+    peerDependencies:
+      typescript: '>=5.0.0'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+    dependencies:
+      '@noble/ciphers': 0.5.3
+      '@noble/curves': 1.2.0
+      '@noble/hashes': 1.3.1
+      '@scure/base': 1.1.1
+      '@scure/bip32': 1.3.1
+      '@scure/bip39': 1.2.1
+      typescript: 5.2.2
     optionalDependencies:
       nostr-wasm: 0.1.0
     dev: false

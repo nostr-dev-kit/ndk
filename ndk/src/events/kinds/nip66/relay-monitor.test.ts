@@ -78,8 +78,8 @@ describe('NDKRelayMonitor', () => {
     });
 
     it('should get kinds', () => {
-      expect(relayMonitor.kinds).toContain(NDKKind.NDKRelayMeta);
-      expect(relayMonitor.kinds).toContain(NDKKind.NDKRelayDiscovery);
+      expect(relayMonitor.kinds).toContain(NDKKind.RelayMeta);
+      expect(relayMonitor.kinds).toContain(NDKKind.RelayDiscovery);
     });
 
     // it('should get geo', () => {
@@ -110,9 +110,9 @@ describe('NDKRelayMonitor', () => {
     });
   
     it('should set kinds correctly', () => {
-      // relayMonitor.kinds = [NDKKind.NDKRelayMeta, NDKKind.NDKRelayDiscovery];
-      expect(relayMonitor.kinds).toContain(NDKKind.NDKRelayMeta);
-      expect(relayMonitor.kinds).toContain(NDKKind.NDKRelayDiscovery);
+
+      expect(relayMonitor.kinds).toContain(NDKKind.RelayMeta);
+      expect(relayMonitor.kinds).toContain(NDKKind.RelayDiscovery);
     });
   
     // it('should set timeouts correctly', () => {
@@ -141,8 +141,8 @@ describe('NDKRelayMonitor', () => {
 
     describe('nip66Filter', () => {
       it('should generate correct filter based on input kinds', () => {
-        const filter = relayMonitor['nip66Filter']( [NDKKind.NDKRelayMeta], { limit: 1 }, { "#n": ["clearnet"] } );
-        expect(filter).toHaveProperty('kinds', expect.arrayContaining([NDKKind.NDKRelayMeta]));
+        const filter = relayMonitor['nip66Filter']( [NDKKind.RelayMeta], { limit: 1 }, { "#n": ["clearnet"] } );
+        expect(filter).toHaveProperty('kinds', expect.arrayContaining([NDKKind.RelayMeta]));
         expect(filter).toHaveProperty('limit', 1);
         expect(filter).toHaveProperty('#n', expect.arrayContaining(["clearnet"]));
       });

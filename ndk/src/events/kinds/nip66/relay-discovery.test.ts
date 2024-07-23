@@ -23,7 +23,7 @@ describe('NDKRelayDiscovery', () => {
 
   describe('getters', () => {
     it('should get kind', () => {
-      expect(relayDiscovery.kind).toBe(NDKKind.NDKRelayDiscovery);
+      expect(relayDiscovery.kind).toBe(NDKKind.RelayDiscovery);
     });
 
     it('should get network', () => {

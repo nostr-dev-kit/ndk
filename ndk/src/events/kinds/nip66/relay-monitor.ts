@@ -66,7 +66,7 @@ export type RelayMonitorDiscoveryFilters = {
  * @author sandwich.farm
  * @extends NDKEventGeoCoded
  * @summary Relay Monitor (NIP-66)
- * @implements NDKKind.NDKRelayMonitor
+ * @implements NDKKind.RelayMonitor
  * @example
  * ```javascript
  * import { NDK } from "@nosplatform/ndk";
@@ -92,7 +92,7 @@ export class NDKRelayMonitor extends NDKEventGeoCoded {
 
     constructor( ndk: NDK | undefined, event?: NostrEvent, debug?: debug.IDebugger ) {
         super(ndk, event);
-        this.kind ??= NDKKind.NDKRelayMonitor; 
+        this.kind ??= NDKKind.RelayMonitor; 
 
         if(!ndk) return;
 
@@ -253,11 +253,11 @@ export class NDKRelayMonitor extends NDKEventGeoCoded {
     async isMonitorActive(): Promise<boolean> {
         // if(typeof this.active !== 'undefined') return this.active;
         const kinds: NDKKind[] = [];
-        if(this.kinds.includes(NDKKind.NDKRelayDiscovery)) { 
-            kinds.push(NDKKind.NDKRelayDiscovery);
+        if(this.kinds.includes(NDKKind.RelayDiscovery)) { 
+            kinds.push(NDKKind.RelayDiscovery);
         }
-        if(this.kinds.includes(NDKKind.NDKRelayMeta)) { 
-            kinds.push(NDKKind.NDKRelayMeta);
+        if(this.kinds.includes(NDKKind.RelayMeta)) { 
+            kinds.push(NDKKind.RelayMeta);
         }
 
         const filter: NDKFilter = this.nip66Filter(kinds, { limit: 1 } as NDKFilter);

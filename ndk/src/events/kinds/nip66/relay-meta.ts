@@ -35,7 +35,7 @@ export class NDKRelayMeta extends NDKRelayDiscovery {
 
     constructor(ndk: NDK | undefined, rawEvent?: NostrEvent) {
         super(ndk, rawEvent);
-        this.kind ??= NDKKind.NDKRelayMeta;
+        this.kind ??= NDKKind.RelayMeta;
     }
 
     static from(event: NDKEvent): NDKRelayMeta {

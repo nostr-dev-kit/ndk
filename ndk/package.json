@@ -52,7 +52,6 @@
     "engines": {
         "node": ">=16"
     },
-    "packageManager": "pnpm@8.15.6",
     "devDependencies": {
         "@nostr-dev-kit/eslint-config-custom": "workspace:*",
         "@nostr-dev-kit/tsconfig": "workspace:*",

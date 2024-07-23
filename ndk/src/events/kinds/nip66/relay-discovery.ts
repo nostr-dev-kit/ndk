@@ -40,7 +40,7 @@ export type RelayDiscoveryFilters = {
 export class NDKRelayDiscovery extends NDKEventGeoCoded {
     constructor(ndk: NDK | undefined, rawEvent?: NostrEvent) {
         super(ndk, rawEvent);
-        this.kind ??= NDKKind.NDKRelayDiscovery; 
+        this.kind ??= NDKKind.RelayDiscovery; 
     }
 
     static from(event: NDKEvent): NDKRelayDiscovery {

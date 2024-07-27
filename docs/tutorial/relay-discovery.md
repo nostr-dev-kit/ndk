@@ -9,14 +9,14 @@ There are many approaches to using NIP-66. Below is a linear example of how to u
 
 ## Setup 
 ```js
-import { NDKRelayMonitor, NDKRelayDiscovery, NDKRelayMeta } from '@nostr-dev-kit/ndk'
+import { NDKRelayMonitor, NDKRelayDiscovery } from '@nostr-dev-kit/ndk'
 ```
 
 ## Relay Monitors
 
 ### Find monitors from the nostr.watch relay
 ```js
-import NDK, { NDKKind, NDKRelayMonitor, NDKRelayMeta, NDKRelayDiscovery } from '@nostr-dev-kit/ndk'
+import NDK, { NDKKind, NDKRelayMonitor, NDKRelayDiscovery } from '@nostr-dev-kit/ndk'
 const ndk = new NDK({explicitRelayUrls: 'wss://history.nostr.watch'})
 await ndk.connect()
 const monitors = Array.from(await ndk.fetchEvents({kinds:NDKKind.RelayMonitor})).map(e => NDKRelayMonitor.from(e))
@@ -130,26 +130,15 @@ this.livenessFilter('offline') // returns: { until: `${Date.now()-(monitor.frequ
 this.livenessFilter('all') //returns {}
 ```
 
-## Relay Meta
-```js
-const promises = []
-paidRelays.forEach( relay => {
-  promises.push(ndk.fetchEvent(relay.url))
-})
-await Promise.allSettled(promises)
-const relayMetas = promises.map( ndkEvent => NDKRelayMeta.from(ndkEvent))
-console.log(relayMetas[0]?.url, relayMeta[0]?.all)
-```
-
 ## Full Datasets
 In a case where you wish to fetch an "complete" dataset, you will need to utilize something similar to `nostr-fetch`. Below is an example of how to do this using `nostr-fetch` with its `ndk-adapter`. 
 
 ```js
 const fetcher = NostrFetcher.withCustomPool(ndkAdapter(ndk));
-const {since} = monitor.nip66Filter(NDKKinds.RelayMeta) //nostr-fetch accepts since and until as a separate parameter instead of in the filter.
+const {since} = monitor.nip66Filter(NDKKinds.RelayDiscovery) //nostr-fetch accepts since and until as a separate parameter instead of in the filter.
 const onlineRelays = await fetcher.fetchAllEvents(
                 this.ndk?.explicitRelayUrls,
-                { authors: [monitor.pubkey], kinds: [NDKKinds.RelayMeta] },
+                { authors: [monitor.pubkey], kinds: [NDKKinds.RelayDiscovery] },
                 since,
             );
 ```

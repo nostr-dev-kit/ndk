@@ -13,7 +13,6 @@ import type { NDKUserProfile } from "../../../user/profile.js";
 import { NDKEventGeoCoded } from "../../geocoded.js";
 
 
-import type { NDKRelayMeta } from "./relay-meta.js";
 import type { NDKRelayDiscovery } from "./relay-discovery.js";
 // import type { FetchNearbyRelayOptions } from "../../geocoded.js";
 // import { FetchNearbyOptions } from "../../../ndk/fetch-geospatial.js";
@@ -21,7 +20,6 @@ import type { NDKRelayDiscovery } from "./relay-discovery.js";
 export type RelayListSet = Set<string> | undefined
 export type RelayMonitorSet = Set<NDKRelayMonitor> | undefined
 export type RelayDiscoveryResult = Set<NDKRelayDiscovery> | undefined
-export type RelayMetaSet = Set<NDKRelayMeta> | undefined
 
 export type LivenessFilter = { 
     since?: number, 
@@ -251,16 +249,7 @@ export class NDKRelayMonitor extends NDKEventGeoCoded {
      * @async
     */
     async isMonitorActive(): Promise<boolean> {
-        // if(typeof this.active !== 'undefined') return this.active;
-        const kinds: NDKKind[] = [];
-        if(this.kinds.includes(NDKKind.RelayDiscovery)) { 
-            kinds.push(NDKKind.RelayDiscovery);
-        }
-        if(this.kinds.includes(NDKKind.RelayMeta)) { 
-            kinds.push(NDKKind.RelayMeta);
-        }
-
-        const filter: NDKFilter = this.nip66Filter(kinds, { limit: 1 } as NDKFilter);
+        const filter: NDKFilter = this.nip66Filter([ NDKKind.RelayDiscovery ], { limit: 1 } as NDKFilter);
 
         return new Promise((resolve, reject) => {
             this.ndk?.fetchEvents(filter)
@@ -286,12 +275,12 @@ export class NDKRelayMonitor extends NDKEventGeoCoded {
     /**
      * @description Reduces a set of `NDKEvent` objects to a list of relay strings.
      * 
-     * @param {Set<NDKRelayDiscovery | NDKRelayMeta | NDKEvent>} events A set of `NDKEvent` objects.
+     * @param {Set<NDKRelayDiscovery | NDKEvent>} events A set of `NDKEvent` objects.
      * @returns Promise resolves to a list of relay strings or undefined.
      * 
      * @protected
      */
-    protected reduceRelayEventsToRelayStrings( events: Set<NDKRelayDiscovery | NDKRelayMeta | NDKEvent> ): RelayListSet {
+    protected reduceRelayEventsToRelayStrings( events: Set<NDKRelayDiscovery | NDKEvent> ): RelayListSet {
         if(typeof events === 'undefined') {
                 return new Set() as RelayListSet;
         }

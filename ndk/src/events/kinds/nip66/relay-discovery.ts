@@ -101,4 +101,26 @@ export class NDKRelayDiscovery extends NDKEventGeoCoded {
             this.tags.push(["s", value]);
         }
     }
+
+    get type(): string | undefined {
+        return this.tagValue("T");
+    }
+
+    set type( value: string | undefined ) {
+        this.removeTag("T");
+        if (value) {
+            this.tags.push(["T", value]);
+        }
+    }
+
+    get operator(): string | undefined {
+        return this.tagValue("p");
+    }
+
+    set operator( value: string | undefined ) {
+        this.removeTag("p");
+        if (value) {
+            this.tags.push(["p", value]);
+        }
+    }
 }

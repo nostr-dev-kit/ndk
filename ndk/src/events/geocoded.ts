@@ -158,49 +158,6 @@ export class NDKEventGeoCoded extends NDKEvent {
         return this.geohashes?.[0];
     }
 
-    get countryCode(): string[] | undefined {
-        return this.tagValuesByMarker("G", "countryCode");
-    }
-
-    get countryCodeAlpha2(): string | undefined {
-        return this.tagValueByMarkerAndValueLength("countryCode", 2);
-    }
-
-    get countryCodeAlpha3(): string | undefined {
-        return this.tagValueByMarkerAndValueLength("countryCode", 3);
-    }
-
-    get countryCodeAlpha4(): string | undefined {
-        return this.tagValueByMarkerAndValueLength("countryCode", 4);
-    }
-
-    get countryCodeNumeric(): string | undefined {
-        return this.tagValueByMarkerAndIsNumber("countryCode"); 
-    }
-
-    get regionCodeAlpha2(): string | undefined {
-        return this.tagValueByMarkerAndValueLength("regionCode", 2);  
-    }
-
-    get regionCodeNumeric(): string | undefined {
-        return this.tagValueByMarkerAndIsNumber("regionCode"); 
-    }
-
-    set countryCode(values: string[]) {
-        this.removeTagByMarker("G", "countryCode");
-        values.forEach(value => {
-            this._setGeoTag("countryCode", value);
-        });
-    }
-
-    get regionCode(): string | undefined {
-        return this.tagValueByMarker("G", "regionCode");
-    }
-
-    set regionCode(value: string) {
-        this._setGeoTag("regionCode", value);
-    }
-
     private set lat(value: number) {
         if(!this._dd) this._dd = { lat: 0, lon: 0 } as DD;
         this._dd.lat = value;
@@ -218,23 +175,6 @@ export class NDKEventGeoCoded extends NDKEvent {
     private get lon(): number | undefined {
         return this._dd?.lon;
     }
-
-    /**
-     * Retrieves all geo tags from the event's tags.
-     * 
-     * @returns the first geotag if available, otherwise undefined.
-     */
-    public geoObject(): EventGeoCodedObject  {
-        const result: EventGeoCodedObject = {};
-        if(this.lat) result.lat = this.lat;
-        if(this.lon) result.lon = this.lon;
-        if(this.geohash) result.geohash = this.geohash;
-        if(this.geohashes) result.geohashes = this.geohashes;
-        if(this.countryCode) result.countryCode = this.countryCode;
-        if(this.regionCode) result.regionCode = this.regionCode;
-        return result;
-    }
-    
 
     /**
      * Sorts an array of `NDKEventGeoCoded` instances based on their distance from a given latitude and longitude.
@@ -262,83 +202,6 @@ export class NDKEventGeoCoded extends NDKEvent {
         });
         return new Set(events) as Set<NDKEventGeoCoded>;
     };
-
-    /**
-     * Removes tags by marker (the value at last position in the tag array).
-     * 
-     * @param key The key to identify which tags to remove.
-     */
-    protected removeTagByMarker(key: string, marker: string) {
-        this.tags = this.tags.filter(tag => !(tag[0] === key && tag[tag.length-1] === marker));
-    }
-
-    /**
-     * Helper method to find a tag by its marker and length of its value.
-     * 
-     * @param key The key to identify which tag value to find.
-     * @return The first value associated with the key, or undefined if not found.
-     */
-    protected tagValueByMarkerAndValueLength(marker: string, length: number): string | undefined {
-        return this.tags.find(tag => tag[2] === marker && tag[1].length === length)?.[1];
-    }
-
-    /**
-     * Helper method to find a tag by its marker and potential type of its value
-     * 
-     * @param key The key to identify which tag value to find.
-     * @return The first value associated with the key, or undefined if not found.
-     */
-    protected tagValueByMarkerAndIsNumber(marker: string): string | undefined {
-        const candidates = this.tags.filter(tag => tag[2] === marker);
-        return candidates.find(tag => !isNaN(Number(tag[1])))?.[1];
-    }
-
-    /**
-     * Helper method to find the first tag value by its marker.
-     * 
-     * @param key The key to identify which tag value to find.
-     * @return The first value associated with the key, or undefined if not found.
-     */
-    protected tagValueByMarker(key: string, marker: string): string | undefined {
-        const tag = this.tags.find(tag => tag[0] === key && tag[tag.length-1] === marker);
-        return tag ? tag[1] : undefined;
-    }
-
-    /**
-     * Helper method to find all tags by marker
-     * 
-     * @param key The key to identify which tag value to find.
-     * @return The first value associated with the key, or undefined if not found.
-     */
-    protected tagValuesByMarker(key: string, marker: string): string[] | undefined {
-        const tags = this.tags.filter(tag => tag[0] === key && tag[tag.length-1] === marker).map(tag => tag[1]).flat();
-        return tags?.length ? tags : undefined;
-    }
-
-    /**
-     * Retrieves tags that are indexed, identified by having their first element's length equal to 1.
-     * 
-     * @returns An array of NDKTag, filtered to include only indexed tags.
-     * 
-     * @protected
-     */
-    protected get indexedTags(): NDKTag[] {
-        return this.tags.filter(tag => tag[0].length === 1);
-    }
-
-    /**
-     * Adds a geo tags to the event's tags, updating or removing existing tags as necessary.
-     * This method manages the insertion of geospatial information tags ('g') into the event's tag array.
-     * 
-     * @param {string} key The geospatial information key (e.g., "lat", "lon", "countryCode").
-     * @param {string} value The value associated with the key.
-     * @private
-     */
-    private _setGeoTag(marker: string, value: string){
-        const key = "G";
-        this.removeTagByMarker(key, marker);
-        this.tags.push([key, value, marker]);
-    }
 
     /**
      * Removes geohash tags ('gh') from the event's tags, cleaning up the tag array from geohash (gh) tags.

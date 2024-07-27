@@ -358,8 +358,6 @@ export class NDKRelayMonitor extends NDKEventGeoCoded {
      * @protected
      */
     public nip66Filter( kinds?: number[], prependFilter?: NDKFilter, appendFilter?: NDKFilter, liveness: RelayLiveness = RelayLiveness.Online ): NDKFilter {
-        // const timeframe: { since?: number, until?: number } = {};
-
         if(!kinds){
             kinds = this.kinds;
         }

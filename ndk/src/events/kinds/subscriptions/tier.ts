@@ -31,9 +31,10 @@ export class NDKSubscriptionTier extends NDKArticle {
     static kind = NDKKind.SubscriptionTier;
     static kinds = [NDKKind.SubscriptionTier];
     
-    constructor(ndk: NDK | undefined, rawEvent?: NostrEvent) {
+    constructor(ndk: NDK | undefined, rawEvent?: NostrEvent | NDKEvent) {
+        const k = rawEvent?.kind ?? NDKKind.SubscriptionTier;
         super(ndk, rawEvent);
-        this.kind ??= NDKKind.SubscriptionTier;
+        this.kind = k;
     }
 
     /**
@@ -42,7 +43,7 @@ export class NDKSubscriptionTier extends NDKArticle {
      * @returns NDKSubscriptionTier
      */
     static from(event: NDKEvent) {
-        return new NDKSubscriptionTier(event.ndk, event.rawEvent());
+        return new NDKSubscriptionTier(event.ndk, event);
     }
 
     /**

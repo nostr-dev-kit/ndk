@@ -294,7 +294,8 @@ export class NDKPool extends EventEmitter<{
 
         const relaysToConnect = new Set(this.autoConnectRelays.keys());
         this.ndk.explicitRelayUrls?.forEach((url) => {
-            relaysToConnect.add(url);
+            const normalizedUrl = normalizeRelayUrl(url);
+            relaysToConnect.add(normalizedUrl);
         });
 
         for (const relayUrl of relaysToConnect) {

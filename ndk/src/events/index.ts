@@ -58,7 +58,15 @@ export class NDKEvent extends EventEmitter {
     /**
      * The relays that this event was received from and/or successfully published to.
      */
-    public onRelays: NDKRelay[] = [];
+    get onRelays(): NDKRelay[] {
+        let res: NDKRelay[] = [];
+        if (!this.ndk) {
+            if (this.relay) res.push(this.relay);
+        } else {
+            res = this.ndk.subManager.seenEvents.get(this.id) || [];
+        }
+        return res;
+    }
 
     /**
      * The status of the publish operation.
@@ -78,8 +86,10 @@ export class NDKEvent extends EventEmitter {
         this.kind = event?.kind;
 
         if (event instanceof NDKEvent) {
-            this.relay = event.relay;
-            this.onRelays = event.onRelays;
+            if (this.relay) {
+                this.relay = event.relay;
+                this.ndk?.subManager.seenEvent(event.id, this.relay!);
+            }
             this.publishStatus = event.publishStatus;
             this.publishError = event.publishError;
         }
@@ -94,6 +104,8 @@ export class NDKEvent extends EventEmitter {
     static deserialize(ndk: NDK | undefined, event: NDKEventSerialized): NDKEvent {
         return new NDKEvent(ndk, deserialize(event));
     }
+
+
 
     /**
      * Returns the event as is.
@@ -390,7 +402,7 @@ export class NDKEvent extends EventEmitter {
         });
 
         const relays = await relaySet.publish(this, timeoutMs, requiredRelayCount);
-        this.onRelays = Array.from(relays);
+        relays.forEach((relay) => this.ndk?.subManager.seenEvent(this.id, relay));
 
         return relays;
     }

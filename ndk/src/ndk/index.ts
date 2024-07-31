@@ -282,6 +282,7 @@ export class NDK extends EventEmitter<{
 
         this.debug = opts.debug || debug("ndk");
         this.explicitRelayUrls = opts.explicitRelayUrls || [];
+        this.subManager = new NDKSubscriptionManager(this.debug);
         this.pool = new NDKPool(
             opts.explicitRelayUrls || [],
             opts.blacklistRelayUrls || DEFAULT_BLACKLISTED_RELAYS,
@@ -330,7 +331,6 @@ export class NDK extends EventEmitter<{
 
         this.initialValidationRatio = opts.initialValidationRatio || 1.0;
         this.lowestValidationRatio = opts.lowestValidationRatio || 1.0;
-        this.subManager = new NDKSubscriptionManager(this.debug);
 
         try {
             this.httpFetch = fetch;

@@ -3,6 +3,7 @@ import { nip19 } from "nostr-tools";
 import { NDKRelay } from "../relay/index.js";
 import type { NDKFilter, NDKSubscription } from "./index.js";
 import { EventPointer } from "../user/index.js";
+import { NDK } from "../ndk/index.js";
 
 /**
  * Don't generate subscription Ids longer than this amount of characters
@@ -225,7 +226,7 @@ export const BECH32_REGEX = /^n(event|ote|profile|pub|addr)1[\d\w]+$/;
  *
  * @param bech32 The NIP-19 bech32.
  */
-export function relaysFromBech32(bech32: string): NDKRelay[] {
+export function relaysFromBech32(bech32: string, ndk?: NDK): NDKRelay[] {
     try {
         const decoded = nip19.decode(bech32);
 
@@ -233,7 +234,7 @@ export function relaysFromBech32(bech32: string): NDKRelay[] {
             const data = decoded.data as unknown as EventPointer;
 
             if (data?.relays) {
-                return data.relays.map((r: string) => new NDKRelay(r));
+                return data.relays.map((r: string) => new NDKRelay(r, ndk?.relayAuthDefaultPolicy, ndk));
             }
         }
     } catch (e) {

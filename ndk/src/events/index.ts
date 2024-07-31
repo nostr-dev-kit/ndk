@@ -239,6 +239,16 @@ export class NDKEvent extends EventEmitter {
     }
 
     /**
+     * Check if the event has a tag with the given name
+     * @param tagName 
+     * @param marker 
+     * @returns 
+     */
+    public hasTag(tagName: string, marker?: string): boolean {
+        return this.tags.some((tag) => tag[0] === tagName && (!marker || tag[3] === marker));
+    }
+
+    /**
      * Get the first tag with the given name
      * @param tagName Tag name to search for
      * @returns The value of the first tag with the given name, or undefined if no such tag exists
@@ -635,6 +645,7 @@ export class NDKEvent extends EventEmitter {
             content: reason || "",
         } as NostrEvent);
         e.tag(this, undefined, true);
+        e.tags.push(["k", this.kind!.toString()])
         if (publish) await e.publish();
 
         return e;

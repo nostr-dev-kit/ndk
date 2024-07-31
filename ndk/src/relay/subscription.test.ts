@@ -1,7 +1,8 @@
 // NDKRelaySubscription.test.ts
 
 import { NDKRelaySubscription, NDKRelaySubscriptionStatus } from "./subscription.js";
-import { NDKSubscription, NDKFilter, NDKSubscriptionInternalId } from "../subscription/index.js";
+import type { NDKFilter, NDKSubscriptionInternalId } from "../subscription/index.js";
+import { NDKSubscription } from "../subscription/index.js";
 import debug from "debug";
 import { NDK } from "../ndk/index.js";
 import { NDKRelay } from "../index.js";

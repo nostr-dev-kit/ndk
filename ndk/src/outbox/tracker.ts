@@ -1,7 +1,7 @@
 import { EventEmitter } from "tseep";
 import { LRUCache } from "typescript-lru-cache";
 
-import { NDKRelayList } from "../events/kinds/NDKRelayList.js";
+import type { NDKRelayList } from "../events/kinds/NDKRelayList.js";
 import { getRelayListForUsers } from "../utils/get-users-relay-list.js";
 import type { NDK } from "../ndk/index.js";
 import type { Hexpubkey } from "../user/index.js";
@@ -75,7 +75,7 @@ export class OutboxTracker extends EventEmitter {
 
         for (let i = 0; i < items.length; i += 400) {
             const slice = items.slice(i, i + 400);
-            let pubkeys = slice
+            const pubkeys = slice
                 .map((item) => getKeyFromItem(item))
                 .filter((pubkey) => !this.data.has(pubkey)); // filter out items that are already being tracked
 

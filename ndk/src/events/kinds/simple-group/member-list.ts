@@ -1,9 +1,10 @@
 import { NDKKind } from "../index.js";
-import { NDKEvent, NostrEvent } from "../../index.js";
-import { NDK } from "../../../ndk/index.js";
-import { NDKRelaySet } from "../../../relay/sets/index.js";
-import { NDKRelay } from "../../../relay/index.js";
-import { Hexpubkey } from "../../../user/index.js";
+import type { NostrEvent } from "../../index.js";
+import { NDKEvent } from "../../index.js";
+import type { NDK } from "../../../ndk/index.js";
+import type { NDKRelaySet } from "../../../relay/sets/index.js";
+import type { NDKRelay } from "../../../relay/index.js";
+import type { Hexpubkey } from "../../../user/index.js";
 
 export class NDKSimpleGroupMemberList extends NDKEvent {
     public relaySet: NDKRelaySet | undefined;

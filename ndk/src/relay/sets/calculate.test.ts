@@ -1,8 +1,9 @@
-import { NDKEvent, NostrEvent } from "../../events/index.js";
+import type { NostrEvent } from "../../events/index.js";
+import { NDKEvent } from "../../events/index.js";
 import { NDKRelayList } from "../../events/kinds/NDKRelayList.js";
 import { NDK } from "../../ndk/index.js";
 import { NDKPrivateKeySigner } from "../../signers/private-key/index.js";
-import { Hexpubkey, NDKUser } from "../../user/index.js";
+import type { Hexpubkey, NDKUser } from "../../user/index.js";
 import { calculateRelaySetFromEvent, calculateRelaySetsFromFilters } from "./calculate.js";
 
 const explicitRelayUrl = "wss://explicit-relay.com/";
@@ -16,9 +17,9 @@ const signers = [
 ];
 
 let ndk: NDK;
-let users: NDKUser[] = [];
-let readRelays: string[][] = [];
-let writeRelays: string[][] = [];
+const users: NDKUser[] = [];
+const readRelays: string[][] = [];
+const writeRelays: string[][] = [];
 
 beforeEach(() => {
     ndk = new NDK({

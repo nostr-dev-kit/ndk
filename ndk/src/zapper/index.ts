@@ -1,10 +1,13 @@
-import { NDK } from "../ndk";
-import { NDKEvent, NDKTag } from "../events";
-import { Hexpubkey, NDKUser } from "../user";
-import { NDKSigner } from "../signers";
+import type { NDK } from "../ndk";
+import type { NDKTag } from "../events";
+import { NDKEvent } from "../events";
+import type { Hexpubkey} from "../user";
+import { NDKUser } from "../user";
+import type { NDKSigner } from "../signers";
 import createDebug from "debug";
 
-import { nip57, NostrEvent } from "nostr-tools";
+import type { NostrEvent } from "nostr-tools";
+import { nip57 } from "nostr-tools";
 import { getRelayListForUsers } from "../utils/get-users-relay-list";
 import { EventEmitter } from "tseep";
 

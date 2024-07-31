@@ -39,7 +39,7 @@ This is an important aspect to consider:
 > `NDKSubscription` have a different lifecycle than `NDKRelaySubscription`. For example, a subscription that is set to close after EOSE might still be active within the `NDKSubscription` lifecycle, but it might have been already been closed within the `NDKRelaySubscription` lifecycle.
 
 ## NDKRelaySubscription
-Most NDK subscriptions (at least by default) are set to be executed with a grouping delay. Will cover what this looks like in practice later, but for now, let's understand than when the `NDKRelaySubscriptionManager` receives an order, it might not execute it right away.
+Most NDK subscriptions (by default) are set to be executed with a grouping delay. Will cover what this looks like in practice later, but for now, let's understand than when the `NDKRelaySubscriptionManager` receives an order, it might not execute it right away.
 
 Once the filter is executed
 

@@ -1,7 +1,8 @@
-import { NDK } from "../../ndk/index.js";
-import { NDKRelaySet } from "../../relay/sets/index.js";
-import { NDKSigner } from "../../signers/index.js";
-import { NDKEvent, NostrEvent } from "../index.js";
+import type { NDK } from "../../ndk/index.js";
+import type { NDKRelaySet } from "../../relay/sets/index.js";
+import type { NDKSigner } from "../../signers/index.js";
+import type { NostrEvent } from "../index.js";
+import { NDKEvent } from "../index.js";
 import { NDKKind } from "./index.js";
 
 /**

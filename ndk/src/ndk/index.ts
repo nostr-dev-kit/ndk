@@ -3,11 +3,13 @@ import { EventEmitter } from "tseep";
 
 import type { NDKCacheAdapter } from "../cache/index.js";
 import dedupEvent from "../events/dedup.js";
-import { NDKEvent, NDKEventId, NDKTag } from "../events/index.js";
+import type { NDKEventId, NDKTag } from "../events/index.js";
+import { NDKEvent } from "../events/index.js";
 import { OutboxTracker } from "../outbox/tracker.js";
 import { NDKRelay } from "../relay/index.js";
 import { NDKPool } from "../relay/pool/index.js";
-import { NDKRelaySet, NDKPublishError } from "../relay/sets/index.js";
+import type { NDKPublishError } from "../relay/sets/index.js";
+import { NDKRelaySet } from "../relay/sets/index.js";
 import { correctRelaySet } from "../relay/sets/utils.js";
 import type { NDKSigner } from "../signers/index.js";
 import type { NDKFilter, NDKSubscriptionOptions } from "../subscription/index.js";
@@ -16,22 +18,23 @@ import { filterFromId, isNip33AValue, relaysFromBech32 } from "../subscription/u
 import type { Hexpubkey, NDKUserParams, ProfilePointer } from "../user/index.js";
 import { NDKUser } from "../user/index.js";
 import { fetchEventFromTag } from "./fetch-event-from-tag.js";
-import { NDKAuthPolicy } from "../relay/auth-policies.js";
+import type { NDKAuthPolicy } from "../relay/auth-policies.js";
 import { Nip96 } from "../media/index.js";
 import { NDKNwc } from "../nwc/index.js";
 import { Queue } from "./queue/index.js";
 import { signatureVerificationInit } from "../events/signature.js";
 import { NDKSubscriptionManager } from "../subscription/manager.js";
 import { setActiveUser } from "./active-user.js";
-import {
+import type {
     LnPaymentInfo,
     NDKLnUrlData,
     NDKZapConfirmation,
     NDKZapDetails,
-    NDKZapper,
-    NutPaymentInfo,
+    NutPaymentInfo} from "../zapper/index.js";
+import {
+    NDKZapper
 } from "../zapper/index.js";
-import { NostrEvent } from "nostr-tools";
+import type { NostrEvent } from "nostr-tools";
 
 export type NDKValidationRatioFn = (
     relay: NDKRelay,

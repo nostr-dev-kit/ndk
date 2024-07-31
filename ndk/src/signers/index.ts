@@ -1,6 +1,6 @@
 import type { NostrEvent } from "../events/index.js";
-import { NDK } from "../ndk/index.js";
-import { NDKRelay } from "../relay/index.js";
+import type { NDK } from "../ndk/index.js";
+import type { NDKRelay } from "../relay/index.js";
 import type { NDKUser } from "../user";
 
 /**

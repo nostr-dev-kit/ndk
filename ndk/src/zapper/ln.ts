@@ -1,6 +1,6 @@
 import { bech32 } from "@scure/base";
-import { NDKLnUrlData } from ".";
-import { NDK } from "../ndk";
+import type { NDKLnUrlData } from ".";
+import type { NDK } from "../ndk";
 import createDebug from "debug";
 
 const d = createDebug("ndk:zapper:ln");

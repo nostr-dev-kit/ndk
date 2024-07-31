@@ -4,7 +4,7 @@ import type { NostrEvent } from "../../events/index.js";
 import { NDKUser } from "../../user/index.js";
 import type { NDKSigner } from "../index.js";
 import { NDKRelay } from "../../relay/index.js";
-import { NDK } from "../../ndk/index.js";
+import type { NDK } from "../../ndk/index.js";
 
 type Nip04QueueItem = {
     type: "encrypt" | "decrypt";

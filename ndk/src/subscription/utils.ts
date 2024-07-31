@@ -2,8 +2,8 @@ import { nip19 } from "nostr-tools";
 
 import { NDKRelay } from "../relay/index.js";
 import type { NDKFilter, NDKSubscription } from "./index.js";
-import { EventPointer } from "../user/index.js";
-import { NDK } from "../ndk/index.js";
+import type { EventPointer } from "../user/index.js";
+import type { NDK } from "../ndk/index.js";
 
 /**
  * Don't generate subscription Ids longer than this amount of characters

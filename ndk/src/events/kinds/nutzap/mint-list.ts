@@ -1,6 +1,7 @@
-import { NDK } from "../../../ndk/index.js";
+import type { NDK } from "../../../ndk/index.js";
 import { NDKRelaySet } from "../../../relay/sets/index.js";
-import { NDKEvent, NostrEvent } from "../../index.js";
+import type { NostrEvent } from "../../index.js";
+import { NDKEvent } from "../../index.js";
 import { NDKKind } from "../index.js";
 
 export class NDKCashuMintList extends NDKEvent {

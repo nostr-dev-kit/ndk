@@ -7,7 +7,7 @@ import type { NDKFilter } from "../../subscription/index.js";
 import type { Hexpubkey } from "../../user/index.js";
 import { normalizeRelayUrl } from "../../utils/normalize-url.js";
 import type { NDKRelay } from "../index.js";
-import { NDKPool } from "../pool/index.js";
+import type { NDKPool } from "../pool/index.js";
 import { NDKRelaySet } from "./index.js";
 import createDebug from "debug";
 

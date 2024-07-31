@@ -1,11 +1,11 @@
-import { NDKEvent } from "../events/index.js";
+import type { NDKEvent } from "../events/index.js";
 import { NDKKind } from "../events/kinds/index.js";
 import { NDKRelayList, relayListFromKind3 } from "../events/kinds/NDKRelayList.js";
-import { NDK } from "../ndk/index.js";
-import { NDKRelay } from "../relay/index.js";
+import type { NDK } from "../ndk/index.js";
+import type { NDKRelay } from "../relay/index.js";
 import { NDKRelaySet } from "../relay/sets/index.js";
 import { NDKSubscriptionCacheUsage } from "../subscription/index.js";
-import { Hexpubkey } from "../user/index.js";
+import type { Hexpubkey } from "../user/index.js";
 
 export async function getRelayListForUser(pubkey: Hexpubkey, ndk: NDK): Promise<NDKRelayList> {
     const list = await getRelayListForUsers([pubkey], ndk);

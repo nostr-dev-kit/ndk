@@ -1,13 +1,14 @@
 import { EventEmitter } from "tseep";
 
-import { NDKEvent, NDKEventId, NostrEvent } from "../events/index.js";
+import type { NDKEventId, NostrEvent } from "../events/index.js";
+import { NDKEvent } from "../events/index.js";
 import type { NDK } from "../ndk/index.js";
 import type { NDKRelay } from "../relay";
 import type { NDKPool } from "../relay/pool/index.js";
 import { calculateRelaySetsFromFilters } from "../relay/sets/calculate";
 import type { NDKRelaySet } from "../relay/sets/index.js";
 import { queryFullyFilled } from "./utils.js";
-import { NDKKind } from "../events/kinds/index.js";
+import type { NDKKind } from "../events/kinds/index.js";
 import { verifiedSignatures } from "../events/validation.js";
 
 export type NDKSubscriptionInternalId = string;
@@ -527,7 +528,7 @@ export class NDKSubscription extends EventEmitter<{
 
             const connectedRelays = new Set(this.pool.connectedRelays().map((r) => r.url));
 
-            let connectedRelaysWithFilters = Array.from(this.relayFilters.keys()).filter((url) =>
+            const connectedRelaysWithFilters = Array.from(this.relayFilters.keys()).filter((url) =>
                 connectedRelays.has(url)
             );
 

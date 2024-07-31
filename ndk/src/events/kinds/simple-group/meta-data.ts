@@ -1,6 +1,7 @@
 import { NDKKind } from "../index.js";
-import { NDKEvent, NostrEvent } from "../../index.js";
-import { NDK } from "../../../ndk/index.js";
+import type { NostrEvent } from "../../index.js";
+import { NDKEvent } from "../../index.js";
+import type { NDK } from "../../../ndk/index.js";
 
 export class NDKSimpleGroupMetadata extends NDKEvent {
     static kind = NDKKind.GroupMetadata;

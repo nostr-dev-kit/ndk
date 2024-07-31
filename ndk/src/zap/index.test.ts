@@ -1,7 +1,7 @@
 import { NDKZap } from ".";
-import { NDKEvent } from "../events/index.js";
+import type { NDKEvent } from "../events/index.js";
 import { NDK } from "../ndk/index.js";
-import { Hexpubkey } from "../user";
+import type { Hexpubkey } from "../user";
 import { NDKRelayList } from "../events/kinds/NDKRelayList.js";
 
 const ndk = new NDK();

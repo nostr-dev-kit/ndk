@@ -5,7 +5,7 @@ import type { NDK } from "../ndk/index.js";
 import type { NostrEvent } from "../events/index.js";
 import type { NDKFilter } from "../subscription";
 import { NDKKind } from "../events/kinds";
-import { NDKRelaySubscription } from "./subscription";
+import type { NDKRelaySubscription } from "./subscription";
 
 const MAX_RECONNECT_ATTEMPTS = 5;
 const FLAPPING_THRESHOLD_MS = 1000;

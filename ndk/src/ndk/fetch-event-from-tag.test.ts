@@ -1,6 +1,7 @@
 import { NDK } from ".";
 import { NDKEvent } from "../events";
-import { NDKSubscriptionCacheUsage, NDKSubscriptionOptions } from "../subscription";
+import type { NDKSubscriptionOptions } from "../subscription";
+import { NDKSubscriptionCacheUsage } from "../subscription";
 
 const ndk = new NDK();
 

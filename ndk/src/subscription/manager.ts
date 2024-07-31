@@ -1,7 +1,7 @@
-import { NDKEventId } from "../events/index.js";
-import { NDKRelay } from "../relay/index.js";
-import { NDKSubscription } from "./index.js";
-import debug from "debug";
+import type { NDKEventId } from "../events/index.js";
+import type { NDKRelay } from "../relay/index.js";
+import type { NDKSubscription } from "./index.js";
+import type debug from "debug";
 
 export type NDKSubscriptionId = string;
 

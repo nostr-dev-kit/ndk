@@ -1,9 +1,10 @@
 import { NDKRelaySubscription } from "./subscription";
-import { NDKSubscription } from "../subscription/index.js";
-import { NDKFilter } from "../subscription/index.js";
-import { filterFingerprint, NDKFilterFingerprint } from "../subscription/grouping.js";
-import { NDKRelay } from ".";
-import { NDKSubscriptionManager } from "../subscription/manager";
+import type { NDKSubscription } from "../subscription/index.js";
+import type { NDKFilter } from "../subscription/index.js";
+import type { NDKFilterFingerprint } from "../subscription/grouping.js";
+import { filterFingerprint } from "../subscription/grouping.js";
+import type { NDKRelay } from ".";
+import type { NDKSubscriptionManager } from "../subscription/manager";
 
 /**
  * The subscription manager of an NDKRelay is in charge of orchestrating the subscriptions

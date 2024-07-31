@@ -1,6 +1,6 @@
-import { NDK } from "../ndk";
-import { NDKRelay } from "../relay";
-import { Hexpubkey } from "../user";
+import type { NDK } from "../ndk";
+import type { NDKRelay } from "../relay";
+import type { Hexpubkey } from "../user";
 import { getTopRelaysForAuthors } from "./relay-ranking";
 import { getRelaysForSync } from "./write";
 

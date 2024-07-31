@@ -1,10 +1,11 @@
-import { NostrEvent } from "nostr-tools";
-import { NDKZapConfirmation, NDKZapPaymentDetails, NDKZapper, NutPaymentInfo } from ".";
+import type { NostrEvent } from "nostr-tools";
+import type { NDKZapConfirmation, NDKZapPaymentDetails, NutPaymentInfo } from ".";
+import { NDKZapper } from ".";
 import { NDKEvent } from "../events";
 import { NDKCashuMintList } from "../events/kinds/nutzap/mint-list";
 import { NDK } from "../ndk";
 import { NDKPrivateKeySigner } from "../signers/private-key";
-import { NDKUser } from "../user";
+import type { NDKUser } from "../user";
 
 jest.mock("./ln.js", () => ({
     getNip57ZapSpecFromLud: jest.fn(async () => {

@@ -1,7 +1,8 @@
 import { NDKKind } from ".";
-import { NDKEvent, NostrEvent } from "..";
-import { NDK } from "../../ndk";
-import { ContentTag } from "../content-tagger";
+import type { NostrEvent } from "..";
+import { NDKEvent } from "..";
+import type { NDK } from "../../ndk";
+import type { ContentTag } from "../content-tagger";
 
 /**
  * Represents a horizontal or vertical video.

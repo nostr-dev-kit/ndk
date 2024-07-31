@@ -1,10 +1,10 @@
 import { EventEmitter } from "tseep";
 
-import { NDKEvent } from "../events/index.js";
+import type { NDKEvent } from "../events/index.js";
 import type { NDK } from "../ndk/index.js";
 import type { Hexpubkey, NDKUser } from "../user/index.js";
 import createDebug from "debug";
-import { NDKLnUrlData } from "../zapper/index.js";
+import type { NDKLnUrlData } from "../zapper/index.js";
 
 const debug = createDebug("ndk:zap");
 

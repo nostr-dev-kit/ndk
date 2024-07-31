@@ -1,14 +1,17 @@
-import { Event, matchFilters } from "nostr-tools";
-import { NDKRelay, NDKRelayStatus } from ".";
-import { NDKEventId, NostrEvent } from "../events";
-import {
+import type { Event} from "nostr-tools";
+import { matchFilters } from "nostr-tools";
+import type { NDKRelay} from ".";
+import { NDKRelayStatus } from ".";
+import type { NDKEventId, NostrEvent } from "../events";
+import type {
     NDKFilter,
     NDKSubscription,
     NDKSubscriptionDelayedType,
     NDKSubscriptionInternalId,
 } from "../subscription";
-import { mergeFilters, NDKFilterFingerprint } from "../subscription/grouping";
-import { NDKSubscriptionManager } from "../subscription/manager";
+import type { NDKFilterFingerprint } from "../subscription/grouping";
+import { mergeFilters } from "../subscription/grouping";
+import type { NDKSubscriptionManager } from "../subscription/manager";
 
 type Item = {
     subscription: NDKSubscription;

@@ -1,4 +1,4 @@
-import { NDKEvent, NDKEventId, NDKTag } from "../events";
+import type { NDKEvent, NDKEventId, NDKTag } from "../events";
 
 export function eventsBySameAuthor(op: NDKEvent, events: NDKEvent[]) {
     const eventsByAuthor = new Map<NDKEventId, NDKEvent>();
@@ -106,7 +106,7 @@ export function eventThreads(op: NDKEvent, events: NDKEvent[]) {
 export function getEventReplyIds(event: NDKEvent): NDKEventId[] {
     if (hasMarkers(event, event.tagType())) {
         let rootTag: NDKTag | undefined;
-        let replyTags: NDKTag[] = [];
+        const replyTags: NDKTag[] = [];
 
         event.getMatchingTags(event.tagType()).forEach((tag) => {
             if (tag[3] === "root") rootTag = tag;
@@ -196,7 +196,7 @@ export function getRootEventId(event: NDKEvent, searchTag?: string): NDKEventId 
  */
 export function getRootTag(event: NDKEvent, searchTag?: string): NDKTag | undefined {
     searchTag ??= event.tagType();
-    let rootEventTag = event.tags.find((tag) => tag[3] === "root");
+    const rootEventTag = event.tags.find((tag) => tag[3] === "root");
 
     if (!rootEventTag) {
         // If we don't have an explicit root marer, this event has no other e-tag markers

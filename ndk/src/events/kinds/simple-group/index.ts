@@ -1,9 +1,10 @@
 import { NDKKind } from "..";
-import { NDKEvent, NDKTag, NostrEvent } from "../..";
-import { NDK } from "../../../ndk";
-import { NDKRelaySet } from "../../../relay/sets";
-import { NDKSigner } from "../../../signers";
-import { Hexpubkey, NDKUser } from "../../../user";
+import type { NDKTag, NostrEvent } from "../..";
+import { NDKEvent } from "../..";
+import type { NDK } from "../../../ndk";
+import type { NDKRelaySet } from "../../../relay/sets";
+import type { NDKSigner } from "../../../signers";
+import type { Hexpubkey, NDKUser } from "../../../user";
 import { NDKSimpleGroupMemberList } from "./member-list";
 import { NDKSimpleGroupMetadata } from "./meta-data";
 

@@ -7,7 +7,8 @@ import { NDKSubscriptionCacheUsage, type NDKSubscriptionOptions } from "../subsc
 import { follows } from "./follows.js";
 import { type NDKUserProfile, profileFromEvent, serializeProfile } from "./profile.js";
 import { getNip05For } from "./nip05.js";
-import { NDKLnUrlData, NDKRelay, NDKZap, NDKZapMethod, NDKZapMethodInfo } from "../index.js";
+import type { NDKLnUrlData, NDKRelay, NDKZapMethod, NDKZapMethodInfo } from "../index.js";
+import { NDKZap } from "../index.js";
 import { NDKCashuMintList } from "../events/kinds/nutzap/mint-list.js";
 import { getNip57ZapSpecFromLud } from "../zapper/ln.js";
 
@@ -267,7 +268,7 @@ export class NDKUser {
     ): Promise<NDKUser | undefined> {
         if (!ndk) throw new Error("No NDK instance found");
 
-        let opts: RequestInit = {};
+        const opts: RequestInit = {};
 
         if (skipCache) opts.cache = "no-cache";
         const profile = await getNip05For(ndk, nip05Id, ndk?.httpFetch, opts);

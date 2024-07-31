@@ -3,9 +3,10 @@ import { type NostrEvent } from "../../index.js";
 import type { NDKEvent, NDKTag } from "../../index.js";
 import { NDKKind } from "../index.js";
 import { NDKArticle } from "../article.js";
-import {
+import type {
     NDKIntervalFrequency,
-    NDKSubscriptionAmount,
+    NDKSubscriptionAmount} from "./amount.js";
+import {
     newAmount,
     parseTagToSubscriptionAmount,
 } from "./amount.js";

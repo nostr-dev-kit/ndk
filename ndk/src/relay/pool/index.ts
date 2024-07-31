@@ -3,7 +3,7 @@ import { EventEmitter } from "tseep";
 
 import type { NDK } from "../../ndk/index.js";
 import { NDKRelay, NDKRelayStatus } from "../index.js";
-import { NDKFilter } from "../../subscription/index.js";
+import type { NDKFilter } from "../../subscription/index.js";
 import { normalizeRelayUrl } from "../../utils/normalize-url.js";
 
 export type NDKPoolStats = {

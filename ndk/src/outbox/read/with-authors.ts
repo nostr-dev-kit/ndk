@@ -1,8 +1,8 @@
 import { chooseRelayCombinationForPubkeys, getAllRelaysForAllPubkeys } from "..";
-import { NDK } from "../../ndk";
+import type { NDK } from "../../ndk";
 import { NDKRelay } from "../../relay";
 import { NDKPool } from "../../relay/pool";
-import { Hexpubkey } from "../../user";
+import type { Hexpubkey } from "../../user";
 import { getTopRelaysForAuthors } from "../relay-ranking";
 import { getWriteRelaysFor, getRelaysForSync } from "../write";
 

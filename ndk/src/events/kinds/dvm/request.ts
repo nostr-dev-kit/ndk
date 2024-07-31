@@ -1,9 +1,10 @@
 import type { NDK } from "../../../ndk/index.js";
-import { NDKSigner } from "../../../signers/index.js";
-import { NDKUser } from "../../../user/index.js";
+import type { NDKSigner } from "../../../signers/index.js";
+import type { NDKUser } from "../../../user/index.js";
 import type { NDKTag, NostrEvent } from "../../index.js";
 import { NDKEvent } from "../../index.js";
-import { NDKDVMJobFeedback, NDKDvmJobFeedbackStatus } from "./feedback.js";
+import type { NDKDvmJobFeedbackStatus } from "./feedback.js";
+import { NDKDVMJobFeedback } from "./feedback.js";
 // import type { NDKDvmJobFeedbackStatus } from "./NDKDVMJobFeedback.js";
 // import { NDKDVMJobFeedback } from "./NDKDVMJobFeedback.js";
 // import { NDKDVMJobResult } from "./NDKDVMJobResult.js";

@@ -1,4 +1,4 @@
-import NDK, { NDKEvent, NDKEventId, NDKKind, NDKPrivateKeySigner, NDKRelaySet, NDKTag, NDKUser, NDKZapDetails, NutPaymentInfo } from "@nostr-dev-kit/ndk";
+import NDK, { NDKEvent, NDKEventId, NDKKind, NDKPrivateKeySigner, NDKRelay, NDKRelaySet, NDKTag, NDKUser, NDKZapDetails, NutPaymentInfo } from "@nostr-dev-kit/ndk";
 import { NostrEvent } from "nostr-tools";
 import { NDKCashuToken, proofsTotalBalance } from "./token.js";
 import { NDKCashuDeposit } from "./deposit.js";
@@ -36,6 +36,9 @@ export class NDKCashuWallet extends NDKEvent {
 
     static kind = NDKKind.CashuWallet;
     static kinds = [NDKKind.CashuWallet];
+
+    public privateTags: NDKTag[] = [];
+    public publicTags: NDKTag[] = [];
 
     constructor(ndk?: NDK, event?: NostrEvent) {
         super(ndk, event);
@@ -75,70 +78,91 @@ export class NDKCashuWallet extends NDKEvent {
         // if (wallet.isDeleted) return;
 
         const prevContent = wallet.content;
+        wallet.publicTags = wallet.tags;
         try {
             await wallet.decrypt();
+
+            wallet.privateTags = JSON.parse(wallet.content);
         } catch (e) {
             console.error(e);
         }
         wallet.content ??= prevContent;
 
-        const contentTags = JSON.parse(wallet.content);
-        wallet.tags = [...contentTags, ...wallet.tags];
-
         await wallet.getP2pk();
+
+        console.log('wallet from event', { privateTags: wallet.privateTags, publicTags: wallet.publicTags });
         
         return wallet;
     }
 
-    set relays(urls: WebSocket['url'][]) {
-        this.tags = this.tags.filter(t => t[0] !== "relay");
-        for (const url of urls) {
-            this.tags.push(["relay", url]);
+    get allTags(): NDKTag[] {
+        return this.privateTags.concat(this.publicTags);
+    }
+
+    private setPrivateTag(name: string, value: string | string[]) {
+        this.privateTags = this.privateTags.filter(t => t[0] !== name);
+        if (Array.isArray(value)) {
+            for (const v of value) {
+                this.privateTags.push([name, v]);
+            }
+        } else {
+            this.privateTags.push([name, value]);
         }
-        console.log('setting relay tags to', {urls})
+    }
+
+    private getPrivateTags(name: string): string[] {
+        return this.privateTags.filter(t => t[0] === name).map(t => t[1]);
+    }
+
+    private getPrivateTag(name: string): string | undefined {
+        return this.privateTags.find(t => t[0] === name)?.[1];
+    }
+
+    private setPublicTag(name: string, value: string | string[]) {
+        this.publicTags = this.publicTags.filter(t => t[0] !== name);
+        if (Array.isArray(value)) {
+            for (const v of value) {
+                this.publicTags.push([name, v]);
+            }
+        } else {
+            this.publicTags.push([name, value]);
+        }
+    }
+
+    private getPublicTags(name: string): string[] {
+        return this.publicTags.filter(t => t[0] === name).map(t => t[1]);
+    }
+
+    set relays(urls: WebSocket['url'][]) {
+        this.setPrivateTag("relay", urls);
     }
 
     get relays(): WebSocket['url'][] {
-        const r = [];
-        for (const tag of this.tags) {
-            if (tag[0] === "relay") { r.push(tag[1]); }
-        }
-
-        return r;
+        return this.getPrivateTags("relay");
     }
 
-    set mints(urls: WebSocket['url'][]) {
-        this.tags = this.tags.filter(t => t[0] !== "mint");
-        for (const url of urls) {
-            this.tags.push(["mint", url]);
-        }
+    set mints(urls: string[]) {
+        this.setPublicTag("mint", urls);
     }
 
-    get mints(): WebSocket['url'][] {
-        const r = [];
-        for (const tag of this.tags) {
-            if (tag[0] === "mint") { r.push(tag[1]); }
-        }
-
-        return Array.from(new Set(r));
+    get mints(): string[] {
+        return this.getPublicTags("mint");
     }
 
-    set name(url: string) {
-        this.removeTag("name");
-        this.tags.push(["name", url]);  
+    set name(value: string) {
+        this.setPrivateTag("name", value);
     }
 
     get name(): string | undefined {
-        return this.tagValue("name");
+        return this.getPrivateTag("name");
     }
     
     get unit(): string {
-        return this.tagValue("unit") ?? "sat";
+        return this.getPrivateTag("unit") ?? "sats";
     }
 
     set unit(unit: string) {
-        this.removeTag("unit");
-        this.tags.push(["unit", unit]);
+        this.setPrivateTag("unit", unit);
     }
 
     async getP2pk(): Promise<string | undefined> {
@@ -152,7 +176,7 @@ export class NDKCashuWallet extends NDKEvent {
     }
 
     get privkey(): string | undefined {
-        const privkey = this.tagValue("privkey");
+        const privkey = this.getPrivateTag("privkey");
         if (privkey) return privkey;
 
         if (this.ndk?.signer instanceof NDKPrivateKeySigner) {
@@ -161,11 +185,12 @@ export class NDKCashuWallet extends NDKEvent {
     }
 
     set privkey(privkey: string | undefined | false) {
-        this.removeTag("privkey");
-        if (privkey)
-            this.tags.push(["privkey", privkey]);
-        this.skipPrivateKey = privkey === false;
-        this.p2pkPubkey = undefined;
+        if (privkey) {
+            this.setPrivateTag("privkey", privkey ?? false);
+        } else {
+            this.skipPrivateKey = privkey === false;
+            this.p2pkPubkey = undefined;
+        }
     }
 
     /**
@@ -175,15 +200,15 @@ export class NDKCashuWallet extends NDKEvent {
         return this.tags.some(t => t[0] === "deleted");
     }
 
-    async toNostrEvent(pubkey?: string): Promise<NostrEvent> {
-        if (this.isDeleted)
-            return super.toNostrEvent(pubkey) as unknown as NostrEvent;
+    public async publish(
+        relaySet?: NDKRelaySet,
+        timeoutMs?: number,
+        requiredRelayCount?: number
+    ): Promise<Set<NDKRelay>> {
+        if (this.isDeleted) {
+            return super.publish(relaySet, timeoutMs, requiredRelayCount);
+        }
         
-        const encryptedTags: NDKTag[] = [];
-        const unencryptedTags: NDKTag[] = [];
-
-        const unencryptedTagNames = [ "d", "client", "mint" ]
-
         // if we haven't been instructed to skip the private key
         // and we don't have one, generate it
         if (!this.skipPrivateKey && !this.privkey) {
@@ -191,18 +216,22 @@ export class NDKCashuWallet extends NDKEvent {
             this.privkey = signer.privateKey;
         }
 
+        // set the tags to the public tags
+        this.tags = this.publicTags;
+
+        // ensure we don't have a privkey in the public tags
         for (const tag of this.tags) {
-            if (unencryptedTagNames.includes(tag[0])) { unencryptedTags.push(tag); }
-            else { encryptedTags.push(tag); }
+            if (tag[0] === "privkey") {
+                throw new Error("privkey should not be in public tags!");
+            }
         }
 
-        this.tags = unencryptedTags;
-        this.content = JSON.stringify(encryptedTags);
-
+        // encrypt private tags
+        this.content = JSON.stringify(this.privateTags);
         const user = await this.ndk!.signer!.user();
         await this.encrypt(user);
-        
-        return super.toNostrEvent(pubkey) as unknown as NostrEvent;
+
+        return super.publish(relaySet, timeoutMs, requiredRelayCount);
     }
 
     get relaySet(): NDKRelaySet | undefined {
@@ -422,7 +451,9 @@ export class NDKCashuWallet extends NDKEvent {
 
     get balance(): number | undefined {
         if (this.state === NDKCashuWalletState.LOADING) {
-            return Number(this.tagValue("balance"));
+            const balance = this.getPrivateTag("balance");
+            if (balance) return Number(balance);
+            else return undefined;
         }
         
         // aggregate all token balances
@@ -433,9 +464,8 @@ export class NDKCashuWallet extends NDKEvent {
      * Writes the wallet balance to relays
      */
     async updateBalance() {
-        this.removeTag("balance");
-        this.tags.push(["balance", this.balance?.toString() ?? "0"]);
-        d("updating balance to %d", this.balance);
+        this.setPrivateTag("balance", this.balance?.toString() ?? "0");
+        d("publishing balance (%d)", this.balance);
         this.publishReplaceable(this.relaySet);
     }
 

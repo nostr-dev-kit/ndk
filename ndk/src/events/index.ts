@@ -595,9 +595,6 @@ export class NDKEvent extends EventEmitter {
             tags = [[forceTag ?? "e", this.id]];
         }
 
-        // NIP-29 h-tags
-        tags = [...tags, ...this.getMatchingTags("h")];
-
         // Add the relay url to all tags
         if (this.relay?.url) {
             tags = tags.map((tag) => {
@@ -614,6 +611,9 @@ export class NDKEvent extends EventEmitter {
         if (marker) {
             tags.forEach((tag) => tag.push(marker)); // Add the marker to both "a" and "e" tags
         }
+
+        // NIP-29 h-tags
+        tags = [...tags, ...this.getMatchingTags("h")];
 
         if (!skipAuthorTag) tags.push(...this.author.referenceTags());
 

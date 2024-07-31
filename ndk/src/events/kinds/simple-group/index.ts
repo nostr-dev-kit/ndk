@@ -1,12 +1,12 @@
 import { NDKKind } from "..";
 import type { NDKTag, NostrEvent } from "../..";
 import { NDKEvent } from "../..";
-import type { NDK } from "../../../ndk";
-import type { NDKRelaySet } from "../../../relay/sets";
-import type { NDKSigner } from "../../../signers";
-import type { Hexpubkey, NDKUser } from "../../../user";
-import { NDKSimpleGroupMemberList } from "./member-list";
-import { NDKSimpleGroupMetadata } from "./meta-data";
+import type { NDK } from "../../../ndk/index.js";
+import type { NDKRelaySet } from "../../../relay/sets/index.js";
+import type { NDKSigner } from "../../../signers/index.js";
+import type { Hexpubkey, NDKUser } from "../../../user/index.js";
+import { NDKSimpleGroupMemberList } from "./member-list.js";
+import { NDKSimpleGroupMetadata } from "./metadata.js";
 
 /**
  * Represents a NIP-29 group.

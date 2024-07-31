@@ -1,4 +1,4 @@
-import NDK, { NDKZapDetails, LnPaymentInfo, NDKEvent, NDKEventId, NDKKind, NDKPrivateKeySigner, NDKRelaySet, NDKSubscriptionCacheUsage, NDKTag, NDKUser, NDKZapConfirmation, NDKZapper, NutPaymentInfo } from "@nostr-dev-kit/ndk";
+import NDK, { NDKEvent, NDKEventId, NDKKind, NDKPrivateKeySigner, NDKRelaySet, NDKTag, NDKUser, NDKZapDetails, NutPaymentInfo } from "@nostr-dev-kit/ndk";
 import { NostrEvent } from "nostr-tools";
 import { NDKCashuToken, proofsTotalBalance } from "./token.js";
 import { NDKCashuDeposit } from "./deposit.js";
@@ -72,7 +72,7 @@ export class NDKCashuWallet extends NDKEvent {
 
     static async from(event: NDKEvent): Promise<NDKCashuWallet | undefined> {
         const wallet = new NDKCashuWallet(event.ndk, event.rawEvent() as NostrEvent);
-        if (wallet.isDeleted) return;
+        // if (wallet.isDeleted) return;
 
         const prevContent = wallet.content;
         try {
@@ -223,22 +223,30 @@ export class NDKCashuWallet extends NDKEvent {
         return deposit;
     }
 
+    /**
+     * Publishes a nutzap event once the proofs has been constructed.
+     * @param proofs Proofs to send to the recipient -- they should be p2pk locked to a pubkey they control
+     * @param mint The mint where the proofs have been minted
+     * @param details Details from the zap
+     * @returns 
+     */
     async publishNutzap(
         proofs: Proof[],
         mint: string,
-        amount: number,
-        unit: string,
-        target: NDKEvent | NDKUser,
-        recipient: NDKUser,
-        relays: WebSocket['url'][],
-        comment?: string,
+        details: NDKZapDetails<NutPaymentInfo>,
     ): Promise<NDKEvent> {
+        const { info } = details;
+        const relays = info.relays;
+        const { amount, unit, target, comment, recipientPubkey, extraTags } = details;
+        const recipient = this.ndk!.getUser({pubkey: recipientPubkey});
+        
         const nutzapEvent = new NDKEvent(this.ndk, {
             kind: NDKKind.Nutzap,
             content: JSON.stringify(proofs),
             tags: [
                 [ "u", mint ],
                 [ "amount", amount.toString(), unit ],
+                ...(extraTags||[])
             ],
         } as NostrEvent);
 

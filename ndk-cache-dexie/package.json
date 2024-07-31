@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/ndk-cache-dexie",
-    "version": "2.5.0",
+    "version": "2.5.1",
     "description": "NDK Dexie Cache Adapter",
     "license": "MIT",
     "docs": "typedoc",

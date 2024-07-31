@@ -1,5 +1,19 @@
 # @nostr-dev-kit/ndk-svelte
 
+## 2.2.18
+
+### Patch Changes
+
+-   e8ad796: expose a way to peak into events as they come
+-   Updated dependencies [ec83ddc]
+-   Updated dependencies [18c55bb]
+-   Updated dependencies
+-   Updated dependencies [18c55bb]
+-   Updated dependencies
+-   Updated dependencies
+-   Updated dependencies [3029124]
+    -   @nostr-dev-kit/ndk@2.10.0
+
 ## 2.2.17
 
 ### Patch Changes

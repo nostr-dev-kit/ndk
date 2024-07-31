@@ -1,5 +1,23 @@
 # @nostr-dev-kit/ndk-cache-dexie
 
+## 2.5.1
+
+### Patch Changes
+
+-   apply limit filter
+-   abb3cd9: add tests
+-   index event kinds and add byKinds filter
+-   improve profile fetching from dexie
+-   3029124: add methods to access and manage unpublished events from the cache
+-   Updated dependencies [ec83ddc]
+-   Updated dependencies [18c55bb]
+-   Updated dependencies
+-   Updated dependencies [18c55bb]
+-   Updated dependencies
+-   Updated dependencies
+-   Updated dependencies [3029124]
+    -   @nostr-dev-kit/ndk@2.10.0
+
 ## 2.5.0
 
 ### Minor Changes

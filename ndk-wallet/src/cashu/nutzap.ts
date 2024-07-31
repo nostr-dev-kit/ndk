@@ -1,8 +1,5 @@
 import { Proof } from "@cashu/cashu-ts";
 import NDK, { Hexpubkey, NDKEvent, NDKKind, NDKUser, NostrEvent } from "@nostr-dev-kit/ndk";
-import createDebug from "debug";
-
-const d = createDebug("ndk-wallet:nutzap");
 
 /**
  * Represents a NIP-61 nutzap

@@ -1,4 +1,4 @@
-import { NDKEvent } from "@nostr-dev-kit/ndk";
+import { NDKEvent, NDKRelay } from "@nostr-dev-kit/ndk";
 import NDKWalletLifecycle from ".";
 import { NDKCashuWallet, NDKCashuWalletState } from "../../cashu/wallet";
 
@@ -8,11 +8,41 @@ function removeDeletedWallet(this: NDKWalletLifecycle, walletId: string) {
     this.emit("wallets");
 }
 
+const seenWallets: Record<string, { events: NDKEvent[], mostRecentTime: number}> = {};
+
 async function handleWalletEvent(
     this: NDKWalletLifecycle,
     event: NDKEvent,
+    relay?: NDKRelay,
 ) {
     const wallet = await NDKCashuWallet.from(event);
+    if (!wallet) {
+        this.debug("encountered a deleted wallet from %s (%d)", relay?.url, event.created_at);
+    }
+    
+    // check if we already have this dTag
+    const dTag = event.dTag!;
+    const existing = seenWallets[dTag];
+    if (existing) {
+        if (existing.mostRecentTime > event.created_at!) {
+            this.debug.extend(dTag)("Relay %s sent an old event %d vs %d (%d)", relay?.url, existing.mostRecentTime, event.created_at, existing.mostRecentTime - event.created_at!);
+        } else {
+            this.debug.extend(dTag)("Relay %s sent a newer event %d vs %d (%d)", relay?.url, existing.mostRecentTime, event.created_at, event.created_at! - existing.mostRecentTime);
+            existing.mostRecentTime = event.created_at!;
+        }
+        if (wallet) {
+            this.debug("wallet with privkey %s (%s)", wallet.privkey, wallet.p2pkPubkey);
+        }
+        existing.events.push(event);
+    } else {
+        this.debug.extend(dTag)("Relay %s sent a new wallet %s", relay?.url, dTag);
+        seenWallets[dTag] = {
+            events: [event],
+            mostRecentTime: event.created_at!,
+        };
+    }
+    
+    // const wallet = await NDKCashuWallet.from(event);
 
     if (!wallet) {
         this.debug("wallet deleted", event.dTag);
@@ -36,12 +66,16 @@ async function handleWalletEvent(
         }, 5000);
     });
     const existingEvent = this.wallets.get(wallet.walletId);
-    if (existingEvent && existingEvent.created_at! >= wallet.created_at!) return;
 
+    // always store the wallet by p2pk, even before checking for their created_at
+    // that way, if a wallet had it's private key replaced, we can still spend from it
     const walletP2pk = await wallet.getP2pk();
     if (walletP2pk) {
         this.walletsByP2pk.set(walletP2pk, wallet);
     }
+    
+    // check if this is the most up to date version of this wallet we have
+    if (existingEvent && existingEvent.created_at! >= wallet.created_at!) return;
 
     this.wallets.set(wallet.walletId, wallet);
     this.emit("wallet", wallet);

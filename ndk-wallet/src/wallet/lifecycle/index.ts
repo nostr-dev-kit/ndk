@@ -1,4 +1,4 @@
-import NDK, { getRelayListForUser, NDKCashuMintList, NDKEvent, NDKEventId, NDKKind, NDKRelaySet, NDKSubscription, NDKSubscriptionCacheUsage, NDKUser } from "@nostr-dev-kit/ndk";
+import NDK, { getRelayListForUser, NDKCashuMintList, NDKEvent, NDKEventId, NDKKind, NDKRelay, NDKRelaySet, NDKSubscription, NDKSubscriptionCacheUsage, NDKUser } from "@nostr-dev-kit/ndk";
 import NDKWallet from "../index.js";
 import handleMintList from "./mint-list.js";
 import handleWalletEvent from "./wallet.js";
@@ -57,16 +57,16 @@ class NDKWalletLifecycle {
         this.sub!.start();
     }
 
-    private eventHandler(event: NDKEvent) {
+    private eventHandler(event: NDKEvent, relay?: NDKRelay) {
         switch (event.kind) {
             case NDKKind.CashuMintList:
                 handleMintList.bind(this, NDKCashuMintList.from(event)).call(this);
                 break;
             case NDKKind.CashuWallet:
-                handleWalletEvent.bind(this, event).call(this);
+                handleWalletEvent.bind(this, event, relay).call(this);
                 break;
             case NDKKind.CashuToken:
-                handleTokenEvent.bind(this, event).call(this);
+                handleTokenEvent.bind(this, event, relay).call(this);
                 break;
             case NDKKind.EventDeletion:
                 handleEventDeletion.bind(this, event).call(this);
@@ -116,8 +116,11 @@ class NDKWalletLifecycle {
         for (const wallet of this.wallets.values()) {
             if (!oldestWalletTimestamp || wallet.created_at! > oldestWalletTimestamp) {
                 oldestWalletTimestamp = wallet.created_at!;
+                this.debug('oldest wallet timestamp', oldestWalletTimestamp);
             }
         }
+
+        this.debug("oldest wallet timestamp", oldestWalletTimestamp, this.wallets.values());
 
         this.tokensSub = this.ndk.subscribe([
             { kinds: [NDKKind.CashuToken], authors: [this.user!.pubkey] },
@@ -125,10 +128,10 @@ class NDKWalletLifecycle {
             { kinds: [NDKKind.WalletChange], authors: [this.user!.pubkey] },
             { kinds: [NDKKind.Nutzap], "#p": [this.user!.pubkey], since: oldestWalletTimestamp },
         ], {
-            subId: 'ndk-wallet-tokens',
+            subId: 'ndk-wallet-tokens2',
             groupable: false,
             cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY
-        }, undefined, false);
+        }, relaySet, false);
         this.tokensSub.on("event", this.eventHandler.bind(this));
         this.tokensSub.on("eose", this.tokensSubEose.bind(this));
         this.tokensSub.start();

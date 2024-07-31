@@ -1,12 +1,15 @@
-import { NDKEvent } from "@nostr-dev-kit/ndk";
+import { NDKEvent, NDKRelay } from "@nostr-dev-kit/ndk";
 import { NDKCashuToken } from "../../cashu/token";
 import NDKWalletLifecycle from ".";
 import { NDKCashuWallet } from "../../cashu/wallet";
 
 async function handleToken(
     this: NDKWalletLifecycle,
-    event: NDKEvent
+    event: NDKEvent,
+    relay?: NDKRelay
 ) {
+    this.debug("Received token event %s from %s", event.id, relay?.url);
+    
     if (this.knownTokens.has(event.id)) return;
     this.knownTokens.add(event.id);
     

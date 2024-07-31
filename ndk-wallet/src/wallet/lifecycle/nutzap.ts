@@ -133,8 +133,7 @@ class NutzapHandler {
                 const p2pkPubkey = nutzap.p2pkPubkey;
                 const walletsByP2pk = this.lifecycle.walletsByP2pk;
                 const wallets = this.lifecycle.wallets;
-                console.error("wallet not found for proof %o", {nutzap: nutzap.rawEvent(), p2pkPubkey, walletsByP2pk, wallets});
-                throw new Error("wallet not found for proof");
+                throw new Error("wallet not found for nutzap (p2pk: " + p2pkPubkey + ") "+nutzap.content);
             }
 
             // we emit a nutzap:seen event only once we know that we have the private key to attempt to redeem it

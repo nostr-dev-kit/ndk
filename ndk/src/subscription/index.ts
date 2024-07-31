@@ -498,6 +498,7 @@ export class NDKSubscription extends EventEmitter<{
     private eosed = false;
 
     public eoseReceived(relay: NDKRelay): void {
+        this.debug(`Received EOSE from %s`, relay.url);
         this.eosesSeen.add(relay);
 
         let lastEventSeen = this.lastEventReceivedAt
@@ -507,9 +508,10 @@ export class NDKSubscription extends EventEmitter<{
         const hasSeenAllEoses = this.eosesSeen.size === this.relayFilters?.size;
         const queryFilled = queryFullyFilled(this);
 
-        const performEose = () => {
+        const performEose = (reason: string) => {
             if (this.eosed) return;
             if (this.eoseTimeout) clearTimeout(this.eoseTimeout);
+            this.debug(`Performing EOSE: ${reason}`);
             this.emit("eose", this);
             this.eosed = true;
 
@@ -517,7 +519,7 @@ export class NDKSubscription extends EventEmitter<{
         };
 
         if (queryFilled || hasSeenAllEoses) {
-            performEose();
+            performEose("query filled or seen all");
         } else if (this.relayFilters) {
             let timeToWaitForNextEose = 1000;
 
@@ -545,7 +547,7 @@ export class NDKSubscription extends EventEmitter<{
                     timeToWaitForNextEose * (1 - percentageOfRelaysThatHaveSentEose);
 
                 if (timeToWaitForNextEose === 0) {
-                    performEose();
+                    performEose("tiem to wait was 0");
                     return;
                 }
 
@@ -561,7 +563,7 @@ export class NDKSubscription extends EventEmitter<{
                     if (lastEventSeen !== undefined && lastEventSeen < 20) {
                         this.eoseTimeout = setTimeout(sendEoseTimeout, timeToWaitForNextEose);
                     } else {
-                        performEose();
+                        performEose("send eose timeout: "+timeToWaitForNextEose);
                     }
                 };
 

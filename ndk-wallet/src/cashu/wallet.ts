@@ -84,7 +84,7 @@ export class NDKCashuWallet extends NDKEvent {
 
             wallet.privateTags = JSON.parse(wallet.content);
         } catch (e) {
-            console.error(e);
+            d("unable to decrypt wallet", e);
         }
         wallet.content ??= prevContent;
 

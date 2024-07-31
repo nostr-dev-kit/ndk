@@ -2,6 +2,7 @@ import { CashuMint, CashuWallet, MeltQuoteResponse, Proof } from "@cashu/cashu-t
 import { NDKCashuWallet } from "./wallet";
 import { NDKCashuToken } from "./token";
 import createDebug from "debug";
+import { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
 
 const d = createDebug("ndk-wallet:cashu:proofs");
 
@@ -91,15 +92,25 @@ export async function rollOverProofs(
     mint: string,
     wallet: NDKCashuWallet,
 ) {
-    console.trace("rolling over proofs for mint %s %o", mint, proofs);
-    proofs.usedTokens.forEach(token => {
-        const tokenProofIds = token.proofs.map(p => p.id);
-        d("deleting token with %d proofs (%o)", token.proofs.length, tokenProofIds);
-        token.delete(undefined, false).then(deletion => {
-            console.log('deletion', deletion.rawEvent());
-            deletion.publish(wallet.relaySet);
+    const relaySet = wallet.relaySet;
+    
+    if (proofs.usedTokens.length > 0) {
+        console.trace("rolling over proofs for mint %s %d tokens", mint, proofs.usedTokens.length);
+
+        const deleteEvent = new NDKEvent(wallet.ndk);
+        deleteEvent.kind = NDKKind.EventDeletion;
+        deleteEvent.tags = [ [ "k", NDKKind.CashuToken.toString() ] ];
+
+        proofs.usedTokens.forEach(token => {
+            d("adding to delete a token that was seen on relay %s %o", token.relay?.url, token.onRelays)
+            deleteEvent.tag(["e", token.id]);
+            if (token.relay) relaySet?.addRelay(token.relay);
         });
-    });
+
+        await deleteEvent.sign();
+        d("delete event %o sending to %s", deleteEvent.rawEvent(), relaySet?.relayUrls);
+        deleteEvent.publish(relaySet);
+    }
     wallet.addUsedTokens(proofs.usedTokens);
 
     const proofsToSave = proofs.movedProofs;

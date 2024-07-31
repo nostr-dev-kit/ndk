@@ -1,5 +1,8 @@
 import { Proof } from "@cashu/cashu-ts";
 import NDK, { Hexpubkey, NDKEvent, NDKKind, NDKUser, NostrEvent } from "@nostr-dev-kit/ndk";
+import createDebug from "debug";
+
+const d = createDebug("ndk-wallet:lifecycle:nutzap");
 
 /**
  * Represents a NIP-61 nutzap
@@ -32,7 +35,14 @@ export class NDKNutzap extends NDKEvent {
         const firstProof = this.proofs[0];
         try {
             const secret = JSON.parse(firstProof.secret);
-            const payload = JSON.parse(secret);
+            let payload: Record<string, any> = {};
+            if (typeof secret === "string") {
+                payload = JSON.parse(secret);
+                d("stringified payload", firstProof.secret);
+            } else if (typeof secret === "object") {
+                payload = secret;
+                d("object payload", firstProof.secret);
+            }
             const isP2PKLocked = payload[0] === 'P2PK' && payload[1]?.data;
             
             if (isP2PKLocked) {
@@ -41,7 +51,9 @@ export class NDKNutzap extends NDKEvent {
 
                 if (p2pk) return p2pk;
             }
-        } catch {}
+        } catch (e) {
+            d("error parsing p2pk pubkey", e, this.proofs[0])
+        }
     }
 
     get comment(): string | undefined {

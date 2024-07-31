@@ -264,6 +264,8 @@ class NDKZapper extends EventEmitter<{
 
         if (!ret) ret = new Error("Unable to zap");
 
+        d("Zap complete", ret);
+
         this.emit("complete", ret);
         if (this.onComplete) {
             this.onComplete(ret);

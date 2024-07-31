@@ -49,6 +49,8 @@ export async function payLn(
     }
 
     return new Promise<string>((resolve, reject) => {
+        let foundMint = false;
+        
         for (const [ mint, balance ] of Object.entries(mintBalances)) {
             if (useMint && mint !== useMint) continue;
             
@@ -63,6 +65,8 @@ export async function payLn(
                 continue;
             }
 
+            foundMint = true;
+
             chooseProofsForPr(data.pr, mint, this.wallet).then(async (result) => {
                 if (result) {
                     this.debug("successfully chose proofs for mint %s", mint);
@@ -73,6 +77,10 @@ export async function payLn(
                     }
                 }
             })
+        }
+
+        if (!foundMint) {
+            reject("no mint with sufficient balance found");
         }
     });
 }

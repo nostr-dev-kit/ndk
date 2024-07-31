@@ -82,7 +82,7 @@ export async function checkTokenProofsForMint(
         }
     }
 
-    return;
+    d("destroying %d tokens with %dspent proofs, moving %d proofs", tokensToDestroy.length, spentProofs.length, proofsToSave.length);
 
     rollOverProofs({
         usedProofs: spentProofs,

@@ -43,7 +43,7 @@ export class NDKRelayPublisher {
         const timeoutPromise = new Promise<boolean>((_, reject) => {
             timeout = setTimeout(() => {
                 timeout = undefined;
-                reject(new Error("Timeout"));
+                reject(new Error("Timeout: "+ timeoutMs+"ms"));
             }, timeoutMs);
         });
 

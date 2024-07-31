@@ -30,10 +30,9 @@ import type {
     NDKLnUrlData,
     NDKZapConfirmation,
     NDKZapDetails,
-    NutPaymentInfo} from "../zapper/index.js";
-import {
-    NDKZapper
+    NutPaymentInfo,
 } from "../zapper/index.js";
+import { NDKZapper } from "../zapper/index.js";
 import type { NostrEvent } from "nostr-tools";
 
 export type NDKValidationRatioFn = (

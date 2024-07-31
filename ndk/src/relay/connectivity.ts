@@ -390,7 +390,7 @@ export class NDKRelayConnectivity {
             durations.map((x) => Math.pow(x - avg, 2)).reduce((a, b) => a + b, 0) /
             durations.length;
         const stdDev = Math.sqrt(variance);
-        const isFlapping = stdDev < 1000;
+        const isFlapping = stdDev < FLAPPING_THRESHOLD_MS;
 
         return isFlapping;
     }

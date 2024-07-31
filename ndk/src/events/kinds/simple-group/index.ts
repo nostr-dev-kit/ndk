@@ -8,31 +8,6 @@ import type { Hexpubkey, NDKUser } from "../../../user";
 import { NDKSimpleGroupMemberList } from "./member-list";
 import { NDKSimpleGroupMetadata } from "./meta-data";
 
-type AddUserOpts = {
-    /**
-     * Whether to publish the event.
-     * @default true
-     */
-    publish?: boolean;
-
-    /**
-     * Event to add the user to
-     */
-    currentUserListEvent?: NDKEvent;
-
-    /**
-     * An additional marker to add to the user/group relationship.
-     * (e.g. tier, role, etc.)
-     */
-    marker?: string;
-
-    /**
-     * Whether to skip the user list event.
-     * @default false
-     */
-    skipUserListEvent?: boolean;
-};
-
 /**
  * Represents a NIP-29 group.
  * @catergory Kind Wrapper

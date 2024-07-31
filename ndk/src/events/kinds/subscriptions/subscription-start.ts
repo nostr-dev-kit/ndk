@@ -4,7 +4,7 @@ import type { NostrEvent } from "../..";
 import { NDKEvent } from "../..";
 import type { NDK } from "../../../ndk";
 import { NDKUser } from "../../../user";
-import type { NDKSubscriptionAmount} from "./amount.js";
+import type { NDKSubscriptionAmount } from "./amount.js";
 import { newAmount, parseTagToSubscriptionAmount } from "./amount.js";
 import { NDKSubscriptionTier } from "./tier";
 

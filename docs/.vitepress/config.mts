@@ -1,7 +1,8 @@
 import { defineConfig } from 'vitepress'
+import { withMermaid } from "vitepress-plugin-mermaid";
 
 // https://vitepress.dev/reference/site-config
-export default defineConfig({
+export default withMermaid(defineConfig({
   title: "NDK",
   description: "NDK Docs",
   base: "/ndk/",
@@ -45,10 +46,16 @@ export default defineConfig({
           { text: 'NDK Svelte', link: '/wrappers/svelte' },
         ]
       },
+      {
+        text: "Internals",
+        items: [
+          { text: "Subscription Lifecycle", link: '/internals/subscriptions' },
+        ]
+      }
     ],
 
     socialLinks: [
       { icon: 'github', link: 'https://github.com/nostr-dev-kit/ndk' }
     ]
   }
-})
+}))

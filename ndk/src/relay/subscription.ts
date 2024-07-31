@@ -1,6 +1,6 @@
-import type { Event} from "nostr-tools";
+import type { Event } from "nostr-tools";
 import { matchFilters } from "nostr-tools";
-import type { NDKRelay} from ".";
+import type { NDKRelay } from ".";
 import { NDKRelayStatus } from ".";
 import type { NDKEventId, NostrEvent } from "../events";
 import type {
@@ -205,7 +205,7 @@ export class NDKRelaySubscription {
 
     public cleanup() {
         // remove delayed execution
-        if (this.executionTimer) clearTimeout(this.executionTimer);
+        if (this.executionTimer) clearTimeout(this.executionTimer as NodeJS.Timeout);
 
         // remove callback from relay
         this.relay.off("ready", this.executeOnRelayReady);

@@ -1,7 +1,7 @@
 import { EventEmitter } from "tseep";
 import type { NostrEvent } from "../../events/index.js";
 import type { NDK } from "../../ndk/index.js";
-import type { Hexpubkey} from "../../user/index.js";
+import type { Hexpubkey } from "../../user/index.js";
 import { NDKUser } from "../../user/index.js";
 import type { NDKSigner } from "../index.js";
 import { NDKPrivateKeySigner } from "../private-key/index.js";

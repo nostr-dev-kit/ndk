@@ -1,7 +1,7 @@
 import type { NDK } from "../ndk";
 import type { NDKTag } from "../events";
 import { NDKEvent } from "../events";
-import type { Hexpubkey} from "../user";
+import type { Hexpubkey } from "../user";
 import { NDKUser } from "../user";
 import type { NDKSigner } from "../signers";
 import createDebug from "debug";

@@ -196,11 +196,6 @@ export class NDKSubscription extends EventEmitter<{
     public eosesSeen = new Set<NDKRelay>();
 
     /**
-     * Events that have been seen by the subscription per relay.
-     */
-    public eventsPerRelay: Map<NDKRelay, Set<NDKEventId>> = new Map();
-
-    /**
      * The time the last event was received by the subscription.
      * This is used to calculate when EOSE should be emitted.
      */

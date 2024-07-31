@@ -3,6 +3,8 @@ import type { NDK } from "../../ndk/index.js";
 import { normalizeRelayUrl } from "../../utils/normalize-url.js";
 import { NDKRelay, NDKRelayStatus } from "../index.js";
 
+export { calculateRelaySetFromEvent } from "./calculate.js";
+
 export class NDKPublishError extends Error {
     public errors: Map<NDKRelay, Error>;
     public publishedToRelays;
@@ -90,8 +92,8 @@ export class NDKRelaySet {
                 
                 relays.add(relay);
             } else {
-                const temporaryRelay = new NDKRelay(normalizeRelayUrl(url), undefined, ndk);
-                ndk.pool.useTemporaryRelay(temporaryRelay);
+                const temporaryRelay = new NDKRelay(normalizeRelayUrl(url), ndk?.relayAuthDefaultPolicy, ndk);
+                ndk.pool.useTemporaryRelay(temporaryRelay, undefined, "requested from fromRelayUrls " + relayUrls);
                 relays.add(temporaryRelay);
             }
         }

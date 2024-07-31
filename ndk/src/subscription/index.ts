@@ -1,6 +1,6 @@
 import { EventEmitter } from "tseep";
 
-import type { NDKEvent, NDKEventId } from "../events/index.js";
+import { NDKEvent, NDKEventId, NostrEvent } from "../events/index.js";
 import type { NDK } from "../ndk/index.js";
 import type { NDKRelay } from "../relay";
 import type { NDKPool } from "../relay/pool/index.js";
@@ -8,6 +8,11 @@ import { calculateRelaySetsFromFilters } from "../relay/sets/calculate";
 import type { NDKRelaySet } from "../relay/sets/index.js";
 import { queryFullyFilled } from "./utils.js";
 import { NDKKind } from "../events/kinds/index.js";
+import { verifiedSignatures } from "../events/validation.js";
+
+export type NDKSubscriptionInternalId = string;
+
+export type NDKSubscriptionDelayedType = "at-least" | "at-most";
 
 export type NDKFilter<K extends number = NDKKind> = {
     ids?: string[];
@@ -68,7 +73,7 @@ export interface NDKSubscriptionOptions {
      * const sub2 = ndk.subscribe({ kinds: [0], authors: ["alice"] }, { groupableDelay: 1000, groupableDelayType: "at-most" });
      * // sub1 and sub2 will be grouped together and executed 1000ms after sub1 was created
      */
-    groupableDelayType?: "at-least" | "at-most";
+    groupableDelayType?: NDKSubscriptionDelayedType;
 
     /**
      * The subscription ID to use for the subscription.
@@ -149,12 +154,20 @@ export class NDKSubscription extends EventEmitter<{
     eose: (sub: NDKSubscription) => void;
     close: (sub: NDKSubscription) => void;
     "event:dup": (
-        event: NDKEvent,
+        eventId: NDKEventId,
         relay: NDKRelay | undefined,
         timeSinceFirstSeen: number,
         sub: NDKSubscription
     ) => void;
     event: (event: NDKEvent, relay: NDKRelay | undefined, sub: NDKSubscription) => void;
+
+    /**
+     * Emitted when a relay unilaterally closes the subscription.
+     * @param relay 
+     * @param reason 
+     * @returns 
+     */
+    closed: (relay: NDKRelay, reason: string) => void;
 }> {
     readonly subId?: string;
     readonly filters: NDKFilter[];
@@ -192,12 +205,17 @@ export class NDKSubscription extends EventEmitter<{
      */
     private lastEventReceivedAt: number | undefined;
 
-    public internalId: string;
+    public internalId: NDKSubscriptionInternalId;
 
     /**
      * Whether the subscription should close when all relays have reached the end of the event stream.
      */
     public closeOnEose: boolean;
+
+    /**
+     * Pool monitor callback
+     */
+    private poolMonitor: ((relay: NDKRelay) => void) | undefined;
 
     public constructor(
         ndk: NDK,
@@ -214,7 +232,7 @@ export class NDKSubscription extends EventEmitter<{
         this.subId = subId || opts?.subId;
         this.internalId = Math.random().toString(36).substring(7);
         this.relaySet = relaySet;
-        this.debug = ndk.debug.extend(`subscription[${opts?.subId ?? this.internalId}]`);
+        this.debug = ndk.debug.extend(`subscription[${opts?.subId??this.internalId}]`);
         this.skipVerification = opts?.skipVerification || false;
         this.skipValidation = opts?.skipValidation || false;
         this.closeOnEose = opts?.closeOnEose || false;
@@ -248,6 +266,15 @@ export class NDKSubscription extends EventEmitter<{
      */
     get filter(): NDKFilter {
         return this.filters[0];
+    }
+
+    get groupableDelay(): number | undefined {
+        if (!this.isGroupable()) return undefined;
+        return this.opts?.groupableDelay;
+    }
+
+    get groupableDelayType(): NDKSubscriptionDelayedType {
+        return this.opts?.groupableDelayType || "at-most";
     }
 
     public isGroupable(): boolean {
@@ -299,6 +326,7 @@ export class NDKSubscription extends EventEmitter<{
 
         if (this.shouldQueryRelays()) {
             this.startWithRelays();
+            this.startPoolMonitor();
         } else {
             this.emit("eose", this);
         }
@@ -306,8 +334,35 @@ export class NDKSubscription extends EventEmitter<{
         return;
     }
 
+    /**
+     * We want to monitor for new relays that are coming online, in case
+     * they should be part of this subscription.
+     */
+    private startPoolMonitor(): void {
+        const d = this.debug.extend("pool-monitor")
+
+        this.poolMonitor = (relay: NDKRelay) => {
+            // check if the pool monitor is already in the relayFilters
+            if (this.relayFilters?.has(relay.url)) return;
+            
+            const calc = calculateRelaySetsFromFilters(this.ndk, this.filters, this.pool);
+
+            // check if the new relay is included
+            if (calc.get(relay.url)) {
+                // add it to the relayFilters
+                this.relayFilters?.set(relay.url, this.filters);
+                
+                // d("New relay connected -- adding to subscription", relay.url);
+                relay.subscribe(this, this.filters);
+            }
+        };
+
+        this.pool.on("relay:connect", this.poolMonitor);
+    }
+
     public stop(): void {
         this.emit("close", this);
+        this.poolMonitor && this.pool.off("relay:connect", this.poolMonitor);
         this.removeAllListeners();
     }
 
@@ -341,20 +396,9 @@ export class NDKSubscription extends EventEmitter<{
             }
         }
 
-        // if relayset is empty, we can't start, log it
-        if (!this.relayFilters || this.relayFilters.size === 0) {
-            this.debug(
-                `No relays to subscribe to (%d connected relays)`,
-                this.pool.connectedRelays().length
-            );
-            return;
-        } else {
-            this.debug(`Subscribing to %d relays`, this.relayFilters.size, this.filters);
-        }
+        if (!this.relayFilters || this.relayFilters.size === 0) return;
 
         // iterate through the this.relayFilters
-        // console.log(this.relayFilters);
-        // console.log('start with relays', {relayFilters: this.relayFilters.values(), filters: JSON.stringify(this.filters), size: this.relayFilters.size});
         for (const [relayUrl, filters] of this.relayFilters) {
             const relay = this.pool.getRelay(relayUrl, true, true, filters);
             relay.subscribe(this, filters);
@@ -371,82 +415,86 @@ export class NDKSubscription extends EventEmitter<{
      * @param optimisticPublish Whether this event is coming from an optimistic publish
      */
     public eventReceived(
-        event: NDKEvent,
+        event: NDKEvent | NostrEvent,
         relay: NDKRelay | undefined,
         fromCache: boolean = false,
         optimisticPublish: boolean = false
     ) {
-        if (relay) {
-            event.relay ??= relay;
-            event.onRelays.push(relay);
-        }
-        if (!relay) relay = event.relay;
+        const eventId = event.id! as NDKEventId;
+        const eventAlreadySeen = this.eventFirstSeen.has(eventId);
+        let ndkEvent: NDKEvent;
 
-        event.ndk ??= this.ndk;
+        if (event instanceof NDKEvent) ndkEvent = event;
+        
+        if (!eventAlreadySeen) {
+            // generate the ndkEvent
+            ndkEvent ??= new NDKEvent(this.ndk, event);
+            ndkEvent.ndk = this.ndk;
+            ndkEvent.relay = relay;
 
-        if (!fromCache && relay) {
-            this.ndk.emit("event", event, relay);
-        }
+            // we don't want to validate/verify events that are either
+            // coming from the cache or have been published by us from within
+            // the client
+            if (!fromCache && !optimisticPublish) {
+                // validate it
+                if (!this.skipValidation) {
+                    if (!ndkEvent.isValid) {
+                        this.debug(`Event failed validation %s from relay %s`, eventId, relay?.url);
+                        return;
+                    }
+                }
+                
+                // verify it
+                if (relay) {
+                    if (relay?.shouldValidateEvent() !== false) {
+                        if (!this.skipVerification) {
+                            if (!ndkEvent.verifySignature(true) && !this.ndk.asyncSigVerification) {
+                                this.debug(`Event failed signature validation`, event);
+                                return;
+                            } else if (relay) {
+                                relay.addValidatedEvent();
+                            }
+                        }
+                    } else {
+                        relay.addNonValidatedEvent();
+                    }
+                }
 
-        // mark the event as seen
-        // move here to avoid verifying signature of duplicate events
-        const eventAlreadySeen = this.eventFirstSeen.has(event.id);
-
-        if (eventAlreadySeen) {
-            const timeSinceFirstSeen = Date.now() - (this.eventFirstSeen.get(event.id) || 0);
-            if (relay) {
-                relay.scoreSlowerEvent(timeSinceFirstSeen);
-                this.trackPerRelay(event, relay);
-            }
-
-            this.emit("event:dup", event, relay, timeSinceFirstSeen, this);
-
-            return;
-        }
-
-        if (!fromCache && !optimisticPublish) {
-            if (!this.skipValidation) {
-                if (!event.isValid) {
-                    this.debug(`Event failed validation`, event.rawEvent());
-                    return;
+                if (this.ndk.cacheAdapter) {
+                    this.ndk.cacheAdapter.setEvent(ndkEvent, this.filters, relay);
                 }
             }
 
-            if (event.relay?.shouldValidateEvent() !== false) {
-                if (!this.skipVerification) {
-                    if (!event.verifySignature(true) && !this.ndk.asyncSigVerification) {
-                        this.debug(`Event failed signature validation`, event);
-                        return;
+            // emit it
+            if (!fromCache && relay) {
+                this.ndk.emit("event", ndkEvent, relay);
+            }
+
+            this.emit("event", ndkEvent, relay, this);
+
+            // mark the eventId as seen
+            this.eventFirstSeen.set(eventId, Date.now());
+        } else {
+            const timeSinceFirstSeen = Date.now() - (this.eventFirstSeen.get(eventId) || 0);
+            this.emit("event:dup", eventId, relay, timeSinceFirstSeen, this);
+
+            if (relay) {
+                // Let's see if we have already verified this event id's signature
+                const signature = verifiedSignatures.get(eventId);
+                if (signature && typeof signature === "string") {
+                    // If it matches then we can increase the relay verification count
+                    if (event.sig === signature) {
+                        relay.addValidatedEvent();
                     }
                 }
             }
         }
 
-        if (!fromCache && !optimisticPublish && relay) {
-            this.trackPerRelay(event, relay);
-
-            if (this.ndk.cacheAdapter) {
-                this.ndk.cacheAdapter.setEvent(event, this.filters, relay);
-            }
-
-            this.eventFirstSeen.set(event.id, Date.now());
-        } else {
-            this.eventFirstSeen.set(event.id, 0);
-        }
-
-        this.emit("event", event, relay, this);
         this.lastEventReceivedAt = Date.now();
     }
 
-    private trackPerRelay(event: NDKEvent, relay: NDKRelay): void {
-        let events = this.eventsPerRelay.get(relay);
-
-        if (!events) {
-            events = new Set();
-            this.eventsPerRelay.set(relay, events);
-        }
-
-        events.add(event.id);
+    public closedReceived(relay: NDKRelay, reason: string): void {
+        this.emit("closed", relay, reason );
     }
 
     // EOSE handling
@@ -474,12 +522,12 @@ export class NDKSubscription extends EventEmitter<{
 
         if (queryFilled || hasSeenAllEoses) {
             performEose();
-        } else {
+        } else if (this.relayFilters) {
             let timeToWaitForNextEose = 1000;
 
             const connectedRelays = new Set(this.pool.connectedRelays().map((r) => r.url));
 
-            let connectedRelaysWithFilters = Array.from(this.relayFilters!.keys()).filter((url) =>
+            let connectedRelaysWithFilters = Array.from(this.relayFilters.keys()).filter((url) =>
                 connectedRelays.has(url)
             );
 

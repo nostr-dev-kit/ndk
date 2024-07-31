@@ -43,6 +43,7 @@ export class NDKPool extends EventEmitter<{
 }> {
     // TODO: This should probably be an LRU cache
     public relays = new Map<WebSocket["url"], NDKRelay>();
+    public autoConnectRelays = new Set<WebSocket["url"]>();
     public blacklistRelayUrls: Set<WebSocket["url"]>;
     private debug: debug.Debugger;
     private temporaryRelayTimers = new Map<WebSocket["url"], NodeJS.Timeout>();
@@ -78,16 +79,13 @@ export class NDKPool extends EventEmitter<{
      * @param relay - The relay to add to the pool.
      * @param removeIfUnusedAfter - The time in milliseconds to wait before removing the relay from the pool after it is no longer used.
      */
-    public useTemporaryRelay(relay: NDKRelay, removeIfUnusedAfter = 30000, filters?: NDKFilter[]) {
+    public useTemporaryRelay(relay: NDKRelay, removeIfUnusedAfter = 30000, filters?: NDKFilter[] | string) {
         const relayAlreadyInPool = this.relays.has(relay.url);
 
         // check if the relay is already in the pool
         if (!relayAlreadyInPool) {
-            // console.trace("adding relay to pool", relay.url, filters);
             this.addRelay(relay);
             this.debug("Adding temporary relay %s for filters %o", relay.url, filters);
-        } else {
-            this.debug("Reusing existing relay %s for filters %o", relay.url, filters);
         }
 
         // check if the relay already has a disconnecting timer
@@ -190,6 +188,7 @@ export class NDKPool extends EventEmitter<{
             }
         });
         this.relays.set(relayUrl, relay);
+        if (connect) this.autoConnectRelays.add(relayUrl)
 
         if (connect) {
             this.emit("relay:connecting", relay);
@@ -209,6 +208,7 @@ export class NDKPool extends EventEmitter<{
         if (relay) {
             relay.disconnect();
             this.relays.delete(relayUrl);
+            this.autoConnectRelays.delete(relayUrl);
             this.emit("relay:disconnect", relay);
             return true;
         }
@@ -288,7 +288,15 @@ export class NDKPool extends EventEmitter<{
             }`
         );
 
-        for (const relay of this.relays.values()) {
+        const relaysToConnect = new Set(this.autoConnectRelays.keys());
+        this.ndk.explicitRelayUrls?.forEach((url) => {
+            relaysToConnect.add(url);
+        });
+
+        for (const relayUrl of relaysToConnect) {
+            const relay = this.relays.get(relayUrl);
+            if (!relay) continue;
+
             const connectPromise = new Promise<void>((resolve, reject) => {
                 this.emit("relay:connecting", relay);
                 return relay.connect(timeoutMs).then(resolve).catch(reject);
@@ -400,7 +408,7 @@ export class NDKPool extends EventEmitter<{
     public permanentAndConnectedRelays(): NDKRelay[] {
         return Array.from(this.relays.values()).filter(
             (relay) =>
-                relay.status === NDKRelayStatus.CONNECTED ||
+                relay.status >= NDKRelayStatus.CONNECTED &&
                 !this.temporaryRelayTimers.has(relay.url)
         );
     }

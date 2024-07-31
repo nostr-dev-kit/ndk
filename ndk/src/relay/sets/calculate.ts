@@ -29,10 +29,7 @@ export async function calculateRelaySetFromEvent(ndk: NDK, event: NDKEvent): Pro
     if (authorWriteRelays) {
         authorWriteRelays.forEach((relayUrl) => {
             const relay = ndk.pool?.getRelay(relayUrl);
-            if (relay) {
-                d("Adding author write relay %s", relayUrl);
-                relays.add(relay);
-            }
+            if (relay) relays.add(relay);
         });
     }
 
@@ -138,9 +135,22 @@ export function calculateRelaySetsFromFilter(
         }
     } else {
         // If we don't, add the explicit relays
-        pool.permanentAndConnectedRelays().forEach((relay: NDKRelay) => {
+        if (ndk.explicitRelayUrls) {
+            ndk.explicitRelayUrls.forEach((relayUrl) => {
+                result.set(relayUrl, filters);
+            });
+        }
+    }
+
+    if (result.size === 0) {
+        // If we don't have any relays, add all the permanent relays
+        pool.permanentAndConnectedRelays().slice(0, 5).forEach((relay) => {
             result.set(relay.url, filters);
         });
+    }
+
+    if (result.size === 0) {
+        console.warn("No relays found for filter", filters);
     }
 
     return result;
@@ -156,5 +166,7 @@ export function calculateRelaySetsFromFilters(
     filters: NDKFilter[],
     pool: NDKPool
 ): Map<WebSocket["url"], NDKFilter[]> {
-    return calculateRelaySetsFromFilter(ndk, filters, pool);
+    const a = calculateRelaySetsFromFilter(ndk, filters, pool);
+
+    return a;
 }

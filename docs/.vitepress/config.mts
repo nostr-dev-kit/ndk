@@ -29,6 +29,7 @@ export default defineConfig({
           { text: 'Local-first', link: '/tutorial/local-first' },
           { text: 'Publishing', link: '/tutorial/publishing' },
           { text: "Subscription Management", link: '/tutorial/subscription-management' },
+          { text: "Speed", link: '/tutorial/speed' },
         ]
       },
       {

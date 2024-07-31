@@ -49,6 +49,11 @@ export type NDKZapDetails<T> = {
      * Comment for the zap
      */
     comment?: string,
+
+    /**
+     * Extra tags to add to the zap
+     */
+    extraTags?: NDKTag[],
     
     /**
      * Pubkey of the user to zap to
@@ -204,6 +209,7 @@ class NDKZapper extends EventEmitter<{
                         ret = await this.onNutPay!({
                             target: this.target,
                             comment: this.comment,
+                            extraTags: this.extraTags,
                             recipientPubkey: split.pubkey,
                             amount: split.amount,
                             unit: this.unit,

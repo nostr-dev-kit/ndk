@@ -20,7 +20,7 @@ async function getUserRelayList(this: NDK, user: NDKUser): Promise<NDKRelayList 
     for (const url of userRelays.relays) {
         let relay = this.pool.relays.get(url);
         if (!relay) {
-            relay = new NDKRelay(url);
+            relay = new NDKRelay(url, this.relayAuthDefaultPolicy, this);
             this.pool.addRelay(relay);
         }
     }

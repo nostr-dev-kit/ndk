@@ -1,4 +1,4 @@
-import NDK, { NDKCashuMintList, NDKEvent, NDKEventId, NDKKind, NDKRelaySet, NDKSubscription, NDKSubscriptionCacheUsage, NDKUser } from "@nostr-dev-kit/ndk";
+import NDK, { getRelayListForUser, NDKCashuMintList, NDKEvent, NDKEventId, NDKKind, NDKRelaySet, NDKSubscription, NDKSubscriptionCacheUsage, NDKUser } from "@nostr-dev-kit/ndk";
 import NDKWallet from "../index.js";
 import handleMintList from "./mint-list.js";
 import handleWalletEvent from "./wallet.js";
@@ -40,8 +40,8 @@ class NDKWalletLifecycle {
         this.nutzap = new NutzapHandler(this);
     }
 
-    public start() {
-        this.debug("starting wallet lifecycle", this.user.pubkey);
+    async start() {
+        const userRelayList = await getRelayListForUser(this.user.pubkey, this.ndk);
         this.sub = this.ndk.subscribe([
             { kinds: [ NDKKind.CashuMintList, NDKKind.CashuWallet ], authors: [this.user.pubkey] },
             { kinds: [NDKKind.WalletChange], authors: [this.user!.pubkey], limit: 10 },
@@ -49,7 +49,7 @@ class NDKWalletLifecycle {
             subId: 'ndk-wallet',
             groupable: false,
             cacheUsage: NDKSubscriptionCacheUsage.PARALLEL
-        }, undefined, false);
+        }, userRelayList.relaySet, false);
 
         this.sub.on("event", this.eventHandler.bind(this));
         this.sub.on("eose", this.eoseHandler.bind(this));
@@ -84,7 +84,10 @@ class NDKWalletLifecycle {
     }
 
     private eoseHandler() {
-        this.debug("main sub eose")
+        this.debug("Loaded wallets", {
+            defaultWallet: this.defaultWallet?.rawEvent(),
+            wallets: Array.from(this.wallets.values()).map(w => w.rawEvent())
+        })
         this.eosed = true;
 
         if (this.tokensSub) {

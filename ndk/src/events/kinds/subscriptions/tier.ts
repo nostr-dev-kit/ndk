@@ -30,7 +30,7 @@ import {
 export class NDKSubscriptionTier extends NDKArticle {
     static kind = NDKKind.SubscriptionTier;
     static kinds = [NDKKind.SubscriptionTier];
-    
+
     constructor(ndk: NDK | undefined, rawEvent?: NostrEvent | NDKEvent) {
         const k = rawEvent?.kind ?? NDKKind.SubscriptionTier;
         super(ndk, rawEvent);

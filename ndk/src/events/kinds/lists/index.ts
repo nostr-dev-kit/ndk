@@ -272,12 +272,9 @@ export class NDKList extends NDKEvent {
      * Removes an item from the list from both the encrypted and unencrypted lists.
      * @param value value of item to remove from the list
      * @param publish whether to publish the change
-     * @returns 
+     * @returns
      */
-    async removeItemByValue(
-        value: string,
-        publish = true
-    ): Promise<Set<NDKRelay> | void> {
+    async removeItemByValue(value: string, publish = true): Promise<Set<NDKRelay> | void> {
         if (!this.ndk) throw new Error("NDK instance not set");
         if (!this.ndk.signer) throw new Error("NDK signer not set");
 

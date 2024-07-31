@@ -132,7 +132,7 @@ export function generateSubId(subscriptions: NDKSubscription[], filters: NDKFilt
  * const bech32 = "nevent1qgs9kqvr4dkruv3t7n2pc6e6a7v9v2s5fprmwjv4gde8c4fe5y29v0spzamhxue69uhhyetvv9ujuurjd9kkzmpwdejhgtcqype6ycavy2e9zpx9mzeuekaahgw96ken0mzkcmgz40ljccwyrn88gxv2ewr"
  * const filter = filterForEventsTaggingId(bech32);
  * // filter => { "#e": [<id>] }
- * 
+ *
  * @example
  * const bech32 = "naddr1qvzqqqr4gupzpjjwt0eqm6as279wf079c0j42jysp2t4s37u8pg5w2dfyktxgkntqqxnzde38yen2desxqmn2d3332u3ff";
  * const filter = filterForEventsTaggingId(bech32);
@@ -143,18 +143,27 @@ export function filterForEventsTaggingId(id: string): NDKFilter | undefined {
         const decoded = nip19.decode(id);
 
         switch (decoded.type) {
-            case 'naddr': return { "#a": [`${decoded.data.kind}:${decoded.data.pubkey}:${decoded.data.identifier}`] }
-            case 'nevent': return { "#e": [decoded.data.id] }
-            case 'note': return { "#e": [decoded.data] }
-            case 'nprofile': return { "#p": [decoded.data.pubkey] }
-            case 'npub': return { "#p": [decoded.data] }
+            case "naddr":
+                return {
+                    "#a": [
+                        `${decoded.data.kind}:${decoded.data.pubkey}:${decoded.data.identifier}`,
+                    ],
+                };
+            case "nevent":
+                return { "#e": [decoded.data.id] };
+            case "note":
+                return { "#e": [decoded.data] };
+            case "nprofile":
+                return { "#p": [decoded.data.pubkey] };
+            case "npub":
+                return { "#p": [decoded.data] };
         }
     } catch {}
 }
 
 /**
  * Creates a valid nostr filter from an event id or a NIP-19 bech32.
- * 
+ *
  * @example
  * const bech32 = "nevent1qgs9kqvr4dkruv3t7n2pc6e6a7v9v2s5fprmwjv4gde8c4fe5y29v0spzamhxue69uhhyetvv9ujuurjd9kkzmpwdejhgtcqype6ycavy2e9zpx9mzeuekaahgw96ken0mzkcmgz40ljccwyrn88gxv2ewr"
  * const filter = filterFromBech32(bech32);
@@ -234,7 +243,9 @@ export function relaysFromBech32(bech32: string, ndk?: NDK): NDKRelay[] {
             const data = decoded.data as unknown as EventPointer;
 
             if (data?.relays) {
-                return data.relays.map((r: string) => new NDKRelay(r, ndk?.relayAuthDefaultPolicy, ndk));
+                return data.relays.map(
+                    (r: string) => new NDKRelay(r, ndk?.relayAuthDefaultPolicy, ndk)
+                );
             }
         }
     } catch (e) {

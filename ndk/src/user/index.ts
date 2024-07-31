@@ -115,12 +115,12 @@ export class NDKUser {
 
     /**
      * Gets NIP-57 and NIP-61 information that this user has signaled
-     * 
+     *
      * @param getAll {boolean} Whether to get all zap info or just the first one
      */
     async getZapInfo(
         getAll = true,
-        methods: NDKZapMethod[] = [ "nip61", "nip57"]
+        methods: NDKZapMethod[] = ["nip61", "nip57"]
     ): Promise<NDKZapMethodInfo[]> {
         if (!this.ndk) throw new Error("No NDK instance found");
 
@@ -131,20 +131,27 @@ export class NDKUser {
 
         if (kinds.length === 0) return [];
 
-        let events = await this.ndk.fetchEvents({ kinds, authors: [this.pubkey] }, {
-            cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE, groupable: false
-        });
+        let events = await this.ndk.fetchEvents(
+            { kinds, authors: [this.pubkey] },
+            {
+                cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE,
+                groupable: false,
+            }
+        );
 
         if (events.size < methods.length) {
-            events = await this.ndk.fetchEvents({ kinds, authors: [this.pubkey] }, {
-                cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY
-            });
+            events = await this.ndk.fetchEvents(
+                { kinds, authors: [this.pubkey] },
+                {
+                    cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY,
+                }
+            );
         }
 
         const res: NDKZapMethodInfo[] = [];
 
-        const nip61 = Array.from(events).find(e => e.kind === NDKKind.CashuMintList);
-        const nip57 = Array.from(events).find(e => e.kind === NDKKind.Metadata);
+        const nip61 = Array.from(events).find((e) => e.kind === NDKKind.CashuMintList);
+        const nip57 = Array.from(events).find((e) => e.kind === NDKKind.Metadata);
 
         if (nip61) {
             const mintList = NDKCashuMintList.from(nip61);
@@ -152,7 +159,11 @@ export class NDKUser {
             if (mintList.mints.length > 0) {
                 res.push({
                     type: "nip61",
-                    data: { mints: mintList.mints, relays: mintList.relays, p2pkPubkey: mintList.p2pkPubkey }
+                    data: {
+                        mints: mintList.mints,
+                        relays: mintList.relays,
+                        p2pkPubkey: mintList.p2pkPubkey,
+                    },
                 });
             }
 
@@ -165,8 +176,8 @@ export class NDKUser {
             const { lud06, lud16 } = profile;
             console.log("lud06", lud06, "lud16", lud16, profile, nip57.rawEvent());
             try {
-                const zapSpec = await getNip57ZapSpecFromLud({lud06, lud16}, this.ndk);
-    
+                const zapSpec = await getNip57ZapSpecFromLud({ lud06, lud16 }, this.ndk);
+
                 if (zapSpec) {
                     res.push({ type: "nip57", data: zapSpec });
                 }
@@ -186,7 +197,7 @@ export class NDKUser {
 
     // }
     // async getRecipientZapConfig(): Promise<> {
-        
+
     // }
 
     /**
@@ -213,7 +224,7 @@ export class NDKUser {
                 await this.fetchProfile({ groupable: false });
                 if (this.profile) {
                     const { lud06, lud16 } = this.profile;
-                    lnurlspec = await getNip57ZapSpecFromLud({lud06, lud16}, ndk!);
+                    lnurlspec = await getNip57ZapSpecFromLud({ lud06, lud16 }, ndk!);
                 }
             } catch {}
 

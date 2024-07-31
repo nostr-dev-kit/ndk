@@ -11,7 +11,7 @@ export class NDKSimpleGroupMemberList extends NDKEvent {
 
     static kind = NDKKind.GroupMembers;
     static kinds = [NDKKind.GroupMembers];
-    
+
     constructor(ndk: NDK | undefined, rawEvent?: NostrEvent | NDKEvent) {
         super(ndk, rawEvent);
         this.kind ??= NDKKind.GroupMembers;
@@ -24,8 +24,7 @@ export class NDKSimpleGroupMemberList extends NDKEvent {
     }
 
     get members(): string[] {
-        return this.getMatchingTags("p")
-            .map(tag => tag[1]);
+        return this.getMatchingTags("p").map((tag) => tag[1]);
     }
 
     public hasMember(member: Hexpubkey): boolean {

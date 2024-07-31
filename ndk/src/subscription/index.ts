@@ -163,9 +163,9 @@ export class NDKSubscription extends EventEmitter<{
 
     /**
      * Emitted when a relay unilaterally closes the subscription.
-     * @param relay 
-     * @param reason 
-     * @returns 
+     * @param relay
+     * @param reason
+     * @returns
      */
     closed: (relay: NDKRelay, reason: string) => void;
 }> {
@@ -232,7 +232,7 @@ export class NDKSubscription extends EventEmitter<{
         this.subId = subId || opts?.subId;
         this.internalId = Math.random().toString(36).substring(7);
         this.relaySet = relaySet;
-        this.debug = ndk.debug.extend(`subscription[${opts?.subId??this.internalId}]`);
+        this.debug = ndk.debug.extend(`subscription[${opts?.subId ?? this.internalId}]`);
         this.skipVerification = opts?.skipVerification || false;
         this.skipValidation = opts?.skipValidation || false;
         this.closeOnEose = opts?.closeOnEose || false;
@@ -339,19 +339,19 @@ export class NDKSubscription extends EventEmitter<{
      * they should be part of this subscription.
      */
     private startPoolMonitor(): void {
-        const d = this.debug.extend("pool-monitor")
+        const d = this.debug.extend("pool-monitor");
 
         this.poolMonitor = (relay: NDKRelay) => {
             // check if the pool monitor is already in the relayFilters
             if (this.relayFilters?.has(relay.url)) return;
-            
+
             const calc = calculateRelaySetsFromFilters(this.ndk, this.filters, this.pool);
 
             // check if the new relay is included
             if (calc.get(relay.url)) {
                 // add it to the relayFilters
                 this.relayFilters?.set(relay.url, this.filters);
-                
+
                 // d("New relay connected -- adding to subscription", relay.url);
                 relay.subscribe(this, this.filters);
             }
@@ -425,7 +425,7 @@ export class NDKSubscription extends EventEmitter<{
         let ndkEvent: NDKEvent;
 
         if (event instanceof NDKEvent) ndkEvent = event;
-        
+
         if (!eventAlreadySeen) {
             // generate the ndkEvent
             ndkEvent ??= new NDKEvent(this.ndk, event);
@@ -443,7 +443,7 @@ export class NDKSubscription extends EventEmitter<{
                         return;
                     }
                 }
-                
+
                 // verify it
                 if (relay) {
                     if (relay?.shouldValidateEvent() !== false) {
@@ -494,7 +494,7 @@ export class NDKSubscription extends EventEmitter<{
     }
 
     public closedReceived(relay: NDKRelay, reason: string): void {
-        this.emit("closed", relay, reason );
+        this.emit("closed", relay, reason);
     }
 
     // EOSE handling
@@ -518,7 +518,7 @@ export class NDKSubscription extends EventEmitter<{
             this.eosed = true;
 
             if (this.opts?.closeOnEose) this.stop();
-        }
+        };
 
         if (queryFilled || hasSeenAllEoses) {
             performEose();
@@ -547,7 +547,7 @@ export class NDKSubscription extends EventEmitter<{
             if (this.eosesSeen.size >= 2 && percentageOfRelaysThatHaveSentEose >= 0.5) {
                 timeToWaitForNextEose =
                     timeToWaitForNextEose * (1 - percentageOfRelaysThatHaveSentEose);
-                
+
                 if (timeToWaitForNextEose === 0) {
                     performEose();
                     return;

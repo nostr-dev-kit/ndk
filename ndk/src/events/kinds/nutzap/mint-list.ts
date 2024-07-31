@@ -17,33 +17,37 @@ export class NDKCashuMintList extends NDKEvent {
         return new NDKCashuMintList(event.ndk, event);
     }
 
-    set relays(urls: WebSocket['url'][]) {
-        this.tags = this.tags.filter(t => t[0] !== "relay");
+    set relays(urls: WebSocket["url"][]) {
+        this.tags = this.tags.filter((t) => t[0] !== "relay");
         for (const url of urls) {
             this.tags.push(["relay", url]);
         }
     }
 
-    get relays(): WebSocket['url'][] {
+    get relays(): WebSocket["url"][] {
         const r = [];
         for (const tag of this.tags) {
-            if (tag[0] === "relay") { r.push(tag[1]); }
+            if (tag[0] === "relay") {
+                r.push(tag[1]);
+            }
         }
 
         return r;
     }
 
-    set mints(urls: WebSocket['url'][]) {
-        this.tags = this.tags.filter(t => t[0] !== "mint");
+    set mints(urls: WebSocket["url"][]) {
+        this.tags = this.tags.filter((t) => t[0] !== "mint");
         for (const url of urls) {
             this.tags.push(["mint", url]);
         }
     }
 
-    get mints(): WebSocket['url'][] {
+    get mints(): WebSocket["url"][] {
         const r = [];
         for (const tag of this.tags) {
-            if (tag[0] === "mint") { r.push(tag[1]); }
+            if (tag[0] === "mint") {
+                r.push(tag[1]);
+            }
         }
 
         return Array.from(new Set(r));
@@ -53,7 +57,7 @@ export class NDKCashuMintList extends NDKEvent {
         if (this._p2pkPubkey) {
             return this._p2pkPubkey;
         }
-        this._p2pkPubkey = this.tagValue("pubkey") ?? this.pubkey
+        this._p2pkPubkey = this.tagValue("pubkey") ?? this.pubkey;
         return this._p2pkPubkey;
     }
 
@@ -66,8 +70,6 @@ export class NDKCashuMintList extends NDKEvent {
     }
 
     get relaySet(): NDKRelaySet | undefined {
-        return NDKRelaySet.fromRelayUrls(
-            this.relays, this.ndk!
-        )
+        return NDKRelaySet.fromRelayUrls(this.relays, this.ndk!);
     }
 }

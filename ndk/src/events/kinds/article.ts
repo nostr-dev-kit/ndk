@@ -11,7 +11,7 @@ import { NDKKind } from "./index.js";
 export class NDKArticle extends NDKEvent {
     static kind = NDKKind.Article;
     static kinds = [NDKKind.Article];
-    
+
     constructor(ndk: NDK | undefined, rawEvent?: NostrEvent | NDKEvent) {
         super(ndk, rawEvent);
         this.kind ??= NDKKind.Article;

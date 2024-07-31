@@ -26,10 +26,7 @@ export class NDKSubscriptionManager {
         });
     }
 
-    public seenEvent(
-        eventId: NDKEventId,
-        relay: NDKRelay,
-    ) {
+    public seenEvent(eventId: NDKEventId, relay: NDKRelay) {
         const current = this.seenEvents.get(eventId) || [];
         current.push(relay);
         this.seenEvents.set(eventId, current);

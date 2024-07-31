@@ -1,4 +1,3 @@
-
 import { EventEmitter } from "tseep";
 
 import { NDKEvent } from "../events/index.js";
@@ -23,8 +22,6 @@ export interface ZapConstructorParams {
     _fetch?: typeof fetch;
 }
 
-
-
 export class NDKZap extends EventEmitter {
     public ndk: NDK;
     public zappedEvent?: NDKEvent;
@@ -44,7 +41,10 @@ export class NDKZap extends EventEmitter {
         this.fetch = args._fetch || fetch;
         this.zapType = args.zapType ?? "nip57";
 
-        this.recipient = args.recipient || args.zappedUser || this.ndk.getUser({ pubkey: this.zappedEvent?.pubkey });
+        this.recipient =
+            args.recipient ||
+            args.zappedUser ||
+            this.ndk.getUser({ pubkey: this.zappedEvent?.pubkey });
     }
 
     /**
@@ -64,14 +64,11 @@ export class NDKZap extends EventEmitter {
         return this.recipient;
     }
 
-
     public async getZapSpec(): Promise<NDKLnUrlData | undefined> {
         if (!this.recipient) throw new Error("No user to zap was provided");
 
         return this.recipient.getZapConfiguration(this.ndk);
     }
-
-    
 
     public async getZapEndpoint(): Promise<string | undefined> {
         const zapSpec = await this.getZapSpec();

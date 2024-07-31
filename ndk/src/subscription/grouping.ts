@@ -4,7 +4,7 @@ export type NDKFilterFingerprint = string;
 
 /**
  * Creates a fingerprint for this filter
- * 
+ *
  * This a deterministic association of the filters
  * used in a filters. When the combination of filters makes it
  * possible to group them, the fingerprint is used to group them.

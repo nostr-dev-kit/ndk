@@ -54,8 +54,7 @@ export function verifySignature(this: NDKEvent, persist: boolean): boolean | und
             verifySignatureAsync(this, persist).then((result) => {
                 if (persist) {
                     this.signatureVerified = result;
-                    if (result)
-                        verifiedSignatures.set(this.id, this.sig!);
+                    if (result) verifiedSignatures.set(this.id, this.sig!);
                 }
 
                 if (!result) {

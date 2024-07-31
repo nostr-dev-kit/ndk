@@ -17,17 +17,17 @@ import { NDKRelaySubscription } from "./subscription.js";
 export type NDKRelayUrl = WebSocket["url"];
 
 export enum NDKRelayStatus {
-    DISCONNECTING,    // 0
-    DISCONNECTED,     // 1
-    RECONNECTING,     // 2
-    FLAPPING,         // 3
-    CONNECTING,       // 4
+    DISCONNECTING, // 0
+    DISCONNECTED, // 1
+    RECONNECTING, // 2
+    FLAPPING, // 3
+    CONNECTING, // 4
 
     // connected states
-    CONNECTED,        // 5
-    AUTH_REQUESTED,   // 6
-    AUTHENTICATING,   // 7
-    AUTHENTICATED,    // 8
+    CONNECTED, // 5
+    AUTH_REQUESTED, // 6
+    AUTHENTICATING, // 7
+    AUTHENTICATED, // 8
 }
 
 export interface NDKRelayConnectionStats {
@@ -106,13 +106,17 @@ export class NDKRelay extends EventEmitter<{
      * The lowest validation ratio this relay can reach.
      */
     public lowestValidationRatio?: number;
-    
+
     /**
      * Current validation ratio this relay is targeting.
      */
     public targetValidationRatio?: number;
 
-    public validationRatioFn?: (relay: NDKRelay, validatedCount: number, nonValidatedCount: number) => number;
+    public validationRatioFn?: (
+        relay: NDKRelay,
+        validatedCount: number,
+        nonValidatedCount: number
+    ) => number;
 
     /**
      * This tracks events that have been seen by this relay
@@ -136,8 +140,13 @@ export class NDKRelay extends EventEmitter<{
     public complaining = false;
     readonly debug: debug.Debugger;
 
-    static defaultValidationRatioUpdateFn = (relay: NDKRelay, validatedCount: number, nonValidatedCount: number): number => {
-        if (relay.lowestValidationRatio === undefined || relay.targetValidationRatio === undefined) return 1;
+    static defaultValidationRatioUpdateFn = (
+        relay: NDKRelay,
+        validatedCount: number,
+        nonValidatedCount: number
+    ): number => {
+        if (relay.lowestValidationRatio === undefined || relay.targetValidationRatio === undefined)
+            return 1;
 
         let newRatio = relay.validationRatio;
 
@@ -149,9 +158,9 @@ export class NDKRelay extends EventEmitter<{
         if (newRatio < relay.validationRatio) {
             return newRatio;
         }
-        
+
         return relay.validationRatio;
-    }
+    };
 
     public constructor(url: WebSocket["url"], authPolicy?: NDKAuthPolicy, ndk?: NDK) {
         super();
@@ -166,12 +175,14 @@ export class NDKRelay extends EventEmitter<{
         this.authPolicy = authPolicy;
         this.targetValidationRatio = ndk?.initialValidationRatio;
         this.lowestValidationRatio = ndk?.lowestValidationRatio;
-        this.validationRatioFn = (ndk?.validationRatioFn ?? NDKRelay.defaultValidationRatioUpdateFn).bind(this);
+        this.validationRatioFn = (
+            ndk?.validationRatioFn ?? NDKRelay.defaultValidationRatioUpdateFn
+        ).bind(this);
 
         this.updateValidationRatio();
 
         if (!ndk) {
-            console.trace("relay created without ndk")
+            console.trace("relay created without ndk");
         }
     }
 

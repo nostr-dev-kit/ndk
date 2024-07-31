@@ -77,11 +77,7 @@ export class NDKRelaySet {
      * @param connect - whether to connect to the relay immediately if it was already in the pool but not connected
      * @returns NDKRelaySet
      */
-    static fromRelayUrls(
-        relayUrls: string[],
-        ndk: NDK,
-        connect = true
-    ): NDKRelaySet {
+    static fromRelayUrls(relayUrls: string[], ndk: NDK, connect = true): NDKRelaySet {
         const relays = new Set<NDKRelay>();
         for (const url of relayUrls) {
             const relay = ndk.pool.relays.get(normalizeRelayUrl(url));
@@ -89,11 +85,19 @@ export class NDKRelaySet {
                 if (relay.status < NDKRelayStatus.CONNECTED && connect) {
                     relay.connect();
                 }
-                
+
                 relays.add(relay);
             } else {
-                const temporaryRelay = new NDKRelay(normalizeRelayUrl(url), ndk?.relayAuthDefaultPolicy, ndk);
-                ndk.pool.useTemporaryRelay(temporaryRelay, undefined, "requested from fromRelayUrls " + relayUrls);
+                const temporaryRelay = new NDKRelay(
+                    normalizeRelayUrl(url),
+                    ndk?.relayAuthDefaultPolicy,
+                    ndk
+                );
+                ndk.pool.useTemporaryRelay(
+                    temporaryRelay,
+                    undefined,
+                    "requested from fromRelayUrls " + relayUrls
+                );
                 relays.add(temporaryRelay);
             }
         }

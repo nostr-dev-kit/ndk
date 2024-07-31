@@ -45,7 +45,7 @@ export class NDKRelayConnectivity {
         this.ndkRelay = ndkRelay;
         this._status = NDKRelayStatus.DISCONNECTED;
         const rand = Math.floor(Math.random() * 1000);
-        this.debug = this.ndkRelay.debug.extend("connectivity"+rand);
+        this.debug = this.ndkRelay.debug.extend("connectivity" + rand);
         this.ndk = ndk;
     }
 
@@ -65,10 +65,13 @@ export class NDKRelayConnectivity {
      */
     public async connect(timeoutMs?: number, reconnect = true): Promise<void> {
         if (this._status !== NDKRelayStatus.DISCONNECTED || this.reconnectTimeout) {
-            this.debug("Relay requested to be connected but was in state %s or it had a reconnect timeout", this._status);
+            this.debug(
+                "Relay requested to be connected but was in state %s or it had a reconnect timeout",
+                this._status
+            );
             return;
         }
-        
+
         if (this.reconnectTimeout) {
             clearTimeout(this.reconnectTimeout);
             this.reconnectTimeout = undefined;
@@ -83,7 +86,10 @@ export class NDKRelayConnectivity {
         if (!this.timeoutMs && timeoutMs) this.timeoutMs = timeoutMs;
 
         if (this.timeoutMs)
-            this.connectTimeout = setTimeout(() => this.onConnectionError(reconnect), this.timeoutMs);
+            this.connectTimeout = setTimeout(
+                () => this.onConnectionError(reconnect),
+                this.timeoutMs
+            );
 
         try {
             this.updateConnectionStats.attempt();
@@ -168,7 +174,7 @@ export class NDKRelayConnectivity {
         this.updateConnectionStats.disconnected();
 
         // if (this._status === NDKRelayStatus.CONNECTED) {
-            this._status = NDKRelayStatus.DISCONNECTED;
+        this._status = NDKRelayStatus.DISCONNECTED;
 
         //     this.handleReconnection();
         // }
@@ -185,7 +191,7 @@ export class NDKRelayConnectivity {
     private onMessage(event: MessageEvent): void {
         try {
             const data = JSON.parse(event.data);
-            const [ cmd, id, ...rest ] = data;
+            const [cmd, id, ...rest] = data;
 
             switch (cmd) {
                 case "EVENT": {
@@ -244,7 +250,10 @@ export class NDKRelayConnectivity {
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
-            this.debug(`Error parsing message from ${this.ndkRelay.url}: ${error.message}`, error?.stack);
+            this.debug(
+                `Error parsing message from ${this.ndkRelay.url}: ${error.message}`,
+                error?.stack
+            );
             return;
         }
     }
@@ -268,7 +277,7 @@ export class NDKRelayConnectivity {
             this.debug("Already authenticating, ignoring");
             return;
         }
-        
+
         this._status = NDKRelayStatus.AUTH_REQUESTED;
 
         if (authPolicy) {
@@ -289,7 +298,10 @@ export class NDKRelayConnectivity {
                     }
 
                     const authenticate = async () => {
-                        if (this._status >= NDKRelayStatus.CONNECTED && this._status < NDKRelayStatus.AUTHENTICATED) {
+                        if (
+                            this._status >= NDKRelayStatus.CONNECTED &&
+                            this._status < NDKRelayStatus.AUTHENTICATED
+                        ) {
                             const event = new NDKEvent(this.ndk);
                             event.kind = NDKKind.ClientAuth;
                             event.tags = [
@@ -307,19 +319,23 @@ export class NDKRelayConnectivity {
                                     this._status = NDKRelayStatus.AUTH_REQUESTED;
                                     this.ndkRelay.emit("auth:failed", e);
                                     this.debug("Authentication failed", e);
-                                })
+                                });
                         } else {
-                            this.debug("Authentication failed, it changed status, status is %d", this._status);
+                            this.debug(
+                                "Authentication failed, it changed status, status is %d",
+                                this._status
+                            );
                         }
-                    }
+                    };
 
                     if (res === true) {
                         if (!this.ndk?.signer) {
                             this.debug("No signer available for authentication localhost");
                             this.ndk?.once("signer:ready", authenticate);
                         } else {
-                            authenticate()
-                                .catch((e) => { console.error("Error authenticating", e); });
+                            authenticate().catch((e) => {
+                                console.error("Error authenticating", e);
+                            });
                         }
                     }
 
@@ -419,21 +435,17 @@ export class NDKRelayConnectivity {
             this.reconnectTimeout = undefined;
             this._status = NDKRelayStatus.RECONNECTING;
             // this.debug(`Reconnection attempt #${attempt}`);
-            this.connect()
-                .catch((err) => {
-                    // this.debug("Reconnect failed", err);
+            this.connect().catch((err) => {
+                // this.debug("Reconnect failed", err);
 
-                    if (attempt < MAX_RECONNECT_ATTEMPTS) {
-                        setTimeout(
-                            () => {
-                                this.handleReconnection(attempt + 1);
-                            },
-                            (1000 * (attempt + 1)) ^ 4
-                        );
-                    } else {
-                        this.debug("Reconnect failed");
-                    }
-                });
+                if (attempt < MAX_RECONNECT_ATTEMPTS) {
+                    setTimeout(() => {
+                        this.handleReconnection(attempt + 1);
+                    }, (1000 * (attempt + 1)) ^ 4);
+                } else {
+                    this.debug("Reconnect failed");
+                }
+            });
         }, reconnectDelay);
 
         this.ndkRelay.emit("delayed-connect", reconnectDelay);
@@ -453,7 +465,10 @@ export class NDKRelayConnectivity {
         if (this._status >= NDKRelayStatus.CONNECTED && this.ws?.readyState === WebSocket.OPEN) {
             this.ws?.send(message);
         } else {
-            this.debug(`Not connected to ${this.ndkRelay.url} (%d), not sending message ${message}`, this._status);
+            this.debug(
+                `Not connected to ${this.ndkRelay.url} (%d), not sending message ${message}`,
+                this._status
+            );
             throw new Error("Attempting to send on a closed relay connection");
         }
     }
@@ -519,10 +534,13 @@ export class NDKRelayConnectivity {
      * @param params - The subscription parameters, including an optional custom id.
      * @returns A new NDKRelaySubscription instance.
      */
-    public req(
-        relaySub: NDKRelaySubscription,
-    ): void {
-        this.send('["REQ","' + relaySub.subId + '",' + JSON.stringify(relaySub.executeFilters).substring(1)) + "]";
+    public req(relaySub: NDKRelaySubscription): void {
+        this.send(
+            '["REQ","' +
+                relaySub.subId +
+                '",' +
+                JSON.stringify(relaySub.executeFilters).substring(1)
+        ) + "]";
         this.openSubs.set(relaySub.subId, relaySub);
     }
 
@@ -565,8 +583,6 @@ export class NDKRelayConnectivity {
     }
 
     get connected(): boolean {
-        return (
-            this._status >= NDKRelayStatus.CONNECTED && this.ws?.readyState === WebSocket.OPEN
-        );
+        return this._status >= NDKRelayStatus.CONNECTED && this.ws?.readyState === WebSocket.OPEN;
     }
 }

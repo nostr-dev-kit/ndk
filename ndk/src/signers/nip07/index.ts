@@ -136,7 +136,7 @@ export class NDKNip07Signer implements NDKSigner {
         this.nip04Processing = true;
         const { type, counterpartyHexpubkey, value, resolve, reject } =
             item || this.nip04Queue.shift()!;
-            
+
         try {
             let result;
 

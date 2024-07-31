@@ -40,7 +40,7 @@ export class NDKSimpleGroup {
     readonly ndk: NDK;
     public groupId: string;
     readonly relaySet: NDKRelaySet;
-    
+
     private fetchingMetadata: Promise<void> | undefined;
 
     public metadata: NDKSimpleGroupMetadata | undefined;
@@ -88,8 +88,8 @@ export class NDKSimpleGroup {
 
     /**
      * Creates the group by publishing a kind:9007 event.
-     * @param signer 
-     * @returns 
+     * @param signer
+     * @returns
      */
     async createGroup(signer?: NDKSigner) {
         signer ??= this.ndk.signer!;
@@ -104,7 +104,15 @@ export class NDKSimpleGroup {
         return event.publish(this.relaySet);
     }
 
-    async setMetadata({name, about, picture}: { name?: string, about?: string, picture?: string }) {
+    async setMetadata({
+        name,
+        about,
+        picture,
+    }: {
+        name?: string;
+        about?: string;
+        picture?: string;
+    }) {
         const event = new NDKEvent(this.ndk);
         event.kind = NDKKind.GroupAdminEditMetadata;
         event.tags.push(["h", this.groupId]);
@@ -115,7 +123,6 @@ export class NDKSimpleGroup {
         await event.sign();
         return event.publish(this.relaySet);
     }
-    
 
     /**
      * Adds a user to the group using a kind:9000 event
@@ -139,7 +146,7 @@ export class NDKSimpleGroup {
         );
 
         if (!memberList) return null;
-        
+
         return NDKSimpleGroupMemberList.from(memberList);
     }
 
@@ -203,9 +210,7 @@ export class NDKSimpleGroup {
         const event = new NDKEvent(this.ndk, {
             kind: NDKKind.GroupAdminRequestJoin,
             content: content ?? "",
-            tags: [
-                [ "h", this.groupId ],
-            ]
+            tags: [["h", this.groupId]],
         } as NostrEvent);
         return event.publish(this.relaySet);
     }
@@ -217,21 +222,29 @@ export class NDKSimpleGroup {
         if (this.metadata) return;
         if (this.fetchingMetadata) return this.fetchingMetadata;
 
-        this.fetchingMetadata = this.ndk.fetchEvent({
-            kinds: [NDKKind.GroupMetadata],
-            "#d": [this.groupId],
-        }, undefined, this.relaySet).then((event) => {
-            if (event) {
-                this.metadata = NDKSimpleGroupMetadata.from(event);
-            } else {
-                this.metadata = new NDKSimpleGroupMetadata(this.ndk);
-                this.metadata.dTag = this.groupId;
-            }
-        }).finally(() => {
-            this.fetchingMetadata = undefined;
-        }).catch(() => {
-            throw new Error("Failed to fetch metadata for group " + this.groupId);
-        });
+        this.fetchingMetadata = this.ndk
+            .fetchEvent(
+                {
+                    kinds: [NDKKind.GroupMetadata],
+                    "#d": [this.groupId],
+                },
+                undefined,
+                this.relaySet
+            )
+            .then((event) => {
+                if (event) {
+                    this.metadata = NDKSimpleGroupMetadata.from(event);
+                } else {
+                    this.metadata = new NDKSimpleGroupMetadata(this.ndk);
+                    this.metadata.dTag = this.groupId;
+                }
+            })
+            .finally(() => {
+                this.fetchingMetadata = undefined;
+            })
+            .catch(() => {
+                throw new Error("Failed to fetch metadata for group " + this.groupId);
+            });
 
         return this.fetchingMetadata;
     }

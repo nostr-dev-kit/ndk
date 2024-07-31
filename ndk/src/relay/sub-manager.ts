@@ -8,7 +8,7 @@ import { NDKSubscriptionManager } from "../subscription/manager";
 /**
  * The subscription manager of an NDKRelay is in charge of orchestrating the subscriptions
  * that are created and closed in a given relay.
- * 
+ *
  * The manager is responsible for:
  * * restarting subscriptions when they are unexpectedly closed
  * * scheduling subscriptions that are received before the relay is connected
@@ -20,25 +20,19 @@ export class NDKRelaySubscriptionManager {
     private topSubscriptionManager?: NDKSubscriptionManager;
     private debug: debug.Debugger;
 
-    constructor(
-        relay: NDKRelay,
-        topSubscriptionManager?: NDKSubscriptionManager,
-    ) {
+    constructor(relay: NDKRelay, topSubscriptionManager?: NDKSubscriptionManager) {
         this.relay = relay;
         this.subscriptions = new Map();
         this.debug = relay.debug.extend("sub-manager");
         this.topSubscriptionManager = topSubscriptionManager;
     }
-    
+
     /**
      * Adds a subscription to the manager.
      */
-    public addSubscription(
-        sub: NDKSubscription,
-        filters: NDKFilter[],
-    ) {
+    public addSubscription(sub: NDKSubscription, filters: NDKFilter[]) {
         let relaySub: NDKRelaySubscription | undefined;
-        
+
         if (!sub.isGroupable()) {
             // if the subscription is not groupable, just execute it
             relaySub = this.createSubscription(sub, filters);

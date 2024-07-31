@@ -23,10 +23,21 @@ import { Queue } from "./queue/index.js";
 import { signatureVerificationInit } from "../events/signature.js";
 import { NDKSubscriptionManager } from "../subscription/manager.js";
 import { setActiveUser } from "./active-user.js";
-import { LnPaymentInfo, NDKLnUrlData, NDKZapConfirmation, NDKZapDetails, NDKZapper, NutPaymentInfo } from "../zapper/index.js";
+import {
+    LnPaymentInfo,
+    NDKLnUrlData,
+    NDKZapConfirmation,
+    NDKZapDetails,
+    NDKZapper,
+    NutPaymentInfo,
+} from "../zapper/index.js";
 import { NostrEvent } from "nostr-tools";
 
-export type NDKValidationRatioFn = (relay: NDKRelay, validatedCount: number, nonValidatedCount: number) => number;
+export type NDKValidationRatioFn = (
+    relay: NDKRelay,
+    validatedCount: number,
+    nonValidatedCount: number
+) => number;
 
 export interface NDKWalletConfig {
     onLnPay?: (payment: NDKZapDetails<LnPaymentInfo>) => Promise<NDKZapConfirmation>;
@@ -131,7 +142,7 @@ export interface NDKConstructorParams {
      * The signature verification validation ratio for new relays.
      */
     initialValidationRatio?: number;
-    
+
     /**
      * The lowest validation ratio any single relay can have.
      * Relays will have a sample of events verified based on this ratio.
@@ -407,7 +418,10 @@ export class NDK extends EventEmitter<{
      */
     public async connect(timeoutMs?: number): Promise<void> {
         if (this._signer && this.autoConnectUserRelays) {
-            this.debug("Attempting to connect to user relays specified by signer %o", await this._signer.relays?.(this));
+            this.debug(
+                "Attempting to connect to user relays specified by signer %o",
+                await this._signer.relays?.(this)
+            );
 
             if (this._signer.relays) {
                 const relays = await this._signer.relays(this);
@@ -629,8 +643,7 @@ export class NDK extends EventEmitter<{
             );
 
             const onEvent = (event: NostrEvent | NDKEvent) => {
-                if (!(event instanceof NDKEvent))
-                    event = new NDKEvent(undefined, event);
+                if (!(event instanceof NDKEvent)) event = new NDKEvent(undefined, event);
 
                 const dedupKey = event.deduplicationKey();
 
@@ -715,21 +728,13 @@ export class NDK extends EventEmitter<{
         comment?: string,
         extraTags?: NDKTag[],
         unit: string = "msat",
-        signer?: NDKSigner,
+        signer?: NDKSigner
     ): Promise<NDKZapper> {
         if (!signer) {
             this.assertSigner();
         }
 
-        const zapper = new NDKZapper(
-            target,
-            amount,
-            unit,
-            comment,
-            this,
-            extraTags,
-            signer,
-        )
+        const zapper = new NDKZapper(target, amount, unit, comment, this, extraTags, signer);
 
         if (this.walletConfig) {
             zapper.onLnPay = this.walletConfig.onLnPay;

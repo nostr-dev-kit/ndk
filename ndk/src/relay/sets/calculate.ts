@@ -35,11 +35,18 @@ export async function calculateRelaySetFromEvent(ndk: NDK, event: NDKEvent): Pro
 
     // get all the hinted relays
     let relayHints = event.tags
-        .filter(tag => ["a", "e"].includes(tag[0]))
-        .map(tag => tag[2])
+        .filter((tag) => ["a", "e"].includes(tag[0]))
+        .map((tag) => tag[2])
         // verify it's a valid URL
         .filter((url: string | undefined) => url && url.startsWith("wss://"))
-        .filter((url: string) => { try { new URL(url); return true; } catch { return false; } })
+        .filter((url: string) => {
+            try {
+                new URL(url);
+                return true;
+            } catch {
+                return false;
+            }
+        })
         .map((url: string) => normalizeRelayUrl(url));
 
     // make unique
@@ -55,9 +62,11 @@ export async function calculateRelaySetFromEvent(ndk: NDK, event: NDKEvent): Pro
     const pTags = event.getMatchingTags("p").map((tag) => tag[1]);
 
     if (pTags.length < 5) {
-        const pTaggedRelays = Array.from(chooseRelayCombinationForPubkeys(ndk, pTags, "read", {
-            preferredRelays: new Set(authorWriteRelays),
-        }).keys())
+        const pTaggedRelays = Array.from(
+            chooseRelayCombinationForPubkeys(ndk, pTags, "read", {
+                preferredRelays: new Set(authorWriteRelays),
+            }).keys()
+        );
         pTaggedRelays.forEach((relayUrl) => {
             const relay = ndk.pool?.getRelay(relayUrl, false, true);
             if (relay) {
@@ -144,9 +153,11 @@ export function calculateRelaySetsFromFilter(
 
     if (result.size === 0) {
         // If we don't have any relays, add all the permanent relays
-        pool.permanentAndConnectedRelays().slice(0, 5).forEach((relay) => {
-            result.set(relay.url, filters);
-        });
+        pool.permanentAndConnectedRelays()
+            .slice(0, 5)
+            .forEach((relay) => {
+                result.set(relay.url, filters);
+            });
     }
 
     if (result.size === 0) {

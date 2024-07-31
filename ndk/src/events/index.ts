@@ -240,9 +240,9 @@ export class NDKEvent extends EventEmitter {
 
     /**
      * Check if the event has a tag with the given name
-     * @param tagName 
-     * @param marker 
-     * @returns 
+     * @param tagName
+     * @param marker
+     * @returns
      */
     public hasTag(tagName: string, marker?: string): boolean {
         return this.tags.some((tag) => tag[0] === tagName && (!marker || tag[3] === marker));
@@ -584,7 +584,7 @@ export class NDKEvent extends EventEmitter {
         }
 
         // NIP-29 h-tags
-        tags = [ ...tags, ...this.getMatchingTags("h") ];
+        tags = [...tags, ...this.getMatchingTags("h")];
 
         // Add the relay url to all tags
         if (this.relay?.url) {
@@ -645,7 +645,7 @@ export class NDKEvent extends EventEmitter {
             content: reason || "",
         } as NostrEvent);
         e.tag(this, undefined, true);
-        e.tags.push(["k", this.kind!.toString()])
+        e.tags.push(["k", this.kind!.toString()]);
         if (publish) await e.publish();
 
         return e;

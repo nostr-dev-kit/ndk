@@ -23,9 +23,9 @@ let writeRelays: string[][] = [];
 beforeEach(() => {
     ndk = new NDK({
         explicitRelayUrls: [explicitRelayUrl],
-        enableOutboxModel: true
+        enableOutboxModel: true,
     });
-})
+});
 
 beforeAll(async () => {
     signers.forEach(async (signer, i) => {
@@ -34,7 +34,7 @@ beforeAll(async () => {
         readRelays[i] = [
             // relays that will have users in common
             `wss://relay${i}/`,
-            `wss://relay${i+2}/`,
+            `wss://relay${i + 2}/`,
 
             // a relay only this user will have
             `wss://user${i}-relay/`,
@@ -42,7 +42,7 @@ beforeAll(async () => {
         writeRelays[i] = [
             // relays that will have users in common
             `wss://relay${i}/`,
-            `wss://relay${i+1}/`,
+            `wss://relay${i + 1}/`,
 
             // a relay only this user will have
             `wss://user${i}-relay/`,
@@ -76,17 +76,17 @@ function combineRelays(relays: string[][]) {
 
 describe("calculateRelaySetFromEvent", () => {
     it("prefers to use the author's write relays", async () => {
-        const event = new NDKEvent(ndk, { kind: 1} as NostrEvent)
+        const event = new NDKEvent(ndk, { kind: 1 } as NostrEvent);
         await event.sign(signers[0]);
         const set = await calculateRelaySetFromEvent(ndk, event);
 
         const expectedRelays = combineRelays([writeRelays[0], [explicitRelayUrl]]);
 
-        expect (set.relayUrls).toEqual(expectedRelays);
-    })
+        expect(set.relayUrls).toEqual(expectedRelays);
+    });
 
-    it("writes to the p-tagged pubkey write relays", async() => {
-        const event = new NDKEvent(ndk, { kind: 1} as NostrEvent)
+    it("writes to the p-tagged pubkey write relays", async () => {
+        const event = new NDKEvent(ndk, { kind: 1 } as NostrEvent);
 
         const taggedUserIndexes = [1, 2, 4];
         for (const i of taggedUserIndexes) {
@@ -115,11 +115,13 @@ describe("calculateRelaySetFromEvent", () => {
         for (const relay of writeRelays[0]) {
             expect(resultedRelays).toContain(relay);
         }
-    })
+    });
 
-    it("if some tagged pubkey doesn't have write relays, writes to the explicit relay list", async() => {
-        const userWithoutRelays = ndk.getUser({ pubkey: "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"});
-        const event = new NDKEvent(ndk, { kind: 1} as NostrEvent);
+    it("if some tagged pubkey doesn't have write relays, writes to the explicit relay list", async () => {
+        const userWithoutRelays = ndk.getUser({
+            pubkey: "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52",
+        });
+        const event = new NDKEvent(ndk, { kind: 1 } as NostrEvent);
         event.tag(userWithoutRelays);
         await event.sign(signers[0]);
 
@@ -130,19 +132,19 @@ describe("calculateRelaySetFromEvent", () => {
         expectedRelays.push(explicitRelayUrl);
 
         expect(resultedRelays).toEqual(expectedRelays);
-    })
+    });
 
-    it("writes to any relay that has been hinted at too", async() => {
-        const event = new NDKEvent(ndk, { kind: 1} as NostrEvent);
-        event.tags.push(["e", "123", "wss://hinted-relay.com/"])
+    it("writes to any relay that has been hinted at too", async () => {
+        const event = new NDKEvent(ndk, { kind: 1 } as NostrEvent);
+        event.tags.push(["e", "123", "wss://hinted-relay.com/"]);
         await event.sign(signers[0]);
 
         const result = await calculateRelaySetFromEvent(ndk, event);
         const resultedRelays = result.relayUrls;
 
         expect(resultedRelays).toContain("wss://hinted-relay.com/");
-    })
-})
+    });
+});
 
 describe("calculateRelaySetsFromFilters", () => {
     it("falls back to the explicit relay when authors don't have relays", () => {

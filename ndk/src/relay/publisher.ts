@@ -23,7 +23,7 @@ export class NDKRelayPublisher {
      */
     public async publish(event: NDKEvent, timeoutMs = 2500): Promise<boolean> {
         let timeout: NodeJS.Timeout | number | undefined;
-        
+
         const publishConnected = () => {
             return new Promise<boolean>((resolve, reject) => {
                 try {
@@ -31,9 +31,9 @@ export class NDKRelayPublisher {
                         .then((result) => {
                             this.ndkRelay.emit("published", event);
                             event.emit("relay:published", this.ndkRelay);
-                            resolve(true)
+                            resolve(true);
                         })
-                        .catch(reject)
+                        .catch(reject);
                 } catch (err) {
                     reject(err);
                 }
@@ -43,7 +43,7 @@ export class NDKRelayPublisher {
         const timeoutPromise = new Promise<boolean>((_, reject) => {
             timeout = setTimeout(() => {
                 timeout = undefined;
-                reject(new Error("Timeout"))
+                reject(new Error("Timeout"));
             }, timeoutMs);
         });
 
@@ -62,12 +62,12 @@ export class NDKRelayPublisher {
             this.ndkRelay.emit("publish:failed", event, err);
             event.emit("relay:publish:failed", this.ndkRelay, err);
             throw err;
-        }
+        };
 
         const onFinally = () => {
             if (timeout) clearTimeout(timeout as NodeJS.Timeout);
             this.ndkRelay.removeListener("connect", onConnectHandler);
-        }
+        };
 
         if (this.ndkRelay.status >= NDKRelayStatus.CONNECTED) {
             /**

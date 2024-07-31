@@ -22,58 +22,58 @@ export type NutPaymentInfo = {
     /**
      * Mints that must be used for the payment
      */
-    mints: string[],
+    mints: string[];
 
     /**
      * Relays where nutzap must be published
      */
-    relays: string[],
+    relays: string[];
 
     /**
      * Optional pubkey to use for P2PK lock
      */
-    p2pkPubkey?: string,
-}
+    p2pkPubkey?: string;
+};
 
 export type LnPaymentInfo = {
     pr: string;
-}
+};
 
 export type NDKZapDetails<T> = {
     /**
      * Target of the zap
      */
-    target: NDKEvent | NDKUser,
+    target: NDKEvent | NDKUser;
 
     /**
      * Comment for the zap
      */
-    comment?: string,
+    comment?: string;
 
     /**
      * Extra tags to add to the zap
      */
-    extraTags?: NDKTag[],
-    
+    extraTags?: NDKTag[];
+
     /**
      * Pubkey of the user to zap to
      */
-    recipientPubkey: string,
+    recipientPubkey: string;
 
     /**
      * Amount of the payment
      */
-    amount: number,
+    amount: number;
 
     /**
      * Unit of the payment (e.g. msat)
      */
-    unit: string,
+    unit: string;
 
     /**
      * Payment details
      */
-    info: T
+    info: T;
 };
 
 export type NDKLUD18ServicePayerData = Partial<{
@@ -105,7 +105,7 @@ export type NDKLnUrlData = {
 };
 
 export type NDKZapConfirmationLN = {
-    preimage: string,
+    preimage: string;
 };
 
 export type NDKZapConfirmationNut = NDKEvent;
@@ -113,28 +113,28 @@ export type NDKZapConfirmationNut = NDKEvent;
 export type NDKZapConfirmation = NDKZapConfirmationLN | NDKZapConfirmationNut;
 
 export type NDKZapSplit = {
-    pubkey: string,
-    amount: number,
+    pubkey: string;
+    amount: number;
 };
 
 export type NDKZapMethod = "nip57" | "nip61";
 
 type ZapMethodInfo = {
-    "nip57": NDKLnUrlData,
-    "nip61": NutPaymentInfo,
-}
+    nip57: NDKLnUrlData;
+    nip61: NutPaymentInfo;
+};
 
 export type NDKZapMethodInfo = {
-    type: NDKZapMethod,
+    type: NDKZapMethod;
 
-    data: ZapMethodInfo[NDKZapMethod],
+    data: ZapMethodInfo[NDKZapMethod];
 };
 
 /**
- * 
+ *
  */
 class NDKZapper extends EventEmitter<{
-    "complete": (info: NDKZapConfirmation | Error) => void,
+    complete: (info: NDKZapConfirmation | Error) => void;
 }> {
     public target: NDKEvent | NDKUser;
     public ndk: NDK;
@@ -148,9 +148,9 @@ class NDKZapper extends EventEmitter<{
     public onLnPay?: (payment: NDKZapDetails<LnPaymentInfo>) => Promise<NDKZapConfirmation>;
     public onNutPay?: (payment: NDKZapDetails<NutPaymentInfo>) => Promise<NDKZapConfirmation>;
     public onComplete?: (info: NDKZapConfirmation | Error) => void;
-    
+
     public maxRelays = 3;
-    
+
     constructor(
         target: NDKEvent | NDKUser,
         amount: number,
@@ -158,7 +158,7 @@ class NDKZapper extends EventEmitter<{
         comment?: string,
         ndk?: NDK,
         extraTags?: NDKTag[],
-        signer?: NDKSigner,
+        signer?: NDKSigner
     ) {
         super();
         this.target = target;
@@ -197,7 +197,7 @@ class NDKZapper extends EventEmitter<{
             if (this.onComplete) this.onComplete(error);
             return;
         }
-        
+
         let ret: NDKZapConfirmation | Error | undefined;
 
         d("Zapping to", split.pubkey, "with", split.amount, "msat using", zapMethod.type);
@@ -206,22 +206,30 @@ class NDKZapper extends EventEmitter<{
             switch (zapMethod.type) {
                 case "nip61": {
                     const data = zapMethod.data as NutPaymentInfo;
-                        ret = await this.onNutPay!({
-                            target: this.target,
-                            comment: this.comment,
-                            extraTags: this.extraTags,
-                            recipientPubkey: split.pubkey,
-                            amount: split.amount,
-                            unit: this.unit,
-                            info: data,
-                        });
+                    ret = await this.onNutPay!({
+                        target: this.target,
+                        comment: this.comment,
+                        extraTags: this.extraTags,
+                        recipientPubkey: split.pubkey,
+                        amount: split.amount,
+                        unit: this.unit,
+                        info: data,
+                    });
                     break;
                 }
                 case "nip57": {
                     const lnUrlData = zapMethod.data as NDKLnUrlData;
 
                     const relays = await this.relays(split.pubkey);
-                    const zapRequest = await this.generateNip57Request(lnUrlData, split.pubkey, split.amount, relays, this.comment, this.extraTags, this.signer);
+                    const zapRequest = await this.generateNip57Request(
+                        lnUrlData,
+                        split.pubkey,
+                        split.amount,
+                        relays,
+                        this.comment,
+                        this.extraTags,
+                        this.signer
+                    );
 
                     if (!zapRequest) {
                         d("Unable to generate zap request");
@@ -234,7 +242,7 @@ class NDKZapper extends EventEmitter<{
                         d("Unable to get payment request");
                         return;
                     }
-                    
+
                     ret = await this.onLnPay!({
                         target: this.target,
                         comment: this.comment,
@@ -243,7 +251,7 @@ class NDKZapper extends EventEmitter<{
                         unit: this.unit,
                         info: { pr },
                     });
-                    
+
                     break;
                 }
             }
@@ -276,7 +284,7 @@ class NDKZapper extends EventEmitter<{
             event: null,
             amount,
             comment: comment || "",
-            relays: relays.slice(0, 4)
+            relays: relays.slice(0, 4),
         });
 
         // add the event tag if it exists; this supports both 'e' and 'a' tags
@@ -304,10 +312,10 @@ class NDKZapper extends EventEmitter<{
 
     /**
      * Gets a bolt11 for a nip57 zap
-     * @param event 
-     * @param amount 
-     * @param zapEndpoint 
-     * @returns 
+     * @param event
+     * @param amount
+     * @param zapEndpoint
+     * @returns
      */
     public async getLnInvoice(
         zapRequest: NDKEvent,
@@ -320,7 +328,7 @@ class NDKZapper extends EventEmitter<{
             `Fetching invoice from ${zapEndpoint}?` +
                 new URLSearchParams({
                     amount: amount.toString(),
-                    nostr: eventPayload
+                    nostr: eventPayload,
                 })
         );
         const url = new URL(zapEndpoint);
@@ -333,7 +341,7 @@ class NDKZapper extends EventEmitter<{
             d(`Received non-200 status from zap endpoint: ${zapEndpoint}`, {
                 status: response.status,
                 amount: amount,
-                nostr: eventPayload
+                nostr: eventPayload,
             });
             const text = await response.text();
             throw new Error(`Unable to fetch zap endpoint ${zapEndpoint}: ${text}`);
@@ -345,18 +353,22 @@ class NDKZapper extends EventEmitter<{
 
     public getZapSplits(): NDKZapSplit[] {
         if (this.target instanceof NDKUser) {
-            return [{
-                pubkey: this.target.pubkey,
-                amount: this.amount,
-            }];
+            return [
+                {
+                    pubkey: this.target.pubkey,
+                    amount: this.amount,
+                },
+            ];
         }
 
         const zapTags = this.target.getMatchingTags("zap");
         if (zapTags.length === 0) {
-            return [{
-                pubkey: this.target.pubkey,
-                amount: this.amount,
-            }]
+            return [
+                {
+                    pubkey: this.target.pubkey,
+                    amount: this.amount,
+                },
+            ];
         }
 
         const splits: NDKZapSplit[] = [];
@@ -371,14 +383,11 @@ class NDKZapper extends EventEmitter<{
         return splits;
     }
 
-    async getZapMethod(
-        ndk: NDK,
-        pubkey: string,
-    ): Promise<NDKZapMethodInfo | undefined> {
+    async getZapMethod(ndk: NDK, pubkey: string): Promise<NDKZapMethodInfo | undefined> {
         const methods: NDKZapMethod[] = [];
 
-        if (this.onNutPay) methods.push("nip61")
-        if (this.onLnPay) methods.push("nip57")
+        if (this.onNutPay) methods.push("nip61");
+        if (this.onLnPay) methods.push("nip57");
 
         d("Available zap methods", methods);
 
@@ -386,12 +395,12 @@ class NDKZapper extends EventEmitter<{
             d("No zap methods available");
             throw new Error("No zap methods available");
         }
-        
-        const user = ndk.getUser({pubkey})
+
+        const user = ndk.getUser({ pubkey });
         const zapInfo = await user.getZapInfo(false, methods);
 
         d("Zap info", zapInfo);
-        
+
         return zapInfo[0];
     }
 

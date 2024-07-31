@@ -24,17 +24,13 @@ describe("filterFingerprint", () => {
         const filters1: NDKFilter[] = [{ kinds: [1], authors: ["author1"] }, { "#e": ["id1"] }];
         const filters2: NDKFilter[] = [{ kinds: [1] }, { authors: ["author2"], "#e": ["id2"] }];
 
-        expect(filterFingerprint(filters1, false)).not.toEqual(
-            filterFingerprint(filters2, false)
-        );
+        expect(filterFingerprint(filters1, false)).not.toEqual(filterFingerprint(filters2, false));
     });
 
     it("generates the same group IDs with multiple compatible filters", () => {
         const filters1: NDKFilter[] = [{ kinds: [1] }, { authors: ["author1"], "#e": ["id1"] }];
         const filters2: NDKFilter[] = [{ kinds: [1] }, { authors: ["author2"], "#e": ["id2"] }];
 
-        expect(filterFingerprint(filters1, false)).toEqual(
-            filterFingerprint(filters2, false)
-        );
+        expect(filterFingerprint(filters1, false)).toEqual(filterFingerprint(filters2, false));
     });
 });

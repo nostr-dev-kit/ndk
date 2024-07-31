@@ -20,5 +20,5 @@ export function getRelaysForFilterWithAuthors(
     authors: Hexpubkey[],
     relayGoalPerAuthor: number = 2
 ): Map<WebSocket["url"], Hexpubkey[]> {
-    return chooseRelayCombinationForPubkeys(ndk, authors, 'write', { count: relayGoalPerAuthor });
+    return chooseRelayCombinationForPubkeys(ndk, authors, "write", { count: relayGoalPerAuthor });
 }

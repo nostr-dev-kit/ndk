@@ -296,7 +296,7 @@ describe("NDKEvent", () => {
                 ["h", "group-id"],
                 ["p", "pubkey"],
             ]);
-        })
+        });
     });
 
     describe("tagId", () => {

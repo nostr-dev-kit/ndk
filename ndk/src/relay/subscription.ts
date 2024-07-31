@@ -1,14 +1,19 @@
 import { Event, matchFilters } from "nostr-tools";
 import { NDKRelay, NDKRelayStatus } from ".";
-import { NDKEvent, NDKEventId, NostrEvent } from "../events";
-import { NDKFilter, NDKSubscription, NDKSubscriptionDelayedType, NDKSubscriptionInternalId } from "../subscription";
+import { NDKEventId, NostrEvent } from "../events";
+import {
+    NDKFilter,
+    NDKSubscription,
+    NDKSubscriptionDelayedType,
+    NDKSubscriptionInternalId,
+} from "../subscription";
 import { mergeFilters, NDKFilterFingerprint } from "../subscription/grouping";
 import { NDKSubscriptionManager } from "../subscription/manager";
 
 type Item = {
     subscription: NDKSubscription;
     filters: NDKFilter[];
-}
+};
 
 export enum NDKRelaySubscriptionStatus {
     INITIAL,
@@ -59,7 +64,7 @@ export class NDKRelaySubscription {
     /**
      * These are subscriptions that have indicated they want to close before
      * we received an EOSE.
-     * 
+     *
      * This happens when this relay is the slowest to respond once the NDKSubscription
      * has received enough EOSEs to give up on this relay.
      */
@@ -92,13 +97,10 @@ export class NDKRelaySubscription {
     private eventIds: Set<NDKEventId> = new Set();
 
     /**
-     * 
+     *
      * @param fingerprint The fingerprint of this subscription.
      */
-    constructor(
-        relay: NDKRelay,
-        fingerprint?: NDKFilterFingerprint
-    ) {
+    constructor(relay: NDKRelay, fingerprint?: NDKFilterFingerprint) {
         this.relay = relay;
         const rand = Math.random().toString(36).substring(7);
         this.debug = relay.debug.extend("subscription-" + rand);
@@ -119,19 +121,19 @@ export class NDKRelaySubscription {
         this.subIdParts.add(part);
     }
 
-    public addItem(
-        subscription: NDKSubscription,
-        filters: NDKFilter[]
-    ) {
+    public addItem(subscription: NDKSubscription, filters: NDKFilter[]) {
         if (this.items.has(subscription.internalId)) return;
-        
+
         subscription.on("close", this.removeItem.bind(this, subscription));
         this.items.set(subscription.internalId, { subscription, filters });
 
         if (this.status !== NDKRelaySubscriptionStatus.RUNNING) {
             // if we have an explicit subId in this subscription, append it to the subId
             if (subscription.subId && (!this._subId || this._subId.length < 48)) {
-                if (this.status === NDKRelaySubscriptionStatus.INITIAL || this.status === NDKRelaySubscriptionStatus.PENDING) {
+                if (
+                    this.status === NDKRelaySubscriptionStatus.INITIAL ||
+                    this.status === NDKRelaySubscriptionStatus.PENDING
+                ) {
                     this.addSubIdPart(subscription.subId);
                 }
             }
@@ -160,7 +162,7 @@ export class NDKRelaySubscription {
 
     /**
      * A subscription has been closed, remove it from the list of items.
-     * @param subscription 
+     * @param subscription
      */
     public removeItem(subscription: NDKSubscription) {
         // If we have not EOSEd yet, don't delete the item, rather mark it for deletion
@@ -168,7 +170,7 @@ export class NDKRelaySubscription {
             this.itemsToRemoveAfterEose.push(subscription.internalId);
             return;
         }
-        
+
         this.items.delete(subscription.internalId);
 
         if (this.items.size === 0) {
@@ -189,7 +191,11 @@ export class NDKRelaySubscription {
                 this.debug("Error closing subscription", e, this);
             }
         } else {
-            this.debug("Subscription wanted to close but it wasn't running, this is probably ok", { subId: this.subId, prevStatus, sub: this });
+            this.debug("Subscription wanted to close but it wasn't running, this is probably ok", {
+                subId: this.subId,
+                prevStatus,
+                sub: this,
+            });
         }
         this.cleanup();
     }
@@ -206,10 +212,7 @@ export class NDKRelaySubscription {
         if (this.onClose) this.onClose(this);
     }
 
-    private catchUpSubscription(
-        subscription: NDKSubscription,
-        filters: NDKFilter[]
-    ) {
+    private catchUpSubscription(subscription: NDKSubscription, filters: NDKFilter[]) {
         this.debug("TODO: catch up subscription", subscription, filters);
     }
 
@@ -233,61 +236,57 @@ export class NDKRelaySubscription {
             const existingDelayType = this.delayType;
             const timeUntilFire = this.fireTime! - Date.now();
 
-            if (existingDelayType === 'at-least' && delayType === 'at-least') {
+            if (existingDelayType === "at-least" && delayType === "at-least") {
                 if (timeUntilFire < delay) {
                     // extend the timeout to the bigger timeout
                     if (this.executionTimer) clearTimeout(this.executionTimer as NodeJS.Timeout);
                     this.schedule(delay, delayType);
                 }
-            } else if (existingDelayType === 'at-least' && delayType === 'at-most') {
+            } else if (existingDelayType === "at-least" && delayType === "at-most") {
                 if (timeUntilFire > delay) {
                     if (this.executionTimer) clearTimeout(this.executionTimer as NodeJS.Timeout);
                     this.schedule(delay, delayType);
                 }
-            } else if (existingDelayType === 'at-most' && delayType === 'at-most') {
+            } else if (existingDelayType === "at-most" && delayType === "at-most") {
                 if (timeUntilFire > delay) {
                     if (this.executionTimer) clearTimeout(this.executionTimer as NodeJS.Timeout);
                     this.schedule(delay, delayType);
                 }
-            } else if (existingDelayType === 'at-most' && delayType === 'at-least') {
+            } else if (existingDelayType === "at-most" && delayType === "at-least") {
                 if (timeUntilFire > delay) {
                     if (this.executionTimer) clearTimeout(this.executionTimer as NodeJS.Timeout);
                     this.schedule(delay, delayType);
                 }
             } else {
-                throw new Error("Unknown delay type combination " + existingDelayType + " " + delayType);
+                throw new Error(
+                    "Unknown delay type combination " + existingDelayType + " " + delayType
+                );
             }
         }
     }
 
-    private schedule(
-        delay: number,
-        delayType: NDKSubscriptionDelayedType
-    ) {
+    private schedule(delay: number, delayType: NDKSubscriptionDelayedType) {
         this.status = NDKRelaySubscriptionStatus.PENDING;
         const currentTime = Date.now();
         this.fireTime = currentTime + delay;
         this.delayType = delayType;
-        const timer = setTimeout(
-            this.execute.bind(this),
-            delay
-        );
+        const timer = setTimeout(this.execute.bind(this), delay);
 
         /**
          * We only store the execution timer if it's an "at-least" delay,
          * since "at-most" delays should not be cancelled.
          */
-        if (delayType === 'at-least') {
+        if (delayType === "at-least") {
             this.executionTimer = timer;
         }
     }
 
     private executeOnRelayReady = () => {
         if (this.status !== NDKRelaySubscriptionStatus.WAITING) return;
-        
+
         this.status = NDKRelaySubscriptionStatus.PENDING;
         this.execute();
-    }
+    };
 
     private finalizeSubId() {
         // if we have subId parts, join those
@@ -310,7 +309,7 @@ export class NDKRelaySubscription {
         this.execute();
         this.debug("Re-executed after auth %s 👉 %s", oldSubId, this.subId);
     }).bind(this);
-    
+
     private execute() {
         if (this.status !== NDKRelaySubscriptionStatus.PENDING) {
             // Because we might schedule this execution multiple times,
@@ -339,7 +338,7 @@ export class NDKRelaySubscription {
     public onstart() {}
     public onevent(event: NostrEvent) {
         this.topSubscriptionManager?.seenEvent(event.id!, this.relay);
-        
+
         for (const { subscription } of this.items.values()) {
             if (matchFilters(subscription.filters, event as Event)) {
                 subscription.eventReceived(event, this.relay, false);
@@ -362,7 +361,7 @@ export class NDKRelaySubscription {
     public onclose(reason?: string) {
         this.status = NDKRelaySubscriptionStatus.CLOSED;
     }
-    
+
     public onclosed(reason?: string) {
         if (!reason) return;
 
@@ -377,11 +376,11 @@ export class NDKRelaySubscription {
      */
     private compileFilters(): NDKFilter[] {
         const mergedFilters: NDKFilter[] = [];
-        const filters = Array.from(this.items.values()).map(item => item.filters);
+        const filters = Array.from(this.items.values()).map((item) => item.filters);
         const filterCount = filters[0].length;
 
         for (let i = 0; i < filterCount; i++) {
-            const allFiltersAtIndex = filters.map(filter => filter[i]);
+            const allFiltersAtIndex = filters.map((filter) => filter[i]);
             mergedFilters.push(mergeFilters(allFiltersAtIndex));
         }
 

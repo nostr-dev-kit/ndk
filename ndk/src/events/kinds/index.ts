@@ -108,7 +108,7 @@ export enum NDKKind {
     SubscriptionTier = 37001,
 
     EcashMintRecommendation = 38000,
-    
+
     HighlightSet = 39802,
     CategorizedHighlightList = NDKKind.HighlightSet, // Deprecated but left for backwards compatibility
 

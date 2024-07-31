@@ -6,8 +6,8 @@ import createDebug from "debug";
 const d = createDebug("ndk:zapper:ln");
 
 export async function getNip57ZapSpecFromLud(
-    { lud06, lud16 }: { lud06?: string, lud16?: string },
-    ndk: NDK,
+    { lud06, lud16 }: { lud06?: string; lud16?: string },
+    ndk: NDK
 ): Promise<NDKLnUrlData | undefined> {
     let zapEndpoint: string | undefined;
 

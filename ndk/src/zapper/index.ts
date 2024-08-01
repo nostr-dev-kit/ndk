@@ -279,7 +279,8 @@ class NDKZapper extends EventEmitter<{
                     }
                 }
             } catch (e: any) {
-                retVal = e;
+                if (e instanceof Error) retVal = e
+                else retVal = new Error(e)
                 d("Error zapping to %s with %d %s using %s: %o", split.pubkey, split.amount, this.unit, zapMethod.type, e);
             }
         }

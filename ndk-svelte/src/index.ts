@@ -15,7 +15,7 @@ import { type Unsubscriber, type Writable, writable } from "svelte/store";
  * Type for NDKEvent classes that have a static `from` method like NDKHighlight.
  */
 type ClassWithConvertFunction<T extends NDKEvent> = {
-    from: (event: NDKEvent) => T;
+    from: (event: NDKEvent) => T | undefined;
 };
 
 export type ExtendedBaseType<T extends NDKEvent> = T & {
@@ -195,7 +195,9 @@ class NDKSvelte extends NDK {
 
             let e = event;
             if (klass) {
-                e = klass.from(event);
+                const ev = klass.from(event);
+                if (!ev) return;
+                e = ev;
                 e.relay = event.relay;
             }
             e.ndk = this;

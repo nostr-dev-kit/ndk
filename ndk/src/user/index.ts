@@ -7,10 +7,20 @@ import { NDKSubscriptionCacheUsage, type NDKSubscriptionOptions } from "../subsc
 import { follows } from "./follows.js";
 import { type NDKUserProfile, profileFromEvent, serializeProfile } from "./profile.js";
 import { getNip05For } from "./nip05.js";
-import type { NDKLnUrlData, NDKRelay, NDKZapMethod, NDKZapMethodInfo } from "../index.js";
-import { NDKZap } from "../index.js";
+import type {
+    NDKRelay,
+    NDKSigner,
+    NDKZapDetails,
+    NDKZapMethod,
+    NDKZapMethodInfo,
+} from "../index.js";
 import { NDKCashuMintList } from "../events/kinds/nutzap/mint-list.js";
-import { getNip57ZapSpecFromLud } from "../zapper/ln.js";
+import {
+    getNip57ZapSpecFromLud,
+    LnPaymentInfo,
+    LNPaymentRequest,
+    NDKLnUrlData,
+} from "../zapper/ln.js";
 
 export type Hexpubkey = string;
 
@@ -163,7 +173,7 @@ export class NDKUser {
                     data: {
                         mints: mintList.mints,
                         relays: mintList.relays,
-                        p2pkPubkey: mintList.p2pkPubkey,
+                        p2pk: mintList.p2pk,
                     },
                 });
             }
@@ -175,7 +185,6 @@ export class NDKUser {
         if (nip57) {
             const profile = profileFromEvent(nip57);
             const { lud06, lud16 } = profile;
-            console.log("lud06", lud06, "lud16", lud16, profile, nip57.rawEvent());
             try {
                 const zapSpec = await getNip57ZapSpecFromLud({ lud06, lud16 }, this.ndk);
 
@@ -219,7 +228,6 @@ export class NDKUser {
                 }
             }
 
-            const zap = new NDKZap({ ndk: ndk!, zappedUser: this });
             let lnurlspec: NDKLnUrlData | undefined;
             try {
                 await this.fetchProfile({ groupable: false });
@@ -514,5 +522,33 @@ export class NDKUser {
 
         if (profilePointer === null) return null;
         return profilePointer.pubkey === this.pubkey;
+    }
+
+    /**
+     * Zap a user
+     *
+     * @param amount The amount to zap in millisatoshis
+     * @param comment A comment to add to the zap request
+     * @param extraTags Extra tags to add to the zap request
+     * @param signer The signer to use (will default to the NDK instance's signer)
+     */
+    async zap(amount: number, comment?: string, tags?: NDKTag[], signer?: NDKSigner) {
+        return new Promise((resolve, reject) => {
+            if (!this.ndk) {
+                reject("No NDK instance found");
+                return;
+            }
+
+            // If we already have a wallet configured, we'll use that
+            // otherwise we'll just get the payment request and return it
+            // to maintain compatibility with the old behavior
+            let onLnPay = this.ndk.walletConfig?.onLnPay;
+            onLnPay ??= async ({ pr }: { pr: LNPaymentRequest }): Promise<undefined> => {
+                resolve(pr);
+            };
+
+            const zapper = this.ndk.zap(this, amount, { comment, tags, signer, onLnPay });
+            zapper.zap().then(resolve).catch(reject);
+        });
     }
 }

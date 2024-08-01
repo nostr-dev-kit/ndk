@@ -1,11 +1,8 @@
-import { NDKEvent } from "@nostr-dev-kit/ndk";
+import type { NDKEvent } from "@nostr-dev-kit/ndk";
 import { NDKWalletChange } from "../../cashu/history";
-import NDKWalletLifecycle from ".";
+import type NDKWalletLifecycle from ".";
 
-async function handleWalletChange(
-    this: NDKWalletLifecycle,
-    event: NDKEvent
-) {
+async function handleWalletChange(this: NDKWalletLifecycle, event: NDKEvent) {
     const walletChange = await NDKWalletChange.from(event);
 
     if (!walletChange) return;

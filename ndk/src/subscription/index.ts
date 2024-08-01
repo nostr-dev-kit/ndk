@@ -563,7 +563,7 @@ export class NDKSubscription extends EventEmitter<{
                     if (lastEventSeen !== undefined && lastEventSeen < 20) {
                         this.eoseTimeout = setTimeout(sendEoseTimeout, timeToWaitForNextEose);
                     } else {
-                        performEose("send eose timeout: "+timeToWaitForNextEose);
+                        performEose("send eose timeout: " + timeToWaitForNextEose);
                     }
                 };
 

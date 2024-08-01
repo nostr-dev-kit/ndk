@@ -1,4 +1,6 @@
-import NDK, { Hexpubkey, NDKEvent, NDKFilter, NDKKind } from "@nostr-dev-kit/ndk";
+import type { Hexpubkey, NDKEvent, NDKFilter} from "@nostr-dev-kit/ndk";
+import type NDK from "@nostr-dev-kit/ndk";
+import { NDKKind } from "@nostr-dev-kit/ndk";
 
 export type MintUrl = string;
 export type MintUsage = {
@@ -8,12 +10,12 @@ export type MintUsage = {
     events: NDKEvent[];
 
     pubkeys: Set<Hexpubkey>;
-}
+};
 export type NDKCashuMintRecommendation = Record<MintUrl, MintUsage>;
 
 /**
  * Provides a list of mint recommendations.
- * @param ndk 
+ * @param ndk
  * @param filter optional extra filter to apply to the REQ
  */
 export async function getCashuMintRecommendations(
@@ -21,11 +23,11 @@ export async function getCashuMintRecommendations(
     filter?: NDKFilter
 ): Promise<NDKCashuMintRecommendation> {
     const f: NDKFilter[] = [
-        { kinds: [ NDKKind.EcashMintRecommendation ], "#k": ["38002"], ...(filter||{}) },
-        { kinds: [ NDKKind.CashuMintList ], ...(filter||{}) },
+        { kinds: [NDKKind.EcashMintRecommendation], "#k": ["38002"], ...(filter || {}) },
+        { kinds: [NDKKind.CashuMintList], ...(filter || {}) },
     ];
     const res: NDKCashuMintRecommendation = {};
-    
+
     const recommendations = await ndk.fetchEvents(f);
 
     for (const event of recommendations) {
@@ -33,10 +35,10 @@ export async function getCashuMintRecommendations(
             case NDKKind.EcashMintRecommendation:
                 for (const uTag of event.getMatchingTags("u")) {
                     if (uTag[2] && uTag[2] !== "cashu") continue;
-        
-                    const url = uTag[1]
+
+                    const url = uTag[1];
                     if (!url) continue;
-        
+
                     const entry = res[url] || { events: [], pubkeys: new Set() };
                     entry.events.push(event);
                     entry.pubkeys.add(event.pubkey);
@@ -46,9 +48,9 @@ export async function getCashuMintRecommendations(
 
             case NDKKind.CashuMintList:
                 for (const mintTag of event.getMatchingTags("mint")) {
-                    const url = mintTag[1]
+                    const url = mintTag[1];
                     if (!url) continue;
-        
+
                     const entry = res[url] || { events: [], pubkeys: new Set() };
                     entry.events.push(event);
                     entry.pubkeys.add(event.pubkey);

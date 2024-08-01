@@ -1,6 +1,9 @@
-import { MintKeys, type Proof } from "@cashu/cashu-ts";
-import NDK, { NDKEvent, NDKKind, NDKRelay, NDKRelaySet, NostrEvent } from "@nostr-dev-kit/ndk";
-import { NDKCashuWallet } from "./wallet";
+import type { MintKeys} from "@cashu/cashu-ts";
+import { type Proof } from "@cashu/cashu-ts";
+import type { NDKRelay, NDKRelaySet, NostrEvent } from "@nostr-dev-kit/ndk";
+import type NDK from "@nostr-dev-kit/ndk";
+import { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
+import type { NDKCashuWallet } from "./wallet";
 
 export function proofsTotalBalance(proofs: Proof[]): number {
     for (const proof of proofs) {
@@ -8,7 +11,7 @@ export function proofsTotalBalance(proofs: Proof[]): number {
             throw new Error("proof amount is negative");
         }
     }
-    
+
     return proofs.reduce((acc, proof) => acc + proof.amount, 0);
 }
 
@@ -38,18 +41,18 @@ export class NDKCashuToken extends NDKEvent {
         } catch (e) {
             return;
         }
-        
+
         return token;
     }
 
     async toNostrEvent(pubkey?: string): Promise<NostrEvent> {
         this.content = JSON.stringify({
-            proofs: this.proofs
+            proofs: this.proofs,
         });
 
         const user = await this.ndk!.signer!.user();
         await this.encrypt(user);
-        
+
         return super.toNostrEvent(pubkey);
     }
 
@@ -60,7 +63,7 @@ export class NDKCashuToken extends NDKEvent {
     }
 
     set wallet(wallet: NDKCashuWallet) {
-        this.tags.push(["a", wallet.tagId()])
+        this.tags.push(["a", wallet.tagId()]);
     }
 
     set mint(mint: string) {

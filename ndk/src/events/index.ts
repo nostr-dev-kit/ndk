@@ -105,8 +105,6 @@ export class NDKEvent extends EventEmitter {
         return new NDKEvent(ndk, deserialize(event));
     }
 
-
-
     /**
      * Returns the event as is.
      */

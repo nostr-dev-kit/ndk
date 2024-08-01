@@ -1,20 +1,18 @@
 import { CashuWallet, CashuMint } from "@cashu/cashu-ts";
-import { LnPaymentInfo } from "@nostr-dev-kit/ndk";
-import { NDKCashuPay } from "../pay";
-import { TokenSelection, rollOverProofs, chooseProofsForPr } from "../proofs";
-import { MintUrl } from "../mint/utils";
+import type { LnPaymentInfo } from "@nostr-dev-kit/ndk";
+import type { NDKCashuPay } from "../pay";
+import type { TokenSelection} from "../proofs";
+import { rollOverProofs, chooseProofsForPr } from "../proofs";
+import type { MintUrl } from "../mint/utils";
 
 /**
- * 
+ *
  * @param useMint Forces the payment to use a specific mint
- * @returns 
+ * @returns
  */
-export async function payLn(
-    this: NDKCashuPay,
-    useMint?: MintUrl,
-): Promise<string | undefined> {
+export async function payLn(this: NDKCashuPay, useMint?: MintUrl): Promise<string | undefined> {
     const mintBalances = this.wallet.mintBalances;
-    let selections: TokenSelection[] = [];
+    const selections: TokenSelection[] = [];
     let amount = this.getAmount();
     const data = this.info as LnPaymentInfo;
     if (!data.pr) throw new Error("missing pr");
@@ -26,9 +24,19 @@ export async function payLn(
         processingSelections = true;
         for (const selection of selections) {
             const _wallet = new CashuWallet(new CashuMint(selection.mint));
-            this.debug("paying LN invoice for %d sats (%d in fees) with proofs %o, %s", selection.quote!.amount, selection.quote!.fee_reserve, selection.usedProofs, data.pr);
+            this.debug(
+                "paying LN invoice for %d sats (%d in fees) with proofs %o, %s",
+                selection.quote!.amount,
+                selection.quote!.fee_reserve,
+                selection.usedProofs,
+                data.pr
+            );
             try {
-                const result = await _wallet.payLnInvoice(data.pr, selection.usedProofs, selection.quote);
+                const result = await _wallet.payLnInvoice(
+                    data.pr,
+                    selection.usedProofs,
+                    selection.quote
+                );
                 this.debug("payment result: %o", result);
 
                 if (result.isPaid && result.preimage) {
@@ -44,16 +52,16 @@ export async function payLn(
                 }
             }
         }
-        
+
         processingSelections = false;
-    }
+    };
 
     return new Promise<string>((resolve, reject) => {
         let foundMint = false;
-        
-        for (const [ mint, balance ] of Object.entries(mintBalances)) {
+
+        for (const [mint, balance] of Object.entries(mintBalances)) {
             if (useMint && mint !== useMint) continue;
-            
+
             if (balance < amount) {
                 this.debug("mint %s has insufficient balance %d", mint, balance, amount);
 
@@ -61,7 +69,7 @@ export async function payLn(
                     reject(`insufficient balance in mint ${mint} (${balance} < ${amount})`);
                     return;
                 }
-                
+
                 continue;
             }
 
@@ -76,7 +84,7 @@ export async function payLn(
                         await processSelections(resolve, reject);
                     }
                 }
-            })
+            });
         }
 
         if (!foundMint) {

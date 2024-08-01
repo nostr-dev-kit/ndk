@@ -1,9 +1,51 @@
 import { bech32 } from "@scure/base";
-import type { NDKLnUrlData } from ".";
 import type { NDK } from "../ndk";
 import createDebug from "debug";
+import { Hexpubkey } from "../user";
 
 const d = createDebug("ndk:zapper:ln");
+
+export type NDKZapConfirmationLN = {
+    preimage: string;
+};
+
+export type NDKPaymentConfirmationLN = {
+    preimage: string;
+};
+
+export type LNPaymentRequest = string;
+
+export type LnPaymentInfo = {
+    pr: LNPaymentRequest;
+};
+
+export type NDKLUD18ServicePayerData = Partial<{
+    name: { mandatory: boolean };
+    pubkey: { mandatory: boolean };
+    identifier: { mandatory: boolean };
+    email: { mandatory: boolean };
+    auth: {
+        mandatory: boolean;
+        k1: string;
+    };
+}> &
+    Record<string, unknown>;
+
+export type NDKLnUrlData = {
+    tag: string;
+    callback: string;
+    minSendable: number;
+    maxSendable: number;
+    metadata: string;
+    payerData?: NDKLUD18ServicePayerData;
+    commentAllowed?: number;
+
+    /**
+     * Pubkey of the zapper that should publish zap receipts for this user
+     */
+    nostrPubkey?: Hexpubkey;
+    allowsNostr?: boolean;
+};
 
 export async function getNip57ZapSpecFromLud(
     { lud06, lud16 }: { lud06?: string; lud16?: string },

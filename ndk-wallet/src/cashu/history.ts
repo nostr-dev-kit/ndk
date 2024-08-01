@@ -1,4 +1,6 @@
-import NDK, { NDKEvent, NDKKind, NDKTag, NostrEvent } from "@nostr-dev-kit/ndk";
+import type { NDKTag, NostrEvent } from "@nostr-dev-kit/ndk";
+import type NDK from "@nostr-dev-kit/ndk";
+import { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
 import createDebug from "debug";
 
 const d = createDebug("ndk-wallet:wallet-change");
@@ -7,14 +9,14 @@ const MARKERS = {
     REDEEMED: "redeemed",
     CREATED: "created",
     DESTROYED: "destroyed",
-}
+};
 
 export class NDKWalletChange extends NDKEvent {
     static MARKERS = MARKERS;
 
     static kind = NDKKind.WalletChange;
-    static kinds = [ NDKKind.WalletChange ];
-    
+    static kinds = [NDKKind.WalletChange];
+
     constructor(ndk?: NDK, event?: NostrEvent | NDKEvent) {
         super(ndk, event);
         this.kind ??= NDKKind.WalletChange;
@@ -36,7 +38,7 @@ export class NDKWalletChange extends NDKEvent {
         } catch (e) {
             return;
         }
-        
+
         return walletChange;
     }
 
@@ -49,17 +51,20 @@ export class NDKWalletChange extends NDKEvent {
         const unencryptedTags: NDKTag[] = [];
 
         for (const tag of this.tags) {
-            if (!this.shouldEncryptTag(tag)) { unencryptedTags.push(tag); }
-            else { encryptedTags.push(tag); }
+            if (!this.shouldEncryptTag(tag)) {
+                unencryptedTags.push(tag);
+            } else {
+                encryptedTags.push(tag);
+            }
         }
 
-        this.tags = unencryptedTags.filter(t => t[0] !== "client");
+        this.tags = unencryptedTags.filter((t) => t[0] !== "client");
         this.content = JSON.stringify(encryptedTags);
 
         const user = await this.ndk!.signer!.user();
 
         await this.encrypt(user);
-        
+
         return super.toNostrEvent(pubkey) as unknown as NostrEvent;
     }
 
@@ -71,11 +76,15 @@ export class NDKWalletChange extends NDKEvent {
     }
 
     private shouldEncryptTag(tag: NDKTag): boolean {
-        const unencryptedTagNames = [ "d", "client", "a" ];
-        if (unencryptedTagNames.includes(tag[0])) { return false; }
+        const unencryptedTagNames = ["d", "client", "a"];
+        if (unencryptedTagNames.includes(tag[0])) {
+            return false;
+        }
 
-        if (tag[0] === "e" && tag[3] === MARKERS.REDEEMED) { return false; }
-        
+        if (tag[0] === "e" && tag[3] === MARKERS.REDEEMED) {
+            return false;
+        }
+
         return true;
     }
 }

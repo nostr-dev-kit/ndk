@@ -1,5 +1,6 @@
-import { CashuMint, CashuWallet, MeltQuoteResponse, Proof } from "@cashu/cashu-ts";
-import { NDKCashuWallet } from "./wallet";
+import type { MeltQuoteResponse, Proof } from "@cashu/cashu-ts";
+import { CashuMint, CashuWallet } from "@cashu/cashu-ts";
+import type { NDKCashuWallet } from "./wallet";
 import { NDKCashuToken } from "./token";
 import createDebug from "debug";
 import { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
@@ -17,17 +18,25 @@ export type TokenSelection = {
 /**
  * Gets a melt quote from a payment request for a mint and tries to get
  * proofs that satisfy the amount.
- * @param pr 
- * @param mint 
- * @param wallet 
+ * @param pr
+ * @param mint
+ * @param wallet
  */
-export async function chooseProofsForPr(pr: string, mint: string, wallet: NDKCashuWallet): Promise<TokenSelection | undefined> {
+export async function chooseProofsForPr(
+    pr: string,
+    mint: string,
+    wallet: NDKCashuWallet
+): Promise<TokenSelection | undefined> {
     const _wallet = new CashuWallet(new CashuMint(mint));
     const quote = await _wallet.meltQuote(pr);
     return chooseProofsForQuote(quote, wallet, mint);
 }
 
-export function chooseProofsForAmount(amount: number, mint: string, wallet: NDKCashuWallet): TokenSelection | undefined {
+export function chooseProofsForAmount(
+    amount: number,
+    mint: string,
+    wallet: NDKCashuWallet
+): TokenSelection | undefined {
     const mintTokens = wallet.mintTokens[mint];
     let remaining = amount;
     const usedProofs: Proof[] = [];
@@ -47,7 +56,13 @@ export function chooseProofsForAmount(amount: number, mint: string, wallet: NDKC
             if (remaining > 0) {
                 usedProofs.push(proof);
                 remaining -= proof.amount;
-                d("%s adding proof for amount %d, with %d remaining of total required", mint, proof.amount, remaining, amount);
+                d(
+                    "%s adding proof for amount %d, with %d remaining of total required",
+                    mint,
+                    proof.amount,
+                    remaining,
+                    amount
+                );
                 tokenUsed = true;
             } else {
                 movedProofs.push(proof);
@@ -60,16 +75,31 @@ export function chooseProofsForAmount(amount: number, mint: string, wallet: NDKC
     }
 
     if (remaining > 0) {
-        d("insufficient tokens to satisfy amount %d, mint %s had %d", amount, mint, amount - remaining);
+        d(
+            "insufficient tokens to satisfy amount %d, mint %s had %d",
+            amount,
+            mint,
+            amount - remaining
+        );
         return;
     }
 
-    d("%s mint, used %d proofs and %d tokens to satisfy amount %d", mint, usedProofs.length, usedTokens.length, amount);
+    d(
+        "%s mint, used %d proofs and %d tokens to satisfy amount %d",
+        mint,
+        usedProofs.length,
+        usedTokens.length,
+        amount
+    );
 
     return { usedProofs, movedProofs, usedTokens, mint };
 }
 
-function chooseProofsForQuote(quote: MeltQuoteResponse, wallet: NDKCashuWallet, mint: string): TokenSelection | undefined {
+function chooseProofsForQuote(
+    quote: MeltQuoteResponse,
+    wallet: NDKCashuWallet,
+    mint: string
+): TokenSelection | undefined {
     const amount = quote.amount + quote.fee_reserve;
 
     d("quote for mint %s is %o", mint, quote);
@@ -90,19 +120,23 @@ export async function rollOverProofs(
     proofs: TokenSelection,
     changes: Proof[],
     mint: string,
-    wallet: NDKCashuWallet,
+    wallet: NDKCashuWallet
 ) {
     const relaySet = wallet.relaySet;
-    
+
     if (proofs.usedTokens.length > 0) {
         console.trace("rolling over proofs for mint %s %d tokens", mint, proofs.usedTokens.length);
 
         const deleteEvent = new NDKEvent(wallet.ndk);
         deleteEvent.kind = NDKKind.EventDeletion;
-        deleteEvent.tags = [ [ "k", NDKKind.CashuToken.toString() ] ];
+        deleteEvent.tags = [["k", NDKKind.CashuToken.toString()]];
 
-        proofs.usedTokens.forEach(token => {
-            d("adding to delete a token that was seen on relay %s %o", token.relay?.url, token.onRelays)
+        proofs.usedTokens.forEach((token) => {
+            d(
+                "adding to delete a token that was seen on relay %s %o",
+                token.relay?.url,
+                token.onRelays
+            );
             deleteEvent.tag(["e", token.id]);
             if (token.relay) relaySet?.addRelay(token.relay);
         });
@@ -131,7 +165,7 @@ export async function rollOverProofs(
     d("saving %d new proofs", proofsToSave.length);
 
     wallet.addToken(tokenEvent);
-    
+
     tokenEvent.publish(wallet.relaySet);
-    d('created new token event', tokenEvent.rawEvent());
+    d("created new token event", tokenEvent.rawEvent());
 }

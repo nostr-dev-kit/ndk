@@ -1,8 +1,9 @@
 import { Proof } from "@cashu/cashu-ts";
-import { NDKCashuWallet } from "./wallet";
+import type { NDKCashuWallet } from "./wallet";
 import createDebug from "debug";
-import { LnPaymentInfo } from "@nostr-dev-kit/ndk";
-import { NutPayment, payNut } from "./pay/nut.js";
+import type { LnPaymentInfo } from "@nostr-dev-kit/ndk";
+import type { NutPayment} from "./pay/nut.js";
+import { payNut } from "./pay/nut.js";
 import { payLn } from "./pay/ln.js";
 import { decode as decodeBolt11 } from "light-bolt11-decoder";
 
@@ -14,17 +15,17 @@ function correctP2pk(p2pk?: string) {
     return p2pk;
 }
 
+/**
+ * Uses cashu balance to make a payment, whether a cashu swap or a lightning
+ */
 export class NDKCashuPay {
     public wallet: NDKCashuWallet;
     public info: LnPaymentInfo | NutPayment;
     public type: "ln" | "nut" = "ln";
     public debug = createDebug("ndk-wallet:cashu:pay");
     public unit: string = "sat";
-    
-    constructor(
-        wallet: NDKCashuWallet,
-        info: LnPaymentInfo | NutPayment
-    ) {
+
+    constructor(wallet: NDKCashuWallet, info: LnPaymentInfo | NutPayment) {
         this.wallet = wallet;
 
         if ((info as LnPaymentInfo).pr) {
@@ -44,11 +45,11 @@ export class NDKCashuPay {
     }
 
     public getAmount() {
-        if (this.type === 'ln') {
+        if (this.type === "ln") {
             const bolt11 = (this.info as LnPaymentInfo).pr;
-            const {sections} = decodeBolt11(bolt11);
+            const { sections } = decodeBolt11(bolt11);
             for (const section of sections) {
-                if (section.name === 'amount') {
+                if (section.name === "amount") {
                     const { value } = section;
                     return Number(value);
                 }
@@ -61,7 +62,7 @@ export class NDKCashuPay {
     }
 
     public async pay() {
-        if (this.type === 'ln') {
+        if (this.type === "ln") {
             return this.payLn();
         } else {
             return this.payNut();
@@ -70,8 +71,6 @@ export class NDKCashuPay {
 
     public payNut = payNut.bind(this);
     public payLn = payLn.bind(this);
-
-    
 }
 
 /**
@@ -80,9 +79,9 @@ export class NDKCashuPay {
  * const user1Mints = ["mint1", "mint2"];
  * const user2Mints = ["mint2", "mint3"];
  * const user3Mints = ["mint1", "mint2"];
- * 
+ *
  * findMintsInCommon([user1Mints, user2Mints, user3Mints]);
- * 
+ *
  * // returns ["mint2"]
  */
 export function findMintsInCommon(mintCollections: string[][]) {
@@ -99,7 +98,7 @@ export function findMintsInCommon(mintCollections: string[][]) {
     }
 
     const commonMints: string[] = [];
-    for (const [ mint, count ] of mintCounts.entries()) {
+    for (const [mint, count] of mintCounts.entries()) {
         if (count === mintCollections.length) {
             commonMints.push(mint);
         }

@@ -1,33 +1,34 @@
-import NDK, { NDKCashuMintList, getRelayListForUser, NDKKind, NDKRelay, NDKRelaySet, NDKUser, NDKEvent, NDKSubscription, NDKEventId } from "@nostr-dev-kit/ndk";
-import {NDKCashuWallet} from "../cashu/wallet.js";
+import type { NDKNutzap, NDKUser } from "@nostr-dev-kit/ndk";
+import type NDK from "@nostr-dev-kit/ndk";
+import { NDKCashuMintList } from "@nostr-dev-kit/ndk";
+import { NDKCashuWallet } from "../cashu/wallet.js";
 import { EventEmitter } from "tseep";
 import createDebug from "debug";
 import NDKWalletLifecycle from "./lifecycle/index.js";
-import { MintUrl } from "../cashu/mint/utils.js";
-import { NDKCashuToken } from "../cashu/token.js";
-import { NDKNutzap } from "../cashu/nutzap.js";
+import type { MintUrl } from "../cashu/mint/utils.js";
+import type { NDKCashuToken } from "../cashu/token.js";
 
 const d = createDebug("ndk-wallet:wallet");
 
 class NDKWallet extends EventEmitter<{
     /**
      * New default was has been established
-     * @param wallet 
+     * @param wallet
      */
-    "wallet:default": (wallet: NDKCashuWallet) => void,
-    "mintlist": (mintList: NDKCashuMintList) => void,
-    "wallet": (wallet: NDKCashuWallet) => void,
-    "wallets": () => void,
-    "wallet:balance": (wallet: NDKCashuWallet) => void,
+    "wallet:default": (wallet: NDKCashuWallet) => void;
+    mintlist: (mintList: NDKCashuMintList) => void;
+    wallet: (wallet: NDKCashuWallet) => void;
+    wallets: () => void;
+    "wallet:balance": (wallet: NDKCashuWallet) => void;
 
-    "nutzap:seen": (nutzap: NDKNutzap) => void,
-    "nutzap:redeemed": (nutzap: NDKNutzap) => void,
-    "nutzap:failed": (nutzap: NDKNutzap) => void,
+    "nutzap:seen": (nutzap: NDKNutzap) => void;
+    "nutzap:redeemed": (nutzap: NDKNutzap) => void;
+    "nutzap:failed": (nutzap: NDKNutzap) => void;
 
-    "ready": () => void,
+    ready: () => void;
 }> {
     public ndk: NDK;
-    
+
     private lifecycle: NDKWalletLifecycle | undefined;
 
     constructor(ndk: NDK) {
@@ -36,7 +37,7 @@ class NDKWallet extends EventEmitter<{
     }
 
     get state() {
-        return this.lifecycle?.state ?? 'loading';
+        return this.lifecycle?.state ?? "loading";
     }
 
     public createCashuWallet() {
@@ -46,9 +47,7 @@ class NDKWallet extends EventEmitter<{
     /**
      * Starts monitoring changes for the user's wallets
      */
-    public start(
-        user?: NDKUser
-    ) {
+    public start(user?: NDKUser) {
         this.lifecycle = new NDKWalletLifecycle(this, this.ndk, user ?? this.ndk.activeUser!);
         this.lifecycle.start();
     }
@@ -60,7 +59,7 @@ class NDKWallet extends EventEmitter<{
         const mintList = new NDKCashuMintList(this.ndk);
         mintList.relays = wallet.relays;
         mintList.mints = wallet.mints;
-        mintList.p2pkPubkey = await wallet.getP2pk();
+        mintList.p2pk = await wallet.getP2pk();
         return mintList.publish();
     }
 
@@ -72,18 +71,14 @@ class NDKWallet extends EventEmitter<{
         return Array.from(this.lifecycle.wallets.values());
     }
 
-    async transfer(
-        wallet: NDKCashuWallet,
-        fromMint: MintUrl,
-        toMint: MintUrl,
-    ) {
+    async transfer(wallet: NDKCashuWallet, fromMint: MintUrl, toMint: MintUrl) {
         const balanceInMint = wallet.mintBalance(fromMint);
 
         if (balanceInMint < 4) {
             throw new Error("insufficient balance in mint:" + fromMint);
         }
-        
-        const deposit = wallet.deposit(balanceInMint-3, toMint);
+
+        const deposit = wallet.deposit(balanceInMint - 3, toMint);
 
         return new Promise<NDKCashuToken>(async (resolve, reject) => {
             d("starting deposit from %s to %s", fromMint, toMint);
@@ -96,7 +91,7 @@ class NDKWallet extends EventEmitter<{
                 d("deposit error: %s", error);
                 reject(error);
             });
-            
+
             // generate pr
             const pr = await deposit.start();
             d("deposit pr: %s", pr);
@@ -107,7 +102,6 @@ class NDKWallet extends EventEmitter<{
 
             const paymentRes = await wallet.lnPay(pr, fromMint);
             d("payment result: %o", paymentRes);
-            
         });
     }
 }

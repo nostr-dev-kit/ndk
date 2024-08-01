@@ -25,15 +25,9 @@ import { Queue } from "./queue/index.js";
 import { signatureVerificationInit } from "../events/signature.js";
 import { NDKSubscriptionManager } from "../subscription/manager.js";
 import { setActiveUser } from "./active-user.js";
-import type {
-    LnPaymentInfo,
-    NDKLnUrlData,
-    NDKZapConfirmation,
-    NDKZapDetails,
-    NutPaymentInfo,
-} from "../zapper/index.js";
-import { NDKZapper } from "../zapper/index.js";
+import { CashuPayCb, LnPayCb, NDKPaymentConfirmation, NDKZapConfirmation, NDKZapper, NDKZapSplit } from "../zapper/index.js";
 import type { NostrEvent } from "nostr-tools";
+import { NDKLnUrlData } from "../zapper/ln.js";
 
 export type NDKValidationRatioFn = (
     relay: NDKRelay,
@@ -42,9 +36,9 @@ export type NDKValidationRatioFn = (
 ) => number;
 
 export interface NDKWalletConfig {
-    onLnPay?: (payment: NDKZapDetails<LnPaymentInfo>) => Promise<NDKZapConfirmation>;
-    onNutPay?: (payment: NDKZapDetails<NutPaymentInfo>) => Promise<NDKZapConfirmation>;
-    onPaymentComplete?: (info: NDKZapConfirmation | Error) => void;
+    onLnPay?: LnPayCb;
+    onCashuPay?: CashuPayCb;
+    onPaymentComplete: (results: Map<NDKZapSplit, NDKPaymentConfirmation | Error | undefined>) => void;
 }
 
 export interface NDKConstructorParams {
@@ -716,7 +710,9 @@ export class NDK extends EventEmitter<{
     }
 
     /**
-     * Create a zap request for an existing event
+     * Zap a user or an event
+     *
+     * This function wi
      *
      * @param amount The amount to zap in millisatoshis
      * @param comment A comment to add to the zap request
@@ -724,27 +720,41 @@ export class NDK extends EventEmitter<{
      * @param recipient The zap recipient (optional for events)
      * @param signer The signer to use (will default to the NDK instance's signer)
      */
-    public async zap(
+    public zap(
         target: NDKEvent | NDKUser,
         amount: number,
-        comment?: string,
-        extraTags?: NDKTag[],
-        unit: string = "msat",
-        signer?: NDKSigner
-    ): Promise<NDKZapper> {
-        if (!signer) {
-            this.assertSigner();
+        {
+            comment,
+            unit,
+            signer,
+            tags,
+            onLnPay,
+            onCashuPay,
+            onComplete,
+        }: {
+            comment?: string;
+            unit?: string;
+            tags?: NDKTag[];
+            onLnPay?: LnPayCb | false;
+            onCashuPay?: CashuPayCb | false;
+            onComplete?: (results: Map<NDKZapSplit, NDKPaymentConfirmation | Error | undefined>) => void;
+            signer?: NDKSigner;
         }
+    ): NDKZapper {
+        if (!signer) this.assertSigner();
 
-        const zapper = new NDKZapper(target, amount, unit, comment, this, extraTags, signer);
+        const zapper = new NDKZapper(target, amount, unit, comment, this, tags, signer);
 
-        if (this.walletConfig) {
-            zapper.onLnPay = this.walletConfig.onLnPay;
-            zapper.onNutPay = this.walletConfig.onNutPay;
-            zapper.onComplete = this.walletConfig.onPaymentComplete;
-        }
+        if (onLnPay !== false) zapper.onLnPay = onLnPay ?? this.walletConfig?.onLnPay;
+        if (onCashuPay !== false) zapper.onCashuPay = onCashuPay ?? this.walletConfig?.onCashuPay;
+        zapper.onComplete = onComplete ?? this.walletConfig?.onPaymentComplete;
 
-        zapper.zap();
+        /**
+         * If there is a wallet configured to handle payments, we start
+         * zapping
+         */
+        if (onLnPay) zapper.zap();
+
         return zapper;
     }
 }

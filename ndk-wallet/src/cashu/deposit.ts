@@ -1,5 +1,6 @@
-import { CashuMint, CashuWallet, Proof } from "@cashu/cashu-ts";
-import { NDKCashuWallet } from "./wallet";
+import type { Proof } from "@cashu/cashu-ts";
+import { CashuMint, CashuWallet } from "@cashu/cashu-ts";
+import type { NDKCashuWallet } from "./wallet";
 import { EventEmitter } from "tseep";
 import { NDKCashuToken } from "./token";
 import createDebug from "debug";
@@ -13,8 +14,8 @@ function randomMint(wallet: NDKCashuWallet) {
 }
 
 export class NDKCashuDeposit extends EventEmitter<{
-    success: (token: NDKCashuToken) => void,
-    error: (error: string) => void,
+    success: (token: NDKCashuToken) => void;
+    error: (error: string) => void;
 }> {
     private mint: string;
     public amount: number;
@@ -25,13 +26,8 @@ export class NDKCashuDeposit extends EventEmitter<{
     public checkIntervalLength = 2500;
     public finalized = false;
     public unit?: string;
-    
-    constructor(
-        wallet: NDKCashuWallet,
-        amount: number,
-        mint?: string,
-        unit?: string
-    ) {
+
+    constructor(wallet: NDKCashuWallet, amount: number, mint?: string, unit?: string) {
         super();
         this.wallet = wallet;
         this.mint = mint ?? randomMint(wallet);
@@ -47,15 +43,13 @@ export class NDKCashuDeposit extends EventEmitter<{
         this.quoteId = quote.quote;
 
         this.check();
-        
+
         return quote.request;
     }
 
     private async runCheck() {
-        if (!this.finalized)
-            await this.finalize()
-        if (!this.finalized)
-            this.delayCheck()
+        if (!this.finalized) await this.finalize();
+        if (!this.finalized) this.delayCheck();
     }
 
     private delayCheck() {
@@ -85,7 +79,7 @@ export class NDKCashuDeposit extends EventEmitter<{
     async finalize() {
         if (!this.quoteId) throw new Error("No quoteId set.");
 
-        let ret: { proofs: Array<Proof>; }
+        let ret: { proofs: Array<Proof> };
 
         try {
             d("Checking for minting status of %s", this.quoteId);
@@ -104,13 +98,13 @@ export class NDKCashuDeposit extends EventEmitter<{
             tokenEvent.proofs = ret.proofs;
             tokenEvent.mint = this.mint;
             tokenEvent.wallet = this.wallet;
-            
-            const res = await tokenEvent.publish(this.wallet.relaySet);
+
+            await tokenEvent.publish(this.wallet.relaySet);
 
             this.emit("success", tokenEvent);
         } catch (e: any) {
-            console.log('relayset', this.wallet.relaySet);
-            this.emit("error", e.message)
+            console.log("relayset", this.wallet.relaySet);
+            this.emit("error", e.message);
             console.error(e);
         }
     }

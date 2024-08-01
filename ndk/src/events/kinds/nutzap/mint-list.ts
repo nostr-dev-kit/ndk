@@ -7,7 +7,7 @@ import { NDKKind } from "../index.js";
 export class NDKCashuMintList extends NDKEvent {
     static kind = NDKKind.CashuMintList;
     static kinds = [NDKKind.CashuMintList];
-    private _p2pkPubkey?: string;
+    private _p2pk?: string;
 
     constructor(ndk?: NDK, event?: NostrEvent | NDKEvent) {
         super(ndk, event);
@@ -54,16 +54,16 @@ export class NDKCashuMintList extends NDKEvent {
         return Array.from(new Set(r));
     }
 
-    get p2pkPubkey(): string {
-        if (this._p2pkPubkey) {
-            return this._p2pkPubkey;
+    get p2pk(): string {
+        if (this._p2pk) {
+            return this._p2pk;
         }
-        this._p2pkPubkey = this.tagValue("pubkey") ?? this.pubkey;
-        return this._p2pkPubkey;
+        this._p2pk = this.tagValue("pubkey") ?? this.pubkey;
+        return this._p2pk;
     }
 
-    set p2pkPubkey(pubkey: string | undefined) {
-        this._p2pkPubkey = pubkey;
+    set p2pk(pubkey: string | undefined) {
+        this._p2pk = pubkey;
         this.removeTag("pubkey");
         if (pubkey) {
             this.tags.push(["pubkey", pubkey]);

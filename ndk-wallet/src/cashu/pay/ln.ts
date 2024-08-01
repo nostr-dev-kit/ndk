@@ -19,8 +19,9 @@ export async function payLn(this: NDKCashuPay, useMint?: MintUrl): Promise<strin
 
     amount /= 1000; // convert msat to sat
 
+    let paid = false;
     let processingSelections = false;
-    const processSelections = async (resolve: (value: string) => void, reject: () => void) => {
+    const processSelections = async (resolve: (value: string) => void, reject: (err: string) => void) => {
         processingSelections = true;
         for (const selection of selections) {
             const _wallet = new CashuWallet(new CashuMint(selection.mint));
@@ -42,6 +43,7 @@ export async function payLn(this: NDKCashuPay, useMint?: MintUrl): Promise<strin
                 if (result.isPaid && result.preimage) {
                     this.debug("payment successful");
                     rollOverProofs(selection, result.change, selection.mint, this.wallet);
+                    paid = true;
                     resolve(result.preimage);
                 }
             } catch (e) {
@@ -51,6 +53,10 @@ export async function payLn(this: NDKCashuPay, useMint?: MintUrl): Promise<strin
                     rollOverProofs(selection, [], selection.mint, this.wallet);
                 }
             }
+        }
+
+        if (!paid) {
+            reject("failed to pay with any mint");
         }
 
         processingSelections = false;
@@ -87,7 +93,10 @@ export async function payLn(this: NDKCashuPay, useMint?: MintUrl): Promise<strin
             });
         }
 
+        this.debug({foundMint})
+
         if (!foundMint) {
+            this.debug("no mint with sufficient balance found");
             reject("no mint with sufficient balance found");
         }
     });

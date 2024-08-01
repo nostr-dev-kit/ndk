@@ -100,7 +100,7 @@ class NDKWallet extends EventEmitter<{
                 return;
             }
 
-            const paymentRes = await wallet.lnPay(pr, fromMint);
+            const paymentRes = await wallet.lnPay({pr}, fromMint);
             d("payment result: %o", paymentRes);
         });
     }

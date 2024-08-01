@@ -1,8 +1,8 @@
 import type {
-    CashuPayCb,
     CashuPaymentInfo,
     NDKEventId,
     NDKPaymentConfirmationCashu,
+    NDKPaymentConfirmationLN,
     NDKRelay,
     NDKTag,
     NDKZapDetails} from "@nostr-dev-kit/ndk";
@@ -268,25 +268,22 @@ export class NDKCashuWallet extends NDKEvent {
         return deposit;
     }
 
-    async lnPay(pr: string, useMint?: MintUrl) {
+    async lnPay({pr}: {pr:string}, useMint?: MintUrl): Promise<NDKPaymentConfirmationLN | undefined> {
         const pay = new NDKCashuPay(this, { pr });
-        return pay.payLn(useMint);
+        const preimage = await pay.payLn(useMint);
+        if (!preimage) return;
+        return {preimage};
     }
 
     /**
      * Swaps tokens to a specific amount, optionally locking to a p2pk.
      * @param amount
      */
-    cashuPay: CashuPayCb = async (payment: NDKZapDetails<CashuPaymentInfo>): Promise<NDKPaymentConfirmationCashu> => {
+    async cashuPay(payment: NDKZapDetails<CashuPaymentInfo>): Promise<NDKPaymentConfirmationCashu> {
         const { amount, unit, mints, p2pk } = payment;
         const pay = new NDKCashuPay(this, { amount, unit, mints, p2pk });
         return pay.payNut();
     }
-
-    // async cashuPay(amount: number, unit: string, mints: MintUrl[], p2pk?: string) {
-    //     const pay = new NDKCashuPay(this, { amount, unit, mints, p2pk });
-    //     return pay.payNut();
-    // }
 
     async redeemNutzap(nutzap: NDKEvent) {
         this.emit("nutzap:seen", nutzap);

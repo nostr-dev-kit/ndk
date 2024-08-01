@@ -29,12 +29,18 @@ export async function payNut(
         senderMints
     );
 
-    if (mintsInCommon.length === 0) {
-        this.debug("no mints in common between sender and recipient");
-        return await payNutWithMintTransfer(this);
+    if (mintsInCommon.length > 0) {
+        try {
+            const res = await payNutWithMintBalance(this, mintsInCommon);
+            return res;
+        } catch (e) {
+            this.debug("failed to pay with mints in common: %s %o", e.message, mintsInCommon);
+        }
     } else {
-        return await payNutWithMintBalance(this, mintsInCommon);
+        this.debug("no mints in common between sender and recipient");
     }
+
+    return await payNutWithMintTransfer(this);
 }
 
 async function payNutWithMintTransfer(
@@ -61,7 +67,7 @@ async function payNutWithMintTransfer(
 
     pay.debug("quote from mint %s: %o", mint, quote);
 
-    const res = await pay.wallet.lnPay(quote.request);
+    const res = await pay.wallet.lnPay({pr: quote.request });
     pay.debug("payment result: %o", res);
 
     if (!res) {

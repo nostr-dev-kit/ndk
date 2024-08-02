@@ -36,21 +36,22 @@ describe("NDKEvent", () => {
 
             const a = event.encode();
             expect(a).toBe(
-                "naddr1qvzqqqr4xqpzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyf8wumn8ghj7un9d3shjtnxxaazu6t0qqzrzv3nxsrcfx9f"
+                "naddr1qvzqqqr4xqpzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyfhwumn8ghj7un9d3shjtnxxaazu6t09uqqgvfjxv6qrvzzck"
             );
         });
 
         it("encodes events as notes when the relay is known", () => {
             const event = new NDKEvent(ndk, {
                 kind: 1,
+                content: "hello world",
                 pubkey: "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52",
-                tags: [["d", "1234"]],
+                tags: [["e", "1234"]],
             } as NostrEvent);
             event.relay = new NDKRelay("wss://relay.f7z.io/");
 
             const a = event.encode();
             expect(a).toBe(
-                "nevent1qgs04xzt6ldm9qhs0ctw0t58kf4z57umjzmjg6jywu0seadwtqqc75spzfmhxue69uhhyetvv9ujue3h0ghxjmcqqqwvqq2y"
+                "nevent1qgs04xzt6ldm9qhs0ctw0t58kf4z57umjzmjg6jywu0seadwtqqc75spzdmhxue69uhhyetvv9ujue3h0ghxjme0qqqqcmeuul"
             );
         });
     });

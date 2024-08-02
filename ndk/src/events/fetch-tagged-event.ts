@@ -1,5 +1,5 @@
-import { NDKEvent } from ".";
-import { NDKSubscriptionOptions } from "../subscription";
+import type { NDKEvent } from ".";
+import type { NDKSubscriptionOptions } from "../subscription";
 import { getReplyTag, getRootTag } from "../thread";
 
 export async function fetchTaggedEvent(
@@ -18,7 +18,7 @@ export async function fetchTaggedEvent(
     let relay; //= hint !== "" ? this.ndk.pool.getRelay(hint) : undefined;
 
     // if we have a relay, attempt to use that first
-    let event = await this.ndk.fetchEvent(id, {}, relay);
+    const event = await this.ndk.fetchEvent(id, {}, relay);
 
     return event;
 }

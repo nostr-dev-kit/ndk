@@ -1,7 +1,8 @@
-import { NDK } from "../../ndk/index.js";
-import { NDKRelaySet } from "../../relay/sets/index.js";
-import { NDKSigner } from "../../signers/index.js";
-import { NDKEvent, NostrEvent } from "../index.js";
+import type { NDK } from "../../ndk/index.js";
+import type { NDKRelaySet } from "../../relay/sets/index.js";
+import type { NDKSigner } from "../../signers/index.js";
+import type { NostrEvent } from "../index.js";
+import { NDKEvent } from "../index.js";
 import { NDKKind } from "./index.js";
 
 /**
@@ -19,13 +20,13 @@ import { NDKKind } from "./index.js";
 export class NDKDraft extends NDKEvent {
     public _event: NostrEvent | undefined;
 
-    constructor(ndk: NDK | undefined, rawEvent?: NostrEvent) {
+    constructor(ndk: NDK | undefined, rawEvent?: NostrEvent | NDKEvent) {
         super(ndk, rawEvent);
         this.kind ??= NDKKind.Draft;
     }
 
     static from(event: NDKEvent) {
-        return new NDKDraft(event.ndk, event.rawEvent());
+        return new NDKDraft(event.ndk, event);
     }
 
     /**

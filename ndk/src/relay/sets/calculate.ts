@@ -7,7 +7,7 @@ import type { NDKFilter } from "../../subscription/index.js";
 import type { Hexpubkey } from "../../user/index.js";
 import { normalizeRelayUrl } from "../../utils/normalize-url.js";
 import type { NDKRelay } from "../index.js";
-import { NDKPool } from "../pool/index.js";
+import type { NDKPool } from "../pool/index.js";
 import { NDKRelaySet } from "./index.js";
 import createDebug from "debug";
 
@@ -29,20 +29,24 @@ export async function calculateRelaySetFromEvent(ndk: NDK, event: NDKEvent): Pro
     if (authorWriteRelays) {
         authorWriteRelays.forEach((relayUrl) => {
             const relay = ndk.pool?.getRelay(relayUrl);
-            if (relay) {
-                d("Adding author write relay %s", relayUrl);
-                relays.add(relay);
-            }
+            if (relay) relays.add(relay);
         });
     }
 
     // get all the hinted relays
     let relayHints = event.tags
-        .filter(tag => ["a", "e"].includes(tag[0]))
-        .map(tag => tag[2])
+        .filter((tag) => ["a", "e"].includes(tag[0]))
+        .map((tag) => tag[2])
         // verify it's a valid URL
         .filter((url: string | undefined) => url && url.startsWith("wss://"))
-        .filter((url: string) => { try { new URL(url); return true; } catch { return false; } })
+        .filter((url: string) => {
+            try {
+                new URL(url);
+                return true;
+            } catch {
+                return false;
+            }
+        })
         .map((url: string) => normalizeRelayUrl(url));
 
     // make unique
@@ -58,9 +62,11 @@ export async function calculateRelaySetFromEvent(ndk: NDK, event: NDKEvent): Pro
     const pTags = event.getMatchingTags("p").map((tag) => tag[1]);
 
     if (pTags.length < 5) {
-        const pTaggedRelays = Array.from(chooseRelayCombinationForPubkeys(ndk, pTags, "read", {
-            preferredRelays: new Set(authorWriteRelays),
-        }).keys())
+        const pTaggedRelays = Array.from(
+            chooseRelayCombinationForPubkeys(ndk, pTags, "read", {
+                preferredRelays: new Set(authorWriteRelays),
+            }).keys()
+        );
         pTaggedRelays.forEach((relayUrl) => {
             const relay = ndk.pool?.getRelay(relayUrl, false, true);
             if (relay) {
@@ -138,9 +144,24 @@ export function calculateRelaySetsFromFilter(
         }
     } else {
         // If we don't, add the explicit relays
-        pool.permanentAndConnectedRelays().forEach((relay: NDKRelay) => {
-            result.set(relay.url, filters);
-        });
+        if (ndk.explicitRelayUrls) {
+            ndk.explicitRelayUrls.forEach((relayUrl) => {
+                result.set(relayUrl, filters);
+            });
+        }
+    }
+
+    if (result.size === 0) {
+        // If we don't have any relays, add all the permanent relays
+        pool.permanentAndConnectedRelays()
+            .slice(0, 5)
+            .forEach((relay) => {
+                result.set(relay.url, filters);
+            });
+    }
+
+    if (result.size === 0) {
+        console.warn("No relays found for filter", filters);
     }
 
     return result;
@@ -156,5 +177,7 @@ export function calculateRelaySetsFromFilters(
     filters: NDKFilter[],
     pool: NDKPool
 ): Map<WebSocket["url"], NDKFilter[]> {
-    return calculateRelaySetsFromFilter(ndk, filters, pool);
+    const a = calculateRelaySetsFromFilter(ndk, filters, pool);
+
+    return a;
 }

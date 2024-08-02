@@ -4,9 +4,11 @@ import type { NDKEvent } from "../events";
 
 export class NDKRelayPublisher {
     private ndkRelay: NDKRelay;
+    private debug: debug.Debugger;
 
     public constructor(ndkRelay: NDKRelay) {
         this.ndkRelay = ndkRelay;
+        this.debug = ndkRelay.debug.extend("publisher");
     }
 
     /**
@@ -20,12 +22,18 @@ export class NDKRelayPublisher {
      * @returns A promise that resolves when the event has been published or rejects if the operation times out
      */
     public async publish(event: NDKEvent, timeoutMs = 2500): Promise<boolean> {
-        const publishWhenConnected = () => {
+        let timeout: NodeJS.Timeout | number | undefined;
+
+        const publishConnected = () => {
             return new Promise<boolean>((resolve, reject) => {
                 try {
-                    this.publishEvent(event, timeoutMs)
-                        .then((result) => resolve(result))
-                        .catch((err) => reject(err));
+                    this.publishEvent(event)
+                        .then((result) => {
+                            this.ndkRelay.emit("published", event);
+                            event.emit("relay:published", this.ndkRelay);
+                            resolve(true);
+                        })
+                        .catch(reject);
                 } catch (err) {
                     reject(err);
                 }
@@ -33,21 +41,45 @@ export class NDKRelayPublisher {
         };
 
         const timeoutPromise = new Promise<boolean>((_, reject) => {
-            setTimeout(() => reject(new Error("Timeout")), timeoutMs);
+            timeout = setTimeout(() => {
+                timeout = undefined;
+                reject(new Error("Timeout: " + timeoutMs + "ms"));
+            }, timeoutMs);
         });
 
         const onConnectHandler = () => {
-            publishWhenConnected()
+            publishConnected()
                 .then((result) => connectResolve(result))
                 .catch((err) => connectReject(err));
         };
 
         let connectResolve: (value: boolean | PromiseLike<boolean>) => void;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let connectReject: (reason?: any) => void;
 
-        if (this.ndkRelay.status === NDKRelayStatus.CONNECTED) {
-            return Promise.race([publishWhenConnected(), timeoutPromise]);
+        const onError = (err: Error) => {
+            this.ndkRelay.debug("Publish failed", err, event.id);
+            this.ndkRelay.emit("publish:failed", event, err);
+            event.emit("relay:publish:failed", this.ndkRelay, err);
+            throw err;
+        };
+
+        const onFinally = () => {
+            if (timeout) clearTimeout(timeout as NodeJS.Timeout);
+            this.ndkRelay.removeListener("connect", onConnectHandler);
+        };
+
+        if (this.ndkRelay.status >= NDKRelayStatus.CONNECTED) {
+            /**
+             * If we're already connected, publish the event right now
+             */
+            return Promise.race([publishConnected(), timeoutPromise])
+                .catch(onError)
+                .finally(onFinally);
         } else {
+            /**
+             * If we are not connected, try to connect and, once connected, publish the event
+             */
             return Promise.race([
                 new Promise<boolean>((resolve, reject) => {
                     connectResolve = resolve;
@@ -55,51 +87,13 @@ export class NDKRelayPublisher {
                     this.ndkRelay.once("connect", onConnectHandler);
                 }),
                 timeoutPromise,
-            ]).finally(() => {
-                // Remove the event listener to avoid memory leaks
-                this.ndkRelay.removeListener("connect", onConnectHandler);
-            });
+            ])
+                .catch(onError)
+                .finally(onFinally);
         }
     }
 
-    private async publishEvent(event: NDKEvent, timeoutMs?: number): Promise<boolean> {
-        const nostrEvent = event.rawEvent();
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const publish = this.ndkRelay.connectivity.relay.publish(nostrEvent as any);
-        let publishTimeout: NodeJS.Timeout | number;
-
-        const publishPromise = new Promise<boolean>((resolve, reject) => {
-            publish
-                .then(() => {
-                    clearTimeout(publishTimeout as unknown as NodeJS.Timeout);
-                    this.ndkRelay.emit("published", event);
-                    event.emit("published", this.ndkRelay);
-                    resolve(true);
-                })
-                .catch((err) => {
-                    clearTimeout(publishTimeout as NodeJS.Timeout);
-                    this.ndkRelay.debug("Publish failed", err, event.id);
-                    this.ndkRelay.emit("publish:failed", event, err);
-                    reject(err);
-                });
-        });
-
-        // If no timeout is specified, just return the publish promise
-        // or if this is an ephemeral event, don't wait for the publish to complete
-        if (!timeoutMs || event.isEphemeral()) {
-            return publishPromise;
-        }
-
-        // Create a promise that rejects after timeoutMs milliseconds
-        const timeoutPromise = new Promise<boolean>((_, reject) => {
-            publishTimeout = setTimeout(() => {
-                this.ndkRelay.debug("Publish timed out", event.rawEvent());
-                this.ndkRelay.emit("publish:failed", event, new Error("Timeout"));
-                reject(new Error("Publish operation timed out"));
-            }, timeoutMs);
-        });
-
-        // wait for either the publish operation to complete or the timeout to occur
-        return Promise.race([publishPromise, timeoutPromise]);
+    private async publishEvent(event: NDKEvent): Promise<string> {
+        return this.ndkRelay.connectivity.publish(event.rawEvent());
     }
 }

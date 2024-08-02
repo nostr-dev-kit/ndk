@@ -282,6 +282,21 @@ describe("NDKEvent", () => {
                 ["p", "pubkey"],
             ]);
         });
+
+        it("returns h tags if they are present", () => {
+            const event = new NDKEvent(ndk, {
+                kind: 1,
+                pubkey: "pubkey",
+                id: "eventid",
+                tags: [["h", "group-id"]],
+            } as NostrEvent);
+
+            expect(event.referenceTags()).toEqual([
+                ["e", "eventid"],
+                ["h", "group-id"],
+                ["p", "pubkey"],
+            ]);
+        });
     });
 
     describe("tagId", () => {

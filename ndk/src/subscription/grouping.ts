@@ -1,12 +1,13 @@
 import type { NDKFilter } from "../index.js";
 
-export type NDKFilterGroupingId = string;
+export type NDKFilterFingerprint = string;
 
 /**
- * Calculates the groupable ID for this filters.
- * The groupable ID is a deterministic association of the filters
+ * Creates a fingerprint for this filter
+ *
+ * This a deterministic association of the filters
  * used in a filters. When the combination of filters makes it
- * possible to group them, the groupable ID is used to group them.
+ * possible to group them, the fingerprint is used to group them.
  *
  * The different filters in the array are differentiated so that
  * filters can only be grouped with other filters that have the same signature
@@ -15,18 +16,18 @@ export type NDKFilterGroupingId = string;
  * that intend to close immediately after EOSE and those that are probably
  * going to be kept open.
  *
- * @returns The groupable ID, or null if the filters are not groupable.
+ * @returns The fingerprint, or undefined if the filters are not groupable.
  */
-export function calculateGroupableId(
+export function filterFingerprint(
     filters: NDKFilter[],
     closeOnEose: boolean
-): NDKFilterGroupingId | null {
+): NDKFilterFingerprint | undefined {
     const elements: string[] = [];
 
     for (const filter of filters) {
         const hasTimeConstraints = filter.since || filter.until;
 
-        if (hasTimeConstraints) return null;
+        if (hasTimeConstraints) return undefined;
 
         const keys = Object.keys(filter || {})
             .sort()

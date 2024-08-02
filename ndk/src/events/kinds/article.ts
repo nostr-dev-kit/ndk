@@ -1,5 +1,5 @@
 import type { NDK } from "../../ndk/index.js";
-import { ContentTag } from "../content-tagger.js";
+import type { ContentTag } from "../content-tagger.js";
 import { NDKEvent, type NostrEvent } from "../index.js";
 import { NDKKind } from "./index.js";
 
@@ -9,7 +9,10 @@ import { NDKKind } from "./index.js";
  * @group Kind Wrapper
  */
 export class NDKArticle extends NDKEvent {
-    constructor(ndk: NDK | undefined, rawEvent?: NostrEvent) {
+    static kind = NDKKind.Article;
+    static kinds = [NDKKind.Article];
+
+    constructor(ndk: NDK | undefined, rawEvent?: NostrEvent | NDKEvent) {
         super(ndk, rawEvent);
         this.kind ??= NDKKind.Article;
     }
@@ -21,7 +24,7 @@ export class NDKArticle extends NDKEvent {
      * @returns NDKArticle
      */
     static from(event: NDKEvent) {
-        return new NDKArticle(event.ndk, event.rawEvent());
+        return new NDKArticle(event.ndk, event);
     }
 
     /**

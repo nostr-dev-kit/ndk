@@ -1,8 +1,8 @@
-import { NDKEvent, NDKEventId } from "./index.js";
+import type { NDKEvent, NDKEventId } from "./index.js";
 
 let worker: Worker | undefined;
 
-let processingQueue: Record<
+const processingQueue: Record<
     NDKEventId,
     { event: NDKEvent; resolves: ((result: boolean) => void)[] }
 > = {};

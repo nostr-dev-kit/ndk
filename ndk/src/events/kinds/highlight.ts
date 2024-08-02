@@ -13,13 +13,16 @@ import { NDKKind } from "./index.js";
 export class NDKHighlight extends NDKEvent {
     private _article: NDKEvent | string | undefined;
 
-    constructor(ndk?: NDK, rawEvent?: NostrEvent) {
+    static kind = NDKKind.Highlight;
+    static kinds = [NDKKind.Highlight];
+
+    constructor(ndk?: NDK, rawEvent?: NostrEvent | NDKEvent) {
         super(ndk, rawEvent);
         this.kind ??= NDKKind.Highlight;
     }
 
     static from(event: NDKEvent) {
-        return new NDKHighlight(event.ndk, event.rawEvent());
+        return new NDKHighlight(event.ndk, event);
     }
 
     get url(): string | undefined {

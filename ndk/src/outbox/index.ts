@@ -1,6 +1,6 @@
-import { NDK } from "../ndk";
-import { NDKRelay } from "../relay";
-import { Hexpubkey } from "../user";
+import type { NDK } from "../ndk";
+import type { NDKRelay } from "../relay";
+import type { Hexpubkey } from "../user";
 import { getTopRelaysForAuthors } from "./relay-ranking";
 import { getRelaysForSync } from "./write";
 
@@ -46,11 +46,11 @@ export function chooseRelayCombinationForPubkeys(
     ndk: NDK,
     pubkeys: Hexpubkey[],
     type: "write" | "read",
-    { count, preferredRelays, }: { count?: number; preferredRelays?: Set<WebSocket["url"]>} = {}
+    { count, preferredRelays }: { count?: number; preferredRelays?: Set<WebSocket["url"]> } = {}
 ): Map<WebSocket["url"], Hexpubkey[]> {
-    count ??= 2
+    count ??= 2;
     preferredRelays ??= new Set<WebSocket["url"]>();
-    
+
     const pool = ndk.pool;
     const connectedRelays = pool.connectedRelays();
 
@@ -58,7 +58,7 @@ export function chooseRelayCombinationForPubkeys(
     connectedRelays.forEach((relay) => {
         preferredRelays!.add(relay.url);
     });
-    
+
     const relayToAuthorsMap = new Map<WebSocket["url"], Hexpubkey[]>();
 
     const { pubkeysToRelays, authorsMissingRelays } = getAllRelaysForAllPubkeys(ndk, pubkeys, type);

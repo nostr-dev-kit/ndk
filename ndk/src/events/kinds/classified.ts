@@ -17,7 +17,7 @@ interface NDKClassifiedPriceTag {
  * @group Kind Wrapper
  */
 export class NDKClassified extends NDKEvent {
-    constructor(ndk: NDK | undefined, rawEvent?: NostrEvent) {
+    constructor(ndk: NDK | undefined, rawEvent?: NostrEvent | NDKEvent) {
         super(ndk, rawEvent);
         this.kind ??= NDKKind.Classified;
     }
@@ -29,7 +29,7 @@ export class NDKClassified extends NDKEvent {
      * @returns NDKClassified
      */
     static from(event: NDKEvent): NDKClassified {
-        return new NDKClassified(event.ndk, event.rawEvent());
+        return new NDKClassified(event.ndk, event);
     }
 
     /**

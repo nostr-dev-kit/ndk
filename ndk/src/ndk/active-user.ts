@@ -1,10 +1,10 @@
-import { NDK } from "./index.js";
-import { NDKRelayList } from "../events/kinds/NDKRelayList.js";
-import { NDKUser } from "../user/index.js";
+import type { NDK } from "./index.js";
+import type { NDKRelayList } from "../events/kinds/NDKRelayList.js";
+import type { NDKUser } from "../user/index.js";
 import createDebug from "debug";
-import { NDKFilter } from "../subscription/index.js";
+import type { NDKFilter } from "../subscription/index.js";
 import { NDKKind } from "../events/kinds/index.js";
-import { NDKEvent } from "../events/index.js";
+import type { NDKEvent } from "../events/index.js";
 import NDKList from "../events/kinds/lists/index.js";
 import { NDKRelay } from "../relay/index.js";
 import { getRelayListForUser } from "../utils/get-users-relay-list.js";
@@ -20,7 +20,7 @@ async function getUserRelayList(this: NDK, user: NDKUser): Promise<NDKRelayList 
     for (const url of userRelays.relays) {
         let relay = this.pool.relays.get(url);
         if (!relay) {
-            relay = new NDKRelay(url);
+            relay = new NDKRelay(url, this.relayAuthDefaultPolicy, this);
             this.pool.addRelay(relay);
         }
     }
@@ -63,7 +63,7 @@ async function setActiveUserConnected(this: NDK, user: NDKUser) {
         false
     );
 
-    let events: Map<NDKKind, NDKEvent> = new Map();
+    const events: Map<NDKKind, NDKEvent> = new Map();
 
     // Collect most recent version of these events
     sub.on("event", (event) => {

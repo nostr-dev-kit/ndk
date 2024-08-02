@@ -6,10 +6,21 @@ import type { NDK } from "../ndk/index.js";
 import { NDKSubscriptionCacheUsage, type NDKSubscriptionOptions } from "../subscription/index.js";
 import { follows } from "./follows.js";
 import { type NDKUserProfile, profileFromEvent, serializeProfile } from "./profile.js";
-import type { NDKSigner } from "../signers/index.js";
-import { NDKLnUrlData } from "../zap/index.js";
 import { getNip05For } from "./nip05.js";
-import { NDKRelay, NDKZap } from "../index.js";
+import type {
+    NDKRelay,
+    NDKSigner,
+    NDKZapDetails,
+    NDKZapMethod,
+    NDKZapMethodInfo,
+} from "../index.js";
+import { NDKCashuMintList } from "../events/kinds/nutzap/mint-list.js";
+import {
+    getNip57ZapSpecFromLud,
+    LnPaymentInfo,
+    LNPaymentRequest,
+    NDKLnUrlData,
+} from "../zapper/ln.js";
 
 export type Hexpubkey = string;
 
@@ -114,6 +125,92 @@ export class NDKUser {
     }
 
     /**
+     * Gets NIP-57 and NIP-61 information that this user has signaled
+     *
+     * @param getAll {boolean} Whether to get all zap info or just the first one
+     */
+    async getZapInfo(
+        getAll = true,
+        methods: NDKZapMethod[] = ["nip61", "nip57"]
+    ): Promise<NDKZapMethodInfo[]> {
+        if (!this.ndk) throw new Error("No NDK instance found");
+
+        const kinds: NDKKind[] = [];
+
+        if (methods.includes("nip61")) kinds.push(NDKKind.CashuMintList);
+        if (methods.includes("nip57")) kinds.push(NDKKind.Metadata);
+
+        if (kinds.length === 0) return [];
+
+        let events = await this.ndk.fetchEvents(
+            { kinds, authors: [this.pubkey] },
+            {
+                cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE,
+                groupable: false,
+            }
+        );
+
+        if (events.size < methods.length) {
+            events = await this.ndk.fetchEvents(
+                { kinds, authors: [this.pubkey] },
+                {
+                    cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY,
+                }
+            );
+        }
+
+        const res: NDKZapMethodInfo[] = [];
+
+        const nip61 = Array.from(events).find((e) => e.kind === NDKKind.CashuMintList);
+        const nip57 = Array.from(events).find((e) => e.kind === NDKKind.Metadata);
+
+        if (nip61) {
+            const mintList = NDKCashuMintList.from(nip61);
+
+            if (mintList.mints.length > 0) {
+                res.push({
+                    type: "nip61",
+                    data: {
+                        mints: mintList.mints,
+                        relays: mintList.relays,
+                        p2pk: mintList.p2pk,
+                    },
+                });
+            }
+
+            // if we are just getting one and already have one, go back
+            if (!getAll) return res;
+        }
+
+        if (nip57) {
+            const profile = profileFromEvent(nip57);
+            const { lud06, lud16 } = profile;
+            try {
+                const zapSpec = await getNip57ZapSpecFromLud({ lud06, lud16 }, this.ndk);
+
+                if (zapSpec) {
+                    res.push({ type: "nip57", data: zapSpec });
+                }
+            } catch (e) {
+                console.error("Error getting NIP-57 zap spec", e);
+            }
+        }
+
+        return res;
+    }
+
+    /**
+     * Determines whether this user
+     * has signaled support for NIP-60 zaps
+     **/
+    // export type UserZapConfiguration = {
+
+    // }
+    // async getRecipientZapConfig(): Promise<> {
+
+    // }
+
+    /**
      * Retrieves the zapper this pubkey has designated as an issuer of zap receipts
      */
     async getZapConfiguration(ndk?: NDK): Promise<NDKLnUrlData | undefined> {
@@ -131,10 +228,13 @@ export class NDKUser {
                 }
             }
 
-            const zap = new NDKZap({ ndk: ndk!, zappedUser: this });
             let lnurlspec: NDKLnUrlData | undefined;
             try {
-                lnurlspec = await zap.getZapSpecWithoutCache();
+                await this.fetchProfile({ groupable: false });
+                if (this.profile) {
+                    const { lud06, lud16 } = this.profile;
+                    lnurlspec = await getNip57ZapSpecFromLud({ lud06, lud16 }, ndk!);
+                }
             } catch {}
 
             if (this.ndk?.cacheAdapter?.saveUsersLNURLDoc) {
@@ -176,7 +276,7 @@ export class NDKUser {
     ): Promise<NDKUser | undefined> {
         if (!ndk) throw new Error("No NDK instance found");
 
-        let opts: RequestInit = {};
+        const opts: RequestInit = {};
 
         if (skipCache) opts.cache = "no-cache";
         const profile = await getNip05For(ndk, nip05Id, ndk?.httpFetch, opts);
@@ -432,32 +532,23 @@ export class NDKUser {
      * @param extraTags Extra tags to add to the zap request
      * @param signer The signer to use (will default to the NDK instance's signer)
      */
-    async zap(
-        amount: number,
-        comment?: string,
-        extraTags?: NDKTag[],
-        signer?: NDKSigner
-    ): Promise<string | null> {
-        if (!this.ndk) throw new Error("No NDK instance found");
+    async zap(amount: number, comment?: string, tags?: NDKTag[], signer?: NDKSigner) {
+        return new Promise((resolve, reject) => {
+            if (!this.ndk) {
+                reject("No NDK instance found");
+                return;
+            }
 
-        if (!signer) {
-            this.ndk.assertSigner();
-        }
+            // If we already have a wallet configured, we'll use that
+            // otherwise we'll just get the payment request and return it
+            // to maintain compatibility with the old behavior
+            let onLnPay = this.ndk.walletConfig?.onLnPay;
+            onLnPay ??= async ({ pr }: { pr: LNPaymentRequest }): Promise<undefined> => {
+                resolve(pr);
+            };
 
-        const zap = new NDKZap({
-            ndk: this.ndk,
-            zappedUser: this,
+            const zapper = this.ndk.zap(this, amount, { comment, tags, signer, onLnPay });
+            zapper.zap().then(resolve).catch(reject);
         });
-
-        const relays = Array.from(this.ndk.pool.relays.keys());
-
-        const paymentRequest = await zap.createZapRequest(
-            amount,
-            comment,
-            extraTags,
-            relays,
-            signer
-        );
-        return paymentRequest;
     }
 }

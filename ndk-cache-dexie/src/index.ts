@@ -39,12 +39,6 @@ export interface NDKCacheAdapterDexieOptions {
     debug?: debug.IDebugger;
 
     /**
-     * The number of seconds to store events in Dexie (IndexedDB) before they expire
-     * Defaults to 3600 seconds (1 hour)
-     */
-    expirationTime?: number;
-
-    /**
      * Number of profiles to keep in an LRU cache
      */
     profileCacheSize?: number;
@@ -56,8 +50,7 @@ export interface NDKCacheAdapterDexieOptions {
 
 export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
     public debug: debug.Debugger;
-    private expirationTime;
-    readonly locking = true;
+    public locking = false;
     public ready = false;
     public profiles: CacheHandler<Profile>;
     public zappers: CacheHandler<ZapperCacheEntry>;
@@ -74,7 +67,6 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
     constructor(opts: NDKCacheAdapterDexieOptions = {}) {
         createDatabase(opts.dbName || "ndk");
         this.debug = opts.debug || createDebug("ndk:dexie-adapter");
-        this.expirationTime = opts.expirationTime || 3600;
 
         this.profiles = new CacheHandler<Profile>({
             maxSize: opts.profileCacheSize || 100000,
@@ -145,6 +137,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
             const endTime = Date.now();
             this.warmedUp = true;
             this.ready = true;
+            this.locking = true;
             this.debug("Warm up completed, time", endTime - startTime, "ms");
 
             // call the onReady callback if it's set

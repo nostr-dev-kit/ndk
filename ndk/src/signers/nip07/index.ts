@@ -4,6 +4,7 @@ import type { NostrEvent } from "../../events/index.js";
 import { NDKUser } from "../../user/index.js";
 import type { NDKSigner } from "../index.js";
 import { NDKRelay } from "../../relay/index.js";
+import type { NDK } from "../../ndk/index.js";
 
 type Nip04QueueItem = {
     type: "encrypt" | "decrypt";
@@ -77,7 +78,7 @@ export class NDKNip07Signer implements NDKSigner {
         return signedEvent.sig;
     }
 
-    public async relays(): Promise<NDKRelay[]> {
+    public async relays(ndk?: NDK): Promise<NDKRelay[]> {
         await this.waitForExtension();
 
         const relays = (await window.nostr!.getRelays?.()) || {};
@@ -89,7 +90,7 @@ export class NDKNip07Signer implements NDKSigner {
                 activeRelays.push(url);
             }
         }
-        return activeRelays.map((url) => new NDKRelay(url));
+        return activeRelays.map((url) => new NDKRelay(url, ndk?.relayAuthDefaultPolicy, ndk));
     }
 
     public async encrypt(recipient: NDKUser, value: string): Promise<string> {
@@ -135,12 +136,6 @@ export class NDKNip07Signer implements NDKSigner {
         this.nip04Processing = true;
         const { type, counterpartyHexpubkey, value, resolve, reject } =
             item || this.nip04Queue.shift()!;
-
-        this.debug("Processing encryption queue item", {
-            type,
-            counterpartyHexpubkey,
-            value,
-        });
 
         try {
             let result;

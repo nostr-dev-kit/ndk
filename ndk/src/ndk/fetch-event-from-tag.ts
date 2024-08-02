@@ -1,9 +1,9 @@
-import { NDK } from ".";
-import { NDKEvent, NDKTag } from "../events";
+import type { NDK } from ".";
+import type { NDKEvent, NDKTag } from "../events";
 import { getRelaysForSync } from "../outbox/write";
 import { NDKRelaySet } from "../relay/sets";
 import { calculateRelaySetsFromFilters } from "../relay/sets/calculate";
-import { NDKSubscriptionOptions } from "../subscription";
+import type { NDKSubscriptionOptions } from "../subscription";
 
 /**
  * Options on how to handle when a relay hint doesn't respond
@@ -77,7 +77,6 @@ export async function fetchEventFromTag(
 
     // XXXXX
     subOpts = {};
-    if (!isValidHint(hint)) return;
 
     d("fetching event from tag", tag, subOpts, fallback);
 
@@ -94,7 +93,7 @@ export async function fetchEventFromTag(
     if (authorRelays && authorRelays.size > 0) {
         d("fetching event from author relays %o", Array.from(authorRelays));
         const relaySet = NDKRelaySet.fromRelayUrls(Array.from(authorRelays), this);
-        let event = await this.fetchEvent(id, subOpts, relaySet);
+        const event = await this.fetchEvent(id, subOpts, relaySet);
         if (event) return event;
     } else {
         d("no author relays found for %s", originalEvent.pubkey, originalEvent);
@@ -103,12 +102,12 @@ export async function fetchEventFromTag(
     // Attempt without relay hint on whatever NDK calculates
     const relaySet = calculateRelaySetsFromFilters(this, [{ ids: [id] }], this.pool);
     d("fetching event without relay hint", relaySet);
-    let event = await this.fetchEvent(id, subOpts);
+    const event = await this.fetchEvent(id, subOpts);
     if (event) return event;
 
     // If we didn't get the event, try to fetch in the relay hint
     if (hint && hint !== "") {
-        let event = await this.fetchEvent(
+        const event = await this.fetchEvent(
             id,
             subOpts,
             this.pool.getRelay(hint, true, true, [{ ids: [id] }])
@@ -118,7 +117,7 @@ export async function fetchEventFromTag(
 
     let result: NDKEvent | null | undefined = undefined;
 
-    let relay = isValidHint(hint)
+    const relay = isValidHint(hint)
         ? this.pool.getRelay(hint, false, true, [{ ids: [id] }])
         : undefined;
 
@@ -134,11 +133,11 @@ export async function fetchEventFromTag(
     /**
      * Fallback fetch promise.
      */
-    let fallbackFetchPromise = new Promise<NDKEvent | null>(async (resolve) => {
-        let fallbackRelaySet = fallback.relaySet;
+    const fallbackFetchPromise = new Promise<NDKEvent | null>(async (resolve) => {
+        const fallbackRelaySet = fallback.relaySet;
 
-        let timeout = fallback.timeout ?? 1500;
-        let timeoutPromise = new Promise<void>((resolve) => setTimeout(resolve, timeout));
+        const timeout = fallback.timeout ?? 1500;
+        const timeoutPromise = new Promise<void>((resolve) => setTimeout(resolve, timeout));
 
         // if this is a timeout fallback, we need to wait for the timeout to resolve
         if (fallback.type === "timeout") await timeoutPromise;
@@ -147,7 +146,7 @@ export async function fetchEventFromTag(
             resolve(result);
         } else {
             d("fallback fetch triggered");
-            let fallbackEvent = await this.fetchEvent(id, subOpts, fallbackRelaySet);
+            const fallbackEvent = await this.fetchEvent(id, subOpts, fallbackRelaySet);
             resolve(fallbackEvent);
         }
     });

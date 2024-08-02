@@ -7,23 +7,27 @@ import type { NDKUser } from "../user/index.js";
 import { NDKRelayConnectivity } from "./connectivity.js";
 import { NDKRelayPublisher } from "./publisher.js";
 import type { NDKRelayScore } from "./score.js";
-import { NDKRelaySubscriptions } from "./subscriptions.js";
-import { NDKAuthPolicy } from "./auth-policies.js";
+import { NDKRelaySubscriptionManager } from "./sub-manager.js";
+import type { NDKAuthPolicy } from "./auth-policies.js";
 import { normalizeRelayUrl } from "../utils/normalize-url.js";
-import { NDK } from "../ndk/index.js";
+import type { NDK } from "../ndk/index.js";
+import type { NDKRelaySubscription } from "./subscription.js";
 
 /** @deprecated Use `WebSocket['url']` instead. */
 export type NDKRelayUrl = WebSocket["url"];
 
 export enum NDKRelayStatus {
-    CONNECTING,
-    CONNECTED,
-    DISCONNECTING,
-    DISCONNECTED,
-    RECONNECTING,
-    FLAPPING,
-    AUTH_REQUIRED,
-    AUTHENTICATING,
+    DISCONNECTING, // 0
+    DISCONNECTED, // 1
+    RECONNECTING, // 2
+    FLAPPING, // 3
+    CONNECTING, // 4
+
+    // connected states
+    CONNECTED, // 5
+    AUTH_REQUESTED, // 6
+    AUTHENTICATING, // 7
+    AUTHENTICATED, // 8
 }
 
 export interface NDKRelayConnectionStats {
@@ -86,6 +90,7 @@ export class NDKRelay extends EventEmitter<{
     notice: (notice: string) => void;
     auth: (challenge: string) => void;
     authed: () => void;
+    "auth:failed": (error: Error) => void;
     published: (event: NDKEvent) => void;
     "publish:failed": (event: NDKEvent, error: Error) => void;
     "delayed-connect": (delayInMs: number) => void;
@@ -93,12 +98,37 @@ export class NDKRelay extends EventEmitter<{
     readonly url: WebSocket["url"];
     readonly scores: Map<NDKUser, NDKRelayScore>;
     public connectivity: NDKRelayConnectivity;
-    private subs: NDKRelaySubscriptions;
+    private subs: NDKRelaySubscriptionManager;
     private publisher: NDKRelayPublisher;
     public authPolicy?: NDKAuthPolicy;
-    public validationRatio?: number;
-    private validatedEventCount: number = 0;
-    private skippedEventCount: number = 0;
+
+    /**
+     * The lowest validation ratio this relay can reach.
+     */
+    public lowestValidationRatio?: number;
+
+    /**
+     * Current validation ratio this relay is targeting.
+     */
+    public targetValidationRatio?: number;
+
+    public validationRatioFn?: (
+        relay: NDKRelay,
+        validatedCount: number,
+        nonValidatedCount: number
+    ) => number;
+
+    /**
+     * This tracks events that have been seen by this relay
+     * with a valid signature.
+     */
+    private validatedEventCount = 0;
+
+    /**
+     * This tracks events that have been seen by this relay
+     * but have not been validated.
+     */
+    private nonValidatedEventCount = 0;
 
     /**
      * Whether this relay is trusted.
@@ -110,16 +140,56 @@ export class NDKRelay extends EventEmitter<{
     public complaining = false;
     readonly debug: debug.Debugger;
 
+    static defaultValidationRatioUpdateFn = (
+        relay: NDKRelay,
+        validatedCount: number,
+        nonValidatedCount: number
+    ): number => {
+        if (relay.lowestValidationRatio === undefined || relay.targetValidationRatio === undefined)
+            return 1;
+
+        let newRatio = relay.validationRatio;
+
+        if (relay.validationRatio > relay.targetValidationRatio) {
+            const factor = validatedCount / 100;
+            newRatio = Math.max(relay.lowestValidationRatio, relay.validationRatio - factor);
+        }
+
+        if (newRatio < relay.validationRatio) {
+            return newRatio;
+        }
+
+        return relay.validationRatio;
+    };
+
     public constructor(url: WebSocket["url"], authPolicy?: NDKAuthPolicy, ndk?: NDK) {
         super();
         this.url = normalizeRelayUrl(url);
         this.scores = new Map<NDKUser, NDKRelayScore>();
         this.debug = debug(`ndk:relay:${url}`);
         this.connectivity = new NDKRelayConnectivity(this, ndk);
-        this.subs = new NDKRelaySubscriptions(this);
+        this.req = this.connectivity.req.bind(this.connectivity);
+        this.close = this.connectivity.close.bind(this.connectivity);
+        this.subs = new NDKRelaySubscriptionManager(this, ndk?.subManager);
         this.publisher = new NDKRelayPublisher(this);
         this.authPolicy = authPolicy;
-        this.validationRatio = undefined;
+        this.targetValidationRatio = ndk?.initialValidationRatio;
+        this.lowestValidationRatio = ndk?.lowestValidationRatio;
+        this.validationRatioFn = (
+            ndk?.validationRatioFn ?? NDKRelay.defaultValidationRatioUpdateFn
+        ).bind(this);
+
+        this.updateValidationRatio();
+
+        if (!ndk) {
+            console.trace("relay created without ndk");
+        }
+    }
+
+    private updateValidationRatio(): void {
+        setTimeout(() => {
+            this.updateValidationRatio();
+        }, 30000);
     }
 
     get status(): NDKRelayStatus {
@@ -156,7 +226,7 @@ export class NDKRelay extends EventEmitter<{
      * @param filters Filters to execute
      */
     public subscribe(subscription: NDKSubscription, filters: NDKFilter[]): void {
-        this.subs.subscribe(subscription, filters);
+        this.subs.addSubscription(subscription, filters);
     }
 
     /**
@@ -173,49 +243,31 @@ export class NDKRelay extends EventEmitter<{
         return this.publisher.publish(event, timeoutMs);
     }
 
-    /**
-     * Called when this relay has responded with an event but
-     * wasn't the fastest one.
-     * @param timeDiffInMs The time difference in ms between the fastest and this relay in milliseconds
-     */
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public scoreSlowerEvent(timeDiffInMs: number): void {
-        // TODO
-    }
-
-    /** @deprecated Use referenceTags instead. */
-    public tagReference(marker?: string): NDKTag {
-        const tag = ["r", this.url];
-
-        if (marker) {
-            tag.push(marker);
-        }
-
-        return tag;
-    }
-
     public referenceTags(): NDKTag[] {
         return [["r", this.url]];
     }
 
-    public activeSubscriptions(): Map<NDKFilter[], NDKSubscription[]> {
-        return this.subs.executedFilters();
-    }
+    // public activeSubscriptions(): Map<NDKFilter[], NDKSubscription[]> {
+    //     // return this.subs.executedFilters();
+    // }
 
     public addValidatedEvent(): void {
         this.validatedEventCount++;
     }
 
-    public addSkippedEvent(): void {
-        this.skippedEventCount++;
+    public addNonValidatedEvent(): void {
+        this.nonValidatedEventCount++;
     }
 
-    public getValidationRatio(): number {
-        if (this.skippedEventCount === 0) {
+    /**
+     * The current validation ratio this relay has achieved.
+     */
+    get validationRatio(): number {
+        if (this.nonValidatedEventCount === 0) {
             return 1;
         }
 
-        return this.validatedEventCount / (this.validatedEventCount + this.skippedEventCount);
+        return this.validatedEventCount / (this.validatedEventCount + this.nonValidatedEventCount);
     }
 
     public shouldValidateEvent(): boolean {
@@ -223,11 +275,18 @@ export class NDKRelay extends EventEmitter<{
             return false;
         }
 
-        if (this.validationRatio === undefined) {
+        if (this.targetValidationRatio === undefined) {
             return true;
         }
 
         // if the current validation ratio is below the threshold, validate the event
-        return this.getValidationRatio() < this.validationRatio;
+        return this.validationRatio < this.targetValidationRatio;
     }
+
+    get connected(): boolean {
+        return this.connectivity.connected;
+    }
+
+    public req: (relaySub: NDKRelaySubscription) => void;
+    public close: (subId: string) => void;
 }

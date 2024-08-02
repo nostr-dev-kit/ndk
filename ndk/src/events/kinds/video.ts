@@ -1,13 +1,17 @@
 import { NDKKind } from ".";
-import { NDKEvent, NostrEvent } from "..";
-import { NDK } from "../../ndk";
-import { ContentTag } from "../content-tagger";
+import type { NostrEvent } from "..";
+import { NDKEvent } from "..";
+import type { NDK } from "../../ndk";
+import type { ContentTag } from "../content-tagger";
 
 /**
  * Represents a horizontal or vertical video.
  * @group Kind Wrapper
  */
 export class NDKVideo extends NDKEvent {
+    static kind = NDKKind.HorizontalVideo;
+    static kinds = [NDKKind.HorizontalVideo, NDKKind.VerticalVideo];
+
     constructor(ndk: NDK | undefined, rawEvent?: NostrEvent) {
         super(ndk, rawEvent);
         this.kind ??= NDKKind.HorizontalVideo;

@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/ndk",
-    "version": "2.9.1",
+    "version": "2.10.0",
     "description": "NDK - Nostr Development Kit",
     "homepage": "https://ndk.fyi",
     "documentation": "https://github.com/nostr-dev-kit/ndk/blob/master/docs/modules.md",
@@ -79,7 +79,7 @@
         "debug": "^4.3.4",
         "light-bolt11-decoder": "^3.0.0",
         "node-fetch": "^3.3.1",
-        "nostr-tools": "^2.5.2",
+        "nostr-tools": "^2.7.1",
         "tseep": "^1.1.1",
         "typescript-lru-cache": "^2.0.0",
         "utf8-buffer": "^1.0.0",

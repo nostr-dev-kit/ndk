@@ -6,7 +6,8 @@ import {
     getReplyTag,
     getRootTag,
 } from ".";
-import { NDKEvent, NDKEventId } from "../events";
+import type { NDKEventId } from "../events";
+import { NDKEvent } from "../events";
 
 const op = new NDKEvent(undefined, {
     id: "op",

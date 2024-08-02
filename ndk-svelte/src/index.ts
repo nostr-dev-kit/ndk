@@ -15,7 +15,7 @@ import { type Unsubscriber, type Writable, writable } from "svelte/store";
  * Type for NDKEvent classes that have a static `from` method like NDKHighlight.
  */
 type ClassWithConvertFunction<T extends NDKEvent> = {
-    from: (event: NDKEvent) => T;
+    from: (event: NDKEvent) => T | undefined;
 };
 
 export type ExtendedBaseType<T extends NDKEvent> = T & {
@@ -195,7 +195,9 @@ class NDKSvelte extends NDK {
 
             let e = event;
             if (klass) {
-                e = klass.from(event);
+                const ev = klass.from(event);
+                if (!ev) return;
+                e = ev;
                 e.relay = event.relay;
             }
             e.ndk = this;
@@ -205,10 +207,18 @@ class NDKSvelte extends NDK {
             if (eventIds.has(dedupKey)) {
                 const prevEvent = events.find((e) => e.deduplicationKey() === dedupKey);
 
-                if (prevEvent && prevEvent.created_at! < event.created_at!) {
-                    // remove the previous event
-                    const index = events.findIndex((e) => e.deduplicationKey() === dedupKey);
-                    events.splice(index, 1);
+                if (prevEvent) {
+                    if (prevEvent.created_at! < event.created_at!) {
+                        // remove the previous event
+                        const index = events.findIndex((e) => e.deduplicationKey() === dedupKey);
+                        events.splice(index, 1);
+                    } else if (prevEvent.created_at! === event.created_at! && prevEvent.id !== event.id) {
+                        // we have an event with the same created_at but different id, which might be a bug
+                        // in some relays but take the incoming event anyway
+                        console.warn("Received event with same created_at but different id", { prevId: prevEvent.id, newId: event.id });
+                        const index = events.findIndex((e) => e.deduplicationKey() === dedupKey);
+                        events.splice(index, 1);
+                    }
                 } else {
                     return;
                 }

@@ -1,5 +1,5 @@
-import { NDK } from "../ndk";
-import { Hexpubkey } from "../user";
+import type { NDK } from "../ndk";
+import type { Hexpubkey } from "../user";
 
 /**
  * Gets write relays for a given pubkey as tracked by the outbox tracker.

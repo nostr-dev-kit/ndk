@@ -117,7 +117,8 @@ export async function generateContentTags(
                 case "nevent":
                     promises.push(
                         new Promise(async (resolve) => {
-                            let { id, relays, author } = data as EventPointer;
+                            const { id, author } = data as EventPointer;
+                            let { relays } = data as EventPointer;
 
                             // If the nevent doesn't have a relay specified, try to get one
                             if (!relays || relays.length === 0) {

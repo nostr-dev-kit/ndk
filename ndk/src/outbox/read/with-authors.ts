@@ -1,8 +1,8 @@
 import { chooseRelayCombinationForPubkeys, getAllRelaysForAllPubkeys } from "..";
-import { NDK } from "../../ndk";
+import type { NDK } from "../../ndk";
 import { NDKRelay } from "../../relay";
 import { NDKPool } from "../../relay/pool";
-import { Hexpubkey } from "../../user";
+import type { Hexpubkey } from "../../user";
 import { getTopRelaysForAuthors } from "../relay-ranking";
 import { getWriteRelaysFor, getRelaysForSync } from "../write";
 
@@ -20,5 +20,5 @@ export function getRelaysForFilterWithAuthors(
     authors: Hexpubkey[],
     relayGoalPerAuthor: number = 2
 ): Map<WebSocket["url"], Hexpubkey[]> {
-    return chooseRelayCombinationForPubkeys(ndk, authors, 'write', { count: relayGoalPerAuthor });
+    return chooseRelayCombinationForPubkeys(ndk, authors, "write", { count: relayGoalPerAuthor });
 }

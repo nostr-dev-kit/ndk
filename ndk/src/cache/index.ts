@@ -3,7 +3,7 @@ import type { NDKRelay } from "../relay/index.js";
 import type { NDKFilter, NDKSubscription } from "../subscription/index.js";
 import type { Hexpubkey, ProfilePointer } from "../user/index.js";
 import type { NDKUserProfile } from "../user/profile.js";
-import { NDKLnUrlData } from "../zapper/ln.js";
+import type { NDKLnUrlData } from "../zapper/ln.js";
 
 export interface NDKCacheAdapter {
     /**

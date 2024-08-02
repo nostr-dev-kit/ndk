@@ -1,5 +1,5 @@
-import { NDKNutzap } from "../events/kinds/nutzap";
-import { Proof } from "../events/kinds/nutzap/proof";
+import type { NDKNutzap } from "../events/kinds/nutzap";
+import type { Proof } from "../events/kinds/nutzap/proof";
 
 /**
  * Provides information that should be used to send a NIP-61 nutzap.

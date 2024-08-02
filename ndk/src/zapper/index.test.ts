@@ -1,10 +1,13 @@
 import type { NostrEvent } from "nostr-tools";
+import type { NDKZapDetails} from ".";
 import { NDKZapper } from ".";
 import { NDKEvent } from "../events";
 import { NDKCashuMintList } from "../events/kinds/nutzap/mint-list";
 import { NDK } from "../ndk";
 import { NDKPrivateKeySigner } from "../signers/private-key";
 import type { NDKUser } from "../user";
+import type { CashuPaymentInfo } from "./nip61";
+import type { LnPaymentInfo } from "./ln";
 
 jest.mock("./ln.js", () => ({
     getNip57ZapSpecFromLud: jest.fn(async () => {
@@ -91,10 +94,10 @@ describe("getZapMethod", () => {
         await mintList.sign(signer);
         ndk.fetchEvents = jest.fn().mockResolvedValue(new Set([mintList]));
         const zapper = new NDKZapper(user, 1000);
-        zapper.onNutPay = async (payment: NDKZapPaymentDetails): Promise<false> => false;
-        const zapMethod = await zapper.getZapMethod(ndk, user.pubkey);
+        zapper.onCashuPay = async (payment: NDKZapDetails<CashuPaymentInfo>) => undefined;
+        const zapMethod = (await zapper.getZapMethods(ndk, user.pubkey))[0];
         expect(zapMethod.type).toBe("nip61");
-        expect((zapMethod.data as NutPaymentInfo).mints).toEqual([
+        expect((zapMethod.data as CashuPaymentInfo).mints).toEqual([
             "https://mint1",
             "https://mint2",
         ]);
@@ -107,13 +110,14 @@ describe("getZapMethod", () => {
         } as NostrEvent);
         ndk.fetchEvents = jest.fn().mockResolvedValue(new Set<NDKEvent>([profile]));
         const zapper = new NDKZapper(user, 1000);
-        zapper.onNutPay = async (payment: NDKZapPaymentDetails): Promise<false> => false;
-        zapper.onLnPay = async (payment: NDKZapPaymentDetails): Promise<NDKZapConfirmation> =>
-            false;
-        const zapMethod = await zapper.getZapMethod(
-            ndk,
-            "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"
-        );
+        zapper.onCashuPay = async (payment: NDKZapDetails<CashuPaymentInfo>) => undefined;
+        zapper.onLnPay = async (payment: NDKZapDetails<LnPaymentInfo>) => undefined;
+        const zapMethod = (
+            await zapper.getZapMethods(
+                ndk,
+                "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"
+            )
+        )[0];
 
         expect(zapMethod.type).toBe("nip57");
     });

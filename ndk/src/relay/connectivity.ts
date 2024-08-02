@@ -222,7 +222,9 @@ export class NDKRelayConnectivity {
                 case "OK": {
                     const ok: boolean = data[2];
                     const reason: string = data[3];
-                    const ep = this.openEventPublishes.get(id) as EventPublishResolver[] | undefined;
+                    const ep = this.openEventPublishes.get(id) as
+                        | EventPublishResolver[]
+                        | undefined;
                     const firstEp = ep?.pop();
 
                     if (!ep || !firstEp) {
@@ -506,7 +508,11 @@ export class NDKRelayConnectivity {
         const ret = new Promise<string>((resolve, reject) => {
             const val = this.openEventPublishes.get(event.id!) ?? [];
             if (val.length > 0) {
-                console.warn("Duplicate event publishing detected, you are publishing event "+event.id!+" twice");
+                console.warn(
+                    "Duplicate event publishing detected, you are publishing event " +
+                        event.id! +
+                        " twice"
+                );
             }
 
             val.push({ resolve, reject });

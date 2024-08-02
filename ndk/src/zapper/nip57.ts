@@ -1,9 +1,11 @@
-import { nip57, NostrEvent } from "nostr-tools";
-import { NDKTag, NDKEvent } from "../events";
-import { NDKSigner } from "../signers";
-import { NDKUser } from "../user";
-import { NDK } from "../ndk";
-import { NDKLnUrlData } from "./ln.js";
+import type { NostrEvent } from "nostr-tools";
+import { nip57 } from "nostr-tools";
+import type { NDKTag} from "../events";
+import { NDKEvent } from "../events";
+import type { NDKSigner } from "../signers";
+import type { NDKUser } from "../user";
+import type { NDK } from "../ndk";
+import type { NDKLnUrlData } from "./ln.js";
 
 export async function generateZapRequest(
     target: NDKEvent | NDKUser,

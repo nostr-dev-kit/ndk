@@ -1,6 +1,6 @@
 import type { NDK } from "../ndk";
 import type { NDKTag } from "../events";
-import { NDKEvent } from "../events";
+import type { NDKEvent } from "../events";
 import type { Hexpubkey } from "../user";
 import { NDKUser } from "../user";
 import type { NDKSigner } from "../signers";
@@ -10,8 +10,8 @@ import { getRelayListForUsers } from "../utils/get-users-relay-list";
 import { EventEmitter } from "tseep";
 import { generateZapRequest } from "./nip57";
 import { NDKNutzap } from "../events/kinds/nutzap";
-import { LnPaymentInfo, NDKLnUrlData, NDKPaymentConfirmationLN, NDKZapConfirmationLN } from "./ln";
-import { NDKZapConfirmationCashu, CashuPaymentInfo, NDKPaymentConfirmationCashu } from "./nip61";
+import type { LnPaymentInfo, NDKLnUrlData, NDKPaymentConfirmationLN, NDKZapConfirmationLN } from "./ln";
+import type { NDKZapConfirmationCashu, CashuPaymentInfo, NDKPaymentConfirmationCashu } from "./nip61";
 import { NDKRelaySet } from "../relay/sets";
 
 const d = createDebug("ndk:zapper");
@@ -75,7 +75,7 @@ export type LnPayCb = (
 ) => Promise<NDKPaymentConfirmationLN | undefined>;
 export type CashuPayCb = (
     payment: NDKZapDetails<CashuPaymentInfo>
-) => Promise<NDKPaymentConfirmationCashu | Error>;
+) => Promise<NDKPaymentConfirmationCashu | undefined>;
 
 /**
  *
@@ -108,7 +108,9 @@ class NDKZapper extends EventEmitter<{
      * in any of the provided mints and return the proofs and mint used.
      */
     public onCashuPay?: CashuPayCb;
-    public onComplete?: (results: Map<NDKZapSplit, NDKPaymentConfirmation | Error | undefined>) => void;
+    public onComplete?: (
+        results: Map<NDKZapSplit, NDKPaymentConfirmation | Error | undefined>
+    ) => void;
 
     public maxRelays = 3;
 
@@ -165,7 +167,7 @@ class NDKZapper extends EventEmitter<{
     }
 
     async zapSplit(split: NDKZapSplit): Promise<NDKPaymentConfirmation | undefined> {
-        let zapped = false;
+        const zapped = false;
         let zapMethods = await this.getZapMethods(this.ndk, split.pubkey);
         let retVal: NDKPaymentConfirmation | Error | undefined;
 
@@ -195,7 +197,7 @@ class NDKZapper extends EventEmitter<{
                 switch (zapMethod.type) {
                     case "nip61": {
                         const data = zapMethod.data as CashuPaymentInfo;
-                        let ret: NDKPaymentConfirmationCashu | Error;
+                        let ret: NDKPaymentConfirmationCashu | undefined;
                         ret = await this.onCashuPay!({
                             target: this.target,
                             comment: this.comment,
@@ -224,7 +226,7 @@ class NDKZapper extends EventEmitter<{
 
                             // we have a confirmation, generate the nutzap
                             const nutzap = new NDKNutzap(this.ndk);
-                            nutzap.tags = [ ...nutzap.tags, ...(this.tags || []) ];
+                            nutzap.tags = [...nutzap.tags, ...(this.tags || [])];
                             nutzap.proofs = proofs;
                             nutzap.mint = mint;
                             nutzap.comment = this.comment;
@@ -279,9 +281,16 @@ class NDKZapper extends EventEmitter<{
                     }
                 }
             } catch (e: any) {
-                if (e instanceof Error) retVal = e
-                else retVal = new Error(e)
-                d("Error zapping to %s with %d %s using %s: %o", split.pubkey, split.amount, this.unit, zapMethod.type, e);
+                if (e instanceof Error) retVal = e;
+                else retVal = new Error(e);
+                d(
+                    "Error zapping to %s with %d %s using %s: %o",
+                    split.pubkey,
+                    split.amount,
+                    this.unit,
+                    zapMethod.type,
+                    e
+                );
             }
         }
 

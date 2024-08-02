@@ -1,6 +1,8 @@
 import debug from "debug";
-import NDK, { Hexpubkey, NDKEvent, NDKKind, NDKUser, NostrEvent } from "../../../index.js";
-import { Proof } from "./proof.js";
+import type { Hexpubkey, NostrEvent } from "../../../index.js";
+import type NDK from "../../../index.js";
+import { NDKEvent, NDKKind, NDKUser } from "../../../index.js";
+import type { Proof } from "./proof.js";
 
 /**
  * Represents a NIP-61 nutzap
@@ -116,7 +118,7 @@ export class NDKNutzap extends NDKEvent {
         return this.tagValue("unit") ?? "msat";
     }
 
-    set unit(value: string | undefined) { 
+    set unit(value: string | undefined) {
         this.removeTag("unit");
         if (value) this.tag(["unit", value]);
     }

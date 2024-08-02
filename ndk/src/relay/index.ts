@@ -247,10 +247,6 @@ export class NDKRelay extends EventEmitter<{
         return [["r", this.url]];
     }
 
-    // public activeSubscriptions(): Map<NDKFilter[], NDKSubscription[]> {
-    //     // return this.subs.executedFilters();
-    // }
-
     public addValidatedEvent(): void {
         this.validatedEventCount++;
     }

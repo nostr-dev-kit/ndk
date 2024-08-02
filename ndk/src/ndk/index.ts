@@ -25,9 +25,17 @@ import { Queue } from "./queue/index.js";
 import { signatureVerificationInit } from "../events/signature.js";
 import { NDKSubscriptionManager } from "../subscription/manager.js";
 import { setActiveUser } from "./active-user.js";
-import { CashuPayCb, LnPayCb, NDKPaymentConfirmation, NDKZapConfirmation, NDKZapper, NDKZapSplit } from "../zapper/index.js";
+import type {
+    CashuPayCb,
+    LnPayCb,
+    NDKPaymentConfirmation,
+    NDKZapSplit} from "../zapper/index.js";
+import {
+    NDKZapConfirmation,
+    NDKZapper
+} from "../zapper/index.js";
 import type { NostrEvent } from "nostr-tools";
-import { NDKLnUrlData } from "../zapper/ln.js";
+import type { NDKLnUrlData } from "../zapper/ln.js";
 
 export type NDKValidationRatioFn = (
     relay: NDKRelay,
@@ -38,7 +46,9 @@ export type NDKValidationRatioFn = (
 export interface NDKWalletConfig {
     onLnPay?: LnPayCb;
     onCashuPay?: CashuPayCb;
-    onPaymentComplete: (results: Map<NDKZapSplit, NDKPaymentConfirmation | Error | undefined>) => void;
+    onPaymentComplete: (
+        results: Map<NDKZapSplit, NDKPaymentConfirmation | Error | undefined>
+    ) => void;
 }
 
 export interface NDKConstructorParams {
@@ -737,7 +747,9 @@ export class NDK extends EventEmitter<{
             tags?: NDKTag[];
             onLnPay?: LnPayCb | false;
             onCashuPay?: CashuPayCb | false;
-            onComplete?: (results: Map<NDKZapSplit, NDKPaymentConfirmation | Error | undefined>) => void;
+            onComplete?: (
+                results: Map<NDKZapSplit, NDKPaymentConfirmation | Error | undefined>
+            ) => void;
             signer?: NDKSigner;
         }
     ): NDKZapper {

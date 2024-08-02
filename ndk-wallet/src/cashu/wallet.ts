@@ -13,7 +13,7 @@ import {
     NDKPrivateKeySigner,
     NDKRelaySet
 } from "@nostr-dev-kit/ndk";
-import type { NostrEvent } from "nostr-tools";
+import type { NostrEvent } from "@nostr-dev-kit/ndk";
 import { NDKCashuToken, proofsTotalBalance } from "./token.js";
 import { NDKCashuDeposit } from "./deposit.js";
 import createDebug from "debug";
@@ -218,15 +218,10 @@ export class NDKCashuWallet extends NDKEvent {
         return this.tags.some((t) => t[0] === "deleted");
     }
 
-    public async publish(
-        relaySet?: NDKRelaySet,
-        timeoutMs?: number,
-        requiredRelayCount?: number
-    ): Promise<Set<NDKRelay>> {
-        if (this.isDeleted) {
-            return super.publish(relaySet, timeoutMs, requiredRelayCount);
-        }
-
+    async toNostrEvent(pubkey?: string): Promise<NostrEvent> {
+        if (this.isDeleted)
+            return super.toNostrEvent(pubkey) as unknown as NostrEvent;
+        
         // if we haven't been instructed to skip the private key
         // and we don't have one, generate it
         if (!this.skipPrivateKey && !this.privkey) {
@@ -249,7 +244,7 @@ export class NDKCashuWallet extends NDKEvent {
         const user = await this.ndk!.signer!.user();
         await this.encrypt(user);
 
-        return super.publish(relaySet, timeoutMs, requiredRelayCount);
+        return super.toNostrEvent(pubkey) as unknown as NostrEvent;
     }
 
     get relaySet(): NDKRelaySet | undefined {

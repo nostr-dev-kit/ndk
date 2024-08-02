@@ -96,6 +96,8 @@ export async function payLn(this: NDKCashuPay, useMint?: MintUrl): Promise<strin
         this.debug({foundMint})
 
         if (!foundMint) {
+            this.wallet.emit("insufficient_balance", {amount, pr: data.pr});
+            
             this.debug("no mint with sufficient balance found");
             reject("no mint with sufficient balance found");
         }

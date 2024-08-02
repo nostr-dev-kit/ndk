@@ -37,7 +37,7 @@ export class NDKRelayConnectivity {
     private ndk?: NDK;
     public openSubs: Map<string, NDKRelaySubscription> = new Map();
     private openCountRequests = new Map<string, CountResolver>();
-    private openEventPublishes = new Map<string, EventPublishResolver>();
+    private openEventPublishes = new Map<string, EventPublishResolver[]>();
     private serial: number = 0;
     public baseEoseTimeout: number = 4_400;
 
@@ -222,15 +222,22 @@ export class NDKRelayConnectivity {
                 case "OK": {
                     const ok: boolean = data[2];
                     const reason: string = data[3];
-                    const ep = this.openEventPublishes.get(id) as EventPublishResolver;
-                    if (ok) {
-                        if (!ep) {
-                            this.debug("Received OK for unknown event publish", id);
-                            return;
-                        }
-                        ep.resolve(reason);
-                    } else ep.reject(new Error(reason));
-                    this.openEventPublishes.delete(id);
+                    const ep = this.openEventPublishes.get(id) as EventPublishResolver[] | undefined;
+                    const firstEp = ep?.pop();
+
+                    if (!ep || !firstEp) {
+                        this.debug("Received OK for unknown event publish", id);
+                        return;
+                    }
+
+                    if (ok) firstEp.resolve(reason);
+                    else firstEp.reject(new Error(reason));
+
+                    if (ep.length === 0) {
+                        this.openEventPublishes.delete(id);
+                    } else {
+                        this.openEventPublishes.set(id, ep);
+                    }
                     return;
                 }
                 case "CLOSED": {
@@ -469,7 +476,6 @@ export class NDKRelayConnectivity {
                 `Not connected to ${this.ndkRelay.url} (%d), not sending message ${message}`,
                 this._status
             );
-            throw new Error("Attempting to send on a closed relay connection");
         }
     }
 
@@ -481,7 +487,9 @@ export class NDKRelayConnectivity {
      */
     private async auth(event: NDKEvent): Promise<string> {
         const ret = new Promise<string>((resolve, reject) => {
-            this.openEventPublishes.set(event.id, { resolve, reject });
+            const val = this.openEventPublishes.get(event.id) ?? [];
+            val.push({ resolve, reject });
+            this.openEventPublishes.set(event.id, val);
         });
         this.send('["AUTH",' + JSON.stringify(event.rawEvent()) + "]");
         return ret;
@@ -496,7 +504,13 @@ export class NDKRelayConnectivity {
      */
     public async publish(event: NostrEvent): Promise<string> {
         const ret = new Promise<string>((resolve, reject) => {
-            this.openEventPublishes.set(event.id!, { resolve, reject });
+            const val = this.openEventPublishes.get(event.id!) ?? [];
+            if (val.length > 0) {
+                console.warn("Duplicate event publishing detected, you are publishing event "+event.id!+" twice");
+            }
+
+            val.push({ resolve, reject });
+            this.openEventPublishes.set(event.id!, val);
         });
         this.send('["EVENT",' + JSON.stringify(event) + "]");
         return ret;

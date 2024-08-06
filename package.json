@@ -26,7 +26,7 @@
     "vitepress": "^1.2.3",
     "vitepress-plugin-mermaid": "^2.0.16"
   },
-  "packageManager": "pnpm@8.15.6",
+  
   "engines": {
     "node": ">=16.0"
   }

@@ -51,6 +51,8 @@ export interface NDKWalletConfig {
     ) => void;
 }
 
+export * from './fetch-geospatial.js';
+
 export interface NDKConstructorParams {
     /**
      * Relays we should explicitly connect to
@@ -410,8 +412,7 @@ export class NDK extends EventEmitter<{
 
     public set signer(newSigner: NDKSigner | undefined) {
         this._signer = newSigner;
-        if (newSigner) this.emit("signer:ready", newSigner);
-
+        this.emit("signer:ready", newSigner);
         newSigner?.user().then((user) => {
             user.ndk = this;
             this.activeUser = user;

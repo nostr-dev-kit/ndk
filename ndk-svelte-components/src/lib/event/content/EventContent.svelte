@@ -10,6 +10,7 @@
     import Kind30000 from "./Kind30000.svelte";
     import Kind30001 from "./Kind30001.svelte";
     import Kind30023 from "./Kind30023.svelte";
+    import Kind30818 from "./Kind30818.svelte";
     import type { SvelteComponent } from "svelte";
     import type { MarkedExtension } from "marked";
     import type { UrlFactory, UrlType } from "$lib";
@@ -44,7 +45,7 @@
      */
     export let content = event?.content;
 
-    const markdownKinds = [ NDKKind.Article, 30041, NDKKind.Wiki ]
+    const markdownKinds = [ NDKKind.Article, 30041 ]
 </script>
 
 {#if event}
@@ -72,6 +73,14 @@
             on:click
             class={$$props.class}
             {markedExtensions}
+        />
+    {:else if event.kind === 30818}
+        <Kind30818
+            {ndk}
+            {event}
+            {...$$props}
+            on:click
+            class={$$props.class}
         />
     {:else}
         <Kind1

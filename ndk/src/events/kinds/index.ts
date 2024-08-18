@@ -78,6 +78,7 @@ export enum NDKKind {
     InterestList = 10015,
     CashuMintList = 10019,
     EmojiList = 10030,
+    DirectMessageReceiveRelayList = 10050,
 
     BlossomList = 10063,
 
@@ -159,6 +160,7 @@ export const NDKListKinds = [
     NDKKind.SearchRelayList,
     NDKKind.InterestList,
     NDKKind.EmojiList,
+    NDKKind.DirectMessageReceiveRelayList,
     NDKKind.FollowSet,
     NDKKind.BookmarkSet,
     NDKKind.CategorizedBookmarkList, // Backwards compatibility

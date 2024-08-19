@@ -23,6 +23,7 @@ export type ExtendedBaseType<T extends NDKEvent> = T & {
 };
 
 export type NDKEventStore<T extends NDKEvent> = Writable<ExtendedBaseType<T>[]> & {
+    id: string,
     filters: NDKFilter[] | undefined;
     refCount: number;
     subscription: NDKSubscription | undefined;
@@ -78,6 +79,7 @@ class NDKSvelte extends NDK {
     private createEventStore<T extends NDKEvent>(filters?: NDKFilter[]): NDKEventStore<T> {
         const store = writable<T[]>([]) as NDKEventStore<T>;
         return {
+            id: Math.random().toString(36).substring(7),
             refCount: 0,
             filters,
             subscription: undefined,
@@ -119,8 +121,7 @@ class NDKSvelte extends NDK {
         opts?: NDKSubscribeOptions,
         klass?: ClassWithConvertFunction<T>
     ): NDKEventStore<ExtendedBaseType<T>> {
-        let eventIds: Set<string> = new Set();
-        let events: ExtendedBaseType<T>[] = [];
+        let events: Map<string, ExtendedBaseType<T>> = new Map();
         const store = this.createEventStore<ExtendedBaseType<T>>(
             Array.isArray(filters) ? filters : [filters]
         );
@@ -130,6 +131,10 @@ class NDKSvelte extends NDK {
         const handleEventLabel = (event: NDKEvent) => {
             handleEventReposts(event);
         };
+
+        const getEventArrayFromMap = () => {
+            return Array.from(events.values());
+        }
 
         /**
          * Called when a repost event is identified. It either adds the repost event
@@ -149,11 +154,11 @@ class NDKSvelte extends NDK {
                     repostedEvent.repostedByEvents = [event];
                 }
 
-                store.set(events);
+                store.set(getEventArrayFromMap());
             };
 
             for (const repostedEventId of _repostEvent.repostedEventIds()) {
-                const repostedEvent = events.find((e) => e.id === repostedEventId);
+                const repostedEvent = events.get(repostedEventId);
 
                 if (repostedEvent) {
                     addRepostToExistingEvent(repostedEvent);
@@ -203,36 +208,25 @@ class NDKSvelte extends NDK {
             e.ndk = this;
             
             const dedupKey = event.deduplicationKey();
-            
-            if (eventIds.has(dedupKey)) {
-                const prevEvent = events.find((e) => e.deduplicationKey() === dedupKey);
 
-                if (prevEvent) {
-                    if (prevEvent.created_at! < event.created_at!) {
-                        // remove the previous event
-                        const index = events.findIndex((e) => e.deduplicationKey() === dedupKey);
-                        events.splice(index, 1);
-                    } else if (prevEvent.created_at! === event.created_at! && prevEvent.id !== event.id) {
-                        // we have an event with the same created_at but different id, which might be a bug
-                        // in some relays but take the incoming event anyway
-                        console.warn("Received event with same created_at but different id", { prevId: prevEvent.id, newId: event.id });
-                        const index = events.findIndex((e) => e.deduplicationKey() === dedupKey);
-                        events.splice(index, 1);
-                    }
-                } else {
-                    return;
+            if (events.has(dedupKey)) {
+                let prevEvent = events.get(dedupKey)!;
+
+                // we received an older version
+                if (prevEvent.created_at! > event.created_at!) return;
+
+                // we received the same timestamp
+                if (prevEvent.created_at! === event.created_at!) {
+                    // with same id
+                    if (prevEvent.id === event.id) return
+
+                    console.warn("Received event with same created_at but different id", { prevId: prevEvent.id, newId: event.id, prev: prevEvent.rawEvent(), new: event.rawEvent() });
                 }
             }
-            eventIds.add(dedupKey);
 
-            const index = events.findIndex((e) => e.created_at! < event.created_at!);
-            if (index === -1) {
-                events.push(e as unknown as T);
-            } else {
-                events.splice(index === -1 ? events.length : index, 0, e as unknown as T);
-            }
+            events.set(dedupKey, e as ExtendedBaseType<T>);
 
-            store.set(events);
+            store.set(getEventArrayFromMap());
         };
 
         /**
@@ -270,8 +264,7 @@ class NDKSvelte extends NDK {
          */
         store.empty = () => {
             store.set([]);
-            events = [];
-            eventIds = new Set();
+            events = new Map();
             store.unsubscribe();
         };
 

@@ -257,7 +257,7 @@ _NDK defaults to having the `closeOnEose` flag set to `false`; if you want your 
 -   The `closeOnEose` flag will make the connection close immediately after EOSE is seen.
 
 ```ts
-ndk.subscribe({ kinds: [0], authors: ["..."] }, { closeOnEose: false });
+ndk.subscribe({ kinds: [0], authors: ["..."] }, { closeOnEose: true });
 ```
 
 ## Convenience methods

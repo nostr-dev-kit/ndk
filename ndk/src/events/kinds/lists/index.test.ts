@@ -42,5 +42,10 @@ describe("NDKList", () => {
             list.kind = 10002;
             expect(list.title).toEqual("Relay Metadata");
         });
+
+        it("defaults to `Direct Message Receive Relay List` for kind 10050 events", () => {
+            list.kind = 10050;
+            expect(list.title).toEqual("Direct Message Receive Relays");
+        });
     });
 });

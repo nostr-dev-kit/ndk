@@ -75,6 +75,8 @@ export class NDKList extends NDKEvent {
             return "Blocked Relays";
         } else if (this.kind === NDKKind.SearchRelayList) {
             return "Search Relays";
+        } else if (this.kind === NDKKind.DirectMessageReceiveRelayList) {
+            return "Direct Message Receive Relays";
         } else if (this.kind === NDKKind.InterestList) {
             return "Interests";
         } else if (this.kind === NDKKind.EmojiList) {

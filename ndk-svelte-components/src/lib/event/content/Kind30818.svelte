@@ -24,6 +24,7 @@
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
 <div class="wiki-article {$$props.class??""}" on:click>
     <SvelteAsciidoc
+      supportMarkdownTransition={event.created_at < 1726282800}
       source={content}
       naturalRenderers={{ a: AsciidocWikiLinkOrReferenceComponent}}
       extra={{dispatch, ndk}}

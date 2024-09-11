@@ -16,6 +16,7 @@ NDK is a [nostr](<[url](https://github.com/nostr-protocol/nostr)>) development k
 npm add @nostr-dev-kit/ndk
 ```
 
+
 ## Debugging
 
 NDK uses the `debug` package to assist in understanding what's happening behind the hood. If you are building a package
@@ -92,6 +93,7 @@ You can pass an object with several options to a newly created instance of NDK.
 ```ts
 // Import the package
 import NDK from "@nostr-dev-kit/ndk";
+import "websocket-polyfill";
 
 // Create a new NDK instance with explicit relays
 const ndk = new NDK({

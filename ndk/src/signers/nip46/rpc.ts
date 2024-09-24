@@ -52,8 +52,11 @@ export class NDKNostrRpc extends EventEmitter {
                 groupable: false,
                 cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY,
             },
-            this.relaySet
+            this.relaySet,
+            false
         );
+
+        this.debug("starting subscription");
 
         sub.on("event", async (event: NDKEvent) => {
             try {
@@ -69,7 +72,11 @@ export class NDKNostrRpc extends EventEmitter {
         });
 
         return new Promise((resolve) => {
-            sub.on("eose", () => resolve(sub));
+            sub.on("eose", () => {
+                this.debug('eosed')
+                resolve(sub)
+            });
+            sub.start();
         });
     }
 

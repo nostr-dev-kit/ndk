@@ -498,7 +498,7 @@ export class NDKSubscription extends EventEmitter<{
     private eosed = false;
 
     public eoseReceived(relay: NDKRelay): void {
-        this.debug(`Received EOSE from %s`, relay.url);
+        this.debug("EOSE received from %s", relay.url);
         this.eosesSeen.add(relay);
 
         let lastEventSeen = this.lastEventReceivedAt
@@ -509,9 +509,9 @@ export class NDKSubscription extends EventEmitter<{
         const queryFilled = queryFullyFilled(this);
 
         const performEose = (reason: string) => {
+            this.debug("Performing EOSE: %s %d", reason, this.eosed);
             if (this.eosed) return;
             if (this.eoseTimeout) clearTimeout(this.eoseTimeout);
-            this.debug(`Performing EOSE: ${reason}`);
             this.emit("eose", this);
             this.eosed = true;
 

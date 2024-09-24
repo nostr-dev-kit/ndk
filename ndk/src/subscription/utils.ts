@@ -4,6 +4,7 @@ import { NDKRelay } from "../relay/index.js";
 import type { NDKFilter, NDKSubscription } from "./index.js";
 import type { EventPointer } from "../user/index.js";
 import type { NDK } from "../ndk/index.js";
+import { NDKRelaySet } from "../relay/sets/index.js";
 
 /**
  * Don't generate subscription Ids longer than this amount of characters
@@ -159,6 +160,24 @@ export function filterForEventsTaggingId(id: string): NDKFilter | undefined {
                 return { "#p": [decoded.data] };
         }
     } catch {}
+}
+
+/**
+ * Creates a valid nostr filter from a bech32 encoding along with a relay set (if one is present in the encoding).
+ * @param id Bech32 of the event
+ * @param ndk 
+ * @returns 
+ */
+export function filterAndRelaySetFromBech32(beche2: string, ndk: NDK): { filter: NDKFilter, relaySet?: NDKRelaySet } {
+    const filter = filterFromId(beche2);
+    const relays = relaysFromBech32(beche2, ndk);
+
+    if (relays.length === 0) return { filter };
+
+    return {
+        filter,
+        relaySet: new NDKRelaySet(new Set(relays), ndk),
+    };
 }
 
 /**

@@ -158,7 +158,7 @@ export class NDKRelaySubscription {
                 this.evaluateExecutionPlan(subscription);
                 break;
             case NDKRelaySubscriptionStatus.CLOSED:
-                this.debug("Subscription is closed, cannot add new items");
+                this.debug("Subscription is closed, cannot add new items %o (%o)", subscription, filters);
                 throw new Error("Cannot add new items to a closed subscription");
         }
     }
@@ -306,7 +306,15 @@ export class NDKRelaySubscription {
     private reExecuteAfterAuth = (() => {
         const oldSubId = this.subId;
         this.debug("Re-executing after auth", this.items.size);
-        this.relay.close(this.subId);
+        if (this.eosed) {
+            // we already received eose, so we can immediately close the old subscription
+            // to create the new one
+            this.relay.close(this.subId);
+        } else {
+            // relays don't like to have the subscription close before they eose back,
+            // so wait until we eose before closing the old subscription
+            this.debug("We are abandoning an opened subscription, once it EOSE's, the handler will close it", { oldSubId })
+        }
         this._subId = undefined;
         this.status = NDKRelaySubscriptionStatus.PENDING;
         this.execute();
@@ -349,8 +357,16 @@ export class NDKRelaySubscription {
         }
     }
 
-    public oneose() {
+    public oneose(subId: string) {
         this.eosed = true;
+
+        // if this is a different subId, then it belongs to a previously
+        // created subscription we have abandoned; we can clean it up here
+        if (subId !== this.subId) {
+            this.debug("Received EOSE for an abandoned subscription", subId, this.subId);
+            this.relay.close(subId);
+            return;
+        }
 
         for (const { subscription } of this.items.values()) {
             subscription.eoseReceived(this.relay);
@@ -380,6 +396,10 @@ export class NDKRelaySubscription {
     private compileFilters(): NDKFilter[] {
         const mergedFilters: NDKFilter[] = [];
         const filters = Array.from(this.items.values()).map((item) => item.filters);
+        if (!filters[0]) {
+            this.debug("👀 No filters to merge", this.items);
+            console.trace("No filters to merge");
+        }
         const filterCount = filters[0].length;
 
         for (let i = 0; i < filterCount; i++) {

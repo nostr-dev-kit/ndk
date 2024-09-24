@@ -216,7 +216,7 @@ export class NDKRelayConnectivity {
                 case "EOSE": {
                     const so = this.openSubs.get(id);
                     if (!so) return;
-                    so.oneose();
+                    so.oneose(id);
                     return;
                 }
                 case "OK": {

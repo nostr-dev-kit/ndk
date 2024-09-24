@@ -381,8 +381,8 @@ class NDKZapper extends EventEmitter<{
     async getZapMethods(ndk: NDK, recipient: Hexpubkey): Promise<NDKZapMethodInfo[]> {
         const methods: NDKZapMethod[] = [];
 
-        if (this.onCashuPay) methods.push("nip61");
-        methods.push("nip57"); // we always support nip57
+        methods.push("nip61");
+        methods.push("nip57");
 
         const user = ndk.getUser({ pubkey: recipient });
         const zapInfo = await user.getZapInfo(false, methods);

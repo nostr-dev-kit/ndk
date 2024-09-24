@@ -1,6 +1,6 @@
 import type { NDKEvent, NDKRelay } from "@nostr-dev-kit/ndk";
 import type NDKWalletLifecycle from ".";
-import { NDKCashuWallet, NDKCashuWalletState } from "../../cashu/wallet";
+import { NDKCashuWallet } from "../../cashu/wallet";
 
 function removeDeletedWallet(this: NDKWalletLifecycle, walletId: string) {
     this.wallets.delete(walletId);

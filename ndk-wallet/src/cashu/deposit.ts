@@ -94,7 +94,7 @@ export class NDKCashuDeposit extends EventEmitter<{
         try {
             this.finalized = true;
 
-            const tokenEvent = new NDKCashuToken(this.wallet.ndk);
+            const tokenEvent = new NDKCashuToken(this.wallet.event.ndk);
             tokenEvent.proofs = ret.proofs;
             tokenEvent.mint = this.mint;
             tokenEvent.wallet = this.wallet;

@@ -39,11 +39,13 @@
     "homepage": "https://github.com/nostr-dev-kit/ndk",
     "dependencies": {
         "@cashu/cashu-ts": "1.0.0-rc.9",
+        "@getalby/sdk": "^3.6.1",
         "@nostr-dev-kit/ndk": "workspace:*",
         "debug": "^4.3.4",
         "light-bolt11-decoder": "^3.0.0",
         "tseep": "^1.1.1",
-        "typescript": "^5.4.4"
+        "typescript": "^5.4.4",
+        "webln": "^0.3.2"
     },
     "devDependencies": {
         "@nostr-dev-kit/eslint-config-custom": "workspace:*",
@@ -51,6 +53,7 @@
         "@types/debug": "^4.1.7",
         "@types/jest": "^29.5.5",
         "@types/node": "^18.15.11",
+        "@webbtc/webln-types": "^3.0.0",
         "jest": "^29.7.0",
         "ts-jest": "^29.1.2",
         "ts-node": "^10.9.2",

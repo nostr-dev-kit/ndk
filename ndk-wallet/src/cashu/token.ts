@@ -107,6 +107,6 @@ export class NDKCashuWalletKey extends NDKEvent {
     }
 
     set wallet(wallet: NDKCashuWallet) {
-        this.dTag = wallet.dTag;
+        this.dTag = wallet.walletId;
     }
 }

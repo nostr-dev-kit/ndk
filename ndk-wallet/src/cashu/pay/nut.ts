@@ -2,7 +2,6 @@ import type { Proof } from "@cashu/cashu-ts";
 import { CashuMint, CashuWallet } from "@cashu/cashu-ts";
 import type { MintUrl } from "../mint/utils";
 import type { NDKCashuPay } from "../pay";
-import { findMintsInCommon } from "../pay";
 import { chooseProofsForAmount, rollOverProofs } from "../proofs";
 
 export type NutPayment = { amount: number; unit: string; mints: MintUrl[]; p2pk?: string };
@@ -33,7 +32,7 @@ export async function payNut(
         try {
             const res = await payNutWithMintBalance(this, mintsInCommon);
             return res;
-        } catch (e) {
+        } catch (e: any) {
             this.debug("failed to pay with mints in common: %s %o", e.message, mintsInCommon);
         }
     } else {
@@ -137,4 +136,38 @@ async function payNutWithMintBalance(
 
     pay.debug("failed to pay with any mint");
     throw new Error("failed to find a mint with enough balance");
+}
+
+/**
+ * Finds mints in common in the intersection of the arrays of mints
+ * @example
+ * const user1Mints = ["mint1", "mint2"];
+ * const user2Mints = ["mint2", "mint3"];
+ * const user3Mints = ["mint1", "mint2"];
+ *
+ * findMintsInCommon([user1Mints, user2Mints, user3Mints]);
+ *
+ * // returns ["mint2"]
+ */
+export function findMintsInCommon(mintCollections: string[][]) {
+    const mintCounts = new Map<string, number>();
+
+    for (const mints of mintCollections) {
+        for (const mint of mints) {
+            if (!mintCounts.has(mint)) {
+                mintCounts.set(mint, 1);
+            } else {
+                mintCounts.set(mint, mintCounts.get(mint)! + 1);
+            }
+        }
+    }
+
+    const commonMints: string[] = [];
+    for (const [mint, count] of mintCounts.entries()) {
+        if (count === mintCollections.length) {
+            commonMints.push(mint);
+        }
+    }
+
+    return commonMints;
 }

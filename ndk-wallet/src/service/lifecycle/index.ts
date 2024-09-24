@@ -18,18 +18,19 @@ import handleWalletEvent from "./wallet.js";
 import handleTokenEvent from "./token.js";
 import handleEventDeletion from "./deletion.js";
 import type { NDKCashuWallet} from "../../cashu/wallet.js";
-import { NDKCashuWalletState } from "../../cashu/wallet.js";
 import type { NDKCashuToken } from "../../cashu/token.js";
 import createDebug from "debug";
 import { NDKWalletChange } from "../../cashu/history.js";
 import NutzapHandler from "./nutzap.js";
+import { NDKWalletStatus } from "../../wallet/index.js";
+import NDKWalletService from "../index.js";
 
 /**
  * This class is responsible for managing the lifecycle of a user wallets.
  * It fetches the user wallets, tokens and nutzaps and keeps them up to date.
  */
 class NDKWalletLifecycle {
-    public wallet: NDKWallet;
+    public service: NDKWalletService;
     private sub: NDKSubscription | undefined;
     public eosed = false;
     public ndk: NDK;
@@ -47,8 +48,8 @@ class NDKWalletLifecycle {
 
     public nutzap: NutzapHandler;
 
-    constructor(wallet: NDKWallet, ndk: NDK, user: NDKUser) {
-        this.wallet = wallet;
+    constructor(service: NDKWalletService, ndk: NDK, user: NDKUser) {
+        this.service = service;
         this.ndk = ndk;
         this.user = user;
         this.nutzap = new NutzapHandler(this);
@@ -107,8 +108,8 @@ class NDKWalletLifecycle {
 
     private eoseHandler() {
         this.debug("Loaded wallets", {
-            defaultWallet: this.defaultWallet?.rawEvent(),
-            wallets: Array.from(this.wallets.values()).map((w) => w.rawEvent()),
+            defaultWallet: this.defaultWallet?.event?.rawEvent(),
+            wallets: Array.from(this.wallets.values()).map((w) => w.event?.rawEvent()),
         });
         this.eosed = true;
 
@@ -136,10 +137,13 @@ class NDKWalletLifecycle {
 
         let oldestWalletTimestamp = undefined;
         for (const wallet of this.wallets.values()) {
-            if (!oldestWalletTimestamp || wallet.created_at! > oldestWalletTimestamp) {
-                oldestWalletTimestamp = wallet.created_at!;
+            if (!oldestWalletTimestamp || wallet.event.created_at! > oldestWalletTimestamp) {
+                oldestWalletTimestamp = wallet.event.created_at!;
                 this.debug("oldest wallet timestamp", oldestWalletTimestamp);
             }
+
+            this.service.wallets.push(wallet)
+            this.service.emit("wallet", wallet);
         }
 
         this.debug("oldest wallet timestamp", oldestWalletTimestamp, this.wallets.values());
@@ -171,13 +175,14 @@ class NDKWalletLifecycle {
     private tokensSubEose() {
         this.state = "ready";
         console.log("EMITTING READY");
-        this.wallet.emit("ready");
         this.tokensSubEosed = true;
+        this.service.emit("ready");
+
         this.nutzap.eosed().then(() => {
             // once we finish processing nutzaps
             // we can update the wallet's cached balance
             for (const wallet of this.wallets.values()) {
-                wallet.state = NDKCashuWalletState.READY;
+                wallet.status = NDKWalletStatus.READY;
                 wallet.updateBalance();
             }
         });
@@ -186,7 +191,7 @@ class NDKWalletLifecycle {
     // private handleMintList = handleMintList.bind
 
     public emit(event: string, ...args: any[]) {
-        this.wallet.emit(event as unknown as any, ...args);
+        this.service.emit(event as unknown as any, ...args);
     }
 
     // Sets the default wallet as seen by the mint list

@@ -127,7 +127,7 @@ export async function rollOverProofs(
     if (proofs.usedTokens.length > 0) {
         console.trace("rolling over proofs for mint %s %d tokens", mint, proofs.usedTokens.length);
 
-        const deleteEvent = new NDKEvent(wallet.ndk);
+        const deleteEvent = new NDKEvent(wallet.event.ndk);
         deleteEvent.kind = NDKKind.EventDeletion;
         deleteEvent.tags = [["k", NDKKind.CashuToken.toString()]];
 

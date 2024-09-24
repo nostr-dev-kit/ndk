@@ -72,37 +72,3 @@ export class NDKCashuPay {
     public payNut = payNut.bind(this);
     public payLn = payLn.bind(this);
 }
-
-/**
- * Finds mints in common in the intersection of the arrays of mints
- * @example
- * const user1Mints = ["mint1", "mint2"];
- * const user2Mints = ["mint2", "mint3"];
- * const user3Mints = ["mint1", "mint2"];
- *
- * findMintsInCommon([user1Mints, user2Mints, user3Mints]);
- *
- * // returns ["mint2"]
- */
-export function findMintsInCommon(mintCollections: string[][]) {
-    const mintCounts = new Map<string, number>();
-
-    for (const mints of mintCollections) {
-        for (const mint of mints) {
-            if (!mintCounts.has(mint)) {
-                mintCounts.set(mint, 1);
-            } else {
-                mintCounts.set(mint, mintCounts.get(mint)! + 1);
-            }
-        }
-    }
-
-    const commonMints: string[] = [];
-    for (const [mint, count] of mintCounts.entries()) {
-        if (count === mintCollections.length) {
-            commonMints.push(mint);
-        }
-    }
-
-    return commonMints;
-}

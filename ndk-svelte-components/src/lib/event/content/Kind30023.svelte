@@ -9,18 +9,21 @@
     import NoteContentPerson from "./NoteContentPerson.svelte";
     import { LINK, HTML, NEWLINE, TOPIC, parseContent, LINKCOLLECTION } from "../../utils/notes.js";
     import { markdownToHtml } from "$lib/utils/markdown";
-    import type { SvelteComponent } from "svelte";
+    import type { ComponentType } from "svelte";
     import RenderHtml from "./RenderHtml.svelte";
     import type sanitizeHtml from "sanitize-html";
     import type { MarkedExtension } from "marked";
+    import type { UrlFactory } from "$lib";
 
     export let ndk: NDK;
     export let article: NDKArticle;
     export let showMedia: boolean = true;
     export let content = article.content;
-    export let mediaCollectionComponent: typeof SvelteComponent | undefined = undefined;
+    export let mediaCollectionComponent: ComponentType | undefined = undefined;
     export let sanitizeHtmlOptions: sanitizeHtml.IOptions | undefined = undefined;
+    export let eventCardComponent: ComponentType = EventCard;
     export let markedExtensions: MarkedExtension[] = [];
+    export let urlFactory: UrlFactory;
 
     const htmlContent = markdownToHtml(content, sanitizeHtmlOptions, markedExtensions);
     const parsed = parseContent({ content: htmlContent, tags: article.tags, html: true });
@@ -37,7 +40,7 @@
             <!-- eslint-disable-next-line svelte/no-at-html-tags -->
             {@html value}
         {:else if type === TOPIC}
-            <NoteContentTopic {value} on:click />
+            <NoteContentTopic {value} {urlFactory} on:click />
         {:else if type === LINK}
             <NoteContentLink {value} {showMedia} on:click={() => alert(value)} />
         {:else if type === LINKCOLLECTION}
@@ -50,14 +53,10 @@
                     {/each}
                 </div>
             {/if}
-        {:else if type.match(/^nostr:np(rofile|ub)$/)}
-            <NoteContentPerson {ndk} {value} on:click />
+        {:else if type.match(/^nostr:np(rofile|ub)$/) && value.pubkey}
+            <NoteContentPerson {ndk} {value} {urlFactory} on:click />
         {:else if type.startsWith('nostr:')}
-            {#if showMedia}
-                <EventCard {ndk} id={value.id} relays={value.relays} />
-            {:else}
-                {value.entity}
-            {/if}
+            <svelte:component this={eventCardComponent} {ndk} id={value.id??value.entity} relays={value.relays} />
         {:else}
             <!-- eslint-disable-next-line svelte/no-at-html-tags -->
             <RenderHtml {ndk} content={value} on:click />

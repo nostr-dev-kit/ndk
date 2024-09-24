@@ -72,6 +72,8 @@
             {showMedia}
             on:click
             class={$$props.class}
+            {urlFactory}
+            {eventCardComponent}
             {markedExtensions}
         />
     {:else if event.kind === 30818}

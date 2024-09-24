@@ -30,6 +30,8 @@ export * from "./events/kinds/simple-group/index.js";
 export * from "./events/kinds/simple-group/metadata.js";
 export * from "./events/kinds/simple-group/member-list.js";
 
+export * from "./app-settings/index.js";
+
 export * from "./relay/index.js";
 export * from "./relay/auth-policies.js";
 export * from "./relay/sets/index.js";

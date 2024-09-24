@@ -57,7 +57,7 @@ export async function getNip57ZapSpecFromLud(
         const [name, domain] = lud16.split("@");
         zapEndpoint = `https://${domain}/.well-known/lnurlp/${name}`;
     } else if (lud06) {
-        const { words } = bech32.decode(lud06, 1000);
+        const { words } = bech32.decode(lud06 as `${string}1${string}`, 1000);
         const data = bech32.fromWords(words);
         const utf8Decoder = new TextDecoder("utf-8");
         zapEndpoint = utf8Decoder.decode(data);

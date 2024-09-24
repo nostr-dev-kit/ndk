@@ -181,7 +181,8 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         if (existingValue?.created_at && profile.created_at && existingValue.created_at >= profile.created_at) {
             return;
         }
-        this.profiles.set(pubkey, { pubkey, ...profile });
+        const cachedAt = Math.floor(Date.now() / 1000);
+        this.profiles.set(pubkey, { pubkey, ...profile, cachedAt });
         this.debug("Saved profile for pubkey", pubkey, profile);
     }
 

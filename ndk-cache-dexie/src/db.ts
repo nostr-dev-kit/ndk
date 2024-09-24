@@ -3,6 +3,7 @@ import Dexie, { type Table } from "dexie";
 
 export interface Profile extends NDKUserProfile {
     pubkey: string;
+    cachedAt: number;
 }
 
 export interface Event {

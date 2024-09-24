@@ -5,6 +5,10 @@ import type { Hexpubkey, ProfilePointer } from "../user/index.js";
 import type { NDKUserProfile } from "../user/profile.js";
 import type { NDKLnUrlData } from "../zapper/ln.js";
 
+export type NDKCacheEntry<T> = T & {
+    cachedAt?: number;
+};
+
 export interface NDKCacheAdapter {
     /**
      * Whether this cache adapter is expected to be fast.
@@ -31,7 +35,7 @@ export interface NDKCacheAdapter {
     /**
      * Special purpose
      */
-    fetchProfile?(pubkey: Hexpubkey): Promise<NDKUserProfile | null>;
+    fetchProfile?(pubkey: Hexpubkey): Promise<NDKCacheEntry<NDKUserProfile> | null>;
     saveProfile?(pubkey: Hexpubkey, profile: NDKUserProfile): void;
 
     /**

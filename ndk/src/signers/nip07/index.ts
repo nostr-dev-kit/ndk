@@ -2,7 +2,7 @@ import debug from "debug";
 
 import type { NostrEvent } from "../../events/index.js";
 import { NDKUser } from "../../user/index.js";
-import type { NDKSigner } from "../index.js";
+import { DEFAULT_ENCRYPTION_SCHEME, ENCRYPTION_SCHEMES, type NDKSigner } from "../index.js";
 import { NDKRelay } from "../../relay/index.js";
 import type { NDK } from "../../ndk/index.js";
 
@@ -93,14 +93,48 @@ export class NDKNip07Signer implements NDKSigner {
         return activeRelays.map((url) => new NDKRelay(url, ndk?.relayAuthDefaultPolicy, ndk));
     }
 
-    public async encrypt(recipient: NDKUser, value: string): Promise<string> {
+    public async encrypt(
+        recipient: NDKUser,
+        value: string,
+        type: ENCRYPTION_SCHEMES = DEFAULT_ENCRYPTION_SCHEME
+    ): Promise<string> {
+        if (type === "nip44") {
+            return this.nip44Encrypt(recipient, value);
+        } else {
+            return this.nip04Encrypt(recipient, value);
+        }
+    }
+
+    public async decrypt(
+        sender: NDKUser,
+        value: string,
+        type: ENCRYPTION_SCHEMES = DEFAULT_ENCRYPTION_SCHEME
+    ): Promise<string> {
+        if (type === "nip44") {
+            return this.nip44Decrypt(sender, value);
+        } else {
+            return this.nip04Decrypt(sender, value);
+        }
+    }
+
+    public async nip44Encrypt(recipient: NDKUser, value: string): Promise<string> {
+        await this.waitForExtension();
+        return await window.nostr!.nip44!.encrypt(recipient.pubkey, value);
+    }
+
+    public async nip44Decrypt(sender: NDKUser, value: string): Promise<string> {
+        await this.waitForExtension();
+        return await window.nostr!.nip44!.decrypt(sender.pubkey, value);
+    }
+
+    public async nip04Encrypt(recipient: NDKUser, value: string): Promise<string> {
         await this.waitForExtension();
 
         const recipientHexPubKey = recipient.pubkey;
         return this.queueNip04("encrypt", recipientHexPubKey, value);
     }
 
-    public async decrypt(sender: NDKUser, value: string): Promise<string> {
+    public async nip04Decrypt(sender: NDKUser, value: string): Promise<string> {
         await this.waitForExtension();
 
         const senderHexPubKey = sender.pubkey;
@@ -205,6 +239,10 @@ declare global {
             signEvent(event: NostrEvent): Promise<{ sig: string }>;
             getRelays?: () => Promise<Nip07RelayMap>;
             nip04?: {
+                encrypt(recipientHexPubKey: string, value: string): Promise<string>;
+                decrypt(senderHexPubKey: string, value: string): Promise<string>;
+            };
+            nip44?: {
                 encrypt(recipientHexPubKey: string, value: string): Promise<string>;
                 decrypt(senderHexPubKey: string, value: string): Promise<string>;
             };

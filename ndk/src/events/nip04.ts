@@ -1,11 +1,12 @@
-import type { NDKSigner } from "../signers";
+import { DEFAULT_ENCRYPTION_SCHEME, ENCRYPTION_SCHEMES, type NDKSigner } from "../signers";
 import type { NDKUser } from "../user";
 import type { NDKEvent } from "./index.js";
 
 export async function encrypt(
     this: NDKEvent,
     recipient?: NDKUser,
-    signer?: NDKSigner
+    signer?: NDKSigner,
+    type: ENCRYPTION_SCHEMES = DEFAULT_ENCRYPTION_SCHEME
 ): Promise<void> {
     if (!this.ndk) throw new Error("No NDK instance found!");
     if (!signer) {
@@ -24,10 +25,10 @@ export async function encrypt(
         recipient = this.ndk.getUser({ pubkey: pTags[0][1] });
     }
 
-    this.content = (await signer?.encrypt(recipient, this.content)) as string;
+    this.content = (await signer?.encrypt(recipient, this.content, type)) as string;
 }
 
-export async function decrypt(this: NDKEvent, sender?: NDKUser, signer?: NDKSigner): Promise<void> {
+export async function decrypt(this: NDKEvent, sender?: NDKUser, signer?: NDKSigner, type: ENCRYPTION_SCHEMES = DEFAULT_ENCRYPTION_SCHEME): Promise<void> {
     if (!this.ndk) throw new Error("No NDK instance found!");
     if (!signer) {
         await this.ndk.assertSigner();
@@ -37,5 +38,5 @@ export async function decrypt(this: NDKEvent, sender?: NDKUser, signer?: NDKSign
         sender = this.author;
     }
 
-    this.content = (await signer?.decrypt(sender, this.content)) as string;
+    this.content = (await signer?.decrypt(sender, this.content, type)) as string;
 }

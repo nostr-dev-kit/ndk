@@ -6,6 +6,7 @@ import { NDKSubscription } from "../subscription";
 import { NDKUser } from "../user";
 import { NDKRelaySet } from "../relay/sets";
 import { NDKPrivateKeySigner } from "../signers/private-key";
+import { NIP73EntityType } from "./nip73";
 
 describe("NDKEvent", () => {
     let ndk: NDK;
@@ -346,6 +347,90 @@ describe("NDKEvent", () => {
             expect(() => event2.replaceableDTag()).toThrowError(
                 "Event is not a parameterized replaceable event"
             );
+        });
+    });
+
+    describe("tagExternal", () => {
+        it("correctly tags a URL", () => {
+            const event = new NDKEvent(ndk);
+            event.tagExternal("https://example.com/article/123#nostr", "url");
+
+            expect(event.tags).toContainEqual(["i", "https://example.com/article/123"]);
+            expect(event.tags).toContainEqual(["k", "https://example.com"]);
+        });
+
+        it("correctly tags a hashtag", () => {
+            const event = new NDKEvent(ndk);
+            event.tagExternal("NostrTest", "hashtag");
+
+            expect(event.tags).toContainEqual(["i", "#nostrtest"]);
+            expect(event.tags).toContainEqual(["k", "#"]);
+        });
+
+        it("correctly tags a geohash", () => {
+            const event = new NDKEvent(ndk);
+            event.tagExternal("u4pruydqqvj", "geohash");
+
+            expect(event.tags).toContainEqual(["i", "geo:u4pruydqqvj"]);
+            expect(event.tags).toContainEqual(["k", "geo"]);
+        });
+
+        it("correctly tags an ISBN", () => {
+            const event = new NDKEvent(ndk);
+            event.tagExternal("978-3-16-148410-0", "isbn");
+
+            expect(event.tags).toContainEqual(["i", "isbn:9783161484100"]);
+            expect(event.tags).toContainEqual(["k", "isbn"]);
+        });
+
+        it("correctly tags a podcast GUID", () => {
+            const event = new NDKEvent(ndk);
+            event.tagExternal("e32b4890-b9ea-4aef-a0bf-54b787833dc5", "podcast:guid");
+
+            expect(event.tags).toContainEqual([
+                "i",
+                "podcast:guid:e32b4890-b9ea-4aef-a0bf-54b787833dc5",
+            ]);
+            expect(event.tags).toContainEqual(["k", "podcast:guid"]);
+        });
+
+        it("correctly tags an ISAN", () => {
+            const event = new NDKEvent(ndk);
+            event.tagExternal("1881-66C7-3420-0000-7-9F3A-0245-U", "isan");
+
+            expect(event.tags).toContainEqual(["i", "isan:1881-66C7-3420-0000"]);
+            expect(event.tags).toContainEqual(["k", "isan"]);
+        });
+
+        it("correctly tags a DOI", () => {
+            const event = new NDKEvent(ndk);
+            event.tagExternal("10.1000/182", "doi");
+
+            expect(event.tags).toContainEqual(["i", "doi:10.1000/182"]);
+            expect(event.tags).toContainEqual(["k", "doi"]);
+        });
+
+        it("adds a marker URL when provided", () => {
+            const event = new NDKEvent(ndk);
+            event.tagExternal(
+                "e32b4890-b9ea-4aef-a0bf-54b787833dc5",
+                "podcast:guid",
+                "https://example.com/marker"
+            );
+
+            expect(event.tags).toContainEqual([
+                "i",
+                "podcast:guid:e32b4890-b9ea-4aef-a0bf-54b787833dc5",
+                "https://example.com/marker",
+            ]);
+            expect(event.tags).toContainEqual(["k", "podcast:guid"]);
+        });
+
+        it("throws an error for unsupported entity types", () => {
+            const event = new NDKEvent(ndk);
+            expect(() => {
+                event.tagExternal("test", "unsupported" as NIP73EntityType);
+            }).toThrow("Unsupported NIP-73 entity type: unsupported");
         });
     });
 });

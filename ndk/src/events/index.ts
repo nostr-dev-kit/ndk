@@ -17,6 +17,7 @@ import { fetchReplyEvent, fetchRootEvent, fetchTaggedEvent } from "./fetch-tagge
 import { type NDKEventSerialized, deserialize, serialize } from "./serializer.js";
 import { validate, verifySignature, getEventHash } from "./validation.js";
 import { matchFilter } from "nostr-tools";
+import { NIP73EntityType } from "./nip73.js";
 
 const skipClientTagOnKinds = [NDKKind.Contacts];
 
@@ -137,6 +138,81 @@ export class NDKEvent extends EventEmitter {
         const user = this.ndk.getUser({ pubkey: this.pubkey });
         this._author = user;
         return user;
+    }
+
+    /**
+     * NIP-73 tagging of external entities
+     * @param entity to be tagged
+     * @param type of the entity
+     * @param markerUrl to be used as the marker URL
+     *
+     * @example
+     * ```typescript
+     * event.tagExternal("https://example.com/article/123#nostr", "url");
+     * event.tags => [["i", "https://example.com/123"], ["k", "https://example.com"]]
+     * ```
+     *
+     * @example tag a podcast:item:guid
+     * ```typescript
+     * event.tagExternal("e32b4890-b9ea-4aef-a0bf-54b787833dc5", "podcast:item:guid");
+     * event.tags => [["i", "podcast:item:guid:e32b4890-b9ea-4aef-a0bf-54b787833dc5"], ["k", "podcast:item:guid"]]
+     * ```
+     *
+     * @see https://github.com/nostr-protocol/nips/blob/master/73.md
+     */
+    public tagExternal(entity: string, type: NIP73EntityType, markerUrl?: string) {
+        let iTag: NDKTag = ["i"];
+        let kTag: NDKTag = ["k"];
+
+        switch (type) {
+            case "url":
+                const url = new URL(entity);
+                url.hash = ""; // Remove the fragment
+                iTag.push(url.toString());
+                kTag.push(`${url.protocol}//${url.host}`);
+                break;
+            case "hashtag":
+                iTag.push(`#${entity.toLowerCase()}`);
+                kTag.push("#");
+                break;
+            case "geohash":
+                iTag.push(`geo:${entity.toLowerCase()}`);
+                kTag.push("geo");
+                break;
+            case "isbn":
+                iTag.push(`isbn:${entity.replace(/-/g, "")}`);
+                kTag.push("isbn");
+                break;
+            case "podcast:guid":
+                iTag.push(`podcast:guid:${entity}`);
+                kTag.push("podcast:guid");
+                break;
+            case "podcast:item:guid":
+                iTag.push(`podcast:item:guid:${entity}`);
+                kTag.push("podcast:item:guid");
+                break;
+            case "podcast:publisher:guid":
+                iTag.push(`podcast:publisher:guid:${entity}`);
+                kTag.push("podcast:publisher:guid");
+                break;
+            case "isan":
+                iTag.push(`isan:${entity.split("-").slice(0, 4).join("-")}`);
+                kTag.push("isan");
+                break;
+            case "doi":
+                iTag.push(`doi:${entity.toLowerCase()}`);
+                kTag.push("doi");
+                break;
+            default:
+                throw new Error(`Unsupported NIP-73 entity type: ${type}`);
+        }
+
+        if (markerUrl) {
+            iTag.push(markerUrl);
+        }
+
+        this.tags.push(iTag);
+        this.tags.push(kTag);
     }
 
     /**

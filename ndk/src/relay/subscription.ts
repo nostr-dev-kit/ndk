@@ -158,7 +158,11 @@ export class NDKRelaySubscription {
                 this.evaluateExecutionPlan(subscription);
                 break;
             case NDKRelaySubscriptionStatus.CLOSED:
-                this.debug("Subscription is closed, cannot add new items %o (%o)", subscription, filters);
+                this.debug(
+                    "Subscription is closed, cannot add new items %o (%o)",
+                    subscription,
+                    filters
+                );
                 throw new Error("Cannot add new items to a closed subscription");
         }
     }
@@ -313,7 +317,10 @@ export class NDKRelaySubscription {
         } else {
             // relays don't like to have the subscription close before they eose back,
             // so wait until we eose before closing the old subscription
-            this.debug("We are abandoning an opened subscription, once it EOSE's, the handler will close it", { oldSubId })
+            this.debug(
+                "We are abandoning an opened subscription, once it EOSE's, the handler will close it",
+                { oldSubId }
+            );
         }
         this._subId = undefined;
         this.status = NDKRelaySubscriptionStatus.PENDING;

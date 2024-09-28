@@ -1,9 +1,9 @@
 import type { UnsignedEvent } from "nostr-tools";
-import { generateSecretKey, getPublicKey, finalizeEvent, nip04 } from "nostr-tools";
+import { generateSecretKey, getPublicKey, finalizeEvent, nip04, nip44 } from "nostr-tools";
 
 import type { NostrEvent } from "../../events/index.js";
 import { NDKUser } from "../../user";
-import type { NDKSigner } from "../index.js";
+import { DEFAULT_ENCRYPTION_SCHEME, ENCRYPTION_SCHEMES, type NDKSigner } from "../index.js";
 import { bytesToHex, hexToBytes } from "@noble/hashes/utils";
 import { nip19 } from "nostr-tools";
 
@@ -68,7 +68,58 @@ export class NDKPrivateKeySigner implements NDKSigner {
         return finalizeEvent(event as UnsignedEvent, this._privateKey).sig;
     }
 
-    public async encrypt(recipient: NDKUser, value: string): Promise<string> {
+    private getConversationKey(recipient: NDKUser): Uint8Array {
+        if (!this._privateKey) {
+            throw Error("Attempted to get conversation key without a private key");
+        }
+
+        const recipientHexPubKey = recipient.pubkey;
+        return nip44.getConversationKey(this._privateKey, recipientHexPubKey);
+    }
+
+    public async nip44Encrypt(recipient: NDKUser, value: string): Promise<string> {
+        const conversationKey = this.getConversationKey(recipient);
+        return await nip44.encrypt(value, conversationKey);
+    }
+
+    public async nip44Decrypt(sender: NDKUser, value: string): Promise<string> {
+        const conversationKey = this.getConversationKey(sender);
+        return await nip44.decrypt(value, conversationKey);
+    }
+
+    /**
+     * This method is deprecated and will be removed in a future release, for compatibility
+     * this function calls nip04Encrypt.
+     */
+    public async encrypt(
+        recipient: NDKUser,
+        value: string,
+        type: ENCRYPTION_SCHEMES = DEFAULT_ENCRYPTION_SCHEME
+    ): Promise<string> {
+        if (type === "nip44") {
+            return this.nip44Encrypt(recipient, value);
+        } else {
+            return this.nip04Encrypt(recipient, value);
+        }
+    }
+
+    /**
+     * This method is deprecated and will be removed in a future release, for compatibility
+     * this function calls nip04Decrypt.
+     */
+    public async decrypt(
+        sender: NDKUser,
+        value: string,
+        type: ENCRYPTION_SCHEMES = DEFAULT_ENCRYPTION_SCHEME
+    ): Promise<string> {
+        if (type === "nip44") {
+            return this.nip44Decrypt(sender, value);
+        } else {
+            return this.nip04Decrypt(sender, value);
+        }
+    }
+
+    public async nip04Encrypt(recipient: NDKUser, value: string): Promise<string> {
         if (!this._privateKey) {
             throw Error("Attempted to encrypt without a private key");
         }
@@ -77,7 +128,7 @@ export class NDKPrivateKeySigner implements NDKSigner {
         return await nip04.encrypt(this._privateKey, recipientHexPubKey, value);
     }
 
-    public async decrypt(sender: NDKUser, value: string): Promise<string> {
+    public async nip04Decrypt(sender: NDKUser, value: string): Promise<string> {
         if (!this._privateKey) {
             throw Error("Attempted to decrypt without a private key");
         }

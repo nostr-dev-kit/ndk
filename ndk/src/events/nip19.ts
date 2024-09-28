@@ -2,10 +2,7 @@ import { nip19 } from "nostr-tools";
 
 import type { NDKEvent } from "./index.js";
 
-export function encode(
-    this: NDKEvent,
-    maxRelayCount: number = 5
-): string {
+export function encode(this: NDKEvent, maxRelayCount: number = 5): string {
     let relays: string[] = [];
 
     if (this.onRelays.length > 0) {

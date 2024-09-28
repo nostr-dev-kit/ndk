@@ -1,6 +1,6 @@
 import type { NostrEvent } from "nostr-tools";
 import { nip57 } from "nostr-tools";
-import type { NDKTag} from "../events";
+import type { NDKTag } from "../events";
 import { NDKEvent } from "../events";
 import type { NDKSigner } from "../signers";
 import type { NDKUser } from "../user";

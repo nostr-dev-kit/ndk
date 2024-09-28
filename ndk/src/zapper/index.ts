@@ -10,8 +10,17 @@ import { getRelayListForUsers } from "../utils/get-users-relay-list";
 import { EventEmitter } from "tseep";
 import { generateZapRequest } from "./nip57";
 import { NDKNutzap } from "../events/kinds/nutzap";
-import type { LnPaymentInfo, NDKLnUrlData, NDKPaymentConfirmationLN, NDKZapConfirmationLN } from "./ln";
-import type { NDKZapConfirmationCashu, CashuPaymentInfo, NDKPaymentConfirmationCashu } from "./nip61";
+import type {
+    LnPaymentInfo,
+    NDKLnUrlData,
+    NDKPaymentConfirmationLN,
+    NDKZapConfirmationLN,
+} from "./ln";
+import type {
+    NDKZapConfirmationCashu,
+    CashuPaymentInfo,
+    NDKPaymentConfirmationCashu,
+} from "./nip61";
 import { NDKRelaySet } from "../relay/sets";
 
 const d = createDebug("ndk:zapper");

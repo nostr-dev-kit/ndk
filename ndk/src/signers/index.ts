@@ -3,6 +3,9 @@ import type { NDK } from "../ndk/index.js";
 import type { NDKRelay } from "../relay/index.js";
 import type { NDKUser } from "../user";
 
+export type ENCRYPTION_SCHEMES = "nip04" | "nip44";
+export const DEFAULT_ENCRYPTION_SCHEME: ENCRYPTION_SCHEMES = "nip04";
+
 /**
  * Interface for NDK signers.
  */
@@ -36,12 +39,35 @@ export interface NDKSigner {
      * Encrypts the given Nostr event for the given recipient.
      * @param value - The value to be encrypted.
      * @param recipient - The recipient of the encrypted value.
+     * @param type - The encryption scheme to use. Defaults to "nip04".
      */
-    encrypt(recipient: NDKUser, value: string): Promise<string>;
+    encrypt(recipient: NDKUser, value: string, type?: ENCRYPTION_SCHEMES): Promise<string>;
 
     /**
      * Decrypts the given value.
      * @param value
+     * @param sender
+     * @param type - The encryption scheme to use. Defaults to "nip04".
      */
-    decrypt(sender: NDKUser, value: string): Promise<string>;
+    decrypt(sender: NDKUser, value: string, type?: ENCRYPTION_SCHEMES): Promise<string>;
+
+    /**
+     * @deprecated use nip44Encrypt instead
+     */
+    nip04Encrypt(recipient: NDKUser, value: string): Promise<string>;
+
+    /**
+     * @deprecated use nip44Decrypt instead
+     */
+    nip04Decrypt(sender: NDKUser, value: string): Promise<string>;
+
+    /**
+     * @deprecated use nip44Encrypt instead
+     */
+    nip44Encrypt(recipient: NDKUser, value: string): Promise<string>;
+
+    /**
+     * @deprecated use nip44Decrypt instead
+     */
+    nip44Decrypt(sender: NDKUser, value: string): Promise<string>;
 }

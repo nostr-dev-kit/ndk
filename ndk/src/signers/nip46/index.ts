@@ -184,12 +184,40 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
     }
 
     public async encrypt(recipient: NDKUser, value: string): Promise<string> {
+        return this.nip04Encrypt(recipient, value);
+    }
+
+    public async decrypt(sender: NDKUser, value: string): Promise<string> {
+        return this.nip04Decrypt(sender, value);
+    }
+
+    public async nip04Encrypt(recipient: NDKUser, value: string): Promise<string> {
+        return this._encrypt(recipient, value, "nip04");
+    }
+
+    public async nip04Decrypt(sender: NDKUser, value: string): Promise<string> {
+        return this._decrypt(sender, value, "nip04");
+    }
+
+    public async nip44Encrypt(recipient: NDKUser, value: string): Promise<string> {
+        return this._encrypt(recipient, value, "nip44");
+    }
+
+    public async nip44Decrypt(sender: NDKUser, value: string): Promise<string> {
+        return this._decrypt(sender, value, "nip44");
+    }
+
+    private async _encrypt(
+        recipient: NDKUser,
+        value: string,
+        method: "nip04" | "nip44"
+    ): Promise<string> {
         this.debug("asking for encryption");
 
         const promise = new Promise<string>((resolve, reject) => {
             this.rpc.sendRequest(
                 this.remotePubkey!,
-                "nip04_encrypt",
+                method + "_encrypt",
                 [recipient.pubkey, value],
                 24133,
                 (response: NDKRpcResponse) => {
@@ -205,13 +233,17 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
         return promise;
     }
 
-    public async decrypt(sender: NDKUser, value: string): Promise<string> {
+    private async _decrypt(
+        sender: NDKUser,
+        value: string,
+        method: "nip04" | "nip44"
+    ): Promise<string> {
         this.debug("asking for decryption");
 
         const promise = new Promise<string>((resolve, reject) => {
             this.rpc.sendRequest(
                 this.remotePubkey!,
-                "nip04_decrypt",
+                method + "_decrypt",
                 [sender.pubkey, value],
                 24133,
                 (response: NDKRpcResponse) => {

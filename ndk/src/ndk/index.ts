@@ -39,7 +39,7 @@ export type NDKValidationRatioFn = (
 export interface NDKWalletConfig {
     onLnPay?: LnPayCb;
     onCashuPay?: CashuPayCb;
-    onPaymentComplete: (
+    onPaymentComplete?: (
         results: Map<NDKZapSplit, NDKPaymentConfirmation | Error | undefined>
     ) => void;
 }
@@ -209,7 +209,7 @@ export class NDK extends EventEmitter<{
         relays: WebSocket["url"][]
     ) => void;
 }> {
-    public explicitRelayUrls?: WebSocket["url"][];
+    private _explicitRelayUrls?: WebSocket["url"][];
     public pool: NDKPool;
     public outboxPool?: NDKPool;
     private _signer?: NDKSigner;
@@ -278,7 +278,7 @@ export class NDK extends EventEmitter<{
         super();
 
         this.debug = opts.debug || debug("ndk");
-        this.explicitRelayUrls = opts.explicitRelayUrls || [];
+        this._explicitRelayUrls = opts.explicitRelayUrls || [];
         this.subManager = new NDKSubscriptionManager(this.debug);
         this.pool = new NDKPool(
             opts.explicitRelayUrls || [],
@@ -332,6 +332,15 @@ export class NDK extends EventEmitter<{
         try {
             this.httpFetch = fetch;
         } catch {}
+    }
+
+    set explicitRelayUrls(urls: WebSocket["url"][]) {
+        this._explicitRelayUrls = urls;
+        this.pool.relayUrls = urls;
+    }
+
+    get explicitRelayUrls() {
+        return this._explicitRelayUrls || [];
     }
 
     set signatureVerificationWorker(worker: Worker | undefined) {

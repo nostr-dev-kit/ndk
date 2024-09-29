@@ -5,7 +5,6 @@ import { NDKCashuWallet } from "../../cashu/wallet";
 function removeDeletedWallet(this: NDKWalletLifecycle, walletId: string) {
     this.wallets.delete(walletId);
     if (this.defaultWallet?.walletId === walletId) this.setDefaultWallet(undefined);
-    this.emit("wallets");
 }
 
 const seenWallets: Record<string, { events: NDKEvent[]; mostRecentTime: number }> = {};
@@ -47,7 +46,7 @@ async function handleWalletEvent(this: NDKWalletLifecycle, event: NDKEvent, rela
             return;
         }
     } else {
-        this.debug.extend(dTag)("Relay %s sent a new wallet %s", relay?.url, dTag);
+        if (relay) this.debug.extend(dTag)("Relay %s sent a new wallet %s", relay.url, dTag);
         seenWallets[dTag] = {
             events: [event],
             mostRecentTime: event.created_at!,
@@ -86,7 +85,7 @@ async function handleWalletEvent(this: NDKWalletLifecycle, event: NDKEvent, rela
     }
 
     // check if this is the most up to date version of this wallet we have
-    if (existingEvent && existingEvent.created_at! >= wallet.created_at!) return;
+    if (existingEvent && existingEvent.event.created_at! >= wallet.event.created_at!) return;
 
     this.wallets.set(wallet.walletId, wallet);
     this.emit("wallet", wallet);

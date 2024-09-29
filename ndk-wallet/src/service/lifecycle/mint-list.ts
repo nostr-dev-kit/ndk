@@ -9,6 +9,6 @@ export default function handleMintList(this: NDKWalletLifecycle, event: NDKEvent
     const prevPubkey = this._mintList?.p2pk;
     this._mintList = mintList;
 
-    if (this.eosed && this._mintList) this.emit("mintlist", this._mintList);
+    if (this.eosed && this._mintList) this.emit("mintlist:ready", this._mintList);
     if (this._mintList.p2pk) this.setDefaultWallet(this._mintList.p2pk);
 }

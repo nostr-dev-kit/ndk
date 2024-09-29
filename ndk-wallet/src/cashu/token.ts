@@ -4,9 +4,11 @@ import type { NDKRelay, NDKRelaySet, NostrEvent } from "@nostr-dev-kit/ndk";
 import type NDK from "@nostr-dev-kit/ndk";
 import { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
 import type { NDKCashuWallet } from "./wallet";
+import { decrypt } from "./decrypt";
 
 export function proofsTotalBalance(proofs: Proof[]): number {
     for (const proof of proofs) {
+        console.log("proof", proof.secret);
         if (proof.amount < 0) {
             throw new Error("proof amount is negative");
         }
@@ -29,7 +31,7 @@ export class NDKCashuToken extends NDKEvent {
 
         token.original = event;
         try {
-            await token.decrypt();
+            await decrypt(token);
         } catch {
             token.content = token.original.content;
         }
@@ -51,7 +53,7 @@ export class NDKCashuToken extends NDKEvent {
         });
 
         const user = await this.ndk!.signer!.user();
-        await this.encrypt(user);
+        await this.encrypt(user, undefined, "nip44");
 
         return super.toNostrEvent(pubkey);
     }

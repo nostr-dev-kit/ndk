@@ -9,9 +9,15 @@ import type { MintUrl } from "../cashu/mint/utils.js";
 import type { NDKCashuToken } from "../cashu/token.js";
 import { NDKWebLNWallet } from "../ln/index.js";
 import { NDKWallet } from "../wallet/index.js";
+import { NutzapMonitor } from "./nutzap-monitor/index.js";
 
 const d = createDebug("ndk-wallet:wallet");
 
+/**
+ * The NDKWalletService provides a shortcut to discover and interact with
+ * users wallets.
+ * 
+ */
 class NDKWalletService extends EventEmitter<{
     /**
      * New default was has been established
@@ -28,7 +34,7 @@ class NDKWalletService extends EventEmitter<{
     "wallet:balance": (wallet: NDKWallet) => void;
 
     "nutzap:seen": (nutzap: NDKNutzap) => void;
-    "nutzap:redeemed": (nutzap: NDKNutzap) => void;
+    "nutzap": (nutzap: NDKNutzap) => void;
     "nutzap:failed": (nutzap: NDKNutzap) => void;
 
     ready: () => void;
@@ -36,52 +42,115 @@ class NDKWalletService extends EventEmitter<{
     public ndk: NDK;
     public wallets: NDKWallet[] = [];
     public state: 'loading' | 'ready' = 'loading';
+    public defaultWallet?: NDKWallet;
 
     private lifecycle: NDKWalletLifecycle | undefined;
+    private nutzapMonitor: NutzapMonitor | undefined;
 
     constructor(ndk: NDK) {
         super();
         this.ndk = ndk;
 
-        this.ndk.walletConfig ??= { onPaymentComplete: () => {}}
+        this.ndk.walletConfig ??= {};
         this.ndk.walletConfig.onCashuPay = this.onCashuPay.bind(this) 
         this.ndk.walletConfig.onLnPay = this.onLnPay.bind(this)
     }
 
     async onCashuPay(payment: NDKZapDetails<CashuPaymentInfo>): Promise<NDKPaymentConfirmationCashu | undefined> {
-        const wallet = this.wallets[0]
-        if (!wallet) throw new Error("No wallet available");
+        if (!this.defaultWallet) throw new Error("No wallet available");
 
-        return wallet.cashuPay(payment);
-
-        
-        console.log('attempt to pay with default wallet', payment);
-        return undefined;
+        return this.defaultWallet.cashuPay(payment);
     }
 
     async onLnPay(payment: NDKZapDetails<LnPaymentInfo>): Promise<NDKPaymentConfirmationLN | undefined> {
-        console.log('attempt to pay with ln', payment)
-        return undefined;
+        if (!this.defaultWallet) throw new Error("No wallet available");
+
+        return this.defaultWallet.lnPay(payment);
     }
 
-    public createCashuWallet() {
-        return new NDKCashuWallet(undefined, this.ndk);
+    private alreadyHasWallet(wallet: NDKWallet): boolean {
+        if (wallet instanceof NDKCashuWallet) {
+            return this.wallets.some(w => w instanceof NDKCashuWallet && w.event.id === wallet.event.id);
+        }
+
+        return false;
     }
 
     /**
      * Starts monitoring changes for the user's wallets
      */
     public start(user?: NDKUser) {
-        // try to load a webln wallet
-        const weblnWallet = new NDKWebLNWallet();
-        weblnWallet.on("ready", () => {
-            this.wallets.push(weblnWallet);
-            this.emit("wallet", weblnWallet);
+        // todo: check NIP-78 configuration for webln/nwc/nip-61 settings
+        this.lifecycle = new NDKWalletLifecycle(this.ndk, user ?? this.ndk.activeUser!);
+        this.lifecycle.on("mintlist:ready", (mintList: NDKCashuMintList) => {
+            this.startNutzapMonitor(mintList);
+        });
+
+        this.lifecycle.on("wallet:default", (wallet: NDKWallet) => {
+            d("default wallet ready", wallet.type);
+            this.defaultWallet = wallet;
+            this.emit("wallet:default", wallet);
+        });
+
+        this.lifecycle.on("wallet", (wallet: NDKWallet) => {
+            d("wallet ready", wallet.type);
+            if (this.alreadyHasWallet(wallet)) {
+                return;
+            }
+
+            this.wallets.push(wallet);
+            this.emit("wallets");
+
+            // if we have a new wallet and the nutzap monitor
+            // is already running, add the wallet to the monitor
+            if (this.nutzapMonitor) {
+                this.nutzapMonitor.addWallet(wallet as NDKCashuWallet);
+            }
+        });
+
+        this.lifecycle.on("ready", () => {
+            this.state = 'ready';
             this.emit("ready");
         });
-        
-        this.lifecycle = new NDKWalletLifecycle(this, this.ndk, user ?? this.ndk.activeUser!);
+
         this.lifecycle.start();
+    }
+
+    /**
+     * Configures NDK to use a webln wallet
+     */
+    public useWebLN() {
+        const wallet = new NDKWebLNWallet();
+        this.ndk.walletConfig ??= {};
+        this.ndk.walletConfig.onCashuPay = wallet.cashuPay.bind(wallet);
+        this.ndk.walletConfig.onLnPay = wallet.lnPay.bind(wallet);
+    }
+
+    /**
+     * Starts monitoring for nutzaps
+     * @param mintList User's mint list (kind:10019)
+     */
+    public startNutzapMonitor(
+        mintList: NDKCashuMintList
+    ) {
+        d("starting nutzap monitor");
+        if (this.nutzapMonitor)
+            throw new Error("Nutzap monitor already started");
+
+        const relaysSet = mintList.relaySet;
+        if (!relaysSet) 
+            throw new Error("Mint list has no relay set");
+
+        this.nutzapMonitor = new NutzapMonitor(this.ndk, this.ndk.activeUser!, relaysSet);
+        this.wallets.
+            filter(w => w instanceof NDKCashuWallet)
+            .forEach(w => this.nutzapMonitor!.addWallet(w));
+            
+        this.nutzapMonitor.on("redeem", (nutzap: NDKNutzap) => {
+            this.emit("nutzap", nutzap);
+        });
+
+        this.nutzapMonitor.start();
     }
 
     /**
@@ -92,7 +161,7 @@ class NDKWalletService extends EventEmitter<{
         mintList.relays = wallet.relays;
         mintList.mints = wallet.mints;
         mintList.p2pk = await wallet.getP2pk();
-        return mintList.publish();
+        return mintList.publishReplaceable();
     }
 
     async transfer(wallet: NDKCashuWallet, fromMint: MintUrl, toMint: MintUrl) {

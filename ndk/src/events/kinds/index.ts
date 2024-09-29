@@ -54,6 +54,7 @@ export enum NDKKind {
     Unsubscribe = 7002,
     SubscriptionReceipt = 7003,
 
+    CashuQuote = 7374,
     CashuToken = 7375,
     WalletChange = 7376,
 

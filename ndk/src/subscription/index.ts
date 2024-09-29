@@ -383,7 +383,7 @@ export class NDKSubscription extends EventEmitter<{
      * Send REQ to relays
      */
     private startWithRelays(): void {
-        if (!this.relaySet) {
+        if (!this.relaySet || this.relaySet.relays.size === 0) {
             this.relayFilters = calculateRelaySetsFromFilters(this.ndk, this.filters, this.pool);
         } else {
             this.relayFilters = new Map();

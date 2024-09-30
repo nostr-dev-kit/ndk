@@ -1,5 +1,16 @@
 # @nostr-dev-kit/ndk-cache-dexie
 
+## 2.5.2
+
+### Patch Changes
+
+-   d6cfa8a: track at which timestamp we cached events
+-   Updated dependencies [d6cfa8a]
+-   Updated dependencies [d6cfa8a]
+-   Updated dependencies [d6cfa8a]
+-   Updated dependencies [722345b]
+    -   @nostr-dev-kit/ndk@2.10.1
+
 ## 2.5.1
 
 ### Patch Changes

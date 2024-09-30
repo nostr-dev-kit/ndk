@@ -1,4 +1,12 @@
-import type { CashuPaymentInfo, LnPaymentInfo, NDKNutzap, NDKPaymentConfirmationCashu, NDKPaymentConfirmationLN, NDKUser, NDKZapDetails } from "@nostr-dev-kit/ndk";
+import type {
+    CashuPaymentInfo,
+    LnPaymentInfo,
+    NDKNutzap,
+    NDKPaymentConfirmationCashu,
+    NDKPaymentConfirmationLN,
+    NDKUser,
+    NDKZapDetails,
+} from "@nostr-dev-kit/ndk";
 import type NDK from "@nostr-dev-kit/ndk";
 import { NDKCashuMintList } from "@nostr-dev-kit/ndk";
 import { NDKCashuWallet } from "../cashu/wallet.js";
@@ -16,7 +24,7 @@ const d = createDebug("ndk-wallet:wallet");
 /**
  * The NDKWalletService provides a shortcut to discover and interact with
  * users wallets.
- * 
+ *
  */
 class NDKWalletService extends EventEmitter<{
     /**
@@ -34,14 +42,14 @@ class NDKWalletService extends EventEmitter<{
     "wallet:balance": (wallet: NDKWallet) => void;
 
     "nutzap:seen": (nutzap: NDKNutzap) => void;
-    "nutzap": (nutzap: NDKNutzap) => void;
+    nutzap: (nutzap: NDKNutzap) => void;
     "nutzap:failed": (nutzap: NDKNutzap) => void;
 
     ready: () => void;
 }> {
     public ndk: NDK;
     public wallets: NDKWallet[] = [];
-    public state: 'loading' | 'ready' = 'loading';
+    public state: "loading" | "ready" = "loading";
     public defaultWallet?: NDKWallet;
 
     private lifecycle: NDKWalletLifecycle | undefined;
@@ -52,17 +60,21 @@ class NDKWalletService extends EventEmitter<{
         this.ndk = ndk;
 
         this.ndk.walletConfig ??= {};
-        this.ndk.walletConfig.onCashuPay = this.onCashuPay.bind(this) 
-        this.ndk.walletConfig.onLnPay = this.onLnPay.bind(this)
+        this.ndk.walletConfig.onCashuPay = this.onCashuPay.bind(this);
+        this.ndk.walletConfig.onLnPay = this.onLnPay.bind(this);
     }
 
-    async onCashuPay(payment: NDKZapDetails<CashuPaymentInfo>): Promise<NDKPaymentConfirmationCashu | undefined> {
+    async onCashuPay(
+        payment: NDKZapDetails<CashuPaymentInfo>
+    ): Promise<NDKPaymentConfirmationCashu | undefined> {
         if (!this.defaultWallet) throw new Error("No wallet available");
 
         return this.defaultWallet.cashuPay(payment);
     }
 
-    async onLnPay(payment: NDKZapDetails<LnPaymentInfo>): Promise<NDKPaymentConfirmationLN | undefined> {
+    async onLnPay(
+        payment: NDKZapDetails<LnPaymentInfo>
+    ): Promise<NDKPaymentConfirmationLN | undefined> {
         if (!this.defaultWallet) throw new Error("No wallet available");
 
         return this.defaultWallet.lnPay(payment);
@@ -70,7 +82,9 @@ class NDKWalletService extends EventEmitter<{
 
     private alreadyHasWallet(wallet: NDKWallet): boolean {
         if (wallet instanceof NDKCashuWallet) {
-            return this.wallets.some(w => w instanceof NDKCashuWallet && w.event.id === wallet.event.id);
+            return this.wallets.some(
+                (w) => w instanceof NDKCashuWallet && w.event.id === wallet.event.id
+            );
         }
 
         return false;
@@ -109,7 +123,7 @@ class NDKWalletService extends EventEmitter<{
         });
 
         this.lifecycle.on("ready", () => {
-            this.state = 'ready';
+            this.state = "ready";
             this.emit("ready");
         });
 
@@ -130,22 +144,18 @@ class NDKWalletService extends EventEmitter<{
      * Starts monitoring for nutzaps
      * @param mintList User's mint list (kind:10019)
      */
-    public startNutzapMonitor(
-        mintList: NDKCashuMintList
-    ) {
+    public startNutzapMonitor(mintList: NDKCashuMintList) {
         d("starting nutzap monitor");
-        if (this.nutzapMonitor)
-            throw new Error("Nutzap monitor already started");
+        if (this.nutzapMonitor) throw new Error("Nutzap monitor already started");
 
         const relaysSet = mintList.relaySet;
-        if (!relaysSet) 
-            throw new Error("Mint list has no relay set");
+        if (!relaysSet) throw new Error("Mint list has no relay set");
 
         this.nutzapMonitor = new NutzapMonitor(this.ndk, this.ndk.activeUser!, relaysSet);
-        this.wallets.
-            filter(w => w instanceof NDKCashuWallet)
-            .forEach(w => this.nutzapMonitor!.addWallet(w));
-            
+        this.wallets
+            .filter((w) => w instanceof NDKCashuWallet)
+            .forEach((w) => this.nutzapMonitor!.addWallet(w));
+
         this.nutzapMonitor.on("redeem", (nutzap: NDKNutzap) => {
             this.emit("nutzap", nutzap);
         });
@@ -193,7 +203,7 @@ class NDKWalletService extends EventEmitter<{
                 return;
             }
 
-            const paymentRes = await wallet.lnPay({pr}, fromMint);
+            const paymentRes = await wallet.lnPay({ pr }, fromMint);
             d("payment result: %o", paymentRes);
         });
     }

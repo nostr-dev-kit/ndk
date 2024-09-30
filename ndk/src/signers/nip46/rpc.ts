@@ -73,8 +73,8 @@ export class NDKNostrRpc extends EventEmitter {
 
         return new Promise((resolve) => {
             sub.on("eose", () => {
-                this.debug('eosed')
-                resolve(sub)
+                this.debug("eosed");
+                resolve(sub);
             });
             sub.start();
         });

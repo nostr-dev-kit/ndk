@@ -1,29 +1,35 @@
-import { CashuPaymentInfo, LnPaymentInfo, NDKPaymentConfirmationCashu, NDKPaymentConfirmationLN, NDKZapDetails } from "@nostr-dev-kit/ndk";
+import {
+    CashuPaymentInfo,
+    LnPaymentInfo,
+    NDKPaymentConfirmationCashu,
+    NDKPaymentConfirmationLN,
+    NDKZapDetails,
+} from "@nostr-dev-kit/ndk";
 import { EventEmitter } from "tseep";
 import { requestProvider } from "webln";
-import { type WebLNProvider} from "@webbtc/webln-types";
+import { type WebLNProvider } from "@webbtc/webln-types";
 import { NDKWallet, NDKWalletBalance, NDKWalletEvents, NDKWalletStatus } from "../wallet";
 import { NDKLnPay } from "./pay";
 
-
-
 export class NDKWebLNWallet extends EventEmitter<NDKWalletEvents> implements NDKWallet {
-    readonly type = 'ln';
-    readonly walletId = 'ln';
+    readonly type = "ln";
+    readonly walletId = "ln";
     public status: NDKWalletStatus = NDKWalletStatus.INITIAL;
     public provider?: WebLNProvider;
 
     constructor() {
         super();
-        requestProvider().then((p: unknown) => {
-            if (p) {
-                this.provider = p as WebLNProvider;
-                this.status = NDKWalletStatus.READY;
-                this.emit("ready");
-            } else {
-                this.status = NDKWalletStatus.FAILED;
-            }
-        }).catch(() => this.status = NDKWalletStatus.FAILED);
+        requestProvider()
+            .then((p: unknown) => {
+                if (p) {
+                    this.provider = p as WebLNProvider;
+                    this.status = NDKWalletStatus.READY;
+                    this.emit("ready");
+                } else {
+                    this.status = NDKWalletStatus.FAILED;
+                }
+            })
+            .catch(() => (this.status = NDKWalletStatus.FAILED));
     }
 
     async pay(payment: LnPaymentInfo): Promise<NDKPaymentConfirmationLN | undefined> {
@@ -35,7 +41,7 @@ export class NDKWebLNWallet extends EventEmitter<NDKWalletEvents> implements NDK
         const pay = new NDKLnPay(this, payment);
         const preimage = await pay.payLn();
         if (!preimage) return;
-        return {preimage};
+        return { preimage };
     }
 
     async cashuPay(payment: NDKZapDetails<CashuPaymentInfo>): Promise<NDKPaymentConfirmationCashu> {
@@ -52,11 +58,14 @@ export class NDKWebLNWallet extends EventEmitter<NDKWalletEvents> implements NDK
                 });
             });
         }
-        
+
         const balance = await this.provider.getBalance?.();
-        if (balance) return [{
-            amount: balance.balance,
-            unit: balance.currency || "sats"
-        }]
+        if (balance)
+            return [
+                {
+                    amount: balance.balance,
+                    unit: balance.currency || "sats",
+                },
+            ];
     }
 }

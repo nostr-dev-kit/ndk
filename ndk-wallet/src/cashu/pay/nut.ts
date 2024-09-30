@@ -10,9 +10,7 @@ export type NutPayment = { amount: number; unit: string; mints: MintUrl[]; p2pk?
  * Generates proof to satisfy a payment.
  * Note that this function doesn't send the proofs to the recipient.
  */
-export async function payNut(
-    this: NDKCashuPay
-): Promise<{ proofs: Proof[]; mint: MintUrl }> {
+export async function payNut(this: NDKCashuPay): Promise<{ proofs: Proof[]; mint: MintUrl }> {
     const data = this.info as NutPayment;
     if (!data.mints) throw new Error("missing mints");
 
@@ -66,7 +64,7 @@ async function payNutWithMintTransfer(
 
     pay.debug("quote from mint %s: %o", mint, quote);
 
-    const res = await pay.wallet.lnPay({pr: quote.request });
+    const res = await pay.wallet.lnPay({ pr: quote.request });
     pay.debug("payment result: %o", res);
 
     if (!res) {

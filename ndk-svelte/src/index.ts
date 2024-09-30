@@ -23,7 +23,7 @@ export type ExtendedBaseType<T extends NDKEvent> = T & {
 };
 
 export type NDKEventStore<T extends NDKEvent> = Writable<ExtendedBaseType<T>[]> & {
-    id: string,
+    id: string;
     filters: NDKFilter[] | undefined;
     refCount: number;
     subscription: NDKSubscription | undefined;
@@ -134,7 +134,7 @@ class NDKSvelte extends NDK {
 
         const getEventArrayFromMap = () => {
             return Array.from(events.values());
-        }
+        };
 
         /**
          * Called when a repost event is identified. It either adds the repost event
@@ -164,16 +164,20 @@ class NDKSvelte extends NDK {
                     addRepostToExistingEvent(repostedEvent);
                 } else {
                     // If we don't have the reposted event, fetch it and add it to the store
-                    _repostEvent.repostedEvents(
-                        klass,
-                        { subId: 'reposted-event-fetch', groupable: true, groupableDelay: 1500, groupableDelayType: 'at-least' },
-                    ).then((fetchedEvents: unknown[]) => {
-                        for (const e of fetchedEvents) {
-                            if (e instanceof NDKEvent) {
-                                handleEvent(e);
+                    _repostEvent
+                        .repostedEvents(klass, {
+                            subId: "reposted-event-fetch",
+                            groupable: true,
+                            groupableDelay: 1500,
+                            groupableDelayType: "at-least",
+                        })
+                        .then((fetchedEvents: unknown[]) => {
+                            for (const e of fetchedEvents) {
+                                if (e instanceof NDKEvent) {
+                                    handleEvent(e);
+                                }
                             }
-                        }
-                    });
+                        });
                 }
             }
         };
@@ -206,7 +210,7 @@ class NDKSvelte extends NDK {
                 e.relay = event.relay;
             }
             e.ndk = this;
-            
+
             const dedupKey = event.deduplicationKey();
 
             if (events.has(dedupKey)) {
@@ -218,9 +222,14 @@ class NDKSvelte extends NDK {
                 // we received the same timestamp
                 if (prevEvent.created_at! === event.created_at!) {
                     // with same id
-                    if (prevEvent.id === event.id) return
+                    if (prevEvent.id === event.id) return;
 
-                    console.warn("Received event with same created_at but different id", { prevId: prevEvent.id, newId: event.id, prev: prevEvent.rawEvent(), new: event.rawEvent() });
+                    console.warn("Received event with same created_at but different id", {
+                        prevId: prevEvent.id,
+                        newId: event.id,
+                        prev: prevEvent.rawEvent(),
+                        new: event.rawEvent(),
+                    });
                 }
             }
 
@@ -310,11 +319,13 @@ class NDKSvelte extends NDK {
             store.onEose = (cb) => {
                 store.subscription?.on("eose", () => {
                     store.eosed = true;
-                    cb()
+                    cb();
                 });
             };
 
-            if (opts?.onEose) { store.onEose(opts.onEose); }
+            if (opts?.onEose) {
+                store.onEose(opts.onEose);
+            }
         };
 
         if (autoStart) {

@@ -9,7 +9,7 @@ const d = createDebug("ndk:dexie-adapter:profiles");
 
 export async function profilesWarmUp(
     cacheHandler: CacheHandler<Profile>,
-    profiles: Table<Profile>,
+    profiles: Table<Profile>
 ): Promise<void> {
     const array = await profiles.limit(cacheHandler.maxSize).toArray();
     for (const user of array) {
@@ -33,7 +33,7 @@ export const profilesDump = (profiles: Table<Profile>, debug: debug.IDebugger) =
 
         if (entries.length) {
             debug(`Saving ${entries.length} users to database`);
-            
+
             await profiles.bulkPut(entries);
         }
 

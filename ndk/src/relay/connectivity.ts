@@ -448,9 +448,12 @@ export class NDKRelayConnectivity {
                 // this.debug("Reconnect failed", err);
 
                 if (attempt < MAX_RECONNECT_ATTEMPTS) {
-                    setTimeout(() => {
-                        this.handleReconnection(attempt + 1);
-                    }, (1000 * (attempt + 1)) ^ 4);
+                    setTimeout(
+                        () => {
+                            this.handleReconnection(attempt + 1);
+                        },
+                        (1000 * (attempt + 1)) ^ 4
+                    );
                 } else {
                     this.debug("Reconnect failed");
                 }

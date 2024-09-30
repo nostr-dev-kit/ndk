@@ -26,7 +26,7 @@ export class CacheHandler<T> {
         this.options = options;
         this.maxSize = options.maxSize;
         if (options.maxSize > 0) {
-            this.cache = new LRUCache({ maxSize: options.maxSize});
+            this.cache = new LRUCache({ maxSize: options.maxSize });
             setInterval(() => this.dump().catch(console.error), 1000 * 10);
         }
 
@@ -77,7 +77,9 @@ export class CacheHandler<T> {
         }
 
         if (entries.length > 0) {
-            this.debug(`Cache hit for keys ${entries.length} and miss for ${missingKeys.length} keys`);
+            this.debug(
+                `Cache hit for keys ${entries.length} and miss for ${missingKeys.length} keys`
+            );
         }
 
         // get missing entries from the database
@@ -94,7 +96,11 @@ export class CacheHandler<T> {
                     foundKeys++;
                 }
             }
-            this.debug(`Time spent querying database: ${endTime - startTime}ms for ${missingKeys.length} keys, which added ${foundKeys} entries to the cache`);
+            this.debug(
+                `Time spent querying database: ${endTime - startTime}ms for ${
+                    missingKeys.length
+                } keys, which added ${foundKeys} entries to the cache`
+            );
         }
 
         return entries;
@@ -145,10 +151,13 @@ export class CacheHandler<T> {
 
     public getFromIndex(attribute: string, key: string | number) {
         const ret = new Set<T>();
-        this.indexes.get(attribute)?.get(key)?.forEach((key) => {
-            const entry = this.get(key);
-            if (entry) ret.add(entry as T);
-        });
+        this.indexes
+            .get(attribute)
+            ?.get(key)
+            ?.forEach((key) => {
+                const entry = this.get(key);
+                if (entry) ret.add(entry as T);
+            });
 
         return ret;
     }

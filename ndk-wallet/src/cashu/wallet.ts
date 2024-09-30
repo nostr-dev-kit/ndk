@@ -5,13 +5,9 @@ import type {
     NDKPaymentConfirmationLN,
     NDKSubscription,
     NDKTag,
-    NDKZapDetails} from "@nostr-dev-kit/ndk";
-import NDK, {
-    NDKEvent,
-    NDKKind,
-    NDKPrivateKeySigner,
-    NDKRelaySet
+    NDKZapDetails,
 } from "@nostr-dev-kit/ndk";
+import NDK, { NDKEvent, NDKKind, NDKPrivateKeySigner, NDKRelaySet } from "@nostr-dev-kit/ndk";
 import type { NostrEvent } from "@nostr-dev-kit/ndk";
 import { NDKCashuToken, proofsTotalBalance } from "./token.js";
 import { NDKCashuDeposit } from "./deposit.js";
@@ -32,7 +28,7 @@ const d = createDebug("ndk-wallet:cashu:wallet");
  * This class tracks state of a NIP-60 wallet
  */
 export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDKWallet {
-    readonly type = 'nip-60';
+    readonly type = "nip-60";
 
     public tokens: NDKCashuToken[] = [];
     public usedTokenIds = new Set<NDKEventId>();
@@ -51,7 +47,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
     public publicTags: NDKTag[] = [];
 
     public _event?: NDKEvent;
-    public walletId: string = 'unset';
+    public walletId: string = "unset";
 
     constructor(ndk: NDK, event?: NDKEvent) {
         super();
@@ -71,11 +67,13 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
     }
 
     get event(): NDKEvent {
-        if (!this._event) throw new Error("wallet event not ready")
+        if (!this._event) throw new Error("wallet event not ready");
         return this._event;
     }
 
-    tagId() { return this.event.tagId(); }
+    tagId() {
+        return this.event.tagId();
+    }
 
     /**
      * Returns the tokens that are available for spending
@@ -252,10 +250,8 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
             const user = await this.event.ndk!.signer!.user();
             await this.event.encrypt(user, undefined, "nip44");
         }
-        
-        return this.event.publishReplaceable(
-            this.relaySet
-        )
+
+        return this.event.publishReplaceable(this.relaySet);
     }
 
     get relaySet(): NDKRelaySet | undefined {
@@ -266,10 +262,10 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
 
     /**
      * Prepares a deposit
-     * @param amount 
-     * @param mint 
-     * @param unit 
-     * 
+     * @param amount
+     * @param mint
+     * @param unit
+     *
      * @example
      * const wallet = new NDKCashuWallet(...);
      * const deposit = wallet.deposit(1000, "https://mint.example.com", "sats");
@@ -279,7 +275,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
      * deposit.on("error", (error) => {
      *   console.log("deposit failed", error);
      * });
-     * 
+     *
      * // start monitoring the deposit
      * deposit.start();
      */
@@ -294,11 +290,14 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
     /**
      * Pay a LN invoice with this wallet
      */
-    async lnPay({pr}: {pr:string}, useMint?: MintUrl): Promise<NDKPaymentConfirmationLN | undefined> {
+    async lnPay(
+        { pr }: { pr: string },
+        useMint?: MintUrl
+    ): Promise<NDKPaymentConfirmationLN | undefined> {
         const pay = new NDKCashuPay(this, { pr });
         const preimage = await pay.payLn(useMint);
         if (!preimage) return;
-        return {preimage};
+        return { preimage };
     }
 
     /**
@@ -417,7 +416,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
     get mintTokens(): Record<MintUrl, NDKCashuToken[]> {
         const tokens: Record<MintUrl, NDKCashuToken[]> = {};
 
-        for (const token of this.tokens) { 
+        for (const token of this.tokens) {
             if (token.mint) {
                 tokens[token.mint] ??= [];
                 tokens[token.mint].push(token);
@@ -430,18 +429,23 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
     async balance(): Promise<NDKWalletBalance[] | undefined> {
         if (this.status === NDKWalletStatus.LOADING) {
             const balance = this.getPrivateTag("balance");
-            if (balance) return [{
-                amount: Number(balance),
-                unit: this.unit,
-            }]
+            if (balance)
+                return [
+                    {
+                        amount: Number(balance),
+                        unit: this.unit,
+                    },
+                ];
         }
 
         // aggregate all token balances
         const proofBalances = proofsTotalBalance(this.tokens.map((t) => t.proofs).flat());
-        return [{
-            amount: proofBalances,
-            unit: this.unit
-        }]
+        return [
+            {
+                amount: proofBalances,
+                unit: this.unit,
+            },
+        ];
     }
 
     /**

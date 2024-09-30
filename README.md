@@ -16,7 +16,6 @@ NDK is a [nostr](<[url](https://github.com/nostr-protocol/nostr)>) development k
 npm add @nostr-dev-kit/ndk
 ```
 
-
 ## Debugging
 
 NDK uses the `debug` package to assist in understanding what's happening behind the hood. If you are building a package

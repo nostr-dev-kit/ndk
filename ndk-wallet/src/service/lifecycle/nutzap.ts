@@ -1,4 +1,4 @@
-import type { NDKEvent, NDKEventId} from "@nostr-dev-kit/ndk";
+import type { NDKEvent, NDKEventId } from "@nostr-dev-kit/ndk";
 import { NDKNutzap } from "@nostr-dev-kit/ndk";
 import type { NDKWalletChange } from "../../cashu/history";
 import createDebug from "debug";
@@ -86,13 +86,6 @@ class NutzapHandler {
                 });
         }
     }
-
-    
-
-    
-    
-
-    
 }
 
 export default NutzapHandler;

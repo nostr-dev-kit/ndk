@@ -8,7 +8,7 @@ export type EventCacheEntry = Event;
 
 export async function eventsWarmUp(
     cacheHandler: CacheHandler<EventCacheEntry>,
-    events: Table<Event>,
+    events: Table<Event>
 ) {
     const array = await events.limit(cacheHandler.maxSize).toArray();
     for (const event of array) {

@@ -1,4 +1,4 @@
-import type { MintKeys} from "@cashu/cashu-ts";
+import type { MintKeys } from "@cashu/cashu-ts";
 import { type Proof } from "@cashu/cashu-ts";
 import type { NDKRelay, NDKRelaySet, NostrEvent } from "@nostr-dev-kit/ndk";
 import type NDK from "@nostr-dev-kit/ndk";

@@ -15,13 +15,8 @@ import type {
     NDKZapMethodInfo,
 } from "../index.js";
 import { NDKCashuMintList } from "../events/kinds/nutzap/mint-list.js";
-import type {
-    LNPaymentRequest,
-    NDKLnUrlData} from "../zapper/ln.js";
-import {
-    getNip57ZapSpecFromLud,
-    LnPaymentInfo
-} from "../zapper/ln.js";
+import type { LNPaymentRequest, NDKLnUrlData } from "../zapper/ln.js";
+import { getNip57ZapSpecFromLud, LnPaymentInfo } from "../zapper/ln.js";
 
 export type Hexpubkey = string;
 

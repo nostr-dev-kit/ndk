@@ -1,9 +1,13 @@
-import { LnPaymentInfo, NDKPaymentConfirmationCashu, NDKPaymentConfirmationLN } from "@nostr-dev-kit/ndk";
+import {
+    LnPaymentInfo,
+    NDKPaymentConfirmationCashu,
+    NDKPaymentConfirmationLN,
+} from "@nostr-dev-kit/ndk";
 import { EventEmitter } from "tseep";
 import { NutPayment } from "../cashu/pay/nut";
 
 export enum NDKWalletStatus {
-    INITIAL = 'initial',
+    INITIAL = "initial",
 
     /**
      * The wallet tokens are being loaded.
@@ -17,27 +21,28 @@ export enum NDKWalletStatus {
      */
     READY = "ready",
 
-    FAILED = 'failed',
+    FAILED = "failed",
 }
 
-export type NDKWalletBalance = { amount: number, unit: string }
+export type NDKWalletBalance = { amount: number; unit: string };
 
 export type NDKWalletEvents = {
     ready: () => void;
-    balance_updated: (balance?: NDKWalletBalance) => void
-}
+    balance_updated: (balance?: NDKWalletBalance) => void;
+};
 
-export interface NDKWallet extends EventEmitter<{
-    /**
-     * Emitted when the wallet is ready to be used.
-     */
-    ready: () => void
+export interface NDKWallet
+    extends EventEmitter<{
+        /**
+         * Emitted when the wallet is ready to be used.
+         */
+        ready: () => void;
 
-    /**
-     * Emitted when a balance is known to have been updated.
-     */
-    balance_update: (balance: NDKWalletBalance) => void
-}> {
+        /**
+         * Emitted when a balance is known to have been updated.
+         */
+        balance_update: (balance: NDKWalletBalance) => void;
+    }> {
     get status(): NDKWalletStatus;
     get type(): string;
 

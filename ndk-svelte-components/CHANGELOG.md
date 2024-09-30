@@ -1,5 +1,16 @@
 # @nostr-dev-kit/ndk-svelte-components
 
+## 2.2.20
+
+### Patch Changes
+
+-   5ac3ce8: use urlFactory to generate URLs on rendering engine
+-   Updated dependencies [d6cfa8a]
+-   Updated dependencies [d6cfa8a]
+-   Updated dependencies [d6cfa8a]
+-   Updated dependencies [722345b]
+    -   @nostr-dev-kit/ndk@2.10.1
+
 ## 2.2.19
 
 ### Patch Changes

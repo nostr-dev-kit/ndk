@@ -21,7 +21,13 @@ import { Nip05CacheEntry, nip05Dump, nip05WarmUp } from "./caches/nip05.js";
 import { EventCacheEntry, eventsDump, eventsWarmUp } from "./caches/events.js";
 import { EventTagCacheEntry, eventTagsDump, eventTagsWarmUp } from "./caches/event-tags.js";
 import { relayInfoDump, relayInfoWarmUp } from "./caches/relay-info.js";
-import { addUnpublishedEvent, discardUnpublishedEvent, getUnpublishedEvents, unpublishedEventsDump, unpublishedEventsWarmUp } from "./caches/unpublished-events.js";
+import {
+    addUnpublishedEvent,
+    discardUnpublishedEvent,
+    getUnpublishedEvents,
+    unpublishedEventsDump,
+    unpublishedEventsWarmUp,
+} from "./caches/unpublished-events.js";
 
 export { db } from "./db";
 
@@ -80,13 +86,11 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
             debug: this.debug,
         });
 
-
         this.nip05s = new CacheHandler<Nip05CacheEntry>({
             maxSize: opts.nip05CacheSize || 1000,
             dump: nip05Dump(db.nip05, this.debug),
             debug: this.debug,
         });
-
 
         this.events = new CacheHandler<EventCacheEntry>({
             maxSize: opts.eventCacheSize || 50000,
@@ -113,7 +117,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
             maxSize: 5000,
             debug: this.debug,
             dump: unpublishedEventsDump(db.unpublishedEvents, this.debug),
-        })
+        });
 
         const profile = (label: string, fn: () => Promise<void>) => {
             const start = Date.now();
@@ -121,17 +125,19 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
                 const end = Date.now();
                 this.debug(label, "took", end - start, "ms");
             });
-        }
+        };
 
         const startTime = Date.now();
         this.warmUpPromise = Promise.allSettled([
-            profile('profilesWarmUp', () => profilesWarmUp(this.profiles, db.profiles)),
-            profile('zapperWarmUp', () => zapperWarmUp(this.zappers, db.lnurl)),
-            profile('nip05WarmUp', () => nip05WarmUp(this.nip05s, db.nip05)),
-            profile('relayInfoWarmUp', () => relayInfoWarmUp(this.relayInfo, db.relayStatus)),
-            profile('unpublishedEventsWarmUp', () => unpublishedEventsWarmUp(this.unpublishedEvents, db.unpublishedEvents)),
-            profile('eventsWarmUp', () => eventsWarmUp(this.events, db.events)),
-            profile('eventTagsWarmUp', () => eventTagsWarmUp(this.eventTags, db.eventTags)),
+            profile("profilesWarmUp", () => profilesWarmUp(this.profiles, db.profiles)),
+            profile("zapperWarmUp", () => zapperWarmUp(this.zappers, db.lnurl)),
+            profile("nip05WarmUp", () => nip05WarmUp(this.nip05s, db.nip05)),
+            profile("relayInfoWarmUp", () => relayInfoWarmUp(this.relayInfo, db.relayStatus)),
+            profile("unpublishedEventsWarmUp", () =>
+                unpublishedEventsWarmUp(this.unpublishedEvents, db.unpublishedEvents)
+            ),
+            profile("eventsWarmUp", () => eventsWarmUp(this.events, db.events)),
+            profile("eventTagsWarmUp", () => eventTagsWarmUp(this.eventTags, db.eventTags)),
         ]);
         this.warmUpPromise.then(() => {
             const endTime = Date.now();
@@ -158,7 +164,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         }
 
         const startTime = Date.now();
-        subscription.filters.map((filter) => this.processFilter(filter, subscription))
+        subscription.filters.map((filter) => this.processFilter(filter, subscription));
         const dur = Date.now() - startTime;
         if (dur > 100) this.debug("query took", dur, "ms", subscription.filter);
     }
@@ -171,14 +177,20 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         return user as NDKUserProfile | null;
     }
 
-    public async getProfiles(fn: (pubkey: Hexpubkey, profile: NDKUserProfile) => boolean): Promise<Map<Hexpubkey, NDKUserProfile> | undefined> {
+    public async getProfiles(
+        fn: (pubkey: Hexpubkey, profile: NDKUserProfile) => boolean
+    ): Promise<Map<Hexpubkey, NDKUserProfile> | undefined> {
         if (!this.profiles) return;
         return this.profiles.getAllWithFilter(fn);
     }
 
     public saveProfile(pubkey: Hexpubkey, profile: NDKUserProfile) {
         const existingValue = this.profiles.get(pubkey);
-        if (existingValue?.created_at && profile.created_at && existingValue.created_at >= profile.created_at) {
+        if (
+            existingValue?.created_at &&
+            profile.created_at &&
+            existingValue.created_at >= profile.created_at
+        ) {
             return;
         }
         const cachedAt = Math.floor(Date.now() / 1000);
@@ -300,7 +312,9 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         const filterKeys = new Set(Object.keys(_filter || {}));
 
         // strip always-allowed filter-keys
-        filterKeys.delete("since"); filterKeys.delete("limit"); filterKeys.delete("until");
+        filterKeys.delete("since");
+        filterKeys.delete("limit");
+        filterKeys.delete("until");
 
         try {
             // start with NIP-33 query
@@ -328,8 +342,9 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
 
     public addUnpublishedEvent = addUnpublishedEvent.bind(this);
     public getUnpublishedEvents = () => getUnpublishedEvents(db.unpublishedEvents);
-    public discardUnpublishedEvent = (id: string) => discardUnpublishedEvent(db.unpublishedEvents, id);
-    
+    public discardUnpublishedEvent = (id: string) =>
+        discardUnpublishedEvent(db.unpublishedEvents, id);
+
     public async setEvent(event: NDKEvent, filters: NDKFilter[], relay?: NDKRelay): Promise<void> {
         if (event.kind === 0) {
             if (!this.profiles) return;
@@ -345,11 +360,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
 
         if (event.isParamReplaceable()) {
             const existingEvent = this.events.get(event.tagId());
-            if (
-                existingEvent &&
-                event.created_at &&
-                existingEvent.createdAt > event.created_at
-            ) {
+            if (existingEvent && event.created_at && existingEvent.createdAt > event.created_at) {
                 addEvent = false;
             }
         }
@@ -361,7 +372,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
                 kind: event.kind!,
                 createdAt: event.created_at!,
                 relay: relay?.url,
-                event: event.serialize(true, true)
+                event: event.serialize(true, true),
             });
 
             // Don't cache contact lists as tags since it's expensive
@@ -384,17 +395,14 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
             return {
                 lastConnectedAt: a.lastConnectedAt,
                 dontConnectBefore: a.dontConnectBefore,
-            }
+            };
         }
     }
 
     /**
      * Searches by authors
      */
-    private byAuthors(
-        filter: NDKFilter,
-        subscription: NDKSubscription
-    ): boolean {
+    private byAuthors(filter: NDKFilter, subscription: NDKSubscription): boolean {
         if (!filter.authors) return false;
 
         let total = 0;
@@ -406,8 +414,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
             const prev = events.length;
 
             // reduce by kind if needed
-            if (filter.kinds)
-                events = events.filter(e => filter.kinds!.includes(e.kind!));
+            if (filter.kinds) events = events.filter((e) => filter.kinds!.includes(e.kind!));
 
             foundEvents(subscription, events, filter);
             total += events.length;
@@ -419,10 +426,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
     /**
      * Searches by ids
      */
-    private byIdsQuery(
-        filter: NDKFilter,
-        subscription: NDKSubscription
-    ): boolean {
+    private byIdsQuery(filter: NDKFilter, subscription: NDKSubscription): boolean {
         if (filter.ids) {
             for (const id of filter.ids) {
                 const event = this.events.get(id);
@@ -456,8 +460,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
                     for (const dTag of filter["#d"]!) {
                         const replaceableId = `${kind}:${author}:${dTag}`;
                         const event = this.events.get(replaceableId);
-                        if (event)
-                            foundEvent(subscription, event, event.relay, filter);
+                        if (event) foundEvent(subscription, event, event.relay, filter);
                     }
                 }
             }
@@ -469,10 +472,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
     /**
      * Searches by tags and optionally filters by tags
      */
-    private byTags(
-        filter: NDKFilter,
-        subscription: NDKSubscription
-    ): boolean {
+    private byTags(filter: NDKFilter, subscription: NDKSubscription): boolean {
         const tagFilters = Object.entries(filter)
             .filter(([filter]) => filter.startsWith("#") && filter.length === 2)
             .map(([filter, values]) => [filter[1], values]);
@@ -517,7 +517,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         if (!hasAllKeys) return false;
 
         for (const kind of filter.kinds) {
-            events = [ ...events, ...Array.from(this.events.getFromIndex("kind", kind))]
+            events = [...events, ...Array.from(this.events.getFromIndex("kind", kind))];
         }
 
         foundEvents(subscription, events, filter);
@@ -526,18 +526,14 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
     }
 }
 
-export function checkEventMatchesFilter(
-    event: Event,
-    filter: NDKFilter,
-): NDKEvent | undefined {
+export function checkEventMatchesFilter(event: Event, filter: NDKFilter): NDKEvent | undefined {
     let deserializedEvent: NostrEvent;
 
     try {
         deserializedEvent = deserialize(event.event);
 
         // Make sure all passed filters match the event
-        if (!matchFilter(filter, deserializedEvent as any))
-            return;
+        if (!matchFilter(filter, deserializedEvent as any)) return;
     } catch (e) {
         console.log("failed to parse event", e);
         return;
@@ -550,16 +546,12 @@ export function checkEventMatchesFilter(
     return ndkEvent;
 }
 
-export function foundEvents(
-    subscription: NDKSubscription,
-    events: Event[],
-    filter?: NDKFilter
-) {
+export function foundEvents(subscription: NDKSubscription, events: Event[], filter?: NDKFilter) {
     // if we have a limit, sort and slice
     if (filter?.limit && events.length > filter.limit) {
         events = events.sort((a, b) => b.createdAt - a.createdAt).slice(0, filter.limit);
     }
-    
+
     for (const event of events) {
         foundEvent(subscription, event, event.relay, filter);
     }
@@ -591,12 +583,12 @@ export function foundEvent(
  */
 function getIndexableTags(event: NDKEvent): NDKTag[] {
     let indexableTags: NDKTag[] = [];
-    
+
     if (event.kind === 3) return [];
-    
+
     for (const tag of event.tags) {
         if (tag[0].length !== 1) continue;
-        
+
         indexableTags.push(tag);
 
         if (indexableTags.length >= INDEXABLE_TAGS_LIMIT) return [];

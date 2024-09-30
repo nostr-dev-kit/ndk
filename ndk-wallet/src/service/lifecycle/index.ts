@@ -4,20 +4,21 @@ import type {
     NDKFilter,
     NDKRelay,
     NDKSubscription,
-    NDKUser} from "@nostr-dev-kit/ndk";
+    NDKUser,
+} from "@nostr-dev-kit/ndk";
 import type NDK from "@nostr-dev-kit/ndk";
 import {
     getRelayListForUser,
     NDKCashuMintList,
     NDKKind,
     NDKRelaySet,
-    NDKSubscriptionCacheUsage
+    NDKSubscriptionCacheUsage,
 } from "@nostr-dev-kit/ndk";
 import handleMintList from "./mint-list.js";
 import handleWalletEvent from "./wallet.js";
 import handleTokenEvent from "./token.js";
 import handleEventDeletion from "./deletion.js";
-import type { NDKCashuWallet} from "../../cashu/wallet.js";
+import type { NDKCashuWallet } from "../../cashu/wallet.js";
 import type { NDKCashuToken } from "../../cashu/token.js";
 import createDebug from "debug";
 import { NDKWalletChange } from "../../cashu/history.js";
@@ -31,8 +32,8 @@ import { NDKWallet } from "../../wallet/index.js";
 class NDKWalletLifecycle extends EventEmitter<{
     "wallet:default": (wallet: NDKWallet) => void;
     "mintlist:ready": (mintList: NDKCashuMintList) => void;
-    "wallet": (wallet: NDKWallet) => void;
-    "ready": () => void;
+    wallet: (wallet: NDKWallet) => void;
+    ready: () => void;
 }> {
     private sub: NDKSubscription | undefined;
     public eosed = false;
@@ -66,11 +67,15 @@ class NDKWalletLifecycle extends EventEmitter<{
                 authors: [this.user.pubkey],
             },
             { kinds: [NDKKind.WalletChange], authors: [this.user!.pubkey], limit: 10 },
-        ]
+        ];
 
         // if we have a clientName, also get NIP-78 AppSpecificData
         if (this.ndk.clientName) {
-            filters.push({ kinds: [NDKKind.AppSpecificData], authors: [this.user.pubkey], "#d": [this.ndk.clientName] })
+            filters.push({
+                kinds: [NDKKind.AppSpecificData],
+                authors: [this.user.pubkey],
+                "#d": [this.ndk.clientName],
+            });
         }
 
         this.sub = this.ndk.subscribe(

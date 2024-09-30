@@ -20,7 +20,7 @@ export class NDKLnPay {
             return this.payNut();
         }
     }
-    
+
     /**
      * Uses LN balance to pay to a mint
      */
@@ -28,11 +28,11 @@ export class NDKLnPay {
         const { mints, p2pk } = this.info as NutPayment;
         let { amount, unit } = this.info as NutPayment;
 
-        if (unit === 'msat') {
+        if (unit === "msat") {
             amount /= 1000;
-            unit = 'sat';
+            unit = "sat";
         }
-        
+
         // get quotes from the mints the recipient has
         const quotesPromises = mints.map(async (mint) => {
             const wallet = new CashuWallet(new CashuMint(mint), { unit: unit });
@@ -46,7 +46,7 @@ export class NDKLnPay {
             throw new Error("failed to get quote from any mint");
         }
 
-        const res = await this.wallet.pay({pr: quote.request});
+        const res = await this.wallet.pay({ pr: quote.request });
         console.log("payment result", res);
 
         if (!res) {
@@ -58,9 +58,9 @@ export class NDKLnPay {
         const { proofs } = await wallet.mintTokens(amount, quote.quote, {
             pubkey: p2pk,
         });
-    
+
         console.warn("minted tokens with proofs %o", proofs);
-    
+
         return { proofs, mint };
     }
 

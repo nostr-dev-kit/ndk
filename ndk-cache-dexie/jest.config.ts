@@ -6,9 +6,7 @@ const config: Config = {
     expand: true,
     testEnvironment: "node",
     testTimeout: 10000,
-    setupFiles: [
-        "fake-indexeddb/auto"
-    ],
+    setupFiles: ["fake-indexeddb/auto"],
     openHandlesTimeout: 4000,
     moduleNameMapper: {
         "^(\\.{1,2}/.*)\\.js$": "$1",

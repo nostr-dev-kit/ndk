@@ -3,9 +3,7 @@
     "out": "docs",
     "name": "NDK Dexie Cache Adapter",
     "theme": "default",
-    "plugin": [
-        "typedoc-plugin-markdown"
-    ],
+    "plugin": ["typedoc-plugin-markdown"],
     "excludeExternals": true,
     "excludePrivate": true,
     "excludeProtected": true,

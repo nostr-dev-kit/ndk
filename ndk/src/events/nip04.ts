@@ -28,7 +28,12 @@ export async function encrypt(
     this.content = (await signer?.encrypt(recipient, this.content, type)) as string;
 }
 
-export async function decrypt(this: NDKEvent, sender?: NDKUser, signer?: NDKSigner, type: ENCRYPTION_SCHEMES = DEFAULT_ENCRYPTION_SCHEME): Promise<void> {
+export async function decrypt(
+    this: NDKEvent,
+    sender?: NDKUser,
+    signer?: NDKSigner,
+    type: ENCRYPTION_SCHEMES = DEFAULT_ENCRYPTION_SCHEME
+): Promise<void> {
     if (!this.ndk) throw new Error("No NDK instance found!");
     if (!signer) {
         await this.ndk.assertSigner();

@@ -54,10 +54,7 @@ export class NDKCashuDeposit extends EventEmitter<{
      * This generates a 7374 event containing the quote ID
      * with an optional expiration set to the bolt11 expiry (if there is one)
      */
-    private async createQuoteEvent(
-        quoteId: string,
-        bolt11: string
-    ) {
+    private async createQuoteEvent(quoteId: string, bolt11: string) {
         const { ndk } = this.wallet;
         const bolt11Expiry = getBolt11ExpiresAt(bolt11);
         let tags: NDKTag[] = [
@@ -67,20 +64,20 @@ export class NDKCashuDeposit extends EventEmitter<{
 
         // if we have a bolt11 expiry, expire this event at that time
         if (bolt11Expiry) tags.push(["expiration", bolt11Expiry.toString()]);
-        
+
         const event = new NDKEvent(ndk, {
             kind: NDKKind.CashuQuote,
             content: quoteId,
-            tags
+            tags,
         } as NostrEvent);
-        d("saving quote ID: %o", event.rawEvent())
+        d("saving quote ID: %o", event.rawEvent());
         await event.encrypt(ndk.activeUser, undefined, "nip44");
         await event.sign();
         try {
             await event.publish(this.wallet.relaySet);
-            d("saved quote on event %s", event.encode())
+            d("saved quote on event %s", event.encode());
         } catch (e: any) {
-            d("error saving quote on event %s", e.relayErrors)
+            d("error saving quote on event %s", e.relayErrors);
         }
         return event;
     }

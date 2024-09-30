@@ -1,5 +1,19 @@
 # @nostr-dev-kit/ndk-cache-redis
 
+## 0.3.0
+
+### Minor Changes
+
+-   update to cashuts 1.1.0
+
+### Patch Changes
+
+-   Updated dependencies [d6cfa8a]
+-   Updated dependencies [d6cfa8a]
+-   Updated dependencies [d6cfa8a]
+-   Updated dependencies [722345b]
+    -   @nostr-dev-kit/ndk@2.10.1
+
 ## 0.2.0
 
 ### Minor Changes

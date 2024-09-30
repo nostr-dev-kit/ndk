@@ -1,4 +1,14 @@
-import { NDKCacheAdapter, NDKCacheRelayInfo, NDKFilter, NDKKind, NDKLnUrlData, NDKRelaySet, NDKUserProfile, NostrEvent, ProfilePointer } from "@nostr-dev-kit/ndk";
+import {
+    NDKCacheAdapter,
+    NDKCacheRelayInfo,
+    NDKFilter,
+    NDKKind,
+    NDKLnUrlData,
+    NDKRelaySet,
+    NDKUserProfile,
+    NostrEvent,
+    ProfilePointer,
+} from "@nostr-dev-kit/ndk";
 import NDK, { NDKRelay } from "@nostr-dev-kit/ndk";
 import { NDKEvent, type NDKSubscription } from "@nostr-dev-kit/ndk";
 import createDebugger from "debug";
@@ -45,17 +55,20 @@ export default class NDKNostrCacheAdapter implements NDKCacheAdapter {
             explicitRelayUrls: [options.relayUrl],
             enableOutboxModel: false,
             debug: d.extend("ndk"),
-        })
-        this.ndk.connect()
-            .then(() => this.onConnect());
-        
+        });
+        this.ndk.connect().then(() => this.onConnect());
+
         this.fallbackNdk = new NDK({
             enableOutboxModel: true,
             debug: d.extend("fallback-ndk"),
         });
-        this.fallbackNdk.connect()
-            .then(() => { d("Connected to fallback NDK %o", this.fallbackNdk.pool.connectedRelays().map((relay) => relay.url)); });
-        
+        this.fallbackNdk.connect().then(() => {
+            d(
+                "Connected to fallback NDK %o",
+                this.fallbackNdk.pool.connectedRelays().map((relay) => relay.url)
+            );
+        });
+
         this.relaySet = NDKRelaySet.fromRelayUrls([options.relayUrl], this.ndk);
         this.relay = Array.from(this.relaySet.relays)[0];
 
@@ -67,30 +80,40 @@ export default class NDKNostrCacheAdapter implements NDKCacheAdapter {
     }
 
     private onConnect() {
-        d("Connected to %o", this.ndk.pool.connectedRelays().map((relay) => relay.url));
+        d(
+            "Connected to %o",
+            this.ndk.pool.connectedRelays().map((relay) => relay.url)
+        );
         this.locking = true;
         this.ready = true;
     }
 
     /**
      * Processes the query locally.
-     * @param subscription 
+     * @param subscription
      * @returns The number of events received.
      */
     private async queryLocally(subscription: NDKSubscription): Promise<number> {
-        const subId = subscription.subId ?? subscription.filters.map((filter) => Object.keys(filter).join(",")).join("-");
+        const subId =
+            subscription.subId ??
+            subscription.filters.map((filter) => Object.keys(filter).join(",")).join("-");
         const _ = d.extend(subId);
-        
+
         return new Promise((resolve, reject) => {
             let eventCount = 0;
 
             _("Querying %o", subscription.filters);
 
             // Generate a subscription
-            const sub = this.ndk.subscribe(subscription.filters, {
-                subId: subscription.subId,
-                closeOnEose: true
-            }, this.relaySet, false);
+            const sub = this.ndk.subscribe(
+                subscription.filters,
+                {
+                    subId: subscription.subId,
+                    closeOnEose: true,
+                },
+                this.relaySet,
+                false
+            );
 
             // Process events
             sub.on("event", (event) => {
@@ -110,8 +133,8 @@ export default class NDKNostrCacheAdapter implements NDKCacheAdapter {
             const onRelayNotice = (notice: string) => {
                 _("Notice received %s", notice);
                 reject(notice);
-            }
-            
+            };
+
             this.relay.once("notice", (notice) => {
                 _("Notice received %o", notice);
             });
@@ -122,25 +145,26 @@ export default class NDKNostrCacheAdapter implements NDKCacheAdapter {
     }
 
     async query(subscription: NDKSubscription): Promise<void> {
-        const subId = subscription.subId ?? subscription.filters.map((filter) => Object.keys(filter).join(",")).join("-");
+        const subId =
+            subscription.subId ??
+            subscription.filters.map((filter) => Object.keys(filter).join(",")).join("-");
         let eventCount = 0;
 
         const _ = d.extend(subId);
-        
-        await Promise.race([
-            this.queryLocally(subscription),
-            timeout(this.queryTimeout)
-        ]).then((count: unknown) => {
-            if (typeof count === "number") {
-                eventCount = count;
 
-                _("Query finished with %d events", eventCount);
+        await Promise.race([this.queryLocally(subscription), timeout(this.queryTimeout)])
+            .then((count: unknown) => {
+                if (typeof count === "number") {
+                    eventCount = count;
 
-                setTimeout(() => this.hydrate(subscription), 2500);
-            }
-        }).catch((err) => {
-            _("Error %o", err);
-        });
+                    _("Query finished with %d events", eventCount);
+
+                    setTimeout(() => this.hydrate(subscription), 2500);
+                }
+            })
+            .catch((err) => {
+                _("Error %o", err);
+            });
     }
 
     private async hydrate(subscription: NDKSubscription) {
@@ -150,9 +174,14 @@ export default class NDKNostrCacheAdapter implements NDKCacheAdapter {
                 let publishedEvents = 0;
                 return new Promise<void>((resolve, reject) => {
                     d("Hydrating %o", subscription.filters);
-                    const sub = this.fallbackNdk.subscribe(subscription.filters, {
-                        closeOnEose: true
-                    }, undefined, false);
+                    const sub = this.fallbackNdk.subscribe(
+                        subscription.filters,
+                        {
+                            closeOnEose: true,
+                        },
+                        undefined,
+                        false
+                    );
                     sub.on("event", (event) => {
                         this.hydrateLocalRelayWithEvent(event);
                         publishedEvents++;
@@ -167,22 +196,28 @@ export default class NDKNostrCacheAdapter implements NDKCacheAdapter {
                     });
                     sub.start();
                 });
-            }
+            },
         });
     }
 
     private hydrateLocalRelayWithEvent(event: NDKEvent) {
         d(`relay status %s`, this.relay.status);
         event.ndk = this.ndk;
-        this.relay.publish(event).then(() => {
-            this.hydratedEvents++;
-        })
-        .catch((err) => {
-            d("Error hydrating event %o", err);
-        });
+        this.relay
+            .publish(event)
+            .then(() => {
+                this.hydratedEvents++;
+            })
+            .catch((err) => {
+                d("Error hydrating event %o", err);
+            });
     }
-    
-    async setEvent(event: NDKEvent, filters: NDKFilter<NDKKind>[], relay?: NDKRelay | undefined): Promise<void> {
+
+    async setEvent(
+        event: NDKEvent,
+        filters: NDKFilter<NDKKind>[],
+        relay?: NDKRelay | undefined
+    ): Promise<void> {
         this.hydrateLocalRelayWithEvent(event);
     }
 
@@ -233,5 +268,5 @@ const profile = async (fn: (...args: any[]) => any) => {
         const result = await fn(...args);
         d("Function took %d ms", Date.now() - start);
         return result;
-    }
-}
+    };
+};

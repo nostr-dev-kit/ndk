@@ -1,5 +1,14 @@
 # @nostr-dev-kit/ndk
 
+## 2.10.1
+
+### Patch Changes
+
+-   d6cfa8a: cap the number of relay hints we add
+-   d6cfa8a: add NIP-78 interface
+-   d6cfa8a: properly handled abandoned subscriptions closing
+-   722345b: nip-44 support
+
 ## 2.10.0
 
 ### Minor Changes

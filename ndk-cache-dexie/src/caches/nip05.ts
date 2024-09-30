@@ -11,7 +11,7 @@ export type Nip05CacheEntry = {
 
 export async function nip05WarmUp(
     cacheHandler: CacheHandler<Nip05CacheEntry>,
-    nip05s: Table<Nip05>,
+    nip05s: Table<Nip05>
 ) {
     const array = await nip05s.limit(cacheHandler.maxSize).toArray();
     for (const nip05 of array) {

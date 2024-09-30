@@ -165,10 +165,13 @@ export function filterForEventsTaggingId(id: string): NDKFilter | undefined {
 /**
  * Creates a valid nostr filter from a bech32 encoding along with a relay set (if one is present in the encoding).
  * @param id Bech32 of the event
- * @param ndk 
- * @returns 
+ * @param ndk
+ * @returns
  */
-export function filterAndRelaySetFromBech32(beche2: string, ndk: NDK): { filter: NDKFilter, relaySet?: NDKRelaySet } {
+export function filterAndRelaySetFromBech32(
+    beche2: string,
+    ndk: NDK
+): { filter: NDKFilter; relaySet?: NDKRelaySet } {
     const filter = filterFromId(beche2);
     const relays = relaysFromBech32(beche2, ndk);
 

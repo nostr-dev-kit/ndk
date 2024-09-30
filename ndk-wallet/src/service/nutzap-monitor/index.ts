@@ -1,4 +1,13 @@
-import NDK, { NDKEvent, type NDKEventId, NDKKind, NDKNutzap, NDKRelaySet, NDKSubscription, NDKSubscriptionCacheUsage, NDKUser } from "@nostr-dev-kit/ndk";
+import NDK, {
+    NDKEvent,
+    type NDKEventId,
+    NDKKind,
+    NDKNutzap,
+    NDKRelaySet,
+    NDKSubscription,
+    NDKSubscriptionCacheUsage,
+    NDKUser,
+} from "@nostr-dev-kit/ndk";
 import { CashuMint, CashuWallet } from "@cashu/cashu-ts";
 import { EventEmitter } from "tseep";
 import createDebug from "debug";
@@ -55,11 +64,7 @@ export class NutzapMonitor extends EventEmitter<{
         }
     }
 
-    constructor(
-        ndk: NDK,
-        user: NDKUser,
-        relaySet?: NDKRelaySet
-    ) {
+    constructor(ndk: NDK, user: NDKUser, relaySet?: NDKRelaySet) {
         super();
         this.ndk = ndk;
         this.user = user;
@@ -77,7 +82,10 @@ export class NutzapMonitor extends EventEmitter<{
 
         this.sub = this.ndk.subscribe(
             { kinds: [NDKKind.Nutzap], "#p": [this.user.pubkey] },
-            { subId: "ndk-wallet:nutzap-monitor", cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY },
+            {
+                subId: "ndk-wallet:nutzap-monitor",
+                cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY,
+            },
             this.relaySet,
             false
         );
@@ -97,8 +105,7 @@ export class NutzapMonitor extends EventEmitter<{
     }
 
     private async eventHandler(event: NDKEvent) {
-        if (this.knownTokens.has(event.id))
-            return;
+        if (this.knownTokens.has(event.id)) return;
         this.knownTokens.set(event.id, PROCESSING_STATUS.initial);
         const nutzapEvent = await NDKNutzap.from(event);
         if (!nutzapEvent) return;

@@ -1,5 +1,16 @@
 # @nostr-dev-kit/ndk-svelte
 
+## 2.2.19
+
+### Patch Changes
+
+-   d6cfa8a: Fix inconsistent store result
+-   Updated dependencies [d6cfa8a]
+-   Updated dependencies [d6cfa8a]
+-   Updated dependencies [d6cfa8a]
+-   Updated dependencies [722345b]
+    -   @nostr-dev-kit/ndk@2.10.1
+
 ## 2.2.18
 
 ### Patch Changes

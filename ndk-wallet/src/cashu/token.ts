@@ -8,7 +8,6 @@ import { decrypt } from "./decrypt";
 
 export function proofsTotalBalance(proofs: Proof[]): number {
     for (const proof of proofs) {
-        console.log("proof", proof.secret);
         if (proof.amount < 0) {
             throw new Error("proof amount is negative");
         }

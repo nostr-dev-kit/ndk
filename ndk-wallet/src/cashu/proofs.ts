@@ -28,7 +28,7 @@ export async function chooseProofsForPr(
     wallet: NDKCashuWallet
 ): Promise<TokenSelection | undefined> {
     const _wallet = new CashuWallet(new CashuMint(mint));
-    const quote = await _wallet.meltQuote(pr);
+    const quote = await _wallet.createMeltQuote(pr);
     return chooseProofsForQuote(quote, wallet, mint);
 }
 
@@ -135,7 +135,7 @@ export async function rollOverProofs(
             d(
                 "adding to delete a token that was seen on relay %s %o",
                 token.relay?.url,
-                token.onRelays
+                token.onRelays.map((r) => r.url)
             );
             deleteEvent.tag(["e", token.id]);
             if (token.relay) relaySet?.addRelay(token.relay);

@@ -39,7 +39,7 @@ export class NDKCashuDeposit extends EventEmitter<{
     }
 
     async start() {
-        const quote = await this._wallet.mintQuote(this.amount);
+        const quote = await this._wallet.createMintQuote(this.amount);
         d("created quote %s for %d %s", quote.quote, this.amount, this.mint);
 
         this.quoteId = quote.quote;

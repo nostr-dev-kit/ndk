@@ -120,16 +120,7 @@ class NDKWalletLifecycle extends EventEmitter<{
     }
 
     private eoseHandler() {
-        this.debug("Loaded wallets", {
-            defaultWallet: this.defaultWallet?.event?.rawEvent(),
-            wallets: Array.from(this.wallets.values()).map((w) => w.event?.rawEvent()),
-        });
         this.eosed = true;
-
-        if (this.tokensSub) {
-            this.debug("WE ALREADY HAVE TOKENS SUB!!!");
-            return;
-        }
 
         // if we don't have a default wallet, choose the first one if there is one
         const firstWallet = Array.from(this.wallets.values())[0];
@@ -152,13 +143,10 @@ class NDKWalletLifecycle extends EventEmitter<{
         for (const wallet of this.wallets.values()) {
             if (!oldestWalletTimestamp || wallet.event.created_at! > oldestWalletTimestamp) {
                 oldestWalletTimestamp = wallet.event.created_at!;
-                this.debug("oldest wallet timestamp", oldestWalletTimestamp);
             }
 
             this.emit("wallet", wallet);
         }
-
-        this.debug("oldest wallet timestamp", oldestWalletTimestamp, this.wallets.values());
 
         this.tokensSub = this.ndk.subscribe(
             [

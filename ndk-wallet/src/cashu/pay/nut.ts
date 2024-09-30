@@ -52,7 +52,7 @@ async function payNutWithMintTransfer(
     // get quotes from the mints the recipient has
     const quotesPromises = mints.map(async (mint) => {
         const wallet = new CashuWallet(new CashuMint(mint), { unit: pay.unit });
-        const quote = await wallet.mintQuote(amount);
+        const quote = await wallet.createMintQuote(amount);
         return { quote, mint };
     });
 

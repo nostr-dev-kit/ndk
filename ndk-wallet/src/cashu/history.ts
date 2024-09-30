@@ -11,6 +11,9 @@ const MARKERS = {
     DESTROYED: "destroyed",
 };
 
+/**
+ * This class represents a balance change in the wallet, whether money being added or removed.
+ */
 export class NDKWalletChange extends NDKEvent {
     static MARKERS = MARKERS;
 

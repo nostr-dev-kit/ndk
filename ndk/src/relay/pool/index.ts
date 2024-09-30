@@ -42,7 +42,7 @@ export class NDKPool extends EventEmitter<{
     "relay:authed": (relay: NDKRelay) => void;
 }> {
     // TODO: This should probably be an LRU cache
-    public relays = new Map<WebSocket["url"], NDKRelay>();
+    private _relays = new Map<WebSocket["url"], NDKRelay>();
     public autoConnectRelays = new Set<WebSocket["url"]>();
     public blacklistRelayUrls: Set<WebSocket["url"]>;
     private debug: debug.Debugger;
@@ -61,13 +61,21 @@ export class NDKPool extends EventEmitter<{
         super();
         this.debug = debug ?? ndk.debug.extend("pool");
         this.ndk = ndk;
+        this.relayUrls = relayUrls;
 
-        for (const relayUrl of relayUrls) {
+        this.blacklistRelayUrls = new Set(blacklistedRelayUrls);
+    }
+
+    get relays() {
+        return this._relays;
+    }
+
+    set relayUrls(urls: WebSocket["url"][]) {
+        this._relays.clear();
+        for (const relayUrl of urls) {
             const relay = new NDKRelay(relayUrl, undefined, this.ndk);
             this.addRelay(relay, false);
         }
-
-        this.blacklistRelayUrls = new Set(blacklistedRelayUrls);
     }
 
     set name(name: string) {

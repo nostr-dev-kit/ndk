@@ -4,8 +4,6 @@ import type NDKWalletLifecycle from ".";
 import type { NDKCashuWallet } from "../../cashu/wallet";
 
 async function handleToken(this: NDKWalletLifecycle, event: NDKEvent, relay?: NDKRelay) {
-    this.debug("Received token event %s from %s", event.id, relay?.url);
-
     if (this.knownTokens.has(event.id)) return;
     this.knownTokens.add(event.id);
 
@@ -21,7 +19,6 @@ async function handleToken(this: NDKWalletLifecycle, event: NDKEvent, relay?: ND
         this.debug("no wallet found for token %s", token.id);
         this.orphanedTokens.set(token.id, token);
     } else {
-        this.debug("adding token %s to wallet %s", token.id, wallet.name);
         wallet.addToken(token);
     }
 }

@@ -176,7 +176,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
     }
 
     get name(): string | undefined {
-        return this.getPrivateTag("name");
+        return this.getPrivateTag("name") ?? this.event.tagValue("name");
     }
 
     get unit(): string {
@@ -386,7 +386,6 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
     }
 
     public addToken(token: NDKCashuToken) {
-        console.trace("adding token", token.id, token.rawEvent());
         if (!this.knownTokens.has(token.id)) {
             this.knownTokens.add(token.id);
             this.tokens.push(token);

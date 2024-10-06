@@ -2,6 +2,7 @@ import type { NDKTag, NostrEvent } from "@nostr-dev-kit/ndk";
 import type NDK from "@nostr-dev-kit/ndk";
 import { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
 import createDebug from "debug";
+import { NDKCashuToken } from "./token";
 
 const d = createDebug("ndk-wallet:wallet-change");
 
@@ -10,6 +11,8 @@ const MARKERS = {
     CREATED: "created",
     DESTROYED: "destroyed",
 };
+
+export type DIRECTIONS = 'in' | 'out';
 
 /**
  * This class represents a balance change in the wallet, whether money being added or removed.
@@ -45,6 +48,78 @@ export class NDKWalletChange extends NDKEvent {
         return walletChange;
     }
 
+    set direction(direction: DIRECTIONS | undefined) {
+        this.removeTag('direction')
+        if (direction) this.tags.push(['direction', direction])
+    }
+
+    get direction(): DIRECTIONS | undefined {
+        return this.tagValue('direction') as DIRECTIONS | undefined;
+    }
+
+    set amount(amount: number) {
+        this.removeTag('amount')
+        this.tags.push(['amount', amount.toString()])
+    }
+
+    get amount(): number | undefined {
+        return this.tagValue('amount') as number | undefined;
+    }
+
+    set fee(fee: number) {
+        this.removeTag('fee')
+        this.tags.push(['fee', fee.toString()])
+    }
+
+    get fee(): number | undefined {
+        return this.tagValue('fee') as number | undefined;
+    }
+
+    set unit(unit: string | undefined) {
+        this.removeTag('unit')
+        if (unit) this.tags.push(['unit', unit.toString()])
+    }
+
+    get unit(): string | undefined {
+        return this.tagValue('unit');
+    }
+
+    set description(description: string | undefined) {
+        this.removeTag('description')
+        if (description) this.tags.push(['description', description.toString()])
+    }
+
+    get description(): string | undefined {
+        return this.tagValue('description');
+    }
+
+    set mint(mint: string | undefined) {
+        this.removeTag('mint')
+        if (mint) this.tags.push(['mint', mint.toString()])
+    }
+
+    get mint(): string | undefined {
+        return this.tagValue('mint');
+    }
+
+    /**
+     * Tags tokens that were created in this history event
+     */
+    set destroyedTokens(events: NDKCashuToken[]) {
+        for (const event of events) {
+            this.tag(event, MARKERS.DESTROYED)
+        }
+    }
+
+    /**
+     * Tags tokens that were created in this history event
+     */
+    set createdTokens(events: NDKCashuToken[]) {
+        for (const event of events) {
+            this.tag(event, MARKERS.CREATED)
+        }
+    }
+
     public addRedeemedNutzap(event: NDKEvent) {
         this.tag(event, MARKERS.REDEEMED);
     }
@@ -66,7 +141,7 @@ export class NDKWalletChange extends NDKEvent {
 
         const user = await this.ndk!.signer!.user();
 
-        await this.encrypt(user);
+        await this.encrypt(user, undefined, "nip44");
 
         return super.toNostrEvent(pubkey) as unknown as NostrEvent;
     }

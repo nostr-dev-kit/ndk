@@ -113,6 +113,11 @@ function chooseProofsForQuote(
     return { ...res, quote };
 }
 
+export type ROLL_OVER_RESULT = {
+    destroyedTokens: NDKCashuToken[],
+    createdToken: NDKCashuToken | undefined
+};
+
 /**
  * Deletes and creates new events to reflect the new state of the proofs
  */
@@ -120,8 +125,8 @@ export async function rollOverProofs(
     proofs: TokenSelection,
     changes: Proof[],
     mint: string,
-    wallet: NDKCashuWallet
-) {
+    wallet: NDKCashuWallet,
+): Promise<ROLL_OVER_RESULT> {
     const relaySet = wallet.relaySet;
 
     if (proofs.usedTokens.length > 0) {
@@ -152,20 +157,24 @@ export async function rollOverProofs(
         proofsToSave.push(change);
     }
 
-    if (proofsToSave.length === 0) {
-        d("no new proofs to save");
-        return;
+    let createdToken: NDKCashuToken | undefined;
+
+    if (proofsToSave.length > 0) {
+        createdToken = new NDKCashuToken(wallet.ndk);
+        createdToken.proofs = proofsToSave;
+        createdToken.mint = mint;
+        createdToken.wallet = wallet;
+        await createdToken.sign();
+        d("saving %d new proofs", proofsToSave.length);
+
+        wallet.addToken(createdToken);
+
+        await createdToken.publish(wallet.relaySet);
+        d("created new token event", createdToken.rawEvent());
     }
 
-    const tokenEvent = new NDKCashuToken(wallet.ndk);
-    tokenEvent.proofs = proofsToSave;
-    tokenEvent.mint = mint;
-    tokenEvent.wallet = wallet;
-    await tokenEvent.sign();
-    d("saving %d new proofs", proofsToSave.length);
-
-    wallet.addToken(tokenEvent);
-
-    tokenEvent.publish(wallet.relaySet);
-    d("created new token event", tokenEvent.rawEvent());
+    return {
+        destroyedTokens: proofs.usedTokens,
+        createdToken,
+    }
 }

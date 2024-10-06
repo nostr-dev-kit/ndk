@@ -51,14 +51,17 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
 
     constructor(ndk: NDK, event?: NDKEvent) {
         super();
+        if (!ndk) throw new Error("no ndk instance");
         this.ndk = ndk;
         if (!event) {
             event = new NDKEvent(ndk);
             event.kind = NDKKind.CashuWallet;
             event.dTag = Math.random().toString(36).substring(3);
+            event.tags = [];
         }
-
+        
         this.event = event;
+        this.event.ndk = ndk;
     }
 
     set event(e: NDKEvent) {
@@ -223,6 +226,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
      * Whether this wallet has been deleted
      */
     get isDeleted(): boolean {
+        if (!this.event?.tags) return false;
         return this.event.tags.some((t) => t[0] === "deleted");
     }
 
@@ -285,6 +289,17 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
             this.addToken(token);
         });
         return deposit;
+    }
+
+    public async addHistoryItem(
+        direction: "in" | "out",
+        amount: number,
+        token?: NDKCashuToken
+    ) {
+        const historyEvent = new NDKWalletChange(this.event.ndk);
+        historyEvent.tag(this.event);
+        await historyEvent.sign();
+        historyEvent.publish(this.relaySet);
     }
 
     /**

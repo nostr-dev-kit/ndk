@@ -6,6 +6,7 @@ import { NDKCashuToken } from "./token";
 import createDebug from "debug";
 import { NDKEvent, NDKKind, NDKTag, NostrEvent } from "@nostr-dev-kit/ndk";
 import { getBolt11ExpiresAt } from "../lib/ln";
+import { NDKWalletChange } from "./history";
 
 const d = createDebug("ndk-wallet:cashu:deposit");
 
@@ -135,6 +136,15 @@ export class NDKCashuDeposit extends EventEmitter<{
             tokenEvent.wallet = this.wallet;
 
             await tokenEvent.publish(this.wallet.relaySet);
+
+            const historyEvent = new NDKWalletChange(this.wallet.event.ndk);
+            historyEvent.direction = 'in';
+            historyEvent.amount = tokenEvent.amount;
+            historyEvent.unit = this.unit;
+            historyEvent.createdTokens = [ tokenEvent ];
+            historyEvent.description = "Deposit";
+            historyEvent.mint = this.mint;
+            historyEvent.publish(this.wallet.relaySet);
 
             this.emit("success", tokenEvent);
         } catch (e: any) {

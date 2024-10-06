@@ -41,7 +41,7 @@ export interface NDKWallet
         /**
          * Emitted when a balance is known to have been updated.
          */
-        balance_update: (balance: NDKWalletBalance) => void;
+        balance_updated: (balance?: NDKWalletBalance) => void;
     }> {
     get status(): NDKWalletStatus;
     get type(): string;

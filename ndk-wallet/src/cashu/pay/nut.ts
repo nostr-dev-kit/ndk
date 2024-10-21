@@ -2,9 +2,14 @@ import type { Proof } from "@cashu/cashu-ts";
 import { CashuMint, CashuWallet } from "@cashu/cashu-ts";
 import type { MintUrl } from "../mint/utils";
 import type { NDKCashuPay } from "../pay";
-import { chooseProofsForAmount, rollOverProofs } from "../proofs";
+import { chooseProofsForAmount, chooseProofsForAmounts, rollOverProofs } from "../proofs";
+import { NDKCashuWallet } from "../wallet";
 
 export type NutPayment = { amount: number; unit: string; mints: MintUrl[]; p2pk?: string };
+
+export async function mintNuts(this: NDKCashuWallet, amounts: number[], unit: string) {
+    return await chooseProofsForAmounts(amounts, this);
+}
 
 /**
  * Generates proof to satisfy a payment.

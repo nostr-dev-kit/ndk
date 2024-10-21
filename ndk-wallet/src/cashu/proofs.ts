@@ -113,6 +113,84 @@ function chooseProofsForQuote(
     return { ...res, quote };
 }
 
+export function chooseProofsForAmounts(amounts: number[], wallet: NDKCashuWallet): TokenSelection & { needsSwap: boolean } | undefined {
+    let missingAmounts: number[] = [...amounts];
+    let tokenSelection: TokenSelection = {
+        usedProofs: [],
+        movedProofs: [],
+        usedTokens: [],
+        mint: ""
+    };
+    const reset = () => {
+        tokenSelection = {
+            usedProofs: [],
+            movedProofs: [],
+            usedTokens: [],
+            mint: ""
+        };
+        missingAmounts = [...amounts];
+    }
+    
+    // try to find all proofs from the same mint
+    for (const [mint, tokens] of Object.entries(wallet.mintTokens)) {
+        reset();
+        tokenSelection.mint = mint;
+        
+        for (const token of tokens) {
+            let tokenUsed = false;
+            for (const proof of token.proofs) {
+                if (missingAmounts.includes(proof.amount)) {
+                    missingAmounts.splice(missingAmounts.indexOf(proof.amount), 1);
+                    tokenSelection.usedProofs.push(proof);
+                    tokenUsed = true;
+                } else {
+                    tokenSelection.movedProofs.push(proof);
+                }
+            }
+
+            if (tokenUsed) {
+                tokenSelection.usedTokens.push(token);
+            }
+        }
+
+        if (missingAmounts.length === 0) {
+            d("found all proofs using mint %s without having to swap", mint);
+            return { ...tokenSelection, needsSwap: false };
+        }
+    }
+
+    for (const [mint, tokens] of Object.entries(wallet.mintTokens)) {
+        reset();
+        tokenSelection.mint = mint;
+        let missingAmount = missingAmounts.reduce((a, b) => a + b, 0);
+        
+        for (const token of tokens) {
+            let tokenUsed = false;
+            for (const proof of token.proofs) {
+                if (missingAmount > 0) {
+                    missingAmount -= proof.amount;
+                    tokenSelection.usedProofs.push(proof);
+                    tokenUsed = true;
+                } else {
+                    tokenSelection.movedProofs.push(proof);
+                }
+            }
+
+            if (tokenUsed) {
+                tokenSelection.usedTokens.push(token);
+            }
+
+            if (missingAmount <= 0) {
+                d("found all proofs using mint %s, will need to swap", mint);
+                return { ...tokenSelection, needsSwap: true };
+            }
+        }
+    }
+
+    d("could not find all proofs for the requested amounts");
+    return;
+}
+
 export type ROLL_OVER_RESULT = {
     destroyedTokens: NDKCashuToken[],
     createdToken: NDKCashuToken | undefined
@@ -130,7 +208,7 @@ export async function rollOverProofs(
     const relaySet = wallet.relaySet;
 
     if (proofs.usedTokens.length > 0) {
-        console.trace("rolling over proofs for mint %s %d tokens", mint, proofs.usedTokens.length);
+        // console.trace("rolling over proofs for mint %s %d tokens", mint, proofs.usedTokens.length);
 
         const deleteEvent = new NDKEvent(wallet.event.ndk);
         deleteEvent.kind = NDKKind.EventDeletion;

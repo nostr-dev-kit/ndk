@@ -21,6 +21,7 @@ import { checkTokenProofs } from "./validate.js";
 import { NDKWallet, NDKWalletBalance, NDKWalletEvents, NDKWalletStatus } from "../wallet/index.js";
 import { EventEmitter } from "tseep";
 import { decrypt } from "./decrypt.js";
+import { chooseProofsForAmounts, rollOverProofs } from "./proofs.js";
 
 const d = createDebug("ndk-wallet:cashu:wallet");
 
@@ -97,6 +98,23 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
     }
 
     public checkProofs = checkTokenProofs.bind(this);
+
+    async mintNuts(amounts: number[], unit: string) {
+        const tokenSelection = await chooseProofsForAmounts(amounts, this);
+        if (tokenSelection?.needsSwap) {
+            const wallet = new CashuWallet(new CashuMint(tokenSelection.mint));
+            const proofs = await wallet.send(0, tokenSelection.usedProofs, {
+                preference: amounts.map((a) => ({ amount: a, count: 1 })),
+            });
+
+            await rollOverProofs(tokenSelection, proofs.returnChange, tokenSelection.mint, this);
+
+            return proofs.send;
+        } else if (tokenSelection) {
+            await rollOverProofs(tokenSelection, [], tokenSelection.mint, this);
+        }
+        return tokenSelection?.usedProofs;
+    }
 
     static async from(event: NDKEvent): Promise<NDKCashuWallet | undefined> {
         if (!event.ndk) throw new Error("no ndk instance on event");

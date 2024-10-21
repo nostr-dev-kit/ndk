@@ -97,6 +97,12 @@ export interface NDKSubscriptionOptions {
      * @default false
      */
     skipValidation?: boolean;
+
+    /**
+     * Skip emitting on events before they are received from a relay. (skip optimistic publish)
+     * @default false
+     */
+    skipOptimisticPublishEvent?: boolean;
 }
 
 /**
@@ -213,6 +219,8 @@ export class NDKSubscription extends EventEmitter<{
      */
     private poolMonitor: ((relay: NDKRelay) => void) | undefined;
 
+    public skipOptimisticPublishEvent: boolean = false;
+
     public constructor(
         ndk: NDK,
         filters: NDKFilter | NDKFilter[],
@@ -232,6 +240,7 @@ export class NDKSubscription extends EventEmitter<{
         this.skipVerification = opts?.skipVerification || false;
         this.skipValidation = opts?.skipValidation || false;
         this.closeOnEose = opts?.closeOnEose || false;
+        this.skipOptimisticPublishEvent = opts?.skipOptimisticPublishEvent || false;
 
         // validate that the caller is not expecting a persistent
         // subscription while using an option that will only hit the cache
@@ -417,6 +426,7 @@ export class NDKSubscription extends EventEmitter<{
         optimisticPublish: boolean = false
     ) {
         const eventId = event.id! as NDKEventId;
+
         const eventAlreadySeen = this.eventFirstSeen.has(eventId);
         let ndkEvent: NDKEvent;
 
@@ -466,10 +476,11 @@ export class NDKSubscription extends EventEmitter<{
                 this.ndk.emit("event", ndkEvent, relay);
             }
 
-            this.emit("event", ndkEvent, relay, this);
-
-            // mark the eventId as seen
-            this.eventFirstSeen.set(eventId, Date.now());
+            if (!optimisticPublish || this.skipOptimisticPublishEvent !== true) {
+                this.emit("event", ndkEvent, relay, this);
+                // mark the eventId as seen
+                this.eventFirstSeen.set(eventId, Date.now());
+            }
         } else {
             const timeSinceFirstSeen = Date.now() - (this.eventFirstSeen.get(eventId) || 0);
             this.emit("event:dup", eventId, relay, timeSinceFirstSeen, this);

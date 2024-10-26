@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk-cache-redis
 
+## 0.3.4
+
+### Patch Changes
+
+-   0191977: provide a way to create nuts of specific denomincation(s)
+
 ## 0.3.3
 
 ### Patch Changes

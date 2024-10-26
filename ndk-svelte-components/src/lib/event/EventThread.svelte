@@ -2,13 +2,13 @@
     import { NDKSubscriptionCacheUsage, type Hexpubkey, type NDKEvent, type NDKEventId } from "@nostr-dev-kit/ndk";
     import type { Readable } from 'svelte/store';
     import { fade } from 'svelte/transition';
-    import { type ComponentType, onDestroy } from "svelte";
+    import { SvelteComponent, onDestroy } from "svelte";
     import EventCard from "./EventCard.svelte";
     import ElementConnector from "./ElementConnector.svelte";
     import type NDKSvelte from "@nostr-dev-kit/ndk-svelte";
 
     type ExtraItem = {
-        component: ComponentType;
+        component: typeof SvelteComponent;
         props: any;
     }
     type ExtraItemFetcher = (event: NDKEvent) => Readable<ExtraItem[]>;

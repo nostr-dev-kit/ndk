@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk
 
+## 2.10.2
+
+### Patch Changes
+
+-   NIP-46 bunker URI improvements
+
 ## 2.10.1
 
 ### Patch Changes

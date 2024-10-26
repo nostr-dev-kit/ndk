@@ -1,5 +1,16 @@
 # @nostr-dev-kit/ndk-svelte-components
 
+## 2.3.0
+
+### Minor Changes
+
+-   Refactor how markdown parsing is done to use a more modular approach with user-supplied svelte component rendering support
+
+### Patch Changes
+
+-   Updated dependencies
+    -   @nostr-dev-kit/ndk@2.10.2
+
 ## 2.2.20
 
 ### Patch Changes

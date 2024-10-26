@@ -5,6 +5,8 @@
 ### Patch Changes
 
 -   4351ec4: provide a way to create nuts of specific denomincation(s)
+-   Updated dependencies
+    -   @nostr-dev-kit/ndk@2.10.2
 
 ## 0.3.2
 

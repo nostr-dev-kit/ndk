@@ -24,7 +24,7 @@
     import type NDK from '@nostr-dev-kit/ndk';
     import EventCard from '../EventCard.svelte';
     import { pluck, values, without } from 'ramda';
-    import type { ComponentType, SvelteComponent } from 'svelte';
+    import type { ComponentType } from 'svelte';
     import type { UrlFactory } from '$lib';
     // import NoteContentEntity from "./NoteContentEntity.svelte"
 
@@ -34,7 +34,7 @@
     export let showEntire = false;
     export let showMedia = true;
     export let content = event.content;
-    export let mediaCollectionComponent: typeof SvelteComponent | undefined = undefined;
+    export let mediaCollectionComponent: ComponentType | undefined = undefined;
     export let eventCardComponent: ComponentType = EventCard;
     export let urlFactory: UrlFactory;
 

@@ -11,7 +11,7 @@
     import Kind30001 from "./Kind30001.svelte";
     import Kind30023 from "./Kind30023.svelte";
     import Kind30818 from "./Kind30818.svelte";
-    import type { SvelteComponent } from "svelte";
+    import type { ComponentType } from "svelte";
     import type { MarkedExtension } from "marked";
     import type { UrlFactory, UrlType } from "$lib";
 
@@ -21,8 +21,8 @@
     export let maxLength: number = 700;
     export let showEntire: boolean = true;
     export let showMedia: boolean = true;
-    export let mediaCollectionComponent: typeof SvelteComponent | undefined = undefined;
-    export let eventCardComponent: typeof SvelteComponent | undefined = undefined;
+    export let mediaCollectionComponent: ComponentType | undefined = undefined;
+    export let eventCardComponent: ComponentType | undefined = undefined;
     
     export let urlFactory: UrlFactory = (type: UrlType, value: string) => {
         switch (type) {

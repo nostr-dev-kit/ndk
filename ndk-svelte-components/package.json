@@ -48,7 +48,7 @@
         "@storybook/testing-library": "^0.2.2",
         "@storybook/theming": "^7.6.20",
         "@sveltejs/adapter-auto": "^2.1.1",
-        "@sveltejs/kit": "^2.5.28",
+        "@sveltejs/kit": "^2.6.4",
         "@sveltejs/package": "^2.3.5",
         "@types/ramda": "^0.29.12",
         "@types/sanitize-html": "^2.13.0",
@@ -56,6 +56,7 @@
         "@typescript-eslint/parser": "^6.21.0",
         "autoprefixer": "^10.4.20",
         "eslint-plugin-storybook": "0.6.14",
+        "mdsvex": "^0.12.3",
         "postcss": "^8.4.47",
         "prettier": "^3.3.3",
         "prettier-plugin-svelte": "^3.2.6",
@@ -64,28 +65,28 @@
         "react-dom": "^18.3.1",
         "storybook": "^7.6.20",
         "svelte": "^4.2.19",
-        "svelte-check": "^3.8.6",
+        "svelte-check": "^4.0.4",
         "tailwindcss": "^3.4.12",
         "tslib": "^2.7.0",
-        "vite": "^4.5.5"
+        "vite": "^5.4.8"
     },
     "dependencies": {
         "@nostr-dev-kit/ndk": "workspace:*",
         "@sveltejs/vite-plugin-svelte": "^3.1.2",
         "classnames": "^2.5.1",
-        "lucide-svelte": "^0.378.0",
-        "marked": "^9.1.6",
+        "lucide-svelte": "^0.451.0",
+        "marked": "^14.1.2",
         "marked-footnote": "^1.2.4",
-        "marked-gfm-heading-id": "^3.2.0",
+        "marked-gfm-heading-id": "^4.1.0",
         "marked-mangle": "^1.1.9",
         "nostr-tools": "^2.7.2",
         "ramda": "^0.29.1",
         "rehype-autolink-headings": "^7.1.0",
         "rehype-slug": "^6.0.0",
-        "svelte-asciidoc": "0.0.6",
         "sanitize-html": "^2.13.0",
+        "svelte-markdown": "^0.4.1",
         "svelte-preprocess": "^5.1.4",
-        "svelte-time": "^0.8.3"
+        "svelte-time": "^0.9.0"
     },
     "peerDependencies": {
         "svelte": "^4.2.0"

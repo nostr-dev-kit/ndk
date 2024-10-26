@@ -160,10 +160,6 @@ export function calculateRelaySetsFromFilter(
             });
     }
 
-    if (result.size === 0) {
-        console.warn("No relays found for filter", filters);
-    }
-
     return result;
 }
 

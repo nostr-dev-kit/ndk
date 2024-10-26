@@ -2,7 +2,6 @@
     // import { without } from 'ramda';
     import {
         parseContent,
-        // getLinks,
         truncateContent,
         LINK,
         // INVOICE,
@@ -38,16 +37,9 @@
     export let eventCardComponent: ComponentType = EventCard;
     export let urlFactory: UrlFactory;
 
-    export const getLinks = (parts: any[]) => pluck(
-        "value",
-        parts.filter(x => x.type === LINK && x.isMedia)
-    )
-
     const fullContent = parseContent({ ...event, content });
     const shortContent = truncateContent(fullContent, { maxLength, showEntire, showMedia });
     const groupedContent = groupContent(shortContent);
-    const links = getLinks(shortContent);
-    // const extraLinks = without(links, getLinks(fullContent));
 
     export const isNewline = (i: number) => !shortContent[i] || shortContent[i].type === NEWLINE;
 

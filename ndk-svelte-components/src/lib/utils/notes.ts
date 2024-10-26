@@ -1,5 +1,5 @@
 import { nip19 } from "nostr-tools";
-import { identity, last, pluck } from "ramda";
+import { identity, last } from "ramda";
 
 export const NEWLINE = "newline";
 export const TEXT = "text";
@@ -36,9 +36,9 @@ export type ParsedPart = {
 
 export const isEmbeddableMedia = (url: string) => isImage(url) || isVideo(url) || isAudio(url);
 
-export const isImage = (url: string) => url.match(/^.*\.(jpg|jpeg|png|webp|gif|avif|svg)/gi);
-export const isVideo = (url: string) => url.match(/^.*\.(mov|mkv|mp4|avi|m4v|webm)/gi);
-export const isAudio = (url: string) => url.match(/^.*\.(ogg|mp3|wav)/gi);
+export const isImage = (url: string) => url?.match(/^.*\.(jpg|jpeg|png|webp|gif|avif|svg)/gi);
+export const isVideo = (url: string) => url?.match(/^.*\.(mov|mkv|mp4|avi|m4v|webm)/gi);
+export const isAudio = (url: string) => url?.match(/^.*\.(ogg|mp3|wav)/gi);
 
 /**
  * Groups content parts into link collections when they are consecutive media links
@@ -310,9 +310,3 @@ export const truncateContent = (content, { showEntire, maxLength, showMedia = fa
 
     return result;
 };
-
-export const getLinks = (parts) =>
-    pluck(
-        "value",
-        parts.filter((x) => x.type === LINK && x.isMedia)
-    );

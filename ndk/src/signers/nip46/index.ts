@@ -155,7 +155,9 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
             }
         }
 
-        if (!this.bunkerPubkey) {
+        if (!this.bunkerPubkey && this.userPubkey) {
+            this.bunkerPubkey = this.userPubkey;
+        } else if (!this.bunkerPubkey) {
             throw new Error("Bunker pubkey not set");
         }
 

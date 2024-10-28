@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk-cache-redis
 
+## 0.3.6
+
+### Patch Changes
+
+-   bump
+
 ## 0.3.5
 
 ### Patch Changes

@@ -1,6 +1,7 @@
 import type {
     CashuPaymentInfo,
     NDKEventId,
+    NDKNutzap,
     NDKPaymentConfirmationCashu,
     NDKPaymentConfirmationLN,
     NDKSubscription,
@@ -24,6 +25,12 @@ import { decrypt } from "./decrypt.js";
 import { chooseProofsForAmounts, rollOverProofs } from "./proofs.js";
 
 const d = createDebug("ndk-wallet:cashu:wallet");
+
+interface SaveProofsOptions {
+    nutzap?: NDKNutzap;
+    direction?: "in" | "out";
+    amount?: number;
+}
 
 /**
  * This class tracks state of a NIP-60 wallet
@@ -318,7 +325,8 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
         const mint = getDecodedToken(token).token[0].mint
         const wallet = new CashuWallet(new CashuMint(mint));
         const proofs = await wallet.receive(token);
-        await this.saveProofs(proofs, mint);
+        const amount = proofsTotalBalance(proofs);
+        await this.saveProofs(proofs, mint, { direction: "in", amount });
 
         const tokenEvent = new NDKCashuToken(this.event.ndk);
         tokenEvent.proofs = proofs;
@@ -411,7 +419,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
      * @param nutzap Nutzap event if these proofs are redeemed from a nutzap
      * @returns
      */
-    async saveProofs(proofs: Proof[], mint: MintUrl, nutzap?: NDKEvent) {
+    async saveProofs(proofs: Proof[], mint: MintUrl, { nutzap, direction, amount } : SaveProofsOptions = {}) {
         const tokenEvent = new NDKCashuToken(this.event.ndk);
         tokenEvent.proofs = proofs;
         tokenEvent.mint = mint;
@@ -426,10 +434,16 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
         });
 
         const historyEvent = new NDKWalletChange(this.event.ndk);
-        historyEvent.tag(this.event);
+        historyEvent.tags.push(this.event.tagReference());
 
         if (nutzap) {
             historyEvent.addRedeemedNutzap(nutzap);
+            historyEvent.direction = "in";
+
+            historyEvent.amount = nutzap.amount;
+        } else {
+            historyEvent.direction = direction;
+            if (amount) historyEvent.amount = amount;
         }
         
         historyEvent.tag(tokenEvent, NDKWalletChange.MARKERS.CREATED);

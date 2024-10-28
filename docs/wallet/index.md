@@ -53,4 +53,11 @@ wallet.mints = choosenMints;
 wallet.publishReplaceable();
 ```
 
-## 
+## Receiving ecash
+To receive ecash just call the `receiveToken` method on the wallet.
+
+```ts
+const tokenEvent = await wallet.receiveToken(token);
+```
+
+This will swap the tokens in the right mint and add them to the wallet. Note that if the mint of this token is not one of the ones in the wallet you will need to move them to the mint you want manually.

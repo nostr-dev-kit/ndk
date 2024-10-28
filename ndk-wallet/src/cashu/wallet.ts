@@ -15,7 +15,7 @@ import createDebug from "debug";
 import type { MintUrl } from "./mint/utils.js";
 import { NDKCashuPay } from "./pay.js";
 import type { Proof } from "@cashu/cashu-ts";
-import { CashuMint, CashuWallet } from "@cashu/cashu-ts";
+import { CashuMint, CashuWallet, getDecodedToken } from "@cashu/cashu-ts";
 import { NDKWalletChange } from "./history.js";
 import { checkTokenProofs } from "./validate.js";
 import { NDKWallet, NDKWalletBalance, NDKWalletEvents, NDKWalletStatus } from "../wallet/index.js";
@@ -309,6 +309,26 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
         return deposit;
     }
 
+    /**
+     * Receives a token and adds it to the wallet
+     * @param token
+     * @returns the token event that was created
+     */
+    public async receiveToken(token: string) {
+        const mint = getDecodedToken(token).token[0].mint
+        const wallet = new CashuWallet(new CashuMint(mint));
+        const proofs = await wallet.receive(token);
+        await this.saveProofs(proofs, mint);
+
+        const tokenEvent = new NDKCashuToken(this.event.ndk);
+        tokenEvent.proofs = proofs;
+        tokenEvent.mint = mint;
+        await tokenEvent.publish(this.relaySet);
+        this.addToken(tokenEvent);
+
+        return tokenEvent;
+    }
+
     public async addHistoryItem(
         direction: "in" | "out",
         amount: number,
@@ -405,14 +425,16 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
             console.error("failed to publish token", e, tokenEvent.rawEvent());
         });
 
+        const historyEvent = new NDKWalletChange(this.event.ndk);
+        historyEvent.tag(this.event);
+
         if (nutzap) {
-            const historyEvent = new NDKWalletChange(this.event.ndk);
             historyEvent.addRedeemedNutzap(nutzap);
-            historyEvent.tag(this.event);
-            historyEvent.tag(tokenEvent, NDKWalletChange.MARKERS.CREATED);
-            await historyEvent.sign();
-            historyEvent.publish(this.relaySet);
         }
+        
+        historyEvent.tag(tokenEvent, NDKWalletChange.MARKERS.CREATED);
+        await historyEvent.sign();
+        historyEvent.publish(this.relaySet);
 
         return tokenEvent;
     }

@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk-cache-redis
 
+## 0.3.5
+
+### Patch Changes
+
+-   receive cashu
+
 ## 0.3.4
 
 ### Patch Changes

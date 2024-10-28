@@ -326,14 +326,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
         const wallet = new CashuWallet(new CashuMint(mint));
         const proofs = await wallet.receive(token);
         const amount = proofsTotalBalance(proofs);
-        await this.saveProofs(proofs, mint, { direction: "in", amount });
-
-        const tokenEvent = new NDKCashuToken(this.event.ndk);
-        tokenEvent.proofs = proofs;
-        tokenEvent.mint = mint;
-        await tokenEvent.publish(this.relaySet);
-        this.addToken(tokenEvent);
-
+        const tokenEvent = await this.saveProofs(proofs, mint, { direction: "in", amount });
         return tokenEvent;
     }
 

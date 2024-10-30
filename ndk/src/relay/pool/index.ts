@@ -416,7 +416,7 @@ export class NDKPool extends EventEmitter<{
 
     public connectedRelays(): NDKRelay[] {
         return Array.from(this.relays.values()).filter(
-            (relay) => relay.status === NDKRelayStatus.CONNECTED
+            (relay) => relay.status >= NDKRelayStatus.CONNECTED
         );
     }
 

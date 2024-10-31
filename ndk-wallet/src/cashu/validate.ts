@@ -71,34 +71,37 @@ export async function checkTokenProofsForMint(
 
     const spentProofsSet = new Set(spentProofs.map((p) => p.id));
     const tokensToDestroy: NDKCashuToken[] = [];
-    const proofsToSave: Proof[] = [];
+    const proofsToSave: Map<string, Proof> = new Map();
 
     for (const token of tokens) {
         const { dirty, unspentProofs, spentProofs } = checkInvalidToken(token, spentProofsSet);
         if (dirty) {
             tokensToDestroy.push(token);
-            proofsToSave.push(...unspentProofs);
-            console.log(
-                "👉 token has spent proofs",
-                spentProofs.map((p) => p.id),
-                token.rawEvent(),
-                token.onRelays,
-                token.relay
+
+            for (const proof of unspentProofs) {
+                const id = proof.secret;
+                proofsToSave.set(id, proof);
+            }
+            
+            d(
+                "👉 token %s has spent proofs",
+                token.id.slice(0, 6),
+                spentProofs.map((p) => p.secret.slice(0, 4)),
             );
         }
     }
 
     d(
-        "destroying %d tokens with %dspent proofs, moving %d proofs",
+        "destroying %d tokens with %d spent proofs, moving %d proofs",
         tokensToDestroy.length,
         spentProofs.length,
-        proofsToSave.length
+        proofsToSave.size
     );
 
-    rollOverProofs(
+    const res = await rollOverProofs(
         {
             usedProofs: spentProofs,
-            movedProofs: proofsToSave,
+            movedProofs: Array.from(proofsToSave.values()),
             usedTokens: tokensToDestroy,
             mint,
         },
@@ -107,5 +110,12 @@ export async function checkTokenProofsForMint(
         wallet
     );
 
-    return spentProofs;
+    d(
+        "rolled over proofs for mint %s, destroyed %d tokens, created %s token",
+            mint,
+            res.destroyedTokens.length,
+            res.createdToken?.id ?? "no new"
+    );
+
+    return res;
 }

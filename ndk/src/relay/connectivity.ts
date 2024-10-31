@@ -32,6 +32,7 @@ export class NDKRelayConnectivity {
         durations: [],
     };
     private debug: debug.Debugger;
+    public netDebug?: ((msg: string, relay: NDKRelay) => void);
     private connectTimeout: ReturnType<typeof setTimeout> | undefined;
     private reconnectTimeout: ReturnType<typeof setTimeout> | undefined;
     private ndk?: NDK;
@@ -149,6 +150,7 @@ export class NDKRelayConnectivity {
      * sets the connection status to `CONNECTED`, and emits `connect` and `ready` events on the `ndkRelay` object.
      */
     private onConnect() {
+        this.netDebug?.("connected", this.ndkRelay);
         if (this.reconnectTimeout) {
             clearTimeout(this.reconnectTimeout);
             this.reconnectTimeout = undefined;
@@ -171,6 +173,7 @@ export class NDKRelayConnectivity {
      * and emits a `disconnect` event on the `ndkRelay` object.
      */
     private onDisconnect() {
+        this.netDebug?.("disconnected", this.ndkRelay)
         this.updateConnectionStats.disconnected();
 
         // if (this._status === NDKRelayStatus.CONNECTED) {
@@ -189,6 +192,7 @@ export class NDKRelayConnectivity {
      * @param event - The MessageEvent containing the received message data.
      */
     private onMessage(event: MessageEvent): void {
+        this.netDebug?.(event.data, this.ndkRelay);
         try {
             const data = JSON.parse(event.data);
             const [cmd, id, ...rest] = data;
@@ -476,6 +480,7 @@ export class NDKRelayConnectivity {
     public async send(message: string) {
         if (this._status >= NDKRelayStatus.CONNECTED && this.ws?.readyState === WebSocket.OPEN) {
             this.ws?.send(message);
+            this.netDebug?.(message, this.ndkRelay);
         } else {
             this.debug(
                 `Not connected to ${this.ndkRelay.url} (%d), not sending message ${message}`,

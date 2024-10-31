@@ -269,6 +269,11 @@ export class NDK extends EventEmitter<{
      */
     public httpFetch: typeof fetch | undefined;
 
+    /**
+     * Provide a caller function to receive all networking traffic from relays
+     */
+    public netDebug?: (msg: string, relay: NDKRelay) => void;
+
     public autoConnectUserRelays = true;
     public autoFetchUserMutelist = true;
 

@@ -25,11 +25,21 @@ export function filterFingerprint(
     const elements: string[] = [];
 
     for (const filter of filters) {
-        const hasTimeConstraints = filter.since || filter.until;
+        const hasLimitContraint = filter.limit;
 
-        if (hasTimeConstraints) return undefined;
+        // We don't produce a fingerprint for queries with a limit, since that would change
+        // the amount of data returned as expected by each subscription
+        if (hasLimitContraint) return undefined;
 
-        const keys = Object.keys(filter || {})
+        const keys = Object.entries(filter || {})
+            .map(([key, values]) => {
+                if (['since', 'until'].includes(key)) {
+                    // We don't want to mix different time constraints values, so we include the value in the fingerprint
+                    return key + ":" + (values as string);
+                } else {
+                    return key;
+                }
+            })
             .sort()
             .join("-");
 

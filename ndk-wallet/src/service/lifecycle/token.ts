@@ -16,7 +16,6 @@ async function handleToken(this: NDKWalletLifecycle, event: NDKEvent, relay?: ND
     wallet ??= this.defaultWallet;
 
     if (!wallet) {
-        this.debug("no wallet found for token %s", token.id);
         this.orphanedTokens.set(token.id, token);
     } else {
         wallet.addToken(token);

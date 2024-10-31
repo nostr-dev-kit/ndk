@@ -1,5 +1,29 @@
 # @nostr-dev-kit/ndk-cache-redis
 
+## 0.3.10
+
+### Patch Changes
+
+-   bump
+
+## 0.3.9
+
+### Patch Changes
+
+-   nip44 decrypt wallet change events
+
+## 0.3.8
+
+### Patch Changes
+
+-   avoid duplicating proofs when they existed previously in different tokens
+
+## 0.3.7
+
+### Patch Changes
+
+-   fix issue were two tokens are being created when redeeming cashu
+
 ## 0.3.6
 
 ### Patch Changes

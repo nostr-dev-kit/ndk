@@ -191,7 +191,7 @@ export function chooseProofsForAmounts(amounts: number[], wallet: NDKCashuWallet
     return;
 }
 
-export type ROLL_OVER_RESULT = {
+export interface RollOverResult {
     destroyedTokens: NDKCashuToken[],
     createdToken: NDKCashuToken | undefined
 };
@@ -204,7 +204,7 @@ export async function rollOverProofs(
     changes: Proof[],
     mint: string,
     wallet: NDKCashuWallet,
-): Promise<ROLL_OVER_RESULT> {
+): Promise<RollOverResult> {
     const relaySet = wallet.relaySet;
 
     if (proofs.usedTokens.length > 0) {

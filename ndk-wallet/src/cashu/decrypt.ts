@@ -11,7 +11,7 @@ export async function decrypt(event: NDKEvent) {
         await event.decrypt(undefined, undefined, "nip44");
         return;
     } catch (e) {
-        debug("unable to decerypt with nip44, attempting with nip04", e);
+        debug("unable to decrypt with nip44, attempting with nip04", e);
         await event.decrypt(undefined, undefined, "nip04");
         debug("✅ decrypted with nip04");
     }

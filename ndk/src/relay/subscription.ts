@@ -2,7 +2,7 @@ import type { Event } from "nostr-tools";
 import { matchFilters } from "nostr-tools";
 import type { NDKRelay } from ".";
 import { NDKRelayStatus } from ".";
-import type { NDKEventId, NostrEvent } from "../events";
+import type { NostrEvent } from "../events";
 import type {
     NDKFilter,
     NDKSubscription,
@@ -63,15 +63,6 @@ export class NDKRelaySubscription {
      * Whether this subscription has reached EOSE.
      */
     private eosed = false;
-
-    /**
-     * These are subscriptions that have indicated they want to close before
-     * we received an EOSE.
-     *
-     * This happens when this relay is the slowest to respond once the NDKSubscription
-     * has received enough EOSEs to give up on this relay.
-     */
-    private itemsToRemoveAfterEose: NDKSubscriptionInternalId[] = [];
 
     /**
      * Timeout at which this subscription will
@@ -214,16 +205,27 @@ export class NDKRelaySubscription {
         if (this.onClose) this.onClose(this);
     }
 
-    private catchUpSubscription(subscription: NDKSubscription, filters: NDKFilter[]) {
-        this.debug("TODO: catch up subscription", subscription, filters);
-    }
-
     private evaluateExecutionPlan(subscription: NDKSubscription) {
         if (!subscription.isGroupable()) {
             // execute immediately
             this.status = NDKRelaySubscriptionStatus.PENDING;
             this.execute();
             return;
+        }
+
+        // if the subscription is adding a limit filter we want to make sure
+        // we are not adding too many, since limit filters concatenate filters instead of merging them
+        // (as merging them would change the meaning)
+        if (subscription.filters.find(filter => !!filter.limit)) {
+            // compile the filter
+            this.executeFilters = this.compileFilters();
+            
+            // if we have 10 filters, we execute immediately, as most relays don't want more than 10
+            if (this.executeFilters.length >= 10) {
+                this.status = NDKRelaySubscriptionStatus.PENDING;
+                this.execute();
+                return;
+            }
         }
 
         const delay = subscription.groupableDelay;
@@ -344,7 +346,6 @@ export class NDKRelaySubscription {
         this.finalizeSubId();
 
         this.executeFilters = this.compileFilters();
-
         this.relay.req(this);
     }
 
@@ -413,7 +414,8 @@ export class NDKRelaySubscription {
 
         for (let i = 0; i < filterCount; i++) {
             const allFiltersAtIndex = filters.map((filter) => filter[i]);
-            mergedFilters.push(mergeFilters(allFiltersAtIndex));
+
+            mergedFilters.push(...mergeFilters(allFiltersAtIndex));
         }
 
         return mergedFilters;

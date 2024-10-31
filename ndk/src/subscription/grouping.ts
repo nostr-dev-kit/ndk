@@ -25,12 +25,6 @@ export function filterFingerprint(
     const elements: string[] = [];
 
     for (const filter of filters) {
-        const hasLimitContraint = filter.limit;
-
-        // We don't produce a fingerprint for queries with a limit, since that would change
-        // the amount of data returned as expected by each subscription
-        if (hasLimitContraint) return undefined;
-
         const keys = Object.entries(filter || {})
             .map(([key, values]) => {
                 if (['since', 'until'].includes(key)) {
@@ -55,23 +49,34 @@ export function filterFingerprint(
  * Go through all the passed filters, which should be
  * relatively similar, and merge them.
  */
-export function mergeFilters(filters: NDKFilter[]): NDKFilter {
+export function mergeFilters(filters: NDKFilter[]): NDKFilter[] {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const result: any = {};
+    const result: NDKFilter[] = [];
+    const lastResult: any = {};
+
+    // concatenate filters that have a limit
+    filters
+        .filter(f => !!f.limit)
+        .forEach(filterWithLimit => result.push(filterWithLimit))
+    
+    // only merge the filters that don't have a limit
+    filters = filters.filter(f => !f.limit);
+
+    if (filters.length === 0) return result;
 
     filters.forEach((filter) => {
         Object.entries(filter).forEach(([key, value]) => {
             if (Array.isArray(value)) {
-                if (result[key] === undefined) {
-                    result[key] = [...value];
+                if (lastResult[key] === undefined) {
+                    lastResult[key] = [...value];
                 } else {
-                    result[key] = Array.from(new Set([...result[key], ...value]));
+                    lastResult[key] = Array.from(new Set([...lastResult[key], ...value]));
                 }
             } else {
-                result[key] = value;
+                lastResult[key] = value;
             }
         });
     });
 
-    return result as NDKFilter;
+    return [...result, lastResult as NDKFilter];
 }

@@ -197,6 +197,15 @@ class NDKWalletLifecycle extends EventEmitter<{
         let w = wallet;
         if (!w && p2pk) w = Array.from(this.wallets.values()).find((w) => w.p2pk === p2pk);
 
+        // apply orphaned tokens to this default wallet
+        this.debug("applying %d orphaned tokens to default wallet", this.orphanedTokens.size);
+        if (w && this.orphanedTokens.size > 0) {
+            for (const token of this.orphanedTokens.values()) {
+                w.addToken(token);
+            }
+            this.orphanedTokens.clear();
+        }
+
         if (w) {
             this.defaultWallet = w;
             this.emit("wallet:default", w);

@@ -1,5 +1,15 @@
 # @nostr-dev-kit/ndk-cache-redis
 
+## 0.3.11
+
+### Patch Changes
+
+-   0bdffa7: if we run into duplicate proofs throughout the same or different tokens, clean up when we roll them into a new token event
+-   0bdffa7: be more tolerant of incorrect nip04 encryption
+-   apply orphan tokens to the default wallet
+-   Updated dependencies [0fc66c5]
+    -   @nostr-dev-kit/ndk@2.10.3
+
 ## 0.3.10
 
 ### Patch Changes

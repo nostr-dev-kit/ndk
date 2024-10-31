@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk
 
+## 2.10.3
+
+### Patch Changes
+
+-   0fc66c5: fix bugs with groupings, missing EOSEs and missing events under some conditions
+
 ## 2.10.2
 
 ### Patch Changes

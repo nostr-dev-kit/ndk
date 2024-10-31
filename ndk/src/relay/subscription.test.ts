@@ -8,7 +8,7 @@ import { NDK } from "../ndk/index.js";
 import { NDKRelay } from "../index.js";
 
 const ndk = new NDK();
-const relay = new NDKRelay("wss://fake-relay.com");
+const relay = new NDKRelay("wss://fake-relay.com", undefined, ndk);
 const filters: NDKFilter[] = [{ kinds: [1] }];
 
 // mock
@@ -140,7 +140,7 @@ describe("NDKRelaySubscription", () => {
         expect(rescheduledTimer).toBe(initialTimer);
     });
 
-    fit("should not close until we have reached EOSE", () => {
+    it("should not close until we have reached EOSE", () => {
         const sub = new MockNDKSubscription("sub11", 0, "at-most");
         sub.groupable = false;
         ndkRelaySubscription.addItem(sub, filters);
@@ -149,7 +149,7 @@ describe("NDKRelaySubscription", () => {
         expect(closeSpy).not.toHaveBeenCalled();
     });
 
-    fit("it should close when we reach EOSE if the subscription said it was closed", () => {
+    it("it should close when we reach EOSE if the subscription asked for close on EOSE", () => {
         const sub = new MockNDKSubscription("sub11", 0, "at-most");
         sub.groupable = false;
         sub.closeOnEose = true;
@@ -157,7 +157,7 @@ describe("NDKRelaySubscription", () => {
         const closeSpy = jest.spyOn(ndkRelaySubscription as any, "close");
         sub.stop();
         expect(closeSpy).not.toHaveBeenCalled();
-        ndkRelaySubscription.oneose();
+        ndkRelaySubscription.oneose(ndkRelaySubscription.subId)
         expect(closeSpy).toHaveBeenCalled();
     });
 });

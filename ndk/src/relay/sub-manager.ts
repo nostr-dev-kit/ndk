@@ -1,4 +1,4 @@
-import { NDKRelaySubscription } from "./subscription";
+import { NDKRelaySubscription, NDKRelaySubscriptionStatus } from "./subscription";
 import type { NDKSubscription } from "../subscription/index.js";
 import type { NDKFilter } from "../subscription/index.js";
 import type { NDKFilterFingerprint } from "../subscription/grouping.js";
@@ -17,14 +17,12 @@ import type { NDKSubscriptionManager } from "../subscription/manager";
  */
 export class NDKRelaySubscriptionManager {
     private relay: NDKRelay;
-    private subscriptions: Map<NDKFilterFingerprint, NDKRelaySubscription>;
+    private subscriptions: Map<NDKFilterFingerprint, NDKRelaySubscription[]>;
     private topSubscriptionManager?: NDKSubscriptionManager;
-    private debug: debug.Debugger;
 
     constructor(relay: NDKRelay, topSubscriptionManager?: NDKSubscriptionManager) {
         this.relay = relay;
         this.subscriptions = new Map();
-        this.debug = relay.debug.extend("sub-manager");
         this.topSubscriptionManager = topSubscriptionManager;
     }
 
@@ -39,7 +37,14 @@ export class NDKRelaySubscriptionManager {
             relaySub = this.createSubscription(sub, filters);
         } else {
             const filterFp = filterFingerprint(filters, sub.closeOnEose);
-            if (filterFp) relaySub = this.subscriptions.get(filterFp);
+            if (filterFp) {
+                const existingSubs = this.subscriptions.get(filterFp);
+
+                // Go through the subscriptions with this fingerprint and see if we there is one
+                // that is not running yet
+                relaySub = (existingSubs||[])
+                    .find(sub => sub.status < NDKRelaySubscriptionStatus.RUNNING)
+            }
             relaySub ??= this.createSubscription(sub, filters, filterFp);
         }
 
@@ -55,13 +60,22 @@ export class NDKRelaySubscriptionManager {
         const relaySub = new NDKRelaySubscription(this.relay, fingerprint);
         relaySub.topSubscriptionManager = this.topSubscriptionManager;
         relaySub.onClose = this.onRelaySubscriptionClose.bind(this);
-
-        this.subscriptions.set(relaySub.fingerprint, relaySub);
+        const currentVal = this.subscriptions.get(relaySub.fingerprint) ?? [];
+        this.subscriptions.set(relaySub.fingerprint, [...currentVal, relaySub]);
 
         return relaySub;
     }
 
     private onRelaySubscriptionClose(sub: NDKRelaySubscription) {
-        this.subscriptions.delete(sub.fingerprint);
+        let currentVal = this.subscriptions.get(sub.fingerprint) ?? [];
+        if (!currentVal) {
+            console.warn("Unexpectedly did not find a subscription with fingerprint", sub.fingerprint);
+        } else if (currentVal.length === 1) {
+            this.subscriptions.delete(sub.fingerprint);
+        } else {
+            currentVal = currentVal.filter(s => s.id !== sub.id);
+            this.subscriptions.set(sub.fingerprint, currentVal);
+            console.log('removing a subscription', {fingerprint: sub.fingerprint, id: sub.id, newSize: this.subscriptions.size})
+        }
     }
 }

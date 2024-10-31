@@ -74,6 +74,7 @@ export class NDKPool extends EventEmitter<{
         this._relays.clear();
         for (const relayUrl of urls) {
             const relay = new NDKRelay(relayUrl, undefined, this.ndk);
+            relay.connectivity.netDebug = this.ndk.netDebug;
             this.addRelay(relay, false);
         }
     }
@@ -261,6 +262,7 @@ export class NDKPool extends EventEmitter<{
 
         if (!relay) {
             relay = new NDKRelay(url, undefined, this.ndk);
+            relay.connectivity.netDebug = this.ndk.netDebug;
             if (temporary) {
                 this.useTemporaryRelay(relay, 30000, filters);
             } else {

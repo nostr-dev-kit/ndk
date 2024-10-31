@@ -53,7 +53,7 @@ export class NDKRelaySubscription {
     /**
      * Tracks the status of this REQ.
      */
-    private status: NDKRelaySubscriptionStatus = NDKRelaySubscriptionStatus.INITIAL;
+    public status: NDKRelaySubscriptionStatus = NDKRelaySubscriptionStatus.INITIAL;
 
     public onClose?: (sub: NDKRelaySubscription) => void;
 
@@ -94,10 +94,7 @@ export class NDKRelaySubscription {
      */
     public executeFilters?: NDKFilter[];
 
-    /**
-     * Event IDs that have been seen by this subscription.
-     */
-    private eventIds: Set<NDKEventId> = new Set();
+    readonly id =  Math.random().toString(36).substring(7);
 
     /**
      *
@@ -105,8 +102,7 @@ export class NDKRelaySubscription {
      */
     constructor(relay: NDKRelay, fingerprint?: NDKFilterFingerprint) {
         this.relay = relay;
-        const rand = Math.random().toString(36).substring(7);
-        this.debug = relay.debug.extend("subscription-" + rand);
+        this.debug = relay.debug.extend("subscription-" + this.id);
         this.fingerprint = fingerprint || Math.random().toString(36).substring(7);
     }
 
@@ -150,6 +146,7 @@ export class NDKRelaySubscription {
                 // the subscription was already running when this new NDKSubscription came
                 // so we might have some events this new NDKSubscription wants
                 // this.catchUpSubscription(subscription, filters);
+                console.log("BUG: This should not happen: This subscription needs to catch up with a subscription that was already running", filters)
                 break;
             case NDKRelaySubscriptionStatus.PENDING:
                 // this subscription is already scheduled to be executed
@@ -172,15 +169,13 @@ export class NDKRelaySubscription {
      * @param subscription
      */
     public removeItem(subscription: NDKSubscription) {
-        // If we have not EOSEd yet, don't delete the item, rather mark it for deletion
-        if (!this.eosed) {
-            this.itemsToRemoveAfterEose.push(subscription.internalId);
-            return;
-        }
-
         this.items.delete(subscription.internalId);
 
         if (this.items.size === 0) {
+            // if we haven't received an EOSE yet, don't close, relays don't like that
+            // rather, when we EOSE and we have 0 items we will close there.
+            if (!this.eosed) return;
+            
             // no more items, close the subscription
             this.close();
         }
@@ -373,6 +368,13 @@ export class NDKRelaySubscription {
             this.debug("Received EOSE for an abandoned subscription", subId, this.subId);
             this.relay.close(subId);
             return;
+        }
+
+        // if we don't have any items left, this is a subscription in a slow
+        // relay and the subscriptions have been EOSEd due to a timeout, we can
+        // close this subscription
+        if (this.items.size === 0) {
+            this.close();
         }
 
         for (const { subscription } of this.items.values()) {

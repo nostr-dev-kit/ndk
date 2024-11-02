@@ -20,3 +20,18 @@ or in the browser enable it by writing in the DevTools console
 ```
 localStorage.debug = 'ndk:*'
 ```
+
+## Network Debugging
+
+You can construct NDK passing a netDebug callback to receive network traffic events, particularly useful for debugging applications not running in a browser.
+
+```ts
+const netDebug = (msg: string, relay: NDKRelay, direction?: "send" | "recv") = {
+    const hostname = new URL(relay.url).hostname;
+    if (direction === "send") netDebug(hostname, msg);
+    else if (direction === "recv") netDebug(hostname, msg);
+    else netDebug(hostname, msg);
+}
+
+ndk = new NDK({ netDebug });
+```

@@ -27,7 +27,7 @@ async function decrypt(
         !(await backend.pubkeyAllowed({
             id,
             pubkey: remotePubkey,
-            method: "decrypt",
+            method: "nip44_decrypt",
             params: payload,
         }))
     ) {

@@ -27,7 +27,7 @@ async function encrypt(
         !(await backend.pubkeyAllowed({
             id,
             pubkey: remotePubkey,
-            method: "encrypt",
+            method: "nip04_encrypt",
             params: payload,
         }))
     ) {

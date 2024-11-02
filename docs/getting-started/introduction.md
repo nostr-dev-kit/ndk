@@ -28,9 +28,7 @@ You can construct NDK passing a netDebug callback to receive network traffic eve
 ```ts
 const netDebug = (msg: string, relay: NDKRelay, direction?: "send" | "recv") = {
     const hostname = new URL(relay.url).hostname;
-    if (direction === "send") netDebug(hostname, msg);
-    else if (direction === "recv") netDebug(hostname, msg);
-    else netDebug(hostname, msg);
+    netDebug(hostname, msg, direction);
 }
 
 ndk = new NDK({ netDebug });

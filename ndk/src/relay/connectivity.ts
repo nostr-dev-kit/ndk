@@ -1,7 +1,7 @@
 import type { NDKRelay, NDKRelayConnectionStats } from ".";
 import { NDKRelayStatus } from ".";
 import { NDKEvent } from "../events/index.js";
-import type { NDK } from "../ndk/index.js";
+import type { NDK, NDKNetDebug } from "../ndk/index.js";
 import type { NostrEvent } from "../events/index.js";
 import type { NDKFilter } from "../subscription";
 import { NDKKind } from "../events/kinds";
@@ -32,7 +32,7 @@ export class NDKRelayConnectivity {
         durations: [],
     };
     private debug: debug.Debugger;
-    public netDebug?: ((msg: string, relay: NDKRelay) => void);
+    public netDebug?: NDKNetDebug;
     private connectTimeout: ReturnType<typeof setTimeout> | undefined;
     private reconnectTimeout: ReturnType<typeof setTimeout> | undefined;
     private ndk?: NDK;
@@ -176,12 +176,11 @@ export class NDKRelayConnectivity {
         this.netDebug?.("disconnected", this.ndkRelay)
         this.updateConnectionStats.disconnected();
 
-        // if (this._status === NDKRelayStatus.CONNECTED) {
+        if (this._status === NDKRelayStatus.CONNECTED) {
+            this.handleReconnection();
+        }
+        this.ndkRelay.emit("disconnect");
         this._status = NDKRelayStatus.DISCONNECTED;
-
-        //     this.handleReconnection();
-        // }
-        // this.ndkRelay.emit("disconnect");
     }
 
     /**
@@ -192,7 +191,7 @@ export class NDKRelayConnectivity {
      * @param event - The MessageEvent containing the received message data.
      */
     private onMessage(event: MessageEvent): void {
-        this.netDebug?.(event.data, this.ndkRelay);
+        this.netDebug?.(event.data, this.ndkRelay, "recv");
         try {
             const data = JSON.parse(event.data);
             const [cmd, id, ...rest] = data;
@@ -362,7 +361,7 @@ export class NDKRelayConnectivity {
     }
 
     /**
-     * Handles errors that occur on the WebSocket connection to the NDK relay.
+     * Handles errors that occur on the WebSocket connection to the relay.
      * @param error - The error or event that occurred.
      */
     private onError(error: Error | Event): void {
@@ -480,7 +479,7 @@ export class NDKRelayConnectivity {
     public async send(message: string) {
         if (this._status >= NDKRelayStatus.CONNECTED && this.ws?.readyState === WebSocket.OPEN) {
             this.ws?.send(message);
-            this.netDebug?.(message, this.ndkRelay);
+            this.netDebug?.(message, this.ndkRelay, "send");
         } else {
             this.debug(
                 `Not connected to ${this.ndkRelay.url} (%d), not sending message ${message}`,

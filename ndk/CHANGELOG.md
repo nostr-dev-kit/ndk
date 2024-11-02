@@ -1,5 +1,12 @@
 # @nostr-dev-kit/ndk
 
+## 2.10.4
+
+### Patch Changes
+
+-   5bed70c: fix: authed relays weren't reported as connected on connectedRelays
+-   873ad4a: concatenate subscriptions that use a limit -- this is better than treating subscriptions with a limit filter as non-groupable
+
 ## 2.10.3
 
 ### Patch Changes

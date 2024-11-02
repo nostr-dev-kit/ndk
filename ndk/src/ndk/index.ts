@@ -36,6 +36,8 @@ export type NDKValidationRatioFn = (
     nonValidatedCount: number
 ) => number;
 
+export type NDKNetDebug = (msg: string, relay: NDKRelay, direction?: "send" | "recv") => void;
+
 export interface NDKWalletConfig {
     onLnPay?: LnPayCb;
     onCashuPay?: CashuPayCb;
@@ -98,6 +100,11 @@ export interface NDKConstructorParams {
      * Debug instance to use
      */
     debug?: debug.Debugger;
+
+    /**
+     * Provide a caller function to receive all networking traffic from relays
+     */
+    netDebug?: NDKNetDebug;
 
     /**
      * Muted pubkeys and eventIds
@@ -272,7 +279,7 @@ export class NDK extends EventEmitter<{
     /**
      * Provide a caller function to receive all networking traffic from relays
      */
-    public netDebug?: (msg: string, relay: NDKRelay) => void;
+    readonly netDebug?: NDKNetDebug;
 
     public autoConnectUserRelays = true;
     public autoFetchUserMutelist = true;
@@ -283,6 +290,7 @@ export class NDK extends EventEmitter<{
         super();
 
         this.debug = opts.debug || debug("ndk");
+        this.netDebug = opts.netDebug;
         this._explicitRelayUrls = opts.explicitRelayUrls || [];
         this.subManager = new NDKSubscriptionManager(this.debug);
         this.pool = new NDKPool(

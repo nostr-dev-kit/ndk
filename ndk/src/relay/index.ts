@@ -168,6 +168,7 @@ export class NDKRelay extends EventEmitter<{
         this.scores = new Map<NDKUser, NDKRelayScore>();
         this.debug = debug(`ndk:relay:${url}`);
         this.connectivity = new NDKRelayConnectivity(this, ndk);
+        this.connectivity.netDebug = ndk?.netDebug;
         this.req = this.connectivity.req.bind(this.connectivity);
         this.close = this.connectivity.close.bind(this.connectivity);
         this.subs = new NDKRelaySubscriptionManager(this, ndk?.subManager);

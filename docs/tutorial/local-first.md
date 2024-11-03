@@ -47,6 +47,16 @@ const event = new NDKEvent(ndk, { kind: 1, content: 'Failing event' });
 event.publish();
 ```
 
+## Querying cached failed events
+Cache adapters with support for failed publish tracking can be queried via the `getUnpublishedEvents` interface.
+
+```ts
+const failedEvents = ndk.cachedAdapter.getUnpublishedEvents()
+
+console.log(failedEvents.length + " events have not published before; trying now");
+failedEvents.forEach((event) => event.publish());
+```
+
 When an event successfully publishes, the event will emit `published`.
 
 ## Handling retries

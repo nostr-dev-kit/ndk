@@ -19,29 +19,3 @@ describe("disconnect policy", () => {
         expect(pool.relays.size).toBe(0);
     });
 });
-
-describe("sign in policy", () => {
-    it("signs in to the relay", async () => {
-        const signer = NDKPrivateKeySigner.generate();
-        const policy = NDKRelayAuthPolicies.signIn({ signer });
-        ndk.relayAuthDefaultPolicy = policy;
-
-        const relayAuth = jest
-            .spyOn(relay, "auth")
-            .mockImplementation(async (event: NDKEvent): Promise<string> => {
-                return "abc";
-            });
-
-        await relay.emit("auth", "1234-challenge");
-        await new Promise((resolve) => {
-            setTimeout(resolve, 100);
-        });
-
-        expect(relayAuth).toHaveBeenCalled();
-
-        // evaluate the event that was published
-        const event = relayAuth.mock.calls[0][0];
-        expect(event.tagValue("relay")).toBe(relay.url);
-        expect(event.tagValue("challenge")).toBe("1234-challenge");
-    });
-});

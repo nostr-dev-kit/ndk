@@ -1,10 +1,9 @@
 import type { UnsignedEvent } from "nostr-tools";
 import { generateSecretKey, getPublicKey, finalizeEvent, nip04, nip44 } from "nostr-tools";
-import { generateSecretKey, getPublicKey, finalizeEvent, nip04, nip44 } from "nostr-tools";
 
 import type { NostrEvent } from "../../events/index.js";
 import { NDKUser } from "../../user";
-import { DEFAULT_ENCRYPTION_SCHEME, ENCRYPTION_SCHEMES, type NDKSigner } from "../index.js";
+import { type NDKSigner } from "../index.js";
 import { bytesToHex, hexToBytes } from "@noble/hashes/utils";
 import { nip19 } from "nostr-tools";
 import { EncryptionNip } from "../../events/encryption.js";
@@ -85,7 +84,7 @@ export class NDKPrivateKeySigner implements NDKSigner {
         const recipientHexPubKey = recipient.pubkey;
         if(nip == 'nip44'){
             // TODO Deriving shared secret is an expensive computation, should be cached.
-            let conversationKey = nip44.v2.utils.getConversationKey(this.privateKey, recipientHexPubKey);
+            let conversationKey = nip44.v2.utils.getConversationKey(this._privateKey, recipientHexPubKey);
             return await nip44.v2.encrypt(value, conversationKey);
         }
         return await nip04.encrypt(this._privateKey, recipientHexPubKey, value);
@@ -99,7 +98,7 @@ export class NDKPrivateKeySigner implements NDKSigner {
         const senderHexPubKey = sender.pubkey;
         if(nip == 'nip44'){
             // TODO Deriving shared secret is an expensive computation, should be cached.
-            let conversationKey = nip44.v2.utils.getConversationKey(this.privateKey, senderHexPubKey);
+            let conversationKey = nip44.v2.utils.getConversationKey(this._privateKey, senderHexPubKey);
             return await nip44.v2.decrypt(value, conversationKey);
         }
         return await nip04.decrypt(this._privateKey, senderHexPubKey, value);

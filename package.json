@@ -15,16 +15,16 @@
     },
     "devDependencies": {
         "@braintree/sanitize-url": "^7.1.0",
-        "@changesets/cli": "^2.27.9",
+        "@changesets/cli": "^2.22.0",
         "@nostr-dev-kit/eslint-config-custom": "workspace:*",
         "@nostr-dev-kit/tsconfig": "workspace:*",
-        "eslint": "^9.14.0",
-        "mermaid": "^10.9.3",
-        "prettier": "^3.3.3",
-        "turbo": "^1.13.4",
-        "typescript": "^5.6.3",
-        "vitepress": "^1.4.5",
-        "vitepress-plugin-mermaid": "^2.0.17"
+        "eslint": "^9.13.0",
+        "mermaid": "^10.9.1",
+        "prettier": "^3.0.3",
+        "turbo": "^1.10.14",
+        "typescript": "^5.5.4",
+        "vitepress": "^1.2.3",
+        "vitepress-plugin-mermaid": "^2.0.16"
     },
     "packageManager": "pnpm@8.15.6",
     "engines": {

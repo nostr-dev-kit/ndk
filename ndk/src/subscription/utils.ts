@@ -2,7 +2,9 @@ import { nip19 } from "nostr-tools";
 
 import { NDKRelay } from "../relay/index.js";
 import type { NDKFilter, NDKSubscription } from "./index.js";
-import { EventPointer } from "../user/index.js";
+import type { EventPointer } from "../user/index.js";
+import type { NDK } from "../ndk/index.js";
+import { NDKRelaySet } from "../relay/sets/index.js";
 
 /**
  * Don't generate subscription Ids longer than this amount of characters
@@ -125,7 +127,69 @@ export function generateSubId(subscriptions: NDKSubscription[], filters: NDKFilt
 }
 
 /**
+ * Creates a valid nostr filter to REQ events that are tagging a NIP-19 bech32
+ * @param id Bech32 of the event
+ * @example
+ * const bech32 = "nevent1qgs9kqvr4dkruv3t7n2pc6e6a7v9v2s5fprmwjv4gde8c4fe5y29v0spzamhxue69uhhyetvv9ujuurjd9kkzmpwdejhgtcqype6ycavy2e9zpx9mzeuekaahgw96ken0mzkcmgz40ljccwyrn88gxv2ewr"
+ * const filter = filterForEventsTaggingId(bech32);
+ * // filter => { "#e": [<id>] }
+ *
+ * @example
+ * const bech32 = "naddr1qvzqqqr4gupzpjjwt0eqm6as279wf079c0j42jysp2t4s37u8pg5w2dfyktxgkntqqxnzde38yen2desxqmn2d3332u3ff";
+ * const filter = filterForEventsTaggingId(bech32);
+ * // filter => { "#a": ["30023:ca4e5bf20debb0578ae4bfc5c3e55548900a975847dc38514729a92596645a6b:1719357007561"]}
+ */
+export function filterForEventsTaggingId(id: string): NDKFilter | undefined {
+    try {
+        const decoded = nip19.decode(id);
+
+        switch (decoded.type) {
+            case "naddr":
+                return {
+                    "#a": [
+                        `${decoded.data.kind}:${decoded.data.pubkey}:${decoded.data.identifier}`,
+                    ],
+                };
+            case "nevent":
+                return { "#e": [decoded.data.id] };
+            case "note":
+                return { "#e": [decoded.data] };
+            case "nprofile":
+                return { "#p": [decoded.data.pubkey] };
+            case "npub":
+                return { "#p": [decoded.data] };
+        }
+    } catch {}
+}
+
+/**
+ * Creates a valid nostr filter from a bech32 encoding along with a relay set (if one is present in the encoding).
+ * @param id Bech32 of the event
+ * @param ndk
+ * @returns
+ */
+export function filterAndRelaySetFromBech32(
+    beche2: string,
+    ndk: NDK
+): { filter: NDKFilter; relaySet?: NDKRelaySet } {
+    const filter = filterFromId(beche2);
+    const relays = relaysFromBech32(beche2, ndk);
+
+    if (relays.length === 0) return { filter };
+
+    return {
+        filter,
+        relaySet: new NDKRelaySet(new Set(relays), ndk),
+    };
+}
+
+/**
  * Creates a valid nostr filter from an event id or a NIP-19 bech32.
+ *
+ * @example
+ * const bech32 = "nevent1qgs9kqvr4dkruv3t7n2pc6e6a7v9v2s5fprmwjv4gde8c4fe5y29v0spzamhxue69uhhyetvv9ujuurjd9kkzmpwdejhgtcqype6ycavy2e9zpx9mzeuekaahgw96ken0mzkcmgz40ljccwyrn88gxv2ewr"
+ * const filter = filterFromBech32(bech32);
+ * // filter => { ids: [...], authors: [...] }
  */
 export function filterFromId(id: string): NDKFilter {
     let decoded;
@@ -150,8 +214,12 @@ export function filterFromId(id: string): NDKFilter {
             decoded = nip19.decode(id);
 
             switch (decoded.type) {
-                case "nevent":
-                    return { ids: [decoded.data.id] };
+                case "nevent": {
+                    const filter: NDKFilter = { ids: [decoded.data.id] };
+                    if (decoded.data.author) filter.authors = [decoded.data.author];
+                    if (decoded.data.kind) filter.kinds = [decoded.data.kind];
+                    return filter;
+                }
                 case "note":
                     return { ids: [decoded.data] };
                 case "naddr":
@@ -189,7 +257,7 @@ export const BECH32_REGEX = /^n(event|ote|profile|pub|addr)1[\d\w]+$/;
  *
  * @param bech32 The NIP-19 bech32.
  */
-export function relaysFromBech32(bech32: string): NDKRelay[] {
+export function relaysFromBech32(bech32: string, ndk?: NDK): NDKRelay[] {
     try {
         const decoded = nip19.decode(bech32);
 
@@ -197,7 +265,9 @@ export function relaysFromBech32(bech32: string): NDKRelay[] {
             const data = decoded.data as unknown as EventPointer;
 
             if (data?.relays) {
-                return data.relays.map((r: string) => new NDKRelay(r));
+                return data.relays.map(
+                    (r: string) => new NDKRelay(r, ndk?.relayAuthDefaultPolicy, ndk)
+                );
             }
         }
     } catch (e) {

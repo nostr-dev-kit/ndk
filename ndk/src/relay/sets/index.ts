@@ -1,6 +1,9 @@
 import type { NDKEvent } from "../../events/index.js";
 import type { NDK } from "../../ndk/index.js";
-import { NDKRelay } from "../index.js";
+import { normalizeRelayUrl } from "../../utils/normalize-url.js";
+import { NDKRelay, NDKRelayStatus } from "../index.js";
+
+export { calculateRelaySetFromEvent } from "./calculate.js";
 
 export class NDKPublishError extends Error {
     public errors: Map<NDKRelay, Error>;
@@ -15,7 +18,7 @@ export class NDKPublishError extends Error {
         message: string,
         errors: Map<NDKRelay, Error>,
         publishedToRelays: Set<NDKRelay>,
-        intendedRelaySet?: NDKRelaySet,
+        intendedRelaySet?: NDKRelaySet
     ) {
         super(message);
         this.errors = errors;
@@ -60,7 +63,7 @@ export class NDKRelaySet {
     }
 
     get relayUrls(): WebSocket["url"][] {
-        return Array.from(this.relays).map(r => r.url);
+        return Array.from(this.relays).map((r) => r.url);
     }
 
     /**
@@ -71,17 +74,30 @@ export class NDKRelaySet {
      *
      * @param relayUrls - list of relay URLs to include in this set
      * @param ndk
+     * @param connect - whether to connect to the relay immediately if it was already in the pool but not connected
      * @returns NDKRelaySet
      */
-    static fromRelayUrls(relayUrls: string[], ndk: NDK): NDKRelaySet {
+    static fromRelayUrls(relayUrls: string[], ndk: NDK, connect = true): NDKRelaySet {
         const relays = new Set<NDKRelay>();
         for (const url of relayUrls) {
-            const relay = ndk.pool.relays.get(url);
+            const relay = ndk.pool.relays.get(normalizeRelayUrl(url));
             if (relay) {
+                if (relay.status < NDKRelayStatus.CONNECTED && connect) {
+                    relay.connect();
+                }
+
                 relays.add(relay);
             } else {
-                const temporaryRelay = new NDKRelay(url);
-                ndk.pool.useTemporaryRelay(temporaryRelay);
+                const temporaryRelay = new NDKRelay(
+                    normalizeRelayUrl(url),
+                    ndk?.relayAuthDefaultPolicy,
+                    ndk
+                );
+                ndk.pool.useTemporaryRelay(
+                    temporaryRelay,
+                    undefined,
+                    "requested from fromRelayUrls " + relayUrls
+                );
                 relays.add(temporaryRelay);
             }
         }
@@ -121,7 +137,7 @@ export class NDKRelaySet {
         const errors: Map<NDKRelay, Error> = new Map();
         const isEphemeral = event.isEphemeral();
 
-        event.publishStatus = 'pending';
+        event.publishStatus = "pending";
 
         // go through each relay and publish the event
         const promises: Promise<void>[] = Array.from(this.relays).map((relay: NDKRelay) => {
@@ -153,18 +169,15 @@ export class NDKRelaySet {
                     publishedToRelays,
                     this
                 );
-                event.publishStatus = 'error';
+                event.publishStatus = "error";
                 event.publishError = error;
 
-                this.ndk.emit("event:publish-failed", event, error);
+                this.ndk.emit("event:publish-failed", event, error, this.relayUrls);
 
-                // Only throw if we don't have an active handler for failed publish event
-                if (this.ndk.listeners("event:publish-failed").length === 0) {
-                    throw error;
-                }
+                throw error;
             }
         } else {
-            event.emit("published", {relaySet: this, publishedToRelays });
+            event.emit("published", { relaySet: this, publishedToRelays });
         }
 
         return publishedToRelays;

@@ -17,7 +17,7 @@ export class CacheHandler<T> {
     private dirtyKeys: Set<string> = new Set();
     private options: CacheOptions<T>;
     private debug: debug.IDebugger;
-    public indexes: Map<string, LRUCache<string, Set<string>>>;
+    public indexes: Map<string | number, LRUCache<string | number, Set<string>>>;
     public isSet = false;
     public maxSize = 0;
 
@@ -27,7 +27,7 @@ export class CacheHandler<T> {
         this.maxSize = options.maxSize;
         if (options.maxSize > 0) {
             this.cache = new LRUCache({ maxSize: options.maxSize });
-            setInterval(() => this.dump(), 1000 * 10);
+            setInterval(() => this.dump().catch(console.error), 1000 * 10);
         }
 
         this.indexes = new Map();
@@ -77,7 +77,9 @@ export class CacheHandler<T> {
         }
 
         if (entries.length > 0) {
-            this.debug(`Cache hit for keys ${entries.length} and miss for ${missingKeys.length} keys`);
+            this.debug(
+                `Cache hit for keys ${entries.length} and miss for ${missingKeys.length} keys`
+            );
         }
 
         // get missing entries from the database
@@ -94,7 +96,11 @@ export class CacheHandler<T> {
                     foundKeys++;
                 }
             }
-            this.debug(`Time spent querying database: ${endTime - startTime}ms for ${missingKeys.length} keys, which added ${foundKeys} entries to the cache`);
+            this.debug(
+                `Time spent querying database: ${endTime - startTime}ms for ${
+                    missingKeys.length
+                } keys, which added ${foundKeys} entries to the cache`
+            );
         }
 
         return entries;
@@ -139,16 +145,19 @@ export class CacheHandler<T> {
         }
     }
 
-    public addIndex<T>(attribute: string) {
+    public addIndex<T>(attribute: string | number) {
         this.indexes.set(attribute, new LRUCache({ maxSize: this.options.maxSize }));
     }
 
-    public getFromIndex(attribute: string, key: string) {
+    public getFromIndex(attribute: string, key: string | number) {
         const ret = new Set<T>();
-        this.indexes.get(attribute)?.get(key)?.forEach((key) => {
-            const entry = this.get(key);
-            if (entry) ret.add(entry as T);
-        });
+        this.indexes
+            .get(attribute)
+            ?.get(key)
+            ?.forEach((key) => {
+                const entry = this.get(key);
+                if (entry) ret.add(entry as T);
+            });
 
         return ret;
     }

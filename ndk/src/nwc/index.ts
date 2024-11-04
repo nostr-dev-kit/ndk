@@ -172,7 +172,7 @@ export class NDKNwc extends EventEmitter {
 
         return await Promise.race(promises);
     }
-    
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async sendReq<T>(method: NostrWalletConnectMethod, params: any): Promise<NDKNwcResponse<T>> {
         return (await sendReq.call(this, method, params)) as NDKNwcResponse<T>;

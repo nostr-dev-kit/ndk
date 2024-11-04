@@ -1,9 +1,10 @@
 import type { UnsignedEvent } from "nostr-tools";
 import { generateSecretKey, getPublicKey, finalizeEvent, nip04, nip44 } from "nostr-tools";
+import { generateSecretKey, getPublicKey, finalizeEvent, nip04, nip44 } from "nostr-tools";
 
 import type { NostrEvent } from "../../events/index.js";
 import { NDKUser } from "../../user";
-import type { NDKSigner } from "../index.js";
+import { DEFAULT_ENCRYPTION_SCHEME, ENCRYPTION_SCHEMES, type NDKSigner } from "../index.js";
 import { bytesToHex, hexToBytes } from "@noble/hashes/utils";
 import { nip19 } from "nostr-tools";
 import { EncryptionNip } from "../../events/encryption.js";
@@ -22,7 +23,7 @@ export class NDKPrivateKeySigner implements NDKSigner {
                     const { type, data } = nip19.decode(privateKey);
                     // console.log(type, data);
                     if (type === "nsec") this._privateKey = data;
-                // If it's a hex encoded private key, convert to Uint8Array
+                    // If it's a hex encoded private key, convert to Uint8Array
                 } else if (privateKey.length === 64) {
                     this._privateKey = hexToBytes(privateKey);
                 } else {

@@ -1,4 +1,4 @@
-import { NDKTag } from "../..";
+import type { NDKTag } from "../..";
 
 export type NDKIntervalFrequency = "daily" | "weekly" | "monthly" | "quarterly" | "yearly";
 

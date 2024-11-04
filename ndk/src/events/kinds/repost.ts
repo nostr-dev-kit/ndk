@@ -9,6 +9,7 @@ type classWithConvertFunction<T> = {
 
 /**
  * Handles NIP-18 reposts.
+ * @group Kind Wrapper
  */
 export class NDKRepost<T> extends NDKEvent {
     private _repostedEvents: T[] | undefined;

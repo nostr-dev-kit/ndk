@@ -15,7 +15,7 @@ import { type Unsubscriber, type Writable, writable } from "svelte/store";
  * Type for NDKEvent classes that have a static `from` method like NDKHighlight.
  */
 type ClassWithConvertFunction<T extends NDKEvent> = {
-    from: (event: NDKEvent) => T;
+    from: (event: NDKEvent) => T | undefined;
 };
 
 export type ExtendedBaseType<T extends NDKEvent> = T & {
@@ -23,6 +23,7 @@ export type ExtendedBaseType<T extends NDKEvent> = T & {
 };
 
 export type NDKEventStore<T extends NDKEvent> = Writable<ExtendedBaseType<T>[]> & {
+    id: string;
     filters: NDKFilter[] | undefined;
     refCount: number;
     subscription: NDKSubscription | undefined;
@@ -30,6 +31,7 @@ export type NDKEventStore<T extends NDKEvent> = Writable<ExtendedBaseType<T>[]> 
     startSubscription: () => void;
     unsubscribe: Unsubscriber;
     onEose: (cb: () => void) => void;
+    onEvent: (cb: (event: NDKEvent, relay?: NDKRelay) => void) => void;
     ref: () => number;
     unref: () => number;
     empty: () => void;
@@ -62,6 +64,11 @@ type NDKSubscribeOptions = NDKSubscriptionOptions & {
      * Callback to be called when the subscription EOSEs
      */
     onEose?: () => void;
+
+    /**
+     * Callback to be called when a new event is received
+     */
+    onEvent?: (event: NDKEvent, relay?: NDKRelay) => void;
 };
 
 class NDKSvelte extends NDK {
@@ -72,6 +79,7 @@ class NDKSvelte extends NDK {
     private createEventStore<T extends NDKEvent>(filters?: NDKFilter[]): NDKEventStore<T> {
         const store = writable<T[]>([]) as NDKEventStore<T>;
         return {
+            id: Math.random().toString(36).substring(7),
             refCount: 0,
             filters,
             subscription: undefined,
@@ -81,6 +89,7 @@ class NDKSvelte extends NDK {
             subscribe: store.subscribe,
             unsubscribe: () => {},
             onEose: (cb) => {},
+            onEvent: (cb) => {},
             startSubscription: () => {
                 throw new Error("not implemented");
             },
@@ -112,8 +121,7 @@ class NDKSvelte extends NDK {
         opts?: NDKSubscribeOptions,
         klass?: ClassWithConvertFunction<T>
     ): NDKEventStore<ExtendedBaseType<T>> {
-        let eventIds: Set<string> = new Set();
-        let events: ExtendedBaseType<T>[] = [];
+        let events: Map<string, ExtendedBaseType<T>> = new Map();
         const store = this.createEventStore<ExtendedBaseType<T>>(
             Array.isArray(filters) ? filters : [filters]
         );
@@ -122,6 +130,10 @@ class NDKSvelte extends NDK {
 
         const handleEventLabel = (event: NDKEvent) => {
             handleEventReposts(event);
+        };
+
+        const getEventArrayFromMap = () => {
+            return Array.from(events.values());
         };
 
         /**
@@ -142,26 +154,30 @@ class NDKSvelte extends NDK {
                     repostedEvent.repostedByEvents = [event];
                 }
 
-                store.set(events);
+                store.set(getEventArrayFromMap());
             };
 
             for (const repostedEventId of _repostEvent.repostedEventIds()) {
-                const repostedEvent = events.find((e) => e.id === repostedEventId);
+                const repostedEvent = events.get(repostedEventId);
 
                 if (repostedEvent) {
                     addRepostToExistingEvent(repostedEvent);
                 } else {
                     // If we don't have the reposted event, fetch it and add it to the store
-                    _repostEvent.repostedEvents(
-                        klass,
-                        { subId: 'reposted-event-fetch', groupable: true, groupableDelay: 1500, groupableDelayType: 'at-least' },
-                    ).then((fetchedEvents: unknown[]) => {
-                        for (const e of fetchedEvents) {
-                            if (e instanceof NDKEvent) {
-                                handleEvent(e);
+                    _repostEvent
+                        .repostedEvents(klass, {
+                            subId: "reposted-event-fetch",
+                            groupable: true,
+                            groupableDelay: 1500,
+                            groupableDelayType: "at-least",
+                        })
+                        .then((fetchedEvents: unknown[]) => {
+                            for (const e of fetchedEvents) {
+                                if (e instanceof NDKEvent) {
+                                    handleEvent(e);
+                                }
                             }
-                        }
-                    });
+                        });
                 }
             }
         };
@@ -188,34 +204,38 @@ class NDKSvelte extends NDK {
 
             let e = event;
             if (klass) {
-                e = klass.from(event);
+                const ev = klass.from(event);
+                if (!ev) return;
+                e = ev;
                 e.relay = event.relay;
             }
             e.ndk = this;
-            
-            const dedupKey = event.deduplicationKey();
-            
-            if (eventIds.has(dedupKey)) {
-                const prevEvent = events.find((e) => e.deduplicationKey() === dedupKey);
 
-                if (prevEvent && prevEvent.created_at! < event.created_at!) {
-                    // remove the previous event
-                    const index = events.findIndex((e) => e.deduplicationKey() === dedupKey);
-                    events.splice(index, 1);
-                } else {
-                    return;
+            const dedupKey = event.deduplicationKey();
+
+            if (events.has(dedupKey)) {
+                let prevEvent = events.get(dedupKey)!;
+
+                // we received an older version
+                if (prevEvent.created_at! > event.created_at!) return;
+
+                // we received the same timestamp
+                if (prevEvent.created_at! === event.created_at!) {
+                    // with same id
+                    if (prevEvent.id === event.id) return;
+
+                    console.warn("Received event with same created_at but different id", {
+                        prevId: prevEvent.id,
+                        newId: event.id,
+                        prev: prevEvent.rawEvent(),
+                        new: event.rawEvent(),
+                    });
                 }
             }
-            eventIds.add(dedupKey);
 
-            const index = events.findIndex((e) => e.created_at! < event.created_at!);
-            if (index === -1) {
-                events.push(e as unknown as T);
-            } else {
-                events.splice(index === -1 ? events.length : index, 0, e as unknown as T);
-            }
+            events.set(dedupKey, e as ExtendedBaseType<T>);
 
-            store.set(events);
+            store.set(getEventArrayFromMap());
         };
 
         /**
@@ -253,8 +273,7 @@ class NDKSvelte extends NDK {
          */
         store.empty = () => {
             store.set([]);
-            events = [];
-            eventIds = new Set();
+            events = new Map();
             store.unsubscribe();
         };
 
@@ -287,6 +306,7 @@ class NDKSvelte extends NDK {
 
             store.subscription.on("event", (event: NDKEvent, relay?: NDKRelay) => {
                 handleEvent(event);
+                if (opts?.onEvent) opts.onEvent(event, relay);
             });
 
             store.subscription.start();
@@ -299,7 +319,7 @@ class NDKSvelte extends NDK {
             store.onEose = (cb) => {
                 store.subscription?.on("eose", () => {
                     store.eosed = true;
-                    cb()
+                    cb();
                 });
             };
 

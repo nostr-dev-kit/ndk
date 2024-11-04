@@ -1,5 +1,55 @@
 # @nostr-dev-kit/ndk-svelte-components
 
+## 2.3.2
+
+### Patch Changes
+
+-   Updated dependencies [5bed70c]
+-   Updated dependencies [873ad4a]
+    -   @nostr-dev-kit/ndk@2.10.4
+
+## 2.3.1
+
+### Patch Changes
+
+-   Updated dependencies [0fc66c5]
+    -   @nostr-dev-kit/ndk@2.10.3
+
+## 2.3.0
+
+### Minor Changes
+
+-   Refactor how markdown parsing is done to use a more modular approach with user-supplied svelte component rendering support
+
+### Patch Changes
+
+-   Updated dependencies
+    -   @nostr-dev-kit/ndk@2.10.2
+
+## 2.2.20
+
+### Patch Changes
+
+-   5ac3ce8: use urlFactory to generate URLs on rendering engine
+-   Updated dependencies [d6cfa8a]
+-   Updated dependencies [d6cfa8a]
+-   Updated dependencies [d6cfa8a]
+-   Updated dependencies [722345b]
+    -   @nostr-dev-kit/ndk@2.10.1
+
+## 2.2.19
+
+### Patch Changes
+
+-   Updated dependencies [ec83ddc]
+-   Updated dependencies [18c55bb]
+-   Updated dependencies
+-   Updated dependencies [18c55bb]
+-   Updated dependencies
+-   Updated dependencies
+-   Updated dependencies [3029124]
+    -   @nostr-dev-kit/ndk@2.10.0
+
 ## 2.2.18
 
 ### Patch Changes

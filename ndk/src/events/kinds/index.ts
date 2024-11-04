@@ -40,6 +40,9 @@ export enum NDKKind {
     // Image: 5100-5199
     DVMReqImageGeneration = 5100,
 
+    // Text-to-Speech: 5200-5299
+    DVMReqTextToSpeech = 5250,
+
     // Discovery
     DVMReqDiscoveryNostrContent = 5300,
     DVMReqDiscoveryNostrPeople = 5301,
@@ -57,11 +60,17 @@ export enum NDKKind {
     Unsubscribe = 7002,
     SubscriptionReceipt = 7003,
 
+    CashuQuote = 7374,
+    CashuToken = 7375,
+    WalletChange = 7376,
+
     // NIP-29
     GroupAdminAddUser = 9000,
     GroupAdminRemoveUser = 9001,
     GroupAdminEditMetadata = 9002,
     GroupAdminEditStatus = 9006,
+    GroupAdminCreateGroup = 9007,
+    GroupAdminRequestJoin = 9021,
 
     // Lists and Sets
     MuteList = 10000,
@@ -74,7 +83,9 @@ export enum NDKKind {
     SearchRelayList = 10007,
     SimpleGroupList = 10009,
     InterestList = 10015,
+    CashuMintList = 10019,
     EmojiList = 10030,
+    DirectMessageReceiveRelayList = 10050,
 
     BlossomList = 10063,
 
@@ -98,10 +109,18 @@ export enum NDKKind {
     InterestSet = 30015,
     InterestsList = NDKKind.InterestSet, // Deprecated but left for backwards compatibility
     EmojiSet = 30030,
-    HighlightSet = 39802,
+    ModularArticle = 30040,
+    ModularArticleItem = 30041,
+    Wiki = 30818,
+    Draft = 31234,
     SubscriptionTier = 37001,
+
+    EcashMintRecommendation = 38000,
+
+    HighlightSet = 39802,
     CategorizedHighlightList = NDKKind.HighlightSet, // Deprecated but left for backwards compatibility
 
+    Nutzap = 9321,
     ZapRequest = 9734,
     Zap = 9735,
     Highlight = 9802,
@@ -124,8 +143,12 @@ export enum NDKKind {
     AppSpecificData = 30078,
     Classified = 30402,
     HorizontalVideo = 34235,
+    VerticalVideo = 34236,
+
+    CashuWallet = 37375,
 
     GroupMetadata = 39000, // NIP-29
+    GroupAdmins = 39001, // NIP-29
     GroupMembers = 39002, // NIP-29
 
     // NIP-89: App Metadata
@@ -144,6 +167,7 @@ export const NDKListKinds = [
     NDKKind.SearchRelayList,
     NDKKind.InterestList,
     NDKKind.EmojiList,
+    NDKKind.DirectMessageReceiveRelayList,
     NDKKind.FollowSet,
     NDKKind.BookmarkSet,
     NDKKind.CategorizedBookmarkList, // Backwards compatibility

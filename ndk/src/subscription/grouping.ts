@@ -1,12 +1,13 @@
 import type { NDKFilter } from "../index.js";
 
-export type NDKFilterGroupingId = string;
+export type NDKFilterFingerprint = string;
 
 /**
- * Calculates the groupable ID for this filters.
- * The groupable ID is a deterministic association of the filters
+ * Creates a fingerprint for this filter
+ *
+ * This a deterministic association of the filters
  * used in a filters. When the combination of filters makes it
- * possible to group them, the groupable ID is used to group them.
+ * possible to group them, the fingerprint is used to group them.
  *
  * The different filters in the array are differentiated so that
  * filters can only be grouped with other filters that have the same signature
@@ -15,20 +16,24 @@ export type NDKFilterGroupingId = string;
  * that intend to close immediately after EOSE and those that are probably
  * going to be kept open.
  *
- * @returns The groupable ID, or null if the filters are not groupable.
+ * @returns The fingerprint, or undefined if the filters are not groupable.
  */
-export function calculateGroupableId(
+export function filterFingerprint(
     filters: NDKFilter[],
     closeOnEose: boolean
-): NDKFilterGroupingId | null {
+): NDKFilterFingerprint | undefined {
     const elements: string[] = [];
 
     for (const filter of filters) {
-        const hasTimeConstraints = filter.since || filter.until;
-
-        if (hasTimeConstraints) return null;
-
-        const keys = Object.keys(filter || {})
+        const keys = Object.entries(filter || {})
+            .map(([key, values]) => {
+                if (['since', 'until'].includes(key)) {
+                    // We don't want to mix different time constraints values, so we include the value in the fingerprint
+                    return key + ":" + (values as string);
+                } else {
+                    return key;
+                }
+            })
             .sort()
             .join("-");
 
@@ -44,23 +49,34 @@ export function calculateGroupableId(
  * Go through all the passed filters, which should be
  * relatively similar, and merge them.
  */
-export function mergeFilters(filters: NDKFilter[]): NDKFilter {
+export function mergeFilters(filters: NDKFilter[]): NDKFilter[] {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const result: any = {};
+    const result: NDKFilter[] = [];
+    const lastResult: any = {};
+
+    // concatenate filters that have a limit
+    filters
+        .filter(f => !!f.limit)
+        .forEach(filterWithLimit => result.push(filterWithLimit))
+    
+    // only merge the filters that don't have a limit
+    filters = filters.filter(f => !f.limit);
+
+    if (filters.length === 0) return result;
 
     filters.forEach((filter) => {
         Object.entries(filter).forEach(([key, value]) => {
             if (Array.isArray(value)) {
-                if (result[key] === undefined) {
-                    result[key] = [...value];
+                if (lastResult[key] === undefined) {
+                    lastResult[key] = [...value];
                 } else {
-                    result[key] = Array.from(new Set([...result[key], ...value]));
+                    lastResult[key] = Array.from(new Set([...lastResult[key], ...value]));
                 }
             } else {
-                result[key] = value;
+                lastResult[key] = value;
             }
         });
     });
 
-    return result as NDKFilter;
+    return [...result, lastResult as NDKFilter];
 }

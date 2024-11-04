@@ -31,7 +31,7 @@ export function validate(this: NDKEvent): boolean {
     return true;
 }
 
-const verifiedEvents = new LRUCache<string, boolean>({
+export const verifiedSignatures = new LRUCache<string, false | string>({
     maxSize: 1000,
     entryExpirationTimeInMS: 60000,
 });
@@ -44,9 +44,9 @@ const verifiedEvents = new LRUCache<string, boolean>({
 export function verifySignature(this: NDKEvent, persist: boolean): boolean | undefined {
     if (typeof this.signatureVerified === "boolean") return this.signatureVerified;
 
-    const prevVerification = verifiedEvents.get(this.id);
+    const prevVerification = verifiedSignatures.get(this.id);
     if (prevVerification !== null) {
-        return (this.signatureVerified = prevVerification);
+        return (this.signatureVerified = !!prevVerification);
     }
 
     try {
@@ -54,17 +54,19 @@ export function verifySignature(this: NDKEvent, persist: boolean): boolean | und
             verifySignatureAsync(this, persist).then((result) => {
                 if (persist) {
                     this.signatureVerified = result;
-                    verifiedEvents.set(this.id, result);
+                    if (result) verifiedSignatures.set(this.id, this.sig!);
                 }
 
                 if (!result) {
                     this.ndk!.emit("event:invalid-sig", this);
+                    verifiedSignatures.set(this.id, false);
                 }
             });
         } else {
             const hash = sha256(new TextEncoder().encode(this.serialize()));
             const res = schnorr.verify(this.sig as string, hash, this.pubkey);
-            verifiedEvents.set(this.id, res);
+            if (res) verifiedSignatures.set(this.id, this.sig!);
+            else verifiedSignatures.set(this.id, false);
             return (this.signatureVerified = res);
         }
     } catch (err) {

@@ -21,5 +21,6 @@ _local_
 .svelte-kit/
 ndk/docs
 .pnpm-store
-ndk/docs/.vitepress/cache
-ndk/docs/.vitepress/dist
+docs/.vitepress/cache
+docs/.vitepress/dist
+.ngit

@@ -92,6 +92,7 @@ You can pass an object with several options to a newly created instance of NDK.
 ```ts
 // Import the package
 import NDK from "@nostr-dev-kit/ndk";
+import "websocket-polyfill";
 
 // Create a new NDK instance with explicit relays
 const ndk = new NDK({
@@ -323,7 +324,8 @@ await ndk.publish(event);
 
 ```ts
 // Find the first event from @jack, and react/like it.
-const event = await ndk.fetchEvent({ author: "jack@cashapp.com" })[0];
+const jack = await ndk.getUserFromNip05("jack@cashapp.com");
+const event = await ndk.fetchEvent({ authors: [jack.pubkey] })[0];
 await event.react("🤙");
 ```
 
@@ -331,8 +333,9 @@ await event.react("🤙");
 
 ```ts
 // Find the first event from @jack, and zap it.
-const event = await ndk.fetchEvent({ author: "jack@cashapp.com" })[0];
-await event.zap(1337, "Zapping your post!"); // Returns a bolt11 payment request
+const jack = await ndk.getUserFromNip05("jack@cashapp.com");
+const event = await ndk.fetchEvent({ authors: [jack.pubkey] })[0];
+await ndk.zap(event, 1337, "Zapping your post!"); // Returns a bolt11 payment request
 ```
 
 ## Architecture decisions & suggestions

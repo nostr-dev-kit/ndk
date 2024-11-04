@@ -34,7 +34,8 @@ type Story = StoryObj<typeof meta>;
 const ndk = new NDK({ explicitRelayUrls: ["wss://nos.lol"] });
 await ndk.connect();
 
-const id = "nevent1qqstuzqnw6czlugwszyj0z6gvffz8y27tsg4mfmnqnjqlj2vx5kac4cprpmhxue69uhhyetvv9ujumn0wd68yct5dyhxxmmdqgsx8zd7vjg70d5na8ek3m8g3lx3ghc8cp5d9sdm4epy0wd4aape6vsxrtmuk";
+const id =
+    "nevent1qqstuzqnw6czlugwszyj0z6gvffz8y27tsg4mfmnqnjqlj2vx5kac4cprpmhxue69uhhyetvv9ujumn0wd68yct5dyhxxmmdqgsx8zd7vjg70d5na8ek3m8g3lx3ghc8cp5d9sdm4epy0wd4aape6vsxrtmuk";
 const event = await ndk.fetchEvent(id);
 
 event.relay = undefined;

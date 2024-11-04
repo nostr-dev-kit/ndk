@@ -11,7 +11,7 @@ export type ZapperCacheEntry = {
 
 export async function zapperWarmUp(
     cacheHandler: CacheHandler<ZapperCacheEntry>,
-    lnurls: Table<Lnurl>,
+    lnurls: Table<Lnurl>
 ) {
     const array = await lnurls.limit(cacheHandler.maxSize).toArray();
     for (const lnurl of array) {

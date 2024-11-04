@@ -1,5 +1,5 @@
 import { nip19 } from "nostr-tools";
-import { identity, last, pluck } from "ramda";
+import { identity, last } from "ramda";
 
 export const NEWLINE = "newline";
 export const TEXT = "text";
@@ -34,12 +34,11 @@ export type ParsedPart = {
     value: any;
 };
 
-export const isEmbeddableMedia = (url: string) =>
-    isImage(url) || isVideo(url) || isAudio(url);
+export const isEmbeddableMedia = (url: string) => isImage(url) || isVideo(url) || isAudio(url);
 
-export const isImage = (url: string) => url.match(/^.*\.(jpg|jpeg|png|webp|gif|avif|svg)/gi);
-export const isVideo = (url: string) => url.match(/^.*\.(mov|mkv|mp4|avi|m4v|webm)/gi);
-export const isAudio = (url: string) => url.match(/^.*\.(ogg|mp3|wav)/gi);
+export const isImage = (url: string) => url?.match(/^.*\.(jpg|jpeg|png|webp|gif|avif|svg)/gi);
+export const isVideo = (url: string) => url?.match(/^.*\.(mov|mkv|mp4|avi|m4v|webm)/gi);
+export const isAudio = (url: string) => url?.match(/^.*\.(ogg|mp3|wav)/gi);
 
 /**
  * Groups content parts into link collections when they are consecutive media links
@@ -62,14 +61,13 @@ export function groupContent(parts: ParsedPart[]): ParsedPart[] {
             }
             buffer = undefined;
         }
-    }
+    };
 
     parts.forEach((part, index) => {
-        if (part.type === LINK && (
-            isImage(part.value.url) ||
-            isVideo(part.value.url) ||
-            isAudio(part.value.url)
-        )) {
+        if (
+            part.type === LINK &&
+            (isImage(part.value.url) || isVideo(part.value.url) || isAudio(part.value.url))
+        ) {
             if (!buffer) {
                 buffer = {
                     type: LINKCOLLECTION,
@@ -83,7 +81,7 @@ export function groupContent(parts: ParsedPart[]): ParsedPart[] {
 
             for (const nextPart of parts.slice(index + 1)) {
                 const isNewline = nextPart.type === NEWLINE;
-                const isBlankText = nextPart.type === TEXT && nextPart.value.trim() === '';
+                const isBlankText = nextPart.type === TEXT && nextPart.value.trim() === "";
                 const isLink = nextPart.type === LINK;
 
                 // This is a noop, keep checking the next part
@@ -145,7 +143,9 @@ export const parseContent = ({ content, tags = [], html = false }: ContentArgs):
                         data = { id: value, relays, pubkey: null };
                         entity = nip19.neventEncode(data);
                     }
-                } catch { /**/ }
+                } catch {
+                    /**/
+                }
 
                 return [`nostr:${type}`, mentionMatch[0], { ...data, entity }];
             }
@@ -233,9 +233,10 @@ export const parseContent = ({ content, tags = [], html = false }: ContentArgs):
         let part: any[] | undefined;
 
         if (html) {
-            // part = parseMention() || parseTopic();
+            part = parseBech32() || parseMention() || parseTopic();
         } else {
-            part = parseHtml() ||
+            part =
+                parseHtml() ||
                 parseNewline() ||
                 parseMention() ||
                 parseTopic() ||
@@ -309,9 +310,3 @@ export const truncateContent = (content, { showEntire, maxLength, showMedia = fa
 
     return result;
 };
-
-export const getLinks = (parts) =>
-    pluck(
-        "value",
-        parts.filter((x) => x.type === LINK && x.isMedia)
-    );

@@ -1,6 +1,6 @@
 import { NDKRelay } from "@nostr-dev-kit/ndk";
 
-const defaultRelays = [ "wss://nos.lol" ];
+const defaultRelays = ["wss://nos.lol"];
 
 export function relaysFromArgs(): NDKRelay[] {
     const explicitRelayUrls: string[] = [];

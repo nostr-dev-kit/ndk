@@ -1,5 +1,48 @@
 # @nostr-dev-kit/ndk
 
+## 2.10.4
+
+### Patch Changes
+
+-   5bed70c: fix: authed relays weren't reported as connected on connectedRelays
+-   873ad4a: concatenate subscriptions that use a limit -- this is better than treating subscriptions with a limit filter as non-groupable
+
+## 2.10.3
+
+### Patch Changes
+
+-   0fc66c5: fix bugs with groupings, missing EOSEs and missing events under some conditions
+
+## 2.10.2
+
+### Patch Changes
+
+-   NIP-46 bunker URI improvements
+
+## 2.10.1
+
+### Patch Changes
+
+-   d6cfa8a: cap the number of relay hints we add
+-   d6cfa8a: add NIP-78 interface
+-   d6cfa8a: properly handled abandoned subscriptions closing
+-   722345b: nip-44 support
+
+## 2.10.0
+
+### Minor Changes
+
+-   Massive refactor of how subscriptions are fingerprinted, grouped, ungrouped and their internal lifecycle
+
+### Patch Changes
+
+-   ec83ddc: fix: close subscription on EOSE at the relay level
+-   18c55bb: fix bug where queued items were not getting processed (e.g. zap fetches)
+-   refactor outbox and be smarter abotu the relays we publish to (account for p-tags and relay hints)
+-   18c55bb: Breaking change: event.zap is now removed, use ndk.zap(event) instead
+-   add filterForEventsTaggingId
+-   3029124: add methods to access and manage unpublished events from the cache
+
 ## 2.9.1
 
 ### Patch Changes

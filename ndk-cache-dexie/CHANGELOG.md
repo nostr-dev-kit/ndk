@@ -1,5 +1,56 @@
 # @nostr-dev-kit/ndk-cache-dexie
 
+## 2.5.5
+
+### Patch Changes
+
+-   Updated dependencies [5bed70c]
+-   Updated dependencies [873ad4a]
+    -   @nostr-dev-kit/ndk@2.10.4
+
+## 2.5.4
+
+### Patch Changes
+
+-   Updated dependencies [0fc66c5]
+    -   @nostr-dev-kit/ndk@2.10.3
+
+## 2.5.3
+
+### Patch Changes
+
+-   Updated dependencies
+    -   @nostr-dev-kit/ndk@2.10.2
+
+## 2.5.2
+
+### Patch Changes
+
+-   d6cfa8a: track at which timestamp we cached events
+-   Updated dependencies [d6cfa8a]
+-   Updated dependencies [d6cfa8a]
+-   Updated dependencies [d6cfa8a]
+-   Updated dependencies [722345b]
+    -   @nostr-dev-kit/ndk@2.10.1
+
+## 2.5.1
+
+### Patch Changes
+
+-   apply limit filter
+-   abb3cd9: add tests
+-   index event kinds and add byKinds filter
+-   improve profile fetching from dexie
+-   3029124: add methods to access and manage unpublished events from the cache
+-   Updated dependencies [ec83ddc]
+-   Updated dependencies [18c55bb]
+-   Updated dependencies
+-   Updated dependencies [18c55bb]
+-   Updated dependencies
+-   Updated dependencies
+-   Updated dependencies [3029124]
+    -   @nostr-dev-kit/ndk@2.10.0
+
 ## 2.5.0
 
 ### Minor Changes

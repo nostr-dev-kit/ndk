@@ -4,11 +4,13 @@ import NDK, { NDKEvent, NDKKind, NDKPrivateKeySigner, NostrEvent } from "@nostr-
 // const signer = new NDKPrivateKeySigner("...");
 
 const ndk = new NDK({
-    outboxRelayUrls: [ "wss://purplepag.es" ],
+    outboxRelayUrls: ["wss://purplepag.es"],
     enableOutboxModel: true,
 });
 
-const pablo = ndk.getUser({npub: "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft"});
+const pablo = ndk.getUser({
+    npub: "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft",
+});
 // const user = pablo;
 // const fiatjaf = ndk.getUser({npub: "npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6"});
 
@@ -48,10 +50,16 @@ setTimeout(async () => {
 
     console.log("Follows", follows.size);
 
-
-
     setTimeout(async () => {
-        const feed = await ndk.fetchEvents({ kinds: [1], authors: Array.from(follows).slice(0, 20000).map(u => u.pubkey) }, { subId: "feed"});
+        const feed = await ndk.fetchEvents(
+            {
+                kinds: [1],
+                authors: Array.from(follows)
+                    .slice(0, 20000)
+                    .map((u) => u.pubkey),
+            },
+            { subId: "feed" }
+        );
         console.log("Feed", feed.size);
     }, 4000);
-}, 2000)
+}, 2000);

@@ -1,7 +1,5 @@
 import { NDK } from "../ndk";
-import { NDKPrivateKeySigner } from "../signers/private-key";
 import { NDKRelayAuthPolicies } from "./auth-policies";
-import type { NDKEvent } from "../events";
 
 const ndk = new NDK({
     explicitRelayUrls: ["ws://localhost/"],

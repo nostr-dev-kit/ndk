@@ -1,9 +1,9 @@
-import { NDKRelay } from ".";
+import type { NDKRelay } from ".";
 import { NDKEvent } from "../events";
 import { NDKKind } from "../events/kinds";
-import { NDK } from "../ndk";
-import { NDKSigner } from "../signers";
-import { NDKPool } from "./pool";
+import type { NDK } from "../ndk";
+import type { NDKSigner } from "../signers";
+import type { NDKPool } from "./pool";
 import createDebug from "debug";
 
 /**
@@ -52,7 +52,9 @@ async function signAndAuth(
 }
 
 /**
- * Uses the signer to sign an event and then authenticate with the relay. If no signer is provided the NDK signer will be used. If none is not available it will wait for one to be ready.
+ * Uses the signer to sign an event and then authenticate with the relay.
+ * If no signer is provided the NDK signer will be used.
+ * If none is not available it will wait for one to be ready.
  */
 function signIn({ ndk, signer, debug }: ISignIn = {}) {
     debug ??= createDebug("ndk:auth-policies:signIn");
@@ -70,6 +72,7 @@ function signIn({ ndk, signer, debug }: ISignIn = {}) {
         signer ??= ndk?.signer;
 
         // If we dont have a signer, we need to wait for one to be ready
+        // eslint-disable-next-line no-async-promise-executor
         return new Promise(async (resolve, reject) => {
             if (signer) {
                 await signAndAuth(event, relay, signer, debug!, resolve, reject);

@@ -69,7 +69,11 @@ export function zapInvoiceFromEvent(event: NDKEvent): NDKZapInvoice | null {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const amountSection = decodedInvoice.sections.find((s: any) => s.name === "amount");
+    const amountSection = decodedInvoice.sections.find((s: any) => s.name === "amount") as {
+        name: "amount";
+        letters: string;
+        value: string;
+    };
     if (!amountSection) {
         return null;
     }

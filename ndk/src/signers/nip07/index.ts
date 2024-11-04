@@ -2,7 +2,7 @@ import debug from "debug";
 
 import type { NostrEvent } from "../../events/index.js";
 import { NDKUser } from "../../user/index.js";
-import type { NDKSigner } from "../index.js";
+import { DEFAULT_ENCRYPTION_SCHEME, ENCRYPTION_SCHEMES, type NDKSigner } from "../index.js";
 import { NDKRelay } from "../../relay/index.js";
 import { EncryptionMethod, EncryptionNip } from "../../events/encryption.js";
 
@@ -79,7 +79,7 @@ export class NDKNip07Signer implements NDKSigner {
         return signedEvent.sig;
     }
 
-    public async relays(): Promise<NDKRelay[]> {
+    public async relays(ndk?: NDK): Promise<NDKRelay[]> {
         await this.waitForExtension();
 
         const relays = (await window.nostr!.getRelays?.()) || {};
@@ -91,7 +91,7 @@ export class NDKNip07Signer implements NDKSigner {
                 activeRelays.push(url);
             }
         }
-        return activeRelays.map((url) => new NDKRelay(url));
+        return activeRelays.map((url) => new NDKRelay(url, ndk?.relayAuthDefaultPolicy, ndk));
     }
 
     public async encryptionEnabled(nip?:EncryptionNip): Promise<EncryptionNip[]>{

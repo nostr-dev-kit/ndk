@@ -27,7 +27,7 @@ async function decrypt(
         !(await backend.pubkeyAllowed({
             id,
             pubkey: remotePubkey,
-            method: "decrypt",
+            method: "nip04_decrypt",
             params: payload,
         }))
     ) {
@@ -35,5 +35,5 @@ async function decrypt(
         return undefined;
     }
 
-    return await backend.signer.decrypt(senderUser, payload);
+    return await backend.signer.decrypt(senderUser, payload, 'nip04');
 }

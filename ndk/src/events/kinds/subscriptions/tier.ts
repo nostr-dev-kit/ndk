@@ -3,12 +3,8 @@ import { type NostrEvent } from "../../index.js";
 import type { NDKEvent, NDKTag } from "../../index.js";
 import { NDKKind } from "../index.js";
 import { NDKArticle } from "../article.js";
-import {
-    NDKIntervalFrequency,
-    NDKSubscriptionAmount,
-    newAmount,
-    parseTagToSubscriptionAmount,
-} from "./amount.js";
+import type { NDKIntervalFrequency, NDKSubscriptionAmount } from "./amount.js";
+import { newAmount, parseTagToSubscriptionAmount } from "./amount.js";
 
 /**
  * @description
@@ -28,9 +24,13 @@ import {
  * tier.addPerk("Access to my private content");
  */
 export class NDKSubscriptionTier extends NDKArticle {
-    constructor(ndk: NDK | undefined, rawEvent?: NostrEvent) {
+    static kind = NDKKind.SubscriptionTier;
+    static kinds = [NDKKind.SubscriptionTier];
+
+    constructor(ndk: NDK | undefined, rawEvent?: NostrEvent | NDKEvent) {
+        const k = rawEvent?.kind ?? NDKKind.SubscriptionTier;
         super(ndk, rawEvent);
-        this.kind ??= NDKKind.SubscriptionTier;
+        this.kind = k;
     }
 
     /**
@@ -39,7 +39,7 @@ export class NDKSubscriptionTier extends NDKArticle {
      * @returns NDKSubscriptionTier
      */
     static from(event: NDKEvent) {
-        return new NDKSubscriptionTier(event.ndk, event.rawEvent());
+        return new NDKSubscriptionTier(event.ndk, event);
     }
 
     /**

@@ -28,6 +28,7 @@ export type NDKEventStore<T extends NDKEvent> = Writable<ExtendedBaseType<T>[]> 
     refCount: number;
     subscription: NDKSubscription | undefined;
     eosed: boolean;
+    skipDeleted: boolean;
     startSubscription: () => void;
     unsubscribe: Unsubscriber;
     onEose: (cb: () => void) => void;
@@ -61,6 +62,12 @@ type NDKSubscribeOptions = NDKSubscriptionOptions & {
     relaySet?: NDKRelaySet;
 
     /**
+     * Whether deleted PRE/addressable-events should be skipped.
+     * @default true
+     */
+    skipDeleted?: boolean;
+
+    /**
      * Callback to be called when the subscription EOSEs
      */
     onEose?: () => void;
@@ -82,6 +89,7 @@ class NDKSvelte extends NDK {
             id: Math.random().toString(36).substring(7),
             refCount: 0,
             filters,
+            skipDeleted: true,
             subscription: undefined,
             eosed: false,
             set: store.set,
@@ -112,10 +120,6 @@ class NDKSvelte extends NDK {
         return [NDKKind.Repost, NDKKind.GenericRepost].includes(event.kind!);
     }
 
-    private eventIsLabel(event: NDKEvent): boolean {
-        return [NDKKind.Label].includes(event.kind!);
-    }
-
     public storeSubscribe<T extends NDKEvent>(
         filters: NDKFilter | NDKFilter[],
         opts?: NDKSubscribeOptions,
@@ -127,10 +131,13 @@ class NDKSvelte extends NDK {
         );
         const autoStart = opts?.autoStart ?? true;
         const relaySet = opts?.relaySet;
+        const skipDeleted = opts?.skipDeleted ?? true;
 
-        const handleEventLabel = (event: NDKEvent) => {
-            handleEventReposts(event);
-        };
+        /**
+         * Tracks the created_at of PRE that have been deleted.
+         * If the most recent version of a PRE is deleted, we don't include it in the store when skipDeleted is true.
+         */
+        const deletedPRETimestamps = new Map<string, number>();
 
         const getEventArrayFromMap = () => {
             return Array.from(events.values());
@@ -197,11 +204,6 @@ class NDKSvelte extends NDK {
                 return;
             }
 
-            if (this.eventIsLabel(event)) {
-                handleEventLabel(event);
-                return;
-            }
-
             let e = event;
             if (klass) {
                 const ev = klass.from(event);
@@ -230,6 +232,24 @@ class NDKSvelte extends NDK {
                         prev: prevEvent.rawEvent(),
                         new: event.rawEvent(),
                     });
+                }
+            }
+
+            if (skipDeleted && event.isParamReplaceable()) {
+                const currentDeletedTimestamp = deletedPRETimestamps.get(dedupKey);
+
+                // if we already have a newer deletion than this event's, don't do anything
+                if (currentDeletedTimestamp && currentDeletedTimestamp > event.created_at!) return;
+
+                const isDeleted = event.hasTag("deleted");
+                
+                if (isDeleted) {
+                    // flag the deletion of this dTag
+                    deletedPRETimestamps.set(dedupKey, event.created_at!);
+                    return;
+                } else {
+                    // remove any deletion flag and proceed to adding the event
+                    deletedPRETimestamps.delete(dedupKey);
                 }
             }
 

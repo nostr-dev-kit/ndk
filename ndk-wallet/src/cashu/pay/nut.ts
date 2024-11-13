@@ -79,7 +79,7 @@ async function payNutWithMintTransfer(
 
     const wallet = new CashuWallet(new CashuMint(mint), { unit: pay.unit });
 
-    const { proofs } = await wallet.mintTokens(amount, quote.quote, {
+    const { proofs } = await wallet.mintProofs(amount, quote.quote, {
         pubkey: p2pk,
     });
 
@@ -122,7 +122,7 @@ async function payNutWithMintBalance(
             });
             pay.debug("payment result: %o", res);
 
-            rollOverProofs(selection, res.returnChange, mint, pay.wallet);
+            rollOverProofs(selection, res.keep, mint, pay.wallet);
 
             return { proofs: res.send, mint };
         } catch (e: any) {

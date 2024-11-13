@@ -1,4 +1,4 @@
-import { CashuWallet, CashuMint, Proof } from "@cashu/cashu-ts";
+import { CashuWallet, CashuMint, Proof, MeltQuoteState } from "@cashu/cashu-ts";
 import type { LnPaymentInfo } from "@nostr-dev-kit/ndk";
 import type { NDKCashuPay } from "../pay";
 import type { TokenSelection } from "../proofs";
@@ -148,7 +148,7 @@ async function executePayment(
     wallet: NDKCashuWallet,
     debug: NDKCashuPay["debug"]
 ): Promise<string | null> {
-    const _wallet = new CashuWallet(new CashuMint(selection.mint));
+    const _wallet = await wallet.walletForMint(selection.mint);
 
     if (!selection.quote) throw new Error("No quote provided")
     
@@ -161,10 +161,22 @@ async function executePayment(
     );
 
     try {
-        const result = await _wallet.payLnInvoice(pr, selection.usedProofs, selection.quote);
-        debug("Payment result: %o", result);
+        const meltQuote = await _wallet.createMeltQuote(pr);
+        const amountToSend = meltQuote.amount + meltQuote.fee_reserve;
 
-        const fee = calculateFee(selection.quote.amount, selection.usedProofs, result.change);
+        const allMintProofs = wallet.proofsForMint(selection.mint);
+        
+        const result = await _wallet.send(
+            amountToSend,
+            allMintProofs,
+            { includeFees: true }
+        );
+        debug("Send result: %o", result);
+
+        const meltResult = await _wallet.meltProofs(meltQuote, result.keep);
+        debug("Melt result: %o", meltResult);
+
+        const fee = calculateFee(selection.quote.amount, allMintProofs, meltResult.change);
 
         function calculateFee(sentAmount: number, proofs: Proof[], change: Proof[]) {
             let fee = -sentAmount;
@@ -174,27 +186,33 @@ async function executePayment(
         }
 
         // generate history event
-        if (result.isPaid && result.preimage) {
+        if (meltResult.quote.state === MeltQuoteState.PAID && meltResult.quote.payment_preimage) {
             debug("Payment successful");
-            const { destroyedTokens, createdToken } = await rollOverProofs(selection, result.change, selection.mint, wallet);
+            const { destroyedTokens, createdToken } = await rollOverProofs(
+                selection,
+                [
+                    ...result.keep,
+                    ...meltResult.change
+                ],
+                selection.mint, wallet);
             const historyEvent = new NDKWalletChange(wallet.ndk);
             historyEvent.destroyedTokens = destroyedTokens;
             if (createdToken) historyEvent.createdTokens = [createdToken];
             historyEvent.tag(wallet.event);
             historyEvent.direction = 'out';
             historyEvent.description = 'Lightning payment';
-            historyEvent.tags.push(['preimage', result.preimage]);
+            historyEvent.tags.push(['preimage', meltResult.quote.payment_preimage]);
             historyEvent.amount = selection.quote.amount;
             historyEvent.fee = fee;
             historyEvent.publish(wallet.relaySet);
 
-            return result.preimage;
+            return meltResult.quote.payment_preimage;
         }
     } catch (e) {
         debug("Failed to pay with mint %s", e.message);
         if (e?.message.match(/already spent/i)) {
             debug("Proofs already spent, rolling over");
-            rollOverProofs(selection, [], selection.mint, wallet, 'out', 'Failed Lightning payment');
+            rollOverProofs(selection, [], selection.mint, wallet);
         }
         throw e;
     }

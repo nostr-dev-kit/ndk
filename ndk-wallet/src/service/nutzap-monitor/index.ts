@@ -12,6 +12,7 @@ import { CashuMint, CashuWallet } from "@cashu/cashu-ts";
 import { EventEmitter } from "tseep";
 import createDebug from "debug";
 import { NDKCashuWallet } from "../../cashu/wallet";
+import { MintUrl } from "../../cashu/mint/utils";
 
 const d = createDebug("ndk-wallet:nutzap-monitor");
 
@@ -101,7 +102,6 @@ export class NutzapMonitor extends EventEmitter<{
 
     private eoseHandler() {
         this.eosed = true;
-        this.processQueue();
     }
 
     private async eventHandler(event: NDKEvent) {
@@ -144,7 +144,7 @@ export class NutzapMonitor extends EventEmitter<{
             const _wallet = this.cashuWallet(mint);
 
             try {
-                const res = await _wallet.receiveTokenEntry(
+                const res = await _wallet.receive(
                     { proofs, mint },
                     {
                         privkey: wallet.privkey,

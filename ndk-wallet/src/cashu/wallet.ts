@@ -55,6 +55,9 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
     public publicTags: NDKTag[] = [];
 
     public _event?: NDKEvent;
+
+    private _wallets: Record<MintUrl, CashuWallet> = {};
+
     public walletId: string = "unset";
 
     constructor(ndk: NDK, event?: NDKEvent) {
@@ -109,12 +112,21 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
     async mintNuts(amounts: number[], unit: string) {
         const tokenSelection = await chooseProofsForAmounts(amounts, this);
         if (tokenSelection?.needsSwap) {
-            const wallet = new CashuWallet(new CashuMint(tokenSelection.mint));
-            const proofs = await wallet.send(0, tokenSelection.usedProofs, {
-                preference: amounts.map((a) => ({ amount: a, count: 1 })),
-            });
+            const wallet = await this.walletForMint(tokenSelection.mint);
+            const currentProofs = this.proofsForMint(tokenSelection.mint);
+            const proofs = await wallet.send(
+                undefined as unknown as number,
+                currentProofs,
+                {
+                    proofsWeHave: currentProofs,
+                    includeFees: true,
+                    outputAmounts: {
+                        sendAmounts: amounts
+                    }
+                }
+            );
 
-            await rollOverProofs(tokenSelection, proofs.returnChange, tokenSelection.mint, this);
+            await rollOverProofs(tokenSelection, proofs.keep, tokenSelection.mint, this);
 
             return proofs.send;
         } else if (tokenSelection) {
@@ -322,7 +334,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
      * @returns the token event that was created
      */
     public async receiveToken(token: string) {
-        const mint = getDecodedToken(token).token[0].mint
+        const mint = getDecodedToken(token).mint
         const wallet = new CashuWallet(new CashuMint(mint));
         const proofs = await wallet.receive(token);
         const amount = proofsTotalBalance(proofs);
@@ -364,6 +376,23 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
         return pay.payNut();
     }
 
+    public proofsForMint(mint: MintUrl) {
+        const res = this.tokens.filter((t) => t.mint === mint).map((t) => t.proofs).flat();
+
+        d("providing proofs for mint %s: %d (amounts: %o)", mint, res.length, res.map((p) => p.amount));
+        
+        return res;
+    }
+
+    public async walletForMint(mint: MintUrl): Promise<CashuWallet> {
+        if (this._wallets[mint]) return this._wallets[mint];
+
+        const wallet = new CashuWallet(new CashuMint(mint), { unit: this.unit });
+        // await wallet.getKeySets();
+        this._wallets[mint] = wallet;
+        return wallet;
+    }
+
     async redeemNutzap(nutzap: NDKEvent) {
         // this.emit("nutzap:seen", nutzap);
 
@@ -373,10 +402,11 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
             const proofs = JSON.parse(nutzap.content);
             console.log(proofs);
 
-            const _wallet = new CashuWallet(new CashuMint(mint));
-            const res = await _wallet.receiveTokenEntry(
+            const _wallet = new CashuWallet(new CashuMint(mint), { unit: this.unit });
+            const res = await _wallet.receive(
                 { proofs, mint },
                 {
+                    proofsWeHave: this.proofsForMint(mint),
                     privkey: this.privkey,
                 }
             );

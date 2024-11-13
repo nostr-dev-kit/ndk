@@ -119,7 +119,7 @@ export class NDKCashuDeposit extends EventEmitter<{
 
         try {
             d("Checking for minting status of %s", this.quoteId);
-            ret = await this._wallet.mintTokens(this.amount, this.quoteId);
+            ret = await this._wallet.mintProofs(this.amount, this.quoteId);
             if (!ret?.proofs) return;
         } catch (e: any) {
             if (e.message.match(/not paid/i)) return;

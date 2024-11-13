@@ -243,7 +243,7 @@ export async function rollOverProofs(
         createdToken.mint = mint;
         createdToken.wallet = wallet;
         await createdToken.sign();
-        d("saving %d new proofs", proofsToSave.length);
+        d("saving %d new proofs (amounts: %o)", proofsToSave.length, proofsToSave.map((p) => p.amount));
 
         wallet.addToken(createdToken);
 

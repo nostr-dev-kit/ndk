@@ -1,6 +1,7 @@
 import type {
     CashuPaymentInfo,
     LnPaymentInfo,
+    NDKEvent,
     NDKNutzap,
     NDKPaymentConfirmationCashu,
     NDKPaymentConfirmationLN,
@@ -83,7 +84,7 @@ class NDKWalletService extends EventEmitter<{
     private alreadyHasWallet(wallet: NDKWallet): boolean {
         if (wallet instanceof NDKCashuWallet) {
             return this.wallets.some(
-                (w) => w instanceof NDKCashuWallet && w.event.id === wallet.event.id
+                (w) => w instanceof NDKCashuWallet && w.event?.id === wallet.event?.id
             );
         }
 
@@ -93,7 +94,7 @@ class NDKWalletService extends EventEmitter<{
     /**
      * Starts monitoring changes for the user's wallets
      */
-    public start(user?: NDKUser) {
+    public start({ user, walletEvent }: { user?: NDKUser; walletEvent?: NDKEvent }) {
         // todo: check NIP-78 configuration for webln/nwc/nip-61 settings
         this.lifecycle = new NDKWalletLifecycle(this.ndk, user ?? this.ndk.activeUser!);
         this.lifecycle.on("mintlist:ready", (mintList: NDKCashuMintList) => {
@@ -127,7 +128,7 @@ class NDKWalletService extends EventEmitter<{
             this.emit("ready");
         });
 
-        this.lifecycle.start();
+        this.lifecycle.start(walletEvent);
     }
 
     /**
@@ -174,6 +175,9 @@ class NDKWalletService extends EventEmitter<{
         return mintList.publishReplaceable();
     }
 
+    /**
+     * Transfers tokens from one mint to another
+     */
     async transfer(wallet: NDKCashuWallet, fromMint: MintUrl, toMint: MintUrl) {
         const balanceInMint = wallet.mintBalance(fromMint);
 

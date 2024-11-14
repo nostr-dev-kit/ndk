@@ -54,7 +54,7 @@ async function payNutWithMintTransfer(
 
     // get quotes from the mints the recipient has
     const quotesPromises = mints.map(async (mint) => {
-        const wallet = new CashuWallet(new CashuMint(mint), { unit: pay.unit });
+        const wallet = await pay.wallet.walletForMint(mint);
         const quote = await wallet.createMintQuote(amount);
         return { quote, mint };
     });
@@ -77,7 +77,7 @@ async function payNutWithMintTransfer(
         throw new Error("payment failed");
     }
 
-    const wallet = new CashuWallet(new CashuMint(mint), { unit: pay.unit });
+    const wallet = await pay.wallet.walletForMint(mint);
 
     const { proofs } = await wallet.mintProofs(amount, quote.quote, {
         pubkey: p2pk,
@@ -107,13 +107,12 @@ async function payNutWithMintBalance(
     }
 
     for (const mint of mintsWithEnoughBalance) {
-        const _wallet = new CashuWallet(new CashuMint(mint));
+        const _wallet = await pay.wallet.walletForMint(mint);
         const selection = chooseProofsForAmount(amount, mint, pay.wallet);
 
         if (!selection) {
             pay.debug("failed to find proofs for amount %d", amount);
             throw new Error("insufficient balance");
-            continue;
         }
 
         try {

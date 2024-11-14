@@ -50,6 +50,11 @@ class NDKWalletLifecycle extends EventEmitter<{
     public debug = createDebug("ndk-wallet:lifecycle");
     public state: "loading" | "ready" = "loading";
 
+    /**
+     * When this is set, the lifecycle will only monitor this wallet.
+     */
+    private walletEvent?: NDKEvent;
+
     constructor(ndk: NDK, user: NDKUser) {
         super();
         this.ndk = ndk;
@@ -57,17 +62,26 @@ class NDKWalletLifecycle extends EventEmitter<{
     }
 
     /**
-     * Check for wallets
+     * Begin monitoring wallets
+     * @param walletEvent - optional wallet event to exclusively monitor
      */
-    async start() {
+    async start(walletEvent?: NDKEvent) {
         const userRelayList = await getRelayListForUser(this.user.pubkey, this.ndk);
         const filters: NDKFilter[] = [
             {
-                kinds: [NDKKind.CashuMintList, NDKKind.CashuWallet],
+                kinds: [NDKKind.CashuMintList],
                 authors: [this.user.pubkey],
             },
             { kinds: [NDKKind.WalletChange], authors: [this.user!.pubkey], limit: 10 },
         ];
+
+        if (walletEvent) {
+            // If we have a wallet event, only monitor wallet transactions of that wallet event
+            filters[1] = { ...filters[1], ...walletEvent.filter() };
+        } else {
+            // If we don't have a wallet event, fetch cashuwallet kind
+            filters[0].kinds!.push(NDKKind.CashuWallet);
+        }
 
         // if we have a clientName, also get NIP-78 AppSpecificData
         if (this.ndk.clientName) {
@@ -153,17 +167,21 @@ class NDKWalletLifecycle extends EventEmitter<{
             this.emit("wallet", wallet);
         }
 
+        const filters: NDKFilter[] = [
+            { kinds: [NDKKind.CashuToken], authors: [this.user!.pubkey] },
+            { kinds: [NDKKind.EventDeletion], authors: [this.user!.pubkey], "#k": [NDKKind.CashuToken.toString()], limit: 0 },
+            { kinds: [NDKKind.WalletChange], authors: [this.user!.pubkey] },
+        ];
+
+        if (this.walletEvent) {
+            filters[0] = { ...filters[0], ...this.walletEvent.filter() };
+            filters[2] = { ...filters[2], ...this.walletEvent.filter() };
+        }
+
+        this.debug("filter for tokens: %o", filters);
+
         this.tokensSub = this.ndk.subscribe(
-            [
-                { kinds: [NDKKind.CashuToken], authors: [this.user!.pubkey] },
-                { kinds: [NDKKind.EventDeletion], authors: [this.user!.pubkey], limit: 0 },
-                { kinds: [NDKKind.WalletChange], authors: [this.user!.pubkey] },
-                // {
-                //     kinds: [NDKKind.Nutzap],
-                //     "#p": [this.user!.pubkey],
-                //     since: oldestWalletTimestamp,
-                // },
-            ],
+            filters,
             {
                 subId: "ndk-wallet-tokens",
                 groupable: false,

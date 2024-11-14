@@ -76,6 +76,13 @@ export class NDKUser {
         return this._npub;
     }
 
+    get nprofile(): string {
+        console.log('encoding with pubkey', this.pubkey)
+        return nip19.nprofileEncode({
+            pubkey: this.pubkey
+        });
+    }
+
     set npub(npub: Npub) {
         this._npub = npub;
     }

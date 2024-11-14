@@ -24,7 +24,7 @@ export class NDKCashuDeposit extends EventEmitter<{
     public amount: number;
     public quoteId: string | undefined;
     private wallet: NDKCashuWallet;
-    private _wallet: CashuWallet;
+    private _wallet?: CashuWallet;
     public checkTimeout: NodeJS.Timeout | undefined;
     public checkIntervalLength = 2500;
     public finalized = false;
@@ -36,10 +36,10 @@ export class NDKCashuDeposit extends EventEmitter<{
         this.mint = mint ?? randomMint(wallet);
         this.amount = amount;
         this.unit = unit;
-        this._wallet = new CashuWallet(new CashuMint(this.mint), { unit });
     }
 
     async start() {
+        this._wallet ??= await this.wallet.walletForMint(this.mint);
         const quote = await this._wallet.createMintQuote(this.amount);
         d("created quote %s for %d %s", quote.quote, this.amount, this.mint);
 
@@ -58,10 +58,11 @@ export class NDKCashuDeposit extends EventEmitter<{
     private async createQuoteEvent(quoteId: string, bolt11: string) {
         const { ndk } = this.wallet;
         const bolt11Expiry = getBolt11ExpiresAt(bolt11);
+        const id = this.wallet.tagId();
         let tags: NDKTag[] = [
-            ["a", this.wallet.tagId()],
             ["mint", this.mint],
         ];
+        if (id) tags.push(["a", id]);
 
         // if we have a bolt11 expiry, expire this event at that time
         if (bolt11Expiry) tags.push(["expiration", bolt11Expiry.toString()]);
@@ -119,6 +120,7 @@ export class NDKCashuDeposit extends EventEmitter<{
 
         try {
             d("Checking for minting status of %s", this.quoteId);
+            this._wallet ??= await this.wallet.walletForMint(this.mint);
             ret = await this._wallet.mintProofs(this.amount, this.quoteId);
             if (!ret?.proofs) return;
         } catch (e: any) {
@@ -130,14 +132,14 @@ export class NDKCashuDeposit extends EventEmitter<{
         try {
             this.finalized = true;
 
-            const tokenEvent = new NDKCashuToken(this.wallet.event.ndk);
+            const tokenEvent = new NDKCashuToken(this.wallet.ndk);
             tokenEvent.proofs = ret.proofs;
             tokenEvent.mint = this.mint;
             tokenEvent.wallet = this.wallet;
 
             await tokenEvent.publish(this.wallet.relaySet);
 
-            const historyEvent = new NDKWalletChange(this.wallet.event.ndk);
+            const historyEvent = new NDKWalletChange(this.wallet.ndk);
             historyEvent.direction = 'in';
             historyEvent.amount = tokenEvent.amount;
             historyEvent.unit = this.unit;

@@ -57,5 +57,10 @@ export interface NDKWallet
     /**
      * Fetch the balance of this wallet
      */
-    balance(): Promise<NDKWalletBalance[] | undefined>;
+    updateBalance?(): Promise<void>;
+
+    /**
+     * Get the balance of this wallet
+     */
+    balance(): NDKWalletBalance[] | undefined;
 }

@@ -64,7 +64,8 @@ export class NDKCashuToken extends NDKEvent {
     }
 
     set wallet(wallet: NDKCashuWallet) {
-        this.tags.push(["a", wallet.tagId()]);
+        const id = wallet.tagId();
+        if (id)this.tags.push(["a", id]);
     }
 
     set mint(mint: string) {

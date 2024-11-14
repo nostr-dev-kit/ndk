@@ -1,15 +1,17 @@
 import type {
     CashuPaymentInfo,
+    Hexpubkey,
     NDKEventId,
+    NDKFilter,
     NDKNutzap,
     NDKPaymentConfirmationCashu,
     NDKPaymentConfirmationLN,
     NDKSubscription,
+    NDKSubscriptionOptions,
     NDKTag,
     NDKZapDetails,
 } from "@nostr-dev-kit/ndk";
 import NDK, { NDKEvent, NDKKind, NDKPrivateKeySigner, NDKRelaySet } from "@nostr-dev-kit/ndk";
-import type { NostrEvent } from "@nostr-dev-kit/ndk";
 import { NDKCashuToken, proofsTotalBalance } from "./token.js";
 import { NDKCashuDeposit } from "./deposit.js";
 import createDebug from "debug";
@@ -23,6 +25,7 @@ import { NDKWallet, NDKWalletBalance, NDKWalletEvents, NDKWalletStatus } from ".
 import { EventEmitter } from "tseep";
 import { decrypt } from "./decrypt.js";
 import { chooseProofsForAmounts, rollOverProofs } from "./proofs.js";
+import { eventHandler } from "./event-handlers/index.js";
 
 const d = createDebug("ndk-wallet:cashu:wallet");
 
@@ -40,7 +43,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
 
     public tokens: NDKCashuToken[] = [];
     public usedTokenIds = new Set<NDKEventId>();
-    private knownTokens: Set<NDKEventId> = new Set();
+    public knownTokens: Set<NDKEventId> = new Set();
     private skipPrivateKey: boolean = false;
     public p2pk: string | undefined;
     private sub?: NDKSubscription;
@@ -58,7 +61,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
 
     private _wallets: Record<MintUrl, CashuWallet> = {};
 
-    public walletId: string = "unset";
+    public walletId: string = "";
 
     constructor(ndk: NDK, event?: NDKEvent) {
         super();
@@ -72,21 +75,20 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
         }
         
         this.event = event;
-        this.event.ndk = ndk;
+        this.ndk = ndk;
     }
 
-    set event(e: NDKEvent) {
-        this.walletId = e.dTag!;
+    set event(e: NDKEvent | undefined) {
+        this.walletId = e?.dTag ?? "";
         this._event = e;
     }
 
-    get event(): NDKEvent {
-        if (!this._event) throw new Error("wallet event not ready");
+    get event(): NDKEvent | undefined {
         return this._event;
     }
 
     tagId() {
-        return this.event.tagId();
+        return this.event?.tagId();
     }
 
     /**
@@ -138,6 +140,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
     static async from(event: NDKEvent): Promise<NDKCashuWallet | undefined> {
         if (!event.ndk) throw new Error("no ndk instance on event");
         const wallet = new NDKCashuWallet(event.ndk, event);
+        if (!wallet.event) return;
         if (wallet.isDeleted) return;
 
         const prevContent = wallet.event.content;
@@ -153,6 +156,42 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
         await wallet.getP2pk();
 
         return wallet;
+    }
+
+    /**
+     * Starts monitoring the wallet
+     */
+    start(opts?: NDKSubscriptionOptions & { pubkey?: Hexpubkey }) {
+        const pubkey = opts?.pubkey ?? this.event?.pubkey;
+        if (!pubkey) throw new Error("no pubkey");
+        
+        d("start %s", this.walletId);
+        const filters: NDKFilter[] = [
+            { kinds: [NDKKind.CashuToken], authors: [pubkey], ...this.event?.filter() },
+            { kinds: [NDKKind.WalletChange], authors: [pubkey] },
+            { kinds: [NDKKind.EventDeletion], authors: [pubkey], "#k": [NDKKind.CashuToken.toString()] },
+        ];
+
+        // if we have an event add it to the filter
+        if (this.event) {
+            // add to CashuToken filter
+            filters[0] = { ...filters[0], ...this.event.filter() };
+
+            // add to WalletChange filter
+            filters[1] = { ...filters[1], ...this.event.filter() };
+        }
+
+        d("filters %j", filters);
+        
+        this.sub = this.ndk.subscribe(filters, opts, this.relaySet, false);
+        
+        this.sub.on("event", eventHandler.bind(this));
+        // this.sub.on("eose", tokensSubEose.bind(this));
+        this.sub.start();
+    }
+
+    stop() {
+        this.sub?.stop();
     }
 
     get allTags(): NDKTag[] {
@@ -171,7 +210,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
     }
 
     private getPrivateTags(name: string): string[] {
-        return this.privateTags.filter((t) => t[0] === name).map((t) => t[1]);
+        return this.privateTags.filter((t) => t[0] === name).map((t) => t[1]).flat();
     }
 
     private getPrivateTag(name: string): string | undefined {
@@ -210,11 +249,11 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
     }
 
     set name(value: string) {
-        this.setPrivateTag("name", value);
+        this.setPublicTag("name", value);
     }
 
     get name(): string | undefined {
-        return this.getPrivateTag("name") ?? this.event.tagValue("name");
+        return this.getPrivateTag("name") ?? this.event?.tagValue("name");
     }
 
     get unit(): string {
@@ -244,10 +283,6 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
     get privkey(): string | undefined {
         const privkey = this.getPrivateTag("privkey");
         if (privkey) return privkey;
-
-        if (this.event.ndk?.signer instanceof NDKPrivateKeySigner) {
-            return this.event.ndk.signer.privateKey;
-        }
     }
 
     set privkey(privkey: string | undefined | false) {
@@ -268,6 +303,8 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
     }
 
     async publish() {
+        if (!this.event) throw new Error("wallet event not available");
+        
         if (!this.isDeleted) {
             // if we haven't been instructed to skip the private key
             // and we don't have one, generate it
@@ -288,7 +325,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
 
             // encrypt private tags
             this.event.content = JSON.stringify(this.privateTags);
-            const user = await this.event.ndk!.signer!.user();
+            const user = await this.ndk!.signer!.user();
             await this.event.encrypt(user, undefined, "nip44");
         }
 
@@ -296,9 +333,10 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
     }
 
     get relaySet(): NDKRelaySet | undefined {
+        if (!this.event) return undefined;
         if (this.relays.length === 0) return undefined;
 
-        return NDKRelaySet.fromRelayUrls(this.relays, this.event.ndk!);
+        return NDKRelaySet.fromRelayUrls(this.relays, this.ndk!);
     }
 
     /**
@@ -335,7 +373,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
      */
     public async receiveToken(token: string) {
         const mint = getDecodedToken(token).mint
-        const wallet = new CashuWallet(new CashuMint(mint));
+        const wallet = await this.walletForMint(mint);
         const proofs = await wallet.receive(token);
         const amount = proofsTotalBalance(proofs);
         const tokenEvent = await this.saveProofs(proofs, mint, { direction: "in", amount });
@@ -347,8 +385,8 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
         amount: number,
         token?: NDKCashuToken
     ) {
-        const historyEvent = new NDKWalletChange(this.event.ndk);
-        historyEvent.tag(this.event);
+        const historyEvent = new NDKWalletChange(this.ndk);
+        if (this.event) historyEvent.tag(this.event);
         await historyEvent.sign();
         historyEvent.publish(this.relaySet);
     }
@@ -387,8 +425,16 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
     public async walletForMint(mint: MintUrl): Promise<CashuWallet> {
         if (this._wallets[mint]) return this._wallets[mint];
 
-        const wallet = new CashuWallet(new CashuMint(mint), { unit: this.unit });
-        // await wallet.getKeySets();
+        let unit = this.unit;
+
+        if (unit === 'sats') {
+            unit = 'sat';
+            d("changing unit from sats to sat");
+        }
+
+        const wallet = new CashuWallet(new CashuMint(mint), { unit });
+        const loadMint = await wallet.loadMint();
+        d("load mint %o", loadMint);
         this._wallets[mint] = wallet;
         return wallet;
     }
@@ -402,7 +448,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
             const proofs = JSON.parse(nutzap.content);
             console.log(proofs);
 
-            const _wallet = new CashuWallet(new CashuMint(mint), { unit: this.unit });
+            const _wallet = await this.walletForMint(mint);
             const res = await _wallet.receive(
                 { proofs, mint },
                 {
@@ -415,7 +461,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
                 // this.emit("nutzap:redeemed", nutzap);
             }
 
-            const tokenEvent = new NDKCashuToken(this.event.ndk);
+            const tokenEvent = new NDKCashuToken(this.ndk);
             tokenEvent.proofs = proofs;
             tokenEvent.mint = mint;
             tokenEvent.wallet = this;
@@ -423,9 +469,9 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
             tokenEvent.publish(this.relaySet);
             console.log("new token event", tokenEvent.rawEvent());
 
-            const historyEvent = new NDKWalletChange(this.event.ndk);
+            const historyEvent = new NDKWalletChange(this.ndk);
             historyEvent.addRedeemedNutzap(nutzap);
-            historyEvent.tag(this.event);
+            if (this.event) historyEvent.tag(this.event);
             historyEvent.tag(tokenEvent, NDKWalletChange.MARKERS.CREATED);
             await historyEvent.sign();
             historyEvent.publish(this.relaySet);
@@ -443,7 +489,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
      * @returns
      */
     async saveProofs(proofs: Proof[], mint: MintUrl, { nutzap, direction, amount } : SaveProofsOptions = {}) {
-        const tokenEvent = new NDKCashuToken(this.event.ndk);
+        const tokenEvent = new NDKCashuToken(this.ndk);
         tokenEvent.proofs = proofs;
         tokenEvent.mint = mint;
         tokenEvent.wallet = this;
@@ -456,8 +502,8 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
             console.error("failed to publish token", e, tokenEvent.rawEvent());
         });
 
-        const historyEvent = new NDKWalletChange(this.event.ndk);
-        historyEvent.tags.push(this.event.tagReference());
+        const historyEvent = new NDKWalletChange(this.ndk);
+        if (this.event) historyEvent.tags.push(this.event.tagReference());
 
         if (nutzap) {
             historyEvent.addRedeemedNutzap(nutzap);
@@ -476,6 +522,10 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
         return tokenEvent;
     }
 
+    /**
+     * Updates the internal state to add a token,
+     * there is no change published anywhere when calling this function.
+     */
     public addToken(token: NDKCashuToken) {
         if (!this.knownTokens.has(token.id)) {
             this.knownTokens.add(token.id);
@@ -495,6 +545,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
     }
 
     async delete(reason?: string, publish = true): Promise<NDKEvent> {
+        if (!this.event) throw new Error("wallet event not available");
         this.event.content = "";
         this.event.tags = [["d", this.walletId], ["deleted"]];
         if (publish) this.event.publishReplaceable();
@@ -518,7 +569,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
         return tokens;
     }
 
-    async balance(): Promise<NDKWalletBalance[] | undefined> {
+    balance(): NDKWalletBalance[] | undefined {
         if (this.status === NDKWalletStatus.LOADING) {
             const balance = this.getPrivateTag("balance");
             if (balance)
@@ -543,7 +594,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
     /**
      * Writes the wallet balance to relays
      */
-    async updateBalance() {
+    async syncBalance() {
         const balance = (await this.balance())?.[0].amount;
         if (!balance) return;
 

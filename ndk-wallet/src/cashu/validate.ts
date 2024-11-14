@@ -1,5 +1,4 @@
 import type { Proof } from "@cashu/cashu-ts";
-import { CashuMint, CashuWallet } from "@cashu/cashu-ts";
 import type { NDKCashuToken } from "./token";
 import createDebug from "debug";
 import { rollOverProofs } from "./proofs";
@@ -55,7 +54,7 @@ export async function checkTokenProofsForMint(
     wallet: NDKCashuWallet
 ) {
     const allProofs = tokens.map((t) => t.proofs).flat();
-    const _wallet = new CashuWallet(new CashuMint(mint));
+    const _wallet = await wallet.walletForMint(mint);
     d(
         "checking %d proofs in %d tokens for spent proofs for mint %s",
         allProofs.length,

@@ -1,5 +1,4 @@
 import type { MeltQuoteResponse, Proof } from "@cashu/cashu-ts";
-import { CashuMint, CashuWallet } from "@cashu/cashu-ts";
 import type { NDKCashuWallet } from "./wallet";
 import { NDKCashuToken } from "./token";
 import createDebug from "debug";
@@ -27,7 +26,7 @@ export async function chooseProofsForPr(
     mint: string,
     wallet: NDKCashuWallet
 ): Promise<TokenSelection | undefined> {
-    const _wallet = new CashuWallet(new CashuMint(mint));
+    const _wallet = await wallet.walletForMint(mint);
     const quote = await _wallet.createMeltQuote(pr);
     return chooseProofsForQuote(quote, wallet, mint);
 }
@@ -210,7 +209,7 @@ export async function rollOverProofs(
     if (proofs.usedTokens.length > 0) {
         // console.trace("rolling over proofs for mint %s %d tokens", mint, proofs.usedTokens.length);
 
-        const deleteEvent = new NDKEvent(wallet.event.ndk);
+        const deleteEvent = new NDKEvent(wallet.ndk);
         deleteEvent.kind = NDKKind.EventDeletion;
         deleteEvent.tags = [["k", NDKKind.CashuToken.toString()]];
 

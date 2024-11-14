@@ -526,7 +526,7 @@ export class NDKSubscription extends EventEmitter<{
             this.emit("eose", this);
             this.eosed = true;
 
-            if (this.opts?.closeOnEose) this.stop();
+            // if (this.opts?.closeOnEose) this.stop();
         };
 
         if (queryFilled || hasSeenAllEoses) {
@@ -551,6 +551,8 @@ export class NDKSubscription extends EventEmitter<{
             // for the next one
             const percentageOfRelaysThatHaveSentEose =
                 this.eosesSeen.size / connectedRelaysWithFilters.length;
+            
+            this.debug("Percentage of relays that have sent EOSE", { subId: this.subId, percentageOfRelaysThatHaveSentEose, seen: this.eosesSeen.size, total: connectedRelaysWithFilters.length });
 
             // If less than 2 and 50% of relays have EOSEd don't add a timeout yet
             if (this.eosesSeen.size >= 2 && percentageOfRelaysThatHaveSentEose >= 0.5) {
@@ -558,7 +560,7 @@ export class NDKSubscription extends EventEmitter<{
                     timeToWaitForNextEose * (1 - percentageOfRelaysThatHaveSentEose);
 
                 if (timeToWaitForNextEose === 0) {
-                    performEose("tiem to wait was 0");
+                    performEose("time to wait was 0");
                     return;
                 }
 

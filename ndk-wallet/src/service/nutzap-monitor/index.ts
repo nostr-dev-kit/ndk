@@ -141,7 +141,7 @@ export class NutzapMonitor extends EventEmitter<{
                 );
             }
 
-            const _wallet = this.cashuWallet(mint);
+            const _wallet = await wallet.walletForMint(mint);
 
             try {
                 const res = await _wallet.receive(
@@ -172,17 +172,5 @@ export class NutzapMonitor extends EventEmitter<{
         if (p2pk) wallet = this.lifecycle.walletsByP2pk.get(p2pk);
 
         return wallet ?? this.lifecycle.defaultWallet;
-    }
-
-    private cashuWallets: Map<string, CashuWallet> = new Map();
-    private cashuWallet(mint: MintUrl, unit: string = "sat"): CashuWallet {
-        const key = `${mint}:${unit}`;
-        let wallet = this.cashuWallets.get(key);
-        if (!wallet) {
-            wallet = new CashuWallet(new CashuMint(mint), { unit });
-            this.cashuWallets.set(key, wallet);
-        }
-
-        return wallet;
     }
 }

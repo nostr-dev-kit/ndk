@@ -1,5 +1,25 @@
 # @nostr-dev-kit/ndk-svelte
 
+## 2.3.1
+
+### Patch Changes
+
+-   Updated dependencies
+    -   @nostr-dev-kit/ndk@2.10.6
+
+## 2.3.0
+
+### Minor Changes
+
+-   7bddeff: skip by default, PRE that have been tagged as "deleted"
+
+### Patch Changes
+
+-   Updated dependencies [5939a3e]
+-   Updated dependencies
+-   Updated dependencies [f2a0cce]
+    -   @nostr-dev-kit/ndk@2.10.5
+
 ## 2.2.22
 
 ### Patch Changes

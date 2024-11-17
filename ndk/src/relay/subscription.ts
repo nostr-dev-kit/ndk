@@ -408,7 +408,8 @@ export class NDKRelaySubscription {
         const filters = Array.from(this.items.values()).map((item) => item.filters);
         if (!filters[0]) {
             this.debug("👀 No filters to merge", this.items);
-            console.trace("No filters to merge");
+            console.error("BUG: No filters to merge!", this.items);
+            return [];
         }
         const filterCount = filters[0].length;
 

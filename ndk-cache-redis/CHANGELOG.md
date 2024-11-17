@@ -1,5 +1,21 @@
 # @nostr-dev-kit/ndk-cache-redis
 
+## 2.1.23
+
+### Patch Changes
+
+-   Updated dependencies
+    -   @nostr-dev-kit/ndk@2.10.6
+
+## 2.1.22
+
+### Patch Changes
+
+-   Updated dependencies [5939a3e]
+-   Updated dependencies
+-   Updated dependencies [f2a0cce]
+    -   @nostr-dev-kit/ndk@2.10.5
+
 ## 2.1.21
 
 ### Patch Changes

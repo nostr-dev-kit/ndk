@@ -1,10 +1,9 @@
+import { EncryptionNip } from "../events/encryption.js";
 import type { NostrEvent } from "../events/index.js";
 import type { NDK } from "../ndk/index.js";
 import type { NDKRelay } from "../relay/index.js";
 import type { NDKUser } from "../user";
 
-export type ENCRYPTION_SCHEMES = "nip04" | "nip44";
-export const DEFAULT_ENCRYPTION_SCHEME: ENCRYPTION_SCHEMES = "nip04";
 
 /**
  * Interface for NDK signers.
@@ -36,38 +35,28 @@ export interface NDKSigner {
     relays?(ndk?: NDK): Promise<NDKRelay[]>;
 
     /**
-     * Encrypts the given Nostr event for the given recipient.
-     * @param value - The value to be encrypted.
-     * @param recipient - The recipient of the encrypted value.
-     * @param type - The encryption scheme to use. Defaults to "nip04".
+     * Determine the types of encryption (by nip) that this signer can perform.
+     * Implementing classes SHOULD return a value even for legacy (only nip04) third party signers.
+     * @nip Optionally returns an array with single supported nip or empty, to check for truthy or falsy.
+     * @return A promised list of any (or none) of these strings  ['nip04', 'nip44'] 
      */
-    encrypt(recipient: NDKUser, value: string, type?: ENCRYPTION_SCHEMES): Promise<string>;
+    encryptionEnabled?(nip?:EncryptionNip): Promise<EncryptionNip[]>
+
+    /**
+     * Encrypts the given Nostr event for the given recipient.
+     * Implementing classes SHOULD equate legacy (only nip04) to nip == `nip04` || undefined
+     * @param recipient - The recipient (pubkey or conversationKey) of the encrypted value.
+     * @param value - The value to be encrypted.
+     * @param nip - which NIP is being implemented ('nip04', 'nip44') 
+     */
+    encrypt(recipient: NDKUser, value: string, nip?:EncryptionNip): Promise<string>;
 
     /**
      * Decrypts the given value.
-     * @param value
-     * @param sender
-     * @param type - The encryption scheme to use. Defaults to "nip04".
+     * Implementing classes SHOULD equate legacy (only nip04) to nip == `nip04` || undefined
+     * @param sender - The sender (pubkey or conversationKey) of the encrypted value
+     * @param value - The value to be decrypted
+     * @param nip - which NIP is being implemented ('nip04', 'nip44', 'nip49') 
      */
-    decrypt(sender: NDKUser, value: string, type?: ENCRYPTION_SCHEMES): Promise<string>;
-
-    /**
-     * @deprecated use nip44Encrypt instead
-     */
-    nip04Encrypt(recipient: NDKUser, value: string): Promise<string>;
-
-    /**
-     * @deprecated use nip44Decrypt instead
-     */
-    nip04Decrypt(sender: NDKUser, value: string): Promise<string>;
-
-    /**
-     * @deprecated use nip44Encrypt instead
-     */
-    nip44Encrypt(recipient: NDKUser, value: string): Promise<string>;
-
-    /**
-     * @deprecated use nip44Decrypt instead
-     */
-    nip44Decrypt(sender: NDKUser, value: string): Promise<string>;
+    decrypt(sender: NDKUser, value: string, nip?:EncryptionNip): Promise<string>;
 }

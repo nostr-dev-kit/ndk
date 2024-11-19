@@ -41,3 +41,5 @@ to this list.
 -   [magicCity h=n](https://github.com/tezosmiami/hicetnunc) - By [@hicetnunc2000](https://github.com/hicetnunc2000/), [@tezosmiami](https://njump.me/npub190rqwj0nud4uhvmaeg7cgn0gypu0s09j87vqjluhfhju0req2khsskh9w7)
 -   [notepress](https://github.com/utxo-one/notepress) - By [@utxo](httsp://njump.me/_@utxo.one)
     -   No frameworks! A very simple long-form (NIP-23) reader
+-   [Olas 🌊](https://github.com/pablof7z/snapstr) - By [@pablof7z](https://njump.me/f7z.io)
+    -   React Native, mobile-only app

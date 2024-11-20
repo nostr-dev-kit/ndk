@@ -5,6 +5,7 @@ packages:
     - "ndk-cache-dexie"
     - "ndk-cache-redis"
     - "ndk-cache-nostr"
+    - "ndk-mobile"
     - "ndk-svelte"
     - "ndk-svelte-components"
     - "ndk-wallet"

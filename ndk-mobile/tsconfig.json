@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "types": ["node", "react-native"],
+        "target": "esnext",
+        "skipLibCheck": true,
+        "module": "commonjs",
+        "strict": false,
+        "jsx": "react",
+        "declaration": true,
+        "esModuleInterop": true
+    },
+    "include": ["src/**/*.ts", "src/**/*.tsx"],
+    "exclude": ["node_modules"],
+    "paths": {
+        "@/*": ["src/*"]
+    }
+}

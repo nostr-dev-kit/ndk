@@ -67,7 +67,6 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
      */
     public constructor(ndk: NDK, remoteNip05: string, localSigner?: NDKSigner);
 
-
     /**
      * @param ndk - The NDK instance to use
      * @param userOrConnectionToken - The public key, or a connection token, of the npub that wants to be published as
@@ -194,7 +193,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
     }
 
     public async getPublicKey(): Promise<Hexpubkey> {
-        if (this.userPubkey)return this.userPubkey;
+        if (this.userPubkey) return this.userPubkey;
 
         return new Promise<Hexpubkey>((resolve, reject) => {
             if (!this.bunkerPubkey) throw new Error("Bunker pubkey not set");
@@ -244,7 +243,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
 
         const promise = new Promise<string>((resolve, reject) => {
             if (!this.bunkerPubkey) throw new Error("Bunker pubkey not set");
-            
+
             this.rpc.sendRequest(
                 this.bunkerPubkey,
                 method + "_encrypt",
@@ -339,7 +338,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
 
         return new Promise<Hexpubkey>((resolve, reject) => {
             if (!this.bunkerPubkey) throw new Error("Bunker pubkey not set");
-            
+
             this.rpc.sendRequest(
                 this.bunkerPubkey,
                 "create_account",

@@ -42,8 +42,9 @@ export class NDKRelaySubscriptionManager {
 
                 // Go through the subscriptions with this fingerprint and see if we there is one
                 // that is not running yet
-                relaySub = (existingSubs||[])
-                    .find(sub => sub.status < NDKRelaySubscriptionStatus.RUNNING)
+                relaySub = (existingSubs || []).find(
+                    (sub) => sub.status < NDKRelaySubscriptionStatus.RUNNING
+                );
             }
             relaySub ??= this.createSubscription(sub, filters, filterFp);
         }
@@ -69,13 +70,20 @@ export class NDKRelaySubscriptionManager {
     private onRelaySubscriptionClose(sub: NDKRelaySubscription) {
         let currentVal = this.subscriptions.get(sub.fingerprint) ?? [];
         if (!currentVal) {
-            console.warn("Unexpectedly did not find a subscription with fingerprint", sub.fingerprint);
+            console.warn(
+                "Unexpectedly did not find a subscription with fingerprint",
+                sub.fingerprint
+            );
         } else if (currentVal.length === 1) {
             this.subscriptions.delete(sub.fingerprint);
         } else {
-            currentVal = currentVal.filter(s => s.id !== sub.id);
+            currentVal = currentVal.filter((s) => s.id !== sub.id);
             this.subscriptions.set(sub.fingerprint, currentVal);
-            console.log('removing a subscription', {fingerprint: sub.fingerprint, id: sub.id, newSize: this.subscriptions.size})
+            console.log("removing a subscription", {
+                fingerprint: sub.fingerprint,
+                id: sub.id,
+                newSize: this.subscriptions.size,
+            });
         }
     }
 }

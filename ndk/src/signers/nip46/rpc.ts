@@ -32,7 +32,7 @@ export class NDKNostrRpc extends EventEmitter {
     private signer: NDKSigner;
     private relaySet: NDKRelaySet | undefined;
     private debug: debug.Debugger;
-    public encryptionType: 'nip04' | 'nip44' = 'nip04';
+    public encryptionType: "nip04" | "nip44" = "nip04";
 
     public constructor(ndk: NDK, signer: NDKSigner, debug: debug.Debugger, relayUrls?: string[]) {
         super();
@@ -84,7 +84,11 @@ export class NDKNostrRpc extends EventEmitter {
     public async parseEvent(event: NDKEvent): Promise<NDKRpcRequest | NDKRpcResponse> {
         const remoteUser = this.ndk.getUser({ pubkey: event.pubkey });
         remoteUser.ndk = this.ndk;
-        const decryptedContent = await this.signer.decrypt(remoteUser, event.content, this.encryptionType);
+        const decryptedContent = await this.signer.decrypt(
+            remoteUser,
+            event.content,
+            this.encryptionType
+        );
         const parsedContent = JSON.parse(decryptedContent);
         const { id, method, params, result, error } = parsedContent;
 

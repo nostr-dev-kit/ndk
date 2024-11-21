@@ -21,11 +21,7 @@ const NDKProvider = ({
         connect?: boolean;
     }
 >) => {
-    const ndk = useRef(
-        new NDK({
-            ...opts,
-        })
-    );
+    const ndk = useRef(new NDK({ ...opts }));
     const [currentUser, setCurrentUser] = useState<NDKUser | null>(null);
     const [unpublishedEvents, setUnpublishedEvents] = useState<Map<string, UnpublishedEventEntry>>(new Map());
     const [cacheInitialized, setCacheInitialized] = useState<boolean | null>(opts?.cacheAdapter ? false : null);

@@ -1,11 +1,11 @@
 {
   "name": "@nostr-dev-kit/ndk-mobile",
-  "version": "0.1.2",
+  "version": "0.1.5",
   "description": "NDK Mobile",
   "private": false,
   "license": "MIT",
   "peerDependencies": {
-    "expo": ">=51.0.0"
+    "expo": "51.0.39"
   },
   "devDependencies": {
     "react-native-builder-bob": "^0.32.1",
@@ -24,7 +24,7 @@
     "react-native-get-random-values": "~1.11.0",
     "zustand": "^5.0.1"
   },
-  "source": "./index.ts",
+  "source": "./src/index.ts",
   "module": "./lib/module/index.js",
   "react-native": "lib/module/index.js",
   "exports": {

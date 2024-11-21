@@ -5,7 +5,7 @@ import { EventEmitter } from "tseep";
 import { NDKCashuToken } from "./token";
 import createDebug from "debug";
 import { NDKEvent, NDKKind, NDKTag, NostrEvent } from "@nostr-dev-kit/ndk";
-import { getBolt11ExpiresAt } from "../lib/ln";
+import { getBolt11ExpiresAt } from "../utils/ln.js";
 import { NDKWalletChange } from "./history";
 
 const d = createDebug("ndk-wallet:cashu:deposit");

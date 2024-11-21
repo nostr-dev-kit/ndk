@@ -14,7 +14,6 @@
         "docs:preview": "vitepress preview"
     },
     "devDependencies": {
-        "@braintree/sanitize-url": "^7.1.0",
         "@changesets/cli": "^2.22.0",
         "@nostr-dev-kit/eslint-config-custom": "workspace:*",
         "@nostr-dev-kit/tsconfig": "workspace:*",

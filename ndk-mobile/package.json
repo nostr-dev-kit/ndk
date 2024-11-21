@@ -5,7 +5,7 @@
   "private": false,
   "license": "MIT",
   "peerDependencies": {
-    "expo": "51.0.39"
+    "expo": "*"
   },
   "devDependencies": {
     "react-native-builder-bob": "^0.32.1",

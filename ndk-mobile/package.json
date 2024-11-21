@@ -36,7 +36,7 @@
     }
   },
   "scripts": {
-    "prepare": "bob build"
+    "prepare": "cd ../ndk-wallet && pnpm build && cd ../ndk-mobile && bob build"
   },
   "files": [
     "src",

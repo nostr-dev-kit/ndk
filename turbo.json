@@ -1,10 +1,9 @@
 {
     "$schema": "https://turbo.build/schema.json",
     "globalDependencies": ["**/.env.*local"],
-    "extends": ["//"],
     "pipeline": {
         "build": {
-            "outputs": ["dist/**"],
+            "outputs": ["dist/**", "lib/**"],
             "dependsOn": ["^build"]
         },
         "test": {

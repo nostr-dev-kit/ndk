@@ -14,6 +14,11 @@ export enum NDKKind {
     GroupNote = 11,
     GroupReply = 12,
 
+    Image = 20,
+
+    // NIP-22
+    GenericRespose = 22,
+
     GenericRepost = 16,
     ChannelCreation = 40,
     ChannelMetadata = 41,

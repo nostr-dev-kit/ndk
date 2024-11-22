@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useNDK } from './ndk';
 import { useStore } from 'zustand';
 
-export type NDKEventWithFrom<T> = NDKEvent & { from: (event: T) => T };
+export type NDKEventWithFrom<T extends NDKEvent> = T & { from: (event: NDKEvent) => T };
 
 interface UseSubscribeParams {
     filters: NDKFilter[] | null;

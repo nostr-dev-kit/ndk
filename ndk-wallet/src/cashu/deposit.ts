@@ -116,13 +116,13 @@ export class NDKCashuDeposit extends EventEmitter<{
     async finalize() {
         if (!this.quoteId) throw new Error("No quoteId set.");
 
-        let ret: { proofs: Array<Proof> };
+        let proofs: Array<Proof>;
 
         try {
             d("Checking for minting status of %s", this.quoteId);
             this._wallet ??= await this.wallet.walletForMint(this.mint);
-            ret = await this._wallet.mintProofs(this.amount, this.quoteId);
-            if (!ret?.proofs) return;
+            proofs = await this._wallet.mintProofs(this.amount, this.quoteId);
+            if (proofs.length === 0) return;
         } catch (e: any) {
             if (e.message.match(/not paid/i)) return;
             d(e.message);
@@ -133,7 +133,7 @@ export class NDKCashuDeposit extends EventEmitter<{
             this.finalized = true;
 
             const tokenEvent = new NDKCashuToken(this.wallet.ndk);
-            tokenEvent.proofs = ret.proofs;
+            tokenEvent.proofs = proofs;
             tokenEvent.mint = this.mint;
             tokenEvent.wallet = this.wallet;
 

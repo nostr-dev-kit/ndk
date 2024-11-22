@@ -7,8 +7,6 @@ const debug = createDebug("ndk-wallet:cashu:decrypt");
  * Decrypts an NDKEvent using nip44, and if that fails, using nip04.
  */
 export async function decrypt(event: NDKEvent) {
-    console.log("decrypting with the nip44/nip04 implementation");
-
     try {
         await event.decrypt(undefined, undefined, "nip44");
         return;

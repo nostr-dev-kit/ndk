@@ -1,5 +1,4 @@
 import type { Proof } from "@cashu/cashu-ts";
-import { CashuMint, CashuWallet } from "@cashu/cashu-ts";
 import type { MintUrl } from "../mint/utils";
 import type { NDKCashuPay } from "../pay";
 import { chooseProofsForAmount, chooseProofsForAmounts, rollOverProofs } from "../proofs";
@@ -79,7 +78,7 @@ async function payNutWithMintTransfer(
 
     const wallet = await pay.wallet.walletForMint(mint);
 
-    const { proofs } = await wallet.mintProofs(amount, quote.quote, {
+    const proofs = await wallet.mintProofs(amount, quote.quote, {
         pubkey: p2pk,
     });
 

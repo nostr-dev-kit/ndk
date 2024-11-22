@@ -38,7 +38,7 @@
     },
     "homepage": "https://github.com/nostr-dev-kit/ndk",
     "dependencies": {
-        "@cashu/cashu-ts": "2.0.0-rc1",
+        "@cashu/cashu-ts": "2.0.0-rc4",
         "@getalby/sdk": "^3.6.1",
         "@nostr-dev-kit/ndk": "workspace:*",
         "debug": "^4.3.4",

@@ -82,6 +82,15 @@ export class NDKNostrRpc extends EventEmitter {
     }
 
     public async parseEvent(event: NDKEvent): Promise<NDKRpcRequest | NDKRpcResponse> {
+        // support both nip04 and nip44 encryption
+        if (this.encryptionType === 'nip44' && event.content.includes('?iv=')) {
+            this.encryptionType = 'nip04';
+            console.log('switching to nip04 encryption')
+        } else if (this.encryptionType === 'nip04' && !event.content.includes('?iv=')) {
+            this.encryptionType = 'nip44';
+            console.log('switching to nip44 encryption')
+        }
+
         const remoteUser = this.ndk.getUser({ pubkey: event.pubkey });
         remoteUser.ndk = this.ndk;
         const decryptedContent = await this.signer.decrypt(

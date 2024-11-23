@@ -2,6 +2,7 @@ import type { NDKEvent } from "../../events/index.js";
 import type { NDK } from "../../ndk/index.js";
 import { normalizeRelayUrl } from "../../utils/normalize-url.js";
 import { NDKRelay, NDKRelayStatus } from "../index.js";
+import { NDKPool } from "../pool/index.js";
 
 export { calculateRelaySetFromEvent } from "./calculate.js";
 
@@ -48,10 +49,12 @@ export class NDKRelaySet {
     readonly relays: Set<NDKRelay>;
     private debug: debug.Debugger;
     private ndk: NDK;
+    private pool: NDKPool;
 
-    public constructor(relays: Set<NDKRelay>, ndk: NDK) {
+    public constructor(relays: Set<NDKRelay>, ndk: NDK, pool?: NDKPool) {
         this.relays = relays;
         this.ndk = ndk;
+        this.pool = pool ?? ndk.pool;
         this.debug = ndk.debug.extend("relayset");
     }
 
@@ -77,10 +80,14 @@ export class NDKRelaySet {
      * @param connect - whether to connect to the relay immediately if it was already in the pool but not connected
      * @returns NDKRelaySet
      */
-    static fromRelayUrls(relayUrls: string[], ndk: NDK, connect = true): NDKRelaySet {
+    static fromRelayUrls(relayUrls: string[], ndk: NDK, connect = true, pool?: NDKPool): NDKRelaySet {
+        pool = pool ?? ndk.pool;
+
+        if (!pool) throw new Error("No pool provided");
+        
         const relays = new Set<NDKRelay>();
         for (const url of relayUrls) {
-            const relay = ndk.pool.relays.get(normalizeRelayUrl(url));
+            const relay = pool.relays.get(normalizeRelayUrl(url));
             if (relay) {
                 if (relay.status < NDKRelayStatus.CONNECTED && connect) {
                     relay.connect();
@@ -93,7 +100,7 @@ export class NDKRelaySet {
                     ndk?.relayAuthDefaultPolicy,
                     ndk
                 );
-                ndk.pool.useTemporaryRelay(
+                pool.useTemporaryRelay(
                     temporaryRelay,
                     undefined,
                     "requested from fromRelayUrls " + relayUrls
@@ -102,7 +109,7 @@ export class NDKRelaySet {
             }
         }
 
-        return new NDKRelaySet(new Set(relays), ndk);
+        return new NDKRelaySet(new Set(relays), ndk, pool);
     }
 
     /**

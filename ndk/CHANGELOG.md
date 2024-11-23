@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk
 
+## 2.10.7
+
+### Patch Changes
+
+-   auto-auth to nip46 relays, and set the user pubkey after getting it from remote
+
 ## 2.10.6
 
 ### Patch Changes

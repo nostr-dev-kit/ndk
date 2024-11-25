@@ -54,10 +54,11 @@ export async function giftUnwrap(this:NDKEvent, sender?:NDKUser, signer?:NDKSign
         throw new Error('no signer')
     try {
 
-      const seal = JSON.parse(await signer.decrypt(sender, this.content, nip));
+      const seal = JSON.parse(await signer.decrypt(sender, this.content, nip)) as NostrEvent;
       if (!seal) throw new Error("Failed to decrypt wrapper")
 
-      const rumor = JSON.parse(await signer.decrypt(sender, seal.content, nip))
+      const receiver = new NDKUser({pubkey: seal.pubkey});
+      const rumor = JSON.parse(await signer.decrypt(receiver, seal.content, nip))
       if (!rumor) throw new Error("Failed to decrypt seal")
 
       if (seal.pubkey === rumor.pubkey) {

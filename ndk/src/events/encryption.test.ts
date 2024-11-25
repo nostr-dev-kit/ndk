@@ -1,6 +1,6 @@
+import { NDKPrivateKeySigner } from "../signers/private-key";
 import { NDKEvent } from ".";
 import { NDK } from "../ndk";
-import { NDKPrivateKeySigner } from "../signers/private-key";
 
 const PRIVATE_KEY_1_FOR_TESTING = '1fbc12b81e0b21f10fb219e88dd76fc80c7aa5369779e44e762fec6f460d6a89';
 const PRIVATE_KEY_2_FOR_TESTING = "d30b946562050e6ced827113da15208730879c46547061b404434edff63236fa";
@@ -38,19 +38,21 @@ describe("NDKEvent encryption (Nip44 & Nip59)", ()=>{
     const recieveuser = await recievesigner.user();
   
     let message = new NDKEvent(new NDK(),{
-      kind : 1,
+      kind : 14,
       pubkey : senduser.pubkey,
       content : "hello world",
-      created_at : new Date().valueOf(),
+      created_at : Math.floor(Date.now() / 1000),
       tags : []
     })
+    message.tags.push(["p", recieveuser.pubkey]);
   
     // console.log('MESSAGE EVENT : '+ JSON.stringify(message.rawEvent()))
     const wrapped = await message.giftWrap(recieveuser,sendsigner);
     // console.log('MESSAGE EVENT WRAPPED : '+ JSON.stringify(wrapped.rawEvent()))
-    const unwrapped = await wrapped.giftUnwrap(senduser,recievesigner)
+    const unwrapped = await wrapped.giftUnwrap(wrapped.author, recievesigner);
     // console.log('MESSAGE EVENT UNWRAPPED : '+ JSON.stringify(unwrapped?.rawEvent())) 
-    expect(unwrapped).toBe(message) 
+    message.id = unwrapped?.id || "";
+    expect(JSON.stringify(unwrapped)).toBe(JSON.stringify(message)); 
   });
 
 })

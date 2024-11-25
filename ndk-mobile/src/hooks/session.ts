@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import NDKSessionContext from '../context/session';
 import { NDKEvent, NDKKind } from '@nostr-dev-kit/ndk';
 import { useNDK } from './ndk';
-import { NDKEventWithFrom } from './subscribe';
+import { NDKEventWithFrom, useSubscribe } from './subscribe';
 
 const useNDKSession = (): NDKSessionContext => {
     const context = useContext(NDKSessionContext);
@@ -38,4 +38,16 @@ const useNDKSessionEventKind = <T extends NDKEvent>(
     return firstEvent ? EventClass.from(firstEvent) : undefined;
 };
 
-export { useNDKSession, useNDKSessionEventKind };
+const useNDKSessionEvents = <T extends NDKEvent>(
+    kinds: NDKKind[],
+    eventClass?: NDKEventWithFrom<any>,
+): T[] => {
+    const { events } = useNDKSession();
+    let allEvents = kinds.flatMap((kind) => events.get(kind) || []);
+
+    if (kinds.length > 1) allEvents = allEvents.sort((a, b) => a.created_at - b.created_at);
+
+    return allEvents.map((e) => eventClass ? eventClass.from(e) : e as T);
+};
+
+export { useNDKSession, useNDKSessionEventKind, useNDKSessionEvents };

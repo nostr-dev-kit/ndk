@@ -107,6 +107,7 @@ export enum NDKKind {
     CurationSet = 30004, // Deprecated but left for backwards compatibility
     ArticleCurationSet = 30004,
     VideoCurationSet = 30005,
+    ImageCurationSet = 30006,
     InterestSet = 30015,
     InterestsList = NDKKind.InterestSet, // Deprecated but left for backwards compatibility
     EmojiSet = 30030,

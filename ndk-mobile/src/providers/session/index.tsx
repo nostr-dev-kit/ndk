@@ -2,11 +2,12 @@ import React from 'react';
 import NDKSessionContext from '../../context/session';
 import { NDKEventWithFrom } from '../../hooks';
 import { useNDK } from '../../hooks/ndk';
-import { NDKEvent, NDKEventId, NDKFilter, NDKKind, NDKSubscription } from '@nostr-dev-kit/ndk';
+import { NDKEvent, NDKEventId, NDKFilter, NDKKind, NDKList, NDKSubscription } from '@nostr-dev-kit/ndk';
 import { PropsWithChildren, useEffect, useState } from 'react';
 
 interface NDKSessionProviderProps {
     follows?: boolean;
+    groups?: boolean;
     kinds?: Map<NDKKind, { wrapper?: NDKEventWithFrom<any> }>;
 }
 
@@ -17,6 +18,12 @@ const NDKSessionProvider = ({ children, ...opts }: PropsWithChildren<NDKSessionP
     let filters: NDKFilter[] = [];
     let sub: NDKSubscription | undefined;
     let knownEventIds = new Set<NDKEventId>();
+
+    // If groups are enabled, add a wrapper for group lists
+    if (opts.groups) {
+        opts.kinds ??= new Map();
+        opts.kinds.set(NDKKind.SimpleGroupList, { wrapper: NDKList });
+    }
 
     let followEvent: NDKEvent | undefined;
     const processFollowEvent = (event: NDKEvent) => {
@@ -56,6 +63,7 @@ const NDKSessionProvider = ({ children, ...opts }: PropsWithChildren<NDKSessionP
         filters.push({ kinds: [], authors: [currentUser.pubkey] });
 
         if (opts.follows) filters[0].kinds!.push(3);
+        if (opts.groups) filters[0].kinds!.push(NDKKind.SimpleGroupList);
         if (opts.kinds) filters[0].kinds!.push(...opts.kinds.keys());
 
         if (filters[0].kinds!.length > 0) {
@@ -63,7 +71,7 @@ const NDKSessionProvider = ({ children, ...opts }: PropsWithChildren<NDKSessionP
             sub.on('event', handleEvent);
             sub.start();
         }
-    }, [ndk, opts.follows, currentUser]);
+    }, [ndk, opts.follows, opts.groups, currentUser]);
 
     return (
         <NDKSessionContext.Provider

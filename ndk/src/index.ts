@@ -1,3 +1,4 @@
+export * from './relay/pool/index.js';
 export * from "./cache/index.js";
 export * from "./user/index.js";
 export * from "./user/pin.js";
@@ -22,7 +23,6 @@ export * from "./events/kinds/subscriptions/receipt.js";
 export * from "./events/kinds/dvm/index.js";
 export * from "./events/kinds/nutzap/mint-list.js";
 export * from "./events/kinds/nutzap/index.js";
-export * from "./nwc/index.js";
 
 export * from "./thread/index.js";
 

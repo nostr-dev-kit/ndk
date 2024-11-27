@@ -20,7 +20,6 @@ import { NDKUser } from "../user/index.js";
 import { fetchEventFromTag } from "./fetch-event-from-tag.js";
 import type { NDKAuthPolicy } from "../relay/auth-policies.js";
 import { Nip96 } from "../media/index.js";
-import { NDKNwc } from "../nwc/index.js";
 import { Queue } from "./queue/index.js";
 import { signatureVerificationInit } from "../events/signature.js";
 import { NDKSubscriptionManager } from "../subscription/manager.js";
@@ -716,22 +715,6 @@ export class NDK extends EventEmitter<{
      */
     public getNip96(domain: string) {
         return new Nip96(domain, this);
-    }
-
-    /**
-     * Creates a new Nostr Wallet Connect instance for the given URI and waits for it to be ready.
-     * @param uri WalletConnect URI
-     * @param connectTimeout Timeout in milliseconds to wait for the NWC to be ready. Set to `false` to avoid connecting.
-     * @example
-     * const nwc = await ndk.nwc("nostr+walletconnect://....")
-     * nwc.payInvoice("lnbc...")
-     */
-    public async nwc(uri: string, connectTimeout: number | false = 2000): Promise<NDKNwc> {
-        const nwc = await NDKNwc.fromURI(this, uri);
-        if (connectTimeout !== false) {
-            await nwc.blockUntilReady(connectTimeout);
-        }
-        return nwc;
     }
 
     /**

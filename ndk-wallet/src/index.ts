@@ -10,4 +10,6 @@ export * from "./cashu/mint/utils";
 
 export * from "./ln/index.js";
 
+export * from "./nwc/index.js";
+
 export default NDKWalletService;

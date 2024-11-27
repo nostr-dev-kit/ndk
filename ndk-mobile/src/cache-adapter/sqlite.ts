@@ -13,8 +13,7 @@ import {
 } from '@nostr-dev-kit/ndk';
 import * as SQLite from 'expo-sqlite';
 import { matchFilter } from 'nostr-tools';
-
-const INDEXABLE_TAGS_LIMIT = 10;
+import { migrations } from './migrations';
 
 type EventRecord = {
     id: string;
@@ -46,67 +45,33 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
 
     private async initialize() {
         this.db = await SQLite.openDatabaseAsync(this.dbName);
-        const start = Date.now();
 
-        await this.db.withTransactionAsync(async () => {
-            // await Promise.all([
-            //     this.db.execAsync(`DROP INDEX IF EXISTS idx_events_pubkey;`),
-            //     this.db.execAsync(`DROP INDEX IF EXISTS idx_events_kind;`),
-            //     this.db.execAsync(`DROP INDEX IF EXISTS idx_events_tags_tag;`),
-            //     this.db.execAsync(`DROP TABLE IF EXISTS events;`),
-            //     this.db.execAsync(`DROP TABLE IF EXISTS profiles;`),
-            //     this.db.execAsync(`DROP TABLE IF EXISTS relay_status;`),
-            //     this.db.execAsync(`DROP TABLE IF EXISTS event_tags;`)
-            // ])
-            await Promise.all([
-                this.db.execAsync(
-                    `CREATE TABLE IF NOT EXISTS unpublished_events (
-                        id TEXT PRIMARY KEY,
-                        event TEXT,
-                        relays TEXT,
-                        last_try_at INTEGER
-                    );`
-                ),
+        // get current schema version
+        let { user_version: schemaVersion } = (await this.db.getFirstSync(`PRAGMA user_version;`)) as { user_version: number };
 
-                this.db.execAsync(
-                    `CREATE TABLE IF NOT EXISTS events (
-                        id TEXT PRIMARY KEY,
-                        created_at INTEGER,
-                        pubkey TEXT,
-                        event TEXT,
-                        kind INTEGER,
-                        relay TEXT
-                    );`
-                ),
-                this.db.execAsync(
-                    `CREATE TABLE IF NOT EXISTS profiles (
-                        pubkey TEXT PRIMARY KEY,
-                        profile TEXT,
-                        catched_at INTEGER
-                    );`
-                ),
-                this.db.execAsync(
-                    `CREATE TABLE IF NOT EXISTS relay_status (
-                        url TEXT PRIMARY KEY,
-                        lastConnectedAt INTEGER,
-                        dontConnectBefore INTEGER
-                    );`
-                ),
-                // New table for event tags
-                this.db.execAsync(
-                    `CREATE TABLE IF NOT EXISTS event_tags (
-                        event_id TEXT,
-                        tag TEXT,
-                        value TEXT,
-                        PRIMARY KEY (event_id, tag)
-                    );`
-                ),
-            ]);
-        });
+        if (!schemaVersion) {
+            schemaVersion = 0;
 
-        await this.db.execAsync(`CREATE INDEX IF NOT EXISTS idx_events_pubkey ON events (pubkey);`);
-        await this.db.execAsync(`CREATE INDEX IF NOT EXISTS idx_events_kind ON events (kind);`);
-        await this.db.execAsync(`CREATE INDEX IF NOT EXISTS idx_events_tags_tag ON event_tags (tag);`);
+            // set the schema version
+            await this.db.execAsync(`PRAGMA user_version = ${schemaVersion};`);
+        }
+
+        if (!schemaVersion || Number(schemaVersion) < migrations.length) {
+            await this.db.withTransactionAsync(async () => {
+                for (let i = Number(schemaVersion); i < migrations.length; i++) {
+                    try {
+                        await migrations[i].up(this.db);
+                    } catch (e) {
+                        console.error('error running migration', e);
+                        throw e;
+                    }
+                    await this.db.execAsync(`PRAGMA user_version = ${i + 1};`);
+                }
+
+                // set the schema version
+                await this.db.execAsync(`PRAGMA user_version = ${migrations.length};`);
+            });
+        }
 
         this.ready = true;
         this.locking = true;
@@ -171,26 +136,48 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
         await this.db.runAsync(`DELETE FROM event_tags WHERE event_id = ?;`, [event.id]);
     }
 
+    fetchProfileSync(pubkey: Hexpubkey): NDKCacheEntry<NDKUserProfile> | null {
+        if (!this.ready) return null;
+
+        const result = this.db.getFirstSync(`SELECT profile, catched_at FROM profiles WHERE pubkey = ?;`, [pubkey]) as {
+            profile: string;
+            catched_at: number;
+        };
+
+        if (result) {
+            try {
+                const profile = JSON.parse(result.profile);
+                return { ...profile, fetchedAt: result.catched_at };
+            } catch (e) {
+                console.error('failed to parse profile', result.profile);
+            }
+        }
+    }
+
     async fetchProfile(pubkey: Hexpubkey): Promise<NDKCacheEntry<NDKUserProfile> | null> {
         if (!this.ready) return;
 
-        const result = this.db.getAllSync(`SELECT profile, catched_at FROM profiles WHERE pubkey = ?;`, [pubkey]) as {
+        const result = this.db.getFirstSync(`SELECT profile, catched_at FROM profiles WHERE pubkey = ?;`, [pubkey]) as {
             profile: string;
             catched_at: number;
-        }[];
+        };
 
-        if (result.length > 0) {
+        if (result) {
             try {
-                const profile = JSON.parse(result[0].profile);
-                return { ...profile, fetchedAt: result[0].catched_at };
+                const profile = JSON.parse(result.profile);
+                return { ...profile, fetchedAt: result.catched_at };
             } catch (e) {
-                console.error('failed to parse profile', result[0].profile);
+                console.error('failed to parse profile', result.profile);
             }
         }
         return null;
     }
 
     saveProfile(pubkey: Hexpubkey, profile: NDKUserProfile): void {
+        // check if the profile we have is newer for this pubkey
+        const existingProfile = this.fetchProfileSync(pubkey);
+        if (existingProfile && existingProfile.fetchedAt && existingProfile.fetchedAt > profile.fetchedAt) return;
+
         this.db.runAsync(`INSERT OR REPLACE INTO profiles (pubkey, profile, catched_at) VALUES (?, ?, ?);`, [
             pubkey,
             JSON.stringify(profile),

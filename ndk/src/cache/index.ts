@@ -33,6 +33,13 @@ export interface NDKCacheAdapter {
     deleteEvent?(event: NDKEvent): Promise<void>;
 
     /**
+     * Fetches a profile from the cache synchronously.
+     * @param pubkey - The pubkey of the profile to fetch.
+     * @returns The profile, or null if it is not in the cache.
+     */
+    fetchProfileSync?(pubkey: Hexpubkey): NDKCacheEntry<NDKUserProfile> | null;
+
+    /**
      * Special purpose
      */
     fetchProfile?(pubkey: Hexpubkey): Promise<NDKCacheEntry<NDKUserProfile> | null>;

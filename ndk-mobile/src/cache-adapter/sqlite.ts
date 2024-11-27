@@ -11,6 +11,7 @@ import {
     NDKTag,
     NDKEventId,
 } from '@nostr-dev-kit/ndk';
+import { LRUCache } from 'typescript-lru-cache';
 import * as SQLite from 'expo-sqlite';
 import { matchFilter } from 'nostr-tools';
 import { migrations } from './migrations';
@@ -37,9 +38,11 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     locking: boolean = false;
     ready: boolean = false;
     private pendingCallbacks: PendingCallback[] = [];
+    private profileCache: LRUCache<string, NDKCacheEntry<NDKUserProfile>>;
 
-    constructor(dbName: string) {
+    constructor(dbName: string, maxProfiles: number = 200) {
         this.dbName = dbName ?? 'ndk-cache';
+        this.profileCache = new LRUCache({ maxSize: maxProfiles });
         this.initialize();
     }
 
@@ -139,6 +142,9 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     fetchProfileSync(pubkey: Hexpubkey): NDKCacheEntry<NDKUserProfile> | null {
         if (!this.ready) return null;
 
+        const cached = this.profileCache.get(pubkey);
+        if (cached) return cached;
+
         const result = this.db.getFirstSync(`SELECT profile, catched_at FROM profiles WHERE pubkey = ?;`, [pubkey]) as {
             profile: string;
             catched_at: number;
@@ -147,7 +153,9 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
         if (result) {
             try {
                 const profile = JSON.parse(result.profile);
-                return { ...profile, fetchedAt: result.catched_at };
+                const entry = { ...profile, fetchedAt: result.catched_at };
+                this.profileCache.set(pubkey, entry);
+                return entry;
             } catch (e) {
                 console.error('failed to parse profile', result.profile);
             }
@@ -157,6 +165,9 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     async fetchProfile(pubkey: Hexpubkey): Promise<NDKCacheEntry<NDKUserProfile> | null> {
         if (!this.ready) return;
 
+        const cached = this.profileCache.get(pubkey);
+        if (cached) return cached;
+
         const result = this.db.getFirstSync(`SELECT profile, catched_at FROM profiles WHERE pubkey = ?;`, [pubkey]) as {
             profile: string;
             catched_at: number;
@@ -165,7 +176,9 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
         if (result) {
             try {
                 const profile = JSON.parse(result.profile);
-                return { ...profile, fetchedAt: result.catched_at };
+                const entry = { ...profile, fetchedAt: result.catched_at };
+                this.profileCache.set(pubkey, entry);
+                return entry;
             } catch (e) {
                 console.error('failed to parse profile', result.profile);
             }
@@ -173,15 +186,20 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
         return null;
     }
 
-    saveProfile(pubkey: Hexpubkey, profile: NDKUserProfile): void {
-        // check if the profile we have is newer for this pubkey
-        const existingProfile = this.fetchProfileSync(pubkey);
-        if (existingProfile && existingProfile.fetchedAt && existingProfile.fetchedAt > profile.fetchedAt) return;
+    async saveProfile(pubkey: Hexpubkey, profile: NDKUserProfile): Promise<void> {
+        // check if the profile we have is newer based on created_at
+        const existingProfile = await this.fetchProfile(pubkey);
+        if (existingProfile?.created_at && profile.created_at && existingProfile.created_at >= profile.created_at) return;
 
-        this.db.runAsync(`INSERT OR REPLACE INTO profiles (pubkey, profile, catched_at) VALUES (?, ?, ?);`, [
+        const now = Date.now();
+        const entry = { ...profile, fetchedAt: now };
+        this.profileCache.set(pubkey, entry);
+
+        this.db.runAsync(`INSERT OR REPLACE INTO profiles (pubkey, profile, catched_at, created_at) VALUES (?, ?, ?, ?);`, [
             pubkey,
             JSON.stringify(profile),
-            Date.now(),
+            now,
+            profile.created_at,
         ]);
     }
 

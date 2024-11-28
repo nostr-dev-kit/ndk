@@ -720,7 +720,19 @@ export class NDK extends EventEmitter<{
         return new Nip96(domain, this);
     }
 
-    set wallet(wallet: NDKWalletInterface) {
-        this.walletConfig = wallet;
+    set wallet(wallet: NDKWalletInterface | undefined) {
+        console.log('setting wallet', {
+            lnPay: wallet?.lnPay,
+            cashuPay: wallet?.cashuPay,
+        })
+
+        if (!wallet) {
+            this.walletConfig = undefined;
+            return;
+        }
+        
+        this.walletConfig ??= {};
+        this.walletConfig.lnPay = wallet?.lnPay?.bind(wallet);
+        this.walletConfig.cashuPay = wallet?.cashuPay?.bind(wallet);
     }
 }

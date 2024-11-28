@@ -85,13 +85,17 @@ export type LnPayCb = (
 export type CashuPayCb = (
     payment: NDKZapDetails<CashuPaymentInfo>
 ) => Promise<NDKPaymentConfirmationCashu | undefined>;
+export type OnCompleteCb = (
+    results: Map<NDKZapSplit, NDKPaymentConfirmation | Error | undefined>
+) => void;
 
 interface NDKZapperOptions {
     comment?: string;
     tags?: NDKTag[];
     signer?: NDKSigner;
-    lnPay?: boolean;
-    cashuPay?: boolean;
+    lnPay?: LnPayCb;
+    cashuPay?: CashuPayCb;
+    onComplete?: OnCompleteCb;
     ndk?: NDK;
 }
 
@@ -126,9 +130,7 @@ class NDKZapper extends EventEmitter<{
      * in any of the provided mints and return the proofs and mint used.
      */
     public cashuPay?: CashuPayCb;
-    public onComplete?: (
-        results: Map<NDKZapSplit, NDKPaymentConfirmation | Error | undefined>
-    ) => void;
+    public onComplete?: OnCompleteCb;
 
     public maxRelays = 3;
 
@@ -151,8 +153,14 @@ class NDKZapper extends EventEmitter<{
         this.tags = opts.tags;
         this.signer = opts.signer;
 
-        this.lnPay = opts.lnPay ? this.ndk.walletConfig?.lnPay : undefined;
-        this.cashuPay = opts.cashuPay ? this.ndk.walletConfig?.cashuPay : undefined;
+        console.log('wallet in zapper', this.ndk.walletConfig);
+
+        this.lnPay = opts.lnPay || this.ndk.walletConfig?.lnPay;
+        this.cashuPay = opts.cashuPay || this.ndk.walletConfig?.cashuPay;
+        this.onComplete = opts.onComplete || this.ndk.walletConfig?.onPaymentComplete;
+
+        console.log('cashuPay in zapper constructor', !!this.cashuPay);
+        console.log('lnPay in zapper constructor', !!this.lnPay);
     }
 
     /**
@@ -418,6 +426,8 @@ class NDKZapper extends EventEmitter<{
 
         if (this.cashuPay) methods.push("nip61");
         if (this.lnPay) methods.push("nip57");
+
+        console.log('methods', methods);
 
         // if there are no methods available, return an empty array
         if (methods.length === 0) throw new Error("There are no payment methods available! Please set at least one of lnPay or cashuPay");

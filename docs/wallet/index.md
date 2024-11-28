@@ -15,7 +15,8 @@ As a developer, the first thing you need to do to use a wallet in your app is to
 Once you instantiate the desired wallet, you simply pass it to ndk.
 
 ```ts
-const wallet = NDKNWCWallet.initWithPairingCode("nostr+walletconnect:....");
+const wallet = new NDKNWCWallet(ndk);
+await wallet.initWithPairingCode("nostr+walletconnect:....");
 ndk.wallet = wallet;
 ```
 

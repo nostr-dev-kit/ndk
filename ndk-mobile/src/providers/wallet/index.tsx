@@ -43,7 +43,7 @@ export const NDKWalletProvider: React.FC<{ children: React.ReactNode }> = ({ chi
                         setDefaultWallet(wallet);
                     });
 
-                    service.start(currentUser);
+                    service.start({ user: currentUser });
                 } catch (error) {
                     console.error('Failed to initialize NDKWalletService:', error);
                 }

@@ -17,7 +17,6 @@ import NDKWalletLifecycle from "./lifecycle/index.js";
 import type { MintUrl } from "../cashu/mint/utils.js";
 import type { NDKCashuToken } from "../cashu/token.js";
 import { NDKWallet } from "../wallet/index.js";
-import { NutzapMonitor } from "./nutzap-monitor/index.js";
 
 const d = createDebug("ndk-wallet:wallet");
 
@@ -53,7 +52,6 @@ class NDKWalletService extends EventEmitter<{
     public defaultWallet?: NDKWallet;
 
     private lifecycle: NDKWalletLifecycle | undefined;
-    private nutzapMonitor: NutzapMonitor | undefined;
 
     constructor(ndk: NDK) {
         super();
@@ -76,9 +74,6 @@ class NDKWalletService extends EventEmitter<{
     public start({ user, walletEvent }: { user?: NDKUser; walletEvent?: NDKEvent } = {}) {
         // todo: check NIP-78 configuration for webln/nwc/nip-61 settings
         this.lifecycle = new NDKWalletLifecycle(this.ndk, user ?? this.ndk.activeUser!);
-        this.lifecycle.on("mintlist:ready", (mintList: NDKCashuMintList) => {
-            this.startNutzapMonitor(mintList);
-        });
 
         this.lifecycle.on("wallet:default", (wallet: NDKWallet) => {
             d("default wallet ready", wallet.type);
@@ -97,9 +92,9 @@ class NDKWalletService extends EventEmitter<{
 
             // if we have a new wallet and the nutzap monitor
             // is already running, add the wallet to the monitor
-            if (this.nutzapMonitor) {
-                this.nutzapMonitor.addWallet(wallet as NDKCashuWallet);
-            }
+            // if (this.nutzapMonitor) {
+            //     this.nutzapMonitor.addWallet(wallet as NDKCashuWallet);
+            // }
         });
 
         this.lifecycle.on("ready", () => {
@@ -110,28 +105,6 @@ class NDKWalletService extends EventEmitter<{
         this.lifecycle.start(walletEvent);
     }
 
-    /**
-     * Starts monitoring for nutzaps
-     * @param mintList User's mint list (kind:10019)
-     */
-    public startNutzapMonitor(mintList: NDKCashuMintList) {
-        d("starting nutzap monitor");
-        if (this.nutzapMonitor) throw new Error("Nutzap monitor already started");
-
-        const relaysSet = mintList.relaySet;
-        if (!relaysSet) throw new Error("Mint list has no relay set");
-
-        this.nutzapMonitor = new NutzapMonitor(this.ndk, this.ndk.activeUser!, relaysSet);
-        this.wallets
-            .filter((w) => w instanceof NDKCashuWallet)
-            .forEach((w) => this.nutzapMonitor!.addWallet(w));
-
-        this.nutzapMonitor.on("redeem", (nutzap: NDKNutzap) => {
-            this.emit("nutzap", nutzap);
-        });
-
-        this.nutzapMonitor.start();
-    }
 
     /**
      * Publishes the mint list tying to a specific wallet

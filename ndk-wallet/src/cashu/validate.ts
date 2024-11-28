@@ -1,5 +1,5 @@
-import type { Proof } from "@cashu/cashu-ts";
-import type { NDKCashuToken } from "./token";
+import { CheckStateEnum, type Proof } from "@cashu/cashu-ts";
+import { NDKCashuToken } from "./token";
 import createDebug from "debug";
 import { rollOverProofs } from "./proofs";
 import type { NDKCashuWallet } from "./wallet";
@@ -61,12 +61,30 @@ export async function checkTokenProofsForMint(
         tokens.length,
         mint
     );
-    const spentProofs = await _wallet.checkProofsSpent(allProofs);
-    d("found %d spent proofs for mint %s", spentProofs.length, mint);
+    const proofStates = await _wallet.checkProofsStates(allProofs);
+    const spentProofs = proofStates.filter(p => p.state === CheckStateEnum.SPENT);
+    const unspentProofs = proofStates.filter(p => p.state === CheckStateEnum.UNSPENT);
+    const pendingProofs = proofStates.filter(p => p.state === CheckStateEnum.PENDING);
 
-    for (const spent of spentProofs) {
-        d("%s: spent proof %s", mint, spent.id);
-    }
+    d("found the following proof states: %o", {
+        spent: spentProofs.length,
+        unspent: unspentProofs.length,
+        pending: pendingProofs.length,
+    });
+
+    console.log('all proofs', allProofs);
+    console.log('spent proofs', spentProofs);
+    console.log('unspent proofs', unspentProofs);
+
+    return;
+
+    // destroy all tokens and create a new one with the unspent proofs
+    // if (unspentProofs.length > 0) {
+    //     const newToken = new NDKCashuToken(wallet.ndk);
+    //     newToken.proofs = unspentProofs.map(p => p.proof);
+    //     newToken.mint = mint;
+    //     return newToken;
+    // }
 
     const spentProofsSet = new Set(spentProofs.map((p) => p.id));
     const tokensToDestroy: NDKCashuToken[] = [];

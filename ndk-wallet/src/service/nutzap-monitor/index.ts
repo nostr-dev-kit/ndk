@@ -1,4 +1,5 @@
 import NDK, {
+    NDKCashuMintList,
     NDKEvent,
     type NDKEventId,
     NDKKind,
@@ -8,11 +9,9 @@ import NDK, {
     NDKSubscriptionCacheUsage,
     NDKUser,
 } from "@nostr-dev-kit/ndk";
-import { CashuMint, CashuWallet } from "@cashu/cashu-ts";
 import { EventEmitter } from "tseep";
 import createDebug from "debug";
 import { NDKCashuWallet } from "../../cashu/wallet";
-import { MintUrl } from "../../cashu/mint/utils";
 
 const d = createDebug("ndk-wallet:nutzap-monitor");
 
@@ -27,7 +26,7 @@ enum PROCESSING_STATUS {
  * This class monitors a user's nutzap inbox relays
  * for new nutzaps and processes them.
  */
-export class NutzapMonitor extends EventEmitter<{
+export class NDKNutzapMonitor extends EventEmitter<{
     /**
      * Emitted when a new nutzap is successfully redeemed
      */
@@ -75,11 +74,33 @@ export class NutzapMonitor extends EventEmitter<{
     /**
      * Start the monitor.
      */
-    public start() {
+    public async start(mintList?: NDKCashuMintList) {
+        // if we are already running, stop the current subscription
+        if (this.sub) {
+            this.sub.stop();
+        }
+        
+        // if we don't have a mint list, we need to get one
+        if (!mintList) {
+            const list = await this.ndk.fetchEvent([
+                { kinds: [NDKKind.CashuMintList], authors: [this.user.pubkey] },
+            ]);
+            if (!list) {
+                return false;
+            }
+    
+            mintList = NDKCashuMintList.from(list);
+        }
+
+        // set the relay set
+        this.relaySet = mintList.relaySet;
+
         if (!this.relaySet) {
             d("no relay set provided");
             throw new Error("no relay set provided");
         }
+
+        console.log("monitoring for nutzaps for user", this.user.pubkey, "on relays", this.relaySet.relayUrls);
 
         this.sub = this.ndk.subscribe(
             { kinds: [NDKKind.Nutzap], "#p": [this.user.pubkey] },
@@ -94,6 +115,8 @@ export class NutzapMonitor extends EventEmitter<{
         this.sub.on("event", this.eventHandler.bind(this));
         this.sub.on("eose", this.eoseHandler.bind(this));
         this.sub.start();
+
+        return true;
     }
 
     public stop() {
@@ -102,9 +125,15 @@ export class NutzapMonitor extends EventEmitter<{
 
     private eoseHandler() {
         this.eosed = true;
+        console.log('eose');
+
+        this.redeemQueue.forEach(nutzap => {
+            this.redeem(nutzap);
+        });
     }
 
     private async eventHandler(event: NDKEvent) {
+        console.log('nutzap event', event.id);
         if (this.knownTokens.has(event.id)) return;
         this.knownTokens.set(event.id, PROCESSING_STATUS.initial);
         const nutzapEvent = await NDKNutzap.from(event);
@@ -127,12 +156,15 @@ export class NutzapMonitor extends EventEmitter<{
     }
 
     private async redeem(nutzap: NDKNutzap) {
+        d("nutzap seen %s", nutzap.id.substring(0, 6));
+        
         const currentStatus = this.knownTokens.get(nutzap.id);
         if (!currentStatus || currentStatus > PROCESSING_STATUS.initial) return;
         this.knownTokens.set(nutzap.id, PROCESSING_STATUS.processing);
 
         try {
             const { proofs, mint } = nutzap;
+            d('nutzap has %d proofs: %o', proofs.length, proofs);
             const wallet = this.findWalletForNutzap(nutzap);
             if (!wallet) {
                 const p2pk = nutzap.p2pk;
@@ -144,24 +176,27 @@ export class NutzapMonitor extends EventEmitter<{
             const _wallet = await wallet.walletForMint(mint);
 
             try {
-                const res = await _wallet.receive(
-                    { proofs, mint },
+                const res = await _wallet.receive({
+                    proofs,
+                    mint,
+                },
                     {
                         privkey: wallet.privkey,
+                        proofsWeHave: wallet.proofsForMint(mint),
                     }
                 );
                 d("redeemed nutzap %o", nutzap.rawEvent());
-                this.lifecycle.emit("nutzap:redeemed", nutzap);
+                this.emit("redeem", nutzap);
 
                 // save new proofs in wallet
                 wallet.saveProofs(res, mint, nutzap);
             } catch (e: any) {
                 console.error(e.message);
-                this.lifecycle.emit("nutzap:failed", nutzap, e.message);
+                this.emit("failed", nutzap, e.message);
             }
-        } catch (e) {
+        } catch (e: any) {
             console.trace(e);
-            this.lifecycle.emit("nutzap:failed", nutzap, e);
+            this.emit("failed", nutzap, e.message);
         }
     }
 
@@ -169,8 +204,9 @@ export class NutzapMonitor extends EventEmitter<{
         const p2pk = nutzap.p2pk;
         let wallet: NDKCashuWallet | undefined;
 
-        if (p2pk) wallet = this.lifecycle.walletsByP2pk.get(p2pk);
+        if (p2pk) wallet = this.walletByP2pk.get(p2pk);
+        wallet ??= this.walletByP2pk.values().next().value;
 
-        return wallet ?? this.lifecycle.defaultWallet;
+        return wallet;
     }
 }

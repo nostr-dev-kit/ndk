@@ -1,5 +1,5 @@
 // Method types
-export type NWCMethod = 
+export type NDKNWCMethod = 
     | "pay_invoice"
     | "multi_pay_invoice"
     | "pay_keysend"
@@ -11,22 +11,22 @@ export type NWCMethod =
     | "get_info";
 
 // Base types for requests and responses
-export interface NWCRequestBase {
-    method: NWCMethod;
+export interface NDKNWCRequestBase {
+    method: NDKNWCMethod;
     params: Record<string, any>;
 }
 
-export interface NWCResponseBase<T = any> {
-    result_type: NWCMethod;
+export interface NDKNWCResponseBase<T = any> {
+    result_type: NDKNWCMethod;
     error?: {
-        code: NWCErrorCode;
+        code: NDKNWCErrorCode;
         message: string;
     };
     result: T | null;
 }
 
 // Error codes
-export type NWCErrorCode = 
+export type NDKNWCErrorCode = 
     | "RATE_LIMITED"
     | "NOT_IMPLEMENTED"
     | "INSUFFICIENT_BALANCE"
@@ -39,7 +39,7 @@ export type NWCErrorCode =
     | "NOT_FOUND";
 
 // Common types
-export interface Transaction {
+export interface NDKNWCTransaction {
     type: "incoming" | "outgoing";
     invoice?: string;
     description?: string;
@@ -55,24 +55,24 @@ export interface Transaction {
 }
 
 // Method-specific request params
-export interface PayInvoiceParams {
+export interface NDKNWCPayInvoiceParams {
     invoice: string;
     amount?: number;
 }
 
-export interface MakeInvoiceParams {
+export interface NDKNWCMakeInvoiceParams {
     amount: number;
     description?: string;
     description_hash?: string;
     expiry?: number;
 }
 
-export interface LookupInvoiceParams {
+export interface NDKNWCLookupInvoiceParams {
     payment_hash?: string;
     invoice?: string;
 }
 
-export interface ListTransactionsParams {
+export interface NDKNWCListTransactionsParams {
     from?: number;
     until?: number;
     limit?: number;
@@ -82,41 +82,41 @@ export interface ListTransactionsParams {
 }
 
 // Method-specific response results
-export interface PayInvoiceResult {
+export interface NDKNWCPayInvoiceResult {
     preimage: string;
     fees_paid?: number;
 }
 
-export interface GetBalanceResult {
+export interface NDKNWCGetBalanceResult {
     balance: number;
 }
 
-export interface GetInfoResult {
+export interface NDKNWCGetInfoResult {
     alias: string;
     color: string;
     pubkey: string;
     network: "mainnet" | "testnet" | "signet" | "regtest";
     block_height: number;
     block_hash: string;
-    methods: NWCMethod[];
+    methods: NDKNWCMethod[];
     notifications?: string[];
 }
 
 // Request/Response type mappings
-export type NWCRequestMap = {
-    pay_invoice: PayInvoiceParams;
-    make_invoice: MakeInvoiceParams;
-    lookup_invoice: LookupInvoiceParams;
-    list_transactions: ListTransactionsParams;
+export type NDKNWCRequestMap = {
+    pay_invoice: NDKNWCPayInvoiceParams;
+    make_invoice: NDKNWCMakeInvoiceParams;
+    lookup_invoice: NDKNWCLookupInvoiceParams;
+    list_transactions: NDKNWCListTransactionsParams;
     get_balance: Record<string, never>;
     get_info: Record<string, never>;
 }
 
-export type NWCResponseMap = {
-    pay_invoice: PayInvoiceResult;
-    make_invoice: Transaction;
-    lookup_invoice: Transaction;
-    list_transactions: { transactions: Transaction[] };
-    get_balance: GetBalanceResult;
-    get_info: GetInfoResult;
+export type NDKNWCResponseMap = {
+    pay_invoice: NDKNWCPayInvoiceResult;
+    make_invoice: NDKNWCTransaction;
+    lookup_invoice: NDKNWCTransaction;
+    list_transactions: { transactions: NDKNWCTransaction[] };
+    get_balance: NDKNWCGetBalanceResult;
+    get_info: NDKNWCGetInfoResult;
 }

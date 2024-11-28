@@ -1,7 +1,10 @@
 import {
     LnPaymentInfo,
+    NDKPaymentConfirmation,
     NDKPaymentConfirmationCashu,
     NDKPaymentConfirmationLN,
+    NDKWalletInterface,
+    NDKZapSplit,
 } from "@nostr-dev-kit/ndk";
 import { EventEmitter } from "tseep";
 import { NutPayment } from "../cashu/pay/nut";
@@ -32,7 +35,7 @@ export type NDKWalletEvents = {
 };
 
 export interface NDKWallet
-    extends EventEmitter<{
+    extends NDKWalletInterface, EventEmitter<{
         /**
          * Emitted when the wallet is ready to be used.
          */
@@ -51,8 +54,24 @@ export interface NDKWallet
      */
     get walletId(): string;
 
-    lnPay(payment: LnPaymentInfo): Promise<NDKPaymentConfirmationLN | undefined>;
-    cashuPay(payment: NutPayment): Promise<NDKPaymentConfirmationCashu | undefined>;
+    /**
+     * Pay a LN invoice
+     * @param payment - The LN payment info
+     */
+    lnPay?(payment: LnPaymentInfo): Promise<NDKPaymentConfirmationLN | undefined>;
+
+    /**
+     * Pay a Cashu invoice
+     * @param payment - The Cashu payment info
+     */
+    cashuPay?(payment: NutPayment): Promise<NDKPaymentConfirmationCashu | undefined>;
+
+    /**
+     * A callback that is called when a payment is complete
+     */
+    onPaymentComplete?(
+        results: Map<NDKZapSplit, NDKPaymentConfirmation | Error | undefined>
+    ): void;
 
     /**
      * Fetch the balance of this wallet

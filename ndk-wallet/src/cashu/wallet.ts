@@ -78,6 +78,18 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
         this.ndk = ndk;
     }
 
+    /**
+     * Creates a new NIP-60 wallet
+     * @param ndk 
+     * @param mints 
+     * @param relayUrls 
+     * @returns 
+     */
+    static create(ndk: NDK, mints: string[] = [], relayUrls: string[] = []) {
+        const wallet = new NDKCashuWallet(ndk);
+        return wallet;
+    }
+
     set event(e: NDKEvent | undefined) {
         this.walletId = e?.dTag ?? "";
         this._event = e;

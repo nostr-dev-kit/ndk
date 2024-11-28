@@ -1,13 +1,13 @@
 import { NDKEvent } from "@nostr-dev-kit/ndk";
 import { NDKKind } from "@nostr-dev-kit/ndk";
 import { NDKNWCWallet } from ".";
-import { NWCResponseBase } from "./types";
-import { NWCResponseMap } from "./types";
+import { NDKNWCResponseBase } from "./types";
+import { NDKNWCResponseMap } from "./types";
 
-export async function waitForResponse<M extends keyof NWCResponseMap>(
+export async function waitForResponse<M extends keyof NDKNWCResponseMap>(
     this: NDKNWCWallet,
     requestId: string
-): Promise<NWCResponseBase<NWCResponseMap[M]>> {
+): Promise<NDKNWCResponseBase<NDKNWCResponseMap[M]>> {
 
     if (!this.pool) throw new Error("Wallet not initialized");
 
@@ -30,7 +30,7 @@ export async function waitForResponse<M extends keyof NWCResponseMap>(
                 if (content.error) {
                     reject(content);
                 } else {
-                    resolve(content.result);
+                    resolve(content);
                 }
             } catch (e: any) {
                 sub.stop();

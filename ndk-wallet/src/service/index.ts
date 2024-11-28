@@ -16,7 +16,6 @@ import createDebug from "debug";
 import NDKWalletLifecycle from "./lifecycle/index.js";
 import type { MintUrl } from "../cashu/mint/utils.js";
 import type { NDKCashuToken } from "../cashu/token.js";
-import { NDKWebLNWallet } from "../ln/index.js";
 import { NDKWallet } from "../wallet/index.js";
 import { NutzapMonitor } from "./nutzap-monitor/index.js";
 
@@ -59,26 +58,6 @@ class NDKWalletService extends EventEmitter<{
     constructor(ndk: NDK) {
         super();
         this.ndk = ndk;
-
-        this.ndk.walletConfig ??= {};
-        this.ndk.walletConfig.onCashuPay = this.onCashuPay.bind(this);
-        this.ndk.walletConfig.onLnPay = this.onLnPay.bind(this);
-    }
-
-    async onCashuPay(
-        payment: NDKZapDetails<CashuPaymentInfo>
-    ): Promise<NDKPaymentConfirmationCashu | undefined> {
-        if (!this.defaultWallet) throw new Error("No wallet available");
-
-        return this.defaultWallet.cashuPay(payment);
-    }
-
-    async onLnPay(
-        payment: NDKZapDetails<LnPaymentInfo>
-    ): Promise<NDKPaymentConfirmationLN | undefined> {
-        if (!this.defaultWallet) throw new Error("No wallet available");
-
-        return this.defaultWallet.lnPay(payment);
     }
 
     private alreadyHasWallet(wallet: NDKWallet): boolean {
@@ -129,16 +108,6 @@ class NDKWalletService extends EventEmitter<{
         });
 
         this.lifecycle.start(walletEvent);
-    }
-
-    /**
-     * Configures NDK to use a webln wallet
-     */
-    public useWebLN() {
-        const wallet = new NDKWebLNWallet();
-        this.ndk.walletConfig ??= {};
-        this.ndk.walletConfig.onCashuPay = wallet.cashuPay.bind(wallet);
-        this.ndk.walletConfig.onLnPay = wallet.lnPay.bind(wallet);
     }
 
     /**

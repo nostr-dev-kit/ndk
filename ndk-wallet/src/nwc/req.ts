@@ -1,18 +1,18 @@
 import { NDKEvent, NDKKind, NostrEvent } from "@nostr-dev-kit/ndk";
 import type { NDKNWCWallet } from "./index.js";
-import { NWCMethod, NWCRequestMap, NWCResponseMap } from "./types.js";
+import { NDKNWCErrorCode, NDKNWCMethod, NDKNWCRequestMap, NDKNWCResponseMap } from "./types.js";
 import { waitForResponse } from "./res.js";
 
 // Base types for requests and responses
 export interface NWCRequestBase {
-    method: NWCMethod;
+    method: NDKNWCMethod;
     params: Record<string, any>;
 }
 
 export interface NWCResponseBase<T = any> {
-    result_type: NWCMethod;
+    result_type: NDKNWCMethod;
     error?: {
-        code: NWCErrorCode;
+        code: NDKNWCErrorCode;
         message: string;
     };
     result: T | null;
@@ -70,11 +70,11 @@ export interface ListTransactionsParams {
     until?: number;
 }
 
-export async function sendReq<M extends keyof NWCRequestMap>(
+export async function sendReq<M extends keyof NDKNWCRequestMap>(
     this: NDKNWCWallet,
     method: M,
-    params: NWCRequestMap[M]
-): Promise<NWCResponseBase<NWCResponseMap[M]>> {
+    params: NDKNWCRequestMap[M]
+): Promise<NWCResponseBase<NDKNWCResponseMap[M]>> {
     if (!this.walletService || !this.signer) {
         throw new Error("Wallet not initialized");
     }
@@ -89,8 +89,8 @@ export async function sendReq<M extends keyof NWCRequestMap>(
     await event.sign(this.signer);
 
     // Wait for response
-    return new Promise<NWCResponseBase<NWCResponseMap[M]>>((resolve, reject) => {
-        waitForResponse.call<NDKNWCWallet, [string], Promise<NWCResponseBase<NWCResponseMap[M]>>>(
+    return new Promise<NWCResponseBase<NDKNWCResponseMap[M]>>((resolve, reject) => {
+        waitForResponse.call<NDKNWCWallet, [string], Promise<NWCResponseBase<NDKNWCResponseMap[M]>>>(
             this,
             event.id
         ).then(resolve).catch(reject);

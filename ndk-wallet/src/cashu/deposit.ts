@@ -30,6 +30,8 @@ export class NDKCashuDeposit extends EventEmitter<{
     public finalized = false;
     public unit?: string;
 
+    private quoteEvent?: NDKEvent;
+
     constructor(wallet: NDKCashuWallet, amount: number, mint?: string, unit?: string) {
         super();
         this.wallet = wallet;
@@ -38,15 +40,24 @@ export class NDKCashuDeposit extends EventEmitter<{
         this.unit = unit;
     }
 
-    async start() {
+    /**
+     * Creates a quote ID and start monitoring for payment.
+     * 
+     * Once a payment is received, the deposit will emit a "success" event.
+     * 
+     * @param pollTime - time in milliseconds between checks
+     * @returns 
+     */
+    async start(pollTime: number = 2500) {
         this._wallet ??= await this.wallet.walletForMint(this.mint);
         const quote = await this._wallet.createMintQuote(this.amount);
         d("created quote %s for %d %s", quote.quote, this.amount, this.mint);
 
         this.quoteId = quote.quote;
 
-        this.check();
-        this.createQuoteEvent(quote.quote, quote.request);
+        this.check(pollTime);
+        this.createQuoteEvent(quote.quote, quote.request)
+            .then((event) => this.quoteEvent = event);
 
         return quote.request;
     }
@@ -149,6 +160,13 @@ export class NDKCashuDeposit extends EventEmitter<{
             historyEvent.publish(this.wallet.relaySet);
 
             this.emit("success", tokenEvent);
+
+            // delete the quote event if it exists
+            if (this.quoteEvent) {
+                const deleteEvent = await this.quoteEvent.delete(undefined, false);
+                deleteEvent.publish(this.wallet.relaySet);
+            }
+
         } catch (e: any) {
             console.log("relayset", this.wallet.relaySet);
             this.emit("error", e.message);

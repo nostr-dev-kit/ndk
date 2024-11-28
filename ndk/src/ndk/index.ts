@@ -37,9 +37,12 @@ export type NDKValidationRatioFn = (
 
 export type NDKNetDebug = (msg: string, relay: NDKRelay, direction?: "send" | "recv") => void;
 
-export interface NDKWalletConfig {
-    onLnPay?: LnPayCb;
-    onCashuPay?: CashuPayCb;
+/**
+ * An interface compatible with ndk-wallet that allows setting multiple handlers and callbacks.
+ */
+export interface NDKWalletInterface {
+    lnPay?: LnPayCb;
+    cashuPay?: CashuPayCb;
     onPaymentComplete?: (
         results: Map<NDKZapSplit, NDKPaymentConfirmation | Error | undefined>
     ) => void;
@@ -283,7 +286,7 @@ export class NDK extends EventEmitter<{
     public autoConnectUserRelays = true;
     public autoFetchUserMutelist = true;
 
-    public walletConfig?: NDKWalletConfig;
+    public walletConfig?: NDKWalletInterface;
 
     public constructor(opts: NDKConstructorParams = {}) {
         super();
@@ -717,54 +720,7 @@ export class NDK extends EventEmitter<{
         return new Nip96(domain, this);
     }
 
-    /**
-     * Zap a user or an event
-     *
-     * This function wi
-     *
-     * @param amount The amount to zap in millisatoshis
-     * @param comment A comment to add to the zap request
-     * @param extraTags Extra tags to add to the zap request
-     * @param recipient The zap recipient (optional for events)
-     * @param signer The signer to use (will default to the NDK instance's signer)
-     */
-    public zap(
-        target: NDKEvent | NDKUser,
-        amount: number,
-        {
-            comment,
-            unit,
-            signer,
-            tags,
-            onLnPay,
-            onCashuPay,
-            onComplete,
-        }: {
-            comment?: string;
-            unit?: string;
-            tags?: NDKTag[];
-            onLnPay?: LnPayCb | false;
-            onCashuPay?: CashuPayCb | false;
-            onComplete?: (
-                results: Map<NDKZapSplit, NDKPaymentConfirmation | Error | undefined>
-            ) => void;
-            signer?: NDKSigner;
-        }
-    ): NDKZapper {
-        if (!signer) this.assertSigner();
-
-        const zapper = new NDKZapper(target, amount, unit, comment, this, tags, signer);
-
-        if (onLnPay !== false) zapper.onLnPay = onLnPay ?? this.walletConfig?.onLnPay;
-        if (onCashuPay !== false) zapper.onCashuPay = onCashuPay ?? this.walletConfig?.onCashuPay;
-        zapper.onComplete = onComplete ?? this.walletConfig?.onPaymentComplete;
-
-        /**
-         * If there is a wallet configured to handle payments, we start
-         * zapping
-         */
-        if (onLnPay) zapper.zap();
-
-        return zapper;
+    set wallet(wallet: NDKWalletInterface) {
+        this.walletConfig = wallet;
     }
 }

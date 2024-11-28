@@ -20,16 +20,17 @@ const kinds = new Map([
 Now say you want to allow the user to bookmark something with the click of a button:
 
 ```tsx
-
-```
-
-const { imageCurationSet } = useNDKSessionEventKind<NDKList>(NDKList, NDKKind.ImageCurationSet, { create: true });
+const { imageCurationSet } = useNDKSessionEventKind<NDKList>(NDKList, NDKKind.ImageCurationSet, {
+    create: true,
+});
 
 const bookmark = async () => {
-await imageCurationSet.addItem(event);
-}
-
+    await imageCurationSet.addItem(event);
+};
 ```
 
 Now, when your app calls the `bookmark` function, it will add the event to the user's image curation set, if none exists it will create one for you.
+
+```
+
 ```

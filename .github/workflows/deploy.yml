@@ -36,7 +36,6 @@ jobs:
             - name: Setup Node
               uses: pnpm/action-setup@v3 # Uncomment this if you're using pnpm
               with:
-                  node-version: 21
                   cache: pnpm # or pnpm / yarn
             - name: Setup Pages
               uses: actions/configure-pages@v4

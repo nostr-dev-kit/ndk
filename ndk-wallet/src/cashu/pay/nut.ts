@@ -115,8 +115,10 @@ async function payNutWithMintBalance(
         }
 
         try {
-            const res = await _wallet.send(amount, selection.usedProofs, {
+            const proofsWeHave = pay.wallet.proofsForMint(mint);
+            const res = await _wallet.send(amount, proofsWeHave, {
                 pubkey: p2pk,
+                proofsWeHave,
             });
             pay.debug("payment result: %o", res);
 
@@ -135,7 +137,7 @@ async function payNutWithMintBalance(
         }
     }
 
-    pay.debug("failed to pay with any mint");
+    pay.debug("failed to pay nut with any mint");
     throw new Error("failed to find a mint with enough balance");
 }
 

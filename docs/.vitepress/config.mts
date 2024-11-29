@@ -31,19 +31,35 @@ export default withMermaid(defineConfig({
           { text: 'Publishing', link: '/tutorial/publishing' },
           { text: "Subscription Management", link: '/tutorial/subscription-management' },
           { text: "Speed", link: '/tutorial/speed' },
+          { text: 'Zaps', link: '/tutorial/zaps' },
         ]
       },
       {
-        text: "Cache",
+        text: "Cache Adapters",
         items: [
-          { text: 'Dexie Adapter', link: '/cache/dexie' },
-          { text: 'Nostr Relay Adapter', link: '/cache/nostr' },
+          { text: 'In-memory + dexie', link: '/cache/dexie' },
+          { text: 'Local Nostr Relay', link: '/cache/nostr' },
+        ]
+      },
+      {
+        text: "Wallet",
+        items: [
+          { text: 'Introduction', link: '/wallet/index' },
+          { text: 'Nutsack (NIP-60)', link: '/wallet/nutsack' },
+          { text: 'Nutzaps', link: '/wallet/nutzaps' },
         ]
       },
       {
         text: "Wrappers",
         items: [
           { text: 'NDK Svelte', link: '/wrappers/svelte' },
+        ]
+      },
+      {
+        text: "Mobile",
+        items: [
+          { text: 'Introduction', link: '/mobile/index' },
+          { text: 'Session', link: '/mobile/session' },
         ]
       },
       {

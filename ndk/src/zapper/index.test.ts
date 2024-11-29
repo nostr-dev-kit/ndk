@@ -94,7 +94,7 @@ describe("getZapMethod", () => {
         await mintList.sign(signer);
         ndk.fetchEvents = jest.fn().mockResolvedValue(new Set([mintList]));
         const zapper = new NDKZapper(user, 1000);
-        zapper.onCashuPay = async (payment: NDKZapDetails<CashuPaymentInfo>) => undefined;
+        zapper.cashuPay = async (payment: NDKZapDetails<CashuPaymentInfo>) => undefined;
         const zapMethod = (await zapper.getZapMethods(ndk, user.pubkey))[0];
         expect(zapMethod.type).toBe("nip61");
         expect((zapMethod.data as CashuPaymentInfo).mints).toEqual([
@@ -110,8 +110,8 @@ describe("getZapMethod", () => {
         } as NostrEvent);
         ndk.fetchEvents = jest.fn().mockResolvedValue(new Set<NDKEvent>([profile]));
         const zapper = new NDKZapper(user, 1000);
-        zapper.onCashuPay = async (payment: NDKZapDetails<CashuPaymentInfo>) => undefined;
-        zapper.onLnPay = async (payment: NDKZapDetails<LnPaymentInfo>) => undefined;
+        zapper.cashuPay = async (payment: NDKZapDetails<CashuPaymentInfo>) => undefined;
+        zapper.lnPay = async (payment: NDKZapDetails<LnPaymentInfo>) => undefined;
         const zapMethod = (
             await zapper.getZapMethods(
                 ndk,

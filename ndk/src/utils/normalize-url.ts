@@ -134,7 +134,7 @@ const normalizeDataURL = (urlString: string, { stripHash }: { stripHash: boolean
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default function normalizeUrl(urlString: string, options: any) {
+export function normalizeUrl(urlString: string, options: any = {}) {
     options = {
         defaultProtocol: "http",
         normalizeProtocol: true,

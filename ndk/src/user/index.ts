@@ -76,6 +76,13 @@ export class NDKUser {
         return this._npub;
     }
 
+    get nprofile(): string {
+        console.log('encoding with pubkey', this.pubkey)
+        return nip19.nprofileEncode({
+            pubkey: this.pubkey
+        });
+    }
+
     set npub(npub: Npub) {
         this._npub = npub;
     }
@@ -518,33 +525,5 @@ export class NDKUser {
 
         if (profilePointer === null) return null;
         return profilePointer.pubkey === this.pubkey;
-    }
-
-    /**
-     * Zap a user
-     *
-     * @param amount The amount to zap in millisatoshis
-     * @param comment A comment to add to the zap request
-     * @param extraTags Extra tags to add to the zap request
-     * @param signer The signer to use (will default to the NDK instance's signer)
-     */
-    async zap(amount: number, comment?: string, tags?: NDKTag[], signer?: NDKSigner) {
-        return new Promise((resolve, reject) => {
-            if (!this.ndk) {
-                reject("No NDK instance found");
-                return;
-            }
-
-            // If we already have a wallet configured, we'll use that
-            // otherwise we'll just get the payment request and return it
-            // to maintain compatibility with the old behavior
-            let onLnPay = this.ndk.walletConfig?.onLnPay;
-            onLnPay ??= async ({ pr }: { pr: LNPaymentRequest }): Promise<undefined> => {
-                resolve(pr);
-            };
-
-            const zapper = this.ndk.zap(this, amount, { comment, tags, signer, onLnPay });
-            zapper.zap().then(resolve).catch(reject);
-        });
     }
 }

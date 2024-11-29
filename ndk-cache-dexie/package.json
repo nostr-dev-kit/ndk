@@ -52,7 +52,7 @@
         "ts-jest": "^29.2.5",
         "tsup": "^8.3.0",
         "typedoc": "^0.26.7",
-        "typedoc-plugin-markdown": "^4.2.8"
+        "typedoc-plugin-markdown": "^4.3.0"
     },
     "dependencies": {
         "@nostr-dev-kit/ndk": "workspace:*",

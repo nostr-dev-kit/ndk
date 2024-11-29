@@ -79,11 +79,6 @@ export class NDKRelaySubscriptionManager {
         } else {
             currentVal = currentVal.filter((s) => s.id !== sub.id);
             this.subscriptions.set(sub.fingerprint, currentVal);
-            console.log("removing a subscription", {
-                fingerprint: sub.fingerprint,
-                id: sub.id,
-                newSize: this.subscriptions.size,
-            });
         }
     }
 }

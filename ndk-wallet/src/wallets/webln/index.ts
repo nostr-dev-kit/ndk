@@ -8,7 +8,7 @@ import {
 import { EventEmitter } from "tseep";
 import { requestProvider } from "webln";
 import { type WebLNProvider } from "@webbtc/webln-types";
-import { NDKWallet, NDKWalletBalance, NDKWalletEvents, NDKWalletStatus } from "../wallet";
+import { NDKWallet, NDKWalletBalance, NDKWalletEvents, NDKWalletStatus } from "../index.js";
 import { NDKLnPay } from "./pay";
 
 export class NDKWebLNWallet extends EventEmitter<NDKWalletEvents> implements NDKWallet {

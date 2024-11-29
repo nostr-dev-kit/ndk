@@ -11,7 +11,7 @@ import NDK, {
 } from "@nostr-dev-kit/ndk";
 import { EventEmitter } from "tseep";
 import createDebug from "debug";
-import { NDKCashuWallet } from "../../cashu/wallet";
+import { NDKCashuWallet } from "../cashu/wallet";
 
 const d = createDebug("ndk-wallet:nutzap-monitor");
 
@@ -99,8 +99,6 @@ export class NDKNutzapMonitor extends EventEmitter<{
             d("no relay set provided");
             throw new Error("no relay set provided");
         }
-
-        console.log("monitoring for nutzaps for user", this.user.pubkey, "on relays", this.relaySet.relayUrls);
 
         this.sub = this.ndk.subscribe(
             { kinds: [NDKKind.Nutzap], "#p": [this.user.pubkey] },

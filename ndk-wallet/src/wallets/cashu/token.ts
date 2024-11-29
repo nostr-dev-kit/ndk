@@ -2,7 +2,7 @@ import type { MintKeys } from "@cashu/cashu-ts";
 import { type Proof } from "@cashu/cashu-ts";
 import type { NDKRelay, NDKRelaySet, NostrEvent } from "@nostr-dev-kit/ndk";
 import type NDK from "@nostr-dev-kit/ndk";
-import { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
+import { NDKEvent, NDKKind, normalizeUrl } from "@nostr-dev-kit/ndk";
 import type { NDKCashuWallet } from "./wallet";
 import { decrypt } from "./decrypt";
 
@@ -46,9 +46,21 @@ export class NDKCashuToken extends NDKEvent {
         return token;
     }
 
+    /**
+     * Strips out anything we don't necessarily have to store.
+     */
+    private cleanProof(proof: Proof): Proof {
+        return {
+            id: proof.id,
+            amount: proof.amount,
+            C: proof.C,
+            secret: proof.secret
+        };
+    }
+
     async toNostrEvent(pubkey?: string): Promise<NostrEvent> {
         this.content = JSON.stringify({
-            proofs: this.proofs,
+            proofs: this.proofs.map(this.cleanProof),
         });
 
         const user = await this.ndk!.signer!.user();
@@ -70,11 +82,12 @@ export class NDKCashuToken extends NDKEvent {
 
     set mint(mint: string) {
         this.removeTag("mint");
-        this.tags.push(["mint", mint]);
+        this.tags.push(["mint", normalizeUrl(mint)]);
     }
 
     get mint(): string | undefined {
-        return this.tagValue("mint");
+        const t = this.tagValue("mint");
+        if (t) return normalizeUrl(t);
     }
 
     get amount(): number {

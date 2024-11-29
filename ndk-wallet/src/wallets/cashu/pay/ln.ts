@@ -2,12 +2,14 @@ import { CashuWallet, CashuMint, Proof, MeltQuoteState } from "@cashu/cashu-ts";
 import type { LnPaymentInfo } from "@nostr-dev-kit/ndk";
 import type { NDKCashuPay } from "../pay";
 import type { TokenSelection } from "../proofs";
-import { rollOverProofs, chooseProofsForPr } from "../proofs";
+import { rollOverProofs } from "../proofs";
 import type { MintUrl } from "../mint/utils";
 import { NDKCashuWallet } from "../wallet";
 import { NDKWalletChange } from "../history";
 
 export async function payLn(this: NDKCashuPay, useMint?: MintUrl): Promise<string | undefined> {
+    this.debug("payLn %o", this.info);
+    
     const mintBalances = this.wallet.mintBalances;
     const amount = this.getAmount() / 1000; // convert msat to sat
     const data = this.info as LnPaymentInfo;
@@ -72,52 +74,15 @@ async function attemptPaymentWithEligibleMints(
     resolve: (value: string) => void,
     reject: (reason: string) => void
 ): Promise<void> {
-    const TIMEOUT = 10000; // 10 seconds timeout
-    const selections: TokenSelection[] = [];
-
-    const selectionPromises = eligibleMints.map((mint) =>
-        chooseProofsForPr(pr, mint, wallet)
-            .then((result) => {
-                if (result) {
-                    debug("Successfully chose proofs for mint %s", mint);
-                    selections.push(result);
-                }
-                return result;
-            })
-            .catch((error) => {
-                debug("Error choosing proofs for mint %s: %s", mint, error);
-                return null;
-            })
-    );
-
-    try {
-        await Promise.race([
-            Promise.all(selectionPromises),
-            new Promise((_, timeoutReject) =>
-                setTimeout(() => timeoutReject(new Error("Timeout")), TIMEOUT)
-            ),
-        ]);
-    } catch (error) {
-        debug("Timed out while choosing proofs: %s", error);
-    }
-
-    if (selections.length === 0) {
-        reject("Failed to choose proofs for any mint");
-        return;
-    }
-
-    // Sort selections by fee reserve (lower is better)
-    selections.sort((a, b) => (a.quote?.fee_reserve ?? 0) - (b.quote?.fee_reserve ?? 0));
-
-    for (const selection of selections) {
+    for (const mint of eligibleMints) {
         try {
-            const result = await executePayment(selection, pr, wallet, debug);
+            const result = await executePayment(mint, pr, amount, wallet, debug);
             if (result) {
                 resolve(result);
                 return;
             }
         } catch (error) {
-            debug("Failed to execute payment for mint %s: %s", selection.mint, error);
+            debug("Failed to execute payment for mint %s: %s", mint, error);
         }
     }
 
@@ -143,40 +108,27 @@ async function attemptPaymentWithEligibleMints(
  * 5. Logs the process and any errors for debugging purposes.
  */
 async function executePayment(
-    selection: TokenSelection,
+    mint: string,
     pr: string,
+    amount: number,
     wallet: NDKCashuWallet,
     debug: NDKCashuPay["debug"]
-): Promise<string | null> {
-    const _wallet = await wallet.walletForMint(selection.mint);
+): Promise<string | undefined | null> {
+    const _wallet = await wallet.walletForMint(mint);
+    const mintProofs = wallet.proofsForMint(mint);
 
-    if (!selection.quote) throw new Error("No quote provided")
-    
-    debug(
-        "Attempting LN payment for %d sats (%d in fees) with proofs %o, %s",
-        selection.quote.amount,
-        selection.quote.fee_reserve,
-        selection.usedProofs,
-        pr
-    );
+    // Add up the amounts of the proofs
+    const amountToSend = mintProofs.reduce((acc, proof) => acc + proof.amount, 0);
+    if (amountToSend < amount) return null;
 
     try {
         const meltQuote = await _wallet.createMeltQuote(pr);
         const amountToSend = meltQuote.amount + meltQuote.fee_reserve;
 
-        const allMintProofs = wallet.proofsForMint(selection.mint);
-        
-        const result = await _wallet.send(
-            amountToSend,
-            allMintProofs,
-            { includeFees: true }
-        );
-        debug("Send result: %o", result);
-
-        const meltResult = await _wallet.meltProofs(meltQuote, result.keep);
+        const meltResult = await _wallet.meltProofs(meltQuote, mintProofs);
         debug("Melt result: %o", meltResult);
 
-        const fee = calculateFee(selection.quote.amount, allMintProofs, meltResult.change);
+        const fee = calculateFee(amount, mintProofs, meltResult.change);
 
         function calculateFee(sentAmount: number, proofs: Proof[], change: Proof[]) {
             let fee = -sentAmount;
@@ -186,36 +138,38 @@ async function executePayment(
         }
 
         // generate history event
-        if (meltResult.quote.state === MeltQuoteState.PAID && meltResult.quote.payment_preimage) {
-            debug("Payment successful");
-            const { destroyedTokens, createdToken } = await rollOverProofs(
-                selection,
-                [
-                    ...result.keep,
-                    ...meltResult.change
-                ],
-                selection.mint, wallet);
-            const historyEvent = new NDKWalletChange(wallet.ndk);
-            historyEvent.destroyedTokens = destroyedTokens;
-            if (createdToken) historyEvent.createdTokens = [createdToken];
-            historyEvent.tag(wallet.event);
-            historyEvent.direction = 'out';
-            historyEvent.description = 'Lightning payment';
-            historyEvent.tags.push(['preimage', meltResult.quote.payment_preimage]);
-            historyEvent.amount = selection.quote.amount;
-            historyEvent.fee = fee;
-            historyEvent.publish(wallet.relaySet);
+        // if (meltResult.quote.state === MeltQuoteState.PAID && meltResult.quote.payment_preimage) {
+        //     debug("Payment successful");
+        //     // const { destroyedTokens, createdToken } = await rollOverProofs(
+        //     //     selection,
+        //     //     [
+        //     //         ...result.keep,
+        //     //         ...meltResult.change
+        //     //     ],
+        //     //     selection.mint, wallet);
+        //     const historyEvent = new NDKWalletChange(wallet.ndk);
+        //     historyEvent.destroyedTokens = destroyedTokens;
+        //     if (createdToken) historyEvent.createdTokens = [createdToken];
+        //     if (wallet.event) historyEvent.tag(wallet.event);
+        //     historyEvent.direction = 'out';
+        //     historyEvent.description = 'Lightning payment';
+        //     historyEvent.tags.push(['preimage', meltResult.quote.payment_preimage]);
+        //     historyEvent.amount = selection.quote.amount;
+        //     historyEvent.fee = fee;
+        //     historyEvent.publish(wallet.relaySet);
 
-            return meltResult.quote.payment_preimage;
-        }
+        //     return meltResult.quote.payment_preimage;
+        // }
     } catch (e) {
-        debug("Failed to pay with mint %s", e.message);
-        if (e?.message.match(/already spent/i)) {
-            debug("Proofs already spent, rolling over");
-            rollOverProofs(selection, [], selection.mint, wallet);
+        if (e instanceof Error) {
+            debug("Failed to pay with mint %s", e.message);
+            // if (e.message.match(/already spent/i)) {
+            //     debug("Proofs already spent, rolling over");
+            //     rollOverProofs(selection, [], selection.mint, wallet);
+            // }
+            throw e;
         }
-        throw e;
-    }
 
-    return null;
+        return null;
+    }
 }

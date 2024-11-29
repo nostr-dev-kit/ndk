@@ -1,9 +1,9 @@
 import { Proof } from "@cashu/cashu-ts";
 import type { NDKCashuWallet } from "./wallet";
 import createDebug from "debug";
-import type { LnPaymentInfo } from "@nostr-dev-kit/ndk";
+import type { LnPaymentInfo, NDKPaymentConfirmationCashu } from "@nostr-dev-kit/ndk";
 import type { NutPayment } from "./pay/nut.js";
-import { payNut } from "./pay/nut.js";
+import { createTokenForPayment } from "./pay/nut.js";
 import { payLn } from "./pay/ln.js";
 import { decode as decodeBolt11 } from "light-bolt11-decoder";
 
@@ -69,6 +69,9 @@ export class NDKCashuPay {
         }
     }
 
-    public payNut = payNut.bind(this);
+    public async payNut() {
+        return createTokenForPayment.call(this);
+    }
+
     public payLn = payLn.bind(this);
 }

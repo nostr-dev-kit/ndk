@@ -1,16 +1,16 @@
 import NDKWalletService from "./service/index.js";
-export * from "./service/nutzap-monitor/index.js";
-export * from "./wallet/index.js";
+export * from "./nutzap-monitor/index.js";
+export * from "./wallets/index.js";
 
-export * from "./cashu/wallet.js";
-export * from "./cashu/token.js";
-export * from "./cashu/deposit.js";
-export * from "./cashu/history.js";
-export * from "./cashu/mint/utils";
+export * from "./wallets/cashu/wallet.js";
+export * from "./wallets/cashu/token.js";
+export * from "./wallets/cashu/deposit.js";
+export * from "./wallets/cashu/history.js";
+export * from "./wallets/cashu/mint/utils";
 
-export * from "./ln/index.js";
+export * from "./wallets/webln/index.js";
 
-export * from "./nwc/index.js";
-export * from "./nwc/types.js";
+export * from "./wallets/nwc/index.js";
+export * from "./wallets/nwc/types.js";
 
 export default NDKWalletService;

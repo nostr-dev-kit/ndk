@@ -10,21 +10,21 @@ import type {
     NDKSubscriptionOptions,
     NDKTag,
     NDKZapDetails,
+    NostrEvent,
 } from "@nostr-dev-kit/ndk";
-import NDK, { NDKEvent, NDKKind, NDKPrivateKeySigner, NDKRelaySet } from "@nostr-dev-kit/ndk";
+import NDK, { NDKEvent, NDKKind, NDKPrivateKeySigner, NDKRelaySet, normalizeUrl } from "@nostr-dev-kit/ndk";
 import { NDKCashuToken, proofsTotalBalance } from "./token.js";
 import { NDKCashuDeposit } from "./deposit.js";
 import createDebug from "debug";
 import type { MintUrl } from "./mint/utils.js";
 import { NDKCashuPay } from "./pay.js";
-import type { Proof } from "@cashu/cashu-ts";
+import type { Proof, SendResponse } from "@cashu/cashu-ts";
 import { CashuMint, CashuWallet, getDecodedToken } from "@cashu/cashu-ts";
 import { NDKWalletChange } from "./history.js";
 import { checkTokenProofs } from "./validate.js";
 import { NDKWallet, NDKWalletBalance, NDKWalletEvents, NDKWalletStatus } from "../wallet/index.js";
 import { EventEmitter } from "tseep";
 import { decrypt } from "./decrypt.js";
-import { chooseProofsForAmounts, rollOverProofs } from "./proofs.js";
 import { eventHandler } from "./event-handlers/index.js";
 
 const d = createDebug("ndk-wallet:cashu:wallet");
@@ -33,6 +33,35 @@ interface SaveProofsOptions {
     nutzap?: NDKNutzap;
     direction?: "in" | "out";
     amount?: number;
+}
+
+/**
+ * Represents a change to the wallet state
+ */
+export type WalletChange = {
+    // reserve proofs are moved into an NDKKind.CashuReserve event until we verify that the recipient has received them
+    reserve: Proof[],
+
+    // destroy proofs are deleted from the wallet
+    destroy?: Proof[],
+
+    // store proofs are added to the wallet
+    store: Proof[],
+    mint: MintUrl,
+}
+
+export type WalletStateChange = {
+    // token ids that are to be deleted
+    deletedTokenIds: Set<string>;
+
+    // these are the Cs of the proofs that are getting deleted
+    deletedProofs: Set<string>;
+
+    // proofs that are to be moved to a reserve
+    reserveProofs: Proof[];
+
+    // proofs that are to be added to the wallet in a new token
+    saveProofs: Proof[];
 }
 
 /**
@@ -124,29 +153,26 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
     public checkProofs = checkTokenProofs.bind(this);
 
     async mintNuts(amounts: number[], unit: string) {
-        const tokenSelection = await chooseProofsForAmounts(amounts, this);
-        if (tokenSelection?.needsSwap) {
-            const wallet = await this.walletForMint(tokenSelection.mint);
-            const currentProofs = this.proofsForMint(tokenSelection.mint);
-            const proofs = await wallet.send(
-                undefined as unknown as number,
-                currentProofs,
-                {
-                    proofsWeHave: currentProofs,
-                    includeFees: true,
-                    outputAmounts: {
-                        sendAmounts: amounts
-                    }
+        let result: SendResponse | undefined;
+        const totalAmount = amounts.reduce((acc, amount) => acc + amount, 0);
+        
+        for (const mint of this.mints) {
+            const wallet = await this.walletForMint(mint);
+            const mintProofs = await this.proofsForMint(mint);
+            result = await wallet.send(totalAmount, mintProofs, {
+                proofsWeHave: mintProofs,
+                includeFees: true,
+                outputAmounts: {
+                    sendAmounts: amounts
                 }
-            );
+            });
 
-            await rollOverProofs(tokenSelection, proofs.keep, tokenSelection.mint, this);
-
-            return proofs.send;
-        } else if (tokenSelection) {
-            await rollOverProofs(tokenSelection, [], tokenSelection.mint, this);
+            if (result.send.length > 0) break;
         }
-        return tokenSelection?.usedProofs;
+        
+        // await rollOverProofs(tokenSelection, proofs.keep, tokenSelection.mint, this);
+
+        return result;
     }
 
     static async from(event: NDKEvent): Promise<NDKCashuWallet | undefined> {
@@ -418,15 +444,187 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
 
     /**
      * Swaps tokens to a specific amount, optionally locking to a p2pk.
+     * 
+     * This function has side effects:
+     * - It swaps tokens at the mint
+     * - It updates the wallet state (deletes affected tokens, might create new ones)
+     * 
+     * This function returns the proofs that need to be sent to the recipient.
      * @param amount
      */
-    async cashuPay(payment: NDKZapDetails<CashuPaymentInfo>): Promise<NDKPaymentConfirmationCashu> {
+    async cashuPay(payment: NDKZapDetails<CashuPaymentInfo>): Promise<NDKPaymentConfirmationCashu | undefined> {
         const { amount, unit, mints, p2pk } = payment;
         const pay = new NDKCashuPay(this, { amount, unit, mints, p2pk });
-        return pay.payNut();
+        const sendResult = await pay.payNut();
+        if (!sendResult) {
+            d("failed to pay with cashu");
+            return;
+        }
+
+        const isP2pk = (p: Proof) => p.secret.startsWith('["P2PK"');
+        const isNotP2pk = (p: Proof) => !isP2pk(p);
+
+        await this.updateState({
+            reserve: sendResult.send.filter(isNotP2pk),
+            destroy: sendResult.send.filter(isP2pk), // no point in reserving p2pk proofs since they will be published already
+            store: sendResult.keep,
+            mint: sendResult.mint,
+        });
+
+        return { proofs: sendResult.send, mint: sendResult.mint };
+    }
+
+    private getAllMintProofs(mint: MintUrl): Map<string, NDKEventId> {
+        const allMintProofs = new Map<string, NDKEventId>();
+
+        this.tokens.forEach((t) => {
+            t.proofs.forEach((p) => {
+                allMintProofs.set(p.C, t.id);
+            });
+        });
+        return allMintProofs;
+    }
+
+    private getTokensMap(mint: MintUrl) {
+        const map = new Map<NDKEventId, NDKCashuToken>();
+
+        for (const token of this.mintTokens[mint]) {
+            map.set(token.id, token);
+        }
+        
+        return map;
+    }
+
+    /**
+     * Calculates the new state of the wallet based on a given change.
+     * 
+     * This method processes the proofs to be stored, identifies proofs to be deleted,
+     * and determines which tokens are affected by the change. It updates the wallet
+     * state by:
+     * - Collecting all proofs that are part of the new state.
+     * - Identifying all proofs that are affected by the change.
+     * - Removing proofs that are to be kept from the affected proofs.
+     * - Identifying proofs that should be deleted.
+     * - Processing affected tokens to determine which proofs need to be saved.
+     * 
+     * @param change The change to be applied to the wallet state.
+     * @returns The new state of the wallet, including proofs to be saved, deleted, or reserved.
+     */
+    public async calculateNewState(change: WalletChange): Promise<WalletStateChange> {
+        const newState: WalletStateChange = {
+            deletedTokenIds: new Set<NDKEventId>(),
+            deletedProofs: new Set<string>(),
+            reserveProofs: [],
+            saveProofs: [],
+        };
+
+        const newStateProofs = this.collectNewStateProofs(change.store);
+        const allAffectedProofs = this.getAllMintProofs(change.mint);
+        const tokenMap = this.getTokensMap(change.mint);
+
+        this.processStoreProofs(change.store, allAffectedProofs, newState.saveProofs);
+        this.identifyDeletedProofs(allAffectedProofs, newState.deletedProofs);
+
+        this.processAffectedTokens(allAffectedProofs, tokenMap, newState, newStateProofs);
+
+        return newState;
+    }
+
+    private collectNewStateProofs(store: Proof[]): Set<string> {
+        const newStateProofs = new Set<string>();
+        store.forEach(proof => newStateProofs.add(proof.C));
+        return newStateProofs;
+    }
+
+    private processStoreProofs(store: Proof[], allAffectedProofs: Map<string, NDKEventId>, saveProofs: Proof[]) {
+        for (const proof of store) {
+            if (!allAffectedProofs.has(proof.C)) {
+                saveProofs.push(proof);
+            } else {
+                allAffectedProofs.delete(proof.C);
+            }
+        }
+    }
+
+    private identifyDeletedProofs(allAffectedProofs: Map<string, NDKEventId>, deletedProofs: Set<string>) {
+        allAffectedProofs.forEach((_, proofC) => {
+            deletedProofs.add(proofC);
+        });
+    }
+
+    private processAffectedTokens(
+        allAffectedProofs: Map<string, NDKEventId>,
+        tokenMap: Map<NDKEventId, NDKCashuToken>,
+        newState: WalletStateChange,
+        newStateProofs: Set<string>
+    ) {
+        const rolledOverProofs = new Set<string>();
+
+        for (const tokenId of allAffectedProofs.values()) {
+            newState.deletedTokenIds.add(tokenId);
+
+            const token = tokenMap.get(tokenId);
+            if (!token) throw new Error("BUG! Unable to find a token that we should have!");
+
+            for (const proof of token.proofs) {
+                if (newStateProofs.has(proof.C) && !rolledOverProofs.has(proof.C)) {
+                    newState.saveProofs.push(proof);
+                    rolledOverProofs.add(proof.C);
+                }
+            }
+        }
+    }
+
+    /**
+     * Updates the wallet state based on a send result
+     * @param sendResult 
+     */
+    public async updateState(change: WalletChange) {
+        const newState = await this.calculateNewState(change);
+
+        // create the new token if we have to
+        if (newState.saveProofs.length > 0) {
+            const newToken = new NDKCashuToken(this.ndk);
+            newToken.proofs = newState.saveProofs;
+            console.log('publishing a new token with %d proofs', newState.saveProofs.length);
+            newToken.mint = change.mint;
+            newToken.wallet = this;
+            await newToken.sign();
+            await newToken.publish(this.relaySet);
+        }
+
+        // delete the tokens that are affected
+        if (newState.deletedTokenIds.size > 0) {
+            const deleteEvent = new NDKEvent(this.ndk, {
+                kind: NDKKind.EventDeletion,
+                tags: [
+                    [ "k", NDKKind.CashuToken.toString() ],
+                    ...Array.from(newState.deletedTokenIds).map((id) => ([ "e", id ])),
+                ]
+            } as NostrEvent);
+            await deleteEvent.sign();
+            console.log("publishing delete event", JSON.stringify(deleteEvent.rawEvent(), null, 4));
+            await deleteEvent.publish(this.relaySet);
+        }
+
+        // create the reserve token if we have to
+        if (newState.reserveProofs.length > 0) {
+            const reserveToken = new NDKCashuToken(this.ndk);
+            reserveToken.proofs = newState.reserveProofs;
+            reserveToken.mint = change.mint;
+            reserveToken.wallet = this;
+            await reserveToken.sign();
+            await reserveToken.publish(this.relaySet);
+        }
+    }
+
+    // TODO: this is not efficient, we should use a set
+    public hasProof(secret: string) {
+        return this.tokens.some((t) => t.proofs.some((p) => p.secret === secret));
     }
 
     public proofsForMint(mint: MintUrl) {
+        mint = normalizeUrl(mint);
         const res = this.tokens.filter((t) => t.mint === mint).map((t) => t.proofs).flat();
 
         d("providing proofs for mint %s: %d (amounts: %o)", mint, res.length, res.map((p) => p.amount));
@@ -445,8 +643,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
         }
 
         const wallet = new CashuWallet(new CashuMint(mint), { unit });
-        const loadMint = await wallet.loadMint();
-        d("load mint %o", loadMint);
+        await wallet.loadMint();
         this._wallets[mint] = wallet;
         return wallet;
     }
@@ -550,7 +747,10 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
      * Removes a token that has been deleted
      */
     public removeTokenId(id: NDKEventId) {
-        if (!this.knownTokens.has(id)) return false;
+        if (!this.knownTokens.has(id)) {
+            console.log("removing token not known, skipping", id);
+            return false;
+        }
 
         this.tokens = this.tokens.filter((t) => t.id !== id);
         this.emit("balance_updated");

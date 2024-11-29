@@ -25,7 +25,6 @@ import { signatureVerificationInit } from "../events/signature.js";
 import { NDKSubscriptionManager } from "../subscription/manager.js";
 import { setActiveUser } from "./active-user.js";
 import type { CashuPayCb, LnPayCb, NDKPaymentConfirmation, NDKZapSplit } from "../zapper/index.js";
-import { NDKZapConfirmation, NDKZapper } from "../zapper/index.js";
 import type { NostrEvent } from "nostr-tools";
 import type { NDKLnUrlData } from "../zapper/ln.js";
 

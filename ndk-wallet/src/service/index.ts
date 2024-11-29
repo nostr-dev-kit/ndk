@@ -1,13 +1,4 @@
-import type {
-    CashuPaymentInfo,
-    LnPaymentInfo,
-    NDKEvent,
-    NDKNutzap,
-    NDKPaymentConfirmationCashu,
-    NDKPaymentConfirmationLN,
-    NDKUser,
-    NDKZapDetails,
-} from "@nostr-dev-kit/ndk";
+import type { NDKNutzap } from "@nostr-dev-kit/ndk";
 import type NDK from "@nostr-dev-kit/ndk";
 import { NDKCashuMintList } from "@nostr-dev-kit/ndk";
 import { NDKCashuWallet } from "../cashu/wallet.js";
@@ -16,7 +7,7 @@ import createDebug from "debug";
 import NDKWalletLifecycle from "./lifecycle/index.js";
 import type { MintUrl } from "../cashu/mint/utils.js";
 import type { NDKCashuToken } from "../cashu/token.js";
-import { NDKWallet } from "../wallet/index.js";
+import { NDKWallet } from "../wallets/index.js";
 
 const d = createDebug("ndk-wallet:wallet");
 
@@ -57,54 +48,6 @@ class NDKWalletService extends EventEmitter<{
         super();
         this.ndk = ndk;
     }
-
-    private alreadyHasWallet(wallet: NDKWallet): boolean {
-        if (wallet instanceof NDKCashuWallet) {
-            return this.wallets.some(
-                (w) => w instanceof NDKCashuWallet && w.event?.id === wallet.event?.id
-            );
-        }
-
-        return false;
-    }
-
-    /**
-     * Starts monitoring changes for the user's wallets
-     */
-    public start({ user, walletEvent }: { user?: NDKUser; walletEvent?: NDKEvent } = {}) {
-        // todo: check NIP-78 configuration for webln/nwc/nip-61 settings
-        this.lifecycle = new NDKWalletLifecycle(this.ndk, user ?? this.ndk.activeUser!);
-
-        this.lifecycle.on("wallet:default", (wallet: NDKWallet) => {
-            d("default wallet ready", wallet.type);
-            this.defaultWallet = wallet;
-            this.emit("wallet:default", wallet);
-        });
-
-        this.lifecycle.on("wallet", (wallet: NDKWallet) => {
-            d("wallet ready", wallet.type);
-            if (this.alreadyHasWallet(wallet)) {
-                return;
-            }
-
-            this.wallets.push(wallet);
-            this.emit("wallets");
-
-            // if we have a new wallet and the nutzap monitor
-            // is already running, add the wallet to the monitor
-            // if (this.nutzapMonitor) {
-            //     this.nutzapMonitor.addWallet(wallet as NDKCashuWallet);
-            // }
-        });
-
-        this.lifecycle.on("ready", () => {
-            this.state = "ready";
-            this.emit("ready");
-        });
-
-        this.lifecycle.start(walletEvent);
-    }
-
 
     /**
      * Publishes the mint list tying to a specific wallet

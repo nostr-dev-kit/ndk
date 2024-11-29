@@ -153,14 +153,9 @@ class NDKZapper extends EventEmitter<{
         this.tags = opts.tags;
         this.signer = opts.signer;
 
-        console.log('wallet in zapper', this.ndk.walletConfig);
-
         this.lnPay = opts.lnPay || this.ndk.walletConfig?.lnPay;
         this.cashuPay = opts.cashuPay || this.ndk.walletConfig?.cashuPay;
         this.onComplete = opts.onComplete || this.ndk.walletConfig?.onPaymentComplete;
-
-        console.log('cashuPay in zapper constructor', !!this.cashuPay);
-        console.log('lnPay in zapper constructor', !!this.lnPay);
     }
 
     /**
@@ -319,9 +314,14 @@ class NDKZapper extends EventEmitter<{
 
             try {
                 if (zapMethod.type === "nip61") {
-                    return this.zapNip61(split, zapMethod.data as CashuPaymentInfo);
+                    retVal = await this.zapNip61(split, zapMethod.data as CashuPaymentInfo);
                 } else if (zapMethod.type === "nip57") {
-                    return this.zapNip57(split, zapMethod.data as NDKLnUrlData);
+                    retVal = await this.zapNip57(split, zapMethod.data as NDKLnUrlData);
+                }
+
+                if (!(retVal instanceof Error)) {
+                    // d("looks like zap with method", zapMethod.type, "worked", retVal);
+                    break;
                 }
             } catch (e: any) {
                 if (e instanceof Error) retVal = e;
@@ -426,8 +426,6 @@ class NDKZapper extends EventEmitter<{
 
         if (this.cashuPay) methods.push("nip61");
         if (this.lnPay) methods.push("nip57");
-
-        console.log('methods', methods);
 
         // if there are no methods available, return an empty array
         if (methods.length === 0) throw new Error("There are no payment methods available! Please set at least one of lnPay or cashuPay");

@@ -5,7 +5,7 @@ import { EventEmitter } from "tseep";
 import { NDKCashuToken } from "./token";
 import createDebug from "debug";
 import { NDKEvent, NDKKind, NDKTag, NostrEvent } from "@nostr-dev-kit/ndk";
-import { getBolt11ExpiresAt } from "../utils/ln.js";
+import { getBolt11ExpiresAt } from "../../utils/ln.js";
 import { NDKWalletChange } from "./history";
 
 const d = createDebug("ndk-wallet:cashu:deposit");
@@ -55,7 +55,7 @@ export class NDKCashuDeposit extends EventEmitter<{
 
         this.quoteId = quote.quote;
 
-        this.check(pollTime);
+        setTimeout(this.check.bind(this, pollTime), pollTime);
         this.createQuoteEvent(quote.quote, quote.request)
             .then((event) => this.quoteEvent = event);
 

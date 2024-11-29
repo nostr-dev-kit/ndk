@@ -86,53 +86,53 @@ export async function checkTokenProofsForMint(
     //     return newToken;
     // }
 
-    const spentProofsSet = new Set(spentProofs.map((p) => p.id));
-    const tokensToDestroy: NDKCashuToken[] = [];
-    const proofsToSave: Map<string, Proof> = new Map();
+    // const spentProofsSet = new Set(spentProofs.map((p) => p.id));
+    // const tokensToDestroy: NDKCashuToken[] = [];
+    // const proofsToSave: Map<string, Proof> = new Map();
 
-    for (const token of tokens) {
-        const { dirty, unspentProofs, spentProofs } = checkInvalidToken(token, spentProofsSet);
-        if (dirty) {
-            tokensToDestroy.push(token);
+    // for (const token of tokens) {
+    //     const { dirty, unspentProofs, spentProofs } = checkInvalidToken(token, spentProofsSet);
+    //     if (dirty) {
+    //         tokensToDestroy.push(token);
 
-            for (const proof of unspentProofs) {
-                const id = proof.secret;
-                proofsToSave.set(id, proof);
-            }
+    //         for (const proof of unspentProofs) {
+    //             const id = proof.secret;
+    //             proofsToSave.set(id, proof);
+    //         }
             
-            d(
-                "👉 token %s has spent proofs",
-                token.id.slice(0, 6),
-                spentProofs.map((p) => p.secret.slice(0, 4)),
-            );
-        }
-    }
+    //         d(
+    //             "👉 token %s has spent proofs",
+    //             token.id.slice(0, 6),
+    //             spentProofs.map((p) => p.secret.slice(0, 4)),
+    //         );
+    //     }
+    // }
 
-    d(
-        "destroying %d tokens with %d spent proofs, moving %d proofs",
-        tokensToDestroy.length,
-        spentProofs.length,
-        proofsToSave.size
-    );
+    // d(
+    //     "destroying %d tokens with %d spent proofs, moving %d proofs",
+    //     tokensToDestroy.length,
+    //     spentProofs.length,
+    //     proofsToSave.size
+    // );
 
-    const res = await rollOverProofs(
-        {
-            usedProofs: spentProofs,
-            movedProofs: Array.from(proofsToSave.values()),
-            usedTokens: tokensToDestroy,
-            mint,
-        },
-        [],
-        mint,
-        wallet
-    );
+    // const res = await rollOverProofs(
+    //     {
+    //         usedProofs: spentProofs,
+    //         movedProofs: Array.from(proofsToSave.values()),
+    //         usedTokens: tokensToDestroy,
+    //         mint,
+    //     },
+    //     [],
+    //     mint,
+    //     wallet
+    // );
 
-    d(
-        "rolled over proofs for mint %s, destroyed %d tokens, created %s token",
-            mint,
-            res.destroyedTokens.length,
-            res.createdToken?.id ?? "no new"
-    );
+    // d(
+    //     "rolled over proofs for mint %s, destroyed %d tokens, created %s token",
+    //         mint,
+    //         res.destroyedTokens.length,
+    //         res.createdToken?.id ?? "no new"
+    // );
 
-    return res;
+    // return res;
 }

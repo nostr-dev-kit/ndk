@@ -7,7 +7,7 @@ import {
     NDKZapSplit,
 } from "@nostr-dev-kit/ndk";
 import { EventEmitter } from "tseep";
-import { NutPayment } from "../cashu/pay/nut";
+import { NutPayment } from "./cashu/pay/nut";
 
 export enum NDKWalletStatus {
     INITIAL = "initial",
@@ -32,6 +32,7 @@ export type NDKWalletBalance = { amount: number; unit: string };
 export type NDKWalletEvents = {
     ready: () => void;
     balance_updated: (balance?: NDKWalletBalance) => void;
+    insufficient_balance: (info: { amount: number; pr: string }) => void;
 };
 
 export interface NDKWallet

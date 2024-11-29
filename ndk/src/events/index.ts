@@ -515,7 +515,7 @@ export class NDKEvent extends EventEmitter {
             (this.ndk?.clientName || this.ndk?.clientNip89) &&
             skipClientTagOnKinds.includes(this.kind!)
         ) {
-            if (!this.tags.some((tag) => tag[0] === "client")) {
+            if (!this.hasTag("client")) {
                 const clientTag: NDKTag = ["client", this.ndk.clientName ?? ""];
                 if (this.ndk.clientNip89) clientTag.push(this.ndk.clientNip89);
                 tags.push(clientTag);

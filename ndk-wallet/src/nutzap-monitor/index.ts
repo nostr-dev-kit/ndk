@@ -11,7 +11,7 @@ import NDK, {
 } from "@nostr-dev-kit/ndk";
 import { EventEmitter } from "tseep";
 import createDebug from "debug";
-import { NDKCashuWallet } from "../cashu/wallet";
+import { NDKCashuWallet } from "../wallets/cashu/wallet";
 
 const d = createDebug("ndk-wallet:nutzap-monitor");
 

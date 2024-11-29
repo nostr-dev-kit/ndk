@@ -1,4 +1,3 @@
-import NDKWalletService from "./service/index.js";
 export * from "./nutzap-monitor/index.js";
 export * from "./wallets/index.js";
 
@@ -12,5 +11,3 @@ export * from "./wallets/webln/index.js";
 
 export * from "./wallets/nwc/index.js";
 export * from "./wallets/nwc/types.js";
-
-export default NDKWalletService;

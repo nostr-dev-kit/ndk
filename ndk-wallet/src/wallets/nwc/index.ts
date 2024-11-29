@@ -1,5 +1,5 @@
 import { EventEmitter } from "tseep";
-import { NDKWalletBalance, NDKWalletEvents, NDKWalletStatus, type NDKWallet } from "../wallet/index.js";
+import { NDKWalletBalance, NDKWalletEvents, NDKWalletStatus, type NDKWallet } from "../index.js";
 import NDK, { NDKPool, LnPaymentInfo, NDKPaymentConfirmationCashu, NDKPaymentConfirmationLN, NDKRelaySet, NDKUser, NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
 import { NutPayment } from "../cashu/pay/nut.js";
 import { hexToBytes } from "@noble/hashes/utils";

@@ -22,7 +22,7 @@ import type { Proof, SendResponse } from "@cashu/cashu-ts";
 import { CashuMint, CashuWallet, getDecodedToken } from "@cashu/cashu-ts";
 import { NDKWalletChange } from "./history.js";
 import { checkTokenProofs } from "./validate.js";
-import { NDKWallet, NDKWalletBalance, NDKWalletEvents, NDKWalletStatus } from "../wallet/index.js";
+import { NDKWallet, NDKWalletBalance, NDKWalletEvents, NDKWalletStatus } from "../index.js";
 import { EventEmitter } from "tseep";
 import { decrypt } from "./decrypt.js";
 import { eventHandler } from "./event-handlers/index.js";
@@ -748,7 +748,6 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
      */
     public removeTokenId(id: NDKEventId) {
         if (!this.knownTokens.has(id)) {
-            console.log("removing token not known, skipping", id);
             return false;
         }
 

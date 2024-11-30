@@ -511,18 +511,21 @@ export class NDKEvent extends EventEmitter {
             }
         }
 
-        if (
-            (this.ndk?.clientName || this.ndk?.clientNip89) &&
-            skipClientTagOnKinds.includes(this.kind!)
-        ) {
-            if (!this.hasTag("client")) {
-                const clientTag: NDKTag = ["client", this.ndk.clientName ?? ""];
-                if (this.ndk.clientNip89) clientTag.push(this.ndk.clientNip89);
-                tags.push(clientTag);
-            }
+        if (this.shouldAddClientTag) {
+            const clientTag: NDKTag = ["client", this.ndk!.clientName ?? ""];
+            if (this.ndk!.clientNip89) clientTag.push(this.ndk!.clientNip89);
+            tags.push(clientTag);
         }
 
         return { content: content || "", tags };
+    }
+
+    get shouldAddClientTag(): boolean {
+        if (!this.ndk?.clientName && !this.ndk?.clientNip89) return false;
+        if (skipClientTagOnKinds.includes(this.kind!)) return false;
+        if (this.isEphemeral()) return false;
+        if (this.hasTag("client")) return false;
+        return true;
     }
 
     public muted(): string | null {

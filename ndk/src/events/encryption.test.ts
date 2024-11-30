@@ -108,12 +108,12 @@ function createDirectMessage(senderPubkey: string, receiverPubkey: string): NDKE
 
 function createNip44(sendSigner: NDKSigner, receiveSigner: NDKSigner) {
   return {
-    encrypt: (_recipientHexPubKey: string, value: string) => {
-      const receiver = new NDKUser({ pubkey: _recipientHexPubKey });
+    encrypt: (receiverHexPubkey: string, value: string) => {
+      const receiver = new NDKUser({ hexpubkey: receiverHexPubkey });
       return sendSigner.encrypt(receiver, value, 'nip44');
     },
-    decrypt: (_senderHexPubKey: string, value: string) => {
-      const sender = new NDKUser({ pubkey: _senderHexPubKey });
+    decrypt: (senderHexPubKey: string, value: string) => {
+      const sender = new NDKUser({ hexpubkey: senderHexPubKey });
       return receiveSigner.decrypt(sender, value, 'nip44');
     },
   }

@@ -6,7 +6,8 @@ on:
     # Runs on pushes targeting the `main` branch. Change this to `master` if you're
     # using the `master` branch as the default branch.
     push:
-        branches: [master]
+        branches:
+          - '*'
 
     # Allows you to run this workflow manually from the Actions tab
     workflow_dispatch:
@@ -36,14 +37,11 @@ jobs:
             - name: Setup Node
               uses: pnpm/action-setup@v3 # Uncomment this if you're using pnpm
               with:
-                  node-version: 21
                   cache: pnpm # or pnpm / yarn
             - name: Setup Pages
               uses: actions/configure-pages@v4
             - name: Install dependencies
               run: pnpm install # or pnpm install / yarn install / bun install
-            - name: Build dexie typedoc
-              run: cd ndk-cache-dexie && pnpm typedoc && cat docs/interfaces/NDKCacheAdapterDexieOptions.md >> ../docs/cache/dexie.md
             - name: Build with VitePress
               run: pnpm docs:build # or pnpm docs:build / yarn docs:build / bun run docs:build
             - name: Build typedoc

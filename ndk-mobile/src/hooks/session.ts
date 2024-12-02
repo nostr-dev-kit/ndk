@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import NDKSessionContext from '../context/session';
 import { NDKEvent, NDKKind } from '@nostr-dev-kit/ndk';
 import { useNDK } from './ndk';
-import { NDKEventWithFrom, useSubscribe } from './subscribe';
+import { NDKEventWithFrom } from './subscribe';
 
 const useNDKSession = (): NDKSessionContext => {
     const context = useContext(NDKSessionContext);

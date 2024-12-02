@@ -25,8 +25,10 @@ type EventRecord = {
     relay: string;
 };
 
-type UnpublishedEventRecord = EventRecord & {
-    relays: string;
+type UnpublishedEventRecord = {
+    id: string;
+    event: string;
+    relays: string; // JSON string of {[url: string]: boolean}
     last_try_at: number;
 };
 
@@ -204,13 +206,47 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     }
 
     addUnpublishedEvent(event: NDKEvent, relayUrls: WebSocket['url'][]): void {
+        const relayStatus: { [key: string]: boolean } = {};
+        relayUrls.forEach(url => relayStatus[url] = false);
+
         try {
             this.db.runSync(`INSERT OR REPLACE INTO unpublished_events (id, event, relays, last_try_at) VALUES (?, ?, ?, ?);`, [
                 event.id,
                 event.serialize(true, true),
-                (relayUrls ?? []).join(','),
+                JSON.stringify(relayStatus),
                 Date.now(),
             ]);
+
+            const onPublished = (relay: NDKRelay) => {
+                const url = relay.url;
+                const record = this.db.getFirstSync(
+                    `SELECT relays FROM unpublished_events WHERE id = ?`,
+                    [event.id]
+                ) as UnpublishedEventRecord | undefined;
+
+                if (!record) {
+                    event.off('published', onPublished);
+                    return;
+                }
+
+                const relays = JSON.parse(record.relays);
+                relays[url] = true;
+
+                const successWrites = Object.values(relays).filter(v => v).length;
+                const unsuccessWrites = Object.values(relays).length - successWrites;
+
+                if (successWrites >= 3 || unsuccessWrites === 0) {
+                    this.discardUnpublishedEvent(event.id);
+                    event.off('published', onPublished);
+                } else {
+                    this.db.runSync(
+                        `UPDATE unpublished_events SET relays = ? WHERE id = ?`,
+                        [JSON.stringify(relays), event.id]
+                    );
+                }
+            };
+
+            event.once('published', onPublished);
         } catch (e) {
             console.error('error adding unpublished event', e);
         }
@@ -232,9 +268,10 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
         const events = (await this.db.getAllAsync(`SELECT * FROM unpublished_events`)) as UnpublishedEventRecord[];
         return events.map((event) => {
             const deserializedEvent = new NDKEvent(undefined, deserialize(event.event));
+            const relays = JSON.parse(event.relays);
             return {
                 event: deserializedEvent,
-                relays: event.relays.split(/,/),
+                relays: Object.keys(relays),
                 lastTryAt: event.last_try_at,
             };
         });

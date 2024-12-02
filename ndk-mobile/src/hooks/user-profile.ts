@@ -2,65 +2,84 @@ import { useEffect, useState, useMemo, useCallback, useRef } from 'react'
 import { useNDK } from './ndk'
 
 export function useUserProfile(pubkey: string) {
-    const { ndk } = useNDK()
+    const { ndk } = useNDK();
 
     const user = useMemo(() => ndk?.getUser({ pubkey }), [ndk, pubkey]);
 
     const fetchFromCache = useCallback(() => {
         if (!ndk) return null;
-        
-        const cachedProfile = ndk.cacheAdapter.fetchProfileSync?.(pubkey)
+
+        const cachedProfile = ndk.cacheAdapter.fetchProfileSync?.(pubkey);
         if (cachedProfile) cachedProfile.pubkey = pubkey;
-        
+
         return cachedProfile;
     }, [ndk, pubkey]);
-    
-    // Try to load synchronously first
-    const initialState = useMemo(() => {
+
+    const [state, setState] = useState(() => {
         if (!ndk || !pubkey) {
-            return { userProfile: null, user: null, loading: false, cache: false, pubkey }
+            return { userProfile: null, user: null, loading: false, cache: false, pubkey };
         }
 
         const cachedProfile = fetchFromCache();
-        return { userProfile: cachedProfile, user, loading: !cachedProfile, cache: !!cachedProfile, pubkey }
-    }, [ndk, pubkey])
+        return {
+            userProfile: cachedProfile,
+            user,
+            loading: !cachedProfile,
+            cache: !!cachedProfile,
+            pubkey,
+        };
+    });
 
-    const [state, setState] = useState(initialState)
+    // Use a ref to track the currently active pubkey fetch
+    const activePubkeyRef = useRef(pubkey);
 
     useEffect(() => {
-        let mounted = true
-        
-        if (!mounted) return;
+        activePubkeyRef.current = pubkey;
 
-        if (!ndk || !pubkey || (state.userProfile && state.userProfile.pubkey === pubkey)) return
+        if (!ndk || !pubkey) return;
 
-        // if the props changed, we need to refetch
-        if (state.userProfile && state.userProfile.pubkey !== pubkey) {
-            const newProfile = fetchFromCache();
+        // If the cached profile is already loaded, don't fetch again
+        if (state.userProfile && state.userProfile.pubkey === pubkey) return;
 
-            setState(prev => ({ ...prev, userProfile: newProfile, loading: !newProfile, cache: !!newProfile }));
-
-            // if we got a new profile from the cache, we don't need to update the state again
-            if (newProfile) return;
+        const cachedProfile = fetchFromCache();
+        if (cachedProfile) {
+            setState({
+                userProfile: cachedProfile,
+                user,
+                loading: false,
+                cache: true,
+                pubkey,
+            });
+            return; // If we have a cached profile, no need to fetch remotely
         }
 
-        state.user?.fetchProfile()
-            .then(profile => {
-                // make sure we are mounted and that the pubkey prop didn't change
-                if (!mounted || state.pubkey !== pubkey) return;
+        setState((prev) => ({ ...prev, loading: true, userProfile: null, cache: false, pubkey }));
 
-                if (profile) profile.pubkey = pubkey;
-                setState(prev => ({ ...prev, pubkey, userProfile: profile, cache: false, loading: false }))
-            })
-            .catch(error => {
-                console.error('Error fetching user profile:', error)
-                if (mounted) {
-                    setState(prev => ({ ...prev, pubkey, loading: false, fromCache: false }))
+        const fetchProfile = async () => {
+            try {
+                const profile = await user?.fetchProfile();
+                if (activePubkeyRef.current !== pubkey) {
+                    return;
                 }
-            })
+                if (profile) profile.pubkey = pubkey;
 
-        return () => { mounted = false }
-    }, [ndk, pubkey])
+                setState({
+                    userProfile: profile || null,
+                    user,
+                    loading: false,
+                    cache: false,
+                    pubkey,
+                });
+            } catch (error) {
+                console.error(`Error fetching user profile for ${pubkey}:`, error);
+                if (activePubkeyRef.current === pubkey) {
+                    setState((prev) => ({ ...prev, loading: false }));
+                }
+            }
+        };
 
-    return state
+        fetchProfile();
+    }, [ndk, pubkey, user, fetchFromCache]);
+
+    return state;
 }

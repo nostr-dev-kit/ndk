@@ -4,18 +4,41 @@ import { NDKEvent, NDKFilter, NDKRelaySet, NDKSubscription, NDKSubscriptionOptio
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useNDK } from './ndk';
 import { useStore } from 'zustand';
+import { useSessionStore } from '../stores/session';
 
+/**
+ * Extends NDKEvent with a 'from' method to wrap events with a kind-specific handler
+ */
 export type NDKEventWithFrom<T extends NDKEvent> = T & { from: (event: NDKEvent) => T };
 
+/**
+ * Parameters for the useSubscribe hook
+ * @interface UseSubscribeParams
+ * @property {NDKFilter[] | null} filters - Nostr filters to subscribe to
+ * @property {Object} [opts] - Subscription options
+ * @property {NDKEventWithFrom<any>} [opts.klass] - Class to convert events to
+ * @property {boolean} [opts.includeDeleted] - Whether to include deleted events
+ * @property {number | false} [opts.bufferMs] - Buffer time in ms, false to disable
+ * @property {string[]} [relays] - Optional relay URLs to connect to
+ */
 interface UseSubscribeParams {
     filters: NDKFilter[] | null;
     opts?: NDKSubscriptionOptions & {
         klass?: NDKEventWithFrom<any>;
         includeDeleted?: boolean;
+        bufferMs?: number | false;
     };
     relays?: string[];
 }
 
+/**
+ * Store interface for managing subscription state
+ * @interface SubscribeStore
+ * @property {T[]} events - Array of received events
+ * @property {Map<string, T>} eventMap - Map of events by ID
+ * @property {boolean} eose - End of stored events flag
+ * @property {boolean} isSubscribed - Subscription status
+ */
 interface SubscribeStore<T> {
     events: T[];
     eventMap: Map<string, T>;
@@ -28,28 +51,87 @@ interface SubscribeStore<T> {
     subscriptionRef: NDKSubscription | undefined;
 }
 
-const createSubscribeStore = <T extends NDKEvent>() =>
-    createStore<SubscribeStore<T>>((set) => ({
-        events: [],
-        eventMap: new Map(),
-        eose: false,
-        isSubscribed: false,
-        subscriptionRef: undefined,
-        addEvent: (event) =>
+/**
+ * Creates a store to manage subscription state with optional event buffering
+ * @param bufferMs - Buffer time in milliseconds, false to disable buffering
+ */
+const createSubscribeStore = <T extends NDKEvent>(bufferMs: number | false = 16) =>
+    createStore<SubscribeStore<T>>((set, get) => {
+        let buffer: T[] = [];
+        let timeout: NodeJS.Timeout | null = null;
+
+        // Function to flush the buffered events to the store
+        const flushBuffer = () => {
             set((state) => {
                 const { eventMap } = state;
-                eventMap.set(event.tagId(), event);
+                buffer.forEach((event) => {
+                    const currentEvent = eventMap.get(event.tagId());
+                    if (currentEvent && currentEvent.created_at! >= event.created_at!) return;
+                    eventMap.set(event.tagId(), event);
+                });
                 const events = Array.from(eventMap.values());
+                buffer = [];
                 return { eventMap, events };
-            }),
-        setEose: () => set({ eose: true }),
-        clearEvents: () => set({ eventMap: new Map(), eose: false }),
-        setSubscription: (sub) => set({ subscriptionRef: sub, isSubscribed: !!sub }),
-    }));
+            });
+            timeout = null;
+        };
 
+        return {
+            events: [],
+            eventMap: new Map(),
+            eose: false,
+            isSubscribed: false,
+            subscriptionRef: undefined,
+
+            addEvent: (event) => {
+                const { eose } = get();
+
+                if (!eose && bufferMs !== false) {
+                    buffer.push(event);
+                    if (!timeout) {
+                        timeout = setTimeout(flushBuffer, bufferMs);
+                    }
+                } else {
+                    // Direct update logic when buffering is disabled or after EOSE
+                    set((state) => {
+                        const { eventMap } = state;
+                        const currentEvent = eventMap.get(event.tagId());
+                        if (currentEvent && currentEvent.created_at! >= event.created_at!) return state;
+
+                        eventMap.set(event.tagId(), event);
+                        const events = Array.from(eventMap.values());
+                        return { eventMap, events };
+                    });
+                }
+            },
+
+            setEose: () => {
+                if (timeout) {
+                    clearTimeout(timeout);
+                    flushBuffer(); // Ensure any remaining buffered events are flushed immediately
+                }
+                set({ eose: true });
+            },
+
+            clearEvents: () => set({ eventMap: new Map(), eose: false }),
+            setSubscription: (sub) => set({ subscriptionRef: sub, isSubscribed: !!sub }),
+        };
+    });
+
+/**
+ * React hook for subscribing to Nostr events
+ * @param params - Subscription parameters
+ * @returns {Object} Subscription state
+ * @returns {T[]} events - Array of received events
+ * @returns {boolean} eose - End of stored events flag
+ * @returns {boolean} isSubscribed - Subscription status
+ */
 export const useSubscribe = <T extends NDKEvent>({ filters, opts = undefined, relays = undefined }: UseSubscribeParams) => {
+    const ref = useRef(0);
+
     const { ndk } = useNDK();
-    const store = useMemo(() => createSubscribeStore<T>(), []);
+    const muteList = useSessionStore((state) => state.muteList);
+    const store = useMemo(() => createSubscribeStore<T>(opts?.bufferMs), [opts?.bufferMs]);
     const storeInstance = useStore(store);
 
     /**
@@ -72,6 +154,12 @@ export const useSubscribe = <T extends NDKEvent>({ filters, opts = undefined, re
     const shouldAcceptEvent = (event: NDKEvent) => {
         const id = event.tagId();
         const currentVal = eventIds.current.get(id);
+
+        // if it's from a muted pubkey, we don't accept it
+        if (muteList.has(event.pubkey)) {
+            console.log('rejecting from muted pubkey', event.pubkey);
+            return false;
+        }
 
         // We have not seen this ID yet
         if (!currentVal) return true;
@@ -118,6 +206,7 @@ export const useSubscribe = <T extends NDKEvent>({ filters, opts = undefined, re
 
     useEffect(() => {
         if (!filters || filters.length === 0 || !ndk) return;
+        ref.current += 1;
 
         if (storeInstance.subscriptionRef) {
             storeInstance.subscriptionRef.stop();
@@ -146,5 +235,6 @@ export const useSubscribe = <T extends NDKEvent>({ filters, opts = undefined, re
         events: storeInstance.events,
         eose: storeInstance.eose,
         isSubscribed: storeInstance.isSubscribed,
+        subscription: storeInstance.subscriptionRef,
     };
 };

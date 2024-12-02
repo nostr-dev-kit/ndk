@@ -1,6 +1,6 @@
 import '@bacons/text-decoder/install';
 import { createStore } from 'zustand/vanilla';
-import { NDKEvent, NDKFilter, NDKRelaySet, NDKSubscription, NDKSubscriptionOptions } from '@nostr-dev-kit/ndk';
+import { NDKEvent, NDKFilter, NDKKind, NDKRelaySet, NDKSubscription, NDKSubscriptionOptions } from '@nostr-dev-kit/ndk';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useNDK } from './ndk';
 import { useStore } from 'zustand';
@@ -17,6 +17,7 @@ export type NDKEventWithFrom<T extends NDKEvent> = T & { from: (event: NDKEvent)
  * @property {NDKFilter[] | null} filters - Nostr filters to subscribe to
  * @property {Object} [opts] - Subscription options
  * @property {NDKEventWithFrom<any>} [opts.klass] - Class to convert events to
+ * @property {boolean} [opts.includeMuted] - Whether to include muted events
  * @property {boolean} [opts.includeDeleted] - Whether to include deleted events
  * @property {number | false} [opts.bufferMs] - Buffer time in ms, false to disable
  * @property {string[]} [relays] - Optional relay URLs to connect to
@@ -25,6 +26,7 @@ interface UseSubscribeParams {
     filters: NDKFilter[] | null;
     opts?: NDKSubscriptionOptions & {
         klass?: NDKEventWithFrom<any>;
+        includeMuted?: boolean;
         includeDeleted?: boolean;
         bufferMs?: number | false;
     };
@@ -156,7 +158,7 @@ export const useSubscribe = <T extends NDKEvent>({ filters, opts = undefined, re
         const currentVal = eventIds.current.get(id);
 
         // if it's from a muted pubkey, we don't accept it
-        if (muteList.has(event.pubkey)) {
+        if (opts?.includeMuted !== true && muteList.has(event.pubkey)) {
             console.log('rejecting from muted pubkey', event.pubkey);
             return false;
         }

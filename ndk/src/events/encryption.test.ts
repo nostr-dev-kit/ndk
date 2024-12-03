@@ -30,6 +30,26 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
     expect(decrypted).toBe(original);
   });
 
+  it("encrypts and decrypts an NDKEvent forcing Nip04 decryption, if the event kind is 4", async () => {
+    const { sendSigner, sendUser, receiveSigner, receiveUser } = await createPKSigners();
+    const sendEvent: NDKEvent = new NDKEvent (new NDK(), {
+        pubkey: sendUser.pubkey,
+        created_at: Math.floor(Date.now() / 1000),
+        tags: [],
+        content: "Test content",
+        kind: 4,
+    });
+
+    const original = sendEvent.content
+    await sendEvent.encrypt(receiveUser, sendSigner);
+    const receiveEvent = new NDKEvent(new NDK(), sendEvent.rawEvent())
+    // Despite of specifying Nip44 here, the event kind 4 forces Nip04 encryption
+    await receiveEvent.decrypt(sendUser, receiveSigner, 'nip44');
+    const decrypted = receiveEvent.content
+
+    expect(decrypted).toBe(original);
+  });
+
   it("gift wraps and unwraps an NDKEvent using a private key signer according to Nip59", async () => {
     const { sendSigner, sendUser, receiveSigner, receiveUser } = await createPKSigners();
     const message = createDirectMessage(sendUser.pubkey, receiveUser.pubkey);

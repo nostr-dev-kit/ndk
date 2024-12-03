@@ -82,8 +82,7 @@ export class NDKPrivateKeySigner implements NDKSigner {
         }
 
         const recipientHexPubKey = recipient.pubkey;
-        if(nip == 'nip44'){
-            // TODO Deriving shared secret is an expensive computation, should be cached.
+        if(nip == 'nip44') {
             let conversationKey = nip44.v2.utils.getConversationKey(this._privateKey, recipientHexPubKey);
             return await nip44.v2.encrypt(value, conversationKey);
         }
@@ -96,8 +95,7 @@ export class NDKPrivateKeySigner implements NDKSigner {
         }
 
         const senderHexPubKey = sender.pubkey;
-        if(nip == 'nip44'){
-            // TODO Deriving shared secret is an expensive computation, should be cached.
+        if(nip == 'nip44') {
             let conversationKey = nip44.v2.utils.getConversationKey(this._privateKey, senderHexPubKey);
             return await nip44.v2.decrypt(value, conversationKey);
         }

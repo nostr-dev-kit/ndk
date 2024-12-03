@@ -1,6 +1,6 @@
 /**
- * Encryption and giftwrapping of events
- * Implemnents Nip04, Nip44, Nip59 
+ * Encryption and gift-wrapping of events
+ * Implements Nip04, Nip44, Nip59 
  */
 import type { NDKSigner } from "../signers";
 import { NDKUser } from "../user";
@@ -12,7 +12,6 @@ export type EncryptionNip = 'nip04' | 'nip44';
 export type EncryptionMethod = 'encrypt' | 'decrypt'
 
 // some clients may wish to set a default for message encryption...
-// TODO how should replies to 'nip04' encrypted messages be handled?
 let defaultEncryption : EncryptionNip | undefined = undefined;
 export function useEncryption(nip : EncryptionNip){
     defaultEncryption = nip;
@@ -68,7 +67,7 @@ export async function decrypt(this: NDKEvent, sender?: NDKUser, signer?: NDKSign
         sender = this.author;
     }
     // simple check for legacy `nip04` encrypted events. adapted from Coracle
-    if ((!nip || nip=='nip04') && await isEncryptionEnabled(signer, 'nip04') && this.content.search("?iv=")) {
+    if ((!nip || nip=='nip04' || this.kind == 4) && await isEncryptionEnabled(signer, 'nip04') && this.content.search("\\?iv=")) {
         try{ 
             decrypted = (await signer?.decrypt(sender, this.content, 'nip04')) as string;
         }catch{}

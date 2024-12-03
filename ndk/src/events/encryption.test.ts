@@ -1,4 +1,5 @@
 import { NDKPrivateKeySigner } from "../signers/private-key";
+import { NDKNip46Signer } from "../signers/nip46";
 import { NDKEvent, NostrEvent } from ".";
 import { NDK } from "../ndk";
 import { NDKNip07Signer } from "../signers/nip07";
@@ -77,6 +78,32 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
     const unwrapped = await wrapped.giftUnwrap(wrapped.author, receive07Signer); 
     message.id = unwrapped?.id || "";
     expect(JSON.stringify(unwrapped)).toBe(JSON.stringify(message)); 
+  });
+
+  it("gift wrapping using a Nip46 signer according to Nip59 for both Nip04 and Nip44 encryption", async () => {
+    const { sendSigner, sendUser, receiveSigner, receiveUser } = await createPKSigners();
+    const message = createDirectMessage(sendUser.pubkey, receiveUser.pubkey);
+    
+    const send46Signer = new NDKNip46Signer(new NDK(), `bunker://example.com?pubkey=${sendUser.pubkey}`, sendSigner);
+    const mockSendRequest = jest.fn().mockImplementation((_remotePubkey, method, _params, _kind, cb) => {
+      if (method.includes("_encrypt")) {
+        cb({ result: "encrypted" });
+      } if (method.includes("_decrypt")) {
+        cb({ result: `{ "pubkey": "${sendUser.pubkey}", "content": "Hello" }` });
+      } else {
+        cb({ result: "{\"sig\": \"signature\"}" });
+      }
+    });
+    send46Signer.rpc.sendRequest = mockSendRequest;
+    
+    const wrapped = await message.giftWrap(receiveUser, send46Signer);
+    expect(mockSendRequest.mock.calls[0][1]).toBe("nip44_encrypt"); 
+    await message.giftWrap(receiveUser, send46Signer, { encryptionNip: "nip04"});
+    expect(mockSendRequest.mock.calls[2][1]).toBe("nip04_encrypt");
+    await wrapped.giftUnwrap(wrapped.author, send46Signer);
+    expect(mockSendRequest.mock.calls[4][1]).toBe("nip44_decrypt");
+    await wrapped.giftUnwrap(wrapped.author, send46Signer, "nip04");
+    expect(mockSendRequest.mock.calls[6][1]).toBe("nip04_decrypt");
   });
 });
 

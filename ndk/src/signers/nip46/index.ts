@@ -9,6 +9,8 @@ import type { NDKRpcResponse } from "./rpc.js";
 import { NDKNostrRpc } from "./rpc.js";
 import { NDKKind } from "../../events/kinds/index.js";
 import type { NDKSubscription } from "../../subscription/index.js";
+import { EncryptionMethod, EncryptionNip } from "../../events/encryption.js";
+import { send } from "process";
 
 /**
  * This NDKSigner implements NIP-46, which allows remote signing of events.
@@ -211,34 +213,24 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
         });
     }
 
-    public async encrypt(recipient: NDKUser, value: string): Promise<string> {
-        return this.nip04Encrypt(recipient, value);
+    public async encryptionEnabled(nip?:EncryptionNip): Promise<EncryptionNip[]>{
+        if (nip) return [nip];
+        return Promise.resolve(["nip04", "nip44"]);
     }
 
-    public async decrypt(sender: NDKUser, value: string): Promise<string> {
-        return this.nip04Decrypt(sender, value);
+    public async encrypt(recipient: NDKUser, value: string, nip: EncryptionNip = 'nip04'): Promise<string> {
+        return this.encryption(recipient, value, nip, "encrypt");
     }
 
-    public async nip04Encrypt(recipient: NDKUser, value: string): Promise<string> {
-        return this._encrypt(recipient, value, "nip04");
+    public async decrypt(sender: NDKUser, value: string, nip: EncryptionNip = 'nip04'): Promise<string> {
+        return this.encryption(sender, value, nip, "decrypt");
     }
 
-    public async nip04Decrypt(sender: NDKUser, value: string): Promise<string> {
-        return this._decrypt(sender, value, "nip04");
-    }
-
-    public async nip44Encrypt(recipient: NDKUser, value: string): Promise<string> {
-        return this._encrypt(recipient, value, "nip44");
-    }
-
-    public async nip44Decrypt(sender: NDKUser, value: string): Promise<string> {
-        return this._decrypt(sender, value, "nip44");
-    }
-
-    private async _encrypt(
+    private async encryption(
         recipient: NDKUser,
         value: string,
-        method: "nip04" | "nip44"
+        nip: EncryptionNip,
+        method: EncryptionMethod
     ): Promise<string> {
         this.debug("asking for encryption");
 
@@ -247,36 +239,8 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
             
             this.rpc.sendRequest(
                 this.bunkerPubkey,
-                method + "_encrypt",
+                `${nip}_${method}`,
                 [recipient.pubkey, value],
-                24133,
-                (response: NDKRpcResponse) => {
-                    if (!response.error) {
-                        resolve(response.result);
-                    } else {
-                        reject(response.error);
-                    }
-                }
-            );
-        });
-
-        return promise;
-    }
-
-    private async _decrypt(
-        sender: NDKUser,
-        value: string,
-        method: "nip04" | "nip44"
-    ): Promise<string> {
-        this.debug("asking for decryption");
-
-        const promise = new Promise<string>((resolve, reject) => {
-            if (!this.bunkerPubkey) throw new Error("Bunker pubkey not set");
-
-            this.rpc.sendRequest(
-                this.bunkerPubkey,
-                method + "_decrypt",
-                [sender.pubkey, value],
                 24133,
                 (response: NDKRpcResponse) => {
                     if (!response.error) {

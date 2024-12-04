@@ -32,7 +32,7 @@ export async function decrypt(
     this: NDKEvent,
     sender?: NDKUser,
     signer?: NDKSigner,
-    type: ENCRYPTION_SCHEMES = DEFAULT_ENCRYPTION_SCHEME
+    type?: ENCRYPTION_SCHEMES
 ): Promise<void> {
     if (!this.ndk) throw new Error("No NDK instance found!");
     if (!signer) {
@@ -41,6 +41,11 @@ export async function decrypt(
     }
     if (!sender) {
         sender = this.author;
+    }
+
+    // if type is not set, check if this looks like nip04
+    if (!type) {
+        type = this.content.match(/\?iv=/) ? 'nip04' : 'nip44';
     }
 
     this.content = (await signer?.decrypt(sender, this.content, type)) as string;

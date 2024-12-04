@@ -256,7 +256,6 @@ declare global {
                 decrypt(senderHexPubKey: string, value: string): Promise<string>;
             };
             nip44?: Nip44;
-            };
         };
     }
 }

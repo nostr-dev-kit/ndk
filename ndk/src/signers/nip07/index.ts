@@ -1,7 +1,7 @@
 import debug from "debug";
 
 import type { NostrEvent } from "../../events/index.js";
-import { NDKUser } from "../../user/index.js";
+import { Hexpubkey, NDKUser } from "../../user/index.js";
 import { DEFAULT_ENCRYPTION_SCHEME, ENCRYPTION_SCHEMES, type NDKSigner } from "../index.js";
 import { NDKRelay } from "../../relay/index.js";
 import type { NDK } from "../../ndk/index.js";
@@ -119,12 +119,20 @@ export class NDKNip07Signer implements NDKSigner {
 
     public async nip44Encrypt(recipient: NDKUser, value: string): Promise<string> {
         await this.waitForExtension();
-        return await window.nostr!.nip44!.encrypt(recipient.pubkey, value);
+        return await this.nip44.encrypt(recipient.pubkey, value);
+    }
+
+    get nip44(): Nip44 {
+        if (!window.nostr?.nip44) {
+            throw new Error("NIP-44 not supported by your browser extension");
+        }
+
+        return window.nostr.nip44;
     }
 
     public async nip44Decrypt(sender: NDKUser, value: string): Promise<string> {
         await this.waitForExtension();
-        return await window.nostr!.nip44!.decrypt(sender.pubkey, value);
+        return await this.nip44.decrypt(sender.pubkey, value);
     }
 
     public async nip04Encrypt(recipient: NDKUser, value: string): Promise<string> {
@@ -232,6 +240,11 @@ export class NDKNip07Signer implements NDKSigner {
     }
 }
 
+type Nip44 = {
+    encrypt: (recipient: Hexpubkey, value: string) => Promise<string>;
+    decrypt: (sender: Hexpubkey, value: string) => Promise<string>;
+}
+
 declare global {
     interface Window {
         nostr?: {
@@ -242,9 +255,7 @@ declare global {
                 encrypt(recipientHexPubKey: string, value: string): Promise<string>;
                 decrypt(senderHexPubKey: string, value: string): Promise<string>;
             };
-            nip44?: {
-                encrypt(recipientHexPubKey: string, value: string): Promise<string>;
-                decrypt(senderHexPubKey: string, value: string): Promise<string>;
+            nip44?: Nip44;
             };
         };
     }

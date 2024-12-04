@@ -4,7 +4,7 @@ import type { NDKRelay } from "../relay/index.js";
 import type { NDKUser } from "../user";
 
 export type ENCRYPTION_SCHEMES = "nip04" | "nip44";
-export const DEFAULT_ENCRYPTION_SCHEME: ENCRYPTION_SCHEMES = "nip04";
+export const DEFAULT_ENCRYPTION_SCHEME: ENCRYPTION_SCHEMES = "nip44";
 
 /**
  * Interface for NDK signers.

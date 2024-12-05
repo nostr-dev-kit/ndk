@@ -1,6 +1,5 @@
 import { create } from 'zustand'
 import { NDKEvent, NDKKind, Hexpubkey, NDKList } from '@nostr-dev-kit/ndk'
-import { NDKCashuWallet } from '@nostr-dev-kit/ndk-wallet'
 
 interface SessionState {
     follows: string[] | undefined
@@ -8,17 +7,10 @@ interface SessionState {
     muteList: Set<Hexpubkey>
     events: Map<NDKKind, NDKEvent[]>
 
-    activeCashuWallet: NDKCashuWallet | undefined
-    cashuWalletEvents: Record<string, NDKEvent>
-    cashuWallets: NDKCashuWallet[] | undefined
-    cashuMintListEvent: NDKEvent | undefined
-    
     setFollows: (follows: string[]) => void
     setMuteList: (muteList: NDKEvent) => void
     setEvents: (kind: NDKKind, events: NDKEvent[]) => void
     mutePubkey: (pubkey: Hexpubkey) => void
-
-    addCashuEvent: (event: NDKEvent) => void
 
     addEvent: (kind: NDKKind, event: NDKEvent) => void
 }
@@ -41,11 +33,6 @@ export const useSessionStore = create<SessionState>((set) => ({
         return state;
     }),
 
-    activeCashuWallet: undefined,
-    cashuWalletEvents: {},
-    cashuWallets: [],
-    cashuMintListEvent: undefined,
-    
     events: new Map(),
     setFollows: (follows) => set({ follows }),
     setMuteList: (muteList: NDKEvent) => {
@@ -65,31 +52,21 @@ export const useSessionStore = create<SessionState>((set) => ({
         newEvents.set(kind, events)
         return { events: newEvents }
     }),
-
-    addCashuEvent: (event: NDKEvent) => set((state) => {
-        return state;
-        // if (event.kind === NDKKind.CashuWallet) {
-        //     const isKnown
-            
-        //     if (state.cashuWallets && state.cashuWallets.find((wallet) => wallet.walletId === event.dTag)) {
-        //         return state
-        //     }
-            
-        //     return { cashuWallets: [...(state.cashuWallets || []), event] }
-        // } else if (event.kind === NDKKind.CashuMintList) {
-        //     if (state.cashuMintListEvent && state.cashuMintListEvent.created_at >= event.created_at) {
-        //         return state
-        //     }
-            
-        //     return { cashuMintListEvent: event }
-        // }
-    }),
-
-    setActiveCashuWallet: (wallet: NDKCashuWallet) => set({ activeCashuWallet: wallet }),
-
     addEvent: (kind, event) => set((state) => {
         const newEvents = new Map(state.events)
-        const existing = newEvents.get(kind) || []
+        let existing = newEvents.get(kind) || []
+
+        // safety check for replaceable events
+        if (event.isReplaceable()) {
+            const existingEvent = existing.find((e) => e.dTag === event.dTag)
+            if (existingEvent && existingEvent.created_at >= event.created_at) {
+                return state
+            } else {
+                // remove the existing event
+                existing = existing.filter((e) => e.id !== existingEvent.id)
+            }
+        }
+        
         newEvents.set(kind, [...existing, event])
         return { events: newEvents }
     })

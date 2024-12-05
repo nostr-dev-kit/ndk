@@ -8,8 +8,8 @@ import {
     NDKCacheEntry,
     NDKRelay,
     deserialize,
-    NDKTag,
     NDKEventId,
+    NDKKind,
 } from '@nostr-dev-kit/ndk';
 import { LRUCache } from 'typescript-lru-cache';
 import * as SQLite from 'expo-sqlite';
@@ -134,6 +134,12 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                 this.db.runAsync(`INSERT OR REPLACE INTO event_tags (event_id, tag, value) VALUES (?, ?, ?);`, [event.id, tag[0], tag[1]])
             ),
         ]);
+
+        // if this event is a delete event, see if the deleted events are in the cache and remove them
+        if (event.kind === NDKKind.EventDeletion) {
+            const deletedEventIds = event.tags.filter((tag) => tag[0] === 'e').map((tag) => tag[1]);
+            await this.db.runAsync(`DELETE FROM event_tags WHERE event_id IN (${deletedEventIds.map(() => '?').join(',')});`, deletedEventIds);
+        }
     }
 
     async deleteEvent(event: NDKEvent): Promise<void> {

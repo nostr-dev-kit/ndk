@@ -453,8 +453,9 @@ export class NDKEvent extends EventEmitter {
         }
 
         // If the published event is a delete event, notify the cache if there is one
-        if (this.kind === NDKKind.EventDeletion && this.ndk.cacheAdapter?.deleteEvent) {
-            this.ndk.cacheAdapter.deleteEvent(this);
+        if (this.kind === NDKKind.EventDeletion && this.ndk.cacheAdapter?.deleteEventIds) {
+            const eTags = this.getMatchingTags('e').map((tag) => tag[1]);
+            this.ndk.cacheAdapter.deleteEventIds(eTags);
         }
 
         const rawEvent = this.rawEvent();
@@ -466,6 +467,11 @@ export class NDKEvent extends EventEmitter {
             } catch (e) {
                 console.error("Error adding unpublished event to cache", e);
             }
+        }
+
+        // if this is a delete event, send immediately to the cache
+        if (this.kind === NDKKind.EventDeletion && this.ndk.cacheAdapter?.deleteEventIds) {
+            this.ndk.cacheAdapter.deleteEventIds(this.getMatchingTags('e').map((tag) => tag[1]));
         }
 
         // send to active subscriptions that want this event
@@ -738,7 +744,10 @@ export class NDKEvent extends EventEmitter {
         } as NostrEvent);
         e.tag(this, undefined, true);
         e.tags.push(["k", this.kind!.toString()]);
-        if (publish) await e.publish();
+        if (publish) {
+            this.emit("deleted");
+            await e.publish();
+        }
 
         return e;
     }

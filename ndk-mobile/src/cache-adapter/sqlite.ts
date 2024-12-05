@@ -137,14 +137,13 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
 
         // if this event is a delete event, see if the deleted events are in the cache and remove them
         if (event.kind === NDKKind.EventDeletion) {
-            const deletedEventIds = event.tags.filter((tag) => tag[0] === 'e').map((tag) => tag[1]);
-            await this.db.runAsync(`DELETE FROM event_tags WHERE event_id IN (${deletedEventIds.map(() => '?').join(',')});`, deletedEventIds);
+            this.deleteEventIds(event.tags.filter((tag) => tag[0] === 'e').map((tag) => tag[1]));
         }
     }
 
-    async deleteEvent(event: NDKEvent): Promise<void> {
-        await this.db.runAsync(`DELETE FROM events WHERE id = ?;`, [event.id]);
-        await this.db.runAsync(`DELETE FROM event_tags WHERE event_id = ?;`, [event.id]);
+    async deleteEventIds(eventIds: NDKEventId[]): Promise<void> {
+        await this.db.runAsync(`DELETE FROM events WHERE id IN (${eventIds.map(() => '?').join(',')});`, eventIds);
+        await this.db.runAsync(`DELETE FROM event_tags WHERE event_id IN (${eventIds.map(() => '?').join(',')});`, eventIds);
     }
 
     fetchProfileSync(pubkey: Hexpubkey): NDKCacheEntry<NDKUserProfile> | null {

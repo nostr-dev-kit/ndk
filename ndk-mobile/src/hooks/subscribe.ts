@@ -47,6 +47,7 @@ interface SubscribeStore<T> {
     eose: boolean;
     isSubscribed: boolean;
     addEvent: (event: T) => void;
+    removeEventId: (id: string) => void;
     setEose: () => void;
     clearEvents: () => void;
     setSubscription: (sub: NDKSubscription | undefined) => void;
@@ -107,6 +108,14 @@ const createSubscribeStore = <T extends NDKEvent>(bufferMs: number | false = 16)
                 }
             },
 
+            removeEventId: (id) => {
+                set((state) => {
+                    state.eventMap.delete(id);
+                    const events = Array.from(state.eventMap.values());
+                    return { eventMap: state.eventMap, events };
+                });
+            },
+
             setEose: () => {
                 if (timeout) {
                     clearTimeout(timeout);
@@ -129,8 +138,6 @@ const createSubscribeStore = <T extends NDKEvent>(bufferMs: number | false = 16)
  * @returns {boolean} isSubscribed - Subscription status
  */
 export const useSubscribe = <T extends NDKEvent>({ filters, opts = undefined, relays = undefined }: UseSubscribeParams) => {
-    const ref = useRef(0);
-
     const { ndk } = useNDK();
     const muteList = useSessionStore((state) => state.muteList);
     const store = useMemo(() => createSubscribeStore<T>(opts?.bufferMs), [opts?.bufferMs]);
@@ -189,6 +196,10 @@ export const useSubscribe = <T extends NDKEvent>({ filters, opts = undefined, re
             // If we need to convert the event, we do so
             if (opts?.klass) event = opts.klass.from(event);
 
+            event.once("deleted", () => {
+                storeInstance.removeEventId(id);
+            });
+
             // If conversion failed, we bail
             if (!event) return;
 
@@ -208,7 +219,6 @@ export const useSubscribe = <T extends NDKEvent>({ filters, opts = undefined, re
 
     useEffect(() => {
         if (!filters || filters.length === 0 || !ndk) return;
-        ref.current += 1;
 
         if (storeInstance.subscriptionRef) {
             storeInstance.subscriptionRef.stop();

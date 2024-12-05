@@ -1,6 +1,7 @@
 import { NDKEvent, NDKRelay, deserialize, profileFromEvent } from "@nostr-dev-kit/ndk";
 import type {
     Hexpubkey,
+    NDKEventId,
     NDKCacheAdapter,
     NDKFilter,
     NDKSubscription,
@@ -335,9 +336,9 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         }
     }
 
-    public async deleteEvent(event: NDKEvent): Promise<void> {
-        this.events.delete(event.tagId());
-        await db.events.where({ id: event.tagId() }).delete();
+    public async deleteEventIds(eventIds: NDKEventId[]): Promise<void> {
+        eventIds.forEach((id) => this.events.delete(id));
+        await db.events.where({ id: eventIds }).delete();
     }
 
     public addUnpublishedEvent = addUnpublishedEvent.bind(this);

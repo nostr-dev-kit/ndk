@@ -12,8 +12,8 @@ import { NDKWallet, NDKWalletBalance, NDKWalletEvents, NDKWalletStatus } from ".
 import { NDKLnPay } from "./pay";
 
 export class NDKWebLNWallet extends EventEmitter<NDKWalletEvents> implements NDKWallet {
-    readonly type = "ln";
-    readonly walletId = "ln";
+    readonly type = "webln";
+    readonly walletId = "webln";
     public status: NDKWalletStatus = NDKWalletStatus.INITIAL;
     public provider?: WebLNProvider;
 

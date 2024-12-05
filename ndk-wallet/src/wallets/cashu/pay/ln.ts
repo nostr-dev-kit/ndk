@@ -118,8 +118,8 @@ async function executePayment(
     const mintProofs = wallet.proofsForMint(mint);
 
     // Add up the amounts of the proofs
-    const amountToSend = mintProofs.reduce((acc, proof) => acc + proof.amount, 0);
-    if (amountToSend < amount) return null;
+    const amountAvailable = mintProofs.reduce((acc, proof) => acc + proof.amount, 0);
+    if (amountAvailable < amount) return null;
 
     try {
         const meltQuote = await _wallet.createMeltQuote(pr);

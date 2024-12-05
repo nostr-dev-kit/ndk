@@ -2,7 +2,6 @@ import { EventEmitter } from "tseep";
 import { NDKWalletBalance, NDKWalletEvents, NDKWalletStatus, type NDKWallet } from "../index.js";
 import NDK, { NDKPool, LnPaymentInfo, NDKPaymentConfirmationCashu, NDKPaymentConfirmationLN, NDKRelaySet, NDKUser, NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
 import { NutPayment } from "../cashu/pay/nut.js";
-import { hexToBytes } from "@noble/hashes/utils";
 import { sendReq } from "./req.js";
 import createDebug from "debug";
 import { NDKNWCGetInfoResult, NDKNWCRequestMap, NDKNWCResponseBase, NDKNWCResponseMap } from "./types.js";
@@ -43,9 +42,7 @@ export class NDKNWCWallet extends EventEmitter<NDKWalletEvents> implements NDKWa
         d('connected to pool', this.pool.connectedRelays());
         
         // Initialize signer
-        this.signer = new NDKPrivateKeySigner(
-            typeof secret === 'string' ? hexToBytes(secret) : secret
-        );
+        this.signer = new NDKPrivateKeySigner(secret);
         
         this._status = NDKWalletStatus.READY;
         this.emit('ready');

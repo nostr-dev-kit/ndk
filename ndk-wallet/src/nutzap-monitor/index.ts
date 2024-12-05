@@ -4,10 +4,12 @@ import NDK, {
     type NDKEventId,
     NDKKind,
     NDKNutzap,
+    NDKPrivateKeySigner,
     NDKRelaySet,
     NDKSubscription,
     NDKSubscriptionCacheUsage,
     NDKUser,
+    normalizeUrl,
 } from "@nostr-dev-kit/ndk";
 import { EventEmitter } from "tseep";
 import createDebug from "debug";
@@ -55,6 +57,7 @@ export class NDKNutzapMonitor extends EventEmitter<{
      * that is needed to redeem the nutzap.
      */
     private walletByP2pk = new Map<string, NDKCashuWallet>();
+    private allWallets: NDKCashuWallet[] = [];
 
     addWallet(wallet: NDKCashuWallet) {
         const p2pk = wallet.p2pk;
@@ -62,6 +65,8 @@ export class NDKNutzapMonitor extends EventEmitter<{
             d("adding wallet with p2pk %o", p2pk);
             this.walletByP2pk.set(p2pk, wallet);
         }
+
+        this.allWallets.push(wallet);
     }
 
     constructor(ndk: NDK, user: NDKUser, relaySet?: NDKRelaySet) {
@@ -163,13 +168,35 @@ export class NDKNutzapMonitor extends EventEmitter<{
         try {
             const { proofs, mint } = nutzap;
             d('nutzap has %d proofs: %o', proofs.length, proofs);
-            const wallet = this.findWalletForNutzap(nutzap);
-            if (!wallet) {
-                const p2pk = nutzap.p2pk;
-                throw new Error(
-                    "wallet not found for nutzap (p2pk: " + p2pk + ") " + nutzap.content
-                );
+
+            let privkey: string | undefined;
+            let wallet: NDKCashuWallet | undefined;
+
+            if (nutzap.p2pk) {
+                wallet = this.findWalletForNutzap(nutzap);
+
+                if (!wallet) {
+                    // if nutzap is p2pk to the active user, check if we have the private key
+                    if (nutzap.p2pk === this.user.pubkey) {
+                        if (this.ndk.signer instanceof NDKPrivateKeySigner)
+                            privkey = (this.ndk.signer as NDKPrivateKeySigner).privateKey;
+                        else {
+                            throw new Error("nutzap p2pk to the active user directly and we don't have access to the private key");
+                        }
+                    }
+
+                    // find the wallet that has one of these mints
+                    const normalizedMint = normalizeUrl(mint);
+                    wallet = this.allWallets.find(w => w.mints
+                        .map(normalizeUrl)
+                        .includes(normalizedMint));
+
+                    if (!wallet) throw new Error("wallet not found for nutzap (mint: " + normalizedMint + ")");
+                }
             }
+
+            if (!wallet) throw new Error("wallet not found for nutzap");
+            privkey = wallet.privkey;
 
             const _wallet = await wallet.walletForMint(mint);
 
@@ -179,7 +206,7 @@ export class NDKNutzapMonitor extends EventEmitter<{
                     mint,
                 },
                     {
-                        privkey: wallet.privkey,
+                        privkey,
                         proofsWeHave: wallet.proofsForMint(mint),
                     }
                 );

@@ -69,9 +69,7 @@ export class NDKCashuPay {
         }
     }
 
-    public async payNut() {
-        return createTokenForPayment.call(this);
-    }
+    public payNut = createTokenForPayment.bind(this);
 
     public payLn = payLn.bind(this);
 }

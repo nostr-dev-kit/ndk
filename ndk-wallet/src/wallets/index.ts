@@ -9,6 +9,8 @@ import {
 import { EventEmitter } from "tseep";
 import { NutPayment } from "./cashu/pay/nut";
 
+export type NDKWalletTypes = 'nwc' | 'nip-60' | 'webln';
+
 export enum NDKWalletStatus {
     INITIAL = "initial",
 
@@ -48,7 +50,7 @@ export interface NDKWallet
         balance_updated: (balance?: NDKWalletBalance) => void;
     }> {
     get status(): NDKWalletStatus;
-    get type(): string;
+    get type(): NDKWalletTypes;
 
     /**
      * An ID of this wallet
@@ -75,7 +77,7 @@ export interface NDKWallet
     ): void;
 
     /**
-     * Fetch the balance of this wallet
+     * Force-fetch the balance of this wallet
      */
     updateBalance?(): Promise<void>;
 

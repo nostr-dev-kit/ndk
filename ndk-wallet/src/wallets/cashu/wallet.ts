@@ -116,6 +116,8 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
      */
     static create(ndk: NDK, mints: string[] = [], relayUrls: string[] = []) {
         const wallet = new NDKCashuWallet(ndk);
+        wallet.mints = mints;
+        wallet.relays = relayUrls;
         return wallet;
     }
 
@@ -187,7 +189,12 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
             await decrypt(wallet.event);
             wallet.privateTags = JSON.parse(wallet.event.content);
         } catch (e) {
-            throw e;
+            // see if perhaps this has already been decrypted
+            try {
+                wallet.privateTags = JSON.parse(wallet.event.content);
+            } catch (e) {
+                throw e;
+            }
         }
         wallet.event.content ??= prevContent;
 
@@ -224,9 +231,11 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
         this.sub = this.ndk.subscribe(filters, opts, this.relaySet, false);
         
         this.sub.on("event", eventHandler.bind(this));
-        // this.sub.on("eose", tokensSubEose.bind(this));
+        // this.sub.on("eose");
         this.sub.start();
     }
+
+
 
     stop() {
         this.sub?.stop();
@@ -303,16 +312,22 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
     }
 
     /**
-     * Returns the p2pk of this wallet
+     * Returns the p2pk of this wallet or generates a new one if we don't have one
      */
     async getP2pk(): Promise<string | undefined> {
         if (this.p2pk) return this.p2pk;
+
+        let signer: NDKPrivateKeySigner;
         if (this.privkey) {
-            const signer = new NDKPrivateKeySigner(this.privkey);
-            const user = await signer.user();
-            this.p2pk = user.pubkey;
-            return this.p2pk;
+            signer = new NDKPrivateKeySigner(this.privkey);
+        } else {
+            signer = NDKPrivateKeySigner.generate();
+            this.privkey = signer.privateKey;
         }
+
+        const user = await signer.user();
+        this.p2pk = user.pubkey;
+        return this.p2pk;
     }
 
     /**

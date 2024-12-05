@@ -60,6 +60,7 @@ export default withMermaid(defineConfig({
         items: [
           { text: 'Introduction', link: '/mobile/index' },
           { text: 'Session', link: '/mobile/session' },
+          { text: 'Wallet', link: '/mobile/wallet' },
         ]
       },
       {

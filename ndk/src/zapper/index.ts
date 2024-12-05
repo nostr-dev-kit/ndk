@@ -270,6 +270,7 @@ class NDKZapper extends EventEmitter<{
             nutzap.tags = [...nutzap.tags, ...(this.tags || [])];
             nutzap.proofs = proofs;
             nutzap.mint = mint;
+            nutzap.target = this.target;
             nutzap.comment = this.comment;
             nutzap.unit = this.unit;
             nutzap.recipientPubkey = split.pubkey;

@@ -673,21 +673,24 @@ export class NDKEvent extends EventEmitter {
         }
 
         // Add the relay url to all tags
-        if (this.relay?.url) {
-            tags = tags.map((tag) => {
-                tag.push(this.relay?.url!);
-                return tag;
-            });
-        } else if (marker) {
-            tags = tags.map((tag) => {
-                tag.push("");
-                return tag;
-            });
-        }
+        tags = tags.map((tag) => {
+            if (tag[0] === "e" || marker) {
+                tag.push(this.relay?.url ?? "");
+            } else if (this.relay?.url) {
+                tag.push(this.relay?.url);
+            }
+            return tag;
+        });
 
-        if (marker) {
-            tags.forEach((tag) => tag.push(marker)); // Add the marker to both "a" and "e" tags
-        }
+        // add marker and pubkey to e tags, and marker to a tags
+        tags.forEach((tag) => {
+            if (tag[0] === "e") {
+                tag.push(marker ?? "");
+                tag.push(this.pubkey);
+            } else if (marker) {
+                tag.push(marker);
+            }
+        });
 
         // NIP-29 h-tags
         tags = [...tags, ...this.getMatchingTags("h")];

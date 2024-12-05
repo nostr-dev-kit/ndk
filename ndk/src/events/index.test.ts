@@ -28,9 +28,9 @@ describe("NDKEvent", () => {
 
     describe("publish", () => {
         it("stores the relays where the event was successfully published to", async () => {
-            const relay1 = new NDKRelay("wss://relay1.nos.dev");
-            const relay2 = new NDKRelay("wss://relay2.nos.dev");
-            const relay3 = new NDKRelay("wss://relay3.nos.dev");
+            const relay1 = new NDKRelay("wss://relay1.nos.dev", undefined, ndk);
+            const relay2 = new NDKRelay("wss://relay2.nos.dev", undefined, ndk);
+            const relay3 = new NDKRelay("wss://relay3.nos.dev", undefined, ndk);
             const relaySet = new NDKRelaySet(new Set([relay1, relay2, relay3]), ndk);
             relaySet.publish = jest.fn().mockResolvedValue(new Set([relay1, relay2]));
 
@@ -92,7 +92,7 @@ describe("NDKEvent", () => {
             otherEvent.author = user1;
 
             event.tag(otherEvent);
-            expect(event.tags).toEqual([["e", otherEvent.id]]);
+            expect(event.tags).toEqual([["e", otherEvent.id, "", "", otherEvent.pubkey]]);
         });
 
         it("tags an event with a marker", () => {
@@ -102,7 +102,7 @@ describe("NDKEvent", () => {
             } as NostrEvent);
             otherEvent.author = user1;
             event.tag(otherEvent, "marker");
-            expect(event.tags).toEqual([["e", otherEvent.id, "", "marker"]]);
+            expect(event.tags).toEqual([["e", otherEvent.id, "", "marker", otherEvent.pubkey]]);
         });
 
         it("tags an event author when it's different from the signing user", () => {
@@ -110,7 +110,7 @@ describe("NDKEvent", () => {
             otherEvent.author = user2;
             event.tag(otherEvent);
             expect(event.tags).toEqual([
-                ["e", otherEvent.id],
+                ["e", otherEvent.id, "", "", otherEvent.pubkey],
                 ["p", user2.pubkey],
             ]);
         });
@@ -119,7 +119,7 @@ describe("NDKEvent", () => {
             const otherEvent = new NDKEvent(ndk, { kind: 1, id: "abc" } as NostrEvent);
             otherEvent.author = user1;
             event.tag(otherEvent);
-            expect(event.tags).toEqual([["e", otherEvent.id]]);
+            expect(event.tags).toEqual([["e", otherEvent.id, "", "", otherEvent.pubkey]]);
         });
 
         it("does not re-tag the same user", () => {
@@ -130,9 +130,9 @@ describe("NDKEvent", () => {
             event.tag(otherEvent);
             event.tag(otherEvent2);
             expect(event.tags).toEqual([
-                ["e", otherEvent.id],
+                ["e", otherEvent.id, "", "", otherEvent.pubkey],
                 ["p", user2.pubkey],
-                ["e", otherEvent2.id],
+                ["e", otherEvent2.id, "", "", otherEvent2.pubkey],
             ]);
         });
     });
@@ -223,11 +223,11 @@ describe("NDKEvent", () => {
 
             expect(event1.referenceTags()).toEqual([
                 ["a", "30000:pubkey:d-code"],
-                ["e", "eventid1"],
+                ["e", "eventid1", "", "", "pubkey"],
                 ["p", "pubkey"],
             ]);
             expect(event2.referenceTags()).toEqual([
-                ["e", "eventid2"],
+                ["e", "eventid2", "", "", "pubkey"],
                 ["p", "pubkey"],
             ]);
         });
@@ -248,17 +248,17 @@ describe("NDKEvent", () => {
 
             expect(nip33event.referenceTags("marker")).toEqual([
                 ["a", "30000:pubkey:d-code", "", "marker"],
-                ["e", "eventid1", "", "marker"],
+                ["e", "eventid1", "", "marker", "pubkey"],
                 ["p", "pubkey"],
             ]);
             expect(event.referenceTags("marker")).toEqual([
-                ["e", "eventid2", "", "marker"],
+                ["e", "eventid2", "", "marker", "pubkey"],
                 ["p", "pubkey"],
             ]);
         });
 
         it("adds a marker to the reference tag if provided with relay if its set", () => {
-            const relay = new NDKRelay("wss://relay.nos.dev/");
+            const relay = new NDKRelay("wss://relay.nos.dev/", undefined, ndk);
             const nip33event = new NDKEvent(ndk, {
                 kind: 30000,
                 pubkey: "pubkey",
@@ -275,11 +275,11 @@ describe("NDKEvent", () => {
 
             expect(nip33event.referenceTags("marker")).toEqual([
                 ["a", "30000:pubkey:d-code", "wss://relay.nos.dev/", "marker"],
-                ["e", "eventid1", "wss://relay.nos.dev/", "marker"],
+                ["e", "eventid1", "wss://relay.nos.dev/", "marker", "pubkey"],
                 ["p", "pubkey"],
             ]);
             expect(event.referenceTags("marker")).toEqual([
-                ["e", "eventid2", "", "marker"],
+                ["e", "eventid2", "", "marker", "pubkey"],
                 ["p", "pubkey"],
             ]);
         });
@@ -293,7 +293,7 @@ describe("NDKEvent", () => {
             } as NostrEvent);
 
             expect(event.referenceTags()).toEqual([
-                ["e", "eventid"],
+                ["e", "eventid", "", "", "pubkey"],
                 ["h", "group-id"],
                 ["p", "pubkey"],
             ]);

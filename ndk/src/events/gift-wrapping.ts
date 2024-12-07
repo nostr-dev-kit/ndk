@@ -4,6 +4,7 @@ import { VerifiedEvent, getEventHash, verifiedSymbol } from "nostr-tools";
 import { EncryptionNip } from "./encryption.js";
 import { NDKUser } from "../user/index.js";
 import { NDKSigner } from "../signers/index.js";
+import { NDKKind } from "./kinds/index.js";
 
 // NIP 59 - adapted from Coracle
 
@@ -40,10 +41,10 @@ export async function giftWrap(this:NDKEvent, recipient: NDKUser, signer?:NDKSig
 }
 
 /**
- * Instantiate a new (Nip59 un-wrapped rumor) NDKEvent from any gift wrapped NDKevent
+ * Instantiate a new (Nip59 un-wrapped rumor) NDKEvent from any gift wrapped NDKEvent
  * @param this 
  */
-export async function giftUnwrap(this:NDKEvent, sender?:NDKUser, signer?:NDKSigner, nip:EncryptionNip = 'nip44') : Promise<NDKEvent | null>{
+export async function giftUnwrap(this:NDKEvent, sender?:NDKUser, signer?:NDKSigner, nip:EncryptionNip = 'nip44'): Promise<NDKEvent> {
     sender = sender || new NDKUser({pubkey:this.pubkey})
     if(!signer){
         if(!this.ndk) 
@@ -53,7 +54,6 @@ export async function giftUnwrap(this:NDKEvent, sender?:NDKUser, signer?:NDKSign
     if(!signer) 
         throw new Error('no signer')
     try {
-
       const seal = JSON.parse(await signer.decrypt(sender, this.content, nip)) as NostrEvent;
       if (!seal) throw new Error("Failed to decrypt wrapper")
 
@@ -63,28 +63,28 @@ export async function giftUnwrap(this:NDKEvent, sender?:NDKUser, signer?:NDKSign
 
       if (seal.pubkey === rumor.pubkey) {
         return new NDKEvent(this.ndk, rumor as NostrEvent)
+      } else {
+        return Promise.reject("Invalid GiftWrap, sender validation failed!");
       }
     } catch (e) {
-        console.log(e)
+        console.log(e);
+        return Promise.reject("Got error unwrapping event! See console log.");
     }
-    return null
   }
 
-
-
-function getRumorEvent(event:NDKEvent, kind?:number):NDKEvent{
+function getRumorEvent(event:NDKEvent, kind?:number): NostrEvent{
     let rumor = event.rawEvent();
-    rumor.kind = kind || rumor.kind  || 1;
+    rumor.kind = kind || rumor.kind  || NDKKind.PrivateDirectMessage;
     rumor.sig = undefined;
     rumor.id = getEventHash(rumor as any);
-    return new NDKEvent(event.ndk, rumor)
+    return rumor;
 }
 
-async function getSealEvent(rumor : NDKEvent, recipient : NDKUser, signer:NDKSigner, nip:EncryptionNip = 'nip44') : Promise<VerifiedEvent>{
+async function getSealEvent(rumor : NostrEvent, recipient : NDKUser, signer:NDKSigner, nip:EncryptionNip = 'nip44'): Promise<VerifiedEvent>{
     const content = await signer.encrypt(recipient, JSON.stringify(rumor), nip);
     let seal : any = {
-        kind: 13,
-        created_at: aproximateNow(5),
+        kind: NDKKind.GiftWrapSeal,
+        created_at: approximateNow(5),
         tags: [],
         content ,
         pubkey : rumor.pubkey
@@ -95,13 +95,13 @@ async function getSealEvent(rumor : NDKEvent, recipient : NDKUser, signer:NDKSig
     return seal;
 }
   
-async function getWrapEvent(sealed:VerifiedEvent, recipient:NDKUser, params? : GiftWrapParams) : Promise<VerifiedEvent>{
+async function getWrapEvent(sealed:VerifiedEvent, recipient:NDKUser, params? : GiftWrapParams): Promise<VerifiedEvent>{
     const signer = NDKPrivateKeySigner.generate();
     const content = await signer.encrypt(recipient, JSON.stringify(sealed), params?.encryptionNip || 'nip44')
     const pubkey = (await signer.user()).pubkey
     let wrap : any = {
-        kind : params?.wrapKind || 1059,
-        created_at: aproximateNow(5),
+        kind : params?.wrapKind || NDKKind.GiftWrap,
+        created_at: approximateNow(5),
         tags: (params?.wrapTags || []).concat([["p", recipient.pubkey]]),
         content,
         pubkey,
@@ -112,6 +112,6 @@ async function getWrapEvent(sealed:VerifiedEvent, recipient:NDKUser, params? : G
     return wrap;
 }
 
-function aproximateNow(drift = 0){
+function approximateNow(drift = 0){
     return Math.round(Date.now() / 1000 - Math.random() * Math.pow(10, drift))
 }

@@ -315,6 +315,27 @@ export class NDKEvent extends EventEmitter {
     public giftUnwrap = giftUnwrap.bind(this);
 
     /**
+     * Shorthand method for Nip-17 Private Direct Messages encryption using Nip-44 and Nip-29 gift wraps.
+     * 
+     * @param recipient user which receives the message
+     * @param signer optional signer to use for decryption of the events, only needed to overwrite the event's ndk signer
+     * @returns Promise containing the encrypted event if successful, otherwise an error
+     */
+    public async encryptNip17(recipient: NDKUser, signer?: NDKSigner): Promise<NDKEvent> {
+        return this.giftWrap(recipient, signer);
+    }
+
+    /**
+     * Shorthand method for Nip-17 Private Direct Messages decryption using Nip-44 and Nip-29 gift wraps.
+     * 
+     * @param signer optional signer to use for decryption of the events, only needed to overwrite the event's ndk signer
+     * @returns Promise containing the decrypted event if successful, otherwise an error
+     */
+    public async decryptNip17(signer?: NDKSigner): Promise<NDKEvent> {
+        return this.giftUnwrap(this.author, signer);
+    }
+
+    /**
      * Get all tags with the given name
      * @param tagName {string} The name of the tag to search for
      * @returns {NDKTag[]} An array of the matching tags

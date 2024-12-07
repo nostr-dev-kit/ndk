@@ -178,6 +178,14 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         return user as NDKUserProfile | null;
     }
 
+    public fetchProfileSync(pubkey: Hexpubkey) {
+        if (!this.profiles) return null;
+
+        let user = this.profiles.get(pubkey);
+
+        return user as NDKUserProfile | null;
+    }
+
     public async getProfiles(
         fn: (pubkey: Hexpubkey, profile: NDKUserProfile) => boolean
     ): Promise<Map<Hexpubkey, NDKUserProfile> | undefined> {

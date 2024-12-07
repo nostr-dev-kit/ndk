@@ -31,6 +31,17 @@
         "vitepress-plugin-mermaid": "^2.0.17"
     },
     "packageManager": "pnpm@8.15.6",
+    "workspaces": [
+        "apps/*",
+        "packages/*",
+        "ndk",
+        "ndk-cache-dexie",
+        "ndk-cache-redis", 
+        "ndk-cache-nostr",
+        "ndk-svelte",
+        "ndk-svelte-components",
+        "ndk-wallet"
+    ],
     "engines": {
         "node": ">=16.0"
     }

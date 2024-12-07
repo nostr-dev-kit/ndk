@@ -5,13 +5,25 @@
     "main": "./dist/index.js",
     "module": "./dist/index.mjs",
     "exports": {
-        "import": {
-            "types": "./dist/index.d.mts",
-            "default": "./dist/index.mjs"
+        ".": {
+            "import": {
+                "types": "./dist/index.d.mts",
+                "default": "./dist/index.mjs"
+            },
+            "require": {
+                "types": "./dist/index.d.ts",
+                "default": "./dist/index.js"
+            }
         },
-        "require": {
-            "types": "./dist/index.d.ts",
-            "default": "./dist/index.js"
+        "./svelte5": {
+            "import": {
+                "types": "./dist/index.svelte.d.mts",
+                "default": "./dist/index.svelte.js"
+            },
+            "require": {
+                "types": "./dist/index.svelte.d.ts",
+                "default": "./dist/index.svelte.js"
+            }
         }
     },
     "files": [
@@ -19,10 +31,11 @@
         "README.md"
     ],
     "scripts": {
-        "build": "tsup src/index.ts --format cjs,esm --dts",
+        "build": "tsup src/index.ts src/index.svelte.ts --format cjs,esm --dts",
         "dev": "tsup --watch src src/index.ts --format cjs,esm --dts",
         "lint": "prettier --check . && eslint .",
-        "format": "prettier --write ."
+        "format": "prettier --write .",
+        "postbuild": "mv dist/index.svelte.mjs dist/index.svelte.js; mv dist/index.svelte.d.mts dist/index.svelte.d.ts"
     },
     "keywords": [
         "nostr",
@@ -33,12 +46,15 @@
     "author": "pablof7z",
     "license": "MIT",
     "dependencies": {
-        "@nostr-dev-kit/ndk": "workspace:*",
-        "svelte": "^4.2.1"
+        "@nostr-dev-kit/ndk": "workspace:*"
+    },
+    "peerDependencies": {
+        "svelte": "*"
     },
     "devDependencies": {
         "@nostr-dev-kit/eslint-config-custom": "workspace:*",
         "@nostr-dev-kit/tsconfig": "workspace:*",
+        "svelte": "5.0.0-next.272",
         "tsup": "^7.2.0"
     }
 }

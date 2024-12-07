@@ -7,15 +7,17 @@ import { NDKUser } from "../user";
 import { NDKRelaySet } from "../relay/sets";
 import { NDKPrivateKeySigner } from "../signers/private-key";
 import { NIP73EntityType } from "./nip73";
+import { NDKSigner } from "../signers";
+import { NDKKind } from "./kinds";
+
+const ndk = new NDK();
 
 describe("NDKEvent", () => {
-    let ndk: NDK;
     let event: NDKEvent;
     let user1: NDKUser;
     let user2: NDKUser;
 
     beforeEach(() => {
-        ndk = new NDK();
         user1 = new NDKUser({
             npub: "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft",
         });
@@ -433,4 +435,133 @@ describe("NDKEvent", () => {
             }).toThrow("Unsupported NIP-73 entity type: unsupported");
         });
     });
+
+    fdescribe("reply", () => {
+        const signers = [0,1,2].map(i => NDKPrivateKeySigner.generate());
+        let users: NDKUser[];
+
+        beforeEach(async () => {
+            users = await Promise.all(signers.map(s => s.user()));
+        });
+
+        const sign = async (event: Partial<NostrEvent>, signer = signers[0]) => {
+            const e = new NDKEvent(ndk, event as NostrEvent);
+            await e.sign(signer);
+            return e;
+        };
+
+        const reply = async (event: NDKEvent, signer: NDKSigner) => {
+            const reply = event.reply();
+            await reply.sign(signer);
+            return reply;
+        }
+
+        describe("replies to kind:1 events", () => {
+            it("creates a reply using a kind 1 event", async () => {
+                const op = await sign({ kind: 1 });
+                const reply = op.reply();
+                expect(reply.kind).toBe(1);
+            });
+                
+            it('carries over the root event of the OP', async () => {
+                const root = await sign({ kind: 1 });
+                const reply1 = await reply(root, signers[1]);
+                const reply2 = reply1.reply();
+                
+                expect(reply2.tags).toContainEqual(['e', root.id, '', 'root', root.pubkey]);
+                expect(reply2.tags).toContainEqual(['p', root.pubkey]);
+            });
+
+            it('adds a root marker for root events', async () => {
+                const op = await sign({ kind: 1 });
+                const reply = op.reply();
+                expect(reply.tags).toContainEqual(['e', op.id, '', 'root', op.pubkey]);
+                expect(reply.tags).toContainEqual(['p', op.pubkey]);
+            });
+
+            it('adds a reply marker for non-root events', async () => {
+                const op = await sign({ kind: 1 });
+                const reply1 = await reply(op, signers[1]);
+                const reply2 = reply1.reply();
+                expect(reply2.tags).toContainEqual(['e', reply1.id, '', 'reply', reply1.pubkey]);
+                expect(reply2.tags).toContainEqual(['p', reply1.pubkey]);
+            });
+        });
+    
+        describe("replies to other kinds", () => {
+            let root: NDKEvent;
+            beforeAll(async () => {
+                root = await sign({ kind: 30023 });
+            });
+            
+            it("creates a reply using a kind 1111 event", async () => {
+                const reply1 = await reply(root, signers[1]);
+                expect(reply1.kind).toBe(NDKKind.GenericReply);
+            });
+
+            it("tags the root event or scope using an appropriate uppercase tag (e.g., 'A', 'E', 'I')", async () => {
+                const reply1 = await reply(root, signers[1]);
+                expect(reply1.tags).toContainEqual(['A', root.tagId(), ""]);
+            });
+
+            it("tags the root event with an 'a' for addressable events when it's a top level reply", async () => {
+                const root = await sign({ kind: 30023 });
+                const reply1 = root.reply();
+                expect(reply1.tags).toContainEqual(['A', root.tagId(), ""]);
+                expect(reply1.tags).toContainEqual(['a', root.tagId(), ""]);
+            });
+
+            it("p-tags the author of the root event", async () => {
+                const root = await sign({ kind: 30023 });
+                const reply1 = root.reply();
+                expect(reply1.tags).toContainEqual(['p', root.pubkey]);
+            });
+
+            it('p-tags the author of the reply event', async () => {
+                const root = await sign({ kind: 30023 });
+                const reply1 = await reply(root, signers[1]);
+                const reply2 = reply1.reply();
+                expect(reply2.tags).toContainEqual(['p', reply1.pubkey]);
+            });
+
+            it("p-tags the author of the root event only once when it's the root reply", async () => {
+                const root = await sign({ kind: 30023 });
+                const reply1 = root.reply();
+                expect(reply1.tags).toContainEqual(['p', root.pubkey]);
+                expect(reply1.tags.filter(t => t[0] === 'p')).toHaveLength(1);
+            });
+
+            it('p-tags the author of the root and reply events', async () => {
+                const reply1 = await reply(root, signers[1]);
+                const reply2 = reply1.reply();
+                expect(reply2.tags).toContainEqual(['p', root.pubkey]);
+                expect(reply2.tags).toContainEqual(['p', reply1.pubkey]);
+            });
+
+            it("tags the root event or scope using an appropriate uppercase tag with the pubkey when it's an E tag", async () => {
+                const root = await sign({ kind: 20 }, signers[0]);
+                const reply1 = await reply(root, signers[1]);
+                expect(reply1.tags).toContainEqual(['E', root.tagId(), "", root.pubkey]);
+            });
+
+            it("tags the parent item using an appropriate lowercase tag (e.g., 'a', 'e', 'i')", async () => {
+                const reply1 = await reply(root, signers[1]);
+                const reply2 = reply1.reply();
+                expect(reply2.tags).toContainEqual(['A', root.tagId(), ""]);
+                expect(reply2.tags).toContainEqual(['e', reply1.tagId(), "", reply1.pubkey]);
+            });
+
+            it("adds a 'K' tag to specify the root kind", async () => {
+                const reply1 = await reply(root, signers[1]);
+                expect(reply1.tags).toContainEqual(['K', root.kind!.toString()]);
+            });
+
+            it("adds a 'k' tag to specify the parent kind", async () => {
+                const reply1 = await reply(root, signers[1]);
+                const reply2 = reply1.reply();
+                expect(reply2.tags).toContainEqual(['k', reply1.kind!.toString()]);
+            });
+        });
+    });
+    
 });

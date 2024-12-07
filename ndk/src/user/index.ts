@@ -387,8 +387,26 @@ export class NDKUser {
 
     /**
      * Returns a set of users that this user follows.
+     * 
+     * @deprecated Use followSet instead
      */
     public follows = follows.bind(this);
+
+    /**
+     * Returns a set of pubkeys that this user follows.
+     * 
+     * @param opts - NDKSubscriptionOptions
+     * @param outbox - boolean
+     * @param kind - number
+     */
+    public async followSet(
+        opts?: NDKSubscriptionOptions,
+        outbox?: boolean,
+        kind: number = NDKKind.Contacts
+    ): Promise<Set<Hexpubkey>> {
+        const follows = await this.follows(opts, outbox, kind);
+        return new Set(Array.from(follows).map((f) => f.pubkey));
+    }
 
     /** @deprecated Use referenceTags instead. */
     /**

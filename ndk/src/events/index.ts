@@ -645,8 +645,10 @@ export class NDKEvent extends EventEmitter {
             tag.push("");
         }
 
-        if (marker) {
-            tag.push(marker);
+        tag.push(marker ?? "");
+
+        if (!this.isParamReplaceable()) {
+            tag.push(this.pubkey);
         }
 
         return tag;
@@ -826,5 +828,59 @@ export class NDKEvent extends EventEmitter {
      */
     get isValid(): boolean {
         return this.validate();
+    }
+
+    public reply(): NDKEvent {
+        const reply = new NDKEvent(this.ndk);
+
+        if (this.kind === 1) {
+            reply.kind = 1;
+            const opHasETag = this.hasTag("e");
+
+            if (opHasETag) {
+                reply.tags = [
+                    ...reply.tags,
+                    ...this.getMatchingTags("e"),
+                    ...this.getMatchingTags("p"),
+                    ...this.getMatchingTags("a"),
+                    ...this.referenceTags("reply")
+                ];
+            } else {
+                reply.tag(this, "root");
+            }
+        } else {
+            reply.kind = NDKKind.GenericReply;
+
+            const carryOverTags = ["A", "E", "I"];
+            const rootTag = this.tags.find((tag) => carryOverTags.includes(tag[0]));
+            
+            // we have a root tag already
+            if (rootTag) {
+                const rootKind = this.tagValue("K");
+                reply.tags.push(rootTag);
+                if (rootKind) reply.tags.push(["K", rootKind]);
+
+                reply.tags.push(["k", this.kind!.toString()]);
+
+                const [ type, id, _, ...extra] = this.tagReference();
+                const tag = [type, id, ...extra];
+                reply.tags.push(tag);
+            } else {
+                const [ type, id, _, relayHint] = this.tagReference();
+                const tag = [type, id, relayHint ?? ""];
+                if (type === "e") tag.push(this.pubkey);
+                reply.tags.push(tag);
+                const uppercaseTag = [...tag];
+                uppercaseTag[0] = uppercaseTag[0].toUpperCase();
+                reply.tags.push(uppercaseTag);
+                reply.tags.push(["K", this.kind!.toString()])
+            }
+
+            // carry over all p tags
+            reply.tags.push(...this.getMatchingTags("p"));
+            reply.tags.push(["p", this.pubkey]);
+        }
+
+        return reply;
     }
 }

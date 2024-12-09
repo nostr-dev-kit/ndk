@@ -157,7 +157,7 @@ describe("NDKRelaySubscription", () => {
         const closeSpy = jest.spyOn(ndkRelaySubscription as any, "close");
         sub.stop();
         expect(closeSpy).not.toHaveBeenCalled();
-        ndkRelaySubscription.oneose(ndkRelaySubscription.subId)
+        ndkRelaySubscription.oneose(ndkRelaySubscription.subId);
         expect(closeSpy).toHaveBeenCalled();
     });
 });

@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/ndk",
-    "version": "2.10.4",
+    "version": "2.10.7",
     "description": "NDK - Nostr Development Kit",
     "homepage": "https://ndk.fyi",
     "documentation": "https://github.com/nostr-dev-kit/ndk/blob/master/docs/modules.md",
@@ -33,7 +33,7 @@
     ],
     "scripts": {
         "dev": "pnpm build --watch",
-        "build": "tsup src/index.ts --format cjs,esm --dts; tsup src/workers/sig-verification.ts --format cjs,esm --dts -d dist/workers",
+        "build": "tsup src/index.ts --format cjs,esm --dts && tsup src/workers/sig-verification.ts --format cjs,esm --dts -d dist/workers",
         "build:core:esm": "tsup src/index.ts --format esm --dts",
         "clean": "rm -rf dist docs",
         "test": "jest",

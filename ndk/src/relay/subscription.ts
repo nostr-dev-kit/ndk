@@ -85,7 +85,7 @@ export class NDKRelaySubscription {
      */
     public executeFilters?: NDKFilter[];
 
-    readonly id =  Math.random().toString(36).substring(7);
+    readonly id = Math.random().toString(36).substring(7);
 
     /**
      *
@@ -137,7 +137,10 @@ export class NDKRelaySubscription {
                 // the subscription was already running when this new NDKSubscription came
                 // so we might have some events this new NDKSubscription wants
                 // this.catchUpSubscription(subscription, filters);
-                console.log("BUG: This should not happen: This subscription needs to catch up with a subscription that was already running", filters)
+                console.log(
+                    "BUG: This should not happen: This subscription needs to catch up with a subscription that was already running",
+                    filters
+                );
                 break;
             case NDKRelaySubscriptionStatus.PENDING:
                 // this subscription is already scheduled to be executed
@@ -166,7 +169,7 @@ export class NDKRelaySubscription {
             // if we haven't received an EOSE yet, don't close, relays don't like that
             // rather, when we EOSE and we have 0 items we will close there.
             if (!this.eosed) return;
-            
+
             // no more items, close the subscription
             this.close();
         }
@@ -216,10 +219,10 @@ export class NDKRelaySubscription {
         // if the subscription is adding a limit filter we want to make sure
         // we are not adding too many, since limit filters concatenate filters instead of merging them
         // (as merging them would change the meaning)
-        if (subscription.filters.find(filter => !!filter.limit)) {
+        if (subscription.filters.find((filter) => !!filter.limit)) {
             // compile the filter
             this.executeFilters = this.compileFilters();
-            
+
             // if we have 10 filters, we execute immediately, as most relays don't want more than 10
             if (this.executeFilters.length >= 10) {
                 this.status = NDKRelaySubscriptionStatus.PENDING;
@@ -408,7 +411,8 @@ export class NDKRelaySubscription {
         const filters = Array.from(this.items.values()).map((item) => item.filters);
         if (!filters[0]) {
             this.debug("👀 No filters to merge", this.items);
-            console.trace("No filters to merge");
+            console.error("BUG: No filters to merge!", this.items);
+            return [];
         }
         const filterCount = filters[0].length;
 

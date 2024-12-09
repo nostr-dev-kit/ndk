@@ -35,5 +35,5 @@ async function encrypt(
         return undefined;
     }
 
-    return await backend.signer.encrypt(recipientUser, payload, 'nip44');
+    return await backend.signer.encrypt(recipientUser, payload, "nip44");
 }

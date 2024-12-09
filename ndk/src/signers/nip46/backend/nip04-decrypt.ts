@@ -35,5 +35,5 @@ async function decrypt(
         return undefined;
     }
 
-    return await backend.signer.decrypt(senderUser, payload, 'nip04');
+    return await backend.signer.decrypt(senderUser, payload, "nip04");
 }

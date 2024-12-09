@@ -8,4 +8,5 @@ packages:
     - "ndk-svelte"
     - "ndk-svelte-components"
     - "ndk-wallet"
+    - "ndk-mobile"
     - "demos"

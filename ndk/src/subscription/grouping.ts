@@ -27,7 +27,7 @@ export function filterFingerprint(
     for (const filter of filters) {
         const keys = Object.entries(filter || {})
             .map(([key, values]) => {
-                if (['since', 'until'].includes(key)) {
+                if (["since", "until"].includes(key)) {
                     // We don't want to mix different time constraints values, so we include the value in the fingerprint
                     return key + ":" + (values as string);
                 } else {
@@ -55,12 +55,10 @@ export function mergeFilters(filters: NDKFilter[]): NDKFilter[] {
     const lastResult: any = {};
 
     // concatenate filters that have a limit
-    filters
-        .filter(f => !!f.limit)
-        .forEach(filterWithLimit => result.push(filterWithLimit))
-    
+    filters.filter((f) => !!f.limit).forEach((filterWithLimit) => result.push(filterWithLimit));
+
     // only merge the filters that don't have a limit
-    filters = filters.filter(f => !f.limit);
+    filters = filters.filter((f) => !f.limit);
 
     if (filters.length === 0) return result;
 

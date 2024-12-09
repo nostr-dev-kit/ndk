@@ -11,6 +11,8 @@ import {
     type NDKFilter,
     type NDKSubscription,
 } from "../../subscription";
+import { NDKRelayAuthPolicies } from "../../relay/auth-policies";
+import { NDKPool } from "../../relay/pool";
 
 export interface NDKRpcRequest {
     id: string;
@@ -32,13 +34,32 @@ export class NDKNostrRpc extends EventEmitter {
     private signer: NDKSigner;
     private relaySet: NDKRelaySet | undefined;
     private debug: debug.Debugger;
-    public encryptionType: 'nip04' | 'nip44' = 'nip04';
+    public encryptionType: "nip04" | "nip44" = "nip04";
+    private pool: NDKPool | undefined;
 
     public constructor(ndk: NDK, signer: NDKSigner, debug: debug.Debugger, relayUrls?: string[]) {
         super();
         this.ndk = ndk;
         this.signer = signer;
-        this.relaySet = relayUrls ? NDKRelaySet.fromRelayUrls(relayUrls, ndk) : undefined;
+
+        // if we have relays, we create a separate pool for it
+        if (relayUrls) {
+            this.pool = new NDKPool(
+                relayUrls,
+                Array.from(ndk.pool.blacklistRelayUrls),
+                ndk,
+                debug.extend("rpc-pool")
+            );
+            
+            this.relaySet = new NDKRelaySet(new Set(), ndk, this.pool);
+            for (const url of relayUrls) {
+                const relay = this.pool.getRelay(url, false, false);
+                relay.authPolicy = NDKRelayAuthPolicies.signIn({ ndk, signer, debug });
+                this.relaySet.addRelay(relay);
+                relay.connect();
+            }
+        }
+
         this.debug = debug.extend("rpc");
     }
 
@@ -52,12 +73,11 @@ export class NDKNostrRpc extends EventEmitter {
                 closeOnEose: false,
                 groupable: false,
                 cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY,
+                pool: this.pool,
             },
             this.relaySet,
             false
         );
-
-        this.debug("starting subscription");
 
         sub.on("event", async (event: NDKEvent) => {
             try {
@@ -82,9 +102,29 @@ export class NDKNostrRpc extends EventEmitter {
     }
 
     public async parseEvent(event: NDKEvent): Promise<NDKRpcRequest | NDKRpcResponse> {
+        // support both nip04 and nip44 encryption
+        if (this.encryptionType === 'nip44' && event.content.includes('?iv=')) {
+            this.encryptionType = 'nip04';
+        } else if (this.encryptionType === 'nip04' && !event.content.includes('?iv=')) {
+            this.encryptionType = 'nip44';
+        }
+
         const remoteUser = this.ndk.getUser({ pubkey: event.pubkey });
         remoteUser.ndk = this.ndk;
-        const decryptedContent = await this.signer.decrypt(remoteUser, event.content, this.encryptionType);
+        let decryptedContent: string;
+
+        try {
+            decryptedContent = await this.signer.decrypt(
+                remoteUser,
+                event.content,
+                this.encryptionType
+            );
+        } catch (e) {
+            const otherEncryptionType = this.encryptionType === 'nip04' ? 'nip44' : 'nip04';
+            decryptedContent = await this.signer.decrypt(remoteUser, event.content, otherEncryptionType);
+            this.encryptionType = otherEncryptionType;
+        }
+        
         const parsedContent = JSON.parse(decryptedContent);
         const { id, method, params, result, error } = parsedContent;
 
@@ -115,7 +155,7 @@ export class NDKNostrRpc extends EventEmitter {
             tags: [["p", remotePubkey]],
             pubkey: localUser.pubkey,
         } as NostrEvent);
-
+        
         event.content = await this.signer.encrypt(remoteUser, event.content, this.encryptionType);
         await event.sign(this.signer);
         await event.publish(this.relaySet);

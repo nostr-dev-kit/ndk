@@ -5,7 +5,7 @@ import { NDKUser } from "../../user/index";
 import { NDKPrivateKeySigner } from "../private-key/index";
 import { NDKNostrRpc } from "./rpc";
 import createDebug from "debug";
-import fetchMock from 'jest-fetch-mock';
+import fetchMock from "jest-fetch-mock";
 
 const debug = createDebug("test");
 
@@ -29,7 +29,9 @@ describe("NDKNip46Signer", () => {
         ndk = new NDK();
         ndk.debug = debug;
         localSigner = new NDKPrivateKeySigner();
-        remoteUser = new NDKUser({ pubkey: "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52" });
+        remoteUser = new NDKUser({
+            pubkey: "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52",
+        });
         rpc = new NDKNostrRpc(ndk, localSigner, debug, undefined);
 
         (NDKPrivateKeySigner as unknown as jest.Mock).mockImplementation(() => localSigner);
@@ -52,10 +54,12 @@ describe("NDKNip46Signer", () => {
         });
 
         it("fetches the remote pubkey using NIP-05", async () => {
-            fetchMock.mockResponseOnce(JSON.stringify({
-                names: { "test": userPubkey },
-                nip46: { [`${userPubkey}`]: ["wss://relay.example.com"] }
-            }));
+            fetchMock.mockResponseOnce(
+                JSON.stringify({
+                    names: { test: userPubkey },
+                    nip46: { [`${userPubkey}`]: ["wss://relay.example.com"] },
+                })
+            );
             ndk.httpFetch = fetch;
 
             const signer = new NDKNip46Signer(ndk, "test@example.com", localSigner);

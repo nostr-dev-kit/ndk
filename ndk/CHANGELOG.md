@@ -1,5 +1,25 @@
 # @nostr-dev-kit/ndk
 
+## 2.10.7
+
+### Patch Changes
+
+-   auto-auth to nip46 relays, and set the user pubkey after getting it from remote
+
+## 2.10.6
+
+### Patch Changes
+
+-   bump
+
+## 2.10.5
+
+### Patch Changes
+
+-   5939a3e: fix: authed relays weren't reported as connected on connectedRelays
+-   fix (NDKRelayConnectivity) reconnection Issues
+-   f2a0cce: add netDebug direction
+
 ## 2.10.4
 
 ### Patch Changes

@@ -95,7 +95,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
 
     private connectionTokenInit(connectionToken: string) {
         const bunkerUrl = new URL(connectionToken);
-        const bunkerPubkey = bunkerUrl.hostname;
+        const bunkerPubkey = bunkerUrl.hostname || bunkerUrl.pathname.replace(/^\/\//, "");
         const userPubkey = bunkerUrl.searchParams.get("pubkey");
         const relayUrls = bunkerUrl.searchParams.getAll("relay");
         const secret = bunkerUrl.searchParams.get("secret");

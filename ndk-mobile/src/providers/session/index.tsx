@@ -2,17 +2,32 @@ import React from 'react';
 import NDKSessionContext from '../../context/session';
 import { NDKEventWithFrom } from '../../hooks';
 import { useNDK } from '../../hooks/ndk';
-import { NDKEvent, NDKEventId, NDKFilter, NDKKind, NDKRelay, NDKSubscription, NDKSubscriptionCacheUsage } from '@nostr-dev-kit/ndk';
+import NDK, { NDKEvent, NDKEventId, NDKFilter, NDKKind, NDKRelay, NDKSubscription, NDKSubscriptionCacheUsage, NostrEvent } from '@nostr-dev-kit/ndk';
 import { PropsWithChildren, useEffect } from 'react';
 import { useSessionStore } from '../../stores/session';
 import { NDKCashuWallet, NDKNutzapMonitor, NDKNWCWallet, NDKWallet, NDKWalletTypes } from '@nostr-dev-kit/ndk-wallet';
 import { useWalletStore } from '../../stores/wallet';
 
+type SettingsStore = {
+    get: (key: string) => Promise<string | null>;
+    set: (key: string, value: string) => Promise<void>;
+    delete: (key: string) => Promise<void>;
+}
+
+/**
+ * Options for the NDKSessionProvider
+ * 
+ * @param follows - Whether to subscribe to follow events
+ * @param muteList - Whether to subscribe to mute list events
+ * @param wallet - Whether to subscribe to wallet events
+ * @param settingsStore - A store for storing and retrieving configuration values
+ * @param kinds - A map of kinds to wrap with a custom wrapper
+ */
 interface NDKSessionProviderProps {
     follows?: boolean;
     muteList?: boolean;
     wallet?: boolean
-    walletConfig?: { type: NDKWalletTypes, pairingCode: string };
+    settingsStore?: SettingsStore;
     kinds?: Map<NDKKind, { wrapper?: NDKEventWithFrom<any> }>;
 }
 
@@ -63,7 +78,15 @@ const NDKSessionProvider = ({ children, ...opts }: PropsWithChildren<NDKSessionP
         }
     };
 
-    const setActiveWallet = (wallet: NDKWallet) => {
+    /**
+     * Set the active wallet
+     * @param wallet - The wallet to set
+     * @param save - Whether to store this setting locally
+     */
+    const setActiveWallet = (
+        wallet: NDKWallet,
+        save = true
+    ) => {
         ndk.wallet = wallet;
         if (wallet instanceof NDKCashuWallet) {
             setBalances(wallet.balance());
@@ -104,6 +127,10 @@ const NDKSessionProvider = ({ children, ...opts }: PropsWithChildren<NDKSessionP
         else {
             setBalances([]);
         }
+
+        if (save && opts.settingsStore) {
+            persistWalletConfiguration(wallet, opts.settingsStore);
+        }
     }
 
     useEffect(() => {
@@ -121,13 +148,8 @@ const NDKSessionProvider = ({ children, ...opts }: PropsWithChildren<NDKSessionP
         if (opts.wallet) filters[0].kinds!.push(NDKKind.CashuWallet);
         if (opts.kinds) filters[0].kinds!.push(...opts.kinds.keys());
 
-        if (opts.walletConfig) {
-            if (opts.walletConfig.type === 'nwc') {
-                const wallet = new NDKNWCWallet(ndk);
-                wallet.initWithPairingCode(opts.walletConfig.pairingCode).then(() => {
-                    setActiveWallet(wallet);
-                });
-            }
+        if (opts.settingsStore) {
+            loadWallet(ndk, opts.settingsStore, (wallet) => setActiveWallet(wallet, false));
         }
 
         if (filters[0].kinds!.length > 0) {
@@ -135,7 +157,7 @@ const NDKSessionProvider = ({ children, ...opts }: PropsWithChildren<NDKSessionP
             sub.on('event', handleEvent);
             sub.start();
         }
-    }, [ndk, opts.follows, opts.muteList, opts.walletConfig, currentUser]);
+    }, [ndk, opts.follows, opts.muteList, opts.settingsStore, currentUser]);
 
     return (
         <NDKSessionContext.Provider
@@ -152,5 +174,92 @@ const NDKSessionProvider = ({ children, ...opts }: PropsWithChildren<NDKSessionP
         </NDKSessionContext.Provider>
     );
 };
+
+function walletPayload(wallet: NDKWallet) {
+    if (wallet instanceof NDKNWCWallet) {
+        return wallet.pairingCode;
+    } else if (wallet instanceof NDKCashuWallet) {
+        return wallet.event.rawEvent();
+    }
+}
+
+/**
+ * Persist the wallet configuration
+ * @param wallet - The wallet to persist
+ * @param settingsStore - The settings store to use
+ */
+function persistWalletConfiguration(wallet: NDKWallet, settingsStore: SettingsStore) {
+    if (!wallet) {
+        settingsStore.delete('wallet');
+        return;
+    }
+    
+    const payload = walletPayload(wallet);
+    if (!payload) {
+        alert('Failed to persist wallet configuration!');
+        return;
+    }
+
+    const type = wallet.type;
+    settingsStore.set('wallet', JSON.stringify({ type, payload }));
+}
+
+async function loadWallet(ndk: NDK, settingsStore: SettingsStore, setActiveWallet: (wallet: NDKWallet | null) => void) {
+    const walletConfig = await settingsStore.get('wallet');
+    if (!walletConfig) return;
+
+    const loadNWCWallet = (pairingCode: string) => {
+        const wallet = new NDKNWCWallet(ndk);
+        wallet.initWithPairingCode(pairingCode).then(() => {
+            setActiveWallet(wallet);
+        });
+    }
+
+    const loadNIP60Wallet = async (payload: NostrEvent) => {
+        try {
+            // Load the cached event
+            const event = new NDKEvent(ndk, payload);
+            const wallet = await NDKCashuWallet.from(event);
+            setActiveWallet(wallet);
+
+            const relaySet = wallet.relaySet;
+
+            // Load remotely
+            const freshEvent = await ndk.fetchEvent(event.encode(), { cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY }, relaySet);
+            if (freshEvent.hasTag('deleted')) {
+                alert('This wallet has been deleted');
+                setActiveWallet(null);
+                return null;
+            } else if (freshEvent.created_at! > event.created_at!) {
+                const wallet = await NDKCashuWallet.from(freshEvent);
+                alert('This wallet has been updated');
+                setActiveWallet(wallet);
+
+                // update the cache
+                persistWalletConfiguration(wallet, settingsStore);
+
+                return wallet;
+            }
+
+            return wallet;
+        } catch (e) {
+            console.error('Error activating wallet', e);
+        }
+    }
+
+    try {
+        const { type, payload } = JSON.parse(walletConfig);
+        if (type === 'nwc') {
+            loadNWCWallet(payload);
+        } else if (type === 'nip-60') {
+            loadNIP60Wallet(payload);
+        } else {
+            alert('Unknown wallet type: ' + type);
+        }
+    } catch (e) {
+        alert('Failed to load wallet configuration');
+        settingsStore.delete('wallet');
+    }
+}
 
 export { NDKSessionProvider };

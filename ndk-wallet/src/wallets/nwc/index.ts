@@ -14,6 +14,8 @@ export class NDKNWCWallet extends EventEmitter<NDKWalletEvents> implements NDKWa
     readonly status = NDKWalletStatus.INITIAL;
     readonly walletId = "nwc";
 
+    public pairingCode?: string;
+
     public ndk: NDK;
 
     public walletService?: NDKUser;
@@ -56,6 +58,8 @@ export class NDKNWCWallet extends EventEmitter<NDKWalletEvents> implements NDKWa
         const pubkey = u.host ?? u.pathname;
         const relayUrls = u.searchParams.getAll("relay");
         const secret = u.searchParams.get("secret");
+
+        this.pairingCode = uri;
 
         if (!pubkey || !relayUrls || !secret) {
             throw new Error("Invalid URI");

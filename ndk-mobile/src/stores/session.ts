@@ -59,11 +59,13 @@ export const useSessionStore = create<SessionState>((set) => ({
         // safety check for replaceable events
         if (event.isReplaceable()) {
             const existingEvent = existing.find((e) => e.dTag === event.dTag)
-            if (existingEvent && existingEvent.created_at >= event.created_at) {
-                return state
-            } else {
-                // remove the existing event
-                existing = existing.filter((e) => e.id !== existingEvent.id)
+            if (existingEvent) {
+                if (existingEvent.created_at >= event.created_at) {
+                    return state
+                } else {
+                    // remove the existing event
+                    existing = existing.filter((e) => e.id !== existingEvent.id)
+                }
             }
         }
         

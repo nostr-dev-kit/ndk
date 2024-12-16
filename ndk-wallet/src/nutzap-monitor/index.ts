@@ -14,6 +14,7 @@ import NDK, {
 import { EventEmitter } from "tseep";
 import createDebug from "debug";
 import { NDKCashuWallet } from "../wallets/cashu/wallet";
+import { Proof } from "@cashu/cashu-ts";
 
 const d = createDebug("ndk-wallet:nutzap-monitor");
 
@@ -69,6 +70,12 @@ export class NDKNutzapMonitor extends EventEmitter<{
         this.allWallets.push(wallet);
     }
 
+    /**
+     * Create a new nutzap monitor.
+     * @param ndk - The NDK instance.
+     * @param user - The user to monitor.
+     * @param relaySet - An optional relay set to monitor zaps on, if one is not provided, the monitor will use the relay set from the mint list, which is the correct default behavior of NIP-61 zaps.
+     */
     constructor(ndk: NDK, user: NDKUser, relaySet?: NDKRelaySet) {
         super();
         this.ndk = ndk;
@@ -199,24 +206,22 @@ export class NDKNutzapMonitor extends EventEmitter<{
             privkey = wallet.privkey;
 
             const _wallet = await wallet.walletForMint(mint);
+            if (!_wallet) throw new Error("unable to load wallet for mint " + mint);
+            const proofsWeHave = wallet.proofsForMint(mint);
 
             try {
-                const res = await _wallet.receive({
-                    proofs,
-                    mint,
-                },
-                    {
-                        privkey,
-                        proofsWeHave: wallet.proofsForMint(mint),
-                    }
+                const res = await _wallet.receive(
+                    { proofs, mint, },
+                    { privkey, proofsWeHave }
                 );
                 d("redeemed nutzap %o", nutzap.rawEvent());
                 this.emit("redeem", nutzap);
 
+                const receivedAmount = computeBalanceDifference(res, proofsWeHave);
+
                 // save new proofs in wallet
-                wallet.saveProofs(res, mint, nutzap);
+                wallet.saveProofs(res, mint, { nutzap, amount: receivedAmount });
             } catch (e: any) {
-                console.error(e.message);
                 this.emit("failed", nutzap, e.message);
             }
         } catch (e: any) {
@@ -234,4 +239,19 @@ export class NDKNutzapMonitor extends EventEmitter<{
 
         return wallet;
     }
+}
+
+/**
+ * Compute the balance difference between two sets of proofs
+ * @param set1 - The first set of proofs
+ * @param set2 - The second set of proofs
+ * @returns The balance difference
+ */
+function computeBalanceDifference(set1: Array<Proof>, set2: Array<Proof>) {
+    const amount1 = set1.reduce((acc, proof) => acc + proof.amount, 0);
+    const amount2 = set2.reduce((acc, proof) => acc + proof.amount, 0);
+
+    const diff = amount1 - amount2;
+
+    return diff;
 }

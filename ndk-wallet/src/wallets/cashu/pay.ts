@@ -1,7 +1,7 @@
 import { Proof } from "@cashu/cashu-ts";
 import type { NDKCashuWallet } from "./wallet";
 import createDebug from "debug";
-import type { LnPaymentInfo, NDKPaymentConfirmationCashu } from "@nostr-dev-kit/ndk";
+import type { CashuPaymentInfo, LnPaymentInfo, NDKZapDetails } from "@nostr-dev-kit/ndk";
 import type { NutPayment } from "./pay/nut.js";
 import { createTokenForPayment } from "./pay/nut.js";
 import { payLn } from "./pay/ln.js";
@@ -20,20 +20,20 @@ function correctP2pk(p2pk?: string) {
  */
 export class NDKCashuPay {
     public wallet: NDKCashuWallet;
-    public info: LnPaymentInfo | NutPayment;
+    public info: NDKZapDetails<LnPaymentInfo | CashuPaymentInfo>;
     public type: "ln" | "nut" = "ln";
     public debug = createDebug("ndk-wallet:cashu:pay");
     public unit: string = "sat";
 
-    constructor(wallet: NDKCashuWallet, info: LnPaymentInfo | NutPayment) {
+    constructor(wallet: NDKCashuWallet, info: NDKZapDetails<LnPaymentInfo | CashuPaymentInfo>) {
         this.wallet = wallet;
 
         if ((info as LnPaymentInfo).pr) {
             this.type = "ln";
-            this.info = info as LnPaymentInfo;
+            this.info = info as NDKZapDetails<LnPaymentInfo>;
         } else {
             this.type = "nut";
-            this.info = info as NutPayment;
+            this.info = info as NDKZapDetails<CashuPaymentInfo>;
             if (this.info.unit.startsWith("msat")) {
                 this.info.unit = "sat";
                 this.info.amount = this.info.amount / 1000;
@@ -61,11 +61,17 @@ export class NDKCashuPay {
         }
     }
 
-    public async pay() {
+    /**
+     * 
+     * @param description A description of what this payment is for to be added to the wallet history
+     * @param nutzap If this payment is a nutzap, this is the nutzap to be added to the wallet history
+     * @returns 
+     */
+    public async pay(payment: NDKZapDetails<LnPaymentInfo | NutPayment>) {
         if (this.type === "ln") {
-            return this.payLn();
+            return this.payLn(payment as NDKZapDetails<LnPaymentInfo>)
         } else {
-            return this.payNut();
+            return this.payNut(payment as NDKZapDetails<NutPayment>);
         }
     }
 

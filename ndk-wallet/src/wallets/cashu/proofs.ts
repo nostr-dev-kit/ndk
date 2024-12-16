@@ -75,6 +75,17 @@ export async function rollOverProofs(
         await deleteEvent.sign();
         d("delete event %o sending to %s", deleteEvent.rawEvent(), relaySet?.relayUrls);
         deleteEvent.publish(relaySet);
+
+        // Remove deleted tokens from the wallet
+        proofs.usedTokens.forEach((token) => {
+            const hasToken = wallet.tokens.find((t) => t.id === token.id);
+            if (hasToken) {
+                console.log("[ROLL OVER] removing token", token.id);
+                wallet.tokens = wallet.tokens.filter((t) => t.id !== token.id);
+            } else {
+                console.log("[ROLL OVER] token not found", token.id);
+            }
+        });
     }
     wallet.addUsedTokens(proofs.usedTokens);
 

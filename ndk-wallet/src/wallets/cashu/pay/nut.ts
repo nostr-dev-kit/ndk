@@ -1,10 +1,10 @@
-import { SendResponse, Token, type Proof } from "@cashu/cashu-ts";
+import { SendResponse, type Proof } from "@cashu/cashu-ts";
 import type { MintUrl } from "../mint/utils";
 import type { NDKCashuPay } from "../pay";
 import { NDKCashuWallet } from "../wallet";
-import { normalizeUrl } from "@nostr-dev-kit/ndk";
+import { CashuPaymentInfo, NDKZapDetails, normalizeUrl } from "@nostr-dev-kit/ndk";
 
-export type NutPayment = { amount: number; unit: string; mints: MintUrl[]; p2pk?: string };
+export type NutPayment = CashuPaymentInfo & { amount: number; unit: string; };
 
 export async function mintNuts(this: NDKCashuWallet, amounts: number[], unit: string) {
     throw new Error("not implemented");
@@ -14,8 +14,8 @@ export async function mintNuts(this: NDKCashuWallet, amounts: number[], unit: st
  * Generates proof to satisfy a payment.
  * Note that this function doesn't send the proofs to the recipient.
  */
-export async function createTokenForPayment(this: NDKCashuPay): Promise<TokenWithMint | undefined> {
-    this.debug("payNut %o", this.info);
+export async function createTokenForPayment(this: NDKCashuPay, payment: NDKZapDetails<NutPayment>): Promise<TokenWithMint | undefined> {
+    console.log("payNut %o", this.info);
     
     const data = this.info as NutPayment;
     if (!data.mints) throw new Error("missing mints");
@@ -25,7 +25,7 @@ export async function createTokenForPayment(this: NDKCashuPay): Promise<TokenWit
 
     const mintsInCommon = findMintsInCommon([recipientMints, senderMints]);
 
-    this.debug(
+    console.log(
         "mints in common %o, recipient %o, sender %o",
         mintsInCommon,
         recipientMints,
@@ -33,16 +33,22 @@ export async function createTokenForPayment(this: NDKCashuPay): Promise<TokenWit
     );
 
     if (mintsInCommon.length === 0) {
-        this.debug("no mints in common between sender and recipient");
-        return;
+        console.log("no mints in common between sender and recipient");
     }
 
     for (const mint of mintsInCommon) {
-        const res = await prepareTokenForPaymentFromMint(this, mint);
-        if (res) return res;
+        try {
+            console.log("attempting payment with mint %s", mint);
+            const res = await prepareTokenForPaymentFromMint(this, mint);
+            if (res) return res;
+        } catch (e) {
+            console.log("failed to prepare token for payment from mint %s: %s", mint, e);
+        }
     }
 
-    return await createTokenForPaymentWithMintTransfer(this);
+    console.log("attempting payment with mint transfer");
+
+    return await createTokenForPaymentWithMintTransfer(this, payment);
 }
 
 /**
@@ -50,14 +56,16 @@ export async function createTokenForPayment(this: NDKCashuPay): Promise<TokenWit
  * for the desired amount in any of the mints the recipient accepts.
  */
 async function createTokenForPaymentWithMintTransfer(
-    pay: NDKCashuPay
+    pay: NDKCashuPay, 
+    payment: NDKZapDetails<CashuPaymentInfo>
 ): Promise<TokenWithMint | undefined> {
-    const { mints, p2pk } = pay.info as NutPayment;
+    const { mints, p2pk } = payment;
     const amount = pay.getAmount();
 
     const generateQuote = async () => {
         const generateQuoteFromSomeMint = async (mint: MintUrl) => {
             const wallet = await pay.wallet.walletForMint(mint);
+            if (!wallet) throw new Error("unable to load wallet for mint " + mint);
             const quote = await wallet.createMintQuote(amount);
             return { quote, mint };
         };
@@ -66,11 +74,11 @@ async function createTokenForPaymentWithMintTransfer(
         const { quote, mint } = await Promise.any(quotesPromises);
 
         if (!quote) {
-            pay.debug("failed to get quote from any mint");
+            console.log("failed to get quote from any mint");
             throw new Error("failed to get quote from any mint");
         }
 
-        pay.debug("quote from mint %s: %o", mint, quote);
+        console.log("quote from mint %s: %o", mint, quote);
 
         return { quote, mint };
     }
@@ -80,20 +88,21 @@ async function createTokenForPaymentWithMintTransfer(
 
     // TODO: create a CashuDeposit event
 
-    const res = await pay.wallet.lnPay({ pr: quote.request });
-    pay.debug("payment result: %o", res);
+    const res = await pay.wallet.lnPay({ pr: quote.request, ...payment });
+    console.log("payment result: %o", res);
 
     if (!res) {
-        pay.debug("payment failed");
+        console.log("payment failed");
         return;
     }
 
     const wallet = await pay.wallet.walletForMint(mint);
+    if (!wallet) throw new Error("unable to load wallet for mint " + mint);
     const proofs = await wallet.mintProofs(amount, quote.quote, {
         pubkey: p2pk,
     });
 
-    pay.debug("minted tokens with proofs %o", proofs);
+    console.log("minted tokens with proofs %o", proofs);
 
     return { keep: [], send: proofs, mint };
 }
@@ -106,20 +115,21 @@ async function prepareTokenForPaymentFromMint(
 ): Promise<TokenWithMint | undefined> {
     const { amount, p2pk } = pay.info as NutPayment;
     const _wallet = await pay.wallet.walletForMint(mint);
-    
+    if (!_wallet) throw new Error("unable to load wallet for mint " + mint);
     try {
-        pay.debug("Attempting with mint %s", mint);
+        // pay.debug
+        console.log("Attempting with mint %s", mint);
         const proofsWeHave = pay.wallet.proofsForMint(mint);
-        pay.debug("proofs we have: %o", proofsWeHave);
+        console.log("proofs we have: %o", proofsWeHave);
         const res = await _wallet.send(amount, proofsWeHave, {
             pubkey: p2pk,
             proofsWeHave,
         });
-        pay.debug("token preparation result: %o", res);
+        console.log("token preparation result: %o", res);
 
         return { ...res, mint };
     } catch (e: any) {
-        pay.debug(
+        console.log(
             "failed to pay with mint %s using proofs %o: %s",
             mint,
             e.message

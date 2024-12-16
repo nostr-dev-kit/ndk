@@ -10,6 +10,7 @@ import { requestProvider } from "webln";
 import { type WebLNProvider } from "@webbtc/webln-types";
 import { NDKWallet, NDKWalletBalance, NDKWalletEvents, NDKWalletStatus } from "../index.js";
 import { NDKLnPay } from "./pay";
+import { NutPayment } from "../cashu/pay/nut.js";
 
 export class NDKWebLNWallet extends EventEmitter<NDKWalletEvents> implements NDKWallet {
     readonly type = "webln";
@@ -46,9 +47,8 @@ export class NDKWebLNWallet extends EventEmitter<NDKWalletEvents> implements NDK
         return { preimage };
     }
 
-    async cashuPay(payment: NDKZapDetails<CashuPaymentInfo>): Promise<NDKPaymentConfirmationCashu> {
-        const { amount, unit, mints, p2pk } = payment;
-        const pay = new NDKLnPay(this, { amount, unit, mints, p2pk });
+    async cashuPay(payment: NDKZapDetails<NutPayment>): Promise<NDKPaymentConfirmationCashu> {
+        const pay = new NDKLnPay(this, payment);
         return pay.payNut();
     }
 

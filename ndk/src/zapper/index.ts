@@ -55,6 +55,11 @@ export type NDKZapDetails<T> = T & {
      * Unit of the payment (e.g. msat)
      */
     unit: string;
+
+    /**
+     * Description of the payment for the sender's record
+     */
+    paymentDescription?: string;
 };
 
 export type NDKZapConfirmation = NDKZapConfirmationLN | NDKZapConfirmationCashu;
@@ -220,12 +225,13 @@ class NDKZapper extends EventEmitter<{
         return await this.lnPay(
             {
                 target: this.target,
-                comment: this.comment,
                 recipientPubkey: split.pubkey,
+                paymentDescription: "NIP-57 Zap",
+                pr,
                 amount: split.amount,
                 unit: this.unit,
-                pr,
-        });
+            }
+        );
     }
 
     /**
@@ -240,9 +246,8 @@ class NDKZapper extends EventEmitter<{
         let ret: NDKPaymentConfirmationCashu | undefined;
         ret = await this.cashuPay({
             target: this.target,
-            comment: this.comment,
-            tags: this.tags,
             recipientPubkey: split.pubkey,
+            paymentDescription: "NIP-61 Zap",
             amount: split.amount,
             unit: this.unit,
             ...data,

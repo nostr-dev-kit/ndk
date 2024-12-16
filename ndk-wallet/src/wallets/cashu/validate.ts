@@ -1,8 +1,10 @@
-import { CheckStateEnum, type Proof } from "@cashu/cashu-ts";
+import { CheckStateEnum, ProofState, type Proof } from "@cashu/cashu-ts";
 import { NDKCashuToken } from "./token";
 import createDebug from "debug";
-import { rollOverProofs } from "./proofs";
 import type { NDKCashuWallet } from "./wallet";
+import { hashToCurve } from '@cashu/crypto/modules/common';
+import { rollOverProofs } from "./proofs";
+import { NDKEvent, NDKKind, NostrEvent } from "@nostr-dev-kit/ndk";
 
 const d = createDebug("ndk-wallet:cashu:validate");
 
@@ -17,7 +19,7 @@ function checkInvalidToken(token: NDKCashuToken, spentProofsSet: Set<string>) {
     }
 
     for (const proof of token.proofs) {
-        if (spentProofsSet.has(proof.id)) {
+        if (spentProofsSet.has(proof.secret)) {
             dirty = true;
             spentProofs.push(proof);
         } else {
@@ -28,33 +30,33 @@ function checkInvalidToken(token: NDKCashuToken, spentProofsSet: Set<string>) {
     return { dirty, unspentProofs, spentProofs };
 }
 
-export async function checkTokenProofs(this: NDKCashuWallet, tokens?: NDKCashuToken[]) {
-    if (!tokens) {
-        tokens = this.tokens;
-    }
+/**
+ * Checks for spent proofs and consolidates all unspent proofs into a single token, destroying all old tokens
+ */
+export async function consolidateTokens(this: NDKCashuWallet) {
+    d("checking %d tokens for spent proofs", this.tokens.length);
 
-    d("checking %d tokens for spent proofs", tokens.length);
-
-    const mints = new Set(tokens.map((t) => t.mint).filter((mint) => !!mint));
+    const mints = new Set(this.tokens.map((t) => t.mint).filter((mint) => !!mint));
 
     d("found %d mints", mints.size);
 
     mints.forEach((mint) => {
-        checkTokenProofsForMint(
+        consolidateMintTokens(
             mint!,
-            tokens.filter((t) => t.mint === mint),
+            this.tokens.filter((t) => t.mint === mint),
             this
         );
     });
 }
 
-export async function checkTokenProofsForMint(
+export async function consolidateMintTokens(
     mint: string,
     tokens: NDKCashuToken[],
     wallet: NDKCashuWallet
 ) {
     const allProofs = tokens.map((t) => t.proofs).flat();
     const _wallet = await wallet.walletForMint(mint);
+    if (!_wallet) return;
     d(
         "checking %d proofs in %d tokens for spent proofs for mint %s",
         allProofs.length,
@@ -62,77 +64,52 @@ export async function checkTokenProofsForMint(
         mint
     );
     const proofStates = await _wallet.checkProofsStates(allProofs);
-    const spentProofs = proofStates.filter(p => p.state === CheckStateEnum.SPENT);
-    const unspentProofs = proofStates.filter(p => p.state === CheckStateEnum.UNSPENT);
-    const pendingProofs = proofStates.filter(p => p.state === CheckStateEnum.PENDING);
 
-    d("found the following proof states: %o", {
-        spent: spentProofs.length,
-        unspent: unspentProofs.length,
-        pending: pendingProofs.length,
+    const spentProofs: Proof[] = [];
+    const unspentProofs: Proof[] = [];
+
+    allProofs.forEach((proof, index) => {
+        const { state } = proofStates[index];
+        if (state === CheckStateEnum.SPENT) {
+            spentProofs.push(proof);
+        } else if (state === CheckStateEnum.UNSPENT) {
+            unspentProofs.push(proof);
+        }
     });
+        
+    console.log({
+        spentProofs,
+        unspentProofs,
+    })
+    
+    // if no spent proofs and we already had a single token, return as a noop
+    if (spentProofs.length === 0 && tokens.length === 1) {
+        console.log("no spent proofs and we already had a single token, skipping", mint);
+        return;
+    }
 
-    console.log('all proofs', allProofs);
-    console.log('spent proofs', spentProofs);
-    console.log('unspent proofs', unspentProofs);
+    if (unspentProofs.length > 0) {
+        // create a new token with all the unspent proofs
+        const newToken = new NDKCashuToken(wallet.ndk);
+        newToken.proofs = unspentProofs;
+        newToken.mint = mint;
+        newToken.wallet = wallet;
+        await newToken.publish(wallet.relaySet);
 
-    return;
+        console.log("published new token", newToken.id)
+    } else {
+        console.log("no unspent proofs, skipping creating new token", mint);
+    }
 
-    // destroy all tokens and create a new one with the unspent proofs
-    // if (unspentProofs.length > 0) {
-    //     const newToken = new NDKCashuToken(wallet.ndk);
-    //     newToken.proofs = unspentProofs.map(p => p.proof);
-    //     newToken.mint = mint;
-    //     return newToken;
-    // }
+    // mark the tokens as used
+    wallet.addUsedTokens(tokens)
+    console.log('destroying ', tokens.length, 'tokens')
+    
+    // destroy all old tokens
+    const deleteEvent = new NDKEvent(wallet.ndk, { kind: NDKKind.EventDeletion } as NostrEvent);
 
-    // const spentProofsSet = new Set(spentProofs.map((p) => p.id));
-    // const tokensToDestroy: NDKCashuToken[] = [];
-    // const proofsToSave: Map<string, Proof> = new Map();
-
-    // for (const token of tokens) {
-    //     const { dirty, unspentProofs, spentProofs } = checkInvalidToken(token, spentProofsSet);
-    //     if (dirty) {
-    //         tokensToDestroy.push(token);
-
-    //         for (const proof of unspentProofs) {
-    //             const id = proof.secret;
-    //             proofsToSave.set(id, proof);
-    //         }
-            
-    //         d(
-    //             "👉 token %s has spent proofs",
-    //             token.id.slice(0, 6),
-    //             spentProofs.map((p) => p.secret.slice(0, 4)),
-    //         );
-    //     }
-    // }
-
-    // d(
-    //     "destroying %d tokens with %d spent proofs, moving %d proofs",
-    //     tokensToDestroy.length,
-    //     spentProofs.length,
-    //     proofsToSave.size
-    // );
-
-    // const res = await rollOverProofs(
-    //     {
-    //         usedProofs: spentProofs,
-    //         movedProofs: Array.from(proofsToSave.values()),
-    //         usedTokens: tokensToDestroy,
-    //         mint,
-    //     },
-    //     [],
-    //     mint,
-    //     wallet
-    // );
-
-    // d(
-    //     "rolled over proofs for mint %s, destroyed %d tokens, created %s token",
-    //         mint,
-    //         res.destroyedTokens.length,
-    //         res.createdToken?.id ?? "no new"
-    // );
-
-    // return res;
+    for (const token of tokens) {
+        deleteEvent.tags.push([ "e", token.id ]);
+    }
+    await deleteEvent.publish(wallet.relaySet);
 }

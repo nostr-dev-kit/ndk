@@ -1,9 +1,11 @@
 import {
+    CashuPaymentInfo,
     LnPaymentInfo,
     NDKPaymentConfirmation,
     NDKPaymentConfirmationCashu,
     NDKPaymentConfirmationLN,
     NDKWalletInterface,
+    NDKZapDetails,
     NDKZapSplit,
 } from "@nostr-dev-kit/ndk";
 import { EventEmitter } from "tseep";
@@ -61,13 +63,13 @@ export interface NDKWallet
      * Pay a LN invoice
      * @param payment - The LN payment info
      */
-    lnPay?(payment: LnPaymentInfo): Promise<NDKPaymentConfirmationLN | undefined>;
+    lnPay?(payment: NDKZapDetails<LnPaymentInfo>): Promise<NDKPaymentConfirmationLN | undefined>;
 
     /**
      * Pay a Cashu invoice
      * @param payment - The Cashu payment info
      */
-    cashuPay?(payment: NutPayment): Promise<NDKPaymentConfirmationCashu | undefined>;
+    cashuPay?(payment: NDKZapDetails<CashuPaymentInfo>): Promise<NDKPaymentConfirmationCashu | undefined>;
 
     /**
      * A callback that is called when a payment is complete

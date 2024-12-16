@@ -1,12 +1,12 @@
 import type { Proof } from "@cashu/cashu-ts";
-import { CashuMint, CashuWallet } from "@cashu/cashu-ts";
+import { CashuWallet } from "@cashu/cashu-ts";
 import type { NDKCashuWallet } from "./wallet";
 import { EventEmitter } from "tseep";
 import { NDKCashuToken } from "./token";
 import createDebug from "debug";
 import { NDKEvent, NDKKind, NDKTag, NostrEvent } from "@nostr-dev-kit/ndk";
-import { getBolt11ExpiresAt } from "../../utils/ln.js";
 import { NDKWalletChange } from "./history";
+import { NDKCashuQuote } from "./quote";
 
 const d = createDebug("ndk-wallet:cashu:deposit");
 
@@ -20,7 +20,7 @@ export class NDKCashuDeposit extends EventEmitter<{
     success: (token: NDKCashuToken) => void;
     error: (error: string) => void;
 }> {
-    private mint: string;
+    public mint: string;
     public amount: number;
     public quoteId: string | undefined;
     private wallet: NDKCashuWallet;
@@ -35,9 +35,21 @@ export class NDKCashuDeposit extends EventEmitter<{
     constructor(wallet: NDKCashuWallet, amount: number, mint?: string, unit?: string) {
         super();
         this.wallet = wallet;
-        this.mint = mint ?? randomMint(wallet);
+        this.mint = mint || randomMint(wallet);
         this.amount = amount;
         this.unit = unit;
+    }
+
+    static fromQuoteEvent(wallet: NDKCashuWallet, quote: NDKCashuQuote) {
+        if (!quote.amount) throw new Error("quote has no amount");
+        if (!quote.mint) throw new Error("quote has no mint");
+
+        const unit = quote.unit ?? wallet.unit;
+        
+        const deposit = new NDKCashuDeposit(wallet, quote.amount, quote.mint, quote.unit);
+
+        deposit.quoteId = quote.quoteId;
+        return deposit;
     }
 
     /**
@@ -49,11 +61,16 @@ export class NDKCashuDeposit extends EventEmitter<{
      * @returns 
      */
     async start(pollTime: number = 2500) {
-        this._wallet ??= await this.wallet.walletForMint(this.mint);
+        const w = await this.wallet.walletForMint(this.mint);
+        if (!w) throw new Error("unable to load wallet for mint " + this.mint);
+        this._wallet = w;
         const quote = await this._wallet.createMintQuote(this.amount);
         d("created quote %s for %d %s", quote.quote, this.amount, this.mint);
 
         this.quoteId = quote.quote;
+
+        // register deposit with monitor
+        this.wallet.depositMonitor.addDeposit(this);
 
         setTimeout(this.check.bind(this, pollTime), pollTime);
         this.createQuoteEvent(quote.quote, quote.request)
@@ -68,31 +85,23 @@ export class NDKCashuDeposit extends EventEmitter<{
      */
     private async createQuoteEvent(quoteId: string, bolt11: string) {
         const { ndk } = this.wallet;
-        const bolt11Expiry = getBolt11ExpiresAt(bolt11);
-        const id = this.wallet.tagId();
-        let tags: NDKTag[] = [
-            ["mint", this.mint],
-        ];
-        if (id) tags.push(["a", id]);
 
-        // if we have a bolt11 expiry, expire this event at that time
-        if (bolt11Expiry) tags.push(["expiration", bolt11Expiry.toString()]);
+        const quoteEvent = new NDKCashuQuote(ndk);
+        quoteEvent.quoteId = quoteId;
+        quoteEvent.mint = this.mint;
+        quoteEvent.amount = this.amount;
+        quoteEvent.unit = this.unit;
+        quoteEvent.wallet = this.wallet;
+        quoteEvent.invoice = bolt11;
 
-        const event = new NDKEvent(ndk, {
-            kind: NDKKind.CashuQuote,
-            content: quoteId,
-            tags,
-        } as NostrEvent);
-        d("saving quote ID: %o", event.rawEvent());
-        await event.encrypt(ndk.activeUser, undefined, "nip44");
-        await event.sign();
         try {
-            await event.publish(this.wallet.relaySet);
-            d("saved quote on event %s", event.encode());
+            await quoteEvent.save();
+            d("saved quote on event %s", quoteEvent.rawEvent());
         } catch (e: any) {
             d("error saving quote on event %s", e.relayErrors);
         }
-        return event;
+
+        return quoteEvent;
     }
 
     private async runCheck() {
@@ -131,7 +140,9 @@ export class NDKCashuDeposit extends EventEmitter<{
 
         try {
             d("Checking for minting status of %s", this.quoteId);
-            this._wallet ??= await this.wallet.walletForMint(this.mint);
+            const w = await this.wallet.walletForMint(this.mint);
+            if (!w) throw new Error("unable to load wallet for mint " + this.mint);
+            this._wallet = w;
             proofs = await this._wallet.mintProofs(this.amount, this.quoteId);
             if (proofs.length === 0) return;
         } catch (e: any) {
@@ -163,6 +174,7 @@ export class NDKCashuDeposit extends EventEmitter<{
 
             // delete the quote event if it exists
             if (this.quoteEvent) {
+                console.log("destroying quote event", this.quoteEvent.id);
                 const deleteEvent = await this.quoteEvent.delete(undefined, false);
                 deleteEvent.publish(this.wallet.relaySet);
             }

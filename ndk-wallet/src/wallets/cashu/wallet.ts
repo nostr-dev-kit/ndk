@@ -118,6 +118,11 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
 
     public depositMonitor = new NDKCashuDepositMonitor();
 
+    /**
+     * Warnings that have been raised
+     */
+    public warnings: WalletWarning[] = [];
+
     constructor(ndk: NDK, event?: NDKEvent) {
         super();
         if (!ndk) throw new Error("no ndk instance");
@@ -898,11 +903,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
                         relay: token.onRelays.map((r) => r.url),
                     })
 
-                    this.emit("warning", {
-                        msg: "Received an older token with proofs that were already known, this is likely a relay that didn't receive (or respected) a delete event",
-                        event: token,
-                        relays: token.onRelays
-                    })
+                    this.warn("Received an older token with proofs that were already known, this is likely a relay that didn't receive (or respected) a delete event", token);
                     
                     return false; 
                 }
@@ -919,6 +920,12 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
         }
 
         return true;
+    }
+
+    private warn(msg: string, event?: NDKEvent, relays?: NDKRelay[]) {
+        relays ??= event?.onRelays;
+        this.warnings.push({ msg, event, relays });
+        this.emit("warning", { msg, event, relays });
     }
 
     /**

@@ -18,7 +18,6 @@ import { NDKCashuToken, proofsTotalBalance } from "./token.js";
 import { NDKCashuDeposit } from "./deposit.js";
 import createDebug from "debug";
 import type { MintUrl } from "./mint/utils.js";
-import { NDKCashuPay } from "./pay.js";
 import type { Proof, SendResponse } from "@cashu/cashu-ts";
 import { CashuMint, CashuWallet, getDecodedToken } from "@cashu/cashu-ts";
 import { NDKWalletChange } from "./history.js";
@@ -28,10 +27,10 @@ import { EventEmitter } from "tseep";
 import { decrypt } from "./decrypt.js";
 import { eventHandler } from "./event-handlers/index.js";
 import { NDKCashuDepositMonitor } from "./deposit-monitor.js";
+import { createToken } from "./pay/nut.js";
+import { payLn } from "./pay/ln.js";
 
 const d = createDebug("ndk-wallet:cashu:wallet");
-
-
 
 interface SaveProofsOptions {
     nutzap?: NDKNutzap;
@@ -469,11 +468,23 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
     /**
      * Pay a LN invoice with this wallet
      */
-    async lnPay(payment: NDKZapDetails<LnPaymentInfo>): Promise<NDKPaymentConfirmationLN | undefined> {
-        const pay = new NDKCashuPay(this, payment);
-        const preimage = await pay.payLn(payment);
-        if (!preimage) return;
-        return { preimage };
+    async lnPay(payment: Partial<NDKZapDetails<LnPaymentInfo>>): Promise<NDKPaymentConfirmationLN | undefined> {
+        if (!payment.amount) throw new Error("amount is required");
+        if (!payment.pr) throw new Error("pr is required");
+
+        const res = await payLn(this, payment.amount, payment.pr);
+        if (!res?.preimage) return;
+
+        console.trace('updating state for', res.mint);
+
+        await this.updateState({
+            reserve: [],
+            destroy: res.send,
+            store: [ ...res.keep, ...res.change ],
+            mint: res.mint,
+        });
+        
+        return { preimage: res.preimage };
     }
 
     /**
@@ -488,23 +499,24 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
      * @param amount
      */
     async cashuPay(payment: NDKZapDetails<CashuPaymentInfo>): Promise<NDKPaymentConfirmationCashu | undefined> {
-        console.log('cashupay', JSON.stringify(payment, null, 4));
-        const pay = new NDKCashuPay(this, payment);
-        const sendResult = await pay.payNut(payment);
-        if (!sendResult) {
+        let { amount, unit } = payment;
+        
+        if (unit.startsWith("msat")) {
+            unit = 'sat';
+            amount = amount / 1000;
+        }
+        
+        const createResult = await createToken(
+            this,
+            amount,
+            unit,
+            payment.mints,
+            payment.p2pk,
+        )
+        if (!createResult) {
             console.log("failed to pay with cashu");
             return;
         }
-
-        const isP2pk = (p: Proof) => p.secret.startsWith('["P2PK"');
-        const isNotP2pk = (p: Proof) => !isP2pk(p);
-
-        await this.updateState({
-            reserve: sendResult.send.filter(isNotP2pk),
-            destroy: sendResult.send.filter(isP2pk), // no point in reserving p2pk proofs since they will be published already
-            store: sendResult.keep,
-            mint: sendResult.mint,
-        });
 
         const historyEvent = new NDKWalletChange(this.ndk);
         historyEvent.direction = "out";
@@ -522,22 +534,30 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
         await historyEvent.sign();
         historyEvent.publish(this.relaySet);
 
-        return { proofs: sendResult.send, mint: sendResult.mint };
+        return { proofs: createResult.send, mint: createResult.mint };
     }
 
-    private getAllMintProofs(mint: MintUrl): Map<string, NDKEventId> {
+    private getAllMintProofs(mint?: MintUrl): Map<string, NDKEventId> {
         const allMintProofs = new Map<string, NDKEventId>();
 
-        this.tokens.forEach((t) => {
+        this.tokens
+            .filter((t) => mint ? t.mint === mint : true)
+            .forEach((t) => {
             t.proofs.forEach((p) => {
                 allMintProofs.set(p.C, t.id);
             });
         });
+
         return allMintProofs;
     }
 
     private getTokensMap(mint: MintUrl) {
         const map = new Map<NDKEventId, NDKCashuToken>();
+
+        if (!this.mintTokens[mint]) {
+            console.trace("BUG: no entry in mintTokens for mint", mint);
+            return map;
+        }
 
         for (const token of this.mintTokens[mint]) {
             map.set(token.id, token);
@@ -615,7 +635,11 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
             newState.deletedTokenIds.add(tokenId);
 
             const token = tokenMap.get(tokenId);
-            if (!token) throw new Error("BUG! Unable to find a token that we should have!");
+            if (!token) {
+                console.log("BUG! Unable to find a token that we should have!", {tokenId});
+                console.log(`tokenMap (${tokenMap.size})`, Array.from(tokenMap.entries()));
+                throw new Error("BUG! Unable to find a token that we should have!");
+            }
 
             for (const proof of token.proofs) {
                 if (newStateProofs.has(proof.C) && !rolledOverProofs.has(proof.C)) {
@@ -900,5 +924,11 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
         }
 
         return balances;
+    }
+
+    getMintsWithBalance(amount: number) {
+        return Object.entries(this.mintBalances)
+            .filter(([_, balance]) => balance >= amount)
+            .map(([mint]) => mint);
     }
 }

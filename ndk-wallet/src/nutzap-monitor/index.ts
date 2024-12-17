@@ -204,7 +204,7 @@ export class NDKNutzapMonitor extends EventEmitter<{
 
             if (!wallet) throw new Error("wallet not found for nutzap");
             privkey = wallet.privkey;
-
+            
             const _wallet = await wallet.walletForMint(mint);
             if (!_wallet) throw new Error("unable to load wallet for mint " + mint);
             const proofsWeHave = wallet.proofsForMint(mint);
@@ -222,6 +222,7 @@ export class NDKNutzapMonitor extends EventEmitter<{
                 // save new proofs in wallet
                 wallet.saveProofs(res, mint, { nutzap, amount: receivedAmount });
             } catch (e: any) {
+                console.log("failed to redeem nutzap", nutzap.id, e.message);
                 this.emit("failed", nutzap, e.message);
             }
         } catch (e: any) {

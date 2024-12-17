@@ -148,7 +148,7 @@ const NDKSessionProvider = ({ children, ...opts }: PropsWithChildren<NDKSessionP
         if (opts.wallet) filters[0].kinds!.push(NDKKind.CashuWallet);
         if (opts.kinds) filters[0].kinds!.push(...opts.kinds.keys());
 
-        if (opts.settingsStore) {
+        if (opts.settingsStore && !ndk.wallet) {
             loadWallet(ndk, opts.settingsStore, (wallet) => setActiveWallet(wallet, false));
         }
 

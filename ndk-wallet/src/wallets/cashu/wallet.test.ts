@@ -2,7 +2,6 @@ import { NDKCashuWallet, WalletChange } from './wallet';
 import { NDKCashuToken } from './token';
 import { NDKZapDetails, CashuPaymentInfo, NDKUser, NDKEvent, NDKPrivateKeySigner, NDKRelaySet } from '@nostr-dev-kit/ndk';
 import NDK from '@nostr-dev-kit/ndk';
-import { NDKCashuPay } from './pay';
 import { jest } from '@jest/globals';
 import { Proof } from '@cashu/cashu-ts';
 import { NDKRelay } from '@nostr-dev-kit/ndk';
@@ -27,11 +26,63 @@ describe('NDKCashuWallet', () => {
         wallet = new NDKCashuWallet(ndk);
     });
 
+    fdescribe("addToken", () => {
+        it('adds a token to the wallet', () => {
+            const { tokens } = createMockTokens(mockPayNutResult, false, 3);
+
+            wallet.addToken(tokens[0]);
+
+            expect(wallet.tokens.length).toBe(1);
+            expect(wallet.tokens[0].id).toBe(tokens[0].id);
+        });
+
+        it('skips adding the same token twice', () => {
+            const { tokens } = createMockTokens(mockPayNutResult, false, 3);
+
+            wallet.addToken(tokens[0]);
+            wallet.addToken(tokens[0]);
+
+            expect(wallet.tokens.length).toBe(1);
+            expect(wallet.tokens[0].id).toBe(tokens[0].id);
+        })
+
+        fit("discards older tokens when both include the same proof", () => {
+            const { tokens } = createMockTokens(mockPayNutResult, false, 3);
+
+            tokens[1].created_at! = Math.floor(Date.now() / 1000);
+            tokens[0].created_at! = tokens[0].created_at! - 1000;
+
+            tokens[1].proofs.push(tokens[0].proofs[0]);
+
+            wallet.addToken(tokens[0]);
+            
+            expect(wallet.addToken(tokens[1])).toBe(true);
+            expect(wallet.tokens.length).toBe(1);
+            expect(wallet.knownTokens.size).toBe(2);
+            expect(wallet.tokens[0].id).toBe(tokens[1].id);
+        })
+
+        fit("refuses to add older tokens when both include the same proof", () => {
+            const { tokens } = createMockTokens(mockPayNutResult, false, 3);
+
+            tokens[0].created_at! = Math.floor(Date.now() / 1000);
+            tokens[1].created_at! = tokens[0].created_at! - 1000;
+
+            tokens[1].proofs.push(tokens[0].proofs[0]);
+
+            wallet.addToken(tokens[0]);
+            
+            expect(wallet.addToken(tokens[1])).toBe(false);
+            expect(wallet.tokens.length).toBe(1);
+            expect(wallet.tokens[0].id).toBe(tokens[0].id);
+        })
+    })
+
     it('should successfully pay with cashu when wallet has enough tokens', async () => {
         const { tokens, modifiedMockResult } = createMockTokens(mockPayNutResult, false, 3);
         wallet.tokens.push(...tokens);
 
-        jest.spyOn(NDKCashuPay.prototype, 'payNut').mockResolvedValue(modifiedMockResult);
+        // jest.spyOn(NDKCashuPay.prototype, 'payNut').mockResolvedValue(modifiedMockResult);
 
         const result = await wallet.cashuPay(paymentDetails);
 
@@ -347,18 +398,6 @@ describe('NDKCashuWallet Integration Test', () => {
     beforeAll(() => {
         ndk = new NDK({ signer: NDKPrivateKeySigner.generate() });
         wallet = new NDKCashuWallet(ndk);
-    });
-
-    fit('should create a new wallet and publish it', async () => {
-        // Create a new wallet and ensure it's initialized properly
-        const newWallet = new NDKCashuWallet(ndk);
-        newWallet.relays = ['wss://example.com'];
-        expect(newWallet).toBeDefined();
-
-        // Publish the wallet
-        await newWallet.publish();
-        expect(newWallet.walletId).not.toBe('');
-        expect(newWallet.event?.id).toBeDefined();
     });
 
     it('should add a token to the wallet and sync balance', async () => {

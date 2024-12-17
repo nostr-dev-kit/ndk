@@ -12,6 +12,7 @@ import type {
     NDKSubscriptionOptions,
     NDKTag,
     NostrEvent,
+    NDKRelay,
 } from "@nostr-dev-kit/ndk";
 import NDK, { NDKEvent, NDKKind, NDKPrivateKeySigner, NDKRelaySet, NDKUser, normalizeUrl } from "@nostr-dev-kit/ndk";
 import { NDKCashuToken, proofsTotalBalance } from "./token.js";
@@ -67,10 +68,18 @@ export type WalletStateChange = {
     saveProofs: Proof[];
 }
 
+export type WalletWarning = {
+    msg: string;
+    event?: NDKEvent;
+    relays?: NDKRelay[];
+}
+
 /**
  * This class tracks state of a NIP-60 wallet
  */
-export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDKWallet {
+export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
+    warning: (warning: WalletWarning) => void;
+}> implements NDKWallet {
     readonly type = "nip-60";
 
     /**
@@ -537,7 +546,31 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
         return { proofs: createResult.send, mint: createResult.mint };
     }
 
-    private getAllMintProofs(mint?: MintUrl): Map<string, NDKEventId> {
+    /**
+     * Returns a map of the proof C values to the token where it was found
+     * @param mint 
+     * @returns 
+     */
+    private getAllMintProofTokens(mint?: MintUrl): Map<string, NDKCashuToken> {
+        const allMintProofs = new Map<string, NDKCashuToken>();
+
+        this.tokens
+            .filter((t) => mint ? t.mint === mint : true)
+            .forEach((t) => {
+            t.proofs.forEach((p) => {
+                allMintProofs.set(p.C, t);
+            });
+        });
+
+        return allMintProofs;
+    }
+
+    /**
+     * Returns a map of the proof C values to the token where it was found
+     * @param mint 
+     * @returns 
+     */
+    private getAllMintProofTokenIds(mint?: MintUrl): Map<string, NDKEventId> {
         const allMintProofs = new Map<string, NDKEventId>();
 
         this.tokens
@@ -551,6 +584,11 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
         return allMintProofs;
     }
 
+    /**
+     * Returns a map of the token ids to the token
+     * @param mint 
+     * @returns 
+     */
     private getTokensMap(mint: MintUrl) {
         const map = new Map<NDKEventId, NDKCashuToken>();
 
@@ -590,7 +628,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
         };
 
         const newStateProofs = this.collectNewStateProofs(change.store);
-        const allAffectedProofs = this.getAllMintProofs(change.mint);
+        const allAffectedProofs = this.getAllMintProofTokenIds(change.mint);
         const tokenMap = this.getTokensMap(change.mint);
 
         this.processStoreProofs(change.store, allAffectedProofs, newState.saveProofs);
@@ -698,13 +736,18 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
         return this.tokens.some((t) => t.proofs.some((p) => p.secret === secret));
     }
 
-    public proofsForMint(mint: MintUrl) {
+    /**
+     * Returns all proofs for a given mint
+     * @param mint 
+     * @returns 
+     */
+    public proofsForMint(mint: MintUrl): Proof[] {
         mint = normalizeUrl(mint);
-        const res = this.tokens.filter((t) => t.mint === mint).map((t) => t.proofs).flat();
 
-        console.log("providing proofs for mint %s: %d (amounts: %o)", mint, res.length, res.map((p) => p.amount));
-        
-        return res;
+        return this.tokens
+            .filter((t) => t.mint === mint)
+            .map((t) => t.proofs)
+            .flat();
     }
 
     /**
@@ -822,12 +865,60 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents> implements NDK
      * Updates the internal state to add a token,
      * there is no change published anywhere when calling this function.
      */
-    public addToken(token: NDKCashuToken) {
+    public addToken(token: NDKCashuToken): boolean {
+        // check for proofs we already have
+        if (!token.mint) throw new Error("token " + token.encode() + " has no mint");
+
+        // double check we don't already have this tokem
+        if (this.knownTokens.has(token.id)) {
+            const stackTrace = new Error().stack;
+            d("Refusing to add the same token twice", token.id, stackTrace);
+            return false;
+        }
+
+        const allMintProofs = this.getAllMintProofTokens(token.mint);
+
+        for (const proof of token.proofs) {
+            if (allMintProofs.has(proof.C)) {
+                const collidingToken = allMintProofs.get(proof.C);
+
+                if (!collidingToken) {
+                    console.trace("BUG: unable to find colliding token", {
+                        token: token.id,
+                        proof: proof.C,
+                    });
+                    throw new Error("BUG: unable to find colliding token");
+                }
+
+                // keep newer token, remove old
+                if (token.created_at! <= collidingToken.created_at!) {
+                    // we don't have to do anything
+                    console.log('skipping adding requested token since we have a newer token with the same proof', {
+                        requestedTokenId: token.id,
+                        relay: token.onRelays.map((r) => r.url),
+                    })
+
+                    this.emit("warning", {
+                        msg: "Received an older token with proofs that were already known, this is likely a relay that didn't receive (or respected) a delete event",
+                        event: token,
+                        relays: token.onRelays
+                    })
+                    
+                    return false; 
+                }
+
+                // remove old token
+                this.removeTokenId(collidingToken.id);
+            }
+        } 
+        
         if (!this.knownTokens.has(token.id)) {
             this.knownTokens.add(token.id);
             this.tokens.push(token);
             this.emit("balance_updated");
         }
+
+        return true;
     }
 
     /**

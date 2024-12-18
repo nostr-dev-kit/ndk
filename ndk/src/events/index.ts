@@ -315,7 +315,7 @@ export class NDKEvent extends EventEmitter {
     public giftUnwrap = giftUnwrap.bind(this);
 
     /**
-     * Shorthand method for Nip-17 Private Direct Messages encryption using Nip-44 and Nip-29 gift wraps.
+     * Shorthand method for Nip-17 Private Direct Messages encryption using Nip-44 and Nip-59 gift wraps.
      * 
      * @param recipient user which receives the message
      * @param signer optional signer to use for decryption of the events, only needed to overwrite the event's ndk signer
@@ -326,7 +326,7 @@ export class NDKEvent extends EventEmitter {
     }
 
     /**
-     * Shorthand method for Nip-17 Private Direct Messages decryption using Nip-44 and Nip-29 gift wraps.
+     * Shorthand method for Nip-17 Private Direct Messages decryption using Nip-44 and Nip-59 gift wraps.
      * 
      * @param signer optional signer to use for decryption of the events, only needed to overwrite the event's ndk signer
      * @returns Promise containing the decrypted event if successful, otherwise an error

@@ -11,7 +11,6 @@ import { NDKKind } from "./kinds/index.js";
 export type GiftWrapParams = {
     encryptionNip?: EncryptionNip
     rumorKind?: number;
-    wrapKind?: 1059 | 1060
     wrapTags?: string[][]
 }
 
@@ -23,7 +22,7 @@ export type GiftWrapParams = {
  * @param params 
  * @returns 
  */
-export async function giftWrap(this:NDKEvent, recipient: NDKUser, signer?:NDKSigner, params:GiftWrapParams = {}) : Promise<NDKEvent>{
+export async function giftWrap(this: NDKEvent, recipient: NDKUser, signer?: NDKSigner, params: GiftWrapParams = {}): Promise<NDKEvent>{
   params.encryptionNip = params.encryptionNip || 'nip44';
   if(!signer){
       if(!this.ndk) 
@@ -95,12 +94,12 @@ async function getSealEvent(rumor : NostrEvent, recipient : NDKUser, signer:NDKS
     return seal;
 }
   
-async function getWrapEvent(sealed:VerifiedEvent, recipient:NDKUser, params? : GiftWrapParams): Promise<VerifiedEvent>{
+async function getWrapEvent(sealed: VerifiedEvent, recipient: NDKUser, params?: GiftWrapParams): Promise<VerifiedEvent>{
     const signer = NDKPrivateKeySigner.generate();
     const content = await signer.encrypt(recipient, JSON.stringify(sealed), params?.encryptionNip || 'nip44')
     const pubkey = (await signer.user()).pubkey
     let wrap : any = {
-        kind : params?.wrapKind || NDKKind.GiftWrap,
+        kind : NDKKind.GiftWrap,
         created_at: approximateNow(5),
         tags: (params?.wrapTags || []).concat([["p", recipient.pubkey]]),
         content,

@@ -27,7 +27,7 @@ const useNDKSessionEventKind = <T extends NDKEvent>(
     const { ndk } = useNDK();
     const { events } = useNDKSession();
     const kindEvents = events.get(kind) || [];
-    const firstEvent = kindEvents[0];
+    const firstEvent = !!kindEvents[0];
 
     if (create && !firstEvent) {
         const event = new EventClass(ndk);
@@ -35,7 +35,23 @@ const useNDKSessionEventKind = <T extends NDKEvent>(
         events.set(kind, [event]);
         return event;
     }
+
     return firstEvent ? EventClass.from(firstEvent) : undefined;
 };
 
-export { useNDKSession, useNDKSessionEventKind };
+const useNDKSessionEvents = <T extends NDKEvent>(
+    kinds: NDKKind[],
+    eventClass?: NDKEventWithFrom<any>,
+): T[] => {
+    const { events } = useNDKSession();
+    let allEvents = kinds.flatMap((kind) => events.get(kind) || []);
+
+    if (kinds.length > 1) allEvents = allEvents.sort((a, b) => a.created_at - b.created_at);
+
+    // remove deleted events if replaceable
+    allEvents = allEvents.filter((e) => !e.isReplaceable() || !e.hasTag('deleted'));
+
+    return allEvents.map((e) => eventClass ? eventClass.from(e) : e as T);
+};
+
+export { useNDKSession, useNDKSessionEventKind, useNDKSessionEvents };

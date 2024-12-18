@@ -43,6 +43,11 @@ export async function generateZapRequest(
         event.tags = event.tags.concat(tags);
     }
 
+    // remove e-tags if we have an a-tag
+    if (event.hasTag("a")) {
+        event.tags = event.tags.filter((tag) => tag[0] !== "e");
+    }
+
     // make sure we only have one `p` tag
     event.tags = event.tags.filter((tag) => tag[0] !== "p");
     event.tags.push(["p", pubkey]);

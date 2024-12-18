@@ -139,7 +139,7 @@ export class NDKNutzap extends NDKEvent {
         this.tags = this.tags.filter((t) => t[0] !== "p");
 
         if (target instanceof NDKEvent) {
-            this.tags.push();
+            this.tags.push(target.tagReference());
         }
     }
 

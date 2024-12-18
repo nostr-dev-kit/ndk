@@ -2,7 +2,7 @@ import debug from "debug";
 
 import { NDK } from "../../ndk/index.js";
 import type { NostrEvent } from "../../events/index.js";
-import { NDKUser } from "../../user/index.js";
+import { Hexpubkey, NDKUser } from "../../user/index.js";
 import { type NDKSigner } from "../index.js";
 import { NDKRelay } from "../../relay/index.js";
 import { EncryptionMethod, EncryptionNip } from "../../events/encryption.js";
@@ -210,6 +210,11 @@ export class NDKNip07Signer implements NDKSigner {
     }
 }
 
+type Nip44 = {
+    encrypt: (recipient: Hexpubkey, value: string) => Promise<string>;
+    decrypt: (sender: Hexpubkey, value: string) => Promise<string>;
+}
+
 declare global {
     interface Window {
         nostr?: {
@@ -220,10 +225,7 @@ declare global {
                 encrypt(recipientHexPubKey: string, value: string): Promise<string>;
                 decrypt(senderHexPubKey: string, value: string): Promise<string>;
             };
-            nip44?: {
-                encrypt(recipientHexPubKey: string, value: string): Promise<string>;
-                decrypt(senderHexPubKey: string, value: string): Promise<string>;
-            };
+            nip44?: Nip44;
         };
     }
 }

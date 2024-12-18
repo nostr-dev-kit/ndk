@@ -28,9 +28,16 @@ export interface NDKCacheAdapter {
     /**
      * Called when an event is deleted by the client.
      * Cache adapters should remove the event from their cache.
-     * @param event - The event that was deleted.
+     * @param eventIds - The ids of the events that were deleted.
      */
-    deleteEvent?(event: NDKEvent): Promise<void>;
+    deleteEventIds?(eventIds: NDKEventId[]): Promise<void>;
+
+    /**
+     * Fetches a profile from the cache synchronously.
+     * @param pubkey - The pubkey of the profile to fetch.
+     * @returns The profile, or null if it is not in the cache.
+     */
+    fetchProfileSync?(pubkey: Hexpubkey): NDKCacheEntry<NDKUserProfile> | null;
 
     /**
      * Special purpose

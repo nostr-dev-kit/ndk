@@ -8,8 +8,8 @@
     "expo": "*"
   },
   "devDependencies": {
-    "react-native-builder-bob": "^0.32.1",
-    "typescript": "^5.5.4"
+    "react-native-builder-bob": "^0.35.2",
+    "typescript": "^5.7.2"
   },
   "keywords": [
     "ndk",
@@ -22,7 +22,8 @@
     "@nostr-dev-kit/ndk": "workspace:*",
     "@nostr-dev-kit/ndk-wallet": "workspace:*",
     "react-native-get-random-values": "~1.11.0",
-    "zustand": "^5.0.1"
+    "typescript-lru-cache": "^2.0.0",
+    "zustand": "^5.0.2"
   },
   "source": "./src/index.ts",
   "module": "./lib/module/index.js",

@@ -31,6 +31,9 @@ export enum NDKKind {
     ChannelMessage = 42,
     ChannelHideMessage = 43,
     ChannelMuteUser = 44,
+
+    GenericReply = 1111,
+    
     Media = 1063,
     Report = 1984,
     Label = 1985,
@@ -113,6 +116,7 @@ export enum NDKKind {
     CurationSet = 30004, // Deprecated but left for backwards compatibility
     ArticleCurationSet = 30004,
     VideoCurationSet = 30005,
+    ImageCurationSet = 30006,
     InterestSet = 30015,
     InterestsList = NDKKind.InterestSet, // Deprecated but left for backwards compatibility
     EmojiSet = 30030,

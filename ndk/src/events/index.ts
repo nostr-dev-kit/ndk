@@ -477,8 +477,9 @@ export class NDKEvent extends EventEmitter {
         }
 
         // If the published event is a delete event, notify the cache if there is one
-        if (this.kind === NDKKind.EventDeletion && this.ndk.cacheAdapter?.deleteEvent) {
-            this.ndk.cacheAdapter.deleteEvent(this);
+        if (this.kind === NDKKind.EventDeletion && this.ndk.cacheAdapter?.deleteEventIds) {
+            const eTags = this.getMatchingTags('e').map((tag) => tag[1]);
+            this.ndk.cacheAdapter.deleteEventIds(eTags);
         }
 
         const rawEvent = this.rawEvent();
@@ -490,6 +491,11 @@ export class NDKEvent extends EventEmitter {
             } catch (e) {
                 console.error("Error adding unpublished event to cache", e);
             }
+        }
+
+        // if this is a delete event, send immediately to the cache
+        if (this.kind === NDKKind.EventDeletion && this.ndk.cacheAdapter?.deleteEventIds) {
+            this.ndk.cacheAdapter.deleteEventIds(this.getMatchingTags('e').map((tag) => tag[1]));
         }
 
         // send to active subscriptions that want this event
@@ -535,18 +541,21 @@ export class NDKEvent extends EventEmitter {
             }
         }
 
-        if (
-            (this.ndk?.clientName || this.ndk?.clientNip89) &&
-            skipClientTagOnKinds.includes(this.kind!)
-        ) {
-            if (!this.tags.some((tag) => tag[0] === "client")) {
-                const clientTag: NDKTag = ["client", this.ndk.clientName ?? ""];
-                if (this.ndk.clientNip89) clientTag.push(this.ndk.clientNip89);
-                tags.push(clientTag);
-            }
+        if (this.shouldAddClientTag) {
+            const clientTag: NDKTag = ["client", this.ndk!.clientName ?? ""];
+            if (this.ndk!.clientNip89) clientTag.push(this.ndk!.clientNip89);
+            tags.push(clientTag);
         }
 
         return { content: content || "", tags };
+    }
+
+    get shouldAddClientTag(): boolean {
+        if (!this.ndk?.clientName && !this.ndk?.clientNip89) return false;
+        if (skipClientTagOnKinds.includes(this.kind!)) return false;
+        if (this.isEphemeral()) return false;
+        if (this.hasTag("client")) return false;
+        return true;
     }
 
     public muted(): string | null {
@@ -660,8 +669,10 @@ export class NDKEvent extends EventEmitter {
             tag.push("");
         }
 
-        if (marker) {
-            tag.push(marker);
+        tag.push(marker ?? "");
+
+        if (!this.isParamReplaceable()) {
+            tag.push(this.pubkey);
         }
 
         return tag;
@@ -694,21 +705,24 @@ export class NDKEvent extends EventEmitter {
         }
 
         // Add the relay url to all tags
-        if (this.relay?.url) {
-            tags = tags.map((tag) => {
-                tag.push(this.relay?.url!);
-                return tag;
-            });
-        } else if (marker) {
-            tags = tags.map((tag) => {
-                tag.push("");
-                return tag;
-            });
-        }
+        tags = tags.map((tag) => {
+            if (tag[0] === "e" || marker) {
+                tag.push(this.relay?.url ?? "");
+            } else if (this.relay?.url) {
+                tag.push(this.relay?.url);
+            }
+            return tag;
+        });
 
-        if (marker) {
-            tags.forEach((tag) => tag.push(marker)); // Add the marker to both "a" and "e" tags
-        }
+        // add marker and pubkey to e tags, and marker to a tags
+        tags.forEach((tag) => {
+            if (tag[0] === "e") {
+                tag.push(marker ?? "");
+                tag.push(this.pubkey);
+            } else if (marker) {
+                tag.push(marker);
+            }
+        });
 
         // NIP-29 h-tags
         tags = [...tags, ...this.getMatchingTags("h")];
@@ -756,7 +770,10 @@ export class NDKEvent extends EventEmitter {
         } as NostrEvent);
         e.tag(this, undefined, true);
         e.tags.push(["k", this.kind!.toString()]);
-        if (publish) await e.publish();
+        if (publish) {
+            this.emit("deleted");
+            await e.publish();
+        }
 
         return e;
     }
@@ -835,5 +852,59 @@ export class NDKEvent extends EventEmitter {
      */
     get isValid(): boolean {
         return this.validate();
+    }
+
+    public reply(): NDKEvent {
+        const reply = new NDKEvent(this.ndk);
+
+        if (this.kind === 1) {
+            reply.kind = 1;
+            const opHasETag = this.hasTag("e");
+
+            if (opHasETag) {
+                reply.tags = [
+                    ...reply.tags,
+                    ...this.getMatchingTags("e"),
+                    ...this.getMatchingTags("p"),
+                    ...this.getMatchingTags("a"),
+                    ...this.referenceTags("reply")
+                ];
+            } else {
+                reply.tag(this, "root");
+            }
+        } else {
+            reply.kind = NDKKind.GenericReply;
+
+            const carryOverTags = ["A", "E", "I"];
+            const rootTag = this.tags.find((tag) => carryOverTags.includes(tag[0]));
+            
+            // we have a root tag already
+            if (rootTag) {
+                const rootKind = this.tagValue("K");
+                reply.tags.push(rootTag);
+                if (rootKind) reply.tags.push(["K", rootKind]);
+
+                reply.tags.push(["k", this.kind!.toString()]);
+
+                const [ type, id, _, ...extra] = this.tagReference();
+                const tag = [type, id, ...extra];
+                reply.tags.push(tag);
+            } else {
+                const [ type, id, _, relayHint] = this.tagReference();
+                const tag = [type, id, relayHint ?? ""];
+                if (type === "e") tag.push(this.pubkey);
+                reply.tags.push(tag);
+                const uppercaseTag = [...tag];
+                uppercaseTag[0] = uppercaseTag[0].toUpperCase();
+                reply.tags.push(uppercaseTag);
+                reply.tags.push(["K", this.kind!.toString()])
+            }
+
+            // carry over all p tags
+            reply.tags.push(...this.getMatchingTags("p"));
+            reply.tags.push(["p", this.pubkey]);
+        }
+
+        return reply;
     }
 }

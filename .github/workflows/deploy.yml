@@ -6,7 +6,8 @@ on:
     # Runs on pushes targeting the `main` branch. Change this to `master` if you're
     # using the `master` branch as the default branch.
     push:
-        branches: [master]
+        branches:
+          - '*'
 
     # Allows you to run this workflow manually from the Actions tab
     workflow_dispatch:
@@ -32,18 +33,16 @@ jobs:
               uses: actions/checkout@v4
               with:
                   fetch-depth: 0 # Not needed if lastUpdated is not enabled
-            # - uses: oven-sh/setup-bun@v1 # Uncomment this if you're using Bun
             - name: Setup Node
-              uses: pnpm/action-setup@v3 # Uncomment this if you're using pnpm
+              uses: actions/setup-node@v4
               with:
-                  node-version: 21
-                  cache: pnpm # or pnpm / yarn
+                  node-version: '20'
+            - name: Setup PNPM
+              uses: pnpm/action-setup@v4
             - name: Setup Pages
               uses: actions/configure-pages@v4
             - name: Install dependencies
               run: pnpm install # or pnpm install / yarn install / bun install
-            - name: Build dexie typedoc
-              run: cd ndk-cache-dexie && pnpm typedoc && cat docs/interfaces/NDKCacheAdapterDexieOptions.md >> ../docs/cache/dexie.md
             - name: Build with VitePress
               run: pnpm docs:build # or pnpm docs:build / yarn docs:build / bun run docs:build
             - name: Build typedoc

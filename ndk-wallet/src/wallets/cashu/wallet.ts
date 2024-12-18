@@ -259,12 +259,12 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
             filters[2] = { ...filters[2], ...this.event.filter() }; // add to CashuQuote filter
         }
 
-        console.log("filters %j", filters);
-        
         this.sub = this.ndk.subscribe(filters, opts, this.relaySet, false);
         
         this.sub.on("event", eventHandler.bind(this));
-        // this.sub.on("eose");
+        this.sub.on("eose", () => {
+            this.emit("ready");
+        });
         this.sub.start();
     }
 
@@ -536,6 +536,8 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
         historyEvent.direction = "out";
         historyEvent.amount = payment.amount;
         historyEvent.unit = payment.unit || this.unit;
+        historyEvent.mint = createResult.mint;
+        if (createResult.fee) historyEvent.fee = createResult.fee;
         if (payment.target) {
             // tag the target if there is one
             historyEvent.tags.push(payment.target.tagReference());

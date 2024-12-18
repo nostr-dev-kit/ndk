@@ -37,6 +37,22 @@ export async function createToken(
                 console.log('updating wallet state');
                 const isP2pk = (p: Proof) => p.secret.startsWith('["P2PK"');
                 const isNotP2pk = (p: Proof) => !isP2pk(p);
+
+                // fee could be calculated here with the difference between the 
+                const totalSent = res.send.reduce((acc, p) => acc + p.amount, 0);
+                const totalChange = res.keep.reduce((acc, p) => acc + p.amount, 0);
+                const fee = totalSent - amount - totalChange;
+
+                console.log("fee for mint payment calculated", {
+                    fee,
+                    totalSent,
+                    totalChange,
+                    amount,
+                });
+
+                if (fee > 0) {
+                    res.fee = fee;
+                }
         
                 wallet.updateState({
                     reserve: res.send.filter(isNotP2pk),
@@ -147,7 +163,7 @@ async function createTokenForPaymentWithMintTransfer(
     return { keep: [], send: proofs, mint };
 }
 
-type TokenWithMint = SendResponse & { mint: MintUrl };
+type TokenWithMint = SendResponse & { mint: MintUrl, fee?: number };
 
 /**
  * Finds mints in common in the intersection of the arrays of mints

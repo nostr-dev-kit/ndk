@@ -64,7 +64,7 @@ export type NDKZapDetails<T> = T & {
 
 export type NDKZapConfirmation = NDKZapConfirmationLN | NDKZapConfirmationCashu;
 
-export type NDKPaymentConfirmation = NDKPaymentConfirmationLN | NDKPaymentConfirmationCashu;
+export type NDKPaymentConfirmation = NDKPaymentConfirmationLN | NDKNutzap;
 
 export type NDKZapSplit = {
     pubkey: string;
@@ -240,7 +240,7 @@ class NDKZapper extends EventEmitter<{
      * (note that the cashuPay function can use any method to create the proofs, including using lightning
      * to mint proofs in the specified mint, the responsibility of minting the proofs is delegated to the caller (e.g. ndk-wallet))
      */
-    async zapNip61(split: NDKZapSplit, data: CashuPaymentInfo): Promise<NDKPaymentConfirmation | undefined> {
+    async zapNip61(split: NDKZapSplit, data: CashuPaymentInfo): Promise<NDKNutzap | Error | undefined> {
         if (!this.cashuPay) throw new Error("No cashuPay function available");
         
         let ret: NDKPaymentConfirmationCashu | undefined;
@@ -280,7 +280,7 @@ class NDKZapper extends EventEmitter<{
             nutzap.unit = this.unit;
             nutzap.recipientPubkey = split.pubkey;
             await nutzap.sign(this.signer);
-            await nutzap.publish(relaySet);
+            nutzap.publish(relaySet);
 
             // mark that we have zapped
             return nutzap;

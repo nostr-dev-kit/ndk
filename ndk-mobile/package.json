@@ -34,6 +34,18 @@
         "types": "./lib/typescript/module/index.d.ts",
         "default": "./lib/module/index.js"
       }
+    },
+    "./components": {
+      "import": {
+        "types": "./lib/typescript/module/components/index.d.ts",
+        "default": "./lib/module/components/index.js"
+      }
+    },
+    "./components/relays": {
+      "import": {
+        "types": "./lib/typescript/module/components/relays/index.d.ts",
+        "default": "./lib/module/components/relays/index.js"
+      }
     }
   },
   "scripts": {

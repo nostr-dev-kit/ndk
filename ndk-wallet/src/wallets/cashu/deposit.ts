@@ -1,12 +1,12 @@
 import type { Proof } from "@cashu/cashu-ts";
 import { CashuWallet } from "@cashu/cashu-ts";
-import type { NDKCashuWallet } from "./wallet";
+import type { NDKCashuWallet } from "./wallet/index.js";
 import { EventEmitter } from "tseep";
 import { NDKCashuToken } from "./token";
 import createDebug from "debug";
-import { NDKEvent, NDKKind, NDKTag, NostrEvent } from "@nostr-dev-kit/ndk";
-import { NDKWalletChange } from "./history";
+import { NDKEvent } from "@nostr-dev-kit/ndk";
 import { NDKCashuQuote } from "./quote";
+import { createInTxEvent } from "./wallet/txs.js";
 
 const d = createDebug("ndk-wallet:cashu:deposit");
 
@@ -61,10 +61,8 @@ export class NDKCashuDeposit extends EventEmitter<{
      * @returns 
      */
     async start(pollTime: number = 2500) {
-        const w = await this.wallet.walletForMint(this.mint);
-        if (!w) throw new Error("unable to load wallet for mint " + this.mint);
-        this._wallet = w;
-        const quote = await this._wallet.createMintQuote(this.amount);
+        const cashuWallet = await this.wallet.cashuWallet(this.mint);
+        const quote = await cashuWallet.createMintQuote(this.amount);
         d("created quote %s for %d %s", quote.quote, this.amount, this.mint);
 
         this.quoteId = quote.quote;
@@ -113,9 +111,6 @@ export class NDKCashuDeposit extends EventEmitter<{
         setTimeout(() => {
             this.runCheck();
             this.checkIntervalLength += 500;
-            if (this.checkIntervalLength > 30000) {
-                this.checkIntervalLength = 30000;
-            }
         }, this.checkIntervalLength);
     }
 
@@ -140,13 +135,28 @@ export class NDKCashuDeposit extends EventEmitter<{
 
         try {
             d("Checking for minting status of %s", this.quoteId);
-            const w = await this.wallet.walletForMint(this.mint);
-            if (!w) throw new Error("unable to load wallet for mint " + this.mint);
-            this._wallet = w;
-            proofs = await this._wallet.mintProofs(this.amount, this.quoteId);
+            const cashuWallet = await this.wallet.cashuWallet(this.mint);
+            const proofsWeHave = await this.wallet.proofsForMint(this.mint);
+            proofs = await cashuWallet.mintProofs(this.amount, this.quoteId, {
+                proofsWeHave,
+            });
             if (proofs.length === 0) return;
         } catch (e: any) {
             if (e.message.match(/not paid/i)) return;
+
+            if (e.message.match(/already issued/i)) {
+                d("Mint is saying the quote has already been issued, destroying quote event: %s", e.message);
+                this.destroyQuoteEvent();
+                this.finalized = true;
+                return;
+            }
+
+            if (e.message.match(/rate limit/i)) {
+                d("Mint seems to be rate limiting, lowering check interval");
+                this.checkIntervalLength += 5000;
+                return;
+            }
+            
             d(e.message);
             return;
         }
@@ -154,35 +164,30 @@ export class NDKCashuDeposit extends EventEmitter<{
         try {
             this.finalized = true;
 
-            const tokenEvent = new NDKCashuToken(this.wallet.ndk);
-            tokenEvent.proofs = proofs;
-            tokenEvent.mint = this.mint;
-            tokenEvent.wallet = this.wallet;
+            const updateRes = await this.wallet.state.update({
+                store: proofs,
+                mint: this.mint,
+            });
 
-            await tokenEvent.publish(this.wallet.relaySet);
+            const tokenEvent = updateRes.created;
+            if (!tokenEvent) throw new Error("no token event created");
 
-            const historyEvent = new NDKWalletChange(this.wallet.ndk);
-            historyEvent.direction = 'in';
-            historyEvent.amount = tokenEvent.amount;
-            historyEvent.unit = this.unit;
-            historyEvent.createdTokens = [ tokenEvent ];
-            historyEvent.description = "Deposit";
-            historyEvent.mint = this.mint;
-            historyEvent.publish(this.wallet.relaySet);
+            createInTxEvent(this.wallet, proofs, this.wallet.unit, this.mint, updateRes, { description: "Deposit" });
 
             this.emit("success", tokenEvent);
 
             // delete the quote event if it exists
-            if (this.quoteEvent) {
-                console.log("destroying quote event", this.quoteEvent.id);
-                const deleteEvent = await this.quoteEvent.delete(undefined, false);
-                deleteEvent.publish(this.wallet.relaySet);
-            }
-
+            this.destroyQuoteEvent();
         } catch (e: any) {
             console.log("relayset", this.wallet.relaySet);
             this.emit("error", e.message);
             console.error(e);
         }
+    }
+
+    private async destroyQuoteEvent() {
+        if (!this.quoteEvent) return;
+        const deleteEvent = await this.quoteEvent.delete(undefined, false);
+        deleteEvent.publish(this.wallet.relaySet);
     }
 }

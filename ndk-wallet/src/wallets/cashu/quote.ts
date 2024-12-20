@@ -4,7 +4,7 @@ import { NDKKind } from "@nostr-dev-kit/ndk";
 
 import { NDKEvent } from "@nostr-dev-kit/ndk";
 import { decrypt } from "./decrypt";
-import { NDKCashuWallet } from "./wallet";
+import { NDKCashuWallet } from "./wallet/index.js";
 import { getBolt11ExpiresAt } from "../../utils/ln";
 
 export class NDKCashuQuote extends NDKEvent {

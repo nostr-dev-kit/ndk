@@ -1,4 +1,4 @@
-import type { NDKTag, NostrEvent } from "@nostr-dev-kit/ndk";
+import type { NDKEventId, NDKTag, NostrEvent } from "@nostr-dev-kit/ndk";
 import type NDK from "@nostr-dev-kit/ndk";
 import { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
 import createDebug from "debug";
@@ -11,6 +11,7 @@ const MARKERS = {
     REDEEMED: "redeemed",
     CREATED: "created",
     DESTROYED: "destroyed",
+    RESERVED: "reserved",
 };
 
 export type DIRECTIONS = 'in' | 'out';
@@ -108,7 +109,13 @@ export class NDKWalletChange extends NDKEvent {
      */
     set destroyedTokens(events: NDKCashuToken[]) {
         for (const event of events) {
-            this.tag(event, MARKERS.DESTROYED)
+            this.tags.push(event.tagReference(MARKERS.DESTROYED));
+        }
+    }
+
+    set destroyedTokenIds(ids: NDKEventId[]) {
+        for (const id of ids) {
+            this.tags.push(['e', id, "", MARKERS.DESTROYED])
         }
     }
 
@@ -117,7 +124,13 @@ export class NDKWalletChange extends NDKEvent {
      */
     set createdTokens(events: NDKCashuToken[]) {
         for (const event of events) {
-            this.tag(event, MARKERS.CREATED)
+            this.tags.push(event.tagReference(MARKERS.CREATED))
+        }
+    }
+
+    set reservedTokens(events: NDKCashuToken[]) {
+        for (const event of events) {
+            this.tags.push(event.tagReference(MARKERS.RESERVED))
         }
     }
 

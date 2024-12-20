@@ -1,10 +1,11 @@
 import { CheckStateEnum, ProofState, type Proof } from "@cashu/cashu-ts";
 import { NDKCashuToken } from "./token";
 import createDebug from "debug";
-import type { NDKCashuWallet } from "./wallet";
+import type { NDKCashuWallet } from "./wallet/index.js";
 import { hashToCurve } from '@cashu/crypto/modules/common';
 import { rollOverProofs } from "./proofs";
 import { NDKEvent, NDKKind, NostrEvent } from "@nostr-dev-kit/ndk";
+import { walletForMint } from "./mint";
 
 const d = createDebug("ndk-wallet:cashu:validate");
 
@@ -55,7 +56,7 @@ export async function consolidateMintTokens(
     wallet: NDKCashuWallet
 ) {
     const allProofs = tokens.map((t) => t.proofs).flat();
-    const _wallet = await wallet.walletForMint(mint);
+    const _wallet = await walletForMint(mint, wallet.unit);
     if (!_wallet) return;
     d(
         "checking %d proofs in %d tokens for spent proofs for mint %s",

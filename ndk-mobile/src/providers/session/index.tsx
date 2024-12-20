@@ -40,7 +40,7 @@ const NDKSessionProvider = ({ children, ...opts }: PropsWithChildren<NDKSessionP
     let followEvent: NDKEvent | undefined;
     const balances = useWalletStore((state) => state.balances);
     const setBalances = useWalletStore((state) => state.setBalances);
-
+    const setNutzapMonitor = useWalletStore((state) => state.setNutzapMonitor);
     const processFollowEvent = (event: NDKEvent, relay: NDKRelay) => {
         if (followEvent && followEvent.created_at! > event.created_at!) return;
 
@@ -88,20 +88,19 @@ const NDKSessionProvider = ({ children, ...opts }: PropsWithChildren<NDKSessionP
         save = true
     ) => {
         ndk.wallet = wallet;
-        if (wallet instanceof NDKCashuWallet) {
-            setBalances(wallet.balance());
-        }
 
         const updateBalance = () => {
             if (!wallet) return;
+            console.log('Updating balance from balance_updated event')
             setBalances(wallet.balance());
         }
 
-        wallet?.on("ready", () => {
-            setBalances(wallet.balance());
-        });
-
         if (wallet) {
+            wallet.on("ready", () => {
+                console.log('Updating balance from ready event')
+                setBalances(wallet.balance());
+            });
+
             wallet.on('balance_updated', () => {
                 updateBalance();
             });
@@ -118,6 +117,8 @@ const NDKSessionProvider = ({ children, ...opts }: PropsWithChildren<NDKSessionP
                 monitor.on('redeem', (zap) => {
                     console.log('zap redeemed', zap.rawEvent());
                 });
+                setNutzapMonitor(monitor);
+                
                 monitor.start();
             }
         }
@@ -226,6 +227,12 @@ async function loadWallet(ndk: NDK, settingsStore: SettingsStore, setActiveWalle
 
             // Load remotely
             const freshEvent = await ndk.fetchEvent(event.encode(), { cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY }, relaySet);
+            if (!freshEvent) {
+                console.log("Refreshing the event came back empty, has the wallet been deleted?")
+                setActiveWallet(null);
+                return null;
+            }
+
             if (freshEvent.hasTag('deleted')) {
                 alert('This wallet has been deleted');
                 setActiveWallet(null);
@@ -244,6 +251,7 @@ async function loadWallet(ndk: NDK, settingsStore: SettingsStore, setActiveWalle
             return wallet;
         } catch (e) {
             console.error('Error activating wallet', e);
+            console.log(payload)
         }
     }
 

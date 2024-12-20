@@ -12,3 +12,15 @@ export function getBolt11ExpiresAt(bolt11: string): number | undefined {
     
     return undefined;
 }
+
+export function getBolt11Amount(bolt11: string): number | undefined {
+    const decoded = decodeBolt11(bolt11);
+    const val = decoded.sections.find((section: { name: string; }) => section.name === 'amount')?.value;
+    return Number(val);
+}
+
+export function getBolt11Description(bolt11: string): string | undefined {
+    const decoded = decodeBolt11(bolt11);
+    const val = decoded.sections.find((section: { name: string; }) => section.name === 'description')?.value;
+    return val;
+}

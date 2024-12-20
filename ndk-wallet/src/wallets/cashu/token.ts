@@ -1,10 +1,9 @@
-import type { MintKeys } from "@cashu/cashu-ts";
 import { type Proof } from "@cashu/cashu-ts";
 import type { NDKRelay, NDKRelaySet, NostrEvent } from "@nostr-dev-kit/ndk";
 import type NDK from "@nostr-dev-kit/ndk";
 import { NDKEvent, NDKKind, normalizeUrl } from "@nostr-dev-kit/ndk";
-import type { NDKCashuWallet } from "./wallet";
-import { decrypt } from "./decrypt";
+import type { NDKCashuWallet } from "./wallet/index.js";
+import { decrypt } from "./decrypt.js";
 
 export function proofsTotalBalance(proofs: Proof[]): number {
     for (const proof of proofs) {
@@ -17,7 +16,7 @@ export function proofsTotalBalance(proofs: Proof[]): number {
 }
 
 export class NDKCashuToken extends NDKEvent {
-    public proofs: Proof[] = [];
+    private _proofs: Proof[] = [];
     private original: NDKEvent | undefined;
 
     constructor(ndk?: NDK, event?: NostrEvent | NDKEvent) {
@@ -44,6 +43,25 @@ export class NDKCashuToken extends NDKEvent {
         }
 
         return token;
+    }
+
+    get proofs(): Proof[] {
+        return this._proofs;
+    }
+
+    set proofs(proofs: Proof[]) {
+        const cs = new Set();
+
+        this._proofs = [];
+        for (const proof of proofs) {
+            if (cs.has(proof.C)) {
+                console.warn("Passed in proofs had duplicates, ignoring", proof.C);
+                continue;
+            }
+
+            this._proofs.push(proof);
+            cs.add(proof.C);
+        }
     }
 
     /**
@@ -104,24 +122,5 @@ export class NDKCashuToken extends NDKEvent {
         } else {
             return super.publish(relaySet, timeoutMs, requiredRelayCount);
         }
-    }
-}
-
-export class NDKCashuWalletKey extends NDKEvent {
-    constructor(ndk?: NDK, event?: NostrEvent) {
-        super(ndk, event);
-        this.kind ??= 37376;
-    }
-
-    set keys(payload: MintKeys) {
-        this.content = JSON.stringify(payload);
-    }
-
-    get keys(): MintKeys {
-        return JSON.parse(this.content);
-    }
-
-    set wallet(wallet: NDKCashuWallet) {
-        this.dTag = wallet.walletId;
     }
 }

@@ -13,7 +13,7 @@ import NDK, {
 } from "@nostr-dev-kit/ndk";
 import { EventEmitter } from "tseep";
 import createDebug from "debug";
-import { NDKCashuWallet } from "../wallets/cashu/wallet";
+import { NDKCashuWallet } from "../wallets/cashu/wallet/index.js";
 import { Proof } from "@cashu/cashu-ts";
 
 const d = createDebug("ndk-wallet:nutzap-monitor");
@@ -33,7 +33,7 @@ export class NDKNutzapMonitor extends EventEmitter<{
     /**
      * Emitted when a new nutzap is successfully redeemed
      */
-    redeem: (event: NDKNutzap) => void;
+    redeem: (event: NDKNutzap, amount: number) => void;
 
     /**
      * Emitted when a nutzap has been seen
@@ -87,6 +87,7 @@ export class NDKNutzapMonitor extends EventEmitter<{
      * Start the monitor.
      */
     public async start(mintList?: NDKCashuMintList) {
+        const authors = [this.user.pubkey];
         // if we are already running, stop the current subscription
         if (this.sub) {
             this.sub.stop();
@@ -95,13 +96,23 @@ export class NDKNutzapMonitor extends EventEmitter<{
         // if we don't have a mint list, we need to get one
         if (!mintList) {
             const list = await this.ndk.fetchEvent([
-                { kinds: [NDKKind.CashuMintList], authors: [this.user.pubkey] },
-            ]);
-            if (!list) {
-                return false;
-            }
+                { kinds: [NDKKind.CashuMintList], authors },
+            ], { groupable: false, closeOnEose: true });
+            if (!list) return false;
     
             mintList = NDKCashuMintList.from(list);
+        }
+
+        // get the most recent token even
+        let wallet: NDKCashuWallet | undefined;
+        let since: number | undefined;
+
+        if (mintList?.p2pk) {
+            wallet = this.walletByP2pk.get(mintList.p2pk)
+            const mostRecentToken = await this.ndk.fetchEvent([
+                { kinds: [NDKKind.CashuToken], authors, limit: 1 },
+            ], { closeOnEose: true, groupable: false }, wallet?.relaySet)
+            if (mostRecentToken) since = mostRecentToken.created_at!;
         }
 
         // set the relay set
@@ -112,8 +123,10 @@ export class NDKNutzapMonitor extends EventEmitter<{
             throw new Error("no relay set provided");
         }
 
+        console.log('starting nutzap monitor with', { since })
+        
         this.sub = this.ndk.subscribe(
-            { kinds: [NDKKind.Nutzap], "#p": [this.user.pubkey] },
+            { kinds: [NDKKind.Nutzap], "#p": [this.user.pubkey], since },
             {
                 subId: "ndk-wallet:nutzap-monitor",
                 cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY,
@@ -135,7 +148,6 @@ export class NDKNutzapMonitor extends EventEmitter<{
 
     private eoseHandler() {
         this.eosed = true;
-        console.log('eose');
 
         this.redeemQueue.forEach(nutzap => {
             this.redeem(nutzap);
@@ -176,55 +188,20 @@ export class NDKNutzapMonitor extends EventEmitter<{
             const { proofs, mint } = nutzap;
             d('nutzap has %d proofs: %o', proofs.length, proofs);
 
-            let privkey: string | undefined;
             let wallet: NDKCashuWallet | undefined;
 
-            if (nutzap.p2pk) {
-                wallet = this.findWalletForNutzap(nutzap);
-
-                if (!wallet) {
-                    // if nutzap is p2pk to the active user, check if we have the private key
-                    if (nutzap.p2pk === this.user.pubkey) {
-                        if (this.ndk.signer instanceof NDKPrivateKeySigner)
-                            privkey = (this.ndk.signer as NDKPrivateKeySigner).privateKey;
-                        else {
-                            throw new Error("nutzap p2pk to the active user directly and we don't have access to the private key");
-                        }
-                    }
-
-                    // find the wallet that has one of these mints
-                    const normalizedMint = normalizeUrl(mint);
-                    wallet = this.allWallets.find(w => w.mints
-                        .map(normalizeUrl)
-                        .includes(normalizedMint));
-
-                    if (!wallet) throw new Error("wallet not found for nutzap (mint: " + normalizedMint + ")");
-                }
-            }
-
+            wallet = this.findWalletForNutzap(nutzap);
             if (!wallet) throw new Error("wallet not found for nutzap");
-            privkey = wallet.privkey;
-            
-            const _wallet = await wallet.walletForMint(mint);
-            if (!_wallet) throw new Error("unable to load wallet for mint " + mint);
-            const proofsWeHave = wallet.proofsForMint(mint);
 
-            try {
-                const res = await _wallet.receive(
-                    { proofs, mint, },
-                    { privkey, proofsWeHave }
-                );
-                d("redeemed nutzap %o", nutzap.rawEvent());
-                this.emit("redeem", nutzap);
-
-                const receivedAmount = computeBalanceDifference(res, proofsWeHave);
-
-                // save new proofs in wallet
-                wallet.saveProofs(res, mint, { nutzap, amount: receivedAmount });
-            } catch (e: any) {
-                console.log("failed to redeem nutzap", nutzap.id, e.message);
-                this.emit("failed", nutzap, e.message);
-            }
+            await wallet.redeemNutzap(
+                nutzap,
+                {
+                    onRedeemed: (res) => {
+                        const amount = res.reduce((acc, proof) => acc + proof.amount, 0);
+                        this.emit("redeem", nutzap, amount);
+                    }
+                }
+            );
         } catch (e: any) {
             console.trace(e);
             this.emit("failed", nutzap, e.message);
@@ -232,11 +209,21 @@ export class NDKNutzapMonitor extends EventEmitter<{
     }
 
     private findWalletForNutzap(nutzap: NDKNutzap): NDKCashuWallet | undefined {
-        const p2pk = nutzap.p2pk;
+        const {p2pk, mint} = nutzap;
         let wallet: NDKCashuWallet | undefined;
 
         if (p2pk) wallet = this.walletByP2pk.get(p2pk);
         wallet ??= this.walletByP2pk.values().next().value;
+
+        if (!wallet) {
+            // find the wallet that has one of these mints
+            const normalizedMint = normalizeUrl(mint);
+            wallet = this.allWallets.find(w => w.mints
+                .map(normalizeUrl)
+                .includes(normalizedMint));
+
+            if (!wallet) throw new Error("wallet not found for nutzap (mint: " + normalizedMint + ")");
+        }
 
         return wallet;
     }

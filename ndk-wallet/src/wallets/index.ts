@@ -9,7 +9,6 @@ import {
     NDKZapSplit,
 } from "@nostr-dev-kit/ndk";
 import { EventEmitter } from "tseep";
-import { NutPayment } from "./cashu/pay/nut";
 
 export type NDKWalletTypes = 'nwc' | 'nip-60' | 'webln';
 

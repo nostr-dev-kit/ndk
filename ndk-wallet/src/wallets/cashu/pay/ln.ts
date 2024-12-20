@@ -1,23 +1,29 @@
-import { CashuWallet, CashuMint, Proof, MeltQuoteState, SendResponse } from "@cashu/cashu-ts";
-import { NDKEvent, NDKTag, NDKUser, NDKZapDetails, type LnPaymentInfo } from "@nostr-dev-kit/ndk";
-import { rollOverProofs, type TokenSelection } from "../proofs";
-import type { MintUrl } from "../mint/utils";
-import { NDKCashuWallet } from "../wallet";
-import { NDKWalletChange } from "../history";
+import { Proof, MeltQuoteState } from "@cashu/cashu-ts";
+import { NDKCashuWallet } from "../wallet/index.js";
+import { getBolt11Amount } from "../../../utils/ln.js";
+import { WalletChange } from "../wallet/state.js";
 
-type LNPaymentResult = SendResponse & { preimage: string, change: Proof[], mint: MintUrl };
+export type LNPaymentResult = {
+    walletChange: WalletChange,
+    preimage: string,
+    fee?: number
+};
 
 export async function payLn(
     wallet: NDKCashuWallet,
-    amount: number,
     pr: string,
 ): Promise<LNPaymentResult | undefined | null> {
-    const eligibleMints = wallet.getMintsWithBalance(amount);
-    console.log("eligible mints", eligibleMints, {amount});
+    let invoiceAmount = getBolt11Amount(pr);
+    if (!invoiceAmount) throw new Error("invoice amount is required");
+
+    invoiceAmount = invoiceAmount / 1000; // msat
+    
+    const eligibleMints = wallet.getMintsWithBalance(invoiceAmount);
+    console.log("eligible mints", eligibleMints, {invoiceAmount});
 
     for (const mint of eligibleMints) {
         try {
-            const result = await executePayment(mint, pr, amount, wallet);
+            const result = await executePayment(mint, pr, invoiceAmount, wallet);
             if (result) {
                 return result;
             }
@@ -52,8 +58,8 @@ async function executePayment(
     wallet: NDKCashuWallet,
 ): Promise<LNPaymentResult | undefined | null> {
     console.log("executing payment from mint", mint);
-    const _wallet = await wallet.walletForMint(mint);
-    if (!_wallet) throw new Error("unable to load wallet for mint " + mint);
+    const result: LNPaymentResult = { walletChange: { mint }, preimage: "" };
+    const cashuWallet = await wallet.cashuWallet(mint);
     const mintProofs = wallet.proofsForMint(mint);
 
     // Add up the amounts of the proofs
@@ -61,59 +67,25 @@ async function executePayment(
     if (amountAvailable < amount) return null;
 
     try {
-        const meltQuote = await _wallet.createMeltQuote(pr);
+        const meltQuote = await cashuWallet.createMeltQuote(pr);
         const amountToSend = meltQuote.amount + meltQuote.fee_reserve;
 
-        const proofs = _wallet.selectProofsToSend(mintProofs, amountToSend);
+        const proofs = cashuWallet.selectProofsToSend(mintProofs, amountToSend);
+        console.log('proofs to send', proofs)
 
-        const meltResult = await _wallet.meltProofs(meltQuote, proofs.send);
+        result.walletChange.destroy = proofs.send;
+
+        const meltResult = await cashuWallet.meltProofs(meltQuote, proofs.send);
         console.log("Melt result: %o", meltResult);
 
-        const fee = calculateFee(amount, mintProofs, meltResult.change);
-
-        function calculateFee(sentAmount: number, proofs: Proof[], change: Proof[]) {
-            let fee = -sentAmount;
-            for (const proof of proofs) fee += proof.amount;
-            for (const proof of change) fee -= proof.amount;
-            return fee;
-        }
-
         // generate history event
-        if (meltResult.quote.state === MeltQuoteState.PAID && meltResult.quote.payment_preimage) {
+        if (meltResult.quote.state === MeltQuoteState.PAID) {
             console.log("Payment successful");
+            result.walletChange.store = meltResult.change;
+            result.fee = calculateFee(amount, proofs.send, meltResult.change);
+            result.preimage = meltResult.quote.payment_preimage ?? "";
 
-            // const historyEvent = new NDKWalletChange(wallet.ndk);
-            // historyEvent.destroyedTokens = sendProofs;
-            // historyEvent.createdTokens = meltResult.change;
-            // if (wallet.event) historyEvent.tag(wallet.event);
-            // historyEvent.direction = 'out';
-            // historyEvent.description = payment.paymentDescription;
-            
-            // if (payment.target) {
-            //     let tag: NDKTag | undefined;
-                
-            //     if (payment.target instanceof NDKEvent) {
-            //         tag = payment.target.tagReference();
-            //     } else if (payment.target instanceof NDKUser && !payment.recipientPubkey) {
-            //         tag = ['p', payment.target.pubkey];
-            //     }
-
-            //     if (tag) {
-            //         console.log("adding tag", tag);
-            //         historyEvent.tags.push(tag);
-            //     }
-            // }
-
-            // if (payment.recipientPubkey) {
-            //     historyEvent.tags.push(['p', payment.recipientPubkey]);
-            // }
-
-            // historyEvent.tags.push(['preimage', meltResult.quote.payment_preimage]);
-            // historyEvent.amount = meltResult.quote.amount;
-            // historyEvent.fee = fee;
-            // historyEvent.publish(wallet.relaySet);
-
-            return { preimage: meltResult.quote.payment_preimage, change: meltResult.change, ...proofs, mint };
+            return result;
         }
 
         return null;
@@ -129,4 +101,11 @@ async function executePayment(
 
         return null;
     }
+}
+
+function calculateFee(sentAmount: number, proofs: Proof[], change: Proof[]) {
+    let fee = -sentAmount;
+    for (const proof of proofs) fee += proof.amount;
+    for (const proof of change) fee -= proof.amount;
+    return fee;
 }

@@ -1,9 +1,12 @@
 import { SendResponse, type Proof } from "@cashu/cashu-ts";
 import type { MintUrl } from "../mint/utils";
-import { NDKCashuWallet } from "../wallet";
-import { CashuPaymentInfo, NDKZapDetails, normalizeUrl } from "@nostr-dev-kit/ndk";
+import { NDKCashuWallet } from "../wallet/index.js";
+import { CashuPaymentInfo, normalizeUrl } from "@nostr-dev-kit/ndk";
 import { correctP2pk } from "../pay";
-import { NDKCashuDeposit } from "../deposit";
+import { payLn } from "./ln";
+import { getBolt11Amount } from "../../../utils/ln";
+import { walletForMint } from "../mint";
+import { WalletChange } from "../wallet/state.js";
 
 export type NutPayment = CashuPaymentInfo & { amount: number; unit: string; };
 
@@ -19,7 +22,7 @@ export async function createToken(
     unit: string,
     recipientMints: MintUrl[],
     p2pk?: string,
-): Promise<TokenWithMint | undefined> {
+): Promise<TokenCreationResult | undefined> {
     p2pk = correctP2pk(p2pk);
     const senderMints = wallet.mints;
     const mintsInCommon = findMintsInCommon([recipientMints, senderMints]);
@@ -30,37 +33,10 @@ export async function createToken(
 
     for (const mint of mintsInCommon) {
         try {
-            console.log("attempting payment with mint %s", mint);
             const res = await createTokenInMint(wallet, mint, amount, p2pk);
 
             if (res) {
-                console.log('updating wallet state');
-                const isP2pk = (p: Proof) => p.secret.startsWith('["P2PK"');
-                const isNotP2pk = (p: Proof) => !isP2pk(p);
-
-                // fee could be calculated here with the difference between the 
-                const totalSent = res.send.reduce((acc, p) => acc + p.amount, 0);
-                const totalChange = res.keep.reduce((acc, p) => acc + p.amount, 0);
-                const fee = totalSent - amount - totalChange;
-
-                console.log("fee for mint payment calculated", {
-                    fee,
-                    totalSent,
-                    totalChange,
-                    amount,
-                });
-
-                if (fee > 0) {
-                    res.fee = fee;
-                }
-        
-                wallet.updateState({
-                    reserve: res.send.filter(isNotP2pk),
-                    destroy: res.send.filter(isP2pk), // no point in reserving p2pk proofs since they will be published already
-                    store: res.keep,
-                    mint: res.mint,
-                });
-                
+                console.log("result of paying within the same mint", res);
                 return res;
             }
         } catch (e) {
@@ -68,9 +44,7 @@ export async function createToken(
         }
     }
 
-    // console.log("attempting payment with mint transfer");
-
-    return await createTokenForPaymentWithMintTransfer(wallet, amount, unit, recipientMints, p2pk);
+    return await createTokenWithMintTransfer(wallet, amount, unit, recipientMints, p2pk);
 }
 
 /**
@@ -84,20 +58,31 @@ async function createTokenInMint(
     mint: MintUrl,
     amount: number,
     p2pk?: string,
-): Promise<TokenWithMint | undefined> {
-    const _wallet = await wallet.walletForMint(mint);
-    if (!_wallet) throw new Error("unable to load wallet for mint " + mint);
+): Promise<TokenCreationResult | undefined> {
+    const walletChange: WalletChange = { mint };
+
+    const cashuWallet = await wallet.cashuWallet(mint);
     try {
         console.log("Attempting with mint %s", mint);
+
         const proofsWeHave = wallet.proofsForMint(mint);
-        console.log("proofs we have: %o", proofsWeHave);
-        const res = await _wallet.send(amount, proofsWeHave, {
+        const proofs = cashuWallet.selectProofsToSend(proofsWeHave, amount);
+        console.log('keeping %d proofs, providing proofs to send: %o', proofs.keep.length, proofs.send)
+        
+        const sendResult = await cashuWallet.send(amount, proofs.send, {
             pubkey: p2pk,
             proofsWeHave,
         });
-        console.log("token preparation result: %o", res);
+        console.log("token preparation result: %o", sendResult);
 
-        return { ...res, mint };
+        walletChange.destroy = proofs.send;
+        walletChange.store = sendResult.keep;
+
+        return {
+            walletChange,
+            send: { proofs: sendResult.send, mint },
+            fee: calculateFee(proofs.send, [...sendResult.send, ...sendResult.keep])
+        };
     } catch (e: any) {
         console.log(
             "failed to pay with mint %s using proofs %o: %s",
@@ -108,62 +93,130 @@ async function createTokenInMint(
 }
 
 /**
+ * Calculates the difference between the provided proofs and the return proof totals;
+ * @param providedProofs 
+ * @param returnedProofs 
+ */
+function calculateFee(providedProofs: Proof[], returnedProofs: Proof[]) {
+    const totalProvided = providedProofs.reduce((acc, p) => acc + p.amount, 0);
+    const totalReturned = returnedProofs.reduce((acc, p) => acc + p.amount, 0);
+
+    if (totalProvided < totalReturned) {
+        console.log("BUG: calculate fee thinks we received back a higher amount of proofs than we sent to the mint", {
+            providedProofs,
+            returnedProofs
+        })
+    }
+
+    return totalProvided - totalReturned;
+}
+
+/**
  * Iterate through the mints to find one that can satisfy a minting request
  * for the desired amount in any of the mints the recipient accepts.
  */
-async function createTokenForPaymentWithMintTransfer(
+async function createTokenWithMintTransfer(
     wallet: NDKCashuWallet,
     amount: number,
     unit: string,
     recipientMints: MintUrl[],
     p2pk?: string,
-): Promise<TokenWithMint | undefined> {
+): Promise<TokenCreationResult | undefined> {
     const generateQuote = async () => {
         const generateQuoteFromSomeMint = async (mint: MintUrl) => {
-            const _wallet = await wallet.walletForMint(mint);
-            if (!_wallet) throw new Error("unable to load wallet for mint " + mint);
-            const quote = await _wallet.createMintQuote(amount);
-            return { quote, mint };
+            const targetMintWallet = await walletForMint(mint, unit);
+            if (!targetMintWallet) throw new Error("unable to load wallet for mint " + mint);
+            const quote = await targetMintWallet.createMintQuote(amount);
+            console.log('received a quote from mint', {quoteId: quote.quote, mint})
+            return { quote, mint, targetMintWallet };
         };
 
         const quotesPromises = recipientMints.map(generateQuoteFromSomeMint);
-        const { quote, mint } = await Promise.any(quotesPromises);
+        const { quote, mint, targetMintWallet } = await Promise.any(quotesPromises);
 
         if (!quote) {
             console.log("failed to get quote from any mint");
             throw new Error("failed to get quote from any mint");
         }
 
-        console.log("quote from mint %s: %o", mint, quote);
+        console.log("quote from mint %s: %o", mint, quote, targetMintWallet.mint);
 
-        return { quote, mint };
+        return { quote, mint, targetMintWallet };
     }
 
-    const { quote, mint } = await generateQuote();
+    // generate quote
+    const { quote, mint: targetMint, targetMintWallet } = await generateQuote();
     if (!quote) return;
 
     // TODO: create a CashuDeposit event?
 
-    const res = await wallet.lnPay({ pr: quote.request, amount, unit });
-    console.log("payment result: %o", res);
+    console.log('instructing local wallet to pay', {quoteId: quote.quote, targetMint, m: targetMintWallet.mint})
 
-    if (!res) {
+    const invoiceAmount = getBolt11Amount(quote.request);
+    if (!invoiceAmount) throw new Error("invoice amount is required");
+    const invoiceAmountInSat = invoiceAmount / 1000;
+    if (invoiceAmountInSat > amount) throw new Error(`invoice amount is more than the amount passed in (${invoiceAmountInSat} vs ${amount})`);
+
+    const payLNResult = await payLn(wallet, quote.request);
+    console.log("LN payment result: %o", payLNResult);
+
+    if (!payLNResult) {
         console.log("payment failed");
         return;
     }
 
-    const _wallet = await wallet.walletForMint(mint);
-    if (!_wallet) throw new Error("unable to load wallet for mint " + mint);
-    const proofs = await _wallet.mintProofs(amount, quote.quote, {
-        pubkey: p2pk,
-    });
+    let proofs: Proof[] = [];
+
+    try {
+        console.log('will try to mint proofs', { w: targetMintWallet.mint, quoteId: quote.quote })
+        proofs = await targetMintWallet.mintProofs(amount, quote.quote, {
+            pubkey: p2pk,
+        });
+    } catch (e) {
+        console.log("failed to mint proofs, fuck, the mint ate the cashu", e);
+
+        // return new Promise((resolve, reject) => {
+        //     const retryInterval = setInterval(async () => {
+        //         console.log("retrying mint proofs", { quote: quote.quote, mint: targetMintWallet.mint });
+        //         try {
+        //             proofs = await targetMintWallet.mintProofs(amount, quote.quote, {
+        //                 pubkey: p2pk,
+        //             });
+        //             clearInterval(retryInterval);
+        //             resolve({ keep: res.change, send: proofs, mint: targetMint, fee: res.fee });
+        //         } catch (e) {
+        //             console.log("failed to mint proofs", e);
+        //         }
+        //     }, 5000);
+        //     setTimeout(() => {
+        //         reject(e);
+        //     }, 1000);
+        // });
+    }
 
     console.log("minted tokens with proofs %o", proofs);
 
-    return { keep: [], send: proofs, mint };
+    return {
+        walletChange: payLNResult.walletChange,
+        send: { proofs, mint: targetMint },
+        fee: payLNResult.fee,
+    }
 }
 
-type TokenWithMint = SendResponse & { mint: MintUrl, fee?: number };
+/**
+ * The result of generating proofs to pay something, whether it's funded with a swap or LN.
+ */
+export type TokenCreationResult = {
+    /**
+     * Information of the wallet state change. The proofs that were used and the proofs that
+     * were created that we need to store.
+     */
+    walletChange: WalletChange,
+    send: { proofs: Proof[], mint: MintUrl },
+    fee?: number
+}
+
+export type TokenWithMint = SendResponse & { mint: MintUrl, fee?: number };
 
 /**
  * Finds mints in common in the intersection of the arrays of mints

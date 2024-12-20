@@ -187,6 +187,9 @@ export const DEFAULT_BLACKLISTED_RELAYS = [
     // "wss://purplepag.es/", // This is a hack, since this is a mostly read-only relay, but not fully. Once we have relay routing this can be removed so it only receives the supported kinds
 ];
 
+// NIP04 && NIP44
+export type EncryptionNip = 'nip04' | 'nip44';
+
 /**
  * The NDK class is the main entry point to the library.
  *
@@ -286,6 +289,12 @@ export class NDK extends EventEmitter<{
     public autoFetchUserMutelist = true;
 
     public walletConfig?: NDKWalletInterface;
+
+    // some clients may wish to set a default for message encryption...
+    public defaultEncryption: EncryptionNip = 'nip44';
+    public useEncryption(nip: EncryptionNip) {
+        this.defaultEncryption = nip;
+    }
 
     public constructor(opts: NDKConstructorParams = {}) {
         super();

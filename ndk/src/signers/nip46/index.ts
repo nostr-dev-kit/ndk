@@ -1,6 +1,6 @@
 import { EventEmitter } from "tseep";
 import type { NostrEvent } from "../../events/index.js";
-import type { NDK } from "../../ndk/index.js";
+import type { EncryptionNip, NDK } from "../../ndk/index.js";
 import type { Hexpubkey } from "../../user/index.js";
 import { NDKUser } from "../../user/index.js";
 import type { NDKSigner } from "../index.js";
@@ -9,8 +9,7 @@ import type { NDKRpcResponse } from "./rpc.js";
 import { NDKNostrRpc } from "./rpc.js";
 import { NDKKind } from "../../events/kinds/index.js";
 import type { NDKSubscription } from "../../subscription/index.js";
-import { EncryptionMethod, EncryptionNip } from "../../events/encryption.js";
-import { send } from "process";
+import { EncryptionMethod } from "../../events/encryption.js";
 
 /**
  * This NDKSigner implements NIP-46, which allows remote signing of events.
@@ -213,7 +212,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
         });
     }
 
-    public async encryptionEnabled(nip?:EncryptionNip): Promise<EncryptionNip[]>{
+    public async encryptionEnabled(nip?: EncryptionNip): Promise<EncryptionNip[]> {
         if (nip) return [nip];
         return Promise.resolve(["nip04", "nip44"]);
     }
@@ -227,7 +226,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
     }
 
     private async encryption(
-        recipient: NDKUser,
+        peer: NDKUser,
         value: string,
         nip: EncryptionNip,
         method: EncryptionMethod
@@ -238,7 +237,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
             this.rpc.sendRequest(
                 this.bunkerPubkey,
                 `${nip}_${method}`,
-                [recipient.pubkey, value],
+                [peer.pubkey, value],
                 24133,
                 (response: NDKRpcResponse) => {
                     if (!response.error) {

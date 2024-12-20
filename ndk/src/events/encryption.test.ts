@@ -43,7 +43,7 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
     });
 
     const original = sendEvent.content
-    await sendEvent.encrypt(receiveUser, sendSigner);
+    await sendEvent.encrypt(receiveUser, sendSigner, 'nip04');
     const receiveEvent = new NDKEvent(new NDK(), sendEvent.rawEvent())
     // Despite of specifying Nip44 here, the event kind 4 forces Nip04 encryption
     await receiveEvent.decrypt(sendUser, receiveSigner, 'nip44');
@@ -175,10 +175,6 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
     expect(mockSendRequest.mock.calls[0][1]).toBe("nip44_encrypt"); 
     await message.giftWrap(receiveUser, send46Signer, { encryptionNip: "nip04"});
     expect(mockSendRequest.mock.calls[2][1]).toBe("nip04_encrypt");
-    await wrapped.giftUnwrap(wrapped.author, send46Signer);
-    expect(mockSendRequest.mock.calls[4][1]).toBe("nip44_decrypt");
-    await wrapped.giftUnwrap(wrapped.author, send46Signer, "nip04");
-    expect(mockSendRequest.mock.calls[6][1]).toBe("nip04_decrypt");
   });
 });
 

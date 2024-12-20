@@ -1,3 +1,4 @@
+import { EncryptionNip } from "../../ndk/index.js";
 import type { UnsignedEvent } from "nostr-tools";
 import { generateSecretKey, getPublicKey, finalizeEvent, nip04, nip44 } from "nostr-tools";
 
@@ -6,7 +7,6 @@ import { NDKUser } from "../../user";
 import { type NDKSigner } from "../index.js";
 import { bytesToHex, hexToBytes } from "@noble/hashes/utils";
 import { nip19 } from "nostr-tools";
-import { EncryptionNip } from "../../events/encryption.js";
 
 
 export class NDKPrivateKeySigner implements NDKSigner {
@@ -70,7 +70,7 @@ export class NDKPrivateKeySigner implements NDKSigner {
     }
 
     public async encryptionEnabled(nip?:EncryptionNip): Promise<EncryptionNip[]>{
-        let enabled : EncryptionNip[] = []
+        let enabled: EncryptionNip[] = []
         if((!nip || nip == 'nip04')) enabled.push('nip04')
         if((!nip || nip == 'nip44')) enabled.push('nip44')
         return enabled;

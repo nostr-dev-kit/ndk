@@ -12,7 +12,7 @@ interface WalletState {
     setNutzapMonitor: (monitor: NDKNutzapMonitor) => void
 }
 
-export const useWalletStore = create<WalletState>((set) => ({
+export const useWalletStore = create<WalletState>()((set) => ({
     activeWallet: undefined,
     setActiveWallet: (wallet: NDKWallet) => set({ activeWallet: wallet }),
 
@@ -24,4 +24,4 @@ export const useWalletStore = create<WalletState>((set) => ({
 
     nutzapMonitor: undefined,
     setNutzapMonitor: (monitor: NDKNutzapMonitor) => set({ nutzapMonitor: monitor }),
-}))
+}));

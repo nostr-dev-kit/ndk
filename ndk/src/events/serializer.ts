@@ -34,8 +34,8 @@ export function deserialize(serializedEvent: NDKEventSerialized): NostrEvent {
         content: eventArray[5],
     };
 
-    if (eventArray.length === 7) ret.sig = eventArray[6];
-    if (eventArray.length === 8) ret.id = eventArray[7];
+    if (eventArray.length >= 7) ret.sig = eventArray[6];
+    if (eventArray.length >= 8) ret.id = eventArray[7];
 
     return ret;
 }

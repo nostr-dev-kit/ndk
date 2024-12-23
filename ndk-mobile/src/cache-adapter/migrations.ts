@@ -58,4 +58,22 @@ export const migrations = [
             await db.execAsync(`ALTER TABLE profiles ADD COLUMN created_at INTEGER;`);
         },
     },
+    {
+        version: 2,
+        up: async (db: SQLite.SQLiteDatabase) => {
+            await db.execAsync(`CREATE INDEX IF NOT EXISTS idx_profiles_pubkey ON profiles (pubkey);`);
+            await db.execAsync(`DROP INDEX IF EXISTS idx_event_tags_tag;`);
+            await db.execAsync(`CREATE INDEX IF NOT EXISTS idx_event_tags_tag ON event_tags (tag, value);`);
+            console.log('migration 2 done');
+        },
+    },
+    {
+        version: 3,
+        up: async (db: SQLite.SQLiteDatabase) => {
+            await db.execAsync(`CREATE TABLE IF NOT EXISTS wot (
+                pubkey TEXT PRIMARY KEY,
+                wot INTEGER
+            );`);
+        },
+    }
 ];

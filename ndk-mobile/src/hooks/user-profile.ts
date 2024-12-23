@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo, useCallback, useRef } from 'react'
-import { useNDK } from './ndk'
+import { useNDK } from '../hooks/ndk';
 
 export function useUserProfile(pubkey: string) {
     const { ndk } = useNDK();
@@ -9,7 +9,7 @@ export function useUserProfile(pubkey: string) {
     const fetchFromCache = useCallback(() => {
         if (!ndk) return null;
 
-        const cachedProfile = ndk.cacheAdapter.fetchProfileSync?.(pubkey);
+        const cachedProfile = ndk.cacheAdapter?.fetchProfileSync?.(pubkey);
         if (cachedProfile) cachedProfile.pubkey = pubkey;
 
         return cachedProfile;

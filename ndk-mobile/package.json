@@ -21,30 +21,31 @@
     "@bacons/text-decoder": "^0.0.0",
     "@nostr-dev-kit/ndk": "workspace:*",
     "@nostr-dev-kit/ndk-wallet": "workspace:*",
+    "immer": "^10.1.1",
     "react-native-get-random-values": "~1.11.0",
     "typescript-lru-cache": "^2.0.0",
     "zustand": "^5.0.2"
   },
   "source": "./src/index.ts",
-  "module": "./lib/module/index.js",
-  "react-native": "lib/module/index.js",
+  "module": "./dist/module/index.js",
+  "react-native": "dist/module/index.js",
   "exports": {
     ".": {
       "import": {
-        "types": "./lib/typescript/module/index.d.ts",
-        "default": "./lib/module/index.js"
+        "types": "./dist/typescript/module/index.d.ts",
+        "default": "./dist/module/index.js"
       }
     },
     "./components": {
       "import": {
-        "types": "./lib/typescript/module/components/index.d.ts",
-        "default": "./lib/module/components/index.js"
+        "types": "./dist/typescript/module/components/index.d.ts",
+        "default": "./dist/module/components/index.js"
       }
     },
     "./components/relays": {
       "import": {
-        "types": "./lib/typescript/module/components/relays/index.d.ts",
-        "default": "./lib/module/components/relays/index.js"
+        "types": "./dist/typescript/module/components/relays/index.d.ts",
+        "default": "./dist/module/components/relays/index.js"
       }
     }
   },
@@ -53,14 +54,14 @@
   },
   "files": [
     "src",
-    "lib",
+    "dist",
     "!**/__tests__",
     "!**/__fixtures__",
     "!**/__mocks__"
   ],
   "react-native-builder-bob": {
     "source": "src",
-    "output": "lib",
+    "output": "dist",
     "targets": [
       [
         "module",
@@ -78,6 +79,6 @@
   },
   "eslintIgnore": [
     "node_modules/",
-    "lib/"
+    "dist/"
   ]
 }

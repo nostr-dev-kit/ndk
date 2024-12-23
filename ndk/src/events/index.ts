@@ -297,8 +297,19 @@ export class NDKEvent extends EventEmitter {
     public getEventHash = getEventHash.bind(this);
     public validate = validate.bind(this);
     public verifySignature = verifySignature.bind(this);
+    /**
+     * Is this event replaceable (whether parameterized or not)?
+     *
+     * This will return true for kind 0, 3, 10k-20k and 30k-40k
+     */
     public isReplaceable = isReplaceable.bind(this);
     public isEphemeral = isEphemeral.bind(this);
+
+    /**
+     * Is this event parameterized replaceable?
+     *
+     * This will return true for kind 30k-40k
+     */
     public isParamReplaceable = isParamReplaceable.bind(this);
 
     /**
@@ -521,6 +532,8 @@ export class NDKEvent extends EventEmitter {
             const clientTag: NDKTag = ["client", this.ndk!.clientName ?? ""];
             if (this.ndk!.clientNip89) clientTag.push(this.ndk!.clientNip89);
             tags.push(clientTag);
+        } else {
+            tags = tags.filter((tag) => tag[0] !== "client");
         }
 
         return { content: content || "", tags };
@@ -830,6 +843,13 @@ export class NDKEvent extends EventEmitter {
         return this.validate();
     }
 
+    /**
+     * Creates a reply event for the current event.
+     * 
+     * This function will use NIP-22 when appropriate (i.e. replies to non-kind:1 events).
+     * This function does not have side-effects; it will just return an event with the appropriate tags
+     * to generate the reply event; the caller is responsible for publishing the event.
+     */
     public reply(): NDKEvent {
         const reply = new NDKEvent(this.ndk);
 

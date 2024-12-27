@@ -80,7 +80,7 @@ export class NDKRelaySet {
      * @param connect - whether to connect to the relay immediately if it was already in the pool but not connected
      * @returns NDKRelaySet
      */
-    static fromRelayUrls(relayUrls: string[], ndk: NDK, connect = true, pool?: NDKPool): NDKRelaySet {
+    static fromRelayUrls(relayUrls: readonly string[], ndk: NDK, connect = true, pool?: NDKPool): NDKRelaySet {
         pool = pool ?? ndk.pool;
 
         if (!pool) throw new Error("No pool provided");

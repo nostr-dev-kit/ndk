@@ -436,7 +436,7 @@ describe("NDKEvent", () => {
         });
     });
 
-    fdescribe("reply", () => {
+    describe("reply", () => {
         const signers = [0,1,2].map(i => NDKPrivateKeySigner.generate());
         let users: NDKUser[];
 
@@ -486,6 +486,20 @@ describe("NDKEvent", () => {
                 expect(reply2.tags).toContainEqual(['e', reply1.id, '', 'reply', reply1.pubkey]);
                 expect(reply2.tags).toContainEqual(['p', reply1.pubkey]);
             });
+
+            it('p-tags the author of the event', async () => {
+                const op = await sign({ kind: 1 });
+                const reply = op.reply();
+                expect(reply.tags).toContainEqual(['p', op.pubkey]);
+            });
+
+            it('carries over the p-tags from the root event', async () => {
+                const op = await sign({ kind: 1 });
+                const reply1 = await reply(op, signers[1]);
+                const reply2 = reply1.reply();
+                expect(reply2.tags).toContainEqual(['p', op.pubkey]);
+                expect(reply2.tags).toContainEqual(['p', reply1.pubkey]);
+            });
         });
     
         describe("replies to other kinds", () => {
@@ -514,7 +528,7 @@ describe("NDKEvent", () => {
             it("p-tags the author of the root event", async () => {
                 const root = await sign({ kind: 30023 });
                 const reply1 = root.reply();
-                expect(reply1.tags).toContainEqual(['p', root.pubkey]);
+                expect(reply1.tags).toContainEqual(['P', root.pubkey]);
             });
 
             it('p-tags the author of the reply event', async () => {
@@ -534,7 +548,7 @@ describe("NDKEvent", () => {
             it('p-tags the author of the root and reply events', async () => {
                 const reply1 = await reply(root, signers[1]);
                 const reply2 = reply1.reply();
-                expect(reply2.tags).toContainEqual(['p', root.pubkey]);
+                expect(reply2.tags).toContainEqual(['P', root.pubkey]);
                 expect(reply2.tags).toContainEqual(['p', reply1.pubkey]);
             });
 

@@ -871,13 +871,13 @@ export class NDKEvent extends EventEmitter {
         } else {
             reply.kind = NDKKind.GenericReply;
 
-            const carryOverTags = ["A", "E", "I"];
-            const rootTag = this.tags.find((tag) => carryOverTags.includes(tag[0]));
+            const carryOverTags = ["A", "E", "I", "P"];
+            const rootTags = this.tags.filter((tag) => carryOverTags.includes(tag[0]));
             
             // we have a root tag already
-            if (rootTag) {
+            if (rootTags.length > 0) {
                 const rootKind = this.tagValue("K");
-                reply.tags.push(rootTag);
+                reply.tags.push(...rootTags);
                 if (rootKind) reply.tags.push(["K", rootKind]);
 
                 reply.tags.push(["k", this.kind!.toString()]);
@@ -894,7 +894,10 @@ export class NDKEvent extends EventEmitter {
                 uppercaseTag[0] = uppercaseTag[0].toUpperCase();
                 reply.tags.push(uppercaseTag);
                 reply.tags.push(["K", this.kind!.toString()])
+                reply.tags.push(["P", this.pubkey]);
             }
+
+            reply.tags.push(["k", this.kind!.toString()]);
 
             // carry over all p tags
             reply.tags.push(...this.getMatchingTags("p"));

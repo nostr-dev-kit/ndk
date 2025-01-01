@@ -39,6 +39,7 @@
         "ndk-cache-redis", 
         "ndk-cache-nostr",
         "ndk-svelte",
+	"ndk-mobile",
         "ndk-svelte-components",
         "ndk-wallet"
     ],

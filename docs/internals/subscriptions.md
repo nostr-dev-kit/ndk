@@ -1,15 +1,16 @@
 # Subscriptions Lifecycle
+
 When an application creates a subscription a lot of things happen under the hood.
 
 Say we want to see `kind:1` events from pubkeys `123`, `456`, and `678`.
 
 ```ts
-const subscription = ndk.subscribe({ kinds: [1], authors: [ "123", "456", "678" ]})
+const subscription = ndk.subscribe({ kinds: [1], authors: ["123", "456", "678"] });
 ```
 
 Since the application level didn't explicitly provide a relay-set, which is the most common use case, NDK will calculate a relay set based on the outbox model plus a variety of some other factors.
 
-So the first thing we'll do before talking to relays is, decide to *which* relays we should talk to.
+So the first thing we'll do before talking to relays is, decide to _which_ relays we should talk to.
 
 The `calculateRelaySetsFromFilters` function will take care of this and provide us with a map of relay URLs and filters for each relay.
 
@@ -32,6 +33,7 @@ flowchart TD
 ```
 
 ## Subscription bundling
+
 Once the subscription has been split into the filters each relay should receive, the filters are sent to the individual `NDKRelay`'s `NDKRelaySubscriptionManager` instances.
 
 `NDKRelaySubscriptionManager` is responsible for keeping track of the active and scheduled subscriptions that are pending to be executed within an individual relay.
@@ -41,6 +43,7 @@ This is an important aspect to consider:
 > `NDKSubscription` have a different lifecycle than `NDKRelaySubscription`. For example, a subscription that is set to close after EOSE might still be active within the `NDKSubscription` lifecycle, but it might have been already been closed within the `NDKRelaySubscription` lifecycle, since NDK attempts to keep the minimum amount of open subscriptions at any given time.
 
 ## NDKRelaySubscription
+
 Most NDK subscriptions (by default) are set to be executed with a grouping delay. Will cover what this looks like in practice later, but for now, let's understand than when the `NDKRelaySubscriptionManager` receives an order, it might not execute it right away.
 
 The different filters that can be grouped together (thus executed as a single `REQ` within a relay) are grouped within the same `NDKRelaySubscription` instance and the execution scheduler is computed respecting what each individual `NDKSubscription` has requested.
@@ -48,24 +51,30 @@ The different filters that can be grouped together (thus executed as a single `R
 (For example, if a subscription with a `groupingDelay` of `at-least` 500 millisecond has been grouped with another subscription with a `groupingDelay` of `at-least` 1000 milliseconds, the `NDKRelaySubscriptionManager` will wait 1000 ms before sending the `REQ` to this particular relay).
 
 ### Execution
+
 Once the filter is executed at the relay level, the `REQ` is submitted into that relay's `NDKRelayConnectivity` instance, which will take care of monitoring for responses for this particular REQ and communicate them back into the `NDKRelaySubscription` instance.
 
-Each `EVENT` that comes back as a response to our `REQ` within this `NDKRelaySubscription` instance is then compared with the filters of each `NDKSubscription` that has been grouped and if it matches, it is sent back to the `NDKSubscription` instance.
-
+Each `EVENT` that comes back as a response to our `REQ` within this `NDKRelaySubscription` instance is sent to the top-level `NDKSubscriptionManager`. This manager tracks ALL active subscriptions and when events come in dispatches the event to all `NDKSubscription`s interested in this event.
 
 # Example
 
 If an application requests `kind:1` of pubkeys `123`, `456`, and `789`. It creates an `NDKSubscription`:
 
 ```ts
-ndk.subscribe({ kinds: [1], authors: [ "123", "456", "789" ]}, { groupableDelay: 500, groupableDelayType: 'at-least' })
+ndk.subscribe(
+    { kinds: [1], authors: ["123", "456", "789"] },
+    { groupableDelay: 500, groupableDelayType: "at-least" }
+);
 // results in NDKSubscription1 with filters { kinds: [1], authors: [ "123", "456", "789" ] }
 ```
 
 Some other part of the application requests a kind:7 from pubkey `123` at the same time.
 
 ```ts
-ndk.subscribe({ kinds: [7], authors: [ "123" ]}, { groupableDelay: 500, groupableDelayType: 'at-most' })
+ndk.subscribe(
+    { kinds: [7], authors: ["123"] },
+    { groupableDelay: 500, groupableDelayType: "at-most" }
+);
 // results in NDKSubscription2 with filters { kinds: [7], authors: [ "123" ] }
 ```
 
@@ -73,7 +82,7 @@ ndk.subscribe({ kinds: [7], authors: [ "123" ]}, { groupableDelay: 500, groupabl
 flowchart TD
     subgraph Subscriptions Lifecycle
         A[Application] -->|"kinds: [1], authors: [123, 456, 678], groupingDelay: at-least 500ms"| B[NDKSubscription1]
-        
+
         A2[Application] -->|"kinds: [7], authors: [123], groupingDelay: at-most 1000ms"| B2[NDKSubscription2]
     end
 ```
@@ -85,7 +94,7 @@ flowchart TD
     subgraph Subscriptions Lifecycle
         A[Application] -->|"kinds: [1], authors: [123, 456, 678], groupingDelay: at-least 500ms"| B[NDKSubscription1]
         B --> C{Calculate Relay Sets}
-        
+
         A2[Application] -->|"kinds: [7], authors: [123], groupingDelay: at-most 1000ms"| B2[NDKSubscription2]
         B2 --> C2{Calculate Relay Sets}
     end
@@ -106,7 +115,7 @@ flowchart TD
     subgraph Subscriptions Lifecycle
         A[Application] -->|"kinds: [1], authors: [123, 456, 678], groupingDelay: at-least 500ms"| B[NDKSubscription1]
         B --> C{Calculate Relay Sets}
-        
+
         A2[Application] -->|"kinds: [7], authors: [123], groupingDelay: at-most 1000ms"| B2[NDKSubscription2]
         B2 --> C2{Calculate Relay Sets}
     end
@@ -115,7 +124,7 @@ flowchart TD
         C -->|"kinds: [1], authors: [123]"| E1[wss://relay1 NDKRelaySubscriptionManager]
         C -->|"kinds: [1], authors: [456]"| E2[wss://relay2 NDKRelaySubscriptionManager]
         C -->|"kinds: [1], authors: [678]"| E3[wss://relay3 NDKRelaySubscriptionManager]
-        
+
         C2 -->|"kinds: [7], authors: [123]"| E1
 
         E1 -->|"Grouping Delay: at-most 1000ms"| F1[NDKRelaySubscription]
@@ -131,7 +140,7 @@ flowchart TD
     subgraph Subscriptions Lifecycle
         A[Application] -->|"kinds: [1], authors: [123, 456, 678], groupingDelay: at-least 500ms"| B[NDKSubscription1]
         B --> C{Calculate Relay Sets}
-        
+
         A2[Application] -->|"kinds: [7], authors: [123], groupingDelay: at-most 1000ms"| B2[NDKSubscription2]
         B2 --> C2{Calculate Relay Sets}
     end
@@ -140,7 +149,7 @@ flowchart TD
         C -->|"kinds: [1], authors: [123]"| E1[wss://relay1 NDKRelaySubscriptionManager]
         C -->|"kinds: [1], authors: [456]"| E2[wss://relay2 NDKRelaySubscriptionManager]
         C -->|"kinds: [1], authors: [678]"| E3[wss://relay3 NDKRelaySubscriptionManager]
-        
+
         C2 -->|"kinds: [7], authors: [123]"| E1
 
         E1 -->|"Grouping Delay: at-most 1000ms"| F1[NDKRelaySubscription]
@@ -166,7 +175,7 @@ flowchart TD
     subgraph Subscriptions Lifecycle
         A[Application] -->|"kinds: [1], authors: [123, 456, 678], groupingDelay: at-least 500ms"| B[NDKSubscription1]
         B --> C{Calculate Relay Sets}
-        
+
         A2[Application] -->|"kinds: [7], authors: [123], groupingDelay: at-most 1000ms"| B2[NDKSubscription2]
         B2 --> C2{Calculate Relay Sets}
     end
@@ -175,7 +184,7 @@ flowchart TD
         C -->|"kinds: [1], authors: [123]"| E1[wss://relay1 NDKRelaySubscriptionManager]
         C -->|"kinds: [1], authors: [456]"| E2[wss://relay2 NDKRelaySubscriptionManager]
         C -->|"kinds: [1], authors: [678]"| E3[wss://relay3 NDKRelaySubscriptionManager]
-        
+
         C2 -->|"kinds: [7], authors: [123]"| E1
 
         E1 -->|"Grouping Delay: at-most 1000ms"| F1[NDKRelaySubscription]

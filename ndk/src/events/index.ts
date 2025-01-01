@@ -486,11 +486,7 @@ export class NDKEvent extends EventEmitter {
         }
 
         // send to active subscriptions that want this event
-        this.ndk.subManager.subscriptions.forEach((sub) => {
-            if (sub.filters.some((filter) => matchFilter(filter, rawEvent as any))) {
-                sub.eventReceived(this, undefined, false, true);
-            }
-        });
+        this.ndk.subManager.dispatchEvent(rawEvent, undefined, true);
 
         const relays = await relaySet.publish(this, timeoutMs, requiredRelayCount);
         relays.forEach((relay) => this.ndk?.subManager.seenEvent(this.id, relay));
@@ -879,8 +875,6 @@ export class NDKEvent extends EventEmitter {
                 const rootKind = this.tagValue("K");
                 reply.tags.push(...rootTags);
                 if (rootKind) reply.tags.push(["K", rootKind]);
-
-                reply.tags.push(["k", this.kind!.toString()]);
 
                 const [ type, id, _, ...extra] = this.tagReference();
                 const tag = [type, id, ...extra];

@@ -46,7 +46,7 @@ export enum NDKRelaySubscriptionStatus {
 export class NDKRelaySubscription {
     public fingerprint: NDKFilterFingerprint;
     public items: Map<NDKSubscriptionInternalId, Item> = new Map();
-    public topSubscriptionManager?: NDKSubscriptionManager;
+    public topSubManager: NDKSubscriptionManager;
 
     public debug: debug.Debugger;
 
@@ -91,8 +91,9 @@ export class NDKRelaySubscription {
      *
      * @param fingerprint The fingerprint of this subscription.
      */
-    constructor(relay: NDKRelay, fingerprint?: NDKFilterFingerprint) {
+    constructor(relay: NDKRelay, fingerprint: NDKFilterFingerprint | null, topSubManager: NDKSubscriptionManager) {
         this.relay = relay;
+        this.topSubManager = topSubManager;
         this.debug = relay.debug.extend("subscription-" + this.id);
         this.fingerprint = fingerprint || Math.random().toString(36).substring(7);
     }
@@ -365,13 +366,7 @@ export class NDKRelaySubscription {
 
     public onstart() {}
     public onevent(event: NostrEvent) {
-        this.topSubscriptionManager?.seenEvent(event.id!, this.relay);
-
-        for (const { subscription } of this.items.values()) {
-            if (matchFilters(subscription.filters, event as Event)) {
-                subscription.eventReceived(event, this.relay, false);
-            }
-        }
+        this.topSubManager.dispatchEvent(event, this.relay);
     }
 
     public oneose(subId: string) {

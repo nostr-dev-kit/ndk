@@ -93,7 +93,8 @@ export interface NDKSubscriptionOptions {
     skipVerification?: boolean;
 
     /**
-     * Skip event validation
+     * Skip event validation. Event validation, checks whether received
+     * kinds conform to what the expected schema of that kind should look like.
      * @default false
      */
     skipValidation?: boolean;
@@ -365,10 +366,13 @@ export class NDKSubscription extends EventEmitter<{
         this.pool.on("relay:connect", this.poolMonitor);
     }
 
+    public onStopped?: () => void;
+
     public stop(): void {
         this.emit("close", this);
         this.poolMonitor && this.pool.off("relay:connect", this.poolMonitor);
         this.removeAllListeners();
+        this.onStopped?.();
     }
 
     /**

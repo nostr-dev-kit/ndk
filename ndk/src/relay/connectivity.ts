@@ -202,7 +202,7 @@ export class NDKRelayConnectivity {
 
             switch (cmd) {
                 case "EVENT": {
-                    const so = this.openSubs.get(id) as NDKRelaySubscription;
+                    const so = this.openSubs.get(id);
                     const event = data[2] as NostrEvent;
                     if (!so) {
                         this.debug(`Received event for unknown subscription ${id}`);

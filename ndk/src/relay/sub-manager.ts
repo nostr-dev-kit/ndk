@@ -18,12 +18,16 @@ import type { NDKSubscriptionManager } from "../subscription/manager";
 export class NDKRelaySubscriptionManager {
     private relay: NDKRelay;
     private subscriptions: Map<NDKFilterFingerprint, NDKRelaySubscription[]>;
-    private topSubscriptionManager?: NDKSubscriptionManager;
+    private generalSubManager: NDKSubscriptionManager;
 
-    constructor(relay: NDKRelay, topSubscriptionManager?: NDKSubscriptionManager) {
+    /**
+     * @param relay - The relay instance.
+     * @param generalSubManager - The subscription manager instance.
+     */
+    constructor(relay: NDKRelay, generalSubManager: NDKSubscriptionManager) {
         this.relay = relay;
         this.subscriptions = new Map();
-        this.topSubscriptionManager = topSubscriptionManager;
+        this.generalSubManager = generalSubManager;
     }
 
     /**
@@ -58,8 +62,7 @@ export class NDKRelaySubscriptionManager {
         filters: NDKFilter[],
         fingerprint?: NDKFilterFingerprint
     ): NDKRelaySubscription {
-        const relaySub = new NDKRelaySubscription(this.relay, fingerprint);
-        relaySub.topSubscriptionManager = this.topSubscriptionManager;
+        const relaySub = new NDKRelaySubscription(this.relay, fingerprint || null, this.generalSubManager);
         relaySub.onClose = this.onRelaySubscriptionClose.bind(this);
         const currentVal = this.subscriptions.get(relaySub.fingerprint) ?? [];
         this.subscriptions.set(relaySub.fingerprint, [...currentVal, relaySub]);

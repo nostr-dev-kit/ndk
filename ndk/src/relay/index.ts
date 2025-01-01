@@ -98,7 +98,7 @@ export class NDKRelay extends EventEmitter<{
     readonly url: WebSocket["url"];
     readonly scores: Map<NDKUser, NDKRelayScore>;
     public connectivity: NDKRelayConnectivity;
-    private subs: NDKRelaySubscriptionManager;
+    public subs: NDKRelaySubscriptionManager;
     private publisher: NDKRelayPublisher;
     public authPolicy?: NDKAuthPolicy;
 

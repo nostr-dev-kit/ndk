@@ -14,7 +14,6 @@ export const initSession = (
     set: (state: Partial<SessionState>) => void,
     get: () => SessionState
 ) => {
-    console.log('running init session')
     const { addEvent } = get();
     let follows: Hexpubkey[] = [];
     const filters = generateFilters(user, opts);

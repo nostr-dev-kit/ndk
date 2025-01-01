@@ -25,8 +25,6 @@ type EventRecord = {
     relay: string;
 };
 
-let processID = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-
 type UnpublishedEventRecord = {
     id: string;
     event: string;
@@ -36,32 +34,6 @@ type UnpublishedEventRecord = {
 
 type PendingCallback = (...arg: any) => any;
 
-// Overhead monitoring variables
-let foundEventsOverhead = 0;
-let queryOverhead = 0;
-let setEventOverhead = 0;
-let setEventDeletePreviousOverhead = 0;
-let setEventInsertEventOverhead = 0;
-let setEventInsertTagsOverhead = 0;
-let fetchProfileOverhead = 0;
-let saveProfileOverhead = 0;
-let addUnpublishedEventOverhead = 0;
-let getUnpublishedEventsOverhead = 0;
-let saveWotOverhead = 0;
-let fetchWotOverhead = 0;
-setInterval(() => {
-//     console.log('foundEvents overhead', foundEventsOverhead);
-    console.log('query overhead', queryOverhead);
-    console.log('setEventDeletePreviousOverhead', setEventDeletePreviousOverhead);
-    console.log('setEventInsertEventOverhead', setEventInsertEventOverhead);
-    console.log('setEventInsertTagsOverhead', setEventInsertTagsOverhead);
-//     console.log('fetchProfile overhead', fetchProfileOverhead);
-//     console.log('saveProfile overhead', saveProfileOverhead);
-//     console.log('addUnpublishedEvent overhead', addUnpublishedEventOverhead);
-//     console.log('getUnpublishedEvents overhead', getUnpublishedEventsOverhead);
-//     console.log('saveWot overhead', saveWotOverhead);
-//     console.log('fetchWot overhead', fetchWotOverhead);
-}, 10000);
 
 export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     readonly dbName: string;
@@ -78,9 +50,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     }
 
     private async initialize() {
-        console.log('initializing cache adapter', this.dbName);
         this.db = SQLite.openDatabaseSync(this.dbName);
-        console.log('cache adapter initialized', this.dbName);
 
         try {
             let { user_version: schemaVersion } = (await this.db.getFirstAsync(`PRAGMA user_version;`)) as { user_version: number };
@@ -90,9 +60,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
         }
 
         // get current schema version
-        console.log('getting schema version');
         let { user_version: schemaVersion } = (this.db.getFirstSync(`PRAGMA user_version;`)) as { user_version: number };
-        console.log('schema version', schemaVersion);
 
         if (!schemaVersion) {
             schemaVersion = 0;
@@ -102,7 +70,6 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
         }
 
         if (!schemaVersion || Number(schemaVersion) < migrations.length) {
-            console.log('running migrations', schemaVersion, migrations.length);
             await this.db.withTransactionAsync(async () => {
                 for (let i = Number(schemaVersion); i < migrations.length; i++) {
                     try {
@@ -117,8 +84,6 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                 // set the schema version
                 await this.db.execAsync(`PRAGMA user_version = ${migrations.length};`);
             });
-        } else {
-            console.log('no migrations to run', schemaVersion, migrations.length);
         }
 
         this.ready = true;
@@ -126,7 +91,6 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
 
         Promise.all(this.pendingCallbacks.map((f) => {
             try {
-                console.log('we are ready: calling callback onReady', f, processID);
                 return f();
             } catch (e) {
                 console.error('error calling cache adapter pending callback', e);
@@ -152,11 +116,8 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
 
     async query(subscription: NDKSubscription): Promise<void> {
         this.ifReady(() => {
-            if (subscription.filters.some((filter) => !this.cachableKinds.includes(filter.kinds?.[0]))) return;
-            console.log('querying', subscription.filters);
+            // if (subscription.filters.some((filter) => !this.cachableKinds.includes(filter.kinds?.[0]))) return;
             
-            const start = performance.now();
-
             // Process filters from the subscription
             for (const filter of subscription.filters) {
                 if (filter.authors) {
@@ -175,31 +136,24 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                     if (events.length > 0) foundEvents(subscription, events, filter);
                 }
             }
-
-            const end = performance.now();
-            queryOverhead += end - start;
         });
     }
 
-    public cachableKinds = [3, 10002, NDKKind.MuteList, NDKKind.BlossomList, NDKKind.Image, NDKKind.Text ];
+    // public cachableKinds = [3, 10002, NDKKind.MuteList, NDKKind.BlossomList, NDKKind.Image, NDKKind.Text ];
 
     async setEvent(event: NDKEvent, filters: NDKFilter[], relay?: NDKRelay): Promise<void> {
-        if (!this.cachableKinds.includes(event.kind!)) return;
+        // if (!this.cachableKinds.includes(event.kind!)) return;
 
         this.onReady(async () => {
             // is the event replaceable?
             if (event.isReplaceable()) {
-                const start = performance.now();
                 await Promise.all([
                     this.db.runAsync(`DELETE FROM events WHERE id = ?;`, [event.id]),
                     this.db.runAsync(`DELETE FROM event_tags WHERE event_id = ?;`, [event.id]),
                 ]);
-                const end = performance.now();
-                setEventDeletePreviousOverhead += end - start;
                 return;
             }
 
-            let start = performance.now();
             this.db.runAsync(`INSERT INTO events (id, created_at, pubkey, event, kind, relay) VALUES (?, ?, ?, ?, ?, ?);`, [
                 event.id,
                 event.created_at!,
@@ -208,18 +162,13 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                 event.kind!,
                 relay?.url || '',
             ])
-            let end = performance.now();
-            setEventInsertEventOverhead += end - start;
 
-            start = performance.now();
             const filterTags: [string, string][] = event.tags.filter((tag) => tag[0].length === 1).map((tag) => [tag[0], tag[1]]);
             if (filterTags.length < 10) {
                 filterTags.forEach((tag) =>
                     this.db.runAsync(`INSERT INTO event_tags (event_id, tag, value) VALUES (?, ?, ?);`, [event.id, tag[0], tag[1]])
                 )
             }
-            end = performance.now();
-            setEventInsertTagsOverhead += end - start;
 
             // if this event is a delete event, see if the deleted events are in the cache and remove them
             if (event.kind === NDKKind.EventDeletion) {
@@ -236,12 +185,9 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     }
 
     fetchProfileSync(pubkey: Hexpubkey): NDKCacheEntry<NDKUserProfile> | null {
-        const start = performance.now();
 
         const cached = this.profileCache.get(pubkey);
         if (cached) {
-            const end = performance.now();
-            fetchProfileOverhead += end - start;
             return cached;
         }
 
@@ -264,26 +210,18 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                 const profile = JSON.parse(result.profile);
                 const entry = { ...profile, fetchedAt: result.catched_at };
                 this.profileCache.set(pubkey, entry);
-                const end = performance.now();
-                fetchProfileOverhead += end - start;
                 return entry;
             } catch (e) {
                 console.error('failed to parse profile', result.profile);
             }
         }
 
-        const end = performance.now();
-        fetchProfileOverhead += end - start;
         return null;
     }
 
     async fetchProfile(pubkey: Hexpubkey): Promise<NDKCacheEntry<NDKUserProfile> | null> {
-        const start = performance.now();
-
         const cached = this.profileCache.get(pubkey);
         if (cached) {
-            const end = performance.now();
-            fetchProfileOverhead += end - start;
             return cached;
         }
 
@@ -298,29 +236,21 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                     const profile = JSON.parse(result.profile);
                     const entry = { ...profile, fetchedAt: result.catched_at };
                     this.profileCache.set(pubkey, entry);
-                    const end = performance.now();
-                    fetchProfileOverhead += end - start;
                     return entry;
                 } catch (e) {
                     console.error('failed to parse profile', result.profile);
                 }
             }
 
-            const end = performance.now();
-            fetchProfileOverhead += end - start;
             return null;
         });
     }
 
     async saveProfile(pubkey: Hexpubkey, profile: NDKUserProfile): Promise<void> {
-        const start = performance.now();
-
         this.onReady(async () => {
             // check if the profile we have is newer based on created_at
             const existingProfile = await this.fetchProfile(pubkey);
             if (existingProfile?.created_at && profile.created_at && existingProfile.created_at >= profile.created_at) {
-                const end = performance.now();
-                saveProfileOverhead += end - start;
                 return;
             }
 
@@ -335,15 +265,11 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                 profile.created_at,
             ]);
 
-            const end = performance.now();
-            saveProfileOverhead += end - start;
         });
     }
 
     addUnpublishedEvent(event: NDKEvent, relayUrls: WebSocket['url'][]): void {
         this.onReady(async () => {
-            const start = performance.now();
-
             const relayStatus: { [key: string]: boolean } = {};
             relayUrls.forEach(url => relayStatus[url] = false);
 
@@ -389,15 +315,11 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                 console.error('error adding unpublished event', e);
             }
 
-            const end = performance.now();
-            addUnpublishedEventOverhead += end - start;
         });
     }
 
     async getUnpublishedEvents(): Promise<{ event: NDKEvent; relays?: WebSocket['url'][]; lastTryAt?: number }[]> {
         return await this.onReady(async () => {
-            const start = performance.now();
-
             const call = () => this._getUnpublishedEvents();
 
             if (!this.ready) {
@@ -406,8 +328,6 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                 });
             } else {
                 const result = await call();
-                const end = performance.now();
-                getUnpublishedEventsOverhead += end - start;
                 return result;
             }
         });
@@ -436,22 +356,16 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
 
     async saveWot(wot: Map<Hexpubkey, number>) {
         this.onReady(async () => {
-            const start = performance.now();
             this.db.runSync(`DELETE FROM wot;`);
             for (const [pubkey, value] of wot) {
                 this.db.runSync(`INSERT INTO wot (pubkey, wot) VALUES (?, ?);`, [pubkey, value]);
             }
-            const end = performance.now();
-            saveWotOverhead += end - start;
         });
     }
 
     async fetchWot(): Promise<Map<Hexpubkey, number>> {
         return await this.onReady(async () => {
-            const start = performance.now();
             const wot = (await this.db.getAllAsync(`SELECT * FROM wot`)) as { pubkey: string; wot: number }[];
-            const end = performance.now();
-            fetchWotOverhead += end - start;
             return new Map(wot.map((wot) => [wot.pubkey, wot.wot]));
         });
     }
@@ -468,7 +382,6 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
 }
 
 export function foundEvents(subscription: NDKSubscription, events: EventRecord[], filter?: NDKFilter) {
-    const start = performance.now();
     // if we have a limit, sort and slice
     if (filter?.limit && events.length > filter.limit) {
         events = events.sort((a, b) => b.created_at - a.created_at).slice(0, filter.limit);
@@ -477,9 +390,6 @@ export function foundEvents(subscription: NDKSubscription, events: EventRecord[]
     for (const event of events) {
         foundEvent(subscription, event, event.relay, filter);
     }
-
-    const end = performance.now();
-    foundEventsOverhead += end - start;
 }
 
 export function foundEvent(subscription: NDKSubscription, event: EventRecord, relayUrl: WebSocket['url'] | undefined, filter?: NDKFilter) {

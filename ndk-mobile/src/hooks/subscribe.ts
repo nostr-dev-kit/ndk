@@ -191,7 +191,6 @@ export const useSubscribe = <T extends NDKEvent>({ filters, opts = undefined, re
         // go through the events and remove any that are from muted pubkeys
         storeInstance.events.forEach((event) => {
             if (muteList.has(event.pubkey)) {
-                console.log('removing event', event.id, 'from muted pubkey', event.pubkey);
                 storeInstance.removeEventId(event.id);
             }
         });
@@ -226,7 +225,7 @@ export const useSubscribe = <T extends NDKEvent>({ filters, opts = undefined, re
             storeInstance.addEvent(event as T);
             eventIds.current.set(id, event.created_at!);
         },
-        [opts?.klass, muteList]
+        [opts?.klass, muteList, filters]
     );
 
     const handleEose = () => {
@@ -238,18 +237,12 @@ export const useSubscribe = <T extends NDKEvent>({ filters, opts = undefined, re
     };
 
     useEffect(() => {
-        console.log('Subscription deps changed:', { filters: JSON.stringify(filters), opts, relaySet, ndk });
-        storeInstance.reset();
-    }, [filters, opts, relaySet, ndk]);
-
-    useEffect(() => {
         if (!filters || filters.length === 0 || !ndk) return;
 
         if (storeInstance.subscriptionRef) {
-            console.log("👉 STOPPING SUBSCRIPTION", { subId: opts?.subId, internalId: storeInstance.subscriptionRef.internalId });
             storeInstance.subscriptionRef.stop();
             storeInstance.setSubscription(undefined);
-            console.log("👉 STOPPED SUBSCRIPTION", { subId: opts?.subId, internalId: storeInstance.subscriptionRef.internalId });
+            storeInstance.reset();
         }
 
         const subscription = ndk.subscribe(filters, opts, relaySet, false);
@@ -257,15 +250,11 @@ export const useSubscribe = <T extends NDKEvent>({ filters, opts = undefined, re
         subscription.on('eose', handleEose);
         subscription.on('closed', handleClosed);
 
-        console.log("👉 STARTING SUBSCRIPTION", { subId: opts?.subId, internalId: subscription.internalId });
-
         storeInstance.setSubscription(subscription);
         subscription.start();
-        console.log("👉 STARTED SUBSCRIPTION", { subId: opts?.subId, internalId: subscription.internalId });
 
         return () => {
             if (storeInstance.subscriptionRef) {
-                console.log("👉 STOPPING SUBSCRIPTION FROM USEEFFECT", { subId: opts?.subId, internalId: storeInstance.subscriptionRef.internalId });
                 storeInstance.subscriptionRef.stop();
                 storeInstance.setSubscription(undefined);
             }

@@ -257,7 +257,7 @@ export const BECH32_REGEX = /^n(event|ote|profile|pub|addr)1[\d\w]+$/;
  *
  * @param bech32 The NIP-19 bech32.
  */
-export function relaysFromBech32(bech32: string, ndk?: NDK): NDKRelay[] {
+export function relaysFromBech32(bech32: string, ndk: NDK): NDKRelay[] {
     try {
         const decoded = nip19.decode(bech32);
 
@@ -266,7 +266,7 @@ export function relaysFromBech32(bech32: string, ndk?: NDK): NDKRelay[] {
 
             if (data?.relays) {
                 return data.relays.map(
-                    (r: string) => new NDKRelay(r, ndk?.relayAuthDefaultPolicy, ndk)
+                    (r: string) => new NDKRelay(r, ndk.relayAuthDefaultPolicy, ndk)
                 );
             }
         }

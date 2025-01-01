@@ -78,7 +78,7 @@ export class NDKNip07Signer implements NDKSigner {
         return signedEvent.sig;
     }
 
-    public async relays(ndk?: NDK): Promise<NDKRelay[]> {
+    public async relays(ndk: NDK): Promise<NDKRelay[]> {
         await this.waitForExtension();
 
         const relays = (await window.nostr!.getRelays?.()) || {};

@@ -162,7 +162,7 @@ export class NDKRelay extends EventEmitter<{
         return relay.validationRatio;
     };
 
-    public constructor(url: WebSocket["url"], authPolicy?: NDKAuthPolicy, ndk?: NDK) {
+    public constructor(url: WebSocket["url"], authPolicy: NDKAuthPolicy | undefined, ndk: NDK) {
         super();
         this.url = normalizeRelayUrl(url);
         this.scores = new Map<NDKUser, NDKRelayScore>();
@@ -171,7 +171,7 @@ export class NDKRelay extends EventEmitter<{
         this.connectivity.netDebug = ndk?.netDebug;
         this.req = this.connectivity.req.bind(this.connectivity);
         this.close = this.connectivity.close.bind(this.connectivity);
-        this.subs = new NDKRelaySubscriptionManager(this, ndk?.subManager);
+        this.subs = new NDKRelaySubscriptionManager(this, ndk.subManager);
         this.publisher = new NDKRelayPublisher(this);
         this.authPolicy = authPolicy;
         this.targetValidationRatio = ndk?.initialValidationRatio;

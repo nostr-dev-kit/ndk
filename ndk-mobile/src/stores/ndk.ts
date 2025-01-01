@@ -54,9 +54,6 @@ export const useNDKStore = create<State & Actions & EventHandler>((set, get) => 
         const settingsStore = params.settingsStore;
         const user = getUserFromSettingsStore(ndk, settingsStore);
 
-        ndk.pool.on('relay:connect', (relay) => {
-            console.log('connected to relay', relay.url);
-        });
         ndk.connect();
 
         // get unpublished events

@@ -1,5 +1,5 @@
 import NDK, { NDKConstructorParams, NDKEvent, NDKUser } from "@nostr-dev-kit/ndk";
-import { create, createStore } from "zustand";
+import { create } from "zustand";
 import { SettingsStore } from "../types";
 import { produce } from "immer";
 import { withPayload } from "../providers/ndk/signers";
@@ -95,8 +95,9 @@ export const useNDKStore = create<State & Actions & EventHandler>((set, get) => 
     },
 
     login: (payload: string, onUserSet?: OnUserSetCallback) => {
-        const {ndk, settingsStore, initialParams} = get();
-        withPayload(ndk, payload).then((signer) => {
+        const {ndk, settingsStore} = get();
+
+        withPayload(ndk, payload, settingsStore).then((signer) => {
             ndk.signer = signer;
 
             if (signer) {

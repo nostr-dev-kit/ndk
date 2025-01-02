@@ -155,6 +155,13 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
     public checkProofs = consolidateTokens.bind(this);
     public consolidateTokens = consolidateTokens.bind(this);
 
+    public toLoadingString() {
+        return JSON.stringify({
+            type: 'nip60',
+            bech32: this.event!.encode(),
+        });
+    }
+
     async mintNuts(amounts: number[], unit: string) {
         let result: SendResponse | undefined;
         const totalAmount = amounts.reduce((acc, amount) => acc + amount, 0);

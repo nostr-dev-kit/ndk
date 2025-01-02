@@ -46,7 +46,6 @@ export const initSession = (
     sub.on('event', handleEvent);
 
     sub.once('eose', () => {
-        console.log('EOSE on main sub', sub.internalId);
         on?.onReady?.();
         eosed = true;
 
@@ -75,7 +74,6 @@ export const initSession = (
         eosed = true;
     });
     sub.start();
-    console.log('sub started', sub.filters, ndk.pool.connectedRelays());
 
     set({ ndk, follows: opts.follows ? [user.pubkey] : [] });
 };

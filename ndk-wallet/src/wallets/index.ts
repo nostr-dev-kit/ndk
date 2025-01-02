@@ -1,4 +1,4 @@
-import {
+import NDK, {
     CashuPaymentInfo,
     LnPaymentInfo,
     NDKPaymentConfirmation,
@@ -9,6 +9,8 @@ import {
     NDKZapSplit,
 } from "@nostr-dev-kit/ndk";
 import { EventEmitter } from "tseep";
+import { NDKNWCWallet } from "./nwc";
+import { NDKCashuWallet } from "./cashu/wallet";
 
 export type NDKWalletTypes = 'nwc' | 'nip-60' | 'webln';
 
@@ -86,4 +88,24 @@ export interface NDKWallet
      * Get the balance of this wallet
      */
     balance(): NDKWalletBalance[] | undefined;
+
+    /**
+     * Serializes the wallet configuration in a way that can be restored later.
+     */
+    toLoadingString?(): string;
+}
+
+export async function walletFromLoadingString(ndk: NDK, str: string): Promise<NDKNWCWallet | NDKCashuWallet | undefined> {
+    const payload = JSON.parse(str);
+
+    switch (payload.type) {
+        case 'nwc':
+            const w = new NDKNWCWallet(ndk);
+            await w.initWithPairingCode(payload.pairingCode);
+            return w;
+        case 'nip60':
+            const event = await ndk.fetchEvent(payload.bech32);
+            if (!event) return undefined;
+            return await NDKCashuWallet.from(event);
+    }
 }

@@ -95,7 +95,14 @@ export type OnCompleteCb = (
 ) => void;
 
 interface NDKZapperOptions {
+    /**
+     * Comment to include in the zap event
+     */
     comment?: string;
+
+    /**
+     * Extra tags to add to the zap event
+     */
     tags?: NDKTag[];
     signer?: NDKSigner;
     lnPay?: LnPayCb;
@@ -139,6 +146,13 @@ class NDKZapper extends EventEmitter<{
 
     public maxRelays = 3;
 
+    /**
+     * 
+     * @param target The target of the zap
+     * @param amount The amount to send indicated in the unit
+     * @param unit The unit of the amount
+     * @param opts Options for the zap
+     */
     constructor(
         target: NDKEvent | NDKUser,
         amount: number,

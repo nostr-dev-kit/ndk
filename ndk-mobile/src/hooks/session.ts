@@ -1,13 +1,32 @@
-import { NDKEvent, NDKKind } from '@nostr-dev-kit/ndk';
+import NDK, { NDKEvent, NDKKind, NDKUser } from '@nostr-dev-kit/ndk';
 import { useNDK } from './ndk';
 import { NDKEventWithFrom } from './subscribe';
 import { useNDKSessionStore } from '../stores/session';
+import { useNDKWallet } from './wallet';
+import { walletFromLoadingString } from '@nostr-dev-kit/ndk-wallet';
+import { SessionInitOpts, SessionInitCallbacks } from '../stores/session/types';
+import { SettingsStore } from '../types';
 
 const useNDKSession = () => {
     const init = useNDKSessionStore(s => s.init);
     const mutePubkey = useNDKSessionStore(s => s.mutePubkey);
 
-    return { init, mutePubkey };
+    const { setActiveWallet } = useNDKWallet();
+
+    const wrappedInit = (ndk: NDK, user: NDKUser, settingsStore: SettingsStore, opts: SessionInitOpts, on: SessionInitCallbacks) => {
+        init(ndk, user, settingsStore, opts, on);
+
+        const walletString = settingsStore?.getSync('wallet');
+        if (walletString) {
+            walletFromLoadingString(ndk, walletString).then((wallet) => {
+                if (wallet) setActiveWallet(wallet);
+            }).catch((e) => {
+                console.error('error setting active wallet', e);
+            });
+        }
+    }
+
+    return { init: wrappedInit, mutePubkey };
 }
 
 const useFollows = () => useNDKSessionStore(s => s.follows);

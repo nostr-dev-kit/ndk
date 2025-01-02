@@ -68,6 +68,13 @@ export class NDKNWCWallet extends EventEmitter<NDKWalletEvents> implements NDKWa
         return this.init(pubkey, relayUrls, secret);
     }
 
+    toLoadingString(): string {
+        return JSON.stringify({
+            type: 'nwc',
+            pairingCode: this.pairingCode
+        });
+    }
+
     async lnPay(payment: LnPaymentInfo): Promise<NDKPaymentConfirmationLN | undefined> {
         if (!this.signer) throw new Error("Wallet not initialized");
 

@@ -274,7 +274,13 @@ export class NDKPool extends EventEmitter<{
     }
 
     private handleRelayConnect(relayUrl: string) {
-        this.emit("relay:connect", this.relays.get(relayUrl)!);
+        const relay = this.relays.get(relayUrl)!;
+        if (!relay) {
+            console.error("NDK BUG: relay not found in pool", { relayUrl });
+            return;
+        }
+
+        this.emit("relay:connect", relay);
 
         if (this.stats().connected === this.relays.size) {
             this.emit("connect");

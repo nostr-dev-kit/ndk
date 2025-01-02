@@ -503,10 +503,12 @@ export class NDK extends EventEmitter<{
         const subscription = new NDKSubscription(this, filters, opts, relaySet);
         this.subManager.add(subscription);
 
+        const pool = opts?.pool ?? this.pool;
+
         // Signal to the relays that they are explicitly being used
         if (relaySet) {
             for (const relay of relaySet.relays) {
-                this.pool.useTemporaryRelay(relay, undefined, subscription.filters);
+                pool.useTemporaryRelay(relay, undefined, subscription.filters);
             }
         }
 

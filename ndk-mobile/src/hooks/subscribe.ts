@@ -186,8 +186,6 @@ export const useSubscribe = <T extends NDKEvent>({ filters, opts = undefined, re
     }, [ndk, relays]);
 
     useEffect(() => {
-        console.log('mute list changed', muteList);
-
         // go through the events and remove any that are from muted pubkeys
         storeInstance.events.forEach((event) => {
             if (muteList.has(event.pubkey)) {
@@ -195,7 +193,7 @@ export const useSubscribe = <T extends NDKEvent>({ filters, opts = undefined, re
             }
         });
 
-    }, [ muteList ])
+    }, [ muteList.size ])
 
     const handleEvent = useCallback(
         (event: NDKEvent) => {

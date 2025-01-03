@@ -5,7 +5,7 @@ import { NutPayment } from "../cashu/pay/nut.js";
 import { sendReq } from "./req.js";
 import createDebug from "debug";
 import { NDKNWCGetInfoResult, NDKNWCRequestMap, NDKNWCResponseBase, NDKNWCResponseMap } from "./types.js";
-import { CashuMint, CashuWallet } from "@cashu/cashu-ts";
+import { CashuMint, CashuWallet, MintQuoteResponse } from "@cashu/cashu-ts";
 
 const d = createDebug("ndk-wallet:nwc");
 
@@ -104,15 +104,28 @@ export class NDKNWCWallet extends EventEmitter<NDKWalletEvents> implements NDKWa
             }
 
             const wallet = new CashuWallet(new CashuMint(mint), { unit });
+            let quote: MintQuoteResponse | undefined;
             try {
-                const quote = await wallet.createMintQuote(amount);
+                quote = await wallet.createMintQuote(amount);
                 d('cashuPay quote', quote);
+            } catch (e) {
+                console.error('error creating mint quote', e);
+                throw e;
+            }
 
+            if (!quote) throw new Error("Didnt receive a mint quote");
+
+            try {
                 const res = await this.req("pay_invoice", { invoice: quote.request });
                 d('cashuPay res', res);
+            } catch (e) {
+                console.error('error paying invoice', e);
+                throw e;
+            }
 
-                // todo check that the amount of the invoice matches the amount we want to pay
+            // todo check that the amount of the invoice matches the amount we want to pay
 
+            try {
                 // mint the tokens
                 const mintProofs = await wallet.mintProofs(amount, quote.quote, {
                     pubkey: payment.p2pk
@@ -124,7 +137,8 @@ export class NDKNWCWallet extends EventEmitter<NDKWalletEvents> implements NDKWa
                     mint: mint
                 };
             } catch (e) {
-                console.error('error creating mint quote', e);
+                console.error('error minting tokens', e);
+                throw e;
             }
         }
     }

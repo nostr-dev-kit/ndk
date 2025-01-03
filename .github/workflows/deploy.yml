@@ -45,8 +45,8 @@ jobs:
               run: pnpm install # or pnpm install / yarn install / bun install
             - name: Build with VitePress
               run: pnpm docs:build # or pnpm docs:build / yarn docs:build / bun run docs:build
-            - name: Build typedoc
-              run: cd ndk && pnpm typedoc --out ../docs/.vitepress/dist/api
+#            - name: Build typedoc
+#              run: cd ndk && pnpm typedoc --out ../docs/.vitepress/dist/api
             - name: Upload artifact
               uses: actions/upload-pages-artifact@v3
               with:

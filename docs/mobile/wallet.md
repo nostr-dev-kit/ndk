@@ -1,26 +1,21 @@
 # Wallet
 
-ndk-mobile makes operating with nostr wallets as seamless as possible.
+`ndk-mobile` makes operating with nostr wallets as seamless as possible.
 
 ## Initialize
 
-When setting up your NDKSession provider, make sure to activate the wallet prop, to indicate you want to enable this feature.
+The `useNDKWallet()` hook provides access to the active wallet and to activate a wallet.
 
-```ts
-<NDKSessionProvider wallet={true}>
-```
+```tsx
+const { activeWallet, setActiveWallet, balances } = useNDKWallet();
 
-If your user has implicitly or explicitly enabled a wallet in your app you can also pass the configuration into the provider to immediately make the wallet available throughout your app.
+return (<View>
+    { activeWallet && <Text>You are using a wallet of type {activeWallet.type}</Text>}
 
-```ts
-const walletConfig = {
-    // type of wallet to enable
-    type: 'nip-60',
-
-    // some wallet Id this user can use
-    walletId: 'naddr1qvzqqqy3lupzq8mxja28nlfd6269zzzsm8feqxrl5eapf7g5fretnpucjh0xlannqythwumn8ghj7un9d3shjtnswf5k6ctv9ehx2ap0qqgx5un0weuxsmp5w4ax2e3cwe382kngsvc'
-
-<NDKSessionProvider wallet={true} walletConfig={walletConfig}>
+    <Button title="Connect" onPress={() => {
+        setActiveWallet('nostr+wallet:....')
+    } />
+</View>)
 ```
 
 ## Using the wallet
@@ -28,7 +23,7 @@ const walletConfig = {
 Now from within your app you can easily zap via the `NDKZapper`, check balance, receive payments, and any other interaction you can use `ndk-wallet`.
 
 ```ts
-const { activeWallet, balances } = useNDKSession();
+const { activeWallet, balances } = useNDKWallet();
 
 async function generateDeposit() {
     const deposit = activeWallet.deposit(10, activeWallet.mints[0], 'sat');

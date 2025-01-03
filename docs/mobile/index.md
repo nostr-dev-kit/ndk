@@ -29,11 +29,13 @@ Initialize NDK using the init function, probably when your app loads.
 function App() {
     const { ndk, init: initializeNDK } = useNDK();
 
-    useEffect() {
-
-    }
-
-    return <NDKProvider explicitRelayUrls={["wss://f7z.io"]}>{/* your app here */}</NDKProvider>;
+    useEffect(() => {
+        initializeNDK({
+            /* Any parameter you'd want to pass to NDK */
+            explicitRelayUrls: [...],
+            // ...
+        }
+    }, []);
 }
 ```
 
@@ -60,7 +62,7 @@ initializeNDK({
 
 Now, once your user logs in, their login information will be stored locally so when your app restarts, the user will be logged in automatically.
 
-## useNDK()
+## `useNDK()`
 
 `useNDK()` provides access to the `ndk` instance and some other useful information.
 

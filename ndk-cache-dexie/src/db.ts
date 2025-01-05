@@ -13,6 +13,7 @@ export interface Event {
     createdAt: number;
     relay?: string;
     event: string;
+    sig?: string;
 }
 
 export interface EventTag {

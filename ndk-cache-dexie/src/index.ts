@@ -53,6 +53,12 @@ export interface NDKCacheAdapterDexieOptions {
     nip05CacheSize?: number;
     eventCacheSize?: number;
     eventTagsCacheSize?: number;
+
+    /**
+     * Whether to store event signatures in the cache
+     * @default false
+     */
+    saveSig?: boolean;
 }
 
 export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
@@ -69,12 +75,13 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
     private warmedUp: boolean = false;
     private warmUpPromise: Promise<any>;
     public devMode = false;
+    private saveSig: boolean;
     public _onReady?: () => void;
 
     constructor(opts: NDKCacheAdapterDexieOptions = {}) {
         createDatabase(opts.dbName || "ndk");
         this.debug = opts.debug || createDebug("ndk:dexie-adapter");
-
+        this.saveSig = opts.saveSig || false;
         this.profiles = new CacheHandler<Profile>({
             maxSize: opts.profileCacheSize || 100000,
             dump: profilesDump(db.profiles, this.debug),
@@ -375,14 +382,20 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         }
 
         if (addEvent) {
-            this.events.set(event.tagId(), {
+            const eventData: Event = {
                 id: event.tagId(),
                 pubkey: event.pubkey,
                 kind: event.kind!,
                 createdAt: event.created_at!,
                 relay: relay?.url,
-                event: event.serialize(true, true),
-            });
+                event: event.serialize(this.saveSig, true),
+            };
+
+            if (this.saveSig && event.sig) {
+                eventData.sig = event.sig;
+            }
+
+            this.events.set(event.tagId(), eventData);
 
             // Don't cache contact lists as tags since it's expensive
             // and there is no use case for it

@@ -15,7 +15,11 @@ export const mutePubkey = (pubkey: Hexpubkey, set) => {
 
         muteList.add(pubkey);
         muteListEvent.tags.push(['p', pubkey]);
-        muteListEvent.publishReplaceable();
+
+        muteListEvent.publishReplaceable()
+            .then((res) => console.log('mute list', res, JSON.stringify(muteListEvent.rawEvent(), null, 4)))
+            .catch(console.error)
+            
 
         return { muteList };
     });

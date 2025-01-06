@@ -115,9 +115,8 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     }
 
     async query(subscription: NDKSubscription): Promise<void> {
-        this.ifReady(() => {
-            // if (subscription.filters.some((filter) => !this.cachableKinds.includes(filter.kinds?.[0]))) return;
-            
+        this.onReady(() => {
+
             // Process filters from the subscription
             for (const filter of subscription.filters) {
                 if (filter.authors) {
@@ -135,15 +134,23 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                     ) as EventRecord[];
                     if (events.length > 0) foundEvents(subscription, events, filter);
                 }
+
+                for (const key in filter) {
+                    if (key.startsWith('#') && key.length === 2) {
+                        const tag = key[1];
+                        const events = this.db.getAllSync(
+                            `SELECT * FROM events INNER JOIN event_tags ON events.id = event_tags.event_id WHERE event_tags.tag = ? AND event_tags.value IN (${filter[key].map(() => '?').join(',')})`,
+                            [tag, ...filter[key]]
+                        ) as EventRecord[];
+                        console.log(`SQLITE ${key} filter found`, events.length);
+                        if (events.length > 0) foundEvents(subscription, events, filter);
+                    }
+                }
             }
         });
     }
 
-    // public cachableKinds = [3, 10002, NDKKind.MuteList, NDKKind.BlossomList, NDKKind.Image, NDKKind.Text ];
-
     async setEvent(event: NDKEvent, filters: NDKFilter[], relay?: NDKRelay): Promise<void> {
-        // if (!this.cachableKinds.includes(event.kind!)) return;
-
         this.onReady(async () => {
             // is the event replaceable?
             if (event.isReplaceable()) {
@@ -269,6 +276,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     }
 
     addUnpublishedEvent(event: NDKEvent, relayUrls: WebSocket['url'][]): void {
+        this.setEvent(event, []);
         this.onReady(async () => {
             const relayStatus: { [key: string]: boolean } = {};
             relayUrls.forEach(url => relayStatus[url] = false);

@@ -2,6 +2,9 @@ import { NDKKind } from ".";
 import type { NostrEvent } from "..";
 import { NDKEvent } from "..";
 import type { NDK } from "../../ndk";
+import { NDKImetaTag } from "../../utils/imeta";
+import { imetaTagToTag } from "../../utils/imeta";
+import { mapImetaTag } from "../../utils/imeta";
 import type { ContentTag } from "../content-tagger";
 
 /**
@@ -11,6 +14,7 @@ import type { ContentTag } from "../content-tagger";
 export class NDKVideo extends NDKEvent {
     static kind = NDKKind.HorizontalVideo;
     static kinds = [NDKKind.HorizontalVideo, NDKKind.VerticalVideo];
+    private _imetas: NDKImetaTag[] = [];
 
     constructor(ndk: NDK | undefined, rawEvent?: NostrEvent) {
         super(ndk, rawEvent);
@@ -53,28 +57,34 @@ export class NDKVideo extends NDKEvent {
      * @returns {string | undefined} - The article thumbnail if available, otherwise undefined.
      */
     get thumbnail(): string | undefined {
-        return this.tagValue("thumb");
+        let thumbnail: string | undefined;
+        if (this.imetas && this.imetas.length > 0) {
+            thumbnail = this.imetas[0].image?.[0];
+        }
+
+        return thumbnail ?? this.tagValue("thumb");
     }
 
-    /**
-     * Setter for the article thumbnail.
-     *
-     * @param {string | undefined} thumbnail - The thumbnail to set for the article.
-     */
-    set thumbnail(thumbnail: string | undefined) {
-        this.removeTag("thumb");
+    get imetas(): NDKImetaTag[] {
+        if (this._imetas) return this._imetas;
+        this._imetas = this.tags.filter((tag) => tag[0] === "imeta")
+            .map(mapImetaTag)
+        return this._imetas;
+    }
 
-        if (thumbnail) this.tags.push(["thumb", thumbnail]);
+    set imetas(tags: NDKImetaTag[]) {
+        this._imetas = tags;
+
+        this.tags = this.tags.filter((tag) => tag[0] !== "imeta");
+        this.tags.push(...tags.map(imetaTagToTag));
     }
 
     get url(): string | undefined {
+        if (this.imetas && this.imetas.length > 0) {
+            return this.imetas[0].url;
+        }
+        
         return this.tagValue("url");
-    }
-
-    set url(url: string | undefined) {
-        this.removeTag("url");
-
-        if (url) this.tags.push(["url", url]);
     }
 
     /**

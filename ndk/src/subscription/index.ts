@@ -94,7 +94,7 @@ export interface NDKSubscriptionOptions {
 
     /**
      * Skip event validation. Event validation, checks whether received
-     * kinds conform to what the expected schema of that kind should look like.
+     * kinds conform to what the expected schema of that kind should look like.rtwle
      * @default false
      */
     skipValidation?: boolean;
@@ -132,6 +132,8 @@ export const defaultOpts: NDKSubscriptionOptions = {
  * * {NDKRelay} relay - The relay that received the event.
  * * {number} timeSinceFirstSeen - The time elapsed since the first time the event was seen.
  * * {NDKSubscription} subscription - The subscription that received the event.
+ * 
+ * @emits cacheEose - Emitted when the cache adapter has reached the end of the events it had.
  *
  * @emits eose - Emitted when all relays have reached the end of the event stream.
  * * {NDKSubscription} subscription - The subscription that received EOSE.
@@ -159,6 +161,8 @@ export const defaultOpts: NDKSubscriptionOptions = {
  * sub.on("event", (event) => console.log(event.content); // Only valid events will be received
  */
 export class NDKSubscription extends EventEmitter<{
+
+    cacheEose: () => void;
     eose: (sub: NDKSubscription) => void;
     close: (sub: NDKSubscription) => void;
     "event:dup": (
@@ -318,6 +322,7 @@ export class NDKSubscription extends EventEmitter<{
 
         if (this.shouldQueryCache()) {
             cachePromise = this.startWithCache();
+            cachePromise.then(() => this.emit('cacheEose'))
 
             if (this.shouldWaitForCache()) {
                 await cachePromise;

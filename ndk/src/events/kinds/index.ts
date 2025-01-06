@@ -24,6 +24,10 @@ export enum NDKKind {
     Report = 1984,
     Label = 1985,
 
+    // NIP-59 - Gift Wrap
+    Seal = 13,
+    GiftWrap = 1059,
+
     // NIP-90: Data Vending Machines
     // Text: 5000-5099
     DVMReqTextExtraction = 5000,

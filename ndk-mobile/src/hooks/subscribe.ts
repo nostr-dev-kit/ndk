@@ -1,7 +1,7 @@
 import '@bacons/text-decoder/install';
 import { createStore } from 'zustand/vanilla';
 import { useStore } from 'zustand';
-import NDK, { NDKEvent, NDKFilter, NDKKind, NDKRelaySet, NDKSubscription, NDKSubscriptionOptions } from '@nostr-dev-kit/ndk';
+import NDK, { NDKEvent, NDKFilter, NDKKind, NDKRelaySet, NDKSubscription, NDKSubscriptionOptions, wrapEvent } from '@nostr-dev-kit/ndk';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useNDK } from './ndk';
 import { useNDKSessionStore } from '../stores/session';
@@ -26,7 +26,10 @@ export type NDKEventWithFrom<T extends NDKEvent> = T & { from: (event: NDKEvent)
 interface UseSubscribeParams {
     filters: NDKFilter[] | null;
     opts?: NDKSubscriptionOptions & {
-        klass?: NDKEventWithFrom<any>;
+        /**
+         * Whether to wrap the event with the kind-specific class when possible
+         */
+        wrap?: boolean;
         includeMuted?: boolean;
         includeDeleted?: boolean;
         wot?: boolean;
@@ -65,7 +68,7 @@ let arrayFrom = 0;
 const createSubscribeStore = <T extends NDKEvent>(bufferMs: number | false = 30) =>
     createStore<SubscribeStore<T>>((set, get) => {
         const buffer: Map<string, T> = new Map();
-        let timeout: NodeJS.Timeout | null = null;
+        let timeout: any | null = null;
 
         // Function to flush the buffered events to the store
         const flushBuffer = () => {
@@ -211,7 +214,7 @@ export const useSubscribe = <T extends NDKEvent>({ filters, opts = undefined, re
             }
 
             // If we need to convert the event, we do so
-            if (opts?.klass) event = opts.klass.from(event);
+            if (opts?.wrap) event = wrapEvent<T>(event);
 
             event.once("deleted", () => {
                 storeInstance.removeEventId(id);
@@ -223,7 +226,7 @@ export const useSubscribe = <T extends NDKEvent>({ filters, opts = undefined, re
             storeInstance.addEvent(event as T);
             eventIds.current.set(id, event.created_at!);
         },
-        [opts?.klass, muteList, filters]
+        [muteList, filters]
     );
 
     const handleEose = () => {

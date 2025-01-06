@@ -486,6 +486,7 @@ export class NDKEvent extends EventEmitter {
         }
 
         // send to active subscriptions that want this event
+        console.log('Dispatch published event', this.kind);
         this.ndk.subManager.dispatchEvent(rawEvent, undefined, true);
 
         const relays = await relaySet.publish(this, timeoutMs, requiredRelayCount);

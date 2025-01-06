@@ -23,7 +23,6 @@ type State = {
     ndk: NDK;
     currentUser: NDKUser | null;
     settingsStore?: SettingsStore;
-    randomId: string;
     unpublishedEvents: Map<string, UnpublishedEventEntry>;
     cacheInitialized: boolean;
     initialParams: InitNDKParams;
@@ -47,7 +46,6 @@ export const useNDKStore = create<State & Actions & EventHandler>((set, get) => 
     unpublishedEvents: new Map(),
     cacheInitialized: false,
     initialParams: undefined,
-    randomId: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
 
     init: (params: InitNDKParams) => {
         const ndk = new NDK(params);

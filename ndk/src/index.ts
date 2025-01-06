@@ -7,24 +7,27 @@ export * from "./user/pin.js";
 export * from "./events/index.js";
 
 // Kinds
-export * from "./events/kinds/index.js";
 export * from "./events/kinds/article.js";
-export * from "./events/kinds/wiki.js";
 export * from "./events/kinds/classified.js";
-export * from "./events/kinds/video.js";
-export * from "./events/kinds/highlight.js";
-export * from "./events/kinds/NDKRelayList.js";
-export * from "./events/kinds/lists/index.js";
 export * from "./events/kinds/drafts.js";
-export * from "./events/kinds/repost.js";
-export * from "./events/kinds/nip89/NDKAppHandler.js";
-export * from "./events/kinds/subscriptions/tier.js";
-export * from "./events/kinds/subscriptions/amount.js";
-export * from "./events/kinds/subscriptions/subscription-start.js";
-export * from "./events/kinds/subscriptions/receipt.js";
 export * from "./events/kinds/dvm/index.js";
-export * from "./events/kinds/nutzap/mint-list.js";
+export * from "./events/kinds/highlight.js";
+export * from "./events/kinds/image.js";
+export * from "./events/kinds/index.js";
+export * from "./events/kinds/lists/index.js";
+export * from "./events/kinds/NDKRelayList.js";
+export * from "./events/kinds/nip89/NDKAppHandler.js";
 export * from "./events/kinds/nutzap/index.js";
+export * from "./events/kinds/nutzap/mint-list.js";
+export * from "./events/kinds/repost.js";
+export * from "./events/kinds/subscriptions/amount.js";
+export * from "./events/kinds/subscriptions/receipt.js";
+export * from "./events/kinds/subscriptions/subscription-start.js";
+export * from "./events/kinds/subscriptions/tier.js";
+export * from "./events/kinds/video.js";
+export * from "./events/kinds/wiki.js";
+
+export * from "./events/wrap.js";
 
 export * from "./thread/index.js";
 
@@ -59,3 +62,4 @@ export * from "./zapper/nip57.js";
 export * from "./zapper/nip61.js";
 export * from "./utils/normalize-url.js";
 export * from "./utils/get-users-relay-list.js";
+export * from "./utils/imeta.js";

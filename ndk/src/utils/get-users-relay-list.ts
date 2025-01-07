@@ -21,7 +21,8 @@ export async function getRelayListForUser(pubkey: Hexpubkey, ndk: NDK): Promise<
 export async function getRelayListForUsers(
     pubkeys: Hexpubkey[],
     ndk: NDK,
-    skipCache = false
+    skipCache = false,
+    timeout = 1000
 ): Promise<Map<Hexpubkey, NDKRelayList>> {
     const pool = ndk.outboxPool || ndk.pool;
     const set = new Set<NDKRelay>();
@@ -113,6 +114,10 @@ export async function getRelayListForUsers(
 
             resolve(relayLists);
         });
+
+        setTimeout(() => {
+            resolve(relayLists)
+        }, timeout);
 
         sub.start();
     });

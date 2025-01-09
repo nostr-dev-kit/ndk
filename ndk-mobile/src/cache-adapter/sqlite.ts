@@ -142,7 +142,6 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                             `SELECT * FROM events INNER JOIN event_tags ON events.id = event_tags.event_id WHERE event_tags.tag = ? AND event_tags.value IN (${filter[key].map(() => '?').join(',')})`,
                             [tag, ...filter[key]]
                         ) as EventRecord[];
-                        console.log(`SQLITE ${key} filter found`, events.length);
                         if (events.length > 0) foundEvents(subscription, events, filter);
                     }
                 }

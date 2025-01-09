@@ -1,4 +1,4 @@
-import { NDKWallet } from '@nostr-dev-kit/ndk-wallet';
+import { NDKCashuWallet, NDKWallet } from '@nostr-dev-kit/ndk-wallet';
 import { useWalletStore } from '../stores/wallet';
 import { useNDK } from './ndk';
 import { useNDKStore } from '../stores/ndk';
@@ -18,6 +18,20 @@ const useNDKWallet = () => {
         ndk.wallet = wallet;
 
         let loadingString: string | undefined;
+
+        const updateBalances = () => {
+            const b = wallet ? wallet.balance() : [];
+            setBalances(b);
+        }
+
+        if (wallet) {
+            wallet.on('ready', updateBalances);
+            wallet.on('balance_updated', updateBalances);
+        }
+
+        if (wallet instanceof NDKCashuWallet) {
+            wallet.start({ subId: 'wallet' })
+        }
         
         if (wallet) loadingString = wallet.toLoadingString?.();
         if (loadingString) 

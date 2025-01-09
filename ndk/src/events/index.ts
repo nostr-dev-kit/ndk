@@ -738,6 +738,14 @@ export class NDKEvent extends EventEmitter {
         }
     }
 
+    nip22Filter(): NDKFilter {
+        if (this.isParamReplaceable()) {
+            return { "#A": [this.tagId()] };
+        } else {
+            return { "#E": [this.tagId()] };
+        }
+    }
+
     /**
      * Generates a deletion event of the current event
      *
@@ -894,7 +902,7 @@ export class NDKEvent extends EventEmitter {
 
             reply.tags.push(["k", this.kind!.toString()]);
 
-            // carry over all p tags
+            // carry over all p tags 
             reply.tags.push(...this.getMatchingTags("p"));
             reply.tags.push(["p", this.pubkey]);
         }

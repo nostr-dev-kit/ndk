@@ -797,6 +797,23 @@ export class NDKEvent extends EventEmitter {
     }
 
     /**
+     * Establishes whether this is a NIP-70-protectede event.
+     * @@satisfies NIP-70
+     */
+    set isProtected(val: boolean) {
+        this.removeTag('-');
+        if (val) this.tags.push(['-']);
+    }
+
+    /**
+     * Whether this is a NIP-70-protectede event.
+     * @@satisfies NIP-70
+     */
+    get isProtected(): boolean {
+        return this.hasTag('-');
+    }
+
+    /**
      * Fetch an event tagged with the given tag following relay hints if provided.
      * @param tag The tag to search for
      * @param marker The marker to use in the tag (e.g. "root")

@@ -1,14 +1,15 @@
 import debug from "debug";
 
-import { EncryptionNip, NDK } from "../../ndk/index.js";
+import { NDK } from "../../ndk/index.js";
 import type { NostrEvent } from "../../events/index.js";
 import { Hexpubkey, NDKUser } from "../../user/index.js";
 import { type NDKSigner } from "../index.js";
 import { NDKRelay } from "../../relay/index.js";
 import { EncryptionMethod } from "../../events/encryption.js";
+import { NDKEncryptionScheme } from "../../types.js";
 
 type EncryptionQueueItem = {
-    nip : EncryptionNip;
+    scheme : NDKEncryptionScheme;
     method: EncryptionMethod;
     counterpartyHexpubkey: string;
     value: string;
@@ -95,14 +96,14 @@ export class NDKNip07Signer implements NDKSigner {
         return activeRelays.map((url) => new NDKRelay(url, ndk?.relayAuthDefaultPolicy, ndk));
     }
 
-    public async encryptionEnabled(nip?:EncryptionNip): Promise<EncryptionNip[]>{
-        let enabled : EncryptionNip[] =  []
+    public async encryptionEnabled(nip?:NDKEncryptionScheme): Promise<NDKEncryptionScheme[]>{
+        let enabled : NDKEncryptionScheme[] =  []
         if((!nip || nip == 'nip04') && Boolean((window as any).nostr!.nip04)) enabled.push('nip04')
         if((!nip || nip == 'nip44') && Boolean((window as any).nostr!.nip44)) enabled.push('nip44')
         return enabled;
     }
 
-    public async encrypt(recipient: NDKUser, value: string, nip:EncryptionNip = 'nip04'): Promise<string> {
+    public async encrypt(recipient: NDKUser, value: string, nip:NDKEncryptionScheme = 'nip04'): Promise<string> {
         if( !(await this.encryptionEnabled(nip)) ) throw new Error(nip + 'encryption is not available from your browser extension')
         await this.waitForExtension();
 
@@ -110,7 +111,7 @@ export class NDKNip07Signer implements NDKSigner {
         return this.queueEncryption(nip, "encrypt", recipientHexPubKey, value);
     }
 
-    public async decrypt(sender: NDKUser, value: string, nip:EncryptionNip = 'nip04'): Promise<string> {
+    public async decrypt(sender: NDKUser, value: string, nip:NDKEncryptionScheme = 'nip04'): Promise<string> {
         if( !(await this.encryptionEnabled(nip)) ) throw new Error(nip + 'encryption is not available from your browser extension')
         await this.waitForExtension();
 
@@ -119,14 +120,14 @@ export class NDKNip07Signer implements NDKSigner {
     }
 
     private async queueEncryption(
-        nip : EncryptionNip,
+        scheme : NDKEncryptionScheme,
         method: EncryptionMethod,
         counterpartyHexpubkey: string,
         value: string
     ): Promise<string> {
         return new Promise((resolve, reject) => {
             this.encryptionQueue.push({
-                nip,
+                scheme,
                 method,
                 counterpartyHexpubkey,
                 value,
@@ -147,7 +148,7 @@ export class NDKNip07Signer implements NDKSigner {
         }
 
         this.encryptionProcessing = true;
-        const {nip, method, counterpartyHexpubkey, value, resolve, reject } =
+        const {scheme, method, counterpartyHexpubkey, value, resolve, reject } =
             item || this.encryptionQueue.shift()!;
 
         this.debug("Processing encryption queue item", {
@@ -157,7 +158,7 @@ export class NDKNip07Signer implements NDKSigner {
         });
 
         try {
-            let result = await window.nostr![nip]![method](counterpartyHexpubkey, value)
+            let result = await window.nostr![scheme]![method](counterpartyHexpubkey, value)
             resolve(result);
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {

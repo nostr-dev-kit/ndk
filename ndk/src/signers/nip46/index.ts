@@ -1,6 +1,6 @@
 import { EventEmitter } from "tseep";
 import type { NostrEvent } from "../../events/index.js";
-import type { EncryptionNip, NDK } from "../../ndk/index.js";
+import type { NDK } from "../../ndk/index.js";
 import type { Hexpubkey } from "../../user/index.js";
 import { NDKUser } from "../../user/index.js";
 import type { NDKSigner } from "../index.js";
@@ -9,6 +9,7 @@ import type { NDKRpcResponse } from "./rpc.js";
 import { NDKNostrRpc } from "./rpc.js";
 import { NDKKind } from "../../events/kinds/index.js";
 import type { NDKSubscription } from "../../subscription/index.js";
+import { NDKEncryptionScheme } from "../../types.js";
 import { EncryptionMethod } from "../../events/encryption.js";
 
 /**
@@ -21,7 +22,7 @@ import { EncryptionMethod } from "../../events/encryption.js";
  *
  * @example
  * const ndk = new NDK()
- * const nip05 = await prompt("enter your nip-05") // Get a NIP-05 the user wants to login with
+ * const nip05 = await prompt("enter your scheme-05") // Get a NIP-05 the user wants to login with
  * const privateKey = localStorage.getItem("nip46-local-key") // If we have a private key previously saved, use it
  * const signer = new NDKNip46Signer(ndk, nip05, privateKey) // Create a signer with (or without) a private key
  *
@@ -212,23 +213,23 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
         });
     }
 
-    public async encryptionEnabled(nip?: EncryptionNip): Promise<EncryptionNip[]> {
-        if (nip) return [nip];
+    public async encryptionEnabled(scheme?: NDKEncryptionScheme): Promise<NDKEncryptionScheme[]> {
+        if (scheme) return [scheme];
         return Promise.resolve(["nip04", "nip44"]);
     }
 
-    public async encrypt(recipient: NDKUser, value: string, nip: EncryptionNip = 'nip04'): Promise<string> {
-        return this.encryption(recipient, value, nip, "encrypt");
+    public async encrypt(recipient: NDKUser, value: string, scheme: NDKEncryptionScheme = 'nip04'): Promise<string> {
+        return this.encryption(recipient, value, scheme, "encrypt");
     }
 
-    public async decrypt(sender: NDKUser, value: string, nip: EncryptionNip = 'nip04'): Promise<string> {
-        return this.encryption(sender, value, nip, "decrypt");
+    public async decrypt(sender: NDKUser, value: string, scheme: NDKEncryptionScheme = 'nip04'): Promise<string> {
+        return this.encryption(sender, value, scheme, "decrypt");
     }
 
     private async encryption(
         peer: NDKUser,
         value: string,
-        nip: EncryptionNip,
+        scheme: NDKEncryptionScheme,
         method: EncryptionMethod
     ): Promise<string> {
         const promise = new Promise<string>((resolve, reject) => {
@@ -236,7 +237,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
 
             this.rpc.sendRequest(
                 this.bunkerPubkey,
-                `${nip}_${method}`,
+                `${scheme}_${method}`,
                 [peer.pubkey, value],
                 24133,
                 (response: NDKRpcResponse) => {

@@ -17,7 +17,6 @@ import { repost } from "./repost.js";
 import { fetchReplyEvent, fetchRootEvent, fetchTaggedEvent } from "./fetch-tagged-event.js";
 import { type NDKEventSerialized, deserialize, serialize } from "./serializer.js";
 import { validate, verifySignature, getEventHash } from "./validation.js";
-import { matchFilter } from "nostr-tools";
 import { NIP73EntityType } from "./nip73.js";
 
 const skipClientTagOnKinds = [NDKKind.Contacts];

@@ -1,7 +1,7 @@
-import { EncryptionNip } from "../ndk";
 import type { NostrEvent } from "../events/index.js";
 import type { NDK } from "../ndk/index.js";
 import type { NDKRelay } from "../relay/index.js";
+import { NDKEncryptionScheme } from "../types.js";
 import type { NDKUser } from "../user";
 
 
@@ -40,7 +40,7 @@ export interface NDKSigner {
      * @nip Optionally returns an array with single supported nip or empty, to check for truthy or falsy.
      * @return A promised list of any (or none) of these strings  ['nip04', 'nip44'] 
      */
-    encryptionEnabled?(nip?:EncryptionNip): Promise<EncryptionNip[]>
+    encryptionEnabled?(scheme?: NDKEncryptionScheme): Promise<NDKEncryptionScheme[]>
 
     /**
      * Encrypts the given Nostr event for the given recipient.
@@ -49,14 +49,14 @@ export interface NDKSigner {
      * @param value - The value to be encrypted.
      * @param nip - which NIP is being implemented ('nip04', 'nip44') 
      */
-    encrypt(recipient: NDKUser, value: string, nip?:EncryptionNip): Promise<string>;
+    encrypt(recipient: NDKUser, value: string, scheme?: NDKEncryptionScheme): Promise<string>;
 
     /**
      * Decrypts the given value.
      * Implementing classes SHOULD equate legacy (only nip04) to nip == `nip04` || undefined
      * @param sender - The sender (pubkey or conversationKey) of the encrypted value
      * @param value - The value to be decrypted
-     * @param nip - which NIP is being implemented ('nip04', 'nip44', 'nip49') 
+     * @param scheme - which NIP is being implemented ('nip04', 'nip44', 'nip49') 
      */
-    decrypt(sender: NDKUser, value: string, nip?:EncryptionNip): Promise<string>;
+    decrypt(sender: NDKUser, value: string, scheme?: NDKEncryptionScheme): Promise<string>;
 }

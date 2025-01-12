@@ -1,4 +1,3 @@
-import { EncryptionNip } from "../../ndk/index.js";
 import type { UnsignedEvent } from "nostr-tools";
 import { generateSecretKey, getPublicKey, finalizeEvent, nip04, nip44 } from "nostr-tools";
 
@@ -7,6 +6,7 @@ import { NDKUser } from "../../user";
 import { type NDKSigner } from "../index.js";
 import { bytesToHex, hexToBytes } from "@noble/hashes/utils";
 import { nip19 } from "nostr-tools";
+import { NDKEncryptionScheme } from "../../types.js";
 
 
 export class NDKPrivateKeySigner implements NDKSigner {
@@ -69,33 +69,33 @@ export class NDKPrivateKeySigner implements NDKSigner {
         return finalizeEvent(event as UnsignedEvent, this._privateKey).sig;
     }
 
-    public async encryptionEnabled(nip?:EncryptionNip): Promise<EncryptionNip[]>{
-        let enabled: EncryptionNip[] = []
-        if((!nip || nip == 'nip04')) enabled.push('nip04')
-        if((!nip || nip == 'nip44')) enabled.push('nip44')
+    public async encryptionEnabled(scheme?: NDKEncryptionScheme): Promise<NDKEncryptionScheme[]>{
+        let enabled: NDKEncryptionScheme[] = []
+        if((!scheme || scheme == 'nip04')) enabled.push('nip04')
+        if((!scheme || scheme == 'nip44')) enabled.push('nip44')
         return enabled;
     }
 
-    public async encrypt(recipient: NDKUser, value: string, nip?: EncryptionNip): Promise<string> {
+    public async encrypt(recipient: NDKUser, value: string, scheme?: NDKEncryptionScheme): Promise<string> {
         if (!this._privateKey || !this.privateKey) {
             throw Error("Attempted to encrypt without a private key");
         }
 
         const recipientHexPubKey = recipient.pubkey;
-        if(nip == 'nip44') {
+        if(scheme == 'nip44') {
             let conversationKey = nip44.v2.utils.getConversationKey(this._privateKey, recipientHexPubKey);
             return await nip44.v2.encrypt(value, conversationKey);
         }
         return await nip04.encrypt(this._privateKey, recipientHexPubKey, value);
     }
 
-    public async decrypt(sender: NDKUser, value: string, nip?: EncryptionNip): Promise<string> {
+    public async decrypt(sender: NDKUser, value: string, scheme?: NDKEncryptionScheme): Promise<string> {
         if (!this._privateKey || !this.privateKey) {
             throw Error("Attempted to decrypt without a private key");
         }
 
         const senderHexPubKey = sender.pubkey;
-        if(nip == 'nip44') {
+        if(scheme == 'nip44') {
             let conversationKey = nip44.v2.utils.getConversationKey(this._privateKey, senderHexPubKey);
             return await nip44.v2.decrypt(value, conversationKey);
         }

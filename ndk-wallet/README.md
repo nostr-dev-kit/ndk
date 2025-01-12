@@ -10,13 +10,41 @@ NDK Wallet provides common interfaces and functionalities to create a wallet tha
 npm add @nostr-dev-kit/ndk-wallet
 ```
 
-### Add as a cache adapter
+### Initialize
 
 ```ts
-import NDKWallet from "@nostr-dev-kit/ndk-wallet";
+// assuming variable ndk holds the NDK instance
 
-const cacheAdapter = new NDKRedisCacheAdapter();
-const ndk = new NDK({ cacheAdapter });
+if(zapMethod === 'nwc'){                
+    const wallet = new NDKNWCWallet(ndk);
+    console.log("Initializing with pairing code: "+ nwcString)
+    await wallet.initWithPairingCode(nwcString!);
+    ndk.wallet = wallet;
+} else if (this.zapMethod === 'webln'){
+    const wallet = new NDKWebLNWallet();
+    ndk.wallet = wallet;
+} 
+```
+
+### Zap
+
+```ts
+const zapper = new NDKZapper(ndkEventOrndkUser, amountInMilliSats);
+if (comment) {
+    zapper.comment = comment;
+}
+zapper.on(
+    'split:complete',
+    (split: NDKZapSplit, info: NDKPaymentConfirmation | Error | undefined) => {
+        console.log('split:complete', split, info);
+    }
+);
+zapper.on('complete', (res) => {
+    console.log('complete', res);
+    paymentInProgress = false
+});
+
+await zapper.zap();
 ```
 
 # License

@@ -47,7 +47,11 @@ export interface NDKSubscriptionOptions {
      */
     closeOnEose?: boolean;
     cacheUsage?: NDKSubscriptionCacheUsage;
-    DontSaveToCache?: boolean;
+
+    /**
+     * Whether to skip caching events coming from this subscription
+     **/
+    dontSaveToCache?: boolean;
 
     /**
      * Groupable subscriptions are created with a slight time
@@ -113,7 +117,7 @@ export interface NDKSubscriptionOptions {
 export const defaultOpts: NDKSubscriptionOptions = {
     closeOnEose: false,
     cacheUsage: NDKSubscriptionCacheUsage.CACHE_FIRST,
-    DontSaveToCache: false,
+    dontSaveToCache: false,
     groupable: true,
     groupableDelay: 100,
     groupableDelayType: "at-most",
@@ -511,7 +515,7 @@ export class NDKSubscription extends EventEmitter<{
         if (!fromCache && !optimisticPublish && relay) {
             this.trackPerRelay(event, relay);
 
-            if (this.ndk.cacheAdapter && !this.opts.DontSaveToCache) {
+            if (this.ndk.cacheAdapter && !this.opts.dontSaveToCache) {
                 this.ndk.cacheAdapter.setEvent(event, this.filters, relay);
             }
 

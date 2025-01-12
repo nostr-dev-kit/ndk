@@ -6,20 +6,43 @@
         "lint": "turbo lint",
         "clean": "turbo clean && rm -rf node_modules",
         "format": "turbo format",
+        "docs:dev": "vitepress dev docs",
+        "docs:build": "vitepress build docs",
         "changeset": "changeset",
         "version-packages": "changeset version",
-        "release": "turbo build --filter=docs^... && changeset publish"
+        "release": "turbo build --filter=docs^... && changeset publish",
+        "docs:preview": "vitepress preview"
     },
     "devDependencies": {
+        "@braintree/sanitize-url": "^7.1.0",
         "@changesets/cli": "^2.22.0",
         "@nostr-dev-kit/eslint-config-custom": "workspace:*",
         "@nostr-dev-kit/tsconfig": "workspace:*",
-        "eslint": "^8.49.0",
+        "cytoscape": "^3.30.4",
+        "cytoscape-cose-bilkent": "^4.1.0",
+        "dayjs": "^1.11.13",
+        "debug": "^4.3.7",
+        "eslint": "^9.13.0",
+        "mermaid": "^10.9.1",
         "prettier": "^3.0.3",
         "turbo": "^1.10.14",
-        "typescript": "^5.2.2"
+        "typescript": "^5.5.4",
+        "vitepress": "^1.5.0",
+        "vitepress-plugin-mermaid": "^2.0.17"
     },
     "packageManager": "pnpm@8.15.6",
+    "workspaces": [
+        "apps/*",
+        "packages/*",
+        "ndk",
+        "ndk-cache-dexie",
+        "ndk-cache-redis", 
+        "ndk-cache-nostr",
+        "ndk-svelte",
+	"ndk-mobile",
+        "ndk-svelte-components",
+        "ndk-wallet"
+    ],
     "engines": {
         "node": ">=16.0"
     }

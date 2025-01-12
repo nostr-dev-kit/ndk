@@ -9,7 +9,7 @@ import { NDKKind } from "../index.js";
 export type NDKListItem = NDKRelay | NDKUser | NDKEvent;
 
 /**
- * Represents any NIP-33 list kind.
+ * Represents any NIP-51 list kind.
  *
  * This class provides some helper methods to manage the list, particularly
  * a CRUD interface to list items.
@@ -27,6 +27,7 @@ export type NDKListItem = NDKRelay | NDKUser | NDKEvent;
  * list.addItem(secretFollow, 'person', true);
  *
  * @emits change
+ * @group Kind Wrapper
  */
 export class NDKList extends NDKEvent {
     public _encryptedTags: NDKTag[] | undefined;
@@ -37,7 +38,7 @@ export class NDKList extends NDKEvent {
      */
     private encryptedTagsLength: number | undefined;
 
-    constructor(ndk?: NDK, rawEvent?: NostrEvent) {
+    constructor(ndk?: NDK, rawEvent?: NostrEvent | NDKEvent) {
         super(ndk, rawEvent);
         this.kind ??= NDKKind.CategorizedBookmarkList;
     }
@@ -46,7 +47,7 @@ export class NDKList extends NDKEvent {
      * Wrap a NDKEvent into a NDKList
      */
     static from(ndkEvent: NDKEvent): NDKList {
-        return new NDKList(ndkEvent.ndk, ndkEvent.rawEvent());
+        return new NDKList(ndkEvent.ndk, ndkEvent);
     }
 
     /**
@@ -54,30 +55,34 @@ export class NDKList extends NDKEvent {
      */
     get title(): string | undefined {
         const titleTag = this.tagValue("title") || this.tagValue("name");
-        if (this.kind === NDKKind.Contacts && !titleTag) {
+        if (titleTag) return titleTag;
+
+        if (this.kind === NDKKind.Contacts) {
             return "Contacts";
-        } else if (this.kind === NDKKind.MuteList && !titleTag) {
+        } else if (this.kind === NDKKind.MuteList) {
             return "Mute";
-        } else if (this.kind === NDKKind.PinList && !titleTag) {
+        } else if (this.kind === NDKKind.PinList) {
             return "Pinned Notes";
-        } else if (this.kind === NDKKind.RelayList && !titleTag) {
+        } else if (this.kind === NDKKind.RelayList) {
             return "Relay Metadata";
-        } else if (this.kind === NDKKind.BookmarkList && !titleTag) {
+        } else if (this.kind === NDKKind.BookmarkList) {
             return "Bookmarks";
-        } else if (this.kind === NDKKind.CommunityList && !titleTag) {
+        } else if (this.kind === NDKKind.CommunityList) {
             return "Communities";
-        } else if (this.kind === NDKKind.PublicChatList && !titleTag) {
+        } else if (this.kind === NDKKind.PublicChatList) {
             return "Public Chats";
-        } else if (this.kind === NDKKind.BlockRelayList && !titleTag) {
+        } else if (this.kind === NDKKind.BlockRelayList) {
             return "Blocked Relays";
-        } else if (this.kind === NDKKind.SearchRelayList && !titleTag) {
+        } else if (this.kind === NDKKind.SearchRelayList) {
             return "Search Relays";
-        } else if (this.kind === NDKKind.InterestList && !titleTag) {
+        } else if (this.kind === NDKKind.DirectMessageReceiveRelayList) {
+            return "Direct Message Receive Relays";
+        } else if (this.kind === NDKKind.InterestList) {
             return "Interests";
-        } else if (this.kind === NDKKind.EmojiList && !titleTag) {
+        } else if (this.kind === NDKKind.EmojiList) {
             return "Emojis";
         } else {
-            return titleTag ?? this.tagValue("d");
+            return this.tagValue("d");
         }
     }
 
@@ -85,14 +90,9 @@ export class NDKList extends NDKEvent {
      * Sets the title of the list.
      */
     set title(title: string | undefined) {
-        this.removeTag("title");
-        this.removeTag("name");
+        this.removeTag(["title", "name"]);
 
-        if (title) {
-            this.tags.push(["title", title]);
-        } else {
-            throw new Error("Title cannot be empty");
-        }
+        if (title) this.tags.push(["title", title]);
     }
 
     /**
@@ -100,32 +100,7 @@ export class NDKList extends NDKEvent {
      * @deprecated Please use "title" instead.
      */
     get name(): string | undefined {
-        const nameTag = this.tagValue("name");
-        if (this.kind === NDKKind.Contacts && !nameTag) {
-            return "Contacts";
-        } else if (this.kind === NDKKind.MuteList && !nameTag) {
-            return "Mute";
-        } else if (this.kind === NDKKind.PinList && !nameTag) {
-            return "Pinned Notes";
-        } else if (this.kind === NDKKind.RelayList && !nameTag) {
-            return "Relay Metadata";
-        } else if (this.kind === NDKKind.BookmarkList && !nameTag) {
-            return "Bookmarks";
-        } else if (this.kind === NDKKind.CommunityList && !nameTag) {
-            return "Communities";
-        } else if (this.kind === NDKKind.PublicChatList && !nameTag) {
-            return "Public Chats";
-        } else if (this.kind === NDKKind.BlockRelayList && !nameTag) {
-            return "Blocked Relays";
-        } else if (this.kind === NDKKind.SearchRelayList && !nameTag) {
-            return "Search Relays";
-        } else if (this.kind === NDKKind.InterestList && !nameTag) {
-            return "Interests";
-        } else if (this.kind === NDKKind.EmojiList && !nameTag) {
-            return "Emojis";
-        } else {
-            return nameTag ?? this.tagValue("d");
-        }
+        return this.title;
     }
 
     /**
@@ -133,13 +108,7 @@ export class NDKList extends NDKEvent {
      * @deprecated Please use "title" instead. This method will use the `title` tag instead.
      */
     set name(name: string | undefined) {
-        this.removeTag("name");
-
-        if (name) {
-            this.tags.push(["title", name]);
-        } else {
-            throw new Error("Name cannot be empty");
-        }
+        this.title = name;
     }
 
     /**
@@ -153,11 +122,23 @@ export class NDKList extends NDKEvent {
      * Sets the description of the list.
      */
     set description(name: string | undefined) {
-        if (name) {
-            this.tags.push(["description", name]);
-        } else {
-            this.removeTag("description");
-        }
+        this.removeTag("description");
+        if (name) this.tags.push(["description", name]);
+    }
+
+    /**
+     * Returns the image of the list.
+     */
+    get image(): string | undefined {
+        return this.tagValue("image");
+    }
+
+    /**
+     * Sets the image of the list.
+     */
+    set image(name: string | undefined) {
+        this.removeTag("image");
+        if (name) this.tags.push(["image", name]);
     }
 
     private isEncryptedTagsCacheValid(): boolean {
@@ -223,6 +204,7 @@ export class NDKList extends NDKEvent {
                 "title",
                 "name",
                 "description",
+                "published_at",
                 "summary",
                 "image",
                 "thumb",
@@ -284,6 +266,44 @@ export class NDKList extends NDKEvent {
         }
 
         this.created_at = Math.floor(Date.now() / 1000);
+
+        this.emit("change");
+    }
+
+    /**
+     * Removes an item from the list from both the encrypted and unencrypted lists.
+     * @param value value of item to remove from the list
+     * @param publish whether to publish the change
+     * @returns
+     */
+    async removeItemByValue(value: string, publish = true): Promise<Set<NDKRelay> | void> {
+        if (!this.ndk) throw new Error("NDK instance not set");
+        if (!this.ndk.signer) throw new Error("NDK signer not set");
+
+        // check in unecrypted tags
+        const index = this.tags.findIndex((tag) => tag[1] === value);
+        if (index >= 0) {
+            this.tags.splice(index, 1);
+        }
+
+        // check in encrypted tags
+        const user = await this.ndk.signer.user();
+        const encryptedTags = await this.encryptedTags();
+
+        const encryptedIndex = encryptedTags.findIndex((tag) => tag[1] === value);
+        if (encryptedIndex >= 0) {
+            encryptedTags.splice(encryptedIndex, 1);
+            this._encryptedTags = encryptedTags;
+            this.encryptedTagsLength = this.content.length;
+            this.content = JSON.stringify(encryptedTags);
+            await this.encrypt(user);
+        }
+
+        if (publish) {
+            return this.publishReplaceable();
+        } else {
+            this.created_at = Math.floor(Date.now() / 1000);
+        }
 
         this.emit("change");
     }

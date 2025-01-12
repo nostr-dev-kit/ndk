@@ -2,13 +2,19 @@ import { nip19 } from "nostr-tools";
 
 import type { NDKEvent } from "./index.js";
 
-export function encode(this: NDKEvent): string {
+const DEFAULT_RELAY_COUNT = 2 as const;
+
+export function encode(this: NDKEvent, maxRelayCount: number = DEFAULT_RELAY_COUNT): string {
     let relays: string[] = [];
 
     if (this.onRelays.length > 0) {
         relays = this.onRelays.map((relay) => relay.url);
     } else if (this.relay) {
         relays = [this.relay.url];
+    }
+
+    if (relays.length > maxRelayCount) {
+        relays = relays.slice(0, maxRelayCount);
     }
 
     if (this.isParamReplaceable()) {

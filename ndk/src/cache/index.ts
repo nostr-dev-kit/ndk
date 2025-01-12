@@ -1,9 +1,13 @@
-import type { NDKEvent } from "../events/index.js";
+import type { NDKEvent, NDKEventId } from "../events/index.js";
 import type { NDKRelay } from "../relay/index.js";
 import type { NDKFilter, NDKSubscription } from "../subscription/index.js";
 import type { Hexpubkey, ProfilePointer } from "../user/index.js";
 import type { NDKUserProfile } from "../user/profile.js";
-import type { NDKLnUrlData } from "../zap/index.js";
+import type { NDKLnUrlData } from "../zapper/ln.js";
+
+export type NDKCacheEntry<T> = T & {
+    cachedAt?: number;
+};
 
 export interface NDKCacheAdapter {
     /**
@@ -24,14 +28,21 @@ export interface NDKCacheAdapter {
     /**
      * Called when an event is deleted by the client.
      * Cache adapters should remove the event from their cache.
-     * @param event - The event that was deleted.
+     * @param eventIds - The ids of the events that were deleted.
      */
-    deleteEvent?(event: NDKEvent): Promise<void>;
+    deleteEventIds?(eventIds: NDKEventId[]): Promise<void>;
+
+    /**
+     * Fetches a profile from the cache synchronously.
+     * @param pubkey - The pubkey of the profile to fetch.
+     * @returns The profile, or null if it is not in the cache.
+     */
+    fetchProfileSync?(pubkey: Hexpubkey): NDKCacheEntry<NDKUserProfile> | null;
 
     /**
      * Special purpose
      */
-    fetchProfile?(pubkey: Hexpubkey): Promise<NDKUserProfile | null>;
+    fetchProfile?(pubkey: Hexpubkey): Promise<NDKCacheEntry<NDKUserProfile> | null>;
     saveProfile?(pubkey: Hexpubkey, profile: NDKUserProfile): void;
 
     /**
@@ -78,10 +89,22 @@ export interface NDKCacheAdapter {
 
     /**
      * Tracks a publishing event.
-     * @param event 
+     * @param event
      * @param relayUrls List of relays that the event will be published to.
      */
     addUnpublishedEvent?(event: NDKEvent, relayUrls: WebSocket["url"][]): void;
+
+    /**
+     * Fetches all unpublished events.
+     */
+    getUnpublishedEvents?(): Promise<
+        { event: NDKEvent; relays?: WebSocket["url"][]; lastTryAt?: number }[]
+    >;
+
+    /**
+     * Removes an unpublished event.
+     */
+    discardUnpublishedEvent?(eventId: NDKEventId): void;
 
     /**
      * Called when the cache is ready.

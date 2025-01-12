@@ -8,7 +8,7 @@ export type EventTagCacheEntry = string;
 
 export async function eventTagsWarmUp(
     cacheHandler: CacheHandler<EventTagCacheEntry>,
-    eventTags: Table<EventTag>,
+    eventTags: Table<EventTag>
 ) {
     const array = await eventTags.limit(cacheHandler.maxSize).toArray();
     for (const event of array) {
@@ -23,8 +23,7 @@ export const eventTagsDump = (eventTags: Table<EventTag>, debug: debug.IDebugger
         for (const tagValue of dirtyKeys) {
             const eventIds = cache.get(tagValue);
             if (eventIds) {
-                for (const eventId of eventIds)
-                    entries.push({ tagValue, eventId });
+                for (const eventId of eventIds) entries.push({ tagValue, eventId });
             }
         }
 

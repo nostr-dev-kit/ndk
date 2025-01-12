@@ -1,7 +1,7 @@
-import { NDKEvent, NostrEvent } from "../events";
+import type { NDKEvent, NostrEvent } from "../events";
 import { type NDKUser } from "../user";
 import { NDKKind } from "../events/kinds";
-import { NDKSubscription } from "../subscription";
+import type { NDKSubscription } from "../subscription";
 import { NDKDVMRequest } from "../events/kinds/dvm/request";
 import { NDKDVMJobFeedback } from "../events/kinds/dvm";
 

@@ -2,7 +2,6 @@
     // import { without } from 'ramda';
     import {
         parseContent,
-        // getLinks,
         truncateContent,
         LINK,
         // INVOICE,
@@ -23,8 +22,8 @@
     import NoteContentPerson from './NoteContentPerson.svelte';
     import type NDK from '@nostr-dev-kit/ndk';
     import EventCard from '../EventCard.svelte';
-    import { pluck, values, without } from 'ramda';
-    import type { SvelteComponent } from 'svelte';
+    import type { ComponentType } from 'svelte';
+    import type { UrlFactory } from '$lib';
     // import NoteContentEntity from "./NoteContentEntity.svelte"
 
     export let event, maxLength;
@@ -33,19 +32,13 @@
     export let showEntire = false;
     export let showMedia = true;
     export let content = event.content;
-    export let mediaCollectionComponent: typeof SvelteComponent | undefined = undefined;
-    export let eventCardComponent: typeof SvelteComponent = EventCard;
-
-    export const getLinks = (parts: any[]) => pluck(
-        "value",
-        parts.filter(x => x.type === LINK && x.isMedia)
-    )
+    export let mediaCollectionComponent: ComponentType | undefined = undefined;
+    export let eventCardComponent: ComponentType = EventCard;
+    export let urlFactory: UrlFactory;
 
     const fullContent = parseContent({ ...event, content });
     const shortContent = truncateContent(fullContent, { maxLength, showEntire, showMedia });
     const groupedContent = groupContent(shortContent);
-    const links = getLinks(shortContent);
-    // const extraLinks = without(links, getLinks(fullContent));
 
     export const isNewline = (i: number) => !shortContent[i] || shortContent[i].type === NEWLINE;
 
@@ -58,7 +51,7 @@
             {#if type === NEWLINE}
                 <NoteContentNewline {value} />
             {:else if type === TOPIC}
-                <NoteContentTopic {value} />
+                <NoteContentTopic {value} {urlFactory} />
             {:else if type === LINK}
                 <NoteContentLink {value} {showMedia} />
             {:else if type === LINKCOLLECTION}
@@ -72,7 +65,7 @@
                     </div>
                 {/if}
             {:else if type.match(/^nostr:np(rofile|ub)$/)}
-                <NoteContentPerson {ndk} {value} on:click />
+                <NoteContentPerson {urlFactory} {ndk} {value} on:click />
             {:else if type.startsWith('nostr:') && showMedia && isStartOrEnd(i) && value.id !== anchorId}
                 <svelte:component this={eventCardComponent} {ndk} id={value.id??value.entity} relays={value.relays} />
             {:else if type.startsWith('nostr:')}

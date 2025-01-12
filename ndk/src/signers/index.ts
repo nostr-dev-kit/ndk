@@ -1,6 +1,9 @@
+import { EncryptionNip } from "../ndk";
 import type { NostrEvent } from "../events/index.js";
-import { NDKRelay } from "../relay/index.js";
+import type { NDK } from "../ndk/index.js";
+import type { NDKRelay } from "../relay/index.js";
 import type { NDKUser } from "../user";
+
 
 /**
  * Interface for NDK signers.
@@ -29,18 +32,31 @@ export interface NDKSigner {
      * Getter for the preferred relays.
      * @returns A promise containing a simple map of preferred relays and their read/write policies.
      */
-    relays?(): Promise<NDKRelay[]>;
+    relays?(ndk?: NDK): Promise<NDKRelay[]>;
+
+    /**
+     * Determine the types of encryption (by nip) that this signer can perform.
+     * Implementing classes SHOULD return a value even for legacy (only nip04) third party signers.
+     * @nip Optionally returns an array with single supported nip or empty, to check for truthy or falsy.
+     * @return A promised list of any (or none) of these strings  ['nip04', 'nip44'] 
+     */
+    encryptionEnabled?(nip?:EncryptionNip): Promise<EncryptionNip[]>
 
     /**
      * Encrypts the given Nostr event for the given recipient.
+     * Implementing classes SHOULD equate legacy (only nip04) to nip == `nip04` || undefined
+     * @param recipient - The recipient (pubkey or conversationKey) of the encrypted value.
      * @param value - The value to be encrypted.
-     * @param recipient - The recipient of the encrypted value.
+     * @param nip - which NIP is being implemented ('nip04', 'nip44') 
      */
-    encrypt(recipient: NDKUser, value: string): Promise<string>;
+    encrypt(recipient: NDKUser, value: string, nip?:EncryptionNip): Promise<string>;
 
     /**
      * Decrypts the given value.
-     * @param value
+     * Implementing classes SHOULD equate legacy (only nip04) to nip == `nip04` || undefined
+     * @param sender - The sender (pubkey or conversationKey) of the encrypted value
+     * @param value - The value to be decrypted
+     * @param nip - which NIP is being implemented ('nip04', 'nip44', 'nip49') 
      */
-    decrypt(sender: NDKUser, value: string): Promise<string>;
+    decrypt(sender: NDKUser, value: string, nip?:EncryptionNip): Promise<string>;
 }

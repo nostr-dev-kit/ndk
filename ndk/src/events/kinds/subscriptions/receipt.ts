@@ -1,8 +1,9 @@
 import debug from "debug";
 import { NDKKind } from "..";
-import { NDKEvent, NDKTag, NostrEvent } from "../..";
-import { NDK } from "../../../ndk";
-import { NDKSubscriptionStart } from "./subscription-start";
+import type { NostrEvent } from "../..";
+import { NDKEvent, NDKTag } from "../..";
+import type { NDK } from "../../../ndk";
+import type { NDKSubscriptionStart } from "./subscription-start";
 import { NDKUser } from "../../../user";
 
 type ValidPeriod = { start: Date; end: Date };

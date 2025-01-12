@@ -1,0 +1,84 @@
+{
+  "name": "@nostr-dev-kit/ndk-mobile",
+  "version": "0.2.2",
+  "description": "NDK Mobile",
+  "private": false,
+  "license": "MIT",
+  "peerDependencies": {
+    "expo": "*"
+  },
+  "devDependencies": {
+    "react-native-builder-bob": "^0.35.2",
+    "typescript": "^5.7.2"
+  },
+  "keywords": [
+    "ndk",
+    "nostr",
+    "react-native",
+    "expo"
+  ],
+  "dependencies": {
+    "@bacons/text-decoder": "^0.0.0",
+    "@nostr-dev-kit/ndk": "workspace:*",
+    "@nostr-dev-kit/ndk-wallet": "workspace:*",
+    "immer": "^10.1.1",
+    "react-native-get-random-values": "~1.11.0",
+    "typescript-lru-cache": "^2.0.0",
+    "zustand": "^5.0.2"
+  },
+  "source": "./src/index.ts",
+  "module": "./dist/module/index.js",
+  "react-native": "dist/module/index.js",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/typescript/module/index.d.ts",
+        "default": "./dist/module/index.js"
+      }
+    },
+    "./components": {
+      "import": {
+        "types": "./dist/typescript/module/components/index.d.ts",
+        "default": "./dist/module/components/index.js"
+      }
+    },
+    "./components/relays": {
+      "import": {
+        "types": "./dist/typescript/module/components/relays/index.d.ts",
+        "default": "./dist/module/components/relays/index.js"
+      }
+    }
+  },
+  "scripts": {
+    "prepare": "cd ../ndk-wallet && pnpm build && cd ../ndk-mobile && bob build"
+  },
+  "files": [
+    "src",
+    "dist",
+    "!**/__tests__",
+    "!**/__fixtures__",
+    "!**/__mocks__"
+  ],
+  "react-native-builder-bob": {
+    "source": "src",
+    "output": "dist",
+    "targets": [
+      [
+        "module",
+        {
+          "esm": true
+        }
+      ],
+      [
+        "typescript",
+        {
+          "esm": true
+        }
+      ]
+    ]
+  },
+  "eslintIgnore": [
+    "node_modules/",
+    "dist/"
+  ]
+}

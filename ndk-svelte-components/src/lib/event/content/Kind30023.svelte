@@ -1,68 +1,53 @@
 <script lang="ts">
     import type { NDKArticle } from "@nostr-dev-kit/ndk";
     import type NDK from "@nostr-dev-kit/ndk";
-    import NoteContentNewline from "./NoteContentNewline.svelte";
-    import NoteContentTopic from "./NoteContentTopic.svelte";
-    import NoteContentLink from "./NoteContentLink.svelte";
+    import defaultRenderers from "./renderer";
 
     import EventCard from "../EventCard.svelte";
-    import NoteContentPerson from "./NoteContentPerson.svelte";
-    import { LINK, HTML, NEWLINE, TOPIC, parseContent, LINKCOLLECTION } from "../../utils/notes.js";
     import { markdownToHtml } from "$lib/utils/markdown";
-    import type { SvelteComponent } from "svelte";
-    import RenderHtml from "./RenderHtml.svelte";
-    import type sanitizeHtml from "sanitize-html";
+    import { onDestroy, setContext, type ComponentType } from "svelte";
     import type { MarkedExtension } from "marked";
+    import type { UrlFactory } from "$lib";
+    import SvelteMarkdown from "svelte-markdown";
+    import { marked, type Token } from "marked";
+    import markedFootnote from "marked-footnote";
 
     export let ndk: NDK;
     export let article: NDKArticle;
     export let showMedia: boolean = true;
     export let content = article.content;
-    export let mediaCollectionComponent: typeof SvelteComponent | undefined = undefined;
-    export let sanitizeHtmlOptions: sanitizeHtml.IOptions | undefined = undefined;
+    export let mediaCollectionComponent: ComponentType | undefined = undefined;
+    export let eventCardComponent: ComponentType = EventCard;
     export let markedExtensions: MarkedExtension[] = [];
+    export let urlFactory: UrlFactory;
+    export let walkTokens: (token: Token) => void = () => {};
 
-    const htmlContent = markdownToHtml(content, sanitizeHtmlOptions, markedExtensions);
-    const parsed = parseContent({ content: htmlContent, tags: article.tags, html: true });
+    setContext('ndk', ndk);
+    setContext('showMedia', showMedia);
 
-    export const isNewline = (i: number) => !parsed[i] || parsed[i].type === NEWLINE;
-    export const isStartOrEnd = (i: number) => isNewline(i - 1) || isNewline(i + 1);
+    // let footnoteRenderers: Record<string, ComponentType> = {};
+    
+    // if (footnote.extensions) {
+    //     console.log('it has a footnote extension', footnote.extensions)
+    //     footnoteRenderers = footnote.extensions.filter(e => e.renderer).map(e => e.renderer)
+    //     console.log({footnoteRenderers})
+    // }else {
+    //     console.log('no footnote renderers', footnote.extensions, {footnote})
+    // }
+
+    const renderers = {
+        ...defaultRenderers,
+        ...$$props.renderers||{},
+    }
+
+    let contentTokens = markdownToHtml(content, markedExtensions);
 </script>
 
-<div class="article {$$props.class??""}" on:click>
-    {#each parsed as { type, value }, i}
-        {#if type === NEWLINE}
-            <NoteContentNewline {value} />
-        {:else if type === HTML}
-            <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-            {@html value}
-        {:else if type === TOPIC}
-            <NoteContentTopic {value} on:click />
-        {:else if type === LINK}
-            <NoteContentLink {value} {showMedia} on:click={() => alert(value)} />
-        {:else if type === LINKCOLLECTION}
-            {#if mediaCollectionComponent}
-                <svelte:component this={mediaCollectionComponent} links={value.map(v=>v.value.url)} />
-            {:else}
-                <div class="note-media--wrapper">
-                    {#each value as {type: _type, value: _value}, j}
-                        <NoteContentLink value={_value} {showMedia} />
-                    {/each}
-                </div>
-            {/if}
-        {:else if type.match(/^nostr:np(rofile|ub)$/)}
-            <NoteContentPerson {ndk} {value} on:click />
-        {:else if type.startsWith('nostr:')}
-            {#if showMedia}
-                <EventCard {ndk} id={value.id} relays={value.relays} />
-            {:else}
-                {value.entity}
-            {/if}
-        {:else}
-            <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-            <RenderHtml {ndk} content={value} on:click />
-        {/if}
-    {/each}
+<div class="article {$$props.class??""}">
+    <SvelteMarkdown
+        source={contentTokens}
+        {renderers}
+    />
 </div>
 
 <style lang="postcss">

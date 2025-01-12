@@ -1,0 +1,16 @@
+{
+    "entryPoints": ["src/index.ts"],
+    "out": "docs",
+    "name": "NDK Dexie Cache Adapter",
+    "theme": "default",
+    "plugin": ["typedoc-plugin-markdown"],
+    "excludeExternals": true,
+    "excludePrivate": true,
+    "excludeProtected": true,
+    "categorizeByGroup": true,
+    "hideParameterTypesInTitle": false,
+    "navigation": {
+        "includeGroups": true
+    },
+    "customCss": "../ndk/docs-styles.css"
+}

@@ -6,10 +6,17 @@ import type { NDK } from "../ndk/index.js";
 import { NDKSubscriptionCacheUsage, type NDKSubscriptionOptions } from "../subscription/index.js";
 import { follows } from "./follows.js";
 import { type NDKUserProfile, profileFromEvent, serializeProfile } from "./profile.js";
-import type { NDKSigner } from "../signers/index.js";
-import { NDKLnUrlData } from "../zap/index.js";
 import { getNip05For } from "./nip05.js";
-import { NDKRelay, NDKZap } from "../index.js";
+import type {
+    NDKRelay,
+    NDKSigner,
+    NDKZapDetails,
+    NDKZapMethod,
+    NDKZapMethodInfo,
+} from "../index.js";
+import { NDKCashuMintList } from "../events/kinds/nutzap/mint-list.js";
+import type { LNPaymentRequest, NDKLnUrlData } from "../zapper/ln.js";
+import { getNip57ZapSpecFromLud, LnPaymentInfo } from "../zapper/ln.js";
 
 export type Hexpubkey = string;
 
@@ -69,6 +76,13 @@ export class NDKUser {
         return this._npub;
     }
 
+    get nprofile(): string {
+        console.log('encoding with pubkey', this.pubkey)
+        return nip19.nprofileEncode({
+            pubkey: this.pubkey
+        });
+    }
+
     set npub(npub: Npub) {
         this._npub = npub;
     }
@@ -114,6 +128,92 @@ export class NDKUser {
     }
 
     /**
+     * Gets NIP-57 and NIP-61 information that this user has signaled
+     *
+     * @param getAll {boolean} Whether to get all zap info or just the first one
+     */
+    async getZapInfo(
+        getAll = true,
+        methods: NDKZapMethod[] = ["nip61", "nip57"]
+    ): Promise<NDKZapMethodInfo[]> {
+        if (!this.ndk) throw new Error("No NDK instance found");
+
+        const kinds: NDKKind[] = [];
+
+        if (methods.includes("nip61")) kinds.push(NDKKind.CashuMintList);
+        if (methods.includes("nip57")) kinds.push(NDKKind.Metadata);
+
+        if (kinds.length === 0) return [];
+
+        let events = await this.ndk.fetchEvents(
+            { kinds, authors: [this.pubkey] },
+            {
+                cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE,
+                groupable: false,
+            }
+        );
+
+        if (events.size < methods.length) {
+            events = await this.ndk.fetchEvents(
+                { kinds, authors: [this.pubkey] },
+                {
+                    cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY,
+                }
+            );
+        }
+
+        const res: NDKZapMethodInfo[] = [];
+
+        const nip61 = Array.from(events).find((e) => e.kind === NDKKind.CashuMintList);
+        const nip57 = Array.from(events).find((e) => e.kind === NDKKind.Metadata);
+
+        if (nip61) {
+            const mintList = NDKCashuMintList.from(nip61);
+
+            if (mintList.mints.length > 0) {
+                res.push({
+                    type: "nip61",
+                    data: {
+                        mints: mintList.mints,
+                        relays: mintList.relays,
+                        p2pk: mintList.p2pk,
+                    },
+                });
+            }
+
+            // if we are just getting one and already have one, go back
+            if (!getAll) return res;
+        }
+
+        if (nip57) {
+            const profile = profileFromEvent(nip57);
+            const { lud06, lud16 } = profile;
+            try {
+                const zapSpec = await getNip57ZapSpecFromLud({ lud06, lud16 }, this.ndk);
+
+                if (zapSpec) {
+                    res.push({ type: "nip57", data: zapSpec });
+                }
+            } catch (e) {
+                console.error("Error getting NIP-57 zap spec", e);
+            }
+        }
+
+        return res;
+    }
+
+    /**
+     * Determines whether this user
+     * has signaled support for NIP-60 zaps
+     **/
+    // export type UserZapConfiguration = {
+
+    // }
+    // async getRecipientZapConfig(): Promise<> {
+
+    // }
+
+    /**
      * Retrieves the zapper this pubkey has designated as an issuer of zap receipts
      */
     async getZapConfiguration(ndk?: NDK): Promise<NDKLnUrlData | undefined> {
@@ -131,10 +231,13 @@ export class NDKUser {
                 }
             }
 
-            const zap = new NDKZap({ ndk: ndk!, zappedUser: this });
             let lnurlspec: NDKLnUrlData | undefined;
             try {
-                lnurlspec = await zap.getZapSpecWithoutCache();
+                await this.fetchProfile({ groupable: false });
+                if (this.profile) {
+                    const { lud06, lud16 } = this.profile;
+                    lnurlspec = await getNip57ZapSpecFromLud({ lud06, lud16 }, ndk!);
+                }
             } catch {}
 
             if (this.ndk?.cacheAdapter?.saveUsersLNURLDoc) {
@@ -176,7 +279,7 @@ export class NDKUser {
     ): Promise<NDKUser | undefined> {
         if (!ndk) throw new Error("No NDK instance found");
 
-        let opts: RequestInit = {};
+        const opts: RequestInit = {};
 
         if (skipCache) opts.cache = "no-cache";
         const profile = await getNip05For(ndk, nip05Id, ndk?.httpFetch, opts);
@@ -198,7 +301,10 @@ export class NDKUser {
      * @param storeProfileEvent {boolean} Whether to store the profile event or not
      * @returns User Profile
      */
-    public async fetchProfile(opts?: NDKSubscriptionOptions, storeProfileEvent: boolean = false): Promise<NDKUserProfile | null> {
+    public async fetchProfile(
+        opts?: NDKSubscriptionOptions,
+        storeProfileEvent: boolean = false
+    ): Promise<NDKUserProfile | null> {
         if (!this.ndk) throw new Error("NDK not set");
 
         if (!this.profile) this.profile = {};
@@ -264,11 +370,12 @@ export class NDKUser {
         if (sortedSetMetadataEvents.length === 0) return null;
 
         // return the most recent profile
-        this.profile = profileFromEvent(sortedSetMetadataEvents[0]);
-        
+        const event = sortedSetMetadataEvents[0];
+        this.profile = profileFromEvent(event);
+
         if (storeProfileEvent) {
             // Store the event as a stringified JSON
-            this.profile.profileEvent = JSON.stringify(sortedSetMetadataEvents[0]);
+            this.profile.profileEvent = JSON.stringify(event);
         }
 
         if (this.profile && this.ndk.cacheAdapter && this.ndk.cacheAdapter.saveProfile) {
@@ -280,8 +387,26 @@ export class NDKUser {
 
     /**
      * Returns a set of users that this user follows.
+     * 
+     * @deprecated Use followSet instead
      */
     public follows = follows.bind(this);
+
+    /**
+     * Returns a set of pubkeys that this user follows.
+     * 
+     * @param opts - NDKSubscriptionOptions
+     * @param outbox - boolean
+     * @param kind - number
+     */
+    public async followSet(
+        opts?: NDKSubscriptionOptions,
+        outbox?: boolean,
+        kind: number = NDKKind.Contacts
+    ): Promise<Set<Hexpubkey>> {
+        const follows = await this.follows(opts, outbox, kind);
+        return new Set(Array.from(follows).map((f) => f.pubkey));
+    }
 
     /** @deprecated Use referenceTags instead. */
     /**
@@ -418,42 +543,5 @@ export class NDKUser {
 
         if (profilePointer === null) return null;
         return profilePointer.pubkey === this.pubkey;
-    }
-
-    /**
-     * Zap a user
-     *
-     * @param amount The amount to zap in millisatoshis
-     * @param comment A comment to add to the zap request
-     * @param extraTags Extra tags to add to the zap request
-     * @param signer The signer to use (will default to the NDK instance's signer)
-     */
-    async zap(
-        amount: number,
-        comment?: string,
-        extraTags?: NDKTag[],
-        signer?: NDKSigner
-    ): Promise<string | null> {
-        if (!this.ndk) throw new Error("No NDK instance found");
-
-        if (!signer) {
-            this.ndk.assertSigner();
-        }
-
-        const zap = new NDKZap({
-            ndk: this.ndk,
-            zappedUser: this,
-        });
-
-        const relays = Array.from(this.ndk.pool.relays.keys());
-
-        const paymentRequest = await zap.createZapRequest(
-            amount,
-            comment,
-            extraTags,
-            relays,
-            signer
-        );
-        return paymentRequest;
     }
 }

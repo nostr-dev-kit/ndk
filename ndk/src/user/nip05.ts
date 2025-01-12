@@ -1,4 +1,5 @@
-import { Hexpubkey, NDKUser, ProfilePointer } from ".";
+import type { Hexpubkey, ProfilePointer } from ".";
+import { NDKUser } from ".";
 import type { NDK } from "../ndk";
 
 export const NIP05_REGEX = /^(?:([\w.+-]+)@)?([\w.-]+)$/;

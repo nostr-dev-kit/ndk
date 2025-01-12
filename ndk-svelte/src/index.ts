@@ -15,7 +15,7 @@ import { type Unsubscriber, type Writable, writable } from "svelte/store";
  * Type for NDKEvent classes that have a static `from` method like NDKHighlight.
  */
 type ClassWithConvertFunction<T extends NDKEvent> = {
-    from: (event: NDKEvent) => T;
+    from: (event: NDKEvent) => T | undefined;
 };
 
 export type ExtendedBaseType<T extends NDKEvent> = T & {
@@ -23,13 +23,16 @@ export type ExtendedBaseType<T extends NDKEvent> = T & {
 };
 
 export type NDKEventStore<T extends NDKEvent> = Writable<ExtendedBaseType<T>[]> & {
+    id: string;
     filters: NDKFilter[] | undefined;
     refCount: number;
     subscription: NDKSubscription | undefined;
     eosed: boolean;
+    skipDeleted: boolean;
     startSubscription: () => void;
     unsubscribe: Unsubscriber;
     onEose: (cb: () => void) => void;
+    onEvent: (cb: (event: NDKEvent, relay?: NDKRelay) => void) => void;
     ref: () => number;
     unref: () => number;
     empty: () => void;
@@ -59,9 +62,20 @@ type NDKSubscribeOptions = NDKSubscriptionOptions & {
     relaySet?: NDKRelaySet;
 
     /**
+     * Whether deleted PRE/addressable-events should be skipped.
+     * @default true
+     */
+    skipDeleted?: boolean;
+
+    /**
      * Callback to be called when the subscription EOSEs
      */
     onEose?: () => void;
+
+    /**
+     * Callback to be called when a new event is received
+     */
+    onEvent?: (event: NDKEvent, relay?: NDKRelay) => void;
 };
 
 class NDKSvelte extends NDK {
@@ -72,8 +86,10 @@ class NDKSvelte extends NDK {
     private createEventStore<T extends NDKEvent>(filters?: NDKFilter[]): NDKEventStore<T> {
         const store = writable<T[]>([]) as NDKEventStore<T>;
         return {
+            id: Math.random().toString(36).substring(7),
             refCount: 0,
             filters,
+            skipDeleted: true,
             subscription: undefined,
             eosed: false,
             set: store.set,
@@ -81,6 +97,7 @@ class NDKSvelte extends NDK {
             subscribe: store.subscribe,
             unsubscribe: () => {},
             onEose: (cb) => {},
+            onEvent: (cb) => {},
             startSubscription: () => {
                 throw new Error("not implemented");
             },
@@ -103,25 +120,27 @@ class NDKSvelte extends NDK {
         return [NDKKind.Repost, NDKKind.GenericRepost].includes(event.kind!);
     }
 
-    private eventIsLabel(event: NDKEvent): boolean {
-        return [NDKKind.Label].includes(event.kind!);
-    }
-
     public storeSubscribe<T extends NDKEvent>(
         filters: NDKFilter | NDKFilter[],
         opts?: NDKSubscribeOptions,
         klass?: ClassWithConvertFunction<T>
     ): NDKEventStore<ExtendedBaseType<T>> {
-        let eventIds: Set<string> = new Set();
-        let events: ExtendedBaseType<T>[] = [];
+        let events: Map<string, ExtendedBaseType<T>> = new Map();
         const store = this.createEventStore<ExtendedBaseType<T>>(
             Array.isArray(filters) ? filters : [filters]
         );
         const autoStart = opts?.autoStart ?? true;
         const relaySet = opts?.relaySet;
+        const skipDeleted = opts?.skipDeleted ?? true;
 
-        const handleEventLabel = (event: NDKEvent) => {
-            handleEventReposts(event);
+        /**
+         * Tracks the created_at of PRE that have been deleted.
+         * If the most recent version of a PRE is deleted, we don't include it in the store when skipDeleted is true.
+         */
+        const deletedPRETimestamps = new Map<string, number>();
+
+        const getEventArrayFromMap = () => {
+            return Array.from(events.values());
         };
 
         /**
@@ -142,26 +161,30 @@ class NDKSvelte extends NDK {
                     repostedEvent.repostedByEvents = [event];
                 }
 
-                store.set(events);
+                store.set(getEventArrayFromMap());
             };
 
             for (const repostedEventId of _repostEvent.repostedEventIds()) {
-                const repostedEvent = events.find((e) => e.id === repostedEventId);
+                const repostedEvent = events.get(repostedEventId);
 
                 if (repostedEvent) {
                     addRepostToExistingEvent(repostedEvent);
                 } else {
                     // If we don't have the reposted event, fetch it and add it to the store
-                    _repostEvent.repostedEvents(
-                        klass,
-                        { subId: 'reposted-event-fetch', groupable: true, groupableDelay: 1500, groupableDelayType: 'at-least' },
-                    ).then((fetchedEvents: unknown[]) => {
-                        for (const e of fetchedEvents) {
-                            if (e instanceof NDKEvent) {
-                                handleEvent(e);
+                    _repostEvent
+                        .repostedEvents(klass, {
+                            subId: "reposted-event-fetch",
+                            groupable: true,
+                            groupableDelay: 1500,
+                            groupableDelayType: "at-least",
+                        })
+                        .then((fetchedEvents: unknown[]) => {
+                            for (const e of fetchedEvents) {
+                                if (e instanceof NDKEvent) {
+                                    handleEvent(e);
+                                }
                             }
-                        }
-                    });
+                        });
                 }
             }
         };
@@ -181,41 +204,58 @@ class NDKSvelte extends NDK {
                 return;
             }
 
-            if (this.eventIsLabel(event)) {
-                handleEventLabel(event);
-                return;
-            }
-
             let e = event;
             if (klass) {
-                e = klass.from(event);
+                const ev = klass.from(event);
+                if (!ev) return;
+                e = ev;
                 e.relay = event.relay;
             }
             e.ndk = this;
-            
-            const dedupKey = event.deduplicationKey();
-            
-            if (eventIds.has(dedupKey)) {
-                const prevEvent = events.find((e) => e.deduplicationKey() === dedupKey);
 
-                if (prevEvent && prevEvent.created_at! < event.created_at!) {
-                    // remove the previous event
-                    const index = events.findIndex((e) => e.deduplicationKey() === dedupKey);
-                    events.splice(index, 1);
-                } else {
-                    return;
+            const dedupKey = event.deduplicationKey();
+
+            if (events.has(dedupKey)) {
+                let prevEvent = events.get(dedupKey)!;
+
+                // we received an older version
+                if (prevEvent.created_at! > event.created_at!) return;
+
+                // we received the same timestamp
+                if (prevEvent.created_at! === event.created_at!) {
+                    // with same id
+                    if (prevEvent.id === event.id) return;
+
+                    console.warn("Received event with same created_at but different id", {
+                        prevId: prevEvent.id,
+                        newId: event.id,
+                        prev: prevEvent.rawEvent(),
+                        new: event.rawEvent(),
+                    });
                 }
             }
-            eventIds.add(dedupKey);
 
-            const index = events.findIndex((e) => e.created_at! < event.created_at!);
-            if (index === -1) {
-                events.push(e as unknown as T);
-            } else {
-                events.splice(index === -1 ? events.length : index, 0, e as unknown as T);
+            if (skipDeleted && event.isParamReplaceable()) {
+                const currentDeletedTimestamp = deletedPRETimestamps.get(dedupKey);
+
+                // if we already have a newer deletion than this event's, don't do anything
+                if (currentDeletedTimestamp && currentDeletedTimestamp > event.created_at!) return;
+
+                const isDeleted = event.hasTag("deleted");
+                
+                if (isDeleted) {
+                    // flag the deletion of this dTag
+                    deletedPRETimestamps.set(dedupKey, event.created_at!);
+                    return;
+                } else {
+                    // remove any deletion flag and proceed to adding the event
+                    deletedPRETimestamps.delete(dedupKey);
+                }
             }
 
-            store.set(events);
+            events.set(dedupKey, e as ExtendedBaseType<T>);
+
+            store.set(getEventArrayFromMap());
         };
 
         /**
@@ -253,8 +293,7 @@ class NDKSvelte extends NDK {
          */
         store.empty = () => {
             store.set([]);
-            events = [];
-            eventIds = new Set();
+            events = new Map();
             store.unsubscribe();
         };
 
@@ -287,6 +326,7 @@ class NDKSvelte extends NDK {
 
             store.subscription.on("event", (event: NDKEvent, relay?: NDKRelay) => {
                 handleEvent(event);
+                if (opts?.onEvent) opts.onEvent(event, relay);
             });
 
             store.subscription.start();
@@ -299,7 +339,7 @@ class NDKSvelte extends NDK {
             store.onEose = (cb) => {
                 store.subscription?.on("eose", () => {
                     store.eosed = true;
-                    cb()
+                    cb();
                 });
             };
 

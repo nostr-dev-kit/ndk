@@ -10,13 +10,17 @@ import GetPublicKeyHandlingStrategy from "./get-public-key.js";
 import Nip04DecryptHandlingStrategy from "./nip04-decrypt.js";
 import Nip04EncryptHandlingStrategy from "./nip04-encrypt.js";
 import SignEventHandlingStrategy from "./sign-event.js";
+import Nip44EncryptHandlingStrategy from "./nip44-encrypt.js";
+import Nip44DecryptHandlingStrategy from "./nip44-decrypt.js";
 import { hexToBytes } from "@noble/hashes/utils";
 
 export type NIP46Method =
     | "connect"
     | "sign_event"
-    | "encrypt"
-    | "decrypt"
+    | "nip04_encrypt"
+    | "nip04_decrypt"
+    | "nip44_encrypt"
+    | "nip44_decrypt"
     | "get_public_key"
     | "ping";
 
@@ -139,6 +143,8 @@ export class NDKNip46Backend {
         sign_event: new SignEventHandlingStrategy(),
         nip04_encrypt: new Nip04EncryptHandlingStrategy(),
         nip04_decrypt: new Nip04DecryptHandlingStrategy(),
+        nip44_encrypt: new Nip44EncryptHandlingStrategy(),
+        nip44_decrypt: new Nip44DecryptHandlingStrategy(),
         get_public_key: new GetPublicKeyHandlingStrategy(),
         ping: new PingEventHandlingStrategy(),
     };

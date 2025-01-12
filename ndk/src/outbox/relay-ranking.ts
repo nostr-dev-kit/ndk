@@ -1,12 +1,12 @@
-import { NDK } from "../ndk";
-import { Hexpubkey } from "../user";
-import { getWriteRelaysFor } from "./read/with-authors";
+import type { NDK } from "../ndk";
+import type { Hexpubkey } from "../user";
+import { getRelaysForSync } from "./write";
 
 export function getTopRelaysForAuthors(ndk: NDK, authors: Hexpubkey[]): WebSocket["url"][] {
     const relaysWithCount = new Map<WebSocket["url"], number>();
 
     authors.forEach((author) => {
-        const writeRelays = getWriteRelaysFor(ndk, author);
+        const writeRelays = getRelaysForSync(ndk, author);
         if (writeRelays) {
             writeRelays.forEach((relay) => {
                 const count = relaysWithCount.get(relay) || 0;
@@ -21,7 +21,7 @@ export function getTopRelaysForAuthors(ndk: NDK, authors: Hexpubkey[]): WebSocke
      */
 
     // Sort the relays by the number of authors that write to them
-    let sortedRelays = Array.from(relaysWithCount.entries()).sort((a, b) => b[1] - a[1]);
+    const sortedRelays = Array.from(relaysWithCount.entries()).sort((a, b) => b[1] - a[1]);
 
     return sortedRelays.map((entry) => entry[0]);
 }

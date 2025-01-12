@@ -17,9 +17,9 @@ interface RedisAdapterOptions {
      */
     expirationTime?: number;
     /**
-    * Redis instance connection path
-    */
-    path?: string
+     * Redis instance connection path
+     */
+    path?: string;
 }
 
 export default class RedisAdapter implements NDKCacheAdapter {
@@ -39,8 +39,8 @@ export default class RedisAdapter implements NDKCacheAdapter {
     }
 
     public async query(subscription: NDKSubscription): Promise<void> {
-        this.debug('query redis status', this.redis.status);
-	if (this.redis.status !== "connect") return;
+        this.debug("query redis status", this.redis.status);
+        if (this.redis.status !== "connect") return;
         await Promise.all(
             subscription.filters.map((filter) => this.processFilter(filter, subscription))
         );
@@ -52,17 +52,24 @@ export default class RedisAdapter implements NDKCacheAdapter {
         const eventIds = await this.redis.smembers(filterString);
 
         return new Promise((resolve) => {
-            Promise.all(eventIds.map(async (eventId) => {
-                const event = await this.redis.get(eventId);
-                if (!event) return;
+            Promise.all(
+                eventIds.map(async (eventId) => {
+                    const event = await this.redis.get(eventId);
+                    if (!event) return;
 
-                const parsedEvent = JSON.parse(event);
-                const relayUrl = parsedEvent.relay;
-                delete parsedEvent.relay;
-                const relay = subscription.ndk.pool.getRelay(relayUrl, false) || new NDKRelay(relayUrl);
+                    const parsedEvent = JSON.parse(event);
+                    const relayUrl = parsedEvent.relay;
+                    delete parsedEvent.relay;
+                    const relay =
+                        subscription.ndk.pool.getRelay(relayUrl, false) || new NDKRelay(relayUrl);
 
-                subscription.eventReceived(new NDKEvent(subscription.ndk, parsedEvent), relay, true);
-            })).then(() => {
+                    subscription.eventReceived(
+                        new NDKEvent(subscription.ndk, parsedEvent),
+                        relay,
+                        true
+                    );
+                })
+            ).then(() => {
                 resolve();
             });
         });
@@ -73,7 +80,11 @@ export default class RedisAdapter implements NDKCacheAdapter {
         return this.redis.set(event.id!, JSON.stringify(event), "EX", this.expirationTime);
     }
 
-    private async storeEventWithFilter(event: NostrEvent, filter: NDKFilter, relay: NDKRelay): Promise<void> {
+    private async storeEventWithFilter(
+        event: NostrEvent,
+        filter: NDKFilter,
+        relay: NDKRelay
+    ): Promise<void> {
         const filterString = JSON.stringify(filter);
 
         // very naive quick implementation of storing the filter
@@ -109,10 +120,9 @@ export default class RedisAdapter implements NDKCacheAdapter {
         return false;
     }
 
-
     public async setEvent(event: NDKEvent, filters: NDKFilter[], relay: NDKRelay): Promise<void> {
-        this.debug('setEvent redis status', this.redis.status);
-	if (this.redis.status !== "connect") return;
+        this.debug("setEvent redis status", this.redis.status);
+        if (this.redis.status !== "connect") return;
         const rawEvent = event.rawEvent();
 
         if (filters.length === 1) {
@@ -132,21 +142,16 @@ export default class RedisAdapter implements NDKCacheAdapter {
     }
 
     public async loadNip05?(nip05: string): Promise<ProfilePointer | null> {
-        this.debug('loadNip05 redis status', this.redis.status);
-	if (this.redis.status !== "connect") return null;
+        this.debug("loadNip05 redis status", this.redis.status);
+        if (this.redis.status !== "connect") return null;
         const profile = await this.redis.get(this.nip05Key(nip05));
         return profile ? JSON.parse(profile) : null;
     }
 
     public saveNip05?(nip05: string, profile: ProfilePointer): void {
-        this.debug('saveNip05 redis status', this.redis.status);
-	if (this.redis.status !== "connect") return;
-        this.redis.set(
-            this.nip05Key(nip05),
-            JSON.stringify(profile),
-            "EX",
-            this.expirationTime,
-        );
+        this.debug("saveNip05 redis status", this.redis.status);
+        if (this.redis.status !== "connect") return;
+        this.redis.set(this.nip05Key(nip05), JSON.stringify(profile), "EX", this.expirationTime);
     }
 
     private nip05Key(nip05: string): string {

@@ -8,6 +8,7 @@ import { NDKKind } from "../index.js";
  * This is a NIP-89 app handler wrapper.
  *
  * @summary NIP-89 App Handler
+ * @group Kind Wrapper
  * @implements kind:31990
  */
 export class NDKAppHandlerEvent extends NDKEvent {

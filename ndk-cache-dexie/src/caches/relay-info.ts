@@ -6,19 +6,22 @@ import { RelayStatus } from "../db";
 
 export async function relayInfoWarmUp(
     cacheHandler: CacheHandler<RelayStatus>,
-    relayStatus: Table<RelayStatus>,
+    relayStatus: Table<RelayStatus>
 ) {
     const array = await relayStatus.limit(cacheHandler.maxSize).toArray();
     for (const entry of array) {
-        cacheHandler.set(entry.url, {
-            url: entry.url,
-            updatedAt: entry.updatedAt,
-            lastConnectedAt: entry.lastConnectedAt,
-            dontConnectBefore: entry.dontConnectBefore,
-        }, false);
+        cacheHandler.set(
+            entry.url,
+            {
+                url: entry.url,
+                updatedAt: entry.updatedAt,
+                lastConnectedAt: entry.lastConnectedAt,
+                dontConnectBefore: entry.dontConnectBefore,
+            },
+            false
+        );
     }
 }
-
 
 export const relayInfoDump = (relayStatus: Table<RelayStatus>, debug: debug.IDebugger) => {
     return async (dirtyKeys: Set<string>, cache: LRUCache<string, RelayStatus>) => {

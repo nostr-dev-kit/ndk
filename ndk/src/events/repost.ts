@@ -23,14 +23,13 @@ export async function repost(
 
     const e = new NDKEvent(this.ndk, {
         kind: getKind(this),
-        content: "",
     } as NostrEvent);
+    e.content = JSON.stringify(this.rawEvent());
     e.tag(this);
 
-    if (e.kind === NDKKind.GenericRepost) {
+    // add a [ "k", kind ] for all non-kind:1 events
+    if (this.kind !== NDKKind.Text) {
         e.tags.push(["k", `${this.kind}`]);
-    } else {
-        e.content = JSON.stringify(this.rawEvent());
     }
 
     if (signer) await e.sign(signer);

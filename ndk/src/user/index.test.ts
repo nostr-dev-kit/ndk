@@ -126,9 +126,9 @@ describe("NDKUser", () => {
                 const sub = new NDKSubscription(ndk, filter, opts);
 
                 setTimeout(() => {
-                    sub.emit("event", newEvent);
-                    sub.emit("event", oldEvent);
-                    sub.emit("eose");
+                    sub.emit("event", newEvent, undefined, sub);
+                    sub.emit("event", oldEvent, undefined, sub);
+                    sub.emit("eose", sub);
                 }, 100);
 
                 return sub;
@@ -174,9 +174,9 @@ describe("NDKUser", () => {
                 const sub = new NDKSubscription(ndk, filter, opts);
 
                 setTimeout(() => {
-                    sub.emit("event", newEvent);
-                    sub.emit("event", oldEvent);
-                    sub.emit("eose");
+                    sub.emit("event", newEvent, undefined, sub);
+                    sub.emit("event", oldEvent, undefined, sub);
+                    sub.emit("eose", sub);
                 }, 100);
 
                 return sub;
@@ -212,9 +212,9 @@ describe("NDKUser", () => {
                 const sub = new NDKSubscription(ndk, filter, opts);
 
                 setTimeout(() => {
-                    sub.emit("event", newEvent);
-                    sub.emit("event", oldEvent);
-                    sub.emit("eose");
+                    sub.emit("event", newEvent, undefined, sub);
+                    sub.emit("event", oldEvent, undefined, sub);
+                    sub.emit("eose", sub);
                 }, 100);
 
                 return sub;
@@ -249,9 +249,9 @@ describe("NDKUser", () => {
                 const sub = new NDKSubscription(ndk, filter, opts);
 
                 setTimeout(() => {
-                    sub.emit("event", newEvent);
-                    sub.emit("event", oldEvent);
-                    sub.emit("eose");
+                    sub.emit("event", newEvent, undefined, sub);
+                    sub.emit("event", oldEvent, undefined, sub);
+                    sub.emit("eose", sub);
                 }, 100);
 
                 return sub;

@@ -38,7 +38,6 @@ describe("NDKRelay", () => {
         it("creates a new NDKRelay", () => {
             expect(relay).toBeInstanceOf(NDKRelay);
             expect(relay.url).toBe("ws://localhost/");
-            expect(relay.activeSubscriptions.length).toBe(0);
             expect(relay.status).toEqual(NDKRelayStatus.DISCONNECTED);
         });
     });

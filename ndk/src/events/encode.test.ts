@@ -8,7 +8,6 @@ describe("event.encode", () => {
     it("encodes all relays the event is known to be on", async () => {
         const event = new NDKEvent(undefined);
         event.kind = 1;
-        event.onRelays = [new NDKRelay("wss://relay1/"), new NDKRelay("wss://relay2/")];
         await event.sign(NDKPrivateKeySigner.generate());
 
         const encoded = event.encode();

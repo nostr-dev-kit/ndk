@@ -27,7 +27,7 @@ async function encrypt(
         !(await backend.pubkeyAllowed({
             id,
             pubkey: remotePubkey,
-            method: "encrypt",
+            method: "nip04_encrypt",
             params: payload,
         }))
     ) {
@@ -35,5 +35,5 @@ async function encrypt(
         return undefined;
     }
 
-    return await backend.signer.encrypt(recipientUser, payload);
+    return await backend.signer.encrypt(recipientUser, payload, "nip04");
 }

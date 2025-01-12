@@ -1,13 +1,15 @@
 import { EventEmitter } from "tseep";
 import type { NostrEvent } from "../../events/index.js";
-import type { NDK } from "../../ndk/index.js";
-import { Hexpubkey, NDKUser } from "../../user/index.js";
+import type { EncryptionNip, NDK } from "../../ndk/index.js";
+import type { Hexpubkey } from "../../user/index.js";
+import { NDKUser } from "../../user/index.js";
 import type { NDKSigner } from "../index.js";
 import { NDKPrivateKeySigner } from "../private-key/index.js";
 import type { NDKRpcResponse } from "./rpc.js";
 import { NDKNostrRpc } from "./rpc.js";
 import { NDKKind } from "../../events/kinds/index.js";
-import { NDKSubscription } from "../../subscription/index.js";
+import type { NDKSubscription } from "../../subscription/index.js";
+import { EncryptionMethod } from "../../events/encryption.js";
 
 /**
  * This NDKSigner implements NIP-46, which allows remote signing of events.
@@ -36,29 +38,28 @@ import { NDKSubscription } from "../../subscription/index.js";
  */
 export class NDKNip46Signer extends EventEmitter implements NDKSigner {
     private ndk: NDK;
-    public remoteUser: NDKUser;
-    public remotePubkey: string | undefined;
-    public token: string | undefined;
+    private _user?: NDKUser;
+
+    /**
+     * The pubkey of the bunker that will be providing signatures
+     */
+    public bunkerPubkey: string | undefined;
+
+    /**
+     * The pubkey of the user that events will be published as
+     */
+    public userPubkey?: string | null;
+
+    /**
+     * An optional secret value provided to connect to the bunker
+     */
+    public secret?: string | null;
     public localSigner: NDKSigner;
     private nip05?: string;
     public rpc: NDKNostrRpc;
     private debug: debug.Debugger;
     public relayUrls: string[] | undefined;
     private subscription: NDKSubscription | undefined;
-
-    /**
-     * @param ndk - The NDK instance to use
-     * @param token - connection token, in the form "npub#otp"
-     * @param localSigner - The signer that will be used to request events to be signed
-     */
-    public constructor(ndk: NDK, token: string, localSigner?: NDKSigner);
-
-    /**
-     * @param ndk - The NDK instance to use
-     * @param remoteNpub - The npub that wants to be published as
-     * @param localSigner - The signer that will be used to request events to be signed
-     */
-    public constructor(ndk: NDK, remoteNpub: string, localSigner?: NDKSigner);
 
     /**
      * @param ndk - The NDK instance to use
@@ -69,46 +70,20 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
 
     /**
      * @param ndk - The NDK instance to use
-     * @param remotePubkey - The public key of the npub that wants to be published as
+     * @param userOrConnectionToken - The public key, or a connection token, of the npub that wants to be published as
      * @param localSigner - The signer that will be used to request events to be signed
      */
-    public constructor(ndk: NDK, remotePubkey: string, localSigner?: NDKSigner);
-
-    /**
-     * @param ndk - The NDK instance to use
-     * @param tokenOrRemoteUser - The public key, or a connection token, of the npub that wants to be published as
-     * @param localSigner - The signer that will be used to request events to be signed
-     */
-    public constructor(ndk: NDK, tokenOrRemoteUser: string, localSigner?: NDKSigner) {
+    public constructor(ndk: NDK, userOrConnectionToken: string, localSigner?: NDKSigner) {
         super();
 
-        let remotePubkey: string | undefined;
-        let token: string | undefined;
-
-        if (tokenOrRemoteUser.includes("#")) {
-            const parts = tokenOrRemoteUser.split("#");
-            if (parts[0].startsWith("npub")) {
-                remotePubkey = new NDKUser({ npub: parts[0] }).pubkey;
-            } else {
-                remotePubkey = parts[0];
-            }
-            token = parts[1];
-        } else if (tokenOrRemoteUser.startsWith("npub")) {
-            remotePubkey = new NDKUser({
-                npub: tokenOrRemoteUser,
-            }).pubkey;
-        } else if (tokenOrRemoteUser.match(/\./)) {
-            this.nip05 = tokenOrRemoteUser;
-        } else {
-            remotePubkey = tokenOrRemoteUser;
-        }
-
         this.ndk = ndk;
-        if (remotePubkey) this.remotePubkey = remotePubkey;
-        this.token = token;
         this.debug = ndk.debug.extend("nip46:signer");
 
-        this.remoteUser = new NDKUser({ pubkey: remotePubkey });
+        if (userOrConnectionToken.startsWith("bunker://")) {
+            this.connectionTokenInit(userOrConnectionToken);
+        } else {
+            this.nip05Init(userOrConnectionToken);
+        }
 
         if (!localSigner) {
             this.localSigner = NDKPrivateKeySigner.generate();
@@ -119,13 +94,42 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
         this.rpc = new NDKNostrRpc(this.ndk, this.localSigner, this.debug, this.relayUrls);
     }
 
+    private connectionTokenInit(connectionToken: string) {
+        const bunkerUrl = new URL(connectionToken);
+        const bunkerPubkey = bunkerUrl.hostname || bunkerUrl.pathname.replace(/^\/\//, "");
+        const userPubkey = bunkerUrl.searchParams.get("pubkey");
+        const relayUrls = bunkerUrl.searchParams.getAll("relay");
+        const secret = bunkerUrl.searchParams.get("secret");
+
+        this.bunkerPubkey = bunkerPubkey;
+        this.userPubkey = userPubkey;
+        this.relayUrls = relayUrls;
+        this.secret = secret;
+    }
+
+    private nip05Init(nip05: string) {
+        this.nip05 = nip05;
+    }
+
+    /**
+     * @deprecated Use userPubkey instead
+     */
+    get remotePubkey() {
+        return this.userPubkey;
+    }
+
+    /**
+     * We start listening for events from the bunker
+     */
     private async startListening() {
         if (this.subscription) return;
 
         const localUser = await this.localSigner.user();
 
+        if (!localUser) throw new Error("Local signer not ready");
+
         this.subscription = await this.rpc.subscribe({
-            kinds: [NDKKind.NostrConnect, NDKKind.NostrConnect + 1],
+            kinds: [NDKKind.NostrConnect],
             "#p": [localUser.pubkey],
         });
     }
@@ -134,23 +138,27 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
      * Get the user that is being published as
      */
     public async user(): Promise<NDKUser> {
-        return this.remoteUser;
+        if (!this._user && !this.userPubkey) throw new Error("Remote user not ready");
+        this._user ??= new NDKUser({ pubkey: this.userPubkey! });
+        return this._user;
     }
 
     public async blockUntilReady(): Promise<NDKUser> {
-        if (this.nip05 && !this.remotePubkey) {
+        if (this.nip05 && !this.userPubkey) {
             const user = await NDKUser.fromNip05(this.nip05, this.ndk);
 
             if (user) {
-                this.remoteUser = user;
-                this.remotePubkey = user.pubkey;
+                this._user = user;
+                this.userPubkey = user.pubkey;
                 this.relayUrls = user.nip46Urls;
                 this.rpc = new NDKNostrRpc(this.ndk, this.localSigner, this.debug, this.relayUrls);
             }
         }
 
-        if (!this.remotePubkey) {
-            throw new Error("Remote pubkey not set");
+        if (!this.bunkerPubkey && this.userPubkey) {
+            this.bunkerPubkey = this.userPubkey;
+        } else if (!this.bunkerPubkey) {
+            throw new Error("Bunker pubkey not set");
         }
 
         await this.startListening();
@@ -160,20 +168,24 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
         });
 
         return new Promise((resolve, reject) => {
-            const connectParams = [this.remotePubkey!];
+            const connectParams = [this.userPubkey ?? ""];
 
-            if (this.token) {
-                connectParams.push(this.token);
-            }
+            if (this.secret) connectParams.push(this.secret);
+
+            if (!this.bunkerPubkey) throw new Error("Bunker pubkey not set");
 
             this.rpc.sendRequest(
-                this.remotePubkey!,
+                this.bunkerPubkey,
                 "connect",
                 connectParams,
                 24133,
                 (response: NDKRpcResponse) => {
                     if (response.result === "ack") {
-                        resolve(this.remoteUser);
+                        this.getPublicKey().then((pubkey) => {
+                            this.userPubkey = pubkey;
+                            this._user = new NDKUser({ pubkey });
+                            resolve(this._user);
+                        });
                     } else {
                         reject(response.error);
                     }
@@ -182,36 +194,50 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
         });
     }
 
-    public async encrypt(recipient: NDKUser, value: string): Promise<string> {
-        this.debug("asking for encryption");
+    public async getPublicKey(): Promise<Hexpubkey> {
+        if (this.userPubkey) return this.userPubkey;
 
-        const promise = new Promise<string>((resolve, reject) => {
+        return new Promise<Hexpubkey>((resolve, reject) => {
+            if (!this.bunkerPubkey) throw new Error("Bunker pubkey not set");
+
             this.rpc.sendRequest(
-                this.remotePubkey!,
-                "nip04_encrypt",
-                [recipient.pubkey, value],
+                this.bunkerPubkey,
+                "get_public_key",
+                [],
                 24133,
                 (response: NDKRpcResponse) => {
-                    if (!response.error) {
-                        resolve(response.result);
-                    } else {
-                        reject(response.error);
-                    }
+                    resolve(response.result);
                 }
             );
         });
-
-        return promise;
     }
 
-    public async decrypt(sender: NDKUser, value: string): Promise<string> {
-        this.debug("asking for decryption");
+    public async encryptionEnabled(nip?: EncryptionNip): Promise<EncryptionNip[]> {
+        if (nip) return [nip];
+        return Promise.resolve(["nip04", "nip44"]);
+    }
 
+    public async encrypt(recipient: NDKUser, value: string, nip: EncryptionNip = 'nip04'): Promise<string> {
+        return this.encryption(recipient, value, nip, "encrypt");
+    }
+
+    public async decrypt(sender: NDKUser, value: string, nip: EncryptionNip = 'nip04'): Promise<string> {
+        return this.encryption(sender, value, nip, "decrypt");
+    }
+
+    private async encryption(
+        peer: NDKUser,
+        value: string,
+        nip: EncryptionNip,
+        method: EncryptionMethod
+    ): Promise<string> {
         const promise = new Promise<string>((resolve, reject) => {
+            if (!this.bunkerPubkey) throw new Error("Bunker pubkey not set");
+
             this.rpc.sendRequest(
-                this.remotePubkey!,
-                "nip04_decrypt",
-                [sender.pubkey, value],
+                this.bunkerPubkey,
+                `${nip}_${method}`,
+                [peer.pubkey, value],
                 24133,
                 (response: NDKRpcResponse) => {
                     if (!response.error) {
@@ -227,16 +253,15 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
     }
 
     public async sign(event: NostrEvent): Promise<string> {
-        this.debug("asking for a signature");
-
         const promise = new Promise<string>((resolve, reject) => {
+            if (!this.bunkerPubkey) throw new Error("Bunker pubkey not set");
+
             this.rpc.sendRequest(
-                this.remotePubkey!,
+                this.bunkerPubkey,
                 "sign_event",
                 [JSON.stringify(event)],
                 24133,
                 (response: NDKRpcResponse) => {
-                    this.debug("got a response", response);
                     if (!response.error) {
                         const json = JSON.parse(response.result);
                         resolve(json.sig);
@@ -263,7 +288,6 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
         email?: string
     ): Promise<Hexpubkey> {
         await this.startListening();
-        this.debug("asking to create an account");
         const req: string[] = [];
 
         if (username) req.push(username);
@@ -271,13 +295,14 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
         if (email) req.push(email);
 
         return new Promise<Hexpubkey>((resolve, reject) => {
+            if (!this.bunkerPubkey) throw new Error("Bunker pubkey not set");
+
             this.rpc.sendRequest(
-                this.remotePubkey!,
+                this.bunkerPubkey,
                 "create_account",
                 req,
                 NDKKind.NostrConnect,
                 (response: NDKRpcResponse) => {
-                    this.debug("got a response", response);
                     if (!response.error) {
                         const pubkey = response.result;
                         resolve(pubkey);

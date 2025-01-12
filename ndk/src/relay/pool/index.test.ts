@@ -5,12 +5,13 @@ import { NDKRelaySet } from "../sets/index.js";
 
 describe("NDKPool", () => {
     it("refuses connecting to blacklisted relays", async () => {
-        const blacklistedRelay = new NDKRelay("wss://url1");
+        const blacklistedRelayUrl = "wss://url1";
         const ndk = new NDK({
-            blacklistRelayUrls: [blacklistedRelay.url],
+            blacklistRelayUrls: [blacklistedRelayUrl],
         });
         const { pool } = ndk;
-        pool.addRelay(blacklistedRelay);
+        const relay = new NDKRelay(blacklistedRelayUrl, undefined, ndk);
+        pool.addRelay(relay);
 
         expect(pool.relays.size).toEqual(0);
     });

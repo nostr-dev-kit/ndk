@@ -481,7 +481,7 @@ export class NDKSubscription extends EventEmitter<{
                     }
                 }
 
-                if (this.ndk.cacheAdapter) {
+                if (this.ndk.cacheAdapter && !this.opts.dontSaveToCache) {
                     this.ndk.cacheAdapter.setEvent(ndkEvent, this.filters, relay);
                 }
             }
@@ -512,19 +512,6 @@ export class NDKSubscription extends EventEmitter<{
             }
         }
 
-        if (!fromCache && !optimisticPublish && relay) {
-            this.trackPerRelay(event, relay);
-
-            if (this.ndk.cacheAdapter && !this.opts.dontSaveToCache) {
-                this.ndk.cacheAdapter.setEvent(event, this.filters, relay);
-            }
-
-            this.eventFirstSeen.set(event.id, Date.now());
-        } else {
-            this.eventFirstSeen.set(event.id, 0);
-        }
-
-        this.emit("event", event, relay, this);
         this.lastEventReceivedAt = Date.now();
     }
 

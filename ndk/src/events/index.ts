@@ -11,7 +11,6 @@ import { type ContentTag, generateContentTags, mergeTags } from "./content-tagge
 import { isEphemeral, isParamReplaceable, isReplaceable } from "./kind.js";
 import { NDKKind } from "./kinds/index.js";
 import { decrypt, encrypt } from "./encryption.js";
-import { giftUnwrap, giftWrap } from "./gift-wrapping.js";
 import { encode } from "./nip19.js";
 import { repost } from "./repost.js";
 import { fetchReplyEvent, fetchRootEvent, fetchTaggedEvent } from "./fetch-tagged-event.js";
@@ -321,29 +320,6 @@ export class NDKEvent extends EventEmitter {
     public encode = encode.bind(this);
     public encrypt = encrypt.bind(this);
     public decrypt = decrypt.bind(this);
-    public giftWrap = giftWrap.bind(this);
-    public giftUnwrap = giftUnwrap.bind(this);
-
-    /**
-     * Shorthand method for Nip-17 Private Direct Messages encryption using Nip-44 and Nip-59 gift wraps.
-     * 
-     * @param recipient user which receives the message
-     * @param signer optional signer to use for decryption of the events, only needed to overwrite the event's ndk signer
-     * @returns Promise containing the encrypted event if successful, otherwise an error
-     */
-    public async encryptNip17(recipient: NDKUser, signer?: NDKSigner): Promise<NDKEvent> {
-        return this.giftWrap(recipient, signer);
-    }
-
-    /**
-     * Shorthand method for Nip-17 Private Direct Messages decryption using Nip-44 and Nip-59 gift wraps.
-     * 
-     * @param signer optional signer to use for decryption of the events, only needed to overwrite the event's ndk signer
-     * @returns Promise containing the decrypted event if successful, otherwise an error
-     */
-    public async decryptNip17(signer?: NDKSigner): Promise<NDKEvent> {
-        return this.giftUnwrap(this.author, signer);
-    }
 
     /**
      * Get all tags with the given name

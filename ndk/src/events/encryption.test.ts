@@ -7,6 +7,7 @@ import { NDKSigner } from "../signers";
 import { NDKUser } from "../user";
 import { NDKRelaySet } from "../relay/sets";
 import { NDKKind } from "./kinds";
+import { giftUnwrap, giftWrap } from "./gift-wrapping";
 
 const PRIVATE_KEY_1_FOR_TESTING = '1fbc12b81e0b21f10fb219e88dd76fc80c7aa5369779e44e762fec6f460d6a89';
 const PRIVATE_KEY_2_FOR_TESTING = "d30b946562050e6ced827113da15208730879c46547061b404434edff63236fa";
@@ -63,8 +64,8 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
     });
     message.tags.push(["p", receiveUser.pubkey]);
 
-    const encrypted = await message.encryptNip17(receiveUser, sendSigner);
-    const decrypted = await encrypted.decryptNip17(receiveSigner);
+    const encrypted = await giftWrap(message, receiveUser, sendSigner);
+    const decrypted = await giftUnwrap(encrypted, sendUser, receiveSigner);
     expect(decrypted.content).toBe(message.content);
     expect(decrypted.pubkey).toBe(sendUser.pubkey);
     expect(decrypted.kind).toBe(NDKKind.PrivateDirectMessage);
@@ -88,7 +89,7 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
       "sig":"a3c6ce632b145c0869423c1afaff4a6d764a9b64dedaf15f170b944ead67227518a72e455567ca1c2a0d187832cecbde7ed478395ec4c95dd3e71749ed66c480"
     });
 
-    const decryptedReceiver = await encryptedForReceiver.decryptNip17(receiveSigner);
+    const decryptedReceiver = await giftUnwrap(encryptedForReceiver, receiveUser, receiveSigner);
     expect(decryptedReceiver.content).toBe("Hola, que tal?");
 
     const encryptedForSender: NDKEvent = new NDKEvent (ndk, {
@@ -101,7 +102,7 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
       "sig":"c94e74533b482aa8eeeb54ae72a5303e0b21f62909ca43c8ef06b0357412d6f8a92f96e1a205102753777fd25321a58fba3fb384eee114bd53ce6c06a1c22bab"
     });
 
-    const decryptedSender = await encryptedForSender.decryptNip17(sendSigner);
+    const decryptedSender = await giftUnwrap(encryptedForSender, sendUser, sendSigner);
     expect(decryptedSender.content).toBe("Hola, que tal?");
   });
 
@@ -109,8 +110,8 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
     const { sendSigner, sendUser, receiveSigner, receiveUser } = await createPKSigners();
     const message = createDirectMessage(sendUser.pubkey, receiveUser.pubkey);
   
-    const wrapped = await message.giftWrap(receiveUser,sendSigner);
-    const unwrapped = await wrapped.giftUnwrap(wrapped.author, receiveSigner);
+    const wrapped = await giftWrap(message, receiveUser, sendSigner);
+    const unwrapped = await giftUnwrap(wrapped, sendUser, receiveSigner);
     message.id = unwrapped?.id || "";
     expect(JSON.stringify(unwrapped)).toBe(JSON.stringify(message)); 
   });
@@ -129,8 +130,8 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
     };    
 
     const send07Signer = new NDKNip07Signer();
-    const wrapped = await message.giftWrap(receiveUser, send07Signer);
-    const unwrapped = await wrapped.giftUnwrap(wrapped.author, receiveSigner); 
+    const wrapped = await giftWrap(message, receiveUser, send07Signer);
+    const unwrapped = await giftUnwrap(wrapped, sendUser, receiveSigner); 
     message.id = unwrapped?.id || "";
     expect(JSON.stringify(unwrapped)).toBe(JSON.stringify(message)); 
   });
@@ -149,8 +150,8 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
     };    
 
     const receive07Signer = new NDKNip07Signer();
-    const wrapped = await message.giftWrap(receiveUser, sendSigner);
-    const unwrapped = await wrapped.giftUnwrap(wrapped.author, receive07Signer); 
+    const wrapped = await giftWrap(message, receiveUser, receive07Signer);
+    const unwrapped = await giftUnwrap(wrapped, sendUser, receiveSigner); 
     message.id = unwrapped?.id || "";
     expect(JSON.stringify(unwrapped)).toBe(JSON.stringify(message)); 
   });
@@ -171,9 +172,9 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
     });
     send46Signer.rpc.sendRequest = mockSendRequest;
     
-    const wrapped = await message.giftWrap(receiveUser, send46Signer);
+    const wrapped = await giftWrap(message, receiveUser, send46Signer);
     expect(mockSendRequest.mock.calls[0][1]).toBe("nip44_encrypt"); 
-    await message.giftWrap(receiveUser, send46Signer, { encryptionNip: "nip04"});
+    await giftWrap(message, receiveUser, send46Signer, { scheme: "nip04"});
     expect(mockSendRequest.mock.calls[2][1]).toBe("nip04_encrypt");
   });
 });

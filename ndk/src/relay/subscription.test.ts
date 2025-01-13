@@ -49,7 +49,7 @@ describe("NDKRelaySubscription", () => {
     let ndkRelaySubscription: NDKRelaySubscription;
 
     beforeEach(() => {
-        ndkRelaySubscription = new NDKRelaySubscription(relay);
+        ndkRelaySubscription = new NDKRelaySubscription(relay, null, ndk.subManager);
         ndkRelaySubscription.debug = debug("test");
     });
 

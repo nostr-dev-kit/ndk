@@ -13,11 +13,17 @@ export enum NDKKind {
     GroupChat = 9,
     GroupNote = 11,
     GroupReply = 12,
+    GiftWrapSeal = 13,
+    // Gift Wrapped Rumors
+    PrivateDirectMessage = 14,
 
     Image = 20,
 
     // NIP-22
     GenericRespose = 22,
+
+    // Nip 59 : Gift Wrap
+    GiftWrap = 1059,
 
     GenericRepost = 16,
     ChannelCreation = 40,

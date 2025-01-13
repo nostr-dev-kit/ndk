@@ -27,6 +27,7 @@ import { setActiveUser } from "./active-user.js";
 import type { CashuPayCb, LnPayCb, NDKPaymentConfirmation, NDKZapSplit } from "../zapper/index.js";
 import type { NostrEvent } from "nostr-tools";
 import type { NDKLnUrlData } from "../zapper/ln.js";
+import { NDKEncryptionScheme } from "../types.js";
 
 export type NDKValidationRatioFn = (
     relay: NDKRelay,
@@ -238,6 +239,8 @@ export class NDK extends EventEmitter<{
     public subManager: NDKSubscriptionManager;
 
     public publishingFailureHandled = false;
+
+    public pools: NDKPool[] = [];
 
     /**
      * Default relay-auth policy that will be used when a relay requests authentication,

@@ -60,6 +60,11 @@ export type NDKZapDetails<T> = T & {
      * Description of the payment for the sender's record
      */
     paymentDescription?: string;
+
+    /**
+     * If this payment is for a nip57 zap, this will contain the zap request.
+     */
+    nip57ZapRequest?: NDKEvent;
 };
 
 export type NDKZapConfirmation = NDKZapConfirmationLN | NDKZapConfirmationCashu;
@@ -194,7 +199,7 @@ class NDKZapper extends EventEmitter<{
                 try {
                     result = await this.zapSplit(split);
                 } catch (e: any) {
-                    result = e;
+                    result = new Error(e.message);
                 }
 
                 this.emit("split:complete", split, result);
@@ -244,6 +249,7 @@ class NDKZapper extends EventEmitter<{
                 pr,
                 amount: split.amount,
                 unit: this.unit,
+                nip57ZapRequest: zapRequest
             }
         );
     }
@@ -441,7 +447,11 @@ class NDKZapper extends EventEmitter<{
      * @param pubkey
      * @returns
      */
-    async getZapMethods(ndk: NDK, recipient: Hexpubkey): Promise<NDKZapMethodInfo[]> {
+    async getZapMethods(
+        ndk: NDK,
+        recipient: Hexpubkey,
+        timeout = 1500
+    ): Promise<NDKZapMethodInfo[]> {
         const methods: NDKZapMethod[] = [];
 
         if (this.cashuPay) methods.push("nip61");
@@ -450,12 +460,16 @@ class NDKZapper extends EventEmitter<{
         // if there are no methods available, return an empty array
         if (methods.length === 0) throw new Error("There are no payment methods available! Please set at least one of lnPay or cashuPay");
 
-        const user = ndk.getUser({ pubkey: recipient });
-        const zapInfo = await user.getZapInfo(false, methods);
+        const timeoutPromise = new Promise<NDKZapMethodInfo[]>((_, reject) => setTimeout(() => reject(new Error("Timeout getting information to zap")), timeout));
+        const getPromise = new Promise<NDKZapMethodInfo[]>((resolve) => {
+            const user = ndk.getUser({ pubkey: recipient });
+            user.getZapInfo(false, methods).then(resolve)
+        });
 
-        d("Zap info for %s: %o", user.npub, zapInfo);
-
-        return zapInfo;
+        const res = await Promise.race([
+            timeoutPromise, getPromise
+        ])
+        return res;
     }
 
     /**

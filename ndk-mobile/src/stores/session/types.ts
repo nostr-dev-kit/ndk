@@ -1,4 +1,4 @@
-import NDK, { NDKEvent, NDKKind, Hexpubkey, NDKUser, NDKList, NDKFilter } from '@nostr-dev-kit/ndk';
+import NDK, { NDKEvent, NDKKind, Hexpubkey, NDKUser, NDKList, NDKFilter, NDKSubscriptionOptions } from '@nostr-dev-kit/ndk';
 import { NDKEventWithFrom } from '../../hooks/subscribe';
 import { SettingsStore } from '../../types';
 
@@ -33,6 +33,11 @@ export interface SessionInitOpts {
      * Extra filters to fetch as part of the session initialization.
      */
     filters?: (user: NDKUser) => NDKFilter[];
+
+    /**
+     * Extra options to pass to the subscription.
+     */
+    subOpts?: NDKSubscriptionOptions;
 }
 
 export interface SessionState {

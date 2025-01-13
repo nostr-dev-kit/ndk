@@ -10,13 +10,12 @@ import { type NDKUser } from "../user/index.js";
 import { type ContentTag, generateContentTags, mergeTags } from "./content-tagger.js";
 import { isEphemeral, isParamReplaceable, isReplaceable } from "./kind.js";
 import { NDKKind } from "./kinds/index.js";
-import { decrypt, encrypt } from "./nip04.js";
+import { decrypt, encrypt } from "./encryption.js";
 import { encode } from "./nip19.js";
 import { repost } from "./repost.js";
 import { fetchReplyEvent, fetchRootEvent, fetchTaggedEvent } from "./fetch-tagged-event.js";
 import { type NDKEventSerialized, deserialize, serialize } from "./serializer.js";
 import { validate, verifySignature, getEventHash } from "./validation.js";
-import { matchFilter } from "nostr-tools";
 import { NIP73EntityType } from "./nip73.js";
 
 const skipClientTagOnKinds = [NDKKind.Contacts];
@@ -529,7 +528,7 @@ export class NDKEvent extends EventEmitter {
             const clientTag: NDKTag = ["client", this.ndk!.clientName ?? ""];
             if (this.ndk!.clientNip89) clientTag.push(this.ndk!.clientNip89);
             tags.push(clientTag);
-        } else {
+        } else if (this.shouldStripClientTag) {
             tags = tags.filter((tag) => tag[0] !== "client");
         }
 
@@ -542,6 +541,10 @@ export class NDKEvent extends EventEmitter {
         if (this.isEphemeral()) return false;
         if (this.hasTag("client")) return false;
         return true;
+    }
+
+    get shouldStripClientTag(): boolean {
+        return skipClientTagOnKinds.includes(this.kind!);
     }
 
     public muted(): string | null {
@@ -770,6 +773,23 @@ export class NDKEvent extends EventEmitter {
         }
 
         return e;
+    }
+
+    /**
+     * Establishes whether this is a NIP-70-protectede event.
+     * @@satisfies NIP-70
+     */
+    set isProtected(val: boolean) {
+        this.removeTag('-');
+        if (val) this.tags.push(['-']);
+    }
+
+    /**
+     * Whether this is a NIP-70-protectede event.
+     * @@satisfies NIP-70
+     */
+    get isProtected(): boolean {
+        return this.hasTag('-');
     }
 
     /**

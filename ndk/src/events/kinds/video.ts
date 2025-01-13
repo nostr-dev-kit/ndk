@@ -14,7 +14,7 @@ import type { ContentTag } from "../content-tagger";
 export class NDKVideo extends NDKEvent {
     static kind = NDKKind.HorizontalVideo;
     static kinds = [NDKKind.HorizontalVideo, NDKKind.VerticalVideo];
-    private _imetas: NDKImetaTag[] = [];
+    private _imetas: NDKImetaTag[] | undefined;
 
     constructor(ndk: NDK | undefined, rawEvent?: NostrEvent) {
         super(ndk, rawEvent);

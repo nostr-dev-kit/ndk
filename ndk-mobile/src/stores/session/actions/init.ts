@@ -16,15 +16,15 @@ export const initSession = (
 ) => {
     const { addEvent } = get();
     let follows: Hexpubkey[] = [];
+    let kindFollows = new Set<Hexpubkey>();
     const filters = generateFilters(user, opts);
-    const sub = ndk.subscribe(filters, { groupable: false, closeOnEose: false }, undefined, false);
+    const sub = ndk.subscribe(filters, { groupable: false, closeOnEose: false, ...(opts.subOpts || {}) }, undefined, false);
     let eosed = false;
 
     const handleEvent = (event: NDKEvent) => {
         addEvent(event, () => {
             if (event.kind === NDKKind.Contacts) {
                 follows = event.tags.filter((tag) => tag[0] === 'p' && !!tag[1]).map((tag) => tag[1]);
-                console.log('Receiving a contact list event', event.id, follows.length);
 
                 // if we have already eosed, get the pubkeys that are not in the wotEntries and add them to the wotEntries
                 if (eosed && opts.wot) {
@@ -35,7 +35,15 @@ export const initSession = (
                     });
                 }
                 
-                return { follows };
+                return { follows: [ ...follows, ...Array.from(kindFollows) ] };
+            } else if (event.kind === 967) {
+                for (const tag of event.getMatchingTags('p')) {
+                    if (!kindFollows.has(tag[1])) {
+                        kindFollows.add(tag[1]);
+                    }
+                }
+
+                return { follows: [ ...follows, ...Array.from(kindFollows) ] };
             } else if (event.kind === NDKKind.MuteList) {
                 const muteList = new Set(event.tags.filter((tag) => tag[0] === 'p' && !!tag[1]).map((tag) => tag[1]));
                 return { muteList, muteListEvent: NDKList.from(event) };

@@ -3,7 +3,8 @@ import { NDK } from "../ndk/index.js";
 import { NDKRelayStatus } from "./index.js";
 
 const ndk = new NDK();
-const relay = new NDKRelay("ws://localhost/");
+const relayUrl = "ws://localhost/";
+const relay = new NDKRelay(relayUrl, undefined, ndk);
 ndk.addExplicitRelay(relay, undefined, false);
 
 // function mockConnect(relay: NDKRelay) {

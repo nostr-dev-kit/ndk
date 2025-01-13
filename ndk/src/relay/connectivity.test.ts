@@ -12,7 +12,7 @@ describe("NDKRelayConnectivity", () => {
 
     beforeEach(() => {
         ndk = new NDK();
-        relay = new NDKRelay("wss://test.relay");
+        relay = new NDKRelay("wss://test.relay", undefined, ndk);
         connectivity = new NDKRelayConnectivity(relay, ndk);
     });
 

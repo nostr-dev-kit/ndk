@@ -64,6 +64,8 @@ export class NDKPool extends EventEmitter<{
         this.relayUrls = relayUrls;
 
         this.blacklistRelayUrls = new Set(blacklistedRelayUrls);
+
+        this.ndk.pools.push(this);
     }
 
     get relays() {
@@ -340,20 +342,23 @@ export class NDKPool extends EventEmitter<{
             }
         }
 
+        const maybeEmitConnect = () => {
+            const allConnected = this.stats().connected === this.relays.size;
+            const someConnected = this.stats().connected > 0;
+
+            if (!allConnected && someConnected) {
+                this.emit("connect");
+            }
+        };
+
         // If we are running with a timeout, check if we need to emit a `connect` event
         // in case some, but not all, relays were connected
-        if (timeoutMs) {
-            setTimeout(() => {
-                const allConnected = this.stats().connected === this.relays.size;
-                const someConnected = this.stats().connected > 0;
-
-                if (!allConnected && someConnected) {
-                    this.emit("connect");
-                }
-            }, timeoutMs);
-        }
+        if (timeoutMs)
+            setTimeout(maybeEmitConnect, timeoutMs);
 
         await Promise.all(promises);
+
+        maybeEmitConnect();
     }
 
     private checkOnFlappingRelays() {

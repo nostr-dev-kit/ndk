@@ -8,9 +8,8 @@ import { follows } from "./follows.js";
 import { type NDKUserProfile, profileFromEvent, serializeProfile } from "./profile.js";
 import { getNip05For } from "./nip05.js";
 import type {
+    NDKFilter,
     NDKRelay,
-    NDKSigner,
-    NDKZapDetails,
     NDKZapMethod,
     NDKZapMethodInfo,
 } from "../index.js";
@@ -125,6 +124,14 @@ export class NDKUser {
      */
     set pubkey(pubkey: string) {
         this._pubkey = pubkey;
+    }
+
+    /**
+     * Equivalent to NDKEvent.filters().
+     * @returns {NDKFilter}
+     */
+    public filters(): NDKFilter {
+        return {"#p": [this.pubkey]}
     }
 
     /**

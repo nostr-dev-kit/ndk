@@ -1,7 +1,6 @@
 import NDK, { NDKConstructorParams, NDKEvent, NDKUser } from "@nostr-dev-kit/ndk";
 import { create } from "zustand";
 import { SettingsStore } from "../types";
-import { produce } from "immer";
 import { withPayload } from "../providers/ndk/signers";
 import { NDKCacheAdapterSqlite } from "../cache-adapter/sqlite";
 
@@ -56,24 +55,26 @@ export const useNDKStore = create<State & Actions & EventHandler>((set, get) => 
 
         // get unpublished events
         ndk.cacheAdapter?.onReady(() => {
-            const unpublishedEvents = new Map<string, UnpublishedEventEntry>();
             ndk?.cacheAdapter?.getUnpublishedEvents?.().then((entries) => {
                 const e = new Map<string, UnpublishedEventEntry>();
                 entries.forEach((entry) => {
                     e.set(entry.event.id, entry);
+                    entry.event.once("published", () => {
+                        console.log('published', entry.event.id);
+                    })
                 });
-            });
-            set({
-                cacheInitialized: true,
-                unpublishedEvents,
-            });
+
+                set({
+                    cacheInitialized: true,
+                    unpublishedEvents: e,
+                });
+            })
         })
 
         ndk.on('event:publish-failed', (event: NDKEvent) => {
-            const unpublishedEvents = produce(get().unpublishedEvents, (draft) => {
-                draft.set(event.id, { event });
-            });
-            set({ unpublishedEvents });
+            const current = new Map(get().unpublishedEvents);
+            current.set(event.id, { event });
+            set({ unpublishedEvents: current });
         });
         
         const key = params.settingsStore?.getSync('login');

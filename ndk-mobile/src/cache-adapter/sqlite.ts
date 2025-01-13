@@ -42,6 +42,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     ready: boolean = false;
     private pendingCallbacks: PendingCallback[] = [];
     private profileCache: LRUCache<string, NDKCacheEntry<NDKUserProfile>>;
+    private unpublishedEventIds: Set<string> = new Set();
 
     constructor(dbName: string, maxProfiles: number = 200) {
         this.dbName = dbName ?? 'ndk-cache';
@@ -275,13 +276,15 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     }
 
     addUnpublishedEvent(event: NDKEvent, relayUrls: WebSocket['url'][]): void {
+        if (this.unpublishedEventIds.has(event.id)) return;
+        this.unpublishedEventIds.add(event.id)
         this.setEvent(event, []);
         this.onReady(async () => {
             const relayStatus: { [key: string]: boolean } = {};
             relayUrls.forEach(url => relayStatus[url] = false);
 
             try {
-                this.db.runSync(`INSERT INTO unpublished_events (id, event, relays, last_try_at) VALUES (?, ?, ?, ?);`, [
+                this.db.runAsync(`INSERT INTO unpublished_events (id, event, relays, last_try_at) VALUES (?, ?, ?, ?);`, [
                     event.id,
                     event.serialize(true, true),
                     JSON.stringify(relayStatus),
@@ -356,6 +359,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     }
 
     discardUnpublishedEvent(eventId: NDKEventId): void {
+        this.unpublishedEventIds.delete(eventId);
         this.onReady(() => {
             this.db.runAsync(`DELETE FROM unpublished_events WHERE id = ?;`, [eventId]);
         });

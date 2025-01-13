@@ -5,8 +5,8 @@ interface WalletState {
     activeWallet: NDKWallet | undefined
     setActiveWallet: (wallet: NDKWallet) => void
 
-    balances: NDKWalletBalance[],
-    setBalances: (balances: NDKWalletBalance[]) => void
+    balance: NDKWalletBalance,
+    setBalance: (balance: NDKWalletBalance) => void
 
     nutzapMonitor: NDKNutzapMonitor | undefined
     setNutzapMonitor: (monitor: NDKNutzapMonitor) => void
@@ -16,10 +16,10 @@ export const useWalletStore = create<WalletState>()((set) => ({
     activeWallet: undefined,
     setActiveWallet: (wallet: NDKWallet) => set({ activeWallet: wallet }),
 
-    balances: [],
-    setBalances: (balances) => {
-        console.log('Setting balances to:', balances);
-        set({ balances });
+    balance: null,
+    setBalance: (balance) => {
+        console.log('Setting balances to:', balance);
+        set({ balance });
     },
 
     nutzapMonitor: undefined,

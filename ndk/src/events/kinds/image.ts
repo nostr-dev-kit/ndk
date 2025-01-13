@@ -30,7 +30,6 @@ export class NDKImage extends NDKEvent {
     }
 
     get isValid(): boolean {
-        console.log('NDKImage isValid running', this.imetas.length > 0)
         return this.imetas.length > 0;
     }
 

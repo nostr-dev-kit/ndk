@@ -1,7 +1,7 @@
-import NDK, { NDKConstructorParams, NDKEvent, NDKUser } from "@nostr-dev-kit/ndk";
+import NDK, { NDKConstructorParams, NDKEvent, NDKSigner, NDKUser } from "@nostr-dev-kit/ndk";
 import { create } from "zustand";
 import { SettingsStore } from "../types";
-import { withPayload } from "../providers/ndk/signers";
+import { NDKNip55Signer, withPayload } from "../signers";
 import { NDKCacheAdapterSqlite } from "../cache-adapter/sqlite";
 
 type OnUserSetCallback = (ndk: NDK, user: NDKUser) => void;
@@ -30,7 +30,7 @@ type State = {
 
 type Actions = {
     init: (params: InitNDKParams) => void;
-    login: (payload: string) => void;
+    login: (payloadOrSigner: string | NDKSigner) => void;
     logout: () => void;
 }
 
@@ -93,28 +93,34 @@ export const useNDKStore = create<State & Actions & EventHandler>((set, get) => 
         }
     },
 
-    login: (payload: string, onUserSet?: OnUserSetCallback) => {
+    login: (payloadOrSigner: string | NDKSigner) => {
         const {ndk, settingsStore} = get();
 
-        withPayload(ndk, payload, settingsStore).then((signer) => {
+        const applySigner = (signer: NDKSigner, payload?: string) => {
             ndk.signer = signer;
 
             if (signer) {
                 signer.user().then((user) => {
                     if (settingsStore) {
                         settingsStore.set('currentUser', user.pubkey);
-                        settingsStore.set('login', payload);
-                    }
-
-                    onUserSet ??= get().onUserSet;
-
-                    const userInStore = get().currentUser;
-                    if (userInStore?.pubkey !== user.pubkey) {
-                        set(setCurrentUser(user, ndk, onUserSet));
+                        if (signer instanceof NDKNip55Signer)
+                            settingsStore.set('signer', 'nip55');
+                        else if (payload)
+                            settingsStore.set('login', payload);
                     }
                 });
             }
-        });
+        }
+
+        if (typeof payloadOrSigner === 'string') {
+            const payload = payloadOrSigner as string;
+            withPayload(ndk, payload, settingsStore).then((signer) => {
+                applySigner(signer, payload);
+            });
+        } else {
+            const signer = payloadOrSigner as NDKSigner;
+            applySigner(signer);
+        }
     },
 
     logout: () => {
@@ -123,6 +129,7 @@ export const useNDKStore = create<State & Actions & EventHandler>((set, get) => 
         set({ currentUser: null });
         settingsStore.delete('currentUser');
         settingsStore.delete('login');
+        settingsStore.delete('signer');
         settingsStore.delete('wot.last_updated_at');
         settingsStore.delete('wot.length');
 

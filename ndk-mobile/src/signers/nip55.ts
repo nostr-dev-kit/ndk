@@ -12,6 +12,11 @@ import {
 import { nip19 } from "nostr-tools";
 import * as IntentLauncher from "expo-intent-launcher";
 
+type NDKNip55Permissions = {
+    permission: string;
+    kind: number;
+};
+
 // type Nip04QueueItem = {
 //     type: "encrypt" | "decrypt";
 //     counterpartyHexpubkey: string;
@@ -69,6 +74,8 @@ export class NDKNip55Signer implements NDKSigner {
     private debug: debug.Debugger;
     private waitTimeout: number;
 
+    private _user: NDKUser | undefined;
+
     /**
      * @param waitTimeout - The timeout in milliseconds to wait for the NIP-55 compatible android mobile client to become available
      */
@@ -77,8 +84,8 @@ export class NDKNip55Signer implements NDKSigner {
         this.waitTimeout = waitTimeout;
     }
 
-    public async blockUntilReady(): Promise<NDKUser> {
-        let response = await this.getPublicKey();
+    public async blockUntilReady(permissions?: NDKNip55Permissions[]): Promise<NDKUser> {
+        let response = await this.getPublicKey(permissions);
 
         // TODO
         // Also add check to to see if an external signer is installed before getting the pubkey
@@ -97,7 +104,8 @@ export class NDKNip55Signer implements NDKSigner {
             throw new Error("Unable to obtain pubkey from external signer");
         }
 
-        return new NDKUser({ pubkey: response.pubkey });
+        this._user = new NDKUser({ pubkey: response.pubkey });
+        return this._user;
     }
 
     // TODO
@@ -107,6 +115,8 @@ export class NDKNip55Signer implements NDKSigner {
      * @returns The NDKUser instance.
      */
     public async user(): Promise<NDKUser> {
+        if (this._user) return this._user;
+        
         if (!this._userPromise) {
             this._userPromise = this.blockUntilReady();
         }
@@ -516,25 +526,20 @@ export class NDKNip55Signer implements NDKSigner {
 
     // TODO
     // Should a timeout be added like in the waitForExtension
-    private async getPublicKey(): Promise<GetPublicKeyResult> {
+    private async getPublicKey(permissions?: NDKNip55Permissions[]): Promise<GetPublicKeyResult> {
         try {
-            const permissions = [
-                { permission: "sign_event", kind: 22242 },
-                { permission: "nip04_encrypt" },
-                { permission: "nip04_decrypt" },
-                { permission: "nip44_encrypt" },
-                { permission: "nip44_decrypt" },
-                { permission: "decrypt_zap_event" },
-            ];
+            const extraPayload: IntentExtra = {
+                package: "com.greenart7c3.nostrsigner", // TODO Detect and specify a general app package
+                type: "get_public_key",
+            };
+
+            if (permissions)
+                extraPayload.permissions = JSON.stringify(permissions);
 
             const intent = await IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
                 category: "android.intent.category.BROWSABLE",
                 data: "nostrsigner:",
-                extra: {
-                    package: "com.greenart7c3.nostrsigner", // TODO Detect and specify a general app package
-                    permissions: JSON.stringify(permissions),
-                    type: "get_public_key",
-                },
+                extra: extraPayload,
             });
 
             console.log("intent", intent);

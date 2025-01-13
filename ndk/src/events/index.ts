@@ -528,7 +528,7 @@ export class NDKEvent extends EventEmitter {
             const clientTag: NDKTag = ["client", this.ndk!.clientName ?? ""];
             if (this.ndk!.clientNip89) clientTag.push(this.ndk!.clientNip89);
             tags.push(clientTag);
-        } else {
+        } else if (this.shouldStripClientTag) {
             tags = tags.filter((tag) => tag[0] !== "client");
         }
 
@@ -541,6 +541,10 @@ export class NDKEvent extends EventEmitter {
         if (this.isEphemeral()) return false;
         if (this.hasTag("client")) return false;
         return true;
+    }
+
+    get shouldStripClientTag(): boolean {
+        return skipClientTagOnKinds.includes(this.kind!);
     }
 
     public muted(): string | null {

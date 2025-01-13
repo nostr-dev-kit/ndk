@@ -5,12 +5,13 @@ import {
     type Npub,
     type Hexpubkey,
     NDKUser,
-    DEFAULT_ENCRYPTION_SCHEME,
-    type ENCRYPTION_SCHEMES,
+    type NDKEncryptionScheme,
     type NDKSigner,
 } from "@nostr-dev-kit/ndk";
 import { nip19 } from "nostr-tools";
 import * as IntentLauncher from "expo-intent-launcher";
+
+const DEFAULT_ENCRYPTION_SCHEME = 'nip44' as const;
 
 type NDKNip55Permissions = {
     permission: string;
@@ -180,7 +181,7 @@ export class NDKNip55Signer implements NDKSigner {
     public async encrypt(
         recipient: NDKUser,
         value: string,
-        type: ENCRYPTION_SCHEMES = DEFAULT_ENCRYPTION_SCHEME
+        type: NDKEncryptionScheme = DEFAULT_ENCRYPTION_SCHEME
     ): Promise<string> {
         if (type === "nip44") {
             return this.nip44Encrypt(recipient, value);
@@ -192,7 +193,7 @@ export class NDKNip55Signer implements NDKSigner {
     public async decrypt(
         sender: NDKUser,
         value: string,
-        type: ENCRYPTION_SCHEMES = DEFAULT_ENCRYPTION_SCHEME
+        type: NDKEncryptionScheme = DEFAULT_ENCRYPTION_SCHEME
     ): Promise<string> {
         if (type === "nip44") {
             return this.nip44Decrypt(sender, value);

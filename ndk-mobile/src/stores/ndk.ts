@@ -4,11 +4,8 @@ import { SettingsStore } from "../types";
 import { NDKNip55Signer, withPayload } from "../signers";
 import { NDKCacheAdapterSqlite } from "../cache-adapter/sqlite";
 
-type OnUserSetCallback = (ndk: NDK, user: NDKUser) => void;
-
 export type InitNDKParams = NDKConstructorParams & {
     settingsStore: SettingsStore;
-    onUserSet?: OnUserSetCallback;
 }
 
 
@@ -25,7 +22,6 @@ type State = {
     unpublishedEvents: Map<string, UnpublishedEventEntry>;
     cacheInitialized: boolean;
     initialParams: InitNDKParams;
-    onUserSet?: OnUserSetCallback;
 }
 
 type Actions = {
@@ -35,7 +31,6 @@ type Actions = {
 }
 
 type EventHandler = {
-    onUserSet?: OnUserSetCallback;
 }
 
 export const useNDKStore = create<State & Actions & EventHandler>((set, get) => ({
@@ -84,8 +79,7 @@ export const useNDKStore = create<State & Actions & EventHandler>((set, get) => 
             settingsStore: params.settingsStore,
             cacheInitialized: ndk.cacheAdapter?.ready !== false,
             initialParams: params,
-            onUserSet: (ndk, user) => params.onUserSet?.(ndk, user),
-            ...(user ? setCurrentUser(user, ndk, params.onUserSet) : {}),
+            ...(user ? { currentUser: user } : {}),
         });
         
         if (key) {
@@ -107,6 +101,11 @@ export const useNDKStore = create<State & Actions & EventHandler>((set, get) => 
                             settingsStore.set('signer', 'nip55');
                         else if (payload)
                             settingsStore.set('login', payload);
+                    }
+
+                    const userInStore = get().currentUser;
+                    if (userInStore?.pubkey !== user.pubkey) {
+                        set({ currentUser: user });
                     }
                 });
             }
@@ -139,22 +138,6 @@ export const useNDKStore = create<State & Actions & EventHandler>((set, get) => 
         }
     }
 }))
-
-function setCurrentUser(
-    user: NDKUser,
-    ndk: NDK,
-    onUserSet: (ndk: NDK, user: NDKUser) => void,
-): Partial<State> {
-    if (ndk.cacheAdapter && !ndk.cacheAdapter?.ready && onUserSet) {
-        ndk.cacheAdapter.onReady(() => {
-            onUserSet(ndk, user);
-        });
-    } else if (onUserSet) {
-        onUserSet(ndk, user);
-    }
-
-    return { currentUser: user };
-}
 
 function getUserFromSettingsStore(ndk: NDK, settingsStore?: SettingsStore) {
     const currentUser = settingsStore?.getSync('currentUser');

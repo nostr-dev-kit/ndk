@@ -1,14 +1,11 @@
-import NDK, { NDKConstructorParams, NDKEvent, NDKUser } from "@nostr-dev-kit/ndk";
+import NDK, { NDKConstructorParams, NDKEvent, NDKSigner, NDKUser } from "@nostr-dev-kit/ndk";
 import { create } from "zustand";
 import { SettingsStore } from "../types";
-import { withPayload } from "../providers/ndk/signers";
+import { NDKNip55Signer, withPayload } from "../signers";
 import { NDKCacheAdapterSqlite } from "../cache-adapter/sqlite";
-
-type OnUserSetCallback = (ndk: NDK, user: NDKUser) => void;
 
 export type InitNDKParams = NDKConstructorParams & {
     settingsStore: SettingsStore;
-    onUserSet?: OnUserSetCallback;
 }
 
 
@@ -25,17 +22,15 @@ type State = {
     unpublishedEvents: Map<string, UnpublishedEventEntry>;
     cacheInitialized: boolean;
     initialParams: InitNDKParams;
-    onUserSet?: OnUserSetCallback;
 }
 
 type Actions = {
     init: (params: InitNDKParams) => void;
-    login: (payload: string) => void;
+    login: (payloadOrSigner: string | NDKSigner) => void;
     logout: () => void;
 }
 
 type EventHandler = {
-    onUserSet?: OnUserSetCallback;
 }
 
 export const useNDKStore = create<State & Actions & EventHandler>((set, get) => ({
@@ -84,8 +79,7 @@ export const useNDKStore = create<State & Actions & EventHandler>((set, get) => 
             settingsStore: params.settingsStore,
             cacheInitialized: ndk.cacheAdapter?.ready !== false,
             initialParams: params,
-            onUserSet: (ndk, user) => params.onUserSet?.(ndk, user),
-            ...(user ? setCurrentUser(user, ndk, params.onUserSet) : {}),
+            ...(user ? { currentUser: user } : {}),
         });
         
         if (key) {
@@ -93,28 +87,39 @@ export const useNDKStore = create<State & Actions & EventHandler>((set, get) => 
         }
     },
 
-    login: (payload: string, onUserSet?: OnUserSetCallback) => {
+    login: (payloadOrSigner: string | NDKSigner) => {
         const {ndk, settingsStore} = get();
 
-        withPayload(ndk, payload, settingsStore).then((signer) => {
+        const applySigner = (signer: NDKSigner, payload?: string) => {
             ndk.signer = signer;
 
             if (signer) {
                 signer.user().then((user) => {
                     if (settingsStore) {
                         settingsStore.set('currentUser', user.pubkey);
-                        settingsStore.set('login', payload);
+                        if (signer instanceof NDKNip55Signer)
+                            settingsStore.set('signer', 'nip55');
+                        else if (payload)
+                            settingsStore.set('login', payload);
                     }
-
-                    onUserSet ??= get().onUserSet;
 
                     const userInStore = get().currentUser;
                     if (userInStore?.pubkey !== user.pubkey) {
-                        set(setCurrentUser(user, ndk, onUserSet));
+                        set({ currentUser: user });
                     }
                 });
             }
-        });
+        }
+
+        if (typeof payloadOrSigner === 'string') {
+            const payload = payloadOrSigner as string;
+            withPayload(ndk, payload, settingsStore).then((signer) => {
+                applySigner(signer, payload);
+            });
+        } else {
+            const signer = payloadOrSigner as NDKSigner;
+            applySigner(signer);
+        }
     },
 
     logout: () => {
@@ -123,6 +128,7 @@ export const useNDKStore = create<State & Actions & EventHandler>((set, get) => 
         set({ currentUser: null });
         settingsStore.delete('currentUser');
         settingsStore.delete('login');
+        settingsStore.delete('signer');
         settingsStore.delete('wot.last_updated_at');
         settingsStore.delete('wot.length');
 
@@ -132,22 +138,6 @@ export const useNDKStore = create<State & Actions & EventHandler>((set, get) => 
         }
     }
 }))
-
-function setCurrentUser(
-    user: NDKUser,
-    ndk: NDK,
-    onUserSet: (ndk: NDK, user: NDKUser) => void,
-): Partial<State> {
-    if (ndk.cacheAdapter && !ndk.cacheAdapter?.ready && onUserSet) {
-        ndk.cacheAdapter.onReady(() => {
-            onUserSet(ndk, user);
-        });
-    } else if (onUserSet) {
-        onUserSet(ndk, user);
-    }
-
-    return { currentUser: user };
-}
 
 function getUserFromSettingsStore(ndk: NDK, settingsStore?: SettingsStore) {
     const currentUser = settingsStore?.getSync('currentUser');

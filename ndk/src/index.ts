@@ -6,6 +6,8 @@ export * from "./user/index.js";
 export * from "./user/pin.js";
 export * from "./events/index.js";
 
+export * from "./types.js";
+
 // Kinds
 export * from "./events/kinds/article.js";
 export * from "./events/kinds/classified.js";

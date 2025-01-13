@@ -18,7 +18,7 @@ export class NDKWebLNWallet extends EventEmitter<NDKWalletEvents> implements NDK
     public status: NDKWalletStatus = NDKWalletStatus.INITIAL;
     public provider?: WebLNProvider;
 
-    private _balance?: NDKWalletBalance[];
+    private _balance?: NDKWalletBalance;
 
     constructor() {
         super();
@@ -62,11 +62,11 @@ export class NDKWebLNWallet extends EventEmitter<NDKWalletEvents> implements NDK
         }
 
         const b = await this.provider.getBalance?.();
-        if (b) this._balance = [{ amount: b.balance, unit: b.currency || "sats" }];
+        if (b) this._balance = { amount: b.balance, unit: b.currency || "sats" };
         return;
     }
 
-    balance(): NDKWalletBalance[] | undefined {
+    balance(): NDKWalletBalance | undefined {
         if (!this.provider) {
             return undefined;
         }

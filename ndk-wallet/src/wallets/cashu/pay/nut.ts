@@ -65,7 +65,7 @@ async function createTokenInMint(
     try {
         console.log("Attempting with mint %s", mint);
 
-        const proofsWeHave = wallet.proofsForMint(mint);
+        const proofsWeHave = wallet.state.proofsForMint(mint);
         const proofs = cashuWallet.selectProofsToSend(proofsWeHave, amount);
         console.log('keeping %d proofs, providing proofs to send: %o', proofs.keep.length, proofs.send)
         

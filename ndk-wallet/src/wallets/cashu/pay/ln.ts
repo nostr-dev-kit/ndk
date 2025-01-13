@@ -60,7 +60,8 @@ async function executePayment(
     console.log("executing payment from mint", mint);
     const result: LNPaymentResult = { walletChange: { mint }, preimage: "" };
     const cashuWallet = await wallet.cashuWallet(mint);
-    const mintProofs = wallet.proofsForMint(mint);
+    const mintProofs = wallet.state.proofsForMint(mint);
+    console.log('mint proofs', mintProofs.map(p => p.C).join(', '))
 
     // Add up the amounts of the proofs
     const amountAvailable = mintProofs.reduce((acc, proof) => acc + proof.amount, 0);
@@ -68,10 +69,12 @@ async function executePayment(
 
     try {
         const meltQuote = await cashuWallet.createMeltQuote(pr);
+        console.log('melt quote', JSON.stringify(meltQuote, null, 4));
         const amountToSend = meltQuote.amount + meltQuote.fee_reserve;
 
         const proofs = cashuWallet.selectProofsToSend(mintProofs, amountToSend);
-        console.log('proofs to send', proofs)
+        console.log('proofs to keep', proofs.keep.length)
+        console.log('proofs to send', proofs.send.length)
 
         result.walletChange.destroy = proofs.send;
 
@@ -91,7 +94,7 @@ async function executePayment(
         return null;
     } catch (e) {
         if (e instanceof Error) {
-            console.log("Failed to pay with mint %s", e.message);
+            console.log("Failed to pay with mint %s: %s", mint, e.message);
             // if (e.message.match(/already spent/i)) {
             //     debug("Proofs already spent, rolling over");
             //     rollOverProofs(selection, [], selection.mint, wallet);

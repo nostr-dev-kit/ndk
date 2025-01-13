@@ -1,6 +1,6 @@
 import { EventEmitter } from "tseep";
 import { NDKWalletBalance, NDKWalletEvents, NDKWalletStatus, type NDKWallet } from "../index.js";
-import NDK, { NDKPool, LnPaymentInfo, NDKPaymentConfirmationCashu, NDKPaymentConfirmationLN, NDKRelaySet, NDKUser, NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
+import NDK, { NDKPool, LnPaymentInfo, NDKPaymentConfirmationCashu, NDKPaymentConfirmationLN, NDKRelaySet, NDKUser, NDKPrivateKeySigner, NDKRelay, NDKRelayAuthPolicies } from "@nostr-dev-kit/ndk";
 import { NutPayment } from "../cashu/pay/nut.js";
 import { sendReq } from "./req.js";
 import createDebug from "debug";
@@ -9,9 +9,14 @@ import { CashuMint, CashuWallet, MintQuoteResponse } from "@cashu/cashu-ts";
 
 const d = createDebug("ndk-wallet:nwc");
 
-export class NDKNWCWallet extends EventEmitter<NDKWalletEvents> implements NDKWallet {
+export type NDKNWCWalletEvents = NDKWalletEvents & {
+    connecting: () => void;
+    error: () => void;
+}
+
+export class NDKNWCWallet extends EventEmitter<NDKNWCWalletEvents> implements NDKWallet {
     readonly type = "nwc";
-    readonly status = NDKWalletStatus.INITIAL;
+    public status = NDKWalletStatus.INITIAL;
     readonly walletId = "nwc";
 
     public pairingCode?: string;
@@ -20,34 +25,53 @@ export class NDKNWCWallet extends EventEmitter<NDKWalletEvents> implements NDKWa
 
     public walletService?: NDKUser;
     public relaySet?: NDKRelaySet;
-    private _status?: NDKWalletStatus;
     public signer?: NDKPrivateKeySigner;
 
-    private _balance?: NDKWalletBalance[];
+    private _balance?: NDKWalletBalance;
 
     private cachedInfo?: NDKNWCGetInfoResult;
 
-    public pool?: NDKPool;
+    public pool: NDKPool;
 
     constructor(ndk: NDK) {
         super();
         this.ndk = ndk;
+        this.pool = new NDKPool([], [], this.ndk);
     }
 
     async init(pubkey: string, relayUrls: string[], secret: string) {
-        d('initializing wallet', pubkey, relayUrls, secret);
+        console.log('initializing wallet', pubkey, relayUrls, secret);
         
         this.walletService = this.ndk.getUser({ pubkey });
+        const policy = NDKRelayAuthPolicies.signIn({ndk: this.ndk});
+        for (const url of relayUrls) {
+            const r = new NDKRelay(url, policy, this.ndk);
+            this.pool.addRelay(r, false);
+            console.log('added relay', url);
+        }
+        console.log('NWC relays', relayUrls)
         this.pool = new NDKPool(relayUrls, [], this.ndk);
-        await this.pool.connect(1000);
+        this.pool.name = 'nwc';
 
-        d('connected to pool', this.pool.connectedRelays());
-        
         // Initialize signer
         this.signer = new NDKPrivateKeySigner(secret);
-        
-        this._status = NDKWalletStatus.READY;
-        this.emit('ready');
+
+        this.pool.on("connect", () => {
+            console.log('connected to pool!!');
+            if (!this.pool) return;
+            this.status = NDKWalletStatus.READY;
+            this.emit('ready');
+        })
+        this.pool.on("relay:disconnect", () => this.status = NDKWalletStatus.LOADING);
+
+        console.log('connecting to pool');
+        this.pool.connect(5000)
+            .then(() => {
+                console.log('connected to pool');
+            })
+            .catch((e) => {
+                console.error('error connecting to pool', e);
+            });
     }
 
     /**
@@ -156,10 +180,10 @@ export class NDKNWCWallet extends EventEmitter<NDKWalletEvents> implements NDKWa
         if (res.error) throw new Error(res.error.message);
 
         // update the cached balance property
-        this._balance = [{
+        this._balance = {
             unit: "msats",
             amount: res.result?.balance ?? 0
-        }];
+        };
 
         this.emit("balance_updated");
     }
@@ -167,7 +191,7 @@ export class NDKNWCWallet extends EventEmitter<NDKWalletEvents> implements NDKWa
     /**
      * Get the balance of this wallet
      */
-    balance(): NDKWalletBalance[] | undefined {
+    balance(): NDKWalletBalance | undefined {
         return this._balance;
     }
     

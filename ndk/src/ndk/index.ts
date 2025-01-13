@@ -240,6 +240,8 @@ export class NDK extends EventEmitter<{
 
     public publishingFailureHandled = false;
 
+    public pools: NDKPool[] = [];
+
     /**
      * Default relay-auth policy that will be used when a relay requests authentication,
      * if no other policy is specified for that relay.

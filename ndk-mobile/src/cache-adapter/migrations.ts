@@ -64,7 +64,6 @@ export const migrations = [
             await db.execAsync(`CREATE INDEX IF NOT EXISTS idx_profiles_pubkey ON profiles (pubkey);`);
             await db.execAsync(`DROP INDEX IF EXISTS idx_event_tags_tag;`);
             await db.execAsync(`CREATE INDEX IF NOT EXISTS idx_event_tags_tag ON event_tags (tag, value);`);
-            console.log('migration 2 done');
         },
     },
     {

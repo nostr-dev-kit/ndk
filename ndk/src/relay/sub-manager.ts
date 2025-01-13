@@ -17,7 +17,7 @@ import type { NDKSubscriptionManager } from "../subscription/manager";
  */
 export class NDKRelaySubscriptionManager {
     private relay: NDKRelay;
-    private subscriptions: Map<NDKFilterFingerprint, NDKRelaySubscription[]>;
+    public subscriptions: Map<NDKFilterFingerprint, NDKRelaySubscription[]>;
     private generalSubManager: NDKSubscriptionManager;
 
     /**

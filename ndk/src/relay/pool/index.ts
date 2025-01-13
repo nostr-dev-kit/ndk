@@ -43,6 +43,7 @@ export class NDKPool extends EventEmitter<{
 }> {
     // TODO: This should probably be an LRU cache
     private _relays = new Map<WebSocket["url"], NDKRelay>();
+    private status: 'idle' | 'active' = 'idle';
     public autoConnectRelays = new Set<WebSocket["url"]>();
     public blacklistRelayUrls: Set<WebSocket["url"]>;
     private debug: debug.Debugger;
@@ -56,12 +57,17 @@ export class NDKPool extends EventEmitter<{
         relayUrls: WebSocket["url"][] = [],
         blacklistedRelayUrls: WebSocket["url"][] = [],
         ndk: NDK,
-        debug?: debug.Debugger
+        { debug, name }: {
+            debug?: debug.Debugger,
+            name?: string
+        } = {}
     ) {
         super();
         this.debug = debug ?? ndk.debug.extend("pool");
+        if (name) this._name = name;
         this.ndk = ndk;
         this.relayUrls = relayUrls;
+
 
         this.blacklistRelayUrls = new Set(blacklistedRelayUrls);
 
@@ -77,11 +83,18 @@ export class NDKPool extends EventEmitter<{
         for (const relayUrl of urls) {
             const relay = new NDKRelay(relayUrl, undefined, this.ndk);
             relay.connectivity.netDebug = this.ndk.netDebug;
-            this.addRelay(relay, false);
+            this.addRelay(relay);
         }
     }
 
+    private _name: string = 'unnamed';
+
+    get name() {
+        return this._name;
+    }
+
     set name(name: string) {
+        this._name = name;
         this.debug = this.debug.extend(name);
     }
 
@@ -202,10 +215,12 @@ export class NDKPool extends EventEmitter<{
                 });
             }
         });
-        this.relays.set(relayUrl, relay);
+        console.trace(`Adding relay ${relayUrl} to pool ${this.name}, with connect: ${!!connect}`);
+        this._relays.set(relayUrl, relay);
         if (connect) this.autoConnectRelays.add(relayUrl);
 
-        if (connect) {
+        // only connect if the pool is active
+        if (connect && this.status === 'active') {
             this.emit("relay:connecting", relay);
             relay.connect(undefined, reconnect).catch((e) => {
                 this.debug(`Failed to connect to relay ${relayUrl}`, e);
@@ -304,6 +319,8 @@ export class NDKPool extends EventEmitter<{
     public async connect(timeoutMs?: number): Promise<void> {
         const promises: Promise<void>[] = [];
 
+        this.status = 'active';
+
         this.debug(
             `Connecting to ${this.relays.size} relays${
                 timeoutMs ? `, timeout ${timeoutMs}...` : ""
@@ -311,14 +328,13 @@ export class NDKPool extends EventEmitter<{
         );
 
         const relaysToConnect = new Set(this.autoConnectRelays.keys());
-        this.ndk.explicitRelayUrls?.forEach((url) => {
-            const normalizedUrl = normalizeRelayUrl(url);
-            relaysToConnect.add(normalizedUrl);
-        });
 
         for (const relayUrl of relaysToConnect) {
             const relay = this.relays.get(relayUrl);
-            if (!relay) continue;
+            if (!relay) {
+                console.log(`Relay ${relayUrl} not found in pool ${this.name}`);
+                continue;
+            }
 
             const connectPromise = new Promise<void>((resolve, reject) => {
                 this.emit("relay:connecting", relay);

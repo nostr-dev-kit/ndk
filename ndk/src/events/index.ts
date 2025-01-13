@@ -471,7 +471,7 @@ export class NDKEvent extends EventEmitter {
         const rawEvent = this.rawEvent();
 
         // add to cache for optimistic updates
-        if (this.ndk.cacheAdapter?.addUnpublishedEvent) {
+        if (this.ndk.cacheAdapter?.addUnpublishedEvent && shouldTrackUnpublishedEvent(this)) {
             try {
                 this.ndk.cacheAdapter.addUnpublishedEvent(this, relaySet.relayUrls);
             } catch (e) {
@@ -485,7 +485,6 @@ export class NDKEvent extends EventEmitter {
         }
 
         // send to active subscriptions that want this event
-        console.log('Dispatch published event', this.kind);
         this.ndk.subManager.dispatchEvent(rawEvent, undefined, true);
 
         const relays = await relaySet.publish(this, timeoutMs, requiredRelayCount);
@@ -929,4 +928,16 @@ export class NDKEvent extends EventEmitter {
 
         return reply;
     }
+}
+
+
+const untrackedUnpublishedEvents = new Set([
+    NDKKind.NostrConnect,
+    NDKKind.NostrWaletConnectInfo,
+    NDKKind.NostrWalletConnectReq,
+    NDKKind.NostrWalletConnectRes,
+]);
+
+function shouldTrackUnpublishedEvent(event: NDKEvent): boolean {
+    return !untrackedUnpublishedEvents.has(event.kind!);
 }

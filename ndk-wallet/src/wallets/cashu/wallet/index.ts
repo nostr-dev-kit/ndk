@@ -48,15 +48,8 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
 }> implements NDKWallet {
     readonly type = "nip-60";
 
-    /**
-     * Token ids that have been used
-     */
-    public usedTokenIds = new Set<NDKEventId>();
 
-    /**
-     * Known tokens in this wallet
-     */
-    public knownTokens: Set<NDKEventId> = new Set();
+
     
     private skipPrivateKey: boolean = false;
     public p2pk: string | undefined;
@@ -577,6 +570,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
     }
 
     balance(): NDKWalletBalance | undefined {
+        console.log("balance", { status: this.status });
         if (this.status === NDKWalletStatus.LOADING) {
             const balance = this.getPrivateTag("balance");
             if (balance)
@@ -588,8 +582,10 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
 
         // aggregate all token balances
         const proofBalances = proofsTotalBalance(this.tokens.map((t) => t.proofs).flat());
+        const reservedAmounts = this.state.reserveAmounts.reduce((acc, amount) => acc + amount, 0);
+        console.log("balance", { proofBalances, reservedAmounts });
         return {
-            amount: proofBalances,
+            amount: proofBalances - reservedAmounts,
             unit: this.unit,
         };
     }
@@ -629,6 +625,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
     }
 
     getMintsWithBalance(amount: number) {
+        console.log("need to update this function to take into account reserved proofs and only use non-reserved proofs");
         return Object.entries(this.mintBalances)
             .filter(([_, balance]) => balance >= amount)
             .map(([mint]) => mint);

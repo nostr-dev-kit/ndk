@@ -323,9 +323,11 @@ export class NDK extends EventEmitter<{
                 opts.outboxRelayUrls || DEFAULT_OUTBOX_RELAYS,
                 opts.blacklistRelayUrls || DEFAULT_BLACKLISTED_RELAYS,
                 this,
-                this.debug.extend("outbox-pool")
+                {
+                    debug: this.debug.extend("outbox-pool"),
+                    name: "outbox"
+                }
             );
-            this.outboxPool.name = "outbox";
 
             this.outboxTracker = new OutboxTracker(this);
         }
@@ -725,11 +727,6 @@ export class NDK extends EventEmitter<{
     }
 
     set wallet(wallet: NDKWalletInterface | undefined) {
-        console.log('setting wallet', {
-            lnPay: wallet?.lnPay,
-            cashuPay: wallet?.cashuPay,
-        })
-
         if (!wallet) {
             this.walletConfig = undefined;
             return;

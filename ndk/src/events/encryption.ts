@@ -50,7 +50,7 @@ export async function decrypt(
     this: NDKEvent,
     sender?: NDKUser,
     signer?: NDKSigner,
-    scheme: NDKEncryptionScheme = 'nip44'
+    scheme?: NDKEncryptionScheme
 ): Promise<void> {
     let decrypted : string | undefined;
     if (!this.ndk) throw new Error("No NDK instance found!");
@@ -62,6 +62,8 @@ export async function decrypt(
     if (!sender) {
         sender = this.author;
     }
+
+    if (!scheme) scheme = this.content.search("\\?iv=") ? 'nip04' : 'nip44';
 
     // simple check for legacy `nip04` encrypted events. adapted from Coracle
     if ((scheme === 'nip04' || this.kind === 4) && await isEncryptionEnabled(signer, 'nip04') && this.content.search("\\?iv=")) {

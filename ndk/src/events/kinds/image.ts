@@ -37,6 +37,7 @@ export class NDKImage extends NDKEvent {
         if (this._imetas) return this._imetas;
         this._imetas = this.tags.filter((tag) => tag[0] === "imeta")
             .map(mapImetaTag)
+            .filter((imeta) => !!imeta.url)
         return this._imetas;
     }
 

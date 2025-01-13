@@ -5,7 +5,7 @@ export default function handleEventDeletion(this: NDKCashuWallet, event: NDKEven
     const deletedIds = event.getMatchingTags("e").map((tag) => tag[1]);
 
     for (const deletedId of deletedIds) {
-        if (!this.knownTokens.has(deletedId)) {
+        if (!this.state.knownTokens.has(deletedId)) {
             continue;
         }
 

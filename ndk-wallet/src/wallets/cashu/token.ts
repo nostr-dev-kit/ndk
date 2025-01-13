@@ -59,6 +59,11 @@ export class NDKCashuToken extends NDKEvent {
                 continue;
             }
 
+            if (proof.amount < 0) {
+                console.warn("Invalid proof with negative amount", proof);
+                continue;
+            }
+
             this._proofs.push(proof);
             cs.add(proof.C);
         }

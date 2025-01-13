@@ -1,22 +1,38 @@
-import { Proof, MeltQuoteState } from "@cashu/cashu-ts";
+import { Proof, MeltQuoteState, CashuWallet } from "@cashu/cashu-ts";
 import { NDKCashuWallet } from "../wallet/index.js";
 import { getBolt11Amount } from "../../../utils/ln.js";
-import { WalletChange } from "../wallet/state.js";
+import { calculateFee, UpdateStateResult, WalletChange, WalletChangeResult, withProofReserve } from "../wallet/state.js";
+import { MintUrl } from "../mint/utils.js";
+import { createOutTxEvent } from "../wallet/txs.js";
 
 export type LNPaymentResult = {
-    walletChange: WalletChange,
+    pr: string, // XXX: Need to add this
     preimage: string,
-    fee?: number
 };
 
+/**
+ * Pay a Lightning Network invoice with a Cashu wallet.
+ * 
+ * @param wallet - The Cashu wallet to use for the payment.
+ * @param pr - The Lightning Network payment request (invoice) to pay.
+ * @param { amount, unit } - The intended amount and unit to pay. -- Intended amount could be what we wanted to pay and the amount in the bolt11 might have a fee.
+ * @returns A Promise that resolves to the payment preimage as a string if successful, or null if the payment fails.
+ */
 export async function payLn(
     wallet: NDKCashuWallet,
     pr: string,
-): Promise<LNPaymentResult | undefined | null> {
+    { amount, unit }: { amount?: number, unit?: string } = {},
+): Promise<WalletChangeResult<LNPaymentResult> | null> {
     let invoiceAmount = getBolt11Amount(pr);
     if (!invoiceAmount) throw new Error("invoice amount is required");
 
     invoiceAmount = invoiceAmount / 1000; // msat
+
+    if (amount && unit) {
+        if (unit === 'msat') {
+            amount = amount / 1000;
+        }
+    }
     
     const eligibleMints = wallet.getMintsWithBalance(invoiceAmount);
     console.log("eligible mints", eligibleMints, {invoiceAmount});
@@ -25,12 +41,17 @@ export async function payLn(
         try {
             const result = await executePayment(mint, pr, invoiceAmount, wallet);
             if (result) {
+                if (amount) {
+                    result.fee = calculateFee(amount, result.stateChange?.destroy ?? [], result.stateChange?.store ?? []);
+                }
                 return result;
             }
         } catch (error: any) {
             console.log("Failed to execute payment for mint %s: %s", mint, error);
         }
     }
+
+    return null;
 }
 
 /**
@@ -56,42 +77,35 @@ async function executePayment(
     pr: string,
     amount: number,
     wallet: NDKCashuWallet,
-): Promise<LNPaymentResult | undefined | null> {
+): Promise<WalletChangeResult<LNPaymentResult> | null> {
     console.log("executing payment from mint", mint);
-    const result: LNPaymentResult = { walletChange: { mint }, preimage: "" };
     const cashuWallet = await wallet.cashuWallet(mint);
-    const mintProofs = wallet.state.proofsForMint(mint);
-    console.log('mint proofs', mintProofs.map(p => p.C).join(', '))
-
-    // Add up the amounts of the proofs
-    const amountAvailable = mintProofs.reduce((acc, proof) => acc + proof.amount, 0);
-    if (amountAvailable < amount) return null;
 
     try {
         const meltQuote = await cashuWallet.createMeltQuote(pr);
-        console.log('melt quote', JSON.stringify(meltQuote, null, 4));
         const amountToSend = meltQuote.amount + meltQuote.fee_reserve;
+        console.log('melt quote', {amountToSend}, JSON.stringify(meltQuote, null, 4));
 
-        const proofs = cashuWallet.selectProofsToSend(mintProofs, amountToSend);
-        console.log('proofs to keep', proofs.keep.length)
-        console.log('proofs to send', proofs.send.length)
+        const result = await withProofReserve<LNPaymentResult>(
+            wallet, cashuWallet, mint, amountToSend, async (proofsToUse, allOurProofs) => {
+                const meltResult = await cashuWallet.meltProofs(meltQuote, proofsToUse);
+                console.log("Melt result: %o", meltResult);
 
-        result.walletChange.destroy = proofs.send;
+                if (meltResult.quote.state === MeltQuoteState.PAID) {
+                    return {
+                        result: {
+                            pr,
+                            preimage: meltResult.quote.payment_preimage ?? ""
+                        },
+                        change: meltResult.change,
+                    }
+                }
 
-        const meltResult = await cashuWallet.meltProofs(meltQuote, proofs.send);
-        console.log("Melt result: %o", meltResult);
+                return null;
+            }
+        )
 
-        // generate history event
-        if (meltResult.quote.state === MeltQuoteState.PAID) {
-            console.log("Payment successful");
-            result.walletChange.store = meltResult.change;
-            result.fee = calculateFee(amount, proofs.send, meltResult.change);
-            result.preimage = meltResult.quote.payment_preimage ?? "";
-
-            return result;
-        }
-
-        return null;
+        return result;
     } catch (e) {
         if (e instanceof Error) {
             console.log("Failed to pay with mint %s: %s", mint, e.message);
@@ -104,11 +118,4 @@ async function executePayment(
 
         return null;
     }
-}
-
-function calculateFee(sentAmount: number, proofs: Proof[], change: Proof[]) {
-    let fee = -sentAmount;
-    for (const proof of proofs) fee += proof.amount;
-    for (const proof of change) fee -= proof.amount;
-    return fee;
 }

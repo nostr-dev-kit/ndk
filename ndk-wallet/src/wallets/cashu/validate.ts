@@ -54,39 +54,18 @@ export async function consolidateMintTokens(
         }
     });
         
-    console.log({
-        spentProofs,
-        unspentProofs,
-    })
+    d("Found %d spent proofs and %d unspent proofs", spentProofs.length, unspentProofs.length);
     
     // if no spent proofs and we already had a single token, return as a noop
     if (spentProofs.length === 0 && tokens.length === 1) {
-        console.log("no spent proofs and we already had a single token, skipping", mint);
+        d("No spent proofs and we already had a single token, skipping %s", mint);
         return;
     }
 
-    if (unspentProofs.length > 0) {
-        // create a new token with all the unspent proofs
-        const newToken = new NDKCashuToken(wallet.ndk);
-        newToken.proofs = unspentProofs;
-        newToken.mint = mint;
-        newToken.wallet = wallet;
-        await newToken.publish(wallet.relaySet);
-
-        console.log("published new token", newToken.id)
-    } else {
-        console.log("no unspent proofs, skipping creating new token", mint);
-    }
-
-    // mark the tokens as used
-    wallet.state.addUsedTokens(tokens)
-    console.log('destroying ', tokens.length, 'tokens')
-    
-    // destroy all old tokens
-    const deleteEvent = new NDKEvent(wallet.ndk, { kind: NDKKind.EventDeletion } as NostrEvent);
-
-    for (const token of tokens) {
-        deleteEvent.tags.push([ "e", token.id ]);
-    }
-    await deleteEvent.publish(wallet.relaySet);
+    // Use wallet state update to handle the changes
+    await wallet.state.update({
+        store: unspentProofs,
+        destroy: spentProofs,
+        mint,
+    });
 }

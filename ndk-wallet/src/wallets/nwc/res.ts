@@ -8,7 +8,6 @@ export async function waitForResponse<M extends keyof NDKNWCResponseMap>(
     this: NDKNWCWallet,
     requestId: string
 ): Promise<NDKNWCResponseBase<NDKNWCResponseMap[M]>> {
-
     if (!this.pool) throw new Error("Wallet not initialized");
 
     return new Promise((resolve, reject) => {
@@ -33,6 +32,7 @@ export async function waitForResponse<M extends keyof NDKNWCResponseMap>(
                     resolve(content);
                 }
             } catch (e: any) {
+                console.error('error decrypting event', e);
                 sub.stop();
                 reject({
                     result_type: "error",

@@ -136,7 +136,7 @@ export class NDKCashuDeposit extends EventEmitter<{
         try {
             d("Checking for minting status of %s", this.quoteId);
             const cashuWallet = await this.wallet.cashuWallet(this.mint);
-            const proofsWeHave = await this.wallet.proofsForMint(this.mint);
+            const proofsWeHave = await this.wallet.state.proofsForMint(this.mint);
             proofs = await cashuWallet.mintProofs(this.amount, this.quoteId, {
                 proofsWeHave,
             });

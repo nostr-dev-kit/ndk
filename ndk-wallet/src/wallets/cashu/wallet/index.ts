@@ -49,11 +49,6 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
     readonly type = "nip-60";
 
     /**
-     * Active tokens in this wallet
-     */
-    public tokens: NDKCashuToken[] = [];
-
-    /**
      * Token ids that have been used
      */
     public usedTokenIds = new Set<NDKEventId>();
@@ -134,22 +129,8 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
         return this.event?.tagId();
     }
 
-    /**
-     * Returns the tokens that are available for spending
-     */
-    get availableTokens(): NDKCashuToken[] {
-        return this.tokens.filter((t) => !this.usedTokenIds.has(t.id));
-    }
-
-    /**
-     * Adds a token to the list of used tokens
-     * to make sure it's proofs are no longer available
-     */
-    public addUsedTokens(token: NDKCashuToken[]) {
-        for (const t of token) {
-            this.usedTokenIds.add(t.id);
-        }
-        this.emit("balance_updated");
+    get tokens(): NDKCashuToken[] {
+        return this.state.tokens;
     }
 
     public checkProofs = consolidateTokens.bind(this);
@@ -168,7 +149,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
         
         for (const mint of this.mints) {
             const wallet = await this.cashuWallet(mint);
-            const mintProofs = await this.proofsForMint(mint);
+            const mintProofs = await this.state.proofsForMint(mint);
              result = await wallet.send(totalAmount, mintProofs, {
                 proofsWeHave: mintProofs,
                 includeFees: true,
@@ -179,8 +160,6 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
 
             if (result.send.length > 0) break;
         }
-        
-        // await rollOverProofs(tokenSelection, proofs.keep, tokenSelection.mint, this);
 
         return result;
     }
@@ -239,6 +218,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
         this.sub.on("event", eventHandler.bind(this));
         this.sub.on("eose", () => {
             this.emit("ready");
+            this.status = NDKWalletStatus.READY;
         });
         this.sub.start();
     }
@@ -481,25 +461,6 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
         return this.paymentHandler.cashuPay(payment);
     }
 
-    /**
-     * Returns a map of the proof C values to the token where it was found
-     * @param mint 
-     * @returns 
-     */
-    private getAllMintProofTokens(mint?: MintUrl): Map<string, NDKCashuToken> {
-        const allMintProofs = new Map<string, NDKCashuToken>();
-
-        this.tokens
-            .filter((t) => mint ? t.mint === mint : true)
-            .forEach((t) => {
-            t.proofs.forEach((p) => {
-                allMintProofs.set(p.C, t);
-            });
-        });
-
-        return allMintProofs;
-    }
-
     private wallets = new Map<string, CashuWallet>();
     async cashuWallet(mint: string): Promise<CashuWallet> {
         if (this.wallets.has(mint)) return this.wallets.get(mint) as CashuWallet;
@@ -510,24 +471,9 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
         return w;
     }
 
-    
     // TODO: this is not efficient, we should use a set
     public hasProof(secret: string) {
         return this.tokens.some((t) => t.proofs.some((p) => p.secret === secret));
-    }
-
-    /**
-     * Returns all proofs for a given mint
-     * @param mint 
-     * @returns 
-     */
-    public proofsForMint(mint: MintUrl): Proof[] {
-        mint = normalizeUrl(mint);
-
-        return this.tokens
-            .filter((t) => t.mint === mint)
-            .map((t) => t.proofs)
-            .flat();
     }
 
     async redeemNutzap(
@@ -555,7 +501,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
             if (!mint) throw new Error("missing mint");
 
             const _wallet = await this.cashuWallet(mint);
-            const proofsWeHave = this.proofsForMint(mint);
+            const proofsWeHave = this.state.proofsForMint(mint);
             const res = await _wallet.receive(
                 { proofs, mint },
                 { proofsWeHave, privkey }
@@ -586,55 +532,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
      * there is no change published anywhere when calling this function.
      */
     public addToken(token: NDKCashuToken): boolean {
-        // check for proofs we already have
-        if (!token.mint) throw new Error("token " + token.encode() + " has no mint");
-
-        // double check we don't already have this tokem
-        if (this.knownTokens.has(token.id)) {
-            const stackTrace = new Error().stack;
-            d("Refusing to add the same token twice", token.id, stackTrace);
-            return false;
-        }
-
-        const allMintProofs = this.getAllMintProofTokens(token.mint);
-
-        for (const proof of token.proofs) {
-            if (allMintProofs.has(proof.C)) {
-                const collidingToken = allMintProofs.get(proof.C);
-
-                if (!collidingToken) {
-                    console.trace("BUG: unable to find colliding token", {
-                        token: token.id,
-                        proof: proof.C,
-                    });
-                    throw new Error("BUG: unable to find colliding token");
-                }
-
-                // keep newer token, remove old
-                if (token.created_at! <= collidingToken.created_at!) {
-                    // we don't have to do anything
-                    console.log('skipping adding requested token since we have a newer token with the same proof', {
-                        requestedTokenId: token.id,
-                        relay: token.onRelays.map((r) => r.url),
-                    })
-
-                    this.warn("Received an older token with proofs that were already known, this is likely a relay that didn't receive (or respected) a delete event", token);
-                    
-                    return false; 
-                }
-
-                // remove old token
-                this.removeTokenId(collidingToken.id);
-            }
-        } 
-        
-        if (!this.knownTokens.has(token.id)) {
-            this.knownTokens.add(token.id);
-            this.tokens.push(token);
-            this.emit("balance_updated");
-        }
-
-        return true;
+        return this.state.addToken(token);
     }
 
     public warn(msg: string, event?: NDKEvent, relays?: NDKRelay[]) {
@@ -647,12 +545,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
      * Removes a token that has been deleted
      */
     public removeTokenId(id: NDKEventId) {
-        if (!this.knownTokens.has(id)) {
-            return false;
-        }
-
-        this.tokens = this.tokens.filter((t) => t.id !== id);
-        this.emit("balance_updated");
+        this.state.removeTokenId(id);
     }
 
     /**
@@ -683,37 +576,33 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
         return tokens;
     }
 
-    balance(): NDKWalletBalance[] | undefined {
+    balance(): NDKWalletBalance | undefined {
         if (this.status === NDKWalletStatus.LOADING) {
             const balance = this.getPrivateTag("balance");
             if (balance)
-                return [
-                    {
-                        amount: Number(balance),
-                        unit: this.unit,
-                    },
-                ];
+                return {
+                    amount: Number(balance),
+                    unit: this.unit,
+                };
         }
 
         // aggregate all token balances
         const proofBalances = proofsTotalBalance(this.tokens.map((t) => t.proofs).flat());
-        return [
-            {
-                amount: proofBalances,
-                unit: this.unit,
-            },
-        ];
+        return {
+            amount: proofBalances,
+            unit: this.unit,
+        };
     }
 
     /**
      * Writes the wallet balance to relays
      */
     async syncBalance() {
-        const balance = (await this.balance())?.[0].amount;
-        if (!balance) return;
+        const amount = this.balance()?.amount;
+        if (!amount) return;
 
-        this.setPrivateTag("balance", balance.toString() ?? "0");
-        console.log("publishing balance (%d)", balance);
+        this.setPrivateTag("balance", amount.toString() ?? "0");
+        console.log("publishing balance (%d)", amount);
         this.publish();
     }
 

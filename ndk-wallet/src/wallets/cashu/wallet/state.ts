@@ -54,13 +54,6 @@ export class WalletState {
     ) {}
 
     /**
-     * Returns the tokens that are available for spending
-     */
-    get availableTokens(): NDKCashuToken[] {
-        return this.tokens.filter((t) => !this.usedTokenIds.has(t.id));
-    }
-
-    /**
      * Returns a map of the proof C values to the token where it was found
      */
     getAllMintProofTokens(mint?: MintUrl): Map<string, NDKCashuToken> {
@@ -253,6 +246,8 @@ export class WalletState {
     public async update(change: WalletChange): Promise<UpdateStateResult> {
         const newState = await this.calculateNewState(change);
         const res: UpdateStateResult = {};
+
+        console.log("[WALLET] state update", JSON.stringify(change), JSON.stringify(newState));
 
         // create the new token if we have to
         if (newState.saveProofs.length > 0) {

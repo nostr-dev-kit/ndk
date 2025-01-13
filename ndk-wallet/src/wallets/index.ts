@@ -87,7 +87,7 @@ export interface NDKWallet
     /**
      * Get the balance of this wallet
      */
-    balance(): NDKWalletBalance[] | undefined;
+    balance(): NDKWalletBalance | undefined;
 
     /**
      * Serializes the wallet configuration in a way that can be restored later.

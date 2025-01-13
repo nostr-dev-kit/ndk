@@ -2,34 +2,10 @@ import { CheckStateEnum, ProofState, type Proof } from "@cashu/cashu-ts";
 import { NDKCashuToken } from "./token";
 import createDebug from "debug";
 import type { NDKCashuWallet } from "./wallet/index.js";
-import { hashToCurve } from '@cashu/crypto/modules/common';
-import { rollOverProofs } from "./proofs";
 import { NDKEvent, NDKKind, NostrEvent } from "@nostr-dev-kit/ndk";
 import { walletForMint } from "./mint";
 
 const d = createDebug("ndk-wallet:cashu:validate");
-
-function checkInvalidToken(token: NDKCashuToken, spentProofsSet: Set<string>) {
-    const unspentProofs: Proof[] = [];
-    const spentProofs: Proof[] = [];
-    let dirty = false;
-
-    if (token.proofs.length === 0) {
-        d("token %s has no proofs", token.id);
-        return { dirty: true, unspentProofs, spentProofs };
-    }
-
-    for (const proof of token.proofs) {
-        if (spentProofsSet.has(proof.secret)) {
-            dirty = true;
-            spentProofs.push(proof);
-        } else {
-            unspentProofs.push(proof);
-        }
-    }
-
-    return { dirty, unspentProofs, spentProofs };
-}
 
 /**
  * Checks for spent proofs and consolidates all unspent proofs into a single token, destroying all old tokens
@@ -103,7 +79,7 @@ export async function consolidateMintTokens(
     }
 
     // mark the tokens as used
-    wallet.addUsedTokens(tokens)
+    wallet.state.addUsedTokens(tokens)
     console.log('destroying ', tokens.length, 'tokens')
     
     // destroy all old tokens

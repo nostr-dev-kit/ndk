@@ -32,6 +32,8 @@ export class PaymentHandler {
     ): Promise<LNPaymentResult | undefined> {
         if (!payment.pr) throw new Error("pr is required");
 
+        console.log("[WALLET] lnPay", JSON.stringify(payment));
+
         const invoiceAmount = getBolt11Amount(payment.pr);
         if (!invoiceAmount) throw new Error("invoice amount is required");
 
@@ -60,6 +62,8 @@ export class PaymentHandler {
             unit = 'sat';
             amount = amount / 1000;
         }
+
+        console.log("[WALLET] cashuPay", JSON.stringify(payment));
         
         const createResult = await createToken(
             this.wallet,

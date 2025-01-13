@@ -1,5 +1,6 @@
 import { LnPaymentInfo, CashuPaymentInfo, NDKUser, NDKNutzap } from "@nostr-dev-kit/ndk";
-import { NDKCashuWallet, UpdateStateResult } from ".";
+import { NDKCashuWallet } from ".";
+import { UpdateStateResult } from "./state";
 import { getBolt11Amount, getBolt11Description } from "../../../utils/ln";
 import { NDKWalletChange } from "../history";
 import { LNPaymentResult } from "../pay/ln";
@@ -15,6 +16,7 @@ export async function createOutTxEvent(
     paymentResult: LNPaymentResult | TokenCreationResult,
     updateStateResult: UpdateStateResult,
 ): Promise<NDKWalletChange> {
+    console.log("[WALLET] createOutTxEvent", JSON.stringify(paymentRequest), JSON.stringify(paymentResult));
     let description: string | undefined = paymentRequest.paymentDescription;
     let amount: number | undefined;
     let unit: string | undefined;
@@ -25,7 +27,7 @@ export async function createOutTxEvent(
         description ??= getBolt11Description((paymentRequest as LnPaymentInfo).pr);
     } else {
         amount = paymentRequest.amount;
-        unit = paymentRequest.unit || this.wallet.unit;
+        unit = paymentRequest.unit || wallet.unit;
     }
 
     if (!amount) {
@@ -53,6 +55,7 @@ export async function createOutTxEvent(
     if (updateStateResult.deleted) historyEvent.destroyedTokenIds = updateStateResult.deleted;
     if (updateStateResult.reserved) historyEvent.reservedTokens = [updateStateResult.reserved];
 
+    console.log("[WALLET] createOutTxEvent event", JSON.stringify(historyEvent.rawEvent(), null, 4));
     await historyEvent.sign();
     historyEvent.publish(wallet.relaySet);
 

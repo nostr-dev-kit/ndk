@@ -11,11 +11,13 @@ import {
 import { nip19 } from "nostr-tools";
 import * as IntentLauncher from "expo-intent-launcher";
 
-const DEFAULT_ENCRYPTION_SCHEME = 'nip44' as const;
+const DEFAULT_ENCRYPTION_SCHEME = "nip44" as const;
+
+const NO_EXTERNAL_SIGNER_ERR_MSG = "android.content.ActivityNotFoundException";
 
 type NDKNip55Permissions = {
     permission: string;
-    kind: number;
+    kind?: number;
 };
 
 // type Nip04QueueItem = {
@@ -24,18 +26,6 @@ type NDKNip55Permissions = {
 //     value: string;
 //     resolve: (value: string) => void;
 //     reject: (reason?: Error) => void;
-// };
-
-// type Nip44 = {
-//     encrypt: (recipient: Hexpubkey, value: string) => Promise<string>;
-//     decrypt: (sender: Hexpubkey, value: string) => Promise<string>;
-// };
-
-// type Nip55RelayMap = {
-//     [key: string]: {
-//         read: boolean;
-//         write: boolean;
-//     };
 // };
 
 type GetPublicKeyResult = {
@@ -49,51 +39,26 @@ type IntentExtra = {
     [key: string]: any;
 };
 
-// declare global {
-//     interface Window {
-//         nostr?: {
-//             getPublicKey(): Promise<string>;
-//             signEvent(event: NostrEvent): Promise<{ sig: string }>;
-//             getRelays?: () => Promise<Nip55RelayMap>;
-//             nip04?: {
-//                 encrypt(recipientHexPubKey: string, value: string): Promise<string>;
-//                 decrypt(senderHexPubKey: string, value: string): Promise<string>;
-//             };
-//             nip44?: Nip44;
-//         };
-//     }
-// }
-
 /**
  * NDKNip55Signer implements the NDKSigner interface for signing Nostr events
  * with a NIP-55 compatible android mobile client.
  */
 export class NDKNip55Signer implements NDKSigner {
     private _userPromise: Promise<NDKUser> | undefined;
+    private _user: NDKUser | undefined;
     // public nip04Queue: Nip04QueueItem[] = [];
     // private nip04Processing = false;
     private debug: debug.Debugger;
-    private waitTimeout: number;
 
-    private _user: NDKUser | undefined;
-
-    /**
-     * @param waitTimeout - The timeout in milliseconds to wait for the NIP-55 compatible android mobile client to become available
-     */
-    public constructor(waitTimeout: number = 1000) {
+    public constructor() {
         this.debug = debug("ndk:nip55");
-        this.waitTimeout = waitTimeout;
     }
 
     public async blockUntilReady(permissions?: NDKNip55Permissions[]): Promise<NDKUser> {
+        // TODO
+        // Check if app has already been granted permissions
         let response = await this.getPublicKey(permissions);
 
-        // TODO
-        // Also add check to to see if an external signer is installed before getting the pubkey
-        // Check if app has already been granted permissions
-
-        // TODO
-        // A response with a structure, e.g., { data?: NDKUser; canceled?: boolean; error?: string; } may be preferable to just returning a Promise<NDKUser> unless NDKUser supports a similar structure
         if (response?.canceled) {
             // If unable to obtain pubkey, due to activity operation being canceled, error out
             throw new Error("Canceled");
@@ -109,15 +74,13 @@ export class NDKNip55Signer implements NDKSigner {
         return this._user;
     }
 
-    // TODO
-    // Test this method
     /**
      * Getter for the user property.
      * @returns The NDKUser instance.
      */
     public async user(): Promise<NDKUser> {
         if (this._user) return this._user;
-        
+
         if (!this._userPromise) {
             this._userPromise = this.blockUntilReady();
         }
@@ -134,25 +97,22 @@ export class NDKNip55Signer implements NDKSigner {
     // TODO
     // Look into handling canceled and unsupported result code without throwing errors
     public async sign(event: NostrEvent): Promise<string> {
-        // TODO
-        // Look into implementing a similar waiting fcn
-        // await this.waitForExtension();
-
         const eventJson = JSON.stringify(event);
         const npub: Npub = this.convertHexToNpub(event.pubkey);
+
+        const extraPayload: IntentExtra = {
+            package: "com.greenart7c3.nostrsigner", // TODO Detect and specify a general app package
+            type: "sign_event",
+            id: event.id,
+            current_user: npub,
+        };
 
         try {
             const intent = await IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
                 category: "android.intent.category.BROWSABLE",
                 data: `nostrsigner:${eventJson}`,
-                // TODO
-                // Look into setting flags
-                extra: {
-                    package: "com.greenart7c3.nostrsigner", // TODO Detect and specify a general app package
-                    type: "sign_event",
-                    id: event.id,
-                    current_user: npub,
-                },
+                flags: 0x20000000 | 0x04000000,
+                extra: extraPayload,
             });
 
             console.log("intent", intent);
@@ -161,8 +121,6 @@ export class NDKNip55Signer implements NDKSigner {
             if (intent.resultCode === -1) {
                 const intentExtra: IntentExtra = intent.extra;
                 console.log("Signer result:", intentExtra);
-                // TODO
-                // Check for a sig type
                 const sig: string = intentExtra?.signature;
                 return sig;
                 // If the activity operation was canceled, error out
@@ -174,6 +132,7 @@ export class NDKNip55Signer implements NDKSigner {
             }
         } catch (error) {
             console.error("Error unable to launch sign intent:", error);
+            this.throwNoExternalSignerErr(error.message);
             throw error;
         }
     }
@@ -203,30 +162,28 @@ export class NDKNip55Signer implements NDKSigner {
     }
 
     public async nip44Encrypt(recipient: NDKUser, value: string): Promise<string> {
-        // TODO
-        // Look into implementing a similar waiting fcn
-        // await this.waitForExtension();
-
         const recipientHexPubKey = recipient.pubkey;
         // TODO
         // Get the sender's pubkey if needed
         // const senderNpub: Npub = this.convertHexToNpub(sender.pubkey);
 
+        const extraPayload: IntentExtra = {
+            package: "com.greenart7c3.nostrsigner", // TODO Detect and specify a general app package
+            type: "nip44_encrypt",
+            // TODO
+            // Look into what ID should be used here, can use the recipient's pubkey for now
+            id: recipientHexPubKey,
+            // TODO
+            // Look into if we need this option, and if we do we can add an optional parameter to the NDKSigner interface for the sender's NDKUser then get their npub
+            // current_user: senderNpub,
+            pubKey: recipientHexPubKey,
+        };
+
         try {
             const intent = await IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
                 category: "android.intent.category.BROWSABLE",
                 data: `nostrsigner:${value}`,
-                extra: {
-                    package: "com.greenart7c3.nostrsigner", // TODO Detect and specify a general app package
-                    type: "nip44_encrypt",
-                    // TODO
-                    // Look into what ID should be used here, can use the recipient's pubkey for now
-                    id: recipientHexPubKey,
-                    // TODO
-                    // Look into if we need this option, and if we do we can add an optional parameter to the NDKSigner interface for the sender's NDKUser then get their npub
-                    // current_user: senderNpub,
-                    pubKey: recipientHexPubKey,
-                },
+                extra: extraPayload,
             });
 
             console.log("intent", intent);
@@ -245,36 +202,35 @@ export class NDKNip55Signer implements NDKSigner {
             }
         } catch (error) {
             console.error("Error unable to launch NIP-44 encrypt intent:", error);
+            this.throwNoExternalSignerErr(error.message);
             throw error;
         }
     }
 
     public async nip44Decrypt(sender: NDKUser, value: string): Promise<string> {
-        // TODO
-        // Look into implementing a similar waiting fcn
-        // await this.waitForExtension();
-
         const senderHexPubKey = sender.pubkey;
 
         // TODO
         // Get the recipient's pubkey if needed
         // const recipientNpub: Npub = this.convertHexToNpub(recipient.pubkey);
 
+        const extraPayload: IntentExtra = {
+            package: "com.greenart7c3.nostrsigner", // TODO Detect and specify a general app package
+            type: "nip44_decrypt",
+            // TODO
+            // Look into what ID should be used here, can use the sender's pubkey for now
+            id: senderHexPubKey,
+            // TODO
+            // Look into if we need this option, and if we do we can add an optional parameter to the NDKSigner interface for the recipient's NDKUser then get their npub
+            // current_user: recipientNpub,
+            pubKey: senderHexPubKey,
+        };
+
         try {
             const intent = await IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
                 category: "android.intent.category.BROWSABLE",
                 data: `nostrsigner:${value}`,
-                extra: {
-                    package: "com.greenart7c3.nostrsigner", // TODO Detect and specify a general app package
-                    type: "nip44_decrypt",
-                    // TODO
-                    // Look into what ID should be used here, can use the sender's pubkey for now
-                    id: senderHexPubKey,
-                    // TODO
-                    // Look into if we need this option, and if we do we can add an optional parameter to the NDKSigner interface for the recipient's NDKUser then get their npub
-                    // current_user: recipientNpub,
-                    pubKey: senderHexPubKey,
-                },
+                extra: extraPayload,
             });
 
             console.log("intent", intent);
@@ -295,37 +251,36 @@ export class NDKNip55Signer implements NDKSigner {
                 throw new Error("Unsupported result code");
             }
         } catch (error) {
-            console.error("Error unable to launch NIP-04 decrypt intent:", error);
+            console.error("Error unable to launch NIP-44 decrypt intent:", error);
+            this.throwNoExternalSignerErr(error.message);
             throw error;
         }
     }
 
     public async nip04Encrypt(recipient: NDKUser, value: string): Promise<string> {
-        // TODO
-        // Look into implementing a similar waiting fcn
-        // await this.waitForExtension();
-
         const recipientHexPubKey = recipient.pubkey;
 
         // TODO
         // Get the sender's pubkey if needed
         // const senderNpub: Npub = this.convertHexToNpub(sender.pubkey);
 
+        const extraPayload: IntentExtra = {
+            package: "com.greenart7c3.nostrsigner", // TODO Detect and specify a general app package
+            type: "nip04_encrypt",
+            // TODO
+            // Look into what ID should be used here, can use the recipient's pubkey for now
+            id: recipientHexPubKey,
+            // TODO
+            // Look into if we need this option, and if we do we can add an optional parameter to the NDKSigner interface for the sender's NDKUser then get their npub
+            // current_user: senderNpub,
+            pubKey: recipientHexPubKey,
+        };
+
         try {
             const intent = await IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
                 category: "android.intent.category.BROWSABLE",
                 data: `nostrsigner:${value}`,
-                extra: {
-                    package: "com.greenart7c3.nostrsigner", // TODO Detect and specify a general app package
-                    type: "nip04_encrypt",
-                    // TODO
-                    // Look into what ID should be used here, can use the recipient's pubkey for now
-                    id: recipientHexPubKey,
-                    // TODO
-                    // Look into if we need this option, and if we do we can add an optional parameter to the NDKSigner interface for the sender's NDKUser then get their npub
-                    // current_user: senderNpub,
-                    pubKey: recipientHexPubKey,
-                },
+                extra: extraPayload,
             });
 
             console.log("intent", intent);
@@ -347,36 +302,35 @@ export class NDKNip55Signer implements NDKSigner {
             }
         } catch (error) {
             console.error("Error unable to launch NIP-04 encrypt intent:", error);
+            this.throwNoExternalSignerErr(error.message);
             throw error;
         }
     }
 
     public async nip04Decrypt(sender: NDKUser, value: string): Promise<string> {
-        // TODO
-        // Look into implementing a similar waiting fcn
-        // await this.waitForExtension();
-
         const senderHexPubKey = sender.pubkey;
 
         // TODO
         // Get the recipient's pubkey if needed
         // const recipientNpub: Npub = this.convertHexToNpub(recipient.pubkey);
 
+        const extraPayload: IntentExtra = {
+            package: "com.greenart7c3.nostrsigner", // TODO Detect and specify a general app package
+            type: "nip04_decrypt",
+            // TODO
+            // Look into what ID should be used here, can use the sender's pubkey for now
+            id: senderHexPubKey,
+            // TODO
+            // Look into if we need this option, and if we do we can add an optional parameter to the NDKSigner interface for the recipient's NDKUser then get their npub
+            // current_user: recipientNpub,
+            pubKey: senderHexPubKey,
+        };
+
         try {
             const intent = await IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
                 category: "android.intent.category.BROWSABLE",
                 data: `nostrsigner:${value}`,
-                extra: {
-                    package: "com.greenart7c3.nostrsigner", // TODO Detect and specify a general app package
-                    type: "nip04_decrypt",
-                    // TODO
-                    // Look into what ID should be used here, can use the sender's pubkey for now
-                    id: senderHexPubKey,
-                    // TODO
-                    // Look into if we need this option, and if we do we can add an optional parameter to the NDKSigner interface for the recipient's NDKUser then get their npub
-                    // current_user: recipientNpub,
-                    pubKey: senderHexPubKey,
-                },
+                extra: extraPayload,
             });
 
             console.log("intent", intent);
@@ -401,6 +355,7 @@ export class NDKNip55Signer implements NDKSigner {
             }
         } catch (error) {
             console.error("Error unable to launch NIP-04 decrypt intent:", error);
+            this.throwNoExternalSignerErr(error.message);
             throw error;
         }
     }
@@ -469,34 +424,6 @@ export class NDKNip55Signer implements NDKSigner {
     //     this.processNip04Queue();
     // }
 
-    // TODO
-    // Convert this to wait for the external signer app existence
-    // private waitForExtension(): Promise<void> {
-    //     return new Promise((resolve, reject) => {
-    //         if (window.nostr) {
-    //             resolve();
-    //             return;
-    //         }
-    //
-    //         let timerId: NodeJS.Timeout | number;
-    //
-    //         // Create an interval to repeatedly check for window.nostr
-    //         const intervalId = setInterval(() => {
-    //             if (window.nostr) {
-    //                 clearTimeout(timerId as number);
-    //                 clearInterval(intervalId);
-    //                 resolve();
-    //             }
-    //         }, 100);
-    //
-    //         // Set a timer to reject the promise if window.nostr is not available within the timeout
-    //         timerId = setTimeout(() => {
-    //             clearInterval(intervalId);
-    //             reject(new Error("NIP-07 extension not available"));
-    //         }, this.waitTimeout);
-    //     });
-    // }
-
     private convertNpubToHex(npub: Npub): Hexpubkey {
         try {
             const { type, data } = nip19.decode(npub);
@@ -525,8 +452,12 @@ export class NDKNip55Signer implements NDKSigner {
         }
     }
 
-    // TODO
-    // Should a timeout be added like in the waitForExtension
+    private throwNoExternalSignerErr(errMsg: string) {
+        if (errMsg.startsWith(NO_EXTERNAL_SIGNER_ERR_MSG)) {
+            throw new Error("NIP-55 external signer not available");
+        }
+    }
+
     private async getPublicKey(permissions?: NDKNip55Permissions[]): Promise<GetPublicKeyResult> {
         try {
             const extraPayload: IntentExtra = {
@@ -534,8 +465,7 @@ export class NDKNip55Signer implements NDKSigner {
                 type: "get_public_key",
             };
 
-            if (permissions)
-                extraPayload.permissions = JSON.stringify(permissions);
+            if (permissions) extraPayload.permissions = JSON.stringify(permissions);
 
             const intent = await IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
                 category: "android.intent.category.BROWSABLE",
@@ -552,9 +482,6 @@ export class NDKNip55Signer implements NDKSigner {
                 const npub: Npub = intentExtra?.signature;
                 const pubkey: Hexpubkey = this.convertNpubToHex(npub);
                 return { pubkey };
-                // TODO
-                // Handle the "Manully approve each permission menu selection"
-                // Amber should return a different resultCode, should specify a data property saying a menu selection occurred, or the same behavior should occur as when selecting "I fully trust this application"
                 // If the activity operation was canceled
             } else if (intent.resultCode === 0) {
                 console.log("Get public key intent canceled");
@@ -566,6 +493,7 @@ export class NDKNip55Signer implements NDKSigner {
             }
         } catch (error) {
             console.error("Error unable to launch get public key intent:", error);
+            this.throwNoExternalSignerErr(error.message);
             return { error };
         }
     }

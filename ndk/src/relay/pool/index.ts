@@ -215,7 +215,6 @@ export class NDKPool extends EventEmitter<{
                 });
             }
         });
-        console.trace(`Adding relay ${relayUrl} to pool ${this.name}, with connect: ${!!connect}`);
         this._relays.set(relayUrl, relay);
         if (connect) this.autoConnectRelays.add(relayUrl);
 

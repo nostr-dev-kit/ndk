@@ -94,8 +94,6 @@ export class NDKNip55Signer implements NDKSigner {
      * @returns The signature of the signed event.
      * @throws Error if the NIP-55 compatible android mobile client is not available and is unable to launch the sign intent
      */
-    // TODO
-    // Look into handling canceled and unsupported result code without throwing errors
     public async sign(event: NostrEvent): Promise<string> {
         const eventJson = JSON.stringify(event);
         const npub: Npub = this.convertHexToNpub(event.pubkey);

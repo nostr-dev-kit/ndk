@@ -9,7 +9,7 @@ export const generateFilters = (user: NDKUser, opts: SessionInitOpts): NDKFilter
     if (opts.muteList) filters[0].kinds!.push(NDKKind.MuteList);
     if (opts.kinds) filters[0].kinds!.push(...opts.kinds.keys());
     if (opts.filters) filters.push(
-        ...opts.filters(user).map(f => ({ ...f, authors: [user.pubkey] }))
+        ...opts.filters(user)
     );
 
     return filters;

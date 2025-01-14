@@ -12,8 +12,6 @@ const useNDKNutzapMonitor = () => {
     const activeWallet = useWalletStore(s => s.activeWallet);
 
     useEffect(() => {
-        console.log('[NDK-WALLET] useNDKNutzapMonitor', { ndk: !!ndk, currentUser: !!currentUser, activeWallet: !!activeWallet, nutzapMonitor: !!nutzapMonitor });
-        
         if (!ndk) return;
         if (!currentUser?.pubkey) return;
         if (!activeWallet?.walletId) return;

@@ -1,9 +1,8 @@
-import { LnPaymentInfo, CashuPaymentInfo, NDKUser, NDKNutzap } from "@nostr-dev-kit/ndk";
+import { LnPaymentInfo, CashuPaymentInfo, NDKUser, NDKNutzap, NDKPaymentConfirmationLN } from "@nostr-dev-kit/ndk";
 import { NDKCashuWallet } from ".";
-import { UpdateStateResult, WalletChangeResult } from "./state";
+import { UpdateStateResult, WalletOperation } from "./state";
 import { getBolt11Amount, getBolt11Description } from "../../../utils/ln";
 import { NDKWalletChange } from "../history";
-import { LNPaymentResult } from "../pay/ln";
 import { PaymentWithOptionalZapInfo } from "./payment";
 import { Proof } from "@cashu/cashu-ts";
 import { MintUrl } from "../mint/utils";
@@ -13,9 +12,8 @@ import { TokenCreationResult } from "../pay/nut";
 export async function createOutTxEvent(
     wallet: NDKCashuWallet,
     paymentRequest: PaymentWithOptionalZapInfo<LnPaymentInfo | CashuPaymentInfo>,
-    paymentResult: WalletChangeResult<LNPaymentResult | TokenCreationResult>,
+    paymentResult: WalletOperation<NDKPaymentConfirmationLN | TokenCreationResult>,
 ): Promise<NDKWalletChange> {
-    console.log("[WALLET] createOutTxEvent");
     let description: string | undefined = paymentRequest.paymentDescription;
     let amount: number | undefined;
     let unit: string | undefined;
@@ -54,7 +52,6 @@ export async function createOutTxEvent(
     if (paymentResult.stateUpdate?.deleted) historyEvent.destroyedTokenIds = paymentResult.stateUpdate.deleted;
     if (paymentResult.stateUpdate?.reserved) historyEvent.reservedTokens = [paymentResult.stateUpdate.reserved];
 
-    console.log("[WALLET] createOutTxEvent event ready");
     await historyEvent.sign();
     historyEvent.publish(wallet.relaySet);
 

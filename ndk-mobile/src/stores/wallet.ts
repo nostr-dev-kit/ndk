@@ -18,7 +18,6 @@ export const useWalletStore = create<WalletState>()((set) => ({
 
     balance: null,
     setBalance: (balance) => {
-        console.log('Setting balances to:', balance);
         set({ balance });
     },
 

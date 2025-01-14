@@ -3,6 +3,7 @@ import { NDKCashuToken } from "../token";
 import { CashuWallet, Proof } from "@cashu/cashu-ts";
 import { MintUrl } from "../mint/utils";
 import { NDKCashuWallet } from ".";
+import { calculateFee } from "./fee";
 
 export type UpdateStateResult = {
     /**
@@ -19,7 +20,11 @@ export type UpdateStateResult = {
     deleted?: NDKEventId[],
 }
 
-export type WalletChange = {
+/**
+ * A description of the changes that need to be made to the wallet state
+ * to reflect changes that have occurred.
+ */
+export type WalletProofChange = {
     // reserve proofs are moved into an NDKKind.CashuReserve event until we verify that the recipient has received them
     reserve?: Proof[],
 
@@ -31,7 +36,10 @@ export type WalletChange = {
     mint: MintUrl,
 }
 
-export type WalletStateChange = {
+/**
+ * A description of tokens that need to be changed to reflect the changes that have occurred.
+ */
+export type WalletTokenChange = {
     // token ids that are to be deleted
     deletedTokenIds: Set<string>;
 
@@ -45,6 +53,11 @@ export type WalletStateChange = {
     saveProofs: Proof[];
 }
 
+/**
+ * This class represents the state of the wallet at any given time.
+ * It uses information coming from relays, as well as optimistic assumptions
+ * about the changing state of the wallet.
+ */
 export class WalletState {
     /**
      * the amounts that are intended to be reserved
@@ -86,8 +99,6 @@ export class WalletState {
      * @param proofs 
      */
     reserveProofs(proofs: Proof[], amount: number) {
-        console.log('reserving %d proofs', proofs.length);
-        
         for (const proof of proofs) {
             this.reservedProofCs.add(proof.C);
         }
@@ -95,7 +106,6 @@ export class WalletState {
         this.reserveAmounts.push(amount);
 
         this.wallet.emit("balance_updated");
-        console.log("balance_updated", { reserveAmounts: this.reserveAmounts });
     }
 
     /**
@@ -170,11 +180,6 @@ export class WalletState {
                 // keep newer token, remove old
                 if (token.created_at! <= collidingToken.created_at!) {
                     // we don't have to do anything
-                    console.log('skipping adding requested token since we have a newer token with the same proof', {
-                        requestedTokenId: token.id,
-                        relay: token.onRelays.map((r) => r.url),
-                    })
-
                     this.wallet.warn("Received an older token with proofs that were already known, this is likely a relay that didn't receive (or respected) a delete event", token);
                     
                     return false; 
@@ -221,8 +226,8 @@ export class WalletState {
      * @param change The change to be applied to the wallet state.
      * @returns The new state of the wallet, including proofs to be saved, deleted, or reserved.
      */
-    public async calculateNewState(change: WalletChange): Promise<WalletStateChange> {
-        const newState: WalletStateChange = {
+    public async calculateNewState(change: WalletProofChange): Promise<WalletTokenChange> {
+        const newState: WalletTokenChange = {
             deletedTokenIds: new Set<NDKEventId>(),
             deletedProofs: new Set<string>(),
             reserveProofs: [],
@@ -240,7 +245,6 @@ export class WalletState {
             )
 
         const allProofsInMint = new Set(this.proofsForMint(mint).map(proof => proof.C));
-        console.log('we have %d proofs in %s', allProofsInMint.size, mint, allProofsInMint);
 
         // find all the new proofs we didn't know about that we need to save
         for (const proofToStore of (change.store||[])) {
@@ -248,11 +252,9 @@ export class WalletState {
             newState.saveProofs.push(proofToStore);
             proofCsToBeStored.add(proofToStore.C);
         }
-        console.log("we have a %d new proofs to store", newState.saveProofs.length);
 
         // find al the proofs that are to be destroyed
         newState.deletedProofs = new Set(change.destroy?.map(proof => proof.C));
-        console.log('we have %d proofs to delete', newState.deletedProofs.size);
 
         // find the tokens where those proofs are stored
         const proofsToTokenMap = this.getAllMintProofTokens(change.mint);
@@ -284,21 +286,14 @@ export class WalletState {
      * Updates the wallet state based on a send result
      * @param sendResult 
      */
-    public async update(change: WalletChange): Promise<UpdateStateResult> {
+    public async update(change: WalletProofChange): Promise<UpdateStateResult> {
         const newState = await this.calculateNewState(change);
         const res: UpdateStateResult = {};
-
-        console.log("[WALLET] state update", {
-            storeCount: newState.saveProofs.length,
-            reserveCount: newState.reserveProofs.length,
-            deletedCount: newState.deletedTokenIds.size,
-        });
 
         // create the new token if we have to
         if (newState.saveProofs.length > 0) {
             const newToken = new NDKCashuToken(this.wallet.ndk);
             newToken.proofs = newState.saveProofs;
-            console.log('publishing a new token with %d proofs', newState.saveProofs.length);
             newToken.mint = change.mint;
             newToken.wallet = this.wallet;
             await newToken.sign();
@@ -341,23 +336,44 @@ export class WalletState {
 
         return res;
     }
-}
 
-export function calculateFee(intendedAmount: number, providedProofs: Proof[], returnedProofs: Proof[]) {
-    const totalProvided = providedProofs.reduce((acc, p) => acc + p.amount, 0);
-    const totalReturned = returnedProofs.reduce((acc, p) => acc + p.amount, 0);
-    const totalFee = totalProvided - intendedAmount - totalReturned;
+    /**
+     * Returns the available balance for each mint, excluding reserved proofs
+     */
+    public getAvailableMintBalances(): Record<MintUrl, number> {
+        const balances: Record<MintUrl, number> = {};
 
-    console.log("calculate fee", {intendedAmount, totalProvided, totalReturned, totalFee});
+        // Get all proofs that are reserved
+        const reservedProofCs = this.reservedProofCs;
 
-    if (totalFee < 0) {
-        console.log("BUG: calculate fee thinks we received back a higher amount of proofs than we sent to the mint", {
-            providedProofs,
-            returnedProofs
-        })
+        for (const token of this.tokens) {
+            if (!token.mint) continue;
+            
+            balances[token.mint] ??= 0;
+            
+            // Only count proofs that aren't reserved
+            const availableProofs = token.proofs.filter(p => !reservedProofCs.has(p.C));
+            balances[token.mint] += availableProofs.reduce((sum, p) => sum + p.amount, 0);
+        }
+
+        return balances;
     }
 
-    return totalFee;
+    /**
+     * Returns the total balance for each mint, including reserved proofs
+     */
+    get mintBalances(): Record<MintUrl, number> {
+        const balances: Record<MintUrl, number> = {};
+
+        for (const token of this.tokens) {
+            if (token.mint) {
+                balances[token.mint] ??= 0;
+                balances[token.mint] += token.amount;
+            }
+        }
+
+        return balances;
+    }
 }
 
 type WithProofReserveCb<T> = {
@@ -365,36 +381,63 @@ type WithProofReserveCb<T> = {
     change: Proof[],
 }
 
-export type WalletChangeResult<T> = {
+/**
+ * The result of performing an operation with the wallet state.
+ * 
+ * This is a wrapper around the result of the operation that might include
+ * results of a payment (`result`).
+ * 
+ * The rest of the fields are used to update the wallet state and generate
+ * tx events.
+ */
+export type WalletOperation<T> = {
     result: T,
-    stateChange: WalletChange | null,
+    proofsChange: WalletProofChange | null,
     stateUpdate: UpdateStateResult | null,
     mint: MintUrl,
     fee: number,
 }
 
+/**
+ * This function is used to reserve proofs for a given mint.
+ * It will reserve the proofs for the given mint, and then call the callback function.
+ * If the callback function returns a result, the wallet state will be updated based on the result.
+ * If the callback function returns null, the proofs will be unreserved.
+ * 
+ * Use this function to wrap any function that might affect the wallet state.
+ * 
+ * @param wallet 
+ * @param cashuWallet 
+ * @param mint 
+ * @param amountWithFees - The amount of proofs to gather including fees (include fees)
+ * @param intendedAmount - The amount of proofs the payment originally was intended to gather (exclude fees)
+ * @param cb 
+ * @returns 
+ */
 export async function withProofReserve<T>(
     wallet: NDKCashuWallet,
     cashuWallet: CashuWallet | undefined,
     mint: MintUrl,
-    amount: number,
+    amountWithFees: number,
+    amountWithoutFees: number,
     cb: (
         proofsToUse: Proof[],
         allOurProofs: Proof[],
     ) => Promise<WithProofReserveCb<T> | null>
-): Promise<WalletChangeResult<T> | null> {
+): Promise<WalletOperation<T> | null> {
     cashuWallet ??= await wallet.cashuWallet(mint);
 
     const allProofMints = wallet.state.proofsForMint(mint, false);
-    const proofs = cashuWallet.selectProofsToSend(allProofMints, amount);
+    const proofs = cashuWallet.selectProofsToSend(allProofMints, amountWithFees);
 
-    // if we don't have enough proofs return null
-    if (proofs.send.length === 0) return null;
+    const fetchedAmount = proofs.send.reduce((a, b) => a + b.amount, 0);
+
+    if (fetchedAmount < amountWithFees) return null;
 
     // reserve the proofs we'll be using
-    wallet.state.reserveProofs(proofs.send, amount);
+    wallet.state.reserveProofs(proofs.send, amountWithFees);
     let cbResult: WithProofReserveCb<T> | null = null;
-    let stateChange: WalletChange | null = null;
+    let proofsChange: WalletProofChange | null = null;
     let updateRes: UpdateStateResult | null = null;
 
     try {
@@ -402,7 +445,7 @@ export async function withProofReserve<T>(
 
         if (!cbResult) return null;
 
-        stateChange = {
+        proofsChange = {
             mint,
             store: cbResult.change,
             destroy: proofs.send,
@@ -411,16 +454,16 @@ export async function withProofReserve<T>(
         /**
          * Update the wallet state in the relays.
          */
-        updateRes = await wallet.state.update(stateChange);
+        updateRes = await wallet.state.update(proofsChange);
     } finally {
-        wallet.state.unreserveProofs(proofs.send, amount);
+        wallet.state.unreserveProofs(proofs.send, amountWithFees);
     }
 
     return {
         result: cbResult.result,
-        stateChange,
+        proofsChange,
         stateUpdate: updateRes,
         mint,
-        fee: calculateFee(amount, proofs.send, cbResult.change),
+        fee: calculateFee(amountWithoutFees, proofs.send, cbResult.change),
     }
 }

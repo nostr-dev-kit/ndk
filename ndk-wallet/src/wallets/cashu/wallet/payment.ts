@@ -1,7 +1,7 @@
-import { CashuPaymentInfo, LnPaymentInfo, NDKPaymentConfirmationCashu, NDKZapDetails, NDKEvent, NDKUser, NDKTag } from "@nostr-dev-kit/ndk";
+import { CashuPaymentInfo, LnPaymentInfo, NDKPaymentConfirmationCashu, NDKZapDetails, NDKEvent, NDKUser, NDKTag, NDKPaymentConfirmationLN } from "@nostr-dev-kit/ndk";
 import { NDKCashuWallet } from ".";
 import { createToken } from "../pay/nut";
-import { LNPaymentResult, payLn } from "../pay/ln";
+import { payLn } from "../pay/ln";
 import { getBolt11Amount } from "../../../utils/ln";
 import { Proof } from "@cashu/cashu-ts";
 import { createOutTxEvent } from "./txs";
@@ -29,7 +29,7 @@ export class PaymentHandler {
     async lnPay(
         payment: PaymentWithOptionalZapInfo<LnPaymentInfo>,
         createTxEvent = true,
-    ): Promise<LNPaymentResult | undefined> {
+    ): Promise<NDKPaymentConfirmationLN | undefined> {
         if (!payment.pr) throw new Error("pr is required");
 
         console.log("[WALLET] lnPay", JSON.stringify(payment));
@@ -64,8 +64,6 @@ export class PaymentHandler {
             amount = amount / 1000;
         }
 
-        console.log("[WALLET] cashuPay", JSON.stringify(payment));
-        
         const createResult = await createToken(
             this.wallet,
             amount,

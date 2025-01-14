@@ -102,6 +102,8 @@ export class NDKNWCWallet extends EventEmitter<NDKNWCWalletEvents> implements ND
     }
 
     async cashuPay(payment: NutPayment): Promise<NDKPaymentConfirmationCashu | undefined> {
+        if (!payment.mints) throw new Error("No mints provided");
+        
         for (const mint of payment.mints) {
             let unit = payment.unit;
             let amount = payment.amount;

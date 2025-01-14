@@ -33,14 +33,23 @@ export async function consolidateMintTokens(
 ) {
     const allProofs = tokens.map((t) => t.proofs).flat();
     const _wallet = await walletForMint(mint, wallet.unit);
-    if (!_wallet) return;
-    d(
+    if (!_wallet) {
+        console.log("could not get wallet for mint %s", mint);
+        return;
+    }
+    console.log(
         "checking %d proofs in %d tokens for spent proofs for mint %s",
         allProofs.length,
         tokens.length,
         mint
     );
-    const proofStates = await _wallet.checkProofsStates(allProofs);
+    let proofStates: ProofState[] = [];
+    try {
+        proofStates = await _wallet.checkProofsStates(allProofs);
+    } catch (e: any) {
+        console.log("failed to check proof states", e.message);
+        return;
+    }
 
     const spentProofs: Proof[] = [];
     const unspentProofs: Proof[] = [];
@@ -54,11 +63,10 @@ export async function consolidateMintTokens(
         }
     });
         
-    d("Found %d spent proofs and %d unspent proofs", spentProofs.length, unspentProofs.length);
+    console.log("Found %d spent proofs and %d unspent proofs", spentProofs.length, unspentProofs.length);
     
     // if no spent proofs and we already had a single token, return as a noop
     if (spentProofs.length === 0 && tokens.length === 1) {
-        d("No spent proofs and we already had a single token, skipping %s", mint);
         return;
     }
 

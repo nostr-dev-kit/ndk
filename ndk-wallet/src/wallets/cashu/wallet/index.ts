@@ -11,6 +11,7 @@ import type {
     NDKSubscriptionOptions,
     NDKTag,
     NDKRelay,
+    NDKPaymentConfirmationLN,
 } from "@nostr-dev-kit/ndk";
 import NDK, { NDKEvent, NDKKind, NDKPrivateKeySigner, NDKRelaySet, NDKUser, normalizeUrl } from "@nostr-dev-kit/ndk";
 import { NDKCashuToken, proofsTotalBalance } from "../token.js";
@@ -25,7 +26,6 @@ import { EventEmitter } from "tseep";
 import { decrypt } from "../decrypt.js";
 import { eventHandler } from "../event-handlers/index.js";
 import { NDKCashuDepositMonitor } from "../deposit-monitor.js";
-import { LNPaymentResult } from "../pay/ln.js";
 import { walletForMint } from "../mint.js";
 
 const d = createDebug("ndk-wallet:cashu:wallet");
@@ -47,9 +47,6 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
     warning: (warning: WalletWarning) => void;
 }> implements NDKWallet {
     readonly type = "nip-60";
-
-
-
     
     private skipPrivateKey: boolean = false;
     public p2pk: string | undefined;
@@ -189,8 +186,6 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
     start(opts?: NDKSubscriptionOptions & { pubkey?: Hexpubkey }) {
         const pubkey = opts?.pubkey ?? this.event?.pubkey;
         if (!pubkey) throw new Error("no pubkey");
-        
-        console.log("start %s", this.walletId);
         
         const filters: NDKFilter[] = [
             { kinds: [NDKKind.CashuToken], authors: [pubkey], ...this.event?.filter() },
@@ -435,7 +430,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
     /**
      * Pay a LN invoice with this wallet
      */
-    async lnPay(payment: PaymentWithOptionalZapInfo<LnPaymentInfo>, createTxEvent = true): Promise<LNPaymentResult | undefined> {
+    async lnPay(payment: PaymentWithOptionalZapInfo<LnPaymentInfo>, createTxEvent = true): Promise<NDKPaymentConfirmationLN | undefined> {
         return this.paymentHandler.lnPay(payment, createTxEvent);
     }
 
@@ -462,11 +457,6 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
         if (!w) throw new Error("unable to load wallet for mint " + mint);
         this.wallets.set(mint, w);
         return w;
-    }
-
-    // TODO: this is not efficient, we should use a set
-    public hasProof(secret: string) {
-        return this.tokens.some((t) => t.proofs.some((p) => p.secret === secret));
     }
 
     async redeemNutzap(
@@ -570,7 +560,6 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
     }
 
     balance(): NDKWalletBalance | undefined {
-        console.log("balance", { status: this.status });
         if (this.status === NDKWalletStatus.LOADING) {
             const balance = this.getPrivateTag("balance");
             if (balance)
@@ -580,10 +569,9 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
                 };
         }
 
-        // aggregate all token balances
         const proofBalances = proofsTotalBalance(this.tokens.map((t) => t.proofs).flat());
         const reservedAmounts = this.state.reserveAmounts.reduce((acc, amount) => acc + amount, 0);
-        console.log("balance", { proofBalances, reservedAmounts });
+        
         return {
             amount: proofBalances - reservedAmounts,
             unit: this.unit,
@@ -602,31 +590,27 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
         this.publish();
     }
 
-    public mintBalance(mint: MintUrl) {
-        return proofsTotalBalance(
-            this.tokens
-                .filter((t) => t.mint === mint)
-                .map((t) => t.proofs)
-                .flat()
-        );
+    /**
+     * Gets the total balance for a specific mint, including reserved proofs
+     */
+    public mintBalance(mint: MintUrl): number {
+        return this.mintBalances[mint] || 0;
     }
 
+    /**
+     * Gets all tokens, grouped by mint with their total balances
+     */
     get mintBalances(): Record<MintUrl, number> {
-        const balances: Record<MintUrl, number> = {};
-
-        for (const token of this.tokens) {
-            if (token.mint) {
-                balances[token.mint] ??= 0;
-                balances[token.mint] += token.amount;
-            }
-        }
-
-        return balances;
+        return this.state.mintBalances;
     }
 
-    getMintsWithBalance(amount: number) {
-        console.log("need to update this function to take into account reserved proofs and only use non-reserved proofs");
-        return Object.entries(this.mintBalances)
+    /**
+     * Returns a list of mints that have enough available balance (excluding reserved proofs)
+     * to cover the specified amount
+     */
+    getMintsWithBalance(amount: number): MintUrl[] {
+        const availableBalances = this.state.getAvailableMintBalances();
+        return Object.entries(availableBalances)
             .filter(([_, balance]) => balance >= amount)
             .map(([mint]) => mint);
     }

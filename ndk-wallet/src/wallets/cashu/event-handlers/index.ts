@@ -2,21 +2,20 @@ import { NDKEvent } from "@nostr-dev-kit/ndk";
 
 import { NDKKind } from "@nostr-dev-kit/ndk";
 import { NDKCashuWallet } from "../wallet";
-import handleToken from "./token";
-import handleEventDeletion from "./deletion";
+import { handleToken } from "./token";
+import { handleEventDeletion } from "./deletion";
 import { handleQuote } from "./quote";
 
+const handlers: Record<number, (this: NDKCashuWallet, event: NDKEvent) => Promise<void>> = {
+    [NDKKind.CashuToken]: handleToken,
+    [NDKKind.CashuQuote]: handleQuote,
+    [NDKKind.EventDeletion]: handleEventDeletion,
+};
+
 export async function eventHandler(this: NDKCashuWallet, event: NDKEvent) {
-    switch (event.kind) {
-        case NDKKind.CashuToken:
-            handleToken.bind(this, event).call(this);
-            break;
-        case NDKKind.CashuQuote:
-            handleQuote.bind(this, event).call(this);
-            break;
-        case NDKKind.EventDeletion:
-            handleEventDeletion.bind(this, event).call(this);
-            break;
+    const handler = handlers[event.kind!];
+    if (handler) {
+        await handler.call(this, event);
     }
 }
 

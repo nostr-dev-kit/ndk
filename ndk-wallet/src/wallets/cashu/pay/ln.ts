@@ -1,14 +1,10 @@
-import { Proof, MeltQuoteState, CashuWallet } from "@cashu/cashu-ts";
+import { MeltQuoteState } from "@cashu/cashu-ts";
 import { NDKCashuWallet } from "../wallet/index.js";
 import { getBolt11Amount } from "../../../utils/ln.js";
-import { calculateFee, UpdateStateResult, WalletChange, WalletChangeResult, withProofReserve } from "../wallet/state.js";
-import { MintUrl } from "../mint/utils.js";
-import { createOutTxEvent } from "../wallet/txs.js";
-
-export type LNPaymentResult = {
-    pr: string, // XXX: Need to add this
-    preimage: string,
-};
+import { WalletOperation, withProofReserve } from "../wallet/state.js";
+import { calculateFee } from "../wallet/fee.js";
+import { NDKPaymentConfirmationLN } from "@nostr-dev-kit/ndk";
+import { consolidateMintTokens } from "../validate.js";
 
 /**
  * Pay a Lightning Network invoice with a Cashu wallet.
@@ -22,7 +18,7 @@ export async function payLn(
     wallet: NDKCashuWallet,
     pr: string,
     { amount, unit }: { amount?: number, unit?: string } = {},
-): Promise<WalletChangeResult<LNPaymentResult> | null> {
+): Promise<WalletOperation<NDKPaymentConfirmationLN> | null> {
     let invoiceAmount = getBolt11Amount(pr);
     if (!invoiceAmount) throw new Error("invoice amount is required");
 
@@ -34,15 +30,19 @@ export async function payLn(
         }
     }
     
-    const eligibleMints = wallet.getMintsWithBalance(invoiceAmount);
-    console.log("eligible mints", eligibleMints, {invoiceAmount});
+    // we add three sats to the calculation as a guess for the fee
+    const eligibleMints = wallet.getMintsWithBalance(invoiceAmount + 3);
+
+    if (!eligibleMints.length) {
+        return null;
+    }
 
     for (const mint of eligibleMints) {
         try {
-            const result = await executePayment(mint, pr, invoiceAmount, wallet);
+            const result = await executePayment(mint, pr, amount ?? invoiceAmount, wallet);
             if (result) {
                 if (amount) {
-                    result.fee = calculateFee(amount, result.stateChange?.destroy ?? [], result.stateChange?.store ?? []);
+                    result.fee = calculateFee(amount, result.proofsChange?.destroy ?? [], result.proofsChange?.store ?? []);
                 }
                 return result;
             }
@@ -75,9 +75,9 @@ export async function payLn(
 async function executePayment(
     mint: string,
     pr: string,
-    amount: number,
+    amountWithoutFees: number,
     wallet: NDKCashuWallet,
-): Promise<WalletChangeResult<LNPaymentResult> | null> {
+): Promise<WalletOperation<NDKPaymentConfirmationLN> | null> {
     console.log("executing payment from mint", mint);
     const cashuWallet = await wallet.cashuWallet(mint);
 
@@ -86,15 +86,16 @@ async function executePayment(
         const amountToSend = meltQuote.amount + meltQuote.fee_reserve;
         console.log('melt quote', {amountToSend}, JSON.stringify(meltQuote, null, 4));
 
-        const result = await withProofReserve<LNPaymentResult>(
-            wallet, cashuWallet, mint, amountToSend, async (proofsToUse, allOurProofs) => {
+        const result = await withProofReserve<NDKPaymentConfirmationLN>(
+            wallet, cashuWallet, mint, amountToSend, amountWithoutFees, async (proofsToUse, allOurProofs) => {
+                console.log("will melt %d proofs on mint %s", proofsToUse.length, mint);
                 const meltResult = await cashuWallet.meltProofs(meltQuote, proofsToUse);
-                console.log("Melt result: %o", meltResult);
+
+                console.log('melt result', JSON.stringify(meltResult, null, 4));
 
                 if (meltResult.quote.state === MeltQuoteState.PAID) {
                     return {
                         result: {
-                            pr,
                             preimage: meltResult.quote.payment_preimage ?? ""
                         },
                         change: meltResult.change,
@@ -109,10 +110,20 @@ async function executePayment(
     } catch (e) {
         if (e instanceof Error) {
             console.log("Failed to pay with mint %s: %s", mint, e.message);
-            // if (e.message.match(/already spent/i)) {
-            //     debug("Proofs already spent, rolling over");
-            //     rollOverProofs(selection, [], selection.mint, wallet);
-            // }
+            if (e.message.match(/already spent/i)) {
+                console.log("Proofs already spent, consolidate mint tokens");
+                setTimeout(() => {
+                    console.log("consolidating mint tokens", { mint });
+                    consolidateMintTokens(
+                        mint,
+                        wallet.tokens.filter((t) => t.mint === mint),
+                        wallet
+                    ).catch((e) => {
+                        debugger
+                        console.log("failed to consolidate mint tokens", JSON.stringify(e.message, null, 4));
+                    });
+                }, 2500);
+            }
             throw e;
         }
 

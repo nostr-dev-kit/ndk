@@ -12,6 +12,9 @@ import { EventEmitter } from "tseep";
 import { NDKNWCWallet } from "./nwc";
 import { NDKCashuWallet } from "./cashu/wallet";
 
+/**
+ * Different types of wallets supported.
+ */
 export type NDKWalletTypes = 'nwc' | 'nip-60' | 'webln';
 
 export enum NDKWalletStatus {

@@ -18,10 +18,6 @@ export const addEvent = (event: NDKEvent, onAdded, set) => {
         const newEvents = new Map(state.events);
         let existing = newEvents.get(kind) || [];
 
-        if (event.kind === NDKKind.BlossomList) {
-            console.log('event is blossom list', event.id, event.tags);
-        }
-
         if (event.isParamReplaceable()) {
             const existingEvent = existing.find((e) => e.dTag === event.dTag);
             if (existingEvent) {

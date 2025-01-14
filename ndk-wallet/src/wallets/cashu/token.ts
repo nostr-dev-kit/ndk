@@ -5,14 +5,20 @@ import { NDKEvent, NDKKind, normalizeUrl } from "@nostr-dev-kit/ndk";
 import type { NDKCashuWallet } from "./wallet/index.js";
 import { decrypt } from "./decrypt.js";
 
+/**
+ * Calculates the total balance from an array of proofs.
+ *
+ * @param {Proof[]} proofs - An array of Proof objects.
+ * @returns {number} The total balance.
+ * @throws {Error} If any proof has a negative amount.
+ */
 export function proofsTotalBalance(proofs: Proof[]): number {
-    for (const proof of proofs) {
+    return proofs.reduce((acc, proof) => {
         if (proof.amount < 0) {
             throw new Error("proof amount is negative");
         }
-    }
-
-    return proofs.reduce((acc, proof) => acc + proof.amount, 0);
+        return acc + proof.amount;
+    }, 0);
 }
 
 export class NDKCashuToken extends NDKEvent {
@@ -51,26 +57,24 @@ export class NDKCashuToken extends NDKEvent {
 
     set proofs(proofs: Proof[]) {
         const cs = new Set();
-
-        this._proofs = [];
-        for (const proof of proofs) {
-            if (cs.has(proof.C)) {
-                console.warn("Passed in proofs had duplicates, ignoring", proof.C);
-                continue;
-            }
-
-            if (proof.amount < 0) {
-                console.warn("Invalid proof with negative amount", proof);
-                continue;
-            }
-
-            this._proofs.push(proof);
-            cs.add(proof.C);
-        }
+        this._proofs = proofs
+            .filter(proof => {
+                if (cs.has(proof.C)) {
+                    console.warn("Passed in proofs had duplicates, ignoring", proof.C);
+                    return false;
+                }
+                if (proof.amount < 0) {
+                    console.warn("Invalid proof with negative amount", proof);
+                    return false;
+                }
+                cs.add(proof.C);
+                return true;
+            })
+            .map(this.cleanProof);
     }
 
     /**
-     * Strips out anything we don't necessarily have to store.
+     * Returns a minimal proof object with only essential properties
      */
     private cleanProof(proof: Proof): Proof {
         return {

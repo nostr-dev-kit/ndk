@@ -176,10 +176,16 @@ export class NDKNip55Signer implements NDKSigner {
 
             console.log("intent", intent);
 
+            // TODO
+            // If encryption is unsuccessful, a resultCode of -1 is still returned with the following value in the event, result, and signature properties
+            // "Could not decrypt the message", ideally a different resultCode, error, or null should be returned
             // If the activity operation succeeded
             if (intent.resultCode === -1) {
                 const intentExtra: IntentExtra = intent.extra;
                 console.log("Signer result:", intentExtra);
+                if (intentExtra.result === "Could not decrypt the message") {
+                    throw new Error("Encryption failed");
+                }
                 return intentExtra.result;
                 // If the activity operation was canceled, error out
             } else if (intent.resultCode === 0) {
@@ -215,12 +221,17 @@ export class NDKNip55Signer implements NDKSigner {
             console.log("intent", intent);
 
             // TODO
-            // If decryption is unsuccessful, a resultCode of -1 is still returned with the following value in the signature
-            // "Could not decrypt the message", ideally a different resultCode or error should be returned
+            // If decryption is unsuccessful, a resultCode of -1 is still returned with the following value in the event, result, and signature properties
+            // "Could not decrypt the message", ideally a different resultCode, error, or null should be returned
+            // The encrypted text could be "Could not decrypt the message", so if we error when that is returned we'll be unable
+            // to decrypt messages containing that text
             // If the activity operation succeeded
             if (intent.resultCode === -1) {
                 const intentExtra: IntentExtra = intent.extra;
                 console.log("Signer result:", intentExtra);
+                if (intentExtra.result === "Could not decrypt the message") {
+                    throw new Error("Decryption failed");
+                }
                 return intentExtra.result;
                 // If the activity operation was canceled, error out
             } else if (intent.resultCode === 0) {
@@ -255,10 +266,16 @@ export class NDKNip55Signer implements NDKSigner {
 
             console.log("intent", intent);
 
+            // TODO
+            // If encryption is unsuccessful, a resultCode of -1 is still returned with the following value in the event, result, and signature properties
+            // "Could not decrypt the message", ideally a different resultCode, error, or null should be returned
             // If the activity operation succeeded
             if (intent.resultCode === -1) {
                 const intentExtra: IntentExtra = intent.extra;
                 console.log("Signer result:", intentExtra);
+                if (intentExtra.result === "Could not decrypt the message") {
+                    throw new Error("Encryption failed");
+                }
                 // TODO
                 // Look into if we need a queue like for NIP-07
                 // return this.queueNip04("encrypt", recipientHexPubKey, value);
@@ -297,12 +314,17 @@ export class NDKNip55Signer implements NDKSigner {
             console.log("intent", intent);
 
             // TODO
-            // If decryption is unsuccessful, a resultCode of -1 is still returned with the following value in the signature
-            // "Could not decrypt the message", ideally a different resultCode or error should be returned
+            // If decryption is unsuccessful, a resultCode of -1 is still returned with the following value in the event, result, and signature properties
+            // "Could not decrypt the message", ideally a different resultCode, error, or null should be returned
+            // The encrypted text could be "Could not decrypt the message", so if we error when that is returned we'll be unable
+            // to decrypt messages containing that text
             // If the activity operation succeeded
             if (intent.resultCode === -1) {
                 const intentExtra: IntentExtra = intent.extra;
                 console.log("Signer result:", intentExtra);
+                if (intentExtra.result === "Could not decrypt the message") {
+                    throw new Error("Decryption failed");
+                }
                 // TODO
                 // Look into if we need a queue like for NIP-07
                 // return this.queueNip04("decrypt", senderHexPubKey, value);

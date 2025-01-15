@@ -11,7 +11,6 @@ export const useNDKSessionStore = create<SessionState>()((set, get) => ({
     ndk: undefined,
     muteList: new Set(),
     muteListEvent: undefined,
-    randomId: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
     events: new Map(),
     wot: new Map(),
 

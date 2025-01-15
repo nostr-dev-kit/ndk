@@ -44,6 +44,11 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     private profileCache: LRUCache<string, NDKCacheEntry<NDKUserProfile>>;
     private unpublishedEventIds: Set<string> = new Set();
 
+    /**
+     * This tracks the events we have written to the database along with their timestamp.
+     */
+    private knownEventTimestamps: Map<string, number> = new Map();
+
     constructor(dbName: string, maxProfiles: number = 200) {
         this.dbName = dbName ?? 'ndk-cache';
         this.profileCache = new LRUCache({ maxSize: maxProfiles });
@@ -87,8 +92,19 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
             });
         }
 
+        console.log('CACHE ready');
+        
         this.ready = true;
         this.locking = true;
+
+        // load all the event timestamps
+        const start = performance.now();
+        const events = await this.db.getAllAsync(`SELECT id, created_at FROM events`) as {id: string, created_at: number}[];    
+        for (const event of events) {
+            this.knownEventTimestamps.set(event.id, event.created_at);
+        }
+        const end = performance.now();
+        console.log('known event timestamps' + this.knownEventTimestamps.size + ' it took ' + (end - start) + 'ms');
 
         Promise.all(this.pendingCallbacks.map((f) => {
             try {
@@ -152,23 +168,40 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
 
     async setEvent(event: NDKEvent, filters: NDKFilter[], relay?: NDKRelay): Promise<void> {
         this.onReady(async () => {
+            // check if the event is already in the database and if it is, check if it's newer than the event we're setting
+            const existingEvent = this.knownEventTimestamps.get(event.tagId());
+            if (existingEvent && existingEvent >= event.created_at!) return;
+
+            // set the event timestamp
+            this.knownEventTimestamps.set(event.tagId(), event.created_at!);
+            
+            if (event.kind === 3) console.log('SET EVENT', event.kind, event.created_at, event.id.substring(0, 8), relay?.url);
             // is the event replaceable?
             if (event.isReplaceable()) {
-                await Promise.all([
-                    this.db.runAsync(`DELETE FROM events WHERE id = ?;`, [event.id]),
-                    this.db.runAsync(`DELETE FROM event_tags WHERE event_id = ?;`, [event.id]),
-                ]);
-                return;
+                console.log('DELETING EVENT', event.tagId());
+                try {
+                    this.db.runSync(`DELETE FROM events WHERE id = ?;`, [event.tagId()]),
+                    this.db.runSync(`DELETE FROM event_tags WHERE event_id = ?;`, [event.tagId()]),
+                    console.log('DELETED EVENT', event.tagId());
+                } catch (e) {
+                    console.error('error deleting event', e, event.tagId());
+                }
             }
 
+            if (event.kind === 3) console.log('INSERTING EVENT', event.tagId());
+
             this.db.runAsync(`INSERT INTO events (id, created_at, pubkey, event, kind, relay) VALUES (?, ?, ?, ?, ?, ?);`, [
-                event.id,
+                event.tagId(),
                 event.created_at!,
                 event.pubkey,
                 event.serialize(true, true),
                 event.kind!,
                 relay?.url || '',
-            ])
+            ]).then(() => {
+                if (event.kind === 3) console.log('👉 INSERTED EVENT', event.kind, event.encode());
+            }).catch((e) => {
+                if (event.kind === 3) console.error('error setting event', e, event.tagId());
+            });
 
             const filterTags: [string, string][] = event.tags.filter((tag) => tag[0].length === 1).map((tag) => [tag[0], tag[1]]);
             if (filterTags.length < 10) {

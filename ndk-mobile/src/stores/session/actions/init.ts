@@ -5,6 +5,8 @@ import { SettingsStore } from '../../../types';
 import { NDKCacheAdapterSqlite } from '../../../cache-adapter/sqlite';
 import { addWotEntries, shouldUpdateWot, wotEntries } from './wot';
 
+
+
 export const initSession = (
     ndk: NDK,
     user: NDKUser,
@@ -17,13 +19,43 @@ export const initSession = (
     const { addEvent } = get();
     let follows: Hexpubkey[] = [];
     let kindFollows = new Set<Hexpubkey>();
-    const filters = generateFilters(user, opts);
+    const filters = generateFilters(ndk, user, opts);
+    console.log('GENERATED FILTERS', filters);
     const sub = ndk.subscribe(filters, { groupable: false, closeOnEose: false, ...(opts.subOpts || {}) }, undefined, false);
     let eosed = false;
 
+    let updateFollowTimer: NodeJS.Timeout | undefined;
+
+    const debouncedUpdateFollows = () => {
+        if (updateFollowTimer) clearTimeout(updateFollowTimer);
+
+        updateFollowTimer = setTimeout(updateFollows, 50);
+    }
+
+    const updateFollows = () => {
+        set({ follows: Array.from(new Set([ ...follows, ...Array.from(kindFollows) ])) });
+    }
+
+    const handleKindFollowEvent = (event: NDKEvent) => {
+        let modified = false;
+        for (const tag of event.getMatchingTags('p')) {
+            if (!kindFollows.has(tag[1])) {
+                kindFollows.add(tag[1]);
+                modified = true;
+            }
+        }
+
+        if (modified) {
+            if (eosed) updateFollows();
+            else debouncedUpdateFollows();
+        }
+    }
+
     const handleEvent = (event: NDKEvent) => {
+        console.log("👉 HANDLE EVENT", event.kind);
         addEvent(event, () => {
             if (event.kind === NDKKind.Contacts) {
+                console.log('CONTACTS EVENT', event.created_at);
                 follows = event.tags.filter((tag) => tag[0] === 'p' && !!tag[1]).map((tag) => tag[1]);
 
                 // if we have already eosed, get the pubkeys that are not in the wotEntries and add them to the wotEntries
@@ -37,13 +69,7 @@ export const initSession = (
                 
                 return { follows: [ ...follows, ...Array.from(kindFollows) ] };
             } else if (event.kind === 967) {
-                for (const tag of event.getMatchingTags('p')) {
-                    if (!kindFollows.has(tag[1])) {
-                        kindFollows.add(tag[1]);
-                    }
-                }
-
-                return { follows: [ ...follows, ...Array.from(kindFollows) ] };
+                handleKindFollowEvent(event);
             } else if (event.kind === NDKKind.MuteList) {
                 const muteList = new Set(event.tags.filter((tag) => tag[0] === 'p' && !!tag[1]).map((tag) => tag[1]));
                 return { muteList, muteListEvent: NDKList.from(event) };

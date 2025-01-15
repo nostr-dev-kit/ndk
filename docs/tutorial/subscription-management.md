@@ -65,3 +65,18 @@ const sub = ndk.subscribe({ kinds: [ 1 ], "#t": [ "nostr" ] }, { groupingDelayTy
 When using `at-least` the subscription timer will be reset every time a new subscription is added to the group.
 
 For example, if you create two subscriptions, one at `t=0` and the other one 50ms later (`t=50ms`), with a `groupableDelay` of `200ms`, `at-least` would send the subscription at `t=250ms` and `at-most` would send it at `t=200ms`.
+
+### Deferred subscription
+Another useful interface to creating subscriptions is to pass event handlers within the subscription itself. In this way, the subscription will first connect the event handlers and then auto-start the subscription.
+
+```ts
+const sub = ndk.subscribe(
+    { kinds: [1] }, // filters
+    { groupable: false }, /// subscription options
+    relaySet, // optional relaySet
+    {
+        onEvent: (event: NDKEvent) => console.log('an event was received', event.id),
+        onEose: () => console.log('the subscription EOSED'),
+    }
+)
+```

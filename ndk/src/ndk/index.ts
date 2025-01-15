@@ -188,6 +188,11 @@ export const DEFAULT_BLACKLISTED_RELAYS = [
     // "wss://purplepag.es/", // This is a hack, since this is a mostly read-only relay, but not fully. Once we have relay routing this can be removed so it only receives the supported kinds
 ];
 
+export interface NDKSubscriptionEventHandlers {
+    onEvent?: (event: NDKEvent, relay?: NDKRelay) => void;
+    onEose?: (sub: NDKSubscription) => void;
+}
+
 /**
  * The NDK class is the main entry point to the library.
  *
@@ -496,14 +501,14 @@ export class NDK extends EventEmitter<{
      * @param filters
      * @param opts
      * @param relaySet explicit relay set to use
-     * @param autoStart automatically start the subscription
+     * @param autoStart automatically start the subscription -- this can be a boolean or an object with `onEvent` and `onEose` handlers
      * @returns NDKSubscription
      */
     public subscribe(
         filters: NDKFilter | NDKFilter[],
         opts?: NDKSubscriptionOptions,
         relaySet?: NDKRelaySet,
-        autoStart = true
+        autoStart: boolean | NDKSubscriptionEventHandlers = true
     ): NDKSubscription {
         const subscription = new NDKSubscription(this, filters, opts, relaySet);
         this.subManager.add(subscription);
@@ -529,6 +534,10 @@ export class NDK extends EventEmitter<{
         }
 
         if (autoStart) {
+            if (typeof autoStart === "object") {
+                if (autoStart.onEvent) subscription.on("event", autoStart.onEvent);
+                if (autoStart.onEose) subscription.on("eose", autoStart.onEose);
+            }
             setTimeout(() => subscription.start(), 0);
         }
 

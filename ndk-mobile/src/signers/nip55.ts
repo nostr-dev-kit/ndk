@@ -96,13 +96,12 @@ export class NDKNip55Signer implements NDKSigner {
      */
     public async sign(event: NostrEvent): Promise<string> {
         const eventJson = JSON.stringify(event);
-        const npub: Npub = this.convertHexToNpub(event.pubkey);
 
         const extraPayload: IntentExtra = {
             package: "com.greenart7c3.nostrsigner", // TODO Detect and specify a general app package
             type: "sign_event",
             id: event.id,
-            current_user: npub,
+            current_user: event.pubkey,
         };
 
         try {
@@ -119,8 +118,7 @@ export class NDKNip55Signer implements NDKSigner {
             if (intent.resultCode === -1) {
                 const intentExtra: IntentExtra = intent.extra;
                 console.log("Signer result:", intentExtra);
-                const sig: string = intentExtra?.signature;
-                return sig;
+                return intentExtra.result;
                 // If the activity operation was canceled, error out
             } else if (intent.resultCode === 0) {
                 throw new Error("Canceled");
@@ -161,20 +159,18 @@ export class NDKNip55Signer implements NDKSigner {
 
     public async nip44Encrypt(recipient: NDKUser, value: string): Promise<string> {
         const recipientHexPubKey = recipient.pubkey;
+
         // TODO
-        // Get the sender's pubkey if needed
-        // const senderNpub: Npub = this.convertHexToNpub(sender.pubkey);
+        // Get the logged in user's pubkey if needed
+        // const loggedInUserHexPubKey = loggedInUser.pubkey;
 
         const extraPayload: IntentExtra = {
             package: "com.greenart7c3.nostrsigner", // TODO Detect and specify a general app package
             type: "nip44_encrypt",
             // TODO
-            // Look into what ID should be used here, can use the recipient's pubkey for now
-            id: recipientHexPubKey,
-            // TODO
-            // Look into if we need this option, and if we do we can add an optional parameter to the NDKSigner interface for the sender's NDKUser then get their npub
-            // current_user: senderNpub,
-            pubKey: recipientHexPubKey,
+            // Look into if we need this option, and if we do we can add an optional parameter to the NDKSigner interface for the logged in NDKUser then get their pubkey
+            // current_user: loggedInUserHexPubKey,
+            pubkey: recipientHexPubKey,
         };
 
         try {
@@ -190,7 +186,7 @@ export class NDKNip55Signer implements NDKSigner {
             if (intent.resultCode === -1) {
                 const intentExtra: IntentExtra = intent.extra;
                 console.log("Signer result:", intentExtra);
-                return "Encryption successful";
+                return intentExtra.result;
                 // If the activity operation was canceled, error out
             } else if (intent.resultCode === 0) {
                 throw new Error("Canceled");
@@ -209,19 +205,16 @@ export class NDKNip55Signer implements NDKSigner {
         const senderHexPubKey = sender.pubkey;
 
         // TODO
-        // Get the recipient's pubkey if needed
-        // const recipientNpub: Npub = this.convertHexToNpub(recipient.pubkey);
+        // Get the logged in user's pubkey if needed
+        // const loggedInUserHexPubKey = loggedInUser.pubkey;
 
         const extraPayload: IntentExtra = {
             package: "com.greenart7c3.nostrsigner", // TODO Detect and specify a general app package
             type: "nip44_decrypt",
             // TODO
-            // Look into what ID should be used here, can use the sender's pubkey for now
-            id: senderHexPubKey,
-            // TODO
-            // Look into if we need this option, and if we do we can add an optional parameter to the NDKSigner interface for the recipient's NDKUser then get their npub
-            // current_user: recipientNpub,
-            pubKey: senderHexPubKey,
+            // Look into if we need this option, and if we do we can add an optional parameter to the NDKSigner interface for the logged in NDKUser then get their pubkey
+            // current_user: loggedInUserHexPubKey,
+            pubkey: senderHexPubKey,
         };
 
         try {
@@ -240,7 +233,7 @@ export class NDKNip55Signer implements NDKSigner {
             if (intent.resultCode === -1) {
                 const intentExtra: IntentExtra = intent.extra;
                 console.log("Signer result:", intentExtra);
-                return "Decryption successful";
+                return intentExtra.result;
                 // If the activity operation was canceled, error out
             } else if (intent.resultCode === 0) {
                 throw new Error("Canceled");
@@ -259,19 +252,16 @@ export class NDKNip55Signer implements NDKSigner {
         const recipientHexPubKey = recipient.pubkey;
 
         // TODO
-        // Get the sender's pubkey if needed
-        // const senderNpub: Npub = this.convertHexToNpub(sender.pubkey);
+        // Get the logged in user's pubkey if needed
+        // const loggedInUserHexPubKey = loggedInUser.pubkey;
 
         const extraPayload: IntentExtra = {
             package: "com.greenart7c3.nostrsigner", // TODO Detect and specify a general app package
             type: "nip04_encrypt",
             // TODO
-            // Look into what ID should be used here, can use the recipient's pubkey for now
-            id: recipientHexPubKey,
-            // TODO
-            // Look into if we need this option, and if we do we can add an optional parameter to the NDKSigner interface for the sender's NDKUser then get their npub
-            // current_user: senderNpub,
-            pubKey: recipientHexPubKey,
+            // Look into if we need this option, and if we do we can add an optional parameter to the NDKSigner interface for the logged in NDKUser then get their pubkey
+            // current_user: loggedInUserHexPubKey,
+            pubkey: recipientHexPubKey,
         };
 
         try {
@@ -290,7 +280,7 @@ export class NDKNip55Signer implements NDKSigner {
                 // TODO
                 // Look into if we need a queue like for NIP-07
                 // return this.queueNip04("encrypt", recipientHexPubKey, value);
-                return "Encryption successful";
+                return intentExtra.result;
                 // If the activity operation was canceled, error out
             } else if (intent.resultCode === 0) {
                 throw new Error("Canceled");
@@ -309,19 +299,16 @@ export class NDKNip55Signer implements NDKSigner {
         const senderHexPubKey = sender.pubkey;
 
         // TODO
-        // Get the recipient's pubkey if needed
-        // const recipientNpub: Npub = this.convertHexToNpub(recipient.pubkey);
+        // Get the logged in user's pubkey if needed
+        // const loggedInUserHexPubKey = loggedInUser.pubkey;
 
         const extraPayload: IntentExtra = {
             package: "com.greenart7c3.nostrsigner", // TODO Detect and specify a general app package
             type: "nip04_decrypt",
             // TODO
-            // Look into what ID should be used here, can use the sender's pubkey for now
-            id: senderHexPubKey,
-            // TODO
-            // Look into if we need this option, and if we do we can add an optional parameter to the NDKSigner interface for the recipient's NDKUser then get their npub
-            // current_user: recipientNpub,
-            pubKey: senderHexPubKey,
+            // Look into if we need this option, and if we do we can add an optional parameter to the NDKSigner interface for the logged in NDKUser then get their pubkey
+            // current_user: loggedInUserHexPubKey,
+            pubkey: senderHexPubKey,
         };
 
         try {
@@ -343,7 +330,7 @@ export class NDKNip55Signer implements NDKSigner {
                 // TODO
                 // Look into if we need a queue like for NIP-07
                 // return this.queueNip04("decrypt", senderHexPubKey, value);
-                return "Decryption successful";
+                return intentExtra.result;
                 // If the activity operation was canceled, error out
             } else if (intent.resultCode === 0) {
                 throw new Error("Canceled");
@@ -439,17 +426,6 @@ export class NDKNip55Signer implements NDKSigner {
         }
     }
 
-    private convertHexToNpub(pubkey: Hexpubkey): Npub {
-        try {
-            const npub = nip19.npubEncode(pubkey);
-
-            return npub;
-        } catch (error) {
-            console.error("Error unable to convert hex to npub:", error);
-            throw error;
-        }
-    }
-
     private throwNoExternalSignerErr(errMsg: string) {
         if (errMsg.startsWith(NO_EXTERNAL_SIGNER_ERR_MSG)) {
             throw new Error("NIP-55 external signer not available");
@@ -477,7 +453,7 @@ export class NDKNip55Signer implements NDKSigner {
             if (intent.resultCode === -1) {
                 const intentExtra: IntentExtra = intent.extra;
                 console.log("Signer result:", intentExtra);
-                const npub: Npub = intentExtra?.signature;
+                const npub: Npub = intentExtra.result;
                 const pubkey: Hexpubkey = this.convertNpubToHex(npub);
                 return { pubkey };
                 // If the activity operation was canceled

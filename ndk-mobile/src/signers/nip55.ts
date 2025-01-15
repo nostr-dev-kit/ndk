@@ -101,7 +101,7 @@ export class NDKNip55Signer implements NDKSigner {
             package: "com.greenart7c3.nostrsigner", // TODO Detect and specify a general app package
             type: "sign_event",
             id: event.id,
-            current_user: event.pubkey,
+            current_user: this._user.pubkey,
         };
 
         try {
@@ -160,16 +160,10 @@ export class NDKNip55Signer implements NDKSigner {
     public async nip44Encrypt(recipient: NDKUser, value: string): Promise<string> {
         const recipientHexPubKey = recipient.pubkey;
 
-        // TODO
-        // Get the logged in user's pubkey if needed
-        // const loggedInUserHexPubKey = loggedInUser.pubkey;
-
         const extraPayload: IntentExtra = {
             package: "com.greenart7c3.nostrsigner", // TODO Detect and specify a general app package
             type: "nip44_encrypt",
-            // TODO
-            // Look into if we need this option, and if we do we can add an optional parameter to the NDKSigner interface for the logged in NDKUser then get their pubkey
-            // current_user: loggedInUserHexPubKey,
+            current_user: this._user.pubkey,
             pubkey: recipientHexPubKey,
         };
 
@@ -204,16 +198,10 @@ export class NDKNip55Signer implements NDKSigner {
     public async nip44Decrypt(sender: NDKUser, value: string): Promise<string> {
         const senderHexPubKey = sender.pubkey;
 
-        // TODO
-        // Get the logged in user's pubkey if needed
-        // const loggedInUserHexPubKey = loggedInUser.pubkey;
-
         const extraPayload: IntentExtra = {
             package: "com.greenart7c3.nostrsigner", // TODO Detect and specify a general app package
             type: "nip44_decrypt",
-            // TODO
-            // Look into if we need this option, and if we do we can add an optional parameter to the NDKSigner interface for the logged in NDKUser then get their pubkey
-            // current_user: loggedInUserHexPubKey,
+            current_user: this._user.pubkey,
             pubkey: senderHexPubKey,
         };
 
@@ -251,16 +239,10 @@ export class NDKNip55Signer implements NDKSigner {
     public async nip04Encrypt(recipient: NDKUser, value: string): Promise<string> {
         const recipientHexPubKey = recipient.pubkey;
 
-        // TODO
-        // Get the logged in user's pubkey if needed
-        // const loggedInUserHexPubKey = loggedInUser.pubkey;
-
         const extraPayload: IntentExtra = {
             package: "com.greenart7c3.nostrsigner", // TODO Detect and specify a general app package
             type: "nip04_encrypt",
-            // TODO
-            // Look into if we need this option, and if we do we can add an optional parameter to the NDKSigner interface for the logged in NDKUser then get their pubkey
-            // current_user: loggedInUserHexPubKey,
+            current_user: this._user.pubkey,
             pubkey: recipientHexPubKey,
         };
 
@@ -298,16 +280,10 @@ export class NDKNip55Signer implements NDKSigner {
     public async nip04Decrypt(sender: NDKUser, value: string): Promise<string> {
         const senderHexPubKey = sender.pubkey;
 
-        // TODO
-        // Get the logged in user's pubkey if needed
-        // const loggedInUserHexPubKey = loggedInUser.pubkey;
-
         const extraPayload: IntentExtra = {
             package: "com.greenart7c3.nostrsigner", // TODO Detect and specify a general app package
             type: "nip04_decrypt",
-            // TODO
-            // Look into if we need this option, and if we do we can add an optional parameter to the NDKSigner interface for the logged in NDKUser then get their pubkey
-            // current_user: loggedInUserHexPubKey,
+            current_user: this._user.pubkey,
             pubkey: senderHexPubKey,
         };
 

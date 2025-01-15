@@ -38,8 +38,6 @@ export class NDKNip55Signer implements NDKSigner {
     private _user: NDKUser | undefined;
 
     public async blockUntilReady(permissions?: NDKNip55Permissions[]): Promise<NDKUser> {
-        // TODO
-        // Check if app has already been granted permissions
         let response = await this.getPublicKey(permissions);
 
         if (response?.canceled) {

@@ -12,6 +12,10 @@ import * as IntentLauncher from "expo-intent-launcher";
 const DEFAULT_ENCRYPTION_SCHEME = "nip44" as const;
 
 const NO_EXTERNAL_SIGNER_ERR_MSG = "android.content.ActivityNotFoundException";
+const INVALID_USER_PUBKEY_ERR_MSG = "Undefined or invalid user pubkey";
+const INVALID_SENDER_PUBKEY_ERR_MSG = "Undefined or invalid sender pubkey";
+const INVALID_RECIPIENT_PUBKEY_ERR_MSG = "Undefined or invalid recipient pubkey";
+const INVALID_EVENT_ID_ERR_MSG = "Undefined or invalid event id";
 
 type NDKNip55Permissions = {
     permission: string;
@@ -76,16 +80,22 @@ export class NDKNip55Signer implements NDKSigner {
      * @throws Error if the NIP-55 compatible android mobile client is not available and is unable to launch the sign intent
      */
     public async sign(event: NostrEvent): Promise<string> {
-        const eventJson = JSON.stringify(event);
-
-        const extraPayload: IntentExtra = {
-            package: "com.greenart7c3.nostrsigner", // TODO Detect and specify a general app package
-            type: "sign_event",
-            id: event.id,
-            current_user: this._user.pubkey,
-        };
-
         try {
+            const eventID = event?.id;
+            this.hasValidEventID(eventID, INVALID_EVENT_ID_ERR_MSG);
+
+            const userPubkey = this._user?.pubkey;
+            this.isValidPubkey(userPubkey, INVALID_USER_PUBKEY_ERR_MSG);
+
+            const eventJson = JSON.stringify(event);
+
+            const extraPayload: IntentExtra = {
+                package: "com.greenart7c3.nostrsigner", // TODO Detect and specify a general app package
+                type: "sign_event",
+                id: eventID,
+                current_user: userPubkey,
+            };
+
             const intent = await IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
                 category: "android.intent.category.BROWSABLE",
                 data: `nostrsigner:${eventJson}`,
@@ -93,12 +103,9 @@ export class NDKNip55Signer implements NDKSigner {
                 extra: extraPayload,
             });
 
-            console.log("intent", intent);
-
             // If the activity operation succeeded
             if (intent.resultCode === -1) {
                 const intentExtra: IntentExtra = intent.extra;
-                console.log("Signer result:", intentExtra);
                 return intentExtra.result;
                 // If the activity operation was canceled, error out
             } else if (intent.resultCode === 0) {
@@ -139,23 +146,25 @@ export class NDKNip55Signer implements NDKSigner {
     }
 
     public async nip44Encrypt(recipient: NDKUser, value: string): Promise<string> {
-        const recipientHexPubKey = recipient.pubkey;
-
-        const extraPayload: IntentExtra = {
-            package: "com.greenart7c3.nostrsigner", // TODO Detect and specify a general app package
-            type: "nip44_encrypt",
-            current_user: this._user.pubkey,
-            pubkey: recipientHexPubKey,
-        };
-
         try {
+            const recipientHexPubKey = recipient?.pubkey;
+            this.isValidPubkey(recipientHexPubKey, INVALID_RECIPIENT_PUBKEY_ERR_MSG);
+
+            const userPubkey = this._user?.pubkey;
+            this.isValidPubkey(userPubkey, INVALID_USER_PUBKEY_ERR_MSG);
+
+            const extraPayload: IntentExtra = {
+                package: "com.greenart7c3.nostrsigner", // TODO Detect and specify a general app package
+                type: "nip44_encrypt",
+                current_user: userPubkey,
+                pubkey: recipientHexPubKey,
+            };
+
             const intent = await IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
                 category: "android.intent.category.BROWSABLE",
                 data: `nostrsigner:${value}`,
                 extra: extraPayload,
             });
-
-            console.log("intent", intent);
 
             // TODO
             // If encryption is unsuccessful, a resultCode of -1 is still returned with the following value in the event, result, and signature properties
@@ -163,7 +172,6 @@ export class NDKNip55Signer implements NDKSigner {
             // If the activity operation succeeded
             if (intent.resultCode === -1) {
                 const intentExtra: IntentExtra = intent.extra;
-                console.log("Signer result:", intentExtra);
                 if (intentExtra.result === "Could not decrypt the message") {
                     throw new Error("Encryption failed");
                 }
@@ -183,23 +191,25 @@ export class NDKNip55Signer implements NDKSigner {
     }
 
     public async nip44Decrypt(sender: NDKUser, value: string): Promise<string> {
-        const senderHexPubKey = sender.pubkey;
-
-        const extraPayload: IntentExtra = {
-            package: "com.greenart7c3.nostrsigner", // TODO Detect and specify a general app package
-            type: "nip44_decrypt",
-            current_user: this._user.pubkey,
-            pubkey: senderHexPubKey,
-        };
-
         try {
+            const senderHexPubKey = sender?.pubkey;
+            this.isValidPubkey(senderHexPubKey, INVALID_SENDER_PUBKEY_ERR_MSG);
+
+            const userPubkey = this._user?.pubkey;
+            this.isValidPubkey(userPubkey, INVALID_USER_PUBKEY_ERR_MSG);
+
+            const extraPayload: IntentExtra = {
+                package: "com.greenart7c3.nostrsigner", // TODO Detect and specify a general app package
+                type: "nip44_decrypt",
+                current_user: userPubkey,
+                pubkey: senderHexPubKey,
+            };
+
             const intent = await IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
                 category: "android.intent.category.BROWSABLE",
                 data: `nostrsigner:${value}`,
                 extra: extraPayload,
             });
-
-            console.log("intent", intent);
 
             // TODO
             // If decryption is unsuccessful, a resultCode of -1 is still returned with the following value in the event, result, and signature properties
@@ -209,7 +219,6 @@ export class NDKNip55Signer implements NDKSigner {
             // If the activity operation succeeded
             if (intent.resultCode === -1) {
                 const intentExtra: IntentExtra = intent.extra;
-                console.log("Signer result:", intentExtra);
                 if (intentExtra.result === "Could not decrypt the message") {
                     throw new Error("Decryption failed");
                 }
@@ -229,23 +238,25 @@ export class NDKNip55Signer implements NDKSigner {
     }
 
     public async nip04Encrypt(recipient: NDKUser, value: string): Promise<string> {
-        const recipientHexPubKey = recipient.pubkey;
-
-        const extraPayload: IntentExtra = {
-            package: "com.greenart7c3.nostrsigner", // TODO Detect and specify a general app package
-            type: "nip04_encrypt",
-            current_user: this._user.pubkey,
-            pubkey: recipientHexPubKey,
-        };
-
         try {
+            const recipientHexPubKey = recipient?.pubkey;
+            this.isValidPubkey(recipientHexPubKey, INVALID_RECIPIENT_PUBKEY_ERR_MSG);
+
+            const userPubkey = this._user?.pubkey;
+            this.isValidPubkey(userPubkey, INVALID_USER_PUBKEY_ERR_MSG);
+
+            const extraPayload: IntentExtra = {
+                package: "com.greenart7c3.nostrsigner", // TODO Detect and specify a general app package
+                type: "nip04_encrypt",
+                current_user: userPubkey,
+                pubkey: recipientHexPubKey,
+            };
+
             const intent = await IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
                 category: "android.intent.category.BROWSABLE",
                 data: `nostrsigner:${value}`,
                 extra: extraPayload,
             });
-
-            console.log("intent", intent);
 
             // TODO
             // If encryption is unsuccessful, a resultCode of -1 is still returned with the following value in the event, result, and signature properties
@@ -253,7 +264,6 @@ export class NDKNip55Signer implements NDKSigner {
             // If the activity operation succeeded
             if (intent.resultCode === -1) {
                 const intentExtra: IntentExtra = intent.extra;
-                console.log("Signer result:", intentExtra);
                 if (intentExtra.result === "Could not decrypt the message") {
                     throw new Error("Encryption failed");
                 }
@@ -273,23 +283,25 @@ export class NDKNip55Signer implements NDKSigner {
     }
 
     public async nip04Decrypt(sender: NDKUser, value: string): Promise<string> {
-        const senderHexPubKey = sender.pubkey;
-
-        const extraPayload: IntentExtra = {
-            package: "com.greenart7c3.nostrsigner", // TODO Detect and specify a general app package
-            type: "nip04_decrypt",
-            current_user: this._user.pubkey,
-            pubkey: senderHexPubKey,
-        };
-
         try {
+            const senderHexPubKey = sender?.pubkey;
+            this.isValidPubkey(senderHexPubKey, INVALID_SENDER_PUBKEY_ERR_MSG);
+
+            const userPubkey = this._user?.pubkey;
+            this.isValidPubkey(userPubkey, INVALID_USER_PUBKEY_ERR_MSG);
+
+            const extraPayload: IntentExtra = {
+                package: "com.greenart7c3.nostrsigner", // TODO Detect and specify a general app package
+                type: "nip04_decrypt",
+                current_user: userPubkey,
+                pubkey: senderHexPubKey,
+            };
+
             const intent = await IntentLauncher.startActivityAsync("android.intent.action.VIEW", {
                 category: "android.intent.category.BROWSABLE",
                 data: `nostrsigner:${value}`,
                 extra: extraPayload,
             });
-
-            console.log("intent", intent);
 
             // TODO
             // If decryption is unsuccessful, a resultCode of -1 is still returned with the following value in the event, result, and signature properties
@@ -299,7 +311,6 @@ export class NDKNip55Signer implements NDKSigner {
             // If the activity operation succeeded
             if (intent.resultCode === -1) {
                 const intentExtra: IntentExtra = intent.extra;
-                console.log("Signer result:", intentExtra);
                 if (intentExtra.result === "Could not decrypt the message") {
                     throw new Error("Decryption failed");
                 }
@@ -335,6 +346,18 @@ export class NDKNip55Signer implements NDKSigner {
         }
     }
 
+    private isValidPubkey(pubkey: Hexpubkey, errMsg: string) {
+        if (pubkey === undefined || typeof pubkey !== "string") {
+            throw new Error(errMsg);
+        }
+    }
+
+    private hasValidEventID(eventID: string, errMsg: string) {
+        if (eventID === undefined || typeof eventID !== "string") {
+            throw new Error(errMsg);
+        }
+    }
+
     private throwNoExternalSignerErr(errMsg: string) {
         if (errMsg.startsWith(NO_EXTERNAL_SIGNER_ERR_MSG)) {
             throw new Error("NIP-55 external signer not available");
@@ -356,22 +379,17 @@ export class NDKNip55Signer implements NDKSigner {
                 extra: extraPayload,
             });
 
-            console.log("intent", intent);
-
             // If the activity operation succeeded
             if (intent.resultCode === -1) {
                 const intentExtra: IntentExtra = intent.extra;
-                console.log("Signer result:", intentExtra);
                 const npub: Npub = intentExtra.result;
                 const pubkey: Hexpubkey = this.convertNpubToHex(npub);
                 return { pubkey };
                 // If the activity operation was canceled
             } else if (intent.resultCode === 0) {
-                console.log("Get public key intent canceled");
                 return { canceled: true };
                 // If the activity operation returns an unsupported user-defined custom value
             } else {
-                console.log("Get public key intent returned an unsupported result code");
                 return { unsupportedResultCode: true };
             }
         } catch (error) {

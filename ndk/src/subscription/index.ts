@@ -109,6 +109,20 @@ export interface NDKSubscriptionOptions {
      * @default false
      */
     skipOptimisticPublishEvent?: boolean;
+
+    /**
+     * Remove filter constraints when querying the cache.
+     * 
+     * This allows setting more aggressive filters that will be removed when hitting the cache.
+     * 
+     * Useful uses of this include removing `since` or `until` constraints or `limit` filters.
+     * 
+     * @example
+     * ndk.subscribe({ kinds: [1], since: 1710000000, limit: 10 }, { cacheUnconstrainFilter: ['since', 'limit'] });
+     * 
+     * This will hit relays with the since and limit constraints, while loading from the cache without them.
+     */
+    cacheUnconstrainFilter?: (keyof NDKFilter)[];
 }
 
 /**
@@ -121,6 +135,7 @@ export const defaultOpts: NDKSubscriptionOptions = {
     groupable: true,
     groupableDelay: 100,
     groupableDelayType: "at-most",
+    cacheUnconstrainFilter: ['limit', 'since', 'until']
 };
 
 /**
@@ -232,6 +247,11 @@ export class NDKSubscription extends EventEmitter<{
 
     public skipOptimisticPublishEvent: boolean = false;
 
+    /**
+     * Filters to remove when querying the cache.
+     */
+    public cacheUnconstrainFilter?: Array<(keyof NDKFilter)>;
+
     public constructor(
         ndk: NDK,
         filters: NDKFilter | NDKFilter[],
@@ -244,23 +264,15 @@ export class NDKSubscription extends EventEmitter<{
         this.pool = opts?.pool || ndk.pool;
         this.opts = { ...defaultOpts, ...(opts || {}) };
         this.filters = filters instanceof Array ? filters : [filters];
-        this.subId = subId || opts?.subId;
+        this.subId = subId || this.opts.subId;
         this.internalId = Math.random().toString(36).substring(7);
         this.relaySet = relaySet;
-        this.debug = ndk.debug.extend(`subscription[${opts?.subId ?? this.internalId}]`);
-        this.skipVerification = opts?.skipVerification || false;
-        this.skipValidation = opts?.skipValidation || false;
-        this.closeOnEose = opts?.closeOnEose || false;
-        this.skipOptimisticPublishEvent = opts?.skipOptimisticPublishEvent || false;
-
-        // validate that the caller is not expecting a persistent
-        // subscription while using an option that will only hit the cache
-        if (
-            this.opts.cacheUsage === NDKSubscriptionCacheUsage.ONLY_CACHE &&
-            !this.opts.closeOnEose
-        ) {
-            throw new Error("Cannot use cache-only options with a persistent subscription");
-        }
+        this.debug = ndk.debug.extend(`subscription[${this.opts.subId ?? this.internalId}]`);
+        this.skipVerification = this.opts.skipVerification || false;
+        this.skipValidation = this.opts.skipValidation || false;
+        this.closeOnEose = this.opts.closeOnEose || false;
+        this.skipOptimisticPublishEvent = this.opts.skipOptimisticPublishEvent || false;
+        this.cacheUnconstrainFilter = this.opts.cacheUnconstrainFilter;
     }
 
     /**

@@ -561,6 +561,8 @@ export class NDKEvent extends EventEmitter {
      * Returns the "d" tag of a parameterized replaceable event or throws an error if the event isn't
      * a parameterized replaceable event.
      * @returns {string} the "d" tag of the event.
+     * 
+     * @deprecated Use `dTag` instead.
      */
     replaceableDTag() {
         if (this.kind && this.kind >= 30000 && this.kind <= 40000) {
@@ -606,15 +608,22 @@ export class NDKEvent extends EventEmitter {
     }
 
     /**
-     * Returns the "reference" value ("<kind>:<author-pubkey>:<d-tag>") for this replaceable event.
-     * @returns {string} The id
+     * Returns a stable reference value for a replaceable event.
+     * 
+     * Param replaceable events are returned in the expected format of `<kind>:<pubkey>:<d-tag>`.
+     * Kind-replaceable events are returned in the format of `<kind>:<pubkey>:`.
+     * 
+     * @returns {string} A stable reference value for replaceable events
      */
     tagAddress(): string {
-        if (!this.isParamReplaceable()) {
-            throw new Error("This must only be called on replaceable events");
+        if (this.isParamReplaceable()) {
+            const dTagId = this.dTag ?? ""; 
+            return `${this.kind}:${this.pubkey}:${dTagId}`;
+        } else if (this.isReplaceable()) {
+            return `${this.kind}:${this.pubkey}:`;
         }
-        const dTagId = this.replaceableDTag();
-        return `${this.kind}:${this.pubkey}:${dTagId}`;
+
+        throw new Error("Event is not a replaceable event");
     }
 
     /**

@@ -37,8 +37,8 @@ export async function getRelayListForUsers(
     // get all kind 10002 events from cache if we have an adapter and is locking
     if (ndk.cacheAdapter?.locking && !skipCache) {
         const cachedList = await ndk.fetchEvents(
-            { kinds: [3, 10002], authors: pubkeys },
-            { cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE }
+            { kinds: [3, 10002], authors: Array.from(new Set(pubkeys)) },
+            { cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE, subId: 'ndk-relay-list-fetch' }
         );
 
         // get list of relay lists from cache

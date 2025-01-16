@@ -53,7 +53,6 @@ const useNDKWallet = () => {
         }
 
         if (wallet) {
-            wallet.on('ready', () => console.log('cashu wallet ready'));
             wallet.on('ready', updateBalance);
             wallet.on('balance_updated', updateBalance);
         } else {

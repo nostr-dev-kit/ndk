@@ -1,7 +1,7 @@
-import { CashuPaymentInfo, LnPaymentInfo, NDKPaymentConfirmationCashu, NDKZapDetails, NDKEvent, NDKUser, NDKTag } from "@nostr-dev-kit/ndk";
+import { CashuPaymentInfo, LnPaymentInfo, NDKPaymentConfirmationCashu, NDKZapDetails, NDKEvent, NDKUser, NDKTag, NDKPaymentConfirmationLN } from "@nostr-dev-kit/ndk";
 import { NDKCashuWallet } from ".";
 import { createToken } from "../pay/nut";
-import { LNPaymentResult, payLn } from "../pay/ln";
+import { payLn } from "../pay/ln";
 import { getBolt11Amount } from "../../../utils/ln";
 import { Proof } from "@cashu/cashu-ts";
 import { createOutTxEvent } from "./txs";
@@ -24,12 +24,12 @@ export class PaymentHandler {
     }
 
     /**
-     * Pay a LN invoice with this wallet
+     * Pay a LN invoice with this wallet. This will used cashu proofs to pay a bolt11.
      */
     async lnPay(
         payment: PaymentWithOptionalZapInfo<LnPaymentInfo>,
         createTxEvent = true,
-    ): Promise<LNPaymentResult | undefined> {
+    ): Promise<NDKPaymentConfirmationLN | undefined> {
         if (!payment.pr) throw new Error("pr is required");
 
         console.log("[WALLET] lnPay", JSON.stringify(payment));
@@ -42,14 +42,15 @@ export class PaymentHandler {
             throw new Error("invoice amount is more than the amount passed in");
         }
 
-        const res = await payLn(this.wallet, payment.pr); // msat to sat
-        if (!res?.preimage) return;
+        const res = await payLn(this.wallet, payment.pr, {
+            amount: payment.amount,
+            unit: payment.unit,
+        }); // msat to sat
+        if (!res?.result?.preimage) return;
 
-        const updateRes = await this.wallet.state.update(res.walletChange);
+        if (createTxEvent) createOutTxEvent(this.wallet, payment, res);
 
-        if (createTxEvent) createOutTxEvent(this.wallet, payment, res, updateRes);
-
-        return res;
+        return res.result;
     }
 
     /**
@@ -63,8 +64,6 @@ export class PaymentHandler {
             amount = amount / 1000;
         }
 
-        console.log("[WALLET] cashuPay", JSON.stringify(payment));
-        
         const createResult = await createToken(
             this.wallet,
             amount,
@@ -80,11 +79,8 @@ export class PaymentHandler {
         const isP2pk = (p: Proof) => p.secret.startsWith('["P2PK"');
         const isNotP2pk = (p: Proof) => !isP2pk(p);
 
-        createResult.walletChange.reserve = createResult.send.proofs?.filter(isNotP2pk) ?? []
-        this.wallet.state.update(createResult.walletChange).then((updateRes) => {
-            createOutTxEvent(this.wallet, payment, createResult, updateRes);
-        })
+        createOutTxEvent(this.wallet, payment, createResult);
 
-        return createResult.send;
+        return createResult.result;
     }
 }

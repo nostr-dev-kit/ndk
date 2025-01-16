@@ -1,4 +1,4 @@
-import { NDKEvent, NDKKind } from '@nostr-dev-kit/ndk';
+import { NDKEvent } from '@nostr-dev-kit/ndk';
 import { firstIsNewer } from '../utils.js';
 import { SessionState } from '../types.js';
 
@@ -17,10 +17,6 @@ export const addEvent = (event: NDKEvent, onAdded, set) => {
         const kind = event.kind!;
         const newEvents = new Map(state.events);
         let existing = newEvents.get(kind) || [];
-
-        if (event.kind === NDKKind.BlossomList) {
-            console.log('event is blossom list', event.id, event.tags);
-        }
 
         if (event.isParamReplaceable()) {
             const existingEvent = existing.find((e) => e.dTag === event.dTag);

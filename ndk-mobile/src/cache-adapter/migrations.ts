@@ -74,5 +74,13 @@ export const migrations = [
                 wot INTEGER
             );`);
         },
+    },
+    {
+        version: 4,
+        // the format we use to reference to event ids has changed, so we need to truncate the tables
+        up: async (db: SQLite.SQLiteDatabase) => {
+            await db.execAsync(`DELETE FROM events;`);
+            await db.execAsync(`DELETE FROM event_tags;`);
+        },
     }
 ];

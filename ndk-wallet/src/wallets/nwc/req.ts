@@ -95,6 +95,6 @@ export async function sendReq<M extends keyof NDKNWCRequestMap>(
             event.id
         ).then(resolve).catch(reject);
 
-        event.publish(this.relaySet);
+        event.publish(this.relaySet)
     });
 }

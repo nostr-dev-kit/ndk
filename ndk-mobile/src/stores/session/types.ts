@@ -7,11 +7,16 @@ export interface SessionInitCallbacks {
     onWotReady?: () => void;
 }
 
+export type FollowOpts = { kinds: NDKKind[] };
+
 export interface SessionInitOpts {
     /**
      * Whether to fetch the user's follows.
+     * 
+     * This parameter can also be an object with per-kind follows to fetch.
+     * This will fetch kind:967 with `k` tags for the given kinds.
      */
-    follows?: boolean;
+    follows?: boolean | FollowOpts;
     /**
      * Whether to fetch the user's mute list.
      */
@@ -46,7 +51,6 @@ export interface SessionState {
     muteList: Set<Hexpubkey>;
     events: Map<NDKKind, NDKEvent[]>;
     wot: Map<Hexpubkey, number>;
-    randomId: string;
     ndk: NDK | undefined;
 
     init(ndk: NDK, user: NDKUser, settingsStore: SettingsStore, opts: SessionInitOpts, on: SessionInitCallbacks): void;

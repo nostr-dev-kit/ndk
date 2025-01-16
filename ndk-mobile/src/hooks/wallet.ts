@@ -12,8 +12,6 @@ const useNDKNutzapMonitor = () => {
     const activeWallet = useWalletStore(s => s.activeWallet);
 
     useEffect(() => {
-        console.log('[NDK-WALLET] useNDKNutzapMonitor', { ndk: !!ndk, currentUser: !!currentUser, activeWallet: !!activeWallet, nutzapMonitor: !!nutzapMonitor });
-        
         if (!ndk) return;
         if (!currentUser?.pubkey) return;
         if (!activeWallet?.walletId) return;
@@ -39,6 +37,7 @@ const useNDKWallet = () => {
 
     const setActiveWallet = useCallback((wallet: NDKWallet) => {
         if (!ndk) return;
+        let debounceTimer: NodeJS.Timeout | undefined;
 
         storeSetActiveWallet(wallet);
         ndk.wallet = wallet;
@@ -46,8 +45,11 @@ const useNDKWallet = () => {
         let loadingString: string | undefined;
 
         const updateBalance = () => {
-            const b = wallet ? wallet.balance() : null;
-            setBalance(b);
+            if (debounceTimer) clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                const b = wallet ? wallet.balance() : null;
+                setBalance(b);
+            }, 50);
         }
 
         if (wallet) {
@@ -58,10 +60,8 @@ const useNDKWallet = () => {
             setBalance(null);
         }
 
-        if (wallet instanceof NDKCashuWallet) {
-            console.log('starting cashu wallet');
+        if (wallet instanceof NDKCashuWallet)
             wallet.start({ subId: 'wallet' })
-        }
 
         if (wallet) wallet.updateBalance?.();
 

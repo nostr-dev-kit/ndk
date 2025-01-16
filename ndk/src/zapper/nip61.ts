@@ -11,12 +11,12 @@ export type CashuPaymentInfo = {
     /**
      * Mints that must be used for the payment
      */
-    mints: string[];
+    mints?: string[];
 
     /**
      * Relays where nutzap must be published
      */
-    relays: string[];
+    relays?: string[];
 
     /**
      * Optional pubkey to use for P2PK lock

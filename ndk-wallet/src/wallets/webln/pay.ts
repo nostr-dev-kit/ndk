@@ -55,7 +55,7 @@ export class NDKLnPay {
         }
 
         const wallet = new CashuWallet(new CashuMint(mint), { unit });
-        const { proofs } = await wallet.mintTokens(amount, quote.quote, {
+        const proofs = await wallet.mintProofs(amount, quote.quote, {
             pubkey: p2pk,
         });
 

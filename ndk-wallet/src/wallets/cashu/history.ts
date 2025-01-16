@@ -1,11 +1,8 @@
 import type { NDKEventId, NDKTag, NostrEvent } from "@nostr-dev-kit/ndk";
 import type NDK from "@nostr-dev-kit/ndk";
 import { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
-import createDebug from "debug";
 import { NDKCashuToken } from "./token";
 import { decrypt } from "./decrypt";
-
-const d = createDebug("ndk-wallet:wallet-change");
 
 const MARKERS = {
     REDEEMED: "redeemed",

@@ -48,9 +48,11 @@ export class NDKNostrRpc extends EventEmitter {
                 relayUrls,
                 Array.from(ndk.pool.blacklistRelayUrls),
                 ndk,
-                debug.extend("rpc-pool")
+                {
+                    debug: debug.extend("rpc-pool"),
+                    name: "nostr-rpc"
+                }
             );
-            this.pool.name = "nostr-rpc";
 
             this.relaySet = new NDKRelaySet(new Set(), ndk, this.pool);
             for (const url of relayUrls) {

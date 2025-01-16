@@ -1,5 +1,5 @@
 import type { Proof } from "@cashu/cashu-ts";
-import { CashuWallet } from "@cashu/cashu-ts";
+
 import type { NDKCashuWallet } from "./wallet/index.js";
 import { EventEmitter } from "tseep";
 import { NDKCashuToken } from "./token";
@@ -24,7 +24,6 @@ export class NDKCashuDeposit extends EventEmitter<{
     public amount: number;
     public quoteId: string | undefined;
     private wallet: NDKCashuWallet;
-    private _wallet?: CashuWallet;
     public checkTimeout: NodeJS.Timeout | undefined;
     public checkIntervalLength = 2500;
     public finalized = false;
@@ -43,9 +42,6 @@ export class NDKCashuDeposit extends EventEmitter<{
     static fromQuoteEvent(wallet: NDKCashuWallet, quote: NDKCashuQuote) {
         if (!quote.amount) throw new Error("quote has no amount");
         if (!quote.mint) throw new Error("quote has no mint");
-
-        const unit = quote.unit ?? wallet.unit;
-        
         const deposit = new NDKCashuDeposit(wallet, quote.amount, quote.mint, quote.unit);
 
         deposit.quoteId = quote.quoteId;

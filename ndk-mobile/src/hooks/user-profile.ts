@@ -1,22 +1,26 @@
 import { useEffect, useState, useMemo, useCallback, useRef } from 'react'
 import { useNDK } from '../hooks/ndk';
+import { NDKUser } from '@nostr-dev-kit/ndk';
 
-export function useUserProfile(pubkey: string) {
+export function useUserProfile(pubkey?: string) {
     const { ndk } = useNDK();
 
-    const user = useMemo(() => ndk?.getUser({ pubkey }), [ndk, pubkey]);
+    const user = useMemo<NDKUser | null>(() => {
+        if (!ndk || !pubkey) return null;
+        return ndk?.getUser({ pubkey });
+    }, [ndk, pubkey]);
 
     const fetchFromCache = useCallback(() => {
-        if (!ndk) return null;
+        if (!ndk || !user) return null;
 
         const cachedProfile = ndk.cacheAdapter?.fetchProfileSync?.(pubkey);
         if (cachedProfile) cachedProfile.pubkey = pubkey;
 
         return cachedProfile;
-    }, [ndk, pubkey]);
+    }, [ndk, user?.pubkey]);
 
     const [state, setState] = useState(() => {
-        if (!ndk || !pubkey) {
+        if (!ndk || !user) {
             return { userProfile: null, user: null, loading: false, cache: false, pubkey };
         }
 

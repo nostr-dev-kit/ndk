@@ -1,22 +1,19 @@
-import { LnPaymentInfo, CashuPaymentInfo, NDKUser, NDKNutzap } from "@nostr-dev-kit/ndk";
+import { LnPaymentInfo, CashuPaymentInfo, NDKUser, NDKNutzap, NDKPaymentConfirmationLN } from "@nostr-dev-kit/ndk";
 import { NDKCashuWallet } from ".";
-import { UpdateStateResult } from "./state";
+import { UpdateStateResult, WalletOperation } from "./state";
 import { getBolt11Amount, getBolt11Description } from "../../../utils/ln";
 import { NDKWalletChange } from "../history";
-import { LNPaymentResult } from "../pay/ln";
-import { TokenCreationResult } from "../pay/nut";
 import { PaymentWithOptionalZapInfo } from "./payment";
 import { Proof } from "@cashu/cashu-ts";
 import { MintUrl } from "../mint/utils";
 import { proofsTotalBalance } from "../token";
+import { TokenCreationResult } from "../pay/nut";
 
 export async function createOutTxEvent(
     wallet: NDKCashuWallet,
     paymentRequest: PaymentWithOptionalZapInfo<LnPaymentInfo | CashuPaymentInfo>,
-    paymentResult: LNPaymentResult | TokenCreationResult,
-    updateStateResult: UpdateStateResult,
+    paymentResult: WalletOperation<NDKPaymentConfirmationLN | TokenCreationResult>,
 ): Promise<NDKWalletChange> {
-    console.log("[WALLET] createOutTxEvent", JSON.stringify(paymentRequest), JSON.stringify(paymentResult));
     let description: string | undefined = paymentRequest.paymentDescription;
     let amount: number | undefined;
     let unit: string | undefined;
@@ -40,7 +37,7 @@ export async function createOutTxEvent(
     historyEvent.direction = "out";
     historyEvent.amount = amount ?? 0;
     historyEvent.unit = unit;
-    historyEvent.mint = paymentResult.walletChange.mint;
+    historyEvent.mint = paymentResult.mint;
     if (paymentResult.fee) historyEvent.fee = paymentResult.fee;
     if (paymentRequest.target) {
         // tag the target if there is one
@@ -51,11 +48,10 @@ export async function createOutTxEvent(
         }
     }
 
-    if (updateStateResult.created) historyEvent.createdTokens = [updateStateResult.created];
-    if (updateStateResult.deleted) historyEvent.destroyedTokenIds = updateStateResult.deleted;
-    if (updateStateResult.reserved) historyEvent.reservedTokens = [updateStateResult.reserved];
+    if (paymentResult.stateUpdate?.created) historyEvent.createdTokens = [paymentResult.stateUpdate.created];
+    if (paymentResult.stateUpdate?.deleted) historyEvent.destroyedTokenIds = paymentResult.stateUpdate.deleted;
+    if (paymentResult.stateUpdate?.reserved) historyEvent.reservedTokens = [paymentResult.stateUpdate.reserved];
 
-    console.log("[WALLET] createOutTxEvent event", JSON.stringify(historyEvent.rawEvent(), null, 4));
     await historyEvent.sign();
     historyEvent.publish(wallet.relaySet);
 

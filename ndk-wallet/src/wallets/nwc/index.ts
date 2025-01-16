@@ -40,38 +40,20 @@ export class NDKNWCWallet extends EventEmitter<NDKNWCWalletEvents> implements ND
     }
 
     async init(pubkey: string, relayUrls: string[], secret: string) {
-        console.log('initializing wallet', pubkey, relayUrls, secret);
-        
         this.walletService = this.ndk.getUser({ pubkey });
-        const policy = NDKRelayAuthPolicies.signIn({ndk: this.ndk});
-        for (const url of relayUrls) {
-            const r = new NDKRelay(url, policy, this.ndk);
-            this.pool.addRelay(r, false);
-            console.log('added relay', url);
-        }
-        console.log('NWC relays', relayUrls)
-        this.pool = new NDKPool(relayUrls, [], this.ndk);
-        this.pool.name = 'nwc';
+        this.pool = new NDKPool(relayUrls, [], this.ndk, { name: 'nwc' });
 
         // Initialize signer
         this.signer = new NDKPrivateKeySigner(secret);
 
         this.pool.on("connect", () => {
-            console.log('connected to pool!!');
             if (!this.pool) return;
             this.status = NDKWalletStatus.READY;
             this.emit('ready');
         })
         this.pool.on("relay:disconnect", () => this.status = NDKWalletStatus.LOADING);
 
-        console.log('connecting to pool');
-        this.pool.connect(5000)
-            .then(() => {
-                console.log('connected to pool');
-            })
-            .catch((e) => {
-                console.error('error connecting to pool', e);
-            });
+        this.pool.connect()
     }
 
     /**
@@ -113,11 +95,15 @@ export class NDKNWCWallet extends EventEmitter<NDKNWCWalletEvents> implements ND
                 preimage: res.result.preimage
             };
         }
+
+        this.updateBalance();
         
         throw new Error(res.error?.message || "Payment failed");
     }
 
     async cashuPay(payment: NutPayment): Promise<NDKPaymentConfirmationCashu | undefined> {
+        if (!payment.mints) throw new Error("No mints provided");
+        
         for (const mint of payment.mints) {
             let unit = payment.unit;
             let amount = payment.amount;
@@ -142,10 +128,13 @@ export class NDKNWCWallet extends EventEmitter<NDKNWCWalletEvents> implements ND
             try {
                 const res = await this.req("pay_invoice", { invoice: quote.request });
                 d('cashuPay res', res);
-            } catch (e) {
-                console.error('error paying invoice', e);
-                throw e;
+            } catch (e: any) {
+                const message = e?.error?.message || e?.message || 'unknown error';
+                console.error('error paying invoice', e, {message});
+                throw new Error(message);
             }
+
+            this.updateBalance();
 
             // todo check that the amount of the invoice matches the amount we want to pay
 
@@ -171,9 +160,9 @@ export class NDKNWCWallet extends EventEmitter<NDKNWCWalletEvents> implements ND
      * Fetch the balance of this wallet
      */
     async updateBalance(): Promise<void> {
-        d('updating balance');
+        console.log('updating balance');
         const res = await this.req("get_balance", {});
-        d('balance', res);
+        console.log('balance', res);
 
         if (!res.result) throw new Error("Failed to get balance");
 

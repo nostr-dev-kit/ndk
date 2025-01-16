@@ -36,7 +36,6 @@ export async function walletForMint(
     }
 
     const wallet = new CashuWallet(new CashuMint(mint), { unit, bip39seed: pk });
-    console.log("[WALLET] loading mint", mint, { withPk: pk ? true : false });
 
     const loadPromise = new Promise<CashuWallet | null>(async (resolve) => {
         try {
@@ -44,7 +43,6 @@ export async function walletForMint(
                 setTimeout(() => rejectTimeout(new Error("timeout loading mint")), timeout);
             });
             await Promise.race([wallet.loadMint(), timeoutPromise]);
-            console.log("[WALLET] loaded mint", mint);
             mintWallets.set(key, wallet);
             mintWalletPromises.delete(key);
             resolve(wallet);

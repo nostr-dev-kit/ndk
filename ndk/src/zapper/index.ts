@@ -496,7 +496,7 @@ class NDKZapper extends EventEmitter<{
     async getZapMethods(
         ndk: NDK,
         recipient: Hexpubkey,
-        timeout = 1500
+        timeout = 2500
     ): Promise<NDKZapMethodInfo[]> {
         const methods: NDKZapMethod[] = [];
 

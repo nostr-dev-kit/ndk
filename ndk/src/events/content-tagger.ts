@@ -8,6 +8,18 @@ export type ContentTag = {
     content: string;
 };
 
+/**
+ * Merges two arrays of NDKTag, ensuring uniqueness and preferring more specific tags.
+ *
+ * This function consolidates `tags1` and `tags2` by:
+ * - Combining both tag arrays.
+ * - Removing duplicate tags based on containment (one tag containing another).
+ * - Retaining the longer or more detailed tag when overlaps are found.
+ *
+ * @param tags1 - The first array of NDKTag.
+ * @param tags2 - The second array of NDKTag.
+ * @returns A merged array of unique NDKTag.
+ */
 export function mergeTags(tags1: NDKTag[], tags2: NDKTag[]): NDKTag[] {
     const tagMap = new Map<string, NDKTag>();
 
@@ -71,12 +83,34 @@ export function uniqueTag(a: NDKTag, b: NDKTag): NDKTag[] {
     return [a, b];
 }
 
+const hashtagRegex = /(?<=\s|^)(#[^\s!@#$%^&*()=+./,[{\]};:'"?><]+)/g;
+
+/**
+ * Generates a unique list of hashtags as used in the content. If multiple variations
+ * of the same hashtag are used, only the first one will be used (#ndk and #NDK both resolve to the first one that was used in the content)
+ * @param content 
+ * @returns 
+ */
+export function generateHashtags(content: string): string[] {
+    const hashtags = content.match(hashtagRegex);
+    const tagIds = new Set<string>();
+    const tag = new Set<string>();
+    if (hashtags) {
+        for (const hashtag of hashtags) {
+            if (tagIds.has(hashtag.slice(1))) continue;
+            tag.add(hashtag.slice(1));
+            tagIds.add(hashtag.slice(1));
+        }
+    }
+    return Array.from(tag);
+}
+
 export async function generateContentTags(
     content: string,
     tags: NDKTag[] = []
 ): Promise<ContentTag> {
     const tagRegex = /(@|nostr:)(npub|nprofile|note|nevent|naddr)[a-zA-Z0-9]+/g;
-    const hashtagRegex = /(?<=\s|^)(#[^\s!@#$%^&*()=+./,[{\]};:'"?><]+)/g;
+    
     const promises: Promise<void>[] = [];
 
     const addTagIfNew = (t: NDKTag) => {
@@ -163,13 +197,9 @@ export async function generateContentTags(
 
     await Promise.all(promises);
 
-    content = content.replace(hashtagRegex, (tag, word) => {
-        const t: NDKTag = ["t", word.slice(1)];
-        if (!tags.find((t2) => t2[0] === t[0] && t2[1] === t[1])) {
-            tags.push(t);
-        }
-        return tag; // keep the original tag in the content
-    });
+    const nonTTags = tags.filter((t) => t[0] !== "t");
+    tags = generateHashtags(content).map((hashtag) => ["t", hashtag]);
+    tags = mergeTags(tags, nonTTags);
 
     return { content, tags };
 }

@@ -1,4 +1,4 @@
-import { NDKEvent, NDKKind } from '@nostr-dev-kit/ndk';
+import { NDKEvent } from '@nostr-dev-kit/ndk';
 import { firstIsNewer } from '../utils.js';
 import { SessionState } from '../types.js';
 

@@ -34,6 +34,19 @@ type UnpublishedEventRecord = {
 
 type PendingCallback = (...arg: any) => any;
 
+function filterForCache(subscription: NDKSubscription) {
+    if (!subscription.cacheUnconstrainFilter) return subscription.filters;
+
+    // remove the keys that are in the cacheUnconstrainFilter
+    const filterCopy: NDKFilter[] = subscription.filters.filter((filter) => {
+        for (const key of subscription.cacheUnconstrainFilter) {
+            delete filter[key];
+        }
+        return Object.keys(filter).length > 0;
+    });
+
+    return filterCopy;
+}
 
 export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     readonly dbName: string;
@@ -58,14 +71,6 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     private async initialize() {
         this.db = SQLite.openDatabaseSync(this.dbName);
 
-        try {
-            let { user_version: schemaVersion } = (await this.db.getFirstAsync(`PRAGMA user_version;`)) as { user_version: number };
-        } catch (e) {
-            console.error('error getting schema version', e);
-            return;
-        }
-
-        // get current schema version
         let { user_version: schemaVersion } = (this.db.getFirstSync(`PRAGMA user_version;`)) as { user_version: number };
 
         if (!schemaVersion) {
@@ -73,6 +78,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
 
             // set the schema version
             await this.db.execAsync(`PRAGMA user_version = ${schemaVersion};`);
+            await this.db.execAsync(`PRAGMA journal_mode = WAL;`);
         }
 
         if (!schemaVersion || Number(schemaVersion) < migrations.length) {
@@ -91,20 +97,15 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                 await this.db.execAsync(`PRAGMA user_version = ${migrations.length};`);
             });
         }
-
-        console.log('CACHE ready');
         
         this.ready = true;
         this.locking = true;
 
         // load all the event timestamps
-        const start = performance.now();
         const events = await this.db.getAllAsync(`SELECT id, created_at FROM events`) as {id: string, created_at: number}[];    
         for (const event of events) {
             this.knownEventTimestamps.set(event.id, event.created_at);
         }
-        const end = performance.now();
-        console.log('known event timestamps' + this.knownEventTimestamps.size + ' it took ' + (end - start) + 'ms');
 
         Promise.all(this.pendingCallbacks.map((f) => {
             try {
@@ -133,18 +134,23 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
 
     async query(subscription: NDKSubscription): Promise<void> {
         this.onReady(() => {
+            const cacheFilters = filterForCache(subscription);
 
             // Process filters from the subscription
-            for (const filter of subscription.filters) {
-                if (filter.authors) {
+            for (const filter of cacheFilters) {
+                if (filter.authors && filter.kinds) {
+                    const events = this.db.getAllSync(
+                        `SELECT * FROM events WHERE pubkey IN (${filter.authors.map(() => '?').join(',')}) AND kind IN (${filter.kinds.map(() => '?').join(',')})`,
+                        [...filter.authors, ...filter.kinds]
+                    ) as EventRecord[];
+                    if (events.length > 0) foundEvents(subscription, events, filter);
+                } else if (filter.authors) {
                     const events = this.db.getAllSync(
                         `SELECT * FROM events WHERE pubkey IN (${filter.authors.map(() => '?').join(',')})`,
                         filter.authors
                     ) as EventRecord[];
                     if (events.length > 0) foundEvents(subscription, events, filter);
-                }
-
-                if (filter.kinds) {
+                } else if (filter.kinds) {
                     const events = this.db.getAllSync(
                         `SELECT * FROM events WHERE kind IN (${filter.kinds.map(() => '?').join(',')})`,
                         filter.kinds
@@ -168,49 +174,39 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
 
     async setEvent(event: NDKEvent, filters: NDKFilter[], relay?: NDKRelay): Promise<void> {
         this.onReady(async () => {
-            // check if the event is already in the database and if it is, check if it's newer than the event we're setting
-            const existingEvent = this.knownEventTimestamps.get(event.tagId());
+            const referenceId = event.isReplaceable() ? event.tagAddress() : event.id;
+            const existingEvent = this.knownEventTimestamps.get(referenceId);
             if (existingEvent && existingEvent >= event.created_at!) return;
 
-            // set the event timestamp
-            this.knownEventTimestamps.set(event.tagId(), event.created_at!);
-            
-            if (event.kind === 3) console.log('SET EVENT', event.kind, event.created_at, event.id.substring(0, 8), relay?.url);
-            // is the event replaceable?
+            this.knownEventTimestamps.set(referenceId, event.created_at!);
+
             if (event.isReplaceable()) {
-                console.log('DELETING EVENT', event.tagId());
                 try {
-                    this.db.runSync(`DELETE FROM events WHERE id = ?;`, [event.tagId()]),
-                    this.db.runSync(`DELETE FROM event_tags WHERE event_id = ?;`, [event.tagId()]),
-                    console.log('DELETED EVENT', event.tagId());
+                    this.db.runSync(`DELETE FROM events WHERE id = ?;`, [referenceId]);
+                    this.db.runSync(`DELETE FROM event_tags WHERE event_id = ?;`, [referenceId]);
                 } catch (e) {
-                    console.error('error deleting event', e, event.tagId());
+                    console.error('error deleting event', e, referenceId);
                 }
             }
 
-            if (event.kind === 3) console.log('INSERTING EVENT', event.tagId());
-
             this.db.runAsync(`INSERT INTO events (id, created_at, pubkey, event, kind, relay) VALUES (?, ?, ?, ?, ?, ?);`, [
-                event.tagId(),
+                referenceId,
                 event.created_at!,
                 event.pubkey,
                 event.serialize(true, true),
                 event.kind!,
                 relay?.url || '',
-            ]).then(() => {
-                if (event.kind === 3) console.log('👉 INSERTED EVENT', event.kind, event.encode());
-            }).catch((e) => {
-                if (event.kind === 3) console.error('error setting event', e, event.tagId());
-            });
+            ]);
 
             const filterTags: [string, string][] = event.tags.filter((tag) => tag[0].length === 1).map((tag) => [tag[0], tag[1]]);
             if (filterTags.length < 10) {
-                filterTags.forEach((tag) =>
-                    this.db.runAsync(`INSERT INTO event_tags (event_id, tag, value) VALUES (?, ?, ?);`, [event.id, tag[0], tag[1]])
-                )
+                await this.db.withTransactionAsync(async () => {
+                    for (const tag of filterTags) {
+                        await this.db.runAsync(`INSERT INTO event_tags (event_id, tag, value) VALUES (?, ?, ?);`, [event.id, tag[0], tag[1]]);
+                    }
+                });
             }
 
-            // if this event is a delete event, see if the deleted events are in the cache and remove them
             if (event.kind === NDKKind.EventDeletion) {
                 this.deleteEventIds(event.tags.filter((tag) => tag[0] === 'e').map((tag) => tag[1]));
             }

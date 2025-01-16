@@ -46,13 +46,11 @@ const getFollowFilter = (
 
     const filters: NDKFilter[] = [];
     const lastKnownEvent = getLatestKnownEvent(ndk, [NDKKind.Contacts], user);
-    console.log('LAST KNOWN EVENT TIMESTAMP', lastKnownEvent);
-    const lastKnownFilter = lastKnownEvent ? { since: lastKnownEvent } : {};
+    const lastKnownFilter = lastKnownEvent ? { since: lastKnownEvent+1 } : {};
 
-    if (follows === true) {
-        filters.push({ kinds: [3], authors: [user.pubkey], ...lastKnownFilter });
+    filters.push({ kinds: [3], authors: [user.pubkey], ...lastKnownFilter });
 
-    } else if (typeof follows === 'object') {
+    if (typeof follows === 'object') {
         filters.push({
             kinds: [967 as NDKKind],
             "#k": follows.kinds.map(kind => kind.toString()),
@@ -60,8 +58,6 @@ const getFollowFilter = (
             ...lastKnownFilter
         });
     }
-
-    console.log("GENERATED FOLLOW FILTER", filters);
 
     return filters;
 };
@@ -79,22 +75,23 @@ const getLatestKnownEvent = (ndk: NDK, kinds: NDKKind[], user?: NDKUser): number
         return undefined;
     }
 
-    const params: any[] = []
-    let query = 'SELECT created_at FROM events WHERE kind IN (' + kinds.map(() => '?').join(',') + ')';
+    const kindPlaceholders = kinds.map(() => '?').join(',');
+    const params: any[] = [...kinds];
+
+    let query = `SELECT created_at FROM events WHERE kind IN (${kindPlaceholders})`;
 
     if (user) {
+        // Add placeholder for pubkey
         query += ' AND pubkey = ?';
         params.push(user.pubkey);
     }
 
-    // query += ' ORDER BY created_at DESC';
+    query += ' ORDER BY created_at DESC';
     query += ' LIMIT 1';
 
-    console.log('QUERY', query, params);
-
     try {
-        const events = cacheAdapter.db.getFirstSync(query, params);
-        return events?.[0]?.created_at;
+        const event = cacheAdapter.db.getFirstSync(query, params) as { created_at: number };
+        return event?.created_at;
     } catch (error) {
         console.error('Error getting latest known event', error);
     }

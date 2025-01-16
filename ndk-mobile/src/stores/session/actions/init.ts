@@ -5,8 +5,6 @@ import { SettingsStore } from '../../../types';
 import { NDKCacheAdapterSqlite } from '../../../cache-adapter/sqlite';
 import { addWotEntries, shouldUpdateWot, wotEntries } from './wot';
 
-
-
 export const initSession = (
     ndk: NDK,
     user: NDKUser,
@@ -20,8 +18,7 @@ export const initSession = (
     let follows: Hexpubkey[] = [];
     let kindFollows = new Set<Hexpubkey>();
     const filters = generateFilters(ndk, user, opts);
-    console.log('GENERATED FILTERS', filters);
-    const sub = ndk.subscribe(filters, { groupable: false, closeOnEose: false, ...(opts.subOpts || {}) }, undefined, false);
+    const sub = ndk.subscribe(filters, { groupable: false, closeOnEose: false, subId: 'ndk-mobile-session', ...(opts.subOpts || {}) }, undefined, false);
     let eosed = false;
 
     let updateFollowTimer: NodeJS.Timeout | undefined;
@@ -33,6 +30,7 @@ export const initSession = (
     }
 
     const updateFollows = () => {
+        console.log('running update follows', follows.length, kindFollows.size);
         set({ follows: Array.from(new Set([ ...follows, ...Array.from(kindFollows) ])) });
     }
 
@@ -52,10 +50,8 @@ export const initSession = (
     }
 
     const handleEvent = (event: NDKEvent) => {
-        console.log("👉 HANDLE EVENT", event.kind);
         addEvent(event, () => {
             if (event.kind === NDKKind.Contacts) {
-                console.log('CONTACTS EVENT', event.created_at);
                 follows = event.tags.filter((tag) => tag[0] === 'p' && !!tag[1]).map((tag) => tag[1]);
 
                 // if we have already eosed, get the pubkeys that are not in the wotEntries and add them to the wotEntries

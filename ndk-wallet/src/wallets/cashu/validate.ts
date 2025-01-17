@@ -1,9 +1,9 @@
 import { CheckStateEnum, ProofState, type Proof } from "@cashu/cashu-ts";
-import { NDKCashuToken } from "./token";
 import createDebug from "debug";
 import type { NDKCashuWallet } from "./wallet/index.js";
-import { NDKEvent, NDKKind, NostrEvent } from "@nostr-dev-kit/ndk";
 import { walletForMint } from "./mint";
+import { WalletProofChange } from "./wallet/state/index.js";
+import { createOutTxEvent } from "./wallet/txs.js";
 
 const d = createDebug("ndk-wallet:cashu:validate");
 
@@ -11,16 +11,15 @@ const d = createDebug("ndk-wallet:cashu:validate");
  * Checks for spent proofs and consolidates all unspent proofs into a single token, destroying all old tokens
  */
 export async function consolidateTokens(this: NDKCashuWallet) {
-    d("checking %d tokens for spent proofs", this.tokens.length);
+    d("checking %d tokens for spent proofs", this.state.tokens.size);
 
-    const mints = new Set(this.tokens.map((t) => t.mint).filter((mint) => !!mint));
+    const mints = new Set(this.state.getMintsProofs({ validStates: new Set(["available"]) }).keys());
 
     d("found %d mints", mints.size);
 
     mints.forEach((mint) => {
         consolidateMintTokens(
             mint!,
-            this.tokens.filter((t) => t.mint === mint),
             this
         );
     });
@@ -28,19 +27,17 @@ export async function consolidateTokens(this: NDKCashuWallet) {
 
 export async function consolidateMintTokens(
     mint: string,
-    tokens: NDKCashuToken[],
     wallet: NDKCashuWallet
 ) {
-    const allProofs = tokens.map((t) => t.proofs).flat();
+    const allProofs = wallet.state.getProofs({ mint });
     const _wallet = await walletForMint(mint, wallet.unit);
     if (!_wallet) {
         console.log("could not get wallet for mint %s", mint);
         return;
     }
     console.log(
-        "checking %d proofs in %d tokens for spent proofs for mint %s",
+        "checking %d proofs for spent proofs for mint %s",
         allProofs.length,
-        tokens.length,
         mint
     );
     let proofStates: ProofState[] = [];
@@ -54,6 +51,7 @@ export async function consolidateMintTokens(
     const spentProofs: Proof[] = [];
     const unspentProofs: Proof[] = [];
 
+    // index stability is guaranteed by cashu-ts
     allProofs.forEach((proof, index) => {
         const { state } = proofStates[index];
         if (state === CheckStateEnum.SPENT) {
@@ -62,18 +60,30 @@ export async function consolidateMintTokens(
             unspentProofs.push(proof);
         }
     });
-        
-    console.log("Found %d spent proofs and %d unspent proofs", spentProofs.length, unspentProofs.length);
-    
-    // if no spent proofs and we already had a single token, return as a noop
-    if (spentProofs.length === 0 && tokens.length === 1) {
-        return;
-    }
 
-    // Use wallet state update to handle the changes
-    await wallet.state.update({
+    const walletChange: WalletProofChange = {
+        mint,
         store: unspentProofs,
         destroy: spentProofs,
+    }
+
+    const totalSpentProofs = spentProofs.reduce((acc, proof) => acc + proof.amount, 0);
+
+    console.log("Found %d spent proofs and %d unspent proofs", walletChange.destroy?.length, walletChange.store?.length);
+    
+    // if no spent proofs return as a noop
+    if (walletChange.destroy?.length === 0) return;
+    
+    // Use wallet state update to handle the changes
+    const walletUpdate = await wallet.state.update(walletChange);
+
+    createOutTxEvent(wallet, {
+        amount: totalSpentProofs,
+        paymentDescription: 'Spent proof consolidation on ' + mint,
+    }, {
         mint,
+        stateUpdate: walletUpdate,
+        proofsChange: walletChange,
+        fee: 0,
     });
 }

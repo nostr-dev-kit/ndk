@@ -1,7 +1,7 @@
 import { MeltQuoteState } from "@cashu/cashu-ts";
 import { NDKCashuWallet } from "../wallet/index.js";
 import { getBolt11Amount } from "../../../utils/ln.js";
-import { WalletOperation, withProofReserve } from "../wallet/state.js";
+import { WalletOperation, withProofReserve } from "../wallet/effect.js";
 import { calculateFee } from "../wallet/fee.js";
 import { NDKPaymentConfirmationLN } from "@nostr-dev-kit/ndk";
 import { consolidateMintTokens } from "../validate.js";
@@ -48,6 +48,7 @@ export async function payLn(
             }
         } catch (error: any) {
             console.log("Failed to execute payment for mint %s: %s", mint, error);
+            wallet.warn(`Failed to execute payment with min ${mint}: ${error}`);
         }
     }
 
@@ -113,18 +114,11 @@ async function executePayment(
             if (e.message.match(/already spent/i)) {
                 console.log("Proofs already spent, consolidate mint tokens");
                 setTimeout(() => {
-                    console.log("consolidating mint tokens", { mint });
-                    consolidateMintTokens(
-                        mint,
-                        wallet.tokens.filter((t) => t.mint === mint),
-                        wallet
-                    ).catch((e) => {
-                        debugger
-                        console.log("failed to consolidate mint tokens", JSON.stringify(e.message, null, 4));
-                    });
+                    consolidateMintTokens(mint, wallet);
                 }, 2500);
+            } else {
+                throw e;
             }
-            throw e;
         }
 
         return null;

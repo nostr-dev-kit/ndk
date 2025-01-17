@@ -1,0 +1,190 @@
+import { NDKEvent, NDKEventId, NDKKind, NostrEvent } from "@nostr-dev-kit/ndk";
+import { ProofC, WalletState, WalletTokenChange } from ".";
+import { WalletProofChange } from "./index.js";
+import { NDKCashuToken } from "../../token";
+import { Proof } from "@cashu/cashu-ts";
+import { MintUrl } from "../../mint/utils";
+
+export type UpdateStateResult = {
+    /**
+     * Tokens that were created as the result of a state change
+     */
+    created?: NDKCashuToken,
+    /**
+     * Tokens that were reserved as the result of a state change
+     */
+    reserved?: NDKCashuToken,
+    /**
+     * Tokens that were deleted as the result of a state change
+     */
+    deleted?: NDKEventId[],
+}
+
+/**
+ * 
+ * @param this 
+ * @param stateChange 
+ */
+export async function update(
+    this: WalletState,
+    stateChange: WalletProofChange,
+): Promise<UpdateStateResult> {
+    updateInternalState(this, stateChange);
+    this.wallet.emit("balance_updated");
+
+    return updateExternalState(this, stateChange);
+}
+
+/**
+ * This function immediately reflects a state update
+ */
+function updateInternalState(
+    walletState: WalletState,
+    stateChange: WalletProofChange,
+) {
+    if (stateChange.store && stateChange.store.length > 0) {
+        for (const proof of stateChange.store) {
+            walletState.addProof(proof, {
+                mint: stateChange.mint,
+                state: "available",
+            });
+        }
+    }
+
+    if (stateChange.destroy && stateChange.destroy.length > 0) {
+        for (const proof of stateChange.destroy) {
+            walletState.updateProof(proof, { state: "deleted" });
+        }
+    }
+
+    if (stateChange.reserve && stateChange.reserve.length > 0) {
+        throw new Error("BUG: Proofs should not be reserved via update");
+    }
+}
+
+/**
+ * This function updates tokens on relays.
+ */
+async function updateExternalState(
+    walletState: WalletState,
+    stateChange: WalletProofChange,
+): Promise<UpdateStateResult> {
+    const newState = calculateNewState(walletState, stateChange);
+
+    if (newState.deletedTokenIds.size > 0) {
+        const deleteEvent = new NDKEvent(walletState.wallet.ndk, {
+            kind: NDKKind.EventDeletion,
+            tags: [
+                [ "k", NDKKind.CashuToken.toString() ],
+                ...Array.from(newState.deletedTokenIds).map((id) => ([ "e", id ])),
+            ]
+        } as NostrEvent);
+        await deleteEvent.sign();
+        deleteEvent.publish(walletState.wallet.relaySet);
+
+        // remove the tokens from the wallet
+        for (const tokenId of newState.deletedTokenIds) {
+            walletState.removeTokenId(tokenId);
+        }
+    }
+
+    // execute the state change
+    const res: UpdateStateResult = {};
+    if (newState.saveProofs.length > 0) {
+        const newToken = await createToken(walletState, stateChange.mint, newState);
+        res.created = newToken;
+    }
+
+    return res;
+}
+
+async function createToken(walletState: WalletState, mint: MintUrl, newState: WalletTokenChange) {
+    const newToken = new NDKCashuToken(walletState.wallet.ndk);
+    newToken.mint = mint;
+    newToken.proofs = newState.saveProofs;
+    newToken.wallet = walletState.wallet;
+
+    // create the event id
+    await newToken.toNostrEvent();
+
+    // immediately add the token to the wallet before signing it
+    walletState.addToken(newToken);
+
+    // sign it
+    await newToken.sign();
+
+    // update the token in place, no need to affect proofs since they already have the right token id
+    walletState.addToken(newToken);
+
+    // publish it
+    newToken.publish(walletState.wallet.relaySet);
+
+    return newToken;
+}
+
+export function calculateNewState(walletState: WalletState, stateChange: WalletProofChange): WalletTokenChange {
+    /**
+     * This tracks the proofs that we know we need to destroy.
+     */
+    const destroyProofs = new Set<ProofC>();
+    for (const proof of stateChange.destroy || []) destroyProofs.add(proof.C);
+    
+    /**
+     * This tracks the proofs that we need to store.
+     */
+    const proofsToStore = new Map<ProofC, Proof>();
+
+    /**
+     * This tracks the tokens that we need to delete.
+     */
+    let tokensToDelete: Map<NDKEventId, NDKCashuToken>;
+
+    // add all proofs from stateChange.store to proofsToStore
+    for (const proof of stateChange.store || []) proofsToStore.set(proof.C, proof);
+
+    // get tokens where proofs to be deleted are stored
+    tokensToDelete = getAffectedTokens(walletState, stateChange);
+
+    // get proofs from tokens that are not deleted that we need to store
+    for (const token of tokensToDelete.values()) {
+        for (const proof of token.proofs) {
+            if (destroyProofs.has(proof.C)) continue;
+            proofsToStore.set(proof.C, proof);
+        }
+    }
+    
+    return {
+        deletedTokenIds: new Set(tokensToDelete.keys()),
+        deletedProofs: destroyProofs,
+        reserveProofs: [],
+        saveProofs: Array.from(proofsToStore.values()),
+    };
+}
+
+function getAffectedTokens(walletState: WalletState, stateChange: WalletProofChange) {
+    const tokens = new Map<NDKEventId, NDKCashuToken>();
+
+    for (const proof of stateChange.destroy || []) {
+        const proofEntry = walletState.proofs.get(proof.C);
+        if (!proofEntry) {
+            console.log("BUG! Unable to find proof entry from known proof's C", proof.C);
+            continue;
+        }
+
+        const tokenId = proofEntry.tokenId;
+        if (!tokenId) {
+            console.log("BUG! Proof entry for known proof's C", proof.C, "has no token id");
+            continue;
+        }
+
+        const token = walletState.tokens.get(tokenId);
+        if (!token || token === "deleted") {
+            console.log("BUG! Unable to find token from known token id", tokenId, "for proof", proof.C);
+            continue;
+        }
+
+        tokens.set(tokenId, token);
+    }
+
+    return tokens;
+}

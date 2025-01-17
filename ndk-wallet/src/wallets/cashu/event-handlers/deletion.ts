@@ -5,10 +5,6 @@ export async function handleEventDeletion(this: NDKCashuWallet, event: NDKEvent)
     const deletedIds = event.getMatchingTags("e").map((tag) => tag[1]);
 
     for (const deletedId of deletedIds) {
-        if (!this.state.knownTokens.has(deletedId)) {
-            continue;
-        }
-
-        this.removeTokenId(deletedId);
+        this.state.removeTokenId(deletedId);
     }
 }

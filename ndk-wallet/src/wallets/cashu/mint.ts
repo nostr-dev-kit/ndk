@@ -46,7 +46,7 @@ export async function walletForMint(
             mintWallets.set(key, wallet);
             mintWalletPromises.delete(key);
             resolve(wallet);
-        } catch (e) {
+        } catch (e: any) {
             console.error("[WALLET] error loading mint", mint, e.message);
             mintWalletPromises.delete(key);
             resolve(null);

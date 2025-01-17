@@ -186,7 +186,7 @@ export class NDKNutzapMonitor extends EventEmitter<{
 
         try {
             const { proofs, mint } = nutzap;
-            d('nutzap has %d proofs: %o', proofs.length, proofs);
+            console.log('nutzap has %d proofs: %o', proofs.length, proofs);
 
             let wallet: NDKCashuWallet | undefined;
 

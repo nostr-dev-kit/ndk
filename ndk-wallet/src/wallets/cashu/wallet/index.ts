@@ -37,8 +37,8 @@ export type WalletWarning = {
 }
 
 import { PaymentHandler, PaymentWithOptionalZapInfo } from "./payment.js";
-import { createInTxEvent } from "./txs.js";
-import { WalletState } from "./state.js";
+import { createInTxEvent, createOutTxEvent } from "./txs.js";
+import { WalletState } from "./state/index.js";
 
 /**
  * This class tracks state of a NIP-60 wallet
@@ -119,9 +119,6 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
         return this.event?.tagId();
     }
 
-    get tokens(): NDKCashuToken[] {
-        return this.state.tokens;
-    }
 
     public checkProofs = consolidateTokens.bind(this);
     public consolidateTokens = consolidateTokens.bind(this);
@@ -133,13 +130,20 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
         });
     }
 
-    async mintNuts(amounts: number[], unit: string) {
+    /**
+     * Generates nuts that can be used to send to someone.
+     * 
+     * Note that this function does not send anything, it just generates a specific amount of proofs.
+     * @param amounts 
+     * @returns 
+     */
+    async mintNuts(amounts: number[]) {
         let result: SendResponse | undefined;
         const totalAmount = amounts.reduce((acc, amount) => acc + amount, 0);
         
         for (const mint of this.mints) {
             const wallet = await this.cashuWallet(mint);
-            const mintProofs = await this.state.proofsForMint(mint);
+            const mintProofs = await this.state.getProofs({ mint });
              result = await wallet.send(totalAmount, mintProofs, {
                 proofsWeHave: mintProofs,
                 includeFees: true,
@@ -148,10 +152,27 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
                 }
             });
 
-            if (result.send.length > 0) break;
-        }
+            if (result.send.length > 0) {
+                const change = { store: result?.keep ?? [], destroy: result.send, mint };
+                const updateRes = await this.state.update(change);
 
-        return result;
+                // create a change event
+                createOutTxEvent(this, {
+                    paymentDescription: "minted nuts",
+                    amount: amounts.reduce((acc, amount) => acc + amount, 0),
+                    unit: this.unit,
+                }, {
+                    result: { proofs: result.send, mint },
+                    proofsChange: change,
+                    stateUpdate: updateRes,
+                    mint,
+                    fee: 0
+                });
+                this.emit("balance_updated");
+
+                return result;
+            }
+        }
     }
 
     static async from(event: NDKEvent): Promise<NDKCashuWallet | undefined> {
@@ -418,8 +439,6 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
         });
         const tokenEvent = updateRes.created;
 
-        if (tokenEvent) this.addToken(tokenEvent);
-
         unit ??= this.unit;
 
         createInTxEvent(this, proofs, unit, mint, updateRes, { description });
@@ -461,7 +480,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
 
     async redeemNutzap(
         nutzap: NDKNutzap,
-        { onRedeemed, onTxEventCreated }: { onRedeemed?: (res: Proof[]) => void, onTxEventCreated?: (event: NDKEvent) => void } 
+        { onRedeemed, onTxEventCreated }: { onRedeemed?: (res: Proof[]) => void, onTxEventCreated?: (event: NDKEvent) => void }
     ) {
         const user = this.ndk.activeUser;
 
@@ -484,7 +503,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
             if (!mint) throw new Error("missing mint");
 
             const _wallet = await this.cashuWallet(mint);
-            const proofsWeHave = this.state.proofsForMint(mint);
+            const proofsWeHave = this.state.getProofs({ mint });
             const res = await _wallet.receive(
                 { proofs, mint },
                 { proofsWeHave, privkey }
@@ -514,21 +533,14 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
      * Updates the internal state to add a token,
      * there is no change published anywhere when calling this function.
      */
-    public addToken(token: NDKCashuToken): boolean {
-        return this.state.addToken(token);
+    public addToken(token: NDKCashuToken) {
+        this.state.addToken(token);
     }
 
     public warn(msg: string, event?: NDKEvent, relays?: NDKRelay[]) {
         relays ??= event?.onRelays;
         this.warnings.push({ msg, event, relays });
         this.emit("warning", { msg, event, relays });
-    }
-
-    /**
-     * Removes a token that has been deleted
-     */
-    public removeTokenId(id: NDKEventId) {
-        this.state.removeTokenId(id);
     }
 
     /**
@@ -543,21 +555,6 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
         return this.event.delete(reason, publish);
     }
 
-    /**
-     * Gets all tokens, grouped by mint
-     */
-    get mintTokens(): Record<MintUrl, NDKCashuToken[]> {
-        const tokens: Record<MintUrl, NDKCashuToken[]> = {};
-
-        for (const token of this.tokens) {
-            if (token.mint) {
-                tokens[token.mint] ??= [];
-                tokens[token.mint].push(token);
-            }
-        }
-
-        return tokens;
-    }
 
     balance(): NDKWalletBalance | undefined {
         if (this.status === NDKWalletStatus.LOADING) {
@@ -569,11 +566,8 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
                 };
         }
 
-        const proofBalances = proofsTotalBalance(this.tokens.map((t) => t.proofs).flat());
-        const reservedAmounts = this.state.reserveAmounts.reduce((acc, amount) => acc + amount, 0);
-        
         return {
-            amount: proofBalances - reservedAmounts,
+            amount: this.state.getBalance({ onlyAvailable: true }),
             unit: this.unit,
         };
     }
@@ -586,7 +580,6 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
         if (!amount) return;
 
         this.setPrivateTag("balance", amount.toString() ?? "0");
-        console.log("publishing balance (%d)", amount);
         this.publish();
     }
 
@@ -601,7 +594,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
      * Gets all tokens, grouped by mint with their total balances
      */
     get mintBalances(): Record<MintUrl, number> {
-        return this.state.mintBalances;
+        return this.state.getMintsBalance({ onlyAvailable: true });
     }
 
     /**
@@ -609,7 +602,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
      * to cover the specified amount
      */
     getMintsWithBalance(amount: number): MintUrl[] {
-        const availableBalances = this.state.getAvailableMintBalances();
+        const availableBalances = this.state.getMintsBalance({ onlyAvailable: true });
         return Object.entries(availableBalances)
             .filter(([_, balance]) => balance >= amount)
             .map(([mint]) => mint);

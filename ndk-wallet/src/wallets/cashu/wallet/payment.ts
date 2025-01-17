@@ -48,7 +48,9 @@ export class PaymentHandler {
         }); // msat to sat
         if (!res?.result?.preimage) return;
 
-        if (createTxEvent) createOutTxEvent(this.wallet, payment, res);
+        if (createTxEvent) {
+            createOutTxEvent(this.wallet, payment, res);
+        }
 
         return res.result;
     }
@@ -64,7 +66,7 @@ export class PaymentHandler {
             amount = amount / 1000;
         }
 
-        const createResult = await createToken(
+        let createResult = await createToken(
             this.wallet,
             amount,
             unit,
@@ -72,8 +74,22 @@ export class PaymentHandler {
             payment.p2pk,
         )
         if (!createResult) {
-            console.log("failed to pay with cashu");
-            return;
+            console.log("failed to pay with cashu", { allowIntramintFallback: payment.allowIntramintFallback });
+            if (payment.allowIntramintFallback) {
+                console.log("trying to pay with fallback using intramint payment");
+                createResult = await createToken(
+                    this.wallet,
+                    amount,
+                    unit,
+                    undefined,
+                    payment.p2pk,
+                )
+            }
+            
+            if (!createResult) {
+                console.log("failed to pay with cashu");
+                return;
+            }
         }
 
         const isP2pk = (p: Proof) => p.secret.startsWith('["P2PK"');

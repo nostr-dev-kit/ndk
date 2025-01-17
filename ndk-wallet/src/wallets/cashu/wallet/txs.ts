@@ -1,6 +1,5 @@
 import { LnPaymentInfo, CashuPaymentInfo, NDKUser, NDKNutzap, NDKPaymentConfirmationLN } from "@nostr-dev-kit/ndk";
 import { NDKCashuWallet } from ".";
-import { UpdateStateResult, WalletOperation } from "./state";
 import { getBolt11Amount, getBolt11Description } from "../../../utils/ln";
 import { NDKWalletChange } from "../history";
 import { PaymentWithOptionalZapInfo } from "./payment";
@@ -8,6 +7,8 @@ import { Proof } from "@cashu/cashu-ts";
 import { MintUrl } from "../mint/utils";
 import { proofsTotalBalance } from "../token";
 import { TokenCreationResult } from "../pay/nut";
+import { WalletOperation } from "./effect";
+import { UpdateStateResult } from "./state/update";
 
 export async function createOutTxEvent(
     wallet: NDKCashuWallet,
@@ -38,6 +39,7 @@ export async function createOutTxEvent(
     historyEvent.amount = amount ?? 0;
     historyEvent.unit = unit;
     historyEvent.mint = paymentResult.mint;
+    historyEvent.description = description;
     if (paymentResult.fee) historyEvent.fee = paymentResult.fee;
     if (paymentRequest.target) {
         // tag the target if there is one

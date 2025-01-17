@@ -5,7 +5,7 @@ import { CashuPaymentInfo, normalizeUrl } from "@nostr-dev-kit/ndk";
 import { correctP2pk } from "../pay";
 import { getBolt11Amount } from "../../../utils/ln";
 import { walletForMint } from "../mint";
-import { WalletOperation, withProofReserve } from "../wallet/state";
+import { WalletOperation, withProofReserve } from "../wallet/effect";
 import { payLn } from "./ln";
 
 export type NutPayment = CashuPaymentInfo & { amount: number; unit: string; };
@@ -24,7 +24,8 @@ export async function createToken(
     unit: string,
     recipientMints?: MintUrl[],
     p2pk?: string,
-): Promise<WalletOperation<TokenCreationResult> | null> {
+): Promise<WalletOperation<TokenCreationResult> | null>
+{
     p2pk = correctP2pk(p2pk);
     const myMintsWithEnoughBalance = wallet.getMintsWithBalance(amount);
     const hasRecipientMints = recipientMints && recipientMints.length > 0;

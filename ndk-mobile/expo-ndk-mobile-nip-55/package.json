@@ -1,0 +1,42 @@
+{
+  "name": "expo-ndk-mobile-nip-55",
+  "version": "0.1.0",
+  "description": "Implements NIP-55 for ndk-mobile using expo modules with native Android support.",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "scripts": {
+    "build": "expo-module build",
+    "clean": "expo-module clean",
+    "lint": "expo-module lint",
+    "test": "expo-module test",
+    "prepare": "expo-module prepare",
+    "prepublishOnly": "expo-module prepublishOnly",
+    "expo-module": "expo-module",
+    "open:android": "open -a \"Android Studio\" example/android"
+  },
+  "keywords": [
+    "react-native",
+    "expo",
+    "expo-ndk-mobile-nip-55",
+    "ExpoNDKMobileNip55"
+  ],
+  "repository": "https://github.com/nostr-dev-kit/ndk",
+  "bugs": {
+    "url": "https://github.com/nostr-dev-kit/ndk/issues"
+  },
+  "author": "J the Code Monkey <jaythecodemonkey.7vk7i@slmail.me> (https://github.com/jchiarulli)",
+  "license": "MIT",
+  "homepage": "https://github.com/nostr-dev-kit/ndk#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "@types/react": "~18.3.12",
+    "expo-module-scripts": "^4.0.3",
+    "expo": "~52.0.0",
+    "react-native": "0.76.0"
+  },
+  "peerDependencies": {
+    "expo": "*",
+    "react": "*",
+    "react-native": "*"
+  }
+}

@@ -1,0 +1,6 @@
+{
+    "platforms": ["android"],
+    "android": {
+        "modules": ["expo.modules.ndk-mobile-nip-55.ExpoNDKMobileNip55Module"]
+    }
+}

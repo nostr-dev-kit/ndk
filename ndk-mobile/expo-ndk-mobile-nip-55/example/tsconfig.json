@@ -1,0 +1,10 @@
+{
+    "extends": "expo/tsconfig.base",
+    "compilerOptions": {
+        "strict": true,
+        "paths": {
+            "expo-ndk-mobile-nip-55": ["../src/index"],
+            "expo-ndk-mobile-nip-55/*": ["../src/*"]
+        }
+    }
+}

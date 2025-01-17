@@ -18,7 +18,7 @@ export function tryNormalizeRelayUrl(url: string): string | undefined {
  * @returns The normalized URL.
  */
 export function normalizeRelayUrl(url: string): string {
-    let r = normalizeUrl(url.toLowerCase(), {
+    let r = normalizeUrl(url, {
         stripAuthentication: false,
         stripWWW: false,
         stripHash: true,
@@ -178,6 +178,9 @@ export function normalizeUrl(urlString: string, options: any = {}) {
     }
 
     const urlObject = new URL(urlString);
+
+    // Lowercase only the hostname
+    urlObject.hostname = urlObject.hostname.toLowerCase();
 
     if (options.forceHttp && options.forceHttps) {
         throw new Error("The `forceHttp` and `forceHttps` options cannot be used together");

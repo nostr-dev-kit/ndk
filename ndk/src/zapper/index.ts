@@ -317,7 +317,6 @@ class NDKZapper extends EventEmitter<{
             await nutzap.sign(this.signer);
             nutzap.publish(relaySet);
 
-            // mark that we have zapped
             return nutzap;
         }
     }
@@ -329,11 +328,12 @@ class NDKZapper extends EventEmitter<{
      * @returns 
      */
     async zapSplit(split: NDKZapSplit): Promise<NDKPaymentConfirmation | undefined> {
-        const zapped = false;
         let zapMethods = await this.getZapMethods(this.ndk, split.pubkey);
         let retVal: NDKPaymentConfirmation | Error | undefined;
 
-        if (zapMethods.length === 0) throw new Error("No zap method available for recipient");
+        const canFallbackToNip61 = this.nutzapAsFallback && this.cashuPay;
+
+        if (zapMethods.length === 0 && !canFallbackToNip61) throw new Error("No zap method available for recipient and NIP-61 fallback is disabled");
 
         // prefer nip61 if available
         zapMethods = zapMethods.sort((a, b) => {
@@ -346,71 +346,46 @@ class NDKZapper extends EventEmitter<{
             if (!this.nutzapAsFallback) return;
 
             const relayLists = await getRelayListForUsers([split.pubkey], this.ndk);
+            let relayUrls = relayLists.get(split.pubkey)?.readRelayUrls;
+            relayUrls = this.ndk.pool.connectedRelays().map((r) => r.url);
             return await this.zapNip61(split, {
                 // use the user's relay list
-                relays: relayLists.get(split.pubkey)!.readRelayUrls,
+                relays: relayUrls,
                 
                 // lock to the user's actual pubkey
-                p2pk: split.pubkey
+                p2pk: split.pubkey,
+
+                // allow intramint fallback
+                allowIntramintFallback: !!canFallbackToNip61,
             });
         }
 
         for (const zapMethod of zapMethods) {
-            if (zapped) break;
-
-            d(
-                "Zapping to %s with %d %s using %s",
-                split.pubkey,
-                split.amount,
-                this.unit,
-                zapMethod.type
-            );
-
             try {
                 if (zapMethod.type === "nip61") {
                     retVal = await this.zapNip61(split, zapMethod.data as CashuPaymentInfo);
                 } else if (zapMethod.type === "nip57") {
                     retVal = await this.zapNip57(split, zapMethod.data as NDKLnUrlData);
-                } else {
-                    retVal = await nip61Fallback();
                 }
 
-                if (!(retVal instanceof Error)) {
-                    break;
+                if (retVal && !(retVal instanceof Error)) {
+                    console.log("Zapped to %s with %d %s using %s: %o", split.pubkey, split.amount, this.unit, zapMethod.type, retVal);
+                    return retVal as NDKPaymentConfirmation;
                 }
             } catch (e: any) {
-                this.emit("notice", `Error zapping to ${split.pubkey} with ${split.amount} ${this.unit} using ${zapMethod.type}: ${e}`);
-
-                console.log(`Error zapping to ${split.pubkey} with ${split.amount} ${this.unit} using ${zapMethod.type}: ${e}`);
-
-                if (this.nutzapAsFallback) {
-                    retVal = await nip61Fallback();
-                    if (retVal) {
-                        console.log(`Fallback to NIP-61 worked`);
-                        this.emit("notice", `Fallback to NIP-61 worked`);
-                    } else {
-                        console.log(`Fallback to NIP-61 failed`);
-                        this.emit("notice", `Fallback to NIP-61 failed`);
-                    }
-                } else {
-                    
-                    if (e instanceof Error) retVal = e;
-                    else retVal = new Error(e);
-                    
-                    d(
-                        "Error zapping to %s with %d %s using %s: %o",
-                        split.pubkey,
-                        split.amount,
-                        this.unit,
-                        zapMethod.type,
-                        e
-                    );
-                }
+                console.log("Error zapping to %s with %d %s using %s: %o", split.pubkey, split.amount, this.unit, zapMethod.type, e);
             }
         }
 
-        if (retVal instanceof Error) throw retVal;
+        if (canFallbackToNip61) {
+            retVal = await nip61Fallback();
 
+            if (retVal instanceof Error) throw retVal;
+            return retVal;
+        }
+
+        if (retVal instanceof Error) throw retVal;
+        
         return retVal;
     }
 

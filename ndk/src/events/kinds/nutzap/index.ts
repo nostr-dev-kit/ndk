@@ -93,7 +93,7 @@ export class NDKNutzap extends NDKEvent {
 
             if (isP2PKLocked) {
                 const paddedp2pk = payload[1].data;
-                const p2pk = paddedp2pk.slice(2, -1);
+                const p2pk = paddedp2pk.slice(2);
 
                 if (p2pk) return p2pk;
             }

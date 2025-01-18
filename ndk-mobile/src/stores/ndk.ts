@@ -8,18 +8,10 @@ export type InitNDKParams = NDKConstructorParams & {
     settingsStore: SettingsStore;
 }
 
-
-export interface UnpublishedEventEntry {
-    event: NDKEvent;
-    relays?: string[];
-    lastTryAt?: number;
-}
-
 type State = {
     ndk: NDK;
     currentUser: NDKUser | null;
     settingsStore?: SettingsStore;
-    unpublishedEvents: Map<string, UnpublishedEventEntry>;
     cacheInitialized: boolean;
     initialParams: InitNDKParams;
 }
@@ -37,7 +29,6 @@ export const useNDKStore = create<State & Actions & EventHandler>((set, get) => 
     ndk: undefined,
     currentUser: null,
     settingsStore: undefined,
-    unpublishedEvents: new Map(),
     cacheInitialized: false,
     initialParams: undefined,
 
@@ -48,30 +39,6 @@ export const useNDKStore = create<State & Actions & EventHandler>((set, get) => 
 
         ndk.connect();
 
-        // get unpublished events
-        ndk.cacheAdapter?.onReady(() => {
-            ndk?.cacheAdapter?.getUnpublishedEvents?.().then((entries) => {
-                const e = new Map<string, UnpublishedEventEntry>();
-                entries.forEach((entry) => {
-                    e.set(entry.event.id, entry);
-                    entry.event.once("published", () => {
-                        console.log('published', entry.event.id);
-                    })
-                });
-
-                set({
-                    cacheInitialized: true,
-                    unpublishedEvents: e,
-                });
-            })
-        })
-
-        ndk.on('event:publish-failed', (event: NDKEvent) => {
-            const current = new Map(get().unpublishedEvents);
-            current.set(event.id, { event });
-            set({ unpublishedEvents: current });
-        });
-        
         const key = params.settingsStore?.getSync('login');
 
         set({

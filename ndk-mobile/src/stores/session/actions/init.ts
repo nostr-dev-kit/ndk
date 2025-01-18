@@ -5,6 +5,8 @@ import { SettingsStore } from '../../../types';
 import { NDKCacheAdapterSqlite } from '../../../cache-adapter/sqlite';
 import { addWotEntries, shouldUpdateWot, wotEntries } from './wot';
 
+const isValidPubkey = (pubkey: Hexpubkey) => pubkey.length === 64 && /^[0-9a-fA-F]+$/.test(pubkey);
+
 export const initSession = (
     ndk: NDK,
     user: NDKUser,
@@ -30,7 +32,6 @@ export const initSession = (
     }
 
     const updateFollows = () => {
-        console.log('running update follows', follows.length, kindFollows.size);
         set({ follows: Array.from(new Set([ ...follows, ...Array.from(kindFollows) ])) });
     }
 
@@ -38,8 +39,10 @@ export const initSession = (
         let modified = false;
         for (const tag of event.getMatchingTags('p')) {
             if (!kindFollows.has(tag[1])) {
-                kindFollows.add(tag[1]);
-                modified = true;
+                if (isValidPubkey(tag[1])) {
+                    kindFollows.add(tag[1]);
+                    modified = true;
+                }
             }
         }
 
@@ -52,7 +55,10 @@ export const initSession = (
     const handleEvent = (event: NDKEvent) => {
         addEvent(event, () => {
             if (event.kind === NDKKind.Contacts) {
-                follows = event.tags.filter((tag) => tag[0] === 'p' && !!tag[1]).map((tag) => tag[1]);
+                follows = event.tags
+                    .filter((tag) => tag[0] === 'p' && !!tag[1])
+                    .map((tag) => tag[1])
+                    .filter(isValidPubkey);
 
                 // if we have already eosed, get the pubkeys that are not in the wotEntries and add them to the wotEntries
                 if (eosed && opts.wot) {

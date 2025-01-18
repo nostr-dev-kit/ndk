@@ -32,8 +32,6 @@ export class PaymentHandler {
     ): Promise<NDKPaymentConfirmationLN | undefined> {
         if (!payment.pr) throw new Error("pr is required");
 
-        console.log("[WALLET] lnPay", JSON.stringify(payment));
-
         const invoiceAmount = getBolt11Amount(payment.pr);
         if (!invoiceAmount) throw new Error("invoice amount is required");
 

@@ -160,9 +160,7 @@ export class NDKNWCWallet extends EventEmitter<NDKNWCWalletEvents> implements ND
      * Fetch the balance of this wallet
      */
     async updateBalance(): Promise<void> {
-        console.log('updating balance');
         const res = await this.req("get_balance", {});
-        console.log('balance', res);
 
         if (!res.result) throw new Error("Failed to get balance");
 

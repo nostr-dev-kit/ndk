@@ -68,8 +68,6 @@ export class NDKCashuQuote extends NDKEvent {
             amount: this.amount,
             unit: this.unit
         });
-
-        console.log("saving quote %o", this.rawEvent());
         
         await this.encrypt(this.ndk.activeUser, undefined, "nip44");
         await this.sign();

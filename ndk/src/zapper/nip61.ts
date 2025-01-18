@@ -22,6 +22,14 @@ export type CashuPaymentInfo = {
      * Optional pubkey to use for P2PK lock
      */
     p2pk?: string;
+
+    /**
+     * Intramint fallback allowed:
+     * 
+     * When set to true, if cross-mint payments fail, we will
+     * fallback to sending an intra-mint payment.
+     */
+    allowIntramintFallback?: boolean;
 };
 
 export type NDKZapConfirmationCashu = NDKNutzap;

@@ -75,15 +75,5 @@ export async function consolidateMintTokens(
     if (walletChange.destroy?.length === 0) return;
     
     // Use wallet state update to handle the changes
-    const walletUpdate = await wallet.state.update(walletChange);
-
-    createOutTxEvent(wallet, {
-        amount: totalSpentProofs,
-        paymentDescription: 'Spent proof consolidation on ' + mint,
-    }, {
-        mint,
-        stateUpdate: walletUpdate,
-        proofsChange: walletChange,
-        fee: 0,
-    });
+    return wallet.state.update(walletChange);
 }

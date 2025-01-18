@@ -1,6 +1,6 @@
 import { EventEmitter } from "tseep";
 
-import type { NDK } from "../ndk/index.js";
+import { NDK } from "../ndk/index.js";
 import type { NDKRelay } from "../relay/index.js";
 import { calculateRelaySetFromEvent } from "../relay/sets/calculate.js";
 import type { NDKRelaySet } from "../relay/sets/index.js";
@@ -18,7 +18,14 @@ import { type NDKEventSerialized, deserialize, serialize } from "./serializer.js
 import { validate, verifySignature, getEventHash } from "./validation.js";
 import { NIP73EntityType } from "./nip73.js";
 
-const skipClientTagOnKinds = [NDKKind.Contacts];
+const skipClientTagOnKinds = new Set([
+    NDKKind.Metadata,
+    NDKKind.GiftWrap,
+    NDKKind.GiftWrapSeal,
+    NDKKind.Contacts,
+    NDKKind.ZapRequest,
+    NDKKind.EventDeletion
+]);
 
 export type NDKEventId = string;
 export type NDKTag = string[];
@@ -536,14 +543,14 @@ export class NDKEvent extends EventEmitter {
 
     get shouldAddClientTag(): boolean {
         if (!this.ndk?.clientName && !this.ndk?.clientNip89) return false;
-        if (skipClientTagOnKinds.includes(this.kind!)) return false;
-        if (this.isEphemeral()) return false;
+        if (skipClientTagOnKinds.has(this.kind!)) return false;
+        if (this.isEphemeral() || this.isReplaceable()) return false;
         if (this.hasTag("client")) return false;
         return true;
     }
 
     get shouldStripClientTag(): boolean {
-        return skipClientTagOnKinds.includes(this.kind!);
+        return skipClientTagOnKinds.has(this.kind!);
     }
 
     public muted(): string | null {

@@ -4,7 +4,6 @@ import NDK, {
     type NDKEventId,
     NDKKind,
     NDKNutzap,
-    NDKPrivateKeySigner,
     NDKRelaySet,
     NDKSubscription,
     NDKSubscriptionCacheUsage,
@@ -14,7 +13,6 @@ import NDK, {
 import { EventEmitter } from "tseep";
 import createDebug from "debug";
 import { NDKCashuWallet } from "../wallets/cashu/wallet/index.js";
-import { Proof } from "@cashu/cashu-ts";
 
 const d = createDebug("ndk-wallet:nutzap-monitor");
 
@@ -155,7 +153,6 @@ export class NDKNutzapMonitor extends EventEmitter<{
     }
 
     private async eventHandler(event: NDKEvent) {
-        console.log('nutzap event', event.id);
         if (this.knownTokens.has(event.id)) return;
         this.knownTokens.set(event.id, PROCESSING_STATUS.initial);
         const nutzapEvent = await NDKNutzap.from(event);
@@ -186,7 +183,6 @@ export class NDKNutzapMonitor extends EventEmitter<{
 
         try {
             const { proofs, mint } = nutzap;
-            console.log('nutzap has %d proofs: %o', proofs.length, proofs);
 
             let wallet: NDKCashuWallet | undefined;
 
@@ -227,19 +223,4 @@ export class NDKNutzapMonitor extends EventEmitter<{
 
         return wallet;
     }
-}
-
-/**
- * Compute the balance difference between two sets of proofs
- * @param set1 - The first set of proofs
- * @param set2 - The second set of proofs
- * @returns The balance difference
- */
-function computeBalanceDifference(set1: Array<Proof>, set2: Array<Proof>) {
-    const amount1 = set1.reduce((acc, proof) => acc + proof.amount, 0);
-    const amount2 = set2.reduce((acc, proof) => acc + proof.amount, 0);
-
-    const diff = amount1 - amount2;
-
-    return diff;
 }

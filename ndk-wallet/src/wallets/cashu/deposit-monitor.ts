@@ -24,8 +24,6 @@ export class NDKCashuDepositMonitor extends EventEmitter<{
             this.removeDeposit(quoteId);
         });
 
-        console.log('[DEPOSIT MONITOR] adding deposit %s', quoteId);
-
         this.deposits.set(quoteId, deposit);
         this.emit("change");
 
@@ -33,7 +31,6 @@ export class NDKCashuDepositMonitor extends EventEmitter<{
     }
 
     public removeDeposit(quoteId: string) {
-        console.log('[DEPOSIT MONITOR] removing deposit %s', quoteId);
         this.deposits.delete(quoteId);
         this.emit("change");
     }

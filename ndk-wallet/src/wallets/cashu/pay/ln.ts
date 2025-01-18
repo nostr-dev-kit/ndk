@@ -79,20 +79,15 @@ async function executePayment(
     amountWithoutFees: number,
     wallet: NDKCashuWallet,
 ): Promise<WalletOperation<NDKPaymentConfirmationLN> | null> {
-    console.log("executing payment from mint", mint);
     const cashuWallet = await wallet.cashuWallet(mint);
 
     try {
         const meltQuote = await cashuWallet.createMeltQuote(pr);
         const amountToSend = meltQuote.amount + meltQuote.fee_reserve;
-        console.log('melt quote', {amountToSend}, JSON.stringify(meltQuote, null, 4));
 
         const result = await withProofReserve<NDKPaymentConfirmationLN>(
             wallet, cashuWallet, mint, amountToSend, amountWithoutFees, async (proofsToUse, allOurProofs) => {
-                console.log("will melt %d proofs on mint %s", proofsToUse.length, mint);
                 const meltResult = await cashuWallet.meltProofs(meltQuote, proofsToUse);
-
-                console.log('melt result', JSON.stringify(meltResult, null, 4));
 
                 if (meltResult.quote.state === MeltQuoteState.PAID) {
                     return {

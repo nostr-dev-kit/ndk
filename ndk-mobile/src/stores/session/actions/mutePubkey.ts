@@ -4,7 +4,6 @@ export const mutePubkey = (pubkey: Hexpubkey, set) => {
     set((state) => {
         const muteList = new Set(state.muteList);
         let muteListEvent: NDKList;
-        console.log('muting user', pubkey);
 
         if (state.muteListEvent) {
             muteListEvent = NDKList.from(state.muteListEvent);
@@ -17,9 +16,6 @@ export const mutePubkey = (pubkey: Hexpubkey, set) => {
         muteListEvent.tags.push(['p', pubkey]);
 
         muteListEvent.publishReplaceable()
-            .then((res) => console.log('mute list', res, JSON.stringify(muteListEvent.rawEvent(), null, 4)))
-            .catch(console.error)
-            
 
         return { muteList };
     });

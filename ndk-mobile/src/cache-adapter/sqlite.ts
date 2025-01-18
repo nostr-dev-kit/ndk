@@ -25,6 +25,19 @@ export type NDKSqliteEventRecord = {
     relay: string;
 };
 
+/**
+ * This is an entry with a loaded event that we can listen on for publication event to update
+ * our internal state.
+ */
+type LoadedUnpublishedEvent = {
+    event: NDKEvent;
+    relays: WebSocket['url'][];
+    lastTryAt: number;
+}
+
+/**
+ * This represents an entry in the database for an unpublished event.
+ */
 type UnpublishedEventRecord = {
     id: string;
     event: string;
@@ -106,6 +119,8 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
         for (const event of events) {
             this.knownEventTimestamps.set(event.id, event.created_at);
         }
+
+        await this.loadUnpublishedEvents();
 
         Promise.all(this.pendingCallbacks.map((f) => {
             try {
@@ -221,7 +236,6 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     }
 
     fetchProfileSync(pubkey: Hexpubkey): NDKCacheEntry<NDKUserProfile> | null {
-
         const cached = this.profileCache.get(pubkey);
         if (cached) {
             return cached;
@@ -304,9 +318,29 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
         });
     }
 
-    addUnpublishedEvent(event: NDKEvent, relayUrls: WebSocket['url'][]): void {
+    private _unpublishedEvents: LoadedUnpublishedEvent[] = [];
+
+    private _addUnpublishedEvent(
+        event: NDKEvent,
+        relays: WebSocket['url'][],
+        lastTryAt: number
+    ) {
         if (this.unpublishedEventIds.has(event.id)) return;
         this.unpublishedEventIds.add(event.id)
+        this._unpublishedEvents.push({ event, relays, lastTryAt });
+
+        const onPublished = (relay: NDKRelay) => {
+            this.discardUnpublishedEvent(event.id);
+            event.off('published', onPublished);
+        };
+
+        event.on('published', onPublished);
+    }
+
+    addUnpublishedEvent(event: NDKEvent, relayUrls: WebSocket['url'][]): void {
+        if (this.unpublishedEventIds.has(event.id)) return;
+        this._addUnpublishedEvent(event, relayUrls, Date.now());
+        
         this.setEvent(event, []);
         this.onReady(async () => {
             const relayStatus: { [key: string]: boolean } = {};
@@ -319,37 +353,6 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                     JSON.stringify(relayStatus),
                     Date.now(),
                 ]);
-
-                const onPublished = (relay: NDKRelay) => {
-                    const url = relay.url;
-                    const record = this.db.getFirstSync(
-                        `SELECT relays FROM unpublished_events WHERE id = ?`,
-                        [event.id]
-                    ) as UnpublishedEventRecord | undefined;
-
-                    if (!record) {
-                        event.off('published', onPublished);
-                        return;
-                    }
-
-                    const relays = JSON.parse(record.relays);
-                    relays[url] = true;
-
-                    const successWrites = Object.values(relays).filter(v => v).length;
-                    const unsuccessWrites = Object.values(relays).length - successWrites;
-
-                    if (successWrites >= 3 || unsuccessWrites === 0) {
-                        this.discardUnpublishedEvent(event.id);
-                        event.off('published', onPublished);
-                    } else {
-                        this.db.runSync(
-                            `UPDATE unpublished_events SET relays = ? WHERE id = ?`,
-                            [JSON.stringify(relays), event.id]
-                        );
-                    }
-                };
-
-                event.once('published', onPublished);
             } catch (e) {
                 console.error('error adding unpublished event', e);
             }
@@ -359,32 +362,30 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
 
     async getUnpublishedEvents(): Promise<{ event: NDKEvent; relays?: WebSocket['url'][]; lastTryAt?: number }[]> {
         return await this.onReady(async () => {
-            const call = () => this._getUnpublishedEvents();
+            const call = () => this._unpublishedEvents;
 
             if (!this.ready) {
                 return new Promise((resolve, reject) => {
-                    this.pendingCallbacks.push(() => call().then(resolve).catch(reject));
+                    this.pendingCallbacks.push(() => resolve(call()));
                 });
             } else {
-                const result = await call();
-                return result;
+                return call();
             }
         });
     }
 
-    private async _getUnpublishedEvents(): Promise<{ event: NDKEvent; relays?: WebSocket['url'][]; lastTryAt?: number }[]> {
-        return await this.onReady(async () => {
-            const events = (await this.db.getAllAsync(`SELECT * FROM unpublished_events`)) as UnpublishedEventRecord[];
-            return events.map((event) => {
-                const deserializedEvent = new NDKEvent(undefined, deserialize(event.event));
-                const relays = JSON.parse(event.relays);
-                return {
-                    event: deserializedEvent,
-                    relays: Object.keys(relays),
-                    lastTryAt: event.last_try_at,
-                };
-            });
-        });
+    /**
+     * This loads the unpublished events from the database into _unpublishedEvents.
+     * 
+     * This should be called during initialization.
+     */
+    private loadUnpublishedEvents() {
+        const events = this.db.getAllSync(`SELECT * FROM unpublished_events`) as UnpublishedEventRecord[];
+        for (const event of events) {
+            const deserializedEvent = new NDKEvent(undefined, deserialize(event.event));
+            const relays = JSON.parse(event.relays);
+            this._addUnpublishedEvent(deserializedEvent, Object.keys(relays), event.last_try_at);
+        }
     }
 
     discardUnpublishedEvent(eventId: NDKEventId): void {

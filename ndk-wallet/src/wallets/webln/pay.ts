@@ -28,6 +28,8 @@ export class NDKLnPay {
         const { mints, p2pk } = this.info as NutPayment;
         let { amount, unit } = this.info as NutPayment;
 
+        if (!mints) throw new Error("No mints provided");
+
         if (unit === "msat") {
             amount /= 1000;
             unit = "sat";

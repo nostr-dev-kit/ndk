@@ -90,7 +90,7 @@ export class NDKSubscriptionManager {
         this.filterMatchingCount += matchingSubs.length;
 
         for (const sub of matchingSubs) {
-            sub.eventReceived(event, undefined, false, optimisticPublish);
+            sub.eventReceived(event, relay, false, optimisticPublish);
         }
     }
 }

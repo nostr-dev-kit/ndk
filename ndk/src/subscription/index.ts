@@ -182,17 +182,35 @@ export const defaultOpts: NDKSubscriptionOptions = {
  * sub.on("event", (event) => console.log(event.content); // Only valid events will be received
  */
 export class NDKSubscription extends EventEmitter<{
-
     cacheEose: () => void;
     eose: (sub: NDKSubscription) => void;
     close: (sub: NDKSubscription) => void;
+
+    /**
+     * Emitted when a duplicate event is received by the subscription.
+     * @param event - The duplicate event received by the subscription.
+     * @param relay - The relay that received the event.
+     * @param timeSinceFirstSeen - The time elapsed since the first time the event was seen.
+     * @param sub - The subscription that received the event.
+     */
     "event:dup": (
-        eventId: NDKEventId,
+        event: NDKEvent | NostrEvent,
         relay: NDKRelay | undefined,
         timeSinceFirstSeen: number,
-        sub: NDKSubscription
+        sub: NDKSubscription,
+        fromCache: boolean,
+        optimisticPublish: boolean
     ) => void;
-    event: (event: NDKEvent, relay: NDKRelay | undefined, sub: NDKSubscription) => void;
+    
+    /**
+     * Emitted when an event is received by the subscription.
+     * @param event - The event received by the subscription.
+     * @param relay - The relay that received the event.
+     * @param sub - The subscription that received the event.
+     * @param fromCache - Whether the event was received from the cache.
+     * @param optimisticPublish - Whether the event was received from an optimistic publish.
+     */
+    event: (event: NDKEvent, relay: NDKRelay | undefined, sub: NDKSubscription, fromCache: boolean, optimisticPublish: boolean) => void;
 
     /**
      * Emitted when a relay unilaterally closes the subscription.
@@ -504,13 +522,13 @@ export class NDKSubscription extends EventEmitter<{
             }
 
             if (!optimisticPublish || this.skipOptimisticPublishEvent !== true) {
-                this.emit("event", ndkEvent, relay, this);
+                this.emit("event", ndkEvent, relay, this, fromCache, optimisticPublish);
                 // mark the eventId as seen
                 this.eventFirstSeen.set(eventId, Date.now());
             }
         } else {
             const timeSinceFirstSeen = Date.now() - (this.eventFirstSeen.get(eventId) || 0);
-            this.emit("event:dup", eventId, relay, timeSinceFirstSeen, this);
+            this.emit("event:dup", event, relay, timeSinceFirstSeen, this, fromCache, optimisticPublish);
 
             if (relay) {
                 // Let's see if we have already verified this event id's signature

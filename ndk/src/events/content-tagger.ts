@@ -197,9 +197,8 @@ export async function generateContentTags(
 
     await Promise.all(promises);
 
-    const nonTTags = tags.filter((t) => t[0] !== "t");
-    tags = generateHashtags(content).map((hashtag) => ["t", hashtag]);
-    tags = mergeTags(tags, nonTTags);
+    const newTags = generateHashtags(content).map((hashtag) => ["t", hashtag]);
+    tags = mergeTags(tags, newTags);
 
     return { content, tags };
 }

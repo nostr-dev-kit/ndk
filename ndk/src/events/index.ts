@@ -20,6 +20,7 @@ import { NIP73EntityType } from "./nip73.js";
 
 const skipClientTagOnKinds = new Set([
     NDKKind.Metadata,
+    NDKKind.EncryptedDirectMessage,
     NDKKind.GiftWrap,
     NDKKind.GiftWrapSeal,
     NDKKind.Contacts,

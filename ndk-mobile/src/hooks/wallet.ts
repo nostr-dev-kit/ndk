@@ -4,7 +4,11 @@ import { useNDK, useNDKCurrentUser } from './ndk';
 import { useNDKStore } from '../stores/ndk';
 import { useEffect, useCallback } from 'react';
 
-const useNDKNutzapMonitor = () => {
+/**
+ * @param start - Whether to start the nutzap monitor if it hasn't been started yet.
+ * @returns 
+ */
+const useNDKNutzapMonitor = (start: boolean = true) => {
     const { ndk } = useNDK();
     const nutzapMonitor = useWalletStore(s => s.nutzapMonitor);
     const setNutzapMonitor = useWalletStore(s => s.setNutzapMonitor);
@@ -12,6 +16,7 @@ const useNDKNutzapMonitor = () => {
     const activeWallet = useWalletStore(s => s.activeWallet);
 
     useEffect(() => {
+        if (!start) return;
         if (!ndk) return;
         if (!currentUser?.pubkey) return;
         if (!activeWallet?.walletId) return;
@@ -22,8 +27,8 @@ const useNDKNutzapMonitor = () => {
         setNutzapMonitor(monitor);
         if (activeWallet instanceof NDKCashuWallet) monitor.addWallet(activeWallet);
         monitor.start();
-    }, [ nutzapMonitor, setNutzapMonitor, activeWallet?.walletId, currentUser?.pubkey, ndk ])
-
+    }, [ nutzapMonitor, setNutzapMonitor, activeWallet?.walletId, currentUser?.pubkey, ndk, start ])
+    
     return { nutzapMonitor, setNutzapMonitor };
 }
 
@@ -34,6 +39,13 @@ const useNDKWallet = () => {
     const storeSetActiveWallet = useWalletStore(s => s.setActiveWallet);
     const balance = useWalletStore(s => s.balance);
     const setBalance = useWalletStore(s => s.setBalance);
+
+    const storeLastUpdatedAt = useCallback((wallet: NDKWallet) => {
+        if (!(wallet instanceof NDKCashuWallet)) return;
+        const now = Math.floor(Date.now()/1000);
+        settingsStore.set('wallet_'+wallet.walletId+'_last_updated_at', now.toString());
+        console.log("[NDK-WALLET] Stored last updated at for wallet", wallet.walletId, "as", now);
+    }, [ settingsStore ]);
 
     const setActiveWallet = useCallback((wallet: NDKWallet) => {
         if (!ndk) return;
@@ -53,14 +65,18 @@ const useNDKWallet = () => {
         }
 
         if (wallet) {
+            wallet.on('ready', () => storeLastUpdatedAt(wallet));
             wallet.on('ready', updateBalance);
             wallet.on('balance_updated', updateBalance);
         } else {
             setBalance(null);
         }
 
-        if (wallet instanceof NDKCashuWallet)
-            wallet.start({ subId: 'wallet' })
+        if (wallet instanceof NDKCashuWallet) {
+            const lastUpdatedAt = settingsStore?.getSync('wallet_' + wallet.walletId + '_last_updated_at');
+            console.log("[NDK-WALLET] Starting wallet", wallet.walletId, "with since", lastUpdatedAt);
+            wallet.start({ subId: 'wallet', since: lastUpdatedAt ? parseInt(lastUpdatedAt) : undefined });
+        }
 
         if (wallet) wallet.updateBalance?.();
 

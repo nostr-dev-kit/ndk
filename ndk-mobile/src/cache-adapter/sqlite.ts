@@ -50,8 +50,10 @@ type PendingCallback = (...arg: any) => any;
 function filterForCache(subscription: NDKSubscription) {
     if (!subscription.cacheUnconstrainFilter) return subscription.filters;
 
+    const filterCopy = [...subscription.filters];
+    
     // remove the keys that are in the cacheUnconstrainFilter
-    const filterCopy: NDKFilter[] = subscription.filters.filter((filter) => {
+    filterCopy.filter((filter) => {
         for (const key of subscription.cacheUnconstrainFilter) {
             delete filter[key];
         }
@@ -74,6 +76,10 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
      * This tracks the events we have written to the database along with their timestamp.
      */
     private knownEventTimestamps: Map<string, number> = new Map();
+
+    private writeBuffer: { query: string; params: any[] }[] = [];
+    private bufferFlushTimeout: number = 100; // milliseconds
+    private bufferFlushTimer: NodeJS.Timeout | null = null;
 
     constructor(dbName: string, maxProfiles: number = 200) {
         this.dbName = dbName ?? 'ndk-cache';
@@ -111,6 +117,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
             });
         }
         
+        // console.log(`[${Date.now()}] [SQLITE] Cache adapter ready`);
         this.ready = true;
         this.locking = true;
 
@@ -187,6 +194,61 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
         });
     }
 
+    /// XXX
+    // public bufferKinds = new Map<number, number>();
+
+    private async flushWriteBuffer() {
+        if (this.writeBuffer.length === 0) return;
+
+        const bufferCopy = [...this.writeBuffer];
+        this.writeBuffer = [];
+
+        // console.log(`[${Date.now()}] [SQLITE] Flushing buffer`, Array.from(this.bufferKinds.entries()));
+
+        // const startTime = Date.now();
+        // console.log(`[${startTime}] [SQLITE] Flushing buffer with ${bufferCopy.length} operations`);
+
+        await this.db.withTransactionAsync(async () => {
+            for (const [index, { query, params }] of bufferCopy.entries()) {
+                // if (index % 10 === 0) {
+                    // console.log(`[${Date.now()}] [SQLITE] Flushing buffer with ${bufferCopy.length} operations, ${index} operations completed in ${Date.now() - startTime}ms`);
+                // }
+                try {
+                    await this.db.runAsync(query, params);
+                } catch (e) {
+                    console.error('error executing buffered write', e, query, params);
+                }
+
+                // if (index % 10 === 0) {
+                //     console.log(`[${Date.now()}] [SQLITE] Flushed ${index} operations completed in ${Date.now() - startTime}ms`);
+                // }
+            }
+        });
+
+        // const endTime = Date.now();
+        // console.log(`[${endTime}] [SQLITE] Finished flushing buffer. Duration: ${endTime - startTime}ms`);
+
+        // null out the timer
+        this.bufferFlushTimer = null;
+
+        // check if there are any more operations in the buffer
+        if (this.writeBuffer.length > 0) {
+            // console.log(`[${Date.now()}] [SQLITE] Buffer has ${this.writeBuffer.length} operations, starting new timer`);
+            this.bufferFlushTimer = setTimeout(() => this.flushWriteBuffer(), this.bufferFlushTimeout);
+        }
+
+        // this.bufferKinds = new Map();
+    }
+
+    private bufferWrite(query: string, params: any[]) {
+        this.writeBuffer.push({ query, params });
+
+        if (!this.bufferFlushTimer) {
+            this.bufferFlushTimer = setTimeout(() => this.flushWriteBuffer(), this.bufferFlushTimeout);
+        }
+    }
+
+    
     async setEvent(event: NDKEvent, filters: NDKFilter[], relay?: NDKRelay): Promise<void> {
         this.onReady(async () => {
             const referenceId = event.isReplaceable() ? event.tagAddress() : event.id;
@@ -197,15 +259,15 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
 
             if (event.isReplaceable()) {
                 try {
-                    this.db.runSync(`DELETE FROM events WHERE id = ?;`, [referenceId]);
-                    this.db.runSync(`DELETE FROM event_tags WHERE event_id = ?;`, [referenceId]);
+                    this.bufferWrite(`DELETE FROM events WHERE id = ?;`, [referenceId]);
+                    this.bufferWrite(`DELETE FROM event_tags WHERE event_id = ?;`, [referenceId]);
                 } catch (e) {
                     console.error('error deleting event', e, referenceId);
                 }
             }
 
-            console.log(`[${Date.now()}] [SQLITE] write op`, event.kind);
-            this.db.runAsync(`INSERT INTO events (id, created_at, pubkey, event, kind, relay) VALUES (?, ?, ?, ?, ?, ?);`, [
+            // this.bufferKinds.set(event.kind!, (this.bufferKinds.get(event.kind!) || 0) + 1);
+            this.bufferWrite(`INSERT INTO events (id, created_at, pubkey, event, kind, relay) VALUES (?, ?, ?, ?, ?, ?);`, [
                 referenceId,
                 event.created_at!,
                 event.pubkey,
@@ -216,12 +278,9 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
 
             const filterTags: [string, string][] = event.tags.filter((tag) => tag[0].length === 1).map((tag) => [tag[0], tag[1]]);
             if (filterTags.length < 10) {
-                await this.db.withTransactionAsync(async () => {
-                    for (const tag of filterTags) {
-                        console.log(`[${Date.now()}] [SQLITE] write operation`, event.kind, tag[0]);
-                        await this.db.runAsync(`INSERT INTO event_tags (event_id, tag, value) VALUES (?, ?, ?);`, [event.id, tag[0], tag[1]]);
-                    }
-                });
+                for (const tag of filterTags) {
+                    this.bufferWrite(`INSERT INTO event_tags (event_id, tag, value) VALUES (?, ?, ?);`, [event.id, tag[0], tag[1]]);
+                }
             }
 
             if (event.kind === NDKKind.EventDeletion) {
@@ -232,9 +291,8 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
 
     async deleteEventIds(eventIds: NDKEventId[]): Promise<void> {
         this.onReady(async () => {
-            console.log(`[${Date.now()}] [SQLITE] delete op`, eventIds.length);
-            await this.db.runAsync(`DELETE FROM events WHERE id IN (${eventIds.map(() => '?').join(',')});`, eventIds);
-            await this.db.runAsync(`DELETE FROM event_tags WHERE event_id IN (${eventIds.map(() => '?').join(',')});`, eventIds);
+            this.bufferWrite(`DELETE FROM events WHERE id IN (${eventIds.map(() => '?').join(',')});`, eventIds);
+            this.bufferWrite(`DELETE FROM event_tags WHERE event_id IN (${eventIds.map(() => '?').join(',')});`, eventIds);
         });
     }
 
@@ -311,8 +369,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
             const entry = { ...profile, fetchedAt: now };
             this.profileCache.set(pubkey, entry);
 
-            console.log(`[${Date.now()}] [SQLITE] write profile`, pubkey);
-            this.db.runAsync(`INSERT OR REPLACE INTO profiles (pubkey, profile, catched_at, created_at) VALUES (?, ?, ?, ?);`, [
+            this.bufferWrite(`INSERT OR REPLACE INTO profiles (pubkey, profile, catched_at, created_at) VALUES (?, ?, ?, ?);`, [
                 pubkey,
                 JSON.stringify(profile),
                 now,
@@ -351,7 +408,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
             relayUrls.forEach(url => relayStatus[url] = false);
 
             try {
-                console.log(`[${Date.now()}] [SQLITE] write unpublished event`, event.kind);
+                // console.log(`[${Date.now()}] [SQLITE] write unpublished event`, event.kind);
                 this.db.runAsync(`INSERT INTO unpublished_events (id, event, relays, last_try_at) VALUES (?, ?, ?, ?);`, [
                     event.id,
                     event.serialize(true, true),
@@ -396,7 +453,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     discardUnpublishedEvent(eventId: NDKEventId): void {
         this.unpublishedEventIds.delete(eventId);
         this.onReady(() => {
-            console.log(`[${Date.now()}] [SQLITE] delete unpublished event`, eventId);
+            // console.log(`[${Date.now()}] [SQLITE] delete unpublished event`, eventId);
             this.db.runAsync(`DELETE FROM unpublished_events WHERE id = ?;`, [eventId]);
         });
     }

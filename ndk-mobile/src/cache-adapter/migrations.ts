@@ -82,5 +82,42 @@ export const migrations = [
             await db.execAsync(`DELETE FROM events;`);
             await db.execAsync(`DELETE FROM event_tags;`);
         },
-    }
+    },
+    {
+        version: 5, // Increment the version number
+        up: async (db: SQLite.SQLiteDatabase) => {
+            // Temporarily disable foreign key constraints
+            await db.execAsync('PRAGMA foreign_keys=off;');
+    
+            // Rename the existing table
+            await db.execAsync('ALTER TABLE event_tags RENAME TO event_tags_old;');
+    
+            // Create the new table without a primary key
+            await db.execAsync(`
+                CREATE TABLE event_tags (
+                    event_id TEXT,
+                    tag TEXT,
+                    value TEXT
+                );
+            `);
+    
+            // Copy data back into the new table
+            await db.execAsync(`
+                INSERT INTO event_tags (event_id, tag, value)
+                SELECT event_id, tag, value FROM event_tags_old;
+            `);
+    
+            // Drop the old table
+            await db.execAsync('DROP TABLE event_tags_old;');
+    
+            // Add a non-unique index on event_id and tag
+            await db.execAsync(`
+                CREATE INDEX IF NOT EXISTS idx_event_tags_event_id_tag ON event_tags (event_id, tag);
+            `);
+    
+            // Re-enable foreign key constraints
+            await db.execAsync('PRAGMA foreign_keys=on;');
+        },
+    },
+    
 ];

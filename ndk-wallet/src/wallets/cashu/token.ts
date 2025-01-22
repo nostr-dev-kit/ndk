@@ -23,6 +23,7 @@ export function proofsTotalBalance(proofs: Proof[]): number {
 
 export class NDKCashuToken extends NDKEvent {
     private _proofs: Proof[] = [];
+    private _mint: string | undefined;
     private original: NDKEvent | undefined;
 
     constructor(ndk?: NDK, event?: NostrEvent | NDKEvent) {
@@ -43,6 +44,7 @@ export class NDKCashuToken extends NDKEvent {
         try {
             const content = JSON.parse(token.content);
             token.proofs = content.proofs;
+            token.mint = content.mint ?? token.tagValue("mint");
             if (!Array.isArray(token.proofs)) return;
         } catch (e) {
             return;
@@ -88,6 +90,7 @@ export class NDKCashuToken extends NDKEvent {
     async toNostrEvent(pubkey?: string): Promise<NostrEvent> {
         this.content = JSON.stringify({
             proofs: this.proofs.map(this.cleanProof),
+            mint: this.mint,
         });
 
         const user = await this.ndk!.signer!.user();
@@ -108,13 +111,11 @@ export class NDKCashuToken extends NDKEvent {
     }
 
     set mint(mint: string) {
-        this.removeTag("mint");
-        this.tags.push(["mint", normalizeUrl(mint)]);
+        this._mint = mint;
     }
 
     get mint(): string | undefined {
-        const t = this.tagValue("mint");
-        if (t) return normalizeUrl(t);
+        return this._mint;
     }
 
     get amount(): number {

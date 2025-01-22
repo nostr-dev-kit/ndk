@@ -10,8 +10,20 @@ import { update } from "./update";
 
 export type ProofC = string;
 export type ProofState = "available" | "reserved" | "deleted";
+export type TokenState = "available" | "deleted";
 
-
+export type JournalEntry = {
+    memo: string,
+    timestamp: number,
+    metadata: {
+        type?: string,
+        mint?: MintUrl,
+        id: string,
+        relayUrl?: string,
+        cache?: boolean,
+        amount?: number,
+    }
+}
 
 /**
  * A description of the changes that need to be made to the wallet state
@@ -47,13 +59,27 @@ export type WalletTokenChange = {
 }
 
 export type ProofEntry = {
-    proof?: Proof;
+    proof: Proof;
     mint: MintUrl;
     tokenId?: NDKEventId;
     state: ProofState;
+
+    /**
+     * The timestamp of the last time the proof state was updated
+     */
+    timestamp: number;
 }
 
 export type ProofEntryWithProof = ProofEntry & { proof: Proof };
+
+export type TokenEntry = {
+    /**
+     * We want this optional because we might just be marking a deletion of a token
+     * we never loaded (or haven't attempted to load yet)
+     */
+    token?: NDKCashuToken;
+    state: TokenState;
+}
 
 /**
  * This class represents the state of the wallet at any given time.
@@ -79,13 +105,26 @@ export class WalletState {
     /**
      * The tokens that are known to this wallet.
      */
-    public tokens = new Map<NDKEventId, NDKCashuToken | "deleted">();
+    public tokens = new Map<NDKEventId, TokenEntry>();
+
+    public journal: JournalEntry[] = [];
 
     constructor(
         public wallet: NDKCashuWallet,
-        public knownTokens = new Set<NDKEventId>(),
         public reservedProofCs: Set<string> = new Set<string>(),
     ) {
+    }
+
+    /** This is a debugging function that dumps the state of the wallet */
+    public dump() {
+        const res = {
+            proofs: Array.from(this.proofs.values()),
+            balances: this.getMintsBalance(),
+            totalBalance: this.getBalance(),
+            tokens: Array.from(this.tokens.values())
+        }
+
+        return res;
     }
 
     /***************************
@@ -123,9 +162,15 @@ export class WalletState {
     public getProofEntries = getProofEntries.bind(this);
 
     /**
+     * Updates information about a proof
+     */
+    public updateProof = updateProof.bind(this);
+
+    /**
      * Returns all proofs, optionally filtered by mint and state
      * @param opts.mint - optional mint to filter by
      * @param opts.onlyAvailable - only include available proofs @default true
+     * @param opts.includeDeleted - include deleted proofs @default false
      */
     public getProofs(opts: GetProofsOpts) {
         return this.getProofEntries(opts).map(entry => entry.proof);
@@ -146,8 +191,6 @@ export class WalletState {
         }
         return mints;
     }
-
-    public updateProof = updateProof.bind(this);
 
     /***************************
      * Balance

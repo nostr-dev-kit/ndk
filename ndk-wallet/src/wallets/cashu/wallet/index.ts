@@ -24,7 +24,7 @@ import { consolidateTokens } from "../validate.js";
 import { NDKWallet, NDKWalletBalance, NDKWalletEvents, NDKWalletStatus } from "../../index.js";
 import { EventEmitter } from "tseep";
 import { decrypt } from "../decrypt.js";
-import { eventHandler } from "../event-handlers/index.js";
+import { eventDupHandler, eventHandler } from "../event-handlers/index.js";
 import { NDKCashuDepositMonitor } from "../deposit-monitor.js";
 import { walletForMint } from "../mint.js";
 
@@ -202,28 +202,37 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
     }
 
     /**
-     * Starts monitoring the wallet
+     * Starts monitoring the wallet.
+     * 
+     * Use `since` to start syncing state from a specific timestamp. This should be
+     * used by storing at the app level a time in which we know we were able to communicate
+     * with the relays, for example, by saving the time the wallet has emitted a "ready" event.
      */
-    start(opts?: NDKSubscriptionOptions & { pubkey?: Hexpubkey }) {
+    start(opts?: NDKSubscriptionOptions & { pubkey?: Hexpubkey, since?: number }) {
         const pubkey = opts?.pubkey ?? this.event?.pubkey;
         if (!pubkey) throw new Error("no pubkey");
         
         const filters: NDKFilter[] = [
             { kinds: [NDKKind.CashuToken], authors: [pubkey], ...this.event?.filter() },
-            { kinds: [NDKKind.WalletChange], authors: [pubkey] },
             { kinds: [NDKKind.CashuQuote], authors: [pubkey] },
             { kinds: [NDKKind.EventDeletion], authors: [pubkey], "#k": [NDKKind.CashuToken.toString()] },
         ];
 
         // if we have an event add it to the filter
         if (this.event) {
-            filters[0] = { ...filters[0], ...this.event.filter() }; // add to CashuToken filter
-            filters[1] = { ...filters[1], ...this.event.filter() }; // add to WalletChange filter
-            filters[2] = { ...filters[2], ...this.event.filter() }; // add to CashuQuote filter
+            filters[0] = { ...filters[0], ...this.event.filter(), since: opts?.since }; // add to CashuToken filter
+            filters[1] = { ...filters[1], ...this.event.filter(), since: opts?.since }; // add to WalletChange filter
+            filters[2] = { ...filters[2], ...this.event.filter(), since: opts?.since }; // add to CashuQuote filter
         }
+
+        opts ??= {};
+        opts.subId ??= "cashu-wallet-state";
+
+        console.log('Wallet filter', JSON.stringify(filters));
 
         this.sub = this.ndk.subscribe(filters, opts, this.relaySet, false);
         
+        this.sub.on("event:dup", eventDupHandler.bind(this));
         this.sub.on("event", eventHandler.bind(this));
         this.sub.on("eose", () => {
             this.emit("ready");
@@ -415,7 +424,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
         console.log("[WALLET DEPOSIT] creating deposit", {amount, mint, unit});
         const deposit = new NDKCashuDeposit(this, amount, mint, unit);
         deposit.on("success", (token) => {
-            this.addToken(token);
+            this.state.addToken(token);
         });
         return deposit;
     }
@@ -527,14 +536,6 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
             console.trace(e);
             // this.emit("nutzap:failed", nutzap, e);
         }
-    }
-
-    /**
-     * Updates the internal state to add a token,
-     * there is no change published anywhere when calling this function.
-     */
-    public addToken(token: NDKCashuToken) {
-        this.state.addToken(token);
     }
 
     public warn(msg: string, event?: NDKEvent, relays?: NDKRelay[]) {

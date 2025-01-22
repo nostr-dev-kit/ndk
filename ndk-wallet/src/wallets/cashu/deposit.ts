@@ -163,7 +163,7 @@ export class NDKCashuDeposit extends EventEmitter<{
             const updateRes = await this.wallet.state.update({
                 store: proofs,
                 mint: this.mint,
-            });
+            }, "Deposit");
 
             const tokenEvent = updateRes.created;
             if (!tokenEvent) throw new Error("no token event created");

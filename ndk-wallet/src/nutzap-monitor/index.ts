@@ -101,22 +101,22 @@ export class NDKNutzapMonitor extends EventEmitter<{
             mintList = NDKCashuMintList.from(list);
         }
 
-        // get the most recent token even
+        // get the most recent known nutzap
         let wallet: NDKCashuWallet | undefined;
         let since: number | undefined;
 
         if (mintList?.p2pk) {
             wallet = this.walletByP2pk.get(mintList.p2pk)
-            const mostRecentToken = await this.ndk.fetchEvent([
-                { kinds: [NDKKind.CashuToken], authors, limit: 1 },
+            const mostRecentKnownNutzap = await this.ndk.fetchEvent([
+                { kinds: [NDKKind.CashuToken], "#p": [this.user.pubkey], limit: 1 },
             ], {
                 cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE,
                 closeOnEose: true,
                 groupable: false,
-                subId: 'cashu-most-recent-token',
+                subId: 'cashu-most-recent-nutzap',
                 cacheUnconstrainFilter: []
             }, wallet?.relaySet)
-            if (mostRecentToken) since = mostRecentToken.created_at!;
+            if (mostRecentKnownNutzap) since = mostRecentKnownNutzap.created_at!;
         }
 
         // set the relay set

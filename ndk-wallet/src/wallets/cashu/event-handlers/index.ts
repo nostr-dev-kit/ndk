@@ -1,4 +1,4 @@
-import { NDKEvent } from "@nostr-dev-kit/ndk";
+import { NDKEvent, NDKEventId, NDKRelay, NDKSubscription, NostrEvent } from "@nostr-dev-kit/ndk";
 
 import { NDKKind } from "@nostr-dev-kit/ndk";
 import { NDKCashuWallet } from "../wallet";
@@ -12,10 +12,33 @@ const handlers: Record<number, (this: NDKCashuWallet, event: NDKEvent) => Promis
     [NDKKind.EventDeletion]: handleEventDeletion,
 };
 
-export async function eventHandler(this: NDKCashuWallet, event: NDKEvent) {
+let balanceUpdateTimer: NodeJS.Timeout | null = null;
+
+export async function eventHandler(
+    this: NDKCashuWallet,
+    event: NDKEvent,
+    relay: NDKRelay | undefined,
+    sub: NDKSubscription,
+    fromCache: boolean,
+    optimisticPublish: boolean
+) {
     const handler = handlers[event.kind!];
     if (handler) {
+        if (balanceUpdateTimer) clearTimeout(balanceUpdateTimer);
         await handler.call(this, event);
+        balanceUpdateTimer = setTimeout(() => {
+            this.emit("balance_updated");
+        }, 100);
     }
 }
 
+export async function eventDupHandler(
+    this: NDKCashuWallet,
+    event: NDKEvent | NostrEvent,
+    relay: NDKRelay | undefined,
+    timeSinceFirstSeen: number,
+    sub: NDKSubscription,
+    fromCache: boolean
+) {
+    // console.log("[EVENT DUPLICATE]", event.kind, relay?.url, { fromCache });
+}

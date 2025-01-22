@@ -12,17 +12,16 @@ export function addToken(
 ) {
     if (!token.mint) throw new Error("BUG: Token has no mint");
 
-    if (this.tokens.get(token.id) === "deleted") {
-        return;
-    }
+    const currentEntry = this.tokens.get(token.id);
+    const state = currentEntry?.state ?? "available";
 
-    this.tokens.set(token.id, token);
+    this.tokens.set(token.id, { token, state });
 
     // go through the proofs this token is claiming
     let added = 0;
     let invalid = 0;
     for (const proof of token.proofs) {
-        const val = maybeAssociateProofWithToken(this, proof, token);
+        const val = maybeAssociateProofWithToken(this, proof, token, state);
         if (val === false) {
             invalid++;
         } else {
@@ -35,16 +34,20 @@ function maybeAssociateProofWithToken(
     walletState: WalletState,
     proof: Proof,
     token: NDKCashuToken,
+    state: "available" | "reserved" | "deleted",
 ): boolean | null {
     const proofC = proof.C;
     const proofEntry = walletState.proofs.get(proofC);
 
     if (!proofEntry) {
-        walletState.addProof(proof, {
+        walletState.addProof({
             mint: token.mint!,
-            state: "available",
+            state,
             tokenId: token.id,
+            timestamp: token.created_at!,
+            proof: proof,
         });
+        // console.log("\tAdding new proof", proof.C, "with state", state);
         return true;
     } else {
         // already associated
@@ -67,10 +70,10 @@ function maybeAssociateProofWithToken(
             }
 
             // update the proof entry
-            walletState.updateProof(proof, { tokenId: token.id });
+            walletState.updateProof(proof, { tokenId: token.id, state });
             return true;
         } else { // not associated with any token
-            walletState.updateProof(proof, { tokenId: token.id });
+            walletState.updateProof(proof, { tokenId: token.id, state });
             return true;
         }
     }
@@ -80,15 +83,19 @@ export function removeTokenId(
     this: WalletState,
     tokenId: NDKEventId,
 ) {
-    this.tokens.set(tokenId, "deleted");
+    const currentEntry = this.tokens.get(tokenId) || {};
+
+    this.tokens.set(tokenId, { ...currentEntry, state: "deleted" });
 
     // remove all proofs associated with this token
-    for (const proof of this.proofs.values()) {
-        if (proof.tokenId === tokenId) {
-            if (!proof.proof) {
+    for (const proofEntry of this.proofs.values()) {
+        const { proof } = proofEntry;
+        if (proofEntry.tokenId === tokenId) {
+            if (!proof) {
                 throw new Error("BUG: Proof entry has no proof");
             }
-            this.proofs.delete(proof.proof.C);
+
+            this.updateProof(proof, { state: "deleted" });
         }
     }
 }

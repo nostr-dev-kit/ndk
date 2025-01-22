@@ -1,25 +1,20 @@
 import { Proof } from "@cashu/cashu-ts";
-import { ProofC, type ProofState, ProofEntryWithProof, WalletState, ProofEntry } from "./index.js";
+import { ProofC, ProofEntryWithProof, WalletState, ProofEntry } from "./index.js";
 import { MintUrl } from "../../mint/utils.js";
-import { NDKEventId } from "@nostr-dev-kit/ndk";
 
 export function addProof(this: WalletState,
-    proof: Proof,
-    {
-        mint,
-        state,
-        tokenId,
-    }: {
-        mint: MintUrl,
-        state: ProofState,
-        tokenId?: NDKEventId,
-    }
+    proofEntry: ProofEntry,
 ) {
-    this.proofs.set(proof.C, {
-        proof,
-        mint,
-        state,
-        tokenId,
+    this.proofs.set(proofEntry.proof.C, proofEntry);
+    this.journal.push({
+        memo: "Added proof",
+        timestamp: Date.now(),
+        metadata: {
+            type: "proof",
+            id: proofEntry.proof.C,
+            amount: proofEntry.proof.amount,
+            mint: proofEntry.mint,
+        }
     });
 }
 
@@ -53,20 +48,23 @@ export function unreserveProofs(
     }
 }
 
-
 export type GetProofsOpts = {
     mint?: MintUrl,
     onlyAvailable?: boolean,
+    includeDeleted?: boolean,
 };
 
 export function getProofEntries(
     this: WalletState,
-    { mint, onlyAvailable }: GetProofsOpts = { onlyAvailable: true }
+    opts: GetProofsOpts = {}
 ): Array<ProofEntryWithProof> {
     const proofs = new Map<ProofC, ProofEntryWithProof>();
 
     const validStates = new Set(['available']);
+    let { mint, onlyAvailable, includeDeleted } = opts;
+    onlyAvailable ??= true;
     if (!onlyAvailable) validStates.add('reserved');
+    if (includeDeleted) validStates.add('deleted');
 
     for (const proofEntry of this.proofs.values()) {
         if (mint && proofEntry.mint !== mint) continue;
@@ -85,8 +83,19 @@ export function updateProof(
     state: Partial<ProofEntry>
 ) {
     const proofC = proof.C;
-    const currentState = this.proofs.get(proofC) || {};
+    const currentState = this.proofs.get(proofC);
+    if (!currentState) throw new Error("Proof not found");
     const newState = { ...currentState, ...state };
-    if (!newState.mint) throw new Error("Proof has no mint");
     this.proofs.set(proofC, newState as ProofEntry);
+
+    this.journal.push({
+        memo: "Updated proof state: "+ JSON.stringify(state),
+        timestamp: Date.now(),
+        metadata: {
+            type: "proof",
+            id: proofC,
+            amount: proof.amount,
+            mint: currentState.mint,
+        }
+    });
 }

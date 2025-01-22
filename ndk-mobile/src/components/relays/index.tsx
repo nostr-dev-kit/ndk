@@ -1,3 +1,3 @@
-import ConnectivityIndicator from "./indicator";
+import ConnectivityIndicator from "./indicator.js";
 
 export default { ConnectivityIndicator };

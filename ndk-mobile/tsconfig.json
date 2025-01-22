@@ -3,7 +3,7 @@
         "types": ["node", "react-native"],
         "target": "esnext",
         "skipLibCheck": true,
-        "module": "commonjs",
+        "module": "nodenext",
         "strict": false,
         "jsx": "react",
         "declaration": true,

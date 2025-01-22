@@ -1,11 +1,11 @@
 import NDK, { NDKEvent, NDKKind, NDKUser } from '@nostr-dev-kit/ndk';
-import { useNDK } from './ndk';
-import { NDKEventWithFrom } from './subscribe';
-import { useNDKSessionStore } from '../stores/session';
-import { useNDKWallet } from './wallet';
+import { useNDK } from './ndk.js';
+import { NDKEventWithFrom } from './subscribe.js';
+import { useNDKSessionStore } from '../stores/session/index.js';
+import { useNDKWallet } from './wallet.js';
 import { walletFromLoadingString } from '@nostr-dev-kit/ndk-wallet';
-import { SessionInitOpts, SessionInitCallbacks } from '../stores/session/types';
-import { SettingsStore } from '../types';
+import { SessionInitOpts, SessionInitCallbacks } from '../stores/session/types.js';
+import { SettingsStore } from '../types.js';
 
 const useNDKSession = () => {
     const init = useNDKSessionStore(s => s.init);

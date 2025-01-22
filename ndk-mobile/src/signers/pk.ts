@@ -1,6 +1,6 @@
 import NDK, { NDKNip46Signer, NDKPrivateKeySigner, NDKSigner } from '@nostr-dev-kit/ndk';
-import { withNip46 } from './nip46';
-import { SettingsStore } from '../types';
+import { withNip46 } from './nip46.js';
+import { SettingsStore } from '../types.js';
 
 export async function withPrivateKey(key: string): Promise<NDKSigner | null> {
     return new NDKPrivateKeySigner(key);

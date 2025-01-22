@@ -1,6 +1,6 @@
 import NDK, { NDKEvent, NDKKind, Hexpubkey, NDKUser, NDKList, NDKFilter, NDKSubscriptionOptions } from '@nostr-dev-kit/ndk';
-import { NDKEventWithFrom } from '../../hooks/subscribe';
-import { SettingsStore } from '../../types';
+import { NDKEventWithFrom } from '../../hooks/subscribe.js';
+import { SettingsStore } from '../../types.js';
 
 export interface SessionInitCallbacks {
     onReady?: () => void;

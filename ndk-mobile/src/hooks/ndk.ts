@@ -1,6 +1,6 @@
 import { NDKEvent } from '@nostr-dev-kit/ndk';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useNDKStore } from '../stores/ndk';
+import { useNDKStore } from '../stores/ndk.js';
 
 export const useNDK = () => {
     const ndk = useNDKStore(s => s.ndk);

@@ -1,9 +1,9 @@
 import NDK, { NDKEvent, NDKKind, Hexpubkey, NDKUser, NDKRelaySet, NDKList, NDKRelay } from '@nostr-dev-kit/ndk';
-import { SessionInitCallbacks, SessionInitOpts, SessionState } from '../types';
-import { generateFilters } from '../utils';
-import { SettingsStore } from '../../../types';
-import { NDKCacheAdapterSqlite } from '../../../cache-adapter/sqlite';
-import { addWotEntries, shouldUpdateWot, wotEntries } from './wot';
+import { SessionInitCallbacks, SessionInitOpts, SessionState } from '../types.js';
+import { generateFilters } from '../utils.js';
+import { SettingsStore } from '../../../types.js';
+import { NDKCacheAdapterSqlite } from '../../../cache-adapter/sqlite.js';
+import { addWotEntries, shouldUpdateWot, wotEntries } from './wot.js';
 
 const isValidPubkey = (pubkey: Hexpubkey) => pubkey.length === 64 && /^[0-9a-fA-F]+$/.test(pubkey);
 

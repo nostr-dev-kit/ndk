@@ -1,8 +1,8 @@
 import NDK, { NDKConstructorParams, NDKEvent, NDKSigner, NDKUser } from "@nostr-dev-kit/ndk";
 import { create } from "zustand";
-import { SettingsStore } from "../types";
-import { NDKNip55Signer, withPayload } from "../signers";
-import { NDKCacheAdapterSqlite } from "../cache-adapter/sqlite";
+import { SettingsStore } from "../types.js";
+import { NDKNip55Signer, withPayload } from "../signers/index.js";
+import { NDKCacheAdapterSqlite } from "../cache-adapter/sqlite.js";
 
 export type InitNDKParams = NDKConstructorParams & {
     settingsStore: SettingsStore;

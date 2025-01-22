@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo, useCallback, useRef } from 'react'
-import { useNDK } from '../hooks/ndk';
+import { useNDK } from './ndk.js';
 import { NDKUser } from '@nostr-dev-kit/ndk';
 
 export function useUserProfile(pubkey?: string) {

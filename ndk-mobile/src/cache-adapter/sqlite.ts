@@ -14,7 +14,7 @@ import {
 import { LRUCache } from 'typescript-lru-cache';
 import * as SQLite from 'expo-sqlite';
 import { matchFilter } from 'nostr-tools';
-import { migrations } from './migrations';
+import { migrations } from './migrations.js';
 
 export type NDKSqliteEventRecord = {
     id: string;

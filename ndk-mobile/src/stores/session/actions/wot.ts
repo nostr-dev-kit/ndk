@@ -1,7 +1,7 @@
 import NDK, { Hexpubkey, NDKEvent, NDKKind, NDKRelaySet } from "@nostr-dev-kit/ndk";
-import { NDKCacheAdapterSqlite } from "../../../cache-adapter/sqlite";
-import { SettingsStore } from "../../../types";
-import { SessionState } from "../types";
+import { NDKCacheAdapterSqlite } from "../../../cache-adapter/sqlite.js";
+import { SettingsStore } from "../../../types.js";
+import { SessionState } from "../types.js";
 
 export const wotEntries = new Map<Hexpubkey, { time: number, list: Set<Hexpubkey> }>();
 

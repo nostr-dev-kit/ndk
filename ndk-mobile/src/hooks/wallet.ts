@@ -1,7 +1,7 @@
 import { NDKCashuWallet, NDKNutzapMonitor, NDKWallet } from '@nostr-dev-kit/ndk-wallet';
-import { useWalletStore } from '../stores/wallet';
-import { useNDK, useNDKCurrentUser } from './ndk';
-import { useNDKStore } from '../stores/ndk';
+import { useWalletStore } from '../stores/wallet.js';
+import { useNDK, useNDKCurrentUser } from './ndk.js';
+import { useNDKStore } from '../stores/ndk.js';
 import { useEffect, useCallback } from 'react';
 
 /**

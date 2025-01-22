@@ -109,7 +109,13 @@ export class NDKNutzapMonitor extends EventEmitter<{
             wallet = this.walletByP2pk.get(mintList.p2pk)
             const mostRecentToken = await this.ndk.fetchEvent([
                 { kinds: [NDKKind.CashuToken], authors, limit: 1 },
-            ], { closeOnEose: true, groupable: false }, wallet?.relaySet)
+            ], {
+                cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE,
+                closeOnEose: true,
+                groupable: false,
+                subId: 'cashu-most-recent-token',
+                cacheUnconstrainFilter: []
+            }, wallet?.relaySet)
             if (mostRecentToken) since = mostRecentToken.created_at!;
         }
 

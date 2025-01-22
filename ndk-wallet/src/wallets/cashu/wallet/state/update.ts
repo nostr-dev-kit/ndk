@@ -1,5 +1,5 @@
-import { NDKEvent, NDKEventId, NDKKind, NostrEvent } from "@nostr-dev-kit/ndk";
-import { ProofC, WalletState, WalletTokenChange } from ".";
+import { NDKEvent, NDKEventId, NDKKind, NDKRelaySet, NostrEvent } from "@nostr-dev-kit/ndk";
+import { JournalEntry, ProofC, WalletState, WalletTokenChange } from ".";
 import { WalletProofChange } from "./index.js";
 import { NDKCashuToken } from "../../token";
 import { Proof } from "@cashu/cashu-ts";
@@ -28,6 +28,7 @@ export type UpdateStateResult = {
 export async function update(
     this: WalletState,
     stateChange: WalletProofChange,
+    memo?: string,
 ): Promise<UpdateStateResult> {
     updateInternalState(this, stateChange);
     this.wallet.emit("balance_updated");
@@ -44,9 +45,11 @@ function updateInternalState(
 ) {
     if (stateChange.store && stateChange.store.length > 0) {
         for (const proof of stateChange.store) {
-            walletState.addProof(proof, {
+            walletState.addProof({
                 mint: stateChange.mint,
                 state: "available",
+                proof,
+                timestamp: Date.now(),
             });
         }
     }
@@ -80,7 +83,7 @@ async function updateExternalState(
             ]
         } as NostrEvent);
         await deleteEvent.sign();
-        deleteEvent.publish(walletState.wallet.relaySet);
+        publishWithRetry(walletState, deleteEvent, walletState.wallet.relaySet);
 
         // remove the tokens from the wallet
         for (const tokenId of newState.deletedTokenIds) {
@@ -96,6 +99,50 @@ async function updateExternalState(
     }
 
     return res;
+}
+
+/**
+ * Publishes an event to a relay set, retrying if necessary.
+ * @param event 
+ * @param relaySet 
+ */
+async function publishWithRetry(
+    walletState: WalletState,
+    event: NDKEvent,
+    relaySet?: NDKRelaySet,
+    retryTimeout = 10 * 1000 // 10 seconds
+) {
+    const publishResult = await event.publish(relaySet);
+    let type: string | undefined;
+    if (event.kind === NDKKind.EventDeletion) type = "deletion";
+    if (event.kind === NDKKind.CashuToken) type = "token";
+    if (event.kind === NDKKind.CashuWallet) type = "wallet";
+
+    const journalEntryMetadata: JournalEntry["metadata"] = {
+        type,
+        id: event.id,
+        relayUrl: relaySet?.relayUrls.join(","),
+    };
+    
+    if (publishResult) {
+        walletState.journal.push({
+            memo: "Publish kind:"+event.kind+" succeesfully",
+            timestamp: Date.now(),
+            metadata: journalEntryMetadata,
+        });
+
+        return publishResult;
+    }
+
+    walletState.journal.push({
+        memo: "Publish failed",
+        timestamp: Date.now(),
+        metadata: journalEntryMetadata,
+    });
+
+    setTimeout(() => {
+        publishWithRetry(walletState, event, relaySet, retryTimeout);
+    }, retryTimeout);
 }
 
 async function createToken(walletState: WalletState, mint: MintUrl, newState: WalletTokenChange) {
@@ -117,7 +164,7 @@ async function createToken(walletState: WalletState, mint: MintUrl, newState: Wa
     walletState.addToken(newToken);
 
     // publish it
-    newToken.publish(walletState.wallet.relaySet);
+    publishWithRetry(walletState, newToken, walletState.wallet.relaySet);
 
     return newToken;
 }
@@ -177,13 +224,13 @@ function getAffectedTokens(walletState: WalletState, stateChange: WalletProofCha
             continue;
         }
 
-        const token = walletState.tokens.get(tokenId);
-        if (!token || token === "deleted") {
+        const tokenEntry = walletState.tokens.get(tokenId);
+        if (!tokenEntry?.token) {
             console.log("BUG! Unable to find token from known token id", tokenId, "for proof", proof.C);
             continue;
         }
 
-        tokens.set(tokenId, token);
+        tokens.set(tokenId, tokenEntry.token);
     }
 
     return tokens;

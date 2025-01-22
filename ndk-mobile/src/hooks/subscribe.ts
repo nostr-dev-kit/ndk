@@ -3,39 +3,44 @@ import { createStore } from 'zustand/vanilla';
 import { useStore } from 'zustand';
 import NDK, { NDKEvent, NDKFilter, NDKKind, NDKRelaySet, NDKSubscription, NDKSubscriptionOptions, wrapEvent } from '@nostr-dev-kit/ndk';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { useNDK } from './ndk';
-import { useNDKSessionStore } from '../stores/session';
+import { useNDK } from './ndk.js';
+import { useNDKSessionStore } from '../stores/session/index.js';
 
 /**
  * Extends NDKEvent with a 'from' method to wrap events with a kind-specific handler
  */
 export type NDKEventWithFrom<T extends NDKEvent> = T & { from: (event: NDKEvent) => T };
 
-/**
- * Parameters for the useSubscribe hook
- * @interface UseSubscribeParams
- * @property {NDKFilter[] | null} filters - Nostr filters to subscribe to
- * @property {Object} [opts] - Subscription options
- * @property {NDKEventWithFrom<any>} [opts.klass] - Class to convert events to
- * @property {boolean} [opts.includeMuted] - Whether to include muted events
- * @property {boolean} [opts.includeDeleted] - Whether to include deleted events
- * @property {boolean} [opts.wot] - Whether to filter with WoT.
- * @property {number | false} [opts.bufferMs] - Buffer time in ms, false to disable
- * @property {string[]} [relays] - Optional relay URLs to connect to
- */
-interface UseSubscribeParams {
-    filters: NDKFilter[] | null;
-    opts?: NDKSubscriptionOptions & {
-        /**
-         * Whether to wrap the event with the kind-specific class when possible
-         */
-        wrap?: boolean;
-        includeMuted?: boolean;
-        includeDeleted?: boolean;
-        wot?: boolean;
-        bufferMs?: number | false;
-    };
-    relays?: readonly string[];
+export type UseSubscribeOptions = NDKSubscriptionOptions & {
+    /**
+     * Whether to wrap the event with the kind-specific class when possible
+     */
+    wrap?: boolean;
+
+    /**
+     * Whether to include muted events
+     */
+    includeMuted?: boolean;
+
+    /**
+     * Whether to include deleted events
+     */
+    includeDeleted?: boolean;
+
+    /**
+     * Whether to filter with WoT.
+     */
+    wot?: boolean;
+
+    /**
+     * Buffer time in ms, false to disable buffering
+     */
+    bufferMs?: number | false;
+
+    /**
+     * Optional relay URLs to connect to
+     */
+    relays?: string[];
 }
 
 /**
@@ -159,16 +164,25 @@ const createSubscribeStore = <T extends NDKEvent>(bufferMs: number | false = 30)
 
 /**
  * React hook for subscribing to Nostr events
- * @param params - Subscription parameters
+ * @param filters - Filters to run or false to avoid running the subscription. Note that when setting the filters to false, changing the filters prop
+ *                  to have a different value will run the subscription, but changing the filters won't.
+ * @param opts - UseSubscribeOptions
+ * @param dependencies - any[] - dependencies to re-run the subscription when they change
  * @returns {Object} Subscription state
  * @returns {T[]} events - Array of received events
  * @returns {boolean} eose - End of stored events flag
  * @returns {boolean} isSubscribed - Subscription status
  */
-export const useSubscribe = <T extends NDKEvent>({ filters, opts = undefined, relays = undefined }: UseSubscribeParams) => {
+export const useSubscribe = <T extends NDKEvent>(
+    filters: NDKFilter[] | false,
+    opts: UseSubscribeOptions = {},
+    dependencies: any[] = []
+) => {
+    dependencies.push(!!filters);
+    
     const { ndk } = useNDK();
     const muteList = useNDKSessionStore(s => s.muteList);
-    const store = useMemo(() => createSubscribeStore<T>(opts?.bufferMs), [filters]);
+    const store = useMemo(() => createSubscribeStore<T>(opts?.bufferMs), dependencies);
     const storeInstance = useStore(store);
 
     /**
@@ -182,11 +196,11 @@ export const useSubscribe = <T extends NDKEvent>({ filters, opts = undefined, re
     const eventIds = useRef<Map<string, number>>(new Map());
 
     const relaySet = useMemo(() => {
-        if (ndk && relays && relays.length > 0) {
-            return NDKRelaySet.fromRelayUrls(relays, ndk);
+        if (ndk && opts.relays && opts.relays.length > 0) {
+            return NDKRelaySet.fromRelayUrls(opts.relays, ndk);
         }
         return undefined;
-    }, [ndk, relays]);
+    }, [ndk, opts.relays]);
 
     useEffect(() => {
         // go through the events and remove any that are from muted pubkeys
@@ -226,7 +240,7 @@ export const useSubscribe = <T extends NDKEvent>({ filters, opts = undefined, re
             storeInstance.addEvent(event as T);
             eventIds.current.set(id, event.created_at!);
         },
-        [muteList, filters]
+        [muteList, ...dependencies]
     );
 
     const handleEose = () => {
@@ -262,7 +276,7 @@ export const useSubscribe = <T extends NDKEvent>({ filters, opts = undefined, re
             eventIds.current.clear();
             storeInstance.reset();
         };
-    }, [filters, opts, relaySet, ndk]);
+    }, [ndk, ...dependencies]);
 
     return {
         events: storeInstance.events,

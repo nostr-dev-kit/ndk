@@ -42,6 +42,7 @@ export class NDKNWCWallet extends EventEmitter<NDKNWCWalletEvents> implements ND
     async init(pubkey: string, relayUrls: string[], secret: string) {
         this.walletService = this.ndk.getUser({ pubkey });
         this.pool = new NDKPool(relayUrls, [], this.ndk, { name: 'nwc' });
+        this.relaySet = NDKRelaySet.fromRelayUrls(relayUrls, this.ndk, false, this.pool);
 
         // Initialize signer
         this.signer = new NDKPrivateKeySigner(secret);

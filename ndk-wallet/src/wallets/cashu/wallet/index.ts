@@ -533,6 +533,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
             const txEvent = await createInTxEvent(this, res, nutzap.unit, mint, updateRes, {nutzap, fee});
             onTxEventCreated?.(txEvent);
         } catch (e) {
+            console.log('error redeeming nutzap', nutzap.encode(),  e);
             console.trace(e);
             // this.emit("nutzap:failed", nutzap, e);
         }

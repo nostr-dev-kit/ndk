@@ -1,15 +1,14 @@
 import NDK, { NDKEvent, NDKKind, NDKUser } from '@nostr-dev-kit/ndk';
 import { useNDK } from './ndk.js';
 import { NDKEventWithFrom } from './subscribe.js';
-import { useNDKSessionStore } from '../stores/session/index.js';
+import { useNDKSession } from '../stores/session/index.js';
 import { useNDKWallet } from './wallet.js';
 import { walletFromLoadingString } from '@nostr-dev-kit/ndk-wallet';
 import { SessionInitOpts, SessionInitCallbacks } from '../stores/session/types.js';
 import { SettingsStore } from '../types.js';
 
-const useNDKSession = () => {
-    const init = useNDKSessionStore(s => s.init);
-    const mutePubkey = useNDKSessionStore(s => s.mutePubkey);
+const useNDKSessionInit = () => {
+    const init = useNDKSession(s => s.init);
 
     const { setActiveWallet } = useNDKWallet();
 
@@ -26,13 +25,13 @@ const useNDKSession = () => {
         }
     }
 
-    return { init: wrappedInit, mutePubkey };
+    return wrappedInit;
 }
 
-const useFollows = () => useNDKSessionStore(s => s.follows);
-const useMuteList = () => useNDKSessionStore(s => s.muteList);
-const useSessionEvents = () => useNDKSessionStore(s => s.events);
-const useWOT = () => useNDKSessionStore(s => s.wot);
+const useFollows = () => useNDKSession(s => s.follows);
+const useMuteList = () => useNDKSession(s => s.muteList);
+const useSessionEvents = () => useNDKSession(s => s.events);
+const useWOT = () => useNDKSession(s => s.wot);
 
 /**
  * This hook allows you to get a specific kind, wrapped in the event class you provide.
@@ -47,7 +46,7 @@ const useNDKSessionEventKind = <T extends NDKEvent>(
     { create }: { create: boolean } = { create: false }
 ): T | undefined => {
     const { ndk } = useNDK();
-    const events = useNDKSessionStore(s => s.events);
+    const events = useNDKSession(s => s.events);
     const kindEvents = events.get(kind) || [];
     const firstEvent = kindEvents[0];
 
@@ -65,7 +64,7 @@ const useNDKSessionEvents = <T extends NDKEvent>(
     kinds: NDKKind[],
     eventClass?: NDKEventWithFrom<any>,
 ): T[] => {
-    const events = useNDKSessionStore(s => s.events);
+    const events = useNDKSession(s => s.events);
     let allEvents = kinds.flatMap((kind) => events.get(kind) || []);
 
     if (kinds.length > 1) allEvents = allEvents.sort((a, b) => a.created_at - b.created_at);
@@ -83,5 +82,5 @@ export {
     useWOT,
     useNDKSessionEventKind,
     useNDKSessionEvents,
-    useNDKSession,
+    useNDKSessionInit,
 };

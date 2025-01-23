@@ -4,7 +4,7 @@ import { useStore } from 'zustand';
 import NDK, { NDKEvent, NDKFilter, NDKKind, NDKRelaySet, NDKSubscription, NDKSubscriptionOptions, wrapEvent } from '@nostr-dev-kit/ndk';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useNDK } from './ndk.js';
-import { useNDKSessionStore } from '../stores/session/index.js';
+import { useNDKSession } from '../stores/session/index.js';
 
 /**
  * Extends NDKEvent with a 'from' method to wrap events with a kind-specific handler
@@ -181,7 +181,7 @@ export const useSubscribe = <T extends NDKEvent>(
     dependencies.push(!!filters);
     
     const { ndk } = useNDK();
-    const muteList = useNDKSessionStore(s => s.muteList);
+    const muteList = useNDKSession(s => s.muteList);
     const store = useMemo(() => createSubscribeStore<T>(opts?.bufferMs), dependencies);
     const storeInstance = useStore(store);
 

@@ -6,7 +6,7 @@ import { setMuteList } from './actions/setMuteList.js';
 import { setEvents } from './actions/setEvents.js';
 import { addEvent } from './actions/addEvent.js';
 
-export const useNDKSessionStore = create<SessionState>()((set, get) => ({
+export const useNDKSession = create<SessionState>()((set, get) => ({
     follows: undefined,
     ndk: undefined,
     muteList: new Set(),

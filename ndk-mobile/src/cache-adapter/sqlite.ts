@@ -203,30 +203,15 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
         const bufferCopy = [...this.writeBuffer];
         this.writeBuffer = [];
 
-        // console.log(`[${Date.now()}] [SQLITE] Flushing buffer`, Array.from(this.bufferKinds.entries()));
-
-        // const startTime = Date.now();
-        // console.log(`[${startTime}] [SQLITE] Flushing buffer with ${bufferCopy.length} operations`);
-
         await this.db.withTransactionAsync(async () => {
             for (const [index, { query, params }] of bufferCopy.entries()) {
-                // if (index % 10 === 0) {
-                    // console.log(`[${Date.now()}] [SQLITE] Flushing buffer with ${bufferCopy.length} operations, ${index} operations completed in ${Date.now() - startTime}ms`);
-                // }
                 try {
                     await this.db.runAsync(query, params);
                 } catch (e) {
                     console.error('error executing buffered write', e, query, params);
                 }
-
-                // if (index % 10 === 0) {
-                //     console.log(`[${Date.now()}] [SQLITE] Flushed ${index} operations completed in ${Date.now() - startTime}ms`);
-                // }
             }
         });
-
-        // const endTime = Date.now();
-        // console.log(`[${endTime}] [SQLITE] Finished flushing buffer. Duration: ${endTime - startTime}ms`);
 
         // null out the timer
         this.bufferFlushTimer = null;
@@ -516,13 +501,14 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
 }
 
 export function foundEvents(subscription: NDKSubscription, events: NDKSqliteEventRecord[], filter?: NDKFilter) {
-    // if we have a limit, sort and slice
-    if (filter?.limit && events.length > filter.limit) {
-        events = events.sort((a, b) => b.created_at - a.created_at).slice(0, filter.limit);
-    }
-
+    let count = 0;
+    
     for (const event of events) {
-        foundEvent(subscription, event, event.relay, filter);
+        if (foundEvent(subscription, event, event.relay, filter)) {
+            count++;
+        }
+        
+        if (filter?.limit && count >= filter.limit) break;
     }
 }
 
@@ -530,15 +516,17 @@ export function foundEvent(subscription: NDKSubscription, event: NDKSqliteEventR
     try {
         const deserializedEvent = deserialize(event.event);
 
-        if (filter && !matchFilter(filter, deserializedEvent as any)) return;
+        if (filter && !matchFilter(filter, deserializedEvent as any)) return false;
 
         const ndkEvent = new NDKEvent(undefined, deserializedEvent);
         const relay = relayUrl ? subscription.pool.getRelay(relayUrl, false) : undefined;
         ndkEvent.relay = relay;
         subscription.eventReceived(ndkEvent, relay, true);
+        return true;
     } catch (e) {
         const error = new Error();
         const backtraceAsString = JSON.stringify(error.stack);
         console.error('failed to deserialize event', e, event, backtraceAsString);
     }
+    return false;
 }

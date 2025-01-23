@@ -29,7 +29,11 @@ const useNDKSessionInit = () => {
 }
 
 const useFollows = () => useNDKSession(s => s.follows);
-const useMuteList = () => useNDKSession(s => s.muteList);
+const useMuteList = () => {
+    const muteList = useNDKSession(s => s.muteList);
+    const mutePubkey = useNDKSession(s => s.mutePubkey);
+    return { muteList, mutePubkey };
+}
 const useSessionEvents = () => useNDKSession(s => s.events);
 const useWOT = () => useNDKSession(s => s.wot);
 

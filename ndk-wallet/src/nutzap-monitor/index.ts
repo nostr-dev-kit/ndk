@@ -105,19 +105,19 @@ export class NDKNutzapMonitor extends EventEmitter<{
         let wallet: NDKCashuWallet | undefined;
         let since: number | undefined;
 
-        if (mintList?.p2pk) {
+        if (mintList?.p2pk)
             wallet = this.walletByP2pk.get(mintList.p2pk)
-            const mostRecentKnownNutzap = await this.ndk.fetchEvent([
-                { kinds: [NDKKind.CashuToken], "#p": [this.user.pubkey], limit: 1 },
-            ], {
-                cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE,
-                closeOnEose: true,
-                groupable: false,
-                subId: 'cashu-most-recent-nutzap',
-                cacheUnconstrainFilter: []
-            }, wallet?.relaySet)
-            if (mostRecentKnownNutzap) since = mostRecentKnownNutzap.created_at!;
-        }
+        
+        const mostRecentKnownNutzap = await this.ndk.fetchEvent([
+            { kinds: [NDKKind.Nutzap], "#p": [this.user.pubkey], limit: 1 },
+        ], {
+            cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE,
+            closeOnEose: true,
+            groupable: false,
+            subId: 'cashu-most-recent-nutzap',
+            cacheUnconstrainFilter: []
+        })
+        if (mostRecentKnownNutzap) since = mostRecentKnownNutzap.created_at!;
 
         // set the relay set
         this.relaySet = mintList.relaySet;
@@ -126,8 +126,6 @@ export class NDKNutzapMonitor extends EventEmitter<{
             d("no relay set provided");
             throw new Error("no relay set provided");
         }
-
-        console.log('starting nutzap monitor with', { since })
         
         this.sub = this.ndk.subscribe(
             { kinds: [NDKKind.Nutzap], "#p": [this.user.pubkey], since },
@@ -150,12 +148,13 @@ export class NDKNutzapMonitor extends EventEmitter<{
         this.sub?.stop();
     }
 
-    private eoseHandler() {
+    private async eoseHandler() {
         this.eosed = true;
 
-        this.redeemQueue.forEach(nutzap => {
-            this.redeem(nutzap);
-        });
+        for (const nutzap of this.redeemQueue.values()) {
+            await this.redeem(nutzap);
+        }
+        this.redeemQueue.clear();
     }
 
     private async eventHandler(event: NDKEvent) {

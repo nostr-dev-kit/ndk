@@ -11,7 +11,7 @@ export default withMermaid(defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: 'Home', link: '/' },
-      { text: 'API Reference', link: '/api/', target: '_blank' },
+      { text: 'API Reference', link: 'https://github.com/nostr-dev-kit/ndk/blob/master/REFERENCES.md', target: '_blank' },
       { text: 'Wiki', link: 'https://wikifreedia.xyz/?c=NDK', target: '_blank' },
     ],
 

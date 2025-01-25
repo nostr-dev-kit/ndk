@@ -49,7 +49,8 @@ ndk.wallet = wallet;
 Now that we have a wallet, some funds, and we have ndk prepared to use that wallet, we'll send a zap. NDK provides a convenient `wallet` setter that allows
 
 ```ts
-const user = await NDKUser.fromNip05("_@f7z.io");
+// have an ndk instance bound to `ndk`, you'll need to pass it in below
+const user = await NDKUser.fromNip05("_@f7z.io", ndk);
 const zapper = new NDKZapper(user, 1, "sat", {
     comment: "hello from my wallet!",
 });

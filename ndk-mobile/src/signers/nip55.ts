@@ -9,6 +9,7 @@ import {
     type NDKSigner,
 } from "@nostr-dev-kit/ndk";
 import { nip19 } from "nostr-tools";
+import * as NostrNip55SignerModule from "nostr-nip55-signer";
 import * as IntentLauncher from "expo-intent-launcher";
 
 const DEFAULT_ENCRYPTION_SCHEME = 'nip44' as const;
@@ -83,6 +84,7 @@ export class NDKNip55Signer implements NDKSigner {
     public constructor(waitTimeout: number = 1000) {
         this.debug = debug("ndk:nip55");
         this.waitTimeout = waitTimeout;
+	NostrNip55SignerModule.getInstalledSignerApps().then((result) => console.log('nip-55 signer options', result));
     }
 
     public async blockUntilReady(permissions?: NDKNip55Permissions[]): Promise<NDKUser> {

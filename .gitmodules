@@ -1,0 +1,3 @@
+[submodule "packages/Nostr-Signer-Expo-Module"]
+	path = packages/Nostr-Signer-Expo-Module
+	url = https://github.com/chebizarro/Nostr-Signer-Expo-Module

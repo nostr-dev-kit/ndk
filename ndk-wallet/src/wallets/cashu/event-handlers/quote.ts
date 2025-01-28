@@ -9,6 +9,6 @@ export async function handleQuote(this: NDKCashuWallet, event: NDKEvent) {
 
     const deposit = NDKCashuDeposit.fromQuoteEvent(this, quote);
     if (this.depositMonitor.addDeposit(deposit)) {
-        deposit.check();
+        deposit.finalize();
     }
 }

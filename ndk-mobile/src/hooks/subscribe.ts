@@ -1,7 +1,7 @@
 import '@bacons/text-decoder/install';
 import { createStore } from 'zustand/vanilla';
 import { useStore } from 'zustand';
-import NDK, { NDKEvent, NDKFilter, NDKKind, NDKRelaySet, NDKSubscription, NDKSubscriptionOptions, wrapEvent } from '@nostr-dev-kit/ndk';
+import { NDKEvent, NDKFilter, NDKRelaySet, NDKSubscription, NDKSubscriptionOptions, wrapEvent } from '@nostr-dev-kit/ndk';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useNDK } from './ndk.js';
 import { useNDKSession } from '../stores/session/index.js';
@@ -173,6 +173,7 @@ const createSubscribeStore = <T extends NDKEvent>(bufferMs: number | false = 30)
  * @returns {boolean} eose - End of stored events flag
  * @returns {boolean} isSubscribed - Subscription status
  */
+
 export const useSubscribe = <T extends NDKEvent>(
     filters: NDKFilter[] | false,
     opts: UseSubscribeOptions = {},
@@ -181,7 +182,6 @@ export const useSubscribe = <T extends NDKEvent>(
     dependencies.push(!!filters);
     
     const { ndk } = useNDK();
-    const muteList = useNDKSession(s => s.muteList);
     const store = useMemo(() => createSubscribeStore<T>(opts?.bufferMs), dependencies);
     const storeInstance = useStore(store);
 
@@ -202,22 +202,23 @@ export const useSubscribe = <T extends NDKEvent>(
         return undefined;
     }, [ndk, opts.relays]);
 
+    const isMutedEvent = useMuteFilter();
+
     useEffect(() => {
         // go through the events and remove any that are from muted pubkeys
         storeInstance.events.forEach((event) => {
-            if (muteList.has(event.pubkey)) {
+            if (isMutedEvent(event)) {
                 storeInstance.removeEventId(event.id);
             }
         });
-
-    }, [ muteList.size ])
+    }, [ isMutedEvent ])
 
     const handleEvent = useCallback(
         (event: NDKEvent) => {
             const id = event.tagId();
 
             // if it's from a muted pubkey, we don't accept it
-            if (opts?.includeMuted !== true && muteList.has(event.pubkey)) return false;
+            if (opts?.includeMuted !== true && isMutedEvent(event)) return false;
 
             if (opts?.includeDeleted !== true && event.isParamReplaceable() && event.hasTag('deleted')) {
                 // We mark the event but we don't add the actual event, since
@@ -240,7 +241,7 @@ export const useSubscribe = <T extends NDKEvent>(
             storeInstance.addEvent(event as T);
             eventIds.current.set(id, event.created_at!);
         },
-        [muteList, ...dependencies]
+        [isMutedEvent, ...dependencies]
     );
 
     const handleEose = () => {
@@ -285,3 +286,50 @@ export const useSubscribe = <T extends NDKEvent>(
         subscription: storeInstance.subscriptionRef,
     };
 };
+
+
+/**
+ * Provides a function that filters events, according to the user's mute list.
+ */
+export function useMuteFilter() {
+    const mutedPubkeys = useNDKSession(s => s.mutedPubkeys);
+    const mutedHashtags = useNDKSession(s => s.mutedHashtags);
+    const mutedWords = useNDKSession(s => s.mutedWords);
+    const mutedEventIds = useNDKSession(s => s.mutedEventIds);
+
+    const isMutedEvent = useMemo(() => {
+        const mutedWordsRegex = mutedWords.size > 0 ? new RegExp(Array.from(mutedWords).join('|'), 'i') : null;
+        const _mutedHashtags = new Set<string>();
+        mutedHashtags.forEach(h => _mutedHashtags.add(h.toLowerCase()));
+
+        return (event: NDKEvent) => {
+            const start = performance.now();
+            const tags = new Set(event.getMatchingTags('t').map(tag => tag[1].toLowerCase()));
+            const taggedEvents = new Set(event.getMatchingTags('e').map(tag => tag[1]));
+            taggedEvents.add(event.id);
+            const hasMutedHashtag = setHasAnyIntersection(_mutedHashtags, tags);
+            let res = false;
+
+            if (
+                hasMutedHashtag ||
+                mutedPubkeys.has(event.pubkey) ||
+                (mutedWordsRegex && event.content.match(mutedWordsRegex))
+            ) res = true;
+
+            if (!res && setHasAnyIntersection(mutedEventIds, taggedEvents)) {
+                res = true;
+            }
+            
+            return res;
+        }
+    }, [mutedPubkeys, mutedHashtags, mutedWords, mutedEventIds]);
+
+    return isMutedEvent;
+}
+
+const setHasAnyIntersection = (set1: Set<string>, set2: Set<string>) => {
+    for (const item of set1) {
+        if (set2.has(item)) return true;
+    }
+    return false;
+}

@@ -21,6 +21,7 @@
     "@bacons/text-decoder": "^0.0.0",
     "@nostr-dev-kit/ndk": "workspace:*",
     "@nostr-dev-kit/ndk-wallet": "workspace:*",
+    "expo-nip55": "workspace:*",
     "react-native-get-random-values": "~1.11.0",
     "typescript-lru-cache": "^2.0.0",
     "zustand": "^5.0.2"

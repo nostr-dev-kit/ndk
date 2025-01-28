@@ -4,6 +4,7 @@ import { generateFilters } from '../utils.js';
 import { SettingsStore } from '../../../types.js';
 import { NDKCacheAdapterSqlite } from '../../../cache-adapter/sqlite.js';
 import { addWotEntries, shouldUpdateWot, wotEntries } from './wot.js';
+import { setMuteList } from './setMuteList.js';
 
 const isValidPubkey = (pubkey: Hexpubkey) => pubkey.length === 64 && /^[0-9a-fA-F]+$/.test(pubkey);
 
@@ -73,8 +74,7 @@ export const initSession = (
             } else if (event.kind === 967) {
                 handleKindFollowEvent(event);
             } else if (event.kind === NDKKind.MuteList) {
-                const muteList = new Set(event.tags.filter((tag) => tag[0] === 'p' && !!tag[1]).map((tag) => tag[1]));
-                return { muteList, muteListEvent: NDKList.from(event) };
+                setMuteList(event, set);
             }
         });
     };

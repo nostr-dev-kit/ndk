@@ -30,9 +30,14 @@ const useNDKSessionInit = () => {
 
 const useFollows = () => useNDKSession(s => s.follows);
 const useMuteList = () => {
-    const muteList = useNDKSession(s => s.muteList);
-    const mutePubkey = useNDKSession(s => s.mutePubkey);
-    return { muteList, mutePubkey };
+    const muteListEvent = useNDKSession(s => s.muteListEvent);
+    const mutedPubkeys = useNDKSession(s => s.mutedPubkeys);
+    const mutedHashtags = useNDKSession(s => s.mutedHashtags);
+    const mutedWords = useNDKSession(s => s.mutedWords);
+    const mutedEventIds = useNDKSession(s => s.mutedEventIds);
+    const mute = useNDKSession(s => s.mute);
+
+    return { mutedPubkeys, mutedHashtags, mutedWords, mutedEventIds, mute, muteListEvent };
 }
 const useSessionEvents = () => useNDKSession(s => s.events);
 const useWOT = () => useNDKSession(s => s.wot);

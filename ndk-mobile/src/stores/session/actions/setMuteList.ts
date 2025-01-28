@@ -6,7 +6,27 @@ export const setMuteList = (muteList: NDKEvent, set) => {
             return state;
         }
 
-        const pubkeys = new Set(muteList.tags.filter((tag) => tag[0] === 'p' && !!tag[1]).map((tag) => tag[1]));
-        return { muteList: pubkeys, muteListEvent: NDKList.from(muteList) };
+        const pubkeys = new Set();
+        const hashtags = new Set();
+        const words = new Set();
+        const eventIds = new Set();
+
+        for (const tag of muteList.tags) {
+            const value = tag[1];
+            switch (tag[0]) {
+                case 'p': pubkeys.add(value); break;
+                case 't': hashtags.add(value); break;
+                case 'word': words.add(value); break;
+                case 'e': eventIds.add(value); break;
+            }
+        }
+
+        return {
+            mutedPubkeys: pubkeys,
+            mutedHashtags: hashtags,
+            mutedWords: words,
+            mutedEventIds: eventIds,
+            muteListEvent: NDKList.from(muteList)
+        };
     });
 }; 

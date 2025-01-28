@@ -1,0 +1,3 @@
+[submodule "packages/expo-nip55"]
+	path = packages/expo-nip55
+	url = https://github.com/pablof7z/expo-nip55

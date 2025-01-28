@@ -64,8 +64,9 @@ export const useNDKStore = create<State & Actions & EventHandler>((set, get) => 
                 signer.user().then((user) => {
                     if (settingsStore) {
                         settingsStore.set('currentUser', user.pubkey);
-                        if (signer instanceof NDKNip55Signer)
-                            settingsStore.set('signer', 'nip55');
+                        if (signer instanceof NDKNip55Signer) {
+                            settingsStore.set('login', ['nip55', signer.packageName].join(' '));
+                        }
                         else if (payload)
                             settingsStore.set('login', payload);
                     }

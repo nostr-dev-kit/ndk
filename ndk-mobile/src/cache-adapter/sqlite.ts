@@ -232,7 +232,6 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
             this.bufferFlushTimer = setTimeout(() => this.flushWriteBuffer(), this.bufferFlushTimeout);
         }
     }
-
     
     async setEvent(event: NDKEvent, filters: NDKFilter[], relay?: NDKRelay): Promise<void> {
         this.onReady(async () => {

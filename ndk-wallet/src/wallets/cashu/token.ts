@@ -1,5 +1,5 @@
 import { type Proof } from "@cashu/cashu-ts";
-import type { NDKRelay, NDKRelaySet, NostrEvent } from "@nostr-dev-kit/ndk";
+import type { NDKEventId, NDKRelay, NDKRelaySet, NostrEvent } from "@nostr-dev-kit/ndk";
 import type NDK from "@nostr-dev-kit/ndk";
 import { NDKEvent, NDKKind, normalizeUrl } from "@nostr-dev-kit/ndk";
 import type { NDKCashuWallet } from "./wallet/index.js";
@@ -24,6 +24,12 @@ export function proofsTotalBalance(proofs: Proof[]): number {
 export class NDKCashuToken extends NDKEvent {
     private _proofs: Proof[] = [];
     private _mint: string | undefined;
+
+    /**
+     * Tokens that this token superseeds
+     */
+    private _deletes: NDKEventId[] = [];
+
     private original: NDKEvent | undefined;
 
     constructor(ndk?: NDK, event?: NostrEvent | NDKEvent) {
@@ -45,6 +51,7 @@ export class NDKCashuToken extends NDKEvent {
             const content = JSON.parse(token.content);
             token.proofs = content.proofs;
             token.mint = content.mint ?? token.tagValue("mint");
+            token.deletedTokens = content.del ?? [];
             if (!Array.isArray(token.proofs)) return;
         } catch (e) {
             return;
@@ -88,10 +95,12 @@ export class NDKCashuToken extends NDKEvent {
     }
 
     async toNostrEvent(pubkey?: string): Promise<NostrEvent> {
-        this.content = JSON.stringify({
+        const payload = {
             proofs: this.proofs.map(this.cleanProof),
             mint: this.mint,
-        });
+            del: this.deletedTokens ?? []
+        };
+        this.content = JSON.stringify(payload);
 
         const user = await this.ndk!.signer!.user();
         await this.encrypt(user, undefined, "nip44");
@@ -116,6 +125,20 @@ export class NDKCashuToken extends NDKEvent {
 
     get mint(): string | undefined {
         return this._mint;
+    }
+
+    /**
+     * Tokens that were deleted by the creation of this token.
+     */
+    get deletedTokens(): NDKEventId[] {
+        return this._deletes;
+    }
+
+    /**
+     * Marks tokens that were deleted by the creation of this token.
+     */
+    set deletedTokens(tokenIds: NDKEventId[]) {
+        this._deletes = tokenIds;
     }
 
     get amount(): number {

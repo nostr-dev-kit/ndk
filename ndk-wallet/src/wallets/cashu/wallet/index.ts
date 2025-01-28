@@ -221,14 +221,11 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
         // if we have an event add it to the filter
         if (this.event) {
             filters[0] = { ...filters[0], ...this.event.filter(), since: opts?.since }; // add to CashuToken filter
-            filters[1] = { ...filters[1], ...this.event.filter(), since: opts?.since }; // add to WalletChange filter
-            filters[2] = { ...filters[2], ...this.event.filter(), since: opts?.since }; // add to CashuQuote filter
+            filters[1] = { ...filters[1], ...this.event.filter(), since: opts?.since }; // add to CashuQuote filter
         }
 
         opts ??= {};
         opts.subId ??= "cashu-wallet-state";
-
-        console.log('Wallet filter', JSON.stringify(filters));
 
         this.sub = this.ndk.subscribe(filters, opts, this.relaySet, false);
         
@@ -554,7 +551,8 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
         this.event.tags = [["d", this.walletId], ["deleted"]];
         if (publish) this.event.publishReplaceable();
 
-        return this.event.delete(reason, publish);
+        const deleteEvent = await this.event.delete(reason, publish);
+        return deleteEvent;
     }
 
 

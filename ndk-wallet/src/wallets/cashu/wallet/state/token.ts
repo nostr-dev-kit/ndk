@@ -20,12 +20,14 @@ export function addToken(
     // go through the proofs this token is claiming
     let added = 0;
     let invalid = 0;
+    let newAmount = 0;
     for (const proof of token.proofs) {
         const val = maybeAssociateProofWithToken(this, proof, token, state);
         if (val === false) {
             invalid++;
         } else {
             added++;
+            newAmount += proof.amount;
         }
     }
 }
@@ -47,7 +49,6 @@ function maybeAssociateProofWithToken(
             timestamp: token.created_at!,
             proof: proof,
         });
-        // console.log("\tAdding new proof", proof.C, "with state", state);
         return true;
     } else {
         // already associated
@@ -58,15 +59,18 @@ function maybeAssociateProofWithToken(
             }
             
             // different token id, ensure the incoming token is newer
-            const existingToken = walletState.tokens.get(proofEntry.tokenId) as NDKCashuToken | undefined;
-            if (!existingToken) {
+            const existingTokenEntry = walletState.tokens.get(proofEntry.tokenId);
+            if (!existingTokenEntry) {
                 throw new Error("BUG: Token id " + proofEntry.tokenId + " not found, was expected to be associated with proof " + proofC);
             }
+            const existingToken = existingTokenEntry.token;
 
-            // existing token didnt have a timestamp or the incoming token is newer
-            if (existingToken.created_at && (!token.created_at || token.created_at < existingToken.created_at)) {
-                // either the incoming token is older or it doesnt have a timestamp
-                return false;
+            if (existingToken) {
+                // existing token didnt have a timestamp or the incoming token is newer
+                if (existingToken.created_at && (!token.created_at || token.created_at < existingToken.created_at)) {
+                    // either the incoming token is older or it doesnt have a timestamp
+                    return false;
+                }
             }
 
             // update the proof entry

@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk
 
+## 2.11.1
+
+### Patch Changes
+
+- avoids distributing events that were NIP-70ed
+
 ## 2.11.0
 
 ### Minor Changes

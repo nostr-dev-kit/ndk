@@ -1,5 +1,17 @@
 # @nostr-dev-kit/ndk-mobile
 
+## 0.3.0
+
+### Minor Changes
+
+- NIP-55 support (thanks to nostr:npub1ehhfg09mr8z34wz85ek46a6rww4f7c7jsujxhdvmpqnl5hnrwsqq2szjqv !)
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.11.1
+    - @nostr-dev-kit/ndk-wallet@0.3.17
+
 ## 0.2.2
 
 ### Patch Changes

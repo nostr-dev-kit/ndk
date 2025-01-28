@@ -20,14 +20,12 @@ export function addToken(
     // go through the proofs this token is claiming
     let added = 0;
     let invalid = 0;
-    let newAmount = 0;
     for (const proof of token.proofs) {
         const val = maybeAssociateProofWithToken(this, proof, token, state);
         if (val === false) {
             invalid++;
         } else {
             added++;
-            newAmount += proof.amount;
         }
     }
 }

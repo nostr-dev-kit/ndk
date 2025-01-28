@@ -24,7 +24,7 @@ const wallet = NDKCashuWallet.create(ndk, unit, mints, relays);
 await wallet.publish();
 ```
 
-This will publish a wallet `kind:37376` event, which contains the wallet information.
+This will publish a wallet `kind:37375` event, which contains the wallet information.
 
 We now have a NIP-60 wallet -- this wallet will be available from any nostr client that supports NIP-60.
 

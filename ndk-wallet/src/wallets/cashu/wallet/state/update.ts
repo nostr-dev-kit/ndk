@@ -94,7 +94,11 @@ async function updateExternalState(
     // execute the state change
     const res: UpdateStateResult = {};
     if (newState.saveProofs.length > 0) {
-        const newToken = await createToken(walletState, stateChange.mint, newState);
+        const newToken = await createTokenEvent(
+            walletState,
+            stateChange.mint,
+            newState,
+        );
         res.created = newToken;
     }
 
@@ -145,7 +149,10 @@ async function publishWithRetry(
     }, retryTimeout);
 }
 
-async function createToken(walletState: WalletState, mint: MintUrl, newState: WalletTokenChange) {
+/**
+ * Creates a token event as part of a state transition.
+ */
+async function createTokenEvent(walletState: WalletState, mint: MintUrl, newState: WalletTokenChange) {
     const newToken = new NDKCashuToken(walletState.wallet.ndk);
     newToken.mint = mint;
     newToken.proofs = newState.saveProofs;
@@ -156,6 +163,9 @@ async function createToken(walletState: WalletState, mint: MintUrl, newState: Wa
 
     // immediately add the token to the wallet before signing it
     walletState.addToken(newToken);
+
+    // add the deleted tokens to the new token
+    newToken.deletedTokens = Array.from(newState.deletedTokenIds);
 
     // sign it
     await newToken.sign();

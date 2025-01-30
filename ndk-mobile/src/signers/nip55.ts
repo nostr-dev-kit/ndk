@@ -1,5 +1,3 @@
-import debug from "debug";
-
 import * as Nip55 from "expo-nip55";
 import { NDKEncryptionScheme, NDKSigner, NDKUser, NostrEvent } from "@nostr-dev-kit/ndk";
 
@@ -69,8 +67,41 @@ export class NDKNip55Signer implements NDKSigner {
      * @param value - The value to be encrypted.
      * @param nip - which NIP is being implemented ('nip04', 'nip44')
      */
-    async encrypt(recipient: NDKUser, value: string, scheme?: NDKEncryptionScheme): Promise<string> {
-        return "";
+    async encrypt(recipient: NDKUser, value: string, scheme: NDKEncryptionScheme): Promise<string> {
+        const recipientHexPubKey = recipient.pubkey;
+
+        let result: {encryptedText: string};
+
+        try {
+          if (scheme === 'nip44') {
+            result = await Nip55.nip44Encrypt(
+                this.packageName,
+                value,
+                this._pubkey,
+                recipientHexPubKey,
+                this._pubkey
+            )
+          } else if (scheme === 'nip04') {
+            result = await Nip55.nip04Encrypt(
+                this.packageName,
+                value,
+                this._pubkey,
+                recipientHexPubKey,
+                this._pubkey
+            )
+          }
+
+          const encryptedText = result.encryptedText;
+
+          if (encryptedText === undefined) {
+            throw new Error("Encryption failed");
+          }
+
+          return result.encryptedText;
+        } catch (error) {
+            console.error("Error encryption failed:", error);
+            throw error;
+        }
     }
     /**
      * Decrypts the given value.
@@ -79,7 +110,40 @@ export class NDKNip55Signer implements NDKSigner {
      * @param value - The value to be decrypted
      * @param scheme - which NIP is being implemented ('nip04', 'nip44', 'nip49')
      */
-    async decrypt(sender: NDKUser, value: string, scheme?: NDKEncryptionScheme): Promise<string> {
-        return "";
+    async decrypt(sender: NDKUser, value: string, scheme: NDKEncryptionScheme): Promise<string> {
+        const senderHexPubKey = sender.pubkey;
+
+        let result: {plainText: string};
+
+        try {
+          if (scheme === 'nip44') {
+            result = await Nip55.nip44Decrypt(
+                this.packageName,
+                value,
+                this._pubkey,
+                senderHexPubKey,
+                this._pubkey
+            )
+          } else if (scheme === 'nip04') {
+            result = await Nip55.nip04Decrypt(
+                this.packageName,
+                value,
+                this._pubkey,
+                senderHexPubKey,
+                this._pubkey
+            )
+          }
+
+          const plainText = result.plainText;
+
+          if (plainText === undefined) {
+            throw new Error("Decryption failed");
+          }
+
+          return result.plainText;
+        } catch (error) {
+            console.error("Error decryption failed:", error);
+            throw error;
+        }
     }
 }

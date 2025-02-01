@@ -532,7 +532,10 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
         } catch (e) {
             console.log('error redeeming nutzap', nutzap.encode(),  e);
             console.trace(e);
-            // this.emit("nutzap:failed", nutzap, e);
+
+            if (e instanceof Error && e.message.match(/already spent/i)) {
+                return false;
+            }
         }
     }
 

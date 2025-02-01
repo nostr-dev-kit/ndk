@@ -117,7 +117,7 @@ export class NDKNutzapMonitor extends EventEmitter<{
             subId: 'cashu-most-recent-nutzap',
             cacheUnconstrainFilter: []
         })
-        if (mostRecentKnownNutzap) since = mostRecentKnownNutzap.created_at! + 1;
+        // if (mostRecentKnownNutzap) since = mostRecentKnownNutzap.created_at! + 1; XXX
 
         // set the relay set
         this.relaySet = mintList.relaySet;
@@ -152,7 +152,8 @@ export class NDKNutzapMonitor extends EventEmitter<{
         this.eosed = true;
 
         for (const nutzap of this.redeemQueue.values()) {
-            await this.redeem(nutzap);
+            const res = await this.redeem(nutzap);
+            if (res === false) break;
         }
         this.redeemQueue.clear();
     }
@@ -194,7 +195,7 @@ export class NDKNutzapMonitor extends EventEmitter<{
             wallet = this.findWalletForNutzap(nutzap);
             if (!wallet) throw new Error("wallet not found for nutzap");
 
-            await wallet.redeemNutzap(
+            const res = await wallet.redeemNutzap(
                 nutzap,
                 {
                     onRedeemed: (res) => {
@@ -203,6 +204,9 @@ export class NDKNutzapMonitor extends EventEmitter<{
                     }
                 }
             );
+
+            if (res === false)
+                return false;
         } catch (e: any) {
             console.trace(e);
             this.emit("failed", nutzap, e.message);

@@ -117,16 +117,15 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
             });
         }
         
-        // console.log(`[${Date.now()}] [SQLITE] Cache adapter ready`);
         this.ready = true;
         this.locking = true;
 
         // load all the event timestamps
-        const events = await this.db.getAllAsync(`SELECT id, created_at FROM events`) as {id: string, created_at: number}[];    
+        const events = this.db.getAllSync(`SELECT id, created_at FROM events`) as {id: string, created_at: number}[];    
         for (const event of events) {
             this.knownEventTimestamps.set(event.id, event.created_at);
         }
-
+        
         await this.loadUnpublishedEvents();
 
         Promise.all(this.pendingCallbacks.map((f) => {

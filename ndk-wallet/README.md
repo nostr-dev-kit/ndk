@@ -45,7 +45,10 @@ zapper.on('complete', (res) => {
 });
 
 await zapper.zap();
-```
+```  
+
+### Docs  
+For more informationn, check the docs: https://nostr-dev-kit.github.io/ndk/wallet/
 
 # License
 

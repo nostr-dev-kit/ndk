@@ -117,7 +117,7 @@ export class NDKNutzapMonitor extends EventEmitter<{
             subId: 'cashu-most-recent-nutzap',
             cacheUnconstrainFilter: []
         })
-        // if (mostRecentKnownNutzap) since = mostRecentKnownNutzap.created_at! + 1; XXX
+        if (mostRecentKnownNutzap) since = mostRecentKnownNutzap.created_at! + 1;
 
         // set the relay set
         this.relaySet = mintList.relaySet;

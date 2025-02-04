@@ -87,6 +87,17 @@ export interface NDKNWCPayInvoiceResult {
     fees_paid?: number;
 }
 
+export interface NDKNWCMakeInvoiceResult {
+    invoice: string;
+    preimage: string;
+    payment_hash: string;
+    amount: number;
+    description: string;
+    description_hash: string;
+    expiry: number;
+    metadata?: Record<string, any>;
+}
+
 export interface NDKNWCGetBalanceResult {
     balance: number;
 }
@@ -114,7 +125,7 @@ export type NDKNWCRequestMap = {
 
 export type NDKNWCResponseMap = {
     pay_invoice: NDKNWCPayInvoiceResult;
-    make_invoice: NDKNWCTransaction;
+    make_invoice: NDKNWCMakeInvoiceResult;
     lookup_invoice: NDKNWCTransaction;
     list_transactions: { transactions: NDKNWCTransaction[] };
     get_balance: NDKNWCGetBalanceResult;

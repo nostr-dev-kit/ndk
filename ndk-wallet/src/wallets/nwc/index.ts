@@ -4,7 +4,7 @@ import NDK, { NDKPool, LnPaymentInfo, NDKPaymentConfirmationCashu, NDKPaymentCon
 import { NutPayment } from "../cashu/pay/nut.js";
 import { sendReq } from "./req.js";
 import createDebug from "debug";
-import { NDKNWCGetInfoResult, NDKNWCRequestMap, NDKNWCResponseBase, NDKNWCResponseMap } from "./types.js";
+import { NDKNWCGetInfoResult, NDKNWCMakeInvoiceParams, NDKNWCRequestMap, NDKNWCResponseBase, NDKNWCResponseMap } from "./types.js";
 import { CashuMint, CashuWallet, MintQuoteResponse } from "@cashu/cashu-ts";
 
 const d = createDebug("ndk-wallet:nwc");
@@ -128,6 +128,7 @@ export class NDKNWCWallet extends EventEmitter<NDKNWCWalletEvents> implements ND
 
             try {
                 const res = await this.req("pay_invoice", { invoice: quote.request });
+                console.log('NWC cashuPay res', res);
                 d('cashuPay res', res);
             } catch (e: any) {
                 const message = e?.error?.message || e?.message || 'unknown error';
@@ -135,25 +136,36 @@ export class NDKNWCWallet extends EventEmitter<NDKNWCWalletEvents> implements ND
                 throw new Error(message);
             }
 
+            const mintTokenAttempt = (resolve: (value: any) => void, reject: (reason?: any) => void, attempt: number) => {
+                // mint the tokens
+                console.log('minting tokens', {attempt, amount, quote: quote.quote, pubkey: payment.p2pk, mint });
+
+                wallet.mintProofs(amount, quote.quote, { pubkey: payment.p2pk }).then(mintProofs => {
+                    console.log('minted tokens', mintProofs);
+                    d('minted tokens', mintProofs);
+    
+                    resolve({
+                        proofs: mintProofs,
+                        mint: mint
+                    });
+                }).catch(e => {
+                    attempt++;
+                    if (attempt <= 3) {
+                        console.error('error minting tokens', e);
+                        setTimeout(() => mintTokenAttempt(resolve, reject, attempt), attempt * 1500);
+                    } else {
+                        reject(e);
+                    }
+                });
+            }
+
             this.updateBalance();
 
             // todo check that the amount of the invoice matches the amount we want to pay
 
-            try {
-                // mint the tokens
-                const mintProofs = await wallet.mintProofs(amount, quote.quote, {
-                    pubkey: payment.p2pk
-                });
-                d('minted tokens', mintProofs);
-
-                return {
-                    proofs: mintProofs,
-                    mint: mint
-                };
-            } catch (e) {
-                console.error('error minting tokens', e);
-                throw e;
-            }
+            return new Promise((resolve, reject) => {
+                mintTokenAttempt(resolve, reject, 0);
+            });
         }
     }
 
@@ -200,6 +212,22 @@ export class NDKNWCWallet extends EventEmitter<NDKNWCWalletEvents> implements ND
         if (res.error) throw new Error(res.error.message);
 
         this.cachedInfo = res.result;
+
+        return res.result;
+    }
+
+    async listTransactions() {
+        const res = await this.req("list_transactions", {});
+
+        if (!res.result) throw new Error("Failed to list transactions");
+
+        return res.result;
+    }
+
+    async makeInvoice(amount: number, description: string): Promise<NDKNWCMakeInvoiceParams> {
+        const res = await this.req("make_invoice", { amount, description });
+
+        if (!res.result) throw new Error("Failed to make invoice");
 
         return res.result;
     }

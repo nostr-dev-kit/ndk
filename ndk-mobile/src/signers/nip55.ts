@@ -1,6 +1,12 @@
 import * as Nip55 from "expo-nip55";
 import { NDKEncryptionScheme, NDKSigner, NDKUser, NostrEvent } from "@nostr-dev-kit/ndk";
 
+export interface Permission {
+    type: string;
+    kind?: number;
+    checked?: boolean;
+}
+
 export class NDKNip55Signer implements NDKSigner {
     private _pubkey: string;
     private _user?: NDKUser;
@@ -9,18 +15,26 @@ export class NDKNip55Signer implements NDKSigner {
     constructor(packageName: string) {
         this.packageName = packageName;
     }
-    
+
     /**
      * Blocks until the signer is ready and returns the associated NDKUser.
      * @returns A promise that resolves to the NDKUser instance.
      */
     async blockUntilReady(): Promise<NDKUser> {
         if (this._user) return this._user;
-        
+
         await Nip55.setPackageName(this.packageName);
-        
-        const data = await Nip55.getPublicKey();
-        if (!data) throw new Error('No signer available found');
+
+        const perms: Permission[] = [
+            { type: "sign_event", kind: 22242 },
+            { type: "nip04_encrypt" },
+            { type: "nip04_decrypt" },
+            { type: "nip44_encrypt" },
+            { type: "nip44_decrypt" },
+        ];
+
+        const data = await Nip55.getPublicKey(this.packageName, perms);
+        if (!data) throw new Error("No signer available found");
 
         this._user = new NDKUser({ npub: data.npub });
         this._pubkey = this._user.pubkey;
@@ -40,14 +54,23 @@ export class NDKNip55Signer implements NDKSigner {
      */
     async sign(event: NostrEvent): Promise<string> {
         console.log('NIP-55 SIGNER SIGNING', event)
-        const result = await Nip55.signEvent(
-            this.packageName,
-            JSON.stringify(event),
-            event.id,
-            this._pubkey
+
+      let result: { signature: string } 
+
+      try {
+        result = await Nip55.signEvent(
+          this.packageName,
+          JSON.stringify(event),
+          event.id,
+          this._pubkey
         )
         console.log('NIP-55 SIGNER SIGNED', result)
-        return result.signature;
+      } catch(error) {
+          console.error("Error sign failed:", error);
+          throw error;
+      }
+      
+      return result.signature;
     }
     
     /**

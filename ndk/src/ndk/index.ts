@@ -27,7 +27,6 @@ import { setActiveUser } from "./active-user.js";
 import type { CashuPayCb, LnPayCb, NDKPaymentConfirmation, NDKZapSplit } from "../zapper/index.js";
 import type { NostrEvent } from "nostr-tools";
 import type { NDKLnUrlData } from "../zapper/ln.js";
-import { NDKEncryptionScheme } from "../types.js";
 
 export type NDKValidationRatioFn = (
     relay: NDKRelay,
@@ -224,6 +223,7 @@ export class NDK extends EventEmitter<{
     ) => void;
 }> {
     private _explicitRelayUrls?: WebSocket["url"][];
+    public blacklistRelayUrls?: WebSocket["url"][];
     public pool: NDKPool;
     public outboxPool?: NDKPool;
     private _signer?: NDKSigner;
@@ -301,13 +301,14 @@ export class NDK extends EventEmitter<{
         this.debug = opts.debug || debug("ndk");
         this.netDebug = opts.netDebug;
         this._explicitRelayUrls = opts.explicitRelayUrls || [];
+        this.blacklistRelayUrls = opts.blacklistRelayUrls || DEFAULT_BLACKLISTED_RELAYS;
         this.subManager = new NDKSubscriptionManager(this.debug);
         this.pool = new NDKPool(
             opts.explicitRelayUrls || [],
-            opts.blacklistRelayUrls || DEFAULT_BLACKLISTED_RELAYS,
+            [],
             this
         );
-        this.pool.name = "main";
+        this.pool.name = "Main";
 
         this.pool.on("relay:auth", async (relay: NDKRelay, challenge: string) => {
             if (this.relayAuthDefaultPolicy) {
@@ -326,11 +327,11 @@ export class NDK extends EventEmitter<{
         if (opts.enableOutboxModel) {
             this.outboxPool = new NDKPool(
                 opts.outboxRelayUrls || DEFAULT_OUTBOX_RELAYS,
-                opts.blacklistRelayUrls || DEFAULT_BLACKLISTED_RELAYS,
+                [],
                 this,
                 {
                     debug: this.debug.extend("outbox-pool"),
-                    name: "outbox"
+                    name: "Outbox Pool"
                 }
             );
 

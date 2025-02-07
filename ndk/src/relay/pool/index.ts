@@ -45,7 +45,7 @@ export class NDKPool extends EventEmitter<{
     private _relays = new Map<WebSocket["url"], NDKRelay>();
     private status: 'idle' | 'active' = 'idle';
     public autoConnectRelays = new Set<WebSocket["url"]>();
-    public blacklistRelayUrls: Set<WebSocket["url"]>;
+    public poolBlacklistRelayUrls = new Set<WebSocket["url"]>();
     private debug: debug.Debugger;
     private temporaryRelayTimers = new Map<WebSocket["url"], NodeJS.Timeout>();
     private flappingRelays: Set<WebSocket["url"]> = new Set();
@@ -53,6 +53,18 @@ export class NDKPool extends EventEmitter<{
     private backoffTimes: Map<string, number> = new Map();
     private ndk: NDK;
 
+    get blacklistRelayUrls() {
+        const val = new Set(this.ndk.blacklistRelayUrls);
+        this.poolBlacklistRelayUrls.forEach((url) => val.add(url));
+        return val;
+    }
+
+    /**
+     * @param relayUrls - The URLs of the relays to connect to.
+     * @param blacklistedRelayUrls - URLs to blacklist for this pool IN ADDITION to those blacklisted at the ndk-level
+     * @param ndk - The NDK instance.
+     * @param opts - Options for the pool.
+     */
     public constructor(
         relayUrls: WebSocket["url"][] = [],
         blacklistedRelayUrls: WebSocket["url"][] = [],
@@ -68,8 +80,7 @@ export class NDKPool extends EventEmitter<{
         this.ndk = ndk;
         this.relayUrls = relayUrls;
 
-
-        this.blacklistRelayUrls = new Set(blacklistedRelayUrls);
+        this.poolBlacklistRelayUrls = new Set(blacklistedRelayUrls);
 
         this.ndk.pools.push(this);
     }

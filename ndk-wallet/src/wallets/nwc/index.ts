@@ -62,7 +62,7 @@ export class NDKNWCWallet extends EventEmitter<NDKNWCWalletEvents> implements ND
      */
     async initWithPairingCode(uri: string) {
         const u = new URL(uri);
-        const pubkey = u.host ?? u.pathname;
+        const pubkey = u.host || u.pathname;
         const relayUrls = u.searchParams.getAll("relay");
         const secret = u.searchParams.get("secret");
 

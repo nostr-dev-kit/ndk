@@ -14,8 +14,6 @@ import type {
     NDKZapMethodInfo,
 } from "../index.js";
 import { NDKCashuMintList } from "../events/kinds/nutzap/mint-list.js";
-import type { LNPaymentRequest, NDKLnUrlData } from "../zapper/ln.js";
-import { getNip57ZapSpecFromLud, LnPaymentInfo } from "../zapper/ln.js";
 
 export type Hexpubkey = string;
 
@@ -51,6 +49,7 @@ export interface NDKUserParams {
 export class NDKUser {
     public ndk: NDK | undefined;
     public profile?: NDKUserProfile;
+    public profileEvent?: NDKEvent;
     private _npub?: Npub;
     private _pubkey?: Hexpubkey;
     readonly relayUrls: string[] = [];
@@ -76,33 +75,15 @@ export class NDKUser {
     }
 
     get nprofile(): string {
-        console.log('encoding with pubkey', this.pubkey)
+        const relays = this.profileEvent?.onRelays?.map((r) => r.url);
         return nip19.nprofileEncode({
-            pubkey: this.pubkey
+            pubkey: this.pubkey,
+            relays
         });
     }
 
     set npub(npub: Npub) {
         this._npub = npub;
-    }
-
-    /**
-     * Get the user's hexpubkey
-     * @returns {Hexpubkey} The user's hexpubkey
-     *
-     * @deprecated Use `pubkey` instead
-     */
-    get hexpubkey(): Hexpubkey {
-        return this.pubkey;
-    }
-
-    /**
-     * Set the user's hexpubkey
-     * @param pubkey {Hexpubkey} The user's hexpubkey
-     * @deprecated Use `pubkey` instead
-     */
-    set hexpubkey(pubkey: Hexpubkey) {
-        this._pubkey = pubkey;
     }
 
     /**
@@ -130,7 +111,7 @@ export class NDKUser {
      * Equivalent to NDKEvent.filters().
      * @returns {NDKFilter}
      */
-    public filters(): NDKFilter {
+    public filter(): NDKFilter {
         return {"#p": [this.pubkey]}
     }
 
@@ -139,137 +120,46 @@ export class NDKUser {
      *
      * @param getAll {boolean} Whether to get all zap info or just the first one
      */
-    async getZapInfo(
-        getAll = true,
-        methods: NDKZapMethod[] = ["nip61", "nip57"]
-    ): Promise<NDKZapMethodInfo[]> {
+    async getZapInfo(timeoutMs?: number): Promise<Map<NDKZapMethod, NDKZapMethodInfo>> {
         if (!this.ndk) throw new Error("No NDK instance found");
 
-        const kinds: NDKKind[] = [];
-
-        if (methods.includes("nip61")) kinds.push(NDKKind.CashuMintList);
-        if (methods.includes("nip57")) kinds.push(NDKKind.Metadata);
-
-        if (kinds.length === 0) return [];
-
-        let events = await this.ndk.fetchEvents(
-            { kinds, authors: [this.pubkey] },
-            {
-                cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE,
-                groupable: false,
+        const promiseWithTimeout = async <T>(promise: Promise<T>): Promise<T | undefined> => {
+            if (!timeoutMs) return promise;
+            try {
+                return await Promise.race([
+                    promise,
+                    new Promise<T>((_, reject) => setTimeout(() => reject(), timeoutMs))
+                ]);
+            } catch {
+                return undefined;
             }
-        );
+        };
 
-        if (events.size < methods.length) {
-            events = await this.ndk.fetchEvents(
-                { kinds, authors: [this.pubkey] },
-                {
-                    cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY,
-                }
-            );
-        }
+        const [ userProfile, mintListEvent ] = await Promise.all([
+            promiseWithTimeout(this.fetchProfile()),
+            promiseWithTimeout(this.ndk.fetchEvent({ kinds: [NDKKind.CashuMintList], authors: [this.pubkey] }))
+        ]);
+        
+        const res: Map<NDKZapMethod, NDKZapMethodInfo> = new Map();
 
-        const res: NDKZapMethodInfo[] = [];
-
-        const nip61 = Array.from(events).find((e) => e.kind === NDKKind.CashuMintList);
-        const nip57 = Array.from(events).find((e) => e.kind === NDKKind.Metadata);
-
-        if (nip61) {
-            const mintList = NDKCashuMintList.from(nip61);
+        if (mintListEvent) {
+            const mintList = NDKCashuMintList.from(mintListEvent);
 
             if (mintList.mints.length > 0) {
-                res.push({
-                    type: "nip61",
-                    data: {
-                        mints: mintList.mints,
-                        relays: mintList.relays,
-                        p2pk: mintList.p2pk,
-                    },
+                res.set("nip61", {
+                    mints: mintList.mints,
+                    relays: mintList.relays,
+                    p2pk: mintList.p2pk,
                 });
             }
-
-            // if we are just getting one and already have one, go back
-            if (!getAll) return res;
         }
 
-        if (nip57) {
-            const profile = profileFromEvent(nip57);
-            const { lud06, lud16 } = profile;
-            try {
-                const zapSpec = await getNip57ZapSpecFromLud({ lud06, lud16 }, this.ndk);
-
-                if (zapSpec) {
-                    res.push({ type: "nip57", data: zapSpec });
-                }
-            } catch (e) {
-                console.error("Error getting NIP-57 zap spec", e);
-            }
+        if (userProfile) {
+            const { lud06, lud16 } = userProfile;
+            res.set("nip57", { lud06, lud16 });
         }
 
         return res;
-    }
-
-    /**
-     * Determines whether this user
-     * has signaled support for NIP-60 zaps
-     **/
-    // export type UserZapConfiguration = {
-
-    // }
-    // async getRecipientZapConfig(): Promise<> {
-
-    // }
-
-    /**
-     * Retrieves the zapper this pubkey has designated as an issuer of zap receipts
-     */
-    async getZapConfiguration(ndk?: NDK): Promise<NDKLnUrlData | undefined> {
-        ndk ??= this.ndk;
-
-        if (!ndk) throw new Error("No NDK instance found");
-
-        const process = async (): Promise<NDKLnUrlData | undefined> => {
-            if (this.ndk?.cacheAdapter?.loadUsersLNURLDoc) {
-                const doc = await this.ndk.cacheAdapter.loadUsersLNURLDoc(this.pubkey);
-
-                if (doc !== "missing") {
-                    if (doc === null) return;
-                    if (doc) return doc;
-                }
-            }
-
-            let lnurlspec: NDKLnUrlData | undefined;
-            try {
-                await this.fetchProfile({ groupable: false });
-                if (this.profile) {
-                    const { lud06, lud16 } = this.profile;
-                    lnurlspec = await getNip57ZapSpecFromLud({ lud06, lud16 }, ndk!);
-                }
-            } catch {}
-
-            if (this.ndk?.cacheAdapter?.saveUsersLNURLDoc) {
-                this.ndk.cacheAdapter.saveUsersLNURLDoc(this.pubkey, lnurlspec || null);
-            }
-
-            if (!lnurlspec) return;
-
-            return lnurlspec;
-        };
-
-        return await ndk.queuesZapConfig.add({
-            id: this.pubkey,
-            func: process,
-        });
-    }
-
-    /**
-     * Fetches the zapper's pubkey for the zapped user
-     * @returns The zapper's pubkey if one can be found
-     */
-    async getZapperPubkey(): Promise<Hexpubkey | undefined> {
-        const zapConfig = await this.getZapConfiguration();
-
-        return zapConfig?.nostrPubkey;
     }
 
     /**
@@ -316,7 +206,7 @@ export class NDKUser {
 
         if (!this.profile) this.profile = {};
 
-        let setMetadataEvents: Set<NDKEvent> | null = null;
+        let setMetadataEvent: NDKEvent | null = null;
 
         if (
             this.ndk.cacheAdapter &&
@@ -340,7 +230,7 @@ export class NDKUser {
             this.ndk.cacheAdapter && // and we have a cache
             this.ndk.cacheAdapter.locking // and the cache identifies itself as fast 😂
         ) {
-            setMetadataEvents = await this.ndk.fetchEvents(
+            setMetadataEvent = await this.ndk.fetchEvent(
                 {
                     kinds: [0],
                     authors: [this.pubkey],
@@ -360,8 +250,8 @@ export class NDKUser {
             };
         }
 
-        if (!setMetadataEvents || setMetadataEvents.size === 0) {
-            setMetadataEvents = await this.ndk.fetchEvents(
+        if (!setMetadataEvent) {
+            setMetadataEvent = await this.ndk.fetchEvent(
                 {
                     kinds: [0],
                     authors: [this.pubkey],
@@ -370,19 +260,14 @@ export class NDKUser {
             );
         }
 
-        const sortedSetMetadataEvents = Array.from(setMetadataEvents).sort(
-            (a, b) => (a.created_at as number) - (b.created_at as number)
-        );
-
-        if (sortedSetMetadataEvents.length === 0) return null;
+        if (!setMetadataEvent) return null;
 
         // return the most recent profile
-        const event = sortedSetMetadataEvents[0];
-        this.profile = profileFromEvent(event);
+        this.profile = profileFromEvent(setMetadataEvent);
 
         if (storeProfileEvent) {
             // Store the event as a stringified JSON
-            this.profile.profileEvent = JSON.stringify(event);
+            this.profile.profileEvent = JSON.stringify(setMetadataEvent);
         }
 
         if (this.profile && this.ndk.cacheAdapter && this.ndk.cacheAdapter.saveProfile) {

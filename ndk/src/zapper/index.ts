@@ -10,11 +10,12 @@ import { getRelayListForUsers } from "../utils/get-users-relay-list";
 import { EventEmitter } from "tseep";
 import { generateZapRequest } from "./nip57";
 import { NDKNutzap } from "../events/kinds/nutzap";
-import type {
-    LnPaymentInfo,
-    NDKLnUrlData,
-    NDKPaymentConfirmationLN,
-    NDKZapConfirmationLN,
+import {
+    getNip57ZapSpecFromLud,
+    type LnPaymentInfo,
+    type NDKLnUrlData,
+    type NDKPaymentConfirmationLN,
+    type NDKZapConfirmationLN,
 } from "./ln";
 import type {
     NDKZapConfirmationCashu,
@@ -87,23 +88,16 @@ export type NDKZapSplit = {
 };
 
 export type NDKZapMethod = "nip57" | "nip61";
+export type NDKLnLudData = { lud06?: string; lud16?: string; };
 
-type ZapMethodInfo = {
-    nip57: NDKLnUrlData;
-    nip61: CashuPaymentInfo;
-};
-
-export type NDKZapMethodInfo = {
-    type: NDKZapMethod;
-
-    data: ZapMethodInfo[NDKZapMethod];
-};
+export type NDKZapMethodInfo = NDKLnLudData | CashuPaymentInfo;
 
 export type LnPayCb = (
     payment: NDKZapDetails<LnPaymentInfo>
 ) => Promise<NDKPaymentConfirmationLN | undefined>;
 export type CashuPayCb = (
-    payment: NDKZapDetails<CashuPaymentInfo>
+    payment: NDKZapDetails<CashuPaymentInfo>,
+    onLnInvoice?: (pr: string) => void
 ) => Promise<NDKPaymentConfirmationCashu | undefined>;
 export type OnCompleteCb = (
     results: Map<NDKZapSplit, NDKPaymentConfirmation | Error | undefined>
@@ -131,6 +125,30 @@ interface NDKZapperOptions {
  *
  */
 class NDKZapper extends EventEmitter<{
+    /**
+     * An LN invoice has been fetched.
+     * @param param0 
+     * @returns 
+     */
+    ln_invoice: ({ amount, recipientPubkey, unit, nip57ZapRequest, pr, type }: {
+        amount: number;
+        recipientPubkey: string;
+        unit: string;
+        nip57ZapRequest?: NDKEvent;
+        pr: string;
+        type: NDKZapMethod;
+    }) => void;
+    
+    ln_payment: ({ preimage, amount, recipientPubkey, unit, nip57ZapRequest, pr }: {
+        preimage: string;
+        amount: number;
+        recipientPubkey: string;
+        pr: string;
+        unit: string;
+        nip57ZapRequest?: NDKEvent;
+        type: NDKZapMethod
+    }) => void;
+    
     /**
      * Emitted when a zap split has been completed
      */
@@ -228,14 +246,17 @@ class NDKZapper extends EventEmitter<{
         return results;
     }
 
-    private async zapNip57(split: NDKZapSplit, data: NDKLnUrlData): Promise<NDKPaymentConfirmation | undefined> {
+    private async zapNip57(split: NDKZapSplit, data: NDKLnLudData): Promise<NDKPaymentConfirmation | undefined> {
         if (!this.lnPay) throw new Error("No lnPay function available");
+
+        const zapSpec = await getNip57ZapSpecFromLud(data, this.ndk);
+        if (!zapSpec) throw new Error("No zap spec available for recipient");
         
         const relays = await this.relays(split.pubkey);
         const zapRequest = await generateZapRequest(
             this.target,
             this.ndk,
-            data,
+            zapSpec,
             split.pubkey,
             split.amount,
             relays,
@@ -249,14 +270,23 @@ class NDKZapper extends EventEmitter<{
             throw new Error("Unable to generate zap request");
         }
 
-        const pr = await this.getLnInvoice(zapRequest, split.amount, data);
+        const pr = await this.getLnInvoice(zapRequest, split.amount, zapSpec);
 
         if (!pr) {
             d("Unable to get payment request");
             throw new Error("Unable to get payment request");
         }
 
-        return await this.lnPay(
+        this.emit("ln_invoice", {
+            amount: split.amount,
+            recipientPubkey: split.pubkey,
+            unit: this.unit,
+            nip57ZapRequest: zapRequest,
+            pr,
+            type: "nip57"
+        });
+
+        const res = await this.lnPay(
             {
                 target: this.target,
                 recipientPubkey: split.pubkey,
@@ -264,9 +294,23 @@ class NDKZapper extends EventEmitter<{
                 pr,
                 amount: split.amount,
                 unit: this.unit,
-                nip57ZapRequest: zapRequest
+                nip57ZapRequest: zapRequest,
             }
         );
+
+        if (res?.preimage) {
+            this.emit("ln_payment", {
+                preimage: res.preimage,
+                amount: split.amount,
+                recipientPubkey: split.pubkey,
+                pr,
+                unit: this.unit,
+                nip57ZapRequest: zapRequest,
+                type: "nip57"
+            });
+        }
+
+        return res;
     }
 
     /**
@@ -286,6 +330,14 @@ class NDKZapper extends EventEmitter<{
             amount: split.amount,
             unit: this.unit,
             ...(data ?? {}),
+        }, (pr: string) => {
+            this.emit("ln_invoice", {
+                pr,
+                amount: split.amount,
+                recipientPubkey: split.pubkey,
+                unit: this.unit,
+                type: "nip61"
+            });
         });
 
         d("NIP-61 Zap result: %o", ret);
@@ -328,19 +380,13 @@ class NDKZapper extends EventEmitter<{
      * @returns 
      */
     async zapSplit(split: NDKZapSplit): Promise<NDKPaymentConfirmation | undefined> {
-        let zapMethods = await this.getZapMethods(this.ndk, split.pubkey);
+        const recipient = this.ndk.getUser({ pubkey: split.pubkey });
+        let zapMethods = await recipient.getZapInfo(2500);
         let retVal: NDKPaymentConfirmation | Error | undefined;
 
         const canFallbackToNip61 = this.nutzapAsFallback && this.cashuPay;
 
-        if (zapMethods.length === 0 && !canFallbackToNip61) throw new Error("No zap method available for recipient and NIP-61 fallback is disabled");
-
-        // prefer nip61 if available
-        zapMethods = zapMethods.sort((a, b) => {
-            if (a.type === "nip61") return -1;
-            if (b.type === "nip61") return 1;
-            return 0;
-        });
+        if (zapMethods.size === 0 && !canFallbackToNip61) throw new Error("No zap method available for recipient and NIP-61 fallback is disabled");
 
         const nip61Fallback = async () => {
             if (!this.nutzapAsFallback) return;
@@ -360,21 +406,16 @@ class NDKZapper extends EventEmitter<{
             });
         }
 
-        for (const zapMethod of zapMethods) {
-            try {
-                if (zapMethod.type === "nip61") {
-                    retVal = await this.zapNip61(split, zapMethod.data as CashuPaymentInfo);
-                } else if (zapMethod.type === "nip57") {
-                    retVal = await this.zapNip57(split, zapMethod.data as NDKLnUrlData);
-                }
+        const nip61Method = zapMethods.get("nip61") as CashuPaymentInfo;
+        if (nip61Method) {
+            retVal = await this.zapNip61(split, nip61Method);
+            if (retVal instanceof NDKNutzap) return retVal;
+        } 
 
-                if (retVal && !(retVal instanceof Error)) {
-                    console.log("Zapped to %s with %d %s using %s: %o", split.pubkey, split.amount, this.unit, zapMethod.type, retVal);
-                    return retVal as NDKPaymentConfirmation;
-                }
-            } catch (e: any) {
-                console.log("Error zapping to %s with %d %s using %s: %o", split.pubkey, split.amount, this.unit, zapMethod.type, e);
-            }
+        const nip57Method = zapMethods.get("nip57") as NDKLnLudData;
+        if (nip57Method) {
+            retVal = await this.zapNip57(split, nip57Method);
+            if (!(retVal instanceof Error)) return retVal;
         }
 
         if (canFallbackToNip61) {
@@ -472,25 +513,9 @@ class NDKZapper extends EventEmitter<{
         ndk: NDK,
         recipient: Hexpubkey,
         timeout = 2500
-    ): Promise<NDKZapMethodInfo[]> {
-        const methods: NDKZapMethod[] = [];
-
-        if (this.cashuPay) methods.push("nip61");
-        if (this.lnPay) methods.push("nip57");
-
-        // if there are no methods available, return an empty array
-        if (methods.length === 0) throw new Error("There are no payment methods available! Please set at least one of lnPay or cashuPay");
-
-        const timeoutPromise = new Promise<NDKZapMethodInfo[]>((_, reject) => setTimeout(() => reject(new Error("Timeout getting information to zap")), timeout));
-        const getPromise = new Promise<NDKZapMethodInfo[]>((resolve) => {
-            const user = ndk.getUser({ pubkey: recipient });
-            user.getZapInfo(false, methods).then(resolve)
-        });
-
-        const res = await Promise.race([
-            timeoutPromise, getPromise
-        ])
-        return res;
+    ): Promise<Map<NDKZapMethod, NDKZapMethodInfo>> {
+        const user = ndk.getUser({ pubkey: recipient });
+        return await user.getZapInfo(timeout)
     }
 
     /**

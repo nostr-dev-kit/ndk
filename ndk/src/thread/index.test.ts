@@ -3,11 +3,18 @@ import {
     eventIsReply,
     eventThreads,
     eventsBySameAuthor,
+    getEventReplyId,
     getReplyTag,
+    getRootEventId,
     getRootTag,
 } from ".";
-import type { NDKEventId } from "../events";
+import type { NDKEventId, NostrEvent } from "../events";
 import { NDKEvent } from "../events";
+import { NDK } from "../ndk";
+import { NDKPrivateKeySigner } from "../signers/private-key";
+
+const ndk = new NDK();
+ndk.signer = NDKPrivateKeySigner.generate();
 
 const op = new NDKEvent(undefined, {
     id: "op",
@@ -264,4 +271,44 @@ describe("Threads to make Gigi ⚡🧡 happy", () => {
             });
         });
     });
+
+    describe("supports nip-22 replies", () => {
+        let op: NDKEvent;
+        let reply1: NDKEvent;
+        let reply2: NDKEvent;
+
+        beforeAll(async () => {
+            op = new NDKEvent(ndk, {
+                kind: 9999,
+                content: "This is the root post"
+            } as NostrEvent)
+            await op.sign();
+            reply1 = op.reply();
+            reply1.content = "this is the reply";
+            await reply1.sign();
+            reply2 = reply1.reply();
+            reply2.content = "this is the reply to the reply";
+            await reply2.sign();
+        })
+        
+        it("finds the root event of the first-level reply", () => {
+            const rootEventId = getRootEventId(reply1);
+            expect(rootEventId).toBe(op.id);
+        })
+
+        it("finds the reply event of the first-level reply", () => {
+            const replyEventId = getEventReplyId(reply1);
+            expect(replyEventId).toBe(op.id);
+        })
+
+        it("finds the root event of the second-level reply", () => {
+            const rootEventId = getRootEventId(reply2);
+            expect(rootEventId).toBe(op.id);
+        })
+
+        it("finds the reply event of the second-level reply", () => {
+            const replyEventId = getEventReplyId(reply2);
+            expect(replyEventId).toBe(reply1.id);
+        })
+    })
 });

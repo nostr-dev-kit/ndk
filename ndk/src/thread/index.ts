@@ -1,4 +1,5 @@
 import type { NDKEvent, NDKEventId, NDKTag } from "../events";
+import { NDKKind } from "../events/kinds";
 
 export function eventsBySameAuthor(op: NDKEvent, events: NDKEvent[]) {
     const eventsByAuthor = new Map<NDKEventId, NDKEvent>();
@@ -103,30 +104,21 @@ export function eventThreads(op: NDKEvent, events: NDKEvent[]) {
     return threadEvents.sort((a, b) => a.created_at! - b.created_at!);
 }
 
-export function getEventReplyIds(event: NDKEvent): NDKEventId[] {
-    if (hasMarkers(event, event.tagType())) {
-        let rootTag: NDKTag | undefined;
-        const replyTags: NDKTag[] = [];
+/**
+ * Returns the reply ID of an event.
+ * @param event The event to get the reply ID from
+ * @returns The reply ID or undefined if the event is not a reply
+ */
+export function getEventReplyId(event: NDKEvent): NDKEventId | undefined {
+    const replyTag = getReplyTag(event);
+    if (replyTag) return replyTag[1];
 
-        event.getMatchingTags(event.tagType()).forEach((tag) => {
-            if (tag[3] === "root") rootTag = tag;
-            if (tag[3] === "reply") replyTags.push(tag);
-        });
-
-        if (replyTags.length === 0) {
-            if (rootTag) {
-                replyTags.push(rootTag);
-            }
-        }
-
-        return replyTags.map((tag) => tag[1]);
-    } else {
-        return event.getMatchingTags("e").map((tag) => tag[1]);
-    }
+    const rootTag = getRootTag(event);
+    if (rootTag) return rootTag[1];
 }
 
 export function isEventOriginalPost(event: NDKEvent): boolean {
-    return getEventReplyIds(event).length === 0;
+    return getEventReplyId(event) === undefined;
 }
 
 export function eventThreadIds(op: NDKEvent, events: NDKEvent[]): Map<NDKEventId, NDKEvent> {
@@ -169,7 +161,11 @@ export function eventIsPartOfThread(
  * Checks if an event has ETag markers.
  */
 export function eventHasETagMarkers(event: NDKEvent): boolean {
-    return event.getMatchingTags("e").some((tag) => tag[3]);
+    for (const tag of event.tags) {
+        if (tag[0] === "e" && (tag[3] ?? "").length > 0) return true;
+    }
+
+    return false;
 }
 
 /**
@@ -196,10 +192,10 @@ export function getRootEventId(event: NDKEvent, searchTag?: string): NDKEventId 
  */
 export function getRootTag(event: NDKEvent, searchTag?: string): NDKTag | undefined {
     searchTag ??= event.tagType();
-    const rootEventTag = event.tags.find((tag) => tag[3] === "root");
+    const rootEventTag = event.tags.find(isTagRootTag);
 
     if (!rootEventTag) {
-        // If we don't have an explicit root marer, this event has no other e-tag markers
+        // If we don't have an explicit root marker, this event has no other e-tag markers
         // and we have a single e-tag, return that value
         if (eventHasETagMarkers(event)) return;
 
@@ -210,24 +206,44 @@ export function getRootTag(event: NDKEvent, searchTag?: string): NDKTag | undefi
     return rootEventTag;
 }
 
+const nip22RootTags = new Set(["A", "E", "I"])
+const nip22ReplyTags = new Set(["a", "e", "i"])
+
 export function getReplyTag(event: NDKEvent, searchTag?: string): NDKTag | undefined {
+    if (event.kind === NDKKind.GenericReply) {
+        let replyTag: NDKTag | undefined;
+        for (const tag of event.tags) {
+            // we look for an "e", "a", or "i" tag and immediately return it if we find it;
+            // if we don't find an "e", "a", or "i" tag, we return the "E", "A", or "I" tag
+            if (nip22RootTags.has(tag[0])) replyTag = tag;
+            else if (nip22ReplyTags.has(tag[0])) {
+                replyTag = tag;
+                break;
+            }
+        }
+        return replyTag;
+    }
+
     searchTag ??= event.tagType();
 
-    let replyTag = event.tags.find((tag) => tag[3] === "reply");
+    let hasMarkers = false;
+    let replyTag: NDKTag | undefined;
 
-    if (replyTag) return replyTag;
+    for (const tag of event.tags) {
+        if (tag[0] !== searchTag) continue;
+        if ((tag[3] ?? "").length > 0) hasMarkers = true;
 
-    // Check with root tag
-    if (!replyTag) replyTag = event.tags.find((tag) => tag[3] === "root");
-
-    // If we don't have anything
-    if (!replyTag) {
-        // if we do have etag markers and no reply tag, then return undefined
-        if (eventHasETagMarkers(event)) return;
-
-        // If we only have one tag of the requested type
-        const matchingTags = event.getMatchingTags(searchTag);
-        if (matchingTags.length === 1) return matchingTags[0];
-        if (matchingTags.length === 2) return matchingTags[1];
+        if (hasMarkers && tag[3] === "reply") return tag;
+        if (hasMarkers && tag[3] === "root") replyTag = tag;
+        if (!hasMarkers) replyTag = tag;
     }
+    
+    return replyTag;
+}
+
+function isTagRootTag(tag: NDKTag): boolean {
+    return (
+        tag[0] === "E" ||
+        tag[3] === "root"
+    );
 }

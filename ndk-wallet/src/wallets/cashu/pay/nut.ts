@@ -8,7 +8,7 @@ import { walletForMint } from "../mint";
 import { WalletOperation, withProofReserve } from "../wallet/effect";
 import { payLn } from "./ln";
 
-export type NutPayment = CashuPaymentInfo & { amount: number; unit: string; };
+export type NutPayment = CashuPaymentInfo & { amount: number; };
 
 /**
  * Generates proof to satisfy a payment.
@@ -21,7 +21,6 @@ export type NutPayment = CashuPaymentInfo & { amount: number; unit: string; };
 export async function createToken(
     wallet: NDKCashuWallet,
     amount: number,
-    unit: string,
     recipientMints?: MintUrl[],
     p2pk?: string,
 ): Promise<WalletOperation<TokenCreationResult> | null>
@@ -30,8 +29,6 @@ export async function createToken(
     const myMintsWithEnoughBalance = wallet.getMintsWithBalance(amount);
     const hasRecipientMints = recipientMints && recipientMints.length > 0;
     const mintsInCommon = hasRecipientMints ? findMintsInCommon([recipientMints, myMintsWithEnoughBalance]) : myMintsWithEnoughBalance;
-
-    if (unit === 'msat') throw new Error("msat should not reach createToken");
 
     for (const mint of mintsInCommon) {
         try {
@@ -46,7 +43,7 @@ export async function createToken(
     }
 
     if (hasRecipientMints) {
-        return await createTokenWithMintTransfer(wallet, amount, unit, recipientMints, p2pk);
+        return await createTokenWithMintTransfer(wallet, amount, recipientMints, p2pk);
     }
 
     return null;
@@ -105,13 +102,12 @@ async function createTokenInMint(
 async function createTokenWithMintTransfer(
     wallet: NDKCashuWallet,
     amount: number,
-    unit: string,
     recipientMints: MintUrl[],
     p2pk?: string,
 ): Promise<WalletOperation<TokenCreationResult> | null> {
     const generateQuote = async () => {
         const generateQuoteFromSomeMint = async (mint: MintUrl) => {
-            const targetMintWallet = await walletForMint(mint, unit);
+            const targetMintWallet = await walletForMint(mint);
             if (!targetMintWallet) throw new Error("unable to load wallet for mint " + mint);
             const quote = await targetMintWallet.createMintQuote(amount);
             return { quote, mint, targetMintWallet };
@@ -141,7 +137,7 @@ async function createTokenWithMintTransfer(
     const invoiceAmountInSat = invoiceAmount / 1000;
     if (invoiceAmountInSat > amount) throw new Error(`invoice amount is more than the amount passed in (${invoiceAmountInSat} vs ${amount})`);
 
-    const payLNResult = await payLn(wallet, quote.request, { amount, unit });
+    const payLNResult = await payLn(wallet, quote.request, { amount });
     if (!payLNResult) {
         console.log("payment failed");
         return null;

@@ -1,4 +1,4 @@
-import { NDKEvent, NDKEventId, NDKKind, NDKRelaySet, NostrEvent } from "@nostr-dev-kit/ndk";
+import { NDKEvent, NDKEventId, NDKKind, NDKRelay, NDKRelaySet, NostrEvent } from "@nostr-dev-kit/ndk";
 import { JournalEntry, ProofC, WalletState, WalletTokenChange } from ".";
 import { WalletProofChange } from "./index.js";
 import { NDKCashuToken } from "../../token";
@@ -116,7 +116,9 @@ async function publishWithRetry(
     relaySet?: NDKRelaySet,
     retryTimeout = 10 * 1000 // 10 seconds
 ) {
-    const publishResult = await event.publish(relaySet);
+    let publishResult: Set<NDKRelay> | undefined;
+    publishResult = await event.publish(relaySet);
+
     let type: string | undefined;
     if (event.kind === NDKKind.EventDeletion) type = "deletion";
     if (event.kind === NDKKind.CashuToken) type = "token";
@@ -156,7 +158,6 @@ async function createTokenEvent(walletState: WalletState, mint: MintUrl, newStat
     const newToken = new NDKCashuToken(walletState.wallet.ndk);
     newToken.mint = mint;
     newToken.proofs = newState.saveProofs;
-    newToken.wallet = walletState.wallet;
 
     // create the event id
     await newToken.toNostrEvent();

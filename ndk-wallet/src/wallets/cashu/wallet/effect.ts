@@ -87,8 +87,6 @@ export async function withProofReserve<T>(
          */
         updateRes = await wallet.state.update(proofsChange);
     } catch (e: any) {
-        console.log('Wrapped state changed failed', e.message);
-        console.log('[STATE] Making proofs available again after a failed operation')
         wallet.state.unreserveProofs(proofs.send, amountWithFees, "available");
         throw e;
     }

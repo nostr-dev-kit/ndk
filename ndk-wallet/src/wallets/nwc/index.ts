@@ -12,6 +12,8 @@ const d = createDebug("ndk-wallet:nwc");
 export type NDKNWCWalletEvents = NDKWalletEvents & {
     connecting: () => void;
     error: () => void;
+
+    timeout: (method: keyof NDKNWCRequestMap) => void;
 }
 
 export class NDKNWCWallet extends EventEmitter<NDKNWCWalletEvents> implements NDKWallet {
@@ -31,48 +33,57 @@ export class NDKNWCWallet extends EventEmitter<NDKNWCWalletEvents> implements ND
 
     private cachedInfo?: NDKNWCGetInfoResult;
 
-    public pool: NDKPool;
+    public pool?: NDKPool;
 
-    constructor(ndk: NDK) {
+    public timeout?: number;
+
+    /**
+     * 
+     * @param ndk 
+     * @param timeout A timeeout to use for all operations. 
+     */
+    constructor(ndk: NDK, { timeout, pairingCode, pubkey, relayUrls, secret }: { timeout?: number, pairingCode?: string, pubkey?: string, relayUrls?: string[], secret?: string }) {
         super();
         this.ndk = ndk;
-        this.pool = new NDKPool([], [], this.ndk);
-    }
 
-    async init(pubkey: string, relayUrls: string[], secret: string) {
+        if (pairingCode) {
+            const u = new URL(pairingCode);
+            pubkey = u.host ?? u.pathname;
+            relayUrls = u.searchParams.getAll("relay");
+            secret = u.searchParams.get("secret") as string;
+            this.pairingCode = pairingCode;
+        }
+
+        if (!pubkey || !relayUrls || !secret) throw new Error("Incomplete initialization parameters");
+
+        this.timeout = timeout;
+
         this.walletService = this.ndk.getUser({ pubkey });
-        this.pool = new NDKPool(relayUrls, [], this.ndk, { name: 'nwc' });
-        this.relaySet = NDKRelaySet.fromRelayUrls(relayUrls, this.ndk, false, this.pool);
+        this.pool = this.getPool(relayUrls);
+        this.relaySet = NDKRelaySet.fromRelayUrls(relayUrls, this.ndk, true, this.pool);
 
         // Initialize signer
         this.signer = new NDKPrivateKeySigner(secret);
 
         this.pool.on("connect", () => {
-            if (!this.pool) return;
             this.status = NDKWalletStatus.READY;
             this.emit('ready');
         })
         this.pool.on("relay:disconnect", () => this.status = NDKWalletStatus.LOADING);
 
         this.pool.connect()
+
+        if (this.pool.connectedRelays().length > 0) {
+            this.status = NDKWalletStatus.READY;
+            this.emit('ready');
+        }
     }
 
-    /**
-     * Initialize the wallet via a nostr+walletconnect URI
-     */
-    async initWithPairingCode(uri: string) {
-        const u = new URL(uri);
-        const pubkey = u.host ?? u.pathname;
-        const relayUrls = u.searchParams.getAll("relay");
-        const secret = u.searchParams.get("secret");
+    private getPool(relayUrls: string[]) {
+        for (const pool of this.ndk.pools)
+            if (pool.name === 'NWC') return pool;
 
-        this.pairingCode = uri;
-
-        if (!pubkey || !relayUrls || !secret) {
-            throw new Error("Invalid URI");
-        }
-
-        return this.init(pubkey, relayUrls, secret);
+        return new NDKPool(relayUrls, [], this.ndk, { name: 'NWC' });
     }
 
     toLoadingString(): string {
@@ -102,23 +113,30 @@ export class NDKNWCWallet extends EventEmitter<NDKNWCWalletEvents> implements ND
         throw new Error(res.error?.message || "Payment failed");
     }
 
-    async cashuPay(payment: NutPayment): Promise<NDKPaymentConfirmationCashu | undefined> {
+    /**
+     * Pay an invoice using a cashu mint
+     * @param payment - The payment to pay
+     * @param onLnPayment - A callback that is called when an LN payment will be processed
+     * @returns The payment confirmation
+     */
+    async cashuPay(
+        payment: NutPayment,
+        onLnInvoice?: (pr: string) => void,
+        onLnPayment?: (mint: string, invoice: string) => void
+    ): Promise<NDKPaymentConfirmationCashu | undefined> {
         if (!payment.mints) throw new Error("No mints provided");
         
         for (const mint of payment.mints) {
-            let unit = payment.unit;
             let amount = payment.amount;
 
-            if (unit === 'msat') {
-                unit = 'sat';
-                amount = amount / 1000;
-            }
+            amount = amount / 1000;
 
-            const wallet = new CashuWallet(new CashuMint(mint), { unit });
+            const wallet = new CashuWallet(new CashuMint(mint), { unit: 'sat' });
             let quote: MintQuoteResponse | undefined;
             try {
                 quote = await wallet.createMintQuote(amount);
                 d('cashuPay quote', quote);
+                onLnInvoice?.(quote.request);
             } catch (e) {
                 console.error('error creating mint quote', e);
                 throw e;
@@ -128,7 +146,11 @@ export class NDKNWCWallet extends EventEmitter<NDKNWCWalletEvents> implements ND
 
             try {
                 const res = await this.req("pay_invoice", { invoice: quote.request });
-                console.log('NWC cashuPay res', res);
+
+                if (res.result?.preimage) {
+                    onLnPayment?.(mint, res.result.preimage);
+                }
+                
                 d('cashuPay res', res);
             } catch (e: any) {
                 const message = e?.error?.message || e?.message || 'unknown error';
@@ -141,7 +163,6 @@ export class NDKNWCWallet extends EventEmitter<NDKNWCWalletEvents> implements ND
                 console.log('minting tokens', {attempt, amount, quote: quote.quote, pubkey: payment.p2pk, mint });
 
                 wallet.mintProofs(amount, quote.quote, { pubkey: payment.p2pk }).then(mintProofs => {
-                    console.log('minted tokens', mintProofs);
                     d('minted tokens', mintProofs);
     
                     resolve({
@@ -181,9 +202,11 @@ export class NDKNWCWallet extends EventEmitter<NDKNWCWalletEvents> implements ND
 
         // update the cached balance property
         this._balance = {
-            unit: "msats",
             amount: res.result?.balance ?? 0
         };
+
+        // balance is always in sats
+        this._balance.amount /= 1000;
 
         this.emit("balance_updated");
     }

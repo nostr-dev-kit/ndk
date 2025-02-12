@@ -100,6 +100,9 @@ export enum NDKKind {
 
     TierList = 17000,
 
+    // NIP-60
+    CashuWallet = 17375,
+
     FollowSet = 30000,
     CategorizedPeopleList = NDKKind.FollowSet, // Deprecated but left for backwards compatibility
     CategorizedBookmarkList = 30001, // Deprecated but left for backwards compatibility
@@ -153,7 +156,8 @@ export enum NDKKind {
     HorizontalVideo = 34235,
     VerticalVideo = 34236,
 
-    CashuWallet = 37375,
+    // Legacy Cashu Wallet
+    LegacyCashuWallet = 37375,
 
     GroupMetadata = 39000, // NIP-29
     GroupAdmins = 39001, // NIP-29

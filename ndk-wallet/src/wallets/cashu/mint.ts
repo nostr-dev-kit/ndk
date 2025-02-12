@@ -19,13 +19,10 @@ function mintKey(mint: MintUrl, unit: string, pk?: Uint8Array) {
 
 export async function walletForMint(
     mint: MintUrl,
-    unit: string,
     pk?: Uint8Array,
     timeout = 5000
 ): Promise<CashuWallet | null> {
-    if (unit === 'sats' || unit.startsWith('msat')) {
-        unit = 'sat';
-    }
+    const unit = 'sat';
 
     const key = mintKey(mint, unit, pk);
 

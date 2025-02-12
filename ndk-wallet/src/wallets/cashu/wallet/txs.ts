@@ -17,15 +17,14 @@ export async function createOutTxEvent(
 ): Promise<NDKWalletChange> {
     let description: string | undefined = paymentRequest.paymentDescription;
     let amount: number | undefined;
-    let unit: string | undefined;
 
     if ((paymentRequest as LnPaymentInfo).pr) {
-        amount = getBolt11Amount((paymentRequest as LnPaymentInfo).pr);
-        unit = "msat";
+        amount = getBolt11Amount((paymentRequest as LnPaymentInfo).pr)
         description ??= getBolt11Description((paymentRequest as LnPaymentInfo).pr);
+
+        if (amount) amount /= 1000; // convert to sats
     } else {
         amount = paymentRequest.amount;
-        unit = paymentRequest.unit || wallet.unit;
     }
 
     if (!amount) {
@@ -33,11 +32,10 @@ export async function createOutTxEvent(
     }
 
     const historyEvent = new NDKWalletChange(wallet.ndk);
-    
+
     if (wallet.event) historyEvent.tags.push(wallet.event.tagReference());
     historyEvent.direction = "out";
     historyEvent.amount = amount ?? 0;
-    historyEvent.unit = unit;
     historyEvent.mint = paymentResult.mint;
     historyEvent.description = description;
     if (paymentResult.fee) historyEvent.fee = paymentResult.fee;
@@ -63,7 +61,6 @@ export async function createOutTxEvent(
 export async function createInTxEvent(
     wallet: NDKCashuWallet,
     proofs: Proof[],
-    unit: string,
     mint: MintUrl,
     updateStateResult: UpdateStateResult,
     { nutzap, fee, description }: { nutzap?: NDKNutzap, fee?: number, description?: string },
@@ -75,7 +72,6 @@ export async function createInTxEvent(
     if (wallet.event) historyEvent.tags.push(wallet.event.tagReference());
     historyEvent.direction = "in";
     historyEvent.amount = amount;
-    historyEvent.unit = wallet.unit;
     historyEvent.mint = mint;
     historyEvent.description = description;
 
@@ -88,7 +84,6 @@ export async function createInTxEvent(
     if (nutzap) historyEvent.addRedeemedNutzap(nutzap);
     if (fee) historyEvent.fee = fee;
 
-    console.log("created history event", JSON.stringify(historyEvent.rawEvent(), null, 4));
     await historyEvent.sign();
     historyEvent.publish(wallet.relaySet);
 

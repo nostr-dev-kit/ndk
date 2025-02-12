@@ -35,7 +35,7 @@ export enum NDKWalletStatus {
     FAILED = "failed",
 }
 
-export type NDKWalletBalance = { amount: number; unit: string };
+export type NDKWalletBalance = { amount: number; };
 
 export type NDKWalletEvents = {
     ready: () => void;
@@ -103,9 +103,7 @@ export async function walletFromLoadingString(ndk: NDK, str: string): Promise<ND
 
     switch (payload.type) {
         case 'nwc':
-            const w = new NDKNWCWallet(ndk);
-            await w.initWithPairingCode(payload.pairingCode);
-            return w;
+            return new NDKNWCWallet(ndk, { timeout: payload.timeout, pairingCode: payload.pairingCode });
         case 'nip60':
             const event = await ndk.fetchEvent(payload.bech32);
             if (!event) return undefined;

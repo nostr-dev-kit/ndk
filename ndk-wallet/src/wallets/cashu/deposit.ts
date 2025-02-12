@@ -27,22 +27,20 @@ export class NDKCashuDeposit extends EventEmitter<{
     public checkTimeout: NodeJS.Timeout | undefined;
     public checkIntervalLength = 2500;
     public finalized = false;
-    public unit?: string;
 
     private quoteEvent?: NDKEvent;
 
-    constructor(wallet: NDKCashuWallet, amount: number, mint?: string, unit?: string) {
+    constructor(wallet: NDKCashuWallet, amount: number, mint?: string) {
         super();
         this.wallet = wallet;
         this.mint = mint || randomMint(wallet);
         this.amount = amount;
-        this.unit = unit;
     }
 
     static fromQuoteEvent(wallet: NDKCashuWallet, quote: NDKCashuQuote) {
         if (!quote.amount) throw new Error("quote has no amount");
         if (!quote.mint) throw new Error("quote has no mint");
-        const deposit = new NDKCashuDeposit(wallet, quote.amount, quote.mint, quote.unit);
+        const deposit = new NDKCashuDeposit(wallet, quote.amount, quote.mint);
 
         deposit.quoteId = quote.quoteId;
         return deposit;
@@ -84,7 +82,6 @@ export class NDKCashuDeposit extends EventEmitter<{
         quoteEvent.quoteId = quoteId;
         quoteEvent.mint = this.mint;
         quoteEvent.amount = this.amount;
-        quoteEvent.unit = this.unit;
         quoteEvent.wallet = this.wallet;
         quoteEvent.invoice = bolt11;
 
@@ -168,14 +165,13 @@ export class NDKCashuDeposit extends EventEmitter<{
             const tokenEvent = updateRes.created;
             if (!tokenEvent) throw new Error("no token event created");
 
-            createInTxEvent(this.wallet, proofs, this.wallet.unit, this.mint, updateRes, { description: "Deposit" });
+            createInTxEvent(this.wallet, proofs, this.mint, updateRes, { description: "Deposit" });
 
             this.emit("success", tokenEvent);
 
             // delete the quote event if it exists
             this.destroyQuoteEvent();
         } catch (e: any) {
-            console.log("relayset", this.wallet.relaySet);
             this.emit("error", e.message);
             console.error(e);
         }

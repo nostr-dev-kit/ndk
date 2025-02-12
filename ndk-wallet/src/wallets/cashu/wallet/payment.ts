@@ -3,7 +3,6 @@ import { NDKCashuWallet } from ".";
 import { createToken } from "../pay/nut";
 import { payLn } from "../pay/ln";
 import { getBolt11Amount } from "../../../utils/ln";
-import { Proof } from "@cashu/cashu-ts";
 import { createOutTxEvent } from "./txs";
 
 export type PaymentWithOptionalZapInfo<T extends LnPaymentInfo | CashuPaymentInfo> = T & {
@@ -57,43 +56,34 @@ export class PaymentHandler {
      * Swaps tokens to a specific amount, optionally locking to a p2pk.
      */
     async cashuPay(payment: NDKZapDetails<CashuPaymentInfo>): Promise<NDKPaymentConfirmationCashu | undefined> {
-        let { amount, unit } = payment;
-        
-        if (unit.startsWith("msat")) {
-            unit = 'sat';
-            amount = amount / 1000;
+        const satPayment = { ...payment };
+        if (satPayment.unit?.startsWith("msat")) {
+            satPayment.amount = satPayment.amount / 1000;
+            satPayment.unit = "sat";
         }
 
         let createResult = await createToken(
             this.wallet,
-            amount,
-            unit,
+            satPayment.amount,
             payment.mints,
             payment.p2pk,
         )
         if (!createResult) {
-            console.log("failed to pay with cashu", { allowIntramintFallback: payment.allowIntramintFallback });
             if (payment.allowIntramintFallback) {
-                console.log("trying to pay with fallback using intramint payment");
                 createResult = await createToken(
                     this.wallet,
-                    amount,
-                    unit,
+                    satPayment.amount,
                     undefined,
                     payment.p2pk,
                 )
             }
             
             if (!createResult) {
-                console.log("failed to pay with cashu");
                 return;
             }
         }
 
-        const isP2pk = (p: Proof) => p.secret.startsWith('["P2PK"');
-        const isNotP2pk = (p: Proof) => !isP2pk(p);
-
-        createOutTxEvent(this.wallet, payment, createResult);
+        createOutTxEvent(this.wallet, satPayment, createResult);
 
         return createResult.result;
     }

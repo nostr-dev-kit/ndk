@@ -1,8 +1,7 @@
 import { type Proof } from "@cashu/cashu-ts";
 import type { NDKEventId, NDKRelay, NDKRelaySet, NostrEvent } from "@nostr-dev-kit/ndk";
 import type NDK from "@nostr-dev-kit/ndk";
-import { NDKEvent, NDKKind, normalizeUrl } from "@nostr-dev-kit/ndk";
-import type { NDKCashuWallet } from "./wallet/index.js";
+import { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
 import { decrypt } from "./decrypt.js";
 
 /**
@@ -106,17 +105,6 @@ export class NDKCashuToken extends NDKEvent {
         await this.encrypt(user, undefined, "nip44");
 
         return super.toNostrEvent(pubkey);
-    }
-
-    get walletId(): string | undefined {
-        const aTag = this.tags.find(([tag]) => tag === "a");
-        if (!aTag) return;
-        return aTag[1]?.split(":")[2];
-    }
-
-    set wallet(wallet: NDKCashuWallet) {
-        const id = wallet.tagId();
-        if (id)this.tags.push(["a", id]);
     }
 
     set mint(mint: string) {

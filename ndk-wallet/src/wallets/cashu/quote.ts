@@ -46,9 +46,6 @@ export class NDKCashuQuote extends NDKEvent {
     }
 
     set wallet(wallet: NDKCashuWallet) {
-        const tagId = wallet.tagId();
-        if (!tagId) return;
-        this.tags.push(["a", tagId]);
         this._wallet = wallet;
     }
 

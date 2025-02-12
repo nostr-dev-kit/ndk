@@ -7,6 +7,8 @@ export * from "./wallets/cashu/deposit.js";
 export * from "./wallets/cashu/history.js";
 export * from "./wallets/cashu/mint/utils";
 
+export * from "./wallets/cashu/wallet/migrate.js";
+
 export * from "./wallets/webln/index.js";
 
 export * from "./wallets/nwc/index.js";

@@ -62,7 +62,7 @@ export class NDKWebLNWallet extends EventEmitter<NDKWalletEvents> implements NDK
         }
 
         const b = await this.provider.getBalance?.();
-        if (b) this._balance = { amount: b.balance, unit: b.currency || "sats" };
+        if (b) this._balance = { amount: b.balance };
         return;
     }
 

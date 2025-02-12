@@ -3,7 +3,6 @@ import createDebug from "debug";
 import type { NDKCashuWallet } from "./wallet/index.js";
 import { walletForMint } from "./mint";
 import { WalletProofChange } from "./wallet/state/index.js";
-import { createOutTxEvent } from "./wallet/txs.js";
 
 const d = createDebug("ndk-wallet:cashu:validate");
 
@@ -30,7 +29,7 @@ export async function consolidateMintTokens(
     wallet: NDKCashuWallet
 ) {
     const allProofs = wallet.state.getProofs({ mint, includeDeleted: true, onlyAvailable: false });
-    const _wallet = await walletForMint(mint, wallet.unit);
+    const _wallet = await walletForMint(mint);
     if (!_wallet) {
         console.log("could not get wallet for mint %s", mint);
         return;

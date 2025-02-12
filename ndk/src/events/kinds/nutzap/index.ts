@@ -65,10 +65,6 @@ export class NDKNutzap extends NDKEvent {
         for (const proof of proofs) {
             this.tags.push(["proof", JSON.stringify(proof)]);
         }
-
-        // remove amount tags
-        this.removeTag("amount");
-        this.tags.push(["amount", this.amount.toString()]);
     }
 
     get proofs(): Proof[] {
@@ -115,7 +111,7 @@ export class NDKNutzap extends NDKEvent {
     }
 
     get unit(): string {
-        return this.tagValue("unit") ?? "msat";
+        return this.tagValue("unit") ?? "sat";
     }
 
     set unit(value: string | undefined) {
@@ -124,8 +120,9 @@ export class NDKNutzap extends NDKEvent {
     }
 
     get amount(): number {
-        const count = this.proofs.reduce((total, proof) => total + proof.amount, 0);
-        return count * 1000;
+        const amount = this.proofs.reduce((total, proof) => total + proof.amount, 0);
+        if (this.unit === "msat") return amount * 1000;
+        return amount;
     }
 
     public sender = this.author;
@@ -159,14 +156,30 @@ export class NDKNutzap extends NDKEvent {
         return new NDKUser({ pubkey });
     }
 
+    async toNostrEvent(): Promise<NostrEvent> {
+        // if the unit is msat, convert to sats
+        if (this.unit === "msat") {
+            this.unit = "sat";
+        }
+
+        this.removeTag("amount");
+        this.tags.push(["amount", this.amount.toString()]);
+
+        const event = await super.toNostrEvent();
+        event.content = this.comment;
+        return event;
+    }
+
     /**
      * Validates that the nutzap conforms to NIP-61
      */
     get isValid(): boolean {
+        let eTagCount = 0;
         let pTagCount = 0;
         let mintTagCount = 0;
 
         for (const tag of this.tags) {
+            if (tag[0] === "e") eTagCount++;
             if (tag[0] === "p") pTagCount++;
             if (tag[0] === "u") mintTagCount++;
         }
@@ -175,6 +188,9 @@ export class NDKNutzap extends NDKEvent {
             // exactly one recipient and mint
             pTagCount === 1 &&
             mintTagCount === 1 &&
+
+            // must have at most one e tag
+            eTagCount <= 1 &&
             // must have at least one proof
             this.proofs.length > 0
         );

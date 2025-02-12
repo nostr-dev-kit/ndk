@@ -138,10 +138,9 @@ export async function generateContentTags(
                     promises.push(
                         new Promise(async (resolve) => {
                             addTagIfNew([
-                                "e",
+                                "q",
                                 data,
                                 await maybeGetEventRelayUrl(entity),
-                                "mention",
                             ]);
                             resolve();
                         })
@@ -159,7 +158,7 @@ export async function generateContentTags(
                                 relays = [await maybeGetEventRelayUrl(entity)];
                             }
 
-                            addTagIfNew(["e", id, relays[0], "mention"]);
+                            addTagIfNew(["q", id, relays[0]]);
                             if (author) addTagIfNew(["p", author]);
                             resolve();
                         })
@@ -177,7 +176,7 @@ export async function generateContentTags(
                                 relays = [await maybeGetEventRelayUrl(entity)];
                             }
 
-                            addTagIfNew(["a", id, relays[0], "mention"]);
+                            addTagIfNew(["q", id, relays[0]]);
                             addTagIfNew(["p", data.pubkey]);
                             resolve();
                         })

@@ -35,10 +35,9 @@ describe("await generateContentTags", () => {
         expect(processedTags).toEqual([
             ["p", "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"],
             [
-                "e",
+                "q",
                 "6ab77c8baf6d0542131cc70b59ba3ece904fd58efe91d612dc3e870bdaf93034",
                 "",
-                "mention",
             ],
         ]);
     });
@@ -74,10 +73,9 @@ describe("await generateContentTags", () => {
             ["p", "existing_p"],
             ["p", "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"],
             [
-                "e",
+                "q",
                 "6ab77c8baf6d0542131cc70b59ba3ece904fd58efe91d612dc3e870bdaf93034",
                 "",
-                "mention",
             ],
         ]);
     });
@@ -98,10 +96,9 @@ describe("await generateContentTags", () => {
         );
         expect(processedTags).toEqual([
             [
-                "e",
+                "q",
                 "8c9093d06a21a5b738e9d21d907334444e7ea12258c21da333e0fc265cf92a8b",
                 "",
-                "mention",
             ],
         ]);
     });
@@ -119,10 +116,9 @@ describe("await generateContentTags", () => {
         );
         expect(processedTags).toEqual([
             [
-                "e",
+                "q",
                 "8c9093d06a21a5b738e9d21d907334444e7ea12258c21da333e0fc265cf92a8b",
                 "",
-                "mention",
             ],
         ]);
     });
@@ -140,10 +136,9 @@ describe("await generateContentTags", () => {
         );
         expect(processedTags).toEqual([
             [
-                "a",
+                "q",
                 "30023:6389be6491e7b693e9f368ece88fcd145f07c068d2c1bbae4247b9b5ef439d32:283946",
                 "",
-                "mention",
             ],
             ["p", "6389be6491e7b693e9f368ece88fcd145f07c068d2c1bbae4247b9b5ef439d32"],
         ]);
@@ -162,10 +157,9 @@ describe("await generateContentTags", () => {
         );
         expect(processedTags).toEqual([
             [
-                "e",
+                "q",
                 "4b6d6da883fc7d74d3936b0a4e0fc8ed00fd505e9024e1ae9d96fc1d2616fe5c",
                 "wss://nos.lol/",
-                "mention",
             ],
             ["p", "b190175cef407c593f17c155480eda1a2ee7f6c84378eef0e97353f87ee59300"],
         ]);
@@ -184,10 +178,9 @@ describe("await generateContentTags", () => {
         );
         expect(processedTags).toEqual([
             [
-                "a",
+                "q",
                 "30023:6389be6491e7b693e9f368ece88fcd145f07c068d2c1bbae4247b9b5ef439d32:283946",
                 "wss://nos.lol",
-                "mention",
             ],
             ["p", "6389be6491e7b693e9f368ece88fcd145f07c068d2c1bbae4247b9b5ef439d32"],
         ]);

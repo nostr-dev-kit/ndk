@@ -50,17 +50,15 @@ type PendingCallback = (...arg: any) => any;
 function filterForCache(subscription: NDKSubscription) {
     if (!subscription.cacheUnconstrainFilter) return subscription.filters;
 
-    const filterCopy = [...subscription.filters];
+    const filterCopy = subscription.filters.map(filter => ({ ...filter }));
     
     // remove the keys that are in the cacheUnconstrainFilter
-    filterCopy.filter((filter) => {
+    return filterCopy.filter((filter) => {
         for (const key of subscription.cacheUnconstrainFilter) {
             delete filter[key];
         }
         return Object.keys(filter).length > 0;
     });
-
-    return filterCopy;
 }
 
 export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
@@ -84,12 +82,15 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     constructor(dbName: string, maxProfiles: number = 200) {
         this.dbName = dbName ?? 'ndk-cache';
         this.profileCache = new LRUCache({ maxSize: maxProfiles });
-        this.initialize();
+        this.db = SQLite.openDatabaseSync(this.dbName);
     }
 
-    private async initialize() {
-        this.db = SQLite.openDatabaseSync(this.dbName);
-
+    /**
+     * Initialize the cache adapter.
+     * 
+     * This should be called before using it.
+     */
+    public async initialize() {
         let { user_version: schemaVersion } = (this.db.getFirstSync(`PRAGMA user_version;`)) as { user_version: number };
 
         if (!schemaVersion) {

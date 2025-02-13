@@ -408,14 +408,22 @@ class NDKZapper extends EventEmitter<{
 
         const nip61Method = zapMethods.get("nip61") as CashuPaymentInfo;
         if (nip61Method) {
-            retVal = await this.zapNip61(split, nip61Method);
-            if (retVal instanceof NDKNutzap) return retVal;
+            try {
+                retVal = await this.zapNip61(split, nip61Method);
+                if (retVal instanceof NDKNutzap) return retVal;
+            } catch (e: any) {
+                this.emit("notice", `NIP-61 attempt failed: ${e.message}`);
+            }
         } 
 
         const nip57Method = zapMethods.get("nip57") as NDKLnLudData;
         if (nip57Method) {
-            retVal = await this.zapNip57(split, nip57Method);
-            if (!(retVal instanceof Error)) return retVal;
+            try {
+                retVal = await this.zapNip57(split, nip57Method);
+                if (!(retVal instanceof Error)) return retVal;
+            } catch (e: any) {
+                this.emit("notice", `NIP-57 attempt failed: ${e.message}`);
+            }
         }
 
         if (canFallbackToNip61) {
@@ -423,6 +431,8 @@ class NDKZapper extends EventEmitter<{
 
             if (retVal instanceof Error) throw retVal;
             return retVal;
+        } else {
+            this.emit("notice", "Zap methods exhausted and there was no fallback to NIP-61");
         }
 
         if (retVal instanceof Error) throw retVal;

@@ -12,12 +12,11 @@ type State = {
     ndk: NDK;
     currentUser: NDKUser | null;
     settingsStore?: SettingsStore;
-    cacheInitialized: boolean;
     initialParams: InitNDKParams;
 }
 
 type Actions = {
-    init: (params: InitNDKParams) => void;
+    init: (ndk: NDK, settingsStore: SettingsStore) => void;
     login: (payloadOrSigner: string | NDKSigner) => void;
     logout: () => void;
 }
@@ -29,29 +28,19 @@ export const useNDKStore = create<State & Actions & EventHandler>((set, get) => 
     ndk: undefined,
     currentUser: null,
     settingsStore: undefined,
-    cacheInitialized: false,
     initialParams: undefined,
 
-    init: (params: InitNDKParams) => {
-        const ndk = new NDK(params);
-        const settingsStore = params.settingsStore;
-        const user = getUserFromSettingsStore(ndk, settingsStore);
-
-        ndk.connect();
-
-        const key = params.settingsStore?.getSync('login');
-
+    
+    init: (ndk: NDK, settingsStore: SettingsStore) => {
         set({
             ndk,
-            settingsStore: params.settingsStore,
-            cacheInitialized: ndk.cacheAdapter?.ready !== false,
-            initialParams: params,
-            ...(user ? { currentUser: user } : {}),
+            settingsStore,
+            currentUser: ndk.activeUser,
         });
+
+        const key = settingsStore?.getSync('login');
         
-        if (key) {
-            get().login(key);
-        }
+        if (key) get().login(key);
     },
 
     login: (payloadOrSigner: string | NDKSigner) => {
@@ -99,6 +88,8 @@ export const useNDKStore = create<State & Actions & EventHandler>((set, get) => 
         settingsStore.delete('signer');
         settingsStore.delete('wot.last_updated_at');
         settingsStore.delete('wot.length');
+        settingsStore.delete('ndkMobileSessionLastEose');
+        settingsStore.delete('wallet');
 
         // nuke the database
         if (ndk.cacheAdapter instanceof NDKCacheAdapterSqlite) {

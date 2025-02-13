@@ -6,15 +6,21 @@ import { NDKNWCResponseMap } from "./types";
 
 export async function waitForResponse<M extends keyof NDKNWCResponseMap>(
     this: NDKNWCWallet,
-    requestId: string
+    request: NDKEvent
 ): Promise<NDKNWCResponseBase<NDKNWCResponseMap[M]>> {
     if (!this.pool) throw new Error("Wallet not initialized");
+    const sendRequest = () => {
+        if (waitForEoseTimeout) clearTimeout(waitForEoseTimeout);
+        request.publish(this.relaySet);
+    }
+
+    let waitForEoseTimeout = setTimeout(sendRequest, 2500);
 
     return new Promise((resolve, reject) => {
         const sub = this.ndk.subscribe(
             {
                 kinds: [NDKKind.NostrWalletConnectRes],
-                "#e": [requestId],
+                "#e": [request.id],
                 limit: 1
             },
             { groupable: false, pool: this.pool }, this.relaySet
@@ -24,7 +30,6 @@ export async function waitForResponse<M extends keyof NDKNWCResponseMap>(
             try {
                 await event.decrypt(event.author, this.signer);
                 const content = JSON.parse(event.content);
-                sub.stop();
                 
                 if (content.error) {
                     reject(content);
@@ -33,7 +38,6 @@ export async function waitForResponse<M extends keyof NDKNWCResponseMap>(
                 }
             } catch (e: any) {
                 console.error('error decrypting event', e);
-                sub.stop();
                 reject({
                     result_type: "error",
                     error: {
@@ -41,7 +45,13 @@ export async function waitForResponse<M extends keyof NDKNWCResponseMap>(
                         message: e.message
                     }
                 });
+            } finally {
+                sub.stop();
             }
         });
+
+        sub.on("eose", () => {
+            sendRequest();
+        })
     });
 }

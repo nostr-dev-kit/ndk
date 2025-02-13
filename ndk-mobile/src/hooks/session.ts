@@ -1,6 +1,7 @@
 import NDK, { NDKEvent, NDKKind, NDKUser } from '@nostr-dev-kit/ndk';
+import { useState, useEffect } from 'react';
 import { useNDK } from './ndk.js';
-import { NDKEventWithFrom } from './subscribe.js';
+import { NDKEventWithFrom, NDKEventWithAsyncFrom } from './subscribe.js';
 import { useNDKSession } from '../stores/session/index.js';
 import { useNDKWallet } from './wallet.js';
 import { walletFromLoadingString } from '@nostr-dev-kit/ndk-wallet';
@@ -8,24 +9,22 @@ import { SessionInitOpts, SessionInitCallbacks } from '../stores/session/types.j
 import { SettingsStore } from '../types.js';
 
 const useNDKSessionInit = () => {
-    const init = useNDKSession(s => s.init);
+    return useNDKSession(s => s.init);
+}
 
+const useNDKSessionInitWallet = () => {
     const { setActiveWallet } = useNDKWallet();
 
-    const wrappedInit = (ndk: NDK, user: NDKUser, settingsStore: SettingsStore, opts: SessionInitOpts, on: SessionInitCallbacks) => {
-        init(ndk, user, settingsStore, opts, on);
-
+    const initWallet = (ndk: NDK, settingsStore: SettingsStore) => {
         const walletString = settingsStore?.getSync('wallet');
         if (walletString) {
             walletFromLoadingString(ndk, walletString).then((wallet) => {
                 if (wallet) setActiveWallet(wallet);
-            }).catch((e) => {
-                console.error('error setting active wallet', e);
             });
         }
     }
 
-    return wrappedInit;
+    return initWallet;
 }
 
 const useFollows = () => useNDKSession(s => s.follows);
@@ -51,9 +50,10 @@ const useWOT = () => useNDKSession(s => s.wot);
  */
 const useNDKSessionEventKind = <T extends NDKEvent>(
     EventClass: NDKEventWithFrom<any>,
-    kind: NDKKind,
+    kind?: NDKKind,
     { create }: { create: boolean } = { create: false }
 ): T | undefined => {
+    kind ??= EventClass.kind;
     const { ndk } = useNDK();
     const events = useNDKSession(s => s.events);
     const kindEvents = events.get(kind) || [];
@@ -67,6 +67,27 @@ const useNDKSessionEventKind = <T extends NDKEvent>(
     }
 
     return firstEvent ? EventClass.from(firstEvent) : undefined;
+};
+
+const useNDKSessionEventKindAsync = <T>(
+    EventClass: NDKEventWithAsyncFrom<any>,
+    kind?: NDKKind,
+    { create }: { create: boolean } = { create: false }
+): T | undefined => {
+    kind ??= EventClass.kind;
+    const events = useNDKSession(s => s.events);
+    const kindEvents = events.get(kind) || [];
+    const firstEvent = kindEvents[0];
+    const [res, setRes] = useState<T | undefined>(undefined);
+
+    useEffect(() => {
+        if (!firstEvent) return;
+        EventClass.from(firstEvent).then((event) => {
+            setRes(event);
+        });
+    }, [firstEvent]);
+
+    return res;
 };
 
 const useNDKSessionEvents = <T extends NDKEvent>(
@@ -92,4 +113,6 @@ export {
     useNDKSessionEventKind,
     useNDKSessionEvents,
     useNDKSessionInit,
+    useNDKSessionInitWallet,
+    useNDKSessionEventKindAsync,
 };

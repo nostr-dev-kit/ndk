@@ -10,6 +10,7 @@ import { useNDKSession } from '../stores/session/index.js';
  * Extends NDKEvent with a 'from' method to wrap events with a kind-specific handler
  */
 export type NDKEventWithFrom<T extends NDKEvent> = T & { from: (event: NDKEvent) => T };
+export type NDKEventWithAsyncFrom<T extends NDKEvent> = T & { from: (event: NDKEvent) => Promise<T> };
 
 export type UseSubscribeOptions = NDKSubscriptionOptions & {
     /**
@@ -303,7 +304,6 @@ export function useMuteFilter() {
         mutedHashtags.forEach(h => _mutedHashtags.add(h.toLowerCase()));
 
         return (event: NDKEvent) => {
-            const start = performance.now();
             const tags = new Set(event.getMatchingTags('t').map(tag => tag[1].toLowerCase()));
             const taggedEvents = new Set(event.getMatchingTags('e').map(tag => tag[1]));
             taggedEvents.add(event.id);

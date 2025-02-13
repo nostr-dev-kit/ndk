@@ -45,7 +45,8 @@ const getFollowFilter = (
     if (!follows) return undefined;
 
     const filters: NDKFilter[] = [];
-    const lastKnownEvent = getLatestKnownEvent(ndk, [NDKKind.Contacts], user);
+    const lastKnownEvent = getLatestKnownEvent(ndk, [NDKKind.Contacts, 967 as NDKKind], user);
+    
     const lastKnownFilter = lastKnownEvent ? { since: lastKnownEvent+1 } : {};
 
     filters.push({ kinds: [3], authors: [user.pubkey], ...lastKnownFilter });

@@ -25,26 +25,16 @@ When using this library don't import `@nostr-dev-kit/ndk` directly, instead impo
 
 Initialize NDK using the init function, probably when your app loads.
 
-```tsx
-function App() {
-    const { ndk, init: initializeNDK } = useNDK();
-
-    useEffect(() => {
-        initializeNDK({
-            /* Any parameter you'd want to pass to NDK */
-            explicitRelayUrls: [...],
-            // ...
-        }
-    }, []);
-}
-```
-
-### Settings
-
 Throughout the use of a normal app, you will probably want to store some settings, such us, the user that is logged in. `ndk-mobile` can take care of this for you automatically if you pass a `settingsStore` to the initialization. For example, using `expo-secure-store` you can:
 
 ```tsx
 import * as SecureStore from 'expo-secure-store';
+
+const ndk = new NDK({
+    /* Any parameter you'd want to pass to NDK */
+    explicitRelayUrls: [...],
+    // ...
+})
 
 const settingsStore = {
     get: SecureStore.getItemAsync,
@@ -53,11 +43,9 @@ const settingsStore = {
     getSync: SecureStore.getItem,
 };
 
-// and then, when you initialiaze NDK:
-initializeNDK({
-    ......,
-    settingsStore
-})
+function App() {
+    useNDKInit(ndk, settingsStore);
+}
 ```
 
 Now, once your user logs in, their login information will be stored locally so when your app restarts, the user will be logged in automatically.
@@ -81,4 +69,4 @@ function LoginScreen() {
 
 ## Example
 
-For a real application using this look at [Olas](https://github.com/pablof7z/snapstr).
+For a real application using this look at [Olas](https://github.com/pablof7z/olas).

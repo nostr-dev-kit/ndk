@@ -88,13 +88,25 @@ export async function sendReq<M extends keyof NDKNWCRequestMap>(
     await event.encrypt(this.walletService, this.signer, 'nip04');
     await event.sign(this.signer);
 
-    // Wait for response
-    return new Promise<NWCResponseBase<NDKNWCResponseMap[M]>>((resolve, reject) => {
-        waitForResponse.call<NDKNWCWallet, [string], Promise<NWCResponseBase<NDKNWCResponseMap[M]>>>(
+    // Create base response promise
+    const responsePromise = new Promise<NWCResponseBase<NDKNWCResponseMap[M]>>((resolve, reject) => {
+        waitForResponse.call<NDKNWCWallet, [NDKEvent], Promise<NWCResponseBase<NDKNWCResponseMap[M]>>>(
             this,
-            event.id
+            event
         ).then(resolve).catch(reject);
-
-        event.publish(this.relaySet)
     });
+
+    // Add timeout race if configured
+    if (this.timeout) {
+        const timeoutPromise = new Promise<NWCResponseBase<NDKNWCResponseMap[M]>>((_, reject) => 
+            setTimeout(() => {
+                this.emit('timeout', method);
+                reject(new Error(`Request timed out after ${this.timeout}ms`));
+            }, this.timeout)
+        );
+        
+        return Promise.race([responsePromise, timeoutPromise]);
+    }
+
+    return responsePromise;
 }

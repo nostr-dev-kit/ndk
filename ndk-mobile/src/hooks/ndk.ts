@@ -1,18 +1,25 @@
-import { NDKEvent } from '@nostr-dev-kit/ndk';
+import NDK, { NDKEvent } from '@nostr-dev-kit/ndk';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNDKStore } from '../stores/ndk.js';
+import { SettingsStore } from '../types.js';
 
 export const useNDK = () => {
     const ndk = useNDKStore(s => s.ndk);
-    const init = useNDKStore(s => s.init);
     const login = useNDKStore(s => s.login);
     const logout = useNDKStore(s => s.logout);
 
-    return { ndk, init, login, logout };
+    return { ndk, login, logout };
+}
+
+export const useNDKInit = (ndk: NDK, settingsStore: SettingsStore) => {
+    const storeInit = useNDKStore(s => s.init);
+
+    useEffect(() => {
+        storeInit(ndk, settingsStore);
+    }, []);
 }
 
 export const useNDKCurrentUser = () => useNDKStore(s => s.currentUser);
-export const useNDKCacheInitialized = () => useNDKStore(s => s.cacheInitialized);
 
 export function useNDKUnpublishedEvents() {
     const { ndk } = useNDK();

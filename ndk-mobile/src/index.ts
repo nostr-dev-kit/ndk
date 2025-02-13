@@ -7,7 +7,7 @@ export * from './components/index.js';
 export * from './components/relays/index.js';
 export * from './signers/index.js';
 export * from '@nostr-dev-kit/ndk';
-
+export * as DBCache from './db/index.js';
 import NDK from '@nostr-dev-kit/ndk';
 
 export default NDK;

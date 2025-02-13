@@ -120,4 +120,16 @@ export const migrations = [
         },
     },
     
+    {
+        version: 6,
+        up: async (db: SQLite.SQLiteDatabase) => {
+            await db.execAsync(`DROP TABLE IF EXISTS wallet_nutzaps;`); // XXX
+            await db.execAsync(`CREATE TABLE IF NOT EXISTS wallet_nutzaps (
+                event_id TEXT PRIMARY KEY UNIQUE,
+                status TEXT,
+                claimed_at INTEGER,
+                tx_event_id TEXT
+            );`);
+        },
+    },
 ];

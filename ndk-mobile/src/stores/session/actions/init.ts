@@ -1,4 +1,4 @@
-import NDK, { NDKEvent, NDKKind, Hexpubkey, NDKUser, NDKRelaySet, NDKList, NDKRelay } from '@nostr-dev-kit/ndk';
+import NDK, { NDKEvent, NDKKind, Hexpubkey, NDKUser } from '@nostr-dev-kit/ndk';
 import { SessionInitCallbacks, SessionInitOpts, SessionState } from '../types.js';
 import { generateFilters } from '../utils.js';
 import { SettingsStore } from '../../../types.js';
@@ -20,7 +20,16 @@ export const initSession = (
     const { addEvent } = get();
     let follows: Hexpubkey[] = [];
     let kindFollows = new Set<Hexpubkey>();
+
     const filters = generateFilters(ndk, user, opts);
+
+    if (!filters[0].since) {
+        const ndkMobileSessionLastEose = settingsStore.getSync('ndkMobileSessionLastEose');
+        if (ndkMobileSessionLastEose) {
+            filters[0].since = parseInt(ndkMobileSessionLastEose);
+        }
+    }
+    
     const sub = ndk.subscribe(filters, { groupable: false, closeOnEose: false, subId: 'ndk-mobile-session', ...(opts.subOpts || {}) }, undefined, false);
     let eosed = false;
 
@@ -84,6 +93,8 @@ export const initSession = (
     sub.once('eose', () => {
         on?.onReady?.();
         eosed = true;
+
+        settingsStore?.set?.('ndkMobileSessionLastEose', Math.floor(Date.now() / 1000).toString())
 
         if (opts.wot) {
             console.log('shouldUpdateWot', shouldUpdateWot(ndk, settingsStore));

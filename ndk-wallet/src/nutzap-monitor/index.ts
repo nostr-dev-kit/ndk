@@ -215,8 +215,10 @@ export class NDKNutzapMonitor extends EventEmitter<{
                 }
             );
 
-            if (res === false)
+            if (res === false) {
+                this.emit("spent", nutzap);
                 return false;
+            }
         } catch (e: any) {
             this.emit("failed", nutzap, e.message);
         }

@@ -63,7 +63,7 @@ export async function decrypt(
         sender = this.author;
     }
 
-    if (!scheme) scheme = this.content.search("\\?iv=") ? 'nip04' : 'nip44';
+    if (!scheme) scheme = this.content.match(/\\?iv=/) ? 'nip04' : 'nip44';
 
     // simple check for legacy `nip04` encrypted events. adapted from Coracle
     if ((scheme === 'nip04' || this.kind === 4) && await isEncryptionEnabled(signer, 'nip04') && this.content.search("\\?iv=")) {

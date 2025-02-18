@@ -19,6 +19,9 @@ export enum NDKKind {
 
     Image = 20,
 
+    // NIP-62
+    Vanish = 62,
+
     // Nip 59 : Gift Wrap
     GiftWrap = 1059,
 

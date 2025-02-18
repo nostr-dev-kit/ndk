@@ -1,8 +1,7 @@
 import { type Proof } from "@cashu/cashu-ts";
-import type { NDKEventId, NDKRelay, NDKRelaySet, NostrEvent } from "@nostr-dev-kit/ndk";
-import type NDK from "@nostr-dev-kit/ndk";
-import { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
-import { decrypt } from "./decrypt.js";
+import { NDK } from "../../../ndk/index.js";
+import { NDKEventId, NDKRelay, NDKRelaySet, NostrEvent } from "../../../index.js";
+import { NDKEvent, NDKKind } from "../../../index.js";
 
 /**
  * Calculates the total balance from an array of proofs.
@@ -23,6 +22,8 @@ export function proofsTotalBalance(proofs: Proof[]): number {
 export class NDKCashuToken extends NDKEvent {
     private _proofs: Proof[] = [];
     private _mint: string | undefined;
+    static kind = NDKKind.CashuToken;
+    static kinds = [NDKKind.CashuToken];
 
     /**
      * Tokens that this token superseeds
@@ -41,7 +42,7 @@ export class NDKCashuToken extends NDKEvent {
 
         token.original = event;
         try {
-            await decrypt(token);
+            await token.decrypt();
         } catch {
             token.content = token.original.content;
         }

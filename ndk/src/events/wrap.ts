@@ -1,5 +1,6 @@
 import { NDKEvent } from ".";
 import { NDKArticle } from "./kinds/article";
+import { NDKCashuToken } from "./kinds/cashu/token";
 import { NDKHighlight } from "./kinds/highlight";
 import { NDKImage } from "./kinds/image";
 import { NDKNutzap } from "./kinds/nutzap";
@@ -23,13 +24,14 @@ export const eventWrappingMap = new Map();
     NDKSimpleGroupMemberList,
     NDKSimpleGroupMetadata,
     NDKSubscriptionTier,
+    NDKCashuToken,
 ].forEach((klass) => {
     klass.kinds.forEach((kind) => {
         eventWrappingMap.set(kind, klass);
     });
 });
 
-export function wrapEvent<T extends NDKEvent>(event: NDKEvent): T | NDKEvent {
+export function wrapEvent<T extends NDKEvent>(event: NDKEvent): T | Promise<T> | NDKEvent {
     const klass = eventWrappingMap.get(event.kind);
     if (klass) return klass.from(event);
     return event;

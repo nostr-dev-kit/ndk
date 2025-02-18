@@ -1,5 +1,4 @@
-import { NDKEvent, NDKEventId, NDKKind, normalizeUrl, NostrEvent } from "@nostr-dev-kit/ndk";
-import { NDKCashuToken } from "../../token";
+import { NDKEventId, NDKCashuToken } from "@nostr-dev-kit/ndk";
 import { Proof } from "@cashu/cashu-ts";
 import { MintUrl } from "../../mint/utils";
 import { NDKCashuWallet } from "..";

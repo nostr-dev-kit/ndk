@@ -1,7 +1,6 @@
-import { NDKEvent, NDKEventId, NDKKind, NDKRelay, NDKRelaySet, NostrEvent } from "@nostr-dev-kit/ndk";
+import { NDKEvent, NDKEventId, NDKKind, NDKRelay, NDKRelaySet, NostrEvent, NDKCashuToken } from "@nostr-dev-kit/ndk";
 import { JournalEntry, ProofC, WalletState, WalletTokenChange } from ".";
 import { WalletProofChange } from "./index.js";
-import { NDKCashuToken } from "../../token";
 import { Proof } from "@cashu/cashu-ts";
 import { MintUrl } from "../../mint/utils";
 

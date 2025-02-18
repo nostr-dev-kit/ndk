@@ -3,7 +3,6 @@ import NDK, { NostrEvent } from "@nostr-dev-kit/ndk";
 import { NDKKind } from "@nostr-dev-kit/ndk";
 
 import { NDKEvent } from "@nostr-dev-kit/ndk";
-import { decrypt } from "./decrypt";
 import { NDKCashuWallet } from "./wallet/index.js";
 import { getBolt11ExpiresAt } from "../../utils/ln";
 
@@ -27,7 +26,7 @@ export class NDKCashuQuote extends NDKEvent {
         const original = event;
 
         try {
-            await decrypt(quote);
+            await quote.decrypt();
         } catch {
             quote.content = original.content;
         }

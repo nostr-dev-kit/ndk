@@ -2,9 +2,8 @@ import type { Proof } from "@cashu/cashu-ts";
 
 import type { NDKCashuWallet } from "./wallet/index.js";
 import { EventEmitter } from "tseep";
-import { NDKCashuToken } from "./token";
 import createDebug from "debug";
-import { NDKEvent } from "@nostr-dev-kit/ndk";
+import { NDKEvent, NDKCashuToken } from "@nostr-dev-kit/ndk";
 import { NDKCashuQuote } from "./quote";
 import { createInTxEvent } from "./wallet/txs.js";
 

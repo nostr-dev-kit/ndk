@@ -1,6 +1,6 @@
 import { calculateNewState } from './update';
 import { WalletState, WalletProofChange } from '.';
-import { NDKCashuToken } from '../../token';
+import { NDKCashuToken } from '@nostr-dev-kit/ndk';
 import { Proof } from '@cashu/cashu-ts';
 import NDK from '@nostr-dev-kit/ndk';
 import { NDKCashuWallet } from '..';

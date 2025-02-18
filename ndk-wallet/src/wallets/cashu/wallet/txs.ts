@@ -1,11 +1,10 @@
-import { LnPaymentInfo, CashuPaymentInfo, NDKUser, NDKNutzap, NDKPaymentConfirmationLN } from "@nostr-dev-kit/ndk";
+import { LnPaymentInfo, CashuPaymentInfo, NDKUser, NDKNutzap, NDKPaymentConfirmationLN, proofsTotalBalance } from "@nostr-dev-kit/ndk";
 import { NDKCashuWallet } from ".";
 import { getBolt11Amount, getBolt11Description } from "../../../utils/ln";
 import { NDKWalletChange } from "../history";
 import { PaymentWithOptionalZapInfo } from "./payment";
 import { Proof } from "@cashu/cashu-ts";
 import { MintUrl } from "../mint/utils";
-import { proofsTotalBalance } from "../token";
 import { TokenCreationResult } from "../pay/nut";
 import { WalletOperation } from "./effect";
 import { UpdateStateResult } from "./state/update";

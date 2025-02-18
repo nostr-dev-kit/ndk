@@ -1,5 +1,18 @@
 # @nostr-dev-kit/ndk-cache-redis
 
+## 0.4.0
+
+### Minor Changes
+
+- Update to new NIP-60 and NIP-61 implementations
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.11.2
+
 ## 0.3.17
 
 ### Patch Changes

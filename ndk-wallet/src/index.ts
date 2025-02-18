@@ -2,7 +2,6 @@ export * from "./nutzap-monitor/index.js";
 export * from "./wallets/index.js";
 
 export * from "./wallets/cashu/wallet/index.js";
-export * from "./wallets/cashu/token.js";
 export * from "./wallets/cashu/deposit.js";
 export * from "./wallets/cashu/history.js";
 export * from "./wallets/cashu/mint/utils";

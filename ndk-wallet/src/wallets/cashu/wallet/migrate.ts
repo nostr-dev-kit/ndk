@@ -1,6 +1,5 @@
 import NDK, { NDKCashuMintList, NDKEvent, NDKKind, NDKPrivateKeySigner } from "@nostr-dev-kit/ndk"
 import { NDKCashuWallet } from ".";
-import { decrypt } from "../decrypt";
 
 /**
  * This function checks if the user had legacy cashu wallets, if they do, it migrates them to the new format.
@@ -104,7 +103,7 @@ async function extractInfoFromLegacyWallet(wallet: NDKEvent) {
     try {
         // decrypt the wallet content, extract the privkey
         const origContent = wallet.content;
-        await decrypt(wallet);
+        await wallet.decrypt();
         const privTags = JSON.parse(wallet.content);
         for (const tag of privTags) {
             if (tag[0] === 'privkey') privkey = tag[1];

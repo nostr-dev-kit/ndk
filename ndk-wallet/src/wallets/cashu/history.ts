@@ -1,8 +1,6 @@
 import type { NDKEventId, NDKTag, NostrEvent } from "@nostr-dev-kit/ndk";
 import type NDK from "@nostr-dev-kit/ndk";
-import { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
-import { NDKCashuToken } from "./token";
-import { decrypt } from "./decrypt";
+import { NDKEvent, NDKKind, NDKCashuToken } from "@nostr-dev-kit/ndk";
 
 const MARKERS = {
     REDEEMED: "redeemed",
@@ -32,7 +30,7 @@ export class NDKWalletChange extends NDKEvent {
 
         const prevContent = walletChange.content;
         try {
-            await decrypt(walletChange);
+            await walletChange.decrypt();
         } catch (e) {
             walletChange.content ??= prevContent;
         }

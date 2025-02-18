@@ -21,7 +21,6 @@ import { getDecodedToken } from "@cashu/cashu-ts";
 import { consolidateTokens } from "../validate.js";
 import { NDKWallet, NDKWalletBalance, NDKWalletEvents, NDKWalletStatus } from "../../index.js";
 import { EventEmitter } from "tseep";
-import { decrypt } from "../decrypt.js";
 import { eventDupHandler, eventHandler } from "../event-handlers/index.js";
 import { NDKCashuDepositMonitor } from "../deposit-monitor.js";
 import { walletForMint } from "../mint.js";
@@ -179,7 +178,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
         if (wallet.isDeleted) return;
 
         try {
-            await decrypt(wallet.event);
+            await wallet.event.decrypt();
         } catch (e) {
         }
 

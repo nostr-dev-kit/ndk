@@ -1,6 +1,6 @@
 import type { NDKEvent } from "@nostr-dev-kit/ndk";
-import { NDKCashuToken } from "../token";
 import { NDKCashuWallet } from "../wallet";
+import { NDKCashuToken } from "@nostr-dev-kit/ndk";
 
 export async function handleToken(this: NDKCashuWallet, event: NDKEvent) {
     if (this.state.tokens.has(event.id)) return;

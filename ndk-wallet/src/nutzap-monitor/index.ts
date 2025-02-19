@@ -80,7 +80,6 @@ export class NDKNutzapMonitor extends EventEmitter<{
      * 
      */
     public async start(
-        mintList?: NDKCashuMintList,
         initialSyncOpts: {
             knownNutzaps: Set<NDKEventId>,
             pageSize: number,
@@ -89,7 +88,6 @@ export class NDKNutzapMonitor extends EventEmitter<{
             pageSize: 5,
         }
     ) {
-        const authors = [this.user.pubkey];
         // if we are already running, stop the current subscription
         if (this.sub) this.sub.stop();
 
@@ -98,19 +96,6 @@ export class NDKNutzapMonitor extends EventEmitter<{
                 this.knownTokens.set(id, PROCESSING_STATUS.seen);
             }
         }
-        
-        // if we don't have a mint list, we need to get one
-        if (!mintList) {
-            const list = await this.ndk.fetchEvent([
-                { kinds: [NDKKind.CashuMintList], authors },
-            ], { groupable: false, closeOnEose: true });
-            if (!list) return false;
-    
-            mintList = NDKCashuMintList.from(list);
-        }
-
-        // set the relay set
-        this.relaySet = mintList.relaySet;
 
         await this.processNutzaps(initialSyncOpts.knownNutzaps, initialSyncOpts.pageSize);
         this.sub = this.ndk.subscribe(
@@ -164,7 +149,6 @@ export class NDKNutzapMonitor extends EventEmitter<{
                 processedCount++;
                 spentTokenCount = 0;
             } else if (result === false) {
-                this.emit("spent", nutzap);
                 spentTokenCount++;
             }
 
@@ -211,7 +195,6 @@ export class NDKNutzapMonitor extends EventEmitter<{
                         const amount = res.reduce((acc, proof) => acc + proof.amount, 0);
                         this.emit("redeem", nutzap, amount);
                     },
-
                 }
             );
 

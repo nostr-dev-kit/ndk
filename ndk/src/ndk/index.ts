@@ -189,6 +189,12 @@ export const DEFAULT_BLACKLISTED_RELAYS = [
 
 export interface NDKSubscriptionEventHandlers {
     onEvent?: (event: NDKEvent, relay?: NDKRelay) => void;
+
+    /**
+     * Called with the events that synchronously loaded from the cache.
+     */
+    onEvents?: (events: NDKEvent[]) => void;
+
     onEose?: (sub: NDKSubscription) => void;
 }
 
@@ -199,8 +205,6 @@ export interface NDKSubscriptionEventHandlers {
  * @emits invalid-signature when an event with an invalid signature is received
  */
 export class NDK extends EventEmitter<{
-    event: (event: NDKEvent, relay: NDKRelay) => void;
-
     "signer:ready": (signer: NDKSigner) => void;
     "signer:required": () => void;
 
@@ -302,7 +306,7 @@ export class NDK extends EventEmitter<{
         this.netDebug = opts.netDebug;
         this._explicitRelayUrls = opts.explicitRelayUrls || [];
         this.blacklistRelayUrls = opts.blacklistRelayUrls || DEFAULT_BLACKLISTED_RELAYS;
-        this.subManager = new NDKSubscriptionManager(this.debug);
+        this.subManager = new NDKSubscriptionManager();
         this.pool = new NDKPool(
             opts.explicitRelayUrls || [],
             [],
@@ -535,11 +539,17 @@ export class NDK extends EventEmitter<{
         }
 
         if (autoStart) {
+            let eventsHandler: ((events: NDKEvent[]) => void) | undefined;
             if (typeof autoStart === "object") {
                 if (autoStart.onEvent) subscription.on("event", autoStart.onEvent);
                 if (autoStart.onEose) subscription.on("eose", autoStart.onEose);
+                if (autoStart.onEvents) eventsHandler = autoStart.onEvents;
             }
-            setTimeout(() => subscription.start(), 0);
+            
+            setTimeout(() => {
+                const cachedEvents = subscription.start(!!eventsHandler);
+                if (cachedEvents && !!eventsHandler) eventsHandler(cachedEvents);
+            }, 0);
         }
 
         return subscription;
@@ -574,6 +584,22 @@ export class NDK extends EventEmitter<{
      * @returns
      */
     public fetchEventFromTag = fetchEventFromTag.bind(this);
+
+    /**
+     * Fetch an event from the cache synchronously.
+     * @param idOrFilter event id in bech32 format or filter
+     * @returns events from the cache or null if the cache is empty
+     */
+    public fetchEventSync(idOrFilter: string | NDKFilter[]): NDKEvent[] | null {
+        if (!this.cacheAdapter) throw new Error("Cache adapter not set");
+        let filters: NDKFilter[];
+        if (typeof idOrFilter === "string") filters = [filterFromId(idOrFilter)];
+        else filters = idOrFilter;
+        const sub = new NDKSubscription(this, filters);
+        const events = this.cacheAdapter.query(sub);
+        if (events instanceof Promise) throw new Error("Cache adapter is async");
+        return events;
+    }
 
     /**
      * Fetch a single event.

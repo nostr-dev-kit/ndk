@@ -2,7 +2,7 @@ import { NDKEventId, NDKCashuToken } from "@nostr-dev-kit/ndk";
 import { Proof } from "@cashu/cashu-ts";
 import { MintUrl } from "../../mint/utils";
 import { NDKCashuWallet } from "..";
-import { addProof, getProofEntries, GetProofsOpts, reserveProofs, unreserveProofs, updateProof } from "./proofs";
+import { addProof, getProofEntries, GetOpts, reserveProofs, unreserveProofs, updateProof } from "./proofs";
 import { getBalance, getMintsBalances } from "./balance";
 import { addToken, removeTokenId } from "./token";
 import { update } from "./update";
@@ -69,8 +69,6 @@ export type ProofEntry = {
     timestamp: number;
 }
 
-export type ProofEntryWithProof = ProofEntry & { proof: Proof };
-
 export type TokenEntry = {
     /**
      * We want this optional because we might just be marking a deletion of a token
@@ -78,6 +76,14 @@ export type TokenEntry = {
      */
     token?: NDKCashuToken;
     state: TokenState;
+    proofEntries?: ProofEntry[];
+}
+
+export type GetTokenEntry = {
+    tokenId: NDKEventId | null;
+    token?: NDKCashuToken;
+    mint: MintUrl;
+    proofEntries: ProofEntry[];
 }
 
 /**
@@ -171,8 +177,22 @@ export class WalletState {
      * @param opts.onlyAvailable - only include available proofs @default true
      * @param opts.includeDeleted - include deleted proofs @default false
      */
-    public getProofs(opts: GetProofsOpts) {
+    public getProofs(opts: GetOpts) {
         return this.getProofEntries(opts).map(entry => entry.proof);
+    }
+
+    public getTokens(opts: GetOpts = { onlyAvailable: true }): Map<NDKEventId | null, GetTokenEntry> {
+        const proofEntries = this.getProofEntries(opts);
+        const tokens = new Map<NDKEventId | null, GetTokenEntry>();
+        for (const proofEntry of proofEntries) {
+            const tokenId = proofEntry.tokenId ?? null;
+            const current: GetTokenEntry = tokens.get(tokenId) ?? { tokenId, mint: proofEntry.mint, proofEntries: [] };
+            current.token ??= tokenId ? this.tokens.get(tokenId)?.token : undefined;
+            current.proofEntries.push(proofEntry);
+            tokens.set(tokenId, current);
+        }
+
+        return tokens;
     }
 
     /**

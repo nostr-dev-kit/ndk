@@ -1,5 +1,5 @@
 import { Proof } from "@cashu/cashu-ts";
-import { ProofC, ProofEntryWithProof, WalletState, ProofEntry } from "./index.js";
+import { ProofC, ProofEntry, WalletState } from "./index.js";
 import { MintUrl } from "../../mint/utils.js";
 
 export function addProof(this: WalletState,
@@ -48,7 +48,7 @@ export function unreserveProofs(
     }
 }
 
-export type GetProofsOpts = {
+export type GetOpts = {
     mint?: MintUrl,
     onlyAvailable?: boolean,
     includeDeleted?: boolean,
@@ -56,9 +56,9 @@ export type GetProofsOpts = {
 
 export function getProofEntries(
     this: WalletState,
-    opts: GetProofsOpts = {}
-): Array<ProofEntryWithProof> {
-    const proofs = new Map<ProofC, ProofEntryWithProof>();
+    opts: GetOpts = {}
+): Array<ProofEntry> {
+    const proofs = new Map<ProofC, ProofEntry>();
 
     const validStates = new Set(['available']);
     let { mint, onlyAvailable, includeDeleted } = opts;
@@ -71,7 +71,7 @@ export function getProofEntries(
         if (!validStates.has(proofEntry.state)) continue;
         if (!proofEntry.proof) continue;
 
-        proofs.set(proofEntry.proof.C, proofEntry as ProofEntryWithProof);
+        proofs.set(proofEntry.proof.C, proofEntry as ProofEntry);
     }
 
     return Array.from(proofs.values());

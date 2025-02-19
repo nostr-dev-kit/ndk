@@ -2,7 +2,6 @@ import { matchFilters, type VerifiedEvent } from "nostr-tools";
 import type { NDKEventId, NostrEvent } from "../events/index.js";
 import type { NDKRelay } from "../relay/index.js";
 import type { NDKSubscription } from "./index.js";
-import type debug from "debug";
 
 export type NDKSubscriptionId = string;
 
@@ -12,11 +11,9 @@ export type NDKSubscriptionId = string;
 export class NDKSubscriptionManager {
     public subscriptions: Map<NDKSubscriptionId, NDKSubscription>;
     public seenEvents = new Map<NDKEventId, NDKRelay[]>();
-    private debug: debug.Debugger;
 
-    constructor(debug: debug.Debugger) {
+    constructor() {
         this.subscriptions = new Map();
-        this.debug = debug.extend("sub-manager");
     }
 
     public add(sub: NDKSubscription) {
@@ -68,8 +65,6 @@ export class NDKSubscriptionManager {
      * @param relay Relay that sent the event
      * @param optimisticPublish Whether the event is coming from an optimistic publish
      */
-    public filterMatchingTime = 0;
-    public filterMatchingCount = 0;
     public dispatchEvent(
         event: NostrEvent,
         relay?: NDKRelay,
@@ -80,14 +75,11 @@ export class NDKSubscriptionManager {
         const subscriptions = this.subscriptions.values();
         const matchingSubs = [];
 
-        const start = Date.now();
         for (const sub of subscriptions) {
             if (matchFilters(sub.filters, event as VerifiedEvent)) {
                 matchingSubs.push(sub);
             }
         }
-        this.filterMatchingTime += Date.now() - start;
-        this.filterMatchingCount += matchingSubs.length;
 
         for (const sub of matchingSubs) {
             sub.eventReceived(event, relay, false, optimisticPublish);

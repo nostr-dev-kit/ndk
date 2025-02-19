@@ -1,11 +1,10 @@
 import '@bacons/text-decoder/install';
 import { createStore } from 'zustand/vanilla';
 import { useStore } from 'zustand';
-import { NDKEvent, NDKFilter, NDKRelaySet, NDKSubscription, NDKSubscriptionOptions, wrapEvent } from '@nostr-dev-kit/ndk';
+import { NDKEvent, NDKFilter, NDKRelaySet, NDKSubscription, NDKSubscriptionOptions } from '@nostr-dev-kit/ndk';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useNDK } from './ndk.js';
 import { useNDKSession } from '../stores/session/index.js';
-
 /**
  * Extends NDKEvent with a 'from' method to wrap events with a kind-specific handler
  */
@@ -229,15 +228,9 @@ export const useSubscribe = <T extends NDKEvent>(
                 return;
             }
 
-            // If we need to convert the event, we do so
-            if (opts?.wrap) event = wrapEvent<T>(event);
-
             event.once("deleted", () => {
                 storeInstance.removeEventId(id);
             });
-
-            // If conversion failed, we bail
-            if (!event) return;
 
             storeInstance.addEvent(event as T);
             eventIds.current.set(id, event.created_at!);
@@ -268,7 +261,10 @@ export const useSubscribe = <T extends NDKEvent>(
         subscription.on('closed', handleClosed);
 
         storeInstance.setSubscription(subscription);
-        subscription.start();
+        const cachedEvents = subscription.start(false);
+        if (cachedEvents) {
+            for (const event of cachedEvents) handleEvent(event);
+        }
 
         return () => {
             if (storeInstance.subscriptionRef) {

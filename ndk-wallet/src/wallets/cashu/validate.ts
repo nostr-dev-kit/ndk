@@ -26,9 +26,12 @@ export async function consolidateTokens(this: NDKCashuWallet) {
 
 export async function consolidateMintTokens(
     mint: string,
-    wallet: NDKCashuWallet
+    wallet: NDKCashuWallet,
+    allProofs?: Proof[],
+    onResult?: (walletChange: WalletProofChange) => void,
+    onFailure?: (error: string) => void
 ) {
-    const allProofs = wallet.state.getProofs({ mint, includeDeleted: true, onlyAvailable: false });
+    allProofs ??= wallet.state.getProofs({ mint, includeDeleted: true, onlyAvailable: false });
     const _wallet = await walletForMint(mint);
     if (!_wallet) {
         console.log("could not get wallet for mint %s", mint);
@@ -43,7 +46,8 @@ export async function consolidateMintTokens(
     try {
         proofStates = await _wallet.checkProofsStates(allProofs);
     } catch (e: any) {
-        console.log("failed to check proof states", e.message);
+        console.log("failed to check proof states", JSON.stringify(e.message));
+        onFailure?.(e.message);
         return;
     }
 
@@ -68,6 +72,8 @@ export async function consolidateMintTokens(
         store: unspentProofs,
         destroy: spentProofs,
     }
+
+    onResult?.(walletChange);
 
     const totalSpentProofs = spentProofs.reduce((acc, proof) => acc + proof.amount, 0);
 

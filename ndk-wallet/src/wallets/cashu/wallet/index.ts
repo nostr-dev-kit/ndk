@@ -16,7 +16,7 @@ import NDK, { NDKEvent, NDKKind, NDKPrivateKeySigner, NDKRelaySet, NDKUser } fro
 import { NDKCashuDeposit } from "../deposit.js";
 import createDebug from "debug";
 import type { MintUrl } from "../mint/utils.js";
-import type { CashuWallet, Proof, SendResponse } from "@cashu/cashu-ts";
+import type { CashuWallet, MintKeys, Proof, SendResponse } from "@cashu/cashu-ts";
 import { getDecodedToken } from "@cashu/cashu-ts";
 import { consolidateTokens } from "../validate.js";
 import { NDKWallet, NDKWalletBalance, NDKWalletEvents, NDKWalletStatus } from "../../index.js";
@@ -36,6 +36,7 @@ export type WalletWarning = {
 import { PaymentHandler, PaymentWithOptionalZapInfo } from "./payment.js";
 import { createInTxEvent, createOutTxEvent } from "./txs.js";
 import { WalletState } from "./state/index.js";
+import { MintInfo } from "@cashu/cashu-ts/dist/lib/es5/model/MintInfo.js";
 
 /**
  * This class tracks state of a NIP-60 wallet
@@ -73,6 +74,28 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
     public state: WalletState;
 
     public relaySet?: NDKRelaySet;
+
+    /**
+     * Called when the wallet needs to load mint info. Use this
+     * to load mint info from a database or other source.
+     */
+    public onMintInfoNeeded?: (mint: string) => Promise<MintInfo | undefined>;
+
+    /**
+     * Called when the wallet has loaded mint info.
+     */
+    public onMintInfoLoaded?: (mint: string, info: MintInfo) => void;
+
+    /**
+     * Called when the wallet needs to load mint keys. Use this
+     * to load mint keys from a database or other source.
+     */
+    public onMintKeysNeeded?: (mint: string) => Promise<MintKeys[] | undefined>;
+
+    /**
+     * Called when the wallet has loaded mint keys.
+     */
+    public onMintKeysLoaded?: (mint: string, keysets: Map<string, MintKeys>) => void;
 
     constructor(ndk: NDK, event?: NDKEvent) {
         super();
@@ -385,10 +408,18 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
     }
 
     private wallets = new Map<string, CashuWallet>();
+
     async cashuWallet(mint: string): Promise<CashuWallet> {
         if (this.wallets.has(mint)) return this.wallets.get(mint) as CashuWallet;
 
-        const w = await walletForMint(mint);
+        const mintInfo = await this.onMintInfoNeeded?.(mint);
+        const mintKeys = await this.onMintKeysNeeded?.(mint);
+
+        const w = await walletForMint(mint, { mintInfo, mintKeys });
+
+        if (w?.mintInfo) this.onMintInfoLoaded?.(mint, w.mintInfo);
+        if (w?.keys) this.onMintKeysLoaded?.(mint, w.keys);
+
         if (!w) throw new Error("unable to load wallet for mint " + mint);
         this.wallets.set(mint, w);
         return w;

@@ -1,4 +1,4 @@
-import { CashuWallet, CashuMint } from "@cashu/cashu-ts";
+import { CashuWallet, CashuMint, GetInfoResponse, MintKeys } from "@cashu/cashu-ts";
 import { MintUrl } from "./mint/utils";
 
 const mintWallets = new Map<string, CashuWallet>();
@@ -19,8 +19,17 @@ function mintKey(mint: MintUrl, unit: string, pk?: Uint8Array) {
 
 export async function walletForMint(
     mint: MintUrl,
-    pk?: Uint8Array,
-    timeout = 5000
+    {
+        pk,
+        timeout = 5000,
+        mintInfo,
+        mintKeys
+    }: {
+        pk?: Uint8Array,
+        timeout?: number,
+        mintInfo?: GetInfoResponse,
+        mintKeys?: MintKeys[]
+    } = {}
 ): Promise<CashuWallet | null> {
     const unit = 'sat';
 
@@ -32,7 +41,14 @@ export async function walletForMint(
         return mintWalletPromises.get(key) as Promise<CashuWallet | null>;
     }
 
-    const wallet = new CashuWallet(new CashuMint(mint), { unit, bip39seed: pk });
+    const wallet = new CashuWallet(
+        new CashuMint(mint),
+        {
+            unit,
+            bip39seed: pk,
+            mintInfo,
+            keys: mintKeys
+        });
 
     const loadPromise = new Promise<CashuWallet | null>(async (resolve) => {
         try {

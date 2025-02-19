@@ -3,28 +3,9 @@ import { useState, useEffect } from 'react';
 import { useNDK } from './ndk.js';
 import { NDKEventWithFrom, NDKEventWithAsyncFrom } from './subscribe.js';
 import { useNDKSession } from '../stores/session/index.js';
-import { useNDKWallet } from './wallet.js';
-import { walletFromLoadingString } from '@nostr-dev-kit/ndk-wallet';
-import { SessionInitOpts, SessionInitCallbacks } from '../stores/session/types.js';
-import { SettingsStore } from '../types.js';
 
 const useNDKSessionInit = () => {
     return useNDKSession(s => s.init);
-}
-
-const useNDKSessionInitWallet = () => {
-    const { setActiveWallet } = useNDKWallet();
-
-    const initWallet = (ndk: NDK, settingsStore: SettingsStore) => {
-        const walletString = settingsStore?.getSync('wallet');
-        if (walletString) {
-            walletFromLoadingString(ndk, walletString).then((wallet) => {
-                if (wallet) setActiveWallet(wallet);
-            });
-        }
-    }
-
-    return initWallet;
 }
 
 const useFollows = () => useNDKSession(s => s.follows);
@@ -113,6 +94,5 @@ export {
     useNDKSessionEventKind,
     useNDKSessionEvents,
     useNDKSessionInit,
-    useNDKSessionInitWallet,
     useNDKSessionEventKindAsync,
 };

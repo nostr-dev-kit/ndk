@@ -10,6 +10,7 @@ import type { NDKRelaySet } from "../relay/sets/index.js";
 import { queryFullyFilled } from "./utils.js";
 import type { NDKKind } from "../events/kinds/index.js";
 import { verifiedSignatures } from "../events/validation.js";
+import { wrapEvent } from "../events/wrap.js";
 
 export type NDKSubscriptionInternalId = string;
 
@@ -123,6 +124,12 @@ export interface NDKSubscriptionOptions {
      * This will hit relays with the since and limit constraints, while loading from the cache without them.
      */
     cacheUnconstrainFilter?: (keyof NDKFilter)[];
+
+    /**
+     * Whether to wrap events in kind-specific classes when possible.
+     * @default false
+     */
+    wrap?: boolean;
 }
 
 /**
@@ -328,7 +335,13 @@ export class NDKSubscription extends EventEmitter<{
     }
 
     private shouldQueryCache(): boolean {
-        return this.opts?.cacheUsage !== NDKSubscriptionCacheUsage.ONLY_RELAY;
+        // explicitly told to not query the cache
+        if (this.opts?.cacheUsage === NDKSubscriptionCacheUsage.ONLY_RELAY) return false;
+
+        const hasNonEphemeralKind = this.filters.some((f) => f.kinds?.some((k) => kindIsEphemeral(k)));
+        if (hasNonEphemeralKind) return true;
+
+        return true;
     }
 
     private shouldQueryRelays(): boolean {
@@ -352,33 +365,90 @@ export class NDKSubscription extends EventEmitter<{
     /**
      * Start the subscription. This is the main method that should be called
      * after creating a subscription.
+     * 
+     * @param emitCachedEvents - Whether to emit events coming from a synchronous cache
+     * 
+     * When using a synchronous cache, the events will be returned immediately
+     * by this function. If you will use those returned events, you should
+     * set emitCachedEvents to false to prevent seeing them as duplicate events.
      */
-    public async start(): Promise<void> {
-        let cachePromise;
+    public start(emitCachedEvents: boolean = true): NDKEvent[] | null {
+        let cacheResult: NDKEvent[] | Promise<NDKEvent[]>;
 
-        if (this.shouldQueryCache()) {
-            cachePromise = this.startWithCache();
-            cachePromise.then(() => this.emit('cacheEose'))
-
-            if (this.shouldWaitForCache()) {
-                await cachePromise;
-
-                // if the cache has a hit, return early
-                if (queryFullyFilled(this)) {
-                    this.emit("eose", this);
-                    return;
+        const updateStateFromCacheResults = (events: NDKEvent[]) => {
+            if (emitCachedEvents) {
+                for (const event of events) {
+                    this.eventReceived(event, undefined, true, false);
                 }
+            } else {
+                cacheResult = [];
+                events.forEach((event) => {
+                    event.ndk = this.ndk;
+                    const e = this.opts.wrap ? wrapEvent(event) : event;
+                    if (!e) return;
+                    if (e instanceof Promise) {
+                        // if we get a promise, we emit it
+                        e.then((wrappedEvent) => {
+                            this.emitEvent(false, wrappedEvent, undefined, true, false);
+                        });
+                        return;
+                    }
+                    this.eventFirstSeen.set(e.id, Date.now());
+                    (cacheResult as NDKEvent[]).push(e);
+                });
             }
         }
 
-        if (this.shouldQueryRelays()) {
-            this.startWithRelays();
-            this.startPoolMonitor();
-        } else {
-            this.emit("eose", this);
+        const loadFromRelays = () => {
+            if (this.shouldQueryRelays()) {
+                this.startWithRelays();
+                this.startPoolMonitor();
+            } else {
+                this.emit("eose", this);
+            }
         }
 
-        return;
+        if (this.shouldQueryCache()) {
+            cacheResult = this.startWithCache();
+
+            if (cacheResult instanceof Promise) {
+                // The cache is asynchronous
+                if (this.shouldWaitForCache()) {
+                    // If we need to wait for it
+                    cacheResult.then((events) => {
+                        // load the results into the subscription state
+                        updateStateFromCacheResults(events);
+                        // if the cache has a hit, return early
+                        if (queryFullyFilled(this)) {
+                            this.emit("eose", this);
+                            return;
+                        } else {
+                            loadFromRelays();
+                        }
+                    });
+                    return null;
+                } else {
+                    cacheResult.then((events) => {
+                        updateStateFromCacheResults(events);
+                    });
+                }
+
+                return null;
+            } else {
+                updateStateFromCacheResults(cacheResult);
+
+                if (queryFullyFilled(this)) {
+                    this.emit("eose", this);
+                } else {
+                    loadFromRelays();
+                }
+
+                return cacheResult;
+            }
+        } else {
+            loadFromRelays();
+            return null;
+        }
     }
 
     /**
@@ -423,13 +493,11 @@ export class NDKSubscription extends EventEmitter<{
         return this.filters.some((f) => f.authors?.length);
     }
 
-    private async startWithCache(): Promise<void> {
+    private startWithCache(): NDKEvent[] | Promise<NDKEvent[]> {
         if (this.ndk.cacheAdapter?.query) {
-            const promise = this.ndk.cacheAdapter.query(this);
-
-            if (this.ndk.cacheAdapter.locking) {
-                await promise;
-            }
+            return this.ndk.cacheAdapter.query(this);
+        } else {
+            return [];
         }
     }
 
@@ -517,12 +585,8 @@ export class NDKSubscription extends EventEmitter<{
             }
 
             // emit it
-            if (!fromCache && relay) {
-                this.ndk.emit("event", ndkEvent, relay);
-            }
-
             if (!optimisticPublish || this.skipOptimisticPublishEvent !== true) {
-                this.emit("event", ndkEvent, relay, this, fromCache, optimisticPublish);
+                this.emitEvent(this.opts?.wrap, ndkEvent, relay, fromCache, optimisticPublish);
                 // mark the eventId as seen
                 this.eventFirstSeen.set(eventId, Date.now());
             }
@@ -543,6 +607,18 @@ export class NDKSubscription extends EventEmitter<{
         }
 
         this.lastEventReceivedAt = Date.now();
+    }
+
+    /**
+     * Optionally wraps, sync or async, and emits the event (if one comes back from the wrapper)
+     */
+    private emitEvent(wrap = false, evt: NDKEvent, relay: NDKRelay | undefined, fromCache: boolean, optimisticPublish: boolean) {
+        const wrapped = wrap ? wrapEvent(evt) : evt;
+        if (wrapped instanceof Promise) {
+            wrapped.then((e) => this.emitEvent(false, e, relay, fromCache, optimisticPublish))
+        } else if (wrapped) {
+            this.emit("event", wrapped, relay, this, fromCache, optimisticPublish);
+        }
     }
 
     public closedReceived(relay: NDKRelay, reason: string): void {
@@ -630,3 +706,5 @@ export class NDKSubscription extends EventEmitter<{
         }
     }
 }
+
+const kindIsEphemeral = (kind: NDKKind) => kind >= 20000 && kind < 30000;

@@ -1,5 +1,13 @@
 # @nostr-dev-kit/ndk
 
+## 2.11.2
+
+### Patch Changes
+
+- updates to nip-60
+- improvements to nwc stability
+- zapper interface changes
+
 ## 2.11.1
 
 ### Patch Changes

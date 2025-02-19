@@ -1,5 +1,20 @@
 # @nostr-dev-kit/ndk-mobile
 
+## 0.4.0
+
+### Minor Changes
+
+- changes to the initialization hook to allow for more fine grained database initialization logic
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.11.2
+    - @nostr-dev-kit/ndk-wallet@0.4.0
+
 ## 0.3.0
 
 ### Minor Changes

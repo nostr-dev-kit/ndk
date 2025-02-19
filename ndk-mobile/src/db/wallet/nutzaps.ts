@@ -21,16 +21,11 @@ export function getNutzaps(ndk: NDK): NDKDBNutzap[] {
     const db = withDb(ndk);
     const nutzaps = db.getAllSync("SELECT * FROM wallet_nutzaps") as NDKDBNutzap[];
 
-    console.log('known nutzaps', nutzaps.length);
-    console.table(nutzaps);
-    
     return nutzaps;
 }
 
 export function saveNutzap(ndk: NDK, nutzap: NDKNutzap, status?: string, claimedAt?: number, txEventId?: string) {
     const db = withDb(ndk);
-
-    console.log('[DB] saving nutzap', nutzap.id, status, claimedAt, txEventId);
 
     db.runSync(
         `INSERT OR REPLACE INTO wallet_nutzaps (event_id, status, claimed_at, tx_event_id) 

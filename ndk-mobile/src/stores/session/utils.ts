@@ -25,7 +25,8 @@ export const generateFilters = (ndk: NDK, user: NDKUser, opts: SessionInitOpts):
 /**
  * Checks whether the first event is newer than the second event.
  */
-export const firstIsNewer = (first: NDKEvent, second: NDKEvent): boolean => {
+export const firstIsNewer = (first: NDKEvent | undefined, second: NDKEvent): boolean => {
+    if (!first && second) return false;
     return first && second && first.created_at >= second.created_at;
 }; 
 

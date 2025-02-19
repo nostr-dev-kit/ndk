@@ -1,16 +1,14 @@
 import { NDKSubscription, NDKRelay } from "../index.js";
 import NDK, { NDKEventId } from "../index.js";
 import { NDKSubscriptionManager } from "./manager.js";
-import debug from "debug";
 
-const d = debug("test");
 const ndk = new NDK();
 
 describe("NDKSubscriptionManager", () => {
     let manager: NDKSubscriptionManager;
 
     beforeEach(() => {
-        manager = new NDKSubscriptionManager(d);
+        manager = new NDKSubscriptionManager();
     });
 
     it("should add a subscription", () => {

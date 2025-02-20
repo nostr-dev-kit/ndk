@@ -198,6 +198,12 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                     filter.kinds
                 ) as NDKSqliteEventRecord[];
                 if (events.length > 0) addResults(foundEvents(subscription, events, filter));
+            } else if (filter.ids) {
+                const events = this.db.getAllSync(
+                    `SELECT * FROM events WHERE id IN (${filter.ids.map(() => '?').join(',')}) ORDER BY created_at DESC`,
+                    filter.ids
+                ) as NDKSqliteEventRecord[];
+                if (events.length > 0) addResults(foundEvents(subscription, events, filter));
             }
         }
 

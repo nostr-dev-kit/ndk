@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk-cache-dexie
 
+## 2.5.13
+
+### Patch Changes
+
+- fix new query() function signature
+
 ## 2.5.12
 
 ### Patch Changes

@@ -163,7 +163,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         this._onReady = callback;
     }
 
-    public async query(subscription: NDKSubscription): Promise<void> {
+    public async query(subscription: NDKSubscription): Promise<NDKEvent[]> {
         // ensure we have warmed up before processing the filter
         if (!this.warmedUp) {
             const startTime = Date.now();
@@ -175,6 +175,8 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         subscription.filters.map((filter) => this.processFilter(filter, subscription));
         const dur = Date.now() - startTime;
         if (dur > 100) this.debug("query took", dur, "ms", subscription.filter);
+
+        return [];
     }
 
     public async fetchProfile(pubkey: Hexpubkey) {
@@ -546,26 +548,6 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
 
         return true;
     }
-}
-
-export function checkEventMatchesFilter(event: Event, filter: NDKFilter): NDKEvent | undefined {
-    let deserializedEvent: NostrEvent;
-
-    try {
-        deserializedEvent = deserialize(event.event);
-
-        // Make sure all passed filters match the event
-        if (!matchFilter(filter, deserializedEvent as any)) return;
-    } catch (e) {
-        console.log("failed to parse event", e);
-        return;
-    }
-
-    const ndkEvent = new NDKEvent(undefined, deserializedEvent);
-    const relay = event.relay ? new NDKRelay(event.relay) : undefined;
-    ndkEvent.relay = relay;
-
-    return ndkEvent;
 }
 
 export function foundEvents(subscription: NDKSubscription, events: Event[], filter?: NDKFilter) {

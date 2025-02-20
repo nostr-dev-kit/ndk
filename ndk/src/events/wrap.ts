@@ -3,6 +3,7 @@ import { NDKArticle } from "./kinds/article";
 import { NDKCashuToken } from "./kinds/cashu/token";
 import { NDKHighlight } from "./kinds/highlight";
 import { NDKImage } from "./kinds/image";
+import { NDKList } from "./kinds/lists";
 import { NDKNutzap } from "./kinds/nutzap";
 import { NDKCashuMintList } from "./kinds/nutzap/mint-list";
 import { NDKSimpleGroupMemberList } from "./kinds/simple-group/member-list";
@@ -25,6 +26,7 @@ export const eventWrappingMap = new Map();
     NDKSimpleGroupMetadata,
     NDKSubscriptionTier,
     NDKCashuToken,
+    NDKList,
 ].forEach((klass) => {
     klass.kinds.forEach((kind) => {
         eventWrappingMap.set(kind, klass);

@@ -1,5 +1,18 @@
 # @nostr-dev-kit/ndk-mobile
 
+## 0.4.1
+
+### Patch Changes
+
+- d87d886: Leverage synchronous cache adapter to load events in one go in useSubscribe hook
+- Updated dependencies [f255a07]
+- Updated dependencies [f255a07]
+- Updated dependencies [2171140]
+- Updated dependencies [72c8492]
+- Updated dependencies [72c8492]
+    - @nostr-dev-kit/ndk@2.12.0
+    - @nostr-dev-kit/ndk-wallet@0.4.1
+
 ## 0.4.0
 
 ### Minor Changes

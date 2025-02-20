@@ -1,5 +1,18 @@
 # @nostr-dev-kit/ndk
 
+## 2.12.0
+
+### Minor Changes
+
+- f255a07: Allow NDKSubscription leveraging synchronous query cache adapters.
+
+### Patch Changes
+
+- f255a07: avoid hitting the cache for ephemeral events
+- 2171140: fix bug: correct checking encryption scheme when it's not set
+- 72c8492: make it possible for cache adapters to return events synchronously
+- 72c8492: add fetchEventSync to fetch events from the cache synchronously
+
 ## 2.11.2
 
 ### Patch Changes

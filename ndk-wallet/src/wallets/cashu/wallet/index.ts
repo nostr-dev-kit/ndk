@@ -138,16 +138,8 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
         return this.event?.tagId();
     }
 
-
     public checkProofs = consolidateTokens.bind(this);
     public consolidateTokens = consolidateTokens.bind(this);
-
-    public toLoadingString() {
-        return JSON.stringify({
-            type: 'nip60',
-            bech32: this.event!.encode(),
-        });
-    }
 
     /**
      * Generates nuts that can be used to send to someone.

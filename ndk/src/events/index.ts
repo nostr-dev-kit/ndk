@@ -862,11 +862,8 @@ export class NDKEvent extends EventEmitter {
             content,
         } as NostrEvent);
         e.tag(this);
-        if (publish) {
-            await e.publish();
-        } else {
-            await e.sign();
-        }
+        
+        if (publish) await e.publish();
 
         return e;
     }

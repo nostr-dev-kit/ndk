@@ -598,7 +598,11 @@ export class NDK extends EventEmitter<{
         const sub = new NDKSubscription(this, filters);
         const events = this.cacheAdapter.query(sub);
         if (events instanceof Promise) throw new Error("Cache adapter is async");
-        return events;
+        return events
+            .map(e => {
+                e.ndk = this;
+                return e;
+            })
     }
 
     /**

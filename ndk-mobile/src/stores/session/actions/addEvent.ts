@@ -18,6 +18,8 @@ export const addEvent = (event: NDKEvent, onAdded, set) => {
         const newEvents = new Map(state.events);
         let existing = newEvents.get(kind) || [];
 
+        console.log('\tadding event', event.kind);
+
         if (event.isParamReplaceable()) {
             const existingEvent = existing.find((e) => e.dTag === event.dTag);
             if (existingEvent) {

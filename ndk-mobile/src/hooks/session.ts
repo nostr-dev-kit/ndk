@@ -1,7 +1,6 @@
 import NDK, { NDKEvent, NDKKind, NDKUser } from '@nostr-dev-kit/ndk';
-import { useState, useEffect } from 'react';
 import { useNDK } from './ndk.js';
-import { NDKEventWithFrom, NDKEventWithAsyncFrom } from './subscribe.js';
+import { NDKEventWithFrom } from './subscribe.js';
 import { useNDKSession } from '../stores/session/index.js';
 
 const useNDKSessionInit = () => {
@@ -24,51 +23,29 @@ const useWOT = () => useNDKSession(s => s.wot);
 
 /**
  * This hook allows you to get a specific kind, wrapped in the event class you provide.
+ * Note that the wrapping must be specified when requesting the event from the NDKSession initializer.
  * @param EventClass 
  * @param kind 
  * @param opts.create - If true, and the event kind is not found, an unpublished event will be provided.
  * @returns 
  */
 const useNDKSessionEventKind = <T extends NDKEvent>(
-    EventClass: NDKEventWithFrom<any>,
-    kind?: NDKKind,
-    { create }: { create: boolean } = { create: false }
+    kind: NDKKind,
+    { create }: { create: NDKEventWithFrom<any> | false } = { create: false }
 ): T | undefined => {
-    kind ??= EventClass.kind;
     const { ndk } = useNDK();
     const events = useNDKSession(s => s.events);
     const kindEvents = events.get(kind) || [];
     const firstEvent = kindEvents[0];
 
     if (create && !firstEvent) {
-        const event = new EventClass(ndk, { kind });
+        const event = new create(ndk, { kind });
         event.kind = kind;
         events.set(kind, [event]);
         return event;
     }
 
-    return firstEvent ? EventClass.from(firstEvent) : undefined;
-};
-
-const useNDKSessionEventKindAsync = <T>(
-    EventClass: NDKEventWithAsyncFrom<any>,
-    kind?: NDKKind,
-    { create }: { create: boolean } = { create: false }
-): T | undefined => {
-    kind ??= EventClass.kind;
-    const events = useNDKSession(s => s.events);
-    const kindEvents = events.get(kind) || [];
-    const firstEvent = kindEvents[0];
-    const [res, setRes] = useState<T | undefined>(undefined);
-
-    useEffect(() => {
-        if (!firstEvent) return;
-        EventClass.from(firstEvent).then((event) => {
-            setRes(event);
-        });
-    }, [firstEvent]);
-
-    return res;
+    return firstEvent as T;
 };
 
 const useNDKSessionEvents = <T extends NDKEvent>(
@@ -94,5 +71,4 @@ export {
     useNDKSessionEventKind,
     useNDKSessionEvents,
     useNDKSessionInit,
-    useNDKSessionEventKindAsync,
 };

@@ -89,7 +89,6 @@ export const useNDKStore = create<State & Actions & EventHandler>((set, get) => 
         settingsStore.delete('wot.last_updated_at');
         settingsStore.delete('wot.length');
         settingsStore.delete('ndkMobileSessionLastEose');
-        settingsStore.delete('wallet');
 
         // nuke the database
         if (ndk.cacheAdapter instanceof NDKCacheAdapterSqlite) {
@@ -97,11 +96,3 @@ export const useNDKStore = create<State & Actions & EventHandler>((set, get) => 
         }
     }
 }))
-
-function getUserFromSettingsStore(ndk: NDK, settingsStore?: SettingsStore) {
-    const currentUser = settingsStore?.getSync('currentUser');
-    if (currentUser) {
-        return ndk.getUser({pubkey: currentUser});
-    }
-    return null;
-}

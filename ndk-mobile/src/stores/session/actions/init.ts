@@ -73,7 +73,6 @@ export const initSession = (
                 // if we have already eosed, get the pubkeys that are not in the wotEntries and add them to the wotEntries
                 if (eosed && opts.wot) {
                     const newEntries = follows.filter((pubkey) => !wotEntries.has(pubkey));
-                    console.log('eosed, adding wot entries', follows.length, newEntries.length);
                     addWotEntries(ndk, newEntries, settingsStore, set, () => {
                         on.onWotReady?.();
                     });
@@ -97,7 +96,6 @@ export const initSession = (
         settingsStore?.set?.('ndkMobileSessionLastEose', Math.floor(Date.now() / 1000).toString())
 
         if (opts.wot) {
-            console.log('shouldUpdateWot', shouldUpdateWot(ndk, settingsStore));
             if (shouldUpdateWot(ndk, settingsStore)) {
                 addWotEntries(ndk, follows, settingsStore, set, () => {
                     on.onWotReady?.();

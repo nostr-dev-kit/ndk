@@ -16,8 +16,8 @@ import NDK, { NDKEvent, NDKKind, NDKPrivateKeySigner, NDKRelaySet, NDKUser } fro
 import { NDKCashuDeposit } from "../deposit.js";
 import createDebug from "debug";
 import type { MintUrl } from "../mint/utils.js";
-import type { CashuWallet, MintKeys, Proof, SendResponse } from "@cashu/cashu-ts";
-import { getDecodedToken } from "@cashu/cashu-ts";
+import type { CashuWallet, GetInfoResponse, MintKeys, Proof, SendResponse } from "@cashu/cashu-ts";
+import { CashuMint, getDecodedToken } from "@cashu/cashu-ts";
 import { consolidateTokens } from "../validate.js";
 import { NDKWallet, NDKWalletBalance, NDKWalletEvents, NDKWalletStatus } from "../../index.js";
 import { EventEmitter } from "tseep";
@@ -36,7 +36,6 @@ export type WalletWarning = {
 import { PaymentHandler, PaymentWithOptionalZapInfo } from "./payment.js";
 import { createInTxEvent, createOutTxEvent } from "./txs.js";
 import { WalletState } from "./state/index.js";
-import { MintInfo } from "@cashu/cashu-ts/dist/lib/es5/model/MintInfo.js";
 
 /**
  * This class tracks state of a NIP-60 wallet
@@ -79,12 +78,12 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
      * Called when the wallet needs to load mint info. Use this
      * to load mint info from a database or other source.
      */
-    public onMintInfoNeeded?: (mint: string) => Promise<MintInfo | undefined>;
+    public onMintInfoNeeded?: (mint: string) => Promise<GetInfoResponse | undefined>;
 
     /**
      * Called when the wallet has loaded mint info.
      */
-    public onMintInfoLoaded?: (mint: string, info: MintInfo) => void;
+    public onMintInfoLoaded?: (mint: string, info: GetInfoResponse) => void;
 
     /**
      * Called when the wallet needs to load mint keys. Use this
@@ -412,12 +411,16 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
     async cashuWallet(mint: string): Promise<CashuWallet> {
         if (this.wallets.has(mint)) return this.wallets.get(mint) as CashuWallet;
 
-        const mintInfo = await this.onMintInfoNeeded?.(mint);
+        let mintInfo = await this.onMintInfoNeeded?.(mint);
         const mintKeys = await this.onMintKeysNeeded?.(mint);
+
+        if (!mintInfo && this.onMintInfoLoaded) {
+            mintInfo = await CashuMint.getInfo(mint);
+            this.onMintInfoLoaded?.(mint, mintInfo);
+        }
 
         const w = await walletForMint(mint, { mintInfo, mintKeys });
 
-        if (w?.mintInfo) this.onMintInfoLoaded?.(mint, w.mintInfo);
         if (w?.keys) this.onMintKeysLoaded?.(mint, w.keys);
 
         if (!w) throw new Error("unable to load wallet for mint " + mint);

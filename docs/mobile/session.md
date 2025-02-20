@@ -83,8 +83,8 @@ return (<View>
 Now say you want to allow the user to bookmark something with the click of a button:
 
 ```tsx
-const { imageCurationSet } = useNDKSessionEventKind<NDKList>(NDKList, NDKKind.ImageCurationSet, {
-    create: true,
+const { imageCurationSet } = useNDKSessionEventKind<NDKList>(NDKKind.ImageCurationSet, {
+    create: NDKList,
 });
 
 const bookmark = async () => {

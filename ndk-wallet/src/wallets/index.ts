@@ -97,16 +97,3 @@ export interface NDKWallet
      */
     toLoadingString?(): string;
 }
-
-export async function walletFromLoadingString(ndk: NDK, str: string): Promise<NDKNWCWallet | NDKCashuWallet | undefined> {
-    const payload = JSON.parse(str);
-
-    switch (payload.type) {
-        case 'nwc':
-            return new NDKNWCWallet(ndk, { timeout: payload.timeout, pairingCode: payload.pairingCode });
-        case 'nip60':
-            const event = await ndk.fetchEvent(payload.bech32);
-            if (!event) return undefined;
-            return await NDKCashuWallet.from(event);
-    }
-}

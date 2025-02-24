@@ -1,32 +1,33 @@
-import type { NDKEventId, NDKTag, NostrEvent } from "@nostr-dev-kit/ndk";
-import type NDK from "@nostr-dev-kit/ndk";
-import { NDKEvent, NDKKind, NDKCashuToken } from "@nostr-dev-kit/ndk";
+import { NDKKind } from "../index.js";
+import { NDKEvent, NDKEventId, NDKTag, NostrEvent } from "../../index.js";
+import { NDK } from "../../../ndk/index.js";
+import { NDKCashuToken } from "./token.js";
 
 const MARKERS = {
     REDEEMED: "redeemed",
     CREATED: "created",
     DESTROYED: "destroyed",
     RESERVED: "reserved",
-};
+} as const;
 
 export type DIRECTIONS = 'in' | 'out';
 
 /**
  * This class represents a balance change in the wallet, whether money being added or removed.
  */
-export class NDKWalletChange extends NDKEvent {
+export class NDKCashuWalletTx extends NDKEvent {
     static MARKERS = MARKERS;
 
-    static kind = NDKKind.WalletChange;
-    static kinds = [NDKKind.WalletChange];
+    static kind = NDKKind.CashuWalletTx;
+    static kinds = [NDKKind.CashuWalletTx];
 
     constructor(ndk?: NDK, event?: NostrEvent | NDKEvent) {
         super(ndk, event);
-        this.kind ??= NDKKind.WalletChange;
+        this.kind ??= NDKKind.CashuWalletTx;
     }
 
-    static async from(event: NDKEvent): Promise<NDKWalletChange | undefined> {
-        const walletChange = new NDKWalletChange(event.ndk, event);
+    static async from(event: NDKEvent): Promise<NDKCashuWalletTx | undefined> {
+        const walletChange = new NDKCashuWalletTx(event.ndk, event);
 
         const prevContent = walletChange.content;
         try {
@@ -163,7 +164,7 @@ export class NDKWalletChange extends NDKEvent {
     }
 
     private shouldEncryptTag(tag: NDKTag): boolean {
-        const unencryptedTagNames = ["d", "client", "a"];
+        const unencryptedTagNames = ["client"];
         if (unencryptedTagNames.includes(tag[0])) {
             return false;
         }
@@ -171,6 +172,8 @@ export class NDKWalletChange extends NDKEvent {
         if (tag[0] === "e" && tag[3] === MARKERS.REDEEMED) {
             return false;
         }
+
+        if (tag[0] === "p") return false;
 
         return true;
     }

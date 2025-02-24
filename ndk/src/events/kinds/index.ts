@@ -72,7 +72,7 @@ export enum NDKKind {
     CashuReserve = 7373,
     CashuQuote = 7374,
     CashuToken = 7375,
-    WalletChange = 7376,
+    CashuWalletTx = 7376,
 
     // NIP-29
     GroupAdminAddUser = 9000,

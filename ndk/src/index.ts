@@ -16,6 +16,7 @@ export * from "./events/kinds/drafts.js";
 export * from "./events/kinds/dvm/index.js";
 export * from "./events/kinds/highlight.js";
 export * from "./events/kinds/cashu/token.js";
+export * from "./events/kinds/cashu/tx.js";
 export * from "./events/kinds/image.js";
 export * from "./events/kinds/index.js";
 export * from "./events/kinds/lists/index.js";

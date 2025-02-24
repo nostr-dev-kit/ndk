@@ -1,7 +1,6 @@
-import { LnPaymentInfo, CashuPaymentInfo, NDKUser, NDKNutzap, NDKPaymentConfirmationLN, proofsTotalBalance } from "@nostr-dev-kit/ndk";
+import { LnPaymentInfo, CashuPaymentInfo, NDKUser, NDKNutzap, NDKPaymentConfirmationLN, proofsTotalBalance, NDKCashuWalletTx } from "@nostr-dev-kit/ndk";
 import { NDKCashuWallet } from ".";
 import { getBolt11Amount, getBolt11Description } from "../../../utils/ln";
-import { NDKWalletChange } from "../history";
 import { PaymentWithOptionalZapInfo } from "./payment";
 import { Proof } from "@cashu/cashu-ts";
 import { MintUrl } from "../mint/utils";
@@ -13,7 +12,7 @@ export async function createOutTxEvent(
     wallet: NDKCashuWallet,
     paymentRequest: PaymentWithOptionalZapInfo<LnPaymentInfo | CashuPaymentInfo>,
     paymentResult: WalletOperation<NDKPaymentConfirmationLN | TokenCreationResult>,
-): Promise<NDKWalletChange> {
+): Promise<NDKCashuWalletTx> {
     let description: string | undefined = paymentRequest.paymentDescription;
     let amount: number | undefined;
 
@@ -30,31 +29,31 @@ export async function createOutTxEvent(
         console.error("BUG: Unable to find amount for paymentRequest", paymentRequest);
     }
 
-    const historyEvent = new NDKWalletChange(wallet.ndk);
+    const txEvent = new NDKCashuWalletTx(wallet.ndk);
 
-    if (wallet.event) historyEvent.tags.push(wallet.event.tagReference());
-    historyEvent.direction = "out";
-    historyEvent.amount = amount ?? 0;
-    historyEvent.mint = paymentResult.mint;
-    historyEvent.description = description;
-    if (paymentResult.fee) historyEvent.fee = paymentResult.fee;
+    if (wallet.event) txEvent.tags.push(wallet.event.tagReference());
+    txEvent.direction = "out";
+    txEvent.amount = amount ?? 0;
+    txEvent.mint = paymentResult.mint;
+    txEvent.description = description;
+    if (paymentResult.fee) txEvent.fee = paymentResult.fee;
     if (paymentRequest.target) {
         // tag the target if there is one
-        historyEvent.tags.push(paymentRequest.target.tagReference());
+        txEvent.tags.push(paymentRequest.target.tagReference());
         
         if (!(paymentRequest.target instanceof NDKUser)) {
-            historyEvent.tags.push(["p", paymentRequest.target.pubkey]);
+            txEvent.tags.push(["p", paymentRequest.target.pubkey]);
         }
     }
 
-    if (paymentResult.stateUpdate?.created) historyEvent.createdTokens = [paymentResult.stateUpdate.created];
-    if (paymentResult.stateUpdate?.deleted) historyEvent.destroyedTokenIds = paymentResult.stateUpdate.deleted;
-    if (paymentResult.stateUpdate?.reserved) historyEvent.reservedTokens = [paymentResult.stateUpdate.reserved];
+    if (paymentResult.stateUpdate?.created) txEvent.createdTokens = [paymentResult.stateUpdate.created];
+    if (paymentResult.stateUpdate?.deleted) txEvent.destroyedTokenIds = paymentResult.stateUpdate.deleted;
+    if (paymentResult.stateUpdate?.reserved) txEvent.reservedTokens = [paymentResult.stateUpdate.reserved];
 
-    await historyEvent.sign();
-    historyEvent.publish(wallet.relaySet);
+    await txEvent.sign();
+    txEvent.publish(wallet.relaySet);
 
-    return historyEvent;
+    return txEvent;
 }
 
 export async function createInTxEvent(
@@ -62,29 +61,29 @@ export async function createInTxEvent(
     proofs: Proof[],
     mint: MintUrl,
     updateStateResult: UpdateStateResult,
-    { nutzap, fee, description }: { nutzap?: NDKNutzap, fee?: number, description?: string },
-): Promise<NDKWalletChange> {
-    const historyEvent = new NDKWalletChange(wallet.ndk);
+    { nutzaps, fee, description }: { nutzaps?: NDKNutzap[], fee?: number, description?: string },
+): Promise<NDKCashuWalletTx> {
+    const txEvent = new NDKCashuWalletTx(wallet.ndk);
 
     const amount = proofsTotalBalance(proofs);
     
-    if (wallet.event) historyEvent.tags.push(wallet.event.tagReference());
-    historyEvent.direction = "in";
-    historyEvent.amount = amount;
-    historyEvent.mint = mint;
-    historyEvent.description = description;
+    if (wallet.event) txEvent.tags.push(wallet.event.tagReference());
+    txEvent.direction = "in";
+    txEvent.amount = amount;
+    txEvent.mint = mint;
+    txEvent.description = description;
 
-    if (nutzap) historyEvent.description ??= "redeemed nutzap";
+    if (nutzaps) txEvent.description ??= "nutzap redeem";
 
-    if (updateStateResult.created) historyEvent.createdTokens = [updateStateResult.created];
-    if (updateStateResult.deleted) historyEvent.destroyedTokenIds = updateStateResult.deleted;
-    if (updateStateResult.reserved) historyEvent.reservedTokens = [updateStateResult.reserved];
+    if (updateStateResult.created) txEvent.createdTokens = [updateStateResult.created];
+    if (updateStateResult.deleted) txEvent.destroyedTokenIds = updateStateResult.deleted;
+    if (updateStateResult.reserved) txEvent.reservedTokens = [updateStateResult.reserved];
 
-    if (nutzap) historyEvent.addRedeemedNutzap(nutzap);
-    if (fee) historyEvent.fee = fee;
+    if (nutzaps) for (const nutzap of nutzaps) txEvent.addRedeemedNutzap(nutzap);
+    if (fee) txEvent.fee = fee;
 
-    await historyEvent.sign();
-    historyEvent.publish(wallet.relaySet);
+    await txEvent.sign();
+    txEvent.publish(wallet.relaySet);
 
-    return historyEvent;
+    return txEvent;
 }

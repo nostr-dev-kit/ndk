@@ -1,7 +1,13 @@
-import { type Proof } from "@cashu/cashu-ts";
 import { NDK } from "../../../ndk/index.js";
 import { NDKEventId, NDKRelay, NDKRelaySet, NostrEvent } from "../../../index.js";
 import { NDKEvent, NDKKind } from "../../../index.js";
+
+type Proof = {
+    id: string;
+    amount: number;
+    secret: string;
+    C: string;
+};
 
 /**
  * Calculates the total balance from an array of proofs.

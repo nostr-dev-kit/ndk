@@ -52,19 +52,19 @@ const useNDKNutzapMonitor = (mintList?: NDKCashuMintList, start: boolean = false
         monitor.wallet = activeWallet;
 
         monitor.on("seen", (event) => {
-            saveNutzap(ndk, event);
+            saveNutzap(ndk, [event]);
         });
 
-        monitor.on("redeem", (event) => {
-            saveNutzap(ndk, event, "redeemed", Math.floor(Date.now()/1000));
+        monitor.on("redeem", (events) => {
+            saveNutzap(ndk, events, "redeemed", Math.floor(Date.now()/1000));
         });
 
         monitor.on("spent", (event) => {
-            saveNutzap(ndk, event, "spent");
+            saveNutzap(ndk, [event], "spent");
         });
 
         monitor.on("failed", (event) => {
-            saveNutzap(ndk, event, "failed");
+            saveNutzap(ndk, [event], "failed");
         });
 
         console.log('starting monitor', activeWallet.walletId);

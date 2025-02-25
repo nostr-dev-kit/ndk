@@ -1,7 +1,7 @@
 import { calculateNewState } from './update';
 import { WalletState, WalletProofChange } from '.';
 import { NDKCashuToken } from '@nostr-dev-kit/ndk';
-import { Proof } from '@cashu/cashu-ts';
+import { mockProof } from "@nostr-dev-kit/ndk/test";
 import NDK from '@nostr-dev-kit/ndk';
 import { NDKCashuWallet } from '..';
 
@@ -115,7 +115,3 @@ describe('calculateNewState', () => {
     });
 });
 
-function mockProof(C: string, amount: number): Proof {
-    const secret = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-    return { C, amount, id: 'mint', secret };
-}

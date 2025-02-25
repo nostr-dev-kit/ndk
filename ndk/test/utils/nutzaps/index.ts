@@ -1,5 +1,4 @@
 import { NDKPrivateKeySigner } from "../../../src/signers/private-key/index.js";
-import { NDK } from "../../../src/ndk/index.js";
 import { NDKNutzap } from "../../../src/events/kinds/nutzap/index.js";
 
 export type Proof = {
@@ -9,10 +8,20 @@ export type Proof = {
     C: string;
 };
 
+/**
+ * Creates a nutzap for a given amount, optionally locking to a p2pk.
+ * @param mint 
+ * @param amount 
+ * @param ndk 
+ * @param opts 
+ * @param opts.senderPk - The private key of the sender
+ * @param opts.recipientPubkey - The nostr pubkey of the recipient
+ * @param opts.content - The content of the nutzap
+ */
 export async function mockNutzap(
     mint: string,
     amount: number,
-    ndk: NDK,
+    ndk: any,
     {
         senderPk = NDKPrivateKeySigner.generate(),
         recipientPubkey,
@@ -38,6 +47,13 @@ export async function mockNutzap(
     return nutzap;
 }
 
+/**
+ * Creates a proof for a given amount, optionally locking to a p2pk.
+ * @param C 
+ * @param amount 
+ * @param p2pk 
+ * @returns 
+ */
 export function mockProof(C: string, amount: number, p2pk?: string): Proof {
     const proof: Proof = {
         C,

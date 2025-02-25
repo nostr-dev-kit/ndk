@@ -24,6 +24,16 @@
         "./workers/sig-verification": {
             "import": "./dist/workers/sig-verification.mjs",
             "require": "./dist/workers/sig-verification.js"
+        },
+        "./test": {
+            "import": {
+                "types": "./dist/test/index.d.ts",
+                "default": "./dist/test/index.js"
+            },
+            "require": {
+                "types": "./dist/test/index.d.ts",
+                "default": "./dist/test/index.js"
+            }
         }
     },
     "files": [
@@ -33,7 +43,7 @@
     ],
     "scripts": {
         "dev": "pnpm build --watch",
-        "build": "tsup src/index.ts --format cjs,esm --dts && tsup src/workers/sig-verification.ts --format cjs,esm --dts -d dist/workers",
+        "build": "tsup src/index.ts --format cjs,esm --dts && tsup src/workers/sig-verification.ts --format cjs,esm --dts -d dist/workers; tsup test/index.ts --format cjs,esm --dts -d dist/test",
         "build:core:esm": "tsup src/index.ts --format esm --dts",
         "clean": "rm -rf dist docs",
         "test": "jest",

@@ -59,8 +59,10 @@ export * from "./user/profile.js";
 export * from "./dvm/schedule.js";
 
 export { type NDKEventSerialized, deserialize, serialize } from "./events/serializer.js";
-export { NDK as default, NDKConstructorParams, NDKWalletInterface } from "./ndk/index.js";
-export { NDKZapInvoice, zapInvoiceFromEvent } from "./zap/invoice.js";
+export { NDK as default } from "./ndk/index.js";
+export type { NDKConstructorParams, NDKWalletInterface } from "./ndk/index.js";
+export type { NDKZapInvoice } from "./zap/invoice.js";
+export { zapInvoiceFromEvent } from "./zap/invoice.js";
 export * from "./zapper/index.js";
 export * from "./zapper/ln.js";
 export * from "./zapper/nip57.js";

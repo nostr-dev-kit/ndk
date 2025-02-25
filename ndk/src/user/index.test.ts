@@ -99,7 +99,6 @@ describe("NDKUser", () => {
                     lud06: "lud06value",
                     lud16: "lud16value",
                     about: "About jeff",
-                    zapService: "Zapservice details",
                 }),
             });
 
@@ -118,7 +117,6 @@ describe("NDKUser", () => {
                     lud06: "lud06value OLD",
                     lud16: "lud16value OLD",
                     about: "About jeff OLD",
-                    zapService: "Zapservice details OLD",
                 }),
             });
 
@@ -144,7 +142,6 @@ describe("NDKUser", () => {
             expect(user.profile?.lud06).toEqual("lud06value");
             expect(user.profile?.lud16).toEqual("lud16value");
             expect(user.profile?.about).toEqual("About jeff");
-            expect(user.profile?.zapService).toEqual("Zapservice details");
         });
 
         // "displayName" is ignored, we only look at the "display_name" field in the user profile

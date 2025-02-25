@@ -8,14 +8,18 @@ export interface NDKUserProfile {
     created_at?: number;
     name?: string;
     displayName?: string;
+
+    /**
+     * @deprecated Use picture instead
+     */
     image?: string;
+    picture?: string;
     banner?: string;
     bio?: string;
     nip05?: string;
     lud06?: string;
     lud16?: string;
     about?: string;
-    zapService?: string;
     website?: string;
     profileEvent?: string;
 }
@@ -43,7 +47,8 @@ export function profileFromEvent(event: NDKEvent): NDKUserProfile {
                 break;
             case "image":
             case "picture":
-                profile.image = (payload.picture || payload.image) as string;
+                profile.picture = (payload.picture || payload.image) as string;
+                profile.image = profile.picture;
                 break;
             case "banner":
                 profile.banner = payload.banner;
@@ -62,9 +67,6 @@ export function profileFromEvent(event: NDKEvent): NDKUserProfile {
                 break;
             case "about":
                 profile.about = payload.about;
-                break;
-            case "zapService":
-                profile.zapService = payload.zapService;
                 break;
             case "website":
                 profile.website = payload.website;
@@ -93,7 +95,7 @@ export function serializeProfile(profile: NDKUserProfile): string {
                 break;
             case "image":
             case "picture":
-                payload.picture = val;
+                payload.picture = val as string;
                 break;
             case "bio":
             case "about":

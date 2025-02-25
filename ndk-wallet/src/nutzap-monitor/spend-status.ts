@@ -41,21 +41,19 @@ export async function getProofSpendState(
 
     for (const state of states) {
         const nutzap = nutzapInstances.shift();
-        if (!nutzap) continue;
+        const proof = proofs.shift();
+        if (!nutzap || !proof) continue;
 
         if (state.state === CheckStateEnum.SPENT) {
-            result.spentProofs.push(state.proof);
+            result.spentProofs.push(proof);
             result.nutzapsWithSpentProofs.push(nutzap);
         } else if (state.state === CheckStateEnum.UNSPENT) {
-            result.unspentProofs.push(state.proof);
+            result.unspentProofs.push(proof);
             result.nutzapsWithUnspentProofs.push(nutzap);
         }
     }
 
-    return {
-        unspentProofs,
-        spentProofs,
-    };
+    return result;
 }
 
 type GetProofSpendStateResult = {

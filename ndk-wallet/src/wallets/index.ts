@@ -1,6 +1,8 @@
 import NDK, {
     CashuPaymentInfo,
     LnPaymentInfo,
+    NDKEvent,
+    NDKNutzap,
     NDKPaymentConfirmation,
     NDKPaymentConfirmationCashu,
     NDKPaymentConfirmationLN,
@@ -10,7 +12,9 @@ import NDK, {
 } from "@nostr-dev-kit/ndk";
 import { EventEmitter } from "tseep";
 import { NDKNWCWallet } from "./nwc";
+import { Proof } from "@cashu/cashu-ts";
 import { NDKCashuWallet } from "./cashu/wallet";
+import { CashuWallet } from "@cashu/cashu-ts";
 
 /**
  * Different types of wallets supported.
@@ -91,4 +95,27 @@ export interface NDKWallet
      * Get the balance of this wallet
      */
     balance(): NDKWalletBalance | undefined;
+
+    /**
+     * Redeem a set of nutzaps into an NWC wallet.
+     * 
+     * This function gets an invoice from the NWC wallet until the total amount of the nutzaps is enough to pay for the invoice
+     * when accounting for fees.
+     * 
+     * @param cashuWallet - The cashu wallet to redeem the nutzaps into
+     * @param nutzapIds - The IDs of the nutzaps to redeem
+     * @param proofs - The proofs to redeem
+     * @param privkey - The private key needed to redeem p2pk proofs.
+     */
+    redeemNutzaps?(cashuWallet: CashuWallet,nutzaps: NDKNutzap[], proofs: Proof[], mint: string, privkey: string): Promise<number>;
+
+    /**
+     * Redeem a single nutzap
+     * @param nutzap - The nutzap to redeem
+     * @param privkey - The private key needed to redeem the nutzap
+     */
+    redeemNutzap?(
+        nutzap: NDKNutzap,
+        { onRedeemed }: { onRedeemed?: (res: Proof[]) => void }
+    ): Promise<NDKPaymentConfirmation | Error | boolean | undefined>;
 }

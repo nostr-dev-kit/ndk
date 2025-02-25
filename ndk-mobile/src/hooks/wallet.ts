@@ -1,4 +1,4 @@
-import { NDKCashuWallet, NDKNutzapMonitor, NDKWallet } from '@nostr-dev-kit/ndk-wallet';
+import { NDKCashuWallet, NDKNutzapMonitor, NDKNWCWallet, NDKWallet } from '@nostr-dev-kit/ndk-wallet';
 import { NDKCashuMintList } from '@nostr-dev-kit/ndk';
 import { useWalletStore } from '../stores/wallet.js';
 import { useNDK, useNDKCurrentUser } from './ndk.js';
@@ -32,14 +32,24 @@ const useNDKNutzapMonitor = (mintList?: NDKCashuMintList, start: boolean = false
         if (!ndk) return;
         if (!currentUser?.pubkey) return;
         if (!activeWallet?.walletId) return;
-        if (nutzapMonitor) return;
+        if (nutzapMonitor) {
+            nutzapMonitor.wallet = activeWallet;
+            nutzapMonitor.mintList = mintList;
+            return;
+        }
+
+        const isCashu = (activeWallet instanceof NDKCashuWallet);
+        const isNwc = (activeWallet instanceof NDKNWCWallet);
+
+        if (!(isCashu || isNwc)) return;
 
         const knownNutzaps = getKnownNutzaps(ndk);
-        const monitor = new NDKNutzapMonitor(ndk, currentUser, mintList?.relaySet);
+        const monitor = new NDKNutzapMonitor(ndk, currentUser, mintList);
 
         setNutzapMonitor(monitor);
-
-        if (activeWallet instanceof NDKCashuWallet) monitor.wallet = activeWallet;
+        
+        console.log('setting wallet on nutzap monitor', activeWallet.walletId);
+        monitor.wallet = activeWallet;
 
         monitor.on("seen", (event) => {
             saveNutzap(ndk, event);
@@ -56,6 +66,8 @@ const useNDKNutzapMonitor = (mintList?: NDKCashuMintList, start: boolean = false
         monitor.on("failed", (event) => {
             saveNutzap(ndk, event, "failed");
         });
+
+        console.log('starting monitor', activeWallet.walletId);
         
         monitor.start({
             knownNutzaps: knownNutzaps,

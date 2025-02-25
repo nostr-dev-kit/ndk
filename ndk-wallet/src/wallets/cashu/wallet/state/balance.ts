@@ -1,10 +1,10 @@
 import { WalletState } from ".";
 import { MintUrl } from "../../mint/utils";
-import { GetProofsOpts } from "./proofs";
+import { GetOpts } from "./proofs";
 
 export function getBalance(
     this: WalletState,
-    opts?: GetProofsOpts
+    opts?: GetOpts
 ) {
     const proofs = this.getProofEntries(opts);
     return proofs.reduce((sum, proof) => sum + proof.proof.amount, 0);
@@ -12,7 +12,7 @@ export function getBalance(
 
 export function getMintsBalances(
     this: WalletState,
-    { onlyAvailable }: GetProofsOpts = { onlyAvailable: true }
+    { onlyAvailable }: GetOpts = { onlyAvailable: true }
 ) {
     const balances: Record<MintUrl, number> = {};
 

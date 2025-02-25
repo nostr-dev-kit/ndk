@@ -164,7 +164,7 @@ export class NDKCashuDeposit extends EventEmitter<{
             const tokenEvent = updateRes.created;
             if (!tokenEvent) throw new Error("no token event created");
 
-            createInTxEvent(this.wallet, proofs, this.mint, updateRes, { description: "Deposit" });
+            createInTxEvent(this.wallet.ndk, proofs, this.mint, updateRes, { description: "Deposit" }, this.wallet.relaySet);
 
             this.emit("success", tokenEvent);
 

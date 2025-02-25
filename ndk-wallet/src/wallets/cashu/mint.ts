@@ -23,14 +23,31 @@ export async function walletForMint(
         pk,
         timeout = 5000,
         mintInfo,
-        mintKeys
+        mintKeys,
+        onMintInfoNeeded,
+        onMintInfoLoaded,
+        onMintKeysNeeded,
+        onMintKeysLoaded
     }: {
         pk?: Uint8Array,
         timeout?: number,
         mintInfo?: GetInfoResponse,
-        mintKeys?: MintKeys[]
+        mintKeys?: MintKeys[],
+        onMintInfoNeeded?: (mint: string) => Promise<GetInfoResponse | undefined>,
+        onMintInfoLoaded?: (mint: string, info: GetInfoResponse) => void,
+        onMintKeysNeeded?: (mint: string) => Promise<MintKeys[] | undefined>,
+        onMintKeysLoaded?: (mint: string, keysets: Map<string, MintKeys>) => void,
     } = {}
 ): Promise<CashuWallet | null> {
+    console.log('REAL walletForMint', mint);
+    mintInfo ??= await onMintInfoNeeded?.(mint);
+    mintKeys ??= await onMintKeysNeeded?.(mint);
+
+    if (!mintInfo && onMintInfoLoaded) {
+        mintInfo = await CashuMint.getInfo(mint);
+        onMintInfoLoaded?.(mint, mintInfo);
+    }
+    
     const unit = 'sat';
 
     const key = mintKey(mint, unit, pk);
@@ -58,6 +75,9 @@ export async function walletForMint(
             await Promise.race([wallet.loadMint(), timeoutPromise]);
             mintWallets.set(key, wallet);
             mintWalletPromises.delete(key);
+
+            if (wallet.keys) onMintKeysLoaded?.(mint, wallet.keys);
+            
             resolve(wallet);
         } catch (e: any) {
             console.error("[WALLET] error loading mint", mint, e.message);

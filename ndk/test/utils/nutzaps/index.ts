@@ -1,5 +1,5 @@
-import { NDKPrivateKeySigner } from "../../../src/signers/private-key/index.js";
-import { NDKNutzap } from "../../../src/events/kinds/nutzap/index.js";
+import { NDKPrivateKeySigner } from "../../../dist/index.mjs";
+import { NDKNutzap } from "../../../dist/index.mjs";
 
 export type Proof = {
     id: string;

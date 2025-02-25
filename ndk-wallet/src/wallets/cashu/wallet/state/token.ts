@@ -1,7 +1,6 @@
 import { Proof } from "@cashu/cashu-ts";
 import { WalletState } from ".";
-import { NDKCashuToken } from "../../token";
-import { NDKEventId } from "@nostr-dev-kit/ndk";
+import { NDKCashuToken, NDKEventId } from "@nostr-dev-kit/ndk";
 
 /**
  * Adds or updates the token in the wallet state, optionally associating proofs with the token

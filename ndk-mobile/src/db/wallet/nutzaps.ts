@@ -24,12 +24,14 @@ export function getNutzaps(ndk: NDK): NDKDBNutzap[] {
     return nutzaps;
 }
 
-export function saveNutzap(ndk: NDK, nutzap: NDKNutzap, status?: string, claimedAt?: number, txEventId?: string) {
+export function saveNutzap(ndk: NDK, nutzaps: NDKNutzap[], status?: string, claimedAt?: number, txEventId?: string) {
     const db = withDb(ndk);
 
-    db.runSync(
-        `INSERT OR REPLACE INTO wallet_nutzaps (event_id, status, claimed_at, tx_event_id) 
+    for (const nutzap of nutzaps) {
+        db.runSync(
+            `INSERT OR REPLACE INTO wallet_nutzaps (event_id, status, claimed_at, tx_event_id) 
         VALUES (?, ?, ?, ?)`, 
-        [nutzap.id, status, claimedAt, txEventId]
-    );
+            [nutzap.id, status, claimedAt, txEventId]
+        );
+    }
 }

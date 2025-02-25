@@ -196,3 +196,45 @@ export class NDKNutzap extends NDKEvent {
         );
     }
 }
+
+/**
+ * Returns the p2pk pubkey a proof is locked to.
+ * 
+ * Note that this function does NOT make cashu pubkey into nostr pubkey
+ * (i.e. it does NOT remove the "02" prefix)
+ * @param proof 
+ */
+export function proofP2pk(proof: Proof): Hexpubkey | undefined {
+    try {
+        const secret = JSON.parse(proof.secret);
+        let payload: Record<string, any> = {};
+        if (typeof secret === "string") {
+            payload = JSON.parse(secret);
+        } else if (typeof secret === "object") {
+            payload = secret;
+        }
+
+        const isP2PKLocked = payload[0] === "P2PK" && payload[1]?.data;
+
+        if (isP2PKLocked) {
+            return payload[1].data;
+        }
+    } catch (e) {
+        console.error("error parsing p2pk pubkey", e, proof);
+    }
+}
+
+/**
+ * Returns the p2pk pubkey a proof is locked to.
+ * 
+ * Note that this function makes cashu pubkey into nostr pubkey
+ * (i.e. it removes the "02" prefix)
+ * @param proof 
+ */
+export function proofP2pkNostr(proof: Proof): Hexpubkey | undefined {
+    const p2pk = proofP2pk(proof);
+    if (!p2pk) return;
+
+    if (p2pk.startsWith("02") && p2pk.length === 66) return p2pk.slice(2);
+    return p2pk;
+}

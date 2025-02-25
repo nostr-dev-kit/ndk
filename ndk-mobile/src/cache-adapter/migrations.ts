@@ -132,4 +132,33 @@ export const migrations = [
             );`);
         },
     },
+
+    {
+        version: 7,
+        up: async (db: SQLite.SQLiteDatabase) => {
+            const profiles = await db.getAllSync(`SELECT * FROM profiles;`) as { pubkey: string, profile: string }[];
+            
+            await db.execAsync(`
+                ALTER TABLE profiles ADD COLUMN name TEXT;
+                ALTER TABLE profiles ADD COLUMN about TEXT;
+                ALTER TABLE profiles ADD COLUMN picture TEXT;
+                ALTER TABLE profiles ADD COLUMN banner TEXT;
+                ALTER TABLE profiles ADD COLUMN nip05 TEXT;
+                ALTER TABLE profiles ADD COLUMN lud16 TEXT;
+                ALTER TABLE profiles ADD COLUMN lud06 TEXT;
+                ALTER TABLE profiles ADD COLUMN display_name TEXT;
+                ALTER TABLE profiles ADD COLUMN website TEXT;
+            `);
+            
+            const start = Date.now();
+            for (const profile of profiles) {
+                try {
+                    const profileJson = JSON.parse(profile.profile);
+                    await db.runAsync(`UPDATE profiles SET name = ?, about = ?, picture = ?, banner = ?, nip05 = ?, lud16 = ?, lud06 = ?, display_name = ?, website = ? WHERE pubkey = ?;`, [profileJson.name, profileJson.about, profileJson.image ?? profileJson.picture, profileJson.banner, profileJson.nip05, profileJson.lud16, profileJson.lud06, profileJson.displayName, profileJson.website, profile.pubkey]);
+                } catch (e) {
+                    await db.runAsync(`DELETE FROM profiles WHERE pubkey = ?;`, [profile.pubkey]);
+                }
+            }
+        },
+    }
 ];

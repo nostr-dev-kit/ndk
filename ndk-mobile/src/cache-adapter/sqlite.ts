@@ -25,6 +25,21 @@ export type NDKSqliteEventRecord = {
     relay: string;
 };
 
+export type NDKSqliteProfileRecord = {
+    pubkey: string;
+    name: string;
+    about: string;
+    picture: string;
+    banner: string;
+    nip05: string;
+    lud16: string;
+    lud06: string;
+    display_name: string;
+    website: string;
+    catched_at: number;
+    created_at: number;
+};
+
 /**
  * This is an entry with a loaded event that we can listen on for publication event to update
  * our internal state.
@@ -67,7 +82,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     locking: boolean = false;
     ready: boolean = false;
     private pendingCallbacks: PendingCallback[] = [];
-    private profileCache: LRUCache<string, NDKCacheEntry<NDKUserProfile>>;
+    private profileCache?: LRUCache<string, NDKCacheEntry<NDKUserProfile>>;
     private unpublishedEventIds: Set<string> = new Set();
 
     /**
@@ -79,9 +94,11 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     private bufferFlushTimeout: number = 100; // milliseconds
     private bufferFlushTimer: NodeJS.Timeout | null = null;
 
-    constructor(dbName: string, maxProfiles: number = 200) {
+    constructor(dbName: string, maxProfiles: number | false = 200) {
         this.dbName = dbName ?? 'ndk-cache';
-        this.profileCache = new LRUCache({ maxSize: maxProfiles });
+        if (maxProfiles) {
+            this.profileCache = new LRUCache({ maxSize: maxProfiles });
+        }
         this.db = SQLite.openDatabaseSync(this.dbName);
     }
 
@@ -294,20 +311,15 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     }
 
     fetchProfileSync(pubkey: Hexpubkey): NDKCacheEntry<NDKUserProfile> | null {
-        const cached = this.profileCache.get(pubkey);
-        if (cached) {
-            return cached;
-        }
+        const cached = this.profileCache?.get(pubkey);
+        if (cached) return cached;
 
         if (!this.ready) return null;
 
-        let result: { profile: string; catched_at: number } | null = null;
+        let result: NDKSqliteProfileRecord | null = null;
 
         try {
-            result = this.db.getFirstSync(`SELECT profile, catched_at FROM profiles WHERE pubkey = ?;`, [pubkey]) as {
-                profile: string;
-                catched_at: number;
-            };
+            result = this.db.getFirstSync(`SELECT name, about, picture, banner, nip05, lud16, lud06, display_name, website, catched_at, created_at FROM profiles WHERE pubkey = ?;`, [pubkey]) as NDKSqliteProfileRecord;
         } catch (e) {
             console.error('error fetching profile', e, { pubkey });
             return null;
@@ -315,12 +327,25 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
 
         if (result) {
             try {
-                const profile = JSON.parse(result.profile);
+                const profile = {
+                    name: result.name,
+                    about: result.about,
+                    picture: result.picture,
+                    banner: result.banner,
+                    nip05: result.nip05,
+                    lud16: result.lud16,
+                    lud06: result.lud06,
+                    displayName: result.display_name,
+                    website: result.website,
+                    created_at: result.created_at
+                };
                 const entry = { ...profile, fetchedAt: result.catched_at };
-                this.profileCache.set(pubkey, entry);
+                if (this.profileCache) {
+                    this.profileCache.set(pubkey, entry);
+                }
                 return entry;
             } catch (e) {
-                console.error('failed to parse profile', result.profile);
+                console.error('failed to parse profile', result);
             }
         }
 
@@ -328,25 +353,60 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     }
 
     async fetchProfile(pubkey: Hexpubkey): Promise<NDKCacheEntry<NDKUserProfile> | null> {
-        const cached = this.profileCache.get(pubkey);
+        const cached = this.profileCache?.get(pubkey);
         if (cached) {
             return cached;
         }
 
         return await this.ifReady(async () => {
-            const result = await this.db.getFirstAsync(`SELECT profile, catched_at FROM profiles WHERE pubkey = ?;`, [pubkey]) as {
-                profile: string;
+            const result = await this.db.getFirstAsync(`
+                SELECT 
+                    name, 
+                    about, 
+                    picture, 
+                    banner, 
+                    nip05, 
+                    lud16, 
+                    lud06, 
+                    display_name, 
+                    website, 
+                    catched_at, 
+                    created_at 
+                FROM profiles WHERE pubkey = ?;`, [pubkey]) as {
+                name: string;
+                about: string;
+                picture: string;
+                banner: string;
+                nip05: string;
+                lud16: string;
+                lud06: string;
+                display_name: string;
+                website: string;
                 catched_at: number;
+                created_at: number;
             };
 
             if (result) {
                 try {
-                    const profile = JSON.parse(result.profile);
+                    const profile = {
+                        name: result.name,
+                        about: result.about,
+                        picture: result.picture,
+                        banner: result.banner,
+                        nip05: result.nip05,
+                        lud16: result.lud16,
+                        lud06: result.lud06,
+                        displayName: result.display_name,
+                        website: result.website,
+                        created_at: result.created_at
+                    };
                     const entry = { ...profile, fetchedAt: result.catched_at };
-                    this.profileCache.set(pubkey, entry);
+                    if (this.profileCache) {
+                        this.profileCache.set(pubkey, entry);
+                    }
                     return entry;
                 } catch (e) {
-                    console.error('failed to parse profile', result.profile);
+                    console.error('failed to parse profile', result);
                 }
             }
 
@@ -364,15 +424,37 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
 
             const now = Date.now();
             const entry = { ...profile, fetchedAt: now };
-            this.profileCache.set(pubkey, entry);
+            if (this.profileCache) {
+                this.profileCache.set(pubkey, entry);
+            }
 
-            this.bufferWrite(`INSERT OR REPLACE INTO profiles (pubkey, profile, catched_at, created_at) VALUES (?, ?, ?, ?);`, [
+            this.bufferWrite(`INSERT OR REPLACE INTO profiles (
+                pubkey, 
+                name, 
+                about, 
+                picture, 
+                banner, 
+                nip05, 
+                lud16, 
+                lud06, 
+                display_name, 
+                website, 
+                catched_at, 
+                created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`, [
                 pubkey,
-                JSON.stringify(profile),
+                profile.name,
+                profile.about,
+                profile.picture,
+                profile.banner,
+                profile.nip05,
+                profile.lud16,
+                profile.lud06,
+                profile.displayName,
+                profile.website,
                 now,
                 profile.created_at,
             ]);
-
         });
     }
 

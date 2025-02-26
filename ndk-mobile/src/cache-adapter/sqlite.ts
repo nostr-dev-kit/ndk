@@ -10,10 +10,10 @@ import {
     deserialize,
     NDKEventId,
     NDKKind,
+    matchFilter,
 } from '@nostr-dev-kit/ndk';
 import { LRUCache } from 'typescript-lru-cache';
 import * as SQLite from 'expo-sqlite';
-import { matchFilter } from 'nostr-tools';
 import { migrations } from './migrations.js';
 
 export type NDKSqliteEventRecord = {
@@ -172,6 +172,8 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     }
 
     query(subscription: NDKSubscription): NDKEvent[] {
+        if (!this.ready) return [];
+        
         const cacheFilters = filterForCache(subscription);
         const results = new Map<NDKEventId, NDKEvent>();
 
@@ -596,10 +598,18 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
 
 export function foundEvents(subscription: NDKSubscription, records: NDKSqliteEventRecord[], filter?: NDKFilter): NDKEvent[] {
     const result: NDKEvent[] = [];
+    let now: number | undefined;
     
     for (const record of records) {
         const event = foundEvent(subscription, record, record.relay, filter);
         if (event) {
+            // check the event is not expired
+            const expiration = event.tagValue('expiration');
+            if (expiration) {
+                now ??= Math.floor(Date.now() / 1000);
+                if (now > parseInt(expiration)) continue;
+            }
+            
             result.push(event);
             if (filter?.limit && result.length >= filter.limit) break;
         }

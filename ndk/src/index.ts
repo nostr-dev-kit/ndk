@@ -1,3 +1,6 @@
+export * from "./events/kinds/index.js";
+import { NDKEvent } from "./events/index.js";
+export { NDKEvent };
 import { NDKPool } from "./relay/pool/index.js";
 
 export { NDKPool };
@@ -18,7 +21,6 @@ export * from "./events/kinds/highlight.js";
 export * from "./events/kinds/cashu/token.js";
 export * from "./events/kinds/cashu/tx.js";
 export * from "./events/kinds/image.js";
-export * from "./events/kinds/index.js";
 export * from "./events/kinds/lists/index.js";
 export * from "./events/kinds/NDKRelayList.js";
 export * from "./events/kinds/nip89/NDKAppHandler.js";
@@ -70,3 +72,4 @@ export * from "./zapper/nip61.js";
 export * from "./utils/normalize-url.js";
 export * from "./utils/get-users-relay-list.js";
 export * from "./utils/imeta.js";
+export * from "./utils/filter.js";

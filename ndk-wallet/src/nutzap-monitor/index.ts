@@ -151,7 +151,6 @@ export class NDKNutzapMonitor extends EventEmitter<{
      */
     public async addPrivkey(signer: NDKPrivateKeySigner) {
         const pubkey = (await signer.user()).pubkey;
-        console.log('NutzapMonitor adding privkey for pubkey', pubkey);
         this.privkeys.set(pubkey, signer);
     }
 

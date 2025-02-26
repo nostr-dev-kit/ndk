@@ -20,7 +20,7 @@ export type NDKNWCWalletEvents = NDKWalletEvents & {
 export class NDKNWCWallet extends EventEmitter<NDKNWCWalletEvents> implements NDKWallet {
     readonly type = "nwc";
     public status = NDKWalletStatus.INITIAL;
-    readonly walletId = "nwc";
+    public walletId = "nwc";
 
     public pairingCode?: string;
 
@@ -243,6 +243,8 @@ export class NDKNWCWallet extends EventEmitter<NDKNWCWalletEvents> implements ND
         if (res.error) throw new Error(res.error.message);
 
         this.cachedInfo = res.result;
+
+        if (res.result.alias) this.walletId = res.result.alias;
 
         return res.result;
     }

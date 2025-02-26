@@ -1,6 +1,7 @@
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { CashuWallet, CheckStateEnum } from "@cashu/cashu-ts";
-import NDK, { NDKNutzap, NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
-import { mockNutzap } from "@nostr-dev-kit/ndk/test";
+import NDK, { NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
+import { mockNutzap } from "@nostr-dev-kit/ndk-test";
 import { getProofSpendState } from "./spend-status";
 
 const ndk = new NDK();
@@ -16,7 +17,7 @@ describe("spend-status", () => {
                 await mockNutzap('https://mint2.com', 200, ndk, { senderPk: ndkSigner }),
             ];
 
-            jest.spyOn(wallet, 'checkProofsStates').mockResolvedValue([
+            vi.spyOn(wallet, 'checkProofsStates').mockResolvedValue([
                 { state: CheckStateEnum.UNSPENT, Y: '1', witness: '1' }, // UNSPENT
                 { state: CheckStateEnum.SPENT, Y: '1', witness: '1' }, // SPENT
             ]);
@@ -24,10 +25,12 @@ describe("spend-status", () => {
             const result = await getProofSpendState(wallet, nutzaps);
             
             expect(result).toHaveLength(2);
-            expect(result[0].state).toBe(0);
-            expect(result[1].state).toBe(1);
-            expect(result[0].nutzap.id).toBe(nutzaps[0].id);
-            expect(result[1].nutzap.id).toBe(nutzaps[1].id);
+            expect(result.unspentProofs).toHaveLength(1);
+            expect(result.spentProofs).toHaveLength(1);
+            expect(result.nutzapsWithUnspentProofs).toHaveLength(1);
+            expect(result.nutzapsWithSpentProofs).toHaveLength(1);
+            expect(result.unspentProofs[0].id).toBe(nutzaps[0].id);
+            expect(result.spentProofs[0].id).toBe(nutzaps[1].id);
         });
 
         it("should deduplicate proofs by C value", async () => {
@@ -36,7 +39,7 @@ describe("spend-status", () => {
             
             nutzap.proofs.push(duplicateProof);
 
-            jest.spyOn(wallet, 'checkProofsStates').mockResolvedValue([
+            vi.spyOn(wallet, 'checkProofsStates').mockResolvedValue([
                 { state: CheckStateEnum.UNSPENT, Y: '1', witness: '1' },
             ]);
 

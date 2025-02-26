@@ -42,6 +42,19 @@ export type NostrEvent = {
 };
 
 /**
+ * A finalized event
+ */
+export type NDKRawEvent = {
+    created_at: number;
+    content: string;
+    tags: NDKTag[];
+    kind: NDKKind | number;
+    pubkey: string;
+    id: string;
+    sig: string;
+};
+
+/**
  * NDKEvent is the basic building block of NDK; most things
  * you do with NDK will revolve around writing or consuming NDKEvents.
  */

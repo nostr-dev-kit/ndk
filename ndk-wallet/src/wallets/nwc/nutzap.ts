@@ -19,21 +19,17 @@ export async function redeemNutzaps(
     if (!info.methods.includes("make_invoice")) throw new Error("This NWC wallet does not support making invoices");
     
     // get the total amount of the proofs
-    let totalAmount = proofs.reduce((acc, proof) => acc + proof.amount, 0);
+    const totalAvailable = proofs.reduce((acc, proof) => acc + proof.amount, 0);
+    let sweepAmount = totalAvailable;
 
-    while (totalAmount > 0) {
-        console.log('\ttotal amount to redeem', totalAmount);
-        const invoice = await this.makeInvoice(totalAmount * 1000, "Nutzap redemption")
-        console.log('received an invoice', invoice);
+    while (sweepAmount > 0) {
+        const invoice = await this.makeInvoice(sweepAmount * 1000, "Nutzap redemption")
 
         const meltQuote = await cashuWallet.createMeltQuote(invoice.invoice);
         const totalRequired = meltQuote.amount + meltQuote.fee_reserve;
-        console.log('\tpaying this invoice requires', totalRequired, meltQuote);
 
-        if (totalRequired > totalAmount) {
-            console.log('\tnot enough balance to pay this invoice, trying again');
-            totalAmount -= meltQuote.fee_reserve;
-            console.log('\tlowering amount by', meltQuote.fee_reserve, 'to', totalAmount);
+        if (totalRequired > totalAvailable) {
+            sweepAmount -= meltQuote.fee_reserve;
             continue;
         }
 
@@ -41,7 +37,12 @@ export async function redeemNutzaps(
         let change: NDKCashuToken | undefined;
         if (result.change.length > 0) change = await saveChange(this.ndk, mint, result.change);
 
-        createOutTxEvent(this.ndk, { pr: invoice.invoice }, {
+        const description = `Nutzap redemption to external wallet (${this.walletId})`;
+
+        createOutTxEvent(this.ndk, {
+            pr: invoice.invoice,
+            paymentDescription: description,
+        }, {
             result: { preimage: invoice.preimage },
             mint: mint,
             fee: meltQuote.fee_reserve,
@@ -51,7 +52,7 @@ export async function redeemNutzaps(
             },
         }, this.relaySet, { nutzaps });
 
-        return totalAmount;
+        return sweepAmount;
     }
 
     throw new Error("Failed to redeem nutzaps");

@@ -186,5 +186,28 @@ export const migrations = [
                 ALTER TABLE event_tags_new RENAME TO event_tags;
             `);
         },
+    },
+
+    {
+        version: 9,
+        up: async (db: SQLite.SQLiteDatabase) => {
+            // Log current indexes to verify
+            const indexes = await db.getAllAsync(`PRAGMA index_list('event_tags');`);
+            console.log('Current indexes on event_tags:', indexes);
+    
+            // Proceed with dropping and recreating
+            await db.execAsync(`
+                ALTER TABLE event_tags RENAME TO event_tags_old;
+                CREATE TABLE event_tags (
+                    event_id TEXT NOT NULL,
+                    tag TEXT NOT NULL,
+                    value TEXT COLLATE NOCASE
+                );
+                INSERT INTO event_tags (event_id, tag, value) SELECT event_id, tag, value FROM event_tags_old;
+                DROP TABLE event_tags_old;
+                CREATE INDEX IF NOT EXISTS idx_event_tags_event_id_tag ON event_tags (event_id, tag);
+                CREATE INDEX IF NOT EXISTS idx_event_tags_tag_value ON event_tags (tag, value);
+            `);
+        },
     }
 ];

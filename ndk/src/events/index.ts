@@ -324,7 +324,7 @@ export class NDKEvent extends EventEmitter {
      */
     public isReplaceable = isReplaceable.bind(this);
     public isEphemeral = isEphemeral.bind(this);
-
+    public isDvm = () => this.kind && this.kind >= 5000 && this.kind <= 7000;
     /**
      * Is this event parameterized replaceable?
      *
@@ -559,6 +559,7 @@ export class NDKEvent extends EventEmitter {
         if (!this.ndk?.clientName && !this.ndk?.clientNip89) return false;
         if (skipClientTagOnKinds.has(this.kind!)) return false;
         if (this.isEphemeral() || this.isReplaceable()) return false;
+        if (this.isDvm()) return false;
         if (this.hasTag("client")) return false;
         return true;
     }

@@ -507,9 +507,6 @@ importers:
       '@nostr-dev-kit/eslint-config-custom':
         specifier: workspace:*
         version: link:../packages/eslint-config-custom
-      '@nostr-dev-kit/ndk-test':
-        specifier: workspace:*
-        version: link:../ndk-test
       '@nostr-dev-kit/tsconfig':
         specifier: workspace:*
         version: link:../packages/tsconfig

@@ -82,7 +82,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     locking: boolean = false;
     ready: boolean = false;
     private pendingCallbacks: PendingCallback[] = [];
-    private profileCache?: LRUCache<string, NDKCacheEntry<NDKUserProfile>>;
+    public profileCache?: LRUCache<string, NDKCacheEntry<NDKUserProfile>>;
     private unpublishedEventIds: Set<string> = new Set();
 
     /**

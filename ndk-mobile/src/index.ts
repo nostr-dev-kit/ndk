@@ -3,6 +3,7 @@ import 'react-native-get-random-values';
 
 export * from './hooks/index.js';
 export * from './cache-adapter/sqlite.js';
+export * from './cache-adapter/search-profiles.js';
 export * from './components/index.js';
 export * from './components/relays/index.js';
 export * from './signers/index.js';

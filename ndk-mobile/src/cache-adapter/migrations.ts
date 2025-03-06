@@ -150,7 +150,6 @@ export const migrations = [
                 ALTER TABLE profiles ADD COLUMN website TEXT;
             `);
             
-            const start = Date.now();
             for (const profile of profiles) {
                 try {
                     const profileJson = JSON.parse(profile.profile);
@@ -159,6 +158,56 @@ export const migrations = [
                     await db.runAsync(`DELETE FROM profiles WHERE pubkey = ?;`, [profile.pubkey]);
                 }
             }
+        },
+    },
+
+    {
+        version: 8,
+        up: async (db: SQLite.SQLiteDatabase) => {
+            await db.execAsync(`
+                -- Create the new table with NOCASE collation
+                CREATE TABLE event_tags_new (
+                    event_id TEXT NOT NULL,
+                    tag TEXT NOT NULL,
+                    value TEXT COLLATE NOCASE,
+                    PRIMARY KEY (event_id, tag, value)
+                );
+
+                -- Insert deduplicated data (group by case-insensitive value)
+                INSERT INTO event_tags_new (event_id, tag, value)
+                SELECT event_id, tag, value
+                FROM event_tags
+                GROUP BY event_id, tag, LOWER(value);  -- Deduplicate by lowercase value
+
+                -- Drop the old table
+                DROP TABLE event_tags;
+
+                -- Rename the new table
+                ALTER TABLE event_tags_new RENAME TO event_tags;
+            `);
+        },
+    },
+
+    {
+        version: 9,
+        up: async (db: SQLite.SQLiteDatabase) => {
+            // Log current indexes to verify
+            const indexes = await db.getAllAsync(`PRAGMA index_list('event_tags');`);
+            console.log('Current indexes on event_tags:', indexes);
+    
+            // Proceed with dropping and recreating
+            await db.execAsync(`
+                ALTER TABLE event_tags RENAME TO event_tags_old;
+                CREATE TABLE event_tags (
+                    event_id TEXT NOT NULL,
+                    tag TEXT NOT NULL,
+                    value TEXT COLLATE NOCASE
+                );
+                INSERT INTO event_tags (event_id, tag, value) SELECT event_id, tag, value FROM event_tags_old;
+                DROP TABLE event_tags_old;
+                CREATE INDEX IF NOT EXISTS idx_event_tags_event_id_tag ON event_tags (event_id, tag);
+                CREATE INDEX IF NOT EXISTS idx_event_tags_tag_value ON event_tags (tag, value);
+            `);
         },
     }
 ];

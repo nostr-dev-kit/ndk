@@ -1,5 +1,15 @@
 # @nostr-dev-kit/ndk-cache-redis
 
+## 0.4.2
+
+### Patch Changes
+
+- cca3357: move NDKWalletChange from ndk-wallet to NDKCashuWalletTx in ndk
+- Updated dependencies [3ea9695]
+- Updated dependencies [cca3357]
+- Updated dependencies [1235f69]
+    - @nostr-dev-kit/ndk@2.12.1
+
 ## 0.4.1
 
 ### Patch Changes

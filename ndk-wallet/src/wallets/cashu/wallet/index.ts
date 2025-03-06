@@ -168,7 +168,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
                 const updateRes = await this.state.update(change);
 
                 // create a change event
-                createOutTxEvent(this, {
+                createOutTxEvent(this.ndk, {
                     paymentDescription: "minted nuts",
                     amount: amounts.reduce((acc, amount) => acc + amount, 0),
                 }, {
@@ -177,7 +177,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
                     stateUpdate: updateRes,
                     mint,
                     fee: 0
-                });
+                }, this.relaySet);
                 this.emit("balance_updated");
 
                 return result;
@@ -371,7 +371,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
         });
         const tokenEvent = updateRes.created;
 
-        createInTxEvent(this, proofs, mint, updateRes, { description });
+        createInTxEvent(this.ndk, proofs, mint, updateRes, { description }, this.relaySet);
 
         return tokenEvent;
     }
@@ -403,26 +403,54 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
     async cashuWallet(mint: string): Promise<CashuWallet> {
         if (this.wallets.has(mint)) return this.wallets.get(mint) as CashuWallet;
 
-        let mintInfo = await this.onMintInfoNeeded?.(mint);
-        const mintKeys = await this.onMintKeysNeeded?.(mint);
-
-        if (!mintInfo && this.onMintInfoLoaded) {
-            mintInfo = await CashuMint.getInfo(mint);
-            this.onMintInfoLoaded?.(mint, mintInfo);
-        }
-
-        const w = await walletForMint(mint, { mintInfo, mintKeys });
-
-        if (w?.keys) this.onMintKeysLoaded?.(mint, w.keys);
+        const w = await walletForMint(mint, {
+            onMintInfoNeeded: this.onMintInfoNeeded,
+            onMintInfoLoaded: this.onMintInfoLoaded,
+            onMintKeysNeeded: this.onMintKeysNeeded,
+            onMintKeysLoaded: this.onMintKeysLoaded,
+        });
 
         if (!w) throw new Error("unable to load wallet for mint " + mint);
         this.wallets.set(mint, w);
         return w;
     }
 
+    async redeemNutzaps(
+        cashuWallet: CashuWallet,
+        nutzaps: NDKNutzap[],
+        proofs: Proof[],
+        mint: string,
+        privkey: string
+    ): Promise<number> {
+        try {
+            const proofsWeHave = this.state.getProofs({ mint });
+            const res = await cashuWallet.receive(
+                { proofs, mint },
+                { proofsWeHave, privkey }
+            );
+
+            const receivedAmount = proofs.reduce((acc, proof) => acc + proof.amount, 0);
+            const redeemedAmount = res.reduce((acc, proof) => acc + proof.amount, 0);
+            const fee = receivedAmount - redeemedAmount;
+
+            const updateRes = await this.state.update({
+                store: res,
+                mint,
+            });
+
+            createInTxEvent(this.ndk, res, mint, updateRes, { nutzaps, fee }, this.relaySet)
+
+            return receivedAmount;
+        } catch (e) {
+            console.log('error redeeming nutzaps', nutzaps.map((n) => n.encode()), e);
+            console.trace(e);
+            throw e;
+        }
+    }
+
     async redeemNutzap(
         nutzap: NDKNutzap,
-        { onRedeemed, onTxEventCreated }: { onRedeemed?: (res: Proof[]) => void, onTxEventCreated?: (event: NDKEvent) => void }
+        { onRedeemed }: { onRedeemed?: (res: Proof[]) => void }
     ) {
         const user = this.ndk.activeUser;
 
@@ -467,8 +495,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
                 mint,
             });
 
-            const txEvent = await createInTxEvent(this, res, mint, updateRes, {nutzap, fee});
-            onTxEventCreated?.(txEvent);
+            createInTxEvent(this.ndk, res, mint, updateRes, {nutzaps: [nutzap], fee}, this.relaySet);
         } catch (e) {
             console.log('error redeeming nutzap', nutzap.encode(),  e);
             console.trace(e);

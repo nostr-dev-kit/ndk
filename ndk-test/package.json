@@ -1,0 +1,23 @@
+{
+  "name": "@nostr-dev-kit/ndk-test",
+  "version": "0.1.0",
+  "description": "Test utilities and mocks for @nostr-dev-kit/ndk",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.mts"
+    }
+  },
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "devDependencies": {
+    "@nostr-dev-kit/ndk": "workspace:*",
+    "typescript": "^5.4.4",
+    "tsup": "^8.3.0"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts"
+  }
+}

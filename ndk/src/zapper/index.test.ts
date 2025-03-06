@@ -95,9 +95,9 @@ describe("getZapMethod", () => {
         ndk.fetchEvents = jest.fn().mockResolvedValue(new Set([mintList]));
         const zapper = new NDKZapper(user, 1000);
         zapper.cashuPay = async (payment: NDKZapDetails<CashuPaymentInfo>) => undefined;
-        const zapMethod = (await zapper.getZapMethods(ndk, user.pubkey))[0];
-        expect(zapMethod.type).toBe("nip61");
-        expect((zapMethod.data as CashuPaymentInfo).mints).toEqual([
+        const zapMethodMap = await zapper.getZapMethods(ndk, user.pubkey);
+        const nip61Method = zapMethodMap.get('nip61');
+        expect((nip61Method as CashuPaymentInfo).mints).toEqual([
             "https://mint1",
             "https://mint2",
         ]);
@@ -112,13 +112,8 @@ describe("getZapMethod", () => {
         const zapper = new NDKZapper(user, 1000);
         zapper.cashuPay = async (payment: NDKZapDetails<CashuPaymentInfo>) => undefined;
         zapper.lnPay = async (payment: NDKZapDetails<LnPaymentInfo>) => undefined;
-        const zapMethod = (
-            await zapper.getZapMethods(
-                ndk,
-                "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"
-            )
-        )[0];
-
-        expect(zapMethod.type).toBe("nip57");
+        const zapMethodMap = await zapper.getZapMethods(ndk, user.pubkey);
+        const nip57Method = zapMethodMap.get("nip57");
+        expect(nip57Method).toBeDefined();
     });
 });

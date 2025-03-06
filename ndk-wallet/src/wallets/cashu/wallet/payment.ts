@@ -46,7 +46,7 @@ export class PaymentHandler {
         if (!res?.result?.preimage) return;
 
         if (createTxEvent) {
-            createOutTxEvent(this.wallet, payment, res);
+            createOutTxEvent(this.wallet.ndk, payment, res, this.wallet.relaySet);
         }
 
         return res.result;
@@ -83,7 +83,7 @@ export class PaymentHandler {
             }
         }
 
-        createOutTxEvent(this.wallet, satPayment, createResult);
+        createOutTxEvent(this.wallet.ndk, satPayment, createResult, this.wallet.relaySet);
 
         return createResult.result;
     }

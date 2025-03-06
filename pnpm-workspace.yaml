@@ -1,6 +1,7 @@
 packages:
     - "packages/*"
     - "ndk"
+    - "ndk-test"
     - "ndk-cache-dexie"
     - "ndk-cache-redis"
     - "ndk-cache-nostr"

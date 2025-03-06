@@ -124,8 +124,8 @@ describe("NDKUser", () => {
                 const sub = new NDKSubscription(ndk, filter, opts);
 
                 setTimeout(() => {
-                    sub.emit("event", newEvent, undefined, sub);
-                    sub.emit("event", oldEvent, undefined, sub);
+                    sub.emit("event", newEvent, undefined, sub, false, false);
+                    sub.emit("event", oldEvent, undefined, sub, false, false);
                     sub.emit("eose", sub);
                 }, 100);
 
@@ -171,8 +171,8 @@ describe("NDKUser", () => {
                 const sub = new NDKSubscription(ndk, filter, opts);
 
                 setTimeout(() => {
-                    sub.emit("event", newEvent, undefined, sub);
-                    sub.emit("event", oldEvent, undefined, sub);
+                    sub.emit("event", newEvent, undefined, sub, false, false);
+                    sub.emit("event", oldEvent, undefined, sub, false, false);
                     sub.emit("eose", sub);
                 }, 100);
 
@@ -209,8 +209,8 @@ describe("NDKUser", () => {
                 const sub = new NDKSubscription(ndk, filter, opts);
 
                 setTimeout(() => {
-                    sub.emit("event", newEvent, undefined, sub);
-                    sub.emit("event", oldEvent, undefined, sub);
+                    sub.emit("event", newEvent, undefined, sub, false, false);
+                    sub.emit("event", oldEvent, undefined, sub, false, false);
                     sub.emit("eose", sub);
                 }, 100);
 
@@ -246,8 +246,8 @@ describe("NDKUser", () => {
                 const sub = new NDKSubscription(ndk, filter, opts);
 
                 setTimeout(() => {
-                    sub.emit("event", newEvent, undefined, sub);
-                    sub.emit("event", oldEvent, undefined, sub);
+                    sub.emit("event", newEvent, undefined, sub, false, false);
+                    sub.emit("event", oldEvent, undefined, sub, false, false);
                     sub.emit("eose", sub);
                 }, 100);
 

@@ -1,3 +1,6 @@
+export * from "./events/kinds/index.js";
+import { NDKEvent } from "./events/index.js";
+export { NDKEvent };
 import { NDKPool } from "./relay/pool/index.js";
 
 export { NDKPool };
@@ -18,7 +21,6 @@ export * from "./events/kinds/highlight.js";
 export * from "./events/kinds/cashu/token.js";
 export * from "./events/kinds/cashu/tx.js";
 export * from "./events/kinds/image.js";
-export * from "./events/kinds/index.js";
 export * from "./events/kinds/lists/index.js";
 export * from "./events/kinds/NDKRelayList.js";
 export * from "./events/kinds/nip89/NDKAppHandler.js";
@@ -59,8 +61,10 @@ export * from "./user/profile.js";
 export * from "./dvm/schedule.js";
 
 export { type NDKEventSerialized, deserialize, serialize } from "./events/serializer.js";
-export { NDK as default, NDKConstructorParams, NDKWalletInterface } from "./ndk/index.js";
-export { NDKZapInvoice, zapInvoiceFromEvent } from "./zap/invoice.js";
+export { NDK as default } from "./ndk/index.js";
+export type { NDKConstructorParams, NDKWalletInterface } from "./ndk/index.js";
+export type { NDKZapInvoice } from "./zap/invoice.js";
+export { zapInvoiceFromEvent } from "./zap/invoice.js";
 export * from "./zapper/index.js";
 export * from "./zapper/ln.js";
 export * from "./zapper/nip57.js";
@@ -68,3 +72,4 @@ export * from "./zapper/nip61.js";
 export * from "./utils/normalize-url.js";
 export * from "./utils/get-users-relay-list.js";
 export * from "./utils/imeta.js";
+export * from "./utils/filter.js";

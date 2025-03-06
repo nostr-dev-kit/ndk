@@ -220,7 +220,7 @@ class NDKZapper extends EventEmitter<{
      * 
      * This function will calculate the splits for this zap and initiate each zap split.
      */
-    async zap() {
+    async zap(methods?: NDKZapMethod[]) {
         // get all splits
         const splits = this.getZapSplits();
         const results = new Map<NDKZapSplit, NDKPaymentConfirmation | Error | undefined>();
@@ -230,7 +230,7 @@ class NDKZapper extends EventEmitter<{
                 let result: NDKPaymentConfirmation | Error | undefined;
 
                 try {
-                    result = await this.zapSplit(split);
+                    result = await this.zapSplit(split, methods);
                 } catch (e: any) {
                     result = new Error(e.message);
                 }
@@ -377,9 +377,10 @@ class NDKZapper extends EventEmitter<{
      * Get the zap methods available for the recipient and initiates the zap
      * in the desired method.
      * @param split 
+     * @param methods - The methods to try, if not provided, all methods will be tried.
      * @returns 
      */
-    async zapSplit(split: NDKZapSplit): Promise<NDKPaymentConfirmation | undefined> {
+    async zapSplit(split: NDKZapSplit, methods?: NDKZapMethod[]): Promise<NDKPaymentConfirmation | undefined> {
         const recipient = this.ndk.getUser({ pubkey: split.pubkey });
         let zapMethods = await recipient.getZapInfo(2500);
         let retVal: NDKPaymentConfirmation | Error | undefined;
@@ -406,8 +407,11 @@ class NDKZapper extends EventEmitter<{
             });
         }
 
+        const canUseNip61= !methods || methods.includes("nip61");
+        const canUseNip57= !methods || methods.includes("nip57");
+
         const nip61Method = zapMethods.get("nip61") as CashuPaymentInfo;
-        if (nip61Method) {
+        if (nip61Method && canUseNip61) {
             try {
                 retVal = await this.zapNip61(split, nip61Method);
                 if (retVal instanceof NDKNutzap) return retVal;
@@ -417,7 +421,7 @@ class NDKZapper extends EventEmitter<{
         } 
 
         const nip57Method = zapMethods.get("nip57") as NDKLnLudData;
-        if (nip57Method) {
+        if (nip57Method && canUseNip57) {
             try {
                 retVal = await this.zapNip57(split, nip57Method);
                 if (!(retVal instanceof Error)) return retVal;

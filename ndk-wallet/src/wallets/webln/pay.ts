@@ -49,7 +49,6 @@ export class NDKLnPay {
         }
 
         const res = await this.wallet.pay({ pr: quote.request });
-        console.log("payment result", res);
 
         if (!res) {
             console.warn("payment failed");

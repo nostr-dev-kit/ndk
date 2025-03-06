@@ -42,6 +42,19 @@ export type NostrEvent = {
 };
 
 /**
+ * A finalized event
+ */
+export type NDKRawEvent = {
+    created_at: number;
+    content: string;
+    tags: NDKTag[];
+    kind: NDKKind | number;
+    pubkey: string;
+    id: string;
+    sig: string;
+};
+
+/**
  * NDKEvent is the basic building block of NDK; most things
  * you do with NDK will revolve around writing or consuming NDKEvents.
  */
@@ -311,7 +324,7 @@ export class NDKEvent extends EventEmitter {
      */
     public isReplaceable = isReplaceable.bind(this);
     public isEphemeral = isEphemeral.bind(this);
-
+    public isDvm = () => this.kind && this.kind >= 5000 && this.kind <= 7000;
     /**
      * Is this event parameterized replaceable?
      *
@@ -546,6 +559,7 @@ export class NDKEvent extends EventEmitter {
         if (!this.ndk?.clientName && !this.ndk?.clientNip89) return false;
         if (skipClientTagOnKinds.has(this.kind!)) return false;
         if (this.isEphemeral() || this.isReplaceable()) return false;
+        if (this.isDvm()) return false;
         if (this.hasTag("client")) return false;
         return true;
     }

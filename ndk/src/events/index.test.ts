@@ -160,8 +160,8 @@ describe("NDKEvent", () => {
                 const sub = new NDKSubscription(ndk, filter, opts);
 
                 setTimeout(() => {
-                    sub.emit("event", event1, undefined, sub);
-                    sub.emit("event", event2, undefined, sub);
+                    sub.emit("event", event1, undefined, sub, false, false);
+                    sub.emit("event", event2, undefined, sub, false, false);
                     sub.emit("eose", sub);
                 }, 100);
 

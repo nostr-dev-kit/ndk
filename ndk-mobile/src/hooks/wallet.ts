@@ -1,4 +1,4 @@
-import { NDKCashuWallet, NDKNutzapMonitor, NDKWallet } from '@nostr-dev-kit/ndk-wallet';
+import { NDKCashuWallet, NDKNutzapMonitor, NDKNWCWallet, NDKWallet } from '@nostr-dev-kit/ndk-wallet';
 import { NDKCashuMintList } from '@nostr-dev-kit/ndk';
 import { useWalletStore } from '../stores/wallet.js';
 import { useNDK, useNDKCurrentUser } from './ndk.js';
@@ -32,31 +32,40 @@ const useNDKNutzapMonitor = (mintList?: NDKCashuMintList, start: boolean = false
         if (!ndk) return;
         if (!currentUser?.pubkey) return;
         if (!activeWallet?.walletId) return;
-        if (nutzapMonitor) return;
+        if (nutzapMonitor) {
+            nutzapMonitor.wallet = activeWallet;
+            nutzapMonitor.mintList = mintList;
+            return;
+        }
+
+        const isCashu = (activeWallet instanceof NDKCashuWallet);
+        const isNwc = (activeWallet instanceof NDKNWCWallet);
+
+        if (!(isCashu || isNwc)) return;
 
         const knownNutzaps = getKnownNutzaps(ndk);
-        const monitor = new NDKNutzapMonitor(ndk, currentUser, mintList?.relaySet);
+        const monitor = new NDKNutzapMonitor(ndk, currentUser, mintList);
 
         setNutzapMonitor(monitor);
-
-        if (activeWallet instanceof NDKCashuWallet) monitor.wallet = activeWallet;
+        
+        monitor.wallet = activeWallet;
 
         monitor.on("seen", (event) => {
-            saveNutzap(ndk, event);
+            saveNutzap(ndk, [event]);
         });
 
-        monitor.on("redeem", (event) => {
-            saveNutzap(ndk, event, "redeemed", Math.floor(Date.now()/1000));
+        monitor.on("redeem", (events) => {
+            saveNutzap(ndk, events, "redeemed", Math.floor(Date.now()/1000));
         });
 
         monitor.on("spent", (event) => {
-            saveNutzap(ndk, event, "spent");
+            saveNutzap(ndk, [event], "spent");
         });
 
         monitor.on("failed", (event) => {
-            saveNutzap(ndk, event, "failed");
+            saveNutzap(ndk, [event], "failed");
         });
-        
+
         monitor.start({
             knownNutzaps: knownNutzaps,
             pageSize: 10,

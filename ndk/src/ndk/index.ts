@@ -547,7 +547,7 @@ export class NDK extends EventEmitter<{
             }
             
             setTimeout(() => {
-                const cachedEvents = subscription.start(!!eventsHandler);
+                const cachedEvents = subscription.start(!eventsHandler);
                 if (cachedEvents && !!eventsHandler) eventsHandler(cachedEvents);
             }, 0);
         }

@@ -1,11 +1,12 @@
 import { EventEmitter } from "tseep";
 import { NDKWalletBalance, NDKWalletEvents, NDKWalletStatus, type NDKWallet } from "../index.js";
-import NDK, { NDKPool, LnPaymentInfo, NDKPaymentConfirmationCashu, NDKPaymentConfirmationLN, NDKRelaySet, NDKUser, NDKPrivateKeySigner, NDKRelay, NDKRelayAuthPolicies } from "@nostr-dev-kit/ndk";
+import NDK, { NDKPool, LnPaymentInfo, NDKPaymentConfirmationCashu, NDKPaymentConfirmationLN, NDKRelaySet, NDKUser, NDKPrivateKeySigner, NDKRelay, NDKRelayAuthPolicies, NDKEventId } from "@nostr-dev-kit/ndk";
 import { NutPayment } from "../cashu/pay/nut.js";
 import { sendReq } from "./req.js";
 import createDebug from "debug";
-import { NDKNWCGetInfoResult, NDKNWCMakeInvoiceParams, NDKNWCRequestMap, NDKNWCResponseBase, NDKNWCResponseMap } from "./types.js";
-import { CashuMint, CashuWallet, MintQuoteResponse } from "@cashu/cashu-ts";
+import { NDKNWCGetInfoResult, NDKNWCMakeInvoiceResult, NDKNWCRequestMap, NDKNWCResponseBase, NDKNWCResponseMap } from "./types.js";
+import { CashuMint, CashuWallet, MintQuoteResponse, Proof } from "@cashu/cashu-ts";
+import { redeemNutzaps } from "./nutzap.js";
 
 const d = createDebug("ndk-wallet:nwc");
 
@@ -19,7 +20,7 @@ export type NDKNWCWalletEvents = NDKWalletEvents & {
 export class NDKNWCWallet extends EventEmitter<NDKNWCWalletEvents> implements NDKWallet {
     readonly type = "nwc";
     public status = NDKWalletStatus.INITIAL;
-    readonly walletId = "nwc";
+    public walletId = "nwc";
 
     public pairingCode?: string;
 
@@ -184,6 +185,20 @@ export class NDKNWCWallet extends EventEmitter<NDKNWCWalletEvents> implements ND
     }
 
     /**
+     * Redeem a set of nutzaps into an NWC wallet.
+     * 
+     * This function gets an invoice from the NWC wallet until the total amount of the nutzaps is enough to pay for the invoice
+     * when accounting for fees.
+     * 
+     * @param cashuWallet - The cashu wallet to redeem the nutzaps into
+     * @param nutzaps - The nutzaps to redeem
+     * @param proofs - The proofs to redeem
+     * @param mint - The mint to redeem the nutzaps into
+     * @param privkey - The private key needed to redeem p2pk proofs.
+     */
+    public redeemNutzaps = redeemNutzaps.bind(this);
+
+    /**
      * Fetch the balance of this wallet
      */
     async updateBalance(): Promise<void> {
@@ -229,6 +244,8 @@ export class NDKNWCWallet extends EventEmitter<NDKNWCWalletEvents> implements ND
 
         this.cachedInfo = res.result;
 
+        if (res.result.alias) this.walletId = res.result.alias;
+
         return res.result;
     }
 
@@ -240,8 +257,10 @@ export class NDKNWCWallet extends EventEmitter<NDKNWCWalletEvents> implements ND
         return res.result;
     }
 
-    async makeInvoice(amount: number, description: string): Promise<NDKNWCMakeInvoiceParams> {
+    async makeInvoice(amount: number, description: string): Promise<NDKNWCMakeInvoiceResult> {
+        console.log('NDKWALLET making invoice', amount, description);
         const res = await this.req("make_invoice", { amount, description });
+        console.log('NDKWALLET made invoice', res);
 
         if (!res.result) throw new Error("Failed to make invoice");
 

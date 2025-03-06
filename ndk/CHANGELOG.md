@@ -1,5 +1,13 @@
 # @nostr-dev-kit/ndk
 
+## 2.12.1
+
+### Patch Changes
+
+- 3ea9695: deprecate userProfile.image
+- cca3357: move NDKWalletChange from ndk-wallet to NDKCashuWalletTx in ndk
+- 1235f69: add test utils to package @nostr-dev-kit/ndk/test
+
 ## 2.12.0
 
 ### Minor Changes

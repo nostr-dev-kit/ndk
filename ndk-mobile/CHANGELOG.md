@@ -1,5 +1,17 @@
 # @nostr-dev-kit/ndk-mobile
 
+## 0.4.2
+
+### Patch Changes
+
+- sqlite search profile support
+- e667a60: store parsed profile in sqlite adapter
+- Updated dependencies [3ea9695]
+- Updated dependencies [cca3357]
+- Updated dependencies [1235f69]
+    - @nostr-dev-kit/ndk@2.12.1
+    - @nostr-dev-kit/ndk-wallet@0.4.2
+
 ## 0.4.1
 
 ### Patch Changes

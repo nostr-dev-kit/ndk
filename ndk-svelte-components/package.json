@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/ndk-svelte-components",
-    "version": "2.3.10",
+    "version": "2.3.11",
     "description": "",
     "license": "MIT",
     "type": "module",

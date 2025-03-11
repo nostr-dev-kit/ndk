@@ -41,6 +41,7 @@ export interface NDKUserParams {
     nip05?: string;
     relayUrls?: string[];
     nip46Urls?: string[];
+    nprofile?: string;
 }
 
 /**
@@ -63,6 +64,20 @@ export class NDKUser {
 
         if (opts.relayUrls) this.relayUrls = opts.relayUrls;
         if (opts.nip46Urls) this.nip46Urls = opts.nip46Urls;
+        
+        if (opts.nprofile) {
+            try {
+                const decoded = nip19.decode(opts.nprofile);
+                if (decoded.type === 'nprofile') {
+                    this._pubkey = decoded.data.pubkey;
+                    if (decoded.data.relays && decoded.data.relays.length > 0) {
+                        this.relayUrls.push(...decoded.data.relays);
+                    }
+                }
+            } catch (e) {
+                console.error("Failed to decode nprofile", e);
+            }
+        }
     }
 
     get npub(): string {

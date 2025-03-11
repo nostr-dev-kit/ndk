@@ -49,6 +49,25 @@ describe("NDKUser", () => {
 
             expect(user.relayUrls).toEqual(["url1", "url2"]);
         });
+        
+        it("sets pubkey and relayUrls from provided nprofile", () => {
+            (nip19.decode as jest.Mock).mockReturnValueOnce({
+                type: "nprofile",
+                data: {
+                    pubkey: "test_pubkey_from_nprofile",
+                    relays: ["relay1", "relay2"]
+                }
+            });
+            
+            const opts: NDKUserParams = {
+                nprofile: "nprofile1qqsw3dy8lqh0v3kpgqxu43qvyy5jm4v3sekprpakjv93mfwqg",
+            };
+
+            const user = new NDKUser(opts);
+            
+            expect(user.pubkey).toEqual("test_pubkey_from_nprofile");
+            expect(user.relayUrls).toEqual(["relay1", "relay2"]);
+        });
     });
 
     describe("pubkey", () => {

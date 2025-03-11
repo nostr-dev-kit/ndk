@@ -558,7 +558,8 @@ export class NDKEvent extends EventEmitter {
     get shouldAddClientTag(): boolean {
         if (!this.ndk?.clientName && !this.ndk?.clientNip89) return false;
         if (skipClientTagOnKinds.has(this.kind!)) return false;
-        if (this.isEphemeral() || this.isReplaceable()) return false;
+        if (this.isEphemeral()) return false;
+        if (this.isReplaceable() && !this.isParamReplaceable()) return false;
         if (this.isDvm()) return false;
         if (this.hasTag("client")) return false;
         return true;

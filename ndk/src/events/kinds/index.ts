@@ -18,6 +18,8 @@ export enum NDKKind {
     PrivateDirectMessage = 14,
 
     Image = 20,
+    Video = 21,
+    ShortVideo = 22,
 
     // NIP-62
     Vanish = 62,

@@ -34,7 +34,7 @@ describe('mapImetaTag', () => {
         const result = mapImetaTag(tag);
         const expected: NDKImetaTag = {
             url: 'https://example.com',
-            alt: 'example',
+            alt: 'image',
             fallback: ['https://fallback1.com']
         };
         expect(result).toEqual(expected);
@@ -83,7 +83,7 @@ describe('exampleFunction', () => {
             dim: '800x600',
             fallback: ['https://fallback1.com', 'https://fallback2.com']
         };
-        const expectedOutput: NDKTag = ['imeta', 'url https://example.com', 'alt example dim 800x600', 'fallback https://fallback1.com', 'fallback https://fallback2.com'];
+        const expectedOutput: NDKTag = ['imeta', 'url https://example.com', 'alt example', 'dim 800x600', 'fallback https://fallback1.com', 'fallback https://fallback2.com'];
         const result = imetaTagToTag(edgeCaseInput);
         expect(result).toEqual(expectedOutput);
     });

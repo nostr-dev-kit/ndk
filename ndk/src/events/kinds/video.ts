@@ -12,13 +12,12 @@ import type { ContentTag } from "../content-tagger";
  * @group Kind Wrapper
  */
 export class NDKVideo extends NDKEvent {
-    static kind = NDKKind.HorizontalVideo;
-    static kinds = [NDKKind.HorizontalVideo, NDKKind.VerticalVideo];
+    static kind = NDKKind.Video;
+    static kinds = [NDKKind.HorizontalVideo, NDKKind.VerticalVideo, NDKKind.ShortVideo, NDKKind.Video];
     private _imetas: NDKImetaTag[] | undefined;
 
     constructor(ndk: NDK | undefined, rawEvent?: NostrEvent) {
         super(ndk, rawEvent);
-        this.kind ??= NDKKind.HorizontalVideo;
     }
 
     /**
@@ -101,19 +100,6 @@ export class NDKVideo extends NDKEvent {
     }
 
     /**
-     * Setter for the article's publication timestamp.
-     *
-     * @param {number | undefined} timestamp - The Unix timestamp to set for the article's publication date.
-     */
-    set published_at(timestamp: number | undefined) {
-        this.removeTag("published_at"); // Removes any existing "published_at" tag.
-
-        if (timestamp !== undefined) {
-            this.tags.push(["published_at", timestamp.toString()]);
-        }
-    }
-
-    /**
      * Generates content tags for the article.
      *
      * This method first checks and sets the publication date if not available,
@@ -124,8 +110,14 @@ export class NDKVideo extends NDKEvent {
     async generateTags(): Promise<ContentTag> {
         super.generateTags();
 
-        if (!this.published_at) {
-            this.published_at = this.created_at;
+        if (!this.kind) {
+            if (this.imetas?.[0]?.dim) {
+                const [width, height] = this.imetas[0].dim.split('x');
+                const isPortrait = width && height && parseInt(width) < parseInt(height);
+                const isShort = this.duration && this.duration < 120;
+                if (isShort && isPortrait) this.kind = NDKKind.ShortVideo;
+                else this.kind = NDKKind.Video;
+            }
         }
 
         return super.generateTags();

@@ -11,6 +11,7 @@ import {
     NDKEventId,
     NDKKind,
     matchFilter,
+    profileFromEvent,
 } from '@nostr-dev-kit/ndk';
 import { LRUCache } from 'typescript-lru-cache';
 import * as SQLite from 'expo-sqlite';
@@ -301,6 +302,11 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
 
             if (event.kind === NDKKind.EventDeletion) {
                 this.deleteEventIds(event.tags.filter((tag) => tag[0] === 'e').map((tag) => tag[1]));
+            } else if (event.kind === NDKKind.Metadata) {
+                const profile = profileFromEvent(event);
+                if (profile) {
+                    this.saveProfile(event.pubkey, profile);
+                }
             }
         });
     }

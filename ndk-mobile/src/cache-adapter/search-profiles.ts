@@ -24,7 +24,8 @@ export function searchProfiles(adapter: NDKCacheAdapterSqlite, query: string): N
             lud06: row.lud06,
             displayName: row.display_name,
             website: row.website,
-            created_at: row.created_at
+            created_at: row.created_at,
+            pubkey: row.pubkey
         };
         results.push(profile);
     }

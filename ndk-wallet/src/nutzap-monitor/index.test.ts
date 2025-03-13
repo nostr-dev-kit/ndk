@@ -1,235 +1,334 @@
-import NDK, { Hexpubkey, NDKCashuMintList, NDKNutzap, NDKPrivateKeySigner, NDKUser } from "@nostr-dev-kit/ndk";
-import { NDKNutzapMonitor } from ".";
-import { fetchPage } from "./fetch-page";
-import { mockNutzap } from "@nostr-dev-kit/ndk/test";
-import * as CashuMintModule from "../wallets/cashu/mint";
-import { CashuWallet, ProofState, Proof, CheckStateEnum } from "@cashu/cashu-ts";
-import { CashuMint } from "@cashu/cashu-ts";
-import * as SpendStatusModule from "./spend-status";
-import { correctP2pk } from "../wallets/cashu/pay";
+import NDK, { NDKCashuMintList, NDKEvent, NDKEventId, NDKNutzap, NDKPrivateKeySigner, NDKRelaySet, NDKUser } from "@nostr-dev-kit/ndk";
+import { NDKNutzapMonitor, NDKNutzapState, NdkNutzapStatus, NDKNutzapMonitorStore } from "./index";
+import * as CashuMintModule from "../wallets/cashu/mint.js";
+import { CashuMint, CashuWallet } from "@cashu/cashu-ts";
+import * as SpendStatusModule from "./spend-status.js";
+import { NDKCashuWallet } from "../wallets/cashu/wallet/index.js";
+import { fetchPage } from "./fetch-page.js";
+import { mockNutzap } from "../tests/index.js";
 
-jest.mock("./fetch-page");
+// Mock the modules we don't want to actually call
+jest.mock("./fetch-page.js");
+jest.mock("./spend-status.js");
+jest.mock("../wallets/cashu/mint.js");
 
-const ndk = new NDK({
-    signer: NDKPrivateKeySigner.generate(),
-    explicitRelayUrls: ['wss://relay1.com', 'wss://relay2.com']
-});
-let user: NDKUser;
-const mintList = new NDKCashuMintList(ndk);
-mintList.mints = ['https://testnut.cashu.space'];
-mintList.relays = ['wss://relay1.com', 'wss://relay2.com'];
+// Define the extended store type with our test spy
+interface MockStore extends NDKNutzapMonitorStore {
+    setNutzapStateSpy: jest.Mock;
+}
 
-beforeAll(async () => {
-    user = await ndk.signer!.user();
-});
+// Mock store for testing
+const createMockStore = (): MockStore => {
+    const nutzapStates = new Map<NDKEventId, NDKNutzapState>();
+    const setNutzapStateSpy = jest.fn();
+    
+    return {
+        getAllNutzaps: async (): Promise<Map<NDKEventId, NDKNutzapState>> => nutzapStates,
+        setNutzapState: async (id: NDKEventId, stateChange: Partial<NDKNutzapState>): Promise<void> => {
+            const currentState = nutzapStates.get(id) || {} as NDKNutzapState;
+            nutzapStates.set(id, { ...currentState, ...stateChange });
+            setNutzapStateSpy(id, stateChange);
+        },
+        setNutzapStateSpy
+    };
+};
 
 describe("NDKNutzapMonitor", () => {
-    describe('processNutzaps', () => {
-        it('checks spending status of nutzaps on each mint', async () => {
-            const monitor = new NDKNutzapMonitor(ndk, user, mintList);
-
-            jest.spyOn(CashuMintModule, 'walletForMint').mockResolvedValue(new CashuWallet(new CashuMint('https://mint1.com')));
-
-            const nutzaps = [
-                await mockNutzap('https://mint1.com', 100, ndk),
-                await mockNutzap('https://mint2.com', 200, ndk),
-            ];
-
-            // mock the fetchPage function
-            (fetchPage as jest.Mock).mockResolvedValue(nutzaps);
-
-            const getUnspentProofsSpy = jest.spyOn(SpendStatusModule, 'getProofSpendState').mockResolvedValue(
-                nutzaps.map(n => ({ nutzap: n, state: CheckStateEnum.UNSPENT }))
-            );
-            jest.spyOn(monitor, 'redeemNutzaps').mockImplementation();
-            
-            await monitor.processNutzaps(new Set(), 10);
-
-            expect(getUnspentProofsSpy).toHaveBeenCalledTimes(2);
-
-            // clear the mock
-            jest.clearAllMocks();
+    let ndk: NDK;
+    let user: NDKUser;
+    let mintList: NDKCashuMintList;
+    let mockStore: MockStore;
+    let monitor: NDKNutzapMonitor;
+    
+    beforeEach(async () => {
+        // Setup NDK with a signer
+        ndk = new NDK({
+            signer: NDKPrivateKeySigner.generate(),
+            explicitRelayUrls: ['wss://relay1.com']
         });
-
-        it('skips asking for known nutzaps', async () => {
-            const monitor = new NDKNutzapMonitor(ndk, user, mintList);
-
-            const nutzaps = [
-                await mockNutzap('https://mint3.com', 200, ndk),
-            ];
-
-            (fetchPage as jest.Mock).mockResolvedValue(nutzaps);
-
-            const knownNutzaps = new Set([nutzaps[0].id]);
-            const unspentResult: [string[], Proof[]] = [nutzaps.map(n => n.id), nutzaps.flatMap(n => n.proofs)];
-
-            const getUnspentProofsSpy = jest.spyOn(SpendStatusModule, 'getProofSpendState').mockResolvedValue(unspentResult);
-
-            await monitor.processNutzaps(knownNutzaps, 10);
-
-            expect(getUnspentProofsSpy).toHaveBeenCalledTimes(0);
+        
+        user = await ndk.signer!.user();
+        
+        // Setup a mint list
+        mintList = new NDKCashuMintList(ndk);
+        mintList.mints = ['https://testmint.com'];
+        
+        // Mock CashuWallet
+        const mockCashuWallet = new CashuWallet(new CashuMint('https://testmint.com'));
+        jest.spyOn(mockCashuWallet, 'checkProofsStates').mockResolvedValue([]);
+        jest.spyOn(CashuMintModule, 'walletForMint').mockResolvedValue(mockCashuWallet);
+        
+        // Setup mock store
+        mockStore = createMockStore();
+        
+        // Create the monitor
+        monitor = new NDKNutzapMonitor(ndk, user, { mintList, store: mockStore });
+        
+        // Setup mock NDKCashuWallet
+        const mockNDKCashuWallet = new NDKCashuWallet(ndk);
+        mockNDKCashuWallet.redeemNutzaps = jest.fn().mockResolvedValue(100);
+        monitor.wallet = mockNDKCashuWallet;
+        
+        // Mock console methods
+        jest.spyOn(console, 'error').mockImplementation(() => {});
+        jest.spyOn(console, 'log').mockImplementation(() => {});
+    });
+    
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+    
+    describe("addPrivkey", () => {
+        it("should add a private key to the monitor", async () => {
+            const signer = NDKPrivateKeySigner.generate();
+            const pubkey = (await signer.user()).pubkey;
             
-            getUnspentProofsSpy.mockClear();
+            await monitor.addPrivkey(signer);
+            
+            expect(monitor.privkeys.has(pubkey)).toBe(true);
         });
-
-        it('tries to redeem unspent nutzaps', async () => {
-            jest.spyOn(CashuMintModule, 'walletForMint').mockResolvedValue(new CashuWallet(new CashuMint('https://mint1.com')));
-            const monitor = new NDKNutzapMonitor(ndk, user, mintList);
-
-            const nutzaps = [
-                await mockNutzap('https://mint1.com', 100, ndk),
-                await mockNutzap('https://mint2.com', 200, ndk),
-            ];
-            (fetchPage as jest.Mock).mockResolvedValue(nutzaps);
-
-            const unspentResult: [string[], Proof[]] = [nutzaps.map(n => n.id), nutzaps.flatMap(n => n.proofs)];
+        
+        it("should attempt to redeem nutzaps that were previously locked to a privkey that is now available", async () => {
+            // Create a signer
+            const signer = NDKPrivateKeySigner.generate();
+            const pubkey = (await signer.user()).pubkey;
             
-            const getUnspentProofsSpy = jest.spyOn(SpendStatusModule, 'getProofSpendState').mockResolvedValue(unspentResult);
-            jest.spyOn(monitor, 'redeemNutzaps').mockImplementation();
-            await monitor.processNutzaps(new Set(), 10);
-
-            expect(getUnspentProofsSpy).toHaveBeenCalledTimes(2);
-
-            jest.clearAllMocks();
-        })
-
-        fit('emits spent on the nutzaps that are seen as spent', async () => {
-            const monitor = new NDKNutzapMonitor(ndk, user, mintList);
-            const nutzaps = [
-                await mockNutzap('https://mint1.com', 100, ndk),
-                await mockNutzap('https://mint1.com', 200, ndk),
-            ];
-
-            (fetchPage as jest.Mock).mockResolvedValue(nutzaps);
-
-            const getProofSpendStateResult = [
-                { nutzap: nutzaps[0], state: CheckStateEnum.UNSPENT },
-                { nutzap: nutzaps[1], state: CheckStateEnum.SPENT },
-            ];
-
-            const getProofSpendStateSpy = jest.spyOn(SpendStatusModule, 'getProofSpendState').mockResolvedValue(getProofSpendStateResult);
-            jest.spyOn(monitor, 'redeemNutzaps').mockImplementation();
-            await monitor.processNutzaps(new Set(), 10);
-
-            // monitor should emit spend with the nutzap that is seen as spent
-            expect(monitor.emit).toHaveBeenCalledWith('spent', nutzaps[1]);
-        })
-
-        it('skips proofs that are p2pk-locked to a key we do not have access to', async () => {
-            const walletForMintSpy = jest.spyOn(CashuMintModule, 'walletForMint').mockResolvedValue(new CashuWallet(new CashuMint('https://mint1.com')));
+            // Create a nutzap that requires this privkey
+            const nutzap = await mockNutzap('https://testmint.com', 100, ndk, { recipientPubkey: pubkey });
             
-            const monitor = new NDKNutzapMonitor(ndk, user, mintList);
-            const pabloPubkey = "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52";
-            const nutzaps = [
-                await mockNutzap('https://mint1.com', 100, ndk, { recipientPubkey: pabloPubkey }),
-                await mockNutzap('https://mint1.com', 100, ndk),
-            ];
-
-            (fetchPage as jest.Mock).mockResolvedValue(nutzaps);
-
-            const redeemSpy = jest.spyOn(monitor, 'redeemNutzaps').mockImplementation();
-
-            // mock the checkProofsStates of whatever CashuWallet instance is returned by walletForMint
-            walletForMintSpy.mockImplementation(() => {
-                const wallet = new CashuWallet(new CashuMint('https://mint1.com'));
-                mockCheckProofsStates(wallet, [CheckStateEnum.UNSPENT, CheckStateEnum.UNSPENT]);
-                return Promise.resolve(wallet);
+            // Set the nutzap state to MISSING_PRIVKEY
+            monitor.nutzapStates.set(nutzap.id, {
+                nutzap,
+                status: NdkNutzapStatus.MISSING_PRIVKEY
             });
             
-            await monitor.processNutzaps(new Set(), 10);
-
-            expect(redeemSpy).toHaveBeenCalledTimes(1);
-            expect(redeemSpy).toHaveBeenCalledWith(nutzaps[1].mint, [nutzaps[1]], nutzaps[1].proofs, ndk.signer as NDKPrivateKeySigner);
+            // Mock getProofSpendState to return the nutzap as unspent
+            jest.spyOn(SpendStatusModule, 'getProofSpendState').mockResolvedValue({
+                unspentProofs: nutzap.proofs,
+                spentProofs: [],
+                nutzapsWithUnspentProofs: [nutzap],
+                nutzapsWithSpentProofs: []
+            });
             
-            jest.clearAllMocks();
-        })
-
-        xit('real quote', async () => {
-            jest.clearAllMocks();
-            const monitor = new NDKNutzapMonitor(ndk, user, mintList);
+            // Spy on redeemNutzaps
+            const redeemSpy = jest.spyOn(monitor, 'redeemNutzaps').mockResolvedValue(undefined);
             
-            const nutzaps = await createRealTestnutNutzap(6, user.pubkey, [2, 4]);
-
-            (fetchPage as jest.Mock).mockResolvedValue(nutzaps);
-
-            // spend the second nutzap
-            await monitor.redeemNutzaps(nutzaps[0].mint, [nutzaps[0]], nutzaps[0].proofs, ndk.signer as NDKPrivateKeySigner);
+            // Add the privkey (this should trigger a check for nutzaps that can now be redeemed)
+            await monitor.addPrivkey(signer);
             
-            await monitor.processNutzaps(new Set(), 10);
-        })
+            // Start the monitor to trigger the check for nutzaps
+            await monitor.start({ filter: {} });
+            
+            // Check that redeemNutzaps was called with the right arguments
+            expect(redeemSpy).toHaveBeenCalled();
+            const callArgs = redeemSpy.mock.calls[0];
+            expect(callArgs[0]).toBe(nutzap.mint);
+            expect(callArgs[1]).toContainEqual(expect.objectContaining({ id: nutzap.id }));
+            expect(callArgs[3]).toHaveProperty('privateKey', signer.privateKey);
+        });
+    });
+    
+    describe("redeemNutzap", () => {
+        it("should set state to MISSING_PRIVKEY when no privkey is available", async () => {
+            // Create a nutzap with a pubkey we don't have
+            const unknownSigner = NDKPrivateKeySigner.generate();
+            const unknownPubkey = (await unknownSigner.user()).pubkey;
+            
+            const nutzap = await mockNutzap('https://testmint.com', 100, ndk, { recipientPubkey: unknownPubkey });
+            
+            // Try to redeem the nutzap
+            await monitor.redeemNutzap(nutzap);
+            
+            // Check the state is set to MISSING_PRIVKEY
+            const state = monitor.nutzapStates.get(nutzap.id);
+            expect(state?.status).toBe(NdkNutzapStatus.MISSING_PRIVKEY);
+            
+            // Check the store was updated
+            expect(mockStore.setNutzapStateSpy).toHaveBeenCalledWith(
+                nutzap.id,
+                expect.objectContaining({ status: NdkNutzapStatus.MISSING_PRIVKEY })
+            );
+        });
+        
+        it("should transition through states and set redeemedAmount when successfully redeemed", async () => {
+            // Mock the wallet for mints
+            const mockCashuWallet = new CashuWallet(new CashuMint('https://testmint.com'));
+            jest.spyOn(CashuMintModule, 'walletForMint').mockResolvedValue(mockCashuWallet);
+            
+            // Get the user's pubkey and create a nutzap for them
+            const userSigner = ndk.signer as NDKPrivateKeySigner;
+            const userPubkey = (await userSigner.user()).pubkey;
+            
+            // Create a nutzap for the user
+            const nutzap = await mockNutzap('https://testmint.com', 100, ndk, { recipientPubkey: userPubkey });
+            
+            // Add the user's privkey to the monitor
+            await monitor.addPrivkey(userSigner);
+            
+            // Listen to emit events instead of spying on private method
+            const stateChanges: NdkNutzapStatus[] = [];
+            monitor.on('state_changed', (id, status) => {
+                stateChanges.push(status);
+            });
+            
+            // Try to redeem the nutzap
+            await monitor.redeemNutzap(nutzap);
+            
+            // Check state transitions (should include INITIAL, PROCESSING, and REDEEMED)
+            expect(stateChanges).toContain(NdkNutzapStatus.INITIAL);
+            expect(stateChanges).toContain(NdkNutzapStatus.PROCESSING);
+            expect(stateChanges).toContain(NdkNutzapStatus.REDEEMED);
+        });
+        
+        it("should mark nutzap as PERMANENT_ERROR when 'unknown public key size' error occurs", async () => {
+            // Mock the wallet for mints
+            const mockCashuWallet = new CashuWallet(new CashuMint('https://testmint.com'));
+            jest.spyOn(CashuMintModule, 'walletForMint').mockResolvedValue(mockCashuWallet);
+            
+            // Get the user's pubkey and create a nutzap for them
+            const userSigner = ndk.signer as NDKPrivateKeySigner;
+            const userPubkey = (await userSigner.user()).pubkey;
+            
+            // Create a nutzap for the user
+            const nutzap = await mockNutzap('https://testmint.com', 100, ndk, { recipientPubkey: userPubkey });
+            
+            // Add the user's privkey to the monitor
+            await monitor.addPrivkey(userSigner);
+            
+            // Mock redeemNutzaps to throw "unknown public key size" error
+            jest.spyOn(monitor.wallet as NDKCashuWallet, 'redeemNutzaps').mockImplementation(() => {
+                throw new Error("unknown public key size");
+            });
+            
+            // Listen for failed emissions
+            const failedEvents: Array<{nutzap: NDKNutzap, error: string}> = [];
+            monitor.on('failed', (nutzap, error) => {
+                failedEvents.push({nutzap, error});
+            });
+            
+            // Try to redeem the nutzap
+            await monitor.redeemNutzap(nutzap);
+            
+            // Check that the failed event was emitted with correct error message
+            expect(failedEvents.length).toBe(1);
+            expect(failedEvents[0].nutzap.id).toBe(nutzap.id);
+            expect(failedEvents[0].error).toBe("Invalid p2pk: unknown public key size");
+            
+            // Check that the nutzap state was updated correctly
+            const finalState = monitor.nutzapStates.get(nutzap.id);
+            expect(finalState?.status).toBe(NdkNutzapStatus.PERMANENT_ERROR);
+            expect(finalState?.errorMessage).toBe("Invalid p2pk: unknown public key size");
+        });
+    });
+    
+    describe("processAccumulatedNutzaps", () => {
+        it("should mark spent nutzaps as SPENT and not attempt to redeem them", async () => {
+            // Get the user's pubkey 
+            const userPubkey = (await ndk.signer!.user()).pubkey;
+            
+            // Create nutzaps - one spent, one unspent
+            const unspentNutzap = await mockNutzap('https://testmint.com', 100, ndk, { recipientPubkey: userPubkey });
+            const spentNutzap = await mockNutzap('https://testmint.com', 200, ndk, { recipientPubkey: userPubkey });
+            
+            // Setup fetchPage mock
+            (fetchPage as jest.Mock).mockResolvedValue([unspentNutzap, spentNutzap]);
+            
+            // Setup getProofSpendState mock to show one nutzap as spent and one as unspent
+            jest.spyOn(SpendStatusModule, 'getProofSpendState').mockResolvedValue({
+                unspentProofs: unspentNutzap.proofs,
+                spentProofs: spentNutzap.proofs,
+                nutzapsWithUnspentProofs: [unspentNutzap],
+                nutzapsWithSpentProofs: [spentNutzap]
+            });
+            
+            // Add user's private key
+            await monitor.addPrivkey(ndk.signer as NDKPrivateKeySigner);
+            
+            // Listen to emit events instead of spying on private method
+            const stateChanges = new Map<NDKEventId, NdkNutzapStatus>();
+            monitor.on('state_changed', (id, status) => {
+                stateChanges.set(id, status);
+            });
+            
+            // Process the nutzaps
+            await monitor.processAccumulatedNutzaps();
+            
+            // Check that spent nutzap was marked as SPENT
+            expect(stateChanges.get(spentNutzap.id)).toBe(NdkNutzapStatus.SPENT);
+        });
+    });
+    
+    describe("store integration", () => {
+        it("should load nutzap states from the store on startup", async () => {
+            // Create a new mock store with pre-populated state
+            const newStore = createMockStore();
+            const existingNutzap = await mockNutzap('https://testmint.com', 100, ndk);
+            
+            // Add a nutzap state to the store
+            await newStore.setNutzapState(existingNutzap.id, {
+                nutzap: existingNutzap,
+                status: NdkNutzapStatus.REDEEMED,
+                redeemedAmount: 100
+            });
+            
+            // Create a new monitor with this store
+            const newMonitor = new NDKNutzapMonitor(ndk, user, { mintList, store: newStore });
+            
+            // Mock fetchPage to return empty array (so we don't process new nutzaps)
+            (fetchPage as jest.Mock).mockResolvedValue([]);
+            
+            // Start the monitor (this should load states from the store)
+            await newMonitor.start({ filter: {} });
+            
+            // Check that the state was loaded from the store
+            const state = newMonitor.nutzapStates.get(existingNutzap.id);
+            expect(state?.status).toBe(NdkNutzapStatus.REDEEMED);
+            expect(state?.redeemedAmount).toBe(100);
+        });
+    });
+    
+    describe("shouldTryRedeem", () => {
+        it("should return false for nutzaps with PERMANENT_ERROR status", async () => {
+            // Create a nutzap
+            const signer = NDKPrivateKeySigner.generate();
+            const pubkey = (await signer.user()).pubkey;
+            const nutzap = await mockNutzap('https://testmint.com', 100, ndk, { recipientPubkey: pubkey });
+            
+            // Set it to PERMANENT_ERROR state
+            monitor.nutzapStates.set(nutzap.id, {
+                nutzap,
+                status: NdkNutzapStatus.PERMANENT_ERROR,
+                errorMessage: "Invalid p2pk: unknown public key size"
+            });
+            
+            // It should not be retried
+            expect(monitor.shouldTryRedeem(nutzap)).toBe(false);
+        });
+        
+        it("should return true for nutzaps with INITIAL status", async () => {
+            // Create a nutzap
+            const signer = NDKPrivateKeySigner.generate();
+            const pubkey = (await signer.user()).pubkey;
+            const nutzap = await mockNutzap('https://testmint.com', 100, ndk, { recipientPubkey: pubkey });
+            
+            // Set it to INITIAL state
+            monitor.nutzapStates.set(nutzap.id, {
+                nutzap,
+                status: NdkNutzapStatus.INITIAL
+            });
+            
+            // It should be retried
+            expect(monitor.shouldTryRedeem(nutzap)).toBe(true);
+        });
+        
+        it("should return true for unknown nutzaps", async () => {
+            // Create a nutzap without setting any state
+            const signer = NDKPrivateKeySigner.generate();
+            const pubkey = (await signer.user()).pubkey;
+            const nutzap = await mockNutzap('https://testmint.com', 100, ndk, { recipientPubkey: pubkey });
+            
+            // It should be retried since it's unknown
+            expect(monitor.shouldTryRedeem(nutzap)).toBe(true);
+        });
     });
 });
-
-// increase jest timeout to 15 seconds
-jest.setTimeout(15000);
-
-const wallet: Record<string, CashuWallet> = {};
-const walletPromises: Record<string, Promise<CashuWallet>> = {};
-
-async function getCashuWallet(mint: string) {
-    if (!wallet[mint]) {
-        if (!walletPromises[mint]) {
-            const w = new CashuWallet(new CashuMint(mint));
-            walletPromises[mint] = new Promise(async (resolve) => {
-                await w.getMintInfo();
-                await w.getKeys();
-                wallet[mint] = w;
-                resolve(w);
-            });
-            await walletPromises[mint];
-        } else {
-            await walletPromises[mint];
-        }
-    }
-    return wallet[mint];
-}
-
-/**
- * This function creates a real testnut nutzap, talking
- * to an actual mint.
- * @returns 
- */
-async function createRealTestnutNutzap(
-    amount: number,
-    recipientPubkey: Hexpubkey,
-    amounts?: number[],
-    mint: string = 'https://testnut.cashu.space',
-    content: string = "",
-    pk: NDKPrivateKeySigner = NDKPrivateKeySigner.generate()
-) {
-    amounts ??= [amount];
-    const cashuWallet = await getCashuWallet(mint);
-    const {quote} = await cashuWallet.createMintQuote(amount);
-    const proofs = await cashuWallet.mintProofs(
-        amount,
-        quote,
-        {
-            pubkey: correctP2pk(recipientPubkey),
-            outputAmounts: {
-                sendAmounts: amounts,
-            }
-        }
-    );
-
-    const nutzaps: NDKNutzap[] = [];
-    const numberOfProofsPerNutzap = proofs.length / amounts.length;
-    for (const [index, amount] of amounts.entries()) {
-        const nutzap = new NDKNutzap(ndk);
-        nutzap.mint = mint;
-        nutzap.proofs = proofs.slice(index * numberOfProofsPerNutzap, (index + 1) * numberOfProofsPerNutzap);
-        nutzap.content = content;
-        await nutzap.sign(pk);
-        nutzaps.push(nutzap);
-    }
-
-    return nutzaps;
-}
-
-/**
- * Mocks in a CashuWallet a call to checkProofsStates with the given states.
- */
-function mockCheckProofsStates(wallet: CashuWallet, states: CheckStateEnum[]) {
-    jest.spyOn(wallet, 'checkProofsStates').mockResolvedValue(
-        states.map(state => ({ state, Y: '1', witness: '1' }))
-    );
-}

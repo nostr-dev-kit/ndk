@@ -19,6 +19,9 @@ export function groupNutzaps(nutzaps: NDKNutzap[], monitor: NDKNutzapMonitor): A
 
         for (const proof of nutzap.proofs) {
             const p2pk = proofP2pkNostr(proof);
+            if (!p2pk) {
+                console.log('Unable to parse p2pk for nutzap', nutzap.encode(), JSON.stringify(nutzap.rawEvent(), null, 4));
+            }
             const safeP2pk = p2pk || "no-key";
 
             // add to the right group

@@ -24,6 +24,9 @@ export enum NDKKind {
     // NIP-62
     Vanish = 62,
 
+    // NIP-60 backup
+    CashuWalletBackup = 375,
+
     // Nip 59 : Gift Wrap
     GiftWrap = 1059,
 

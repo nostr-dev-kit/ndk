@@ -426,7 +426,7 @@ export class NDKNutzapMonitor extends EventEmitter<{
         this.nutzapStates.set(id, { ...currentState, ...state });
         this.emit("state_changed", id, currentState.status);
 
-        const serializedState = (state: Partial<NDKNutzapState>) => JSON.stringify({...state, nutzap: !!state.nutzap}, null, 2);
+        const serializedState = (state: Partial<NDKNutzapState>) => JSON.stringify({...state, nutzap: !!state.nutzap});
         const currentStatusStr = serializedState(currentState);
         const newStatusStr = serializedState(state);
         console.log(`\t[${id.substring(0, 6)}]`, currentStatusStr, "changed to 👉", newStatusStr);
@@ -518,6 +518,22 @@ export class NDKNutzapMonitor extends EventEmitter<{
             }
         } catch (e: any) {
             console.error(`${this.randId} failed to redeem nutzaps`, e.message);
+            
+            // Handle "unknown public key size" as a permanent error
+            if (e.message && e.message.includes("unknown public key size")) {
+                for (const nutzap of nutzaps) {
+                    this.updateNutzapState(nutzap.id, { 
+                        status: NdkNutzapStatus.PERMANENT_ERROR, 
+                        errorMessage: "Invalid p2pk: unknown public key size" 
+                    });
+                    this.emit("failed", nutzap, "Invalid p2pk: unknown public key size");
+                }
+            } else {
+                // For other errors, emit failed event
+                for (const nutzap of nutzaps) {
+                    this.emit("failed", nutzap, e.message);
+                }
+            }
         }
     }
 
@@ -531,6 +547,13 @@ export class NDKNutzapMonitor extends EventEmitter<{
         if (state.status === NdkNutzapStatus.MISSING_PRIVKEY) {
             const p2pk = state.nutzap?.p2pk;
             if (p2pk && this.privkeys.has(p2pk)) return true;
+        }
+
+        // Never retry permanent errors
+        if (state.status === NdkNutzapStatus.PERMANENT_ERROR) {
+            console.log(`${this.randId} will not try redeeming nutzap with permanent error:`, 
+                        state.nutzap?.id, state.errorMessage);
+            return false;
         }
 
         console.log(`${this.randId} will not try redeeming nutzap`, state.nutzap?.id, "because it's in status", state.status);

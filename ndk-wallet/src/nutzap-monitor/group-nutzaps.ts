@@ -1,18 +1,19 @@
-import { NDKEventId, NDKNutzap } from "@nostr-dev-kit/ndk";
+import { NDKNutzap } from "@nostr-dev-kit/ndk";
 import { proofP2pkNostr } from "@nostr-dev-kit/ndk";
+import { NDKNutzapMonitor } from ".";
 
-type GroupedNutzaps = {
+export type GroupedNutzaps = {
     mint: string;
     p2pk: string;
     nutzaps: NDKNutzap[];
 }
 
-export function groupNutzaps(nutzaps: NDKNutzap[], knownNutzaps: Set<NDKEventId>): Array<GroupedNutzaps> {
+export function groupNutzaps(nutzaps: NDKNutzap[], monitor: NDKNutzapMonitor): Array<GroupedNutzaps> {
     const result = new Map<string, GroupedNutzaps>();
     const getKey = (mint: string, p2pk: string = "no-key") => `${mint}:${p2pk}`;
     
     for (const nutzap of nutzaps) {
-        if (knownNutzaps.has(nutzap.id)) continue;
+        if (!monitor.shouldTryRedeem(nutzap)) continue;
 
         const mint = nutzap.mint;
 

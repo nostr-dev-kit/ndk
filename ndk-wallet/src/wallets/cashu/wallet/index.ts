@@ -112,26 +112,26 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
         this.state = new WalletState(this);
     }
 
-    /**
-     * Finds the user's wallet or creates a new one if it one can't be found
-     * @param ndk 
-     * @param mints 
-     * @returns 
-     */
-    static findOrCreate(ndk: NDK, mints: string[] = [], relayUrls: string[] = []) {
-        const wallet = new NDKCashuWallet(ndk);
-        wallet.mints = mints;
-        wallet.relaySet = NDKRelaySet.fromRelayUrls(relayUrls, ndk);
-        wallet.publish();
-        return wallet;
-    }
-
     set event(e: NDKEvent | undefined) {
         this._event = e;
     }
 
     get event(): NDKEvent | undefined {
         return this._event;
+    }
+
+    /**
+     * Generates a backup of this wallet
+     */
+    async backup(publish = true) {
+        if (!this.event) throw new Error("wallet event not available");
+
+        const backup = new NDKCashuWalletBackup(this.ndk);
+        backup.privkeys = Array.from(this.privkeys.values().map(signer => signer.privateKey!));
+        backup.mints = this.mints;
+        if (publish) backup.publish(this.relaySet);
+
+        return backup;
     }
 
     tagId() {
@@ -202,7 +202,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
                 if (tag[0] === "mint") {
                     wallet.mints.push(tag[1]);
                 } else if (tag[0] === "privkey") {
-                    wallet.addPrivkey(tag[1]);
+                    await wallet.addPrivkey(tag[1]);
                 }
             }
         } catch (e) {
@@ -262,6 +262,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
 
         if (this.privkeys.size === 0) {
             const signer = NDKPrivateKeySigner.generate();
+            console.trace('generating a new p2pk', signer.privateKey);
             await this.addPrivkey(signer.privateKey!);
         }
 
@@ -302,23 +303,20 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
         return this.event.tags.some((t) => t[0] === "deleted");
     }
 
+    /** 
+     * Generates the payload for a wallet event
+     */
+    private walletPayload(): NDKTag[] {
+        const privkeys = Array.from(this.privkeys.values().map(signer => signer.privateKey!));
+        
+        return payloadForEvent(privkeys, this.mints);
+    }
+
     async publish() {
         if (!this.event) throw new Error("wallet event not available");
         
         if (!this.isDeleted) {
-            if (this.privkeys.size === 0) throw new Error("privkey not set");
-
-            const content: NDKTag[] = [];
-            
-            for (const mint of this.mints) {
-                content.push(["mint", mint]);
-            }
-
-            for (const privkey of this.privkeys.values()) {
-                content.push(["privkey", privkey.privateKey!]);
-            }
-
-            this.event.content = JSON.stringify(content);
+            this.event.content = JSON.stringify(this.walletPayload());
             const user = await this.ndk!.signer!.user();
             await this.event.encrypt(user, undefined, "nip44");
         }
@@ -450,6 +448,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
 
     async redeemNutzap(
         nutzap: NDKNutzap,
+        privkey: NDKPrivateKeySigner | undefined,
         { onRedeemed }: { onRedeemed?: (res: Proof[]) => void }
     ) {
         const user = this.ndk.activeUser;
@@ -458,7 +457,7 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
 
         const isP2pk = !!nutzap.p2pk;
 
-        let privkey = isP2pk ? this.privkeys.get(nutzap.p2pk) : undefined;
+        privkey ??= isP2pk ? this.privkeys.get(nutzap.p2pk) : undefined;
 
         // if the nutzap is p2pk to the user's pubkey, check if we have the private key in memory
         if (!privkey && nutzap.p2pk === user.pubkey) {
@@ -556,4 +555,56 @@ export class NDKCashuWallet extends EventEmitter<NDKWalletEvents & {
             .filter(([_, balance]) => balance >= amount)
             .map(([mint]) => mint);
     }
+}
+
+
+export class NDKCashuWalletBackup extends NDKEvent {
+    public privkeys: string[] = [];
+    public mints: string[] = [];
+    
+    constructor(ndk: NDK, event?: NDKEvent) {
+        super(ndk, event);
+        this.kind ??= NDKKind.CashuWalletBackup;
+    }
+
+    static async from(event: NDKEvent): Promise<NDKCashuWalletBackup | undefined> {
+        if (!event.ndk) throw new Error("no ndk instance on event");
+        
+        const backup = new NDKCashuWalletBackup(event.ndk, event);
+        
+        try {
+            await backup.decrypt();
+            const content = JSON.parse(backup.content);
+            for (const tag of content) {
+                if (tag[0] === "mint") {
+                    backup.mints.push(tag[1]);
+                } else if (tag[0] === "privkey") {
+                    backup.privkeys.push(tag[1]);
+                }
+            }
+        } catch (e) {
+            console.log('error decrypting backup event', backup.encode(), e);
+            return;
+        }
+
+        return backup;
+    }
+
+    async save(relaySet?: NDKRelaySet) {
+        if (!this.ndk) throw new Error("no ndk instance");
+        this.content = JSON.stringify(payloadForEvent(this.privkeys, this.mints));
+        await this.encrypt(this.ndk.activeUser!, undefined, "nip44");
+        return this.publish(relaySet);
+    }
+}
+
+function payloadForEvent(privkeys: string[], mints: string[]) {
+    if (privkeys.length === 0) throw new Error("privkey not set");
+    
+    const payload: NDKTag[] = [
+        ...mints.map((mint) => ["mint", mint]),
+        ...privkeys.map((privkey) => ["privkey", privkey]),
+    ];
+
+    return payload;
 }

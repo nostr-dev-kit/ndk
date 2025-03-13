@@ -6,6 +6,7 @@ import NDK, {
     NDKPaymentConfirmation,
     NDKPaymentConfirmationCashu,
     NDKPaymentConfirmationLN,
+    NDKPrivateKeySigner,
     NDKWalletInterface,
     NDKZapDetails,
     NDKZapSplit,
@@ -116,6 +117,7 @@ export interface NDKWallet
      */
     redeemNutzap?(
         nutzap: NDKNutzap,
+        privkey: NDKPrivateKeySigner | undefined,
         { onRedeemed }: { onRedeemed?: (res: Proof[]) => void }
     ): Promise<NDKPaymentConfirmation | Error | boolean | undefined>;
 }

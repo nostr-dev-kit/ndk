@@ -226,5 +226,13 @@ export const migrations = [
                 );
             `);
         },
+    },
+    
+    {
+        version: 11,
+        up: async (db: SQLite.SQLiteDatabase) => {
+            // Drop the old nutzaps table as it's no longer needed
+            await db.execAsync(`DROP TABLE IF EXISTS wallet_nutzaps;`);
+        },
     }
 ];

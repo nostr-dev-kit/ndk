@@ -4,18 +4,7 @@ import { useWalletStore } from '../stores/wallet.js';
 import { useNDK, useNDKCurrentUser } from './ndk.js';
 import { useNDKStore } from '../stores/ndk.js';
 import { useEffect, useCallback } from 'react';
-import { getNutzaps, saveNutzap } from '../db/wallet/nutzaps.js';
 import { wallet } from '../db/index.js';
-import NDK from '@nostr-dev-kit/ndk';
-
-const getKnownNutzaps = (ndk: NDK) => {
-    const nutzaps = getNutzaps(ndk);
-    
-    return new Set(nutzaps
-        .filter(n => n.status === 'redeemed' || n.status === 'spent' || n.status === 'failed')
-        .map(n => n.event_id)
-    );
-}
 
 /**
  * @param start - Whether to start the nutzap monitor if it hasn't been started yet.
@@ -60,25 +49,6 @@ const useNDKNutzapMonitor = (mintList?: NDKCashuMintList, start: boolean = false
         setNutzapMonitor(monitor);
         
         monitor.wallet = activeWallet;
-
-        monitor.on("seen", (event) => {
-            saveNutzap(ndk, [event]);
-        });
-
-        monitor.on("redeemed", (events, amount) => {
-            saveNutzap(ndk, events, "redeemed", Math.floor(Date.now()/1000));
-        });
-
-        monitor.on("state_changed", (eventId, status) => {
-            if (status === 'spent') {
-                // We need to find the nutzap first
-                monitor.nutzapStates.forEach((state, id) => {
-                    if (id === eventId && state.nutzap) {
-                        saveNutzap(ndk, [state.nutzap], "spent");
-                    }
-                });
-            }
-        });
 
         monitor.start({
             filter: { limit: 100 },

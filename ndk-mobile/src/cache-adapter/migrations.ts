@@ -209,5 +209,22 @@ export const migrations = [
                 CREATE INDEX IF NOT EXISTS idx_event_tags_tag_value ON event_tags (tag, value);
             `);
         },
+    },
+    
+    {
+        version: 10,
+        up: async (db: SQLite.SQLiteDatabase) => {
+            await db.execAsync(`
+                CREATE TABLE IF NOT EXISTS nutzap_monitor_state (
+                    event_id TEXT PRIMARY KEY,
+                    status TEXT NOT NULL,
+                    nutzap TEXT,
+                    redeemed_by_id TEXT,
+                    error_message TEXT,
+                    redeemed_amount INTEGER,
+                    updated_at INTEGER
+                );
+            `);
+        },
     }
 ];

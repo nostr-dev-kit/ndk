@@ -5,6 +5,7 @@ import { useNDK, useNDKCurrentUser } from './ndk.js';
 import { useNDKStore } from '../stores/ndk.js';
 import { useEffect, useCallback } from 'react';
 import { getNutzaps, saveNutzap } from '../db/wallet/nutzaps.js';
+import { wallet } from '../db/index.js';
 import NDK from '@nostr-dev-kit/ndk';
 
 const getKnownNutzaps = (ndk: NDK) => {
@@ -43,8 +44,18 @@ const useNDKNutzapMonitor = (mintList?: NDKCashuMintList, start: boolean = false
 
         if (!(isCashu || isNwc)) return;
 
-        const knownNutzaps = getKnownNutzaps(ndk);
-        const monitor = new NDKNutzapMonitor(ndk, currentUser, mintList);
+        // Create a store from our SQLite implementation
+        const store = wallet.nutzapMonitor.createNutzapMonitorStore(ndk);
+        
+        // Use the new constructor signature with object parameters
+        const monitor = new NDKNutzapMonitor(
+            ndk, 
+            currentUser, 
+            { 
+                mintList, 
+                store 
+            }
+        );
 
         setNutzapMonitor(monitor);
         
@@ -54,21 +65,24 @@ const useNDKNutzapMonitor = (mintList?: NDKCashuMintList, start: boolean = false
             saveNutzap(ndk, [event]);
         });
 
-        monitor.on("redeem", (events) => {
+        monitor.on("redeemed", (events, amount) => {
             saveNutzap(ndk, events, "redeemed", Math.floor(Date.now()/1000));
         });
 
-        monitor.on("spent", (event) => {
-            saveNutzap(ndk, [event], "spent");
-        });
-
-        monitor.on("failed", (event) => {
-            saveNutzap(ndk, [event], "failed");
+        monitor.on("state_changed", (eventId, status) => {
+            if (status === 'spent') {
+                // We need to find the nutzap first
+                monitor.nutzapStates.forEach((state, id) => {
+                    if (id === eventId && state.nutzap) {
+                        saveNutzap(ndk, [state.nutzap], "spent");
+                    }
+                });
+            }
         });
 
         monitor.start({
-            knownNutzaps: knownNutzaps,
-            pageSize: 10,
+            filter: { limit: 100 },
+            opts: { skipVerification: true }
         });
     }, [ nutzapMonitor, setNutzapMonitor, activeWallet?.walletId, currentUser?.pubkey, ndk, start, mintList ])
     

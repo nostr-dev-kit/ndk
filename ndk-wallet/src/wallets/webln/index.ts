@@ -1,5 +1,4 @@
-import {
-    CashuPaymentInfo,
+import NDK, {
     LnPaymentInfo,
     NDKPaymentConfirmationCashu,
     NDKPaymentConfirmationLN,
@@ -8,20 +7,20 @@ import {
 import { EventEmitter } from "tseep";
 import { requestProvider } from "webln";
 import { type WebLNProvider } from "@webbtc/webln-types";
-import { NDKWallet, NDKWalletBalance, NDKWalletEvents, NDKWalletStatus } from "../index.js";
+import { NDKWallet, NDKWalletBalance, NDKWalletEvents, NDKWalletStatus, NDKWalletTypes } from "../index.js";
 import { NDKLnPay } from "./pay";
 import { NutPayment } from "../cashu/pay/nut.js";
 
-export class NDKWebLNWallet extends EventEmitter<NDKWalletEvents> implements NDKWallet {
-    readonly type = "webln";
-    readonly walletId = "webln";
+export class NDKWebLNWallet extends NDKWallet {
+    get type(): NDKWalletTypes { return "webln"; }
+    public walletId = "webln";
     public status: NDKWalletStatus = NDKWalletStatus.INITIAL;
     public provider?: WebLNProvider;
 
     private _balance?: NDKWalletBalance;
 
-    constructor() {
-        super();
+    constructor(ndk: NDK) {
+        super(ndk);
         requestProvider()
             .then((p: unknown) => {
                 if (p) {
@@ -66,7 +65,7 @@ export class NDKWebLNWallet extends EventEmitter<NDKWalletEvents> implements NDK
         return;
     }
 
-    balance(): NDKWalletBalance | undefined {
+    get balance(): NDKWalletBalance | undefined {
         if (!this.provider) {
             return undefined;
         }

@@ -17,10 +17,10 @@ import { NDKCashuWallet, NDKCashuWalletBackup } from "../wallets/cashu/wallet/in
 import { NDKWallet } from "../wallets/index.js";
 import { fetchPage } from "./fetch-page.js";
 import { GroupedNutzaps, groupNutzaps } from "./group-nutzaps.js";
-import { MintKeys, Proof } from "@cashu/cashu-ts";
+import { CashuWallet, MintKeys, Proof } from "@cashu/cashu-ts";
 import { GetInfoResponse } from "@cashu/cashu-ts";
 import { getProofSpendState } from "./spend-status.js";
-import { walletForMint } from "../wallets/cashu/mint.js";
+import { getCashuWallet, MintInfoNeededCb, MintInfoLoadedCb, MintKeysNeededCb, MintKeysLoadedCb, MintInterface } from "../wallets/mint.js";
 
 export interface NDKNutzapState {
     nutzap?: NDKNutzap;
@@ -58,6 +58,9 @@ export enum NdkNutzapStatus {
 
     // Generic permanent error
     PERMANENT_ERROR = 'permanent_error',
+
+    // The nutzap is invalid
+    INVALID_NUTZAP = 'invalid_nutzap',
 }
 
 /**
@@ -106,7 +109,7 @@ export class NDKNutzapMonitor extends EventEmitter<{
      * Emitted when a nutzap has failed to be redeemed
      */
     failed: (event: NDKNutzap, error: string) => void;
-}> {
+}> implements MintInterface {
     public store?: NDKNutzapMonitorStore;
     public ndk: NDK;
     private user: NDKUser;
@@ -118,37 +121,12 @@ export class NDKNutzapMonitor extends EventEmitter<{
 
     public privkeys = new Map<string, NDKPrivateKeySigner>();
 
-    /**
-     * Called when we need to load mint info. Use this
-     * to load mint info from a database or other source.
-     * 
-     * Note that when providing a wallet that is of type NDKCashuWallet,
-     * this parameter will be automatically inherited.
-     */
-    public onMintInfoNeeded?: (mint: string) => Promise<GetInfoResponse | undefined>;
-
-    /**
-     * Called when we have loaded mint info. If passing a NDKCashuWallet,
-     * this parameter will be automatically inherited.
-     */
-    public onMintInfoLoaded?: (mint: string, info: GetInfoResponse) => void;
-
-    /**
-     * Called when we need to load mint keys. Use this
-     * to load mint keys from a database or other source.
-     * 
-     * Note that when providing a wallet that is of type NDKCashuWallet,
-     * this parameter will be automatically inherited.
-     */
-    public onMintKeysNeeded?: (mint: string) => Promise<MintKeys[] | undefined>;
-
-    /**
-     * Called when we have loaded mint keys. If passing a NDKCashuWallet,
-     * this parameter will be automatically inherited.
-     */
-    public onMintKeysLoaded?: (mint: string, keysets: Map<string, MintKeys>) => void;
-
-    private randId = Math.random().toString(36).substring(2, 15);
+    public cashuWallets = new Map<string, CashuWallet>();
+    public getCashuWallet = getCashuWallet.bind(this) as MintInterface['getCashuWallet'];
+    public onMintInfoNeeded?: MintInfoNeededCb;
+    public onMintInfoLoaded?: MintInfoLoadedCb;
+    public onMintKeysNeeded?: MintKeysNeededCb;
+    public onMintKeysLoaded?: MintKeysLoadedCb;
 
     /**
      * Create a new nutzap monitor.
@@ -168,23 +146,24 @@ export class NDKNutzapMonitor extends EventEmitter<{
         this.mintList = mintList;
         this.relaySet = mintList?.relaySet;
         this.store = store;
+        console.log(`✨ NDKNutzapMonitor initialized for user`, user.pubkey);
     }
 
     set wallet(wallet: NDKWallet | undefined) {
         this._wallet = wallet;
 
-        if (wallet instanceof NDKCashuWallet) {
+        if (wallet) {
             this.onMintInfoNeeded ??= wallet.onMintInfoNeeded;
             this.onMintInfoLoaded ??= wallet.onMintInfoLoaded;
             this.onMintKeysNeeded ??= wallet.onMintKeysNeeded;
             this.onMintKeysLoaded ??= wallet.onMintKeysLoaded;
 
-            if (wallet?.privkeys) {
+            if (wallet instanceof NDKCashuWallet && wallet?.privkeys) {
                 for (const [pubkey, signer] of wallet.privkeys.entries()) {
                     try {
                         this.addPrivkey(signer);
                     } catch (e) {
-                        console.error(`${this.randId} failed to add privkey from wallet with pubkey`, pubkey, e);
+                        console.error(`failed to add privkey from wallet with pubkey`, pubkey, e);
                     }
                 }
             }
@@ -214,10 +193,10 @@ export class NDKNutzapMonitor extends EventEmitter<{
 
         // check for nutzaps that were missing the pubkey we just added
         const inMssingPrivKeyState = (state: NDKNutzapState) => state.status === NdkNutzapStatus.MISSING_PRIVKEY;
-        const correctP2pk = (state: NDKNutzapState) => state.nutzap?.p2pk === pubkey;
+        const ensureIsCashuPubkey = (state: NDKNutzapState) => state.nutzap?.p2pk === pubkey;
         const candidateNutzaps = Array.from(this.nutzapStates.values())
             .filter(inMssingPrivKeyState)
-            .filter(correctP2pk);
+            .filter(ensureIsCashuPubkey);
         
         if (candidateNutzaps.length > 0) {
             const nutzaps = candidateNutzaps.map(c => c.nutzap).filter(n => !!n);
@@ -262,7 +241,7 @@ export class NDKNutzapMonitor extends EventEmitter<{
                     const signer = new NDKPrivateKeySigner(privkey);
                     this.addPrivkey(signer);
                 } catch (e) {
-                    console.error(`${this.randId} failed to add privkey`, privkey, e);
+                    console.error(`failed to add privkey`, privkey, e);
                 }
             }
         }
@@ -287,10 +266,13 @@ export class NDKNutzapMonitor extends EventEmitter<{
         // if we are already running, stop the current subscription
         if (this.sub) this.sub.stop();
 
+        console.log(`🚀 Starting nutzap monitor for user`, this.user.pubkey);
+        
         try {
+            console.log(`🔑 Fetching backup keys`);
             await this.getBackupKeys();
         } catch (e) {
-            console.error(`${this.randId} failed to get backup keys`, e);
+            console.error(`❌ Failed to get backup keys`, e);
         }
 
         await this.addUserPrivKey();
@@ -300,21 +282,33 @@ export class NDKNutzapMonitor extends EventEmitter<{
         // we start the subscription.
         const since = Math.floor(Date.now() / 1000);
         const monitorFilter = { kinds: [NDKKind.Nutzap], "#p": [this.user.pubkey], since }
+        console.log(`📡 Subscription filter:`, JSON.stringify(monitorFilter));
 
         // load all nutzaps from the store
         if (this.store) {
-            const nutzaps = await this.store.getAllNutzaps();
-            for (const [id, state] of nutzaps.entries()) {
-                this.nutzapStates.set(id, state);
+            try {
+                console.log(`📦 Loading nutzaps from store`);
+                const nutzaps = await this.store.getAllNutzaps();
+                console.log(`📊 Loaded ${nutzaps.size} nutzaps from store`);
+                for (const [id, state] of nutzaps.entries()) {
+                    this.nutzapStates.set(id, state);
+                }
+            } catch (e) {
+                console.error(`❌ Failed to load nutzaps from store`, e);
             }
+        } else {
+            console.log(`📦 No store provided, skipping loading nutzaps from store`);
         }
 
         try {
+            console.log(`🕵️ Processing accumulated nutzaps`);
             await this.processAccumulatedNutzaps(filter, opts);
         } catch (e) {
-            console.error(`${this.randId} failed to process nutzaps`, e);
+            console.error(`❌ Failed to process nutzaps`, e);
         }
 
+        console.log(`👂 Starting subscription with filter:`, JSON.stringify(monitorFilter));
+        
         this.sub = this.ndk.subscribe(
             monitorFilter,
             {
@@ -332,16 +326,8 @@ export class NDKNutzapMonitor extends EventEmitter<{
             }
         );
 
+        console.log(`✅ Nutzap monitor started successfully`);
         return true;
-    }
-
-    private async cashuWalletForMint(mint: string) {
-        return walletForMint(mint, {
-            onMintInfoNeeded: this.onMintInfoNeeded,
-            onMintInfoLoaded: this.onMintInfoLoaded,
-            onMintKeysNeeded: this.onMintKeysNeeded,
-            onMintKeysLoaded: this.onMintKeysLoaded,
-        });
     }
 
     /**
@@ -352,18 +338,22 @@ export class NDKNutzapMonitor extends EventEmitter<{
         const groupPrivkey = this.privkeys.get(group.p2pk);
         if (!groupPrivkey) {
             const totalAmount = group.nutzaps.reduce((acc, nutzap) => acc + nutzap.amount, 0);
-            console.error(`${this.randId} no privkey found for p2pk`, group.p2pk, "there are ", group.nutzaps.length, "nutzaps in this group with a total amount of", totalAmount, "sats");
+            console.error(`❌ No privkey found for p2pk`, group.p2pk, "there are ", group.nutzaps.length, "nutzaps in this group with a total amount of", totalAmount, "sats");
             return;
         }
         
-        const cashuWallet = await this.cashuWalletForMint(group.mint);
+        console.log(`🔐 Found privkey for p2pk ${group.p2pk.substring(0, 6)}...`);
+        const cashuWallet = await this.getCashuWallet(group.mint);
         if (!cashuWallet) {
-            console.error(`${this.randId} failed to get cashu wallet for mint`, group.mint);
+            console.error(`❌ Failed to get cashu wallet for mint`, group.mint);
             return;
         }
         
+        console.log(`🔍 Checking spend state for ${group.nutzaps.length} nutzaps`);
         const spendStates = await getProofSpendState(cashuWallet, group.nutzaps);
 
+        console.log(`📊 Spend states: ${spendStates.nutzapsWithSpentProofs.length} spent, ${spendStates.nutzapsWithUnspentProofs.length} unspent`);
+        
         // update the state of the nutzaps that have been spent
         for (const nutzap of spendStates.nutzapsWithSpentProofs) {
             this.updateNutzapState(nutzap.id, { status: NdkNutzapStatus.SPENT, nutzap });
@@ -375,6 +365,7 @@ export class NDKNutzapMonitor extends EventEmitter<{
         }
 
         if (spendStates.unspentProofs.length > 0) {
+            console.log(`💸 Found ${spendStates.unspentProofs.length} unspent proofs to redeem`);
             for (const nutzap of spendStates.nutzapsWithUnspentProofs) {
                 if (!oldestUnspentNutzapTime || oldestUnspentNutzapTime > nutzap.created_at!) {
                     oldestUnspentNutzapTime = nutzap.created_at!;
@@ -397,12 +388,19 @@ export class NDKNutzapMonitor extends EventEmitter<{
         _filter.kinds = [NDKKind.Nutzap];
         _filter["#p"] = [this.user.pubkey];
         const knownNutzapIds = new Set(this.nutzapStates.keys());
+        
+        console.log(`🔄 Fetching page with filter:`, JSON.stringify(_filter));
+        console.log(`📋 Known nutzaps: ${knownNutzapIds.size}`);
+        
         const nutzaps = await fetchPage(this.ndk, _filter, knownNutzapIds, this.relaySet);
+        console.log(`📩 Fetched ${nutzaps.length} new nutzaps`);
 
         // group nutzaps by mint
         const groupedNutzaps = groupNutzaps(nutzaps, this);
+        console.log(`📊 Grouped into ${groupedNutzaps.length} mint groups`);
 
         for (const group of groupedNutzaps) {
+            console.log(`💰 Processing group for mint ${group.mint} with ${group.nutzaps.length} nutzaps`);
             await this.checkAndRedeemGroup(group, oldestUnspentNutzapTime);
         }
 
@@ -410,13 +408,15 @@ export class NDKNutzapMonitor extends EventEmitter<{
         if (oldestUnspentNutzapTime) {
             // update filter to fetch the previous page
             _filter.since = oldestUnspentNutzapTime-1;
+            console.log(`🔙 Found older nutzaps, fetching previous page with since=${_filter.since}`);
             await this.processAccumulatedNutzaps(_filter, opts);
         } else {
-            console.log(`${this.randId} no new nutzaps found, stopping`);
+            console.log(`🏁 No more nutzaps found, pagination complete`);
         }
     }
 
     public stop() {
+        console.log(`🛑 Stopping nutzap monitor`);
         this.sub?.stop();
     }
 
@@ -454,7 +454,7 @@ export class NDKNutzapMonitor extends EventEmitter<{
         if (!this.nutzapStates.has(nutzap.id)) this.updateNutzapState(nutzap.id, { status: NdkNutzapStatus.INITIAL, nutzap });
         
         const mint = nutzap.mint;
-        const cashuWallet = await this.cashuWalletForMint(mint);
+        const cashuWallet = await this.getCashuWallet(mint);
         if (!cashuWallet) {
             this.updateNutzapState(nutzap.id, { status: NdkNutzapStatus.TEMPORARY_ERROR, errorMessage: "Failed to get cashu wallet for mint" });
             return this.nutzapStates.get(nutzap.id)!;
@@ -493,10 +493,34 @@ export class NDKNutzapMonitor extends EventEmitter<{
         proofs: Proof[],
         privkey: NDKPrivateKeySigner
     ) {
-        const cashuWallet = await this.cashuWalletForMint(mint);
+        console.log(`🌱 Attempting to redeem ${nutzaps.length} nutzaps with ${proofs.length} proofs from mint ${mint}`);
+        const cashuWallet = await this.getCashuWallet(mint);
+
+        // perform validation on each nutzap
+        for (const nutzap of nutzaps) {
+            if (!nutzap.isValid) {
+                this.updateNutzapState(nutzap.id, { status: NdkNutzapStatus.INVALID_NUTZAP, errorMessage: "Invalid nutzap" });
+                return;
+            }
+
+            // check that the nutzap has a valid p2pk
+            const rawP2pk = nutzap.rawP2pk;
+            if (!rawP2pk) {
+                this.updateNutzapState(nutzap.id, { status: NdkNutzapStatus.INVALID_NUTZAP, errorMessage: "Invalid nutzap: locked to an invalid public key (no p2pk)" });
+                return;
+            }
+
+            if (rawP2pk.length !== 66) {
+                this.updateNutzapState(nutzap.id, { status: NdkNutzapStatus.INVALID_NUTZAP, errorMessage: "Invalid nutzap: locked to an invalid public key (length " + rawP2pk.length + ")" });
+                return;
+            }
+
+            // 
+            
+        }
 
         if (!cashuWallet) {
-            console.error(`${this.randId} failed to get cashu wallet for mint`, mint);
+            console.error(`❌ Failed to get cashu wallet for mint`, mint);
             return;
         }
 
@@ -508,8 +532,10 @@ export class NDKNutzapMonitor extends EventEmitter<{
         }
         
         try {
-            const totalAmount = await this.wallet.redeemNutzaps(cashuWallet, nutzaps, proofs, mint, privkey.privateKey!);
+            console.log(`💰 Redeeming ${proofs.length} proofs for ${nutzaps.length} nutzaps`);
+            const totalAmount = await this.wallet.redeemNutzaps(nutzaps, privkey.privateKey!, { cashuWallet, proofs, mint });
 
+            console.log(`✅ Successfully redeemed ${nutzaps.length} nutzaps for ${totalAmount} sats`);
             this.emit("redeemed", nutzaps, totalAmount);
 
             for (const nutzap of nutzaps) {
@@ -517,7 +543,7 @@ export class NDKNutzapMonitor extends EventEmitter<{
                 this.updateNutzapState(nutzap.id, { status: NdkNutzapStatus.REDEEMED, redeemedAmount: nutzapTotalAmount });
             }
         } catch (e: any) {
-            console.error(`${this.randId} failed to redeem nutzaps`, e.message);
+            console.error(`❌ Failed to redeem nutzaps`, e.message);
             
             // Handle "unknown public key size" as a permanent error
             if (e.message && e.message.includes("unknown public key size")) {
@@ -549,14 +575,16 @@ export class NDKNutzapMonitor extends EventEmitter<{
             if (p2pk && this.privkeys.has(p2pk)) return true;
         }
 
+        if ([NdkNutzapStatus.SPENT, NdkNutzapStatus.REDEEMED].includes(state.status)) return false;
+
         // Never retry permanent errors
-        if (state.status === NdkNutzapStatus.PERMANENT_ERROR) {
-            console.log(`${this.randId} will not try redeeming nutzap with permanent error:`, 
+        if ([NdkNutzapStatus.PERMANENT_ERROR, NdkNutzapStatus.INVALID_NUTZAP].includes(state.status)) {
+            console.log(`will not try redeeming nutzap with permanent error:`, 
                         state.nutzap?.id, state.errorMessage);
             return false;
         }
 
-        console.log(`${this.randId} will not try redeeming nutzap`, state.nutzap?.id, "because it's in status", state.status);
+        console.log(`will not try redeeming nutzap`, state.nutzap?.id, "because it's in status", state.status);
     
         return false;
     }

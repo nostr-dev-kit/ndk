@@ -1,13 +1,14 @@
 import { EventEmitter } from "tseep";
-import { NDKWalletBalance, NDKWalletEvents, NDKWalletStatus, type NDKWallet } from "../index.js";
+import { NDKWallet, NDKWalletBalance, NDKWalletEvents, NDKWalletStatus, NDKWalletTypes } from "../index.js";
 import NDK, { NDKPool, LnPaymentInfo, NDKPaymentConfirmationCashu, NDKPaymentConfirmationLN, NDKRelaySet, NDKUser, NDKPrivateKeySigner, NDKRelay, NDKRelayAuthPolicies, NDKEventId } from "@nostr-dev-kit/ndk";
 import { NutPayment } from "../cashu/pay/nut.js";
 import { sendReq } from "./req.js";
 import createDebug from "debug";
 import { NDKNWCGetInfoResult, NDKNWCMakeInvoiceResult, NDKNWCRequestMap, NDKNWCResponseBase, NDKNWCResponseMap } from "./types.js";
-import { CashuMint, CashuWallet, MintQuoteResponse, Proof } from "@cashu/cashu-ts";
+import { CashuMint, CashuWallet, MintQuoteResponse } from "@cashu/cashu-ts";
 import { redeemNutzaps } from "./nutzap.js";
-
+import { mintProofs } from "../../utils/cashu.js";
+import { getCashuWallet, MintInterface } from "../mint.js";
 const d = createDebug("ndk-wallet:nwc");
 
 export type NDKNWCWalletEvents = NDKWalletEvents & {
@@ -17,14 +18,12 @@ export type NDKNWCWalletEvents = NDKWalletEvents & {
     timeout: (method: keyof NDKNWCRequestMap) => void;
 }
 
-export class NDKNWCWallet extends EventEmitter<NDKNWCWalletEvents> implements NDKWallet {
-    readonly type = "nwc";
+export class NDKNWCWallet extends NDKWallet {
+    get type(): NDKWalletTypes { return "nwc"; }
     public status = NDKWalletStatus.INITIAL;
     public walletId = "nwc";
 
     public pairingCode?: string;
-
-    public ndk: NDK;
 
     public walletService?: NDKUser;
     public relaySet?: NDKRelaySet;
@@ -44,8 +43,7 @@ export class NDKNWCWallet extends EventEmitter<NDKNWCWalletEvents> implements ND
      * @param timeout A timeeout to use for all operations. 
      */
     constructor(ndk: NDK, { timeout, pairingCode, pubkey, relayUrls, secret }: { timeout?: number, pairingCode?: string, pubkey?: string, relayUrls?: string[], secret?: string }) {
-        super();
-        this.ndk = ndk;
+        super(ndk);
 
         if (pairingCode) {
             const u = new URL(pairingCode);
@@ -108,7 +106,10 @@ export class NDKNWCWallet extends EventEmitter<NDKNWCWalletEvents> implements ND
     }
 
     /**
-     * Pay an invoice using a cashu mint
+     * Pay by minting tokens.
+     * 
+     * This creates a quote on a mint, pays it using NWC and then mints the tokens.
+     * 
      * @param payment - The payment to pay
      * @param onLnPayment - A callback that is called when an LN payment will be processed
      * @returns The payment confirmation
@@ -138,6 +139,8 @@ export class NDKNWCWallet extends EventEmitter<NDKNWCWalletEvents> implements ND
 
             if (!quote) throw new Error("Didnt receive a mint quote");
 
+            // todo check that the amount of the invoice matches the amount we want to pay
+
             try {
                 const res = await this.req("pay_invoice", { invoice: quote.request });
 
@@ -152,35 +155,9 @@ export class NDKNWCWallet extends EventEmitter<NDKNWCWalletEvents> implements ND
                 throw new Error(message);
             }
 
-            const mintTokenAttempt = (resolve: (value: any) => void, reject: (reason?: any) => void, attempt: number) => {
-                // mint the tokens
-                console.log('minting tokens', {attempt, amount, quote: quote.quote, pubkey: payment.p2pk, mint });
-
-                wallet.mintProofs(amount, quote.quote, { pubkey: payment.p2pk }).then(mintProofs => {
-                    d('minted tokens', mintProofs);
-    
-                    resolve({
-                        proofs: mintProofs,
-                        mint: mint
-                    });
-                }).catch(e => {
-                    attempt++;
-                    if (attempt <= 3) {
-                        console.error('error minting tokens', e);
-                        setTimeout(() => mintTokenAttempt(resolve, reject, attempt), attempt * 1500);
-                    } else {
-                        reject(e);
-                    }
-                });
-            }
-
             this.updateBalance();
 
-            // todo check that the amount of the invoice matches the amount we want to pay
-
-            return new Promise((resolve, reject) => {
-                mintTokenAttempt(resolve, reject, 0);
-            });
+            return mintProofs(wallet, quote, amount, mint, payment.p2pk);
         }
     }
 
@@ -222,7 +199,7 @@ export class NDKNWCWallet extends EventEmitter<NDKNWCWalletEvents> implements ND
     /**
      * Get the balance of this wallet
      */
-    balance(): NDKWalletBalance | undefined {
+    get balance(): NDKWalletBalance | undefined {
         return this._balance;
     }
     

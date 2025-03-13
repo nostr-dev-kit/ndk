@@ -7,6 +7,7 @@ import NDK, {
     NDKPaymentConfirmationCashu,
     NDKPaymentConfirmationLN,
     NDKPrivateKeySigner,
+    NDKRelay,
     NDKWalletInterface,
     NDKZapDetails,
     NDKZapSplit,
@@ -16,6 +17,7 @@ import { NDKNWCWallet } from "./nwc";
 import { Proof } from "@cashu/cashu-ts";
 import { NDKCashuWallet } from "./cashu/wallet";
 import { CashuWallet } from "@cashu/cashu-ts";
+import { MintInfoNeededCb, MintInfoLoadedCb, MintInterface, MintKeysLoadedCb, MintKeysNeededCb, getCashuWallet } from "./mint";
 
 /**
  * Different types of wallets supported.
@@ -46,27 +48,38 @@ export type NDKWalletEvents = {
     ready: () => void;
     balance_updated: (balance?: NDKWalletBalance) => void;
     insufficient_balance: (info: { amount: number; pr: string }) => void;
+    warning: (warning: { msg: string, event?: NDKEvent, relays?: NDKRelay[] }) => void;
 };
 
-export interface NDKWallet
-    extends NDKWalletInterface, EventEmitter<{
-        /**
-         * Emitted when the wallet is ready to be used.
-         */
-        ready: () => void;
 
-        /**
-         * Emitted when a balance is known to have been updated.
-         */
-        balance_updated: (balance?: NDKWalletBalance) => void;
-    }> {
-    get status(): NDKWalletStatus;
-    get type(): NDKWalletTypes;
 
+export class NDKWallet extends EventEmitter<NDKWalletEvents> implements NDKWalletInterface, MintInterface {
+    public cashuWallets = new Map<string, CashuWallet>();
+
+    public onMintInfoNeeded?: MintInfoNeededCb;
+    public onMintInfoLoaded?: MintInfoLoadedCb;
+    public onMintKeysNeeded?: MintKeysNeededCb;
+    public onMintKeysLoaded?: MintKeysLoadedCb;
+
+    public getCashuWallet = getCashuWallet.bind(this) as MintInterface['getCashuWallet'];
+
+    public ndk: NDK;
+
+    constructor(ndk: NDK) {
+        super();
+        this.ndk = ndk;
+    }
+
+    public status: NDKWalletStatus = NDKWalletStatus.INITIAL;
+
+    get type(): NDKWalletTypes {
+        throw new Error("Not implemented");
+    }
+    
     /**
      * An ID of this wallet
      */
-    get walletId(): string;
+    public walletId = "unknown";
 
     /**
      * Pay a LN invoice
@@ -95,7 +108,9 @@ export interface NDKWallet
     /**
      * Get the balance of this wallet
      */
-    balance(): NDKWalletBalance | undefined;
+    get balance(): NDKWalletBalance | undefined {
+        throw new Error("Not implemented");
+    }
 
     /**
      * Redeem a set of nutzaps into an NWC wallet.
@@ -108,16 +123,17 @@ export interface NDKWallet
      * @param proofs - The proofs to redeem
      * @param privkey - The private key needed to redeem p2pk proofs.
      */
-    redeemNutzaps?(cashuWallet: CashuWallet,nutzaps: NDKNutzap[], proofs: Proof[], mint: string, privkey: string): Promise<number>;
+    redeemNutzaps(
+        nutzaps: NDKNutzap[],
+        privkey: string,
+        opts: RedeemNutzapsOpts
+    ): Promise<number> {
+        throw new Error("Not implemented");
+    }
+}
 
-    /**
-     * Redeem a single nutzap
-     * @param nutzap - The nutzap to redeem
-     * @param privkey - The private key needed to redeem the nutzap
-     */
-    redeemNutzap?(
-        nutzap: NDKNutzap,
-        privkey: NDKPrivateKeySigner | undefined,
-        { onRedeemed }: { onRedeemed?: (res: Proof[]) => void }
-    ): Promise<NDKPaymentConfirmation | Error | boolean | undefined>;
+export interface RedeemNutzapsOpts {
+    cashuWallet?: CashuWallet,
+    proofs?: Proof[],
+    mint?: string,
 }

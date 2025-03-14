@@ -5,14 +5,12 @@ import { NDKUser } from "../../user/index";
 import { NDKPrivateKeySigner } from "../private-key/index";
 import { NDKNostrRpc } from "./rpc";
 import createDebug from "debug";
-import fetchMock from "jest-fetch-mock";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 
 const debug = createDebug("test");
 
-jest.mock("../private-key/index");
-jest.mock("./rpc");
-
-fetchMock.enableMocks();
+vi.mock("../private-key/index");
+vi.mock("./rpc");
 
 const bunkerPubkey = "0a7c23a70a83bf413ed2b12d583418671eb75bbd0e21db2647c1c83dbdb917ff";
 const userPubkey = "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52";
@@ -34,10 +32,12 @@ describe("NDKNip46Signer", () => {
         });
         rpc = new NDKNostrRpc(ndk, localSigner, debug, undefined);
 
-        (NDKPrivateKeySigner as unknown as jest.Mock).mockImplementation(() => localSigner);
-        (NDKNostrRpc as unknown as jest.Mock).mockImplementation(() => rpc);
+        (NDKPrivateKeySigner as unknown as ReturnType<typeof vi.fn>).mockImplementation(
+            () => localSigner
+        );
+        (NDKNostrRpc as unknown as ReturnType<typeof vi.fn>).mockImplementation(() => rpc);
 
-        fetchMock.resetMocks();
+        vi.resetAllMocks();
     });
 
     it("should initialize with a connection token", () => {
@@ -54,11 +54,13 @@ describe("NDKNip46Signer", () => {
         });
 
         it("fetches the remote pubkey using NIP-05", async () => {
-            fetchMock.mockResponseOnce(
-                JSON.stringify({
-                    names: { test: userPubkey },
-                    nip46: { [`${userPubkey}`]: ["wss://relay.example.com"] },
-                })
+            vi.spyOn(global, "fetch").mockResolvedValueOnce(
+                new Response(
+                    JSON.stringify({
+                        names: { test: userPubkey },
+                        nip46: { [`${userPubkey}`]: ["wss://relay.example.com"] },
+                    })
+                )
             );
             ndk.httpFetch = fetch;
 

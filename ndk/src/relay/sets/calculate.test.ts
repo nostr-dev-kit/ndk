@@ -5,6 +5,7 @@ import { NDK } from "../../ndk/index.js";
 import { NDKPrivateKeySigner } from "../../signers/private-key/index.js";
 import type { Hexpubkey, NDKUser } from "../../user/index.js";
 import { calculateRelaySetFromEvent, calculateRelaySetsFromFilters } from "./calculate.js";
+import { describe, it, expect, beforeEach, beforeAll, afterAll, vi } from "vitest";
 
 const explicitRelayUrl = "wss://explicit-relay.com/";
 
@@ -51,13 +52,13 @@ beforeAll(async () => {
     });
 });
 
-jest.mock("../../utils/get-users-relay-list.js", () => ({
-    getRelayListForUsers: jest.fn(async () => {
+vi.mock("../../utils/get-users-relay-list.js", () => ({
+    getRelayListForUsers: vi.fn(async () => {
         const map = new Map<Hexpubkey, NDKEvent>();
         users.forEach((user, i) => {
             const list = new NDKRelayList(ndk) as any;
-            jest.spyOn(list, "readRelayUrls", "get").mockReturnValue(readRelays[i]);
-            jest.spyOn(list, "writeRelayUrls", "get").mockReturnValue(writeRelays[i]);
+            vi.spyOn(list, "readRelayUrls", "get").mockReturnValue(readRelays[i]);
+            vi.spyOn(list, "writeRelayUrls", "get").mockReturnValue(writeRelays[i]);
             map.set(user.pubkey, list);
         });
 
@@ -66,7 +67,7 @@ jest.mock("../../utils/get-users-relay-list.js", () => ({
 }));
 
 afterAll(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 });
 
 function combineRelays(relays: string[][]) {

@@ -1,58 +1,29 @@
 import { NDKNutzap } from "./index.js";
-import { NDKEvent } from "../../../index.js";
-import { expect, test, describe, jest, beforeEach } from "@jest/globals";
-import type { TagType } from "../../../index.js";
+import { vi, describe, test, expect, beforeEach } from "vitest";
 
-// Mock dependencies
-jest.mock("../../../index.js", () => {
-    // Explicitly type the original module
-    const original = jest.requireActual("../../../index.js") as object;
-
-    // Create a mock class that implements the minimal interface we need
-    class MockNDKEvent {
-        tags: TagType[] = [];
-        kind?: number = 9321;
-        content: string = "";
-
-        // Mock basic required methods
-        tag(tag: TagType): void {
-            this.tags.push(tag);
-        }
-
-        tagValue(tagName: string): string | undefined {
-            const tag = this.tags.find((t) => t[0] === tagName);
-            return tag ? tag[1] : undefined;
-        }
-
-        getMatchingTags(tagName: string): TagType[] {
-            return this.tags.filter((t) => t[0] === tagName);
-        }
-
-        removeTag(tagName: string): void {
-            this.tags = this.tags.filter((t) => t[0] !== tagName);
-        }
-    }
-
-    return {
-        ...original,
-        NDKEvent: MockNDKEvent,
-    };
-});
+// Define a type for our debug mock function
+type MockDebugger = ReturnType<typeof vi.fn> & {
+    extend: ReturnType<typeof vi.fn>;
+};
 
 describe("NDKNutzap", () => {
-    let mockDebug: { extend: jest.Mock };
+    let mockDebug: MockDebugger;
 
     beforeEach(() => {
-        // Mock the debug function
-        mockDebug = {
-            extend: jest.fn().mockReturnThis(),
-        };
+        // Create a function that can be called directly and also has an extend property
+        mockDebug = vi.fn() as MockDebugger;
+        mockDebug.extend = vi.fn().mockReturnValue(mockDebug);
     });
 
     describe("p2pk extraction", () => {
         test("should extract rawP2pk with proper P2PK array format", () => {
             // Create nutzap with mocked NDK
-            const nutzap = new NDKNutzap({ debug: mockDebug } as any);
+            const nutzap = new NDKNutzap({
+                debug: mockDebug,
+                getUser: vi.fn().mockImplementation((opts) => ({
+                    pubkey: opts.pubkey,
+                })),
+            } as any);
             const testPubkey = "02b85cb23753546871fe6d1c20641120499a4ec60decd712e76708bb0fef19a7a1";
 
             // Mock the proofs with the format seen in the real-world example
@@ -79,7 +50,12 @@ describe("NDKNutzap", () => {
         });
 
         test("should handle non-array secret format", () => {
-            const nutzap = new NDKNutzap({ debug: mockDebug } as any);
+            const nutzap = new NDKNutzap({
+                debug: mockDebug,
+                getUser: vi.fn().mockImplementation((opts) => ({
+                    pubkey: opts.pubkey,
+                })),
+            } as any);
             const testPubkey = "02a1b2c3d4e5f6";
 
             // Mock a proof with non-array format but still has data at payload[1].data
@@ -102,7 +78,12 @@ describe("NDKNutzap", () => {
         });
 
         test("should handle nested string JSON parsing", () => {
-            const nutzap = new NDKNutzap({ debug: mockDebug } as any);
+            const nutzap = new NDKNutzap({
+                debug: mockDebug,
+                getUser: vi.fn().mockImplementation((opts) => ({
+                    pubkey: opts.pubkey,
+                })),
+            } as any);
             const testPubkey = "02d4e5f6a1b2c3";
 
             // Mock a proof with a stringified JSON inside the secret
@@ -128,7 +109,12 @@ describe("NDKNutzap", () => {
         });
 
         test("should handle invalid proof data gracefully", () => {
-            const nutzap = new NDKNutzap({ debug: mockDebug } as any);
+            const nutzap = new NDKNutzap({
+                debug: mockDebug,
+                getUser: vi.fn().mockImplementation((opts) => ({
+                    pubkey: opts.pubkey,
+                })),
+            } as any);
 
             // Test with various invalid proof formats
 
@@ -166,12 +152,18 @@ describe("NDKNutzap", () => {
 
         test("should handle real-world nutzap example", () => {
             // Mock NDK
-            const mockNDK = { debug: mockDebug };
+            const mockNDK = {
+                debug: mockDebug,
+                getUser: vi.fn().mockImplementation((opts) => ({
+                    pubkey: opts.pubkey,
+                })),
+            };
 
             // This test recreates the actual nutzap from the user's example
             const nutzapEvent = {
                 kind: 9321,
                 content: "🌊",
+                created_at: Math.floor(Date.now() / 1000),
                 tags: [
                     ["alt", "This is a nutzap"],
                     [

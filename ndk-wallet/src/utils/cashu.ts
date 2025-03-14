@@ -33,7 +33,7 @@ export async function mintProofs(
         console.log('minting tokens', {attempt, amount, quote: quote.quote, pubkey, mint });
 
         wallet.mintProofs(amount, quote.quote, { pubkey }).then(mintProofs => {
-            d('minted tokens', mintProofs);
+            console.debug('minted tokens', mintProofs);
 
             resolve({
                 proofs: mintProofs,

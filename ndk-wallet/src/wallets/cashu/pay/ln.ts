@@ -79,7 +79,7 @@ async function executePayment(
     amountWithoutFees: number,
     wallet: NDKCashuWallet,
 ): Promise<WalletOperation<NDKPaymentConfirmationLN> | null> {
-    const cashuWallet = await wallet.cashuWallet(mint);
+    const cashuWallet = await wallet.getCashuWallet(mint);
 
     try {
         const meltQuote = await cashuWallet.createMeltQuote(pr);

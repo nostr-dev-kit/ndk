@@ -422,6 +422,11 @@ export class NDKNutzapMonitor extends EventEmitter<{
             return;
         }
 
+        // Check if the mint is in the mintList
+        if (this.mintList && !this.mintList.mints.includes(nutzap.mint)) {
+            this.emit("seen_in_unknown_mint", nutzap);
+        }
+
         this.redeemNutzap(nutzap);
     }
 
@@ -431,6 +436,21 @@ export class NDKNutzapMonitor extends EventEmitter<{
      */
     public async redeemNutzap(nutzap: NDKNutzap): Promise<NDKNutzapState> {
         if (!this.nutzapStates.has(nutzap.id)) this.updateNutzapState(nutzap.id, { status: NdkNutzapStatus.INITIAL, nutzap });
+        
+        // First check if we have the private key to redeem this nutzap
+        const rawP2pk = nutzap.rawP2pk;
+        if (rawP2pk) {
+            const cashuPubkey = proofP2pk(nutzap.proofs[0]);
+            if (cashuPubkey) {
+                const nostrPubkey = cashuPubkeyToNostrPubkey(cashuPubkey);
+                if (nostrPubkey && !this.privkeys.has(nostrPubkey)) {
+                    // No private key available for this p2pk
+                    this.updateNutzapState(nutzap.id, { status: NdkNutzapStatus.MISSING_PRIVKEY, errorMessage: "No privkey found for p2pk" });
+                    return this.nutzapStates.get(nutzap.id)!;
+                }
+            }
+        }
+        
         await this.redeemNutzaps(nutzap.mint, [nutzap], nutzap.proofs);
         return this.nutzapStates.get(nutzap.id)!;
     }
@@ -461,6 +481,33 @@ export class NDKNutzapMonitor extends EventEmitter<{
         const cashuWallet = await this.getCashuWallet(mint);
         const validNutzaps: NDKNutzap[] = [];
 
+        // First check if we have the required private key
+        if (proofs.length > 0) {
+            const cashuPubkey = proofP2pk(proofs[0]);
+            if (!cashuPubkey) {
+                for (const nutzap of nutzaps) {
+                    this.updateNutzapState(nutzap.id, { status: NdkNutzapStatus.INVALID_NUTZAP, errorMessage: "Invalid nutzap: proof is not p2pk" });
+                }
+                return;
+            }
+            
+            const nostrPubkey = cashuPubkeyToNostrPubkey(cashuPubkey);
+            if (!nostrPubkey) {
+                for (const nutzap of nutzaps) {
+                    this.updateNutzapState(nutzap.id, { status: NdkNutzapStatus.INVALID_NUTZAP, errorMessage: "Invalid nutzap: locked to an invalid public key (not a nostr key)" });
+                }
+                return;
+            }
+            
+            const privkey = this.privkeys.get(nostrPubkey);
+            if (!privkey) {
+                for (const nutzap of nutzaps) {
+                    this.updateNutzapState(nutzap.id, { status: NdkNutzapStatus.MISSING_PRIVKEY, errorMessage: "No privkey found for p2pk" });
+                }
+                return;
+            }
+        }
+
         // perform validation on each nutzap
         for (const nutzap of nutzaps) {
             if (!nutzap.isValid) {
@@ -483,6 +530,9 @@ export class NDKNutzapMonitor extends EventEmitter<{
             validNutzaps.push(nutzap);
         }
 
+        if (validNutzaps.length === 0) return;
+
+        // Get the necessary private key
         const cashuPubkey = proofP2pk(proofs[0]);
         if (!cashuPubkey) return;
         const nostrPubkey = cashuPubkeyToNostrPubkey(cashuPubkey);
@@ -584,6 +634,13 @@ export class NDKNutzapMonitor extends EventEmitter<{
      * @returns The updated oldestUnspentNutzapTime if any nutzaps were processed
      */
     private async processNutzaps(nutzaps: NDKNutzap[], oldestUnspentNutzapTime?: number): Promise<number | undefined> {
+        // First, find the oldest nutzap timestamp
+        for (const nutzap of nutzaps) {
+            if (nutzap.created_at && (!oldestUnspentNutzapTime || oldestUnspentNutzapTime > nutzap.created_at)) {
+                oldestUnspentNutzapTime = nutzap.created_at;
+            }
+        }
+        
         // Group nutzaps by mint
         const groupedNutzaps = groupNutzaps(nutzaps, this);
 

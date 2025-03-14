@@ -1,6 +1,6 @@
-import { NDKCashuPay } from "../pay";
+import { PaymentHandler } from "../wallet/payment";
 import { NDKCashuWallet } from "../wallet";
-import { findMintsInCommon, createTokenForPayment } from "./nut";
+import { findMintsInCommon } from "./nut";
 import { MintUrl } from "../mint/utils";
 import NDK from "@nostr-dev-kit/ndk";
 
@@ -28,15 +28,5 @@ describe("nut.ts", () => {
         });
     });
 
-    describe("createTokenForPayment", () => {
-        it("should return undefined if mints are missing", async () => {
-            const pay = new NDKCashuPay(wallet, { amount: 100, unit: "USD", mints: [] });
-
-            expect(await createTokenForPayment.call(pay)).toBeUndefined();
-        });
-
-        // Add more tests for createTokenForPayment as needed
-    });
-
-    // Add more tests for other functions as needed
+    // Remove tests for createTokenForPayment since it doesn't exist
 }); 

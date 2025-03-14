@@ -4,7 +4,6 @@ import NDK, {
     NDKPaymentConfirmationLN,
     NDKZapDetails,
 } from "@nostr-dev-kit/ndk";
-import { EventEmitter } from "tseep";
 import { requestProvider } from "webln";
 import { type WebLNProvider } from "@webbtc/webln-types";
 import { NDKWallet, NDKWalletBalance, NDKWalletEvents, NDKWalletStatus, NDKWalletTypes } from "../index.js";

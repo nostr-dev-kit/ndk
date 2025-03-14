@@ -23,33 +23,37 @@ export async function getProofSpendState(
     
     const proofCs = new Set<string>();
     const proofs: Proof[] = [];
-    const nutzapInstances: NDKNutzap[] = [];
+    const nutzapMap = new Map<string, NDKNutzap>(); // Map proof C to nutzap
 
-    // we leverage cashu-ts index stability
-
-    
+    // Collect unique proofs
     for (const nutzap of nutzaps) {
         for (const proof of nutzap.proofs) {
             if (proofCs.has(proof.C)) continue;
             proofCs.add(proof.C);
             proofs.push(proof);
-            nutzapInstances.push(nutzap);  // Store nutzap instance for each proof
+            nutzapMap.set(proof.C, nutzap);
         }
     }
 
     const states = await wallet.checkProofsStates(proofs);
 
-    for (const state of states) {
-        const nutzap = nutzapInstances.shift();
-        const proof = proofs.shift();
-        if (!nutzap || !proof) continue;
+    for (let i = 0; i < states.length; i++) {
+        const state = states[i];
+        const proof = proofs[i];
+        const nutzap = nutzapMap.get(proof.C);
+        
+        if (!nutzap) continue;
 
         if (state.state === CheckStateEnum.SPENT) {
             result.spentProofs.push(proof);
-            result.nutzapsWithSpentProofs.push(nutzap);
+            if (!result.nutzapsWithSpentProofs.some(n => n.id === nutzap.id)) {
+                result.nutzapsWithSpentProofs.push(nutzap);
+            }
         } else if (state.state === CheckStateEnum.UNSPENT) {
             result.unspentProofs.push(proof);
-            result.nutzapsWithUnspentProofs.push(nutzap);
+            if (!result.nutzapsWithUnspentProofs.some(n => n.id === nutzap.id)) {
+                result.nutzapsWithUnspentProofs.push(nutzap);
+            }
         }
     }
 

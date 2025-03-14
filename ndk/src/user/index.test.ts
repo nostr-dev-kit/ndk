@@ -4,18 +4,19 @@ import { NDK } from "../ndk/index.js";
 import { NDKSubscription } from "../subscription/index.js";
 import { NDKUser, type ProfilePointer, type NDKUserParams } from "./index.js";
 import * as Nip05 from "./nip05.js";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 
-jest.mock("nostr-tools", () => ({
-    ...jest.requireActual("nostr-tools"),
+vi.mock("nostr-tools", () => ({
+    ...vi.importActual("nostr-tools"),
     nip19: {
-        npubEncode: jest.fn().mockImplementation(() => "npub1_encoded_npub"),
-        decode: jest.fn().mockReturnValue({ type: "npub", data: "decoded_hexpubkey" }),
+        npubEncode: vi.fn().mockImplementation(() => "npub1_encoded_npub"),
+        decode: vi.fn().mockReturnValue({ type: "npub", data: "decoded_hexpubkey" }),
     },
 }));
 
 describe("NDKUser", () => {
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     describe("constructor", () => {
@@ -51,7 +52,7 @@ describe("NDKUser", () => {
         });
 
         it("sets pubkey and relayUrls from provided nprofile", () => {
-            (nip19.decode as jest.Mock).mockReturnValueOnce({
+            (nip19.decode as ReturnType<typeof vi.fn>).mockReturnValueOnce({
                 type: "nprofile",
                 data: {
                     pubkey: "test_pubkey_from_nprofile",
@@ -76,7 +77,7 @@ describe("NDKUser", () => {
                 npub: "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft",
             });
 
-            (nip19.decode as jest.Mock).mockReturnValue({
+            (nip19.decode as ReturnType<typeof vi.fn>).mockReturnValue({
                 data: "decoded_hexpubkey",
             });
 
@@ -97,7 +98,7 @@ describe("NDKUser", () => {
             npub: "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft",
         });
         user.ndk = ndk;
-        (nip19.decode as jest.Mock).mockReturnValue({
+        (nip19.decode as ReturnType<typeof vi.fn>).mockReturnValue({
             data: "decoded_hexpubkey",
         });
         const pubkey = user.pubkey;
@@ -139,7 +140,7 @@ describe("NDKUser", () => {
                 }),
             });
 
-            ndk.subscribe = jest.fn((filter, opts?): NDKSubscription => {
+            ndk.subscribe = vi.fn((filter, opts?): NDKSubscription => {
                 const sub = new NDKSubscription(ndk, filter, opts);
 
                 setTimeout(() => {
@@ -186,7 +187,7 @@ describe("NDKUser", () => {
                 }),
             });
 
-            ndk.subscribe = jest.fn((filter, opts?): NDKSubscription => {
+            ndk.subscribe = vi.fn((filter, opts?): NDKSubscription => {
                 const sub = new NDKSubscription(ndk, filter, opts);
 
                 setTimeout(() => {
@@ -224,7 +225,7 @@ describe("NDKUser", () => {
                 }),
             });
 
-            ndk.subscribe = jest.fn((filter, opts?): NDKSubscription => {
+            ndk.subscribe = vi.fn((filter, opts?): NDKSubscription => {
                 const sub = new NDKSubscription(ndk, filter, opts);
 
                 setTimeout(() => {
@@ -261,7 +262,7 @@ describe("NDKUser", () => {
                 }),
             });
 
-            ndk.subscribe = jest.fn((filter, opts?): NDKSubscription => {
+            ndk.subscribe = vi.fn((filter, opts?): NDKSubscription => {
                 const sub = new NDKSubscription(ndk, filter, opts);
 
                 setTimeout(() => {
@@ -287,21 +288,21 @@ describe("NDKUser", () => {
 
             // Valid NIP-05
             const validNip05 = "_@jeffg.fyi";
-            jest.spyOn(Nip05, "getNip05For").mockResolvedValue({
+            vi.spyOn(Nip05, "getNip05For").mockResolvedValue({
                 pubkey: "1739d937dc8c0c7370aa27585938c119e25c41f6c441a5d34c6d38503e3136ef",
             } as ProfilePointer);
             expect(await user.validateNip05(validNip05)).toEqual(true);
 
             // Invalid NIP-05
             const invalidNip05 = "_@f7z.io";
-            jest.spyOn(Nip05, "getNip05For").mockResolvedValue({
+            vi.spyOn(Nip05, "getNip05For").mockResolvedValue({
                 pubkey: "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52",
             } as ProfilePointer);
             expect(await user.validateNip05(invalidNip05)).toEqual(false);
 
             // Random NIP-05
             const randomNip05 = "bobby@globalhypermeganet.com";
-            jest.spyOn(Nip05, "getNip05For").mockResolvedValue(null);
+            vi.spyOn(Nip05, "getNip05For").mockResolvedValue(null);
             expect(await user.validateNip05(randomNip05)).toEqual(null);
         });
     });

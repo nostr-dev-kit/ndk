@@ -8,9 +8,10 @@ import { NDKPrivateKeySigner } from "../signers/private-key";
 import type { NDKUser } from "../user";
 import type { CashuPaymentInfo } from "./nip61";
 import type { LnPaymentInfo } from "./ln";
+import { describe, it, expect, beforeAll, afterEach, vi } from "vitest";
 
-jest.mock("./ln.js", () => ({
-    getNip57ZapSpecFromLud: jest.fn(async () => {
+vi.mock("./ln.js", () => ({
+    getNip57ZapSpecFromLud: vi.fn(async () => {
         return {
             status: "OK",
             tag: "payRequest",
@@ -85,14 +86,14 @@ describe("getZapMethod", () => {
     });
 
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it("identifies when the user has signaled nutzaps", async () => {
         const mintList = new NDKCashuMintList();
         mintList.mints = ["https://mint1", "https://mint2"];
         await mintList.sign(signer);
-        ndk.fetchEvents = jest.fn().mockResolvedValue(new Set([mintList]));
+        ndk.fetchEvents = vi.fn().mockResolvedValue(new Set([mintList]));
         const zapper = new NDKZapper(user, 1000);
         zapper.cashuPay = async (payment: NDKZapDetails<CashuPaymentInfo>) => undefined;
         const zapMethodMap = await zapper.getZapMethods(ndk, user.pubkey);
@@ -105,7 +106,7 @@ describe("getZapMethod", () => {
             content: JSON.stringify({ lud16: "pablo@primal.net" }),
             kind: 0,
         } as NostrEvent);
-        ndk.fetchEvents = jest.fn().mockResolvedValue(new Set<NDKEvent>([profile]));
+        ndk.fetchEvents = vi.fn().mockResolvedValue(new Set<NDKEvent>([profile]));
         const zapper = new NDKZapper(user, 1000);
         zapper.cashuPay = async (payment: NDKZapDetails<CashuPaymentInfo>) => undefined;
         zapper.lnPay = async (payment: NDKZapDetails<LnPaymentInfo>) => undefined;

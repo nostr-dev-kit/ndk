@@ -1,9 +1,10 @@
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { NDKRelayConnectivity } from "./connectivity";
 import { NDKRelay, NDKRelayStatus } from "./index";
 import { NDK } from "../ndk/index";
 
-jest.mock("ws");
-jest.useFakeTimers();
+vi.mock("ws");
+vi.useFakeTimers();
 
 describe("NDKRelayConnectivity", () => {
     let ndk: NDK;
@@ -17,7 +18,7 @@ describe("NDKRelayConnectivity", () => {
     });
 
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     describe("connect", () => {
@@ -33,7 +34,7 @@ describe("NDKRelayConnectivity", () => {
         });
 
         it("should create a new WebSocket connection", async () => {
-            const mockWebSocket = jest.fn();
+            const mockWebSocket = vi.fn();
             global.WebSocket = mockWebSocket as any;
 
             await connectivity.connect();
@@ -51,14 +52,14 @@ describe("NDKRelayConnectivity", () => {
         });
 
         it("should close the WebSocket connection", () => {
-            const mockClose = jest.fn();
+            const mockClose = vi.fn();
             connectivity["ws"] = { close: mockClose } as any;
             connectivity.disconnect();
             expect(mockClose).toHaveBeenCalled();
         });
 
         it("should handle disconnect error", () => {
-            const mockClose = jest.fn(() => {
+            const mockClose = vi.fn(() => {
                 throw new Error("Disconnect failed");
             });
             connectivity["ws"] = { close: mockClose } as any;
@@ -81,7 +82,7 @@ describe("NDKRelayConnectivity", () => {
 
     describe("send", () => {
         it("should send message when connected and WebSocket is open", async () => {
-            const mockSend = jest.fn();
+            const mockSend = vi.fn();
             connectivity["_status"] = NDKRelayStatus.CONNECTED;
             connectivity["ws"] = { readyState: WebSocket.OPEN, send: mockSend } as any;
             await connectivity.send("test message");
@@ -98,7 +99,7 @@ describe("NDKRelayConnectivity", () => {
 
     describe("publish", () => {
         it("should send EVENT message and return a promise", async () => {
-            const mockSend = jest.spyOn(connectivity, "send").mockResolvedValue(undefined);
+            const mockSend = vi.spyOn(connectivity, "send").mockResolvedValue(undefined);
             const event = { id: "test-id", content: "test-content" };
             const publishPromise = connectivity.publish(event as any);
             expect(mockSend).toHaveBeenCalledWith(
@@ -110,7 +111,7 @@ describe("NDKRelayConnectivity", () => {
 
     describe("count", () => {
         it("should send COUNT message and return a promise", async () => {
-            const mockSend = jest.spyOn(connectivity, "send").mockResolvedValue(undefined);
+            const mockSend = vi.spyOn(connectivity, "send").mockResolvedValue(undefined);
             const filters = [{ authors: ["test-author"] }];
             const countPromise = connectivity.count(filters, {});
             expect(mockSend).toHaveBeenCalledWith(

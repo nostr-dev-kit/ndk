@@ -6,13 +6,14 @@ import { NDKSubscription } from "../subscription/index.js";
 import debug from "debug";
 import { NDK } from "../ndk/index.js";
 import { NDKRelay } from "../index.js";
+import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 
 const ndk = new NDK();
 const relay = new NDKRelay("wss://fake-relay.com", undefined, ndk);
 const filters: NDKFilter[] = [{ kinds: [1] }];
 
 // mock
-relay.req = jest.fn();
+relay.req = vi.fn();
 
 // Mock classes for NDKSubscription and NDKFilter
 class MockNDKSubscription extends NDKSubscription {
@@ -51,6 +52,12 @@ describe("NDKRelaySubscription", () => {
     beforeEach(() => {
         ndkRelaySubscription = new NDKRelaySubscription(relay, null, ndk.subManager);
         ndkRelaySubscription.debug = debug("test");
+        vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+        vi.restoreAllMocks();
+        vi.useRealTimers();
     });
 
     it("should initialize with status INITIAL", () => {
@@ -68,9 +75,9 @@ describe("NDKRelaySubscription", () => {
 
     it("should execute immediately if subscription is not groupable", () => {
         const subscription = new MockNDKSubscription("sub2", 1000, "at-least");
-        jest.spyOn(subscription, "isGroupable").mockReturnValue(false);
+        vi.spyOn(subscription, "isGroupable").mockReturnValue(false);
 
-        const executeSpy = jest.spyOn(ndkRelaySubscription as any, "execute");
+        const executeSpy = vi.spyOn(ndkRelaySubscription as any, "execute");
         ndkRelaySubscription.addItem(subscription, filters);
         expect(executeSpy).toHaveBeenCalled();
     });
@@ -92,11 +99,11 @@ describe("NDKRelaySubscription", () => {
     });
 
     it("should execute subscription", () => {
-        const executeSpy = jest.spyOn(ndkRelaySubscription as any, "execute");
+        const executeSpy = vi.spyOn(ndkRelaySubscription as any, "execute");
         const subscription = new MockNDKSubscription("sub6", 1000, "at-least");
 
         ndkRelaySubscription.addItem(subscription, filters);
-        jest.advanceTimersByTime(1000);
+        vi.advanceTimersByTime(1000);
         expect(executeSpy).toHaveBeenCalled();
     });
 
@@ -144,7 +151,7 @@ describe("NDKRelaySubscription", () => {
         const sub = new MockNDKSubscription("sub11", 0, "at-most");
         sub.groupable = false;
         ndkRelaySubscription.addItem(sub, filters);
-        const closeSpy = jest.spyOn(ndkRelaySubscription as any, "close");
+        const closeSpy = vi.spyOn(ndkRelaySubscription as any, "close");
         sub.stop();
         expect(closeSpy).not.toHaveBeenCalled();
     });
@@ -154,12 +161,10 @@ describe("NDKRelaySubscription", () => {
         sub.groupable = false;
         sub.closeOnEose = true;
         ndkRelaySubscription.addItem(sub, filters);
-        const closeSpy = jest.spyOn(ndkRelaySubscription as any, "close");
+        const closeSpy = vi.spyOn(ndkRelaySubscription as any, "close");
         sub.stop();
         expect(closeSpy).not.toHaveBeenCalled();
         ndkRelaySubscription.oneose(ndkRelaySubscription.subId);
         expect(closeSpy).toHaveBeenCalled();
     });
 });
-
-jest.useFakeTimers();

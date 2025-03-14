@@ -1,6 +1,7 @@
 import { NDKUser } from ".";
 import { NDKEvent } from "../events/index";
 import { NDK } from "../ndk";
+import { describe, it, expect, vi } from "vitest";
 
 describe("follows", () => {
     const ndk = new NDK();
@@ -11,7 +12,7 @@ describe("follows", () => {
 
     const followedHexpubkey = "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52";
 
-    const fetchEventMock = jest.spyOn(ndk, "fetchEvent");
+    const fetchEventMock = vi.spyOn(ndk, "fetchEvent");
 
     it("skips tags on the contact list with invalid pubkeys", async () => {
         fetchEventMock.mockImplementation(() => {

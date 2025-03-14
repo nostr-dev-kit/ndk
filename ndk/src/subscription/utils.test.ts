@@ -1,6 +1,7 @@
 import { type NDKFilter, NDKSubscription } from ".";
 import { NDK } from "../ndk";
 import { filterForEventsTaggingId, filterFromId, generateSubId } from "./utils";
+import { describe, it, expect } from "vitest";
 
 const ndk = new NDK();
 
@@ -70,7 +71,7 @@ describe("filterFromId", () => {
 });
 
 describe("filterForEventsTaggingId", () => {
-    fit("handles nevents", () => {
+    it.only("handles nevents", () => {
         const filter = filterForEventsTaggingId(
             "nevent1qgs9kqvr4dkruv3t7n2pc6e6a7v9v2s5fprmwjv4gde8c4fe5y29v0spzamhxue69uhhyetvv9ujuurjd9kkzmpwdejhgtcqype6ycavy2e9zpx9mzeuekaahgw96ken0mzkcmgz40ljccwyrn88gxv2ewr"
         );
@@ -79,7 +80,7 @@ describe("filterForEventsTaggingId", () => {
         });
     });
 
-    fit("handles naddr", () => {
+    it.only("handles naddr", () => {
         const filter = filterForEventsTaggingId(
             "naddr1qvzqqqr4gupzpjjwt0eqm6as279wf079c0j42jysp2t4s37u8pg5w2dfyktxgkntqqxnzde38yen2desxqmn2d3332u3ff"
         );

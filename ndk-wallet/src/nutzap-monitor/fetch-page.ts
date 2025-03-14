@@ -22,8 +22,6 @@ export async function fetchPage(
         relaySet
     );
 
-    console.log(`fetched ${events.size} events`, relaySet?.relayUrls?.join(", "));
-
     return Array.from(events)
         .map((e) => NDKNutzap.from(e))
         .filter((n) => !!n) as NDKNutzap[];

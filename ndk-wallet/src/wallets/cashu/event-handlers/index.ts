@@ -17,10 +17,6 @@ let balanceUpdateTimer: NodeJS.Timeout | null = null;
 export async function eventHandler(
     this: NDKCashuWallet,
     event: NDKEvent,
-    relay: NDKRelay | undefined,
-    sub: NDKSubscription,
-    fromCache: boolean,
-    optimisticPublish: boolean
 ) {
     const handler = handlers[event.kind!];
     if (handler) {

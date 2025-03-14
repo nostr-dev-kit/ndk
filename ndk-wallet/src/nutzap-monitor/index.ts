@@ -696,15 +696,6 @@ export class NDKNutzapMonitor
         nutzaps: NDKNutzap[],
         oldestUnspentNutzapTime?: number
     ): Promise<number | undefined> {
-        // First, find the oldest nutzap timestamp
-        for (const nutzap of nutzaps) {
-            if (
-                nutzap.created_at &&
-                (!oldestUnspentNutzapTime || oldestUnspentNutzapTime > nutzap.created_at)
-            ) {
-                oldestUnspentNutzapTime = nutzap.created_at;
-            }
-        }
 
         // Group nutzaps by mint
         const groupedNutzaps = groupNutzaps(nutzaps, this);

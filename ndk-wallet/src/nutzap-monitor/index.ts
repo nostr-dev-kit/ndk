@@ -1,4 +1,5 @@
 import NDK, {
+    cashuPubkeyToNostrPubkey,
     NDKCashuMintList,
     NDKEvent,
     type NDKEventId,
@@ -11,14 +12,14 @@ import NDK, {
     NDKSubscriptionCacheUsage,
     NDKSubscriptionOptions,
     NDKUser,
+    proofP2pk,
 } from "@nostr-dev-kit/ndk";
 import { EventEmitter } from "tseep";
 import { NDKCashuWallet, NDKCashuWalletBackup } from "../wallets/cashu/wallet/index.js";
 import { NDKWallet } from "../wallets/index.js";
 import { fetchPage } from "./fetch-page.js";
 import { GroupedNutzaps, groupNutzaps } from "./group-nutzaps.js";
-import { CashuWallet, MintKeys, Proof } from "@cashu/cashu-ts";
-import { GetInfoResponse } from "@cashu/cashu-ts";
+import { CashuWallet, Proof } from "@cashu/cashu-ts";
 import { getProofSpendState } from "./spend-status.js";
 import { getCashuWallet, MintInfoNeededCb, MintInfoLoadedCb, MintKeysNeededCb, MintKeysLoadedCb, MintInterface } from "../wallets/mint.js";
 
@@ -146,7 +147,6 @@ export class NDKNutzapMonitor extends EventEmitter<{
         this.mintList = mintList;
         this.relaySet = mintList?.relaySet;
         this.store = store;
-        console.log(`✨ NDKNutzapMonitor initialized for user`, user.pubkey);
     }
 
     set wallet(wallet: NDKWallet | undefined) {
@@ -265,11 +265,8 @@ export class NDKNutzapMonitor extends EventEmitter<{
     public async start({ filter, opts }: { filter?: NDKFilter, opts?: NDKSubscriptionOptions }) {
         // if we are already running, stop the current subscription
         if (this.sub) this.sub.stop();
-
-        console.log(`🚀 Starting nutzap monitor for user`, this.user.pubkey);
         
         try {
-            console.log(`🔑 Fetching backup keys`);
             await this.getBackupKeys();
         } catch (e) {
             console.error(`❌ Failed to get backup keys`, e);
@@ -282,32 +279,30 @@ export class NDKNutzapMonitor extends EventEmitter<{
         // we start the subscription.
         const since = Math.floor(Date.now() / 1000);
         const monitorFilter = { kinds: [NDKKind.Nutzap], "#p": [this.user.pubkey], since }
-        console.log(`📡 Subscription filter:`, JSON.stringify(monitorFilter));
 
         // load all nutzaps from the store
         if (this.store) {
             try {
-                console.log(`📦 Loading nutzaps from store`);
                 const nutzaps = await this.store.getAllNutzaps();
-                console.log(`📊 Loaded ${nutzaps.size} nutzaps from store`);
                 for (const [id, state] of nutzaps.entries()) {
                     this.nutzapStates.set(id, state);
                 }
             } catch (e) {
                 console.error(`❌ Failed to load nutzaps from store`, e);
             }
-        } else {
-            console.log(`📦 No store provided, skipping loading nutzaps from store`);
         }
 
         try {
-            console.log(`🕵️ Processing accumulated nutzaps`);
+            await this.processRedeemableNutzapsFromStore();
+        } catch (e) {
+            console.error(`❌ Failed to process redeemable nutzaps from store`, e);
+        }
+
+        try {
             await this.processAccumulatedNutzaps(filter, opts);
         } catch (e) {
             console.error(`❌ Failed to process nutzaps`, e);
         }
-
-        console.log(`👂 Starting subscription with filter:`, JSON.stringify(monitorFilter));
         
         this.sub = this.ndk.subscribe(
             monitorFilter,
@@ -334,25 +329,9 @@ export class NDKNutzapMonitor extends EventEmitter<{
      * Checks if the group of nutzaps can be redeemed and redeems the ones that can be.
      */
     private async checkAndRedeemGroup(group: GroupedNutzaps, oldestUnspentNutzapTime?: number | undefined) {
-        // get the privkey we will need to redeem these nutzaps
-        const groupPrivkey = this.privkeys.get(group.p2pk);
-        if (!groupPrivkey) {
-            const totalAmount = group.nutzaps.reduce((acc, nutzap) => acc + nutzap.amount, 0);
-            console.error(`❌ No privkey found for p2pk`, group.p2pk, "there are ", group.nutzaps.length, "nutzaps in this group with a total amount of", totalAmount, "sats");
-            return;
-        }
-        
-        console.log(`🔐 Found privkey for p2pk ${group.p2pk.substring(0, 6)}...`);
         const cashuWallet = await this.getCashuWallet(group.mint);
-        if (!cashuWallet) {
-            console.error(`❌ Failed to get cashu wallet for mint`, group.mint);
-            return;
-        }
         
-        console.log(`🔍 Checking spend state for ${group.nutzaps.length} nutzaps`);
         const spendStates = await getProofSpendState(cashuWallet, group.nutzaps);
-
-        console.log(`📊 Spend states: ${spendStates.nutzapsWithSpentProofs.length} spent, ${spendStates.nutzapsWithUnspentProofs.length} unspent`);
         
         // update the state of the nutzaps that have been spent
         for (const nutzap of spendStates.nutzapsWithSpentProofs) {
@@ -365,14 +344,13 @@ export class NDKNutzapMonitor extends EventEmitter<{
         }
 
         if (spendStates.unspentProofs.length > 0) {
-            console.log(`💸 Found ${spendStates.unspentProofs.length} unspent proofs to redeem`);
             for (const nutzap of spendStates.nutzapsWithUnspentProofs) {
                 if (!oldestUnspentNutzapTime || oldestUnspentNutzapTime > nutzap.created_at!) {
                     oldestUnspentNutzapTime = nutzap.created_at!;
                 }
             }
 
-            await this.redeemNutzaps(group.mint, spendStates.nutzapsWithUnspentProofs, spendStates.unspentProofs, groupPrivkey);
+            await this.redeemNutzaps(group.mint, spendStates.nutzapsWithUnspentProofs, spendStates.unspentProofs);
         }
     }
 
@@ -389,44 +367,45 @@ export class NDKNutzapMonitor extends EventEmitter<{
         _filter["#p"] = [this.user.pubkey];
         const knownNutzapIds = new Set(this.nutzapStates.keys());
         
-        console.log(`🔄 Fetching page with filter:`, JSON.stringify(_filter));
-        console.log(`📋 Known nutzaps: ${knownNutzapIds.size}`);
-        
         const nutzaps = await fetchPage(this.ndk, _filter, knownNutzapIds, this.relaySet);
-        console.log(`📩 Fetched ${nutzaps.length} new nutzaps`);
 
-        // group nutzaps by mint
-        const groupedNutzaps = groupNutzaps(nutzaps, this);
-        console.log(`📊 Grouped into ${groupedNutzaps.length} mint groups`);
-
-        for (const group of groupedNutzaps) {
-            console.log(`💰 Processing group for mint ${group.mint} with ${group.nutzaps.length} nutzaps`);
-            await this.checkAndRedeemGroup(group, oldestUnspentNutzapTime);
-        }
+        // Process the nutzaps
+        oldestUnspentNutzapTime = await this.processNutzaps(nutzaps, oldestUnspentNutzapTime);
 
         // if we found a new nutzap we were able to process, fetch the next page
         if (oldestUnspentNutzapTime) {
             // update filter to fetch the previous page
             _filter.since = oldestUnspentNutzapTime-1;
-            console.log(`🔙 Found older nutzaps, fetching previous page with since=${_filter.since}`);
             await this.processAccumulatedNutzaps(_filter, opts);
-        } else {
-            console.log(`🏁 No more nutzaps found, pagination complete`);
         }
     }
 
     public stop() {
-        console.log(`🛑 Stopping nutzap monitor`);
         this.sub?.stop();
     }
 
     private updateNutzapState(id: NDKEventId, state: Partial<NDKNutzapState>) {
         const currentState = this.nutzapStates.get(id) ?? {} as NDKNutzapState;
         if (!currentState.status) state.status ??= NdkNutzapStatus.INITIAL;
+
+        // Check if the update would actually change anything
+        const stateIsUnchanged = Object.entries(state).every(([key, value]) => {
+            if (key === 'nutzap' && currentState.nutzap && value) {
+                return currentState.nutzap.id === (value as NDKNutzap).id;
+            }
+            return currentState[key as keyof NDKNutzapState] === value;
+        });
+
+        if (stateIsUnchanged) return;
+
         this.nutzapStates.set(id, { ...currentState, ...state });
         this.emit("state_changed", id, currentState.status);
 
-        const serializedState = (state: Partial<NDKNutzapState>) => JSON.stringify({...state, nutzap: !!state.nutzap});
+        const serializedState = (state: Partial<NDKNutzapState>) => {
+            const res: Record<string, any> = { ...state };
+            if (res.nutzap) res.nutzap = res.nutzap.id;
+            return JSON.stringify(res);
+        }
         const currentStatusStr = serializedState(currentState);
         const newStatusStr = serializedState(state);
         console.log(`\t[${id.substring(0, 6)}]`, currentStatusStr, "changed to 👉", newStatusStr);
@@ -452,23 +431,7 @@ export class NDKNutzapMonitor extends EventEmitter<{
      */
     public async redeemNutzap(nutzap: NDKNutzap): Promise<NDKNutzapState> {
         if (!this.nutzapStates.has(nutzap.id)) this.updateNutzapState(nutzap.id, { status: NdkNutzapStatus.INITIAL, nutzap });
-        
-        const mint = nutzap.mint;
-        const cashuWallet = await this.getCashuWallet(mint);
-        if (!cashuWallet) {
-            this.updateNutzapState(nutzap.id, { status: NdkNutzapStatus.TEMPORARY_ERROR, errorMessage: "Failed to get cashu wallet for mint" });
-            return this.nutzapStates.get(nutzap.id)!;
-        }
-
-        // get the privkey we will need to redeem these nutzaps
-        const key = this.privkeys.get(nutzap.p2pk!);
-        if (!key) {
-            this.updateNutzapState(nutzap.id, { status: NdkNutzapStatus.MISSING_PRIVKEY, errorMessage: "No privkey found for p2pk" });
-            return this.nutzapStates.get(nutzap.id)!;
-        }
-        
-        await this.redeemNutzaps(mint, [nutzap], nutzap.proofs, key);
-
+        await this.redeemNutzaps(nutzap.mint, [nutzap], nutzap.proofs);
         return this.nutzapStates.get(nutzap.id)!;
     }
 
@@ -491,51 +454,54 @@ export class NDKNutzapMonitor extends EventEmitter<{
         mint: string,
         nutzaps: NDKNutzap[],
         proofs: Proof[],
-        privkey: NDKPrivateKeySigner
     ) {
-        console.log(`🌱 Attempting to redeem ${nutzaps.length} nutzaps with ${proofs.length} proofs from mint ${mint}`);
+        if (!this.wallet) throw new Error("wallet not set");
+        if (!this.wallet.redeemNutzaps) throw new Error("wallet does not support redeeming nutzaps");
+        
         const cashuWallet = await this.getCashuWallet(mint);
+        const validNutzaps: NDKNutzap[] = [];
 
         // perform validation on each nutzap
         for (const nutzap of nutzaps) {
             if (!nutzap.isValid) {
                 this.updateNutzapState(nutzap.id, { status: NdkNutzapStatus.INVALID_NUTZAP, errorMessage: "Invalid nutzap" });
-                return;
+                continue;
             }
 
             // check that the nutzap has a valid p2pk
             const rawP2pk = nutzap.rawP2pk;
             if (!rawP2pk) {
                 this.updateNutzapState(nutzap.id, { status: NdkNutzapStatus.INVALID_NUTZAP, errorMessage: "Invalid nutzap: locked to an invalid public key (no p2pk)" });
-                return;
+                continue;
             }
 
             if (rawP2pk.length !== 66) {
                 this.updateNutzapState(nutzap.id, { status: NdkNutzapStatus.INVALID_NUTZAP, errorMessage: "Invalid nutzap: locked to an invalid public key (length " + rawP2pk.length + ")" });
-                return;
+                continue;
             }
 
-            // 
-            
+            validNutzaps.push(nutzap);
         }
 
-        if (!cashuWallet) {
-            console.error(`❌ Failed to get cashu wallet for mint`, mint);
+        const cashuPubkey = proofP2pk(proofs[0]);
+        if (!cashuPubkey) return;
+        const nostrPubkey = cashuPubkeyToNostrPubkey(cashuPubkey);
+        if (!nostrPubkey) return;
+        
+        const privkey = this.privkeys.get(nostrPubkey);
+        if (!privkey) {
+            for (const nutzap of validNutzaps) {
+                this.updateNutzapState(nutzap.id, { status: NdkNutzapStatus.MISSING_PRIVKEY, errorMessage: "No privkey found for p2pk" });
+            }
             return;
         }
 
-        if (!this.wallet) throw new Error("wallet not set");
-        if (!this.wallet.redeemNutzaps) throw new Error("wallet does not support redeeming nutzaps");
-
-        for (const nutzap of nutzaps) {
+        for (const nutzap of validNutzaps) {
             this.updateNutzapState(nutzap.id, { status: NdkNutzapStatus.PROCESSING });
         }
         
         try {
-            console.log(`💰 Redeeming ${proofs.length} proofs for ${nutzaps.length} nutzaps`);
             const totalAmount = await this.wallet.redeemNutzaps(nutzaps, privkey.privateKey!, { cashuWallet, proofs, mint });
-
-            console.log(`✅ Successfully redeemed ${nutzaps.length} nutzaps for ${totalAmount} sats`);
             this.emit("redeemed", nutzaps, totalAmount);
 
             for (const nutzap of nutzaps) {
@@ -573,20 +539,60 @@ export class NDKNutzapMonitor extends EventEmitter<{
         if (state.status === NdkNutzapStatus.MISSING_PRIVKEY) {
             const p2pk = state.nutzap?.p2pk;
             if (p2pk && this.privkeys.has(p2pk)) return true;
+            return false;
         }
 
         if ([NdkNutzapStatus.SPENT, NdkNutzapStatus.REDEEMED].includes(state.status)) return false;
 
         // Never retry permanent errors
-        if ([NdkNutzapStatus.PERMANENT_ERROR, NdkNutzapStatus.INVALID_NUTZAP].includes(state.status)) {
-            console.log(`will not try redeeming nutzap with permanent error:`, 
-                        state.nutzap?.id, state.errorMessage);
-            return false;
-        }
-
-        console.log(`will not try redeeming nutzap`, state.nutzap?.id, "because it's in status", state.status);
+        if ([NdkNutzapStatus.PERMANENT_ERROR, NdkNutzapStatus.INVALID_NUTZAP].includes(state.status)) return false;
     
         return false;
+    }
+
+    /**
+     * Process nutzaps from the store that are in a redeemable state.
+     * This includes nutzaps in INITIAL state and those in MISSING_PRIVKEY state
+     * for which we now have the private key.
+     */
+    private async processRedeemableNutzapsFromStore() {
+        const redeemableNutzaps: NDKNutzap[] = [];
+
+        // Find all nutzaps in the store that are in a redeemable state
+        for (const [id, state] of this.nutzapStates.entries()) {
+            // Skip if there's no nutzap object
+            if (!state.nutzap) continue;
+
+            // Check if this nutzap should be redeemed
+            if (this.shouldTryRedeem(state.nutzap)) {
+                redeemableNutzaps.push(state.nutzap);
+            }
+        }
+        if (redeemableNutzaps.length === 0) return;
+
+        // Process the nutzaps
+        await this.processNutzaps(redeemableNutzaps);
+    }
+
+    /**
+     * Common method to process a collection of nutzaps:
+     * - Group them by mint
+     * - Check and redeem each group
+     * 
+     * @param nutzaps The nutzaps to process
+     * @param oldestUnspentNutzapTime Optional timestamp to track the oldest unspent nutzap
+     * @returns The updated oldestUnspentNutzapTime if any nutzaps were processed
+     */
+    private async processNutzaps(nutzaps: NDKNutzap[], oldestUnspentNutzapTime?: number): Promise<number | undefined> {
+        // Group nutzaps by mint
+        const groupedNutzaps = groupNutzaps(nutzaps, this);
+
+        // Process each group
+        for (const group of groupedNutzaps) {
+            await this.checkAndRedeemGroup(group, oldestUnspentNutzapTime);
+        }
+
+        return oldestUnspentNutzapTime;
     }
 }
 

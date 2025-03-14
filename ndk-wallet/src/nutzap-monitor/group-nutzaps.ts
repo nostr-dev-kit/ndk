@@ -1,10 +1,10 @@
-import { NDKNutzap } from "@nostr-dev-kit/ndk";
-import { proofP2pkNostr } from "@nostr-dev-kit/ndk";
+import { cashuPubkeyToNostrPubkey, NDKNutzap, proofP2pk } from "@nostr-dev-kit/ndk";
 import { NDKNutzapMonitor } from ".";
 
 export type GroupedNutzaps = {
     mint: string;
-    p2pk: string;
+    cashuPubkey: string;
+    nostrPubkey: string;
     nutzaps: NDKNutzap[];
 }
 
@@ -18,15 +18,11 @@ export function groupNutzaps(nutzaps: NDKNutzap[], monitor: NDKNutzapMonitor): A
         const mint = nutzap.mint;
 
         for (const proof of nutzap.proofs) {
-            const p2pk = proofP2pkNostr(proof);
-            if (!p2pk) {
-                console.log('Unable to parse p2pk for nutzap', nutzap.encode(), JSON.stringify(nutzap.rawEvent(), null, 4));
-            }
-            const safeP2pk = p2pk || "no-key";
+            const cashuPubkey = proofP2pk(proof) ?? "no-key";
 
             // add to the right group
-            const key = getKey(mint, safeP2pk);
-            const group = (result.get(key) ?? { mint, p2pk: safeP2pk, nutzaps: [] }) as GroupedNutzaps;
+            const key = getKey(mint, cashuPubkey);
+            const group = (result.get(key) ?? { mint, cashuPubkey, nostrPubkey: cashuPubkeyToNostrPubkey(cashuPubkey), nutzaps: [] }) as GroupedNutzaps;
             group.nutzaps.push(nutzap);
             result.set(key, group);
         }

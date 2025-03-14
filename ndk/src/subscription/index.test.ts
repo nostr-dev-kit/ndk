@@ -53,8 +53,22 @@ describe("NDKSubscriptionFilters", () => {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const mockedEmit = vi.spyOn(sub, "emit" as any);
             const mockedValidate = vi.spyOn(invalidEvent, "validate");
-            const mockedVerify = vi.spyOn(invalidEvent, "verifySignature");
-            sub.eventReceived(invalidEvent, undefined);
+            // Mock verifySignature to explicitly return false
+            const mockedVerify = vi
+                .spyOn(invalidEvent, "verifySignature")
+                .mockImplementation(() => false);
+
+            // Create a mock relay object with the required methods
+            const mockRelay = {
+                shouldValidateEvent: () => true,
+                addValidatedEvent: vi.fn(),
+                addNonValidatedEvent: vi.fn(),
+                url: "wss://mock.relay",
+            };
+
+            // Pass the mock relay to eventReceived
+            sub.eventReceived(invalidEvent, mockRelay as any);
+
             expect(mockedValidate).not.toHaveBeenCalled();
             expect(mockedVerify).toHaveBeenCalled();
             expect(mockedEmit).not.toHaveBeenCalled();

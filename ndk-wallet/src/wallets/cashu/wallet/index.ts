@@ -123,9 +123,15 @@ export class NDKCashuWallet extends NDKWallet {
         if (this.privkeys.size === 0) throw new Error("no privkey to backup");
 
         const backup = new NDKCashuWalletBackup(this.ndk);
-        backup.privkeys = Array.from(this.privkeys.values().map((signer) => signer.privateKey!));
+
+        const privkeys: string[] = [];
+        for (const [pubkey, signer] of this.privkeys.entries()) {
+            privkeys.push(signer.privateKey!);
+        }
+        
+        backup.privkeys = privkeys;
         backup.mints = this.mints;
-        if (publish) backup.publish(this.relaySet);
+        if (publish) backup.save(this.relaySet);
 
         return backup;
     }
@@ -134,7 +140,6 @@ export class NDKCashuWallet extends NDKWallet {
         return this.event?.tagId();
     }
 
-    public checkProofs = consolidateTokens.bind(this);
     public consolidateTokens = consolidateTokens.bind(this);
 
     /**
@@ -266,7 +271,7 @@ export class NDKCashuWallet extends NDKWallet {
 
         if (this.privkeys.size === 0) {
             const signer = NDKPrivateKeySigner.generate();
-            console.trace("generating a new p2pk", signer.privateKey);
+            console.trace(`generating a new p2pk`, signer.privateKey);
             await this.addPrivkey(signer.privateKey!);
         }
 
@@ -518,6 +523,7 @@ export class NDKCashuWalletBackup extends NDKEvent {
 
     async save(relaySet?: NDKRelaySet) {
         if (!this.ndk) throw new Error("no ndk instance");
+        if (!this.privkeys.length) throw new Error("no privkeys");
         this.content = JSON.stringify(payloadForEvent(this.privkeys, this.mints));
         await this.encrypt(this.ndk.activeUser!, undefined, "nip44");
         return this.publish(relaySet);

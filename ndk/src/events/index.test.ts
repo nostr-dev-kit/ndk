@@ -9,6 +9,7 @@ import { NDKPrivateKeySigner } from "../signers/private-key";
 import { NIP73EntityType } from "./nip73";
 import { NDKSigner } from "../signers";
 import { NDKKind } from "./kinds";
+import { vi } from "vitest";
 
 const ndk = new NDK();
 
@@ -58,7 +59,7 @@ describe("NDKEvent", () => {
 
         it("returns tagId for other kinds", () => {
             event.kind = 2;
-            const spy = jest.spyOn(event, "tagId").mockReturnValue("mockTagId");
+            const spy = vi.spyOn(event, "tagId").mockReturnValue("mockTagId");
             const result = event.deduplicationKey();
             expect(result).toEqual("mockTagId");
             expect(spy).toHaveBeenCalled();
@@ -67,7 +68,7 @@ describe("NDKEvent", () => {
 
         it("returns parameterized tagId for kinds between 30k and 40k", () => {
             event.kind = 35000;
-            const spy = jest.spyOn(event, "tagId").mockReturnValue("parameterizedTagId");
+            const spy = vi.spyOn(event, "tagId").mockReturnValue("parameterizedTagId");
             const result = event.deduplicationKey();
             expect(result).toEqual("parameterizedTagId");
             expect(spy).toHaveBeenCalled();

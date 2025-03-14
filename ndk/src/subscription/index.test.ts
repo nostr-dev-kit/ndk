@@ -1,6 +1,7 @@
 import { NDKSubscription } from ".";
 import { NDK } from "../ndk";
 import { NDKEvent } from "../events";
+import { vi } from "vitest";
 
 const ndk = new NDK();
 const invalidEvent = new NDKEvent(ndk, {
@@ -18,9 +19,9 @@ describe("NDKSubscriptionFilters", () => {
         it("doesn't emit for invalid/unverified events", () => {
             const sub = new NDKSubscription(ndk, {}, {});
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const mockedEmit = jest.spyOn(sub, "emit" as any);
-            const mockedValidate = jest.spyOn(invalidEvent, "validate");
-            const mockedVerify = jest.spyOn(invalidEvent, "verifySignature");
+            const mockedEmit = vi.spyOn(sub, "emit" as any);
+            const mockedValidate = vi.spyOn(invalidEvent, "validate");
+            const mockedVerify = vi.spyOn(invalidEvent, "verifySignature");
             sub.eventReceived(invalidEvent, undefined);
             expect(mockedValidate).toHaveBeenCalled();
             expect(mockedVerify).not.toHaveBeenCalled();
@@ -34,9 +35,9 @@ describe("NDKSubscriptionFilters", () => {
             // New sub skipping verification on purpose
             const sub = new NDKSubscription(ndk, {}, { skipVerification: true });
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const mockedEmit = jest.spyOn(sub, "emit" as any);
-            const mockedValidate = jest.spyOn(invalidEvent, "validate");
-            const mockedVerify = jest.spyOn(invalidEvent, "verifySignature");
+            const mockedEmit = vi.spyOn(sub, "emit" as any);
+            const mockedValidate = vi.spyOn(invalidEvent, "validate");
+            const mockedVerify = vi.spyOn(invalidEvent, "verifySignature");
             sub.eventReceived(invalidEvent, undefined);
             expect(mockedValidate).toHaveBeenCalled();
             expect(mockedVerify).not.toHaveBeenCalled();
@@ -50,9 +51,9 @@ describe("NDKSubscriptionFilters", () => {
             // New sub skipping validation on purpose
             const sub = new NDKSubscription(ndk, {}, { skipValidation: true });
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const mockedEmit = jest.spyOn(sub, "emit" as any);
-            const mockedValidate = jest.spyOn(invalidEvent, "validate");
-            const mockedVerify = jest.spyOn(invalidEvent, "verifySignature");
+            const mockedEmit = vi.spyOn(sub, "emit" as any);
+            const mockedValidate = vi.spyOn(invalidEvent, "validate");
+            const mockedVerify = vi.spyOn(invalidEvent, "verifySignature");
             sub.eventReceived(invalidEvent, undefined);
             expect(mockedValidate).not.toHaveBeenCalled();
             expect(mockedVerify).toHaveBeenCalled();
@@ -69,9 +70,9 @@ describe("NDKSubscriptionFilters", () => {
                 { skipValidation: true, skipVerification: true }
             );
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const mockedEmit = jest.spyOn(sub, "emit" as any);
-            const mockedValidate = jest.spyOn(invalidEvent, "validate");
-            const mockedVerify = jest.spyOn(invalidEvent, "verifySignature");
+            const mockedEmit = vi.spyOn(sub, "emit" as any);
+            const mockedValidate = vi.spyOn(invalidEvent, "validate");
+            const mockedVerify = vi.spyOn(invalidEvent, "verifySignature");
             sub.eventReceived(invalidEvent, undefined);
             expect(mockedValidate).not.toHaveBeenCalled();
             expect(mockedVerify).not.toHaveBeenCalled();

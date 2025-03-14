@@ -572,6 +572,17 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     }
 
     /**
+     * Get an event from the database by ID.
+     * 
+     * @param id - The ID of the event to get.
+     * @returns The event, or null if it doesn't exist.
+     */
+    public getEventId(id: NDKEventId): NDKEvent | null {
+        const row = this.db.getFirstSync(`SELECT event FROM events WHERE id = ?;`, [id]) as { event: string };
+        return row ? new NDKEvent(undefined, deserialize(row.event)) : null;
+    }
+
+    /**
      * This function runs a query and returns parsed events.
      * @param query The query to run.
      * @param params The parameters to pass to the query.

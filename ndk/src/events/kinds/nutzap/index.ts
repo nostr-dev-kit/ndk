@@ -21,25 +21,24 @@ export class NDKNutzap extends NDKEvent {
 
         // ensure we have an alt tag
         if (!this.alt) this.alt = "This is a nutzap";
-    }
-
-    static from(event: NDKEvent) {
-        const e = new this(event.ndk, event);
 
         try {
-            const proofTags = e.getMatchingTags("proof");
+            const proofTags = this.getMatchingTags("proof");
 
             if (proofTags.length) {
                 // preferred version with proofs as tags
-                e._proofs = proofTags.map((tag) => JSON.parse(tag[1])) as Proof[];
+                this._proofs = proofTags.map((tag) => JSON.parse(tag[1])) as Proof[];
             } else {
                 // old version with proofs in content?
-                e._proofs = JSON.parse(e.content) as Proof[];
+                this._proofs = JSON.parse(this.content) as Proof[];
             }
         } catch {
             return;
         }
+    }
 
+    static from(event: NDKEvent) {
+        const e = new this(event.ndk, event);
         if (!e._proofs || !e._proofs.length) return;
 
         return e;
@@ -71,31 +70,43 @@ export class NDKNutzap extends NDKEvent {
         return this._proofs;
     }
 
-    /**
-     * Gets the p2pk pubkey that is embedded in the first proof
-     */
-    get p2pk(): string | undefined {
+    get rawP2pk(): string | undefined {
         const firstProof = this.proofs[0];
         try {
             const secret = JSON.parse(firstProof.secret);
-            let payload: Record<string, any> = {};
+            let payload: any;
             if (typeof secret === "string") {
                 payload = JSON.parse(secret);
                 this.debug("stringified payload", firstProof.secret);
             } else if (typeof secret === "object") {
                 payload = secret;
             }
-            const isP2PKLocked = payload[0] === "P2PK" && payload[1]?.data;
-
-            if (isP2PKLocked) {
-                const paddedp2pk = payload[1].data;
-                const p2pk = paddedp2pk.slice(2);
-
-                if (p2pk) return p2pk;
+            
+            // If payload is an array and has format ["P2PK", {data: "..."}]
+            if (Array.isArray(payload) && payload[0] === "P2PK" && payload.length > 1 && typeof payload[1] === "object" && payload[1] !== null) {
+                return payload[1].data;
             }
+            
+            // Handle non-array case
+            if (typeof payload === "object" && payload !== null && typeof payload[1]?.data === "string") {
+                return payload[1].data;
+            }
+            
+            return undefined;
         } catch (e) {
             this.debug("error parsing p2pk pubkey", e, this.proofs[0]);
         }
+    }
+
+    /**
+     * Gets the p2pk pubkey that is embedded in the first proof.
+     * 
+     * Note that this returns a nostr pubkey, not a cashu pubkey (no "02" prefix)
+     */
+    get p2pk(): string | undefined {
+        const rawP2pk = this.rawP2pk;
+        if (!rawP2pk) return;
+        return rawP2pk.startsWith("02") ? rawP2pk.slice(2) : rawP2pk;
     }
 
     /**
@@ -106,22 +117,23 @@ export class NDKNutzap extends NDKEvent {
     }
 
     set mint(value: string) {
-        this.removeTag("u");
-        this.tag(["u", value]);
+        this.replaceTag(["u", value]);
     }
 
     get unit(): string {
-        return this.tagValue("unit") ?? "sat";
+        let _unit = this.tagValue("unit") ?? "sat";
+        if (_unit?.startsWith('msat')) _unit = "sat";
+        return _unit;
     }
 
     set unit(value: string | undefined) {
         this.removeTag("unit");
+        if (value?.startsWith('msat')) throw new Error("msat is not allowed, use sat denomination instead");
         if (value) this.tag(["unit", value]);
     }
 
     get amount(): number {
         const amount = this.proofs.reduce((total, proof) => total + proof.amount, 0);
-        if (this.unit === "msat") return amount * 1000;
         return amount;
     }
 
@@ -237,4 +249,14 @@ export function proofP2pkNostr(proof: Proof): Hexpubkey | undefined {
 
     if (p2pk.startsWith("02") && p2pk.length === 66) return p2pk.slice(2);
     return p2pk;
+}
+
+/**
+ * 
+ * @param cashuPubkey 
+ * @returns 
+ */
+export function cashuPubkeyToNostrPubkey(cashuPubkey: string): string | undefined {
+    if (cashuPubkey.startsWith("02") && cashuPubkey.length === 66) return cashuPubkey.slice(2);
+    return undefined;
 }

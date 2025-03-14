@@ -57,7 +57,7 @@ export async function withProofReserve<T>(
         allOurProofs: Proof[],
     ) => Promise<WithProofReserveCb<T> | null>
 ): Promise<WalletOperation<T> | null> {
-    cashuWallet ??= await wallet.cashuWallet(mint);
+    cashuWallet ??= await wallet.getCashuWallet(mint);
 
     const availableMintProofs = wallet.state.getProofs({ mint, onlyAvailable: true });
     const proofs = cashuWallet.selectProofsToSend(availableMintProofs, amountWithFees);

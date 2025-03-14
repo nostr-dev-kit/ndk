@@ -419,6 +419,16 @@ export class NDKEvent extends EventEmitter {
     }
 
     /**
+     * Replace a tag with a new value. If not found, it will be added.
+     * @param tag The tag to replace.
+     * @param value The new value for the tag.
+     */
+    public replaceTag(tag: NDKTag): void {
+        this.removeTag(tag[0]);
+        this.tags.push(tag);
+    }
+
+    /**
      * Sign the event if a signer is present.
      *
      * It will generate tags.

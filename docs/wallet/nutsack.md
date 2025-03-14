@@ -33,7 +33,7 @@ We now have a NIP-60 wallet -- this wallet will be available from any nostr clie
 ```ts
 const deposit = wallet.deposit(1000, mints[0]);
 const bolt11 = deposit.start(); // get a LN PR
-deposit.on("success", () => console.log("we have money!", wallet.balance()));
+deposit.on("success", () => console.log("we have money!", wallet.balance));
 ```
 
 ## Configure NDK to use a wallet

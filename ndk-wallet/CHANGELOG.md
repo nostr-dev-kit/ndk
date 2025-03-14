@@ -1,5 +1,16 @@
 # @nostr-dev-kit/ndk-cache-redis
 
+## 0.5.0
+
+### Minor Changes
+
+- BREAKING: move wallet balance to be a getter since it sets a more natural expectation of what the function does
+- Bug fix: NWC nutzaps always validate that the p2pk is properly padded
+
+### Patch Changes
+
+- implement mint get/set interfaces at the NDKWallet level
+
 ## 0.4.3
 
 ### Patch Changes

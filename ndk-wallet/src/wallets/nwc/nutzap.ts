@@ -1,17 +1,27 @@
 import { Proof } from "@cashu/cashu-ts";
-import { CashuWallet } from "@cashu/cashu-ts";
 import { NDKNWCWallet } from "./index.js";
 import NDK, { NDKCashuToken, NDKNutzap } from "@nostr-dev-kit/ndk";
 import { createOutTxEvent } from "../cashu/wallet/txs.js";
+import { RedeemNutzapsOpts } from "../index.js";
 
 export async function redeemNutzaps(
     this: NDKNWCWallet,
-    cashuWallet: CashuWallet,
     nutzaps: NDKNutzap[],
-    proofs: Proof[],
-    mint: string,
-    privkey: string
+    privkey: string,
+    {
+        cashuWallet,
+        proofs,
+        mint,
+    }: RedeemNutzapsOpts
 ): Promise<number> {
+    proofs ??= nutzaps.flatMap(n => n.proofs);
+    if (!cashuWallet) {
+        if (!mint) throw new Error("No mint provided");
+        cashuWallet = await this.getCashuWallet(mint);
+    } else {
+        mint = cashuWallet.mint.mintUrl;
+    }
+    
     const info = await this.getInfo();
 
     if (!info.methods.includes("make_invoice")) throw new Error("This NWC wallet does not support making invoices");

@@ -7,11 +7,13 @@
         "strict": false,
         "jsx": "react",
         "declaration": true,
-        "esModuleInterop": true
+        "esModuleInterop": true,
+        "rootDir": "src",
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["src/*"]
+        }
     },
     "include": ["src/**/*.ts", "src/**/*.tsx"],
-    "exclude": ["node_modules"],
-    "paths": {
-        "@/*": ["src/*"]
-    }
+    "exclude": ["node_modules"]
 }

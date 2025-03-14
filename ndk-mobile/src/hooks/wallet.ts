@@ -4,17 +4,7 @@ import { useWalletStore } from '../stores/wallet.js';
 import { useNDK, useNDKCurrentUser } from './ndk.js';
 import { useNDKStore } from '../stores/ndk.js';
 import { useEffect, useCallback } from 'react';
-import { getNutzaps, saveNutzap } from '../db/wallet/nutzaps.js';
-import NDK from '@nostr-dev-kit/ndk';
-
-const getKnownNutzaps = (ndk: NDK) => {
-    const nutzaps = getNutzaps(ndk);
-    
-    return new Set(nutzaps
-        .filter(n => n.status === 'redeemed' || n.status === 'spent' || n.status === 'failed')
-        .map(n => n.event_id)
-    );
-}
+import { wallet } from '../db/index.js';
 
 /**
  * @param start - Whether to start the nutzap monitor if it hasn't been started yet.
@@ -43,32 +33,26 @@ const useNDKNutzapMonitor = (mintList?: NDKCashuMintList, start: boolean = false
 
         if (!(isCashu || isNwc)) return;
 
-        const knownNutzaps = getKnownNutzaps(ndk);
-        const monitor = new NDKNutzapMonitor(ndk, currentUser, mintList);
+        // Create a store from our SQLite implementation
+        const store = wallet.nutzapMonitor.createNutzapMonitorStore(ndk);
+        
+        // Use the new constructor signature with object parameters
+        const monitor = new NDKNutzapMonitor(
+            ndk, 
+            currentUser, 
+            { 
+                mintList, 
+                store 
+            }
+        );
 
         setNutzapMonitor(monitor);
         
         monitor.wallet = activeWallet;
 
-        monitor.on("seen", (event) => {
-            saveNutzap(ndk, [event]);
-        });
-
-        monitor.on("redeem", (events) => {
-            saveNutzap(ndk, events, "redeemed", Math.floor(Date.now()/1000));
-        });
-
-        monitor.on("spent", (event) => {
-            saveNutzap(ndk, [event], "spent");
-        });
-
-        monitor.on("failed", (event) => {
-            saveNutzap(ndk, [event], "failed");
-        });
-
         monitor.start({
-            knownNutzaps: knownNutzaps,
-            pageSize: 10,
+            filter: { limit: 100 },
+            opts: { skipVerification: true }
         });
     }, [ nutzapMonitor, setNutzapMonitor, activeWallet?.walletId, currentUser?.pubkey, ndk, start, mintList ])
     
@@ -99,7 +83,7 @@ const useNDKWallet = () => {
         const updateBalance = () => {
             if (debounceTimer) clearTimeout(debounceTimer);
             debounceTimer = setTimeout(() => {
-                const b = wallet ? wallet.balance() : null;
+                const b = wallet ? wallet.balance : null;
                 setBalance(b);
             }, 50);
         }

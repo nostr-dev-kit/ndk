@@ -54,7 +54,7 @@
     "devDependencies": {
         "@nostr-dev-kit/eslint-config-custom": "workspace:*",
         "@nostr-dev-kit/tsconfig": "workspace:*",
-        "svelte": "5.0.0-next.272",
+        "svelte": "5.23.0",
         "tsup": "^7.2.0"
     }
 }

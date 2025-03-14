@@ -482,7 +482,6 @@ export class NDKSubscription extends EventEmitter<{
     public stop(): void {
         this.emit("close", this);
         this.poolMonitor && this.pool.off("relay:connect", this.poolMonitor);
-        this.removeAllListeners();
         this.onStopped?.();
     }
 
@@ -515,7 +514,6 @@ export class NDKSubscription extends EventEmitter<{
         }
 
         if (!this.relayFilters || this.relayFilters.size === 0) return;
-
         // iterate through the this.relayFilters
         for (const [relayUrl, filters] of this.relayFilters) {
             const relay = this.pool.getRelay(relayUrl, true, true, filters);
@@ -647,7 +645,7 @@ export class NDKSubscription extends EventEmitter<{
             this.emit("eose", this);
             this.eosed = true;
 
-            // if (this.opts?.closeOnEose) this.stop();
+            if (this.opts?.closeOnEose) this.stop();
         };
 
         if (queryFilled || hasSeenAllEoses) {

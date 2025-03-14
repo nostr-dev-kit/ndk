@@ -2,11 +2,11 @@ import { SendResponse, type Proof } from "@cashu/cashu-ts";
 import type { MintUrl } from "../mint/utils";
 import { NDKCashuWallet } from "../wallet/index.js";
 import { CashuPaymentInfo, normalizeUrl } from "@nostr-dev-kit/ndk";
-import { correctP2pk } from "../pay";
 import { getBolt11Amount } from "../../../utils/ln";
 import { walletForMint } from "../mint";
 import { WalletOperation, withProofReserve } from "../wallet/effect";
 import { payLn } from "./ln";
+import { ensureIsCashuPubkey, mintProofs } from "../../../utils/cashu";
 
 export type NutPayment = CashuPaymentInfo & { amount: number; };
 
@@ -25,7 +25,7 @@ export async function createToken(
     p2pk?: string,
 ): Promise<WalletOperation<TokenCreationResult> | null>
 {
-    p2pk = correctP2pk(p2pk);
+    p2pk = ensureIsCashuPubkey(p2pk);
     const myMintsWithEnoughBalance = wallet.getMintsWithBalance(amount);
     const hasRecipientMints = recipientMints && recipientMints.length > 0;
     const mintsInCommon = hasRecipientMints ? findMintsInCommon([recipientMints, myMintsWithEnoughBalance]) : myMintsWithEnoughBalance;
@@ -61,7 +61,7 @@ async function createTokenInMint(
     amount: number,
     p2pk?: string,
 ): Promise<WalletOperation<TokenCreationResult> | null> {
-    const cashuWallet = await wallet.cashuWallet(mint);
+    const cashuWallet = await wallet.getCashuWallet(mint);
     try {
         console.log("Attempting with mint %s", mint);
 
@@ -143,37 +143,11 @@ async function createTokenWithMintTransfer(
         return null;
     }
 
-    let proofs: Proof[] = [];
-
-    try {
-        proofs = await targetMintWallet.mintProofs(amount, quote.quote, {
-            pubkey: p2pk,
-        });
-    } catch (e) {
-        console.log("failed to mint proofs, fuck, the mint ate the cashu", e);
-
-        // return new Promise((resolve, reject) => {
-        //     const retryInterval = setInterval(async () => {
-        //         console.log("retrying mint proofs", { quote: quote.quote, mint: targetMintWallet.mint });
-        //         try {
-        //             proofs = await targetMintWallet.mintProofs(amount, quote.quote, {
-        //                 pubkey: p2pk,
-        //             });
-        //             clearInterval(retryInterval);
-        //             resolve({ keep: res.change, send: proofs, mint: targetMint, fee: res.fee });
-        //         } catch (e) {
-        //             console.log("failed to mint proofs", e);
-        //         }
-        //     }, 5000);
-        //     setTimeout(() => {
-        //         reject(e);
-        //     }, 1000);
-        // });
-    }
+    const {proofs, mint} = await mintProofs( targetMintWallet, quote, amount, targetMint, p2pk);
 
     return {
         ...payLNResult,
-        result: { proofs, mint: targetMint },
+        result: { proofs, mint },
         fee: payLNResult.fee,
     }
 }

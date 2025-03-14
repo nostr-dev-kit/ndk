@@ -383,7 +383,7 @@ class NDKZapper extends EventEmitter<{
             nutzap.mint = mint;
             nutzap.target = this.target;
             nutzap.comment = this.comment;
-            nutzap.unit = this.unit;
+            nutzap.unit = "sat";
             nutzap.recipientPubkey = split.pubkey;
             await nutzap.sign(this.signer);
             nutzap.publish(relaySet);

@@ -487,7 +487,7 @@ export class NDKEvent extends EventEmitter {
         if (!this.ndk)
             throw new Error("NDKEvent must be associated with an NDK instance to publish");
 
-        if (!relaySet) {
+        if (!relaySet || relaySet.size === 0) {
             // If we have a devWriteRelaySet, use it to publish all events
             relaySet =
                 this.ndk.devWriteRelaySet || (await calculateRelaySetFromEvent(this.ndk, this));

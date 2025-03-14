@@ -14,7 +14,7 @@ describe("fetchEventFromTag", () => {
             const subOpts: NDKSubscriptionOptions = {
                 cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE,
             };
-            jest.spyOn(ndk.pool, "getRelay");
+            vi.spyOn(ndk.pool, "getRelay");
             const event = await ndk.fetchEventFromTag(tag, originalEvent, subOpts);
             expect(ndk.pool.getRelay).not.toHaveBeenCalled();
         });

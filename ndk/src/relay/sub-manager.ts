@@ -62,7 +62,11 @@ export class NDKRelaySubscriptionManager {
         filters: NDKFilter[],
         fingerprint?: NDKFilterFingerprint
     ): NDKRelaySubscription {
-        const relaySub = new NDKRelaySubscription(this.relay, fingerprint || null, this.generalSubManager);
+        const relaySub = new NDKRelaySubscription(
+            this.relay,
+            fingerprint || null,
+            this.generalSubManager
+        );
         relaySub.onClose = this.onRelaySubscriptionClose.bind(this);
         const currentVal = this.subscriptions.get(relaySub.fingerprint) ?? [];
         this.subscriptions.set(relaySub.fingerprint, [...currentVal, relaySub]);

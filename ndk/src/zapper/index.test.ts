@@ -96,11 +96,8 @@ describe("getZapMethod", () => {
         const zapper = new NDKZapper(user, 1000);
         zapper.cashuPay = async (payment: NDKZapDetails<CashuPaymentInfo>) => undefined;
         const zapMethodMap = await zapper.getZapMethods(ndk, user.pubkey);
-        const nip61Method = zapMethodMap.get('nip61');
-        expect((nip61Method as CashuPaymentInfo).mints).toEqual([
-            "https://mint1",
-            "https://mint2",
-        ]);
+        const nip61Method = zapMethodMap.get("nip61");
+        expect((nip61Method as CashuPaymentInfo).mints).toEqual(["https://mint1", "https://mint2"]);
     });
 
     it("defaults to nip57 when the user has not signaled nutzaps", async () => {

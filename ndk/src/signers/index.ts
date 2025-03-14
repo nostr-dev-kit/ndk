@@ -4,7 +4,6 @@ import type { NDKRelay } from "../relay/index.js";
 import { NDKEncryptionScheme } from "../types.js";
 import type { NDKUser } from "../user";
 
-
 /**
  * Interface for NDK signers.
  */
@@ -38,16 +37,16 @@ export interface NDKSigner {
      * Determine the types of encryption (by nip) that this signer can perform.
      * Implementing classes SHOULD return a value even for legacy (only nip04) third party signers.
      * @nip Optionally returns an array with single supported nip or empty, to check for truthy or falsy.
-     * @return A promised list of any (or none) of these strings  ['nip04', 'nip44'] 
+     * @return A promised list of any (or none) of these strings  ['nip04', 'nip44']
      */
-    encryptionEnabled?(scheme?: NDKEncryptionScheme): Promise<NDKEncryptionScheme[]>
+    encryptionEnabled?(scheme?: NDKEncryptionScheme): Promise<NDKEncryptionScheme[]>;
 
     /**
      * Encrypts the given Nostr event for the given recipient.
      * Implementing classes SHOULD equate legacy (only nip04) to nip == `nip04` || undefined
      * @param recipient - The recipient (pubkey or conversationKey) of the encrypted value.
      * @param value - The value to be encrypted.
-     * @param nip - which NIP is being implemented ('nip04', 'nip44') 
+     * @param nip - which NIP is being implemented ('nip04', 'nip44')
      */
     encrypt(recipient: NDKUser, value: string, scheme?: NDKEncryptionScheme): Promise<string>;
 
@@ -56,7 +55,7 @@ export interface NDKSigner {
      * Implementing classes SHOULD equate legacy (only nip04) to nip == `nip04` || undefined
      * @param sender - The sender (pubkey or conversationKey) of the encrypted value
      * @param value - The value to be decrypted
-     * @param scheme - which NIP is being implemented ('nip04', 'nip44', 'nip49') 
+     * @param scheme - which NIP is being implemented ('nip04', 'nip44', 'nip49')
      */
     decrypt(sender: NDKUser, value: string, scheme?: NDKEncryptionScheme): Promise<string>;
 }

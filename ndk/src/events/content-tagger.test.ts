@@ -34,11 +34,7 @@ describe("await generateContentTags", () => {
         expect(processedTags.length).toEqual(2);
         expect(processedTags).toEqual([
             ["p", "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"],
-            [
-                "q",
-                "6ab77c8baf6d0542131cc70b59ba3ece904fd58efe91d612dc3e870bdaf93034",
-                "",
-            ],
+            ["q", "6ab77c8baf6d0542131cc70b59ba3ece904fd58efe91d612dc3e870bdaf93034", ""],
         ]);
     });
 
@@ -72,11 +68,7 @@ describe("await generateContentTags", () => {
         expect(processedTags).toEqual([
             ["p", "existing_p"],
             ["p", "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"],
-            [
-                "q",
-                "6ab77c8baf6d0542131cc70b59ba3ece904fd58efe91d612dc3e870bdaf93034",
-                "",
-            ],
+            ["q", "6ab77c8baf6d0542131cc70b59ba3ece904fd58efe91d612dc3e870bdaf93034", ""],
         ]);
     });
 
@@ -95,11 +87,7 @@ describe("await generateContentTags", () => {
                 "nostr:note13jgf85r2yxjmww8f6gweque5g388agfztrppmgenur7zvh8e929s4cptur"
         );
         expect(processedTags).toEqual([
-            [
-                "q",
-                "8c9093d06a21a5b738e9d21d907334444e7ea12258c21da333e0fc265cf92a8b",
-                "",
-            ],
+            ["q", "8c9093d06a21a5b738e9d21d907334444e7ea12258c21da333e0fc265cf92a8b", ""],
         ]);
     });
 
@@ -115,11 +103,7 @@ describe("await generateContentTags", () => {
             "Hello world, nostr:note13jgf85r2yxjmww8f6gweque5g388agfztrppmgenur7zvh8e929s4cptur"
         );
         expect(processedTags).toEqual([
-            [
-                "q",
-                "8c9093d06a21a5b738e9d21d907334444e7ea12258c21da333e0fc265cf92a8b",
-                "",
-            ],
+            ["q", "8c9093d06a21a5b738e9d21d907334444e7ea12258c21da333e0fc265cf92a8b", ""],
         ]);
     });
 

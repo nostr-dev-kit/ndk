@@ -1,4 +1,4 @@
-import { NDKEvent, NDKList } from '@nostr-dev-kit/ndk';
+import { NDKEvent, NDKList } from "@nostr-dev-kit/ndk";
 
 export const setMuteList = (muteList: NDKEvent, set) => {
     set((state) => {
@@ -14,10 +14,18 @@ export const setMuteList = (muteList: NDKEvent, set) => {
         for (const tag of muteList.tags) {
             const value = tag[1];
             switch (tag[0]) {
-                case 'p': pubkeys.add(value); break;
-                case 't': hashtags.add(value); break;
-                case 'word': words.add(value); break;
-                case 'e': eventIds.add(value); break;
+                case "p":
+                    pubkeys.add(value);
+                    break;
+                case "t":
+                    hashtags.add(value);
+                    break;
+                case "word":
+                    words.add(value);
+                    break;
+                case "e":
+                    eventIds.add(value);
+                    break;
             }
         }
 
@@ -26,7 +34,7 @@ export const setMuteList = (muteList: NDKEvent, set) => {
             mutedHashtags: hashtags,
             mutedWords: words,
             mutedEventIds: eventIds,
-            muteListEvent: NDKList.from(muteList)
+            muteListEvent: NDKList.from(muteList),
         };
     });
-}; 
+};

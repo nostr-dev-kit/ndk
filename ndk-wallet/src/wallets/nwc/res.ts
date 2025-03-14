@@ -12,7 +12,7 @@ export async function waitForResponse<M extends keyof NDKNWCResponseMap>(
     const sendRequest = () => {
         if (waitForEoseTimeout) clearTimeout(waitForEoseTimeout);
         request.publish(this.relaySet);
-    }
+    };
 
     let waitForEoseTimeout = setTimeout(sendRequest, 2500);
 
@@ -21,29 +21,30 @@ export async function waitForResponse<M extends keyof NDKNWCResponseMap>(
             {
                 kinds: [NDKKind.NostrWalletConnectRes],
                 "#e": [request.id],
-                limit: 1
+                limit: 1,
             },
-            { groupable: false, pool: this.pool }, this.relaySet
+            { groupable: false, pool: this.pool },
+            this.relaySet
         );
 
         sub.on("event", async (event: NDKEvent) => {
             try {
                 await event.decrypt(event.author, this.signer);
                 const content = JSON.parse(event.content);
-                
+
                 if (content.error) {
                     reject(content);
                 } else {
                     resolve(content);
                 }
             } catch (e: any) {
-                console.error('error decrypting event', e);
+                console.error("error decrypting event", e);
                 reject({
                     result_type: "error",
                     error: {
                         code: "failed_to_parse_response",
-                        message: e.message
-                    }
+                        message: e.message,
+                    },
                 });
             } finally {
                 sub.stop();
@@ -52,6 +53,6 @@ export async function waitForResponse<M extends keyof NDKNWCResponseMap>(
 
         sub.on("eose", () => {
             sendRequest();
-        })
+        });
     });
 }

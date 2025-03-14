@@ -2,7 +2,14 @@ import { NDKEventId, NDKCashuToken } from "@nostr-dev-kit/ndk";
 import { Proof } from "@cashu/cashu-ts";
 import { MintUrl } from "../../mint/utils";
 import { NDKCashuWallet } from "..";
-import { addProof, getProofEntries, GetOpts, reserveProofs, unreserveProofs, updateProof } from "./proofs";
+import {
+    addProof,
+    getProofEntries,
+    GetOpts,
+    reserveProofs,
+    unreserveProofs,
+    updateProof,
+} from "./proofs";
 import { getBalance, getMintsBalances } from "./balance";
 import { addToken, removeTokenId } from "./token";
 import { update } from "./update";
@@ -12,17 +19,17 @@ export type ProofState = "available" | "reserved" | "deleted";
 export type TokenState = "available" | "deleted";
 
 export type JournalEntry = {
-    memo: string,
-    timestamp: number,
+    memo: string;
+    timestamp: number;
     metadata: {
-        type?: string,
-        mint?: MintUrl,
-        id: string,
-        relayUrl?: string,
-        cache?: boolean,
-        amount?: number,
-    }
-}
+        type?: string;
+        mint?: MintUrl;
+        id: string;
+        relayUrl?: string;
+        cache?: boolean;
+        amount?: number;
+    };
+};
 
 /**
  * A description of the changes that need to be made to the wallet state
@@ -30,15 +37,15 @@ export type JournalEntry = {
  */
 export type WalletProofChange = {
     // reserve proofs are moved into an NDKKind.CashuReserve event until we verify that the recipient has received them
-    reserve?: Proof[],
+    reserve?: Proof[];
 
     // destroy proofs are deleted from the wallet
-    destroy?: Proof[],
+    destroy?: Proof[];
 
     // store proofs are added to the wallet
-    store?: Proof[],
-    mint: MintUrl,
-}
+    store?: Proof[];
+    mint: MintUrl;
+};
 
 /**
  * A description of tokens that need to be changed to reflect the changes that have occurred.
@@ -55,7 +62,7 @@ export type WalletTokenChange = {
 
     // proofs that are to be added to the wallet in a new token
     saveProofs: Proof[];
-}
+};
 
 export type ProofEntry = {
     proof: Proof;
@@ -67,7 +74,7 @@ export type ProofEntry = {
      * The timestamp of the last time the proof state was updated
      */
     timestamp: number;
-}
+};
 
 export type TokenEntry = {
     /**
@@ -77,14 +84,14 @@ export type TokenEntry = {
     token?: NDKCashuToken;
     state: TokenState;
     proofEntries?: ProofEntry[];
-}
+};
 
 export type GetTokenEntry = {
     tokenId: NDKEventId | null;
     token?: NDKCashuToken;
     mint: MintUrl;
     proofEntries: ProofEntry[];
-}
+};
 
 /**
  * This class represents the state of the wallet at any given time.
@@ -116,9 +123,8 @@ export class WalletState {
 
     constructor(
         public wallet: NDKCashuWallet,
-        public reservedProofCs: Set<string> = new Set<string>(),
-    ) {
-    }
+        public reservedProofCs: Set<string> = new Set<string>()
+    ) {}
 
     /** This is a debugging function that dumps the state of the wallet */
     public dump() {
@@ -126,8 +132,8 @@ export class WalletState {
             proofs: Array.from(this.proofs.values()),
             balances: this.getMintsBalance(),
             totalBalance: this.getBalance(),
-            tokens: Array.from(this.tokens.values())
-        }
+            tokens: Array.from(this.tokens.values()),
+        };
 
         return res;
     }
@@ -148,7 +154,7 @@ export class WalletState {
 
     /**
      * Reserves a number of selected proofs and a specific amount.
-     * 
+     *
      * The amount and total of the proofs don't need to match. We
      * might want to use 5 sats and have 2 proofs of 4 sats each.
      * In that case, the reserve amount is 5, while the reserve proofs
@@ -178,15 +184,21 @@ export class WalletState {
      * @param opts.includeDeleted - include deleted proofs @default false
      */
     public getProofs(opts: GetOpts) {
-        return this.getProofEntries(opts).map(entry => entry.proof);
+        return this.getProofEntries(opts).map((entry) => entry.proof);
     }
 
-    public getTokens(opts: GetOpts = { onlyAvailable: true }): Map<NDKEventId | null, GetTokenEntry> {
+    public getTokens(
+        opts: GetOpts = { onlyAvailable: true }
+    ): Map<NDKEventId | null, GetTokenEntry> {
         const proofEntries = this.getProofEntries(opts);
         const tokens = new Map<NDKEventId | null, GetTokenEntry>();
         for (const proofEntry of proofEntries) {
             const tokenId = proofEntry.tokenId ?? null;
-            const current: GetTokenEntry = tokens.get(tokenId) ?? { tokenId, mint: proofEntry.mint, proofEntries: [] };
+            const current: GetTokenEntry = tokens.get(tokenId) ?? {
+                tokenId,
+                mint: proofEntry.mint,
+                proofEntries: [],
+            };
             current.token ??= tokenId ? this.tokens.get(tokenId)?.token : undefined;
             current.proofEntries.push(proofEntry);
             tokens.set(tokenId, current);
@@ -197,9 +209,11 @@ export class WalletState {
 
     /**
      * Gets a list of proofs for each mint
-     * @returns 
+     * @returns
      */
-    public getMintsProofs({ validStates = new Set(["available"]) }: { validStates?: Set<ProofState> } = {}): Map<MintUrl, Proof[]> {
+    public getMintsProofs({
+        validStates = new Set(["available"]),
+    }: { validStates?: Set<ProofState> } = {}): Map<MintUrl, Proof[]> {
         const mints = new Map<MintUrl, Proof[]>();
         for (const entry of this.proofs.values()) {
             if (!entry.mint || !entry.proof) continue;
@@ -217,7 +231,7 @@ export class WalletState {
 
     /**
      * Returns the balance of the wallet, optionally filtered by mint and state
-     * 
+     *
      * @params opts.mint - optional mint to filter by
      * @params opts.onlyAvailable - only include available proofs @default true
      */
@@ -225,7 +239,7 @@ export class WalletState {
 
     /**
      * Returns the balances of the different mints
-     * 
+     *
      * @params opts.onlyAvailable - only include available proofs @default true
      */
     public getMintsBalance = getMintsBalances.bind(this);

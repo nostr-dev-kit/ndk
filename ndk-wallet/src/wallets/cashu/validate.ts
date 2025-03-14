@@ -12,15 +12,16 @@ const d = createDebug("ndk-wallet:cashu:validate");
 export async function consolidateTokens(this: NDKCashuWallet) {
     d("checking %d tokens for spent proofs", this.state.tokens.size);
 
-    const mints = new Set(this.state.getMintsProofs({ validStates: new Set(["available", "reserved", "deleted"]) }).keys());
+    const mints = new Set(
+        this.state
+            .getMintsProofs({ validStates: new Set(["available", "reserved", "deleted"]) })
+            .keys()
+    );
 
     d("found %d mints", mints.size);
 
     mints.forEach((mint) => {
-        consolidateMintTokens(
-            mint!,
-            this
-        );
+        consolidateMintTokens(mint!, this);
     });
 }
 
@@ -37,11 +38,7 @@ export async function consolidateMintTokens(
         console.log("could not get wallet for mint %s", mint);
         return;
     }
-    console.log(
-        "checking %d proofs for spent proofs for mint %s",
-        allProofs.length,
-        mint
-    );
+    console.log("checking %d proofs for spent proofs for mint %s", allProofs.length, mint);
     let proofStates: ProofState[] = [];
     try {
         proofStates = await _wallet.checkProofsStates(allProofs);
@@ -71,14 +68,19 @@ export async function consolidateMintTokens(
         mint,
         store: unspentProofs,
         destroy: spentProofs,
-    }
+    };
 
     onResult?.(walletChange);
 
     const totalSpentProofs = spentProofs.reduce((acc, proof) => acc + proof.amount, 0);
 
-    console.log("Found %d spent, %d unspent, %d pending proofs", walletChange.destroy?.length, walletChange.store?.length, pendingProofs.length);
-    
+    console.log(
+        "Found %d spent, %d unspent, %d pending proofs",
+        walletChange.destroy?.length,
+        walletChange.store?.length,
+        pendingProofs.length
+    );
+
     // if no spent proofs return as a noop
     if (walletChange.destroy?.length === 0) return;
 
@@ -86,7 +88,7 @@ export async function consolidateMintTokens(
     walletChange.store?.push(...pendingProofs);
     const totalPendingProofs = pendingProofs.reduce((acc, proof) => acc + proof.amount, 0);
     wallet.state.reserveProofs(pendingProofs, totalPendingProofs);
-    
+
     // Use wallet state update to handle the changes
     return wallet.state.update(walletChange, "Consolidate");
 }

@@ -24,7 +24,7 @@ export interface NDKCacheAdapter {
 
     /**
      * Either synchronously or asynchronously queries the cache.
-     * 
+     *
      * Cache adapters that return values synchronously should return an array of events.
      * Asynchronous cache adapters should call the subscription.eventReceived method for each event.
      */

@@ -8,27 +8,28 @@ import { WalletOperation, withProofReserve } from "../wallet/effect";
 import { payLn } from "./ln";
 import { ensureIsCashuPubkey, mintProofs } from "../../../utils/cashu";
 
-export type NutPayment = CashuPaymentInfo & { amount: number; };
+export type NutPayment = CashuPaymentInfo & { amount: number };
 
 /**
  * Generates proof to satisfy a payment.
- * 
+ *
  * This function exclusively creates the sendable proofs in the mint, it doesn't modify
  * the state of the wallet, send tokens or generate any type of event.
- * 
+ *
  * When no recipientMints are provided, the function will mint in one of the mints the wallet has enough balance for.
  */
 export async function createToken(
     wallet: NDKCashuWallet,
     amount: number,
     recipientMints?: MintUrl[],
-    p2pk?: string,
-): Promise<WalletOperation<TokenCreationResult> | null>
-{
+    p2pk?: string
+): Promise<WalletOperation<TokenCreationResult> | null> {
     p2pk = ensureIsCashuPubkey(p2pk);
     const myMintsWithEnoughBalance = wallet.getMintsWithBalance(amount);
     const hasRecipientMints = recipientMints && recipientMints.length > 0;
-    const mintsInCommon = hasRecipientMints ? findMintsInCommon([recipientMints, myMintsWithEnoughBalance]) : myMintsWithEnoughBalance;
+    const mintsInCommon = hasRecipientMints
+        ? findMintsInCommon([recipientMints, myMintsWithEnoughBalance])
+        : myMintsWithEnoughBalance;
 
     for (const mint of mintsInCommon) {
         try {
@@ -51,22 +52,27 @@ export async function createToken(
 
 /**
  * Generates sendable proofs in a specific mint.
- * @param pay 
- * @param mint 
- * @returns 
+ * @param pay
+ * @param mint
+ * @returns
  */
 async function createTokenInMint(
     wallet: NDKCashuWallet,
     mint: MintUrl,
     amount: number,
-    p2pk?: string,
+    p2pk?: string
 ): Promise<WalletOperation<TokenCreationResult> | null> {
     const cashuWallet = await wallet.getCashuWallet(mint);
     try {
         console.log("Attempting with mint %s", mint);
 
         const result = await withProofReserve<TokenCreationResult>(
-            wallet, cashuWallet, mint, amount, amount, async (proofsToUse, allOurProofs) => {
+            wallet,
+            cashuWallet,
+            mint,
+            amount,
+            amount,
+            async (proofsToUse, allOurProofs) => {
                 const sendResult = await cashuWallet.send(amount, proofsToUse, {
                     pubkey: p2pk,
                     proofsWeHave: allOurProofs,
@@ -79,17 +85,13 @@ async function createTokenInMint(
                     },
                     change: sendResult.keep,
                     mint,
-                }
+                };
             }
-        )
+        );
 
         return result;
     } catch (e: any) {
-        console.log(
-            "failed to pay with mint %s using proofs %o: %s",
-            mint,
-            e.message
-        );
+        console.log("failed to pay with mint %s using proofs %o: %s", mint, e.message);
     }
 
     return null;
@@ -103,7 +105,7 @@ async function createTokenWithMintTransfer(
     wallet: NDKCashuWallet,
     amount: number,
     recipientMints: MintUrl[],
-    p2pk?: string,
+    p2pk?: string
 ): Promise<WalletOperation<TokenCreationResult> | null> {
     const generateQuote = async () => {
         const generateQuoteFromSomeMint = async (mint: MintUrl) => {
@@ -122,7 +124,7 @@ async function createTokenWithMintTransfer(
         }
 
         return { quote, mint, targetMintWallet };
-    }
+    };
 
     // generate quote
     const { quote, mint: targetMint, targetMintWallet } = await generateQuote();
@@ -135,7 +137,10 @@ async function createTokenWithMintTransfer(
     const invoiceAmount = getBolt11Amount(quote.request);
     if (!invoiceAmount) throw new Error("invoice amount is required");
     const invoiceAmountInSat = invoiceAmount / 1000;
-    if (invoiceAmountInSat > amount) throw new Error(`invoice amount is more than the amount passed in (${invoiceAmountInSat} vs ${amount})`);
+    if (invoiceAmountInSat > amount)
+        throw new Error(
+            `invoice amount is more than the amount passed in (${invoiceAmountInSat} vs ${amount})`
+        );
 
     const payLNResult = await payLn(wallet, quote.request, { amount });
     if (!payLNResult) {
@@ -143,24 +148,24 @@ async function createTokenWithMintTransfer(
         return null;
     }
 
-    const {proofs, mint} = await mintProofs( targetMintWallet, quote, amount, targetMint, p2pk);
+    const { proofs, mint } = await mintProofs(targetMintWallet, quote, amount, targetMint, p2pk);
 
     return {
         ...payLNResult,
         result: { proofs, mint },
         fee: payLNResult.fee,
-    }
+    };
 }
 
 /**
  * The result of generating proofs to pay something, whether it's funded with a swap or LN.
  */
 export type TokenCreationResult = {
-    proofs: Proof[],
-    mint: MintUrl,
-}
+    proofs: Proof[];
+    mint: MintUrl;
+};
 
-export type TokenWithMint = SendResponse & { mint: MintUrl, fee?: number };
+export type TokenWithMint = SendResponse & { mint: MintUrl; fee?: number };
 
 /**
  * Finds mints in common in the intersection of the arrays of mints
@@ -179,7 +184,7 @@ export function findMintsInCommon(mintCollections: string[][]) {
     for (const mints of mintCollections) {
         for (const mint of mints) {
             const normalizedMint = normalizeUrl(mint);
-            
+
             if (!mintCounts.has(normalizedMint)) {
                 mintCounts.set(normalizedMint, 1);
             } else {

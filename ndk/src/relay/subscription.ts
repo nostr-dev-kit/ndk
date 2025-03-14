@@ -91,7 +91,11 @@ export class NDKRelaySubscription {
      *
      * @param fingerprint The fingerprint of this subscription.
      */
-    constructor(relay: NDKRelay, fingerprint: NDKFilterFingerprint | null, topSubManager: NDKSubscriptionManager) {
+    constructor(
+        relay: NDKRelay,
+        fingerprint: NDKFilterFingerprint | null,
+        topSubManager: NDKSubscriptionManager
+    ) {
         this.relay = relay;
         this.topSubManager = topSubManager;
         this.debug = relay.debug.extend("subscription-" + this.id);
@@ -113,7 +117,15 @@ export class NDKRelaySubscription {
     }
 
     public addItem(subscription: NDKSubscription, filters: NDKFilter[]) {
-        this.debug("Adding item", { filters, internalId: subscription.internalId, status: this.status, fingerprint: this.fingerprint, id: this.subId, items: this.items, itemsSize: this.items.size });
+        this.debug("Adding item", {
+            filters,
+            internalId: subscription.internalId,
+            status: this.status,
+            fingerprint: this.fingerprint,
+            id: this.subId,
+            items: this.items,
+            itemsSize: this.items.size,
+        });
         if (this.items.has(subscription.internalId)) return;
 
         subscription.on("close", this.removeItem.bind(this, subscription));
@@ -295,12 +307,27 @@ export class NDKRelaySubscription {
     private executeOnRelayReady = () => {
         if (this.status !== NDKRelaySubscriptionStatus.WAITING) return;
         if (this.items.size === 0) {
-            this.debug("No items to execute; this relay was probably too slow to respond and the caller gave up", { status: this.status, fingerprint: this.fingerprint, items: this.items, itemsSize: this.items.size, id: this.id, subId: this.subId });
+            this.debug(
+                "No items to execute; this relay was probably too slow to respond and the caller gave up",
+                {
+                    status: this.status,
+                    fingerprint: this.fingerprint,
+                    items: this.items,
+                    itemsSize: this.items.size,
+                    id: this.id,
+                    subId: this.subId,
+                }
+            );
             this.cleanup();
             return;
         }
 
-        this.debug("Executing on relay ready", { status: this.status, fingerprint: this.fingerprint, items: this.items, itemsSize: this.items.size });
+        this.debug("Executing on relay ready", {
+            status: this.status,
+            fingerprint: this.fingerprint,
+            items: this.items,
+            itemsSize: this.items.size,
+        });
 
         this.status = NDKRelaySubscriptionStatus.PENDING;
         this.execute();
@@ -349,7 +376,13 @@ export class NDKRelaySubscription {
         // check on the relay connectivity status
         if (!this.relay.connected) {
             this.status = NDKRelaySubscriptionStatus.WAITING;
-            this.debug("Waiting for relay to be ready", { status: this.status, id: this.subId, fingerprint: this.fingerprint, items: this.items, itemsSize: this.items.size });
+            this.debug("Waiting for relay to be ready", {
+                status: this.status,
+                id: this.subId,
+                fingerprint: this.fingerprint,
+                items: this.items,
+                itemsSize: this.items.size,
+            });
             this.relay.once("ready", this.executeOnRelayReady);
             return;
         } else if (this.relay.status < NDKRelayStatus.AUTHENTICATED) {
@@ -391,7 +424,14 @@ export class NDKRelaySubscription {
             subscription.eoseReceived(this.relay);
 
             if (subscription.closeOnEose) {
-                this.debug("Removing item because of EOSE", { filters: subscription.filters, internalId: subscription.internalId, status: this.status, fingerprint: this.fingerprint, items: this.items, itemsSize: this.items.size });
+                this.debug("Removing item because of EOSE", {
+                    filters: subscription.filters,
+                    internalId: subscription.internalId,
+                    status: this.status,
+                    fingerprint: this.fingerprint,
+                    items: this.items,
+                    itemsSize: this.items.size,
+                });
                 this.removeItem(subscription);
             }
         }

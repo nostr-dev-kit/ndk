@@ -7,10 +7,10 @@ export function useNip55() {
 
     useEffect(() => {
         getInstalledSignerApps().then(setSignerApps);
-    }, [])
+    }, []);
 
     return {
         isAvailable: signerApps.length > 0,
         apps: signerApps,
-    }
+    };
 }

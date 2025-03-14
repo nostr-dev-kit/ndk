@@ -19,7 +19,7 @@ export interface NWCResponseBase<T = any> {
 }
 
 // Error codes
-export type NWCErrorCode = 
+export type NWCErrorCode =
     | "RATE_LIMITED"
     | "NOT_IMPLEMENTED"
     | "INSUFFICIENT_BALANCE"
@@ -82,29 +82,35 @@ export async function sendReq<M extends keyof NDKNWCRequestMap>(
     const event = new NDKEvent(this.ndk, {
         kind: NDKKind.NostrWalletConnectReq,
         tags: [["p", this.walletService.pubkey]],
-        content: JSON.stringify({ method, params })
+        content: JSON.stringify({ method, params }),
     } as NostrEvent);
 
-    await event.encrypt(this.walletService, this.signer, 'nip04');
+    await event.encrypt(this.walletService, this.signer, "nip04");
     await event.sign(this.signer);
 
     // Create base response promise
-    const responsePromise = new Promise<NWCResponseBase<NDKNWCResponseMap[M]>>((resolve, reject) => {
-        waitForResponse.call<NDKNWCWallet, [NDKEvent], Promise<NWCResponseBase<NDKNWCResponseMap[M]>>>(
-            this,
-            event
-        ).then(resolve).catch(reject);
-    });
+    const responsePromise = new Promise<NWCResponseBase<NDKNWCResponseMap[M]>>(
+        (resolve, reject) => {
+            waitForResponse
+                .call<
+                    NDKNWCWallet,
+                    [NDKEvent],
+                    Promise<NWCResponseBase<NDKNWCResponseMap[M]>>
+                >(this, event)
+                .then(resolve)
+                .catch(reject);
+        }
+    );
 
     // Add timeout race if configured
     if (this.timeout) {
-        const timeoutPromise = new Promise<NWCResponseBase<NDKNWCResponseMap[M]>>((_, reject) => 
+        const timeoutPromise = new Promise<NWCResponseBase<NDKNWCResponseMap[M]>>((_, reject) =>
             setTimeout(() => {
-                this.emit('timeout', method);
+                this.emit("timeout", method);
                 reject(new Error(`Request timed out after ${this.timeout}ms`));
             }, this.timeout)
         );
-        
+
         return Promise.race([responsePromise, timeoutPromise]);
     }
 

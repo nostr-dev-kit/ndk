@@ -1,15 +1,23 @@
-import '@bacons/text-decoder/install';
-import { createStore } from 'zustand/vanilla';
-import { useStore } from 'zustand';
-import { NDKEvent, NDKFilter, NDKRelaySet, NDKSubscription, NDKSubscriptionOptions } from '@nostr-dev-kit/ndk';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { useNDK } from './ndk.js';
-import { useNDKSession } from '../stores/session/index.js';
+import "@bacons/text-decoder/install";
+import { createStore } from "zustand/vanilla";
+import { useStore } from "zustand";
+import {
+    NDKEvent,
+    NDKFilter,
+    NDKRelaySet,
+    NDKSubscription,
+    NDKSubscriptionOptions,
+} from "@nostr-dev-kit/ndk";
+import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useNDK } from "./ndk.js";
+import { useNDKSession } from "../stores/session/index.js";
 /**
  * Extends NDKEvent with a 'from' method to wrap events with a kind-specific handler
  */
 export type NDKEventWithFrom<T extends NDKEvent> = T & { from: (event: NDKEvent) => T };
-export type NDKEventWithAsyncFrom<T extends NDKEvent> = T & { from: (event: NDKEvent) => Promise<T> };
+export type NDKEventWithAsyncFrom<T extends NDKEvent> = T & {
+    from: (event: NDKEvent) => Promise<T>;
+};
 
 export type UseSubscribeOptions = NDKSubscriptionOptions & {
     /**
@@ -41,7 +49,7 @@ export type UseSubscribeOptions = NDKSubscriptionOptions & {
      * Optional relay URLs to connect to
      */
     relays?: string[];
-}
+};
 
 /**
  * Store interface for managing subscription state
@@ -104,7 +112,7 @@ const createSubscribeStore = <T extends NDKEvent>(bufferMs: number | false = 30)
 
             addEvent: (event) => {
                 const tagId = event.tagId();
-                
+
                 if (bufferMs !== false) {
                     const currentEvent = buffer.get(tagId) || get().eventMap.get(tagId);
                     if (currentEvent && currentEvent.created_at! >= event.created_at!) return;
@@ -119,7 +127,8 @@ const createSubscribeStore = <T extends NDKEvent>(bufferMs: number | false = 30)
                     set((state) => {
                         const { eventMap } = state;
                         const currentEvent = eventMap.get(tagId);
-                        if (currentEvent && currentEvent.created_at! >= event.created_at!) return state;
+                        if (currentEvent && currentEvent.created_at! >= event.created_at!)
+                            return state;
 
                         eventMap.set(tagId, event);
                         const events = Array.from(eventMap.values());
@@ -144,7 +153,7 @@ const createSubscribeStore = <T extends NDKEvent>(bufferMs: number | false = 30)
                 if (bufferMs !== false) {
                     bufferMs = 16;
                 }
-                
+
                 set({ eose: true });
             },
 
@@ -156,7 +165,7 @@ const createSubscribeStore = <T extends NDKEvent>(bufferMs: number | false = 30)
                     eose: false,
                     isSubscribed: false,
                     subscriptionRef: undefined,
-                })
+                });
             },
             setSubscription: (sub) => set({ subscriptionRef: sub, isSubscribed: !!sub }),
         };
@@ -180,7 +189,7 @@ export const useSubscribe = <T extends NDKEvent>(
     dependencies: any[] = []
 ) => {
     dependencies.push(!!filters);
-    
+
     const { ndk } = useNDK();
     const store = useMemo(() => createSubscribeStore<T>(opts?.bufferMs), dependencies);
     const storeInstance = useStore(store);
@@ -211,7 +220,7 @@ export const useSubscribe = <T extends NDKEvent>(
                 storeInstance.removeEventId(event.id);
             }
         });
-    }, [ isMutedEvent ])
+    }, [isMutedEvent]);
 
     const handleEvent = useCallback(
         (event: NDKEvent) => {
@@ -220,7 +229,11 @@ export const useSubscribe = <T extends NDKEvent>(
             // if it's from a muted pubkey, we don't accept it
             if (opts?.includeMuted !== true && isMutedEvent(event)) return false;
 
-            if (opts?.includeDeleted !== true && event.isParamReplaceable() && event.hasTag('deleted')) {
+            if (
+                opts?.includeDeleted !== true &&
+                event.isParamReplaceable() &&
+                event.hasTag("deleted")
+            ) {
                 // We mark the event but we don't add the actual event, since
                 // it has been deleted
                 eventIds.current.set(id, event.created_at!);
@@ -256,9 +269,9 @@ export const useSubscribe = <T extends NDKEvent>(
         }
 
         const subscription = ndk.subscribe(filters, opts, relaySet, false);
-        subscription.on('event', handleEvent);
-        subscription.on('eose', handleEose);
-        subscription.on('closed', handleClosed);
+        subscription.on("event", handleEvent);
+        subscription.on("eose", handleEose);
+        subscription.on("closed", handleClosed);
 
         storeInstance.setSubscription(subscription);
         const cachedEvents = subscription.start(false);
@@ -284,24 +297,24 @@ export const useSubscribe = <T extends NDKEvent>(
     };
 };
 
-
 /**
  * Provides a function that filters events, according to the user's mute list.
  */
 export function useMuteFilter() {
-    const mutedPubkeys = useNDKSession(s => s.mutedPubkeys);
-    const mutedHashtags = useNDKSession(s => s.mutedHashtags);
-    const mutedWords = useNDKSession(s => s.mutedWords);
-    const mutedEventIds = useNDKSession(s => s.mutedEventIds);
+    const mutedPubkeys = useNDKSession((s) => s.mutedPubkeys);
+    const mutedHashtags = useNDKSession((s) => s.mutedHashtags);
+    const mutedWords = useNDKSession((s) => s.mutedWords);
+    const mutedEventIds = useNDKSession((s) => s.mutedEventIds);
 
     const isMutedEvent = useMemo(() => {
-        const mutedWordsRegex = mutedWords.size > 0 ? new RegExp(Array.from(mutedWords).join('|'), 'i') : null;
+        const mutedWordsRegex =
+            mutedWords.size > 0 ? new RegExp(Array.from(mutedWords).join("|"), "i") : null;
         const _mutedHashtags = new Set<string>();
-        mutedHashtags.forEach(h => _mutedHashtags.add(h.toLowerCase()));
+        mutedHashtags.forEach((h) => _mutedHashtags.add(h.toLowerCase()));
 
         return (event: NDKEvent) => {
-            const tags = new Set(event.getMatchingTags('t').map(tag => tag[1].toLowerCase()));
-            const taggedEvents = new Set(event.getMatchingTags('e').map(tag => tag[1]));
+            const tags = new Set(event.getMatchingTags("t").map((tag) => tag[1].toLowerCase()));
+            const taggedEvents = new Set(event.getMatchingTags("e").map((tag) => tag[1]));
             taggedEvents.add(event.id);
             const hasMutedHashtag = setHasAnyIntersection(_mutedHashtags, tags);
             let res = false;
@@ -310,14 +323,15 @@ export function useMuteFilter() {
                 hasMutedHashtag ||
                 mutedPubkeys.has(event.pubkey) ||
                 (mutedWordsRegex && event.content.match(mutedWordsRegex))
-            ) res = true;
+            )
+                res = true;
 
             if (!res && setHasAnyIntersection(mutedEventIds, taggedEvents)) {
                 res = true;
             }
-            
+
             return res;
-        }
+        };
     }, [mutedPubkeys, mutedHashtags, mutedWords, mutedEventIds]);
 
     return isMutedEvent;
@@ -328,4 +342,4 @@ const setHasAnyIntersection = (set1: Set<string>, set2: Set<string>) => {
         if (set2.has(item)) return true;
     }
     return false;
-}
+};

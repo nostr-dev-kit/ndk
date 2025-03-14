@@ -5,8 +5,8 @@ const mintWallets = new Map<string, CashuWallet>();
 const mintWalletPromises = new Map<string, Promise<CashuWallet | null>>();
 
 function mintKey(mint: MintUrl, unit: string, pk?: Uint8Array) {
-    if (unit === 'sats') {
-        unit = 'sat';
+    if (unit === "sats") {
+        unit = "sat";
     }
 
     if (pk) {
@@ -27,16 +27,16 @@ export async function walletForMint(
         onMintInfoNeeded,
         onMintInfoLoaded,
         onMintKeysNeeded,
-        onMintKeysLoaded
+        onMintKeysLoaded,
     }: {
-        pk?: Uint8Array,
-        timeout?: number,
-        mintInfo?: GetInfoResponse,
-        mintKeys?: MintKeys[],
-        onMintInfoNeeded?: (mint: string) => Promise<GetInfoResponse | undefined>,
-        onMintInfoLoaded?: (mint: string, info: GetInfoResponse) => void,
-        onMintKeysNeeded?: (mint: string) => Promise<MintKeys[] | undefined>,
-        onMintKeysLoaded?: (mint: string, keysets: Map<string, MintKeys>) => void,
+        pk?: Uint8Array;
+        timeout?: number;
+        mintInfo?: GetInfoResponse;
+        mintKeys?: MintKeys[];
+        onMintInfoNeeded?: (mint: string) => Promise<GetInfoResponse | undefined>;
+        onMintInfoLoaded?: (mint: string, info: GetInfoResponse) => void;
+        onMintKeysNeeded?: (mint: string) => Promise<MintKeys[] | undefined>;
+        onMintKeysLoaded?: (mint: string, keysets: Map<string, MintKeys>) => void;
     } = {}
 ): Promise<CashuWallet | null> {
     mintInfo ??= await onMintInfoNeeded?.(mint);
@@ -46,8 +46,8 @@ export async function walletForMint(
         mintInfo = await CashuMint.getInfo(mint);
         onMintInfoLoaded?.(mint, mintInfo);
     }
-    
-    const unit = 'sat';
+
+    const unit = "sat";
 
     const key = mintKey(mint, unit, pk);
 
@@ -57,14 +57,12 @@ export async function walletForMint(
         return mintWalletPromises.get(key) as Promise<CashuWallet | null>;
     }
 
-    const wallet = new CashuWallet(
-        new CashuMint(mint),
-        {
-            unit,
-            bip39seed: pk,
-            mintInfo,
-            keys: mintKeys
-        });
+    const wallet = new CashuWallet(new CashuMint(mint), {
+        unit,
+        bip39seed: pk,
+        mintInfo,
+        keys: mintKeys,
+    });
 
     const loadPromise = new Promise<CashuWallet | null>(async (resolve) => {
         try {
@@ -76,7 +74,7 @@ export async function walletForMint(
             mintWalletPromises.delete(key);
 
             if (wallet.keys) onMintKeysLoaded?.(mint, wallet.keys);
-            
+
             resolve(wallet);
         } catch (e: any) {
             console.error("[WALLET] error loading mint", mint, e.message);

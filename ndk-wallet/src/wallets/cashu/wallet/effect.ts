@@ -7,44 +7,42 @@ import { UpdateStateResult } from "./state/update";
 import { calculateFee } from "./fee";
 
 type WithProofReserveCb<T> = {
-    result: T,
-    change: Proof[],
-}
+    result: T;
+    change: Proof[];
+};
 
 /**
  * The result of performing an operation with the wallet state.
- * 
+ *
  * This is a wrapper around the result of the operation that might include
  * results of a payment (`result`).
- * 
+ *
  * The rest of the fields are used to update the wallet state and generate
  * tx events.
  */
 export type WalletOperation<T> = {
-    result?: T,
-    proofsChange: WalletProofChange | null,
-    stateUpdate: UpdateStateResult | null,
-    mint: MintUrl,
-    fee: number,
-}
-
-
+    result?: T;
+    proofsChange: WalletProofChange | null;
+    stateUpdate: UpdateStateResult | null;
+    mint: MintUrl;
+    fee: number;
+};
 
 /**
  * This function is used to reserve proofs for a given mint.
  * It will reserve the proofs for the given mint, and then call the callback function.
  * If the callback function returns a result, the wallet state will be updated based on the result.
  * If the callback function returns null, the proofs will be unreserved.
- * 
+ *
  * Use this function to wrap any function that might affect the wallet state.
- * 
- * @param wallet 
- * @param cashuWallet 
- * @param mint 
+ *
+ * @param wallet
+ * @param cashuWallet
+ * @param mint
  * @param amountWithFees - The amount of proofs to gather including fees (include fees)
  * @param intendedAmount - The amount of proofs the payment originally was intended to gather (exclude fees)
- * @param cb 
- * @returns 
+ * @param cb
+ * @returns
  */
 export async function withProofReserve<T>(
     wallet: NDKCashuWallet,
@@ -52,10 +50,7 @@ export async function withProofReserve<T>(
     mint: MintUrl,
     amountWithFees: number,
     amountWithoutFees: number,
-    cb: (
-        proofsToUse: Proof[],
-        allOurProofs: Proof[],
-    ) => Promise<WithProofReserveCb<T> | null>
+    cb: (proofsToUse: Proof[], allOurProofs: Proof[]) => Promise<WithProofReserveCb<T> | null>
 ): Promise<WalletOperation<T> | null> {
     cashuWallet ??= await wallet.getCashuWallet(mint);
 
@@ -80,7 +75,7 @@ export async function withProofReserve<T>(
             mint,
             store: cbResult.change,
             destroy: proofs.send,
-        }
+        };
 
         /**
          * Update the wallet state.
@@ -99,7 +94,5 @@ export async function withProofReserve<T>(
         stateUpdate: updateRes,
         mint,
         fee: calculateFee(amountWithoutFees, proofs.send, cbResult.change),
-    }
-
-
+    };
 }

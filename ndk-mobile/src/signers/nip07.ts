@@ -1,4 +1,4 @@
-import { NDKNip07Signer, NDKUser } from '@nostr-dev-kit/ndk';
+import { NDKNip07Signer, NDKUser } from "@nostr-dev-kit/ndk";
 
 export async function loginWithNip07() {
     try {

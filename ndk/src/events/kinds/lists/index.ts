@@ -43,7 +43,7 @@ export class NDKList extends NDKEvent {
         NDKKind.SearchRelayList,
         NDKKind.BlockRelayList,
         NDKKind.BookmarkList,
-    ]
+    ];
 
     /**
      * Stores the number of bytes the content was before decryption

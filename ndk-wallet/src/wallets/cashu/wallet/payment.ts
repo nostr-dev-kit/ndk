@@ -1,4 +1,13 @@
-import { CashuPaymentInfo, LnPaymentInfo, NDKPaymentConfirmationCashu, NDKZapDetails, NDKEvent, NDKUser, NDKTag, NDKPaymentConfirmationLN } from "@nostr-dev-kit/ndk";
+import {
+    CashuPaymentInfo,
+    LnPaymentInfo,
+    NDKPaymentConfirmationCashu,
+    NDKZapDetails,
+    NDKEvent,
+    NDKUser,
+    NDKTag,
+    NDKPaymentConfirmationLN,
+} from "@nostr-dev-kit/ndk";
 import { NDKCashuWallet } from ".";
 import { createToken } from "../pay/nut";
 import { payLn } from "../pay/ln";
@@ -17,7 +26,7 @@ export type PaymentWithOptionalZapInfo<T extends LnPaymentInfo | CashuPaymentInf
 
 export class PaymentHandler {
     private wallet: NDKCashuWallet;
-    
+
     constructor(wallet: NDKCashuWallet) {
         this.wallet = wallet;
     }
@@ -27,7 +36,7 @@ export class PaymentHandler {
      */
     async lnPay(
         payment: PaymentWithOptionalZapInfo<LnPaymentInfo>,
-        createTxEvent = true,
+        createTxEvent = true
     ): Promise<NDKPaymentConfirmationLN | undefined> {
         if (!payment.pr) throw new Error("pr is required");
 
@@ -55,7 +64,9 @@ export class PaymentHandler {
     /**
      * Swaps tokens to a specific amount, optionally locking to a p2pk.
      */
-    async cashuPay(payment: NDKZapDetails<CashuPaymentInfo>): Promise<NDKPaymentConfirmationCashu | undefined> {
+    async cashuPay(
+        payment: NDKZapDetails<CashuPaymentInfo>
+    ): Promise<NDKPaymentConfirmationCashu | undefined> {
         const satPayment = { ...payment };
         if (satPayment.unit?.startsWith("msat")) {
             satPayment.amount = satPayment.amount / 1000;
@@ -66,18 +77,18 @@ export class PaymentHandler {
             this.wallet,
             satPayment.amount,
             payment.mints,
-            payment.p2pk,
-        )
+            payment.p2pk
+        );
         if (!createResult) {
             if (payment.allowIntramintFallback) {
                 createResult = await createToken(
                     this.wallet,
                     satPayment.amount,
                     undefined,
-                    payment.p2pk,
-                )
+                    payment.p2pk
+                );
             }
-            
+
             if (!createResult) {
                 return;
             }

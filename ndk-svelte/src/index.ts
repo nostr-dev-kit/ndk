@@ -242,7 +242,7 @@ class NDKSvelte extends NDK {
                 if (currentDeletedTimestamp && currentDeletedTimestamp > event.created_at!) return;
 
                 const isDeleted = event.hasTag("deleted");
-                
+
                 if (isDeleted) {
                     // flag the deletion of this dTag
                     deletedPRETimestamps.set(dedupKey, event.created_at!);

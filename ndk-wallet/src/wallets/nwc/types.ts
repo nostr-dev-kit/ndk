@@ -1,5 +1,5 @@
 // Method types
-export type NDKNWCMethod = 
+export type NDKNWCMethod =
     | "pay_invoice"
     | "multi_pay_invoice"
     | "pay_keysend"
@@ -26,7 +26,7 @@ export interface NDKNWCResponseBase<T = any> {
 }
 
 // Error codes
-export type NDKNWCErrorCode = 
+export type NDKNWCErrorCode =
     | "RATE_LIMITED"
     | "NOT_IMPLEMENTED"
     | "INSUFFICIENT_BALANCE"
@@ -121,7 +121,7 @@ export type NDKNWCRequestMap = {
     list_transactions: NDKNWCListTransactionsParams;
     get_balance: Record<string, never>;
     get_info: Record<string, never>;
-}
+};
 
 export type NDKNWCResponseMap = {
     pay_invoice: NDKNWCPayInvoiceResult;
@@ -130,4 +130,4 @@ export type NDKNWCResponseMap = {
     list_transactions: { transactions: NDKNWCTransaction[] };
     get_balance: NDKNWCGetBalanceResult;
     get_info: NDKNWCGetInfoResult;
-}
+};

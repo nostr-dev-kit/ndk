@@ -1,10 +1,10 @@
-import NDK, { NDKEvent, NDKKind, Hexpubkey, NDKUser } from '@nostr-dev-kit/ndk';
-import { SessionInitCallbacks, SessionInitOpts, SessionState } from '../types.js';
-import { generateFilters } from '../utils.js';
-import { SettingsStore } from '../../../types.js';
-import { NDKCacheAdapterSqlite } from '../../../cache-adapter/sqlite.js';
-import { addWotEntries, shouldUpdateWot, wotEntries } from './wot.js';
-import { setMuteList } from './setMuteList.js';
+import NDK, { NDKEvent, NDKKind, Hexpubkey, NDKUser } from "@nostr-dev-kit/ndk";
+import { SessionInitCallbacks, SessionInitOpts, SessionState } from "../types.js";
+import { generateFilters } from "../utils.js";
+import { SettingsStore } from "../../../types.js";
+import { NDKCacheAdapterSqlite } from "../../../cache-adapter/sqlite.js";
+import { addWotEntries, shouldUpdateWot, wotEntries } from "./wot.js";
+import { setMuteList } from "./setMuteList.js";
 
 const isValidPubkey = (pubkey: Hexpubkey) => pubkey.length === 64 && /^[0-9a-fA-F]+$/.test(pubkey);
 
@@ -24,13 +24,23 @@ export const initSession = (
     const filters = generateFilters(ndk, user, opts);
 
     if (!filters[0].since) {
-        const ndkMobileSessionLastEose = settingsStore.getSync('ndkMobileSessionLastEose');
+        const ndkMobileSessionLastEose = settingsStore.getSync("ndkMobileSessionLastEose");
         if (ndkMobileSessionLastEose) {
             filters[0].since = parseInt(ndkMobileSessionLastEose);
         }
     }
-    
-    const sub = ndk.subscribe(filters, { groupable: false, closeOnEose: false, subId: 'ndk-mobile-session', ...(opts.subOpts || {}) }, undefined, false);
+
+    const sub = ndk.subscribe(
+        filters,
+        {
+            groupable: false,
+            closeOnEose: false,
+            subId: "ndk-mobile-session",
+            ...(opts.subOpts || {}),
+        },
+        undefined,
+        false
+    );
     let eosed = false;
 
     let updateFollowTimer: NodeJS.Timeout | undefined;
@@ -39,15 +49,15 @@ export const initSession = (
         if (updateFollowTimer) clearTimeout(updateFollowTimer);
 
         updateFollowTimer = setTimeout(updateFollows, 50);
-    }
+    };
 
     const updateFollows = () => {
-        set({ follows: Array.from(new Set([ ...follows, ...Array.from(kindFollows) ])) });
-    }
+        set({ follows: Array.from(new Set([...follows, ...Array.from(kindFollows)])) });
+    };
 
     const handleKindFollowEvent = (event: NDKEvent) => {
         let modified = false;
-        for (const tag of event.getMatchingTags('p')) {
+        for (const tag of event.getMatchingTags("p")) {
             if (!kindFollows.has(tag[1])) {
                 if (isValidPubkey(tag[1])) {
                     kindFollows.add(tag[1]);
@@ -60,13 +70,13 @@ export const initSession = (
             if (eosed) updateFollows();
             else debouncedUpdateFollows();
         }
-    }
+    };
 
     const handleEvent = (event: NDKEvent) => {
         addEvent(event, () => {
             if (event.kind === NDKKind.Contacts) {
                 follows = event.tags
-                    .filter((tag) => tag[0] === 'p' && !!tag[1])
+                    .filter((tag) => tag[0] === "p" && !!tag[1])
                     .map((tag) => tag[1])
                     .filter(isValidPubkey);
 
@@ -77,8 +87,8 @@ export const initSession = (
                         on.onWotReady?.();
                     });
                 }
-                
-                return { follows: [ ...follows, ...Array.from(kindFollows) ] };
+
+                return { follows: [...follows, ...Array.from(kindFollows)] };
             } else if (event.kind === 967) {
                 handleKindFollowEvent(event);
             } else if (event.kind === NDKKind.MuteList) {
@@ -87,13 +97,13 @@ export const initSession = (
         });
     };
 
-    sub.on('event', handleEvent);
+    sub.on("event", handleEvent);
 
-    sub.once('eose', () => {
+    sub.once("eose", () => {
         on?.onReady?.();
         eosed = true;
 
-        settingsStore?.set?.('ndkMobileSessionLastEose', Math.floor(Date.now() / 1000).toString())
+        settingsStore?.set?.("ndkMobileSessionLastEose", Math.floor(Date.now() / 1000).toString());
 
         if (opts.wot) {
             if (shouldUpdateWot(ndk, settingsStore)) {
@@ -101,8 +111,8 @@ export const initSession = (
                     on.onWotReady?.();
                 });
             } else {
-                console.log('not updating wot');
-                
+                console.log("not updating wot");
+
                 // fetch wot from database
                 const cacheAdapter = ndk.cacheAdapter;
                 if (!(cacheAdapter instanceof NDKCacheAdapterSqlite)) {

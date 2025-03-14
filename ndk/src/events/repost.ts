@@ -24,9 +24,8 @@ export async function repost(
     const e = new NDKEvent(this.ndk, {
         kind: getKind(this),
     } as NostrEvent);
-    
-    if (!this.isProtected)
-        e.content = JSON.stringify(this.rawEvent());
+
+    if (!this.isProtected) e.content = JSON.stringify(this.rawEvent());
     e.tag(this);
 
     // add a [ "k", kind ] for all non-kind:1 events

@@ -37,7 +37,7 @@ describe("NDKSubscriptionManager", () => {
 
     it("should record seen events", () => {
         const eventId: NDKEventId = "event1";
-        const relay = new NDKRelay('wss://example.com', undefined, ndk);
+        const relay = new NDKRelay("wss://example.com", undefined, ndk);
         manager.seenEvent(eventId, relay);
         const seenRelays = manager.seenEvents.get(eventId);
         expect(seenRelays).toContain(relay);

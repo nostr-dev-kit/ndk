@@ -61,11 +61,11 @@ NDK-svelte introduces a reference counting mechanism through the ref and unref m
 
 ### Benefits:
 
--   **Optimized Lifecycle**: Instead of starting a new subscription every time a component mounts, and ending it when it unmounts, you can reuse an existing subscription if another component is already using it.
+- **Optimized Lifecycle**: Instead of starting a new subscription every time a component mounts, and ending it when it unmounts, you can reuse an existing subscription if another component is already using it.
 
--   **Resource Efficiency**: By preventing redundant subscriptions, you save both network bandwidth and processing power.
+- **Resource Efficiency**: By preventing redundant subscriptions, you save both network bandwidth and processing power.
 
--   **Synchronization**: Ensures that multiple components referencing the same data are synchronized with a single data source.
+- **Synchronization**: Ensures that multiple components referencing the same data are synchronized with a single data source.
 
 ### How to use:
 
@@ -99,4 +99,4 @@ which provides some components to make it easier to build nostr apps with Svelte
 
 # Authors
 
--   [@pablof7z](https://njump.me/npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft)
+- [@pablof7z](https://njump.me/npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft)

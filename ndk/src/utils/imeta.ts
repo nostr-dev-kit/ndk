@@ -20,12 +20,12 @@ export function mapImetaTag(tag: NDKTag): NDKImetaTag {
 
     // If we have a single value, split the string into key/value pairs
     if (tag.length === 2) {
-        const parts = tag[1].split(' ');
+        const parts = tag[1].split(" ");
 
         for (let i = 0; i < parts.length; i += 2) {
             const key = parts[i] as keyof NDKImetaTag;
             const value = parts[i + 1];
-            if (key === 'fallback') {
+            if (key === "fallback") {
                 if (!data.fallback) data.fallback = []; // Ensure fallback is initialized
                 data.fallback.push(value); // Push value to fallback array
             } else {
@@ -39,11 +39,11 @@ export function mapImetaTag(tag: NDKTag): NDKImetaTag {
     // Process all values in the tag
     const tags = tag.slice(1);
     for (const val of tags) {
-        const parts = val.split(' ');
+        const parts = val.split(" ");
         const key = parts[0] as keyof NDKImetaTag;
-        const value = parts.slice(1).join(' ');
+        const value = parts.slice(1).join(" ");
 
-        if (key === 'fallback') {
+        if (key === "fallback") {
             if (!data.fallback) data.fallback = []; // Ensure fallback is initialized
             data.fallback.push(value);
         } else {
@@ -58,7 +58,7 @@ export function mapImetaTag(tag: NDKTag): NDKImetaTag {
  * Converts an NDKImetaTag to an NDKTag
  */
 export function imetaTagToTag(imeta: NDKImetaTag): NDKTag {
-    const tag: NDKTag = ['imeta'];
+    const tag: NDKTag = ["imeta"];
 
     for (const [key, value] of Object.entries(imeta)) {
         if (Array.isArray(value)) {

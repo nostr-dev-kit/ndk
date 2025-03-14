@@ -4,12 +4,12 @@ A React Native/Expo implementation of [NDK (Nostr Development Kit)](https://gith
 
 ## Features
 
--   🔐 Multiple signer implementations (NIP-07, NIP-46, Private Key)
--   💾 SQLite-based caching for offline support
--   🔄 Subscription management with automatic reconnection
--   📱 React Native and Expo compatibility
--   🪝 React hooks for easy state management
--   👛 Integrated wallet support
+- 🔐 Multiple signer implementations (NIP-07, NIP-46, Private Key)
+- 💾 SQLite-based caching for offline support
+- 🔄 Subscription management with automatic reconnection
+- 📱 React Native and Expo compatibility
+- 🪝 React hooks for easy state management
+- 👛 Integrated wallet support
 
 ## Installation
 

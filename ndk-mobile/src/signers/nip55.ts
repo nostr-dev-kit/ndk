@@ -11,18 +11,18 @@ export class NDKNip55Signer implements NDKSigner {
     constructor(packageName: string) {
         this.packageName = packageName;
     }
-    
+
     /**
      * Blocks until the signer is ready and returns the associated NDKUser.
      * @returns A promise that resolves to the NDKUser instance.
      */
     async blockUntilReady(): Promise<NDKUser> {
         if (this._user) return this._user;
-        
+
         await Nip55.setPackageName(this.packageName);
-        
+
         const data = await Nip55.getPublicKey();
-        if (!data) throw new Error('No signer available found');
+        if (!data) throw new Error("No signer available found");
 
         this._user = new NDKUser({ npub: data.npub });
         this._pubkey = this._user.pubkey;
@@ -41,17 +41,17 @@ export class NDKNip55Signer implements NDKSigner {
      * @returns A promise that resolves to the signature of the signed event.
      */
     async sign(event: NostrEvent): Promise<string> {
-        console.log('NIP-55 SIGNER SIGNING', event)
+        console.log("NIP-55 SIGNER SIGNING", event);
         const result = await Nip55.signEvent(
             this.packageName,
             JSON.stringify(event),
             event.id,
             this._pubkey
-        )
-        console.log('NIP-55 SIGNER SIGNED', result)
+        );
+        console.log("NIP-55 SIGNER SIGNED", result);
         return result.signature;
     }
-    
+
     /**
      * Determine the types of encryption (by nip) that this signer can perform.
      * Implementing classes SHOULD return a value even for legacy (only nip04) third party signers.
@@ -69,7 +69,11 @@ export class NDKNip55Signer implements NDKSigner {
      * @param value - The value to be encrypted.
      * @param nip - which NIP is being implemented ('nip04', 'nip44')
      */
-    async encrypt(recipient: NDKUser, value: string, scheme?: NDKEncryptionScheme): Promise<string> {
+    async encrypt(
+        recipient: NDKUser,
+        value: string,
+        scheme?: NDKEncryptionScheme
+    ): Promise<string> {
         return "";
     }
     /**

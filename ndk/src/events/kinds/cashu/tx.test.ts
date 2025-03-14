@@ -5,15 +5,15 @@ import { NDKCashuWalletTx } from "./tx";
 import { mockNutzap } from "../../../../test/utils/nutzaps/index.js";
 import { NDKUser } from "../../../user";
 
-const FAKE_MINT = 'https://cashu.example.com'
+const FAKE_MINT = "https://cashu.example.com";
 
 const ndk = new NDK({
     signer: NDKPrivateKeySigner.generate(),
-    clientName: 'testing'
+    clientName: "testing",
 });
 
 describe("NDKCashuWalletTx", () => {
-    describe('redeeming nutzaps', () => {
+    describe("redeeming nutzaps", () => {
         let senderUser: NDKUser;
         let nutzap: NDKNutzap;
 
@@ -22,7 +22,7 @@ describe("NDKCashuWalletTx", () => {
             senderUser = await signer.user();
             nutzap = await mockNutzap(FAKE_MINT, 100, ndk, { senderPk: signer });
         });
-        
+
         it("p-tags the person that redeemed the nutzaps", async () => {
             const tx = new NDKCashuWalletTx(ndk);
             tx.addRedeemedNutzap(nutzap);

@@ -25,7 +25,7 @@ const skipClientTagOnKinds = new Set([
     NDKKind.GiftWrapSeal,
     NDKKind.Contacts,
     NDKKind.ZapRequest,
-    NDKKind.EventDeletion
+    NDKKind.EventDeletion,
 ]);
 
 export type NDKEventId = string;
@@ -495,7 +495,7 @@ export class NDKEvent extends EventEmitter {
 
         // If the published event is a delete event, notify the cache if there is one
         if (this.kind === NDKKind.EventDeletion && this.ndk.cacheAdapter?.deleteEventIds) {
-            const eTags = this.getMatchingTags('e').map((tag) => tag[1]);
+            const eTags = this.getMatchingTags("e").map((tag) => tag[1]);
             this.ndk.cacheAdapter.deleteEventIds(eTags);
         }
 
@@ -512,7 +512,7 @@ export class NDKEvent extends EventEmitter {
 
         // if this is a delete event, send immediately to the cache
         if (this.kind === NDKKind.EventDeletion && this.ndk.cacheAdapter?.deleteEventIds) {
-            this.ndk.cacheAdapter.deleteEventIds(this.getMatchingTags('e').map((tag) => tag[1]));
+            this.ndk.cacheAdapter.deleteEventIds(this.getMatchingTags("e").map((tag) => tag[1]));
         }
 
         // send to active subscriptions that want this event
@@ -594,7 +594,7 @@ export class NDKEvent extends EventEmitter {
      * Returns the "d" tag of a parameterized replaceable event or throws an error if the event isn't
      * a parameterized replaceable event.
      * @returns {string} the "d" tag of the event.
-     * 
+     *
      * @deprecated Use `dTag` instead.
      */
     replaceableDTag() {
@@ -642,15 +642,15 @@ export class NDKEvent extends EventEmitter {
 
     /**
      * Returns a stable reference value for a replaceable event.
-     * 
+     *
      * Param replaceable events are returned in the expected format of `<kind>:<pubkey>:<d-tag>`.
      * Kind-replaceable events are returned in the format of `<kind>:<pubkey>:`.
-     * 
+     *
      * @returns {string} A stable reference value for replaceable events
      */
     tagAddress(): string {
         if (this.isParamReplaceable()) {
-            const dTagId = this.dTag ?? ""; 
+            const dTagId = this.dTag ?? "";
             return `${this.kind}:${this.pubkey}:${dTagId}`;
         } else if (this.isReplaceable()) {
             return `${this.kind}:${this.pubkey}:`;
@@ -821,8 +821,8 @@ export class NDKEvent extends EventEmitter {
      * @@satisfies NIP-70
      */
     set isProtected(val: boolean) {
-        this.removeTag('-');
-        if (val) this.tags.push(['-']);
+        this.removeTag("-");
+        if (val) this.tags.push(["-"]);
     }
 
     /**
@@ -830,7 +830,7 @@ export class NDKEvent extends EventEmitter {
      * @@satisfies NIP-70
      */
     get isProtected(): boolean {
-        return this.hasTag('-');
+        return this.hasTag("-");
     }
 
     /**
@@ -887,7 +887,7 @@ export class NDKEvent extends EventEmitter {
             content,
         } as NostrEvent);
         e.tag(this);
-        
+
         if (publish) await e.publish();
 
         return e;
@@ -908,7 +908,7 @@ export class NDKEvent extends EventEmitter {
 
     /**
      * Creates a reply event for the current event.
-     * 
+     *
      * This function will use NIP-22 when appropriate (i.e. replies to non-kind:1 events).
      * This function does not have side-effects; it will just return an event with the appropriate tags
      * to generate the reply event; the caller is responsible for publishing the event.
@@ -926,7 +926,7 @@ export class NDKEvent extends EventEmitter {
                     ...this.getMatchingTags("e"),
                     ...this.getMatchingTags("p"),
                     ...this.getMatchingTags("a"),
-                    ...this.referenceTags("reply")
+                    ...this.referenceTags("reply"),
                 ];
             } else {
                 reply.tag(this, "root");
@@ -936,31 +936,31 @@ export class NDKEvent extends EventEmitter {
 
             const carryOverTags = ["A", "E", "I", "P"];
             const rootTags = this.tags.filter((tag) => carryOverTags.includes(tag[0]));
-            
+
             // we have a root tag already
             if (rootTags.length > 0) {
                 const rootKind = this.tagValue("K");
                 reply.tags.push(...rootTags);
                 if (rootKind) reply.tags.push(["K", rootKind]);
 
-                const [ type, id, _, ...extra] = this.tagReference();
+                const [type, id, _, ...extra] = this.tagReference();
                 const tag = [type, id, ...extra];
                 reply.tags.push(tag);
             } else {
-                const [ type, id, _, relayHint] = this.tagReference();
+                const [type, id, _, relayHint] = this.tagReference();
                 const tag = [type, id, relayHint ?? ""];
                 if (type === "e") tag.push(this.pubkey);
                 reply.tags.push(tag);
                 const uppercaseTag = [...tag];
                 uppercaseTag[0] = uppercaseTag[0].toUpperCase();
                 reply.tags.push(uppercaseTag);
-                reply.tags.push(["K", this.kind!.toString()])
+                reply.tags.push(["K", this.kind!.toString()]);
                 reply.tags.push(["P", this.pubkey]);
             }
 
             reply.tags.push(["k", this.kind!.toString()]);
 
-            // carry over all p tags 
+            // carry over all p tags
             reply.tags.push(...this.getMatchingTags("p"));
             reply.tags.push(["p", this.pubkey]);
         }
@@ -968,7 +968,6 @@ export class NDKEvent extends EventEmitter {
         return reply;
     }
 }
-
 
 const untrackedUnpublishedEvents = new Set([
     NDKKind.NostrConnect,

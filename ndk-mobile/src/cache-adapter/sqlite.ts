@@ -12,10 +12,10 @@ import {
     NDKKind,
     matchFilter,
     profileFromEvent,
-} from '@nostr-dev-kit/ndk';
-import { LRUCache } from 'typescript-lru-cache';
-import * as SQLite from 'expo-sqlite';
-import { migrations } from './migrations.js';
+} from "@nostr-dev-kit/ndk";
+import { LRUCache } from "typescript-lru-cache";
+import * as SQLite from "expo-sqlite";
+import { migrations } from "./migrations.js";
 
 export type NDKSqliteEventRecord = {
     id: string;
@@ -47,9 +47,9 @@ export type NDKSqliteProfileRecord = {
  */
 type LoadedUnpublishedEvent = {
     event: NDKEvent;
-    relays: WebSocket['url'][];
+    relays: WebSocket["url"][];
     lastTryAt: number;
-}
+};
 
 /**
  * This represents an entry in the database for an unpublished event.
@@ -66,8 +66,8 @@ type PendingCallback = (...arg: any) => any;
 function filterForCache(subscription: NDKSubscription) {
     if (!subscription.cacheUnconstrainFilter) return subscription.filters;
 
-    const filterCopy = subscription.filters.map(filter => ({ ...filter }));
-    
+    const filterCopy = subscription.filters.map((filter) => ({ ...filter }));
+
     // remove the keys that are in the cacheUnconstrainFilter
     return filterCopy.filter((filter) => {
         for (const key of subscription.cacheUnconstrainFilter) {
@@ -96,7 +96,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     private bufferFlushTimer: NodeJS.Timeout | null = null;
 
     constructor(dbName: string, maxProfiles: number | false = 200) {
-        this.dbName = dbName ?? 'ndk-cache';
+        this.dbName = dbName ?? "ndk-cache";
         if (maxProfiles) {
             this.profileCache = new LRUCache({ maxSize: maxProfiles });
         }
@@ -105,11 +105,13 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
 
     /**
      * Initialize the cache adapter.
-     * 
+     *
      * This should be called before using it.
      */
     public async initialize() {
-        let { user_version: schemaVersion } = (this.db.getFirstSync(`PRAGMA user_version;`)) as { user_version: number };
+        let { user_version: schemaVersion } = this.db.getFirstSync(`PRAGMA user_version;`) as {
+            user_version: number;
+        };
 
         if (!schemaVersion) {
             schemaVersion = 0;
@@ -125,7 +127,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                     try {
                         await migrations[i].up(this.db);
                     } catch (e) {
-                        console.error('error running migration', e);
+                        console.error("error running migration", e);
                         throw e;
                     }
                     await this.db.execAsync(`PRAGMA user_version = ${i + 1};`);
@@ -135,25 +137,30 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                 await this.db.execAsync(`PRAGMA user_version = ${migrations.length};`);
             });
         }
-        
+
         this.ready = true;
         this.locking = true;
 
         // load all the event timestamps
-        const events = this.db.getAllSync(`SELECT id, created_at FROM events`) as {id: string, created_at: number}[];    
+        const events = this.db.getAllSync(`SELECT id, created_at FROM events`) as {
+            id: string;
+            created_at: number;
+        }[];
         for (const event of events) {
             this.knownEventTimestamps.set(event.id, event.created_at);
         }
-        
+
         await this.loadUnpublishedEvents();
 
-        Promise.all(this.pendingCallbacks.map((f) => {
-            try {
-                return f();
-            } catch (e) {
-                console.error('error calling cache adapter pending callback', e);
-            }
-        }));
+        Promise.all(
+            this.pendingCallbacks.map((f) => {
+                try {
+                    return f();
+                } catch (e) {
+                    console.error("error calling cache adapter pending callback", e);
+                }
+            })
+        );
     }
 
     onReady(callback: () => any) {
@@ -174,7 +181,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
 
     query(subscription: NDKSubscription): NDKEvent[] {
         if (!this.ready) return [];
-        
+
         const cacheFilters = filterForCache(subscription);
         const results = new Map<NDKEventId, NDKEvent>();
 
@@ -182,45 +189,48 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
             for (const event of events) {
                 results.set(event.id, event);
             }
-        }
+        };
 
         // Process filters from the subscription
         for (const filter of cacheFilters) {
-            const hasHashtagFilter = Object.keys(filter).some((key) => key.startsWith('#') && key.length === 2);
-            
+            const hasHashtagFilter = Object.keys(filter).some(
+                (key) => key.startsWith("#") && key.length === 2
+            );
+
             if (hasHashtagFilter) {
                 for (const key in filter) {
-                    if (key.startsWith('#') && key.length === 2) {
+                    if (key.startsWith("#") && key.length === 2) {
                         const tag = key[1];
                         const events = this.db.getAllSync(
-                            `SELECT * FROM events INNER JOIN event_tags ON events.id = event_tags.event_id WHERE event_tags.tag = ? AND event_tags.value IN (${filter[key].map(() => '?').join(',')}) ORDER BY created_at DESC`,
+                            `SELECT * FROM events INNER JOIN event_tags ON events.id = event_tags.event_id WHERE event_tags.tag = ? AND event_tags.value IN (${filter[key].map(() => "?").join(",")}) ORDER BY created_at DESC`,
                             [tag, ...filter[key]]
                         ) as NDKSqliteEventRecord[];
-                        if (events.length > 0) addResults(foundEvents(subscription, events, filter));
+                        if (events.length > 0)
+                            addResults(foundEvents(subscription, events, filter));
                         break;
                     }
                 }
-            }  else if (filter.authors && filter.kinds) {
+            } else if (filter.authors && filter.kinds) {
                 const events = this.db.getAllSync(
-                    `SELECT * FROM events WHERE pubkey IN (${filter.authors.map(() => '?').join(',')}) AND kind IN (${filter.kinds.map(() => '?').join(',')}) ORDER BY created_at DESC`,
+                    `SELECT * FROM events WHERE pubkey IN (${filter.authors.map(() => "?").join(",")}) AND kind IN (${filter.kinds.map(() => "?").join(",")}) ORDER BY created_at DESC`,
                     [...filter.authors, ...filter.kinds]
                 ) as NDKSqliteEventRecord[];
                 if (events.length > 0) addResults(foundEvents(subscription, events, filter));
             } else if (filter.authors) {
                 const events = this.db.getAllSync(
-                    `SELECT * FROM events WHERE pubkey IN (${filter.authors.map(() => '?').join(',')}) ORDER BY created_at DESC`,
+                    `SELECT * FROM events WHERE pubkey IN (${filter.authors.map(() => "?").join(",")}) ORDER BY created_at DESC`,
                     filter.authors
                 ) as NDKSqliteEventRecord[];
                 if (events.length > 0) addResults(foundEvents(subscription, events, filter));
             } else if (filter.kinds) {
                 const events = this.db.getAllSync(
-                    `SELECT * FROM events WHERE kind IN (${filter.kinds.map(() => '?').join(',')}) ORDER BY created_at DESC`,
+                    `SELECT * FROM events WHERE kind IN (${filter.kinds.map(() => "?").join(",")}) ORDER BY created_at DESC`,
                     filter.kinds
                 ) as NDKSqliteEventRecord[];
                 if (events.length > 0) addResults(foundEvents(subscription, events, filter));
             } else if (filter.ids) {
                 const events = this.db.getAllSync(
-                    `SELECT * FROM events WHERE id IN (${filter.ids.map(() => '?').join(',')}) ORDER BY created_at DESC`,
+                    `SELECT * FROM events WHERE id IN (${filter.ids.map(() => "?").join(",")}) ORDER BY created_at DESC`,
                     filter.ids
                 ) as NDKSqliteEventRecord[];
                 if (events.length > 0) addResults(foundEvents(subscription, events, filter));
@@ -243,7 +253,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                 try {
                     await this.db.runAsync(query, params);
                 } catch (e) {
-                    console.error('error executing buffered write', e, query, params);
+                    console.error("error executing buffered write", e, query, params);
                 }
             }
         });
@@ -254,7 +264,10 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
         // check if there are any more operations in the buffer
         if (this.writeBuffer.length > 0) {
             // console.log(`[${Date.now()}] [SQLITE] Buffer has ${this.writeBuffer.length} operations, starting new timer`);
-            this.bufferFlushTimer = setTimeout(() => this.flushWriteBuffer(), this.bufferFlushTimeout);
+            this.bufferFlushTimer = setTimeout(
+                () => this.flushWriteBuffer(),
+                this.bufferFlushTimeout
+            );
         }
     }
 
@@ -262,10 +275,13 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
         this.writeBuffer.push({ query, params });
 
         if (!this.bufferFlushTimer) {
-            this.bufferFlushTimer = setTimeout(() => this.flushWriteBuffer(), this.bufferFlushTimeout);
+            this.bufferFlushTimer = setTimeout(
+                () => this.flushWriteBuffer(),
+                this.bufferFlushTimeout
+            );
         }
     }
-    
+
     async setEvent(event: NDKEvent, filters: NDKFilter[], relay?: NDKRelay): Promise<void> {
         this.onReady(async () => {
             const referenceId = event.isReplaceable() ? event.tagAddress() : event.id;
@@ -279,29 +295,39 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                     this.bufferWrite(`DELETE FROM events WHERE id = ?;`, [referenceId]);
                     this.bufferWrite(`DELETE FROM event_tags WHERE event_id = ?;`, [referenceId]);
                 } catch (e) {
-                    console.error('error deleting event', e, referenceId);
+                    console.error("error deleting event", e, referenceId);
                 }
             }
 
             // this.bufferKinds.set(event.kind!, (this.bufferKinds.get(event.kind!) || 0) + 1);
-            this.bufferWrite(`INSERT INTO events (id, created_at, pubkey, event, kind, relay) VALUES (?, ?, ?, ?, ?, ?);`, [
-                referenceId,
-                event.created_at!,
-                event.pubkey,
-                event.serialize(true, true),
-                event.kind!,
-                relay?.url || '',
-            ]);
+            this.bufferWrite(
+                `INSERT INTO events (id, created_at, pubkey, event, kind, relay) VALUES (?, ?, ?, ?, ?, ?);`,
+                [
+                    referenceId,
+                    event.created_at!,
+                    event.pubkey,
+                    event.serialize(true, true),
+                    event.kind!,
+                    relay?.url || "",
+                ]
+            );
 
-            const filterTags: [string, string][] = event.tags.filter((tag) => tag[0].length === 1).map((tag) => [tag[0], tag[1]]);
+            const filterTags: [string, string][] = event.tags
+                .filter((tag) => tag[0].length === 1)
+                .map((tag) => [tag[0], tag[1]]);
             if (filterTags.length < 10) {
                 for (const tag of filterTags) {
-                    this.bufferWrite(`INSERT INTO event_tags (event_id, tag, value) VALUES (?, ?, ?);`, [event.id, tag[0], tag[1]]);
+                    this.bufferWrite(
+                        `INSERT INTO event_tags (event_id, tag, value) VALUES (?, ?, ?);`,
+                        [event.id, tag[0], tag[1]]
+                    );
                 }
             }
 
             if (event.kind === NDKKind.EventDeletion) {
-                this.deleteEventIds(event.tags.filter((tag) => tag[0] === 'e').map((tag) => tag[1]));
+                this.deleteEventIds(
+                    event.tags.filter((tag) => tag[0] === "e").map((tag) => tag[1])
+                );
             } else if (event.kind === NDKKind.Metadata) {
                 const profile = profileFromEvent(event);
                 if (profile) {
@@ -313,8 +339,14 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
 
     async deleteEventIds(eventIds: NDKEventId[]): Promise<void> {
         this.onReady(async () => {
-            this.bufferWrite(`DELETE FROM events WHERE id IN (${eventIds.map(() => '?').join(',')});`, eventIds);
-            this.bufferWrite(`DELETE FROM event_tags WHERE event_id IN (${eventIds.map(() => '?').join(',')});`, eventIds);
+            this.bufferWrite(
+                `DELETE FROM events WHERE id IN (${eventIds.map(() => "?").join(",")});`,
+                eventIds
+            );
+            this.bufferWrite(
+                `DELETE FROM event_tags WHERE event_id IN (${eventIds.map(() => "?").join(",")});`,
+                eventIds
+            );
         });
     }
 
@@ -327,9 +359,12 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
         let result: NDKSqliteProfileRecord | null = null;
 
         try {
-            result = this.db.getFirstSync(`SELECT name, about, picture, banner, nip05, lud16, lud06, display_name, website, catched_at, created_at FROM profiles WHERE pubkey = ?;`, [pubkey]) as NDKSqliteProfileRecord;
+            result = this.db.getFirstSync(
+                `SELECT name, about, picture, banner, nip05, lud16, lud06, display_name, website, catched_at, created_at FROM profiles WHERE pubkey = ?;`,
+                [pubkey]
+            ) as NDKSqliteProfileRecord;
         } catch (e) {
-            console.error('error fetching profile', e, { pubkey });
+            console.error("error fetching profile", e, { pubkey });
             return null;
         }
 
@@ -345,7 +380,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                     lud06: result.lud06,
                     displayName: result.display_name,
                     website: result.website,
-                    created_at: result.created_at
+                    created_at: result.created_at,
                 };
                 const entry = { ...profile, fetchedAt: result.catched_at };
                 if (this.profileCache) {
@@ -353,7 +388,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                 }
                 return entry;
             } catch (e) {
-                console.error('failed to parse profile', result);
+                console.error("failed to parse profile", result);
             }
         }
 
@@ -367,7 +402,8 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
         }
 
         return await this.ifReady(async () => {
-            const result = await this.db.getFirstAsync(`
+            const result = (await this.db.getFirstAsync(
+                `
                 SELECT 
                     name, 
                     about, 
@@ -380,7 +416,9 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                     website, 
                     catched_at, 
                     created_at 
-                FROM profiles WHERE pubkey = ?;`, [pubkey]) as {
+                FROM profiles WHERE pubkey = ?;`,
+                [pubkey]
+            )) as {
                 name: string;
                 about: string;
                 picture: string;
@@ -406,7 +444,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                         lud06: result.lud06,
                         displayName: result.display_name,
                         website: result.website,
-                        created_at: result.created_at
+                        created_at: result.created_at,
                     };
                     const entry = { ...profile, fetchedAt: result.catched_at };
                     if (this.profileCache) {
@@ -414,7 +452,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                     }
                     return entry;
                 } catch (e) {
-                    console.error('failed to parse profile', result);
+                    console.error("failed to parse profile", result);
                 }
             }
 
@@ -426,7 +464,11 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
         this.onReady(async () => {
             // check if the profile we have is newer based on created_at
             const existingProfile = await this.fetchProfile(pubkey);
-            if (existingProfile?.created_at && profile.created_at && existingProfile.created_at >= profile.created_at) {
+            if (
+                existingProfile?.created_at &&
+                profile.created_at &&
+                existingProfile.created_at >= profile.created_at
+            ) {
                 return;
             }
 
@@ -436,7 +478,8 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                 this.profileCache.set(pubkey, entry);
             }
 
-            this.bufferWrite(`INSERT OR REPLACE INTO profiles (
+            this.bufferWrite(
+                `INSERT OR REPLACE INTO profiles (
                 pubkey, 
                 name, 
                 about, 
@@ -449,67 +492,64 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                 website, 
                 catched_at, 
                 created_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`, [
-                pubkey,
-                profile.name,
-                profile.about,
-                profile.picture,
-                profile.banner,
-                profile.nip05,
-                profile.lud16,
-                profile.lud06,
-                profile.displayName,
-                profile.website,
-                now,
-                profile.created_at,
-            ]);
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+                [
+                    pubkey,
+                    profile.name,
+                    profile.about,
+                    profile.picture,
+                    profile.banner,
+                    profile.nip05,
+                    profile.lud16,
+                    profile.lud06,
+                    profile.displayName,
+                    profile.website,
+                    now,
+                    profile.created_at,
+                ]
+            );
         });
     }
 
     private _unpublishedEvents: LoadedUnpublishedEvent[] = [];
 
-    private _addUnpublishedEvent(
-        event: NDKEvent,
-        relays: WebSocket['url'][],
-        lastTryAt: number
-    ) {
+    private _addUnpublishedEvent(event: NDKEvent, relays: WebSocket["url"][], lastTryAt: number) {
         if (this.unpublishedEventIds.has(event.id)) return;
-        this.unpublishedEventIds.add(event.id)
+        this.unpublishedEventIds.add(event.id);
         this._unpublishedEvents.push({ event, relays, lastTryAt });
 
         const onPublished = (relay: NDKRelay) => {
             this.discardUnpublishedEvent(event.id);
-            event.off('published', onPublished);
+            event.off("published", onPublished);
         };
 
-        event.on('published', onPublished);
+        event.on("published", onPublished);
     }
 
-    addUnpublishedEvent(event: NDKEvent, relayUrls: WebSocket['url'][]): void {
+    addUnpublishedEvent(event: NDKEvent, relayUrls: WebSocket["url"][]): void {
         if (this.unpublishedEventIds.has(event.id)) return;
         this._addUnpublishedEvent(event, relayUrls, Date.now());
-        
+
         this.setEvent(event, []);
         this.onReady(async () => {
             const relayStatus: { [key: string]: boolean } = {};
-            relayUrls.forEach(url => relayStatus[url] = false);
+            relayUrls.forEach((url) => (relayStatus[url] = false));
 
             try {
                 // console.log(`[${Date.now()}] [SQLITE] write unpublished event`, event.kind);
-                this.db.runAsync(`INSERT INTO unpublished_events (id, event, relays, last_try_at) VALUES (?, ?, ?, ?);`, [
-                    event.id,
-                    event.serialize(true, true),
-                    JSON.stringify(relayStatus),
-                    Date.now(),
-                ]);
+                this.db.runAsync(
+                    `INSERT INTO unpublished_events (id, event, relays, last_try_at) VALUES (?, ?, ?, ?);`,
+                    [event.id, event.serialize(true, true), JSON.stringify(relayStatus), Date.now()]
+                );
             } catch (e) {
-                console.error('error adding unpublished event', e);
+                console.error("error adding unpublished event", e);
             }
-
         });
     }
 
-    async getUnpublishedEvents(): Promise<{ event: NDKEvent; relays?: WebSocket['url'][]; lastTryAt?: number }[]> {
+    async getUnpublishedEvents(): Promise<
+        { event: NDKEvent; relays?: WebSocket["url"][]; lastTryAt?: number }[]
+    > {
         return await this.onReady(async () => {
             const call = () => this._unpublishedEvents;
 
@@ -525,11 +565,13 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
 
     /**
      * This loads the unpublished events from the database into _unpublishedEvents.
-     * 
+     *
      * This should be called during initialization.
      */
     private loadUnpublishedEvents() {
-        const events = this.db.getAllSync(`SELECT * FROM unpublished_events`) as UnpublishedEventRecord[];
+        const events = this.db.getAllSync(
+            `SELECT * FROM unpublished_events`
+        ) as UnpublishedEventRecord[];
         for (const event of events) {
             const deserializedEvent = new NDKEvent(undefined, deserialize(event.event));
             const relays = JSON.parse(event.relays);
@@ -556,7 +598,10 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
 
     async fetchWot(): Promise<Map<Hexpubkey, number>> {
         return await this.onReady(async () => {
-            const wot = (await this.db.getAllAsync(`SELECT * FROM wot`)) as { pubkey: string; wot: number }[];
+            const wot = (await this.db.getAllAsync(`SELECT * FROM wot`)) as {
+                pubkey: string;
+                wot: number;
+            }[];
             return new Map(wot.map((wot) => [wot.pubkey, wot.wot]));
         });
     }
@@ -573,12 +618,14 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
 
     /**
      * Get an event from the database by ID.
-     * 
+     *
      * @param id - The ID of the event to get.
      * @returns The event, or null if it doesn't exist.
      */
     public getEventId(id: NDKEventId): NDKEvent | null {
-        const row = this.db.getFirstSync(`SELECT event FROM events WHERE id = ?;`, [id]) as { event: string };
+        const row = this.db.getFirstSync(`SELECT event FROM events WHERE id = ?;`, [id]) as {
+            event: string;
+        };
         return row ? new NDKEvent(undefined, deserialize(row.event)) : null;
     }
 
@@ -587,7 +634,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
      * @param query The query to run.
      * @param params The parameters to pass to the query.
      * @param filterFn An optional filter function to filter events before deserializing them.
-     * @returns 
+     * @returns
      */
     public getEvents(
         query: string,
@@ -606,27 +653,31 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                 const deserializedEvent = deserialize(record.event);
                 return new NDKEvent(undefined, deserializedEvent);
             } catch (e) {
-                console.error('failed to deserialize event', e, record);
+                console.error("failed to deserialize event", e, record);
                 return null;
             }
-        }); 
+        });
     }
 }
 
-export function foundEvents(subscription: NDKSubscription, records: NDKSqliteEventRecord[], filter?: NDKFilter): NDKEvent[] {
+export function foundEvents(
+    subscription: NDKSubscription,
+    records: NDKSqliteEventRecord[],
+    filter?: NDKFilter
+): NDKEvent[] {
     const result: NDKEvent[] = [];
     let now: number | undefined;
-    
+
     for (const record of records) {
         const event = foundEvent(subscription, record, record.relay, filter);
         if (event) {
             // check the event is not expired
-            const expiration = event.tagValue('expiration');
+            const expiration = event.tagValue("expiration");
             if (expiration) {
                 now ??= Math.floor(Date.now() / 1000);
                 if (now > parseInt(expiration)) continue;
             }
-            
+
             result.push(event);
             if (filter?.limit && result.length >= filter.limit) break;
         }
@@ -635,7 +686,12 @@ export function foundEvents(subscription: NDKSubscription, records: NDKSqliteEve
     return result;
 }
 
-export function foundEvent(subscription: NDKSubscription, event: NDKSqliteEventRecord, relayUrl: WebSocket['url'] | undefined, filter?: NDKFilter): NDKEvent | null {
+export function foundEvent(
+    subscription: NDKSubscription,
+    event: NDKSqliteEventRecord,
+    relayUrl: WebSocket["url"] | undefined,
+    filter?: NDKFilter
+): NDKEvent | null {
     try {
         const deserializedEvent = deserialize(event.event);
 
@@ -647,7 +703,7 @@ export function foundEvent(subscription: NDKSubscription, event: NDKSqliteEventR
 
         return ndkEvent;
     } catch (e) {
-        console.error('failed to deserialize event', e, event.event);
+        console.error("failed to deserialize event", e, event.event);
         return null;
     }
 }

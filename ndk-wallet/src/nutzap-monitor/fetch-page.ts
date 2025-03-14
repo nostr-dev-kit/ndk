@@ -1,4 +1,10 @@
-import NDK, { NDKEventId, NDKFilter, NDKNutzap, NDKRelaySet, NDKSubscriptionCacheUsage } from "@nostr-dev-kit/ndk";
+import NDK, {
+    NDKEventId,
+    NDKFilter,
+    NDKNutzap,
+    NDKRelaySet,
+    NDKSubscriptionCacheUsage,
+} from "@nostr-dev-kit/ndk";
 
 export async function fetchPage(
     ndk: NDK,
@@ -6,15 +12,19 @@ export async function fetchPage(
     knownNutzaps: Set<NDKEventId>,
     relaySet?: NDKRelaySet
 ): Promise<NDKNutzap[]> {
-    const events = await ndk.fetchEvents(filter, {
-        cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY,
-        groupable: false,
-        subId: 'recent-nutzap',
-    }, relaySet)
+    const events = await ndk.fetchEvents(
+        filter,
+        {
+            cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY,
+            groupable: false,
+            subId: "recent-nutzap",
+        },
+        relaySet
+    );
 
-    console.log(`fetched ${events.size} events`, relaySet?.relayUrls?.join(', '));
+    console.log(`fetched ${events.size} events`, relaySet?.relayUrls?.join(", "));
 
     return Array.from(events)
-        .map(e => NDKNutzap.from(e))
-        .filter(n => !!n) as NDKNutzap[];
+        .map((e) => NDKNutzap.from(e))
+        .filter((n) => !!n) as NDKNutzap[];
 }

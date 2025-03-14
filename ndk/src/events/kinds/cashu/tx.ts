@@ -10,7 +10,7 @@ const MARKERS = {
     RESERVED: "reserved",
 } as const;
 
-export type DIRECTIONS = 'in' | 'out';
+export type DIRECTIONS = "in" | "out";
 
 /**
  * This class represents a balance change in the wallet, whether money being added or removed.
@@ -47,57 +47,57 @@ export class NDKCashuWalletTx extends NDKEvent {
     }
 
     set direction(direction: DIRECTIONS | undefined) {
-        this.removeTag('direction')
-        if (direction) this.tags.push(['direction', direction])
+        this.removeTag("direction");
+        if (direction) this.tags.push(["direction", direction]);
     }
 
     get direction(): DIRECTIONS | undefined {
-        return this.tagValue('direction') as DIRECTIONS | undefined;
+        return this.tagValue("direction") as DIRECTIONS | undefined;
     }
 
     set amount(amount: number) {
-        this.removeTag('amount')
-        this.tags.push(['amount', amount.toString()])
+        this.removeTag("amount");
+        this.tags.push(["amount", amount.toString()]);
     }
 
     get amount(): number | undefined {
-        return this.tagValue('amount') as number | undefined;
+        return this.tagValue("amount") as number | undefined;
     }
 
     set fee(fee: number) {
-        this.removeTag('fee')
-        this.tags.push(['fee', fee.toString()])
+        this.removeTag("fee");
+        this.tags.push(["fee", fee.toString()]);
     }
 
     get fee(): number | undefined {
-        return this.tagValue('fee') as number | undefined;
+        return this.tagValue("fee") as number | undefined;
     }
 
     set unit(unit: string | undefined) {
-        this.removeTag('unit')
-        if (unit) this.tags.push(['unit', unit.toString()])
+        this.removeTag("unit");
+        if (unit) this.tags.push(["unit", unit.toString()]);
     }
 
     get unit(): string | undefined {
-        return this.tagValue('unit');
+        return this.tagValue("unit");
     }
 
     set description(description: string | undefined) {
-        this.removeTag('description')
-        if (description) this.tags.push(['description', description.toString()])
+        this.removeTag("description");
+        if (description) this.tags.push(["description", description.toString()]);
     }
 
     get description(): string | undefined {
-        return this.tagValue('description');
+        return this.tagValue("description");
     }
 
     set mint(mint: string | undefined) {
-        this.removeTag('mint')
-        if (mint) this.tags.push(['mint', mint.toString()])
+        this.removeTag("mint");
+        if (mint) this.tags.push(["mint", mint.toString()]);
     }
 
     get mint(): string | undefined {
-        return this.tagValue('mint');
+        return this.tagValue("mint");
     }
 
     /**
@@ -111,7 +111,7 @@ export class NDKCashuWalletTx extends NDKEvent {
 
     set destroyedTokenIds(ids: NDKEventId[]) {
         for (const id of ids) {
-            this.tags.push(['e', id, "", MARKERS.DESTROYED])
+            this.tags.push(["e", id, "", MARKERS.DESTROYED]);
         }
     }
 
@@ -120,13 +120,13 @@ export class NDKCashuWalletTx extends NDKEvent {
      */
     set createdTokens(events: NDKCashuToken[]) {
         for (const event of events) {
-            this.tags.push(event.tagReference(MARKERS.CREATED))
+            this.tags.push(event.tagReference(MARKERS.CREATED));
         }
     }
 
     set reservedTokens(events: NDKCashuToken[]) {
         for (const event of events) {
-            this.tags.push(event.tagReference(MARKERS.RESERVED))
+            this.tags.push(event.tagReference(MARKERS.RESERVED));
         }
     }
 

@@ -6,12 +6,20 @@ import NDK, {
 } from "@nostr-dev-kit/ndk";
 import { requestProvider } from "webln";
 import { type WebLNProvider } from "@webbtc/webln-types";
-import { NDKWallet, NDKWalletBalance, NDKWalletEvents, NDKWalletStatus, NDKWalletTypes } from "../index.js";
+import {
+    NDKWallet,
+    NDKWalletBalance,
+    NDKWalletEvents,
+    NDKWalletStatus,
+    NDKWalletTypes,
+} from "../index.js";
 import { NDKLnPay } from "./pay";
 import { NutPayment } from "../cashu/pay/nut.js";
 
 export class NDKWebLNWallet extends NDKWallet {
-    get type(): NDKWalletTypes { return "webln"; }
+    get type(): NDKWalletTypes {
+        return "webln";
+    }
     public walletId = "webln";
     public status: NDKWalletStatus = NDKWalletStatus.INITIAL;
     public provider?: WebLNProvider;

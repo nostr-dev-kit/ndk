@@ -7,12 +7,7 @@ import { NDKSubscriptionCacheUsage, type NDKSubscriptionOptions } from "../subsc
 import { follows } from "./follows.js";
 import { type NDKUserProfile, profileFromEvent, serializeProfile } from "./profile.js";
 import { getNip05For } from "./nip05.js";
-import type {
-    NDKFilter,
-    NDKRelay,
-    NDKZapMethod,
-    NDKZapMethodInfo,
-} from "../index.js";
+import type { NDKFilter, NDKRelay, NDKZapMethod, NDKZapMethodInfo } from "../index.js";
 import { NDKCashuMintList } from "../events/kinds/nutzap/mint-list.js";
 
 export type Hexpubkey = string;
@@ -64,11 +59,11 @@ export class NDKUser {
 
         if (opts.relayUrls) this.relayUrls = opts.relayUrls;
         if (opts.nip46Urls) this.nip46Urls = opts.nip46Urls;
-        
+
         if (opts.nprofile) {
             try {
                 const decoded = nip19.decode(opts.nprofile);
-                if (decoded.type === 'nprofile') {
+                if (decoded.type === "nprofile") {
                     this._pubkey = decoded.data.pubkey;
                     if (decoded.data.relays && decoded.data.relays.length > 0) {
                         this.relayUrls.push(...decoded.data.relays);
@@ -93,7 +88,7 @@ export class NDKUser {
         const relays = this.profileEvent?.onRelays?.map((r) => r.url);
         return nip19.nprofileEncode({
             pubkey: this.pubkey,
-            relays
+            relays,
         });
     }
 
@@ -127,7 +122,7 @@ export class NDKUser {
      * @returns {NDKFilter}
      */
     public filter(): NDKFilter {
-        return {"#p": [this.pubkey]}
+        return { "#p": [this.pubkey] };
     }
 
     /**
@@ -143,18 +138,20 @@ export class NDKUser {
             try {
                 return await Promise.race([
                     promise,
-                    new Promise<T>((_, reject) => setTimeout(() => reject(), timeoutMs))
+                    new Promise<T>((_, reject) => setTimeout(() => reject(), timeoutMs)),
                 ]);
             } catch {
                 return undefined;
             }
         };
 
-        const [ userProfile, mintListEvent ] = await Promise.all([
+        const [userProfile, mintListEvent] = await Promise.all([
             promiseWithTimeout(this.fetchProfile()),
-            promiseWithTimeout(this.ndk.fetchEvent({ kinds: [NDKKind.CashuMintList], authors: [this.pubkey] }))
+            promiseWithTimeout(
+                this.ndk.fetchEvent({ kinds: [NDKKind.CashuMintList], authors: [this.pubkey] })
+            ),
         ]);
-        
+
         const res: Map<NDKZapMethod, NDKZapMethodInfo> = new Map();
 
         if (mintListEvent) {
@@ -294,14 +291,14 @@ export class NDKUser {
 
     /**
      * Returns a set of users that this user follows.
-     * 
+     *
      * @deprecated Use followSet instead
      */
     public follows = follows.bind(this);
 
     /**
      * Returns a set of pubkeys that this user follows.
-     * 
+     *
      * @param opts - NDKSubscriptionOptions
      * @param outbox - boolean
      * @param kind - number

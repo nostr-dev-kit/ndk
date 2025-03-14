@@ -38,7 +38,7 @@ export async function getRelayListForUsers(
     if (ndk.cacheAdapter?.locking && !skipCache) {
         const cachedList = await ndk.fetchEvents(
             { kinds: [3, 10002], authors: Array.from(new Set(pubkeys)) },
-            { cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE, subId: 'ndk-relay-list-fetch' }
+            { cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE, subId: "ndk-relay-list-fetch" }
         );
 
         // get list of relay lists from cache
@@ -116,7 +116,7 @@ export async function getRelayListForUsers(
         });
 
         setTimeout(() => {
-            resolve(relayLists)
+            resolve(relayLists);
         }, timeout);
 
         sub.start();

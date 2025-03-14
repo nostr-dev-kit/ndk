@@ -50,21 +50,21 @@ export class NDKCashuQuote extends NDKEvent {
 
     set invoice(invoice: string) {
         const bolt11Expiry = getBolt11ExpiresAt(invoice);
-        
+
         // if we have a bolt11 expiry, expire this event at that time
         if (bolt11Expiry) this.tags.push(["expiration", bolt11Expiry.toString()]);
     }
 
     async save() {
         if (!this.ndk) throw new Error("NDK is required");
-        
+
         this.content = JSON.stringify({
             quoteId: this.quoteId,
             mint: this.mint,
             amount: this.amount,
-            unit: this.unit
+            unit: this.unit,
         });
-        
+
         await this.encrypt(this.ndk.activeUser, undefined, "nip44");
         await this.sign();
         await this.publish(this._wallet?.relaySet);

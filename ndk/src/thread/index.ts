@@ -206,8 +206,8 @@ export function getRootTag(event: NDKEvent, searchTag?: string): NDKTag | undefi
     return rootEventTag;
 }
 
-const nip22RootTags = new Set(["A", "E", "I"])
-const nip22ReplyTags = new Set(["a", "e", "i"])
+const nip22RootTags = new Set(["A", "E", "I"]);
+const nip22ReplyTags = new Set(["a", "e", "i"]);
 
 export function getReplyTag(event: NDKEvent, searchTag?: string): NDKTag | undefined {
     if (event.kind === NDKKind.GenericReply) {
@@ -237,13 +237,10 @@ export function getReplyTag(event: NDKEvent, searchTag?: string): NDKTag | undef
         if (hasMarkers && tag[3] === "root") replyTag = tag;
         if (!hasMarkers) replyTag = tag;
     }
-    
+
     return replyTag;
 }
 
 function isTagRootTag(tag: NDKTag): boolean {
-    return (
-        tag[0] === "E" ||
-        tag[3] === "root"
-    );
+    return tag[0] === "E" || tag[3] === "root";
 }

@@ -5,7 +5,7 @@ import { NDKCashuDeposit } from "./deposit";
  * This class tracks the active deposits and emits a "change" event when there is a change.
  */
 export class NDKCashuDepositMonitor extends EventEmitter<{
-    "change": () => void;
+    change: () => void;
 }> {
     public deposits: Map<string, NDKCashuDeposit> = new Map();
 
@@ -13,9 +13,7 @@ export class NDKCashuDepositMonitor extends EventEmitter<{
         super();
     }
 
-    public addDeposit(
-        deposit: NDKCashuDeposit,
-    ) {
+    public addDeposit(deposit: NDKCashuDeposit) {
         const { quoteId } = deposit;
         if (!quoteId) throw new Error("deposit has no quote ID");
         if (this.deposits.has(quoteId)) return false;

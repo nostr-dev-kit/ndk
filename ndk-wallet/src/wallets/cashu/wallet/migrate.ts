@@ -1,4 +1,4 @@
-import NDK, { NDKCashuMintList, NDKEvent, NDKKind, NDKPrivateKeySigner } from "@nostr-dev-kit/ndk"
+import NDK, { NDKCashuMintList, NDKEvent, NDKKind, NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
 import { NDKCashuWallet } from ".";
 
 /**
@@ -6,7 +6,7 @@ import { NDKCashuWallet } from ".";
  */
 export async function migrateCashuWallet(ndk: NDK) {
     let mintList = await getMintList(ndk);
-    
+
     const oldWallets = await getOldWallets(ndk);
     if (oldWallets.length === 0) return;
 
@@ -38,7 +38,7 @@ export async function migrateCashuWallet(ndk: NDK) {
         if (!mintList.p2pk && privKeys.size > 0) mintList.p2pk = Array.from(privKeys.keys())[0];
         await mintList.toNostrEvent();
     } else {
-        console.log('no mint list found, creating new one');
+        console.log("no mint list found, creating new one");
 
         mintList = new NDKCashuMintList(ndk);
         mintList.mints = Array.from(mints);
@@ -57,10 +57,7 @@ export async function migrateCashuWallet(ndk: NDK) {
 
     // delete the old wallets
     for (const wallet of oldWallets) {
-        wallet.tags = [
-            ["d", wallet.dTag ?? ""],
-            ["deleted"]
-        ];
+        wallet.tags = [["d", wallet.dTag ?? ""], ["deleted"]];
         await wallet.publishReplaceable();
     }
 }
@@ -86,11 +83,10 @@ async function getOldWallets(ndk: NDK) {
     if (!user) throw new Error("No active user");
 
     const walletEvents = await ndk.fetchEvents([
-        { kinds: [NDKKind.LegacyCashuWallet], authors: [user.pubkey], },
+        { kinds: [NDKKind.LegacyCashuWallet], authors: [user.pubkey] },
     ]);
 
-    return Array.from(walletEvents)
-        .filter((event) => !event.hasTag('deleted'));
+    return Array.from(walletEvents).filter((event) => !event.hasTag("deleted"));
 }
 
 /**
@@ -99,20 +95,20 @@ async function getOldWallets(ndk: NDK) {
 async function extractInfoFromLegacyWallet(wallet: NDKEvent) {
     const mints: string[] = [];
     let privkey: string | undefined;
-    
+
     try {
         // decrypt the wallet content, extract the privkey
         const origContent = wallet.content;
         await wallet.decrypt();
         const privTags = JSON.parse(wallet.content);
         for (const tag of privTags) {
-            if (tag[0] === 'privkey') privkey = tag[1];
-            if (tag[0] === 'mint') mints.push(tag[1]);
+            if (tag[0] === "privkey") privkey = tag[1];
+            if (tag[0] === "mint") mints.push(tag[1]);
         }
         wallet.content = origContent;
 
         const signer = new NDKPrivateKeySigner(privkey);
-        
+
         return { privkey, mints };
     } catch (error) {
         console.error("Error decrypting legacy wallet", error);

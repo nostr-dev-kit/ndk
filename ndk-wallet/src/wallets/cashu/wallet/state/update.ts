@@ -1,4 +1,12 @@
-import { NDKEvent, NDKEventId, NDKKind, NDKRelay, NDKRelaySet, NostrEvent, NDKCashuToken } from "@nostr-dev-kit/ndk";
+import {
+    NDKEvent,
+    NDKEventId,
+    NDKKind,
+    NDKRelay,
+    NDKRelaySet,
+    NostrEvent,
+    NDKCashuToken,
+} from "@nostr-dev-kit/ndk";
 import { JournalEntry, ProofC, WalletState, WalletTokenChange } from ".";
 import { WalletProofChange } from "./index.js";
 import { Proof } from "@cashu/cashu-ts";
@@ -8,26 +16,26 @@ export type UpdateStateResult = {
     /**
      * Tokens that were created as the result of a state change
      */
-    created?: NDKCashuToken,
+    created?: NDKCashuToken;
     /**
      * Tokens that were reserved as the result of a state change
      */
-    reserved?: NDKCashuToken,
+    reserved?: NDKCashuToken;
     /**
      * Tokens that were deleted as the result of a state change
      */
-    deleted?: NDKEventId[],
-}
+    deleted?: NDKEventId[];
+};
 
 /**
- * 
- * @param this 
- * @param stateChange 
+ *
+ * @param this
+ * @param stateChange
  */
 export async function update(
     this: WalletState,
     stateChange: WalletProofChange,
-    memo?: string,
+    memo?: string
 ): Promise<UpdateStateResult> {
     updateInternalState(this, stateChange);
     this.wallet.emit("balance_updated");
@@ -38,10 +46,7 @@ export async function update(
 /**
  * This function immediately reflects a state update
  */
-function updateInternalState(
-    walletState: WalletState,
-    stateChange: WalletProofChange,
-) {
+function updateInternalState(walletState: WalletState, stateChange: WalletProofChange) {
     if (stateChange.store && stateChange.store.length > 0) {
         for (const proof of stateChange.store) {
             walletState.addProof({
@@ -69,7 +74,7 @@ function updateInternalState(
  */
 async function updateExternalState(
     walletState: WalletState,
-    stateChange: WalletProofChange,
+    stateChange: WalletProofChange
 ): Promise<UpdateStateResult> {
     const newState = calculateNewState(walletState, stateChange);
 
@@ -77,9 +82,9 @@ async function updateExternalState(
         const deleteEvent = new NDKEvent(walletState.wallet.ndk, {
             kind: NDKKind.EventDeletion,
             tags: [
-                [ "k", NDKKind.CashuToken.toString() ],
-                ...Array.from(newState.deletedTokenIds).map((id) => ([ "e", id ])),
-            ]
+                ["k", NDKKind.CashuToken.toString()],
+                ...Array.from(newState.deletedTokenIds).map((id) => ["e", id]),
+            ],
         } as NostrEvent);
         await deleteEvent.sign();
         publishWithRetry(walletState, deleteEvent, walletState.wallet.relaySet);
@@ -93,11 +98,7 @@ async function updateExternalState(
     // execute the state change
     const res: UpdateStateResult = {};
     if (newState.saveProofs.length > 0) {
-        const newToken = await createTokenEvent(
-            walletState,
-            stateChange.mint,
-            newState,
-        );
+        const newToken = await createTokenEvent(walletState, stateChange.mint, newState);
         res.created = newToken;
     }
 
@@ -106,8 +107,8 @@ async function updateExternalState(
 
 /**
  * Publishes an event to a relay set, retrying if necessary.
- * @param event 
- * @param relaySet 
+ * @param event
+ * @param relaySet
  */
 async function publishWithRetry(
     walletState: WalletState,
@@ -128,10 +129,10 @@ async function publishWithRetry(
         id: event.id,
         relayUrl: relaySet?.relayUrls.join(","),
     };
-    
+
     if (publishResult) {
         walletState.journal.push({
-            memo: "Publish kind:"+event.kind+" succeesfully",
+            memo: "Publish kind:" + event.kind + " succeesfully",
             timestamp: Date.now(),
             metadata: journalEntryMetadata,
         });
@@ -153,7 +154,11 @@ async function publishWithRetry(
 /**
  * Creates a token event as part of a state transition.
  */
-async function createTokenEvent(walletState: WalletState, mint: MintUrl, newState: WalletTokenChange) {
+async function createTokenEvent(
+    walletState: WalletState,
+    mint: MintUrl,
+    newState: WalletTokenChange
+) {
     const newToken = new NDKCashuToken(walletState.wallet.ndk);
     newToken.mint = mint;
     newToken.proofs = newState.saveProofs;
@@ -179,13 +184,16 @@ async function createTokenEvent(walletState: WalletState, mint: MintUrl, newStat
     return newToken;
 }
 
-export function calculateNewState(walletState: WalletState, stateChange: WalletProofChange): WalletTokenChange {
+export function calculateNewState(
+    walletState: WalletState,
+    stateChange: WalletProofChange
+): WalletTokenChange {
     /**
      * This tracks the proofs that we know we need to destroy.
      */
     const destroyProofs = new Set<ProofC>();
     for (const proof of stateChange.destroy || []) destroyProofs.add(proof.C);
-    
+
     /**
      * This tracks the proofs that we need to store.
      */
@@ -209,7 +217,7 @@ export function calculateNewState(walletState: WalletState, stateChange: WalletP
             proofsToStore.set(proof.C, proof);
         }
     }
-    
+
     return {
         deletedTokenIds: new Set(tokensToDelete.keys()),
         deletedProofs: destroyProofs,
@@ -236,7 +244,12 @@ function getAffectedTokens(walletState: WalletState, stateChange: WalletProofCha
 
         const tokenEntry = walletState.tokens.get(tokenId);
         if (!tokenEntry?.token) {
-            console.log("BUG! Unable to find token from known token id", tokenId, "for proof", proof.C);
+            console.log(
+                "BUG! Unable to find token from known token id",
+                tokenId,
+                "for proof",
+                proof.C
+            );
             continue;
         }
 

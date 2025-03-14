@@ -1,7 +1,7 @@
 import Relays from "./relays/index.js";
 
 const Components = {
-    Relays
+    Relays,
 };
 
 export { Components };

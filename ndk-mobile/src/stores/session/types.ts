@@ -1,6 +1,15 @@
-import NDK, { NDKEvent, NDKKind, Hexpubkey, NDKUser, NDKList, NDKFilter, NDKSubscriptionOptions, NDKEventId } from '@nostr-dev-kit/ndk';
-import { NDKEventWithFrom } from '../../hooks/subscribe.js';
-import { SettingsStore } from '../../types.js';
+import NDK, {
+    NDKEvent,
+    NDKKind,
+    Hexpubkey,
+    NDKUser,
+    NDKList,
+    NDKFilter,
+    NDKSubscriptionOptions,
+    NDKEventId,
+} from "@nostr-dev-kit/ndk";
+import { NDKEventWithFrom } from "../../hooks/subscribe.js";
+import { SettingsStore } from "../../types.js";
 
 export interface SessionInitCallbacks {
     onReady?: () => void;
@@ -12,7 +21,7 @@ export type FollowOpts = { kinds: NDKKind[] };
 export interface SessionInitOpts {
     /**
      * Whether to fetch the user's follows.
-     * 
+     *
      * This parameter can also be an object with per-kind follows to fetch.
      * This will fetch kind:967 with `k` tags for the given kinds.
      */
@@ -57,9 +66,18 @@ export interface SessionState {
     wot: Map<Hexpubkey, number>;
     ndk: NDK | undefined;
 
-    init(ndk: NDK, user: NDKUser, settingsStore: SettingsStore, opts: SessionInitOpts, on: SessionInitCallbacks): void;
+    init(
+        ndk: NDK,
+        user: NDKUser,
+        settingsStore: SettingsStore,
+        opts: SessionInitOpts,
+        on: SessionInitCallbacks
+    ): void;
     setMuteList: (muteList: NDKEvent) => void;
     setEvents: (kind: NDKKind, events: NDKEvent[]) => void;
-    mute: (pubkey: Hexpubkey | string | NDKEvent, type?: 'pubkey' | 'hashtag' | 'word' | 'thread') => void;
+    mute: (
+        pubkey: Hexpubkey | string | NDKEvent,
+        type?: "pubkey" | "hashtag" | "word" | "thread"
+    ) => void;
     addEvent: (event: NDKEvent, onAdded?: () => Partial<SessionState>) => void;
-} 
+}

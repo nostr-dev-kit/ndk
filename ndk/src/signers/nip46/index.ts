@@ -218,11 +218,19 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
         return Promise.resolve(["nip04", "nip44"]);
     }
 
-    public async encrypt(recipient: NDKUser, value: string, scheme: NDKEncryptionScheme = 'nip04'): Promise<string> {
+    public async encrypt(
+        recipient: NDKUser,
+        value: string,
+        scheme: NDKEncryptionScheme = "nip04"
+    ): Promise<string> {
         return this.encryption(recipient, value, scheme, "encrypt");
     }
 
-    public async decrypt(sender: NDKUser, value: string, scheme: NDKEncryptionScheme = 'nip04'): Promise<string> {
+    public async decrypt(
+        sender: NDKUser,
+        value: string,
+        scheme: NDKEncryptionScheme = "nip04"
+    ): Promise<string> {
         return this.encryption(sender, value, scheme, "decrypt");
     }
 

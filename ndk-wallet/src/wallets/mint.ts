@@ -8,7 +8,7 @@ export type MintKeysLoadedCb = (mint: string, keysets: Map<string, MintKeys>) =>
 
 export interface MintInterface {
     cashuWallets: Map<string, CashuWallet>;
-    
+
     /**
      * Called when the wallet needs to load mint info. Use this
      * to load mint info from a database or other source.
@@ -35,7 +35,7 @@ export interface MintInterface {
      * Get a cashu wallet for a mint.
      */
     getCashuWallet(mint: string): Promise<CashuWallet>;
-};
+}
 
 export async function getCashuWallet(this: MintInterface, mint: string): Promise<CashuWallet> {
     if (this.cashuWallets.has(mint)) return this.cashuWallets.get(mint) as CashuWallet;

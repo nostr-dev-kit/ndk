@@ -2,10 +2,7 @@ import { WalletState } from ".";
 import { MintUrl } from "../../mint/utils";
 import { GetOpts } from "./proofs";
 
-export function getBalance(
-    this: WalletState,
-    opts?: GetOpts
-) {
+export function getBalance(this: WalletState, opts?: GetOpts) {
     const proofs = this.getProofEntries(opts);
     return proofs.reduce((sum, proof) => sum + proof.proof.amount, 0);
 }

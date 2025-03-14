@@ -81,17 +81,27 @@ export class NDKNutzap extends NDKEvent {
             } else if (typeof secret === "object") {
                 payload = secret;
             }
-            
+
             // If payload is an array and has format ["P2PK", {data: "..."}]
-            if (Array.isArray(payload) && payload[0] === "P2PK" && payload.length > 1 && typeof payload[1] === "object" && payload[1] !== null) {
+            if (
+                Array.isArray(payload) &&
+                payload[0] === "P2PK" &&
+                payload.length > 1 &&
+                typeof payload[1] === "object" &&
+                payload[1] !== null
+            ) {
                 return payload[1].data;
             }
-            
+
             // Handle non-array case
-            if (typeof payload === "object" && payload !== null && typeof payload[1]?.data === "string") {
+            if (
+                typeof payload === "object" &&
+                payload !== null &&
+                typeof payload[1]?.data === "string"
+            ) {
                 return payload[1].data;
             }
-            
+
             return undefined;
         } catch (e) {
             this.debug("error parsing p2pk pubkey", e, this.proofs[0]);
@@ -100,7 +110,7 @@ export class NDKNutzap extends NDKEvent {
 
     /**
      * Gets the p2pk pubkey that is embedded in the first proof.
-     * 
+     *
      * Note that this returns a nostr pubkey, not a cashu pubkey (no "02" prefix)
      */
     get p2pk(): string | undefined {
@@ -122,13 +132,14 @@ export class NDKNutzap extends NDKEvent {
 
     get unit(): string {
         let _unit = this.tagValue("unit") ?? "sat";
-        if (_unit?.startsWith('msat')) _unit = "sat";
+        if (_unit?.startsWith("msat")) _unit = "sat";
         return _unit;
     }
 
     set unit(value: string | undefined) {
         this.removeTag("unit");
-        if (value?.startsWith('msat')) throw new Error("msat is not allowed, use sat denomination instead");
+        if (value?.startsWith("msat"))
+            throw new Error("msat is not allowed, use sat denomination instead");
         if (value) this.tag(["unit", value]);
     }
 
@@ -200,7 +211,6 @@ export class NDKNutzap extends NDKEvent {
             // exactly one recipient and mint
             pTagCount === 1 &&
             mintTagCount === 1 &&
-
             // must have at most one e tag
             eTagCount <= 1 &&
             // must have at least one proof
@@ -211,10 +221,10 @@ export class NDKNutzap extends NDKEvent {
 
 /**
  * Returns the p2pk pubkey a proof is locked to.
- * 
+ *
  * Note that this function does NOT make cashu pubkey into nostr pubkey
  * (i.e. it does NOT remove the "02" prefix)
- * @param proof 
+ * @param proof
  */
 export function proofP2pk(proof: Proof): Hexpubkey | undefined {
     try {
@@ -238,10 +248,10 @@ export function proofP2pk(proof: Proof): Hexpubkey | undefined {
 
 /**
  * Returns the p2pk pubkey a proof is locked to.
- * 
+ *
  * Note that this function makes cashu pubkey into nostr pubkey
  * (i.e. it removes the "02" prefix)
- * @param proof 
+ * @param proof
  */
 export function proofP2pkNostr(proof: Proof): Hexpubkey | undefined {
     const p2pk = proofP2pk(proof);
@@ -252,9 +262,9 @@ export function proofP2pkNostr(proof: Proof): Hexpubkey | undefined {
 }
 
 /**
- * 
- * @param cashuPubkey 
- * @returns 
+ *
+ * @param cashuPubkey
+ * @returns
  */
 export function cashuPubkeyToNostrPubkey(cashuPubkey: string): string | undefined {
     if (cashuPubkey.startsWith("02") && cashuPubkey.length === 66) return cashuPubkey.slice(2);

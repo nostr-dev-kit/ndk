@@ -1,4 +1,4 @@
-import { NDKKind, NDKEvent } from '@nostr-dev-kit/ndk';
+import { NDKKind, NDKEvent } from "@nostr-dev-kit/ndk";
 
 export const setEvents = (kind: NDKKind, events: NDKEvent[], set) => {
     set((state) => {
@@ -6,4 +6,4 @@ export const setEvents = (kind: NDKKind, events: NDKEvent[], set) => {
         newEvents.set(kind, events);
         return { events: newEvents };
     });
-}; 
+};

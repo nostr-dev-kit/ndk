@@ -113,14 +113,14 @@ export interface NDKSubscriptionOptions {
 
     /**
      * Remove filter constraints when querying the cache.
-     * 
+     *
      * This allows setting more aggressive filters that will be removed when hitting the cache.
-     * 
+     *
      * Useful uses of this include removing `since` or `until` constraints or `limit` filters.
-     * 
+     *
      * @example
      * ndk.subscribe({ kinds: [1], since: 1710000000, limit: 10 }, { cacheUnconstrainFilter: ['since', 'limit'] });
-     * 
+     *
      * This will hit relays with the since and limit constraints, while loading from the cache without them.
      */
     cacheUnconstrainFilter?: (keyof NDKFilter)[];
@@ -142,7 +142,7 @@ export const defaultOpts: NDKSubscriptionOptions = {
     groupable: true,
     groupableDelay: 100,
     groupableDelayType: "at-most",
-    cacheUnconstrainFilter: ['limit', 'since', 'until']
+    cacheUnconstrainFilter: ["limit", "since", "until"],
 };
 
 /**
@@ -160,7 +160,7 @@ export const defaultOpts: NDKSubscriptionOptions = {
  * * {NDKRelay} relay - The relay that received the event.
  * * {number} timeSinceFirstSeen - The time elapsed since the first time the event was seen.
  * * {NDKSubscription} subscription - The subscription that received the event.
- * 
+ *
  * @emits cacheEose - Emitted when the cache adapter has reached the end of the events it had.
  *
  * @emits eose - Emitted when all relays have reached the end of the event stream.
@@ -208,7 +208,7 @@ export class NDKSubscription extends EventEmitter<{
         fromCache: boolean,
         optimisticPublish: boolean
     ) => void;
-    
+
     /**
      * Emitted when an event is received by the subscription.
      * @param event - The event received by the subscription.
@@ -217,7 +217,13 @@ export class NDKSubscription extends EventEmitter<{
      * @param fromCache - Whether the event was received from the cache.
      * @param optimisticPublish - Whether the event was received from an optimistic publish.
      */
-    event: (event: NDKEvent, relay: NDKRelay | undefined, sub: NDKSubscription, fromCache: boolean, optimisticPublish: boolean) => void;
+    event: (
+        event: NDKEvent,
+        relay: NDKRelay | undefined,
+        sub: NDKSubscription,
+        fromCache: boolean,
+        optimisticPublish: boolean
+    ) => void;
 
     /**
      * Emitted when a relay unilaterally closes the subscription.
@@ -275,7 +281,7 @@ export class NDKSubscription extends EventEmitter<{
     /**
      * Filters to remove when querying the cache.
      */
-    public cacheUnconstrainFilter?: Array<(keyof NDKFilter)>;
+    public cacheUnconstrainFilter?: Array<keyof NDKFilter>;
 
     public constructor(
         ndk: NDK,
@@ -338,7 +344,9 @@ export class NDKSubscription extends EventEmitter<{
         // explicitly told to not query the cache
         if (this.opts?.cacheUsage === NDKSubscriptionCacheUsage.ONLY_RELAY) return false;
 
-        const hasNonEphemeralKind = this.filters.some((f) => f.kinds?.some((k) => kindIsEphemeral(k)));
+        const hasNonEphemeralKind = this.filters.some((f) =>
+            f.kinds?.some((k) => kindIsEphemeral(k))
+        );
         if (hasNonEphemeralKind) return true;
 
         return true;
@@ -365,9 +373,9 @@ export class NDKSubscription extends EventEmitter<{
     /**
      * Start the subscription. This is the main method that should be called
      * after creating a subscription.
-     * 
+     *
      * @param emitCachedEvents - Whether to emit events coming from a synchronous cache
-     * 
+     *
      * When using a synchronous cache, the events will be returned immediately
      * by this function. If you will use those returned events, you should
      * set emitCachedEvents to false to prevent seeing them as duplicate events.
@@ -397,7 +405,7 @@ export class NDKSubscription extends EventEmitter<{
                     (cacheResult as NDKEvent[]).push(e);
                 });
             }
-        }
+        };
 
         const loadFromRelays = () => {
             if (this.shouldQueryRelays()) {
@@ -406,7 +414,7 @@ export class NDKSubscription extends EventEmitter<{
             } else {
                 this.emit("eose", this);
             }
-        }
+        };
 
         if (this.shouldQueryCache()) {
             cacheResult = this.startWithCache();
@@ -590,7 +598,15 @@ export class NDKSubscription extends EventEmitter<{
             }
         } else {
             const timeSinceFirstSeen = Date.now() - (this.eventFirstSeen.get(eventId) || 0);
-            this.emit("event:dup", event, relay, timeSinceFirstSeen, this, fromCache, optimisticPublish);
+            this.emit(
+                "event:dup",
+                event,
+                relay,
+                timeSinceFirstSeen,
+                this,
+                fromCache,
+                optimisticPublish
+            );
 
             if (relay) {
                 // Let's see if we have already verified this event id's signature
@@ -610,10 +626,16 @@ export class NDKSubscription extends EventEmitter<{
     /**
      * Optionally wraps, sync or async, and emits the event (if one comes back from the wrapper)
      */
-    private emitEvent(wrap = false, evt: NDKEvent, relay: NDKRelay | undefined, fromCache: boolean, optimisticPublish: boolean) {
+    private emitEvent(
+        wrap = false,
+        evt: NDKEvent,
+        relay: NDKRelay | undefined,
+        fromCache: boolean,
+        optimisticPublish: boolean
+    ) {
         const wrapped = wrap ? wrapEvent(evt) : evt;
         if (wrapped instanceof Promise) {
-            wrapped.then((e) => this.emitEvent(false, e, relay, fromCache, optimisticPublish))
+            wrapped.then((e) => this.emitEvent(false, e, relay, fromCache, optimisticPublish));
         } else if (wrapped) {
             this.emit("event", wrapped, relay, this, fromCache, optimisticPublish);
         }
@@ -670,8 +692,13 @@ export class NDKSubscription extends EventEmitter<{
             // for the next one
             const percentageOfRelaysThatHaveSentEose =
                 this.eosesSeen.size / connectedRelaysWithFilters.length;
-            
-            this.debug("Percentage of relays that have sent EOSE", { subId: this.subId, percentageOfRelaysThatHaveSentEose, seen: this.eosesSeen.size, total: connectedRelaysWithFilters.length });
+
+            this.debug("Percentage of relays that have sent EOSE", {
+                subId: this.subId,
+                percentageOfRelaysThatHaveSentEose,
+                seen: this.eosesSeen.size,
+                total: connectedRelaysWithFilters.length,
+            });
 
             // If less than 2 and 50% of relays have EOSEd don't add a timeout yet
             if (this.eosesSeen.size >= 2 && percentageOfRelaysThatHaveSentEose >= 0.5) {

@@ -72,7 +72,7 @@ class NDKSvelte extends NDK {
 
             // If the event is deleted and skipDeleted is true (default), remove it from the list
             if (isDeleted && opts?.skipDeleted !== false) {
-                const index = eventList.findIndex(event => event.deduplicationKey() === dedupKey);
+                const index = eventList.findIndex((event) => event.deduplicationKey() === dedupKey);
                 if (index !== -1) {
                     eventList.splice(index, 1);
                 }
@@ -80,7 +80,7 @@ class NDKSvelte extends NDK {
             }
 
             // Update the reactive event list inserting the event in the right position according to the created_at timestamp
-            const pos = eventList.findIndex(event => event.created_at! < e.created_at!);
+            const pos = eventList.findIndex((event) => event.created_at! < e.created_at!);
             eventList.splice(pos, 0, e as T);
         };
 
@@ -113,7 +113,7 @@ class NDKSvelte extends NDK {
         eventList.unsubscribe = () => subscription.stop();
 
         return eventList;
-    }
+    };
 }
 
 export default NDKSvelte;

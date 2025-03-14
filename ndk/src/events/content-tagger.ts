@@ -88,8 +88,8 @@ const hashtagRegex = /(?<=\s|^)(#[^\s!@#$%^&*()=+./,[{\]};:'"?><]+)/g;
 /**
  * Generates a unique list of hashtags as used in the content. If multiple variations
  * of the same hashtag are used, only the first one will be used (#ndk and #NDK both resolve to the first one that was used in the content)
- * @param content 
- * @returns 
+ * @param content
+ * @returns
  */
 export function generateHashtags(content: string): string[] {
     const hashtags = content.match(hashtagRegex);
@@ -110,7 +110,7 @@ export async function generateContentTags(
     tags: NDKTag[] = []
 ): Promise<ContentTag> {
     const tagRegex = /(@|nostr:)(npub|nprofile|note|nevent|naddr)[a-zA-Z0-9]+/g;
-    
+
     const promises: Promise<void>[] = [];
 
     const addTagIfNew = (t: NDKTag) => {
@@ -137,11 +137,7 @@ export async function generateContentTags(
                 case "note":
                     promises.push(
                         new Promise(async (resolve) => {
-                            addTagIfNew([
-                                "q",
-                                data,
-                                await maybeGetEventRelayUrl(entity),
-                            ]);
+                            addTagIfNew(["q", data, await maybeGetEventRelayUrl(entity)]);
                             resolve();
                         })
                     );

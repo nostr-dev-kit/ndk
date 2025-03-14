@@ -47,11 +47,11 @@ export class NDKCashuDeposit extends EventEmitter<{
 
     /**
      * Creates a quote ID and start monitoring for payment.
-     * 
+     *
      * Once a payment is received, the deposit will emit a "success" event.
-     * 
+     *
      * @param pollTime - time in milliseconds between checks
-     * @returns 
+     * @returns
      */
     async start(pollTime: number = 2500) {
         const cashuWallet = await this.wallet.getCashuWallet(this.mint);
@@ -64,8 +64,9 @@ export class NDKCashuDeposit extends EventEmitter<{
         this.wallet.depositMonitor.addDeposit(this);
 
         setTimeout(this.check.bind(this, pollTime), pollTime);
-        this.createQuoteEvent(quote.quote, quote.request)
-            .then((event) => this.quoteEvent = event);
+        this.createQuoteEvent(quote.quote, quote.request).then(
+            (event) => (this.quoteEvent = event)
+        );
 
         return quote.request;
     }
@@ -137,7 +138,10 @@ export class NDKCashuDeposit extends EventEmitter<{
             if (e.message.match(/not paid/i)) return;
 
             if (e.message.match(/already issued/i)) {
-                d("Mint is saying the quote has already been issued, destroying quote event: %s", e.message);
+                d(
+                    "Mint is saying the quote has already been issued, destroying quote event: %s",
+                    e.message
+                );
                 this.destroyQuoteEvent();
                 this.finalized = true;
                 return;
@@ -148,7 +152,7 @@ export class NDKCashuDeposit extends EventEmitter<{
                 this.checkIntervalLength += 5000;
                 return;
             }
-            
+
             d(e.message);
             return;
         }
@@ -156,15 +160,25 @@ export class NDKCashuDeposit extends EventEmitter<{
         try {
             this.finalized = true;
 
-            const updateRes = await this.wallet.state.update({
-                store: proofs,
-                mint: this.mint,
-            }, "Deposit");
+            const updateRes = await this.wallet.state.update(
+                {
+                    store: proofs,
+                    mint: this.mint,
+                },
+                "Deposit"
+            );
 
             const tokenEvent = updateRes.created;
             if (!tokenEvent) throw new Error("no token event created");
 
-            createInTxEvent(this.wallet.ndk, proofs, this.mint, updateRes, { description: "Deposit" }, this.wallet.relaySet);
+            createInTxEvent(
+                this.wallet.ndk,
+                proofs,
+                this.mint,
+                updateRes,
+                { description: "Deposit" },
+                this.wallet.relaySet
+            );
 
             this.emit("success", tokenEvent);
 

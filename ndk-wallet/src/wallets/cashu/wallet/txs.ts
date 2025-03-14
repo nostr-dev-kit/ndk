@@ -1,4 +1,13 @@
-import NDK, { LnPaymentInfo, CashuPaymentInfo, NDKUser, NDKNutzap, NDKPaymentConfirmationLN, proofsTotalBalance, NDKCashuWalletTx, NDKRelaySet } from "@nostr-dev-kit/ndk";
+import NDK, {
+    LnPaymentInfo,
+    CashuPaymentInfo,
+    NDKUser,
+    NDKNutzap,
+    NDKPaymentConfirmationLN,
+    proofsTotalBalance,
+    NDKCashuWalletTx,
+    NDKRelaySet,
+} from "@nostr-dev-kit/ndk";
 import { getBolt11Amount, getBolt11Description } from "../../../utils/ln";
 import { PaymentWithOptionalZapInfo } from "./payment";
 import { Proof } from "@cashu/cashu-ts";
@@ -9,7 +18,7 @@ import { UpdateStateResult } from "./state/update";
 
 /**
  * Creates a tx event for outgoing payment, this means we are spending cashu proofs.
- * 
+ *
  * Nutzaps are only here to indicate that we have redeemed nutzaps and spent them into a non-NIP-60 wallet,
  * like when redeeming nutzaps into an NWC wallet.
  */
@@ -24,7 +33,7 @@ export async function createOutTxEvent(
     let amount: number | undefined;
 
     if ((paymentRequest as LnPaymentInfo).pr) {
-        amount = getBolt11Amount((paymentRequest as LnPaymentInfo).pr)
+        amount = getBolt11Amount((paymentRequest as LnPaymentInfo).pr);
         description ??= getBolt11Description((paymentRequest as LnPaymentInfo).pr);
 
         if (amount) amount /= 1000; // convert to sats
@@ -46,7 +55,7 @@ export async function createOutTxEvent(
     if (paymentRequest.target) {
         // tag the target if there is one
         txEvent.tags.push(paymentRequest.target.tagReference());
-        
+
         if (!(paymentRequest.target instanceof NDKUser)) {
             txEvent.tags.push(["p", paymentRequest.target.pubkey]);
         }
@@ -57,9 +66,12 @@ export async function createOutTxEvent(
         for (const nutzap of nutzaps) txEvent.addRedeemedNutzap(nutzap);
     }
 
-    if (paymentResult.stateUpdate?.created) txEvent.createdTokens = [paymentResult.stateUpdate.created];
-    if (paymentResult.stateUpdate?.deleted) txEvent.destroyedTokenIds = paymentResult.stateUpdate.deleted;
-    if (paymentResult.stateUpdate?.reserved) txEvent.reservedTokens = [paymentResult.stateUpdate.reserved];
+    if (paymentResult.stateUpdate?.created)
+        txEvent.createdTokens = [paymentResult.stateUpdate.created];
+    if (paymentResult.stateUpdate?.deleted)
+        txEvent.destroyedTokenIds = paymentResult.stateUpdate.deleted;
+    if (paymentResult.stateUpdate?.reserved)
+        txEvent.reservedTokens = [paymentResult.stateUpdate.reserved];
 
     await txEvent.sign();
     txEvent.publish(relaySet);
@@ -72,13 +84,13 @@ export async function createInTxEvent(
     proofs: Proof[],
     mint: MintUrl,
     updateStateResult: UpdateStateResult,
-    { nutzaps, fee, description }: { nutzaps?: NDKNutzap[], fee?: number, description?: string },
-    relaySet?: NDKRelaySet,
+    { nutzaps, fee, description }: { nutzaps?: NDKNutzap[]; fee?: number; description?: string },
+    relaySet?: NDKRelaySet
 ): Promise<NDKCashuWalletTx> {
     const txEvent = new NDKCashuWalletTx(ndk);
 
     const amount = proofsTotalBalance(proofs);
-    
+
     txEvent.direction = "in";
     txEvent.amount = amount;
     txEvent.mint = mint;

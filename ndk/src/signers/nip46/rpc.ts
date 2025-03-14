@@ -44,15 +44,10 @@ export class NDKNostrRpc extends EventEmitter {
 
         // if we have relays, we create a separate pool for it
         if (relayUrls) {
-            this.pool = new NDKPool(
-                relayUrls,
-                [],
-                ndk,
-                {
-                    debug: debug.extend("rpc-pool"),
-                    name: "Nostr RPC"
-                }
-            );
+            this.pool = new NDKPool(relayUrls, [], ndk, {
+                debug: debug.extend("rpc-pool"),
+                name: "Nostr RPC",
+            });
 
             this.relaySet = new NDKRelaySet(new Set(), ndk, this.pool);
             for (const url of relayUrls) {
@@ -106,10 +101,10 @@ export class NDKNostrRpc extends EventEmitter {
 
     public async parseEvent(event: NDKEvent): Promise<NDKRpcRequest | NDKRpcResponse> {
         // support both nip04 and nip44 encryption
-        if (this.encryptionType === 'nip44' && event.content.includes('?iv=')) {
-            this.encryptionType = 'nip04';
-        } else if (this.encryptionType === 'nip04' && !event.content.includes('?iv=')) {
-            this.encryptionType = 'nip44';
+        if (this.encryptionType === "nip44" && event.content.includes("?iv=")) {
+            this.encryptionType = "nip04";
+        } else if (this.encryptionType === "nip04" && !event.content.includes("?iv=")) {
+            this.encryptionType = "nip44";
         }
 
         const remoteUser = this.ndk.getUser({ pubkey: event.pubkey });
@@ -123,11 +118,15 @@ export class NDKNostrRpc extends EventEmitter {
                 this.encryptionType
             );
         } catch (e) {
-            const otherEncryptionType = this.encryptionType === 'nip04' ? 'nip44' : 'nip04';
-            decryptedContent = await this.signer.decrypt(remoteUser, event.content, otherEncryptionType);
+            const otherEncryptionType = this.encryptionType === "nip04" ? "nip44" : "nip04";
+            decryptedContent = await this.signer.decrypt(
+                remoteUser,
+                event.content,
+                otherEncryptionType
+            );
             this.encryptionType = otherEncryptionType;
         }
-        
+
         const parsedContent = JSON.parse(decryptedContent);
         const { id, method, params, result, error } = parsedContent;
 
@@ -158,7 +157,7 @@ export class NDKNostrRpc extends EventEmitter {
             tags: [["p", remotePubkey]],
             pubkey: localUser.pubkey,
         } as NostrEvent);
-        
+
         event.content = await this.signer.encrypt(remoteUser, event.content, this.encryptionType);
         await event.sign(this.signer);
         await event.publish(this.relaySet);

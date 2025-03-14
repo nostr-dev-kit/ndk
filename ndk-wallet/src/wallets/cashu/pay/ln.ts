@@ -8,7 +8,7 @@ import { consolidateMintTokens } from "../validate.js";
 
 /**
  * Pay a Lightning Network invoice with a Cashu wallet.
- * 
+ *
  * @param wallet - The Cashu wallet to use for the payment.
  * @param pr - The Lightning Network payment request (invoice) to pay.
  * @param { amount, unit } - The intended amount and unit to pay. -- Intended amount could be what we wanted to pay and the amount in the bolt11 might have a fee.
@@ -17,7 +17,7 @@ import { consolidateMintTokens } from "../validate.js";
 export async function payLn(
     wallet: NDKCashuWallet,
     pr: string,
-    { amount, unit }: { amount?: number, unit?: string } = {},
+    { amount, unit }: { amount?: number; unit?: string } = {}
 ): Promise<WalletOperation<NDKPaymentConfirmationLN> | null> {
     let invoiceAmount = getBolt11Amount(pr);
     if (!invoiceAmount) throw new Error("invoice amount is required");
@@ -25,11 +25,11 @@ export async function payLn(
     invoiceAmount = invoiceAmount / 1000; // msat
 
     if (amount && unit) {
-        if (unit === 'msat') {
+        if (unit === "msat") {
             amount = amount / 1000;
         }
     }
-    
+
     // we add three sats to the calculation as a guess for the fee
     const eligibleMints = wallet.getMintsWithBalance(invoiceAmount + 3);
 
@@ -42,7 +42,11 @@ export async function payLn(
             const result = await executePayment(mint, pr, amount ?? invoiceAmount, wallet);
             if (result) {
                 if (amount) {
-                    result.fee = calculateFee(amount, result.proofsChange?.destroy ?? [], result.proofsChange?.store ?? []);
+                    result.fee = calculateFee(
+                        amount,
+                        result.proofsChange?.destroy ?? [],
+                        result.proofsChange?.store ?? []
+                    );
                 }
                 return result;
             }
@@ -77,7 +81,7 @@ async function executePayment(
     mint: string,
     pr: string,
     amountWithoutFees: number,
-    wallet: NDKCashuWallet,
+    wallet: NDKCashuWallet
 ): Promise<WalletOperation<NDKPaymentConfirmationLN> | null> {
     const cashuWallet = await wallet.getCashuWallet(mint);
 
@@ -86,21 +90,26 @@ async function executePayment(
         const amountToSend = meltQuote.amount + meltQuote.fee_reserve;
 
         const result = await withProofReserve<NDKPaymentConfirmationLN>(
-            wallet, cashuWallet, mint, amountToSend, amountWithoutFees, async (proofsToUse, allOurProofs) => {
+            wallet,
+            cashuWallet,
+            mint,
+            amountToSend,
+            amountWithoutFees,
+            async (proofsToUse, allOurProofs) => {
                 const meltResult = await cashuWallet.meltProofs(meltQuote, proofsToUse);
 
                 if (meltResult.quote.state === MeltQuoteState.PAID) {
                     return {
                         result: {
-                            preimage: meltResult.quote.payment_preimage ?? ""
+                            preimage: meltResult.quote.payment_preimage ?? "",
                         },
                         change: meltResult.change,
-                    }
+                    };
                 }
 
                 return null;
             }
-        )
+        );
 
         return result;
     } catch (e) {

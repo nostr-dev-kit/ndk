@@ -307,11 +307,7 @@ export class NDK extends EventEmitter<{
         this._explicitRelayUrls = opts.explicitRelayUrls || [];
         this.blacklistRelayUrls = opts.blacklistRelayUrls || DEFAULT_BLACKLISTED_RELAYS;
         this.subManager = new NDKSubscriptionManager();
-        this.pool = new NDKPool(
-            opts.explicitRelayUrls || [],
-            [],
-            this
-        );
+        this.pool = new NDKPool(opts.explicitRelayUrls || [], [], this);
         this.pool.name = "Main";
 
         this.pool.on("relay:auth", async (relay: NDKRelay, challenge: string) => {
@@ -329,15 +325,10 @@ export class NDK extends EventEmitter<{
         this.relayAuthDefaultPolicy = opts.relayAuthDefaultPolicy;
 
         if (opts.enableOutboxModel) {
-            this.outboxPool = new NDKPool(
-                opts.outboxRelayUrls || DEFAULT_OUTBOX_RELAYS,
-                [],
-                this,
-                {
-                    debug: this.debug.extend("outbox-pool"),
-                    name: "Outbox Pool"
-                }
-            );
+            this.outboxPool = new NDKPool(opts.outboxRelayUrls || DEFAULT_OUTBOX_RELAYS, [], this, {
+                debug: this.debug.extend("outbox-pool"),
+                name: "Outbox Pool",
+            });
 
             this.outboxTracker = new OutboxTracker(this);
         }
@@ -545,7 +536,7 @@ export class NDK extends EventEmitter<{
                 if (autoStart.onEose) subscription.on("eose", autoStart.onEose);
                 if (autoStart.onEvents) eventsHandler = autoStart.onEvents;
             }
-            
+
             setTimeout(() => {
                 const cachedEvents = subscription.start(!eventsHandler);
                 if (cachedEvents && !!eventsHandler) eventsHandler(cachedEvents);
@@ -598,11 +589,10 @@ export class NDK extends EventEmitter<{
         const sub = new NDKSubscription(this, filters);
         const events = this.cacheAdapter.query(sub);
         if (events instanceof Promise) throw new Error("Cache adapter is async");
-        return events
-            .map(e => {
-                e.ndk = this;
-                return e;
-            })
+        return events.map((e) => {
+            e.ndk = this;
+            return e;
+        });
     }
 
     /**
@@ -771,7 +761,7 @@ export class NDK extends EventEmitter<{
             this.walletConfig = undefined;
             return;
         }
-        
+
         this.walletConfig ??= {};
         this.walletConfig.lnPay = wallet?.lnPay?.bind(wallet);
         this.walletConfig.cashuPay = wallet?.cashuPay?.bind(wallet);

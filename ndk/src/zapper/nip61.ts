@@ -25,7 +25,7 @@ export type CashuPaymentInfo = {
 
     /**
      * Intramint fallback allowed:
-     * 
+     *
      * When set to true, if cross-mint payments fail, we will
      * fallback to sending an intra-mint payment.
      */

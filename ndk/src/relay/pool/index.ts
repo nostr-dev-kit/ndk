@@ -43,7 +43,7 @@ export class NDKPool extends EventEmitter<{
 }> {
     // TODO: This should probably be an LRU cache
     private _relays = new Map<WebSocket["url"], NDKRelay>();
-    private status: 'idle' | 'active' = 'idle';
+    private status: "idle" | "active" = "idle";
     public autoConnectRelays = new Set<WebSocket["url"]>();
     public poolBlacklistRelayUrls = new Set<WebSocket["url"]>();
     private debug: debug.Debugger;
@@ -69,9 +69,12 @@ export class NDKPool extends EventEmitter<{
         relayUrls: WebSocket["url"][] = [],
         blacklistedRelayUrls: WebSocket["url"][] = [],
         ndk: NDK,
-        { debug, name }: {
-            debug?: debug.Debugger,
-            name?: string
+        {
+            debug,
+            name,
+        }: {
+            debug?: debug.Debugger;
+            name?: string;
         } = {}
     ) {
         super();
@@ -98,7 +101,7 @@ export class NDKPool extends EventEmitter<{
         }
     }
 
-    private _name: string = 'unnamed';
+    private _name: string = "unnamed";
 
     get name() {
         return this._name;
@@ -230,7 +233,7 @@ export class NDKPool extends EventEmitter<{
         if (connect) this.autoConnectRelays.add(relayUrl);
 
         // only connect if the pool is active
-        if (connect && this.status === 'active') {
+        if (connect && this.status === "active") {
             this.emit("relay:connecting", relay);
             relay.connect(undefined, reconnect).catch((e) => {
                 this.debug(`Failed to connect to relay ${relayUrl}`, e);
@@ -329,7 +332,7 @@ export class NDKPool extends EventEmitter<{
     public async connect(timeoutMs?: number): Promise<void> {
         const promises: Promise<void>[] = [];
 
-        this.status = 'active';
+        this.status = "active";
 
         this.debug(
             `Connecting to ${this.relays.size} relays${
@@ -379,8 +382,7 @@ export class NDKPool extends EventEmitter<{
 
         // If we are running with a timeout, check if we need to emit a `connect` event
         // in case some, but not all, relays were connected
-        if (timeoutMs)
-            setTimeout(maybeEmitConnect, timeoutMs);
+        if (timeoutMs) setTimeout(maybeEmitConnect, timeoutMs);
 
         await Promise.all(promises);
 

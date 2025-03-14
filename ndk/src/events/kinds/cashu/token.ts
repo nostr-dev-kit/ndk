@@ -73,7 +73,7 @@ export class NDKCashuToken extends NDKEvent {
     set proofs(proofs: Proof[]) {
         const cs = new Set();
         this._proofs = proofs
-            .filter(proof => {
+            .filter((proof) => {
                 if (cs.has(proof.C)) {
                     console.warn("Passed in proofs had duplicates, ignoring", proof.C);
                     return false;
@@ -96,7 +96,7 @@ export class NDKCashuToken extends NDKEvent {
             id: proof.id,
             amount: proof.amount,
             C: proof.C,
-            secret: proof.secret
+            secret: proof.secret,
         };
     }
 
@@ -104,7 +104,7 @@ export class NDKCashuToken extends NDKEvent {
         const payload = {
             proofs: this.proofs.map(this.cleanProof),
             mint: this.mint,
-            del: this.deletedTokens ?? []
+            del: this.deletedTokens ?? [],
         };
         this.content = JSON.stringify(payload);
 

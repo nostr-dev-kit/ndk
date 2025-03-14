@@ -439,6 +439,8 @@ export class NDKSubscription extends EventEmitter<{
                     cacheResult.then((events) => {
                         updateStateFromCacheResults(events);
                     });
+
+                    loadFromRelays();
                 }
 
                 return null;
@@ -521,7 +523,10 @@ export class NDKSubscription extends EventEmitter<{
             }
         }
 
-        if (!this.relayFilters || this.relayFilters.size === 0) return;
+        if (!this.relayFilters || this.relayFilters.size === 0) {
+            console.error("No relays found for subscription %s", this.subId, this.filters);
+            return;
+        }
         // iterate through the this.relayFilters
         for (const [relayUrl, filters] of this.relayFilters) {
             const relay = this.pool.getRelay(relayUrl, true, true, filters);

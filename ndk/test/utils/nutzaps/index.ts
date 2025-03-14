@@ -10,10 +10,10 @@ export type Proof = {
 
 /**
  * Creates a nutzap for a given amount, optionally locking to a p2pk.
- * @param mint 
- * @param amount 
- * @param ndk 
- * @param opts 
+ * @param mint
+ * @param amount
+ * @param ndk
+ * @param opts
  * @param opts.senderPk - The private key of the sender
  * @param opts.recipientPubkey - The nostr pubkey of the recipient
  * @param opts.content - The content of the nutzap
@@ -25,23 +25,21 @@ export async function mockNutzap(
     {
         senderPk = NDKPrivateKeySigner.generate(),
         recipientPubkey,
-        content = ""
+        content = "",
     }: {
-        senderPk?: NDKPrivateKeySigner,
-        recipientPubkey?: string,
-        content?: string
+        senderPk?: NDKPrivateKeySigner;
+        recipientPubkey?: string;
+        content?: string;
     } = {}
 ) {
     if (!recipientPubkey) {
         ndk.assertSigner();
         recipientPubkey = (await ndk.signer!.user()).pubkey;
     }
-    
+
     const nutzap = new NDKNutzap(ndk);
     nutzap.mint = mint;
-    nutzap.proofs = [
-        mockProof(mint, amount, recipientPubkey),
-    ]
+    nutzap.proofs = [mockProof(mint, amount, recipientPubkey)];
     nutzap.content = content;
     await nutzap.sign(senderPk);
     return nutzap;
@@ -49,18 +47,20 @@ export async function mockNutzap(
 
 /**
  * Creates a proof for a given amount, optionally locking to a p2pk.
- * @param C 
- * @param amount 
- * @param p2pk 
- * @returns 
+ * @param C
+ * @param amount
+ * @param p2pk
+ * @returns
  */
 export function mockProof(C: string, amount: number, p2pk?: string): Proof {
     const proof: Proof = {
         C,
         amount,
-        id: 'mint',
-        secret: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
-    }
+        id: "mint",
+        secret:
+            Math.random().toString(36).substring(2, 15) +
+            Math.random().toString(36).substring(2, 15),
+    };
 
     if (p2pk) {
         proof.secret = JSON.stringify([
@@ -71,6 +71,6 @@ export function mockProof(C: string, amount: number, p2pk?: string): Proof {
             },
         ]);
     }
-    
+
     return proof;
 }

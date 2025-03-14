@@ -1,6 +1,7 @@
 import { NDKRelay } from "./index.js";
 import { NDK } from "../ndk/index.js";
 import { NDKRelayStatus } from "./index.js";
+import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
 
 const ndk = new NDK();
 const relayUrl = "ws://localhost/";
@@ -26,13 +27,13 @@ describe("NDKRelay", () => {
     // let relaySub: any;
 
     // beforeEach(() => {
-    //     relaySub = jest.spyOn(relay.connectivity.relay, "subscribe");
+    //     relaySub = vi.spyOn(relay.connectivity.relay, "subscribe");
     // });
 
     // afterEach(() => {
     //     relaySub.mockRestore();
-    //     jest.clearAllMocks();
-    //     jest.resetAllMocks();
+    //     vi.clearAllMocks();
+    //     vi.resetAllMocks();
     // });
 
     describe("constructor", () => {
@@ -45,8 +46,8 @@ describe("NDKRelay", () => {
 
     describe("disconnect", () => {
         it("it doesn't try and disconnect if it already is disconnected", async () => {
-            const mockedDisconnect = jest.spyOn(relay.connectivity, "disconnect");
-            jest.spyOn(relay.connectivity, "status", "get").mockReturnValue(
+            const mockedDisconnect = vi.spyOn(relay.connectivity, "disconnect");
+            vi.spyOn(relay.connectivity, "status", "get").mockReturnValue(
                 NDKRelayStatus.DISCONNECTED
             );
             relay.disconnect();
@@ -102,7 +103,7 @@ describe("NDKRelay", () => {
     //         let isAvailableCall: any;
 
     //         beforeEach(() => {
-    //             isAvailableCall = jest
+    //             isAvailableCall = vi
     //                 .spyOn(relay.connectivity, "isAvailable")
     //                 .mockReturnValue(true);
     //         });

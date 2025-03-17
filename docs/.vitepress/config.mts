@@ -68,6 +68,18 @@ export default withMermaid(defineConfig({
         items: [
           { text: "Subscription Lifecycle", link: '/internals/subscriptions' },
         ]
+      },
+      {
+        text: "Code Snippets",
+        items: [
+          { text: "Overview", link: '/snippets/' },
+          { 
+            text: "User",
+            items: [
+              { text: "Generate Keys", link: '/snippets/user/generate-keys' }
+            ]
+          }
+        ]
       }
     ],
 

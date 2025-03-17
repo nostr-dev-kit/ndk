@@ -7,12 +7,14 @@ import { type NDKSigner } from "../index.js";
 import { bytesToHex, hexToBytes } from "@noble/hashes/utils";
 import { nip19 } from "nostr-tools";
 import { NDKEncryptionScheme } from "../../types.js";
+import { NDK } from "../../ndk/index.js";
 
 export class NDKPrivateKeySigner implements NDKSigner {
     private _user: NDKUser | undefined;
-    _privateKey?: Uint8Array;
+    private _privateKey?: Uint8Array;
+    private _pubkey?: string;
 
-    public constructor(privateKey?: Uint8Array | string) {
+    public constructor(privateKey?: Uint8Array | string, ndk?: NDK) {
         if (privateKey) {
             // If it's a string, it can be either a hex encoded private key or an nsec.
             if (typeof privateKey === "string") {
@@ -32,15 +34,24 @@ export class NDKPrivateKeySigner implements NDKSigner {
             }
 
             if (this._privateKey) {
-                this._user = new NDKUser({
-                    pubkey: getPublicKey(this._privateKey),
-                });
+                this._pubkey = getPublicKey(this._privateKey);
+                this._user = ndk
+                    ? ndk.getUser({ pubkey: this._pubkey })
+                    : new NDKUser({
+                          pubkey: this._pubkey,
+                      });
             }
         }
     }
+
     get privateKey(): string | undefined {
         if (!this._privateKey) return undefined;
         return bytesToHex(this._privateKey);
+    }
+
+    get pubkey(): string {
+        if (!this._pubkey) throw new Error("Not ready");
+        return this._pubkey;
     }
 
     public static generate(): NDKPrivateKeySigner {
@@ -56,8 +67,15 @@ export class NDKPrivateKeySigner implements NDKSigner {
     }
 
     public async user(): Promise<NDKUser> {
-        await this.blockUntilReady();
-        return this._user as NDKUser;
+        if (!this._user) {
+            throw new Error("NDKUser not initialized");
+        }
+        return this._user;
+    }
+
+    public get userSync(): NDKUser {
+        if (!this._user) throw new Error("NDKUser not initialized");
+        return this._user;
     }
 
     public async sign(event: NostrEvent): Promise<string> {

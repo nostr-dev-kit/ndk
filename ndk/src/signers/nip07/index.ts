@@ -34,13 +34,22 @@ export class NDKNip07Signer implements NDKSigner {
     private encryptionProcessing = false;
     private debug: debug.Debugger;
     private waitTimeout: number;
-
+    private _pubkey: string | undefined;
+    private ndk?: NDK;
+    private _user: NDKUser | undefined;
+    
     /**
      * @param waitTimeout - The timeout in milliseconds to wait for the NIP-07 to become available
      */
-    public constructor(waitTimeout: number = 1000) {
+    public constructor(waitTimeout: number = 1000, ndk?: NDK) {
         this.debug = debug("ndk:nip07");
         this.waitTimeout = waitTimeout;
+        this.ndk = ndk;
+    }
+
+    get pubkey(): string {
+        if (!this._pubkey) throw new Error("Not ready");
+        return this._pubkey;
     }
 
     public async blockUntilReady(): Promise<NDKUser> {
@@ -53,7 +62,13 @@ export class NDKNip07Signer implements NDKSigner {
             throw new Error("User rejected access");
         }
 
-        return new NDKUser({ pubkey: pubkey });
+        this._pubkey = pubkey;
+        let user: NDKUser;
+        if (this.ndk) user = this.ndk.getUser({pubkey})
+        else user = new NDKUser({ pubkey });
+        this._user = user;
+
+        return user;
     }
 
     /**
@@ -66,6 +81,11 @@ export class NDKNip07Signer implements NDKSigner {
         }
 
         return this._userPromise;
+    }
+
+    get userSync(): NDKUser {
+        if (!this._user) throw new Error("User not ready");
+        return this._user;
     }
 
     /**

@@ -12,6 +12,7 @@ export default withMermaid(defineConfig({
     nav: [
       { text: 'Home', link: '/' },
       { text: 'API Reference', link: '/api/', target: '_blank' },
+      { text: 'Code Snippets', link: '/snippets/' },
       { text: 'Wiki', link: 'https://wikifreedia.xyz/?c=NDK', target: '_blank' },
     ],
 

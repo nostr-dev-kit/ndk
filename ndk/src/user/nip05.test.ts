@@ -1,11 +1,12 @@
 import { NDK } from "../ndk";
 import { getNip05For } from "./nip05";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 
 const ndk = new NDK();
 
 describe("nip05", () => {
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     describe("getNip05For", () => {
@@ -22,11 +23,11 @@ describe("nip05", () => {
                 },
             };
 
-            const fetchMock = jest.fn(() =>
+            const fetchMock = vi.fn(() =>
                 Promise.resolve({
                     json: (): Promise<any> => Promise.resolve(json),
                 } as Response)
-            ) as jest.Mock;
+            );
 
             const result = await getNip05For(ndk, "bob@nsec.app", fetchMock);
 

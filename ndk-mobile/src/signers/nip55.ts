@@ -1,15 +1,17 @@
 import debug from "debug";
 
 import * as Nip55 from "expo-nip55";
-import { NDKEncryptionScheme, NDKSigner, NDKUser, NostrEvent } from "@nostr-dev-kit/ndk";
+import NDK, { NDKEncryptionScheme, NDKSigner, NDKUser, NostrEvent } from "@nostr-dev-kit/ndk";
 
 export class NDKNip55Signer implements NDKSigner {
     private _pubkey: string;
     private _user?: NDKUser;
     public packageName: string;
-
-    constructor(packageName: string) {
+    private ndk?: NDK;
+    
+    constructor(packageName: string, ndk?: NDK) {
         this.packageName = packageName;
+        this.ndk = ndk;
     }
 
     /**
@@ -35,6 +37,17 @@ export class NDKNip55Signer implements NDKSigner {
     async user(): Promise<NDKUser> {
         return this.blockUntilReady();
     }
+
+    public get userSync(): NDKUser {
+        if (!this._user) throw new Error("User not ready");
+        return this._user;
+    }
+
+    public get pubkey(): string {
+        if (!this._pubkey) throw new Error("Pubkey not ready");
+        return this._pubkey;
+    }
+    
     /**
      * Signs the given Nostr event.
      * @param event - The Nostr event to be signed.

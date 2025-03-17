@@ -9,6 +9,13 @@ import type { NDKUser } from "../user";
  */
 export interface NDKSigner {
     /**
+     * Synchronously get the public key of the signer.
+     * @throws {Error} "Not ready" when the signer is not ready to provide a pubkey synchronously (e.g., NIP-07 or NIP-46 signers)
+     * @returns The public key in hex format
+     */
+    get pubkey(): string;
+
+    /**
      * Blocks until the signer is ready and returns the associated NDKUser.
      * @returns A promise that resolves to the NDKUser instance.
      */
@@ -19,6 +26,8 @@ export interface NDKSigner {
      * @returns A promise that resolves to the NDKUser instance.
      */
     user(): Promise<NDKUser>;
+
+    get userSync(): NDKUser;
 
     /**
      * Signs the given Nostr event.

@@ -60,4 +60,21 @@ describe("NDKPrivateKeySigner", () => {
         expect(signature).toBeDefined();
         expect(signature.length).toBe(128);
     });
+
+    it("provides synchronous access to pubkey", () => {
+        const signer = NDKPrivateKeySigner.generate();
+        expect(signer.pubkey).toBeDefined();
+        expect(signer.pubkey).toHaveLength(64);
+
+        // Test with a known private key to verify correct pubkey
+        const privateKeyString = "0277cc53c89ca9c8a441987265276fafa55bf5bed8a55b16fd640e0d6a0c21e2";
+        const knownSigner = new NDKPrivateKeySigner(privateKeyString);
+        expect(knownSigner.pubkey).toBe(
+            "c44f2be1b2fb5371330386046e60207bbd84938d4812ee0c7a3c11be605a7585"
+        );
+
+        // Test error case when signer is not ready
+        const emptySigner = new NDKPrivateKeySigner();
+        expect(() => emptySigner.pubkey).toThrow("Not ready");
+    });
 });

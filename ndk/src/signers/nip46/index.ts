@@ -51,6 +51,11 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
      */
     public userPubkey?: string | null;
 
+    get pubkey(): string {
+        if (!this.userPubkey) throw new Error("Not ready");
+        return this.userPubkey;
+    }
+
     /**
      * An optional secret value provided to connect to the bunker
      */
@@ -113,13 +118,6 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
     }
 
     /**
-     * @deprecated Use userPubkey instead
-     */
-    get remotePubkey() {
-        return this.userPubkey;
-    }
-
-    /**
      * We start listening for events from the bunker
      */
     private async startListening() {
@@ -140,7 +138,13 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
      */
     public async user(): Promise<NDKUser> {
         if (!this._user && !this.userPubkey) throw new Error("Remote user not ready");
-        this._user ??= new NDKUser({ pubkey: this.userPubkey! });
+        this._user ??= this.ndk.getUser({ pubkey: this.userPubkey! });
+        return this._user;
+    }
+
+    public get userSync(): NDKUser {
+        if (!this._user && !this.userPubkey) throw new Error("Remote user not ready");
+        this._user ??= this.ndk.getUser({ pubkey: this.userPubkey! });
         return this._user;
     }
 
@@ -184,7 +188,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
                     if (response.result === "ack") {
                         this.getPublicKey().then((pubkey) => {
                             this.userPubkey = pubkey;
-                            this._user = new NDKUser({ pubkey });
+                            this._user = this.ndk.getUser({ pubkey });
                             resolve(this._user);
                         });
                     } else {

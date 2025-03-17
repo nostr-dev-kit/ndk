@@ -9,6 +9,7 @@ import type { NDKUser } from "../user";
 import type { CashuPaymentInfo } from "./nip61";
 import type { LnPaymentInfo } from "./ln";
 import { describe, it, expect, beforeAll, afterEach, vi } from "vitest";
+import type { NDKUserProfile } from "../user/profile";
 
 vi.mock("./ln.js", () => ({
     getNip57ZapSpecFromLud: vi.fn(async () => {
@@ -26,10 +27,9 @@ vi.mock("./ln.js", () => ({
     }),
 }));
 
-const ndk = new NDK();
-
 describe("NDKZapper", () => {
     describe("getZapSplits", () => {
+        const ndk = new NDK();
         const event = new NDKEvent();
         event.ndk = ndk;
 
@@ -76,12 +76,17 @@ describe("NDKZapper", () => {
 });
 
 describe("getZapMethod", () => {
+    let ndk: NDK;
     let signer: NDKPrivateKeySigner;
     let user: NDKUser;
 
     beforeAll(async () => {
+        ndk = new NDK({
+            explicitRelayUrls: ["wss://relay.example.com"],
+        });
         signer = NDKPrivateKeySigner.generate();
-        user = await signer.user();
+        ndk.signer = signer;
+        user = ndk.getUser({ pubkey: signer.pubkey });
         user.ndk = ndk;
     });
 
@@ -93,25 +98,63 @@ describe("getZapMethod", () => {
         const mintList = new NDKCashuMintList();
         mintList.mints = ["https://mint1", "https://mint2"];
         await mintList.sign(signer);
-        ndk.fetchEvents = vi.fn().mockResolvedValue(new Set([mintList]));
+
+        // Mock both profile and mint list fetching
+        user.fetchProfile = vi.fn().mockResolvedValue(null);
+        ndk.fetchEvent = vi.fn().mockResolvedValue(mintList);
+        
         const zapper = new NDKZapper(user, 1000);
         zapper.cashuPay = async (payment: NDKZapDetails<CashuPaymentInfo>) => undefined;
+        
         const zapMethodMap = await zapper.getZapMethods(ndk, user.pubkey);
         const nip61Method = zapMethodMap.get("nip61");
         expect((nip61Method as CashuPaymentInfo).mints).toEqual(["https://mint1", "https://mint2"]);
     });
 
     it("defaults to nip57 when the user has not signaled nutzaps", async () => {
-        const profile = new NDKEvent(ndk, {
-            content: JSON.stringify({ lud16: "pablo@primal.net" }),
+        const profile: NDKUserProfile = {
+            name: "Pablo",
+            displayName: "Pablo F",
+            about: "Test user",
+            lud06: "lnurl1dp68gurn8ghj7um5v93kketj9ehx2amn9wf6x7mp0xyyp6",
+            lud16: "pablo@primal.net",
+            created_at: Date.now() / 1000
+        };
+
+        // Create a kind 0 event with the profile
+        const profileEvent = new NDKEvent(ndk, {
             kind: 0,
-        } as NostrEvent);
-        ndk.fetchEvents = vi.fn().mockResolvedValue(new Set<NDKEvent>([profile]));
+            pubkey: user.pubkey,
+            tags: [],
+            created_at: Date.now() / 1000,
+            content: JSON.stringify(profile)
+        });
+
+        // Mock both profile and mint list fetching
+        const fetchProfileMock = vi.fn().mockResolvedValue(profile);
+        ndk.fetchEvent = vi.fn().mockImplementation((filter) => {
+            if (filter.kinds?.[0] === 0) {
+                return Promise.resolve(profileEvent);
+            }
+            return Promise.resolve(null);
+        });
+        
         const zapper = new NDKZapper(user, 1000);
         zapper.cashuPay = async (payment: NDKZapDetails<CashuPaymentInfo>) => undefined;
         zapper.lnPay = async (payment: NDKZapDetails<LnPaymentInfo>) => undefined;
+        
+        // Debug logging for promise resolution
+        console.log('Starting getZapMethods call');
         const zapMethodMap = await zapper.getZapMethods(ndk, user.pubkey);
+        console.log('After getZapMethods call');
+        
+        // Debug logging
+        console.log('Profile returned by fetchProfile:', await user.fetchProfile());
+        console.log('ZapMethodMap:', zapMethodMap);
+        
         const nip57Method = zapMethodMap.get("nip57");
         expect(nip57Method).toBeDefined();
+        expect((nip57Method as any).lud16).toBe("pablo@primal.net");
+        expect((nip57Method as any).lud06).toBe("lnurl1dp68gurn8ghj7um5v93kketj9ehx2amn9wf6x7mp0xyyp6");
     });
 });

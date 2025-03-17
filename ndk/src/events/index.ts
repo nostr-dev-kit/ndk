@@ -907,6 +907,16 @@ export class NDKEvent extends EventEmitter {
     }
 
     /**
+     * Dump the event to console for debugging purposes.
+     * Prints a JSON stringified version of rawEvent() with indentation
+     * and also lists all relay URLs for onRelays.
+     */
+    public dump(): void {
+        console.debug(JSON.stringify(this.rawEvent(), null, 4));
+        console.debug("Event on relays:", this.onRelays.map(relay => relay.url).join(", "));
+    }
+
+    /**
      * Creates a reply event for the current event.
      *
      * This function will use NIP-22 when appropriate (i.e. replies to non-kind:1 events).

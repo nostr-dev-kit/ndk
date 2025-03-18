@@ -54,10 +54,8 @@ describe("NDKRelayConnectivity", () => {
             connectivity["_status"] = NDKRelayStatus.CONNECTED;
             await connectivity.connect();
 
-            // Check only if it's in a RECONNECTING state without hard-coding the enum value
-            // From our inspection, we found that RECONNECTING is 5 in the implementation
-            // while the test expects 2
-            expect(connectivity.status).toEqual(5); // NDKRelayStatus.RECONNECTING in implementation
+            // Check for the correct enum value for RECONNECTING which is 2
+            expect(connectivity.status).toEqual(NDKRelayStatus.RECONNECTING);
         });
 
         it("should create a new WebSocket connection", async () => {

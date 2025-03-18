@@ -1,6 +1,7 @@
 import { Nip96 } from ".";
 import { NDK } from "../ndk";
 import { NDKPrivateKeySigner } from "../signers/private-key";
+import { vi } from "vitest";
 
 const ndk = new NDK();
 ndk.signer = NDKPrivateKeySigner.generate();
@@ -32,13 +33,13 @@ const uploadRepsonse = {
 
 describe("Nip96", () => {
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it("fetches the spec on first call", async () => {
         const blob = new Blob(["Hello, world!"], { type: "text/plain" });
         const nip96 = new Nip96("nostrcheck.me", ndk);
-        ndk.httpFetch = jest
+        ndk.httpFetch = vi
             .fn()
             .mockImplementationOnce(() =>
                 Promise.resolve({
@@ -59,7 +60,7 @@ describe("Nip96", () => {
         const nip96 = new Nip96("nostrcheck.me", ndk);
         nip96.nip98Required = true;
         nip96.spec = okSpec;
-        ndk.httpFetch = jest.fn().mockImplementation(() =>
+        ndk.httpFetch = vi.fn().mockImplementation(() =>
             Promise.resolve({
                 status: 200,
                 json: () => Promise.resolve(uploadRepsonse),

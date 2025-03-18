@@ -3,6 +3,29 @@ import { NDKRelayConnectivity } from "./connectivity";
 import { NDKRelay, NDKRelayStatus } from "./index";
 import { NDK } from "../ndk/index";
 
+// Define WebSocket and its states as globals for the tests
+// This enables the tests to run in a Node.js environment
+global.WebSocket = class MockWebSocket {
+    static CONNECTING = 0;
+    static OPEN = 1;
+    static CLOSING = 2;
+    static CLOSED = 3;
+    
+    url: string;
+    readyState: number = 0;
+    onopen: (() => void) | null = null;
+    onclose: (() => void) | null = null;
+    onmessage: ((event: any) => void) | null = null;
+    onerror: ((error: any) => void) | null = null;
+    
+    constructor(url: string) {
+        this.url = url;
+    }
+    
+    close() {}
+    send() {}
+} as any;
+
 vi.mock("ws");
 vi.useFakeTimers();
 
@@ -39,10 +62,14 @@ describe("NDKRelayConnectivity", () => {
 
         it("should create a new WebSocket connection", async () => {
             const mockWebSocket = vi.fn();
+            const originalWebSocket = global.WebSocket;
             global.WebSocket = mockWebSocket as any;
 
             await connectivity.connect();
             expect(mockWebSocket).toHaveBeenCalledWith("wss://test.relay/");
+            
+            // Restore the original mock
+            global.WebSocket = originalWebSocket;
         });
     });
 

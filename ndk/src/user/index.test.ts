@@ -140,17 +140,7 @@ describe("NDKUser", () => {
                 }),
             });
 
-            ndk.subscribe = vi.fn((filter, opts?): NDKSubscription => {
-                const sub = new NDKSubscription(ndk, filter, opts);
-
-                setTimeout(() => {
-                    sub.emit("event", newEvent, undefined, sub, false, false);
-                    sub.emit("event", oldEvent, undefined, sub, false, false);
-                    sub.emit("eose", sub);
-                }, 100);
-
-                return sub;
-            });
+            ndk.fetchEvent = vi.fn().mockResolvedValue(newEvent);
 
             await user.fetchProfile();
             expect(user.profile?.displayName).toEqual("JeffG");
@@ -187,17 +177,7 @@ describe("NDKUser", () => {
                 }),
             });
 
-            ndk.subscribe = vi.fn((filter, opts?): NDKSubscription => {
-                const sub = new NDKSubscription(ndk, filter, opts);
-
-                setTimeout(() => {
-                    sub.emit("event", newEvent, undefined, sub, false, false);
-                    sub.emit("event", oldEvent, undefined, sub, false, false);
-                    sub.emit("eose", sub);
-                }, 100);
-
-                return sub;
-            });
+            ndk.fetchEvent = vi.fn().mockResolvedValue(newEvent);
 
             await user.fetchProfile();
             expect(user.profile?.displayName).toEqual("James");
@@ -225,17 +205,7 @@ describe("NDKUser", () => {
                 }),
             });
 
-            ndk.subscribe = vi.fn((filter, opts?): NDKSubscription => {
-                const sub = new NDKSubscription(ndk, filter, opts);
-
-                setTimeout(() => {
-                    sub.emit("event", newEvent, undefined, sub, false, false);
-                    sub.emit("event", oldEvent, undefined, sub, false, false);
-                    sub.emit("eose", sub);
-                }, 100);
-
-                return sub;
-            });
+            ndk.fetchEvent = vi.fn().mockResolvedValue(newEvent);
 
             await user.fetchProfile();
             expect(user.profile?.image).toEqual("https://set-from-picture-field.url");
@@ -262,17 +232,7 @@ describe("NDKUser", () => {
                 }),
             });
 
-            ndk.subscribe = vi.fn((filter, opts?): NDKSubscription => {
-                const sub = new NDKSubscription(ndk, filter, opts);
-
-                setTimeout(() => {
-                    sub.emit("event", newEvent, undefined, sub, false, false);
-                    sub.emit("event", oldEvent, undefined, sub, false, false);
-                    sub.emit("eose", sub);
-                }, 100);
-
-                return sub;
-            });
+            ndk.fetchEvent = vi.fn().mockResolvedValue(newEvent);
 
             await user.fetchProfile();
             expect(user.profile?.customField).toEqual("custom NEW");

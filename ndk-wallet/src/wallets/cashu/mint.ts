@@ -48,13 +48,34 @@ export async function walletForMint(
     }
 
     const unit = "sat";
-
     const key = mintKey(mint, unit, pk);
+    
+    // Check if we already have a wallet for this mint
+    if (mintWallets.has(key)) {
+        return mintWallets.get(key) as CashuWallet;
+    }
 
-    if (mintWallets.has(key)) return mintWallets.get(key) as CashuWallet;
-
+    // Check if there's already a promise to load this wallet
     if (mintWalletPromises.has(key)) {
         return mintWalletPromises.get(key) as Promise<CashuWallet | null>;
+    }
+    
+    
+    // Load mint info if needed
+    if (!mintInfo) {
+        if (onMintInfoNeeded) {
+            mintInfo = await onMintInfoNeeded(mint);
+        }
+        
+        if (!mintInfo && onMintInfoLoaded) {
+            mintInfo = await CashuMint.getInfo(mint);
+            onMintInfoLoaded(mint, mintInfo);
+        }
+    }
+    
+    // Load mint keys if needed
+    if (!mintKeys && onMintKeysNeeded) {
+        mintKeys = await onMintKeysNeeded(mint);
     }
 
     const wallet = new CashuWallet(new CashuMint(mint), {
@@ -67,13 +88,19 @@ export async function walletForMint(
     const loadPromise = new Promise<CashuWallet | null>(async (resolve) => {
         try {
             const timeoutPromise = new Promise((_, rejectTimeout) => {
-                setTimeout(() => rejectTimeout(new Error("timeout loading mint")), timeout);
+                setTimeout(() => {
+                    rejectTimeout(new Error("timeout loading mint"));
+                }, timeout);
             });
+            
             await Promise.race([wallet.loadMint(), timeoutPromise]);
+            
             mintWallets.set(key, wallet);
             mintWalletPromises.delete(key);
 
-            if (wallet.keys) onMintKeysLoaded?.(mint, wallet.keys);
+            if (wallet.keys) {
+                onMintKeysLoaded?.(mint, wallet.keys);
+            }
 
             resolve(wallet);
         } catch (e: any) {

@@ -46,14 +46,6 @@ export type WalletWarning = {
 import { PaymentHandler, PaymentWithOptionalZapInfo } from "./payment.js";
 import { createInTxEvent, createOutTxEvent } from "./txs.js";
 import { WalletState } from "./state/index.js";
-import {
-    getCashuWallet,
-    MintInfoNeededCb,
-    MintInfoLoadedCb,
-    MintInterface,
-    MintKeysNeededCb,
-    MintKeysLoadedCb,
-} from "../../mint.js";
 
 /**
  * This class tracks state of a NIP-60 wallet
@@ -227,6 +219,9 @@ export class NDKCashuWallet extends NDKWallet {
      * with the relays, for example, by saving the time the wallet has emitted a "ready" event.
      */
     start(opts?: NDKSubscriptionOptions & { pubkey?: Hexpubkey; since?: number }) {
+        if (this.status === NDKWalletStatus.READY) return;
+        this.status = NDKWalletStatus.LOADING;
+        
         const pubkey = opts?.pubkey ?? this.event?.pubkey;
         if (!pubkey) throw new Error("no pubkey");
 
@@ -261,6 +256,7 @@ export class NDKCashuWallet extends NDKWallet {
 
     stop() {
         this.sub?.stop();
+        this.status = NDKWalletStatus.INITIAL;
     }
 
     /**

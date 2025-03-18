@@ -20,6 +20,7 @@ export enum NDKKind {
     Image = 20,
     Video = 21,
     ShortVideo = 22,
+    Story = 23,
 
     // NIP-62
     Vanish = 62,

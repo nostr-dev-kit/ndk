@@ -3,13 +3,13 @@ import { NDKCacheAdapterSqlite, NDKSqliteProfileRecord, NDKUserProfile } from ".
 /**
  * Convenience method to search for profiles in the database.
  */
-export function searchProfiles(adapter: NDKCacheAdapterSqlite, query: string): NDKUserProfile[] {
+export function searchProfiles(adapter: NDKCacheAdapterSqlite, query: string): [string, NDKUserProfile][] {
     const pubkeys = adapter.db.getAllSync(
         `SELECT * FROM profiles WHERE name LIKE ? OR about LIKE ? OR nip05 LIKE ? OR display_name LIKE ?`,
         [`%${query}%`, `%${query}%`, `%${query}%`, `%${query}%`]
     ) as NDKSqliteProfileRecord[];
 
-    const results: NDKUserProfile[] = [];
+    const results: [string, NDKUserProfile][] = [];
 
     for (const row of pubkeys) {
         const profile = {
@@ -23,9 +23,8 @@ export function searchProfiles(adapter: NDKCacheAdapterSqlite, query: string): N
             displayName: row.display_name,
             website: row.website,
             created_at: row.created_at,
-            pubkey: row.pubkey,
         };
-        results.push(profile);
+        results.push([row.pubkey, profile]);
     }
 
     return results;

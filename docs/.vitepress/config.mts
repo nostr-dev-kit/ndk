@@ -12,6 +12,7 @@ export default withMermaid(defineConfig({
     nav: [
       { text: 'Home', link: '/' },
       { text: 'API Reference', link: '/api/', target: '_blank' },
+      { text: 'Code Snippets', link: '/snippets/' },
       { text: 'Wiki', link: 'https://wikifreedia.xyz/?c=NDK', target: '_blank' },
     ],
 
@@ -67,6 +68,18 @@ export default withMermaid(defineConfig({
         text: "Internals",
         items: [
           { text: "Subscription Lifecycle", link: '/internals/subscriptions' },
+        ]
+      },
+      {
+        text: "Code Snippets",
+        items: [
+          { text: "Overview", link: '/snippets/' },
+          { 
+            text: "User",
+            items: [
+              { text: "Generate Keys", link: '/snippets/user/generate-keys' }
+            ]
+          }
         ]
       }
     ],

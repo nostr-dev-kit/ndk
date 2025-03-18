@@ -1,8 +1,15 @@
 packages:
-    - "packages/*"
-    - "ndk"
-    - "ndk-test"
-    - "ndk-cache-dexie"
-    - "ndk-svelte"
-    - "ndk-svelte-components"
-    - "ndk-wallet"
+  - packages/*
+  - ndk-core
+  - ndk-test
+  - ndk-cache-dexie
+  - ndk-svelte
+  - ndk-svelte-components
+  - ndk-wallet
+onlyBuiltDependencies:
+  - bufferutil
+  - es5-ext
+  - esbuild
+  - msw
+  - svelte-preprocess
+  - utf-8-validate

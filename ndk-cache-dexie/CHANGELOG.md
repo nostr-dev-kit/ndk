@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk-cache-dexie
 
+## 2.5.16-rc1.0
+
+### Patch Changes
+
+- 9d1a79c: performance improvements
+
 ## 2.5.15
 
 ### Patch Changes

@@ -32,7 +32,7 @@ export class PerfStats {
         this.stats.forEach((value, key) => {
             stats[key] = {
                 avg: value.totalTime / value.count,
-                count: value.count
+                count: value.count,
             };
         });
         debug("Performance stats:", stats);

@@ -8,7 +8,7 @@ export class NDKNip55Signer implements NDKSigner {
     private _user?: NDKUser;
     public packageName: string;
     private ndk?: NDK;
-    
+
     constructor(packageName: string, ndk?: NDK) {
         this.packageName = packageName;
         this.ndk = ndk;
@@ -47,7 +47,7 @@ export class NDKNip55Signer implements NDKSigner {
         if (!this._pubkey) throw new Error("Pubkey not ready");
         return this._pubkey;
     }
-    
+
     /**
      * Signs the given Nostr event.
      * @param event - The Nostr event to be signed.

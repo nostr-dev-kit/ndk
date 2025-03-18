@@ -84,10 +84,10 @@ describe("byKinds performance", () => {
         const startTime = Math.floor(Date.now() / 1000);
         const eventCount = 5000;
         const targetKind = 1;
-        
+
         // Measure time before adding events
         const addStart = performance.now();
-        
+
         // Add a large number of events with the same kind
         for (let i = 0; i < eventCount; i++) {
             const event = new NDKEvent(ndk);
@@ -97,25 +97,25 @@ describe("byKinds performance", () => {
             await event.sign();
             ndk.cacheAdapter!.setEvent(event, []);
         }
-        
+
         const addDuration = performance.now() - addStart;
         console.log(`Added ${eventCount} events in ${addDuration}ms`);
-        
+
         // Create a subscription that queries by kind
         const subscription = new NDKSubscription(ndk, [{ kinds: [targetKind] }]);
         const receiveEventSpy = jest.spyOn(subscription, "eventReceived");
-        
+
         // Measure query time
         const queryStart = performance.now();
         await ndk.cacheAdapter!.query(subscription);
         const queryDuration = performance.now() - queryStart;
-        
+
         console.log(`Query took ${queryDuration}ms`);
-        
+
         // The test passes if the query completes in a reasonable time
         // Currently it's failing with 15+ seconds, we want it under 1000ms
         expect(queryDuration).toBeLessThan(1000);
-        
+
         // Also verify that we're not getting too many events
         // (this would mean our limit filtering is working)
         expect(receiveEventSpy).toHaveBeenCalled();

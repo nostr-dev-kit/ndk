@@ -102,10 +102,10 @@ describe("getZapMethod", () => {
         // Mock both profile and mint list fetching
         user.fetchProfile = vi.fn().mockResolvedValue(null);
         ndk.fetchEvent = vi.fn().mockResolvedValue(mintList);
-        
+
         const zapper = new NDKZapper(user, 1000);
         zapper.cashuPay = async (payment: NDKZapDetails<CashuPaymentInfo>) => undefined;
-        
+
         const zapMethodMap = await zapper.getZapMethods(ndk, user.pubkey);
         const nip61Method = zapMethodMap.get("nip61");
         expect((nip61Method as CashuPaymentInfo).mints).toEqual(["https://mint1", "https://mint2"]);
@@ -118,7 +118,7 @@ describe("getZapMethod", () => {
             about: "Test user",
             lud06: "lnurl1dp68gurn8ghj7um5v93kketj9ehx2amn9wf6x7mp0xyyp6",
             lud16: "pablo@primal.net",
-            created_at: Date.now() / 1000
+            created_at: Date.now() / 1000,
         };
 
         // Create a kind 0 event with the profile
@@ -127,7 +127,7 @@ describe("getZapMethod", () => {
             pubkey: user.pubkey,
             tags: [],
             created_at: Date.now() / 1000,
-            content: JSON.stringify(profile)
+            content: JSON.stringify(profile),
         });
 
         // Mock both profile and mint list fetching
@@ -138,23 +138,25 @@ describe("getZapMethod", () => {
             }
             return Promise.resolve(null);
         });
-        
+
         const zapper = new NDKZapper(user, 1000);
         zapper.cashuPay = async (payment: NDKZapDetails<CashuPaymentInfo>) => undefined;
         zapper.lnPay = async (payment: NDKZapDetails<LnPaymentInfo>) => undefined;
-        
+
         // Debug logging for promise resolution
-        console.log('Starting getZapMethods call');
+        console.log("Starting getZapMethods call");
         const zapMethodMap = await zapper.getZapMethods(ndk, user.pubkey);
-        console.log('After getZapMethods call');
-        
+        console.log("After getZapMethods call");
+
         // Debug logging
-        console.log('Profile returned by fetchProfile:', await user.fetchProfile());
-        console.log('ZapMethodMap:', zapMethodMap);
-        
+        console.log("Profile returned by fetchProfile:", await user.fetchProfile());
+        console.log("ZapMethodMap:", zapMethodMap);
+
         const nip57Method = zapMethodMap.get("nip57");
         expect(nip57Method).toBeDefined();
         expect((nip57Method as any).lud16).toBe("pablo@primal.net");
-        expect((nip57Method as any).lud06).toBe("lnurl1dp68gurn8ghj7um5v93kketj9ehx2amn9wf6x7mp0xyyp6");
+        expect((nip57Method as any).lud06).toBe(
+            "lnurl1dp68gurn8ghj7um5v93kketj9ehx2amn9wf6x7mp0xyyp6"
+        );
     });
 });

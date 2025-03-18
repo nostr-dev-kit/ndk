@@ -37,7 +37,7 @@ export class NDKNip07Signer implements NDKSigner {
     private _pubkey: string | undefined;
     private ndk?: NDK;
     private _user: NDKUser | undefined;
-    
+
     /**
      * @param waitTimeout - The timeout in milliseconds to wait for the NIP-07 to become available
      */
@@ -64,7 +64,7 @@ export class NDKNip07Signer implements NDKSigner {
 
         this._pubkey = pubkey;
         let user: NDKUser;
-        if (this.ndk) user = this.ndk.getUser({pubkey})
+        if (this.ndk) user = this.ndk.getUser({ pubkey });
         else user = new NDKUser({ pubkey });
         this._user = user;
 

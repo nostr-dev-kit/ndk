@@ -163,23 +163,23 @@ describe("NDKEvent", () => {
                 ...eventData,
                 created_at: Math.floor(Date.now() / 1000 - 3600),
                 id: "id1",
-                sig: "sig1"
+                sig: "sig1",
             });
 
             const event2 = new NDKEvent(ndk, {
                 ...eventData,
                 created_at: Math.floor(Date.now() / 1000),
                 id: "id2",
-                sig: "sig2"
+                sig: "sig2",
             });
 
             // Test the deduplication logic directly
             const events = new Map<string, NDKEvent>();
-            
+
             // Add the older event first
             const dedupKey1 = event1.deduplicationKey();
             events.set(dedupKey1, event1);
-            
+
             // Then add the newer event
             const dedupKey2 = event2.deduplicationKey();
             const existingEvent = events.get(dedupKey2);
@@ -188,7 +188,7 @@ describe("NDKEvent", () => {
             } else {
                 events.set(dedupKey2, event2);
             }
-            
+
             // Verify that only the newest event was kept (deduplication)
             expect(events.size).toBe(1);
             const dedupedEvent = events.values().next().value;

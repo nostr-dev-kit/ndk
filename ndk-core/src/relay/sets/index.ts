@@ -120,24 +120,24 @@ export class NDKRelaySet {
     /**
      * Publish an event to all relays in this relay set.
      *
-     * This method implements a robust mechanism for publishing events to multiple relays with 
-     * built-in handling for race conditions, timeouts, and partial failures. The implementation 
+     * This method implements a robust mechanism for publishing events to multiple relays with
+     * built-in handling for race conditions, timeouts, and partial failures. The implementation
      * uses a dual-tracking mechanism to ensure accurate reporting of which relays successfully
      * received an event.
      *
      * Key aspects of this implementation:
-     * 
+     *
      * 1. DUAL-TRACKING MECHANISM:
      *    - Promise-based tracking: Records successes/failures from the promises returned by relay.publish()
      *    - Event-based tracking: Listens for 'relay:published' events that indicate successful publishing
      *    This approach ensures we don't miss successful publishes even if there are subsequent errors in
      *    the promise chain.
-     * 
+     *
      * 2. RACE CONDITION HANDLING:
      *    - If a relay emits a success event but later fails in the promise chain, we still count it as a success
      *    - If a relay times out after successfully publishing, we still count it as a success
      *    - All relay operations happen in parallel, with proper tracking regardless of completion order
-     * 
+     *
      * 3. TIMEOUT MANAGEMENT:
      *    - Individual timeouts for each relay operation
      *    - Proper cleanup of timeouts to prevent memory leaks
@@ -147,7 +147,7 @@ export class NDKRelaySet {
      *    - Detailed tracking of specific errors for each failed relay
      *    - Special handling for ephemeral events (which don't expect acknowledgement)
      *    - RequiredRelayCount parameter to control the minimum success threshold
-     * 
+     *
      * @param event Event to publish
      * @param timeoutMs Timeout in milliseconds for each relay publish operation
      * @param requiredRelayCount The minimum number of relays we expect the event to be published to
@@ -174,12 +174,12 @@ export class NDKRelaySet {
         // We use a Set data structure to ensure each relay is only counted once
         // even if multiple success signals are received from the same relay
         const publishedToRelays: Set<NDKRelay> = new Set();
-        
+
         // Map to track errors from relays that failed to publish the event
         // This maintains a per-relay record of specific error messages
         // which is valuable for debugging and error reporting
         const errors: Map<NDKRelay, Error> = new Map();
-        
+
         // Ephemeral events (like NIP-15 Events with Expiration Time) are treated differently
         // because they don't expect acknowledgement from relays
         // NIP-16 defines ephemeral events as ones with kinds from 20000 to 29999
@@ -197,7 +197,7 @@ export class NDKRelaySet {
         // This mechanism relies on the fact that NDKRelay instances emit 'published' events
         // when they successfully send an event to a relay
         const relayPublishedHandler = (relay: NDKRelay) => {
-            // When a relay emits a success event, we register it regardless of 
+            // When a relay emits a success event, we register it regardless of
             // what happens with the corresponding promise
             publishedToRelays.add(relay);
         };
@@ -205,7 +205,7 @@ export class NDKRelaySet {
         // Register the event listener
         // The 'relay:published' event is emitted by the event when a relay successfully
         // publishes it. This provides an additional signal path beyond promises.
-        event.on('relay:published', relayPublishedHandler);
+        event.on("relay:published", relayPublishedHandler);
 
         try {
             // SECOND TRACKING MECHANISM: PROMISE-BASED TRACKING
@@ -218,19 +218,24 @@ export class NDKRelaySet {
                     // Create a timeout if a timeout duration was specified
                     // This controls how long to wait for each individual relay
                     // Note: This is a per-relay timeout, not a global timeout for the entire operation
-                    const timeoutId = timeoutMs ? setTimeout(() => {
-                        // Only timeout if we haven't already recorded this relay as successful
-                        // (prevents race conditions with event-based tracking)
-                        // This is crucial: if the relay already succeeded through the event mechanism,
-                        // we don't want to incorrectly mark it as timed out
-                        if (!publishedToRelays.has(relay)) {
-                            // Record the specific timeout error for this relay
-                            errors.set(relay, new Error(`Publish timeout after ${timeoutMs}ms`));
-                            // Signal that this relay's publish operation has failed
-                            resolve(false);
-                        }
-                    }, timeoutMs) : null;
-                    
+                    const timeoutId = timeoutMs
+                        ? setTimeout(() => {
+                              // Only timeout if we haven't already recorded this relay as successful
+                              // (prevents race conditions with event-based tracking)
+                              // This is crucial: if the relay already succeeded through the event mechanism,
+                              // we don't want to incorrectly mark it as timed out
+                              if (!publishedToRelays.has(relay)) {
+                                  // Record the specific timeout error for this relay
+                                  errors.set(
+                                      relay,
+                                      new Error(`Publish timeout after ${timeoutMs}ms`)
+                                  );
+                                  // Signal that this relay's publish operation has failed
+                                  resolve(false);
+                              }
+                          }, timeoutMs)
+                        : null;
+
                     // Attempt to publish to this relay
                     // The relay.publish method sends the event to the relay and returns a promise
                     // that resolves to true if the relay acknowledges receipt of the event
@@ -241,7 +246,7 @@ export class NDKRelaySet {
                             // This is important to ensure we don't have dangling timeouts
                             // if the relay responds before the timeout period
                             if (timeoutId) clearTimeout(timeoutId);
-                            
+
                             if (success) {
                                 // Record successful publish in our tracking set
                                 // Note: The relay might already be in the set if it emitted a success event
@@ -257,7 +262,7 @@ export class NDKRelaySet {
                         .catch((err) => {
                             // Clear the timeout to prevent memory leaks
                             if (timeoutId) clearTimeout(timeoutId);
-                            
+
                             // Record the error for non-ephemeral events
                             // We don't track errors for ephemeral events since they don't expect
                             // acknowledgement from relays
@@ -291,7 +296,7 @@ export class NDKRelaySet {
                         publishedToRelays,
                         this
                     );
-                    
+
                     // Update the event status to reflect the failure
                     // This allows consumers to check event.publishStatus to determine if an event was
                     // successfully published
@@ -313,7 +318,7 @@ export class NDKRelaySet {
                 // This allows consumers to check event.publishStatus to determine if an event was
                 // successfully published
                 event.publishStatus = "success";
-                
+
                 // Emit an event to notify listeners of the successful publish
                 // This allows application code to react to successful publishes
                 event.emit("published", { relaySet: this, publishedToRelays });
@@ -328,7 +333,7 @@ export class NDKRelaySet {
             // This is critical for long-running applications
             // The finally block ensures this cleanup happens regardless of success or failure
             // preventing zombie event listeners that could cause memory leaks and unexpected behavior
-            event.off('relay:published', relayPublishedHandler);
+            event.off("relay:published", relayPublishedHandler);
         }
     }
 

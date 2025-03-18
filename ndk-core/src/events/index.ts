@@ -913,7 +913,7 @@ export class NDKEvent extends EventEmitter {
      */
     public dump(): void {
         console.debug(JSON.stringify(this.rawEvent(), null, 4));
-        console.debug("Event on relays:", this.onRelays.map(relay => relay.url).join(", "));
+        console.debug("Event on relays:", this.onRelays.map((relay) => relay.url).join(", "));
     }
 
     /**

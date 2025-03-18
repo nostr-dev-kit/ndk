@@ -135,28 +135,28 @@ export class NDKUser {
 
         const promiseWithTimeout = async <T>(promise: Promise<T>): Promise<T | undefined> => {
             if (!timeoutMs) return promise;
-            
+
             let timeoutId: NodeJS.Timeout | undefined;
             const timeoutPromise = new Promise<never>((_, reject) => {
-                timeoutId = setTimeout(() => reject(new Error('Timeout')), timeoutMs);
+                timeoutId = setTimeout(() => reject(new Error("Timeout")), timeoutMs);
             });
 
             try {
-                console.log('Starting promise with timeout:', timeoutMs);
+                console.log("Starting promise with timeout:", timeoutMs);
                 const result = await Promise.race([promise, timeoutPromise]);
-                console.log('Promise resolved with result:', result);
+                console.log("Promise resolved with result:", result);
                 if (timeoutId) clearTimeout(timeoutId);
                 return result;
             } catch (e) {
-                console.log('Promise error:', e);
-                if (e instanceof Error && e.message === 'Timeout') {
-                    console.log('Promise timed out, waiting for original promise');
+                console.log("Promise error:", e);
+                if (e instanceof Error && e.message === "Timeout") {
+                    console.log("Promise timed out, waiting for original promise");
                     try {
                         const result = await promise;
-                        console.log('Original promise resolved with:', result);
+                        console.log("Original promise resolved with:", result);
                         return result;
                     } catch (originalError) {
-                        console.log('Original promise failed:', originalError);
+                        console.log("Original promise failed:", originalError);
                         return undefined;
                     }
                 }
@@ -164,14 +164,19 @@ export class NDKUser {
             }
         };
 
-        console.log('Starting Promise.all');
+        console.log("Starting Promise.all");
         const [userProfile, mintListEvent] = await Promise.all([
             promiseWithTimeout(this.fetchProfile()),
             promiseWithTimeout(
                 this.ndk.fetchEvent({ kinds: [NDKKind.CashuMintList], authors: [this.pubkey] })
             ),
         ]);
-        console.log('Promise.all completed. userProfile:', userProfile, 'mintListEvent:', mintListEvent);
+        console.log(
+            "Promise.all completed. userProfile:",
+            userProfile,
+            "mintListEvent:",
+            mintListEvent
+        );
 
         const res: Map<NDKZapMethod, NDKZapMethodInfo> = new Map();
 
@@ -189,11 +194,11 @@ export class NDKUser {
 
         if (userProfile) {
             const { lud06, lud16 } = userProfile;
-            console.log('Setting nip57 with:', { lud06, lud16 });
+            console.log("Setting nip57 with:", { lud06, lud16 });
             res.set("nip57", { lud06, lud16 });
         }
 
-        console.log('Returning result map:', res);
+        console.log("Returning result map:", res);
         return res;
     }
 

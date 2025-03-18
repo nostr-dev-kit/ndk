@@ -69,10 +69,11 @@ export function strToDimension(dimensionStr: string): StickerDimension {
 /**
  * Maps sticker types to their value types
  */
-export type StoryValueType<T extends NDKStoryStickerType> =
-    T extends NDKStoryStickerType.Event ? NDKEvent :
-    T extends NDKStoryStickerType.Pubkey ? NDKUser :
-    string;
+export type StoryValueType<T extends NDKStoryStickerType> = T extends NDKStoryStickerType.Event
+    ? NDKEvent
+    : T extends NDKStoryStickerType.Pubkey
+      ? NDKUser
+      : string;
 
 /**
  * Interface representing story dimensions
@@ -85,33 +86,33 @@ export interface NDKStoryDimension {
 /**
  * Represents a sticker in an NDK story.
  *
-* Example usage:
-* ```typescript
-* // Create a text sticker
-* const textSticker = new NDKStorySticker(NDKStoryStickerType.Text);
-* textSticker.value = "Hello World!";
-* textSticker.position = { x: 540, y: 960 };
-* textSticker.dimension = { width: 500, height: 150 };
-* textSticker.style = "bold";
-* textSticker.rotation = 15;
-*
-* // Create a mention sticker (Pubkey type)
-* const mentionSticker = new NDKStorySticker(NDKStoryStickerType.Pubkey);
-* mentionSticker.value = new NDKUser("pubkey-value");
-* mentionSticker.position = { x: 300, y: 500 };
-* mentionSticker.dimension = { width: 200, height: 50 };
-*
-* // Create a sticker from a tag
-* const tagSticker = new NDKStorySticker([
-*     "sticker",
-*     "event",
-*     "event-id",
-*     "540,960",
-*     "500x150",
-*     "style italic"
-* ]);
-* ```
-*/
+ * Example usage:
+ * ```typescript
+ * // Create a text sticker
+ * const textSticker = new NDKStorySticker(NDKStoryStickerType.Text);
+ * textSticker.value = "Hello World!";
+ * textSticker.position = { x: 540, y: 960 };
+ * textSticker.dimension = { width: 500, height: 150 };
+ * textSticker.style = "bold";
+ * textSticker.rotation = 15;
+ *
+ * // Create a mention sticker (Pubkey type)
+ * const mentionSticker = new NDKStorySticker(NDKStoryStickerType.Pubkey);
+ * mentionSticker.value = new NDKUser("pubkey-value");
+ * mentionSticker.position = { x: 300, y: 500 };
+ * mentionSticker.dimension = { width: 200, height: 50 };
+ *
+ * // Create a sticker from a tag
+ * const tagSticker = new NDKStorySticker([
+ *     "sticker",
+ *     "event",
+ *     "event-id",
+ *     "540,960",
+ *     "500x150",
+ *     "style italic"
+ * ]);
+ * ```
+ */
 export class NDKStorySticker<T extends NDKStoryStickerType = NDKStoryStickerType> {
     static Text = NDKStoryStickerType.Text;
     static Pubkey = NDKStoryStickerType.Pubkey;
@@ -189,7 +190,7 @@ export class NDKStorySticker<T extends NDKStoryStickerType = NDKStoryStickerType
 
     /**
      * Checks if the sticker is valid.
-     * 
+     *
      * @returns {boolean} - True if the sticker is valid, false otherwise.
      */
     get isValid() {
@@ -197,29 +198,33 @@ export class NDKStorySticker<T extends NDKStoryStickerType = NDKStoryStickerType
     }
 
     hasValidDimensions = () => {
-        return typeof this.dimension.width === 'number' && 
-               typeof this.dimension.height === 'number' && 
-               !isNaN(this.dimension.width) && 
-               !isNaN(this.dimension.height);
-    }
-    
+        return (
+            typeof this.dimension.width === "number" &&
+            typeof this.dimension.height === "number" &&
+            !isNaN(this.dimension.width) &&
+            !isNaN(this.dimension.height)
+        );
+    };
+
     hasValidPosition = () => {
-        return typeof this.position.x === 'number' && 
-               typeof this.position.y === 'number' && 
-               !isNaN(this.position.x) && 
-               !isNaN(this.position.y);
-    }
+        return (
+            typeof this.position.x === "number" &&
+            typeof this.position.y === "number" &&
+            !isNaN(this.position.x) &&
+            !isNaN(this.position.y)
+        );
+    };
 
     toTag(): NDKTag {
         if (!this.isValid) {
             const errors = [
-                !this.hasValidDimensions() ? 'dimensions is invalid' : undefined,
-                !this.hasValidPosition() ? 'position is invalid' : undefined,
+                !this.hasValidDimensions() ? "dimensions is invalid" : undefined,
+                !this.hasValidPosition() ? "position is invalid" : undefined,
             ].filter(Boolean);
 
-            throw new Error(`Invalid sticker: ${errors.join(', ')}`);
+            throw new Error(`Invalid sticker: ${errors.join(", ")}`);
         }
-        
+
         let value: string;
 
         switch (this.type) {
@@ -238,7 +243,7 @@ export class NDKStorySticker<T extends NDKStoryStickerType = NDKStoryStickerType
             this.type,
             value,
             coordinates(this.position),
-            dimension(this.dimension)
+            dimension(this.dimension),
         ];
 
         if (this.properties) {
@@ -265,7 +270,7 @@ export class NDKStory extends NDKEvent {
     constructor(ndk: NDK | undefined, rawEvent?: NostrEvent | NDKEvent) {
         super(ndk, rawEvent);
         this.kind ??= NDKKind.Story;
-        
+
         // Load imeta if an event was passed in
         if (rawEvent) {
             for (const tag of rawEvent.tags) {
@@ -310,10 +315,10 @@ export class NDKStory extends NDKEvent {
      */
     set imeta(tag: NDKImetaTag | undefined) {
         this._imeta = tag;
-        
+
         // Update the tags array - remove all existing imeta tags
         this.tags = this.tags.filter((t) => t[0] !== "imeta");
-        
+
         // Add the new imeta tag if provided
         if (tag) {
             this.tags.push(imetaTagToTag(tag));
@@ -377,14 +382,14 @@ export class NDKStory extends NDKEvent {
      */
     get stickers(): NDKStorySticker[] {
         const stickers: NDKStorySticker[] = [];
-        
+
         for (const tag of this.tags) {
             if (tag[0] !== "sticker" || tag.length < 5) continue;
-            
+
             const sticker = NDKStorySticker.fromTag(tag);
             if (sticker) stickers.push(sticker);
         }
-        
+
         return stickers;
     }
 
@@ -395,7 +400,7 @@ export class NDKStory extends NDKEvent {
      */
     addSticker(sticker: NDKStorySticker | StorySticker): void {
         let stickerToAdd: NDKStorySticker;
-        
+
         if (sticker instanceof NDKStorySticker) {
             stickerToAdd = sticker;
         } else {
@@ -403,22 +408,22 @@ export class NDKStory extends NDKEvent {
             const tag: NDKTag = [
                 "sticker",
                 sticker.type,
-                typeof sticker.value === 'string' ? sticker.value : '',
+                typeof sticker.value === "string" ? sticker.value : "",
                 coordinates(sticker.position),
-                dimension(sticker.dimension)
+                dimension(sticker.dimension),
             ];
-            
+
             // Add properties if available
             if (sticker.properties) {
                 for (const [key, value] of Object.entries(sticker.properties)) {
                     tag.push(`${key} ${value}`);
                 }
             }
-            
+
             stickerToAdd = new NDKStorySticker(tag);
             stickerToAdd.value = sticker.value as any;
         }
-        
+
         // Add special tags for specific sticker types
         if (stickerToAdd.type === NDKStoryStickerType.Pubkey) {
             // Use tag() method for pubkey stickers
@@ -428,7 +433,7 @@ export class NDKStory extends NDKEvent {
             // This will handle both 'e' and 'a' tags appropriately
             this.tag(stickerToAdd.value as NDKEvent);
         }
-        
+
         this.tags.push(stickerToAdd.toTag());
     }
 
@@ -440,7 +445,7 @@ export class NDKStory extends NDKEvent {
     removeSticker(index: number): void {
         const stickers = this.stickers;
         if (index < 0 || index >= stickers.length) return;
-        
+
         // Find and remove the sticker tag
         let stickerCount = 0;
         for (let i = 0; i < this.tags.length; i++) {

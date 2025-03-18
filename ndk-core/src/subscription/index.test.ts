@@ -47,6 +47,26 @@ describe("NDKSubscriptionFilters", () => {
             mockedVerify.mockRestore();
         });
 
+        it("doesn't emit events when isValid returns false", () => {
+            const sub = new NDKSubscription(ndk, {}, { skipVerification: true });
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const mockedEmit = vi.spyOn(sub, "emit" as any);
+
+            // Create a new event with a mock isValid property
+            const event = new NDKEvent(ndk);
+
+            // Mock the isValid getter to return false
+            Object.defineProperty(event, "isValid", {
+                get: () => false,
+            });
+
+            sub.eventReceived(event, undefined);
+
+            // Event should not be emitted
+            expect(mockedEmit).not.toHaveBeenCalled();
+            mockedEmit.mockRestore();
+        });
+
         it("doesn't emit for events with bad signatures", () => {
             // New sub skipping validation on purpose
             const sub = new NDKSubscription(ndk, {}, { skipValidation: true });

@@ -38,7 +38,7 @@
     "workspaces": [
         "apps/*",
         "packages/*",
-        "ndk",
+        "ndk-core",
         "ndk-cache-dexie",
         "ndk-cache-redis",
         "ndk-cache-nostr",

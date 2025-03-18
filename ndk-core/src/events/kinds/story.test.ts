@@ -1,8 +1,9 @@
 import { describe, test, expect } from 'vitest';
-import { NDKStorySticker, NDKStoryStickerType, type NDKTag } from './ndk-story-sticker';
+import { NDKStorySticker, NDKStoryStickerType } from './story.js';
 import { NDKUser } from '../../user/index.js';
+import { NDKTag } from '../index.js';
 
-const sampleUser = new NDKUser('sample-pubkey');
+const sampleUser = new NDKUser({ pubkey: 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52' });
 
 const sampleTag: NDKTag = [
     'sticker',
@@ -62,7 +63,7 @@ describe('NDKStorySticker', () => {
         const expectedTag: NDKTag = [
             'sticker',
             'pubkey',
-            'sample-pubkey',
+            'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52',
             '250,400',
             '150x150',
             'style highlight',
@@ -75,5 +76,45 @@ describe('NDKStorySticker', () => {
         const invalidTag: NDKTag = ['invalid', 'tag'];
         const sticker = NDKStorySticker.fromTag(invalidTag);
         expect(sticker).toBeNull();
+    });
+
+    test('isValid should return true for valid stickers', () => {
+        const sticker = new NDKStorySticker(NDKStoryStickerType.Text);
+        sticker.value = 'Test Sticker';
+        sticker.position = { x: 100, y: 200 };
+        sticker.dimension = { width: 300, height: 100 };
+        
+        expect(sticker.isValid).toBe(true);
+    });
+
+    test('isValid should return false when dimensions are invalid', () => {
+        const sticker = new NDKStorySticker(NDKStoryStickerType.Text);
+        sticker.value = 'Test Sticker';
+        sticker.position = { x: 100, y: 200 };
+        sticker.dimension = { width: NaN, height: 100 };
+        
+        expect(sticker.isValid).toBe(false);
+        expect(sticker.hasValidDimensions()).toBe(false);
+        expect(sticker.hasValidPosition()).toBe(true);
+    });
+
+    test('isValid should return false when position is invalid', () => {
+        const sticker = new NDKStorySticker(NDKStoryStickerType.Text);
+        sticker.value = 'Test Sticker';
+        sticker.position = { x: NaN, y: 200 };
+        sticker.dimension = { width: 300, height: 100 };
+        
+        expect(sticker.isValid).toBe(false);
+        expect(sticker.hasValidDimensions()).toBe(true);
+        expect(sticker.hasValidPosition()).toBe(false);
+    });
+
+    test('toTag should throw an error for invalid stickers', () => {
+        const sticker = new NDKStorySticker(NDKStoryStickerType.Text);
+        sticker.value = 'Test Sticker';
+        sticker.position = { x: NaN, y: 200 };
+        sticker.dimension = { width: 300, height: 100 };
+        
+        expect(() => sticker.toTag()).toThrow('Invalid sticker: position is invalid');
     });
 });

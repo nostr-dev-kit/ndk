@@ -192,15 +192,26 @@ export class NDKStorySticker<T extends NDKStoryStickerType = NDKStoryStickerType
      * 
      * @returns {boolean} - True if the sticker is valid, false otherwise.
      */
-    isValid(): boolean {
+    get isValid() {
         return this.hasValidDimensions() && this.hasValidPosition();
     }
 
-    hasValidDimensions = () => typeof this.dimension.width === 'number' && typeof this.dimension.height === 'number';
-    hasValidPosition = () => typeof this.position.x === 'number' && typeof this.position.y === 'number';
+    hasValidDimensions = () => {
+        return typeof this.dimension.width === 'number' && 
+               typeof this.dimension.height === 'number' && 
+               !isNaN(this.dimension.width) && 
+               !isNaN(this.dimension.height);
+    }
+    
+    hasValidPosition = () => {
+        return typeof this.position.x === 'number' && 
+               typeof this.position.y === 'number' && 
+               !isNaN(this.position.x) && 
+               !isNaN(this.position.y);
+    }
 
     toTag(): NDKTag {
-        if (!this.isValid()) {
+        if (!this.isValid) {
             const errors = [
                 !this.hasValidDimensions() ? 'dimensions is invalid' : undefined,
                 !this.hasValidPosition() ? 'position is invalid' : undefined,

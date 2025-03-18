@@ -1,6 +1,6 @@
 packages:
   - packages/*
-  - ndk
+  - ndk-core
   - ndk-test
   - ndk-cache-dexie
   - ndk-svelte

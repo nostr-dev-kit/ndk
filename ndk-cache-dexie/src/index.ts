@@ -527,25 +527,30 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         return true;
     }
 
-    private byKinds(
-        filterKeys: Set<string>,
-        filter: NDKFilter,
-        subscription: NDKSubscription
-    ): boolean {
-        if (!filter.kinds) return false;
-        const f = ["kinds"];
-        const hasAllKeys = filterKeys.size === f.length && f.every((k) => filterKeys.has(k));
-
-        let events: Event[] = [];
-
-        if (!hasAllKeys) return false;
-
-        for (const kind of filter.kinds) {
-            events = [...events, ...Array.from(this.events.getFromIndex("kind", kind))];
+    private byKinds(filterKeys: Set<string>, filter: NDKFilter, subscription: NDKSubscription): boolean {
+        if (!filter.kinds || filterKeys.size !== 1 || !filterKeys.has("kinds")) return false;
+    
+        const limit = filter.limit || 500;
+        let totalEvents = 0;
+        const processedEventIds = new Set<string>();
+    
+        const sortedKinds = [...filter.kinds].sort((a, b) => 
+            (this.events.indexes.get("kind")?.get(a)?.size || 0) - (this.events.indexes.get("kind")?.get(b)?.size || 0)
+        );
+    
+        for (const kind of sortedKinds) {
+            const events = this.events.getFromIndex("kind", kind);
+            for (const event of events) {
+                if (processedEventIds.has(event.id)) continue;
+    
+                processedEventIds.add(event.id);
+                foundEvent(subscription, event, event.relay, filter);
+                totalEvents++;
+    
+                if (totalEvents >= limit) break;
+            }
+            if (totalEvents >= limit) break;
         }
-
-        foundEvents(subscription, events, filter);
-
         return true;
     }
 }

@@ -26,10 +26,12 @@
     ],
     "scripts": {
         "dev": "pnpm build --watch",
-        "build": "tsup src/index.ts --format cjs,esm --dts",
+        "build": "tsup src/index.ts src/performance-test.ts --format cjs,esm --dts",
         "clean": "rm -rf dist",
         "lint": "prettier --check . && eslint .",
-        "format": "prettier --write ."
+        "format": "prettier --write .",
+        "test": "vitest",
+        "perf-test": "pnpm build && node dist/performance-test.js"
     },
     "keywords": [
         "nostr",
@@ -44,15 +46,14 @@
         "@nostr-dev-kit/eslint-config-custom": "workspace:*",
         "@nostr-dev-kit/tsconfig": "workspace:*",
         "@types/debug": "^4.1.12",
-        "@types/jest": "^29.5.13",
         "@types/node": "^22.6.1",
         "fake-indexeddb": "^6.0.0",
-        "jest": "^29.7.0",
         "prettier": "^3.3.3",
-        "ts-jest": "^29.2.5",
+        "ts-node": "^10.9.2",
         "tsup": "^8.3.0",
         "typedoc": "^0.26.7",
-        "typedoc-plugin-markdown": "^4.3.0"
+        "typedoc-plugin-markdown": "^4.3.0",
+        "vitest": "^1.2.0"
     },
     "dependencies": {
         "@nostr-dev-kit/ndk": "workspace:*",

@@ -511,7 +511,11 @@ export class NDKSubscription extends EventEmitter<{
     }
 
     /**
-     * Send REQ to relays
+     * Find available relays that should be part of this subscription and execute in them.
+     * 
+     * Note that this is executed in addition to using the pool monitor, so even if the relay set
+     * that is computed (i.e. we don't have any relays available), when relays come online, we will
+     * check if we need to execute in them.
      */
     private startWithRelays(): void {
         if (!this.relaySet || this.relaySet.relays.size === 0) {
@@ -523,10 +527,6 @@ export class NDKSubscription extends EventEmitter<{
             }
         }
 
-        if (!this.relayFilters || this.relayFilters.size === 0) {
-            console.error("No relays found for subscription %s", this.subId, this.filters);
-            return;
-        }
         // iterate through the this.relayFilters
         for (const [relayUrl, filters] of this.relayFilters) {
             const relay = this.pool.getRelay(relayUrl, true, true, filters);

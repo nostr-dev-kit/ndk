@@ -7,7 +7,7 @@ const ndk = new NDK();
 const invalidEvent = new NDKEvent(ndk, {
     kind: 1,
     created_at: 1234567890,
-    pubkey: "pubkey", // This is invalid based on the Pubkey regex
+    pubkey: "invalid_pubkey", // This is invalid based on the Pubkey regex
     id: "id",
     sig: "signature", // This signature won't verify either
     tags: [],

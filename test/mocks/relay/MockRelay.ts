@@ -1,5 +1,5 @@
 import { EventEmitter } from "events";
-import { NDKRelayStatus, NDKEvent, NDKFilter, NDKSubscription } from "../../../ndk/src";
+import { NDKRelayStatus, NDKEvent, NDKFilter, NDKSubscription } from "../../../ndk-core/src";
 
 interface MockRelayOptions {
     simulateDisconnect?: boolean;

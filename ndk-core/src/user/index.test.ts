@@ -1,22 +1,18 @@
-import { nip19 } from "nostr-tools";
 import { NDKEvent } from "../events/index.js";
 import { NDK } from "../ndk/index.js";
 import { NDKSubscription } from "../subscription/index.js";
 import { NDKUser, type ProfilePointer, type NDKUserParams } from "./index.js";
 import * as Nip05 from "./nip05.js";
 import { describe, it, expect, beforeEach, vi } from "vitest";
-
-vi.mock("nostr-tools", () => ({
-    ...vi.importActual("nostr-tools"),
-    nip19: {
-        npubEncode: vi.fn().mockImplementation(() => "npub1_encoded_npub"),
-        decode: vi.fn().mockReturnValue({ type: "npub", data: "decoded_hexpubkey" }),
-    },
-}));
+import { EventGenerator } from "@nostr-dev-kit/ndk-test-utils";
 
 describe("NDKUser", () => {
+    let ndk: NDK;
+
     beforeEach(() => {
         vi.clearAllMocks();
+        ndk = new NDK();
+        EventGenerator.setNDK(ndk);
     });
 
     describe("constructor", () => {
@@ -38,7 +34,9 @@ describe("NDKUser", () => {
             };
 
             const user = new NDKUser(opts);
-            expect(user.npub).toEqual("npub1_encoded_npub");
+            expect(user.npub).toEqual(
+                "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft"
+            );
         });
 
         it("sets relayUrls from provided relayUrls", () => {
@@ -52,22 +50,17 @@ describe("NDKUser", () => {
         });
 
         it("sets pubkey and relayUrls from provided nprofile", () => {
-            (nip19.decode as ReturnType<typeof vi.fn>).mockReturnValueOnce({
-                type: "nprofile",
-                data: {
-                    pubkey: "test_pubkey_from_nprofile",
-                    relays: ["relay1", "relay2"],
-                },
-            });
-
             const opts: NDKUserParams = {
-                nprofile: "nprofile1qqsw3dy8lqh0v3kpgqxu43qvyy5jm4v3sekprpakjv93mfwqg",
+                nprofile:
+                    "nprofile1qqs04xzt6ldm9qhs0ctw0t58kf4z57umjzmjg6jywu0seadwtqqc75spr9mhxue69uhhq7tjv9kkjepwve5kzar2v9nzucm0d5qscamnwvaz7tmxxaazu6t0f6uyq5",
             };
 
             const user = new NDKUser(opts);
 
-            expect(user.pubkey).toEqual("test_pubkey_from_nprofile");
-            expect(user.relayUrls).toEqual(["relay1", "relay2"]);
+            expect(user.pubkey).toEqual(
+                "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"
+            );
+            expect(user.relayUrls).toEqual(["wss://pyramid.fiatjaf.com", "wss://f7z.io"]);
         });
     });
 
@@ -77,39 +70,33 @@ describe("NDKUser", () => {
                 npub: "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft",
             });
 
-            (nip19.decode as ReturnType<typeof vi.fn>).mockReturnValue({
-                data: "decoded_hexpubkey",
-            });
-
             const pubkey = user.pubkey;
 
-            expect(nip19.decode).toHaveBeenCalledWith(
-                "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft"
+            expect(pubkey).toEqual(
+                "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"
             );
-            expect(pubkey).toEqual("decoded_hexpubkey");
         });
     });
 
     describe("fetchProfile", () => {
-        const ndk = new NDK();
         let newEvent: NDKEvent;
         let oldEvent: NDKEvent;
-        const user = new NDKUser({
-            npub: "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft",
+        let user: NDKUser;
+        let pubkey: string;
+
+        beforeEach(() => {
+            user = new NDKUser({
+                npub: "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft",
+            });
+            user.ndk = ndk;
+            pubkey = user.pubkey;
         });
-        user.ndk = ndk;
-        (nip19.decode as ReturnType<typeof vi.fn>).mockReturnValue({
-            data: "decoded_hexpubkey",
-        });
-        const pubkey = user.pubkey;
 
         it("Returns updated fields", async () => {
-            newEvent = new NDKEvent(ndk, {
-                kind: 0,
-                pubkey: pubkey,
-                tags: [],
-                created_at: Date.now() / 1000 - 3600,
-                content: JSON.stringify({
+            // Use EventGenerator to create profile events
+            newEvent = EventGenerator.createEvent(
+                0,
+                JSON.stringify({
                     displayName: "JeffG",
                     name: "Jeff",
                     image: "https://image.url",
@@ -120,14 +107,13 @@ describe("NDKUser", () => {
                     lud16: "lud16value",
                     about: "About jeff",
                 }),
-            });
+                pubkey
+            );
+            newEvent.created_at = Math.floor(Date.now() / 1000) - 3600;
 
-            oldEvent = new NDKEvent(ndk, {
-                kind: 0,
-                pubkey: pubkey,
-                tags: [],
-                created_at: Date.now() / 1000 - 7200,
-                content: JSON.stringify({
+            oldEvent = EventGenerator.createEvent(
+                0,
+                JSON.stringify({
                     displayName: "JeffG_OLD",
                     name: "Jeff_OLD",
                     image: "https://image.url.old",
@@ -138,7 +124,9 @@ describe("NDKUser", () => {
                     lud16: "lud16value OLD",
                     about: "About jeff OLD",
                 }),
-            });
+                pubkey
+            );
+            oldEvent.created_at = Math.floor(Date.now() / 1000) - 7200;
 
             ndk.fetchEvent = vi.fn().mockResolvedValue(newEvent);
 
@@ -156,26 +144,24 @@ describe("NDKUser", () => {
 
         // "displayName" is ignored, we only look at the "display_name" field in the user profile
         it("Display name is set properly", async () => {
-            newEvent = new NDKEvent(ndk, {
-                kind: 0,
-                pubkey: pubkey,
-                tags: [],
-                created_at: Date.now() / 1000 - 3600,
-                content: JSON.stringify({
+            newEvent = EventGenerator.createEvent(
+                0,
+                JSON.stringify({
                     displayName: "JeffG",
                     display_name: "James",
                 }),
-            });
+                pubkey
+            );
+            newEvent.created_at = Math.floor(Date.now() / 1000) - 3600;
 
-            oldEvent = new NDKEvent(ndk, {
-                kind: 0,
-                pubkey: pubkey,
-                tags: [],
-                created_at: Date.now() / 1000 - 7200,
-                content: JSON.stringify({
+            oldEvent = EventGenerator.createEvent(
+                0,
+                JSON.stringify({
                     displayName: "Bob",
                 }),
-            });
+                pubkey
+            );
+            oldEvent.created_at = Math.floor(Date.now() / 1000) - 7200;
 
             ndk.fetchEvent = vi.fn().mockResolvedValue(newEvent);
 
@@ -185,25 +171,23 @@ describe("NDKUser", () => {
 
         // Both "image" and "picture" are set to the "image" field in the user profile
         it("Image is set properly", async () => {
-            newEvent = new NDKEvent(ndk, {
-                kind: 0,
-                pubkey: pubkey,
-                tags: [],
-                created_at: Date.now() / 1000 - 3600,
-                content: JSON.stringify({
+            newEvent = EventGenerator.createEvent(
+                0,
+                JSON.stringify({
                     picture: "https://set-from-picture-field.url",
                 }),
-            });
+                pubkey
+            );
+            newEvent.created_at = Math.floor(Date.now() / 1000) - 3600;
 
-            oldEvent = new NDKEvent(ndk, {
-                kind: 0,
-                pubkey: pubkey,
-                tags: [],
-                created_at: Date.now() / 1000 - 7200,
-                content: JSON.stringify({
+            oldEvent = EventGenerator.createEvent(
+                0,
+                JSON.stringify({
                     image: "https://set-from-image-field.url",
                 }),
-            });
+                pubkey
+            );
+            oldEvent.created_at = Math.floor(Date.now() / 1000) - 7200;
 
             ndk.fetchEvent = vi.fn().mockResolvedValue(newEvent);
 
@@ -212,25 +196,23 @@ describe("NDKUser", () => {
         });
 
         it("Allows for arbitrary values to be set on user profiles", async () => {
-            newEvent = new NDKEvent(ndk, {
-                kind: 0,
-                pubkey: pubkey,
-                tags: [],
-                created_at: Date.now() / 1000 - 3600,
-                content: JSON.stringify({
+            newEvent = EventGenerator.createEvent(
+                0,
+                JSON.stringify({
                     customField: "custom NEW",
                 }),
-            });
+                pubkey
+            );
+            newEvent.created_at = Math.floor(Date.now() / 1000) - 3600;
 
-            oldEvent = new NDKEvent(ndk, {
-                kind: 0,
-                pubkey: pubkey,
-                tags: [],
-                created_at: Date.now() / 1000 - 7200,
-                content: JSON.stringify({
+            oldEvent = EventGenerator.createEvent(
+                0,
+                JSON.stringify({
                     customField: "custom OLD",
                 }),
-            });
+                pubkey
+            );
+            oldEvent.created_at = Math.floor(Date.now() / 1000) - 7200;
 
             ndk.fetchEvent = vi.fn().mockResolvedValue(newEvent);
 
@@ -241,7 +223,6 @@ describe("NDKUser", () => {
 
     describe("validateNip05", () => {
         it("validates the NIP-05 for users", async () => {
-            const ndk = new NDK();
             const user = ndk.getUser({
                 pubkey: "1739d937dc8c0c7370aa27585938c119e25c41f6c441a5d34c6d38503e3136ef",
             });

@@ -1,32 +1,33 @@
-import { NDKEvent, NDKRelay, NDKRelayStatus, NDKFilter } from "../../../ndk/src";
-import { MockRelay } from "./MockRelay";
+import type { NDKEvent, NDKFilter, NDKRelayStatus } from "@nostr-dev-kit/ndk";
+import { RelayMock } from "./relay-mock";
 
-export class MockRelayPool {
-    mockRelays: Map<string, MockRelay> = new Map();
-    relays: Set<MockRelay> = new Set();
+export class RelayPoolMock {
+    mockRelays: Map<string, RelayMock> = new Map();
+    relays: Set<RelayMock> = new Set();
     private eventListeners: Map<string, Set<Function>> = new Map();
+    private onceListeners: Map<string, Set<Function>> = new Map();
 
     constructor() {
         // Initialize the mock relay pool
     }
 
-    addMockRelay(url: string, options = {}): MockRelay {
-        const mockRelay = new MockRelay(url, options);
+    addMockRelay(url: string, options = {}): RelayMock {
+        const mockRelay = new RelayMock(url, options);
         this.mockRelays.set(url, mockRelay);
         this.relays.add(mockRelay);
         return mockRelay;
     }
 
-    getMockRelay(url: string): MockRelay | undefined {
+    getMockRelay(url: string): RelayMock | undefined {
         return this.mockRelays.get(url);
     }
 
-    addRelay(relay: MockRelay): void {
+    addRelay(relay: RelayMock): void {
         this.relays.add(relay);
         this.mockRelays.set(relay.url, relay);
     }
 
-    removeRelay(relay: MockRelay): void {
+    removeRelay(relay: RelayMock): void {
         this.relays.delete(relay);
         this.mockRelays.delete(relay.url);
     }
@@ -63,13 +64,13 @@ export class MockRelayPool {
     }
 
     // Add this method to support the NDKSubscription implementation
-    permanentAndConnectedRelays(): MockRelay[] {
-        return Array.from(this.relays).filter((relay) => relay.status === NDKRelayStatus.CONNECTED);
+    permanentAndConnectedRelays(): RelayMock[] {
+        return Array.from(this.relays).filter((relay) => relay.status === 2); // CONNECTED
     }
 
     // Add this method to support the eoseReceived method in NDKSubscription
-    connectedRelays(): MockRelay[] {
-        return Array.from(this.relays).filter((relay) => relay.status === NDKRelayStatus.CONNECTED);
+    connectedRelays(): RelayMock[] {
+        return Array.from(this.relays).filter((relay) => relay.status === 2); // CONNECTED
     }
 
     // Add this method to support the NDKSubscription implementation
@@ -78,7 +79,7 @@ export class MockRelayPool {
         connect: boolean = false,
         createIfNotExists: boolean = false,
         _filters?: NDKFilter[]
-    ): MockRelay {
+    ): RelayMock {
         let relay = this.mockRelays.get(url);
 
         if (!relay && createIfNotExists) {
@@ -89,7 +90,7 @@ export class MockRelayPool {
             throw new Error(`Relay ${url} not found and createIfNotExists is false`);
         }
 
-        if (connect && relay.status !== NDKRelayStatus.CONNECTED) {
+        if (connect && relay.status !== 2) { // CONNECTED
             relay.connect();
         }
 
@@ -104,10 +105,37 @@ export class MockRelayPool {
         this.eventListeners.get(eventName)?.add(callback);
     }
 
+    // Add 'once' event listener support (required by NDK)
+    once(eventName: string, callback: Function): void {
+        if (!this.onceListeners.has(eventName)) {
+            this.onceListeners.set(eventName, new Set());
+        }
+        
+        // Create a wrapper that removes itself after first execution
+        const wrappedCallback = (...args: any[]) => {
+            callback(...args);
+            
+            // Remove the listener after execution
+            this.onceListeners.get(eventName)?.delete(wrappedCallback);
+        };
+        
+        this.onceListeners.get(eventName)?.add(wrappedCallback);
+        
+        // Also register in normal listeners for emit to find it
+        if (!this.eventListeners.has(eventName)) {
+            this.eventListeners.set(eventName, new Set());
+        }
+        this.eventListeners.get(eventName)?.add(wrappedCallback);
+    }
+
     // Remove event listener
     off(eventName: string, callback: Function): void {
         if (this.eventListeners.has(eventName)) {
             this.eventListeners.get(eventName)?.delete(callback);
+        }
+        
+        if (this.onceListeners.has(eventName)) {
+            this.onceListeners.get(eventName)?.delete(callback);
         }
     }
 
@@ -119,4 +147,4 @@ export class MockRelayPool {
             });
         }
     }
-}
+} 

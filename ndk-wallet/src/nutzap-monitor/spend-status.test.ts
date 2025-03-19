@@ -1,7 +1,8 @@
 import { CashuWallet, CheckStateEnum } from "@cashu/cashu-ts";
 import NDK, { NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
-import { mockNutzap } from "../tests/index.js";
+import { mockNutzap } from "@nostr-dev-kit/ndk-test-utils";
 import { getProofSpendState } from "./spend-status";
+import { vi, describe, it, expect } from 'vitest';
 
 // Create NDK with a signer
 const ndkSigner = NDKPrivateKeySigner.generate();
@@ -17,7 +18,7 @@ describe("spend-status", () => {
                 await mockNutzap("https://mint2.com", 200, ndk, { senderPk: ndkSigner }),
             ];
 
-            wallet.checkProofsStates = jest.fn().mockResolvedValue([
+            wallet.checkProofsStates = vi.fn().mockResolvedValue([
                 { state: CheckStateEnum.UNSPENT, Y: "1", witness: "1" }, // UNSPENT
                 { state: CheckStateEnum.SPENT, Y: "1", witness: "1" }, // SPENT
             ]);
@@ -38,7 +39,7 @@ describe("spend-status", () => {
 
             nutzap.proofs.push(duplicateProof);
 
-            wallet.checkProofsStates = jest
+            wallet.checkProofsStates = vi
                 .fn()
                 .mockResolvedValue([{ state: CheckStateEnum.UNSPENT, Y: "1", witness: "1" }]);
 
@@ -50,7 +51,7 @@ describe("spend-status", () => {
 
         it("should handle empty nutzap array", async () => {
             const freshWallet = new CashuWallet({} as any);
-            freshWallet.checkProofsStates = jest.fn().mockResolvedValue([]);
+            freshWallet.checkProofsStates = vi.fn().mockResolvedValue([]);
 
             const result = await getProofSpendState(freshWallet, []);
 
@@ -65,7 +66,7 @@ describe("spend-status", () => {
             const nutzap = await mockNutzap("https://mint1.com", 100, ndk, { senderPk: ndkSigner });
             nutzap.proofs = [];
 
-            wallet.checkProofsStates = jest.fn().mockResolvedValue([]);
+            wallet.checkProofsStates = vi.fn().mockResolvedValue([]);
 
             const result = await getProofSpendState(wallet, [nutzap]);
 
@@ -78,7 +79,7 @@ describe("spend-status", () => {
 
         it("should handle nutzaps with multiple proofs correctly", async () => {
             // Create a nutzap with multiple proofs
-            const nutzap = await mockNutzap("https://mint1.com", 100, undefined, {
+            const nutzap = await mockNutzap("https://mint1.com", 100, ndk, {
                 senderPk: ndkSigner,
             });
 
@@ -91,7 +92,7 @@ describe("spend-status", () => {
             nutzap.proofs.push(secondProof);
 
             // Mock checkProofsStates to return one spent and one unspent
-            wallet.checkProofsStates = jest.fn().mockResolvedValue([
+            wallet.checkProofsStates = vi.fn().mockResolvedValue([
                 { state: CheckStateEnum.UNSPENT, Y: "1", witness: "1" },
                 { state: CheckStateEnum.SPENT, Y: "1", witness: "1" },
             ]);
@@ -110,12 +111,12 @@ describe("spend-status", () => {
         });
 
         it("should handle error responses from checkProofsStates gracefully", async () => {
-            const nutzap = await mockNutzap("https://mint1.com", 100, undefined, {
+            const nutzap = await mockNutzap("https://mint1.com", 100, ndk, {
                 senderPk: ndkSigner,
             });
 
             // Mock checkProofsStates to throw an error
-            wallet.checkProofsStates = jest.fn().mockRejectedValue(new Error("Mint server error"));
+            wallet.checkProofsStates = vi.fn().mockRejectedValue(new Error("Mint server error"));
 
             // The function should gracefully handle errors
             await expect(getProofSpendState(wallet, [nutzap])).rejects.toThrow("Mint server error");
@@ -132,7 +133,7 @@ describe("spend-status", () => {
             nutzaps[1].proofs[0].C = "uniqueC1";
             nutzaps[2].proofs[0].C = "uniqueC2";
 
-            wallet.checkProofsStates = jest.fn().mockResolvedValue([
+            wallet.checkProofsStates = vi.fn().mockResolvedValue([
                 { state: CheckStateEnum.UNSPENT, Y: "1", witness: "1" }, // UNSPENT
                 { state: CheckStateEnum.SPENT, Y: "1", witness: "1" }, // SPENT
                 { state: CheckStateEnum.UNSPENT, Y: "1", witness: "1" }, // UNSPENT

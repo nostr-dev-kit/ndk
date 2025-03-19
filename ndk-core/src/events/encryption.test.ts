@@ -9,15 +9,14 @@ import { NDKRelaySet } from "../relay/sets";
 import { NDKKind } from "./kinds";
 import * as giftWrappingModule from "./gift-wrapping";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-
-const PRIVATE_KEY_1_FOR_TESTING =
-    "1fbc12b81e0b21f10fb219e88dd76fc80c7aa5369779e44e762fec6f460d6a89";
-const PRIVATE_KEY_2_FOR_TESTING =
-    "d30b946562050e6ced827113da15208730879c46547061b404434edff63236fa";
+import { TestFixture, UserGenerator, SignerGenerator } from "@nostr-dev-kit/ndk-test-utils";
 
 describe("NDKEvent encryption (Nip44 & Nip59)", () => {
+    let fixture: TestFixture;
+
     beforeEach(() => {
         vi.clearAllMocks();
+        fixture = new TestFixture();
     });
 
     afterEach(() => {
@@ -25,18 +24,21 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
     });
 
     it("encrypts and decrypts an NDKEvent using Nip44", async () => {
-        const { sendSigner, sendUser, receiveSigner, receiveUser } = await createPKSigners();
-        const sendEvent: NDKEvent = new NDKEvent(new NDK(), {
-            pubkey: sendUser.pubkey,
-            created_at: Math.floor(Date.now() / 1000),
-            tags: [],
-            content: "Test content",
-            kind: 1,
-        });
+        // Get test users
+        const sendUser = await fixture.getUser("alice");
+        const receiveUser = await fixture.getUser("bob");
+
+        // Set up signers
+        const sendSigner = fixture.getSigner("alice");
+        const receiveSigner = fixture.getSigner("bob");
+        fixture.ndk.signer = sendSigner;
+
+        // Create event
+        const sendEvent = await fixture.eventFactory.createSignedTextNote("Test content", "alice");
 
         const original = sendEvent.content;
         await sendEvent.encrypt(receiveUser, sendSigner, "nip44");
-        const receiveEvent = new NDKEvent(new NDK(), sendEvent.rawEvent());
+        const receiveEvent = new NDKEvent(fixture.ndk, sendEvent.rawEvent());
         await receiveEvent.decrypt(sendUser, receiveSigner, "nip44");
         const decrypted = receiveEvent.content;
 
@@ -44,18 +46,25 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
     });
 
     it("encrypts and decrypts an NDKEvent forcing Nip04 decryption, if the event kind is 4", async () => {
-        const { sendSigner, sendUser, receiveSigner, receiveUser } = await createPKSigners();
-        const sendEvent: NDKEvent = new NDKEvent(new NDK(), {
-            pubkey: sendUser.pubkey,
-            created_at: Math.floor(Date.now() / 1000),
-            tags: [],
-            content: "Test content",
-            kind: 4,
-        });
+        // Get test users
+        const sendUser = await fixture.getUser("alice");
+        const receiveUser = await fixture.getUser("bob");
+
+        // Set up signers
+        const sendSigner = fixture.getSigner("alice");
+        const receiveSigner = fixture.getSigner("bob");
+        fixture.ndk.signer = sendSigner;
+
+        // Create a DM
+        const sendEvent = await fixture.eventFactory.createDirectMessage(
+            "Test content",
+            "alice",
+            "bob"
+        );
 
         const original = sendEvent.content;
         await sendEvent.encrypt(receiveUser, sendSigner, "nip04");
-        const receiveEvent = new NDKEvent(new NDK(), sendEvent.rawEvent());
+        const receiveEvent = new NDKEvent(fixture.ndk, sendEvent.rawEvent());
         // Despite of specifying Nip44 here, the event kind 4 forces Nip04 encryption
         await receiveEvent.decrypt(sendUser, receiveSigner, "nip44");
         const decrypted = receiveEvent.content;
@@ -64,14 +73,17 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
     });
 
     it("encrypts and decrypts an NDKEvent using Nip17", async () => {
-        const { sendSigner, sendUser, receiveSigner, receiveUser } = await createPKSigners();
-        const ndk = new NDK({ signer: sendSigner });
-        const message: NDKEvent = new NDKEvent(ndk, {
-            pubkey: sendUser.pubkey,
-            created_at: Math.floor(Date.now() / 1000),
-            tags: [],
-            content: "Hello Nip17!",
-        });
+        // Get test users
+        const sendUser = await fixture.getUser("alice");
+        const receiveUser = await fixture.getUser("bob");
+
+        // Set up signers
+        const sendSigner = fixture.getSigner("alice");
+        const receiveSigner = fixture.getSigner("bob");
+        fixture.ndk.signer = sendSigner;
+
+        // Create a text note
+        const message = await fixture.eventFactory.createSignedTextNote("Hello Nip17!", "alice");
         message.tags.push(["p", receiveUser.pubkey]);
 
         // Mock the gift wrapping functions
@@ -79,7 +91,7 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
         const giftUnwrapSpy = vi.spyOn(giftWrappingModule, "giftUnwrap");
 
         // Return a wrapped event
-        const wrappedEvent = new NDKEvent(ndk);
+        const wrappedEvent = new NDKEvent(fixture.ndk);
         wrappedEvent.kind = NDKKind.GiftWrap;
         wrappedEvent.content = "encrypted-content";
         wrappedEvent.tags = [["p", receiveUser.pubkey]];
@@ -87,8 +99,8 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
         wrappedEvent.created_at = Math.floor(Date.now() / 1000);
         giftWrapSpy.mockResolvedValue(wrappedEvent);
 
-        // Return an unwrapped event
-        const unwrappedEvent = new NDKEvent(ndk);
+        // Return an unwrapped event that matches the message
+        const unwrappedEvent = new NDKEvent(fixture.ndk);
         unwrappedEvent.kind = NDKKind.PrivateDirectMessage;
         unwrappedEvent.content = "Hello Nip17!";
         unwrappedEvent.pubkey = sendUser.pubkey;
@@ -108,27 +120,32 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
     });
 
     it("decrypts examples from Nip17 spec", async () => {
+        // These are specific secrets from the NIP-17 spec example
         const senderPk = "nsec1w8udu59ydjvedgs3yv5qccshcj8k05fh3l60k9x57asjrqdpa00qkmr89m";
         const receiverPk = "nsec12ywtkplvyq5t6twdqwwygavp5lm4fhuang89c943nf2z92eez43szvn4dt";
-        const { sendSigner, sendUser, receiveSigner, receiveUser } = await createPKSigners(
-            senderPk,
-            receiverPk
-        );
-        const ndk = new NDK({ signer: sendSigner });
+
+        // Create signers with these keys
+        const sendPKSigner = new NDKPrivateKeySigner(senderPk);
+        const sendUser = await sendPKSigner.user();
+        const receivePKSigner = new NDKPrivateKeySigner(receiverPk);
+        const receiveUser = await receivePKSigner.user();
+
+        // Initialize NDK with sender's signer
+        const ndk = new NDK({ signer: sendPKSigner });
 
         // Mock the gift unwrap function
         const giftUnwrapSpy = vi.spyOn(giftWrappingModule, "giftUnwrap");
 
-        // Create a response for the first unwrap call
+        // Create responses for unwrap calls
         const decryptedEvent1 = new NDKEvent(ndk);
         decryptedEvent1.content = "Hola, que tal?";
         giftUnwrapSpy.mockResolvedValueOnce(decryptedEvent1);
 
-        // Create a response for the second unwrap call
         const decryptedEvent2 = new NDKEvent(ndk);
         decryptedEvent2.content = "Hola, que tal?";
         giftUnwrapSpy.mockResolvedValueOnce(decryptedEvent2);
 
+        // Real encrypted events from the spec
         const encryptedForReceiver: NDKEvent = new NDKEvent(ndk, {
             id: "2886780f7349afc1344047524540ee716f7bdc1b64191699855662330bf235d8",
             pubkey: "8f8a7ec43b77d25799281207e1a47f7a654755055788f7482653f9c9661c6d51",
@@ -142,7 +159,7 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
         const decryptedReceiver = await giftWrappingModule.giftUnwrap(
             encryptedForReceiver,
             receiveUser,
-            receiveSigner
+            receivePKSigner
         );
         expect(decryptedReceiver.content).toBe("Hola, que tal?");
 
@@ -160,21 +177,35 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
         const decryptedSender = await giftWrappingModule.giftUnwrap(
             encryptedForSender,
             sendUser,
-            sendSigner
+            sendPKSigner
         );
         expect(decryptedSender.content).toBe("Hola, que tal?");
     });
 
     it("gift wraps and unwraps an NDKEvent using a private key signer according to Nip59", async () => {
-        const { sendSigner, sendUser, receiveSigner, receiveUser } = await createPKSigners();
-        const message = createDirectMessage(sendUser.pubkey, receiveUser.pubkey);
+        // Get test users
+        const sendUser = await fixture.getUser("alice");
+        const receiveUser = await fixture.getUser("bob");
+
+        // Set up signers
+        const sendSigner = fixture.getSigner("alice");
+        const receiveSigner = fixture.getSigner("bob");
+        fixture.ndk.signer = sendSigner;
+
+        // Create a direct message
+        const message = await fixture.eventFactory.createDirectMessage(
+            "hello world",
+            "alice",
+            "bob"
+        );
+        message.kind = 14; // Override kind to match test requirements
 
         // Mock gift wrap and unwrap
         const giftWrapSpy = vi.spyOn(giftWrappingModule, "giftWrap");
         const giftUnwrapSpy = vi.spyOn(giftWrappingModule, "giftUnwrap");
 
         // Create a wrapped event
-        const wrappedEvent = new NDKEvent(message.ndk);
+        const wrappedEvent = new NDKEvent(fixture.ndk);
         wrappedEvent.kind = NDKKind.GiftWrap;
         wrappedEvent.pubkey = message.pubkey;
         wrappedEvent.created_at = message.created_at;
@@ -193,8 +224,22 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
     });
 
     it("gift wraps and unwraps an NDKEvent using a Nip07 signer for sending according to Nip59", async () => {
-        const { sendSigner, sendUser, receiveSigner, receiveUser } = await createPKSigners();
-        const message = createDirectMessage(sendUser.pubkey, receiveUser.pubkey);
+        // Get test users
+        const sendUser = await fixture.getUser("alice");
+        const receiveUser = await fixture.getUser("bob");
+
+        // Set up signers
+        const sendSigner = fixture.getSigner("alice");
+        const receiveSigner = fixture.getSigner("bob");
+        fixture.ndk.signer = sendSigner;
+
+        // Create a direct message
+        const message = await fixture.eventFactory.createDirectMessage(
+            "hello world",
+            "alice",
+            "bob"
+        );
+        message.kind = 14; // Override kind to match test requirements
 
         /** @ts-ignore */
         globalThis.window = {
@@ -212,7 +257,7 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
         const giftUnwrapSpy = vi.spyOn(giftWrappingModule, "giftUnwrap");
 
         // Create a wrapped event
-        const wrappedEvent = new NDKEvent(message.ndk);
+        const wrappedEvent = new NDKEvent(fixture.ndk);
         wrappedEvent.kind = NDKKind.GiftWrap;
         wrappedEvent.pubkey = message.pubkey;
         wrappedEvent.created_at = message.created_at;
@@ -232,8 +277,22 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
     });
 
     it("gift wraps and unwraps an NDKEvent using a Nip07 signer for receiving according to Nip59", async () => {
-        const { sendSigner, sendUser, receiveSigner, receiveUser } = await createPKSigners();
-        const message = createDirectMessage(sendUser.pubkey, receiveUser.pubkey);
+        // Get test users
+        const sendUser = await fixture.getUser("alice");
+        const receiveUser = await fixture.getUser("bob");
+
+        // Set up signers
+        const sendSigner = fixture.getSigner("alice");
+        const receiveSigner = fixture.getSigner("bob");
+        fixture.ndk.signer = sendSigner;
+
+        // Create a direct message
+        const message = await fixture.eventFactory.createDirectMessage(
+            "hello world",
+            "alice",
+            "bob"
+        );
+        message.kind = 14; // Override kind to match test requirements
 
         /** @ts-ignore */
         globalThis.window = {
@@ -251,7 +310,7 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
         const giftUnwrapSpy = vi.spyOn(giftWrappingModule, "giftUnwrap");
 
         // Create a wrapped event
-        const wrappedEvent = new NDKEvent(message.ndk);
+        const wrappedEvent = new NDKEvent(fixture.ndk);
         wrappedEvent.kind = NDKKind.GiftWrap;
         wrappedEvent.pubkey = message.pubkey;
         wrappedEvent.created_at = message.created_at;
@@ -271,11 +330,24 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
     });
 
     it("gift wrapping using a Nip46 signer according to Nip59 for both Nip04 and Nip44 encryption", async () => {
-        const { sendSigner, sendUser, receiveSigner, receiveUser } = await createPKSigners();
-        const message = createDirectMessage(sendUser.pubkey, receiveUser.pubkey);
+        // Get test users
+        const sendUser = await fixture.getUser("alice");
+        const receiveUser = await fixture.getUser("bob");
+
+        // Set up signers
+        const sendSigner = fixture.getSigner("alice");
+        fixture.ndk.signer = sendSigner;
+
+        // Create a direct message
+        const message = await fixture.eventFactory.createDirectMessage(
+            "hello world",
+            "alice",
+            "bob"
+        );
+        message.kind = 14; // Override kind to match test requirements
 
         const send46Signer = new NDKNip46Signer(
-            new NDK(),
+            fixture.ndk,
             `bunker://example.com?pubkey=${sendUser.pubkey}`,
             sendSigner
         );
@@ -313,40 +385,6 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
         expect(mockSendRequest.mock.calls[1][1]).toBe("nip04_encrypt");
     });
 });
-
-async function createPKSigners(
-    senderPk: string = PRIVATE_KEY_1_FOR_TESTING,
-    receiverPk: string = PRIVATE_KEY_2_FOR_TESTING
-): Promise<{
-    sendSigner: NDKSigner;
-    sendUser: NDKUser;
-    receiveSigner: NDKSigner;
-    receiveUser: NDKUser;
-}> {
-    const sendPKSigner = new NDKPrivateKeySigner(senderPk);
-    const sendUser = await sendPKSigner.user();
-    const receivePKSigner = new NDKPrivateKeySigner(receiverPk);
-    const receiveUser = await receivePKSigner.user();
-    return {
-        sendSigner: sendPKSigner,
-        sendUser,
-        receiveSigner: receivePKSigner,
-        receiveUser,
-    };
-}
-
-function createDirectMessage(senderPubkey: string, receiverPubkey: string): NDKEvent {
-    const message = new NDKEvent(new NDK(), {
-        kind: 14,
-        pubkey: senderPubkey,
-        content: "hello world",
-        created_at: Math.floor(Date.now() / 1000),
-        tags: [],
-    });
-    message.tags.push(["p", receiverPubkey]);
-
-    return message;
-}
 
 function createNip44(sendSigner: NDKSigner, receiveSigner: NDKSigner) {
     return {

@@ -1,8 +1,5 @@
-import NDK, { NDKEvent, NDKKind } from "../../../ndk/src";
-import { NDKPrivateKeySigner } from "../../../ndk/src/signers/private-key";
-
-// Since we're using a pnpm monorepo, we need to handle the nostr-tools import carefully
-// The pure subpath is being used to avoid WebCrypto dependencies
+import { NDKEvent } from "@nostr-dev-kit/ndk";
+import { NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
 import * as nostrTools from "nostr-tools";
 
 /**
@@ -13,10 +10,15 @@ import * as nostrTools from "nostr-tools";
  */
 export class EventGenerator {
     private static privateKeys = new Map<string, string>();
-    private static ndk: NDK | null = null;
+    private static ndk: any = null;
 
-    static setNDK(ndk: NDK): void {
+    static setNDK(ndk: any): void {
         this.ndk = ndk;
+        
+        // Check if the NDK instance has a signer, if not create one
+        if (!ndk.signer) {
+            ndk.signer = NDKPrivateKeySigner.generate();
+        }
     }
 
     static getPrivateKeyForPubkey(pubkey: string): string {
@@ -40,7 +42,7 @@ export class EventGenerator {
     }
 
     static createEvent(
-        kind: number = NDKKind.Text,
+        kind: number = 1, // text note
         content: string = "",
         pubkey: string = ""
     ): NDKEvent {
@@ -73,11 +75,10 @@ export class EventGenerator {
         }
 
         const privateKey = this.getPrivateKeyForPubkey(pubkey);
-        const event = this.createEvent(NDKKind.Text, content, pubkey);
+        const event = this.createEvent(1, content, pubkey);
 
-        // Create a signer and sign the event
-        const signer = new NDKPrivateKeySigner(privateKey);
-        await event.sign(signer);
+        // Sign the event using NDK's signing mechanism
+        await event.sign();
 
         return event;
     }
@@ -91,14 +92,11 @@ export class EventGenerator {
             throw new Error("NDK not set in EventGenerator. Call setNDK first.");
         }
 
-        const fromPrivateKey = this.getPrivateKeyForPubkey(from);
-
-        const event = this.createEvent(NDKKind.EncryptedDirectMessage, content, from);
+        const event = this.createEvent(4, content, from);
         event.tags.push(["p", to]);
 
-        // Create a signer and sign the event
-        const signer = new NDKPrivateKeySigner(fromPrivateKey);
-        await event.sign(signer);
+        // Sign the event
+        await event.sign();
 
         return event;
     }
@@ -113,19 +111,16 @@ export class EventGenerator {
             pubkey = nostrTools.getPublicKey(secretKey);
         }
 
-        const privateKey = this.getPrivateKeyForPubkey(pubkey);
-
         const event = this.createEvent(
-            NDKKind.Repost,
-            JSON.stringify(originalEvent.rawEvent()),
+            6, // Repost kind
+            JSON.stringify(await originalEvent.toNostrEvent()),
             pubkey
         );
         event.tags.push(["e", originalEvent.id || ""]);
         event.tags.push(["p", originalEvent.pubkey]);
 
-        // Create a signer and sign the event
-        const signer = new NDKPrivateKeySigner(privateKey);
-        await event.sign(signer);
+        // Sign the event
+        await event.sign();
 
         return event;
     }
@@ -151,17 +146,14 @@ export class EventGenerator {
             pubkey = nostrTools.getPublicKey(secretKey);
         }
 
-        const privateKey = this.getPrivateKeyForPubkey(pubkey);
-
         const event = this.createEvent(kind, content, pubkey);
 
         // Parameterized replaceable events require a d tag
         event.tags.push(["d", dTag]);
 
-        // Create a signer and sign the event
-        const signer = new NDKPrivateKeySigner(privateKey);
-        await event.sign(signer);
+        // Sign the event
+        await event.sign();
 
         return event;
     }
-}
+} 

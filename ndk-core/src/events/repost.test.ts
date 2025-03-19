@@ -1,6 +1,7 @@
 import { NDKEvent } from ".";
 import { NDK } from "../ndk";
 import { NDKPrivateKeySigner } from "../signers/private-key";
+import { EventGenerator } from "@nostr-dev-kit/ndk-test-utils";
 
 const ndk = new NDK({
     signer: NDKPrivateKeySigner.generate(),
@@ -9,9 +10,11 @@ let event1: NDKEvent;
 
 describe("repost", () => {
     beforeEach(async () => {
-        event1 = new NDKEvent(ndk);
-        event1.kind = 1;
-        event1.content = "hi";
+        // Set up the EventGenerator with our NDK instance
+        EventGenerator.setNDK(ndk);
+
+        // Create a text note event using EventGenerator
+        event1 = EventGenerator.createEvent(1, "hi");
     });
 
     it("includes the JSON-stringified event", async () => {

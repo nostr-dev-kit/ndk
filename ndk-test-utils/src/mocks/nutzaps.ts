@@ -1,6 +1,5 @@
 import { NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
 import { NDKNutzap } from "@nostr-dev-kit/ndk";
-import NDK from "@nostr-dev-kit/ndk";
 
 export type Proof = {
     id: string;
@@ -22,35 +21,29 @@ export type Proof = {
 export async function mockNutzap(
     mint: string,
     amount: number,
-    ndk?: NDK | null,
+    ndk: any,
     {
         senderPk = NDKPrivateKeySigner.generate(),
         recipientPubkey,
         content = "",
     }: {
-        senderPk?: NDKPrivateKeySigner;
+        senderPk?: any;
         recipientPubkey?: string;
         content?: string;
     } = {}
 ) {
     if (!recipientPubkey) {
-        // Generate a recipient pubkey if not provided and ndk doesn't have a signer
-        if (!ndk || !ndk.signer) {
-            const tempSigner = NDKPrivateKeySigner.generate();
-            recipientPubkey = (await tempSigner.user()).pubkey;
-        } else {
-            ndk.assertSigner();
-            recipientPubkey = (await ndk.signer!.user()).pubkey;
-        }
+        ndk.assertSigner();
+        recipientPubkey = (await ndk.signer!.user()).pubkey;
     }
 
-    // Create NDK instance if not provided
-    const ndkInstance = ndk || new NDK();
-
-    const nutzap = new NDKNutzap(ndkInstance);
+    const nutzap = new NDKNutzap(ndk);
     nutzap.mint = mint;
     nutzap.proofs = [mockProof(mint, amount, recipientPubkey)];
-    nutzap.content = content;
+    if (recipientPubkey) {
+        nutzap.recipientPubkey = recipientPubkey;
+    }
+    nutzap.comment = content;
     await nutzap.sign(senderPk);
     return nutzap;
 }
@@ -83,4 +76,4 @@ export function mockProof(C: string, amount: number, p2pk?: string): Proof {
     }
 
     return proof;
-}
+} 

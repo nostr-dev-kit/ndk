@@ -1,15 +1,18 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import NDK, { NDKSubscription, NDKFilter, NDKKind, NDKEvent, NDKRelay, NDKRelaySet } from "./index";
-import { MockRelayPool } from "../../test/mocks/relay/MockRelayPool";
-import { EventGenerator } from "../../test/mocks/events/EventGenerator";
-import { expectEventToBeValid, expectEventsToMatch } from "../../test/assertions/eventAssertions";
+import {
+    RelayPoolMock,
+    EventGenerator,
+    expectEventToBeValid,
+    expectEventsToMatch,
+} from "@nostr-dev-kit/ndk-test-utils";
 
 describe("NDKSubscription", () => {
     let ndk: NDK;
-    let pool: MockRelayPool;
+    let pool: RelayPoolMock;
 
     beforeEach(() => {
-        pool = new MockRelayPool();
+        pool = new RelayPoolMock();
         ndk = new NDK({ explicitRelayUrls: [] });
 
         // Set up the EventGenerator with our NDK instance
@@ -100,10 +103,10 @@ describe("NDKSubscription", () => {
         );
         expect(receivedEvents.length).toEqual(3);
         expect(eoseReceived).toBe(true);
-        expectEventToBeValid(receivedEvents[0]);
-        expectEventsToMatch(receivedEvents[0], event1);
-        expectEventsToMatch(receivedEvents[1], event2);
-        expectEventsToMatch(receivedEvents[2], event3);
+        expectEventToBeValid(expect, receivedEvents[0]);
+        expectEventsToMatch(expect, receivedEvents[0], event1);
+        expectEventsToMatch(expect, receivedEvents[1], event2);
+        expectEventsToMatch(expect, receivedEvents[2], event3);
     });
 
     it("should close subscription on EOSE when requested", async () => {

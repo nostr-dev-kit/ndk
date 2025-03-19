@@ -1,0 +1,24 @@
+{
+    "name": "@nostr-dev-kit/ndk-test-utils",
+    "version": "0.1.0",
+    "description": "Test helpers, mocks, and stubs for the Nostr Development Kit (NDK)",
+    "main": "dist/index.js",
+    "typings": "dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "tsc",
+        "test": "vitest run",
+        "test:watch": "vitest"
+    },
+    "peerDependencies": {
+        "@nostr-dev-kit/ndk": "^2.0.0"
+    },
+    "devDependencies": {
+        "typescript": "^5.3.3",
+        "@nostr-dev-kit/ndk": "workspace:*",
+        "nostr-tools": "^2.7.1",
+        "vitest": "^1.0.0"
+    }
+} 

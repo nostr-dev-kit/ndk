@@ -1,7 +1,7 @@
 import { NDKUser } from ".";
-import { NDKEvent } from "../events/index";
 import { NDK } from "../ndk";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { EventGenerator } from "@nostr-dev-kit/ndk-test-utils";
 
 describe("follows", () => {
     const ndk = new NDK();
@@ -14,9 +14,14 @@ describe("follows", () => {
 
     const fetchEventMock = vi.spyOn(ndk, "fetchEvent");
 
+    beforeEach(() => {
+        // Set up the EventGenerator with our NDK instance
+        EventGenerator.setNDK(ndk);
+    });
+
     it("skips tags on the contact list with invalid pubkeys", async () => {
         fetchEventMock.mockImplementation(() => {
-            const e = new NDKEvent(ndk);
+            const e = EventGenerator.createEvent(3); // Kind 3 is for contact lists
             e.tags = [["p", "invalid-pubkey"]];
             e.tags = [["p", followedHexpubkey]];
             return new Promise((resolve) => resolve(e));
@@ -34,7 +39,7 @@ describe("follows", () => {
 
     it("dedupes followed users", async () => {
         fetchEventMock.mockImplementation(() => {
-            const e = new NDKEvent(ndk);
+            const e = EventGenerator.createEvent(3); // Kind 3 is for contact lists
             e.tags = [["p", "invalid-pubkey"]];
             e.tags = [["p", followedHexpubkey]];
             e.tags = [["p", followedHexpubkey]];

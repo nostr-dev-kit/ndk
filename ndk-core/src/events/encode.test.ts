@@ -3,17 +3,23 @@ import { NDKEvent } from ".";
 import { NDKRelay } from "../relay";
 import type { EventPointer } from "../user";
 import { NDKPrivateKeySigner } from "../signers/private-key";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NDK } from "../ndk";
+import { EventGenerator } from "@nostr-dev-kit/ndk-test-utils";
 
 describe("event.encode", () => {
-    it("encodes all relays the event is known to be on", async () => {
-        const event = new NDKEvent(undefined);
-        event.kind = 1;
-        await event.sign(NDKPrivateKeySigner.generate());
+    let mockNdk: NDK;
 
+    beforeEach(() => {
         // Create a mock NDK instance
-        const mockNdk = new NDK();
+        mockNdk = new NDK();
+        EventGenerator.setNDK(mockNdk);
+    });
+
+    it("encodes all relays the event is known to be on", async () => {
+        // Use EventGenerator to create a kind 1 text note
+        const event = EventGenerator.createEvent(1);
+        await event.sign(NDKPrivateKeySigner.generate());
 
         // Mock the onRelays getter to return our test relays
         const testRelays = [

@@ -512,7 +512,7 @@ export class NDKSubscription extends EventEmitter<{
 
     /**
      * Find available relays that should be part of this subscription and execute in them.
-     * 
+     *
      * Note that this is executed in addition to using the pool monitor, so even if the relay set
      * that is computed (i.e. we don't have any relays available), when relays come online, we will
      * check if we need to execute in them.

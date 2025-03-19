@@ -4,21 +4,20 @@ import type { NostrEvent } from ".";
 import { NDKEvent } from ".";
 import { NDK } from "../ndk";
 import { NDKRelay } from "../relay";
+import { TestFixture } from "@nostr-dev-kit/ndk-test-utils";
 
-let ndk: NDK;
+let fixture: TestFixture;
 
 beforeAll(() => {
-    ndk = new NDK();
+    fixture = new TestFixture();
 });
 
 describe("NDKEvent", () => {
     describe("encode", () => {
-        it("encodes NIP-33 events", () => {
-            const event = new NDKEvent(ndk, {
-                kind: 30000,
-                pubkey: "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52",
-                tags: [["d", "1234"]],
-            } as NostrEvent);
+        it("encodes NIP-33 events", async () => {
+            const pubkey = "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52";
+            const event = await fixture.eventFactory.createSignedTextNote("", pubkey, 30000);
+            event.tags.push(["d", "1234"]);
 
             const a = event.encode();
             expect(a).toBe(
@@ -26,13 +25,12 @@ describe("NDKEvent", () => {
             );
         });
 
-        it("encodes NIP-33 events with relay when it's known", () => {
-            const event = new NDKEvent(ndk, {
-                kind: 30000,
-                pubkey: "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52",
-                tags: [["d", "1234"]],
-            } as NostrEvent);
-            event.relay = new NDKRelay("wss://relay.f7z.io/", undefined, ndk);
+        it("encodes NIP-33 events with relay when it's known", async () => {
+            const pubkey = "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52";
+            const event = await fixture.eventFactory.createSignedTextNote("", pubkey, 30000);
+            event.tags.push(["d", "1234"]);
+            // Cast to any to avoid type issues with NDKRelay
+            event.relay = new NDKRelay("wss://relay.f7z.io/", undefined, fixture.ndk) as any;
 
             const a = event.encode();
             expect(a).toBe(
@@ -40,14 +38,12 @@ describe("NDKEvent", () => {
             );
         });
 
-        it("encodes events as notes when the relay is known", () => {
-            const event = new NDKEvent(ndk, {
-                kind: 1,
-                content: "hello world",
-                pubkey: "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52",
-                tags: [["e", "1234"]],
-            } as NostrEvent);
-            event.relay = new NDKRelay("wss://relay.f7z.io/", undefined, ndk);
+        it("encodes events as notes when the relay is known", async () => {
+            const pubkey = "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52";
+            const event = await fixture.eventFactory.createSignedTextNote("hello world", pubkey, 1);
+            event.tags.push(["e", "1234"]);
+            // Cast to any to avoid type issues with NDKRelay
+            event.relay = new NDKRelay("wss://relay.f7z.io/", undefined, fixture.ndk) as any;
 
             const a = event.encode();
             expect(a).toBe(

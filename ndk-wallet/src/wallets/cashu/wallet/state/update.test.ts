@@ -1,9 +1,10 @@
 import { calculateNewState } from "./update";
 import { WalletState, WalletProofChange } from ".";
 import { NDKCashuToken } from "@nostr-dev-kit/ndk";
-import { mockProof } from "@nostr-dev-kit/ndk/test";
+import { mockProof } from "@nostr-dev-kit/ndk-test-utils";
 import NDK from "@nostr-dev-kit/ndk";
 import { NDKCashuWallet } from "..";
+import { describe, it, expect, beforeEach } from 'vitest';
 
 const ndk = new NDK();
 

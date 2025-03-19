@@ -2,8 +2,10 @@ import { NDK } from "../../../ndk";
 import { NDKPrivateKeySigner } from "../../../signers/private-key";
 import { NDKNutzap } from "../nutzap";
 import { NDKCashuWalletTx } from "./tx";
-import { mockNutzap } from "@nostr-dev-kit/ndk-test-utils";
+// Skip using the external mock
+// import { mockNutzap } from "@nostr-dev-kit/ndk-test-utils";
 import { NDKUser } from "../../../user";
+import { NDKEvent } from "../../../events";
 
 const FAKE_MINT = "https://cashu.example.com";
 
@@ -11,6 +13,17 @@ const ndk = new NDK({
     signer: NDKPrivateKeySigner.generate(),
     clientName: "testing",
 });
+
+// Inline mock function to avoid issues with the ndk-test-utils
+async function createMockNutzap(mint: string, amount: number, ndk: any, signer: NDKPrivateKeySigner) {
+    const event = new NDKEvent(ndk);
+    event.kind = 9011; // Nutzap kind
+    event.content = "";
+    event.tags.push(["mint", mint]);
+    event.tags.push(["amount", amount.toString()]);
+    await event.sign(signer);
+    return new NDKNutzap(ndk, event);
+}
 
 describe("NDKCashuWalletTx", () => {
     describe("redeeming nutzaps", () => {
@@ -20,9 +33,8 @@ describe("NDKCashuWalletTx", () => {
         beforeEach(async () => {
             const signer = NDKPrivateKeySigner.generate();
             senderUser = await signer.user();
-            nutzap = (await mockNutzap(FAKE_MINT, 100, ndk, {
-                senderPk: signer,
-            })) as unknown as NDKNutzap;
+            // Use our inline mock function
+            nutzap = await createMockNutzap(FAKE_MINT, 100, ndk, signer);
         });
 
         it("p-tags the person that redeemed the nutzaps", async () => {
@@ -42,4 +54,4 @@ describe("NDKCashuWalletTx", () => {
             expect(clientTag).toBe("testing");
         });
     });
-});
+}); 

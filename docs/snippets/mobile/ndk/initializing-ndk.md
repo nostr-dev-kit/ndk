@@ -4,6 +4,10 @@ This guide demonstrates how to properly initialize NDK in a mobile application c
 
 ## Basic Setup
 
+Mobile applications should NOT import or install `@nostr-dev-kit/ndk` and use `@nostr-dev-kit/ndk-mobile` instead.
+
+`@nostr-dev-kit/ndk-mobile` re-exports everything `@nostr-dev-kit/ndk` exports, so anywhere you see an example using `@nostr-dev-kit/ndk` just substitute with `@nostr-dev-kit/ndk-mobile` and it will work correctly.
+
 ```typescript
 import NDK, { NDKCacheAdapterSqlite } from "@nostr-dev-kit/ndk-mobile";
 

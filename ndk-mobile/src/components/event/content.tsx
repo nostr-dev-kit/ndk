@@ -16,8 +16,8 @@ import React, { useEffect, useState } from 'react';
 import { Pressable, Text, TextProps, StyleSheet } from 'react-native';
 import { NDKEvent, NDKKind, NDKUser } from '@nostr-dev-kit/ndk';
 import { Image } from 'expo-image';
-import { useNDK } from '@/hooks/ndk.js';
-import { useUserProfile } from '@/hooks/user-profile.js';
+import { useNDK } from '../../hooks/ndk.js';
+import { useUserProfile } from '../../hooks/user-profile.js';
 
 const styles = StyleSheet.create({
     mention: {

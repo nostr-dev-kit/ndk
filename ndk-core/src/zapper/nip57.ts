@@ -43,10 +43,19 @@ export async function generateZapRequest(
         event.tags = event.tags.concat(tags);
     }
 
-    // remove e-tags if we have an a-tag
-    if (event.hasTag("a")) {
-        event.tags = event.tags.filter((tag) => tag[0] !== "e");
+    const eTaggedEvents = new Set<string>();
+    const aTaggedEvents = new Set<string>();
+
+    for (const tag of event.tags) {
+        if (tag[0] === "e") {
+            eTaggedEvents.add(tag[1]);
+        } else if (tag[0] === "a") {
+            aTaggedEvents.add(tag[1]);
+        }
     }
+
+    if (eTaggedEvents.size > 1) throw new Error("Only one e-tag is allowed");
+    if (aTaggedEvents.size > 1) throw new Error("Only one a-tag is allowed");
 
     // make sure we only have one `p` tag
     event.tags = event.tags.filter((tag) => tag[0] !== "p");

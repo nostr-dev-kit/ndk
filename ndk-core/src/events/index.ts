@@ -915,16 +915,6 @@ export class NDKEvent extends EventEmitter {
      * Prints a JSON stringified version of rawEvent() with indentation
      * and also lists all relay URLs for onRelays.
      */
-    public dump(msg?: string): void {
-        console.debug(msg ?? "Event", this.inspect);
-        console.debug("Event on relays:", this.onRelays.map((relay) => relay.url).join(", "));
-    }
-
-    /**
-     * Dump the event to console for debugging purposes.
-     * Prints a JSON stringified version of rawEvent() with indentation
-     * and also lists all relay URLs for onRelays.
-     */
     public dump(): void {
         console.debug(JSON.stringify(this.rawEvent(), null, 4));
         console.debug("Event on relays:", this.onRelays.map((relay) => relay.url).join(", "));

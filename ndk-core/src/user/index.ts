@@ -244,16 +244,23 @@ export class NDKUser {
     ): Promise<NDKUserProfile | null> {
         if (!this.ndk) throw new Error("NDK not set");
 
-        if (!this.profile) this.profile = {};
-
         let setMetadataEvent: NDKEvent | null = null;
 
         if (
             this.ndk.cacheAdapter &&
-            this.ndk.cacheAdapter.fetchProfile &&
+            (
+                this.ndk.cacheAdapter.fetchProfile ||
+                this.ndk.cacheAdapter.fetchProfileSync
+            ) &&
             opts?.cacheUsage !== NDKSubscriptionCacheUsage.ONLY_RELAY
         ) {
-            const profile = await this.ndk.cacheAdapter.fetchProfile(this.pubkey);
+            let profile: NDKUserProfile | null = null;
+            
+            if (this.ndk.cacheAdapter.fetchProfileSync) {
+                profile = this.ndk.cacheAdapter.fetchProfileSync(this.pubkey);
+            } else if (this.ndk.cacheAdapter.fetchProfile) {
+                profile = await this.ndk.cacheAdapter.fetchProfile(this.pubkey);
+            }
 
             if (profile) {
                 this.profile = profile;
@@ -261,43 +268,14 @@ export class NDKUser {
             }
         }
 
-        // if no options have been set and we have a cache, try to load from cache with no grouping
-        // This is done in favour of simply using NDKSubscriptionCacheUsage.CACHE_FIRST since
-        // we want to avoid depending on the grouping, arguably, all queries should go through this
-        // type of behavior when we have a locking cache
-        if (
-            !opts && // if no options have been set
-            this.ndk.cacheAdapter && // and we have a cache
-            this.ndk.cacheAdapter.locking // and the cache identifies itself as fast 😂
-        ) {
-            setMetadataEvent = await this.ndk.fetchEvent(
-                {
-                    kinds: [0],
-                    authors: [this.pubkey],
-                },
-                {
-                    cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE,
-                    closeOnEose: true,
-                    groupable: false,
-                }
-            );
-
-            opts = {
-                cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY,
-                closeOnEose: true,
-                groupable: true,
-                groupableDelay: 250,
-            };
-        }
+        opts ??= {};
+        opts.cacheUsage ??= NDKSubscriptionCacheUsage.ONLY_RELAY;
+        opts.closeOnEose ??= true;
+        opts.groupable ??= true;
+        opts.groupableDelay ??= 250;
 
         if (!setMetadataEvent) {
-            setMetadataEvent = await this.ndk.fetchEvent(
-                {
-                    kinds: [0],
-                    authors: [this.pubkey],
-                },
-                opts
-            );
+            setMetadataEvent = await this.ndk.fetchEvent({ kinds: [0], authors: [this.pubkey] }, opts);
         }
 
         if (!setMetadataEvent) return null;
@@ -305,12 +283,7 @@ export class NDKUser {
         // return the most recent profile
         this.profile = profileFromEvent(setMetadataEvent);
 
-        if (storeProfileEvent) {
-            // Store the event as a stringified JSON
-            this.profile.profileEvent = JSON.stringify(setMetadataEvent);
-        }
-
-        if (this.profile && this.ndk.cacheAdapter && this.ndk.cacheAdapter.saveProfile) {
+        if (storeProfileEvent && this.profile && this.ndk.cacheAdapter && this.ndk.cacheAdapter.saveProfile) {
             this.ndk.cacheAdapter.saveProfile(this.pubkey, this.profile);
         }
 

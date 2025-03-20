@@ -107,8 +107,6 @@ async function extractInfoFromLegacyWallet(wallet: NDKEvent) {
         }
         wallet.content = origContent;
 
-        const signer = new NDKPrivateKeySigner(privkey);
-
         return { privkey, mints };
     } catch (error) {
         console.error("Error decrypting legacy wallet", error);

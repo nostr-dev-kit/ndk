@@ -95,7 +95,7 @@ export class NDKEvent extends EventEmitter {
     public publishStatus?: "pending" | "success" | "error" = "success";
     public publishError?: Error;
 
-    constructor(ndk?: NDK, event?: NostrEvent | NDKEvent) {
+    constructor(ndk?: NDK, event?: Partial<NDKRawEvent> | NDKEvent) {
         super();
         this.ndk = ndk;
         this.created_at = event?.created_at;
@@ -904,6 +904,20 @@ export class NDKEvent extends EventEmitter {
      */
     get isValid(): boolean {
         return this.validate();
+    }
+
+    get inspect(): string {
+        return JSON.stringify(this.rawEvent(), null, 4);
+    }
+
+    /**
+     * Dump the event to console for debugging purposes.
+     * Prints a JSON stringified version of rawEvent() with indentation
+     * and also lists all relay URLs for onRelays.
+     */
+    public dump(msg?: string): void {
+        console.debug(msg ?? "Event", this.inspect);
+        console.debug("Event on relays:", this.onRelays.map((relay) => relay.url).join(", "));
     }
 
     /**

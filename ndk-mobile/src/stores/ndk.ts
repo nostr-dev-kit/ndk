@@ -1,4 +1,4 @@
-import NDK, { NDKConstructorParams, NDKEvent, NDKSigner, NDKUser } from "@nostr-dev-kit/ndk";
+import NDK, { NDKConstructorParams, NDKSigner, NDKUser } from "@nostr-dev-kit/ndk";
 import { create } from "zustand";
 import { SettingsStore } from "../types.js";
 import { NDKNip55Signer, withPayload } from "../signers/index.js";

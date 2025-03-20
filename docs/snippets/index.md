@@ -10,6 +10,8 @@ Snippets are organized into the following categories:
     - [Generate Keys](./user/generate-keys.md) - Generate a new key pair and obtain all formats (private key, public key, nsec, npub)
     - [Get Profile](./user/get-profile.md) - Fetch and handle user profile information
 - [Mobile](./mobile/)
+    - [Basics]
+        - [Initialize NDK + SQLite cache](./mobile/ndk/initializing-ndk.md) - Set up NDK with SQLite caching for mobile apps
     - [User](./mobile/user/)
         - [Loading User Profiles](./mobile/user/loading-user-profiles.md) - Efficiently load and cache user profiles in mobile apps
     - [Events](./mobile/events/)

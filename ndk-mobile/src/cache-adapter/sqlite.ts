@@ -95,7 +95,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     private bufferFlushTimeout: number = 100; // milliseconds
     private bufferFlushTimer: NodeJS.Timeout | null = null;
 
-    constructor(dbName: string, maxProfiles: number | false = 200) {
+    constructor(dbName: string, maxProfiles: number | false = false) {
         this.dbName = dbName ?? "ndk-cache";
         if (maxProfiles) {
             this.profileCache = new LRUCache({ maxSize: maxProfiles });

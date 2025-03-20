@@ -1,4 +1,10 @@
 {
     "extends": "@nostr-dev-kit/tsconfig/base.json",
-    "rootDir": "."
+    "rootDir": ".",
+    "types": ["jest", "@testing-library/jest-native"],
+    "compilerOptions": {
+        "moduleResolution": "node",
+        "allowJs": true,
+        "esModuleInterop": true
+    }
 }

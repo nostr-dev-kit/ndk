@@ -24,6 +24,7 @@ import { Queue } from "./queue/index.js";
 import { signatureVerificationInit } from "../events/signature.js";
 import { NDKSubscriptionManager } from "../subscription/manager.js";
 import { setActiveUser } from "./active-user.js";
+import { getEntity } from "./entity.js";
 import type { CashuPayCb, LnPayCb, NDKPaymentConfirmation, NDKZapSplit } from "../zapper/index.js";
 import type { NostrEvent } from "nostr-tools";
 import type { NDKLnUrlData } from "../zapper/ln.js";
@@ -755,6 +756,8 @@ export class NDK extends EventEmitter<{
     public getNip96(domain: string) {
         return new Nip96(domain, this);
     }
+
+    public getEntity = getEntity.bind(this);
 
     set wallet(wallet: NDKWalletInterface | undefined) {
         if (!wallet) {

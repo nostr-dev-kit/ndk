@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk-mobile
 
+## 2.3.1-rc1.0
+
+### Patch Changes
+
+- add <EventContent> component
+
 ## 0.4.4
 
 ### Patch Changes

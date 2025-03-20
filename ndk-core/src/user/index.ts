@@ -48,7 +48,7 @@ export class NDKUser {
     public profileEvent?: NDKEvent;
     private _npub?: Npub;
     private _pubkey?: Hexpubkey;
-    readonly relayUrls: string[] = [];
+    public relayUrls: string[] = [];
     readonly nip46Urls: string[] = [];
 
     public constructor(opts: NDKUserParams) {

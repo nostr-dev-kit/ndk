@@ -78,7 +78,11 @@
         "tsd": "^0.31.2",
         "tsup": "^8.4.0",
         "typedoc": "^0.28.0",
-        "typedoc-plugin-rename-defaults": "^0.7.3"
+        "typedoc-plugin-rename-defaults": "^0.7.3",
+        "nostr-tools": "2.7.1"
+    },
+    "peerDependencies": {
+        "nostr-tools": "^2.7.1"
     },
     "dependencies": {
         "@noble/curves": "^1.6.0",
@@ -87,7 +91,6 @@
         "@scure/base": "^1.1.9",
         "debug": "^4.3.6",
         "light-bolt11-decoder": "^3.2.0",
-        "nostr-tools": "^2.7.1",
         "tseep": "^1.2.2",
         "typescript-lru-cache": "^2.0.0",
         "utf8-buffer": "^1.0.0",

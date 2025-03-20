@@ -7,4 +7,7 @@ This section contains a growing collection of code snippets demonstrating how to
 Snippets are organized into the following categories:
 
 - [User](./user/)
-  - [Generate Keys](./user/generate-keys.md) - Generate a new key pair and obtain all formats (private key, public key, nsec, npub)
+    - [Generate Keys](./user/generate-keys.md) - Generate a new key pair and obtain all formats (private key, public key, nsec, npub)
+- [Mobile](./mobile/)
+    - [Events](./mobile/events/)
+        - [Rendering Event Content](./mobile/events/rendering-event-content.md) - Rich text rendering of Nostr event content with mentions, hashtags, and media

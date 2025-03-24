@@ -37,6 +37,8 @@ export * from "./events/kinds/wiki.js";
 
 export * from "./events/wrap.js";
 
+export * from "./events/gift-wrapping.js";
+
 export * from "./thread/index.js";
 
 export * from "./events/kinds/simple-group/index.js";

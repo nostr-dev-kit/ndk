@@ -244,7 +244,6 @@ export class NDKCashuWallet extends NDKWallet {
 
         if (this.privkeys.size === 0) {
             const signer = NDKPrivateKeySigner.generate();
-            console.trace(`generating a new p2pk`, signer.privateKey);
             await this.addPrivkey(signer.privateKey!);
         }
 

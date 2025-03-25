@@ -17,14 +17,13 @@ const ndk = new NDK({
 ndk.connect();
 
 // create a new NIP-60 wallet
-const unit = "sat"; // unit of the wallet
 const mints = [ 'https://testnut.cashu.space' ] // mints the wallet will use
 const relays = [ 'wss://f7z.io', 'ws://localhost:4040' ]; // relays where proofs will be stored
 const wallet = NDKCashuWallet.create(ndk, unit, mints, relays);
 await wallet.publish();
 ```
 
-This will publish a wallet `kind:37375` event, which contains the wallet information.
+This will publish a wallet `kind:17375` event, which contains the wallet information.
 
 We now have a NIP-60 wallet -- this wallet will be available from any nostr client that supports NIP-60.
 

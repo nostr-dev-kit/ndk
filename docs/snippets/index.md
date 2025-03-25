@@ -21,3 +21,8 @@ Snippets are organized into the following categories:
         - [Rendering Event Content](./mobile/events/rendering-event-content.md) - Rich text rendering of Nostr event content with mentions, hashtags, and media
     - [Session](./mobile/session/)
         - [Login](./mobile/session/login.md) - Handle user authentication with NDK Mobile using various methods (NIP-46, nsec)
+- [Wallet](./wallet/)
+    - [Connect Nostr Wallet Connect](./wallet/connect-nwc.md) - Connect to an NWC wallet and set it up for zapping
+    - [Using Cashu Wallet](./wallet/using-cashu-wallet.md) - Create and use a Cashu wallet for managing e-cash tokens
+    - [Nutzap Monitor](./wallet/nutzap-monitor.md) - Track and process Cashu tokens sent via Nostr zaps
+    - [Cashu Deposits](./wallet/cashu-deposits.md) - Fund your Cashu wallet using Lightning invoices

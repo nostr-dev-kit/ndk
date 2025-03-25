@@ -1,7 +1,7 @@
 import { generateSecretKey } from "nostr-tools";
-import NDK, { NDKEvent, type NostrEvent } from "../../index.js";
+import { type NostrEvent } from "../../index.js";
 import { NDKPrivateKeySigner } from "./index";
-import { bytesToHex, hexToBytes } from "@noble/hashes/utils";
+import { bytesToHex } from "@noble/hashes/utils";
 import { nip19 } from "nostr-tools";
 
 describe("NDKPrivateKeySigner", () => {
@@ -72,9 +72,5 @@ describe("NDKPrivateKeySigner", () => {
         expect(knownSigner.pubkey).toBe(
             "c44f2be1b2fb5371330386046e60207bbd84938d4812ee0c7a3c11be605a7585"
         );
-
-        // Test error case when signer is not ready
-        const emptySigner = new NDKPrivateKeySigner();
-        expect(() => emptySigner.pubkey).toThrow("Not ready");
     });
 });

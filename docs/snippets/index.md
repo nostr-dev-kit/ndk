@@ -9,6 +9,9 @@ Snippets are organized into the following categories:
 - [User](./user/)
     - [Generate Keys](./user/generate-keys.md) - Generate a new key pair and obtain all formats (private key, public key, nsec, npub)
     - [Get Profile](./user/get-profile.md) - Fetch and handle user profile information
+- [Event](./event/)
+    - [Basic](./event/basic.md) - Generate a basic Nostr event
+    - [Tagging Users and Events](./event/tagging-users-and-events.md) - Add tags to mention users and events
 - [Mobile](./mobile/)
     - [Basics]
         - [Initialize NDK + SQLite cache](./mobile/ndk/initializing-ndk.md) - Set up NDK with SQLite caching for mobile apps

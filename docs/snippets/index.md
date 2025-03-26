@@ -26,3 +26,8 @@ Snippets are organized into the following categories:
     - [Using Cashu Wallet](./wallet/using-cashu-wallet.md) - Create and use a Cashu wallet for managing e-cash tokens
     - [Nutzap Monitor](./wallet/nutzap-monitor.md) - Track and process Cashu tokens sent via Nostr zaps
     - [Cashu Deposits](./wallet/cashu-deposits.md) - Fund your Cashu wallet using Lightning invoices
+- [Testing](./testing/)
+    - [Mock Relays](./testing/mock-relays.md) - Create and use mock relays for testing NDK applications
+    - [Event Generation](./testing/event-generation.md) - Generate test events with different kinds and content
+    - [Nutzap Testing](./testing/nutzap-testing.md) - Test Cashu token and Nutzap functionality
+    - [Relay Pool Testing](./testing/relay-pool-testing.md) - Test relay pool behavior and event handling

@@ -1,6 +1,6 @@
 import type { NDK } from "../../../ndk/index.js";
-import type { NDKUserProfile } from "../../../user/profile";
-import type { NostrEvent } from "../../index.js";
+import type { NDKUserProfile } from "../../../user/profile.js";
+import type { NDKTag, NostrEvent } from "../../index.js";
 import { NDKEvent } from "../../index.js";
 import { NDKKind } from "../index.js";
 
@@ -19,8 +19,33 @@ export class NDKAppHandlerEvent extends NDKEvent {
         this.kind ??= NDKKind.AppHandler;
     }
 
-    static from(ndkEvent: NDKEvent) {
-        return new NDKAppHandlerEvent(ndkEvent.ndk, ndkEvent.rawEvent());
+    static from(ndkEvent: NDKEvent): NDKAppHandlerEvent | null {
+        const event = new NDKAppHandlerEvent(ndkEvent.ndk, ndkEvent.rawEvent());
+        if (event.isValid) {
+            return event;
+        }
+
+        return null;
+    }
+
+    get isValid(): boolean {
+        const combinations = new Map<string, string>();
+        const combinationFromTag = (tag: NDKTag): string => [tag[0], tag[2]].join(':').toLowerCase();
+        const tagsToInspect = ['web', 'android', 'ios'];
+
+        for (const tag of this.tags) {
+            if (tagsToInspect.includes(tag[0])) {
+                const combination = combinationFromTag(tag);
+                if (combinations.has(combination)) {
+                    if (combinations.get(combination) !== tag[1].toLowerCase()) {
+                        return false;
+                    }
+                }
+                combinations.set(combination, tag[1].toLowerCase());
+            }
+        }
+
+        return true;
     }
 
     /**

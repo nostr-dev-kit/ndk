@@ -60,10 +60,10 @@ export type NDKRawEvent = {
  */
 export class NDKEvent extends EventEmitter {
     public ndk?: NDK;
-    public created_at?: number;
+    public created_at: number;
     public content = "";
     public tags: NDKTag[] = [];
-    public kind?: NDKKind | number;
+    public kind: NDKKind | number;
     public id = "";
     public sig?: string;
     public pubkey = "";
@@ -98,13 +98,13 @@ export class NDKEvent extends EventEmitter {
     constructor(ndk?: NDK, event?: Partial<NDKRawEvent> | NDKEvent) {
         super();
         this.ndk = ndk;
-        this.created_at = event?.created_at;
+        this.created_at = event?.created_at!;
         this.content = event?.content || "";
         this.tags = event?.tags || [];
         this.id = event?.id || "";
         this.sig = event?.sig;
         this.pubkey = event?.pubkey || "";
-        this.kind = event?.kind;
+        this.kind = event?.kind!;
 
         if (event instanceof NDKEvent) {
             if (this.relay) {
@@ -129,7 +129,7 @@ export class NDKEvent extends EventEmitter {
     /**
      * Returns the event as is.
      */
-    public rawEvent(): NostrEvent {
+    public rawEvent(): NDKRawEvent {
         return {
             created_at: this.created_at,
             content: this.content,
@@ -137,8 +137,8 @@ export class NDKEvent extends EventEmitter {
             kind: this.kind,
             pubkey: this.pubkey,
             id: this.id,
-            sig: this.sig,
-        } as NostrEvent;
+            sig: this.sig!,
+        };
     }
 
     set author(user: NDKUser) {
@@ -826,7 +826,7 @@ export class NDKEvent extends EventEmitter {
     }
 
     /**
-     * Whether this is a NIP-70-protectede event.
+     * Whether this is a NIP-70-protected event.
      * @@satisfies NIP-70
      */
     get isProtected(): boolean {

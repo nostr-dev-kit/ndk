@@ -1,10 +1,10 @@
-import { NDKEvent, NostrEvent } from "./index.js";
+import { NDKEvent, type NDKRawEvent, type NostrEvent } from "./index.js";
 import { NDKPrivateKeySigner } from "../signers/private-key";
 import { getEventHash } from "nostr-tools";
 import { NDKUser } from "../user/index.js";
-import { NDKSigner } from "../signers/index.js";
+import type { NDKSigner } from "../signers/index.js";
 import { NDKKind } from "./kinds/index.js";
-import { NDKEncryptionScheme } from "../types.js";
+import type { NDKEncryptionScheme } from "../types.js";
 
 export type GiftWrapParams = {
     scheme?: NDKEncryptionScheme;
@@ -26,16 +26,17 @@ export async function giftWrap(
     signer?: NDKSigner,
     params: GiftWrapParams = {}
 ): Promise<NDKEvent> {
+    let _signer = signer;
     params.scheme ??= "nip44";
-    if (!signer) {
+    if (!_signer) {
         if (!event.ndk) throw new Error("no signer available for giftWrap");
-        signer = event.ndk.signer;
+        _signer = event.ndk.signer;
     }
-    if (!signer) throw new Error("no signer");
-    if (!signer.encryptionEnabled || !signer.encryptionEnabled(params.scheme))
+    if (!_signer) throw new Error("no signer");
+    if (!_signer.encryptionEnabled || !_signer.encryptionEnabled(params.scheme))
         throw new Error("signer is not able to giftWrap");
     const rumor = getRumorEvent(event, params?.rumorKind);
-    const seal = await getSealEvent(rumor, recipient, signer, params.scheme);
+    const seal = await getSealEvent(rumor, recipient, _signer, params.scheme);
     const wrap = await getWrapEvent(seal, recipient, params);
     return new NDKEvent(event.ndk, wrap);
 }
@@ -50,10 +51,11 @@ export async function giftUnwrap(
     signer?: NDKSigner,
     scheme: NDKEncryptionScheme = "nip44"
 ): Promise<NDKEvent> {
-    sender = sender || new NDKUser({ pubkey: event.pubkey });
-    if (!signer) {
+    const _sender = sender || new NDKUser({ pubkey: event.pubkey });
+    let _signer = signer;
+    if (!_signer) {
         if (!event.ndk) throw new Error("no signer available for giftUnwrap");
-        signer = event.ndk.signer;
+        _signer = event.ndk.signer;
     }
     if (!signer) throw new Error("no signer");
     try {
@@ -66,12 +68,9 @@ export async function giftUnwrap(
         const rumorSender = new NDKUser({ pubkey: seal.pubkey });
         const rumor = JSON.parse(await signer.decrypt(rumorSender, seal.content, scheme));
         if (!rumor) throw new Error("Failed to decrypt seal");
+        if (rumor.pubkey !== _sender.pubkey) throw new Error("Invalid GiftWrap, sender validation failed!");
 
-        if (seal.pubkey === rumor.pubkey) {
-            return new NDKEvent(event.ndk, rumor as NostrEvent);
-        } else {
-            return Promise.reject("Invalid GiftWrap, sender validation failed!");
-        }
+        return new NDKEvent(event.ndk, rumor as NostrEvent);
     } catch (e) {
         console.log(e);
         return Promise.reject("Got error unwrapping event! See console log.");
@@ -79,7 +78,7 @@ export async function giftUnwrap(
 }
 
 function getRumorEvent(event: NDKEvent, kind?: number): NDKEvent {
-    let rumor = event.rawEvent();
+    const rumor = event.rawEvent() as Partial<NDKRawEvent>;
     rumor.kind = kind || rumor.kind || NDKKind.PrivateDirectMessage;
     rumor.sig = undefined;
     rumor.id = getEventHash(rumor as any);

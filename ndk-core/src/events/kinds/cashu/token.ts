@@ -101,6 +101,8 @@ export class NDKCashuToken extends NDKEvent {
     }
 
     async toNostrEvent(pubkey?: string): Promise<NostrEvent> {
+        if (!this.ndk) throw new Error("no ndk");
+        if (!this.ndk.signer) throw new Error("no signer");
         const payload = {
             proofs: this.proofs.map(this.cleanProof),
             mint: this.mint,
@@ -108,7 +110,7 @@ export class NDKCashuToken extends NDKEvent {
         };
         this.content = JSON.stringify(payload);
 
-        const user = await this.ndk!.signer!.user();
+        const user = await this.ndk.signer.user();
         await this.encrypt(user, undefined, "nip44");
 
         return super.toNostrEvent(pubkey);

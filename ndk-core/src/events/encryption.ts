@@ -52,6 +52,21 @@ export async function decrypt(
     signer?: NDKSigner,
     scheme?: NDKEncryptionScheme
 ): Promise<void> {
+    // Check if we have this decrypted event in cache
+    if (this.ndk?.cacheAdapter?.getDecryptedEvent) {
+        // Try to get the cached decrypted event synchronously first
+        let cachedEvent = null;
+        if (typeof this.ndk.cacheAdapter.getDecryptedEvent === 'function') {
+            cachedEvent = this.ndk.cacheAdapter.getDecryptedEvent(this.id);
+        }
+
+        // If we found a cached decrypted event, use its content
+        if (cachedEvent) {
+            this.content = cachedEvent.content;
+            return;
+        }
+    }
+
     let decrypted: string | undefined;
     if (!this.ndk) throw new Error("No NDK instance found!");
     if (!signer) {
@@ -77,7 +92,13 @@ export async function decrypt(
         decrypted = (await signer!.decrypt(sender, this.content, "nip44")) as string;
     }
     if (!decrypted) throw new Error("Failed to decrypt event.");
+
     this.content = decrypted;
+
+    // Cache the decrypted event if we have a cache adapter that supports it
+    if (this.ndk?.cacheAdapter?.addDecryptedEvent) {
+        this.ndk.cacheAdapter.addDecryptedEvent(this);
+    }
 }
 
 async function isEncryptionEnabled(

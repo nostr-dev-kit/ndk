@@ -613,6 +613,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
             this.db.runSync(`DELETE FROM events;`);
             this.db.runSync(`DELETE FROM event_tags;`);
             this.db.runSync(`DELETE FROM unpublished_events;`);
+            this.db.runSync(`DELETE FROM decrypted_events;`);
         });
     }
 
@@ -656,6 +657,54 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                 console.error("failed to deserialize event", e, record);
                 return null;
             }
+        });
+    }
+
+    /**
+     * Get a decrypted event from the database by ID.
+     * 
+     * @param eventId - The ID of the decrypted event to get.
+     * @returns The decrypted event, or null if it doesn't exist.
+     */
+    public getDecryptedEvent(eventId: NDKEventId): NDKEvent | null {
+        if (!this.ready) return null;
+
+        try {
+            const row = this.db.getFirstSync(
+                `SELECT event FROM decrypted_events WHERE event_id = ?;`,
+                [eventId]
+            ) as { event: string } | undefined;
+
+            if (!row) return null;
+
+            return new NDKEvent(undefined, deserialize(row.event));
+        } catch (e) {
+            console.error("Error getting decrypted event", e, { eventId });
+            return null;
+        }
+    }
+
+    /**
+     * Store a decrypted event in the database.
+     * 
+     * @param event - The decrypted event to store.
+     */
+    public addDecryptedEvent(event: NDKEvent): void {
+        this.onReady(() => {
+            const now = Date.now();
+
+            this.bufferWrite(
+                `INSERT OR REPLACE INTO decrypted_events (
+                    event_id, 
+                    event, 
+                    decrypted_at
+                ) VALUES (?, ?, ?);`,
+                [
+                    event.id,
+                    event.serialize(true, true),
+                    now
+                ]
+            );
         });
     }
 }

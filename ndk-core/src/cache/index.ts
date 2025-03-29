@@ -116,6 +116,19 @@ export interface NDKCacheAdapter {
      * Called when the cache is ready.
      */
     onReady?(callback: () => void): void;
+
+    /**
+     * Get a decrypted event from the cache by ID.
+     * @param eventId - The ID of the decrypted event to get.
+     * @returns The decrypted event, or null if it doesn't exist.
+     */
+    getDecryptedEvent?(eventId: NDKEventId): NDKEvent | null;
+
+    /**
+     * Store a decrypted event in the cache.
+     * @param event - The decrypted event to store.
+     */
+    addDecryptedEvent?(event: NDKEvent): void;
 }
 
 export type NDKCacheRelayInfo = {

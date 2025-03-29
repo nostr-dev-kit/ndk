@@ -10,6 +10,31 @@ import { NDKKind } from "./kinds";
 import * as giftWrappingModule from "./gift-wrapping";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { TestFixture, UserGenerator, SignerGenerator } from "@nostr-dev-kit/ndk-test-utils";
+import { NDKCacheAdapter } from "../cache";
+import { decrypt } from "./encryption";
+
+// Define a mock cache adapter for testing
+class MockCacheAdapter implements NDKCacheAdapter {
+    locking = false;
+    ready = true;
+    private decryptedEvents = new Map<string, NDKEvent>();
+
+    query() {
+        return [];
+    }
+
+    async setEvent() {
+        return Promise.resolve();
+    }
+
+    getDecryptedEvent(eventId: string): NDKEvent | null {
+        return this.decryptedEvents.get(eventId) || null;
+    }
+
+    addDecryptedEvent(event: NDKEvent): void {
+        this.decryptedEvents.set(event.id, event);
+    }
+}
 
 describe("NDKEvent encryption (Nip44 & Nip59)", () => {
     let fixture: TestFixture;
@@ -371,7 +396,7 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
         vi.spyOn(giftWrappingModule, "giftWrap").mockImplementation(
             async (event, recipient, signer, params = {}) => {
                 const method = params.scheme === "nip04" ? "nip04_encrypt" : "nip44_encrypt";
-                mockSendRequest("", method, {}, 0, () => {});
+                mockSendRequest("", method, {}, 0, () => { });
                 const wrapped = new NDKEvent(event.ndk);
                 return wrapped;
             }
@@ -383,6 +408,96 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
 
         await giftWrappingModule.giftWrap(message, receiveUser, send46Signer, { scheme: "nip04" });
         expect(mockSendRequest.mock.calls[1][1]).toBe("nip04_encrypt");
+    });
+
+    it("uses cached decrypted event when available", async () => {
+        // Get test users
+        const sendUser = await fixture.getUser("alice");
+        const receiveUser = await fixture.getUser("bob");
+
+        // Set up signers
+        const sendSigner = fixture.getSigner("alice");
+        const receiveSigner = fixture.getSigner("bob");
+        fixture.ndk.signer = sendSigner;
+
+        // Create event
+        const sendEvent = await fixture.eventFactory.createSignedTextNote("Test content", "alice");
+        const original = sendEvent.content;
+
+        // Encrypt the event
+        await sendEvent.encrypt(receiveUser, sendSigner, "nip44");
+
+        // Create an encrypted event
+        const encryptedEvent = new NDKEvent(fixture.ndk, sendEvent.rawEvent());
+
+        // Create decrypted event that will be in the cache
+        const decryptedEvent = new NDKEvent(fixture.ndk, sendEvent.rawEvent());
+        decryptedEvent.content = original;
+
+        // Set up mock cache adapter
+        const mockCache = new MockCacheAdapter();
+        mockCache.addDecryptedEvent(decryptedEvent);
+        fixture.ndk.cacheAdapter = mockCache;
+
+        // Spy on cache methods
+        const getDecryptedEventSpy = vi.spyOn(mockCache, 'getDecryptedEvent');
+        const addDecryptedEventSpy = vi.spyOn(mockCache, 'addDecryptedEvent');
+
+        // Mock the decrypt function for signer to verify it's not called
+        const decryptSpy = vi.spyOn(receiveSigner, 'decrypt');
+
+        // Decrypt the event
+        await encryptedEvent.decrypt(sendUser, receiveSigner, "nip44");
+
+        // Verify cache was checked
+        expect(getDecryptedEventSpy).toHaveBeenCalledWith(encryptedEvent.id);
+
+        // Verify decrypt wasn't called on the signer since we used cached version
+        expect(decryptSpy).not.toHaveBeenCalled();
+
+        // Verify content is correct
+        expect(encryptedEvent.content).toBe(original);
+    });
+
+    it("caches a decrypted event after successful decryption", async () => {
+        // Get test users
+        const sendUser = await fixture.getUser("alice");
+        const receiveUser = await fixture.getUser("bob");
+
+        // Set up signers
+        const sendSigner = fixture.getSigner("alice");
+        const receiveSigner = fixture.getSigner("bob");
+        fixture.ndk.signer = sendSigner;
+
+        // Create event
+        const sendEvent = await fixture.eventFactory.createSignedTextNote("Test content", "alice");
+        const original = sendEvent.content;
+
+        // Encrypt the event
+        await sendEvent.encrypt(receiveUser, sendSigner, "nip44");
+
+        // Create an encrypted event
+        const encryptedEvent = new NDKEvent(fixture.ndk, sendEvent.rawEvent());
+
+        // Set up mock cache adapter (empty at first)
+        const mockCache = new MockCacheAdapter();
+        fixture.ndk.cacheAdapter = mockCache;
+
+        // Spy on cache methods
+        const getDecryptedEventSpy = vi.spyOn(mockCache, 'getDecryptedEvent');
+        const addDecryptedEventSpy = vi.spyOn(mockCache, 'addDecryptedEvent');
+
+        // Decrypt the event
+        await encryptedEvent.decrypt(sendUser, receiveSigner, "nip44");
+
+        // Verify cache was checked
+        expect(getDecryptedEventSpy).toHaveBeenCalledWith(encryptedEvent.id);
+
+        // Verify the decrypted event was cached
+        expect(addDecryptedEventSpy).toHaveBeenCalledWith(encryptedEvent);
+
+        // Verify content is correct
+        expect(encryptedEvent.content).toBe(original);
     });
 });
 

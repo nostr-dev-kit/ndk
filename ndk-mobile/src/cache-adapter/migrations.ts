@@ -258,4 +258,21 @@ export const migrations = [
             await db.execAsync(`DROP TABLE IF EXISTS wallet_nutzaps;`);
         },
     },
+
+    {
+        version: 12,
+        up: async (db: SQLite.SQLiteDatabase) => {
+            // Create a new table for storing decrypted events
+            await db.execAsync(`
+                CREATE TABLE IF NOT EXISTS decrypted_events (
+                    event_id TEXT PRIMARY KEY,
+                    event TEXT NOT NULL,
+                    decrypted_at INTEGER NOT NULL
+                );
+                
+                CREATE INDEX IF NOT EXISTS idx_decrypted_events_event_id 
+                ON decrypted_events (event_id);
+            `);
+        },
+    },
 ];

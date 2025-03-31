@@ -1,7 +1,8 @@
-import NDK, { NDKEvent, NDKEventId, NDKNutzap } from "@nostr-dev-kit/ndk";
+import type NDK from "@nostr-dev-kit/ndk";
+import { NDKEvent, type NDKEventId, NDKNutzap } from "@nostr-dev-kit/ndk";
+import { type NDKNutzapState, NdkNutzapStatus } from "@nostr-dev-kit/ndk-wallet";
 import * as SQLite from "expo-sqlite";
-import { NDKCacheAdapterSqlite } from "../../cache-adapter/sqlite.js";
-import { NdkNutzapStatus, NDKNutzapState } from "@nostr-dev-kit/ndk-wallet";
+import type { NDKCacheAdapterSqlite } from "../../cache-adapter/sqlite.js";
 
 function withDb(ndk: NDK) {
     const db = (ndk.cacheAdapter as NDKCacheAdapterSqlite).db;
@@ -53,7 +54,7 @@ export async function getAllNutzaps(ndk: NDK): Promise<Map<NDKEventId, NDKNutzap
 
         if (row.redeemed_by_id) state.redeemedById = row.redeemed_by_id;
         if (row.error_message) state.errorMessage = row.error_message;
-        if (row.redeemed_amount) state.redeemedAmount = parseInt(row.redeemed_amount);
+        if (row.redeemed_amount) state.redeemedAmount = Number.parseInt(row.redeemed_amount);
 
         result.set(row.event_id, state);
     }

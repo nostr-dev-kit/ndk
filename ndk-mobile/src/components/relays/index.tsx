@@ -1,3 +1,7 @@
 import ConnectivityIndicator from "./indicator.js";
 
-export default { ConnectivityIndicator };
+const Relay = {
+    ConnectivityIndicator,
+};
+
+export default Relay;

@@ -1,8 +1,8 @@
+import type { NDKRelay } from "@nostr-dev-kit/ndk";
 import React from "react";
-import { NDKRelay } from "@nostr-dev-kit/ndk";
 
 import { NDKRelayStatus } from "@nostr-dev-kit/ndk";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { View } from "react-native";
 
 const CONNECTIVITY_STATUS_COLORS: Record<NDKRelayStatus, string> = {
@@ -20,6 +20,7 @@ const CONNECTIVITY_STATUS_COLORS: Record<NDKRelayStatus, string> = {
 export default function RelayConnectivityIndicator({ relay }: { relay: NDKRelay }) {
     const [color, setColor] = useState(CONNECTIVITY_STATUS_COLORS[relay.status]);
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     useEffect(() => {
         relay.on("connect", () => setColor(CONNECTIVITY_STATUS_COLORS[relay.status]));
         relay.on("disconnect", () => setColor(CONNECTIVITY_STATUS_COLORS[relay.status]));
@@ -30,7 +31,7 @@ export default function RelayConnectivityIndicator({ relay }: { relay: NDKRelay 
         relay.on("authed", () => setColor(CONNECTIVITY_STATUS_COLORS[relay.status]));
         relay.on("auth:failed", () => setColor(CONNECTIVITY_STATUS_COLORS[relay.status]));
         relay.on("delayed-connect", () => setColor(CONNECTIVITY_STATUS_COLORS[relay.status]));
-    }, []);
+    }, [relay?.url, relay?.status]);
 
     return (
         <View

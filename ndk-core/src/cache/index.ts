@@ -46,6 +46,12 @@ export interface NDKCacheAdapter {
     fetchProfileSync?(pubkey: Hexpubkey): NDKCacheEntry<NDKUserProfile> | null;
 
     /**
+     * Retrieve all profiles from the cache synchronously.
+     * @returns A map of pubkeys to profiles.
+     */
+    getAllProfilesSync?(): Map<Hexpubkey, NDKCacheEntry<NDKUserProfile>>;
+
+    /**
      * Special purpose
      */
     fetchProfile?(pubkey: Hexpubkey): Promise<NDKCacheEntry<NDKUserProfile> | null>;

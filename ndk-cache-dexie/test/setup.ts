@@ -5,9 +5,7 @@ import { vi } from "vitest";
 vi.mock("debug", () => {
     return {
         default: () => {
-            const debugFn = (...args: any[]) => {
-                console.log("[debug]", ...args);
-            };
+            const debugFn = (..._args: any[]) => {};
             debugFn.extend = () => debugFn;
             return debugFn;
         },

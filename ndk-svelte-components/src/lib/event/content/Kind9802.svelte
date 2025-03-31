@@ -1,15 +1,15 @@
 <script lang="ts">
-    import type { NDKEvent } from "@nostr-dev-kit/ndk";
-    import NoteContentLink from "./NoteContentLink.svelte";
-    import { urlIsMedia } from "$lib/utils/notes";
-    import sanitizeHtml from "sanitize-html";
+import { urlIsMedia } from "$lib/utils/notes";
+import type { NDKEvent } from "@nostr-dev-kit/ndk";
+import sanitizeHtml from "sanitize-html";
+import NoteContentLink from "./NoteContentLink.svelte";
 
-    export let event: NDKEvent;
-    // export const showMedia = false; // Unused so far
+export let event: NDKEvent;
+// export const showMedia = false; // Unused so far
 
-    const ref = event?.tagValue("r");
-    let context = event?.tagValue("context");
-    context = context?.replace(event?.content as string, `<mark>${event?.content}</mark>`);
+const _ref = event?.tagValue("r");
+let context = event?.tagValue("context");
+context = context?.replace(event?.content as string, `<mark>${event?.content}</mark>`);
 </script>
 
 <div class="{$$props.class??""}">

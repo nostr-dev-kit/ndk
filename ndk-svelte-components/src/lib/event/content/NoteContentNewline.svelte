@@ -1,5 +1,5 @@
 <script lang="ts">
-    export let value: string[] = [];
+export const value: string[] = [];
 </script>
 
 <!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->

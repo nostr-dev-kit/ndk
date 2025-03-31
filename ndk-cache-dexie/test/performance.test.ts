@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeAll } from "vitest";
 import NDK, { NDKEvent, NDKPrivateKeySigner, NDKSubscription } from "@nostr-dev-kit/ndk";
+import { beforeAll, describe, expect, it } from "vitest";
 import NDKCacheAdapterDexie from "../src/index";
 
 // Create an NDK instance with a dexie adapter for testing
@@ -13,9 +13,6 @@ describe("Cache performance tests", () => {
         const startTime = Math.floor(Date.now() / 1000);
         const eventCount = 5000;
         const targetKind = 1;
-
-        // Add a large number of events with the same kind
-        console.log(`Adding ${eventCount} events to the cache...`);
         const addStart = performance.now();
 
         for (let i = 0; i < eventCount; i++) {
@@ -24,11 +21,10 @@ describe("Cache performance tests", () => {
             event.content = `Test event ${i}`;
             event.created_at = startTime - i;
             await event.sign();
-            ndk.cacheAdapter!.setEvent(event, []);
+            ndk.cacheAdapter?.setEvent(event, []);
         }
 
-        const addDuration = performance.now() - addStart;
-        console.log(`Added ${eventCount} events in ${addDuration.toFixed(2)}ms`);
+        const _addDuration = performance.now() - addStart;
 
         // Create a subscription that queries by kind
         const subscription = new NDKSubscription(ndk, [{ kinds: [targetKind] }]);
@@ -40,14 +36,9 @@ describe("Cache performance tests", () => {
             receivedEvents++;
             return originalEventReceived.apply(this, args);
         };
-
-        // Measure query time
-        console.log("Executing query by kinds...");
         const queryStart = performance.now();
-        await ndk.cacheAdapter!.query(subscription);
+        await ndk.cacheAdapter?.query(subscription);
         const queryDuration = performance.now() - queryStart;
-
-        console.log(`Query took ${queryDuration.toFixed(2)}ms, received ${receivedEvents} events`);
 
         // The test passes if the query completes in a reasonable time
         // Currently it's failing with 15+ seconds, we want it under 1000ms

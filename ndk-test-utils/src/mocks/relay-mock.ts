@@ -1,4 +1,4 @@
-import { EventEmitter } from "events";
+import { EventEmitter } from "node:events";
 import type { NDKEvent, NDKFilter, NDKRelayStatus, NDKSubscription } from "@nostr-dev-kit/ndk";
 
 interface RelayMockOptions {
@@ -21,7 +21,7 @@ export class RelayMock extends EventEmitter {
     // Configurable behavior for testing
     public options: Required<RelayMockOptions>;
 
-    constructor(url: string = "wss://mock.relay", options: RelayMockOptions = {}) {
+    constructor(url = "wss://mock.relay", options: RelayMockOptions = {}) {
         super();
         this.url = url;
         this.options = {
@@ -69,8 +69,7 @@ export class RelayMock extends EventEmitter {
     }
 
     send(message: string): void {
-        if (this.status !== 2) { // CONNECTED
-            console.log(`[RelayMock:${this.url}] Cannot send message - relay not connected`);
+        if (this.status !== 2) {
             return;
         }
 
@@ -83,7 +82,7 @@ export class RelayMock extends EventEmitter {
             if (type === "REQ") {
                 const [subId, ...filters] = rest;
                 // Find the subscription with this ID
-                const subscription = Array.from(this.activeSubscriptions.values()).find(
+                const _subscription = Array.from(this.activeSubscriptions.values()).find(
                     (sub) => sub.subId === subId
                 );
 
@@ -140,7 +139,7 @@ export class RelayMock extends EventEmitter {
      */
     async simulateEvent(event: NDKEvent, subId?: string): Promise<void> {
         const eventData = await event.toNostrEvent();
-        
+
         if (subId) {
             // If a subscription ID is provided, only send to that subscription
             const subscription = this.activeSubscriptions.get(subId);
@@ -196,4 +195,4 @@ export class RelayMock extends EventEmitter {
         this.activeSubscriptions.clear();
         this._status = 0; // DISCONNECTED
     }
-} 
+}

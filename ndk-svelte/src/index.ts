@@ -79,10 +79,6 @@ type NDKSubscribeOptions = NDKSubscriptionOptions & {
 };
 
 class NDKSvelte extends NDK {
-    constructor(opts?: NDKConstructorParams) {
-        super(opts);
-    }
-
     private createEventStore<T extends NDKEvent>(filters?: NDKFilter[]): NDKEventStore<T> {
         const store = writable<T[]>([]) as NDKEventStore<T>;
         return {
@@ -96,8 +92,8 @@ class NDKSvelte extends NDK {
             update: store.update,
             subscribe: store.subscribe,
             unsubscribe: () => {},
-            onEose: (cb) => {},
-            onEvent: (cb) => {},
+            onEose: (_cb) => {},
+            onEvent: (_cb) => {},
             startSubscription: () => {
                 throw new Error("not implemented");
             },
@@ -110,7 +106,7 @@ class NDKSvelte extends NDK {
             empty: () => {
                 throw new Error("not implemented");
             },
-            changeFilters: (filters: NDKFilter[]) => {
+            changeFilters: (_filters: NDKFilter[]) => {
                 throw new Error("not implemented");
             },
         };
@@ -216,7 +212,7 @@ class NDKSvelte extends NDK {
             const dedupKey = event.deduplicationKey();
 
             if (events.has(dedupKey)) {
-                let prevEvent = events.get(dedupKey)!;
+                const prevEvent = events.get(dedupKey)!;
 
                 // we received an older version
                 if (prevEvent.created_at! > event.created_at!) return;
@@ -247,10 +243,9 @@ class NDKSvelte extends NDK {
                     // flag the deletion of this dTag
                     deletedPRETimestamps.set(dedupKey, event.created_at!);
                     return;
-                } else {
-                    // remove any deletion flag and proceed to adding the event
-                    deletedPRETimestamps.delete(dedupKey);
                 }
+                // remove any deletion flag and proceed to adding the event
+                deletedPRETimestamps.delete(dedupKey);
             }
 
             events.set(dedupKey, e as ExtendedBaseType<T>);

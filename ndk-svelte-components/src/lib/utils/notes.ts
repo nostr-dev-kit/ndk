@@ -24,7 +24,7 @@ export const urlIsMedia = (url: string) =>
 
 type ContentArgs = {
     content: string;
-    tags?: Array<[string, string, string]>;
+    tags?: [string, string, string][];
     html?: boolean;
 };
 
@@ -126,13 +126,15 @@ export const parseContent = ({ content, tags = [], html = false }: ContentArgs):
         const mentionMatch = text.match(/^#\[(\d+)\]/i);
 
         if (mentionMatch) {
-            const i = parseInt(mentionMatch[1]);
+            const i = Number.parseInt(mentionMatch[1]);
 
             if (tags[i]) {
                 const [tag, value, url] = tags[i];
                 const relays = [url].filter(identity);
 
-                let type, data, entity;
+                let type;
+                let data;
+                let entity;
                 try {
                     if (tag === "p") {
                         type = "nprofile";
@@ -179,8 +181,7 @@ export const parseContent = ({ content, tags = [], html = false }: ContentArgs):
                 }
 
                 return [`nostr:${type}`, bech32, { ...value, entity }];
-            } catch (e) {
-                console.log(e);
+            } catch (_e) {
                 // pass
             }
         }
@@ -213,7 +214,7 @@ export const parseContent = ({ content, tags = [], html = false }: ContentArgs):
             }
 
             if (!url.match("://")) {
-                url = "https://" + url;
+                url = `https://${url}`;
             }
 
             return [LINK, raw, { url, isMedia: urlIsMedia(url) }];

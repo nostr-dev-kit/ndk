@@ -7,10 +7,6 @@ export class RelayPoolMock {
     private eventListeners: Map<string, Set<Function>> = new Map();
     private onceListeners: Map<string, Set<Function>> = new Map();
 
-    constructor() {
-        // Initialize the mock relay pool
-    }
-
     addMockRelay(url: string, options = {}): RelayMock {
         const mockRelay = new RelayMock(url, options);
         this.mockRelays.set(url, mockRelay);
@@ -76,8 +72,8 @@ export class RelayPoolMock {
     // Add this method to support the NDKSubscription implementation
     getRelay(
         url: string,
-        connect: boolean = false,
-        createIfNotExists: boolean = false,
+        connect = false,
+        createIfNotExists = false,
         _filters?: NDKFilter[]
     ): RelayMock {
         let relay = this.mockRelays.get(url);
@@ -90,7 +86,8 @@ export class RelayPoolMock {
             throw new Error(`Relay ${url} not found and createIfNotExists is false`);
         }
 
-        if (connect && relay.status !== 2) { // CONNECTED
+        if (connect && relay.status !== 2) {
+            // CONNECTED
             relay.connect();
         }
 
@@ -110,17 +107,17 @@ export class RelayPoolMock {
         if (!this.onceListeners.has(eventName)) {
             this.onceListeners.set(eventName, new Set());
         }
-        
+
         // Create a wrapper that removes itself after first execution
         const wrappedCallback = (...args: any[]) => {
             callback(...args);
-            
+
             // Remove the listener after execution
             this.onceListeners.get(eventName)?.delete(wrappedCallback);
         };
-        
+
         this.onceListeners.get(eventName)?.add(wrappedCallback);
-        
+
         // Also register in normal listeners for emit to find it
         if (!this.eventListeners.has(eventName)) {
             this.eventListeners.set(eventName, new Set());
@@ -133,7 +130,7 @@ export class RelayPoolMock {
         if (this.eventListeners.has(eventName)) {
             this.eventListeners.get(eventName)?.delete(callback);
         }
-        
+
         if (this.onceListeners.has(eventName)) {
             this.onceListeners.get(eventName)?.delete(callback);
         }
@@ -147,4 +144,4 @@ export class RelayPoolMock {
             });
         }
     }
-} 
+}

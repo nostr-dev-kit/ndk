@@ -1,33 +1,27 @@
 <script lang="ts">
-    import type { NDKEvent, NDKTag } from "@nostr-dev-kit/ndk";
-    import { humanFileSize } from "$lib/utils/event";
+import { humanFileSize } from "$lib/utils/event";
+import type { NDKEvent, NDKTag } from "@nostr-dev-kit/ndk";
 
-    export let event: NDKEvent;
-    export let showMedia: boolean = true;
+export let event: NDKEvent;
+export const showMedia = true;
 
-    const SUPPORTED_IMAGE_TYPES = [
-        "image/png",
-        "image/jpg",
-        "image/jpeg",
-        "image/webp",
-        "image/gif",
-    ];
+const _SUPPORTED_IMAGE_TYPES = ["image/png", "image/jpg", "image/jpeg", "image/webp", "image/gif"];
 
-    const SUPPORTED_VIDEO_TYPES = [
-        "video/mp4",
-        "video/ogg",
-        "video/quicktime",
-        "video/avi",
-        "video/mpeg",
-    ];
+const _SUPPORTED_VIDEO_TYPES = [
+    "video/mp4",
+    "video/ogg",
+    "video/quicktime",
+    "video/avi",
+    "video/mpeg",
+];
 
-    const file: string = event.getMatchingTags("url")[0][1];
-    const truncatedFile: string = file.substring(0, 32).concat("...");
-    const mimeType: string = event.getMatchingTags("m")[0][1];
-    const sizeTags: NDKTag[] = event.getMatchingTags("size");
-    const size: string = sizeTags ? humanFileSize(parseInt(sizeTags[0][1])) : "";
-    const dimTags: NDKTag[] = event.getMatchingTags("dim");
-    const dim: string = dimTags.length > 0 ? dimTags[0][1] : "";
+const file: string = event.getMatchingTags("url")[0][1];
+const _truncatedFile: string = file.substring(0, 32).concat("...");
+const _mimeType: string = event.getMatchingTags("m")[0][1];
+const sizeTags: NDKTag[] = event.getMatchingTags("size");
+const _size: string = sizeTags ? humanFileSize(Number.parseInt(sizeTags[0][1])) : "";
+const dimTags: NDKTag[] = event.getMatchingTags("dim");
+const _dim: string = dimTags.length > 0 ? dimTags[0][1] : "";
 </script>
 
 <div class="kind1063--content {$$props.class??""}">

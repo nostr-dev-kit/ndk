@@ -1,8 +1,8 @@
 <script lang="ts">
-    import { formatRelayName } from '$lib/utils/relay';
-    import type { NDKRelay } from '@nostr-dev-kit/ndk';
+import { formatRelayName } from "$lib/utils/relay";
+import type { NDKRelay } from "@nostr-dev-kit/ndk";
 
-    export let relay: NDKRelay;
+export let relay: NDKRelay;
 </script>
 
 {formatRelayName(relay)}

@@ -1,37 +1,37 @@
 <script lang="ts">
-    import { copyToClipboard } from "$lib/utils";
-    import type { NDKEvent } from "@nostr-dev-kit/ndk";
+import { copyToClipboard } from "$lib/utils";
+import type { NDKEvent } from "@nostr-dev-kit/ndk";
 
-    import { Copy, Link, MoreVertical, Trash } from "lucide-svelte";
+import { Copy, Link, MoreVertical, Trash } from "lucide-svelte";
 
-    import { createEventDispatcher } from "svelte";
+import { createEventDispatcher } from "svelte";
 
-    const dispatch = createEventDispatcher();
+const _dispatch = createEventDispatcher();
 
-    export let event: NDKEvent
-    export let open = false;
-    export let enableDelete = false;
+export let event: NDKEvent;
+export const open = false;
+export const enableDelete = false;
 
-    let copiedEventId = false;
-    let copiedEventJSON = false;
+let _copiedEventId = false;
+let _copiedEventJSON = false;
 
-    function copyId(e: Event) {
-        e.stopPropagation();
-        copyToClipboard(event.encode());
-        copiedEventId = true;
-        setTimeout(() => {
-            copiedEventId = false;
-        }, 1000);
-    }
+function copyId(e: Event) {
+    e.stopPropagation();
+    copyToClipboard(event.encode());
+    _copiedEventId = true;
+    setTimeout(() => {
+        _copiedEventId = false;
+    }, 1000);
+}
 
-    function copyJSON(e: Event) {
-        e.stopPropagation();
-        copyToClipboard(JSON.stringify(event.rawEvent()));
-        copiedEventJSON = true;
-        setTimeout(() => {
-            copiedEventJSON = false;
-        }, 1000);
-    }
+function copyJSON(e: Event) {
+    e.stopPropagation();
+    copyToClipboard(JSON.stringify(event.rawEvent()));
+    _copiedEventJSON = true;
+    setTimeout(() => {
+        _copiedEventJSON = false;
+    }, 1000);
+}
 </script>
 
 <div class="event-card--dropdown-button {open ? "event-card--dropdown-button---opened" : "event-card--dropdown-button---closed"} {$$props.class??""}">

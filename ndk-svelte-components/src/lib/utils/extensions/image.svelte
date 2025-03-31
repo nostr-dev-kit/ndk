@@ -1,6 +1,6 @@
 <script lang="ts">
-    const imageRegexp = /(?<!\!\[.*?\]\()https?:\/\/[^ ]+\.(jpg|jpeg|png|gif|webp|bmp|svg)(?!\))/;
-    const isImage = (url: string) => imageRegexp.test(url);
+const imageRegexp = /(?<!\!\[.*?\]\()https?:\/\/[^ ]+\.(jpg|jpeg|png|gif|webp|bmp|svg)(?!\))/;
+const _isImage = (url: string) => imageRegexp.test(url);
 </script>
 
 {#if isImage($$props.href)}

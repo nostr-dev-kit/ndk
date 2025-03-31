@@ -1,10 +1,10 @@
 <script lang="ts">
-    import { isAudio, isImage, isVideo } from "$lib/utils/notes";
-    import { getContext } from "svelte";
+import { isAudio, isImage, isVideo } from "$lib/utils/notes";
+import { getContext } from "svelte";
 
-    export let href: string;
-    export let text: string = href.replace(/https?:\/\/(www\.)?/, "");
-    export let showMedia = getContext("showMedia") || false;
+export let href: string;
+export const text: string = href.replace(/https?:\/\/(www\.)?/, "");
+export const showMedia = getContext("showMedia") || false;
 </script>
 
 {#if showMedia}

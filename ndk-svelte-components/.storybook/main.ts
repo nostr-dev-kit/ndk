@@ -1,5 +1,5 @@
+import { dirname, join } from "node:path";
 import type { StorybookConfig } from "@storybook/sveltekit";
-import { join, dirname } from "path";
 
 /**
  * This function is used to resolve the absolute path of a package.

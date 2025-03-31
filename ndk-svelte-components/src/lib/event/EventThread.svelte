@@ -1,139 +1,144 @@
 <script lang="ts">
-    import { NDKSubscriptionCacheUsage, type Hexpubkey, type NDKEvent, type NDKEventId } from "@nostr-dev-kit/ndk";
-    import type { Readable } from 'svelte/store';
-    import { fade } from 'svelte/transition';
-    import { type ComponentType, onDestroy } from "svelte";
-    import EventCard from "./EventCard.svelte";
-    import ElementConnector from "./ElementConnector.svelte";
-    import type NDKSvelte from "@nostr-dev-kit/ndk-svelte";
+import {
+    type Hexpubkey,
+    type NDKEvent,
+    type NDKEventId,
+    NDKSubscriptionCacheUsage,
+} from "@nostr-dev-kit/ndk";
+import type NDKSvelte from "@nostr-dev-kit/ndk-svelte";
+import { type ComponentType, onDestroy } from "svelte";
+import type { Readable } from "svelte/store";
+import { fade } from "svelte/transition";
+import ElementConnector from "./ElementConnector.svelte";
+import EventCard from "./EventCard.svelte";
 
-    type ExtraItem = {
-        component: ComponentType;
-        props: any;
-    }
-    type ExtraItemFetcher = (event: NDKEvent) => Readable<ExtraItem[]>;
+type ExtraItem = {
+    component: ComponentType;
+    props: any;
+};
+type ExtraItemFetcher = (event: NDKEvent) => Readable<ExtraItem[]>;
 
-    export let ndk: NDKSvelte;
-    export let event: NDKEvent;
-    export let skipEvent = false;
-    export let eventComponent: any = EventCard;
-    export let eventComponentProps: Object = {};
-    export let whitelistPubkeys: Set<Hexpubkey> | undefined = undefined;
-    export let useWhitelist = false;
-    export let extraItemsFetcher: ExtraItemFetcher | undefined = undefined;
+export let ndk: NDKSvelte;
+export let event: NDKEvent;
+export const skipEvent = false;
+export const eventComponent: any = EventCard;
+export const eventComponentProps: Object = {};
+export const whitelistPubkeys: Set<Hexpubkey> | undefined = undefined;
+export const useWhitelist = false;
+export const extraItemsFetcher: ExtraItemFetcher | undefined = undefined;
 
-    // Event IDs that are part of the thread
-    let threadIds = new Map<NDKEventId, NDKEvent>();
-    let replyIds = new Map<NDKEventId, NDKEvent>();
+// Event IDs that are part of the thread
+let threadIds = new Map<NDKEventId, NDKEvent>();
+let replyIds = new Map<NDKEventId, NDKEvent>();
 
-    let eventsByAuthor = new Set<NDKEventId>([event.id]);
+const eventsByAuthor = new Set<NDKEventId>([event.id]);
 
-    threadIds.set(event.id, event);
+threadIds.set(event.id, event);
 
-    /**
-     * Extra events are events that might be coming from alternative sources
-     * instead of coming from a relay
-     */
-    let extraItems: Readable<ExtraItem[]>;
+/**
+ * Extra events are events that might be coming from alternative sources
+ * instead of coming from a relay
+ */
+let _extraItems: Readable<ExtraItem[]>;
 
-    if (extraItemsFetcher) {
-        extraItems = extraItemsFetcher(event);
-    }
+if (extraItemsFetcher) {
+    _extraItems = extraItemsFetcher(event);
+}
 
-    export let replies: Readable<NDKEvent[]> = ndk.storeSubscribe({
+export let replies: Readable<NDKEvent[]> = ndk.storeSubscribe(
+    {
         kinds: [1, 12],
-        "#e": Array.from(threadIds.keys())
-    }, { closeOnEose: false, groupableDelay: 100, cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY });
+        "#e": Array.from(threadIds.keys()),
+    },
+    { closeOnEose: false, groupableDelay: 100, cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY }
+);
 
-    $: {
-        const threadIdCountBefore = threadIds.size;
-        const replyIdCountBefore = replyIds.size;
+$: {
+    const threadIdCountBefore = threadIds.size;
+    const replyIdCountBefore = replyIds.size;
 
-        // Update eventsByAuthor
-        for (const taggedEvent of $replies) {
-            if (taggedEvent.pubkey === event.pubkey)
-                eventsByAuthor.add(taggedEvent.id);
-        }
-
-        // Find threaded events and replies
-        for (const taggedEvent of $replies) {
-            if (eventIsPartOfThread(taggedEvent))
-                threadIds.set(taggedEvent.id, taggedEvent);
-        }
-
-        for (const taggedEvent of $replies) {
-            if (threadIds.has(taggedEvent.id)) continue;
-            if (eventIsReply(taggedEvent))
-                replyIds.set(taggedEvent.id, taggedEvent);
-        }
-
-        // Do we need to redo our filter?
-        if (threadIdCountBefore < threadIds.size) {
-            replies.unsubscribe();
-            replies = ndk.storeSubscribe({
-                kinds: [1],
-                "#e": Array.from(threadIds.keys())
-            }, { closeOnEose: false, groupableDelay: 100, subId: "thread-filter" });
-            threadIds = threadIds;
-        }
-
-        if (replyIdCountBefore < replyIds.size) {
-            replyIds = replyIds;
-        }
+    // Update eventsByAuthor
+    for (const taggedEvent of $replies) {
+        if (taggedEvent.pubkey === event.pubkey) eventsByAuthor.add(taggedEvent.id);
     }
 
-    function eventIsPartOfThread(e: NDKEvent): boolean {
-        // must be same author
-        if (event.pubkey !== e.pubkey) return false;
-
-        // Check if all tagged events are by the original author
-        const taggedEventIds = e.getMatchingTags("e").map(tag => tag[1]);
-        const allTaggedEventsAreByOriginalAuthor = taggedEventIds.every(id => eventsByAuthor.has(id));
-
-        return allTaggedEventsAreByOriginalAuthor;
+    // Find threaded events and replies
+    for (const taggedEvent of $replies) {
+        if (eventIsPartOfThread(taggedEvent)) threadIds.set(taggedEvent.id, taggedEvent);
     }
 
-    function eventIsReply(event: NDKEvent): boolean {
-        return isReply(event);
+    for (const taggedEvent of $replies) {
+        if (threadIds.has(taggedEvent.id)) continue;
+        if (eventIsReply(taggedEvent)) replyIds.set(taggedEvent.id, taggedEvent);
     }
 
-    onDestroy(() => {
+    // Do we need to redo our filter?
+    if (threadIdCountBefore < threadIds.size) {
         replies.unsubscribe();
-    })
-
-    function isReply(e: NDKEvent): boolean {
-        const replyMarker = e.tags.find(tag => {
-            return (
-                threadIds.has(tag[1]) &&
-                tag[3] === 'reply'
-            );
-        })
-
-        if (replyMarker) return true;
-
-        // check if the event has valid markers, if it does and we don't have an explicit reply, this was
-        // probably a reply to a reply or a mention
-        const hasMarker = !!e.tags.find(tag => ["reply", "mention"].includes(tag[3]));
-        if (hasMarker) return false;
-
-        // if we don't have markers, check if there are tags for other events that the main event
-        // does not have
-        const expectedTags = event.getMatchingTags("e").map(tag => tag[1]);
-        expectedTags.push(event.id);
-
-        // return true if there are no unexpected e tags
-        return e.getMatchingTags("e").every(tag => expectedTags.includes(tag[1]));
+        replies = ndk.storeSubscribe(
+            {
+                kinds: [1],
+                "#e": Array.from(threadIds.keys()),
+            },
+            { closeOnEose: false, groupableDelay: 100, subId: "thread-filter" }
+        );
+        threadIds = threadIds;
     }
 
-    function sortThread(a: NDKEvent, b: NDKEvent): number {
-        return a.created_at! - b.created_at!;
+    if (replyIdCountBefore < replyIds.size) {
+        replyIds = replyIds;
     }
+}
 
-    function sortReplies(a: NDKEvent, b: NDKEvent): number {
-        return a.created_at! - b.created_at!;
-    }
+function eventIsPartOfThread(e: NDKEvent): boolean {
+    // must be same author
+    if (event.pubkey !== e.pubkey) return false;
 
-    let eventContainer: HTMLElement;
+    // Check if all tagged events are by the original author
+    const taggedEventIds = e.getMatchingTags("e").map((tag) => tag[1]);
+    const allTaggedEventsAreByOriginalAuthor = taggedEventIds.every((id) => eventsByAuthor.has(id));
+
+    return allTaggedEventsAreByOriginalAuthor;
+}
+
+function eventIsReply(event: NDKEvent): boolean {
+    return isReply(event);
+}
+
+onDestroy(() => {
+    replies.unsubscribe();
+});
+
+function isReply(e: NDKEvent): boolean {
+    const replyMarker = e.tags.find((tag) => {
+        return threadIds.has(tag[1]) && tag[3] === "reply";
+    });
+
+    if (replyMarker) return true;
+
+    // check if the event has valid markers, if it does and we don't have an explicit reply, this was
+    // probably a reply to a reply or a mention
+    const hasMarker = !!e.tags.find((tag) => ["reply", "mention"].includes(tag[3]));
+    if (hasMarker) return false;
+
+    // if we don't have markers, check if there are tags for other events that the main event
+    // does not have
+    const expectedTags = event.getMatchingTags("e").map((tag) => tag[1]);
+    expectedTags.push(event.id);
+
+    // return true if there are no unexpected e tags
+    return e.getMatchingTags("e").every((tag) => expectedTags.includes(tag[1]));
+}
+
+function sortThread(a: NDKEvent, b: NDKEvent): number {
+    return a.created_at! - b.created_at!;
+}
+
+function sortReplies(a: NDKEvent, b: NDKEvent): number {
+    return a.created_at! - b.created_at!;
+}
+
+let _eventContainer: HTMLElement;
 </script>
 
 <div class="event-thread flex flex-col gap-6" transition:fade={{ duration: 500 }}>

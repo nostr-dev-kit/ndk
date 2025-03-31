@@ -1,11 +1,9 @@
 <script lang="ts">
-    import { isAudio, isImage, isVideo } from "$lib/utils/notes";
+import { isAudio, isImage, isVideo } from "$lib/utils/notes";
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    export let value: any;
-    export let showMedia = false;
-
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export let value: any;
+export const showMedia = false;
 </script>
 
 {#if showMedia && value.isMedia}

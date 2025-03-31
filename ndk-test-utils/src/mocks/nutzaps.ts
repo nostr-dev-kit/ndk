@@ -34,7 +34,7 @@ export async function mockNutzap(
 ) {
     if (!recipientPubkey) {
         ndk.assertSigner();
-        recipientPubkey = (await ndk.signer!.user()).pubkey;
+        recipientPubkey = (await ndk.signer?.user()).pubkey;
     }
 
     const nutzap = new NDKNutzap(ndk);
@@ -70,10 +70,10 @@ export function mockProof(C: string, amount: number, p2pk?: string): Proof {
             "P2PK",
             {
                 nonce: "4eb3d1430af5e2663634af4ff80a394cfe1d377d41ab34d6d92e03cb3f2cdc8c",
-                data: "02" + p2pk,
+                data: `02${p2pk}`,
             },
         ]);
     }
 
     return proof;
-} 
+}

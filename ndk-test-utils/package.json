@@ -4,9 +4,7 @@
     "description": "Test helpers, mocks, and stubs for the Nostr Development Kit (NDK)",
     "main": "dist/index.js",
     "typings": "dist/index.d.ts",
-    "files": [
-        "dist"
-    ],
+    "files": ["dist"],
     "scripts": {
         "build": "tsc",
         "test": "vitest run",
@@ -21,4 +19,4 @@
         "nostr-tools": "^2.7.1",
         "vitest": "^1.0.0"
     }
-} 
+}

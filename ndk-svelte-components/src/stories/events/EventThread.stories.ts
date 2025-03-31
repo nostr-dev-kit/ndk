@@ -1,7 +1,7 @@
-import NDK from "@nostr-dev-kit/ndk-svelte";
 import { NDKEvent } from "@nostr-dev-kit/ndk";
-import type { Meta, StoryObj } from "@storybook/svelte";
 import NDKCacheAdapterDexie from "@nostr-dev-kit/ndk-cache-dexie";
+import NDK from "@nostr-dev-kit/ndk-svelte";
+import type { Meta, StoryObj } from "@storybook/svelte";
 
 import EventThread from "../../lib/event/EventThread.svelte";
 

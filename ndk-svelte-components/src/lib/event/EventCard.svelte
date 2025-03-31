@@ -1,39 +1,39 @@
 <script lang="ts">
-    import { EventContent, Name } from '$lib';
-    import EventCardDropdownMenu from './EventCardDropdownMenu.svelte';
-    import Avatar from '$lib/user/Avatar.svelte';
-    import type { NDKEvent } from '@nostr-dev-kit/ndk';
-    import type NDK from '@nostr-dev-kit/ndk';
-    import Time from "svelte-time";
+import { EventContent, Name } from "$lib";
+import Avatar from "$lib/user/Avatar.svelte";
+import type { NDKEvent } from "@nostr-dev-kit/ndk";
+import type NDK from "@nostr-dev-kit/ndk";
+import Time from "svelte-time";
+import EventCardDropdownMenu from "./EventCardDropdownMenu.svelte";
 
-    export let ndk: NDK;
-    export let id: string | undefined = undefined;
-    export const relays: string[] | undefined = undefined;
-    export let event: NDKEvent | null | undefined = undefined;
-    export let relativeTimeAllowed = true;
+export let ndk: NDK;
+export const id: string | undefined = undefined;
+export const relays: string[] | undefined = undefined;
+export let event: NDKEvent | null | undefined = undefined;
+export const relativeTimeAllowed = true;
 
-    // eslint-disable-next-line no-async-promise-executor
-    const eventPromise = new Promise(async (resolve, reject) => {
-        if (event) {
-            resolve(event);
-        } else if (id) {
-            event = await ndk.fetchEvent(id);
+// eslint-disable-next-line no-async-promise-executor
+const _eventPromise = new Promise(async (resolve, reject) => {
+    if (event) {
+        resolve(event);
+    } else if (id) {
+        event = await ndk.fetchEvent(id);
 
-            if (!event) reject('Event not found');
-            else resolve(event);
-        }
-    });
-
-    export let timeAgoCutoff: number = 60*60*24;
-
-    function useRelativeTime() {
-        if (!relativeTimeAllowed || !event) return false;
-
-        const now = Date.now();
-        const diff = now - event.created_at! * 1000;
-
-        return diff < 1000 * timeAgoCutoff;
+        if (!event) reject("Event not found");
+        else resolve(event);
     }
+});
+
+export const timeAgoCutoff: number = 60 * 60 * 24;
+
+function useRelativeTime() {
+    if (!relativeTimeAllowed || !event) return false;
+
+    const now = Date.now();
+    const diff = now - event.created_at! * 1000;
+
+    return diff < 1000 * timeAgoCutoff;
+}
 </script>
 
 {#await eventPromise then}

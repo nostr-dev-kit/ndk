@@ -1,11 +1,11 @@
 <script lang="ts">
-    import type { NDKList } from "@nostr-dev-kit/ndk";
-    import type NDK from '@nostr-dev-kit/ndk';
-    import Avatar from "$lib/user/Avatar.svelte";
-    import Name from "$lib/user/Name.svelte";
+import Avatar from "$lib/user/Avatar.svelte";
+import Name from "$lib/user/Name.svelte";
+import type { NDKList } from "@nostr-dev-kit/ndk";
+import type NDK from "@nostr-dev-kit/ndk";
 
-    export let ndk:NDK;
-    export let list: NDKList;
+export let ndk: NDK;
+export let list: NDKList;
 </script>
 
 {#each list.items as tag (tag[1])}

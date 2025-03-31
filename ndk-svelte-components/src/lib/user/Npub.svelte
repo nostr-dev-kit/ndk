@@ -1,54 +1,54 @@
 <script lang="ts">
-    import type { NDKUser } from "@nostr-dev-kit/ndk";
-    import type NDK from "@nostr-dev-kit/ndk";
-    import { copyToClipboard, truncatedBech32 } from "$lib/utils";
-    import { Copy, Check } from "lucide-svelte";
-    import { fade } from "svelte/transition";
+import { copyToClipboard, truncatedBech32 } from "$lib/utils";
+import type { NDKUser } from "@nostr-dev-kit/ndk";
+import type NDK from "@nostr-dev-kit/ndk";
+import { Check, Copy } from "lucide-svelte";
+import { fade } from "svelte/transition";
 
-    /**
-     * The NDK instance you want to use
-     */
-    export let ndk: NDK;
+/**
+ * The NDK instance you want to use
+ */
+export let ndk: NDK;
 
-    /**
-     * The npub of the user you want to display an avatar for
-     */
-    export let npub: string | undefined = undefined;
+/**
+ * The npub of the user you want to display an avatar for
+ */
+export let npub: string | undefined = undefined;
 
-    /**
-     * The hexpubkey of the user you want to display an avatar for
-     */
-    export let pubkey: string | undefined = undefined;
+/**
+ * The hexpubkey of the user you want to display an avatar for
+ */
+export const pubkey: string | undefined = undefined;
 
-    /**
-     * The user object of the user you want to display an avatar for
-     */
-    export let user: NDKUser | undefined = undefined;
+/**
+ * The user object of the user you want to display an avatar for
+ */
+export let user: NDKUser | undefined = undefined;
 
-    /**
-     * Optionally specify the maximum length of the npub to display
-     */
-    export let npubMaxLength: number | undefined = undefined;
+/**
+ * Optionally specify the maximum length of the npub to display
+ */
+export const npubMaxLength: number | undefined = undefined;
 
-    if (!user) {
-        let opts = npub ? { npub } : { pubkey };
-        user = ndk.getUser(opts);
-        npub = user.npub;
-    }
+if (!user) {
+    const opts = npub ? { npub } : { pubkey };
+    user = ndk.getUser(opts);
+    npub = user.npub;
+}
 
-    let checkVisible = false;
+let _checkVisible = false;
 
-    function copyNpub() {
-        copyToClipboard(npub);
-        showCheck();
-    }
+function copyNpub() {
+    copyToClipboard(npub);
+    showCheck();
+}
 
-    function showCheck() {
-        checkVisible = true;
-        setTimeout(() => {
-            checkVisible = false;
-        }, 1000);
-    }
+function showCheck() {
+    _checkVisible = true;
+    setTimeout(() => {
+        _checkVisible = false;
+    }, 1000);
+}
 </script>
 
 <span class="name">

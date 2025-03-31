@@ -13,8 +13,8 @@ export class EventGenerator {
     private static ndk: any = null;
 
     static setNDK(ndk: any): void {
-        this.ndk = ndk;
-        
+        EventGenerator.ndk = ndk;
+
         // Check if the NDK instance has a signer, if not create one
         if (!ndk.signer) {
             ndk.signer = NDKPrivateKeySigner.generate();
@@ -22,7 +22,7 @@ export class EventGenerator {
     }
 
     static getPrivateKeyForPubkey(pubkey: string): string {
-        if (!this.privateKeys.has(pubkey)) {
+        if (!EventGenerator.privateKeys.has(pubkey)) {
             // Using the core functions from nostr-tools
             const privateKey = nostrTools.generateSecretKey();
             const hexPrivateKey = Buffer.from(privateKey).toString("hex");
@@ -30,23 +30,23 @@ export class EventGenerator {
 
             // If this is a randomly generated pubkey, associate it
             if (!pubkey || pubkey === generatedPubkey) {
-                this.privateKeys.set(generatedPubkey, hexPrivateKey);
+                EventGenerator.privateKeys.set(generatedPubkey, hexPrivateKey);
                 return hexPrivateKey;
             }
 
             // Otherwise, we need to create a mapping for the specific pubkey
             // (This is just for testing - in real world the private key would need to match)
-            this.privateKeys.set(pubkey, hexPrivateKey);
+            EventGenerator.privateKeys.set(pubkey, hexPrivateKey);
         }
-        return this.privateKeys.get(pubkey) || "";
+        return EventGenerator.privateKeys.get(pubkey) || "";
     }
 
     static createEvent(
-        kind: number = 1, // text note
-        content: string = "",
-        pubkey: string = ""
+        kind = 1, // text note
+        content = "",
+        pubkey = ""
     ): NDKEvent {
-        if (!this.ndk) {
+        if (!EventGenerator.ndk) {
             throw new Error("NDK not set in EventGenerator. Call setNDK first.");
         }
 
@@ -55,7 +55,7 @@ export class EventGenerator {
             pubkey = nostrTools.getPublicKey(secretKey);
         }
 
-        const event = new NDKEvent(this.ndk);
+        const event = new NDKEvent(EventGenerator.ndk);
         event.kind = kind;
         event.pubkey = pubkey;
         event.content = content;
@@ -64,8 +64,8 @@ export class EventGenerator {
         return event;
     }
 
-    static async createSignedTextNote(content: string, pubkey: string = ""): Promise<NDKEvent> {
-        if (!this.ndk) {
+    static async createSignedTextNote(content: string, pubkey = ""): Promise<NDKEvent> {
+        if (!EventGenerator.ndk) {
             throw new Error("NDK not set in EventGenerator. Call setNDK first.");
         }
 
@@ -74,8 +74,8 @@ export class EventGenerator {
             pubkey = nostrTools.getPublicKey(secretKey);
         }
 
-        const privateKey = this.getPrivateKeyForPubkey(pubkey);
-        const event = this.createEvent(1, content, pubkey);
+        const _privateKey = EventGenerator.getPrivateKeyForPubkey(pubkey);
+        const event = EventGenerator.createEvent(1, content, pubkey);
 
         // Sign the event using NDK's signing mechanism
         await event.sign();
@@ -88,11 +88,11 @@ export class EventGenerator {
         from: string,
         to: string
     ): Promise<NDKEvent> {
-        if (!this.ndk) {
+        if (!EventGenerator.ndk) {
             throw new Error("NDK not set in EventGenerator. Call setNDK first.");
         }
 
-        const event = this.createEvent(4, content, from);
+        const event = EventGenerator.createEvent(4, content, from);
         event.tags.push(["p", to]);
 
         // Sign the event
@@ -101,8 +101,8 @@ export class EventGenerator {
         return event;
     }
 
-    static async createRepost(originalEvent: NDKEvent, pubkey: string = ""): Promise<NDKEvent> {
-        if (!this.ndk) {
+    static async createRepost(originalEvent: NDKEvent, pubkey = ""): Promise<NDKEvent> {
+        if (!EventGenerator.ndk) {
             throw new Error("NDK not set in EventGenerator. Call setNDK first.");
         }
 
@@ -111,7 +111,7 @@ export class EventGenerator {
             pubkey = nostrTools.getPublicKey(secretKey);
         }
 
-        const event = this.createEvent(
+        const event = EventGenerator.createEvent(
             6, // Repost kind
             JSON.stringify(await originalEvent.toNostrEvent()),
             pubkey
@@ -128,10 +128,10 @@ export class EventGenerator {
     static async createParameterizedReplaceable(
         kind: number,
         content: string,
-        pubkey: string = "",
-        dTag: string = ""
+        pubkey = "",
+        dTag = ""
     ): Promise<NDKEvent> {
-        if (!this.ndk) {
+        if (!EventGenerator.ndk) {
             throw new Error("NDK not set in EventGenerator. Call setNDK first.");
         }
 
@@ -146,7 +146,7 @@ export class EventGenerator {
             pubkey = nostrTools.getPublicKey(secretKey);
         }
 
-        const event = this.createEvent(kind, content, pubkey);
+        const event = EventGenerator.createEvent(kind, content, pubkey);
 
         // Parameterized replaceable events require a d tag
         event.tags.push(["d", dTag]);
@@ -156,4 +156,4 @@ export class EventGenerator {
 
         return event;
     }
-} 
+}

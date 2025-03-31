@@ -26,10 +26,7 @@
             }
         }
     },
-    "files": [
-        "dist",
-        "README.md"
-    ],
+    "files": ["dist", "README.md"],
     "scripts": {
         "build": "tsup src/index.ts src/index.svelte.ts --format cjs,esm --dts",
         "dev": "tsup --watch src src/index.ts --format cjs,esm --dts",
@@ -37,12 +34,7 @@
         "format": "prettier --write .",
         "postbuild": "mv dist/index.svelte.mjs dist/index.svelte.js; mv dist/index.svelte.d.mts dist/index.svelte.d.ts"
     },
-    "keywords": [
-        "nostr",
-        "nostr-dev-kit",
-        "ndk",
-        "svelte"
-    ],
+    "keywords": ["nostr", "nostr-dev-kit", "ndk", "svelte"],
     "author": "pablof7z",
     "license": "MIT",
     "dependencies": {

@@ -1,30 +1,30 @@
 <script lang="ts">
-    import type { NDKRelay } from '@nostr-dev-kit/ndk';
-    import type NDK from '@nostr-dev-kit/ndk';
-    import { onMount } from 'svelte';
-    import RelayListItem from './RelayListItem.svelte';
+import type { NDKRelay } from "@nostr-dev-kit/ndk";
+import type NDK from "@nostr-dev-kit/ndk";
+import { onMount } from "svelte";
+import RelayListItem from "./RelayListItem.svelte";
 
-    export let ndk: NDK;
+export let ndk: NDK;
 
-    let relays: NDKRelay[] = [];
-    let notices: Map<NDKRelay, string[]> = new Map();
+let _relays: NDKRelay[] = [];
+const _notices: Map<NDKRelay, string[]> = new Map();
 
-    onMount(() => {
+onMount(() => {
+    update();
+    ndk.pool.on("connect", () => {
         update();
-        ndk.pool.on('connect', () => {
-            update();
-        });
-        ndk.pool.on('relay:connect', () => {
-            update();
-        });
-        ndk.pool.on('disconnect', () => {
-            update();
-        });
     });
+    ndk.pool.on("relay:connect", () => {
+        update();
+    });
+    ndk.pool.on("disconnect", () => {
+        update();
+    });
+});
 
-    function update() {
-        relays = Array.from(ndk.pool.relays.values());
-    }
+function update() {
+    _relays = Array.from(ndk.pool.relays.values());
+}
 </script>
 
 <ul>

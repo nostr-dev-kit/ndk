@@ -1,16 +1,16 @@
 import {
-    NDKCacheAdapter,
+    type NDKCacheAdapter,
     NDKCacheRelayInfo,
-    NDKFilter,
-    NDKKind,
+    type NDKFilter,
+    type NDKKind,
     NDKLnUrlData,
     NDKRelaySet,
     NDKUserProfile,
     NostrEvent,
     ProfilePointer,
 } from "@nostr-dev-kit/ndk";
-import NDK, { NDKRelay } from "@nostr-dev-kit/ndk";
-import { NDKEvent, type NDKSubscription } from "@nostr-dev-kit/ndk";
+import NDK, { type NDKRelay } from "@nostr-dev-kit/ndk";
+import type { NDKEvent, NDKSubscription } from "@nostr-dev-kit/ndk";
 import createDebugger from "debug";
 import { Queue } from "./queue";
 
@@ -201,7 +201,7 @@ export default class NDKNostrCacheAdapter implements NDKCacheAdapter {
     }
 
     private hydrateLocalRelayWithEvent(event: NDKEvent) {
-        d(`relay status %s`, this.relay.status);
+        d("relay status %s", this.relay.status);
         event.ndk = this.ndk;
         this.relay
             .publish(event)
@@ -215,8 +215,8 @@ export default class NDKNostrCacheAdapter implements NDKCacheAdapter {
 
     async setEvent(
         event: NDKEvent,
-        filters: NDKFilter<NDKKind>[],
-        relay?: NDKRelay | undefined
+        _filters: NDKFilter<NDKKind>[],
+        _relay?: NDKRelay | undefined
     ): Promise<void> {
         this.hydrateLocalRelayWithEvent(event);
     }
@@ -262,7 +262,7 @@ export default class NDKNostrCacheAdapter implements NDKCacheAdapter {
 
 const timeout = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const profile = async (fn: (...args: any[]) => any) => {
+const _profile = async (fn: (...args: any[]) => any) => {
     return async (...args: any[]) => {
         const start = Date.now();
         const result = await fn(...args);

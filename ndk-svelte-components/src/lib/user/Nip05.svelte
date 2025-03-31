@@ -1,81 +1,80 @@
 <script lang="ts">
-    import type { NDKUser, NDKUserProfile } from "@nostr-dev-kit/ndk";
-    import type NDK from "@nostr-dev-kit/ndk";
-    import { prettifyNip05 } from "$lib/utils/user";
+import { prettifyNip05 } from "$lib/utils/user";
+import type { NDKUser, NDKUserProfile } from "@nostr-dev-kit/ndk";
+import type NDK from "@nostr-dev-kit/ndk";
 
-    /**
-     * The NDK instance you want to use
-     */
-    export let ndk: NDK;
+/**
+ * The NDK instance you want to use
+ */
+export let ndk: NDK;
 
-    /**
-     * The npub of the user you want to display a NIP-05 for
-     */
-    export let npub: string | undefined = undefined;
+/**
+ * The npub of the user you want to display a NIP-05 for
+ */
+export const npub: string | undefined = undefined;
 
-    /**
-     * The hexpubkey of the user you want to display a NIP-05 for, required in order to validate nip-05.
-     */
-    export let pubkey: string | undefined = undefined;
+/**
+ * The hexpubkey of the user you want to display a NIP-05 for, required in order to validate nip-05.
+ */
+export const pubkey: string | undefined = undefined;
 
-    /**
-     * The user object of the user you want to display a NIP-05 for
-     */
-    export let user: NDKUser | undefined = undefined;
+/**
+ * The user object of the user you want to display a NIP-05 for
+ */
+export let user: NDKUser | undefined = undefined;
 
-    /**
-     * An NDKUserProfile object for the user you want to display a NIP-05 for
-     */
-    export let userProfile: NDKUserProfile | undefined = undefined;
+/**
+ * An NDKUserProfile object for the user you want to display a NIP-05 for
+ */
+export const userProfile: NDKUserProfile | undefined = undefined;
 
-    /**
-     * Optionally specify the maximum length of the nip-05 to display
-     */
-    export let nip05MaxLength: number | undefined = undefined;
+/**
+ * Optionally specify the maximum length of the nip-05 to display
+ */
+export const nip05MaxLength: number | undefined = undefined;
 
-    if (!user) {
-        let opts = npub ? { npub } : { pubkey };
-        try {
-            user = ndk.getUser(opts);
-        } catch (e) {
-            console.error(`error trying to get user`, { opts }, e);
-        }
+if (!user) {
+    const opts = npub ? { npub } : { pubkey };
+    try {
+        user = ndk.getUser(opts);
+    } catch (e) {
+        console.error("error trying to get user", { opts }, e);
     }
+}
 
-    interface validationResponse {
-        valid: boolean | null,
-        userProfile: NDKUserProfile | null
-    }
+interface validationResponse {
+    valid: boolean | null;
+    userProfile: NDKUserProfile | null;
+}
 
-    async function fetchAndValidate(): Promise<validationResponse> {
-        // If we have a user profile and a NIP-05 value, validate.
-        if(userProfile && userProfile.nip05) {
-            return {
-                valid: await user!.validateNip05(userProfile.nip05), 
-                userProfile
-            }
+async function fetchAndValidate(): Promise<validationResponse> {
+    // If we have a user profile and a NIP-05 value, validate.
+    if (userProfile?.nip05) {
+        return {
+            valid: await user?.validateNip05(userProfile.nip05),
+            userProfile,
+        };
         // If we have a user, got get a profile and try to validate.
-        } else if(user) {
-            const profile = await user.fetchProfile();
-            if(profile && profile.nip05) {
-                return {
-                    valid: await user!.validateNip05(profile.nip05), 
-                    userProfile: profile
-                }
-            } else {
-                return {
-                    valid: null,
-                    userProfile: profile
-                }
-            }
-        // Otherwise fail gracefully
-        } else {
-            return {
-                valid: null,
-                userProfile: null
-            }
-        }
     }
+    if (user) {
+        const profile = await user.fetchProfile();
+        if (profile?.nip05) {
+            return {
+                valid: await user?.validateNip05(profile.nip05),
+                userProfile: profile,
+            };
+        }
+        return {
+            valid: null,
+            userProfile: profile,
+        };
+        // Otherwise fail gracefully
+    }
+    return {
+        valid: null,
+        userProfile: null,
+    };
+}
 </script>
 
 <span class="name">

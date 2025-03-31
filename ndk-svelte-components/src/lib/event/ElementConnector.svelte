@@ -1,40 +1,40 @@
 <script lang="ts">
-    export let from: HTMLElement;
-    export let topOffset = 20;
+export let from: HTMLElement;
+export const topOffset = 20;
 
-    let bottomOfFrom: number = 0;
-    let container: HTMLElement | undefined = undefined;
+let _bottomOfFrom = 0;
+const container: HTMLElement | undefined = undefined;
 
-    let topOfContainer: number = 0;
+let _topOfContainer = 0;
 
-    $: if (from) {
-		bottomOfFrom = from.getBoundingClientRect().bottom;
-	}
+$: if (from) {
+    _bottomOfFrom = from.getBoundingClientRect().bottom;
+}
 
-	$: if (container) {
-		topOfContainer = container.getBoundingClientRect().top;
-	}
+$: if (container) {
+    _topOfContainer = container.getBoundingClientRect().top;
+}
 
-    // when the window is resized, recalculate the positions
-    window.addEventListener('resize', () => {
-        if (from) {
-            bottomOfFrom = from.getBoundingClientRect().bottom;
-        }
+// when the window is resized, recalculate the positions
+window.addEventListener("resize", () => {
+    if (from) {
+        _bottomOfFrom = from.getBoundingClientRect().bottom;
+    }
 
-        if (container) {
-            topOfContainer = container.getBoundingClientRect().top;
-        }
-    });
+    if (container) {
+        _topOfContainer = container.getBoundingClientRect().top;
+    }
+});
 
-	setInterval(() => {
-		if (from) {
-			bottomOfFrom = from.getBoundingClientRect().bottom;
-		}
+setInterval(() => {
+    if (from) {
+        _bottomOfFrom = from.getBoundingClientRect().bottom;
+    }
 
-		if (container) {
-			topOfContainer = container.getBoundingClientRect().top;
-		}
-	}, 2000);
+    if (container) {
+        _topOfContainer = container.getBoundingClientRect().top;
+    }
+}, 2000);
 </script>
 
 <div

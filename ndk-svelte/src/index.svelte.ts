@@ -1,6 +1,6 @@
 import NDK, {
     type NDKConstructorParams,
-    NDKEvent,
+    type NDKEvent,
     type NDKFilter,
     type NDKRelay,
     type NDKRelaySet,
@@ -27,10 +27,6 @@ type Actions = {
 };
 
 class NDKSvelte extends NDK {
-    constructor(opts?: NDKConstructorParams) {
-        super(opts);
-    }
-
     /**
      * Subscribes to NDK events and returns a reactive list of events.
      * Automatically cleans up the subscription when no longer needed.

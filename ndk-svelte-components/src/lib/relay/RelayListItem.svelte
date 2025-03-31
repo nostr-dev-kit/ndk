@@ -1,35 +1,40 @@
 <script lang="ts">
-    import { NDKRelayStatus, type NDKRelay } from "@nostr-dev-kit/ndk";
-    import RelayName from "./RelayName.svelte";
-    import { onMount } from "svelte";
+import { type NDKRelay, NDKRelayStatus } from "@nostr-dev-kit/ndk";
+import { onMount } from "svelte";
+import RelayName from "./RelayName.svelte";
 
-    export let relay: NDKRelay;
-    export let expanded = false;
+export let relay: NDKRelay;
+export const expanded = false;
 
-    let notices: string[] = [];
-    let activeSubCount = relay.activeSubscriptions().size
+let notices: string[] = [];
+let _activeSubCount = relay.activeSubscriptions().size;
 
-    onMount(() => {
-        relay.on('notice', (_, notice) => { notices = [notice, ...notices] });
+onMount(() => {
+    relay.on("notice", (_, notice) => {
+        notices = [notice, ...notices];
     });
+});
 
-    $: activeSubCount = relay.activeSubscriptions().size;
-    setInterval(() => {
-        activeSubCount = relay.activeSubscriptions().size;
-    }, 1000);
+$: _activeSubCount = relay.activeSubscriptions().size;
+setInterval(() => {
+    _activeSubCount = relay.activeSubscriptions().size;
+}, 1000);
 
-    let nextReconnectIn: number | undefined;
-    let nextReconnectInterval: any;
+let _nextReconnectIn: number | undefined;
+let nextReconnectInterval: any;
 
-    setInterval(() => {
-        if (!relay.connectionStats.nextReconnectAt || relay.connectionStats.nextReconnectAt! < Date.now()) {
-            clearInterval(nextReconnectInterval);
-            nextReconnectIn = undefined;
-            return;
-        }
+setInterval(() => {
+    if (
+        !relay.connectionStats.nextReconnectAt ||
+        relay.connectionStats.nextReconnectAt! < Date.now()
+    ) {
+        clearInterval(nextReconnectInterval);
+        _nextReconnectIn = undefined;
+        return;
+    }
 
-        nextReconnectIn = Math.floor((relay.connectionStats.nextReconnectAt - Date.now()) / 1000);
-    }, 1000);
+    _nextReconnectIn = Math.floor((relay.connectionStats.nextReconnectAt - Date.now()) / 1000);
+}, 1000);
 </script>
 
 <li>

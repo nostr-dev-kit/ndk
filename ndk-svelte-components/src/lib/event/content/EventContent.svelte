@@ -1,50 +1,50 @@
 <script lang="ts">
-    import type NDK from "@nostr-dev-kit/ndk";
-    import { NDKKind, NDKList, type NDKEvent } from "@nostr-dev-kit/ndk";
-    import { NDKArticle } from "@nostr-dev-kit/ndk";
-    import Kind1 from "./Kind1.svelte";
-    // import Kind40 from "./Kind40.svelte"
-    import Kind1063 from "./Kind1063.svelte";
-    // import Kind1985 from "./Kind1985.svelte"
-    import Kind9802 from "./Kind9802.svelte";
-    import Kind30000 from "./Kind30000.svelte";
-    import Kind30001 from "./Kind30001.svelte";
-    import Kind30023 from "./Kind30023.svelte";
-    import type { ComponentType } from "svelte";
-    import type { MarkedExtension } from "marked";
-    import type { UrlFactory, UrlType } from "$lib";
+import type { UrlFactory, UrlType } from "$lib";
+import type NDK from "@nostr-dev-kit/ndk";
+import { type NDKEvent, NDKKind, NDKList } from "@nostr-dev-kit/ndk";
+import { NDKArticle } from "@nostr-dev-kit/ndk";
+import type { MarkedExtension } from "marked";
+import type { ComponentType } from "svelte";
+import Kind1 from "./Kind1.svelte";
+// import Kind40 from "./Kind40.svelte"
+import Kind1063 from "./Kind1063.svelte";
+// import Kind1985 from "./Kind1985.svelte"
+import Kind9802 from "./Kind9802.svelte";
+import Kind30000 from "./Kind30000.svelte";
+import Kind30001 from "./Kind30001.svelte";
+import Kind30023 from "./Kind30023.svelte";
 
-    export let ndk: NDK;
-    export let event: NDKEvent | null | undefined;
-    export let anchorId: string | null = null;
-    export let maxLength: number = 700;
-    export let showEntire: boolean = true;
-    export let showMedia: boolean = true;
-    export let mediaCollectionComponent: ComponentType | undefined = undefined;
-    export let eventCardComponent: ComponentType | undefined = undefined;
-    
-    export let urlFactory: UrlFactory = (type: UrlType, value: string) => {
-        switch (type) {
-            case "hashtag":
-                return `/t/${value}`;
-            case "mention":
-                return `/p/${value}`;
-            default:
-                return value;
-        }
-    };
+export let ndk: NDK;
+export let event: NDKEvent | null | undefined;
+export const anchorId: string | null = null;
+export const maxLength = 700;
+export const showEntire = true;
+export const showMedia = true;
+export const mediaCollectionComponent: ComponentType | undefined = undefined;
+export const eventCardComponent: ComponentType | undefined = undefined;
 
-    /**
-     * Markdown marked extensions to use
-     */
-    export let markedExtensions: MarkedExtension[] = [];
+export const urlFactory: UrlFactory = (type: UrlType, value: string) => {
+    switch (type) {
+        case "hashtag":
+            return `/t/${value}`;
+        case "mention":
+            return `/p/${value}`;
+        default:
+            return value;
+    }
+};
 
-    /**
-     * Optional content to use instead of the one from the event
-     */
-    export let content = event?.content;
+/**
+ * Markdown marked extensions to use
+ */
+export const markedExtensions: MarkedExtension[] = [];
 
-    const markdownKinds = [ NDKKind.Article, 30041 ]
+/**
+ * Optional content to use instead of the one from the event
+ */
+export const content = event?.content;
+
+const _markdownKinds = [NDKKind.Article, 30041];
 </script>
 
 {#if event}

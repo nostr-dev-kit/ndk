@@ -1,8 +1,9 @@
-import { Proof } from "@cashu/cashu-ts";
-import { NDKNWCWallet } from "./index.js";
-import NDK, { NDKCashuToken, NDKNutzap } from "@nostr-dev-kit/ndk";
+import type { Proof } from "@cashu/cashu-ts";
+import type NDK from "@nostr-dev-kit/ndk";
+import { NDKCashuToken, type NDKNutzap } from "@nostr-dev-kit/ndk";
 import { createOutTxEvent } from "../cashu/wallet/txs.js";
-import { RedeemNutzapsOpts } from "../index.js";
+import type { RedeemNutzapsOpts } from "../index.js";
+import type { NDKNWCWallet } from "./index.js";
 
 export async function redeemNutzaps(
     this: NDKNWCWallet,
@@ -76,7 +77,6 @@ async function saveChange(
 ): Promise<NDKCashuToken | undefined> {
     const totalChange = change.reduce((acc, proof) => acc + proof.amount, 0);
     if (totalChange === 0) return;
-    console.log("[NWC] we have some change, save it as CashuTokens", totalChange);
 
     const token = new NDKCashuToken(ndk);
     token.mint = mint;

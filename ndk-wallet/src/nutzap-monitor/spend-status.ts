@@ -1,5 +1,5 @@
-import { CashuWallet, Proof, CheckStateEnum } from "@cashu/cashu-ts";
-import { NDKNutzap } from "@nostr-dev-kit/ndk";
+import { type CashuWallet, CheckStateEnum, type Proof } from "@cashu/cashu-ts";
+import type { NDKNutzap } from "@nostr-dev-kit/ndk";
 
 /**
  * Checks which proofs are unspent and returns the nutzap ids and proofs.

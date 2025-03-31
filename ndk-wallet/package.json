@@ -27,11 +27,7 @@
         "type": "git",
         "url": "git+https://github.com/nostr-dev-kit/ndk.git"
     },
-    "keywords": [
-        "nostr",
-        "cashu",
-        "ecash"
-    ],
+    "keywords": ["nostr", "cashu", "ecash"],
     "author": "pablof7z",
     "license": "MIT",
     "bugs": {

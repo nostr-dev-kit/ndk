@@ -1,4 +1,4 @@
-import { CashuWallet, MintQuoteResponse, Proof } from "@cashu/cashu-ts";
+import type { CashuWallet, MintQuoteResponse, Proof } from "@cashu/cashu-ts";
 
 /**
  * Ensures a pubkey is in the correct format for Cashu.
@@ -32,9 +32,6 @@ export async function mintProofs(
         attempt: number
     ) => {
         const pubkey = ensureIsCashuPubkey(p2pk);
-
-        // mint the tokens
-        console.log("minting tokens", { attempt, amount, quote: quote.quote, pubkey, mint });
 
         wallet
             .mintProofs(amount, quote.quote, { pubkey })

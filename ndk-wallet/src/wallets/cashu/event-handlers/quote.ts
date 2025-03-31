@@ -1,7 +1,7 @@
-import NDK, { NDKEvent } from "@nostr-dev-kit/ndk";
-import { NDKCashuWallet } from "../wallet";
-import { NDKCashuQuote } from "../quote";
+import NDK, { type NDKEvent } from "@nostr-dev-kit/ndk";
 import { NDKCashuDeposit } from "../deposit";
+import { NDKCashuQuote } from "../quote";
+import type { NDKCashuWallet } from "../wallet";
 
 export async function handleQuote(this: NDKCashuWallet, event: NDKEvent) {
     const quote = await NDKCashuQuote.from(event);

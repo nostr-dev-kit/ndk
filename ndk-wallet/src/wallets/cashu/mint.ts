@@ -1,5 +1,5 @@
-import { CashuWallet, CashuMint, GetInfoResponse, MintKeys } from "@cashu/cashu-ts";
-import { MintUrl } from "./mint/utils";
+import { CashuMint, CashuWallet, type GetInfoResponse, type MintKeys } from "@cashu/cashu-ts";
+import type { MintUrl } from "./mint/utils";
 
 const mintWallets = new Map<string, CashuWallet>();
 const mintWalletPromises = new Map<string, Promise<CashuWallet | null>>();
@@ -49,7 +49,7 @@ export async function walletForMint(
 
     const unit = "sat";
     const key = mintKey(mint, unit, pk);
-    
+
     // Check if we already have a wallet for this mint
     if (mintWallets.has(key)) {
         return mintWallets.get(key) as CashuWallet;
@@ -59,20 +59,19 @@ export async function walletForMint(
     if (mintWalletPromises.has(key)) {
         return mintWalletPromises.get(key) as Promise<CashuWallet | null>;
     }
-    
-    
+
     // Load mint info if needed
     if (!mintInfo) {
         if (onMintInfoNeeded) {
             mintInfo = await onMintInfoNeeded(mint);
         }
-        
+
         if (!mintInfo && onMintInfoLoaded) {
             mintInfo = await CashuMint.getInfo(mint);
             onMintInfoLoaded(mint, mintInfo);
         }
     }
-    
+
     // Load mint keys if needed
     if (!mintKeys && onMintKeysNeeded) {
         mintKeys = await onMintKeysNeeded(mint);
@@ -92,9 +91,9 @@ export async function walletForMint(
                     rejectTimeout(new Error("timeout loading mint"));
                 }, timeout);
             });
-            
+
             await Promise.race([wallet.loadMint(), timeoutPromise]);
-            
+
             mintWallets.set(key, wallet);
             mintWalletPromises.delete(key);
 

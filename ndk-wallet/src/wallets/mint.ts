@@ -1,4 +1,4 @@
-import { GetInfoResponse, MintKeys, CashuWallet } from "@cashu/cashu-ts";
+import type { CashuWallet, GetInfoResponse, MintKeys } from "@cashu/cashu-ts";
 import { walletForMint } from "./cashu/mint";
 
 export type MintInfoNeededCb = (mint: string) => Promise<GetInfoResponse | undefined>;
@@ -47,7 +47,7 @@ export async function getCashuWallet(this: MintInterface, mint: string): Promise
         onMintKeysLoaded: this.onMintKeysLoaded,
     });
 
-    if (!w) throw new Error("unable to load wallet for mint " + mint);
+    if (!w) throw new Error(`unable to load wallet for mint ${mint}`);
     this.cashuWallets.set(mint, w);
     return w;
 }

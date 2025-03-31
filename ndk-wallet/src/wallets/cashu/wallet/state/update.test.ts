@@ -1,10 +1,10 @@
-import { calculateNewState } from "./update";
-import { WalletState, WalletProofChange } from ".";
 import { NDKCashuToken } from "@nostr-dev-kit/ndk";
-import { mockProof } from "@nostr-dev-kit/ndk-test-utils";
 import NDK from "@nostr-dev-kit/ndk";
+import { mockProof } from "@nostr-dev-kit/ndk-test-utils";
+import { beforeEach, describe, expect, it } from "vitest";
+import type { WalletProofChange, WalletState } from ".";
 import { NDKCashuWallet } from "..";
-import { describe, it, expect, beforeEach } from 'vitest';
+import { calculateNewState } from "./update";
 
 const ndk = new NDK();
 
@@ -81,11 +81,8 @@ describe("calculateNewState", () => {
         const tokens = [new NDKCashuToken(ndk), new NDKCashuToken(ndk)];
         tokens.forEach((token, index) => {
             token.mint = "mint";
-            token.id = "token" + index;
-            token.proofs = [
-                mockProof("proof-" + index + "-1", 100),
-                mockProof("proof-" + index + "-2", 100),
-            ];
+            token.id = `token${index}`;
+            token.proofs = [mockProof(`proof-${index}-1`, 100), mockProof(`proof-${index}-2`, 100)];
             walletState.addToken(token);
         });
 

@@ -1,25 +1,30 @@
+import { CashuMint, CashuWallet } from "@cashu/cashu-ts";
 import NDK, {
     cashuPubkeyToNostrPubkey,
     NDKCashuMintList,
     NDKEvent,
-    NDKEventId,
+    type NDKEventId,
     NDKFilter,
     NDKKind,
     NDKNutzap,
     NDKPrivateKeySigner,
     NDKRelaySet,
     NDKSubscriptionOptions,
-    NDKUser,
+    type NDKUser,
 } from "@nostr-dev-kit/ndk";
-import { NDKNutzapMonitor, NDKNutzapState, NdkNutzapStatus, NDKNutzapMonitorStore } from "./index";
-import * as CashuMintModule from "../wallets/cashu/mint.js";
-import { CashuMint, CashuWallet } from "@cashu/cashu-ts";
-import * as SpendStatusModule from "./spend-status.js";
-import { NDKCashuWallet } from "../wallets/cashu/wallet/index.js";
-import { fetchPage } from "./fetch-page.js";
 import { mockNutzap } from "@nostr-dev-kit/ndk-test-utils";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import * as CashuMintModule from "../wallets/cashu/mint.js";
+import { NDKCashuWallet } from "../wallets/cashu/wallet/index.js";
 import { NDKCashuWalletBackup } from "../wallets/cashu/wallet/index.js";
-import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { fetchPage } from "./fetch-page.js";
+import {
+    NDKNutzapMonitor,
+    type NDKNutzapMonitorStore,
+    type NDKNutzapState,
+    NdkNutzapStatus,
+} from "./index";
+import * as SpendStatusModule from "./spend-status.js";
 
 // Mock the modules we don't want to actually call
 vi.mock("./fetch-page.js");
@@ -67,7 +72,7 @@ describe("NDKNutzapMonitor", () => {
             explicitRelayUrls: ["wss://relay1.com"],
         });
 
-        user = await ndk.signer!.user();
+        user = await ndk.signer?.user();
 
         // Setup a mint list
         mintList = new NDKCashuMintList(ndk);
@@ -85,7 +90,7 @@ describe("NDKNutzapMonitor", () => {
         monitor = new NDKNutzapMonitor(ndk, user, { mintList, store: mockStore });
 
         // Make updateNutzapState public for testing
-        (monitor as any).updateNutzapState = monitor["updateNutzapState"].bind(monitor);
+        (monitor as any).updateNutzapState = monitor.updateNutzapState.bind(monitor);
 
         // Setup mock NDKCashuWallet
         const mockNDKCashuWallet = new NDKCashuWallet(ndk);
@@ -113,7 +118,7 @@ describe("NDKNutzapMonitor", () => {
 
         it("should not add duplicate private keys", async () => {
             const signer = NDKPrivateKeySigner.generate();
-            const pubkey = (await signer.user()).pubkey;
+            const _pubkey = (await signer.user()).pubkey;
 
             await monitor.addPrivkey(signer);
             const initialSize = monitor.privkeys.size;
@@ -197,13 +202,13 @@ describe("NDKNutzapMonitor", () => {
         it.skip("should handle errors when loading backup events", async () => {
             // Mock the fetchEvents method to throw an error
             ndk.fetchEvents = vi.fn().mockRejectedValue(new Error("Network error"));
-            
+
             // Spy on console.error
             const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-            
+
             // Call the method
             await monitor.getBackupKeys();
-            
+
             // Verify error was logged
             expect(consoleSpy).toHaveBeenCalled();
             expect(consoleSpy.mock.calls[0][0]).toContain("Error loading backup events");
@@ -272,10 +277,10 @@ describe("NDKNutzapMonitor", () => {
 
             // Mock redeemNutzaps to simulate successful redemption
             vi.spyOn(monitor, "redeemNutzaps").mockImplementation(
-                async (mint, nutzaps, proofs) => {
+                async (_mint, nutzaps, _proofs) => {
                     // Simulate successful redemption
                     for (const nutzap of nutzaps) {
-                        (monitor as any)["updateNutzapState"](nutzap.id, {
+                        (monitor as any).updateNutzapState(nutzap.id, {
                             status: NdkNutzapStatus.REDEEMED,
                             redeemedAmount: 100,
                         });
@@ -407,7 +412,7 @@ describe("NDKNutzapMonitor", () => {
     describe("processAccumulatedNutzaps", () => {
         it("should mark spent nutzaps as SPENT and not attempt to redeem them", async () => {
             // Get the user's pubkey
-            const userPubkey = (await ndk.signer!.user()).pubkey;
+            const userPubkey = (await ndk.signer?.user()).pubkey;
 
             // Create nutzaps - one spent, one unspent
             const unspentNutzap = await mockNutzap("https://testmint.com", 100, ndk, {
@@ -449,7 +454,7 @@ describe("NDKNutzapMonitor", () => {
 
         it("should process multiple pages of nutzaps when there are unspent nutzaps", async () => {
             // Get the user's pubkey
-            const userPubkey = (await ndk.signer!.user()).pubkey;
+            const userPubkey = (await ndk.signer?.user()).pubkey;
 
             // Create nutzaps for page 1
             const nutzap1 = await mockNutzap("https://testmint.com", 100, ndk, {
@@ -465,18 +470,17 @@ describe("NDKNutzapMonitor", () => {
 
             // Setup fetchPage mock to return different results based on filter
             let fetchPageCallCount = 0;
-            (fetchPage as vi.Mock).mockImplementation((ndk, filter) => {
+            (fetchPage as vi.Mock).mockImplementation((_ndk, _filter) => {
                 fetchPageCallCount++;
                 if (fetchPageCallCount === 1) {
                     return [nutzap1];
-                } else {
-                    return [nutzap2];
                 }
+                return [nutzap2];
             });
 
             // Setup getProofSpendState mock to return all nutzaps as unspent
             vi.spyOn(SpendStatusModule, "getProofSpendState").mockImplementation(
-                async (wallet, nutzaps) => {
+                async (_wallet, nutzaps) => {
                     return {
                         unspentProofs: nutzaps.flatMap((n) => n.proofs),
                         spentProofs: [],
@@ -491,19 +495,17 @@ describe("NDKNutzapMonitor", () => {
 
             // Mock processAccumulatedNutzaps to avoid infinite recursion in tests
             const originalProcessAccumulatedNutzaps = monitor.processAccumulatedNutzaps;
-            monitor.processAccumulatedNutzaps = vi
-                .fn()
-                .mockImplementation(async (filter = {}) => {
-                    // Call the original once to process the first page
-                    if (!filter.since) {
-                        await originalProcessAccumulatedNutzaps.call(monitor, filter);
-                        // Manually call with the second filter to simulate recursion
-                        await originalProcessAccumulatedNutzaps.call(monitor, {
-                            ...filter,
-                            since: 999,
-                        });
-                    }
-                });
+            monitor.processAccumulatedNutzaps = vi.fn().mockImplementation(async (filter = {}) => {
+                // Call the original once to process the first page
+                if (!filter.since) {
+                    await originalProcessAccumulatedNutzaps.call(monitor, filter);
+                    // Manually call with the second filter to simulate recursion
+                    await originalProcessAccumulatedNutzaps.call(monitor, {
+                        ...filter,
+                        since: 999,
+                    });
+                }
+            });
 
             // Spy on processNutzaps
             const processSpy = vi.spyOn(monitor as any, "processNutzaps");
@@ -592,7 +594,7 @@ describe("NDKNutzapMonitor", () => {
 
             // Use ts-ignore here because we're intentionally mocking a static method
             // @ts-ignore - mocking static method
-            NDKNutzap.from = vi.fn().mockImplementation(async (event: NDKEvent) => {
+            NDKNutzap.from = vi.fn().mockImplementation(async (_event: NDKEvent) => {
                 // Return our mock nutzap
                 return nutzap;
             });
@@ -678,7 +680,7 @@ describe("NDKNutzapMonitor", () => {
             // Create a method to access the private updateNutzapState method
             const updateState = (id: string, state: Partial<NDKNutzapState>) => {
                 // @ts-ignore - accessing private method for testing
-                return monitor["updateNutzapState"](id, state);
+                return monitor.updateNutzapState(id, state);
             };
 
             // Update the nutzap state
@@ -832,7 +834,7 @@ describe("NIP-61 specific functionality", () => {
             explicitRelayUrls: ["wss://relay1.com"],
         });
 
-        user = await ndk.signer!.user();
+        user = await ndk.signer?.user();
 
         // Setup a mint list
         mintList = new NDKCashuMintList(ndk);

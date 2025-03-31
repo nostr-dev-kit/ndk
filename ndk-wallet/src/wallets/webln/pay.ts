@@ -1,7 +1,7 @@
-import { LnPaymentInfo } from "@nostr-dev-kit/ndk";
-import { NDKWebLNWallet } from ".";
-import { NutPayment } from "../cashu/pay/nut";
 import { CashuMint, CashuWallet } from "@cashu/cashu-ts";
+import type { LnPaymentInfo } from "@nostr-dev-kit/ndk";
+import type { NDKWebLNWallet } from ".";
+import type { NutPayment } from "../cashu/pay/nut";
 
 export class NDKLnPay {
     public wallet: NDKWebLNWallet;
@@ -16,9 +16,8 @@ export class NDKLnPay {
     public async pay() {
         if (this.type === "ln") {
             return this.payLn();
-        } else {
-            return this.payNut();
         }
+        return this.payNut();
     }
 
     /**
@@ -72,7 +71,7 @@ export class NDKLnPay {
         const data = this.info as LnPaymentInfo;
         if (!data.pr) throw new Error("missing pr");
 
-        let paid = false;
+        const _paid = false;
         const ret = await this.wallet.pay(data);
         return ret ? ret.preimage : undefined;
     }

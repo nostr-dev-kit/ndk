@@ -1,37 +1,38 @@
-import { EventEmitter } from "tseep";
+import { CashuMint, CashuWallet, type MintQuoteResponse } from "@cashu/cashu-ts";
+import type NDK from "@nostr-dev-kit/ndk";
 import {
-    NDKWallet,
-    NDKWalletBalance,
-    NDKWalletEvents,
-    NDKWalletStatus,
-    NDKWalletTypes,
-} from "../index.js";
-import NDK, {
+    type LnPaymentInfo,
+    NDKEventId,
+    type NDKPaymentConfirmationCashu,
+    type NDKPaymentConfirmationLN,
     NDKPool,
-    LnPaymentInfo,
-    NDKPaymentConfirmationCashu,
-    NDKPaymentConfirmationLN,
-    NDKRelaySet,
-    NDKUser,
     NDKPrivateKeySigner,
     NDKRelay,
     NDKRelayAuthPolicies,
-    NDKEventId,
+    NDKRelaySet,
+    type NDKUser,
 } from "@nostr-dev-kit/ndk";
-import { NutPayment } from "../cashu/pay/nut.js";
-import { sendReq } from "./req.js";
 import createDebug from "debug";
+import { EventEmitter } from "tseep";
+import { mintProofs } from "../../utils/cashu.js";
+import type { NutPayment } from "../cashu/pay/nut.js";
 import {
+    NDKWallet,
+    type NDKWalletBalance,
+    type NDKWalletEvents,
+    NDKWalletStatus,
+    type NDKWalletTypes,
+} from "../index.js";
+import { MintInterface, getCashuWallet } from "../mint.js";
+import { redeemNutzaps } from "./nutzap.js";
+import { sendReq } from "./req.js";
+import type {
     NDKNWCGetInfoResult,
     NDKNWCMakeInvoiceResult,
     NDKNWCRequestMap,
     NDKNWCResponseBase,
     NDKNWCResponseMap,
 } from "./types.js";
-import { CashuMint, CashuWallet, MintQuoteResponse } from "@cashu/cashu-ts";
-import { redeemNutzaps } from "./nutzap.js";
-import { mintProofs } from "../../utils/cashu.js";
-import { getCashuWallet, MintInterface } from "../mint.js";
 const d = createDebug("ndk-wallet:nwc");
 
 export type NDKNWCWalletEvents = NDKWalletEvents & {
@@ -248,7 +249,7 @@ export class NDKNWCWallet extends NDKWallet {
         params: NDKNWCRequestMap[M]
     ) => Promise<NDKNWCResponseBase<NDKNWCResponseMap[M]>>;
 
-    async getInfo(refetch: boolean = false) {
+    async getInfo(refetch = false) {
         if (refetch) {
             this.cachedInfo = undefined;
         }
@@ -278,9 +279,7 @@ export class NDKNWCWallet extends NDKWallet {
     }
 
     async makeInvoice(amount: number, description: string): Promise<NDKNWCMakeInvoiceResult> {
-        console.log("NDKWALLET making invoice", amount, description);
         const res = await this.req("make_invoice", { amount, description });
-        console.log("NDKWALLET made invoice", res);
 
         if (!res.result) throw new Error("Failed to make invoice");
 

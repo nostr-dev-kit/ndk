@@ -1,10 +1,10 @@
-import { Proof } from "@cashu/cashu-ts";
-import { MintUrl } from "../mint/utils";
-import { NDKCashuWallet } from "./index.js";
-import { CashuWallet } from "@cashu/cashu-ts";
-import { WalletProofChange } from "./state/index";
-import { UpdateStateResult } from "./state/update";
+import type { Proof } from "@cashu/cashu-ts";
+import type { CashuWallet } from "@cashu/cashu-ts";
+import type { MintUrl } from "../mint/utils";
 import { calculateFee } from "./fee";
+import type { NDKCashuWallet } from "./index.js";
+import type { WalletProofChange } from "./state/index";
+import type { UpdateStateResult } from "./state/update";
 
 type WithProofReserveCb<T> = {
     result: T;

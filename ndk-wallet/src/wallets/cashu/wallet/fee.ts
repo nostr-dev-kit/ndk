@@ -1,4 +1,4 @@
-import { Proof } from "@cashu/cashu-ts";
+import type { Proof } from "@cashu/cashu-ts";
 
 export function calculateFee(
     intendedAmount: number,
@@ -10,11 +10,6 @@ export function calculateFee(
     const totalFee = totalProvided - intendedAmount - totalReturned;
 
     if (totalFee < 0) {
-        console.log("invalid fee calculation: received more proofs than sent to mint", {
-            totalProvided,
-            totalReturned,
-            totalFee,
-        });
         throw new Error("Invalid fee calculation: received more proofs than sent to mint");
     }
 

@@ -7,4 +7,4 @@
 // For example:
 // 1. Set up global mocks
 // 2. Set up environment variables
-// 3. Configure test dependencies 
+// 3. Configure test dependencies

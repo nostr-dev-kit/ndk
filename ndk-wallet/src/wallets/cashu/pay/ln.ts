@@ -1,10 +1,10 @@
 import { MeltQuoteState } from "@cashu/cashu-ts";
-import { NDKCashuWallet } from "../wallet/index.js";
+import type { NDKPaymentConfirmationLN } from "@nostr-dev-kit/ndk";
 import { getBolt11Amount } from "../../../utils/ln.js";
-import { WalletOperation, withProofReserve } from "../wallet/effect.js";
-import { calculateFee } from "../wallet/fee.js";
-import { NDKPaymentConfirmationLN } from "@nostr-dev-kit/ndk";
 import { consolidateMintTokens } from "../validate.js";
+import { type WalletOperation, withProofReserve } from "../wallet/effect.js";
+import { calculateFee } from "../wallet/fee.js";
+import type { NDKCashuWallet } from "../wallet/index.js";
 
 /**
  * Pay a Lightning Network invoice with a Cashu wallet.
@@ -51,7 +51,6 @@ export async function payLn(
                 return result;
             }
         } catch (error: any) {
-            console.log("Failed to execute payment for mint %s: %s", mint, error);
             wallet.warn(`Failed to execute payment with min ${mint}: ${error}`);
         }
     }
@@ -95,7 +94,7 @@ async function executePayment(
             mint,
             amountToSend,
             amountWithoutFees,
-            async (proofsToUse, allOurProofs) => {
+            async (proofsToUse, _allOurProofs) => {
                 const meltResult = await cashuWallet.meltProofs(meltQuote, proofsToUse);
 
                 if (meltResult.quote.state === MeltQuoteState.PAID) {
@@ -114,9 +113,7 @@ async function executePayment(
         return result;
     } catch (e) {
         if (e instanceof Error) {
-            console.log("Failed to pay with mint %s: %s", mint, e.message);
             if (e.message.match(/already spent/i)) {
-                console.log("Proofs already spent, consolidate mint tokens");
                 setTimeout(() => {
                     consolidateMintTokens(mint, wallet);
                 }, 2500);

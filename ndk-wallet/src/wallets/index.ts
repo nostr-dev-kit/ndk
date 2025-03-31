@@ -1,30 +1,31 @@
-import NDK, {
-    CashuPaymentInfo,
-    LnPaymentInfo,
-    NDKEvent,
-    NDKNutzap,
-    NDKPaymentConfirmation,
-    NDKPaymentConfirmationCashu,
-    NDKPaymentConfirmationLN,
+import type { Proof } from "@cashu/cashu-ts";
+import type { CashuWallet } from "@cashu/cashu-ts";
+import type NDK from "@nostr-dev-kit/ndk";
+import {
+    type CashuPaymentInfo,
+    type LnPaymentInfo,
+    type NDKEvent,
+    type NDKNutzap,
+    type NDKPaymentConfirmation,
+    type NDKPaymentConfirmationCashu,
+    type NDKPaymentConfirmationLN,
     NDKPrivateKeySigner,
-    NDKRelay,
-    NDKWalletInterface,
-    NDKZapDetails,
-    NDKZapSplit,
+    type NDKRelay,
+    type NDKWalletInterface,
+    type NDKZapDetails,
+    type NDKZapSplit,
 } from "@nostr-dev-kit/ndk";
 import { EventEmitter } from "tseep";
-import { NDKNWCWallet } from "./nwc";
-import { Proof } from "@cashu/cashu-ts";
 import { NDKCashuWallet } from "./cashu/wallet";
-import { CashuWallet } from "@cashu/cashu-ts";
 import {
-    MintInfoNeededCb,
-    MintInfoLoadedCb,
-    MintInterface,
-    MintKeysLoadedCb,
-    MintKeysNeededCb,
+    type MintInfoLoadedCb,
+    type MintInfoNeededCb,
+    type MintInterface,
+    type MintKeysLoadedCb,
+    type MintKeysNeededCb,
     getCashuWallet,
 } from "./mint";
+import { NDKNWCWallet } from "./nwc";
 
 /**
  * Different types of wallets supported.
@@ -131,7 +132,11 @@ export class NDKWallet
      * @param proofs - The proofs to redeem
      * @param privkey - The private key needed to redeem p2pk proofs.
      */
-    redeemNutzaps(nutzaps: NDKNutzap[], privkey: string, opts: RedeemNutzapsOpts): Promise<number> {
+    redeemNutzaps(
+        _nutzaps: NDKNutzap[],
+        _privkey: string,
+        _opts: RedeemNutzapsOpts
+    ): Promise<number> {
         throw new Error("Not implemented");
     }
 }

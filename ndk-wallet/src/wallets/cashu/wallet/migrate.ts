@@ -1,4 +1,10 @@
-import NDK, { NDKCashuMintList, NDKEvent, NDKKind, NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
+import type NDK from "@nostr-dev-kit/ndk";
+import {
+    NDKCashuMintList,
+    type NDKEvent,
+    NDKKind,
+    type NDKPrivateKeySigner,
+} from "@nostr-dev-kit/ndk";
 import { NDKCashuWallet } from ".";
 
 /**
@@ -38,8 +44,6 @@ export async function migrateCashuWallet(ndk: NDK) {
         if (!mintList.p2pk && privKeys.size > 0) mintList.p2pk = Array.from(privKeys.keys())[0];
         await mintList.toNostrEvent();
     } else {
-        console.log("no mint list found, creating new one");
-
         mintList = new NDKCashuMintList(ndk);
         mintList.mints = Array.from(mints);
         await mintList.toNostrEvent();

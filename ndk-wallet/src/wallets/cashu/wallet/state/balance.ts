@@ -1,6 +1,6 @@
-import { WalletState } from ".";
-import { MintUrl } from "../../mint/utils";
-import { GetOpts } from "./proofs";
+import type { WalletState } from ".";
+import type { MintUrl } from "../../mint/utils";
+import type { GetOpts } from "./proofs";
 
 export function getBalance(this: WalletState, opts?: GetOpts) {
     const proofs = this.getProofEntries(opts);

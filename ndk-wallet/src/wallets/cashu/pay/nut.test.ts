@@ -1,13 +1,13 @@
-import { PaymentHandler } from "../wallet/payment";
-import { NDKCashuWallet } from "../wallet";
-import { findMintsInCommon } from "./nut";
-import { MintUrl } from "../mint/utils";
 import NDK from "@nostr-dev-kit/ndk";
+import type { MintUrl } from "../mint/utils";
+import { NDKCashuWallet } from "../wallet";
+import { PaymentHandler } from "../wallet/payment";
+import { findMintsInCommon } from "./nut";
 
 const ndk = new NDK();
 
 describe("nut.ts", () => {
-    const wallet = new NDKCashuWallet(ndk);
+    const _wallet = new NDKCashuWallet(ndk);
 
     describe("findMintsInCommon", () => {
         it("should return mints that are common in all collections", () => {

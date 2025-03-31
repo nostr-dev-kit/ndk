@@ -1,8 +1,8 @@
 import { CashuWallet, CheckStateEnum } from "@cashu/cashu-ts";
 import NDK, { NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
 import { mockNutzap } from "@nostr-dev-kit/ndk-test-utils";
+import { describe, expect, it, vi } from "vitest";
 import { getProofSpendState } from "./spend-status";
-import { vi, describe, it, expect } from 'vitest';
 
 // Create NDK with a signer
 const ndkSigner = NDKPrivateKeySigner.generate();

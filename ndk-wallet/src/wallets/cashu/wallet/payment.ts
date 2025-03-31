@@ -1,17 +1,17 @@
-import {
+import type {
     CashuPaymentInfo,
     LnPaymentInfo,
-    NDKPaymentConfirmationCashu,
-    NDKZapDetails,
     NDKEvent,
-    NDKUser,
-    NDKTag,
+    NDKPaymentConfirmationCashu,
     NDKPaymentConfirmationLN,
+    NDKTag,
+    NDKUser,
+    NDKZapDetails,
 } from "@nostr-dev-kit/ndk";
-import { NDKCashuWallet } from ".";
-import { createToken } from "../pay/nut";
-import { payLn } from "../pay/ln";
+import type { NDKCashuWallet } from ".";
 import { getBolt11Amount } from "../../../utils/ln";
+import { payLn } from "../pay/ln";
+import { createToken } from "../pay/nut";
 import { createOutTxEvent } from "./txs";
 
 export type PaymentWithOptionalZapInfo<T extends LnPaymentInfo | CashuPaymentInfo> = T & {

@@ -1,7 +1,12 @@
-import { NDKEvent, NDKKind, NostrEvent } from "@nostr-dev-kit/ndk";
+import { NDKEvent, NDKKind, type NostrEvent } from "@nostr-dev-kit/ndk";
 import type { NDKNWCWallet } from "./index.js";
-import { NDKNWCErrorCode, NDKNWCMethod, NDKNWCRequestMap, NDKNWCResponseMap } from "./types.js";
 import { waitForResponse } from "./res.js";
+import type {
+    NDKNWCErrorCode,
+    NDKNWCMethod,
+    NDKNWCRequestMap,
+    NDKNWCResponseMap,
+} from "./types.js";
 
 // Base types for requests and responses
 export interface NWCRequestBase {
@@ -92,11 +97,10 @@ export async function sendReq<M extends keyof NDKNWCRequestMap>(
     const responsePromise = new Promise<NWCResponseBase<NDKNWCResponseMap[M]>>(
         (resolve, reject) => {
             waitForResponse
-                .call<
-                    NDKNWCWallet,
-                    [NDKEvent],
-                    Promise<NWCResponseBase<NDKNWCResponseMap[M]>>
-                >(this, event)
+                .call<NDKNWCWallet, [NDKEvent], Promise<NWCResponseBase<NDKNWCResponseMap[M]>>>(
+                    this,
+                    event
+                )
                 .then(resolve)
                 .catch(reject);
         }

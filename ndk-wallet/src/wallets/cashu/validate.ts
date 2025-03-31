@@ -1,8 +1,8 @@
-import { CheckStateEnum, ProofState, type Proof } from "@cashu/cashu-ts";
+import { CheckStateEnum, type Proof, type ProofState } from "@cashu/cashu-ts";
 import createDebug from "debug";
-import type { NDKCashuWallet } from "./wallet/index.js";
 import { walletForMint } from "./mint";
-import { WalletProofChange } from "./wallet/state/index.js";
+import type { NDKCashuWallet } from "./wallet/index.js";
+import type { WalletProofChange } from "./wallet/state/index.js";
 
 const d = createDebug("ndk-wallet:cashu:validate");
 
@@ -35,15 +35,12 @@ export async function consolidateMintTokens(
     allProofs ??= wallet.state.getProofs({ mint, includeDeleted: true, onlyAvailable: false });
     const _wallet = await walletForMint(mint);
     if (!_wallet) {
-        console.log("could not get wallet for mint %s", mint);
         return;
     }
-    console.log("checking %d proofs for spent proofs for mint %s", allProofs.length, mint);
     let proofStates: ProofState[] = [];
     try {
         proofStates = await _wallet.checkProofsStates(allProofs);
     } catch (e: any) {
-        console.log("failed to check proof states", JSON.stringify(e.message));
         onFailure?.(e.message);
         return;
     }
@@ -72,14 +69,7 @@ export async function consolidateMintTokens(
 
     onResult?.(walletChange);
 
-    const totalSpentProofs = spentProofs.reduce((acc, proof) => acc + proof.amount, 0);
-
-    console.log(
-        "Found %d spent, %d unspent, %d pending proofs",
-        walletChange.destroy?.length,
-        walletChange.store?.length,
-        pendingProofs.length
-    );
+    const _totalSpentProofs = spentProofs.reduce((acc, proof) => acc + proof.amount, 0);
 
     // if no spent proofs return as a noop
     if (walletChange.destroy?.length === 0) return;

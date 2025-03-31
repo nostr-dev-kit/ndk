@@ -1,20 +1,21 @@
-import NDK, {
+import type NDK from "@nostr-dev-kit/ndk";
+import type {
     LnPaymentInfo,
     NDKPaymentConfirmationCashu,
     NDKPaymentConfirmationLN,
     NDKZapDetails,
 } from "@nostr-dev-kit/ndk";
+import type { WebLNProvider } from "@webbtc/webln-types";
 import { requestProvider } from "webln";
-import { type WebLNProvider } from "@webbtc/webln-types";
+import type { NutPayment } from "../cashu/pay/nut.js";
 import {
     NDKWallet,
-    NDKWalletBalance,
+    type NDKWalletBalance,
     NDKWalletEvents,
     NDKWalletStatus,
-    NDKWalletTypes,
+    type NDKWalletTypes,
 } from "../index.js";
 import { NDKLnPay } from "./pay";
-import { NutPayment } from "../cashu/pay/nut.js";
 
 export class NDKWebLNWallet extends NDKWallet {
     get type(): NDKWalletTypes {

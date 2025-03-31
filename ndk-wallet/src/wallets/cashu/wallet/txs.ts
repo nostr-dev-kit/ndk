@@ -1,20 +1,21 @@
-import NDK, {
-    LnPaymentInfo,
-    CashuPaymentInfo,
-    NDKUser,
-    NDKNutzap,
-    NDKPaymentConfirmationLN,
-    proofsTotalBalance,
+import type { Proof } from "@cashu/cashu-ts";
+import type NDK from "@nostr-dev-kit/ndk";
+import {
+    type CashuPaymentInfo,
+    type LnPaymentInfo,
     NDKCashuWalletTx,
-    NDKRelaySet,
+    type NDKNutzap,
+    type NDKPaymentConfirmationLN,
+    type NDKRelaySet,
+    NDKUser,
+    proofsTotalBalance,
 } from "@nostr-dev-kit/ndk";
 import { getBolt11Amount, getBolt11Description } from "../../../utils/ln";
-import { PaymentWithOptionalZapInfo } from "./payment";
-import { Proof } from "@cashu/cashu-ts";
-import { MintUrl } from "../mint/utils";
-import { TokenCreationResult } from "../pay/nut";
-import { WalletOperation } from "./effect";
-import { UpdateStateResult } from "./state/update";
+import type { MintUrl } from "../mint/utils";
+import type { TokenCreationResult } from "../pay/nut";
+import type { WalletOperation } from "./effect";
+import type { PaymentWithOptionalZapInfo } from "./payment";
+import type { UpdateStateResult } from "./state/update";
 
 /**
  * Creates a tx event for outgoing payment, this means we are spending cashu proofs.

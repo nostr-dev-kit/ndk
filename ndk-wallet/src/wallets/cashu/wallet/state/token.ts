@@ -1,6 +1,6 @@
-import { Proof } from "@cashu/cashu-ts";
-import { WalletState } from ".";
-import { NDKCashuToken, NDKEventId } from "@nostr-dev-kit/ndk";
+import type { Proof } from "@cashu/cashu-ts";
+import type { NDKCashuToken, NDKEventId } from "@nostr-dev-kit/ndk";
+import type { WalletState } from ".";
 
 /**
  * Adds or updates the token in the wallet state, optionally associating proofs with the token
@@ -14,14 +14,14 @@ export function addToken(this: WalletState, token: NDKCashuToken) {
     this.tokens.set(token.id, { token, state });
 
     // go through the proofs this token is claiming
-    let added = 0;
-    let invalid = 0;
+    let _added = 0;
+    let _invalid = 0;
     for (const proof of token.proofs) {
         const val = maybeAssociateProofWithToken(this, proof, token, state);
         if (val === false) {
-            invalid++;
+            _invalid++;
         } else {
-            added++;
+            _added++;
         }
     }
 }
@@ -44,46 +44,41 @@ function maybeAssociateProofWithToken(
             proof: proof,
         });
         return true;
-    } else {
-        // already associated
-        if (proofEntry.tokenId) {
-            if (proofEntry.tokenId === token.id) {
-                // already associated with this token, nothing to do
-                return null;
-            }
-
-            // different token id, ensure the incoming token is newer
-            const existingTokenEntry = walletState.tokens.get(proofEntry.tokenId);
-            if (!existingTokenEntry) {
-                throw new Error(
-                    "BUG: Token id " +
-                        proofEntry.tokenId +
-                        " not found, was expected to be associated with proof " +
-                        proofC
-                );
-            }
-            const existingToken = existingTokenEntry.token;
-
-            if (existingToken) {
-                // existing token didnt have a timestamp or the incoming token is newer
-                if (
-                    existingToken.created_at &&
-                    (!token.created_at || token.created_at < existingToken.created_at)
-                ) {
-                    // either the incoming token is older or it doesnt have a timestamp
-                    return false;
-                }
-            }
-
-            // update the proof entry
-            walletState.updateProof(proof, { tokenId: token.id, state });
-            return true;
-        } else {
-            // not associated with any token
-            walletState.updateProof(proof, { tokenId: token.id, state });
-            return true;
-        }
     }
+    // already associated
+    if (proofEntry.tokenId) {
+        if (proofEntry.tokenId === token.id) {
+            // already associated with this token, nothing to do
+            return null;
+        }
+
+        // different token id, ensure the incoming token is newer
+        const existingTokenEntry = walletState.tokens.get(proofEntry.tokenId);
+        if (!existingTokenEntry) {
+            throw new Error(
+                `BUG: Token id ${proofEntry.tokenId} not found, was expected to be associated with proof ${proofC}`
+            );
+        }
+        const existingToken = existingTokenEntry.token;
+
+        if (existingToken) {
+            // existing token didnt have a timestamp or the incoming token is newer
+            if (
+                existingToken.created_at &&
+                (!token.created_at || token.created_at < existingToken.created_at)
+            ) {
+                // either the incoming token is older or it doesnt have a timestamp
+                return false;
+            }
+        }
+
+        // update the proof entry
+        walletState.updateProof(proof, { tokenId: token.id, state });
+        return true;
+    }
+    // not associated with any token
+    walletState.updateProof(proof, { tokenId: token.id, state });
+    return true;
 }
 
 export function removeTokenId(this: WalletState, tokenId: NDKEventId) {

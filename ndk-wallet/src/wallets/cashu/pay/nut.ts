@@ -1,12 +1,12 @@
-import { SendResponse, type Proof } from "@cashu/cashu-ts";
-import type { MintUrl } from "../mint/utils";
-import { NDKCashuWallet } from "../wallet/index.js";
-import { CashuPaymentInfo, normalizeUrl } from "@nostr-dev-kit/ndk";
+import type { Proof, SendResponse } from "@cashu/cashu-ts";
+import { type CashuPaymentInfo, normalizeUrl } from "@nostr-dev-kit/ndk";
+import { ensureIsCashuPubkey, mintProofs } from "../../../utils/cashu";
 import { getBolt11Amount } from "../../../utils/ln";
 import { walletForMint } from "../mint";
-import { WalletOperation, withProofReserve } from "../wallet/effect";
+import type { MintUrl } from "../mint/utils";
+import { type WalletOperation, withProofReserve } from "../wallet/effect";
+import type { NDKCashuWallet } from "../wallet/index.js";
 import { payLn } from "./ln";
-import { ensureIsCashuPubkey, mintProofs } from "../../../utils/cashu";
 
 export type NutPayment = CashuPaymentInfo & { amount: number };
 
@@ -38,9 +38,7 @@ export async function createToken(
             if (res) {
                 return res;
             }
-        } catch (e) {
-            console.log("failed to prepare token for payment from mint %s: %s", mint, e);
-        }
+        } catch (_e) {}
     }
 
     if (hasRecipientMints) {
@@ -64,8 +62,6 @@ async function createTokenInMint(
 ): Promise<WalletOperation<TokenCreationResult> | null> {
     const cashuWallet = await wallet.getCashuWallet(mint);
     try {
-        console.log("Attempting with mint %s", mint);
-
         const result = await withProofReserve<TokenCreationResult>(
             wallet,
             cashuWallet,
@@ -90,9 +86,7 @@ async function createTokenInMint(
         );
 
         return result;
-    } catch (e: any) {
-        console.log("failed to pay with mint %s using proofs %o: %s", mint, e.message);
-    }
+    } catch (_e: any) {}
 
     return null;
 }
@@ -110,7 +104,7 @@ async function createTokenWithMintTransfer(
     const generateQuote = async () => {
         const generateQuoteFromSomeMint = async (mint: MintUrl) => {
             const targetMintWallet = await walletForMint(mint);
-            if (!targetMintWallet) throw new Error("unable to load wallet for mint " + mint);
+            if (!targetMintWallet) throw new Error(`unable to load wallet for mint ${mint}`);
             const quote = await targetMintWallet.createMintQuote(amount);
             return { quote, mint, targetMintWallet };
         };
@@ -119,7 +113,6 @@ async function createTokenWithMintTransfer(
         const { quote, mint, targetMintWallet } = await Promise.any(quotesPromises);
 
         if (!quote) {
-            console.log("failed to get quote from any mint");
             throw new Error("failed to get quote from any mint");
         }
 
@@ -144,7 +137,6 @@ async function createTokenWithMintTransfer(
 
     const payLNResult = await payLn(wallet, quote.request, { amount });
     if (!payLNResult) {
-        console.log("payment failed");
         return null;
     }
 

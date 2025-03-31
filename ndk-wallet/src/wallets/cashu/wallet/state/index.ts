@@ -1,16 +1,16 @@
-import { NDKEventId, NDKCashuToken } from "@nostr-dev-kit/ndk";
-import { Proof } from "@cashu/cashu-ts";
-import { MintUrl } from "../../mint/utils";
-import { NDKCashuWallet } from "..";
+import type { Proof } from "@cashu/cashu-ts";
+import type { NDKCashuToken, NDKEventId } from "@nostr-dev-kit/ndk";
+import type { NDKCashuWallet } from "..";
+import type { MintUrl } from "../../mint/utils";
+import { getBalance, getMintsBalances } from "./balance";
 import {
+    type GetOpts,
     addProof,
     getProofEntries,
-    GetOpts,
     reserveProofs,
     unreserveProofs,
     updateProof,
 } from "./proofs";
-import { getBalance, getMintsBalances } from "./balance";
 import { addToken, removeTokenId } from "./token";
 import { update } from "./update";
 

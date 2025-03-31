@@ -1,5 +1,5 @@
-import { cashuPubkeyToNostrPubkey, NDKNutzap, proofP2pk } from "@nostr-dev-kit/ndk";
-import { NDKNutzapMonitor } from ".";
+import { type NDKNutzap, cashuPubkeyToNostrPubkey, proofP2pk } from "@nostr-dev-kit/ndk";
+import type { NDKNutzapMonitor } from ".";
 
 export type GroupedNutzaps = {
     mint: string;
@@ -8,12 +8,9 @@ export type GroupedNutzaps = {
     nutzaps: NDKNutzap[];
 };
 
-export function groupNutzaps(
-    nutzaps: NDKNutzap[],
-    monitor: NDKNutzapMonitor
-): Array<GroupedNutzaps> {
+export function groupNutzaps(nutzaps: NDKNutzap[], monitor: NDKNutzapMonitor): GroupedNutzaps[] {
     const result = new Map<string, GroupedNutzaps>();
-    const getKey = (mint: string, p2pk: string = "no-key") => `${mint}:${p2pk}`;
+    const getKey = (mint: string, p2pk = "no-key") => `${mint}:${p2pk}`;
 
     for (const nutzap of nutzaps) {
         if (!monitor.shouldTryRedeem(nutzap)) continue;

@@ -1,34 +1,39 @@
-import NDK, {
-    cashuPubkeyToNostrPubkey,
-    NDKCashuMintList,
-    NDKEvent,
+import type { CashuWallet, Proof } from "@cashu/cashu-ts";
+import type NDK from "@nostr-dev-kit/ndk";
+import {
+    type NDKCashuMintList,
+    type NDKEvent,
     type NDKEventId,
-    NDKFilter,
+    type NDKFilter,
     NDKKind,
     NDKNutzap,
     NDKPrivateKeySigner,
-    NDKRelaySet,
-    NDKSubscription,
+    type NDKRelaySet,
+    type NDKSubscription,
     NDKSubscriptionCacheUsage,
-    NDKSubscriptionOptions,
-    NDKUser,
+    type NDKSubscriptionOptions,
+    type NDKUser,
+    cashuPubkeyToNostrPubkey,
     proofP2pk,
 } from "@nostr-dev-kit/ndk";
 import { EventEmitter } from "tseep";
 import { NDKCashuWallet, NDKCashuWalletBackup } from "../wallets/cashu/wallet/index.js";
-import { NDKWallet } from "../wallets/index.js";
-import { fetchPage } from "./fetch-page.js";
-import { GroupedNutzaps, groupNutzaps } from "./group-nutzaps.js";
-import { CashuWallet, Proof } from "@cashu/cashu-ts";
-import { getProofSpendState } from "./spend-status.js";
+import type { NDKWallet } from "../wallets/index.js";
 import {
+    type MintInfoLoadedCb,
+    type MintInfoNeededCb,
+    type MintInterface,
+    type MintKeysLoadedCb,
+    type MintKeysNeededCb,
     getCashuWallet,
-    MintInfoNeededCb,
-    MintInfoLoadedCb,
-    MintKeysNeededCb,
-    MintKeysLoadedCb,
-    MintInterface,
 } from "../wallets/mint.js";
+import { fetchPage } from "./fetch-page.js";
+import { type GroupedNutzaps, groupNutzaps } from "./group-nutzaps.js";
+import { getProofSpendState } from "./spend-status.js";
+
+const _startTime = Date.now();
+
+function log(_msg: string) {}
 
 export interface NDKNutzapState {
     nutzap?: NDKNutzap;
@@ -173,7 +178,7 @@ export class NDKNutzapMonitor
                     try {
                         this.addPrivkey(signer);
                     } catch (e) {
-                        console.error(`failed to add privkey from wallet with pubkey`, pubkey, e);
+                        console.error("failed to add privkey from wallet with pubkey", pubkey, e);
                     }
                 }
             }
@@ -254,7 +259,7 @@ export class NDKNutzapMonitor
                     const signer = new NDKPrivateKeySigner(privkey);
                     this.addPrivkey(signer);
                 } catch (e) {
-                    console.error(`failed to add privkey`, privkey, e);
+                    console.error("failed to add privkey", privkey, e);
                 }
             }
         }
@@ -276,16 +281,20 @@ export class NDKNutzapMonitor
      *
      */
     public async start({ filter, opts }: { filter?: NDKFilter; opts?: NDKSubscriptionOptions }) {
+        log("Starting nutzap monitor");
+
         // if we are already running, stop the current subscription
         if (this.sub) this.sub.stop();
 
         try {
             await this.getBackupKeys();
+            log(`Got backup keys ${this.privkeys.size}`);
         } catch (e) {
-            console.error(`❌ Failed to get backup keys`, e);
+            console.error("❌ Failed to get backup keys", e);
         }
 
         await this.addUserPrivKey();
+        log(`Added user privkey ${this.privkeys.size}`);
 
         // We generate the filter now to account for nutzaps that have been received
         // between the moment we start looking for accumulated nutzaps and the moment
@@ -295,27 +304,36 @@ export class NDKNutzapMonitor
 
         // load all nutzaps from the store
         if (this.store) {
+            log("Will load nutzaps from store");
             try {
                 const nutzaps = await this.store.getAllNutzaps();
+                log(`Loaded ${nutzaps.size} nutzaps`);
                 for (const [id, state] of nutzaps.entries()) {
                     this.nutzapStates.set(id, state);
                 }
+                log(`Changed the state of ${nutzaps.size} nutzaps`);
             } catch (e) {
-                console.error(`❌ Failed to load nutzaps from store`, e);
+                console.error("❌ Failed to load nutzaps from store", e);
             }
         }
 
         try {
+            log("Will start processing redeemable nutzaps from store");
             await this.processRedeemableNutzapsFromStore();
+            log("Finished processing redeemable nutzaps from store");
         } catch (e) {
-            console.error(`❌ Failed to process redeemable nutzaps from store`, e);
+            console.error("❌ Failed to process redeemable nutzaps from store", e);
         }
 
         try {
+            log("Will start processing accumulated nutzaps");
             await this.processAccumulatedNutzaps(filter, opts);
+            log(`Finished processing accumulated nutzaps ${this.nutzapStates.size}`);
         } catch (e) {
-            console.error(`❌ Failed to process nutzaps`, e);
+            console.error("❌ Failed to process nutzaps", e);
         }
+
+        log(`Running filter ${JSON.stringify(monitorFilter)}`);
 
         this.sub = this.ndk.subscribe(
             monitorFilter,
@@ -334,7 +352,7 @@ export class NDKNutzapMonitor
             }
         );
 
-        console.log(`✅ Nutzap monitor started successfully`);
+        log("✅ Nutzap monitor started successfully");
         return true;
     }
 
@@ -380,6 +398,7 @@ export class NDKNutzapMonitor
      * @param opts
      */
     public async processAccumulatedNutzaps(filter: NDKFilter = {}, opts?: NDKSubscriptionOptions) {
+        log("Processing accumulated nutzaps");
         let oldestUnspentNutzapTime: number | undefined;
         const _filter = { ...filter };
 
@@ -389,8 +408,12 @@ export class NDKNutzapMonitor
 
         const nutzaps = await fetchPage(this.ndk, _filter, knownNutzapIds, this.relaySet);
 
+        log(`We loaded ${nutzaps.length} nutzaps from relays`);
+
         // Process the nutzaps
         oldestUnspentNutzapTime = await this.processNutzaps(nutzaps, oldestUnspentNutzapTime);
+
+        log("We finished processing thesenutzaps");
 
         // if we found a new nutzap we were able to process, fetch the next page
         if (oldestUnspentNutzapTime) {
@@ -428,7 +451,7 @@ export class NDKNutzapMonitor
         };
         const currentStatusStr = serializedState(currentState);
         const newStatusStr = serializedState(state);
-        console.log(`\t[${id.substring(0, 6)}]`, currentStatusStr, "changed to 👉", newStatusStr);
+        log(`[${id.substring(0, 6)}] ${currentStatusStr} changed to 👉 ${newStatusStr}`);
 
         this.store?.setNutzapState(id, state);
     }
@@ -565,10 +588,7 @@ export class NDKNutzapMonitor
             if (rawP2pk.length !== 66) {
                 this.updateNutzapState(nutzap.id, {
                     status: NdkNutzapStatus.INVALID_NUTZAP,
-                    errorMessage:
-                        "Invalid nutzap: locked to an invalid public key (length " +
-                        rawP2pk.length +
-                        ")",
+                    errorMessage: `Invalid nutzap: locked to an invalid public key (length ${rawP2pk.length})`,
                 });
                 continue;
             }
@@ -615,10 +635,10 @@ export class NDKNutzapMonitor
                 });
             }
         } catch (e: any) {
-            console.error(`❌ Failed to redeem nutzaps`, e.message);
+            console.error("❌ Failed to redeem nutzaps", e.message);
 
             // Handle "unknown public key size" as a permanent error
-            if (e.message && e.message.includes("unknown public key size")) {
+            if (e.message?.includes("unknown public key size")) {
                 for (const nutzap of nutzaps) {
                     this.updateNutzapState(nutzap.id, {
                         status: NdkNutzapStatus.PERMANENT_ERROR,
@@ -668,7 +688,7 @@ export class NDKNutzapMonitor
         const redeemableNutzaps: NDKNutzap[] = [];
 
         // Find all nutzaps in the store that are in a redeemable state
-        for (const [id, state] of this.nutzapStates.entries()) {
+        for (const [_id, state] of this.nutzapStates.entries()) {
             // Skip if there's no nutzap object
             if (!state.nutzap) continue;
 
@@ -678,6 +698,8 @@ export class NDKNutzapMonitor
             }
         }
         if (redeemableNutzaps.length === 0) return;
+
+        log(`We found ${redeemableNutzaps.length} redeemable nutzaps in the store`);
 
         // Process the nutzaps
         await this.processNutzaps(redeemableNutzaps);
@@ -696,13 +718,19 @@ export class NDKNutzapMonitor
         nutzaps: NDKNutzap[],
         oldestUnspentNutzapTime?: number
     ): Promise<number | undefined> {
-
         // Group nutzaps by mint
         const groupedNutzaps = groupNutzaps(nutzaps, this);
 
         // Process each group
         for (const group of groupedNutzaps) {
-            await this.checkAndRedeemGroup(group, oldestUnspentNutzapTime);
+            log(`Processing group ${group.mint} with ${group.nutzaps.length} nutzaps`);
+            try {
+                await this.checkAndRedeemGroup(group, oldestUnspentNutzapTime);
+                log(`Finished processing group ${group.mint}`);
+            } catch (e) {
+                log(`Failed to process group ${group.mint}`);
+                console.error(`❌ Failed to process group ${group.mint}`, e);
+            }
         }
 
         return oldestUnspentNutzapTime;

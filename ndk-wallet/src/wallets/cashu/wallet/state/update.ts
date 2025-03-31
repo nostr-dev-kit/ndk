@@ -1,16 +1,16 @@
+import type { Proof } from "@cashu/cashu-ts";
 import {
-    NDKEvent,
-    NDKEventId,
-    NDKKind,
-    NDKRelay,
-    NDKRelaySet,
-    NostrEvent,
     NDKCashuToken,
+    NDKEvent,
+    type NDKEventId,
+    NDKKind,
+    type NDKRelay,
+    type NDKRelaySet,
+    type NostrEvent,
 } from "@nostr-dev-kit/ndk";
-import { JournalEntry, ProofC, WalletState, WalletTokenChange } from ".";
-import { WalletProofChange } from "./index.js";
-import { Proof } from "@cashu/cashu-ts";
-import { MintUrl } from "../../mint/utils";
+import type { JournalEntry, ProofC, WalletState, WalletTokenChange } from ".";
+import type { MintUrl } from "../../mint/utils";
+import type { WalletProofChange } from "./index.js";
 
 export type UpdateStateResult = {
     /**
@@ -35,7 +35,7 @@ export type UpdateStateResult = {
 export async function update(
     this: WalletState,
     stateChange: WalletProofChange,
-    memo?: string
+    _memo?: string
 ): Promise<UpdateStateResult> {
     updateInternalState(this, stateChange);
     this.wallet.emit("balance_updated");
@@ -132,7 +132,7 @@ async function publishWithRetry(
 
     if (publishResult) {
         walletState.journal.push({
-            memo: "Publish kind:" + event.kind + " succeesfully",
+            memo: `Publish kind:${event.kind} succeesfully`,
             timestamp: Date.now(),
             metadata: journalEntryMetadata,
         });
@@ -232,24 +232,16 @@ function getAffectedTokens(walletState: WalletState, stateChange: WalletProofCha
     for (const proof of stateChange.destroy || []) {
         const proofEntry = walletState.proofs.get(proof.C);
         if (!proofEntry) {
-            console.log("BUG! Unable to find proof entry from known proof's C", proof.C);
             continue;
         }
 
         const tokenId = proofEntry.tokenId;
         if (!tokenId) {
-            console.log("BUG! Proof entry for known proof's C", proof.C, "has no token id");
             continue;
         }
 
         const tokenEntry = walletState.tokens.get(tokenId);
         if (!tokenEntry?.token) {
-            console.log(
-                "BUG! Unable to find token from known token id",
-                tokenId,
-                "for proof",
-                proof.C
-            );
             continue;
         }
 

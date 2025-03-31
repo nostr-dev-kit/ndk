@@ -1,10 +1,10 @@
 import type { Proof } from "@cashu/cashu-ts";
 
-import type { NDKCashuWallet } from "./wallet/index.js";
-import { EventEmitter } from "tseep";
+import type { NDKCashuToken, NDKEvent } from "@nostr-dev-kit/ndk";
 import createDebug from "debug";
-import { NDKEvent, NDKCashuToken } from "@nostr-dev-kit/ndk";
+import { EventEmitter } from "tseep";
 import { NDKCashuQuote } from "./quote";
+import type { NDKCashuWallet } from "./wallet/index.js";
 import { createInTxEvent } from "./wallet/txs.js";
 
 const d = createDebug("ndk-wallet:cashu:deposit");
@@ -53,7 +53,7 @@ export class NDKCashuDeposit extends EventEmitter<{
      * @param pollTime - time in milliseconds between checks
      * @returns
      */
-    async start(pollTime: number = 2500) {
+    async start(pollTime = 2500) {
         const cashuWallet = await this.wallet.getCashuWallet(this.mint);
         const quote = await cashuWallet.createMintQuote(this.amount);
         d("created quote %s for %d %s", quote.quote, this.amount, this.mint);
@@ -124,7 +124,7 @@ export class NDKCashuDeposit extends EventEmitter<{
     async finalize() {
         if (!this.quoteId) throw new Error("No quoteId set.");
 
-        let proofs: Array<Proof>;
+        let proofs: Proof[];
 
         try {
             d("Checking for minting status of %s", this.quoteId);

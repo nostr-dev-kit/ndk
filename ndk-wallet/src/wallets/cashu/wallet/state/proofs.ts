@@ -1,6 +1,6 @@
-import { Proof } from "@cashu/cashu-ts";
-import { ProofC, ProofEntry, WalletState } from "./index.js";
-import { MintUrl } from "../../mint/utils.js";
+import type { Proof } from "@cashu/cashu-ts";
+import type { MintUrl } from "../../mint/utils.js";
+import type { ProofC, ProofEntry, WalletState } from "./index.js";
 
 export function addProof(this: WalletState, proofEntry: ProofEntry) {
     this.proofs.set(proofEntry.proof.C, proofEntry);
@@ -38,7 +38,7 @@ export function unreserveProofs(
     if (index !== -1) {
         this.reserveAmounts.splice(index, 1);
     } else {
-        throw new Error("BUG: Amount " + amount + " not found in reserveAmounts");
+        throw new Error(`BUG: Amount ${amount} not found in reserveAmounts`);
     }
 }
 
@@ -48,7 +48,7 @@ export type GetOpts = {
     includeDeleted?: boolean;
 };
 
-export function getProofEntries(this: WalletState, opts: GetOpts = {}): Array<ProofEntry> {
+export function getProofEntries(this: WalletState, opts: GetOpts = {}): ProofEntry[] {
     const proofs = new Map<ProofC, ProofEntry>();
 
     const validStates = new Set(["available"]);
@@ -76,7 +76,7 @@ export function updateProof(this: WalletState, proof: Proof, state: Partial<Proo
     this.proofs.set(proofC, newState as ProofEntry);
 
     this.journal.push({
-        memo: "Updated proof state: " + JSON.stringify(state),
+        memo: `Updated proof state: ${JSON.stringify(state)}`,
         timestamp: Date.now(),
         metadata: {
             type: "proof",

@@ -1,10 +1,11 @@
-import NDK, { NostrEvent } from "@nostr-dev-kit/ndk";
+import type NDK from "@nostr-dev-kit/ndk";
+import type { NostrEvent } from "@nostr-dev-kit/ndk";
 
 import { NDKKind } from "@nostr-dev-kit/ndk";
 
 import { NDKEvent } from "@nostr-dev-kit/ndk";
-import { NDKCashuWallet } from "./wallet/index.js";
 import { getBolt11ExpiresAt } from "../../utils/ln";
+import type { NDKCashuWallet } from "./wallet/index.js";
 
 export class NDKCashuQuote extends NDKEvent {
     public quoteId: string | undefined;
@@ -37,7 +38,7 @@ export class NDKCashuQuote extends NDKEvent {
             quote.mint = content.mint;
             quote.amount = content.amount;
             quote.unit = content.unit;
-        } catch (e) {
+        } catch (_e) {
             return;
         }
 

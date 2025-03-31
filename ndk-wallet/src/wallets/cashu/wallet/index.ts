@@ -1,3 +1,5 @@
+import type { CashuWallet, SendResponse } from "@cashu/cashu-ts";
+import { getDecodedToken } from "@cashu/cashu-ts";
 import type {
     CashuPaymentInfo,
     Hexpubkey,
@@ -5,32 +7,27 @@ import type {
     NDKFilter,
     NDKNutzap,
     NDKPaymentConfirmationCashu,
-    NDKZapDetails,
+    NDKPaymentConfirmationLN,
+    NDKRelay,
     NDKSubscription,
     NDKSubscriptionOptions,
-    NDKRelay,
-    NDKPaymentConfirmationLN,
     NDKTag,
+    NDKZapDetails,
 } from "@nostr-dev-kit/ndk";
-import NDK, {
-    NDKEvent,
-    NDKKind,
-    NDKPrivateKeySigner,
-    NDKRelaySet,
-} from "@nostr-dev-kit/ndk";
-import { NDKCashuDeposit } from "../deposit.js";
-import type { MintUrl } from "../mint/utils.js";
-import type { CashuWallet, SendResponse } from "@cashu/cashu-ts";
-import { getDecodedToken } from "@cashu/cashu-ts";
-import { consolidateTokens } from "../validate.js";
+import type NDK from "@nostr-dev-kit/ndk";
+import { NDKEvent, NDKKind, NDKPrivateKeySigner, type NDKRelaySet } from "@nostr-dev-kit/ndk";
 import {
     NDKWallet,
-    NDKWalletBalance, NDKWalletStatus,
-    NDKWalletTypes,
-    RedeemNutzapsOpts
+    type NDKWalletBalance,
+    NDKWalletStatus,
+    type NDKWalletTypes,
+    type RedeemNutzapsOpts,
 } from "../../index.js";
-import { eventDupHandler, eventHandler } from "../event-handlers/index.js";
 import { NDKCashuDepositMonitor } from "../deposit-monitor.js";
+import { NDKCashuDeposit } from "../deposit.js";
+import { eventDupHandler, eventHandler } from "../event-handlers/index.js";
+import type { MintUrl } from "../mint/utils.js";
+import { consolidateTokens } from "../validate.js";
 
 export type WalletWarning = {
     msg: string;
@@ -38,9 +35,13 @@ export type WalletWarning = {
     relays?: NDKRelay[];
 };
 
-import { PaymentHandler, PaymentWithOptionalZapInfo } from "./payment.js";
-import { createInTxEvent, createOutTxEvent } from "./txs.js";
+import { PaymentHandler, type PaymentWithOptionalZapInfo } from "./payment.js";
 import { WalletState } from "./state/index.js";
+import { createInTxEvent, createOutTxEvent } from "./txs.js";
+
+const _startTime = Date.now();
+
+function log(_msg: string) {}
 
 /**
  * This class tracks state of a NIP-60 wallet
@@ -62,7 +63,7 @@ export class NDKCashuWallet extends NDKWallet {
     public privkeys = new Map<string, NDKPrivateKeySigner>();
     public signer?: NDKPrivateKeySigner;
 
-    public walletId: string = "nip-60";
+    public walletId = "nip-60";
 
     public depositMonitor = new NDKCashuDepositMonitor();
 
@@ -81,22 +82,25 @@ export class NDKCashuWallet extends NDKWallet {
         this.ndk = ndk;
         this.paymentHandler = new PaymentHandler(this);
         this.state = new WalletState(this);
+
+        log("NDK Cashu Wallet constructor");
     }
 
     /**
      * Generates a backup event for this wallet
      */
     async backup(publish = true) {
+        log("NDK Cashu Wallet generating backup");
         // check if we have a key to backup
         if (this.privkeys.size === 0) throw new Error("no privkey to backup");
 
         const backup = new NDKCashuWalletBackup(this.ndk);
 
         const privkeys: string[] = [];
-        for (const [pubkey, signer] of this.privkeys.entries()) {
+        for (const [_pubkey, signer] of this.privkeys.entries()) {
             privkeys.push(signer.privateKey!);
         }
-        
+
         backup.privkeys = privkeys;
         backup.mints = this.mints;
         if (publish) backup.save(this.relaySet);
@@ -194,11 +198,13 @@ export class NDKCashuWallet extends NDKWallet {
      * with the relays, for example, by saving the time the wallet has emitted a "ready" event.
      */
     start(opts?: NDKSubscriptionOptions & { pubkey?: Hexpubkey; since?: number }) {
+        log("NDK Cashu Wallet starting");
+
         const activeUser = this.ndk?.activeUser;
-        
+
         if (this.status === NDKWalletStatus.READY) return;
         this.status = NDKWalletStatus.LOADING;
-        
+
         const pubkey = opts?.pubkey ?? activeUser?.pubkey;
         if (!pubkey) throw new Error("no pubkey");
 
@@ -215,20 +221,27 @@ export class NDKCashuWallet extends NDKWallet {
         if (opts?.since) {
             filters[0].since = opts.since;
             filters[1].since = opts.since;
+            filters[2].since = opts.since;
         }
 
-        opts ??= {};
-        opts.subId ??= "cashu-wallet-state";
+        const subOpts: NDKSubscriptionOptions = opts ?? {};
+        subOpts.subId ??= "cashu-wallet-state";
+
+        log(`Subscribing to ${JSON.stringify(filters)} and opts ${JSON.stringify(opts)}`);
 
         this.sub = this.ndk.subscribe(filters, opts, this.relaySet, false);
 
         this.sub.on("event:dup", eventDupHandler.bind(this));
-        this.sub.on("event", eventHandler.bind(this));
+        this.sub.on("event", (event: NDKEvent) => {
+            log(`Event ${event.kind} received`);
+            eventHandler.call(this, event);
+        });
         this.sub.on("eose", () => {
+            log("Eose received");
             this.emit("ready");
             this.status = NDKWalletStatus.READY;
         });
-        this.sub.start();
+        this.sub.start(true);
     }
 
     stop() {
@@ -277,7 +290,7 @@ export class NDKCashuWallet extends NDKWallet {
             this.signer = this.privkeys.get(pubkey);
             this.p2pk = pubkey;
         } else {
-            throw new Error("privkey for " + pubkey + " not found");
+            throw new Error(`privkey for ${pubkey} not found`);
         }
     }
 
@@ -295,7 +308,7 @@ export class NDKCashuWallet extends NDKWallet {
             content: JSON.stringify(this.walletPayload()),
             kind: NDKKind.CashuWallet,
         });
-        const user = await this.ndk!.signer!.user();
+        const user = await this.ndk?.signer?.user();
         await event.encrypt(user, undefined, "nip44");
 
         return event.publish(this.relaySet);
@@ -331,7 +344,7 @@ export class NDKCashuWallet extends NDKWallet {
      * @returns the token event that was created
      */
     public async receiveToken(token: string, description?: string) {
-        let { mint } = getDecodedToken(token);
+        const { mint } = getDecodedToken(token);
         const wallet = await this.getCashuWallet(mint);
         const proofs = await wallet.receive(token);
 

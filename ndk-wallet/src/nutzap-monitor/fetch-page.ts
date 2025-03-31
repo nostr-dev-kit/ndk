@@ -1,15 +1,16 @@
-import NDK, {
-    NDKEventId,
-    NDKFilter,
+import type NDK from "@nostr-dev-kit/ndk";
+import {
+    type NDKEventId,
+    type NDKFilter,
     NDKNutzap,
-    NDKRelaySet,
+    type NDKRelaySet,
     NDKSubscriptionCacheUsage,
 } from "@nostr-dev-kit/ndk";
 
 export async function fetchPage(
     ndk: NDK,
     filter: NDKFilter,
-    knownNutzaps: Set<NDKEventId>,
+    _knownNutzaps: Set<NDKEventId>,
     relaySet?: NDKRelaySet
 ): Promise<NDKNutzap[]> {
     const events = await ndk.fetchEvents(

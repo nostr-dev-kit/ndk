@@ -1,7 +1,7 @@
-import { NDKNutzap, cashuPubkeyToNostrPubkey } from "@nostr-dev-kit/ndk";
-import { NDKNutzapMonitor, NdkNutzapStatus } from "./index";
+import { type NDKNutzap, cashuPubkeyToNostrPubkey } from "@nostr-dev-kit/ndk";
+import { describe, expect, test, vi } from "vitest";
 import { GroupedNutzaps, groupNutzaps } from "./group-nutzaps";
-import { describe, test, expect, vi } from 'vitest';
+import { type NDKNutzapMonitor, NdkNutzapStatus } from "./index";
 
 describe("groupNutzaps", () => {
     // Mock the NDKNutzapMonitor with a simple implementation of shouldTryRedeem
@@ -307,15 +307,9 @@ describe("groupNutzaps", () => {
         // 1. mint1, pubkey1 (id1)
         // 2. mint1, pubkey2 (id3)
         // 3. mint2, pubkey2 (id5)
-        const group1 = result.find(
-            (g) => g.mint === "mint1" && g.cashuPubkey === "02pubkey1"
-        );
-        const group2 = result.find(
-            (g) => g.mint === "mint1" && g.cashuPubkey === "02pubkey2"
-        );
-        const group3 = result.find(
-            (g) => g.mint === "mint2" && g.cashuPubkey === "02pubkey2"
-        );
+        const group1 = result.find((g) => g.mint === "mint1" && g.cashuPubkey === "02pubkey1");
+        const group2 = result.find((g) => g.mint === "mint1" && g.cashuPubkey === "02pubkey2");
+        const group3 = result.find((g) => g.mint === "mint2" && g.cashuPubkey === "02pubkey2");
 
         expect(group1).toBeDefined();
         expect(group2).toBeDefined();

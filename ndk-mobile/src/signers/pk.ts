@@ -1,6 +1,7 @@
-import NDK, { NDKNip46Signer, NDKPrivateKeySigner, NDKSigner } from "@nostr-dev-kit/ndk";
+import type NDK from "@nostr-dev-kit/ndk";
+import { NDKNip46Signer, NDKPrivateKeySigner, type NDKSigner } from "@nostr-dev-kit/ndk";
+import type { SettingsStore } from "../types.js";
 import { withNip46 } from "./nip46.js";
-import { SettingsStore } from "../types.js";
 import { NDKNip55Signer } from "./nip55.js";
 
 export async function withPrivateKey(key: string): Promise<NDKSigner | null> {
@@ -8,7 +9,7 @@ export async function withPrivateKey(key: string): Promise<NDKSigner | null> {
 }
 
 export async function withNip55(payload: string): Promise<NDKSigner | null> {
-    const [type, packageName] = payload.split(" ");
+    const [_type, packageName] = payload.split(" ");
     const signer = new NDKNip55Signer(packageName);
     try {
         const user = await signer.blockUntilReady();
@@ -35,7 +36,6 @@ export async function withPayload(
     if (!pk) {
         const localSigner = NDKPrivateKeySigner.generate();
         pk = localSigner.privateKey;
-        console.log("NIP-46: Generating new key", pk);
         isNewKey = true;
     }
 

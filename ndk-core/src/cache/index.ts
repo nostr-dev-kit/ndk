@@ -135,6 +135,11 @@ export interface NDKCacheAdapter {
      * @param event - The decrypted event to store.
      */
     addDecryptedEvent?(event: NDKEvent): void;
+
+    /**
+     * Cleans up the cache. This is called when the user logs out.
+     */
+    clear?(): Promise<void>;
 }
 
 export type NDKCacheRelayInfo = {

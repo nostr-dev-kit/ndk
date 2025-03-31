@@ -1,5 +1,5 @@
 import type { Hexpubkey, NDKCacheEntry, NDKUserProfile } from "@nostr-dev-kit/ndk";
-import type { NDKCacheAdapterSqlite, NDKSqliteProfileRecord } from "./sqlite.js";
+import type { NDKCacheAdapterSqlite, NDKSqliteProfileRecord } from "./index.js";
 
 /**
  * Retrieve all profiles from the cache synchronously

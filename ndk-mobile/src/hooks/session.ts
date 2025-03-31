@@ -1,7 +1,7 @@
-import NDK, { NDKEvent, NDKKind, NDKUser } from "@nostr-dev-kit/ndk";
-import { useNDK } from "./ndk.js";
-import { NDKEventWithFrom } from "./subscribe.js";
+import NDK, { type NDKEvent, type NDKKind, NDKUser } from "@nostr-dev-kit/ndk";
 import { useNDKSession } from "../stores/session/index.js";
+import { useNDK } from "./ndk.js";
+import type { NDKEventWithFrom } from "./subscribe.js";
 
 const useNDKSessionInit = () => {
     return useNDKSession((s) => s.init);

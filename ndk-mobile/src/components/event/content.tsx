@@ -1,44 +1,46 @@
 /**
  * A React Native component that renders Nostr event content with rich formatting support.
  * Handles rendering of mentions, hashtags, URLs, emojis, and images within event content.
- * 
+ *
  * Features:
  * - Renders nostr: mentions with optional custom mention component
  * - Formats hashtags with optional press handling
  * - Renders URLs and images with press handling
  * - Supports custom emoji rendering from event tags
  * - Special handling for reaction events (❤️, 👎)
- * 
+ *
  * @package @nostr-dev-kit/ndk-mobile
  */
 
-import React, { useEffect, useState } from 'react';
-import { Pressable, Text, TextProps, StyleSheet } from 'react-native';
-import { NDKEvent, NDKKind, NDKUser } from '@nostr-dev-kit/ndk';
-import { Image } from 'expo-image';
-import { useNDK } from '../../hooks/ndk.js';
-import { useUserProfile } from '../../hooks/user-profile.js';
+import { type NDKEvent, NDKKind, NDKUser } from "@nostr-dev-kit/ndk";
+import { Image } from "expo-image";
+// biome-ignore lint/style/useImportType: <explanation>
+import React from "react";
+import { useEffect, useState } from "react";
+import { Pressable, StyleSheet, Text, type TextProps } from "react-native";
+import { useNDK } from "../../hooks/ndk.js";
+import { useProfile } from "@nostr-dev-kit/ndk-hooks";
 
 const styles = StyleSheet.create({
     mention: {
-        fontWeight: 'bold',
-        color: '#0066CC',
+        fontWeight: "bold",
+        color: "#0066CC",
     },
     hashtag: {
-        fontWeight: 'bold',
-        color: '#0066CC',
+        fontWeight: "bold",
+        color: "#0066CC",
     },
     url: {
-        fontWeight: 'bold',
-        color: '#0066CC',
-        textDecorationLine: 'underline',
+        fontWeight: "bold",
+        color: "#0066CC",
+        textDecorationLine: "underline",
     },
     image: {
-        width: '100%',
-        height: '100%',
-        resizeMode: 'cover',
+        width: "100%",
+        height: "100%",
+        resizeMode: "cover",
         borderRadius: 12,
-    }
+    },
 });
 
 /**
@@ -62,15 +64,24 @@ export interface EventContentProps extends TextProps {
 /**
  * Renders an emoji from an event's emoji tags
  */
-function RenderEmoji({ shortcode, event, fontSize }: { shortcode: string; event?: NDKEvent; fontSize?: number }) {
+function RenderEmoji({
+    shortcode,
+    event,
+    fontSize,
+}: { shortcode: string; event?: NDKEvent; fontSize?: number }) {
     if (!event) return <Text style={{ fontSize }}>:{shortcode}:</Text>;
 
-    const emojiTag = event.tags.find((tag) => tag[0] === 'emoji' && tag[1] === shortcode);
+    const emojiTag = event.tags.find((tag) => tag[0] === "emoji" && tag[1] === shortcode);
     if (!emojiTag || !emojiTag[2]) return <Text style={{ fontSize }}>:{shortcode}:</Text>;
 
     const emojiSize = fontSize || 14;
 
-    return <Image source={{ uri: emojiTag[2] }} style={{ width: emojiSize, height: emojiSize, resizeMode: 'contain' }} />;
+    return (
+        <Image
+            source={{ uri: emojiTag[2] }}
+            style={{ width: emojiSize, height: emojiSize, resizeMode: "contain" }}
+        />
+    );
 }
 
 /**
@@ -97,11 +108,7 @@ function RenderHashtag({
         );
     }
 
-    return (
-        <Text style={combinedStyle}>
-            #{hashtag}
-        </Text>
-    );
+    return <Text style={combinedStyle}>#{hashtag}</Text>;
 }
 
 /**
@@ -114,16 +121,24 @@ interface RenderMentionProps {
     fontSize?: number;
     style?: any;
 }
-function RenderMention({ user, onUserPress, MentionComponent, fontSize, style, }: RenderMentionProps) {
-    const { userProfile } = useUserProfile(user.pubkey);
+function RenderMention({
+    user,
+    onUserPress,
+    MentionComponent,
+    fontSize,
+    style,
+}: RenderMentionProps) {
+    const { userProfile } = useProfile(user.pubkey);
     const combinedStyle = [styles.mention, { fontSize }, style];
 
     return (
-        <Text 
-            style={combinedStyle}
-            onPress={() => onUserPress?.(user.pubkey)}
-        >
-            @{MentionComponent ? <MentionComponent pubkey={user.pubkey} /> : userProfile?.name ?? user.pubkey.substring(0, 8)}
+        <Text style={combinedStyle} onPress={() => onUserPress?.(user.pubkey)}>
+            @
+            {MentionComponent ? (
+                <MentionComponent pubkey={user.pubkey} />
+            ) : (
+                (userProfile?.name ?? user.pubkey.substring(0, 8))
+            )}
         </Text>
     );
 }
@@ -141,16 +156,11 @@ function RenderEvent({
     useEffect(() => {
         if (!entity) return;
         ndk.fetchEvent(entity).then((event) => setEvent(event));
-    }, [entity])
+    }, [entity]);
 
     if (!event) return <Text>{entity}</Text>;
 
-    return (
-        <EventContent
-            event={event}
-            onUserPress={onUserPress}
-        />
-    )
+    return <EventContent event={event} onUserPress={onUserPress} />;
 }
 
 /**
@@ -190,16 +200,14 @@ function RenderPart({
         return <RenderEmoji shortcode={emojiMatch[1]} event={event} fontSize={fontSize} />;
     }
 
-    if (part.startsWith('https://') && part.match(/\.(jpg|jpeg|png|gif)/)) {
+    if (part.startsWith("https://") && part.match(/\.(jpg|jpeg|png|gif)/)) {
         return (
             <Pressable onPress={() => onUrlPress?.(part)}>
-                <Image
-                    source={{ uri: part }}
-                    style={[styles.image, style]}
-                />
+                <Image source={{ uri: part }} style={[styles.image, style]} />
             </Pressable>
         );
-    } else if (part.startsWith('https://') || part.startsWith('http://')) {
+    }
+    if (part.startsWith("https://") || part.startsWith("http://")) {
         return (
             <Text style={[styles.url, style]} onPress={() => onUrlPress?.(part)}>
                 {part}
@@ -212,35 +220,28 @@ function RenderPart({
         const entity = ndk.getEntity(mentionMatch);
         if (entity instanceof NDKUser) {
             if (MentionComponent) {
-                return (
-                    <MentionComponent pubkey={entity.pubkey} />
-                )
-            } else {
-                return (
-                    <RenderMention
-                        user={entity}
-                        onUserPress={onUserPress}
-                        fontSize={fontSize}
-                        style={style}
-                    />
-                );
+                return <MentionComponent pubkey={entity.pubkey} />;
             }
-        } else if (entity) {
             return (
-                <RenderEvent
-                    entity={mentionMatch}
+                <RenderMention
+                    user={entity}
                     onUserPress={onUserPress}
+                    fontSize={fontSize}
+                    style={style}
                 />
-            )
+            );
+        }
+        if (entity) {
+            return <RenderEvent entity={mentionMatch} onUserPress={onUserPress} />;
         }
     }
 
     const hashtagMatch = part.match(/^#([\p{L}\p{N}_\-]+)/u);
     if (hashtagMatch) {
         return (
-            <RenderHashtag 
-                hashtag={hashtagMatch[1]} 
-                onHashtagPress={onHashtagPress} 
+            <RenderHashtag
+                hashtag={hashtagMatch[1]}
+                onHashtagPress={onHashtagPress}
                 fontSize={fontSize}
                 style={style}
             />
@@ -256,12 +257,12 @@ function RenderPart({
 
 /**
  * Main component for rendering Nostr event content with rich formatting
- * 
+ *
  * @example
  * ```tsx
  * // Basic usage
  * <EventContent event={ndkEvent} />
- * 
+ *
  * // With custom handlers
  * <EventContent
  *     event={ndkEvent}
@@ -269,7 +270,7 @@ function RenderPart({
  *     onHashtagPress={(hashtag) => console.log('Hashtag pressed:', hashtag)}
  *     onUrlPress={(url) => console.log('URL pressed:', url)}
  * />
- * 
+ *
  * // With custom mention component
  * <EventContent
  *     event={ndkEvent}
@@ -292,11 +293,13 @@ const EventContent: React.FC<EventContentProps> = ({
 
     // Handle reaction events
     if (event?.kind === NDKKind.Reaction) {
-        return <Text style={style}>{event.content || '❤️'}</Text>;
+        return <Text style={style}>{event.content || "❤️"}</Text>;
     }
 
-    const contentToRender = content || event?.content || '';
-    const parts = contentToRender.split(/(\s+|(?=https?:\/\/)|(?<=\s)#[\p{L}\p{N}_\-]+|(?<=\s)nostr:[a-zA-Z0-9]+|:[a-zA-Z0-9_+-]+:)/u);
+    const contentToRender = content || event?.content || "";
+    const parts = contentToRender.split(
+        /(\s+|(?=https?:\/\/)|(?<=\s)#[\p{L}\p{N}_\-]+|(?<=\s)nostr:[a-zA-Z0-9]+|:[a-zA-Z0-9_+-]+:)/u
+    );
 
     return (
         <Text numberOfLines={numberOfLines} style={style} {...props}>
@@ -316,4 +319,4 @@ const EventContent: React.FC<EventContentProps> = ({
     );
 };
 
-export default EventContent; 
+export default EventContent;

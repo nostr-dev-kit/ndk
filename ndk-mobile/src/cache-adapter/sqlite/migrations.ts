@@ -1,4 +1,4 @@
-import * as SQLite from "expo-sqlite";
+import type * as SQLite from "expo-sqlite";
 
 export const migrations = [
     {
@@ -47,28 +47,28 @@ export const migrations = [
                 );`
             );
 
-            await db.execAsync(`CREATE INDEX IF NOT EXISTS idx_events_pubkey ON events (pubkey);`);
-            await db.execAsync(`CREATE INDEX IF NOT EXISTS idx_events_kind ON events (kind);`);
+            await db.execAsync("CREATE INDEX IF NOT EXISTS idx_events_pubkey ON events (pubkey);");
+            await db.execAsync("CREATE INDEX IF NOT EXISTS idx_events_kind ON events (kind);");
             await db.execAsync(
-                `CREATE INDEX IF NOT EXISTS idx_events_tags_tag ON event_tags (tag);`
+                "CREATE INDEX IF NOT EXISTS idx_event_tags_tag ON event_tags (tag);"
             );
         },
     },
     {
         version: 1,
         up: async (db: SQLite.SQLiteDatabase) => {
-            await db.execAsync(`ALTER TABLE profiles ADD COLUMN created_at INTEGER;`);
+            await db.execAsync("ALTER TABLE profiles ADD COLUMN created_at INTEGER;");
         },
     },
     {
         version: 2,
         up: async (db: SQLite.SQLiteDatabase) => {
             await db.execAsync(
-                `CREATE INDEX IF NOT EXISTS idx_profiles_pubkey ON profiles (pubkey);`
+                "CREATE INDEX IF NOT EXISTS idx_profiles_pubkey ON profiles (pubkey);"
             );
-            await db.execAsync(`DROP INDEX IF EXISTS idx_event_tags_tag;`);
+            await db.execAsync("DROP INDEX IF EXISTS idx_event_tags_tag;");
             await db.execAsync(
-                `CREATE INDEX IF NOT EXISTS idx_event_tags_tag ON event_tags (tag, value);`
+                "CREATE INDEX IF NOT EXISTS idx_event_tags_tag ON event_tags (tag, value);"
             );
         },
     },
@@ -85,8 +85,8 @@ export const migrations = [
         version: 4,
         // the format we use to reference to event ids has changed, so we need to truncate the tables
         up: async (db: SQLite.SQLiteDatabase) => {
-            await db.execAsync(`DELETE FROM events;`);
-            await db.execAsync(`DELETE FROM event_tags;`);
+            await db.execAsync("DELETE FROM events;");
+            await db.execAsync("DELETE FROM event_tags;");
         },
     },
     {
@@ -129,7 +129,7 @@ export const migrations = [
     {
         version: 6,
         up: async (db: SQLite.SQLiteDatabase) => {
-            await db.execAsync(`DROP TABLE IF EXISTS wallet_nutzaps;`); // XXX
+            await db.execAsync("DROP TABLE IF EXISTS wallet_nutzaps;"); // XXX
             await db.execAsync(`CREATE TABLE IF NOT EXISTS wallet_nutzaps (
                 event_id TEXT PRIMARY KEY UNIQUE,
                 status TEXT,
@@ -142,7 +142,7 @@ export const migrations = [
     {
         version: 7,
         up: async (db: SQLite.SQLiteDatabase) => {
-            const profiles = (await db.getAllSync(`SELECT * FROM profiles;`)) as {
+            const profiles = (await db.getAllSync("SELECT * FROM profiles;")) as {
                 pubkey: string;
                 profile: string;
             }[];
@@ -163,7 +163,7 @@ export const migrations = [
                 try {
                     const profileJson = JSON.parse(profile.profile);
                     await db.runAsync(
-                        `UPDATE profiles SET name = ?, about = ?, picture = ?, banner = ?, nip05 = ?, lud16 = ?, lud06 = ?, display_name = ?, website = ? WHERE pubkey = ?;`,
+                        "UPDATE profiles SET name = ?, about = ?, picture = ?, banner = ?, nip05 = ?, lud16 = ?, lud06 = ?, display_name = ?, website = ? WHERE pubkey = ?;",
                         [
                             profileJson.name,
                             profileJson.about,
@@ -177,8 +177,8 @@ export const migrations = [
                             profile.pubkey,
                         ]
                     );
-                } catch (e) {
-                    await db.runAsync(`DELETE FROM profiles WHERE pubkey = ?;`, [profile.pubkey]);
+                } catch (_e) {
+                    await db.runAsync("DELETE FROM profiles WHERE pubkey = ?;", [profile.pubkey]);
                 }
             }
         },
@@ -215,8 +215,7 @@ export const migrations = [
         version: 9,
         up: async (db: SQLite.SQLiteDatabase) => {
             // Log current indexes to verify
-            const indexes = await db.getAllAsync(`PRAGMA index_list('event_tags');`);
-            console.log("Current indexes on event_tags:", indexes);
+            const _indexes = await db.getAllAsync(`PRAGMA index_list('event_tags');`);
 
             // Proceed with dropping and recreating
             await db.execAsync(`
@@ -255,12 +254,57 @@ export const migrations = [
         version: 11,
         up: async (db: SQLite.SQLiteDatabase) => {
             // Drop the old nutzaps table as it's no longer needed
-            await db.execAsync(`DROP TABLE IF EXISTS wallet_nutzaps;`);
+            await db.execAsync("DROP TABLE IF EXISTS wallet_nutzaps;");
         },
     },
 
     {
         version: 12,
+        up: async (db: SQLite.SQLiteDatabase) => {
+            await db.execAsync(`
+                CREATE TABLE IF NOT EXISTS mint_info (
+                    url TEXT PRIMARY KEY,
+                    payload TEXT,
+                    created_at INTEGER,
+                    updated_at INTEGER
+                )
+            `);
+        },
+    },
+
+    // New migration for Cashu mint_keys table
+    {
+        version: 13,
+        up: async (db: SQLite.SQLiteDatabase) => {
+            await db.execAsync(`
+                CREATE TABLE IF NOT EXISTS mint_keys (
+                    url TEXT,
+                    keyset_id TEXT,
+                    payload TEXT,
+                    created_at INTEGER,
+                    updated_at INTEGER,
+                    PRIMARY KEY (url, keyset_id)
+                )
+            `);
+        },
+    },
+
+    {
+        version: 14,
+        up: async (db: SQLite.SQLiteDatabase) => {
+            await db.execAsync(`
+                CREATE TABLE IF NOT EXISTS relays (
+                    url TEXT PRIMARY KEY,
+                    connect BOOLEAN DEFAULT 1,
+                    read BOOLEAN DEFAULT 1,
+                    write BOOLEAN DEFAULT 1
+                );
+            `);
+        },
+    },
+
+    {
+        version: 15,
         up: async (db: SQLite.SQLiteDatabase) => {
             // Create a new table for storing decrypted events
             await db.execAsync(`

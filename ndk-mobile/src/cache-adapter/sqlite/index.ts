@@ -27,16 +27,7 @@ import {
     getMintKeysetRecord,
     setMintInfo,
     setMintKeys,
-} from "../mint/mint-methods.js";
-import {
-    deleteRelay,
-    getRelay,
-    getRelays,
-    getRelaysSync,
-    saveRelay,
-    saveRelays,
-    updateRelayPreferences,
-} from "../relay/relay-methods.js";
+} from "../../mint/mint-methods.js";
 import { getAllProfilesSync } from "./get-all-profiles.js";
 import { migrations } from "./migrations.js";
 
@@ -117,15 +108,6 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     private bufferFlushTimeout = 100; // milliseconds
     private bufferFlushTimer: NodeJS.Timeout | null = null;
 
-    // Relay management methods
-    public getRelays = getRelays.bind(this);
-    public getRelaysSync = getRelaysSync.bind(this);
-    public getRelay = getRelay.bind(this);
-    public saveRelay = saveRelay.bind(this);
-    public saveRelays = saveRelays.bind(this);
-    public deleteRelay = deleteRelay.bind(this);
-    public updateRelayPreferences = updateRelayPreferences.bind(this);
-
     // Mint management methods
     public getMintInfo = getMintInfo.bind(this);
     public getMintInfoRecord = getMintInfoRecord.bind(this);
@@ -137,8 +119,6 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     public getMintKeysetRecord = getMintKeysetRecord.bind(this);
     public getAllMintKeysets = getAllMintKeysets.bind(this);
     public setMintKeys = setMintKeys.bind(this);
-    public deleteMintKeysets = deleteMintKeysets.bind(this);
-    public deleteMintKeyset = deleteMintKeyset.bind(this);
     
     // Profile methods
     public getAllProfilesSync = getAllProfilesSync.bind(this);
@@ -632,7 +612,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
         });
     }
 
-    clear() {
+    async clear() {
         this.onReady(() => {
             this.db.runSync("DELETE FROM wot;");
             this.db.runSync("DELETE FROM profiles;");

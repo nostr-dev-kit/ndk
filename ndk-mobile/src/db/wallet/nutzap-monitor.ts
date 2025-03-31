@@ -1,8 +1,8 @@
 import type NDK from "@nostr-dev-kit/ndk";
-import { NDKEvent, type NDKEventId, NDKNutzap } from "@nostr-dev-kit/ndk";
+import { type NDKEventId, NDKNutzap } from "@nostr-dev-kit/ndk";
 import { type NDKNutzapState, NdkNutzapStatus } from "@nostr-dev-kit/ndk-wallet";
 import * as SQLite from "expo-sqlite";
-import type { NDKCacheAdapterSqlite } from "../../cache-adapter/sqlite.js";
+import type { NDKCacheAdapterSqlite } from "../../cache-adapter/sqlite/index.js";
 
 function withDb(ndk: NDK) {
     const db = (ndk.cacheAdapter as NDKCacheAdapterSqlite).db;

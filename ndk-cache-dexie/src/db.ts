@@ -1,4 +1,4 @@
-import type { NDKEvent, NDKEventId, NDKUser, NDKUserProfile, NostrEvent } from "@nostr-dev-kit/ndk";
+import type { NDKEventId, NDKUserProfile, NDKRawEvent } from "@nostr-dev-kit/ndk";
 import Dexie, { type Table } from "dexie";
 
 export interface Profile extends NDKUserProfile {
@@ -42,7 +42,7 @@ export interface RelayStatus {
 
 export interface UnpublishedEvent {
     id: NDKEventId;
-    event: NostrEvent;
+    event: NDKRawEvent;
     relays: Record<WebSocket["url"], boolean>;
     lastTryAt?: number;
 }

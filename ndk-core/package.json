@@ -36,11 +36,7 @@
             }
         }
     },
-    "files": [
-        "dist",
-        "src",
-        "README.md"
-    ],
+    "files": ["dist", "src", "README.md"],
     "scripts": {
         "dev": "pnpm build --watch",
         "build": "tsup src/index.ts --format cjs,esm --dts && tsup src/workers/sig-verification.ts --format cjs,esm --dts -d dist/workers",
@@ -56,9 +52,7 @@
         "posttest": "pnpm lint",
         "format": "prettier --write ."
     },
-    "keywords": [
-        "nostr"
-    ],
+    "keywords": ["nostr"],
     "author": "pablof7z",
     "license": "MIT",
     "engines": {

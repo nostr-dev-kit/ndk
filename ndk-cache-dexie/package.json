@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/ndk-cache-dexie",
-    "version": "2.5.16-rc1.0",
+    "version": "2.6.0",
     "description": "NDK Dexie Cache Adapter",
     "license": "MIT",
     "docs": "typedoc",
@@ -20,10 +20,7 @@
             "default": "./dist/index.js"
         }
     },
-    "files": [
-        "dist",
-        "README.md"
-    ],
+    "files": ["dist", "README.md"],
     "scripts": {
         "dev": "pnpm build --watch",
         "build": "tsup src/index.ts src/performance-test.ts --format cjs,esm --dts",
@@ -33,15 +30,8 @@
         "test": "vitest",
         "perf-test": "pnpm build && node dist/performance-test.js"
     },
-    "keywords": [
-        "nostr",
-        "dexie",
-        "cache"
-    ],
-    "authors": [
-        "pablof7z",
-        "erskingardner"
-    ],
+    "keywords": ["nostr", "dexie", "cache"],
+    "authors": ["pablof7z", "erskingardner"],
     "devDependencies": {
         "@nostr-dev-kit/eslint-config-custom": "workspace:*",
         "@nostr-dev-kit/tsconfig": "workspace:*",

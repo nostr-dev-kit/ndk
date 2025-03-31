@@ -1,10 +1,10 @@
-import { NDKEvent, NDKEventId, NDKRelay } from "@nostr-dev-kit/ndk";
-import { UnpublishedEvent } from "../db";
+import { NDKEvent, type NDKEventId, type NDKRelay } from "@nostr-dev-kit/ndk";
 import type debug from "debug";
 import type { Table } from "dexie";
-import { LRUCache } from "typescript-lru-cache";
-import { CacheHandler } from "../lru-cache";
-import NDKCacheAdapterDexie from "..";
+import type { LRUCache } from "typescript-lru-cache";
+import type NDKCacheAdapterDexie from "..";
+import type { UnpublishedEvent } from "../db";
+import type { CacheHandler } from "../lru-cache";
 
 /**
  * The threshold
@@ -88,8 +88,8 @@ export function addUnpublishedEvent(
         existingEntry.relays[url] = true;
         this.unpublishedEvents.set(event.id, existingEntry);
 
-        let successWrites = Object.values(existingEntry.relays).filter((v) => v).length;
-        let unsuccessWrites = Object.values(existingEntry.relays).length - successWrites;
+        const successWrites = Object.values(existingEntry.relays).filter((v) => v).length;
+        const unsuccessWrites = Object.values(existingEntry.relays).length - successWrites;
 
         if (successWrites >= WRITE_STATUS_THRESHOLD || unsuccessWrites === 0) {
             // this.debug(`Removing ${event.id} from cache`, { successWrites, unsuccessWrites });

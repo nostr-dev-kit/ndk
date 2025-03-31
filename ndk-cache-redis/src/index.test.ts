@@ -8,8 +8,8 @@ import NDK, {
     NDKSubscriptionCacheUsage,
     NDKRelay,
 } from "@nostr-dev-kit/ndk";
-import NDKRedisCacheAdapter from ".";
 import Redis from "ioredis";
+import NDKRedisCacheAdapter from ".";
 
 const signer = NDKPrivateKeySigner.generate();
 const ndk = new NDK({
@@ -64,7 +64,7 @@ describe("setEvent", () => {
             },
             { cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE, closeOnEose: true }
         );
-        const event = await storeEvent(sub);
+        const _event = await storeEvent(sub);
 
         // sub should have an event fired to it
         await new Promise<void>((resolve) => {

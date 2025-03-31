@@ -59,7 +59,7 @@ export default class RedisAdapter implements NDKCacheAdapter {
 
                     const parsedEvent = JSON.parse(event);
                     const relayUrl = parsedEvent.relay;
-                    delete parsedEvent.relay;
+                    parsedEvent.relay = undefined;
                     const relay =
                         subscription.ndk.pool.getRelay(relayUrl, false) || new NDKRelay(relayUrl);
 
@@ -135,7 +135,6 @@ export default class RedisAdapter implements NDKCacheAdapter {
 
                 if (matchFilter(filter, rawEvent as any)) {
                     await this.storeEventWithFilter(rawEvent, filter, relay);
-                    continue;
                 }
             }
         }

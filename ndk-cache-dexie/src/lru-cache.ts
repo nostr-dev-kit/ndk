@@ -1,4 +1,4 @@
-import { Table } from "dexie";
+import type { Table } from "dexie";
 import { LRUCache } from "typescript-lru-cache";
 
 export type WarmUpFunction<T> = (
@@ -13,7 +13,7 @@ export interface CacheOptions<T> {
 }
 
 export class CacheHandler<T> {
-    private cache?: LRUCache<string, T>;
+    private cache: LRUCache<string, T> = new LRUCache({ maxSize: 0 });
     private dirtyKeys: Set<string> = new Set();
     private options: CacheOptions<T>;
     private debug: debug.IDebugger;
@@ -140,24 +140,28 @@ export class CacheHandler<T> {
 
     private async dump() {
         if (this.dirtyKeys.size > 0) {
-            await this.options.dump(this.dirtyKeys, this.cache!);
+            await this.options.dump(this.dirtyKeys, this.cache);
             this.dirtyKeys.clear();
         }
     }
 
-    public addIndex<T>(attribute: string | number) {
+    public addIndex<_T>(attribute: string | number) {
         this.indexes.set(attribute, new LRUCache({ maxSize: this.options.maxSize }));
     }
 
-    public getFromIndex(attribute: string, key: string | number) {
+    public getFromIndex(index: string, key: string | number) {
         const ret = new Set<T>();
-        this.indexes
-            .get(attribute)
-            ?.get(key)
-            ?.forEach((key) => {
-                const entry = this.get(key);
-                if (entry) ret.add(entry as T);
-            });
+        const indexValues = this.indexes.get(index);
+        if (indexValues) {
+            const values = indexValues.get(key);
+            
+            if (values) {
+                for (const key of values.values()) {
+                    const entry = this.get(key);
+                    if (entry) ret.add(entry as T);
+                }
+            }
+        }
 
         return ret;
     }

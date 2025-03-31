@@ -15,12 +15,12 @@ describe("foundEvents", () => {
             event.created_at = startTime - i * 60;
             times.push(event.created_at);
             await event.sign();
-            ndk.cacheAdapter!.setEvent(event, []);
+            ndk.cacheAdapter?.setEvent(event, []);
         }
 
         const subscription = new NDKSubscription(ndk, [{ kinds: [2], limit: 2 }]);
         const spy = jest.spyOn(subscription, "eventReceived");
-        await ndk.cacheAdapter!.query(subscription);
+        await ndk.cacheAdapter?.query(subscription);
         expect(subscription.eventReceived).toBeCalledTimes(2);
 
         // the time of the events that were received must be the first two in the list
@@ -36,20 +36,20 @@ describe("foundEvent", () => {
         event.kind = 1;
         event.tags.push(["a", "123"]);
         await event.sign();
-        ndk.cacheAdapter!.setEvent(event, []);
+        ndk.cacheAdapter?.setEvent(event, []);
     });
 
     it("correctly avoids reporting events that don't fully match NIP-01 filter", async () => {
         const subscription = new NDKSubscription(ndk, [{ "#a": ["123"], "#t": ["hello"] }]);
         jest.spyOn(subscription, "eventReceived");
-        await ndk.cacheAdapter!.query(subscription);
+        await ndk.cacheAdapter?.query(subscription);
         expect(subscription.eventReceived).toBeCalledTimes(0);
     });
 
     it("correctly reports events that fully match NIP-01 filter", async () => {
         const subscription = new NDKSubscription(ndk, [{ "#a": ["123"] }]);
         jest.spyOn(subscription, "eventReceived");
-        await ndk.cacheAdapter!.query(subscription);
+        await ndk.cacheAdapter?.query(subscription);
         expect(subscription.eventReceived).toBeCalledTimes(1);
     });
 });
@@ -60,20 +60,20 @@ describe("by kind filter", () => {
         const event = new NDKEvent(ndk);
         event.kind = 10002;
         await event.sign();
-        ndk.cacheAdapter!.setEvent(event, []);
+        ndk.cacheAdapter?.setEvent(event, []);
     });
 
     it("returns an event when fetching by kind", async () => {
         const subscription = new NDKSubscription(ndk, [{ kinds: [10002] }]);
         jest.spyOn(subscription, "eventReceived");
-        await ndk.cacheAdapter!.query(subscription);
+        await ndk.cacheAdapter?.query(subscription);
         expect(subscription.eventReceived).toBeCalledTimes(1);
     });
 
     it("matches by kind even when there is a since filter", async () => {
         const subscription = new NDKSubscription(ndk, [{ kinds: [10002], since: 1000 }]);
         jest.spyOn(subscription, "eventReceived");
-        await ndk.cacheAdapter!.query(subscription);
+        await ndk.cacheAdapter?.query(subscription);
         expect(subscription.eventReceived).toBeCalledTimes(1);
     });
 });
@@ -95,11 +95,10 @@ describe("byKinds performance", () => {
             event.content = `Test event ${i}`;
             event.created_at = startTime - i;
             await event.sign();
-            ndk.cacheAdapter!.setEvent(event, []);
+            ndk.cacheAdapter?.setEvent(event, []);
         }
 
-        const addDuration = performance.now() - addStart;
-        console.log(`Added ${eventCount} events in ${addDuration}ms`);
+        const _addDuration = performance.now() - addStart;
 
         // Create a subscription that queries by kind
         const subscription = new NDKSubscription(ndk, [{ kinds: [targetKind] }]);
@@ -107,10 +106,8 @@ describe("byKinds performance", () => {
 
         // Measure query time
         const queryStart = performance.now();
-        await ndk.cacheAdapter!.query(subscription);
+        await ndk.cacheAdapter?.query(subscription);
         const queryDuration = performance.now() - queryStart;
-
-        console.log(`Query took ${queryDuration}ms`);
 
         // The test passes if the query completes in a reasonable time
         // Currently it's failing with 15+ seconds, we want it under 1000ms

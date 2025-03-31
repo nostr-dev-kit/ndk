@@ -1,7 +1,7 @@
 import type { Table } from "dexie";
+import type { LRUCache } from "typescript-lru-cache";
 import type { Profile } from "../db";
 import type { CacheHandler } from "../lru-cache";
-import type { LRUCache } from "typescript-lru-cache";
 export { db } from "../db.js";
 import createDebug from "debug";
 

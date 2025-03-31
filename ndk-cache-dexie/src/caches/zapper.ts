@@ -1,8 +1,8 @@
-import type { Table } from "dexie";
-import type { CacheHandler } from "../lru-cache";
 import type debug from "debug";
-import type { Lnurl } from "../db";
+import type { Table } from "dexie";
 import type { LRUCache } from "typescript-lru-cache";
+import type { Lnurl } from "../db";
+import type { CacheHandler } from "../lru-cache";
 
 export type ZapperCacheEntry = {
     document: string | null;

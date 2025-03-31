@@ -1,8 +1,8 @@
-import type { Table } from "dexie";
-import type { CacheHandler } from "../lru-cache";
 import type debug from "debug";
+import type { Table } from "dexie";
 import type { LRUCache } from "typescript-lru-cache";
-import { RelayStatus } from "../db";
+import type { RelayStatus } from "../db";
+import type { CacheHandler } from "../lru-cache";
 
 export async function relayInfoWarmUp(
     cacheHandler: CacheHandler<RelayStatus>,

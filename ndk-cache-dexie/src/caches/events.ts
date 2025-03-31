@@ -1,8 +1,8 @@
-import type { Table } from "dexie";
-import type { CacheHandler } from "../lru-cache";
 import type debug from "debug";
-import type { Event } from "../db";
+import type { Table } from "dexie";
 import type { LRUCache } from "typescript-lru-cache";
+import type { Event } from "../db";
+import type { CacheHandler } from "../lru-cache";
 
 export type EventCacheEntry = Event;
 

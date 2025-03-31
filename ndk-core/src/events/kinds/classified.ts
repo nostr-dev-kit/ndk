@@ -81,7 +81,7 @@ export class NDKClassified extends NDKEvent {
         const tag = this.tagValue("published_at");
 
         if (tag) {
-            return parseInt(tag);
+            return Number.parseInt(tag);
         }
 
         return undefined;
@@ -129,13 +129,12 @@ export class NDKClassified extends NDKEvent {
         const priceTag = this.tags.find((tag) => tag[0] === "price");
         if (priceTag) {
             return {
-                amount: parseFloat(priceTag[1]),
+                amount: Number.parseFloat(priceTag[1]),
                 currency: priceTag[2],
                 frequency: priceTag[3],
             };
-        } else {
-            return undefined;
         }
+        return undefined;
     }
 
     /**
@@ -146,7 +145,7 @@ export class NDKClassified extends NDKEvent {
     set price(priceTag: NDKClassifiedPriceTag | string | undefined) {
         if (typeof priceTag === "string") {
             priceTag = {
-                amount: parseFloat(priceTag),
+                amount: Number.parseFloat(priceTag),
             };
         }
 

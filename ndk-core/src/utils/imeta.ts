@@ -1,4 +1,4 @@
-import { NDKTag } from "../events";
+import type { NDKTag } from "../events";
 
 export interface NDKImetaTag {
     url?: string;

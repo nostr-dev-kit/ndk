@@ -1,10 +1,10 @@
+import createDebug from "debug";
 import type { NDKRelay } from ".";
 import { NDKEvent } from "../events/index.js";
 import { NDKKind } from "../events/kinds/index.js";
 import type { NDK } from "../ndk/index.js";
 import type { NDKSigner } from "../signers/index.js";
 import type { NDKPool } from "./pool/index.js";
-import createDebug from "debug";
 
 /**
  * NDKAuthPolicies are functions that are called when a relay requests authentication
@@ -13,7 +13,10 @@ import createDebug from "debug";
  * @param relay The relay that requested authentication.
  * @param challenge The challenge that the relay sent.
  */
-type NDKAuthPolicy = (relay: NDKRelay, challenge: string) => Promise<boolean | void | NDKEvent>;
+type NDKAuthPolicy = (
+    relay: NDKRelay,
+    challenge: string
+) => Promise<boolean | undefined | NDKEvent>;
 
 /**
  * This policy will disconnect from relays that request authentication.
@@ -22,7 +25,7 @@ function disconnect(pool: NDKPool, debug?: debug.Debugger) {
     debug ??= createDebug("ndk:relay:auth-policies:disconnect");
 
     return async (relay: NDKRelay) => {
-        debug!(`Relay ${relay.url} requested authentication, disconnecting`);
+        debug?.(`Relay ${relay.url} requested authentication, disconnecting`);
 
         pool.removeRelay(relay.url);
     };
@@ -46,7 +49,7 @@ async function signAndAuth(
         await event.sign(signer);
         resolve(event);
     } catch (e) {
-        debug!(`Failed to publish auth event to relay ${relay.url}`, e);
+        debug?.(`Failed to publish auth event to relay ${relay.url}`, e);
         reject(event);
     }
 }
@@ -60,7 +63,7 @@ function signIn({ ndk, signer, debug }: ISignIn = {}) {
     debug ??= createDebug("ndk:auth-policies:signIn");
 
     return async (relay: NDKRelay, challenge: string): Promise<NDKEvent> => {
-        debug!(`Relay ${relay.url} requested authentication, signing in`);
+        debug?.(`Relay ${relay.url} requested authentication, signing in`);
 
         const event = new NDKEvent(ndk);
         event.kind = NDKKind.ClientAuth;

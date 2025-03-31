@@ -44,7 +44,7 @@ function isValidHint(hint: string | undefined) {
     try {
         new URL(hint);
         return true;
-    } catch (e) {
+    } catch (_e) {
         return false;
     }
 }

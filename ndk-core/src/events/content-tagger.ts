@@ -1,7 +1,7 @@
 import { nip19 } from "nostr-tools";
 
-import type { NDKTag } from "./index.js";
 import type { EventPointer, ProfilePointer } from "../user/index.js";
+import type { NDKTag } from "./index.js";
 
 export type ContentTag = {
     tags: NDKTag[];
@@ -68,14 +68,15 @@ export function uniqueTag(a: NDKTag, b: NDKTag): NDKTag[] {
         if (a.every((v, i) => v === b[i])) {
             // and same values (regardless of length), return one
             return [a];
-        } else {
-            // and different values, return both
-            return [a, b];
         }
-    } else if (aLength > bLength && a.every((v, i) => v === b[i])) {
+        // and different values, return both
+        return [a, b];
+    }
+    if (aLength > bLength && a.every((v, i) => v === b[i])) {
         // If different length but the longer contains the shorter, return the longer
         return [a];
-    } else if (bLength > aLength && b.every((v, i) => v === a[i])) {
+    }
+    if (bLength > aLength && b.every((v, i) => v === a[i])) {
         return [b];
     }
 
@@ -185,7 +186,7 @@ export async function generateContentTags(
             if (t) addTagIfNew(t);
 
             return `nostr:${entity}`;
-        } catch (error) {
+        } catch (_error) {
             return tag;
         }
     });
@@ -203,7 +204,7 @@ export async function generateContentTags(
  * @param nip19Id
  * @returns Relay URL or an empty string
  */
-async function maybeGetEventRelayUrl(nip19Id: string): Promise<string> {
+async function maybeGetEventRelayUrl(_nip19Id: string): Promise<string> {
     /* TODO */
 
     return "";

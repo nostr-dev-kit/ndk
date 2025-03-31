@@ -1,5 +1,5 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { NDKNip07Signer } from "./index";
-import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
 
 describe("NDKNip07Signer", () => {
     beforeEach(() => {
@@ -12,7 +12,7 @@ describe("NDKNip07Signer", () => {
     });
 
     afterEach(() => {
-        delete (global as any).window;
+        (global as any).window = undefined;
     });
 
     it("throws 'Not ready' when accessing pubkey before initialization", () => {
@@ -22,7 +22,7 @@ describe("NDKNip07Signer", () => {
 
     it("provides synchronous access to pubkey after initialization", async () => {
         const mockPubkey = "mock-pubkey";
-        (window.nostr!.getPublicKey as any).mockResolvedValue(mockPubkey);
+        (window.nostr?.getPublicKey as any).mockResolvedValue(mockPubkey);
 
         const signer = new NDKNip07Signer();
         await signer.blockUntilReady();

@@ -1,4 +1,4 @@
-import { matchFilters, type VerifiedEvent } from "nostr-tools";
+import { type VerifiedEvent, matchFilters } from "nostr-tools";
 import type { NDKEventId, NostrEvent } from "../events/index.js";
 import type { NDKRelay } from "../relay/index.js";
 import type { NDKSubscription } from "./index.js";
@@ -20,7 +20,6 @@ export class NDKSubscriptionManager {
         this.subscriptions.set(sub.internalId, sub);
 
         if (sub.onStopped) {
-            console.log("SUB-MANAGER BUG: Subscription already had onStopped! 🤔", sub.internalId);
         }
 
         sub.onStopped = () => {
@@ -65,7 +64,7 @@ export class NDKSubscriptionManager {
      * @param relay Relay that sent the event
      * @param optimisticPublish Whether the event is coming from an optimistic publish
      */
-    public dispatchEvent(event: NostrEvent, relay?: NDKRelay, optimisticPublish: boolean = false) {
+    public dispatchEvent(event: NostrEvent, relay?: NDKRelay, optimisticPublish = false) {
         if (relay) this.seenEvent(event.id!, relay);
 
         const subscriptions = this.subscriptions.values();

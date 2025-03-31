@@ -2,10 +2,10 @@ import { EventEmitter } from "tseep";
 import { LRUCache } from "typescript-lru-cache";
 
 import type { NDKRelayList } from "../events/kinds/NDKRelayList.js";
-import { getRelayListForUsers } from "../utils/get-users-relay-list.js";
 import type { NDK } from "../ndk/index.js";
 import type { Hexpubkey } from "../user/index.js";
 import { NDKUser } from "../user/index.js";
+import { getRelayListForUsers } from "../utils/get-users-relay-list.js";
 import { normalize } from "../utils/normalize-url.js";
 
 export type OutboxItemType = "user" | "kind";
@@ -144,7 +144,7 @@ export class OutboxTracker extends EventEmitter {
      * @param key
      * @param score
      */
-    public track(item: NDKUser | Hexpubkey, type?: OutboxItemType, skipCache = true): OutboxItem {
+    public track(item: NDKUser | Hexpubkey, type?: OutboxItemType, _skipCache = true): OutboxItem {
         const key = getKeyFromItem(item);
         type ??= getTypeFromItem(item);
         let outboxItem = this.data.get(key);
@@ -163,15 +163,13 @@ export class OutboxTracker extends EventEmitter {
 function getKeyFromItem(item: NDKUser | Hexpubkey): Hexpubkey {
     if (item instanceof NDKUser) {
         return item.pubkey;
-    } else {
-        return item;
     }
+    return item;
 }
 
 function getTypeFromItem(item: NDKUser | Hexpubkey): OutboxItemType {
     if (item instanceof NDKUser) {
         return "user";
-    } else {
-        return "kind";
     }
+    return "kind";
 }

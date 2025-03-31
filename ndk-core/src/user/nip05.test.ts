@@ -1,6 +1,6 @@
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { NDK } from "../ndk";
 import { getNip05For } from "./nip05";
-import { describe, it, expect, beforeEach, vi } from "vitest";
 
 const ndk = new NDK();
 

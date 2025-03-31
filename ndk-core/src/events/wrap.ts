@@ -1,4 +1,4 @@
-import { NDKEvent } from "./index.js";
+import type { NDKEvent } from "./index.js";
 import { NDKArticle } from "./kinds/article.js";
 import { NDKCashuToken } from "./kinds/cashu/token.js";
 import { NDKHighlight } from "./kinds/highlight.js";
@@ -15,7 +15,7 @@ import { NDKWiki } from "./kinds/wiki.js";
 
 export function wrapEvent<T extends NDKEvent>(event: NDKEvent): T | Promise<T> | NDKEvent {
     const eventWrappingMap = new Map();
-    [
+    for (const klass of [
         NDKImage,
         NDKVideo,
         NDKCashuMintList,
@@ -29,11 +29,11 @@ export function wrapEvent<T extends NDKEvent>(event: NDKEvent): T | Promise<T> |
         NDKCashuToken,
         NDKList,
         NDKStory,
-    ].forEach((klass) => {
-        klass.kinds.forEach((kind) => {
+    ]) {
+        for (const kind of klass.kinds) {
             eventWrappingMap.set(kind, klass);
-        });
-    });
+        }
+    }
 
     const klass = eventWrappingMap.get(event.kind);
     if (klass) return klass.from(event);

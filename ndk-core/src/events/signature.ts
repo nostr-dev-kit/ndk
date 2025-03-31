@@ -28,7 +28,7 @@ export function signatureVerificationInit(w: Worker) {
     };
 }
 
-export async function verifySignatureAsync(event: NDKEvent, persist: boolean): Promise<boolean> {
+export async function verifySignatureAsync(event: NDKEvent, _persist: boolean): Promise<boolean> {
     const promise = new Promise<boolean>((resolve) => {
         const serialized = event.serialize();
         let enqueue = false;
@@ -40,7 +40,7 @@ export async function verifySignatureAsync(event: NDKEvent, persist: boolean): P
 
         if (!enqueue) return;
 
-        worker!.postMessage({
+        worker?.postMessage({
             serialized,
             id: event.id,
             sig: event.sig,

@@ -1,10 +1,10 @@
-import { NDKEvent } from "../events/index.js";
+import { EventGenerator } from "@nostr-dev-kit/ndk-test-utils";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { NDKEvent } from "../events/index.js";
 import { NDK } from "../ndk/index.js";
 import { NDKSubscription } from "../subscription/index.js";
-import { NDKUser, type ProfilePointer, type NDKUserParams } from "./index.js";
+import { NDKUser, type NDKUserParams, type ProfilePointer } from "./index.js";
 import * as Nip05 from "./nip05.js";
-import { describe, it, expect, beforeEach, vi } from "vitest";
-import { EventGenerator } from "@nostr-dev-kit/ndk-test-utils";
 
 describe("NDKUser", () => {
     let ndk: NDK;

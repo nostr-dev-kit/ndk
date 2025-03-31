@@ -1,28 +1,28 @@
-import type { NDK } from "../ndk";
+import createDebug from "debug";
 import type { NDKTag } from "../events";
 import type { NDKEvent } from "../events";
+import type { NDK } from "../ndk";
+import type { NDKSigner } from "../signers";
 import type { Hexpubkey } from "../user";
 import { NDKUser } from "../user";
-import type { NDKSigner } from "../signers";
-import createDebug from "debug";
 
-import { getRelayListForUsers } from "../utils/get-users-relay-list";
 import { EventEmitter } from "tseep";
-import { generateZapRequest } from "./nip57";
 import { NDKNutzap } from "../events/kinds/nutzap";
+import { NDKRelaySet } from "../relay/sets";
+import { getRelayListForUsers } from "../utils/get-users-relay-list";
 import {
-    getNip57ZapSpecFromLud,
     type LnPaymentInfo,
     type NDKLnUrlData,
     type NDKPaymentConfirmationLN,
     type NDKZapConfirmationLN,
+    getNip57ZapSpecFromLud,
 } from "./ln";
+import { generateZapRequest } from "./nip57";
 import type {
-    NDKZapConfirmationCashu,
     CashuPaymentInfo,
     NDKPaymentConfirmationCashu,
+    NDKZapConfirmationCashu,
 } from "./nip61";
-import { NDKRelaySet } from "../relay/sets";
 
 const d = createDebug("ndk:zapper");
 
@@ -207,7 +207,7 @@ class NDKZapper extends EventEmitter<{
     constructor(
         target: NDKEvent | NDKUser,
         amount: number,
-        unit: string = "msat",
+        unit = "msat",
         opts: NDKZapperOptions = {}
     ) {
         super();
@@ -367,11 +367,12 @@ class NDKZapper extends EventEmitter<{
             // we assign the error instead of throwing it so that we can try the next zap method
             // but we want to keep the error around in case there is no successful zap
             return ret;
-        } else if (ret) {
+        }
+        if (ret) {
             const { proofs, mint } = ret as NDKZapConfirmationCashu;
 
             if (!proofs || !mint)
-                throw new Error("Invalid zap confirmation: missing proofs or mint: " + ret);
+                throw new Error(`Invalid zap confirmation: missing proofs or mint: ${ret}`);
 
             const relays = await this.relays(split.pubkey);
             const relaySet = NDKRelaySet.fromRelayUrls(relays, this.ndk);
@@ -404,7 +405,7 @@ class NDKZapper extends EventEmitter<{
         methods?: NDKZapMethod[]
     ): Promise<NDKPaymentConfirmation | undefined> {
         const recipient = this.ndk.getUser({ pubkey: split.pubkey });
-        let zapMethods = await recipient.getZapInfo(2500);
+        const zapMethods = await recipient.getZapInfo(2500);
         let retVal: NDKPaymentConfirmation | Error | undefined;
 
         const canFallbackToNip61 = this.nutzapAsFallback && this.cashuPay;
@@ -460,9 +461,8 @@ class NDKZapper extends EventEmitter<{
 
             if (retVal instanceof Error) throw retVal;
             return retVal;
-        } else {
-            this.emit("notice", "Zap methods exhausted and there was no fallback to NIP-61");
         }
+        this.emit("notice", "Zap methods exhausted and there was no fallback to NIP-61");
 
         if (retVal instanceof Error) throw retVal;
 
@@ -484,11 +484,10 @@ class NDKZapper extends EventEmitter<{
         const zapEndpoint = data.callback;
         const eventPayload = JSON.stringify(zapRequest.rawEvent());
         d(
-            `Fetching invoice from ${zapEndpoint}?` +
-                new URLSearchParams({
-                    amount: amount.toString(),
-                    nostr: eventPayload,
-                })
+            `Fetching invoice from ${zapEndpoint}?${new URLSearchParams({
+                amount: amount.toString(),
+                nostr: eventPayload,
+            })}`
         );
         const url = new URL(zapEndpoint);
         url.searchParams.append("amount", amount.toString());
@@ -531,11 +530,11 @@ class NDKZapper extends EventEmitter<{
         }
 
         const splits: NDKZapSplit[] = [];
-        const total = zapTags.reduce((acc, tag) => acc + parseInt(tag[2]), 0);
+        const total = zapTags.reduce((acc, tag) => acc + Number.parseInt(tag[2]), 0);
 
         for (const tag of zapTags) {
             const pubkey = tag[1];
-            const amount = Math.floor((parseInt(tag[2]) / total) * this.amount);
+            const amount = Math.floor((Number.parseInt(tag[2]) / total) * this.amount);
             splits.push({ pubkey, amount });
         }
 

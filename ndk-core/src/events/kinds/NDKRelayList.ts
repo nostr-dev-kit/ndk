@@ -1,9 +1,9 @@
-import { NDKKind } from "./index.js";
-import type { NostrEvent } from "../index.js";
-import { NDKEvent } from "../index.js";
 import type { NDK } from "../../ndk/index.js";
 import { NDKRelaySet } from "../../relay/sets/index.js";
 import { normalizeRelayUrl, tryNormalizeRelayUrl } from "../../utils/normalize-url.js";
+import type { NostrEvent } from "../index.js";
+import { NDKEvent } from "../index.js";
+import { NDKKind } from "./index.js";
 
 const READ_MARKER = "read";
 const WRITE_MARKER = "write";
@@ -73,7 +73,7 @@ export class NDKRelayList extends NDKEvent {
         if (!this.ndk) throw new Error("NDKRelayList has no NDK instance");
 
         return new NDKRelaySet(
-            new Set(this.relays.map((u) => this.ndk!.pool.getRelay(u))),
+            new Set(this.relays.map((u) => this.ndk?.pool.getRelay(u)).filter((r) => !!r)),
             this.ndk
         );
     }

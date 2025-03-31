@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { NDK } from "../ndk/index";
 import { NDKRelayConnectivity } from "./connectivity";
 import { NDKRelay, NDKRelayStatus } from "./index";
-import { NDK } from "../ndk/index";
 
 // Define WebSocket and its states as globals for the tests
 // This enables the tests to run in a Node.js environment
@@ -12,7 +12,7 @@ global.WebSocket = class MockWebSocket {
     static CLOSED = 3;
 
     url: string;
-    readyState: number = 0;
+    readyState = 0;
     onopen: (() => void) | null = null;
     onclose: (() => void) | null = null;
     onmessage: ((event: any) => void) | null = null;
@@ -51,7 +51,7 @@ describe("NDKRelayConnectivity", () => {
         });
 
         it("should set status to RECONNECTING when not disconnected", async () => {
-            connectivity["_status"] = NDKRelayStatus.CONNECTED;
+            connectivity._status = NDKRelayStatus.CONNECTED;
             await connectivity.connect();
 
             // Check for the correct enum value for RECONNECTING which is 2
@@ -73,7 +73,7 @@ describe("NDKRelayConnectivity", () => {
 
     describe("disconnect", () => {
         beforeEach(() => {
-            connectivity["_status"] = NDKRelayStatus.CONNECTED;
+            connectivity._status = NDKRelayStatus.CONNECTED;
         });
         it("should set status to DISCONNECTING", () => {
             connectivity.disconnect();
@@ -82,7 +82,7 @@ describe("NDKRelayConnectivity", () => {
 
         it("should close the WebSocket connection", () => {
             const mockClose = vi.fn();
-            connectivity["ws"] = { close: mockClose } as any;
+            connectivity.ws = { close: mockClose } as any;
             connectivity.disconnect();
             expect(mockClose).toHaveBeenCalled();
         });
@@ -91,7 +91,7 @@ describe("NDKRelayConnectivity", () => {
             const mockClose = vi.fn(() => {
                 throw new Error("Disconnect failed");
             });
-            connectivity["ws"] = { close: mockClose } as any;
+            connectivity.ws = { close: mockClose } as any;
             connectivity.disconnect();
             expect(connectivity.status).toBe(NDKRelayStatus.DISCONNECTED);
         });
@@ -99,12 +99,12 @@ describe("NDKRelayConnectivity", () => {
 
     describe("isAvailable", () => {
         it("should return true when status is CONNECTED", () => {
-            connectivity["_status"] = NDKRelayStatus.CONNECTED;
+            connectivity._status = NDKRelayStatus.CONNECTED;
             expect(connectivity.isAvailable()).toBe(true);
         });
 
         it("should return false when status is not CONNECTED", () => {
-            connectivity["_status"] = NDKRelayStatus.DISCONNECTED;
+            connectivity._status = NDKRelayStatus.DISCONNECTED;
             expect(connectivity.isAvailable()).toBe(false);
         });
     });
@@ -112,16 +112,16 @@ describe("NDKRelayConnectivity", () => {
     describe("send", () => {
         it("should send message when connected and WebSocket is open", async () => {
             const mockSend = vi.fn();
-            connectivity["_status"] = NDKRelayStatus.CONNECTED;
-            connectivity["ws"] = { readyState: WebSocket.OPEN, send: mockSend } as any;
+            connectivity._status = NDKRelayStatus.CONNECTED;
+            connectivity.ws = { readyState: WebSocket.OPEN, send: mockSend } as any;
             await connectivity.send("test message");
             expect(mockSend).toHaveBeenCalledWith("test message");
         });
 
         it("should not send message when not connected", async () => {
-            connectivity["_status"] = NDKRelayStatus.DISCONNECTED;
+            connectivity._status = NDKRelayStatus.DISCONNECTED;
             const mockSend = vi.fn();
-            connectivity["ws"] = { readyState: WebSocket.OPEN, send: mockSend } as any;
+            connectivity.ws = { readyState: WebSocket.OPEN, send: mockSend } as any;
 
             await connectivity.send("test message");
 

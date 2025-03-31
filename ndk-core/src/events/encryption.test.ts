@@ -1,17 +1,17 @@
-import { NDKPrivateKeySigner } from "../signers/private-key";
-import { NDKNip46Signer } from "../signers/nip46";
-import { NDKEvent, NostrEvent } from ".";
+import { SignerGenerator, TestFixture, UserGenerator } from "@nostr-dev-kit/ndk-test-utils";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { NDKEvent, type NostrEvent } from ".";
+import type { NDKCacheAdapter } from "../cache";
 import { NDK } from "../ndk";
-import { NDKNip07Signer } from "../signers/nip07";
-import { NDKSigner } from "../signers";
-import { NDKUser } from "../user";
 import { NDKRelaySet } from "../relay/sets";
-import { NDKKind } from "./kinds";
-import * as giftWrappingModule from "./gift-wrapping";
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { TestFixture, UserGenerator, SignerGenerator } from "@nostr-dev-kit/ndk-test-utils";
-import { NDKCacheAdapter } from "../cache";
+import type { NDKSigner } from "../signers";
+import { NDKNip07Signer } from "../signers/nip07";
+import { NDKNip46Signer } from "../signers/nip46";
+import { NDKPrivateKeySigner } from "../signers/private-key";
+import { NDKUser } from "../user";
 import { decrypt } from "./encryption";
+import * as giftWrappingModule from "./gift-wrapping";
+import { NDKKind } from "./kinds";
 
 // Define a mock cache adapter for testing
 class MockCacheAdapter implements NDKCacheAdapter {
@@ -177,7 +177,8 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
             created_at: 1703128320,
             kind: 1059,
             tags: [["p", "918e2da906df4ccd12c8ac672d8335add131a4cf9d27ce42b3bb3625755f0788"]],
-            content: `AsqzdlMsG304G8h08bE67dhAR1gFTzTckUUyuvndZ8LrGCvwI4pgC3d6hyAK0Wo9gtkLqSr2rT2RyHlE5wRqbCOlQ8WvJEKwqwIJwT5PO3l2RxvGCHDbd1b1o40ZgIVwwLCfOWJ86I5upXe8K5AgpxYTOM1BD+SbgI5jOMA8tgpRoitJedVSvBZsmwAxXM7o7sbOON4MXHzOqOZpALpS2zgBDXSAaYAsTdEM4qqFeik+zTk3+L6NYuftGidqVluicwSGS2viYWr5OiJ1zrj1ERhYSGLpQnPKrqDaDi7R1KrHGFGyLgkJveY/45y0rv9aVIw9IWF11u53cf2CP7akACel2WvZdl1htEwFu/v9cFXD06fNVZjfx3OssKM/uHPE9XvZttQboAvP5UoK6lv9o3d+0GM4/3zP+yO3C0NExz1ZgFmbGFz703YJzM+zpKCOXaZyzPjADXp8qBBeVc5lmJqiCL4solZpxA1865yPigPAZcc9acSUlg23J1dptFK4n3Tl5HfSHP+oZ/QS/SHWbVFCtq7ZMQSRxLgEitfglTNz9P1CnpMwmW/Y4Gm5zdkv0JrdUVrn2UO9ARdHlPsW5ARgDmzaxnJypkfoHXNfxGGXWRk0sKLbz/ipnaQP/eFJv/ibNuSfqL6E4BnN/tHJSHYEaTQ/PdrA2i9laG3vJti3kAl5Ih87ct0w/tzYfp4SRPhEF1zzue9G/16eJEMzwmhQ5Ec7jJVcVGa4RltqnuF8unUu3iSRTQ+/MNNUkK6Mk+YuaJJs6Fjw6tRHuWi57SdKKv7GGkr0zlBUU2Dyo1MwpAqzsCcCTeQSv+8qt4wLf4uhU9Br7F/L0ZY9bFgh6iLDCdB+4iABXyZwT7Ufn762195hrSHcU4Okt0Zns9EeiBOFxnmpXEslYkYBpXw70GmymQfJlFOfoEp93QKCMS2DAEVeI51dJV1e+6t3pCSsQN69Vg6jUCsm1TMxSs2VX4BRbq562+VffchvW2BB4gMjsvHVUSRl8i5/ZSDlfzSPXcSGALLHBRzy+gn0oXXJ/447VHYZJDL3Ig8+QW5oFMgnWYhuwI5QSLEyflUrfSz+Pdwn/5eyjybXKJftePBD9Q+8NQ8zulU5sqvsMeIx/bBUx0fmOXsS3vjqCXW5IjkmSUV7q54GewZqTQBlcx+90xh/LSUxXex7UwZwRnifvyCbZ+zwNTHNb12chYeNjMV7kAIr3cGQv8vlOMM8ajyaZ5KVy7HpSXQjz4PGT2/nXbL5jKt8Lx0erGXsSsazkdoYDG3U`,
+            content:
+                "AsqzdlMsG304G8h08bE67dhAR1gFTzTckUUyuvndZ8LrGCvwI4pgC3d6hyAK0Wo9gtkLqSr2rT2RyHlE5wRqbCOlQ8WvJEKwqwIJwT5PO3l2RxvGCHDbd1b1o40ZgIVwwLCfOWJ86I5upXe8K5AgpxYTOM1BD+SbgI5jOMA8tgpRoitJedVSvBZsmwAxXM7o7sbOON4MXHzOqOZpALpS2zgBDXSAaYAsTdEM4qqFeik+zTk3+L6NYuftGidqVluicwSGS2viYWr5OiJ1zrj1ERhYSGLpQnPKrqDaDi7R1KrHGFGyLgkJveY/45y0rv9aVIw9IWF11u53cf2CP7akACel2WvZdl1htEwFu/v9cFXD06fNVZjfx3OssKM/uHPE9XvZttQboAvP5UoK6lv9o3d+0GM4/3zP+yO3C0NExz1ZgFmbGFz703YJzM+zpKCOXaZyzPjADXp8qBBeVc5lmJqiCL4solZpxA1865yPigPAZcc9acSUlg23J1dptFK4n3Tl5HfSHP+oZ/QS/SHWbVFCtq7ZMQSRxLgEitfglTNz9P1CnpMwmW/Y4Gm5zdkv0JrdUVrn2UO9ARdHlPsW5ARgDmzaxnJypkfoHXNfxGGXWRk0sKLbz/ipnaQP/eFJv/ibNuSfqL6E4BnN/tHJSHYEaTQ/PdrA2i9laG3vJti3kAl5Ih87ct0w/tzYfp4SRPhEF1zzue9G/16eJEMzwmhQ5Ec7jJVcVGa4RltqnuF8unUu3iSRTQ+/MNNUkK6Mk+YuaJJs6Fjw6tRHuWi57SdKKv7GGkr0zlBUU2Dyo1MwpAqzsCcCTeQSv+8qt4wLf4uhU9Br7F/L0ZY9bFgh6iLDCdB+4iABXyZwT7Ufn762195hrSHcU4Okt0Zns9EeiBOFxnmpXEslYkYBpXw70GmymQfJlFOfoEp93QKCMS2DAEVeI51dJV1e+6t3pCSsQN69Vg6jUCsm1TMxSs2VX4BRbq562+VffchvW2BB4gMjsvHVUSRl8i5/ZSDlfzSPXcSGALLHBRzy+gn0oXXJ/447VHYZJDL3Ig8+QW5oFMgnWYhuwI5QSLEyflUrfSz+Pdwn/5eyjybXKJftePBD9Q+8NQ8zulU5sqvsMeIx/bBUx0fmOXsS3vjqCXW5IjkmSUV7q54GewZqTQBlcx+90xh/LSUxXex7UwZwRnifvyCbZ+zwNTHNb12chYeNjMV7kAIr3cGQv8vlOMM8ajyaZ5KVy7HpSXQjz4PGT2/nXbL5jKt8Lx0erGXsSsazkdoYDG3U",
             sig: "a3c6ce632b145c0869423c1afaff4a6d764a9b64dedaf15f170b944ead67227518a72e455567ca1c2a0d187832cecbde7ed478395ec4c95dd3e71749ed66c480",
         });
 
@@ -394,9 +395,9 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
 
         // Mock giftWrap to call sendRequest with the right method
         vi.spyOn(giftWrappingModule, "giftWrap").mockImplementation(
-            async (event, recipient, signer, params = {}) => {
+            async (event, _recipient, _signer, params = {}) => {
                 const method = params.scheme === "nip04" ? "nip04_encrypt" : "nip44_encrypt";
-                mockSendRequest("", method, {}, 0, () => { });
+                mockSendRequest("", method, {}, 0, () => {});
                 const wrapped = new NDKEvent(event.ndk);
                 return wrapped;
             }
@@ -440,11 +441,11 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
         fixture.ndk.cacheAdapter = mockCache;
 
         // Spy on cache methods
-        const getDecryptedEventSpy = vi.spyOn(mockCache, 'getDecryptedEvent');
-        const addDecryptedEventSpy = vi.spyOn(mockCache, 'addDecryptedEvent');
+        const getDecryptedEventSpy = vi.spyOn(mockCache, "getDecryptedEvent");
+        const _addDecryptedEventSpy = vi.spyOn(mockCache, "addDecryptedEvent");
 
         // Mock the decrypt function for signer to verify it's not called
-        const decryptSpy = vi.spyOn(receiveSigner, 'decrypt');
+        const decryptSpy = vi.spyOn(receiveSigner, "decrypt");
 
         // Decrypt the event
         await encryptedEvent.decrypt(sendUser, receiveSigner, "nip44");
@@ -484,8 +485,8 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
         fixture.ndk.cacheAdapter = mockCache;
 
         // Spy on cache methods
-        const getDecryptedEventSpy = vi.spyOn(mockCache, 'getDecryptedEvent');
-        const addDecryptedEventSpy = vi.spyOn(mockCache, 'addDecryptedEvent');
+        const getDecryptedEventSpy = vi.spyOn(mockCache, "getDecryptedEvent");
+        const addDecryptedEventSpy = vi.spyOn(mockCache, "addDecryptedEvent");
 
         // Decrypt the event
         await encryptedEvent.decrypt(sendUser, receiveSigner, "nip44");

@@ -2,13 +2,13 @@ import { nip19 } from "nostr-tools";
 
 import { NDKEvent, type NDKTag, type NostrEvent } from "../events/index.js";
 import { NDKKind } from "../events/kinds/index.js";
+import { NDKCashuMintList } from "../events/kinds/nutzap/mint-list.js";
+import type { NDKFilter, NDKRelay, NDKZapMethod, NDKZapMethodInfo } from "../index.js";
 import type { NDK } from "../ndk/index.js";
 import { NDKSubscriptionCacheUsage, type NDKSubscriptionOptions } from "../subscription/index.js";
 import { follows } from "./follows.js";
-import { type NDKUserProfile, profileFromEvent, serializeProfile } from "./profile.js";
 import { getNip05For } from "./nip05.js";
-import type { NDKFilter, NDKRelay, NDKZapMethod, NDKZapMethodInfo } from "../index.js";
-import { NDKCashuMintList } from "../events/kinds/nutzap/mint-list.js";
+import { type NDKUserProfile, profileFromEvent, serializeProfile } from "./profile.js";
 
 export type Hexpubkey = string;
 
@@ -142,41 +142,27 @@ export class NDKUser {
             });
 
             try {
-                console.log("Starting promise with timeout:", timeoutMs);
                 const result = await Promise.race([promise, timeoutPromise]);
-                console.log("Promise resolved with result:", result);
                 if (timeoutId) clearTimeout(timeoutId);
                 return result;
             } catch (e) {
-                console.log("Promise error:", e);
                 if (e instanceof Error && e.message === "Timeout") {
-                    console.log("Promise timed out, waiting for original promise");
                     try {
                         const result = await promise;
-                        console.log("Original promise resolved with:", result);
                         return result;
-                    } catch (originalError) {
-                        console.log("Original promise failed:", originalError);
+                    } catch (_originalError) {
                         return undefined;
                     }
                 }
                 return undefined;
             }
         };
-
-        console.log("Starting Promise.all");
         const [userProfile, mintListEvent] = await Promise.all([
             promiseWithTimeout(this.fetchProfile()),
             promiseWithTimeout(
                 this.ndk.fetchEvent({ kinds: [NDKKind.CashuMintList], authors: [this.pubkey] })
             ),
         ]);
-        console.log(
-            "Promise.all completed. userProfile:",
-            userProfile,
-            "mintListEvent:",
-            mintListEvent
-        );
 
         const res: Map<NDKZapMethod, NDKZapMethodInfo> = new Map();
 
@@ -194,11 +180,8 @@ export class NDKUser {
 
         if (userProfile) {
             const { lud06, lud16 } = userProfile;
-            console.log("Setting nip57 with:", { lud06, lud16 });
             res.set("nip57", { lud06, lud16 });
         }
-
-        console.log("Returning result map:", res);
         return res;
     }
 
@@ -240,7 +223,7 @@ export class NDKUser {
      */
     public async fetchProfile(
         opts?: NDKSubscriptionOptions,
-        storeProfileEvent: boolean = false
+        storeProfileEvent = false
     ): Promise<NDKUserProfile | null> {
         if (!this.ndk) throw new Error("NDK not set");
 
@@ -248,14 +231,11 @@ export class NDKUser {
 
         if (
             this.ndk.cacheAdapter &&
-            (
-                this.ndk.cacheAdapter.fetchProfile ||
-                this.ndk.cacheAdapter.fetchProfileSync
-            ) &&
+            (this.ndk.cacheAdapter.fetchProfile || this.ndk.cacheAdapter.fetchProfileSync) &&
             opts?.cacheUsage !== NDKSubscriptionCacheUsage.ONLY_RELAY
         ) {
             let profile: NDKUserProfile | null = null;
-            
+
             if (this.ndk.cacheAdapter.fetchProfileSync) {
                 profile = this.ndk.cacheAdapter.fetchProfileSync(this.pubkey);
             } else if (this.ndk.cacheAdapter.fetchProfile) {
@@ -275,7 +255,10 @@ export class NDKUser {
         opts.groupableDelay ??= 250;
 
         if (!setMetadataEvent) {
-            setMetadataEvent = await this.ndk.fetchEvent({ kinds: [0], authors: [this.pubkey] }, opts);
+            setMetadataEvent = await this.ndk.fetchEvent(
+                { kinds: [0], authors: [this.pubkey] },
+                opts
+            );
         }
 
         if (!setMetadataEvent) return null;
@@ -283,7 +266,12 @@ export class NDKUser {
         // return the most recent profile
         this.profile = profileFromEvent(setMetadataEvent);
 
-        if (storeProfileEvent && this.profile && this.ndk.cacheAdapter && this.ndk.cacheAdapter.saveProfile) {
+        if (
+            storeProfileEvent &&
+            this.profile &&
+            this.ndk.cacheAdapter &&
+            this.ndk.cacheAdapter.saveProfile
+        ) {
             this.ndk.cacheAdapter.saveProfile(this.pubkey, this.profile);
         }
 

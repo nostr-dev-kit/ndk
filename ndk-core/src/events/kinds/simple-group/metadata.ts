@@ -1,7 +1,7 @@
-import { NDKKind } from "../index.js";
+import type { NDK } from "../../../ndk/index.js";
 import type { NostrEvent } from "../../index.js";
 import { NDKEvent } from "../../index.js";
-import type { NDK } from "../../../ndk/index.js";
+import { NDKKind } from "../index.js";
 
 export class NDKSimpleGroupMetadata extends NDKEvent {
     static kind = NDKKind.GroupMetadata;
@@ -31,6 +31,7 @@ export class NDKSimpleGroupMetadata extends NDKEvent {
     get scope(): "public" | "private" | undefined {
         if (this.getMatchingTags("public").length > 0) return "public";
         if (this.getMatchingTags("public").length > 0) return "private";
+        return undefined;
     }
 
     set scope(scope: "public" | "private" | undefined) {
@@ -47,6 +48,7 @@ export class NDKSimpleGroupMetadata extends NDKEvent {
     get access(): "open" | "closed" | undefined {
         if (this.getMatchingTags("open").length > 0) return "open";
         if (this.getMatchingTags("closed").length > 0) return "closed";
+        return undefined;
     }
 
     set access(access: "open" | "closed" | undefined) {

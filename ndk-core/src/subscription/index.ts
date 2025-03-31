@@ -2,15 +2,15 @@ import { EventEmitter } from "tseep";
 
 import type { NDKEventId, NostrEvent } from "../events/index.js";
 import { NDKEvent } from "../events/index.js";
+import type { NDKKind } from "../events/kinds/index.js";
+import { verifiedSignatures } from "../events/validation.js";
+import { wrapEvent } from "../events/wrap.js";
 import type { NDK } from "../ndk/index.js";
 import type { NDKRelay } from "../relay";
 import type { NDKPool } from "../relay/pool/index.js";
 import { calculateRelaySetsFromFilters } from "../relay/sets/calculate";
 import type { NDKRelaySet } from "../relay/sets/index.js";
 import { queryFullyFilled } from "./utils.js";
-import type { NDKKind } from "../events/kinds/index.js";
-import { verifiedSignatures } from "../events/validation.js";
-import { wrapEvent } from "../events/wrap.js";
 
 export type NDKSubscriptionInternalId = string;
 
@@ -276,7 +276,7 @@ export class NDKSubscription extends EventEmitter<{
      */
     private poolMonitor: ((relay: NDKRelay) => void) | undefined;
 
-    public skipOptimisticPublishEvent: boolean = false;
+    public skipOptimisticPublishEvent = false;
 
     /**
      * Filters to remove when querying the cache.
@@ -294,7 +294,7 @@ export class NDKSubscription extends EventEmitter<{
         this.ndk = ndk;
         this.pool = opts?.pool || ndk.pool;
         this.opts = { ...defaultOpts, ...(opts || {}) };
-        this.filters = filters instanceof Array ? filters : [filters];
+        this.filters = Array.isArray(filters) ? filters : [filters];
         this.subId = subId || this.opts.subId;
         this.internalId = Math.random().toString(36).substring(7);
         this.relaySet = relaySet;
@@ -312,7 +312,7 @@ export class NDKSubscription extends EventEmitter<{
     public relaysMissingEose(): WebSocket["url"][] {
         if (!this.relayFilters) return [];
 
-        const relaysMissingEose = Array.from(this.relayFilters!.keys()).filter(
+        const relaysMissingEose = Array.from(this.relayFilters?.keys()).filter(
             (url) => !this.eosesSeen.has(this.pool.getRelay(url, false, false))
         );
 
@@ -380,7 +380,7 @@ export class NDKSubscription extends EventEmitter<{
      * by this function. If you will use those returned events, you should
      * set emitCachedEvents to false to prevent seeing them as duplicate events.
      */
-    public start(emitCachedEvents: boolean = true): NDKEvent[] | null {
+    public start(emitCachedEvents = true): NDKEvent[] | null {
         let cacheResult: NDKEvent[] | Promise<NDKEvent[]>;
 
         const updateStateFromCacheResults = (events: NDKEvent[]) => {
@@ -430,35 +430,31 @@ export class NDKSubscription extends EventEmitter<{
                         if (queryFullyFilled(this)) {
                             this.emit("eose", this);
                             return;
-                        } else {
-                            loadFromRelays();
                         }
+                        loadFromRelays();
                     });
                     return null;
-                } else {
-                    cacheResult.then((events) => {
-                        updateStateFromCacheResults(events);
-                    });
-
-                    loadFromRelays();
                 }
+                cacheResult.then((events) => {
+                    updateStateFromCacheResults(events);
+                });
+
+                loadFromRelays();
 
                 return null;
-            } else {
-                updateStateFromCacheResults(cacheResult);
-
-                if (queryFullyFilled(this)) {
-                    this.emit("eose", this);
-                } else {
-                    loadFromRelays();
-                }
-
-                return cacheResult;
             }
-        } else {
-            loadFromRelays();
-            return null;
+            updateStateFromCacheResults(cacheResult);
+
+            if (queryFullyFilled(this)) {
+                this.emit("eose", this);
+            } else {
+                loadFromRelays();
+            }
+
+            return cacheResult;
         }
+        loadFromRelays();
+        return null;
     }
 
     /**
@@ -466,7 +462,7 @@ export class NDKSubscription extends EventEmitter<{
      * they should be part of this subscription.
      */
     private startPoolMonitor(): void {
-        const d = this.debug.extend("pool-monitor");
+        const _d = this.debug.extend("pool-monitor");
 
         this.poolMonitor = (relay: NDKRelay) => {
             // check if the pool monitor is already in the relayFilters
@@ -505,9 +501,8 @@ export class NDKSubscription extends EventEmitter<{
     private startWithCache(): NDKEvent[] | Promise<NDKEvent[]> {
         if (this.ndk.cacheAdapter?.query) {
             return this.ndk.cacheAdapter.query(this);
-        } else {
-            return [];
         }
+        return [];
     }
 
     /**
@@ -546,8 +541,8 @@ export class NDKSubscription extends EventEmitter<{
     public eventReceived(
         event: NDKEvent | NostrEvent,
         relay: NDKRelay | undefined,
-        fromCache: boolean = false,
-        optimisticPublish: boolean = false
+        fromCache = false,
+        optimisticPublish = false
     ) {
         const eventId = event.id! as NDKEventId;
 
@@ -569,7 +564,7 @@ export class NDKSubscription extends EventEmitter<{
                 // validate it
                 if (!this.skipValidation) {
                     if (!ndkEvent.isValid) {
-                        this.debug(`Event failed validation %s from relay %s`, eventId, relay?.url);
+                        this.debug("Event failed validation %s from relay %s", eventId, relay?.url);
                         return;
                     }
                 }
@@ -579,9 +574,10 @@ export class NDKSubscription extends EventEmitter<{
                     if (relay?.shouldValidateEvent() !== false) {
                         if (!this.skipVerification) {
                             if (!ndkEvent.verifySignature(true) && !this.ndk.asyncSigVerification) {
-                                this.debug(`Event failed signature validation`, event);
+                                this.debug("Event failed signature validation", event);
                                 return;
-                            } else if (relay) {
+                            }
+                            if (relay) {
                                 relay.addValidatedEvent();
                             }
                         }
@@ -597,7 +593,7 @@ export class NDKSubscription extends EventEmitter<{
 
             // emit it
             if (!optimisticPublish || this.skipOptimisticPublishEvent !== true) {
-                this.emitEvent(this.opts?.wrap, ndkEvent, relay, fromCache, optimisticPublish);
+                this.emitEvent(this.opts?.wrap ?? false, ndkEvent, relay, fromCache, optimisticPublish);
                 // mark the eventId as seen
                 this.eventFirstSeen.set(eventId, Date.now());
             }
@@ -632,7 +628,7 @@ export class NDKSubscription extends EventEmitter<{
      * Optionally wraps, sync or async, and emits the event (if one comes back from the wrapper)
      */
     private emitEvent(
-        wrap = false,
+        wrap: boolean,
         evt: NDKEvent,
         relay: NDKRelay | undefined,
         fromCache: boolean,
@@ -727,7 +723,7 @@ export class NDKSubscription extends EventEmitter<{
                     if (lastEventSeen !== undefined && lastEventSeen < 20) {
                         this.eoseTimeout = setTimeout(sendEoseTimeout, timeToWaitForNextEose);
                     } else {
-                        performEose("send eose timeout: " + timeToWaitForNextEose);
+                        performEose(`send eose timeout: ${timeToWaitForNextEose}`);
                     }
                 };
 

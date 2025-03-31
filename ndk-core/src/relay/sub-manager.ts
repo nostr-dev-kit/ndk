@@ -1,10 +1,10 @@
-import { NDKRelaySubscription, NDKRelaySubscriptionStatus } from "./subscription";
-import type { NDKSubscription } from "../subscription/index.js";
-import type { NDKFilter } from "../subscription/index.js";
+import type { NDKRelay } from ".";
 import type { NDKFilterFingerprint } from "../subscription/grouping.js";
 import { filterFingerprint } from "../subscription/grouping.js";
-import type { NDKRelay } from ".";
+import type { NDKSubscription } from "../subscription/index.js";
+import type { NDKFilter } from "../subscription/index.js";
 import type { NDKSubscriptionManager } from "../subscription/manager";
+import { NDKRelaySubscription, NDKRelaySubscriptionStatus } from "./subscription";
 
 /**
  * The subscription manager of an NDKRelay is in charge of orchestrating the subscriptions
@@ -58,8 +58,8 @@ export class NDKRelaySubscriptionManager {
     }
 
     public createSubscription(
-        sub: NDKSubscription,
-        filters: NDKFilter[],
+        _sub: NDKSubscription,
+        _filters: NDKFilter[],
         fingerprint?: NDKFilterFingerprint
     ): NDKRelaySubscription {
         const relaySub = new NDKRelaySubscription(

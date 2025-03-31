@@ -1,3 +1,4 @@
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import type { NostrEvent } from "../../events/index.js";
 import { NDKEvent } from "../../events/index.js";
 import { NDKRelayList } from "../../events/kinds/NDKRelayList.js";
@@ -5,7 +6,6 @@ import { NDK } from "../../ndk/index.js";
 import { NDKPrivateKeySigner } from "../../signers/private-key/index.js";
 import type { Hexpubkey, NDKUser } from "../../user/index.js";
 import { calculateRelaySetFromEvent, calculateRelaySetsFromFilters } from "./calculate.js";
-import { describe, it, expect, beforeEach, beforeAll, afterAll, vi } from "vitest";
 
 const explicitRelayUrl = "wss://explicit-relay.com/";
 

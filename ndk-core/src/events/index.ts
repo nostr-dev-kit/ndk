@@ -1,22 +1,22 @@
 import { EventEmitter } from "tseep";
 
-import { NDK } from "../ndk/index.js";
+import type { NDK } from "../ndk/index.js";
 import type { NDKRelay } from "../relay/index.js";
 import { calculateRelaySetFromEvent } from "../relay/sets/calculate.js";
 import type { NDKRelaySet } from "../relay/sets/index.js";
 import type { NDKSigner } from "../signers/index.js";
 import type { NDKFilter } from "../subscription/index.js";
-import { type NDKUser } from "../user/index.js";
+import type { NDKUser } from "../user/index.js";
 import { type ContentTag, generateContentTags, mergeTags } from "./content-tagger.js";
+import { decrypt, encrypt } from "./encryption.js";
+import { fetchReplyEvent, fetchRootEvent, fetchTaggedEvent } from "./fetch-tagged-event.js";
 import { isEphemeral, isParamReplaceable, isReplaceable } from "./kind.js";
 import { NDKKind } from "./kinds/index.js";
-import { decrypt, encrypt } from "./encryption.js";
 import { encode } from "./nip19.js";
+import type { NIP73EntityType } from "./nip73.js";
 import { repost } from "./repost.js";
-import { fetchReplyEvent, fetchRootEvent, fetchTaggedEvent } from "./fetch-tagged-event.js";
 import { type NDKEventSerialized, deserialize, serialize } from "./serializer.js";
-import { validate, verifySignature, getEventHash } from "./validation.js";
-import { NIP73EntityType } from "./nip73.js";
+import { getEventHash, validate, verifySignature } from "./validation.js";
 
 const skipClientTagOnKinds = new Set([
     NDKKind.Metadata,
@@ -181,16 +181,17 @@ export class NDKEvent extends EventEmitter {
      * @see https://github.com/nostr-protocol/nips/blob/master/73.md
      */
     public tagExternal(entity: string, type: NIP73EntityType, markerUrl?: string) {
-        let iTag: NDKTag = ["i"];
-        let kTag: NDKTag = ["k"];
+        const iTag: NDKTag = ["i"];
+        const kTag: NDKTag = ["k"];
 
         switch (type) {
-            case "url":
+            case "url": {
                 const url = new URL(entity);
                 url.hash = ""; // Remove the fragment
                 iTag.push(url.toString());
                 kTag.push(`${url.protocol}//${url.host}`);
                 break;
+            }
             case "hashtag":
                 iTag.push(`#${entity.toLowerCase()}`);
                 kTag.push("#");
@@ -305,7 +306,7 @@ export class NDKEvent extends EventEmitter {
         try {
             this.id = this.getEventHash();
             // eslint-disable-next-line no-empty
-        } catch (e) {}
+        } catch (_e) {}
 
         // if (this.id) nostrEvent.id = this.id;
         // if (this.sig) nostrEvent.sig = this.sig;
@@ -441,7 +442,7 @@ export class NDKEvent extends EventEmitter {
             this.ndk?.assertSigner();
 
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            signer = this.ndk!.signer!;
+            signer = this.ndk?.signer!;
         } else {
             this.author = await signer.user();
         }
@@ -547,7 +548,7 @@ export class NDKEvent extends EventEmitter {
                 let str = [...Array(randLength)].map(() => Math.random().toString(36)[2]).join("");
 
                 if (title && title.length > 0) {
-                    str = title.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "") + "-" + str;
+                    str = `${title.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "")}-${str}`;
                 }
 
                 tags.push(["d", str]);
@@ -555,8 +556,8 @@ export class NDKEvent extends EventEmitter {
         }
 
         if (this.shouldAddClientTag) {
-            const clientTag: NDKTag = ["client", this.ndk!.clientName ?? ""];
-            if (this.ndk!.clientNip89) clientTag.push(this.ndk!.clientNip89);
+            const clientTag: NDKTag = ["client", this.ndk?.clientName ?? ""];
+            if (this.ndk?.clientNip89) clientTag.push(this.ndk?.clientNip89);
             tags.push(clientTag);
         } else if (this.shouldStripClientTag) {
             tags = tags.filter((tag) => tag[0] !== "client");
@@ -622,9 +623,8 @@ export class NDKEvent extends EventEmitter {
             (this.kind && this.kind >= 10000 && this.kind < 20000)
         ) {
             return `${this.kind}:${this.pubkey}`;
-        } else {
-            return this.tagId();
         }
+        return this.tagId();
     }
 
     /**
@@ -652,7 +652,8 @@ export class NDKEvent extends EventEmitter {
         if (this.isParamReplaceable()) {
             const dTagId = this.dTag ?? "";
             return `${this.kind}:${this.pubkey}:${dTagId}`;
-        } else if (this.isReplaceable()) {
+        }
+        if (this.isReplaceable()) {
             return `${this.kind}:${this.pubkey}:`;
         }
 
@@ -777,17 +778,15 @@ export class NDKEvent extends EventEmitter {
     filter(): NDKFilter {
         if (this.isParamReplaceable()) {
             return { "#a": [this.tagId()] };
-        } else {
-            return { "#e": [this.tagId()] };
         }
+        return { "#e": [this.tagId()] };
     }
 
     nip22Filter(): NDKFilter {
         if (this.isParamReplaceable()) {
             return { "#A": [this.tagId()] };
-        } else {
-            return { "#E": [this.tagId()] };
         }
+        return { "#E": [this.tagId()] };
     }
 
     /**
@@ -807,7 +806,7 @@ export class NDKEvent extends EventEmitter {
             content: reason || "",
         } as NostrEvent);
         e.tag(this, undefined, true);
-        e.tags.push(["k", this.kind!.toString()]);
+        e.tags.push(["k", this.kind?.toString()]);
         if (publish) {
             this.emit("deleted");
             await e.publish();
@@ -877,7 +876,7 @@ export class NDKEvent extends EventEmitter {
      *
      * @param content The content of the reaction
      */
-    async react(content: string, publish: boolean = true): Promise<NDKEvent> {
+    async react(content: string, publish = true): Promise<NDKEvent> {
         if (!this.ndk) throw new Error("No NDK instance found");
 
         this.ndk.assertSigner();
@@ -968,11 +967,11 @@ export class NDKEvent extends EventEmitter {
                 const uppercaseTag = [...tag];
                 uppercaseTag[0] = uppercaseTag[0].toUpperCase();
                 reply.tags.push(uppercaseTag);
-                reply.tags.push(["K", this.kind!.toString()]);
+                reply.tags.push(["K", this.kind?.toString()]);
                 reply.tags.push(["P", this.pubkey]);
             }
 
-            reply.tags.push(["k", this.kind!.toString()]);
+            reply.tags.push(["k", this.kind?.toString()]);
 
             // carry over all p tags
             reply.tags.push(...this.getMatchingTags("p"));

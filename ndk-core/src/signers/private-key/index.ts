@@ -1,13 +1,13 @@
 import type { UnsignedEvent } from "nostr-tools";
-import { generateSecretKey, getPublicKey, finalizeEvent, nip04, nip44 } from "nostr-tools";
+import { finalizeEvent, generateSecretKey, getPublicKey, nip04, nip44 } from "nostr-tools";
 
-import type { NostrEvent } from "../../events/index.js";
-import { NDKUser } from "../../user";
-import { type NDKSigner } from "../index.js";
 import { bytesToHex, hexToBytes } from "@noble/hashes/utils";
 import { nip19 } from "nostr-tools";
-import { NDKEncryptionScheme } from "../../types.js";
-import { NDK } from "../../ndk/index.js";
+import type { NostrEvent } from "../../events/index.js";
+import type { NDK } from "../../ndk/index.js";
+import type { NDKEncryptionScheme } from "../../types.js";
+import { NDKUser } from "../../user";
+import type { NDKSigner } from "../index.js";
 
 /**
  * A signer that uses an in-memory private key (nsec).
@@ -127,9 +127,9 @@ export class NDKPrivateKeySigner implements NDKSigner {
     }
 
     public async encryptionEnabled(scheme?: NDKEncryptionScheme): Promise<NDKEncryptionScheme[]> {
-        let enabled: NDKEncryptionScheme[] = [];
-        if (!scheme || scheme == "nip04") enabled.push("nip04");
-        if (!scheme || scheme == "nip44") enabled.push("nip44");
+        const enabled: NDKEncryptionScheme[] = [];
+        if (!scheme || scheme === "nip04") enabled.push("nip04");
+        if (!scheme || scheme === "nip44") enabled.push("nip44");
         return enabled;
     }
 
@@ -143,8 +143,8 @@ export class NDKPrivateKeySigner implements NDKSigner {
         }
 
         const recipientHexPubKey = recipient.pubkey;
-        if (scheme == "nip44") {
-            let conversationKey = nip44.v2.utils.getConversationKey(
+        if (scheme === "nip44") {
+            const conversationKey = nip44.v2.utils.getConversationKey(
                 this._privateKey,
                 recipientHexPubKey
             );
@@ -163,8 +163,8 @@ export class NDKPrivateKeySigner implements NDKSigner {
         }
 
         const senderHexPubKey = sender.pubkey;
-        if (scheme == "nip44") {
-            let conversationKey = nip44.v2.utils.getConversationKey(
+        if (scheme === "nip44") {
+            const conversationKey = nip44.v2.utils.getConversationKey(
                 this._privateKey,
                 senderHexPubKey
             );

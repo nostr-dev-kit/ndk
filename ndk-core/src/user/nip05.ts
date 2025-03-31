@@ -14,7 +14,7 @@ export async function getNip05For(
         id: fullname,
         func: async (): Promise<ProfilePointer | null> => {
             // If we have a cache, try to load from cache first
-            if (ndk.cacheAdapter && ndk.cacheAdapter.loadNip05) {
+            if (ndk.cacheAdapter?.loadNip05) {
                 const profile = await ndk.cacheAdapter.loadNip05(fullname);
 
                 if (profile !== "missing") {
@@ -26,7 +26,8 @@ export async function getNip05For(
                         });
                         user.ndk = ndk;
                         return user;
-                    } else if (fetchOpts.cache !== "no-cache") {
+                    }
+                    if (fetchOpts.cache !== "no-cache") {
                         return null;
                     }
                 }
@@ -51,14 +52,14 @@ export async function getNip05For(
                 }
 
                 // Save the lookup to cache
-                if (ndk?.cacheAdapter && ndk.cacheAdapter.saveNip05) {
+                if (ndk?.cacheAdapter?.saveNip05) {
                     ndk.cacheAdapter.saveNip05(fullname, profile);
                 }
 
                 return profile;
             } catch (_e) {
                 // Save the failed lookup to cache
-                if (ndk?.cacheAdapter && ndk.cacheAdapter.saveNip05) {
+                if (ndk?.cacheAdapter?.saveNip05) {
                     ndk?.cacheAdapter.saveNip05(fullname, null);
                 }
                 console.error("Failed to fetch NIP05 for", fullname, _e);

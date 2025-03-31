@@ -5,14 +5,14 @@ import type { NostrEvent } from "../../events";
 import { NDKEvent } from "../../events";
 import { NDKKind } from "../../events/kinds";
 import type { NDK } from "../../ndk";
-import { NDKRelaySet } from "../../relay/sets";
-import {
-    NDKSubscriptionCacheUsage,
-    type NDKFilter,
-    type NDKSubscription,
-} from "../../subscription";
 import { NDKRelayAuthPolicies } from "../../relay/auth-policies";
 import { NDKPool } from "../../relay/pool";
+import { NDKRelaySet } from "../../relay/sets";
+import {
+    type NDKFilter,
+    type NDKSubscription,
+    NDKSubscriptionCacheUsage,
+} from "../../subscription";
 
 export interface NDKRpcRequest {
     id: string;
@@ -117,7 +117,7 @@ export class NDKNostrRpc extends EventEmitter {
                 event.content,
                 this.encryptionType
             );
-        } catch (e) {
+        } catch (_e) {
             const otherEncryptionType = this.encryptionType === "nip04" ? "nip44" : "nip04";
             decryptedContent = await this.signer.decrypt(
                 remoteUser,
@@ -132,9 +132,8 @@ export class NDKNostrRpc extends EventEmitter {
 
         if (method) {
             return { id, pubkey: event.pubkey, method, params, event };
-        } else {
-            return { id, result, error, event };
         }
+        return { id, result, error, event };
     }
 
     public async sendResponse(

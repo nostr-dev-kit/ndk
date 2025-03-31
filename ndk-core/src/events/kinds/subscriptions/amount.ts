@@ -43,8 +43,9 @@ export function newAmount(amount: number, currency: string, term: NDKIntervalFre
 }
 
 export function parseTagToSubscriptionAmount(tag: NDKTag): NDKSubscriptionAmount | undefined {
-    const amount = parseInt(tag[1]);
-    if (isNaN(amount) || amount === undefined || amount === null || amount <= 0) return undefined;
+    const amount = Number.parseInt(tag[1]);
+    if (Number.isNaN(amount) || amount === undefined || amount === null || amount <= 0)
+        return undefined;
 
     const currency = tag[2];
     if (currency === undefined || currency === "") return undefined;

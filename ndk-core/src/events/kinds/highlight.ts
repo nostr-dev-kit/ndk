@@ -34,15 +34,15 @@ export class NDKHighlight extends NDKEvent {
      */
     set context(context: string | undefined) {
         if (context === undefined) {
-            this.tags = this.tags.filter(([tag, value]) => tag !== "context");
+            this.tags = this.tags.filter(([tag, _value]) => tag !== "context");
         } else {
-            this.tags = this.tags.filter(([tag, value]) => tag !== "context");
+            this.tags = this.tags.filter(([tag, _value]) => tag !== "context");
             this.tags.push(["context", context]);
         }
     }
 
     get context(): string | undefined {
-        return this.tags.find(([tag, value]) => tag === "context")?.[1] ?? undefined;
+        return this.tags.find(([tag, _value]) => tag === "context")?.[1] ?? undefined;
     }
 
     /**
@@ -86,11 +86,16 @@ export class NDKHighlight extends NDKEvent {
         if (!articleTag) return undefined;
 
         switch (articleTag[0]) {
-            case "a":
+            case "a": {
                 // eslint-disable-next-line no-case-declarations
                 const [kind, pubkey, identifier] = articleTag[1].split(":");
-                taggedBech32 = nip19.naddrEncode({ kind: parseInt(kind), pubkey, identifier });
+                taggedBech32 = nip19.naddrEncode({
+                    kind: Number.parseInt(kind),
+                    pubkey,
+                    identifier,
+                });
                 break;
+            }
             case "e":
                 taggedBech32 = nip19.noteEncode(articleTag[1]);
                 break;

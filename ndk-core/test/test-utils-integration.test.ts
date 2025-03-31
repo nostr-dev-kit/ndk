@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { EventGenerator, RelayMock, mockNutzap } from "@nostr-dev-kit/ndk-test-utils";
+import { beforeEach, describe, expect, it } from "vitest";
 import NDK from "../src";
-import { RelayMock, EventGenerator, mockNutzap } from "@nostr-dev-kit/ndk-test-utils";
 import { NDKPrivateKeySigner } from "../src/signers/private-key";
 
 describe("ndk-test-utils integration", () => {

@@ -1,9 +1,9 @@
+import { mockNutzap } from "@nostr-dev-kit/ndk-test-utils";
 import { NDK } from "../../../ndk";
 import { NDKPrivateKeySigner } from "../../../signers/private-key";
-import { NDKNutzap } from "../nutzap";
+import type { NDKUser } from "../../../user";
+import type { NDKNutzap } from "../nutzap";
 import { NDKCashuWalletTx } from "./tx";
-import { mockNutzap } from "@nostr-dev-kit/ndk-test-utils";
-import { NDKUser } from "../../../user";
 
 const FAKE_MINT = "https://cashu.example.com";
 

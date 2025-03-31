@@ -1,7 +1,7 @@
-import { NDKEvent } from ".";
+import { EventGenerator } from "@nostr-dev-kit/ndk-test-utils";
+import type { NDKEvent } from ".";
 import { NDK } from "../ndk";
 import { NDKPrivateKeySigner } from "../signers/private-key";
-import { EventGenerator } from "@nostr-dev-kit/ndk-test-utils";
 
 const ndk = new NDK({
     signer: NDKPrivateKeySigner.generate(),

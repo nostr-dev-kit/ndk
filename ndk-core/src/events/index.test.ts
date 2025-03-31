@@ -1,17 +1,17 @@
-import type { NostrEvent } from ".";
-import { NDKEvent } from ".";
-import { NDK } from "../ndk";
-import { NDKRelay } from "../relay";
-import { NDKSubscription } from "../subscription";
-import { NDKUser } from "../user";
-import { NDKRelaySet } from "../relay/sets";
-import { NDKPrivateKeySigner } from "../signers/private-key";
-import { NIP73EntityType } from "./nip73";
-import { NDKSigner } from "../signers";
-import { NDKKind } from "./kinds";
-import { vi } from "vitest";
 import { EventGenerator } from "@nostr-dev-kit/ndk-test-utils";
 import { TestFixture } from "@nostr-dev-kit/ndk-test-utils";
+import { vi } from "vitest";
+import type { NostrEvent } from ".";
+import type { NDKEvent } from ".";
+import { NDK } from "../ndk";
+import { NDKRelay } from "../relay";
+import { NDKRelaySet } from "../relay/sets";
+import { NDKSigner } from "../signers";
+import { NDKPrivateKeySigner } from "../signers/private-key";
+import { NDKSubscription } from "../subscription";
+import { NDKUser } from "../user";
+import { NDKKind } from "./kinds";
+import type { NIP73EntityType } from "./nip73";
 
 const ndk = new NDK();
 
@@ -199,7 +199,7 @@ describe("NDKEvent", () => {
             expect(events.size).toBe(1);
             const dedupedEvent = events.values().next().value;
             expect(dedupedEvent).toBeDefined();
-            expect(dedupedEvent!.id).toEqual(event2.id);
+            expect(dedupedEvent?.id).toEqual(event2.id);
         });
     });
 
@@ -415,15 +415,15 @@ describe("NDKEvent", () => {
 
     describe("reply", () => {
         let fixture: TestFixture;
-        let alice: NDKUser;
-        let bob: NDKUser;
-        let carol: NDKUser;
+        let _alice: NDKUser;
+        let _bob: NDKUser;
+        let _carol: NDKUser;
 
         beforeEach(async () => {
             fixture = new TestFixture();
-            alice = await fixture.getUser("alice");
-            bob = await fixture.getUser("bob");
-            carol = await fixture.getUser("carol");
+            _alice = await fixture.getUser("alice");
+            _bob = await fixture.getUser("bob");
+            _carol = await fixture.getUser("carol");
 
             // Set up signers
             fixture.setupSigner("alice");
@@ -471,7 +471,7 @@ describe("NDKEvent", () => {
 
             it("adds a reply marker for non-root events", async () => {
                 // Create thread with root and one reply
-                const [root, reply1] = await fixture.eventFactory.createEventChain(
+                const [_root, reply1] = await fixture.eventFactory.createEventChain(
                     "Hello world",
                     "alice",
                     [{ content: "First reply", author: "bob" }]
@@ -651,7 +651,7 @@ describe("NDKEvent", () => {
                     "bob"
                 );
 
-                expect(reply1.tags).toContainEqual(["K", root.kind!.toString()]);
+                expect(reply1.tags).toContainEqual(["K", root.kind?.toString()]);
             });
 
             it("adds a 'k' tag to specify the parent kind", async () => {
@@ -662,7 +662,7 @@ describe("NDKEvent", () => {
                 fixture.setupSigner("carol");
                 const reply2 = reply1.reply();
 
-                expect(reply2.tags).toContainEqual(["k", reply1.kind!.toString()]);
+                expect(reply2.tags).toContainEqual(["k", reply1.kind?.toString()]);
             });
         });
     });

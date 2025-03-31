@@ -29,10 +29,9 @@ export function filterFingerprint(
             .map(([key, values]) => {
                 if (["since", "until"].includes(key)) {
                     // We don't want to mix different time constraints values, so we include the value in the fingerprint
-                    return key + ":" + (values as string);
-                } else {
-                    return key;
+                    return `${key}:${values as string}`;
                 }
+                return key;
             })
             .sort()
             .join("-");

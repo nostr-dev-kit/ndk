@@ -1,13 +1,13 @@
-import type { NDK } from "./index.js";
-import type { NDKRelayList } from "../events/kinds/NDKRelayList.js";
-import type { NDKUser } from "../user/index.js";
 import createDebug from "debug";
-import type { NDKFilter } from "../subscription/index.js";
-import { NDKKind } from "../events/kinds/index.js";
 import type { NDKEvent } from "../events/index.js";
+import type { NDKRelayList } from "../events/kinds/NDKRelayList.js";
+import { NDKKind } from "../events/kinds/index.js";
 import NDKList from "../events/kinds/lists/index.js";
 import { NDKRelay } from "../relay/index.js";
+import type { NDKFilter } from "../subscription/index.js";
+import type { NDKUser } from "../user/index.js";
 import { getRelayListForUser } from "../utils/get-users-relay-list.js";
+import type { NDK } from "./index.js";
 
 const debug = createDebug("ndk:active-user");
 
@@ -51,7 +51,7 @@ async function setActiveUserConnected(this: NDK, user: NDKUser) {
     ];
 
     if (this.autoFetchUserMutelist) {
-        filters[0].kinds!.push(NDKKind.MuteList);
+        filters[0].kinds?.push(NDKKind.MuteList);
     }
 
     const relaySet = userRelays ? userRelays.relaySet : undefined;

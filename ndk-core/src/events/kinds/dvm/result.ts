@@ -7,10 +7,6 @@ import { NDKEvent } from "../../index.js";
  * they have finished processing a job.
  */
 export class NDKDVMJobResult extends NDKEvent {
-    constructor(ndk?: NDK, event?: NostrEvent) {
-        super(ndk, event);
-    }
-
     static from(event: NDKEvent) {
         return new NDKDVMJobResult(event.ndk, event.rawEvent());
     }

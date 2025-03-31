@@ -1,9 +1,9 @@
 import type { NDKEvent, NostrEvent } from "../events";
-import { type NDKUser } from "../user";
 import { NDKKind } from "../events/kinds";
-import type { NDKSubscription } from "../subscription";
-import { NDKDVMRequest } from "../events/kinds/dvm/request";
 import { NDKDVMJobFeedback } from "../events/kinds/dvm";
+import { NDKDVMRequest } from "../events/kinds/dvm/request";
+import type { NDKSubscription } from "../subscription";
+import type { NDKUser } from "../user";
 
 function addRelays(event: NDKEvent, relays?: string[]) {
     const tags = [];
@@ -42,7 +42,7 @@ export async function dvmSchedule(
     encrypted = true,
     waitForConfirmationForMs?: number
 ) {
-    if (!(events instanceof Array)) {
+    if (!Array.isArray(events)) {
         events = [events];
     }
 
@@ -96,7 +96,7 @@ export async function dvmSchedule(
         }, waitForConfirmationForMs);
     });
 
-    const schedulePromise = new Promise<NDKDVMJobFeedback | NDKEvent | string | void>(
+    const schedulePromise = new Promise<NDKDVMJobFeedback | NDKEvent | string | undefined>(
         (resolve, reject) => {
             if (waitForConfirmationForMs) {
                 res?.on("event", async (e: NDKEvent) => {
@@ -116,12 +116,12 @@ export async function dvmSchedule(
             }
 
             scheduleEvent.publish().then(() => {
-                if (!waitForConfirmationForMs) resolve();
+                if (!waitForConfirmationForMs) resolve(undefined);
             });
         }
     );
 
-    return new Promise<NDKEvent | string | void>((resolve, reject) => {
+    return new Promise<NDKEvent | string | undefined>((resolve, reject) => {
         if (waitForConfirmationForMs) {
             Promise.race([timeoutPromise, schedulePromise])
                 .then((e) => {

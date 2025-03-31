@@ -1,12 +1,12 @@
 import { nip19 } from "nostr-tools";
-import { NDK } from ".";
+import type { NDK } from ".";
 import type { ProfilePointer } from "../user/index.js";
 
 /**
- * 
- * @param this 
- * @param entity 
- * @returns 
+ *
+ * @param this
+ * @param entity
+ * @returns
  */
 export function getEntity(this: NDK, entity: string) {
     try {
@@ -15,7 +15,7 @@ export function getEntity(this: NDK, entity: string) {
         if (decoded.type === "npub") return npub(this, decoded.data);
         if (decoded.type === "nprofile") return nprofile(this, decoded.data);
         return decoded;
-    } catch (e) {
+    } catch (_e) {
         return null;
     }
 }

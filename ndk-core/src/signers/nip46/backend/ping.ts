@@ -8,7 +8,7 @@ export default class PingEventHandlingStrategy implements IEventHandlingStrategy
         backend: NDKNip46Backend,
         id: string,
         remotePubkey: string,
-        params: string[]
+        _params: string[]
     ): Promise<string | undefined> {
         const debug = backend.debug.extend("ping");
 
@@ -17,9 +17,8 @@ export default class PingEventHandlingStrategy implements IEventHandlingStrategy
         if (await backend.pubkeyAllowed({ id, pubkey: remotePubkey, method: "ping" })) {
             debug(`connection request from ${remotePubkey} allowed`);
             return "pong";
-        } else {
-            debug(`connection request from ${remotePubkey} rejected`);
         }
+        debug(`connection request from ${remotePubkey} rejected`);
 
         return undefined;
     }

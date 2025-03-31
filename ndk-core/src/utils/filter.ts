@@ -1,4 +1,4 @@
-import { NDKFilter, NDKRawEvent } from "../index.js";
+import type { NDKFilter, NDKRawEvent } from "../index.js";
 
 /**
  * Matches a filter against an event
@@ -17,24 +17,24 @@ export function matchFilter(filter: NDKFilter, event: NDKRawEvent): boolean {
         return false;
     }
 
-    for (let f in filter) {
+    for (const f in filter) {
         if (f[0] === "#") {
-            let tagName = f.slice(1);
+            const tagName = f.slice(1);
             if (tagName === "t") {
                 // only make lower case if the tag is 't', no need to do lowercase for most other things
-                let values = filter[`#${tagName}`]?.map((v: string) => v.toLowerCase());
+                const values = filter[`#${tagName}`]?.map((v: string) => v.toLowerCase());
                 if (
                     values &&
                     !event.tags.find(
-                        ([t, v]) => t === tagName && values!.indexOf(v.toLowerCase()) !== -1
+                        ([t, v]) => t === tagName && values?.indexOf(v.toLowerCase()) !== -1
                     )
                 )
                     return false;
             } else {
-                let values = filter[`#${tagName}`];
+                const values = filter[`#${tagName}`];
                 if (
                     values &&
-                    !event.tags.find(([t, v]) => t === tagName && values!.indexOf(v) !== -1)
+                    !event.tags.find(([t, v]) => t === tagName && values?.indexOf(v) !== -1)
                 )
                     return false;
             }

@@ -2,7 +2,7 @@ import type { NDKEvent } from "../../events/index.js";
 import type { NDK } from "../../ndk/index.js";
 import { normalizeRelayUrl } from "../../utils/normalize-url.js";
 import { NDKRelay, NDKRelayStatus } from "../index.js";
-import { NDKPool } from "../pool/index.js";
+import type { NDKPool } from "../pool/index.js";
 
 export { calculateRelaySetFromEvent } from "./calculate.js";
 
@@ -108,7 +108,7 @@ export class NDKRelaySet {
                 pool.useTemporaryRelay(
                     temporaryRelay,
                     undefined,
-                    "requested from fromRelayUrls " + relayUrls
+                    `requested from fromRelayUrls ${relayUrls}`
                 );
                 relays.add(temporaryRelay);
             }
@@ -167,7 +167,7 @@ export class NDKRelaySet {
     public async publish(
         event: NDKEvent,
         timeoutMs?: number,
-        requiredRelayCount: number = 1
+        requiredRelayCount = 1
     ): Promise<Set<NDKRelay>> {
         // Set to track relays that successfully received the event.
         // This set is populated both by promise resolutions and by relay:published events

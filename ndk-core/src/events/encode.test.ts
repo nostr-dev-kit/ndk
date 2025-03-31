@@ -1,11 +1,11 @@
-import { nip19 } from "nostr-tools";
-import { NDKEvent } from ".";
-import { NDKRelay } from "../relay";
-import type { EventPointer } from "../user";
-import { NDKPrivateKeySigner } from "../signers/private-key";
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { NDK } from "../ndk";
 import { EventGenerator } from "@nostr-dev-kit/ndk-test-utils";
+import { nip19 } from "nostr-tools";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { NDKEvent } from ".";
+import { NDK } from "../ndk";
+import { NDKRelay } from "../relay";
+import { NDKPrivateKeySigner } from "../signers/private-key";
+import type { EventPointer } from "../user";
 
 describe("event.encode", () => {
     let mockNdk: NDK;

@@ -1,8 +1,8 @@
 import "websocket-polyfill";
+import { describe, expect, it } from "vitest";
 import { NDK } from "../../ndk/index.js";
 import { NDKRelay } from "../index.js";
 import { NDKRelaySet } from "../sets/index.js";
-import { describe, it, expect } from "vitest";
 
 describe("NDKPool", () => {
     it("refuses connecting to blacklisted relays", async () => {

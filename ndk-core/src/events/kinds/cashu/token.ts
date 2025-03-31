@@ -1,6 +1,6 @@
-import { NDK } from "../../../ndk/index.js";
-import { NDKEventId, NDKRelay, NDKRelaySet, NostrEvent } from "../../../index.js";
+import type { NDKEventId, NDKRelay, NDKRelaySet, NostrEvent } from "../../../index.js";
 import { NDKEvent, NDKKind } from "../../../index.js";
+import type { NDK } from "../../../ndk/index.js";
 
 type Proof = {
     id: string;
@@ -59,7 +59,7 @@ export class NDKCashuToken extends NDKEvent {
             token.mint = content.mint ?? token.tagValue("mint");
             token.deletedTokens = content.del ?? [];
             if (!Array.isArray(token.proofs)) return;
-        } catch (e) {
+        } catch (_e) {
             return;
         }
 
@@ -149,8 +149,7 @@ export class NDKCashuToken extends NDKEvent {
     ): Promise<Set<NDKRelay>> {
         if (this.original) {
             return this.original.publish(relaySet, timeoutMs, requiredRelayCount);
-        } else {
-            return super.publish(relaySet, timeoutMs, requiredRelayCount);
         }
+        return super.publish(relaySet, timeoutMs, requiredRelayCount);
     }
 }

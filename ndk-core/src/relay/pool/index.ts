@@ -2,9 +2,9 @@ import type debug from "debug";
 import { EventEmitter } from "tseep";
 
 import type { NDK } from "../../ndk/index.js";
-import { NDKRelay, NDKRelayStatus } from "../index.js";
 import type { NDKFilter } from "../../subscription/index.js";
 import { normalizeRelayUrl } from "../../utils/normalize-url.js";
+import { NDKRelay, NDKRelayStatus } from "../index.js";
 
 export type NDKPoolStats = {
     total: number;
@@ -66,8 +66,8 @@ export class NDKPool extends EventEmitter<{
      * @param opts - Options for the pool.
      */
     public constructor(
-        relayUrls: WebSocket["url"][] = [],
-        blacklistedRelayUrls: WebSocket["url"][] = [],
+        relayUrls: WebSocket["url"][],
+        blacklistedRelayUrls: WebSocket["url"][],
         ndk: NDK,
         {
             debug,
@@ -101,7 +101,7 @@ export class NDKPool extends EventEmitter<{
         }
     }
 
-    private _name: string = "unnamed";
+    private _name = "unnamed";
 
     get name() {
         return this._name;
@@ -181,7 +181,7 @@ export class NDKPool extends EventEmitter<{
             const info = this.ndk.cacheAdapter.getRelayStatus(relayUrl);
 
             // if we have info and the relay should not connect yet, set a delayed connect
-            if (info && info.dontConnectBefore) {
+            if (info?.dontConnectBefore) {
                 if (info.dontConnectBefore > Date.now()) {
                     const delay = info.dontConnectBefore - Date.now();
                     this.debug(`Refusing to add relay ${relayUrl}: delayed connect for ${delay}ms`);
@@ -189,9 +189,8 @@ export class NDKPool extends EventEmitter<{
                         this.addRelay(relay, connect);
                     }, delay);
                     return;
-                } else {
-                    reconnect = false;
                 }
+                reconnect = false;
             }
         }
 
@@ -345,7 +344,6 @@ export class NDKPool extends EventEmitter<{
         for (const relayUrl of relaysToConnect) {
             const relay = this.relays.get(relayUrl);
             if (!relay) {
-                console.log(`Relay ${relayUrl} not found in pool ${this.name}`);
                 continue;
             }
 

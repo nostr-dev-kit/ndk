@@ -72,31 +72,41 @@ export class NDKList extends NDKEvent {
 
         if (this.kind === NDKKind.Contacts) {
             return "Contacts";
-        } else if (this.kind === NDKKind.MuteList) {
-            return "Mute";
-        } else if (this.kind === NDKKind.PinList) {
-            return "Pinned Notes";
-        } else if (this.kind === NDKKind.RelayList) {
-            return "Relay Metadata";
-        } else if (this.kind === NDKKind.BookmarkList) {
-            return "Bookmarks";
-        } else if (this.kind === NDKKind.CommunityList) {
-            return "Communities";
-        } else if (this.kind === NDKKind.PublicChatList) {
-            return "Public Chats";
-        } else if (this.kind === NDKKind.BlockRelayList) {
-            return "Blocked Relays";
-        } else if (this.kind === NDKKind.SearchRelayList) {
-            return "Search Relays";
-        } else if (this.kind === NDKKind.DirectMessageReceiveRelayList) {
-            return "Direct Message Receive Relays";
-        } else if (this.kind === NDKKind.InterestList) {
-            return "Interests";
-        } else if (this.kind === NDKKind.EmojiList) {
-            return "Emojis";
-        } else {
-            return this.tagValue("d");
         }
+        if (this.kind === NDKKind.MuteList) {
+            return "Mute";
+        }
+        if (this.kind === NDKKind.PinList) {
+            return "Pinned Notes";
+        }
+        if (this.kind === NDKKind.RelayList) {
+            return "Relay Metadata";
+        }
+        if (this.kind === NDKKind.BookmarkList) {
+            return "Bookmarks";
+        }
+        if (this.kind === NDKKind.CommunityList) {
+            return "Communities";
+        }
+        if (this.kind === NDKKind.PublicChatList) {
+            return "Public Chats";
+        }
+        if (this.kind === NDKKind.BlockRelayList) {
+            return "Blocked Relays";
+        }
+        if (this.kind === NDKKind.SearchRelayList) {
+            return "Search Relays";
+        }
+        if (this.kind === NDKKind.DirectMessageReceiveRelayList) {
+            return "Direct Message Receive Relays";
+        }
+        if (this.kind === NDKKind.InterestList) {
+            return "Interests";
+        }
+        if (this.kind === NDKKind.EmojiList) {
+            return "Emojis";
+        }
+        return this.tagValue("d");
     }
 
     /**
@@ -174,17 +184,15 @@ export class NDKList extends NDKEvent {
                 try {
                     const decryptedContent = await this.ndk.signer.decrypt(user, this.content);
                     const a = JSON.parse(decryptedContent);
-                    if (a && a[0]) {
+                    if (a?.[0]) {
                         this.encryptedTagsLength = this.content.length;
                         return (this._encryptedTags = a);
                     }
                     this.encryptedTagsLength = this.content.length;
                     return (this._encryptedTags = []);
-                } catch (e) {
-                    console.log(`error decrypting ${this.content}`);
-                }
+                } catch (_e) {}
             }
-        } catch (e) {
+        } catch (_e) {
             // console.trace(e);
             // throw e;
         }
@@ -197,7 +205,7 @@ export class NDKList extends NDKEvent {
      *
      * (i.e. the NDKPersonList can validate that items are NDKUser instances)
      */
-    public validateTag(tagValue: string): boolean | string {
+    public validateTag(_tagValue: string): boolean | string {
         return true;
     }
 
@@ -289,7 +297,7 @@ export class NDKList extends NDKEvent {
      * @param publish whether to publish the change
      * @returns
      */
-    async removeItemByValue(value: string, publish = true): Promise<Set<NDKRelay> | void> {
+    async removeItemByValue(value: string, publish = true): Promise<Set<NDKRelay> | undefined> {
         if (!this.ndk) throw new Error("NDK instance not set");
         if (!this.ndk.signer) throw new Error("NDK signer not set");
 
@@ -314,9 +322,8 @@ export class NDKList extends NDKEvent {
 
         if (publish) {
             return this.publishReplaceable();
-        } else {
-            this.created_at = Math.floor(Date.now() / 1000);
         }
+        this.created_at = Math.floor(Date.now() / 1000);
 
         this.emit("change");
     }
@@ -390,7 +397,7 @@ export class NDKList extends NDKEvent {
             for (const [key, values] of nip33Queries.entries()) {
                 const [kind, pubkey] = key.split(":");
                 filters.push({
-                    kinds: [parseInt(kind)],
+                    kinds: [Number.parseInt(kind)],
                     authors: [pubkey],
                     "#d": values,
                 });

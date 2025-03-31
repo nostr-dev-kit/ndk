@@ -15,7 +15,7 @@ describe("fetchEventFromTag", () => {
                 cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE,
             };
             vi.spyOn(ndk.pool, "getRelay");
-            const event = await ndk.fetchEventFromTag(tag, originalEvent, subOpts);
+            const _event = await ndk.fetchEventFromTag(tag, originalEvent, subOpts);
             expect(ndk.pool.getRelay).not.toHaveBeenCalled();
         });
     });

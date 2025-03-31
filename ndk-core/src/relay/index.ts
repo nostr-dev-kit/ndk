@@ -2,32 +2,32 @@ import debug from "debug";
 import { EventEmitter } from "tseep";
 
 import type { NDKEvent, NDKTag } from "../events/index.js";
+import type { NDK } from "../ndk/index.js";
 import type { NDKFilter, NDKSubscription } from "../subscription/index.js";
 import type { NDKUser } from "../user/index.js";
+import { normalizeRelayUrl } from "../utils/normalize-url.js";
+import type { NDKAuthPolicy } from "./auth-policies.js";
 import { NDKRelayConnectivity } from "./connectivity.js";
 import { NDKRelayPublisher } from "./publisher.js";
 import type { NDKRelayScore } from "./score.js";
 import { NDKRelaySubscriptionManager } from "./sub-manager.js";
-import type { NDKAuthPolicy } from "./auth-policies.js";
-import { normalizeRelayUrl } from "../utils/normalize-url.js";
-import type { NDK } from "../ndk/index.js";
 import type { NDKRelaySubscription } from "./subscription.js";
 
 /** @deprecated Use `WebSocket['url']` instead. */
 export type NDKRelayUrl = WebSocket["url"];
 
 export enum NDKRelayStatus {
-    DISCONNECTING, // 0
-    DISCONNECTED, // 1
-    RECONNECTING, // 2
-    FLAPPING, // 3
-    CONNECTING, // 4
+    DISCONNECTING = 0, // 0
+    DISCONNECTED = 1, // 1
+    RECONNECTING = 2, // 2
+    FLAPPING = 3, // 3
+    CONNECTING = 4, // 4
 
     // connected states
-    CONNECTED, // 5
-    AUTH_REQUESTED, // 6
-    AUTHENTICATING, // 7
-    AUTHENTICATED, // 8
+    CONNECTED = 5, // 5
+    AUTH_REQUESTED = 6, // 6
+    AUTHENTICATING = 7, // 7
+    AUTHENTICATED = 8, // 8
 }
 
 export interface NDKRelayConnectionStats {
@@ -143,7 +143,7 @@ export class NDKRelay extends EventEmitter<{
     static defaultValidationRatioUpdateFn = (
         relay: NDKRelay,
         validatedCount: number,
-        nonValidatedCount: number
+        _nonValidatedCount: number
     ): number => {
         if (relay.lowestValidationRatio === undefined || relay.targetValidationRatio === undefined)
             return 1;

@@ -1,5 +1,5 @@
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import { NDKNutzap } from "./index.js";
-import { vi, describe, test, expect, beforeEach } from "vitest";
 
 // Define a type for our debug mock function
 type MockDebugger = ReturnType<typeof vi.fn> & {

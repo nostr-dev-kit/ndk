@@ -16,9 +16,8 @@ export function getRelaysForSync(
 
     if (type === "write") {
         return item.writeRelays;
-    } else {
-        return item.readRelays;
     }
+    return item.readRelays;
 }
 
 /**

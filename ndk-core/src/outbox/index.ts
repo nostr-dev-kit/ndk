@@ -56,7 +56,7 @@ export function chooseRelayCombinationForPubkeys(
 
     // add connected relays to the preferred relays
     connectedRelays.forEach((relay) => {
-        preferredRelays!.add(relay.url);
+        preferredRelays?.add(relay.url);
     });
 
     const relayToAuthorsMap = new Map<WebSocket["url"], Hexpubkey[]>();

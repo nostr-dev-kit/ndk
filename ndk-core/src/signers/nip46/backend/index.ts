@@ -1,18 +1,18 @@
+import { hexToBytes } from "@noble/hashes/utils";
 import type { NDKEvent } from "../../../events/index.js";
 import type { NDK } from "../../../ndk/index.js";
 import type { NDKUser } from "../../../user/index.js";
-import { NDKPrivateKeySigner } from "../../private-key/index.js";
 import type { NDKSigner } from "../../index.js";
+import { NDKPrivateKeySigner } from "../../private-key/index.js";
 import { NDKNostrRpc } from "../rpc.js";
-import PingEventHandlingStrategy from "./ping.js";
 import ConnectEventHandlingStrategy from "./connect.js";
 import GetPublicKeyHandlingStrategy from "./get-public-key.js";
 import Nip04DecryptHandlingStrategy from "./nip04-decrypt.js";
 import Nip04EncryptHandlingStrategy from "./nip04-encrypt.js";
-import SignEventHandlingStrategy from "./sign-event.js";
-import Nip44EncryptHandlingStrategy from "./nip44-encrypt.js";
 import Nip44DecryptHandlingStrategy from "./nip44-decrypt.js";
-import { hexToBytes } from "@noble/hashes/utils";
+import Nip44EncryptHandlingStrategy from "./nip44-encrypt.js";
+import PingEventHandlingStrategy from "./ping.js";
+import SignEventHandlingStrategy from "./sign-event.js";
 
 export type NIP46Method =
     | "connect"
@@ -164,7 +164,7 @@ export class NDKNip46Backend {
      * @param pubkey public key to apply token to
      * @param token token to apply
      */
-    async applyToken(pubkey: string, token: string): Promise<void> {
+    async applyToken(_pubkey: string, _token: string): Promise<void> {
         throw new Error("connection token not supported");
     }
 

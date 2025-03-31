@@ -1,9 +1,9 @@
-import type { NDKEvent, NostrEvent } from ".";
+import { schnorr } from "@noble/curves/secp256k1";
 import { sha256 } from "@noble/hashes/sha256";
 import { bytesToHex } from "@noble/hashes/utils";
-import { schnorr } from "@noble/curves/secp256k1";
-import { verifySignatureAsync } from "./signature";
 import { LRUCache } from "typescript-lru-cache";
+import type { NDKEvent, NostrEvent } from ".";
+import { verifySignatureAsync } from "./signature";
 
 const PUBKEY_REGEX = /^[a-f0-9]{64}$/;
 
@@ -46,7 +46,8 @@ export function verifySignature(this: NDKEvent, persist: boolean): boolean | und
 
     const prevVerification = verifiedSignatures.get(this.id);
     if (prevVerification !== null) {
-        return (this.signatureVerified = !!prevVerification);
+        this.signatureVerified = !!prevVerification;
+        return this.signatureVerified;
     }
 
     try {
@@ -58,7 +59,7 @@ export function verifySignature(this: NDKEvent, persist: boolean): boolean | und
                 }
 
                 if (!result) {
-                    this.ndk!.emit("event:invalid-sig", this);
+                    this.ndk?.emit("event:invalid-sig", this);
                     verifiedSignatures.set(this.id, false);
                 }
             });
@@ -67,10 +68,12 @@ export function verifySignature(this: NDKEvent, persist: boolean): boolean | und
             const res = schnorr.verify(this.sig as string, hash, this.pubkey);
             if (res) verifiedSignatures.set(this.id, this.sig!);
             else verifiedSignatures.set(this.id, false);
-            return (this.signatureVerified = res);
+            this.signatureVerified = res;
+            return res;
         }
-    } catch (err) {
-        return (this.signatureVerified = false);
+    } catch (_err) {
+        this.signatureVerified = false;
+        return false;
     }
 }
 

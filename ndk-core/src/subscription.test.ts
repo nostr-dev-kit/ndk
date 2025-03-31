@@ -1,11 +1,18 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import NDK, { NDKSubscription, NDKFilter, NDKKind, NDKEvent, NDKRelay, NDKRelaySet } from "./index";
 import {
-    RelayPoolMock,
     EventGenerator,
+    RelayPoolMock,
     expectEventToBeValid,
     expectEventsToMatch,
 } from "@nostr-dev-kit/ndk-test-utils";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import NDK, {
+    NDKSubscription,
+    type NDKFilter,
+    NDKKind,
+    type NDKEvent,
+    type NDKRelay,
+    NDKRelaySet,
+} from "./index";
 
 describe("NDKSubscription", () => {
     let ndk: NDK;
@@ -39,8 +46,6 @@ describe("NDKSubscription", () => {
         const event2 = await EventGenerator.createSignedTextNote("Hello world #2");
         const event3 = await EventGenerator.createSignedTextNote("Hello world #3");
 
-        console.log(`[Test] Created test events: ${event1.id}, ${event2.id}, ${event3.id}`);
-
         // Define filter
         const filter: NDKFilter = { kinds: [NDKKind.Text] };
 
@@ -60,47 +65,23 @@ describe("NDKSubscription", () => {
             },
             relaySet
         );
-        console.log(`[Test] Created subscription with ID: ${sub.subId}`);
 
         // Track received events
         const receivedEvents: NDKEvent[] = [];
         let eoseReceived = false;
 
         sub.on("event", (event: NDKEvent) => {
-            console.log(`[Test] Received event: ${event.id}`);
             receivedEvents.push(event);
         });
 
         sub.on("eose", () => {
-            console.log("[Test] EOSE received");
             eoseReceived = true;
         });
-
-        // Start the subscription first
-        console.log("[Test] Starting subscription");
         await sub.start();
-
-        // Manually simulate events directly to the subscription
-        console.log("[Test] Manually simulating events");
-
-        // Directly call eventReceived on the subscription
-        console.log("[Test] Simulating event1");
         mockRelay.simulateEvent(event1, sub.subId!);
-
-        console.log("[Test] Simulating event2");
         mockRelay.simulateEvent(event2, sub.subId!);
-
-        console.log("[Test] Simulating event3");
         mockRelay.simulateEvent(event3, sub.subId!);
-
-        // Simulate EOSE
-        console.log("[Test] Simulating EOSE");
         mockRelay.simulateEOSE(sub.subId!);
-
-        // Verify results
-        console.log(
-            `[Test] Received ${receivedEvents.length} events, EOSE received: ${eoseReceived}`
-        );
         expect(receivedEvents.length).toEqual(3);
         expect(eoseReceived).toBe(true);
         expectEventToBeValid(expect, receivedEvents[0]);
@@ -112,7 +93,6 @@ describe("NDKSubscription", () => {
     it("should close subscription on EOSE when requested", async () => {
         // Create test events
         const event = await EventGenerator.createSignedTextNote("Test event");
-        console.log(`[Test] Created test event: ${event.id}`);
 
         // Define filter
         const filter: NDKFilter = { kinds: [NDKKind.Text] };
@@ -135,7 +115,6 @@ describe("NDKSubscription", () => {
             },
             relaySet
         );
-        console.log(`[Test] Created subscription with ID: ${sub.subId} and closeOnEose=true`);
 
         // Track events
         let eventReceived = false;
@@ -143,35 +122,21 @@ describe("NDKSubscription", () => {
         let closedReceived = false;
 
         sub.on("event", () => {
-            console.log("[Test] Event received");
             eventReceived = true;
         });
 
         sub.on("eose", () => {
-            console.log("[Test] EOSE received");
             eoseReceived = true;
         });
 
         sub.on("close", () => {
-            console.log("[Test] Close received");
             closedReceived = true;
         });
-
-        // Start the subscription first
-        console.log("[Test] Starting subscription");
         await sub.start();
-
-        // Directly call eventReceived on the subscription
-        console.log("[Test] Simulating event");
         mockRelay.simulateEvent(event, sub.subId!);
 
         // Simulate EOSE
         mockRelay.simulateEOSE(sub.subId!);
-
-        // Verify results
-        console.log(
-            `[Test] Event received: ${eventReceived}, EOSE received: ${eoseReceived}, Closed: ${closedReceived}`
-        );
         expect(eventReceived).toBe(true);
         expect(eoseReceived).toBe(true);
         expect(closedReceived).toBe(true);

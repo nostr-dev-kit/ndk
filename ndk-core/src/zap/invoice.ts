@@ -64,7 +64,7 @@ export function zapInvoiceFromEvent(event: NDKEvent): NDKZapInvoice | null {
 
         zapRequest = JSON.parse(zapRequestPayload);
         decodedInvoice = decode(bolt11[1]);
-    } catch (e) {
+    } catch (_e) {
         return null;
     }
 
@@ -78,7 +78,7 @@ export function zapInvoiceFromEvent(event: NDKEvent): NDKZapInvoice | null {
         return null;
     }
 
-    const amount = parseInt(amountSection.value);
+    const amount = Number.parseInt(amountSection.value);
     if (!amount) {
         return null;
     }

@@ -1,7 +1,7 @@
-import { describe, test, expect } from "vitest";
-import { NDKStory, NDKStorySticker, NDKStoryStickerType } from "./story.js";
+import { describe, expect, test } from "vitest";
 import { NDKUser } from "../../user/index.js";
-import { NDKTag } from "../index.js";
+import type { NDKTag } from "../index.js";
+import { NDKStory, NDKStorySticker, NDKStoryStickerType } from "./story.js";
 
 const sampleUser = new NDKUser({
     pubkey: "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52",
@@ -115,7 +115,7 @@ describe("NDKStorySticker", () => {
         const sticker = new NDKStorySticker(NDKStoryStickerType.Text);
         sticker.value = "Test Sticker";
         sticker.position = { x: 100, y: 200 };
-        sticker.dimension = { width: NaN, height: 100 };
+        sticker.dimension = { width: Number.NaN, height: 100 };
 
         expect(sticker.isValid).toBe(false);
         expect(sticker.hasValidDimensions()).toBe(false);
@@ -125,7 +125,7 @@ describe("NDKStorySticker", () => {
     test("isValid should return false when position is invalid", () => {
         const sticker = new NDKStorySticker(NDKStoryStickerType.Text);
         sticker.value = "Test Sticker";
-        sticker.position = { x: NaN, y: 200 };
+        sticker.position = { x: Number.NaN, y: 200 };
         sticker.dimension = { width: 300, height: 100 };
 
         expect(sticker.isValid).toBe(false);
@@ -136,7 +136,7 @@ describe("NDKStorySticker", () => {
     test("toTag should throw an error for invalid stickers", () => {
         const sticker = new NDKStorySticker(NDKStoryStickerType.Text);
         sticker.value = "Test Sticker";
-        sticker.position = { x: NaN, y: 200 };
+        sticker.position = { x: Number.NaN, y: 200 };
         sticker.dimension = { width: 300, height: 100 };
 
         expect(() => sticker.toTag()).toThrow("Invalid sticker: position is invalid");

@@ -1,4 +1,5 @@
 import type { NostrEvent } from "nostr-tools";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import type { NDKZapDetails } from ".";
 import { NDKZapper } from ".";
 import { NDKEvent } from "../events";
@@ -6,10 +7,9 @@ import { NDKCashuMintList } from "../events/kinds/nutzap/mint-list";
 import { NDK } from "../ndk";
 import { NDKPrivateKeySigner } from "../signers/private-key";
 import type { NDKUser } from "../user";
-import type { CashuPaymentInfo } from "./nip61";
-import type { LnPaymentInfo } from "./ln";
-import { describe, it, expect, beforeAll, afterEach, vi } from "vitest";
 import type { NDKUserProfile } from "../user/profile";
+import type { LnPaymentInfo } from "./ln";
+import type { CashuPaymentInfo } from "./nip61";
 
 vi.mock("./ln.js", () => ({
     getNip57ZapSpecFromLud: vi.fn(async () => {
@@ -104,7 +104,7 @@ describe("getZapMethod", () => {
         ndk.fetchEvent = vi.fn().mockResolvedValue(mintList);
 
         const zapper = new NDKZapper(user, 1000);
-        zapper.cashuPay = async (payment: NDKZapDetails<CashuPaymentInfo>) => undefined;
+        zapper.cashuPay = async (_payment: NDKZapDetails<CashuPaymentInfo>) => undefined;
 
         const zapMethodMap = await zapper.getZapMethods(ndk, user.pubkey);
         const nip61Method = zapMethodMap.get("nip61");
@@ -131,7 +131,7 @@ describe("getZapMethod", () => {
         });
 
         // Mock both profile and mint list fetching
-        const fetchProfileMock = vi.fn().mockResolvedValue(profile);
+        const _fetchProfileMock = vi.fn().mockResolvedValue(profile);
         ndk.fetchEvent = vi.fn().mockImplementation((filter) => {
             if (filter.kinds?.[0] === 0) {
                 return Promise.resolve(profileEvent);
@@ -140,17 +140,9 @@ describe("getZapMethod", () => {
         });
 
         const zapper = new NDKZapper(user, 1000);
-        zapper.cashuPay = async (payment: NDKZapDetails<CashuPaymentInfo>) => undefined;
-        zapper.lnPay = async (payment: NDKZapDetails<LnPaymentInfo>) => undefined;
-
-        // Debug logging for promise resolution
-        console.log("Starting getZapMethods call");
+        zapper.cashuPay = async (_payment: NDKZapDetails<CashuPaymentInfo>) => undefined;
+        zapper.lnPay = async (_payment: NDKZapDetails<LnPaymentInfo>) => undefined;
         const zapMethodMap = await zapper.getZapMethods(ndk, user.pubkey);
-        console.log("After getZapMethods call");
-
-        // Debug logging
-        console.log("Profile returned by fetchProfile:", await user.fetchProfile());
-        console.log("ZapMethodMap:", zapMethodMap);
 
         const nip57Method = zapMethodMap.get("nip57");
         expect(nip57Method).toBeDefined();

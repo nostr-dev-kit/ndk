@@ -1,7 +1,7 @@
-import { NDKSubscription } from ".";
-import { NDK } from "../ndk";
-import { NDKEvent } from "../events";
 import { vi } from "vitest";
+import { NDKSubscription } from ".";
+import { NDKEvent } from "../events";
+import { NDK } from "../ndk";
 
 const ndk = new NDK();
 const invalidEvent = new NDKEvent(ndk, {

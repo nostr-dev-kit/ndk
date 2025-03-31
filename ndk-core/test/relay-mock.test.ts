@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { RelayMock, EventGenerator } from "@nostr-dev-kit/ndk-test-utils";
+import { EventGenerator, RelayMock } from "@nostr-dev-kit/ndk-test-utils";
+import { beforeEach, describe, expect, it } from "vitest";
 import { NDK, NDKEvent } from "../src";
 
 describe("RelayMock from ndk-test-utils", () => {

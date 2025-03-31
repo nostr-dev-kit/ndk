@@ -171,7 +171,7 @@ describe("Threads to make Gigi ⚡🧡 happy", () => {
                     'So I hear I am an ecash hater?\nTo be clear, I love ecash, it has great applications, such as paid API calls like in Wasabi. The worlds soft currencies will be ecash, built on Bitcoin stack.\nThere is however an issue when 90% bitcoiners think ecash is noncustodial, pegged, see it as a "scaling" solution.\n* There are no proof of reserve proposals that make sense, mints can always brr.\n* Ecash is not a scaling solution, it\'s a custodial solution.\n* You are giving someone your bitcoin, and they are giving you a thing they claim is bitcoin.\n* Mint operators should be aware of the legal risks.',
                 sig: "0404562af5706ef330451be4dc0b8003959b7554bac47f7075c3fd616c21228d93c73f1d919de8ad2e8f09505ec572868ad82c3945ce7a3dcd6c5fdecc6e165b",
             });
-            const replyEvent = new NDKEvent(undefined, {
+            const _replyEvent = new NDKEvent(undefined, {
                 id: "f88d4af5cf5e2817e498903e5ed907566ebb9682f78f365cc60cf3c4009d1b48",
                 pubkey: "f55678aa1f5d554536d456b13beab04f636d63fdedd586fe38a4cb9ce48c90bc",
                 created_at: 1713516665,
@@ -257,7 +257,7 @@ describe("Threads to make Gigi ⚡🧡 happy", () => {
 
         describe("getRootTag", () => {
             it("properly handles events without markers", () => {
-                expect(getRootTag(eventWithNoMarkers)![1]).toBe(
+                expect(getRootTag(eventWithNoMarkers)?.[1]).toBe(
                     "280098061928d822887022b5dfadd4e18cc1710b4f4a01d531d41bcf4ab2d4ff"
                 );
             });
@@ -265,7 +265,7 @@ describe("Threads to make Gigi ⚡🧡 happy", () => {
 
         describe("getReplyTag", () => {
             it("properly handles events without markers", () => {
-                expect(getReplyTag(eventWithNoMarkers)![1]).toBe(
+                expect(getReplyTag(eventWithNoMarkers)?.[1]).toBe(
                     "1c15684fe4258b06c0e49e25f38b4897e1bc47210ad3ab78c65e022e3ad36e0f"
                 );
             });

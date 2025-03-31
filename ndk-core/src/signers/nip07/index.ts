@@ -1,12 +1,12 @@
 import debug from "debug";
 
-import { NDK } from "../../ndk/index.js";
+import type { EncryptionMethod } from "../../events/encryption.js";
 import type { NostrEvent } from "../../events/index.js";
-import { Hexpubkey, NDKUser } from "../../user/index.js";
-import { type NDKSigner } from "../index.js";
+import type { NDK } from "../../ndk/index.js";
 import { NDKRelay } from "../../relay/index.js";
-import { EncryptionMethod } from "../../events/encryption.js";
-import { NDKEncryptionScheme } from "../../types.js";
+import type { NDKEncryptionScheme } from "../../types.js";
+import { type Hexpubkey, NDKUser } from "../../user/index.js";
+import type { NDKSigner } from "../index.js";
 
 type EncryptionQueueItem = {
     scheme: NDKEncryptionScheme;
@@ -41,7 +41,7 @@ export class NDKNip07Signer implements NDKSigner {
     /**
      * @param waitTimeout - The timeout in milliseconds to wait for the NIP-07 to become available
      */
-    public constructor(waitTimeout: number = 1000, ndk?: NDK) {
+    public constructor(waitTimeout = 1000, ndk?: NDK) {
         this.debug = debug("ndk:nip07");
         this.waitTimeout = waitTimeout;
         this.ndk = ndk;
@@ -55,7 +55,7 @@ export class NDKNip07Signer implements NDKSigner {
     public async blockUntilReady(): Promise<NDKUser> {
         await this.waitForExtension();
 
-        const pubkey = await window.nostr!.getPublicKey();
+        const pubkey = await window.nostr?.getPublicKey();
 
         // If the user rejects granting access, error out
         if (!pubkey) {
@@ -97,14 +97,15 @@ export class NDKNip07Signer implements NDKSigner {
     public async sign(event: NostrEvent): Promise<string> {
         await this.waitForExtension();
 
-        const signedEvent = await window.nostr!.signEvent(event);
+        const signedEvent = await window.nostr?.signEvent(event);
+        if (!signedEvent) throw new Error("Failed to sign event");
         return signedEvent.sig;
     }
 
     public async relays(ndk: NDK): Promise<NDKRelay[]> {
         await this.waitForExtension();
 
-        const relays = (await window.nostr!.getRelays?.()) || {};
+        const relays = (await window.nostr?.getRelays?.()) || {};
 
         const activeRelays = [];
         for (const url of Object.keys(relays)) {
@@ -117,10 +118,10 @@ export class NDKNip07Signer implements NDKSigner {
     }
 
     public async encryptionEnabled(nip?: NDKEncryptionScheme): Promise<NDKEncryptionScheme[]> {
-        let enabled: NDKEncryptionScheme[] = [];
-        if ((!nip || nip == "nip04") && Boolean((window as any).nostr!.nip04))
+        const enabled: NDKEncryptionScheme[] = [];
+        if ((!nip || nip === "nip04") && Boolean((window as any).nostr?.nip04))
             enabled.push("nip04");
-        if ((!nip || nip == "nip44") && Boolean((window as any).nostr!.nip44))
+        if ((!nip || nip === "nip44") && Boolean((window as any).nostr?.nip44))
             enabled.push("nip44");
         return enabled;
     }
@@ -131,7 +132,7 @@ export class NDKNip07Signer implements NDKSigner {
         nip: NDKEncryptionScheme = "nip04"
     ): Promise<string> {
         if (!(await this.encryptionEnabled(nip)))
-            throw new Error(nip + "encryption is not available from your browser extension");
+            throw new Error(`${nip}encryption is not available from your browser extension`);
         await this.waitForExtension();
 
         const recipientHexPubKey = recipient.pubkey;
@@ -144,7 +145,7 @@ export class NDKNip07Signer implements NDKSigner {
         nip: NDKEncryptionScheme = "nip04"
     ): Promise<string> {
         if (!(await this.encryptionEnabled(nip)))
-            throw new Error(nip + "encryption is not available from your browser extension");
+            throw new Error(`${nip}encryption is not available from your browser extension`);
         await this.waitForExtension();
 
         const senderHexPubKey = sender.pubkey;
@@ -190,12 +191,12 @@ export class NDKNip07Signer implements NDKSigner {
         });
 
         try {
-            let result = await window.nostr![scheme]![method](counterpartyHexpubkey, value);
+            const result = await window.nostr?.[scheme]?.[method](counterpartyHexpubkey, value);
+            if (!result) throw new Error("Failed to encrypt/decrypt");
             resolve(result);
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             // retry a few times if the call is already executing
-            if (error.message && error.message.includes("call already executing")) {
+            if (error.message?.includes("call already executing")) {
                 if (retries < 5) {
                     this.debug("Retrying encryption queue item", {
                         method,

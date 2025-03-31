@@ -1,9 +1,9 @@
 import type { NDK } from "../../ndk/index.js";
+import type { NDKUser } from "../../user/index.js";
+import { type NDKImetaTag, imetaTagToTag, mapImetaTag } from "../../utils/imeta.js";
 import type { ContentTag } from "../content-tagger.js";
-import { NDKEvent, type NostrEvent, NDKTag } from "../index.js";
+import { NDKEvent, type NDKTag, type NostrEvent } from "../index.js";
 import { NDKKind } from "./index.js";
-import { imetaTagToTag, mapImetaTag, type NDKImetaTag } from "../../utils/imeta.js";
-import { NDKUser } from "../../user/index.js";
 
 /**
  * Sticker type for NDKStory
@@ -177,7 +177,7 @@ export class NDKStorySticker<T extends NDKStoryStickerType = NDKStoryStickerType
     }
 
     get rotation(): number | undefined {
-        return this.properties?.rot ? parseFloat(this.properties.rot) : undefined;
+        return this.properties?.rot ? Number.parseFloat(this.properties.rot) : undefined;
     }
 
     set rotation(rotation: number | undefined) {
@@ -201,8 +201,8 @@ export class NDKStorySticker<T extends NDKStoryStickerType = NDKStoryStickerType
         return (
             typeof this.dimension.width === "number" &&
             typeof this.dimension.height === "number" &&
-            !isNaN(this.dimension.width) &&
-            !isNaN(this.dimension.height)
+            !Number.isNaN(this.dimension.width) &&
+            !Number.isNaN(this.dimension.height)
         );
     };
 
@@ -210,8 +210,8 @@ export class NDKStorySticker<T extends NDKStoryStickerType = NDKStoryStickerType
         return (
             typeof this.position.x === "number" &&
             typeof this.position.y === "number" &&
-            !isNaN(this.position.x) &&
-            !isNaN(this.position.y)
+            !Number.isNaN(this.position.x) &&
+            !Number.isNaN(this.position.y)
         );
     };
 
@@ -359,7 +359,7 @@ export class NDKStory extends NDKEvent {
         const durTag = this.tagValue("dur");
         if (!durTag) return undefined;
 
-        return parseInt(durTag);
+        return Number.parseInt(durTag);
     }
 
     /**

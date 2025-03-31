@@ -34,7 +34,7 @@ export class NDKSimpleGroup {
     }
 
     public relayUrls(): string[] {
-        return this.relaySet!.relayUrls;
+        return this.relaySet?.relayUrls;
     }
 
     get name(): string | undefined {
@@ -182,7 +182,7 @@ export class NDKSimpleGroup {
         return event;
     }
 
-    public async requestToJoin(pubkey: Hexpubkey, content?: string) {
+    public async requestToJoin(_pubkey: Hexpubkey, content?: string) {
         const event = new NDKEvent(this.ndk, {
             kind: NDKKind.GroupAdminRequestJoin,
             content: content ?? "",
@@ -219,7 +219,7 @@ export class NDKSimpleGroup {
                 this.fetchingMetadata = undefined;
             })
             .catch(() => {
-                throw new Error("Failed to fetch metadata for group " + this.groupId);
+                throw new Error(`Failed to fetch metadata for group ${this.groupId}`);
             });
 
         return this.fetchingMetadata;
@@ -227,7 +227,7 @@ export class NDKSimpleGroup {
 }
 
 // Remove a p tag of a user
-const untagUser = (pubkey: Hexpubkey) => (tag: NDKTag) => !(tag[0] === "p" && tag[1] === pubkey);
+const _untagUser = (pubkey: Hexpubkey) => (tag: NDKTag) => !(tag[0] === "p" && tag[1] === pubkey);
 
 function randomId(length: number) {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

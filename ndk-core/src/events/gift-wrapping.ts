@@ -1,10 +1,10 @@
-import { NDKEvent, type NDKRawEvent, type NostrEvent } from "./index.js";
-import { NDKPrivateKeySigner } from "../signers/private-key";
 import { getEventHash } from "nostr-tools";
-import { NDKUser } from "../user/index.js";
 import type { NDKSigner } from "../signers/index.js";
-import { NDKKind } from "./kinds/index.js";
+import { NDKPrivateKeySigner } from "../signers/private-key";
 import type { NDKEncryptionScheme } from "../types.js";
+import { NDKUser } from "../user/index.js";
+import { NDKEvent, type NDKRawEvent, type NostrEvent } from "./index.js";
+import { NDKKind } from "./kinds/index.js";
 
 export type GiftWrapParams = {
     scheme?: NDKEncryptionScheme;
@@ -59,7 +59,7 @@ export async function giftUnwrap(
     }
     if (!signer) throw new Error("no signer");
     try {
-        const seal = JSON.parse(await signer.decrypt(sender, event.content, scheme)) as NostrEvent;
+        const seal = JSON.parse(await signer.decrypt(_sender, event.content, scheme)) as NostrEvent;
         if (!seal) throw new Error("Failed to decrypt wrapper");
 
         if (!new NDKEvent(undefined, seal).verifySignature(false))
@@ -68,11 +68,11 @@ export async function giftUnwrap(
         const rumorSender = new NDKUser({ pubkey: seal.pubkey });
         const rumor = JSON.parse(await signer.decrypt(rumorSender, seal.content, scheme));
         if (!rumor) throw new Error("Failed to decrypt seal");
-        if (rumor.pubkey !== _sender.pubkey) throw new Error("Invalid GiftWrap, sender validation failed!");
+        if (rumor.pubkey !== _sender.pubkey)
+            throw new Error("Invalid GiftWrap, sender validation failed!");
 
         return new NDKEvent(event.ndk, rumor as NostrEvent);
-    } catch (e) {
-        console.log(e);
+    } catch (_e) {
         return Promise.reject("Got error unwrapping event! See console log.");
     }
 }
@@ -120,5 +120,5 @@ async function getWrapEvent(
 }
 
 function approximateNow(drift = 0) {
-    return Math.round(Date.now() / 1000 - Math.random() * Math.pow(10, drift));
+    return Math.round(Date.now() / 1000 - Math.random() * 10 ** drift);
 }

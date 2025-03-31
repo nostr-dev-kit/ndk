@@ -1,6 +1,6 @@
 import { bech32 } from "@scure/base";
-import type { NDK } from "../ndk";
 import createDebug from "debug";
+import type { NDK } from "../ndk";
 import type { Hexpubkey } from "../user";
 
 const d = createDebug("ndk:zapper:ln");

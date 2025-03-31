@@ -19,23 +19,23 @@ type Item = {
 };
 
 export enum NDKRelaySubscriptionStatus {
-    INITIAL,
+    INITIAL = 0,
 
     /**
      * The subscription is pending execution.
      */
-    PENDING,
+    PENDING = 1,
 
     /**
      * The subscription is waiting for the relay to be ready.
      */
-    WAITING,
+    WAITING = 2,
 
     /**
      * The subscription is currently running.
      */
-    RUNNING,
-    CLOSED,
+    RUNNING = 3,
+    CLOSED = 4,
 }
 
 /**
@@ -98,7 +98,7 @@ export class NDKRelaySubscription {
     ) {
         this.relay = relay;
         this.topSubManager = topSubManager;
-        this.debug = relay.debug.extend("subscription-" + this.id);
+        this.debug = relay.debug.extend(`subscription-${this.id}`);
         this.fingerprint = fingerprint || Math.random().toString(36).substring(7);
     }
 
@@ -148,13 +148,6 @@ export class NDKRelaySubscription {
                 this.evaluateExecutionPlan(subscription);
                 break;
             case NDKRelaySubscriptionStatus.RUNNING:
-                // the subscription was already running when this new NDKSubscription came
-                // so we might have some events this new NDKSubscription wants
-                // this.catchUpSubscription(subscription, filters);
-                console.log(
-                    "BUG: This should not happen: This subscription needs to catch up with a subscription that was already running",
-                    filters
-                );
                 break;
             case NDKRelaySubscriptionStatus.PENDING:
                 // this subscription is already scheduled to be executed
@@ -281,9 +274,7 @@ export class NDKRelaySubscription {
                     this.schedule(delay, delayType);
                 }
             } else {
-                throw new Error(
-                    "Unknown delay type combination " + existingDelayType + " " + delayType
-                );
+                throw new Error(`Unknown delay type combination ${existingDelayType} ${delayType}`);
             }
         }
     }
@@ -341,7 +332,7 @@ export class NDKRelaySubscription {
             this._subId = this.fingerprint.slice(0, 15);
         }
 
-        this._subId += "-" + Math.random().toString(36).substring(2, 7);
+        this._subId += `-${Math.random().toString(36).substring(2, 7)}`;
     }
 
     // we do it this way so that we can remove the listener
@@ -385,7 +376,8 @@ export class NDKRelaySubscription {
             });
             this.relay.once("ready", this.executeOnRelayReady);
             return;
-        } else if (this.relay.status < NDKRelayStatus.AUTHENTICATED) {
+        }
+        if (this.relay.status < NDKRelayStatus.AUTHENTICATED) {
             this.relay.once("authed", this.reExecuteAfterAuth);
         }
 
@@ -437,7 +429,7 @@ export class NDKRelaySubscription {
         }
     }
 
-    public onclose(reason?: string) {
+    public onclose(_reason?: string) {
         this.status = NDKRelaySubscriptionStatus.CLOSED;
     }
 

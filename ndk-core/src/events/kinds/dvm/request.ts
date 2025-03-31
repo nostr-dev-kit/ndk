@@ -21,10 +21,6 @@ import { NDKDVMJobFeedback } from "./feedback.js";
  * await request.publish()
  */
 export class NDKDVMRequest extends NDKEvent {
-    constructor(ndk: NDK | undefined, event?: NostrEvent) {
-        super(ndk, event);
-    }
-
     static from(event: NDKEvent) {
         return new NDKDVMRequest(event.ndk, event.rawEvent());
     }
@@ -42,7 +38,7 @@ export class NDKDVMRequest extends NDKEvent {
 
         if (v === undefined) return undefined;
 
-        return parseInt(v);
+        return Number.parseInt(v);
     }
 
     /**

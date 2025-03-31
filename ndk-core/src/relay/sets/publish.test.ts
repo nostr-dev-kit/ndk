@@ -1,17 +1,14 @@
-import { NDKRelaySet } from "./index";
-import { NDKRelay, NDKRelayStatus } from "../index";
-import { NDK } from "../../ndk/index";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { NDKEvent, NostrEvent } from "../../events/index";
+import { NDK } from "../../ndk/index";
 import { NDKPrivateKeySigner } from "../../signers/private-key/index";
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { NDKRelay, NDKRelayStatus } from "../index";
+import { NDKRelaySet } from "./index";
 
 // Mock WebSocket globally to avoid actual network connections
 vi.mock("ws", () => {
     return {
         default: class MockWebSocket {
-            constructor() {
-                /* empty */
-            }
             addEventListener() {
                 /* empty */
             }

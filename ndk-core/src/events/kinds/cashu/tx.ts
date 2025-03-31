@@ -1,7 +1,7 @@
+import type { NDK } from "../../../ndk/index.js";
+import { NDKEvent, type NDKEventId, type NDKTag, type NostrEvent } from "../../index.js";
 import { NDKKind } from "../index.js";
-import { NDKEvent, NDKEventId, NDKTag, NostrEvent } from "../../index.js";
-import { NDK } from "../../../ndk/index.js";
-import { NDKCashuToken } from "./token.js";
+import type { NDKCashuToken } from "./token.js";
 
 const MARKERS = {
     REDEEMED: "redeemed",
@@ -32,14 +32,14 @@ export class NDKCashuWalletTx extends NDKEvent {
         const prevContent = walletChange.content;
         try {
             await walletChange.decrypt();
-        } catch (e) {
+        } catch (_e) {
             walletChange.content ??= prevContent;
         }
 
         try {
             const contentTags = JSON.parse(walletChange.content);
             walletChange.tags = [...contentTags, ...walletChange.tags];
-        } catch (e) {
+        } catch (_e) {
             return;
         }
 
@@ -149,7 +149,7 @@ export class NDKCashuWalletTx extends NDKEvent {
         this.tags = unencryptedTags.filter((t) => t[0] !== "client");
         this.content = JSON.stringify(encryptedTags);
 
-        const user = await this.ndk!.signer!.user();
+        const user = await this.ndk?.signer?.user();
 
         await this.encrypt(user, undefined, "nip44");
 

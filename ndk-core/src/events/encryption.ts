@@ -1,11 +1,11 @@
+import type { NDKSigner } from "../signers";
 /**
  * Encryption and gift-wrapping of events
  * Implements Nip04, Nip44, Nip59
  */
-import { type NDKEncryptionScheme } from "../types";
-import type { NDKSigner } from "../signers";
-import { NDKUser } from "../user";
-import { type NDKEvent } from "./index.js";
+import type { NDKEncryptionScheme } from "../types";
+import type { NDKUser } from "../user";
+import type { NDKEvent } from "./index.js";
 
 export type EncryptionMethod = "encrypt" | "decrypt";
 
@@ -17,29 +17,28 @@ export async function encrypt(
 ): Promise<void> {
     let encrypted: string | undefined;
     if (!this.ndk) throw new Error("No NDK instance found!");
-    if (!signer) {
+    let currentSigner = signer;
+    if (!currentSigner) {
         this.ndk.assertSigner();
-        signer = this.ndk.signer;
+        currentSigner = this.ndk.signer;
     }
-    if (!recipient) {
+    if (!currentSigner) throw new Error("no NDK signer");
+
+    const currentRecipient = recipient || (() => {
         const pTags = this.getMatchingTags("p");
-
         if (pTags.length !== 1) {
-            throw new Error(
-                "No recipient could be determined and no explicit recipient was provided"
-            );
+            throw new Error("No recipient could be determined and no explicit recipient was provided");
         }
+        return this.ndk.getUser({ pubkey: pTags[0][1] });
+    })();
 
-        recipient = this.ndk.getUser({ pubkey: pTags[0][1] });
-    }
-
-    if (scheme === "nip44" && (await isEncryptionEnabled(signer!, "nip44"))) {
-        encrypted = (await signer?.encrypt(recipient, this.content, "nip44")) as string;
+    if (scheme === "nip44" && (await isEncryptionEnabled(currentSigner, "nip44"))) {
+        encrypted = (await currentSigner.encrypt(currentRecipient, this.content, "nip44")) as string;
     }
 
     // support for encrypting events via legacy `nip04`. adapted from Coracle
-    if ((!encrypted || scheme === "nip04") && (await isEncryptionEnabled(signer!, "nip04"))) {
-        encrypted = (await signer!.encrypt(recipient, this.content, "nip04")) as string;
+    if ((!encrypted || scheme === "nip04") && (await isEncryptionEnabled(currentSigner, "nip04"))) {
+        encrypted = (await currentSigner.encrypt(currentRecipient, this.content, "nip04")) as string;
     }
 
     if (!encrypted) throw new Error("Failed to encrypt event.");
@@ -56,7 +55,7 @@ export async function decrypt(
     if (this.ndk?.cacheAdapter?.getDecryptedEvent) {
         // Try to get the cached decrypted event synchronously first
         let cachedEvent = null;
-        if (typeof this.ndk.cacheAdapter.getDecryptedEvent === 'function') {
+        if (typeof this.ndk.cacheAdapter.getDecryptedEvent === "function") {
             cachedEvent = this.ndk.cacheAdapter.getDecryptedEvent(this.id);
         }
 
@@ -69,27 +68,27 @@ export async function decrypt(
 
     let decrypted: string | undefined;
     if (!this.ndk) throw new Error("No NDK instance found!");
-    if (!signer) {
+    let currentSigner = signer;
+    if (!currentSigner) {
         this.ndk.assertSigner();
-        signer = this.ndk.signer;
+        currentSigner = this.ndk.signer;
     }
-    if (!signer) throw new Error("no NDK signer");
-    if (!sender) {
-        sender = this.author;
-    }
+    if (!currentSigner) throw new Error("no NDK signer");
 
-    if (!scheme) scheme = this.content.match(/\\?iv=/) ? "nip04" : "nip44";
+    const currentSender = sender || this.author;
+    if (!currentSender) throw new Error("No sender provided and no author available");
+    const currentScheme = scheme || (this.content.match(/\\?iv=/) ? "nip04" : "nip44");
 
     // simple check for legacy `nip04` encrypted events. adapted from Coracle
     if (
-        (scheme === "nip04" || this.kind === 4) &&
-        (await isEncryptionEnabled(signer, "nip04")) &&
-        this.content.search("\\?iv=")
+         (currentScheme === "nip04" || this.kind === 4) &&
+         (await isEncryptionEnabled(currentSigner, "nip04")) &&
+         this.content.search("\\?iv=")
     ) {
-        decrypted = (await signer!.decrypt(sender, this.content, "nip04")) as string;
+         decrypted = (await currentSigner.decrypt(currentSender, this.content, "nip04")) as string;
     }
-    if (!decrypted && scheme === "nip44" && (await isEncryptionEnabled(signer, "nip44"))) {
-        decrypted = (await signer!.decrypt(sender, this.content, "nip44")) as string;
+    if (!decrypted && currentScheme === "nip44" && (await isEncryptionEnabled(currentSigner, "nip44"))) {
+         decrypted = (await currentSigner.decrypt(currentSender, this.content, "nip44")) as string;
     }
     if (!decrypted) throw new Error("Failed to decrypt event.");
 
@@ -104,7 +103,7 @@ export async function decrypt(
 async function isEncryptionEnabled(
     signer: NDKSigner,
     scheme?: NDKEncryptionScheme
-): Promise<Boolean> {
+): Promise<boolean> {
     if (!signer.encryptionEnabled) return false;
     if (!scheme) return true;
     return Boolean(await signer.encryptionEnabled(scheme));

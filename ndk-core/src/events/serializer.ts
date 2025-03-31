@@ -1,4 +1,4 @@
-import type { NostrEvent, NDKEvent } from ".";
+import type { NDKEvent, NostrEvent } from ".";
 
 export type NDKEventSerialized = string;
 

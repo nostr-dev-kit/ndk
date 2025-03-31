@@ -1,3 +1,4 @@
+import createDebug from "debug";
 import type { NDKEvent } from "../../events/index.js";
 import type { NDK } from "../../ndk/index.js";
 import { chooseRelayCombinationForPubkeys } from "../../outbox/index.js";
@@ -9,7 +10,6 @@ import { normalizeRelayUrl } from "../../utils/normalize-url.js";
 import type { NDKRelay } from "../index.js";
 import type { NDKPool } from "../pool/index.js";
 import { NDKRelaySet } from "./index.js";
-import createDebug from "debug";
 
 const d = createDebug("ndk:outbox:calculate");
 
@@ -38,7 +38,7 @@ export async function calculateRelaySetFromEvent(ndk: NDK, event: NDKEvent): Pro
         .filter((tag) => ["a", "e"].includes(tag[0]))
         .map((tag) => tag[2])
         // verify it's a valid URL
-        .filter((url: string | undefined) => url && url.startsWith("wss://"))
+        .filter((url: string | undefined) => url?.startsWith("wss://"))
         .filter((url: string) => {
             try {
                 new URL(url);

@@ -38,7 +38,7 @@ export class NDKNutzap extends NDKEvent {
     }
 
     static from(event: NDKEvent) {
-        const e = new this(event.ndk, event);
+        const e = new NDKNutzap(event.ndk, event);
         if (!e._proofs || !e._proofs.length) return;
 
         return e;
@@ -101,11 +101,11 @@ export class NDKNutzap extends NDKEvent {
             ) {
                 return payload[1].data;
             }
-
-            return undefined;
         } catch (e) {
             this.debug("error parsing p2pk pubkey", e, this.proofs[0]);
         }
+
+        return undefined;
     }
 
     /**

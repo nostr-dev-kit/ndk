@@ -1,10 +1,10 @@
 import { nip19 } from "nostr-tools";
 
-import { NDKRelay } from "../relay/index.js";
-import type { NDKFilter, NDKSubscription } from "./index.js";
-import type { EventPointer } from "../user/index.js";
 import type { NDK } from "../ndk/index.js";
+import { NDKRelay } from "../relay/index.js";
 import { NDKRelaySet } from "../relay/sets/index.js";
+import type { EventPointer } from "../user/index.js";
+import type { NDKFilter, NDKSubscription } from "./index.js";
 
 /**
  * Don't generate subscription Ids longer than this amount of characters
@@ -71,11 +71,11 @@ export function compareFilter(filter1: NDKFilter, filter2: NDKFilter) {
 }
 
 function filterIncludesIds(filter: NDKFilter): boolean {
-    return !!filter["ids"];
+    return !!filter.ids;
 }
 
 function resultHasAllRequestedIds(subscription: NDKSubscription): boolean {
-    const ids = subscription.filter["ids"];
+    const ids = subscription.filter.ids;
 
     return !!ids && ids.length === subscription.eventFirstSeen.size;
 }
@@ -109,7 +109,7 @@ export function generateSubId(subscriptions: NDKSubscription[], filters: NDKFilt
         }
 
         if (filterKinds.size > 0) {
-            subIdParts.push("kinds:" + Array.from(filterKinds).join(","));
+            subIdParts.push(`kinds:${Array.from(filterKinds).join(",")}`);
         }
 
         if (filterNonKindKeys.size > 0) {
@@ -121,7 +121,7 @@ export function generateSubId(subscriptions: NDKSubscription[], filters: NDKFilt
     if (subId.length > MAX_SUBID_LENGTH) subId = subId.substring(0, MAX_SUBID_LENGTH);
 
     // Add the random string to the resulting subId
-    subId += "-" + Math.floor(Math.random() * 999).toString();
+    subId += `-${Math.floor(Math.random() * 999).toString()}`;
 
     return subId;
 }
@@ -199,7 +199,7 @@ export function filterFromId(id: string): NDKFilter {
 
         const filter: NDKFilter = {
             authors: [pubkey],
-            kinds: [parseInt(kind)],
+            kinds: [Number.parseInt(kind)],
         };
 
         if (identifier) {
@@ -222,7 +222,7 @@ export function filterFromId(id: string): NDKFilter {
                 }
                 case "note":
                     return { ids: [decoded.data] };
-                case "naddr":
+                case "naddr": {
                     const filter: NDKFilter = {
                         authors: [decoded.data.pubkey],
                         kinds: [decoded.data.kind],
@@ -231,6 +231,7 @@ export function filterFromId(id: string): NDKFilter {
                     if (decoded.data.identifier) filter["#d"] = [decoded.data.identifier];
 
                     return filter;
+                }
             }
         } catch (e) {
             console.error("Error decoding", id, e);
@@ -270,7 +271,7 @@ export function relaysFromBech32(bech32: string, ndk: NDK): NDKRelay[] {
                 );
             }
         }
-    } catch (e) {
+    } catch (_e) {
         /* empty */
     }
 

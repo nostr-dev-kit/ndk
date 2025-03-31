@@ -17,14 +17,13 @@ export class Queue<T> {
     private processing: Set<string> = new Set();
     private promises: Map<string, Promise<T>> = new Map();
 
-    constructor(name: string, maxConcurrency: number) {
+    constructor(_name: string, maxConcurrency: number) {
         this.maxConcurrency = maxConcurrency;
     }
 
     public add(item: QueueItem<T>): Promise<T> {
         if (this.promises.has(item.id)) {
             return this.promises.get(item.id)!;
-        } else {
         }
 
         const promise = new Promise<T>((resolve, reject) => {

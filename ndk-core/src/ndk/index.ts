@@ -1,11 +1,14 @@
 import debug from "debug";
 import { EventEmitter } from "tseep";
 
+import type { NostrEvent } from "nostr-tools";
 import type { NDKCacheAdapter } from "../cache/index.js";
 import dedupEvent from "../events/dedup.js";
 import type { NDKEventId, NDKTag } from "../events/index.js";
 import { NDKEvent } from "../events/index.js";
+import { signatureVerificationInit } from "../events/signature.js";
 import { OutboxTracker } from "../outbox/tracker.js";
+import type { NDKAuthPolicy } from "../relay/auth-policies.js";
 import { NDKRelay } from "../relay/index.js";
 import { NDKPool } from "../relay/pool/index.js";
 import type { NDKPublishError } from "../relay/sets/index.js";
@@ -14,20 +17,16 @@ import { correctRelaySet } from "../relay/sets/utils.js";
 import type { NDKSigner } from "../signers/index.js";
 import type { NDKFilter, NDKSubscriptionOptions } from "../subscription/index.js";
 import { NDKSubscription } from "../subscription/index.js";
+import { NDKSubscriptionManager } from "../subscription/manager.js";
 import { filterFromId, isNip33AValue, relaysFromBech32 } from "../subscription/utils.js";
 import type { Hexpubkey, NDKUserParams, ProfilePointer } from "../user/index.js";
 import { NDKUser } from "../user/index.js";
-import { fetchEventFromTag } from "./fetch-event-from-tag.js";
-import type { NDKAuthPolicy } from "../relay/auth-policies.js";
-import { Nip96 } from "../media/index.js";
-import { Queue } from "./queue/index.js";
-import { signatureVerificationInit } from "../events/signature.js";
-import { NDKSubscriptionManager } from "../subscription/manager.js";
+import type { CashuPayCb, LnPayCb, NDKPaymentConfirmation, NDKZapSplit } from "../zapper/index.js";
+import type { NDKLnUrlData } from "../zapper/ln.js";
 import { setActiveUser } from "./active-user.js";
 import { getEntity } from "./entity.js";
-import type { CashuPayCb, LnPayCb, NDKPaymentConfirmation, NDKZapSplit } from "../zapper/index.js";
-import type { NostrEvent } from "nostr-tools";
-import type { NDKLnUrlData } from "../zapper/ln.js";
+import { fetchEventFromTag } from "./fetch-event-from-tag.js";
+import { Queue } from "./queue/index.js";
 
 export type NDKValidationRatioFn = (
     relay: NDKRelay,
@@ -242,9 +241,9 @@ export class NDK extends EventEmitter<{
     public clientNip89?: string;
     public queuesZapConfig: Queue<NDKLnUrlData | undefined>;
     public queuesNip05: Queue<ProfilePointer | null>;
-    public asyncSigVerification: boolean = false;
-    public initialValidationRatio: number = 1.0;
-    public lowestValidationRatio: number = 1.0;
+    public asyncSigVerification = false;
+    public initialValidationRatio = 1.0;
+    public lowestValidationRatio = 1.0;
     public validationRatioFn?: NDKValidationRatioFn;
     public subManager: NDKSubscriptionManager;
 
@@ -392,7 +391,7 @@ export class NDK extends EventEmitter<{
         }
 
         this.pool.addRelay(relay, connect);
-        this.explicitRelayUrls!.push(relay.url);
+        this.explicitRelayUrls?.push(relay.url);
 
         return relay;
     }
@@ -524,8 +523,7 @@ export class NDK extends EventEmitter<{
         if (this.outboxPool && subscription.hasAuthorsFilter()) {
             const authors: string[] = subscription.filters
                 .filter((filter) => filter.authors && filter.authors?.length > 0)
-                .map((filter) => filter.authors!)
-                .flat();
+                .flatMap((filter) => filter.authors!);
 
             this.outboxTracker?.trackUsers(authors);
         }
@@ -703,17 +701,19 @@ export class NDK extends EventEmitter<{
             );
 
             const onEvent = (event: NostrEvent | NDKEvent) => {
-                if (!(event instanceof NDKEvent)) event = new NDKEvent(undefined, event);
+                let _event: NDKEvent;
+                if (!(event instanceof NDKEvent)) _event = new NDKEvent(undefined, event);
+                else _event = event;
 
-                const dedupKey = event.deduplicationKey();
+                const dedupKey = _event.deduplicationKey();
 
                 const existingEvent = events.get(dedupKey);
                 if (existingEvent) {
-                    event = dedupEvent(existingEvent, event);
+                    _event = dedupEvent(existingEvent, _event);
                 }
 
-                event.ndk = this;
-                events.set(dedupKey, event);
+                _event.ndk = this;
+                events.set(dedupKey, _event);
             };
 
             // We want to inspect duplicated events
@@ -740,21 +740,6 @@ export class NDK extends EventEmitter<{
             this.emit("signer:required");
             throw new Error("Signer required");
         }
-    }
-
-    /**
-     * Creates a new Nip96 instance for the given domain.
-     * @param domain Domain to use for nip96 uploads
-     * @example Upload a file to a NIP-96 enabled domain:
-     *
-     * ```typescript
-     * const blob = new Blob(["Hello, world!"], { type: "text/plain" });
-     * const nip96 = ndk.getNip96("nostrcheck.me");
-     * await nip96.upload(blob);
-     * ```
-     */
-    public getNip96(domain: string) {
-        return new Nip96(domain, this);
     }
 
     public getEntity = getEntity.bind(this);

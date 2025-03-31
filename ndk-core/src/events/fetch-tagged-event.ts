@@ -13,7 +13,7 @@ export async function fetchTaggedEvent(
 
     if (t.length === 0) return undefined;
 
-    const [_, id, hint] = t[0];
+    const [_, id, _hint] = t[0];
 
     let relay; //= hint !== "" ? this.ndk.pool.getRelay(hint) : undefined;
 

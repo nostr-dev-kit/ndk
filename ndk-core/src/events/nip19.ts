@@ -24,13 +24,13 @@ export function encode(this: NDKEvent, maxRelayCount: number = DEFAULT_RELAY_COU
             identifier: this.replaceableDTag(),
             relays,
         });
-    } else if (relays.length > 0) {
+    }
+    if (relays.length > 0) {
         return nip19.neventEncode({
             id: this.tagId(),
             relays,
             author: this.pubkey,
         });
-    } else {
-        return nip19.noteEncode(this.tagId());
     }
+    return nip19.noteEncode(this.tagId());
 }

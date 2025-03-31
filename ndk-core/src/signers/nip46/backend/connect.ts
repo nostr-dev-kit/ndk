@@ -19,7 +19,7 @@ export default class ConnectEventHandlingStrategy implements IEventHandlingStrat
         debug(`connection request from ${remotePubkey}`);
 
         if (token && backend.applyToken) {
-            debug(`applying token`);
+            debug("applying token");
             await backend.applyToken(remotePubkey, token);
         }
 
@@ -33,9 +33,8 @@ export default class ConnectEventHandlingStrategy implements IEventHandlingStrat
         ) {
             debug(`connection request from ${remotePubkey} allowed`);
             return "ack";
-        } else {
-            debug(`connection request from ${remotePubkey} rejected`);
         }
+        debug(`connection request from ${remotePubkey} rejected`);
 
         return undefined;
     }

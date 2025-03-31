@@ -85,7 +85,7 @@ export class NDKArticle extends NDKEvent {
     get published_at(): number | undefined {
         const tag = this.tagValue("published_at");
         if (tag) {
-            let val = parseInt(tag);
+            let val = Number.parseInt(tag);
 
             // if val is timestamp in milliseconds, convert to seconds
             if (val > 1000000000000) {

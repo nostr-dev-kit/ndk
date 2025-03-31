@@ -2,7 +2,7 @@ import { NDKKind } from ".";
 import type { NostrEvent } from "..";
 import { NDKEvent } from "..";
 import type { NDK } from "../../ndk";
-import { NDKImetaTag } from "../../utils/imeta";
+import type { NDKImetaTag } from "../../utils/imeta";
 import { imetaTagToTag } from "../../utils/imeta";
 import { mapImetaTag } from "../../utils/imeta";
 import type { ContentTag } from "../content-tagger";
@@ -20,10 +20,6 @@ export class NDKVideo extends NDKEvent {
         NDKKind.Video,
     ];
     private _imetas: NDKImetaTag[] | undefined;
-
-    constructor(ndk: NDK | undefined, rawEvent?: NostrEvent) {
-        super(ndk, rawEvent);
-    }
 
     /**
      * Creates a NDKArticle from an existing NDKEvent.
@@ -98,7 +94,7 @@ export class NDKVideo extends NDKEvent {
     get published_at(): number | undefined {
         const tag = this.tagValue("published_at");
         if (tag) {
-            return parseInt(tag);
+            return Number.parseInt(tag);
         }
         return undefined;
     }
@@ -117,7 +113,8 @@ export class NDKVideo extends NDKEvent {
         if (!this.kind) {
             if (this.imetas?.[0]?.dim) {
                 const [width, height] = this.imetas[0].dim.split("x");
-                const isPortrait = width && height && parseInt(width) < parseInt(height);
+                const isPortrait =
+                    width && height && Number.parseInt(width) < Number.parseInt(height);
                 const isShort = this.duration && this.duration < 120;
                 if (isShort && isPortrait) this.kind = NDKKind.ShortVideo;
                 else this.kind = NDKKind.Video;
@@ -130,7 +127,7 @@ export class NDKVideo extends NDKEvent {
     get duration(): number | undefined {
         const tag = this.tagValue("duration");
         if (tag) {
-            return parseInt(tag);
+            return Number.parseInt(tag);
         }
         return undefined;
     }

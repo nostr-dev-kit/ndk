@@ -1,7 +1,7 @@
+import { EventGenerator } from "@nostr-dev-kit/ndk-test-utils";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { NDKUser } from ".";
 import { NDK } from "../ndk";
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { EventGenerator } from "@nostr-dev-kit/ndk-test-utils";
 
 describe("follows", () => {
     const ndk = new NDK();

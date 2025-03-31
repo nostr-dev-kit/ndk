@@ -14,10 +14,6 @@ type classWithConvertFunction<T> = {
 export class NDKRepost<T> extends NDKEvent {
     private _repostedEvents: T[] | undefined;
 
-    constructor(ndk?: NDK, rawEvent?: NostrEvent) {
-        super(ndk, rawEvent);
-    }
-
     static from(event: NDKEvent) {
         return new NDKRepost(event.ndk, event.rawEvent());
     }
@@ -64,11 +60,10 @@ function filterForId(id: string): NDKFilter {
     if (id.match(/:/)) {
         const [kind, pubkey, identifier] = id.split(":");
         return {
-            kinds: [parseInt(kind)],
+            kinds: [Number.parseInt(kind)],
             authors: [pubkey],
             "#d": [identifier],
         };
-    } else {
-        return { ids: [id] };
     }
+    return { ids: [id] };
 }

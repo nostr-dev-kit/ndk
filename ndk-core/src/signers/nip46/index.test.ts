@@ -1,18 +1,18 @@
 import { Debugger } from "debug";
-import { NDKNip46Signer } from "./index";
-import { NDK } from "../../ndk/index.js";
-import { NDKUser } from "../../user/index.js";
-import { NDKPrivateKeySigner } from "../private-key/index.js";
-import { NDKNostrRpc } from "./rpc.js";
 import createDebug from "debug";
-import { describe, it, expect, beforeEach, vi } from "vitest";
-import type { NDKSigner } from "../index.js";
-import type { NDKRpcResponse } from "./rpc.js";
 import { EventEmitter } from "tseep";
-import type { NDKRelaySet } from "../../relay/sets";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { NDK } from "../../ndk/index.js";
 import type { NDKPool } from "../../relay/pool";
+import type { NDKRelaySet } from "../../relay/sets";
+import { NDKUser } from "../../user/index.js";
+import type { NDKSigner } from "../index.js";
+import { NDKPrivateKeySigner } from "../private-key/index.js";
+import { NDKNip46Signer } from "./index";
+import { NDKNostrRpc } from "./rpc.js";
+import type { NDKRpcResponse } from "./rpc.js";
 
-const debug = createDebug("test");
+const _debug = createDebug("test");
 
 vi.mock("./rpc.js", () => {
     return {
@@ -29,7 +29,7 @@ vi.mock("./rpc.js", () => {
 const bunkerPubkey = "0a7c23a70a83bf413ed2b12d583418671eb75bbd0e21db2647c1c83dbdb917ff";
 const userPubkey = "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52";
 
-const connectionToken = `bunker://${bunkerPubkey}?pubkey=${userPubkey}`;
+const _connectionToken = `bunker://${bunkerPubkey}?pubkey=${userPubkey}`;
 
 describe("NDKNip46Signer", () => {
     let ndk: NDK;
@@ -97,10 +97,10 @@ describe("NDKNip46Signer", () => {
                         on: vi.fn(),
                         sendRequest: vi.fn(
                             (
-                                remotePubkey: string,
-                                method: string,
-                                params?: string[],
-                                kind?: number,
+                                _remotePubkey: string,
+                                _method: string,
+                                _params?: string[],
+                                _kind?: number,
                                 cb?: (res: NDKRpcResponse) => void
                             ) => {
                                 const response: NDKRpcResponse = {

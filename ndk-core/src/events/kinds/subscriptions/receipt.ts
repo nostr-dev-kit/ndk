@@ -3,8 +3,8 @@ import { NDKKind } from "..";
 import type { NostrEvent } from "../..";
 import { NDKEvent, NDKTag } from "../..";
 import type { NDK } from "../../../ndk";
-import type { NDKSubscriptionStart } from "./subscription-start";
 import { NDKUser } from "../../../user";
+import type { NDKSubscriptionStart } from "./subscription-start";
 
 type ValidPeriod = { start: Date; end: Date };
 
@@ -103,8 +103,8 @@ export class NDKSubscriptionReceipt extends NDKEvent {
         if (!tag) return undefined;
         try {
             return {
-                start: new Date(parseInt(tag[1]) * 1000),
-                end: new Date(parseInt(tag[2]) * 1000),
+                start: new Date(Number.parseInt(tag[1]) * 1000),
+                end: new Date(Number.parseInt(tag[2]) * 1000),
             };
         } catch {
             return undefined;

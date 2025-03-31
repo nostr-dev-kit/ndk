@@ -1,16 +1,16 @@
 import { EventEmitter } from "tseep";
+import type { EncryptionMethod } from "../../events/encryption.js";
 import type { NostrEvent } from "../../events/index.js";
+import { NDKKind } from "../../events/kinds/index.js";
 import type { NDK } from "../../ndk/index.js";
+import type { NDKSubscription } from "../../subscription/index.js";
+import type { NDKEncryptionScheme } from "../../types.js";
 import type { Hexpubkey } from "../../user/index.js";
 import { NDKUser } from "../../user/index.js";
 import type { NDKSigner } from "../index.js";
 import { NDKPrivateKeySigner } from "../private-key/index.js";
 import type { NDKRpcResponse } from "./rpc.js";
 import { NDKNostrRpc } from "./rpc.js";
-import { NDKKind } from "../../events/kinds/index.js";
-import type { NDKSubscription } from "../../subscription/index.js";
-import { NDKEncryptionScheme } from "../../types.js";
-import { EncryptionMethod } from "../../events/encryption.js";
 
 /**
  * This NDKSigner implements NIP-46, which allows remote signing of events.
@@ -202,7 +202,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
     public async getPublicKey(): Promise<Hexpubkey> {
         if (this.userPubkey) return this.userPubkey;
 
-        return new Promise<Hexpubkey>((resolve, reject) => {
+        return new Promise<Hexpubkey>((resolve, _reject) => {
             if (!this.bunkerPubkey) throw new Error("Bunker pubkey not set");
 
             this.rpc.sendRequest(

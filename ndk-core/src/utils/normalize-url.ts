@@ -86,8 +86,8 @@ const normalizeDataURL = (urlString: string, { stripHash }: { stripHash: boolean
         throw new Error(`Invalid URL: ${urlString}`);
     }
 
-    let type: string = match.groups?.type ?? "";
-    let data: string = match.groups?.data ?? "";
+    const type: string = match.groups?.type ?? "";
+    const data: string = match.groups?.data ?? "";
     let hash = match.groups?.hash ?? "";
 
     const mediaType = type.split(";");
@@ -260,7 +260,7 @@ export function normalizeUrl(urlString: string, options: any = {}) {
 
         if (testParameter(lastComponent, options.removeDirectoryIndex)) {
             pathComponents = pathComponents.slice(0, -1);
-            urlObject.pathname = pathComponents.slice(1).join("/") + "/";
+            urlObject.pathname = `${pathComponents.slice(1).join("/")}/`;
         }
     }
 

@@ -1,7 +1,7 @@
-import { NDKKind } from "../events/kinds";
 import { NDKEvent, type NostrEvent } from "../events/index.js";
+import { NDKKind } from "../events/kinds";
 import type { NDK } from "../ndk";
-import { NDKRelaySet } from "../relay/sets";
+import type { NDKRelaySet } from "../relay/sets";
 
 /**
  * Implements NIP-78 App Settings

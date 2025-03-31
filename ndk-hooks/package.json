@@ -1,0 +1,47 @@
+{
+    "name": "@nostr-dev-kit/ndk-hooks",
+    "version": "0.1.0",
+    "private": false,
+    "description": "React hooks for the Nostr Development Kit (NDK)",
+    "main": "dist/index.js",
+    "module": "dist/index.mjs",
+    "types": "dist/types/index.d.ts",
+    "files": [
+        "dist",
+        "README.md"
+    ],
+    "scripts": {
+        "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+        "dev": "tsup src/index.ts --format cjs,esm --watch",
+        "lint": "biome check .",
+        "format": "biome check . --write",
+        "test": "vitest run",
+        "test:watch": "vitest",
+        "prepare": "pnpm run build"
+    },
+    "peerDependencies": {
+        "@nostr-dev-kit/ndk": "^2.13",
+        "zustand": "^5",
+        "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
+    },
+    "devDependencies": {
+        "@nostr-dev-kit/ndk": "workspace:*",
+        "@testing-library/react-hooks": "^8.0.1",
+        "@types/react": "^18.2.67",
+        "biome": "^0.3.3",
+        "react": "^18.2.0",
+        "react-test-renderer": "^18.2.0",
+        "tsup": "^8.0.2",
+        "typescript": "^5.4.3",
+        "vitest": "^1.4.0",
+        "zustand": "^5.0.3"
+    },
+    "keywords": [
+        "nostr",
+        "ndk",
+        "react",
+        "hooks"
+    ],
+    "author": "_@f7z.io",
+    "license": "MIT"
+}

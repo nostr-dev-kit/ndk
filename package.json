@@ -14,6 +14,7 @@
         "docs:preview": "vitepress preview"
     },
     "devDependencies": {
+        "@biomejs/biome": "^1.9.4",
         "@changesets/cli": "^2.22.0",
         "@nostr-dev-kit/eslint-config-custom": "workspace:*",
         "@nostr-dev-kit/tsconfig": "workspace:*",
@@ -43,6 +44,7 @@
         "ndk-cache-redis",
         "ndk-cache-nostr",
         "ndk-svelte",
+        "ndk-hooks",
         "ndk-mobile",
         "ndk-svelte-components",
         "ndk-wallet"

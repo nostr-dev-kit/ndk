@@ -5,6 +5,7 @@ packages:
   - ndk-test-utils
   - ndk-cache-dexie
   - ndk-svelte
+  - ndk-hooks
   - ndk-svelte-components
   - ndk-wallet
 onlyBuiltDependencies:

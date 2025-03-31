@@ -4,7 +4,11 @@
 
 ## Overview
 
-`@nostr-dev-kit/ndk-hooks` provides a set of React hooks and utilities to easily integrate Nostr functionality into your React applications using NDK. This library helps you efficiently manage Nostr user profiles and other Nostr-related data in your React components.
+`@nostr-dev-kit/ndk-hooks` provides a set of React hooks and utilities to easily integrate Nostr functionality into your React applications using NDK. This library helps you efficiently manage Nostr data in your React components, including:
+
+- NDK instance management with `useNDK`
+- Current user management with `useNDKCurrentUser`
+- User profile management with `useProfile`
 
 ## Installation
 
@@ -27,9 +31,61 @@ yarn add @nostr-dev-kit/ndk-hooks
 
 ## Usage
 
-### Initialize the Store
+### NDK Store and Hooks
 
-Before using the hooks, you need to initialize the profiles store with your NDK instance:
+#### Setting Up NDK Instance
+
+First, initialize the NDK instance and make it available to your components:
+
+```tsx
+import NDK from '@nostr-dev-kit/ndk';
+import { useNDK } from '@nostr-dev-kit/ndk-hooks';
+
+function App() {
+  const { setNDK } = useNDK();
+  
+  useEffect(() => {
+    const ndk = new NDK({
+      explicitRelayUrls: ['wss://relay.nostr.band', 'wss://relay.damus.io'],
+    });
+    
+    ndk.connect().then(() => {
+      setNDK(ndk);
+    });
+  }, [setNDK]);
+  
+  return <YourApp />;
+}
+```
+
+#### Accessing Current User
+
+You can access and set the current user with `useNDKCurrentUser`:
+
+```tsx
+import { useNDKCurrentUser } from '@nostr-dev-kit/ndk-hooks';
+
+function UserProfile() {
+  const { currentUser } = useNDKCurrentUser();
+  
+  if (!currentUser) {
+    return <div>Not logged in</div>;
+  }
+  
+  return (
+    <div>
+      <h2>Logged in as: {currentUser.pubkey}</h2>
+      {/* Display user information */}
+    </div>
+  );
+}
+```
+
+For more details on NDK store and hooks, see the [NDK Hooks Documentation](docs/ndk-hooks.md).
+
+### User Profile Management
+
+Before using the profile hooks, you need to initialize the profiles store with your NDK instance:
 
 ```tsx
 import NDK from '@nostr-dev-kit/ndk';
@@ -98,7 +154,23 @@ const profiles = useUserProfilesStore.getState().profiles;
 
 ## API Reference
 
-### Hooks
+### NDK Hooks
+
+#### `useNDK(): { ndk: NDK | null, setNDK: (ndk: NDK) => void }`
+
+Provides access to the NDK instance and a function to set it.
+
+- `ndk` - The current NDK instance or null if not set
+- `setNDK` - Function to set the NDK instance
+
+#### `useNDKCurrentUser(): { currentUser: NDKUser | null, setCurrentUser: (user: NDKUser | null) => void }`
+
+Provides access to the current user and a function to set it.
+
+- `currentUser` - The current user or null if not logged in
+- `setCurrentUser` - Function to set the current user
+
+### Profile Hooks
 
 #### `useProfile(pubkey: string, forceRefresh?: boolean): NDKUserProfile | undefined`
 

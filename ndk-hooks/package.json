@@ -26,6 +26,7 @@
     },
     "devDependencies": {
         "@nostr-dev-kit/ndk": "workspace:*",
+        "@nostr-dev-kit/ndk-test-utils": "workspace:*",
         "@testing-library/react-hooks": "^8.0.1",
         "@types/react": "^18.2.67",
         "biome": "^0.3.3",

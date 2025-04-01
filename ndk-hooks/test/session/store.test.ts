@@ -162,27 +162,7 @@ describe("useNDKSessions Zustand Store", () => {
 
     // --- Session Data Interaction ---
 
-    it("addEventToSession: should add an event to the correct session", () => {
-        useNDKSessions.getState().createSession(pubkey1);
-        const event = new NDKEvent();
-        event.kind = 1;
-        event.id = "event1";
-        useNDKSessions.getState().addEventToSession(pubkey1, event);
-        const session = useNDKSessions.getState().getSession(pubkey1);
-        expect(session?.events.get(1)).toHaveLength(1);
-        expect(session?.events.get(1)?.[0].id).toBe("event1");
-    });
-
-    it("addEventToSession: should not add duplicate events", () => {
-        useNDKSessions.getState().createSession(pubkey1);
-        const event = new NDKEvent();
-        event.kind = 1;
-        event.id = "event1";
-        useNDKSessions.getState().addEventToSession(pubkey1, event);
-        useNDKSessions.getState().addEventToSession(pubkey1, event); // Add again
-        const session = useNDKSessions.getState().getSession(pubkey1);
-        expect(session?.events.get(1)).toHaveLength(1);
-    });
+    // Tests for addEventToSession removed
 
     it("muteItemForSession: should add item to the correct mute set", () => {
         useNDKSessions.getState().createSession(pubkey1);

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { createSubscribeStore, type SubscribeStore } from '../../src/stores/subscribe';
+import { createSubscribeStore, type SubscribeStore, type MuteCriteria } from '../../src/stores/subscribe';
 import { act } from '@testing-library/react-hooks';
 import type { NDKEvent, NDKSubscription } from '@nostr-dev-kit/ndk';
 
@@ -37,6 +37,10 @@ class MockEvent {
 
   hasTag(tagName: string) {
     return this.tags.some(tag => tag[0] === tagName);
+  }
+
+  getMatchingTags(tagName: string): string[][] {
+    return this.tags.filter(tag => tag[0] === tagName);
   }
 
   once(event: string, callback: () => void) {
@@ -262,6 +266,143 @@ describe('Subscribe Store - Advanced Tests', () => {
 
       // Nothing should happen
       expect(store.getState().events.length).toBe(0);
+    });
+  });
+
+
+  describe('filterMutedEvents', () => {
+    const mutedPubkey = 'muted-pubkey';
+    const nonMutedPubkey = 'non-muted-pubkey';
+    const mutedEventId = 'muted-event-id';
+    const mutedHashtag = 'mutedtag'; // Lowercase
+    const mutedWord = 'badword';
+
+    const eventMutedPubkey = new MockEvent({ id: 'ev-pubkey', pubkey: mutedPubkey }) as unknown as NDKEvent;
+    const eventMutedWord = new MockEvent({ id: 'ev-word', pubkey: nonMutedPubkey, content: `Contains ${mutedWord}` }) as unknown as NDKEvent;
+    const eventMutedTag = new MockEvent({ id: 'ev-tag', pubkey: nonMutedPubkey, tags: [['t', mutedHashtag]] }) as unknown as NDKEvent;
+    const eventMutedRef = new MockEvent({ id: 'ev-ref', pubkey: nonMutedPubkey, tags: [['e', mutedEventId]] }) as unknown as NDKEvent;
+    const eventMutedOwnId = new MockEvent({ id: mutedEventId, pubkey: nonMutedPubkey }) as unknown as NDKEvent;
+    const eventNonMuted = new MockEvent({ id: 'ev-ok', pubkey: nonMutedPubkey, content: 'This is fine', tags: [['t', 'goodtag']] }) as unknown as NDKEvent;
+
+    const allEvents = [
+        eventMutedPubkey,
+        eventMutedWord,
+        eventMutedTag,
+        eventMutedRef,
+        eventMutedOwnId,
+        eventNonMuted
+    ];
+
+    beforeEach(() => {
+        // Use no buffer for easier testing of filterMutedEvents
+        store = createSubscribeStore<NDKEvent>(false);
+        // Pre-populate store
+        act(() => {
+            store.getState().addEvents(allEvents);
+        });
+        expect(store.getState().events.length).toBe(6); // Ensure all added initially
+    });
+
+    it('should not filter anything if criteria are empty', () => {
+        const criteria: MuteCriteria = {
+            mutedPubkeys: new Set(),
+            mutedEventIds: new Set(),
+            mutedHashtags: new Set(),
+            mutedWordsRegex: null,
+        };
+
+        act(() => {
+            store.getState().filterMutedEvents(criteria);
+        });
+
+        expect(store.getState().events.length).toBe(6);
+    });
+
+    it('should filter based on mutedPubkeys', () => {
+        const criteria: MuteCriteria = {
+            mutedPubkeys: new Set([mutedPubkey]),
+            mutedEventIds: new Set(),
+            mutedHashtags: new Set(),
+            mutedWordsRegex: null,
+        };
+
+        act(() => {
+            store.getState().filterMutedEvents(criteria);
+        });
+
+        expect(store.getState().events.length).toBe(5);
+        expect(store.getState().eventMap.has('ev-pubkey')).toBe(false);
+    });
+
+    it('should filter based on mutedWordsRegex', () => {
+        const criteria: MuteCriteria = {
+            mutedPubkeys: new Set(),
+            mutedEventIds: new Set(),
+            mutedHashtags: new Set(),
+            mutedWordsRegex: new RegExp(mutedWord, 'i'),
+        };
+
+        act(() => {
+            store.getState().filterMutedEvents(criteria);
+        });
+
+        expect(store.getState().events.length).toBe(5);
+        expect(store.getState().eventMap.has('ev-word')).toBe(false);
+    });
+
+    it('should filter based on mutedHashtags', () => { // Removed (case-insensitive) as hook handles lowercasing
+        const criteria: MuteCriteria = {
+            mutedPubkeys: new Set(),
+            mutedEventIds: new Set(),
+            mutedHashtags: new Set([mutedHashtag]), // Provide lowercase tag
+            mutedWordsRegex: null,
+        };
+
+        // Ensure the mock event provides the tag correctly
+        eventMutedTag.getMatchingTags = (tagName: string) => tagName === 't' ? [['t', mutedHashtag]] : [];
+
+        act(() => {
+            store.getState().filterMutedEvents(criteria);
+        });
+
+        expect(store.getState().events.length).toBe(5);
+        expect(store.getState().eventMap.has('ev-tag')).toBe(false);
+    });
+
+    it('should filter based on mutedEventIds (referenced)', () => {
+        const criteria: MuteCriteria = {
+            mutedPubkeys: new Set(),
+            mutedEventIds: new Set([mutedEventId]),
+            mutedHashtags: new Set(),
+            mutedWordsRegex: null,
+        };
+
+        act(() => {
+            store.getState().filterMutedEvents(criteria);
+        });
+
+        // Should remove the event referencing the muted ID AND the event whose own ID is muted
+        expect(store.getState().events.length).toBe(4);
+        expect(store.getState().eventMap.has('ev-ref')).toBe(false);
+        expect(store.getState().eventMap.has(mutedEventId)).toBe(false);
+    });
+
+    it('should filter based on multiple criteria', () => {
+        const criteria: MuteCriteria = {
+            mutedPubkeys: new Set([mutedPubkey]),
+            mutedEventIds: new Set(),
+            mutedHashtags: new Set(),
+            mutedWordsRegex: new RegExp(mutedWord, 'i'),
+        };
+
+        act(() => {
+            store.getState().filterMutedEvents(criteria);
+        });
+
+        expect(store.getState().events.length).toBe(4);
+        expect(store.getState().eventMap.has('ev-pubkey')).toBe(false);
+        expect(store.getState().eventMap.has('ev-word')).toBe(false);
+        expect(store.getState().eventMap.has('ev-ok')).toBe(true);
     });
   });
 });

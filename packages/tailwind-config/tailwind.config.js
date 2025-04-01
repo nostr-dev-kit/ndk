@@ -1,7 +1,7 @@
 module.exports = {
     content: [
         // app content
-        `src/**/*.{js,ts,jsx,tsx,svelte}`,
+        "src/**/*.{js,ts,jsx,tsx,svelte}",
         // include packages if not transpiling
         "../../packages/**/*.{js,ts,jsx,tsx,svelte}",
     ],

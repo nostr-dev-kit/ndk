@@ -7,18 +7,25 @@ The `NDKNutzapMonitor` class monitors a user's nutzap inbox for new nutzaps and 
 - Monitors relays for nutzaps sent to a specific user
 - Automatically redeems nutzaps when the appropriate private key is available
 - Keeps track of nutzap states (initial, processing, redeemed, spent, error)
-- Persists states across application sessions using a store
+- Persists states across application sessions using the configured NDK Cache Adapter
 - Emits events for tracking monitor activity
 
 ## Basic Usage
 
 ```typescript
 import { NDKNutzapMonitor } from "@nostr-dev-kit/ndk-wallet";
+import NDK, { NDKUser, NDKPrivateKeySigner, NDKCashuMintList } from "@nostr-dev-kit/ndk";
+import { NDKCashuWallet } from "@nostr-dev-kit/ndk-wallet"; // Example wallet
+
+// Assume ndk: NDK, user: NDKUser, mintList?: NDKCashuMintList are initialized
+// Assume myCashuWallet: NDKCashuWallet is initialized
+// Assume myPrivateKeySigner: NDKPrivateKeySigner is initialized
 
 // Create a monitor for a user
+// The store is now automatically derived from ndk.cacheAdapter if available
 const monitor = new NDKNutzapMonitor(ndk, user, {
     mintList,
-    store: myNutzapStore,
+    // No need to pass 'store' manually if using a compatible cache adapter
 });
 
 // Set the wallet to use for redeeming nutzaps
@@ -40,7 +47,7 @@ monitor.on("redeemed", (events, amount) => {
 
 ## State Management
 
-The monitor uses a state machine to track the status of each nutzap. States include:
+The monitor uses a state machine to track the status of each nutzap. The possible states (`NdkNutzapStatus`) are defined in `@nostr-dev-kit/ndk`:
 
 - `INITIAL`: First time we see a nutzap
 - `PROCESSING`: Currently processing the nutzap
@@ -49,42 +56,78 @@ The monitor uses a state machine to track the status of each nutzap. States incl
 - `MISSING_PRIVKEY`: No private key available to redeem the nutzap
 - `TEMPORARY_ERROR`: A transient error occurred
 - `PERMANENT_ERROR`: A permanent error occurred (will not retry)
+- `INVALID_NUTZAP`: The nutzap data is invalid
 
-## State Store
+## State Persistence (via Cache Adapter)
 
-The `NDKNutzapMonitor` can use a state store to persist nutzap states across application sessions. This is optional but recommended for production use.
+The `NDKNutzapMonitor` now leverages the configured `ndk.cacheAdapter` for persisting nutzap states across application sessions.
 
-### Store Interface
+If the `ndk.cacheAdapter` implements the optional `getAllNutzapStates` and `setNutzapState` methods (as defined in the `NDKCacheAdapter` interface in `@nostr-dev-kit/ndk`), the monitor will automatically use these methods to load initial states and save updates.
 
-The store must implement the `NDKNutzapMonitorStore` interface:
+### Cache Adapter Interface Methods
+
+The relevant methods in the `NDKCacheAdapter` interface are:
 
 ```typescript
-interface NDKNutzapMonitorStore {
-    getAllNutzaps: () => Promise<Map<NDKEventId, NDKNutzapState>>;
-    setNutzapState: (id: NDKEventId, stateChange: Partial<NDKNutzapState>) => Promise<void>;
+// Defined in @nostr-dev-kit/ndk
+interface NDKCacheAdapter {
+    // ... other methods
+
+    /**
+     * Gets all nutzap states from the cache.
+     * @returns A map of event IDs to nutzap states.
+     */
+    getAllNutzapStates?(): Promise<Map<NDKEventId, NDKNutzapState>>;
+
+    /**
+     * Sets the state of a nutzap in the cache.
+     * @param id The ID of the nutzap event.
+     * @param stateChange The partial state change to apply.
+     */
+    setNutzapState?(id: NDKEventId, stateChange: Partial<NDKNutzapState>): Promise<void>;
 }
 ```
 
 ### State Updates
 
-When updating a nutzap's state, the monitor calls `setNutzapState` with only the changed properties, not the entire state object. This approach is efficient and allows the store implementation to decide how to merge updates with existing state.
+When updating a nutzap's state, the monitor calls `cacheAdapter.setNutzapState` with only the changed properties (`Partial<NDKNutzapState>`), not the entire state object. This allows the cache adapter implementation to efficiently merge updates.
 
-For example, when a nutzap is redeemed, the monitor might update its state with:
+For example:
 
 ```typescript
-store.setNutzapState(nutzapId, {
+// Internal call within NDKNutzapMonitor
+await ndk.cacheAdapter?.setNutzapState?.(nutzapId, {
     status: NdkNutzapStatus.REDEEMED,
     redeemedAmount: 100,
 });
 ```
 
-This updates only the `status` and `redeemedAmount` fields, leaving other fields unchanged.
+### Implementing Persistence
 
-### Implementing a Store
+If you are creating a custom cache adapter and want it to support nutzap state persistence, you need to implement the `getAllNutzapStates` and `setNutzapState` methods.
 
-You can implement the store using any storage mechanism (localStorage, IndexedDB, server database, etc.) as long as it conforms to the required interface.
+NDK Mobile (`@nostr-dev-kit/ndk-mobile`) provides an implementation using SQLite via its `NDKCacheAdapterSqlite`. If you use this adapter with your NDK instance, nutzap state persistence will work automatically.
 
-For detailed documentation and examples of implementing a store, see [NDKNutzapMonitor State Store](./nutzap-monitor-state-store.md).
+```typescript
+// Example: Initializing NDK with the SQLite adapter from ndk-mobile
+import NDK from "@nostr-dev-kit/ndk";
+import { NDKCacheAdapterSqlite } from "@nostr-dev-kit/ndk-mobile";
+
+const cacheAdapter = new NDKCacheAdapterSqlite("my-ndk-cache.db");
+await cacheAdapter.initialize(); // Important: Initialize the adapter
+
+const ndk = new NDK({
+    cacheAdapter: cacheAdapter,
+    // ... other NDK options
+});
+
+// Pass the NDK instance to the adapter AFTER NDK is initialized
+// This allows the adapter to use the NDK instance if needed (e.g., for deserializing events)
+cacheAdapter.ndk = ndk;
+
+// Now, when NDKNutzapMonitor is created with this ndk instance,
+// it will use the SQLite adapter for persistence.
+```
 
 ## Events
 
@@ -98,9 +141,9 @@ The monitor emits several events that you can listen for:
 
 ## Managing Private Keys
 
-The monitor needs private keys to redeem nutzaps. Typically, you don't need to do this manually, just by setting the wallet parameter it should have all it needs.
+The monitor needs private keys to redeem nutzaps. Typically, you don't need to do this manually; setting the `monitor.wallet` property should provide the necessary keys if the wallet implementation supports it (like `NDKCashuWallet`).
 
-You can also add private keys using:
+You can also add extra private keys using:
 
 ```typescript
 await monitor.addPrivkey(privateKeySigner);

@@ -1,6 +1,15 @@
 import { createStore } from 'zustand/vanilla';
 import type { NDKEvent, NDKSubscription } from '@nostr-dev-kit/ndk';
 
+// Helper function (moved to top to avoid hoisting issues)
+const setHasAnyIntersection = (set1: Set<string>, set2: Set<string>): boolean => {
+  if (set1.size === 0 || set2.size === 0) return false;
+  for (const item of set1) {
+    if (set2.has(item)) return true;
+  }
+  return false;
+};
+
 /**
  * Store interface for managing subscription state
  * @interface SubscribeStore
@@ -8,14 +17,25 @@ import type { NDKEvent, NDKSubscription } from '@nostr-dev-kit/ndk';
  * @property {Map<string, T>} eventMap - Map of events by ID
  * @property {boolean} eose - End of stored events flag
  */
+export interface MuteCriteria {
+  mutedPubkeys: Set<string>;
+  mutedEventIds: Set<string>;
+  mutedHashtags: Set<string>; // Lowercase
+  mutedWordsRegex: RegExp | null;
+}
+
 export interface SubscribeStore<T extends NDKEvent> {
   events: T[];
   eventMap: Map<string, T>;
   eose: boolean;
+  // isSubscribed: boolean; // Removed
+  subscriptionRef: NDKSubscription | undefined; // Keep ref for potential direct access if needed? Or remove too? Let's remove for now.
   addEvent: (event: T) => void;
   addEvents: (events: T[]) => void;
   removeEventId: (id: string) => void;
+  filterMutedEvents: (criteria: MuteCriteria) => void; // Updated signature
   setEose: () => void;
+  // setSubscription: (sub: NDKSubscription | undefined) => void; // Removed
   reset: () => void;
 }
 
@@ -67,6 +87,8 @@ export const createSubscribeStore = <T extends NDKEvent>(bufferMs: number | fals
       events: [],
       eventMap: new Map<string, T>(),
       eose: false,
+      // isSubscribed: false, // Removed
+      subscriptionRef: undefined, // Removed
       
       // Add an event to the store
       addEvent: (event) => {
@@ -195,6 +217,54 @@ export const createSubscribeStore = <T extends NDKEvent>(bufferMs: number | fals
         set({ eventMap: newEventMap, events: newEvents });
       },
       
+      /**
+       * Filters the *existing* events in the store based on comprehensive mute criteria.
+       * @param criteria - An object containing sets of muted pubkeys, event IDs, hashtags (lowercase), and a regex for muted words.
+       */
+      filterMutedEvents: (criteria: MuteCriteria) => {
+        const { mutedPubkeys, mutedEventIds, mutedHashtags, mutedWordsRegex } = criteria;
+    
+        // Optimization: If all criteria are empty, no filtering is needed.
+        if (
+          mutedPubkeys.size === 0 &&
+          mutedEventIds.size === 0 &&
+          mutedHashtags.size === 0 &&
+          !mutedWordsRegex
+        ) {
+          return;
+        }
+    
+        const state = get();
+        const currentEventMap = state.eventMap;
+        const newEventMap = new Map<string, T>();
+        let changed = false;
+    
+        for (const [id, event] of currentEventMap.entries()) {
+          // Check against all mute criteria
+          const tags = new Set(event.getMatchingTags("t").map((tag) => tag[1].toLowerCase()));
+          const taggedEvents = new Set(event.getMatchingTags("e").map((tag) => tag[1]));
+          taggedEvents.add(event.id); // Include the event's own ID
+    
+          const isMuted =
+            mutedPubkeys.has(event.pubkey) ||
+            setHasAnyIntersection(mutedEventIds, taggedEvents) ||
+            setHasAnyIntersection(mutedHashtags, tags) ||
+            (mutedWordsRegex && event.content && event.content.match(mutedWordsRegex));
+    
+          if (!isMuted) {
+            newEventMap.set(id, event);
+          } else {
+            changed = true; // Mark as changed if an event was removed
+          }
+        }
+    
+        // Only update state if events were actually removed
+        if (changed) {
+          const newEvents = Array.from(newEventMap.values());
+          set({ eventMap: newEventMap, events: newEvents });
+        }
+      },
+      
       // Set EOSE flag and flush buffer
       setEose: () => {
         // Ensure buffer is flushed immediately
@@ -213,6 +283,8 @@ export const createSubscribeStore = <T extends NDKEvent>(bufferMs: number | fals
         }
       },
       
+      // setSubscription removed
+    
       // Reset store to initial state
       reset: () => {
         // Clear buffer and any pending flush
@@ -221,14 +293,16 @@ export const createSubscribeStore = <T extends NDKEvent>(bufferMs: number | fals
           clearTimeout(timeout);
           timeout = null;
         }
-        
+    
         // Reset state
         set({
           events: [],
           eventMap: new Map<string, T>(),
           eose: false,
+          // isSubscribed: false, // Removed reset
+          subscriptionRef: undefined, // Removed reset
         });
-      }
+      },
     };
   });
   

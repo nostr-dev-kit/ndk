@@ -12,14 +12,13 @@
  * @package @nostr-dev-kit/ndk-mobile
  */
 
-import { type NDKEvent, NDKKind, NDKUser } from "@nostr-dev-kit/ndk";
+import { type NDKEvent, NDKKind, NDKUser } from "@nostr-dev-kit/ndk-hooks";
 import { Image } from "expo-image";
 // biome-ignore lint/style/useImportType: <explanation>
 import React from "react";
 import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, type TextProps } from "react-native";
-import { useNDK } from "../../hooks/ndk.js";
-import { useProfile } from "@nostr-dev-kit/ndk-hooks";
+import { useNDK, useProfile } from "@nostr-dev-kit/ndk-hooks";
 
 const styles = StyleSheet.create({
     mention: {
@@ -128,7 +127,7 @@ function RenderMention({
     fontSize,
     style,
 }: RenderMentionProps) {
-    const { userProfile } = useProfile(user.pubkey);
+    const userProfile = useProfile(user.pubkey);
     const combinedStyle = [styles.mention, { fontSize }, style];
 
     return (

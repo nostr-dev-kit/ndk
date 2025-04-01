@@ -1,7 +1,13 @@
 import debug from "debug";
 
+import type NDK from "@nostr-dev-kit/ndk";
+import {
+    type NDKEncryptionScheme,
+    type NDKSigner,
+    NDKUser,
+    type NostrEvent,
+} from "@nostr-dev-kit/ndk";
 import * as Nip55 from "expo-nip55";
-import NDK, { NDKEncryptionScheme, NDKSigner, NDKUser, NostrEvent } from "@nostr-dev-kit/ndk";
 
 export class NDKNip55Signer implements NDKSigner {
     private _pubkey: string;
@@ -54,14 +60,12 @@ export class NDKNip55Signer implements NDKSigner {
      * @returns A promise that resolves to the signature of the signed event.
      */
     async sign(event: NostrEvent): Promise<string> {
-        console.log("NIP-55 SIGNER SIGNING", event);
         const result = await Nip55.signEvent(
             this.packageName,
             JSON.stringify(event),
             event.id,
             this._pubkey
         );
-        console.log("NIP-55 SIGNER SIGNED", result);
         return result.signature;
     }
 
@@ -71,7 +75,7 @@ export class NDKNip55Signer implements NDKSigner {
      * @nip Optionally returns an array with single supported nip or empty, to check for truthy or falsy.
      * @return A promised list of any (or none) of these strings  ['nip04', 'nip44']
      */
-    async encryptionEnabled?(scheme?: NDKEncryptionScheme): Promise<NDKEncryptionScheme[]> {
+    async encryptionEnabled?(_scheme?: NDKEncryptionScheme): Promise<NDKEncryptionScheme[]> {
         return [];
     }
 
@@ -83,9 +87,9 @@ export class NDKNip55Signer implements NDKSigner {
      * @param nip - which NIP is being implemented ('nip04', 'nip44')
      */
     async encrypt(
-        recipient: NDKUser,
-        value: string,
-        scheme?: NDKEncryptionScheme
+        _recipient: NDKUser,
+        _value: string,
+        _scheme?: NDKEncryptionScheme
     ): Promise<string> {
         return "";
     }
@@ -96,7 +100,11 @@ export class NDKNip55Signer implements NDKSigner {
      * @param value - The value to be decrypted
      * @param scheme - which NIP is being implemented ('nip04', 'nip44', 'nip49')
      */
-    async decrypt(sender: NDKUser, value: string, scheme?: NDKEncryptionScheme): Promise<string> {
+    async decrypt(
+        _sender: NDKUser,
+        _value: string,
+        _scheme?: NDKEncryptionScheme
+    ): Promise<string> {
         return "";
     }
 }

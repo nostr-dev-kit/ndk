@@ -15,7 +15,7 @@ export interface UserSessionData {
     mutedHashtags: Set<string>; // Hashtags muted by this user
     mutedWords: Set<string>; // Words muted by this user
     mutedEventIds: Set<string>; // Event IDs muted by this user
-    events: Map<number, NDKEvent[]>; // Events fetched for this user, keyed by kind
+    // events: Map<number, NDKEvent[]>; // Removed - Events fetched for this user, keyed by kind
     lastActive: number; // Timestamp of last activity
     metadata?: UserMetadata; // User profile metadata
     // Add other user-specific fields as needed, e.g., wot scores
@@ -50,7 +50,7 @@ export interface SessionState {
     setActiveSession: (pubkey: string | null) => void;
     getSession: (pubkey: string) => UserSessionData | undefined;
     getActiveSession: () => UserSessionData | undefined;
-    addEventToSession: (pubkey: string, event: NDKEvent) => void;
+    // addEventToSession: (pubkey: string, event: NDKEvent) => void; // Removed
     muteItemForSession: (
         pubkey: string,
         value: string,

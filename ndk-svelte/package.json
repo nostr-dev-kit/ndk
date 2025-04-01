@@ -32,7 +32,7 @@
         "dev": "tsup --watch src src/index.ts --format cjs,esm --dts",
         "lint": "prettier --check . && eslint .",
         "format": "prettier --write .",
-        "postbuild": "mv dist/index.svelte.mjs dist/index.svelte.js; mv dist/index.svelte.d.mts dist/index.svelte.d.ts"
+        "postbuild": "[ -f dist/index.svelte.mjs ] && mv dist/index.svelte.mjs dist/index.svelte.js; [ -f dist/index.svelte.d.mts ] && mv dist/index.svelte.d.mts dist/index.svelte.d.ts"
     },
     "keywords": ["nostr", "nostr-dev-kit", "ndk", "svelte"],
     "author": "pablof7z",
@@ -44,7 +44,6 @@
         "svelte": "*"
     },
     "devDependencies": {
-        "@nostr-dev-kit/eslint-config-custom": "workspace:*",
         "@nostr-dev-kit/tsconfig": "workspace:*",
         "svelte": "5.23.0",
         "tsup": "^7.2.0"

@@ -1,4 +1,5 @@
-import NDK, { NDKPrivateKeySigner, NDKNip46Signer, NDKSigner } from "@nostr-dev-kit/ndk";
+import type NDK from "@nostr-dev-kit/ndk";
+import { NDKNip46Signer, NDKPrivateKeySigner, type NDKSigner } from "@nostr-dev-kit/ndk";
 
 export async function withNip46(ndk: NDK, token: string, sk?: string): Promise<NDKSigner | null> {
     let localSigner = NDKPrivateKeySigner.generate();

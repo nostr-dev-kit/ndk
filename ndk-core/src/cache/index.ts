@@ -4,6 +4,8 @@ import type { NDKFilter, NDKSubscription } from "../subscription/index.js";
 import type { Hexpubkey, ProfilePointer } from "../user/index.js";
 import type { NDKUserProfile } from "../user/profile.js";
 import type { NDKLnUrlData } from "../zapper/ln.js";
+import type { NDKNutzapState } from "../types.js";
+
 
 export type NDKCacheEntry<T> = T & {
     cachedAt?: number;
@@ -140,6 +142,20 @@ export interface NDKCacheAdapter {
      * Cleans up the cache. This is called when the user logs out.
      */
     clear?(): Promise<void>;
+
+
+    /**
+     * Gets all nutzap states from the cache.
+     * @returns A map of event IDs to nutzap states.
+     */
+    getAllNutzapStates?(): Promise<Map<NDKEventId, NDKNutzapState>>;
+
+    /**
+     * Sets the state of a nutzap in the cache.
+     * @param id The ID of the nutzap event.
+     * @param stateChange The partial state change to apply.
+     */
+    setNutzapState?(id: NDKEventId, stateChange: Partial<NDKNutzapState>): Promise<void>;
 }
 
 export type NDKCacheRelayInfo = {

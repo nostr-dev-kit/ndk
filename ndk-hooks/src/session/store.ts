@@ -11,7 +11,7 @@ const createDefaultSession = (pubkey: string): UserSessionData => ({
     mutedHashtags: new Set<string>(),
     mutedWords: new Set<string>(),
     mutedEventIds: new Set<string>(),
-    events: new Map<number, NDKEvent[]>(),
+    // events: new Map<number, NDKEvent[]>(), // Removed
     lastActive: Date.now(),
     wot: new Map<string, number>(),
 });
@@ -105,25 +105,7 @@ export const useNDKSessions = create<SessionState>()((set, get) => ({
 
     // --- Session Data Interaction ---
 
-    addEventToSession: (pubkey, event) => {
-        set((state) => {
-            const session = state.sessions.get(pubkey);
-            if (!session) return state;
-
-            const newEvents = new Map(session.events);
-            const kindEvents = newEvents.get(event.kind) || [];
-
-            // Avoid duplicates
-            if (!kindEvents.some((e) => e.id === event.id)) {
-                newEvents.set(event.kind, [...kindEvents, event]);
-                const updatedSession = { ...session, events: newEvents };
-                const newSessions = new Map(state.sessions);
-                newSessions.set(pubkey, updatedSession);
-                return { sessions: newSessions };
-            }
-            return state; // No change if event already exists
-        });
-    },
+    // addEventToSession removed
 
     muteItemForSession: (pubkey, value, itemType, publish = true) => {
         set((state) => {

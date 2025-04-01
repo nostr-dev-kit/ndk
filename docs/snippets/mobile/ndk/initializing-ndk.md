@@ -46,10 +46,11 @@ import { useNDKInit, useNDKSessionInit, useNDKCurrentUser } from '@nostr-dev-kit
 import { useEffect } from 'react';
 
 function App() {
+    // Initialize NDK using the function from previous examples
     const ndk = initializeNDK(); // From previous examples
     const initializeSession = useNDKSessionInit();
 
-    // Put the ndk instance in a store that will make it easily accessible throughout the app
+    // Put the ndk instance in the store system, making it accessible throughout the app
     useNDKInit(ndk, settingsStore);
 
     // Get current user

@@ -5,65 +5,113 @@ A React Native/Expo implementation of [NDK (Nostr Development Kit)](https://gith
 ## Features
 
 - 🔐 Multiple signer implementations (NIP-07, NIP-46, Private Key)
-- 💾 SQLite-based caching for offline support
+- 💾 SQLite-based caching for offline support (`NDKCacheAdapterSqlite`)
 - 🔄 Subscription management with automatic reconnection
 - 📱 React Native and Expo compatibility
-- 🪝 React hooks for easy state management
-- 👛 Integrated wallet support
+- 🪝 React hooks for easy state management (via `@nostr-dev-kit/ndk-hooks`)
+- 👛 Integrated wallet support (via `@nostr-dev-kit/ndk-wallet`)
 
 ## Installation
 
 ```sh
-npm install @nostr-dev-kit/ndk-mobile
+# Install NDK Core, Hooks, Wallet, and Mobile
+npm install @nostr-dev-kit/ndk @nostr-dev-kit/ndk-hooks @nostr-dev-kit/ndk-wallet @nostr-dev-kit/ndk-mobile
 ```
 
 ## Usage
 
-When using this library don't import `@nostr-dev-kit/ndk` directly, instead import `@nostr-dev-kit/ndk-mobile`. `ndk-mobile` exports the same classes as `ndk`, so you can just swap the import.
+When using this library, you primarily interact with the core `NDK` instance and hooks from `@nostr-dev-kit/ndk-hooks`. `ndk-mobile` provides the `NDKCacheAdapterSqlite` for persistence and potentially mobile-specific signer integrations in the future.
 
 ### Initialization
 
-Initialize NDK using the init function, probably when your app loads.
-
-Throughout the use of a normal app, you will probably want to store some settings, such us, the user that is logged in. `ndk-mobile` can take care of this for you automatically if you pass a `settingsStore` to the initialization. For example, using `expo-secure-store` you can:
+Initialize NDK using the `NDK` constructor, likely when your app loads. You can configure the SQLite cache adapter provided by `ndk-mobile`.
 
 ```tsx
-import * as SecureStore from 'expo-secure-store';
+import NDK from "@nostr-dev-kit/ndk";
+import { NDKCacheAdapterSqlite } from "@nostr-dev-kit/ndk-mobile";
+import { NDKProvider } from "@nostr-dev-kit/ndk-hooks"; // Import Provider
+import { useEffect, useState } from "react";
 
-const ndk = new NDK({
-    /* Any parameter you'd want to pass to NDK */
-    explicitRelayUrls: [...],
-    // ...
-})
+async function initializeNdk() {
+    const cacheAdapter = new NDKCacheAdapterSqlite("my-ndk-cache.db");
+    await cacheAdapter.initialize();
 
-const settingsStore = {
-    get: SecureStore.getItemAsync,
-    set: SecureStore.setItemAsync,
-    delete: SecureStore.deleteItemAsync,
-    getSync: SecureStore.getItem,
-};
+    const ndkInstance = new NDK({
+        cacheAdapter: cacheAdapter,
+        explicitRelayUrls: [/* your relays */],
+        // ... other NDK options
+    });
+
+    // Assign NDK instance back to adapter *after* NDK initialization
+    cacheAdapter.ndk = ndkInstance;
+
+    await ndkInstance.connect();
+    return ndkInstance;
+}
 
 function App() {
-    useNDKInit(ndk, settingsStore);
+    const [ndk, setNdk] = useState<NDK | null>(null);
+
+    useEffect(() => {
+        initializeNdk().then(setNdk);
+    }, []);
+
+    if (!ndk) {
+        return <Text>Loading NDK...</Text>; // Or some loading indicator
+    }
+
+    // Wrap your app with NDKProvider from ndk-hooks
+    return (
+        <NDKProvider ndk={ndk}>
+            {/* Your App Components */}
+            <LoginScreen />
+        </NDKProvider>
+    );
 }
 ```
 
-Now, once your user logs in, their login information will be stored locally so when your app restarts, the user will be logged in automatically.
+### Using Hooks
 
-## `useNDK()`
-
-`useNDK()` provides access to the `ndk` instance and some other useful information.
+Use hooks from `@nostr-dev-kit/ndk-hooks` to access NDK state and functionality within your components.
 
 ```tsx
+import { useNDK, useNDKCurrentUser, useLogin } from "@nostr-dev-kit/ndk-hooks"; // Import hooks
+import { NDKNip46Signer, NDKPrivateKeySigner } from "@nostr-dev-kit/ndk"; // Import signers
+import { Button, Text } from "react-native";
+import { useEffect } from "react";
+
 function LoginScreen() {
-    const { ndk, login } = useNDK();
-    const currentUser = useNDKCurrentUser();
+    const { ndk } = useNDK(); // Get NDK instance from context
+    const currentUser = useNDKCurrentUser(); // Get current user from context
+    const { login } = useLogin(); // Get login function from context
 
     useEffect(() => {
-        if (currentUser) alert("you are now logged in as ", +currentUser.pubkey);
+        if (currentUser) {
+            console.log("Logged in as:", currentUser.pubkey);
+            // Potentially navigate away or update UI
+        }
     }, [currentUser]);
 
-    return <Button onPress={() => login(withPayload("nsec1..."))} title="Login" />;
+    const handleLogin = async () => {
+        // Example: Login with a private key
+        const signer = new NDKPrivateKeySigner("nsec1...");
+        await login(signer);
+
+        // Or login with NIP-46 (requires setup)
+        // const nip46Signer = new NDKNip46Signer(ndk, "npub...", new NDKPrivateKeySigner("nsec_local..."));
+        // await nip46Signer.blockUntilReady();
+        // await login(nip46Signer);
+    };
+
+    return (
+        <>
+            {currentUser ? (
+                <Text>Logged in: {currentUser.profile?.name || currentUser.pubkey}</Text>
+            ) : (
+                <Button onPress={handleLogin} title="Login with NSEC" />
+            )}
+        </>
+    );
 }
 ```
 

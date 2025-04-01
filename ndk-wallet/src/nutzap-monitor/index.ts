@@ -16,6 +16,8 @@ import {
     cashuPubkeyToNostrPubkey,
     proofP2pk,
 } from "@nostr-dev-kit/ndk";
+import { NdkNutzapStatus } from "@nostr-dev-kit/ndk";
+import type { NDKNutzapState } from "@nostr-dev-kit/ndk";
 import { EventEmitter } from "tseep";
 import { NDKCashuWallet, NDKCashuWalletBackup } from "../wallets/cashu/wallet/index.js";
 import type { NDKWallet } from "../wallets/index.js";
@@ -34,47 +36,6 @@ import { getProofSpendState } from "./spend-status.js";
 const _startTime = Date.now();
 
 function log(_msg: string) {}
-
-export interface NDKNutzapState {
-    nutzap?: NDKNutzap;
-
-    status: NdkNutzapStatus;
-
-    // The token event id of the event that redeemed the nutzap
-    redeemedById?: NDKEventId;
-
-    // Error message if the nutzap has an error
-    errorMessage?: string;
-
-    // Amount redeemed if the nutzap has been redeemed
-    redeemedAmount?: number;
-}
-
-export enum NdkNutzapStatus {
-    // First time we see a nutzap
-    INITIAL = "initial",
-
-    // Processing the nutzap
-    PROCESSING = "processing",
-
-    // Nutzap has been redeemed
-    REDEEMED = "redeemed",
-
-    // Nutzap has been spent
-    SPENT = "spent",
-
-    // The nutzap is p2pk to a pubkey of which we don't have a privkey
-    MISSING_PRIVKEY = "missing_privkey",
-
-    // Generic temporary error
-    TEMPORARY_ERROR = "temporary_error",
-
-    // Generic permanent error
-    PERMANENT_ERROR = "permanent_error",
-
-    // The nutzap is invalid
-    INVALID_NUTZAP = "invalid_nutzap",
-}
 
 /**
  * This interface should be provided by the application to save and load

@@ -18,15 +18,19 @@
         "test:watch": "vitest",
         "prepare": "pnpm run build"
     },
+    "dependencies": {
+        "@nostr-dev-kit/ndk-wallet": "workspace:*",
+        "zustand": "^5"
+    },
     "peerDependencies": {
-        "@nostr-dev-kit/ndk": "^2.13",
-        "zustand": "^5",
+        "@nostr-dev-kit/ndk": "workspace:*",
         "react": "*"
     },
     "devDependencies": {
-        "@testing-library/react-hooks": "^8.0.1",
         "@nostr-dev-kit/ndk": "workspace:*",
         "@nostr-dev-kit/ndk-test-utils": "workspace:*",
+        "@testing-library/react": "^16.2.0",
+        "@testing-library/react-hooks": "^8.0.1",
         "@types/react": "^18.2.67",
         "biome": "^0.3.3",
         "react": "^18.2.0",

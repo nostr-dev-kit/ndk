@@ -1,3 +1,4 @@
+import type NDK from "@nostr-dev-kit/ndk";
 import {
     type Hexpubkey,
     type NDKCacheAdapter,
@@ -12,6 +13,7 @@ import {
     deserialize,
     matchFilter,
     profileFromEvent,
+    type NDKNutzapState, // Import the type moved to ndk-core
 } from "@nostr-dev-kit/ndk";
 import * as SQLite from "expo-sqlite";
 import {
@@ -29,6 +31,8 @@ import {
     setMintKeys,
 } from "../../mint/mint-methods.js";
 import { getAllProfilesSync } from "./get-all-profiles.js";
+import { getAllNutzapStates } from "./nutzap-state-get.js"; // Import the get helper
+import { prepareNutzapStateUpdate } from "./nutzap-state-set.js"; // Import the set helper
 import { migrations } from "./migrations.js";
 
 export type NDKSqliteEventRecord = {
@@ -94,6 +98,7 @@ function filterForCache(subscription: NDKSubscription) {
 export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     readonly dbName: string;
     public db: SQLite.SQLiteDatabase;
+    public ndk?: NDK; // Added to hold NDK instance
     public locking = false;
     public ready = false;
     private pendingCallbacks: PendingCallback[] = [];
@@ -119,13 +124,17 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     public getMintKeysetRecord = getMintKeysetRecord.bind(this);
     public getAllMintKeysets = getAllMintKeysets.bind(this);
     public setMintKeys = setMintKeys.bind(this);
-    
+
     // Profile methods
     public getAllProfilesSync = getAllProfilesSync.bind(this);
 
-    constructor(dbName: string) {
+    // Nutzap state methods
+    public getAllNutzapStates = getAllNutzapStates.bind(this); // Bind the imported function
+
+    constructor(dbName: string, ndkInstance?: NDK) { // Optionally accept NDK instance
         this.dbName = dbName ?? "ndk-cache";
         this.db = SQLite.openDatabaseSync(this.dbName);
+        this.ndk = ndkInstance; // Assign NDK instance
     }
 
     /**
@@ -417,18 +426,18 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
         return await this.ifReady(async () => {
             const result = (await this.db.getFirstAsync(
                 `
-                SELECT 
-                    name, 
-                    about, 
-                    picture, 
-                    banner, 
-                    nip05, 
-                    lud16, 
-                    lud06, 
-                    display_name, 
-                    website, 
-                    catched_at, 
-                    created_at 
+                SELECT
+                    name,
+                    about,
+                    picture,
+                    banner,
+                    nip05,
+                    lud16,
+                    lud06,
+                    display_name,
+                    website,
+                    catched_at,
+                    created_at
                 FROM profiles WHERE pubkey = ?;`,
                 [pubkey]
             )) as {
@@ -487,17 +496,17 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
 
             this.bufferWrite(
                 `INSERT OR REPLACE INTO profiles (
-                pubkey, 
-                name, 
-                about, 
-                picture, 
-                banner, 
-                nip05, 
-                lud16, 
-                lud06, 
-                display_name, 
-                website, 
-                catched_at, 
+                pubkey,
+                name,
+                about,
+                picture,
+                banner,
+                nip05,
+                lud16,
+                lud06,
+                display_name,
+                website,
+                catched_at,
                 created_at
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
                 [
@@ -620,6 +629,8 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
             this.db.runSync("DELETE FROM event_tags;");
             this.db.runSync("DELETE FROM unpublished_events;");
             this.db.runSync("DELETE FROM decrypted_events;");
+            // Also clear nutzap state table if needed
+            this.db.runSync("DELETE FROM nutzap_monitor_state;");
         });
     }
 
@@ -701,8 +712,8 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
 
             this.bufferWrite(
                 `INSERT OR REPLACE INTO decrypted_events (
-                    event_id, 
-                    event, 
+                    event_id,
+                    event,
                     decrypted_at
                 ) VALUES (?, ?, ?);`,
                 [event.id, event.serialize(true, true), now]
@@ -748,6 +759,20 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
             this.db.runSync("UPDATE profiles SET catched_at = ? WHERE pubkey = ?;", [now, pubkey]);
         } catch (e) {
             console.error("Error updating profile cache timestamp", e);
+        }
+    }
+
+    /**
+     * Sets the state of a nutzap in the cache.
+     * This method prepares the update using prepareNutzapStateUpdate and then buffers the write.
+     * @param id The ID of the nutzap event.
+     * @param stateChange The partial state change to apply.
+     */
+    public async setNutzapState(id: NDKEventId, stateChange: Partial<NDKNutzapState>): Promise<void> {
+        const updateDetails = await prepareNutzapStateUpdate.call(this, id, stateChange);
+
+        if (updateDetails) {
+            this.bufferWrite(updateDetails.query, updateDetails.params);
         }
     }
 }

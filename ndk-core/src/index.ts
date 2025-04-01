@@ -1,3 +1,6 @@
+export { NdkNutzapStatus } from "./types.js";
+export type { NDKNutzapState } from "./types.js";
+
 export * from "./events/kinds/index.js";
 import { NDKEvent } from "./events/index.js";
 export { NDKEvent };

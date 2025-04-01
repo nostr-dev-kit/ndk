@@ -192,16 +192,9 @@ function LogoutButton({ pubkey }: { pubkey: string }) {
 }
 ```
 
-### Adding Events
+### Adding Events (Removed)
 
-```typescript
-import { type NDKEvent } from "@nostr-dev-kit/ndk";
-const addEventToSession = useNDKSessions.getState().addEventToSession;
-
-function handleNewEvent(event: NDKEvent, targetPubkey: string) {
-    addEventToSession(targetPubkey, event);
-}
-```
+*Note: The `addEventToSession` action and the general-purpose `events` map within the session state have been removed. Storing arbitrary events keyed by kind within the session proved brittle. Use dedicated hooks (like `useSubscribe`) or separate stores tailored to specific event kinds (e.g., a store for user profiles, a store for contacts) to manage event data.*
 
 ### Muting Items
 

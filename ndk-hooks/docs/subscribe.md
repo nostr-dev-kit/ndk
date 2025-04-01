@@ -51,7 +51,10 @@ const { events, eose, subscription } = useSubscribe<NDKEvent>(
     bufferMs: 30,
     
     // Optional relay URLs to connect to
-    relays: ['wss://relay.example.com']
+    relays: ['wss://relay.example.com'],
+
+    // Whether to include events from muted authors (default: false)
+    includeMuted: false
   },
   [/* dependencies */]
 );
@@ -84,3 +87,11 @@ The hook automatically leverages the NDK cache adapter if one is configured with
 2. It processes cached events before waiting for live events from relays
 
 This provides a good user experience by showing existing data immediately.
+
+## Mute List Integration
+
+The `useSubscribe` hook automatically integrates with the active session's mute list (managed via `useNDKSessions` and `useActiveSessionData`).
+
+- By default (`includeMuted: false`), events authored by pubkeys found in the active session's `mutedPubkeys` set will be filtered out. This applies to both live events and cached events.
+- If the active session's mute list changes, the hook will automatically re-filter the currently stored events to reflect the changes.
+- Set `includeMuted: true` in the options if you need to display events from muted authors.

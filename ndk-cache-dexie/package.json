@@ -33,7 +33,6 @@
     "keywords": ["nostr", "dexie", "cache"],
     "authors": ["pablof7z", "erskingardner"],
     "devDependencies": {
-        "@nostr-dev-kit/eslint-config-custom": "workspace:*",
         "@nostr-dev-kit/tsconfig": "workspace:*",
         "@types/debug": "^4.1.12",
         "@types/node": "^22.6.1",

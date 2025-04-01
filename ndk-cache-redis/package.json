@@ -40,7 +40,6 @@
         "typescript": "^5.4.4"
     },
     "devDependencies": {
-        "@nostr-dev-kit/eslint-config-custom": "workspace:*",
         "@nostr-dev-kit/tsconfig": "workspace:*",
         "@types/debug": "^4.1.7",
         "@types/node": "^18.15.11",

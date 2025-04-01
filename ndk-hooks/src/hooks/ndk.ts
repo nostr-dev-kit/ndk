@@ -6,16 +6,9 @@ import type { NDKEvent, NDKPublishError } from "@nostr-dev-kit/ndk"; // Added ty
 /**
  * Interface for the useNDK hook return value
  */
-interface UseNDKResult {
-  /**
-   * The NDK instance
-   */
-  ndk: NDK | null;
-
-  /**
-   * Function to set the NDK instance
-   */
-  setNDK: (ndk: NDK) => void;
+interface UseNDKResult extends Pick<NDKStoreState, 'ndk' | 'setNDK' | 'addSigner' | 'switchToUser'> {
+  // Interface now inherits relevant types from NDKStoreState
+  // Keeping it potentially extendable if needed later
 }
 
 /**
@@ -26,9 +19,11 @@ interface UseNDKResult {
 export const useNDK = (): UseNDKResult => {
   const ndk = useNDKStore((state) => state.ndk);
   const setNDK = useNDKStore((state) => state.setNDK);
+  const addSigner = useNDKStore((state) => state.addSigner);
+  const switchToUser = useNDKStore((state) => state.switchToUser);
 
   // Memoize the result to ensure reference stability between renders
-  return useMemo(() => ({ ndk, setNDK }), [ndk, setNDK]);
+  return useMemo(() => ({ ndk, setNDK, addSigner, switchToUser }), [ndk, setNDK, addSigner, switchToUser]);
 };
 
 

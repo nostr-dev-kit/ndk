@@ -29,7 +29,7 @@ export interface NDKStoreState {
    * Adds a signer to the available signers map.
    * @param signer The NDKSigner instance to add.
    */
-  addSigner: (signer: NDKSigner) => Promise<void>;
+  addSigner: (signer: NDKSigner, switchTo?: boolean) => Promise<void>;
 
   /**
    * Switches the active user to the one associated with the given pubkey.
@@ -54,7 +54,7 @@ export const useNDKStore = create<NDKStoreState>((set, get) => {
       set({ ndk });
     },
 
-    addSigner: async (signer: NDKSigner) => {
+    addSigner: async (signer: NDKSigner, switchTo = true) => {
       try {
         const user = await signer.user();
         const pubkey = user.pubkey;
@@ -62,8 +62,15 @@ export const useNDKStore = create<NDKStoreState>((set, get) => {
           signers: new Map(state.signers).set(pubkey, signer),
         }));
         console.log(`Signer added for pubkey: ${pubkey}`);
+
+        // Automatically switch if requested (default is true)
+        if (switchTo) {
+          await get().switchToUser(pubkey);
+        }
       } catch (error) {
         console.error("Failed to add signer:", error);
+        // Re-throw or handle error appropriately for the caller
+        throw error;
       }
     },
 

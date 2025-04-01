@@ -1,4 +1,5 @@
-import type { NDKCacheAdapterSqlite, NDKSqliteProfileRecord, NDKUserProfile } from "../../index.js";
+import { NDKUserProfile } from "@nostr-dev-kit/ndk";
+import type { NDKCacheAdapterSqlite, NDKSqliteProfileRecord } from "../../index.js";
 
 /**
  * Convenience method to search for profiles in the database.

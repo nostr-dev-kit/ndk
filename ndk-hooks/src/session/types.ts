@@ -1,6 +1,6 @@
 // types.ts - Type definitions for session data using Zustand
 import type NDK from "@nostr-dev-kit/ndk";
-import type { NDKEvent, NDKUser } from "@nostr-dev-kit/ndk";
+import type { NDKEvent, NDKUser, NDKUserProfile } from "@nostr-dev-kit/ndk";
 
 /**
  * User-specific session data stored within the main store.
@@ -17,20 +17,9 @@ export interface UserSessionData {
     mutedEventIds: Set<string>; // Event IDs muted by this user
     // events: Map<number, NDKEvent[]>; // Removed - Events fetched for this user, keyed by kind
     lastActive: number; // Timestamp of last activity
-    metadata?: UserMetadata; // User profile metadata
+    profile?: NDKUserProfile; // User profile metadata
     // Add other user-specific fields as needed, e.g., wot scores
     wot?: Map<string, number>;
-}
-
-/**
- * User metadata (profile information)
- */
-export interface UserMetadata {
-    name?: string;
-    displayName?: string;
-    picture?: string;
-    about?: string;
-    nip05?: string;
 }
 
 /**
@@ -73,6 +62,5 @@ export interface SessionInitOptions {
     fetchProfiles?: boolean; // Fetch user profile metadata
     fetchFollows?: boolean; // Fetch user follows list
     fetchMuteList?: boolean; // Fetch user mute list
-    explicitRelays?: string[]; // Explicit relays to use for this session's NDK
     autoSetActive?: boolean; // Automatically set this session as active upon creation
 }

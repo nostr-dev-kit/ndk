@@ -15,8 +15,7 @@
         "lint": "biome check .",
         "format": "biome check . --write",
         "test": "vitest run",
-        "test:watch": "vitest",
-        "prepare": "pnpm run build"
+        "test:watch": "vitest"
     },
     "dependencies": {
         "@nostr-dev-kit/ndk-wallet": "workspace:*",
@@ -24,16 +23,17 @@
     },
     "peerDependencies": {
         "@nostr-dev-kit/ndk": "workspace:*",
-        "react": "*"
+        "react": "^18.2.0"
     },
     "devDependencies": {
         "@nostr-dev-kit/ndk": "workspace:*",
         "@nostr-dev-kit/ndk-test-utils": "workspace:*",
-        "@testing-library/react": "^16.2.0",
-        "@testing-library/react-hooks": "^8.0.1",
+        "@testing-library/react": "^15.0.0",
+        "@testing-library/dom": "^10.0.0",
         "@types/react": "^18.2.67",
         "biome": "^0.3.3",
         "react": "^18.2.0",
+        "react-dom": "^18.2.0",
         "react-test-renderer": "^18.2.0",
         "tsup": "^8.0.2",
         "typescript": "^5.4.3",

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import type NDK from "@nostr-dev-kit/ndk";
-import type { NDKEvent, NDKUser } from "@nostr-dev-kit/ndk";
+import { profileFromEvent, type NDKEvent, type NDKUser } from "@nostr-dev-kit/ndk";
 import { type SessionState, type UserSessionData, type SessionInitOptions } from "./types";
 import { processMuteList } from "./utils.js"; // Assuming a utility function for processing mute lists
 
@@ -220,15 +220,9 @@ export const useNDKSessions = create<SessionState>()((set, get) => ({
             // Fetch Profile
             if (opts.fetchProfiles !== false) { // Default to true
                 promises.push(
-                    user.fetchProfile().then((profileEvent) => {
-                        // Ensure content is a string before parsing
-                        if (profileEvent?.content && typeof profileEvent.content === 'string') {
-                            try {
-                                const metadata = JSON.parse(profileEvent.content);
-                                get().updateSession(pubkey, { metadata }); // Use get() to access action
-                            } catch (e) {
-                                console.error("Failed to parse profile metadata", e);
-                            }
+                    user.fetchProfile().then((profile) => {
+                        if (profile) {
+                            get().updateSession(pubkey, { profile }); // Use get() to access action
                         }
                     }),
                 );

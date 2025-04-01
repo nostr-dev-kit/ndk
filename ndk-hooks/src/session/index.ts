@@ -7,7 +7,6 @@ export { useNDKSessions, useSession, useActiveSessionData } from "./store.js";
 export type {
     SessionState,
     UserSessionData,
-    UserMetadata,
     SessionInitOptions,
 } from "./types.js";
 

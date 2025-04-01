@@ -1,4 +1,4 @@
-import { useActiveSessionData } from '../session/store';
+import { useActiveSessionData, useNDKSessions } from '../session/store';
 
 /**
  * Returns the list of followed pubkeys (as NDKUser objects) for the active session.
@@ -24,5 +24,3 @@ export const useMuteList = () => {
 
     return { pubkeys, hashtags, words, eventIds, event };
 };
-
-// Add other session-related hooks here in the future if needed.

@@ -14,7 +14,6 @@ export * from './hooks/observer';
 export { useNDKWallet, useNDKNutzapMonitor } from "./hooks/wallet";
 
 export * from './hooks/ndk';
-// export * from './hooks/current-user'; // Removed duplicate export
 export * from './hooks/subscribe';
 export * from './hooks/useAvailableSessions';
 

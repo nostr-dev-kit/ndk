@@ -5,7 +5,6 @@ import { useNDKStore } from '../../src/stores/ndk';
 import type { NDKUser } from '@nostr-dev-kit/ndk';
 
 // Create mocks
-const mockSetCurrentUser = vi.fn();
 let mockCurrentUser: NDKUser | null = null;
 
 // Mock dependencies
@@ -15,16 +14,16 @@ vi.mock('../../src/stores/ndk', () => {
       if (typeof selector === 'function') {
         return selector({
           currentUser: mockCurrentUser,
-          setCurrentUser: mockSetCurrentUser,
+          // No longer mocking setCurrentUser here
         });
       }
       
       // When called directly with no selector, return the store
       if (selector === undefined) {
-        return { currentUser: mockCurrentUser, setCurrentUser: mockSetCurrentUser };
+        return { currentUser: mockCurrentUser };
       }
       
-      return { currentUser: mockCurrentUser, setCurrentUser: mockSetCurrentUser };
+      return { currentUser: mockCurrentUser };
     }),
   };
 });
@@ -35,32 +34,32 @@ describe('useNDKCurrentUser', () => {
     
     // Reset the mocks
     mockCurrentUser = null;
-    mockSetCurrentUser.mockReset();
+    // mockSetCurrentUser removed
     
     // Update the store mock implementation
     (useNDKStore as any).mockImplementation((selector) => {
       if (typeof selector === 'function') {
         return selector({
           currentUser: mockCurrentUser,
-          setCurrentUser: mockSetCurrentUser,
+          // No longer mocking setCurrentUser here
         });
       }
       
       // When called directly with no selector, return the store
       if (selector === undefined) {
-        return { currentUser: mockCurrentUser, setCurrentUser: mockSetCurrentUser };
+        return { currentUser: mockCurrentUser };
       }
       
-      return { currentUser: mockCurrentUser, setCurrentUser: mockSetCurrentUser };
+      return { currentUser: mockCurrentUser };
     });
   });
   
-  it('should return currentUser and setCurrentUser from the store', () => {
+  it('should return only currentUser from the store', () => { // Updated test description
     const { result } = renderHook(() => useNDKCurrentUser());
     
+    // Expect only currentUser
     expect(result.current).toEqual({
       currentUser: null,
-      setCurrentUser: mockSetCurrentUser,
     });
   });
   

@@ -18,6 +18,7 @@ This document provides comprehensive documentation for the NDK store and hooks i
 - [API Reference](#api-reference)
   - [`useNDK`](#usendk)
   - [`useNDKCurrentUser`](#usendkcurrentuser)
+   - [`useAvailableSessions`](#useavailablesessions)
   - [`useNDKStore`](#usendkstore)
 - [Best Practices](#best-practices)
 - [Edge Cases and Troubleshooting](#edge-cases-and-troubleshooting)
@@ -286,6 +287,52 @@ A hook that provides read-only access to the currently active user.
 **Returns:**
 
 - `currentUser` - The currently active `NDKUser` or `null` if no user context is active.
+
+
+### `useAvailableSessions`
+
+```typescript
+function useAvailableSessions(): {
+  availablePubkeys: Hexpubkey[];
+}
+```
+
+A hook that provides a list of available session pubkeys.
+
+This hook retrieves the list of signers currently managed by the `useNDKStore` and returns an array of their corresponding public keys (hex format). This represents the user sessions that have been added (e.g., via `addSigner`) and are available to be switched to using `switchToUser`.
+
+**Returns:**
+
+- `availablePubkeys` - An array of `Hexpubkey` strings representing the pubkeys of available signers.
+
+**Example:**
+
+```tsx
+import { useAvailableSessions, useNDKStore } from '@nostr-dev-kit/ndk-hooks';
+
+function SessionSwitcher() {
+  const { availablePubkeys } = useAvailableSessions();
+  const { switchToUser } = useNDKStore();
+
+  if (!availablePubkeys.length) {
+    return <div>No sessions available. Add a signer first.</div>;
+  }
+
+  return (
+    <div>
+      <h3>Available Sessions:</h3>
+      <ul>
+        {availablePubkeys.map(pubkey => (
+          <li key={pubkey}>
+            {pubkey.substring(0, 10)}...
+            <button onClick={() => switchToUser(pubkey)}>Switch to</button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+```
 
 ### `useNDKStore`
 

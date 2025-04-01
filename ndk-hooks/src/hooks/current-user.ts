@@ -10,22 +10,18 @@ interface UseNDKCurrentUserResult {
    * The current user (if logged in)
    */
   currentUser: NDKUser | null;
-  
-  /**
-   * Function to set the current user
-   */
-  setCurrentUser: (user: NDKUser | null) => void;
 }
 
 /**
- * Hook to access the current user and setCurrentUser function
- * 
- * @returns {UseNDKCurrentUserResult} Object containing the current user and setCurrentUser function
+ * Hook to access the current user state from the NDK store.
+ *
+ * Note: Setting the current user is handled via the `switchToUser` action in the `useNDKStore`.
+ *
+ * @returns {UseNDKCurrentUserResult} Object containing the current user.
  */
 export const useNDKCurrentUser = (): UseNDKCurrentUserResult => {
   const currentUser = useNDKStore((state) => state.currentUser);
-  const setCurrentUser = useNDKStore((state) => state.setCurrentUser);
 
   // Memoize the result to ensure reference stability between renders
-  return useMemo(() => ({ currentUser, setCurrentUser }), [currentUser, setCurrentUser]);
+  return useMemo(() => ({ currentUser }), [currentUser]);
 };

@@ -52,3 +52,4 @@ lerna-debug.log*
 .cursorrules
 .repomix-output.txt
 cursor-tools.config.json
+.repomix-output.txt

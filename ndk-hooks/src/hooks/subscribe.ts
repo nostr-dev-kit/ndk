@@ -2,11 +2,13 @@ import {
   type NDKEvent,
   type NDKFilter,
   NDKRelaySet,
+  NDKSubscription,
   type NDKSubscriptionOptions,
 } from '@nostr-dev-kit/ndk';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useStore } from 'zustand';
-import { createSubscribeStore } from '../stores/subscribe';
+import { useShallow } from 'zustand/shallow';
+import { createSubscribeStore, type SubscribeStore } from '../stores/subscribe';
 import { useNDK } from './ndk';
 
 /**
@@ -48,141 +50,122 @@ export type UseSubscribeOptions = NDKSubscriptionOptions & {
  * @returns {Object} Subscription state
  * @returns {T[]} events - Array of received events
  * @returns {boolean} eose - End of stored events flag
- * @returns {boolean} isSubscribed - Subscription status
  */
-export const useSubscribe = <T extends NDKEvent>(
+export function useSubscribe<T extends NDKEvent>(
   filters: NDKFilter[] | false,
   opts: UseSubscribeOptions = {},
   dependencies: any[] = []
-) => {
-  // Use stable reference for filters to avoid unnecessary re-renders
-  const filtersRef = useRef(filters);
-  filtersRef.current = filters;
-  
-  // Create a stable deps array to avoid re-creating the store on each render
-  const stableDeps = useMemo(() => [...dependencies, !!filters], [JSON.stringify(dependencies), !!filters]);
-  
+) {
   const { ndk } = useNDK();
-  const store = useMemo(() => createSubscribeStore<T>(opts?.bufferMs), []);
-  const storeInstance = useStore(store);
+  
+  // Ensure store instance is stable across renders, even with Fast Refresh
+  const storeRef = useRef<ReturnType<typeof createSubscribeStore<T>> | null>(null);
+  if (!storeRef.current) {
+      // Pass bufferMs directly, assuming opts stability is handled by useEffect deps
+      storeRef.current = createSubscribeStore<T>(opts.bufferMs);
+  }
+  const store = storeRef.current;
 
-  /**
-   * Map of eventIds that have been received by this subscription.
-   *
-   * Key: event identifier (event.dTag or event.id)
-   *
-   * Value: timestamp of the event, used to choose the
-   * most recent event on replaceable events
-   */
-  const eventIds = useRef<Map<string, number>>(new Map());
-  const isSubscribing = useRef(false);
+  // Reference to subscription - doesn't trigger re-renders when changed
+  const subRef = useRef<NDKSubscription | null>(null);
 
-  const relaySet = useMemo(() => {
-    if (ndk && opts.relays && opts.relays.length > 0) {
-      return NDKRelaySet.fromRelayUrls(opts.relays, ndk);
-    }
-    return undefined;
-  }, [ndk, opts.relays ? opts.relays.join(',') : '']);
-
-  const handleEvent = useCallback(
-    (event: NDKEvent) => {
-      const id = event.tagId();
-
-      if (
-        opts?.includeDeleted !== true &&
-        event.isParamReplaceable() &&
-        event.hasTag("deleted")
-      ) {
-        // We mark the event but we don't add the actual event, since
-        // it has been deleted
-        eventIds.current.set(id, event.created_at!);
-        return;
-      }
-
-      event.once("deleted", () => {
-        storeInstance.removeEventId(id);
-      });
-
-      storeInstance.addEvent(event as T);
-      eventIds.current.set(id, event.created_at!);
-    },
-    [storeInstance, opts?.includeDeleted]
-  );
-
-  const handleEose = useCallback(() => {
-    storeInstance.setEose();
-  }, [storeInstance]);
-
-  const handleClosed = useCallback(() => {
-    storeInstance.setSubscription(undefined);
-  }, [storeInstance]);
-
-  // Use a ref to track whether we need to perform cleanup
-  const hasSubscription = useRef(false);
-
+  // Setup subscription only when NDK or deps change
   useEffect(() => {
-    // Don't subscribe if no valid filters or NDK
-    if (!filtersRef.current || (Array.isArray(filtersRef.current) && filtersRef.current.length === 0) || !ndk) {
-      return;
-    }
-
-    // Prevent concurrent subscriptions
-    if (isSubscribing.current) return;
-    isSubscribing.current = true;
-
-    // Clean up any existing subscription
-    if (storeInstance.subscriptionRef) {
-      storeInstance.subscriptionRef.stop();
-      storeInstance.setSubscription(undefined);
-      storeInstance.reset();
-    }
-
-    // Create and set up new subscription
-    const subscription = ndk.subscribe(filtersRef.current, opts, relaySet, false);
-    subscription.on("event", handleEvent);
-    subscription.on("eose", handleEose);
-    subscription.on("closed", handleClosed);
-
-    storeInstance.setSubscription(subscription);
-    hasSubscription.current = true;
-    // Start the subscription and handle any initial events
-    const cachedEvents = subscription.start(false);
-    if (Array.isArray(cachedEvents) && cachedEvents.length > 0) {
-      // Use addEvents for batch processing of cached events
-      storeInstance.addEvents(cachedEvents as T[]);
-      
-      // Update eventIds for all cached events
-      for (const event of cachedEvents) {
-        const id = event.tagId();
-        eventIds.current.set(id, event.created_at!);
-        
-        // Set up deletion listener for each event
-        event.once("deleted", () => {
-          storeInstance.removeEventId(id);
-        });
-      }
-    }
+    // Skip if no NDK or no filters
+    if (!ndk || !filters || (Array.isArray(filters) && filters.length === 0)) return;
     
-    isSubscribing.current = false;
-
-    return () => {
-      if (hasSubscription.current && storeInstance.subscriptionRef) {
-        storeInstance.subscriptionRef.stop();
-        storeInstance.setSubscription(undefined);
+    // Clean up previous subscription
+    if (subRef.current) {
+      subRef.current.stop();
+      subRef.current = null;
+    }
+        
+    // Helper function to set up event handlers and start subscription
+    const setupSubscription = () => {
+      // Create relay set if needed
+      let relaySet: NDKRelaySet | undefined;
+      if (opts?.relays && opts?.relays.length > 0) {
+        relaySet = NDKRelaySet.fromRelayUrls(opts?.relays, ndk);
       }
-      eventIds.current.clear();
-      storeInstance.reset();
-      hasSubscription.current = false;
+      
+      // Create subscription - we know filters is not false here
+      // because of the check above, but we need to tell TypeScript
+      const currentFilters = filters as NDKFilter[];
+      const sub = ndk.subscribe(currentFilters, opts, relaySet, false);
+      subRef.current = sub;
+      
+      // Set up event handler that respects deleted flag
+      sub.on('event', (event: NDKEvent) => {
+        // Skip deleted events if includeDeleted is false
+        if (!opts.includeDeleted && event.hasTag('deleted')) {
+          return;
+        }
+        
+        // Set up deleted event handler
+        event.once('deleted', () => {
+          const state = store.getState();
+          state.removeEventId(event.tagId());
+        });
+        
+        // Add event to store
+        const state = store.getState();
+        state.addEvent(event as T);
+      });
+      
+      // Handle end of stored events
+      sub.on('eose', () => {
+        const state = store.getState();
+        state.setEose();
+      });
+      
+      // Start subscription and handle cached events
+      const cached = sub.start(false);
+      
+      // Process any cached events
+      if (cached && cached.length > 0) {
+        // Filter out deleted events if needed
+        const validEvents = opts.includeDeleted 
+          ? cached 
+          : cached.filter((e: NDKEvent) => !e.hasTag('deleted'));
+        
+        if (validEvents.length > 0) {
+          // Add all valid events at once
+          const state = store.getState();
+          state.addEvents(validEvents as T[]);
+          
+          // Set up deleted handlers for each event
+          for (const evt of validEvents) {
+            evt.once('deleted', () => {
+              const state = store.getState();
+              state.removeEventId(evt.tagId());
+            });
+          }
+        }
+      }
     };
-  }, [ndk, ...stableDeps, relaySet, handleEvent, handleEose, handleClosed]);
+    
+    // Set up subscription
+    setupSubscription();
+    
+    // Cleanup function
+    return () => {
+      if (subRef.current) {
+        subRef.current.stop();
+        subRef.current = null;
+      }
+    };
+  }, [ndk, ...dependencies]);
+
+  // Extract store state in a way that doesn't cause unnecessary re-renders
+  const events = useStore(store, (state) => state.events);
+  const eose = useStore(store, (state) => state.eose);
 
   return {
-    events: storeInstance.events,
-    eose: storeInstance.eose,
-    isSubscribed: storeInstance.isSubscribed,
-    subscription: storeInstance.subscriptionRef,
+    events,
+    eose,
   };
-};
+}
+
 
 /**
  * Utility function to check if two sets have any intersection

@@ -32,7 +32,7 @@ function SubscribeExample() {
   ];
   
   // Subscribe to events with the filters
-  const { events, eose, isSubscribed } = useSubscribe<NDKEvent>(filters);
+  const { events, eose } = useSubscribe<NDKEvent>(filters);
   
   if (!initialized) {
     return <div>Initializing NDK...</div>;
@@ -45,7 +45,6 @@ function SubscribeExample() {
       <div>
         <h2>Subscription Status</h2>
         <p>Connected to NDK: {ndk ? 'Yes' : 'No'}</p>
-        <p>Subscription active: {isSubscribed ? 'Yes' : 'No'}</p>
         <p>End of Stored Events: {eose ? 'Yes' : 'No'}</p>
         <p>Events received: {events.length}</p>
       </div>

@@ -7,20 +7,16 @@ import type { NDKEvent, NDKSubscription } from '@nostr-dev-kit/ndk';
  * @property {T[]} events - Array of received events
  * @property {Map<string, T>} eventMap - Map of events by ID
  * @property {boolean} eose - End of stored events flag
- * @property {boolean} isSubscribed - Subscription status
  */
 export interface SubscribeStore<T extends NDKEvent> {
   events: T[];
   eventMap: Map<string, T>;
   eose: boolean;
-  isSubscribed: boolean;
   addEvent: (event: T) => void;
   addEvents: (events: T[]) => void;
   removeEventId: (id: string) => void;
   setEose: () => void;
   reset: () => void;
-  setSubscription: (sub: NDKSubscription | undefined) => void;
-  subscriptionRef: NDKSubscription | undefined;
 }
 
 /**
@@ -71,8 +67,6 @@ export const createSubscribeStore = <T extends NDKEvent>(bufferMs: number | fals
       events: [],
       eventMap: new Map<string, T>(),
       eose: false,
-      isSubscribed: false,
-      subscriptionRef: undefined,
       
       // Add an event to the store
       addEvent: (event) => {
@@ -233,14 +227,7 @@ export const createSubscribeStore = <T extends NDKEvent>(bufferMs: number | fals
           events: [],
           eventMap: new Map<string, T>(),
           eose: false,
-          isSubscribed: false,
-          subscriptionRef: undefined
         });
-      },
-      
-      // Set subscription reference
-      setSubscription: (sub) => {
-        set({ subscriptionRef: sub, isSubscribed: !!sub });
       }
     };
   });

@@ -15,13 +15,12 @@ function MyComponent() {
   ];
   
   // Subscribe to events
-  const { events, eose, isSubscribed } = useSubscribe<NDKEvent>(filters);
+  const { events, eose } = useSubscribe<NDKEvent>(filters);
   
   return (
     <div>
       <h2>Events: {events.length}</h2>
       <p>EOSE (End of Stored Events): {eose ? 'Yes' : 'No'}</p>
-      <p>Subscription active: {isSubscribed ? 'Yes' : 'No'}</p>
       
       {events.map(event => (
         <div key={event.id}>
@@ -39,7 +38,7 @@ function MyComponent() {
 The `useSubscribe` hook accepts the following options:
 
 ```tsx
-const { events, eose, isSubscribed, subscription } = useSubscribe<NDKEvent>(
+const { events, eose, subscription } = useSubscribe<NDKEvent>(
   filters,
   {
     // Whether to wrap the event with the kind-specific class when possible
@@ -68,7 +67,6 @@ const { events, eose, isSubscribed, subscription } = useSubscribe<NDKEvent>(
 
 - `events`: Array of received events
 - `eose`: Boolean flag indicating End of Stored Events
-- `isSubscribed`: Boolean flag indicating if the subscription is active
 - `subscription`: The underlying NDKSubscription object
 
 ## Performance Optimization

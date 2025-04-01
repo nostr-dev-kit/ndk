@@ -168,31 +168,6 @@ describe('Subscribe Store - Advanced Tests', () => {
     });
   });
 
-  describe('subscription cleanup', () => {
-    it('should clean up old subscription when a new one is set', () => {
-      const { setSubscription } = store.getState();
-
-      // Create and set first subscription
-      const sub1 = createMockSubscription();
-      act(() => {
-        setSubscription(sub1);
-      });
-
-      expect(store.getState().isSubscribed).toBe(true);
-      expect(store.getState().subscriptionRef).toBe(sub1);
-
-      // Create and set second subscription
-      const sub2 = createMockSubscription();
-      act(() => {
-        setSubscription(sub2);
-      });
-
-      // Old subscription should be replaced by new one
-      expect(store.getState().subscriptionRef).toBe(sub2);
-      expect(store.getState().isSubscribed).toBe(true);
-    });
-  });
-
   describe('addEvents batch processing', () => {
     it('should efficiently process multiple events with buffering disabled', () => {
       // Create a store with no buffering (immediate updates)

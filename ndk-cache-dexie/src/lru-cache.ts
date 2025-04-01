@@ -13,7 +13,7 @@ export interface CacheOptions<T> {
 }
 
 export class CacheHandler<T> {
-    private cache: LRUCache<string, T> = new LRUCache({ maxSize: 0 });
+    private cache?: LRUCache<string, T>;
     private dirtyKeys: Set<string> = new Set();
     private options: CacheOptions<T>;
     private debug: debug.IDebugger;

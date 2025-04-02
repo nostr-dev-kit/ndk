@@ -8,19 +8,14 @@ import {
 import { useEffect, useMemo, useRef } from 'react';
 import { useStore } from 'zustand';
 import { useShallow } from 'zustand/shallow';
-import { createSubscribeStore, type SubscribeStore, type MuteCriteria } from '../stores/subscribe'; // Import MuteCriteria
+import { createSubscribeStore, type SubscribeStore, type MuteCriteria } from '../stores/subscribe';
+import { isMuted } from '../utils/mute'; // Import the utility function
 import { useNDK } from './ndk';
 // import { useNDKCurrentUser } from './ndk'; // Not strictly needed here if only using session data
-import { useActiveSessionData } from '../session/store';
+import { useUserSession } from '../session';
 
-// Helper function (moved to top to avoid hoisting issues)
-const setHasAnyIntersection = (set1: Set<string>, set2: Set<string>): boolean => {
-  if (set1.size === 0 || set2.size === 0) return false;
-  for (const item of set1) {
-    if (set2.has(item)) return true;
-  }
-  return false;
-};
+// Removed duplicated helper function: setHasAnyIntersection
+// isMuted is now imported from ../utils/mute.ts
 
 /**
  * Extends NDKEvent with a 'from' method to wrap events with a kind-specific handler
@@ -45,11 +40,6 @@ export type UseSubscribeOptions = NDKSubscriptionOptions & {
    * Buffer time in ms, false to disable buffering
    */
   bufferMs?: number | false;
-
-  /**
-   * Optional relay URLs to connect to
-   */
-  relays?: string[];
 
   /**
    * Whether to include events from muted authors (default: false)
@@ -79,7 +69,7 @@ export function useSubscribe<T extends NDKEvent>(
 ) {
   const { ndk } = useNDK();
   // const currentUser = useNDKCurrentUser(); // Not strictly needed if only using session data
-  const activeSessionData = useActiveSessionData();
+  const activeSessionData = useUserSession();
 
   // Extract and prepare mute criteria from active session for performance
   const muteCriteria = useMemo((): MuteCriteria => {
@@ -126,21 +116,11 @@ export function useSubscribe<T extends NDKEvent>(
         
     // Helper function to set up event handlers and start subscription
     const setupSubscription = () => {
-      // Create relay set if needed
-      let relaySet: NDKRelaySet | undefined;
-      if (opts?.relays && opts?.relays.length > 0) {
-        relaySet = NDKRelaySet.fromRelayUrls(opts?.relays, ndk);
-      }
-      
       // Create subscription - we know filters is not false here
       // because of the check above, but we need to tell TypeScript
       const currentFilters = filters as NDKFilter[];
-      const sub = ndk.subscribe(currentFilters, opts, relaySet, false);
-      subRef.current = sub;
-      // store.getState().setSubscription(sub); // Removed call
-      
-      // Set up event handler that respects deleted flag
-      sub.on('event', (event: NDKEvent) => {
+      // Define handler for individual events (received after initial cache load if onEvents is used)
+      const handleEvent = (event: NDKEvent) => { // Renamed back to handleEvent
         // Skip deleted events if includeDeleted is false
         if (!opts.includeDeleted && event.hasTag('deleted')) {
           return;
@@ -161,41 +141,58 @@ export function useSubscribe<T extends NDKEvent>(
         // Add event to store
         const state = store.getState();
         state.addEvent(event as T);
-      });
-      
-      // Handle end of stored events
-      sub.on('eose', () => {
-        const state = store.getState();
-        state.setEose();
-      });
-      
-      // Start subscription and handle cached events
-      const cached = sub.start(false);
-      
-      // Process any cached events
-      if (cached && cached.length > 0) {
-        // Filter out deleted and muted events if needed
-        const validEvents = cached.filter((e: NDKEvent) => {
-          if (!opts.includeDeleted && e.hasTag('deleted')) return false;
-          // TODO: Implement WoT filtering if opts.wot is true
-          if (!opts.includeMuted && isMuted(e, muteCriteria)) return false;
-          return true;
-        });
+      };
 
-        if (validEvents.length > 0) {
-          // Add all valid events at once
-          const state = store.getState();
-          state.addEvents(validEvents as T[]);
-          
-          // Set up deleted handlers for each event
-          for (const evt of validEvents) {
-            evt.once('deleted', () => {
-              const state = store.getState();
-              state.removeEventId(evt.tagId());
-            });
+      // Define handler for the initial batch of events from the cache
+      const handleCachedEvents = (events: NDKEvent[]) => { // Renamed parameter
+        if (events && events.length > 0) {
+          // Filter out deleted and muted events if needed from the cached batch
+          const validEvents = events.filter((e: NDKEvent) => {
+            if (!opts.includeDeleted && e.hasTag('deleted')) return false;
+            // TODO: Implement WoT filtering if opts.wot is true
+            if (!opts.includeMuted && isMuted(e, muteCriteria)) return false;
+            return true;
+          });
+
+          if (validEvents.length > 0) {
+            // Add all valid events at once
+            const state = store.getState();
+            state.addEvents(validEvents as T[]);
+
+            // Set up deleted handlers for each event
+            for (const evt of validEvents) {
+              evt.once('deleted', () => {
+                const state = store.getState();
+                state.removeEventId(evt.tagId());
+              });
+            }
           }
         }
-      }
+      };
+
+      // Define handler for EOSE
+      const handleEose = () => {
+        const state = store.getState();
+        state.setEose();
+      };
+
+      // Create subscription, passing handlers directly
+      const sub = ndk.subscribe(
+        currentFilters,
+        opts,
+        { // autoStart object with handlers
+          onEvent: handleEvent, // Use the renamed handler
+          onEvents: handleCachedEvents,
+          onEose: handleEose,
+        }
+      );
+      subRef.current = sub;
+
+      // Old logic removed:
+      // - sub.on('event', ...)
+      // - sub.on('eose', ...)
+      // - sub.start(false)
+      // - Processing of `cached` variable
     };
     
     // Set up subscription
@@ -209,7 +206,7 @@ export function useSubscribe<T extends NDKEvent>(
         subRef.current = null;
       }
     };
-  }, [ndk, muteCriteria, store, opts.includeDeleted, opts.includeMuted, opts.relays, filters, ...dependencies]); // Updated dependencies
+  }, [ndk, muteCriteria, store, opts.includeDeleted, opts.includeMuted, opts.relaySet, opts.relayUrls, filters, ...dependencies]); // Updated dependencies
 
   // Effect to filter existing events when mute list changes
   useEffect(() => {
@@ -247,22 +244,5 @@ export function useSubscribe<T extends NDKEvent>(
 }
 
 
-// Helper function to check if an event is muted based on criteria
-// (Adapted from ndk-mobile's useMuteFilter logic)
-const isMuted = (event: NDKEvent, criteria: MuteCriteria): boolean => {
-  const { mutedPubkeys, mutedEventIds, mutedHashtags, mutedWordsRegex } = criteria;
-
-  // Basic checks first for performance
-  if (mutedPubkeys.has(event.pubkey)) return true;
-  if (mutedWordsRegex && event.content && event.content.match(mutedWordsRegex)) return true;
-
-  // Check tags only if necessary
-  const tags = new Set(event.getMatchingTags("t").map((tag) => tag[1].toLowerCase()));
-  if (setHasAnyIntersection(mutedHashtags, tags)) return true;
-
-  const taggedEvents = new Set(event.getMatchingTags("e").map((tag) => tag[1]));
-  taggedEvents.add(event.id); // Include the event's own ID
-  if (setHasAnyIntersection(mutedEventIds, taggedEvents)) return true;
-
-  return false;
-};
+// Removed duplicated helper function: isMuted
+// It is now imported from ../utils/mute.ts

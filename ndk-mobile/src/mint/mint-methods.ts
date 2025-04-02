@@ -16,7 +16,6 @@ import { nowSeconds } from "../utils/time.js";
  */
 export function getMintInfo(this: NDKCacheAdapterSqlite, url: string): MintInfoResponse | null {
     try {
-        if (!this.ready) return null;
 
         const res = this.db.getFirstSync("SELECT payload FROM mint_info WHERE url = ?", [url]) as
             | { payload: string }
@@ -37,7 +36,6 @@ export function getMintInfo(this: NDKCacheAdapterSqlite, url: string): MintInfoR
  */
 export function getMintInfoRecord(this: NDKCacheAdapterSqlite, url: string): StoredMintInfo | null {
     try {
-        if (!this.ready) return null;
 
         const res = this.db.getFirstSync(
             "SELECT url, payload, created_at, updated_at FROM mint_info WHERE url = ?",
@@ -71,7 +69,6 @@ export function getMintInfoRecord(this: NDKCacheAdapterSqlite, url: string): Sto
  */
 export function getAllMintInfo(this: NDKCacheAdapterSqlite): StoredMintInfo[] {
     try {
-        if (!this.ready) return [];
 
         const results = this.db.getAllSync(
             "SELECT url, payload, created_at, updated_at FROM mint_info"
@@ -104,7 +101,6 @@ export function setMintInfo(
     url: string,
     payload: MintInfoResponse
 ): void {
-    if (!this.ready) return;
 
     try {
         const now = nowSeconds();
@@ -130,27 +126,12 @@ export function setMintInfo(
 }
 
 /**
- * Deletes mint information from the database
- * @param url - The URL of the mint to delete
- */
-export function deleteMintInfo(this: NDKCacheAdapterSqlite, url: string): void {
-    if (!this.ready) return;
-
-    try {
-        this.db.runSync("DELETE FROM mint_info WHERE url = ?", [url]);
-    } catch (e) {
-        console.error("Error deleting mint info", e);
-    }
-}
-
-/**
  * Gets all mint keys for a specific mint URL
  * @param url - The URL of the mint
  * @returns Array of mint keys
  */
 export function getMintKeys(this: NDKCacheAdapterSqlite, url: string): MintKeys[] {
     try {
-        if (!this.ready) return [];
 
         const results = this.db.getAllSync("SELECT payload FROM mint_keys WHERE url = ?", [
             url,
@@ -175,7 +156,6 @@ export function getMintKeyset(
     keysetId: string
 ): MintKeys | null {
     try {
-        if (!this.ready) return null;
 
         const res = this.db.getFirstSync(
             "SELECT payload FROM mint_keys WHERE url = ? AND keyset_id = ?",
@@ -202,7 +182,6 @@ export function getMintKeysetRecord(
     keysetId: string
 ): StoredMintKeys | null {
     try {
-        if (!this.ready) return null;
 
         const res = this.db.getFirstSync(
             `SELECT url, keyset_id, payload, created_at, updated_at 
@@ -239,7 +218,6 @@ export function getMintKeysetRecord(
  */
 export function getAllMintKeysets(this: NDKCacheAdapterSqlite): StoredMintKeys[] {
     try {
-        if (!this.ready) return [];
 
         const results = this.db.getAllSync(
             "SELECT url, keyset_id, payload, created_at, updated_at FROM mint_keys"
@@ -276,7 +254,6 @@ export function setMintKeys(
     keysetId: string,
     keys: MintKeys
 ): void {
-    if (!this.ready) return;
 
     try {
         const now = nowSeconds();
@@ -292,34 +269,5 @@ export function setMintKeys(
         );
     } catch (e) {
         console.error("Error setting mint keys", e);
-    }
-}
-
-/**
- * Deletes all keysets for a specific mint
- * @param url - The URL of the mint
- */
-export function deleteMintKeysets(this: NDKCacheAdapterSqlite, url: string): void {
-    if (!this.ready) return;
-
-    try {
-        this.db.runSync("DELETE FROM mint_keys WHERE url = ?", [url]);
-    } catch (e) {
-        console.error("Error deleting mint keysets", e);
-    }
-}
-
-/**
- * Deletes a specific keyset
- * @param url - The URL of the mint
- * @param keysetId - The ID of the keyset to delete
- */
-export function deleteMintKeyset(this: NDKCacheAdapterSqlite, url: string, keysetId: string): void {
-    if (!this.ready) return;
-
-    try {
-        this.db.runSync("DELETE FROM mint_keys WHERE url = ? AND keyset_id = ?", [url, keysetId]);
-    } catch (e) {
-        console.error("Error deleting mint keyset", e);
     }
 }

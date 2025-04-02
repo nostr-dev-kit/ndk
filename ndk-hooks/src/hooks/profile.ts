@@ -18,7 +18,7 @@ import {
  */
 export function useProfile(pubkey: Hexpubkey | undefined, forceRefresh?: boolean): NDKUserProfile | undefined {
     const activeSessionPubkey = useNDKSessions(state => state.activeSessionPubkey);
-    const currentUserProfile = useCurrentUserProfile(); // Get current user profile unconditionally
+    const currentUserProfile = useCurrentUserProfile();
 
     // Delegate if pubkey matches active user AND forceRefresh is not requested
     if (pubkey && pubkey === activeSessionPubkey && !forceRefresh) {

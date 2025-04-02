@@ -1,32 +1,35 @@
 {
     "name": "@nostr-dev-kit/ndk-mobile",
-    "version": "0.4.5-rc4",
+    "version": "0.5.0",
     "description": "NDK Mobile",
     "private": false,
     "license": "MIT",
     "peerDependencies": {
+        "@cashu/cashu-ts": "^2",
         "expo": "^52",
         "expo-nip55": "*",
-        "expo-sqlite": "^15",
-        "@cashu/cashu-ts": "^2"
+        "expo-sqlite": "^15"
     },
     "devDependencies": {
         "babel-preset-expo": "^12.0.9",
-        "expo-sqlite": "^15.1.2",
+        "expo-sqlite": "^15.1.4",
         "react-native-builder-bob": "^0.35.2",
-        "typescript": "^5.7.2",
-        "@testing-library/react-hooks": "^8.0.1"
+        "typescript": "^5.8.2"
     },
-    "keywords": ["ndk", "nostr", "react-native", "expo"],
+    "keywords": [
+        "ndk",
+        "nostr",
+        "react-native",
+        "expo"
+    ],
     "dependencies": {
         "@bacons/text-decoder": "^0.0.0",
         "@nostr-dev-kit/ndk": "workspace:*",
-        "@nostr-dev-kit/ndk-wallet": "workspace:*",
         "@nostr-dev-kit/ndk-hooks": "workspace:*",
+        "@nostr-dev-kit/ndk-wallet": "workspace:*",
         "react-native-get-random-values": "~1.11.0",
         "typescript-lru-cache": "^2.0.0",
-        "zustand": "^5.0.2",
-        "react": "^18.3.0"
+        "zustand": "^5.0.2"
     },
     "source": "./src/index.ts",
     "type": "module",
@@ -53,12 +56,18 @@
         }
     },
     "scripts": {
-        "prepare": "cd ../ndk-wallet && pnpm build && cd ../ndk-mobile && bob build",
+        "build": "bob build",
         "test": "vitest run",
         "test:watch": "vitest",
         "test:coverage": "vitest run --coverage"
     },
-    "files": ["src", "dist", "!**/__tests__", "!**/__fixtures__", "!**/__mocks__"],
+    "files": [
+        "src",
+        "dist",
+        "!**/__tests__",
+        "!**/__fixtures__",
+        "!**/__mocks__"
+    ],
     "react-native-builder-bob": {
         "source": "src",
         "output": "dist",
@@ -67,18 +76,29 @@
                 "module",
                 {
                     "esm": true,
-                    "exclude": ["**/__tests__/**", "**/__mocks__/**", "**/__fixtures__/**"]
+                    "exclude": [
+                        "**/__tests__/**",
+                        "**/__mocks__/**",
+                        "**/__fixtures__/**"
+                    ]
                 }
             ],
             [
                 "typescript",
                 {
                     "esm": true,
-                    "exclude": ["**/__tests__/**", "**/__mocks__/**", "**/__fixtures__/**"],
+                    "exclude": [
+                        "**/__tests__/**",
+                        "**/__mocks__/**",
+                        "**/__fixtures__/**"
+                    ],
                     "project": "tsconfig.build.json"
                 }
             ]
         ]
     },
-    "eslintIgnore": ["node_modules/", "dist/"]
+    "eslintIgnore": [
+        "node_modules/",
+        "dist/"
+    ]
 }

@@ -1,6 +1,6 @@
 // types.ts - Type definitions for session data using Zustand
 import type NDK from "@nostr-dev-kit/ndk";
-import type { NDKEvent, NDKUser, NDKUserProfile } from "@nostr-dev-kit/ndk";
+import type { Hexpubkey, NDKEvent, NDKKind, NDKUser, NDKUserProfile } from "@nostr-dev-kit/ndk";
 
 /**
  * User-specific session data stored within the main store.
@@ -8,16 +8,26 @@ import type { NDKEvent, NDKUser, NDKUserProfile } from "@nostr-dev-kit/ndk";
 export interface UserSessionData {
     userPubkey: string; // User's public key (primary identifier)
     ndk?: NDK; // NDK instance for this user
-    follows?: string[]; // User's follows (pubkeys)
     relays?: string[]; // User's preferred relays
-    muteListEvent?: NDKEvent; // The raw mute list event
+    // muteListEvent?: NDKEvent; // Removed: Now stored in replaceableEvents[10000]
     mutedPubkeys: Set<string>; // Pubkeys muted by this user
     mutedHashtags: Set<string>; // Hashtags muted by this user
     mutedWords: Set<string>; // Words muted by this user
     mutedEventIds: Set<string>; // Event IDs muted by this user
-    // events: Map<number, NDKEvent[]>; // Removed - Events fetched for this user, keyed by kind
+
+    profile?: NDKUserProfile;
+    followSet?: Set<Hexpubkey>; // Set of followed pubkeys
+    // contactsEvent?: NDKEvent; // Removed: Now stored in replaceableEvents[3]
+
+    /**
+     * Events that are unique per kind, part of the session;
+     * we will keep a subscription permanently opened monitoring this
+     * event kinds
+     */
+    replaceableEvents: Map<NDKKind, NDKEvent | null>;
+
     lastActive: number; // Timestamp of last activity
-    profile?: NDKUserProfile; // User profile metadata
+    
     // Add other user-specific fields as needed, e.g., wot scores
     wot?: Map<string, number>;
 }
@@ -39,14 +49,12 @@ export interface SessionState {
     setActiveSession: (pubkey: string | null) => void;
     getSession: (pubkey: string) => UserSessionData | undefined;
     getActiveSession: () => UserSessionData | undefined;
-    // addEventToSession: (pubkey: string, event: NDKEvent) => void; // Removed
     muteItemForSession: (
         pubkey: string,
         value: string,
         itemType: "pubkey" | "hashtag" | "word" | "event",
         publish?: boolean,
     ) => void;
-    setMuteListForSession: (pubkey: string, muteListEvent: NDKEvent) => void;
     initSession: (
         ndk: NDK,
         user: NDKUser,
@@ -59,8 +67,9 @@ export interface SessionState {
  * Session initialization options
  */
 export interface SessionInitOptions {
-    fetchProfiles?: boolean; // Fetch user profile metadata
-    fetchFollows?: boolean; // Fetch user follows list
-    fetchMuteList?: boolean; // Fetch user mute list
+    profile?: boolean; // Fetch user profile metadata
+    follows?: boolean; // Fetch user follows list
+    muteList?: boolean; // Fetch user mute list
+    events?: Map<NDKKind, { wrap?: { from: (event: NDKEvent) => NDKEvent } }>; // Map of kinds to fetch with optional wrapper class
     autoSetActive?: boolean; // Automatically set this session as active upon creation
 }

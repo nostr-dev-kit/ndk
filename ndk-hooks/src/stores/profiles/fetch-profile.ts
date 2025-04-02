@@ -9,13 +9,22 @@ export const fetchProfileImplementation = (
     force?: boolean
 ) => {
     const { ndk, profiles } = get();
-    if (!ndk || !pubkey) return;
+    if (!ndk || !pubkey) {
+        console.log('[PROFILE STORE FETCH] ndk?', !!ndk)
+        console.log('[PROFILE STORE FETCH] pubkey?', !!pubkey)
+        return;
+    }
     
     const currentProfile = profiles.get(pubkey);
-    if (currentProfile && !force) return;
+    if (currentProfile && !force) {
+        console.log('[PROFILE STORE] we already have one', {pubkey, currentProfile })
+        return;
+    }
     
     const user = ndk.getUser({ pubkey: pubkey });
+    console.log('[PROFILE STORE] fetching', pubkey)
     user.fetchProfile().then((profile) => {
+        console.log('got a profile?', {pubkey, profile: !!profile})
         set((state) => {
             const profiles = new Map(state.profiles);
             if (profile) profiles.set(pubkey, profile);

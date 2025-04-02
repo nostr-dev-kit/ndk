@@ -81,11 +81,12 @@ class NDKSvelte extends NDK {
         };
 
         // Create the subscription
+        // The relaySet, if provided, is already within the opts object
         const subscription = this.subscribe(
             Array.isArray(filters) ? filters : [filters],
-            opts,
-            opts?.relaySet,
-            false
+            opts, // opts already contains relaySet if it was passed
+            // opts?.relaySet, // Removed: Passed via opts
+            false // autoStart = false
         );
 
         // Handle incoming events

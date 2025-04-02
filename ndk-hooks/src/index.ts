@@ -3,7 +3,10 @@
  * 
  * React hooks for the NDK (Nostr Development Kit)
  */
-export * from "@nostr-dev-kit/ndk"; // Re-export core NDK types and classes
+import NDK from "@nostr-dev-kit/ndk";
+export * from "@nostr-dev-kit/ndk";
+
+export default NDK;
 
 export * from './hooks/session';
 // (No NDK type exports here)
@@ -16,6 +19,7 @@ export { useNDKWallet, useNDKNutzapMonitor } from "./hooks/wallet";
 export * from './hooks/ndk';
 export * from './hooks/subscribe';
 export * from './hooks/useAvailableSessions';
+export { useMuteFilter, useMuteItem } from './hooks/mute'; // Added useMuteItem
 
 // Export stores
 export * from './stores/profiles';

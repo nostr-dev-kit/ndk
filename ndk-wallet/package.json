@@ -27,7 +27,11 @@
         "type": "git",
         "url": "git+https://github.com/nostr-dev-kit/ndk.git"
     },
-    "keywords": ["nostr", "cashu", "ecash"],
+    "keywords": [
+        "nostr",
+        "cashu",
+        "ecash"
+    ],
     "author": "pablof7z",
     "license": "MIT",
     "bugs": {
@@ -43,7 +47,7 @@
         "debug": "^4.3.4",
         "light-bolt11-decoder": "^3.0.0",
         "tseep": "^1.1.1",
-        "typescript": "^5.4.4",
+        "typescript": "^5.8.2",
         "webln": "^0.3.2"
     },
     "devDependencies": {
@@ -51,12 +55,9 @@
         "@cashu/crypto": "0.3.4",
         "@nostr-dev-kit/ndk-test-utils": "workspace:*",
         "@nostr-dev-kit/tsconfig": "workspace:*",
-        "@types/debug": "^4.1.7",
-        "@types/node": "^18.15.11",
         "@webbtc/webln-types": "^3.0.0",
         "nock": "^13.5.6",
-        "ts-node": "^10.9.2",
-        "tsup": "^7.2.0",
+        "tsup": "^8.4.0",
         "vitest": "^3.0.7"
     }
 }

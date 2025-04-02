@@ -72,8 +72,8 @@ export class NDKNostrRpc extends EventEmitter {
                 groupable: false,
                 cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY,
                 pool: this.pool,
+                relaySet: this.relaySet,
             },
-            this.relaySet,
             false
         );
 

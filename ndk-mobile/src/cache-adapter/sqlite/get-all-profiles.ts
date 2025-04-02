@@ -6,8 +6,6 @@ import type { NDKCacheAdapterSqlite, NDKSqliteProfileRecord } from "./index.js";
  * @returns A map of pubkeys to profiles
  */
 export function getAllProfilesSync(this: NDKCacheAdapterSqlite): Map<Hexpubkey, NDKCacheEntry<NDKUserProfile>> {
-    if (!this.ready) return new Map();
-    
     const profiles = new Map<Hexpubkey, NDKCacheEntry<NDKUserProfile>>();
     
     try {

@@ -22,15 +22,6 @@ export async function getAllNutzapStates(
 ): Promise<Map<NDKEventId, NDKNutzapState>> {
     const result = new Map<NDKEventId, NDKNutzapState>();
 
-    // Ensure the adapter is ready before querying
-    await new Promise<void>((resolve) => {
-        if (this.ready) {
-            resolve();
-        } else {
-            this.onReady(resolve);
-        }
-    });
-
     const nutzaps = (await this.db.getAllAsync(
         "SELECT * FROM nutzap_monitor_state"
     )) as NutzapMonitorRow[];

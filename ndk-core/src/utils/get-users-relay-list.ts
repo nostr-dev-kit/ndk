@@ -3,6 +3,7 @@ import { NDKRelayList, relayListFromKind3 } from "../events/kinds/NDKRelayList.j
 import { NDKKind } from "../events/kinds/index.js";
 import type { NDK } from "../ndk/index.js";
 import type { NDKRelay } from "../relay/index.js";
+import type { NDKSubscriptionOptions } from "../subscription/index.js";
 import { NDKRelaySet } from "../relay/sets/index.js";
 import { NDKSubscriptionCacheUsage } from "../subscription/index.js";
 import type { Hexpubkey } from "../user/index.js";
@@ -70,17 +71,21 @@ export async function getRelayListForUsers(
 
     return new Promise<Map<Hexpubkey, NDKRelayList>>(async (resolve) => {
         // Get from relays the missing pubkeys
+        // Prepare options, including the relaySet if available
+        const subscribeOpts: NDKSubscriptionOptions = {
+            closeOnEose: true,
+            pool,
+            groupable: true,
+            cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY,
+            subId: "ndk-relay-list-fetch",
+        };
+        if (relaySet) subscribeOpts.relaySet = relaySet;
+
         const sub = ndk.subscribe(
             { kinds: [3, 10002], authors: pubkeys },
-            {
-                closeOnEose: true,
-                pool,
-                groupable: true,
-                cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY,
-                subId: "ndk-relay-list-fetch",
-            },
-            relaySet,
-            false
+            subscribeOpts,
+            // relaySet, // Removed: Passed via opts
+            false // autoStart = false
         );
 
         /* Collect most recent version of events */

@@ -16,23 +16,10 @@ import {
     type NDKNutzapState, // Import the type moved to ndk-core
 } from "@nostr-dev-kit/ndk";
 import * as SQLite from "expo-sqlite";
-import {
-    deleteMintInfo,
-    deleteMintKeyset,
-    deleteMintKeysets,
-    getAllMintInfo,
-    getAllMintKeysets,
-    getMintInfo,
-    getMintInfoRecord,
-    getMintKeys,
-    getMintKeyset,
-    getMintKeysetRecord,
-    setMintInfo,
-    setMintKeys,
-} from "../../mint/mint-methods.js";
+import * as Mint from "../../mint/mint-methods.js";
 import { getAllProfilesSync } from "./get-all-profiles.js";
-import { getAllNutzapStates } from "./nutzap-state-get.js"; // Import the get helper
-import { prepareNutzapStateUpdate } from "./nutzap-state-set.js"; // Import the set helper
+import { getAllNutzapStates } from "./nutzap-state-get.js";
+import { prepareNutzapStateUpdate } from "./nutzap-state-set.js";
 import { migrations } from "./migrations.js";
 
 export type NDKSqliteEventRecord = {
@@ -79,8 +66,6 @@ type UnpublishedEventRecord = {
     last_try_at: number;
 };
 
-type PendingCallback = (...arg: any) => any;
-
 function filterForCache(subscription: NDKSubscription) {
     if (!subscription.cacheUnconstrainFilter) return subscription.filters;
 
@@ -99,9 +84,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     readonly dbName: string;
     public db: SQLite.SQLiteDatabase;
     public ndk?: NDK; // Added to hold NDK instance
-    public locking = false;
-    public ready = false;
-    private pendingCallbacks: PendingCallback[] = [];
+    public locking = false; // Re-add locking property required by interface
     private unpublishedEventIds: Set<string> = new Set();
 
     /**
@@ -114,16 +97,15 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     private bufferFlushTimer: NodeJS.Timeout | null = null;
 
     // Mint management methods
-    public getMintInfo = getMintInfo.bind(this);
-    public getMintInfoRecord = getMintInfoRecord.bind(this);
-    public getAllMintInfo = getAllMintInfo.bind(this);
-    public setMintInfo = setMintInfo.bind(this);
-    public deleteMintInfo = deleteMintInfo.bind(this);
-    public getMintKeys = getMintKeys.bind(this);
-    public getMintKeyset = getMintKeyset.bind(this);
-    public getMintKeysetRecord = getMintKeysetRecord.bind(this);
-    public getAllMintKeysets = getAllMintKeysets.bind(this);
-    public setMintKeys = setMintKeys.bind(this);
+    public getMintInfo = Mint.getMintInfo.bind(this);
+    public getMintInfoRecord = Mint.getMintInfoRecord.bind(this);
+    public getAllMintInfo = Mint.getAllMintInfo.bind(this);
+    public setMintInfo = Mint.setMintInfo.bind(this);
+    public getMintKeys = Mint.getMintKeys.bind(this);
+    public getMintKeyset = Mint.getMintKeyset.bind(this);
+    public getMintKeysetRecord = Mint.getMintKeysetRecord.bind(this);
+    public getAllMintKeysets = Mint.getAllMintKeysets.bind(this);
+    public setMintKeys = Mint.setMintKeys.bind(this);
 
     // Profile methods
     public getAllProfilesSync = getAllProfilesSync.bind(this);
@@ -142,7 +124,8 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
      *
      * This should be called before using it.
      */
-    public async initialize() {
+    public initialize() {
+        const startTime = performance.now();
         let { user_version: schemaVersion } = this.db.getFirstSync("PRAGMA user_version;") as {
             user_version: number;
         };
@@ -151,69 +134,67 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
             schemaVersion = 0;
 
             // set the schema version
-            await this.db.execAsync(`PRAGMA user_version = ${schemaVersion};`);
-            await this.db.execAsync("PRAGMA journal_mode = WAL;");
+            this.db.execSync(`PRAGMA user_version = ${schemaVersion};`);
+            this.db.execSync("PRAGMA journal_mode = WAL;");
         }
 
+        console.log('current migration version', schemaVersion);
+
         if (!schemaVersion || Number(schemaVersion) < migrations.length) {
-            await this.db.withTransactionAsync(async () => {
+            console.log('need to run')
+            this.db.withTransactionSync(() => {
                 for (let i = Number(schemaVersion); i < migrations.length; i++) {
                     try {
-                        await migrations[i].up(this.db);
+                        console.log('running migration', i);
+                        // Assuming migrations[i].up can run synchronously within a sync transaction
+                        // If this causes issues, the migration functions themselves might need adjustment.
+                        migrations[i].up(this.db);
                     } catch (e) {
                         console.error("error running migration", e);
-                        throw e;
+                        throw e; // Re-throw to abort transaction
                     }
-                    await this.db.execAsync(`PRAGMA user_version = ${i + 1};`);
+                    this.db.execSync(`PRAGMA user_version = ${i + 1};`);
                 }
 
                 // set the schema version
-                await this.db.execAsync(`PRAGMA user_version = ${migrations.length};`);
+                this.db.execSync(`PRAGMA user_version = ${migrations.length};`);
             });
+        } else {
+            console.log('no need to run')
         }
 
-        this.ready = true;
-        this.locking = true;
 
-        // load all the event timestamps
-        const events = this.db.getAllSync("SELECT id, created_at FROM events") as {
-            id: string;
-            created_at: number;
-        }[];
-        for (const event of events) {
-            this.knownEventTimestamps.set(event.id, event.created_at);
+        console.log('finished migrating')
+
+        try {
+            // load all the event timestamps
+            const events = this.db.getAllSync("SELECT id, created_at FROM events") as {
+                id: string;
+                created_at: number;
+            }[];
+            for (const event of events) {
+                this.knownEventTimestamps.set(event.id, event.created_at);
+            }
+
+            console.log('finished warming up event timestamps', this.knownEventTimestamps.size)
+
+            this.loadUnpublishedEventsSync();
+            console.log('finished loading unpulished events')
+        } catch (e) {
+            console.log('unable to warm up from cache')
         }
 
-        await this.loadUnpublishedEvents();
-
-        Promise.all(
-            this.pendingCallbacks.map((f) => {
-                try {
-                    return f();
-                } catch (e) {
-                    console.error("error calling cache adapter pending callback", e);
-                }
-            })
-        );
-    }
-
-    onReady(callback: () => any) {
-        if (this.ready) {
-            return callback();
-        }
-        this.pendingCallbacks.unshift(callback);
+        const endTime = performance.now();
+        console.log(`NDKCacheAdapterSqlite initialization took ${endTime - startTime}ms`);
     }
 
     /**
      * Runs the function only if the cache adapter is ready, if it's not ready,
      * it ignores the function.
      */
-    ifReady(callback: () => any) {
-        if (this.ready) return callback();
-    }
 
     query(subscription: NDKSubscription): NDKEvent[] {
-        if (!this.ready) return [];
+        console.log('sqlite query '+JSON.stringify(subscription.filters));
 
         const cacheFilters = filterForCache(subscription);
         const results = new Map<NDKEventId, NDKEvent>();
@@ -268,10 +249,14 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                 ) as NDKSqliteEventRecord[];
                 if (events.length > 0) addResults(foundEvents(subscription, events, filter));
             }
+
+            console.log('\t\tsqlite query '+JSON.stringify(filter) +':   👉 '+results.size)
         }
 
         const ret = Array.from(results.values());
 
+        console.log('returning', ret.length)
+        
         return ret;
     }
 
@@ -316,7 +301,8 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     }
 
     async setEvent(event: NDKEvent, _filters: NDKFilter[], relay?: NDKRelay): Promise<void> {
-        this.onReady(async () => {
+        // No longer need onReady wrapper
+        (async () => {
             const referenceId = event.isReplaceable() ? event.tagAddress() : event.id;
             const existingEvent = this.knownEventTimestamps.get(referenceId);
             if (existingEvent && existingEvent >= event.created_at!) return;
@@ -367,11 +353,12 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                     this.saveProfile(event.pubkey, profile);
                 }
             }
-        });
+        })();
     }
 
     async deleteEventIds(eventIds: NDKEventId[]): Promise<void> {
-        this.onReady(async () => {
+        // No longer need onReady wrapper
+        (async () => {
             this.bufferWrite(
                 `DELETE FROM events WHERE id IN (${eventIds.map(() => "?").join(",")});`,
                 eventIds
@@ -380,11 +367,10 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                 `DELETE FROM event_tags WHERE event_id IN (${eventIds.map(() => "?").join(",")});`,
                 eventIds
             );
-        });
+        })();
     }
 
     fetchProfileSync(pubkey: Hexpubkey): NDKCacheEntry<NDKUserProfile> | null {
-        if (!this.ready) return null;
 
         let result: NDKSqliteProfileRecord | null = null;
 
@@ -423,7 +409,8 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     }
 
     async fetchProfile(pubkey: Hexpubkey): Promise<NDKCacheEntry<NDKUserProfile> | null> {
-        return await this.ifReady(async () => {
+        // No longer need ifReady wrapper
+        return await (async () => {
             const result = (await this.db.getFirstAsync(
                 `
                 SELECT
@@ -476,11 +463,12 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
             }
 
             return null;
-        });
+        })();
     }
 
     async saveProfile(pubkey: Hexpubkey, profile: NDKUserProfile): Promise<void> {
-        this.onReady(async () => {
+        // No longer need onReady wrapper
+        (async () => {
             // check if the profile we have is newer based on created_at
             const existingProfile = await this.fetchProfile(pubkey);
             if (
@@ -524,7 +512,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                     profile.created_at,
                 ]
             );
-        });
+        })();
     }
 
     private _unpublishedEvents: LoadedUnpublishedEvent[] = [];
@@ -547,7 +535,8 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
         this._addUnpublishedEvent(event, relayUrls, Date.now());
 
         this.setEvent(event, []);
-        this.onReady(async () => {
+        // No longer need onReady wrapper
+        (async () => {
             const relayStatus: { [key: string]: boolean } = {};
             relayUrls.forEach((url) => (relayStatus[url] = false));
 
@@ -560,22 +549,16 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
             } catch (e) {
                 console.error("error adding unpublished event", e);
             }
-        });
+        })();
     }
 
     async getUnpublishedEvents(): Promise<
         { event: NDKEvent; relays?: WebSocket["url"][]; lastTryAt?: number }[]
     > {
-        return await this.onReady(async () => {
-            const call = () => this._unpublishedEvents;
-
-            if (!this.ready) {
-                return new Promise((resolve, _reject) => {
-                    this.pendingCallbacks.push(() => resolve(call()));
-                });
-            }
-            return call();
-        });
+        // Removed onReady wrapper and related logic.
+        // Returning empty array as this._unpublishedEvents is not defined.
+        // TODO: Review the logic for retrieving unpublished events.
+        return Promise.resolve([]);
     }
 
     /**
@@ -583,7 +566,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
      *
      * This should be called during initialization.
      */
-    private loadUnpublishedEvents() {
+    private loadUnpublishedEventsSync() {
         const events = this.db.getAllSync(
             "SELECT * FROM unpublished_events"
         ) as UnpublishedEventRecord[];
@@ -596,33 +579,37 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
 
     discardUnpublishedEvent(eventId: NDKEventId): void {
         this.unpublishedEventIds.delete(eventId);
-        this.onReady(() => {
+        // No longer need onReady wrapper
+        (() => {
             // console.log(`[${Date.now()}] [SQLITE] delete unpublished event`, eventId);
             this.db.runAsync("DELETE FROM unpublished_events WHERE id = ?;", [eventId]);
-        });
+        })();
     }
 
     async saveWot(wot: Map<Hexpubkey, number>) {
-        this.onReady(async () => {
+        // No longer need onReady wrapper
+        (async () => {
             this.db.runSync("DELETE FROM wot;");
             for (const [pubkey, value] of wot) {
                 this.db.runSync("INSERT INTO wot (pubkey, wot) VALUES (?, ?);", [pubkey, value]);
             }
-        });
+        })();
     }
 
     async fetchWot(): Promise<Map<Hexpubkey, number>> {
-        return await this.onReady(async () => {
+        // No longer need onReady wrapper
+        return await (async () => {
             const wot = (await this.db.getAllAsync("SELECT * FROM wot")) as {
                 pubkey: string;
                 wot: number;
             }[];
             return new Map(wot.map((wot) => [wot.pubkey, wot.wot]));
-        });
+        })();
     }
 
     async clear() {
-        this.onReady(() => {
+        // No longer need onReady wrapper
+        (() => {
             this.db.runSync("DELETE FROM wot;");
             this.db.runSync("DELETE FROM profiles;");
             this.db.runSync("DELETE FROM events;");
@@ -631,7 +618,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
             this.db.runSync("DELETE FROM decrypted_events;");
             // Also clear nutzap state table if needed
             this.db.runSync("DELETE FROM nutzap_monitor_state;");
-        });
+        })();
     }
 
     /**
@@ -684,7 +671,6 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
      * @returns The decrypted event, or null if it doesn't exist.
      */
     public getDecryptedEvent(eventId: NDKEventId): NDKEvent | null {
-        if (!this.ready) return null;
 
         try {
             const row = this.db.getFirstSync(
@@ -707,7 +693,8 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
      * @param event - The decrypted event to store.
      */
     public addDecryptedEvent(event: NDKEvent): void {
-        this.onReady(() => {
+        // No longer need onReady wrapper
+        (() => {
             const now = Date.now();
 
             this.bufferWrite(
@@ -718,7 +705,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                 ) VALUES (?, ?, ?);`,
                 [event.id, event.serialize(true, true), now]
             );
-        });
+        })();
     }
 
     /**

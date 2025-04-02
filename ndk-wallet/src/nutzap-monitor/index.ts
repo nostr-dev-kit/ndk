@@ -1,20 +1,22 @@
+// Removed duplicate import line
 import type { CashuWallet, Proof } from "@cashu/cashu-ts";
 import type NDK from "@nostr-dev-kit/ndk";
 import {
+    NDKKind,
+    NDKNutzap,
+    NDKPrivateKeySigner,
+    NDKSubscriptionCacheUsage, // Import value
+    cashuPubkeyToNostrPubkey,
+    proofP2pk,
+    // Types
     type NDKCashuMintList,
     type NDKEvent,
     type NDKEventId,
     type NDKFilter,
-    NDKKind,
-    NDKNutzap,
-    NDKPrivateKeySigner,
     type NDKRelaySet,
     type NDKSubscription,
-    NDKSubscriptionCacheUsage,
     type NDKSubscriptionOptions,
     type NDKUser,
-    cashuPubkeyToNostrPubkey,
-    proofP2pk,
 } from "@nostr-dev-kit/ndk";
 import { NdkNutzapStatus } from "@nostr-dev-kit/ndk";
 import type { NDKNutzapState } from "@nostr-dev-kit/ndk";
@@ -296,20 +298,24 @@ export class NDKNutzapMonitor
 
         log(`Running filter ${JSON.stringify(monitorFilter)}`);
 
+        // Prepare options, including the relaySet
+        const subscribeOpts: NDKSubscriptionOptions = {
+            subId: "ndk-wallet:nutzap-monitor",
+            cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY,
+            wrap: false,
+            // We skip validation so the user knows about nutzaps that were sent but are not valid
+            // this way tooling can be more comprehensive and include nutzaps that were not valid
+            skipValidation: true,
+            ...opts,
+            relaySet: this.relaySet, // Pass relaySet via options
+        };
+
         this.sub = this.ndk.subscribe(
             monitorFilter,
-            {
-                subId: "ndk-wallet:nutzap-monitor",
-                cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY,
-                wrap: false,
-                // We skip validation so the user knows about nutzaps that were sent but are not valid
-                // this way tooling can be more comprehensive and include nutzaps that were not valid
-                skipValidation: true,
-                ...opts,
-            },
-            this.relaySet,
-            {
-                onEvent: (event) => this.eventHandler(event),
+            subscribeOpts,
+            // this.relaySet, // Removed: Passed via opts
+            { // autoStart handlers (now 3rd argument)
+                onEvent: (event: NDKEvent) => this.eventHandler(event), // Added NDKEvent type
             }
         );
 

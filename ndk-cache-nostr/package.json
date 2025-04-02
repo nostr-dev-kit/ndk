@@ -35,7 +35,7 @@
     "dependencies": {
         "@nostr-dev-kit/ndk": "workspace:*",
         "debug": "^4.3.4",
-        "typescript": "^5.4.4",
+        "typescript": "^5.8.2",
         "websocket-polyfill": "^0.0.3"
     },
     "devDependencies": {

@@ -16,17 +16,7 @@ export async function prepareNutzapStateUpdate(
     id: NDKEventId,
     stateChange: Partial<NDKNutzapState>
 ): Promise<QueryDetails | null> {
-    // Ensure the adapter is ready before proceeding
-    let isReady = this.ready;
-    if (!isReady) {
-        await new Promise<void>((resolve) => this.onReady(resolve));
-        isReady = this.ready; // Re-check readiness after waiting
-    }
-
-    if (!isReady) {
-        console.warn("NDKCacheAdapterSqlite not ready, skipping nutzap state update.");
-        return null; // Indicate that the operation cannot proceed
-    }
+    // Readiness checks removed as initialization is now synchronous.
 
 
     const now = Math.floor(Date.now() / 1000);

@@ -102,7 +102,6 @@ export function useObserver<T extends NDKEvent>(
                 wrap: true,
                 ...opts, // Allow overriding defaults
             },
-            undefined,
             false
         );
 

@@ -7,4 +7,6 @@ export * from "./cache-adapter/sqlite/search-profiles.js";
 export * from "./components/index.js";
 export * from "./types/cashu.js";
 export * from "./signers/nip55.js";
+import NDK from "@nostr-dev-kit/ndk-hooks";
 export * from "@nostr-dev-kit/ndk-hooks";
+export default NDK;

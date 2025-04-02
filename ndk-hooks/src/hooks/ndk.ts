@@ -1,7 +1,7 @@
-import { useMemo, useCallback, useEffect, useRef, useState } from 'react'; // Added react hooks
+import { useMemo, useCallback, useEffect, useRef, useState } from 'react';
 import { useNDKStore, type NDKStoreState } from '../stores/ndk';
-import type NDK from '@nostr-dev-kit/ndk';
-import type { NDKEvent, NDKPublishError } from "@nostr-dev-kit/ndk"; // Added types
+import { useUserProfilesStore, UserProfilesStore } from '../stores/profiles'; // Added profile store import
+import NDK, { type NDKEvent, type NDKPublishError } from "@nostr-dev-kit/ndk"; // Consolidated NDK import
 
 /**
  * Interface for the useNDK hook return value
@@ -23,7 +23,7 @@ export const useNDK = (): UseNDKResult => {
   const switchToUser = useNDKStore((state) => state.switchToUser);
 
   // Memoize the result to ensure reference stability between renders
-  return useMemo(() => ({ ndk, setNDK, addSigner, switchToUser }), [ndk, setNDK, addSigner, switchToUser]);
+  return useMemo(() => ({ ndk: ndk!, setNDK, addSigner, switchToUser }), [ndk, setNDK, addSigner, switchToUser]);
 };
 
 
@@ -103,4 +103,42 @@ export function useNDKUnpublishedEvents() {
     }, [ndk, updateStateFromCache]);
 
     return unpublishedEvents;
+}
+
+
+/**
+ * Hook to initialize the NDK instance and related stores.
+ *
+ * This hook provides a function to set the NDK instance in the NDK store
+ * and subsequently initialize other dependent stores like the user profiles store.
+ *
+ * @returns An initialization function `initializeNDK`.
+ */
+export function useNDKInit() {
+    const setNDK = useNDKStore((state) => state.setNDK);
+    // Get the initialize action from the profiles store
+    const initializeProfilesStore = useUserProfilesStore((state: UserProfilesStore) => state.initialize);
+
+    /**
+     * Initializes the NDK instance and dependent stores.
+     * @param ndkInstance The configured NDK instance to use.
+     */
+    const initializeNDK = useCallback((ndkInstance: NDK) => {
+        if (!ndkInstance) {
+            console.error("useNDKInit: Attempted to initialize with a null NDK instance.");
+            return;
+        }
+
+        console.log("Initializing NDK instance...");
+        setNDK(ndkInstance);
+
+        // Initialize the profiles store, passing the NDK instance
+        console.log("Initializing User Profiles store...");
+        initializeProfilesStore(ndkInstance);
+
+        console.log("NDK and dependent stores initialized.");
+
+    }, [setNDK, initializeProfilesStore]);
+
+    return initializeNDK;
 }

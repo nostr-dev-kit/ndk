@@ -4,9 +4,9 @@ import {
     type NDKSubscription,
     NDKSubscriptionCacheUsage,
     type NDKSubscriptionOptions,
-} from '@nostr-dev-kit/ndk'; // Core NDK types
+} from '@nostr-dev-kit/ndk';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useNDK } from './ndk'; // Import hook from local file
+import { useNDK } from './ndk';
 
 /**
  * Subscribes to NDK events based on the provided filters and returns the matching events.
@@ -52,7 +52,6 @@ export function useObserver<T extends NDKEvent>(
     const bufferTimeout = useRef<NodeJS.Timeout | null>(null);
     const addedEventIds = useRef(new Set<string>());
 
-    // Push a dependency so the effect re-runs if filters change.
     dependencies.push(!!filters);
 
     const stopFilters = useCallback(() => {
@@ -73,7 +72,6 @@ export function useObserver<T extends NDKEvent>(
         let isValid = true;
         if (sub.current) stopFilters();
 
-        // Helper to process each event with deduplication and buffering.
         const processEvent = (event: NDKEvent) => {
             if (!isValid) return;
             const tagId = event.tagId();
@@ -85,44 +83,38 @@ export function useObserver<T extends NDKEvent>(
                     setEvents((prev) => [...prev, ...buffer.current]);
                     buffer.current = [];
                     bufferTimeout.current = null;
-                }, 50); // Buffer events for 50ms
+                }, 50);
             }
         };
 
-        // Create the subscription.
         sub.current = ndk.subscribe(
             filters,
             {
-                // Default options optimized for observer-like behavior
                 skipVerification: true,
                 closeOnEose: true,
                 cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE,
-                groupable: false, // Ensure individual event handling
-                subId: 'observer-hook', // Generic subId for the hook
+                groupable: false,
+                subId: 'observer-hook',
                 wrap: true,
-                ...opts, // Allow overriding defaults
+                ...opts,
             },
             false
         );
 
-        // Process asynchronous events.
         if (sub.current) {
             sub.current.on('event', (event) => {
                 if (!isValid) return;
                 processEvent(event);
             });
-        } // Closing bracket for the if (sub.current) block starting on line 90
+        }
 
-        // Synchronously get events from cache.
         if (sub.current) {
             const syncEvents = sub.current.start(false);
             if (syncEvents) {
                 for (const event of syncEvents) processEvent(event);
             }
         }
-        // This closing bracket was incorrectly closing the useEffect scope
 
-        // Flush synchronous events immediately.
         if (buffer.current.length > 0) {
             if (bufferTimeout.current) {
                 clearTimeout(bufferTimeout.current);
@@ -136,7 +128,7 @@ export function useObserver<T extends NDKEvent>(
             isValid = false;
             stopFilters();
         };
-    }, [ndk, ...dependencies, stopFilters]); // Added stopFilters to dependency array
+    }, [ndk, ...dependencies, stopFilters]);
 
     return events as T[];
 }

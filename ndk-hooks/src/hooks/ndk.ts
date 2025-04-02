@@ -1,7 +1,7 @@
-import NDK, { type NDKEvent, type NDKPublishError } from '@nostr-dev-kit/ndk'; // Consolidated NDK import
+import NDK, { type NDKEvent, type NDKPublishError } from '@nostr-dev-kit/ndk';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { type NDKStoreState, useNDKStore } from '../stores/ndk';
-import { UserProfilesStore, useUserProfilesStore } from '../stores/profiles'; // Added profile store import
+import { UserProfilesStore, useUserProfilesStore } from '../stores/profiles';
 
 /**
  * Interface for the useNDK hook return value
@@ -10,10 +10,7 @@ interface UseNDKResult
     extends Pick<
         NDKStoreState,
         'ndk' | 'setNDK' | 'addSigner' | 'switchToUser'
-    > {
-    // Interface now inherits relevant types from NDKStoreState
-    // Keeping it potentially extendable if needed later
-}
+    > {}
 
 /**
  * Hook to access the NDK instance and setNDK function
@@ -26,7 +23,6 @@ export const useNDK = (): UseNDKResult => {
     const addSigner = useNDKStore((state) => state.addSigner);
     const switchToUser = useNDKStore((state) => state.switchToUser);
 
-    // Memoize the result to ensure reference stability between renders
     return useMemo(
         () => ({ ndk: ndk!, setNDK, addSigner, switchToUser }),
         [ndk, setNDK, addSigner, switchToUser]
@@ -46,7 +42,7 @@ export const useNDKCurrentUser = () =>
  * @returns An array of objects, each containing the unpublished event, optional target relays, and last attempt timestamp.
  */
 export function useNDKUnpublishedEvents() {
-    const { ndk } = useNDK(); // Use the local useNDK hook
+    const { ndk } = useNDK();
     const [unpublishedEvents, setUnpublishedEvents] = useState<
         { event: NDKEvent; relays?: WebSocket['url'][]; lastTryAt?: number }[]
     >([]);
@@ -60,7 +56,6 @@ export function useNDKUnpublishedEvents() {
         const previousEntries = new Set(state.current?.map((e) => e.event.id));
         const newEntries = [];
 
-        // Check if lengths differ or if any entry ID is not in previousEntries
         let changed = entries.length !== state.current?.length;
         if (!changed) {
             const currentIds = new Set(state.current.map((e) => e.event.id));
@@ -73,16 +68,13 @@ export function useNDKUnpublishedEvents() {
         }
 
         if (changed) {
-            // Rebuild newEntries from the latest cache data
-            const freshEntries = entries.map((entry) => ({ ...entry })); // Create shallow copies
+            const freshEntries = entries.map((entry) => ({ ...entry }));
 
             state.current = freshEntries;
             setUnpublishedEvents(freshEntries);
 
-            // Re-attach listeners to the new event instances
             for (const entry of freshEntries) {
                 entry.event.on('published', () => {
-                    // Filter based on the current state ref
                     state.current = state.current?.filter(
                         (e) => e.event.id !== entry.event.id
                     );
@@ -90,14 +82,13 @@ export function useNDKUnpublishedEvents() {
                 });
             }
         }
-    }, [ndk]); // Dependency array includes ndk
+    }, [ndk]);
 
     useEffect(() => {
         if (!ndk?.cacheAdapter?.getUnpublishedEvents) return;
 
         updateStateFromCache();
 
-        // Correct handler signature (assuming this is the NDK v2 signature)
         const handlePublishFailed = (
             _event: NDKEvent,
             _error: NDKPublishError,
@@ -108,7 +99,6 @@ export function useNDKUnpublishedEvents() {
 
         ndk?.on('event:publish-failed', handlePublishFailed);
 
-        // Cleanup function
         return () => {
             ndk?.off('event:publish-failed', handlePublishFailed);
         };
@@ -127,7 +117,6 @@ export function useNDKUnpublishedEvents() {
  */
 export function useNDKInit() {
     const setNDK = useNDKStore((state) => state.setNDK);
-    // Get the initialize action from the profiles store
     const initializeProfilesStore = useUserProfilesStore(
         (state: UserProfilesStore) => state.initialize
     );
@@ -148,7 +137,6 @@ export function useNDKInit() {
             console.log('Initializing NDK instance...');
             setNDK(ndkInstance);
 
-            // Initialize the profiles store, passing the NDK instance
             console.log('Initializing User Profiles store...');
             initializeProfilesStore(ndkInstance);
 

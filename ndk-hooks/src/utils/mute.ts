@@ -28,7 +28,6 @@ export const isMuted = (event: NDKEvent, criteria: MuteCriteria): boolean => {
     const { mutedPubkeys, mutedEventIds, mutedHashtags, mutedWordsRegex } =
         criteria;
 
-    // Basic checks first for performance
     if (mutedPubkeys.has(event.pubkey)) return true;
     if (
         mutedWordsRegex &&
@@ -37,7 +36,6 @@ export const isMuted = (event: NDKEvent, criteria: MuteCriteria): boolean => {
     )
         return true;
 
-    // Check tags only if necessary
     const tags = new Set(
         event.getMatchingTags('t').map((tag) => tag[1].toLowerCase())
     );
@@ -46,7 +44,7 @@ export const isMuted = (event: NDKEvent, criteria: MuteCriteria): boolean => {
     const taggedEvents = new Set(
         event.getMatchingTags('e').map((tag) => tag[1])
     );
-    taggedEvents.add(event.id); // Include the event's own ID
+    taggedEvents.add(event.id);
     if (setHasAnyIntersection(mutedEventIds, taggedEvents)) return true;
 
     return false;

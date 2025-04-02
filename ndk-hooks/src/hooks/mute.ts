@@ -1,11 +1,8 @@
-import { NDKEvent } from '@nostr-dev-kit/ndk'; // Changed to regular import
+import { NDKEvent } from '@nostr-dev-kit/ndk';
 import { useCallback, useMemo } from 'react';
 import { useUserSession } from '../session';
-import { type MuteCriteria } from '../stores/subscribe'; // Assuming MuteCriteria is exported from here
-import { isMuted } from '../utils/mute'; // Import the utility function
-
-// Removed duplicated helper functions: setHasAnyIntersection and isMuted
-// They are now imported from ../utils/mute.ts
+import { type MuteCriteria } from '../stores/subscribe';
+import { isMuted } from '../utils/mute';
 
 /**
  * Provides a memoized filter function to check if an NDKEvent should be muted
@@ -16,20 +13,17 @@ import { isMuted } from '../utils/mute'; // Import the utility function
 export function useMuteFilter(): (event: NDKEvent) => boolean {
     const activeSessionData = useUserSession();
 
-    // Prepare mute criteria from active session, memoized for performance
     const muteCriteria = useMemo((): MuteCriteria => {
         const pubkeys = activeSessionData?.mutedPubkeys ?? new Set<string>();
         const eventIds = activeSessionData?.mutedEventIds ?? new Set<string>();
         const hashtags = activeSessionData?.mutedHashtags ?? new Set<string>();
         const words = activeSessionData?.mutedWords ?? new Set<string>();
 
-        // Pre-compile regex for words for performance
         const wordsRegex =
             words.size > 0
                 ? new RegExp(Array.from(words).join('|'), 'i')
                 : null;
 
-        // Pre-lowercase hashtags for performance
         const lowerCaseHashtags = new Set<string>();
         hashtags.forEach((h) => lowerCaseHashtags.add(h.toLowerCase()));
 
@@ -41,19 +35,18 @@ export function useMuteFilter(): (event: NDKEvent) => boolean {
         };
     }, [activeSessionData]);
 
-    // Return a memoized filter function that uses the derived criteria
     const filterFn = useCallback(
         (event: NDKEvent): boolean => {
             return isMuted(event, muteCriteria);
         },
-        [muteCriteria] // Re-create the filter function only when mute criteria change
+        [muteCriteria]
     );
 
     return filterFn;
 }
 
-import { NDKUser } from '@nostr-dev-kit/ndk'; // Changed to regular import
-import { useNDKSessions } from '../session'; // Import the main store hook
+import { NDKUser } from '@nostr-dev-kit/ndk';
+import { useNDKSessions } from '../session';
 
 /**
  * Type definition for the item that can be muted.
@@ -99,7 +92,7 @@ export function useMuteItem(
             } else if (typeof item === 'string') {
                 if (item.startsWith('#') && item.length > 1) {
                     itemType = 'hashtag';
-                    value = item.substring(1); // Remove the #
+                    value = item.substring(1);
                 } else {
                     itemType = 'word';
                     value = item;

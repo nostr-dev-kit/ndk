@@ -1,5 +1,3 @@
-// src/session/store/muteItemForSession.ts
-
 import { NDKEvent, NDKKind } from '@nostr-dev-kit/ndk';
 import type { StoreApi } from 'zustand';
 import type { SessionState } from '../types';
@@ -13,7 +11,6 @@ export function muteItemForSession(
     publish: boolean = true
 ): void {
     const session = get().sessions.get(pubkey);
-    // Need session and NDK instance to publish
     if (!session || (publish && !session.ndk)) {
         console.warn(
             `Cannot mute item for session ${pubkey}: Session or NDK instance missing.`
@@ -21,16 +18,14 @@ export function muteItemForSession(
         return;
     }
 
-    // 1. Get current mute list event or create an empty placeholder
     const currentMuteEvent =
         session.replaceableEvents?.get(NDKKind.MuteList) ??
         new NDKEvent(session.ndk);
-    currentMuteEvent.kind = NDKKind.MuteList; // Ensure kind is set if it was new
+    currentMuteEvent.kind = NDKKind.MuteList;
 
-    // 2. Determine tag type and check if already muted in the event tags
     let tagType: string;
     let alreadyMuted = false;
-    const lowerCaseValue = value.toLowerCase(); // Hashtags are case-insensitive
+    const lowerCaseValue = value.toLowerCase();
 
     switch (itemType) {
         case 'pubkey':
@@ -66,15 +61,14 @@ export function muteItemForSession(
 
     if (alreadyMuted) {
         console.debug(`Item ${value} (${itemType}) already muted.`);
-        return; // No change needed
+        return;
     }
 
-    // 3. Perform optimistic update to the store state
     set((state) => {
         const currentSessionState = state.sessions.get(pubkey);
-        if (!currentSessionState) return state; // Session might have been deleted
+        if (!currentSessionState) return state;
 
-        const newSession = { ...currentSessionState }; // Clone session
+        const newSession = { ...currentSessionState };
         let changed = false;
 
         switch (itemType) {
@@ -109,21 +103,16 @@ export function muteItemForSession(
             newSessions.set(pubkey, newSession);
             return { sessions: newSessions };
         }
-        return state; // Should not happen if alreadyMuted check passed, but safety first
+        return state;
     });
 
-    // 4. Create and publish the new event if requested
     if (publish && session.ndk) {
         const newEvent = new NDKEvent(session.ndk);
         newEvent.kind = NDKKind.MuteList;
-        // Copy existing tags
-        newEvent.tags = currentMuteEvent.tags.map((tag) => [...tag]); // Deep copy tags
-        // Add the new tag
+        newEvent.tags = currentMuteEvent.tags.map((tag) => [...tag]);
         newEvent.tags.push([tagType, value]);
-        // Content can be empty or stringified JSON of tags, often empty for mute lists
         newEvent.content = '';
 
-        // Sign and publish
         newEvent
             .publish()
             .then(() => {
@@ -137,9 +126,6 @@ export function muteItemForSession(
                     error
                 );
                 // TODO: Consider reverting the optimistic update here?
-                // This is complex as the state might have changed again.
-                // For now, log the error. The reactive flow might eventually correct it
-                // if the event arrives via subscription despite publish failure reporting.
             });
     }
 }

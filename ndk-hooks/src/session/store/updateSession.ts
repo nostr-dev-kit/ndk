@@ -1,10 +1,9 @@
-// src/session/store/updateSession.ts
 import type { StoreApi } from 'zustand';
 import type { SessionState, UserSessionData } from '../types';
 
 export function updateSession(
     set: StoreApi<SessionState>['setState'],
-    get: StoreApi<SessionState>['getState'], // Added get for consistency
+    get: StoreApi<SessionState>['getState'],
     pubkey: string,
     data: Partial<UserSessionData>
 ): void {
@@ -14,7 +13,6 @@ export function updateSession(
             console.warn(`Attempted to update non-existent session: ${pubkey}`);
             return state;
         }
-        // Ensure lastActive is always updated on any update
         const updatedSession = { ...session, ...data, lastActive: Date.now() };
         const newSessions = new Map(state.sessions);
         newSessions.set(pubkey, updatedSession);

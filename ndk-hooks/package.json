@@ -13,7 +13,7 @@
         "build": "tsup src/index.ts --format cjs,esm --dts --clean",
         "dev": "tsup src/index.ts --format cjs,esm --watch",
         "lint": "biome check .",
-        "format": "biome check . --write",
+        "format": "biome format . --write",
         "test": "vitest run",
         "test:watch": "vitest"
     },

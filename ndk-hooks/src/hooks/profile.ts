@@ -1,12 +1,12 @@
 import type { Hexpubkey, NDKUserProfile } from '@nostr-dev-kit/ndk';
 import { useEffect } from 'react';
 import { useShallow } from 'zustand/shallow';
-import { useNDKSessions } from '../session'; // Added import
+import { useNDKSessions } from '../session';
 import {
     type UserProfilesStore,
     useUserProfilesStore,
 } from '../stores/profiles';
-import { useCurrentUserProfile } from './session'; // Added import
+import { useCurrentUserProfile } from './session';
 
 /**
  * Hook for getting a user profile. If the requested pubkey matches the active session user
@@ -20,15 +20,6 @@ export function useProfile(
     pubkey: Hexpubkey | undefined,
     forceRefresh?: boolean
 ): NDKUserProfile | undefined {
-    // const activeSessionPubkey = useNDKSessions(state => state.activeSessionPubkey);
-    // const currentUserProfile = useCurrentUserProfile();
-
-    // Delegate if pubkey matches active user AND forceRefresh is not requested
-    // if (pubkey && pubkey === activeSessionPubkey && !forceRefresh) {
-    //     return currentUserProfile;
-    // }
-
-    // Original logic for non-active user or when forceRefresh is true
     const fetchProfile = useUserProfilesStore((state) => state.fetchProfile);
 
     const profileSelector = useShallow((state: UserProfilesStore) =>

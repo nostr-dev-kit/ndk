@@ -1,9 +1,7 @@
-// src/session/store/processMuteListForSession.ts (File renamed conceptually)
-
 import { NDKKind } from '@nostr-dev-kit/ndk';
 import type { StoreApi } from 'zustand';
 import type { SessionState } from '../types';
-import { processMuteList } from '../utils.js'; // Needs the utility function
+import { processMuteList } from '../utils.js';
 
 /**
  * Processes the mute list event (Kind 10000) stored in the session's
@@ -17,19 +15,15 @@ export function processMuteListForSession(
 ): void {
     set((state) => {
         const session = state.sessions.get(pubkey);
-        // Ensure session and replaceableEvents map exist
         if (!session || !session.replaceableEvents) return state;
 
-        // Get the mute list event from the map
         const muteListEvent = session.replaceableEvents.get(NDKKind.MuteList);
 
-        // Default to empty sets if no mute list event is found
         let mutedPubkeys = new Set<string>();
         let mutedHashtags = new Set<string>();
         let mutedWords = new Set<string>();
         let mutedEventIds = new Set<string>();
 
-        // Process the event if it exists
         if (muteListEvent) {
             const processed = processMuteList(muteListEvent);
             mutedPubkeys = processed.mutedPubkeys;
@@ -38,10 +32,8 @@ export function processMuteListForSession(
             mutedEventIds = processed.mutedEventIds;
         }
 
-        // Update the session with the derived sets
         const updatedSession = {
             ...session,
-            // No longer storing muteListEvent here directly
             mutedPubkeys,
             mutedHashtags,
             mutedWords,

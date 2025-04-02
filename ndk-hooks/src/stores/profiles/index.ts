@@ -24,7 +24,6 @@ interface UserProfilesItems {
 }
 
 interface UserProfilesStoreActions {
-    // Initializes the store; this must be called the initialization of the app
     initialize: (ndk: NDK) => void;
 
     /**

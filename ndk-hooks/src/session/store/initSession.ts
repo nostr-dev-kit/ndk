@@ -10,8 +10,8 @@ import { StoreApi } from 'zustand';
 import { SessionInitOptions, SessionState, UserSessionData } from '../types';
 
 export async function initializeSession(
-    set: StoreApi<SessionState>['setState'], // Correct type for set
-    get: StoreApi<SessionState>['getState'], // Correct type for get
+    set: StoreApi<SessionState>['setState'],
+    get: StoreApi<SessionState>['getState'],
     ndk: NDK,
     user: NDKUser,
     opts: SessionInitOptions = {},
@@ -20,22 +20,19 @@ export async function initializeSession(
     const pubkey = user.pubkey;
 
     try {
-        // 1. Create or Get Session
         let session = get().sessions.get(pubkey);
         if (!session) {
-            get().createSession(pubkey, { ndk }); // Call action via get()
-            session = get().sessions.get(pubkey)!; // Re-fetch session
+            get().createSession(pubkey, { ndk });
+            session = get().sessions.get(pubkey)!;
         } else if (!session.ndk) {
-            get().updateSession(pubkey, { ndk }); // Call action via get()
-            session = { ...session, ndk }; // Update local copy
+            get().updateSession(pubkey, { ndk });
+            session = { ...session, ndk };
         }
 
-        // 2. Set Active (if requested)
         if (opts.autoSetActive !== false) {
-            get().setActiveSession(pubkey); // Call action via get()
+            get().setActiveSession(pubkey);
         }
 
-        // 3. Fetch Initial Data via Subscription
         const filter: NDKFilter = { authors: [pubkey], kinds: [] };
         const kindsToFetch: NDKKind[] = [];
 
@@ -46,32 +43,26 @@ export async function initializeSession(
             kindsToFetch.push(NDKKind.Contacts);
         }
         if (opts.muteList) {
-            // NDKKind doesn't export MuteList, use the number directly
             kindsToFetch.push(NDKKind.MuteList);
         }
         if (opts.events) {
             kindsToFetch.push(...opts.events.keys());
         }
 
-        // Remove duplicates just in case
         filter.kinds = [...new Set(kindsToFetch)];
 
-        // Only subscribe if there's something to fetch
         if (filter.kinds.length > 0) {
-            // Create the subscription with filter and options
             const subscription: NDKSubscription = ndk.subscribe(filter, {
                 closeOnEose: false,
             });
 
-            // Attach the event handler to the subscription object
             subscription.on('event', (event: NDKEvent) => {
                 const currentSession = get().sessions.get(pubkey);
-                if (!currentSession) return; // Session might have been deleted
+                if (!currentSession) return;
 
                 switch (event.kind) {
                     case NDKKind.Metadata: {
                         const existingProfile = currentSession.profile;
-                        // Check timestamp before parsing potentially expensive JSON
                         if (
                             !existingProfile ||
                             event.created_at! >
@@ -109,7 +100,6 @@ export async function initializeSession(
                                 currentSession.replaceableEvents
                             );
                             newReplaceableEvents.set(NDKKind.Contacts, event);
-                            // Update both followSet and the event in the map
                             get().updateSession(pubkey, {
                                 followSet,
                                 replaceableEvents: newReplaceableEvents,
@@ -133,14 +123,10 @@ export async function initializeSession(
                             get().updateSession(pubkey, {
                                 replaceableEvents: newReplaceableEvents,
                             });
-                            // Note: We removed the direct call to setMuteListForSession.
-                            // The processing of the mute list should happen elsewhere,
-                            // likely triggered by observing changes to this event in the store.
                         }
                         break;
                     }
                     default: {
-                        // Handle custom replaceable events from opts.events
                         const eventOptions = opts.events?.get(event.kind!);
                         if (eventOptions) {
                             const existingEvent =
@@ -157,7 +143,6 @@ export async function initializeSession(
                                     typeof eventOptions.wrap.from === 'function'
                                 ) {
                                     try {
-                                        // Use the static 'from' method of the wrapper class
                                         finalEvent =
                                             eventOptions.wrap.from(event);
                                     } catch (wrapError) {
@@ -165,7 +150,6 @@ export async function initializeSession(
                                             `Error wrapping event kind ${event.kind}:`,
                                             wrapError
                                         );
-                                        // Proceed with the original event if wrapping fails
                                     }
                                 }
                                 const newReplaceableEvents = new Map(
@@ -185,12 +169,9 @@ export async function initializeSession(
                 }
             });
 
-            // NDK usually starts subscriptions automatically upon creation,
-            // but explicitly calling start() ensures it if behavior changes.
             subscription.start();
         }
 
-        // Callback indicates setup is complete, data will stream in
         cb?.(null, pubkey);
         return pubkey;
     } catch (error) {

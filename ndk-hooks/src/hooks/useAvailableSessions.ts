@@ -25,13 +25,10 @@ interface UseAvailableSessionsResult {
 export const useAvailableSessions = (): UseAvailableSessionsResult => {
     const signers = useNDKStore((state) => state.signers);
 
-    // Memoize the derived list of pubkeys for reference stability.
-    // The list only updates when the signers map itself changes.
     const availablePubkeys = useMemo(
         () => Array.from(signers.keys()),
         [signers]
     );
 
-    // Memoize the final result object
     return useMemo(() => ({ availablePubkeys }), [availablePubkeys]);
 };

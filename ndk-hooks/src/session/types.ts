@@ -1,4 +1,3 @@
-// types.ts - Type definitions for session data using Zustand
 import type NDK from '@nostr-dev-kit/ndk';
 import type {
     Hexpubkey,
@@ -12,18 +11,16 @@ import type {
  * User-specific session data stored within the main store.
  */
 export interface UserSessionData {
-    userPubkey: string; // User's public key (primary identifier)
-    ndk?: NDK; // NDK instance for this user
-    relays?: string[]; // User's preferred relays
-    // muteListEvent?: NDKEvent; // Removed: Now stored in replaceableEvents[10000]
-    mutedPubkeys: Set<string>; // Pubkeys muted by this user
-    mutedHashtags: Set<string>; // Hashtags muted by this user
-    mutedWords: Set<string>; // Words muted by this user
-    mutedEventIds: Set<string>; // Event IDs muted by this user
+    userPubkey: string;
+    ndk?: NDK;
+    relays?: string[];
+    mutedPubkeys: Set<string>;
+    mutedHashtags: Set<string>;
+    mutedWords: Set<string>;
+    mutedEventIds: Set<string>;
 
     profile?: NDKUserProfile;
-    followSet?: Set<Hexpubkey>; // Set of followed pubkeys
-    // contactsEvent?: NDKEvent; // Removed: Now stored in replaceableEvents[3]
+    followSet?: Set<Hexpubkey>;
 
     /**
      * Events that are unique per kind, part of the session;
@@ -32,9 +29,8 @@ export interface UserSessionData {
      */
     replaceableEvents: Map<NDKKind, NDKEvent | null>;
 
-    lastActive: number; // Timestamp of last activity
+    lastActive: number;
 
-    // Add other user-specific fields as needed, e.g., wot scores
     wot?: Map<string, number>;
 }
 
@@ -42,13 +38,9 @@ export interface UserSessionData {
  * The overall state managed by the Zustand store.
  */
 export interface SessionState {
-    // Map of user sessions, keyed by pubkey
     sessions: Map<string, UserSessionData>;
-    // Currently active session pubkey (null if none)
     activeSessionPubkey: string | null;
 
-    // Actions - defined within the store creation
-    // These are examples, the actual implementation will be in the store file
     createSession: (
         pubkey: string,
         initialData?: Partial<UserSessionData>
@@ -76,9 +68,9 @@ export interface SessionState {
  * Session initialization options
  */
 export interface SessionInitOptions {
-    profile?: boolean; // Fetch user profile metadata
-    follows?: boolean; // Fetch user follows list
-    muteList?: boolean; // Fetch user mute list
-    events?: Map<NDKKind, { wrap?: { from: (event: NDKEvent) => NDKEvent } }>; // Map of kinds to fetch with optional wrapper class
-    autoSetActive?: boolean; // Automatically set this session as active upon creation
+    profile?: boolean;
+    follows?: boolean;
+    muteList?: boolean;
+    events?: Map<NDKKind, { wrap?: { from: (event: NDKEvent) => NDKEvent } }>;
+    autoSetActive?: boolean;
 }

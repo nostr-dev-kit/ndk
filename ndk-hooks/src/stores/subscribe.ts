@@ -1,7 +1,6 @@
 import type { NDKEvent, NDKSubscription } from '@nostr-dev-kit/ndk';
 import { createStore } from 'zustand/vanilla';
 
-// Helper function (moved to top to avoid hoisting issues)
 const setHasAnyIntersection = (
     set1: Set<string>,
     set2: Set<string>
@@ -31,14 +30,12 @@ export interface SubscribeStore<T extends NDKEvent> {
     events: T[];
     eventMap: Map<string, T>;
     eose: boolean;
-    // isSubscribed: boolean; // Removed
-    subscriptionRef: NDKSubscription | undefined; // Keep ref for potential direct access if needed? Or remove too? Let's remove for now.
+    subscriptionRef: NDKSubscription | undefined;
     addEvent: (event: T) => void;
     addEvents: (events: T[]) => void;
     removeEventId: (id: string) => void;
-    filterMutedEvents: (criteria: MuteCriteria) => void; // Updated signature
+    filterMutedEvents: (criteria: MuteCriteria) => void;
     setEose: () => void;
-    // setSubscription: (sub: NDKSubscription | undefined) => void; // Removed
     reset: () => void;
 }
 
@@ -50,21 +47,17 @@ export const createSubscribeStore = <T extends NDKEvent>(
     bufferMs: number | false = 30
 ) => {
     const store = createStore<SubscribeStore<T>>((set, get) => {
-        // Global buffer outside of the store state
         const buffer = new Map<string, T>();
         let timeout: NodeJS.Timeout | null = null;
 
-        // Function to flush buffer and update state
         const flushBuffer = () => {
             const state = get();
             const newEventMap = new Map(state.eventMap);
             let hasChanges = false;
 
-            // Add buffered events to the event map
             for (const [id, event] of buffer.entries()) {
                 const existingEvent = newEventMap.get(id);
 
-                // Only add newer events or events without existing entry
                 if (
                     !existingEvent ||
                     (existingEvent.created_at !== undefined &&
@@ -76,15 +69,11 @@ export const createSubscribeStore = <T extends NDKEvent>(
                 }
             }
 
-            // Clear buffer after processing
             buffer.clear();
 
-            // Only update state if there were changes
             if (hasChanges) {
-                // Create a new events array from the map values
                 const newEvents = Array.from(newEventMap.values());
 
-                // Update state
                 set({ eventMap: newEventMap, events: newEvents });
             }
 
@@ -95,16 +84,13 @@ export const createSubscribeStore = <T extends NDKEvent>(
             events: [],
             eventMap: new Map<string, T>(),
             eose: false,
-            // isSubscribed: false, // Removed
-            subscriptionRef: undefined, // Removed
+            subscriptionRef: undefined,
 
-            // Add an event to the store
             addEvent: (event) => {
                 const id = event.tagId();
 
                 if (bufferMs !== false) {
                     // Buffering is enabled
-                    // Check if we already have a newer version of this event
                     const existingInBuffer = buffer.get(id);
                     const existingInStore = get().eventMap.get(id);
 
@@ -114,7 +100,7 @@ export const createSubscribeStore = <T extends NDKEvent>(
                         event.created_at !== undefined &&
                         existingInBuffer.created_at >= event.created_at
                     ) {
-                        return; // Skip older events
+                        return;
                     }
 
                     if (
@@ -123,23 +109,19 @@ export const createSubscribeStore = <T extends NDKEvent>(
                         event.created_at !== undefined &&
                         existingInStore.created_at >= event.created_at
                     ) {
-                        return; // Skip older events
+                        return;
                     }
 
-                    // Add to buffer
                     buffer.set(id, event);
 
-                    // Schedule buffer flush if not already scheduled
                     if (!timeout) {
                         timeout = setTimeout(flushBuffer, bufferMs);
                     }
                 } else {
-                    // Immediate update (no buffering)
                     const state = get();
                     const newEventMap = new Map(state.eventMap);
                     const existingEvent = newEventMap.get(id);
 
-                    // Skip older events
                     if (
                         existingEvent &&
                         existingEvent.created_at !== undefined &&
@@ -149,23 +131,19 @@ export const createSubscribeStore = <T extends NDKEvent>(
                         return;
                     }
 
-                    // Update map with new event
                     newEventMap.set(id, event);
 
-                    // Create new events array
                     const newEvents = Array.from(newEventMap.values());
 
-                    // Update state
                     set({ eventMap: newEventMap, events: newEvents });
                 }
             },
 
-            // Add multiple events to the store efficiently
             addEvents: (events) => {
                 if (!events || events.length === 0) return;
 
                 if (bufferMs !== false) {
-                    // Buffering is enabled - add all valid events to buffer
+                    // Buffering is enabled
                     let needsFlush = false;
 
                     for (const event of events) {
@@ -175,7 +153,6 @@ export const createSubscribeStore = <T extends NDKEvent>(
                         const existingInBuffer = buffer.get(id);
                         const existingInStore = get().eventMap.get(id);
 
-                        // Skip older events
                         if (
                             existingInBuffer &&
                             existingInBuffer.created_at !== undefined &&
@@ -194,21 +171,17 @@ export const createSubscribeStore = <T extends NDKEvent>(
                             continue;
                         }
 
-                        // Add to buffer
                         buffer.set(id, event);
                         needsFlush = true;
                     }
 
-                    // Schedule buffer flush if needed and not already scheduled
                     if (needsFlush && !timeout) {
                         timeout = setTimeout(flushBuffer, bufferMs);
                     }
                 } else {
-                    // Immediate update (no buffering)
                     const state = get();
                     const newEventMap = new Map(state.eventMap);
 
-                    // Process all events at once
                     let hasUpdates = false;
 
                     for (const event of events) {
@@ -217,7 +190,6 @@ export const createSubscribeStore = <T extends NDKEvent>(
                         const id = event.tagId();
                         const existingEvent = newEventMap.get(id);
 
-                        // Skip older events
                         if (
                             existingEvent &&
                             existingEvent.created_at !== undefined &&
@@ -227,12 +199,10 @@ export const createSubscribeStore = <T extends NDKEvent>(
                             continue;
                         }
 
-                        // Update map with new event
                         newEventMap.set(id, event);
                         hasUpdates = true;
                     }
 
-                    // Only update state if there were actual changes
                     if (hasUpdates) {
                         const newEvents = Array.from(newEventMap.values());
                         set({ eventMap: newEventMap, events: newEvents });
@@ -240,7 +210,6 @@ export const createSubscribeStore = <T extends NDKEvent>(
                 }
             },
 
-            // Remove an event by ID
             removeEventId: (id) => {
                 const state = get();
                 const newEventMap = new Map(state.eventMap);
@@ -261,7 +230,6 @@ export const createSubscribeStore = <T extends NDKEvent>(
                     mutedWordsRegex,
                 } = criteria;
 
-                // Optimization: If all criteria are empty, no filtering is needed.
                 if (
                     mutedPubkeys.size === 0 &&
                     mutedEventIds.size === 0 &&
@@ -277,7 +245,6 @@ export const createSubscribeStore = <T extends NDKEvent>(
                 let changed = false;
 
                 for (const [id, event] of currentEventMap.entries()) {
-                    // Check against all mute criteria
                     const tags = new Set(
                         event
                             .getMatchingTags('t')
@@ -286,7 +253,7 @@ export const createSubscribeStore = <T extends NDKEvent>(
                     const taggedEvents = new Set(
                         event.getMatchingTags('e').map((tag) => tag[1])
                     );
-                    taggedEvents.add(event.id); // Include the event's own ID
+                    taggedEvents.add(event.id);
 
                     const isMuted =
                         mutedPubkeys.has(event.pubkey) ||
@@ -299,53 +266,42 @@ export const createSubscribeStore = <T extends NDKEvent>(
                     if (!isMuted) {
                         newEventMap.set(id, event);
                     } else {
-                        changed = true; // Mark as changed if an event was removed
+                        changed = true;
                     }
                 }
 
-                // Only update state if events were actually removed
                 if (changed) {
                     const newEvents = Array.from(newEventMap.values());
                     set({ eventMap: newEventMap, events: newEvents });
                 }
             },
 
-            // Set EOSE flag and flush buffer
             setEose: () => {
-                // Ensure buffer is flushed immediately
                 if (timeout) {
                     clearTimeout(timeout);
                     timeout = null;
                     flushBuffer();
                 }
 
-                // Update EOSE flag
                 set({ eose: true });
 
-                // Adjust buffer time for faster updates after EOSE
                 if (bufferMs !== false) {
                     bufferMs = 16;
                 }
             },
 
-            // setSubscription removed
-
-            // Reset store to initial state
             reset: () => {
-                // Clear buffer and any pending flush
                 buffer.clear();
                 if (timeout) {
                     clearTimeout(timeout);
                     timeout = null;
                 }
 
-                // Reset state
                 set({
                     events: [],
                     eventMap: new Map<string, T>(),
                     eose: false,
-                    // isSubscribed: false, // Removed reset
-                    subscriptionRef: undefined, // Removed reset
+                    subscriptionRef: undefined,
                 });
             },
         };

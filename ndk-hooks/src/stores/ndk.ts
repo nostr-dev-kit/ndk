@@ -50,7 +50,6 @@ export const useNDKStore = create<NDKStoreState>((set, get) => {
         signers: new Map<Hexpubkey, NDKSigner>(),
 
         setNDK: (ndk: NDK) => {
-            // Simply set the NDK instance. User/signer management is handled by switchToUser.
             set({ ndk });
         },
 
@@ -63,13 +62,11 @@ export const useNDKStore = create<NDKStoreState>((set, get) => {
                 }));
                 console.log(`Signer added for pubkey: ${pubkey}`);
 
-                // Automatically switch if requested (default is true)
                 if (switchTo) {
                     await get().switchToUser(pubkey);
                 }
             } catch (error) {
                 console.error('Failed to add signer:', error);
-                // Re-throw or handle error appropriately for the caller
                 throw error;
             }
         },
@@ -84,21 +81,12 @@ export const useNDKStore = create<NDKStoreState>((set, get) => {
             }
 
             const signers = get().signers;
-            const newSigner = signers.get(pubkey); // Will be undefined if no signer for this pubkey
+            const newSigner = signers.get(pubkey);
 
-            // Set the signer on the NDK instance
-            // If newSigner is undefined, this effectively makes the session read-only
-            // for NDK operations that require signing.
             ndk.signer = newSigner;
 
-            // Get the NDKUser object for the pubkey
             const user = ndk.getUser({ pubkey });
 
-            // Profile fetching should ideally be handled by components/hooks
-            // that need the profile data (e.g., using useProfile),
-            // keeping this store focused on NDK instance and signer management.
-
-            // Update the currentUser state
             set({ currentUser: user });
 
             if (newSigner) {

@@ -1,9 +1,9 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { renderHook, act } from '@testing-library/react-hooks';
+import NDK, { type NDKEvent, type NDKFilter, NDKRelaySet, type NDKSubscription } from '@nostr-dev-kit/ndk';
 import { waitFor } from '@testing-library/react'; // Import waitFor from @testing-library/react
-import { useSubscribe } from '../../src/hooks/subscribe';
+import { act, renderHook } from '@testing-library/react-hooks';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useNDK } from '../../src/hooks/ndk';
-import NDK, { type NDKEvent, type NDKSubscription, type NDKFilter, NDKRelaySet } from '@nostr-dev-kit/ndk';
+import { useSubscribe } from '../../src/hooks/subscribe';
 
 // We're not using the EventGenerator from ndk-test-utils for now as it requires actual NDK instance
 // Mock hooks

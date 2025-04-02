@@ -1,13 +1,14 @@
 // test/hooks/useAvailableSessions.test.ts
+
+import type { NDKSigner } from '@nostr-dev-kit/ndk';
 import { renderHook } from '@testing-library/react-hooks'; // Correct import
+import { vi } from 'vitest';
 import { useAvailableSessions } from '../../src/hooks/useAvailableSessions';
 import { useNDKStore } from '../../src/stores/ndk';
-import { vi } from 'vitest';
-import type { NDKSigner } from '@nostr-dev-kit/ndk';
 
 // Mock useNDKStore
 vi.mock('../../src/stores/ndk', () => ({
-    useNDKStore: vi.fn()
+    useNDKStore: vi.fn(),
 }));
 
 // Helper to set the mock return value for useNDKStore selector
@@ -16,7 +17,6 @@ const mockUseNDKStoreSelector = (signers: Map<string, NDKSigner>) => {
         return selector({ signers });
     });
 };
-
 
 describe('useAvailableSessions', () => {
     beforeEach(() => {
@@ -41,7 +41,9 @@ describe('useAvailableSessions', () => {
 
         const { result } = renderHook(() => useAvailableSessions());
         // Sort the result to ensure consistent order for comparison
-        expect(result.current.availablePubkeys.sort()).toEqual(['pubkey1', 'pubkey2'].sort());
+        expect(result.current.availablePubkeys.sort()).toEqual(
+            ['pubkey1', 'pubkey2'].sort()
+        );
     });
 
     it('should return the same array reference if signers map reference does not change', () => {

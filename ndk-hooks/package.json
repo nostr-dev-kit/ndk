@@ -28,8 +28,6 @@
     "devDependencies": {
         "@nostr-dev-kit/ndk": "workspace:*",
         "@nostr-dev-kit/ndk-test-utils": "workspace:*",
-        "biome": "^0.3.3",
-        
         "tsup": "^8",
         "typescript": "^5.8.2",
         "vitest": "^1.4.0",

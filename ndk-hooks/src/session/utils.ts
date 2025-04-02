@@ -1,4 +1,4 @@
-import type { NDKEvent } from "@nostr-dev-kit/ndk";
+import type { NDKEvent } from '@nostr-dev-kit/ndk';
 
 /**
  * Processes a Kind 10000 (Mute List) event to extract muted items.
@@ -17,18 +17,21 @@ export function processMuteList(muteListEvent: NDKEvent): {
     const mutedEventIds = new Set<string>();
 
     if (muteListEvent.kind !== 10000) {
-        console.warn("Attempted to process non-mute list event:", muteListEvent);
+        console.warn(
+            'Attempted to process non-mute list event:',
+            muteListEvent
+        );
         return { mutedPubkeys, mutedHashtags, mutedWords, mutedEventIds };
     }
 
     muteListEvent.tags.forEach((tag) => {
-        if (tag[0] === "p" && tag[1]) {
+        if (tag[0] === 'p' && tag[1]) {
             mutedPubkeys.add(tag[1]);
-        } else if (tag[0] === "t" && tag[1]) {
+        } else if (tag[0] === 't' && tag[1]) {
             mutedHashtags.add(tag[1].toLowerCase()); // Store hashtags lowercase
-        } else if (tag[0] === "word" && tag[1]) {
+        } else if (tag[0] === 'word' && tag[1]) {
             mutedWords.add(tag[1]);
-        } else if (tag[0] === "e" && tag[1]) {
+        } else if (tag[0] === 'e' && tag[1]) {
             mutedEventIds.add(tag[1]);
         }
         // Note: Kind 10000 can also be encrypted. Decryption needs to happen

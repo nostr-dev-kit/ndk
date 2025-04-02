@@ -1,6 +1,6 @@
 // src/session/store/createSession.ts
-import type { StoreApi } from "zustand";
-import type { SessionState, UserSessionData } from "../types";
+import type { StoreApi } from 'zustand';
+import type { SessionState, UserSessionData } from '../types';
 
 // Helper function moved here as it's only used by createSession
 const createDefaultSession = (pubkey: string): UserSessionData => ({
@@ -19,7 +19,7 @@ export function createSession(
     set: StoreApi<SessionState>['setState'],
     get: StoreApi<SessionState>['getState'], // Added get for consistency, though not used here
     pubkey: string,
-    initialData: Partial<UserSessionData> = {},
+    initialData: Partial<UserSessionData> = {}
 ): void {
     set((state) => {
         if (state.sessions.has(pubkey)) {

@@ -1,16 +1,16 @@
-import type NDK from "@nostr-dev-kit/ndk";
-import type { Hexpubkey, NDKUserProfile } from "@nostr-dev-kit/ndk";
-import { create } from "zustand";
-import { fetchProfileImplementation } from "./fetch-profile";
-import { initializeProfilesStore } from "./initialize";
-import { setProfileImplementation } from "./set-profile";
+import type NDK from '@nostr-dev-kit/ndk';
+import type { Hexpubkey, NDKUserProfile } from '@nostr-dev-kit/ndk';
+import { create } from 'zustand';
+import { fetchProfileImplementation } from './fetch-profile';
+import { initializeProfilesStore } from './initialize';
+import { setProfileImplementation } from './set-profile';
 
 interface UserProfilesItems {
     /**
      * The NDK instance
-     */ 
+     */
     ndk: NDK | undefined;
-    
+
     /**
      * The profile map
      */
@@ -21,7 +21,7 @@ interface UserProfilesItems {
      * (even if we couldn't find one)
      */
     lastFetchedAt: Map<Hexpubkey, number>;
-};
+}
 
 interface UserProfilesStoreActions {
     // Initializes the store; this must be called the initialization of the app
@@ -33,17 +33,20 @@ interface UserProfilesStoreActions {
      * @param profile - The profile to store
      * @param cachedAt - The timestamp in seconds when the profile was retrieved
      */
-    setProfile: (pubkey: string, profile: NDKUserProfile, cachedAt?: number) => void;
+    setProfile: (
+        pubkey: string,
+        profile: NDKUserProfile,
+        cachedAt?: number
+    ) => void;
 
     /*
      * Fetch a profile from the NDK instance
-     * 
+     *
      * @param pubkey - The pubkey of the profile to fetch
      * @param force - Whether to force the fetch even if the profile is already cached
      */
     fetchProfile: (pubkey?: string, force?: boolean) => void;
 }
-
 
 export type UserProfilesStore = UserProfilesItems & UserProfilesStoreActions;
 

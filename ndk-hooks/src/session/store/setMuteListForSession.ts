@@ -1,8 +1,9 @@
 // src/session/store/processMuteListForSession.ts (File renamed conceptually)
-import type { StoreApi } from "zustand";
-import { NDKKind } from "@nostr-dev-kit/ndk";
-import type { SessionState } from "../types";
-import { processMuteList } from "../utils.js"; // Needs the utility function
+
+import { NDKKind } from '@nostr-dev-kit/ndk';
+import type { StoreApi } from 'zustand';
+import type { SessionState } from '../types';
+import { processMuteList } from '../utils.js'; // Needs the utility function
 
 /**
  * Processes the mute list event (Kind 10000) stored in the session's
@@ -12,7 +13,7 @@ import { processMuteList } from "../utils.js"; // Needs the utility function
 export function processMuteListForSession(
     set: StoreApi<SessionState>['setState'],
     get: StoreApi<SessionState>['getState'],
-    pubkey: string,
+    pubkey: string
 ): void {
     set((state) => {
         const session = state.sessions.get(pubkey);

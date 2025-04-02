@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook, act } from '@testing-library/react-hooks';
+import { act, renderHook } from '@testing-library/react-hooks';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useProfile } from '../../src/hooks/profile';
 import { useUserProfilesStore } from '../../src/stores/profiles';
 
@@ -17,28 +17,32 @@ vi.mock('../../src/stores/profiles', () => {
                     fetchProfile: mockFetchProfile,
                 });
             }
-            
+
             // When called directly with no selector, return the fetchProfile function
             if (selector === undefined) {
                 return { fetchProfile: mockFetchProfile };
             }
-            
+
             return mockFetchProfile;
         }),
     };
 });
 
 describe('useProfile', () => {
-    const testPubkey = '000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f';
-    const mockProfile = { name: 'Test User', picture: 'https://example.com/pic.jpg' };
-    
+    const testPubkey =
+        '000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f';
+    const mockProfile = {
+        name: 'Test User',
+        picture: 'https://example.com/pic.jpg',
+    };
+
     beforeEach(() => {
         vi.clearAllMocks();
-        
+
         // Reset the mocks
         mockProfiles.clear();
         mockFetchProfile.mockReset();
-        
+
         // Update the store mock implementation
         (useUserProfilesStore as any).mockImplementation((selector) => {
             if (typeof selector === 'function') {
@@ -47,39 +51,39 @@ describe('useProfile', () => {
                     fetchProfile: mockFetchProfile,
                 });
             }
-            
+
             // When called directly with no selector, return the store
             if (selector === undefined) {
                 return { fetchProfile: mockFetchProfile };
             }
-            
+
             return mockFetchProfile;
         });
     });
-    
+
     it('should return undefined if no pubkey is provided', () => {
         const { result } = renderHook(() => useProfile(undefined));
         expect(result.current).toBeUndefined();
     });
-    
+
     it('should call fetchProfile with the provided pubkey', () => {
         renderHook(() => useProfile(testPubkey));
-        
+
         expect(mockFetchProfile).toHaveBeenCalledWith(testPubkey, undefined);
     });
-    
+
     it('should call fetchProfile with forceRefresh when provided', () => {
         renderHook(() => useProfile(testPubkey, true));
-        
+
         expect(mockFetchProfile).toHaveBeenCalledWith(testPubkey, true);
     });
-    
+
     it('should return profile when available in the store', () => {
         // Add the profile to the mock profiles map
         mockProfiles.set(testPubkey, mockProfile);
-        
+
         const { result } = renderHook(() => useProfile(testPubkey));
-        
+
         expect(result.current).toEqual(mockProfile);
     });
 });

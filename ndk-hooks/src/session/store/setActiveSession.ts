@@ -1,11 +1,11 @@
 // src/session/store/setActiveSession.ts
-import type { StoreApi } from "zustand";
-import type { SessionState } from "../types";
+import type { StoreApi } from 'zustand';
+import type { SessionState } from '../types';
 
 export function setActiveSession(
     set: StoreApi<SessionState>['setState'],
     get: StoreApi<SessionState>['getState'], // Added get for consistency
-    pubkey: string | null,
+    pubkey: string | null
 ): void {
     set((state) => {
         if (pubkey === null || state.sessions.has(pubkey)) {

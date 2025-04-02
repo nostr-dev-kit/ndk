@@ -5,8 +5,8 @@ import {
     NDKSubscriptionCacheUsage,
     type NDKSubscriptionOptions,
 } from '@nostr-dev-kit/ndk'; // Core NDK types
-import { useNDK } from './ndk'; // Import hook from local file
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useNDK } from './ndk'; // Import hook from local file
 
 /**
  * Subscribes to NDK events based on the provided filters and returns the matching events.

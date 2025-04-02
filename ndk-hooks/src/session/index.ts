@@ -1,9 +1,9 @@
-export { useNDKSessions, useUserSession } from "./store/index.js";
+export { useNDKSessions, useUserSession } from './store/index.js';
 
 export type {
+    SessionInitOptions,
     SessionState,
     UserSessionData,
-    SessionInitOptions,
-} from "./types.js";
+} from './types.js';
 
-export { processMuteList } from "./utils.js";
+export { processMuteList } from './utils.js';

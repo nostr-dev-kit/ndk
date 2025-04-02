@@ -1,12 +1,12 @@
 // src/session/store/updateSession.ts
-import type { StoreApi } from "zustand";
-import type { SessionState, UserSessionData } from "../types";
+import type { StoreApi } from 'zustand';
+import type { SessionState, UserSessionData } from '../types';
 
 export function updateSession(
     set: StoreApi<SessionState>['setState'],
     get: StoreApi<SessionState>['getState'], // Added get for consistency
     pubkey: string,
-    data: Partial<UserSessionData>,
+    data: Partial<UserSessionData>
 ): void {
     set((state) => {
         const session = state.sessions.get(pubkey);

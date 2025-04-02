@@ -1,8 +1,19 @@
+import NDK, {
+    Hexpubkey,
+    NDKEvent,
+    NDKKind,
+    NDKUser,
+    NDKUserProfile,
+} from '@nostr-dev-kit/ndk';
 import { useMemo } from 'react';
-import NDK, { NDKEvent, NDKKind, NDKUser, Hexpubkey, NDKUserProfile } from '@nostr-dev-kit/ndk';
-import { useUserSession, useNDKSessions, SessionState, UserSessionData } from '../session'; // Combined imports
-import { useProfile } from './profile'; // Added import for profile hook
+import {
+    SessionState,
+    UserSessionData,
+    useNDKSessions,
+    useUserSession,
+} from '../session'; // Combined imports
 import { useNDK } from './ndk'; // Added import
+import { useProfile } from './profile'; // Added import for profile hook
 
 /**
  * Returns the list of followed pubkeys for the active session.
@@ -31,7 +42,6 @@ export const useMuteList = () => {
     return { pubkeys, hashtags, words, eventIds, event };
 };
 
-
 interface UseNDKSessionEventOptions<T extends NDKEvent> {
     /**
      * Optional class (e.g., NDKList) to create a new, default instance
@@ -51,7 +61,8 @@ interface UseNDKSessionEventOptions<T extends NDKEvent> {
  */
 export function useNDKSessionEvent<T extends NDKEvent>(
     kind: NDKKind,
-    options: UseNDKSessionEventOptions<T> & Required<Pick<UseNDKSessionEventOptions<T>, 'create'>>,
+    options: UseNDKSessionEventOptions<T> &
+        Required<Pick<UseNDKSessionEventOptions<T>, 'create'>>
 ): T;
 
 /**
@@ -63,7 +74,7 @@ export function useNDKSessionEvent<T extends NDKEvent>(
  */
 export function useNDKSessionEvent<T extends NDKEvent>(
     kind: NDKKind,
-    options?: Omit<UseNDKSessionEventOptions<T>, 'create'>,
+    options?: Omit<UseNDKSessionEventOptions<T>, 'create'>
 ): T | undefined;
 
 /**
@@ -71,13 +82,15 @@ export function useNDKSessionEvent<T extends NDKEvent>(
  */
 export function useNDKSessionEvent<T extends NDKEvent>(
     kind: NDKKind,
-    options: UseNDKSessionEventOptions<T> = {},
+    options: UseNDKSessionEventOptions<T> = {}
 ): T | undefined {
     const { ndk } = useNDK();
     const { create } = options;
     // Get active session data from the main store hook
     const activeSession = useUserSession(); // Use the existing hook
-    const activeSessionPubkey = useNDKSessions(state => state.activeSessionPubkey); // Need pubkey for user creation
+    const activeSessionPubkey = useNDKSessions(
+        (state) => state.activeSessionPubkey
+    ); // Need pubkey for user creation
 
     // Memoize the result to prevent unnecessary recalculations/creations
     const event = useMemo(() => {
@@ -94,24 +107,28 @@ export function useNDKSessionEvent<T extends NDKEvent>(
             try {
                 // Instantiate the class, passing NDK instance if needed by constructor
                 const newInstance = new create(ndk);
-                 // Assign the user's pubkey if the created instance has a pubkey field
-                 // (This is a common pattern but might vary depending on the class T)
-                 if ('pubkey' in newInstance && activeSessionPubkey) {
-                     (newInstance as any).pubkey = activeSessionPubkey;
-                 }
+                // Assign the user's pubkey if the created instance has a pubkey field
+                // (This is a common pattern but might vary depending on the class T)
+                if ('pubkey' in newInstance && activeSessionPubkey) {
+                    (newInstance as any).pubkey = activeSessionPubkey;
+                }
                 // Note: This newly created instance is NOT automatically saved back to the store.
                 // It's returned for immediate use. Saving would require a separate action.
                 return newInstance;
             } catch (error) {
-                console.error(`Failed to create instance for kind ${kind} using provided class:`, error);
+                console.error(
+                    `Failed to create instance for kind ${kind} using provided class:`,
+                    error
+                );
                 return undefined;
             }
         }
 
         // Event doesn't exist and create option not provided or failed
         return undefined;
-
-    }, [activeSession, kind, create, ndk, activeSessionPubkey]) as T | undefined; // Assert final type
+    }, [activeSession, kind, create, ndk, activeSessionPubkey]) as
+        | T
+        | undefined; // Assert final type
 
     return event;
 }
@@ -128,7 +145,9 @@ export function useNDKSessionEvent<T extends NDKEvent>(
  */
 export const useCurrentUserProfile = (): NDKUserProfile | undefined => {
     // Get active session pubkey from the main store hook
-    const activeSessionPubkey = useNDKSessions(state => state.activeSessionPubkey);
+    const activeSessionPubkey = useNDKSessions(
+        (state) => state.activeSessionPubkey
+    );
 
     // Use the useProfile hook to get the profile for the active user's pubkey
     // Note: useProfile returns NDKUserProfile | undefined directly

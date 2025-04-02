@@ -1,6 +1,12 @@
 // types.ts - Type definitions for session data using Zustand
-import type NDK from "@nostr-dev-kit/ndk";
-import type { Hexpubkey, NDKEvent, NDKKind, NDKUser, NDKUserProfile } from "@nostr-dev-kit/ndk";
+import type NDK from '@nostr-dev-kit/ndk';
+import type {
+    Hexpubkey,
+    NDKEvent,
+    NDKKind,
+    NDKUser,
+    NDKUserProfile,
+} from '@nostr-dev-kit/ndk';
 
 /**
  * User-specific session data stored within the main store.
@@ -27,7 +33,7 @@ export interface UserSessionData {
     replaceableEvents: Map<NDKKind, NDKEvent | null>;
 
     lastActive: number; // Timestamp of last activity
-    
+
     // Add other user-specific fields as needed, e.g., wot scores
     wot?: Map<string, number>;
 }
@@ -43,7 +49,10 @@ export interface SessionState {
 
     // Actions - defined within the store creation
     // These are examples, the actual implementation will be in the store file
-    createSession: (pubkey: string, initialData?: Partial<UserSessionData>) => void;
+    createSession: (
+        pubkey: string,
+        initialData?: Partial<UserSessionData>
+    ) => void;
     updateSession: (pubkey: string, data: Partial<UserSessionData>) => void;
     deleteSession: (pubkey: string) => void;
     setActiveSession: (pubkey: string | null) => void;
@@ -52,14 +61,14 @@ export interface SessionState {
     muteItemForSession: (
         pubkey: string,
         value: string,
-        itemType: "pubkey" | "hashtag" | "word" | "event",
-        publish?: boolean,
+        itemType: 'pubkey' | 'hashtag' | 'word' | 'event',
+        publish?: boolean
     ) => void;
     initSession: (
         ndk: NDK,
         user: NDKUser,
         opts?: SessionInitOptions,
-        cb?: (error: Error | null, pubkey?: string) => void,
+        cb?: (error: Error | null, pubkey?: string) => void
     ) => Promise<string | undefined>;
 }
 

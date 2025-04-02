@@ -102,7 +102,6 @@ These hooks help manage content muting based on session preferences.
 *   **Purpose**: This hook provides a highly optimized function designed to determine if a specific Nostr event (`NDKEvent`) should be considered 'muted' or filtered out based on the currently active user session's preferences. It leverages the mute lists configured within the session, which can include muted public keys (authors), specific event IDs, hashtags (case-insensitive), and keywords (using case-insensitive regular expressions). The hook is built for performance, employing memoization (`useMemo`, `useCallback`) to avoid unnecessary recalculations of mute criteria or the filter function itself, ensuring smooth UI performance even with frequent event processing. It efficiently checks against the various mute criteria, prioritizing simpler checks like pubkey matching before moving to more complex tag and content analysis. It returns a simple boolean function for easy integration into event filtering logic.
 *   **File**: `ndk-hooks/src/hooks/mute.ts`
 *   **Returns**: `(event: NDKEvent) => boolean` (returns `true` if event should be muted)
-*   **Flag**: (No specific flags for this hook after refactoring).
 
 ### `useMuteItem`
 

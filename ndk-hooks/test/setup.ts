@@ -4,7 +4,7 @@ import { vi } from 'vitest';
 vi.mock('react', async () => {
     const actual = await vi.importActual('react');
     return {
-        ...actual as object,
+        ...(actual as object),
         useEffect: vi.fn((fn) => fn()),
     };
 });

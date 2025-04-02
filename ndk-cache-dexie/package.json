@@ -33,7 +33,6 @@
     "keywords": ["nostr", "dexie", "cache"],
     "authors": ["pablof7z", "erskingardner"],
     "devDependencies": {
-        "@nostr-dev-kit/eslint-config-custom": "workspace:*",
         "@nostr-dev-kit/tsconfig": "workspace:*",
         "@types/debug": "^4.1.12",
         "@types/node": "^22.6.1",
@@ -41,8 +40,8 @@
         "prettier": "^3.3.3",
         "ts-node": "^10.9.2",
         "tsup": "^8.3.0",
-        "typedoc": "^0.26.7",
-        "typedoc-plugin-markdown": "^4.3.0",
+        "typedoc": "^0.28.0",
+        "typedoc-plugin-markdown": "^4.5.0",
         "vitest": "^1.2.0"
     },
     "dependencies": {

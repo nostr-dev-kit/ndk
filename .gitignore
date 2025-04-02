@@ -24,3 +24,4 @@ ndk/docs
 docs/.vitepress/cache
 docs/.vitepress/dist
 .ngit
+**/.repomix-output.txt

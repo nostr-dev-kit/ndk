@@ -14,7 +14,7 @@
         "@nostr-dev-kit/ndk": "^2.0.0"
     },
     "devDependencies": {
-        "typescript": "^5.3.3",
+        "typescript": "^5.8.2",
         "@nostr-dev-kit/ndk": "workspace:*",
         "nostr-tools": "^2.7.1",
         "vitest": "^1.0.0"

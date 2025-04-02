@@ -12,15 +12,21 @@ import NDK from "@nostr-dev-kit/ndk";
 // instantiate your NDK
 const ndk = new NDK({
     explicitRelayUrls: [ <some-relays> ],
-    signer = NDKPrivateKeySigner.generate();
+    signer: NDKPrivateKeySigner.generate();
 });
 ndk.connect();
 
 // create a new NIP-60 wallet
-const mints = [ 'https://testnut.cashu.space' ] // mints the wallet will use
-const relays = [ 'wss://f7z.io', 'ws://localhost:4040' ]; // relays where proofs will be stored
-const wallet = NDKCashuWallet.create(ndk, unit, mints, relays);
+const wallet = new NDKCashuWallet(ndk);
+wallet.mints = ["https://mint.example.com"];
+
+// REQUIRED: Generate and publish the wallet's P2PK
+await wallet.getP2pk();
+console.log("P2PK:", wallet.p2pk);
+
+// REQUIRED: Publish the wallet's mint list for token/nutzap reception
 await wallet.publish();
+console.log("Wallet published successfully");
 ```
 
 This will publish a wallet `kind:17375` event, which contains the wallet information.
@@ -31,9 +37,13 @@ We now have a NIP-60 wallet -- this wallet will be available from any nostr clie
 
 ```ts
 const deposit = wallet.deposit(1000, mints[0]);
-const bolt11 = deposit.start(); // get a LN PR
+const bolt11 = await deposit.start(); // get a LN PR
 deposit.on("success", () => console.log("we have money!", wallet.balance));
 ```
+
+## Receiving Nutzaps
+
+In order to receive nutzaps, users will need to publish a CashuMintList event (`kind:10019`) and activate the nutzap monitor. Refer to the nutzap-monitor section of this tutorial.
 
 ## Configure NDK to use a wallet
 

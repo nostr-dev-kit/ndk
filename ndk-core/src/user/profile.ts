@@ -37,7 +37,7 @@ export function profileFromEvent(event: NDKEvent): NDKUserProfile {
     profile.created_at = event.created_at;
     profile.profileEvent = JSON.stringify(event.rawEvent());
 
-    Object.keys(payload).forEach((key) => {
+    for (const key of Object.keys(payload)) {
         switch (key) {
             case "name":
                 profile.name = payload.name;
@@ -75,7 +75,7 @@ export function profileFromEvent(event: NDKEvent): NDKUserProfile {
                 profile[key] = payload[key];
                 break;
         }
-    });
+    }
 
     return profile;
 }

@@ -212,3 +212,61 @@ flowchart TD
         H4 -->|"Matched Filters: kinds: [1]"| I1
     end
 ```
+
+## Handling Subscription Events
+
+When creating a subscription using `ndk.subscribe`, you can provide handlers for different stages of the subscription lifecycle directly within the options or the `autoStart` parameter.
+
+```typescript
+interface NDKSubscriptionEventHandlers {
+    /**
+     * Called for each individual event received after the initial cache load (if applicable)
+     * or for all events if onEvents is not provided.
+     */
+    onEvent?: (event: NDKEvent, relay?: NDKRelay) => void;
+
+    /**
+     * Called *once* with all events found synchronously in the cache when the subscription starts.
+     * If this handler is provided, `onEvent` will *not* be called for these initial cached events.
+     * This is useful for bulk processing or batching UI updates.
+     */
+    onEvents?: (events: NDKEvent[]) => void;
+
+    /**
+     * Called when the subscription receives an EOSE (End of Stored Events) marker
+     * from all connected relays for this subscription request.
+     */
+    onEose?: (sub: NDKSubscription) => void;
+}
+
+// Example passing handlers directly (preferred method)
+ndk.subscribe(
+    filters,
+    { // Options can include explicit relays now
+        closeOnEose: true,
+        // relayUrls: ["wss://explicit.relay"] // Optionally specify relays here
+    },
+    { // Pass handlers via the autoStart parameter (now the 3rd argument)
+        onEvent: (event) => {
+            console.log("Received event:", event.id);
+        },
+        onEvents: (events) => { // Renamed parameter
+            console.log(`Received ${events.length} events from cache initially.`);
+            // Process the batch of cached events here
+        },
+        onEose: (subscription) => {
+            console.log("Subscription reached EOSE:", subscription.internalId);
+        }
+    }
+);
+```
+
+### Bulk Cache Event Handling (`onEvents`)
+
+A key feature is the behavior when using the `onEvents` handler. If NDK has a cache adapter configured and finds events matching the subscription filter synchronously in the cache upon starting the subscription:
+
+1.  The `onEvents` handler will be called exactly once with an array containing all these cached `NDKEvent` objects.
+2.  The regular `onEvent` handler will *not* be called for this initial batch of cached events.
+3.  After this initial batch, `onEvent` will be called for any subsequent events received from relays or asynchronous cache updates.
+
+This allows applications to efficiently process the initial state from the cache in one go, which can be particularly beneficial for UI frameworks to avoid multiple re-renders that might occur if `onEvent` were called for each cached item individually. If `onEvents` is *not* provided, `onEvent` will be called for every event, including those from the cache.

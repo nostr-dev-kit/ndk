@@ -1,11 +1,13 @@
-import { act, renderHook } from '@testing-library/react-hooks';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { act, renderHook } from '@testing-library/react';
+import { MockedFunction, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useProfile } from '../../src/hooks/profile';
-import { useUserProfilesStore } from '../../src/stores/profiles';
+import { UserProfilesStore, useUserProfilesStore } from '../../src/stores/profiles';
 
 // Create mocks
 const mockFetchProfile = vi.fn();
 const mockProfiles = new Map();
+const mockInitialize = vi.fn();
+const mockSetProfile = vi.fn();
 
 // Mock dependencies
 vi.mock('../../src/stores/profiles', () => {
@@ -44,20 +46,26 @@ describe('useProfile', () => {
         mockFetchProfile.mockReset();
 
         // Update the store mock implementation
-        (useUserProfilesStore as any).mockImplementation((selector) => {
+        (useUserProfilesStore as unknown as MockedFunction<typeof useUserProfilesStore>).mockImplementation((selector?: (state: UserProfilesStore) => unknown) => {
+            const mockState: UserProfilesStore = {
+                ndk: undefined, // Add mock value
+                profiles: mockProfiles,
+                lastFetchedAt: new Map(), // Add mock value
+                initialize: mockInitialize, // Add mock function
+                setProfile: mockSetProfile, // Add mock function
+                fetchProfile: mockFetchProfile,
+            };
+
             if (typeof selector === 'function') {
-                return selector({
-                    profiles: mockProfiles,
-                    fetchProfile: mockFetchProfile,
-                });
+                return selector(mockState);
             }
 
             // When called directly with no selector, return the store
             if (selector === undefined) {
-                return { fetchProfile: mockFetchProfile };
+                return mockState;
             }
 
-            return mockFetchProfile;
+            return mockState;
         });
     });
 

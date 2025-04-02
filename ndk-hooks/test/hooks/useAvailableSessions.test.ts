@@ -1,10 +1,10 @@
 // test/hooks/useAvailableSessions.test.ts
 
 import type { NDKSigner } from '@nostr-dev-kit/ndk';
-import { renderHook } from '@testing-library/react-hooks'; // Correct import
-import { vi } from 'vitest';
+import { renderHook } from '@testing-library/react'; // Correct import
+import { MockedFunction, vi } from 'vitest'; // Import MockedFunction
 import { useAvailableSessions } from '../../src/hooks/useAvailableSessions';
-import { useNDKStore } from '../../src/stores/ndk';
+import { NDKStoreState, useNDKStore } from '../../src/stores/ndk'; // Import state type
 
 // Mock useNDKStore
 vi.mock('../../src/stores/ndk', () => ({
@@ -13,8 +13,10 @@ vi.mock('../../src/stores/ndk', () => ({
 
 // Helper to set the mock return value for useNDKStore selector
 const mockUseNDKStoreSelector = (signers: Map<string, NDKSigner>) => {
-    (useNDKStore as any).mockImplementation((selector: (state: any) => any) => {
-        return selector({ signers });
+    // biome-ignore lint/suspicious/noExplicitAny: <Mocking Zustand store selector>
+    (useNDKStore as unknown as MockedFunction<typeof useNDKStore>).mockImplementation((selector: (state: NDKStoreState) => any) => {
+        // Provide a partial state matching what the selector needs
+        return selector({ signers } as Partial<NDKStoreState> as NDKStoreState);
     });
 };
 

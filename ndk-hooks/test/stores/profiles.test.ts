@@ -1,4 +1,5 @@
-import { act } from '@testing-library/react-hooks';
+import NDK from '@nostr-dev-kit/ndk'; // Import NDK type
+import { act } from '@testing-library/react'; // Correct import
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useUserProfilesStore } from '../../src/stores/profiles';
 
@@ -49,7 +50,7 @@ describe('Profiles Store', () => {
             const store = useUserProfilesStore.getState();
 
             act(() => {
-                store.initialize(mockNDK as any);
+                store.initialize(mockNDK as unknown as NDK);
             });
 
             const state = useUserProfilesStore.getState();
@@ -67,7 +68,7 @@ describe('Profiles Store', () => {
             const mockEmptyNDK = { cacheAdapter: null };
 
             act(() => {
-                store.initialize(mockEmptyNDK as any);
+                store.initialize(mockEmptyNDK as unknown as NDK);
             });
 
             const state = useUserProfilesStore.getState();
@@ -126,7 +127,7 @@ describe('Profiles Store', () => {
             const store = useUserProfilesStore.getState();
 
             act(() => {
-                store.initialize(mockNDK as any);
+                store.initialize(mockNDK as unknown as NDK);
             });
 
             await act(async () => {
@@ -154,7 +155,7 @@ describe('Profiles Store', () => {
             );
 
             act(() => {
-                store.initialize(mockNDK as any);
+                store.initialize(mockNDK as unknown as NDK);
             });
 
             await act(async () => {

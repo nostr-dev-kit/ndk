@@ -1,12 +1,14 @@
 import NDK from '@nostr-dev-kit/ndk';
-import { renderHook } from '@testing-library/react-hooks';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { renderHook } from '@testing-library/react';
+import { MockedFunction, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useNDK } from '../../src/hooks/ndk';
-import { useNDKStore } from '../../src/stores/ndk';
+import { NDKStoreState, useNDKStore } from '../../src/stores/ndk';
 
 // Create mocks
 const mockSetNDK = vi.fn();
 let mockNDK: NDK | null = null;
+const mockAddSigner = vi.fn();
+const mockSwitchToUser = vi.fn();
 
 // Mock dependencies
 vi.mock('../../src/stores/ndk', () => {
@@ -38,29 +40,38 @@ describe('useNDK', () => {
         mockSetNDK.mockReset();
 
         // Update the store mock implementation
-        (useNDKStore as any).mockImplementation((selector) => {
+        (useNDKStore as unknown as MockedFunction<typeof useNDKStore>).mockImplementation((selector?: (state: NDKStoreState) => unknown) => {
+            const mockState: NDKStoreState = {
+                ndk: mockNDK,
+                setNDK: mockSetNDK,
+                currentUser: null, // Add mock value
+                signers: new Map(), // Add mock value (Map expected)
+                addSigner: mockAddSigner, // Add mock function
+                switchToUser: mockSwitchToUser, // Add mock function
+            };
+
             if (typeof selector === 'function') {
-                return selector({
-                    ndk: mockNDK,
-                    setNDK: mockSetNDK,
-                });
+                return selector(mockState);
             }
 
             // When called directly with no selector, return the store
             if (selector === undefined) {
-                return { ndk: mockNDK, setNDK: mockSetNDK };
+                return mockState;
             }
 
-            return { ndk: mockNDK, setNDK: mockSetNDK };
+            return mockState;
         });
     });
 
     it('should return ndk and setNDK from the store', () => {
         const { result } = renderHook(() => useNDK());
 
+        // Expect the full object returned by the hook/store
         expect(result.current).toEqual({
             ndk: null,
             setNDK: mockSetNDK,
+            addSigner: mockAddSigner,
+            switchToUser: mockSwitchToUser,
         });
     });
 

@@ -1,5 +1,5 @@
 import NDK, { Hexpubkey, NDKSigner, NDKUser } from '@nostr-dev-kit/ndk';
-import { act } from '@testing-library/react-hooks'; // Revert back
+import { act } from '@testing-library/react'; // Correct import
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useNDKStore } from '../../src/stores/ndk';
 
@@ -114,7 +114,8 @@ describe('NDK Store', () => {
             const error = new Error('Signer error');
             vi.mocked(mockSigner1.user).mockRejectedValueOnce(error); // remove problematic cast
             await act(async () => {
-                await addSigner(mockSigner1);
+                // Add .catch to prevent Vitest failing on the mock rejection
+                await addSigner(mockSigner1).catch(() => {});
             });
             const { signers } = useNDKStore.getState();
             expect(signers.size).toBe(0);

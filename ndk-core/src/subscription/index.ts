@@ -145,6 +145,15 @@ export interface NDKSubscriptionOptions {
      * @since 2.13.0
      */
     relayUrls?: string[];
+
+    /**
+     * When set, the cache will be queried first, and, when hitting relays,
+     * a `since` filter will be added to the subscription that is one second
+     * after the last event received from the cache.
+     * 
+     * This option implies cacheUsage: CACHE_FIRST.
+     */
+    addSinceFromCache?: boolean;
 }
 
 /**
@@ -279,6 +288,12 @@ export class NDKSubscription extends EventEmitter<{
      */
     private lastEventReceivedAt: number | undefined;
 
+    /**
+     * The most recent event timestamp from cache results.
+     * This is used for addSinceFromCache functionality.
+     */
+    private mostRecentCacheEventTimestamp?: number;
+
     public internalId: NDKSubscriptionInternalId;
 
     /**
@@ -362,6 +377,8 @@ export class NDKSubscription extends EventEmitter<{
     }
 
     private shouldQueryCache(): boolean {
+        if (this.opts.addSinceFromCache) return true;
+        
         // explicitly told to not query the cache
         if (this.opts?.cacheUsage === NDKSubscriptionCacheUsage.ONLY_RELAY) return false;
 
@@ -378,6 +395,8 @@ export class NDKSubscription extends EventEmitter<{
     }
 
     private shouldWaitForCache(): boolean {
+        if (this.opts.addSinceFromCache) return true;
+
         return (
             // Must want to close on EOSE; subscriptions
             // that want to receive further updates must
@@ -407,24 +426,31 @@ export class NDKSubscription extends EventEmitter<{
         const updateStateFromCacheResults = (events: NDKEvent[]) => {
             if (emitCachedEvents) {
                 for (const event of events) {
+                    if (!this.mostRecentCacheEventTimestamp || event.created_at > this.mostRecentCacheEventTimestamp) {
+                        this.mostRecentCacheEventTimestamp = event.created_at;
+                    }
                     this.eventReceived(event, undefined, true, false);
                 }
             } else {
                 cacheResult = [];
-                events.forEach((event) => {
+                for (const event of events) {
+                    if (!this.mostRecentCacheEventTimestamp || event.created_at > this.mostRecentCacheEventTimestamp) {
+                        this.mostRecentCacheEventTimestamp = event.created_at;
+                    }
+                    
                     event.ndk = this.ndk;
                     const e = this.opts.wrap ? wrapEvent(event) : event;
-                    if (!e) return;
+                    if (!e) break;
                     if (e instanceof Promise) {
                         // if we get a promise, we emit it
                         e.then((wrappedEvent) => {
                             this.emitEvent(false, wrappedEvent, undefined, true, false);
                         });
-                        return;
+                        break;
                     }
                     this.eventFirstSeen.set(e.id, Date.now());
                     (cacheResult as NDKEvent[]).push(e);
-                });
+                }
             }
         };
 
@@ -534,12 +560,29 @@ export class NDKSubscription extends EventEmitter<{
      * check if we need to execute in them.
      */
     private startWithRelays(): void {
+        // Create a copy of filters to potentially modify for addSinceFromCache
+        let filters = this.filters;
+        
+        // If addSinceFromCache is enabled and we have a timestamp from cache results,
+        // modify the filters to add a 'since' filter that's one second after the most recent event
+        if (this.opts.addSinceFromCache && this.mostRecentCacheEventTimestamp) {
+            const sinceTimestamp = this.mostRecentCacheEventTimestamp + 1;
+            filters = filters.map(filter => ({
+                ...filter,
+                since: Math.max(filter.since || 0, sinceTimestamp)
+            }));
+        }
+
+        if (this.opts.addSinceFromCache) {
+            console.log("we were asked to add a since from cache", JSON.stringify(filters, null, 4));
+        }
+        
         if (!this.relaySet || this.relaySet.relays.size === 0) {
-            this.relayFilters = calculateRelaySetsFromFilters(this.ndk, this.filters, this.pool);
+            this.relayFilters = calculateRelaySetsFromFilters(this.ndk, filters, this.pool);
         } else {
             this.relayFilters = new Map();
             for (const relay of this.relaySet.relays) {
-                this.relayFilters.set(relay.url, this.filters);
+                this.relayFilters.set(relay.url, filters);
             }
         }
 

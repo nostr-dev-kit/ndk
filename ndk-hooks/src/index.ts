@@ -9,19 +9,24 @@ export * from '@nostr-dev-kit/ndk';
 
 export default NDK;
 
-export * from './hooks/session';
+// Feature-specific exports
+export * from './session/hooks'; // Session hooks (useCurrentUserProfile, useFollows, useMuteList, useNDKSessionEvent)
+export * from './session/store'; // Session store (useNDKSessions)
+export * from './ndk/hooks';     // NDK core hooks (useNDK, useNDKCurrentUser, useNDKUnpublishedEvents, useNDKInit)
+export * from './ndk/store';     // NDK store (useNDKStore) - Assuming this exists or will be created
+export * from './profiles/hooks'; // Profile hooks (useProfile)
+export * from './profiles/store'; // Profile store (useUserProfilesStore) - Assuming this exists or will be created
 
-export { useMuteFilter, useMuteItem } from './hooks/mute';
-export * from './hooks/ndk';
-export * from './hooks/observer';
-export * from './hooks/profile';
-export * from './hooks/subscribe';
-export * from './hooks/useAvailableSessions';
-export { useNDKNutzapMonitor, useNDKWallet } from './hooks/wallet';
-export * from './session/index.js';
-export * from './stores/ndk';
-export * from './stores/profiles';
-export * from './stores/subscribe';
-// Removed duplicate export of './stores/sessions' - useNDKSessions is exported via './hooks/session'
-export type { NDKSessionsState } from './stores/sessions/index'; // Export main state type
-export type { NDKUserSession } from './stores/sessions/types'; // Export session type
+// Common/Utility hooks and stores (adjust paths as needed if these are further organized)
+export { useMuteFilter, useMuteItem } from './common/hooks/mute';
+export * from './common/hooks/observer';
+export * from './common/hooks/subscribe';
+export * from './session/hooks/use-available-sessions'; // Corrected path
+export { useNDKNutzapMonitor, useNDKWallet } from './wallet/hooks'; // Corrected path
+export * from './common/store/subscribe'; // Subscribe store
+
+// Re-exporting from session/index.js might be redundant now
+// export * from './session/index.js';
+// Removed duplicate export of './stores/sessions' - useNDKSessions is exported via './session/store'
+export type { NDKSessionsState } from './session/store/index'; // Export main state type from new location
+export type { NDKUserSession } from './session/store/types'; // Export session type from new location

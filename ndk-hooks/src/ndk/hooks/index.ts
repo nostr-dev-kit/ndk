@@ -1,8 +1,9 @@
 import type NDK from '@nostr-dev-kit/ndk';
 import type { NDKEvent, NDKPublishError } from '@nostr-dev-kit/ndk';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { type NDKStoreState, useNDKStore } from '../stores/ndk';
-import { type UserProfilesStore, useUserProfilesStore } from '../stores/profiles';
+import { type NDKStoreState, useNDKStore } from '../store'; // Corrected path
+import { type UserProfilesStore, useUserProfilesStore } from '../../profiles/store'; // Corrected path
+// Removed SessionState and useNDKSessions imports
 
 /**
  * Interface for the useNDK hook return value
@@ -116,6 +117,7 @@ export function useNDKInit() {
     const initializeProfilesStore = useUserProfilesStore(
         (state: UserProfilesStore) => state.initialize
     );
+    // Removed initializeSessionStore logic
 
     /**
      * Initializes the NDK instance and dependent stores.
@@ -136,9 +138,11 @@ export function useNDKInit() {
             console.log('Initializing User Profiles store...');
             initializeProfilesStore(ndkInstance);
 
+            // Removed Session store initialization call
+
             console.log('NDK and dependent stores initialized.');
         },
-        [setNDK, initializeProfilesStore]
+        [setNDK, initializeProfilesStore] // Removed initializeSessionStore from dependencies
     );
 
     return initializeNDK;

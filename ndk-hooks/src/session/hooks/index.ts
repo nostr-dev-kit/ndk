@@ -4,12 +4,23 @@ import {
     NDKKind, type NDKUserProfile
 } from '@nostr-dev-kit/ndk';
 import { useMemo } from 'react';
-import {
-    useNDKSessions,
-    useUserSession
-} from '../session';
-import { useNDK } from './ndk';
-import { useProfile } from './profile';
+import { useNDKSessions } from '../store'; // Corrected import path
+// useUserSession will be defined below, so remove the import
+import { useNDK } from '../../ndk/hooks'; // Corrected import path
+import { useProfile } from '../../profiles/hooks'; // Corrected import path for useProfile
+
+/**
+ * Selector hook to get the full NDKUserSession object for the active user.
+ * Returns undefined if no session is active.
+ */
+export const useUserSession = () => {
+    const { sessions, activeSessionPubkey } = useNDKSessions(
+        (state) => ({ sessions: state.sessions, activeSessionPubkey: state.activeSessionPubkey }),
+    );
+
+    if (!activeSessionPubkey) return undefined;
+    return sessions.get(activeSessionPubkey);
+};
 
 /**
  * Returns the list of followed pubkeys for the active session.

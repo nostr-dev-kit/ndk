@@ -1,6 +1,6 @@
 import type { Hexpubkey } from '@nostr-dev-kit/ndk';
 import { useMemo } from 'react';
-import { useNDKSessions } from '../stores/sessions'; // Changed import
+import { useNDKSessions } from '../store'; // Corrected import path
 
 /**
  * Interface for the useAvailableSessions hook return value

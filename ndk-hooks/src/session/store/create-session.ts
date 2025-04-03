@@ -1,7 +1,8 @@
 import type { StoreApi } from 'zustand';
-import type { SessionState, UserSessionData } from '../types';
+import type { NDKUserSession } from './types';
+import type { NDKSessionsState } from './index'; // Import the correct state type
 
-const createDefaultSession = (pubkey: string): UserSessionData => ({
+const createDefaultSession = (pubkey: string): NDKUserSession => ({
     pubkey,
     mutedPubkeys: new Set<string>(),
     mutedHashtags: new Set<string>(),
@@ -12,10 +13,10 @@ const createDefaultSession = (pubkey: string): UserSessionData => ({
 });
 
 export function createSession(
-    set: StoreApi<SessionState>['setState'],
-    get: StoreApi<SessionState>['getState'],
+    set: StoreApi<NDKSessionsState>['setState'],
+    get: StoreApi<NDKSessionsState>['getState'],
     pubkey: string,
-    initialData: Partial<UserSessionData> = {}
+    initialData: Partial<NDKUserSession> = {}
 ): void {
     set((state) => {
         if (state.sessions.has(pubkey)) {

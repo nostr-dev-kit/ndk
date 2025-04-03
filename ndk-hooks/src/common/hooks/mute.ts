@@ -1,8 +1,8 @@
 import { NDKEvent } from '@nostr-dev-kit/ndk';
 import { useCallback, useMemo } from 'react';
-import { useUserSession } from '../session';
-import { type MuteCriteria } from '../stores/subscribe';
-import { isMuted } from '../utils/mute';
+import { useUserSession } from '../../session/hooks'; // Corrected path
+import type { MuteCriteria } from '../store/subscribe'; // Corrected path and added 'type' keyword
+import { isMuted } from '../../utils/mute'; // Corrected path
 
 /**
  * Provides a memoized filter function to check if an NDKEvent should be muted
@@ -25,7 +25,9 @@ export function useMuteFilter(): (event: NDKEvent) => boolean {
                 : null;
 
         const lowerCaseHashtags = new Set<string>();
-        hashtags.forEach((h) => lowerCaseHashtags.add(h.toLowerCase()));
+        for (const h of hashtags) { // Changed forEach to for...of
+            lowerCaseHashtags.add(h.toLowerCase());
+        }
 
         return {
             mutedPubkeys: pubkeys,
@@ -46,7 +48,7 @@ export function useMuteFilter(): (event: NDKEvent) => boolean {
 }
 
 import { NDKUser } from '@nostr-dev-kit/ndk';
-import { useNDKSessions } from '../session';
+import { useNDKSessions } from '../../session/store'; // Corrected import path
 
 /**
  * Type definition for the item that can be muted.
@@ -62,7 +64,7 @@ type MutableItem = NDKEvent | NDKUser | string;
  *          Does nothing if there is no active session.
  */
 export function useMuteItem(
-    publish: boolean = true
+    publish = true // Removed explicit type annotation
 ): (item: MutableItem) => void {
     const { activeSessionPubkey, muteItemForSession } = useNDKSessions(
         (state) => ({
@@ -102,9 +104,9 @@ export function useMuteItem(
                 return;
             }
 
-            muteItemForSession(activeSessionPubkey, value, itemType, publish);
+            muteItemForSession(activeSessionPubkey, value, itemType); // Removed publish argument
         },
-        [activeSessionPubkey, muteItemForSession, publish]
+        [activeSessionPubkey, muteItemForSession] // Removed unused 'publish' dependency
     );
 
     return muteFn;

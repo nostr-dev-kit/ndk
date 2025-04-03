@@ -1,9 +1,9 @@
-export { useNDKSessions, useUserSession } from './store/index.js';
+export { useNDKSessions } from './store'; // useUserSession moved to hooks export
+export { useUserSession } from './hooks'; // Export useUserSession from hooks
 
 export type {
     SessionInitOptions,
-    SessionState,
-    UserSessionData,
-} from './types.js';
+    NDKUserSession // Export renamed type
+} from './store/types'; // Corrected path and removed obsolete types
 
-export { processMuteList } from './utils.js';
+export { processMuteList } from './utils'; // Removed .js extension

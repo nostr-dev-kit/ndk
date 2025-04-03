@@ -1,11 +1,12 @@
 import type { StoreApi } from 'zustand';
-import type { SessionState, UserSessionData } from '../types';
+import type { NDKUserSession } from './types';
+import type { NDKSessionsState } from './index'; // Import the correct state type
 
 export function updateSession(
-    set: StoreApi<SessionState>['setState'],
-    get: StoreApi<SessionState>['getState'],
+    set: StoreApi<NDKSessionsState>['setState'],
+    get: StoreApi<NDKSessionsState>['getState'],
     pubkey: string,
-    data: Partial<UserSessionData>
+    data: Partial<NDKUserSession>
 ): void {
     set((state) => {
         const session = state.sessions.get(pubkey);

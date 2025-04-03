@@ -1,6 +1,6 @@
 # NDK Hooks: Multi-User Session Management
 
-This document explains how to use the Zustand-based multi-user session management system provided by `ndk-hooks`. It allows you to manage NDK instances, user data (profiles, follows, mutes), and events for multiple Nostr users concurrently within your React application.
+This document explains how to use the Zustand-based multi-user session management system provided by `ndk-hooks`. It allows you to manage user data (profiles, follows, mutes), and events for multiple Nostr users concurrently within your React application.
 
 ## Core Concept
 
@@ -25,24 +25,27 @@ import type { NDKUser, NDKKind, NDKList, NDKSimpleGroupList, NDKSigner } from "@
 ```
 
 ## Initializing a Session
-
-Before interacting with a user's data, you need to initialize their session. This typically involves providing an `NDK` instance, the `NDKUser` object, and optionally an `NDKSigner` if you want the session to be able to perform signed actions (like publishing mutes).
+Before interacting with a user's data, you need to initialize the NDK instance and then initialize the user's session. The store now manages its own NDK instance internally, so you don't need to pass it to each function.
 
 ```typescript
-import { useNDKSessions } from "@nostr-dev-kit/ndk-hooks/session";
+import { useNDKSessions, useNDKInit } from "@nostr-dev-kit/ndk-hooks";
 import NDK from "@nostr-dev-kit/ndk";
 import { NDKNip07Signer } from "@nostr-dev-kit/ndk"; // Example signer
-
-// Assume you have an NDK instance configured
-const ndkInstance = new NDK({ explicitRelayUrls: ["wss://relay.example.com"] });
-await ndkInstance.connect();
-
-// Get the initSession action from the store
-const initSession = useNDKSessions.getState().initSession;
 
 // Example: Initialize session after NIP-07 login
 async function loginAndInitSession() {
     try {
+        // First, initialize the NDK instance
+        const ndkInstance = new NDK({ explicitRelayUrls: ["wss://relay.example.com"] });
+        await ndkInstance.connect();
+        
+        // Initialize the NDK instance in the store
+        const initializeNDK = useNDKInit();
+        initializeNDK(ndkInstance);
+        
+        // Now get the initSession action from the store
+        const initSession = useNDKSessions.getState().initSession;
+        
         const nip07Signer = new NDKNip07Signer();
         const user = await nip07Signer.user(); // Gets NDKUser
 
@@ -59,8 +62,8 @@ async function loginAndInitSession() {
             ])
         };
 
-        // Pass the signer directly to initSession
-        const initializedPubkey = await initSession(ndkInstance, user, nip07Signer, options);
+        // Notice: No need to pass the NDK instance to initSession
+        const initializedPubkey = await initSession(user, nip07Signer, options);
 
         if (initializedPubkey) {
             console.log(`Session initialized and active for pubkey: ${initializedPubkey}`);
@@ -75,20 +78,17 @@ async function loginAndInitSession() {
 loginAndInitSession();
 ```
 
-The `initSession(ndk, user, signer?, opts?)` action performs the following:
+The `initSession(user, signer?, opts?)` action performs the following:
 1.  Creates a new session entry in the store if one doesn't exist for the given `pubkey`.
-2.  Associates the provided `NDK` instance with the session.
+2.  Uses the NDK instance from the store that was initialized with `useNDKInit`.
 3.  **Associates the provided `NDKSigner` (if any) with the session.** This allows hooks like `useMuteItem` to publish signed events using the correct signer for the session.
-4.  **Configures the main `ndk` instance's `signer` property** with the provided signer. This ensures the NDK instance used for initial data fetches (profile, follows, etc.) uses the correct signer if needed for authentication (e.g., NIP-98).
-5.  Optionally sets the session as active based on `opts.autoSetActive`.
-6.  Creates a persistent subscription to fetch and keep updated the user's profile, follow list, mute list, and any additional kinds specified in `opts.events`.
+4.  Optionally sets the session as active based on `opts.autoSetActive`.
+5.  Creates a persistent subscription to fetch and keep updated the user's profile, follow list, mute list, and any additional kinds specified in `opts.events`.
+6.  Uses the modern NDK subscription pattern with `onEvent`, `onEvents` (for cached events), and `onEose` handlers.
 7.  Stores these replaceable events in the `session.replaceableEvents` map, automatically wrapping them with specified classes if provided.
 8.  Updates derived state like `session.followSet` and `session.muted*` sets based on the received events.
 
-**Note for App Developers:** Passing the `signer` to `initSession` is the recommended way to associate a signer with a user's session data. While you can still set `ndk.signer` manually *after* initialization for general NDK operations, providing it during `initSession` ensures that:
-    a) The session state correctly stores the intended signer.
-    b) Initial data fetches performed by `initSession` itself (like profiles or lists requiring NIP-98) use the correct authentication.
-    c) Hooks relying on the session's signer (like `useMuteItem`) function correctly.
+**Note for App Developers:** You must initialize the NDK instance in the store using `useNDKInit` before calling `initSession`. Passing the `signer` to `initSession` is the recommended way to associate a signer with a user's session data. The session store now manages its own NDK instance, which simplifies the API and ensures consistency across different parts of your application.
 
 ## Accessing Session State
 
@@ -186,6 +186,45 @@ function MyBlossomComponent() {
 
 This hook simplifies accessing potentially wrapped event objects stored in the session's `replaceableEvents` map. The `create` option is useful for providing a default, usable object immediately, even before the actual event is fetched from relays.
 
+## Initializing the NDK Instance
+
+Before using any of the session management features, you need to initialize the NDK instance in the store. This is done using the `useNDKInit` hook:
+
+```typescript
+import { useNDKInit } from "@nostr-dev-kit/ndk-hooks";
+import NDK from "@nostr-dev-kit/ndk";
+
+function App() {
+    const initializeNDK = useNDKInit();
+    
+    useEffect(() => {
+        const setupNDK = async () => {
+            const ndkInstance = new NDK({
+                explicitRelayUrls: ["wss://relay.example.com"]
+            });
+            await ndkInstance.connect();
+            
+            // Initialize the NDK instance in the session store and other stores
+            initializeNDK(ndkInstance);
+            
+            console.log("NDK initialized in stores");
+        };
+        
+        setupNDK();
+    }, [initializeNDK]);
+    
+    return (
+        // Your app components...
+    );
+}
+```
+
+The `useNDKInit` hook returns a function that initializes the NDK instance in:
+1. The session store (`useNDKSessions`)
+2. Any other stores that depend on the NDK instance
+
+This centralized initialization ensures that all components and hooks have access to the same NDK instance.
+
 ## Modifying Session State
 
 Actions to modify the state are accessed via `useNDKSessions.getState()`.
@@ -213,15 +252,6 @@ function SessionSwitcher() {
         </select>
     );
 }
-```
-
-### Creating a Session Manually (Less Common)
-
-Usually, `initSession` handles creation.
-
-```typescript
-const createSession = useNDKSessions.getState().createSession;
-// createSession(newPubkey, { /* initial partial data */ });
 ```
 
 ### Deleting a Session
@@ -281,10 +311,40 @@ The `useMuteItem` hook returns a function that accepts:
 
 Calling the returned function triggers the `muteItemForSession` action for the active user, performing an optimistic update and publishing the new mute list event (if configured).
 
-{/* Section Removed: Setting the Mute List from an Event */}
 ## Available State and Actions
 
 Refer to `ndk-hooks/src/session/types.ts` for the full `SessionState` interface, which details all available state properties (like `sessions`, `activeSessionPubkey`) and action signatures.
+
+## Modern Subscription Pattern
+
+The session store now uses the modern NDK subscription pattern with callbacks for handling events:
+
+```typescript
+// Example of the modern subscription pattern used internally
+const subscription = ndk.subscribe(
+    filter,
+    { closeOnEose: false }, // Options object
+    { // Callbacks object
+        onEvent: (event: NDKEvent) => {
+            // Handle a single event as it arrives
+            handleEventUpdate(event);
+        },
+        onEvents: (events: NDKEvent[]) => {
+            // Handle multiple events, typically from cache
+            for (const event of events) {
+                handleEventUpdate(event);
+            }
+        },
+        onEose: () => {
+            // Handle end-of-stored-events
+            console.log("All events received from relays");
+        }
+    }
+);
+// The subscription starts automatically with the new pattern
+```
+
+This pattern provides more flexibility and better handling of cached events compared to the previous approach.
 
 ## Utility Functions
 

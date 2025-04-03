@@ -1,6 +1,6 @@
 # Session Management with `useNDKSessions`
 
-The `@nostr-dev-kit/ndk-hooks` package provides a centralized system for managing user sessions and their associated signers within your React application. This system is built around the `useNDKSessions` Zustand store.
+The `@nostr-dev-kit/ndk-hooks` package provides a centralized system for managing user sessions and their associated data within your React application. This system is built around the `useNDKSessions` Zustand store, which now manages its own NDK instance internally.
 
 ## Core Concepts
 
@@ -10,13 +10,13 @@ The `@nostr-dev-kit/ndk-hooks` package provides a centralized system for managin
 
 ## The `useNDKSessions` Store
 
-This Zustand store holds the state for all managed sessions and signers. You typically don't interact with the store directly but use the exported functions to manage sessions.
+This Zustand store holds the state for all managed sessions and their data. The store now initializes and manages its own NDK instance, which simplifies integration and usage. You typically don't interact with the store directly but use the exported functions to manage sessions.
 
 **State:**
 
-*   `sessions: Map<Hexpubkey, Session>`: A map of all known sessions, keyed by `pubkey`.
-*   `signers: Map<Hexpubkey, NDKSigner>`: A map of available signers, keyed by `pubkey`.
-*   `activeSessionPubkey: Hexpubkey | null`: The `pubkey` of the currently active session, or `null` if no session is active.
+*   `ndk: NDK | undefined`: The NDK instance used by the session store.
+*   `sessions: Map<string, UserSessionData>`: A map of all known sessions, keyed by `pubkey`.
+*   `activeSessionPubkey: string | null`: The `pubkey` of the currently active session, or `null` if no session is active.
 
 **Accessing State (Example):**
 
@@ -45,96 +45,128 @@ function SessionList() {
 }
 ```
 
-## Managing Sessions and Signers
+## Initializing the NDK Instance
 
-The following functions are exported from `@nostr-dev-kit/ndk-hooks` to manage the session state:
-
-### `addSigner(signer: NDKSigner, makeActive = true): Promise<Session | undefined>`
-
-Adds a signer to the system. It implicitly starts a session for the signer's user if one doesn't exist.
-
-*   **Purpose:** Used for logging in a user.
-*   **Behavior:**
-    1.  Retrieves the `NDKUser` associated with the `signer`.
-    2.  Checks if a session for this user already exists.
-    3.  If not, calls `startSession` to create a new session.
-    4.  Adds the `signer` to the `signers` map.
-    5.  If `makeActive` is `true` (default), calls `switchToUser` to make this session the active one.
-*   **Returns:** A promise resolving to the `Session` object (new or existing) associated with the signer, or `undefined` if the signer's user couldn't be determined.
+Before using any session management functions, you must initialize the NDK instance in the store using the `useNDKInit` hook:
 
 ```tsx
-import { addSigner } from "@nostr-dev-kit/ndk-hooks";
-import { NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
+import { useNDKInit } from "@nostr-dev-kit/ndk-hooks";
+import NDK from "@nostr-dev-kit/ndk";
 
-async function loginWithPrivateKey(nsec: string) {
+function App() {
+    const initializeNDK = useNDKInit();
+    
+    useEffect(() => {
+        const setupNDK = async () => {
+            const ndkInstance = new NDK({
+                explicitRelayUrls: ["wss://relay.example.com"]
+            });
+            await ndkInstance.connect();
+            
+            // Initialize the NDK instance in the session store
+            initializeNDK(ndkInstance);
+        };
+        
+        setupNDK();
+    }, [initializeNDK]);
+    
+    return (
+        // Your app components
+    );
+}
+```
+
+The `useNDKInit` function initializes the NDK instance in the session store and any other stores that depend on the NDK instance.
+
+## Managing Sessions
+
+The following functions are exported from the session store to manage sessions:
+
+### `initSession(user: NDKUser, signer?: NDKSigner, opts?: SessionInitOptions): Promise<string | undefined>`
+
+Initializes a session for a Nostr user. This is the primary function for setting up a user session.
+
+* **Purpose:** Used for creating or updating a user's session with their profile, follows, and other data.
+* **Behavior:**
+  1. Creates a new session entry in the store if one doesn't exist for the given `pubkey`.
+  2. Associates the provided `NDKSigner` (if any) with the session.
+  3. Optionally sets the session as active based on `opts.autoSetActive`.
+  4. Creates a persistent subscription to fetch and keep updated the user's profile, follow list, mute list, and any additional kinds specified in `opts.events`.
+  5. Uses the modern NDK subscription pattern with `onEvent`, `onEvents`, and `onEose` handlers.
+* **Returns:** A promise resolving to the user's pubkey if successful, or `undefined` if initialization failed.
+
+```tsx
+import { useNDKSessions } from "@nostr-dev-kit/ndk-hooks";
+import { NDKNip07Signer } from "@nostr-dev-kit/ndk";
+
+async function loginWithNip07() {
     try {
-        const signer = new NDKPrivateKeySigner(nsec);
-        const session = await addSigner(signer); // Adds signer and makes the session active
-        if (session) {
-            console.log("Logged in:", session.pubkey);
+        const signer = new NDKNip07Signer();
+        const user = await signer.user();
+        
+        const initSession = useNDKSessions.getState().initSession;
+        
+        const options = {
+            profile: true,
+            follows: true,
+            muteList: true,
+            autoSetActive: true,
+        };
+        
+        // Notice: No NDK instance is passed
+        const pubkey = await initSession(user, signer, options);
+        
+        if (pubkey) {
+            console.log(`Session initialized for: ${pubkey}`);
         } else {
-            console.error("Login failed.");
+            console.error("Session initialization failed");
         }
     } catch (e) {
-        console.error("Error creating signer:", e);
+        console.error("Login error:", e);
     }
 }
 ```
 
-### `startSession(pubkey: Hexpubkey, options?: SessionStartOptions): Promise<Session>`
+### `deleteSession(pubkey: string): void`
 
-Explicitly starts or retrieves a session for a given `pubkey`. Does **not** add a signer; use `addSigner` for that.
+Removes a session from the store.
 
-*   **Purpose:** To initialize a session, often for read-only access or before a signer is available (e.g., loading from storage).
-*   **Behavior:**
-    1.  Checks if a session for the `pubkey` already exists. If so, returns it.
-    2.  If not, creates a new `Session` object.
-    3.  Adds the session to the `sessions` map.
-    4.  If `options.makeActive` is `true`, calls `switchToUser` to activate this session.
-*   **Returns:** A promise resolving to the `Session` object (new or existing).
+* **Purpose:** Used for logging out or removing a user's data.
+* **Behavior:** Removes the session entry from the `sessions` map.
 
-```tsx
-import { startSession } from "@nostr-dev-kit/ndk-hooks";
+### `setActiveSession(pubkey: string | null): void`
 
-async function viewProfile(pubkey: string) {
-    // Start a session for the user, but don't make it active unless specified
-    const session = await startSession(pubkey, { makeActive: false });
-    console.log("Session started for:", session.pubkey);
-    // Now you can potentially fetch profile data associated with this session
-}
-```
+Sets the active session or clears it if `null` is provided.
 
-### `switchToUser(pubkey: Hexpubkey | ""): Promise<void>`
-
-Activates the session associated with the given `pubkey`.
-
-*   **Purpose:** To change the currently active user/signer.
-*   **Behavior:**
-    1.  Validates that the session for the `pubkey` exists (or clears the active session if `pubkey` is empty).
-    2.  Updates `activeSessionPubkey` in the store.
-    3.  Updates `ndk.activeUser` to the corresponding `NDKUser`.
-    4.  Updates `ndk.signer` to the corresponding `NDKSigner` if available, otherwise sets it to `undefined`.
-*   **Logout:** Calling `switchToUser("")` effectively logs the user out by clearing the active session, `ndk.activeUser`, and `ndk.signer`.
+* **Purpose:** Used to switch between different user sessions.
+* **Behavior:** Updates the `activeSessionPubkey` in the store.
 
 ```tsx
-import { switchToUser, useNDKSessions } from "@nostr-dev-kit/ndk-hooks";
+import { useNDKSessions } from "@nostr-dev-kit/ndk-hooks";
 
 function AccountSwitcher() {
-    const sessionsMap = useNDKSessions(s => s.sessions);
+    const sessionsMap = useNDKSessions(state => state.sessions);
+    const activePubkey = useNDKSessions(state => state.activeSessionPubkey);
+    const setActiveSession = useNDKSessions.getState().setActiveSession;
+    
     const sessions = Array.from(sessionsMap.values());
-
+    
     const handleSwitch = (pubkey: string) => {
-        switchToUser(pubkey);
+        setActiveSession(pubkey);
     };
-
+    
     const handleLogout = () => {
-        switchToUser(""); // Logout
+        setActiveSession(null); // Clear active session
     };
-
+    
     return (
         <div>
             {sessions.map(session => (
-                <button key={session.pubkey} onClick={() => handleSwitch(session.pubkey)}>
+                <button
+                    key={session.pubkey}
+                    onClick={() => handleSwitch(session.pubkey)}
+                    style={{ fontWeight: session.pubkey === activePubkey ? 'bold' : 'normal' }}
+                >
                     Switch to {session.pubkey.substring(0, 8)}
                 </button>
             ))}
@@ -144,33 +176,48 @@ function AccountSwitcher() {
 }
 ```
 
-### `removeSigner(pubkey: Hexpubkey): Promise<void>`
+### `muteItemForSession(pubkey: string, value: string, itemType: 'pubkey' | 'hashtag' | 'word' | 'event', publish?: boolean): void`
 
-Removes only the signer associated with a `pubkey`, leaving the session intact (making it read-only).
+Adds an item to a session's mute list.
 
-*   **Purpose:** To "forget" the signing capability for a user without removing their session data entirely.
-*   **Behavior:**
-    1.  Removes the signer from the `signers` map.
-    2.  If the removed signer belonged to the currently active session, it also clears `ndk.signer`.
+* **Purpose:** Used to mute users, hashtags, words, or events.
+* **Behavior:** Updates the appropriate mute set in the session and optionally publishes a new mute list event.
 
-### `removeSession(pubkey: Hexpubkey): Promise<void>`
+## Modern Subscription Pattern
 
-Removes both the session and its associated signer (if any).
+The session store now uses the modern NDK subscription pattern internally:
 
-*   **Purpose:** To completely remove a user account from the application's state.
-*   **Behavior:**
-    1.  Calls `removeSigner` for the `pubkey`.
-    2.  Removes the session from the `sessions` map.
-    3.  If the removed session was the active one, it calls `switchToUser("")` to log out.
+```typescript
+// Example of the pattern used in setupEventSubscription
+const subscription = ndk.subscribe(
+    filter,
+    { closeOnEose: false }, // Options object
+    { // Callbacks object
+        onEvent: (event: NDKEvent) => {
+            // Handle single events as they arrive
+            handleEventUpdate(event);
+        },
+        onEvents: (events: NDKEvent[]) => {
+            // Handle multiple events, typically from cache
+            for (const event of events) {
+                handleEventUpdate(event);
+            }
+        },
+        onEose: () => {
+            // Handle end-of-stored-events signal
+            console.log("Received all initial events");
+        }
+    }
+);
+// The subscription starts automatically
+```
 
-### `stopSession(pubkey: Hexpubkey): Promise<void>`
+This pattern provides more flexibility and better handling of cached events.
 
-Currently, this function primarily ensures the session exists but doesn't perform significant cleanup specific to stopping. Its role might evolve. Use `removeSession` or `switchToUser("")` for logging out or removing accounts.
+## Integration with React Applications
 
-## Integration with NDKProvider
+The session store is designed to work seamlessly with React applications. You don't need to wrap your app in a provider, as Zustand handles state management globally.
 
-Ensure your application is wrapped with `<NDKProvider ndk={yourNdkInstance}>`. The session management functions rely on accessing the `NDK` instance provided by this context.
+## Persistence
 
-## Persistence (ndk-mobile)
-
-While `ndk-hooks` manages the in-memory state, persistence (saving/loading sessions and signers across app restarts) is handled by platform-specific packages like `@nostr-dev-kit/ndk-mobile`. See the `ndk-mobile` documentation for details on `useSessionMonitor` and `bootNDK`.
+While `ndk-hooks` manages the in-memory state, persistence (saving/loading sessions across app restarts) is typically handled by platform-specific implementations. For example, `@nostr-dev-kit/ndk-mobile` provides utilities for persisting sessions on mobile devices.

@@ -53,6 +53,7 @@ export const useUserProfilesStore = create<UserProfilesStore>((set, get) => ({
     profiles: new Map(),
     lastFetchedAt: new Map(),
     ndk: undefined,
+    /** @internal */
     initialize: initializeProfilesStore.bind(null, set),
     setProfile: setProfileImplementation.bind(null, set),
     fetchProfile: fetchProfileImplementation.bind(null, set, get),

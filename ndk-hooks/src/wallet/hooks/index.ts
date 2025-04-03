@@ -2,7 +2,7 @@ import NDK from '@nostr-dev-kit/ndk';
 import type { NDKWallet } from '@nostr-dev-kit/ndk-wallet';
 import { useCallback } from 'react';
 import { create } from 'zustand';
-import { useNDK } from './ndk';
+import { useNDK } from '../../ndk/hooks'; // Corrected path
 
 interface WalletHookState {
     activeWallet: NDKWallet | null;
@@ -67,7 +67,7 @@ import {
     type NDKNutzapMonitorStore,
 } from '@nostr-dev-kit/ndk-wallet';
 import { useEffect, useMemo, useState } from 'react';
-import { useNDKCurrentUser } from './ndk';
+import { useNDKCurrentUser } from '../../ndk/hooks'; // Corrected path
 
 interface NutzapMonitorHookState {
     nutzapMonitor: NDKNutzapMonitor | null;

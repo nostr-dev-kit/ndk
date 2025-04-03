@@ -1,12 +1,12 @@
 import type { Hexpubkey, NDKUserProfile } from '@nostr-dev-kit/ndk';
 import { useEffect } from 'react';
 import { useShallow } from 'zustand/shallow';
-import { useNDKSessions } from '../session';
+import { useNDKSessions } from '../../session/store'; // Corrected import path (needs ../../)
 import {
     type UserProfilesStore,
     useUserProfilesStore,
-} from '../stores/profiles';
-import { useCurrentUserProfile } from './session';
+} from '../store'; // Corrected import path
+import { useCurrentUserProfile } from '../../session/hooks'; // Corrected import path
 
 /**
  * Hook for getting a user profile. If the requested pubkey matches the active session user
@@ -20,7 +20,7 @@ export function useProfile(
     pubkey: Hexpubkey | undefined,
     forceRefresh?: boolean
 ): NDKUserProfile | undefined {
-    const fetchProfile = useUserProfilesStore((state) => state.fetchProfile);
+    const fetchProfile = useUserProfilesStore((state: UserProfilesStore) => state.fetchProfile); // Added type for state
 
     const profileSelector = useShallow((state: UserProfilesStore) =>
         pubkey ? state.profiles.get(pubkey) : undefined

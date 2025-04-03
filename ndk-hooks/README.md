@@ -6,9 +6,11 @@
 
 `@nostr-dev-kit/ndk-hooks` provides a set of React hooks and utilities to easily integrate Nostr functionality into your React applications using NDK. This library helps you efficiently manage Nostr data in your React components, including:
 
-- NDK instance management with `useNDK`
+- NDK instance management with `useNDKInit` and `useNDK`
 - Current user management with `useNDKCurrentUser`
 - User profile management with `useProfile`
+- Multi-user session management with `useNDKSessions`
+- Event subscriptions with modern callback patterns
 
 ## Installation
 
@@ -35,28 +37,38 @@ yarn add @nostr-dev-kit/ndk-hooks
 
 #### Setting Up NDK Instance
 
-First, initialize the NDK instance and make it available to your components:
+The library provides a centralized way to initialize the NDK instance across all stores using the `useNDKInit` hook:
 
 ```tsx
 import NDK from '@nostr-dev-kit/ndk';
-import { useNDK } from '@nostr-dev-kit/ndk-hooks';
+import { useNDKInit } from '@nostr-dev-kit/ndk-hooks';
 
 function App() {
-  const { setNDK } = useNDK();
+  const initializeNDK = useNDKInit();
   
   useEffect(() => {
-    const ndk = new NDK({
-      explicitRelayUrls: ['wss://relay.nostr.band', 'wss://relay.damus.io'],
-    });
+    const setupNDK = async () => {
+      const ndk = new NDK({
+        explicitRelayUrls: ['wss://relay.nostr.band', 'wss://relay.damus.io'],
+      });
+      
+      await ndk.connect();
+      
+      // This initializes the NDK instance in all stores:
+      // - NDK store (for useNDK hook)
+      // - Session store (for useNDKSessions hook)
+      // - Profile store (for useProfile hook)
+      initializeNDK(ndk);
+    };
     
-    ndk.connect().then(() => {
-      setNDK(ndk);
-    });
-  }, [setNDK]);
+    setupNDK();
+  }, [initializeNDK]);
   
   return <YourApp />;
 }
 ```
+
+Once initialized, you can access the NDK instance with the `useNDK` hook in your components.
 
 #### Accessing Current User
 
@@ -85,22 +97,7 @@ For more details on NDK store and hooks, see the [NDK Hooks Documentation](docs/
 
 ### User Profile Management
 
-Before using the profile hooks, you need to initialize the profiles store with your NDK instance:
-
-```tsx
-import NDK from '@nostr-dev-kit/ndk';
-import { useUserProfilesStore } from '@nostr-dev-kit/ndk-hooks';
-
-// During app initialization
-const ndk = new NDK({
-  explicitRelayUrls: ['wss://relay.nostr.band', 'wss://relay.damus.io'],
-});
-
-await ndk.connect();
-
-// Initialize the profiles store
-useUserProfilesStore.getState().initialize(ndk);
-```
+The profile management functionality is automatically initialized when you use the `useNDKInit` hook as shown above. You don't need to do any additional setup.
 
 ### Getting a User Profile
 
@@ -135,26 +132,16 @@ You can force a profile to be refreshed from the network by passing `true` as th
 const profile = useProfile(pubkey, true);
 ```
 
-### Directly Accessing the Store
-
-You can directly interact with the underlying Zustand store:
-
-```tsx
-import { useUserProfilesStore } from '@nostr-dev-kit/ndk-hooks';
-
-// Set a profile manually
-useUserProfilesStore.getState().setProfile(pubkey, profile);
-
-// Fetch a profile manually
-useUserProfilesStore.getState().fetchProfile(pubkey);
-
-// Get all profiles
-const profiles = useUserProfilesStore.getState().profiles;
-```
-
 ## API Reference
 
 ### NDK Hooks
+
+#### `useNDKInit(): (ndkInstance: NDK) => void`
+
+Provides a function to initialize the NDK instance across all stores in the application.
+
+- Returns a function that takes an NDK instance and initializes it in all stores
+- This is the recommended way to set up NDK in your application
 
 #### `useNDK(): { ndk: NDK | null, setNDK: (ndk: NDK) => void }`
 
@@ -180,21 +167,28 @@ Fetches and returns a Nostr user profile for the given pubkey.
 - `forceRefresh` - (Optional) Whether to force a refresh of the profile from the network
 - Returns: The user profile object or undefined if not loaded yet
 
-### Store API
+### Session Management
 
-#### `useUserProfilesStore`
+#### `useNDKSessions`
 
-A Zustand store that manages user profiles.
+A Zustand store that manages user sessions. The store now manages its own NDK instance internally.
 
 Properties:
-- `profiles` - Map of pubkeys to profile objects
-- `lastFetchedAt` - Map of pubkeys to timestamps of last fetch
-- `ndk` - The NDK instance
+- `ndk` - The NDK instance used by the session store
+- `sessions` - Map of pubkeys to session data
+- `activeSessionPubkey` - The pubkey of the active session
 
-Methods:
-- `initialize(ndk: NDK)` - Initialize the store with an NDK instance
-- `setProfile(pubkey: string, profile: NDKUserProfile, cachedAt?: number)` - Manually set a profile
-- `fetchProfile(pubkey?: string, force?: boolean)` - Fetch a profile from the network
+Public Methods:
+- `initSession(user: NDKUser, signer?: NDKSigner, opts?: SessionInitOptions)` - Initialize a session for a user
+- `deleteSession(pubkey: string)` - Delete a session
+- `setActiveSession(pubkey: string | null)` - Set the active session
+- `muteItemForSession(pubkey: string, value: string, itemType: string, publish?: boolean)` - Mute an item for a session
+
+#### `useUserSession(pubkey?: string): UserSessionData | undefined`
+
+Returns the session data for the specified pubkey or the active session if no pubkey is provided.
+
+For more details on session management, see the [Session Management Documentation](docs/session-management.md).
 
 ## License
 

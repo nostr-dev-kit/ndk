@@ -2,14 +2,13 @@ import type { StoreApi } from 'zustand';
 import type { SessionState, UserSessionData } from '../types';
 
 const createDefaultSession = (pubkey: string): UserSessionData => ({
-    userPubkey: pubkey,
+    pubkey,
     mutedPubkeys: new Set<string>(),
     mutedHashtags: new Set<string>(),
     mutedWords: new Set<string>(),
     mutedEventIds: new Set<string>(),
     replaceableEvents: new Map(),
     lastActive: Date.now(),
-    wot: new Map<string, number>(),
 });
 
 export function createSession(

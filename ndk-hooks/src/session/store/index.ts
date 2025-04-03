@@ -1,6 +1,6 @@
 import { NDKKind } from '@nostr-dev-kit/ndk';
 import { create } from 'zustand';
-import { type SessionState, type UserSessionData } from '../types';
+import type { SessionState, UserSessionData } from '../types';
 import { createSession } from './createSession';
 import { deleteSession } from './deleteSession';
 import { initializeSession } from './initSession';
@@ -34,8 +34,8 @@ export const useNDKSessions = create<SessionState>()((set, get) => ({
     muteItemForSession: (pubkey, value, itemType, publish) =>
         muteItemForSession(set, get, pubkey, value, itemType, publish),
 
-    initSession: (ndk, user, opts, cb) =>
-        initializeSession(set, get, ndk, user, opts, cb),
+    initSession: (ndk, user, signer, opts) =>
+        initializeSession(set, get, ndk, user, signer, opts),
 }));
 
 useNDKSessions.subscribe((state: SessionState, prevState: SessionState) => {

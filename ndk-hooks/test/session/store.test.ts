@@ -1,6 +1,6 @@
 import NDK from '@nostr-dev-kit/ndk'; // Changed from 'import type'
 import { NDKEvent, NDKUser } from '@nostr-dev-kit/ndk';
-import { beforeEach, describe, expect, it, Mock, vi } from 'vitest'; // Import Mock type
+import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest'; // Import Mock type as a type
 import { useNDKSessions } from '../../src/session/store';
 
 // Mock NDK and related classes/functions
@@ -13,6 +13,11 @@ vi.mock('@nostr-dev-kit/ndk', async (importOriginal) => {
             return {
                 fetchEvent: vi.fn(),
                 publish: vi.fn(),
+                subscribe: vi.fn().mockReturnValue({
+                    on: vi.fn(),
+                    start: vi.fn()
+                }),
+                signer: undefined, // Add signer property that can be set
                 // Add other methods if needed by tests
             };
         }),
@@ -50,6 +55,12 @@ describe('useNDKSessions Zustand Store', () => {
     const mockUser1 = new NDKUser({ pubkey: pubkey1 });
     const mockUser2 = new NDKUser({ pubkey: pubkey2 });
 
+    // Create a mock signer for testing
+    const mockSigner = {
+        sign: vi.fn().mockResolvedValue({ sig: 'mockSignature' }),
+        getPublicKey: vi.fn().mockResolvedValue(pubkey1),
+    };
+
     it('should initialize with empty sessions and null active pubkey', () => {
         const state = useNDKSessions.getState();
         expect(state.sessions.size).toBe(0);
@@ -85,15 +96,15 @@ describe('useNDKSessions Zustand Store', () => {
 
     it('updateSession: should update an existing session', () => {
         useNDKSessions.getState().createSession(pubkey1);
-        const updateData = { follows: ['follow1'], lastActive: 123 };
+        const updateData = { followSet: new Set(['follow1']), lastActive: 123 };
         useNDKSessions.getState().updateSession(pubkey1, updateData);
         const session = useNDKSessions.getState().sessions.get(pubkey1);
-        expect(session?.follows).toEqual(['follow1']);
+        expect(session?.followSet).toEqual(new Set(['follow1']));
         expect(session?.lastActive).not.toBe(123); // lastActive is always updated internally
     });
 
     it('updateSession: should not update a non-existent session', () => {
-        useNDKSessions.getState().updateSession(pubkey1, { follows: ['f1'] });
+        useNDKSessions.getState().updateSession(pubkey1, { followSet: new Set(['f1']) });
         expect(useNDKSessions.getState().sessions.size).toBe(0);
     });
 
@@ -184,31 +195,15 @@ describe('useNDKSessions Zustand Store', () => {
         expect(session?.mutedHashtags.has('mutetag')).toBe(true); // Should be lowercased
     });
 
-    it('setMuteListForSession: should process and set mute data from event', () => {
-        useNDKSessions.getState().createSession(pubkey1);
-        const muteEvent = new NDKEvent();
-        muteEvent.kind = 10000;
-        muteEvent.tags = [
-            ['p', 'mutedUser'],
-            ['t', 'MutedTag'],
-            ['e', 'mutedEventId'],
-            ['word', 'mutedWord'],
-        ];
-        useNDKSessions.getState().setMuteListForSession(pubkey1, muteEvent);
-        const session = useNDKSessions.getState().getSession(pubkey1);
-        expect(session?.muteListEvent).toBe(muteEvent);
-        expect(session?.mutedPubkeys.has('mutedUser')).toBe(true);
-        expect(session?.mutedHashtags.has('mutedtag')).toBe(true);
-        expect(session?.mutedEventIds.has('mutedEventId')).toBe(true);
-        expect(session?.mutedWords.has('mutedWord')).toBe(true);
-    });
-
     // --- Initialization ---
 
     it('initSession: should create session, set active, and fetch data', async () => {
         const mockProfileEvent = new NDKEvent();
         mockProfileEvent.content = JSON.stringify({ name: 'Test User' });
+        mockProfileEvent.created_at = 123456789;
+        
         const mockFollowsSet = new Set([new NDKUser({ pubkey: 'follow1' })]);
+        
         const mockMuteEvent = new NDKEvent();
         mockMuteEvent.kind = 10000;
         mockMuteEvent.tags = [['p', 'muted1']];
@@ -230,9 +225,10 @@ describe('useNDKSessions Zustand Store', () => {
 
         const initPromise = useNDKSessions
             .getState()
-            .initSession(mockNdkInstance, mockUser1, {
-                fetchFollows: true,
-                fetchMuteList: true,
+            .initSession(mockNdkInstance, mockUser1, undefined, {
+                profile: true,
+                follows: true,
+                muteList: true,
             });
 
         await expect(initPromise).resolves.toBe(pubkey1);
@@ -242,18 +238,18 @@ describe('useNDKSessions Zustand Store', () => {
         const session = state.sessions.get(pubkey1);
         expect(session).toBeDefined();
         expect(session?.ndk).toBe(mockNdkInstance);
-        expect(session?.metadata?.name).toBe('Test User');
-        expect(session?.follows).toEqual(['follow1']);
-        expect(session?.muteListEvent).toBe(mockMuteEvent);
-        expect(session?.mutedPubkeys.has('muted1')).toBe(true);
-
-        // Verify mocks were called
-        expect(mockUser1.fetchProfile).toHaveBeenCalled();
-        expect(mockUser1.follows).toHaveBeenCalled();
-        expect(mockNdkInstance.fetchEvent).toHaveBeenCalledWith({
-            kinds: [10000],
-            authors: [pubkey1],
-        });
+        expect(session?.profile?.name).toBe('Test User');
+        
+        // We can't test for these directly in this test since the new implementation
+        // uses subscriptions rather than direct fetching
+        // Verify that subscribe was called with the right filter
+        expect(mockNdkInstance.subscribe).toHaveBeenCalledWith(
+            expect.objectContaining({
+                authors: [pubkey1],
+                kinds: expect.arrayContaining([0, 3, 10000])
+            }),
+            expect.anything()
+        );
     });
 
     it('initSession: should handle errors during fetch', async () => {
@@ -265,7 +261,7 @@ describe('useNDKSessions Zustand Store', () => {
         const callback = vi.fn();
         const initPromise = useNDKSessions
             .getState()
-            .initSession(mockNdkInstance, mockUser1, {}, callback);
+            .initSession(mockNdkInstance, mockUser1, undefined, {}, callback);
 
         await expect(initPromise).resolves.toBeUndefined(); // Should resolve undefined on error
         expect(callback).toHaveBeenCalledWith(fetchError); // Callback should receive the error
@@ -273,6 +269,116 @@ describe('useNDKSessions Zustand Store', () => {
         // Session should still exist, but without profile data
         const session = useNDKSessions.getState().getSession(pubkey1);
         expect(session).toBeDefined();
-        expect(session?.metadata).toBeUndefined();
+        expect(session?.profile).toBeUndefined();
+    });
+
+    // --- Signer Support Tests ---
+
+    it('createSession: should store a signer when provided in initialData', () => {
+        // Create a simple mock signer and cast it to NDKSigner
+        const testSigner = {
+            sign: vi.fn(),
+            getPublicKey: vi.fn()
+        } as unknown as import('@nostr-dev-kit/ndk').NDKSigner;
+        
+        useNDKSessions.getState().createSession(pubkey1, { signer: testSigner });
+        
+        const session = useNDKSessions.getState().getSession(pubkey1);
+        expect(session?.signer).toBe(testSigner);
+    });
+
+    it('createSession: should work without a signer for backward compatibility', () => {
+        useNDKSessions.getState().createSession(pubkey1, { relays: ['relay1'] });
+        
+        const session = useNDKSessions.getState().getSession(pubkey1);
+        expect(session?.signer).toBeUndefined();
+        expect(session?.relays).toEqual(['relay1']);
+    });
+
+    it('initSession: should configure NDK with signer when provided', async () => {
+        // Create a simple mock signer and cast it to NDKSigner
+        const testSigner = {
+            sign: vi.fn(),
+            getPublicKey: vi.fn()
+        } as unknown as import('@nostr-dev-kit/ndk').NDKSigner;
+        
+        const initPromise = useNDKSessions
+            .getState()
+            .initSession(mockNdkInstance, mockUser1, testSigner);
+            
+        await expect(initPromise).resolves.toBe(pubkey1);
+        
+        // Check NDK was configured with signer
+        expect(mockNdkInstance.signer).toBe(testSigner);
+        
+        // Check session was created with signer
+        const session = useNDKSessions.getState().getSession(pubkey1);
+        expect(session?.signer).toBe(testSigner);
+    });
+
+    it('initSession: should work without a signer for backward compatibility', async () => {
+        const initPromise = useNDKSessions
+            .getState()
+            .initSession(mockNdkInstance, mockUser1);
+            
+        await expect(initPromise).resolves.toBe(pubkey1);
+        
+        // Check session was created without signer
+        const session = useNDKSessions.getState().getSession(pubkey1);
+        expect(session?.signer).toBeUndefined();
+    });
+
+    it('initSession: should initialize a session with various options', async () => {
+        // Create a simple mock signer and cast it to NDKSigner
+        const testSigner = {
+            sign: vi.fn(),
+            getPublicKey: vi.fn()
+        } as unknown as import('@nostr-dev-kit/ndk').NDKSigner;
+        
+        // Test with autoSetActive: false
+        const initPromise = useNDKSessions
+            .getState()
+            .initSession(mockNdkInstance, mockUser1, testSigner, {
+                autoSetActive: false,
+                profile: true
+            });
+            
+        await expect(initPromise).resolves.toBe(pubkey1);
+        
+        // With autoSetActive: false, the active session should not be set
+        expect(useNDKSessions.getState().activeSessionPubkey).not.toBe(pubkey1);
+        
+        // But the session should still exist with the signer
+        const session = useNDKSessions.getState().getSession(pubkey1);
+        expect(session).toBeDefined();
+        expect(session?.signer).toBe(testSigner);
+    });
+
+    it('initSession: should handle undefined signer', async () => {
+        // Test with an explicitly undefined signer (same as not providing one)
+        const initPromise = useNDKSessions
+            .getState()
+            .initSession(mockNdkInstance, mockUser1, undefined);
+            
+        await expect(initPromise).resolves.toBe(pubkey1);
+        
+        // Session should exist without a signer
+        const session = useNDKSessions.getState().getSession(pubkey1);
+        expect(session?.signer).toBeUndefined();
+    });
+
+    it('updateSession: should update signer when provided', () => {
+        useNDKSessions.getState().createSession(pubkey1);
+        
+        // Create a simple mock signer and cast it to NDKSigner
+        const testSigner = {
+            sign: vi.fn(),
+            getPublicKey: vi.fn()
+        } as unknown as import('@nostr-dev-kit/ndk').NDKSigner;
+        
+        useNDKSessions.getState().updateSession(pubkey1, { signer: testSigner });
+        
+        const session = useNDKSessions.getState().getSession(pubkey1);
+        expect(session?.signer).toBe(testSigner);
     });
 });

@@ -1,4 +1,5 @@
-import NDK, { Hexpubkey, NDKSigner, NDKUser } from '@nostr-dev-kit/ndk';
+import type NDK from '@nostr-dev-kit/ndk';
+import type { Hexpubkey, NDKSigner, NDKUser } from '@nostr-dev-kit/ndk';
 import { create } from 'zustand';
 
 /**

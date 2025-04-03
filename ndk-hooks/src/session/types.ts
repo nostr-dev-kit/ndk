@@ -5,15 +5,16 @@ import type {
     NDKKind,
     NDKUser,
     NDKUserProfile,
+    NDKSigner,
 } from '@nostr-dev-kit/ndk';
+import { NDKEventWithFrom } from '../hooks/subscribe';
 
 /**
  * User-specific session data stored within the main store.
  */
 export interface UserSessionData {
-    userPubkey: string;
-    ndk?: NDK;
-    relays?: string[];
+    pubkey: string;
+    signer?: NDKSigner;
     mutedPubkeys: Set<string>;
     mutedHashtags: Set<string>;
     mutedWords: Set<string>;
@@ -30,8 +31,6 @@ export interface UserSessionData {
     replaceableEvents: Map<NDKKind, NDKEvent | null>;
 
     lastActive: number;
-
-    wot?: Map<string, number>;
 }
 
 /**
@@ -59,8 +58,8 @@ export interface SessionState {
     initSession: (
         ndk: NDK,
         user: NDKUser,
+        signer?: NDKSigner,
         opts?: SessionInitOptions,
-        cb?: (error: Error | null, pubkey?: string) => void
     ) => Promise<string | undefined>;
 }
 
@@ -71,6 +70,6 @@ export interface SessionInitOptions {
     profile?: boolean;
     follows?: boolean;
     muteList?: boolean;
-    events?: Map<NDKKind, { wrap?: { from: (event: NDKEvent) => NDKEvent } }>;
+    events?: Map<NDKKind, { wrap?: NDKEventWithFrom<NDKEvent> }>;
     autoSetActive?: boolean;
 }

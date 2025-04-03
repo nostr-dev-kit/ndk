@@ -21,12 +21,12 @@ import {
 // Import types if necessary
 import type { UserSessionData, SessionInitOptions } from "@nostr-dev-kit/ndk-hooks/session";
 import type NDK from "@nostr-dev-kit/ndk";
-import type { NDKUser, NDKKind, NDKList, NDKSimpleGroupList } from "@nostr-dev-kit/ndk"; // Added Kinds/Classes
+import type { NDKUser, NDKKind, NDKList, NDKSimpleGroupList, NDKSigner } from "@nostr-dev-kit/ndk"; // Added NDKSigner
 ```
 
 ## Initializing a Session
 
-Before interacting with a user's data, you need to initialize their session. This typically involves providing an `NDK` instance and the `NDKUser` object.
+Before interacting with a user's data, you need to initialize their session. This typically involves providing an `NDK` instance, the `NDKUser` object, and optionally an `NDKSigner` if you want the session to be able to perform signed actions (like publishing mutes).
 
 ```typescript
 import { useNDKSessions } from "@nostr-dev-kit/ndk-hooks/session";
@@ -45,7 +45,6 @@ async function loginAndInitSession() {
     try {
         const nip07Signer = new NDKNip07Signer();
         const user = await nip07Signer.user(); // Gets NDKUser
-        ndkInstance.signer = nip07Signer; // Assign signer to NDK
 
         const options: SessionInitOptions = {
             profile: true, // Fetch user profile (default: true) - Renamed from fetchProfiles
@@ -54,13 +53,14 @@ async function loginAndInitSession() {
             autoSetActive: true, // Make this session active immediately (default: true)
             // NEW: Specify additional replaceable events to fetch and optionally wrap
             events: new Map([
-                [NDKKind.SimpleGroupList, { wrap: NDKSimpleGroupList }], // Fetch Kind 30009, wrap with NDKSimpleGroupList
-                [NDKKind.BlossomList, { wrap: NDKList }], // Fetch Kind 30001, wrap with NDKList
+                [NDKKind.SimpleGroupList, { wrap: NDKSimpleGroupList }], // Fetch Kind 10009, wrap with NDKSimpleGroupList
+                [NDKKind.BlossomList, { wrap: NDKList }], // Fetch Kind 10050, wrap with NDKList
                 // Add other kinds as needed
             ])
         };
 
-        const initializedPubkey = await initSession(ndkInstance, user, options);
+        // Pass the signer directly to initSession
+        const initializedPubkey = await initSession(ndkInstance, user, nip07Signer, options);
 
         if (initializedPubkey) {
             console.log(`Session initialized and active for pubkey: ${initializedPubkey}`);
@@ -75,13 +75,20 @@ async function loginAndInitSession() {
 loginAndInitSession();
 ```
 
-The `initSession` action performs the following:
+The `initSession(ndk, user, signer?, opts?)` action performs the following:
 1.  Creates a new session entry in the store if one doesn't exist for the given `pubkey`.
 2.  Associates the provided `NDK` instance with the session.
-3.  Optionally sets the session as active.
-4.  Creates a persistent subscription to fetch and keep updated the user's profile, follow list, mute list, and any additional kinds specified in `opts.events`.
-5.  Stores these replaceable events in the `session.replaceableEvents` map, automatically wrapping them with specified classes if provided.
-6.  Updates derived state like `session.followSet` and `session.muted*` sets based on the received events.
+3.  **Associates the provided `NDKSigner` (if any) with the session.** This allows hooks like `useMuteItem` to publish signed events using the correct signer for the session.
+4.  **Configures the main `ndk` instance's `signer` property** with the provided signer. This ensures the NDK instance used for initial data fetches (profile, follows, etc.) uses the correct signer if needed for authentication (e.g., NIP-98).
+5.  Optionally sets the session as active based on `opts.autoSetActive`.
+6.  Creates a persistent subscription to fetch and keep updated the user's profile, follow list, mute list, and any additional kinds specified in `opts.events`.
+7.  Stores these replaceable events in the `session.replaceableEvents` map, automatically wrapping them with specified classes if provided.
+8.  Updates derived state like `session.followSet` and `session.muted*` sets based on the received events.
+
+**Note for App Developers:** Passing the `signer` to `initSession` is the recommended way to associate a signer with a user's session data. While you can still set `ndk.signer` manually *after* initialization for general NDK operations, providing it during `initSession` ensures that:
+    a) The session state correctly stores the intended signer.
+    b) Initial data fetches performed by `initSession` itself (like profiles or lists requiring NIP-98) use the correct authentication.
+    c) Hooks relying on the session's signer (like `useMuteItem`) function correctly.
 
 ## Accessing Session State
 
@@ -107,7 +114,7 @@ function UserDisplay() {
 
     return (
         <div>
-            <h2>Active User: {activeSession.metadata?.displayName || activeSession.userPubkey}</h2>
+            <h2>Active User: {activeSession.profile?.displayName || activeSession.userPubkey}</h2>
             <p>Last Active: {new Date(activeSession.lastActive).toLocaleString()}</p>
             {/* Display other session data */}
         </div>
@@ -200,7 +207,7 @@ function SessionSwitcher() {
             <option value="">-- Select User --</option>
             {sessions.map(session => (
                 <option key={session.userPubkey} value={session.userPubkey}>
-                    {session.metadata?.name || session.userPubkey.substring(0, 8)}
+                    {session.profile?.name || session.userPubkey.substring(0, 8)}
                 </option>
             ))}
         </select>
@@ -231,7 +238,6 @@ function LogoutButton({ pubkey }: { pubkey: string }) {
 }
 ```
 
-{/* Section Removed: Adding Events (Removed) */}
 ### Muting Items
 
 The store provides a low-level action `muteItemForSession` which takes the pubkey, value, item type, and publish flag.

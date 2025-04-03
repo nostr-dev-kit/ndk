@@ -1,16 +1,12 @@
-import NDK, {
-    Hexpubkey,
-    NDKEvent,
-    NDKKind,
-    NDKUser,
-    NDKUserProfile,
+import type NDK from '@nostr-dev-kit/ndk';
+import {
+    type NDKEvent,
+    NDKKind, type NDKUserProfile
 } from '@nostr-dev-kit/ndk';
 import { useMemo } from 'react';
 import {
-    SessionState,
-    UserSessionData,
     useNDKSessions,
-    useUserSession,
+    useUserSession
 } from '../session';
 import { useNDK } from './ndk';
 import { useProfile } from './profile';

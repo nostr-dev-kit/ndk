@@ -1,7 +1,7 @@
 /**
  * @nostr-dev-kit/ndk-hooks
  *
- * React hooks for the NDK (Nostr Development Kit)
+ * React hooks for NDK.
  */
 import NDK from '@nostr-dev-kit/ndk';
 

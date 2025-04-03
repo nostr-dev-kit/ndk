@@ -66,16 +66,15 @@ type MutableItem = NDKEvent | NDKUser | string;
 export function useMuteItem(
     publish = true // Removed explicit type annotation
 ): (item: MutableItem) => void {
-    const { activeSessionPubkey, muteItemForSession } = useNDKSessions(
+    const { activePubkey } = useNDKSessions(
         (state) => ({
-            activeSessionPubkey: state.activeSessionPubkey,
-            muteItemForSession: state.muteItemForSession,
+            activePubkey: state.activePubkey,
         })
     );
 
     const muteFn = useCallback(
         (item: MutableItem) => {
-            if (!activeSessionPubkey) {
+            if (!activePubkey) {
                 console.warn(
                     'useMuteItem: No active session found. Cannot mute item.'
                 );
@@ -103,10 +102,8 @@ export function useMuteItem(
                 console.warn('useMuteItem: Invalid item type provided.', item);
                 return;
             }
-
-            muteItemForSession(activeSessionPubkey, value, itemType); // Removed publish argument
         },
-        [activeSessionPubkey, muteItemForSession] // Removed unused 'publish' dependency
+        [activePubkey] // Removed unused 'publish' dependency
     );
 
     return muteFn;

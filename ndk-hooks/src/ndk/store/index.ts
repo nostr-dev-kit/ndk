@@ -11,10 +11,7 @@ export interface NDKStoreState {
      */
     ndk: NDK | null;
 
-    /**
-     * The currently active user (can be read-only or have a signer)
-     */
-    currentUser: NDKUser | null;
+    // currentUser removed, managed by session store now
 
     /**
      * Sets the NDK instance
@@ -28,7 +25,7 @@ export interface NDKStoreState {
 export const useNDKStore = create<NDKStoreState>((set) => {
     return {
         ndk: null,
-        currentUser: null,
+        // currentUser removed
 
         setNDK: (ndk: NDK) => {
             set({ ndk });

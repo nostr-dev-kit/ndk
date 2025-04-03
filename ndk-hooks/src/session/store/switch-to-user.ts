@@ -1,51 +1,61 @@
+// src/session/store/switch-to-user.ts
+import type { Draft } from 'immer';
 import type { Hexpubkey } from '@nostr-dev-kit/ndk';
-import { useNDKStore } from '../../ndk/store'; // Corrected import path
-import type { NDKSessionsState } from './index';
-import { setActiveSession } from './set-active-session'; // Import the function
-import type { StoreApi } from 'zustand';
+import type { NDKSessionsState } from './types';
 
 /**
  * Implementation for switching the active user session.
- * Ensures the session exists, sets the NDK signer, updates NDKStore,
- * and sets the active session in the session store.
+ * Sets the activePubkey in the store and configures ndk.signer.
  */
-export async function switchToUser(
-    get: StoreApi<NDKSessionsState>['getState'],
-    set: StoreApi<NDKSessionsState>['setState'],
-    pubkey: Hexpubkey
-): Promise<void> {
-    const ndk = useNDKStore.getState().ndk;
+export const switchToUser = (
+    set: (fn: (draft: Draft<NDKSessionsState>) => void) => void,
+    get: () => NDKSessionsState,
+    pubkey: Hexpubkey | null // Allow null to deactivate
+): void => {
+    const ndk = get().ndk;
     if (!ndk) {
-        console.error('Cannot switch user: NDK instance not initialized.');
+        console.error('Cannot switch user: NDK instance not initialized in session store.');
         return;
     }
 
-    // Create user object first
-    const user = ndk.getUser({ pubkey });
-
-    // Ensure session exists for this user (does not set signer here)
-    const ensuredPubkey = get().ensureSession(user);
-    if (!ensuredPubkey) {
-        console.error(`Failed to ensure session for ${pubkey} during switch.`);
+    if (pubkey === null) {
+        // Deactivate user
+        set((draft) => {
+            draft.activePubkey = null;
+        });
+        ndk.signer = undefined;
+        console.log('Deactivated current user session.');
         return;
     }
 
-    // Get signer if available from the session store's signer map
-    const signers = get().signers;
-    const newSigner = signers.get(pubkey);
+    // Activate user
+    const session = get().sessions.get(pubkey);
 
-    // Set NDK signer (can be undefined if no signer is associated)
+    if (!session) {
+        console.error(`Cannot switch to user ${pubkey}: Session does not exist.`);
+        // Optionally, we could try to add the session here if desired,
+        // but the current requirement implies it should already exist.
+        // For now, just log an error.
+        return;
+    }
+
+    const newSigner = session.signer; // Get signer directly from the session
+
+    // Set NDK signer (can be undefined if no signer is associated with the session)
     ndk.signer = newSigner;
 
-    // Update NDK store's current user
-    useNDKStore.setState({ currentUser: user });
-
-    // Update active session pubkey and lastActive timestamp using the dedicated function
-    setActiveSession(set, get, pubkey);
+    // Update active pubkey and lastActive timestamp
+    set((draft) => {
+        draft.activePubkey = pubkey;
+        const draftSession = draft.sessions.get(pubkey);
+        if (draftSession) {
+            draftSession.lastActive = Date.now();
+        }
+    });
 
     if (newSigner) {
         console.log(`Switched to user ${pubkey} with active signer.`);
     } else {
-        console.log(`Switched to user ${pubkey} in read-only mode.`);
+        console.log(`Switched to user ${pubkey} (read-only).`);
     }
-}
+};

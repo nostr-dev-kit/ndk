@@ -19,8 +19,8 @@ export * from './profiles/store'; // Profile store (useUserProfilesStore) - Assu
 
 // Common/Utility hooks and stores (adjust paths as needed if these are further organized)
 export { useMuteFilter, useMuteItem } from './common/hooks/mute';
-export * from './common/hooks/observer';
-export * from './common/hooks/subscribe';
+export * from './observer/hooks'; // Updated path
+export * from './subscribe/hooks'; // Updated path
 export * from './session/hooks/use-available-sessions'; // Corrected path
 export { useNDKNutzapMonitor, useNDKWallet } from './wallet/hooks'; // Corrected path
 export * from './common/store/subscribe'; // Subscribe store
@@ -30,3 +30,4 @@ export * from './common/store/subscribe'; // Subscribe store
 // Removed duplicate export of './stores/sessions' - useNDKSessions is exported via './session/store'
 export type { NDKSessionsState } from './session/store/index'; // Export main state type from new location
 export type { NDKUserSession } from './session/store/types'; // Export session type from new location
+export type { SessionStartOptions } from './session/store/types'; // Export session options type (Renamed)

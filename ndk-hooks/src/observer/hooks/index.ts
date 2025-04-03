@@ -6,7 +6,7 @@ import {
     type NDKSubscriptionOptions,
 } from '@nostr-dev-kit/ndk';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useNDK } from './ndk';
+import { useNDK } from '../../ndk/hooks'; // Corrected path
 
 /**
  * Subscribes to NDK events based on the provided filters and returns the matching events.
@@ -43,7 +43,7 @@ import { useNDK } from './ndk';
 export function useObserver<T extends NDKEvent>(
     filters: NDKFilter[] | false,
     opts: NDKSubscriptionOptions = {},
-    dependencies: any[] = []
+    dependencies: unknown[] = [] // Changed any[] to unknown[]
 ): T[] {
     const { ndk } = useNDK();
     const sub = useRef<NDKSubscription | null>(null);
@@ -64,7 +64,7 @@ export function useObserver<T extends NDKEvent>(
         }
         addedEventIds.current.clear();
         setEvents([]);
-    }, [setEvents]);
+    }, []); // Removed setEvents from dependency array
 
     useEffect(() => {
         if (!ndk || !filters || filters.length === 0) return;
@@ -128,7 +128,8 @@ export function useObserver<T extends NDKEvent>(
             isValid = false;
             stopFilters();
         };
-    }, [ndk, ...dependencies, stopFilters]);
+    // Added filters and opts to dependency array
+    }, [ndk, filters, opts, ...dependencies, stopFilters]);
 
     return events as T[];
 }

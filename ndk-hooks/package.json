@@ -19,6 +19,7 @@
     },
     "dependencies": {
         "@nostr-dev-kit/ndk-wallet": "workspace:*",
+        "immer": "^10.1.1",
         "zustand": "^5"
     },
     "peerDependencies": {

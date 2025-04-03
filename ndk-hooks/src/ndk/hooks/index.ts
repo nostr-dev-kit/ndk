@@ -1,9 +1,9 @@
 import type NDK from '@nostr-dev-kit/ndk';
-import type { NDKEvent, NDKPublishError } from '@nostr-dev-kit/ndk';
+import type { NDKEvent, NDKPublishError, NDKUser } from '@nostr-dev-kit/ndk'; // Add NDKUser
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { type NDKStoreState, useNDKStore } from '../store'; // Corrected path
 import { type UserProfilesStore, useUserProfilesStore } from '../../profiles/store'; // Corrected path
-// Removed SessionState and useNDKSessions imports
+import { useNDKSessions } from '../../session/store'; // Import session store hook
 
 /**
  * Interface for the useNDK hook return value
@@ -27,10 +27,21 @@ export const useNDK = (): UseNDKResult => {
 };
 
 /**
- * Hook to access the current NDKUser instance from the store.
+ * Hook to access the NDKUser instance corresponding to the currently active session.
+ * Retrieves the active pubkey from the session store and returns the NDKUser object.
+ * Returns null if no session is active or NDK is not initialized.
  */
-export const useNDKCurrentUser = () =>
-    useNDKStore((state) => state.currentUser);
+export const useNDKCurrentUser = (): NDKUser | null => {
+    const ndk = useNDKStore((state) => state.ndk);
+    const activePubkey = useNDKSessions((state) => state.activePubkey);
+
+    return useMemo(() => {
+        if (ndk && activePubkey) {
+            return ndk.getUser({ pubkey: activePubkey });
+        }
+        return null;
+    }, [ndk, activePubkey]);
+};
 
 /**
  * Hook to get the list of unpublished events from the NDK cache adapter.
@@ -115,9 +126,9 @@ export function useNDKUnpublishedEvents() {
 export function useNDKInit() {
     const setNDK = useNDKStore((state) => state.setNDK);
     const initializeProfilesStore = useUserProfilesStore(
-        (state: UserProfilesStore) => state.initialize
+        (state) => state.initialize
     );
-    // Removed initializeSessionStore logic
+    const initializeSessionStore = useNDKSessions((state) => state.init); // Get session init function
 
     /**
      * Initializes the NDK instance and dependent stores.
@@ -138,11 +149,12 @@ export function useNDKInit() {
             console.log('Initializing User Profiles store...');
             initializeProfilesStore(ndkInstance);
 
-            // Removed Session store initialization call
+            console.log('Initializing NDK Sessions store...');
+            initializeSessionStore(ndkInstance);
 
             console.log('NDK and dependent stores initialized.');
         },
-        [setNDK, initializeProfilesStore] // Removed initializeSessionStore from dependencies
+        [setNDK, initializeProfilesStore, initializeSessionStore] // Add session init to dependencies
     );
 
     return initializeNDK;

@@ -1,21 +1,19 @@
-import {
-    type NDKEvent,
-    type NDKFilter,
-    NDKRelaySet,
+// src/subscribe/hooks/index.ts
+import type {
+    NDKEvent,
+    NDKFilter, // Keep as non-type import if used as value
     NDKSubscription,
-    type NDKSubscriptionOptions,
+    NDKSubscriptionOptions
 } from '@nostr-dev-kit/ndk';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, type RefObject } from 'react'; // Added RefObject type import
 import { useStore } from 'zustand';
-import { useShallow } from 'zustand/shallow';
-import { useUserSession } from '../session';
+import { useUserSession } from '../../session/hooks'; // Corrected path
 import {
     createSubscribeStore,
-    type MuteCriteria,
-    type SubscribeStore,
-} from '../stores/subscribe';
-import { isMuted } from '../utils/mute';
-import { useNDK } from './ndk';
+    type MuteCriteria
+} from '../../common/store/subscribe'; // Updated path
+import { isMuted } from '../../utils/mute'; // Corrected path
+import { useNDK } from '../../ndk/hooks'; // Corrected path
 
 /**
  * Extends NDKEvent with a 'from' method to wrap events with a kind-specific handler
@@ -54,6 +52,14 @@ export type UseSubscribeOptions = NDKSubscriptionOptions & {
     wot?: boolean;
 };
 
+// Define interface for return type outside the function
+interface UseSubscribeResult<T extends NDKEvent> {
+    events: T[];
+    eose: boolean;
+    subscription: NDKSubscription | null;
+    storeRef: RefObject<ReturnType<typeof createSubscribeStore<T>> | null>;
+}
+
 /**
  * React hook for subscribing to Nostr events
  * @param filters - Filters to run or false to avoid running the subscription. Note that when setting the filters to false, changing the filters prop
@@ -67,7 +73,7 @@ export type UseSubscribeOptions = NDKSubscriptionOptions & {
 export function useSubscribe<T extends NDKEvent>(
     filters: NDKFilter[] | false,
     opts: UseSubscribeOptions = {},
-    dependencies: any[] = []
+    dependencies: unknown[] = [] // Changed any[] to unknown[]
 ) {
     const { ndk } = useNDK();
     const activeSessionData = useUserSession();
@@ -84,7 +90,9 @@ export function useSubscribe<T extends NDKEvent>(
                 : null;
 
         const lowerCaseHashtags = new Set<string>();
-        hashtags.forEach((h) => lowerCaseHashtags.add(h.toLowerCase()));
+        for (const h of hashtags) { // Changed forEach to for...of
+            lowerCaseHashtags.add(h.toLowerCase());
+        }
 
         return {
             mutedPubkeys: pubkeys,
@@ -183,14 +191,12 @@ export function useSubscribe<T extends NDKEvent>(
                 subRef.current = null;
             }
         };
+    // Added opts to dependency array, removed specific opts.* properties
     }, [
         ndk,
         muteCriteria,
         store,
-        opts.includeDeleted,
-        opts.includeMuted,
-        opts.relaySet,
-        opts.relayUrls,
+        opts,
         filters,
         ...dependencies,
     ]);
@@ -206,13 +212,12 @@ export function useSubscribe<T extends NDKEvent>(
     const eose = useStore(store, (state) => state.eose);
     const subscription = useStore(store, (state) => state.subscriptionRef);
 
-    const returnValue: any = {
+    const returnValue: UseSubscribeResult<T> = {
         events,
         eose,
-        subscription,
+        subscription: subscription ?? null, // Handle undefined from useStore
+        storeRef,
     };
-
-    returnValue.storeRef = storeRef;
 
     return returnValue;
 }

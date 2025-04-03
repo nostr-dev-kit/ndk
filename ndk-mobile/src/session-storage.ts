@@ -2,6 +2,7 @@ import * as SecureStore from 'expo-secure-store';
 import type { Hexpubkey } from '@nostr-dev-kit/ndk';
 
 const SESSIONS_STORE_KEY = 'ndk-saved-sessions';
+const ACTIVE_PUBKEY_STORE_KEY = 'ndk-active-pubkey';
 
 /**
  * Interface for a stored user session, mirroring the structure used for persistence.
@@ -9,7 +10,6 @@ const SESSIONS_STORE_KEY = 'ndk-saved-sessions';
 export interface StoredSession {
     pubkey: Hexpubkey;
     signerPayload?: string; // Store the stringified payload from signer.toPayload()
-    lastActive: number;
 }
 
 /**
@@ -22,8 +22,7 @@ export async function loadSessionsFromStorage(): Promise<StoredSession[]> {
         if (!sessionsJson) return [];
 
         const sessions = JSON.parse(sessionsJson) as StoredSession[];
-        // Sort by lastActive (most recent first)
-        return sessions.sort((a, b) => b.lastActive - a.lastActive);
+        return sessions;
     } catch (error) {
         console.error('Error loading sessions from storage (async):', error);
         return [];
@@ -41,8 +40,7 @@ export function loadSessionsFromStorageSync(): StoredSession[] {
         if (!sessionsJson) return [];
 
         const sessions = JSON.parse(sessionsJson) as StoredSession[];
-        // Sort by lastActive (most recent first)
-        return sessions.sort((a, b) => b.lastActive - a.lastActive);
+        return sessions;
     } catch (error) {
         console.error('Error loading sessions from storage (sync):', error);
         return [];
@@ -59,10 +57,9 @@ export async function saveSessionsToStorage(
 ): Promise<void> {
     try {
         // Sort by lastActive (most recent first) before saving
-        const sortedSessions = [...sessions].sort((a, b) => b.lastActive - a.lastActive);
         await SecureStore.setItemAsync(
             SESSIONS_STORE_KEY,
-            JSON.stringify(sortedSessions)
+            JSON.stringify(sessions)
         );
     } catch (error) {
         console.error('Error saving sessions to storage:', error);
@@ -93,11 +90,9 @@ export async function addOrUpdateStoredSession(
     try {
         const sessions = await loadSessionsFromStorage(); // Keep async load here for updates
         const existingIndex = sessions.findIndex(s => s.pubkey === pubkey);
-        const now = Date.now();
 
         if (existingIndex !== -1) {
             // Update existing session
-            sessions[existingIndex].lastActive = now;
             // Update signer payload if provided, otherwise keep existing or undefined
             if (signerPayload !== undefined) {
                 sessions[existingIndex].signerPayload = signerPayload;
@@ -106,8 +101,7 @@ export async function addOrUpdateStoredSession(
             // Add new session
             sessions.push({
                 pubkey,
-                signerPayload, // Will be undefined for read-only sessions initially
-                lastActive: now,
+                signerPayload // Will be undefined for read-only sessions initially
             });
         }
 
@@ -129,5 +123,42 @@ export async function removeStoredSession(pubkey: Hexpubkey): Promise<void> {
         console.log(`Removed session ${pubkey} from storage.`);
     } catch (error) {
         console.error('Error removing session from storage:', error);
+    }
+}
+
+/**
+ * Get the active pubkey from secure storage asynchronously.
+ * @returns A promise resolving to the active pubkey or undefined if not set.
+ */
+export async function getActivePubkey(): Promise<Hexpubkey | undefined> {
+    try {
+        const activePubkey = await SecureStore.getItemAsync(ACTIVE_PUBKEY_STORE_KEY);
+        return activePubkey || undefined;
+    } catch (error) {
+        console.error('Error getting active pubkey from storage:', error);
+        return undefined;
+    }
+}
+
+/**
+ * Set the active pubkey in secure storage asynchronously.
+ * @param pubkey The pubkey to set as active.
+ */
+export async function setActivePubkey(pubkey: Hexpubkey): Promise<void> {
+    try {
+        await SecureStore.setItemAsync(ACTIVE_PUBKEY_STORE_KEY, pubkey);
+    } catch (error) {
+        console.error('Error setting active pubkey in storage:', error);
+    }
+}
+
+/**
+ * Clear the active pubkey from secure storage asynchronously.
+ */
+export async function clearActivePubkey(): Promise<void> {
+    try {
+        await SecureStore.deleteItemAsync(ACTIVE_PUBKEY_STORE_KEY);
+    } catch (error) {
+        console.error('Error clearing active pubkey from storage:', error);
     }
 }

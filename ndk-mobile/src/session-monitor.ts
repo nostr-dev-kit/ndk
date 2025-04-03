@@ -2,34 +2,39 @@ import { useEffect, useRef } from 'react';
 // No longer need NDK type here directly if we get it from useNDK
 import {
     useNDK,
-    useNDKSessions,
-    type UserSessionData,
+    useNDKSessions, // Keep the hook import
     ndkSignerFromPayload,
     type NDKUser,
-    type NDKSigner
-} from '@nostr-dev-kit/ndk-hooks'; // Consolidate imports
-import {
+    type NDKSigner,
+    type SessionStartOptions, // Import from ndk-hooks (now exported)
+} from '@nostr-dev-kit/ndk-hooks';
+import { // Session storage functions
     loadSessionsFromStorage,
     addOrUpdateStoredSession,
-    removeStoredSession
+    removeStoredSession,
+    getActivePubkey,
+    setActivePubkey,
+    clearActivePubkey
 } from './session-storage.js';
+import { Hexpubkey } from '@nostr-dev-kit/ndk';
 
 /**
  * Hook to monitor NDK session state and persist changes to secure storage.
  * It also loads persisted sessions on initial mount.
  */
-export function useSessionMonitor() { // Remove ndk parameter
-    // Access the whole state object first
+export function useSessionMonitor(opts?: SessionStartOptions) {
     const { ndk } = useNDK();
     const {
         sessions,
-        activeSessionPubkey,
-        initSession,
-        getActiveSession,
-        // deleteSession, // Include if needed elsewhere
+        signers,
+        activePubkey,
+        addSession,
+        startSession,
+        switchToUser,
     } = useNDKSessions();
-
+    // Actions are accessed directly from the hook, not getState()
     const isInitialized = useRef(false);
+    const storedKeys = useRef(new Map<Hexpubkey, boolean>());
 
     // Effect to initialize sessions from storage on startup
     useEffect(() => {
@@ -40,6 +45,7 @@ export function useSessionMonitor() { // Remove ndk parameter
             if (!ndk) return; // Guard against null ndk
 
             try {
+                // Load stored sessions
                 const storedSessions = await loadSessionsFromStorage();
                 if (storedSessions.length === 0) {
                     console.log('[NDK-Mobile] No saved sessions found.');
@@ -48,9 +54,13 @@ export function useSessionMonitor() { // Remove ndk parameter
 
                 console.log(`[NDK-Mobile] Found ${storedSessions.length} saved sessions`);
 
-                let isFirst = true;
+                // Load active pubkey
+                const storedActivePubkey = await getActivePubkey();
+
+                // Add all sessions to NDK
                 for (const storedSession of storedSessions) {
                     try {
+
                         const user: NDKUser = ndk.getUser({ pubkey: storedSession.pubkey });
                         let signer: NDKSigner | undefined = undefined;
 
@@ -64,72 +74,86 @@ export function useSessionMonitor() { // Remove ndk parameter
                             }
                         }
 
-                        // Use initSession to initialize the session in the store
-                        await initSession(ndk, user, signer, {
-                            // profile: false, // Optional: control fetching profile
-                            // follows: false, // Optional: control fetching follows
-                            // muteList: false, // Optional: control fetching mute list
-                            autoSetActive: isFirst,
-                        });
-
-                        console.log(`[NDK-Mobile] Restored session for pubkey: ${storedSession.pubkey}${signer ? ' with signer' : ' (read-only)'}`);
-                        isFirst = false;
+                        // Add session to NDK
+                        await addSession(signer ? signer : user);
                     } catch (error) {
                         console.error(
-                            `[NDK-Mobile] Failed to restore session for pubkey ${storedSession.pubkey}:`,
+                            `[NDK-Mobile] Failed to process stored session for pubkey ${storedSession.pubkey}:`,
                             error
                         );
-                        // Consider removing from storage if init fails critically
-                        await removeStoredSession(storedSession.pubkey);
+                        // Optionally remove from storage on error
+                        // await removeStoredSession(storedSession.pubkey);
                     }
                 }
+
+                // Switch to stored active pubkey or first session if available
+                if (storedActivePubkey && sessions.has(storedActivePubkey)) {
+                    await switchToUser(storedActivePubkey);
+                    console.log('Switched to stored active pubkey:', storedActivePubkey);
+                    await startSession(storedActivePubkey, opts);
+                }
+
+                console.log('stored active pubkey:', storedActivePubkey);
             } catch (error) {
                 console.error('[NDK-Mobile] Error initializing sessions from storage:', error);
             }
         }
 
         initializeFromStorage();
-    }, [ndk, initSession]); // Dependency is now initSession
+    }, [ndk, addSession, switchToUser]); // Update dependencies
 
     // Effect to persist active session changes
     useEffect(() => {
-        if (!ndk || !isInitialized.current || !activeSessionPubkey) return;
+        if (!ndk || !isInitialized.current) return;
 
-        // Get the full active session data using the selector/getter
-        const activeSessionData = getActiveSession();
+        async function persistSessions() {
+            // Store all signers with their payloads
+            for (const [pubkey, signer] of signers) {
+                if (storedKeys.current.get(pubkey)) {
+                    // we already have this signer in storage
+                    continue;
+                }
 
-        if (!activeSessionData) {
-            // This case might happen briefly if activeSessionPubkey is set but data isn't ready
-            // Or if the active session was deleted.
-            // console.log("[NDK-Mobile] Active session pubkey set, but no data found yet.");
-            return;
-        }
+                const payload = signer.toPayload();
+                if (payload) {
+                    await addOrUpdateStoredSession(pubkey, payload);
+                    storedKeys.current.set(pubkey, true);
+                }
+            }
 
-        async function persistActiveSession() {
-            // Access the signer directly from the session data
-            const signerPayload = activeSessionData.signer
-                ? activeSessionData.signer.toPayload()
-                : undefined;
+            // Store all read-only sessions
+            for (const pubkey of sessions.keys()) {
+                if (storedKeys.current.has(pubkey)) {
+                    // we already have this session in storage
+                    continue;
+                }
 
-            try {
-                await addOrUpdateStoredSession(
-                    activeSessionPubkey, // Already checked this is not null
-                    signerPayload
-                );
-                console.log(`[NDK-Mobile] Persisted active session: ${activeSessionPubkey}`);
-            } catch (error) {
-                console.error(`[NDK-Mobile] Failed to persist session ${activeSessionPubkey}:`, error);
+                await addOrUpdateStoredSession(pubkey);
+                storedKeys.current.set(pubkey, true);
             }
         }
 
-        persistActiveSession();
-        // Dependencies: activeSessionPubkey triggers the effect.
-        // getActiveSession is assumed stable (common in Zustand).
-        // ndk is needed for potential signer operations (though payload handles it here).
-    }, [activeSessionPubkey, getActiveSession, ndk]);
+        persistSessions();
+    }, [sessions, signers, ndk]);
 
-    // Effect to handle storage removal when a session is removed from the store
-    const prevSessionsRef = useRef<Map<string, UserSessionData>>(new Map()); // Use correct type
+    // Effect to persist active pubkey changes
+    useEffect(() => {
+        if (!ndk || !isInitialized.current) return;
+
+        async function updateActivePubkey() {
+            if (activePubkey) {
+                await setActivePubkey(activePubkey);
+            } else {
+                await clearActivePubkey();
+            }
+        }
+
+        updateActivePubkey();
+    }, [activePubkey, ndk]);
+
+
+    // Infer the session data type from the 'sessions' map returned by the hook
+    const prevSessionsRef = useRef<typeof sessions>(new Map());
     useEffect(() => {
         const currentSessions = sessions;
         const prevSessions = prevSessionsRef.current;

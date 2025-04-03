@@ -1,95 +1,127 @@
-# Session Management
+# Session Management & Persistence (NDK Mobile)
 
-`ndk-mobile` provides a way to manage session events that are typically necessary to have available throughout an entire app and should be monitored throughout the lifetime of the app, for example, the follow-list, muted pubkeys, NIP-60 wallets, bookmarks, etc -- Anything that is relevant throughout your entire app, you would want to make available through the ndk-mobile's session.
+`@nostr-dev-kit/ndk-mobile` builds upon the session management provided by `@nostr-dev-kit/ndk-hooks` by adding **persistent storage** for user sessions and signers using `expo-secure-store`. This allows your mobile application to remember logged-in users across restarts.
 
-The `useNDKSession` hook provides access to user's information.
+## Core Concepts Recap
 
-Say for example you want to allow your user to interface with their bookmarks, you want to have access to their bookmarks anywhere in the app both for reading and writing.
+*   **Session State:** Managed by `useNDKSessions` in `ndk-hooks` (in-memory).
+*   **Persistence:** Handled by `ndk-mobile` using secure storage.
 
-# Initialiazing
+## Automatic Persistence with `useSessionMonitor`
 
-Once your user logs in, you want to initialize the session
+The easiest way to enable session persistence is by using the `useSessionMonitor` hook provided by `ndk-mobile`.
 
-```tsx
-const { ndk } = useNDK();
-const currentUser = useNDKCurrentUser();
-
-// use to track if, for example, we want to show a loader screen
-// while the session is starting
-const [appReady, setAppReady] = useState(false);
-
-// When the user logs in
-useEffect(() => {
-    if (!ndk || !currentUser) return;
-
-    initializeSession(
-        ndk,
-        currentUser,
-        settingsStore,
-        {
-            follows: true, // load the user's follow list
-            muteList: true, // load the user's mute list
-            kinds: extraKindsRequired, // explained further down
-            filters: sessionFilters, // explained below
-        },
-        {
-            onReady: () => setAppReady(true),
-        }
-    );
-}, [ndk, currentUser?.pubkey]);
-```
-
-### `kinds` option
-
-If your app is interested in some particular kinds, say for example the user's
-image curation set, you would probably want to load that in the session and make it
-broadly available throughout the app.
-
-The `kinds` option allows you to express which kinds, and optionally NDK-kind wrappers to
-instantiate when the events are received.
-
-Ths parameter
-
-```ts
-
-const kinds = new Map([
-    [NDKKind.ImageCurationSet, { wrapper: NDKList }],
-]);
-
-const { ndk } = useNDK();
-const currentUser = useNDKCurrentUser();
-const { init: initializeSession } = useNDKSession();
-const follows = useFollows();
-const muteList = useMuteList();
-
-useEffect(() => {
-    if (!currentUser) return;
-    initializeSession(
-        ndk,
-        currentUser,
-        {
-            follows: true, // get the user's follow list
-            muteList: true, // get the user's mute list
-        }
-    );
-}, [currentUser?.pubkey])
-
-return (<View>
-    <Text>Follows: {follows ? 'not loaded yet' : follows?.length}</Text>
-</View>)
-
-```
-
-Now say you want to allow the user to bookmark something with the click of a button:
+*   **Purpose:** Automatically loads saved sessions on app startup and saves changes to the active session whenever it's updated in the `useNDKSessions` store.
+*   **Usage:** Call this hook once near the root of your application, typically within a component that also initializes NDK (e.g., using `NDKProvider`). It automatically uses the `NDK` instance provided by the context.
 
 ```tsx
-const { imageCurationSet } = useNDKSessionEventKind<NDKList>(NDKKind.ImageCurationSet, {
-    create: NDKList,
-});
+import React, { useEffect, useState } from 'react';
+import NDK from '@nostr-dev-kit/ndk';
+import { NDKProvider, useNDKStore } from '@nostr-dev-kit/ndk-hooks';
+import { useSessionMonitor, NDKCacheAdapterSqlite } from '@nostr-dev-kit/ndk-mobile';
+import { initializeNDK } from '@/lib/ndk'; // Your NDK initialization function
 
-const bookmark = async () => {
-    await imageCurationSet.addItem(event);
-};
+function AppRoot() {
+    const { ndk, setNDK } = useNDKStore();
+
+    // Initialize NDK on mount
+    useEffect(() => {
+        async function bootstrapNDK() {
+            if (!ndk) {
+                try {
+                    // initializeNDK now calls the synchronous bootNDK internally
+                    const initializedNdk = await initializeNDK();
+                    setNDK(initializedNdk);
+                } catch (error) {
+                    console.error('Error initializing NDK:', error);
+                }
+            }
+        }
+        bootstrapNDK();
+    }, [setNDK, ndk]);
+
+    // Start session monitoring once NDK is available
+    useSessionMonitor(); // <- Add this hook (no longer needs ndk instance)
+
+    if (!ndk) {
+        return <Text>Loading...</Text>; // Or your app's loader
+    }
+
+    return (
+        <NDKProvider ndk={ndk}>
+            {/* Your App Components */}
+        </NDKProvider>
+    );
+}
 ```
 
-Now, when your app calls the `bookmark` function, it will add the event to the user's image curation set, if none exists it will create one for you.
+**How it works:**
+
+1.  **On Mount:** `useSessionMonitor` retrieves the `ndk` instance using the `useNDK` hook. It then calls `loadSessionsFromStorage` (asynchronously) to retrieve saved sessions.
+2.  It iterates through the stored sessions (most recent first):
+    *   Gets the `NDKUser` instance using `ndk.getUser()`.
+    *   If a `signerPayload` exists, it calls `ndkSignerFromPayload` (asynchronously) to deserialize the signer.
+    *   Calls `initSession` (from `ndk-hooks`) for each user, passing the `ndk` instance, `user`, optional `signer`, and setting `autoSetActive` for the first session. This populates the `useNDKSessions` store.
+3.  **On Active Session Change:** The hook subscribes to changes in `useNDKSessions.activeSessionPubkey`. When the active session changes:
+    *   It retrieves the full active session data using `getActiveSession()`.
+    *   It accesses the `signer` directly from the session data.
+    *   It serializes the signer using `signer.toPayload()`.
+    *   It calls `addOrUpdateStoredSession` (asynchronously) to save the `pubkey`, serialized `signerPayload`, and update the `lastActive` timestamp in secure storage.
+4.  **On Session Removal:** The hook monitors the `sessions` map from `useNDKSessions`. When a session is detected as removed (comparing current vs. previous state), it calls `removeStoredSession` (asynchronously) to delete the session from secure storage.
+
+## Synchronous Bootstrapping with `bootNDK`
+
+For scenarios where you need to **synchronously** initialize the `NDK` instance with the last active user *before* the React component tree mounts (e.g., setting up background tasks, avoiding initial flashes of logged-out state), `ndk-mobile` provides the synchronous `bootNDK` function.
+
+*   **Purpose:** To **synchronously** pre-populate `ndk.activeUser` directly on the `NDK` instance using the most recently active session found in storage.
+*   **Limitation:** Due to the synchronous nature and the asynchronous requirement for signer deserialization (`ndkSignerFromPayload`), `bootNDK` **cannot** set `ndk.signer`. Signer restoration is handled asynchronously by `useSessionMonitor` later.
+*   **Usage:** Call this function within your NDK initialization logic, *after* creating the `NDK` instance but *before* connecting or passing it to the `NDKProvider`.
+
+```typescript
+// Example: apps/mobile/lib/ndk.ts
+import NDK, {
+    NDKCacheAdapterSqlite,
+    bootNDK // Import bootNDK
+} from '@nostr-dev-kit/ndk-mobile';
+// ... other imports
+
+export async function initializeNDK() { // Function remains async due to connect()
+    const cacheAdapter = new NDKCacheAdapterSqlite('olas');
+    await cacheAdapter.initialize();
+
+    const ndk = new NDK({
+        cacheAdapter,
+        explicitRelayUrls: [/*...*/],
+        // ... other options
+    });
+    cacheAdapter.ndk = ndk; // Assign NDK back to adapter
+
+    // Synchronously boot NDK with the most recently active user from storage
+    bootNDK(ndk); // <- Call synchronous bootNDK here (no await)
+
+    // Connect *after* setting the active user
+    await ndk.connect();
+
+    return ndk;
+}
+```
+
+**How it works:**
+
+1.  Calls `loadSessionsFromStorageSync` (synchronously).
+2.  Takes the first session (most recent).
+3.  Sets `ndk.activeUser` using `ndk.getUser()`.
+4.  Logs whether a signer payload was found but confirms it will be loaded asynchronously later by `useSessionMonitor`.
+
+**Note:** `bootNDK` directly modifies the `ndk` instance synchronously. `useSessionMonitor` will later run and asynchronously re-hydrate the `useNDKSessions` store and load the signer based on the same storage data, ensuring consistency between the initial `ndk` state and the React state.
+
+## Signer Serialization
+
+`ndk-mobile` relies on the signer serialization mechanism defined in `ndk-core`:
+
+*   **`signer.toPayload(): string`:** Each signer (`NDKPrivateKeySigner`, `NDKNip07Signer`, `NDKNip46Signer`, `NDKNip55Signer`) implements this method to return a JSON string containing its type and necessary data for reconstruction.
+*   **`ndkSignerFromPayload(payloadString: string, ndk?: NDK): Promise<NDKSigner | undefined>`:** An asynchronous function in `ndk-core` that takes the payload string, parses the type, looks up the corresponding signer class in a registry, and calls its static `fromPayload` method.
+*   **`SignerClass.fromPayload(payloadString: string, ndk?: NDK): Promise<SignerClass>`:** Each signer class implements this static asynchronous method to reconstruct an instance from its serialized payload string.
+*   **`signerRegistry: Map<string, NDKSignerStatic<NDKSigner>>`:** A map in `ndk-core` where signer types register themselves (e.g., `signerRegistry.set("nip55", NDKNip55Signer)`). This allows `ndkSignerFromPayload` to find the correct class for deserialization.
+
+`ndk-mobile` uses `toPayload` (via `useSessionMonitor`) to save the active signer and `ndkSignerFromPayload` (via `useSessionMonitor`) to restore it asynchronously. `bootNDK` uses synchronous storage access but cannot restore the signer itself.

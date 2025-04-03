@@ -1,16 +1,14 @@
-import NDK, { type NDKEvent, type NDKPublishError } from '@nostr-dev-kit/ndk';
+import type NDK from '@nostr-dev-kit/ndk';
+import type { NDKEvent, NDKPublishError } from '@nostr-dev-kit/ndk';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { type NDKStoreState, useNDKStore } from '../stores/ndk';
-import { UserProfilesStore, useUserProfilesStore } from '../stores/profiles';
+import { type UserProfilesStore, useUserProfilesStore } from '../stores/profiles';
 
 /**
  * Interface for the useNDK hook return value
  */
 interface UseNDKResult
-    extends Pick<
-        NDKStoreState,
-        'ndk' | 'setNDK' | 'addSigner' | 'switchToUser'
-    > {}
+    extends Pick<NDKStoreState, 'ndk' | 'setNDK'> {}
 
 /**
  * Hook to access the NDK instance and setNDK function
@@ -20,12 +18,10 @@ interface UseNDKResult
 export const useNDK = (): UseNDKResult => {
     const ndk = useNDKStore((state) => state.ndk);
     const setNDK = useNDKStore((state) => state.setNDK);
-    const addSigner = useNDKStore((state) => state.addSigner);
-    const switchToUser = useNDKStore((state) => state.switchToUser);
 
     return useMemo(
-        () => ({ ndk: ndk!, setNDK, addSigner, switchToUser }),
-        [ndk, setNDK, addSigner, switchToUser]
+        () => ({ ndk, setNDK }),
+        [ndk, setNDK]
     );
 };
 

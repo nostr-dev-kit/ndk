@@ -6,6 +6,7 @@ import {
     type NDKSigner,
     NDKUser,
     type NostrEvent,
+    signerRegistry, // Import the registry from ndk-core
 } from "@nostr-dev-kit/ndk";
 import * as Nip55 from "expo-nip55";
 
@@ -107,4 +108,55 @@ export class NDKNip55Signer implements NDKSigner {
     ): Promise<string> {
         return "";
     }
-}
+
+    /**
+     * Serializes the signer's package name and pubkey.
+     * @returns A JSON string containing the type, package name, and pubkey.
+     */
+    public toPayload(): string {
+        if (!this._pubkey) {
+            throw new Error("NIP-55 signer not ready for serialization (missing pubkey)");
+        }
+        const payload = {
+            type: "nip55",
+            payload: {
+                packageName: this.packageName,
+                pubkey: this._pubkey, // Include pubkey for potential re-initialization
+            },
+        };
+        return JSON.stringify(payload);
+    }
+
+    /**
+     * Deserializes the signer from a payload string.
+     * @param payloadString The JSON string obtained from toPayload().
+     * @param ndk Optional NDK instance.
+     * @returns An instance of NDKNip55Signer.
+     */
+    public static async fromPayload(payloadString: string, ndk?: NDK): Promise<NDKNip55Signer> {
+        const parsed = JSON.parse(payloadString);
+
+        if (parsed.type !== "nip55") {
+            throw new Error(`Invalid payload type: expected 'nip55', got ${parsed.type}`);
+        }
+
+        const payload = parsed.payload;
+
+        if (!payload || typeof payload !== 'object' || !payload.packageName) {
+            throw new Error("Invalid payload content for nip55 signer");
+        }
+
+        const signer = new NDKNip55Signer(payload.packageName, ndk);
+        // We can optionally pre-set the pubkey if available in the payload
+        // to potentially speed up the initial blockUntilReady, though it will verify anyway.
+        if (payload.pubkey) {
+            signer._pubkey = payload.pubkey;
+        }
+
+        return signer;
+    }
+} // End of NDKNip55Signer class
+
+// Register this signer type with the core registry *outside* the class definition
+// This ensures ndkSignerFromPayload can deserialize it.
+signerRegistry.set("nip55", NDKNip55Signer);

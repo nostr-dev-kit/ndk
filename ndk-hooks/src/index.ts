@@ -22,3 +22,6 @@ export * from './session/index.js';
 export * from './stores/ndk';
 export * from './stores/profiles';
 export * from './stores/subscribe';
+// Removed duplicate export of './stores/sessions' - useNDKSessions is exported via './hooks/session'
+export type { NDKSessionsState } from './stores/sessions/index'; // Export main state type
+export type { NDKUserSession } from './stores/sessions/types'; // Export session type

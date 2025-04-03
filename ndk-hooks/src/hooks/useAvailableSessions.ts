@@ -1,6 +1,6 @@
 import type { Hexpubkey } from '@nostr-dev-kit/ndk';
 import { useMemo } from 'react';
-import { useNDKStore } from '../stores/ndk';
+import { useNDKSessions } from '../stores/sessions'; // Changed import
 
 /**
  * Interface for the useAvailableSessions hook return value
@@ -8,7 +8,7 @@ import { useNDKStore } from '../stores/ndk';
 interface UseAvailableSessionsResult {
     /**
      * An array of hex pubkeys for which signers are available in the store.
-     * Represents the available user sessions.
+     * Represents the available user sessions (started sessions).
      */
     availablePubkeys: Hexpubkey[];
 }
@@ -17,17 +17,17 @@ interface UseAvailableSessionsResult {
  * Hook to get a list of available session pubkeys.
  *
  * This hook retrieves the list of signers from the NDK store
- * and returns an array of their corresponding public keys.
+ * and returns an array of their corresponding public keys (from started sessions).
  * This represents the sessions that the user can potentially switch to.
  *
  * @returns {UseAvailableSessionsResult} Object containing an array of available pubkeys.
  */
 export const useAvailableSessions = (): UseAvailableSessionsResult => {
-    const signers = useNDKStore((state) => state.signers);
+    const sessions = useNDKSessions((state) => state.sessions); // Use sessions store and sessions map
 
     const availablePubkeys = useMemo(
-        () => Array.from(signers.keys()),
-        [signers]
+        () => Array.from(sessions.keys()), // Get keys from sessions map
+        [sessions]
     );
 
     return useMemo(() => ({ availablePubkeys }), [availablePubkeys]);

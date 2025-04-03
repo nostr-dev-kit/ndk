@@ -24,10 +24,8 @@ export const fetchProfileImplementation = (
     }
 
     const user = ndk.getUser({ pubkey: pubkey });
-    console.log('[PROFILE STORE] fetching', pubkey);
     user.fetchProfile()
         .then((profile) => {
-            console.log('got a profile?', { pubkey, profile: !!profile });
             set((state) => {
                 const profiles = new Map(state.profiles);
                 if (profile) profiles.set(pubkey, profile);

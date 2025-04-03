@@ -15,7 +15,6 @@ import { NDKEventWithFrom } from '../../subscribe/hooks';
  */
 export interface NDKUserSession {
     pubkey: Hexpubkey; // Changed from string for clarity
-    signer?: NDKSigner;
     mutedPubkeys: Set<Hexpubkey>; // Changed from string
     mutedHashtags: Set<string>;
     mutedWords: Set<string>;
@@ -37,7 +36,7 @@ export interface NDKUserSession {
     subscription?: NDKSubscription;
 
     /**
-     * Last time the session was set to be the active one.
+     * Last time the session was set to be the active one (in seconds)
      */
     lastActive: number;
 }

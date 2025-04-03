@@ -1,4 +1,3 @@
-// src/subscribe/hooks/index.ts
 import type {
     NDKEvent,
     NDKFilter, // Keep as non-type import if used as value

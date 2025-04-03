@@ -28,8 +28,7 @@ export const useUserSession = () => {
  * Returns an empty array if there is no active session or no follows list.
  */
 export const useFollows = (): Set<Hexpubkey> => {
-    const activeSession = useUserSession();
-    return activeSession?.followSet ?? new Set<Hexpubkey>();
+    return useNDKSessions(s => s.activePubkey ? s.sessions.get(s.activePubkey)?.followSet ?? new Set<Hexpubkey>() : new Set<Hexpubkey>());
 };
 
 /**

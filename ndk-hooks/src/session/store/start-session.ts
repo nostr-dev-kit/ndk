@@ -137,6 +137,7 @@ export const startSession = (
     // --- Subscription Handlers ---
 
     const handleEvent = (event: NDKEvent) => {
+        console.log('handle session event', event.pubkey.slice(0, 6), event.kind);
         set((draft) => {
             const session = draft.sessions.get(pubkey);
             if (!session) return; // Session might have been removed while processing
@@ -145,6 +146,7 @@ export const startSession = (
     };
 
     const handleEvents = (events: NDKEvent[]) => {
+        console.log('handle session events', events.map(event => event.pubkey.slice(0, 6) + event.kind).join(', '));
         set((draft) => {
             const session = draft.sessions.get(pubkey);
             if (!session) return; // Session might have been removed
@@ -159,6 +161,7 @@ export const startSession = (
     };
 
     // --- Create Subscription ---
+    console.log('starting subscription for', pubkey);
 
     const sub = ndk.subscribe(
         filters,

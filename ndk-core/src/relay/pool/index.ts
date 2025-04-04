@@ -155,6 +155,11 @@ export class NDKPool extends EventEmitter<{
 
     /**
      * Adds a relay to the pool.
+     * 
+     * Note that this relay will not be added to the explicit list of relays, so
+     * we will connect to it but only for subscriptions that require ite.
+     * 
+     * If you want to add a relay to the explicit list, use `ndk.addExplicitRelay` instead.
      *
      * @param relay - The relay to add to the pool.
      * @param connect - Whether or not to connect to the relay.

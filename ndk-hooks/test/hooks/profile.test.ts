@@ -31,8 +31,7 @@ vi.mock('../../src/stores/profiles', () => {
 });
 
 describe('useProfile', () => {
-    const testPubkey =
-        '000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f';
+    const testPubkey = '000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f';
     const mockProfile = {
         name: 'Test User',
         picture: 'https://example.com/pic.jpg',
@@ -46,27 +45,29 @@ describe('useProfile', () => {
         mockFetchProfile.mockReset();
 
         // Update the store mock implementation
-        (useUserProfilesStore as unknown as MockedFunction<typeof useUserProfilesStore>).mockImplementation((selector?: (state: UserProfilesStore) => unknown) => {
-            const mockState: UserProfilesStore = {
-                ndk: undefined, // Add mock value
-                profiles: mockProfiles,
-                lastFetchedAt: new Map(), // Add mock value
-                initialize: mockInitialize, // Add mock function
-                setProfile: mockSetProfile, // Add mock function
-                fetchProfile: mockFetchProfile,
-            };
+        (useUserProfilesStore as unknown as MockedFunction<typeof useUserProfilesStore>).mockImplementation(
+            (selector?: (state: UserProfilesStore) => unknown) => {
+                const mockState: UserProfilesStore = {
+                    ndk: undefined, // Add mock value
+                    profiles: mockProfiles,
+                    lastFetchedAt: new Map(), // Add mock value
+                    initialize: mockInitialize, // Add mock function
+                    setProfile: mockSetProfile, // Add mock function
+                    fetchProfile: mockFetchProfile,
+                };
 
-            if (typeof selector === 'function') {
-                return selector(mockState);
-            }
+                if (typeof selector === 'function') {
+                    return selector(mockState);
+                }
 
-            // When called directly with no selector, return the store
-            if (selector === undefined) {
+                // When called directly with no selector, return the store
+                if (selector === undefined) {
+                    return mockState;
+                }
+
                 return mockState;
             }
-
-            return mockState;
-        });
+        );
     });
 
     it('should return undefined if no pubkey is provided', () => {

@@ -16,8 +16,7 @@ export function deleteSession(
         let newActivePubkey = state.activeSessionPubkey;
         if (newActivePubkey === pubkey) {
             const remainingKeys = Array.from(newSessions.keys());
-            newActivePubkey =
-                remainingKeys.length > 0 ? remainingKeys[0] : null;
+            newActivePubkey = remainingKeys.length > 0 ? remainingKeys[0] : null;
         }
 
         return { sessions: newSessions, activeSessionPubkey: newActivePubkey };

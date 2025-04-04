@@ -1,11 +1,4 @@
-import NDK, {
-    NDKEvent,
-    NDKFilter,
-    NDKKind,
-    NDKSubscription,
-    NDKUser,
-    profileFromEvent,
-} from '@nostr-dev-kit/ndk';
+import NDK, { NDKEvent, NDKFilter, NDKKind, NDKSubscription, NDKUser, profileFromEvent } from '@nostr-dev-kit/ndk';
 import { StoreApi } from 'zustand';
 import { SessionInitOptions, SessionState, UserSessionData } from '../types';
 
@@ -63,42 +56,25 @@ export async function initializeSession(
                 switch (event.kind) {
                     case NDKKind.Metadata: {
                         const existingProfile = currentSession.profile;
-                        if (
-                            !existingProfile ||
-                            event.created_at! >
-                                (existingProfile.created_at || 0)
-                        ) {
+                        if (!existingProfile || event.created_at! > (existingProfile.created_at || 0)) {
                             try {
                                 const profile = profileFromEvent(event);
                                 profile.created_at = event.created_at;
                                 get().updateSession(pubkey, { profile });
                             } catch (e) {
-                                console.error(
-                                    `Failed to parse profile JSON for ${pubkey}:`,
-                                    e,
-                                    event.content
-                                );
+                                console.error(`Failed to parse profile JSON for ${pubkey}:`, e, event.content);
                             }
                         }
                         break;
                     }
                     case NDKKind.Contacts: {
-                        const existingEvent =
-                            currentSession.replaceableEvents.get(
-                                NDKKind.Contacts
-                            );
-                        if (
-                            !existingEvent ||
-                            event.created_at! > existingEvent.created_at!
-                        ) {
+                        const existingEvent = currentSession.replaceableEvents.get(NDKKind.Contacts);
+                        if (!existingEvent || event.created_at! > existingEvent.created_at!) {
                             const followSet = new Set<string>();
                             event.tags.forEach((tag) => {
-                                if (tag[0] === 'p' && tag[1].length === 64)
-                                    followSet.add(tag[1]);
+                                if (tag[0] === 'p' && tag[1].length === 64) followSet.add(tag[1]);
                             });
-                            const newReplaceableEvents = new Map(
-                                currentSession.replaceableEvents
-                            );
+                            const newReplaceableEvents = new Map(currentSession.replaceableEvents);
                             newReplaceableEvents.set(NDKKind.Contacts, event);
                             get().updateSession(pubkey, {
                                 followSet,
@@ -108,17 +84,9 @@ export async function initializeSession(
                         break;
                     }
                     case NDKKind.MuteList: {
-                        const existingEvent =
-                            currentSession.replaceableEvents.get(
-                                NDKKind.MuteList
-                            );
-                        if (
-                            !existingEvent ||
-                            event.created_at! > existingEvent.created_at!
-                        ) {
-                            const newReplaceableEvents = new Map(
-                                currentSession.replaceableEvents
-                            );
+                        const existingEvent = currentSession.replaceableEvents.get(NDKKind.MuteList);
+                        if (!existingEvent || event.created_at! > existingEvent.created_at!) {
+                            const newReplaceableEvents = new Map(currentSession.replaceableEvents);
                             newReplaceableEvents.set(NDKKind.MuteList, event);
                             get().updateSession(pubkey, {
                                 replaceableEvents: newReplaceableEvents,
@@ -129,36 +97,18 @@ export async function initializeSession(
                     default: {
                         const eventOptions = opts.events?.get(event.kind!);
                         if (eventOptions) {
-                            const existingEvent =
-                                currentSession.replaceableEvents.get(
-                                    event.kind!
-                                );
-                            if (
-                                !existingEvent ||
-                                event.created_at! > existingEvent.created_at!
-                            ) {
+                            const existingEvent = currentSession.replaceableEvents.get(event.kind!);
+                            if (!existingEvent || event.created_at! > existingEvent.created_at!) {
                                 let finalEvent = event;
-                                if (
-                                    eventOptions.wrap &&
-                                    typeof eventOptions.wrap.from === 'function'
-                                ) {
+                                if (eventOptions.wrap && typeof eventOptions.wrap.from === 'function') {
                                     try {
-                                        finalEvent =
-                                            eventOptions.wrap.from(event);
+                                        finalEvent = eventOptions.wrap.from(event);
                                     } catch (wrapError) {
-                                        console.error(
-                                            `Error wrapping event kind ${event.kind}:`,
-                                            wrapError
-                                        );
+                                        console.error(`Error wrapping event kind ${event.kind}:`, wrapError);
                                     }
                                 }
-                                const newReplaceableEvents = new Map(
-                                    currentSession.replaceableEvents
-                                );
-                                newReplaceableEvents.set(
-                                    event.kind!,
-                                    finalEvent
-                                );
+                                const newReplaceableEvents = new Map(currentSession.replaceableEvents);
+                                newReplaceableEvents.set(event.kind!, finalEvent);
                                 get().updateSession(pubkey, {
                                     replaceableEvents: newReplaceableEvents,
                                 });

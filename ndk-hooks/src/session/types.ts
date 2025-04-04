@@ -1,11 +1,5 @@
 import type NDK from '@nostr-dev-kit/ndk';
-import type {
-    Hexpubkey,
-    NDKEvent,
-    NDKKind,
-    NDKUser,
-    NDKUserProfile,
-} from '@nostr-dev-kit/ndk';
+import type { Hexpubkey, NDKEvent, NDKKind, NDKUser, NDKUserProfile } from '@nostr-dev-kit/ndk';
 
 /**
  * User-specific session data stored within the main store.
@@ -41,10 +35,7 @@ export interface SessionState {
     sessions: Map<string, UserSessionData>;
     activeSessionPubkey: string | null;
 
-    createSession: (
-        pubkey: string,
-        initialData?: Partial<UserSessionData>
-    ) => void;
+    createSession: (pubkey: string, initialData?: Partial<UserSessionData>) => void;
     updateSession: (pubkey: string, data: Partial<UserSessionData>) => void;
     deleteSession: (pubkey: string) => void;
     setActiveSession: (pubkey: string | null) => void;

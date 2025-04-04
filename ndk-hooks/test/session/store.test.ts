@@ -34,8 +34,7 @@ vi.mock('@nostr-dev-kit/ndk', async (importOriginal) => {
 });
 
 // Helper to reset store before each test
-const resetStore = () =>
-    useNDKSessions.setState({ sessions: new Map(), activeSessionPubkey: null });
+const resetStore = () => useNDKSessions.setState({ sessions: new Map(), activeSessionPubkey: null });
 
 describe('useNDKSessions Zustand Store', () => {
     beforeEach(() => {
@@ -75,12 +74,8 @@ describe('useNDKSessions Zustand Store', () => {
     });
 
     it('createSession: should not overwrite existing session', () => {
-        useNDKSessions
-            .getState()
-            .createSession(pubkey1, { ndk: mockNdkInstance });
-        useNDKSessions
-            .getState()
-            .createSession(pubkey1, { relays: ['relay1'] }); // Attempt overwrite
+        useNDKSessions.getState().createSession(pubkey1, { ndk: mockNdkInstance });
+        useNDKSessions.getState().createSession(pubkey1, { relays: ['relay1'] }); // Attempt overwrite
         const state = useNDKSessions.getState();
         expect(state.sessions.size).toBe(1);
         expect(state.sessions.get(pubkey1)?.ndk).toBe(mockNdkInstance); // Should retain original NDK
@@ -119,9 +114,7 @@ describe('useNDKSessions Zustand Store', () => {
     it('setActiveSession: should set the active session pubkey', () => {
         useNDKSessions.getState().createSession(pubkey1);
         useNDKSessions.getState().createSession(pubkey2);
-        const session2InitialLastActive = useNDKSessions
-            .getState()
-            .sessions.get(pubkey2)?.lastActive;
+        const session2InitialLastActive = useNDKSessions.getState().sessions.get(pubkey2)?.lastActive;
         useNDKSessions.getState().setActiveSession(pubkey2);
         expect(useNDKSessions.getState().activeSessionPubkey).toBe(pubkey2);
         // Check if lastActive was updated for the new active session
@@ -177,18 +170,15 @@ describe('useNDKSessions Zustand Store', () => {
 
     it('muteItemForSession: should add item to the correct mute set', () => {
         useNDKSessions.getState().createSession(pubkey1);
-        useNDKSessions
-            .getState()
-            .muteItemForSession(pubkey1, 'mutePubkey', 'pubkey', false);
-        useNDKSessions
-            .getState()
-            .muteItemForSession(pubkey1, 'MuteTag', 'hashtag', false);
+        useNDKSessions.getState().muteItemForSession(pubkey1, 'mutePubkey', 'pubkey', false);
+        useNDKSessions.getState().muteItemForSession(pubkey1, 'MuteTag', 'hashtag', false);
         const session = useNDKSessions.getState().getSession(pubkey1);
         expect(session?.mutedPubkeys.has('mutePubkey')).toBe(true);
         expect(session?.mutedHashtags.has('mutetag')).toBe(true); // Should be lowercased
     });
 
-    it('should process mute data when mute list event changes', async () => { // Renamed test
+    it('should process mute data when mute list event changes', async () => {
+        // Renamed test
         useNDKSessions.getState().createSession(pubkey1);
         const muteEvent = new NDKEvent();
         muteEvent.kind = NDKKind.MuteList; // Use NDKKind
@@ -249,7 +239,8 @@ describe('useNDKSessions Zustand Store', () => {
         // biome-ignore lint/suspicious/noExplicitAny: <Mocking NDKSubscription with self-reference>
         const mockSubscription: any = {
             // biome-ignore lint/suspicious/noExplicitAny: <Mocking complex NDKSubscription.on signature>
-            on: vi.fn((eventName: string, cb: any) => { // Remove circular return type annotation
+            on: vi.fn((eventName: string, cb: any) => {
+                // Remove circular return type annotation
                 if (eventName === 'event') {
                     eventCallback = cb;
                 }
@@ -261,15 +252,11 @@ describe('useNDKSessions Zustand Store', () => {
         (mockNdkInstance.subscribe as Mock).mockReturnValue(mockSubscription);
 
         // Call initSession
-        const initPromise = useNDKSessions.getState().initSession(
-            mockNdkInstance,
-            mockUser1,
-            {
-                profile: true, // Correct option
-                follows: true, // Correct option
-                muteList: true, // Correct option
-            }
-        );
+        const initPromise = useNDKSessions.getState().initSession(mockNdkInstance, mockUser1, {
+            profile: true, // Correct option
+            follows: true, // Correct option
+            muteList: true, // Correct option
+        });
 
         // It should resolve with the pubkey
         await expect(initPromise).resolves.toBe(pubkey1);
@@ -286,11 +273,14 @@ describe('useNDKSessions Zustand Store', () => {
         }
 
         // Wait for profile and follows processing which happens in the event callback
-        await waitFor(() => {
-            const updatedSession = useNDKSessions.getState().getSession(pubkey1);
-            expect(updatedSession?.profile).toBeDefined();
-            expect(updatedSession?.followSet?.has('follow1')).toBe(true);
-        }, { timeout: 4000 }); // Further increased timeout
+        await waitFor(
+            () => {
+                const updatedSession = useNDKSessions.getState().getSession(pubkey1);
+                expect(updatedSession?.profile).toBeDefined();
+                expect(updatedSession?.followSet?.has('follow1')).toBe(true);
+            },
+            { timeout: 4000 }
+        ); // Further increased timeout
 
         // Assert final state *after* waitFor
         const state = useNDKSessions.getState();
@@ -317,7 +307,8 @@ describe('useNDKSessions Zustand Store', () => {
     it('initSession: should call callback with error if NDK subscribe fails', async () => {
         const subscribeError = new Error('Subscription failed');
         // Cast to Mock before calling mockImplementation
-        (mockNdkInstance.subscribe as Mock).mockImplementation(() => { // Ensure correct cast
+        (mockNdkInstance.subscribe as Mock).mockImplementation(() => {
+            // Ensure correct cast
             throw subscribeError; // Simulate error during subscribe call
         });
 

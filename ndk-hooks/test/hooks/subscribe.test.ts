@@ -102,9 +102,9 @@ describe('useSubscribe hook - Advanced Tests', () => {
             replaceableEvents: new Map(),
             lastActive: Date.now() / 1000,
         } as UserSessionData);
-        mockedUseNDKCurrentUser.mockReturnValue(
-            { pubkey: 'test-user-pubkey' } as unknown as NDKUser
-        );
+        mockedUseNDKCurrentUser.mockReturnValue({
+            pubkey: 'test-user-pubkey',
+        } as unknown as NDKUser);
 
         vi.useFakeTimers();
     });
@@ -139,8 +139,11 @@ describe('useSubscribe hook - Advanced Tests', () => {
         // biome-ignore lint/suspicious/noExplicitAny: <Adding helper to mock>
         (event as any).triggerDeleted = () => {
             // biome-ignore lint/suspicious/noExplicitAny: <Accessing mock internals>
-            const deletedHandler = (event.once as MockedFunction<any>).mock.calls.find(call => call[0] === 'deleted')?.[1];
-            if (deletedHandler && typeof deletedHandler === 'function') { // Add type check
+            const deletedHandler = (event.once as MockedFunction<any>).mock.calls.find(
+                (call) => call[0] === 'deleted'
+            )?.[1];
+            if (deletedHandler && typeof deletedHandler === 'function') {
+                // Add type check
                 deletedHandler();
             }
         };
@@ -149,10 +152,10 @@ describe('useSubscribe hook - Advanced Tests', () => {
 
     it('loads an event', async () => {
         const stableFilters = [{ kinds: [1] }];
-        
+
         // Set up the hook
         const { result } = renderHook(() => useSubscribe(stableFilters, { bufferMs: false }));
-        
+
         // Advanced timers to ensure effects run
         act(() => {
             vi.advanceTimersByTime(50);
@@ -161,7 +164,7 @@ describe('useSubscribe hook - Advanced Tests', () => {
 
         // Verify ndk.subscribe was called
         expect(mockNDK.subscribe).toHaveBeenCalledTimes(1);
-        
+
         // We can't easily test subscription reference due to store implementation
         // but we can verify the ndk.subscribe was called with correct args
         expect(mockNDK.subscribe).toHaveBeenCalledWith(
@@ -177,35 +180,41 @@ describe('useSubscribe hook - Advanced Tests', () => {
     // Skip this test as it's been consistently failing due to cleanup/mock interaction issues
     it.skip('should clean up subscription on unmount', () => {
         mockSubscription.stop = vi.fn();
-        
+
         const { unmount } = renderHook(() => useSubscribe([{ kinds: [1] }], { bufferMs: false }));
-        
+
         // Verify subscription was created
         expect(mockNDK.subscribe).toHaveBeenCalledTimes(1);
-        
+
         // Unmount the component
         unmount();
-        
+
         // Verify the subscription was stopped
         expect(mockSubscription.stop).toHaveBeenCalled();
     });
 
-
     it('should not add events with "deleted" tag when includeDeleted is false', async () => {
         const deletedEvent = createTestEvent('deleted-event-id', 'test-pubkey', 'deleted event', [['deleted', 'true']]);
-        const { result } = renderHook(() => useSubscribe([{ kinds: [1] }], { includeDeleted: false, bufferMs: false }));
+        const { result } = renderHook(() =>
+            useSubscribe([{ kinds: [1] }], {
+                includeDeleted: false,
+                bufferMs: false,
+            })
+        );
 
         // Get the onEvent handler directly from the subscribe call
         // biome-ignore lint/suspicious/noExplicitAny: <Accessing mock internals>
         const mockCall = (mockNDK.subscribe as MockedFunction<any>).mock.calls[0];
-        const subscribeArgs = mockCall[2] as { onEvent: (event: NDKEvent) => void };
+        const subscribeArgs = mockCall[2] as {
+            onEvent: (event: NDKEvent) => void;
+        };
         const onEventHandler = subscribeArgs.onEvent;
-        
+
         // Mock the store methods for better assertions
         result.current.storeRef.current!.getState().addEvent = vi.fn(
             result.current.storeRef.current!.getState().addEvent
         );
-        
+
         // Call the handler directly
         act(() => {
             onEventHandler(deletedEvent);
@@ -225,19 +234,20 @@ describe('useSubscribe hook - Advanced Tests', () => {
         const { result } = renderHook(() => useSubscribe([{ kinds: [1] }], hookOptions));
 
         // Mock the addEvent method for better assertions
-        result.current.storeRef.current!.getState().addEvent = vi.fn()
-            .mockImplementation((event) => {
-                // Create a simplified implementation that adds to the events array directly
-                const state = result.current.storeRef.current!.getState();
-                state.events = [...state.events, event];
-            });
-        
+        result.current.storeRef.current!.getState().addEvent = vi.fn().mockImplementation((event) => {
+            // Create a simplified implementation that adds to the events array directly
+            const state = result.current.storeRef.current!.getState();
+            state.events = [...state.events, event];
+        });
+
         // Get the onEvent handler directly
         // biome-ignore lint/suspicious/noExplicitAny: <Accessing mock internals>
         const mockCall = (mockNDK.subscribe as MockedFunction<any>).mock.calls[0];
-        const subscribeArgs = mockCall[2] as { onEvent: (event: NDKEvent) => void };
+        const subscribeArgs = mockCall[2] as {
+            onEvent: (event: NDKEvent) => void;
+        };
         const onEventHandler = subscribeArgs.onEvent;
-        
+
         // Call the handler directly with the deleted event
         act(() => {
             onEventHandler(deletedEvent);
@@ -270,10 +280,9 @@ describe('useSubscribe hook - Advanced Tests', () => {
     it('should resubscribe when filters change', () => {
         const initialFilters = [{ kinds: [1] as NDKKind[], limit: 10 }];
         const newFilters = [{ kinds: [1, 2] as NDKKind[], limit: 20 }];
-        const { rerender } = renderHook(
-            (props) => useSubscribe(props.filters, { bufferMs: false }),
-            { initialProps: { filters: initialFilters } }
-        );
+        const { rerender } = renderHook((props) => useSubscribe(props.filters, { bufferMs: false }), {
+            initialProps: { filters: initialFilters },
+        });
 
         expect(mockNDK.subscribe).toHaveBeenCalledTimes(1);
         expect(mockNDK.subscribe).toHaveBeenCalledWith(
@@ -295,41 +304,40 @@ describe('useSubscribe hook - Advanced Tests', () => {
         const filters = [{ kinds: [1] as NDKKind[] }];
         const dependencies = ['dep1'];
         const newDependencies = ['dep1', 'dep2'];
-        const { rerender } = renderHook(
-            (props) => useSubscribe(filters, { bufferMs: false }, props.dependencies),
-            { initialProps: { dependencies } }
-        );
+        const { rerender } = renderHook((props) => useSubscribe(filters, { bufferMs: false }, props.dependencies), {
+            initialProps: { dependencies },
+        });
 
         expect(mockNDK.subscribe).toHaveBeenCalledTimes(1);
         (mockNDK.subscribe as unknown as MockedFunction<typeof mockNDK.subscribe>).mockClear();
         rerender({ dependencies: newDependencies });
         expect(mockNDK.subscribe).toHaveBeenCalledTimes(1);
     });
-    
+
     // Skip this test as it's unreliable with the current store implementation
     it.skip('verifies event deletion removes it from the store', async () => {
         // Create test event
         const testEvent = createTestEvent('test-event-id', 'test-pubkey', 'test content');
-        
+
         // Create a direct instance of the store to test against
         const testStore = createSubscribeStore<NDKEvent>(false);
-        
+
         // Add the event to the store
         testStore.getState().addEvent(testEvent);
-        
+
         // Verify event is in the store
         expect(testStore.getState().events.length).toBe(1);
-        
+
         // Set up a spy to verify removal
         const removeEventSpy = vi.spyOn(testStore.getState(), 'removeEventId');
-        
+
         // Verify the once handler was properly called when adding event
         expect(testEvent.once).toHaveBeenCalledWith('deleted', expect.any(Function));
-        
+
         // Simulate an event deletion by triggering the helper we added to the testEvent
         // biome-ignore lint/suspicious/noExplicitAny: <Using added helper method>
         (testEvent as any).triggerDeleted();
-        
+
         // Verify the removal method was called with the correct ID
         expect(removeEventSpy).toHaveBeenCalledWith(testEvent.id);
     });
@@ -342,51 +350,59 @@ describe('useSubscribe hook - Advanced Tests', () => {
     const mutedPubkeyEvent = createTestEvent('muted-event-pubkey', mutedPubkey, 'Event from muted author');
     const nonMutedEvent = createTestEvent('non-muted-event-1', nonMutedPubkey, 'Event from non-muted author');
     const mutedWordEvent = createTestEvent('muted-event-word', nonMutedPubkey, 'This event contains a BADWORD');
-    const mutedTagEvent = createTestEvent('muted-event-tag', nonMutedPubkey, 'Event with muted tag', [['t', 'mutedtag']]);
-    const mutedEventIdEvent = createTestEvent('muted-event-id', nonMutedPubkey, 'Event referencing muted event', [['e', 'muted-referenced-event-id']]);
-    const mutedOwnIdEvent = createTestEvent('muted-referenced-event-id', nonMutedPubkey, 'This event ID itself is muted');
+    const mutedTagEvent = createTestEvent('muted-event-tag', nonMutedPubkey, 'Event with muted tag', [
+        ['t', 'mutedtag'],
+    ]);
+    const mutedEventIdEvent = createTestEvent('muted-event-id', nonMutedPubkey, 'Event referencing muted event', [
+        ['e', 'muted-referenced-event-id'],
+    ]);
+    const mutedOwnIdEvent = createTestEvent(
+        'muted-referenced-event-id',
+        nonMutedPubkey,
+        'This event ID itself is muted'
+    );
 
     it('verifies proper mute filtering based on different criteria', async () => {
         // This test checks that all the different mute criteria work properly
-        
+
         // Set up mute criteria
         const muteCriteria = {
             mutedPubkeys: new Set([mutedPubkey]),
             mutedEventIds: new Set(['muted-referenced-event-id']),
             mutedHashtags: new Set(['mutedtag']),
-            mutedWordsRegex: /badword/i
+            mutedWordsRegex: /badword/i,
         };
-        
+
         // Import the isMuted function directly from source
         const { isMuted } = await import('../../src/utils/mute');
-        
+
         // Check all mute scenarios:
-        
+
         // 1. Event from muted author
         expect(isMuted(mutedPubkeyEvent, muteCriteria)).toBe(true);
-        
+
         // 2. Event from non-muted author without muted content should pass
         expect(isMuted(nonMutedEvent, muteCriteria)).toBe(false);
-        
+
         // 3. Event with muted word in content
         expect(isMuted(mutedWordEvent, muteCriteria)).toBe(true);
-        
+
         // 4. Event with muted hashtag
         expect(isMuted(mutedTagEvent, muteCriteria)).toBe(true);
-        
+
         // 5. Event referencing a muted event
         expect(isMuted(mutedEventIdEvent, muteCriteria)).toBe(true);
-        
+
         // 6. Event whose ID itself is muted
         expect(isMuted(mutedOwnIdEvent, muteCriteria)).toBe(true);
     });
 
     it('verifies includeDeleted option allows deleted events', async () => {
         const deletedEvent = createTestEvent('deleted-event-id', 'test-pubkey', 'deleted event', [['deleted', 'true']]);
-        
+
         // Test with and without includeDeleted option
         const store = createSubscribeStore<NDKEvent>(false);
-        
+
         // Create a function to handle events like the hook would
         const handleEvent = (event: NDKEvent, includeDeleted: boolean) => {
             // This represents the core logic from the hook
@@ -395,10 +411,10 @@ describe('useSubscribe hook - Advanced Tests', () => {
             }
             return true; // Event would be included
         };
-        
+
         // With includeDeleted=false, deleted events should be filtered
         expect(handleEvent(deletedEvent, false)).toBe(false);
-        
+
         // With includeDeleted=true, deleted events should be included
         expect(handleEvent(deletedEvent, true)).toBe(true);
     });
@@ -418,18 +434,16 @@ describe('useSubscribe hook - Advanced Tests', () => {
 
         const capturedEventHandlers: Map<string, ((event: NDKEvent) => void)[]> = new Map();
         // biome-ignore lint/suspicious/noExplicitAny: <Mocking complex overloaded NDKSubscription.on signature>
-        (mockSubscription.on as unknown as MockedFunction<any>).mockImplementation(
-            (...args: unknown[]) => {
-                const eventName = args[0] as string;
-                const handler = args[1] as (event: NDKEvent) => void;
-                
-                if (!capturedEventHandlers.has(eventName)) {
-                    capturedEventHandlers.set(eventName, []);
-                }
-                capturedEventHandlers.get(eventName)?.push(handler);
-                return mockSubscription;
+        (mockSubscription.on as unknown as MockedFunction<any>).mockImplementation((...args: unknown[]) => {
+            const eventName = args[0] as string;
+            const handler = args[1] as (event: NDKEvent) => void;
+
+            if (!capturedEventHandlers.has(eventName)) {
+                capturedEventHandlers.set(eventName, []);
             }
-        );
+            capturedEventHandlers.get(eventName)?.push(handler);
+            return mockSubscription;
+        });
 
         const eventToMuteByWord = createTestEvent('event-to-mute-word', nonMutedPubkey, 'Contains BADWORD');
         const { result, rerender: rerenderHook } = renderHook(
@@ -477,7 +491,14 @@ describe('useSubscribe hook - Advanced Tests', () => {
             lastActive: Date.now() / 1000,
         } as UserSessionData);
 
-        const cachedEvents = [mutedPubkeyEvent, nonMutedEvent, mutedWordEvent, mutedTagEvent, mutedEventIdEvent, mutedOwnIdEvent];
+        const cachedEvents = [
+            mutedPubkeyEvent,
+            nonMutedEvent,
+            mutedWordEvent,
+            mutedTagEvent,
+            mutedEventIdEvent,
+            mutedOwnIdEvent,
+        ];
         const { result } = renderHook(() => useSubscribe([{ kinds: [1] }], { bufferMs: false }));
 
         // Directly add cached events to the internal store
@@ -503,7 +524,14 @@ describe('useSubscribe hook - Advanced Tests', () => {
             lastActive: Date.now() / 1000,
         } as UserSessionData);
 
-        const cachedEvents = [mutedPubkeyEvent, nonMutedEvent, mutedWordEvent, mutedTagEvent, mutedEventIdEvent, mutedOwnIdEvent];
+        const cachedEvents = [
+            mutedPubkeyEvent,
+            nonMutedEvent,
+            mutedWordEvent,
+            mutedTagEvent,
+            mutedEventIdEvent,
+            mutedOwnIdEvent,
+        ];
         const hookOptions = { includeMuted: true, bufferMs: false as const };
         const { result } = renderHook(() => useSubscribe([{ kinds: [1] }], hookOptions));
 

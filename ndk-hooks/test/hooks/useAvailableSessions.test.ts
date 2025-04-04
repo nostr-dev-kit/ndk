@@ -14,10 +14,12 @@ vi.mock('../../src/stores/ndk', () => ({
 // Helper to set the mock return value for useNDKStore selector
 const mockUseNDKStoreSelector = (signers: Map<string, NDKSigner>) => {
     // biome-ignore lint/suspicious/noExplicitAny: <Mocking Zustand store selector>
-    (useNDKStore as unknown as MockedFunction<typeof useNDKStore>).mockImplementation((selector: (state: NDKStoreState) => any) => {
-        // Provide a partial state matching what the selector needs
-        return selector({ signers } as Partial<NDKStoreState> as NDKStoreState);
-    });
+    (useNDKStore as unknown as MockedFunction<typeof useNDKStore>).mockImplementation(
+        (selector: (state: NDKStoreState) => any) => {
+            // Provide a partial state matching what the selector needs
+            return selector({ signers } as Partial<NDKStoreState> as NDKStoreState);
+        }
+    );
 };
 
 describe('useAvailableSessions', () => {
@@ -43,15 +45,11 @@ describe('useAvailableSessions', () => {
 
         const { result } = renderHook(() => useAvailableSessions());
         // Sort the result to ensure consistent order for comparison
-        expect(result.current.availablePubkeys.sort()).toEqual(
-            ['pubkey1', 'pubkey2'].sort()
-        );
+        expect(result.current.availablePubkeys.sort()).toEqual(['pubkey1', 'pubkey2'].sort());
     });
 
     it('should return the same array reference if signers map reference does not change', () => {
-        const mockSigners = new Map<string, NDKSigner>([
-            ['pubkey1', {} as NDKSigner],
-        ]);
+        const mockSigners = new Map<string, NDKSigner>([['pubkey1', {} as NDKSigner]]);
         mockUseNDKStoreSelector(mockSigners);
 
         const { result, rerender } = renderHook(() => useAvailableSessions());
@@ -65,9 +63,7 @@ describe('useAvailableSessions', () => {
     });
 
     it('should return a new array reference if signers map reference changes', () => {
-        const initialSigners = new Map<string, NDKSigner>([
-            ['pubkey1', {} as NDKSigner],
-        ]);
+        const initialSigners = new Map<string, NDKSigner>([['pubkey1', {} as NDKSigner]]);
         mockUseNDKStoreSelector(initialSigners);
 
         const { result, rerender } = renderHook(() => useAvailableSessions());

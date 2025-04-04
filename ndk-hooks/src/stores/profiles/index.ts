@@ -32,11 +32,7 @@ interface UserProfilesStoreActions {
      * @param profile - The profile to store
      * @param cachedAt - The timestamp in seconds when the profile was retrieved
      */
-    setProfile: (
-        pubkey: string,
-        profile: NDKUserProfile,
-        cachedAt?: number
-    ) => void;
+    setProfile: (pubkey: string, profile: NDKUserProfile, cachedAt?: number) => void;
 
     /*
      * Fetch a profile from the NDK instance

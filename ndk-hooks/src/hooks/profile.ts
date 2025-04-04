@@ -2,10 +2,7 @@ import type { Hexpubkey, NDKUserProfile } from '@nostr-dev-kit/ndk';
 import { useEffect } from 'react';
 import { useShallow } from 'zustand/shallow';
 import { useNDKSessions } from '../session';
-import {
-    type UserProfilesStore,
-    useUserProfilesStore,
-} from '../stores/profiles';
+import { type UserProfilesStore, useUserProfilesStore } from '../stores/profiles';
 import { useCurrentUserProfile } from './session';
 
 /**
@@ -16,15 +13,10 @@ import { useCurrentUserProfile } from './session';
  * @param forceRefresh - Whether to force a refresh of the profile (bypasses delegation to `useCurrentUserProfile`)
  * @returns The user profile or undefined if not available
  */
-export function useProfile(
-    pubkey: Hexpubkey | undefined,
-    forceRefresh?: boolean
-): NDKUserProfile | undefined {
+export function useProfile(pubkey: Hexpubkey | undefined, forceRefresh?: boolean): NDKUserProfile | undefined {
     const fetchProfile = useUserProfilesStore((state) => state.fetchProfile);
 
-    const profileSelector = useShallow((state: UserProfilesStore) =>
-        pubkey ? state.profiles.get(pubkey) : undefined
-    );
+    const profileSelector = useShallow((state: UserProfilesStore) => (pubkey ? state.profiles.get(pubkey) : undefined));
     const profile = useUserProfilesStore(profileSelector);
 
     useEffect(() => {

@@ -24,8 +24,7 @@ const mockNDK = {
 };
 
 describe('Profiles Store', () => {
-    const testPubkey =
-        '000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f';
+    const testPubkey = '000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f';
     const testProfile = {
         name: 'Test User',
         picture: 'https://example.com/pic.jpg',
@@ -150,9 +149,7 @@ describe('Profiles Store', () => {
             const store = useUserProfilesStore.getState();
 
             // Make the fetch fail
-            mockUser.fetchProfile.mockRejectedValueOnce(
-                new Error('Fetch failed')
-            );
+            mockUser.fetchProfile.mockRejectedValueOnce(new Error('Fetch failed'));
 
             act(() => {
                 store.initialize(mockNDK as unknown as NDK);

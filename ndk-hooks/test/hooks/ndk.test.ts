@@ -40,27 +40,29 @@ describe('useNDK', () => {
         mockSetNDK.mockReset();
 
         // Update the store mock implementation
-        (useNDKStore as unknown as MockedFunction<typeof useNDKStore>).mockImplementation((selector?: (state: NDKStoreState) => unknown) => {
-            const mockState: NDKStoreState = {
-                ndk: mockNDK,
-                setNDK: mockSetNDK,
-                currentUser: null, // Add mock value
-                signers: new Map(), // Add mock value (Map expected)
-                addSigner: mockAddSigner, // Add mock function
-                switchToUser: mockSwitchToUser, // Add mock function
-            };
+        (useNDKStore as unknown as MockedFunction<typeof useNDKStore>).mockImplementation(
+            (selector?: (state: NDKStoreState) => unknown) => {
+                const mockState: NDKStoreState = {
+                    ndk: mockNDK,
+                    setNDK: mockSetNDK,
+                    currentUser: null, // Add mock value
+                    signers: new Map(), // Add mock value (Map expected)
+                    addSigner: mockAddSigner, // Add mock function
+                    switchToUser: mockSwitchToUser, // Add mock function
+                };
 
-            if (typeof selector === 'function') {
-                return selector(mockState);
-            }
+                if (typeof selector === 'function') {
+                    return selector(mockState);
+                }
 
-            // When called directly with no selector, return the store
-            if (selector === undefined) {
+                // When called directly with no selector, return the store
+                if (selector === undefined) {
+                    return mockState;
+                }
+
                 return mockState;
             }
-
-            return mockState;
-        });
+        );
     });
 
     it('should return ndk and setNDK from the store', () => {

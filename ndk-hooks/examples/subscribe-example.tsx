@@ -13,10 +13,7 @@ function SubscribeExample() {
     React.useEffect(() => {
         if (!initialized) {
             const newNDK = new NDK({
-                explicitRelayUrls: [
-                    'wss://relay.damus.io',
-                    'wss://relay.nostr.band',
-                ],
+                explicitRelayUrls: ['wss://relay.damus.io', 'wss://relay.nostr.band'],
             });
 
             newNDK.connect().then(() => {
@@ -62,9 +59,7 @@ function SubscribeExample() {
                             <li key={event.id}>
                                 <strong>{event.id.substring(0, 8)}...</strong>
                                 <p>
-                                    <small>
-                                        From: {event.pubkey.substring(0, 8)}...
-                                    </small>
+                                    <small>From: {event.pubkey.substring(0, 8)}...</small>
                                 </p>
                                 <p>{event.content}</p>
                             </li>

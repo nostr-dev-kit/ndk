@@ -24,9 +24,7 @@ const useInternalWalletStore = create<WalletHookState>((set) => ({
 export const useNDKWallet = () => {
     const { ndk } = useNDK();
     const activeWallet = useInternalWalletStore((s) => s.activeWallet);
-    const storeSetActiveWallet = useInternalWalletStore(
-        (s) => s.setActiveWallet
-    );
+    const storeSetActiveWallet = useInternalWalletStore((s) => s.setActiveWallet);
     const balance = useInternalWalletStore((s) => s.balance);
     const setBalance = useInternalWalletStore((s) => s.setBalance);
 
@@ -62,10 +60,7 @@ export const useNDKWallet = () => {
 };
 
 import type { NDKCashuMintList, NDKUser } from '@nostr-dev-kit/ndk';
-import {
-    NDKNutzapMonitor,
-    type NDKNutzapMonitorStore,
-} from '@nostr-dev-kit/ndk-wallet';
+import { NDKNutzapMonitor, type NDKNutzapMonitorStore } from '@nostr-dev-kit/ndk-wallet';
 import { useEffect, useMemo, useState } from 'react';
 import { useNDKCurrentUser } from './ndk';
 
@@ -87,30 +82,18 @@ const useInternalNutzapMonitorStore = create<NutzapMonitorHookState>((set) => ({
  * @param mintList - Optional mint list for the monitor.
  * @param start - Whether to automatically start the monitor.
  */
-export const useNDKNutzapMonitor = (
-    mintList?: NDKCashuMintList,
-    start = false
-) => {
+export const useNDKNutzapMonitor = (mintList?: NDKCashuMintList, start = false) => {
     const { ndk } = useNDK();
     const currentUser = useNDKCurrentUser();
     const { activeWallet } = useNDKWallet();
     const nutzapMonitor = useInternalNutzapMonitorStore((s) => s.nutzapMonitor);
-    const setNutzapMonitor = useInternalNutzapMonitorStore(
-        (s) => s.setNutzapMonitor
-    );
+    const setNutzapMonitor = useInternalNutzapMonitorStore((s) => s.setNutzapMonitor);
     const [monitorStarted, setMonitorStarted] = useState(false);
 
     const monitorStore = useMemo((): NDKNutzapMonitorStore | undefined => {
-        if (
-            ndk?.cacheAdapter?.getAllNutzapStates &&
-            ndk?.cacheAdapter?.setNutzapState
-        ) {
-            const boundGetAll = ndk.cacheAdapter.getAllNutzapStates.bind(
-                ndk.cacheAdapter
-            );
-            const boundSetState = ndk.cacheAdapter.setNutzapState.bind(
-                ndk.cacheAdapter
-            );
+        if (ndk?.cacheAdapter?.getAllNutzapStates && ndk?.cacheAdapter?.setNutzapState) {
+            const boundGetAll = ndk.cacheAdapter.getAllNutzapStates.bind(ndk.cacheAdapter);
+            const boundSetState = ndk.cacheAdapter.setNutzapState.bind(ndk.cacheAdapter);
             return {
                 getAllNutzaps: boundGetAll,
                 setNutzapState: boundSetState,
@@ -147,15 +130,7 @@ export const useNDKNutzapMonitor = (
                 nutzapMonitor.mintList = mintList;
             }
         }
-    }, [
-        ndk,
-        currentUser,
-        activeWallet,
-        mintList,
-        monitorStore,
-        nutzapMonitor,
-        setNutzapMonitor,
-    ]);
+    }, [ndk, currentUser, activeWallet, mintList, monitorStore, nutzapMonitor, setNutzapMonitor]);
 
     useEffect(() => {
         if (start && nutzapMonitor && !monitorStarted) {

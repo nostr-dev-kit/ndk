@@ -25,10 +25,7 @@ interface UseAvailableSessionsResult {
 export const useAvailableSessions = (): UseAvailableSessionsResult => {
     const signers = useNDKStore((state) => state.signers);
 
-    const availablePubkeys = useMemo(
-        () => Array.from(signers.keys()),
-        [signers]
-    );
+    const availablePubkeys = useMemo(() => Array.from(signers.keys()), [signers]);
 
     return useMemo(() => ({ availablePubkeys }), [availablePubkeys]);
 };

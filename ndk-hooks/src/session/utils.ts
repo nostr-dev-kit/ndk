@@ -17,10 +17,7 @@ export function processMuteList(muteListEvent: NDKEvent): {
     const mutedEventIds = new Set<string>();
 
     if (muteListEvent.kind !== NDKKind.MuteList) {
-        console.warn(
-            'Attempted to process non-mute list event:',
-            muteListEvent
-        );
+        console.warn('Attempted to process non-mute list event:', muteListEvent);
         return { mutedPubkeys, mutedHashtags, mutedWords, mutedEventIds };
     }
 

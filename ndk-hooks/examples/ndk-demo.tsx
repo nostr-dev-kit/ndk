@@ -10,10 +10,7 @@ const NDKDemo = () => {
     useEffect(() => {
         if (!ndk) {
             const newNdk = new NDK({
-                explicitRelayUrls: [
-                    'wss://relay.damus.io',
-                    'wss://relay.snort.social',
-                ],
+                explicitRelayUrls: ['wss://relay.damus.io', 'wss://relay.snort.social'],
             });
 
             newNdk.on('signer:ready', () => {

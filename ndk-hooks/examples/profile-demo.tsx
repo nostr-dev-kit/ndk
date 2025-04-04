@@ -12,13 +12,7 @@ function UserProfile({ pubkey }: { pubkey: string }) {
 
     return (
         <div className="user-profile">
-            {profile.picture && (
-                <img
-                    src={profile.picture}
-                    alt={profile.name || 'User'}
-                    className="profile-picture"
-                />
-            )}
+            {profile.picture && <img src={profile.picture} alt={profile.name || 'User'} className="profile-picture" />}
             <h2>{profile.name || 'Anonymous'}</h2>
             {profile.nip05 && <p className="nip05">{profile.nip05}</p>}
             {profile.about && <p className="about">{profile.about}</p>}
@@ -35,11 +29,7 @@ export default function App() {
     useEffect(() => {
         async function initializeNDK() {
             const ndk = new NDK({
-                explicitRelayUrls: [
-                    'wss://relay.nostr.band',
-                    'wss://relay.damus.io',
-                    'wss://nos.lol',
-                ],
+                explicitRelayUrls: ['wss://relay.nostr.band', 'wss://relay.damus.io', 'wss://nos.lol'],
             });
 
             await ndk.connect();

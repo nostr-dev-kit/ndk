@@ -19,10 +19,7 @@ export function useMuteFilter(): (event: NDKEvent) => boolean {
         const hashtags = activeSessionData?.mutedHashtags ?? new Set<string>();
         const words = activeSessionData?.mutedWords ?? new Set<string>();
 
-        const wordsRegex =
-            words.size > 0
-                ? new RegExp(Array.from(words).join('|'), 'i')
-                : null;
+        const wordsRegex = words.size > 0 ? new RegExp(Array.from(words).join('|'), 'i') : null;
 
         const lowerCaseHashtags = new Set<string>();
         hashtags.forEach((h) => lowerCaseHashtags.add(h.toLowerCase()));
@@ -61,22 +58,16 @@ type MutableItem = NDKEvent | NDKUser | string;
  * @returns {(item: MutableItem) => void} A memoized function to call with the item to mute.
  *          Does nothing if there is no active session.
  */
-export function useMuteItem(
-    publish: boolean = true
-): (item: MutableItem) => void {
-    const { activeSessionPubkey, muteItemForSession } = useNDKSessions(
-        (state) => ({
-            activeSessionPubkey: state.activeSessionPubkey,
-            muteItemForSession: state.muteItemForSession,
-        })
-    );
+export function useMuteItem(publish: boolean = true): (item: MutableItem) => void {
+    const { activeSessionPubkey, muteItemForSession } = useNDKSessions((state) => ({
+        activeSessionPubkey: state.activeSessionPubkey,
+        muteItemForSession: state.muteItemForSession,
+    }));
 
     const muteFn = useCallback(
         (item: MutableItem) => {
             if (!activeSessionPubkey) {
-                console.warn(
-                    'useMuteItem: No active session found. Cannot mute item.'
-                );
+                console.warn('useMuteItem: No active session found. Cannot mute item.');
                 return;
             }
 

@@ -6,11 +6,7 @@ import { UserProfilesStore, useUserProfilesStore } from '../stores/profiles';
 /**
  * Interface for the useNDK hook return value
  */
-interface UseNDKResult
-    extends Pick<
-        NDKStoreState,
-        'ndk' | 'setNDK' | 'addSigner' | 'switchToUser'
-    > {}
+interface UseNDKResult extends Pick<NDKStoreState, 'ndk' | 'setNDK' | 'addSigner' | 'switchToUser'> {}
 
 /**
  * Hook to access the NDK instance and setNDK function
@@ -23,17 +19,13 @@ export const useNDK = (): UseNDKResult => {
     const addSigner = useNDKStore((state) => state.addSigner);
     const switchToUser = useNDKStore((state) => state.switchToUser);
 
-    return useMemo(
-        () => ({ ndk: ndk!, setNDK, addSigner, switchToUser }),
-        [ndk, setNDK, addSigner, switchToUser]
-    );
+    return useMemo(() => ({ ndk: ndk!, setNDK, addSigner, switchToUser }), [ndk, setNDK, addSigner, switchToUser]);
 };
 
 /**
  * Hook to access the current NDKUser instance from the store.
  */
-export const useNDKCurrentUser = () =>
-    useNDKStore((state) => state.currentUser);
+export const useNDKCurrentUser = () => useNDKStore((state) => state.currentUser);
 
 /**
  * Hook to get the list of unpublished events from the NDK cache adapter.
@@ -46,9 +38,7 @@ export function useNDKUnpublishedEvents() {
     const [unpublishedEvents, setUnpublishedEvents] = useState<
         { event: NDKEvent; relays?: WebSocket['url'][]; lastTryAt?: number }[]
     >([]);
-    const state = useRef<
-        { event: NDKEvent; relays?: WebSocket['url'][]; lastTryAt?: number }[]
-    >([]);
+    const state = useRef<{ event: NDKEvent; relays?: WebSocket['url'][]; lastTryAt?: number }[]>([]);
 
     const updateStateFromCache = useCallback(async () => {
         if (!ndk?.cacheAdapter?.getUnpublishedEvents) return;
@@ -75,9 +65,7 @@ export function useNDKUnpublishedEvents() {
 
             for (const entry of freshEntries) {
                 entry.event.on('published', () => {
-                    state.current = state.current?.filter(
-                        (e) => e.event.id !== entry.event.id
-                    );
+                    state.current = state.current?.filter((e) => e.event.id !== entry.event.id);
                     setUnpublishedEvents(state.current);
                 });
             }
@@ -89,11 +77,7 @@ export function useNDKUnpublishedEvents() {
 
         updateStateFromCache();
 
-        const handlePublishFailed = (
-            _event: NDKEvent,
-            _error: NDKPublishError,
-            _relays: string[]
-        ) => {
+        const handlePublishFailed = (_event: NDKEvent, _error: NDKPublishError, _relays: string[]) => {
             updateStateFromCache();
         };
 
@@ -117,9 +101,7 @@ export function useNDKUnpublishedEvents() {
  */
 export function useNDKInit() {
     const setNDK = useNDKStore((state) => state.setNDK);
-    const initializeProfilesStore = useUserProfilesStore(
-        (state: UserProfilesStore) => state.initialize
-    );
+    const initializeProfilesStore = useUserProfilesStore((state: UserProfilesStore) => state.initialize);
 
     /**
      * Initializes the NDK instance and dependent stores.
@@ -128,9 +110,7 @@ export function useNDKInit() {
     const initializeNDK = useCallback(
         (ndkInstance: NDK) => {
             if (!ndkInstance) {
-                console.error(
-                    'useNDKInit: Attempted to initialize with a null NDK instance.'
-                );
+                console.error('useNDKInit: Attempted to initialize with a null NDK instance.');
                 return;
             }
 

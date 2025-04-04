@@ -74,9 +74,7 @@ export const useNDKStore = create<NDKStoreState>((set, get) => {
         switchToUser: async (pubkey: Hexpubkey) => {
             const ndk = get().ndk;
             if (!ndk) {
-                console.error(
-                    'Cannot switch user: NDK instance not initialized.'
-                );
+                console.error('Cannot switch user: NDK instance not initialized.');
                 return;
             }
 

@@ -1,19 +1,8 @@
-import {
-    type NDKEvent,
-    type NDKFilter,
-    NDKRelaySet,
-    NDKSubscription,
-    type NDKSubscriptionOptions,
-} from '@nostr-dev-kit/ndk';
+import { type NDKEvent, type NDKFilter, NDKSubscription, type NDKSubscriptionOptions } from '@nostr-dev-kit/ndk';
 import { useEffect, useMemo, useRef } from 'react';
 import { useStore } from 'zustand';
-import { useShallow } from 'zustand/shallow';
 import { useUserSession } from '../session';
-import {
-    createSubscribeStore,
-    type MuteCriteria,
-    type SubscribeStore,
-} from '../stores/subscribe';
+import { createSubscribeStore, type MuteCriteria } from '../stores/subscribe';
 import { isMuted } from '../utils/mute';
 import { useNDK } from './ndk';
 
@@ -78,10 +67,7 @@ export function useSubscribe<T extends NDKEvent>(
         const hashtags = activeSessionData?.mutedHashtags ?? new Set<string>();
         const words = activeSessionData?.mutedWords ?? new Set<string>();
 
-        const wordsRegex =
-            words.size > 0
-                ? new RegExp(Array.from(words).join('|'), 'i')
-                : null;
+        const wordsRegex = words.size > 0 ? new RegExp(Array.from(words).join('|'), 'i') : null;
 
         const lowerCaseHashtags = new Set<string>();
         hashtags.forEach((h) => lowerCaseHashtags.add(h.toLowerCase()));
@@ -93,9 +79,7 @@ export function useSubscribe<T extends NDKEvent>(
             mutedWordsRegex: wordsRegex,
         };
     }, [activeSessionData]);
-    const storeRef = useRef<ReturnType<typeof createSubscribeStore<T>> | null>(
-        null
-    );
+    const storeRef = useRef<ReturnType<typeof createSubscribeStore<T>> | null>(null);
     if (!storeRef.current) {
         storeRef.current = createSubscribeStore<T>(opts.bufferMs);
     }
@@ -103,13 +87,9 @@ export function useSubscribe<T extends NDKEvent>(
 
     const subRef = useRef<NDKSubscription | null>(null);
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <we don't want to react to filters and opts changes, only explicit dependencies>
     useEffect(() => {
-        if (
-            !ndk ||
-            !filters ||
-            (Array.isArray(filters) && filters.length === 0)
-        )
-            return;
+        if (!ndk || !filters) return;
 
         if (subRef.current) {
             subRef.current.stop();
@@ -140,11 +120,9 @@ export function useSubscribe<T extends NDKEvent>(
             const handleCachedEvents = (events: NDKEvent[]) => {
                 if (events && events.length > 0) {
                     const validEvents = events.filter((e: NDKEvent) => {
-                        if (!opts.includeDeleted && e.hasTag('deleted'))
-                            return false;
-                        // TODO: Implement WoT filtering if opts.wot is true
-                        if (!opts.includeMuted && isMuted(e, muteCriteria))
-                            return false;
+                        if (!opts.includeDeleted && e.hasTag('deleted')) return false;
+
+                        if (!opts.includeMuted && isMuted(e, muteCriteria)) return false;
                         return true;
                     });
 
@@ -206,13 +184,5 @@ export function useSubscribe<T extends NDKEvent>(
     const eose = useStore(store, (state) => state.eose);
     const subscription = useStore(store, (state) => state.subscriptionRef);
 
-    const returnValue: any = {
-        events,
-        eose,
-        subscription,
-    };
-
-    returnValue.storeRef = storeRef;
-
-    return returnValue;
+    return { events, eose, subscription };
 }

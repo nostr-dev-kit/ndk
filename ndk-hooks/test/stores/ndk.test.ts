@@ -104,9 +104,7 @@ describe('NDK Store', () => {
             expect(signers.size).toBe(1);
             expect(signers.get('pubkey1')).toBe(mockSigner1);
             expect(mockSigner1.user).toHaveBeenCalledTimes(1);
-            expect(console.log).toHaveBeenCalledWith(
-                'Signer added for pubkey: pubkey1'
-            );
+            expect(console.log).toHaveBeenCalledWith('Signer added for pubkey: pubkey1');
         });
 
         it('should handle errors when adding a signer', async () => {
@@ -119,10 +117,7 @@ describe('NDK Store', () => {
             });
             const { signers } = useNDKStore.getState();
             expect(signers.size).toBe(0);
-            expect(console.error).toHaveBeenCalledWith(
-                'Failed to add signer:',
-                error
-            );
+            expect(console.error).toHaveBeenCalledWith('Failed to add signer:', error);
         });
     });
 
@@ -145,9 +140,7 @@ describe('NDK Store', () => {
             expect(mockNDK.signer).toBe(mockSigner1);
             expect(currentUser).toBe(mockUser1);
             expect(mockNDK.getUser).toHaveBeenCalledWith({ pubkey: 'pubkey1' });
-            expect(console.log).toHaveBeenCalledWith(
-                'Switched to user pubkey1 with active signer.'
-            );
+            expect(console.log).toHaveBeenCalledWith('Switched to user pubkey1 with active signer.');
         });
 
         it('should switch to a user without a signer (read-only)', async () => {
@@ -162,9 +155,7 @@ describe('NDK Store', () => {
             expect(mockNDK.getUser).toHaveBeenCalledWith({
                 pubkey: readOnlyUserPubkey,
             });
-            expect(console.log).toHaveBeenCalledWith(
-                `Switched to user ${readOnlyUserPubkey} in read-only mode.`
-            );
+            expect(console.log).toHaveBeenCalledWith(`Switched to user ${readOnlyUserPubkey} in read-only mode.`);
         });
 
         it('should switch between users with signers', async () => {
@@ -184,9 +175,7 @@ describe('NDK Store', () => {
 
             expect(mockNDK.signer).toBe(mockSigner2);
             expect(useNDKStore.getState().currentUser).toBe(mockUser2);
-            expect(console.log).toHaveBeenCalledWith(
-                'Switched to user pubkey2 with active signer.'
-            );
+            expect(console.log).toHaveBeenCalledWith('Switched to user pubkey2 with active signer.');
         });
 
         it('should switch from a signed-in user to read-only', async () => {
@@ -205,9 +194,7 @@ describe('NDK Store', () => {
 
             expect(mockNDK.signer).toBeUndefined();
             expect(useNDKStore.getState().currentUser).toBe(mockUser3);
-            expect(console.log).toHaveBeenCalledWith(
-                `Switched to user ${readOnlyUserPubkey} in read-only mode.`
-            );
+            expect(console.log).toHaveBeenCalledWith(`Switched to user ${readOnlyUserPubkey} in read-only mode.`);
         });
 
         it('should log an error if NDK instance is not initialized', async () => {
@@ -230,9 +217,7 @@ describe('NDK Store', () => {
                 await switchToUser('pubkey1');
             });
 
-            expect(console.error).toHaveBeenCalledWith(
-                'Cannot switch user: NDK instance not initialized.'
-            );
+            expect(console.error).toHaveBeenCalledWith('Cannot switch user: NDK instance not initialized.');
             expect(useNDKStore.getState().currentUser).toBeNull();
             expect(mockNDK.signer).toBeUndefined(); // Should remain undefined
         });

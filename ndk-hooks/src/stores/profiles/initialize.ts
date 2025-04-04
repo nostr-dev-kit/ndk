@@ -2,10 +2,7 @@ import type NDK from '@nostr-dev-kit/ndk';
 import type { Hexpubkey, NDKUserProfile } from '@nostr-dev-kit/ndk';
 import type { UserProfilesStore } from '.';
 
-export function initializeProfilesStore(
-    set: (state: Partial<UserProfilesStore>) => void,
-    ndk: NDK
-) {
+export function initializeProfilesStore(set: (state: Partial<UserProfilesStore>) => void, ndk: NDK) {
     const cacheAdapter = ndk.cacheAdapter;
     if (!cacheAdapter?.getAllProfilesSync) return;
 

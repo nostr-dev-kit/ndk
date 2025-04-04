@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/ndk-hooks",
-    "version": "0.1.3",
+    "version": "0.1.5",
     "description": "React hooks for the Nostr Development Kit (NDK)",
     "main": "dist/index.js",
     "module": "dist/index.mjs",
@@ -18,11 +18,11 @@
         "test:watch": "vitest"
     },
     "dependencies": {
-        "@nostr-dev-kit/ndk-wallet": "workspace:*",
+        "@nostr-dev-kit/ndk-wallet": "*",
         "zustand": "^5"
     },
     "peerDependencies": {
-        "@nostr-dev-kit/ndk": "workspace:*",
+        "@nostr-dev-kit/ndk": "*",
         "react": "^18.3.1"
     },
     "devDependencies": {

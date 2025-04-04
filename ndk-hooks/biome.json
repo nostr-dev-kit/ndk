@@ -15,7 +15,8 @@
         "formatter": {
             "quoteStyle": "single",
             "trailingCommas": "es5",
-            "semicolons": "always"
+            "semicolons": "always",
+            "lineWidth": 120
         }
     }
 }

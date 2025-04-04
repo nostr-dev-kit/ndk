@@ -1,10 +1,7 @@
 import type { NDKEvent, NDKSubscription } from '@nostr-dev-kit/ndk';
 import { createStore } from 'zustand/vanilla';
 
-const setHasAnyIntersection = (
-    set1: Set<string>,
-    set2: Set<string>
-): boolean => {
+const setHasAnyIntersection = (set1: Set<string>, set2: Set<string>): boolean => {
     if (set1.size === 0 || set2.size === 0) return false;
     for (const item of set1) {
         if (set2.has(item)) return true;
@@ -43,9 +40,7 @@ export interface SubscribeStore<T extends NDKEvent> {
  * Creates a store to manage subscription state with optional event buffering
  * @param bufferMs - Buffer time in milliseconds, false to disable buffering
  */
-export const createSubscribeStore = <T extends NDKEvent>(
-    bufferMs: number | false = 30
-) => {
+export const createSubscribeStore = <T extends NDKEvent>(bufferMs: number | false = 30) => {
     const store = createStore<SubscribeStore<T>>((set, get) => {
         const buffer = new Map<string, T>();
         let timeout: NodeJS.Timeout | null = null;
@@ -223,12 +218,7 @@ export const createSubscribeStore = <T extends NDKEvent>(
              * @param criteria - An object containing sets of muted pubkeys, event IDs, hashtags (lowercase), and a regex for muted words.
              */
             filterMutedEvents: (criteria: MuteCriteria) => {
-                const {
-                    mutedPubkeys,
-                    mutedEventIds,
-                    mutedHashtags,
-                    mutedWordsRegex,
-                } = criteria;
+                const { mutedPubkeys, mutedEventIds, mutedHashtags, mutedWordsRegex } = criteria;
 
                 if (
                     mutedPubkeys.size === 0 &&
@@ -245,23 +235,15 @@ export const createSubscribeStore = <T extends NDKEvent>(
                 let changed = false;
 
                 for (const [id, event] of currentEventMap.entries()) {
-                    const tags = new Set(
-                        event
-                            .getMatchingTags('t')
-                            .map((tag) => tag[1].toLowerCase())
-                    );
-                    const taggedEvents = new Set(
-                        event.getMatchingTags('e').map((tag) => tag[1])
-                    );
+                    const tags = new Set(event.getMatchingTags('t').map((tag) => tag[1].toLowerCase()));
+                    const taggedEvents = new Set(event.getMatchingTags('e').map((tag) => tag[1]));
                     taggedEvents.add(event.id);
 
                     const isMuted =
                         mutedPubkeys.has(event.pubkey) ||
                         setHasAnyIntersection(mutedEventIds, taggedEvents) ||
                         setHasAnyIntersection(mutedHashtags, tags) ||
-                        (mutedWordsRegex &&
-                            event.content &&
-                            event.content.match(mutedWordsRegex));
+                        (mutedWordsRegex && event.content && event.content.match(mutedWordsRegex));
 
                     if (!isMuted) {
                         newEventMap.set(id, event);

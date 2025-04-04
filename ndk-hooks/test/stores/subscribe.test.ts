@@ -1,11 +1,7 @@
 import type { NDKEvent, NDKSubscription } from '@nostr-dev-kit/ndk';
 import { act } from '@testing-library/react'; // Correct import
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import {
-    createSubscribeStore,
-    type MuteCriteria,
-    type SubscribeStore,
-} from '../../src/stores/subscribe';
+import { createSubscribeStore, type MuteCriteria, type SubscribeStore } from '../../src/stores/subscribe';
 
 // Create a proper Mock for NDKEvent - using a similar pattern to test/subscribe.test.ts
 class MockEvent {
@@ -22,10 +18,7 @@ class MockEvent {
     constructor(data: Partial<MockEvent> = {}) {
         this.id = data.id || `id-${Math.random().toString(36).substring(7)}`;
         this.pubkey = data.pubkey || 'test-pubkey';
-        this.created_at =
-            data.created_at !== undefined
-                ? data.created_at
-                : Math.floor(Date.now() / 1000);
+        this.created_at = data.created_at !== undefined ? data.created_at : Math.floor(Date.now() / 1000);
         this.content = data.content || 'test content';
         this.kind = data.kind || 1;
         this.tags = data.tags || [];
@@ -163,9 +156,7 @@ describe('Subscribe Store - Advanced Tests', () => {
 
             // Event should be added
             expect(noBufferStore.getState().events.length).toBe(1);
-            expect(noBufferStore.getState().events[0].id).toBe(
-                'event-undefined'
-            );
+            expect(noBufferStore.getState().events[0].id).toBe('event-undefined');
 
             // Add a second event with the same ID but with a timestamp
             const eventWithTimestamp = new MockEvent({
@@ -421,8 +412,7 @@ describe('Subscribe Store - Advanced Tests', () => {
             };
 
             // Ensure the mock event provides the tag correctly
-            eventMutedTag.getMatchingTags = (tagName: string) =>
-                tagName === 't' ? [['t', mutedHashtag]] : [];
+            eventMutedTag.getMatchingTags = (tagName: string) => (tagName === 't' ? [['t', mutedHashtag]] : []);
 
             act(() => {
                 store.getState().filterMutedEvents(criteria);

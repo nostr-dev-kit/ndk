@@ -1,17 +1,6 @@
-import NDK, {
-    Hexpubkey,
-    NDKEvent,
-    NDKKind,
-    NDKUser,
-    NDKUserProfile,
-} from '@nostr-dev-kit/ndk';
+import NDK, { Hexpubkey, NDKEvent, NDKKind, NDKUser, NDKUserProfile } from '@nostr-dev-kit/ndk';
 import { useMemo } from 'react';
-import {
-    SessionState,
-    UserSessionData,
-    useNDKSessions,
-    useUserSession,
-} from '../session';
+import { SessionState, UserSessionData, useNDKSessions, useUserSession } from '../session';
 import { useNDK } from './ndk';
 import { useProfile } from './profile';
 
@@ -59,8 +48,7 @@ interface UseNDKSessionEventOptions<T extends NDKEvent> {
  */
 export function useNDKSessionEvent<T extends NDKEvent>(
     kind: NDKKind,
-    options: UseNDKSessionEventOptions<T> &
-        Required<Pick<UseNDKSessionEventOptions<T>, 'create'>>
+    options: UseNDKSessionEventOptions<T> & Required<Pick<UseNDKSessionEventOptions<T>, 'create'>>
 ): T;
 
 /**
@@ -85,9 +73,7 @@ export function useNDKSessionEvent<T extends NDKEvent>(
     const { ndk } = useNDK();
     const { create } = options;
     const activeSession = useUserSession();
-    const activeSessionPubkey = useNDKSessions(
-        (state) => state.activeSessionPubkey
-    );
+    const activeSessionPubkey = useNDKSessions((state) => state.activeSessionPubkey);
 
     const event = useMemo(() => {
         if (!activeSession || !activeSessionPubkey) return undefined;
@@ -102,18 +88,13 @@ export function useNDKSessionEvent<T extends NDKEvent>(
                 newInstance.pubkey = activeSessionPubkey;
                 return newInstance;
             } catch (error) {
-                console.error(
-                    `Failed to create instance for kind ${kind} using provided class:`,
-                    error
-                );
+                console.error(`Failed to create instance for kind ${kind} using provided class:`, error);
                 return undefined;
             }
         }
 
         return undefined;
-    }, [activeSession, kind, create, ndk, activeSessionPubkey]) as
-        | T
-        | undefined;
+    }, [activeSession, kind, create, ndk, activeSessionPubkey]) as T | undefined;
 
     return event;
 }
@@ -129,9 +110,7 @@ export function useNDKSessionEvent<T extends NDKEvent>(
  *          or the profile hasn't been fetched yet.
  */
 export const useCurrentUserProfile = (): NDKUserProfile | undefined => {
-    const activeSessionPubkey = useNDKSessions(
-        (state) => state.activeSessionPubkey
-    );
+    const activeSessionPubkey = useNDKSessions((state) => state.activeSessionPubkey);
 
     const profile = useProfile(activeSessionPubkey ?? undefined);
 

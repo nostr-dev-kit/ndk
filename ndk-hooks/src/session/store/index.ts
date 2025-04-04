@@ -14,8 +14,7 @@ export const useNDKSessions = create<SessionState>()((set, get) => ({
     activeSessionPubkey: null,
 
     // --- Basic Session Management ---
-    createSession: (pubkey, initialData) =>
-        createSession(set, get, pubkey, initialData),
+    createSession: (pubkey, initialData) => createSession(set, get, pubkey, initialData),
     updateSession: (pubkey, data) => updateSession(set, get, pubkey, data),
     deleteSession: (pubkey) => deleteSession(set, get, pubkey),
     setActiveSession: (pubkey) => setActiveSession(set, get, pubkey),
@@ -34,30 +33,19 @@ export const useNDKSessions = create<SessionState>()((set, get) => ({
     muteItemForSession: (pubkey, value, itemType, publish) =>
         muteItemForSession(set, get, pubkey, value, itemType, publish),
 
-    initSession: (ndk, user, opts, cb) =>
-        initializeSession(set, get, ndk, user, opts, cb),
+    initSession: (ndk, user, opts, cb) => initializeSession(set, get, ndk, user, opts, cb),
 }));
 
 useNDKSessions.subscribe((state: SessionState, prevState: SessionState) => {
     if (state.sessions !== prevState.sessions) {
         state.sessions.forEach((session: UserSessionData, pubkey: string) => {
             const prevSession = prevState.sessions.get(pubkey);
-            const currentMuteEvent = session.replaceableEvents.get(
-                NDKKind.MuteList
-            );
-            const prevMuteEvent = prevSession?.replaceableEvents.get(
-                NDKKind.MuteList
-            );
+            const currentMuteEvent = session.replaceableEvents.get(NDKKind.MuteList);
+            const prevMuteEvent = prevSession?.replaceableEvents.get(NDKKind.MuteList);
 
             if (currentMuteEvent !== prevMuteEvent) {
-                console.debug(
-                    `Mute list event changed for ${pubkey}, reprocessing...`
-                );
-                processMuteListForSession(
-                    useNDKSessions.setState,
-                    useNDKSessions.getState,
-                    pubkey
-                );
+                console.debug(`Mute list event changed for ${pubkey}, reprocessing...`);
+                processMuteListForSession(useNDKSessions.setState, useNDKSessions.getState, pubkey);
             }
         });
     }

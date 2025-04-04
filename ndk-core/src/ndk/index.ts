@@ -461,30 +461,70 @@ export class NDK extends EventEmitter<{
     /**
      * Connect to relays with optional timeout.
      * If the timeout is reached, the connection will be continued to be established in the background.
+     * This will wait for either all relays to connect or for the timeout to be reached.
+     *
+     * @param timeoutMs - The timeout in milliseconds to wait for connections
+     * @returns A promise that resolves when all relays are connected or when the timeout is reached
      */
     public async connect(timeoutMs?: number): Promise<void> {
-        if (this._signer && this.autoConnectUserRelays) {
-            this.debug(
-                "Attempting to connect to user relays specified by signer %o",
-                await this._signer.relays?.(this)
-            );
-
+        // Handle signer relay connections
+        if (this._signer?.relays && this.autoConnectUserRelays) {
             if (this._signer.relays) {
                 const relays = await this._signer.relays(this);
                 relays.forEach((relay) => this.pool.addRelay(relay));
             }
         }
 
-        const connections = [this.pool.connect(timeoutMs)];
-
+        // Start the connection process for all pools
+        const connectPromises = [this.pool.connect(timeoutMs)];
         if (this.outboxPool) {
-            connections.push(this.outboxPool.connect(timeoutMs));
+            connectPromises.push(this.outboxPool.connect(timeoutMs));
         }
+        
+        // Helper function to create a promise that resolves when a pool emits its connect event
+        const createPoolConnectPromise = (pool: NDKPool, name: string, maxWait: number) => {
+            return new Promise<void>((resolve) => {
+                const onConnect = () => {
+                    this.debug(`${name} pool emitted connect event`);
+                    resolve();
+                };
+                
+                pool.on("connect", onConnect);
+                
+                // Clean up the listener after timeout or default wait (30s)
+                setTimeout(() => {
+                    pool.off("connect", onConnect);
+                }, maxWait);
+            });
+        };
+        
+        const defaultTimeout = 30000;
+        const maxWait = timeoutMs || defaultTimeout;
+        
+        const poolPromises: Promise<void>[] = [
+            createPoolConnectPromise(this.pool, "Main", maxWait)
+        ];
+        
+        if (this.outboxPool)
+            poolPromises.push(createPoolConnectPromise(this.outboxPool, "Outbox", maxWait));
+        
+        if (timeoutMs) {
+            // Create a timeout promise
+            const timeoutPromise = new Promise<void>(resolve => {
+                setTimeout(() => {
+                    // Force emit connect on all pools
+                    this.pool.emit("connect");
+                    if (this.outboxPool) this.outboxPool.emit("connect");
+                    
+                    resolve();
+                }, timeoutMs);
+            });
 
-        this.debug("Connecting to relays %o", { timeoutMs });
-
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        return Promise.allSettled(connections).then(() => {});
+            await Promise.race([Promise.all(poolPromises), timeoutPromise]);
+        } else {
+            // No timeout, wait for all connections to complete
+            await Promise.all(poolPromises);
+        }
     }
 
     /**
@@ -556,7 +596,6 @@ export class NDK extends EventEmitter<{
     public subscribe(
         filters: NDKFilter | NDKFilter[],
         opts?: NDKSubscriptionOptions,
-        // relaySet?: NDKRelaySet, // Removed v2.13.0: Pass via opts.relaySet or opts.relayUrls
         autoStart: boolean | NDKSubscriptionEventHandlers = true
     ): NDKSubscription {
         // NDKSubscription constructor now handles relaySet/relayUrls from opts

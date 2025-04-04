@@ -33,12 +33,14 @@
     },
     "homepage": "https://github.com/nostr-dev-kit/ndk",
     "dependencies": {
-        "@nostr-dev-kit/ndk": "workspace:*",
         "debug": "^4.3.4",
-        "typescript": "^5.8.2",
-        "websocket-polyfill": "^0.0.3"
+        "typescript": "^5.8.2"
+    },
+    "peerDependencies": {
+        "@nostr-dev-kit/ndk": "^2"
     },
     "devDependencies": {
+        "@nostr-dev-kit/ndk": "workspace:*",
         "@nostr-dev-kit/tsconfig": "workspace:*",
         "@types/debug": "^4.1.7",
         "@types/node": "^18.15.11",

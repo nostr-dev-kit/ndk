@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/ndk",
-    "version": "2.13.0",
+    "version": "2.13.1-rc3",
     "description": "NDK - Nostr Development Kit",
     "homepage": "https://ndk.fyi",
     "documentation": "https://github.com/nostr-dev-kit/ndk/blob/master/docs/modules.md",
@@ -46,11 +46,11 @@
         "test:watch": "vitest watch",
         "test:coverage": "vitest run --coverage",
         "test:ui": "vitest --ui",
-        "lint": "prettier --check . && eslint .",
+        "lint": "biome lint --check . && eslint .",
         "compile": "tsc",
         "prepare": "pnpm build",
         "posttest": "pnpm lint",
-        "format": "prettier --write ."
+        "format": "biome format --write ."
     },
     "keywords": ["nostr"],
     "author": "pablof7z",
@@ -84,8 +84,6 @@
         "debug": "^4.3.6",
         "light-bolt11-decoder": "^3.2.0",
         "tseep": "^1.2.2",
-        "typescript-lru-cache": "^2.0.0",
-        "utf8-buffer": "^1.0.0",
-        "websocket-polyfill": "^0.0.3"
+        "typescript-lru-cache": "^2.0.0"
     }
 }

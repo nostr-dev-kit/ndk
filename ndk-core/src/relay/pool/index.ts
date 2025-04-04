@@ -316,7 +316,9 @@ export class NDKPool extends EventEmitter<{
 
         this.emit("relay:connect", relay);
 
-        if (this.stats().connected === this.relays.size) {
+        // Check if all relays intended for auto-connect are now connected
+        if (this.stats().connected === this.autoConnectRelays.size) {
+            this.debug("All auto-connect relays are connected, emitting connect");
             this.emit("connect");
         }
     }
@@ -374,22 +376,27 @@ export class NDKPool extends EventEmitter<{
             }
         }
 
-        const maybeEmitConnect = () => {
-            const allConnected = this.stats().connected === this.relays.size;
-            const someConnected = this.stats().connected > 0;
+        // Wait for all individual connection promises to settle.
+        // We use allSettled because we want to wait for all attempts, even failures.
+        await Promise.allSettled(promises);
 
-            if (!allConnected && someConnected) {
+        // After all attempts have settled, check the final state.
+        const finalStats = this.stats();
+        const allAutoRelaysConnected = finalStats.connected === this.autoConnectRelays.size;
+        const someRelaysConnected = finalStats.connected > 0;
+
+        if (timeoutMs) {
+            // If a timeout was specified, emit 'connect' if at least one relay connected.
+            // This allows NDK.connect to resolve even with partial connectivity on timeout.
+            if (someRelaysConnected) {
                 this.emit("connect");
             }
-        };
-
-        // If we are running with a timeout, check if we need to emit a `connect` event
-        // in case some, but not all, relays were connected
-        if (timeoutMs) setTimeout(maybeEmitConnect, timeoutMs);
-
-        await Promise.all(promises);
-
-        maybeEmitConnect();
+        } else {
+            // If no timeout, emit 'connect' only if *all* targeted relays connected successfully.
+            if (allAutoRelaysConnected) {
+                this.emit("connect");
+            }
+        }
     }
 
     private checkOnFlappingRelays() {

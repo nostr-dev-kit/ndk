@@ -61,7 +61,9 @@ export class NDKCashuWalletTx extends NDKEvent {
     }
 
     get amount(): number | undefined {
-        return this.tagValue("amount") as number | undefined;
+        const val = this.tagValue("amount");
+        if (val === undefined) return undefined;
+        return Number(val);
     }
 
     set fee(fee: number) {
@@ -70,7 +72,9 @@ export class NDKCashuWalletTx extends NDKEvent {
     }
 
     get fee(): number | undefined {
-        return this.tagValue("fee") as number | undefined;
+        const val = this.tagValue("fee");
+        if (val === undefined) return undefined;
+        return Number(val);
     }
 
     set unit(unit: string | undefined) {

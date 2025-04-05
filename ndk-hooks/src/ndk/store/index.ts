@@ -1,5 +1,5 @@
 import type NDK from '@nostr-dev-kit/ndk';
-import type { NDKUser } from '@nostr-dev-kit/ndk';
+import type { NDKSigner, NDKUser } from '@nostr-dev-kit/ndk';
 import { create } from 'zustand';
 
 /**
@@ -17,6 +17,8 @@ export interface NDKStoreState {
      * Sets the NDK instance
      */
     setNDK: (ndk: NDK) => void;
+
+    setSigner: (signer: NDKSigner | undefined) => void;
 }
 
 /**
@@ -29,6 +31,15 @@ export const useNDKStore = create<NDKStoreState>((set) => {
 
         setNDK: (ndk: NDK) => {
             set({ ndk });
+        },
+
+        setSigner: (signer: NDKSigner | undefined) => {
+            set((state) => {
+                if (state.ndk) {
+                    state.ndk.signer = signer;
+                }
+                return { ndk: state.ndk };
+            });
         }
     };
 });

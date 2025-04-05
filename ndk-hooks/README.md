@@ -43,22 +43,21 @@ The library provides a centralized way to initialize the NDK instance across all
 import NDK from '@nostr-dev-kit/ndk';
 import { useNDKInit } from '@nostr-dev-kit/ndk-hooks';
 
+const ndk = new NDK({
+  explicitRelayUrls: ['wss://relay.nostr.band', 'wss://relay.damus.io'],
+});
+ndk.connect();
+
 function App() {
   const initializeNDK = useNDKInit();
   
   useEffect(() => {
     const setupNDK = async () => {
-      const ndk = new NDK({
-        explicitRelayUrls: ['wss://relay.nostr.band', 'wss://relay.damus.io'],
-      });
-      
-      await ndk.connect();
-      
+      initializeNDK(ndk);
       // This initializes the NDK instance in all stores:
       // - NDK store (for useNDK hook)
       // - Session store (for useNDKSessions hook)
       // - Profile store (for useProfile hook)
-      initializeNDK(ndk);
     };
     
     setupNDK();
@@ -87,7 +86,6 @@ function UserProfile() {
   return (
     <div>
       <h2>Logged in as: {currentUser.pubkey}</h2>
-      {/* Display user information */}
     </div>
   );
 }

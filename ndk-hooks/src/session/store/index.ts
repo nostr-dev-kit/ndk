@@ -36,8 +36,11 @@ const sessionStateCreator: StateCreator<NDKSessionsState, [['zustand/immer', nev
      * @param setActive - If true, sets the session as active.
      * @returns 
      */
-    addSession: (userOrSigner: NDKUser | NDKSigner, setActive?: boolean) =>
-        addSession(set, get, userOrSigner, setActive),
+    addSession: async (userOrSigner: NDKUser | NDKSigner, setActive?: boolean) => {
+        const pubkey = await addSession(set, get, userOrSigner, setActive);
+        if (pubkey && setActive) get().switchToUser(pubkey);
+        return pubkey;
+    },
 
     startSession: (pubkey: Hexpubkey, opts: SessionStartOptions) =>
         startSession(set, get, pubkey, opts),

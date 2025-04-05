@@ -26,7 +26,6 @@ export const addSession = async (
     let signer: NDKSigner | undefined = undefined;
     let userPubkey: Hexpubkey;
 
-    // Check if it's a signer instance
     if (userOrSigner instanceof NDKUser) {
         user = userOrSigner as NDKUser;
         userPubkey = user.pubkey;
@@ -61,13 +60,6 @@ export const addSession = async (
             // Update last active time for existing session
             session.lastActive = Date.now() / 1000;
             console.debug(`Session already exists for ${userPubkey}, updating lastActive.`);
-        }
-
-        // If we processed a signer, ensure it's set on the session
-        // Check against the signer captured in the outer scope
-        if (signer && session.signer !== signer) {
-            session.signer = signer;
-            console.debug(`Updated signer for session ${userPubkey}`);
         }
 
         if (setActive) {

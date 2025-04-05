@@ -6,29 +6,18 @@ import {
 } from '@nostr-dev-kit/ndk';
 import { useMemo } from 'react';
 import { useNDKSessions } from '../store'; // Corrected import path
-// useUserSession will be defined below, so remove the import
 import { useNDK } from '../../ndk/hooks'; // Corrected import path
 import { useProfile } from '../../profiles/hooks'; // Corrected import path for useProfile
+import { useNDKStore } from '../../ndk/store';
 
-/**
- * Selector hook to get the full NDKUserSession object for the active user.
- * Returns undefined if no session is active.
- */
-export const useUserSession = () => {
-    const { sessions, activePubkey } = useNDKSessions(
-        (state) => ({ sessions: state.sessions, activePubkey: state.activePubkey }),
-    );
-
-    if (!activePubkey) return undefined;
-    return sessions.get(activePubkey);
-};
+const EMPTY_SET = new Set<Hexpubkey>();
 
 /**
  * Returns the list of followed pubkeys for the active session.
  * Returns an empty array if there is no active session or no follows list.
  */
 export const useFollows = (): Set<Hexpubkey> => {
-    return useNDKSessions(s => s.activePubkey ? s.sessions.get(s.activePubkey)?.followSet ?? new Set<Hexpubkey>() : new Set<Hexpubkey>());
+    return useNDKSessions(s => s.activePubkey ? s.sessions.get(s.activePubkey)?.followSet ?? EMPTY_SET : EMPTY_SET);
 };
 
 /**
@@ -37,7 +26,7 @@ export const useFollows = (): Set<Hexpubkey> => {
  * Returns default empty sets and undefined for the event if no active session exists.
  */
 export const useMuteList = () => {
-    const activeSession = useUserSession();
+    const activeSession = useNDKSessions(s => s.activePubkey ? s.sessions.get(s.activePubkey) : undefined);
     const event = activeSession?.events?.get(NDKKind.MuteList);
     const pubkeys = activeSession?.mutedPubkeys ?? new Set<string>();
     const hashtags = activeSession?.mutedHashtags ?? new Set<string>();
@@ -91,15 +80,14 @@ export function useNDKSessionEvent<T extends NDKEvent>(
 ): T | undefined {
     const { ndk } = useNDK();
     const { create } = options;
-    const activeSession = useUserSession();
-    const activePubkey = useNDKSessions(
-        (state) => state.activePubkey
-    );
+    const activePubkey = useNDKSessions(s => s.activePubkey);
+    const activeSessionEvents = useNDKSessions(s => s.activePubkey ? s.sessions.get(s.activePubkey)?.events : undefined);
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     const event = useMemo(() => {
-        if (!activeSession || !activePubkey) return undefined;
+        if (!activeSessionEvents || !activePubkey) return undefined;
 
-        const existingEvent = activeSession.events.get(kind);
+        const existingEvent = activeSessionEvents.get(kind);
 
         if (existingEvent) return existingEvent as T;
 
@@ -118,7 +106,7 @@ export function useNDKSessionEvent<T extends NDKEvent>(
         }
 
         return undefined;
-    }, [activeSession, kind, create, ndk, activePubkey]) as
+    }, [activeSessionEvents, kind, ndk, activePubkey]) as
         | T
         | undefined;
 
@@ -144,3 +132,17 @@ export const useCurrentUserProfile = (): NDKUserProfile | undefined => {
 
     return profile;
 };
+
+export const useSessionSwitchUser = (pubkey: string) => {
+    const switchToUser = useNDKSessions((state) => state.switchToUser);
+    const signers = useNDKSessions((state) => state.signers);
+    const setSigner = useNDKStore((state) => state.setSigner);
+
+    const handleSwitchUser = async () => {
+        switchToUser(pubkey);
+        const signer = signers.get(pubkey);
+        setSigner(signer);
+    };
+
+    return handleSwitchUser;
+}

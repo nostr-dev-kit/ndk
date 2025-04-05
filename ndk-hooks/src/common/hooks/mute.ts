@@ -1,7 +1,6 @@
 import { NDKEvent } from '@nostr-dev-kit/ndk';
 import { useCallback, useMemo } from 'react';
-import { useUserSession } from '../../session/hooks'; // Corrected path
-import type { MuteCriteria } from '../store/subscribe'; // Corrected path and added 'type' keyword
+import type { MuteCriteria } from '../../subscribe/store'; // Corrected path and added 'type' keyword
 import { isMuted } from '../../utils/mute'; // Corrected path
 
 /**
@@ -11,13 +10,13 @@ import { isMuted } from '../../utils/mute'; // Corrected path
  * @returns {(event: NDKEvent) => boolean} A function that returns `true` if the event should be filtered (muted), `false` otherwise.
  */
 export function useMuteFilter(): (event: NDKEvent) => boolean {
-    const activeSessionData = useUserSession();
+    const activeSession = useNDKSessions(s => s.activePubkey ? s.sessions.get(s.activePubkey) : undefined);
 
     const muteCriteria = useMemo((): MuteCriteria => {
-        const pubkeys = activeSessionData?.mutedPubkeys ?? new Set<string>();
-        const eventIds = activeSessionData?.mutedEventIds ?? new Set<string>();
-        const hashtags = activeSessionData?.mutedHashtags ?? new Set<string>();
-        const words = activeSessionData?.mutedWords ?? new Set<string>();
+        const pubkeys = activeSession?.mutedPubkeys ?? new Set<string>();
+        const eventIds = activeSession?.mutedEventIds ?? new Set<string>();
+        const hashtags = activeSession?.mutedHashtags ?? new Set<string>();
+        const words = activeSession?.mutedWords ?? new Set<string>();
 
         const wordsRegex =
             words.size > 0
@@ -35,7 +34,7 @@ export function useMuteFilter(): (event: NDKEvent) => boolean {
             mutedHashtags: lowerCaseHashtags,
             mutedWordsRegex: wordsRegex,
         };
-    }, [activeSessionData]);
+    }, [activeSession]);
 
     const filterFn = useCallback(
         (event: NDKEvent): boolean => {

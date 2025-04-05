@@ -56,7 +56,10 @@ export default withMermaid(
                 },
                 {
                     text: "Wrappers",
-                    items: [{ text: "NDK Svelte", link: "/wrappers/svelte" }],
+                    items: [
+                        { text: "NDK Svelte", link: "/wrappers/svelte" },
+                        { text: "NDK React Hooks", link: "/wrappers/react" },
+                    ],
                 },
                 {
                     text: "Mobile",

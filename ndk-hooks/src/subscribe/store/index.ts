@@ -34,7 +34,7 @@ export interface SubscribeStore<T extends NDKEvent> {
     addEvent: (event: T) => void;
     addEvents: (events: T[]) => void;
     removeEventId: (id: string) => void;
-    filterMutedEvents: (criteria: MuteCriteria) => void;
+    filterMutedEvents: (muteFilter: (event: NDKEvent) => boolean) => void;
     setEose: () => void;
     reset: () => void;
 }
@@ -218,62 +218,19 @@ export const createSubscribeStore = <T extends NDKEvent>(
                 set({ eventMap: newEventMap, events: newEvents });
             },
 
-            /**
-             * Filters the *existing* events in the store based on comprehensive mute criteria.
-             * @param criteria - An object containing sets of muted pubkeys, event IDs, hashtags (lowercase), and a regex for muted words.
-             */
-            filterMutedEvents: (criteria: MuteCriteria) => {
-                const {
-                    mutedPubkeys,
-                    mutedEventIds,
-                    mutedHashtags,
-                    mutedWordsRegex,
-                } = criteria;
-
-                if (
-                    mutedPubkeys.size === 0 &&
-                    mutedEventIds.size === 0 &&
-                    mutedHashtags.size === 0 &&
-                    !mutedWordsRegex
-                ) {
-                    return;
-                }
-
+            filterMutedEvents: (muteFilter: (event: NDKEvent) => boolean) => {
                 const state = get();
                 const currentEventMap = state.eventMap;
                 const newEventMap = new Map<string, T>();
-                let changed = false;
 
                 for (const [id, event] of currentEventMap.entries()) {
-                    const tags = new Set(
-                        event
-                            .getMatchingTags('t')
-                            .map((tag) => tag[1].toLowerCase())
-                    );
-                    const taggedEvents = new Set(
-                        event.getMatchingTags('e').map((tag) => tag[1])
-                    );
-                    taggedEvents.add(event.id);
-
-                    const isMuted =
-                        mutedPubkeys.has(event.pubkey) ||
-                        setHasAnyIntersection(mutedEventIds, taggedEvents) ||
-                        setHasAnyIntersection(mutedHashtags, tags) ||
-                        (mutedWordsRegex &&
-                            event.content &&
-                            event.content.match(mutedWordsRegex));
-
-                    if (!isMuted) {
+                    if (!muteFilter(event)) {
                         newEventMap.set(id, event);
-                    } else {
-                        changed = true;
                     }
                 }
 
-                if (changed) {
-                    const newEvents = Array.from(newEventMap.values());
-                    set({ eventMap: newEventMap, events: newEvents });
-                }
+                const newEvents = Array.from(newEventMap.values());
+                set({ eventMap: newEventMap, events: newEvents });
             },
 
             setEose: () => {

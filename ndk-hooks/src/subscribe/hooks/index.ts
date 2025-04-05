@@ -1,18 +1,14 @@
 import type {
     NDKEvent,
-    NDKFilter, // Keep as non-type import if used as value
+    NDKFilter,
     NDKSubscription,
     NDKSubscriptionOptions
 } from '@nostr-dev-kit/ndk';
-import { useEffect, useMemo, useRef, type RefObject } from 'react'; // Added RefObject type import
+import { useEffect, useRef, type RefObject } from 'react'; // Added RefObject type import
 import { useStore } from 'zustand';
-import { useUserSession } from '../../session/hooks'; // Corrected path
-import {
-    createSubscribeStore,
-    type MuteCriteria
-} from '../../common/store/subscribe'; // Updated path
-import { isMuted } from '../../utils/mute'; // Corrected path
-import { useNDK } from '../../ndk/hooks'; // Corrected path
+import { createSubscribeStore } from '../store';
+import { useNDK } from '../../ndk/hooks';
+import { useMuteFilter } from '../../common/hooks/mute';
 
 /**
  * Extends NDKEvent with a 'from' method to wrap events with a kind-specific handler
@@ -51,55 +47,23 @@ export type UseSubscribeOptions = NDKSubscriptionOptions & {
     wot?: boolean;
 };
 
-// Define interface for return type outside the function
-interface UseSubscribeResult<T extends NDKEvent> {
-    events: T[];
-    eose: boolean;
-    subscription: NDKSubscription | null;
-    storeRef: RefObject<ReturnType<typeof createSubscribeStore<T>> | null>;
-}
-
 /**
  * React hook for subscribing to Nostr events
  * @param filters - Filters to run or false to avoid running the subscription. Note that when setting the filters to false, changing the filters prop
  *                  to have a different value will run the subscription, but changing the filters won't.
  * @param opts - UseSubscribeOptions
- * @param dependencies - any[] - dependencies to re-run the subscription when they change
- * @returns {Object} Subscription state
- * @returns {T[]} events - Array of received events
- * @returns {boolean} eose - End of stored events flag
+ * @param dependencies - unknown[] - dependencies to re-run the subscription when they change
+ * @returns {UseSubscribeResult<T>} Subscription state including events, eose flag, subscription, and store reference
  */
-export function useSubscribe<T extends NDKEvent>(
+export function useSubscribe<T extends NDKEvent, R = T[]>(
     filters: NDKFilter[] | false,
     opts: UseSubscribeOptions = {},
-    dependencies: unknown[] = [] // Changed any[] to unknown[]
-) {
+    dependencies: unknown[] = []
+): T[] {
     const { ndk } = useNDK();
-    const activeSessionData = useUserSession();
 
-    const muteCriteria = useMemo((): MuteCriteria => {
-        const pubkeys = activeSessionData?.mutedPubkeys ?? new Set<string>();
-        const eventIds = activeSessionData?.mutedEventIds ?? new Set<string>();
-        const hashtags = activeSessionData?.mutedHashtags ?? new Set<string>();
-        const words = activeSessionData?.mutedWords ?? new Set<string>();
+    const muteFilter = useMuteFilter();
 
-        const wordsRegex =
-            words.size > 0
-                ? new RegExp(Array.from(words).join('|'), 'i')
-                : null;
-
-        const lowerCaseHashtags = new Set<string>();
-        for (const h of hashtags) { // Changed forEach to for...of
-            lowerCaseHashtags.add(h.toLowerCase());
-        }
-
-        return {
-            mutedPubkeys: pubkeys,
-            mutedEventIds: eventIds,
-            mutedHashtags: lowerCaseHashtags,
-            mutedWordsRegex: wordsRegex,
-        };
-    }, [activeSessionData]);
     const storeRef = useRef<ReturnType<typeof createSubscribeStore<T>> | null>(
         null
     );
@@ -110,13 +74,9 @@ export function useSubscribe<T extends NDKEvent>(
 
     const subRef = useRef<NDKSubscription | null>(null);
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <we only one to depend on the explicit dependencies>
     useEffect(() => {
-        if (
-            !ndk ||
-            !filters ||
-            (Array.isArray(filters) && filters.length === 0)
-        )
-            return;
+        if (!ndk || !filters) return;
 
         if (subRef.current) {
             subRef.current.stop();
@@ -130,8 +90,7 @@ export function useSubscribe<T extends NDKEvent>(
                     return;
                 }
 
-                // TODO: Implement WoT filtering if opts.wot is true
-                if (!opts.includeMuted && isMuted(event, muteCriteria)) {
+                if (!opts.includeMuted && muteFilter(event)) {
                     return;
                 }
 
@@ -149,8 +108,7 @@ export function useSubscribe<T extends NDKEvent>(
                     const validEvents = events.filter((e: NDKEvent) => {
                         if (!opts.includeDeleted && e.hasTag('deleted'))
                             return false;
-                        // TODO: Implement WoT filtering if opts.wot is true
-                        if (!opts.includeMuted && isMuted(e, muteCriteria))
+                        if (!opts.includeMuted && muteFilter(e))
                             return false;
                         return true;
                     });
@@ -190,33 +148,14 @@ export function useSubscribe<T extends NDKEvent>(
                 subRef.current = null;
             }
         };
-    // Added opts to dependency array, removed specific opts.* properties
-    }, [
-        ndk,
-        muteCriteria,
-        store,
-        opts,
-        filters,
-        ...dependencies,
-    ]);
+    }, [ ndk, muteFilter, ...dependencies ]);
 
     useEffect(() => {
         if (!opts.includeMuted) {
             const state = store.getState();
-            state.filterMutedEvents(muteCriteria);
+            state.filterMutedEvents(muteFilter);
         }
-    }, [muteCriteria, store, opts.includeMuted]);
+    }, [muteFilter, store, opts.includeMuted]);
 
-    const events = useStore(store, (state) => state.events);
-    const eose = useStore(store, (state) => state.eose);
-    const subscription = useStore(store, (state) => state.subscriptionRef);
-
-    const returnValue: UseSubscribeResult<T> = {
-        events,
-        eose,
-        subscription: subscription ?? null, // Handle undefined from useStore
-        storeRef,
-    };
-
-    return returnValue;
+    return useStore(store, s => s.events);
 }

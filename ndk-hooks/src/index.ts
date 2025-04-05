@@ -23,7 +23,7 @@ export * from './observer/hooks'; // Updated path
 export * from './subscribe/hooks'; // Updated path
 export * from './session/hooks/use-available-sessions'; // Corrected path
 export { useNDKNutzapMonitor, useNDKWallet } from './wallet/hooks'; // Corrected path
-export * from './common/store/subscribe'; // Subscribe store
+export * from './subscribe/store'; // Subscribe store
 
 // Re-exporting from session/index.js might be redundant now
 // export * from './session/index.js';

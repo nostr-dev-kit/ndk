@@ -11,7 +11,7 @@ import { useNDK } from '../../ndk/hooks'; // Corrected path
 /**
  * Subscribes to NDK events based on the provided filters and returns the matching events.
  *
- * This hook is designed for efficiently observing events, particularly from the cache.
+ * This hook is designed for efficiently observing events from the cache.
  * It incorporates several optimizations:
  *
  * - **Cache First:** Prioritizes fetching events synchronously from the NDK cache (`cacheUsage: ONLY_CACHE` by default).
@@ -19,7 +19,6 @@ import { useNDK } from '../../ndk/hooks'; // Corrected path
  * - **Buffering:** Asynchronous events received from relays are buffered for a short period (50ms)
  *   to batch updates and reduce re-renders. Synchronous events from the cache are flushed immediately.
  * - **Automatic Cleanup:** Stops the NDK subscription when the component unmounts or when filters/dependencies change.
- * - **Defaults:** Uses sensible defaults for observer-like subscriptions (`closeOnEose: true`, `groupable: false`, `skipVerification: true`). These can be overridden via the `opts` parameter.
  *
  * @template T - The specific type of NDKEvent expected (defaults to NDKEvent).
  * @param {NDKFilter | NDKFilter[] | false} filters - A single NDK filter, an array of filters, or `false` to disable the subscription.
@@ -43,7 +42,7 @@ import { useNDK } from '../../ndk/hooks'; // Corrected path
 export function useObserver<T extends NDKEvent>(
     filters: NDKFilter[] | false,
     opts: NDKSubscriptionOptions = {},
-    dependencies: unknown[] = [] // Changed any[] to unknown[]
+    dependencies: unknown[] = []
 ): T[] {
     const { ndk } = useNDK();
     const sub = useRef<NDKSubscription | null>(null);
@@ -64,8 +63,9 @@ export function useObserver<T extends NDKEvent>(
         }
         addedEventIds.current.clear();
         setEvents([]);
-    }, []); // Removed setEvents from dependency array
+    }, []);
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     useEffect(() => {
         if (!ndk || !filters || filters.length === 0) return;
 
@@ -98,22 +98,16 @@ export function useObserver<T extends NDKEvent>(
                 wrap: true,
                 ...opts,
             },
-            false
-        );
-
-        if (sub.current) {
-            sub.current.on('event', (event) => {
-                if (!isValid) return;
-                processEvent(event);
-            });
-        }
-
-        if (sub.current) {
-            const syncEvents = sub.current.start(false);
-            if (syncEvents) {
-                for (const event of syncEvents) processEvent(event);
+            {
+                onEvent: (event) => {
+                    if (!isValid) return;
+                    processEvent(event);
+                },
+                onEvents: (events) => {
+                    for (const event of events) processEvent(event);
+                }
             }
-        }
+        );
 
         if (buffer.current.length > 0) {
             if (bufferTimeout.current) {
@@ -128,8 +122,7 @@ export function useObserver<T extends NDKEvent>(
             isValid = false;
             stopFilters();
         };
-    // Added filters and opts to dependency array
-    }, [ndk, filters, opts, ...dependencies, stopFilters]);
+    }, [ndk, ...dependencies, stopFilters]);
 
     return events as T[];
 }

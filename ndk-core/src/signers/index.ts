@@ -7,6 +7,14 @@ import type { NDKUser } from "../user";
 /**
  * Interface for NDK signers.
  */
+/**
+ * Interface for a serialized signer payload
+ */
+export interface NDKSignerPayload {
+    type: string;
+    payload: string;
+}
+
 export interface NDKSigner {
     /**
      * Synchronously get the public key of the signer.
@@ -67,4 +75,23 @@ export interface NDKSigner {
      * @param scheme - which NIP is being implemented ('nip04', 'nip44', 'nip49')
      */
     decrypt(sender: NDKUser, value: string, scheme?: NDKEncryptionScheme): Promise<string>;
+
+    /**
+     * Serializes the signer's essential data into a storable format.
+     * @returns A JSON string containing the type and payload.
+     */
+    toPayload(): string;
+}
+
+/**
+ * Interface for Signer classes that support static deserialization
+ */
+export interface NDKSignerStatic<T extends NDKSigner> {
+    /**
+     * Deserializes the signer from a payload string.
+     * @param payload The JSON string obtained from toPayload().
+     * @param ndk Optional NDK instance, required by some signers (e.g., NIP-46).
+     * @returns An instance of the specific signer class.
+     */
+    fromPayload(payload: string, ndk?: NDK): Promise<T>;
 }

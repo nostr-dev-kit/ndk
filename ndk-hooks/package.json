@@ -1,11 +1,10 @@
 {
     "name": "@nostr-dev-kit/ndk-hooks",
-    "version": "0.1.0",
-    "private": false,
+    "version": "0.1.3",
     "description": "React hooks for the Nostr Development Kit (NDK)",
     "main": "dist/index.js",
     "module": "dist/index.mjs",
-    "types": "dist/types/index.d.ts",
+    "types": "dist/index.d.ts",
     "files": [
         "dist",
         "README.md"
@@ -14,25 +13,24 @@
         "build": "tsup src/index.ts --format cjs,esm --dts --clean",
         "dev": "tsup src/index.ts --format cjs,esm --watch",
         "lint": "biome check .",
-        "format": "biome check . --write",
+        "format": "biome format . --write",
         "test": "vitest run",
-        "test:watch": "vitest",
-        "prepare": "pnpm run build"
+        "test:watch": "vitest"
+    },
+    "dependencies": {
+        "@nostr-dev-kit/ndk-wallet": "workspace:*",
+        "immer": "^10.1.1",
+        "zustand": "^5"
     },
     "peerDependencies": {
-        "@nostr-dev-kit/ndk": "^2.13",
-        "zustand": "^5",
-        "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
+        "@nostr-dev-kit/ndk": "workspace:*",
+        "react": "^18.3.1"
     },
     "devDependencies": {
         "@nostr-dev-kit/ndk": "workspace:*",
-        "@testing-library/react-hooks": "^8.0.1",
-        "@types/react": "^18.2.67",
-        "biome": "^0.3.3",
-        "react": "^18.2.0",
-        "react-test-renderer": "^18.2.0",
-        "tsup": "^8.0.2",
-        "typescript": "^5.4.3",
+        "@nostr-dev-kit/ndk-test-utils": "workspace:*",
+        "tsup": "^8",
+        "typescript": "^5.8.2",
         "vitest": "^1.4.0",
         "zustand": "^5.0.3"
     },
@@ -43,5 +41,8 @@
         "hooks"
     ],
     "author": "_@f7z.io",
-    "license": "MIT"
+    "license": "MIT",
+    "publishConfig": {
+        "access": "public"
+    }
 }

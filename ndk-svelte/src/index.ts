@@ -317,7 +317,7 @@ class NDKSvelte extends NDK {
                 filters.push(...opts.repostsFilters);
             }
 
-            store.subscription = this.subscribe(filters, opts, relaySet, false);
+            store.subscription = this.subscribe(filters, { ...opts, relaySet }, false); // Pass relaySet via opts
 
             store.subscription.on("event", (event: NDKEvent, relay?: NDKRelay) => {
                 handleEvent(event);

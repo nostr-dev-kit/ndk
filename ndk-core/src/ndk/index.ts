@@ -187,14 +187,32 @@ export const DEFAULT_BLACKLISTED_RELAYS = [
     // "wss://purplepag.es/", // This is a hack, since this is a mostly read-only relay, but not fully. Once we have relay routing this can be removed so it only receives the supported kinds
 ];
 
+/**
+ * Defines handlers that can be passed to `ndk.subscribe` via the `autoStart` parameter
+ * to react to subscription lifecycle events.
+ */
 export interface NDKSubscriptionEventHandlers {
+    /**
+     * Called for each individual event received from relays *after* the initial cache load (if `onEvents` is provided),
+     * or for *all* events (including cached ones) if `onEvents` is not provided.
+     * @param event The received NDKEvent.
+     * @param relay The relay the event was received from (undefined if from cache).
+     */
     onEvent?: (event: NDKEvent, relay?: NDKRelay) => void;
 
     /**
-     * Called with the events that synchronously loaded from the cache.
+     * Called *once* with an array of all events found synchronously in the cache when the subscription starts.
+     * If this handler is provided, `onEvent` will *not* be called for this initial batch of cached events.
+     * This is useful for bulk processing or batching UI updates based on the initial cached state.
+     * @param events An array of NDKEvents loaded synchronously from the cache.
      */
-    onEvents?: (events: NDKEvent[]) => void;
+    onEvents?: (events: NDKEvent[]) => void; // Parameter name is already 'events'
 
+    /**
+     * Called when the subscription receives an EOSE (End of Stored Events) marker
+     * from all connected relays involved in this subscription request.
+     * @param sub The NDKSubscription instance that reached EOSE.
+     */
     onEose?: (sub: NDKSubscription) => void;
 }
 
@@ -492,28 +510,64 @@ export class NDK extends EventEmitter<{
     }
 
     /**
-     * Create a new subscription. Subscriptions automatically start, you can make them automatically close when all relays send back an EOSE by setting `opts.closeOnEose` to `true`)
+     * Creates and starts a new subscription.
      *
-     * @param filters
-     * @param opts
-     * @param relaySet explicit relay set to use
-     * @param autoStart automatically start the subscription -- this can be a boolean or an object with `onEvent` and `onEose` handlers
-     * @returns NDKSubscription
+     * Subscriptions automatically start unless `autoStart` is set to `false`.
+     * You can control automatic closing on EOSE via `opts.closeOnEose`.
+     *
+     * @param filters - A single NDKFilter object or an array of filters.
+     * @param opts - Optional NDKSubscriptionOptions to customize behavior (e.g., caching, grouping).
+     * @param relaySet - Optional explicit NDKRelaySet to use for this subscription. If not provided, NDK calculates the optimal set.
+     * @param autoStart - Controls automatic starting and allows providing event handlers.
+     *   - `true` (default): Starts the subscription immediately.
+     *   - `false`: Creates the subscription but does not start it (call `subscription.start()` manually).
+     *   - `NDKSubscriptionEventHandlers` object: Starts the subscription immediately and attaches the provided handlers (`onEvent`, `onEvents`, `onEose`).
+     *     - Using `onEvents` changes behavior: it receives initial cached events in bulk, and `onEvent` is skipped for that initial batch. See {@link NDKSubscriptionEventHandlers}.
+     * @returns The created NDKSubscription instance.
+     *
+     * @example Basic subscription
+     * ```typescript
+     * const sub = ndk.subscribe({ kinds: [1], authors: [pubkey] });
+     * sub.on("event", (event) => console.log("Kind 1 event:", event.content));
+     * ```
+     *
+     * @example Subscription with options and direct handlers
+     * ```typescript
+     * const sub = ndk.subscribe(
+     *   { kinds: [0], authors: [pubkey] },
+     *   { closeOnEose: true, cacheUsage: NDKSubscriptionCacheUsage.PARALLEL },
+     *   undefined, // Use default relay set calculation
+     *   {
+     *     onEvents: (events) => { // Renamed parameter
+     *       if (events.length > 0) {
+     *         console.log(`Got ${events.length} profile events from cache:`, events[0].content);
+     *       }
+     *     },
+     *     onEvent: (event) => { // Renamed parameter
+     *       console.log("Got profile update from relay:", event.content); // Clarified source
+     *     },
+     *     onEose: () => console.log("Profile subscription finished.")
+     *   }
+     * );
+     * ```
+     *
+     * @since 2.13.0 `relaySet` parameter removed; pass `relaySet` or `relayUrls` via `opts`.
      */
     public subscribe(
         filters: NDKFilter | NDKFilter[],
         opts?: NDKSubscriptionOptions,
-        relaySet?: NDKRelaySet,
+        // relaySet?: NDKRelaySet, // Removed v2.13.0: Pass via opts.relaySet or opts.relayUrls
         autoStart: boolean | NDKSubscriptionEventHandlers = true
     ): NDKSubscription {
-        const subscription = new NDKSubscription(this, filters, opts, relaySet);
+        // NDKSubscription constructor now handles relaySet/relayUrls from opts
+        const subscription = new NDKSubscription(this, filters, opts);
         this.subManager.add(subscription);
 
-        const pool = opts?.pool ?? this.pool;
+        const pool = subscription.pool; // Use the pool determined by the subscription options
 
-        // Signal to the relays that they are explicitly being used
-        if (relaySet) {
-            for (const relay of relaySet.relays) {
+        // Signal to the relays that they are explicitly being used if a relaySet was provided/created
+        if (subscription.relaySet) {
+            for (const relay of subscription.relaySet.relays) {
                 pool.useTemporaryRelay(relay, undefined, subscription.filters);
             }
         }
@@ -538,7 +592,7 @@ export class NDK extends EventEmitter<{
 
             setTimeout(() => {
                 const cachedEvents = subscription.start(!eventsHandler);
-                if (cachedEvents && !!eventsHandler) eventsHandler(cachedEvents);
+                if (cachedEvents && cachedEvents.length > 0 && !!eventsHandler) eventsHandler(cachedEvents);
             }, 0);
         }
 
@@ -646,11 +700,18 @@ export class NDK extends EventEmitter<{
         return new Promise((resolve) => {
             let fetchedEvent: NDKEvent | null = null;
 
+            // Prepare options, including the relaySet if available
+            const subscribeOpts: NDKSubscriptionOptions = {
+                ...(opts || {}),
+                closeOnEose: true,
+            };
+            if (relaySet) subscribeOpts.relaySet = relaySet;
+
             const s = this.subscribe(
                 filters,
-                { ...(opts || {}), closeOnEose: true },
-                relaySet,
-                false
+                subscribeOpts,
+                // relaySet, // Removed: Passed via opts
+                false // autoStart = false
             );
 
             /** This is a workaround, for some reason we're leaking subscriptions that should EOSE and fetchEvent is not
@@ -693,11 +754,18 @@ export class NDK extends EventEmitter<{
         return new Promise((resolve) => {
             const events: Map<string, NDKEvent> = new Map();
 
+            // Prepare options, including the relaySet if available
+            const subscribeOpts: NDKSubscriptionOptions = {
+                ...(opts || {}),
+                closeOnEose: true,
+            };
+            if (relaySet) subscribeOpts.relaySet = relaySet;
+
             const relaySetSubscription = this.subscribe(
                 filters,
-                { ...(opts || {}), closeOnEose: true },
-                relaySet,
-                false
+                subscribeOpts,
+                // relaySet, // Removed: Passed via opts
+                false // autoStart = false
             );
 
             const onEvent = (event: NostrEvent | NDKEvent) => {

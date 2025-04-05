@@ -9,7 +9,7 @@ import type { NDK } from "../ndk/index.js";
 import type { NDKRelay } from "../relay";
 import type { NDKPool } from "../relay/pool/index.js";
 import { calculateRelaySetsFromFilters } from "../relay/sets/calculate";
-import type { NDKRelaySet } from "../relay/sets/index.js";
+import { NDKRelaySet } from "../relay/sets/index.js";
 import { queryFullyFilled } from "./utils.js";
 
 export type NDKSubscriptionInternalId = string;
@@ -76,8 +76,8 @@ export interface NDKSubscriptionOptions {
      * "at-most" means "wait at most this long before sending the subscription"
      * @default "at-most"
      * @example
-     * const sub1 = ndk.subscribe({ kinds: [1], authors: ["alice"] }, { groupableDelay: 100, groupableDelayType: "at-least" });
-     * const sub2 = ndk.subscribe({ kinds: [0], authors: ["alice"] }, { groupableDelay: 1000, groupableDelayType: "at-most" });
+     * const sub1 = ndk.subscribe({ kinds: [1], authors: ["alice"] }, { groupableDelay: 100, groupableDelayType: "at-least" }); // 3 args
+     * const sub2 = ndk.subscribe({ kinds: [0], authors: ["alice"] }, { groupableDelay: 1000, groupableDelayType: "at-most" }); // 3 args
      * // sub1 and sub2 will be grouped together and executed 1000ms after sub1 was created
      */
     groupableDelayType?: NDKSubscriptionDelayedType;
@@ -119,7 +119,7 @@ export interface NDKSubscriptionOptions {
      * Useful uses of this include removing `since` or `until` constraints or `limit` filters.
      *
      * @example
-     * ndk.subscribe({ kinds: [1], since: 1710000000, limit: 10 }, { cacheUnconstrainFilter: ['since', 'limit'] });
+     * ndk.subscribe({ kinds: [1], since: 1710000000, limit: 10 }, { cacheUnconstrainFilter: ['since', 'limit'] }); // 3 args
      *
      * This will hit relays with the since and limit constraints, while loading from the cache without them.
      */
@@ -130,6 +130,30 @@ export interface NDKSubscriptionOptions {
      * @default false
      */
     wrap?: boolean;
+
+    /**
+     * Explicit relay set to use for this subscription instead of calculating it.
+     * If `relayUrls` is also provided in the options, this `relaySet` takes precedence.
+     * @since 2.13.0 Moved from `ndk.subscribe` parameter to options.
+     */
+    relaySet?: NDKRelaySet;
+
+    /**
+     * Explicit relay URLs to use for this subscription instead of calculating the relay set.
+     * An `NDKRelaySet` will be created internally from these URLs.
+     * If `relaySet` is also provided in the options, the explicit `relaySet` takes precedence over these URLs.
+     * @since 2.13.0
+     */
+    relayUrls?: string[];
+
+    /**
+     * When set, the cache will be queried first, and, when hitting relays,
+     * a `since` filter will be added to the subscription that is one second
+     * after the last event received from the cache.
+     * 
+     * This option implies cacheUsage: CACHE_FIRST.
+     */
+    addSinceFromCache?: boolean;
 }
 
 /**
@@ -264,6 +288,12 @@ export class NDKSubscription extends EventEmitter<{
      */
     private lastEventReceivedAt: number | undefined;
 
+    /**
+     * The most recent event timestamp from cache results.
+     * This is used for addSinceFromCache functionality.
+     */
+    private mostRecentCacheEventTimestamp?: number;
+
     public internalId: NDKSubscriptionInternalId;
 
     /**
@@ -287,18 +317,24 @@ export class NDKSubscription extends EventEmitter<{
         ndk: NDK,
         filters: NDKFilter | NDKFilter[],
         opts?: NDKSubscriptionOptions,
-        relaySet?: NDKRelaySet,
         subId?: string
     ) {
         super();
         this.ndk = ndk;
-        this.pool = opts?.pool || ndk.pool;
         this.opts = { ...defaultOpts, ...(opts || {}) };
+        this.pool = this.opts.pool || ndk.pool;
         this.filters = Array.isArray(filters) ? filters : [filters];
         this.subId = subId || this.opts.subId;
         this.internalId = Math.random().toString(36).substring(7);
-        this.relaySet = relaySet;
         this.debug = ndk.debug.extend(`subscription[${this.opts.subId ?? this.internalId}]`);
+
+        // Handle relaySet and relayUrls options
+        if (this.opts.relaySet) {
+            this.relaySet = this.opts.relaySet;
+        } else if (this.opts.relayUrls) {
+            this.relaySet = NDKRelaySet.fromRelayUrls(this.opts.relayUrls, this.ndk);
+        }
+
         this.skipVerification = this.opts.skipVerification || false;
         this.skipValidation = this.opts.skipValidation || false;
         this.closeOnEose = this.opts.closeOnEose || false;
@@ -341,6 +377,8 @@ export class NDKSubscription extends EventEmitter<{
     }
 
     private shouldQueryCache(): boolean {
+        if (this.opts.addSinceFromCache) return true;
+        
         // explicitly told to not query the cache
         if (this.opts?.cacheUsage === NDKSubscriptionCacheUsage.ONLY_RELAY) return false;
 
@@ -357,6 +395,8 @@ export class NDKSubscription extends EventEmitter<{
     }
 
     private shouldWaitForCache(): boolean {
+        if (this.opts.addSinceFromCache) return true;
+
         return (
             // Must want to close on EOSE; subscriptions
             // that want to receive further updates must
@@ -386,24 +426,31 @@ export class NDKSubscription extends EventEmitter<{
         const updateStateFromCacheResults = (events: NDKEvent[]) => {
             if (emitCachedEvents) {
                 for (const event of events) {
+                    if (!this.mostRecentCacheEventTimestamp || event.created_at > this.mostRecentCacheEventTimestamp) {
+                        this.mostRecentCacheEventTimestamp = event.created_at;
+                    }
                     this.eventReceived(event, undefined, true, false);
                 }
             } else {
                 cacheResult = [];
-                events.forEach((event) => {
+                for (const event of events) {
+                    if (!this.mostRecentCacheEventTimestamp || event.created_at > this.mostRecentCacheEventTimestamp) {
+                        this.mostRecentCacheEventTimestamp = event.created_at;
+                    }
+                    
                     event.ndk = this.ndk;
                     const e = this.opts.wrap ? wrapEvent(event) : event;
-                    if (!e) return;
+                    if (!e) break;
                     if (e instanceof Promise) {
                         // if we get a promise, we emit it
                         e.then((wrappedEvent) => {
                             this.emitEvent(false, wrappedEvent, undefined, true, false);
                         });
-                        return;
+                        break;
                     }
                     this.eventFirstSeen.set(e.id, Date.now());
                     (cacheResult as NDKEvent[]).push(e);
-                });
+                }
             }
         };
 
@@ -513,12 +560,25 @@ export class NDKSubscription extends EventEmitter<{
      * check if we need to execute in them.
      */
     private startWithRelays(): void {
+        // Create a copy of filters to potentially modify for addSinceFromCache
+        let filters = this.filters;
+        
+        // If addSinceFromCache is enabled and we have a timestamp from cache results,
+        // modify the filters to add a 'since' filter that's one second after the most recent event
+        if (this.opts.addSinceFromCache && this.mostRecentCacheEventTimestamp) {
+            const sinceTimestamp = this.mostRecentCacheEventTimestamp + 1;
+            filters = filters.map(filter => ({
+                ...filter,
+                since: Math.max(filter.since || 0, sinceTimestamp)
+            }));
+        }
+        
         if (!this.relaySet || this.relaySet.relays.size === 0) {
-            this.relayFilters = calculateRelaySetsFromFilters(this.ndk, this.filters, this.pool);
+            this.relayFilters = calculateRelaySetsFromFilters(this.ndk, filters, this.pool);
         } else {
             this.relayFilters = new Map();
             for (const relay of this.relaySet.relays) {
-                this.relayFilters.set(relay.url, this.filters);
+                this.relayFilters.set(relay.url, filters);
             }
         }
 

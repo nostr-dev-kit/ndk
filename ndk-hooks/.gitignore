@@ -47,3 +47,9 @@ lerna-debug.log*
 
 # TypeScript
 *.tsbuildinfo
+
+.clinerules
+.cursorrules
+.repomix-output.txt
+cursor-tools.config.json
+.repomix-output.txt

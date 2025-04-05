@@ -1,3 +1,6 @@
+export { NdkNutzapStatus } from "./types.js";
+export type { NDKNutzapState } from "./types.js";
+
 export * from "./events/kinds/index.js";
 import { NDKEvent } from "./events/index.js";
 export { NDKEvent };
@@ -50,12 +53,14 @@ export * from "./app-settings/index.js";
 export * from "./relay/index.js";
 export * from "./relay/auth-policies.js";
 export * from "./relay/sets/index.js";
+export type { NDKSignerPayload } from "./signers/index.js"; // Export the payload type
 export * from "./signers/index.js";
 export * from "./signers/nip07/index.js";
 export * from "./signers/nip46/backend/index.js";
 export * from "./signers/nip46/rpc.js";
 export * from "./signers/nip46/index.js";
 export * from "./signers/private-key/index.js";
+export * from "./signers/deserialization.js"; // Export registry and deserialization function
 export * from "./subscription/index.js";
 export * from "./subscription/utils.js";
 export * from "./subscription/grouping.js";

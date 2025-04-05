@@ -1,0 +1,16 @@
+{
+    "repo": {
+        "provider": "openrouter",
+        "model": "google/gemini-2.0-pro-exp-02-05:free"
+    },
+    "plan": {
+        "fileProvider": "openrouter",
+        "thinkingProvider": "openrouter",
+        "fileModel": "google/gemini-2.0-pro-exp-02-05:free",
+        "thinkingModel": "google/gemini-2.0-flash-thinking-exp:free"
+    },
+    "doc": {
+        "provider": "openrouter",
+        "model": "google/gemini-2.0-pro-exp-02-05:free"
+    }
+}

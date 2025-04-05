@@ -172,4 +172,37 @@ export class NDKPrivateKeySigner implements NDKSigner {
         }
         return await nip04.decrypt(this._privateKey, senderHexPubKey, value);
     }
+
+    /**
+     * Serializes the signer's private key into a storable format.
+     * @returns A JSON string containing the type and the hex private key.
+     */
+    public toPayload(): string {
+        if (!this._privateKey) throw new Error("Private key not available");
+        const payload = {
+            type: "private-key",
+            payload: this.privateKey, // Use the hex private key
+        };
+        return JSON.stringify(payload);
+    }
+
+    /**
+     * Deserializes the signer from a payload string.
+     * @param payloadString The JSON string obtained from toPayload().
+     * @param ndk Optional NDK instance.
+     * @returns An instance of NDKPrivateKeySigner.
+     */
+    public static async fromPayload(payloadString: string, ndk?: NDK): Promise<NDKPrivateKeySigner> {
+        const payload = JSON.parse(payloadString);
+
+        if (payload.type !== "private-key") {
+            throw new Error(`Invalid payload type: expected 'private-key', got ${payload.type}`);
+        }
+
+        if (!payload.payload || typeof payload.payload !== 'string') {
+            throw new Error("Invalid payload content for private-key signer");
+        }
+
+        return new NDKPrivateKeySigner(payload.payload, ndk);
+    }
 }

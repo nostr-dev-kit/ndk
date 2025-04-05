@@ -1,95 +1,140 @@
-# Session Management
+# Session Management & Persistence (NDK Mobile)
 
-`ndk-mobile` provides a way to manage session events that are typically necessary to have available throughout an entire app and should be monitored throughout the lifetime of the app, for example, the follow-list, muted pubkeys, NIP-60 wallets, bookmarks, etc -- Anything that is relevant throughout your entire app, you would want to make available through the ndk-mobile's session.
+`@nostr-dev-kit/ndk-mobile` builds upon the session management provided by `@nostr-dev-kit/ndk-hooks` by adding **persistent storage** for user sessions and signers using `expo-secure-store`. This allows your mobile application to remember logged-in users across restarts.
 
-The `useNDKSession` hook provides access to user's information.
+## Core Concepts Recap
 
-Say for example you want to allow your user to interface with their bookmarks, you want to have access to their bookmarks anywhere in the app both for reading and writing.
+*   **Session State:** Managed by `useNDKSessions` in `ndk-hooks` (in-memory).
+*   **Persistence:** Handled by `ndk-mobile` using secure storage.
 
-# Initialiazing
+## Automatic Persistence with `useSessionMonitor`
 
-Once your user logs in, you want to initialize the session
+The easiest way to enable session persistence is by using the `useSessionMonitor` hook provided by `ndk-mobile`.
 
-```tsx
-const { ndk } = useNDK();
-const currentUser = useNDKCurrentUser();
-
-// use to track if, for example, we want to show a loader screen
-// while the session is starting
-const [appReady, setAppReady] = useState(false);
-
-// When the user logs in
-useEffect(() => {
-    if (!ndk || !currentUser) return;
-
-    initializeSession(
-        ndk,
-        currentUser,
-        settingsStore,
-        {
-            follows: true, // load the user's follow list
-            muteList: true, // load the user's mute list
-            kinds: extraKindsRequired, // explained further down
-            filters: sessionFilters, // explained below
-        },
-        {
-            onReady: () => setAppReady(true),
-        }
-    );
-}, [ndk, currentUser?.pubkey]);
-```
-
-### `kinds` option
-
-If your app is interested in some particular kinds, say for example the user's
-image curation set, you would probably want to load that in the session and make it
-broadly available throughout the app.
-
-The `kinds` option allows you to express which kinds, and optionally NDK-kind wrappers to
-instantiate when the events are received.
-
-Ths parameter
-
-```ts
-
-const kinds = new Map([
-    [NDKKind.ImageCurationSet, { wrapper: NDKList }],
-]);
-
-const { ndk } = useNDK();
-const currentUser = useNDKCurrentUser();
-const { init: initializeSession } = useNDKSession();
-const follows = useFollows();
-const muteList = useMuteList();
-
-useEffect(() => {
-    if (!currentUser) return;
-    initializeSession(
-        ndk,
-        currentUser,
-        {
-            follows: true, // get the user's follow list
-            muteList: true, // get the user's mute list
-        }
-    );
-}, [currentUser?.pubkey])
-
-return (<View>
-    <Text>Follows: {follows ? 'not loaded yet' : follows?.length}</Text>
-</View>)
-
-```
-
-Now say you want to allow the user to bookmark something with the click of a button:
+*   **Purpose:** Automatically loads saved sessions on app startup and saves changes to the active session whenever it's updated in the `useNDKSessions` store.
+*   **Usage:** Call this hook once near the root of your application, typically within a component that also initializes NDK (e.g., using `NDKProvider`). It automatically uses the `NDK` instance provided by the context. You can optionally pass `SessionInitOptions` to customize how sessions are initialized when loaded from storage.
 
 ```tsx
-const { imageCurationSet } = useNDKSessionEventKind<NDKList>(NDKKind.ImageCurationSet, {
-    create: NDKList,
-});
+import React, { useEffect, useState } from 'react';
+import NDK from '@nostr-dev-kit/ndk';
+import { NDKProvider, useNDKStore } from '@nostr-dev-kit/ndk-mobile';
+import { useSessionMonitor, NDKCacheAdapterSqlite, bootNDK } from '@nostr-dev-kit/ndk-mobile';
 
-const bookmark = async () => {
-    await imageCurationSet.addItem(event);
-};
+const cacheAdapter = new NDKCacheAdapterSqlite('your-app');
+cacheAdapter.initialize();
+
+function initializeNDK() {
+    const opts: Record<string, unknown> = {}; // Use a more specific type than any
+
+    const ndk = new NDK({
+        cacheAdapter,
+        explicitRelayUrls: [ /* your default relays */ ],
+        clientName: 'your-app',
+    });
+
+    // Boot NDK with the most logged-in accounts that ndk-mobile saves for you
+    bootNDK(ndk); // Call synchronous boot function
+
+    ndk.connect();
+
+    return ndk;
+}
+
+const ndk = initializeNDK();
+
+function AppRoot() {
+    const { setNDK } = useNDKStore();
+
+    useEffect(() => setNDK(ndk), []);
+    // Optionally pass options to control how restored sessions are initialized
+    useSessionMonitor({
+        // Example: Don't automatically fetch profiles for restored sessions
+        // profile: false,
+        // follows: false,
+        // muteList: false,
+    });
+
+    return (
+        <NDKProvider ndk={ndk}>
+            {/* Your App Components */}
+        </NDKProvider>
+    );
+}
 ```
 
-Now, when your app calls the `bookmark` function, it will add the event to the user's image curation set, if none exists it will create one for you.
+**How it works:**
+
+1.  **On Mount:** `useSessionMonitor` retrieves the `ndk` instance using the `useNDK` hook. It then calls `loadSessionsFromStorage` (asynchronously) to retrieve saved sessions.
+2.  It iterates through the stored sessions (most recent first):
+    *   Gets the `NDKUser` instance using `ndk.getUser()`.
+    *   If a `signerPayload` exists, it calls `ndkSignerFromPayload` (asynchronously) to deserialize the signer.
+    *   Calls `initSession` (from `ndk-hooks`) for each user, passing the `ndk` instance, `user`, optional `signer`, and merging any provided `sessionInitOptions` with the default `autoSetActive: isFirst` logic. This populates the `useNDKSessions` store.
+3.  **On Active Session Change:** The hook subscribes to changes in `useNDKSessions.activeSessionPubkey`. When the active session changes:
+    *   It retrieves the full active session data using `getActiveSession()`.
+    *   It accesses the `signer` directly from the session data.
+    *   It serializes the signer using `signer.toPayload()`.
+    *   It calls `addOrUpdateStoredSession` (asynchronously) to save the `pubkey`, serialized `signerPayload`, and update the `lastActive` timestamp in secure storage.
+4.  **On Session Removal:** The hook monitors the `sessions` map from `useNDKSessions`. When a session is detected as removed (comparing current vs. previous state), it calls `removeStoredSession` (asynchronously) to delete the session from secure storage.
+
+
+## Logging In / Starting a New Session
+
+This is the standard method for logging a user into your application and establishing their active session. It's typically performed after a successful login event, such as obtaining credentials via NIP-07, NIP-46 (Nostr Connect), or directly using a private key.
+This involves:
+
+1.  **Getting the `NDKUser`:** Obtain the `NDKUser` object for the logged-in user, usually via `ndk.getUser({ npub })` or `ndk.getUser({ hexpubkey })`.
+2.  **Getting the `NDKSigner`:** Obtain the appropriate `NDKSigner` instance (e.g., `Nip07Signer`, `Nip46Signer`, `PrivateKeySigner`).
+3.  **Calling `initSession`:** Use the `initSession` function exported from `@nostr-dev-kit/ndk-hooks` (and re-exported by `ndk-mobile`) to add the user and signer to the session store.
+
+```tsx
+import { useNDK } from "@nostr-dev-kit/ndk-react"; // Or your context provider
+import { useNDKSessions } from "@nostr-dev-kit/ndk-hooks"; // Or from ndk-mobile
+import { NDKUser, NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
+import React from 'react';
+
+// Assume you have obtained the user's private key after login
+const userPrivateKey = "nsec..."; // Replace with actual private key logic
+
+function LoginButton() {
+    const { ndk } = useNDK();
+    const { initSession, setActiveSession } = useNDKSessions();
+
+    const handleLogin = async () => {
+        if (!ndk || !userPrivateKey) return;
+
+        try {
+            // 1. Create the signer
+            const signer = new NDKPrivateKeySigner(userPrivateKey);
+
+            // 2. Get the NDKUser associated with the signer
+            const user: NDKUser = await signer.user();
+            await user.fetchProfile(); // Optional: Fetch profile details
+
+            // 3. Initialize the session in the store
+            //    - Pass ndk, user, and signer.
+            //    - Set autoSetActive to true if you want this to be the main session immediately.
+            initSession(ndk, user, signer, true);
+
+            // Alternatively, if you initSession with autoSetActive: false,
+            // you can activate it later:
+            // setActiveSession(user.pubkey);
+
+            console.log(`Session initialized for user: ${user.npub}`);
+
+            // If useSessionMonitor is active, this session will now be persisted.
+
+        } catch (error) {
+            console.error("Failed to initialize session:", error);
+            // Handle login error
+        }
+    };
+
+    return <button onClick={handleLogin}>Login with Private Key</button>;
+}
+```
+
+**Important Notes:**
+
+*   If you are using `useSessionMonitor`, calling `initSession` will trigger the monitor to persist the newly added session automatically.
+*   Ensure you handle signer creation securely, especially when dealing with private keys.
+*   The `ndk` instance must be available when calling `initSession`. Make sure your component is within the `NDKProvider` context or has access to the initialized `NDK` instance.

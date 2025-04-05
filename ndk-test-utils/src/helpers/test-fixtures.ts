@@ -39,6 +39,19 @@ export class UserGenerator {
     }
 
     /**
+     * Get the private key for a specific test user
+     * @param name The name of the user (alice, bob, carol, dave, eve)
+     * @returns The private key hex string
+     */
+    static getPrivateKey(name: string): string {
+        const privateKey = UserGenerator.privateKeys[name.toLowerCase()];
+        if (!privateKey) {
+            throw new Error(`Unknown test user: ${name}`);
+        }
+        return privateKey;
+    }
+
+    /**
      * Get a user with a random private key
      * @param ndk The NDK instance to use for the user
      * @returns The NDK user
@@ -64,7 +77,7 @@ export class SignerGenerator {
      * @returns The NDK signer
      */
     static getSigner(name: string): NDKPrivateKeySigner {
-        const privateKey = UserGenerator.privateKeys[name.toLowerCase()];
+        const privateKey = UserGenerator.getPrivateKey(name); // Use the public static method
 
         if (!privateKey) {
             throw new Error(`Unknown test user: ${name}`);

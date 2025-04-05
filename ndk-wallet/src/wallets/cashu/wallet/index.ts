@@ -229,7 +229,7 @@ export class NDKCashuWallet extends NDKWallet {
 
         log(`Subscribing to ${JSON.stringify(filters)} and opts ${JSON.stringify(opts)}`);
 
-        this.sub = this.ndk.subscribe(filters, opts, this.relaySet, false);
+        this.sub = this.ndk.subscribe(filters, { ...subOpts, relaySet: this.relaySet }, false); // Pass relaySet via opts
 
         this.sub.on("event:dup", eventDupHandler.bind(this));
         this.sub.on("event", (event: NDKEvent) => {

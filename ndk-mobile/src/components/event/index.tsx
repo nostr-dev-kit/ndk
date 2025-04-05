@@ -1,3 +1,7 @@
 import Content from "./content.js";
 
-export default { Content }; 
+const Event = {
+    Content,
+};
+
+export default Event;

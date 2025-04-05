@@ -11,6 +11,7 @@ import type { NDKSigner } from "../index.js";
 import { NDKPrivateKeySigner } from "../private-key/index.js";
 import type { NDKRpcResponse } from "./rpc.js";
 import { NDKNostrRpc } from "./rpc.js";
+import { ndkSignerFromPayload } from "../deserialization.js";
 
 /**
  * This NDKSigner implements NIP-46, which allows remote signing of events.
@@ -137,14 +138,16 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
      * Get the user that is being published as
      */
     public async user(): Promise<NDKUser> {
-        if (!this._user && !this.userPubkey) throw new Error("Remote user not ready");
-        this._user ??= this.ndk.getUser({ pubkey: this.userPubkey! });
-        return this._user;
+        // If user is already available, return it
+        if (this._user) return this._user;
+
+        // If not, block until ready, which sets _user
+        return this.blockUntilReady();
     }
 
     public get userSync(): NDKUser {
-        if (!this._user && !this.userPubkey) throw new Error("Remote user not ready");
-        this._user ??= this.ndk.getUser({ pubkey: this.userPubkey! });
+        // userSync should only return if the user is definitively available
+        if (!this._user) throw new Error("Remote user not ready synchronously");
         return this._user;
     }
 
@@ -325,5 +328,80 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
                 }
             );
         });
+    }
+
+    /**
+     * Serializes the signer's connection details and local signer state.
+     * @returns A JSON string containing the type, connection info, and local signer payload.
+     */
+    public toPayload(): string {
+        if (!this.bunkerPubkey || !this.userPubkey) {
+            throw new Error("NIP-46 signer is not fully initialized for serialization");
+        }
+
+        const payload = {
+            type: "nip46",
+            payload: {
+                bunkerPubkey: this.bunkerPubkey,
+                userPubkey: this.userPubkey,
+                relayUrls: this.relayUrls,
+                secret: this.secret,
+                localSignerPayload: this.localSigner.toPayload(),
+                // Store nip05 if it was used for initialization, otherwise null
+                nip05: this.nip05 || null,
+            },
+        };
+        return JSON.stringify(payload);
+    }
+
+    /**
+     * Deserializes the signer from a payload string.
+     * @param payloadString The JSON string obtained from toPayload().
+     * @param ndk The NDK instance, required for NIP-46.
+     * @returns An instance of NDKNip46Signer.
+     */
+    public static async fromPayload(payloadString: string, ndk: NDK): Promise<NDKNip46Signer> {
+        if (!ndk) {
+            throw new Error("NDK instance is required to deserialize NIP-46 signer");
+        }
+
+        const parsed = JSON.parse(payloadString);
+
+        if (parsed.type !== "nip46") {
+            throw new Error(`Invalid payload type: expected 'nip46', got ${parsed.type}`);
+        }
+
+        const payload = parsed.payload;
+
+        if (!payload || typeof payload !== 'object' || !payload.localSignerPayload) {
+            throw new Error("Invalid payload content for nip46 signer");
+        }
+
+        // Deserialize the local signer first
+        const localSigner = await ndkSignerFromPayload(payload.localSignerPayload, ndk);
+        if (!localSigner) {
+            throw new Error("Failed to deserialize local signer for NIP-46");
+        }
+
+        let signer: NDKNip46Signer;
+
+        // Reconstruct based on whether nip05 was originally used
+        if (payload.nip05) {
+            signer = new NDKNip46Signer(ndk, payload.nip05, localSigner);
+            signer.userPubkey = payload.userPubkey;
+            signer.bunkerPubkey = payload.bunkerPubkey;
+            signer.relayUrls = payload.relayUrls;
+            signer.secret = payload.secret;
+        } else {
+            // Reconstruct using connection token parameters (implicitly)
+            // Let's adapt the constructor logic slightly for this case
+            // We'll use the userPubkey as the primary identifier in the constructor
+            signer = new NDKNip46Signer(ndk, payload.userPubkey, localSigner);
+            signer.bunkerPubkey = payload.bunkerPubkey;
+            signer.relayUrls = payload.relayUrls;
+            signer.secret = payload.secret;
+        }
+
+        return signer;
     }
 }

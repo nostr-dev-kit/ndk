@@ -119,9 +119,10 @@ export class NDKNip07Signer implements NDKSigner {
 
     public async encryptionEnabled(nip?: NDKEncryptionScheme): Promise<NDKEncryptionScheme[]> {
         const enabled: NDKEncryptionScheme[] = [];
-        if ((!nip || nip === "nip04") && Boolean((window as any).nostr?.nip04))
+        // Check against the defined window.nostr type which includes optional nip04/nip44
+        if ((!nip || nip === "nip04") && Boolean(window.nostr?.nip04))
             enabled.push("nip04");
-        if ((!nip || nip === "nip44") && Boolean((window as any).nostr?.nip44))
+        if ((!nip || nip === "nip44") && Boolean(window.nostr?.nip44))
             enabled.push("nip44");
         return enabled;
     }
@@ -181,8 +182,14 @@ export class NDKNip07Signer implements NDKSigner {
         }
 
         this.encryptionProcessing = true;
-        const { scheme, method, counterpartyHexpubkey, value, resolve, reject } =
-            item || this.encryptionQueue.shift()!;
+        const currentItem = item || this.encryptionQueue.shift();
+
+        if (!currentItem) {
+            this.encryptionProcessing = false;
+            return;
+        }
+
+        const { scheme, method, counterpartyHexpubkey, value, resolve, reject } = currentItem;
 
         this.debug("Processing encryption queue item", {
             method,
@@ -194,24 +201,28 @@ export class NDKNip07Signer implements NDKSigner {
             const result = await window.nostr?.[scheme]?.[method](counterpartyHexpubkey, value);
             if (!result) throw new Error("Failed to encrypt/decrypt");
             resolve(result);
-        } catch (error: any) {
-            // retry a few times if the call is already executing
-            if (error.message?.includes("call already executing")) {
-                if (retries < 5) {
-                    this.debug("Retrying encryption queue item", {
-                        method,
-                        counterpartyHexpubkey,
-                        value,
-                        retries,
-                    });
-                    setTimeout(() => {
-                        this.processEncryptionQueue(item, retries + 1);
-                    }, 50 * retries);
+        } catch (error: unknown) {
+            // Check if error is an instance of Error before accessing message
+            const errorMessage = error instanceof Error ? error.message : String(error);
 
-                    return;
-                }
+            // Retry a few times if the call is already executing
+            if (errorMessage.includes("call already executing") && retries < 5) {
+                this.debug("Retrying encryption queue item", {
+                    method,
+                    counterpartyHexpubkey,
+                    value,
+                    retries,
+                });
+                setTimeout(() => {
+                    // Pass currentItem to avoid potential issues if item was undefined
+                    this.processEncryptionQueue(currentItem, retries + 1);
+                }, 50 * retries);
+
+                return; // Exit after scheduling retry
             }
-            reject(error);
+
+            // Ensure we reject with an Error object for other errors
+            reject(error instanceof Error ? error : new Error(errorMessage));
         }
 
         this.processEncryptionQueue();
@@ -224,7 +235,7 @@ export class NDKNip07Signer implements NDKSigner {
                 return;
             }
 
-            let timerId: NodeJS.Timeout | number;
+            let timerId: NodeJS.Timeout | number | undefined; // Use let and allow undefined
 
             // Create an interval to repeatedly check for window.nostr
             const intervalId = setInterval(() => {
@@ -242,6 +253,38 @@ export class NDKNip07Signer implements NDKSigner {
             }, this.waitTimeout);
         });
     }
+
+    /**
+     * Serializes the signer type into a storable format.
+     * NIP-07 signers don't have persistent state to serialize beyond their type.
+     * @returns A JSON string containing the type.
+     */
+    public toPayload(): string {
+        const payload = {
+            type: "nip07",
+            payload: "", // No specific payload needed for NIP-07
+        };
+        return JSON.stringify(payload);
+    }
+
+    /**
+     * Deserializes the signer from a payload string.
+     * Creates a new NDKNip07Signer instance.
+     * @param payloadString The JSON string obtained from toPayload().
+     * @param ndk Optional NDK instance.
+     * @returns An instance of NDKNip07Signer.
+     */
+    public static async fromPayload(payloadString: string, ndk?: NDK): Promise<NDKNip07Signer> {
+        const payload = JSON.parse(payloadString);
+
+        if (payload.type !== "nip07") {
+            throw new Error(`Invalid payload type: expected 'nip07', got ${payload.type}`);
+        }
+
+        // NIP-07 doesn't need data from the payload, just create a new instance.
+        // We might want to pass constructor args if they were stored, but they aren't here.
+        return new NDKNip07Signer(undefined, ndk);
+    }
 }
 
 type Nip44 = {
@@ -255,6 +298,7 @@ declare global {
             getPublicKey(): Promise<string>;
             signEvent(event: NostrEvent): Promise<{ sig: string }>;
             getRelays?: () => Promise<Nip07RelayMap>;
+            // Make nip04 and nip44 optional properties directly on the nostr object type
             nip04?: {
                 encrypt(recipientHexPubKey: string, value: string): Promise<string>;
                 decrypt(senderHexPubKey: string, value: string): Promise<string>;

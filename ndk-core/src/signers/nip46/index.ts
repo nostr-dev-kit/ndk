@@ -11,7 +11,7 @@ import type { NDKSigner } from "../index.js";
 import { NDKPrivateKeySigner } from "../private-key/index.js";
 import type { NDKRpcResponse } from "./rpc.js";
 import { NDKNostrRpc } from "./rpc.js";
-import { ndkSignerFromPayload } from "../deserialization.js"; // Correct path
+import { ndkSignerFromPayload } from "../deserialization.js";
 
 /**
  * This NDKSigner implements NIP-46, which allows remote signing of events.
@@ -378,8 +378,6 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
         }
 
         // Deserialize the local signer first
-        // We'll need the ndkSignerFromPayload function here later
-        // For now, assume it exists and works
         const localSigner = await ndkSignerFromPayload(payload.localSignerPayload, ndk);
         if (!localSigner) {
             throw new Error("Failed to deserialize local signer for NIP-46");
@@ -390,23 +388,18 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
         // Reconstruct based on whether nip05 was originally used
         if (payload.nip05) {
             signer = new NDKNip46Signer(ndk, payload.nip05, localSigner);
-            // Restore other properties if needed, though blockUntilReady should handle it
             signer.userPubkey = payload.userPubkey;
             signer.bunkerPubkey = payload.bunkerPubkey;
             signer.relayUrls = payload.relayUrls;
             signer.secret = payload.secret;
         } else {
             // Reconstruct using connection token parameters (implicitly)
-            // Need a way to pass these directly, maybe modify constructor or add a static method
-            // For now, let's create and then set properties
-            // This assumes a constructor that can handle partial init or a different static method
             // Let's adapt the constructor logic slightly for this case
             // We'll use the userPubkey as the primary identifier in the constructor
             signer = new NDKNip46Signer(ndk, payload.userPubkey, localSigner);
             signer.bunkerPubkey = payload.bunkerPubkey;
             signer.relayUrls = payload.relayUrls;
             signer.secret = payload.secret;
-            // userPubkey is already set by constructor
         }
 
         return signer;

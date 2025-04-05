@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react';
-// No longer need NDK type here directly if we get it from useNDK
 import {
     useNDK,
     useNDKSessions, // Keep the hook import
@@ -30,6 +29,7 @@ export function useSessionMonitor(opts?: SessionStartOptions) {
         activePubkey,
         addSession,
         startSession,
+        stopSession,
         switchToUser,
     } = useNDKSessions();
     // Actions are accessed directly from the hook, not getState()
@@ -39,7 +39,6 @@ export function useSessionMonitor(opts?: SessionStartOptions) {
     // Effect to initialize sessions from storage on startup
     useEffect(() => {
         if (!ndk || isInitialized.current) return;
-        isInitialized.current = true;
 
         async function initializeFromStorage() {
             if (!ndk) return; // Guard against null ndk
@@ -60,18 +59,18 @@ export function useSessionMonitor(opts?: SessionStartOptions) {
                 // Add all sessions to NDK
                 for (const storedSession of storedSessions) {
                     try {
-
                         const user: NDKUser = ndk.getUser({ pubkey: storedSession.pubkey });
                         let signer: NDKSigner | undefined = undefined;
 
                         if (storedSession.signerPayload) {
-                            signer = await ndkSignerFromPayload(
-                                storedSession.signerPayload,
-                                ndk
-                            );
+                            signer = await ndkSignerFromPayload(storedSession.signerPayload, ndk);
                             if (!signer) {
                                 console.warn(`[NDK-Mobile] Failed to deserialize signer for ${storedSession.pubkey}, session will be read-only.`);
+                            } else {
+                                storedKeys.current.set(storedSession.pubkey, true);
                             }
+                        } else {
+                            storedKeys.current.set(storedSession.pubkey, false);
                         }
 
                         // Add session to NDK
@@ -99,7 +98,9 @@ export function useSessionMonitor(opts?: SessionStartOptions) {
             }
         }
 
-        initializeFromStorage();
+        initializeFromStorage().finally(() => {
+            isInitialized.current = true;
+        })
     }, [ndk, addSession, switchToUser]); // Update dependencies
 
     // Effect to persist active session changes
@@ -136,13 +137,25 @@ export function useSessionMonitor(opts?: SessionStartOptions) {
         persistSessions();
     }, [sessions, signers, ndk]);
 
+    const currentActivePubkey = useRef(activePubkey);
+
     // Effect to persist active pubkey changes
     useEffect(() => {
         if (!ndk || !isInitialized.current) return;
 
+        console.log('Running updateActivePubkey effect', isInitialized.current, currentActivePubkey.current, activePubkey);
+
         async function updateActivePubkey() {
             if (activePubkey) {
+                if (currentActivePubkey.current !== activePubkey) {
+                    console.log('Stopping previous session:', currentActivePubkey.current);
+                    await stopSession(currentActivePubkey.current);
+                    console.log(`Active pubkey changed to: ${activePubkey}`);
+                    currentActivePubkey.current = activePubkey;
+                }
                 await setActivePubkey(activePubkey);
+                console.log('Starting session for active pubkey:', activePubkey);
+                await startSession(activePubkey, opts);
             } else {
                 await clearActivePubkey();
             }

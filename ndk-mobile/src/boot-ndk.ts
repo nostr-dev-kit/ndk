@@ -1,7 +1,8 @@
-import type NDK from '@nostr-dev-kit/ndk';
-import type { Hexpubkey } from '@nostr-dev-kit/ndk';
+import NDK from '@nostr-dev-kit/ndk';
+import type { Hexpubkey } from '@nostr-dev-kit/ndk-hooks';
 // Cannot import ndkSignerFromPayload as it's async and this function is sync
 import { loadSessionsFromStorageSync } from './session-storage.js';
+import { ndkSignerFromPayload } from '@nostr-dev-kit/ndk';
 
 /**
  * Initializes the NDK instance synchronously with the most recently active user from storage.
@@ -13,6 +14,7 @@ import { loadSessionsFromStorageSync } from './session-storage.js';
  * @returns The pubkey of the user that was booted, or null if no session was found.
  */
 export function bootNDK(ndk: NDK): Hexpubkey | null {
+    console.log("bootNDK (sync): Initializing NDK with active user from storage...");
     try {
         const sessions = loadSessionsFromStorageSync(); // Use synchronous load
         if (sessions.length === 0) {
@@ -31,7 +33,12 @@ export function bootNDK(ndk: NDK): Hexpubkey | null {
         // Cannot set signer synchronously because ndkSignerFromPayload is async.
         // useSessionMonitor will handle async signer loading later.
         if (mostRecentSession.signerPayload) {
-            console.log(`bootNDK (sync): Signer payload found for ${userPubkey}, but will be loaded asynchronously later.`);
+            ndkSignerFromPayload(mostRecentSession.signerPayload, ndk).then((signer) => {
+            console.log(`bootNDK (sync): Loaded signer for ${userPubkey}`);
+            ndk.signer = signer;
+            }).catch((error) => {
+                console.log(`bootNDK (sync): Signer payload found for ${userPubkey}, but will be loaded asynchronously later.`);
+            });
         } else {
             console.log(`bootNDK (sync): No signer payload found for ${userPubkey}. User is read-only initially.`);
         }

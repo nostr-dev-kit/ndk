@@ -572,10 +572,6 @@ export class NDKSubscription extends EventEmitter<{
                 since: Math.max(filter.since || 0, sinceTimestamp)
             }));
         }
-
-        if (this.opts.addSinceFromCache) {
-            console.log("we were asked to add a since from cache", JSON.stringify(filters, null, 4));
-        }
         
         if (!this.relaySet || this.relaySet.relays.size === 0) {
             this.relayFilters = calculateRelaySetsFromFilters(this.ndk, filters, this.pool);

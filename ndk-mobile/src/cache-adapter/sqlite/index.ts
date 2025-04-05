@@ -194,8 +194,6 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
      */
 
     query(subscription: NDKSubscription): NDKEvent[] {
-        console.log('sqlite query '+JSON.stringify(subscription.filters));
-
         const cacheFilters = filterForCache(subscription);
         const results = new Map<NDKEventId, NDKEvent>();
 
@@ -212,7 +210,6 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
             );
 
             if (hasHashtagFilter) {
-                console.log('\tusing hasHashtagFilter query', JSON.stringify(filter));
                 for (const key in filter) {
                     if (key.startsWith("#") && key.length === 2) {
                         const tag = key[1];
@@ -226,28 +223,24 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                     }
                 }
             } else if (filter.authors && filter.kinds) {
-                console.log('\tusing authors + kinds query', JSON.stringify(filter));
                 const events = this.db.getAllSync(
                     `SELECT * FROM events WHERE pubkey IN (${filter.authors.map(() => "?").join(",")}) AND kind IN (${filter.kinds.map(() => "?").join(",")}) ORDER BY created_at DESC`,
                     [...filter.authors, ...filter.kinds]
                 ) as NDKSqliteEventRecord[];
                 if (events.length > 0) addResults(foundEvents(subscription, events, filter));
             } else if (filter.authors) {
-                console.log('\tusing authors query', JSON.stringify(filter));
                 const events = this.db.getAllSync(
                     `SELECT * FROM events WHERE pubkey IN (${filter.authors.map(() => "?").join(",")}) ORDER BY created_at DESC`,
                     filter.authors
                 ) as NDKSqliteEventRecord[];
                 if (events.length > 0) addResults(foundEvents(subscription, events, filter));
             } else if (filter.kinds) {
-                console.log('\tusing kinds query', JSON.stringify(filter));
                 const events = this.db.getAllSync(
                     `SELECT * FROM events WHERE kind IN (${filter.kinds.map(() => "?").join(",")}) ORDER BY created_at DESC`,
                     filter.kinds
                 ) as NDKSqliteEventRecord[];
                 if (events.length > 0) addResults(foundEvents(subscription, events, filter));
             } else if (filter.ids) {
-                console.log('\tusing ids query', JSON.stringify(filter));
                 const events = this.db.getAllSync(
                     `SELECT * FROM events WHERE id IN (${filter.ids.map(() => "?").join(",")}) ORDER BY created_at DESC`,
                     filter.ids
@@ -256,13 +249,9 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
             } else {
                 console.log('\t👀 no logic on how to run this query in the sqlite cache', JSON.stringify(filter));
             }
-
-            console.log('\t\tsqlite query '+JSON.stringify(filter) +':   👉 '+results.size)
         }
 
         const ret = Array.from(results.values());
-
-        console.log('returning', ret.length)
         
         return ret;
     }

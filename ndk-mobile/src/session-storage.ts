@@ -61,6 +61,9 @@ export async function saveSessionsToStorage(
             SESSIONS_STORE_KEY,
             JSON.stringify(sessions)
         );
+
+        console.log('Sessions saved to storage:', JSON.stringify(sessions, null, 4));
+        
     } catch (error) {
         console.error('Error saving sessions to storage:', error);
     }

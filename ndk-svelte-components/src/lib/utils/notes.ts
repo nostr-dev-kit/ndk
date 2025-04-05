@@ -64,10 +64,7 @@ export function groupContent(parts: ParsedPart[]): ParsedPart[] {
     };
 
     parts.forEach((part, index) => {
-        if (
-            part.type === LINK &&
-            (isImage(part.value.url) || isVideo(part.value.url) || isAudio(part.value.url))
-        ) {
+        if (part.type === LINK && (isImage(part.value.url) || isVideo(part.value.url) || isAudio(part.value.url))) {
             if (!buffer) {
                 buffer = {
                     type: LINKCOLLECTION,
@@ -164,9 +161,7 @@ export const parseContent = ({ content, tags = [], html = false }: ContentArgs):
     };
 
     const parseBech32 = () => {
-        const bech32 = first(
-            text.match(/^(web\+)?(nostr:)?\/?\/?n(event|ote|profile|pub|addr)1[\d\w]+/i)
-        );
+        const bech32 = first(text.match(/^(web\+)?(nostr:)?\/?\/?n(event|ote|profile|pub|addr)1[\d\w]+/i));
 
         if (bech32) {
             try {
@@ -283,10 +278,8 @@ export const truncateContent = (content, { showEntire, maxLength, showMedia = fa
     const truncateAt = maxLength * 0.6;
 
     content.every((part, i) => {
-        const isText =
-            [TOPIC, TEXT].includes(part.type) || (part.type === LINK && !part.value.isMedia);
-        const isMedia =
-            part.type === INVOICE || part.type.startsWith("nostr:") || part.value.isMedia;
+        const isText = [TOPIC, TEXT].includes(part.type) || (part.type === LINK && !part.value.isMedia);
+        const isMedia = part.type === INVOICE || part.type.startsWith("nostr:") || part.value.isMedia;
 
         if (isText) {
             length += part.value.length;

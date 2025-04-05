@@ -10,7 +10,7 @@ export const migrations = [
                     event TEXT,
                     relays TEXT,
                     last_try_at INTEGER
-                );`
+                );`,
             );
 
             db.execSync(
@@ -21,21 +21,21 @@ export const migrations = [
                     event TEXT,
                     kind INTEGER,
                     relay TEXT
-                );`
+                );`,
             );
             db.execSync(
                 `CREATE TABLE IF NOT EXISTS profiles (
                     pubkey TEXT PRIMARY KEY,
                     profile TEXT,
                     catched_at INTEGER
-                );`
+                );`,
             );
             db.execSync(
                 `CREATE TABLE IF NOT EXISTS relay_status (
                     url TEXT PRIMARY KEY,
                     lastConnectedAt INTEGER,
                     dontConnectBefore INTEGER
-                );`
+                );`,
             );
             // New table for event tags
             db.execSync(
@@ -44,14 +44,12 @@ export const migrations = [
                     tag TEXT,
                     value TEXT,
                     PRIMARY KEY (event_id, tag)
-                );`
+                );`,
             );
 
             db.execSync("CREATE INDEX IF NOT EXISTS idx_events_pubkey ON events (pubkey);");
             db.execSync("CREATE INDEX IF NOT EXISTS idx_events_kind ON events (kind);");
-            db.execSync(
-                "CREATE INDEX IF NOT EXISTS idx_event_tags_tag ON event_tags (tag);"
-            );
+            db.execSync("CREATE INDEX IF NOT EXISTS idx_event_tags_tag ON event_tags (tag);");
         },
     },
     {
@@ -63,13 +61,9 @@ export const migrations = [
     {
         version: 2,
         up: (db: SQLite.SQLiteDatabase) => {
-            db.execSync(
-                "CREATE INDEX IF NOT EXISTS idx_profiles_pubkey ON profiles (pubkey);"
-            );
+            db.execSync("CREATE INDEX IF NOT EXISTS idx_profiles_pubkey ON profiles (pubkey);");
             db.execSync("DROP INDEX IF EXISTS idx_event_tags_tag;");
-            db.execSync(
-                "CREATE INDEX IF NOT EXISTS idx_event_tags_tag ON event_tags (tag, value);"
-            );
+            db.execSync("CREATE INDEX IF NOT EXISTS idx_event_tags_tag ON event_tags (tag, value);");
         },
     },
     {
@@ -175,7 +169,7 @@ export const migrations = [
                             profileJson.displayName,
                             profileJson.website,
                             profile.pubkey,
-                        ]
+                        ],
                     );
                 } catch (_e) {
                     db.runSync("DELETE FROM profiles WHERE pubkey = ?;", [profile.pubkey]);

@@ -8,13 +8,7 @@ import type {
 import type { WebLNProvider } from "@webbtc/webln-types";
 import { requestProvider } from "webln";
 import type { NutPayment } from "../cashu/pay/nut.js";
-import {
-    NDKWallet,
-    type NDKWalletBalance,
-    NDKWalletEvents,
-    NDKWalletStatus,
-    type NDKWalletTypes,
-} from "../index.js";
+import { NDKWallet, type NDKWalletBalance, NDKWalletEvents, NDKWalletStatus, type NDKWalletTypes } from "../index.js";
 import { NDKLnPay } from "./pay";
 
 export class NDKWebLNWallet extends NDKWallet {

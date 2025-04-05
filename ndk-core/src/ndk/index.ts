@@ -28,11 +28,7 @@ import { getEntity } from "./entity.js";
 import { fetchEventFromTag } from "./fetch-event-from-tag.js";
 import { Queue } from "./queue/index.js";
 
-export type NDKValidationRatioFn = (
-    relay: NDKRelay,
-    validatedCount: number,
-    nonValidatedCount: number
-) => number;
+export type NDKValidationRatioFn = (relay: NDKRelay, validatedCount: number, nonValidatedCount: number) => number;
 
 export type NDKNetDebug = (msg: string, relay: NDKRelay, direction?: "send" | "recv") => void;
 
@@ -42,9 +38,7 @@ export type NDKNetDebug = (msg: string, relay: NDKRelay, direction?: "send" | "r
 export interface NDKWalletInterface {
     lnPay?: LnPayCb;
     cashuPay?: CashuPayCb;
-    onPaymentComplete?: (
-        results: Map<NDKZapSplit, NDKPaymentConfirmation | Error | undefined>
-    ) => void;
+    onPaymentComplete?: (results: Map<NDKZapSplit, NDKPaymentConfirmation | Error | undefined>) => void;
 }
 
 export interface NDKConstructorParams {
@@ -238,11 +232,7 @@ export class NDK extends EventEmitter<{
      * @param error The error that caused the event to fail to publish
      * @param relays The relays that the event was attempted to be published to
      */
-    "event:publish-failed": (
-        event: NDKEvent,
-        error: NDKPublishError,
-        relays: WebSocket["url"][]
-    ) => void;
+    "event:publish-failed": (event: NDKEvent, error: NDKPublishError, relays: WebSocket["url"][]) => void;
 }> {
     private _explicitRelayUrls?: WebSocket["url"][];
     public blacklistRelayUrls?: WebSocket["url"][];
@@ -395,11 +385,7 @@ export class NDK extends EventEmitter<{
      * @param connect Whether to connect to the relay automatically
      * @returns
      */
-    public addExplicitRelay(
-        urlOrRelay: string | NDKRelay,
-        relayAuthPolicy?: NDKAuthPolicy,
-        connect = true
-    ): NDKRelay {
+    public addExplicitRelay(urlOrRelay: string | NDKRelay, relayAuthPolicy?: NDKAuthPolicy, connect = true): NDKRelay {
         let relay: NDKRelay;
 
         if (typeof urlOrRelay === "string") {
@@ -466,7 +452,7 @@ export class NDK extends EventEmitter<{
         if (this._signer && this.autoConnectUserRelays) {
             this.debug(
                 "Attempting to connect to user relays specified by signer %o",
-                await this._signer.relays?.(this)
+                await this._signer.relays?.(this),
             );
 
             if (this._signer.relays) {
@@ -557,7 +543,7 @@ export class NDK extends EventEmitter<{
         filters: NDKFilter | NDKFilter[],
         opts?: NDKSubscriptionOptions,
         // relaySet?: NDKRelaySet, // Removed v2.13.0: Pass via opts.relaySet or opts.relayUrls
-        autoStart: boolean | NDKSubscriptionEventHandlers = true
+        autoStart: boolean | NDKSubscriptionEventHandlers = true,
     ): NDKSubscription {
         // NDKSubscription constructor now handles relaySet/relayUrls from opts
         const subscription = new NDKSubscription(this, filters, opts);
@@ -608,11 +594,7 @@ export class NDK extends EventEmitter<{
      *
      * @deprecated Use `event.publish()` instead
      */
-    public async publish(
-        event: NDKEvent,
-        relaySet?: NDKRelaySet,
-        timeoutMs?: number
-    ): Promise<Set<NDKRelay>> {
+    public async publish(event: NDKEvent, relaySet?: NDKRelaySet, timeoutMs?: number): Promise<Set<NDKRelay>> {
         this.debug("Deprecated: Use `event.publish()` instead");
 
         return event.publish(relaySet, timeoutMs);
@@ -658,7 +640,7 @@ export class NDK extends EventEmitter<{
     public async fetchEvent(
         idOrFilter: string | NDKFilter | NDKFilter[],
         opts?: NDKSubscriptionOptions,
-        relaySetOrRelay?: NDKRelaySet | NDKRelay
+        relaySetOrRelay?: NDKRelaySet | NDKRelay,
     ): Promise<NDKEvent | null> {
         let filters: NDKFilter[];
         let relaySet: NDKRelaySet | undefined;
@@ -711,7 +693,7 @@ export class NDK extends EventEmitter<{
                 filters,
                 subscribeOpts,
                 // relaySet, // Removed: Passed via opts
-                false // autoStart = false
+                false, // autoStart = false
             );
 
             /** This is a workaround, for some reason we're leaking subscriptions that should EOSE and fetchEvent is not
@@ -749,7 +731,7 @@ export class NDK extends EventEmitter<{
     public async fetchEvents(
         filters: NDKFilter | NDKFilter[],
         opts?: NDKSubscriptionOptions,
-        relaySet?: NDKRelaySet
+        relaySet?: NDKRelaySet,
     ): Promise<Set<NDKEvent>> {
         return new Promise((resolve) => {
             const events: Map<string, NDKEvent> = new Map();
@@ -765,7 +747,7 @@ export class NDK extends EventEmitter<{
                 filters,
                 subscribeOpts,
                 // relaySet, // Removed: Passed via opts
-                false // autoStart = false
+                false, // autoStart = false
             );
 
             const onEvent = (event: NostrEvent | NDKEvent) => {

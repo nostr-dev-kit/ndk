@@ -4,13 +4,10 @@ import type { NDKCacheAdapterSqlite, NDKSqliteProfileRecord } from "../../index.
 /**
  * Convenience method to search for profiles in the database.
  */
-export function searchProfiles(
-    adapter: NDKCacheAdapterSqlite,
-    query: string
-): [string, NDKUserProfile][] {
+export function searchProfiles(adapter: NDKCacheAdapterSqlite, query: string): [string, NDKUserProfile][] {
     const pubkeys = adapter.db.getAllSync(
         "SELECT * FROM profiles WHERE name LIKE ? OR about LIKE ? OR nip05 LIKE ? OR display_name LIKE ?",
-        [`%${query}%`, `%${query}%`, `%${query}%`, `%${query}%`]
+        [`%${query}%`, `%${query}%`, `%${query}%`, `%${query}%`],
     ) as NDKSqliteProfileRecord[];
 
     const results: [string, NDKUserProfile][] = [];

@@ -120,18 +120,12 @@ export class NDKNip07Signer implements NDKSigner {
     public async encryptionEnabled(nip?: NDKEncryptionScheme): Promise<NDKEncryptionScheme[]> {
         const enabled: NDKEncryptionScheme[] = [];
         // Check against the defined window.nostr type which includes optional nip04/nip44
-        if ((!nip || nip === "nip04") && Boolean(window.nostr?.nip04))
-            enabled.push("nip04");
-        if ((!nip || nip === "nip44") && Boolean(window.nostr?.nip44))
-            enabled.push("nip44");
+        if ((!nip || nip === "nip04") && Boolean(window.nostr?.nip04)) enabled.push("nip04");
+        if ((!nip || nip === "nip44") && Boolean(window.nostr?.nip44)) enabled.push("nip44");
         return enabled;
     }
 
-    public async encrypt(
-        recipient: NDKUser,
-        value: string,
-        nip: NDKEncryptionScheme = "nip04"
-    ): Promise<string> {
+    public async encrypt(recipient: NDKUser, value: string, nip: NDKEncryptionScheme = "nip04"): Promise<string> {
         if (!(await this.encryptionEnabled(nip)))
             throw new Error(`${nip}encryption is not available from your browser extension`);
         await this.waitForExtension();
@@ -140,11 +134,7 @@ export class NDKNip07Signer implements NDKSigner {
         return this.queueEncryption(nip, "encrypt", recipientHexPubKey, value);
     }
 
-    public async decrypt(
-        sender: NDKUser,
-        value: string,
-        nip: NDKEncryptionScheme = "nip04"
-    ): Promise<string> {
+    public async decrypt(sender: NDKUser, value: string, nip: NDKEncryptionScheme = "nip04"): Promise<string> {
         if (!(await this.encryptionEnabled(nip)))
             throw new Error(`${nip}encryption is not available from your browser extension`);
         await this.waitForExtension();
@@ -157,7 +147,7 @@ export class NDKNip07Signer implements NDKSigner {
         scheme: NDKEncryptionScheme,
         method: EncryptionMethod,
         counterpartyHexpubkey: string,
-        value: string
+        value: string,
     ): Promise<string> {
         return new Promise((resolve, reject) => {
             this.encryptionQueue.push({

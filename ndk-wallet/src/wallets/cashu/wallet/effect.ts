@@ -50,7 +50,7 @@ export async function withProofReserve<T>(
     mint: MintUrl,
     amountWithFees: number,
     amountWithoutFees: number,
-    cb: (proofsToUse: Proof[], allOurProofs: Proof[]) => Promise<WithProofReserveCb<T> | null>
+    cb: (proofsToUse: Proof[], allOurProofs: Proof[]) => Promise<WithProofReserveCb<T> | null>,
 ): Promise<WalletOperation<T> | null> {
     cashuWallet ??= await wallet.getCashuWallet(mint);
 

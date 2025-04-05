@@ -66,13 +66,12 @@ export class NDKRelayConnectivity {
      */
     public async connect(timeoutMs?: number, reconnect = true): Promise<void> {
         if (
-            (this._status !== NDKRelayStatus.RECONNECTING &&
-                this._status !== NDKRelayStatus.DISCONNECTED) ||
+            (this._status !== NDKRelayStatus.RECONNECTING && this._status !== NDKRelayStatus.DISCONNECTED) ||
             this.reconnectTimeout
         ) {
             this.debug(
                 "Relay requested to be connected but was in state %s or it had a reconnect timeout",
-                this._status
+                this._status,
             );
             return;
         }
@@ -90,16 +89,11 @@ export class NDKRelayConnectivity {
         timeoutMs ??= this.timeoutMs;
         if (!this.timeoutMs && timeoutMs) this.timeoutMs = timeoutMs;
 
-        if (this.timeoutMs)
-            this.connectTimeout = setTimeout(
-                () => this.onConnectionError(reconnect),
-                this.timeoutMs
-            );
+        if (this.timeoutMs) this.connectTimeout = setTimeout(() => this.onConnectionError(reconnect), this.timeoutMs);
 
         try {
             this.updateConnectionStats.attempt();
-            if (this._status === NDKRelayStatus.DISCONNECTED)
-                this._status = NDKRelayStatus.CONNECTING;
+            if (this._status === NDKRelayStatus.DISCONNECTED) this._status = NDKRelayStatus.CONNECTING;
             else this._status = NDKRelayStatus.RECONNECTING;
 
             this.ws = new WebSocket(this.ndkRelay.url);
@@ -229,9 +223,7 @@ export class NDKRelayConnectivity {
                 case "OK": {
                     const ok: boolean = data[2];
                     const reason: string = data[3];
-                    const ep = this.openEventPublishes.get(id) as
-                        | EventPublishResolver[]
-                        | undefined;
+                    const ep = this.openEventPublishes.get(id) as EventPublishResolver[] | undefined;
                     const firstEp = ep?.pop();
 
                     if (!ep || !firstEp) {
@@ -266,10 +258,7 @@ export class NDKRelayConnectivity {
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
-            this.debug(
-                `Error parsing message from ${this.ndkRelay.url}: ${error.message}`,
-                error?.stack
-            );
+            this.debug(`Error parsing message from ${this.ndkRelay.url}: ${error.message}`, error?.stack);
             return;
         }
     }
@@ -314,10 +303,7 @@ export class NDKRelayConnectivity {
                     }
 
                     const authenticate = async () => {
-                        if (
-                            this._status >= NDKRelayStatus.CONNECTED &&
-                            this._status < NDKRelayStatus.AUTHENTICATED
-                        ) {
+                        if (this._status >= NDKRelayStatus.CONNECTED && this._status < NDKRelayStatus.AUTHENTICATED) {
                             const event = new NDKEvent(this.ndk);
                             event.kind = NDKKind.ClientAuth;
                             event.tags = [
@@ -337,10 +323,7 @@ export class NDKRelayConnectivity {
                                     this.debug("Authentication failed", e);
                                 });
                         } else {
-                            this.debug(
-                                "Authentication failed, it changed status, status is %d",
-                                this._status
-                            );
+                            this.debug("Authentication failed, it changed status, status is %d", this._status);
                         }
                     };
 
@@ -402,8 +385,7 @@ export class NDKRelayConnectivity {
 
         const sum = durations.reduce((a, b) => a + b, 0);
         const avg = sum / durations.length;
-        const variance =
-            durations.map((x) => (x - avg) ** 2).reduce((a, b) => a + b, 0) / durations.length;
+        const variance = durations.map((x) => (x - avg) ** 2).reduce((a, b) => a + b, 0) / durations.length;
         const stdDev = Math.sqrt(variance);
         const isFlapping = stdDev < FLAPPING_THRESHOLD_MS;
 
@@ -458,7 +440,7 @@ export class NDKRelayConnectivity {
                         () => {
                             this.handleReconnection(attempt + 1);
                         },
-                        (1000 * (attempt + 1)) ^ 4
+                        (1000 * (attempt + 1)) ^ 4,
                     );
                 } else {
                     this.debug("Reconnect failed");
@@ -484,10 +466,7 @@ export class NDKRelayConnectivity {
             this.ws?.send(message);
             this.netDebug?.(message, this.ndkRelay, "send");
         } else {
-            this.debug(
-                `Not connected to ${this.ndkRelay.url} (%d), not sending message ${message}`,
-                this._status
-            );
+            this.debug(`Not connected to ${this.ndkRelay.url} (%d), not sending message ${message}`, this._status);
         }
     }
 
@@ -518,9 +497,7 @@ export class NDKRelayConnectivity {
         const ret = new Promise<string>((resolve, reject) => {
             const val = this.openEventPublishes.get(event.id!) ?? [];
             if (val.length > 0) {
-                console.warn(
-                    `Duplicate event publishing detected, you are publishing event ${event.id!} twice`
-                );
+                console.warn(`Duplicate event publishing detected, you are publishing event ${event.id!} twice`);
             }
 
             val.push({ resolve, reject });
@@ -563,9 +540,7 @@ export class NDKRelayConnectivity {
      * @returns A new NDKRelaySubscription instance.
      */
     public req(relaySub: NDKRelaySubscription): void {
-        `${this.send(
-            `["REQ","${relaySub.subId}",${JSON.stringify(relaySub.executeFilters).substring(1)}`
-        )}]`;
+        `${this.send(`["REQ","${relaySub.subId}",${JSON.stringify(relaySub.executeFilters).substring(1)}`)}]`;
         this.openSubs.set(relaySub.subId, relaySub);
     }
 
@@ -580,9 +555,7 @@ export class NDKRelayConnectivity {
 
         disconnected: () => {
             if (this._connectionStats.connectedAt) {
-                this._connectionStats.durations.push(
-                    Date.now() - this._connectionStats.connectedAt
-                );
+                this._connectionStats.durations.push(Date.now() - this._connectionStats.connectedAt);
 
                 if (this._connectionStats.durations.length > 100) {
                     this._connectionStats.durations.shift();

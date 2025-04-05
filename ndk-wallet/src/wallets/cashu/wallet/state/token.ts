@@ -30,7 +30,7 @@ function maybeAssociateProofWithToken(
     walletState: WalletState,
     proof: Proof,
     token: NDKCashuToken,
-    state: "available" | "reserved" | "deleted"
+    state: "available" | "reserved" | "deleted",
 ): boolean | null {
     const proofC = proof.C;
     const proofEntry = walletState.proofs.get(proofC);
@@ -56,17 +56,14 @@ function maybeAssociateProofWithToken(
         const existingTokenEntry = walletState.tokens.get(proofEntry.tokenId);
         if (!existingTokenEntry) {
             throw new Error(
-                `BUG: Token id ${proofEntry.tokenId} not found, was expected to be associated with proof ${proofC}`
+                `BUG: Token id ${proofEntry.tokenId} not found, was expected to be associated with proof ${proofC}`,
             );
         }
         const existingToken = existingTokenEntry.token;
 
         if (existingToken) {
             // existing token didnt have a timestamp or the incoming token is newer
-            if (
-                existingToken.created_at &&
-                (!token.created_at || token.created_at < existingToken.created_at)
-            ) {
+            if (existingToken.created_at && (!token.created_at || token.created_at < existingToken.created_at)) {
                 // either the incoming token is older or it doesnt have a timestamp
                 return false;
             }

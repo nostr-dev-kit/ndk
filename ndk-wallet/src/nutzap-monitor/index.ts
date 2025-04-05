@@ -117,7 +117,7 @@ export class NDKNutzapMonitor
     constructor(
         ndk: NDK,
         user: NDKUser,
-        { mintList, store }: { mintList?: NDKCashuMintList; store?: NDKNutzapMonitorStore }
+        { mintList, store }: { mintList?: NDKCashuMintList; store?: NDKNutzapMonitorStore },
     ) {
         super();
         this.ndk = ndk;
@@ -170,8 +170,7 @@ export class NDKNutzapMonitor
         if (!this.sub) return;
 
         // check for nutzaps that were missing the pubkey we just added
-        const inMssingPrivKeyState = (state: NDKNutzapState) =>
-            state.status === NdkNutzapStatus.MISSING_PRIVKEY;
+        const inMssingPrivKeyState = (state: NDKNutzapState) => state.status === NdkNutzapStatus.MISSING_PRIVKEY;
         const ensureIsCashuPubkey = (state: NDKNutzapState) => state.nutzap?.p2pk === pubkey;
         const candidateNutzaps = Array.from(this.nutzapStates.values())
             .filter(inMssingPrivKeyState)
@@ -206,7 +205,7 @@ export class NDKNutzapMonitor
         const backupEvents = await this.ndk.fetchEvents(
             [{ kinds: [NDKKind.CashuWalletBackup], authors: [this.user.pubkey] }],
             undefined,
-            this.relaySet
+            this.relaySet,
         );
 
         const keys = Array.from(this.privkeys.values());
@@ -314,9 +313,10 @@ export class NDKNutzapMonitor
             monitorFilter,
             subscribeOpts,
             // this.relaySet, // Removed: Passed via opts
-            { // autoStart handlers (now 3rd argument)
+            {
+                // autoStart handlers (now 3rd argument)
                 onEvent: (event: NDKEvent) => this.eventHandler(event), // Added NDKEvent type
-            }
+            },
         );
 
         log("✅ Nutzap monitor started successfully");
@@ -326,10 +326,7 @@ export class NDKNutzapMonitor
     /**
      * Checks if the group of nutzaps can be redeemed and redeems the ones that can be.
      */
-    private async checkAndRedeemGroup(
-        group: GroupedNutzaps,
-        oldestUnspentNutzapTime?: number | undefined
-    ) {
+    private async checkAndRedeemGroup(group: GroupedNutzaps, oldestUnspentNutzapTime?: number | undefined) {
         const cashuWallet = await this.getCashuWallet(group.mint);
 
         const spendStates = await getProofSpendState(cashuWallet, group.nutzaps);
@@ -351,11 +348,7 @@ export class NDKNutzapMonitor
                 }
             }
 
-            await this.redeemNutzaps(
-                group.mint,
-                spendStates.nutzapsWithUnspentProofs,
-                spendStates.unspentProofs
-            );
+            await this.redeemNutzaps(group.mint, spendStates.nutzapsWithUnspentProofs, spendStates.unspentProofs);
         }
     }
 
@@ -489,8 +482,7 @@ export class NDKNutzapMonitor
      */
     public async redeemNutzaps(mint: string, nutzaps: NDKNutzap[], proofs: Proof[]) {
         if (!this.wallet) throw new Error("wallet not set");
-        if (!this.wallet.redeemNutzaps)
-            throw new Error("wallet does not support redeeming nutzaps");
+        if (!this.wallet.redeemNutzaps) throw new Error("wallet does not support redeeming nutzaps");
 
         const cashuWallet = await this.getCashuWallet(mint);
         const validNutzaps: NDKNutzap[] = [];
@@ -513,8 +505,7 @@ export class NDKNutzapMonitor
                 for (const nutzap of nutzaps) {
                     this.updateNutzapState(nutzap.id, {
                         status: NdkNutzapStatus.INVALID_NUTZAP,
-                        errorMessage:
-                            "Invalid nutzap: locked to an invalid public key (not a nostr key)",
+                        errorMessage: "Invalid nutzap: locked to an invalid public key (not a nostr key)",
                     });
                 }
                 return;
@@ -638,10 +629,7 @@ export class NDKNutzapMonitor
         if ([NdkNutzapStatus.SPENT, NdkNutzapStatus.REDEEMED].includes(state.status)) return false;
 
         // Never retry permanent errors
-        if (
-            [NdkNutzapStatus.PERMANENT_ERROR, NdkNutzapStatus.INVALID_NUTZAP].includes(state.status)
-        )
-            return false;
+        if ([NdkNutzapStatus.PERMANENT_ERROR, NdkNutzapStatus.INVALID_NUTZAP].includes(state.status)) return false;
 
         return false;
     }
@@ -681,10 +669,7 @@ export class NDKNutzapMonitor
      * @param oldestUnspentNutzapTime Optional timestamp to track the oldest unspent nutzap
      * @returns The updated oldestUnspentNutzapTime if any nutzaps were processed
      */
-    private async processNutzaps(
-        nutzaps: NDKNutzap[],
-        oldestUnspentNutzapTime?: number
-    ): Promise<number | undefined> {
+    private async processNutzaps(nutzaps: NDKNutzap[], oldestUnspentNutzapTime?: number): Promise<number | undefined> {
         // Group nutzaps by mint
         const groupedNutzaps = groupNutzaps(nutzaps, this);
 

@@ -46,9 +46,7 @@ export class NDKRelaySubscriptionManager {
 
                 // Go through the subscriptions with this fingerprint and see if we there is one
                 // that is not running yet
-                relaySub = (existingSubs || []).find(
-                    (sub) => sub.status < NDKRelaySubscriptionStatus.RUNNING
-                );
+                relaySub = (existingSubs || []).find((sub) => sub.status < NDKRelaySubscriptionStatus.RUNNING);
             }
             relaySub ??= this.createSubscription(sub, filters, filterFp);
         }
@@ -60,13 +58,9 @@ export class NDKRelaySubscriptionManager {
     public createSubscription(
         _sub: NDKSubscription,
         _filters: NDKFilter[],
-        fingerprint?: NDKFilterFingerprint
+        fingerprint?: NDKFilterFingerprint,
     ): NDKRelaySubscription {
-        const relaySub = new NDKRelaySubscription(
-            this.relay,
-            fingerprint || null,
-            this.generalSubManager
-        );
+        const relaySub = new NDKRelaySubscription(this.relay, fingerprint || null, this.generalSubManager);
         relaySub.onClose = this.onRelaySubscriptionClose.bind(this);
         const currentVal = this.subscriptions.get(relaySub.fingerprint) ?? [];
         this.subscriptions.set(relaySub.fingerprint, [...currentVal, relaySub]);
@@ -77,10 +71,7 @@ export class NDKRelaySubscriptionManager {
     private onRelaySubscriptionClose(sub: NDKRelaySubscription) {
         let currentVal = this.subscriptions.get(sub.fingerprint) ?? [];
         if (!currentVal) {
-            console.warn(
-                "Unexpectedly did not find a subscription with fingerprint",
-                sub.fingerprint
-            );
+            console.warn("Unexpectedly did not find a subscription with fingerprint", sub.fingerprint);
         } else if (currentVal.length === 1) {
             this.subscriptions.delete(sub.fingerprint);
         } else {

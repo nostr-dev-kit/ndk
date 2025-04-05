@@ -1,7 +1,7 @@
-import { NDKEvent } from '@nostr-dev-kit/ndk';
-import { useCallback, useMemo } from 'react';
-import type { MuteCriteria } from '../../subscribe/store'; // Corrected path and added 'type' keyword
-import { isMuted } from '../../utils/mute'; // Corrected path
+import { NDKEvent } from "@nostr-dev-kit/ndk";
+import { useCallback, useMemo } from "react";
+import type { MuteCriteria } from "../../subscribe/store"; // Corrected path and added 'type' keyword
+import { isMuted } from "../../utils/mute"; // Corrected path
 
 /**
  * Provides a memoized filter function to check if an NDKEvent should be muted
@@ -10,7 +10,7 @@ import { isMuted } from '../../utils/mute'; // Corrected path
  * @returns {(event: NDKEvent) => boolean} A function that returns `true` if the event should be filtered (muted), `false` otherwise.
  */
 export function useMuteFilter(): (event: NDKEvent) => boolean {
-    const activeSession = useNDKSessions(s => s.activePubkey ? s.sessions.get(s.activePubkey) : undefined);
+    const activeSession = useNDKSessions((s) => (s.activePubkey ? s.sessions.get(s.activePubkey) : undefined));
 
     const muteCriteria = useMemo((): MuteCriteria => {
         const pubkeys = activeSession?.mutedPubkeys ?? new Set<string>();
@@ -18,13 +18,11 @@ export function useMuteFilter(): (event: NDKEvent) => boolean {
         const hashtags = activeSession?.mutedHashtags ?? new Set<string>();
         const words = activeSession?.mutedWords ?? new Set<string>();
 
-        const wordsRegex =
-            words.size > 0
-                ? new RegExp(Array.from(words).join('|'), 'i')
-                : null;
+        const wordsRegex = words.size > 0 ? new RegExp(Array.from(words).join("|"), "i") : null;
 
         const lowerCaseHashtags = new Set<string>();
-        for (const h of hashtags) { // Changed forEach to for...of
+        for (const h of hashtags) {
+            // Changed forEach to for...of
             lowerCaseHashtags.add(h.toLowerCase());
         }
 
@@ -40,14 +38,14 @@ export function useMuteFilter(): (event: NDKEvent) => boolean {
         (event: NDKEvent): boolean => {
             return isMuted(event, muteCriteria);
         },
-        [muteCriteria]
+        [muteCriteria],
     );
 
     return filterFn;
 }
 
-import { NDKUser } from '@nostr-dev-kit/ndk';
-import { useNDKSessions } from '../../session/store'; // Corrected import path
+import { NDKUser } from "@nostr-dev-kit/ndk";
+import { useNDKSessions } from "../../session/store"; // Corrected import path
 
 /**
  * Type definition for the item that can be muted.
@@ -63,46 +61,42 @@ type MutableItem = NDKEvent | NDKUser | string;
  *          Does nothing if there is no active session.
  */
 export function useMuteItem(
-    publish = true // Removed explicit type annotation
+    publish = true, // Removed explicit type annotation
 ): (item: MutableItem) => void {
-    const { activePubkey } = useNDKSessions(
-        (state) => ({
-            activePubkey: state.activePubkey,
-        })
-    );
+    const { activePubkey } = useNDKSessions((state) => ({
+        activePubkey: state.activePubkey,
+    }));
 
     const muteFn = useCallback(
         (item: MutableItem) => {
             if (!activePubkey) {
-                console.warn(
-                    'useMuteItem: No active session found. Cannot mute item.'
-                );
+                console.warn("useMuteItem: No active session found. Cannot mute item.");
                 return;
             }
 
-            let itemType: 'pubkey' | 'hashtag' | 'word' | 'event';
+            let itemType: "pubkey" | "hashtag" | "word" | "event";
             let value: string;
 
             if (item instanceof NDKEvent) {
-                itemType = 'event';
+                itemType = "event";
                 value = item.id;
             } else if (item instanceof NDKUser) {
-                itemType = 'pubkey';
+                itemType = "pubkey";
                 value = item.pubkey;
-            } else if (typeof item === 'string') {
-                if (item.startsWith('#') && item.length > 1) {
-                    itemType = 'hashtag';
+            } else if (typeof item === "string") {
+                if (item.startsWith("#") && item.length > 1) {
+                    itemType = "hashtag";
                     value = item.substring(1);
                 } else {
-                    itemType = 'word';
+                    itemType = "word";
                     value = item;
                 }
             } else {
-                console.warn('useMuteItem: Invalid item type provided.', item);
+                console.warn("useMuteItem: Invalid item type provided.", item);
                 return;
             }
         },
-        [activePubkey] // Removed unused 'publish' dependency
+        [activePubkey], // Removed unused 'publish' dependency
     );
 
     return muteFn;

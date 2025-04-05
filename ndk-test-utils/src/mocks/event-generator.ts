@@ -44,7 +44,7 @@ export class EventGenerator {
     static createEvent(
         kind = 1, // text note
         content = "",
-        pubkey = ""
+        pubkey = "",
     ): NDKEvent {
         if (!EventGenerator.ndk) {
             throw new Error("NDK not set in EventGenerator. Call setNDK first.");
@@ -83,11 +83,7 @@ export class EventGenerator {
         return event;
     }
 
-    static async createEncryptedDirectMessage(
-        content: string,
-        from: string,
-        to: string
-    ): Promise<NDKEvent> {
+    static async createEncryptedDirectMessage(content: string, from: string, to: string): Promise<NDKEvent> {
         if (!EventGenerator.ndk) {
             throw new Error("NDK not set in EventGenerator. Call setNDK first.");
         }
@@ -114,7 +110,7 @@ export class EventGenerator {
         const event = EventGenerator.createEvent(
             6, // Repost kind
             JSON.stringify(await originalEvent.toNostrEvent()),
-            pubkey
+            pubkey,
         );
         event.tags.push(["e", originalEvent.id || ""]);
         event.tags.push(["p", originalEvent.pubkey]);
@@ -129,16 +125,14 @@ export class EventGenerator {
         kind: number,
         content: string,
         pubkey = "",
-        dTag = ""
+        dTag = "",
     ): Promise<NDKEvent> {
         if (!EventGenerator.ndk) {
             throw new Error("NDK not set in EventGenerator. Call setNDK first.");
         }
 
         if (kind < 30000 || kind > 39999) {
-            throw new Error(
-                `Invalid parameterized replaceable event kind: ${kind}. Must be between 30000-39999.`
-            );
+            throw new Error(`Invalid parameterized replaceable event kind: ${kind}. Must be between 30000-39999.`);
         }
 
         if (!pubkey) {

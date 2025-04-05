@@ -5,14 +5,7 @@ import {
     expectEventsToMatch,
 } from "@nostr-dev-kit/ndk-test-utils";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import NDK, {
-    NDKSubscription,
-    type NDKFilter,
-    NDKKind,
-    type NDKEvent,
-    type NDKRelay,
-    NDKRelaySet,
-} from "./index";
+import NDK, { NDKSubscription, type NDKFilter, NDKKind, type NDKEvent, type NDKRelay, NDKRelaySet } from "./index";
 
 describe("NDKSubscription", () => {
     let ndk: NDK;
@@ -63,7 +56,7 @@ describe("NDKSubscription", () => {
                 skipVerification: true, // Skip verification to simplify test
                 skipValidation: true, // Skip validation to simplify test
             },
-            relaySet
+            relaySet,
         );
 
         // Track received events
@@ -113,7 +106,7 @@ describe("NDKSubscription", () => {
                 skipVerification: true, // Skip verification to simplify test
                 skipValidation: true, // Skip validation to simplify test
             },
-            relaySet
+            relaySet,
         );
 
         // Track events

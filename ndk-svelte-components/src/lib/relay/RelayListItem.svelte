@@ -24,10 +24,7 @@ let _nextReconnectIn: number | undefined;
 let nextReconnectInterval: any;
 
 setInterval(() => {
-    if (
-        !relay.connectionStats.nextReconnectAt ||
-        relay.connectionStats.nextReconnectAt! < Date.now()
-    ) {
+    if (!relay.connectionStats.nextReconnectAt || relay.connectionStats.nextReconnectAt! < Date.now()) {
         clearInterval(nextReconnectInterval);
         _nextReconnectIn = undefined;
         return;

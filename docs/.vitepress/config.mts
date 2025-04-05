@@ -79,9 +79,7 @@ export default withMermaid(
                         { text: "Overview", link: "/snippets/" },
                         {
                             text: "User",
-                            items: [
-                                { text: "Generate Keys", link: "/snippets/user/generate-keys" },
-                            ],
+                            items: [{ text: "Generate Keys", link: "/snippets/user/generate-keys" }],
                         },
                     ],
                 },
@@ -89,5 +87,5 @@ export default withMermaid(
 
             socialLinks: [{ icon: "github", link: "https://github.com/nostr-dev-kit/ndk" }],
         },
-    })
+    }),
 );

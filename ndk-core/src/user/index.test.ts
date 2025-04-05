@@ -23,9 +23,7 @@ describe("NDKUser", () => {
 
             const user = new NDKUser(opts);
 
-            expect(user.npub).toEqual(
-                "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft"
-            );
+            expect(user.npub).toEqual("npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft");
         });
 
         it("sets npub from provided hexpubkey", () => {
@@ -34,9 +32,7 @@ describe("NDKUser", () => {
             };
 
             const user = new NDKUser(opts);
-            expect(user.npub).toEqual(
-                "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft"
-            );
+            expect(user.npub).toEqual("npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft");
         });
 
         it("sets relayUrls from provided relayUrls", () => {
@@ -57,9 +53,7 @@ describe("NDKUser", () => {
 
             const user = new NDKUser(opts);
 
-            expect(user.pubkey).toEqual(
-                "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"
-            );
+            expect(user.pubkey).toEqual("fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52");
             expect(user.relayUrls).toEqual(["wss://pyramid.fiatjaf.com", "wss://f7z.io"]);
         });
     });
@@ -72,9 +66,7 @@ describe("NDKUser", () => {
 
             const pubkey = user.pubkey;
 
-            expect(pubkey).toEqual(
-                "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"
-            );
+            expect(pubkey).toEqual("fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52");
         });
     });
 
@@ -107,7 +99,7 @@ describe("NDKUser", () => {
                     lud16: "lud16value",
                     about: "About jeff",
                 }),
-                pubkey
+                pubkey,
             );
             newEvent.created_at = Math.floor(Date.now() / 1000) - 3600;
 
@@ -124,7 +116,7 @@ describe("NDKUser", () => {
                     lud16: "lud16value OLD",
                     about: "About jeff OLD",
                 }),
-                pubkey
+                pubkey,
             );
             oldEvent.created_at = Math.floor(Date.now() / 1000) - 7200;
 
@@ -150,7 +142,7 @@ describe("NDKUser", () => {
                     displayName: "JeffG",
                     display_name: "James",
                 }),
-                pubkey
+                pubkey,
             );
             newEvent.created_at = Math.floor(Date.now() / 1000) - 3600;
 
@@ -159,7 +151,7 @@ describe("NDKUser", () => {
                 JSON.stringify({
                     displayName: "Bob",
                 }),
-                pubkey
+                pubkey,
             );
             oldEvent.created_at = Math.floor(Date.now() / 1000) - 7200;
 
@@ -176,7 +168,7 @@ describe("NDKUser", () => {
                 JSON.stringify({
                     picture: "https://set-from-picture-field.url",
                 }),
-                pubkey
+                pubkey,
             );
             newEvent.created_at = Math.floor(Date.now() / 1000) - 3600;
 
@@ -185,7 +177,7 @@ describe("NDKUser", () => {
                 JSON.stringify({
                     image: "https://set-from-image-field.url",
                 }),
-                pubkey
+                pubkey,
             );
             oldEvent.created_at = Math.floor(Date.now() / 1000) - 7200;
 
@@ -201,7 +193,7 @@ describe("NDKUser", () => {
                 JSON.stringify({
                     customField: "custom NEW",
                 }),
-                pubkey
+                pubkey,
             );
             newEvent.created_at = Math.floor(Date.now() / 1000) - 3600;
 
@@ -210,7 +202,7 @@ describe("NDKUser", () => {
                 JSON.stringify({
                     customField: "custom OLD",
                 }),
-                pubkey
+                pubkey,
             );
             oldEvent.created_at = Math.floor(Date.now() / 1000) - 7200;
 

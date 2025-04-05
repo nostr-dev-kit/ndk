@@ -14,10 +14,9 @@ type QueryDetails = {
 export async function prepareNutzapStateUpdate(
     this: NDKCacheAdapterSqlite,
     id: NDKEventId,
-    stateChange: Partial<NDKNutzapState>
+    stateChange: Partial<NDKNutzapState>,
 ): Promise<QueryDetails | null> {
     // Readiness checks removed as initialization is now synchronous.
-
 
     const now = Math.floor(Date.now() / 1000);
 
@@ -29,10 +28,9 @@ export async function prepareNutzapStateUpdate(
     }
 
     // Check if state already exists
-    const existingState = (await this.db.getFirstAsync(
-        "SELECT event_id FROM nutzap_monitor_state WHERE event_id = ?",
-        [id]
-    )) as { event_id: string } | undefined;
+    const existingState = (await this.db.getFirstAsync("SELECT event_id FROM nutzap_monitor_state WHERE event_id = ?", [
+        id,
+    ])) as { event_id: string } | undefined;
 
     if (existingState) {
         // Prepare update query
@@ -53,7 +51,7 @@ export async function prepareNutzapStateUpdate(
                 stateChange.redeemedAmount,
                 now,
                 id,
-            ]
+            ],
         };
     } else {
         // Prepare insert query
@@ -75,7 +73,7 @@ export async function prepareNutzapStateUpdate(
                 stateChange.errorMessage,
                 stateChange.redeemedAmount,
                 now,
-            ]
+            ],
         };
     }
 }

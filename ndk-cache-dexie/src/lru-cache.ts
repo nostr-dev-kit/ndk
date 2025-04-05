@@ -1,10 +1,7 @@
 import type { Table } from "dexie";
 import { LRUCache } from "typescript-lru-cache";
 
-export type WarmUpFunction<T> = (
-    cacheHandler: CacheHandler<T>,
-    debug: debug.IDebugger
-) => Promise<void>;
+export type WarmUpFunction<T> = (cacheHandler: CacheHandler<T>, debug: debug.IDebugger) => Promise<void>;
 
 export interface CacheOptions<T> {
     maxSize: number;
@@ -77,9 +74,7 @@ export class CacheHandler<T> {
         }
 
         if (entries.length > 0) {
-            this.debug(
-                `Cache hit for keys ${entries.length} and miss for ${missingKeys.length} keys`
-            );
+            this.debug(`Cache hit for keys ${entries.length} and miss for ${missingKeys.length} keys`);
         }
 
         // get missing entries from the database
@@ -99,7 +94,7 @@ export class CacheHandler<T> {
             this.debug(
                 `Time spent querying database: ${endTime - startTime}ms for ${
                     missingKeys.length
-                } keys, which added ${foundKeys} entries to the cache`
+                } keys, which added ${foundKeys} entries to the cache`,
             );
         }
 
@@ -154,7 +149,7 @@ export class CacheHandler<T> {
         const indexValues = this.indexes.get(index);
         if (indexValues) {
             const values = indexValues.get(key);
-            
+
             if (values) {
                 for (const key of values.values()) {
                     const entry = this.get(key);

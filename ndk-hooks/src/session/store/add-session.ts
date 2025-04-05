@@ -1,7 +1,7 @@
 // src/session/store/add-session.ts
-import { NDKSigner, NDKUser, Hexpubkey } from '@nostr-dev-kit/ndk';
-import type { Draft } from 'immer'; // Import Draft type
-import type { NDKSessionsState, NDKUserSession } from './types';
+import { NDKSigner, NDKUser, Hexpubkey } from "@nostr-dev-kit/ndk";
+import type { Draft } from "immer"; // Import Draft type
+import type { NDKSessionsState, NDKUserSession } from "./types";
 
 /**
  * Creates a default empty session object.
@@ -13,14 +13,14 @@ const createDefaultSession = (pubkey: Hexpubkey): NDKUserSession => ({
     mutedWords: new Set(),
     mutedEventIds: new Set(),
     events: new Map(),
-    lastActive: Date.now()/ 1000
+    lastActive: Date.now() / 1000,
 });
 
 export const addSession = async (
     set: (fn: (draft: Draft<NDKSessionsState>) => void) => void,
     get: () => NDKSessionsState, // get remains the same
     userOrSigner: NDKUser | NDKSigner,
-    setActive: boolean = true
+    setActive: boolean = true,
 ): Promise<Hexpubkey> => {
     let user: NDKUser;
     let signer: NDKSigner | undefined = undefined;
@@ -40,7 +40,6 @@ export const addSession = async (
                 // No need for explicit check, signer is guaranteed here
                 draft.signers.set(userPubkey, signer as NDKSigner);
             });
-
         } catch (error) {
             console.error("Failed to get user from signer:", error);
             throw new Error("Could not retrieve user from the provided signer.");

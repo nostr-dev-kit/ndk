@@ -8,7 +8,7 @@ export default class PingEventHandlingStrategy implements IEventHandlingStrategy
         backend: NDKNip46Backend,
         id: string,
         remotePubkey: string,
-        _params: string[]
+        _params: string[],
     ): Promise<string | undefined> {
         const debug = backend.debug.extend("ping");
 

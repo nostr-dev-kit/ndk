@@ -133,41 +133,27 @@ export class NDKPrivateKeySigner implements NDKSigner {
         return enabled;
     }
 
-    public async encrypt(
-        recipient: NDKUser,
-        value: string,
-        scheme?: NDKEncryptionScheme
-    ): Promise<string> {
+    public async encrypt(recipient: NDKUser, value: string, scheme?: NDKEncryptionScheme): Promise<string> {
         if (!this._privateKey || !this.privateKey) {
             throw Error("Attempted to encrypt without a private key");
         }
 
         const recipientHexPubKey = recipient.pubkey;
         if (scheme === "nip44") {
-            const conversationKey = nip44.v2.utils.getConversationKey(
-                this._privateKey,
-                recipientHexPubKey
-            );
+            const conversationKey = nip44.v2.utils.getConversationKey(this._privateKey, recipientHexPubKey);
             return await nip44.v2.encrypt(value, conversationKey);
         }
         return await nip04.encrypt(this._privateKey, recipientHexPubKey, value);
     }
 
-    public async decrypt(
-        sender: NDKUser,
-        value: string,
-        scheme?: NDKEncryptionScheme
-    ): Promise<string> {
+    public async decrypt(sender: NDKUser, value: string, scheme?: NDKEncryptionScheme): Promise<string> {
         if (!this._privateKey || !this.privateKey) {
             throw Error("Attempted to decrypt without a private key");
         }
 
         const senderHexPubKey = sender.pubkey;
         if (scheme === "nip44") {
-            const conversationKey = nip44.v2.utils.getConversationKey(
-                this._privateKey,
-                senderHexPubKey
-            );
+            const conversationKey = nip44.v2.utils.getConversationKey(this._privateKey, senderHexPubKey);
             return await nip44.v2.decrypt(value, conversationKey);
         }
         return await nip04.decrypt(this._privateKey, senderHexPubKey, value);
@@ -199,7 +185,7 @@ export class NDKPrivateKeySigner implements NDKSigner {
             throw new Error(`Invalid payload type: expected 'private-key', got ${payload.type}`);
         }
 
-        if (!payload.payload || typeof payload.payload !== 'string') {
+        if (!payload.payload || typeof payload.payload !== "string") {
             throw new Error("Invalid payload content for private-key signer");
         }
 

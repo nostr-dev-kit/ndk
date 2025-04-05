@@ -101,7 +101,7 @@ describe("NDKNip46Signer", () => {
                                 _method: string,
                                 _params?: string[],
                                 _kind?: number,
-                                cb?: (res: NDKRpcResponse) => void
+                                cb?: (res: NDKRpcResponse) => void,
                             ) => {
                                 const response: NDKRpcResponse = {
                                     id: "test-id",
@@ -110,7 +110,7 @@ describe("NDKNip46Signer", () => {
                                 };
                                 if (cb) cb(response);
                                 return Promise.resolve(response);
-                            }
+                            },
                         ),
                         subscribe: vi.fn().mockResolvedValue({}),
                         parseEvent: vi.fn().mockResolvedValue({}),

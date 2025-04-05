@@ -3,14 +3,7 @@ import type { NDKCashuToken, NDKEventId } from "@nostr-dev-kit/ndk";
 import type { NDKCashuWallet } from "..";
 import type { MintUrl } from "../../mint/utils";
 import { getBalance, getMintsBalances } from "./balance";
-import {
-    type GetOpts,
-    addProof,
-    getProofEntries,
-    reserveProofs,
-    unreserveProofs,
-    updateProof,
-} from "./proofs";
+import { type GetOpts, addProof, getProofEntries, reserveProofs, unreserveProofs, updateProof } from "./proofs";
 import { addToken, removeTokenId } from "./token";
 import { update } from "./update";
 
@@ -123,7 +116,7 @@ export class WalletState {
 
     constructor(
         public wallet: NDKCashuWallet,
-        public reservedProofCs: Set<string> = new Set<string>()
+        public reservedProofCs: Set<string> = new Set<string>(),
     ) {}
 
     /** This is a debugging function that dumps the state of the wallet */
@@ -187,9 +180,7 @@ export class WalletState {
         return this.getProofEntries(opts).map((entry) => entry.proof);
     }
 
-    public getTokens(
-        opts: GetOpts = { onlyAvailable: true }
-    ): Map<NDKEventId | null, GetTokenEntry> {
+    public getTokens(opts: GetOpts = { onlyAvailable: true }): Map<NDKEventId | null, GetTokenEntry> {
         const proofEntries = this.getProofEntries(opts);
         const tokens = new Map<NDKEventId | null, GetTokenEntry>();
         for (const proofEntry of proofEntries) {
@@ -213,7 +204,9 @@ export class WalletState {
      */
     public getMintsProofs({
         validStates = new Set(["available"]),
-    }: { validStates?: Set<ProofState> } = {}): Map<MintUrl, Proof[]> {
+    }: {
+        validStates?: Set<ProofState>;
+    } = {}): Map<MintUrl, Proof[]> {
         const mints = new Map<MintUrl, Proof[]>();
         for (const entry of this.proofs.values()) {
             if (!entry.mint || !entry.proof) continue;

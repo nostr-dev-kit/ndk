@@ -2,10 +2,7 @@ import type { NDKEvent, NDKEventId } from "./index.js";
 
 let worker: Worker | undefined;
 
-const processingQueue: Record<
-    NDKEventId,
-    { event: NDKEvent; resolves: ((result: boolean) => void)[] }
-> = {};
+const processingQueue: Record<NDKEventId, { event: NDKEvent; resolves: ((result: boolean) => void)[] }> = {};
 
 export function signatureVerificationInit(w: Worker) {
     worker = w;

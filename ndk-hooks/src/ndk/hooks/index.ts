@@ -1,15 +1,14 @@
-import type NDK from '@nostr-dev-kit/ndk';
-import type { NDKEvent, NDKPublishError, NDKUser } from '@nostr-dev-kit/ndk'; // Add NDKUser
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { type NDKStoreState, useNDKStore } from '../store'; // Corrected path
-import { type UserProfilesStore, useUserProfilesStore } from '../../profiles/store'; // Corrected path
-import { useNDKSessions } from '../../session/store'; // Import session store hook
+import type NDK from "@nostr-dev-kit/ndk";
+import type { NDKEvent, NDKPublishError, NDKUser } from "@nostr-dev-kit/ndk"; // Add NDKUser
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { type NDKStoreState, useNDKStore } from "../store"; // Corrected path
+import { type UserProfilesStore, useUserProfilesStore } from "../../profiles/store"; // Corrected path
+import { useNDKSessions } from "../../session/store"; // Import session store hook
 
 /**
  * Interface for the useNDK hook return value
  */
-interface UseNDKResult
-    extends Pick<NDKStoreState, 'ndk' | 'setNDK'> {}
+interface UseNDKResult extends Pick<NDKStoreState, "ndk" | "setNDK"> {}
 
 /**
  * Hook to access the NDK instance and setNDK function
@@ -20,10 +19,7 @@ export const useNDK = (): UseNDKResult => {
     const ndk = useNDKStore((state) => state.ndk);
     const setNDK = useNDKStore((state) => state.setNDK);
 
-    return useMemo(
-        () => ({ ndk, setNDK }),
-        [ndk, setNDK]
-    );
+    return useMemo(() => ({ ndk, setNDK }), [ndk, setNDK]);
 };
 
 /**
@@ -52,11 +48,9 @@ export const useNDKCurrentUser = (): NDKUser | null => {
 export function useNDKUnpublishedEvents() {
     const { ndk } = useNDK();
     const [unpublishedEvents, setUnpublishedEvents] = useState<
-        { event: NDKEvent; relays?: WebSocket['url'][]; lastTryAt?: number }[]
+        { event: NDKEvent; relays?: WebSocket["url"][]; lastTryAt?: number }[]
     >([]);
-    const state = useRef<
-        { event: NDKEvent; relays?: WebSocket['url'][]; lastTryAt?: number }[]
-    >([]);
+    const state = useRef<{ event: NDKEvent; relays?: WebSocket["url"][]; lastTryAt?: number }[]>([]);
 
     const updateStateFromCache = useCallback(async () => {
         if (!ndk?.cacheAdapter?.getUnpublishedEvents) return;
@@ -82,10 +76,8 @@ export function useNDKUnpublishedEvents() {
             setUnpublishedEvents(freshEntries);
 
             for (const entry of freshEntries) {
-                entry.event.on('published', () => {
-                    state.current = state.current?.filter(
-                        (e) => e.event.id !== entry.event.id
-                    );
+                entry.event.on("published", () => {
+                    state.current = state.current?.filter((e) => e.event.id !== entry.event.id);
                     setUnpublishedEvents(state.current);
                 });
             }
@@ -97,18 +89,14 @@ export function useNDKUnpublishedEvents() {
 
         updateStateFromCache();
 
-        const handlePublishFailed = (
-            _event: NDKEvent,
-            _error: NDKPublishError,
-            _relays: string[]
-        ) => {
+        const handlePublishFailed = (_event: NDKEvent, _error: NDKPublishError, _relays: string[]) => {
             updateStateFromCache();
         };
 
-        ndk?.on('event:publish-failed', handlePublishFailed);
+        ndk?.on("event:publish-failed", handlePublishFailed);
 
         return () => {
-            ndk?.off('event:publish-failed', handlePublishFailed);
+            ndk?.off("event:publish-failed", handlePublishFailed);
         };
     }, [ndk, updateStateFromCache]);
 
@@ -125,9 +113,7 @@ export function useNDKUnpublishedEvents() {
  */
 export function useNDKInit() {
     const setNDK = useNDKStore((state) => state.setNDK);
-    const initializeProfilesStore = useUserProfilesStore(
-        (state) => state.initialize
-    );
+    const initializeProfilesStore = useUserProfilesStore((state) => state.initialize);
     const initializeSessionStore = useNDKSessions((state) => state.init); // Get session init function
 
     /**
@@ -137,24 +123,22 @@ export function useNDKInit() {
     const initializeNDK = useCallback(
         (ndkInstance: NDK) => {
             if (!ndkInstance) {
-                console.error(
-                    'useNDKInit: Attempted to initialize with a null NDK instance.'
-                );
+                console.error("useNDKInit: Attempted to initialize with a null NDK instance.");
                 return;
             }
 
-            console.log('Initializing NDK instance...');
+            console.log("Initializing NDK instance...");
             setNDK(ndkInstance);
 
-            console.log('Initializing User Profiles store...');
+            console.log("Initializing User Profiles store...");
             initializeProfilesStore(ndkInstance);
 
-            console.log('Initializing NDK Sessions store...');
+            console.log("Initializing NDK Sessions store...");
             initializeSessionStore(ndkInstance);
 
-            console.log('NDK and dependent stores initialized.');
+            console.log("NDK and dependent stores initialized.");
         },
-        [setNDK, initializeProfilesStore, initializeSessionStore] // Add session init to dependencies
+        [setNDK, initializeProfilesStore, initializeSessionStore], // Add session init to dependencies
     );
 
     return initializeNDK;

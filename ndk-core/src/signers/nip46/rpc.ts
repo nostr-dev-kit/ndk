@@ -8,11 +8,7 @@ import type { NDK } from "../../ndk";
 import { NDKRelayAuthPolicies } from "../../relay/auth-policies";
 import { NDKPool } from "../../relay/pool";
 import { NDKRelaySet } from "../../relay/sets";
-import {
-    type NDKFilter,
-    type NDKSubscription,
-    NDKSubscriptionCacheUsage,
-} from "../../subscription";
+import { type NDKFilter, type NDKSubscription, NDKSubscriptionCacheUsage } from "../../subscription";
 
 export interface NDKRpcRequest {
     id: string;
@@ -74,7 +70,7 @@ export class NDKNostrRpc extends EventEmitter {
                 pool: this.pool,
                 relaySet: this.relaySet,
             },
-            false
+            false,
         );
 
         sub.on("event", async (event: NDKEvent) => {
@@ -112,18 +108,10 @@ export class NDKNostrRpc extends EventEmitter {
         let decryptedContent: string;
 
         try {
-            decryptedContent = await this.signer.decrypt(
-                remoteUser,
-                event.content,
-                this.encryptionType
-            );
+            decryptedContent = await this.signer.decrypt(remoteUser, event.content, this.encryptionType);
         } catch (_e) {
             const otherEncryptionType = this.encryptionType === "nip04" ? "nip44" : "nip04";
-            decryptedContent = await this.signer.decrypt(
-                remoteUser,
-                event.content,
-                otherEncryptionType
-            );
+            decryptedContent = await this.signer.decrypt(remoteUser, event.content, otherEncryptionType);
             this.encryptionType = otherEncryptionType;
         }
 
@@ -141,7 +129,7 @@ export class NDKNostrRpc extends EventEmitter {
         remotePubkey: string,
         result: string,
         kind = NDKKind.NostrConnect,
-        error?: string
+        error?: string,
     ): Promise<void> {
         const res = { id, result } as NDKRpcResponse;
         if (error) {
@@ -175,7 +163,7 @@ export class NDKNostrRpc extends EventEmitter {
         method: string,
         params: string[] = [],
         kind = 24133,
-        cb?: (res: NDKRpcResponse) => void
+        cb?: (res: NDKRpcResponse) => void,
     ): Promise<NDKRpcResponse> {
         const id = Math.random().toString(36).substring(7);
         const localUser = await this.signer.user();

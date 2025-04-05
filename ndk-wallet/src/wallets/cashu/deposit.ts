@@ -64,9 +64,7 @@ export class NDKCashuDeposit extends EventEmitter<{
         this.wallet.depositMonitor.addDeposit(this);
 
         setTimeout(this.check.bind(this, pollTime), pollTime);
-        this.createQuoteEvent(quote.quote, quote.request).then(
-            (event) => (this.quoteEvent = event)
-        );
+        this.createQuoteEvent(quote.quote, quote.request).then((event) => (this.quoteEvent = event));
 
         return quote.request;
     }
@@ -138,10 +136,7 @@ export class NDKCashuDeposit extends EventEmitter<{
             if (e.message.match(/not paid/i)) return;
 
             if (e.message.match(/already issued/i)) {
-                d(
-                    "Mint is saying the quote has already been issued, destroying quote event: %s",
-                    e.message
-                );
+                d("Mint is saying the quote has already been issued, destroying quote event: %s", e.message);
                 this.destroyQuoteEvent();
                 this.finalized = true;
                 return;
@@ -165,7 +160,7 @@ export class NDKCashuDeposit extends EventEmitter<{
                     store: proofs,
                     mint: this.mint,
                 },
-                "Deposit"
+                "Deposit",
             );
 
             const tokenEvent = updateRes.created;
@@ -177,7 +172,7 @@ export class NDKCashuDeposit extends EventEmitter<{
                 this.mint,
                 updateRes,
                 { description: "Deposit" },
-                this.wallet.relaySet
+                this.wallet.relaySet,
             );
 
             this.emit("success", tokenEvent);

@@ -1,9 +1,9 @@
-import type NDK from '@nostr-dev-kit/ndk';
-import type { Hexpubkey, NDKUserProfile } from '@nostr-dev-kit/ndk';
-import { create } from 'zustand';
-import { fetchProfileImplementation } from './fetch-profile';
-import { initializeProfilesStore } from './initialize';
-import { setProfileImplementation } from './set-profile';
+import type NDK from "@nostr-dev-kit/ndk";
+import type { Hexpubkey, NDKUserProfile } from "@nostr-dev-kit/ndk";
+import { create } from "zustand";
+import { fetchProfileImplementation } from "./fetch-profile";
+import { initializeProfilesStore } from "./initialize";
+import { setProfileImplementation } from "./set-profile";
 
 interface UserProfilesItems {
     /**
@@ -32,11 +32,7 @@ interface UserProfilesStoreActions {
      * @param profile - The profile to store
      * @param cachedAt - The timestamp in seconds when the profile was retrieved
      */
-    setProfile: (
-        pubkey: string,
-        profile: NDKUserProfile,
-        cachedAt?: number
-    ) => void;
+    setProfile: (pubkey: string, profile: NDKUserProfile, cachedAt?: number) => void;
 
     /*
      * Fetch a profile from the NDK instance

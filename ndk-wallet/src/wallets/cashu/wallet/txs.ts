@@ -28,7 +28,7 @@ export async function createOutTxEvent(
     paymentRequest: PaymentWithOptionalZapInfo<LnPaymentInfo | CashuPaymentInfo>,
     paymentResult: WalletOperation<NDKPaymentConfirmationLN | TokenCreationResult>,
     relaySet?: NDKRelaySet,
-    { nutzaps }: { nutzaps?: NDKNutzap[] } = {}
+    { nutzaps }: { nutzaps?: NDKNutzap[] } = {},
 ): Promise<NDKCashuWalletTx> {
     let description: string | undefined = paymentRequest.paymentDescription;
     let amount: number | undefined;
@@ -67,12 +67,9 @@ export async function createOutTxEvent(
         for (const nutzap of nutzaps) txEvent.addRedeemedNutzap(nutzap);
     }
 
-    if (paymentResult.stateUpdate?.created)
-        txEvent.createdTokens = [paymentResult.stateUpdate.created];
-    if (paymentResult.stateUpdate?.deleted)
-        txEvent.destroyedTokenIds = paymentResult.stateUpdate.deleted;
-    if (paymentResult.stateUpdate?.reserved)
-        txEvent.reservedTokens = [paymentResult.stateUpdate.reserved];
+    if (paymentResult.stateUpdate?.created) txEvent.createdTokens = [paymentResult.stateUpdate.created];
+    if (paymentResult.stateUpdate?.deleted) txEvent.destroyedTokenIds = paymentResult.stateUpdate.deleted;
+    if (paymentResult.stateUpdate?.reserved) txEvent.reservedTokens = [paymentResult.stateUpdate.reserved];
 
     await txEvent.sign();
     txEvent.publish(relaySet);
@@ -86,7 +83,7 @@ export async function createInTxEvent(
     mint: MintUrl,
     updateStateResult: UpdateStateResult,
     { nutzaps, fee, description }: { nutzaps?: NDKNutzap[]; fee?: number; description?: string },
-    relaySet?: NDKRelaySet
+    relaySet?: NDKRelaySet,
 ): Promise<NDKCashuWalletTx> {
     const txEvent = new NDKCashuWalletTx(ndk);
 

@@ -150,7 +150,7 @@ export class NDKCashuWallet extends NDKWallet {
                         mint,
                         fee: 0,
                     },
-                    this.relaySet
+                    this.relaySet,
                 );
                 this.emit("balance_updated");
 
@@ -364,7 +364,7 @@ export class NDKCashuWallet extends NDKWallet {
      */
     async lnPay(
         payment: PaymentWithOptionalZapInfo<LnPaymentInfo>,
-        createTxEvent = true
+        createTxEvent = true,
     ): Promise<NDKPaymentConfirmationLN | undefined> {
         return this.paymentHandler.lnPay(payment, createTxEvent);
     }
@@ -380,9 +380,7 @@ export class NDKCashuWallet extends NDKWallet {
      * This function returns the proofs that need to be sent to the recipient.
      * @param amount
      */
-    async cashuPay(
-        payment: NDKZapDetails<CashuPaymentInfo>
-    ): Promise<NDKPaymentConfirmationCashu | undefined> {
+    async cashuPay(payment: NDKZapDetails<CashuPaymentInfo>): Promise<NDKPaymentConfirmationCashu | undefined> {
         return this.paymentHandler.cashuPay(payment);
     }
 
@@ -391,7 +389,7 @@ export class NDKCashuWallet extends NDKWallet {
     async redeemNutzaps(
         nutzaps: NDKNutzap[],
         privkey: string,
-        { mint, proofs, cashuWallet }: RedeemNutzapsOpts
+        { mint, proofs, cashuWallet }: RedeemNutzapsOpts,
     ): Promise<number> {
         if (cashuWallet) {
             mint ??= cashuWallet.mint.mintUrl;
@@ -423,7 +421,7 @@ export class NDKCashuWallet extends NDKWallet {
             console.error(
                 "error redeeming nutzaps",
                 nutzaps.map((n) => n.encode()),
-                e
+                e,
             );
             throw e;
         }

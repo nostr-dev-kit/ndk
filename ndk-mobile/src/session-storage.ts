@@ -1,8 +1,8 @@
-import * as SecureStore from 'expo-secure-store';
-import type { Hexpubkey } from '@nostr-dev-kit/ndk';
+import * as SecureStore from "expo-secure-store";
+import type { Hexpubkey } from "@nostr-dev-kit/ndk";
 
-const SESSIONS_STORE_KEY = 'ndk-saved-sessions';
-const ACTIVE_PUBKEY_STORE_KEY = 'ndk-active-pubkey';
+const SESSIONS_STORE_KEY = "ndk-saved-sessions";
+const ACTIVE_PUBKEY_STORE_KEY = "ndk-active-pubkey";
 
 /**
  * Interface for a stored user session, mirroring the structure used for persistence.
@@ -24,7 +24,7 @@ export async function loadSessionsFromStorage(): Promise<StoredSession[]> {
         const sessions = JSON.parse(sessionsJson) as StoredSession[];
         return sessions;
     } catch (error) {
-        console.error('Error loading sessions from storage (async):', error);
+        console.error("Error loading sessions from storage (async):", error);
         return [];
     }
 }
@@ -42,30 +42,23 @@ export function loadSessionsFromStorageSync(): StoredSession[] {
         const sessions = JSON.parse(sessionsJson) as StoredSession[];
         return sessions;
     } catch (error) {
-        console.error('Error loading sessions from storage (sync):', error);
+        console.error("Error loading sessions from storage (sync):", error);
         return [];
     }
 }
-
 
 /**
  * Save sessions to secure storage asynchronously.
  * @param sessions An array of sessions to save.
  */
-export async function saveSessionsToStorage(
-    sessions: StoredSession[]
-): Promise<void> {
+export async function saveSessionsToStorage(sessions: StoredSession[]): Promise<void> {
     try {
         // Sort by lastActive (most recent first) before saving
-        await SecureStore.setItemAsync(
-            SESSIONS_STORE_KEY,
-            JSON.stringify(sessions)
-        );
+        await SecureStore.setItemAsync(SESSIONS_STORE_KEY, JSON.stringify(sessions));
 
-        console.log('Sessions saved to storage:', JSON.stringify(sessions, null, 4));
-        
+        console.log("Sessions saved to storage:", JSON.stringify(sessions, null, 4));
     } catch (error) {
-        console.error('Error saving sessions to storage:', error);
+        console.error("Error saving sessions to storage:", error);
     }
 }
 
@@ -74,11 +67,9 @@ export async function saveSessionsToStorage(
  * @param pubkey The pubkey of the session to retrieve.
  * @returns A promise resolving to the stored session or undefined if not found.
  */
-export async function getStoredSession(
-    pubkey: Hexpubkey
-): Promise<StoredSession | undefined> {
+export async function getStoredSession(pubkey: Hexpubkey): Promise<StoredSession | undefined> {
     const sessions = await loadSessionsFromStorage();
-    return sessions.find(s => s.pubkey === pubkey);
+    return sessions.find((s) => s.pubkey === pubkey);
 }
 
 /**
@@ -86,13 +77,10 @@ export async function getStoredSession(
  * @param pubkey The pubkey of the session.
  * @param signerPayload Optional stringified signer payload.
  */
-export async function addOrUpdateStoredSession(
-    pubkey: Hexpubkey,
-    signerPayload?: string
-): Promise<void> {
+export async function addOrUpdateStoredSession(pubkey: Hexpubkey, signerPayload?: string): Promise<void> {
     try {
         const sessions = await loadSessionsFromStorage(); // Keep async load here for updates
-        const existingIndex = sessions.findIndex(s => s.pubkey === pubkey);
+        const existingIndex = sessions.findIndex((s) => s.pubkey === pubkey);
 
         if (existingIndex !== -1) {
             // Update existing session
@@ -104,13 +92,13 @@ export async function addOrUpdateStoredSession(
             // Add new session
             sessions.push({
                 pubkey,
-                signerPayload // Will be undefined for read-only sessions initially
+                signerPayload, // Will be undefined for read-only sessions initially
             });
         }
 
         await saveSessionsToStorage(sessions);
     } catch (error) {
-        console.error('Error adding/updating stored session:', error);
+        console.error("Error adding/updating stored session:", error);
     }
 }
 
@@ -121,11 +109,11 @@ export async function addOrUpdateStoredSession(
 export async function removeStoredSession(pubkey: Hexpubkey): Promise<void> {
     try {
         const sessions = await loadSessionsFromStorage(); // Keep async load here
-        const updatedSessions = sessions.filter(s => s.pubkey !== pubkey);
+        const updatedSessions = sessions.filter((s) => s.pubkey !== pubkey);
         await saveSessionsToStorage(updatedSessions);
         console.log(`Removed session ${pubkey} from storage.`);
     } catch (error) {
-        console.error('Error removing session from storage:', error);
+        console.error("Error removing session from storage:", error);
     }
 }
 
@@ -138,7 +126,7 @@ export async function getActivePubkey(): Promise<Hexpubkey | undefined> {
         const activePubkey = await SecureStore.getItemAsync(ACTIVE_PUBKEY_STORE_KEY);
         return activePubkey || undefined;
     } catch (error) {
-        console.error('Error getting active pubkey from storage:', error);
+        console.error("Error getting active pubkey from storage:", error);
         return undefined;
     }
 }
@@ -151,7 +139,7 @@ export async function setActivePubkey(pubkey: Hexpubkey): Promise<void> {
     try {
         await SecureStore.setItemAsync(ACTIVE_PUBKEY_STORE_KEY, pubkey);
     } catch (error) {
-        console.error('Error setting active pubkey in storage:', error);
+        console.error("Error setting active pubkey in storage:", error);
     }
 }
 
@@ -162,6 +150,6 @@ export async function clearActivePubkey(): Promise<void> {
     try {
         await SecureStore.deleteItemAsync(ACTIVE_PUBKEY_STORE_KEY);
     } catch (error) {
-        console.error('Error clearing active pubkey from storage:', error);
+        console.error("Error clearing active pubkey from storage:", error);
     }
 }

@@ -16,7 +16,6 @@ import { nowSeconds } from "../utils/time.js";
  */
 export function getMintInfo(this: NDKCacheAdapterSqlite, url: string): MintInfoResponse | null {
     try {
-
         const res = this.db.getFirstSync("SELECT payload FROM mint_info WHERE url = ?", [url]) as
             | { payload: string }
             | undefined;
@@ -36,11 +35,9 @@ export function getMintInfo(this: NDKCacheAdapterSqlite, url: string): MintInfoR
  */
 export function getMintInfoRecord(this: NDKCacheAdapterSqlite, url: string): StoredMintInfo | null {
     try {
-
-        const res = this.db.getFirstSync(
-            "SELECT url, payload, created_at, updated_at FROM mint_info WHERE url = ?",
-            [url]
-        ) as
+        const res = this.db.getFirstSync("SELECT url, payload, created_at, updated_at FROM mint_info WHERE url = ?", [
+            url,
+        ]) as
             | {
                   url: string;
                   payload: string;
@@ -69,10 +66,7 @@ export function getMintInfoRecord(this: NDKCacheAdapterSqlite, url: string): Sto
  */
 export function getAllMintInfo(this: NDKCacheAdapterSqlite): StoredMintInfo[] {
     try {
-
-        const results = this.db.getAllSync(
-            "SELECT url, payload, created_at, updated_at FROM mint_info"
-        ) as {
+        const results = this.db.getAllSync("SELECT url, payload, created_at, updated_at FROM mint_info") as {
             url: string;
             payload: string;
             created_at: number;
@@ -96,12 +90,7 @@ export function getAllMintInfo(this: NDKCacheAdapterSqlite): StoredMintInfo[] {
  * @param url - The URL of the mint
  * @param payload - The mint information to save
  */
-export function setMintInfo(
-    this: NDKCacheAdapterSqlite,
-    url: string,
-    payload: MintInfoResponse
-): void {
-
+export function setMintInfo(this: NDKCacheAdapterSqlite, url: string, payload: MintInfoResponse): void {
     try {
         const now = nowSeconds();
         const existing = this.getMintInfoRecord(url);
@@ -115,10 +104,12 @@ export function setMintInfo(
             ]);
         } else {
             // Insert new record
-            this.db.runSync(
-                "INSERT INTO mint_info (url, payload, created_at, updated_at) VALUES (?, ?, ?, ?)",
-                [url, JSON.stringify(payload), now, now]
-            );
+            this.db.runSync("INSERT INTO mint_info (url, payload, created_at, updated_at) VALUES (?, ?, ?, ?)", [
+                url,
+                JSON.stringify(payload),
+                now,
+                now,
+            ]);
         }
     } catch (e) {
         console.error("Error setting mint info", e);
@@ -132,10 +123,9 @@ export function setMintInfo(
  */
 export function getMintKeys(this: NDKCacheAdapterSqlite, url: string): MintKeys[] {
     try {
-
-        const results = this.db.getAllSync("SELECT payload FROM mint_keys WHERE url = ?", [
-            url,
-        ]) as { payload: string }[];
+        const results = this.db.getAllSync("SELECT payload FROM mint_keys WHERE url = ?", [url]) as {
+            payload: string;
+        }[];
 
         return results.map((res) => JSON.parse(res.payload) as MintKeys);
     } catch (e) {
@@ -150,17 +140,12 @@ export function getMintKeys(this: NDKCacheAdapterSqlite, url: string): MintKeys[
  * @param keysetId - The ID of the keyset
  * @returns The mint keys or null if not found
  */
-export function getMintKeyset(
-    this: NDKCacheAdapterSqlite,
-    url: string,
-    keysetId: string
-): MintKeys | null {
+export function getMintKeyset(this: NDKCacheAdapterSqlite, url: string, keysetId: string): MintKeys | null {
     try {
-
-        const res = this.db.getFirstSync(
-            "SELECT payload FROM mint_keys WHERE url = ? AND keyset_id = ?",
-            [url, keysetId]
-        ) as { payload: string } | undefined;
+        const res = this.db.getFirstSync("SELECT payload FROM mint_keys WHERE url = ? AND keyset_id = ?", [
+            url,
+            keysetId,
+        ]) as { payload: string } | undefined;
 
         if (!res) return null;
         return JSON.parse(res.payload) as MintKeys;
@@ -176,17 +161,12 @@ export function getMintKeyset(
  * @param keysetId - The ID of the keyset
  * @returns The complete mint keys record or null if not found
  */
-export function getMintKeysetRecord(
-    this: NDKCacheAdapterSqlite,
-    url: string,
-    keysetId: string
-): StoredMintKeys | null {
+export function getMintKeysetRecord(this: NDKCacheAdapterSqlite, url: string, keysetId: string): StoredMintKeys | null {
     try {
-
         const res = this.db.getFirstSync(
             `SELECT url, keyset_id, payload, created_at, updated_at 
              FROM mint_keys WHERE url = ? AND keyset_id = ?`,
-            [url, keysetId]
+            [url, keysetId],
         ) as
             | {
                   url: string;
@@ -218,10 +198,7 @@ export function getMintKeysetRecord(
  */
 export function getAllMintKeysets(this: NDKCacheAdapterSqlite): StoredMintKeys[] {
     try {
-
-        const results = this.db.getAllSync(
-            "SELECT url, keyset_id, payload, created_at, updated_at FROM mint_keys"
-        ) as {
+        const results = this.db.getAllSync("SELECT url, keyset_id, payload, created_at, updated_at FROM mint_keys") as {
             url: string;
             keyset_id: string;
             payload: string;
@@ -248,13 +225,7 @@ export function getAllMintKeysets(this: NDKCacheAdapterSqlite): StoredMintKeys[]
  * @param keysetId - The ID of the keyset
  * @param keys - The mint keys to save
  */
-export function setMintKeys(
-    this: NDKCacheAdapterSqlite,
-    url: string,
-    keysetId: string,
-    keys: MintKeys
-): void {
-
+export function setMintKeys(this: NDKCacheAdapterSqlite, url: string, keysetId: string, keys: MintKeys): void {
     try {
         const now = nowSeconds();
 
@@ -265,7 +236,7 @@ export function setMintKeys(
         this.db.runSync(
             `INSERT INTO mint_keys (url, keyset_id, payload, created_at, updated_at) 
              VALUES (?, ?, ?, ?, ?)`,
-            [url, keysetId, JSON.stringify(keys), now, now]
+            [url, keysetId, JSON.stringify(keys), now, now],
         );
     } catch (e) {
         console.error("Error setting mint keys", e);

@@ -24,13 +24,9 @@ export async function mintProofs(
     quote: MintQuoteResponse,
     amount: number,
     mint: string,
-    p2pk?: string
+    p2pk?: string,
 ): Promise<{ proofs: Proof[]; mint: string }> {
-    const mintTokenAttempt = (
-        resolve: (value: any) => void,
-        reject: (reason?: any) => void,
-        attempt: number
-    ) => {
+    const mintTokenAttempt = (resolve: (value: any) => void, reject: (reason?: any) => void, attempt: number) => {
         const pubkey = ensureIsCashuPubkey(p2pk);
 
         wallet

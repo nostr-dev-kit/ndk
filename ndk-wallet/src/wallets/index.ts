@@ -59,10 +59,7 @@ export type NDKWalletEvents = {
     warning: (warning: { msg: string; event?: NDKEvent; relays?: NDKRelay[] }) => void;
 };
 
-export class NDKWallet
-    extends EventEmitter<NDKWalletEvents>
-    implements NDKWalletInterface, MintInterface
-{
+export class NDKWallet extends EventEmitter<NDKWalletEvents> implements NDKWalletInterface, MintInterface {
     public cashuWallets = new Map<string, CashuWallet>();
 
     public onMintInfoNeeded?: MintInfoNeededCb;
@@ -100,9 +97,7 @@ export class NDKWallet
      * Pay a Cashu invoice
      * @param payment - The Cashu payment info
      */
-    cashuPay?(
-        payment: NDKZapDetails<CashuPaymentInfo>
-    ): Promise<NDKPaymentConfirmationCashu | undefined>;
+    cashuPay?(payment: NDKZapDetails<CashuPaymentInfo>): Promise<NDKPaymentConfirmationCashu | undefined>;
 
     /**
      * A callback that is called when a payment is complete
@@ -132,11 +127,7 @@ export class NDKWallet
      * @param proofs - The proofs to redeem
      * @param privkey - The private key needed to redeem p2pk proofs.
      */
-    redeemNutzaps(
-        _nutzaps: NDKNutzap[],
-        _privkey: string,
-        _opts: RedeemNutzapsOpts
-    ): Promise<number> {
+    redeemNutzaps(_nutzaps: NDKNutzap[], _privkey: string, _opts: RedeemNutzapsOpts): Promise<number> {
         throw new Error("Not implemented");
     }
 }

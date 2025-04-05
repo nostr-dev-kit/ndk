@@ -9,17 +9,10 @@ export type ZapperCacheEntry = {
     fetchedAt: number;
 };
 
-export async function zapperWarmUp(
-    cacheHandler: CacheHandler<ZapperCacheEntry>,
-    lnurls: Table<Lnurl>
-) {
+export async function zapperWarmUp(cacheHandler: CacheHandler<ZapperCacheEntry>, lnurls: Table<Lnurl>) {
     const array = await lnurls.limit(cacheHandler.maxSize).toArray();
     for (const lnurl of array) {
-        cacheHandler.set(
-            lnurl.pubkey,
-            { document: lnurl.document, fetchedAt: lnurl.fetchedAt },
-            false
-        );
+        cacheHandler.set(lnurl.pubkey, { document: lnurl.document, fetchedAt: lnurl.fetchedAt }, false);
     }
 }
 

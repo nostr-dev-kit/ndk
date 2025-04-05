@@ -1,17 +1,9 @@
-import {
-    type MarkedExtension,
-    type TokenizerAndRendererExtension,
-    type TokensList,
-    marked,
-} from "marked";
+import { type MarkedExtension, type TokenizerAndRendererExtension, type TokensList, marked } from "marked";
 import markedFootnote from "marked-footnote";
 import { gfmHeadingId } from "marked-gfm-heading-id";
 import { mangle } from "marked-mangle";
 
-export const markdownToHtml = (
-    content: string,
-    extraMarkedExtensions?: MarkedExtension[]
-): TokensList => {
+export const markdownToHtml = (content: string, extraMarkedExtensions?: MarkedExtension[]): TokensList => {
     marked.use(mangle());
     marked.use(gfmHeadingId());
     marked.use(markedFootnote());
@@ -64,11 +56,7 @@ export const markdownToHtml = (
                 name: "nostrEvent",
                 level: "inline",
                 start(src: string) {
-                    return (
-                        src.indexOf("nostr:note") ??
-                        src.indexOf("nostr:nevent") ??
-                        src.indexOf("nostr:naddr")
-                    );
+                    return src.indexOf("nostr:note") ?? src.indexOf("nostr:nevent") ?? src.indexOf("nostr:naddr");
                 },
                 tokenizer(src: string, _tokens) {
                     const match = eventRegexp.exec(src);

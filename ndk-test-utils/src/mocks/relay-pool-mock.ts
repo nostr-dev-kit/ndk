@@ -70,12 +70,7 @@ export class RelayPoolMock {
     }
 
     // Add this method to support the NDKSubscription implementation
-    getRelay(
-        url: string,
-        connect = false,
-        createIfNotExists = false,
-        _filters?: NDKFilter[]
-    ): RelayMock {
+    getRelay(url: string, connect = false, createIfNotExists = false, _filters?: NDKFilter[]): RelayMock {
         let relay = this.mockRelays.get(url);
 
         if (!relay && createIfNotExists) {

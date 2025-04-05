@@ -18,11 +18,7 @@ import {
     getNip57ZapSpecFromLud,
 } from "./ln";
 import { generateZapRequest } from "./nip57";
-import type {
-    CashuPaymentInfo,
-    NDKPaymentConfirmationCashu,
-    NDKZapConfirmationCashu,
-} from "./nip61";
+import type { CashuPaymentInfo, NDKPaymentConfirmationCashu, NDKZapConfirmationCashu } from "./nip61";
 
 const d = createDebug("ndk:zapper");
 
@@ -92,16 +88,12 @@ export type NDKLnLudData = { lud06?: string; lud16?: string };
 
 export type NDKZapMethodInfo = NDKLnLudData | CashuPaymentInfo;
 
-export type LnPayCb = (
-    payment: NDKZapDetails<LnPaymentInfo>
-) => Promise<NDKPaymentConfirmationLN | undefined>;
+export type LnPayCb = (payment: NDKZapDetails<LnPaymentInfo>) => Promise<NDKPaymentConfirmationLN | undefined>;
 export type CashuPayCb = (
     payment: NDKZapDetails<CashuPaymentInfo>,
-    onLnInvoice?: (pr: string) => void
+    onLnInvoice?: (pr: string) => void,
 ) => Promise<NDKPaymentConfirmationCashu | undefined>;
-export type OnCompleteCb = (
-    results: Map<NDKZapSplit, NDKPaymentConfirmation | Error | undefined>
-) => void;
+export type OnCompleteCb = (results: Map<NDKZapSplit, NDKPaymentConfirmation | Error | undefined>) => void;
 
 interface NDKZapperOptions {
     /**
@@ -166,10 +158,7 @@ class NDKZapper extends EventEmitter<{
     /**
      * Emitted when a zap split has been completed
      */
-    "split:complete": (
-        split: NDKZapSplit,
-        info: NDKPaymentConfirmation | Error | undefined
-    ) => void;
+    "split:complete": (split: NDKZapSplit, info: NDKPaymentConfirmation | Error | undefined) => void;
 
     complete: (results: Map<NDKZapSplit, NDKPaymentConfirmation | Error | undefined>) => void;
 
@@ -204,12 +193,7 @@ class NDKZapper extends EventEmitter<{
      * @param unit The unit of the amount
      * @param opts Options for the zap
      */
-    constructor(
-        target: NDKEvent | NDKUser,
-        amount: number,
-        unit = "msat",
-        opts: NDKZapperOptions = {}
-    ) {
+    constructor(target: NDKEvent | NDKUser, amount: number, unit = "msat", opts: NDKZapperOptions = {}) {
         super();
         this.target = target;
         this.ndk = opts.ndk || target.ndk!;
@@ -251,7 +235,7 @@ class NDKZapper extends EventEmitter<{
 
                 this.emit("split:complete", split, result);
                 results.set(split, result);
-            })
+            }),
         );
 
         this.emit("complete", results);
@@ -260,10 +244,7 @@ class NDKZapper extends EventEmitter<{
         return results;
     }
 
-    private async zapNip57(
-        split: NDKZapSplit,
-        data: NDKLnLudData
-    ): Promise<NDKPaymentConfirmation | undefined> {
+    private async zapNip57(split: NDKZapSplit, data: NDKLnLudData): Promise<NDKPaymentConfirmation | undefined> {
         if (!this.lnPay) throw new Error("No lnPay function available");
 
         const zapSpec = await getNip57ZapSpecFromLud(data, this.ndk);
@@ -279,7 +260,7 @@ class NDKZapper extends EventEmitter<{
             relays,
             this.comment,
             this.tags,
-            this.signer
+            this.signer,
         );
 
         if (!zapRequest) {
@@ -334,10 +315,7 @@ class NDKZapper extends EventEmitter<{
      * (note that the cashuPay function can use any method to create the proofs, including using lightning
      * to mint proofs in the specified mint, the responsibility of minting the proofs is delegated to the caller (e.g. ndk-wallet))
      */
-    async zapNip61(
-        split: NDKZapSplit,
-        data?: CashuPaymentInfo
-    ): Promise<NDKNutzap | Error | undefined> {
+    async zapNip61(split: NDKZapSplit, data?: CashuPaymentInfo): Promise<NDKNutzap | Error | undefined> {
         if (!this.cashuPay) throw new Error("No cashuPay function available");
 
         let ret: NDKPaymentConfirmationCashu | undefined;
@@ -358,7 +336,7 @@ class NDKZapper extends EventEmitter<{
                     unit: this.unit,
                     type: "nip61",
                 });
-            }
+            },
         );
 
         d("NIP-61 Zap result: %o", ret);
@@ -371,8 +349,7 @@ class NDKZapper extends EventEmitter<{
         if (ret) {
             const { proofs, mint } = ret as NDKZapConfirmationCashu;
 
-            if (!proofs || !mint)
-                throw new Error(`Invalid zap confirmation: missing proofs or mint: ${ret}`);
+            if (!proofs || !mint) throw new Error(`Invalid zap confirmation: missing proofs or mint: ${ret}`);
 
             const relays = await this.relays(split.pubkey);
             const relaySet = NDKRelaySet.fromRelayUrls(relays, this.ndk);
@@ -400,10 +377,7 @@ class NDKZapper extends EventEmitter<{
      * @param methods - The methods to try, if not provided, all methods will be tried.
      * @returns
      */
-    async zapSplit(
-        split: NDKZapSplit,
-        methods?: NDKZapMethod[]
-    ): Promise<NDKPaymentConfirmation | undefined> {
+    async zapSplit(split: NDKZapSplit, methods?: NDKZapMethod[]): Promise<NDKPaymentConfirmation | undefined> {
         const recipient = this.ndk.getUser({ pubkey: split.pubkey });
         const zapMethods = await recipient.getZapInfo(2500);
         let retVal: NDKPaymentConfirmation | Error | undefined;
@@ -411,9 +385,7 @@ class NDKZapper extends EventEmitter<{
         const canFallbackToNip61 = this.nutzapAsFallback && this.cashuPay;
 
         if (zapMethods.size === 0 && !canFallbackToNip61)
-            throw new Error(
-                "No zap method available for recipient and NIP-61 fallback is disabled"
-            );
+            throw new Error("No zap method available for recipient and NIP-61 fallback is disabled");
 
         const nip61Fallback = async () => {
             if (!this.nutzapAsFallback) return;
@@ -476,18 +448,14 @@ class NDKZapper extends EventEmitter<{
      * @param zapEndpoint
      * @returns
      */
-    public async getLnInvoice(
-        zapRequest: NDKEvent,
-        amount: number,
-        data: NDKLnUrlData
-    ): Promise<string | null> {
+    public async getLnInvoice(zapRequest: NDKEvent, amount: number, data: NDKLnUrlData): Promise<string | null> {
         const zapEndpoint = data.callback;
         const eventPayload = JSON.stringify(zapRequest.rawEvent());
         d(
             `Fetching invoice from ${zapEndpoint}?${new URLSearchParams({
                 amount: amount.toString(),
                 nostr: eventPayload,
-            })}`
+            })}`,
         );
         const url = new URL(zapEndpoint);
         url.searchParams.append("amount", amount.toString());
@@ -547,11 +515,7 @@ class NDKZapper extends EventEmitter<{
      * @param pubkey
      * @returns
      */
-    async getZapMethods(
-        ndk: NDK,
-        recipient: Hexpubkey,
-        timeout = 2500
-    ): Promise<Map<NDKZapMethod, NDKZapMethodInfo>> {
+    async getZapMethods(ndk: NDK, recipient: Hexpubkey, timeout = 2500): Promise<Map<NDKZapMethod, NDKZapMethodInfo>> {
         const user = ndk.getUser({ pubkey: recipient });
         return await user.getZapInfo(timeout);
     }
@@ -563,10 +527,7 @@ class NDKZapper extends EventEmitter<{
         let r: string[] = [];
 
         if (this.ndk?.activeUser) {
-            const relayLists = await getRelayListForUsers(
-                [this.ndk.activeUser.pubkey, pubkey],
-                this.ndk
-            );
+            const relayLists = await getRelayListForUsers([this.ndk.activeUser.pubkey, pubkey], this.ndk);
 
             const relayScores = new Map<string, number>();
 

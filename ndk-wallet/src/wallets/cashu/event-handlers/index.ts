@@ -1,10 +1,4 @@
-import {
-    type NDKEvent,
-    NDKEventId,
-    type NDKRelay,
-    type NDKSubscription,
-    type NostrEvent,
-} from "@nostr-dev-kit/ndk";
+import { type NDKEvent, NDKEventId, type NDKRelay, type NDKSubscription, type NostrEvent } from "@nostr-dev-kit/ndk";
 
 import { NDKKind } from "@nostr-dev-kit/ndk";
 import type { NDKCashuWallet } from "../wallet";
@@ -37,7 +31,7 @@ export async function eventDupHandler(
     _relay: NDKRelay | undefined,
     _timeSinceFirstSeen: number,
     _sub: NDKSubscription,
-    _fromCache: boolean
+    _fromCache: boolean,
 ) {
     // console.log("[EVENT DUPLICATE]", event.kind, relay?.url, { fromCache });
 }

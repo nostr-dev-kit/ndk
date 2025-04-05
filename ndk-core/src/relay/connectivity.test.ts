@@ -134,9 +134,7 @@ describe("NDKRelayConnectivity", () => {
             const mockSend = vi.spyOn(connectivity, "send").mockResolvedValue(undefined);
             const event = { id: "test-id", content: "test-content" };
             const publishPromise = connectivity.publish(event as any);
-            expect(mockSend).toHaveBeenCalledWith(
-                '["EVENT",{"id":"test-id","content":"test-content"}]'
-            );
+            expect(mockSend).toHaveBeenCalledWith('["EVENT",{"id":"test-id","content":"test-content"}]');
             expect(publishPromise).toBeInstanceOf(Promise);
         });
     });
@@ -147,7 +145,7 @@ describe("NDKRelayConnectivity", () => {
             const filters = [{ authors: ["test-author"] }];
             const countPromise = connectivity.count(filters, {});
             expect(mockSend).toHaveBeenCalledWith(
-                expect.stringMatching(/^\["COUNT","count:\d+",\{"authors":\["test-author"\]\}\]$/)
+                expect.stringMatching(/^\["COUNT","count:\d+",\{"authors":\["test-author"\]\}\]$/),
             );
             expect(countPromise).toBeInstanceOf(Promise);
         });

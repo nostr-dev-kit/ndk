@@ -1,8 +1,8 @@
 // src/session/store/switch-to-user.ts
-import type { Draft } from 'immer';
-import type { Hexpubkey } from '@nostr-dev-kit/ndk';
-import type { NDKSessionsState } from './types';
-import { useNDKStore } from '../../ndk/store';
+import type { Draft } from "immer";
+import type { Hexpubkey } from "@nostr-dev-kit/ndk";
+import type { NDKSessionsState } from "./types";
+import { useNDKStore } from "../../ndk/store";
 
 /**
  * Implementation for switching the active user session.
@@ -11,12 +11,12 @@ import { useNDKStore } from '../../ndk/store';
 export const switchToUser = (
     set: (fn: (draft: Draft<NDKSessionsState>) => void) => void,
     get: () => NDKSessionsState,
-    pubkey: Hexpubkey | null // Allow null to deactivate
+    pubkey: Hexpubkey | null, // Allow null to deactivate
 ): void => {
     const signers = get().signers;
     const ndk = get().ndk;
     if (!ndk) {
-        console.error('Cannot switch user: NDK instance not initialized in session store.');
+        console.error("Cannot switch user: NDK instance not initialized in session store.");
         return;
     }
 
@@ -26,7 +26,7 @@ export const switchToUser = (
             draft.activePubkey = null;
         });
         ndk.signer = undefined;
-        console.log('Deactivated current user session.');
+        console.log("Deactivated current user session.");
         return;
     }
 
@@ -42,11 +42,11 @@ export const switchToUser = (
     }
 
     const signer = signers.get(pubkey);
-    console.log(`Switching to user ${pubkey}..., signer: ${signer ? 'present' : 'not present'}`);
+    console.log(`Switching to user ${pubkey}..., signer: ${signer ? "present" : "not present"}`);
 
     // Set NDK signer (can be undefined if no signer is associated with the session)
     useNDKStore.getState().setSigner(signer);
-    console.log(`NDK signer set to ${signer ? signer.pubkey : 'none'}`);
+    console.log(`NDK signer set to ${signer ? signer.pubkey : "none"}`);
 
     // Update active pubkey and lastActive timestamp
     set((draft) => {

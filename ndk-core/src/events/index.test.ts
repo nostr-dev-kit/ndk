@@ -159,21 +159,13 @@ describe("NDKEvent", () => {
                 pubkey: "pubkey123",
             };
 
-            const event1 = EventGenerator.createEvent(
-                eventData.kind,
-                eventData.content,
-                eventData.pubkey
-            );
+            const event1 = EventGenerator.createEvent(eventData.kind, eventData.content, eventData.pubkey);
             event1.tags = eventData.tags;
             event1.created_at = Math.floor(Date.now() / 1000 - 3600);
             event1.id = "id1";
             event1.sig = "sig1";
 
-            const event2 = EventGenerator.createEvent(
-                eventData.kind,
-                eventData.content,
-                eventData.pubkey
-            );
+            const event2 = EventGenerator.createEvent(eventData.kind, eventData.content, eventData.pubkey);
             event2.tags = eventData.tags;
             event2.created_at = Math.floor(Date.now() / 1000);
             event2.id = "id2";
@@ -216,13 +208,10 @@ describe("NDKEvent", () => {
 
         describe("mentions", () => {
             it("handles NIP-27 mentions", async () => {
-                event.content =
-                    "hello nostr:npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft!";
+                event.content = "hello nostr:npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft!";
                 const nostrEvent = await event.toNostrEvent();
                 const mentionTag = nostrEvent.tags.find(
-                    (t) =>
-                        t[0] === "p" &&
-                        t[1] === "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"
+                    (t) => t[0] === "p" && t[1] === "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52",
                 );
                 expect(mentionTag).toBeTruthy();
             });
@@ -323,9 +312,7 @@ describe("NDKEvent", () => {
             const event2 = EventGenerator.createEvent(1, "", "pubkey");
 
             expect(event1.replaceableDTag()).toEqual("d-code");
-            expect(() => event2.replaceableDTag()).toThrowError(
-                "Event is not a parameterized replaceable event"
-            );
+            expect(() => event2.replaceableDTag()).toThrowError("Event is not a parameterized replaceable event");
         });
     });
 
@@ -366,10 +353,7 @@ describe("NDKEvent", () => {
             const event = EventGenerator.createEvent(1, "", "pubkey");
             event.tagExternal("e32b4890-b9ea-4aef-a0bf-54b787833dc5", "podcast:guid");
 
-            expect(event.tags).toContainEqual([
-                "i",
-                "podcast:guid:e32b4890-b9ea-4aef-a0bf-54b787833dc5",
-            ]);
+            expect(event.tags).toContainEqual(["i", "podcast:guid:e32b4890-b9ea-4aef-a0bf-54b787833dc5"]);
             expect(event.tags).toContainEqual(["k", "podcast:guid"]);
         });
 
@@ -391,11 +375,7 @@ describe("NDKEvent", () => {
 
         it("adds a marker URL when provided", () => {
             const event = EventGenerator.createEvent(1, "", "pubkey");
-            event.tagExternal(
-                "e32b4890-b9ea-4aef-a0bf-54b787833dc5",
-                "podcast:guid",
-                "https://example.com/marker"
-            );
+            event.tagExternal("e32b4890-b9ea-4aef-a0bf-54b787833dc5", "podcast:guid", "https://example.com/marker");
 
             expect(event.tags).toContainEqual([
                 "i",
@@ -441,11 +421,9 @@ describe("NDKEvent", () => {
 
             it("carries over the root event of the OP", async () => {
                 // Create thread with root and one reply
-                const [root, reply1] = await fixture.eventFactory.createEventChain(
-                    "Hello world",
-                    "alice",
-                    [{ content: "First reply", author: "bob" }]
-                );
+                const [root, reply1] = await fixture.eventFactory.createEventChain("Hello world", "alice", [
+                    { content: "First reply", author: "bob" },
+                ]);
 
                 // Create a second reply to the first reply
                 fixture.setupSigner("carol");
@@ -471,11 +449,9 @@ describe("NDKEvent", () => {
 
             it("adds a reply marker for non-root events", async () => {
                 // Create thread with root and one reply
-                const [_root, reply1] = await fixture.eventFactory.createEventChain(
-                    "Hello world",
-                    "alice",
-                    [{ content: "First reply", author: "bob" }]
-                );
+                const [_root, reply1] = await fixture.eventFactory.createEventChain("Hello world", "alice", [
+                    { content: "First reply", author: "bob" },
+                ]);
 
                 // Create a second reply to the first reply
                 fixture.setupSigner("carol");
@@ -500,11 +476,9 @@ describe("NDKEvent", () => {
 
             it("carries over the p-tags from the root event", async () => {
                 // Create thread with root and one reply
-                const [root, reply1] = await fixture.eventFactory.createEventChain(
-                    "Hello world",
-                    "alice",
-                    [{ content: "First reply", author: "bob" }]
-                );
+                const [root, reply1] = await fixture.eventFactory.createEventChain("Hello world", "alice", [
+                    { content: "First reply", author: "bob" },
+                ]);
 
                 // Create a second reply to the first reply
                 fixture.setupSigner("carol");
@@ -521,11 +495,7 @@ describe("NDKEvent", () => {
 
             beforeEach(async () => {
                 // Create a non-standard event type (kind 30023)
-                root = await fixture.eventFactory.createSignedTextNote(
-                    "Hello world",
-                    "alice",
-                    30023
-                );
+                root = await fixture.eventFactory.createSignedTextNote("Hello world", "alice", 30023);
                 // Add a d-tag for parameterized replaceable events
                 root.tags.push(["d", "test"]);
             });
@@ -533,11 +503,7 @@ describe("NDKEvent", () => {
             it("creates a reply using a kind 1111 event", async () => {
                 // Create reply to non-standard event
                 fixture.setupSigner("bob");
-                const reply1 = await fixture.eventFactory.createReply(
-                    root,
-                    "This is a reply",
-                    "bob"
-                );
+                const reply1 = await fixture.eventFactory.createReply(root, "This is a reply", "bob");
 
                 expect(reply1.kind).toBe(1111); // GenericReply kind
             });
@@ -545,11 +511,7 @@ describe("NDKEvent", () => {
             it("tags the root event or scope using an appropriate uppercase tag (e.g., 'A', 'E', 'I')", async () => {
                 // Create reply to non-standard event
                 fixture.setupSigner("bob");
-                const reply1 = await fixture.eventFactory.createReply(
-                    root,
-                    "This is a reply",
-                    "bob"
-                );
+                const reply1 = await fixture.eventFactory.createReply(root, "This is a reply", "bob");
 
                 expect(reply1.tags).toContainEqual(["A", root.tagId(), ""]);
             });
@@ -557,11 +519,7 @@ describe("NDKEvent", () => {
             it("tags the root event with an 'a' for addressable events when it's a top level reply", async () => {
                 // Create reply to non-standard event
                 fixture.setupSigner("bob");
-                const reply1 = await fixture.eventFactory.createReply(
-                    root,
-                    "This is a reply",
-                    "bob"
-                );
+                const reply1 = await fixture.eventFactory.createReply(root, "This is a reply", "bob");
 
                 expect(reply1.tags).toContainEqual(["A", root.tagId(), ""]);
                 expect(reply1.tags).toContainEqual(["a", root.tagId(), ""]);
@@ -570,11 +528,7 @@ describe("NDKEvent", () => {
             it("p-tags the author of the root event", async () => {
                 // Create reply to non-standard event
                 fixture.setupSigner("bob");
-                const reply1 = await fixture.eventFactory.createReply(
-                    root,
-                    "This is a reply",
-                    "bob"
-                );
+                const reply1 = await fixture.eventFactory.createReply(root, "This is a reply", "bob");
 
                 expect(reply1.tags).toContainEqual(["P", root.pubkey]);
             });
@@ -613,19 +567,11 @@ describe("NDKEvent", () => {
 
             it("tags the root event or scope using an appropriate uppercase tag with the pubkey when it's an E tag", async () => {
                 // Create a kind 20 event
-                const k20event = await fixture.eventFactory.createSignedTextNote(
-                    "Kind 20 event",
-                    "alice",
-                    20
-                );
+                const k20event = await fixture.eventFactory.createSignedTextNote("Kind 20 event", "alice", 20);
 
                 // Create a reply to the kind 20 event
                 fixture.setupSigner("bob");
-                const reply1 = await fixture.eventFactory.createReply(
-                    k20event,
-                    "This is a reply",
-                    "bob"
-                );
+                const reply1 = await fixture.eventFactory.createReply(k20event, "This is a reply", "bob");
 
                 expect(reply1.tags).toContainEqual(["E", k20event.tagId(), "", k20event.pubkey]);
             });
@@ -645,11 +591,7 @@ describe("NDKEvent", () => {
             it("adds a 'K' tag to specify the root kind", async () => {
                 // Create reply to non-standard event
                 fixture.setupSigner("bob");
-                const reply1 = await fixture.eventFactory.createReply(
-                    root,
-                    "This is a reply",
-                    "bob"
-                );
+                const reply1 = await fixture.eventFactory.createReply(root, "This is a reply", "bob");
 
                 expect(reply1.tags).toContainEqual(["K", root.kind?.toString()]);
             });

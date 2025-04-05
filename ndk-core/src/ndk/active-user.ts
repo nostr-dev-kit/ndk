@@ -56,12 +56,7 @@ async function setActiveUserConnected(this: NDK, user: NDKUser) {
 
     const relaySet = userRelays ? userRelays.relaySet : undefined;
 
-    const sub = this.subscribe(
-        filters,
-        { subId: "active-user-settings", closeOnEose: true },
-        relaySet,
-        false
-    );
+    const sub = this.subscribe(filters, { subId: "active-user-settings", closeOnEose: true }, relaySet, false);
 
     const events: Map<NDKKind, NDKEvent> = new Map();
 

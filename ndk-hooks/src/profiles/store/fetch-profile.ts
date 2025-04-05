@@ -1,11 +1,11 @@
-import { inSeconds } from '../../utils/time';
-import type { UserProfilesStore } from '.';
+import { inSeconds } from "../../utils/time";
+import type { UserProfilesStore } from ".";
 
 export const fetchProfileImplementation = (
     set: (fn: (state: UserProfilesStore) => Partial<UserProfilesStore>) => void,
     get: () => UserProfilesStore,
     pubkey?: string,
-    force?: boolean
+    force?: boolean,
 ) => {
     const { ndk, profiles } = get();
     if (!ndk || !pubkey) return;

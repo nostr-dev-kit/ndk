@@ -1,12 +1,12 @@
 // src/session/store/stop-session.ts
-import type { Draft } from 'immer';
-import type { Hexpubkey } from '@nostr-dev-kit/ndk';
-import type { NDKSessionsState } from './types';
+import type { Draft } from "immer";
+import type { Hexpubkey } from "@nostr-dev-kit/ndk";
+import type { NDKSessionsState } from "./types";
 
 export const stopSession = (
     set: (fn: (draft: Draft<NDKSessionsState>) => void) => void,
     get: () => NDKSessionsState,
-    pubkey: Hexpubkey
+    pubkey: Hexpubkey,
 ): void => {
     const session = get().sessions.get(pubkey);
 

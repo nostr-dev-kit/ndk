@@ -12,7 +12,7 @@ type PubkeyToRelaysMap = Map<Hexpubkey, Set<WebSocket["url"]>>;
 export function getAllRelaysForAllPubkeys(
     ndk: NDK,
     pubkeys: Hexpubkey[],
-    type: "write" | "read" = "read"
+    type: "write" | "read" = "read",
 ): {
     pubkeysToRelays: PubkeyToRelaysMap;
     authorsMissingRelays: Set<Hexpubkey>;
@@ -46,7 +46,7 @@ export function chooseRelayCombinationForPubkeys(
     ndk: NDK,
     pubkeys: Hexpubkey[],
     type: "write" | "read",
-    { count, preferredRelays }: { count?: number; preferredRelays?: Set<WebSocket["url"]> } = {}
+    { count, preferredRelays }: { count?: number; preferredRelays?: Set<WebSocket["url"]> } = {},
 ): Map<WebSocket["url"], Hexpubkey[]> {
     count ??= 2;
     preferredRelays ??= new Set<WebSocket["url"]>();

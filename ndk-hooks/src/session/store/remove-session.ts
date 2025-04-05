@@ -1,12 +1,12 @@
 // src/session/store/remove-session.ts
-import type { Draft } from 'immer';
-import type { Hexpubkey, NDKSigner } from '@nostr-dev-kit/ndk';
-import type { NDKSessionsState } from './types';
+import type { Draft } from "immer";
+import type { Hexpubkey, NDKSigner } from "@nostr-dev-kit/ndk";
+import type { NDKSessionsState } from "./types";
 
 export const removeSession = (
     set: (fn: (draft: Draft<NDKSessionsState>) => void) => void,
     get: () => NDKSessionsState,
-    pubkey: Hexpubkey
+    pubkey: Hexpubkey,
 ): void => {
     const state = get();
     const sessionToRemove = state.sessions.get(pubkey);
@@ -76,7 +76,7 @@ export const removeSession = (
                     console.log(`Switched active session to ${nextActivePubkey}`);
                 } else {
                     ndk.signer = undefined; // No sessions left, clear signer
-                    console.log('No remaining sessions, deactivated active user.');
+                    console.log("No remaining sessions, deactivated active user.");
                 }
             }
         }

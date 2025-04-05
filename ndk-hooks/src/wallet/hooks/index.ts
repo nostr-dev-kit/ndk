@@ -1,8 +1,8 @@
-import NDK from '@nostr-dev-kit/ndk';
-import type { NDKWallet } from '@nostr-dev-kit/ndk-wallet';
-import { useCallback } from 'react';
-import { create } from 'zustand';
-import { useNDK } from '../../ndk/hooks'; // Corrected path
+import NDK from "@nostr-dev-kit/ndk";
+import type { NDKWallet } from "@nostr-dev-kit/ndk-wallet";
+import { useCallback } from "react";
+import { create } from "zustand";
+import { useNDK } from "../../ndk/hooks"; // Corrected path
 
 interface WalletHookState {
     activeWallet: NDKWallet | null;
@@ -24,9 +24,7 @@ const useInternalWalletStore = create<WalletHookState>((set) => ({
 export const useNDKWallet = () => {
     const { ndk } = useNDK();
     const activeWallet = useInternalWalletStore((s) => s.activeWallet);
-    const storeSetActiveWallet = useInternalWalletStore(
-        (s) => s.setActiveWallet
-    );
+    const storeSetActiveWallet = useInternalWalletStore((s) => s.setActiveWallet);
     const balance = useInternalWalletStore((s) => s.balance);
     const setBalance = useInternalWalletStore((s) => s.setBalance);
 
@@ -48,26 +46,23 @@ export const useNDKWallet = () => {
             };
 
             if (wallet) {
-                wallet.on('ready', updateBalance);
-                wallet.on('balance_updated', updateBalance);
+                wallet.on("ready", updateBalance);
+                wallet.on("balance_updated", updateBalance);
                 wallet.updateBalance?.();
             } else {
                 setBalance(null);
             }
         },
-        [ndk, storeSetActiveWallet, setBalance]
+        [ndk, storeSetActiveWallet, setBalance],
     );
 
     return { activeWallet, setActiveWallet, balance, setBalance };
 };
 
-import type { NDKCashuMintList, NDKUser } from '@nostr-dev-kit/ndk';
-import {
-    NDKNutzapMonitor,
-    type NDKNutzapMonitorStore,
-} from '@nostr-dev-kit/ndk-wallet';
-import { useEffect, useMemo, useState } from 'react';
-import { useNDKCurrentUser } from '../../ndk/hooks'; // Corrected path
+import type { NDKCashuMintList, NDKUser } from "@nostr-dev-kit/ndk";
+import { NDKNutzapMonitor, type NDKNutzapMonitorStore } from "@nostr-dev-kit/ndk-wallet";
+import { useEffect, useMemo, useState } from "react";
+import { useNDKCurrentUser } from "../../ndk/hooks"; // Corrected path
 
 interface NutzapMonitorHookState {
     nutzapMonitor: NDKNutzapMonitor | null;
@@ -87,30 +82,18 @@ const useInternalNutzapMonitorStore = create<NutzapMonitorHookState>((set) => ({
  * @param mintList - Optional mint list for the monitor.
  * @param start - Whether to automatically start the monitor.
  */
-export const useNDKNutzapMonitor = (
-    mintList?: NDKCashuMintList,
-    start = false
-) => {
+export const useNDKNutzapMonitor = (mintList?: NDKCashuMintList, start = false) => {
     const { ndk } = useNDK();
     const currentUser = useNDKCurrentUser();
     const { activeWallet } = useNDKWallet();
     const nutzapMonitor = useInternalNutzapMonitorStore((s) => s.nutzapMonitor);
-    const setNutzapMonitor = useInternalNutzapMonitorStore(
-        (s) => s.setNutzapMonitor
-    );
+    const setNutzapMonitor = useInternalNutzapMonitorStore((s) => s.setNutzapMonitor);
     const [monitorStarted, setMonitorStarted] = useState(false);
 
     const monitorStore = useMemo((): NDKNutzapMonitorStore | undefined => {
-        if (
-            ndk?.cacheAdapter?.getAllNutzapStates &&
-            ndk?.cacheAdapter?.setNutzapState
-        ) {
-            const boundGetAll = ndk.cacheAdapter.getAllNutzapStates.bind(
-                ndk.cacheAdapter
-            );
-            const boundSetState = ndk.cacheAdapter.setNutzapState.bind(
-                ndk.cacheAdapter
-            );
+        if (ndk?.cacheAdapter?.getAllNutzapStates && ndk?.cacheAdapter?.setNutzapState) {
+            const boundGetAll = ndk.cacheAdapter.getAllNutzapStates.bind(ndk.cacheAdapter);
+            const boundSetState = ndk.cacheAdapter.setNutzapState.bind(ndk.cacheAdapter);
             return {
                 getAllNutzaps: boundGetAll,
                 setNutzapState: boundSetState,
@@ -130,7 +113,7 @@ export const useNDKNutzapMonitor = (
         }
 
         if (!nutzapMonitor) {
-            console.log('Initializing NDKNutzapMonitor');
+            console.log("Initializing NDKNutzapMonitor");
             const monitor = new NDKNutzapMonitor(ndk, currentUser, {
                 mintList,
                 store: monitorStore,
@@ -139,27 +122,19 @@ export const useNDKNutzapMonitor = (
             setNutzapMonitor(monitor);
         } else {
             if (nutzapMonitor.wallet?.walletId !== activeWallet.walletId) {
-                console.log('Updating wallet in NDKNutzapMonitor');
+                console.log("Updating wallet in NDKNutzapMonitor");
                 nutzapMonitor.wallet = activeWallet;
             }
             if (nutzapMonitor.mintList !== mintList) {
-                console.log('Updating mintList in NDKNutzapMonitor');
+                console.log("Updating mintList in NDKNutzapMonitor");
                 nutzapMonitor.mintList = mintList;
             }
         }
-    }, [
-        ndk,
-        currentUser,
-        activeWallet,
-        mintList,
-        monitorStore,
-        nutzapMonitor,
-        setNutzapMonitor,
-    ]);
+    }, [ndk, currentUser, activeWallet, mintList, monitorStore, nutzapMonitor, setNutzapMonitor]);
 
     useEffect(() => {
         if (start && nutzapMonitor && !monitorStarted) {
-            console.log('Starting NDKNutzapMonitor');
+            console.log("Starting NDKNutzapMonitor");
             nutzapMonitor
                 .start({
                     filter: { limit: 100 },
@@ -167,20 +142,20 @@ export const useNDKNutzapMonitor = (
                 })
                 .then(() => {
                     setMonitorStarted(true);
-                    console.log('NDKNutzapMonitor started successfully');
+                    console.log("NDKNutzapMonitor started successfully");
                 })
                 .catch((err: Error) => {
-                    console.error('Failed to start NDKNutzapMonitor', err);
+                    console.error("Failed to start NDKNutzapMonitor", err);
                 });
         } else if (!start && nutzapMonitor && monitorStarted) {
-            console.log('Stopping NDKNutzapMonitor');
+            console.log("Stopping NDKNutzapMonitor");
             nutzapMonitor.stop();
             setMonitorStarted(false);
         }
 
         return () => {
             if (nutzapMonitor && monitorStarted) {
-                console.log('Stopping NDKNutzapMonitor on cleanup');
+                console.log("Stopping NDKNutzapMonitor on cleanup");
                 nutzapMonitor.stop();
                 setMonitorStarted(false);
             }

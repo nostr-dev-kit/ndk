@@ -119,12 +119,10 @@ class NDKSvelte extends NDK {
     public storeSubscribe<T extends NDKEvent>(
         filters: NDKFilter | NDKFilter[],
         opts?: NDKSubscribeOptions,
-        klass?: ClassWithConvertFunction<T>
+        klass?: ClassWithConvertFunction<T>,
     ): NDKEventStore<ExtendedBaseType<T>> {
         let events: Map<string, ExtendedBaseType<T>> = new Map();
-        const store = this.createEventStore<ExtendedBaseType<T>>(
-            Array.isArray(filters) ? filters : [filters]
-        );
+        const store = this.createEventStore<ExtendedBaseType<T>>(Array.isArray(filters) ? filters : [filters]);
         const autoStart = opts?.autoStart ?? true;
         const relaySet = opts?.relaySet;
         const skipDeleted = opts?.skipDeleted ?? true;

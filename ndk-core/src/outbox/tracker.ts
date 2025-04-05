@@ -75,9 +75,7 @@ export class OutboxTracker extends EventEmitter {
 
         for (let i = 0; i < items.length; i += 400) {
             const slice = items.slice(i, i + 400);
-            const pubkeys = slice
-                .map((item) => getKeyFromItem(item))
-                .filter((pubkey) => !this.data.has(pubkey)); // filter out items that are already being tracked
+            const pubkeys = slice.map((item) => getKeyFromItem(item)).filter((pubkey) => !this.data.has(pubkey)); // filter out items that are already being tracked
 
             // if all items are already being tracked, skip
             if (pubkeys.length === 0) continue;
@@ -96,12 +94,8 @@ export class OutboxTracker extends EventEmitter {
                                 outboxItem ??= new OutboxItem("user");
 
                                 if (relayList) {
-                                    outboxItem.readRelays = new Set(
-                                        normalize(relayList.readRelayUrls)
-                                    );
-                                    outboxItem.writeRelays = new Set(
-                                        normalize(relayList.writeRelayUrls)
-                                    );
+                                    outboxItem.readRelays = new Set(normalize(relayList.readRelayUrls));
+                                    outboxItem.writeRelays = new Set(normalize(relayList.writeRelayUrls));
 
                                     // remove all blacklisted relays
                                     for (const relayUrl of outboxItem.readRelays) {
@@ -132,7 +126,7 @@ export class OutboxTracker extends EventEmitter {
                             }
                         })
                         .finally(resolve);
-                })
+                }),
             );
         }
 

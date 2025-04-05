@@ -41,9 +41,7 @@ export default class RedisAdapter implements NDKCacheAdapter {
     public async query(subscription: NDKSubscription): Promise<void> {
         this.debug("query redis status", this.redis.status);
         if (this.redis.status !== "connect") return;
-        await Promise.all(
-            subscription.filters.map((filter) => this.processFilter(filter, subscription))
-        );
+        await Promise.all(subscription.filters.map((filter) => this.processFilter(filter, subscription)));
     }
 
     private async processFilter(filter: NDKFilter, subscription: NDKSubscription): Promise<void> {
@@ -60,15 +58,10 @@ export default class RedisAdapter implements NDKCacheAdapter {
                     const parsedEvent = JSON.parse(event);
                     const relayUrl = parsedEvent.relay;
                     parsedEvent.relay = undefined;
-                    const relay =
-                        subscription.ndk.pool.getRelay(relayUrl, false) || new NDKRelay(relayUrl);
+                    const relay = subscription.ndk.pool.getRelay(relayUrl, false) || new NDKRelay(relayUrl);
 
-                    subscription.eventReceived(
-                        new NDKEvent(subscription.ndk, parsedEvent),
-                        relay,
-                        true
-                    );
-                })
+                    subscription.eventReceived(new NDKEvent(subscription.ndk, parsedEvent), relay, true);
+                }),
             ).then(() => {
                 resolve();
             });
@@ -80,11 +73,7 @@ export default class RedisAdapter implements NDKCacheAdapter {
         return this.redis.set(event.id!, JSON.stringify(event), "EX", this.expirationTime);
     }
 
-    private async storeEventWithFilter(
-        event: NostrEvent,
-        filter: NDKFilter,
-        relay: NDKRelay
-    ): Promise<void> {
+    private async storeEventWithFilter(event: NostrEvent, filter: NDKFilter, relay: NDKRelay): Promise<void> {
         const filterString = JSON.stringify(filter);
 
         // very naive quick implementation of storing the filter

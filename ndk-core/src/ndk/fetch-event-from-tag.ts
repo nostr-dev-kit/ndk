@@ -65,7 +65,7 @@ export async function fetchEventFromTag(
     subOpts?: NDKSubscriptionOptions,
     fallback: NDKFetchFallbackOptions = {
         type: "timeout",
-    }
+    },
 ) {
     const d = this.debug.extend("fetch-event-from-tag");
     const [_, id, hint] = tag;
@@ -107,19 +107,13 @@ export async function fetchEventFromTag(
 
     // If we didn't get the event, try to fetch in the relay hint
     if (hint && hint !== "") {
-        const event = await this.fetchEvent(
-            id,
-            subOpts,
-            this.pool.getRelay(hint, true, true, [{ ids: [id] }])
-        );
+        const event = await this.fetchEvent(id, subOpts, this.pool.getRelay(hint, true, true, [{ ids: [id] }]));
         if (event) return event;
     }
 
     let result: NDKEvent | null | undefined = undefined;
 
-    const relay = isValidHint(hint)
-        ? this.pool.getRelay(hint, false, true, [{ ids: [id] }])
-        : undefined;
+    const relay = isValidHint(hint) ? this.pool.getRelay(hint, false, true, [{ ids: [id] }]) : undefined;
 
     const fetchMaybeWithRelayHint = new Promise<NDKEvent | null>((resolve) => {
         this.fetchEvent(id, subOpts, relay).then(resolve);

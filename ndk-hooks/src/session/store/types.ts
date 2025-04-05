@@ -1,14 +1,7 @@
-import type NDK from '@nostr-dev-kit/ndk';
-import type { NDKFilter, NDKSubscription } from '@nostr-dev-kit/ndk';
-import type {
-    Hexpubkey,
-    NDKEvent,
-    NDKKind,
-    NDKUser,
-    NDKUserProfile,
-    NDKSigner,
-} from '@nostr-dev-kit/ndk';
-import { NDKEventWithFrom } from '../../subscribe/hooks';
+import type NDK from "@nostr-dev-kit/ndk";
+import type { NDKFilter, NDKSubscription } from "@nostr-dev-kit/ndk";
+import type { Hexpubkey, NDKEvent, NDKKind, NDKUser, NDKUserProfile, NDKSigner } from "@nostr-dev-kit/ndk";
+import { NDKEventWithFrom } from "../../subscribe/hooks";
 
 /**
  * User-specific session data stored within the main store.
@@ -41,7 +34,6 @@ export interface NDKUserSession {
     lastActive: number;
 }
 
-
 /**
  * Options for starting a user session subscription.
  * Corresponds to NDK['subscribe'] filters and options.
@@ -50,7 +42,7 @@ export interface SessionStartOptions {
     profile?: boolean;
     follows?: boolean;
     muteList?: boolean;
-    
+
     /**
      * Fetch other specific replaceable event kinds (10k-20k, 30k-40k).
      * Provide a map where keys are NDKKind and values are optional NDKFilters

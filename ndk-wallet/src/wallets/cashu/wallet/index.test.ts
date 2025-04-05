@@ -175,7 +175,7 @@ describe("NDKCashuWallet", () => {
                 "warning",
                 expect.objectContaining({
                     msg: "Test warning message",
-                })
+                }),
             );
         });
     });

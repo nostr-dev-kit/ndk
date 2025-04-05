@@ -12,10 +12,7 @@ export default defineConfig({
     resolve: {
         alias: {
             "@nostr-dev-kit/ndk": path.resolve(__dirname, "../ndk-core/src/index.ts"),
-            "@nostr-dev-kit/ndk-test-utils": path.resolve(
-                __dirname,
-                "../ndk-test-utils/src/index.ts"
-            ),
+            "@nostr-dev-kit/ndk-test-utils": path.resolve(__dirname, "../ndk-test-utils/src/index.ts"),
         },
     },
 });

@@ -10,10 +10,7 @@ import type { NDKNutzap } from "@nostr-dev-kit/ndk";
  * @param pubkeys -- Pubkeys the caller has the private key to, to make sure the proofs are not p2pk-locked to a key we do not have access to
  * @returns
  */
-export async function getProofSpendState(
-    wallet: CashuWallet,
-    nutzaps: NDKNutzap[]
-): Promise<GetProofSpendStateResult> {
+export async function getProofSpendState(wallet: CashuWallet, nutzaps: NDKNutzap[]): Promise<GetProofSpendStateResult> {
     const result: GetProofSpendStateResult = {
         unspentProofs: [],
         spentProofs: [],

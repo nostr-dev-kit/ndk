@@ -1,10 +1,5 @@
 <script lang="ts">
-import {
-    type Hexpubkey,
-    type NDKEvent,
-    type NDKEventId,
-    NDKSubscriptionCacheUsage,
-} from "@nostr-dev-kit/ndk";
+import { type Hexpubkey, type NDKEvent, type NDKEventId, NDKSubscriptionCacheUsage } from "@nostr-dev-kit/ndk";
 import type NDKSvelte from "@nostr-dev-kit/ndk-svelte";
 import { type ComponentType, onDestroy } from "svelte";
 import type { Readable } from "svelte/store";
@@ -50,7 +45,7 @@ export let replies: Readable<NDKEvent[]> = ndk.storeSubscribe(
         kinds: [1, 12],
         "#e": Array.from(threadIds.keys()),
     },
-    { closeOnEose: false, groupableDelay: 100, cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY }
+    { closeOnEose: false, groupableDelay: 100, cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY },
 );
 
 $: {
@@ -80,7 +75,7 @@ $: {
                 kinds: [1],
                 "#e": Array.from(threadIds.keys()),
             },
-            { closeOnEose: false, groupableDelay: 100, subId: "thread-filter" }
+            { closeOnEose: false, groupableDelay: 100, subId: "thread-filter" },
         );
         threadIds = threadIds;
     }

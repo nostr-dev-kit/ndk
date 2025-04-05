@@ -1,12 +1,7 @@
 import { NDKEvent, NDKKind, type NostrEvent } from "@nostr-dev-kit/ndk";
 import type { NDKNWCWallet } from "./index.js";
 import { waitForResponse } from "./res.js";
-import type {
-    NDKNWCErrorCode,
-    NDKNWCMethod,
-    NDKNWCRequestMap,
-    NDKNWCResponseMap,
-} from "./types.js";
+import type { NDKNWCErrorCode, NDKNWCMethod, NDKNWCRequestMap, NDKNWCResponseMap } from "./types.js";
 
 // Base types for requests and responses
 export interface NWCRequestBase {
@@ -78,7 +73,7 @@ export interface ListTransactionsParams {
 export async function sendReq<M extends keyof NDKNWCRequestMap>(
     this: NDKNWCWallet,
     method: M,
-    params: NDKNWCRequestMap[M]
+    params: NDKNWCRequestMap[M],
 ): Promise<NWCResponseBase<NDKNWCResponseMap[M]>> {
     if (!this.walletService || !this.signer) {
         throw new Error("Wallet not initialized");
@@ -94,17 +89,12 @@ export async function sendReq<M extends keyof NDKNWCRequestMap>(
     await event.sign(this.signer);
 
     // Create base response promise
-    const responsePromise = new Promise<NWCResponseBase<NDKNWCResponseMap[M]>>(
-        (resolve, reject) => {
-            waitForResponse
-                .call<NDKNWCWallet, [NDKEvent], Promise<NWCResponseBase<NDKNWCResponseMap[M]>>>(
-                    this,
-                    event
-                )
-                .then(resolve)
-                .catch(reject);
-        }
-    );
+    const responsePromise = new Promise<NWCResponseBase<NDKNWCResponseMap[M]>>((resolve, reject) => {
+        waitForResponse
+            .call<NDKNWCWallet, [NDKEvent], Promise<NWCResponseBase<NDKNWCResponseMap[M]>>>(this, event)
+            .then(resolve)
+            .catch(reject);
+    });
 
     // Add timeout race if configured
     if (this.timeout) {
@@ -112,7 +102,7 @@ export async function sendReq<M extends keyof NDKNWCRequestMap>(
             setTimeout(() => {
                 this.emit("timeout", method);
                 reject(new Error(`Request timed out after ${this.timeout}ms`));
-            }, this.timeout)
+            }, this.timeout),
         );
 
         return Promise.race([responsePromise, timeoutPromise]);

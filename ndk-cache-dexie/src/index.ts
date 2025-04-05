@@ -27,14 +27,7 @@ import {
     unpublishedEventsWarmUp,
 } from "./caches/unpublished-events.js";
 import { type ZapperCacheEntry, zapperDump, zapperWarmUp } from "./caches/zapper.js";
-import {
-    type Event,
-    type Profile,
-    type RelayStatus,
-    type UnpublishedEvent,
-    createDatabase,
-    db,
-} from "./db.js";
+import { type Event, type Profile, type RelayStatus, type UnpublishedEvent, createDatabase, db } from "./db.js";
 import { CacheHandler } from "./lru-cache.js";
 
 export { db } from "./db";
@@ -149,7 +142,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
             profile("nip05WarmUp", () => nip05WarmUp(this.nip05s, db.nip05)),
             profile("relayInfoWarmUp", () => relayInfoWarmUp(this.relayInfo, db.relayStatus)),
             profile("unpublishedEventsWarmUp", () =>
-                unpublishedEventsWarmUp(this.unpublishedEvents, db.unpublishedEvents)
+                unpublishedEventsWarmUp(this.unpublishedEvents, db.unpublishedEvents),
             ),
             profile("eventsWarmUp", () => eventsWarmUp(this.events, db.events)),
             profile("eventTagsWarmUp", () => eventTagsWarmUp(this.eventTags, db.eventTags)),
@@ -203,7 +196,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
     }
 
     public async getProfiles(
-        fn: (pubkey: Hexpubkey, profile: NDKUserProfile) => boolean
+        fn: (pubkey: Hexpubkey, profile: NDKUserProfile) => boolean,
     ): Promise<Map<Hexpubkey, NDKUserProfile> | undefined> {
         if (!this.profiles) return;
         return this.profiles.getAllWithFilter(fn);
@@ -211,11 +204,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
 
     public saveProfile(pubkey: Hexpubkey, profile: NDKUserProfile) {
         const existingValue = this.profiles.get(pubkey);
-        if (
-            existingValue?.created_at &&
-            profile.created_at &&
-            existingValue.created_at >= profile.created_at
-        ) {
+        if (existingValue?.created_at && profile.created_at && existingValue.created_at >= profile.created_at) {
             return;
         }
         const cachedAt = Math.floor(Date.now() / 1000);
@@ -223,10 +212,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         this.debug("Saved profile for pubkey", pubkey, profile);
     }
 
-    public async loadNip05(
-        nip05: string,
-        maxAgeForMissing = 3600
-    ): Promise<ProfilePointer | null | "missing"> {
+    public async loadNip05(nip05: string, maxAgeForMissing = 3600): Promise<ProfilePointer | null | "missing"> {
         const cache = this.nip05s?.get(nip05);
 
         if (cache) {
@@ -280,7 +266,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
     public async loadUsersLNURLDoc?(
         pubkey: Hexpubkey,
         maxAgeInSecs = 86400,
-        maxAgeForMissing = 3600
+        maxAgeForMissing = 3600,
     ): Promise<NDKLnUrlData | null | "missing"> {
         const cache = this.zappers?.get(pubkey);
         if (cache) {
@@ -367,8 +353,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
 
     public addUnpublishedEvent = addUnpublishedEvent.bind(this);
     public getUnpublishedEvents = () => getUnpublishedEvents(db.unpublishedEvents);
-    public discardUnpublishedEvent = (id: string) =>
-        discardUnpublishedEvent(db.unpublishedEvents, id);
+    public discardUnpublishedEvent = (id: string) => discardUnpublishedEvent(db.unpublishedEvents, id);
 
     public async setEvent(event: NDKEvent, _filters: NDKFilter[], relay?: NDKRelay): Promise<void> {
         if (event.kind === 0) {
@@ -471,11 +456,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
     /**
      * Searches by NIP-33
      */
-    private byNip33Query(
-        filterKeys: Set<string>,
-        filter: NDKFilter,
-        subscription: NDKSubscription
-    ): boolean {
+    private byNip33Query(filterKeys: Set<string>, filter: NDKFilter, subscription: NDKSubscription): boolean {
         const f = ["#d", "authors", "kinds"];
         const hasAllKeys = filterKeys.size === f.length && f.every((k) => filterKeys.has(k));
 
@@ -532,11 +513,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         return true;
     }
 
-    private byKinds(
-        filterKeys: Set<string>,
-        filter: NDKFilter,
-        subscription: NDKSubscription
-    ): boolean {
+    private byKinds(filterKeys: Set<string>, filter: NDKFilter, subscription: NDKSubscription): boolean {
         if (!filter.kinds || filterKeys.size !== 1 || !filterKeys.has("kinds")) return false;
 
         const limit = filter.limit || 500;
@@ -546,7 +523,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         const sortedKinds = [...filter.kinds].sort(
             (a, b) =>
                 (this.events.indexes.get("kind")?.get(a)?.size || 0) -
-                (this.events.indexes.get("kind")?.get(b)?.size || 0)
+                (this.events.indexes.get("kind")?.get(b)?.size || 0),
         );
 
         for (const kind of sortedKinds) {
@@ -581,7 +558,7 @@ export function foundEvent(
     subscription: NDKSubscription,
     event: Event,
     relayUrl: WebSocket["url"] | undefined,
-    filter?: NDKFilter
+    filter?: NDKFilter,
 ) {
     try {
         const deserializedEvent = deserialize(event.event);

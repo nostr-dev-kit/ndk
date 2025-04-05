@@ -1,14 +1,10 @@
-import type NDK from '@nostr-dev-kit/ndk';
-import {
-    Hexpubkey,
-    type NDKEvent,
-    NDKKind, type NDKUserProfile
-} from '@nostr-dev-kit/ndk';
-import { useMemo } from 'react';
-import { useNDKSessions } from '../store'; // Corrected import path
-import { useNDK } from '../../ndk/hooks'; // Corrected import path
-import { useProfile } from '../../profiles/hooks'; // Corrected import path for useProfile
-import { useNDKStore } from '../../ndk/store';
+import type NDK from "@nostr-dev-kit/ndk";
+import { Hexpubkey, type NDKEvent, NDKKind, type NDKUserProfile } from "@nostr-dev-kit/ndk";
+import { useMemo } from "react";
+import { useNDKSessions } from "../store"; // Corrected import path
+import { useNDK } from "../../ndk/hooks"; // Corrected import path
+import { useProfile } from "../../profiles/hooks"; // Corrected import path for useProfile
+import { useNDKStore } from "../../ndk/store";
 
 const EMPTY_SET = new Set<Hexpubkey>();
 
@@ -17,7 +13,9 @@ const EMPTY_SET = new Set<Hexpubkey>();
  * Returns an empty array if there is no active session or no follows list.
  */
 export const useFollows = (): Set<Hexpubkey> => {
-    return useNDKSessions(s => s.activePubkey ? s.sessions.get(s.activePubkey)?.followSet ?? EMPTY_SET : EMPTY_SET);
+    return useNDKSessions((s) =>
+        s.activePubkey ? (s.sessions.get(s.activePubkey)?.followSet ?? EMPTY_SET) : EMPTY_SET,
+    );
 };
 
 /**
@@ -26,7 +24,7 @@ export const useFollows = (): Set<Hexpubkey> => {
  * Returns default empty sets and undefined for the event if no active session exists.
  */
 export const useMuteList = () => {
-    const activeSession = useNDKSessions(s => s.activePubkey ? s.sessions.get(s.activePubkey) : undefined);
+    const activeSession = useNDKSessions((s) => (s.activePubkey ? s.sessions.get(s.activePubkey) : undefined));
     const event = activeSession?.events?.get(NDKKind.MuteList);
     const pubkeys = activeSession?.mutedPubkeys ?? new Set<string>();
     const hashtags = activeSession?.mutedHashtags ?? new Set<string>();
@@ -55,8 +53,7 @@ interface UseNDKSessionEventOptions<T extends NDKEvent> {
  */
 export function useNDKSessionEvent<T extends NDKEvent>(
     kind: NDKKind,
-    options: UseNDKSessionEventOptions<T> &
-        Required<Pick<UseNDKSessionEventOptions<T>, 'create'>>
+    options: UseNDKSessionEventOptions<T> & Required<Pick<UseNDKSessionEventOptions<T>, "create">>,
 ): T;
 
 /**
@@ -68,7 +65,7 @@ export function useNDKSessionEvent<T extends NDKEvent>(
  */
 export function useNDKSessionEvent<T extends NDKEvent>(
     kind: NDKKind,
-    options?: Omit<UseNDKSessionEventOptions<T>, 'create'>
+    options?: Omit<UseNDKSessionEventOptions<T>, "create">,
 ): T | undefined;
 
 /**
@@ -76,12 +73,14 @@ export function useNDKSessionEvent<T extends NDKEvent>(
  */
 export function useNDKSessionEvent<T extends NDKEvent>(
     kind: NDKKind,
-    options: UseNDKSessionEventOptions<T> = {}
+    options: UseNDKSessionEventOptions<T> = {},
 ): T | undefined {
     const { ndk } = useNDK();
     const { create } = options;
-    const activePubkey = useNDKSessions(s => s.activePubkey);
-    const activeSessionEvents = useNDKSessions(s => s.activePubkey ? s.sessions.get(s.activePubkey)?.events : undefined);
+    const activePubkey = useNDKSessions((s) => s.activePubkey);
+    const activeSessionEvents = useNDKSessions((s) =>
+        s.activePubkey ? s.sessions.get(s.activePubkey)?.events : undefined,
+    );
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     const event = useMemo(() => {
@@ -97,18 +96,13 @@ export function useNDKSessionEvent<T extends NDKEvent>(
                 newInstance.pubkey = activePubkey;
                 return newInstance;
             } catch (error) {
-                console.error(
-                    `Failed to create instance for kind ${kind} using provided class:`,
-                    error
-                );
+                console.error(`Failed to create instance for kind ${kind} using provided class:`, error);
                 return undefined;
             }
         }
 
         return undefined;
-    }, [activeSessionEvents, kind, ndk, activePubkey]) as
-        | T
-        | undefined;
+    }, [activeSessionEvents, kind, ndk, activePubkey]) as T | undefined;
 
     return event;
 }
@@ -124,9 +118,7 @@ export function useNDKSessionEvent<T extends NDKEvent>(
  *          or the profile hasn't been fetched yet.
  */
 export const useCurrentUserProfile = (): NDKUserProfile | undefined => {
-    const activePubkey = useNDKSessions(
-        (state) => state.activePubkey
-    );
+    const activePubkey = useNDKSessions((state) => state.activePubkey);
 
     const profile = useProfile(activePubkey ?? undefined);
 
@@ -145,4 +137,4 @@ export const useSessionSwitchUser = (pubkey: string) => {
     };
 
     return handleSwitchUser;
-}
+};

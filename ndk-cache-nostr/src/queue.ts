@@ -40,7 +40,7 @@ export class Queue<T> {
                             // It's important to rethrow the error here to not accidentally resolve the promise.
                             // However, since TypeScript 4.4, you can set "useUnknownInCatchVariables" to false if this line errors.
                             throw error;
-                        }
+                        },
                     ),
             });
             this.process();

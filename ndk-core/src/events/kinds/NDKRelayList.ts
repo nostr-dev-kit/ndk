@@ -74,7 +74,7 @@ export class NDKRelayList extends NDKEvent {
 
         return new NDKRelaySet(
             new Set(this.relays.map((u) => this.ndk?.pool.getRelay(u)).filter((r) => !!r)),
-            this.ndk
+            this.ndk,
         );
     }
 }

@@ -16,7 +16,7 @@ export async function generateZapRequest(
     relays: string[],
     comment?: string,
     tags?: NDKTag[],
-    signer?: NDKSigner
+    signer?: NDKSigner,
 ): Promise<NDKEvent | null> {
     const zapEndpoint = data.callback;
     const zapRequest = nip57.makeZapRequest({

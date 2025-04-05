@@ -35,7 +35,7 @@ export type UpdateStateResult = {
 export async function update(
     this: WalletState,
     stateChange: WalletProofChange,
-    _memo?: string
+    _memo?: string,
 ): Promise<UpdateStateResult> {
     updateInternalState(this, stateChange);
     this.wallet.emit("balance_updated");
@@ -74,7 +74,7 @@ function updateInternalState(walletState: WalletState, stateChange: WalletProofC
  */
 async function updateExternalState(
     walletState: WalletState,
-    stateChange: WalletProofChange
+    stateChange: WalletProofChange,
 ): Promise<UpdateStateResult> {
     const newState = calculateNewState(walletState, stateChange);
 
@@ -114,7 +114,7 @@ async function publishWithRetry(
     walletState: WalletState,
     event: NDKEvent,
     relaySet?: NDKRelaySet,
-    retryTimeout = 10 * 1000 // 10 seconds
+    retryTimeout = 10 * 1000, // 10 seconds
 ) {
     let publishResult: Set<NDKRelay> | undefined;
     publishResult = await event.publish(relaySet);
@@ -154,11 +154,7 @@ async function publishWithRetry(
 /**
  * Creates a token event as part of a state transition.
  */
-async function createTokenEvent(
-    walletState: WalletState,
-    mint: MintUrl,
-    newState: WalletTokenChange
-) {
+async function createTokenEvent(walletState: WalletState, mint: MintUrl, newState: WalletTokenChange) {
     const newToken = new NDKCashuToken(walletState.wallet.ndk);
     newToken.mint = mint;
     newToken.proofs = newState.saveProofs;
@@ -184,10 +180,7 @@ async function createTokenEvent(
     return newToken;
 }
 
-export function calculateNewState(
-    walletState: WalletState,
-    stateChange: WalletProofChange
-): WalletTokenChange {
+export function calculateNewState(walletState: WalletState, stateChange: WalletProofChange): WalletTokenChange {
     /**
      * This tracks the proofs that we know we need to destroy.
      */

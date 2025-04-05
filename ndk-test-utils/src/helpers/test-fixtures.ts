@@ -144,11 +144,7 @@ export class TestEventFactory {
      * @param toUser The recipient
      * @returns The created event (not necessarily signed)
      */
-    async createDirectMessage(
-        content: string,
-        fromUser: NDKUser | string,
-        toUser: NDKUser | string
-    ): Promise<any> {
+    async createDirectMessage(content: string, fromUser: NDKUser | string, toUser: NDKUser | string): Promise<any> {
         let fromPubkey: string;
         let toPubkey: string;
 
@@ -186,12 +182,7 @@ export class TestEventFactory {
      * @param kind The kind of the reply (defaults to same as original for kind 1, or 1111 for other kinds)
      * @returns The created reply event (not necessarily signed)
      */
-    async createReply(
-        originalEvent: any,
-        content: string,
-        fromUser: NDKUser | string,
-        kind?: number
-    ): Promise<any> {
+    async createReply(originalEvent: any, content: string, fromUser: NDKUser | string, kind?: number): Promise<any> {
         let fromPubkey: string;
 
         if (typeof fromUser === "string") {
@@ -246,7 +237,7 @@ export class TestEventFactory {
     async createEventChain(
         initialContent: string,
         initialAuthor: NDKUser | string,
-        replies: Array<{ content: string; author: NDKUser | string }>
+        replies: Array<{ content: string; author: NDKUser | string }>,
     ): Promise<any[]> {
         // Create the root event
         const rootEvent = await this.createSignedTextNote(initialContent, initialAuthor);

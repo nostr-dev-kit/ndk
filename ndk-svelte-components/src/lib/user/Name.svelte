@@ -51,8 +51,7 @@ if (!userProfile && !user && ndk) {
 }
 
 const _npub = npub || user?.npub;
-const truncatedNpub =
-    npubMaxLength && _npub ? truncatedBech32(_npub as string, npubMaxLength) : _npub;
+const truncatedNpub = npubMaxLength && _npub ? truncatedBech32(_npub as string, npubMaxLength) : _npub;
 
 function chooseNameFromDisplay(profile?: NDKUserProfile) {
     if (profile?.[attribute]) return profile[attribute];

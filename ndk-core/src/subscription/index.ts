@@ -150,7 +150,7 @@ export interface NDKSubscriptionOptions {
      * When set, the cache will be queried first, and, when hitting relays,
      * a `since` filter will be added to the subscription that is one second
      * after the last event received from the cache.
-     * 
+     *
      * This option implies cacheUsage: CACHE_FIRST.
      */
     addSinceFromCache?: boolean;
@@ -230,7 +230,7 @@ export class NDKSubscription extends EventEmitter<{
         timeSinceFirstSeen: number,
         sub: NDKSubscription,
         fromCache: boolean,
-        optimisticPublish: boolean
+        optimisticPublish: boolean,
     ) => void;
 
     /**
@@ -246,7 +246,7 @@ export class NDKSubscription extends EventEmitter<{
         relay: NDKRelay | undefined,
         sub: NDKSubscription,
         fromCache: boolean,
-        optimisticPublish: boolean
+        optimisticPublish: boolean,
     ) => void;
 
     /**
@@ -313,12 +313,7 @@ export class NDKSubscription extends EventEmitter<{
      */
     public cacheUnconstrainFilter?: Array<keyof NDKFilter>;
 
-    public constructor(
-        ndk: NDK,
-        filters: NDKFilter | NDKFilter[],
-        opts?: NDKSubscriptionOptions,
-        subId?: string
-    ) {
+    public constructor(ndk: NDK, filters: NDKFilter | NDKFilter[], opts?: NDKSubscriptionOptions, subId?: string) {
         super();
         this.ndk = ndk;
         this.opts = { ...defaultOpts, ...(opts || {}) };
@@ -349,7 +344,7 @@ export class NDKSubscription extends EventEmitter<{
         if (!this.relayFilters) return [];
 
         const relaysMissingEose = Array.from(this.relayFilters?.keys()).filter(
-            (url) => !this.eosesSeen.has(this.pool.getRelay(url, false, false))
+            (url) => !this.eosesSeen.has(this.pool.getRelay(url, false, false)),
         );
 
         return relaysMissingEose;
@@ -378,13 +373,11 @@ export class NDKSubscription extends EventEmitter<{
 
     private shouldQueryCache(): boolean {
         if (this.opts.addSinceFromCache) return true;
-        
+
         // explicitly told to not query the cache
         if (this.opts?.cacheUsage === NDKSubscriptionCacheUsage.ONLY_RELAY) return false;
 
-        const hasNonEphemeralKind = this.filters.some((f) =>
-            f.kinds?.some((k) => kindIsEphemeral(k))
-        );
+        const hasNonEphemeralKind = this.filters.some((f) => f.kinds?.some((k) => kindIsEphemeral(k)));
         if (hasNonEphemeralKind) return true;
 
         return true;
@@ -437,7 +430,7 @@ export class NDKSubscription extends EventEmitter<{
                     if (!this.mostRecentCacheEventTimestamp || event.created_at > this.mostRecentCacheEventTimestamp) {
                         this.mostRecentCacheEventTimestamp = event.created_at;
                     }
-                    
+
                     event.ndk = this.ndk;
                     const e = this.opts.wrap ? wrapEvent(event) : event;
                     if (!e) break;
@@ -562,17 +555,17 @@ export class NDKSubscription extends EventEmitter<{
     private startWithRelays(): void {
         // Create a copy of filters to potentially modify for addSinceFromCache
         let filters = this.filters;
-        
+
         // If addSinceFromCache is enabled and we have a timestamp from cache results,
         // modify the filters to add a 'since' filter that's one second after the most recent event
         if (this.opts.addSinceFromCache && this.mostRecentCacheEventTimestamp) {
             const sinceTimestamp = this.mostRecentCacheEventTimestamp + 1;
-            filters = filters.map(filter => ({
+            filters = filters.map((filter) => ({
                 ...filter,
-                since: Math.max(filter.since || 0, sinceTimestamp)
+                since: Math.max(filter.since || 0, sinceTimestamp),
             }));
         }
-        
+
         if (!this.relaySet || this.relaySet.relays.size === 0) {
             this.relayFilters = calculateRelaySetsFromFilters(this.ndk, filters, this.pool);
         } else {
@@ -602,7 +595,7 @@ export class NDKSubscription extends EventEmitter<{
         event: NDKEvent | NostrEvent,
         relay: NDKRelay | undefined,
         fromCache = false,
-        optimisticPublish = false
+        optimisticPublish = false,
     ) {
         const eventId = event.id! as NDKEventId;
 
@@ -659,15 +652,7 @@ export class NDKSubscription extends EventEmitter<{
             }
         } else {
             const timeSinceFirstSeen = Date.now() - (this.eventFirstSeen.get(eventId) || 0);
-            this.emit(
-                "event:dup",
-                event,
-                relay,
-                timeSinceFirstSeen,
-                this,
-                fromCache,
-                optimisticPublish
-            );
+            this.emit("event:dup", event, relay, timeSinceFirstSeen, this, fromCache, optimisticPublish);
 
             if (relay) {
                 // Let's see if we have already verified this event id's signature
@@ -692,7 +677,7 @@ export class NDKSubscription extends EventEmitter<{
         evt: NDKEvent,
         relay: NDKRelay | undefined,
         fromCache: boolean,
-        optimisticPublish: boolean
+        optimisticPublish: boolean,
     ) {
         const wrapped = wrap ? wrapEvent(evt) : evt;
         if (wrapped instanceof Promise) {
@@ -714,9 +699,7 @@ export class NDKSubscription extends EventEmitter<{
         this.debug("EOSE received from %s", relay.url);
         this.eosesSeen.add(relay);
 
-        let lastEventSeen = this.lastEventReceivedAt
-            ? Date.now() - this.lastEventReceivedAt
-            : undefined;
+        let lastEventSeen = this.lastEventReceivedAt ? Date.now() - this.lastEventReceivedAt : undefined;
 
         const hasSeenAllEoses = this.eosesSeen.size === this.relayFilters?.size;
         const queryFilled = queryFullyFilled(this);
@@ -739,7 +722,7 @@ export class NDKSubscription extends EventEmitter<{
             const connectedRelays = new Set(this.pool.connectedRelays().map((r) => r.url));
 
             const connectedRelaysWithFilters = Array.from(this.relayFilters.keys()).filter((url) =>
-                connectedRelays.has(url)
+                connectedRelays.has(url),
             );
 
             // if we have no connected relays, wait for all relays to connect
@@ -751,8 +734,7 @@ export class NDKSubscription extends EventEmitter<{
             // that have already sent an EOSE, the more
             // relays that have sent an EOSE, the less time we should wait
             // for the next one
-            const percentageOfRelaysThatHaveSentEose =
-                this.eosesSeen.size / connectedRelaysWithFilters.length;
+            const percentageOfRelaysThatHaveSentEose = this.eosesSeen.size / connectedRelaysWithFilters.length;
 
             this.debug("Percentage of relays that have sent EOSE", {
                 subId: this.subId,
@@ -763,8 +745,7 @@ export class NDKSubscription extends EventEmitter<{
 
             // If less than 2 and 50% of relays have EOSEd don't add a timeout yet
             if (this.eosesSeen.size >= 2 && percentageOfRelaysThatHaveSentEose >= 0.5) {
-                timeToWaitForNextEose =
-                    timeToWaitForNextEose * (1 - percentageOfRelaysThatHaveSentEose);
+                timeToWaitForNextEose = timeToWaitForNextEose * (1 - percentageOfRelaysThatHaveSentEose);
 
                 if (timeToWaitForNextEose === 0) {
                     performEose("time to wait was 0");
@@ -774,9 +755,7 @@ export class NDKSubscription extends EventEmitter<{
                 if (this.eoseTimeout) clearTimeout(this.eoseTimeout);
 
                 const sendEoseTimeout = () => {
-                    lastEventSeen = this.lastEventReceivedAt
-                        ? Date.now() - this.lastEventReceivedAt
-                        : undefined;
+                    lastEventSeen = this.lastEventReceivedAt ? Date.now() - this.lastEventReceivedAt : undefined;
 
                     // If we have seen an event in the past 20ms don't emit an EOSE due to a timeout, events
                     // are still being received

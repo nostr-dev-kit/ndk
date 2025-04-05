@@ -80,15 +80,7 @@ export class NDKSimpleGroup {
         return event.publish(this.relaySet);
     }
 
-    async setMetadata({
-        name,
-        about,
-        picture,
-    }: {
-        name?: string;
-        about?: string;
-        picture?: string;
-    }) {
+    async setMetadata({ name, about, picture }: { name?: string; about?: string; picture?: string }) {
         const event = new NDKEvent(this.ndk);
         event.kind = NDKKind.GroupAdminEditMetadata;
         event.tags.push(["h", this.groupId]);
@@ -118,7 +110,7 @@ export class NDKSimpleGroup {
                 "#d": [this.groupId],
             },
             undefined,
-            this.relaySet
+            this.relaySet,
         );
 
         if (!memberList) return null;
@@ -205,7 +197,7 @@ export class NDKSimpleGroup {
                     "#d": [this.groupId],
                 },
                 undefined,
-                this.relaySet
+                this.relaySet,
             )
             .then((event) => {
                 if (event) {

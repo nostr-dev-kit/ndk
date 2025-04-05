@@ -12,7 +12,7 @@ export async function pinEvent(
     user: NDKUser,
     event: NDKEvent,
     pinEvent?: NDKEvent,
-    publish?: boolean
+    publish?: boolean,
 ): Promise<NDKEvent> {
     const kind = NDKKind.PinList;
     if (!user.ndk) throw new Error("No NDK instance found");
@@ -23,7 +23,7 @@ export async function pinEvent(
     if (!pinEvent) {
         const events: Set<NDKEvent> = await user.ndk.fetchEvents(
             { kinds: [kind], authors: [user.pubkey] },
-            { cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY }
+            { cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY },
         );
 
         if (events.size > 0) {

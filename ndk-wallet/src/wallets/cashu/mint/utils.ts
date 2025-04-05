@@ -18,10 +18,7 @@ export type NDKCashuMintRecommendation = Record<MintUrl, MintUsage>;
  * @param ndk
  * @param filter optional extra filter to apply to the REQ
  */
-export async function getCashuMintRecommendations(
-    ndk: NDK,
-    filter?: NDKFilter
-): Promise<NDKCashuMintRecommendation> {
+export async function getCashuMintRecommendations(ndk: NDK, filter?: NDKFilter): Promise<NDKCashuMintRecommendation> {
     const f: NDKFilter[] = [
         { kinds: [NDKKind.EcashMintRecommendation], "#k": ["38002"], ...(filter || {}) },
         { kinds: [NDKKind.CashuMintList], ...(filter || {}) },

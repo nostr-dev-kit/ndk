@@ -65,7 +65,7 @@ export async function calculateRelaySetFromEvent(ndk: NDK, event: NDKEvent): Pro
         const pTaggedRelays = Array.from(
             chooseRelayCombinationForPubkeys(ndk, pTags, "read", {
                 preferredRelays: new Set(authorWriteRelays),
-            }).keys()
+            }).keys(),
         );
         pTaggedRelays.forEach((relayUrl) => {
             const relay = ndk.pool?.getRelay(relayUrl, false, true);
@@ -94,7 +94,7 @@ export async function calculateRelaySetFromEvent(ndk: NDK, event: NDKEvent): Pro
 export function calculateRelaySetsFromFilter(
     ndk: NDK,
     filters: NDKFilter[],
-    pool: NDKPool
+    pool: NDKPool,
 ): Map<WebSocket["url"], NDKFilter[]> {
     const result = new Map<WebSocket["url"], NDKFilter[]>();
     const authors = new Set<Hexpubkey>();
@@ -122,7 +122,7 @@ export function calculateRelaySetsFromFilter(
                 // replace authors with the authors for each relay
                 for (const [relayUrl, authors] of authorToRelaysMap.entries()) {
                     const authorFilterAndRelayPubkeyIntersection = filter.authors.filter((author) =>
-                        authors.includes(author)
+                        authors.includes(author),
                     );
                     result.set(relayUrl, [
                         ...result.get(relayUrl)!,
@@ -171,7 +171,7 @@ export function calculateRelaySetsFromFilter(
 export function calculateRelaySetsFromFilters(
     ndk: NDK,
     filters: NDKFilter[],
-    pool: NDKPool
+    pool: NDKPool,
 ): Map<WebSocket["url"], NDKFilter[]> {
     const a = calculateRelaySetsFromFilter(ndk, filters, pool);
 

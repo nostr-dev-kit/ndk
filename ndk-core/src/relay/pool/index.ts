@@ -75,7 +75,7 @@ export class NDKPool extends EventEmitter<{
         }: {
             debug?: debug.Debugger;
             name?: string;
-        } = {}
+        } = {},
     ) {
         super();
         this.debug = debug ?? ndk.debug.extend("pool");
@@ -117,11 +117,7 @@ export class NDKPool extends EventEmitter<{
      * @param relay - The relay to add to the pool.
      * @param removeIfUnusedAfter - The time in milliseconds to wait before removing the relay from the pool after it is no longer used.
      */
-    public useTemporaryRelay(
-        relay: NDKRelay,
-        removeIfUnusedAfter = 30000,
-        filters?: NDKFilter[] | string
-    ) {
+    public useTemporaryRelay(relay: NDKRelay, removeIfUnusedAfter = 30000, filters?: NDKFilter[] | string) {
         const relayAlreadyInPool = this.relays.has(relay.url);
 
         // check if the relay is already in the pool
@@ -281,12 +277,7 @@ export class NDKPool extends EventEmitter<{
      *
      * New relays will be attempted to be connected.
      */
-    public getRelay(
-        url: WebSocket["url"],
-        connect = true,
-        temporary = false,
-        filters?: NDKFilter[]
-    ): NDKRelay {
+    public getRelay(url: WebSocket["url"], connect = true, temporary = false, filters?: NDKFilter[]): NDKRelay {
         let relay = this.relays.get(normalizeRelayUrl(url));
 
         if (!relay) {
@@ -333,11 +324,7 @@ export class NDKPool extends EventEmitter<{
 
         this.status = "active";
 
-        this.debug(
-            `Connecting to ${this.relays.size} relays${
-                timeoutMs ? `, timeout ${timeoutMs}...` : ""
-            }`
-        );
+        this.debug(`Connecting to ${this.relays.size} relays${timeoutMs ? `, timeout ${timeoutMs}...` : ""}`);
 
         const relaysToConnect = new Set(this.autoConnectRelays.keys());
 
@@ -359,10 +346,8 @@ export class NDKPool extends EventEmitter<{
 
                 promises.push(
                     Promise.race([connectPromise, timeoutPromise]).catch((e) => {
-                        this.debug(
-                            `Failed to connect to relay ${relay.url}: ${e ?? "No reason specified"}`
-                        );
-                    })
+                        this.debug(`Failed to connect to relay ${relay.url}: ${e ?? "No reason specified"}`);
+                    }),
                 );
             } else {
                 promises.push(connectPromise);
@@ -452,16 +437,12 @@ export class NDKPool extends EventEmitter<{
     }
 
     public connectedRelays(): NDKRelay[] {
-        return Array.from(this.relays.values()).filter(
-            (relay) => relay.status >= NDKRelayStatus.CONNECTED
-        );
+        return Array.from(this.relays.values()).filter((relay) => relay.status >= NDKRelayStatus.CONNECTED);
     }
 
     public permanentAndConnectedRelays(): NDKRelay[] {
         return Array.from(this.relays.values()).filter(
-            (relay) =>
-                relay.status >= NDKRelayStatus.CONNECTED &&
-                !this.temporaryRelayTimers.has(relay.url)
+            (relay) => relay.status >= NDKRelayStatus.CONNECTED && !this.temporaryRelayTimers.has(relay.url),
         );
     }
 

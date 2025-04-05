@@ -10,13 +10,13 @@ export async function follows(
     this: NDKUser,
     opts?: NDKSubscriptionOptions,
     outbox?: boolean,
-    kind: number = NDKKind.Contacts
+    kind: number = NDKKind.Contacts,
 ): Promise<Set<NDKUser>> {
     if (!this.ndk) throw new Error("NDK not set");
 
     const contactListEvent = await this.ndk.fetchEvent(
         { kinds: [kind], authors: [this.pubkey] },
-        opts || { groupable: false }
+        opts || { groupable: false },
     );
 
     if (contactListEvent) {

@@ -47,8 +47,8 @@ describe("generateSubId", () => {
                 new NDKSubscription(
                     ndk,
                     { kinds: [10002], authors: [id] },
-                    { groupable: true, subId: `relay-list-${id}` }
-                )
+                    { groupable: true, subId: `relay-list-${id}` },
+                ),
             );
             filter.authors?.push(id);
         }
@@ -61,7 +61,7 @@ describe("generateSubId", () => {
 describe("filterFromId", () => {
     it("handles nevents", () => {
         const filter = filterFromId(
-            "nevent1qgs9kqvr4dkruv3t7n2pc6e6a7v9v2s5fprmwjv4gde8c4fe5y29v0spzamhxue69uhhyetvv9ujuurjd9kkzmpwdejhgtcqype6ycavy2e9zpx9mzeuekaahgw96ken0mzkcmgz40ljccwyrn88gxv2ewr"
+            "nevent1qgs9kqvr4dkruv3t7n2pc6e6a7v9v2s5fprmwjv4gde8c4fe5y29v0spzamhxue69uhhyetvv9ujuurjd9kkzmpwdejhgtcqype6ycavy2e9zpx9mzeuekaahgw96ken0mzkcmgz40ljccwyrn88gxv2ewr",
         );
         expect(filter).toEqual({
             ids: ["73a263ac22b25104c5d8b3ccdbbdba1c5d5b337ec56c6d02abff2c61c41cce74"],
@@ -73,7 +73,7 @@ describe("filterFromId", () => {
 describe("filterForEventsTaggingId", () => {
     it("handles nevents", () => {
         const filter = filterForEventsTaggingId(
-            "nevent1qgs9kqvr4dkruv3t7n2pc6e6a7v9v2s5fprmwjv4gde8c4fe5y29v0spzamhxue69uhhyetvv9ujuurjd9kkzmpwdejhgtcqype6ycavy2e9zpx9mzeuekaahgw96ken0mzkcmgz40ljccwyrn88gxv2ewr"
+            "nevent1qgs9kqvr4dkruv3t7n2pc6e6a7v9v2s5fprmwjv4gde8c4fe5y29v0spzamhxue69uhhyetvv9ujuurjd9kkzmpwdejhgtcqype6ycavy2e9zpx9mzeuekaahgw96ken0mzkcmgz40ljccwyrn88gxv2ewr",
         );
         expect(filter).toEqual({
             "#e": ["73a263ac22b25104c5d8b3ccdbbdba1c5d5b337ec56c6d02abff2c61c41cce74"],
@@ -82,12 +82,10 @@ describe("filterForEventsTaggingId", () => {
 
     it("handles naddr", () => {
         const filter = filterForEventsTaggingId(
-            "naddr1qvzqqqr4gupzpjjwt0eqm6as279wf079c0j42jysp2t4s37u8pg5w2dfyktxgkntqqxnzde38yen2desxqmn2d3332u3ff"
+            "naddr1qvzqqqr4gupzpjjwt0eqm6as279wf079c0j42jysp2t4s37u8pg5w2dfyktxgkntqqxnzde38yen2desxqmn2d3332u3ff",
         );
         expect(filter).toEqual({
-            "#a": [
-                "30023:ca4e5bf20debb0578ae4bfc5c3e55548900a975847dc38514729a92596645a6b:1719357007561",
-            ],
+            "#a": ["30023:ca4e5bf20debb0578ae4bfc5c3e55548900a975847dc38514729a92596645a6b:1719357007561"],
         });
     });
 });

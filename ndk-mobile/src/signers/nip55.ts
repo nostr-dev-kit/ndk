@@ -61,12 +61,7 @@ export class NDKNip55Signer implements NDKSigner {
      * @returns A promise that resolves to the signature of the signed event.
      */
     async sign(event: NostrEvent): Promise<string> {
-        const result = await Nip55.signEvent(
-            this.packageName,
-            JSON.stringify(event),
-            event.id,
-            this._pubkey
-        );
+        const result = await Nip55.signEvent(this.packageName, JSON.stringify(event), event.id, this._pubkey);
         return result.signature;
     }
 
@@ -87,11 +82,7 @@ export class NDKNip55Signer implements NDKSigner {
      * @param value - The value to be encrypted.
      * @param nip - which NIP is being implemented ('nip04', 'nip44')
      */
-    async encrypt(
-        _recipient: NDKUser,
-        _value: string,
-        _scheme?: NDKEncryptionScheme
-    ): Promise<string> {
+    async encrypt(_recipient: NDKUser, _value: string, _scheme?: NDKEncryptionScheme): Promise<string> {
         return "";
     }
     /**
@@ -101,11 +92,7 @@ export class NDKNip55Signer implements NDKSigner {
      * @param value - The value to be decrypted
      * @param scheme - which NIP is being implemented ('nip04', 'nip44', 'nip49')
      */
-    async decrypt(
-        _sender: NDKUser,
-        _value: string,
-        _scheme?: NDKEncryptionScheme
-    ): Promise<string> {
+    async decrypt(_sender: NDKUser, _value: string, _scheme?: NDKEncryptionScheme): Promise<string> {
         return "";
     }
 
@@ -142,7 +129,7 @@ export class NDKNip55Signer implements NDKSigner {
 
         const payload = parsed.payload;
 
-        if (!payload || typeof payload !== 'object' || !payload.packageName) {
+        if (!payload || typeof payload !== "object" || !payload.packageName) {
             throw new Error("Invalid payload content for nip55 signer");
         }
 

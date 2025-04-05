@@ -93,15 +93,7 @@ export class NDKDraft extends NDKEvent {
      * @param signer: Optional signer to encrypt with
      * @param publish: Whether to publish, optionally specifying relaySet to publish to
      */
-    async save({
-        signer,
-        publish,
-        relaySet,
-    }: {
-        signer?: NDKSigner;
-        publish?: boolean;
-        relaySet?: NDKRelaySet;
-    }) {
+    async save({ signer, publish, relaySet }: { signer?: NDKSigner; publish?: boolean; relaySet?: NDKRelaySet }) {
         signer ??= this.ndk?.signer;
         if (!signer) throw new Error("No signer available");
 

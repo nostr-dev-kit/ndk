@@ -9,10 +9,7 @@ export type Nip05CacheEntry = {
     fetchedAt: number;
 };
 
-export async function nip05WarmUp(
-    cacheHandler: CacheHandler<Nip05CacheEntry>,
-    nip05s: Table<Nip05>
-) {
+export async function nip05WarmUp(cacheHandler: CacheHandler<Nip05CacheEntry>, nip05s: Table<Nip05>) {
     const array = await nip05s.limit(cacheHandler.maxSize).toArray();
     for (const nip05 of array) {
         cacheHandler.set(nip05.nip05, nip05, false);

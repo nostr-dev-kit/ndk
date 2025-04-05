@@ -7,7 +7,7 @@ import type { Hexpubkey } from "../user";
 export function getRelaysForSync(
     ndk: NDK,
     author: Hexpubkey,
-    type: "write" | "read" = "write"
+    type: "write" | "read" = "write",
 ): Set<WebSocket["url"]> | undefined {
     if (!ndk.outboxTracker) return undefined;
 
@@ -26,7 +26,7 @@ export function getRelaysForSync(
 export async function getWriteRelaysFor(
     ndk: NDK,
     author: Hexpubkey,
-    type: "write" | "read" = "write"
+    type: "write" | "read" = "write",
 ): Promise<Set<WebSocket["url"]> | undefined> {
     if (!ndk.outboxTracker) return undefined;
     if (!ndk.outboxTracker.data.has(author)) {

@@ -24,7 +24,7 @@ export async function giftWrap(
     event: NDKEvent,
     recipient: NDKUser,
     signer?: NDKSigner,
-    params: GiftWrapParams = {}
+    params: GiftWrapParams = {},
 ): Promise<NDKEvent> {
     let _signer = signer;
     params.scheme ??= "nip44";
@@ -49,7 +49,7 @@ export async function giftUnwrap(
     event: NDKEvent,
     sender?: NDKUser,
     signer?: NDKSigner,
-    scheme: NDKEncryptionScheme = "nip44"
+    scheme: NDKEncryptionScheme = "nip44",
 ): Promise<NDKEvent> {
     const _sender = sender || new NDKUser({ pubkey: event.pubkey });
     let _signer = signer;
@@ -68,8 +68,7 @@ export async function giftUnwrap(
         const rumorSender = new NDKUser({ pubkey: seal.pubkey });
         const rumor = JSON.parse(await signer.decrypt(rumorSender, seal.content, scheme));
         if (!rumor) throw new Error("Failed to decrypt seal");
-        if (rumor.pubkey !== _sender.pubkey)
-            throw new Error("Invalid GiftWrap, sender validation failed!");
+        if (rumor.pubkey !== _sender.pubkey) throw new Error("Invalid GiftWrap, sender validation failed!");
 
         return new NDKEvent(event.ndk, rumor as NostrEvent);
     } catch (_e) {
@@ -89,7 +88,7 @@ async function getSealEvent(
     rumor: NDKEvent,
     recipient: NDKUser,
     signer: NDKSigner,
-    scheme: NDKEncryptionScheme = "nip44"
+    scheme: NDKEncryptionScheme = "nip44",
 ): Promise<NDKEvent> {
     const seal = new NDKEvent(rumor.ndk);
     seal.kind = NDKKind.GiftWrapSeal;
@@ -104,7 +103,7 @@ async function getWrapEvent(
     sealed: NDKEvent,
     recipient: NDKUser,
     params?: GiftWrapParams,
-    scheme: NDKEncryptionScheme = "nip44"
+    scheme: NDKEncryptionScheme = "nip44",
 ): Promise<NDKEvent> {
     const signer = NDKPrivateKeySigner.generate();
 

@@ -6,7 +6,6 @@ import type { NDKUserProfile } from "../user/profile.js";
 import type { NDKLnUrlData } from "../zapper/ln.js";
 import type { NDKNutzapState } from "../types.js";
 
-
 export type NDKCacheEntry<T> = T & {
     cachedAt?: number;
 };
@@ -68,13 +67,10 @@ export interface NDKCacheAdapter {
      * const allAliceProfiles = await cache.getProfiles(searchFunc);
      */
     getProfiles?: (
-        filter: (pubkey: Hexpubkey, profile: NDKUserProfile) => boolean
+        filter: (pubkey: Hexpubkey, profile: NDKUserProfile) => boolean,
     ) => Promise<Map<Hexpubkey, NDKUserProfile> | undefined>;
 
-    loadNip05?(
-        nip05: string,
-        maxAgeForMissing?: number
-    ): Promise<ProfilePointer | null | "missing">;
+    loadNip05?(nip05: string, maxAgeForMissing?: number): Promise<ProfilePointer | null | "missing">;
     saveNip05?(nip05: string, profile: ProfilePointer | null): void;
 
     /**
@@ -87,7 +83,7 @@ export interface NDKCacheAdapter {
     loadUsersLNURLDoc?(
         pubkey: Hexpubkey,
         maxAgeInSecs?: number,
-        maxAgeForMissing?: number
+        maxAgeForMissing?: number,
     ): Promise<NDKLnUrlData | null | "missing">;
     saveUsersLNURLDoc?(pubkey: Hexpubkey, doc: NDKLnUrlData | null): void;
 
@@ -111,9 +107,7 @@ export interface NDKCacheAdapter {
     /**
      * Fetches all unpublished events.
      */
-    getUnpublishedEvents?(): Promise<
-        { event: NDKEvent; relays?: WebSocket["url"][]; lastTryAt?: number }[]
-    >;
+    getUnpublishedEvents?(): Promise<{ event: NDKEvent; relays?: WebSocket["url"][]; lastTryAt?: number }[]>;
 
     /**
      * Removes an unpublished event.
@@ -142,7 +136,6 @@ export interface NDKCacheAdapter {
      * Cleans up the cache. This is called when the user logs out.
      */
     clear?(): Promise<void>;
-
 
     /**
      * Gets all nutzap states from the cache.

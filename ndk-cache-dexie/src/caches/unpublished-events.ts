@@ -13,17 +13,14 @@ const WRITE_STATUS_THRESHOLD = 3;
 
 export async function unpublishedEventsWarmUp(
     cacheHandler: CacheHandler<UnpublishedEvent>,
-    unpublishedEvents: Table<UnpublishedEvent>
+    unpublishedEvents: Table<UnpublishedEvent>,
 ) {
     await unpublishedEvents.each((unpublishedEvent) => {
         cacheHandler.set(unpublishedEvent.event.id!, unpublishedEvent, false);
     });
 }
 
-export function unpublishedEventsDump(
-    unpublishedEvents: Table<UnpublishedEvent>,
-    debug: debug.IDebugger
-) {
+export function unpublishedEventsDump(unpublishedEvents: Table<UnpublishedEvent>, debug: debug.IDebugger) {
     return async (dirtyKeys: Set<string>, cache: LRUCache<NDKEventId, UnpublishedEvent>) => {
         const entries: UnpublishedEvent[] = [];
 
@@ -45,13 +42,13 @@ export function unpublishedEventsDump(
 
 export async function discardUnpublishedEvent(
     unpublishedEvents: Table<UnpublishedEvent>,
-    eventId: NDKEventId
+    eventId: NDKEventId,
 ): Promise<void> {
     await unpublishedEvents.delete(eventId);
 }
 
 export async function getUnpublishedEvents(
-    unpublishedEvents: Table<UnpublishedEvent>
+    unpublishedEvents: Table<UnpublishedEvent>,
 ): Promise<{ event: NDKEvent; relays: WebSocket["url"][]; lastTryAt?: number }[]> {
     const events: { event: NDKEvent; relays: WebSocket["url"][]; lastTryAt?: number }[] = [];
 
@@ -66,11 +63,7 @@ export async function getUnpublishedEvents(
     return events;
 }
 
-export function addUnpublishedEvent(
-    this: NDKCacheAdapterDexie,
-    event: NDKEvent,
-    relays: WebSocket["url"][]
-): void {
+export function addUnpublishedEvent(this: NDKCacheAdapterDexie, event: NDKEvent, relays: WebSocket["url"][]): void {
     const r: UnpublishedEvent["relays"] = {};
     relays.forEach((url) => (r[url] = false));
     this.unpublishedEvents.set(event.id!, { id: event.id, event: event.rawEvent(), relays: r });

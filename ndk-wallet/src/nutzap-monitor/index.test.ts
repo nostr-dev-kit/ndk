@@ -18,12 +18,7 @@ import * as CashuMintModule from "../wallets/cashu/mint.js";
 import { NDKCashuWallet } from "../wallets/cashu/wallet/index.js";
 import { NDKCashuWalletBackup } from "../wallets/cashu/wallet/index.js";
 import { fetchPage } from "./fetch-page.js";
-import {
-    NDKNutzapMonitor,
-    type NDKNutzapMonitorStore,
-    type NDKNutzapState,
-    NdkNutzapStatus,
-} from "./index";
+import { NDKNutzapMonitor, type NDKNutzapMonitorStore, type NDKNutzapState, NdkNutzapStatus } from "./index";
 import * as SpendStatusModule from "./spend-status.js";
 
 // Mock the modules we don't want to actually call
@@ -43,10 +38,7 @@ const createMockStore = (): MockStore => {
 
     return {
         getAllNutzaps: async (): Promise<Map<NDKEventId, NDKNutzapState>> => nutzapStates,
-        setNutzapState: async (
-            id: NDKEventId,
-            stateChange: Partial<NDKNutzapState>
-        ): Promise<void> => {
+        setNutzapState: async (id: NDKEventId, stateChange: Partial<NDKNutzapState>): Promise<void> => {
             const currentState = nutzapStates.get(id) || ({} as NDKNutzapState);
             nutzapStates.set(id, { ...currentState, ...stateChange });
             setNutzapStateSpy(id, stateChange);
@@ -254,7 +246,7 @@ describe("NDKNutzapMonitor", () => {
             // Check the store was updated
             expect(mockStore.setNutzapStateSpy).toHaveBeenCalledWith(
                 nutzap.id,
-                expect.objectContaining({ status: NdkNutzapStatus.MISSING_PRIVKEY })
+                expect.objectContaining({ status: NdkNutzapStatus.MISSING_PRIVKEY }),
             );
         });
 
@@ -276,18 +268,16 @@ describe("NDKNutzapMonitor", () => {
             await monitor.addPrivkey(userSigner);
 
             // Mock redeemNutzaps to simulate successful redemption
-            vi.spyOn(monitor, "redeemNutzaps").mockImplementation(
-                async (_mint, nutzaps, _proofs) => {
-                    // Simulate successful redemption
-                    for (const nutzap of nutzaps) {
-                        (monitor as any).updateNutzapState(nutzap.id, {
-                            status: NdkNutzapStatus.REDEEMED,
-                            redeemedAmount: 100,
-                        });
-                    }
-                    monitor.emit("redeemed", nutzaps, 100);
+            vi.spyOn(monitor, "redeemNutzaps").mockImplementation(async (_mint, nutzaps, _proofs) => {
+                // Simulate successful redemption
+                for (const nutzap of nutzaps) {
+                    (monitor as any).updateNutzapState(nutzap.id, {
+                        status: NdkNutzapStatus.REDEEMED,
+                        redeemedAmount: 100,
+                    });
                 }
-            );
+                monitor.emit("redeemed", nutzaps, 100);
+            });
 
             // Try to redeem the nutzap
             await monitor.redeemNutzap(nutzap);
@@ -324,9 +314,7 @@ describe("NDKNutzapMonitor", () => {
             // Check final state
             const finalState = monitor.nutzapStates.get(nutzap.id);
             expect(finalState?.status).toBe(NdkNutzapStatus.INVALID_NUTZAP);
-            expect(finalState?.errorMessage).toContain(
-                "Invalid nutzap: locked to an invalid public key"
-            );
+            expect(finalState?.errorMessage).toContain("Invalid nutzap: locked to an invalid public key");
         });
 
         it("should mark nutzap as PERMANENT_ERROR when 'unknown public key size' error occurs", async () => {
@@ -479,16 +467,14 @@ describe("NDKNutzapMonitor", () => {
             });
 
             // Setup getProofSpendState mock to return all nutzaps as unspent
-            vi.spyOn(SpendStatusModule, "getProofSpendState").mockImplementation(
-                async (_wallet, nutzaps) => {
-                    return {
-                        unspentProofs: nutzaps.flatMap((n) => n.proofs),
-                        spentProofs: [],
-                        nutzapsWithUnspentProofs: nutzaps,
-                        nutzapsWithSpentProofs: [],
-                    };
-                }
-            );
+            vi.spyOn(SpendStatusModule, "getProofSpendState").mockImplementation(async (_wallet, nutzaps) => {
+                return {
+                    unspentProofs: nutzaps.flatMap((n) => n.proofs),
+                    spentProofs: [],
+                    nutzapsWithUnspentProofs: nutzaps,
+                    nutzapsWithSpentProofs: [],
+                };
+            });
 
             // Add user's private key
             await monitor.addPrivkey(ndk.signer as NDKPrivateKeySigner);
@@ -640,7 +626,7 @@ describe("NDKNutzapMonitor", () => {
             // Check that the error was logged
             expect(errorSpy).toHaveBeenCalledWith(
                 expect.stringContaining("Failed to load nutzaps from store"),
-                expect.any(Error)
+                expect.any(Error),
             );
         });
     });
@@ -692,7 +678,7 @@ describe("NDKNutzapMonitor", () => {
             // Check that the store was updated
             expect(mockStore.setNutzapStateSpy).toHaveBeenCalledWith(
                 nutzap.id,
-                expect.objectContaining({ status: NdkNutzapStatus.PROCESSING })
+                expect.objectContaining({ status: NdkNutzapStatus.PROCESSING }),
             );
         });
     });

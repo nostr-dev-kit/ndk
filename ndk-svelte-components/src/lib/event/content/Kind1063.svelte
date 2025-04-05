@@ -7,13 +7,7 @@ export const showMedia = true;
 
 const _SUPPORTED_IMAGE_TYPES = ["image/png", "image/jpg", "image/jpeg", "image/webp", "image/gif"];
 
-const _SUPPORTED_VIDEO_TYPES = [
-    "video/mp4",
-    "video/ogg",
-    "video/quicktime",
-    "video/avi",
-    "video/mpeg",
-];
+const _SUPPORTED_VIDEO_TYPES = ["video/mp4", "video/ogg", "video/quicktime", "video/avi", "video/mpeg"];
 
 const file: string = event.getMatchingTags("url")[0][1];
 const _truncatedFile: string = file.substring(0, 32).concat("...");

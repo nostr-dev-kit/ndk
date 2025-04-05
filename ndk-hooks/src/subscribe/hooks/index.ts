@@ -1,14 +1,9 @@
-import type {
-    NDKEvent,
-    NDKFilter,
-    NDKSubscription,
-    NDKSubscriptionOptions
-} from '@nostr-dev-kit/ndk';
-import { useEffect, useRef, type RefObject } from 'react'; // Added RefObject type import
-import { useStore } from 'zustand';
-import { createSubscribeStore } from '../store';
-import { useNDK } from '../../ndk/hooks';
-import { useMuteFilter } from '../../common/hooks/mute';
+import type { NDKEvent, NDKFilter, NDKSubscription, NDKSubscriptionOptions } from "@nostr-dev-kit/ndk";
+import { useEffect, useRef, type RefObject } from "react"; // Added RefObject type import
+import { useStore } from "zustand";
+import { createSubscribeStore } from "../store";
+import { useNDK } from "../../ndk/hooks";
+import { useMuteFilter } from "../../common/hooks/mute";
 
 /**
  * Extends NDKEvent with a 'from' method to wrap events with a kind-specific handler
@@ -58,15 +53,13 @@ export type UseSubscribeOptions = NDKSubscriptionOptions & {
 export function useSubscribe<T extends NDKEvent, R = T[]>(
     filters: NDKFilter[] | false,
     opts: UseSubscribeOptions = {},
-    dependencies: unknown[] = []
+    dependencies: unknown[] = [],
 ): T[] {
     const { ndk } = useNDK();
 
     const muteFilter = useMuteFilter();
 
-    const storeRef = useRef<ReturnType<typeof createSubscribeStore<T>> | null>(
-        null
-    );
+    const storeRef = useRef<ReturnType<typeof createSubscribeStore<T>> | null>(null);
     if (!storeRef.current) {
         storeRef.current = createSubscribeStore<T>(opts.bufferMs);
     }
@@ -86,7 +79,7 @@ export function useSubscribe<T extends NDKEvent, R = T[]>(
         const setupSubscription = () => {
             const currentFilters = filters as NDKFilter[];
             const handleEvent = (event: NDKEvent) => {
-                if (!opts.includeDeleted && event.hasTag('deleted')) {
+                if (!opts.includeDeleted && event.hasTag("deleted")) {
                     return;
                 }
 
@@ -94,7 +87,7 @@ export function useSubscribe<T extends NDKEvent, R = T[]>(
                     return;
                 }
 
-                event.once('deleted', () => {
+                event.once("deleted", () => {
                     const state = store.getState();
                     state.removeEventId(event.tagId());
                 });
@@ -106,10 +99,8 @@ export function useSubscribe<T extends NDKEvent, R = T[]>(
             const handleCachedEvents = (events: NDKEvent[]) => {
                 if (events && events.length > 0) {
                     const validEvents = events.filter((e: NDKEvent) => {
-                        if (!opts.includeDeleted && e.hasTag('deleted'))
-                            return false;
-                        if (!opts.includeMuted && muteFilter(e))
-                            return false;
+                        if (!opts.includeDeleted && e.hasTag("deleted")) return false;
+                        if (!opts.includeMuted && muteFilter(e)) return false;
                         return true;
                     });
 
@@ -118,7 +109,7 @@ export function useSubscribe<T extends NDKEvent, R = T[]>(
                         state.addEvents(validEvents as T[]);
 
                         for (const evt of validEvents) {
-                            evt.once('deleted', () => {
+                            evt.once("deleted", () => {
                                 const state = store.getState();
                                 state.removeEventId(evt.tagId());
                             });
@@ -148,7 +139,7 @@ export function useSubscribe<T extends NDKEvent, R = T[]>(
                 subRef.current = null;
             }
         };
-    }, [ ndk, muteFilter, ...dependencies ]);
+    }, [ndk, muteFilter, ...dependencies]);
 
     useEffect(() => {
         if (!opts.includeMuted) {
@@ -157,5 +148,5 @@ export function useSubscribe<T extends NDKEvent, R = T[]>(
         }
     }, [muteFilter, store, opts.includeMuted]);
 
-    return useStore(store, s => s.events);
+    return useStore(store, (s) => s.events);
 }

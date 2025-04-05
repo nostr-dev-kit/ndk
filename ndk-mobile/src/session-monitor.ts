@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 import {
     useNDK,
     useNDKSessions, // Keep the hook import
@@ -6,16 +6,17 @@ import {
     type NDKUser,
     type NDKSigner,
     type SessionStartOptions, // Import from ndk-hooks (now exported)
-} from '@nostr-dev-kit/ndk-hooks';
-import { // Session storage functions
+} from "@nostr-dev-kit/ndk-hooks";
+import {
+    // Session storage functions
     loadSessionsFromStorage,
     addOrUpdateStoredSession,
     removeStoredSession,
     getActivePubkey,
     setActivePubkey,
-    clearActivePubkey
-} from './session-storage.js';
-import { Hexpubkey } from '@nostr-dev-kit/ndk';
+    clearActivePubkey,
+} from "./session-storage.js";
+import { Hexpubkey } from "@nostr-dev-kit/ndk";
 
 /**
  * Hook to monitor NDK session state and persist changes to secure storage.
@@ -23,15 +24,7 @@ import { Hexpubkey } from '@nostr-dev-kit/ndk';
  */
 export function useSessionMonitor(opts?: SessionStartOptions) {
     const { ndk } = useNDK();
-    const {
-        sessions,
-        signers,
-        activePubkey,
-        addSession,
-        startSession,
-        stopSession,
-        switchToUser,
-    } = useNDKSessions();
+    const { sessions, signers, activePubkey, addSession, startSession, stopSession, switchToUser } = useNDKSessions();
     // Actions are accessed directly from the hook, not getState()
     const isInitialized = useRef(false);
     const storedKeys = useRef(new Map<Hexpubkey, boolean>());
@@ -47,7 +40,7 @@ export function useSessionMonitor(opts?: SessionStartOptions) {
                 // Load stored sessions
                 const storedSessions = await loadSessionsFromStorage();
                 if (storedSessions.length === 0) {
-                    console.log('[NDK-Mobile] No saved sessions found.');
+                    console.log("[NDK-Mobile] No saved sessions found.");
                     return;
                 }
 
@@ -65,7 +58,9 @@ export function useSessionMonitor(opts?: SessionStartOptions) {
                         if (storedSession.signerPayload) {
                             signer = await ndkSignerFromPayload(storedSession.signerPayload, ndk);
                             if (!signer) {
-                                console.warn(`[NDK-Mobile] Failed to deserialize signer for ${storedSession.pubkey}, session will be read-only.`);
+                                console.warn(
+                                    `[NDK-Mobile] Failed to deserialize signer for ${storedSession.pubkey}, session will be read-only.`,
+                                );
                             } else {
                                 storedKeys.current.set(storedSession.pubkey, true);
                             }
@@ -78,7 +73,7 @@ export function useSessionMonitor(opts?: SessionStartOptions) {
                     } catch (error) {
                         console.error(
                             `[NDK-Mobile] Failed to process stored session for pubkey ${storedSession.pubkey}:`,
-                            error
+                            error,
                         );
                         // Optionally remove from storage on error
                         // await removeStoredSession(storedSession.pubkey);
@@ -88,19 +83,19 @@ export function useSessionMonitor(opts?: SessionStartOptions) {
                 // Switch to stored active pubkey or first session if available
                 if (storedActivePubkey && sessions.has(storedActivePubkey)) {
                     await switchToUser(storedActivePubkey);
-                    console.log('Switched to stored active pubkey:', storedActivePubkey);
+                    console.log("Switched to stored active pubkey:", storedActivePubkey);
                     await startSession(storedActivePubkey, opts);
                 }
 
-                console.log('stored active pubkey:', storedActivePubkey);
+                console.log("stored active pubkey:", storedActivePubkey);
             } catch (error) {
-                console.error('[NDK-Mobile] Error initializing sessions from storage:', error);
+                console.error("[NDK-Mobile] Error initializing sessions from storage:", error);
             }
         }
 
         initializeFromStorage().finally(() => {
             isInitialized.current = true;
-        })
+        });
     }, [ndk, addSession, switchToUser]); // Update dependencies
 
     // Effect to persist active session changes
@@ -143,18 +138,23 @@ export function useSessionMonitor(opts?: SessionStartOptions) {
     useEffect(() => {
         if (!ndk || !isInitialized.current) return;
 
-        console.log('Running updateActivePubkey effect', isInitialized.current, currentActivePubkey.current, activePubkey);
+        console.log(
+            "Running updateActivePubkey effect",
+            isInitialized.current,
+            currentActivePubkey.current,
+            activePubkey,
+        );
 
         async function updateActivePubkey() {
             if (activePubkey) {
                 if (currentActivePubkey.current !== activePubkey) {
-                    console.log('Stopping previous session:', currentActivePubkey.current);
+                    console.log("Stopping previous session:", currentActivePubkey.current);
                     await stopSession(currentActivePubkey.current);
                     console.log(`Active pubkey changed to: ${activePubkey}`);
                     currentActivePubkey.current = activePubkey;
                 }
                 await setActivePubkey(activePubkey);
-                console.log('Starting session for active pubkey:', activePubkey);
+                console.log("Starting session for active pubkey:", activePubkey);
                 await startSession(activePubkey, opts);
             } else {
                 await clearActivePubkey();
@@ -163,7 +163,6 @@ export function useSessionMonitor(opts?: SessionStartOptions) {
 
         updateActivePubkey();
     }, [activePubkey, ndk]);
-
 
     // Infer the session data type from the 'sessions' map returned by the hook
     const prevSessionsRef = useRef<typeof sessions>(new Map());
@@ -179,9 +178,7 @@ export function useSessionMonitor(opts?: SessionStartOptions) {
         });
 
         prevSessionsRef.current = new Map(currentSessions);
-
     }, [sessions]);
-
 
     return null;
 }

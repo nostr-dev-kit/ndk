@@ -22,11 +22,7 @@ class MockNDKSubscription extends NDKSubscription {
     private _groupableDelayType: "at-most" | "at-least";
     public groupable = true;
 
-    constructor(
-        internalId: NDKSubscriptionInternalId,
-        delay: number,
-        delayType: "at-most" | "at-least"
-    ) {
+    constructor(internalId: NDKSubscriptionInternalId, delay: number, delayType: "at-most" | "at-least") {
         super(ndk, filters);
         this.internalId = internalId;
         this._groupableDelay = delay;

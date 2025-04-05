@@ -7,10 +7,7 @@ import createDebug from "debug";
 
 const d = createDebug("ndk:dexie-adapter:profiles");
 
-export async function profilesWarmUp(
-    cacheHandler: CacheHandler<Profile>,
-    profiles: Table<Profile>
-): Promise<void> {
+export async function profilesWarmUp(cacheHandler: CacheHandler<Profile>, profiles: Table<Profile>): Promise<void> {
     const array = await profiles.limit(cacheHandler.maxSize).toArray();
     for (const user of array) {
         const obj = user;

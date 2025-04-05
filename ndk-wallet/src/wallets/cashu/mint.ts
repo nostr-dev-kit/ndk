@@ -37,7 +37,7 @@ export async function walletForMint(
         onMintInfoLoaded?: (mint: string, info: GetInfoResponse) => void;
         onMintKeysNeeded?: (mint: string) => Promise<MintKeys[] | undefined>;
         onMintKeysLoaded?: (mint: string, keysets: Map<string, MintKeys>) => void;
-    } = {}
+    } = {},
 ): Promise<CashuWallet | null> {
     mintInfo ??= await onMintInfoNeeded?.(mint);
     mintKeys ??= await onMintKeysNeeded?.(mint);

@@ -6,7 +6,7 @@ import type { NDKNWCResponseMap } from "./types";
 
 export async function waitForResponse<M extends keyof NDKNWCResponseMap>(
     this: NDKNWCWallet,
-    request: NDKEvent
+    request: NDKEvent,
 ): Promise<NDKNWCResponseBase<NDKNWCResponseMap[M]>> {
     if (!this.pool) throw new Error("Wallet not initialized");
     const sendRequest = () => {
@@ -24,7 +24,7 @@ export async function waitForResponse<M extends keyof NDKNWCResponseMap>(
                 limit: 1,
             },
             { groupable: false, pool: this.pool },
-            this.relaySet
+            this.relaySet,
         );
 
         sub.on("event", async (event: NDKEvent) => {

@@ -34,7 +34,7 @@ class NDKSvelte extends NDK {
     public $subscribe = <T extends NDKEvent>(
         filters: NDKFilter[],
         opts?: NDKSubscribeOptions,
-        klass?: ClassWithConvertFunction<T>
+        klass?: ClassWithConvertFunction<T>,
     ) => {
         // A reactive list for the events
         const eventList = $state<T[] & Actions>([]);
@@ -86,7 +86,7 @@ class NDKSvelte extends NDK {
             Array.isArray(filters) ? filters : [filters],
             opts, // opts already contains relaySet if it was passed
             // opts?.relaySet, // Removed: Passed via opts
-            false // autoStart = false
+            false, // autoStart = false
         );
 
         // Handle incoming events

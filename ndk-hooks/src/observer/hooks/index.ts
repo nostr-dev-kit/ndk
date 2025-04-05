@@ -4,9 +4,9 @@ import {
     type NDKSubscription,
     NDKSubscriptionCacheUsage,
     type NDKSubscriptionOptions,
-} from '@nostr-dev-kit/ndk';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { useNDK } from '../../ndk/hooks'; // Corrected path
+} from "@nostr-dev-kit/ndk";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useNDK } from "../../ndk/hooks"; // Corrected path
 
 /**
  * Subscribes to NDK events based on the provided filters and returns the matching events.
@@ -42,7 +42,7 @@ import { useNDK } from '../../ndk/hooks'; // Corrected path
 export function useObserver<T extends NDKEvent>(
     filters: NDKFilter[] | false,
     opts: NDKSubscriptionOptions = {},
-    dependencies: unknown[] = []
+    dependencies: unknown[] = [],
 ): T[] {
     const { ndk } = useNDK();
     const sub = useRef<NDKSubscription | null>(null);
@@ -94,7 +94,7 @@ export function useObserver<T extends NDKEvent>(
                 closeOnEose: true,
                 cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE,
                 groupable: false,
-                subId: 'observer-hook',
+                subId: "observer-hook",
                 wrap: true,
                 ...opts,
             },
@@ -105,8 +105,8 @@ export function useObserver<T extends NDKEvent>(
                 },
                 onEvents: (events) => {
                     for (const event of events) processEvent(event);
-                }
-            }
+                },
+            },
         );
 
         if (buffer.current.length > 0) {

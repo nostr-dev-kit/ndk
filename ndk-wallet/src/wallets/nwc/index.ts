@@ -82,7 +82,7 @@ export class NDKNWCWallet extends NDKWallet {
             pubkey?: string;
             relayUrls?: string[];
             secret?: string;
-        }
+        },
     ) {
         super(ndk);
 
@@ -94,8 +94,7 @@ export class NDKNWCWallet extends NDKWallet {
             this.pairingCode = pairingCode;
         }
 
-        if (!pubkey || !relayUrls || !secret)
-            throw new Error("Incomplete initialization parameters");
+        if (!pubkey || !relayUrls || !secret) throw new Error("Incomplete initialization parameters");
 
         this.timeout = timeout;
 
@@ -158,7 +157,7 @@ export class NDKNWCWallet extends NDKWallet {
     async cashuPay(
         payment: NutPayment,
         onLnInvoice?: (pr: string) => void,
-        onLnPayment?: (mint: string, invoice: string) => void
+        onLnPayment?: (mint: string, invoice: string) => void,
     ): Promise<NDKPaymentConfirmationCashu | undefined> {
         if (!payment.mints) throw new Error("No mints provided");
 
@@ -246,7 +245,7 @@ export class NDKNWCWallet extends NDKWallet {
 
     req = sendReq.bind(this) as <M extends keyof NDKNWCRequestMap>(
         method: M,
-        params: NDKNWCRequestMap[M]
+        params: NDKNWCRequestMap[M],
     ) => Promise<NDKNWCResponseBase<NDKNWCResponseMap[M]>>;
 
     async getInfo(refetch = false) {

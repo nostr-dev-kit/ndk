@@ -43,12 +43,7 @@ export type Nip46PermitCallback = (params: Nip46PermitCallbackParams) => Promise
 export type Nip46ApplyTokenCallback = (pubkey: string, token: string) => Promise<void>;
 
 export interface IEventHandlingStrategy {
-    handle(
-        backend: NDKNip46Backend,
-        id: string,
-        remotePubkey: string,
-        params: string[]
-    ): Promise<string | undefined>;
+    handle(backend: NDKNip46Backend, id: string, remotePubkey: string, params: string[]): Promise<string | undefined>;
 }
 
 /**
@@ -76,7 +71,7 @@ export class NDKNip46Backend {
         ndk: NDK,
         signer: NDKSigner,
         permitCallback: Nip46PermitCallback,
-        relayUrls?: WebSocket["url"][]
+        relayUrls?: WebSocket["url"][],
     );
 
     /**
@@ -88,7 +83,7 @@ export class NDKNip46Backend {
         ndk: NDK,
         privateKey: string,
         permitCallback: Nip46PermitCallback,
-        relayUrls?: WebSocket["url"][]
+        relayUrls?: WebSocket["url"][],
     );
 
     /**
@@ -100,7 +95,7 @@ export class NDKNip46Backend {
         ndk: NDK,
         privateKeyOrSigner: string | NDKSigner,
         permitCallback: Nip46PermitCallback,
-        relayUrls?: WebSocket["url"][]
+        relayUrls?: WebSocket["url"][],
     ) {
         this.ndk = ndk;
 
@@ -132,7 +127,7 @@ export class NDKNip46Backend {
                 kinds: [24133 as number],
                 "#p": [this.localUser.pubkey],
             },
-            { closeOnEose: false }
+            { closeOnEose: false },
         );
 
         sub.on("event", (e) => this.handleIncomingEvent(e));

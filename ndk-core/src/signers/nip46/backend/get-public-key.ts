@@ -5,7 +5,7 @@ export default class GetPublicKeyHandlingStrategy implements IEventHandlingStrat
         backend: NDKNip46Backend,
         _id: string,
         _remotePubkey: string,
-        _params: string[]
+        _params: string[],
     ): Promise<string | undefined> {
         return backend.localUser?.pubkey;
     }

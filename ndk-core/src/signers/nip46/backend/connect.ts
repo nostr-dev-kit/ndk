@@ -11,7 +11,7 @@ export default class ConnectEventHandlingStrategy implements IEventHandlingStrat
         backend: NDKNip46Backend,
         id: string,
         remotePubkey: string,
-        params: string[]
+        params: string[],
     ): Promise<string | undefined> {
         const [_, token] = params;
         const debug = backend.debug.extend("connect");

@@ -18,7 +18,7 @@ import { getRelaysForSync, getWriteRelaysFor } from "../write";
 export function getRelaysForFilterWithAuthors(
     ndk: NDK,
     authors: Hexpubkey[],
-    relayGoalPerAuthor = 2
+    relayGoalPerAuthor = 2,
 ): Map<WebSocket["url"], Hexpubkey[]> {
     return chooseRelayCombinationForPubkeys(ndk, authors, "write", { count: relayGoalPerAuthor });
 }

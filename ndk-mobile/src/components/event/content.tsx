@@ -63,11 +63,7 @@ export interface EventContentProps extends TextProps {
 /**
  * Renders an emoji from an event's emoji tags
  */
-function RenderEmoji({
-    shortcode,
-    event,
-    fontSize,
-}: { shortcode: string; event?: NDKEvent; fontSize?: number }) {
+function RenderEmoji({ shortcode, event, fontSize }: { shortcode: string; event?: NDKEvent; fontSize?: number }) {
     if (!event) return <Text style={{ fontSize }}>:{shortcode}:</Text>;
 
     const emojiTag = event.tags.find((tag) => tag[0] === "emoji" && tag[1] === shortcode);
@@ -76,10 +72,7 @@ function RenderEmoji({
     const emojiSize = fontSize || 14;
 
     return (
-        <Image
-            source={{ uri: emojiTag[2] }}
-            style={{ width: emojiSize, height: emojiSize, resizeMode: "contain" }}
-        />
+        <Image source={{ uri: emojiTag[2] }} style={{ width: emojiSize, height: emojiSize, resizeMode: "contain" }} />
     );
 }
 
@@ -120,13 +113,7 @@ interface RenderMentionProps {
     fontSize?: number;
     style?: any;
 }
-function RenderMention({
-    user,
-    onUserPress,
-    MentionComponent,
-    fontSize,
-    style,
-}: RenderMentionProps) {
+function RenderMention({ user, onUserPress, MentionComponent, fontSize, style }: RenderMentionProps) {
     const userProfile = useProfile(user.pubkey);
     const combinedStyle = [styles.mention, { fontSize }, style];
 
@@ -142,13 +129,7 @@ function RenderMention({
     );
 }
 
-function RenderEvent({
-    entity,
-    onUserPress,
-}: {
-    entity: string;
-    onUserPress?: (pubkey: string) => void;
-}) {
+function RenderEvent({ entity, onUserPress }: { entity: string; onUserPress?: (pubkey: string) => void }) {
     const { ndk } = useNDK();
     const [event, setEvent] = useState<NDKEvent | null>(null);
 
@@ -221,14 +202,7 @@ function RenderPart({
             if (MentionComponent) {
                 return <MentionComponent pubkey={entity.pubkey} />;
             }
-            return (
-                <RenderMention
-                    user={entity}
-                    onUserPress={onUserPress}
-                    fontSize={fontSize}
-                    style={style}
-                />
-            );
+            return <RenderMention user={entity} onUserPress={onUserPress} fontSize={fontSize} style={style} />;
         }
         if (entity) {
             return <RenderEvent entity={mentionMatch} onUserPress={onUserPress} />;
@@ -297,7 +271,7 @@ const EventContent: React.FC<EventContentProps> = ({
 
     const contentToRender = content || event?.content || "";
     const parts = contentToRender.split(
-        /(\s+|(?=https?:\/\/)|(?<=\s)#[\p{L}\p{N}_\-]+|(?<=\s)nostr:[a-zA-Z0-9]+|:[a-zA-Z0-9_+-]+:)/u
+        /(\s+|(?=https?:\/\/)|(?<=\s)#[\p{L}\p{N}_\-]+|(?<=\s)nostr:[a-zA-Z0-9]+|:[a-zA-Z0-9_+-]+:)/u,
     );
 
     return (

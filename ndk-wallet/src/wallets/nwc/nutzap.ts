@@ -9,7 +9,7 @@ export async function redeemNutzaps(
     this: NDKNWCWallet,
     nutzaps: NDKNutzap[],
     privkey: string,
-    { cashuWallet, proofs, mint }: RedeemNutzapsOpts
+    { cashuWallet, proofs, mint }: RedeemNutzapsOpts,
 ): Promise<number> {
     proofs ??= nutzaps.flatMap((n) => n.proofs);
     if (!cashuWallet) {
@@ -21,8 +21,7 @@ export async function redeemNutzaps(
 
     const info = await this.getInfo();
 
-    if (!info.methods.includes("make_invoice"))
-        throw new Error("This NWC wallet does not support making invoices");
+    if (!info.methods.includes("make_invoice")) throw new Error("This NWC wallet does not support making invoices");
 
     // get the total amount of the proofs
     const totalAvailable = proofs.reduce((acc, proof) => acc + proof.amount, 0);
@@ -61,7 +60,7 @@ export async function redeemNutzaps(
                 },
             },
             this.relaySet,
-            { nutzaps }
+            { nutzaps },
         );
 
         return sweepAmount;
@@ -70,11 +69,7 @@ export async function redeemNutzaps(
     throw new Error("Failed to redeem nutzaps");
 }
 
-async function saveChange(
-    ndk: NDK,
-    mint: string,
-    change: Proof[]
-): Promise<NDKCashuToken | undefined> {
+async function saveChange(ndk: NDK, mint: string, change: Proof[]): Promise<NDKCashuToken | undefined> {
     const totalChange = change.reduce((acc, proof) => acc + proof.amount, 0);
     if (totalChange === 0) return;
 

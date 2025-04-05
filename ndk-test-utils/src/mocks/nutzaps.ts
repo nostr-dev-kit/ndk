@@ -30,7 +30,7 @@ export async function mockNutzap(
         senderPk?: any;
         recipientPubkey?: string;
         content?: string;
-    } = {}
+    } = {},
 ) {
     if (!recipientPubkey) {
         ndk.assertSigner();
@@ -60,9 +60,7 @@ export function mockProof(C: string, amount: number, p2pk?: string): Proof {
         C,
         amount,
         id: "mint",
-        secret:
-            Math.random().toString(36).substring(2, 15) +
-            Math.random().toString(36).substring(2, 15),
+        secret: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
     };
 
     if (p2pk) {

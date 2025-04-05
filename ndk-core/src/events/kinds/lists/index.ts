@@ -248,7 +248,7 @@ export class NDKList extends NDKEvent {
         item: NDKListItem | NDKTag,
         mark: string | undefined = undefined,
         encrypted = false,
-        position: "top" | "bottom" = "bottom"
+        position: "top" | "bottom" = "bottom",
     ): Promise<void> {
         if (!this.ndk) throw new Error("NDK instance not set");
         if (!this.ndk.signer) throw new Error("NDK signer not set");

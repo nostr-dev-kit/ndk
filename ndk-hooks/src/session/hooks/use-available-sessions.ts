@@ -1,6 +1,6 @@
-import type { Hexpubkey } from '@nostr-dev-kit/ndk';
-import { useMemo } from 'react';
-import { useNDKSessions } from '../store'; // Corrected import path
+import type { Hexpubkey } from "@nostr-dev-kit/ndk";
+import { useMemo } from "react";
+import { useNDKSessions } from "../store"; // Corrected import path
 
 /**
  * Interface for the useAvailableSessions hook return value
@@ -27,7 +27,7 @@ export const useAvailableSessions = (): UseAvailableSessionsResult => {
 
     const availablePubkeys = useMemo(
         () => Array.from(sessions.keys()), // Get keys from sessions map
-        [sessions]
+        [sessions],
     );
 
     return useMemo(() => ({ availablePubkeys }), [availablePubkeys]);

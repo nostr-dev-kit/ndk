@@ -145,7 +145,7 @@ export class NDKCashuToken extends NDKEvent {
     public async publish(
         relaySet?: NDKRelaySet,
         timeoutMs?: number,
-        requiredRelayCount?: number
+        requiredRelayCount?: number,
     ): Promise<Set<NDKRelay>> {
         if (this.original) {
             return this.original.publish(relaySet, timeoutMs, requiredRelayCount);

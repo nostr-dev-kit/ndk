@@ -1,6 +1,6 @@
-import type NDK from '@nostr-dev-kit/ndk';
-import type { NDKSigner, NDKUser } from '@nostr-dev-kit/ndk';
-import { create } from 'zustand';
+import type NDK from "@nostr-dev-kit/ndk";
+import type { NDKSigner, NDKUser } from "@nostr-dev-kit/ndk";
+import { create } from "zustand";
 
 /**
  * Interface for the NDK store state
@@ -40,6 +40,6 @@ export const useNDKStore = create<NDKStoreState>((set) => {
                 }
                 return { ndk: state.ndk };
             });
-        }
+        },
     };
 });

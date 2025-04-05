@@ -1,10 +1,5 @@
 import type NDK from "@nostr-dev-kit/ndk";
-import {
-    NDKCashuMintList,
-    type NDKEvent,
-    NDKKind,
-    type NDKPrivateKeySigner,
-} from "@nostr-dev-kit/ndk";
+import { NDKCashuMintList, type NDKEvent, NDKKind, type NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
 import { NDKCashuWallet } from ".";
 
 /**
@@ -86,9 +81,7 @@ async function getOldWallets(ndk: NDK) {
     const user = ndk.activeUser;
     if (!user) throw new Error("No active user");
 
-    const walletEvents = await ndk.fetchEvents([
-        { kinds: [NDKKind.LegacyCashuWallet], authors: [user.pubkey] },
-    ]);
+    const walletEvents = await ndk.fetchEvents([{ kinds: [NDKKind.LegacyCashuWallet], authors: [user.pubkey] }]);
 
     return Array.from(walletEvents).filter((event) => !event.hasTag("deleted"));
 }

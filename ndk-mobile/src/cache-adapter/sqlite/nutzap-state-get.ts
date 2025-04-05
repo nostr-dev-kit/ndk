@@ -17,14 +17,10 @@ interface NutzapMonitorRow {
  * Gets all nutzap states from the monitor state table.
  * This function is bound to the NDKCacheAdapterSqlite instance.
  */
-export async function getAllNutzapStates(
-    this: NDKCacheAdapterSqlite
-): Promise<Map<NDKEventId, NDKNutzapState>> {
+export async function getAllNutzapStates(this: NDKCacheAdapterSqlite): Promise<Map<NDKEventId, NDKNutzapState>> {
     const result = new Map<NDKEventId, NDKNutzapState>();
 
-    const nutzaps = (await this.db.getAllAsync(
-        "SELECT * FROM nutzap_monitor_state"
-    )) as NutzapMonitorRow[];
+    const nutzaps = (await this.db.getAllAsync("SELECT * FROM nutzap_monitor_state")) as NutzapMonitorRow[];
 
     for (const row of nutzaps) {
         const state: NDKNutzapState = {
@@ -32,16 +28,13 @@ export async function getAllNutzapStates(
         };
 
         // Only deserialize nutzap for states where we might need it
-        if (
-            row.nutzap &&
-            ![NdkNutzapStatus.REDEEMED, NdkNutzapStatus.SPENT].includes(state.status)
-        ) {
+        if (row.nutzap && ![NdkNutzapStatus.REDEEMED, NdkNutzapStatus.SPENT].includes(state.status)) {
             try {
                 const rawEvent = JSON.parse(row.nutzap);
                 // We need the NDK instance to create the NDKNutzap object
                 // Assuming NDK instance is available via `this.ndk` - needs verification/adjustment
                 if (this.ndk) {
-                     state.nutzap = new NDKNutzap(this.ndk, rawEvent);
+                    state.nutzap = new NDKNutzap(this.ndk, rawEvent);
                 } else {
                     console.warn("NDK instance not available on cache adapter, cannot deserialize Nutzap event");
                 }

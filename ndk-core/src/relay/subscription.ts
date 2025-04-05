@@ -91,11 +91,7 @@ export class NDKRelaySubscription {
      *
      * @param fingerprint The fingerprint of this subscription.
      */
-    constructor(
-        relay: NDKRelay,
-        fingerprint: NDKFilterFingerprint | null,
-        topSubManager: NDKSubscriptionManager
-    ) {
+    constructor(relay: NDKRelay, fingerprint: NDKFilterFingerprint | null, topSubManager: NDKSubscriptionManager) {
         this.relay = relay;
         this.topSubManager = topSubManager;
         this.debug = relay.debug.extend(`subscription-${this.id}`);
@@ -156,11 +152,7 @@ export class NDKRelaySubscription {
                 this.evaluateExecutionPlan(subscription);
                 break;
             case NDKRelaySubscriptionStatus.CLOSED:
-                this.debug(
-                    "Subscription is closed, cannot add new items %o (%o)",
-                    subscription,
-                    filters
-                );
+                this.debug("Subscription is closed, cannot add new items %o (%o)", subscription, filters);
                 throw new Error("Cannot add new items to a closed subscription");
         }
     }
@@ -298,17 +290,14 @@ export class NDKRelaySubscription {
     private executeOnRelayReady = () => {
         if (this.status !== NDKRelaySubscriptionStatus.WAITING) return;
         if (this.items.size === 0) {
-            this.debug(
-                "No items to execute; this relay was probably too slow to respond and the caller gave up",
-                {
-                    status: this.status,
-                    fingerprint: this.fingerprint,
-                    items: this.items,
-                    itemsSize: this.items.size,
-                    id: this.id,
-                    subId: this.subId,
-                }
-            );
+            this.debug("No items to execute; this relay was probably too slow to respond and the caller gave up", {
+                status: this.status,
+                fingerprint: this.fingerprint,
+                items: this.items,
+                itemsSize: this.items.size,
+                id: this.id,
+                subId: this.subId,
+            });
             this.cleanup();
             return;
         }
@@ -346,10 +335,9 @@ export class NDKRelaySubscription {
         } else {
             // relays don't like to have the subscription close before they eose back,
             // so wait until we eose before closing the old subscription
-            this.debug(
-                "We are abandoning an opened subscription, once it EOSE's, the handler will close it",
-                { oldSubId }
-            );
+            this.debug("We are abandoning an opened subscription, once it EOSE's, the handler will close it", {
+                oldSubId,
+            });
         }
         this._subId = undefined;
         this.status = NDKRelaySubscriptionStatus.PENDING;

@@ -182,23 +182,17 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
 
             if (!this.bunkerPubkey) throw new Error("Bunker pubkey not set");
 
-            this.rpc.sendRequest(
-                this.bunkerPubkey,
-                "connect",
-                connectParams,
-                24133,
-                (response: NDKRpcResponse) => {
-                    if (response.result === "ack") {
-                        this.getPublicKey().then((pubkey) => {
-                            this.userPubkey = pubkey;
-                            this._user = this.ndk.getUser({ pubkey });
-                            resolve(this._user);
-                        });
-                    } else {
-                        reject(response.error);
-                    }
+            this.rpc.sendRequest(this.bunkerPubkey, "connect", connectParams, 24133, (response: NDKRpcResponse) => {
+                if (response.result === "ack") {
+                    this.getPublicKey().then((pubkey) => {
+                        this.userPubkey = pubkey;
+                        this._user = this.ndk.getUser({ pubkey });
+                        resolve(this._user);
+                    });
+                } else {
+                    reject(response.error);
                 }
-            );
+            });
         });
     }
 
@@ -208,15 +202,9 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
         return new Promise<Hexpubkey>((resolve, _reject) => {
             if (!this.bunkerPubkey) throw new Error("Bunker pubkey not set");
 
-            this.rpc.sendRequest(
-                this.bunkerPubkey,
-                "get_public_key",
-                [],
-                24133,
-                (response: NDKRpcResponse) => {
-                    resolve(response.result);
-                }
-            );
+            this.rpc.sendRequest(this.bunkerPubkey, "get_public_key", [], 24133, (response: NDKRpcResponse) => {
+                resolve(response.result);
+            });
         });
     }
 
@@ -225,19 +213,11 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
         return Promise.resolve(["nip04", "nip44"]);
     }
 
-    public async encrypt(
-        recipient: NDKUser,
-        value: string,
-        scheme: NDKEncryptionScheme = "nip04"
-    ): Promise<string> {
+    public async encrypt(recipient: NDKUser, value: string, scheme: NDKEncryptionScheme = "nip04"): Promise<string> {
         return this.encryption(recipient, value, scheme, "encrypt");
     }
 
-    public async decrypt(
-        sender: NDKUser,
-        value: string,
-        scheme: NDKEncryptionScheme = "nip04"
-    ): Promise<string> {
+    public async decrypt(sender: NDKUser, value: string, scheme: NDKEncryptionScheme = "nip04"): Promise<string> {
         return this.encryption(sender, value, scheme, "decrypt");
     }
 
@@ -245,7 +225,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
         peer: NDKUser,
         value: string,
         scheme: NDKEncryptionScheme,
-        method: EncryptionMethod
+        method: EncryptionMethod,
     ): Promise<string> {
         const promise = new Promise<string>((resolve, reject) => {
             if (!this.bunkerPubkey) throw new Error("Bunker pubkey not set");
@@ -261,7 +241,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
                     } else {
                         reject(response.error);
                     }
-                }
+                },
             );
         });
 
@@ -284,7 +264,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
                     } else {
                         reject(response.error);
                     }
-                }
+                },
             );
         });
 
@@ -298,11 +278,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
      * @param email Email address to associate with this account -- Remote servers may use this for recovery
      * @returns The public key of the newly created account
      */
-    public async createAccount(
-        username?: string,
-        domain?: string,
-        email?: string
-    ): Promise<Hexpubkey> {
+    public async createAccount(username?: string, domain?: string, email?: string): Promise<Hexpubkey> {
         await this.startListening();
         const req: string[] = [];
 
@@ -325,7 +301,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
                     } else {
                         reject(response.error);
                     }
-                }
+                },
             );
         });
     }
@@ -373,7 +349,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
 
         const payload = parsed.payload;
 
-        if (!payload || typeof payload !== 'object' || !payload.localSignerPayload) {
+        if (!payload || typeof payload !== "object" || !payload.localSignerPayload) {
             throw new Error("Invalid payload content for nip46 signer");
         }
 

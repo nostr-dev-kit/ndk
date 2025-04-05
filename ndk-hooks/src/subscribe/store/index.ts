@@ -1,10 +1,7 @@
-import type { NDKEvent, NDKSubscription } from '@nostr-dev-kit/ndk';
-import { createStore } from 'zustand/vanilla';
+import type { NDKEvent, NDKSubscription } from "@nostr-dev-kit/ndk";
+import { createStore } from "zustand/vanilla";
 
-const setHasAnyIntersection = (
-    set1: Set<string>,
-    set2: Set<string>
-): boolean => {
+const setHasAnyIntersection = (set1: Set<string>, set2: Set<string>): boolean => {
     if (set1.size === 0 || set2.size === 0) return false;
     for (const item of set1) {
         if (set2.has(item)) return true;
@@ -43,9 +40,7 @@ export interface SubscribeStore<T extends NDKEvent> {
  * Creates a store to manage subscription state with optional event buffering
  * @param bufferMs - Buffer time in milliseconds, false to disable buffering
  */
-export const createSubscribeStore = <T extends NDKEvent>(
-    bufferMs: number | false = 30
-) => {
+export const createSubscribeStore = <T extends NDKEvent>(bufferMs: number | false = 30) => {
     const store = createStore<SubscribeStore<T>>((set, get) => {
         const buffer = new Map<string, T>();
         let timeout: NodeJS.Timeout | null = null;

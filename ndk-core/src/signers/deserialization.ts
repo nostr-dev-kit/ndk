@@ -21,10 +21,7 @@ signerRegistry.set("nip46", NDKNip46Signer);
  * @param ndk Optional NDK instance, required by some signers.
  * @returns An instance of the specific signer class, or undefined if the type is unknown.
  */
-export async function ndkSignerFromPayload(
-    payloadString: string,
-    ndk?: NDK
-): Promise<NDKSigner | undefined> {
+export async function ndkSignerFromPayload(payloadString: string, ndk?: NDK): Promise<NDKSigner | undefined> {
     let parsed: NDKSignerPayload;
 
     try {
@@ -34,7 +31,7 @@ export async function ndkSignerFromPayload(
         return undefined;
     }
 
-    if (!parsed || typeof parsed !== 'object' || !parsed.type) {
+    if (!parsed || typeof parsed !== "object" || !parsed.type) {
         console.error("Invalid signer payload format", parsed);
         return undefined;
     }

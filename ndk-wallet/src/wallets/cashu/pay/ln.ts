@@ -17,7 +17,7 @@ import type { NDKCashuWallet } from "../wallet/index.js";
 export async function payLn(
     wallet: NDKCashuWallet,
     pr: string,
-    { amount, unit }: { amount?: number; unit?: string } = {}
+    { amount, unit }: { amount?: number; unit?: string } = {},
 ): Promise<WalletOperation<NDKPaymentConfirmationLN> | null> {
     let invoiceAmount = getBolt11Amount(pr);
     if (!invoiceAmount) throw new Error("invoice amount is required");
@@ -45,7 +45,7 @@ export async function payLn(
                     result.fee = calculateFee(
                         amount,
                         result.proofsChange?.destroy ?? [],
-                        result.proofsChange?.store ?? []
+                        result.proofsChange?.store ?? [],
                     );
                 }
                 return result;
@@ -80,7 +80,7 @@ async function executePayment(
     mint: string,
     pr: string,
     amountWithoutFees: number,
-    wallet: NDKCashuWallet
+    wallet: NDKCashuWallet,
 ): Promise<WalletOperation<NDKPaymentConfirmationLN> | null> {
     const cashuWallet = await wallet.getCashuWallet(mint);
 
@@ -107,7 +107,7 @@ async function executePayment(
                 }
 
                 return null;
-            }
+            },
         );
 
         return result;

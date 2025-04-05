@@ -7,10 +7,7 @@ export function getBalance(this: WalletState, opts?: GetOpts) {
     return proofs.reduce((sum, proof) => sum + proof.proof.amount, 0);
 }
 
-export function getMintsBalances(
-    this: WalletState,
-    { onlyAvailable }: GetOpts = { onlyAvailable: true }
-) {
+export function getMintsBalances(this: WalletState, { onlyAvailable }: GetOpts = { onlyAvailable: true }) {
     const balances: Record<MintUrl, number> = {};
 
     const proofs = this.getProofEntries({ onlyAvailable });

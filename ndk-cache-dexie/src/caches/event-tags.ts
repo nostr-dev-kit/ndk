@@ -6,10 +6,7 @@ import type { CacheHandler } from "../lru-cache";
 
 export type EventTagCacheEntry = string;
 
-export async function eventTagsWarmUp(
-    cacheHandler: CacheHandler<EventTagCacheEntry>,
-    eventTags: Table<EventTag>
-) {
+export async function eventTagsWarmUp(cacheHandler: CacheHandler<EventTagCacheEntry>, eventTags: Table<EventTag>) {
     const array = await eventTags.limit(cacheHandler.maxSize).toArray();
     for (const event of array) {
         cacheHandler.add(event.tagValue, event.eventId, false);

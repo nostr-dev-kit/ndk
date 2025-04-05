@@ -11,7 +11,7 @@ export async function fetchPage(
     ndk: NDK,
     filter: NDKFilter,
     _knownNutzaps: Set<NDKEventId>,
-    relaySet?: NDKRelaySet
+    relaySet?: NDKRelaySet,
 ): Promise<NDKNutzap[]> {
     const events = await ndk.fetchEvents(
         filter,
@@ -20,7 +20,7 @@ export async function fetchPage(
             groupable: false,
             subId: "recent-nutzap",
         },
-        relaySet
+        relaySet,
     );
 
     return Array.from(events)

@@ -65,7 +65,7 @@ export default class NDKNostrCacheAdapter implements NDKCacheAdapter {
         this.fallbackNdk.connect().then(() => {
             d(
                 "Connected to fallback NDK %o",
-                this.fallbackNdk.pool.connectedRelays().map((relay) => relay.url)
+                this.fallbackNdk.pool.connectedRelays().map((relay) => relay.url),
             );
         });
 
@@ -82,7 +82,7 @@ export default class NDKNostrCacheAdapter implements NDKCacheAdapter {
     private onConnect() {
         d(
             "Connected to %o",
-            this.ndk.pool.connectedRelays().map((relay) => relay.url)
+            this.ndk.pool.connectedRelays().map((relay) => relay.url),
         );
         this.locking = true;
         this.ready = true;
@@ -95,8 +95,7 @@ export default class NDKNostrCacheAdapter implements NDKCacheAdapter {
      */
     private async queryLocally(subscription: NDKSubscription): Promise<number> {
         const subId =
-            subscription.subId ??
-            subscription.filters.map((filter) => Object.keys(filter).join(",")).join("-");
+            subscription.subId ?? subscription.filters.map((filter) => Object.keys(filter).join(",")).join("-");
         const _ = d.extend(subId);
 
         return new Promise((resolve, reject) => {
@@ -112,7 +111,7 @@ export default class NDKNostrCacheAdapter implements NDKCacheAdapter {
                     closeOnEose: true,
                 },
                 this.relaySet,
-                false
+                false,
             );
 
             // Process events
@@ -146,8 +145,7 @@ export default class NDKNostrCacheAdapter implements NDKCacheAdapter {
 
     async query(subscription: NDKSubscription): Promise<void> {
         const subId =
-            subscription.subId ??
-            subscription.filters.map((filter) => Object.keys(filter).join(",")).join("-");
+            subscription.subId ?? subscription.filters.map((filter) => Object.keys(filter).join(",")).join("-");
         let eventCount = 0;
 
         const _ = d.extend(subId);
@@ -180,7 +178,7 @@ export default class NDKNostrCacheAdapter implements NDKCacheAdapter {
                             closeOnEose: true,
                         },
                         undefined,
-                        false
+                        false,
                     );
                     sub.on("event", (event) => {
                         this.hydrateLocalRelayWithEvent(event);
@@ -213,11 +211,7 @@ export default class NDKNostrCacheAdapter implements NDKCacheAdapter {
             });
     }
 
-    async setEvent(
-        event: NDKEvent,
-        _filters: NDKFilter<NDKKind>[],
-        _relay?: NDKRelay | undefined
-    ): Promise<void> {
+    async setEvent(event: NDKEvent, _filters: NDKFilter<NDKKind>[], _relay?: NDKRelay | undefined): Promise<void> {
         this.hydrateLocalRelayWithEvent(event);
     }
 

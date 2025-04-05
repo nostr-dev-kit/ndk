@@ -4,10 +4,7 @@ import type { LRUCache } from "typescript-lru-cache";
 import type { RelayStatus } from "../db";
 import type { CacheHandler } from "../lru-cache";
 
-export async function relayInfoWarmUp(
-    cacheHandler: CacheHandler<RelayStatus>,
-    relayStatus: Table<RelayStatus>
-) {
+export async function relayInfoWarmUp(cacheHandler: CacheHandler<RelayStatus>, relayStatus: Table<RelayStatus>) {
     const array = await relayStatus.limit(cacheHandler.maxSize).toArray();
     for (const entry of array) {
         cacheHandler.set(
@@ -18,7 +15,7 @@ export async function relayInfoWarmUp(
                 lastConnectedAt: entry.lastConnectedAt,
                 dontConnectBefore: entry.dontConnectBefore,
             },
-            false
+            false,
         );
     }
 }

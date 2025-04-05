@@ -17,9 +17,7 @@ describe("NDKEvent", () => {
             event.tags.push(["d", "1234"]);
 
             const a = event.encode();
-            expect(a).toBe(
-                "naddr1qvzqqqr4xqpzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqqzrzv3nxsl6m2ff"
-            );
+            expect(a).toBe("naddr1qvzqqqr4xqpzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqqzrzv3nxsl6m2ff");
         });
 
         it("encodes NIP-33 events with relay when it's known", async () => {
@@ -31,7 +29,7 @@ describe("NDKEvent", () => {
 
             const a = event.encode();
             expect(a).toBe(
-                "naddr1qvzqqqr4xqpzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyfhwumn8ghj7un9d3shjtnxxaazu6t09uqqgvfjxv6qrvzzck"
+                "naddr1qvzqqqr4xqpzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyfhwumn8ghj7un9d3shjtnxxaazu6t09uqqgvfjxv6qrvzzck",
             );
         });
 
@@ -44,7 +42,7 @@ describe("NDKEvent", () => {
 
             const a = event.encode();
             expect(a).toBe(
-                "nevent1qgs04xzt6ldm9qhs0ctw0t58kf4z57umjzmjg6jywu0seadwtqqc75spzdmhxue69uhhyetvv9ujue3h0ghxjme0qqqqcmeuul"
+                "nevent1qgs04xzt6ldm9qhs0ctw0t58kf4z57umjzmjg6jywu0seadwtqqc75spzdmhxue69uhhyetvv9ujue3h0ghxjme0qqqqcmeuul",
             );
         });
     });

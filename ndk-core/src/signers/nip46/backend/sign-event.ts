@@ -6,7 +6,7 @@ export default class SignEventHandlingStrategy implements IEventHandlingStrategy
         backend: NDKNip46Backend,
         id: string,
         remotePubkey: string,
-        params: string[]
+        params: string[],
     ): Promise<string | undefined> {
         const event = await signEvent(backend, id, remotePubkey, params);
         if (!event) return undefined;
@@ -19,7 +19,7 @@ async function signEvent(
     backend: NDKNip46Backend,
     id: string,
     remotePubkey: string,
-    params: string[]
+    params: string[],
 ): Promise<NDKEvent | undefined> {
     const [eventString] = params;
 

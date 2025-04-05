@@ -36,7 +36,7 @@ export class PaymentHandler {
      */
     async lnPay(
         payment: PaymentWithOptionalZapInfo<LnPaymentInfo>,
-        createTxEvent = true
+        createTxEvent = true,
     ): Promise<NDKPaymentConfirmationLN | undefined> {
         if (!payment.pr) throw new Error("pr is required");
 
@@ -64,29 +64,17 @@ export class PaymentHandler {
     /**
      * Swaps tokens to a specific amount, optionally locking to a p2pk.
      */
-    async cashuPay(
-        payment: NDKZapDetails<CashuPaymentInfo>
-    ): Promise<NDKPaymentConfirmationCashu | undefined> {
+    async cashuPay(payment: NDKZapDetails<CashuPaymentInfo>): Promise<NDKPaymentConfirmationCashu | undefined> {
         const satPayment = { ...payment };
         if (satPayment.unit?.startsWith("msat")) {
             satPayment.amount = satPayment.amount / 1000;
             satPayment.unit = "sat";
         }
 
-        let createResult = await createToken(
-            this.wallet,
-            satPayment.amount,
-            payment.mints,
-            payment.p2pk
-        );
+        let createResult = await createToken(this.wallet, satPayment.amount, payment.mints, payment.p2pk);
         if (!createResult) {
             if (payment.allowIntramintFallback) {
-                createResult = await createToken(
-                    this.wallet,
-                    satPayment.amount,
-                    undefined,
-                    payment.p2pk
-                );
+                createResult = await createToken(this.wallet, satPayment.amount, undefined, payment.p2pk);
             }
 
             if (!createResult) {

@@ -37,8 +37,8 @@ describe("generateZapRequest", () => {
                 1000,
                 ["wss://relay.example.com"],
                 undefined,
-                additionalTags
-            )
+                additionalTags,
+            ),
         ).rejects.toThrow("Only one e-tag is allowed");
     });
 
@@ -74,7 +74,7 @@ describe("generateZapRequest", () => {
             1000,
             ["wss://relay.example.com"],
             undefined,
-            additionalTags
+            additionalTags,
         );
 
         // Verify both 'a' and 'e' tags are present
@@ -118,8 +118,8 @@ describe("generateZapRequest", () => {
                 1000,
                 ["wss://relay.example.com"],
                 undefined,
-                conflictingTags
-            )
+                conflictingTags,
+            ),
         ).rejects.toThrow("Only one e-tag is allowed");
     });
 });

@@ -26,9 +26,7 @@ describe("NDKPrivateKeySigner", () => {
         expect(signer.privateKey).toEqual(privateKeyString);
         expect(signer.privateKey?.length).toBe(64);
         const user = await signer.user();
-        expect(user.pubkey).toBe(
-            "c44f2be1b2fb5371330386046e60207bbd84938d4812ee0c7a3c11be605a7585"
-        );
+        expect(user.pubkey).toBe("c44f2be1b2fb5371330386046e60207bbd84938d4812ee0c7a3c11be605a7585");
     });
 
     it("creates a new NDKPrivateKeySigner instance with a provided bech32 encoded private key", async () => {
@@ -39,9 +37,7 @@ describe("NDKPrivateKeySigner", () => {
         expect(signer.privateKey).toEqual(bytesToHex(data));
         expect(signer.privateKey?.length).toBe(64);
         const user = await signer.user();
-        expect(user.pubkey).toBe(
-            "c44f2be1b2fb5371330386046e60207bbd84938d4812ee0c7a3c11be605a7585"
-        );
+        expect(user.pubkey).toBe("c44f2be1b2fb5371330386046e60207bbd84938d4812ee0c7a3c11be605a7585");
     });
 
     it("signs a NostrEvent with the private key", async () => {
@@ -69,8 +65,6 @@ describe("NDKPrivateKeySigner", () => {
         // Test with a known private key to verify correct pubkey
         const privateKeyString = "0277cc53c89ca9c8a441987265276fafa55bf5bed8a55b16fd640e0d6a0c21e2";
         const knownSigner = new NDKPrivateKeySigner(privateKeyString);
-        expect(knownSigner.pubkey).toBe(
-            "c44f2be1b2fb5371330386046e60207bbd84938d4812ee0c7a3c11be605a7585"
-        );
+        expect(knownSigner.pubkey).toBe("c44f2be1b2fb5371330386046e60207bbd84938d4812ee0c7a3c11be605a7585");
     });
 });

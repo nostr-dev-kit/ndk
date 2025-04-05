@@ -26,18 +26,10 @@ describe("groupNutzaps", () => {
 
         // Create mock nutzaps with different mints and p2pk values
         const nutzaps = [
-            createMockNutzap("id1", "mint1", [
-                { secret: JSON.stringify(["P2PK", { data: "02pubkey1" }]) },
-            ]),
-            createMockNutzap("id2", "mint1", [
-                { secret: JSON.stringify(["P2PK", { data: "02pubkey1" }]) },
-            ]),
-            createMockNutzap("id3", "mint1", [
-                { secret: JSON.stringify(["P2PK", { data: "02pubkey2" }]) },
-            ]),
-            createMockNutzap("id4", "mint2", [
-                { secret: JSON.stringify(["P2PK", { data: "02pubkey1" }]) },
-            ]),
+            createMockNutzap("id1", "mint1", [{ secret: JSON.stringify(["P2PK", { data: "02pubkey1" }]) }]),
+            createMockNutzap("id2", "mint1", [{ secret: JSON.stringify(["P2PK", { data: "02pubkey1" }]) }]),
+            createMockNutzap("id3", "mint1", [{ secret: JSON.stringify(["P2PK", { data: "02pubkey2" }]) }]),
+            createMockNutzap("id4", "mint2", [{ secret: JSON.stringify(["P2PK", { data: "02pubkey1" }]) }]),
         ];
 
         // Call the function under test
@@ -76,25 +68,15 @@ describe("groupNutzaps", () => {
     test("should filter nutzaps that should not be redeemed", () => {
         // Create a mock monitor where shouldTryRedeem returns false for specific nutzap ids
         const monitor = {
-            shouldTryRedeem: vi
-                .fn()
-                .mockImplementation((nutzap) => nutzap.id !== "id2" && nutzap.id !== "id4"),
+            shouldTryRedeem: vi.fn().mockImplementation((nutzap) => nutzap.id !== "id2" && nutzap.id !== "id4"),
         } as unknown as NDKNutzapMonitor;
 
         // Create mock nutzaps
         const nutzaps = [
-            createMockNutzap("id1", "mint1", [
-                { secret: JSON.stringify(["P2PK", { data: "02pubkey1" }]) },
-            ]),
-            createMockNutzap("id2", "mint1", [
-                { secret: JSON.stringify(["P2PK", { data: "02pubkey1" }]) },
-            ]),
-            createMockNutzap("id3", "mint2", [
-                { secret: JSON.stringify(["P2PK", { data: "02pubkey1" }]) },
-            ]),
-            createMockNutzap("id4", "mint2", [
-                { secret: JSON.stringify(["P2PK", { data: "02pubkey1" }]) },
-            ]),
+            createMockNutzap("id1", "mint1", [{ secret: JSON.stringify(["P2PK", { data: "02pubkey1" }]) }]),
+            createMockNutzap("id2", "mint1", [{ secret: JSON.stringify(["P2PK", { data: "02pubkey1" }]) }]),
+            createMockNutzap("id3", "mint2", [{ secret: JSON.stringify(["P2PK", { data: "02pubkey1" }]) }]),
+            createMockNutzap("id4", "mint2", [{ secret: JSON.stringify(["P2PK", { data: "02pubkey1" }]) }]),
         ];
 
         // Call the function under test
@@ -127,9 +109,7 @@ describe("groupNutzaps", () => {
             createMockNutzap("id2", "mint1", [
                 { secret: JSON.stringify({}) }, // Missing P2PK structure
             ]),
-            createMockNutzap("id3", "mint1", [
-                { secret: JSON.stringify(["P2PK", { data: "02pubkey1" }]) },
-            ]),
+            createMockNutzap("id3", "mint1", [{ secret: JSON.stringify(["P2PK", { data: "02pubkey1" }]) }]),
         ];
 
         // Call the function under test
@@ -148,9 +128,7 @@ describe("groupNutzaps", () => {
         expect(noKeyGroup?.nostrPubkey).toBe(cashuPubkeyToNostrPubkey("no-key"));
 
         // Group for nutzaps with valid key
-        const validKeyGroup = result.find(
-            (g) => g.mint === "mint1" && g.cashuPubkey === "02pubkey1"
-        );
+        const validKeyGroup = result.find((g) => g.mint === "mint1" && g.cashuPubkey === "02pubkey1");
         expect(validKeyGroup).toBeDefined();
         expect(validKeyGroup?.nutzaps.length).toBe(1);
         expect(validKeyGroup?.nostrPubkey).toBe(cashuPubkeyToNostrPubkey("02pubkey1"));
@@ -230,13 +208,10 @@ describe("groupNutzaps", () => {
 
         // Find each group
         const group1 = result.find(
-            (g) =>
-                g.cashuPubkey ===
-                "02fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"
+            (g) => g.cashuPubkey === "02fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52",
         );
         const group2 = result.find(
-            (g) =>
-                g.cashuPubkey === "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"
+            (g) => g.cashuPubkey === "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52",
         );
 
         expect(group1).toBeDefined();
@@ -273,25 +248,15 @@ describe("groupNutzaps", () => {
         // Create a complex set of nutzaps
         const nutzaps = [
             // Mint1, pubkey1 - should be redeemed
-            createMockNutzap("id1", "mint1", [
-                { secret: JSON.stringify(["P2PK", { data: "02pubkey1" }]) },
-            ]),
+            createMockNutzap("id1", "mint1", [{ secret: JSON.stringify(["P2PK", { data: "02pubkey1" }]) }]),
             // Mint1, pubkey1 - should NOT be redeemed
-            createMockNutzap("id2", "mint1", [
-                { secret: JSON.stringify(["P2PK", { data: "02pubkey1" }]) },
-            ]),
+            createMockNutzap("id2", "mint1", [{ secret: JSON.stringify(["P2PK", { data: "02pubkey1" }]) }]),
             // Mint1, pubkey2 - should be redeemed
-            createMockNutzap("id3", "mint1", [
-                { secret: JSON.stringify(["P2PK", { data: "02pubkey2" }]) },
-            ]),
+            createMockNutzap("id3", "mint1", [{ secret: JSON.stringify(["P2PK", { data: "02pubkey2" }]) }]),
             // Mint2, pubkey1 - should NOT be redeemed
-            createMockNutzap("id4", "mint2", [
-                { secret: JSON.stringify(["P2PK", { data: "02pubkey1" }]) },
-            ]),
+            createMockNutzap("id4", "mint2", [{ secret: JSON.stringify(["P2PK", { data: "02pubkey1" }]) }]),
             // Mint2, pubkey2 - should be redeemed
-            createMockNutzap("id5", "mint2", [
-                { secret: JSON.stringify(["P2PK", { data: "02pubkey2" }]) },
-            ]),
+            createMockNutzap("id5", "mint2", [{ secret: JSON.stringify(["P2PK", { data: "02pubkey2" }]) }]),
         ];
 
         // Call the function under test
@@ -330,21 +295,15 @@ describe("groupNutzaps", () => {
         const monitor = createMockMonitor();
 
         // Mock cashu pubkeys
-        const cashuPubkeys = [
-            "02fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52",
-            "no-key",
-        ];
+        const cashuPubkeys = ["02fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52", "no-key"];
 
         // Create nutzaps with these pubkeys
         const nutzaps = cashuPubkeys.map((pubkey, index) =>
             createMockNutzap(`id${index + 1}`, "mint1", [
                 {
-                    secret:
-                        pubkey === "no-key"
-                            ? "invalid-secret"
-                            : JSON.stringify(["P2PK", { data: pubkey }]),
+                    secret: pubkey === "no-key" ? "invalid-secret" : JSON.stringify(["P2PK", { data: pubkey }]),
                 },
-            ])
+            ]),
         );
 
         // Call the function under test
@@ -360,10 +319,7 @@ describe("groupNutzaps", () => {
         const monitor = createMockMonitor();
 
         // Create a nutzap with no valid proofs
-        const nutzap = createMockNutzap("id1", "mint1", [
-            { secret: "invalid-json-1" },
-            { secret: "invalid-json-2" },
-        ]);
+        const nutzap = createMockNutzap("id1", "mint1", [{ secret: "invalid-json-1" }, { secret: "invalid-json-2" }]);
 
         // Call the function under test
         const result = groupNutzaps([nutzap], monitor);

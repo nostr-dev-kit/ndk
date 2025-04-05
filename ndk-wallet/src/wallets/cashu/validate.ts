@@ -13,9 +13,7 @@ export async function consolidateTokens(this: NDKCashuWallet) {
     d("checking %d tokens for spent proofs", this.state.tokens.size);
 
     const mints = new Set(
-        this.state
-            .getMintsProofs({ validStates: new Set(["available", "reserved", "deleted"]) })
-            .keys()
+        this.state.getMintsProofs({ validStates: new Set(["available", "reserved", "deleted"]) }).keys(),
     );
 
     d("found %d mints", mints.size);
@@ -30,7 +28,7 @@ export async function consolidateMintTokens(
     wallet: NDKCashuWallet,
     allProofs?: Proof[],
     onResult?: (walletChange: WalletProofChange) => void,
-    onFailure?: (error: string) => void
+    onFailure?: (error: string) => void,
 ) {
     allProofs ??= wallet.state.getProofs({ mint, includeDeleted: true, onlyAvailable: false });
     const _wallet = await walletForMint(mint);

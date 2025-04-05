@@ -106,10 +106,7 @@ export function generateHashtags(content: string): string[] {
     return Array.from(tag);
 }
 
-export async function generateContentTags(
-    content: string,
-    tags: NDKTag[] = []
-): Promise<ContentTag> {
+export async function generateContentTags(content: string, tags: NDKTag[] = []): Promise<ContentTag> {
     const tagRegex = /(@|nostr:)(npub|nprofile|note|nevent|naddr)[a-zA-Z0-9]+/g;
 
     const promises: Promise<void>[] = [];
@@ -140,7 +137,7 @@ export async function generateContentTags(
                         new Promise(async (resolve) => {
                             addTagIfNew(["q", data, await maybeGetEventRelayUrl(entity)]);
                             resolve();
-                        })
+                        }),
                     );
                     break;
 
@@ -158,7 +155,7 @@ export async function generateContentTags(
                             addTagIfNew(["q", id, relays[0]]);
                             if (author) addTagIfNew(["p", author]);
                             resolve();
-                        })
+                        }),
                     );
                     break;
 
@@ -176,7 +173,7 @@ export async function generateContentTags(
                             addTagIfNew(["q", id, relays[0]]);
                             addTagIfNew(["p", data.pubkey]);
                             resolve();
-                        })
+                        }),
                     );
                     break;
                 default:

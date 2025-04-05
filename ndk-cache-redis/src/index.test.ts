@@ -45,7 +45,7 @@ describe("setEvent", () => {
                 authors: [user.pubkey],
                 kinds: [NDKKind.Text],
             },
-            { cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE, closeOnEose: true }
+            { cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE, closeOnEose: true },
         );
         const event = await storeEvent(sub);
 
@@ -62,7 +62,7 @@ describe("setEvent", () => {
                 authors: [user.pubkey],
                 kinds: [NDKKind.Text],
             },
-            { cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE, closeOnEose: true }
+            { cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE, closeOnEose: true },
         );
         const _event = await storeEvent(sub);
 

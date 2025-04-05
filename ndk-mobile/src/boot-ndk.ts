@@ -1,8 +1,8 @@
-import NDK from '@nostr-dev-kit/ndk';
-import type { Hexpubkey } from '@nostr-dev-kit/ndk-hooks';
+import NDK from "@nostr-dev-kit/ndk";
+import type { Hexpubkey } from "@nostr-dev-kit/ndk-hooks";
 // Cannot import ndkSignerFromPayload as it's async and this function is sync
-import { loadSessionsFromStorageSync } from './session-storage.js';
-import { ndkSignerFromPayload } from '@nostr-dev-kit/ndk';
+import { loadSessionsFromStorageSync } from "./session-storage.js";
+import { ndkSignerFromPayload } from "@nostr-dev-kit/ndk";
 
 /**
  * Initializes the NDK instance synchronously with the most recently active user from storage.
@@ -33,19 +33,23 @@ export function bootNDK(ndk: NDK): Hexpubkey | null {
         // Cannot set signer synchronously because ndkSignerFromPayload is async.
         // useSessionMonitor will handle async signer loading later.
         if (mostRecentSession.signerPayload) {
-            ndkSignerFromPayload(mostRecentSession.signerPayload, ndk).then((signer) => {
-            console.log(`bootNDK (sync): Loaded signer for ${userPubkey}`);
-            ndk.signer = signer;
-            }).catch((error) => {
-                console.log(`bootNDK (sync): Signer payload found for ${userPubkey}, but will be loaded asynchronously later.`);
-            });
+            ndkSignerFromPayload(mostRecentSession.signerPayload, ndk)
+                .then((signer) => {
+                    console.log(`bootNDK (sync): Loaded signer for ${userPubkey}`);
+                    ndk.signer = signer;
+                })
+                .catch((error) => {
+                    console.log(
+                        `bootNDK (sync): Signer payload found for ${userPubkey}, but will be loaded asynchronously later.`,
+                    );
+                });
         } else {
             console.log(`bootNDK (sync): No signer payload found for ${userPubkey}. User is read-only initially.`);
         }
 
         return userPubkey;
     } catch (error) {
-        console.error('bootNDK (sync): Error initializing NDK with active user:', error);
+        console.error("bootNDK (sync): Error initializing NDK with active user:", error);
         // Reset activeUser if an error occurred during boot
         ndk.activeUser = undefined;
         return null;

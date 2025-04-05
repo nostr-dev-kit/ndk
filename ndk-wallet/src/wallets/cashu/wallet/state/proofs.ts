@@ -24,12 +24,7 @@ export function reserveProofs(this: WalletState, proofs: Proof[], amount: number
     this.reserveAmounts.push(amount);
 }
 
-export function unreserveProofs(
-    this: WalletState,
-    proofs: Proof[],
-    amount: number,
-    newState: "available" | "deleted"
-) {
+export function unreserveProofs(this: WalletState, proofs: Proof[], amount: number, newState: "available" | "deleted") {
     for (const proof of proofs) {
         this.updateProof(proof, { state: newState });
     }

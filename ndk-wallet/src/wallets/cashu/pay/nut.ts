@@ -22,7 +22,7 @@ export async function createToken(
     wallet: NDKCashuWallet,
     amount: number,
     recipientMints?: MintUrl[],
-    p2pk?: string
+    p2pk?: string,
 ): Promise<WalletOperation<TokenCreationResult> | null> {
     p2pk = ensureIsCashuPubkey(p2pk);
     const myMintsWithEnoughBalance = wallet.getMintsWithBalance(amount);
@@ -58,7 +58,7 @@ async function createTokenInMint(
     wallet: NDKCashuWallet,
     mint: MintUrl,
     amount: number,
-    p2pk?: string
+    p2pk?: string,
 ): Promise<WalletOperation<TokenCreationResult> | null> {
     const cashuWallet = await wallet.getCashuWallet(mint);
     try {
@@ -82,7 +82,7 @@ async function createTokenInMint(
                     change: sendResult.keep,
                     mint,
                 };
-            }
+            },
         );
 
         return result;
@@ -99,7 +99,7 @@ async function createTokenWithMintTransfer(
     wallet: NDKCashuWallet,
     amount: number,
     recipientMints: MintUrl[],
-    p2pk?: string
+    p2pk?: string,
 ): Promise<WalletOperation<TokenCreationResult> | null> {
     const generateQuote = async () => {
         const generateQuoteFromSomeMint = async (mint: MintUrl) => {
@@ -131,9 +131,7 @@ async function createTokenWithMintTransfer(
     if (!invoiceAmount) throw new Error("invoice amount is required");
     const invoiceAmountInSat = invoiceAmount / 1000;
     if (invoiceAmountInSat > amount)
-        throw new Error(
-            `invoice amount is more than the amount passed in (${invoiceAmountInSat} vs ${amount})`
-        );
+        throw new Error(`invoice amount is more than the amount passed in (${invoiceAmountInSat} vs ${amount})`);
 
     const payLNResult = await payLn(wallet, quote.request, { amount });
     if (!payLNResult) {

@@ -82,9 +82,7 @@ export class RelayMock extends EventEmitter {
             if (type === "REQ") {
                 const [subId, ...filters] = rest;
                 // Find the subscription with this ID
-                const _subscription = Array.from(this.activeSubscriptions.values()).find(
-                    (sub) => sub.subId === subId
-                );
+                const _subscription = Array.from(this.activeSubscriptions.values()).find((sub) => sub.subId === subId);
 
                 // Emit the subscription event
                 this.emit("subscription", { id: subId, filters });

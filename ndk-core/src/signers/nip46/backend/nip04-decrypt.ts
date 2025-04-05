@@ -6,7 +6,7 @@ export default class Nip04DecryptHandlingStrategy implements IEventHandlingStrat
         backend: NDKNip46Backend,
         id: string,
         remotePubkey: string,
-        params: string[]
+        params: string[],
     ): Promise<string | undefined> {
         const [senderPubkey, payload] = params;
         const senderUser = new NDKUser({ pubkey: senderPubkey });
@@ -21,7 +21,7 @@ async function decrypt(
     id: string,
     remotePubkey: string,
     senderUser: NDKUser,
-    payload: string
+    payload: string,
 ) {
     if (
         !(await backend.pubkeyAllowed({

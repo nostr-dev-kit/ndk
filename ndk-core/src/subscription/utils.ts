@@ -146,9 +146,7 @@ export function filterForEventsTaggingId(id: string): NDKFilter | undefined {
         switch (decoded.type) {
             case "naddr":
                 return {
-                    "#a": [
-                        `${decoded.data.kind}:${decoded.data.pubkey}:${decoded.data.identifier}`,
-                    ],
+                    "#a": [`${decoded.data.kind}:${decoded.data.pubkey}:${decoded.data.identifier}`],
                 };
             case "nevent":
                 return { "#e": [decoded.data.id] };
@@ -168,10 +166,7 @@ export function filterForEventsTaggingId(id: string): NDKFilter | undefined {
  * @param ndk
  * @returns
  */
-export function filterAndRelaySetFromBech32(
-    beche2: string,
-    ndk: NDK
-): { filter: NDKFilter; relaySet?: NDKRelaySet } {
+export function filterAndRelaySetFromBech32(beche2: string, ndk: NDK): { filter: NDKFilter; relaySet?: NDKRelaySet } {
     const filter = filterFromId(beche2);
     const relays = relaysFromBech32(beche2, ndk);
 
@@ -266,9 +261,7 @@ export function relaysFromBech32(bech32: string, ndk: NDK): NDKRelay[] {
             const data = decoded.data as unknown as EventPointer;
 
             if (data?.relays) {
-                return data.relays.map(
-                    (r: string) => new NDKRelay(r, ndk.relayAuthDefaultPolicy, ndk)
-                );
+                return data.relays.map((r: string) => new NDKRelay(r, ndk.relayAuthDefaultPolicy, ndk));
             }
         }
     } catch (_e) {

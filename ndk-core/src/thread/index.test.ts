@@ -145,12 +145,7 @@ describe("Threads to make Gigi ⚡🧡 happy", () => {
                 created_at: 1713171435,
                 kind: 1,
                 tags: [
-                    [
-                        "e",
-                        "b58922a716933ff927822f9c055c20f54e0aa871f114bb896da8c5a0666de741",
-                        "",
-                        "root",
-                    ],
+                    ["e", "b58922a716933ff927822f9c055c20f54e0aa871f114bb896da8c5a0666de741", "", "root"],
                     ["p", "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"],
                 ],
                 content: "GM\nCHAD IS RAD",
@@ -189,12 +184,7 @@ describe("Threads to make Gigi ⚡🧡 happy", () => {
                         "wss://nostr.mom/",
                         "reply",
                     ],
-                    [
-                        "p",
-                        "c1fc7771f5fa418fd3ac49221a18f19b42ccb7a663da8f04cbbf6c08c80d20b1",
-                        "",
-                        "mention",
-                    ],
+                    ["p", "c1fc7771f5fa418fd3ac49221a18f19b42ccb7a663da8f04cbbf6c08c80d20b1", "", "mention"],
                 ],
                 content:
                     "All points valid. But I would love to see Cashu as a base in lnbits, as it is already a custodial multi-wallet.",
@@ -206,24 +196,9 @@ describe("Threads to make Gigi ⚡🧡 happy", () => {
                 created_at: 1713526057,
                 kind: 1,
                 tags: [
-                    [
-                        "e",
-                        "c2fe486097fb72a49081baba7b53c3cffa886e9e0117462b9c31f2e79f09c1e7",
-                        "",
-                        "root",
-                    ],
-                    [
-                        "e",
-                        "c2fe486097fb72a49081baba7b53c3cffa886e9e0117462b9c31f2e79f09c1e7",
-                        "",
-                        "root",
-                    ],
-                    [
-                        "e",
-                        "f88d4af5cf5e2817e498903e5ed907566ebb9682f78f365cc60cf3c4009d1b48",
-                        "",
-                        "reply",
-                    ],
+                    ["e", "c2fe486097fb72a49081baba7b53c3cffa886e9e0117462b9c31f2e79f09c1e7", "", "root"],
+                    ["e", "c2fe486097fb72a49081baba7b53c3cffa886e9e0117462b9c31f2e79f09c1e7", "", "root"],
+                    ["e", "f88d4af5cf5e2817e498903e5ed907566ebb9682f78f365cc60cf3c4009d1b48", "", "reply"],
                     ["p", "c1fc7771f5fa418fd3ac49221a18f19b42ccb7a663da8f04cbbf6c08c80d20b1"],
                     ["p", "f55678aa1f5d554536d456b13beab04f636d63fdedd586fe38a4cb9ce48c90bc"],
                 ],
@@ -258,7 +233,7 @@ describe("Threads to make Gigi ⚡🧡 happy", () => {
         describe("getRootTag", () => {
             it("properly handles events without markers", () => {
                 expect(getRootTag(eventWithNoMarkers)?.[1]).toBe(
-                    "280098061928d822887022b5dfadd4e18cc1710b4f4a01d531d41bcf4ab2d4ff"
+                    "280098061928d822887022b5dfadd4e18cc1710b4f4a01d531d41bcf4ab2d4ff",
                 );
             });
         });
@@ -266,7 +241,7 @@ describe("Threads to make Gigi ⚡🧡 happy", () => {
         describe("getReplyTag", () => {
             it("properly handles events without markers", () => {
                 expect(getReplyTag(eventWithNoMarkers)?.[1]).toBe(
-                    "1c15684fe4258b06c0e49e25f38b4897e1bc47210ad3ab78c65e022e3ad36e0f"
+                    "1c15684fe4258b06c0e49e25f38b4897e1bc47210ad3ab78c65e022e3ad36e0f",
                 );
             });
         });

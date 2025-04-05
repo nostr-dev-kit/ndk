@@ -112,11 +112,7 @@ export class NDKRelay extends EventEmitter<{
      */
     public targetValidationRatio?: number;
 
-    public validationRatioFn?: (
-        relay: NDKRelay,
-        validatedCount: number,
-        nonValidatedCount: number
-    ) => number;
+    public validationRatioFn?: (relay: NDKRelay, validatedCount: number, nonValidatedCount: number) => number;
 
     /**
      * This tracks events that have been seen by this relay
@@ -143,10 +139,9 @@ export class NDKRelay extends EventEmitter<{
     static defaultValidationRatioUpdateFn = (
         relay: NDKRelay,
         validatedCount: number,
-        _nonValidatedCount: number
+        _nonValidatedCount: number,
     ): number => {
-        if (relay.lowestValidationRatio === undefined || relay.targetValidationRatio === undefined)
-            return 1;
+        if (relay.lowestValidationRatio === undefined || relay.targetValidationRatio === undefined) return 1;
 
         let newRatio = relay.validationRatio;
 
@@ -176,9 +171,7 @@ export class NDKRelay extends EventEmitter<{
         this.authPolicy = authPolicy;
         this.targetValidationRatio = ndk?.initialValidationRatio;
         this.lowestValidationRatio = ndk?.lowestValidationRatio;
-        this.validationRatioFn = (
-            ndk?.validationRatioFn ?? NDKRelay.defaultValidationRatioUpdateFn
-        ).bind(this);
+        this.validationRatioFn = (ndk?.validationRatioFn ?? NDKRelay.defaultValidationRatioUpdateFn).bind(this);
 
         this.updateValidationRatio();
 

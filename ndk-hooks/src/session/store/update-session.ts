@@ -1,13 +1,13 @@
 // src/session/store/update-session.ts
-import type { Draft } from 'immer';
-import type { Hexpubkey } from '@nostr-dev-kit/ndk';
-import type { NDKSessionsState, NDKUserSession } from './types';
+import type { Draft } from "immer";
+import type { Hexpubkey } from "@nostr-dev-kit/ndk";
+import type { NDKSessionsState, NDKUserSession } from "./types";
 
 export const updateSession = (
     set: (fn: (draft: Draft<NDKSessionsState>) => void) => void,
     get: () => NDKSessionsState, // get signature remains the same
     pubkey: Hexpubkey,
-    data: Partial<NDKUserSession>
+    data: Partial<NDKUserSession>,
 ): void => {
     set((draft) => {
         const session = draft.sessions.get(pubkey);

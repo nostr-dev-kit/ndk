@@ -25,7 +25,11 @@
         "type": "git",
         "url": "git+https://github.com/nostr-dev-kit/ndk.git"
     },
-    "keywords": ["nostr", "redis", "cache"],
+    "keywords": [
+        "nostr",
+        "redis",
+        "cache"
+    ],
     "author": "pablof7z",
     "license": "MIT",
     "bugs": {

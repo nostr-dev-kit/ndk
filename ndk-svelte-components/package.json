@@ -12,7 +12,11 @@
             "svelte": "./dist/index.js"
         }
     },
-    "files": ["dist", "!dist/**/*.test.*", "!dist/**/*.spec.*"],
+    "files": [
+        "dist",
+        "!dist/**/*.test.*",
+        "!dist/**/*.spec.*"
+    ],
     "scripts": {
         "dev": "vite build --watch",
         "build": "vite build && pnpm run package",

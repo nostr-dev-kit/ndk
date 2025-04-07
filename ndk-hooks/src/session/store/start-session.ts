@@ -1,8 +1,7 @@
-// src/session/store/start-session.ts
+import type { Hexpubkey, NDKEvent, NDKFilter, NDKRelay } from "@nostr-dev-kit/ndk";
+import { NDKKind, profileFromEvent } from "@nostr-dev-kit/ndk";
 import type { Draft } from "immer";
-import type { Hexpubkey, NDKEvent, NDKSubscription, NDKUserProfile, NDKFilter, NDKRelay } from "@nostr-dev-kit/ndk";
-import NDK, { NDKKind, profileFromEvent } from "@nostr-dev-kit/ndk";
-import type { NDKSessionsState, SessionStartOptions, NDKUserSession } from "./types";
+import type { NDKSessionsState, NDKUserSession, SessionStartOptions } from "./types";
 
 function handleProfileEvent(event: NDKEvent, sessionDraft: Draft<NDKUserSession>): void {
     const profile = profileFromEvent(event);
@@ -74,7 +73,6 @@ function processEvent(event: NDKEvent, sessionDraft: Draft<NDKUserSession>, opts
                 handleProfileEvent(event, sessionDraft);
                 break;
             case NDKKind.Contacts:
-                console.log("setting contact list with", event.created_at, event.tags.length);
                 handleContactsEvent(event, sessionDraft);
                 break;
             case NDKKind.MuteList:
@@ -111,7 +109,6 @@ export const startSession = (
     pubkey: Hexpubkey,
     opts: SessionStartOptions,
 ): void => {
-    console.log("will start session", pubkey);
     const ndk = get().ndk;
     if (!ndk) {
         console.error("NDK instance not initialized in session store. Cannot start session.");
@@ -126,7 +123,6 @@ export const startSession = (
 
     // Stop existing subscription if present
     if (existingSession.subscription) {
-        console.debug(`Stopping existing subscription for ${pubkey} before starting new one.`);
         existingSession.subscription.stop();
         set((draft) => {
             const session = draft.sessions.get(pubkey);

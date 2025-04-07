@@ -1,6 +1,7 @@
 // src/session/store/add-session.ts
-import { NDKSigner, NDKUser, Hexpubkey } from "@nostr-dev-kit/ndk";
+import { type Hexpubkey, type NDKSigner, NDKUser } from "@nostr-dev-kit/ndk";
 import type { Draft } from "immer"; // Import Draft type
+import { useNDKStore } from "../../ndk/store";
 import type { NDKSessionsState, NDKUserSession } from "./types";
 
 /**
@@ -18,9 +19,9 @@ const createDefaultSession = (pubkey: Hexpubkey): NDKUserSession => ({
 
 export const addSession = async (
     set: (fn: (draft: Draft<NDKSessionsState>) => void) => void,
-    get: () => NDKSessionsState, // get remains the same
+    get: () => NDKSessionsState,
     userOrSigner: NDKUser | NDKSigner,
-    setActive: boolean = true,
+    setActive = true,
 ): Promise<Hexpubkey> => {
     let user: NDKUser;
     let signer: NDKSigner | undefined = undefined;
@@ -54,7 +55,6 @@ export const addSession = async (
             // Create new session if it doesn't exist
             session = createDefaultSession(userPubkey);
             draft.sessions.set(userPubkey, session);
-            console.debug(`Created new session for ${userPubkey}`);
         } else {
             // Update last active time for existing session
             session.lastActive = Date.now() / 1000;
@@ -63,6 +63,7 @@ export const addSession = async (
 
         if (setActive) {
             draft.activePubkey = userPubkey;
+            useNDKStore.getState().setSigner(signer);
         }
     });
 

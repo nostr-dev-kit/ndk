@@ -1,12 +1,60 @@
 import type NDK from "@nostr-dev-kit/ndk";
-import { Hexpubkey, type NDKEvent, NDKKind, type NDKUserProfile } from "@nostr-dev-kit/ndk";
-import { useMemo } from "react";
-import { useNDKSessions } from "../store"; // Corrected import path
-import { useNDK } from "../../ndk/hooks"; // Corrected import path
-import { useProfile } from "../../profiles/hooks"; // Corrected import path for useProfile
-import { useNDKStore } from "../../ndk/store";
+import {
+    type Hexpubkey,
+    type NDKEvent,
+    NDKKind,
+    type NDKSigner,
+    type NDKUser,
+    type NDKUserProfile,
+} from "@nostr-dev-kit/ndk";
+import { useCallback, useMemo } from "react";
+import { useNDK, useNDKCurrentUser } from "../../ndk/hooks";
+import { useProfile } from "../../profiles/hooks";
+import { useNDKSessions } from "../store";
 
 const EMPTY_SET = new Set<Hexpubkey>();
+
+/**
+ * Hook to login a new session.
+ * @param userOrSigner - A user (for read-only sessions) or a signer to login with.
+ * @returns
+ */
+export const useNDKSessionLogin = () => {
+    const addSession = useNDKSessions.getState().addSession;
+    return useCallback((userOrSigner: NDKUser | NDKSigner) => addSession(userOrSigner), [addSession]);
+};
+
+/**
+ * Hook to logout the sessions
+ *
+ * @params pubkey - The pubkey of the user to logout. If not provided, it will use the current user's pubkey.
+ * If no pubkey is provided and there is no current user, an error will be logged.
+ * @returns
+ */
+export const useNDKSessionLogout = () => {
+    const currentUser = useNDKCurrentUser();
+    const removeSession = useNDKSessions.getState().removeSession;
+    return useCallback(
+        (pubkey?: Hexpubkey) => {
+            const _pubkey = pubkey ?? currentUser?.pubkey;
+            if (!_pubkey) {
+                console.error("No pubkey provided for logout");
+                return;
+            }
+            removeSession(_pubkey);
+        },
+        [removeSession, currentUser],
+    );
+};
+
+/**
+ * Hook to swtich the active session.
+ * @returns
+ */
+export const useNDKSessionSwitch = () => {
+    const switchToUser = useNDKSessions.getState().switchToUser;
+    return useCallback((pubkey: Hexpubkey | null) => switchToUser(pubkey), [switchToUser]);
+};
 
 /**
  * Returns the list of followed pubkeys for the active session.
@@ -123,18 +171,4 @@ export const useCurrentUserProfile = (): NDKUserProfile | undefined => {
     const profile = useProfile(activePubkey ?? undefined);
 
     return profile;
-};
-
-export const useSessionSwitchUser = (pubkey: string) => {
-    const switchToUser = useNDKSessions((state) => state.switchToUser);
-    const signers = useNDKSessions((state) => state.signers);
-    const setSigner = useNDKStore((state) => state.setSigner);
-
-    const handleSwitchUser = async () => {
-        switchToUser(pubkey);
-        const signer = signers.get(pubkey);
-        setSigner(signer);
-    };
-
-    return handleSwitchUser;
 };

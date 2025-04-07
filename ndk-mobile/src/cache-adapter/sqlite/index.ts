@@ -7,20 +7,20 @@ import {
     type NDKEventId,
     type NDKFilter,
     NDKKind,
+    type NDKNutzapState,
     type NDKRelay,
     type NDKSubscription,
     type NDKUserProfile,
     deserialize,
     matchFilter,
     profileFromEvent,
-    type NDKNutzapState, // Import the type moved to ndk-core
 } from "@nostr-dev-kit/ndk";
 import * as SQLite from "expo-sqlite";
 import * as Mint from "../../mint/mint-methods.js";
 import { getAllProfilesSync } from "./get-all-profiles.js";
+import { migrations } from "./migrations.js";
 import { getAllNutzapStates } from "./nutzap-state-get.js";
 import { prepareNutzapStateUpdate } from "./nutzap-state-set.js";
-import { migrations } from "./migrations.js";
 
 export type NDKSqliteEventRecord = {
     id: string;
@@ -139,14 +139,10 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
             this.db.execSync("PRAGMA journal_mode = WAL;");
         }
 
-        console.log("current migration version", schemaVersion);
-
         if (!schemaVersion || Number(schemaVersion) < migrations.length) {
-            console.log("need to run");
             this.db.withTransactionSync(() => {
                 for (let i = Number(schemaVersion); i < migrations.length; i++) {
                     try {
-                        console.log("running migration", i);
                         // Assuming migrations[i].up can run synchronously within a sync transaction
                         // If this causes issues, the migration functions themselves might need adjustment.
                         migrations[i].up(this.db);
@@ -160,11 +156,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                 // set the schema version
                 this.db.execSync(`PRAGMA user_version = ${migrations.length};`);
             });
-        } else {
-            console.log("no need to run");
         }
-
-        console.log("finished migrating");
 
         try {
             // load all the event timestamps
@@ -176,10 +168,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                 this.knownEventTimestamps.set(event.id, event.created_at);
             }
 
-            console.log("finished warming up event timestamps", this.knownEventTimestamps.size);
-
             this.loadUnpublishedEventsSync();
-            console.log("finished loading unpulished events");
         } catch (e) {
             console.log("unable to warm up from cache");
         }

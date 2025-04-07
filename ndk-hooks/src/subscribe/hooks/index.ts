@@ -1,9 +1,9 @@
 import type { NDKEvent, NDKFilter, NDKSubscription, NDKSubscriptionOptions } from "@nostr-dev-kit/ndk";
-import { useEffect, useRef, type RefObject } from "react"; // Added RefObject type import
+import { useEffect, useRef } from "react";
 import { useStore } from "zustand";
-import { createSubscribeStore } from "../store";
-import { useNDK } from "../../ndk/hooks";
 import { useMuteFilter } from "../../common/hooks/mute";
+import { useNDK } from "../../ndk/hooks";
+import { createSubscribeStore } from "../store";
 
 /**
  * Extends NDKEvent with a 'from' method to wrap events with a kind-specific handler
@@ -16,11 +16,6 @@ export type NDKEventWithAsyncFrom<T extends NDKEvent> = T & {
 };
 
 export type UseSubscribeOptions = NDKSubscriptionOptions & {
-    /**
-     * Whether to wrap the event with the kind-specific class when possible
-     */
-    wrap?: boolean;
-
     /**
      * Whether to include deleted events
      */
@@ -35,11 +30,6 @@ export type UseSubscribeOptions = NDKSubscriptionOptions & {
      * Whether to include events from muted authors (default: false)
      */
     includeMuted?: boolean;
-
-    /**
-     * Whether to filter with WoT (Web of Trust). (Implementation TBD)
-     */
-    wot?: boolean;
 };
 
 /**
@@ -54,7 +44,7 @@ export function useSubscribe<T extends NDKEvent, R = T[]>(
     filters: NDKFilter[] | false,
     opts: UseSubscribeOptions = {},
     dependencies: unknown[] = [],
-): T[] {
+): { events: T[]; eose: boolean } {
     const { ndk } = useNDK();
 
     const muteFilter = useMuteFilter();
@@ -148,5 +138,8 @@ export function useSubscribe<T extends NDKEvent, R = T[]>(
         }
     }, [muteFilter, store, opts.includeMuted]);
 
-    return useStore(store, (s) => s.events);
+    const events = useStore(store, (s) => s.events);
+    const eose = useStore(store, (s) => s.eose);
+
+    return { events, eose };
 }

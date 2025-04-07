@@ -1,20 +1,20 @@
-import { create, type StateCreator } from "zustand"; // Import StateCreator as type
-import { immer } from "zustand/middleware/immer"; // Import Immer middleware
-import { enableMapSet } from "immer"; // Import enableMapSet for Map and Set support
 import type NDK from "@nostr-dev-kit/ndk";
+import { enableMapSet } from "immer";
+import { type StateCreator, create } from "zustand";
+import { immer } from "zustand/middleware/immer";
 
 // Enable Map and Set support for Immer
 enableMapSet();
 import type { Hexpubkey, NDKSigner, NDKUser } from "@nostr-dev-kit/ndk";
 import type { NDKSessionsState, NDKUserSession, SessionStartOptions } from "./types";
 
-import { init } from "./init"; // New init function
-import { addSession } from "./add-session"; // Renamed from ensureSession/init-session
-import { startSession } from "./start-session"; // New startSession function
-import { stopSession } from "./stop-session"; // New stopSession function
-import { switchToUser } from "./switch-to-user"; // Will be updated
-import { removeSession } from "./remove-session"; // Will be updated
-import { updateSession } from "./update-session"; // Keep internal update
+import { addSession } from "./add-session";
+import { init } from "./init";
+import { removeSession } from "./remove-session";
+import { startSession } from "./start-session";
+import { stopSession } from "./stop-session";
+import { switchToUser } from "./switch-to-user";
+import { updateSession } from "./update-session";
 
 /**
  * Zustand store for managing NDK user sessions.

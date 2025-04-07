@@ -27,17 +27,6 @@ import { useNDK } from "../../ndk/hooks"; // Corrected path
  * @param {any[]} [dependencies=[]] - Optional React useEffect dependency array. The hook will re-subscribe
  *   if any value in this array changes. The `filters` parameter is implicitly included as a dependency.
  * @returns {T[]} An array containing the unique events matching the filters.
- *
- * @example
- * // Get all profile events for a specific pubkey from the cache
- * const pubkey = 'npub...';
- * const filters = { kinds: [0], authors: [pubkey] };
- * const profileEvents = useObserver<NDKUserProfile>(filters);
- *
- * // Observe notes mentioning the user, re-subscribing if `userId` changes
- * const userId = '...';
- * const mentionFilters = { kinds: [1], '#p': [userId] };
- * const mentionEvents = useObserver(mentionFilters, { cacheUsage: NDKSubscriptionCacheUsage.CACHE_FIRST }, [userId]);
  */
 export function useObserver<T extends NDKEvent>(
     filters: NDKFilter[] | false,
@@ -67,7 +56,7 @@ export function useObserver<T extends NDKEvent>(
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     useEffect(() => {
-        if (!ndk || !filters || filters.length === 0) return;
+        if (!ndk || !filters) return;
 
         let isValid = true;
         if (sub.current) stopFilters();
@@ -90,11 +79,9 @@ export function useObserver<T extends NDKEvent>(
         sub.current = ndk.subscribe(
             filters,
             {
-                skipVerification: true,
                 closeOnEose: true,
                 cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE,
                 groupable: false,
-                subId: "observer-hook",
                 wrap: true,
                 ...opts,
             },
@@ -103,9 +90,7 @@ export function useObserver<T extends NDKEvent>(
                     if (!isValid) return;
                     processEvent(event);
                 },
-                onEvents: (events) => {
-                    for (const event of events) processEvent(event);
-                },
+                onEvents: (events) => setEvents(events),
             },
         );
 
@@ -114,7 +99,6 @@ export function useObserver<T extends NDKEvent>(
                 clearTimeout(bufferTimeout.current);
                 bufferTimeout.current = null;
             }
-            setEvents(buffer.current);
             buffer.current = [];
         }
 

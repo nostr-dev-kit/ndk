@@ -1,5 +1,5 @@
 import type NDK from "@nostr-dev-kit/ndk";
-import type { NDKSigner, NDKUser } from "@nostr-dev-kit/ndk";
+import type { NDKSigner } from "@nostr-dev-kit/ndk";
 import { create } from "zustand";
 
 /**

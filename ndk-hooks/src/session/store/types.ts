@@ -1,7 +1,6 @@
 import type NDK from "@nostr-dev-kit/ndk";
-import type { NDKFilter, NDKSubscription } from "@nostr-dev-kit/ndk";
-import type { Hexpubkey, NDKEvent, NDKKind, NDKUser, NDKUserProfile, NDKSigner } from "@nostr-dev-kit/ndk";
-import { NDKEventWithFrom } from "../../subscribe/hooks";
+import type { NDKSubscription } from "@nostr-dev-kit/ndk";
+import type { Hexpubkey, NDKEvent, NDKKind, NDKSigner, NDKUser, NDKUserProfile } from "@nostr-dev-kit/ndk";
 
 /**
  * User-specific session data stored within the main store.
@@ -49,7 +48,7 @@ export interface SessionStartOptions {
      * to apply specifically to that kind (e.g., for NIP-65 relay lists).
      * If the value is null or undefined, a default filter `{ authors: [pubkey], kinds: [kind], limit: 1 }` is used.
      */
-    events?: Map<NDKKind, NDKEventWithFrom<NDKEvent>>;
+    events?: Map<NDKKind, typeof NDKEvent>;
 }
 
 /**

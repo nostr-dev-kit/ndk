@@ -50,7 +50,8 @@ export const useUserProfilesStore = create<UserProfilesStore>((set, get) => ({
     lastFetchedAt: new Map(),
     ndk: undefined,
     /** @internal */
-    initialize: initializeProfilesStore.bind(null, set),
-    setProfile: setProfileImplementation.bind(null, set),
-    fetchProfile: fetchProfileImplementation.bind(null, set, get),
+    initialize: (ndk: NDK) => initializeProfilesStore(set, ndk),
+    setProfile: (pubkey: string, profile: NDKUserProfile, cachedAt?: number) =>
+        setProfileImplementation(set, pubkey, profile, cachedAt),
+    fetchProfile: (pubkey?: string, force?: boolean) => fetchProfileImplementation(set, get, pubkey, force),
 }));

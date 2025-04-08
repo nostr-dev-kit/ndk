@@ -35,6 +35,7 @@ export default withMermaid(
                             text: "Subscription Management",
                             link: "/tutorial/subscription-management",
                         },
+                        { text: "Signer Persistence", link: "/tutorial/signer-persistence" },
                         { text: "Speed", link: "/tutorial/speed" },
                         { text: "Zaps", link: "/tutorial/zaps" },
                     ],
@@ -72,16 +73,6 @@ export default withMermaid(
                 {
                     text: "Internals",
                     items: [{ text: "Subscription Lifecycle", link: "/internals/subscriptions" }],
-                },
-                {
-                    text: "Code Snippets",
-                    items: [
-                        { text: "Overview", link: "/snippets/" },
-                        {
-                            text: "User",
-                            items: [{ text: "Generate Keys", link: "/snippets/user/generate-keys" }],
-                        },
-                    ],
                 },
             ],
 

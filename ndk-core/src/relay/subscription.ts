@@ -1,7 +1,3 @@
-import type { Event } from "nostr-tools";
-import { matchFilters } from "nostr-tools";
-import type { NDKRelay } from ".";
-import { NDKRelayStatus } from ".";
 import type { NostrEvent } from "../events";
 import type {
     NDKFilter,
@@ -12,6 +8,8 @@ import type {
 import type { NDKFilterFingerprint } from "../subscription/grouping";
 import { mergeFilters } from "../subscription/grouping";
 import type { NDKSubscriptionManager } from "../subscription/manager";
+import type { NDKRelay } from ".";
+import { NDKRelayStatus } from ".";
 
 type Item = {
     subscription: NDKSubscription;
@@ -94,7 +92,7 @@ export class NDKRelaySubscription {
     constructor(relay: NDKRelay, fingerprint: NDKFilterFingerprint | null, topSubManager: NDKSubscriptionManager) {
         this.relay = relay;
         this.topSubManager = topSubManager;
-        this.debug = relay.debug.extend(`subscription-${this.id}`);
+        this.debug = relay.debug.extend(`sub[${this.id}]`);
         this.fingerprint = fingerprint || Math.random().toString(36).substring(7);
     }
 

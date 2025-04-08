@@ -1,5 +1,3 @@
-import "websocket-polyfill";
-
 import { TestFixture } from "@nostr-dev-kit/ndk-test-utils";
 import { NDKRelay } from "../relay";
 

@@ -1,8 +1,8 @@
 import createDebug from "debug";
 import type { NDKEvent } from "../events/index.js";
-import type { NDKRelayList } from "../events/kinds/NDKRelayList.js";
 import { NDKKind } from "../events/kinds/index.js";
 import NDKList from "../events/kinds/lists/index.js";
+import type { NDKRelayList } from "../events/kinds/NDKRelayList.js";
 import { NDKRelay } from "../relay/index.js";
 import type { NDKFilter } from "../subscription/index.js";
 import type { NDKUser } from "../user/index.js";
@@ -54,28 +54,26 @@ async function setActiveUserConnected(this: NDK, user: NDKUser) {
         filters[0].kinds?.push(NDKKind.MuteList);
     }
 
+    const events: Map<NDKKind, NDKEvent> = new Map();
     const relaySet = userRelays ? userRelays.relaySet : undefined;
 
-    const sub = this.subscribe(filters, { subId: "active-user-settings", closeOnEose: true }, relaySet, false);
+    this.subscribe(
+        filters,
+        { subId: "active-user-settings", closeOnEose: true, relaySet },
+        {
+            onEvent: (event) => {
+                const prevEvent = events.get(event.kind!);
 
-    const events: Map<NDKKind, NDKEvent> = new Map();
-
-    // Collect most recent version of these events
-    sub.on("event", (event) => {
-        const prevEvent = events.get(event.kind!);
-
-        if (prevEvent && prevEvent.created_at! >= event.created_at!) return;
-        events.set(event.kind!, event);
-    });
-
-    // Once we EOSE, process the events
-    sub.on("eose", () => {
-        for (const event of events.values()) {
-            processEvent.call(this, event);
-        }
-    });
-
-    sub.start();
+                if (prevEvent && prevEvent.created_at! >= event.created_at!) return;
+                events.set(event.kind!, event);
+            },
+            onEose: () => {
+                for (const event of events.values()) {
+                    processEvent.call(this, event);
+                }
+            },
+        },
+    );
 }
 
 async function processEvent(this: NDK, event: NDKEvent) {

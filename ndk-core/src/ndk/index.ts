@@ -1,7 +1,6 @@
 import debug from "debug";
-import { EventEmitter } from "tseep";
-
 import type { NostrEvent } from "nostr-tools";
+import { EventEmitter } from "tseep";
 import type { NDKCacheAdapter } from "../cache/index.js";
 import dedupEvent from "../events/dedup.js";
 import type { NDKEventId, NDKTag } from "../events/index.js";
@@ -21,6 +20,7 @@ import { NDKSubscriptionManager } from "../subscription/manager.js";
 import { filterFromId, isNip33AValue, relaysFromBech32 } from "../subscription/utils.js";
 import type { Hexpubkey, NDKUserParams, ProfilePointer } from "../user/index.js";
 import { NDKUser } from "../user/index.js";
+import { normalizeRelayUrl } from "../utils/normalize-url.js";
 import type { CashuPayCb, LnPayCb, NDKPaymentConfirmation, NDKZapSplit } from "../zapper/index.js";
 import type { NDKLnUrlData } from "../zapper/ln.js";
 import { setActiveUser } from "./active-user.js";
@@ -363,7 +363,7 @@ export class NDK extends EventEmitter<{
     }
 
     set explicitRelayUrls(urls: WebSocket["url"][]) {
-        this._explicitRelayUrls = urls;
+        this._explicitRelayUrls = urls.map(normalizeRelayUrl);
         this.pool.relayUrls = urls;
     }
 

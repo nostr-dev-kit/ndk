@@ -727,6 +727,10 @@ export class NDKSubscription extends EventEmitter<{
 
             // if we have no connected relays, wait for all relays to connect
             if (connectedRelaysWithFilters.length === 0) {
+                this.debug(
+                    "No connected relays, waiting for all relays to connect",
+                    Array.from(this.relayFilters.keys()).join(", "),
+                );
                 return;
             }
 

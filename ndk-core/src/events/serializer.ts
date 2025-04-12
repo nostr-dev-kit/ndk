@@ -30,8 +30,26 @@ export function deserialize(serializedEvent: NDKEventSerialized): NostrEvent {
         content: eventArray[5],
     };
 
-    if (eventArray.length >= 7) ret.sig = eventArray[6];
-    if (eventArray.length >= 8) ret.id = eventArray[7];
+    if (eventArray.length >= 7) {
+        const first = eventArray[6];
+        const second = eventArray[7];
+
+        if (first && first.length === 128) {
+            // it's a signature
+            ret.sig = first;
+            if (second && second.length === 64) {
+                // it's an id
+                ret.id = second;
+            }
+        } else if (first && first.length === 64) {
+            // it's an id
+            ret.id = first;
+            if (second && second.length === 128) {
+                // it's a signature
+                ret.sig = second;
+            }
+        }
+    }
 
     return ret;
 }

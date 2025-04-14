@@ -1,22 +1,22 @@
-import { useEffect, useRef } from "react";
+import type { Hexpubkey } from "@nostr-dev-kit/ndk";
 import {
+    type NDKSigner,
+    type NDKUser,
+    type SessionStartOptions, // Import from ndk-hooks (now exported)
+    ndkSignerFromPayload,
     useNDK,
     useNDKSessions, // Keep the hook import
-    ndkSignerFromPayload,
-    type NDKUser,
-    type NDKSigner,
-    type SessionStartOptions, // Import from ndk-hooks (now exported)
 } from "@nostr-dev-kit/ndk-hooks";
+import { useEffect, useRef } from "react";
 import {
+    addOrUpdateStoredSession,
+    clearActivePubkey,
+    getActivePubkey,
     // Session storage functions
     loadSessionsFromStorage,
-    addOrUpdateStoredSession,
     removeStoredSession,
-    getActivePubkey,
     setActivePubkey,
-    clearActivePubkey,
 } from "./session-storage.js";
-import { Hexpubkey } from "@nostr-dev-kit/ndk";
 
 /**
  * Hook to monitor NDK session state and persist changes to secure storage.
@@ -40,11 +40,8 @@ export function useSessionMonitor(opts?: SessionStartOptions) {
                 // Load stored sessions
                 const storedSessions = await loadSessionsFromStorage();
                 if (storedSessions.length === 0) {
-                    console.log("[NDK-Mobile] No saved sessions found.");
                     return;
                 }
-
-                console.log(`[NDK-Mobile] Found ${storedSessions.length} saved sessions`);
 
                 // Load active pubkey
                 const storedActivePubkey = await getActivePubkey();
@@ -52,7 +49,9 @@ export function useSessionMonitor(opts?: SessionStartOptions) {
                 // Add all sessions to NDK
                 for (const storedSession of storedSessions) {
                     try {
-                        const user: NDKUser = ndk.getUser({ pubkey: storedSession.pubkey });
+                        const user: NDKUser = ndk.getUser({
+                            pubkey: storedSession.pubkey,
+                        });
                         let signer: NDKSigner | undefined = undefined;
 
                         if (storedSession.signerPayload) {

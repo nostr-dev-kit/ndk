@@ -1,12 +1,13 @@
 {
     "name": "@nostr-dev-kit/ndk-hooks",
-    "version": "0.1.8",
+    "version": "0.1.9",
     "description": "React hooks for the Nostr Development Kit (NDK)",
     "main": "dist/index.js",
     "module": "dist/index.mjs",
     "types": "dist/index.d.ts",
     "files": ["dist", "README.md"],
     "scripts": {
+        "prepare": "tsup src/index.ts --format cjs,esm --dts --clean",
         "build": "tsup src/index.ts --format cjs,esm --dts --clean",
         "dev": "tsup src/index.ts --format cjs,esm --watch",
         "lint": "biome check .",

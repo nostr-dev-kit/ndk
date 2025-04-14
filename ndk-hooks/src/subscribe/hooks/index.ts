@@ -129,7 +129,7 @@ export function useSubscribe<T extends NDKEvent, R = T[]>(
                 subRef.current = null;
             }
         };
-    }, [ndk, muteFilter, ...dependencies]);
+    }, [ndk, muteFilter, !!filters, ...dependencies]);
 
     useEffect(() => {
         if (!opts.includeMuted) {

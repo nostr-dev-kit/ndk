@@ -366,8 +366,8 @@ export class NDKEvent extends EventEmitter {
      * @param tagName Tag name to search for
      * @returns The value of the first tag with the given name, or undefined if no such tag exists
      */
-    public tagValue(tagName: string): string | undefined {
-        const tags = this.getMatchingTags(tagName);
+    public tagValue(tagName: string, marker?: string): string | undefined {
+        const tags = this.getMatchingTags(tagName, marker);
         if (tags.length === 0) return undefined;
         return tags[0][1];
     }
@@ -407,11 +407,30 @@ export class NDKEvent extends EventEmitter {
     /**
      * Remove all tags with the given name (e.g. "d", "a", "p")
      * @param tagName Tag name(s) to search for and remove
+     * @param marker Optional marker to check for too
+     * 
+     * @example
+     * Remove a tags with a "defer" marker
+     * ```typescript
+     * event.tags = [
+     *   ["a", "....", "defer"],
+     *   ["a", "....", "no-defer"],
+     * ]
+     * 
+     * event.removeTag("a", "defer");
+     * 
+     * // event.tags => [["a", "....", "no-defer"]]
+     * 
      * @returns {void}
      */
-    public removeTag(tagName: string | string[]): void {
+    public removeTag(tagName: string | string[], marker?: string): void {
         const tagNames = Array.isArray(tagName) ? tagName : [tagName];
-        this.tags = this.tags.filter((tag) => !tagNames.includes(tag[0]));
+        this.tags = this.tags.filter((tag) => {
+            const include = tagNames.includes(tag[0]);
+            const hasMarker = marker ? tag[3] === marker : true;
+
+            return !(include && hasMarker);
+        });
     }
 
     /**

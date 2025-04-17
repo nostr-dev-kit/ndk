@@ -507,10 +507,10 @@ export class NDK extends EventEmitter<{
      *   - `onEvent`: Called for each event received.
      *  - `onEvents`: Called once with an array of events when the subscription starts (from the cache).
      *  - `onEose`: Called when the subscription receives EOSE.
-     *  
-     *     @deprecated For backwards compatibility, this third parameter also accepts a relaySet, the relaySet should be passed via `opts.relaySet`.
+     *  For backwards compatibility, this third parameter also accepts a relaySet, the relaySet should be passed via `opts.relaySet`.
+     * 
      * @param _autoStart - For backwards compatibility, this can be a boolean indicating whether to start the subscription immediately.
-     *      @deprecated This parameter is deprecated and will be removed in a future version.
+     *  This parameter is deprecated and will be removed in a future version.
      *   - `false`: Creates the subscription but does not start it (call `subscription.start()` manually).
      * @returns The created NDKSubscription instance.
      *

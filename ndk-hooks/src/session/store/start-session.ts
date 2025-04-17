@@ -56,10 +56,62 @@ function handleOtherEvent(event: NDKEvent, sessionDraft: Draft<NDKUserSession>, 
     }
 }
 
+/**
+ * Called when we need to update the kindFollowSet
+ * 
+ * This is called when we are handling a follow event or when we need to undo a follow event because it was deleted.
+ */
+function handleKindFollowEvent(event: NDKEvent, sessionDraft: Draft<NDKUserSession>, followed = true, last_updated_at = event.created_at): void {
+    const kindFollowSet = sessionDraft.kindFollowSet ?? new Map<NDKKind, Map<Hexpubkey, { followed: boolean, last_updated_at: number }>>();
+
+    // get all the kind numbers in the follow event
+    const kinds = event.getMatchingTags("k").map((t) => Number(t[1]));
+
+    // get all the followed pubkeys
+    const followedPubkeys = event.getMatchingTags("p").map((t) => t[1]);
+
+    for (const kind of kinds) {
+        for (const pubkey of followedPubkeys) {
+            const kindFollows = kindFollowSet.get(kind) || new Map<Hexpubkey, { followed: boolean, last_updated_at: number }>();
+            const followedInfo = { followed, last_updated_at };
+
+            // see if we already have this pubkey in the map and if the timestamp we have now is newer
+            const existingFollowedInfo = kindFollows.get(pubkey);
+            if (!existingFollowedInfo || existingFollowedInfo.last_updated_at < event.created_at) {
+                kindFollows.set(pubkey, followedInfo);
+            }
+            kindFollowSet.set(kind, kindFollows);
+        }
+    }
+
+    sessionDraft.kindFollowSet = kindFollowSet;
+    console.debug(`Updated kind follow set for ${sessionDraft.pubkey}`);
+}
+
+/**
+ * Called when we receive a deletion of a follow event,
+ * we need to go through the kindFollowSet and remove the pubkey if the event we have now is newer
+ * @returns 
+ */
+function handkeEventDeletion(event: NDKEvent, sessionDraft: Draft<NDKUserSession>): void {
+    const kindFollowSet = sessionDraft.kindFollowSet;
+
+    if (!kindFollowSet) return;
+
+    for (const eTag of event.getMatchingTags("e")) {
+        if (!eTag[1]) continue;
+        if (!event.ndk) continue;
+
+        const followEventDeleted = event.ndk.fetchEventSync(eTag[1])
+        if (!followEventDeleted?.[0]) continue;
+        handleKindFollowEvent(followEventDeleted[0], sessionDraft, false, event.created_at);
+    }
+}
+
 function processEvent(event: NDKEvent, sessionDraft: Draft<NDKUserSession>, opts?: SessionStartOptions): void {
     const knownEventForKind = sessionDraft.events?.get(event.kind);
 
-    if (!(!knownEventForKind || knownEventForKind.created_at < event.created_at)) {
+    if (!(!knownEventForKind || knownEventForKind.created_at < event.created_at) && event.isReplaceable()) {
         console.log("We already have an event of kind " + event.kind + " that is newer", {
             knownEvent: knownEventForKind.created_at,
             incomingEvent: event.created_at,
@@ -77,6 +129,12 @@ function processEvent(event: NDKEvent, sessionDraft: Draft<NDKUserSession>, opts
                 break;
             case NDKKind.MuteList:
                 handleMuteListEvent(event, sessionDraft);
+                break;
+            case 967:
+                handleKindFollowEvent(event, sessionDraft);
+                break;
+            case NDKKind.EventDeletion:
+                handkeEventDeletion(event, sessionDraft);
                 break;
             default:
                 handleOtherEvent(event, sessionDraft, opts);
@@ -100,7 +158,13 @@ function buildSessionFilter(pubkey: string, opts: SessionStartOptions): NDKFilte
         mainKindsToFetch.add(kind);
     }
 
-    return [{ kinds: Array.from(mainKindsToFetch), authors: [pubkey] }];
+    const filter: NDKFilter[] = [ { kinds: Array.from(mainKindsToFetch), authors: [pubkey] } ];
+
+    if (Array.isArray(opts.follows)) {
+        filter.push({ kinds: [967 as NDKKind], "#k": opts.follows.map(k => k.toString()), authors: [pubkey] });
+    }
+
+    return filter;
 }
 
 export const startSession = (
@@ -136,6 +200,8 @@ export const startSession = (
 
     // Build the filter(s) based on options
     const filters = buildSessionFilter(pubkey, opts);
+
+    console.debug(`Generated filters for ${pubkey}:`, JSON.stringify(filters, null, 4));
 
     if (filters.length === 0) {
         console.warn(`No filters generated for session start options for pubkey ${pubkey}. No subscription created.`);

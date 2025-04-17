@@ -1,8 +1,10 @@
 import * as SecureStore from "expo-secure-store";
-import type { Hexpubkey } from "@nostr-dev-kit/ndk";
+import { NDKPrivateKeySigner, type Hexpubkey } from "@nostr-dev-kit/ndk";
 
 const SESSIONS_STORE_KEY = "ndk-saved-sessions";
 const ACTIVE_PUBKEY_STORE_KEY = "ndk-active-pubkey";
+
+const LEGACY_LOGIN_STORE_KEY = "login";
 
 /**
  * Interface for a stored user session, mirroring the structure used for persistence.
@@ -30,12 +32,38 @@ export async function loadSessionsFromStorage(): Promise<StoredSession[]> {
 }
 
 /**
+ * Migrate legacy login data to the new session storage format.
+ */
+function migrateLegacyLogin() {
+    try {
+        const legacySessionKey = SecureStore.getItem(LEGACY_LOGIN_STORE_KEY);
+        if (legacySessionKey) {
+            if (legacySessionKey.startsWith('nsec1')) {
+                const signer = new NDKPrivateKeySigner(legacySessionKey);
+                const pubkey = signer.pubkey;
+
+                saveSessionsToStorage([
+                    { pubkey, signerPayload: signer.toPayload() }
+                ])
+            }
+
+            // delete the legacy login key after migration
+            SecureStore.deleteItemAsync(LEGACY_LOGIN_STORE_KEY);
+        }
+    } catch (error) {
+        console.error("Error migrating legacy login:", error);
+    }
+}
+
+/**
  * Load sessions from secure storage synchronously.
  * Note: Synchronous storage access can block the JS thread. Use judiciously.
  * @returns An array of stored sessions, sorted by lastActive descending.
  */
 export function loadSessionsFromStorageSync(): StoredSession[] {
     try {
+        migrateLegacyLogin();
+        
         const sessionsJson = SecureStore.getItem(SESSIONS_STORE_KEY);
         if (!sessionsJson) return [];
 
@@ -51,10 +79,10 @@ export function loadSessionsFromStorageSync(): StoredSession[] {
  * Save sessions to secure storage asynchronously.
  * @param sessions An array of sessions to save.
  */
-export async function saveSessionsToStorage(sessions: StoredSession[]): Promise<void> {
+export function saveSessionsToStorage(sessions: StoredSession[]): void {
     try {
         // Sort by lastActive (most recent first) before saving
-        await SecureStore.setItemAsync(SESSIONS_STORE_KEY, JSON.stringify(sessions));
+        SecureStore.setItem(SESSIONS_STORE_KEY, JSON.stringify(sessions));
 
         console.log("Sessions saved to storage:", JSON.stringify(sessions, null, 4));
     } catch (error) {
@@ -121,9 +149,9 @@ export async function removeStoredSession(pubkey: Hexpubkey): Promise<void> {
  * Get the active pubkey from secure storage asynchronously.
  * @returns A promise resolving to the active pubkey or undefined if not set.
  */
-export async function getActivePubkey(): Promise<Hexpubkey | undefined> {
+export function getActivePubkey(): Hexpubkey | undefined {
     try {
-        const activePubkey = await SecureStore.getItemAsync(ACTIVE_PUBKEY_STORE_KEY);
+        const activePubkey = SecureStore.getItem(ACTIVE_PUBKEY_STORE_KEY);
         return activePubkey || undefined;
     } catch (error) {
         console.error("Error getting active pubkey from storage:", error);

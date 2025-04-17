@@ -1,6 +1,5 @@
-import NDK from "@nostr-dev-kit/ndk";
+import type NDK from "@nostr-dev-kit/ndk";
 import type { Hexpubkey } from "@nostr-dev-kit/ndk-hooks";
-// Cannot import ndkSignerFromPayload as it's async and this function is sync
 import { loadSessionsFromStorageSync } from "./session-storage.js";
 import { ndkSignerFromPayload } from "@nostr-dev-kit/ndk";
 

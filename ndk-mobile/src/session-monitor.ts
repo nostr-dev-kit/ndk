@@ -2,17 +2,16 @@ import type { Hexpubkey } from "@nostr-dev-kit/ndk";
 import {
     type NDKSigner,
     type NDKUser,
-    type SessionStartOptions, // Import from ndk-hooks (now exported)
+    type SessionStartOptions,
     ndkSignerFromPayload,
     useNDK,
-    useNDKSessions, // Keep the hook import
+    useNDKSessions,
 } from "@nostr-dev-kit/ndk-hooks";
 import { useEffect, useRef } from "react";
 import {
     addOrUpdateStoredSession,
     clearActivePubkey,
     getActivePubkey,
-    // Session storage functions
     loadSessionsFromStorage,
     removeStoredSession,
     setActivePubkey,
@@ -24,10 +23,10 @@ import {
  */
 export function useSessionMonitor(opts?: SessionStartOptions) {
     const { ndk } = useNDK();
-    const { sessions, signers, activePubkey, addSession, startSession, stopSession, switchToUser } = useNDKSessions();
-    // Actions are accessed directly from the hook, not getState()
+    const { sessions, signers, activePubkey, addSession, startSession, stopSession } = useNDKSessions();
     const isInitialized = useRef(false);
     const storedKeys = useRef(new Map<Hexpubkey, boolean>());
+    const storedActivePubkey = getActivePubkey();
 
     // Effect to initialize sessions from storage on startup
     useEffect(() => {
@@ -44,8 +43,7 @@ export function useSessionMonitor(opts?: SessionStartOptions) {
                 }
 
                 // Load active pubkey
-                const storedActivePubkey = await getActivePubkey();
-
+                
                 // Add all sessions to NDK
                 for (const storedSession of storedSessions) {
                     try {
@@ -68,7 +66,7 @@ export function useSessionMonitor(opts?: SessionStartOptions) {
                         }
 
                         // Add session to NDK
-                        await addSession(signer ? signer : user);
+                        await addSession(signer ? signer : user, storedSession.pubkey === storedActivePubkey);
                     } catch (error) {
                         console.error(
                             `[NDK-Mobile] Failed to process stored session for pubkey ${storedSession.pubkey}:`,
@@ -78,24 +76,21 @@ export function useSessionMonitor(opts?: SessionStartOptions) {
                         // await removeStoredSession(storedSession.pubkey);
                     }
                 }
-
-                // Switch to stored active pubkey or first session if available
-                if (storedActivePubkey && sessions.has(storedActivePubkey)) {
-                    await switchToUser(storedActivePubkey);
-                    console.log("Switched to stored active pubkey:", storedActivePubkey);
-                    await startSession(storedActivePubkey, opts);
-                }
-
-                console.log("stored active pubkey:", storedActivePubkey);
             } catch (error) {
                 console.error("[NDK-Mobile] Error initializing sessions from storage:", error);
             }
         }
 
         initializeFromStorage().finally(() => {
+
+            // start session
+            startSession(storedActivePubkey, opts);
+            
             isInitialized.current = true;
         });
-    }, [ndk, addSession, switchToUser]); // Update dependencies
+    // We're intentionally only running this effect when ndk changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [ndk]);
 
     // Effect to persist active session changes
     useEffect(() => {
@@ -133,28 +128,25 @@ export function useSessionMonitor(opts?: SessionStartOptions) {
 
     const currentActivePubkey = useRef(activePubkey);
 
-    // Effect to persist active pubkey changes
+    // Effect to persist active pubkey changes and start session
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     useEffect(() => {
-        if (!ndk || !isInitialized.current) return;
-
-        console.log(
-            "Running updateActivePubkey effect",
-            isInitialized.current,
-            currentActivePubkey.current,
-            activePubkey,
-        );
+        if (!ndk || !isInitialized.current) {
+            return;
+        }
 
         async function updateActivePubkey() {
             if (activePubkey) {
-                if (currentActivePubkey.current !== activePubkey) {
-                    console.log("Stopping previous session:", currentActivePubkey.current);
-                    await stopSession(currentActivePubkey.current);
-                    console.log(`Active pubkey changed to: ${activePubkey}`);
-                    currentActivePubkey.current = activePubkey;
+                try {
+                    if (currentActivePubkey.current !== activePubkey) {
+                        await stopSession(currentActivePubkey.current);
+                        currentActivePubkey.current = activePubkey;
+                    }
+                    setActivePubkey(activePubkey);
+                    await startSession(activePubkey, opts);
+                } catch (error) {
+                    console.error(`Failed to start session for active pubkey ${activePubkey}:`, error);
                 }
-                await setActivePubkey(activePubkey);
-                console.log("Starting session for active pubkey:", activePubkey);
-                await startSession(activePubkey, opts);
             } else {
                 await clearActivePubkey();
             }

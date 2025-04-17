@@ -16,6 +16,15 @@ export interface NDKUserSession {
     followSet?: Set<Hexpubkey>;
 
     /**
+     * Follows per kind.
+     * 
+     * Each kind has a map where the key is the user's pubkey.
+     * We keep the followed boolean and the last updated timestamp,
+     * so that we can track delete events of the follow event.
+     */
+    kindFollowSet?: Map<NDKKind, Map<Hexpubkey, { followed: boolean, last_updated_at: number }>>;
+
+    /**
      * Events that are unique per kind, part of the session;
      * we will keep a subscription permanently opened monitoring this
      * event kinds
@@ -39,7 +48,15 @@ export interface NDKUserSession {
  */
 export interface SessionStartOptions {
     profile?: boolean;
-    follows?: boolean;
+
+    /**
+     * Fetch contacts (follows) for the user.
+     * 
+     * true = Fetch default contact list
+     * false = Do not fetch contacts
+     * NDKKind[] = Fetch contact list + kind-scoped follows.
+     */
+    follows?: boolean | NDKKind[];
     muteList?: boolean;
 
     /**
@@ -70,9 +87,10 @@ export interface NDKSessionsState {
      * If only a user is provided, ensures a basic session entry exists.
      * Does NOT automatically start the session subscription or set it active.
      * @param userOrSigner - The NDKUser or NDKSigner to add.
+     * @param setActive - If true, sets the session as active.
      * @returns The Hexpubkey of the added/ensured session.
      */
-    addSession: (userOrSigner: NDKUser | NDKSigner) => Promise<Hexpubkey>;
+    addSession: (userOrSigner: NDKUser | NDKSigner, setActive: boolean) => Promise<Hexpubkey>;
 
     /**
      * Starts fetching data for a specific session by creating an NDK subscription.

@@ -13,6 +13,7 @@ import { useProfile } from "../../profiles/hooks";
 import { useNDKSessions } from "../store";
 
 const EMPTY_SET = new Set<Hexpubkey>();
+const EMPTY_KIND_MAP = new Map<NDKKind, Map<Hexpubkey, { followed: boolean; last_updated_at: number }>>();
 
 /**
  * Hook to login a new session.
@@ -21,7 +22,7 @@ const EMPTY_SET = new Set<Hexpubkey>();
  */
 export const useNDKSessionLogin = () => {
     const addSession = useNDKSessions.getState().addSession;
-    return useCallback((userOrSigner: NDKUser | NDKSigner) => addSession(userOrSigner), [addSession]);
+    return useCallback((userOrSigner: NDKUser | NDKSigner, setActive: boolean) => addSession(userOrSigner, setActive), [addSession]);
 };
 
 /**
@@ -61,9 +62,29 @@ export const useNDKSessionSwitch = () => {
  * Returns an empty array if there is no active session or no follows list.
  */
 export const useFollows = (): Set<Hexpubkey> => {
-    return useNDKSessions((s) =>
+    const follows = useNDKSessions((s) =>
         s.activePubkey ? (s.sessions.get(s.activePubkey)?.followSet ?? EMPTY_SET) : EMPTY_SET,
     );
+    const followKinds = useNDKSessions((s) =>
+        s.activePubkey ? (s.sessions.get(s.activePubkey)?.kindFollowSet ?? EMPTY_KIND_MAP) : EMPTY_KIND_MAP,
+    );
+
+    const followSet = useMemo(() => {
+        const set = new Set<Hexpubkey>(follows);
+        for (const kinds of followKinds.values()) {
+            for (const [pubkey, { followed }] of kinds.entries()) {
+                if (followed) {
+                    set.add(pubkey);
+                } else {
+                    set.delete(pubkey);
+                }
+            }
+        }
+
+        return set;
+    }, [follows, followKinds]);
+    
+    return followSet;
 };
 
 /**

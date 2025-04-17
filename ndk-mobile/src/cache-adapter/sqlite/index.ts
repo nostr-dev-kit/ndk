@@ -277,58 +277,55 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     }
 
     async setEvent(event: NDKEvent, _filters: NDKFilter[], relay?: NDKRelay): Promise<void> {
-        // No longer need onReady wrapper
-        (async () => {
-            const referenceId = event.isReplaceable() ? event.tagAddress() : event.id;
-            const existingEvent = this.knownEventTimestamps.get(referenceId);
-            if (existingEvent && existingEvent >= event.created_at!) return;
+        const referenceId = event.isReplaceable() ? event.tagAddress() : event.id;
+        const existingEvent = this.knownEventTimestamps.get(referenceId);
+        if (existingEvent && existingEvent >= event.created_at) return;
 
-            this.knownEventTimestamps.set(referenceId, event.created_at!);
+        this.knownEventTimestamps.set(referenceId, event.created_at);
 
-            if (event.isReplaceable()) {
-                try {
-                    this.bufferWrite("DELETE FROM events WHERE id = ?;", [referenceId]);
-                    this.bufferWrite("DELETE FROM event_tags WHERE event_id = ?;", [referenceId]);
-                } catch (e) {
-                    console.error("error deleting event", e, referenceId);
-                }
+        if (event.isReplaceable()) {
+            try {
+                this.bufferWrite("DELETE FROM events WHERE id = ?;", [referenceId]);
+                this.bufferWrite("DELETE FROM event_tags WHERE event_id = ?;", [referenceId]);
+            } catch (e) {
+                console.error("error deleting event", e, referenceId);
             }
+        }
 
-            // this.bufferKinds.set(event.kind!, (this.bufferKinds.get(event.kind!) || 0) + 1);
-            this.bufferWrite(
-                "INSERT INTO events (id, created_at, pubkey, event, kind, relay) VALUES (?, ?, ?, ?, ?, ?);",
-                [
-                    referenceId,
-                    event.created_at!,
-                    event.pubkey,
-                    event.serialize(true, true),
-                    event.kind!,
-                    relay?.url || "",
-                ],
-            );
+        // this.bufferKinds.set(event.kind!, (this.bufferKinds.get(event.kind!) || 0) + 1);
+        this.bufferWrite(
+            "INSERT INTO events (id, created_at, pubkey, event, kind, relay) VALUES (?, ?, ?, ?, ?, ?);",
+            [
+                referenceId,
+                event.created_at,
+                event.pubkey,
+                event.serialize(true, true),
+                event.kind,
+                relay?.url || "",
+            ],
+        );
 
-            const filterTags: [string, string][] = event.tags
-                .filter((tag) => tag[0].length === 1)
-                .map((tag) => [tag[0], tag[1]]);
-            if (filterTags.length < 10) {
-                for (const tag of filterTags) {
-                    this.bufferWrite("INSERT INTO event_tags (event_id, tag, value) VALUES (?, ?, ?);", [
-                        event.id,
-                        tag[0],
-                        tag[1],
-                    ]);
-                }
+        const filterTags: [string, string][] = event.tags
+            .filter((tag) => tag[0].length === 1)
+            .map((tag) => [tag[0], tag[1]]);
+        if (filterTags.length < 10) {
+            for (const tag of filterTags) {
+                this.bufferWrite("INSERT INTO event_tags (event_id, tag, value) VALUES (?, ?, ?);", [
+                    event.id,
+                    tag[0],
+                    tag[1],
+                ]);
             }
+        }
 
-            if (event.kind === NDKKind.EventDeletion) {
-                this.deleteEventIds(event.tags.filter((tag) => tag[0] === "e").map((tag) => tag[1]));
-            } else if (event.kind === NDKKind.Metadata) {
-                const profile = profileFromEvent(event);
-                if (profile) {
-                    this.saveProfile(event.pubkey, profile);
-                }
+        if (event.kind === NDKKind.EventDeletion) {
+            this.deleteEventIds(event.tags.filter((tag) => tag[0] === "e").map((tag) => tag[1]));
+        } else if (event.kind === NDKKind.Metadata) {
+            const profile = profileFromEvent(event);
+            if (profile) {
+                this.saveProfile(event.pubkey, profile);
             }
-        })();
+        }
     }
 
     async deleteEventIds(eventIds: NDKEventId[]): Promise<void> {

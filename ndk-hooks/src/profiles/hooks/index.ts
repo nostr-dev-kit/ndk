@@ -1,4 +1,11 @@
-import { NDKEvent, NDKKind, serializeProfile, type Hexpubkey, type NDKSigner, type NDKUserProfile } from "@nostr-dev-kit/ndk";
+import {
+    NDKEvent,
+    NDKKind,
+    serializeProfile,
+    type Hexpubkey,
+    type NDKSigner,
+    type NDKUserProfile,
+} from "@nostr-dev-kit/ndk";
 import { useCallback, useEffect } from "react";
 import { useShallow } from "zustand/shallow";
 import { type UserProfilesStore, useUserProfilesStore } from "../store"; // Corrected import path

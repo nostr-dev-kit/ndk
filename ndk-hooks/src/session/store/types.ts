@@ -8,22 +8,18 @@ import type { NDKEventWithFrom } from "../../subscribe/hooks";
  */
 export interface NDKUserSession {
     pubkey: Hexpubkey; // Changed from string for clarity
-    mutedPubkeys: Set<Hexpubkey>; // Changed from string
-    mutedHashtags: Set<string>;
-    mutedWords: Set<string>;
-    mutedEventIds: Set<string>;
 
     profile?: NDKUserProfile;
     followSet?: Set<Hexpubkey>;
 
     /**
      * Follows per kind.
-     * 
+     *
      * Each kind has a map where the key is the user's pubkey.
      * We keep the followed boolean and the last updated timestamp,
      * so that we can track delete events of the follow event.
      */
-    kindFollowSet?: Map<NDKKind, Map<Hexpubkey, { followed: boolean, last_updated_at: number }>>;
+    kindFollowSet?: Map<NDKKind, Map<Hexpubkey, { followed: boolean; last_updated_at: number }>>;
 
     /**
      * Events that are unique per kind, part of the session;
@@ -52,13 +48,12 @@ export interface SessionStartOptions {
 
     /**
      * Fetch contacts (follows) for the user.
-     * 
+     *
      * true = Fetch default contact list
      * false = Do not fetch contacts
      * NDKKind[] = Fetch contact list + kind-scoped follows.
      */
     follows?: boolean | NDKKind[];
-    muteList?: boolean;
 
     /**
      * Fetch other specific replaceable event kinds (10k-20k, 30k-40k).

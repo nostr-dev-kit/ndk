@@ -2,6 +2,7 @@
 import { type Hexpubkey, type NDKSigner, NDKUser } from "@nostr-dev-kit/ndk";
 import type { Draft } from "immer"; // Import Draft type
 import { useNDKStore } from "../../ndk/store";
+import { useNDKMutes } from "../../mutes/store";
 import type { NDKSessionsState, NDKUserSession } from "./types";
 
 /**
@@ -9,14 +10,16 @@ import type { NDKSessionsState, NDKUserSession } from "./types";
  */
 const createDefaultSession = (pubkey: Hexpubkey): NDKUserSession => ({
     pubkey,
-    mutedPubkeys: new Set(),
-    mutedHashtags: new Set(),
-    mutedWords: new Set(),
-    mutedEventIds: new Set(),
     events: new Map(),
     lastActive: Date.now() / 1000,
 });
 
+/**
+ * Adds a new session to the store.
+ *
+ * @note This function should not be called directly. Use the useNDKSessionLogin hook instead.
+ * @see useNDKSessionLogin in src/session/hooks/index.ts
+ */
 export const addSession = async (
     set: (fn: (draft: Draft<NDKSessionsState>) => void) => void,
     get: () => NDKSessionsState,
@@ -66,6 +69,14 @@ export const addSession = async (
             useNDKStore.getState().setSigner(signer);
         }
     });
+
+    // Initialize mutes for this user in the mute store
+    useNDKMutes.getState().initMutes(userPubkey);
+
+    // If setting as active, also update the active pubkey in the mute store
+    if (setActive) {
+        useNDKMutes.getState().setActivePubkey(userPubkey);
+    }
 
     return userPubkey;
 };

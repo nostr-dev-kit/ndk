@@ -1,8 +1,11 @@
-import NDK from "@nostr-dev-kit/ndk";
 import type { NDKWallet } from "@nostr-dev-kit/ndk-wallet";
 import { useCallback } from "react";
 import { create } from "zustand";
-import { useNDK } from "../../ndk/hooks"; // Corrected path
+import { useNDK } from "../../ndk/hooks";
+import type { NDKCashuMintList } from "@nostr-dev-kit/ndk";
+import { NDKNutzapMonitor, type NDKNutzapMonitorStore } from "@nostr-dev-kit/ndk-wallet";
+import { useEffect, useMemo, useState } from "react";
+import { useNDKCurrentUser } from "../../ndk/hooks";
 
 interface WalletHookState {
     activeWallet: NDKWallet | null;
@@ -59,11 +62,6 @@ export const useNDKWallet = () => {
     return { activeWallet, setActiveWallet, balance, setBalance };
 };
 
-import type { NDKCashuMintList, NDKUser } from "@nostr-dev-kit/ndk";
-import { NDKNutzapMonitor, type NDKNutzapMonitorStore } from "@nostr-dev-kit/ndk-wallet";
-import { useEffect, useMemo, useState } from "react";
-import { useNDKCurrentUser } from "../../ndk/hooks"; // Corrected path
-
 interface NutzapMonitorHookState {
     nutzapMonitor: NDKNutzapMonitor | null;
     setNutzapMonitor: (monitor: NDKNutzapMonitor | null) => void;
@@ -105,6 +103,7 @@ export const useNDKNutzapMonitor = (mintList?: NDKCashuMintList, start = false) 
     useEffect(() => {
         if (!ndk || !currentUser?.pubkey || !activeWallet) {
             if (nutzapMonitor) {
+                console.log("Stopping NDKNutzapMonitor due to missing dependencies");
                 nutzapMonitor.stop();
                 setNutzapMonitor(null);
                 setMonitorStarted(false);
@@ -112,7 +111,7 @@ export const useNDKNutzapMonitor = (mintList?: NDKCashuMintList, start = false) 
             return;
         }
 
-        if (!nutzapMonitor) {
+        if (!nutzapMonitor && start) {
             console.log("Initializing NDKNutzapMonitor");
             const monitor = new NDKNutzapMonitor(ndk, currentUser, {
                 mintList,
@@ -120,7 +119,7 @@ export const useNDKNutzapMonitor = (mintList?: NDKCashuMintList, start = false) 
             });
             monitor.wallet = activeWallet;
             setNutzapMonitor(monitor);
-        } else {
+        } else if (nutzapMonitor) {
             if (nutzapMonitor.wallet?.walletId !== activeWallet.walletId) {
                 console.log("Updating wallet in NDKNutzapMonitor");
                 nutzapMonitor.wallet = activeWallet;
@@ -130,7 +129,7 @@ export const useNDKNutzapMonitor = (mintList?: NDKCashuMintList, start = false) 
                 nutzapMonitor.mintList = mintList;
             }
         }
-    }, [ndk, currentUser, activeWallet, mintList, monitorStore, nutzapMonitor, setNutzapMonitor]);
+    }, [ndk, currentUser, activeWallet, mintList, monitorStore, nutzapMonitor, setNutzapMonitor, start]);
 
     useEffect(() => {
         if (start && nutzapMonitor && !monitorStarted) {

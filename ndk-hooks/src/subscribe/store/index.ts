@@ -1,14 +1,6 @@
 import type { NDKEvent, NDKSubscription } from "@nostr-dev-kit/ndk";
 import { createStore } from "zustand/vanilla";
 
-const setHasAnyIntersection = (set1: Set<string>, set2: Set<string>): boolean => {
-    if (set1.size === 0 || set2.size === 0) return false;
-    for (const item of set1) {
-        if (set2.has(item)) return true;
-    }
-    return false;
-};
-
 /**
  * Store interface for managing subscription state
  * @interface SubscribeStore

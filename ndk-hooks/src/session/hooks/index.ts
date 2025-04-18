@@ -8,7 +8,7 @@ import {
     type NDKUserProfile,
 } from "@nostr-dev-kit/ndk";
 import { useCallback, useMemo } from "react";
-import { useNDK, useNDKCurrentUser } from "../../ndk/hooks";
+import { useNDK, useNDKCurrentPubkey, useNDKCurrentUser } from "../../ndk/hooks";
 import { useProfileValue } from "../../profiles/hooks";
 import { useNDKSessions } from "../store";
 
@@ -22,7 +22,10 @@ const EMPTY_KIND_MAP = new Map<NDKKind, Map<Hexpubkey, { followed: boolean; last
  */
 export const useNDKSessionLogin = () => {
     const addSession = useNDKSessions.getState().addSession;
-    return useCallback((userOrSigner: NDKUser | NDKSigner, setActive: boolean) => addSession(userOrSigner, setActive), [addSession]);
+    return useCallback(
+        (userOrSigner: NDKUser | NDKSigner, setActive: boolean) => addSession(userOrSigner, setActive),
+        [addSession],
+    );
 };
 
 /**
@@ -33,18 +36,18 @@ export const useNDKSessionLogin = () => {
  * @returns
  */
 export const useNDKSessionLogout = () => {
-    const currentUser = useNDKCurrentUser();
+    const currentPubkey = useNDKCurrentPubkey();
     const removeSession = useNDKSessions.getState().removeSession;
     return useCallback(
         (pubkey?: Hexpubkey) => {
-            const _pubkey = pubkey ?? currentUser?.pubkey;
+            const _pubkey = pubkey ?? currentPubkey;
             if (!_pubkey) {
                 console.error("No pubkey provided for logout");
                 return;
             }
             removeSession(_pubkey);
         },
-        [removeSession, currentUser],
+        [removeSession, currentPubkey],
     );
 };
 
@@ -83,24 +86,8 @@ export const useFollows = (): Set<Hexpubkey> => {
 
         return set;
     }, [follows, followKinds]);
-    
+
     return followSet;
-};
-
-/**
- * Returns the mute list data for the active session.
- * Includes sets of muted pubkeys, hashtags, words, event IDs, and the raw mute list event.
- * Returns default empty sets and undefined for the event if no active session exists.
- */
-export const useMuteList = () => {
-    const activeSession = useNDKSessions((s) => (s.activePubkey ? s.sessions.get(s.activePubkey) : undefined));
-    const event = activeSession?.events?.get(NDKKind.MuteList);
-    const pubkeys = activeSession?.mutedPubkeys ?? new Set<string>();
-    const hashtags = activeSession?.mutedHashtags ?? new Set<string>();
-    const words = activeSession?.mutedWords ?? new Set<string>();
-    const eventIds = activeSession?.mutedEventIds ?? new Set<string>();
-
-    return { pubkeys, hashtags, words, eventIds, event };
 };
 
 interface UseNDKSessionEventOptions<T extends NDKEvent> {

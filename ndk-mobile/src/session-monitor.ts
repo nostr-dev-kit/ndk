@@ -5,7 +5,12 @@ import {
     type SessionStartOptions,
     ndkSignerFromPayload,
     useNDK,
-    useNDKSessions,
+    useNDKCurrentUser,
+    useNDKSessionLogin,
+    useNDKSessionSessions,
+    useNDKSessionSigners,
+    useNDKSessionStart,
+    useNDKSessionStop,
 } from "@nostr-dev-kit/ndk-hooks";
 import { useEffect, useRef } from "react";
 import {
@@ -23,10 +28,15 @@ import {
  */
 export function useSessionMonitor(opts?: SessionStartOptions) {
     const { ndk } = useNDK();
-    const { sessions, signers, activePubkey, addSession, startSession, stopSession } = useNDKSessions();
     const isInitialized = useRef(false);
     const storedKeys = useRef(new Map<Hexpubkey, boolean>());
     const storedActivePubkey = getActivePubkey();
+    const addSession = useNDKSessionLogin();
+    const currentUser = useNDKCurrentUser();
+    const signers = useNDKSessionSigners();
+    const sessions = useNDKSessionSessions();
+    const startSession = useNDKSessionStart();
+    const stopSession = useNDKSessionStop();
 
     // Effect to initialize sessions from storage on startup
     useEffect(() => {
@@ -126,7 +136,7 @@ export function useSessionMonitor(opts?: SessionStartOptions) {
         persistSessions();
     }, [sessions, signers, ndk]);
 
-    const currentActivePubkey = useRef(activePubkey);
+    const currentActivePubkey = useRef(currentUser?.pubkey);
 
     // Effect to persist active pubkey changes and start session
     // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
@@ -136,16 +146,16 @@ export function useSessionMonitor(opts?: SessionStartOptions) {
         }
 
         async function updateActivePubkey() {
-            if (activePubkey) {
+            if (currentUser?.pubkey) {
                 try {
-                    if (currentActivePubkey.current !== activePubkey) {
+                    if (currentActivePubkey.current !== currentUser?.pubkey) {
                         await stopSession(currentActivePubkey.current);
-                        currentActivePubkey.current = activePubkey;
+                        currentActivePubkey.current = currentUser?.pubkey;
                     }
-                    setActivePubkey(activePubkey);
-                    await startSession(activePubkey, opts);
+                    setActivePubkey(currentUser?.pubkey);
+                    await startSession(currentUser?.pubkey, opts);
                 } catch (error) {
-                    console.error(`Failed to start session for active pubkey ${activePubkey}:`, error);
+                    console.error(`Failed to start session for active pubkey ${currentUser?.pubkey}:`, error);
                 }
             } else {
                 await clearActivePubkey();
@@ -153,7 +163,7 @@ export function useSessionMonitor(opts?: SessionStartOptions) {
         }
 
         updateActivePubkey();
-    }, [activePubkey, ndk]);
+    }, [currentUser?.pubkey, ndk]);
 
     // Infer the session data type from the 'sessions' map returned by the hook
     const prevSessionsRef = useRef<typeof sessions>(new Map());

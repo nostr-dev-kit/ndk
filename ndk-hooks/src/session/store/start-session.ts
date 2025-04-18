@@ -1,5 +1,5 @@
 import type { Hexpubkey, NDKEvent, NDKFilter, NDKRelay } from "@nostr-dev-kit/ndk";
-import { NDKKind, profileFromEvent } from "@nostr-dev-kit/ndk";
+import { NDKCashuMintList, NDKKind, profileFromEvent } from "@nostr-dev-kit/ndk";
 import type { Draft } from "immer";
 import type { NDKSessionsState, NDKUserSession, SessionStartOptions } from "./types";
 
@@ -16,30 +16,6 @@ function handleContactsEvent(event: NDKEvent, sessionDraft: Draft<NDKUserSession
     sessionDraft.followSet = followSet;
 }
 
-function handleMuteListEvent(event: NDKEvent, sessionDraft: Draft<NDKUserSession>): void {
-    // Only update if the new event is newer or same timestamp
-    // Need to store the timestamp of the last mute list event processed
-    // Let's add `muteListLastFetched` to NDKUserSession type later if needed.
-    // For now, assume latest received is best.
-    const mutedPubkeys = new Set<Hexpubkey>();
-    const mutedEvents = new Set<string>();
-    const mutedHashtags = new Set<string>();
-    const mutedWords = new Set<string>();
-
-    for (const tag of event.tags) {
-        if (tag[0] === "p") mutedPubkeys.add(tag[1]);
-        else if (tag[0] === "e") mutedEvents.add(tag[1]);
-        else if (tag[0] === "t") mutedHashtags.add(tag[1]);
-        else if (tag[0] === "word") mutedWords.add(tag[1]);
-    }
-
-    sessionDraft.mutedPubkeys = mutedPubkeys;
-    sessionDraft.mutedEventIds = mutedEvents;
-    sessionDraft.mutedHashtags = mutedHashtags;
-    sessionDraft.mutedWords = mutedWords;
-    console.debug(`Updated mute list for ${sessionDraft.pubkey}`);
-}
-
 function handleOtherEvent(event: NDKEvent, sessionDraft: Draft<NDKUserSession>, opts?: SessionStartOptions): void {
     const existingEvent = sessionDraft.events.get(event.kind);
     // Only update if the new event is newer
@@ -50,19 +26,24 @@ function handleOtherEvent(event: NDKEvent, sessionDraft: Draft<NDKUserSession>, 
     const klassWrapper = opts?.events?.get(event.kind);
     if (klassWrapper) {
         const wrappedEvent = klassWrapper.from(event);
-        if (wrappedEvent) {
-            sessionDraft.events.set(event.kind, wrappedEvent);
-        }
+        if (wrappedEvent) sessionDraft.events.set(event.kind, wrappedEvent);
     }
 }
 
 /**
  * Called when we need to update the kindFollowSet
- * 
+ *
  * This is called when we are handling a follow event or when we need to undo a follow event because it was deleted.
  */
-function handleKindFollowEvent(event: NDKEvent, sessionDraft: Draft<NDKUserSession>, followed = true, last_updated_at = event.created_at): void {
-    const kindFollowSet = sessionDraft.kindFollowSet ?? new Map<NDKKind, Map<Hexpubkey, { followed: boolean, last_updated_at: number }>>();
+function handleKindFollowEvent(
+    event: NDKEvent,
+    sessionDraft: Draft<NDKUserSession>,
+    followed = true,
+    last_updated_at = event.created_at,
+): void {
+    const kindFollowSet =
+        sessionDraft.kindFollowSet ??
+        new Map<NDKKind, Map<Hexpubkey, { followed: boolean; last_updated_at: number }>>();
 
     // get all the kind numbers in the follow event
     const kinds = event.getMatchingTags("k").map((t) => Number(t[1]));
@@ -72,7 +53,8 @@ function handleKindFollowEvent(event: NDKEvent, sessionDraft: Draft<NDKUserSessi
 
     for (const kind of kinds) {
         for (const pubkey of followedPubkeys) {
-            const kindFollows = kindFollowSet.get(kind) || new Map<Hexpubkey, { followed: boolean, last_updated_at: number }>();
+            const kindFollows =
+                kindFollowSet.get(kind) || new Map<Hexpubkey, { followed: boolean; last_updated_at: number }>();
             const followedInfo = { followed, last_updated_at };
 
             // see if we already have this pubkey in the map and if the timestamp we have now is newer
@@ -85,13 +67,12 @@ function handleKindFollowEvent(event: NDKEvent, sessionDraft: Draft<NDKUserSessi
     }
 
     sessionDraft.kindFollowSet = kindFollowSet;
-    console.debug(`Updated kind follow set for ${sessionDraft.pubkey}`);
 }
 
 /**
  * Called when we receive a deletion of a follow event,
  * we need to go through the kindFollowSet and remove the pubkey if the event we have now is newer
- * @returns 
+ * @returns
  */
 function handkeEventDeletion(event: NDKEvent, sessionDraft: Draft<NDKUserSession>): void {
     const kindFollowSet = sessionDraft.kindFollowSet;
@@ -102,7 +83,7 @@ function handkeEventDeletion(event: NDKEvent, sessionDraft: Draft<NDKUserSession
         if (!eTag[1]) continue;
         if (!event.ndk) continue;
 
-        const followEventDeleted = event.ndk.fetchEventSync(eTag[1])
+        const followEventDeleted = event.ndk.fetchEventSync(eTag[1]);
         if (!followEventDeleted?.[0]) continue;
         handleKindFollowEvent(followEventDeleted[0], sessionDraft, false, event.created_at);
     }
@@ -128,7 +109,8 @@ function processEvent(event: NDKEvent, sessionDraft: Draft<NDKUserSession>, opts
                 handleContactsEvent(event, sessionDraft);
                 break;
             case NDKKind.MuteList:
-                handleMuteListEvent(event, sessionDraft);
+                // Delegate to mute store instead of handling in session store
+                require("../../mutes/store").useNDKMutes.getState().loadMuteList(sessionDraft.pubkey, event);
                 break;
             case 967:
                 handleKindFollowEvent(event, sessionDraft);
@@ -152,16 +134,16 @@ function buildSessionFilter(pubkey: string, opts: SessionStartOptions): NDKFilte
 
     if (opts.profile !== false) mainKindsToFetch.add(NDKKind.Metadata);
     if (opts.follows !== false) mainKindsToFetch.add(NDKKind.Contacts);
-    if (opts.muteList !== false) mainKindsToFetch.add(NDKKind.MuteList);
+    mainKindsToFetch.add(NDKKind.MuteList);
 
     for (const kind of opts.events?.keys() || []) {
         mainKindsToFetch.add(kind);
     }
 
-    const filter: NDKFilter[] = [ { kinds: Array.from(mainKindsToFetch), authors: [pubkey] } ];
+    const filter: NDKFilter[] = [{ kinds: Array.from(mainKindsToFetch), authors: [pubkey] }];
 
     if (Array.isArray(opts.follows)) {
-        filter.push({ kinds: [967 as NDKKind], "#k": opts.follows.map(k => k.toString()), authors: [pubkey] });
+        filter.push({ kinds: [967 as NDKKind], "#k": opts.follows.map((k) => k.toString()), authors: [pubkey] });
     }
 
     return filter;
@@ -196,23 +178,17 @@ export const startSession = (
         });
     }
 
-    console.debug(`Starting session subscription for ${pubkey} with opts:`, opts);
-
     // Build the filter(s) based on options
     const filters = buildSessionFilter(pubkey, opts);
-
-    console.debug(`Generated filters for ${pubkey}:`, JSON.stringify(filters, null, 4));
 
     if (filters.length === 0) {
         console.warn(`No filters generated for session start options for pubkey ${pubkey}. No subscription created.`);
         return; // Don't create a subscription if no filters are generated
     }
 
-    console.debug(`Subscribing with filters for ${pubkey}:`, filters);
-
     // --- Subscription Handlers ---
 
-    const handleEvent = (event: NDKEvent, relay: NDKRelay) => {
+    const onEvent = (event: NDKEvent, relay?: NDKRelay) => {
         console.log("handle session event", event.pubkey.slice(0, 6), event.kind, relay?.url);
         set((draft) => {
             const session = draft.sessions.get(pubkey);
@@ -221,8 +197,7 @@ export const startSession = (
         });
     };
 
-    const handleEvents = (events: NDKEvent[]) => {
-        console.log("handle session events", events.map((event) => event.pubkey.slice(0, 6) + event.kind).join(", "));
+    const onEvents = (events: NDKEvent[]) => {
         set((draft) => {
             const session = draft.sessions.get(pubkey);
             if (!session) return; // Session might have been removed
@@ -236,14 +211,7 @@ export const startSession = (
         });
     };
 
-    // --- Create Subscription ---
-    console.log("starting subscription for", pubkey);
-
-    const sub = ndk.subscribe(
-        filters,
-        { closeOnEose: false, addSinceFromCache: true },
-        { onEvent: handleEvent, onEvents: handleEvents },
-    );
+    const sub = ndk.subscribe(filters, { closeOnEose: false, addSinceFromCache: true }, { onEvent, onEvents });
 
     // Store the subscription handle
     set((draft) => {

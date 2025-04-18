@@ -1,11 +1,15 @@
 import type { Hexpubkey, NDKSigner } from "@nostr-dev-kit/ndk";
 import type { Draft } from "immer";
 import { useNDKStore } from "../../ndk/store";
+import { useNDKMutes } from "../../mutes/store";
 import type { NDKSessionsState } from "./types";
 
 /**
  * Implementation for switching the active user session.
- * Sets the activePubkey in the store.
+ * Sets the activePubkey in the store and synchronizes with the mute store.
+ *
+ * @note This function should not be called directly. Use the useNDKSessionSwitch hook instead.
+ * @see useNDKSessionSwitch in src/session/hooks/index.ts
  */
 export const switchToUser = (
     set: (fn: (draft: Draft<NDKSessionsState>) => void) => void,
@@ -46,4 +50,15 @@ export const switchToUser = (
             }
         }
     });
+
+    // Synchronize with mute store
+    const muteStore = useNDKMutes.getState();
+
+    // Update the active pubkey in the mute store
+    muteStore.setActivePubkey(pubkey);
+
+    // Initialize mutes for the active user if they exist
+    if (pubkey) {
+        muteStore.initMutes(pubkey);
+    }
 };

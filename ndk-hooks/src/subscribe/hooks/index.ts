@@ -1,9 +1,9 @@
 import type { NDKEvent, NDKFilter, NDKSubscription, NDKSubscriptionOptions } from "@nostr-dev-kit/ndk";
 import { useEffect, useRef } from "react";
 import { useStore } from "zustand";
-import { useMuteFilter } from "../../common/hooks/mute";
 import { useNDK } from "../../ndk/hooks";
 import { createSubscribeStore } from "../store";
+import { useMuteFilter } from "../../mutes/hooks/use-mute-filter";
 
 /**
  * Extends NDKEvent with a 'from' method to wrap events with a kind-specific handler

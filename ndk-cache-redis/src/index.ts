@@ -7,18 +7,8 @@ import { matchFilter } from "nostr-tools";
 
 type NostrEventWithRelay = NostrEvent & { relay?: string };
 interface RedisAdapterOptions {
-    /**
-     * Debug instance to use for logging.
-     */
     debug?: debug.IDebugger;
-
-    /**
-     * The number of seconds to store events in redis before they expire.
-     */
     expirationTime?: number;
-    /**
-     * Redis instance connection path
-     */
     path?: string;
 }
 
@@ -38,72 +28,71 @@ export default class RedisAdapter implements NDKCacheAdapter {
         this.expirationTime = opts.expirationTime || 3600;
     }
 
-    public async query(subscription: NDKSubscription): Promise<void> {
+    public async query(subscription: NDKSubscription): Promise<NDKEvent[]> {
         this.debug("query redis status", this.redis.status);
-        if (this.redis.status !== "connect") return;
-        await Promise.all(subscription.filters.map((filter) => this.processFilter(filter, subscription)));
+        if (this.redis.status !== "connect") return [];
+        
+        const events: NDKEvent[] = [];
+        for (const filter of subscription.filters) {
+            await this.processFilter(filter, subscription, events);
+        }
+        return events;
     }
 
-    private async processFilter(filter: NDKFilter, subscription: NDKSubscription): Promise<void> {
+    private async processFilter(filter: NDKFilter, subscription: NDKSubscription, events: NDKEvent[]): Promise<void> {
         const filterString = JSON.stringify(filter);
 
         const eventIds = await this.redis.smembers(filterString);
+        if (!eventIds?.length) return;
 
-        return new Promise((resolve) => {
-            Promise.all(
-                eventIds.map(async (eventId) => {
-                    const event = await this.redis.get(eventId);
-                    if (!event) return;
+        for (const eventId of eventIds) {
+            const event = await this.redis.get(eventId);
+            if (!event) continue;
 
-                    const parsedEvent = JSON.parse(event);
-                    const relayUrl = parsedEvent.relay;
-                    parsedEvent.relay = undefined;
-                    const relay = subscription.ndk.pool.getRelay(relayUrl, false) || new NDKRelay(relayUrl);
+            const parsedEvent = JSON.parse(event);
 
-                    subscription.eventReceived(new NDKEvent(subscription.ndk, parsedEvent), relay, true);
-                }),
-            ).then(() => {
-                resolve();
-            });
-        });
+            const ndkEvent = new NDKEvent(subscription.ndk, parsedEvent);
+            subscription.eventReceived(ndkEvent, undefined, true);
+            events.push(ndkEvent);
+        }
     }
 
-    private storeEvent(event: NostrEventWithRelay, relay: NDKRelay) {
+    private async storeEvent(event: NostrEventWithRelay, relay: NDKRelay) {
         event.relay = relay.url;
-        return this.redis.set(event.id!, JSON.stringify(event), "EX", this.expirationTime);
+        try {
+            const eventStr = JSON.stringify(event);
+            await this.redis.set(event.id!, eventStr);
+            await this.redis.expire(event.id!, this.expirationTime);
+        } catch (err) {
+            this.debug("Error storing event", err);
+        }
     }
 
     private async storeEventWithFilter(event: NostrEvent, filter: NDKFilter, relay: NDKRelay): Promise<void> {
         const filterString = JSON.stringify(filter);
 
-        // very naive quick implementation of storing the filter
-        this.redis.sadd(filterString, event.id!);
-        this.redis.expire(filterString, this.expirationTime);
+        await this.redis.sadd(filterString, event.id!);
+        await this.redis.expire(filterString, this.expirationTime);
 
-        // store the event if it doesn't already exist
         const exists = await this.redis.exists(event.id!);
 
         if (!exists) {
             await this.storeEvent(event, relay);
         } else {
-            // renew the expiration time
-            this.redis.expire(event.id!, this.expirationTime);
+            await this.redis.expire(event.id!, this.expirationTime);
         }
     }
 
     public shouldSkipFilter(filter: NDKFilter): boolean {
         const values = Object.values(filter);
 
-        // if it has too many things tagged in an array
         if (values.some((v) => Array.isArray(v) && v.length > 10)) {
             this.debug("skipping filter", filter);
             return true;
         }
 
-        // if it has too many queries
         if (values && values.length > 3) return true;
 
-        // if it uses since or until
         if (filter.since || filter.until) return true;
 
         return false;
@@ -129,17 +118,23 @@ export default class RedisAdapter implements NDKCacheAdapter {
         }
     }
 
-    public async loadNip05?(nip05: string): Promise<ProfilePointer | null> {
+    public async loadNip05?(nip05: string, maxAgeForMissing?: number): Promise<ProfilePointer | null | "missing"> {
         this.debug("loadNip05 redis status", this.redis.status);
         if (this.redis.status !== "connect") return null;
         const profile = await this.redis.get(this.nip05Key(nip05));
         return profile ? JSON.parse(profile) : null;
     }
 
-    public saveNip05?(nip05: string, profile: ProfilePointer): void {
+    public async saveNip05?(nip05: string, profile: ProfilePointer | null): Promise<void> {
         this.debug("saveNip05 redis status", this.redis.status);
         if (this.redis.status !== "connect") return;
-        this.redis.set(this.nip05Key(nip05), JSON.stringify(profile), "EX", this.expirationTime);
+        try {
+            const profileStr = JSON.stringify(profile);
+            await this.redis.set(this.nip05Key(nip05), profileStr);
+            await this.redis.expire(this.nip05Key(nip05), this.expirationTime);
+        } catch (err) {
+            this.debug("Error saving nip05", err);
+        }
     }
 
     private nip05Key(nip05: string): string {

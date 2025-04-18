@@ -15,7 +15,7 @@
         }
     },
     "scripts": {
-        "dev": "pnpm build --watch",
+        "dev": "bun run build --watch",
         "build": "tsup src/index.ts --format cjs,esm --dts",
         "clean": "rm -rf dist",
         "lint": "prettier --check . && eslint .",

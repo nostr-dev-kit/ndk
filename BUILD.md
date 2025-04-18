@@ -1,12 +1,12 @@
 # Build NDK
 
-NDK is structured as a monorepo using `pnpm` as the package manager.
+NDK is structured as a monorepo using `bun` as the package manager.
 
 ```
 git clone https://github.com/nostr-dev-kit/ndk
 cd ndk
-pnpm install
-pnpm build
+bun install
+bun run build
 ```
 
 If you only care about building ndk core and not the family of packages you can just
@@ -14,7 +14,7 @@ If you only care about building ndk core and not the family of packages you can 
 ```
 git clone https://github.com/nostr-dev-kit/ndk
 cd ndk
-pnpm install
+bun install
 cd ndk
-pnpm build
+bun run build
 ```

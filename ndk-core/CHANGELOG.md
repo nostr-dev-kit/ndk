@@ -1,5 +1,22 @@
 # @nostr-dev-kit/ndk
 
+## 2.14.0
+
+### Minor Changes
+
+- 5ab19ef: feat: Refactor session management and add persistence
+
+    - **ndk-core:** Added signer serialization (`toPayload`, `fromPayload`) and deserialization (`ndkSignerFromPayload`, `signerRegistry`) framework.
+    - **ndk-hooks:** (Breaking Change) Refactored session state into `useNDKSessions` store with new management functions (`addSigner`, `startSession`, `switchToUser`, etc.), removing old session logic.
+    - **ndk-mobile:** Added persistent session storage using `expo-secure-store` (`session-storage.ts`, `useSessionMonitor`, `bootNDK`). Updated `NDKNip55Signer` for serialization and registration.
+
+### Patch Changes
+
+- c83166a: bump
+- 6e16e06: Implement caching for decrypted events in NDKCacheAdapter.
+- import changes
+- 5ab19ef: Adds new option addSinceFromCache to modify filters with a since for the last event that matches the filter that is in the cache. Use this to speed up relay list fetching
+
 ## 2.12.2
 
 ### Patch Changes

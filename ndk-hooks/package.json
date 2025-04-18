@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/ndk-hooks",
-    "version": "0.2.0",
+    "version": "1.0.0",
     "description": "React hooks for the Nostr Development Kit (NDK)",
     "type": "module",
     "main": "dist/index.js",
@@ -16,7 +16,10 @@
             "default": "./dist/index.js"
         }
     },
-    "files": ["dist", "README.md"],
+    "files": [
+        "dist",
+        "README.md"
+    ],
     "scripts": {
         "build": "tsup src/index.ts --format cjs,esm --dts --clean",
         "prepare": "bun run build",
@@ -45,7 +48,12 @@
         "vitest": "^1.4.0",
         "zustand": "^5.0.3"
     },
-    "keywords": ["nostr", "ndk", "react", "hooks"],
+    "keywords": [
+        "nostr",
+        "ndk",
+        "react",
+        "hooks"
+    ],
     "author": "_@f7z.io",
     "license": "MIT",
     "publishConfig": {

@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/ndk-test-utils",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "description": "Test helpers, mocks, and stubs for the Nostr Development Kit (NDK)",
     "type": "module",
     "main": "dist/index.js",

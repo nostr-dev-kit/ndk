@@ -1,5 +1,19 @@
 # @nostr-dev-kit/ndk-cache-dexie
 
+## 2.6.1
+
+### Patch Changes
+
+- c83166a: bump
+- 9d1a79c: performance improvements
+- import changes
+- Updated dependencies [c83166a]
+- Updated dependencies [5ab19ef]
+- Updated dependencies [6e16e06]
+- Updated dependencies
+- Updated dependencies [5ab19ef]
+    - @nostr-dev-kit/ndk@2.14.0
+
 ## 2.5.16-rc1.0
 
 ### Patch Changes

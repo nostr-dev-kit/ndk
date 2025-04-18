@@ -1,5 +1,18 @@
 # @nostr-dev-kit/ndk-svelte
 
+## 2.4.6
+
+### Patch Changes
+
+- c83166a: bump
+- import changes
+- Updated dependencies [c83166a]
+- Updated dependencies [5ab19ef]
+- Updated dependencies [6e16e06]
+- Updated dependencies
+- Updated dependencies [5ab19ef]
+    - @nostr-dev-kit/ndk@2.14.0
+
 ## 2.4.5
 
 ### Patch Changes

@@ -1,4 +1,5 @@
 {
+    "name": "@nostr-dev-kit/monorepo",
     "private": true,
     "scripts": {
         "build": "turbo build",

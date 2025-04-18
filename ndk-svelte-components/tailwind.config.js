@@ -1,4 +1,11 @@
+/** @type {import('tailwindcss').Config} */
 module.exports = {
-    prefix: "ndk-svelte-",
-    presets: [require("@nostr-dev-kit/tailwind-config/tailwind.config.js")],
-};
+  content: ['./**/*.{js,ts,jsx,tsx,svelte}'],
+  theme: {
+    extend: {},
+  },
+  plugins: [
+    require('@tailwindcss/typography'),
+    require('daisyui')
+  ],
+}

@@ -1,5 +1,4 @@
 {
-    "type": "module",
     "name": "@nostr-dev-kit/ndk-hooks",
     "version": "0.2.0",
     "description": "React hooks for the Nostr Development Kit (NDK)",
@@ -20,6 +19,7 @@
     "files": ["dist", "README.md"],
     "scripts": {
         "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+        "prepare": "bun run build",
         "dev": "bun run build --watch",
         "lint": "biome check .",
         "format": "biome format . --write",
@@ -27,16 +27,15 @@
         "test:watch": "bun test --watch"
     },
     "dependencies": {
+        "@nostr-dev-kit/ndk": "workspace:*",
         "@nostr-dev-kit/ndk-wallet": "workspace:*",
         "immer": "^10.1.1",
         "zustand": "^5"
     },
     "peerDependencies": {
-        "@nostr-dev-kit/ndk": "workspace:*",
         "react": "^18.3.1"
     },
     "devDependencies": {
-        "@nostr-dev-kit/ndk": "workspace:*",
         "@nostr-dev-kit/ndk-test-utils": "workspace:*",
         "@types/react": "^18.2.0",
         "jsdom": "^26.1.0",

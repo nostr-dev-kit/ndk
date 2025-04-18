@@ -1,5 +1,5 @@
 import type NDK from "@nostr-dev-kit/ndk";
-import type { Hexpubkey } from "@nostr-dev-kit/ndk-hooks";
+import type { NDKUser } from "@nostr-dev-kit/ndk";
 import { loadSessionsFromStorageSync } from "./session-storage.js";
 import { ndkSignerFromPayload } from "@nostr-dev-kit/ndk";
 
@@ -12,7 +12,7 @@ import { ndkSignerFromPayload } from "@nostr-dev-kit/ndk";
  * @param ndk The NDK instance to initialize.
  * @returns The pubkey of the user that was booted, or null if no session was found.
  */
-export function bootNDK(ndk: NDK): Hexpubkey | null {
+export function bootNDK(ndk: NDK): string | null {
     console.log("bootNDK (sync): Initializing NDK with active user from storage...");
     try {
         const sessions = loadSessionsFromStorageSync(); // Use synchronous load

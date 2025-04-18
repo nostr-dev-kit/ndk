@@ -13,7 +13,7 @@ interface RedisAdapterOptions {
 }
 
 export default class RedisAdapter implements NDKCacheAdapter {
-    public redis;
+    public redis: Redis;
     public debug;
     private expirationTime;
     readonly locking;
@@ -21,7 +21,7 @@ export default class RedisAdapter implements NDKCacheAdapter {
     constructor(opts: RedisAdapterOptions = {}) {
         this.redis = opts.path ? new Redis(opts.path) : new Redis();
         this.debug = opts.debug || _debug("ndk:redis-adapter");
-        this.redis.on("error", (err) => {
+        this.redis.on("error", (err: Error) => {
             this.debug("redis error", err);
         });
         this.locking = true;

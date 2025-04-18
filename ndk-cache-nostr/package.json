@@ -42,7 +42,6 @@
         "websocket-polyfill": "^0.0.3"
     },
     "devDependencies": {
-        "@nostr-dev-kit/tsconfig": "workspace:*",
         "@types/debug": "^4.1.7",
         "@types/node": "^18.15.11",
         "ts-node": "^10.9.2",

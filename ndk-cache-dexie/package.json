@@ -43,7 +43,6 @@
         "erskingardner"
     ],
     "devDependencies": {
-        "@nostr-dev-kit/tsconfig": "workspace:*",
         "@types/debug": "^4.1.12",
         "@types/node": "^22.6.1",
         "fake-indexeddb": "^6.0.0",

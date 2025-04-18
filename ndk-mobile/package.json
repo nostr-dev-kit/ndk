@@ -4,13 +4,19 @@
     "description": "NDK Mobile",
     "private": false,
     "license": "MIT",
-    "peerDependencies": {
-        "@cashu/cashu-ts": "^2",
-        "expo": "^52",
-        "expo-nip55": "*",
+    "dependencies": {
         "@nostr-dev-kit/ndk": "workspace:*",
         "@nostr-dev-kit/ndk-hooks": "workspace:*",
         "@nostr-dev-kit/ndk-wallet": "workspace:*",
+        "@bacons/text-decoder": "^0.0.0",
+        "react-native-get-random-values": "~1.11.0",
+        "typescript-lru-cache": "^2.0.0",
+        "zustand": "^5.0.2",
+        "@cashu/cashu-ts": "^2",
+        "expo-nip55": "*"
+    },
+    "peerDependencies": {
+        "expo": "^52",
         "expo-sqlite": "^15"
     },
     "devDependencies": {
@@ -25,12 +31,6 @@
         "react-native",
         "expo"
     ],
-    "dependencies": {
-        "@bacons/text-decoder": "^0.0.0",
-        "react-native-get-random-values": "~1.11.0",
-        "typescript-lru-cache": "^2.0.0",
-        "zustand": "^5.0.2"
-    },
     "source": "./src/index.ts",
     "type": "module",
     "main": "dist/module/index.js",
@@ -56,7 +56,8 @@
         }
     },
     "scripts": {
-        "prepare": "bob build",
+        "prepare": "bun run build",
+        "build": "bob build",
         "test": "vitest run",
         "test:watch": "vitest",
         "test:coverage": "vitest run --coverage"

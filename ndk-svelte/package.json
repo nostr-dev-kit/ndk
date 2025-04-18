@@ -52,7 +52,6 @@
         "svelte": "*"
     },
     "devDependencies": {
-        "@nostr-dev-kit/tsconfig": "workspace:*",
         "svelte": "5.23.0",
         "tsup": "^8.4.0"
     }

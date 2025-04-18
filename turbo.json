@@ -3,11 +3,27 @@
     "tasks": {
         "build": {
             "outputs": ["dist/**", "lib/**"],
-            "dependsOn": ["^build"]
+            "dependsOn": ["^build"],
+            "inputs": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js", "src/**/*.jsx"]
+        },
+        "ndk-core#build": {
+            "outputs": ["dist/**"]
+        },
+        "ndk-wallet#build": {
+            "outputs": ["dist/**"],
+            "dependsOn": ["ndk-core#build"]
+        },
+        "ndk-hooks#build": {
+            "outputs": ["dist/**"],
+            "dependsOn": ["ndk-core#build", "ndk-wallet#build"]
+        },
+        "ndk-mobile#build": {
+            "outputs": ["dist/**"],
+            "dependsOn": ["ndk-core#build", "ndk-wallet#build", "ndk-hooks#build"]
         },
         "test": {
             "outputs": ["coverage/**"],
-            "dependsOn": []
+            "dependsOn": ["build"]
         },
         "lint": {},
         "dev": {

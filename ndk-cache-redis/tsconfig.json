@@ -1,5 +1,24 @@
 {
-    "extends": "@nostr-dev-kit/tsconfig/ndk-cache-redis.json",
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "ESNext",
+        "composite": false,
+        "declaration": true,
+        "declarationMap": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "inlineSources": false,
+        "isolatedModules": true,
+        "moduleResolution": "node",
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
+        "preserveWatchOutput": true,
+        "skipLibCheck": true,
+        "strict": true,
+        "allowJs": true,
+        "checkJs": true,
+        "types": ["node"]
+    },
     "include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.ts"],
     "exclude": ["dist", "build", "node_modules"]
 }

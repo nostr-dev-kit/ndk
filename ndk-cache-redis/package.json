@@ -1,39 +1,25 @@
 {
     "name": "@nostr-dev-kit/ndk-cache-redis",
-    "version": "0.1.0",
-    "description": "Redis cache adapter for NDK",
+    "version": "0.0.1",
     "type": "module",
-    "main": "dist/index.js",
-    "module": "dist/index.mjs",
-    "types": "dist/index.d.ts",
-    "exports": {
-        "import": {
-            "types": "./dist/index.d.ts",
-            "default": "./dist/index.mjs"
-        },
-        "require": {
-            "types": "./dist/index.d.ts",
-            "default": "./dist/index.js"
-        }
-    },
+    "main": "./dist/index.js",
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.ts",
     "files": [
         "dist"
     ],
     "scripts": {
         "build": "tsup src/index.ts --format cjs,esm --dts",
-        "test": "bun test",
-        "test:watch": "bun test --watch"
+        "clean": "rm -rf dist"
     },
     "dependencies": {
         "@nostr-dev-kit/ndk": "workspace:*",
-        "debug": "^4.3.4",
-        "ioredis": "^5.3.2"
+        "ioredis": "^5.0.0"
     },
     "devDependencies": {
-        "@nostr-dev-kit/tsconfig": "workspace:*",
-        "@types/debug": "^4.1.12",
         "@types/ioredis": "^5.0.0",
-        "tsup": "^8.0.0",
+        "@types/node": "^20.0.0",
+        "tsup": "^8",
         "typescript": "^5.8.2"
     }
 }

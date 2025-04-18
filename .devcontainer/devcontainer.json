@@ -15,7 +15,7 @@
         }
     },
     // Add pnpm bin to path, so we have turbo available
-    "postStartCommand": "echo 'export PATH=$(pnpm bin):$PATH' >> ~/.bashrc && . ~/.bashrc"
+    "postStartCommand": "echo 'export PATH=$(bun bin):$PATH' >> ~/.bashrc && . ~/.bashrc"
     // Features to add to the dev container. More info: https://containers.dev/features.
     // "features": {},
     // Use 'forwardPorts' to make a list of ports inside the container available locally.

@@ -394,7 +394,7 @@ export class NDKSubscription extends EventEmitter<{
             // Must want to close on EOSE; subscriptions
             // that want to receive further updates must
             // always hit the relay
-            this.opts.closeOnEose! &&
+            !!this.opts.closeOnEose &&
             // Cache adapter must claim to be fast
             !!this.ndk.cacheAdapter?.locking &&
             // If explicitly told to run in parallel, then

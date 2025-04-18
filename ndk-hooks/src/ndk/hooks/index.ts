@@ -6,21 +6,18 @@ import { useNDKSessions } from "../../session/store"; // Import session store ho
 import { type NDKStoreState, useNDKStore } from "../store"; // Corrected path
 
 /**
- * Interface for the useNDK hook return value
+ * Hook to access the NDK instance
  */
-interface UseNDKResult extends Pick<NDKStoreState, "ndk" | "setNDK"> {}
+export const useNDK = (): { ndk: NDK | null } => {
+    const ndk = useNDKStore((state) => state.ndk);
+    return useMemo(() => ({ ndk }), [ndk]);
+};
 
 /**
- * Hook to access the NDK instance and setNDK function
- *
- * @returns {UseNDKResult} Object containing the NDK instance and setNDK function
+ * Gets the current active pubkey from the NDK session store.
+ * @returns Hexpubkey | null - The active pubkey or null if no session is active.
  */
-export const useNDK = (): UseNDKResult => {
-    const ndk = useNDKStore((state) => state.ndk);
-    const setNDK = useNDKStore((state) => state.setNDK);
-
-    return useMemo(() => ({ ndk, setNDK }), [ndk, setNDK]);
-};
+export const useNDKCurrentPubkey = () => useNDKSessions((state) => state.activePubkey);
 
 /**
  * Hook to access the NDKUser instance corresponding to the currently active session.
@@ -29,7 +26,7 @@ export const useNDK = (): UseNDKResult => {
  */
 export const useNDKCurrentUser = (): NDKUser | null => {
     const ndk = useNDKStore((state) => state.ndk);
-    const activePubkey = useNDKSessions((state) => state.activePubkey);
+    const activePubkey = useNDKCurrentPubkey();
 
     return useMemo(() => {
         if (ndk && activePubkey) {

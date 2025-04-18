@@ -6,7 +6,8 @@ import {
     type NDKSubscriptionOptions,
 } from "@nostr-dev-kit/ndk";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useNDK } from "../../ndk/hooks"; // Corrected path
+import { useNDK } from "../../ndk/hooks";
+import { useMuteFilter } from "../../mutes/hooks/use-mute-filter";
 
 /**
  * Subscribes to NDK events based on the provided filters and returns the matching events.
@@ -28,9 +29,16 @@ import { useNDK } from "../../ndk/hooks"; // Corrected path
  *   if any value in this array changes. The `filters` parameter is implicitly included as a dependency.
  * @returns {T[]} An array containing the unique events matching the filters.
  */
+export interface UseObserverOptions extends NDKSubscriptionOptions {
+    /**
+     * Whether to include muted events (default: false)
+     */
+    includeMuted?: boolean;
+}
+
 export function useObserver<T extends NDKEvent>(
     filters: NDKFilter[] | false,
-    opts: NDKSubscriptionOptions = {},
+    opts: UseObserverOptions = {},
     dependencies: unknown[] = [],
 ): T[] {
     const { ndk } = useNDK();
@@ -39,6 +47,7 @@ export function useObserver<T extends NDKEvent>(
     const buffer = useRef<NDKEvent[]>([]);
     const bufferTimeout = useRef<NodeJS.Timeout | null>(null);
     const addedEventIds = useRef(new Set<string>());
+    const muteFilter = useMuteFilter();
 
     dependencies.push(!!filters);
 
@@ -63,6 +72,7 @@ export function useObserver<T extends NDKEvent>(
 
         const processEvent = (event: NDKEvent) => {
             if (!isValid) return;
+            if (!opts.includeMuted && muteFilter(event)) return;
             const tagId = event.tagId();
             if (addedEventIds.current.has(tagId)) return;
             addedEventIds.current.add(tagId);
@@ -90,7 +100,12 @@ export function useObserver<T extends NDKEvent>(
                     if (!isValid) return;
                     processEvent(event);
                 },
-                onEvents: (events) => setEvents(events),
+                onEvents: (events) => {
+                    const filtered = !opts.includeMuted
+                        ? events.filter(e => !muteFilter(e))
+                        : events;
+                    setEvents(filtered);
+                },
             },
         );
 
@@ -106,7 +121,7 @@ export function useObserver<T extends NDKEvent>(
             isValid = false;
             stopFilters();
         };
-    }, [ndk, ...dependencies, stopFilters]);
+    }, [ndk, muteFilter, opts.includeMuted, ...dependencies, stopFilters]);
 
     return events as T[];
 }

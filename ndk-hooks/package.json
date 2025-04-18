@@ -1,6 +1,7 @@
 {
+    "type": "module",
     "name": "@nostr-dev-kit/ndk-hooks",
-    "version": "0.1.9",
+    "version": "0.2.0",
     "description": "React hooks for the Nostr Development Kit (NDK)",
     "type": "module",
     "main": "dist/index.js",
@@ -38,6 +39,7 @@
         "@nostr-dev-kit/ndk": "workspace:*",
         "@nostr-dev-kit/ndk-test-utils": "workspace:*",
         "@types/react": "^18.2.0",
+        "jsdom": "^26.1.0",
         "tsup": "^8",
         "react": "^18.3.1",
         "typescript": "^5.8.2",

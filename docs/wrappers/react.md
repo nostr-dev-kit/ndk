@@ -181,14 +181,26 @@ export default NoteFeed;
 `ndk-hooks` provides several other specialized hooks:
 
 *   `useFollows(pubkey)`: Fetches the follow list for a user.
-*   `useMuteList(pubkey)`: Fetches the mute list for a user.
-*   `useMuteFilter()`: Provides a filter function based on the current user's mute list.
 *   `useNDKWallet()`: Manages wallet connections (e.g., NWC).
 *   `useNDKNutzapMonitor()`: Monitors for incoming zaps via Nutzap.
 
 ## Muting Users, Hashtags, Words, and Events
 
 NDK React hooks provide a simple way to mute users, hashtags, words, or specific events for the current session using the `useMuteItem` hook. Muting is session-specific and updates the Nostr mute list (kind 10000 event) for the active user.
+
+### Mute Hooks
+
+NDK React hooks provide a simple way to work with mutes without having to interact with the underlying store implementation. The following hooks are available:
+
+- `useMuteList()`: Returns the mute list data for the active user, including sets of muted pubkeys, hashtags, words, event IDs, and the raw mute list event.
+- `useMuteFilter()`: Returns a function that checks if an event is muted for the active user.
+- `useMuteItem()`: Returns a function that mutes an item for the current user.
+- `useUnmuteItem()`: Returns a function that unmutes an item for the current user.
+- `useIsItemMuted()`: Returns whether an item is muted for the current user.
+
+All the internal details like initializing mutes, loading mute lists, setting active pubkeys, and publishing mute lists are handled automatically by the library when you use these hooks. The mute store is automatically synchronized with the session store, so you don't need to worry about keeping them in sync.
+
+> **Best Practice**: Always use the provided hooks to interact with the mute functionality. Direct access to the underlying stores is not recommended and may lead to synchronization issues.
 
 ### Muting with `useMuteItem`
 
@@ -232,6 +244,6 @@ function MuteExample({ user, event }: { user: NDKUser; event: NDKEvent }) {
 ### Notes
 - Muting is persisted as a Nostr kind 10000 event and will be respected by all NDK-powered clients that support mute lists.
 - The mute list is automatically updated and published for the active session.
-- Use `useMuteList()` to access the current mute list, and `useMuteFilter()` to filter events in your UI based on the mute list.
+- Use `useMuteFilter()` to filter events in your UI based on the mute list.
 
 Explore the exported hooks from `@nostr-dev-kit/ndk-hooks` for more advanced use cases.

@@ -25,13 +25,13 @@
         "README.md"
     ],
     "scripts": {
-        "dev": "pnpm build --watch",
+        "dev": "bun run build --watch",
         "build": "tsup src/index.ts src/performance-test.ts --format cjs,esm --dts",
         "clean": "rm -rf dist",
         "lint": "prettier --check . && eslint .",
         "format": "prettier --write .",
         "test": "vitest",
-        "perf-test": "pnpm build && node dist/performance-test.js"
+        "perf-test": "bun run build && node dist/performance-test.js"
     },
     "keywords": [
         "nostr",

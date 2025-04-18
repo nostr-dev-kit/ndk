@@ -24,22 +24,11 @@ export default class NDKNostrCacheAdapter implements NDKCacheAdapter {
     public locking: boolean;
     public ready?: boolean | undefined;
 
-    /**
-     * The NDK instance used to interact with the local nostr relay.
-     */
     private ndk: NDK;
-
-    /**
-     * The fallback NDK is used to gather events on the background, to hydrate the
-     * cache
-     */
     private fallbackNdk: NDK;
     private relaySet: NDKRelaySet;
     private relay: NDKRelay;
 
-    /**
-     * How long it's acceptable to block until queries finish.
-     */
     public queryTimeout = 4000;
 
     public backgroundSubscriptionQueue: Queue<void> = new Queue("ndk-nostr-cache-adapter", 5);
@@ -88,22 +77,16 @@ export default class NDKNostrCacheAdapter implements NDKCacheAdapter {
         this.ready = true;
     }
 
-    /**
-     * Processes the query locally.
-     * @param subscription
-     * @returns The number of events received.
-     */
-    private async queryLocally(subscription: NDKSubscription): Promise<number> {
+    private async queryLocally(subscription: NDKSubscription): Promise<NDKEvent[]> {
         const subId =
             subscription.subId ?? subscription.filters.map((filter) => Object.keys(filter).join(",")).join("-");
         const _ = d.extend(subId);
 
         return new Promise((resolve, reject) => {
-            let eventCount = 0;
+            const events: NDKEvent[] = [];
 
             _("Querying %o", subscription.filters);
 
-            // Generate a subscription
             const sub = this.ndk.subscribe(
                 subscription.filters,
                 {
@@ -114,21 +97,18 @@ export default class NDKNostrCacheAdapter implements NDKCacheAdapter {
                 false,
             );
 
-            // Process events
             sub.on("event", (event) => {
                 subscription.eventReceived(event, undefined, true);
-                eventCount++;
+                events.push(event);
                 _("Event received %d", event.kind);
             });
 
-            // Finish when we EOSE
             sub.on("eose", () => {
                 _("Eose received");
                 this.relay.off("notice", onRelayNotice);
-                resolve(eventCount);
+                resolve(events);
             });
 
-            // Handle relay notices
             const onRelayNotice = (notice: string) => {
                 _("Notice received %s", notice);
                 reject(notice);
@@ -138,31 +118,29 @@ export default class NDKNostrCacheAdapter implements NDKCacheAdapter {
                 _("Notice received %o", notice);
             });
 
-            // Start the subscription
             sub.start();
         });
     }
 
-    async query(subscription: NDKSubscription): Promise<void> {
+    async query(subscription: NDKSubscription): Promise<NDKEvent[]> {
         const subId =
             subscription.subId ?? subscription.filters.map((filter) => Object.keys(filter).join(",")).join("-");
-        let eventCount = 0;
+        let events: NDKEvent[] = [];
 
         const _ = d.extend(subId);
 
-        await Promise.race([this.queryLocally(subscription), timeout(this.queryTimeout)])
-            .then((count: unknown) => {
-                if (typeof count === "number") {
-                    eventCount = count;
+        try {
+            const result = await Promise.race([this.queryLocally(subscription), timeout(this.queryTimeout)]);
+            if (Array.isArray(result)) {
+                events = result;
+                _("Query finished with %d events", events.length);
+                setTimeout(() => this.hydrate(subscription), 2500);
+            }
+        } catch (err) {
+            _("Error %o", err);
+        }
 
-                    _("Query finished with %d events", eventCount);
-
-                    setTimeout(() => this.hydrate(subscription), 2500);
-                }
-            })
-            .catch((err) => {
-                _("Error %o", err);
-            });
+        return events;
     }
 
     private async hydrate(subscription: NDKSubscription) {
@@ -214,44 +192,6 @@ export default class NDKNostrCacheAdapter implements NDKCacheAdapter {
     async setEvent(event: NDKEvent, _filters: NDKFilter<NDKKind>[], _relay?: NDKRelay | undefined): Promise<void> {
         this.hydrateLocalRelayWithEvent(event);
     }
-
-    // async deleteEvent?(event: NDKEvent): Promise<void> {
-    //     d("deleteEvent method not implemented.");
-    // }
-    // async fetchProfile?(pubkey: string): Promise<NDKUserProfile | null> {
-    //     d("fetchProfile method not implemented.");
-    // }
-    // saveProfile?(pubkey: string, profile: NDKUserProfile): void {
-    //     d("saveProfile method not implemented.");
-    // }
-    // getProfiles?: ((filter: (pubkey: string, profile: NDKUserProfile) => boolean) => Promise<Map<string, NDKUserProfile> | undefined>) | undefined;
-    // async loadNip05?(nip05: string, maxAgeForMissing?: number | undefined): Promise<ProfilePointer | "missing" | null> {
-    //     d("loadNip05 method not implemented.");
-    // }
-    // saveNip05?(nip05: string, profile: ProfilePointer | null): void {
-    //     d("saveNip05 method not implemented.");
-    // }
-    // async loadUsersLNURLDoc?(pubkey: string, maxAgeInSecs?: number | undefined, maxAgeForMissing?: number | undefined): Promise<"missing" | NDKLnUrlData | null> {
-    //     d("loadUsersLNURLDoc method not implemented.");
-    // }
-    // saveUsersLNURLDoc?(pubkey: string, doc: NDKLnUrlData | null): void {
-    //     d("saveUsersLNURLDoc method not implemented.");
-    // }
-    // updateRelayStatus?(relayUrl: string, info: NDKCacheRelayInfo): void {
-    //     d("updateRelayStatus method not implemented.");
-    // }
-    // addUnpublishedEvent?(event: NDKEvent, relayUrls: string[]): void {
-    //     d("addUnpublishedEvent method not implemented.");
-    // }
-    // async getUnpublishedEvents?(): Promise<{ event: NDKEvent; relays?: string[] | undefined; lastTryAt?: number | undefined; }[]> {
-    //     d("getUnpublishedEvents method not implemented.");
-    // }
-    // discardUnpublishedEvent?(eventId: string): void {
-    //     d("discardUnpublishedEvent method not implemented.");
-    // }
-    // onReady?(callback: () => void): void {
-    //     d("onReady method not implemented.");
-    // }
 }
 
 const timeout = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));

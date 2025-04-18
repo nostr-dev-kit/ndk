@@ -1,4 +1,5 @@
 {
+    "name": "@nostr-dev-kit/monorepo",
     "private": true,
     "scripts": {
         "build": "turbo build",
@@ -17,6 +18,7 @@
         "@biomejs/biome": "2.0.0-beta.1",
         "@changesets/cli": "^2.22.0",
         "@nostr-dev-kit/tsconfig": "workspace:*",
+        "@types/ioredis": "^5.0.0",
         "@types/sinon": "^17.0.4",
         "@vitest/coverage-v8": "^3",
         "cytoscape": "^3.31.1",
@@ -32,7 +34,7 @@
         "vitepress-plugin-mermaid": "^2.0.17",
         "vitest": "^3"
     },
-    "packageManager": "pnpm@10.5.2",
+    "type": "module",
     "workspaces": [
         "apps/*",
         "packages/*",
@@ -44,9 +46,11 @@
         "ndk-hooks",
         "ndk-mobile",
         "ndk-svelte-components",
-        "ndk-wallet"
+        "ndk-wallet",
+        "ndk-test-utils"
     ],
     "engines": {
         "node": ">=16.0"
-    }
+    },
+    "packageManager": "bun@1.0.0"
 }

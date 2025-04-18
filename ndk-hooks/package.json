@@ -3,18 +3,28 @@
     "name": "@nostr-dev-kit/ndk-hooks",
     "version": "0.2.0",
     "description": "React hooks for the Nostr Development Kit (NDK)",
+    "type": "module",
     "main": "dist/index.js",
     "module": "dist/index.mjs",
     "types": "dist/index.d.ts",
+    "exports": {
+        "import": {
+            "types": "./dist/index.d.ts",
+            "default": "./dist/index.mjs"
+        },
+        "require": {
+            "types": "./dist/index.d.ts",
+            "default": "./dist/index.js"
+        }
+    },
     "files": ["dist", "README.md"],
     "scripts": {
-        "prepare": "tsup src/index.ts --format cjs,esm --dts --clean",
         "build": "tsup src/index.ts --format cjs,esm --dts --clean",
-        "dev": "tsup src/index.ts --format cjs,esm --watch",
+        "dev": "bun run build --watch",
         "lint": "biome check .",
         "format": "biome format . --write",
-        "test": "vitest run",
-        "test:watch": "vitest"
+        "test": "bun test",
+        "test:watch": "bun test --watch"
     },
     "dependencies": {
         "@nostr-dev-kit/ndk-wallet": "workspace:*",
@@ -28,8 +38,10 @@
     "devDependencies": {
         "@nostr-dev-kit/ndk": "workspace:*",
         "@nostr-dev-kit/ndk-test-utils": "workspace:*",
+        "@types/react": "^18.2.0",
         "jsdom": "^26.1.0",
         "tsup": "^8",
+        "react": "^18.3.1",
         "typescript": "^5.8.2",
         "vitest": "^1.4.0",
         "zustand": "^5.0.3"

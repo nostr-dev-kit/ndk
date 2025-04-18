@@ -1,13 +1,17 @@
-# FIXME: Hardcoded node version
-# FIXME: Use prod and dev stages!
-FROM node:20-slim
+# Use the specific Bun version that matches our package manager
+FROM oven/bun:1.0.0
 
-RUN corepack enable
-
-# FIXME: We need to use a WORKDIR because of
-# https://stackoverflow.com/a/65443098 but
-# the choice of the actual dir is quite arbitrary.
-COPY . /app
+# Set working directory
 WORKDIR /app
 
-RUN pnpm install
+# Copy package files
+COPY package.json bun.lockb ./
+
+# Install dependencies
+RUN bun install
+
+# Copy the rest of the code
+COPY . .
+
+# Build the project
+RUN bun run build

@@ -19,10 +19,10 @@
     ],
     "scripts": {
         "dev": "vite build --watch",
-        "build": "vite build && pnpm run package",
+        "build": "vite build && bun run package",
         "preview": "vite preview",
         "package": "svelte-kit sync && svelte-package && publint",
-        "prepublishOnly": "pnpm run package",
+        "prepublishOnly": "bun run package",
         "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
         "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
         "format": "prettier --write ."

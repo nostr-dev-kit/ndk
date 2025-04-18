@@ -1,6 +1,4 @@
-# Sample workflow for building and deploying a VitePress site to GitHub Pages
-#
-name: Deploy VitePress site to Pages
+name: bun-types
 
 on:
     # Runs on pushes targeting the `main` branch. Change this to `master` if you're
@@ -27,26 +25,19 @@ concurrency:
 jobs:
     # Build job
     build:
+        name: build-app
         runs-on: ubuntu-latest
         steps:
-            - name: Checkout
+            - name: Checkout repo
               uses: actions/checkout@v4
+            - name: Install bun
+              uses: oven-sh/setup-bun@v2
               with:
-                  fetch-depth: 0 # Not needed if lastUpdated is not enabled
-            - name: Setup Node
-              uses: actions/setup-node@v4
-              with:
-                  node-version: "20"
-            - name: Setup PNPM
-              uses: pnpm/action-setup@v4
-            - name: Setup Pages
-              uses: actions/configure-pages@v4
+                  bun-version: 1.0.0
             - name: Install dependencies
-              run: pnpm install # or pnpm install / yarn install / bun install
-            - name: Build with VitePress
-              run: pnpm docs:build # or pnpm docs:build / yarn docs:build / bun run docs:build
-            #            - name: Build typedoc
-            #              run: cd ndk && pnpm typedoc --out ../docs/.vitepress/dist/api
+              run: bun install
+            - name: Build app
+              run: bun run build
             - name: Upload artifact
               uses: actions/upload-pages-artifact@v3
               with:

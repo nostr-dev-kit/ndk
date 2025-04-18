@@ -42,7 +42,7 @@
         "README.md"
     ],
     "scripts": {
-        "dev": "pnpm build --watch",
+        "dev": "bun run build --watch",
         "build": "tsup src/index.ts --format cjs,esm --dts && tsup src/workers/sig-verification.ts --format cjs,esm --dts -d dist/workers",
         "build:core:esm": "tsup src/index.ts --format esm --dts",
         "clean": "rm -rf dist docs",
@@ -52,8 +52,8 @@
         "test:ui": "vitest --ui",
         "lint": "prettier --check . && eslint .",
         "compile": "tsc",
-        "prepare": "pnpm build",
-        "posttest": "pnpm lint",
+        "prepare": "bun run build",
+        "posttest": "bun run lint",
         "format": "prettier --write ."
     },
     "keywords": [
@@ -64,7 +64,7 @@
     "engines": {
         "node": ">=16"
     },
-    "packageManager": "pnpm@10.8.0",
+    "packageManager": "bun@1.0.0",
     "devDependencies": {
         "@types/debug": "^4.1.12",
         "@types/node": "^22.13.10",

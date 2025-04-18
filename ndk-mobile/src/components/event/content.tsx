@@ -18,7 +18,7 @@ import { Image } from "expo-image";
 import React from "react";
 import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, type TextProps } from "react-native";
-import { useNDK, useProfile } from "@nostr-dev-kit/ndk-hooks";
+import { useNDK, useProfileValue } from "@nostr-dev-kit/ndk-hooks";
 
 const styles = StyleSheet.create({
     mention: {
@@ -114,7 +114,7 @@ interface RenderMentionProps {
     style?: any;
 }
 function RenderMention({ user, onUserPress, MentionComponent, fontSize, style }: RenderMentionProps) {
-    const userProfile = useProfile(user.pubkey);
+    const userProfile = useProfileValue(user.pubkey);
     const combinedStyle = [styles.mention, { fontSize }, style];
 
     return (

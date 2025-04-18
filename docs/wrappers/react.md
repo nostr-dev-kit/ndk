@@ -88,12 +88,12 @@ function Signin() {
 
 ## Fetching User Profiles
 
-Easily fetch and display Nostr user profiles using the `useProfile` hook. It handles caching and fetching logic automatically.
+Easily fetch and display Nostr user profiles using the `useProfileValue` hook. It handles caching and fetching logic automatically.
 
 ```tsx
 // src/components/UserCard.tsx
 import React from 'react';
-import { useProfile } from '@nostr-dev-kit/ndk-hooks';
+import { useProfileValue } from '@nostr-dev-kit/ndk-hooks';
 
 interface UserCardProps {
   pubkey: string;
@@ -101,7 +101,7 @@ interface UserCardProps {
 
 function UserCard({ pubkey }: UserCardProps) {
   // Fetch profile, force refresh by passing `true` as second argument
-  const profile = useProfile(pubkey);
+  const profile = useProfileValue(pubkey);
 
   if (!profile) {
     return <div>Loading profile for {pubkey.substring(0, 8)}...</div>;
@@ -169,7 +169,7 @@ function NoteFeed() {
 
 // Helper component (replace with actual implementation)
 function UserProfileLink({ pubkey }: { pubkey: string }) {
-  const profile = useProfile(pubkey);
+  const profile = useProfileValue(pubkey);
   return <span>{profile?.name || pubkey.substring(0, 8)}</span>;
 }
 
@@ -185,5 +185,53 @@ export default NoteFeed;
 *   `useMuteFilter()`: Provides a filter function based on the current user's mute list.
 *   `useNDKWallet()`: Manages wallet connections (e.g., NWC).
 *   `useNDKNutzapMonitor()`: Monitors for incoming zaps via Nutzap.
+
+## Muting Users, Hashtags, Words, and Events
+
+NDK React hooks provide a simple way to mute users, hashtags, words, or specific events for the current session using the `useMuteItem` hook. Muting is session-specific and updates the Nostr mute list (kind 10000 event) for the active user.
+
+### Muting with `useMuteItem`
+
+The `useMuteItem` hook returns a function you can call with a user, hashtag, word, or event to mute it. The hook automatically determines the type and updates the mute list accordingly.
+
+```tsx
+import { useMuteItem } from '@nostr-dev-kit/ndk-hooks';
+import { NDKUser, NDKEvent } from '@nostr-dev-kit/ndk';
+
+function MuteExample({ user, event }: { user: NDKUser; event: NDKEvent }) {
+  const muteItem = useMuteItem();
+
+  // Mute a user
+  const handleMuteUser = () => muteItem(user);
+
+  // Mute a hashtag
+  const handleMuteHashtag = () => muteItem('#nostr');
+
+  // Mute a word
+  const handleMuteWord = () => muteItem('spam');
+
+  // Mute an event
+  const handleMuteEvent = () => muteItem(event);
+
+  return (
+    <div>
+      <button onClick={handleMuteUser}>Mute User</button>
+      <button onClick={handleMuteHashtag}>Mute #nostr</button>
+      <button onClick={handleMuteWord}>Mute "spam"</button>
+      <button onClick={handleMuteEvent}>Mute Event</button>
+    </div>
+  );
+}
+```
+
+- **User:** Pass an `NDKUser` instance to mute a user by pubkey.
+- **Hashtag:** Pass a string starting with `#` (e.g., `#nostr`) to mute a hashtag.
+- **Word:** Pass a string (e.g., `spam`) to mute a word.
+- **Event:** Pass an `NDKEvent` instance to mute a specific event by ID.
+
+### Notes
+- Muting is persisted as a Nostr kind 10000 event and will be respected by all NDK-powered clients that support mute lists.
+- The mute list is automatically updated and published for the active session.
+- Use `useMuteList()` to access the current mute list, and `useMuteFilter()` to filter events in your UI based on the mute list.
 
 Explore the exported hooks from `@nostr-dev-kit/ndk-hooks` for more advanced use cases.

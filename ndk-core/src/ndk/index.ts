@@ -546,7 +546,7 @@ export class NDK extends EventEmitter<{
         filters: NDKFilter | NDKFilter[],
         opts?: NDKSubscriptionOptions,
         autoStartOrRelaySet: NDKRelaySet | boolean | NDKSubscriptionEventHandlers = true,
-        _autoStart: boolean = true,
+        _autoStart = true,
     ): NDKSubscription {
         let _relaySet: NDKRelaySet | undefined = opts?.relaySet;
         let autoStart: boolean | NDKSubscriptionEventHandlers = _autoStart;

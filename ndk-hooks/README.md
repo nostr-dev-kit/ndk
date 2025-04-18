@@ -8,7 +8,7 @@
 
 - NDK instance management with `useNDKInit` and `useNDK`
 - Current user management with `useNDKCurrentUser`
-- User profile management with `useProfile`
+- User profile management with `useProfileValue`
 - Multi-user session management with `useNDKSessions`
 - Event subscriptions with modern callback patterns
 
@@ -57,7 +57,7 @@ function App() {
       // This initializes the NDK instance in all stores:
       // - NDK store (for useNDK hook)
       // - Session store (for useNDKSessions hook)
-      // - Profile store (for useProfile hook)
+      // - Profile store (for useProfileValue hook)
     };
     
     setupNDK();
@@ -99,13 +99,13 @@ The profile management functionality is automatically initialized when you use t
 
 ### Getting a User Profile
 
-Use the `useProfile` hook to fetch and display user profiles:
+Use the `useProfileValue` hook to fetch and display user profiles:
 
 ```tsx
-import { useProfile } from '@nostr-dev-kit/ndk-hooks';
+import { useProfileValue } from '@nostr-dev-kit/ndk-hooks';
 
 function UserCard({ pubkey }) {
-  const profile = useProfile(pubkey);
+  const profile = useProfileValue(pubkey);
 
   if (!profile) {
     return <div>Loading profile...</div>;
@@ -127,7 +127,7 @@ You can force a profile to be refreshed from the network by passing `true` as th
 
 ```tsx
 // This will fetch the profile from the network even if it's cached
-const profile = useProfile(pubkey, true);
+const profile = useProfileValue(pubkey, true);
 ```
 
 ## API Reference
@@ -157,7 +157,7 @@ Provides access to the current user and a function to set it.
 
 ### Profile Hooks
 
-#### `useProfile(pubkey: string, forceRefresh?: boolean): NDKUserProfile | undefined`
+#### `useProfileValue(pubkey: string, forceRefresh?: boolean): NDKUserProfile | undefined`
 
 Fetches and returns a Nostr user profile for the given pubkey.
 

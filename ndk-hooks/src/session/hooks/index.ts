@@ -9,7 +9,7 @@ import {
 } from "@nostr-dev-kit/ndk";
 import { useCallback, useMemo } from "react";
 import { useNDK, useNDKCurrentUser } from "../../ndk/hooks";
-import { useProfile } from "../../profiles/hooks";
+import { useProfileValue } from "../../profiles/hooks";
 import { useNDKSessions } from "../store";
 
 const EMPTY_SET = new Set<Hexpubkey>();
@@ -181,7 +181,7 @@ export function useNDKSessionEvent<T extends NDKEvent>(
  *
  * This hook combines session management with profile fetching.
  * It identifies the active user's public key from the session
- * and then uses `useProfile` to fetch and return their profile data.
+ * and then uses `useProfileValue` to fetch and return their profile data.
  *
  * @returns The NDKUserProfile object for the active user, or undefined if no session is active
  *          or the profile hasn't been fetched yet.
@@ -189,7 +189,7 @@ export function useNDKSessionEvent<T extends NDKEvent>(
 export const useCurrentUserProfile = (): NDKUserProfile | undefined => {
     const activePubkey = useNDKSessions((state) => state.activePubkey);
 
-    const profile = useProfile(activePubkey ?? undefined);
+    const profile = useProfileValue(activePubkey ?? undefined);
 
     return profile;
 };

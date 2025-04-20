@@ -26,6 +26,7 @@ to this list.
     -   Tauri, Desktop app
 -   [Nostr App Manager](https://github.com/nostrband/nostr-app-manager) - By [@nostrband](https://njump.me/npub1wc4rc9wxl2gfzxl384g0cw3f79nrms0sfdpe02y7aasy7c3we4sqd0qywr)
     -   React, Frontend
+-   [Nostr Components](https://github.com/saiy2k/nostr-components) - By [@saiy2k](https://njump.me/npub1qsvv5ttv6mrlh38q8ydmw3gzwq360mdu8re2vr7rk68sqmhmsh4svhsft3)
 -   [Stemstr](https://github.com/stemstr/Client) - By [@stemstr](https://njump.me/npub1stemstrls4f5plqeqkeq43gtjhtycuqd9w25v5r5z5ygaq2n2sjsd6mul5)
 -   [Audgit.ai](https://github.com/ArcadeLabsInc/audgit.ai) - By [@ArcadeLabsInc](https://njump.me/npub1tlv67m7xvlyplzexuynmfpguvyet0sjffce3y8vu0suuyuwgzauqjk7fdm)
 -   [Swarmstr](https://github.com/ptrio42/swarmstr.com) - By [@pitiunited](https://njump.me/npub178umpxtdflcm7a08nexvs4mu384kx0ngg9w8ltm5eut6q7lcp0vq05qrg4)

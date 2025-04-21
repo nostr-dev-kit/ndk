@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk
 
+## 2.14.1
+
+### Patch Changes
+
+- version bump
+
 ## 2.14.0
 
 ### Minor Changes

@@ -10,12 +10,9 @@ import type { MuteItemType, PublishMuteListOptions } from "../store/types";
 type MutableItem = NDKEvent | NDKUser | string;
 
 export function useMuteFilter(): (event: NDKEvent) => boolean {
-    const filterFn = useCallback(
-        (event: NDKEvent): boolean => {
-            return false;
-        },
-        [],
-    );
+    const filterFn = useCallback((event: NDKEvent): boolean => {
+        return false;
+    }, []);
 
     return filterFn;
 }

@@ -1,5 +1,12 @@
 # @nostr-dev-kit/ndk-test-utils
 
+## 1.0.1
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.14.1
+
 ## 1.0.0
 
 ### Patch Changes

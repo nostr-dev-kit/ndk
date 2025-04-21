@@ -31,7 +31,7 @@ export default class RedisAdapter implements NDKCacheAdapter {
     public async query(subscription: NDKSubscription): Promise<NDKEvent[]> {
         this.debug("query redis status", this.redis.status);
         if (this.redis.status !== "connect") return [];
-        
+
         const events: NDKEvent[] = [];
         for (const filter of subscription.filters) {
             await this.processFilter(filter, subscription, events);

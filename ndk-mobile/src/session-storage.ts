@@ -38,13 +38,11 @@ function migrateLegacyLogin() {
     try {
         const legacySessionKey = SecureStore.getItem(LEGACY_LOGIN_STORE_KEY);
         if (legacySessionKey) {
-            if (legacySessionKey.startsWith('nsec1')) {
+            if (legacySessionKey.startsWith("nsec1")) {
                 const signer = new NDKPrivateKeySigner(legacySessionKey);
                 const pubkey = signer.pubkey;
 
-                saveSessionsToStorage([
-                    { pubkey, signerPayload: signer.toPayload() }
-                ])
+                saveSessionsToStorage([{ pubkey, signerPayload: signer.toPayload() }]);
             }
 
             // delete the legacy login key after migration
@@ -63,7 +61,7 @@ function migrateLegacyLogin() {
 export function loadSessionsFromStorageSync(): StoredSession[] {
     try {
         migrateLegacyLogin();
-        
+
         const sessionsJson = SecureStore.getItem(SESSIONS_STORE_KEY);
         if (!sessionsJson) return [];
 

@@ -31,7 +31,10 @@ export function useMuteFilter(): (event: NDKEvent) => boolean {
         return s.getMuteCriteria(activePubkey);
     });
 
-    return useCallback((event: NDKEvent) => {
-        return isMuted(event, muteCriteria);
-    }, [muteCriteria]);
+    return useCallback(
+        (event: NDKEvent) => {
+            return isMuted(event, muteCriteria);
+        },
+        [muteCriteria],
+    );
 }

@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/ndk-hooks",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "description": "React hooks for the Nostr Development Kit (NDK)",
     "type": "module",
     "main": "dist/index.js",
@@ -55,8 +55,5 @@
         "hooks"
     ],
     "author": "_@f7z.io",
-    "license": "MIT",
-    "publishConfig": {
-        "access": "public"
-    }
+    "license": "MIT"
 }

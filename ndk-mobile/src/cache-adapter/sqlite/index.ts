@@ -293,17 +293,14 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
         }
 
         // this.bufferKinds.set(event.kind!, (this.bufferKinds.get(event.kind!) || 0) + 1);
-        this.bufferWrite(
-            "INSERT INTO events (id, created_at, pubkey, event, kind, relay) VALUES (?, ?, ?, ?, ?, ?);",
-            [
-                referenceId,
-                event.created_at,
-                event.pubkey,
-                event.serialize(true, true),
-                event.kind,
-                relay?.url || "",
-            ],
-        );
+        this.bufferWrite("INSERT INTO events (id, created_at, pubkey, event, kind, relay) VALUES (?, ?, ?, ?, ?, ?);", [
+            referenceId,
+            event.created_at,
+            event.pubkey,
+            event.serialize(true, true),
+            event.kind,
+            relay?.url || "",
+        ]);
 
         const filterTags: [string, string][] = event.tags
             .filter((tag) => tag[0].length === 1)

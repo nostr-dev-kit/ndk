@@ -53,7 +53,7 @@ export function useSessionMonitor(opts?: SessionStartOptions) {
                 }
 
                 // Load active pubkey
-                
+
                 // Add all sessions to NDK
                 for (const storedSession of storedSessions) {
                     try {
@@ -92,14 +92,13 @@ export function useSessionMonitor(opts?: SessionStartOptions) {
         }
 
         initializeFromStorage().finally(() => {
-
             // start session
             startSession(storedActivePubkey, opts);
-            
+
             isInitialized.current = true;
         });
-    // We're intentionally only running this effect when ndk changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // We're intentionally only running this effect when ndk changes
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ndk]);
 
     // Effect to persist active session changes

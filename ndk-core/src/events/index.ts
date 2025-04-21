@@ -408,7 +408,7 @@ export class NDKEvent extends EventEmitter {
      * Remove all tags with the given name (e.g. "d", "a", "p")
      * @param tagName Tag name(s) to search for and remove
      * @param marker Optional marker to check for too
-     * 
+     *
      * @example
      * Remove a tags with a "defer" marker
      * ```typescript
@@ -416,11 +416,11 @@ export class NDKEvent extends EventEmitter {
      *   ["a", "....", "defer"],
      *   ["a", "....", "no-defer"],
      * ]
-     * 
+     *
      * event.removeTag("a", "defer");
-     * 
+     *
      * // event.tags => [["a", "....", "no-defer"]]
-     * 
+     *
      * @returns {void}
      */
     public removeTag(tagName: string | string[], marker?: string): void {

@@ -9,7 +9,12 @@ import { initMutes } from "./init";
  * @param pubkey The user's public key
  * @param event The mute list event (kind 10000)
  */
-export const loadMuteList = (set: (state: any) => void, get: () => NDKMutesState, pubkey: Hexpubkey, event: NDKEvent) => {
+export const loadMuteList = (
+    set: (state: any) => void,
+    get: () => NDKMutesState,
+    pubkey: Hexpubkey,
+    event: NDKEvent,
+) => {
     set((state: any) => {
         console.log("Loading mute list for pubkey:", pubkey, "from event:", event.id);
         // Initialize mutes if they don't exist

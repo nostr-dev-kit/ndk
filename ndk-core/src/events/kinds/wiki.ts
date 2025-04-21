@@ -4,8 +4,8 @@ import { NDKArticle } from "./article";
 
 /**
  * Represents a NIP-54 wiki event.
- * 
- * Wiki events use 
+ *
+ * Wiki events use
  */
 export class NDKWiki extends NDKArticle {
     static kind = NDKKind.Wiki;
@@ -25,9 +25,9 @@ export class NDKWiki extends NDKArticle {
 
     /**
      * Defers the author's wiki event to another wiki event.
-     * 
+     *
      * Wiki-events can tag other wiki-events with a `defer` marker to indicate that it considers someone else's entry as a "better" version of itself. If using a `defer` marker both `a` and `e` tags SHOULD be used.
-     * 
+     *
      * @example
      * myWiki.defer = betterWikiEntryOnTheSameTopic;
      * myWiki.publishReplaceable()
@@ -40,7 +40,7 @@ export class NDKWiki extends NDKArticle {
 
 /**
  * Represents a NIP-54 wiki merge request event.
- * 
+ *
  * Users can request other users to get their entries merged into someone else's entry by creating a `kind:818` event.
  */
 export class NDKWikiMergeRequest extends NDKEvent {

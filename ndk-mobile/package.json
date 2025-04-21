@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/ndk-mobile",
-    "version": "0.6.0",
+    "version": "0.6.2",
     "description": "NDK Mobile",
     "private": false,
     "license": "MIT",
@@ -23,7 +23,7 @@
         "babel-preset-expo": "^12.0.9",
         "expo-sqlite": "^15.1.4",
         "react-native-builder-bob": "^0.35.2",
-        "typescript": "^5.8.2"
+        "typescript": "^5.8.3"
     },
     "keywords": [
         "ndk",

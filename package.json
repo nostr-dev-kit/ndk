@@ -17,26 +17,8 @@
         "changeset": "changeset",
         "version-packages": "changeset version",
         "release": "turbo build --filter=docs^... && changeset publish",
-        "docs:preview": "vitepress preview"
-    },
-    "devDependencies": {
-        "@biomejs/biome": "2.0.0-beta.1",
-        "@changesets/cli": "^2.22.0",
-        "@types/ioredis": "^5.0.0",
-        "@types/sinon": "^17.0.4",
-        "@vitest/coverage-v8": "^3",
-        "cytoscape": "^3.31.1",
-        "cytoscape-cose-bilkent": "^4.1.0",
-        "dayjs": "^1.11.13",
-        "debug": "^4.3.7",
-        "mermaid": "^10.9.1",
-        "msw": "^2.7.3",
-        "sinon": "^19.0.2",
-        "turbo": "^2.4.4",
-        "typescript": "^5.8.2",
-        "vitepress": "^1.5.0",
-        "vitepress-plugin-mermaid": "^2.0.17",
-        "vitest": "^3"
+        "docs:preview": "vitepress preview",
+        "publish": "bun scripts/publish.ts"
     },
     "type": "module",
     "workspaces": [
@@ -54,5 +36,12 @@
     "engines": {
         "node": ">=16.0"
     },
-    "packageManager": "bun@1.0.0"
+    "publishConfig": {
+        "registry": "http://localhost:4873/"
+    },
+    "packageManager": "bun@1.0.0",
+    "devDependencies": {
+        "chalk": "^5.4.1",
+        "prompts": "^2.4.2"
+    }
 }

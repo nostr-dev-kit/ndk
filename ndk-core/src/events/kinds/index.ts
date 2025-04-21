@@ -37,9 +37,9 @@ export enum NDKKind {
     ChannelMessage = 42,
     ChannelHideMessage = 43,
     ChannelMuteUser = 44,
-    
+
     WikiMergeRequest = 818,
-    
+
     GenericReply = 1111,
 
     Media = 1063,

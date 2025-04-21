@@ -508,7 +508,7 @@ export class NDK extends EventEmitter<{
      *  - `onEvents`: Called once with an array of events when the subscription starts (from the cache).
      *  - `onEose`: Called when the subscription receives EOSE.
      *  For backwards compatibility, this third parameter also accepts a relaySet, the relaySet should be passed via `opts.relaySet`.
-     * 
+     *
      * @param _autoStart - For backwards compatibility, this can be a boolean indicating whether to start the subscription immediately.
      *  This parameter is deprecated and will be removed in a future version.
      *   - `false`: Creates the subscription but does not start it (call `subscription.start()` manually).
@@ -550,7 +550,7 @@ export class NDK extends EventEmitter<{
     ): NDKSubscription {
         let _relaySet: NDKRelaySet | undefined = opts?.relaySet;
         let autoStart: boolean | NDKSubscriptionEventHandlers = _autoStart;
-        
+
         // For backwards compatibility, check if the first parameter is a relaySet
         if (autoStartOrRelaySet instanceof NDKRelaySet) {
             console.warn("relaySet is deprecated, use opts.relaySet instead. This will be removed in version v2.14.0");
@@ -559,9 +559,9 @@ export class NDK extends EventEmitter<{
         } else if (typeof autoStartOrRelaySet === "boolean" || typeof autoStartOrRelaySet === "object") {
             autoStart = autoStartOrRelaySet;
         }
-        
+
         // NDKSubscription constructor now handles relaySet/relayUrls from opts
-        const subscription = new NDKSubscription(this, filters, { relaySet: _relaySet, ...opts});
+        const subscription = new NDKSubscription(this, filters, { relaySet: _relaySet, ...opts });
         this.subManager.add(subscription);
 
         const pool = subscription.pool; // Use the pool determined by the subscription options

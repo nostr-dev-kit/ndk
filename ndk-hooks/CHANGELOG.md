@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk-hooks
 
+## 1.1.0
+
+### Minor Changes
+
+- Implement NDK session monitoring and storage management
+
 ## 1.0.2
 
 ### Patch Changes

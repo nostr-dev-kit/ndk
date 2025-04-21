@@ -128,7 +128,38 @@ export default UserCard;
 
 ## Managing User Sessions (Login & Multi-Account)
 
-`ndk-hooks` provides robust session management, supporting both single and multiple user accounts.
+`ndk-hooks` provides robust session management, supporting both single and multiple user accounts. You can use the session monitoring functionality to automatically persist and restore user sessions across page reloads.
+
+### Session Storage and Monitoring
+
+The `useNDKSessionMonitor` hook allows you to automatically persist and restore user sessions using a storage adapter. This is particularly useful for maintaining user state across page reloads or app restarts.
+
+```tsx
+import { useNDKSessionMonitor, NDKSessionLocalStorage } from '@nostr-dev-kit/ndk-hooks';
+
+// Create a storage adapter (localStorage for web apps)
+const sessionStorage = new NDKSessionLocalStorage();
+
+function App() {
+  
+  
+  // Set up session monitoring with the storage adapter
+  useNDKSessionMonitor(sessionStorage, {
+    // Optional configuration options
+    follows: true, // Automatically fetch and monitor the user's contact list
+  });
+  
+  // Rest of your app...
+}
+```
+
+The session monitor will:
+1. Automatically restore sessions from storage when your app loads
+2. Persist new sessions when users log in
+3. Update storage when sessions change
+4. Remove sessions from storage when users log out
+
+You can use this alongside the other session management hooks like `useNDKSessionLogin`, `useNDKSessionLogout`, and `useNDKSessionSwitch`.
 
 ## Subscribing to Events
 

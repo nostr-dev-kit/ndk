@@ -43,7 +43,8 @@ async function findPackageJsons(dir: string): Promise<PackageInfo[]> {
                 try {
                     const pkgRaw = await readFile(fullPath, "utf8");
                     const pkg = JSON.parse(pkgRaw);
-                    if (pkg.name && pkg.version) {
+                    // Skip packages with private: true
+                    if (pkg.name && pkg.version && !pkg.private) {
                         results.push({
                             name: pkg.name,
                             version: pkg.version,
@@ -78,7 +79,7 @@ async function getPublishedVersion(pkgName: string): Promise<string | null> {
     return new Promise((resolve) => {
         const proc = spawn("npm", ["info", pkgName, "version"]);
         let data = "";
-        proc.stdout.on("data", (chunk) => (data += chunk));
+        proc.stdout.on("data", (chunk) => { data += chunk; });
         proc.on("close", (code) => {
             if (code === 0) {
                 resolve(data.trim() || null);
@@ -142,7 +143,7 @@ async function main() {
             : chalk.gray("unpublished");
         const toVer = chalk.green(pkg.version);
         return {
-            title: `[ ] ${name} (${fromVer} → ${toVer})`,
+            title: `${name} (${fromVer} → ${toVer})`,
             value: pkg,
         };
     });

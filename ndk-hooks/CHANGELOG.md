@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk-hooks
 
+## 1.1.1
+
+### Patch Changes
+
+- export wallet hooks separately
+
 ## 1.1.0
 
 ### Minor Changes

@@ -2,6 +2,7 @@ import type { Hexpubkey, NDKEvent, NDKFilter, NDKRelay } from "@nostr-dev-kit/nd
 import { NDKCashuMintList, NDKKind, profileFromEvent } from "@nostr-dev-kit/ndk";
 import type { Draft } from "immer";
 import type { NDKSessionsState, NDKUserSession, SessionStartOptions } from "./types";
+import { useNDKMutes } from "../../mutes/store";
 
 function handleProfileEvent(event: NDKEvent, sessionDraft: Draft<NDKUserSession>): void {
     const profile = profileFromEvent(event);
@@ -110,7 +111,7 @@ function processEvent(event: NDKEvent, sessionDraft: Draft<NDKUserSession>, opts
                 break;
             case NDKKind.MuteList:
                 // Delegate to mute store instead of handling in session store
-                require("../../mutes/store").useNDKMutes.getState().loadMuteList(sessionDraft.pubkey, event);
+                useNDKMutes.getState().loadMuteList(sessionDraft.pubkey, event);
                 break;
             case 967:
                 handleKindFollowEvent(event, sessionDraft);
@@ -155,6 +156,7 @@ export const startSession = (
     pubkey: Hexpubkey,
     opts: SessionStartOptions,
 ): void => {
+    console.log('calling startSession', pubkey);
     const ndk = get().ndk;
     if (!ndk) {
         console.error("NDK instance not initialized in session store. Cannot start session.");
@@ -163,7 +165,6 @@ export const startSession = (
 
     const existingSession = get().sessions.get(pubkey);
     if (!existingSession) {
-        console.error(`Session for pubkey ${pubkey} does not exist. Cannot start subscription.`);
         return;
     }
 

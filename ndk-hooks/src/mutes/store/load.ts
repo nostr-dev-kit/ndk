@@ -16,7 +16,6 @@ export const loadMuteList = (
     event: NDKEvent,
 ) => {
     set((state: any) => {
-        console.log("Loading mute list for pubkey:", pubkey, "from event:", event.id);
         // Initialize mutes if they don't exist
         if (!state.mutes.has(pubkey)) {
             initMutes(set, get, pubkey);

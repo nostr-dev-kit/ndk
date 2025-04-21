@@ -11,7 +11,7 @@ export const isMuted = (event: NDKEvent, criteria: MuteCriteria | null | undefin
     // Handle null or undefined criteria
     if (!criteria) return false;
 
-    const { pubkeys, eventIds, hashtags, wordsRegex } = criteria;
+    const { pubkeys, eventIds, hashtags, words } = criteria;
 
     // Check pubkey first (most common and fastest check)
     if (pubkeys.has(event.pubkey)) return true;
@@ -27,8 +27,11 @@ export const isMuted = (event: NDKEvent, criteria: MuteCriteria | null | undefin
     }
 
     // Check content with regex (most expensive, do last)
-    if (wordsRegex && event.content) {
-        if (event.content.match(wordsRegex)) return true;
+    if (words && event.content) {
+        const wordsInContent = event.content.split(/\s+/).map((word) => word.toLowerCase());
+        for (const word of wordsInContent) {
+            if (words.has(word)) return true;
+        }
     }
 
     return false;

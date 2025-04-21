@@ -10,6 +10,7 @@ export const removeSession = (
 ): void => {
     const state = get();
     const sessionToRemove = state.sessions.get(pubkey);
+    const signerToRemove = state.signers.get(pubkey);
 
     if (!sessionToRemove) {
         console.warn(`No session found to remove for pubkey: ${pubkey}`);
@@ -27,30 +28,12 @@ export const removeSession = (
         // The subscription handle will be removed when the session is deleted below.
     }
 
-    const signerToRemove = sessionToRemove.signer;
     const wasActive = state.activePubkey === pubkey;
 
     set((draft) => {
-        // --- Remove Session ---
         draft.sessions.delete(pubkey);
-        console.log(`Session removed from store for pubkey: ${pubkey}`);
 
-        // --- Handle Signer Removal ---
-        if (signerToRemove) {
-            let signerInUse = false;
-            // Check if any *other* remaining session uses this signer
-            for (const session of draft.sessions.values()) {
-                if (session.signer === signerToRemove) {
-                    signerInUse = true;
-                    break;
-                }
-            }
-
-            if (!signerInUse) {
-                draft.signers.delete(pubkey);
-                console.log(`Signer for ${pubkey} removed as it's no longer used by any session.`);
-            }
-        }
+        draft.signers.delete(pubkey);
 
         // --- Handle Active Session Change ---
         if (wasActive) {
@@ -67,17 +50,12 @@ export const removeSession = (
 
             draft.activePubkey = nextActivePubkey;
 
+            const nextActiveSigner = nextActivePubkey ? draft.signers.get(nextActivePubkey) : undefined;
+
             // Update global NDK signer based on the new active session (or lack thereof)
             const ndk = draft.ndk; // Access NDK from draft
             if (ndk) {
-                if (nextActivePubkey) {
-                    const nextActiveSession = draft.sessions.get(nextActivePubkey);
-                    ndk.signer = nextActiveSession?.signer; // Set to new signer or undefined
-                    console.log(`Switched active session to ${nextActivePubkey}`);
-                } else {
-                    ndk.signer = undefined; // No sessions left, clear signer
-                    console.log("No remaining sessions, deactivated active user.");
-                }
+                ndk.signer = nextActiveSigner;
             }
         }
     });

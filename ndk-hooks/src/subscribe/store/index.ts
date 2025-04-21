@@ -12,7 +12,7 @@ export interface MuteCriteria {
     mutedPubkeys: Set<string>;
     mutedEventIds: Set<string>;
     mutedHashtags: Set<string>; // Lowercase
-    mutedWordsRegex: RegExp | null;
+    mutedWords: Set<string>;
 }
 
 export interface SubscribeStore<T extends NDKEvent> {

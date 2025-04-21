@@ -10,7 +10,6 @@ import type { Hexpubkey } from "@nostr-dev-kit/ndk";
  */
 export const isItemMuted = (get: () => NDKMutesState, pubkey: Hexpubkey, item: string, type: MuteItemType): boolean => {
     const userMutes = get().mutes.get(pubkey);
-    console.log("Checking if item is muted for pubkey:", pubkey, "item:", item, "type:", type);
     if (!userMutes) return false;
 
     switch (type) {

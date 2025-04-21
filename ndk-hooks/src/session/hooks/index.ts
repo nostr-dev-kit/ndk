@@ -8,7 +8,7 @@ import {
     type NDKUserProfile,
 } from "@nostr-dev-kit/ndk";
 import { useCallback, useMemo } from "react";
-import { useNDK, useNDKCurrentPubkey, useNDKCurrentUser } from "../../ndk/hooks";
+import { useNDK, useNDKCurrentPubkey } from "../../ndk/hooks";
 import { useProfileValue } from "../../profiles/hooks";
 import { useNDKSessions } from "../store";
 

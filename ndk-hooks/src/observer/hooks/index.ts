@@ -45,7 +45,7 @@ export function useObserver<T extends NDKEvent>(
     const sub = useRef<NDKSubscription | null>(null);
     const [events, setEvents] = useState<NDKEvent[]>([]);
     const buffer = useRef<NDKEvent[]>([]);
-    const bufferTimeout = useRef<NodeJS.Timeout | null>(null);
+    const bufferTimeout = useRef<NodeJS.Timeout | number | null>(null);
     const addedEventIds = useRef(new Set<string>());
     const muteFilter = useMuteFilter();
 

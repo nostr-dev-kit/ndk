@@ -34,7 +34,7 @@ export const useNDKWallet = () => {
     const setActiveWallet = useCallback(
         (wallet: NDKWallet | null) => {
             if (!ndk) return;
-            let debounceTimer: NodeJS.Timeout | undefined;
+            let debounceTimer: number | NodeJS.Timeout | undefined;
 
             storeSetActiveWallet(wallet);
             ndk.wallet = wallet ?? undefined;

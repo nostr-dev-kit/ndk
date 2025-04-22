@@ -35,7 +35,7 @@ export interface SubscribeStore<T extends NDKEvent> {
 export const createSubscribeStore = <T extends NDKEvent>(bufferMs: number | false = 30) => {
     const store = createStore<SubscribeStore<T>>((set, get) => {
         const buffer = new Map<string, T>();
-        let timeout: NodeJS.Timeout | null = null;
+        let timeout: number | NodeJS.Timeout | null = null;
 
         const flushBuffer = () => {
             const state = get();

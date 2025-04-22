@@ -1,6 +1,5 @@
-import NDK, { NDKUser, NDKEvent, NDKFilter, mapImetaTag } from '@nostr-dev-kit/ndk';
+import NDK, { NDKUser, NDKEvent, NDKFilter, mapImetaTag, NDKBlossomList, NDKImetaTag } from '@nostr-dev-kit/ndk';
 import { BlossomUploadOptions, ErrorCodes, SHA256Calculator } from '../types';
-import { getUserServerList } from '../servers/server-list';
 import { createAuthenticatedFetchOptions } from '../utils/auth';
 import { fetchWithRetry, extractResponseJson } from '../utils/http';
 import { defaultSHA256Calculator } from '../utils/sha256';
@@ -12,48 +11,9 @@ import {
 } from '../utils/errors';
 import { DebugLogger } from '../utils/logger';
 import { extractHashFromUrl } from '../healing/url-healing';
+import NDKBlossom from '../blossom';
 
 const logger = new DebugLogger('ndk:blossom:uploader');
-
-// NDK interface for imeta tags
-interface NDKImetaTag {
-    url?: string;
-    blurhash?: string;
-    dim?: string;
-    alt?: string;
-    m?: string;
-    x?: string;
-    size?: string;
-    fallback?: string[];
-    [key: string]: string | string[] | undefined;
-}
-
-/**
- * Get the dimensions of an image
- * 
- * @param file Image file
- * @returns Dimensions as "WxH" string or undefined
- */
-async function getImageDimensions(file: File): Promise<string | undefined> {
-    if (!file.type.startsWith('image/')) return undefined;
-
-    return new Promise((resolve) => {
-        const img = new Image();
-        const objectUrl = URL.createObjectURL(file);
-
-        img.onload = () => {
-            URL.revokeObjectURL(objectUrl);
-            resolve(`${img.width}x${img.height}`);
-        };
-
-        img.onerror = () => {
-            URL.revokeObjectURL(objectUrl);
-            resolve(undefined);
-        };
-
-        img.src = objectUrl;
-    });
-}
 
 /**
  * Upload a file to a specific Blossom server
@@ -113,19 +73,7 @@ export async function uploadToServer(
                     xhr.addEventListener('load', () => {
                         if (xhr.status >= 200 && xhr.status < 300) {
                             try {
-                                const response = JSON.parse(xhr.responseText);
-                                const url = `${baseUrl}/${hash}`;
-
-                                // Get image dimensions if it's an image
-                                getImageDimensions(file).then((dim) => {
-                                    resolve({
-                                        url,
-                                        size: file.size.toString(),
-                                        m: file.type,
-                                        x: hash,
-                                        dim
-                                    });
-                                });
+                                return JSON.parse(xhr.responseText);
                             } catch (error) {
                                 reject(new NDKBlossomServerError(
                                     `Invalid response from server: ${(error as Error).message}`,
@@ -190,16 +138,12 @@ export async function uploadToServer(
         // Determine the blob URL
         const url = `${baseUrl}/${hash}`;
 
-        // Get image dimensions if it's an image
-        const dim = await getImageDimensions(file);
-
         // Return the blob metadata
         return {
             url,
             size: file.size.toString(),
             m: file.type,
             x: hash,
-            dim
         };
     } catch (error) {
         if (error instanceof NDKBlossomServerError ||
@@ -219,33 +163,29 @@ export async function uploadToServer(
 /**
  * Upload a file to a user's Blossom servers
  * 
- * @param ndk NDK instance
  * @param file File to upload
  * @param options Upload options
  * @returns Blob metadata with imeta format
  */
 export async function uploadFile(
-    ndk: NDK,
+    ndkBlossom: NDKBlossom,
     file: File,
     options: BlossomUploadOptions = {}
 ): Promise<NDKImetaTag> {
     logger.debug(`Starting file upload`, { fileName: file.name, fileType: file.type, fileSize: file.size });
 
-    // Check if NDK has a signer
-    if (!ndk.signer) {
-        throw new NDKBlossomAuthError(
-            'No signer available to upload file',
-            ErrorCodes.NO_SIGNER
+    // Get user's Blossom server list
+    const serverList = await ndkBlossom.getServerList();
+    if (!serverList) {
+        throw new NDKBlossomUploadError(
+            'No Blossom server list found in user profile. Add servers to your profile before uploading.',
+            ErrorCodes.SERVER_LIST_EMPTY
         );
     }
 
-    // Get user's Blossom server list
-    let serverList: string[];
+    let serverUrls: string[];
     try {
-        const pubkey = (await ndk.signer.user()).pubkey;
-        const user = ndk.getUser({ pubkey });
-        const userServerList = await getUserServerList(ndk, user);
-        serverList = userServerList.servers;
+        serverUrls = serverList.servers;
     } catch (error) {
         if (error instanceof NDKBlossomNotFoundError) {
             // No server list found
@@ -258,7 +198,7 @@ export async function uploadFile(
     }
 
     // Check if server list is empty
-    if (!serverList.length) {
+    if (!serverUrls.length) {
         throw new NDKBlossomUploadError(
             'No Blossom servers found in user profile. Add servers to your profile before uploading.',
             ErrorCodes.SERVER_LIST_EMPTY
@@ -268,10 +208,10 @@ export async function uploadFile(
     // Try each server in order
     const errors: { serverUrl: string; error: Error }[] = [];
 
-    for (const serverUrl of serverList) {
+    for (const serverUrl of serverUrls) {
         try {
             // Try to upload to this server
-            const result = await uploadToServer(ndk, file, serverUrl, options);
+            const result = await uploadToServer(ndkBlossom.ndk, file, serverUrl, options);
             logger.debug(`Upload successful to ${serverUrl}`);
             return result;
         } catch (error) {
@@ -287,7 +227,7 @@ export async function uploadFile(
                 if (action === 'retry') {
                     // Retry this server
                     try {
-                        const result = await uploadToServer(ndk, file, serverUrl, options);
+                        const result = await uploadToServer(ndkBlossom.ndk, file, serverUrl, options);
                         logger.debug(`Retry upload successful to ${serverUrl}`);
                         return result;
                     } catch (retryError) {

@@ -1,4 +1,4 @@
-import NDK, { NDKUser, NDKImetaTag, NDKEvent, NDKKind } from '@nostr-dev-kit/ndk';
+import NDK, { NDKUser, NDKImetaTag, NDKEvent, NDKKind, NDKBlossomList, wrapEvent } from '@nostr-dev-kit/ndk';
 import {
     BlossomRetryOptions,
     BlossomServerConfig,
@@ -25,7 +25,7 @@ import { defaultSHA256Calculator } from './utils/sha256';
  * NDKBlossom class for interacting with the Blossom protocol
  */
 export class NDKBlossom {
-    private ndk: NDK;
+    public ndk: NDK;
     private serverConfigs: Map<string, BlossomServerConfig> = new Map();
     private retryOptions: BlossomRetryOptions;
     private debugMode: boolean = false;
@@ -100,6 +100,26 @@ export class NDKBlossom {
         return this.sha256Calculator;
     }
 
+    private _serverList: NDKBlossomList | undefined;
+
+    set serverList(serverList: NDKBlossomList) {
+        this._serverList = serverList;
+    }
+
+    public async getServerList(user?: NDKUser): Promise<NDKBlossomList | undefined> {
+        if (this._serverList) return this._serverList;
+
+        user ??= this.ndk.activeUser;
+        if (!user) throw new NDKBlossomError('No user available to fetch server list', 'NO_SIGNER');
+
+        const filter = { kinds: NDKBlossomList.kinds, authors: [user.pubkey] };
+        const event = await this.ndk.fetchEvent(filter);
+        if (!event) return undefined;
+        
+        this._serverList = wrapEvent(event) as NDKBlossomList;
+        return this._serverList;
+    }
+
     /**
      * Uploads a file to a Blossom server
      * @param file The file to upload
@@ -124,7 +144,7 @@ export class NDKBlossom {
             }
 
             // Upload the file
-            const result = await uploadFile(this.ndk, file, options);
+            const result = await uploadFile(this, file, options);
             return result;
         } catch (error) {
             // Handle upload failures
@@ -188,17 +208,11 @@ export class NDKBlossom {
      */
     public async listBlobs(user: NDKUser): Promise<NDKImetaTag[]> {
         // Get user's server list
-        const filter = { kinds: [NDKKind.BlossomList], authors: [user.pubkey] };
-        const event = await this.ndk.fetchEvent(filter);
+        const serverList = await this.getServerList();
 
         let serverUrls: string[] = [];
 
-        if (event) {
-            // Extract server URLs from tags
-            serverUrls = event.tags
-                .filter((tag: string[]) => tag[0] === 'server' && tag[1])
-                .map((tag: string[]) => tag[1]);
-        }
+        if (serverList) serverUrls = serverList.servers;
 
         if (serverUrls.length === 0) {
             this.logger.error(`No servers found for user ${user.pubkey}`);
@@ -206,7 +220,6 @@ export class NDKBlossom {
         }
 
         // Array to store all blobs
-        const blobs: NDKImetaTag[] = [];
         const blobMap = new Map<string, NDKImetaTag>(); // Use hash as key to deduplicate
 
         // Try each server

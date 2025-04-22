@@ -52,7 +52,6 @@
         "test:ui": "vitest --ui",
         "lint": "prettier --check . && eslint .",
         "compile": "tsc",
-        "prepare": "bun run build",
         "posttest": "bun run lint",
         "format": "prettier --write ."
     },

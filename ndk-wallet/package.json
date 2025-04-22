@@ -18,7 +18,6 @@
     },
     "scripts": {
         "dev": "bun run build --watch",
-        "prepare": "bun run build",
         "build": "tsup src/index.ts --format cjs,esm --dts",
         "clean": "rm -rf dist",
         "test": "bun test",

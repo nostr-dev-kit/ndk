@@ -58,7 +58,6 @@
         }
     },
     "scripts": {
-        "prepare": "bun run build",
         "build": "bob build",
         "test": "vitest run",
         "test:watch": "vitest",

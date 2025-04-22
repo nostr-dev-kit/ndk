@@ -38,6 +38,19 @@ jobs:
               run: bun install
             - name: Build app
               run: bun run build
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                node-version: '18'
+            - name: Install VitePress globally
+              run: npm install -g vitepress
+            - name: Create VitePress dist directory
+              run: mkdir -p docs/.vitepress/dist
+            - name: Copy documentation files
+              run: |
+                cp -r docs/* docs/.vitepress/dist/
+                # Remove VitePress config files from the dist directory
+                rm -rf docs/.vitepress/dist/.vitepress
             - name: Upload artifact
               uses: actions/upload-pages-artifact@v3
               with:

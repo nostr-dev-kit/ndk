@@ -9,7 +9,7 @@
     "excludePrivate": true,
     "excludeProtected": true,
     "categorizeByGroup": true,
-    "hideParameterTypesInTitle": false,
+    "tsconfig": "./tsconfig.typedoc.json",
     "navigationLinks": {
         "Github": "https://github.com/nostr-dev-kit/ndk",
         "NDK CLI": "https://github.com/nostr-dev-kit/ndk-cli",

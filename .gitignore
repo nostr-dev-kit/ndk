@@ -1,4 +1,5 @@
 **/node_modules
+ndk-core/docs
 **/build
 **/dist
 **/lib

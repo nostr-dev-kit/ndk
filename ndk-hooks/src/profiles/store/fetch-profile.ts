@@ -1,12 +1,14 @@
 import type { UserProfilesStore } from ".";
+import { UseProfileValueOptions } from "../types";
 import { inSeconds } from "../../utils/time";
 
 export const fetchProfileImplementation = (
     set: (fn: (state: UserProfilesStore) => Partial<UserProfilesStore>) => void,
     get: () => UserProfilesStore,
     pubkey?: string,
-    force?: boolean,
+    opts?: UseProfileValueOptions,
 ) => {
+    const force = opts?.refresh;
     const { ndk, profiles } = get();
     if (!ndk) {
         console.error("NDK instance is not initialized. Did you use useNDKInit at the beginning of your app?");
@@ -18,7 +20,7 @@ export const fetchProfileImplementation = (
     if (currentProfile && !force) return;
 
     const user = ndk.getUser({ pubkey: pubkey });
-    user.fetchProfile()
+    user.fetchProfile(opts?.subOpts)
         .then((profile) => {
             set((state) => {
                 const profiles = new Map(state.profiles);

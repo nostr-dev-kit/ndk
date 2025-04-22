@@ -124,6 +124,33 @@ function Signin() {
 
 Easily fetch and display Nostr user profiles using the `useProfileValue` hook. It handles caching and fetching logic automatically.
 
+### Using the `useProfileValue` Hook
+
+The `useProfileValue` hook accepts two parameters:
+- `pubkey`: The public key of the user whose profile you want to fetch
+- `options`: An optional object with the following properties:
+  - `refresh`: A boolean indicating whether to force a refresh of the profile
+  - `subOpts`: NDKSubscriptionOptions to customize how the profile is fetched from relays
+
+```tsx
+// Basic usage
+const profile = useProfileValue(pubkey);
+
+// Force refresh the profile
+const profile = useProfileValue(pubkey, { refresh: true });
+
+// With subscription options
+const profile = useProfileValue(pubkey, {
+  refresh: false,
+  subOpts: {
+    closeOnEose: true,
+    // Other NDKSubscriptionOptions...
+  }
+});
+```
+
+The hook returns the user's profile (NDKUserProfile) or undefined if the profile is not available yet.
+
 ```tsx
 // src/components/UserCard.tsx
 import React from 'react';
@@ -134,8 +161,11 @@ interface UserCardProps {
 }
 
 function UserCard({ pubkey }: UserCardProps) {
-  // Fetch profile, force refresh by passing `true` as second argument
-  const profile = useProfileValue(pubkey);
+  // Fetch profile with options
+  const profile = useProfileValue(pubkey, {
+    refresh: false, // Whether to force a refresh of the profile
+    subOpts: { /* NDKSubscriptionOptions */ } // Options for the subscription
+  });
 
   if (!profile) {
     return <div>Loading profile for {pubkey.substring(0, 8)}...</div>;
@@ -211,7 +241,7 @@ function NoteFeed() {
 
 // Helper component (replace with actual implementation)
 function UserProfileLink({ pubkey }: { pubkey: string }) {
-  const profile = useProfileValue(pubkey);
+  const profile = useProfileValue(pubkey, { refresh: true });
   return <span>{profile?.name || pubkey.substring(0, 8)}</span>;
 }
 

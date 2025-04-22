@@ -1,5 +1,6 @@
 import type NDK from "@nostr-dev-kit/ndk";
 import type { Hexpubkey, NDKUserProfile } from "@nostr-dev-kit/ndk";
+import { UseProfileValueOptions } from "../types";
 import { create } from "zustand";
 import { fetchProfileImplementation } from "./fetch-profile";
 import { initializeProfilesStore } from "./initialize";
@@ -38,9 +39,10 @@ interface UserProfilesStoreActions {
      * Fetch a profile from the NDK instance
      *
      * @param pubkey - The pubkey of the profile to fetch
-     * @param force - Whether to force the fetch even if the profile is already cached
+     * @param pubkey - The pubkey of the profile to fetch
+     * @param opts - Options for fetching the profile
      */
-    fetchProfile: (pubkey?: string, force?: boolean) => void;
+    fetchProfile: (pubkey?: string, opts?: UseProfileValueOptions) => void;
 }
 
 export type UserProfilesStore = UserProfilesItems & UserProfilesStoreActions;
@@ -53,5 +55,6 @@ export const useUserProfilesStore = create<UserProfilesStore>((set, get) => ({
     initialize: (ndk: NDK) => initializeProfilesStore(set, ndk),
     setProfile: (pubkey: string, profile: NDKUserProfile, cachedAt?: number) =>
         setProfileImplementation(set, pubkey, profile, cachedAt),
-    fetchProfile: (pubkey?: string, force?: boolean) => fetchProfileImplementation(set, get, pubkey, force),
+    fetchProfile: (pubkey?: string, opts?: UseProfileValueOptions) =>
+        fetchProfileImplementation(set, get, pubkey, opts),
 }));

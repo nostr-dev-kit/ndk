@@ -6,6 +6,7 @@ import {
     type NDKSigner,
     type NDKUserProfile,
 } from "@nostr-dev-kit/ndk";
+import { UseProfileValueOptions } from "../types";
 import { useCallback, useEffect } from "react";
 import { useShallow } from "zustand/shallow";
 import { type UserProfilesStore, useUserProfilesStore } from "../store"; // Corrected import path
@@ -14,28 +15,32 @@ import { useNDK } from "../../ndk/hooks";
 /**
  * @deprecated Use `useProfileValue` instead.
  */
+
 export function useProfile(pubkey?: Hexpubkey | undefined, forceRefresh?: boolean): NDKUserProfile | undefined {
-    return useProfileValue(pubkey, forceRefresh);
+    return useProfileValue(pubkey, { refresh: forceRefresh });
 }
 
 /**
  * Get a user's profile.
  * Otherwise, it fetches the profile from the global profile store.
  * @param pubkey - The pubkey of the user to fetch
- * @param refresh - Whether to force a refresh of the profile
+ * @param opts - Options for fetching the profile
  * @returns The user profile or undefined if not available
  */
-export function useProfileValue(pubkey?: Hexpubkey | undefined, refresh?: boolean): NDKUserProfile | undefined {
-    const fetchProfile = useUserProfilesStore((state: UserProfilesStore) => state.fetchProfile); // Added type for state
+export function useProfileValue(
+    pubkey?: Hexpubkey | undefined,
+    opts?: UseProfileValueOptions
+): NDKUserProfile | undefined {
+    const fetchProfile = useUserProfilesStore((state: UserProfilesStore) => state.fetchProfile);
 
     const profileSelector = useShallow((state: UserProfilesStore) => (pubkey ? state.profiles.get(pubkey) : undefined));
     const profile = useUserProfilesStore(profileSelector);
 
     useEffect(() => {
         if (pubkey) {
-            fetchProfile(pubkey, refresh);
+            fetchProfile(pubkey, opts);
         }
-    }, [pubkey, fetchProfile, refresh]);
+    }, [pubkey, fetchProfile, opts]);
 
     return profile;
 }

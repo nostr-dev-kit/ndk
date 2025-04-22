@@ -19,15 +19,16 @@ export const isMuted = (event: NDKEvent, criteria: MuteCriteria | null | undefin
     // Check event ID
     if (eventIds.has(event.id)) return true;
 
+    // Check tags
     if (eventIds.size > 0 || hashtags.size > 0) {
         for (const tag of event.tags) {
             if (tag[0] === "e" && eventIds.has(tag[1])) return true;
-            if (tag[1] === "t" && hashtags.has(tag[2])) return true;
+            if (tag[0] === "t" && hashtags.has(tag[1])) return true;
         }
     }
 
     // Check content with regex (most expensive, do last)
-    if (words && event.content) {
+    if (words && words.size > 0 && event.content) {
         const wordsInContent = event.content.split(/\s+/).map((word) => word.toLowerCase());
         for (const word of wordsInContent) {
             if (words.has(word)) return true;

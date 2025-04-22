@@ -18,7 +18,6 @@ const createMockStore = () => {
         initMutes: vi.fn((pubkey) => {
             if (!mutes.has(pubkey)) {
                 mutes.set(pubkey, {
-                    pubkey,
                     pubkeys: new Set(),
                     hashtags: new Set(),
                     words: new Set(),
@@ -66,7 +65,6 @@ describe("NDKMutesStore", () => {
             // Verify the user mutes structure
             const userMutes = mockStore.mutes.get(testPubkey);
             expect(userMutes).toBeDefined();
-            expect(userMutes?.pubkey).toBe(testPubkey);
             expect(userMutes?.pubkeys.size).toBe(0);
             expect(userMutes?.hashtags.size).toBe(0);
             expect(userMutes?.words.size).toBe(0);

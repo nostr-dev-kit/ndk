@@ -2,7 +2,8 @@ import { useCallback } from "react";
 import { NDKEvent, NDKUser } from "@nostr-dev-kit/ndk";
 import { useNDKCurrentPubkey } from "../../ndk/hooks";
 import { useNDKMutes } from "../store";
-import type { MuteItemType, PublishMuteListOptions } from "../store/types";
+import type { PublishMuteListOptions } from "../store/types";
+import { identifyMuteItem } from "../utils/identify-mute-item";
 
 /**
  * Type for items that can be muted.
@@ -25,29 +26,11 @@ export function useMuteItem(options?: PublishMuteListOptions): (item: MutableIte
                 return;
             }
 
-            let itemType: MuteItemType;
-            let value: string;
+            const identified = identifyMuteItem(item);
+            if (!identified) return;
 
-            if (item instanceof NDKEvent) {
-                itemType = "event";
-                value = item.id;
-            } else if (item instanceof NDKUser) {
-                itemType = "pubkey";
-                value = item.pubkey;
-            } else if (typeof item === "string") {
-                if (item.startsWith("#") && item.length > 1) {
-                    itemType = "hashtag";
-                    value = item.substring(1);
-                } else {
-                    itemType = "word";
-                    value = item;
-                }
-            } else {
-                console.warn("useMuteItem: Invalid item type provided.", item);
-                return;
-            }
-
-            muteItem(currentPubkey, value, itemType, options);
+            const { type, value } = identified;
+            muteItem(currentPubkey, value, type, options);
         },
         [currentPubkey, muteItem, options],
     );

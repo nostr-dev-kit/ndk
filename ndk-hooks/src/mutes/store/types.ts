@@ -17,7 +17,6 @@ export interface MuteCriteria {
  * User-specific mute data
  */
 export interface NDKUserMutes {
-    pubkey: Hexpubkey;
     pubkeys: Set<Hexpubkey>;
     hashtags: Set<string>;
     words: Set<string>;
@@ -58,6 +57,12 @@ export interface NDKMutesState {
      * Map of user mutes by pubkey
      */
     mutes: Map<Hexpubkey, NDKUserMutes>;
+
+    /**
+     * Extra mutes that won't be included in the published mute list
+     * This is at the application level, not per user
+     */
+    extraMutes: NDKUserMutes;
 
     /**
      * The active pubkey for mute operations
@@ -114,6 +119,12 @@ export interface NDKMutesState {
      * @param type The type of the item
      */
     isItemMuted: (pubkey: Hexpubkey, item: string, type: MuteItemType) => boolean;
+
+    /**
+     * Add multiple extra mute items that won't be included in the published mute list
+     * @param items Array of items to mute
+     */
+    addExtraMuteItems: (items: MuteableItem[]) => void;
 
     /**
      * Publish the mute list for a user

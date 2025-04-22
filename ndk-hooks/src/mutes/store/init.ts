@@ -11,7 +11,6 @@ export const initMutes = (set: (state: any) => void, get: () => NDKMutesState, p
     set((state: any) => {
         if (!state.mutes.has(pubkey)) {
             state.mutes.set(pubkey, {
-                pubkey,
                 pubkeys: new Set<Hexpubkey>(),
                 hashtags: new Set<string>(),
                 words: new Set<string>(),

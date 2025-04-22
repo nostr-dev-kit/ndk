@@ -10,23 +10,43 @@ import type { Hexpubkey } from "@nostr-dev-kit/ndk";
  */
 export const isItemMuted = (get: () => NDKMutesState, pubkey: Hexpubkey, item: string, type: MuteItemType): boolean => {
     const userMutes = get().mutes.get(pubkey);
-    if (!userMutes) return false;
+    const extraMutes = get().extraMutes;
+    
+    if (!userMutes && !extraMutes) return false;
 
     switch (type) {
         case "pubkey":
-            return userMutes.pubkeys.has(item);
+            return (userMutes && userMutes.pubkeys.has(item)) ||
+                   extraMutes.pubkeys.has(item);
         case "event":
-            return userMutes.eventIds.has(item);
-        case "hashtag":
-            return userMutes.hashtags.has(item.toLowerCase());
-        case "word": {
-            if (userMutes.words.size === 0) return false;
+            return (userMutes && userMutes.eventIds.has(item)) ||
+                   extraMutes.eventIds.has(item);
+        case "hashtag": {
             const lowerItem = item.toLowerCase();
-            for (const word of userMutes.words) {
-                if (lowerItem.includes(word.toLowerCase())) {
-                    return true;
+            return (userMutes && userMutes.hashtags.has(lowerItem)) ||
+                   extraMutes.hashtags.has(lowerItem);
+        }
+        case "word": {
+            const lowerItem = item.toLowerCase();
+            
+            // Check regular mutes
+            if (userMutes && userMutes.words.size > 0) {
+                for (const word of userMutes.words) {
+                    if (lowerItem.includes(word.toLowerCase())) {
+                        return true;
+                    }
                 }
             }
+            
+            // Check extra mutes
+            if (extraMutes.words.size > 0) {
+                for (const word of extraMutes.words) {
+                    if (lowerItem.includes(word.toLowerCase())) {
+                        return true;
+                    }
+                }
+            }
+            
             return false;
         }
         default:

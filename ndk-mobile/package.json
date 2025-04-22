@@ -1,12 +1,12 @@
 {
     "name": "@nostr-dev-kit/ndk-mobile",
-    "version": "0.6.13",
+    "version": "0.6.14",
     "description": "NDK Mobile",
     "private": false,
     "license": "MIT",
     "dependencies": {
         "@nostr-dev-kit/ndk": "2.14.2",
-        "@nostr-dev-kit/ndk-hooks": "1.1.11",
+        "@nostr-dev-kit/ndk-hooks": "1.1.12",
         "@nostr-dev-kit/ndk-wallet": "0.5.6",
         "@bacons/text-decoder": "^0.0.0",
         "react-native-get-random-values": "~1.11.0",

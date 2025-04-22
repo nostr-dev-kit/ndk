@@ -4,7 +4,7 @@ import { immer } from "zustand/middleware/immer";
 import type { Hexpubkey, NDKEvent } from "@nostr-dev-kit/ndk";
 import type { NDKMutesState, NDKUserMutes, MuteItemType, PublishMuteListOptions, MuteableItem } from "./types";
 import { initMutes } from "./init";
-import { getMuteCriteria } from "./get-mute-cruteria";
+import { getMuteCriteria } from "./get-mute-criteria";
 import { loadMuteList } from "./load";
 import { muteItem } from "./mute-item";
 import { unmuteItem } from "./unmute-item";

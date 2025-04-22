@@ -5,15 +5,17 @@
     "private": false,
     "license": "MIT",
     "dependencies": {
+        "@bacons/text-decoder": "^0.0.0",
+        "@cashu/cashu-ts": "^2",
         "@nostr-dev-kit/ndk": "2.14.2",
         "@nostr-dev-kit/ndk-hooks": "1.1.12",
         "@nostr-dev-kit/ndk-wallet": "0.5.6",
-        "@bacons/text-decoder": "^0.0.0",
+        "expo-image": "~2.0.7",
+        "expo-secure-store": "~14.0.1",
+        "expo-nip55": "*",
         "react-native-get-random-values": "~1.11.0",
         "typescript-lru-cache": "^2.0.0",
-        "zustand": "^5.0.2",
-        "@cashu/cashu-ts": "^2",
-        "expo-nip55": "*"
+        "zustand": "^5.0.2"
     },
     "peerDependencies": {
         "expo": "^52",

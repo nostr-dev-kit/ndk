@@ -94,7 +94,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
 
     private writeBuffer: { query: string; params: any[] }[] = [];
     private bufferFlushTimeout = 100; // milliseconds
-    private bufferFlushTimer: number | null = null;
+    private bufferFlushTimer: NodeJS.Timeout | null = null;
 
     // Mint management methods
     public getMintInfo = Mint.getMintInfo.bind(this);

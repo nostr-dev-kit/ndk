@@ -19,8 +19,7 @@
         "cs:pub": "changeset publish",
         "version-packages": "changeset version",
         "release": "turbo build --filter=docs^... && changeset publish",
-        "docs:preview": "vitepress preview",
-        "publish": "bun scripts/publish.ts"
+        "docs:preview": "vitepress preview"
     },
     "type": "module",
     "workspaces": [
@@ -43,7 +42,6 @@
     },
     "packageManager": "bun@1.0.0",
     "devDependencies": {
-        "chalk": "^5.4.1",
-        "prompts": "^2.4.2"
+        "turbo": "^2.5.0"
     }
 }

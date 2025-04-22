@@ -7,6 +7,7 @@
         "build:wallet": "cd ndk-wallet && bun run build",
         "build:hooks": "cd ndk-hooks && bun run build",
         "build:mobile": "cd ndk-mobile && bun run build",
+        "build:blossom": "cd ndk-blossom && bun run build",
         "dev": "turbo dev --no-cache --continue",
         "lint": "biome check .",
         "clean": "turbo clean && rm -rf node_modules",
@@ -32,7 +33,8 @@
         "ndk-mobile",
         "ndk-svelte-components",
         "ndk-wallet",
-        "ndk-test-utils"
+        "ndk-test-utils",
+        "ndk-blossom"
     ],
     "engines": {
         "node": ">=16.0"

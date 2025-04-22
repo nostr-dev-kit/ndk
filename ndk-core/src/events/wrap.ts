@@ -12,6 +12,7 @@ import { NDKStory } from "./kinds/story.js";
 import { NDKSubscriptionTier } from "./kinds/subscriptions/tier.js";
 import { NDKVideo } from "./kinds/video.js";
 import { NDKWiki } from "./kinds/wiki.js";
+import { NDKBlossomList } from "./kinds/blossom-list.js";
 
 export function wrapEvent<T extends NDKEvent>(event: NDKEvent): T | Promise<T> | NDKEvent {
     const eventWrappingMap = new Map();
@@ -29,6 +30,7 @@ export function wrapEvent<T extends NDKEvent>(event: NDKEvent): T | Promise<T> |
         NDKCashuToken,
         NDKList,
         NDKStory,
+        NDKBlossomList,
     ]) {
         for (const kind of klass.kinds) {
             eventWrappingMap.set(kind, klass);

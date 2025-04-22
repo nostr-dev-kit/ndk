@@ -2,7 +2,7 @@ import { enableMapSet } from "immer";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import type { Hexpubkey, NDKEvent } from "@nostr-dev-kit/ndk";
-import type { NDKMutesState, NDKUserMutes, MuteItemType, PublishMuteListOptions } from "./types";
+import type { NDKMutesState, NDKUserMutes, MuteItemType, PublishMuteListOptions, MuteableItem } from "./types";
 import { initMutes } from "./init";
 import { getMuteCriteria } from "./get-mute-cruteria";
 import { loadMuteList } from "./load";
@@ -11,6 +11,7 @@ import { unmuteItem } from "./unmute-item";
 import { setActivePubkey } from "./set-active-pubkey";
 import { publishMuteList } from "./publish";
 import { isItemMuted } from "./is-item-muted";
+import { addExtraMuteItems } from "./add-extra-mute-items";
 
 // Enable Map and Set support for Immer
 enableMapSet();
@@ -23,6 +24,12 @@ enableMapSet();
 // @ts-ignore - Using simpler types to avoid complex type issues with Immer and Zustand
 const mutesStateCreator = (set: (state: any) => void, get: () => NDKMutesState) => ({
     mutes: new Map<Hexpubkey, NDKUserMutes>(),
+    extraMutes: {
+        pubkeys: new Set<Hexpubkey>(),
+        hashtags: new Set<string>(),
+        words: new Set<string>(),
+        eventIds: new Set<string>(),
+    },
     activePubkey: null,
 
     initMutes: (pubkey: Hexpubkey) => initMutes(set, get, pubkey),
@@ -34,6 +41,8 @@ const mutesStateCreator = (set: (state: any) => void, get: () => NDKMutesState) 
     setActivePubkey: (pubkey: Hexpubkey | null) => setActivePubkey(set, pubkey),
     getMuteCriteria: (pubkey: Hexpubkey) => getMuteCriteria(get, pubkey),
     isItemMuted: (pubkey: Hexpubkey, item: string, type: MuteItemType) => isItemMuted(get, pubkey, item, type),
+    addExtraMuteItems: (items: MuteableItem[]) =>
+        addExtraMuteItems(set, get, items),
     publishMuteList: (pubkey: Hexpubkey) => publishMuteList(get, pubkey),
 });
 

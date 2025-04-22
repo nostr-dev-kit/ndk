@@ -32,10 +32,11 @@
         "test:watch": "bun test --watch"
     },
     "dependencies": {
-        "immer": "^10.1.1",
-        "zustand": "^5",
         "@nostr-dev-kit/ndk": "^2.14.2",
-        "@nostr-dev-kit/ndk-wallet": "0.5.6"
+        "@nostr-dev-kit/ndk-wallet": "0.5.6",
+        "@testing-library/react": "^16.3.0",
+        "immer": "^10.1.1",
+        "zustand": "^5"
     },
     "peerDependencies": {
         "react": "^18.0.0"

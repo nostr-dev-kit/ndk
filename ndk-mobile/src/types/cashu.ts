@@ -1,11 +1,5 @@
-import type { GetInfoResponse } from "@cashu/cashu-ts";
+export type MintInfoResponse = any;
 
-export type MintInfoResponse = GetInfoResponse;
-
-/**
- * Stored mint information with metadata
- * @interface StoredMintInfo
- */
 export interface StoredMintInfo {
     /** The mint URL */
     url: string;

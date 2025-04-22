@@ -1,14 +1,3 @@
-/**
- * @nostr-dev-kit/ndk-hooks
- *
- * React hooks for NDK.
- */
-import NDK from "@nostr-dev-kit/ndk";
-
-export * from "@nostr-dev-kit/ndk";
-
-export default NDK;
-
 export * from "./session/hooks/index.js";
 export * from "./session/hooks/signers.js";
 export * from "./session/hooks/sessions.js";
@@ -23,8 +12,12 @@ export * from "./profiles/hooks";
 export * from "./profiles/store";
 export * from "./mutes/hooks";
 
-// Common/Utility hooks and stores (adjust paths as needed if these are further organized)
 export * from "./observer/hooks";
 export * from "./subscribe/hooks";
 export * from "./session/hooks/use-available-sessions";
 export * from "./subscribe/store";
+export * from "./wallet/hooks";
+
+export * from "@nostr-dev-kit/ndk"
+import NDK from "@nostr-dev-kit/ndk";
+export default NDK;

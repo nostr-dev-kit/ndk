@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/ndk-test-utils",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Test helpers, mocks, and stubs for the Nostr Development Kit (NDK)",
     "type": "module",
     "main": "dist/index.js",
@@ -25,11 +25,11 @@
         "test:watch": "bun test --watch"
     },
     "peerDependencies": {
-        "@nostr-dev-kit/ndk": "workspace:*"
+        "@nostr-dev-kit/ndk": "2.14.2"
     },
     "devDependencies": {
         "typescript": "^5.8.2",
-        "@nostr-dev-kit/ndk": "workspace:*",
+        "@nostr-dev-kit/ndk": "2.14.2",
         "nostr-tools": "^2.7.1",
         "tsup": "^8.4.0"
     }

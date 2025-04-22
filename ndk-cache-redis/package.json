@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/ndk-cache-redis",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "type": "module",
     "main": "./dist/index.js",
     "module": "./dist/index.mjs",
@@ -13,7 +13,7 @@
         "clean": "rm -rf dist"
     },
     "dependencies": {
-        "@nostr-dev-kit/ndk": "workspace:*",
+        "@nostr-dev-kit/ndk": "2.14.2",
         "ioredis": "^5.0.0"
     },
     "devDependencies": {

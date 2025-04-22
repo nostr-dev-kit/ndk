@@ -1,5 +1,73 @@
 # @nostr-dev-kit/ndk-mobile
 
+## 0.6.13
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/ndk-wallet@0.5.6
+    - @nostr-dev-kit/ndk-hooks@1.1.11
+
+## 0.6.12
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/ndk-hooks@1.1.10
+
+## 0.6.11
+
+### Patch Changes
+
+- redo imports
+- Updated dependencies
+    - @nostr-dev-kit/ndk-hooks@1.1.9
+
+## 0.6.10
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.14.2
+    - @nostr-dev-kit/ndk-hooks@1.1.7
+    - @nostr-dev-kit/ndk-wallet@0.5.5
+
+## 0.6.9
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/ndk-hooks@1.1.6
+
+## 0.6.8
+
+### Patch Changes
+
+- update docs
+- Updated dependencies
+    - @nostr-dev-kit/ndk-hooks@1.1.5
+
+## 0.6.7
+
+### Patch Changes
+
+- fiddle with exports
+- Updated dependencies
+    - @nostr-dev-kit/ndk-hooks@1.1.3
+
+## 0.6.6
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/ndk-hooks@1.1.3
+
+## 0.6.5
+
+### Patch Changes
+
+- export NDK
+
 ## 0.6.4
 
 ### Patch Changes

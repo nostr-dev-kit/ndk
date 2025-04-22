@@ -9,7 +9,7 @@
     },
     "ndk-cache-dexie": {
       "name": "@nostr-dev-kit/ndk-cache-dexie",
-      "version": "2.6.2",
+      "version": "2.6.3",
       "dependencies": {
         "@nostr-dev-kit/ndk": "workspace:*",
         "debug": "^4.3.7",
@@ -31,7 +31,7 @@
     },
     "ndk-cache-nostr": {
       "name": "@nostr-dev-kit/ndk-cache-nostr",
-      "version": "0.1.14",
+      "version": "0.1.15",
       "dependencies": {
         "@nostr-dev-kit/ndk": "workspace:*",
         "debug": "^4.3.4",
@@ -47,7 +47,7 @@
     },
     "ndk-cache-redis": {
       "name": "@nostr-dev-kit/ndk-cache-redis",
-      "version": "0.0.3",
+      "version": "0.1.1",
       "dependencies": {
         "@nostr-dev-kit/ndk": "workspace:*",
         "ioredis": "^5.0.0",
@@ -61,7 +61,7 @@
     },
     "ndk-core": {
       "name": "@nostr-dev-kit/ndk",
-      "version": "2.14.1",
+      "version": "2.14.2",
       "dependencies": {
         "@noble/curves": "^1.6.0",
         "@noble/hashes": "^1.5.0",
@@ -91,15 +91,15 @@
     },
     "ndk-hooks": {
       "name": "@nostr-dev-kit/ndk-hooks",
-      "version": "1.0.2",
+      "version": "1.1.10",
       "dependencies": {
-        "@nostr-dev-kit/ndk": "workspace:*",
-        "@nostr-dev-kit/ndk-wallet": "workspace:*",
+        "@nostr-dev-kit/ndk": "^2.14.2",
+        "@nostr-dev-kit/ndk-wallet": "0.5.5",
         "immer": "^10.1.1",
         "zustand": "^5",
       },
       "devDependencies": {
-        "@nostr-dev-kit/ndk-test-utils": "workspace:*",
+        "@nostr-dev-kit/ndk-test-utils": "1.0.1",
         "@types/react": "^18.2.0",
         "jsdom": "^26.1.0",
         "react": "^18.3.1",
@@ -109,18 +109,18 @@
         "zustand": "^5.0.3",
       },
       "peerDependencies": {
-        "react": "^18.3.1",
+        "react": "^18.0.0",
       },
     },
     "ndk-mobile": {
       "name": "@nostr-dev-kit/ndk-mobile",
-      "version": "0.6.2",
+      "version": "0.6.12",
       "dependencies": {
         "@bacons/text-decoder": "^0.0.0",
         "@cashu/cashu-ts": "^2",
-        "@nostr-dev-kit/ndk": "workspace:*",
-        "@nostr-dev-kit/ndk-hooks": "workspace:*",
-        "@nostr-dev-kit/ndk-wallet": "workspace:*",
+        "@nostr-dev-kit/ndk": "2.14.2",
+        "@nostr-dev-kit/ndk-hooks": "1.1.10",
+        "@nostr-dev-kit/ndk-wallet": "0.5.5",
         "expo-nip55": "*",
         "react-native-get-random-values": "~1.11.0",
         "typescript-lru-cache": "^2.0.0",
@@ -139,7 +139,7 @@
     },
     "ndk-svelte": {
       "name": "@nostr-dev-kit/ndk-svelte",
-      "version": "2.4.7",
+      "version": "2.4.8",
       "dependencies": {
         "@nostr-dev-kit/ndk": "workspace:*",
       },
@@ -161,22 +161,22 @@
     },
     "ndk-test-utils": {
       "name": "@nostr-dev-kit/ndk-test-utils",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "devDependencies": {
-        "@nostr-dev-kit/ndk": "workspace:*",
+        "@nostr-dev-kit/ndk": "2.14.2",
         "nostr-tools": "^2.7.1",
         "tsup": "^8.4.0",
         "typescript": "^5.8.2",
       },
       "peerDependencies": {
-        "@nostr-dev-kit/ndk": "workspace:*",
+        "@nostr-dev-kit/ndk": "2.14.2",
       },
     },
     "ndk-wallet": {
       "name": "@nostr-dev-kit/ndk-wallet",
-      "version": "0.5.4",
+      "version": "0.5.5",
       "dependencies": {
-        "@nostr-dev-kit/ndk": "workspace:*",
+        "@nostr-dev-kit/ndk": "2.14.2",
         "debug": "^4.3.4",
         "light-bolt11-decoder": "^3.0.0",
         "tseep": "^1.1.1",
@@ -186,7 +186,7 @@
       "devDependencies": {
         "@cashu/cashu-ts": "2.1.0",
         "@cashu/crypto": "0.3.4",
-        "@nostr-dev-kit/ndk-test-utils": "workspace:*",
+        "@nostr-dev-kit/ndk-test-utils": "1.0.1",
         "@webbtc/webln-types": "^3.0.0",
         "nock": "^13.5.6",
         "tsup": "^8.4.0",

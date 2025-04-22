@@ -7,37 +7,71 @@
 The core of `ndk-hooks` revolves around a shared NDK instance. Initialize it once at the root of your application using the `useNDKInit` hook. This ensures all hooks and stores use the same NDK configuration.
 
 ```tsx
+// components/ndk.tsx
+'use client';
+
+// Here we will initialize NDK and configure it to be available throughout the application
+import NDK, { NDKNip07Signer, NDKPrivateKeySigner, NDKSigner } from "@nostr-dev-kit/ndk";
+
+// An optional in-browser cache adapter
+import NDKCacheAdapterDexie from "@nostr-dev-kit/ndk-cache-dexie";
+import { NDKSessionLocalStorage, useNDKInit, useNDKSessionMonitor } from "@nostr-dev-kit/ndk-hooks";
+import { useEffect } from "react";
+
+// Define explicit relays or use defaults
+const explicitRelayUrls = ["wss://relay.primal.net", "wss://nos.lol", "wss://purplepag.es"];
+
+// Setup Dexie cache adapter (Client-side only)
+let cacheAdapter: NDKCacheAdapterDexie | undefined;
+if (typeof window !== "undefined") {
+    cacheAdapter = new NDKCacheAdapterDexie({ dbName: "your-app-name" });
+}
+
+// Create the singleton NDK instance
+const ndk = new NDK({ explicitRelayUrls, cacheAdapter });
+
+// Connect to relays on initialization (client-side)
+if (typeof window !== "undefined") ndk.connect();
+
+// Use the browser's localStorage for session storage
+const sessionStorage = new NDKSessionLocalStorage();
+
+/**
+ * Use an NDKHeadless component to initialize NDK in order to prevent application-rerenders
+ * when there are changes to the NDK or session state.
+ * 
+ * Include this headless component in your app layout to initialize NDK correctly.
+ * @returns 
+ */
+export default function NDKHeadless() {
+    const initNDK = useNDKInit();
+
+    useNDKSessionMonitor(sessionStorage, {
+        profile: true, // automatically fetch profile information for the active user
+        follows: true, // automatically fetch follows of the active user
+    });
+
+    useEffect(() => {
+        if (ndk) initNDK(ndk);
+    }, [initNDK])
+    
+    return null;
+}   
+```
+
+```tsx
 // src/App.tsx
 import React, { useEffect } from 'react';
-import NDK from '@nostr-dev-kit/ndk';
 import { useNDKInit } from '@nostr-dev-kit/ndk-hooks';
+import { NDKSessionLocalStorage, useNDKSessionMonitor } from '@nostr-dev-kit/ndk-hooks';
 import YourMainApp from './YourMainApp'; // Your main application component
-
-// Configure your NDK instance
-const ndkInstance = new NDK({
-  explicitRelayUrls: ['wss://relay.nostr.band', 'wss://relay.damus.io'],
-  // Add other NDK options like signer, cache, etc.
-});
-ndkInstance.connect();
+import NDKHeadless from "components/ndk.tsx";
 
 function App() {
-  const initializeNDK = useNDKInit();
-
-  useEffect(() => {
-    const setupNDK = async () => {
-      // Initialize the NDK instance in all ndk-hooks stores
-      initializeNDK(ndkInstance);
-    };
-
-    setupNDK();
-
-    // Optional: Disconnect on component unmount
-    return () => {
-      ndkInstance.pool?.shutdown();
-    };
-  }, [initializeNDK]);
-
-  return <YourMainApp />;
+  return <ThemeProvider>
+    <NDKHeadless />
+    <YourMainApp />
+  </ThemeProvider>
 }
 
 export default App;
@@ -130,29 +164,6 @@ export default UserCard;
 
 `ndk-hooks` provides robust session management, supporting both single and multiple user accounts. You can use the session monitoring functionality to automatically persist and restore user sessions across page reloads.
 
-### Session Storage and Monitoring
-
-The `useNDKSessionMonitor` hook allows you to automatically persist and restore user sessions using a storage adapter. This is particularly useful for maintaining user state across page reloads or app restarts.
-
-```tsx
-import { useNDKSessionMonitor, NDKSessionLocalStorage } from '@nostr-dev-kit/ndk-hooks';
-
-// Create a storage adapter (localStorage for web apps)
-const sessionStorage = new NDKSessionLocalStorage();
-
-function App() {
-  
-  
-  // Set up session monitoring with the storage adapter
-  useNDKSessionMonitor(sessionStorage, {
-    // Optional configuration options
-    follows: true, // Automatically fetch and monitor the user's contact list
-  });
-  
-  // Rest of your app...
-}
-```
-
 The session monitor will:
 1. Automatically restore sessions from storage when your app loads
 2. Persist new sessions when users log in
@@ -212,8 +223,8 @@ export default NoteFeed;
 `ndk-hooks` provides several other specialized hooks:
 
 *   `useFollows(pubkey)`: Fetches the follow list for a user.
-*   `useNDKWallet()`: Manages wallet connections (e.g., NWC).
-*   `useNDKNutzapMonitor()`: Monitors for incoming zaps via Nutzap.
+*   `useNDKWallet()`: Manages wallet connections (e.g., NWC) (via `import of "@nostr-dev-kit/ndk-hooks/wallet"`)
+*   `useNDKNutzapMonitor()`: Monitors for incoming zaps via Nutzap. (via `import of "@nostr-dev-kit/ndk-hooks/wallet"`)
 
 ## Muting Users, Hashtags, Words, and Events
 

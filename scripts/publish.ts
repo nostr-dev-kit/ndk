@@ -109,12 +109,22 @@ async function main() {
         return;
     }
 
-    const toPublish: PackageInfo[] = [];
-
-    for (const pkg of packages) {
-        process.stdout.write(`Checking ${pkg.name}... `);
+    console.log("Checking package versions in parallel...");
+    
+    // Create an array of promises to check all packages in parallel
+    const checkPromises = packages.map(async (pkg) => {
         const published = await getPublishedVersion(pkg.name);
         pkg.publishedVersion = published;
+        return { pkg, published };
+    });
+    
+    // Wait for all checks to complete in parallel
+    const results = await Promise.all(checkPromises);
+    
+    // Process results
+    const toPublish: PackageInfo[] = [];
+    for (const { pkg, published } of results) {
+        process.stdout.write(`Package ${pkg.name}: `);
         if (!published) {
             console.log("Not published yet. Will publish.");
             toPublish.push(pkg);
@@ -145,6 +155,7 @@ async function main() {
         return {
             title: `${name} (${fromVer} → ${toVer})`,
             value: pkg,
+            selected: true, // Default all checkboxes to true
         };
     });
 

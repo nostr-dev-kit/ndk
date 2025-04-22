@@ -3,7 +3,7 @@
     "private": true,
     "scripts": {
         "prepare": "bun run build:core",
-        "build": "bun run build:core && bun run build:wallet && bun run build:hooks && bun run build:mobile",
+        "build": "turbo build",
         "build:core": "cd ndk-core && bun run build",
         "build:wallet": "cd ndk-wallet && bun run build",
         "build:hooks": "cd ndk-hooks && bun run build",

@@ -1,5 +1,56 @@
 # @nostr-dev-kit/ndk-hooks
 
+## 1.1.11
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/ndk-wallet@0.5.6
+
+## 1.1.10
+
+### Patch Changes
+
+- move peerdependency
+
+## 1.1.9
+
+### Patch Changes
+
+- redo imports
+
+## 1.1.7
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.14.2
+    - @nostr-dev-kit/ndk-wallet@0.5.5
+
+## 1.1.6
+
+### Patch Changes
+
+- bump
+
+## 1.1.5
+
+### Patch Changes
+
+- update docs
+
+## 1.1.3
+
+### Patch Changes
+
+- fiddle with exports
+
+## 1.1.3
+
+### Patch Changes
+
+- fix exports
+
 ## 1.1.1
 
 ### Patch Changes

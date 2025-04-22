@@ -136,7 +136,7 @@ export class NDKUser {
         const promiseWithTimeout = async <T>(promise: Promise<T>): Promise<T | undefined> => {
             if (!timeoutMs) return promise;
 
-            let timeoutId: NodeJS.Timeout | undefined;
+            let timeoutId: number | NodeJS.Timeout | undefined;
             const timeoutPromise = new Promise<never>((_, reject) => {
                 timeoutId = setTimeout(() => reject(new Error("Timeout")), timeoutMs);
             });

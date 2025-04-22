@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk-hooks
 
+## 1.1.13
+
+### Patch Changes
+
+- add subOptions to fetch profiles
+
 ## 1.1.12
 
 ### Patch Changes

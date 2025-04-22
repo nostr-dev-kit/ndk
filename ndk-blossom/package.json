@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/ndk-blossom",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Blossom protocol support for NDK (Nostr Development Kit)",
     "main": "dist/index.js",
     "module": "dist/index.js",

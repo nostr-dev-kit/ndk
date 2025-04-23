@@ -248,11 +248,57 @@ function UserProfileLink({ pubkey }: { pubkey: string }) {
 export default NoteFeed;
 ```
 
+### Fetching a Single Event with `useEvent`
+
+The `useEvent` hook allows you to fetch a single event by its ID or using a filter. This is useful when you need to retrieve and display a specific event, such as an article, note, or any other Nostr content.
+
+```tsx
+// src/components/EventViewer.tsx
+import React from 'react';
+import { NDKEvent, NDKArticle } from '@nostr-dev-kit/ndk';
+import { useEvent } from '@nostr-dev-kit/ndk-hooks';
+
+function EventViewer({ eventId }: { eventId: string }) {
+  // Fetch a single event by ID or filter
+  // Returns undefined while loading, null if not found, or the event if found
+  const event = useEvent<NDKArticle>(
+    eventId,
+    { wrap: true }, // Optional: UseSubscribeOptions
+    [] // Optional: dependencies array
+  );
+
+  if (event === undefined) return <div>Loading event...</div>;
+  if (event === null) return <div>Event not found</div>;
+
+  return (
+    <div>
+      <h2>{event.title || 'Untitled'}</h2>
+      <p>{event.content}</p>
+      <small>Published: {new Date(event.created_at! * 1000).toLocaleString()}</small>
+    </div>
+  );
+}
+
+export default EventViewer;
+```
+
+The `useEvent` hook accepts three parameters:
+- `idOrFilter`: A string ID, an NDKFilter object, or an array of NDKFilter objects to fetch the event
+- `opts`: Optional UseSubscribeOptions to customize how the event is fetched
+- `dependencies`: Optional array of dependencies that will trigger a refetch when changed
+
+The hook returns:
+- `undefined` while the event is being loaded
+- `null` if the event was not found
+- The event object if it was found
+
+This makes it easy to handle loading states and display appropriate UI for each case.
+
 ## Other Useful Hooks
 
 `ndk-hooks` provides several other specialized hooks:
 
-*   `useFollows(pubkey)`: Fetches the follow list for a user.
+*   `useFollows()`: Fetches the follow list of the active user.
 *   `useNDKWallet()`: Manages wallet connections (e.g., NWC) (via `import of "@nostr-dev-kit/ndk-hooks/wallet"`)
 *   `useNDKNutzapMonitor()`: Monitors for incoming zaps via Nutzap. (via `import of "@nostr-dev-kit/ndk-hooks/wallet"`)
 

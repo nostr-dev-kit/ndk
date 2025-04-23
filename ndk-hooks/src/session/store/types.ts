@@ -71,7 +71,7 @@ export interface NDKSessionsState {
     ndk?: NDK;
     sessions: Map<Hexpubkey, NDKUserSession>;
     signers: Map<Hexpubkey, NDKSigner>;
-    activePubkey: Hexpubkey | null;
+    activePubkey: Hexpubkey | undefined;
 
     /** Initializes the store with an NDK instance. */
     init: (ndk: NDK) => void;

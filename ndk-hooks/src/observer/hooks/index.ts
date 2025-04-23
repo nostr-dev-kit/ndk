@@ -119,7 +119,7 @@ export function useObserver<T extends NDKEvent>(
             isValid = false;
             stopFilters();
         };
-    }, [ndk, muteFilter, opts.includeMuted, ...dependencies, stopFilters]);
+    }, [ndk, ...dependencies]);
 
     return events as T[];
 }

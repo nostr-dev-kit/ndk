@@ -14,6 +14,8 @@ export * from "./mutes/hooks";
 
 export * from "./observer/hooks";
 export * from "./subscribe/hooks";
+export * from "./subscribe/hooks/subscribe.js";
+export * from "./subscribe/hooks/event.js";
 export * from "./session/hooks/use-available-sessions";
 export * from "./subscribe/store";
 export * from "./wallet/hooks";
@@ -21,3 +23,5 @@ export * from "./wallet/hooks";
 export * from "@nostr-dev-kit/ndk"
 import NDK from "@nostr-dev-kit/ndk";
 export default NDK;
+
+export const NDKHooksVersion = "0.1.0";

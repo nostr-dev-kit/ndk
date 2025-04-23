@@ -1,6 +1,7 @@
 import type { NDKMutesState, MuteItemType, PublishMuteListOptions } from "./types";
 import type { Hexpubkey } from "@nostr-dev-kit/ndk";
 import { initMutes } from "./init";
+import { computeMuteCriteria } from "../utils/compute-mute-criteria";
 
 /**
  * Mutes an item (pubkey, event, hashtag, or word) for a user in the mute store.
@@ -41,6 +42,11 @@ export const muteItem = (
             case "word":
                 userMutes.words.add(item);
                 break;
+        }
+
+        // Update muteCriteria if this is the active pubkey
+        if (state.activePubkey === pubkey) {
+            state.muteCriteria = computeMuteCriteria(userMutes, state.extraMutes);
         }
     });
 

@@ -70,6 +70,11 @@ export interface NDKMutesState {
     activePubkey: Hexpubkey | null;
 
     /**
+     * The combined mute criteria for the active pubkey and extraMutes
+     */
+    muteCriteria: MuteCriteria;
+
+    /**
      * Initialize mutes for a user
      * @param pubkey The pubkey of the user
      */

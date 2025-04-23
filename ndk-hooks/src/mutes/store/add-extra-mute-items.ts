@@ -1,6 +1,8 @@
 import type { NDKMutesState, MuteableItem } from "./types";
 import { identifyMuteItem } from "../utils/identify-mute-item";
 
+import { computeMuteCriteria } from "../utils/compute-mute-criteria";
+
 /**
  * Adds multiple extra mute items to the application-level mute store.
  * These items won't be included in the published mute list.
@@ -35,5 +37,8 @@ export const addExtraMuteItems = (
                     break;
             }
         }
+        // Update muteCriteria for the current active pubkey
+        const userMutes = state.activePubkey ? state.mutes.get(state.activePubkey) : undefined;
+        state.muteCriteria = computeMuteCriteria(userMutes, state.extraMutes);
     });
 };

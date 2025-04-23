@@ -18,18 +18,21 @@ enableMapSet();
 /**
  * Create the mute store
  */
-// Using any types to avoid complex type issues with Immer and Zustand
-// In a real implementation, we would properly type these
-// @ts-ignore - Using simpler types to avoid complex type issues with Immer and Zustand
 const mutesStateCreator = (set: (state: any) => void, get: () => NDKMutesState) => ({
-    mutes: new Map<Hexpubkey, NDKUserMutes>(),
+    mutes: new Map<string, NDKUserMutes>(),
     extraMutes: {
-        pubkeys: new Set<Hexpubkey>(),
+        pubkeys: new Set<string>(),
         hashtags: new Set<string>(),
         words: new Set<string>(),
         eventIds: new Set<string>(),
     },
     activePubkey: null,
+    muteCriteria: {
+        pubkeys: new Set<string>(),
+        eventIds: new Set<string>(),
+        hashtags: new Set<string>(),
+        words: new Set<string>(),
+    },
 
     initMutes: (pubkey: Hexpubkey) => initMutes(set, get, pubkey),
     loadMuteList: (pubkey: Hexpubkey, event: NDKEvent) => loadMuteList(set, get, pubkey, event),

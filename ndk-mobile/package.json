@@ -38,22 +38,35 @@
     "type": "module",
     "main": "dist/module/index.js",
     "react-native": "dist/module/index.js",
+    "types": "./dist/typescript/index.d.ts",
     "exports": {
         ".": {
             "import": {
-                "types": "./dist/typescript/module/index.d.ts",
+                "types": "./dist/typescript/index.d.ts",
+                "default": "./dist/module/index.js"
+            },
+            "require": {
+                "types": "./dist/typescript/index.d.ts",
                 "default": "./dist/module/index.js"
             }
         },
         "./components": {
             "import": {
-                "types": "./dist/typescript/module/components/index.d.ts",
+                "types": "./dist/typescript/components/index.d.ts",
+                "default": "./dist/module/components/index.js"
+            },
+            "require": {
+                "types": "./dist/typescript/components/index.d.ts",
                 "default": "./dist/module/components/index.js"
             }
         },
         "./components/relays": {
             "import": {
-                "types": "./dist/typescript/module/components/relays/index.d.ts",
+                "types": "./dist/typescript/components/relays/index.d.ts",
+                "default": "./dist/module/components/relays/index.js"
+            },
+            "require": {
+                "types": "./dist/typescript/components/relays/index.d.ts",
                 "default": "./dist/module/components/relays/index.js"
             }
         }
@@ -76,7 +89,10 @@
         "output": "dist",
         "targets": [
             [
-                "module"
+                "module",
+                {
+                    "esm": true
+                }
             ],
             [
                 "typescript",

@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { NDKEvent, NDKUser } from "@nostr-dev-kit/ndk";
 import { useNDKCurrentPubkey } from "../../ndk/hooks";
-import { useNDKMutes } from "../store";
+import { useActiveMuteCriteria } from "./use-mute-criteria";
 import type { MuteItemType } from "../store/types";
 import type { MutableItem } from "./use-mute-item";
 
@@ -11,12 +11,9 @@ import type { MutableItem } from "./use-mute-item";
  * @returns True if the item is muted, false otherwise
  */
 export function useIsItemMuted(item: MutableItem): boolean {
-    const currentPubkey = useNDKCurrentPubkey();
-    const isItemMuted = useNDKMutes((s) => s.isItemMuted);
+    const muteCriteria = useActiveMuteCriteria();
 
     return useMemo(() => {
-        if (!currentPubkey) return false;
-
         let itemType: MuteItemType;
         let value: string;
 
@@ -38,6 +35,17 @@ export function useIsItemMuted(item: MutableItem): boolean {
             return false;
         }
 
-        return isItemMuted(currentPubkey, value, itemType);
-    }, [currentPubkey, isItemMuted, item]);
+        switch (itemType) {
+            case "event":
+                return muteCriteria.eventIds.has(value);
+            case "pubkey":
+                return muteCriteria.pubkeys.has(value);
+            case "hashtag":
+                return muteCriteria.hashtags.has(value);
+            case "word":
+                return muteCriteria.words.has(value);
+            default:
+                return false;
+        }
+    }, [muteCriteria, item]);
 }

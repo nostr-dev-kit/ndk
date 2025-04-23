@@ -16,20 +16,13 @@ import { EMPTY_MUTE_CRITERIA } from "./use-mute-filter";
  * @returns The mute criteria for the active user, or empty criteria if no user is active.
  */
 export function useActiveMuteCriteria(): MuteCriteria {
-    const activePubkey = useNDKSessions((s) => s.activePubkey);
-
-    console.log("useActiveMuteCriteria", activePubkey);
-
-    // Get the raw criteria from the store
-    return useMuteCriteria(activePubkey);
+    return useNDKMutes((s: NDKMutesState) => s.muteCriteria);
 }
 
 export function useMuteCriteria(pubkey?: string): MuteCriteria {
-    const mutesForPubkey = useNDKMutes((s: NDKMutesState) => pubkey ? s.mutes.get(pubkey) : EMPTY_MUTE_CRITERIA);
+    const mutesForPubkey = useNDKMutes((s: NDKMutesState) => (pubkey ? s.mutes.get(pubkey) : EMPTY_MUTE_CRITERIA));
     const extraMutes = useNDKMutes((s: NDKMutesState) => s.extraMutes);
     const [criteria, setCriteria] = useState<MuteCriteria>(EMPTY_MUTE_CRITERIA);
-
-    console.log('calling into useMuteCriteria', pubkey);
 
     useEffect(() => {
         // combine the mutes from the store and the extra mutes
@@ -40,11 +33,9 @@ export function useMuteCriteria(pubkey?: string): MuteCriteria {
             pubkeys: new Set<string>([...(mutesForPubkey?.pubkeys || []), ...(extraMutes?.pubkeys || [])]),
         };
 
-        console.log('Combined mutes for pubkey:', pubkey, '->', combinedMutes);
-
         // set the criteria state to the combined mutes
         setCriteria(combinedMutes);
-    }, [pubkey,
+    }, [
         mutesForPubkey?.eventIds, mutesForPubkey?.hashtags, mutesForPubkey?.words, mutesForPubkey?.pubkeys,
         extraMutes?.eventIds, extraMutes?.hashtags, extraMutes?.words, extraMutes?.pubkeys
     ]);

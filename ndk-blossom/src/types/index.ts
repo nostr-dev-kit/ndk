@@ -1,4 +1,4 @@
-import { NDKEvent, NDKUser } from '@nostr-dev-kit/ndk';
+import { NDKEvent, NDKUser } from "@nostr-dev-kit/ndk";
 
 // Blob Descriptor returned from server
 export interface BlossomBlobDescriptor {
@@ -45,12 +45,12 @@ export interface BlossomUploadOptions {
     /**
      * Callback for upload progress
      */
-    onProgress?: (progress: { loaded: number, total: number }) => 'continue' | 'cancel';
+    onProgress?: (progress: { loaded: number; total: number }) => "continue" | "cancel";
 
     /**
      * Callback for server errors
      */
-    onServerError?: (error: Error, serverUrl: string) => 'retry' | 'skip';
+    onServerError?: (error: Error, serverUrl: string) => "retry" | "skip";
 
     /**
      * Custom SHA256 calculator implementation
@@ -64,7 +64,7 @@ export interface BlossomOptimizationOptions {
     height?: number;
     format?: string;
     quality?: number;
-    fit?: 'contain' | 'cover' | 'fill' | 'inside' | 'outside';
+    fit?: "contain" | "cover" | "fill" | "inside" | "outside";
     background?: string;
     blur?: number;
     sharpen?: boolean;
@@ -102,36 +102,36 @@ export interface BlossomBatchMirrorResults {
 // Error types
 export const ErrorCodes = {
     // Server Errors
-    SERVER_UNAVAILABLE: 'SERVER_UNAVAILABLE',
-    SERVER_ERROR: 'SERVER_ERROR',
-    SERVER_REJECTED: 'SERVER_REJECTED',
-    SERVER_TIMEOUT: 'SERVER_TIMEOUT',
-    SERVER_LIST_EMPTY: 'SERVER_LIST_EMPTY',
-    SERVER_INVALID_RESPONSE: 'SERVER_INVALID_RESPONSE',
+    SERVER_UNAVAILABLE: "SERVER_UNAVAILABLE",
+    SERVER_ERROR: "SERVER_ERROR",
+    SERVER_REJECTED: "SERVER_REJECTED",
+    SERVER_TIMEOUT: "SERVER_TIMEOUT",
+    SERVER_LIST_EMPTY: "SERVER_LIST_EMPTY",
+    SERVER_INVALID_RESPONSE: "SERVER_INVALID_RESPONSE",
 
     // Auth Errors
-    NO_SIGNER: 'NO_SIGNER',
-    AUTH_REQUIRED: 'AUTH_REQUIRED',
-    AUTH_INVALID: 'AUTH_INVALID',
-    AUTH_EXPIRED: 'AUTH_EXPIRED',
-    AUTH_REJECTED: 'AUTH_REJECTED',
+    NO_SIGNER: "NO_SIGNER",
+    AUTH_REQUIRED: "AUTH_REQUIRED",
+    AUTH_INVALID: "AUTH_INVALID",
+    AUTH_EXPIRED: "AUTH_EXPIRED",
+    AUTH_REJECTED: "AUTH_REJECTED",
 
     // Upload Errors
-    UPLOAD_TOO_LARGE: 'UPLOAD_TOO_LARGE',
-    UPLOAD_INVALID_TYPE: 'UPLOAD_INVALID_TYPE',
-    UPLOAD_FAILED: 'UPLOAD_FAILED',
-    ALL_SERVERS_FAILED: 'ALL_SERVERS_FAILED',
+    UPLOAD_TOO_LARGE: "UPLOAD_TOO_LARGE",
+    UPLOAD_INVALID_TYPE: "UPLOAD_INVALID_TYPE",
+    UPLOAD_FAILED: "UPLOAD_FAILED",
+    ALL_SERVERS_FAILED: "ALL_SERVERS_FAILED",
 
     // Not Found Errors
-    BLOB_NOT_FOUND: 'BLOB_NOT_FOUND',
-    USER_SERVER_LIST_NOT_FOUND: 'USER_SERVER_LIST_NOT_FOUND',
+    BLOB_NOT_FOUND: "BLOB_NOT_FOUND",
+    USER_SERVER_LIST_NOT_FOUND: "USER_SERVER_LIST_NOT_FOUND",
 
     // Optimization Errors
-    SERVER_UNSUPPORTED: 'SERVER_UNSUPPORTED',
-    FORMAT_UNSUPPORTED: 'FORMAT_UNSUPPORTED',
+    SERVER_UNSUPPORTED: "SERVER_UNSUPPORTED",
+    FORMAT_UNSUPPORTED: "FORMAT_UNSUPPORTED",
 } as const;
 
-export type ErrorCode = typeof ErrorCodes[keyof typeof ErrorCodes];
+export type ErrorCode = (typeof ErrorCodes)[keyof typeof ErrorCodes];
 
 /**
  * Interface for SHA256 calculation implementation
@@ -139,9 +139,9 @@ export type ErrorCode = typeof ErrorCodes[keyof typeof ErrorCodes];
 export interface SHA256Calculator {
     /**
      * Calculate SHA256 hash of a file
-     * 
+     *
      * @param file File to hash
      * @returns Hash as hex string
      */
     calculateSha256(file: File): Promise<string>;
-} 
+}

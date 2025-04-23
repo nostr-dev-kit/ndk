@@ -94,10 +94,6 @@ function processEvent(event: NDKEvent, sessionDraft: Draft<NDKUserSession>, opts
     const knownEventForKind = sessionDraft.events?.get(event.kind);
 
     if (!(!knownEventForKind || knownEventForKind.created_at < event.created_at) && event.isReplaceable()) {
-        console.log("We already have an event of kind " + event.kind + " that is newer", {
-            knownEvent: knownEventForKind.created_at,
-            incomingEvent: event.created_at,
-        });
         return;
     }
 
@@ -156,7 +152,6 @@ export const startSession = (
     pubkey: Hexpubkey,
     opts: SessionStartOptions,
 ): void => {
-    console.log("calling startSession", pubkey);
     const ndk = get().ndk;
     if (!ndk) {
         console.error("NDK instance not initialized in session store. Cannot start session.");

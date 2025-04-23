@@ -138,10 +138,8 @@ export function useNDKSessionMonitor(sessionStorage: NDKSessionStorageAdapter | 
     // Effect to persist active pubkey changes and start session
     // biome-ignore lint/correctness/useExhaustiveDependencies: <no need to depend on session start/stop or opts>
     useEffect(() => {
-        console.log("Current user pubkey:", currentUser?.pubkey);
         if (!ndk || !isInitialized.current || !sessionStorage) return;
         if (currentUser?.pubkey === currentActivePubkey.current) {
-            console.log("No change in active pubkey, skipping update.");
             return;
         }
 
@@ -156,9 +154,7 @@ export function useNDKSessionMonitor(sessionStorage: NDKSessionStorageAdapter | 
                         }
                         currentActivePubkey.current = currentUser.pubkey;
                     }
-                    console.log("Storing active pubkey:", currentUser.pubkey);
                     storeActivePubkey(sessionStorage, currentUser.pubkey);
-                    console.log("Starting session for active pubkey:", currentUser.pubkey);
                     await startSession(currentUser.pubkey, opts || {});
                 } catch (error) {
                     console.error(`Failed to start session for active pubkey ${currentUser?.pubkey}:`, error);

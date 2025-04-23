@@ -1,5 +1,23 @@
 # @nostr-dev-kit/ndk-hooks
 
+## 1.1.16
+
+### Patch Changes
+
+- bump
+
+## 1.1.15
+
+### Patch Changes
+
+- bump
+
+## 1.1.14
+
+### Patch Changes
+
+- make mute calculation more efficient
+
 ## 1.1.13
 
 ### Patch Changes

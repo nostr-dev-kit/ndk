@@ -1,15 +1,15 @@
-import NDK, { NDKUser, NDKKind, NDKBlossomList, wrapEvent, } from '@nostr-dev-kit/ndk';
-import { checkBlobExists } from '../utils/http';
-import { NDKBlossomNotFoundError } from '../utils/errors';
-import { ErrorCodes } from '../types';
-import { DebugLogger } from '../utils/logger';
-import { findHashInNostr } from '../upload/uploader';
+import NDK, { NDKUser, NDKKind, NDKBlossomList, wrapEvent } from "@nostr-dev-kit/ndk";
+import { checkBlobExists } from "../utils/http";
+import { NDKBlossomNotFoundError } from "../utils/errors";
+import { ErrorCodes } from "../types";
+import { DebugLogger } from "../utils/logger";
+import { findHashInNostr } from "../upload/uploader";
 
-const logger = new DebugLogger('ndk:blossom:url-healing');
+const logger = new DebugLogger("ndk:blossom:url-healing");
 
 /**
  * Extract hash from a Blossom URL
- * 
+ *
  * @param url URL to extract hash from
  * @returns SHA-256 hash or undefined if not found
  */
@@ -21,11 +21,11 @@ export function extractHashFromUrl(url: string): string | undefined {
         const pathname = urlObj.pathname;
 
         // Extract the hash
-        const parts = pathname.split('/');
+        const parts = pathname.split("/");
         const lastPart = parts[parts.length - 1];
 
         // Remove file extension if present
-        const hash = lastPart.includes('.') ? lastPart.split('.')[0] : lastPart;
+        const hash = lastPart.includes(".") ? lastPart.split(".")[0] : lastPart;
 
         // Validate that it looks like a SHA-256 hash (64 hex chars)
         if (/^[a-f0-9]{64}$/i.test(hash)) {
@@ -50,16 +50,14 @@ async function tryUrls(urls: string[], skipUrl?: string): Promise<string | undef
     if (urls.length === 0) return undefined;
 
     // Filter out the URL to skip
-    const filteredUrls = skipUrl
-        ? urls.filter(url => url !== skipUrl)
-        : urls;
+    const filteredUrls = skipUrl ? urls.filter((url) => url !== skipUrl) : urls;
 
     if (filteredUrls.length === 0) return undefined;
 
     // Try each URL
     for (const url of filteredUrls) {
         try {
-            const exists = await checkBlobExists(url, '');
+            const exists = await checkBlobExists(url, "");
             if (exists) {
                 logger.debug(`Found working URL: ${url}`);
                 return url;
@@ -77,7 +75,7 @@ async function tryUrls(urls: string[], skipUrl?: string): Promise<string | undef
 
 /**
  * Fix a Blossom URL by finding an alternative server with the same blob
- * 
+ *
  * @param ndk NDK instance
  * @param user NDK user
  * @param url URL to fix
@@ -95,7 +93,7 @@ export async function fixUrl(ndk: NDK, user: NDKUser, url: string): Promise<stri
 
     // Check if the original URL works
     try {
-        const exists = await checkBlobExists(url, '');
+        const exists = await checkBlobExists(url, "");
         if (exists) {
             logger.debug(`Original URL works, no need to fix: ${url}`);
             return url;
@@ -132,7 +130,7 @@ export async function fixUrl(ndk: NDK, user: NDKUser, url: string): Promise<stri
         for (const serverUrl of serverUrls) {
             try {
                 // Normalize server URL
-                const baseUrl = serverUrl.endsWith('/') ? serverUrl.slice(0, -1) : serverUrl;
+                const baseUrl = serverUrl.endsWith("/") ? serverUrl.slice(0, -1) : serverUrl;
                 const newUrl = `${baseUrl}/${hash}`;
 
                 // Check if this server has the blob
@@ -170,7 +168,7 @@ export async function fixUrl(ndk: NDK, user: NDKUser, url: string): Promise<stri
 
 /**
  * Get a blob by its hash from one of a user's servers
- * 
+ *
  * @param ndk NDK instance
  * @param user NDK user
  * @param hash SHA-256 hash of the blob
@@ -190,7 +188,7 @@ export async function getBlobUrlByHash(ndk: NDK, user: NDKUser, hash: string): P
         if (event) {
             // Extract server URLs from tags
             serverUrls = event.tags
-                .filter((tag: string[]) => tag[0] === 'server' && tag[1])
+                .filter((tag: string[]) => tag[0] === "server" && tag[1])
                 .map((tag: string[]) => tag[1]);
         }
 
@@ -206,7 +204,7 @@ export async function getBlobUrlByHash(ndk: NDK, user: NDKUser, hash: string): P
 
             throw new NDKBlossomNotFoundError(
                 `No servers found for user ${user.pubkey}`,
-                ErrorCodes.USER_SERVER_LIST_NOT_FOUND
+                ErrorCodes.USER_SERVER_LIST_NOT_FOUND,
             );
         }
 
@@ -214,7 +212,7 @@ export async function getBlobUrlByHash(ndk: NDK, user: NDKUser, hash: string): P
         for (const serverUrl of serverUrls) {
             try {
                 // Normalize server URL
-                const baseUrl = serverUrl.endsWith('/') ? serverUrl.slice(0, -1) : serverUrl;
+                const baseUrl = serverUrl.endsWith("/") ? serverUrl.slice(0, -1) : serverUrl;
                 const url = `${baseUrl}/${hash}`;
 
                 // Check if this server has the blob
@@ -232,7 +230,7 @@ export async function getBlobUrlByHash(ndk: NDK, user: NDKUser, hash: string): P
         // If we get here, the hash wasn't found on any server
         throw new NDKBlossomNotFoundError(
             `Blob with hash ${hash} not found on any of user's servers`,
-            ErrorCodes.BLOB_NOT_FOUND
+            ErrorCodes.BLOB_NOT_FOUND,
         );
     } catch (error) {
         if (error instanceof NDKBlossomNotFoundError) {
@@ -250,7 +248,7 @@ export async function getBlobUrlByHash(ndk: NDK, user: NDKUser, hash: string): P
             `Failed to get blob URL: ${(error as Error).message}`,
             ErrorCodes.BLOB_NOT_FOUND,
             undefined,
-            error as Error
+            error as Error,
         );
     }
-} 
+}

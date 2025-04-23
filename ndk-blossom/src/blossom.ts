@@ -1,25 +1,25 @@
-import NDK, { NDKUser, NDKImetaTag, NDKEvent, NDKKind, NDKBlossomList, wrapEvent } from '@nostr-dev-kit/ndk';
+import NDK, { NDKUser, NDKImetaTag, NDKEvent, NDKKind, NDKBlossomList, wrapEvent } from "@nostr-dev-kit/ndk";
 import {
     BlossomRetryOptions,
     BlossomServerConfig,
     BlossomUploadOptions,
     BlossomOptimizationOptions,
-    SHA256Calculator
-} from './types';
+    SHA256Calculator,
+} from "./types";
 import {
     NDKBlossomError,
     NDKBlossomUploadError,
     NDKBlossomServerError,
     NDKBlossomAuthError,
     NDKBlossomNotFoundError,
-    NDKBlossomOptimizationError
-} from './utils/errors';
-import { DEFAULT_RETRY_OPTIONS } from './utils/constants';
-import { Logger, DebugLogger, CustomLogger } from './utils/logger';
-import { uploadFile } from './upload/uploader';
-import { fixUrl, getBlobUrlByHash } from './healing/url-healing';
-import { checkBlobExists, fetchWithRetry } from './utils/http';
-import { defaultSHA256Calculator } from './utils/sha256';
+    NDKBlossomOptimizationError,
+} from "./utils/errors";
+import { DEFAULT_RETRY_OPTIONS } from "./utils/constants";
+import { Logger, DebugLogger, CustomLogger } from "./utils/logger";
+import { uploadFile } from "./upload/uploader";
+import { fixUrl, getBlobUrlByHash } from "./healing/url-healing";
+import { checkBlobExists, fetchWithRetry } from "./utils/http";
+import { defaultSHA256Calculator } from "./utils/sha256";
 
 /**
  * NDKBlossom class for interacting with the Blossom protocol
@@ -40,7 +40,11 @@ export class NDKBlossom {
     /**
      * Callback for upload progress
      */
-    public onUploadProgress?: (progress: { loaded: number, total: number }, file: File, serverUrl: string) => 'continue' | 'cancel';
+    public onUploadProgress?: (
+        progress: { loaded: number; total: number },
+        file: File,
+        serverUrl: string,
+    ) => "continue" | "cancel";
 
     /**
      * Callback for mirror progress
@@ -110,12 +114,12 @@ export class NDKBlossom {
         if (this._serverList) return this._serverList;
 
         user ??= this.ndk.activeUser;
-        if (!user) throw new NDKBlossomError('No user available to fetch server list', 'NO_SIGNER');
+        if (!user) throw new NDKBlossomError("No user available to fetch server list", "NO_SIGNER");
 
         const filter = { kinds: NDKBlossomList.kinds, authors: [user.pubkey] };
         const event = await this.ndk.fetchEvent(filter);
         if (!event) return undefined;
-        
+
         this._serverList = wrapEvent(event) as NDKBlossomList;
         return this._serverList;
     }
@@ -132,9 +136,9 @@ export class NDKBlossom {
             if (this.onUploadProgress) {
                 options.onProgress = (progress) => {
                     if (this.onUploadProgress) {
-                        return this.onUploadProgress(progress, file, 'unknown');
+                        return this.onUploadProgress(progress, file, "unknown");
                     }
-                    return 'continue';
+                    return "continue";
                 };
             }
 
@@ -149,9 +153,11 @@ export class NDKBlossom {
         } catch (error) {
             // Handle upload failures
             if (this.onUploadFailed && error instanceof Error) {
-                this.onUploadFailed(error.message,
+                this.onUploadFailed(
+                    error.message,
                     error instanceof NDKBlossomUploadError ? error.serverUrl : undefined,
-                    file);
+                    file,
+                );
             }
 
             // Re-throw the error
@@ -180,9 +186,9 @@ export class NDKBlossom {
         } catch (error) {
             throw new NDKBlossomNotFoundError(
                 `Failed to fetch blob: ${(error as Error).message}`,
-                'BLOB_NOT_FOUND',
+                "BLOB_NOT_FOUND",
                 url,
-                error as Error
+                error as Error,
             );
         }
     }
@@ -226,7 +232,7 @@ export class NDKBlossom {
         for (const serverUrl of serverUrls) {
             try {
                 // Normalize server URL
-                const baseUrl = serverUrl.endsWith('/') ? serverUrl.slice(0, -1) : serverUrl;
+                const baseUrl = serverUrl.endsWith("/") ? serverUrl.slice(0, -1) : serverUrl;
                 const url = `${baseUrl}/list/${user.pubkey}`;
 
                 // Fetch blobs
@@ -251,7 +257,7 @@ export class NDKBlossom {
                             x: blob.sha256,
                             dim: blob.width && blob.height ? `${blob.width}x${blob.height}` : undefined,
                             blurhash: blob.blurhash,
-                            alt: blob.alt
+                            alt: blob.alt,
                         };
 
                         // Add to map using hash as key for deduplication
@@ -277,10 +283,7 @@ export class NDKBlossom {
      */
     public async deleteBlob(hash: string): Promise<boolean> {
         if (!this.ndk.signer) {
-            throw new NDKBlossomAuthError(
-                'No signer available to delete blob',
-                'NO_SIGNER'
-            );
+            throw new NDKBlossomAuthError("No signer available to delete blob", "NO_SIGNER");
         }
 
         // Get user's pubkey
@@ -295,7 +298,7 @@ export class NDKBlossom {
         if (event) {
             // Extract server URLs from tags
             serverUrls = event.tags
-                .filter((tag: string[]) => tag[0] === 'server' && tag[1])
+                .filter((tag: string[]) => tag[0] === "server" && tag[1])
                 .map((tag: string[]) => tag[1]);
         }
 
@@ -311,12 +314,12 @@ export class NDKBlossom {
         for (const serverUrl of serverUrls) {
             try {
                 // Normalize server URL
-                const baseUrl = serverUrl.endsWith('/') ? serverUrl.slice(0, -1) : serverUrl;
+                const baseUrl = serverUrl.endsWith("/") ? serverUrl.slice(0, -1) : serverUrl;
                 const url = `${baseUrl}/${hash}`;
 
                 // Create authenticated request
                 const options = await createAuthenticatedFetchOptions(this.ndk, serverUrl, {
-                    method: 'DELETE'
+                    method: "DELETE",
                 });
 
                 // Send delete request
@@ -352,7 +355,7 @@ export class NDKBlossom {
     public setRetryOptions(options: Partial<BlossomRetryOptions>): void {
         this.retryOptions = {
             ...this.retryOptions,
-            ...options
+            ...options,
         };
     }
 
@@ -376,14 +379,10 @@ export class NDKBlossom {
             // Parse the URL and extract relevant parts
             const urlObj = new URL(url);
             const baseUrl = `${urlObj.protocol}//${urlObj.host}`;
-            const hash = urlObj.pathname.split('/').pop();
+            const hash = urlObj.pathname.split("/").pop();
 
             if (!hash) {
-                throw new NDKBlossomOptimizationError(
-                    'Invalid URL, no hash found',
-                    'BLOB_NOT_FOUND',
-                    url
-                );
+                throw new NDKBlossomOptimizationError("Invalid URL, no hash found", "BLOB_NOT_FOUND", url);
             }
 
             // Construct the media URL
@@ -407,8 +406,8 @@ export class NDKBlossom {
             if (!response.ok) {
                 throw new NDKBlossomOptimizationError(
                     `Failed to get optimized blob: ${response.status} ${response.statusText}`,
-                    'SERVER_REJECTED',
-                    url
+                    "SERVER_REJECTED",
+                    url,
                 );
             }
 
@@ -420,9 +419,9 @@ export class NDKBlossom {
 
             throw new NDKBlossomOptimizationError(
                 `Failed to get optimized blob: ${(error as Error).message}`,
-                'SERVER_UNSUPPORTED',
+                "SERVER_UNSUPPORTED",
                 url,
-                error as Error
+                error as Error,
             );
         }
     }
@@ -437,14 +436,10 @@ export class NDKBlossom {
         // Parse the URL and extract relevant parts
         const urlObj = new URL(url);
         const baseUrl = `${urlObj.protocol}//${urlObj.host}`;
-        const hash = urlObj.pathname.split('/').pop();
+        const hash = urlObj.pathname.split("/").pop();
 
         if (!hash) {
-            throw new NDKBlossomOptimizationError(
-                'Invalid URL, no hash found',
-                'BLOB_NOT_FOUND',
-                url
-            );
+            throw new NDKBlossomOptimizationError("Invalid URL, no hash found", "BLOB_NOT_FOUND", url);
         }
 
         // Construct the media URL
@@ -471,25 +466,25 @@ export class NDKBlossom {
      * @param sizes Array of size configurations
      * @returns A srcset string
      */
-    public generateSrcset(url: string, sizes: { width: number, format?: string }[]): string {
+    public generateSrcset(url: string, sizes: { width: number; format?: string }[]): string {
         const srcset: string[] = [];
 
         // Parse the URL and extract relevant parts
         const urlObj = new URL(url);
         const baseUrl = `${urlObj.protocol}//${urlObj.host}`;
-        const hash = urlObj.pathname.split('/').pop();
+        const hash = urlObj.pathname.split("/").pop();
 
         if (!hash) {
-            return ''; // Invalid URL, can't generate srcset
+            return ""; // Invalid URL, can't generate srcset
         }
 
         // Generate a srcset entry for each size
         for (const size of sizes) {
             // Build the query parameters
             const params = new URLSearchParams();
-            params.append('width', size.width.toString());
+            params.append("width", size.width.toString());
             if (size.format) {
-                params.append('format', size.format);
+                params.append("format", size.format);
             }
 
             // Build the URL
@@ -499,14 +494,18 @@ export class NDKBlossom {
             srcset.push(`${mediaUrl} ${size.width}w`);
         }
 
-        return srcset.join(', ');
+        return srcset.join(", ");
     }
 }
 
 /**
  * Helper function to create authenticated fetch options
  */
-async function createAuthenticatedFetchOptions(ndk: NDK, serverUrl: string, options: RequestInit = {}): Promise<RequestInit> {
+async function createAuthenticatedFetchOptions(
+    ndk: NDK,
+    serverUrl: string,
+    options: RequestInit = {},
+): Promise<RequestInit> {
     // This is a placeholder, as this function would ideally come from the auth utility
     // but we need to avoid circular dependencies
     return options;
@@ -519,17 +518,11 @@ export {
     NDKBlossomServerError,
     NDKBlossomAuthError,
     NDKBlossomNotFoundError,
-    NDKBlossomOptimizationError
+    NDKBlossomOptimizationError,
 };
 
 // Export types
-export type {
-    BlossomRetryOptions,
-    BlossomServerConfig,
-    BlossomUploadOptions,
-    BlossomOptimizationOptions,
-    NDKImetaTag
-};
+export type { BlossomRetryOptions, BlossomServerConfig, BlossomUploadOptions, BlossomOptimizationOptions, NDKImetaTag };
 
 // Export default
-export default NDKBlossom; 
+export default NDKBlossom;

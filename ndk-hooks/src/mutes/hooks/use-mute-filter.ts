@@ -22,8 +22,6 @@ export const EMPTY_MUTE_CRITERIA: MuteCriteria = {
 export function useMuteFilter(): (event: NDKEvent) => boolean {
     const muteCriteria = useActiveMuteCriteria();
 
-    console.log("useMuteFilter", muteCriteria);
-
     return useCallback(
         (event: NDKEvent) => {
             return isMuted(event, muteCriteria);

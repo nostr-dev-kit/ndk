@@ -1,15 +1,15 @@
-import NDK, { NDKEvent } from '@nostr-dev-kit/ndk';
-import { BLOSSOM_AUTH_EVENT_KIND } from './constants';
-import { NDKBlossomAuthError } from './errors';
-import { ErrorCodes } from '../types';
-import { fetchWithRetry, extractResponseJson } from './http';
-import { Logger, DebugLogger } from './logger';
+import NDK, { NDKEvent } from "@nostr-dev-kit/ndk";
+import { BLOSSOM_AUTH_EVENT_KIND } from "./constants";
+import { NDKBlossomAuthError } from "./errors";
+import { ErrorCodes } from "../types";
+import { fetchWithRetry, extractResponseJson } from "./http";
+import { Logger, DebugLogger } from "./logger";
 
-const logger = new DebugLogger('ndk:blossom:auth');
+const logger = new DebugLogger("ndk:blossom:auth");
 
 /**
  * Create an authentication event for a Blossom server
- * 
+ *
  * @param ndk NDK instance
  * @param serverUrl URL of the Blossom server
  * @returns Signed authentication event
@@ -17,10 +17,7 @@ const logger = new DebugLogger('ndk:blossom:auth');
 export async function createAuthEvent(ndk: NDK, serverUrl: string): Promise<NDKEvent> {
     // Check if NDK has a signer
     if (!ndk.signer) {
-        throw new NDKBlossomAuthError(
-            'No signer available to create authentication event',
-            ErrorCodes.NO_SIGNER
-        );
+        throw new NDKBlossomAuthError("No signer available to create authentication event", ErrorCodes.NO_SIGNER);
     }
 
     try {
@@ -31,10 +28,10 @@ export async function createAuthEvent(ndk: NDK, serverUrl: string): Promise<NDKE
         const authEvent = new NDKEvent(ndk);
         authEvent.kind = BLOSSOM_AUTH_EVENT_KIND;
         authEvent.created_at = Math.floor(Date.now() / 1000);
-        authEvent.content = '';
+        authEvent.content = "";
         authEvent.tags = [
-            ['challenge', challenge],
-            ['url', serverUrl]
+            ["challenge", challenge],
+            ["url", serverUrl],
         ];
 
         // Sign the event
@@ -50,34 +47,34 @@ export async function createAuthEvent(ndk: NDK, serverUrl: string): Promise<NDKE
             `Failed to create auth event: ${(error as Error).message}`,
             ErrorCodes.AUTH_REQUIRED,
             serverUrl,
-            error as Error
+            error as Error,
         );
     }
 }
 
 /**
  * Get an authentication challenge from a Blossom server
- * 
+ *
  * @param serverUrl URL of the Blossom server
  * @returns Challenge string
  */
 async function getAuthChallenge(serverUrl: string): Promise<string> {
     try {
         // Normalize server URL
-        const baseUrl = serverUrl.endsWith('/') ? serverUrl.slice(0, -1) : serverUrl;
+        const baseUrl = serverUrl.endsWith("/") ? serverUrl.slice(0, -1) : serverUrl;
         const url = `${baseUrl}/auth/challenge`;
 
         // Fetch challenge
-        const response = await fetchWithRetry(url, { method: 'GET' });
+        const response = await fetchWithRetry(url, { method: "GET" });
 
         // Parse response
         const data = await extractResponseJson(response, serverUrl);
 
         if (!data.challenge) {
             throw new NDKBlossomAuthError(
-                'Invalid challenge response from server',
+                "Invalid challenge response from server",
                 ErrorCodes.SERVER_INVALID_RESPONSE,
-                serverUrl
+                serverUrl,
             );
         }
 
@@ -91,14 +88,14 @@ async function getAuthChallenge(serverUrl: string): Promise<string> {
             `Failed to get auth challenge: ${(error as Error).message}`,
             ErrorCodes.AUTH_REQUIRED,
             serverUrl,
-            error as Error
+            error as Error,
         );
     }
 }
 
 /**
  * Add authentication headers to a request
- * 
+ *
  * @param headers Headers object to modify
  * @param authEvent Signed authentication event
  * @returns Modified headers object
@@ -106,13 +103,13 @@ async function getAuthChallenge(serverUrl: string): Promise<string> {
 export function addAuthHeaders(headers: Record<string, string>, authEvent: NDKEvent): Record<string, string> {
     return {
         ...headers,
-        'Authorization': `Nostr ${authEvent.id}`
+        Authorization: `Nostr ${authEvent.id}`,
     };
 }
 
 /**
  * Create authenticated fetch options with the NDK signer
- * 
+ *
  * @param ndk NDK instance
  * @param serverUrl Server URL for context
  * @param options Original fetch options
@@ -121,17 +118,17 @@ export function addAuthHeaders(headers: Record<string, string>, authEvent: NDKEv
 export async function createAuthenticatedFetchOptions(
     ndk: NDK,
     serverUrl: string,
-    options: RequestInit = {}
+    options: RequestInit = {},
 ): Promise<RequestInit> {
     // Create auth event
     const authEvent = await createAuthEvent(ndk, serverUrl);
 
     // Add auth headers
-    const headers = addAuthHeaders(options.headers as Record<string, string> || {}, authEvent);
+    const headers = addAuthHeaders((options.headers as Record<string, string>) || {}, authEvent);
 
     // Return modified options
     return {
         ...options,
-        headers
+        headers,
     };
-} 
+}

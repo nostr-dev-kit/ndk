@@ -1,5 +1,5 @@
-import debug from 'debug';
-import { DEBUG_NAMESPACE } from './constants';
+import debug from "debug";
+import { DEBUG_NAMESPACE } from "./constants";
 
 /**
  * Standard logger interface
@@ -22,19 +22,19 @@ export class DebugLogger implements Logger {
     }
 
     error(message: string, data?: any): void {
-        this.log('error', message, data);
+        this.log("error", message, data);
     }
 
     warn(message: string, data?: any): void {
-        this.log('warn', message, data);
+        this.log("warn", message, data);
     }
 
     info(message: string, data?: any): void {
-        this.log('info', message, data);
+        this.log("info", message, data);
     }
 
     debug(message: string, data?: any): void {
-        this.log('debug', message, data);
+        this.log("debug", message, data);
     }
 
     private log(level: string, message: string, data?: any): void {
@@ -58,18 +58,18 @@ export class CustomLogger implements Logger {
     }
 
     error(message: string, data?: any): void {
-        this.logFunction('error', message, data);
+        this.logFunction("error", message, data);
     }
 
     warn(message: string, data?: any): void {
-        this.logFunction('warn', message, data);
+        this.logFunction("warn", message, data);
     }
 
     info(message: string, data?: any): void {
-        this.logFunction('info', message, data);
+        this.logFunction("info", message, data);
     }
 
     debug(message: string, data?: any): void {
-        this.logFunction('debug', message, data);
+        this.logFunction("debug", message, data);
     }
-} 
+}

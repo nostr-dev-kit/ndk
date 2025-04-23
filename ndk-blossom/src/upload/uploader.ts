@@ -1,23 +1,23 @@
-import NDK, { NDKUser, NDKEvent, NDKFilter, mapImetaTag, NDKBlossomList, NDKImetaTag } from '@nostr-dev-kit/ndk';
-import { BlossomUploadOptions, ErrorCodes, SHA256Calculator } from '../types';
-import { createAuthenticatedFetchOptions } from '../utils/auth';
-import { fetchWithRetry, extractResponseJson } from '../utils/http';
-import { defaultSHA256Calculator } from '../utils/sha256';
+import NDK, { NDKUser, NDKEvent, NDKFilter, mapImetaTag, NDKBlossomList, NDKImetaTag } from "@nostr-dev-kit/ndk";
+import { BlossomUploadOptions, ErrorCodes, SHA256Calculator } from "../types";
+import { createAuthenticatedFetchOptions } from "../utils/auth";
+import { fetchWithRetry, extractResponseJson } from "../utils/http";
+import { defaultSHA256Calculator } from "../utils/sha256";
 import {
     NDKBlossomUploadError,
     NDKBlossomServerError,
     NDKBlossomNotFoundError,
-    NDKBlossomAuthError
-} from '../utils/errors';
-import { DebugLogger } from '../utils/logger';
-import { extractHashFromUrl } from '../healing/url-healing';
-import NDKBlossom from '../blossom';
+    NDKBlossomAuthError,
+} from "../utils/errors";
+import { DebugLogger } from "../utils/logger";
+import { extractHashFromUrl } from "../healing/url-healing";
+import NDKBlossom from "../blossom";
 
-const logger = new DebugLogger('ndk:blossom:uploader');
+const logger = new DebugLogger("ndk:blossom:uploader");
 
 /**
  * Upload a file to a specific Blossom server
- * 
+ *
  * @param ndk NDK instance
  * @param file File to upload
  * @param serverUrl URL of the Blossom server
@@ -28,7 +28,7 @@ export async function uploadToServer(
     ndk: NDK,
     file: File,
     serverUrl: string,
-    options: BlossomUploadOptions = {}
+    options: BlossomUploadOptions = {},
 ): Promise<NDKImetaTag> {
     logger.debug(`Uploading file to ${serverUrl}`, { fileName: file.name, fileType: file.type, fileSize: file.size });
 
@@ -41,17 +41,17 @@ export async function uploadToServer(
 
     try {
         // Normalize server URL
-        const baseUrl = serverUrl.endsWith('/') ? serverUrl.slice(0, -1) : serverUrl;
+        const baseUrl = serverUrl.endsWith("/") ? serverUrl.slice(0, -1) : serverUrl;
         const uploadUrl = `${baseUrl}/upload`;
 
         // Create authenticated fetch options
         const authOptions = await createAuthenticatedFetchOptions(ndk, serverUrl, {
-            method: 'PUT',
+            method: "PUT",
             body: file,
             headers: {
-                'Content-Type': file.type || 'application/octet-stream',
-                ...options.headers
-            }
+                "Content-Type": file.type || "application/octet-stream",
+                ...options.headers,
+            },
         });
 
         // Add progress tracking if needed
@@ -61,56 +61,58 @@ export async function uploadToServer(
                 const xhr = new XMLHttpRequest();
 
                 const uploadPromise = new Promise<NDKImetaTag>((resolve, reject) => {
-                    xhr.upload.addEventListener('progress', (event) => {
+                    xhr.upload.addEventListener("progress", (event) => {
                         if (event.lengthComputable) {
                             options.onProgress?.({
                                 loaded: event.loaded,
-                                total: event.total
+                                total: event.total,
                             });
                         }
                     });
 
-                    xhr.addEventListener('load', () => {
+                    xhr.addEventListener("load", () => {
                         if (xhr.status >= 200 && xhr.status < 300) {
                             try {
                                 return JSON.parse(xhr.responseText);
                             } catch (error) {
-                                reject(new NDKBlossomServerError(
-                                    `Invalid response from server: ${(error as Error).message}`,
-                                    ErrorCodes.SERVER_INVALID_RESPONSE,
-                                    serverUrl,
-                                    xhr.status,
-                                    error as Error
-                                ));
+                                reject(
+                                    new NDKBlossomServerError(
+                                        `Invalid response from server: ${(error as Error).message}`,
+                                        ErrorCodes.SERVER_INVALID_RESPONSE,
+                                        serverUrl,
+                                        xhr.status,
+                                        error as Error,
+                                    ),
+                                );
                             }
                         } else {
-                            reject(new NDKBlossomServerError(
-                                `Upload failed with status ${xhr.status}`,
-                                ErrorCodes.SERVER_REJECTED,
-                                serverUrl,
-                                xhr.status
-                            ));
+                            reject(
+                                new NDKBlossomServerError(
+                                    `Upload failed with status ${xhr.status}`,
+                                    ErrorCodes.SERVER_REJECTED,
+                                    serverUrl,
+                                    xhr.status,
+                                ),
+                            );
                         }
                     });
 
-                    xhr.addEventListener('error', () => {
-                        reject(new NDKBlossomServerError(
-                            'Network error during upload',
-                            ErrorCodes.SERVER_UNAVAILABLE,
-                            serverUrl
-                        ));
+                    xhr.addEventListener("error", () => {
+                        reject(
+                            new NDKBlossomServerError(
+                                "Network error during upload",
+                                ErrorCodes.SERVER_UNAVAILABLE,
+                                serverUrl,
+                            ),
+                        );
                     });
 
-                    xhr.addEventListener('abort', () => {
-                        reject(new NDKBlossomServerError(
-                            'Upload aborted',
-                            ErrorCodes.UPLOAD_FAILED,
-                            serverUrl
-                        ));
+                    xhr.addEventListener("abort", () => {
+                        reject(new NDKBlossomServerError("Upload aborted", ErrorCodes.UPLOAD_FAILED, serverUrl));
                     });
 
                     // Open the request
-                    xhr.open('PUT', uploadUrl);
+                    xhr.open("PUT", uploadUrl);
 
                     // Add headers
                     for (const [key, value] of Object.entries(authOptions.headers || {})) {
@@ -129,7 +131,7 @@ export async function uploadToServer(
         // Use standard fetch if no progress tracking
         const response = await fetchWithRetry(uploadUrl, authOptions, {
             maxRetries: options.maxRetries,
-            retryDelay: options.retryDelay
+            retryDelay: options.retryDelay,
         });
 
         // Get blob URL from response
@@ -146,8 +148,7 @@ export async function uploadToServer(
             x: hash,
         };
     } catch (error) {
-        if (error instanceof NDKBlossomServerError ||
-            error instanceof NDKBlossomAuthError) {
+        if (error instanceof NDKBlossomServerError || error instanceof NDKBlossomAuthError) {
             throw error;
         }
 
@@ -155,14 +156,14 @@ export async function uploadToServer(
             `Upload failed: ${(error as Error).message}`,
             ErrorCodes.UPLOAD_FAILED,
             serverUrl,
-            error as Error
+            error as Error,
         );
     }
 }
 
 /**
  * Upload a file to a user's Blossom servers
- * 
+ *
  * @param file File to upload
  * @param options Upload options
  * @returns Blob metadata with imeta format
@@ -170,7 +171,7 @@ export async function uploadToServer(
 export async function uploadFile(
     ndkBlossom: NDKBlossom,
     file: File,
-    options: BlossomUploadOptions = {}
+    options: BlossomUploadOptions = {},
 ): Promise<NDKImetaTag> {
     logger.debug(`Starting file upload`, { fileName: file.name, fileType: file.type, fileSize: file.size });
 
@@ -178,8 +179,8 @@ export async function uploadFile(
     const serverList = await ndkBlossom.getServerList();
     if (!serverList) {
         throw new NDKBlossomUploadError(
-            'No Blossom server list found in user profile. Add servers to your profile before uploading.',
-            ErrorCodes.SERVER_LIST_EMPTY
+            "No Blossom server list found in user profile. Add servers to your profile before uploading.",
+            ErrorCodes.SERVER_LIST_EMPTY,
         );
     }
 
@@ -190,8 +191,8 @@ export async function uploadFile(
         if (error instanceof NDKBlossomNotFoundError) {
             // No server list found
             throw new NDKBlossomUploadError(
-                'No Blossom servers found in user profile. Add servers to your profile before uploading.',
-                ErrorCodes.SERVER_LIST_EMPTY
+                "No Blossom servers found in user profile. Add servers to your profile before uploading.",
+                ErrorCodes.SERVER_LIST_EMPTY,
             );
         }
         throw error;
@@ -200,8 +201,8 @@ export async function uploadFile(
     // Check if server list is empty
     if (!serverUrls.length) {
         throw new NDKBlossomUploadError(
-            'No Blossom servers found in user profile. Add servers to your profile before uploading.',
-            ErrorCodes.SERVER_LIST_EMPTY
+            "No Blossom servers found in user profile. Add servers to your profile before uploading.",
+            ErrorCodes.SERVER_LIST_EMPTY,
         );
     }
 
@@ -224,7 +225,7 @@ export async function uploadFile(
             // Check if we should handle this error with custom handler
             if (options.onServerError && error instanceof NDKBlossomServerError) {
                 const action = options.onServerError(error, serverUrl);
-                if (action === 'retry') {
+                if (action === "retry") {
                     // Retry this server
                     try {
                         const result = await uploadToServer(ndkBlossom.ndk, file, serverUrl, options);
@@ -242,14 +243,14 @@ export async function uploadFile(
 
     // If we get here, all servers failed
     throw new NDKBlossomUploadError(
-        `Upload failed on all servers: ${errors.map(e => `${e.serverUrl}: ${e.error.message}`).join(', ')}`,
-        ErrorCodes.ALL_SERVERS_FAILED
+        `Upload failed on all servers: ${errors.map((e) => `${e.serverUrl}: ${e.error.message}`).join(", ")}`,
+        ErrorCodes.ALL_SERVERS_FAILED,
     );
 }
 
 /**
  * Find a hash in nostr by searching for #x tags
- * 
+ *
  * @param ndk NDK instance
  * @param hash SHA-256 hash to search for
  * @returns Array of URLs found, empty array if none found
@@ -259,8 +260,8 @@ export async function findHashInNostr(ndk: NDK, hash: string): Promise<string[]>
 
     // Create a filter to search for x tags
     const filter: NDKFilter = {
-        '#x': [hash],
-        limit: 10
+        "#x": [hash],
+        limit: 10,
     };
 
     try {
@@ -279,7 +280,7 @@ export async function findHashInNostr(ndk: NDK, hash: string): Promise<string[]>
             // Check for URL in tags
             for (const tag of event.tags) {
                 // Check imeta tags
-                if (tag[0] === 'imeta') {
+                if (tag[0] === "imeta") {
                     const imetaTag = mapImetaTag(tag);
                     if (imetaTag.url && imetaTag.x === hash) {
                         foundUrls.add(imetaTag.url);
@@ -287,7 +288,7 @@ export async function findHashInNostr(ndk: NDK, hash: string): Promise<string[]>
                 }
 
                 // Check metadata tags
-                if (tag[0] === 'url' && tag[1]) {
+                if (tag[0] === "url" && tag[1]) {
                     // Extract hash from the URL and compare
                     const urlHash = extractHashFromUrl(tag[1]);
                     if (urlHash === hash) {

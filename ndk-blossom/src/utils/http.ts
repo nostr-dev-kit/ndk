@@ -1,15 +1,15 @@
-import { NDKBlossomServerError } from './errors';
-import { DEFAULT_HEADERS, DEFAULT_RETRY_OPTIONS, SERVER_ERROR_STATUS_CODES } from './constants';
-import { BlossomRetryOptions } from '../types';
-import { Logger, DebugLogger } from './logger';
-import { ErrorCodes } from '../types';
+import { NDKBlossomServerError } from "./errors";
+import { DEFAULT_HEADERS, DEFAULT_RETRY_OPTIONS, SERVER_ERROR_STATUS_CODES } from "./constants";
+import { BlossomRetryOptions } from "../types";
+import { Logger, DebugLogger } from "./logger";
+import { ErrorCodes } from "../types";
 
 // Default logger
 const defaultLogger = new DebugLogger();
 
 /**
  * Make an HTTP request with retry capability
- * 
+ *
  * @param url URL to fetch
  * @param options Fetch options
  * @param retryOptions Retry configuration
@@ -20,18 +20,18 @@ export async function fetchWithRetry(
     url: string,
     options: RequestInit = {},
     retryOptions: Partial<BlossomRetryOptions> = {},
-    logger: Logger = defaultLogger
+    logger: Logger = defaultLogger,
 ): Promise<Response> {
     // Set up retry options with defaults
     const retry = {
         ...DEFAULT_RETRY_OPTIONS,
-        ...retryOptions
+        ...retryOptions,
     };
 
     // Set up headers with defaults
     const headers = {
         ...DEFAULT_HEADERS,
-        ...(options.headers || {})
+        ...(options.headers || {}),
     };
 
     // Number of attempts made
@@ -45,15 +45,18 @@ export async function fetchWithRetry(
             // Make the request
             const response = await fetch(url, {
                 ...options,
-                headers
+                headers,
             });
 
             // Check for retryable status codes
             if (!response.ok && retry.retryableStatusCodes.includes(response.status) && attempts < retry.maxRetries) {
                 attempts++;
                 const delay = getNextDelay();
-                logger.warn(`Request failed with status ${response.status}, retrying in ${delay}ms (attempt ${attempts}/${retry.maxRetries})`, { url });
-                await new Promise(resolve => setTimeout(resolve, delay));
+                logger.warn(
+                    `Request failed with status ${response.status}, retrying in ${delay}ms (attempt ${attempts}/${retry.maxRetries})`,
+                    { url },
+                );
+                await new Promise((resolve) => setTimeout(resolve, delay));
                 continue;
             }
 
@@ -64,8 +67,11 @@ export async function fetchWithRetry(
             if (attempts < retry.maxRetries) {
                 attempts++;
                 const delay = getNextDelay();
-                logger.warn(`Network error, retrying in ${delay}ms (attempt ${attempts}/${retry.maxRetries})`, { url, error });
-                await new Promise(resolve => setTimeout(resolve, delay));
+                logger.warn(`Network error, retrying in ${delay}ms (attempt ${attempts}/${retry.maxRetries})`, {
+                    url,
+                    error,
+                });
+                await new Promise((resolve) => setTimeout(resolve, delay));
             } else {
                 // Throw custom error after all retries failed
                 throw new NDKBlossomServerError(
@@ -73,7 +79,7 @@ export async function fetchWithRetry(
                     ErrorCodes.SERVER_UNAVAILABLE,
                     url,
                     undefined,
-                    error as Error
+                    error as Error,
                 );
             }
         }
@@ -83,13 +89,13 @@ export async function fetchWithRetry(
     throw new NDKBlossomServerError(
         `Request failed after ${retry.maxRetries} retries`,
         ErrorCodes.SERVER_UNAVAILABLE,
-        url
+        url,
     );
 }
 
 /**
  * Make a HEAD request to check if a resource exists
- * 
+ *
  * @param url URL to check
  * @param options Fetch options
  * @param retryOptions Retry configuration
@@ -98,13 +104,17 @@ export async function fetchWithRetry(
 export async function checkResourceExists(
     url: string,
     options: RequestInit = {},
-    retryOptions: Partial<BlossomRetryOptions> = {}
+    retryOptions: Partial<BlossomRetryOptions> = {},
 ): Promise<boolean> {
     try {
-        const response = await fetchWithRetry(url, {
-            ...options,
-            method: 'HEAD'
-        }, retryOptions);
+        const response = await fetchWithRetry(
+            url,
+            {
+                ...options,
+                method: "HEAD",
+            },
+            retryOptions,
+        );
 
         return response.ok;
     } catch (error) {
@@ -114,7 +124,7 @@ export async function checkResourceExists(
 
 /**
  * Check if a Blossom server has a blob by its hash
- * 
+ *
  * @param serverUrl Base URL of the server
  * @param hash SHA256 hash of the blob
  * @param retryOptions Retry configuration
@@ -123,18 +133,18 @@ export async function checkResourceExists(
 export async function checkBlobExists(
     serverUrl: string,
     hash: string,
-    retryOptions: Partial<BlossomRetryOptions> = {}
+    retryOptions: Partial<BlossomRetryOptions> = {},
 ): Promise<boolean> {
     // Normalize the server URL
-    const baseUrl = serverUrl.endsWith('/') ? serverUrl.slice(0, -1) : serverUrl;
+    const baseUrl = serverUrl.endsWith("/") ? serverUrl.slice(0, -1) : serverUrl;
     const url = `${baseUrl}/${hash}`;
 
-    return checkResourceExists(url, { method: 'HEAD' }, retryOptions);
+    return checkResourceExists(url, { method: "HEAD" }, retryOptions);
 }
 
 /**
  * Extract JSON from a response with error handling
- * 
+ *
  * @param response Fetch Response object
  * @param serverUrl Original server URL for error context
  * @returns Parsed JSON data
@@ -147,14 +157,14 @@ export async function extractResponseJson(response: Response, serverUrl: string)
                 `Server error: ${response.status} ${response.statusText}`,
                 ErrorCodes.SERVER_ERROR,
                 serverUrl,
-                response.status
+                response.status,
             );
         } else {
             throw new NDKBlossomServerError(
                 `Request rejected: ${response.status} ${response.statusText}`,
                 ErrorCodes.SERVER_REJECTED,
                 serverUrl,
-                response.status
+                response.status,
             );
         }
     }
@@ -167,7 +177,7 @@ export async function extractResponseJson(response: Response, serverUrl: string)
             ErrorCodes.SERVER_INVALID_RESPONSE,
             serverUrl,
             response.status,
-            error as Error
+            error as Error,
         );
     }
-} 
+}

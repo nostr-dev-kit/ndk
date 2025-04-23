@@ -1,4 +1,4 @@
-import { ErrorCode } from '../types';
+import { ErrorCode } from "../types";
 
 /**
  * Base error class for NDK-Blossom
@@ -10,7 +10,7 @@ export class NDKBlossomError extends Error {
 
     constructor(message: string, code: ErrorCode, serverUrl?: string, cause?: Error) {
         super(message);
-        this.name = 'NDKBlossomError';
+        this.name = "NDKBlossomError";
         this.code = code;
         this.serverUrl = serverUrl;
         this.cause = cause;
@@ -23,7 +23,7 @@ export class NDKBlossomError extends Error {
 export class NDKBlossomUploadError extends NDKBlossomError {
     constructor(message: string, code: ErrorCode, serverUrl?: string, cause?: Error) {
         super(message, code, serverUrl, cause);
-        this.name = 'NDKBlossomUploadError';
+        this.name = "NDKBlossomUploadError";
     }
 }
 
@@ -35,7 +35,7 @@ export class NDKBlossomServerError extends NDKBlossomError {
 
     constructor(message: string, code: ErrorCode, serverUrl?: string, status?: number, cause?: Error) {
         super(message, code, serverUrl, cause);
-        this.name = 'NDKBlossomServerError';
+        this.name = "NDKBlossomServerError";
         this.status = status;
     }
 }
@@ -46,7 +46,7 @@ export class NDKBlossomServerError extends NDKBlossomError {
 export class NDKBlossomAuthError extends NDKBlossomError {
     constructor(message: string, code: ErrorCode, serverUrl?: string, cause?: Error) {
         super(message, code, serverUrl, cause);
-        this.name = 'NDKBlossomAuthError';
+        this.name = "NDKBlossomAuthError";
     }
 }
 
@@ -56,7 +56,7 @@ export class NDKBlossomAuthError extends NDKBlossomError {
 export class NDKBlossomNotFoundError extends NDKBlossomError {
     constructor(message: string, code: ErrorCode, serverUrl?: string, cause?: Error) {
         super(message, code, serverUrl, cause);
-        this.name = 'NDKBlossomNotFoundError';
+        this.name = "NDKBlossomNotFoundError";
     }
 }
 
@@ -66,6 +66,6 @@ export class NDKBlossomNotFoundError extends NDKBlossomError {
 export class NDKBlossomOptimizationError extends NDKBlossomError {
     constructor(message: string, code: ErrorCode, serverUrl?: string, cause?: Error) {
         super(message, code, serverUrl, cause);
-        this.name = 'NDKBlossomOptimizationError';
+        this.name = "NDKBlossomOptimizationError";
     }
-} 
+}

@@ -31,10 +31,12 @@ export function useMuteFilter(): (event: NDKEvent) => boolean {
         return s.getMuteCriteria(activePubkey);
     });
 
+    const memoedMuteCriteria = useMemo(() => muteCriteria, [muteCriteria.pubkeys.size, muteCriteria.eventIds.size, muteCriteria.hashtags.size, muteCriteria.words.size]);
+
     return useCallback(
         (event: NDKEvent) => {
-            return isMuted(event, muteCriteria);
+            return isMuted(event, memoedMuteCriteria);
         },
-        [muteCriteria],
+        [memoedMuteCriteria],
     );
 }

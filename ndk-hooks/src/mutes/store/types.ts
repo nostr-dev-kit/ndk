@@ -10,7 +10,7 @@ export interface MuteCriteria {
     pubkeys: Set<Hexpubkey>;
     eventIds: Set<string>;
     hashtags: Set<string>;
-    words: Set<string> | null;
+    words: Set<string>;
 }
 
 /**

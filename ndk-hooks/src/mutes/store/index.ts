@@ -40,8 +40,7 @@ const mutesStateCreator = (set: (state: any) => void, get: () => NDKMutesState) 
     unmuteItem: (pubkey: Hexpubkey, item: string, type: MuteItemType, options?: PublishMuteListOptions) =>
         unmuteItem(set, get, pubkey, item, type, options),
     setActivePubkey: (pubkey: Hexpubkey | null) => setActivePubkey(set, pubkey),
-    addExtraMuteItems: (items: MuteableItem[]) =>
-        addExtraMuteItems(set, get, items),
+    addExtraMuteItems: (items: MuteableItem[]) => addExtraMuteItems(set, get, items),
     publishMuteList: (pubkey: Hexpubkey) => publishMuteList(get, pubkey),
 });
 

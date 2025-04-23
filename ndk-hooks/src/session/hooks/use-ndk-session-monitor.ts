@@ -169,9 +169,9 @@ export function useNDKSessionMonitor(sessionStorage: NDKSessionStorageAdapter | 
         }
 
         updateActivePubkey();
-    // Remove startSession and stopSession from dependencies to prevent infinite loop
-    // These functions are stable enough and don't need to trigger effect re-runs
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // Remove startSession and stopSession from dependencies to prevent infinite loop
+        // These functions are stable enough and don't need to trigger effect re-runs
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentUser?.pubkey, ndk, sessionStorage]);
 
     // Infer the session data type from the 'sessions' map returned by the hook

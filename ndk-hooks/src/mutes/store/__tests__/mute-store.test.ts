@@ -312,8 +312,6 @@ describe("NDKMutesStore", () => {
         });
     });
 
-
-
     describe("publishMuteList", () => {
         it("should publish a mute list event", async () => {
             const pubkey = testPubkey;

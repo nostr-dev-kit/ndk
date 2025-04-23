@@ -8,7 +8,6 @@ import { NDKKind } from "./index.js";
  * @group Kind Wrapper
  */
 export class NDKBlossomList extends NDKEvent {
-
     static kinds = [NDKKind.BlossomList];
 
     constructor(ndk?: NDK, rawEvent?: NostrEvent) {
@@ -24,9 +23,7 @@ export class NDKBlossomList extends NDKEvent {
      * Returns all Blossom servers in the list
      */
     get servers(): string[] {
-        return this.tags
-            .filter((tag) => tag[0] === "server")
-            .map((tag) => tag[1]);
+        return this.tags.filter((tag) => tag[0] === "server").map((tag) => tag[1]);
     }
 
     /**
@@ -59,7 +56,7 @@ export class NDKBlossomList extends NDKEvent {
         const currentServers = this.servers;
 
         // Remove the server if it already exists in the list
-        const filteredServers = currentServers.filter(s => s !== server);
+        const filteredServers = currentServers.filter((s) => s !== server);
 
         // Add the server to the beginning of the list
         this.servers = [server, ...filteredServers];
@@ -88,6 +85,6 @@ export class NDKBlossomList extends NDKEvent {
         const currentServers = this.servers;
 
         // Filter out the server to remove
-        this.servers = currentServers.filter(s => s !== server);
+        this.servers = currentServers.filter((s) => s !== server);
     }
-} 
+}

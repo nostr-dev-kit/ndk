@@ -36,8 +36,14 @@ export function useMuteCriteria(pubkey?: string): MuteCriteria {
         // set the criteria state to the combined mutes
         setCriteria(combinedMutes);
     }, [
-        mutesForPubkey?.eventIds, mutesForPubkey?.hashtags, mutesForPubkey?.words, mutesForPubkey?.pubkeys,
-        extraMutes?.eventIds, extraMutes?.hashtags, extraMutes?.words, extraMutes?.pubkeys
+        mutesForPubkey?.eventIds,
+        mutesForPubkey?.hashtags,
+        mutesForPubkey?.words,
+        mutesForPubkey?.pubkeys,
+        extraMutes?.eventIds,
+        extraMutes?.hashtags,
+        extraMutes?.words,
+        extraMutes?.pubkeys,
     ]);
 
     return criteria;

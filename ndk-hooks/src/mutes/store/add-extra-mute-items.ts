@@ -10,11 +10,7 @@ import { computeMuteCriteria } from "../utils/compute-mute-criteria";
  * @param get Zustand get function
  * @param items Array of items to mute
  */
-export const addExtraMuteItems = (
-    set: (state: any) => void,
-    get: () => NDKMutesState,
-    items: MuteableItem[],
-) => {
+export const addExtraMuteItems = (set: (state: any) => void, get: () => NDKMutesState, items: MuteableItem[]) => {
     set((state: any) => {
         for (const item of items) {
             const identified = identifyMuteItem(item);

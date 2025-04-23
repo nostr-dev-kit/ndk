@@ -20,8 +20,6 @@ export * from "./session/hooks/use-available-sessions";
 export * from "./subscribe/store";
 export * from "./wallet/hooks";
 
-export * from "@nostr-dev-kit/ndk"
+export * from "@nostr-dev-kit/ndk";
 import NDK from "@nostr-dev-kit/ndk";
 export default NDK;
-
-export const NDKHooksVersion = "0.4.0";

@@ -11,24 +11,21 @@ import type { Hexpubkey } from "@nostr-dev-kit/ndk";
 export const isItemMuted = (get: () => NDKMutesState, pubkey: Hexpubkey, item: string, type: MuteItemType): boolean => {
     const userMutes = get().mutes.get(pubkey);
     const extraMutes = get().extraMutes;
-    
+
     if (!userMutes && !extraMutes) return false;
 
     switch (type) {
         case "pubkey":
-            return (userMutes && userMutes.pubkeys.has(item)) ||
-                   extraMutes.pubkeys.has(item);
+            return (userMutes && userMutes.pubkeys.has(item)) || extraMutes.pubkeys.has(item);
         case "event":
-            return (userMutes && userMutes.eventIds.has(item)) ||
-                   extraMutes.eventIds.has(item);
+            return (userMutes && userMutes.eventIds.has(item)) || extraMutes.eventIds.has(item);
         case "hashtag": {
             const lowerItem = item.toLowerCase();
-            return (userMutes && userMutes.hashtags.has(lowerItem)) ||
-                   extraMutes.hashtags.has(lowerItem);
+            return (userMutes && userMutes.hashtags.has(lowerItem)) || extraMutes.hashtags.has(lowerItem);
         }
         case "word": {
             const lowerItem = item.toLowerCase();
-            
+
             // Check regular mutes
             if (userMutes && userMutes.words.size > 0) {
                 for (const word of userMutes.words) {
@@ -37,7 +34,7 @@ export const isItemMuted = (get: () => NDKMutesState, pubkey: Hexpubkey, item: s
                     }
                 }
             }
-            
+
             // Check extra mutes
             if (extraMutes.words.size > 0) {
                 for (const word of extraMutes.words) {
@@ -46,7 +43,7 @@ export const isItemMuted = (get: () => NDKMutesState, pubkey: Hexpubkey, item: s
                     }
                 }
             }
-            
+
             return false;
         }
         default:

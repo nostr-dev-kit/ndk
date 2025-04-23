@@ -156,7 +156,7 @@ export const startSession = (
     pubkey: Hexpubkey,
     opts: SessionStartOptions,
 ): void => {
-    console.log('calling startSession', pubkey);
+    console.log("calling startSession", pubkey);
     const ndk = get().ndk;
     if (!ndk) {
         console.error("NDK instance not initialized in session store. Cannot start session.");

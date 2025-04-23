@@ -29,7 +29,7 @@ export function useProfile(pubkey?: Hexpubkey | undefined, forceRefresh?: boolea
  */
 export function useProfileValue(
     pubkey?: Hexpubkey | undefined,
-    opts?: UseProfileValueOptions
+    opts?: UseProfileValueOptions,
 ): NDKUserProfile | undefined {
     const fetchProfile = useUserProfilesStore((state: UserProfilesStore) => state.fetchProfile);
 

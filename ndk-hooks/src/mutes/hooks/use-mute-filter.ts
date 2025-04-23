@@ -1,9 +1,8 @@
 import { useCallback, useMemo } from "react";
-import { Hexpubkey, NDKEvent } from "@nostr-dev-kit/ndk";
-import { useNDKSessions } from "../../session/store";
-import { useNDKMutes } from "../store";
+import type { Hexpubkey, NDKEvent } from "@nostr-dev-kit/ndk";
 import { isMuted } from "../../utils/mute";
 import type { MuteCriteria } from "../store/types";
+import { useActiveMuteCriteria } from "./use-mute-criteria";
 
 export const EMPTY_MUTE_CRITERIA: MuteCriteria = {
     pubkeys: new Set(),
@@ -21,22 +20,14 @@ export const EMPTY_MUTE_CRITERIA: MuteCriteria = {
  * 3. Using a stable dependency (the serialized state) for the memoization
  */
 export function useMuteFilter(): (event: NDKEvent) => boolean {
-    const activePubkey = useNDKSessions((s) => s.activePubkey);
+    const muteCriteria = useActiveMuteCriteria();
 
-    // Get the mute criteria directly from the store
-    const muteCriteria = useNDKMutes((s) => {
-        if (!activePubkey) {
-            return EMPTY_MUTE_CRITERIA;
-        }
-        return s.getMuteCriteria(activePubkey);
-    });
-
-    const memoedMuteCriteria = useMemo(() => muteCriteria, [muteCriteria.pubkeys.size, muteCriteria.eventIds.size, muteCriteria.hashtags.size, muteCriteria.words.size]);
+    console.log("useMuteFilter", muteCriteria);
 
     return useCallback(
         (event: NDKEvent) => {
-            return isMuted(event, memoedMuteCriteria);
+            return isMuted(event, muteCriteria);
         },
-        [memoedMuteCriteria],
+        [muteCriteria],
     );
 }

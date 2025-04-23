@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { NDKEvent, NDKUser } from "@nostr-dev-kit/ndk";
+import { type NDKEvent, NDKUser } from "@nostr-dev-kit/ndk";
 import { createMockEvent } from "../../store/__tests__/fixtures";
 import { useNDKMutes } from "../../store";
 import * as sessionStore from "../../../session/store";
@@ -17,18 +17,11 @@ const createMockStore = () => {
         muteItem: vi.fn(),
         unmuteItem: vi.fn(),
         setActivePubkey: vi.fn(),
-        getMuteCriteria: vi.fn(),
         isItemMuted: vi.fn(),
         publishMuteList: vi.fn(),
     };
 
     // Setup default behavior
-    store.getMuteCriteria.mockReturnValue({
-        pubkeys: new Set<string>(),
-        eventIds: new Set<string>(),
-        hashtags: new Set<string>(),
-        words: new Set<string>(),
-    });
 
     return store;
 };
@@ -71,18 +64,12 @@ describe("Mute Hooks", () => {
                 words: new Set<string>(["muted-word"]),
             };
 
-            mockStore.getMuteCriteria.mockReturnValue(mockCriteria);
-
-            // Call getMuteCriteria to set up the expectation
-            mockStore.getMuteCriteria("current-user");
-
             // Mock the hook implementation
             const mockActiveMuteCriteria = vi.fn(() => mockCriteria);
             vi.spyOn(hooksModule, "useActiveMuteCriteria").mockImplementation(mockActiveMuteCriteria);
 
             // Verify the mock implementation
             expect(hooksModule.useActiveMuteCriteria()).toBe(mockCriteria);
-            expect(mockStore.getMuteCriteria).toHaveBeenCalledWith("current-user");
         });
 
         it("should return empty criteria when no active user", () => {

@@ -4,7 +4,6 @@ import { immer } from "zustand/middleware/immer";
 import type { Hexpubkey, NDKEvent } from "@nostr-dev-kit/ndk";
 import type { NDKMutesState, NDKUserMutes, MuteItemType, PublishMuteListOptions, MuteableItem } from "./types";
 import { initMutes } from "./init";
-import { getMuteCriteria } from "./get-mute-criteria";
 import { loadMuteList } from "./load";
 import { muteItem } from "./mute-item";
 import { unmuteItem } from "./unmute-item";
@@ -39,7 +38,6 @@ const mutesStateCreator = (set: (state: any) => void, get: () => NDKMutesState) 
     unmuteItem: (pubkey: Hexpubkey, item: string, type: MuteItemType, options?: PublishMuteListOptions) =>
         unmuteItem(set, get, pubkey, item, type, options),
     setActivePubkey: (pubkey: Hexpubkey | null) => setActivePubkey(set, pubkey),
-    getMuteCriteria: (pubkey: Hexpubkey) => getMuteCriteria(get, pubkey),
     isItemMuted: (pubkey: Hexpubkey, item: string, type: MuteItemType) => isItemMuted(get, pubkey, item, type),
     addExtraMuteItems: (items: MuteableItem[]) =>
         addExtraMuteItems(set, get, items),

@@ -107,12 +107,6 @@ export interface NDKMutesState {
     setActivePubkey: (pubkey: Hexpubkey | null) => void;
 
     /**
-     * Get mute criteria for a user
-     * @param pubkey The pubkey of the user
-     */
-    getMuteCriteria: (pubkey: Hexpubkey) => MuteCriteria;
-
-    /**
      * Check if an item is muted for a user
      * @param pubkey The pubkey of the user
      * @param item The item to check

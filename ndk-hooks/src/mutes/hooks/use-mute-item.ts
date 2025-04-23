@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { NDKEvent, NDKUser } from "@nostr-dev-kit/ndk";
+import type { NDKEvent, NDKUser } from "@nostr-dev-kit/ndk";
 import { useNDKCurrentPubkey } from "../../ndk/hooks";
 import { useNDKMutes } from "../store";
 import type { PublishMuteListOptions } from "../store/types";

@@ -24,4 +24,4 @@ export * from "@nostr-dev-kit/ndk"
 import NDK from "@nostr-dev-kit/ndk";
 export default NDK;
 
-export const NDKHooksVersion = "0.1.0";
+export const NDKHooksVersion = "0.4.0";

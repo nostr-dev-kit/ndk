@@ -3,7 +3,7 @@ import { createMockEvent, createMockMuteListEvent } from "./fixtures";
 import { useNDKMutes } from "../index";
 import { enableMapSet } from "immer";
 import type { MuteItemType, NDKUserMutes } from "../types";
-import { NDKEvent } from "@nostr-dev-kit/ndk";
+import type { NDKEvent } from "@nostr-dev-kit/ndk";
 
 // Enable Map and Set support for Immer
 enableMapSet();
@@ -32,7 +32,6 @@ const createMockStore = () => {
             // Update the activePubkey
             return pubkey;
         }),
-        getMuteCriteria: vi.fn(),
         isItemMuted: vi.fn(),
         publishMuteList: vi.fn(),
     };
@@ -314,87 +313,6 @@ describe("NDKMutesStore", () => {
         });
     });
 
-    describe("getMuteCriteria", () => {
-        it("should return mute criteria for a user", () => {
-            const pubkey = testPubkey;
-            const mutedPubkey = "muted-pubkey";
-            const mutedEventId = "muted-event-id";
-            const mutedHashtag = "muted-hashtag";
-            const mutedWord = "muted-word";
-
-            // Mock the getMuteCriteria implementation
-            mockStore.getMuteCriteria.mockImplementation((pubkey) => {
-                const userMutes = mockStore.mutes.get(pubkey);
-
-                if (!userMutes) {
-                    return {
-                        pubkeys: new Set<string>(),
-                        eventIds: new Set<string>(),
-                        hashtags: new Set<string>(),
-                        words: new Set<string>(),
-                    };
-                }
-
-                const lowerCaseHashtags = new Set<string>();
-                for (const h of userMutes.hashtags) {
-                    lowerCaseHashtags.add(h.toLowerCase());
-                }
-
-                return {
-                    pubkeys: userMutes.pubkeys,
-                    eventIds: userMutes.eventIds,
-                    hashtags: lowerCaseHashtags,
-                    words: userMutes.words,
-                };
-            });
-
-            // Initialize and add muted items
-            mockStore.initMutes(pubkey);
-            const userMutes = mockStore.mutes.get(pubkey);
-            if (userMutes) {
-                userMutes.pubkeys.add(mutedPubkey);
-                userMutes.eventIds.add(mutedEventId);
-                userMutes.hashtags.add(mutedHashtag);
-                userMutes.words.add(mutedWord);
-            }
-
-            // Call the function
-            const criteria = mockStore.getMuteCriteria(pubkey);
-
-            // Verify it was called
-            expect(mockStore.getMuteCriteria).toHaveBeenCalledWith(pubkey);
-
-            // Verify the criteria
-            expect(criteria.pubkeys.has(mutedPubkey)).toBe(true);
-            expect(criteria.eventIds.has(mutedEventId)).toBe(true);
-            expect(criteria.hashtags.has(mutedHashtag.toLowerCase())).toBe(true);
-            expect(criteria.words.has(mutedWord)).toBe(true);
-        });
-
-        it("should return empty criteria when user doesn't exist", () => {
-            const pubkey = "nonexistent-pubkey";
-
-            // Mock the implementation to return empty criteria
-            mockStore.getMuteCriteria.mockReturnValueOnce({
-                pubkeys: new Set<string>(),
-                eventIds: new Set<string>(),
-                hashtags: new Set<string>(),
-                words: new Set<string>(),
-            });
-
-            // Call the function
-            const criteria = mockStore.getMuteCriteria(pubkey);
-
-            // Verify it was called
-            expect(mockStore.getMuteCriteria).toHaveBeenCalledWith(pubkey);
-
-            // Verify the criteria is empty
-            expect(criteria.pubkeys.size).toBe(0);
-            expect(criteria.eventIds.size).toBe(0);
-            expect(criteria.hashtags.size).toBe(0);
-            expect(criteria.words.size).toBe(0);
-        });
-    });
 
     describe("isItemMuted", () => {
         it("should check if a pubkey is muted", () => {

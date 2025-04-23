@@ -32,7 +32,6 @@ const createMockStore = () => {
             // Update the activePubkey
             return pubkey;
         }),
-        isItemMuted: vi.fn(),
         publishMuteList: vi.fn(),
     };
 };
@@ -314,55 +313,6 @@ describe("NDKMutesStore", () => {
     });
 
 
-    describe("isItemMuted", () => {
-        it("should check if a pubkey is muted", () => {
-            const pubkey = testPubkey;
-            const mutedPubkey = "muted-pubkey";
-
-            // Mock the isItemMuted implementation
-            mockStore.isItemMuted.mockImplementation((pubkey, item, type) => {
-                const userMutes = mockStore.mutes.get(pubkey);
-                if (!userMutes) return false;
-
-                switch (type) {
-                    case "pubkey":
-                        return userMutes.pubkeys.has(item);
-                    case "event":
-                        return userMutes.eventIds.has(item);
-                    case "hashtag":
-                        return userMutes.hashtags.has(item.toLowerCase());
-                    case "word": {
-                        if (userMutes.words.size === 0) return false;
-                        const lowerItem = item.toLowerCase();
-                        for (const word of userMutes.words) {
-                            if (lowerItem.includes(word.toLowerCase())) {
-                                return true;
-                            }
-                        }
-                        return false;
-                    }
-                    default:
-                        return false;
-                }
-            });
-
-            // Initialize and add a muted pubkey
-            mockStore.initMutes(pubkey);
-            const userMutes = mockStore.mutes.get(pubkey);
-            userMutes?.pubkeys.add(mutedPubkey);
-
-            // Call the function
-            const isMuted = mockStore.isItemMuted(pubkey, mutedPubkey, "pubkey");
-            const isNotMuted = mockStore.isItemMuted(pubkey, "non-muted-pubkey", "pubkey");
-
-            // Verify it was called
-            expect(mockStore.isItemMuted).toHaveBeenCalledWith(pubkey, mutedPubkey, "pubkey");
-
-            // Verify the results
-            expect(isMuted).toBe(true);
-            expect(isNotMuted).toBe(false);
-        });
-    });
 
     describe("publishMuteList", () => {
         it("should publish a mute list event", async () => {

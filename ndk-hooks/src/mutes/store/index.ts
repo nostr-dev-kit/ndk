@@ -9,7 +9,6 @@ import { muteItem } from "./mute-item";
 import { unmuteItem } from "./unmute-item";
 import { setActivePubkey } from "./set-active-pubkey";
 import { publishMuteList } from "./publish";
-import { isItemMuted } from "./is-item-muted";
 import { addExtraMuteItems } from "./add-extra-mute-items";
 
 // Enable Map and Set support for Immer
@@ -41,7 +40,6 @@ const mutesStateCreator = (set: (state: any) => void, get: () => NDKMutesState) 
     unmuteItem: (pubkey: Hexpubkey, item: string, type: MuteItemType, options?: PublishMuteListOptions) =>
         unmuteItem(set, get, pubkey, item, type, options),
     setActivePubkey: (pubkey: Hexpubkey | null) => setActivePubkey(set, pubkey),
-    isItemMuted: (pubkey: Hexpubkey, item: string, type: MuteItemType) => isItemMuted(get, pubkey, item, type),
     addExtraMuteItems: (items: MuteableItem[]) =>
         addExtraMuteItems(set, get, items),
     publishMuteList: (pubkey: Hexpubkey) => publishMuteList(get, pubkey),

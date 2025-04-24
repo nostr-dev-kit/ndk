@@ -44,6 +44,27 @@ bun add @nostr-dev-kit/ndk-mobile
 
 The plugin is automatically included when you install `@nostr-dev-kit/ndk-mobile`, so you don't need to install it separately.
 
+### How the Plugin Connection Works
+
+When you install `@nostr-dev-kit/ndk-mobile`, Expo looks at its package.json file, which contains:
+
+```json
+"expo": {
+  "plugins": [
+    {
+      "name": "ndk-mobile-sig-check",
+      "path": "./sig-check-module/expo-plugin.js"
+    }
+  ]
+}
+```
+
+This configuration tells Expo:
+1. There's a plugin named "ndk-mobile-sig-check" in this package
+2. The plugin's code is located at "./sig-check-module/expo-plugin.js"
+
+When your app's app.json references "ndk-mobile-sig-check", Expo knows to look for this plugin in the installed packages and finds it in `@nostr-dev-kit/ndk-mobile`.
+
 ### For Development of NDK Mobile
 
 If you're developing NDK Mobile itself, the module is already included in the repository.

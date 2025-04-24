@@ -5,7 +5,12 @@
     "private": false,
     "license": "MIT",
     "expo": {
-        "plugins": ["./sig-check-module/expo-plugin.js"]
+        "plugins": [
+            {
+                "name": "ndk-mobile-sig-check",
+                "path": "./sig-check-module/expo-plugin.js"
+            }
+        ]
     },
     "dependencies": {
         "@bacons/text-decoder": "^0.0.0",

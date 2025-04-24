@@ -12,6 +12,7 @@ import { NDKRelayPublisher } from "./publisher.js";
 import type { NDKRelayScore } from "./score.js";
 import { NDKRelaySubscriptionManager } from "./sub-manager.js";
 import type { NDKRelaySubscription } from "./subscription.js";
+import { SignatureVerificationStats, startSignatureVerificationStats } from "./signature-verification-stats.js";
 
 /** @deprecated Use `WebSocket['url']` instead. */
 export type NDKRelayUrl = WebSocket["url"];
@@ -118,13 +119,13 @@ export class NDKRelay extends EventEmitter<{
      * This tracks events that have been seen by this relay
      * with a valid signature.
      */
-    private validatedEventCount = 0;
+    public validatedEventCount = 0;
 
     /**
      * This tracks events that have been seen by this relay
      * but have not been validated.
      */
-    private nonValidatedEventCount = 0;
+    public nonValidatedEventCount = 0;
 
     /**
      * Whether this relay is trusted.
@@ -294,3 +295,5 @@ export class NDKRelay extends EventEmitter<{
     public req: (relaySub: NDKRelaySubscription) => void;
     public close: (subId: string) => void;
 }
+
+export { SignatureVerificationStats, startSignatureVerificationStats };

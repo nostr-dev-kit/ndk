@@ -82,3 +82,6 @@ export * from "./utils/normalize-url.js";
 export * from "./utils/get-users-relay-list.js";
 export * from "./utils/imeta.js";
 export * from "./utils/filter.js";
+
+// Re-export signature verification stats
+export { SignatureVerificationStats, startSignatureVerificationStats } from "./relay/signature-verification-stats.js";

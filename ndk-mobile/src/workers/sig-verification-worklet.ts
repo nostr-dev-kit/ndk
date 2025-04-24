@@ -1,146 +1,181 @@
 import { schnorr } from "@noble/curves/secp256k1";
 import { sha256 } from "@noble/hashes/sha256";
 import type { NDKEvent } from "@nostr-dev-kit/ndk";
-import { Buffer } from 'buffer';
+import { Buffer } from "buffer";
 
-// Try to import Reanimated, but don't fail if it's not available or incompatible
+// Reanimated detection
 let runOnJS: (fn: Function) => Function;
 let runOnUI: (fn: Function) => Function;
 let useWorkletCallback: (fn: Function, deps: any[]) => Function;
 let reanimatedAvailable = false;
 
 try {
-  const Reanimated = require('react-native-reanimated');
-  runOnJS = Reanimated.runOnJS;
-  runOnUI = Reanimated.runOnUI;
-  useWorkletCallback = Reanimated.useWorkletCallback;
-  reanimatedAvailable = true;
-} catch (e) {
-  console.warn('react-native-reanimated not available or incompatible version. Falling back to main thread verification.');
-  // Provide fallback implementations that just run on the main thread
-  runOnJS = (fn: Function) => fn;
-  runOnUI = (fn: Function) => (...args: any[]) => {
-    // Extract the callback which is the last argument
-    const callback = args[args.length - 1];
-    // Call the function directly on the main thread
-    try {
-      const result = fn(...args);
-      callback(result);
-    } catch (e) {
-      callback(false);
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const Reanimated = require("react-native-reanimated");
+    runOnJS = Reanimated.runOnJS;
+    runOnUI = Reanimated.runOnUI;
+    useWorkletCallback = Reanimated.useWorkletCallback;
+    reanimatedAvailable = true;
+} catch {
+    console.warn(
+        "react-native-reanimated not available or incompatible. Falling back to main thread verification."
+    );
+    runOnJS = (fn: Function) => fn;
+    runOnUI = (fn: Function) => (...args: any[]) => {
+        const callback = args[args.length - 1];
+        try {
+            const result = fn(...args);
+            callback(result);
+        } catch {
+            callback(false);
+        }
+        return undefined;
+    };
+    useWorkletCallback = (fn: Function) => fn;
+}
+
+// Pure-JS UTF-8 encoder (worklet-friendly)
+function utf8Encode(str: string): Uint8Array {
+    "worklet";
+    const bytes: number[] = [];
+    for (let i = 0; i < str.length; i++) {
+        let c = str.charCodeAt(i);
+        if (c < 0x80) {
+            bytes.push(c);
+        } else if (c < 0x800) {
+            bytes.push(0xc0 | (c >> 6), 0x80 | (c & 0x3f));
+        } else if (c < 0xd800 || c >= 0xe000) {
+            bytes.push(
+                0xe0 | (c >> 12),
+                0x80 | ((c >> 6) & 0x3f),
+                0x80 | (c & 0x3f)
+            );
+        } else {
+            // surrogate pair
+            i++;
+            const c2 = str.charCodeAt(i);
+            const cp = 0x10000 + (((c & 0x3ff) << 10) | (c2 & 0x3ff));
+            bytes.push(
+                0xf0 | (cp >> 18),
+                0x80 | ((cp >> 12) & 0x3f),
+                0x80 | ((cp >> 6) & 0x3f),
+                0x80 | (cp & 0x3f)
+            );
+        }
     }
-    return undefined;
-  };
-  useWorkletCallback = (fn: Function) => fn;
+    console.log('[NDK-MOBILE] utf8Encode', {str, bytes});
+    return new Uint8Array(bytes);
+}
+
+// Pure-JS hex string → bytes (worklet-friendly)
+function hexToBytes(hex: string): Uint8Array {
+    "worklet";
+    const len = hex.length >> 1;
+    const out = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+        out[i] = parseInt(hex.substr(i * 2, 2), 16);
+    }
+    return out;
 }
 
 /**
- * Worklet function that performs signature verification
- * This runs on a separate thread to avoid blocking the UI
+ * Runs entirely in JSI worklet. No Node or Web polyfills.
  */
 export function verifySignatureWorklet(
-  serialized: string,
-  id: string,
-  sig: string,
-  pubkey: string,
-  callback: (result: boolean) => void
+    serialized: string,
+    id: string,
+    sig: string,
+    pubkey: string,
+    callback: (res: boolean) => void
 ) {
-  'worklet';
-  try {
-    // Calculate the event hash
-    const eventHash = sha256(new TextEncoder().encode(serialized));
-    const buffer = Buffer.from(id, "hex");
-    const idHash = Uint8Array.from(buffer);
+    "worklet";
+    try {
+      console.log('[NDK-MOBILE] running inside the worklet', {reanimatedAvailable});
+        // const eventHash = sha256(utf8Encode(serialized));
+        // console.log('[NDK-MOBILE] eventHash', {eventHash});
+        const idHash = hexToBytes(id);
+        console.log('[NDK-MOBILE] idHash', {idHash});
 
-    // Compare the hashes
-    let result = true;
-    if (eventHash.length !== idHash.length) {
-      result = false;
-    } else {
-      for (let i = 0; i < eventHash.length; i++) {
-        if (eventHash[i] !== idHash[i]) {
-          result = false;
-          break;
+        let ok = true;
+        // console.log('[NDK-MOBILE] eventHash.length === idHash.length', {ok});
+        // if (ok) {
+        //     for (let i = 0; i < eventHash.length; i++) {
+        //         if (eventHash[i] !== idHash[i]) {
+        //             ok = false;
+        //             break;
+        //         }
+        //     }
+        // }
+        
+        console.log('running verifySignatureWorklet', {ok}, schnorr.verify);
+
+        if (ok) {
+            ok = schnorr.verify(sig, idHash, pubkey);
+            console.log('[NDK-MOBILE] schnorr.verify', {ok});
         }
-      }
+
+
+        runOnJS(callback)(ok);
+    } catch (e) {
+        console.error("Signature verify error:", e, { serialized, id, sig, pubkey });
+        runOnJS(callback)(false);
     }
-
-    // If hashes match, verify the signature
-    if (result) {
-      result = schnorr.verify(sig, buffer, pubkey);
-    }
-
-    console.log("Signature verification result:", result, id, sig);
-
-    // Send the result back to the JS thread
-    runOnJS(callback)(result);
-  } catch (_err) {
-    // On any error, avoid crashing the UI thread and report invalid signature
-    runOnJS(callback)(false);
-  }
 }
 
 /**
- * Verify a signature asynchronously using the worklet
- * This function matches the interface expected by NDK's signatureVerificationFunction
- *
- * @param event The NDK event to verify
- * @returns Promise that resolves to a boolean indicating if the signature is valid
+ * Async wrapper matching NDK’s signatureVerificationFunction interface
  */
 export async function verifySignatureAsync(event: NDKEvent): Promise<boolean> {
-  return new Promise<boolean>((resolve) => {
-    const serialized = event.serialize();
-    
-    if (reanimatedAvailable) {
-      // Run the verification in a worklet if Reanimated is available
-      runOnUI(verifySignatureWorklet)(
-        serialized,
-        event.id,
-        event.sig!,
-        event.pubkey!,
-        resolve
-      );
-    } else {
-      // Fall back to main thread verification if Reanimated is not available
-      try {
-        // Calculate the event hash
-        const eventHash = sha256(new TextEncoder().encode(serialized));
-        // Use Buffer from the 'buffer' package
-        const buffer = Buffer.from(event.id, "hex");
-        const idHash = Uint8Array.from(buffer);
-
-        // Compare the hashes
-        let result = true;
-        if (eventHash.length !== idHash.length) {
-          result = false;
+    return new Promise<boolean>((resolve) => {
+        console.log('[NDK-MOBILE] verifySignatureAsync', {reanimatedAvailable});
+        const serialized = event.serialize();
+        if (reanimatedAvailable) {
+            runOnUI(verifySignatureWorklet)(
+                serialized,
+                event.id,
+                event.sig!,
+                event.pubkey!,
+                resolve
+            );
         } else {
-          for (let i = 0; i < eventHash.length; i++) {
-            if (eventHash[i] !== idHash[i]) {
-              result = false;
-              break;
+            // Main-thread fallback (still uses TextEncoder/Buffer)
+            try {
+                const eventHash = sha256(
+                    new TextEncoder().encode(serialized)
+                );
+                const buf = Buffer.from(event.id, "hex");
+                const idHash = Uint8Array.from(buf);
+
+                let ok = eventHash.length === idHash.length;
+                if (ok) {
+                    for (let i = 0; i < eventHash.length; i++) {
+                        if (eventHash[i] !== idHash[i]) {
+                            ok = false;
+                            break;
+                        }
+                    }
+                }
+                if (ok) {
+                    ok = schnorr.verify(
+                        event.sig!,
+                        buf,
+                        event.pubkey!
+                    );
+                }
+                resolve(ok);
+            } catch (e) {
+                console.error("Signature verify error:", e);
+                resolve(false);
             }
-          }
         }
-
-        // If hashes match, verify the signature
-        if (result) {
-          result = schnorr.verify(event.sig!, buffer, event.pubkey!);
-        }
-
-        resolve(result);
-      } catch (e) {
-        console.error('Error verifying signature on main thread:', e);
-        resolve(false);
-      }
-    }
-  });
+    });
 }
 
 /**
- * Hook to create a signature verification function that can be used in components
+ * Hook for components
  */
 export function useSignatureVerification() {
-  return useWorkletCallback((event: NDKEvent) => {
-    return verifySignatureAsync(event);
-  }, []);
+    return useWorkletCallback((event: NDKEvent) => {
+        return verifySignatureAsync(event);
+    }, []);
 }

@@ -44,7 +44,7 @@ export const verifiedSignatures = new LRUCache<string, false | string>({
 export function verifySignature(this: NDKEvent, persist: boolean): boolean | undefined {
     if (typeof this.signatureVerified === "boolean") return this.signatureVerified;
 
-    console.log("verifying signature", this.id, { asyncAdapter: !!this.ndk?.asyncSigVerification });
+    console.log("[NDK-CORE] verifying signature", this.id, { asyncAdapter: !!this.ndk?.asyncSigVerification });
 
     const prevVerification = verifiedSignatures.get(this.id);
     if (prevVerification !== null) {

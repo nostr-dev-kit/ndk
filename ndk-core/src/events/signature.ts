@@ -45,8 +45,11 @@ export async function verifySignatureAsync(event: NDKEvent, _persist: boolean, r
     let result: boolean;
     // Use custom verification function if provided
     if (ndkInstance.signatureVerificationFunction) {
+        console.log("[NDK-CORE] Using custom signature verification function async");
         result = await ndkInstance.signatureVerificationFunction(event);
+        console.log("Custom signature verification result", event.id, { result });
     } else {
+        console.log("Using worker-based signature verification async");
         // Otherwise use the worker-based verification
         result = await new Promise<boolean>((resolve) => {
             const serialized = event.serialize();

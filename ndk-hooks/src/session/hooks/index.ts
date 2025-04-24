@@ -23,7 +23,7 @@ const EMPTY_KIND_MAP = new Map<NDKKind, Map<Hexpubkey, { followed: boolean; last
 export const useNDKSessionLogin = () => {
     const addSession = useNDKSessions.getState().addSession;
     return useCallback(
-        (userOrSigner: NDKUser | NDKSigner, setActive: boolean) => addSession(userOrSigner, setActive),
+        (userOrSigner: NDKUser | NDKSigner, setActive = true) => addSession(userOrSigner, setActive),
         [addSession],
     );
 };

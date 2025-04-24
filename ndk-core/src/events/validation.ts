@@ -44,8 +44,6 @@ export const verifiedSignatures = new LRUCache<string, false | string>({
 export function verifySignature(this: NDKEvent, persist: boolean): boolean | undefined {
     if (typeof this.signatureVerified === "boolean") return this.signatureVerified;
 
-    console.log("[NDK-CORE] verifying signature", this.id, { asyncAdapter: !!this.ndk?.asyncSigVerification });
-
     const prevVerification = verifiedSignatures.get(this.id);
     if (prevVerification !== null) {
         this.signatureVerified = !!prevVerification;
@@ -55,10 +53,8 @@ export function verifySignature(this: NDKEvent, persist: boolean): boolean | und
     try {
         // Use async verification if enabled (either via worker or custom function)
         if (this.ndk?.asyncSigVerification) {
-            console.log("verifying signature async", this.id);
             // verifySignatureAsync will use either the custom function or the worker
             verifySignatureAsync(this, persist, this.relay).then((result) => {
-                console.log("signature verified", this.id, {result});
                 if (persist) {
                     this.signatureVerified = result;
                     if (result) verifiedSignatures.set(this.id, this.sig!);
@@ -76,11 +72,7 @@ export function verifySignature(this: NDKEvent, persist: boolean): boolean | und
             .catch((err) => {
                 console.error("signature verification error", this.id, err);
             })
-            .finally(() => {
-                console.log("signature verification completed", this.id);
-            });
         } else {
-            console.log("verifying signature sync", this.id);
             const hash = sha256(new TextEncoder().encode(this.serialize()));
             const res = schnorr.verify(this.sig as string, hash, this.pubkey);
             if (res) verifiedSignatures.set(this.id, this.sig!);

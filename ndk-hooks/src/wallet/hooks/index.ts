@@ -103,7 +103,6 @@ export const useNDKNutzapMonitor = (mintList?: NDKCashuMintList, start = false) 
     useEffect(() => {
         if (!ndk || !currentUser?.pubkey || !activeWallet) {
             if (nutzapMonitor) {
-                console.log("Stopping NDKNutzapMonitor due to missing dependencies");
                 nutzapMonitor.stop();
                 setNutzapMonitor(null);
                 setMonitorStarted(false);
@@ -112,7 +111,6 @@ export const useNDKNutzapMonitor = (mintList?: NDKCashuMintList, start = false) 
         }
 
         if (!nutzapMonitor && start) {
-            console.log("Initializing NDKNutzapMonitor");
             const monitor = new NDKNutzapMonitor(ndk, currentUser, {
                 mintList,
                 store: monitorStore,
@@ -121,11 +119,9 @@ export const useNDKNutzapMonitor = (mintList?: NDKCashuMintList, start = false) 
             setNutzapMonitor(monitor);
         } else if (nutzapMonitor) {
             if (nutzapMonitor.wallet?.walletId !== activeWallet.walletId) {
-                console.log("Updating wallet in NDKNutzapMonitor");
                 nutzapMonitor.wallet = activeWallet;
             }
             if (nutzapMonitor.mintList !== mintList) {
-                console.log("Updating mintList in NDKNutzapMonitor");
                 nutzapMonitor.mintList = mintList;
             }
         }
@@ -133,7 +129,6 @@ export const useNDKNutzapMonitor = (mintList?: NDKCashuMintList, start = false) 
 
     useEffect(() => {
         if (start && nutzapMonitor && !monitorStarted) {
-            console.log("Starting NDKNutzapMonitor");
             nutzapMonitor
                 .start({
                     filter: { limit: 100 },
@@ -141,20 +136,17 @@ export const useNDKNutzapMonitor = (mintList?: NDKCashuMintList, start = false) 
                 })
                 .then(() => {
                     setMonitorStarted(true);
-                    console.log("NDKNutzapMonitor started successfully");
                 })
                 .catch((err: Error) => {
                     console.error("Failed to start NDKNutzapMonitor", err);
                 });
         } else if (!start && nutzapMonitor && monitorStarted) {
-            console.log("Stopping NDKNutzapMonitor");
             nutzapMonitor.stop();
             setMonitorStarted(false);
         }
 
         return () => {
             if (nutzapMonitor && monitorStarted) {
-                console.log("Stopping NDKNutzapMonitor on cleanup");
                 nutzapMonitor.stop();
                 setMonitorStarted(false);
             }

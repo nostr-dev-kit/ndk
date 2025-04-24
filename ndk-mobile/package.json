@@ -82,7 +82,6 @@
     "files": [
         "src",
         "dist",
-        "!src/workers/example.tsx",
         "!dist/**/example.*",
         "!**/__tests__",
         "!**/__fixtures__",

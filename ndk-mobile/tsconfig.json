@@ -15,5 +15,5 @@
         }
     },
     "include": ["src/**/*.ts", "src/**/*.tsx"],
-    "exclude": ["node_modules", "src/workers/example.tsx"]
+    "exclude": ["node_modules"]
 }

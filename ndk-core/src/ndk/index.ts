@@ -276,6 +276,11 @@ export class NDK extends EventEmitter<{
      * When provided, this will be used instead of the default verification logic.
      */
     public signatureVerificationFunction?: (event: NDKEvent) => Promise<boolean>;
+    /**
+     * Rolling total of time spent (in ms) performing signature verifications.
+     * Users can read this to monitor or display aggregate verification cost.
+     */
+    public signatureVerificationTimeMs: number = 0;
 
     public publishingFailureHandled = false;
 

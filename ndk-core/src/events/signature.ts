@@ -26,30 +26,37 @@ export function signatureVerificationInit(w: Worker) {
 }
 
 export async function verifySignatureAsync(event: NDKEvent, _persist: boolean): Promise<boolean> {
-    // If the NDK instance has a custom verification function, use it
-    if (event.ndk?.signatureVerificationFunction) {
-        return event.ndk.signatureVerificationFunction(event);
-    }
-    
-    // Otherwise use the worker-based verification
-    const promise = new Promise<boolean>((resolve) => {
-        const serialized = event.serialize();
-        let enqueue = false;
-        if (!processingQueue[event.id]) {
-            processingQueue[event.id] = { event, resolves: [] };
-            enqueue = true;
-        }
-        processingQueue[event.id].resolves.push(resolve);
+    // Measure total time spent in signature verification
+    const ndkInstance = event.ndk!;
+    const start = Date.now();
 
-        if (!enqueue) return;
+    let result: boolean;
+    // Use custom verification if provided
+    if (ndkInstance.signatureVerificationFunction) {
+        result = await ndkInstance.signatureVerificationFunction(event);
+    } else {
+        // Otherwise use the worker-based verification
+        result = await new Promise<boolean>((resolve) => {
+            const serialized = event.serialize();
+            let enqueue = false;
+            if (!processingQueue[event.id]) {
+                processingQueue[event.id] = { event, resolves: [] };
+                enqueue = true;
+            }
+            processingQueue[event.id].resolves.push(resolve);
 
-        worker?.postMessage({
-            serialized,
-            id: event.id,
-            sig: event.sig,
-            pubkey: event.pubkey,
+            if (!enqueue) return;
+
+            worker?.postMessage({
+                serialized,
+                id: event.id,
+                sig: event.sig,
+                pubkey: event.pubkey,
+            });
         });
-    });
+    }
 
-    return promise;
+    // Accumulate elapsed time
+    ndkInstance.signatureVerificationTimeMs += Date.now() - start;
+    return result;
 }

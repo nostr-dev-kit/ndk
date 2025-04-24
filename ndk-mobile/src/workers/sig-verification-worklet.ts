@@ -15,32 +15,36 @@ export function verifySignatureWorklet(
   callback: (result: boolean) => void
 ) {
   'worklet';
-  
-  // Calculate the event hash
-  const eventHash = sha256(new TextEncoder().encode(serialized));
-  const buffer = Buffer.from(id, "hex");
-  const idHash = Uint8Array.from(buffer);
+  try {
+    // Calculate the event hash
+    const eventHash = sha256(new TextEncoder().encode(serialized));
+    const buffer = Buffer.from(id, "hex");
+    const idHash = Uint8Array.from(buffer);
 
-  // Compare the hashes
-  let result = true;
-  if (eventHash.length !== idHash.length) {
-    result = false;
-  } else {
-    for (let i = 0; i < eventHash.length; i++) {
-      if (eventHash[i] !== idHash[i]) {
-        result = false;
-        break;
+    // Compare the hashes
+    let result = true;
+    if (eventHash.length !== idHash.length) {
+      result = false;
+    } else {
+      for (let i = 0; i < eventHash.length; i++) {
+        if (eventHash[i] !== idHash[i]) {
+          result = false;
+          break;
+        }
       }
     }
-  }
 
-  // If hashes match, verify the signature
-  if (result) {
-    result = schnorr.verify(sig, buffer, pubkey);
-  }
+    // If hashes match, verify the signature
+    if (result) {
+      result = schnorr.verify(sig, buffer, pubkey);
+    }
 
-  // Send the result back to the JS thread
-  runOnJS(callback)(result);
+    // Send the result back to the JS thread
+    runOnJS(callback)(result);
+  } catch (_err) {
+    // On any error, avoid crashing the UI thread and report invalid signature
+    runOnJS(callback)(false);
+  }
 }
 
 /**

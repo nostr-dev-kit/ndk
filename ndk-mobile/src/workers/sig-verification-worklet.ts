@@ -1,7 +1,38 @@
-import { runOnJS, runOnUI, useWorkletCallback } from 'react-native-reanimated';
 import { schnorr } from "@noble/curves/secp256k1";
 import { sha256 } from "@noble/hashes/sha256";
 import type { NDKEvent } from "@nostr-dev-kit/ndk";
+import { Buffer } from 'buffer';
+
+// Try to import Reanimated, but don't fail if it's not available or incompatible
+let runOnJS: (fn: Function) => Function;
+let runOnUI: (fn: Function) => Function;
+let useWorkletCallback: (fn: Function, deps: any[]) => Function;
+let reanimatedAvailable = false;
+
+try {
+  const Reanimated = require('react-native-reanimated');
+  runOnJS = Reanimated.runOnJS;
+  runOnUI = Reanimated.runOnUI;
+  useWorkletCallback = Reanimated.useWorkletCallback;
+  reanimatedAvailable = true;
+} catch (e) {
+  console.warn('react-native-reanimated not available or incompatible version. Falling back to main thread verification.');
+  // Provide fallback implementations that just run on the main thread
+  runOnJS = (fn: Function) => fn;
+  runOnUI = (fn: Function) => (...args: any[]) => {
+    // Extract the callback which is the last argument
+    const callback = args[args.length - 1];
+    // Call the function directly on the main thread
+    try {
+      const result = fn(...args);
+      callback(result);
+    } catch (e) {
+      callback(false);
+    }
+    return undefined;
+  };
+  useWorkletCallback = (fn: Function) => fn;
+}
 
 /**
  * Worklet function that performs signature verification
@@ -39,6 +70,8 @@ export function verifySignatureWorklet(
       result = schnorr.verify(sig, buffer, pubkey);
     }
 
+    console.log("Signature verification result:", result, id, sig);
+
     // Send the result back to the JS thread
     runOnJS(callback)(result);
   } catch (_err) {
@@ -58,14 +91,48 @@ export async function verifySignatureAsync(event: NDKEvent): Promise<boolean> {
   return new Promise<boolean>((resolve) => {
     const serialized = event.serialize();
     
-    // Run the verification in a worklet
-    runOnUI(verifySignatureWorklet)(
-      serialized,
-      event.id,
-      event.sig!,
-      event.pubkey!,
-      resolve
-    );
+    if (reanimatedAvailable) {
+      // Run the verification in a worklet if Reanimated is available
+      runOnUI(verifySignatureWorklet)(
+        serialized,
+        event.id,
+        event.sig!,
+        event.pubkey!,
+        resolve
+      );
+    } else {
+      // Fall back to main thread verification if Reanimated is not available
+      try {
+        // Calculate the event hash
+        const eventHash = sha256(new TextEncoder().encode(serialized));
+        // Use Buffer from the 'buffer' package
+        const buffer = Buffer.from(event.id, "hex");
+        const idHash = Uint8Array.from(buffer);
+
+        // Compare the hashes
+        let result = true;
+        if (eventHash.length !== idHash.length) {
+          result = false;
+        } else {
+          for (let i = 0; i < eventHash.length; i++) {
+            if (eventHash[i] !== idHash[i]) {
+              result = false;
+              break;
+            }
+          }
+        }
+
+        // If hashes match, verify the signature
+        if (result) {
+          result = schnorr.verify(event.sig!, buffer, event.pubkey!);
+        }
+
+        resolve(result);
+      } catch (e) {
+        console.error('Error verifying signature on main thread:', e);
+        resolve(false);
+      }
+    }
   });
 }
 

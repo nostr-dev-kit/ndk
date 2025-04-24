@@ -26,13 +26,24 @@ export function signatureVerificationInit(w: Worker) {
     };
 }
 
+/**
+ * Verify a signature asynchronously using either a custom function or a worker.
+ *
+ * This function first checks if a custom verification function is provided in the NDK instance.
+ * If available, it uses that function. Otherwise, it falls back to the worker-based verification.
+ *
+ * @param event The event to verify
+ * @param _persist Whether to persist the verification result
+ * @param relay The relay that provided the event (optional)
+ * @returns A promise that resolves to a boolean indicating if the signature is valid
+ */
 export async function verifySignatureAsync(event: NDKEvent, _persist: boolean, relay?: NDKRelay): Promise<boolean> {
     // Measure total time spent in signature verification
     const ndkInstance = event.ndk!;
     const start = Date.now();
 
     let result: boolean;
-    // Use custom verification if provided
+    // Use custom verification function if provided
     if (ndkInstance.signatureVerificationFunction) {
         result = await ndkInstance.signatureVerificationFunction(event);
     } else {

@@ -122,20 +122,21 @@ export interface NDKConstructorParams {
     relayAuthDefaultPolicy?: NDKAuthPolicy;
 
     /**
-     * Whether to verify signatures on events synchronously or asynchronously.
+     * Set a Web Worker for signature verification.
      *
      * @default undefined
      *
-     * When set to true, the signature verification will processed in a web worker.
+     * When provided, signature verification will be processed in a web worker.
      * You should listen for the `event:invalid-sig` event to handle invalid signatures.
      *
      * @example
      * ```typescript
      * const worker = new Worker("path/to/signature-verification.js");
-     * ndk.delayedSigVerification = worker;
+     * ndk.signatureVerificationWorker = worker;
      * ndk.on("event:invalid-sig", (event) => {
      *    console.error("Invalid signature", event);
      * });
+     * ```
      */
     signatureVerificationWorker?: Worker | undefined;
 
@@ -162,7 +163,7 @@ export interface NDKConstructorParams {
     /**
      * A custom function to verify event signatures.
      * When provided, this function will be used instead of the default verification logic.
-     * This is useful for platforms like React Native where Web Workers are not available.
+     * This is particularly useful for platforms like React Native where Web Workers are not available.
      *
      * @example
      * ```typescript
@@ -280,10 +281,14 @@ export class NDK extends EventEmitter<{
     public subManager: NDKSubscriptionManager;
     
     /**
-     * Custom function to verify event signatures.
-     * When provided, this will be used instead of the default verification logic.
+     * Private storage for the signature verification function
      */
-    public signatureVerificationFunction?: (event: NDKEvent) => Promise<boolean>;
+    private _signatureVerificationFunction?: (event: NDKEvent) => Promise<boolean>;
+    
+    /**
+     * Private storage for the signature verification worker
+     */
+    private _signatureVerificationWorker?: Worker;
     /**
      * Rolling total of time spent (in ms) performing signature verifications.
      * Users can read this to monitor or display aggregate verification cost.
@@ -387,12 +392,17 @@ export class NDK extends EventEmitter<{
         this.queuesZapConfig = new Queue("zaps", 3);
         this.queuesNip05 = new Queue("nip05", 10);
 
-        this.signatureVerificationWorker = opts.signatureVerificationWorker;
-        this.signatureVerificationFunction = opts.signatureVerificationFunction;
+        // Set signature verification methods
+        // The setters will handle setting asyncSigVerification appropriately
         
-        // If a custom verification function is provided, enable async verification
-        if (this.signatureVerificationFunction) {
-            this.asyncSigVerification = true;
+        // Handle both worker and function for backward compatibility
+        if (opts.signatureVerificationWorker) {
+            this.signatureVerificationWorker = opts.signatureVerificationWorker;
+        }
+        
+        // Always set the function if provided, even if a worker is also set
+        if (opts.signatureVerificationFunction) {
+            this.signatureVerificationFunction = opts.signatureVerificationFunction;
         }
 
         this.initialValidationRatio = opts.initialValidationRatio || 1.0;
@@ -414,11 +424,56 @@ export class NDK extends EventEmitter<{
         return this._explicitRelayUrls || [];
     }
 
+    /**
+     * Set a Web Worker for signature verification.
+     *
+     * This method initializes the worker and sets the asyncSigVerification flag.
+     * The actual verification is handled by the verifySignatureAsync function in signature.ts,
+     * which will use the worker if available.
+     */
     set signatureVerificationWorker(worker: Worker | undefined) {
-        this.asyncSigVerification = !!worker;
+        this._signatureVerificationWorker = worker;
+        
         if (worker) {
+            // Initialize the worker
             signatureVerificationInit(worker);
+            
+            // Set asyncSigVerification flag
+            this.asyncSigVerification = true;
+        } else {
+            // If worker is undefined, clear the flag
+            this.asyncSigVerification = false;
         }
+    }
+
+    /**
+     * Set a custom signature verification function.
+     *
+     * This method is particularly useful for platforms that don't support Web Workers,
+     * such as React Native.
+     *
+     * When a function is provided, it will be used for signature verification
+     * instead of the default worker-based verification. This enables signature
+     * verification on platforms where Web Workers are not available.
+     *
+     * @example
+     * ```typescript
+     * import { verifySignatureAsync } from "@nostr-dev-kit/ndk-mobile";
+     *
+     * ndk.signatureVerificationFunction = verifySignatureAsync;
+     * ```
+     */
+    set signatureVerificationFunction(fn: ((event: NDKEvent) => Promise<boolean>) | undefined) {
+        this._signatureVerificationFunction = fn;
+        // Enable async verification when a function is provided
+        this.asyncSigVerification = !!fn;
+    }
+
+    /**
+     * Get the custom signature verification function
+     */
+    get signatureVerificationFunction(): ((event: NDKEvent) => Promise<boolean>) | undefined {
+        return this._signatureVerificationFunction;
     }
 
     /**

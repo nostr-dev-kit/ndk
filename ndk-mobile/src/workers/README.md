@@ -4,7 +4,7 @@ This module provides a signature verification worklet for React Native/Expo appl
 
 ## Installation
 
-Make sure you have the required dependencies installed:
+The signature verification worklet requires react-native-reanimated as a peer dependency. Make sure you have it installed:
 
 ```bash
 # Using npm
@@ -16,6 +16,14 @@ yarn add react-native-reanimated
 # Using bun
 bun add react-native-reanimated
 ```
+
+> **Note:** The worklet is compatible with react-native-reanimated version 3.16.0 or higher. If Reanimated is not available or an incompatible version is detected, the verification will fall back to running on the main thread.
+
+### Buffer Polyfill
+
+The worklet uses the `Buffer` class from the 'buffer' npm package, which is included as a dependency of ndk-mobile. You don't need to install it separately.
+
+If your app already has a Buffer polyfill, there should be no conflicts as long as it provides the standard Buffer API.
 
 ## Setup
 
@@ -67,9 +75,16 @@ const ndk = new NDK({
 });
 
 // Initialize the signature verification worklet
-initSignatureVerificationWorklet(ndk);
+// Returns true if Reanimated is available and properly initialized
+const isUsingWorklet = initSignatureVerificationWorklet(ndk);
 
-// Now NDK will use the worklet for signature verification
+if (isUsingWorklet) {
+  console.log('Using Reanimated worklet for signature verification');
+} else {
+  console.log('Falling back to main thread for signature verification');
+}
+
+// Now NDK will use the verification function (either worklet or main thread)
 // You can listen for invalid signatures
 ndk.on('event:invalid-sig', (event) => {
   console.log('Invalid signature detected:', event.id);
@@ -108,12 +123,23 @@ If you encounter issues with Reanimated:
 
 1. Make sure you've added the Babel plugin correctly
 2. For Expo, ensure you've configured the plugin in app.json/app.config.js
-3. Rebuild your app completely (clear cache if needed)
+3. Check that your Reanimated version is 3.16.0 or higher
+4. Rebuild your app completely (clear cache if needed)
 
 ```bash
 # Clear cache and rebuild
 expo start -c
 ```
+
+### Fallback to main thread
+
+The worklet will automatically fall back to running on the main thread if:
+
+1. Reanimated is not installed
+2. An incompatible version of Reanimated is detected
+3. There's an error initializing the worklet
+
+You can check if the worklet is being used by checking the return value of `initSignatureVerificationWorklet()`.
 
 ### TypeScript errors
 
@@ -129,3 +155,12 @@ The worklet significantly improves UI performance by moving signature verificati
 1. The first verification might be slightly slower due to worklet initialization
 2. Very high volumes of verifications might still cause performance issues
 3. Consider implementing batching for multiple verifications if needed
+4. When falling back to the main thread, verification will block the UI thread, so performance may be affected
+
+## Version Compatibility
+
+This module is designed to be compatible with various versions of react-native-reanimated:
+
+- **Optimal:** Works best with the version specified in the peer dependencies (3.16.0 or higher)
+- **Fallback:** Will fall back to main thread verification if Reanimated is not available or incompatible
+- **No Breaking Changes:** Your app will continue to function even if there are version mismatches

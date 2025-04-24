@@ -9,18 +9,19 @@
         "@nostr-dev-kit/ndk": "2.14.2",
         "@nostr-dev-kit/ndk-hooks": "1.1.17",
         "@nostr-dev-kit/ndk-wallet": "0.5.6",
+        "buffer": "^6.0.3",
         "expo-image": "~2.0.7",
         "expo-nip55": "*",
         "expo-secure-store": "~14.0.1",
         "react-native-get-random-values": "~1.11.0",
-        "react-native-reanimated": "^3.17.5",
         "typescript-lru-cache": "^2.0.0",
         "zustand": "^5.0.2"
     },
     "peerDependencies": {
         "expo": "^52",
         "expo-sqlite": "^15",
-        "react-native": ">=0.71.0"
+        "react-native": ">=0.71.0",
+        "react-native-reanimated": ">=3.16.0"
     },
     "devDependencies": {
         "@types/react-native": "^0.73.0",

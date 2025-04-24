@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk-hooks
 
+## 1.1.17
+
+### Patch Changes
+
+- remove some debugging and code cleanup
+
 ## 1.1.16
 
 ### Patch Changes

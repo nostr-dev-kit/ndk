@@ -237,10 +237,10 @@ export class NDK extends EventEmitter<{
     "signer:required": () => void;
 
     /**
-     * Emitted when an event with an invalid signature is received and the signature
-     * was processed asynchronously.
+     * Emitted when an event with an invalid signature is received.
+     * Includes the relay that provided the invalid signature.
      */
-    "event:invalid-sig": (event: NDKEvent) => void;
+    "event:invalid-sig": (event: NDKEvent, relay?: NDKRelay) => void;
 
     /**
      * Emitted when an event fails to publish.
@@ -267,8 +267,9 @@ export class NDK extends EventEmitter<{
     public queuesNip05: Queue<ProfilePointer | null>;
     public asyncSigVerification = false;
     public initialValidationRatio = 1.0;
-    public lowestValidationRatio = 1.0;
+    public lowestValidationRatio = 0.1;
     public validationRatioFn?: NDKValidationRatioFn;
+    public autoBlacklistInvalidRelays = false;
     public subManager: NDKSubscriptionManager;
     
     /**
@@ -388,7 +389,9 @@ export class NDK extends EventEmitter<{
         }
 
         this.initialValidationRatio = opts.initialValidationRatio || 1.0;
-        this.lowestValidationRatio = opts.lowestValidationRatio || 1.0;
+        this.lowestValidationRatio = opts.lowestValidationRatio || 0.1;
+        this.autoBlacklistInvalidRelays = opts.autoBlacklistInvalidRelays || false;
+        this.validationRatioFn = opts.validationRatioFn || this.defaultValidationRatioFn;
 
         try {
             this.httpFetch = fetch;
@@ -498,6 +501,68 @@ export class NDK extends EventEmitter<{
 
         if (this.outboxPool) {
             connections.push(this.outboxPool.connect(timeoutMs));
+        }
+
+        return Promise.all(connections).then(() => {});
+    }
+
+    /**
+     * Centralized method to report an invalid signature, identifying the relay that provided it.
+     * A single invalid signature means the relay is considered malicious.
+     * All invalid signature detections (synchronous or asynchronous) should delegate to this method.
+     *
+     * @param event The event with an invalid signature
+     * @param relay The relay that provided the invalid signature
+     */
+    public reportInvalidSignature(event: NDKEvent, relay?: NDKRelay): void {
+        this.debug(`Invalid signature detected for event ${event.id}${relay ? ` from relay ${relay.url}` : ''}`);
+        
+        // Emit event with relay information
+        this.emit("event:invalid-sig", event, relay);
+        
+        // If auto-blacklisting is enabled and we have a relay, add the relay to the blacklist
+        if (this.autoBlacklistInvalidRelays && relay) {
+            this.blacklistRelay(relay.url);
+        }
+    }
+    
+    /**
+     * Add a relay URL to the blacklist as it has been identified as malicious
+     */
+    public blacklistRelay(url: string): void {
+        if (!this.blacklistRelayUrls) {
+            this.blacklistRelayUrls = [];
+        }
+        
+        if (!this.blacklistRelayUrls.includes(url)) {
+            this.blacklistRelayUrls.push(url);
+            this.debug(`Added relay to blacklist: ${url}`);
+            
+            // Disconnect from this relay if connected
+            const relay = this.pool.getRelay(url, false, false);
+            if (relay) {
+                relay.disconnect();
+                this.debug(`Disconnected from blacklisted relay: ${url}`);
+            }
+        }
+    }
+
+    /**
+     * Default function to calculate validation ratio based on historical validation results.
+     * The more events validated successfully, the lower the ratio goes (down to the minimum).
+     */
+    private defaultValidationRatioFn(relay: NDKRelay, validatedCount: number, nonValidatedCount: number): number {
+        if (validatedCount < 10) return this.initialValidationRatio;
+        
+        // Calculate a logarithmically decreasing ratio that approaches the minimum
+        // as more events are validated
+        const trustFactor = Math.min(validatedCount / 100, 1); // Caps at 100 validated events
+        
+        const calculatedRatio = this.initialValidationRatio *
+            (1 - trustFactor) +
+            this.lowestValidationRatio * trustFactor;
+        
+        return Math.max(calculatedRatio, this.lowestValidationRatio);
         }
 
         this.debug("Connecting to relays %o", { timeoutMs });

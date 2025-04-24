@@ -181,6 +181,17 @@ export class NDKRelay extends EventEmitter<{
     }
 
     private updateValidationRatio(): void {
+        if (this.validationRatioFn && this.validatedEventCount > 0) {
+            const newRatio = this.validationRatioFn(
+                this,
+                this.validatedEventCount,
+                this.nonValidatedEventCount
+            );
+            
+            this.targetValidationRatio = newRatio;
+        }
+        
+        // Schedule the next update
         setTimeout(() => {
             this.updateValidationRatio();
         }, 30000);
@@ -269,8 +280,11 @@ export class NDKRelay extends EventEmitter<{
             return true;
         }
 
-        // if the current validation ratio is below the threshold, validate the event
-        return this.validationRatio < this.targetValidationRatio;
+        // Always validate if ratio is 1.0
+        if (this.targetValidationRatio >= 1.0) return true;
+        
+        // Otherwise, randomly decide based on ratio
+        return Math.random() < this.targetValidationRatio;
     }
 
     get connected(): boolean {

@@ -1,8 +1,9 @@
 import type { NDKEvent, NDKEventId } from "./index.js";
+import type { NDKRelay } from "../relay/index.js";
 
 let worker: Worker | undefined;
 
-const processingQueue: Record<NDKEventId, { event: NDKEvent; resolves: ((result: boolean) => void)[] }> = {};
+const processingQueue: Record<NDKEventId, { event: NDKEvent; resolves: ((result: boolean) => void)[]; relay?: NDKRelay }> = {};
 
 export function signatureVerificationInit(w: Worker) {
     worker = w;
@@ -25,7 +26,7 @@ export function signatureVerificationInit(w: Worker) {
     };
 }
 
-export async function verifySignatureAsync(event: NDKEvent, _persist: boolean): Promise<boolean> {
+export async function verifySignatureAsync(event: NDKEvent, _persist: boolean, relay?: NDKRelay): Promise<boolean> {
     // Measure total time spent in signature verification
     const ndkInstance = event.ndk!;
     const start = Date.now();
@@ -40,7 +41,7 @@ export async function verifySignatureAsync(event: NDKEvent, _persist: boolean): 
             const serialized = event.serialize();
             let enqueue = false;
             if (!processingQueue[event.id]) {
-                processingQueue[event.id] = { event, resolves: [] };
+                processingQueue[event.id] = { event, resolves: [], relay };
                 enqueue = true;
             }
             processingQueue[event.id].resolves.push(resolve);

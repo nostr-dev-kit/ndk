@@ -52,14 +52,18 @@ export function verifySignature(this: NDKEvent, persist: boolean): boolean | und
 
     try {
         if (this.ndk?.asyncSigVerification) {
-            verifySignatureAsync(this, persist).then((result) => {
+            verifySignatureAsync(this, persist, this.relay).then((result) => {
                 if (persist) {
                     this.signatureVerified = result;
                     if (result) verifiedSignatures.set(this.id, this.sig!);
                 }
 
                 if (!result) {
-                    this.ndk?.emit("event:invalid-sig", this);
+                    if (this.relay) {
+                        this.ndk?.reportInvalidSignature(this, this.relay);
+                    } else {
+                        this.ndk?.reportInvalidSignature(this);
+                    }
                     verifiedSignatures.set(this.id, false);
                 }
             });

@@ -624,17 +624,25 @@ export class NDKSubscription extends EventEmitter<{
 
                 // verify it
                 if (relay) {
-                    if (relay?.shouldValidateEvent() !== false) {
-                        if (!this.skipVerification) {
-                            if (!ndkEvent.verifySignature(true) && !this.ndk.asyncSigVerification) {
-                                this.debug("Event failed signature validation", event);
-                                return;
-                            }
-                            if (relay) {
-                                relay.addValidatedEvent();
-                            }
+                    // Check if we need to verify this event based on sampling
+                    const shouldVerify = relay.shouldValidateEvent();
+                    
+                    if (shouldVerify && !this.skipVerification) {
+                        // Set the relay on the event for async verification
+                        ndkEvent.relay = relay;
+                        
+                        // Attempt verification
+                        if (!ndkEvent.verifySignature(true) && !this.ndk.asyncSigVerification) {
+                            this.debug("Event failed signature validation", event);
+                            // Report the invalid signature with relay information through the centralized method
+                            this.ndk.reportInvalidSignature(ndkEvent, relay);
+                            return;
                         }
+                        
+                        // Track successful validation
+                        relay.addValidatedEvent();
                     } else {
+                        // We skipped verification for this event
                         relay.addNonValidatedEvent();
                     }
                 }
@@ -655,12 +663,17 @@ export class NDKSubscription extends EventEmitter<{
             this.emit("event:dup", event, relay, timeSinceFirstSeen, this, fromCache, optimisticPublish);
 
             if (relay) {
-                // Let's see if we have already verified this event id's signature
+                // Check if we've already verified this event id's signature
                 const signature = verifiedSignatures.get(eventId);
                 if (signature && typeof signature === "string") {
-                    // If it matches then we can increase the relay verification count
+                    // If signatures match, we count it as validated
                     if (event.sig === signature) {
                         relay.addValidatedEvent();
+                    } else {
+                        // Signatures don't match - this is a malicious relay!
+                        // One invalid signature means the relay is considered evil
+                        const eventToReport = event instanceof NDKEvent ? event : new NDKEvent(this.ndk, event);
+                        this.ndk.reportInvalidSignature(eventToReport, relay);
                     }
                 }
             }

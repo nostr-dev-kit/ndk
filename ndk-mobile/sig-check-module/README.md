@@ -149,6 +149,69 @@ If you encounter issues with the iOS build, check the following:
 - Check the Pod installation logs for any errors
 - Ensure the `libsecp256k1.a` file is properly included in the build
 
+## Recompiling the Native Code
+
+If you need to make changes to the native code or update the secp256k1 library, you'll need to recompile the native components.
+
+### Android
+
+For Android, the native code is compiled using CMake when the app is built. If you modify the C++ code:
+
+1. Make your changes to `android/jsi-schnorr.cpp` or `CMakeLists.txt`
+2. Run `expo prebuild --platform android` to regenerate the native project
+3. Build with `eas build --platform android` or run locally with `expo run:android`
+
+### iOS
+
+For iOS, you need to compile the secp256k1 library and create the static library:
+
+1. If you've modified the secp256k1 submodule, first update it:
+   ```bash
+   cd native/secp256k1
+   git pull origin master
+   ```
+
+2. Compile the secp256k1 library for iOS:
+   ```bash
+   # Navigate to the secp256k1 directory
+   cd native/secp256k1
+
+   # Configure for iOS
+   ./autogen.sh
+   ./configure --enable-module-schnorrsig --disable-shared --enable-static
+
+   # Build
+   make
+   ```
+
+3. Create a fat binary for both device and simulator architectures:
+   ```bash
+   # For device (arm64)
+   xcrun --sdk iphoneos clang -c -arch arm64 src/*.c -I./include -o libsecp256k1-arm64.a
+
+   # For simulator (x86_64)
+   xcrun --sdk iphonesimulator clang -c -arch x86_64 src/*.c -I./include -o libsecp256k1-x86_64.a
+
+   # Create fat binary
+   lipo -create libsecp256k1-arm64.a libsecp256k1-x86_64.a -output ../../ios/libsecp256k1.a
+   ```
+
+4. If you've modified the Objective-C++ code in `ios/jsi-schnorr.mm`, update it as needed
+
+5. Run `expo prebuild --platform ios` to regenerate the native project
+6. Build with `eas build --platform ios` or run locally with `expo run:ios`
+
+### JavaScript Wrapper
+
+If you've modified the JavaScript wrapper:
+
+1. Make your changes to `src/index.ts`
+2. Rebuild the TypeScript files:
+   ```bash
+   cd sig-check-module
+   bun run build
+   ```
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.

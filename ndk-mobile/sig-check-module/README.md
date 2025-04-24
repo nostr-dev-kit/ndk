@@ -15,11 +15,34 @@ This module implements native Schnorr signature verification using the secp256k1
 
 ### For Applications Using NDK Mobile
 
-If you're using NDK Mobile in your Expo-managed application, the signature verification module is included as part of the package. Make sure you have the latest version of NDK Mobile:
+To use this native signature verification module in your Expo-managed application, you need to:
+
+1. Install the NDK Mobile package:
 
 ```bash
+# Using npm
+npm install @nostr-dev-kit/ndk-mobile
+
+# Using yarn
+yarn add @nostr-dev-kit/ndk-mobile
+
+# Using bun
 bun add @nostr-dev-kit/ndk-mobile
 ```
+
+2. Add the plugin to your app's `app.json` or `app.config.js`:
+
+```json
+{
+  "expo": {
+    "plugins": [
+      "ndk-mobile-sig-check"
+    ]
+  }
+}
+```
+
+The plugin is automatically included when you install `@nostr-dev-kit/ndk-mobile`, so you don't need to install it separately.
 
 ### For Development of NDK Mobile
 
@@ -60,20 +83,26 @@ eas build --platform ios
 
 ## Usage with NDK
 
-Import the `verifySignatureAsync` function and set it as the signature verification function for your NDK instance:
+After installing the package and configuring the plugin, you need to import the `verifySignatureAsync` function and set it as the signature verification function for your NDK instance:
 
 ```typescript
+// Import the verification function from the NDK Mobile package
 import { verifySignatureAsync } from "@nostr-dev-kit/ndk-mobile/sig-check-module";
 import { NDK } from "@nostr-dev-kit/ndk";
 
 // Create your NDK instance
-const ndk = new NDK();
+const ndk = new NDK({
+  explicitRelayUrls: ["wss://relay.example.com"]
+});
 
 // Set the signature verification function
 ndk.signatureVerificationFunction = verifySignatureAsync;
 
 // Now all event signature verifications will use the native implementation
+// This provides significant performance improvements over JavaScript-based verification
 ```
+
+This integration ensures that all signature verifications in your app will use the native implementation, which is much faster than the JavaScript-based verification, especially on mobile devices.
 
 ## How It Works
 

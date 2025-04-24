@@ -158,6 +158,22 @@ export interface NDKConstructorParams {
      * A function that is invoked to calculate the validation ratio for a relay.
      */
     validationRatioFn?: NDKValidationRatioFn;
+
+    /**
+     * A custom function to verify event signatures.
+     * When provided, this function will be used instead of the default verification logic.
+     * This is useful for platforms like React Native where Web Workers are not available.
+     *
+     * @example
+     * ```typescript
+     * import { verifySignatureAsync } from "@nostr-dev-kit/ndk-mobile";
+     *
+     * const ndk = new NDK({
+     *   signatureVerificationFunction: verifySignatureAsync
+     * });
+     * ```
+     */
+    signatureVerificationFunction?: (event: NDKEvent) => Promise<boolean>;
 }
 
 export interface GetUserParams extends NDKUserParams {
@@ -254,6 +270,12 @@ export class NDK extends EventEmitter<{
     public lowestValidationRatio = 1.0;
     public validationRatioFn?: NDKValidationRatioFn;
     public subManager: NDKSubscriptionManager;
+    
+    /**
+     * Custom function to verify event signatures.
+     * When provided, this will be used instead of the default verification logic.
+     */
+    public signatureVerificationFunction?: (event: NDKEvent) => Promise<boolean>;
 
     public publishingFailureHandled = false;
 
@@ -353,6 +375,12 @@ export class NDK extends EventEmitter<{
         this.queuesNip05 = new Queue("nip05", 10);
 
         this.signatureVerificationWorker = opts.signatureVerificationWorker;
+        this.signatureVerificationFunction = opts.signatureVerificationFunction;
+        
+        // If a custom verification function is provided, enable async verification
+        if (this.signatureVerificationFunction) {
+            this.asyncSigVerification = true;
+        }
 
         this.initialValidationRatio = opts.initialValidationRatio || 1.0;
         this.lowestValidationRatio = opts.lowestValidationRatio || 1.0;

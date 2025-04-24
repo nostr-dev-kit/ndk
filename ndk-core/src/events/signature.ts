@@ -26,6 +26,12 @@ export function signatureVerificationInit(w: Worker) {
 }
 
 export async function verifySignatureAsync(event: NDKEvent, _persist: boolean): Promise<boolean> {
+    // If the NDK instance has a custom verification function, use it
+    if (event.ndk?.signatureVerificationFunction) {
+        return event.ndk.signatureVerificationFunction(event);
+    }
+    
+    // Otherwise use the worker-based verification
     const promise = new Promise<boolean>((resolve) => {
         const serialized = event.serialize();
         let enqueue = false;

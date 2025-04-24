@@ -4,6 +4,7 @@ export * from "./cache-adapter/sqlite/index.js";
 export * from "./session-storage-adapter.js";
 export * from "./session-monitor.js";
 export * from "./mint/index.js";
+export * from "./workers/index.js";
 
 export * from "@nostr-dev-kit/ndk-hooks";
 import NDK from "@nostr-dev-kit/ndk-hooks";

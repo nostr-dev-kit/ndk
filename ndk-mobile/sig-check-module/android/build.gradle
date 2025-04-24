@@ -1,0 +1,18 @@
+apply plugin: 'com.android.library'
+
+android {
+  compileSdkVersion 33
+  defaultConfig {
+    minSdkVersion 21
+    externalNativeBuild {
+      cmake { cppFlags "-std=c++17 -fvisibility=hidden" }
+    }
+  }
+  externalNativeBuild {
+    cmake { path "CMakeLists.txt" }
+  }
+}
+
+dependencies {
+  implementation "com.facebook.react:react-native:+"
+}

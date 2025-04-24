@@ -1,0 +1,3 @@
+[submodule "ndk-mobile/sig-check-module/native/secp256k1"]
+	path = ndk-mobile/sig-check-module/native/secp256k1
+	url = https://github.com/bitcoin-core/secp256k1.git

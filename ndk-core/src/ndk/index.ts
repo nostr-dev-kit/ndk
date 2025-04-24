@@ -174,6 +174,13 @@ export interface NDKConstructorParams {
      * ```
      */
     signatureVerificationFunction?: (event: NDKEvent) => Promise<boolean>;
+
+    /**
+     * Whether to automatically blacklist relays that provide invalid signatures.
+     * 
+     * @default true
+     */
+    autoBlacklistInvalidRelays?: boolean;
 }
 
 export interface GetUserParams extends NDKUserParams {
@@ -503,7 +510,7 @@ export class NDK extends EventEmitter<{
             connections.push(this.outboxPool.connect(timeoutMs));
         }
 
-        return Promise.all(connections).then(() => {});
+        return Promise.allSettled(connections).then(() => {});
     }
 
     /**
@@ -563,12 +570,6 @@ export class NDK extends EventEmitter<{
             this.lowestValidationRatio * trustFactor;
         
         return Math.max(calculatedRatio, this.lowestValidationRatio);
-        }
-
-        this.debug("Connecting to relays %o", { timeoutMs });
-
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        return Promise.allSettled(connections).then(() => {});
     }
 
     /**

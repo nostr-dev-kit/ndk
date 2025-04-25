@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk-hooks
 
+## 1.1.18
+
+### Patch Changes
+
+- improve mutes ergonomics and documentation
+
 ## 1.1.17
 
 ### Patch Changes

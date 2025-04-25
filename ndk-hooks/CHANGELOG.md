@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk-hooks
 
+## 1.1.19
+
+### Patch Changes
+
+- add way to get current mute list from the store
+
 ## 1.1.18
 
 ### Patch Changes

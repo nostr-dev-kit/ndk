@@ -35,6 +35,20 @@ export const SCHEMA = {
             id TEXT PRIMARY KEY,
             state TEXT
         );
+    `,
+    decrypted_events: `
+        CREATE TABLE IF NOT EXISTS decrypted_events (
+            id TEXT PRIMARY KEY,
+            event TEXT
+        );
+    `,
+    unpublished_events: `
+        CREATE TABLE IF NOT EXISTS unpublished_events (
+            id TEXT PRIMARY KEY,
+            event TEXT,
+            relays TEXT,
+            lastTryAt INTEGER
+        );
     `
     // Add more tables as needed to match ndk-mobile
 };

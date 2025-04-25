@@ -11,6 +11,11 @@ import { fetchProfileSync } from "./functions/fetchProfileSync";
 import { getAllProfilesSync } from "./functions/getAllProfilesSync";
 import { updateRelayStatus } from "./functions/updateRelayStatus";
 import { getRelayStatus } from "./functions/getRelayStatus";
+import { getDecryptedEvent } from "./functions/getDecryptedEvent";
+import { addDecryptedEvent } from "./functions/addDecryptedEvent";
+import { addUnpublishedEvent } from "./functions/addUnpublishedEvent";
+import { getUnpublishedEvents } from "./functions/getUnpublishedEvents";
+import { discardUnpublishedEvent } from "./functions/discardUnpublishedEvent";
 
 // Add more imports as you implement more methods
 
@@ -37,6 +42,11 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
         this.getAllProfilesSync = getAllProfilesSync.bind(this);
         this.updateRelayStatus = updateRelayStatus.bind(this);
         this.getRelayStatus = getRelayStatus.bind(this);
+        this.getDecryptedEvent = getDecryptedEvent.bind(this);
+        this.addDecryptedEvent = addDecryptedEvent.bind(this);
+        this.addUnpublishedEvent = addUnpublishedEvent.bind(this);
+        this.getUnpublishedEvents = getUnpublishedEvents.bind(this);
+        this.discardUnpublishedEvent = discardUnpublishedEvent.bind(this);
         // Bind more methods as implemented
     }
 
@@ -58,6 +68,11 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
     updateRelayStatus: typeof updateRelayStatus;
     getRelayStatus: typeof getRelayStatus;
     // Add more method signatures as you implement them
+    getDecryptedEvent: typeof getDecryptedEvent;
+    addDecryptedEvent: typeof addDecryptedEvent;
+    addUnpublishedEvent: typeof addUnpublishedEvent;
+    getUnpublishedEvents: () => Promise<{ event: NDKEvent; relays?: string[]; lastTryAt?: number }[]>;
+    discardUnpublishedEvent: typeof discardUnpublishedEvent;
 
     // Stub for required query method
     async query(...args: any[]): Promise<any> {

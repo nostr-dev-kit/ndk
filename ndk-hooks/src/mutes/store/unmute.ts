@@ -1,7 +1,7 @@
 import type { NDKMutesState } from "./types";
 import type { Hexpubkey } from "@nostr-dev-kit/ndk";
 import NDK, { NDKEvent, NDKKind, NDKList } from "@nostr-dev-kit/ndk";
-import type { MutableItem } from "./types";
+import type { MuteableItem } from "./types";
 import { computeMuteCriteria } from "../utils/compute-mute-criteria";
 import { identifyMuteItem } from "../utils/identify-mute-item";
 
@@ -15,7 +15,7 @@ import { identifyMuteItem } from "../utils/identify-mute-item";
 export const unmute = (
     set: (updater: (state: NDKMutesState) => void) => void,
     get: () => NDKMutesState,
-    item: MutableItem,
+    item: MuteableItem,
     pubkey?: Hexpubkey,
 ) => {
     const identified = identifyMuteItem(item);

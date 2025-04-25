@@ -32,12 +32,7 @@ export interface NDKUserMutes {
 /**
  * Type for items that can be muted
  */
-export type MuteableItem = NDKEvent | Hexpubkey | string;
-
-/**
- * Type for items that can be muted.
- */
-export type MutableItem = NDKEvent | NDKUser | string;
+export type MuteableItem = NDKEvent | NDKUser | string;
 
 /**
  * Type for the mute item type
@@ -104,14 +99,14 @@ export interface NDKMutesState {
      * @param item The item to mute
      * @param pubkey The pubkey of the user (optional, uses active pubkey if undefined)
      */
-    mute: (item: MutableItem, pubkey?: Hexpubkey) => void;
+    mute: (item: MuteableItem, pubkey?: Hexpubkey) => void;
 
     /**
      * Unmute an item for a user
      * @param item The item to unmute
      * @param pubkey The pubkey of the user (optional, uses active pubkey if undefined)
      */
-    unmute: (item: MutableItem, pubkey?: Hexpubkey) => void;
+    unmute: (item: MuteableItem, pubkey?: Hexpubkey) => void;
 
     /**
      * Set the active pubkey for mute operations

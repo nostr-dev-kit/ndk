@@ -3,7 +3,7 @@ import type { Hexpubkey } from "@nostr-dev-kit/ndk";
 import { initMutes } from "./init";
 import { computeMuteCriteria } from "../utils/compute-mute-criteria";
 import NDK, { NDKEvent, NDKKind, NDKList } from "@nostr-dev-kit/ndk";
-import type { MutableItem } from "./types";
+import type { MuteableItem } from "./types";
 import { identifyMuteItem } from "../utils/identify-mute-item";
 
 export function newMuteList(ndk: NDK) {
@@ -22,7 +22,7 @@ export function newMuteList(ndk: NDK) {
 export const mute = (
     set: (state: NDKMutesState) => void,
     get: () => NDKMutesState,
-    item: MutableItem,
+    item: MuteableItem,
     pubkey?: Hexpubkey,
 ) => {
     const identified = identifyMuteItem(item);

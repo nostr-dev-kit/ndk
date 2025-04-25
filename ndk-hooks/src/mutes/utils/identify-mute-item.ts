@@ -1,13 +1,13 @@
 import { NDKEvent, NDKUser } from "@nostr-dev-kit/ndk";
 import type { MuteItemType } from "../store/types";
-import type { MutableItem } from "../store/types";
+import type { MuteableItem } from "../store/types";
 
 /**
  * Identifies the type and value of a mutable item
  * @param item The item to identify
  * @returns An object with the type and value of the item, or undefined if the item is invalid
  */
-export function identifyMuteItem(item: MutableItem): { type: MuteItemType; value: string } | undefined {
+export function identifyMuteItem(item: MuteableItem): { type: MuteItemType; value: string } | undefined {
     let itemType: MuteItemType;
     let value: string;
 

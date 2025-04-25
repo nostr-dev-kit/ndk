@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk-hooks
 
+## 1.1.20
+
+### Patch Changes
+
+- refactor: fix issue with muteable items being confused between Hexpubkey and strings
+
 ## 1.1.19
 
 ### Patch Changes

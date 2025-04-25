@@ -3,7 +3,6 @@ import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import type { Hexpubkey, NDKEvent } from "@nostr-dev-kit/ndk";
 import type { NDKMutesState, NDKUserMutes, MuteableItem } from "./types";
-import type { MutableItem } from "./types";
 import { initMutes } from "./init";
 import { loadMuteList } from "./load";
 import { mute } from "./mute";
@@ -48,8 +47,8 @@ const mutesStateCreator = (set: (state: any) => void, get: () => NDKMutesState) 
 
     initMutes: (pubkey: Hexpubkey) => initMutes(set, get, pubkey),
     loadMuteList: (event: NDKEvent) => loadMuteList(set, get, event),
-    mute: (item: MutableItem, pubkey?: Hexpubkey) => mute(set, get, item, pubkey),
-    unmute: (item: MutableItem, pubkey?: Hexpubkey) => unmute(set, get, item, pubkey),
+    mute: (item: MuteableItem, pubkey?: Hexpubkey) => mute(set, get, item, pubkey),
+    unmute: (item: MuteableItem, pubkey?: Hexpubkey) => unmute(set, get, item, pubkey),
     setActivePubkey: (pubkey: Hexpubkey | null) => setActivePubkey(set, pubkey),
     addExtraMuteItems: (items: MuteableItem[]) => addExtraMuteItems(set, get, items),
 });

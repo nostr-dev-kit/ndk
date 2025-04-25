@@ -1,0 +1,1 @@
+Publish status updates using publish_task_status_update VERY frequently; before doing something, as you make progress and when you finish. Specially when you are changing direction, or trying different approaches. This is very important. You will be fired if you forget to update your boss about it.

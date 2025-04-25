@@ -34,7 +34,8 @@
         "ndk-svelte-components",
         "ndk-wallet",
         "ndk-test-utils",
-        "ndk-blossom"
+        "ndk-blossom",
+        "ndk-cache-sqlite-wasm"
     ],
     "engines": {
         "node": ">=16.0"

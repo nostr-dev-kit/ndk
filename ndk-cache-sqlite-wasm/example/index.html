@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NDKCacheAdapterSqliteWasm Example</title>
+</head>
+<body>
+  <h1>NDKCacheAdapterSqliteWasm Example</h1>
+  <div>
+    <button id="init">Initialize Cache</button>
+    <span id="init-time"></span>
+  </div>
+  <div>
+    <input id="event-count" type="number" value="100" min="1" style="width: 60px;">
+    <button id="bulk-set">Create N Events</button>
+    <span id="write-time"></span>
+    <button id="save-db">Save DB</button>
+    <span id="save-time"></span>
+  </div>
+  <div>
+    <button id="get-all">Get All Events</button>
+    <span id="read-time"></span>
+  </div>
+  <pre id="output"></pre>
+  <script type="module">
+    import NDKCacheAdapterSqliteWasm from './index.js';
+
+    let cache;
+
+    document.getElementById('init').onclick = async () => {
+      const t0 = performance.now();
+      cache = new NDKCacheAdapterSqliteWasm({ dbName: "example" });
+      await cache.initialize();
+      const t1 = performance.now();
+      document.getElementById('init-time').textContent = `Initialized in ${(t1 - t0).toFixed(2)} ms`;
+      document.getElementById('output').textContent = "Cache initialized!";
+    };
+
+    document.getElementById('bulk-set').onclick = async () => {
+      if (!cache) return alert("Initialize cache first!");
+      const count = parseInt(document.getElementById('event-count').value, 10);
+      const t0 = performance.now();
+      for (let i = 0; i < count; i++) {
+        const event = {
+          id: "test-event-" + i,
+          pubkey: "pubkey" + (i % 10),
+          created_at: Math.floor(Date.now() / 1000),
+          kind: 1,
+          tags: [],
+          content: "Event #" + i,
+          sig: "sig" + i
+        };
+        await cache.setEvent(event, []);
+      }
+      const t1 = performance.now();
+      document.getElementById('write-time').textContent = `Wrote ${count} events in ${(t1 - t0).toFixed(2)} ms`;
+      document.getElementById('output').textContent = `Wrote ${count} events.`;
+    };
+
+    document.getElementById('save-db').onclick = async () => {
+      if (!cache) return alert("Initialize cache first!");
+      const t0 = performance.now();
+      await cache.db.saveToIndexedDB();
+      const t1 = performance.now();
+      document.getElementById('save-time').textContent = `Saved DB in ${(t1 - t0).toFixed(2)} ms`;
+      document.getElementById('output').textContent = "Database saved to IndexedDB.";
+    };
+
+    document.getElementById('get-all').onclick = async () => {
+      if (!cache) return alert("Initialize cache first!");
+      const t0 = performance.now();
+      let found = 0;
+      let i = 0;
+      let events = [];
+      while (true) {
+        const event = await cache.getEvent("test-event-" + i);
+        if (!event) break;
+        events.push(event);
+        i++;
+      }
+      const t1 = performance.now();
+      document.getElementById('read-time').textContent = `Read ${events.length} events in ${(t1 - t0).toFixed(2)} ms`;
+      document.getElementById('output').textContent = `Loaded ${events.length} events.`;
+    };
+  </script>
+</body>
+</html>

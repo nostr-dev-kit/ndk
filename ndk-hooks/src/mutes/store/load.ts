@@ -1,5 +1,5 @@
 import type { NDKMutesState } from "./types";
-import type { Hexpubkey, NDKEvent } from "@nostr-dev-kit/ndk";
+import { NDKList, type Hexpubkey, type NDKEvent } from "@nostr-dev-kit/ndk";
 import { initMutes } from "./init";
 import { computeMuteCriteria } from "../utils/compute-mute-criteria";
 import { EMPTY_MUTE_CRITERIA } from "../hooks";
@@ -11,11 +11,7 @@ import { EMPTY_MUTE_CRITERIA } from "../hooks";
  * @param pubkey The user's public key
  * @param event The mute list event (kind 10000)
  */
-export const loadMuteList = (
-    set: (state: any) => void,
-    get: () => NDKMutesState,
-    event: NDKEvent,
-) => {
+export const loadMuteList = (set: (state: any) => void, get: () => NDKMutesState, event: NDKEvent) => {
     set((state: any) => {
         const pubkey = event.pubkey;
 
@@ -24,7 +20,7 @@ export const loadMuteList = (
             initMutes(set, get, pubkey);
         }
 
-        const userMutes = state.mutes.get(pubkey) ?? EMPTY_MUTE_CRITERIA
+        const userMutes = state.mutes.get(pubkey) ?? EMPTY_MUTE_CRITERIA;
         if (!userMutes) return;
 
         const newMutedPubkeys = new Set<Hexpubkey>();
@@ -48,6 +44,7 @@ export const loadMuteList = (
         // Update muteCriteria if this is the active pubkey
         if (state.activePubkey === pubkey) {
             state.muteCriteria = computeMuteCriteria(userMutes, state.extraMutes);
+            state.muteList = NDKList.from(event);
         }
     });
 };

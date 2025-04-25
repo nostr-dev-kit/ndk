@@ -207,7 +207,7 @@ export const startSession = (
     };
 
     console.debug("Starting session for", pubkey, "with filters", JSON.stringify(filters, null, 4));
-    
+
     const sub = ndk.subscribe(filters, { closeOnEose: false, addSinceFromCache: true }, { onEvent, onEvents });
 
     // Store the subscription handle

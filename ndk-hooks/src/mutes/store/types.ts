@@ -50,13 +50,13 @@ export type MuteItemType = "pubkey" | "hashtag" | "word" | "event";
 
 export interface NDKMutesState {
     /**
-    * The NDK instance used for mute operations
-    */
+     * The NDK instance used for mute operations
+     */
     ndk: NDK | undefined;
 
     /**
-    * Map of user mutes by pubkey
-    */
+     * Map of user mutes by pubkey
+     */
     mutes: Map<Hexpubkey, NDKUserMutes>;
 
     /**
@@ -69,6 +69,11 @@ export interface NDKMutesState {
      * The active pubkey for mute operations
      */
     activePubkey: Hexpubkey | null;
+
+    /**
+     * The active mute list
+     */
+    muteList: NDKList;
 
     /**
      * The combined mute criteria for the active pubkey and extraMutes
@@ -86,12 +91,6 @@ export interface NDKMutesState {
      * @param event The mute list event
      */
     loadMuteList: (event: NDKEvent) => void;
-
-    /**
-     * Get the mute list for a user
-     * @param pubkey The pubkey of the user (optional, uses active pubkey if undefined)
-     */
-    getMuteList: (pubkey?: Hexpubkey) => NDKList;
 
     /**
      * Mute an item for a user
@@ -125,5 +124,4 @@ export interface NDKMutesState {
      * @param items Array of items to mute
      */
     addExtraMuteItems: (items: MuteableItem[]) => void;
-
 }

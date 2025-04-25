@@ -17,8 +17,7 @@ enableMapSet();
 /**
  * Create the mute store
  */
-import NDK from "@nostr-dev-kit/ndk";
-import { getMuteList } from "./get-mute-list";
+import NDK, { NDKList } from "@nostr-dev-kit/ndk";
 
 const mutesStateCreator = (set: (state: any) => void, get: () => NDKMutesState) => ({
     ndk: undefined, // Will be set by init
@@ -30,6 +29,7 @@ const mutesStateCreator = (set: (state: any) => void, get: () => NDKMutesState) 
         eventIds: new Set<string>(),
     },
     activePubkey: null,
+    muteList: new NDKList(),
     muteCriteria: {
         pubkeys: new Set<string>(),
         eventIds: new Set<string>(),
@@ -48,11 +48,8 @@ const mutesStateCreator = (set: (state: any) => void, get: () => NDKMutesState) 
 
     initMutes: (pubkey: Hexpubkey) => initMutes(set, get, pubkey),
     loadMuteList: (event: NDKEvent) => loadMuteList(set, get, event),
-    getMuteList: (pubkey?: Hexpubkey) => getMuteList(set, get, pubkey),
-    mute: (item: MutableItem, pubkey?: Hexpubkey) =>
-        mute(set, get, item, pubkey),
-    unmute: (item: MutableItem, pubkey?: Hexpubkey) =>
-        unmute(set, get, item, pubkey),
+    mute: (item: MutableItem, pubkey?: Hexpubkey) => mute(set, get, item, pubkey),
+    unmute: (item: MutableItem, pubkey?: Hexpubkey) => unmute(set, get, item, pubkey),
     setActivePubkey: (pubkey: Hexpubkey | null) => setActivePubkey(set, pubkey),
     addExtraMuteItems: (items: MuteableItem[]) => addExtraMuteItems(set, get, items),
 });

@@ -31,25 +31,27 @@ export const mute = (
         return;
     }
 
+    const state = get();
+    const userPubkey = pubkey || state.activePubkey;
+    if (!userPubkey) {
+        console.warn("mute: No pubkey provided and no active pubkey found.");
+        return;
+    }
+
+    const ndk = state.ndk;
+    if (!ndk) {
+        console.warn("mute: NDK instance is not initialized. Call init first.");
+        return;
+    }
+
+    // ensure we have a user-specific mute entry before we mutate it
+    if (!state.mutes.has(userPubkey)) {
+        initMutes(set, get, userPubkey);
+    }
+
     const { type, value } = identified;
     set((state: NDKMutesState) => {
         // Use provided pubkey or active pubkey
-        const userPubkey = pubkey || state.activePubkey;
-        if (!userPubkey) {
-            console.warn("mute: No pubkey provided and no active pubkey found.");
-            return;
-        }
-
-        // Initialize mutes if they don't exist
-        if (!state.mutes.has(userPubkey)) {
-            initMutes(set, get, userPubkey);
-        }
-
-        const ndk = state.ndk;
-        if (!ndk) {
-            console.warn("mute: NDK instance is not initialized. Call useNDKMutes.getState().init(ndk) first.");
-            return;
-        }
         const userMutes = state.mutes.get(userPubkey);
         if (!userMutes) return;
         const muteEvent = userMutes?.muteListEvent ?? newMuteList(ndk);
@@ -78,6 +80,7 @@ export const mute = (
         // Update muteCriteria if this is the active pubkey
         if (state.activePubkey === userPubkey) {
             state.muteCriteria = computeMuteCriteria(userMutes, state.extraMutes);
+            state.muteList = NDKList.from(muteEvent);
         }
 
         muteEvent.publishReplaceable();

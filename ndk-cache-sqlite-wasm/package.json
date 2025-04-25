@@ -1,0 +1,27 @@
+{
+  "name": "@nostr-dev-kit/ndk-cache-sqlite-wasm",
+  "version": "0.1.0",
+  "description": "SQLite WASM cache adapter for NDK, compatible with browser and JS environments.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "docs"
+  ],
+  "scripts": {
+    "build": "bun build ./src/index.ts --outdir ./dist",
+    "prepublishOnly": "bun run build"
+  },
+  "dependencies": {
+    "sql.js": "^1.8.0"
+  },
+  "devDependencies": {},
+  "license": "MIT"
+}

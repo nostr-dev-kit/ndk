@@ -1,4 +1,5 @@
 **/node_modules
+temp
 ndk-core/docs
 **/build
 **/dist

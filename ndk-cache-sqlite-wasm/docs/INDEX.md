@@ -52,10 +52,25 @@ All database migrations are handled automatically on initialization, mirroring t
 
 The adapter provides both synchronous and asynchronous methods, matching the NDKCacheAdapter interface. Use whichever fits your application's needs.
 
+## Advanced Features
+
+- **Decrypted Event Cache:**  
+  Supports storing and retrieving decrypted events with `addDecryptedEvent` and `getDecryptedEvent`, just like the ndk-mobile SQLite adapter.
+
+- **Unpublished Event Management:**  
+  Supports adding, retrieving, and discarding unpublished events with `addUnpublishedEvent`, `getUnpublishedEvents`, and `discardUnpublishedEvent`.
+
+- **Automatic Persistence:**  
+  The database is automatically persisted to IndexedDB 1000ms after the last write, so your data survives page reloads without manual intervention.
+
+- **Full Parity with ndk-mobile:**  
+  Implements all core and advanced cache methods, including relay status, profile, and event management.
+
 ## Minimal Setup
 
 - No manual WASM loading or DB setup required.
 - No need to manage migrations.
+- No need to manually save the database—persistence is automatic.
 - Just instantiate, initialize, and use.
 
 ## Troubleshooting

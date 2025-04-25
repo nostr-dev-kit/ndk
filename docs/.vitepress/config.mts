@@ -45,6 +45,7 @@ export default withMermaid(
                     items: [
                         { text: "In-memory + dexie", link: "/cache/dexie" },
                         { text: "Local Nostr Relay", link: "/cache/nostr" },
+                        { text: "SQLite (WASM)", link: "/cache/sqlite-wasm.md" },
                     ],
                 },
                 {

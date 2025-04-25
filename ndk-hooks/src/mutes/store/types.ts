@@ -1,4 +1,4 @@
-import type { NDKEvent, Hexpubkey, NDKUser } from "@nostr-dev-kit/ndk";
+import type { NDKEvent, Hexpubkey, NDKUser, NDKList } from "@nostr-dev-kit/ndk";
 import NDK from "@nostr-dev-kit/ndk";
 
 /**
@@ -26,7 +26,7 @@ export interface NDKUserMutes {
     /**
      * The NDKEvent representing the mute list (kind 10000)
      */
-    muteListEvent?: NDKEvent;
+    muteListEvent?: NDKList;
 }
 
 /**
@@ -86,6 +86,12 @@ export interface NDKMutesState {
      * @param event The mute list event
      */
     loadMuteList: (event: NDKEvent) => void;
+
+    /**
+     * Get the mute list for a user
+     * @param pubkey The pubkey of the user (optional, uses active pubkey if undefined)
+     */
+    getMuteList: (pubkey?: Hexpubkey) => NDKList;
 
     /**
      * Mute an item for a user

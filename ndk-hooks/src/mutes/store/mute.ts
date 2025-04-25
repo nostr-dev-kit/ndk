@@ -2,14 +2,14 @@ import type { NDKMutesState } from "./types";
 import type { Hexpubkey } from "@nostr-dev-kit/ndk";
 import { initMutes } from "./init";
 import { computeMuteCriteria } from "../utils/compute-mute-criteria";
-import NDK, { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
+import NDK, { NDKEvent, NDKKind, NDKList } from "@nostr-dev-kit/ndk";
 import type { MutableItem } from "./types";
 import { identifyMuteItem } from "../utils/identify-mute-item";
 
-export function newMuteList(ndk: NDK, pubkey: Hexpubkey) {
-    return new NDKEvent(ndk, {
-        kind: NDKKind.MuteList,
-    })
+export function newMuteList(ndk: NDK) {
+    const list = new NDKList(ndk);
+    list.kind = NDKKind.MuteList;
+    return list;
 }
 
 /**
@@ -52,7 +52,7 @@ export const mute = (
         }
         const userMutes = state.mutes.get(userPubkey);
         if (!userMutes) return;
-        const muteEvent = userMutes?.muteListEvent ?? newMuteList(ndk, userPubkey);
+        const muteEvent = userMutes?.muteListEvent ?? newMuteList(ndk);
 
         switch (type) {
             case "pubkey":

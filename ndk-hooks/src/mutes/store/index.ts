@@ -18,6 +18,7 @@ enableMapSet();
  * Create the mute store
  */
 import NDK from "@nostr-dev-kit/ndk";
+import { getMuteList } from "./get-mute-list";
 
 const mutesStateCreator = (set: (state: any) => void, get: () => NDKMutesState) => ({
     ndk: undefined, // Will be set by init
@@ -47,6 +48,7 @@ const mutesStateCreator = (set: (state: any) => void, get: () => NDKMutesState) 
 
     initMutes: (pubkey: Hexpubkey) => initMutes(set, get, pubkey),
     loadMuteList: (event: NDKEvent) => loadMuteList(set, get, event),
+    getMuteList: (pubkey?: Hexpubkey) => getMuteList(set, get, pubkey),
     mute: (item: MutableItem, pubkey?: Hexpubkey) =>
         mute(set, get, item, pubkey),
     unmute: (item: MutableItem, pubkey?: Hexpubkey) =>

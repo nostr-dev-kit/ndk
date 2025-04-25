@@ -1,10 +1,12 @@
-# Muting, Unmuting, and Checking Mutes in React (NDK)
+## Muting Users, Events, Hashtags, and Words
 
-This snippet demonstrates how to use the current mute API from `@nostr-dev-kit/ndk-hooks` to mute, unmute, and check mute status for users, events, hashtags, or words in a React application. These focused examples are designed for LLMs and automation tools.
+NDK React hooks provide a simple, unified API for muting and unmuting users, events, hashtags, and words. Muting is session-specific and updates the Nostr mute list (kind 10000 event) for the active user.
 
----
+### Muting and Unmuting
 
-## Muting an Event or User
+Use the `useNDKMutes` hook to access the mute and unmute functions. These functions automatically determine the type of item (user, event, hashtag, or word).
+
+#### Muting
 
 ```tsx
 import { useNDKMutes } from '@nostr-dev-kit/ndk-hooks';
@@ -27,9 +29,7 @@ function MuteExample({ user, event }: { user: NDKUser; event: NDKEvent }) {
 }
 ```
 
----
-
-## Unmuting an Event or User
+#### Unmuting
 
 ```tsx
 import { useNDKMutes } from '@nostr-dev-kit/ndk-hooks';
@@ -52,9 +52,7 @@ function UnmuteExample({ user, event }: { user: NDKUser; event: NDKEvent }) {
 }
 ```
 
----
-
-## Checking if an Item is Muted
+#### Checking if an Item is Muted
 
 ```tsx
 import { useIsItemMuted } from '@nostr-dev-kit/ndk-hooks';
@@ -70,11 +68,9 @@ function CheckMute({ user, event }: { user: NDKUser; event: NDKEvent }) {
 }
 ```
 
----
+### Adding Extra Mute Items (Application-Level Mutes)
 
-## Adding Extra Mute Items (Application-Level Mutes)
-
-Extra mutes are application-provided mute items that are not included in the published mute list. Use this to mute items at the application level (e.g., to respect other people's mute lists or provide custom mute sources) without modifying the user's own mute list.
+You can add extra items to the mute list at the application level (for example, to respect other people's mute lists or provide custom mute sources) without modifying the user's own mute list. These extra mutes are not published and are only used for filtering in your app.
 
 ```tsx
 import { useNDKMutes } from '@nostr-dev-kit/ndk-hooks';
@@ -98,7 +94,10 @@ function ExtraMuteExample() {
 ```
 
 **Notes:**
-- Extra mutes are stored at the application level, not per user.
-- Extra mutes are NOT included in the published mute list.
-- Extra mutes are checked when filtering events with `useIsItemMuted` or `useMuteFilter`.
-- Use `addExtraMuteItems` for application-specific mutes that should not affect the user's own mute list.
+- Muting and unmuting are persisted as Nostr kind 10000 events and will be respected by all NDK-powered clients that support mute lists.
+- The mute list is automatically updated and published for the active session.
+- Use `useIsItemMuted(item)` to check if any item is muted.
+- Use `useNDKMutes(s => s.addExtraMuteItems)` for application-level mutes that should not be published or affect the user's own mute list.
+- All internal details like initializing mutes, loading mute lists, and synchronizing with the session store are handled automatically.
+
+Explore the exported hooks from `@nostr-dev-kit/ndk-hooks` for more advanced use cases.

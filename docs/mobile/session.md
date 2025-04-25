@@ -87,8 +87,8 @@ This involves:
 3.  **Calling `initSession`:** Use the `initSession` function exported from `@nostr-dev-kit/ndk-hooks` (and re-exported by `ndk-mobile`) to add the user and signer to the session store.
 
 ```tsx
-import { useNDK } from "@nostr-dev-kit/ndk-react"; // Or your context provider
-import { useNDKSessions } from "@nostr-dev-kit/ndk-hooks"; // Or from ndk-mobile
+import { useNDK } from "@nostr-dev-kit/ndk-hooks";
+import { useNDKSessions } from "@nostr-dev-kit/ndk-hooks";
 import { NDKUser, NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
 import React from 'react';
 

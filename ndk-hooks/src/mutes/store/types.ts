@@ -1,4 +1,5 @@
-import type { NDKEvent, Hexpubkey } from "@nostr-dev-kit/ndk";
+import type { NDKEvent, Hexpubkey, NDKUser } from "@nostr-dev-kit/ndk";
+import NDK from "@nostr-dev-kit/ndk";
 
 /**
  * Mute criteria used for filtering events
@@ -34,28 +35,28 @@ export interface NDKUserMutes {
 export type MuteableItem = NDKEvent | Hexpubkey | string;
 
 /**
+ * Type for items that can be muted.
+ */
+export type MutableItem = NDKEvent | NDKUser | string;
+
+/**
  * Type for the mute item type
  */
 export type MuteItemType = "pubkey" | "hashtag" | "word" | "event";
 
 /**
- * Options for publishing mute list events
- */
-export interface PublishMuteListOptions {
-    /**
-     * Whether to publish the mute list event
-     * @default true
-     */
-    publish?: boolean;
-}
-
-/**
  * The state structure for the NDK Mutes Zustand store
  */
+
 export interface NDKMutesState {
     /**
-     * Map of user mutes by pubkey
-     */
+    * The NDK instance used for mute operations
+    */
+    ndk: NDK | undefined;
+
+    /**
+    * Map of user mutes by pubkey
+    */
     mutes: Map<Hexpubkey, NDKUserMutes>;
 
     /**
@@ -82,10 +83,9 @@ export interface NDKMutesState {
 
     /**
      * Load mute list for a user from an event
-     * @param pubkey The pubkey of the user
      * @param event The mute list event
      */
-    loadMuteList: (pubkey: Hexpubkey, event: NDKEvent) => void;
+    loadMuteList: (event: NDKEvent) => void;
 
     /**
      * Mute an item for a user
@@ -94,16 +94,19 @@ export interface NDKMutesState {
      * @param type The type of the item
      * @param options Options for publishing the mute list
      */
-    muteItem: (pubkey: Hexpubkey, item: string, type: MuteItemType, options?: PublishMuteListOptions) => void;
+    /**
+     * Mute an item for a user
+     * @param item The item to mute
+     * @param pubkey The pubkey of the user (optional, uses active pubkey if undefined)
+     */
+    mute: (item: MutableItem, pubkey?: Hexpubkey) => void;
 
     /**
      * Unmute an item for a user
-     * @param pubkey The pubkey of the user
      * @param item The item to unmute
-     * @param type The type of the item
-     * @param options Options for publishing the mute list
+     * @param pubkey The pubkey of the user (optional, uses active pubkey if undefined)
      */
-    unmuteItem: (pubkey: Hexpubkey, item: string, type: MuteItemType, options?: PublishMuteListOptions) => void;
+    unmute: (item: MutableItem, pubkey?: Hexpubkey) => void;
 
     /**
      * Set the active pubkey for mute operations
@@ -117,9 +120,4 @@ export interface NDKMutesState {
      */
     addExtraMuteItems: (items: MuteableItem[]) => void;
 
-    /**
-     * Publish the mute list for a user
-     * @param pubkey The pubkey of the user
-     */
-    publishMuteList: (pubkey: Hexpubkey) => Promise<NDKEvent | undefined>;
 }

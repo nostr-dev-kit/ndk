@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useUserProfilesStore } from "../../profiles/store";
 import { useNDKSessions } from "../../session/store"; // Import session store hook
 import { type NDKStoreState, useNDKStore } from "../store"; // Corrected path
+import { useNDKMutes } from "../../mutes/store";
 
 /**
  * Hook to access the NDK instance
@@ -112,6 +113,7 @@ export function useNDKInit() {
     const setNDK = useNDKStore((state) => state.setNDK);
     const initializeProfilesStore = useUserProfilesStore((state) => state.initialize);
     const initializeSessionStore = useNDKSessions((state) => state.init); // Get session init function
+    const initializeMutesStore = useNDKMutes((state) => state.init); // Get mutes init function
 
     /**
      * Initializes the NDK instance and dependent stores.
@@ -127,6 +129,7 @@ export function useNDKInit() {
             setNDK(ndkInstance);
             initializeProfilesStore(ndkInstance);
             initializeSessionStore(ndkInstance);
+            initializeMutesStore(ndkInstance);
         },
         [setNDK, initializeProfilesStore, initializeSessionStore],
     );

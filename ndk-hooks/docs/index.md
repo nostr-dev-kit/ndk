@@ -301,67 +301,6 @@ This makes it easy to handle loading states and display appropriate UI for each 
 *   `useFollows()`: Fetches the follow list of the active user.
 *   `useNDKWallet()`: Manages wallet connections (e.g., NWC) (via `import of "@nostr-dev-kit/ndk-hooks/wallet"`)
 *   `useNDKNutzapMonitor()`: Monitors for incoming zaps via Nutzap. (via `import of "@nostr-dev-kit/ndk-hooks/wallet"`)
+## Muting
 
-## Muting Users, Hashtags, Words, and Events
-
-NDK React hooks provide a simple way to mute users, hashtags, words, or specific events for the current session using the `useMuteItem` hook. Muting is session-specific and updates the Nostr mute list (kind 10000 event) for the active user.
-
-### Mute Hooks
-
-NDK React hooks provide a simple way to work with mutes without having to interact with the underlying store implementation. The following hooks are available:
-
-- `useMuteList()`: Returns the mute list data for the active user, including sets of muted pubkeys, hashtags, words, event IDs, and the raw mute list event.
-- `useMuteFilter()`: Returns a function that checks if an event is muted for the active user.
-- `useMuteItem()`: Returns a function that mutes an item for the current user.
-- `useUnmuteItem()`: Returns a function that unmutes an item for the current user.
-- `useIsItemMuted()`: Returns whether an item is muted for the current user.
-
-All the internal details like initializing mutes, loading mute lists, setting active pubkeys, and publishing mute lists are handled automatically by the library when you use these hooks. The mute store is automatically synchronized with the session store, so you don't need to worry about keeping them in sync.
-
-> **Best Practice**: Always use the provided hooks to interact with the mute functionality. Direct access to the underlying stores is not recommended and may lead to synchronization issues.
-
-### Muting with `useMuteItem`
-
-The `useMuteItem` hook returns a function you can call with a user, hashtag, word, or event to mute it. The hook automatically determines the type and updates the mute list accordingly.
-
-```tsx
-import { useMuteItem } from '@nostr-dev-kit/ndk-hooks';
-import { NDKUser, NDKEvent } from '@nostr-dev-kit/ndk';
-
-function MuteExample({ user, event }: { user: NDKUser; event: NDKEvent }) {
-  const muteItem = useMuteItem();
-
-  // Mute a user
-  const handleMuteUser = () => muteItem(user);
-
-  // Mute a hashtag
-  const handleMuteHashtag = () => muteItem('#nostr');
-
-  // Mute a word
-  const handleMuteWord = () => muteItem('spam');
-
-  // Mute an event
-  const handleMuteEvent = () => muteItem(event);
-
-  return (
-    <div>
-      <button onClick={handleMuteUser}>Mute User</button>
-      <button onClick={handleMuteHashtag}>Mute #nostr</button>
-      <button onClick={handleMuteWord}>Mute "spam"</button>
-      <button onClick={handleMuteEvent}>Mute Event</button>
-    </div>
-  );
-}
-```
-
-- **User:** Pass an `NDKUser` instance to mute a user by pubkey.
-- **Hashtag:** Pass a string starting with `#` (e.g., `#nostr`) to mute a hashtag.
-- **Word:** Pass a string (e.g., `spam`) to mute a word.
-- **Event:** Pass an `NDKEvent` instance to mute a specific event by ID.
-
-### Notes
-- Muting is persisted as a Nostr kind 10000 event and will be respected by all NDK-powered clients that support mute lists.
-- The mute list is automatically updated and published for the active session.
-- Use `useMuteFilter()` to filter events in your UI based on the mute list.
-
-Explore the exported hooks from `@nostr-dev-kit/ndk-hooks` for more advanced use cases.
+See [Muting Documentation](./muting.md) for details on how to mute, unmute, and check mute status for users, events, hashtags, and words using NDK React hooks.

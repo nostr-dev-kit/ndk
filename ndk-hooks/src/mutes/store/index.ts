@@ -2,13 +2,13 @@ import { enableMapSet } from "immer";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import type { Hexpubkey, NDKEvent } from "@nostr-dev-kit/ndk";
-import type { NDKMutesState, NDKUserMutes, MuteItemType, PublishMuteListOptions, MuteableItem } from "./types";
+import type { NDKMutesState, NDKUserMutes, MuteableItem } from "./types";
+import type { MutableItem } from "./types";
 import { initMutes } from "./init";
 import { loadMuteList } from "./load";
-import { muteItem } from "./mute-item";
-import { unmuteItem } from "./unmute-item";
+import { mute } from "./mute";
+import { unmute } from "./unmute";
 import { setActivePubkey } from "./set-active-pubkey";
-import { publishMuteList } from "./publish";
 import { addExtraMuteItems } from "./add-extra-mute-items";
 
 // Enable Map and Set support for Immer
@@ -17,7 +17,10 @@ enableMapSet();
 /**
  * Create the mute store
  */
+import NDK from "@nostr-dev-kit/ndk";
+
 const mutesStateCreator = (set: (state: any) => void, get: () => NDKMutesState) => ({
+    ndk: undefined, // Will be set by init
     mutes: new Map<string, NDKUserMutes>(),
     extraMutes: {
         pubkeys: new Set<string>(),
@@ -33,19 +36,29 @@ const mutesStateCreator = (set: (state: any) => void, get: () => NDKMutesState) 
         words: new Set<string>(),
     },
 
+    /**
+     * Initialize the mute store with an NDK instance.
+     */
+    init: (ndkInstance: NDK) => {
+        set((state: NDKMutesState) => {
+            state.ndk = ndkInstance;
+        });
+    },
+
     initMutes: (pubkey: Hexpubkey) => initMutes(set, get, pubkey),
-    loadMuteList: (pubkey: Hexpubkey, event: NDKEvent) => loadMuteList(set, get, pubkey, event),
-    muteItem: (pubkey: Hexpubkey, item: string, type: MuteItemType, options?: PublishMuteListOptions) =>
-        muteItem(set, get, pubkey, item, type, options),
-    unmuteItem: (pubkey: Hexpubkey, item: string, type: MuteItemType, options?: PublishMuteListOptions) =>
-        unmuteItem(set, get, pubkey, item, type, options),
+    loadMuteList: (event: NDKEvent) => loadMuteList(set, get, event),
+    mute: (item: MutableItem, pubkey?: Hexpubkey) =>
+        mute(set, get, item, pubkey),
+    unmute: (item: MutableItem, pubkey?: Hexpubkey) =>
+        unmute(set, get, item, pubkey),
     setActivePubkey: (pubkey: Hexpubkey | null) => setActivePubkey(set, pubkey),
     addExtraMuteItems: (items: MuteableItem[]) => addExtraMuteItems(set, get, items),
-    publishMuteList: (pubkey: Hexpubkey) => publishMuteList(get, pubkey),
 });
 
 // Create the store using the Immer middleware
+/**
+ * Factory function to create a Zustand store for NDK mutes, given an NDK instance.
+ */
 export const useNDKMutes = create(immer(mutesStateCreator));
-
 // Export the state type
 export type { NDKMutesState };

@@ -106,8 +106,7 @@ function processEvent(event: NDKEvent, sessionDraft: Draft<NDKUserSession>, opts
                 handleContactsEvent(event, sessionDraft);
                 break;
             case NDKKind.MuteList:
-                // Delegate to mute store instead of handling in session store
-                useNDKMutes.getState().loadMuteList(sessionDraft.pubkey, event);
+                useNDKMutes.getState().loadMuteList(event);
                 break;
             case 967:
                 handleKindFollowEvent(event, sessionDraft);
@@ -207,6 +206,8 @@ export const startSession = (
         });
     };
 
+    console.debug("Starting session for", pubkey, "with filters", JSON.stringify(filters, null, 4));
+    
     const sub = ndk.subscribe(filters, { closeOnEose: false, addSinceFromCache: true }, { onEvent, onEvents });
 
     // Store the subscription handle

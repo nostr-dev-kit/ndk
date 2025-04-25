@@ -9,10 +9,6 @@ import { EMPTY_MUTE_CRITERIA } from "./use-mute-filter";
  * The mute store is automatically synchronized with the session store
  * through the session store functions.
  *
- * This hook uses memoization to prevent unnecessary re-renders when the criteria
- * object hasn't actually changed. This is crucial for preventing infinite loops
- * in useEffect, useMemo, and useCallback hooks that depend on the criteria.
- *
  * @returns The mute criteria for the active user, or empty criteria if no user is active.
  */
 export function useActiveMuteCriteria(): MuteCriteria {

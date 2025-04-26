@@ -1,5 +1,23 @@
 # @nostr-dev-kit/ndk-cache-sqlite-wasm
 
+## 0.4.5
+
+### Patch Changes
+
+- don't define sync methods when running in web worker mode instead of throwing when being used
+
+## 0.4.4
+
+### Patch Changes
+
+- correct raw property
+
+## 0.4.3
+
+### Patch Changes
+
+- modify normalization
+
 ## 0.4.2
 
 ### Patch Changes

@@ -13,9 +13,6 @@ export function fetchProfileSync(
     this: NDKCacheAdapterSqliteWasm,
     pubkey: string
 ): NDKCacheEntry<NDKUserProfile> | null {
-    if (this.useWorker) {
-        throw new Error("fetchProfileSync is not supported in Web Worker mode. Use fetchProfile (async) instead.");
-    }
     const stmt = "SELECT profile, updated_at FROM profiles WHERE pubkey = ? LIMIT 1";
     const result = this.db.exec(stmt, [pubkey]);
     if (result && result[0] && result[0].values && result[0].values[0]) {

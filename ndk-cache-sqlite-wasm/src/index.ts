@@ -31,6 +31,10 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
     public db: any;
     public ndk?: NDK;
 
+    // Conditionally defined sync methods
+    public fetchProfileSync?: typeof fetchProfileSync;
+    public getAllProfilesSync?: typeof getAllProfilesSync;
+
     // Web Worker integration
     private worker?: Worker;
     private workerUrl?: string;
@@ -43,8 +47,12 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
         this.wasmUrl = options.wasmUrl;
         this.useWorker = options.useWorker ?? false;
         this.workerUrl = options.workerUrl;
-        // All method bindings are now handled via public field initializers.
-        // Bind more methods as implemented
+        
+        // Conditionally define sync methods only if not in worker mode
+        if (!this.useWorker) {
+            this.fetchProfileSync = fetchProfileSync.bind(this);
+            this.getAllProfilesSync = getAllProfilesSync.bind(this);
+        }
     }
 
     /**
@@ -146,8 +154,7 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
     public getEvent = getEvent.bind(this);
     public fetchProfile = fetchProfile.bind(this);
     public saveProfile = saveProfile.bind(this);
-    public fetchProfileSync = fetchProfileSync.bind(this);
-    public getAllProfilesSync = getAllProfilesSync.bind(this);
+    // fetchProfileSync and getAllProfilesSync are conditionally defined in the constructor
     public updateRelayStatus = updateRelayStatus.bind(this);
     public getRelayStatus = getRelayStatus.bind(this);
     public getDecryptedEvent = getDecryptedEvent.bind(this);

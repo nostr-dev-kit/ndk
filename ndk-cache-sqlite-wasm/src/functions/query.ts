@@ -6,17 +6,24 @@ import { deserialize, matchFilter } from "@nostr-dev-kit/ndk";
  * Utility to normalize DB rows from `{ columns, values }` to array of objects.
  */
 function normalizeDbRows(rows: any[]): any[] {
-    if (!Array.isArray(rows) || rows.length === 0) return rows;
-    // Check if the first row is in { columns, values } format
-    if (rows[0] && Array.isArray(rows[0].columns) && Array.isArray(rows[0].values)) {
-        return rows.map(row => {
-            const obj: any = {};
-            row.columns.forEach((col: string, idx: number) => {
-                obj[col] = row.values[idx];
+    if (!Array.isArray(rows) || rows.length === 0) {
+        return [];
+    }
+
+    const first = rows[0];
+    if (Array.isArray(first.columns) && Array.isArray(first.values)) {
+        return rows.flatMap(row => {
+            return row.values.map((cellVals: any[]) => {
+                const obj: Record<string, any> = {};
+                row.columns.forEach((col: string, idx: number) => {
+                    obj[col] = cellVals[idx];
+                });
+                return obj;
             });
-            return obj;
         });
     }
+
+    // fallback: assume already “normalized”
     return rows;
 }
 
@@ -161,13 +168,13 @@ function foundEvent(
     filter?: NDKFilter
 ): NDKEvent | null {
     try {
-        const deserializedEvent = deserialize(record.event);
+        const deserializedEvent = deserialize(record.raw);
         if (filter && !matchFilter(filter, deserializedEvent as any)) return null;
         const ndkEvent = new NDKEvent(undefined, deserializedEvent);
         return ndkEvent;
     } catch (e) {
         // eslint-disable-next-line no-console
-        console.error("failed to deserialize event", e, record.event);
+        console.error("failed to deserialize event", e, record.raw);
         return null;
     }
 }

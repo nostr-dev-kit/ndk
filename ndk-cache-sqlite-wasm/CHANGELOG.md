@@ -1,5 +1,68 @@
 # @nostr-dev-kit/ndk-cache-sqlite-wasm
 
+## 0.4.0
+
+### Minor Changes
+
+- Add Web Worker support to improve performance and prevent UI blocking.
+
+    This release adds optional Web Worker support to the NDK Cache SQLite WASM adapter. Users can now opt-in to running database operations in a separate thread, which prevents UI blocking during intensive operations.
+
+    ## Features
+
+    - Added `useWorker` and `workerUrl` options to the adapter configuration
+    - Implemented a Web Worker script that handles database operations
+    - Modified all database methods to work in both main thread and Web Worker modes
+    - Added documentation for Web Worker setup in different frameworks (Next.js, Vite)
+    - Created a Vite example application demonstrating Web Worker usage
+
+    ## Usage
+
+    ```typescript
+    const cache = new NDKCacheAdapterSqliteWasm({
+        useWorker: true,
+        workerUrl: "/worker.js",
+        wasmUrl: "/sql-wasm.wasm",
+    });
+    ```
+
+    See the documentation in `docs/web-worker-setup.md` for detailed setup instructions.
+
+## 0.4.0 (upcoming)
+
+### New Features
+
+- **Web Worker Support:** Added optional Web Worker mode to offload SQLite operations from the main thread.
+    - Improves application responsiveness during heavy database operations
+    - Configurable via new options: `useWorker`, `workerUrl`
+    - See [Web Worker Setup](./docs/web-worker-setup.md) for detailed configuration instructions
+
+### Breaking Changes
+
+- **Web Worker/Async API Adaptation:** All database interaction methods in `NDKCacheAdapterSqliteWasm` are now asynchronous to support both main-thread and Web Worker modes.
+    - If `useWorker` is enabled, all DB methods are async and communicate with the worker.
+    - If `useWorker` is disabled, methods remain async but execute on the main thread.
+- **Synchronous Methods Deprecated in Worker Mode:**
+    - `fetchProfileSync` and `getAllProfilesSync` will throw an error if called when `useWorker` is true. Synchronous DB access is fundamentally incompatible with Web Worker mode.
+    - For compatibility, these methods are still available in main-thread mode, but their use is discouraged in favor of async methods.
+- **Migration:** Users should migrate to the async versions of all DB methods for compatibility with both main-thread and worker modes.
+
+### Configuration
+
+- **New Options:**
+    - `useWorker: boolean` - Enable Web Worker mode (default: false)
+    - `workerUrl: string` - URL to the worker script (required when useWorker is true)
+- **Example:**
+    ```typescript
+    const cacheAdapter = new NDKCacheAdapterSqliteWasm({
+        useWorker: true,
+        workerUrl: "/dist/worker.js",
+        wasmUrl: "/dist/sql-wasm.wasm",
+    });
+    ```
+
+---
+
 ## 0.3.0
 
 ### Minor Changes

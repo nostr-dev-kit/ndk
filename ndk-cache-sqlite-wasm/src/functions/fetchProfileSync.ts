@@ -4,10 +4,18 @@ import type { NDKCacheAdapterSqliteWasm } from "../index";
 /**
  * Synchronously fetches a user profile by pubkey from the SQLite WASM database.
  */
+/**
+ * Synchronous profile fetch is NOT supported in Web Worker mode.
+ * BREAKING CHANGE: If useWorker is true, this will throw.
+ * See CHANGELOG.md for details.
+ */
 export function fetchProfileSync(
     this: NDKCacheAdapterSqliteWasm,
     pubkey: string
 ): NDKCacheEntry<NDKUserProfile> | null {
+    if (this.useWorker) {
+        throw new Error("fetchProfileSync is not supported in Web Worker mode. Use fetchProfile (async) instead.");
+    }
     const stmt = "SELECT profile, updated_at FROM profiles WHERE pubkey = ? LIMIT 1";
     const result = this.db.exec(stmt, [pubkey]);
     if (result && result[0] && result[0].values && result[0].values[0]) {

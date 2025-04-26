@@ -1,8 +1,6 @@
-import type { NDKCacheAdapter, NDKCacheEntry, NDKUserProfile, NDKEvent, NDKFilter, NDKRelay } from "@nostr-dev-kit/ndk";
+import type { NDKCacheAdapter } from "@nostr-dev-kit/ndk";
 import { loadWasmAndInitDb } from "./db/wasm-loader";
 import { runMigrations } from "./db/migrations";
-
-// Import modular methods
 import { setEvent } from "./functions/setEvent";
 import { getEvent } from "./functions/getEvent";
 import { fetchProfile } from "./functions/fetchProfile";
@@ -16,69 +14,145 @@ import { addDecryptedEvent } from "./functions/addDecryptedEvent";
 import { addUnpublishedEvent } from "./functions/addUnpublishedEvent";
 import { getUnpublishedEvents } from "./functions/getUnpublishedEvents";
 import { discardUnpublishedEvent } from "./functions/discardUnpublishedEvent";
-
-// Add more imports as you implement more methods
+import { query } from "./functions/query";
 
 export interface NDKCacheAdapterSqliteWasmOptions {
     dbName?: string;
     wasmUrl?: string;
+    useWorker?: boolean; 
+    workerUrl?: string;
 }
 
 export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
     public dbName: string;
     public wasmUrl?: string;
     public locking = false;
-    public db: any; // Will be the WASM-backed DB instance
+    public db: any;
+
+    // Web Worker integration
+    private worker?: Worker;
+    private workerUrl?: string;
+    protected useWorker: boolean = false;
+    private pendingRequests: Map<string, { resolve: (value: any) => void; reject: (reason?: any) => void }> = new Map();
+    private nextRequestId: number = 0;
 
     constructor(options: NDKCacheAdapterSqliteWasmOptions = {}) {
         this.dbName = options.dbName || "ndk-cache";
         this.wasmUrl = options.wasmUrl;
-        // Bind modular methods
-        this.setEvent = setEvent.bind(this);
-        this.getEvent = getEvent.bind(this);
-        this.fetchProfile = fetchProfile.bind(this);
-        this.saveProfile = saveProfile.bind(this);
-        this.fetchProfileSync = fetchProfileSync.bind(this);
-        this.getAllProfilesSync = getAllProfilesSync.bind(this);
-        this.updateRelayStatus = updateRelayStatus.bind(this);
-        this.getRelayStatus = getRelayStatus.bind(this);
-        this.getDecryptedEvent = getDecryptedEvent.bind(this);
-        this.addDecryptedEvent = addDecryptedEvent.bind(this);
-        this.addUnpublishedEvent = addUnpublishedEvent.bind(this);
-        this.getUnpublishedEvents = getUnpublishedEvents.bind(this);
-        this.discardUnpublishedEvent = discardUnpublishedEvent.bind(this);
+        this.useWorker = options.useWorker ?? false;
+        this.workerUrl = options.workerUrl;
+        // All method bindings are now handled via public field initializers.
         // Bind more methods as implemented
     }
 
     /**
-     * Loads WASM, initializes DB, and runs migrations.
+     * Loads WASM, initializes DB, and runs migrations, or initializes the worker.
      */
     async initialize() {
-        this.db = await loadWasmAndInitDb(this.wasmUrl, this.dbName);
-        await runMigrations(this.db);
+        if (this.useWorker) {
+            await this.initializeWorker();
+        } else {
+            this.db = await loadWasmAndInitDb(this.wasmUrl, this.dbName);
+            await runMigrations(this.db);
+        }
     }
 
-    // Modular method signatures (implementations are in ./functions/*.ts)
-    setEvent: typeof setEvent;
-    getEvent: typeof getEvent;
-    fetchProfile: typeof fetchProfile;
-    saveProfile: typeof saveProfile;
-    fetchProfileSync: typeof fetchProfileSync;
-    getAllProfilesSync: typeof getAllProfilesSync;
-    updateRelayStatus: typeof updateRelayStatus;
-    getRelayStatus: typeof getRelayStatus;
-    // Add more method signatures as you implement them
-    getDecryptedEvent: typeof getDecryptedEvent;
-    addDecryptedEvent: typeof addDecryptedEvent;
-    addUnpublishedEvent: typeof addUnpublishedEvent;
-    getUnpublishedEvents: () => Promise<{ event: NDKEvent; relays?: string[]; lastTryAt?: number }[]>;
-    discardUnpublishedEvent: typeof discardUnpublishedEvent;
+    /**
+     * Initializes the Web Worker, sets up message handlers, and sends the init message.
+     */
+    private async initializeWorker(): Promise<void> {
+        console.log('Initializing Web Worker...');
+        let effectiveWorkerUrl = this.workerUrl;
 
-    // Stub for required query method
-    async query(...args: any[]): Promise<any> {
-        // TODO: Implement query logic
-        return null;
+        if (!effectiveWorkerUrl) {
+            try {
+                // This relies on bundler support for URL constructors with relative paths
+                effectiveWorkerUrl = new URL('./worker.js', import.meta.url).toString();
+                console.log('Determined worker URL automatically:', effectiveWorkerUrl);
+            } catch (e) {
+                console.error("Failed to determine worker URL automatically. Please provide 'workerUrl' option.", e);
+                throw new Error("Worker URL configuration error.");
+            }
+        } else {
+            console.log('Using provided worker URL:', effectiveWorkerUrl);
+        }
+
+        // Use module type for imports
+        console.log('Creating Web Worker with URL:', effectiveWorkerUrl);
+        this.worker = new Worker(effectiveWorkerUrl, { type: 'module' });
+        console.log('Web Worker created successfully');
+
+        this.worker.onmessage = (event: MessageEvent) => {
+            console.log('Received message from worker:', event.data);
+            const { id, result, error } = event.data;
+            const pending = this.pendingRequests.get(id);
+            if (pending) {
+                if (error) {
+                    console.error("Error from worker:", error);
+                    pending.reject(new Error(`Worker error: ${error.message || error}`));
+                } else {
+                    console.log('Resolving pending request:', id);
+                    pending.resolve(result);
+                }
+                this.pendingRequests.delete(id);
+            }
+        };
+
+        this.worker.onerror = (event: ErrorEvent) => {
+            console.error("Unhandled worker error:", event.message, event);
+            // Reject all pending requests on catastrophic worker failure
+            this.pendingRequests.forEach(p => p.reject(new Error(`Worker failed: ${event.message}`)));
+            this.pendingRequests.clear();
+        };
+
+        console.log('Web Worker event handlers set up');
+
+        // Send initialization config to worker
+        console.log('Sending initialization config to worker');
+        return this.postWorkerMessage({
+            type: 'init',
+            payload: {
+                dbName: this.dbName,
+                wasmUrl: this.wasmUrl
+            }
+        }).then(result => {
+            console.log('Worker initialization complete, result:', result);
+            return result;
+        });
     }
+
+    /**
+     * Helper to send messages to the worker and track responses.
+     */
+    protected postWorkerMessage(message: any): Promise<any> {
+        if (!this.worker) {
+            console.error("Worker not initialized");
+            return Promise.reject(new Error("Worker not initialized"));
+        }
+        const id = `req-${this.nextRequestId++}`;
+        console.log(`Posting message to worker (${id}):`, message);
+        return new Promise((resolve, reject) => {
+            this.pendingRequests.set(id, { resolve, reject });
+            this.worker!.postMessage({ ...message, id });
+            console.log(`Message posted to worker (${id})`);
+        });
+    }
+
+    // Modular method bindings (public field initializers)
+    public setEvent = setEvent.bind(this);
+    public getEvent = getEvent.bind(this);
+    public fetchProfile = fetchProfile.bind(this);
+    public saveProfile = saveProfile.bind(this);
+    public fetchProfileSync = fetchProfileSync.bind(this);
+    public getAllProfilesSync = getAllProfilesSync.bind(this);
+    public updateRelayStatus = updateRelayStatus.bind(this);
+    public getRelayStatus = getRelayStatus.bind(this);
+    public getDecryptedEvent = getDecryptedEvent.bind(this);
+    public addDecryptedEvent = addDecryptedEvent.bind(this);
+    public addUnpublishedEvent = addUnpublishedEvent.bind(this);
+    public getUnpublishedEvents = getUnpublishedEvents.bind(this);
+    public discardUnpublishedEvent = discardUnpublishedEvent.bind(this);
+    public query = query.bind(this);
 }
 
 export default NDKCacheAdapterSqliteWasm;

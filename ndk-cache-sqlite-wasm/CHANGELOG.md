@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk-cache-sqlite-wasm
 
+## 0.4.2
+
+### Patch Changes
+
+- load queries as objects
+
 ## 0.4.1
 
 ### Patch Changes

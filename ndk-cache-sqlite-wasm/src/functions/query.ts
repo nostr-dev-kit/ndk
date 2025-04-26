@@ -3,6 +3,24 @@ import { NDKEvent, NDKSubscription, NDKFilter } from "@nostr-dev-kit/ndk";
 import { deserialize, matchFilter } from "@nostr-dev-kit/ndk";
 
 /**
+ * Utility to normalize DB rows from `{ columns, values }` to array of objects.
+ */
+function normalizeDbRows(rows: any[]): any[] {
+    if (!Array.isArray(rows) || rows.length === 0) return rows;
+    // Check if the first row is in { columns, values } format
+    if (rows[0] && Array.isArray(rows[0].columns) && Array.isArray(rows[0].values)) {
+        return rows.map(row => {
+            const obj: any = {};
+            row.columns.forEach((col: string, idx: number) => {
+                obj[col] = row.values[idx];
+            });
+            return obj;
+        });
+    }
+    return rows;
+}
+
+/**
  * Query events from the WASM-backed SQLite DB using NDKSubscription filters.
  * Mirrors the logic of the mobile adapter, but uses async/await and WASM DB API.
  */
@@ -38,7 +56,8 @@ export function query(
                     `;
                     const params = [key[1], ...tagValues];
                     const events = this.db.exec(sql, params);
-                    if (events && events.length > 0) addResults(foundEvents(subscription, events, filter));
+                    const normalizedEvents = normalizeDbRows(events);
+                    if (normalizedEvents && normalizedEvents.length > 0) addResults(foundEvents(subscription, normalizedEvents, filter));
                     break;
                 }
             }
@@ -51,7 +70,8 @@ export function query(
             `;
             const params = [...filter.authors, ...filter.kinds];
             const events = this.db.exec(sql, params);
-            if (events && events.length > 0) addResults(foundEvents(subscription, events, filter));
+            const normalizedEvents = normalizeDbRows(events);
+            if (normalizedEvents && normalizedEvents.length > 0) addResults(foundEvents(subscription, normalizedEvents, filter));
         } else if (filter.authors) {
             const sql = `
                 SELECT * FROM events
@@ -60,7 +80,8 @@ export function query(
             `;
             const params = filter.authors;
             const events = this.db.exec(sql, params);
-            if (events && events.length > 0) addResults(foundEvents(subscription, events, filter));
+            const normalizedEvents = normalizeDbRows(events);
+            if (normalizedEvents && normalizedEvents.length > 0) addResults(foundEvents(subscription, normalizedEvents, filter));
         } else if (filter.kinds) {
             const sql = `
                 SELECT * FROM events
@@ -69,7 +90,8 @@ export function query(
             `;
             const params = filter.kinds;
             const events = this.db.exec(sql, params);
-            if (events && events.length > 0) addResults(foundEvents(subscription, events, filter));
+            const normalizedEvents = normalizeDbRows(events);
+            if (normalizedEvents && normalizedEvents.length > 0) addResults(foundEvents(subscription, normalizedEvents, filter));
         } else if (filter.ids) {
             const sql = `
                 SELECT * FROM events
@@ -78,7 +100,8 @@ export function query(
             `;
             const params = filter.ids;
             const events = this.db.exec(sql, params);
-            if (events && events.length > 0) addResults(foundEvents(subscription, events, filter));
+            const normalizedEvents = normalizeDbRows(events);
+            if (normalizedEvents && normalizedEvents.length > 0) addResults(foundEvents(subscription, normalizedEvents, filter));
         } else {
             // eslint-disable-next-line no-console
             console.log("\t👀 no logic on how to run this query in the sqlite wasm cache", JSON.stringify(filter));

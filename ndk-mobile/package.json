@@ -1,13 +1,13 @@
 {
     "name": "@nostr-dev-kit/ndk-mobile",
-    "version": "0.7.2",
+    "version": "0.7.3",
     "description": "NDK Mobile",
     "private": false,
     "license": "MIT",
     "dependencies": {
         "@bacons/text-decoder": "^0.0.0",
         "@nostr-dev-kit/ndk": "2.14.2",
-        "@nostr-dev-kit/ndk-hooks": "1.1.20",
+        "@nostr-dev-kit/ndk-hooks": "1.1.21",
         "@nostr-dev-kit/ndk-wallet": "0.5.6",
         "buffer": "^6.0.3",
         "expo-image": "~2.0.7",

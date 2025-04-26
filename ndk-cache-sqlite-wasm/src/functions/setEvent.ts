@@ -1,4 +1,4 @@
-import type { NDKEvent, NDKFilter, NDKRelay } from "@nostr-dev-kit/ndk";
+import { type NDKEvent, type NDKFilter, type NDKRelay } from "@nostr-dev-kit/ndk";
 import type { NDKCacheAdapterSqliteWasm } from "../index";
 
 /**
@@ -20,7 +20,7 @@ export async function setEvent(
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     const tags = JSON.stringify(event.tags ?? []);
-    const raw = JSON.stringify(event);
+    const raw = event.serialize(true, true);
     const values = [
         event.id,
         event.pubkey,

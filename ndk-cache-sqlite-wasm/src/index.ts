@@ -15,6 +15,7 @@ import { addUnpublishedEvent } from "./functions/addUnpublishedEvent";
 import { getUnpublishedEvents } from "./functions/getUnpublishedEvents";
 import { discardUnpublishedEvent } from "./functions/discardUnpublishedEvent";
 import { query } from "./functions/query";
+import NDK from "@nostr-dev-kit/ndk";
 
 export interface NDKCacheAdapterSqliteWasmOptions {
     dbName?: string;
@@ -28,6 +29,7 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
     public wasmUrl?: string;
     public locking = false;
     public db: any;
+    public ndk?: NDK;
 
     // Web Worker integration
     private worker?: Worker;
@@ -48,7 +50,8 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
     /**
      * Loads WASM, initializes DB, and runs migrations, or initializes the worker.
      */
-    async initialize() {
+    async initialize(ndk?: NDK) {
+        this.ndk = ndk;
         if (this.useWorker) {
             await this.initializeWorker();
         } else {

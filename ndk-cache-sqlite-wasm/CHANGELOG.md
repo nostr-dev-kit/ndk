@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk-cache-sqlite-wasm
 
+## 0.4.1
+
+### Patch Changes
+
+- Fix serialization
+
 ## 0.4.0
 
 ### Minor Changes

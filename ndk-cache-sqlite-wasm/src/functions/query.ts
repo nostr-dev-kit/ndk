@@ -1,5 +1,5 @@
 import type { NDKCacheAdapterSqliteWasm } from "../index";
-import type { NDKEvent, NDKSubscription, NDKFilter } from "@nostr-dev-kit/ndk";
+import { NDKEvent, NDKSubscription, NDKFilter } from "@nostr-dev-kit/ndk";
 import { deserialize, matchFilter } from "@nostr-dev-kit/ndk";
 
 /**
@@ -116,7 +116,7 @@ function foundEvents(
     for (const record of records) {
         const event = foundEvent(subscription, record, record.relay, filter);
         if (event) {
-            const expiration = event.tagValue && event.tagValue("expiration");
+            const expiration = event.tagValue("expiration");
             if (expiration) {
                 now ??= Math.floor(Date.now() / 1000);
                 if (now > Number.parseInt(expiration)) continue;
@@ -140,10 +140,7 @@ function foundEvent(
     try {
         const deserializedEvent = deserialize(record.event);
         if (filter && !matchFilter(filter, deserializedEvent as any)) return null;
-        // NDKEvent constructor: (ndk, rawEvent)
-        // relay assignment is optional for WASM
-        // @ts-ignore
-        const ndkEvent = new (subscription.NDKEventClass || (globalThis as any).NDKEvent || Object.getPrototypeOf(subscription.filters[0]).constructor)(undefined, deserializedEvent);
+        const ndkEvent = new NDKEvent(undefined, deserializedEvent);
         return ndkEvent;
     } catch (e) {
         // eslint-disable-next-line no-console

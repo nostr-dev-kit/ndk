@@ -23,7 +23,8 @@
     "prepublishOnly": "bun run build"
   },
   "dependencies": {
-    "sql.js": "^1.8.0"
+    "sql.js": "^1.8.0",
+    "@nostr-dev-kit/ndk": "latest"
   },
   "devDependencies": {},
   "license": "MIT"

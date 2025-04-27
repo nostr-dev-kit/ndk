@@ -1,20 +1,6 @@
 import type { NDK } from "../ndk/index.js";
-import type { NDKSigner, NDKSignerPayload, NDKSignerStatic } from "./index.js";
-import { NDKNip07Signer } from "./nip07/index.js";
-import { NDKNip46Signer } from "./nip46/index.js";
-import { NDKPrivateKeySigner } from "./private-key/index.js";
-
-/**
- * Registry to hold signer types and their corresponding deserialization functions.
- * Signer packages (like ndk-mobile for NIP-55) can add their types here.
- */
-export const signerRegistry: Map<string, NDKSignerStatic<NDKSigner>> = new Map();
-
-// Register built-in signers
-signerRegistry.set("private-key", NDKPrivateKeySigner);
-signerRegistry.set("nip07", NDKNip07Signer);
-signerRegistry.set("nip46", NDKNip46Signer);
-
+import type { NDKSigner, NDKSignerPayload } from "./index.js";
+import { signerRegistry, initializeSignerRegistry } from "./registry.js";
 /**
  * Deserializes a signer from a payload string using the signer registry.
  * @param payloadString The JSON string obtained from a signer's toPayload().
@@ -22,12 +8,20 @@ signerRegistry.set("nip46", NDKNip46Signer);
  * @returns An instance of the specific signer class, or undefined if the type is unknown.
  */
 export async function ndkSignerFromPayload(payloadString: string, ndk?: NDK): Promise<NDKSigner> {
+    // Ensure built-in signers are registered
+    initializeSignerRegistry();
     let parsed: NDKSignerPayload;
 
     try {
         parsed = JSON.parse(payloadString);
     } catch (e) {
-        throw new Error(`Failed to parse signer payload: ${e instanceof Error ? e.message : String(e)}`);
+        console.error("Failed to parse signer payload string", payloadString, e);
+        return undefined;
+    }
+    // Ensure the payload has a valid type field
+    if (!parsed || typeof (parsed as any).type !== "string") {
+        console.error("Failed to parse signer payload string", payloadString, new Error("Missing type field"));
+        return undefined;
     }
 
     const SignerClass = signerRegistry.get(parsed.type);

@@ -6,8 +6,8 @@ import {
     type NDKSigner,
     NDKUser,
     type NostrEvent,
-    signerRegistry, // Import the registry from ndk-core
 } from "@nostr-dev-kit/ndk";
+import { registerSigner } from "@nostr-dev-kit/ndk";
 import * as Nip55 from "expo-nip55";
 
 export class NDKNip55Signer implements NDKSigner {
@@ -146,4 +146,4 @@ export class NDKNip55Signer implements NDKSigner {
 
 // Register this signer type with the core registry *outside* the class definition
 // This ensures ndkSignerFromPayload can deserialize it.
-signerRegistry.set("nip55", NDKNip55Signer);
+registerSigner("nip55", NDKNip55Signer);

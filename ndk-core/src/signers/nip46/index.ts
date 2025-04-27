@@ -11,6 +11,7 @@ import type { NDKSigner } from "../index.js";
 import { NDKPrivateKeySigner } from "../private-key/index.js";
 import type { NDKRpcResponse } from "./rpc.js";
 import { NDKNostrRpc } from "./rpc.js";
+import { ndkSignerFromPayload } from "../deserialization.js";
 /**
  * This NDKSigner implements NIP-46, which allows remote signing of events.
  * This class is meant to be used client-side, paired with the NDKNip46Backend or a NIP-46 backend (like Nostr-Connect)

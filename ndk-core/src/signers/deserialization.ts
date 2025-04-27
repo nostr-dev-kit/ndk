@@ -7,7 +7,7 @@ import { signerRegistry, initializeSignerRegistry } from "./registry.js";
  * @param ndk Optional NDK instance, required by some signers.
  * @returns An instance of the specific signer class, or undefined if the type is unknown.
  */
-export async function ndkSignerFromPayload(payloadString: string, ndk?: NDK): Promise<NDKSigner> {
+export async function ndkSignerFromPayload(payloadString: string, ndk?: NDK): Promise<NDKSigner | undefined> {
     // Ensure built-in signers are registered
     initializeSignerRegistry();
     let parsed: NDKSignerPayload;

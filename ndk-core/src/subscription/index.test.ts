@@ -1,4 +1,4 @@
-import { vi } from "vitest";
+import { vi, describe, it, expect } from "vitest"; // Added describe, it, expect
 import { NDKSubscription } from ".";
 import { NDKEvent } from "../events";
 import { NDK } from "../ndk";

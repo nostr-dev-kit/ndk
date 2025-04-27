@@ -1,6 +1,6 @@
 import { CashuWallet, CheckStateEnum } from "@cashu/cashu-ts";
 import NDK, { NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
-import { mockNutzap } from "@nostr-dev-kit/ndk-test-utils";
+import { mockNutzap } from "@nostr-dev-kit/ndk/test";
 import { describe, expect, it, vi } from "vitest";
 import { getProofSpendState } from "./spend-status";
 

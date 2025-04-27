@@ -1,4 +1,4 @@
-import { mockNutzap } from "@nostr-dev-kit/ndk-test-utils";
+import { mockNutzap } from "../../../../test";
 import { NDK } from "../../../ndk";
 import { NDKPrivateKeySigner } from "../../../signers/private-key";
 import type { NDKUser } from "../../../user";

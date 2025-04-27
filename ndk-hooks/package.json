@@ -41,7 +41,6 @@
         "react": "*"
     },
     "devDependencies": {
-        "@nostr-dev-kit/ndk-test-utils": "1.0.1",
         "@types/react": "^18.2.0",
         "jsdom": "^26.1.0",
         "tsup": "^8",

@@ -43,7 +43,7 @@
     ],
     "scripts": {
         "dev": "bun run build --watch",
-        "build": "tsup src/index.ts --format cjs,esm --dts && tsup src/workers/sig-verification.ts --format cjs,esm --dts -d dist/workers",
+        "build": "tsup src/index.ts --format cjs,esm --dts && tsup src/workers/sig-verification.ts --format cjs,esm --dts -d dist/workers && tsup test/index.ts --format cjs,esm --dts -d dist/test",
         "build:core:esm": "tsup src/index.ts --format esm --dts",
         "clean": "rm -rf dist docs",
         "test": "vitest run",

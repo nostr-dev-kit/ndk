@@ -7,7 +7,7 @@ This guide demonstrates how to test Cashu token and Nutzap functionality using N
 Create and test Nutzap events:
 
 ```typescript
-import { mockNutzap, mockProof } from "@nostr-dev-kit/ndk-test-utils";
+import { mockNutzap, mockProof } from "@nostr-dev-kit/ndk/test";
 import { NDK } from "@nostr-dev-kit/ndk";
 
 describe("Nutzap Tests", () => {
@@ -62,7 +62,7 @@ expect(proofs.reduce((sum, p) => sum + p.amount, 0)).toBe(500);
 ### Testing Token Processing
 
 ```typescript
-import { RelayMock } from "@nostr-dev-kit/ndk-test-utils";
+import { RelayMock } from "@nostr-dev-kit/ndk/test";
 
 // Set up relay and monitor
 const relay = new RelayMock("wss://test.relay");

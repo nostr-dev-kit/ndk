@@ -1,6 +1,6 @@
-import { NDKEvent } from "@nostr-dev-kit/ndk";
-import { NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
 import * as nostrTools from "nostr-tools";
+import { NDKEvent } from "src/events";
+import { NDKPrivateKeySigner } from "src/signers/private-key";
 
 /**
  * EventGenerator for testing purposes

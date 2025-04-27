@@ -12,7 +12,7 @@ import NDK, {
     NDKSubscriptionOptions,
     type NDKUser,
 } from "@nostr-dev-kit/ndk";
-import { mockNutzap } from "@nostr-dev-kit/ndk-test-utils";
+import { mockNutzap } from "@nostr-dev-kit/ndk/test";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import * as CashuMintModule from "../wallets/cashu/mint.js";
 import { NDKCashuWallet } from "../wallets/cashu/wallet/index.js";

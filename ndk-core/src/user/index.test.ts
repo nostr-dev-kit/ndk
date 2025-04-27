@@ -1,4 +1,4 @@
-import { EventGenerator } from "@nostr-dev-kit/ndk-test-utils";
+import { EventGenerator } from "../../test";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { NDKEvent } from "../events/index.js";
 import { NDK } from "../ndk/index.js";

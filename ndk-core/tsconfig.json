@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "baseUrl": ".", // Add baseUrl
         "target": "ESNext",
         "module": "ESNext",
         "composite": false,
@@ -15,12 +16,11 @@
         "preserveWatchOutput": true,
         "skipLibCheck": true,
         "strict": true,
+        "types": ["vitest/globals"], // Add vitest globals
         "allowJs": true,
         "checkJs": true,
         "lib": ["dom", "dom.iterable", "esnext"],
         "emitDeclarationOnly": true,
         "outDir": "lib"
     },
-    "include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.ts"],
-    "exclude": ["dist", "build", "node_modules"]
 }

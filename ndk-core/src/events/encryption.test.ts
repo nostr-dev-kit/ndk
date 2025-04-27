@@ -1,15 +1,13 @@
-import { SignerGenerator, TestFixture, UserGenerator } from "@nostr-dev-kit/ndk-test-utils";
+import { TestFixture } from "../../test";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { NDKEvent, type NostrEvent } from ".";
 import type { NDKCacheAdapter } from "../cache";
 import { NDK } from "../ndk";
-import { NDKRelaySet } from "../relay/sets";
 import type { NDKSigner } from "../signers";
 import { NDKNip07Signer } from "../signers/nip07";
 import { NDKNip46Signer } from "../signers/nip46";
 import { NDKPrivateKeySigner } from "../signers/private-key";
 import { NDKUser } from "../user";
-import { decrypt } from "./encryption";
 import * as giftWrappingModule from "./gift-wrapping";
 import { NDKKind } from "./kinds";
 

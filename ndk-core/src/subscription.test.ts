@@ -1,9 +1,7 @@
 import {
     EventGenerator,
     RelayPoolMock,
-    expectEventToBeValid,
-    expectEventsToMatch,
-} from "@nostr-dev-kit/ndk-test-utils";
+} from "../test";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import NDK, { NDKSubscription, type NDKFilter, NDKKind, type NDKEvent, type NDKRelay, NDKRelaySet } from "./index";
 
@@ -55,8 +53,8 @@ describe("NDKSubscription", () => {
                 subId,
                 skipVerification: true, // Skip verification to simplify test
                 skipValidation: true, // Skip validation to simplify test
+                relaySet,
             },
-            relaySet,
         );
 
         // Track received events
@@ -105,8 +103,8 @@ describe("NDKSubscription", () => {
                 subId: "test-subscription-2",
                 skipVerification: true, // Skip verification to simplify test
                 skipValidation: true, // Skip validation to simplify test
+                relaySet,
             },
-            relaySet,
         );
 
         // Track events

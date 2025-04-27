@@ -1,3 +1,4 @@
+import { describe, it, expect, vi } from "vitest"; // Added vitest imports
 import { NDK } from ".";
 import { NDKEvent } from "../events";
 import type { NDKSubscriptionOptions } from "../subscription";

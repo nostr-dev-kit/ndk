@@ -1,5 +1,7 @@
 import { EventEmitter } from "node:events";
-import type { NDKEvent, NDKFilter, NDKRelayStatus, NDKSubscription } from "@nostr-dev-kit/ndk";
+import { NDKEvent } from "src/events";
+import { NDKRelayStatus } from "src/relay";
+import { NDKSubscription, NDKFilter } from "src/subscription";
 
 interface RelayMockOptions {
     simulateDisconnect?: boolean;
@@ -17,6 +19,8 @@ export class RelayMock extends EventEmitter {
     private _status: NDKRelayStatus = 0; // DISCONNECTED
     public messageLog: Array<{ direction: "in" | "out"; message: string }> = [];
     private activeSubscriptions: Map<string, NDKSubscription> = new Map();
+    public validatedEvents: number = 0;
+    public nonValidatedEvents: number = 0;
 
     // Configurable behavior for testing
     public options: Required<RelayMockOptions>;
@@ -126,20 +130,40 @@ export class RelayMock extends EventEmitter {
         return true;
     }
 
-    // Additional methods for testing
+    // Event tracking methods
+    
+    /**
+     * Track the number of validated events (used in tests)
+     */
+    addValidatedEvent(): void {
+        this.validatedEvents += 1;
+    }
+
+    /**
+     * Track the number of non-validated events (used in tests)
+     */
+    addNonValidatedEvent(): void {
+        this.nonValidatedEvents += 1;
+    }
+
+    // Simulation methods for testing
+
+    /**
+     * Simulate receiving a raw message
+     */
     simulateReceiveMessage(message: string): void {
         this.messageLog.push({ direction: "in", message });
         this.emit("message", message);
     }
 
     /**
-     * Simulate an event being received by a subscription
+     * Simulate receiving an event
      */
     async simulateEvent(event: NDKEvent, subId?: string): Promise<void> {
         const eventData = await event.toNostrEvent();
 
         if (subId) {
-            // If a subscription ID is provided, only send to that subscription
+            // If a subId is provided, only send to that subscription
             const subscription = this.activeSubscriptions.get(subId);
             if (subscription) {
                 // Directly call the eventReceived method on the subscription
@@ -184,13 +208,12 @@ export class RelayMock extends EventEmitter {
         const noticeMessage = JSON.stringify(["NOTICE", message]);
         this.simulateReceiveMessage(noticeMessage);
     }
-
-    /**
-     * Reset the mock relay state
-     */
+    
     reset(): void {
         this.messageLog = [];
         this.activeSubscriptions.clear();
         this._status = 0; // DISCONNECTED
+        this.validatedEvents = 0;
+        this.nonValidatedEvents = 0;
     }
 }

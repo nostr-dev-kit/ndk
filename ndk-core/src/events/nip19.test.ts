@@ -1,4 +1,4 @@
-import { TestFixture } from "@nostr-dev-kit/ndk-test-utils";
+import { TestFixture } from "../../test";
 import { NDKRelay } from "../relay";
 
 let fixture: TestFixture;

@@ -7,7 +7,7 @@ This guide demonstrates how to test relay pool behavior and event handling using
 Create and configure a mock relay pool:
 
 ```typescript
-import { RelayPoolMock } from "@nostr-dev-kit/ndk-test-utils";
+import { RelayPoolMock } from "@nostr-dev-kit/ndk/test";
 import { NDK } from "@nostr-dev-kit/ndk";
 
 describe("Relay Pool Tests", () => {
@@ -45,7 +45,7 @@ describe("Relay Pool Tests", () => {
 ### Testing Event Distribution
 
 ```typescript
-import { EventGenerator } from "@nostr-dev-kit/ndk-test-utils";
+import { EventGenerator } from "@nostr-dev-kit/ndk/test";
 
 // Create events to distribute
 const generator = new EventGenerator();

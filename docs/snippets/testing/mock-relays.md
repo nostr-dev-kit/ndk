@@ -7,7 +7,7 @@ This guide demonstrates how to use NDK's test utilities to create and work with 
 First, install the test utilities package:
 
 ```bash
-pnpm add --save-dev @nostr-dev-kit/ndk-test-utils
+pnpm add --save-dev @nostr-dev-kit/ndk/test
 ```
 
 ## Basic Mock Relay Usage
@@ -15,7 +15,7 @@ pnpm add --save-dev @nostr-dev-kit/ndk-test-utils
 Create and use a basic mock relay:
 
 ```typescript
-import { RelayMock } from "@nostr-dev-kit/ndk-test-utils";
+import { RelayMock } from "@nostr-dev-kit/ndk/test";
 import { NDK } from "@nostr-dev-kit/ndk";
 
 describe("Mock Relay Tests", () => {
@@ -79,7 +79,7 @@ await flakyRelay.connect();             // Should reconnect
 ### Testing Event Publishing
 
 ```typescript
-import { RelayMock, EventGenerator } from "@nostr-dev-kit/ndk-test-utils";
+import { RelayMock, EventGenerator } from "@nostr-dev-kit/ndk/test";
 
 // Create an event generator
 const generator = new EventGenerator();
@@ -111,7 +111,7 @@ relayMock.simulateReceiveMessage('["AUTH", "challenge"]');
 Use RelayPoolMock to test multiple relay scenarios:
 
 ```typescript
-import { RelayPoolMock } from "@nostr-dev-kit/ndk-test-utils";
+import { RelayPoolMock } from "@nostr-dev-kit/ndk/test";
 
 // Create a mock relay pool
 const poolMock = new RelayPoolMock();

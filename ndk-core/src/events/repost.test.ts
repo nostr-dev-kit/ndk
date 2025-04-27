@@ -1,4 +1,4 @@
-import { EventGenerator } from "@nostr-dev-kit/ndk-test-utils";
+import { EventGenerator } from "../../test";
 import type { NDKEvent } from ".";
 import { NDK } from "../ndk";
 import { NDKPrivateKeySigner } from "../signers/private-key";

@@ -33,7 +33,6 @@
         "ndk-mobile",
         "ndk-svelte-components",
         "ndk-wallet",
-        "ndk-test-utils",
         "ndk-blossom",
         "ndk-cache-sqlite-wasm"
     ],

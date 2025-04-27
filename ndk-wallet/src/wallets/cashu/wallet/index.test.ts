@@ -1,5 +1,5 @@
 import NDK, { NDKEvent, NDKKind, NDKPrivateKeySigner, NDKUser } from "@nostr-dev-kit/ndk";
-import { mockProof } from "@nostr-dev-kit/ndk-test-utils";
+import { mockProof } from "@nostr-dev-kit/ndk/test";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { NDKCashuWallet } from "./index";
 

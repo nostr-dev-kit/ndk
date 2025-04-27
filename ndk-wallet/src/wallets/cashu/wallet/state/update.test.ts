@@ -1,6 +1,6 @@
 import { NDKCashuToken } from "@nostr-dev-kit/ndk";
 import NDK from "@nostr-dev-kit/ndk";
-import { mockProof } from "@nostr-dev-kit/ndk-test-utils";
+import { mockProof } from "@nostr-dev-kit/ndk/test";
 import { beforeEach, describe, expect, it } from "vitest";
 import type { WalletProofChange, WalletState } from ".";
 import { NDKCashuWallet } from "..";

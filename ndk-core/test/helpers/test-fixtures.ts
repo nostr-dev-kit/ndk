@@ -1,9 +1,7 @@
-import NDK from "@nostr-dev-kit/ndk";
-import { NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
-import { NDKUser } from "@nostr-dev-kit/ndk";
-import type { NDKUserParams } from "@nostr-dev-kit/ndk";
-import * as nostrTools from "nostr-tools";
+import { NDKPrivateKeySigner } from "src/signers/private-key/index.js";
+import {NDK} from "src/ndk/index.js";
 import { EventGenerator } from "../mocks/event-generator";
+import { NDKUser } from "src/user";
 
 /**
  * Class for generating deterministic test users

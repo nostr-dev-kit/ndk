@@ -7,7 +7,7 @@ This guide shows how to use NDK's test utilities to generate various types of ev
 Use the EventGenerator to create different types of events:
 
 ```typescript
-import { EventGenerator } from "@nostr-dev-kit/ndk-test-utils";
+import { EventGenerator } from "@nostr-dev-kit/ndk/test";
 import { NDK } from "@nostr-dev-kit/ndk";
 
 const ndk = new NDK();
@@ -133,7 +133,7 @@ const reactionEvent = await generator.reaction(replyEvent.id, "+");
 
 ```typescript
 // Test event processing with mock relay
-import { RelayMock } from "@nostr-dev-kit/ndk-test-utils";
+import { RelayMock } from "@nostr-dev-kit/ndk/test";
 
 const relay = new RelayMock("wss://test.relay");
 const events = [];

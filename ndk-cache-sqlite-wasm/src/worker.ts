@@ -31,8 +31,9 @@ function scheduleSave() {
 // Patch db.run to schedule save after each write
 function patchDbPersistence(database: any) {
     const origRun = database.run;
-    database.run = function (...args: any[]) {
-        const result = origRun.apply(this, args);
+    database.run = function (sql: string, params?: any[] | Record<string, any>) {
+        // Assuming origRun has the correct signature from the Database type
+        const result = origRun.call(this, sql, params);
         scheduleSave();
         return result;
     };

@@ -35,23 +35,23 @@ export async function loadWasmAndInitDb(wasmUrl?: string, dbName: string = "ndk-
 
     // Debounced save logic
     let saveTimeout: ReturnType<typeof setTimeout> | null = null;
-    db._scheduleSave = () => {
+    (db as any)._scheduleSave = () => {
         if (saveTimeout) clearTimeout(saveTimeout);
         saveTimeout = setTimeout(() => {
-            db.saveToIndexedDB();
+            (db as any).saveToIndexedDB();
         }, 1000);
     };
 
-    db.saveToIndexedDB = async () => {
+    (db as any).saveToIndexedDB = async () => {
         const data = db.export();
         await saveToIndexedDB(dbName, data);
     };
 
     // Patch run/exec to schedule save after writes
     const origRun = db.run;
-    db.run = function (...args: any[]) {
-        const result = origRun.apply(db, args);
-        db._scheduleSave();
+    db.run = function (sql: string, params?: any[] | Record<string, any>) {
+        const result = origRun.call(db, sql, params);
+        (db as any)._scheduleSave();
         return result;
     };
 

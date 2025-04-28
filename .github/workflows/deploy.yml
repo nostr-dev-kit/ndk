@@ -57,7 +57,7 @@ jobs:
               run: |
                 cd ndk-core
                 npx typedoc --options typedoc.json
-                mv docs ../docs/.vitepress/dist/api
+                mv typedoc-docs ../docs/.vitepress/dist/api
             - name: Upload artifact
               uses: actions/upload-pages-artifact@v3
               with:

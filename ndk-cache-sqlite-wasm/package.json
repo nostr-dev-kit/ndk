@@ -27,6 +27,7 @@
         "@nostr-dev-kit/ndk": "latest"
     },
     "devDependencies": {
+        "@types/sql.js": "^1.4.9",
         "typescript": "^5.0.0"
     },
     "license": "MIT"

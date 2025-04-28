@@ -626,21 +626,25 @@ export class NDKSubscription extends EventEmitter<{
                 if (relay) {
                     // Check if we need to verify this event based on sampling
                     const shouldVerify = relay.shouldValidateEvent();
-                    
+
                     if (shouldVerify && !this.skipVerification) {
                         // Set the relay on the event for async verification
                         ndkEvent.relay = relay;
-                        
+
                         // Attempt verification
                         if (!this.ndk.asyncSigVerification) {
-                            console.log("Will verify signature synchronously", this.subId, JSON.stringify(this.filters));
+                            console.log(
+                                "Will verify signature synchronously",
+                                this.subId,
+                                JSON.stringify(this.filters),
+                            );
                             if (!ndkEvent.verifySignature(true)) {
                                 this.debug("Event failed signature validation", event);
                                 // Report the invalid signature with relay information through the centralized method
                                 this.ndk.reportInvalidSignature(ndkEvent, relay);
                                 return;
                             }
-                            
+
                             // Track successful validation
                             relay.addValidatedEvent();
                         }

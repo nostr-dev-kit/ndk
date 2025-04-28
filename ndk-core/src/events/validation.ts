@@ -54,24 +54,25 @@ export function verifySignature(this: NDKEvent, persist: boolean): boolean | und
         // Use async verification if enabled (either via worker or custom function)
         if (this.ndk?.asyncSigVerification) {
             // verifySignatureAsync will use either the custom function or the worker
-            verifySignatureAsync(this, persist, this.relay).then((result) => {
-                if (persist) {
-                    this.signatureVerified = result;
-                    if (result) verifiedSignatures.set(this.id, this.sig!);
-                }
-
-                if (!result) {
-                    if (this.relay) {
-                        this.ndk?.reportInvalidSignature(this, this.relay);
-                    } else {
-                        this.ndk?.reportInvalidSignature(this);
+            verifySignatureAsync(this, persist, this.relay)
+                .then((result) => {
+                    if (persist) {
+                        this.signatureVerified = result;
+                        if (result) verifiedSignatures.set(this.id, this.sig!);
                     }
-                    verifiedSignatures.set(this.id, false);
-                }
-            })
-            .catch((err) => {
-                console.error("signature verification error", this.id, err);
-            })
+
+                    if (!result) {
+                        if (this.relay) {
+                            this.ndk?.reportInvalidSignature(this, this.relay);
+                        } else {
+                            this.ndk?.reportInvalidSignature(this);
+                        }
+                        verifiedSignatures.set(this.id, false);
+                    }
+                })
+                .catch((err) => {
+                    console.error("signature verification error", this.id, err);
+                });
         } else {
             const hash = sha256(new TextEncoder().encode(this.serialize()));
             const res = schnorr.verify(this.sig as string, hash, this.pubkey);

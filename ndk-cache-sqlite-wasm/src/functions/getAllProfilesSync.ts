@@ -9,9 +9,7 @@ import type { NDKCacheAdapterSqliteWasm } from "../index";
  * BREAKING CHANGE: If useWorker is true, this will throw.
  * See CHANGELOG.md for details.
  */
-export function getAllProfilesSync(
-    this: NDKCacheAdapterSqliteWasm
-): Map<Hexpubkey, NDKCacheEntry<NDKUserProfile>> {
+export function getAllProfilesSync(this: NDKCacheAdapterSqliteWasm): Map<Hexpubkey, NDKCacheEntry<NDKUserProfile>> {
     const stmt = "SELECT pubkey, profile, updated_at FROM profiles";
     const result = this.db.exec(stmt);
     const profiles = new Map<Hexpubkey, NDKCacheEntry<NDKUserProfile>>();

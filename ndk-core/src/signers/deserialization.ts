@@ -1,6 +1,6 @@
 import type { NDK } from "../ndk/index.js";
 import type { NDKSigner, NDKSignerPayload } from "./index.js";
-import { signerRegistry, initializeSignerRegistry } from "./registry.js";
+import { signerRegistry } from "./registry.js";
 /**
  * Deserializes a signer from a payload string using the signer registry.
  * @param payloadString The JSON string obtained from a signer's toPayload().
@@ -8,8 +8,6 @@ import { signerRegistry, initializeSignerRegistry } from "./registry.js";
  * @returns An instance of the specific signer class, or undefined if the type is unknown.
  */
 export async function ndkSignerFromPayload(payloadString: string, ndk?: NDK): Promise<NDKSigner | undefined> {
-    // Ensure built-in signers are registered
-    initializeSignerRegistry();
     let parsed: NDKSignerPayload;
 
     try {

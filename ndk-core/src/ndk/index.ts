@@ -178,7 +178,7 @@ export interface NDKConstructorParams {
 
     /**
      * Whether to automatically blacklist relays that provide invalid signatures.
-     * 
+     *
      * @default true
      */
     autoBlacklistInvalidRelays?: boolean;
@@ -279,12 +279,12 @@ export class NDK extends EventEmitter<{
     public validationRatioFn?: NDKValidationRatioFn;
     public autoBlacklistInvalidRelays = false;
     public subManager: NDKSubscriptionManager;
-    
+
     /**
      * Private storage for the signature verification function
      */
     private _signatureVerificationFunction?: (event: NDKEvent) => Promise<boolean>;
-    
+
     /**
      * Private storage for the signature verification worker
      */
@@ -394,12 +394,12 @@ export class NDK extends EventEmitter<{
 
         // Set signature verification methods
         // The setters will handle setting asyncSigVerification appropriately
-        
+
         // Handle both worker and function for backward compatibility
         if (opts.signatureVerificationWorker) {
             this.signatureVerificationWorker = opts.signatureVerificationWorker;
         }
-        
+
         // Always set the function if provided, even if a worker is also set
         if (opts.signatureVerificationFunction) {
             this.signatureVerificationFunction = opts.signatureVerificationFunction;
@@ -433,11 +433,11 @@ export class NDK extends EventEmitter<{
      */
     set signatureVerificationWorker(worker: Worker | undefined) {
         this._signatureVerificationWorker = worker;
-        
+
         if (worker) {
             // Initialize the worker
             signatureVerificationInit(worker);
-            
+
             // Set asyncSigVerification flag
             this.asyncSigVerification = true;
         } else {
@@ -577,17 +577,17 @@ export class NDK extends EventEmitter<{
      * @param relay The relay that provided the invalid signature
      */
     public reportInvalidSignature(event: NDKEvent, relay?: NDKRelay): void {
-        this.debug(`Invalid signature detected for event ${event.id}${relay ? ` from relay ${relay.url}` : ''}`);
-        
+        this.debug(`Invalid signature detected for event ${event.id}${relay ? ` from relay ${relay.url}` : ""}`);
+
         // Emit event with relay information
         this.emit("event:invalid-sig", event, relay);
-        
+
         // If auto-blacklisting is enabled and we have a relay, add the relay to the blacklist
         if (this.autoBlacklistInvalidRelays && relay) {
             this.blacklistRelay(relay.url);
         }
     }
-    
+
     /**
      * Add a relay URL to the blacklist as it has been identified as malicious
      */
@@ -595,11 +595,11 @@ export class NDK extends EventEmitter<{
         if (!this.blacklistRelayUrls) {
             this.blacklistRelayUrls = [];
         }
-        
+
         if (!this.blacklistRelayUrls.includes(url)) {
             this.blacklistRelayUrls.push(url);
             this.debug(`Added relay to blacklist: ${url}`);
-            
+
             // Disconnect from this relay if connected
             const relay = this.pool.getRelay(url, false, false);
             if (relay) {
@@ -615,15 +615,14 @@ export class NDK extends EventEmitter<{
      */
     private defaultValidationRatioFn(relay: NDKRelay, validatedCount: number, nonValidatedCount: number): number {
         if (validatedCount < 10) return this.initialValidationRatio;
-        
+
         // Calculate a logarithmically decreasing ratio that approaches the minimum
         // as more events are validated
         const trustFactor = Math.min(validatedCount / 100, 1); // Caps at 100 validated events
-        
-        const calculatedRatio = this.initialValidationRatio *
-            (1 - trustFactor) +
-            this.lowestValidationRatio * trustFactor;
-        
+
+        const calculatedRatio =
+            this.initialValidationRatio * (1 - trustFactor) + this.lowestValidationRatio * trustFactor;
+
         return Math.max(calculatedRatio, this.lowestValidationRatio);
     }
 

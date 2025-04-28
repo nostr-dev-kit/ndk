@@ -8,18 +8,15 @@ import type { NDKCacheAdapterSqliteWasm } from "../index";
  * Adapted for Web Worker support: now always async.
  * If useWorker is true, sends command to worker; else, runs on main thread.
  */
-export async function getEvent(
-    this: NDKCacheAdapterSqliteWasm,
-    id: string
-): Promise<NDKEvent | null> {
+export async function getEvent(this: NDKCacheAdapterSqliteWasm, id: string): Promise<NDKEvent | null> {
     const stmt = "SELECT raw FROM events WHERE id = ? AND deleted = 0 LIMIT 1";
     if (this.useWorker) {
         const result = await this.postWorkerMessage({
             type: "get",
             payload: {
                 sql: stmt,
-                params: [id]
-            }
+                params: [id],
+            },
         });
         if (result && result.raw) {
             try {

@@ -131,7 +131,7 @@ export class RelayMock extends EventEmitter {
     }
 
     // Event tracking methods
-    
+
     /**
      * Track the number of validated events (used in tests)
      */
@@ -208,7 +208,7 @@ export class RelayMock extends EventEmitter {
         const noticeMessage = JSON.stringify(["NOTICE", message]);
         this.simulateReceiveMessage(noticeMessage);
     }
-    
+
     reset(): void {
         this.messageLog = [];
         this.activeSubscriptions.clear();

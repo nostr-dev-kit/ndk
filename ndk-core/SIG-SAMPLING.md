@@ -463,7 +463,7 @@ The `ndk-test-utils` package provides several useful tools for testing our imple
 
 1. **Validation Ratio Calculation**
    ```typescript
-   import { TestFixture, EventGenerator } from "@nostr-dev-kit/ndk-test-utils";
+   import { TestFixture, EventGenerator } from "@nostr-dev-kit/ndk/test";
    
    test('validation ratio decreases with successful validations', () => {
      const fixture = new TestFixture();
@@ -501,7 +501,7 @@ The `ndk-test-utils` package provides several useful tools for testing our imple
 
 2. **Custom Validation Function**
    ```typescript
-   import { TestFixture } from "@nostr-dev-kit/ndk-test-utils";
+   import { TestFixture } from "@nostr-dev-kit/ndk/test";
    
    test('custom validation function is applied', () => {
      // Creating a custom function that always returns 0.5
@@ -533,7 +533,7 @@ The `ndk-test-utils` package provides several useful tools for testing our imple
 
 1. **Invalid Signature Detection**
    ```typescript
-   import { RelayMock, EventGenerator } from "@nostr-dev-kit/ndk-test-utils";
+   import { RelayMock, EventGenerator } from "@nostr-dev-kit/ndk/test";
    
    test('detects and reports invalid signatures', async () => {
      // Create NDK instance with test configuration
@@ -571,7 +571,7 @@ The `ndk-test-utils` package provides several useful tools for testing our imple
 
 2. **Event Emitting and Blacklisting Test**
    ```typescript
-   import { RelayMock, EventGenerator } from "@nostr-dev-kit/ndk-test-utils";
+   import { RelayMock, EventGenerator } from "@nostr-dev-kit/ndk/test";
    
    test('emits event:invalid-sig event with relay and can blacklist', async () => {
      // Create NDK with auto blacklisting
@@ -603,7 +603,7 @@ The `ndk-test-utils` package provides several useful tools for testing our imple
 
 3. **Testing with Time Control**
    ```typescript
-   import { TestFixture, withTimeControl } from "@nostr-dev-kit/ndk-test-utils";
+   import { TestFixture, withTimeControl } from "@nostr-dev-kit/ndk/test";
    
    test('ratio calculation over time', withTimeControl(async ({ advanceTime }) => {
      const fixture = new TestFixture();
@@ -651,7 +651,7 @@ The `ndk-test-utils` package provides several useful tools for testing our imple
 
 4. **Testing Async Signature Verification**
    ```typescript
-   import { RelayMock, EventGenerator } from "@nostr-dev-kit/ndk-test-utils";
+   import { RelayMock, EventGenerator } from "@nostr-dev-kit/ndk/test";
    
    test('centralizes invalid signature reporting from async verification', async () => {
      // Create NDK with async verification

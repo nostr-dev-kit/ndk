@@ -20,7 +20,7 @@ import NDK from "@nostr-dev-kit/ndk";
 export interface NDKCacheAdapterSqliteWasmOptions {
     dbName?: string;
     wasmUrl?: string;
-    useWorker?: boolean; 
+    useWorker?: boolean;
     workerUrl?: string;
 }
 
@@ -47,7 +47,7 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
         this.wasmUrl = options.wasmUrl;
         this.useWorker = options.useWorker ?? false;
         this.workerUrl = options.workerUrl;
-        
+
         // Conditionally define sync methods only if not in worker mode
         if (!this.useWorker) {
             this.fetchProfileSync = fetchProfileSync.bind(this);
@@ -72,29 +72,29 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
      * Initializes the Web Worker, sets up message handlers, and sends the init message.
      */
     private async initializeWorker(): Promise<void> {
-        console.log('Initializing Web Worker...');
+        console.log("Initializing Web Worker...");
         let effectiveWorkerUrl = this.workerUrl;
 
         if (!effectiveWorkerUrl) {
             try {
                 // This relies on bundler support for URL constructors with relative paths
-                effectiveWorkerUrl = new URL('./worker.js', import.meta.url).toString();
-                console.log('Determined worker URL automatically:', effectiveWorkerUrl);
+                effectiveWorkerUrl = new URL("./worker.js", import.meta.url).toString();
+                console.log("Determined worker URL automatically:", effectiveWorkerUrl);
             } catch (e) {
                 console.error("Failed to determine worker URL automatically. Please provide 'workerUrl' option.", e);
                 throw new Error("Worker URL configuration error.");
             }
         } else {
-            console.log('Using provided worker URL:', effectiveWorkerUrl);
+            console.log("Using provided worker URL:", effectiveWorkerUrl);
         }
 
         // Use module type for imports
-        console.log('Creating Web Worker with URL:', effectiveWorkerUrl);
-        this.worker = new Worker(effectiveWorkerUrl, { type: 'module' });
-        console.log('Web Worker created successfully');
+        console.log("Creating Web Worker with URL:", effectiveWorkerUrl);
+        this.worker = new Worker(effectiveWorkerUrl, { type: "module" });
+        console.log("Web Worker created successfully");
 
         this.worker.onmessage = (event: MessageEvent) => {
-            console.log('Received message from worker:', event.data);
+            console.log("Received message from worker:", event.data);
             const { id, result, error } = event.data;
             const pending = this.pendingRequests.get(id);
             if (pending) {
@@ -102,7 +102,7 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
                     console.error("Error from worker:", error);
                     pending.reject(new Error(`Worker error: ${error.message || error}`));
                 } else {
-                    console.log('Resolving pending request:', id);
+                    console.log("Resolving pending request:", id);
                     pending.resolve(result);
                 }
                 this.pendingRequests.delete(id);
@@ -112,22 +112,22 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
         this.worker.onerror = (event: ErrorEvent) => {
             console.error("Unhandled worker error:", event.message, event);
             // Reject all pending requests on catastrophic worker failure
-            this.pendingRequests.forEach(p => p.reject(new Error(`Worker failed: ${event.message}`)));
+            this.pendingRequests.forEach((p) => p.reject(new Error(`Worker failed: ${event.message}`)));
             this.pendingRequests.clear();
         };
 
-        console.log('Web Worker event handlers set up');
+        console.log("Web Worker event handlers set up");
 
         // Send initialization config to worker
-        console.log('Sending initialization config to worker');
+        console.log("Sending initialization config to worker");
         return this.postWorkerMessage({
-            type: 'init',
+            type: "init",
             payload: {
                 dbName: this.dbName,
-                wasmUrl: this.wasmUrl
-            }
-        }).then(result => {
-            console.log('Worker initialization complete, result:', result);
+                wasmUrl: this.wasmUrl,
+            },
+        }).then((result) => {
+            console.log("Worker initialization complete, result:", result);
             return result;
         });
     }

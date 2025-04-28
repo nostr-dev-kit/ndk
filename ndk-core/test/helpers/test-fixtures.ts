@@ -1,19 +1,21 @@
 import { NDKPrivateKeySigner } from "src/signers/private-key/index.js";
-import {NDK} from "src/ndk/index.js";
+import { NDK } from "src/ndk/index.js";
 import { EventGenerator } from "../mocks/event-generator";
 import { NDKUser } from "src/user";
 import { NDKEvent } from "src";
+
+type Names = "alice" | "bob" | "carol" | "dave" | "eve";
 
 /**
  * Class for generating deterministic test users
  */
 export class UserGenerator {
-    private static privateKeys: Record<string, string> = {
-        alice: "1fbc12b81e0b21f10fb219e88dd76fc80c7aa5369779e44e762fec6f460d6a89",
-        bob: "d30b946562050e6ced827113da15208730879c46547061b404434edff63236fa",
-        carol: "5b4a934c43656a7d874251b013491b24cc87d52af8b9df469976de24a8582d03",
-        dave: "3ee8168c362c3c6b3b88b0458c7075308d7f8a3ee2f19459a5919e8781e3646a",
-        eve: "eefc920c5fe4e9c0510334def5f1d8df9d5a91a84b659ad2f8087ccbc732d571",
+    public static privateKeys: Record<string, string> = {
+        alice: "1f4ca0aba830226f3780bcba8dd646a5149a2be50267cb87dcdd973669977d81",
+        bob: "c025cd26f6e11481566dd2459a6efa2d31976e285d04b797660eed82f0fd091f",
+        carol: "5955f65c522f8ce30ed2f5863e0a0638dba945f3d2c3f372b7906e33b4cb1b83",
+        dave: "2f820ff78ce23247dc58ac44492cf5c5f7554bc2753284aa62c7caea1db77cf6",
+        eve: "c18cda5e6451783736a36cf2875f5e954617e44db03cb84bda43040c995dc585",
     };
 
     /**
@@ -22,7 +24,7 @@ export class UserGenerator {
      * @param ndk The NDK instance to use for the user
      * @returns The NDK user
      */
-    static async getUser(name: string, ndk?: NDK): Promise<NDKUser> {
+    static async getUser(name: Names, ndk?: NDK): Promise<NDKUser> {
         const privateKey = UserGenerator.privateKeys[name.toLowerCase()];
         if (!privateKey) {
             throw new Error(`Unknown test user: ${name}`);
@@ -42,7 +44,7 @@ export class UserGenerator {
      * @param name The name of the user (alice, bob, carol, dave, eve)
      * @returns The private key hex string
      */
-    static getPrivateKey(name: string): string {
+    static getPrivateKey(name: Names): string {
         const privateKey = UserGenerator.privateKeys[name.toLowerCase()];
         if (!privateKey) {
             throw new Error(`Unknown test user: ${name}`);
@@ -75,7 +77,7 @@ export class SignerGenerator {
      * @param name The name of the user (alice, bob, carol, dave, eve)
      * @returns The NDK signer
      */
-    static getSigner(name: string): NDKPrivateKeySigner {
+    static getSigner(name: Names): NDKPrivateKeySigner {
         const privateKey = UserGenerator.getPrivateKey(name); // Use the public static method
 
         if (!privateKey) {
@@ -118,7 +120,7 @@ export class TestEventFactory {
      * @param kind The kind of the event (defaults to 1)
      * @returns The signed event
      */
-    async createSignedTextNote(content: string, user: NDKUser | string, kind = 1): Promise<any> {
+    async createSignedTextNote(content: string, user: NDKUser | string | undefined, kind = 1): Promise<any> {
         let pubkey: string;
         let signer: NDKPrivateKeySigner;
 
@@ -127,9 +129,8 @@ export class TestEventFactory {
             await signer.blockUntilReady();
             pubkey = signer.pubkey;
         } else {
-            pubkey = user.pubkey;
-            // Note: This won't produce an actual valid signature since we don't have the user's private key
             signer = NDKPrivateKeySigner.generate();
+            pubkey = signer.pubkey;
         }
 
         const event = EventGenerator.createEvent(kind, content, pubkey);

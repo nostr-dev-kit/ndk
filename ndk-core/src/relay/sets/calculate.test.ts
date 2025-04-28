@@ -78,7 +78,7 @@ function combineRelays(relays: string[][]) {
 
 describe("calculateRelaySetFromEvent", () => {
     it("prefers to use the author's write relays", async () => {
-        const event = new NDKEvent(ndk, { kind: 1 } as NostrEvent);
+        const event = new NDKEvent(ndk, { kind: 1 });
         await event.sign(signers[0]);
         const set = await calculateRelaySetFromEvent(ndk, event);
 
@@ -91,7 +91,7 @@ describe("calculateRelaySetFromEvent", () => {
     });
 
     it("writes to the p-tagged pubkey write relays", async () => {
-        const event = new NDKEvent(ndk, { kind: 1 } as NostrEvent);
+        const event = new NDKEvent(ndk, { kind: 1 });
 
         const taggedUserIndexes = [1, 2, 4];
         for (const i of taggedUserIndexes) {

@@ -134,7 +134,7 @@ describe("NDKEvent", () => {
         });
 
         it("tags an event without a marker", () => {
-            const otherEvent = new NDKEvent(ndk, { kind: 1, content: "", pubkey: user1.pubkey});
+            const otherEvent = new NDKEvent(ndk, { kind: 1, content: "", pubkey: user1.pubkey });
             otherEvent.id = "123";
 
             event.tag(otherEvent);
@@ -145,8 +145,8 @@ describe("NDKEvent", () => {
         });
 
         it("tags an event with a marker", () => {
-            const event = new NDKEvent(ndk, { kind: 1, content: "", pubkey: user1.pubkey});
-            const otherEvent = new NDKEvent(ndk, { kind: 1, content: "", pubkey: user1.pubkey});
+            const event = new NDKEvent(ndk, { kind: 1, content: "", pubkey: user1.pubkey });
+            const otherEvent = new NDKEvent(ndk, { kind: 1, content: "", pubkey: user1.pubkey });
             otherEvent.id = "123";
 
             event.tag(otherEvent, "marker");
@@ -154,8 +154,8 @@ describe("NDKEvent", () => {
         });
 
         it("tags an event author when it's different from the signing user", () => {
-            const event = new NDKEvent(ndk, { kind: 1, content: "", pubkey: user1.pubkey});
-            const otherEvent = new NDKEvent(ndk, { kind: 1, content: "", pubkey: user2.pubkey});
+            const event = new NDKEvent(ndk, { kind: 1, content: "", pubkey: user1.pubkey });
+            const otherEvent = new NDKEvent(ndk, { kind: 1, content: "", pubkey: user2.pubkey });
             event.tag(otherEvent);
             expect(event.tags).toEqual([
                 ["e", otherEvent.id, "", "", otherEvent.pubkey],
@@ -164,8 +164,8 @@ describe("NDKEvent", () => {
         });
 
         it("does not tag an event author when it's the same as the signing user", () => {
-            const event = new NDKEvent(ndk, { kind: 1, content: "", pubkey: user1.pubkey});
-            const otherEvent = new NDKEvent(ndk, { kind: 1, content: "", pubkey: user1.pubkey});
+            const event = new NDKEvent(ndk, { kind: 1, content: "", pubkey: user1.pubkey });
+            const otherEvent = new NDKEvent(ndk, { kind: 1, content: "", pubkey: user1.pubkey });
             otherEvent.id = "abc";
 
             event.tag(otherEvent);
@@ -173,10 +173,10 @@ describe("NDKEvent", () => {
         });
 
         it("does not re-tag the same user", () => {
-            const otherEvent = new NDKEvent(ndk, { kind: 1, content: "", pubkey: user2.pubkey});
+            const otherEvent = new NDKEvent(ndk, { kind: 1, content: "", pubkey: user2.pubkey });
             otherEvent.id = "abc";
 
-            const otherEvent2 = new NDKEvent(ndk, { kind: 1, content: "", pubkey: user2.pubkey});
+            const otherEvent2 = new NDKEvent(ndk, { kind: 1, content: "", pubkey: user2.pubkey });
             otherEvent2.id = "def";
 
             event.tag(otherEvent);
@@ -208,13 +208,13 @@ describe("NDKEvent", () => {
                 pubkey: user1.pubkey,
             };
 
-            const event1 = new NDKEvent(ndk, { kind: 30000, content: eventData.content, pubkey: eventData.pubkey});
+            const event1 = new NDKEvent(ndk, { kind: 30000, content: eventData.content, pubkey: eventData.pubkey });
             event1.tags = eventData.tags;
             event1.created_at = Math.floor(Date.now() / 1000 - 3600);
             event1.id = "id1";
             event1.sig = "sig1";
 
-            const event2 = new NDKEvent(ndk, { kind: 30000, content: eventData.content, pubkey: eventData.pubkey});
+            const event2 = new NDKEvent(ndk, { kind: 30000, content: eventData.content, pubkey: eventData.pubkey });
             event2.tags = eventData.tags;
             event2.created_at = Math.floor(Date.now() / 1000);
             event2.id = "id2";
@@ -545,7 +545,7 @@ describe("NDKEvent", () => {
             beforeEach(async () => {
                 root = new NDKEvent(ndk, { kind: NDKKind.Article, content: "Hello world" });
                 root.tags.push(["d", "test"]);
-                await SignerGenerator.sign(root, 'alice');
+                await SignerGenerator.sign(root, "alice");
             });
 
             it("creates a reply using a kind 1111 event", async () => {

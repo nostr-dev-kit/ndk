@@ -5,11 +5,7 @@ import type { NDKCacheAdapterSqliteWasm } from "../index";
  * Updates relay status in the SQLite WASM database.
  * Stores relay info as a JSON string in a dedicated table.
  */
-export function updateRelayStatus(
-    this: NDKCacheAdapterSqliteWasm,
-    relayUrl: string,
-    info: NDKCacheRelayInfo
-): void {
+export function updateRelayStatus(this: NDKCacheAdapterSqliteWasm, relayUrl: string, info: NDKCacheRelayInfo): void {
     const stmt = `
         CREATE TABLE IF NOT EXISTS relay_status (
             url TEXT PRIMARY KEY,

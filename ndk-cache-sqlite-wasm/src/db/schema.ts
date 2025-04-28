@@ -1,7 +1,7 @@
 /**
  * Database schema for ndk-cache-sqlite-wasm.
  * Mirrors the schema used in ndk-mobile's SQLite adapter.
- * 
+ *
  * This is a TypeScript representation of the SQL schema.
  * The actual SQL statements will be used in migrations.ts.
  */
@@ -49,6 +49,6 @@ export const SCHEMA = {
             relays TEXT,
             lastTryAt INTEGER
         );
-    `
+    `,
     // Add more tables as needed to match ndk-mobile
 };

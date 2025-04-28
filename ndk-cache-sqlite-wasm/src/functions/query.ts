@@ -12,7 +12,7 @@ function normalizeDbRows(rows: any[]): any[] {
 
     const first = rows[0];
     if (Array.isArray(first.columns) && Array.isArray(first.values)) {
-        return rows.flatMap(row => {
+        return rows.flatMap((row) => {
             return row.values.map((cellVals: any[]) => {
                 const obj: Record<string, any> = {};
                 row.columns.forEach((col: string, idx: number) => {
@@ -31,10 +31,7 @@ function normalizeDbRows(rows: any[]): any[] {
  * Query events from the WASM-backed SQLite DB using NDKSubscription filters.
  * Mirrors the logic of the mobile adapter, but uses async/await and WASM DB API.
  */
-export function query(
-    this: NDKCacheAdapterSqliteWasm,
-    subscription: NDKSubscription
-): NDKEvent[] {
+export function query(this: NDKCacheAdapterSqliteWasm, subscription: NDKSubscription): NDKEvent[] {
     if (!this.db) throw new Error("Database not initialized");
 
     const cacheFilters = filterForCache(subscription);
@@ -64,7 +61,8 @@ export function query(
                     const params = [key[1], ...tagValues];
                     const events = this.db.exec(sql, params);
                     const normalizedEvents = normalizeDbRows(events);
-                    if (normalizedEvents && normalizedEvents.length > 0) addResults(foundEvents(subscription, normalizedEvents, filter));
+                    if (normalizedEvents && normalizedEvents.length > 0)
+                        addResults(foundEvents(subscription, normalizedEvents, filter));
                     break;
                 }
             }
@@ -78,7 +76,8 @@ export function query(
             const params = [...filter.authors, ...filter.kinds];
             const events = this.db.exec(sql, params);
             const normalizedEvents = normalizeDbRows(events);
-            if (normalizedEvents && normalizedEvents.length > 0) addResults(foundEvents(subscription, normalizedEvents, filter));
+            if (normalizedEvents && normalizedEvents.length > 0)
+                addResults(foundEvents(subscription, normalizedEvents, filter));
         } else if (filter.authors) {
             const sql = `
                 SELECT * FROM events
@@ -88,7 +87,8 @@ export function query(
             const params = filter.authors;
             const events = this.db.exec(sql, params);
             const normalizedEvents = normalizeDbRows(events);
-            if (normalizedEvents && normalizedEvents.length > 0) addResults(foundEvents(subscription, normalizedEvents, filter));
+            if (normalizedEvents && normalizedEvents.length > 0)
+                addResults(foundEvents(subscription, normalizedEvents, filter));
         } else if (filter.kinds) {
             const sql = `
                 SELECT * FROM events
@@ -98,7 +98,8 @@ export function query(
             const params = filter.kinds;
             const events = this.db.exec(sql, params);
             const normalizedEvents = normalizeDbRows(events);
-            if (normalizedEvents && normalizedEvents.length > 0) addResults(foundEvents(subscription, normalizedEvents, filter));
+            if (normalizedEvents && normalizedEvents.length > 0)
+                addResults(foundEvents(subscription, normalizedEvents, filter));
         } else if (filter.ids) {
             const sql = `
                 SELECT * FROM events
@@ -108,7 +109,8 @@ export function query(
             const params = filter.ids;
             const events = this.db.exec(sql, params);
             const normalizedEvents = normalizeDbRows(events);
-            if (normalizedEvents && normalizedEvents.length > 0) addResults(foundEvents(subscription, normalizedEvents, filter));
+            if (normalizedEvents && normalizedEvents.length > 0)
+                addResults(foundEvents(subscription, normalizedEvents, filter));
         } else {
             // eslint-disable-next-line no-console
             console.log("\t👀 no logic on how to run this query in the sqlite wasm cache", JSON.stringify(filter));
@@ -135,11 +137,7 @@ function filterForCache(subscription: NDKSubscription): NDKFilter[] {
 /**
  * Helper to process DB records and return NDKEvent[].
  */
-function foundEvents(
-    subscription: NDKSubscription,
-    records: any[],
-    filter?: NDKFilter
-): NDKEvent[] {
+function foundEvents(subscription: NDKSubscription, records: any[], filter?: NDKFilter): NDKEvent[] {
     const result: NDKEvent[] = [];
     let now: number | undefined;
 
@@ -165,7 +163,7 @@ function foundEvent(
     subscription: NDKSubscription,
     record: any,
     relayUrl: string | undefined,
-    filter?: NDKFilter
+    filter?: NDKFilter,
 ): NDKEvent | null {
     try {
         const deserializedEvent = deserialize(record.raw);

@@ -11,7 +11,7 @@ import type { NDKCacheAdapterSqliteWasm } from "../index";
  */
 export function fetchProfileSync(
     this: NDKCacheAdapterSqliteWasm,
-    pubkey: string
+    pubkey: string,
 ): NDKCacheEntry<NDKUserProfile> | null {
     const stmt = "SELECT profile, updated_at FROM profiles WHERE pubkey = ? LIMIT 1";
     const result = this.db.exec(stmt, [pubkey]);

@@ -8,6 +8,7 @@ import type { NDK } from "../../ndk/index.js";
 import type { NDKEncryptionScheme } from "../../types.js";
 import { NDKUser } from "../../user";
 import type { NDKSigner } from "../index.js";
+import { registerSigner } from "../registry.js";
 
 /**
  * A signer that uses an in-memory private key (nsec).
@@ -192,3 +193,5 @@ export class NDKPrivateKeySigner implements NDKSigner {
         return new NDKPrivateKeySigner(payload.payload, ndk);
     }
 }
+
+registerSigner("private-key", NDKPrivateKeySigner);

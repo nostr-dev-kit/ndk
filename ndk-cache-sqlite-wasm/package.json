@@ -1,31 +1,31 @@
 {
-  "name": "@nostr-dev-kit/ndk-cache-sqlite-wasm",
-  "version": "0.4.5",
-  "description": "SQLite WASM cache adapter for NDK, compatible with browser and JS environments.",
-  "main": "dist/index.mjs",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.mjs",
-      "types": "./dist/index.d.ts"
+    "name": "@nostr-dev-kit/ndk-cache-sqlite-wasm",
+    "version": "0.4.5",
+    "description": "SQLite WASM cache adapter for NDK, compatible with browser and JS environments.",
+    "main": "dist/index.mjs",
+    "module": "dist/index.mjs",
+    "types": "dist/index.d.ts",
+    "exports": {
+        ".": {
+            "import": "./dist/index.mjs",
+            "require": "./dist/index.mjs",
+            "types": "./dist/index.d.ts"
+        },
+        "./sql-wasm.wasm": "./dist/sql-wasm.wasm"
     },
-    "./sql-wasm.wasm": "./dist/sql-wasm.wasm"
-  },
-  "files": [
-    "dist",
-    "dist/sql-wasm.wasm",
-    "docs"
-  ],
-  "scripts": {
-    "build": "bun build ./src/index.ts --outfile ./dist/index.mjs --format esm --target browser && bun build ./src/worker.ts --outfile ./dist/worker.js --format esm --target browser && cp ./example/sql-wasm.wasm ./dist/sql-wasm.wasm",
-    "prepublishOnly": "bun run build"
-  },
-  "dependencies": {
-    "sql.js": "^1.8.0",
-    "@nostr-dev-kit/ndk": "latest"
-  },
-  "devDependencies": {},
-  "license": "MIT"
+    "files": [
+        "dist",
+        "dist/sql-wasm.wasm",
+        "docs"
+    ],
+    "scripts": {
+        "build": "bun build ./src/index.ts --outfile ./dist/index.mjs --format esm --target browser && bun build ./src/worker.ts --outfile ./dist/worker.js --format esm --target browser && cp ./example/sql-wasm.wasm ./dist/sql-wasm.wasm",
+        "prepublishOnly": "bun run build"
+    },
+    "dependencies": {
+        "sql.js": "^1.8.0",
+        "@nostr-dev-kit/ndk": "latest"
+    },
+    "devDependencies": {},
+    "license": "MIT"
 }

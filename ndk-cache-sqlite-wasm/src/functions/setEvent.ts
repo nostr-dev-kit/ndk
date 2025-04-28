@@ -12,7 +12,7 @@ export async function setEvent(
     this: NDKCacheAdapterSqliteWasm,
     event: NDKEvent,
     _filters: NDKFilter[],
-    _relay?: NDKRelay
+    _relay?: NDKRelay,
 ): Promise<void> {
     const stmt = `
         INSERT OR REPLACE INTO events (
@@ -21,17 +21,7 @@ export async function setEvent(
     `;
     const tags = JSON.stringify(event.tags ?? []);
     const raw = event.serialize(true, true);
-    const values = [
-        event.id,
-        event.pubkey,
-        event.created_at,
-        event.kind,
-        tags,
-        event.content,
-        event.sig,
-        raw,
-        0
-    ];
+    const values = [event.id, event.pubkey, event.created_at, event.kind, tags, event.content, event.sig, raw, 0];
 
     if (this.useWorker) {
         // Worker mode: send command, return promise
@@ -39,8 +29,8 @@ export async function setEvent(
             type: "run",
             payload: {
                 sql: stmt,
-                params: values
-            }
+                params: values,
+            },
         });
     } else {
         // Main thread: run directly, but still async for consistency

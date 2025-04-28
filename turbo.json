@@ -2,67 +2,32 @@
     "$schema": "https://turbo.build/schema.json",
     "tasks": {
         "build": {
-            "outputs": [
-                "dist/**",
-                "lib/**"
-            ],
-            "dependsOn": [
-                "^build"
-            ],
-            "inputs": [
-                "src/**/*.ts",
-                "src/**/*.tsx",
-                "src/**/*.js",
-                "src/**/*.jsx"
-            ]
+            "outputs": ["dist/**", "lib/**"],
+            "dependsOn": ["^build"],
+            "inputs": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js", "src/**/*.jsx"]
         },
         "ndk-core#build": {
-            "outputs": [
-                "dist/**"
-            ]
+            "outputs": ["dist/**"]
         },
         "ndk-wallet#build": {
-            "outputs": [
-                "dist/**"
-            ],
-            "dependsOn": [
-                "ndk-core#build"
-            ]
+            "outputs": ["dist/**"],
+            "dependsOn": ["ndk-core#build"]
         },
         "ndk-hooks#build": {
-            "outputs": [
-                "dist/**"
-            ],
-            "dependsOn": [
-                "ndk-core#build",
-                "ndk-wallet#build"
-            ]
+            "outputs": ["dist/**"],
+            "dependsOn": ["ndk-core#build", "ndk-wallet#build"]
         },
         "ndk-mobile#build": {
-            "outputs": [
-                "dist/**"
-            ],
-            "dependsOn": [
-                "ndk-core#build",
-                "ndk-wallet#build",
-                "ndk-hooks#build"
-            ]
+            "outputs": ["dist/**"],
+            "dependsOn": ["ndk-core#build", "ndk-wallet#build", "ndk-hooks#build"]
         },
         "ndk-blossom#build": {
-            "outputs": [
-                "dist/**"
-            ],
-            "dependsOn": [
-                "ndk-core#build"
-            ]
+            "outputs": ["dist/**"],
+            "dependsOn": ["ndk-core#build"]
         },
         "test": {
-            "outputs": [
-                "coverage/**"
-            ],
-            "dependsOn": [
-                "build"
-            ]
+            "outputs": ["coverage/**"],
+            "dependsOn": ["build"]
         },
         "lint": {},
         "dev": {
@@ -73,7 +38,5 @@
             "cache": false
         }
     },
-    "globalDependencies": [
-        "**/.env.*local"
-    ]
+    "globalDependencies": ["**/.env.*local"]
 }

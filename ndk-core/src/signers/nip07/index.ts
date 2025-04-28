@@ -7,6 +7,7 @@ import { NDKRelay } from "../../relay/index.js";
 import type { NDKEncryptionScheme } from "../../types.js";
 import { type Hexpubkey, NDKUser } from "../../user/index.js";
 import type { NDKSigner } from "../index.js";
+import { registerSigner } from "../registry.js";
 
 type EncryptionQueueItem = {
     scheme: NDKEncryptionScheme;
@@ -297,3 +298,5 @@ declare global {
         };
     }
 }
+
+registerSigner("nip07", NDKNip07Signer);

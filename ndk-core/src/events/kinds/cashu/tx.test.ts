@@ -1,6 +1,5 @@
-import { mockNutzap } from "../../../../test";
+import { mockNutzap, SignerGenerator } from "../../../../test";
 import { NDK } from "../../../ndk";
-import { NDKPrivateKeySigner } from "../../../signers/private-key";
 import type { NDKUser } from "../../../user";
 import type { NDKNutzap } from "../nutzap";
 import { NDKCashuWalletTx } from "./tx";
@@ -8,27 +7,30 @@ import { NDKCashuWalletTx } from "./tx";
 const FAKE_MINT = "https://cashu.example.com";
 
 const ndk = new NDK({
-    signer: NDKPrivateKeySigner.generate(),
+    signer: SignerGenerator.getSigner("bob"),
     clientName: "testing",
 });
 
 describe("NDKCashuWalletTx", () => {
-    describe("redeeming nutzaps", () => {
+    describe("alice nutzaps bob", () => {
         let senderUser: NDKUser;
         let nutzap: NDKNutzap;
 
         beforeEach(async () => {
-            const signer = NDKPrivateKeySigner.generate();
+            const signer = SignerGenerator.getSigner("alice");
             senderUser = await signer.user();
             nutzap = (await mockNutzap(FAKE_MINT, 100, ndk, {
                 senderPk: signer,
             })) as unknown as NDKNutzap;
         });
 
-        it("p-tags the person that redeemed the nutzaps", async () => {
+        it("bob's wallet transaction p-tags alice", async () => {
             const tx = new NDKCashuWalletTx(ndk);
             tx.addRedeemedNutzap(nutzap);
             await tx.sign();
+
+            console.log(nutzap.inspect);
+            console.log(tx.inspect);
 
             const pTag = tx.tagValue("p");
             expect(pTag).toEqual(senderUser.pubkey);

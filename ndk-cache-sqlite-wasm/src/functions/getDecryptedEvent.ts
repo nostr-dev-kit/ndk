@@ -4,10 +4,7 @@ import type { NDKCacheAdapterSqliteWasm } from "../index";
 /**
  * Retrieves a decrypted event by ID from the SQLite WASM database.
  */
-export function getDecryptedEvent(
-    this: NDKCacheAdapterSqliteWasm,
-    eventId: NDKEventId
-): NDKEvent | null {
+export function getDecryptedEvent(this: NDKCacheAdapterSqliteWasm, eventId: NDKEventId): NDKEvent | null {
     const stmt = "SELECT event FROM decrypted_events WHERE id = ? LIMIT 1";
     const result = this.db.exec(stmt, [eventId]);
     if (result && result[0] && result[0].values && result[0].values[0]) {

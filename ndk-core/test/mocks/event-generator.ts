@@ -1,5 +1,4 @@
-import * as nostrTools from "nostr-tools";
-import { NDKEvent } from "src/events";
+import { NDKEvent } from "src/events/index.js";
 import { NDKPrivateKeySigner } from "src/signers/private-key";
 
 /**
@@ -23,10 +22,9 @@ export class EventGenerator {
 
     static getPrivateKeyForPubkey(pubkey: string): string {
         if (!EventGenerator.privateKeys.has(pubkey)) {
-            // Using the core functions from nostr-tools
-            const privateKey = nostrTools.generateSecretKey();
-            const hexPrivateKey = Buffer.from(privateKey).toString("hex");
-            const generatedPubkey = nostrTools.getPublicKey(privateKey);
+            const signer = NDKPrivateKeySigner.generate();
+            const hexPrivateKey = signer.privateKey;
+            const generatedPubkey = signer.pubkey;
 
             // If this is a randomly generated pubkey, associate it
             if (!pubkey || pubkey === generatedPubkey) {
@@ -51,15 +49,14 @@ export class EventGenerator {
         }
 
         if (!pubkey) {
-            const secretKey = nostrTools.generateSecretKey();
-            pubkey = nostrTools.getPublicKey(secretKey);
+            const signer = NDKPrivateKeySigner.generate();
+            pubkey = signer.pubkey;
         }
 
         const event = new NDKEvent(EventGenerator.ndk);
         event.kind = kind;
         event.pubkey = pubkey;
         event.content = content;
-        event.created_at = Math.floor(Date.now() / 1000);
 
         return event;
     }
@@ -70,8 +67,8 @@ export class EventGenerator {
         }
 
         if (!pubkey) {
-            const secretKey = nostrTools.generateSecretKey();
-            pubkey = nostrTools.getPublicKey(secretKey);
+            const signer = NDKPrivateKeySigner.generate();
+            pubkey = signer.pubkey;
         }
 
         const _privateKey = EventGenerator.getPrivateKeyForPubkey(pubkey);
@@ -103,8 +100,8 @@ export class EventGenerator {
         }
 
         if (!pubkey) {
-            const secretKey = nostrTools.generateSecretKey();
-            pubkey = nostrTools.getPublicKey(secretKey);
+            const signer = NDKPrivateKeySigner.generate();
+            pubkey = signer.pubkey;
         }
 
         const event = EventGenerator.createEvent(
@@ -136,8 +133,8 @@ export class EventGenerator {
         }
 
         if (!pubkey) {
-            const secretKey = nostrTools.generateSecretKey();
-            pubkey = nostrTools.getPublicKey(secretKey);
+            const signer = NDKPrivateKeySigner.generate();
+            pubkey = signer.pubkey;
         }
 
         const event = EventGenerator.createEvent(kind, content, pubkey);

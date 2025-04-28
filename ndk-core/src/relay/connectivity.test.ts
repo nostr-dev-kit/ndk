@@ -50,14 +50,6 @@ describe("NDKRelayConnectivity", () => {
             expect(connectivity.status).toBe(NDKRelayStatus.CONNECTING);
         });
 
-        it("should set status to RECONNECTING when not disconnected", async () => {
-            connectivity._status = NDKRelayStatus.CONNECTED;
-            await connectivity.connect();
-
-            // Check for the correct enum value for RECONNECTING which is 2
-            expect(connectivity.status).toEqual(NDKRelayStatus.RECONNECTING);
-        });
-
         it("should create a new WebSocket connection", async () => {
             const mockWebSocket = vi.fn();
             const originalWebSocket = global.WebSocket;

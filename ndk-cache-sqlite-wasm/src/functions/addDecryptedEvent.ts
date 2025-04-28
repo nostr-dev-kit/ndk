@@ -4,10 +4,7 @@ import type { NDKCacheAdapterSqliteWasm } from "../index";
 /**
  * Adds a decrypted event to the SQLite WASM database.
  */
-export function addDecryptedEvent(
-    this: NDKCacheAdapterSqliteWasm,
-    event: NDKEvent
-): void {
+export function addDecryptedEvent(this: NDKCacheAdapterSqliteWasm, event: NDKEvent): void {
     const stmt = `
         INSERT OR REPLACE INTO decrypted_events (
             id, event

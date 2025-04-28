@@ -22,5 +22,5 @@
         "lib": ["dom", "dom.iterable", "esnext"],
         "emitDeclarationOnly": true,
         "outDir": "lib"
-    },
+    }
 }

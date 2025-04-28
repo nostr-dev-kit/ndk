@@ -7,7 +7,7 @@ import type { NDKCacheAdapterSqliteWasm } from "../index";
 export async function saveProfile(
     this: NDKCacheAdapterSqliteWasm,
     pubkey: string,
-    profile: NDKUserProfile
+    profile: NDKUserProfile,
 ): Promise<void> {
     const stmt = `
         INSERT OR REPLACE INTO profiles (

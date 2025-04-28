@@ -64,7 +64,7 @@ export class NDKRelayConnectivity {
      * @param reconnect - Indicates whether a reconnection should be attempted if the connection fails. Defaults to `true`.
      * @returns A Promise that resolves when the connection is established, or rejects if the connection fails.
      */
-    public async connect(timeoutMs?: number, reconnect = true): Promise<void> {
+    async connect(timeoutMs?: number, reconnect = true): Promise<void> {
         if (
             (this._status !== NDKRelayStatus.RECONNECTING && this._status !== NDKRelayStatus.DISCONNECTED) ||
             this.reconnectTimeout
@@ -461,7 +461,7 @@ export class NDKRelayConnectivity {
      * @param message - The message to send to the NDK relay.
      * @throws {Error} If attempting to send on a closed relay connection.
      */
-    public async send(message: string) {
+    async send(message: string) {
         if (this._status >= NDKRelayStatus.CONNECTED && this.ws?.readyState === WebSocket.OPEN) {
             this.ws?.send(message);
             this.netDebug?.(message, this.ndkRelay, "send");
@@ -493,7 +493,7 @@ export class NDKRelayConnectivity {
      * @returns A promise that resolves with the result of the event publication.
      * @throws {Error} If attempting to publish on a closed relay connection.
      */
-    public async publish(event: NostrEvent): Promise<string> {
+    async publish(event: NostrEvent): Promise<string> {
         const ret = new Promise<string>((resolve, reject) => {
             const val = this.openEventPublishes.get(event.id!) ?? [];
             if (val.length > 0) {
@@ -515,7 +515,7 @@ export class NDKRelayConnectivity {
      * @returns A promise that resolves with the number of matching events.
      * @throws {Error} If attempting to send the count request on a closed relay connection.
      */
-    public async count(filters: NDKFilter[], params: { id?: string | null }): Promise<number> {
+    async count(filters: NDKFilter[], params: { id?: string | null }): Promise<number> {
         this.serial++;
         const id = params?.id || `count:${this.serial}`;
         const ret = new Promise<number>((resolve, reject) => {

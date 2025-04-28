@@ -11,17 +11,12 @@ export function addUnpublishedEvent(
     this: NDKCacheAdapterSqliteWasm,
     event: NDKEvent,
     relayUrls: string[],
-    lastTryAt: number = Date.now()
+    lastTryAt: number = Date.now(),
 ): void {
     const stmt = `
         INSERT OR REPLACE INTO unpublished_events (
             id, event, relays, lastTryAt
         ) VALUES (?, ?, ?, ?)
     `;
-    this.db.run(stmt, [
-        event.id,
-        JSON.stringify(event),
-        JSON.stringify(relayUrls),
-        lastTryAt
-    ]);
+    this.db.run(stmt, [event.id, JSON.stringify(event), JSON.stringify(relayUrls), lastTryAt]);
 }

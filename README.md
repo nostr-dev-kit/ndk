@@ -2,6 +2,8 @@
 
 <img src="https://raw.githubusercontent.com/nvk/ndk.fyi/master/ndk.svg" alt="drawing" width="200"/>
 
+![Tests](https://github.com/nostr-dev-kit/ndk/actions/workflows/deploy.yml/badge.svg)
+
 NDK is a [nostr](<[url](https://github.com/nostr-protocol/nostr)>) development kit that makes the experience of building Nostr-related applications, whether they are relays, clients, or anything in between, better, more reliable and overall nicer to work with than existing solutions.
 
 ## Features
@@ -37,10 +39,11 @@ NDK is a [nostr](<[url](https://github.com/nostr-protocol/nostr)>) development k
 - [x] Caching adapters
 
     - Server-side
-        - [x] [Redis](https://github.com/nostr-dev-kit/ndk-cache-redis)
+        - [x] [Redis](https://github.com/nostr-dev-kit/ndk/tree/master/ndk-cache-redis)
     - Client-side
-        - [x] IndexDB ([Dexie](https://github.com/nostr-dev-kit/ndk-cache-dexie))
-        - [x] SQLite (on mobile)
+        - [x] IndexDB ([Dexie](https://github.com/nostr-dev-kit/ndk/tree/master/ndk-cache-dexie))
+        - [x] [SQLite on Mobile](https://github.com/nostr-dev-kit/ndk/tree/master/ndk-mobile)
+        - [x] [SQLite WASM on Web Workers](https://github.com/nostr-dev-kit/ndk/tree/master/ndk-cache-sqlite-wasm)))
 
 - Subscription Management
     - [x] Auto-grouping queries

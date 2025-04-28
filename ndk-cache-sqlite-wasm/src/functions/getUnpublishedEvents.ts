@@ -6,7 +6,7 @@ import type { NDKCacheAdapterSqliteWasm } from "../index";
  * Returns an array of { event, relays, lastTryAt }
  */
 export async function getUnpublishedEvents(
-    this: NDKCacheAdapterSqliteWasm
+    this: NDKCacheAdapterSqliteWasm,
 ): Promise<{ event: NDKEvent; relays?: string[]; lastTryAt?: number }[]> {
     const stmt = "SELECT event, relays, lastTryAt FROM unpublished_events";
     const result = this.db.exec(stmt);

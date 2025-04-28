@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { NDKEvent, NostrEvent } from "../../events/index";
+import { NDKEvent } from "../../events/index";
 import { NDK } from "../../ndk/index";
 import { NDKPrivateKeySigner } from "../../signers/private-key/index";
-import { NDKRelay, NDKRelayStatus } from "../index";
+import { NDKRelay } from "../index";
 import { NDKRelaySet } from "./index";
 
 // Mock WebSocket globally to avoid actual network connections
@@ -34,9 +34,6 @@ describe("NDKRelaySet publish", () => {
     let mockPublish3: any;
 
     beforeEach(async () => {
-        // Clear any previous mocks
-        vi.clearAllMocks();
-
         ndk = new NDK();
 
         relay1 = new NDKRelay("wss://relay1.example.com", undefined, ndk);
@@ -47,12 +44,9 @@ describe("NDKRelaySet publish", () => {
         event = new NDKEvent(ndk);
         event.content = "test content";
         event.kind = 1;
-        event.tags = [];
-        event.created_at = Math.floor(Date.now() / 1000);
 
         // Generate a key to sign the event
         const signer = NDKPrivateKeySigner.generate();
-        event.pubkey = (await signer.user()).pubkey;
         await event.sign(signer);
 
         // Create the relay set
@@ -62,10 +56,6 @@ describe("NDKRelaySet publish", () => {
         mockPublish1 = vi.spyOn(relay1, "publish").mockImplementation(() => Promise.resolve(true));
         mockPublish2 = vi.spyOn(relay2, "publish").mockImplementation(() => Promise.resolve(true));
         mockPublish3 = vi.spyOn(relay3, "publish").mockImplementation(() => Promise.resolve(true));
-    });
-
-    afterEach(() => {
-        vi.clearAllMocks();
     });
 
     it("should track successful publishes", async () => {

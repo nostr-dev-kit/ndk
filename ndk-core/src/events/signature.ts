@@ -3,7 +3,10 @@ import type { NDKRelay } from "../relay/index.js";
 
 let worker: Worker | undefined;
 
-const processingQueue: Record<NDKEventId, { event: NDKEvent; resolves: ((result: boolean) => void)[]; relay?: NDKRelay }> = {};
+const processingQueue: Record<
+    NDKEventId,
+    { event: NDKEvent; resolves: ((result: boolean) => void)[]; relay?: NDKRelay }
+> = {};
 
 export function signatureVerificationInit(w: Worker) {
     worker = w;

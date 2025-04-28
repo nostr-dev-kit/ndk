@@ -2,6 +2,7 @@ import { NDKPrivateKeySigner } from "src/signers/private-key/index.js";
 import {NDK} from "src/ndk/index.js";
 import { EventGenerator } from "../mocks/event-generator";
 import { NDKUser } from "src/user";
+import { NDKEvent } from "src";
 
 /**
  * Class for generating deterministic test users
@@ -82,6 +83,12 @@ export class SignerGenerator {
         }
 
         return new NDKPrivateKeySigner(privateKey);
+    }
+
+    static async sign(event: NDKEvent, user: string): Promise<NDKEvent> {
+        const signer = SignerGenerator.getSigner(user);
+        await event.sign(signer);
+        return event;
     }
 
     /**

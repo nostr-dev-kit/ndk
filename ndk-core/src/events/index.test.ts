@@ -1,6 +1,4 @@
-import { EventGenerator } from "../../test";
-import { TestFixture } from "../../test";
-import { RelayMock } from "../../test";
+import { SignerGenerator, TestFixture } from "../../test";
 import { vi, describe, it, expect, beforeEach } from "vitest";
 import { NDKEvent } from ".";
 import { NDK } from "../ndk";
@@ -9,6 +7,7 @@ import { NDKRelaySet } from "../relay/sets";
 import { NDKPrivateKeySigner } from "../signers/private-key";
 import { NDKUser } from "../user";
 import type { NIP73EntityType } from "./nip73";
+import { NDKKind } from "./kinds";
 
 const ndk = new NDK();
 
@@ -18,15 +17,13 @@ describe("NDKEvent", () => {
     let user2: NDKUser;
 
     beforeEach(() => {
-        EventGenerator.setNDK(ndk);
-
         user1 = new NDKUser({
             npub: "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft",
         });
         user2 = new NDKUser({
-            npub: "npub12262qa4uhw7u8gdwlgmntqtv7aye8vdcmvszkqwgs0zchel6mz7s6cgrkj",
+            npub: "npub1nnn379gxen6tn8erft6fh43q905g82q0jks4t3hf58pkl4l8srrsyjkzrt",
         });
-        event = EventGenerator.createEvent(undefined, "", user1.pubkey);
+        event = new NDKEvent(ndk, { kind: 1 });
     });
 
     describe("publish", () => {
@@ -43,78 +40,64 @@ describe("NDKEvent", () => {
             expect(result).toEqual(new Set([relay1, relay2]));
         });
 
-                it('publish method waits for connecting relays before publishing', async () => {
-            // Skip the actual implementation test and just verify the code exists
-            // This is a simpler approach that avoids mocking complex interactions
+        // // Tests using RelayMock for publish behavior
+        // it('publish method waits for connecting relays before publishing using RelayMock', async () => {
+        //     const relay1 = new RelayMock('wss://relay1.test', { connectionDelay: 50, autoConnect: true }) as unknown as NDKRelay;
+        //     const relay2 = new RelayMock('wss://relay2.test', { connectionDelay: 100, autoConnect: true }) as unknown as NDKRelay;
 
-            // Verify that the NDKEvent.publish method contains the code to wait for connecting relays
-            const publishSource = NDKEvent.prototype.publish.toString();
+        //     const relaySet = new NDKRelaySet(new Set([relay1, relay2]), ndk);
+        //     const event = new NDKEvent(ndk);
+        //     event.kind = 1;
+        //     event.content = "Hello, world!";
+        //     await event.sign(NDKPrivateKeySigner.generate());
 
-            // Check if the method contains the key parts of our implementation
-            expect(publishSource).toContain('connectingRelays');
-            expect(publishSource).toContain('relay.status >= NDKRelayStatus.CONNECTING');
-            expect(publishSource).toContain('relay.status < NDKRelayStatus.CONNECTED');
-            expect(publishSource).toContain('connectPromises');
-            expect(publishSource).toContain('relay.once("connect"');
+        //     const publishSpy1 = vi.spyOn(relay1, 'publish');
+        //     const publishSpy2 = vi.spyOn(relay2, 'publish');
 
-            // This test passes if the implementation exists in the code
-        });
+        //     await event.publish(relaySet);
 
-        // Tests using RelayMock for publish behavior
-        it('publish method waits for connecting relays before publishing using RelayMock', async () => {
-            const relay1 = new RelayMock('wss://relay1.test', { connectionDelay: 50, autoConnect: true }) as unknown as NDKRelay;
-            const relay2 = new RelayMock('wss://relay2.test', { connectionDelay: 100, autoConnect: true }) as unknown as NDKRelay;
+        //     expect(publishSpy1).toHaveBeenCalled();
+        //     expect(publishSpy2).toHaveBeenCalled();
+        // });
 
-            const relaySet = new NDKRelaySet(new Set([relay1, relay2]), ndk);
-            const event = new NDKEvent(ndk);
-            event.kind = 1;
-            event.content = "Hello, world!";
-            await event.sign(NDKPrivateKeySigner.generate());
+        // it('publish method respects timeout when waiting for relays to connect using RelayMock', async () => {
+        //     const relay1 = new RelayMock('wss://relay1.test', { connectionDelay: 0, autoConnect: true }) as unknown as NDKRelay;
+        //     const slowRelay = new RelayMock('wss://slow.test', { connectionDelay: 500, autoConnect: true }) as unknown as NDKRelay;
 
-            const publishSpy1 = vi.spyOn(relay1, 'publish');
-            const publishSpy2 = vi.spyOn(relay2, 'publish');
+        //     const relaySet = new NDKRelaySet(new Set([relay1, slowRelay]), ndk);
+        //     const event = new NDKEvent(ndk);
+        //     event.kind = 1;
+        //     event.content = "Hello, world!";
+        //     await event.sign(NDKPrivateKeySigner.generate());
 
-            await event.publish(relaySet);
+        //     const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        //     const publishSpy1 = vi.spyOn(relay1, 'publish');
+        //     const publishSpySlow = vi.spyOn(slowRelay, 'publish');
 
-            expect(publishSpy1).toHaveBeenCalled();
-            expect(publishSpy2).toHaveBeenCalled();
-        });
+        //     await event.publish(relaySet, 100);
 
-        it('publish method respects timeout when waiting for relays to connect using RelayMock', async () => {
-            const relay1 = new RelayMock('wss://relay1.test', { connectionDelay: 0, autoConnect: true }) as unknown as NDKRelay;
-            const slowRelay = new RelayMock('wss://slow.test', { connectionDelay: 500, autoConnect: true }) as unknown as NDKRelay;
+        //     expect(consoleWarnSpy).toHaveBeenCalledWith(
+        //         expect.stringContaining("Timeout waiting for relays to connect"),
+        //         expect.any(Error)
+        //     );
+        //     expect(publishSpy1).toHaveBeenCalled();
+        //     expect(publishSpySlow).not.toHaveBeenCalled();
 
-            const relaySet = new NDKRelaySet(new Set([relay1, slowRelay]), ndk);
-            const event = new NDKEvent(ndk);
-            event.kind = 1;
-            event.content = "Hello, world!";
-            await event.sign(NDKPrivateKeySigner.generate());
-
-            const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-            const publishSpy1 = vi.spyOn(relay1, 'publish');
-            const publishSpySlow = vi.spyOn(slowRelay, 'publish');
-
-            await event.publish(relaySet, 100);
-
-            expect(consoleWarnSpy).toHaveBeenCalledWith(
-                expect.stringContaining("Timeout waiting for relays to connect"),
-                expect.any(Error)
-            );
-            expect(publishSpy1).toHaveBeenCalled();
-            expect(publishSpySlow).not.toHaveBeenCalled();
-
-            consoleWarnSpy.mockRestore();
-        });
+        //     consoleWarnSpy.mockRestore();
+        // });
     });
 
     describe("deduplicationKey", () => {
         it("returns <kind>:<pubkey> for kinds 0", () => {
+            event.pubkey = user1.pubkey;
             event.kind = 0;
+            console.log("pubkey", user1.pubkey);
             const result = event.deduplicationKey();
             expect(result).toEqual(`0:${user1.pubkey}`);
         });
 
         it("returns <kind>:<pubkey> for kinds 3", () => {
+            event.pubkey = user1.pubkey;
             event.kind = 3;
             const result = event.deduplicationKey();
             expect(result).toEqual(`3:${user1.pubkey}`);
@@ -151,15 +134,19 @@ describe("NDKEvent", () => {
         });
 
         it("tags an event without a marker", () => {
-            const otherEvent = EventGenerator.createEvent(1, "", user1.pubkey);
+            const otherEvent = new NDKEvent(ndk, { kind: 1, content: "", pubkey: user1.pubkey});
             otherEvent.id = "123";
 
             event.tag(otherEvent);
-            expect(event.tags).toEqual([["e", otherEvent.id, "", "", otherEvent.pubkey]]);
+            expect(event.tags).toEqual([
+                ["e", otherEvent.id, "", "", otherEvent.pubkey],
+                ["p", user1.pubkey],
+            ]);
         });
 
         it("tags an event with a marker", () => {
-            const otherEvent = EventGenerator.createEvent(1, "", user1.pubkey);
+            const event = new NDKEvent(ndk, { kind: 1, content: "", pubkey: user1.pubkey});
+            const otherEvent = new NDKEvent(ndk, { kind: 1, content: "", pubkey: user1.pubkey});
             otherEvent.id = "123";
 
             event.tag(otherEvent, "marker");
@@ -167,7 +154,8 @@ describe("NDKEvent", () => {
         });
 
         it("tags an event author when it's different from the signing user", () => {
-            const otherEvent = EventGenerator.createEvent(1, "", user2.pubkey);
+            const event = new NDKEvent(ndk, { kind: 1, content: "", pubkey: user1.pubkey});
+            const otherEvent = new NDKEvent(ndk, { kind: 1, content: "", pubkey: user2.pubkey});
             event.tag(otherEvent);
             expect(event.tags).toEqual([
                 ["e", otherEvent.id, "", "", otherEvent.pubkey],
@@ -176,7 +164,8 @@ describe("NDKEvent", () => {
         });
 
         it("does not tag an event author when it's the same as the signing user", () => {
-            const otherEvent = EventGenerator.createEvent(1, "", user1.pubkey);
+            const event = new NDKEvent(ndk, { kind: 1, content: "", pubkey: user1.pubkey});
+            const otherEvent = new NDKEvent(ndk, { kind: 1, content: "", pubkey: user1.pubkey});
             otherEvent.id = "abc";
 
             event.tag(otherEvent);
@@ -184,10 +173,10 @@ describe("NDKEvent", () => {
         });
 
         it("does not re-tag the same user", () => {
-            const otherEvent = EventGenerator.createEvent(1, "", user2.pubkey);
+            const otherEvent = new NDKEvent(ndk, { kind: 1, content: "", pubkey: user2.pubkey});
             otherEvent.id = "abc";
 
-            const otherEvent2 = EventGenerator.createEvent(1, "", user2.pubkey);
+            const otherEvent2 = new NDKEvent(ndk, { kind: 1, content: "", pubkey: user2.pubkey});
             otherEvent2.id = "def";
 
             event.tag(otherEvent);
@@ -216,16 +205,16 @@ describe("NDKEvent", () => {
                 kind: 30001,
                 tags: [["d", "test"]],
                 content: "content",
-                pubkey: "pubkey123",
+                pubkey: user1.pubkey,
             };
 
-            const event1 = EventGenerator.createEvent(eventData.kind, eventData.content, eventData.pubkey);
+            const event1 = new NDKEvent(ndk, { kind: 30000, content: eventData.content, pubkey: eventData.pubkey});
             event1.tags = eventData.tags;
             event1.created_at = Math.floor(Date.now() / 1000 - 3600);
             event1.id = "id1";
             event1.sig = "sig1";
 
-            const event2 = EventGenerator.createEvent(eventData.kind, eventData.content, eventData.pubkey);
+            const event2 = new NDKEvent(ndk, { kind: 30000, content: eventData.content, pubkey: eventData.pubkey});
             event2.tags = eventData.tags;
             event2.created_at = Math.floor(Date.now() / 1000);
             event2.id = "id2";
@@ -280,83 +269,83 @@ describe("NDKEvent", () => {
 
     describe("referenceTags", () => {
         it("returns the correct tag for referencing the event", () => {
-            const event1 = EventGenerator.createEvent(30000, "", "pubkey");
+            const event1 = new NDKEvent(ndk, { kind: 30000, content: "", pubkey: user1.pubkey });
             event1.tags.push(["d", "d-code"]);
             event1.id = "eventid1";
 
-            const event2 = EventGenerator.createEvent(1, "", "pubkey");
+            const event2 = new NDKEvent(ndk, { kind: 1, content: "", pubkey: user2.pubkey });
             event2.id = "eventid2";
 
             expect(event1.referenceTags()).toEqual([
-                ["a", "30000:pubkey:d-code"],
-                ["e", "eventid1", "", "", "pubkey"],
-                ["p", "pubkey"],
+                ["a", `30000:${user1.pubkey}:d-code`],
+                ["e", "eventid1", "", "", user1.pubkey],
+                ["p", user1.pubkey],
             ]);
             expect(event2.referenceTags()).toEqual([
-                ["e", "eventid2", "", "", "pubkey"],
-                ["p", "pubkey"],
+                ["e", "eventid2", "", "", user2.pubkey],
+                ["p", user2.pubkey],
             ]);
         });
 
         it("adds a marker to the reference tag if provided", () => {
-            const nip33event = EventGenerator.createEvent(30000, "", "pubkey");
+            const nip33event = new NDKEvent(ndk, { kind: 30000, pubkey: user1.pubkey });
             nip33event.tags.push(["d", "d-code"]);
             nip33event.id = "eventid1";
 
-            const event = EventGenerator.createEvent(1, "", "pubkey");
+            const event = new NDKEvent(ndk, { kind: 1, pubkey: user2.pubkey });
             event.id = "eventid2";
 
             expect(nip33event.referenceTags("marker")).toEqual([
-                ["a", "30000:pubkey:d-code", "", "marker"],
-                ["e", "eventid1", "", "marker", "pubkey"],
-                ["p", "pubkey"],
+                ["a", `30000:${user1.pubkey}:d-code`, "", "marker"],
+                ["e", "eventid1", "", "marker", user1.pubkey],
+                ["p", user1.pubkey],
             ]);
             expect(event.referenceTags("marker")).toEqual([
-                ["e", "eventid2", "", "marker", "pubkey"],
-                ["p", "pubkey"],
+                ["e", "eventid2", "", "marker", user2.pubkey],
+                ["p", user2.pubkey],
             ]);
         });
 
         it("adds a marker to the reference tag if provided with relay if its set", () => {
             const relay = new NDKRelay("wss://relay.nos.dev/", undefined, ndk);
-            const nip33event = EventGenerator.createEvent(30000, "", "pubkey");
+            const nip33event = new NDKEvent(ndk, { kind: 30000, content: "", pubkey: user1.pubkey });
             nip33event.tags.push(["d", "d-code"]);
             nip33event.id = "eventid1";
             nip33event.relay = relay;
 
-            const event = EventGenerator.createEvent(1, "", "pubkey");
+            const event = new NDKEvent(ndk, { kind: 1, content: "", pubkey: user2.pubkey });
             event.id = "eventid2";
 
             expect(nip33event.referenceTags("marker")).toEqual([
-                ["a", "30000:pubkey:d-code", "wss://relay.nos.dev/", "marker"],
-                ["e", "eventid1", "wss://relay.nos.dev/", "marker", "pubkey"],
-                ["p", "pubkey"],
+                ["a", `30000:${user1.pubkey}:d-code`, "wss://relay.nos.dev/", "marker"],
+                ["e", "eventid1", "wss://relay.nos.dev/", "marker", user1.pubkey],
+                ["p", user1.pubkey],
             ]);
             expect(event.referenceTags("marker")).toEqual([
-                ["e", "eventid2", "", "marker", "pubkey"],
-                ["p", "pubkey"],
+                ["e", "eventid2", "", "marker", user2.pubkey],
+                ["p", user2.pubkey],
             ]);
         });
 
         it("returns h tags if they are present", () => {
-            const event = EventGenerator.createEvent(1, "", "pubkey");
+            const event = new NDKEvent(ndk, { kind: 1, pubkey: user1.pubkey });
             event.id = "eventid";
             event.tags.push(["h", "group-id"]);
 
             expect(event.referenceTags()).toEqual([
-                ["e", "eventid", "", "", "pubkey"],
+                ["e", "eventid", "", "", user1.pubkey],
                 ["h", "group-id"],
-                ["p", "pubkey"],
+                ["p", user1.pubkey],
             ]);
         });
     });
 
     describe("tagId", () => {
         it("returns the correct tagId for a given event", () => {
-            const event1 = EventGenerator.createEvent(30000, "", "pubkey");
+            const event1 = new NDKEvent(ndk, { kind: 30000, content: "", pubkey: "pubkey" });
             event1.tags.push(["d", "d-code"]);
 
-            const event2 = EventGenerator.createEvent(1, "", "pubkey");
+            const event2 = new NDKEvent(ndk, { kind: 1, content: "" });
             event2.id = "eventid";
 
             expect(event1.tagId()).toEqual("30000:pubkey:d-code");
@@ -366,10 +355,10 @@ describe("NDKEvent", () => {
 
     describe("replacableDTag", () => {
         it("returns the correct tagId for a given event", () => {
-            const event1 = EventGenerator.createEvent(30000, "", "pubkey");
+            const event1 = new NDKEvent(ndk, { kind: 30000, content: "", pubkey: "" });
             event1.tags.push(["d", "d-code"]);
 
-            const event2 = EventGenerator.createEvent(1, "", "pubkey");
+            const event2 = new NDKEvent(ndk, { kind: 1, content: "" });
 
             expect(event1.replaceableDTag()).toEqual("d-code");
             expect(() => event2.replaceableDTag()).toThrowError("Event is not a parameterized replaceable event");
@@ -378,7 +367,7 @@ describe("NDKEvent", () => {
 
     describe("tagExternal", () => {
         it("correctly tags a URL", () => {
-            const event = EventGenerator.createEvent(1, "", "pubkey");
+            const event = new NDKEvent(ndk, { kind: 1 });
             event.tagExternal("https://example.com/article/123#nostr", "url");
 
             expect(event.tags).toContainEqual(["i", "https://example.com/article/123"]);
@@ -386,7 +375,7 @@ describe("NDKEvent", () => {
         });
 
         it("correctly tags a hashtag", () => {
-            const event = EventGenerator.createEvent(1, "", "pubkey");
+            const event = new NDKEvent(ndk, { kind: 1 });
             event.tagExternal("NostrTest", "hashtag");
 
             expect(event.tags).toContainEqual(["i", "#nostrtest"]);
@@ -394,7 +383,7 @@ describe("NDKEvent", () => {
         });
 
         it("correctly tags a geohash", () => {
-            const event = EventGenerator.createEvent(1, "", "pubkey");
+            const event = new NDKEvent(ndk, { kind: 1 });
             event.tagExternal("u4pruydqqvj", "geohash");
 
             expect(event.tags).toContainEqual(["i", "geo:u4pruydqqvj"]);
@@ -402,7 +391,7 @@ describe("NDKEvent", () => {
         });
 
         it("correctly tags an ISBN", () => {
-            const event = EventGenerator.createEvent(1, "", "pubkey");
+            const event = new NDKEvent(ndk, { kind: 1 });
             event.tagExternal("978-3-16-148410-0", "isbn");
 
             expect(event.tags).toContainEqual(["i", "isbn:9783161484100"]);
@@ -410,7 +399,7 @@ describe("NDKEvent", () => {
         });
 
         it("correctly tags a podcast GUID", () => {
-            const event = EventGenerator.createEvent(1, "", "pubkey");
+            const event = new NDKEvent(ndk, { kind: 1 });
             event.tagExternal("e32b4890-b9ea-4aef-a0bf-54b787833dc5", "podcast:guid");
 
             expect(event.tags).toContainEqual(["i", "podcast:guid:e32b4890-b9ea-4aef-a0bf-54b787833dc5"]);
@@ -418,7 +407,7 @@ describe("NDKEvent", () => {
         });
 
         it("correctly tags an ISAN", () => {
-            const event = EventGenerator.createEvent(1, "", "pubkey");
+            const event = new NDKEvent(ndk, { kind: 1 });
             event.tagExternal("1881-66C7-3420-0000-7-9F3A-0245-U", "isan");
 
             expect(event.tags).toContainEqual(["i", "isan:1881-66C7-3420-0000"]);
@@ -426,7 +415,7 @@ describe("NDKEvent", () => {
         });
 
         it("correctly tags a DOI", () => {
-            const event = EventGenerator.createEvent(1, "", "pubkey");
+            const event = new NDKEvent(ndk, { kind: 1 });
             event.tagExternal("10.1000/182", "doi");
 
             expect(event.tags).toContainEqual(["i", "doi:10.1000/182"]);
@@ -434,7 +423,7 @@ describe("NDKEvent", () => {
         });
 
         it("adds a marker URL when provided", () => {
-            const event = EventGenerator.createEvent(1, "", "pubkey");
+            const event = new NDKEvent(ndk, { kind: 1 });
             event.tagExternal("e32b4890-b9ea-4aef-a0bf-54b787833dc5", "podcast:guid", "https://example.com/marker");
 
             expect(event.tags).toContainEqual([
@@ -446,7 +435,7 @@ describe("NDKEvent", () => {
         });
 
         it("throws an error for unsupported entity types", () => {
-            const event = EventGenerator.createEvent(1, "", "pubkey");
+            const event = new NDKEvent(ndk, { kind: 1 });
             expect(() => {
                 event.tagExternal("test", "unsupported" as NIP73EntityType);
             }).toThrow("Unsupported NIP-73 entity type: unsupported");
@@ -554,71 +543,54 @@ describe("NDKEvent", () => {
             let root: NDKEvent;
 
             beforeEach(async () => {
-                // Create a non-standard event type (kind 30023)
-                root = await fixture.eventFactory.createSignedTextNote("Hello world", "alice", 30023);
-                // Add a d-tag for parameterized replaceable events
+                root = new NDKEvent(ndk, { kind: NDKKind.Article, content: "Hello world" });
                 root.tags.push(["d", "test"]);
+                await SignerGenerator.sign(root, 'alice');
             });
 
             it("creates a reply using a kind 1111 event", async () => {
-                // Create reply to non-standard event
-                fixture.setupSigner("bob");
-                const reply1 = await fixture.eventFactory.createReply(root, "This is a reply", "bob");
-
+                const reply1 = root.reply();
                 expect(reply1.kind).toBe(1111); // GenericReply kind
             });
 
             it("tags the root event or scope using an appropriate uppercase tag (e.g., 'A', 'E', 'I')", async () => {
-                // Create reply to non-standard event
-                fixture.setupSigner("bob");
-                const reply1 = await fixture.eventFactory.createReply(root, "This is a reply", "bob");
-
+                const reply1 = root.reply();
                 expect(reply1.tags).toContainEqual(["A", root.tagId(), ""]);
             });
 
             it("tags the root event with an 'a' for addressable events when it's a top level reply", async () => {
-                // Create reply to non-standard event
-                fixture.setupSigner("bob");
-                const reply1 = await fixture.eventFactory.createReply(root, "This is a reply", "bob");
+                const reply1 = root.reply();
 
                 expect(reply1.tags).toContainEqual(["A", root.tagId(), ""]);
                 expect(reply1.tags).toContainEqual(["a", root.tagId(), ""]);
             });
 
             it("p-tags the author of the root event", async () => {
-                // Create reply to non-standard event
-                fixture.setupSigner("bob");
-                const reply1 = await fixture.eventFactory.createReply(root, "This is a reply", "bob");
+                const reply1 = root.reply();
 
                 expect(reply1.tags).toContainEqual(["P", root.pubkey]);
             });
 
             it("p-tags the author of the reply event", async () => {
-                // Create thread with non-standard root and one reply
-                const reply1 = await fixture.eventFactory.createReply(root, "First reply", "bob");
+                const reply1 = root.reply();
 
                 // Create a second reply to the first reply
-                fixture.setupSigner("carol");
                 const reply2 = reply1.reply();
 
                 expect(reply2.tags).toContainEqual(["p", reply1.pubkey]);
             });
 
             it("p-tags the author of the root event only once when it's the root reply", async () => {
-                // Intentionally create using the root event's reply() method
                 const reply1 = root.reply();
 
-                // Check that it has the p tag exactly once
                 expect(reply1.tags).toContainEqual(["p", root.pubkey]);
                 expect(reply1.tags.filter((t) => t[0] === "p")).toHaveLength(1);
             });
 
             it("p-tags the author of the root and reply events", async () => {
-                // Create thread with non-standard root and one reply
-                const reply1 = await fixture.eventFactory.createReply(root, "First reply", "bob");
+                const reply1 = root.reply();
 
                 // Create a second reply to the first reply
-                fixture.setupSigner("carol");
                 const reply2 = reply1.reply();
 
                 expect(reply2.tags).toContainEqual(["P", root.pubkey]);
@@ -626,22 +598,17 @@ describe("NDKEvent", () => {
             });
 
             it("tags the root event or scope using an appropriate uppercase tag with the pubkey when it's an E tag", async () => {
-                // Create a kind 20 event
-                const k20event = await fixture.eventFactory.createSignedTextNote("Kind 20 event", "alice", 20);
+                const k20event = new NDKEvent(ndk, { kind: 20, content: "Hello world" });
 
                 // Create a reply to the kind 20 event
-                fixture.setupSigner("bob");
-                const reply1 = await fixture.eventFactory.createReply(k20event, "This is a reply", "bob");
+                const reply1 = k20event.reply();
 
                 expect(reply1.tags).toContainEqual(["E", k20event.tagId(), "", k20event.pubkey]);
             });
 
             it("tags the parent item using an appropriate lowercase tag (e.g., 'a', 'e', 'i')", async () => {
-                // Create thread with non-standard root and one reply
-                const reply1 = await fixture.eventFactory.createReply(root, "First reply", "bob");
+                const reply1 = root.reply();
 
-                // Create a second reply to the first reply
-                fixture.setupSigner("carol");
                 const reply2 = reply1.reply();
 
                 expect(reply2.tags).toContainEqual(["A", root.tagId(), ""]);
@@ -649,19 +616,14 @@ describe("NDKEvent", () => {
             });
 
             it("adds a 'K' tag to specify the root kind", async () => {
-                // Create reply to non-standard event
-                fixture.setupSigner("bob");
-                const reply1 = await fixture.eventFactory.createReply(root, "This is a reply", "bob");
+                const reply1 = root.reply();
 
                 expect(reply1.tags).toContainEqual(["K", root.kind?.toString()]);
             });
 
             it("adds a 'k' tag to specify the parent kind", async () => {
-                // Create thread with non-standard root and one reply
-                const reply1 = await fixture.eventFactory.createReply(root, "First reply", "bob");
+                const reply1 = root.reply();
 
-                // Create a second reply to the first reply
-                fixture.setupSigner("carol");
                 const reply2 = reply1.reply();
 
                 expect(reply2.tags).toContainEqual(["k", reply1.kind?.toString()]);

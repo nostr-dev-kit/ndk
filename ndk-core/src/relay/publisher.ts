@@ -89,7 +89,7 @@ export class NDKRelayPublisher {
             new Promise<boolean>((resolve, reject) => {
                 connectResolve = resolve;
                 connectReject = reject;
-                this.ndkRelay.once("connect", onConnectHandler);
+                this.ndkRelay.on("connect", onConnectHandler);
             }),
             timeoutPromise,
         ])

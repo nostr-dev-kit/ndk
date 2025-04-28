@@ -271,7 +271,11 @@ export class NDKRelaySet {
                     // The NDKPublishError class provides a structured way to report not just that
                     // publishing failed, but specifically which relays failed and which succeeded
                     const error = new NDKPublishError(
-                        "Not enough relays received the event",
+                        "Not enough relays received the event (" +
+                            publishedToRelays.size +
+                            " published, " +
+                            requiredRelayCount +
+                            " required)",
                         errors,
                         publishedToRelays,
                         this,

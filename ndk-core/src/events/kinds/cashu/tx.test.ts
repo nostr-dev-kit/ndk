@@ -29,9 +29,6 @@ describe("NDKCashuWalletTx", () => {
             tx.addRedeemedNutzap(nutzap);
             await tx.sign();
 
-            console.log(nutzap.inspect);
-            console.log(tx.inspect);
-
             const pTag = tx.tagValue("p");
             expect(pTag).toEqual(senderUser.pubkey);
 

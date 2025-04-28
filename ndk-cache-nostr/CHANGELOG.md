@@ -1,5 +1,13 @@
 # @nostr-dev-kit/ndk-cache-nostr
 
+## 0.1.17
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.14.4
+
 ## 0.1.16
 
 ### Patch Changes

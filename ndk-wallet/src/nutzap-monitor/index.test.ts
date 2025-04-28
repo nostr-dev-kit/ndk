@@ -1,15 +1,11 @@
 import { CashuMint, CashuWallet } from "@cashu/cashu-ts";
 import NDK, {
-    cashuPubkeyToNostrPubkey,
     NDKCashuMintList,
     NDKEvent,
     type NDKEventId,
-    NDKFilter,
-    NDKKind,
     NDKNutzap,
+    NDKNutzapState,
     NDKPrivateKeySigner,
-    NDKRelaySet,
-    NDKSubscriptionOptions,
     type NDKUser,
 } from "@nostr-dev-kit/ndk";
 import { mockNutzap } from "@nostr-dev-kit/ndk/test";
@@ -18,7 +14,7 @@ import * as CashuMintModule from "../wallets/cashu/mint.js";
 import { NDKCashuWallet } from "../wallets/cashu/wallet/index.js";
 import { NDKCashuWalletBackup } from "../wallets/cashu/wallet/index.js";
 import { fetchPage } from "./fetch-page.js";
-import { NDKNutzapMonitor, type NDKNutzapMonitorStore, type NDKNutzapState, NdkNutzapStatus } from "./index";
+import { NDKNutzapMonitor, type NDKNutzapMonitorStore } from "./index";
 import * as SpendStatusModule from "./spend-status.js";
 
 // Mock the modules we don't want to actually call
@@ -64,7 +60,7 @@ describe("NDKNutzapMonitor", () => {
             explicitRelayUrls: ["wss://relay1.com"],
         });
 
-        user = await ndk.signer?.user();
+        user = await ndk.signer?.user()!;
 
         // Setup a mint list
         mintList = new NDKCashuMintList(ndk);

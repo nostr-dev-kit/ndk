@@ -633,11 +633,6 @@ export class NDKSubscription extends EventEmitter<{
 
                         // Attempt verification
                         if (!this.ndk.asyncSigVerification) {
-                            console.log(
-                                "Will verify signature synchronously",
-                                this.subId,
-                                JSON.stringify(this.filters),
-                            );
                             if (!ndkEvent.verifySignature(true)) {
                                 this.debug("Event failed signature validation", event);
                                 // Report the invalid signature with relay information through the centralized method

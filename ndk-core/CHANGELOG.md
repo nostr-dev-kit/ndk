@@ -1,5 +1,12 @@
 # @nostr-dev-kit/ndk
 
+## 2.14.4
+
+### Patch Changes
+
+- finally solve race conditions when publishing to relays in connecting state
+- finally solve race conditions when publishing to relays in connecting state
+
 ## 2.14.3
 
 ### Patch Changes

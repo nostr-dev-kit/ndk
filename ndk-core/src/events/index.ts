@@ -494,12 +494,14 @@ export class NDKEvent extends EventEmitter {
         timeoutMs?: number,
         requiredRelayCount?: number,
     ): Promise<Set<NDKRelay>> {
+        if (!requiredRelayCount) requiredRelayCount = 1;
         if (!this.sig) await this.sign();
         if (!this.ndk) throw new Error("NDKEvent must be associated with an NDK instance to publish");
 
         if (!relaySet || relaySet.size === 0) {
             // If we have a devWriteRelaySet, use it to publish all events
-            relaySet = this.ndk.devWriteRelaySet || (await calculateRelaySetFromEvent(this.ndk, this));
+            relaySet =
+                this.ndk.devWriteRelaySet || (await calculateRelaySetFromEvent(this.ndk, this, requiredRelayCount));
         }
 
         // If the published event is a delete event, notify the cache if there is one

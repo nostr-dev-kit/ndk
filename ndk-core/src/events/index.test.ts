@@ -91,7 +91,6 @@ describe("NDKEvent", () => {
         it("returns <kind>:<pubkey> for kinds 0", () => {
             event.pubkey = user1.pubkey;
             event.kind = 0;
-            console.log("pubkey", user1.pubkey);
             const result = event.deduplicationKey();
             expect(result).toEqual(`0:${user1.pubkey}`);
         });

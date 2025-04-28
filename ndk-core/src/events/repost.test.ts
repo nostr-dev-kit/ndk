@@ -21,7 +21,6 @@ describe("repost", () => {
     });
 
     it("includes the JSON-stringified event", async () => {
-        console.log(event1.inspect);
         const e = await event1.repost(false);
         await e.sign();
 

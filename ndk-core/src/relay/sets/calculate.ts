@@ -21,7 +21,11 @@ const d = createDebug("ndk:outbox:calculate");
  * @param event {Event}
  * @returns Promise<NDKRelaySet>
  */
-export async function calculateRelaySetFromEvent(ndk: NDK, event: NDKEvent): Promise<NDKRelaySet> {
+export async function calculateRelaySetFromEvent(
+    ndk: NDK,
+    event: NDKEvent,
+    requiredRelayCount?: number,
+): Promise<NDKRelaySet> {
     const relays: Set<NDKRelay> = new Set();
 
     // get the author's write relays
@@ -79,6 +83,20 @@ export async function calculateRelaySetFromEvent(ndk: NDK, event: NDKEvent): Pro
     }
 
     ndk.pool?.permanentAndConnectedRelays().forEach((relay: NDKRelay) => relays.add(relay));
+
+    // if we have less than the required relay count, add from ndk.explicitRelayUrls (skipping the ones that we already have)
+    if (requiredRelayCount && relays.size < requiredRelayCount) {
+        const explicitRelays = ndk.explicitRelayUrls
+            ?.filter((url) => !Array.from(relays).some((r) => r.url === url))
+            .slice(0, requiredRelayCount - relays.size);
+        explicitRelays?.forEach((url) => {
+            const relay = ndk.pool?.getRelay(url, false, true);
+            if (relay) {
+                d("Adding explicit relay %s", url);
+                relays.add(relay);
+            }
+        });
+    }
 
     return new NDKRelaySet(relays, ndk);
 }

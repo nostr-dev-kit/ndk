@@ -1,5 +1,14 @@
 # @nostr-dev-kit/ndk-hooks
 
+## 1.1.23
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.14.4
+    - @nostr-dev-kit/ndk-wallet@0.5.8
+
 ## 1.1.22
 
 ### Patch Changes

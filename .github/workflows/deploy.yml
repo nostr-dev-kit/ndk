@@ -46,18 +46,24 @@ jobs:
               uses: pnpm/action-setup@v2
               with:
                 version: 8
-            - name: Install dependencies with pnpm
+            - name: Install documentation dependencies with bun
               run: |
-                pnpm install vitepress vitepress-plugin-mermaid mermaid vue
+                bun add -d vitepress vitepress-plugin-mermaid mermaid vue typescript typedoc
+            - name: Prepare documentation
+              run: |
+                chmod +x ./prepare-docs.sh
+                ./prepare-docs.sh
+            - name: Generate TypeDoc API documentation
+              run: |
+                cd ndk-core
+                npx typedoc --options typedoc.json
+                cd ..
+                mkdir -p docs/.vitepress/dist/api
+                cp -r ndk-core/typedoc-docs/* docs/.vitepress/dist/api/
             - name: Build VitePress site
               run: |
                 cd docs
                 npx vitepress build
-            - name: Generate TypeDoc documentation
-              run: |
-                cd ndk-core
-                npx typedoc --options typedoc.json
-                mv typedoc-docs ../docs/.vitepress/dist/api
             - name: Upload artifact
               uses: actions/upload-pages-artifact@v3
               with:

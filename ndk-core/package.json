@@ -1,9 +1,9 @@
 {
     "name": "@nostr-dev-kit/ndk",
-    "version": "2.14.2",
+    "version": "2.14.3",
     "description": "NDK - Nostr Development Kit",
     "homepage": "https://ndk.fyi",
-    "documentation": "https://github.com/nostr-dev-kit/ndk/blob/master/docs/modules.md",
+    "documentation": "https://nostr-dev-kit.github.io/ndk",
     "repository": {
         "type": "git",
         "url": "https://github.com/nostr-dev-kit/ndk"
@@ -67,6 +67,7 @@
     "devDependencies": {
         "@types/debug": "^4.1.12",
         "@types/node": "^22.13.10",
+        "@vitest/coverage-v8": "3.1.2",
         "esbuild": "^0.25.1",
         "esbuild-plugin-alias": "^0.2.1",
         "esm-loader-typescript": "^1.0.6",

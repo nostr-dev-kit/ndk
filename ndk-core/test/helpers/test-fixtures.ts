@@ -87,7 +87,7 @@ export class SignerGenerator {
         return new NDKPrivateKeySigner(privateKey);
     }
 
-    static async sign(event: NDKEvent, user: string): Promise<NDKEvent> {
+    static async sign(event: NDKEvent, user: Names): Promise<NDKEvent> {
         const signer = SignerGenerator.getSigner(user);
         await event.sign(signer);
         return event;
@@ -120,7 +120,7 @@ export class TestEventFactory {
      * @param kind The kind of the event (defaults to 1)
      * @returns The signed event
      */
-    async createSignedTextNote(content: string, user: NDKUser | string | undefined, kind = 1): Promise<any> {
+    async createSignedTextNote(content: string, user: NDKUser | Names | undefined, kind = 1): Promise<any> {
         let pubkey: string;
         let signer: NDKPrivateKeySigner;
 
@@ -150,7 +150,7 @@ export class TestEventFactory {
      * @param toUser The recipient
      * @returns The created event (not necessarily signed)
      */
-    async createDirectMessage(content: string, fromUser: NDKUser | string, toUser: NDKUser | string): Promise<any> {
+    async createDirectMessage(content: string, fromUser: NDKUser | Names, toUser: NDKUser | Names): Promise<any> {
         let fromPubkey: string;
         let toPubkey: string;
 
@@ -188,7 +188,7 @@ export class TestEventFactory {
      * @param kind The kind of the reply (defaults to same as original for kind 1, or 1111 for other kinds)
      * @returns The created reply event (not necessarily signed)
      */
-    async createReply(originalEvent: any, content: string, fromUser: NDKUser | string, kind?: number): Promise<any> {
+    async createReply(originalEvent: any, content: string, fromUser: NDKUser | Names, kind?: number): Promise<any> {
         let fromPubkey: string;
 
         if (typeof fromUser === "string") {
@@ -242,8 +242,8 @@ export class TestEventFactory {
      */
     async createEventChain(
         initialContent: string,
-        initialAuthor: NDKUser | string,
-        replies: Array<{ content: string; author: NDKUser | string }>,
+        initialAuthor: NDKUser | Names,
+        replies: Array<{ content: string; author: NDKUser | Names }>,
     ): Promise<any[]> {
         // Create the root event
         const rootEvent = await this.createSignedTextNote(initialContent, initialAuthor);
@@ -279,7 +279,7 @@ export class TestFixture {
      * @param name The name of the user (alice, bob, carol, dave, eve)
      * @returns The NDK user
      */
-    async getUser(name: string): Promise<NDKUser> {
+    async getUser(name: Names): Promise<NDKUser> {
         return UserGenerator.getUser(name, this.ndk);
     }
 
@@ -288,7 +288,7 @@ export class TestFixture {
      * @param name The name of the user
      * @returns The NDK signer
      */
-    getSigner(name: string): NDKPrivateKeySigner {
+    getSigner(name: Names): NDKPrivateKeySigner {
         const signer = SignerGenerator.getSigner(name);
         return signer;
     }
@@ -297,7 +297,7 @@ export class TestFixture {
      * Set up the NDK instance with a specific signer
      * @param name The name of the predefined user to use as signer
      */
-    setupSigner(name: string): void {
+    setupSigner(name: Names): void {
         this.ndk.signer = this.getSigner(name);
     }
 }

@@ -7,3 +7,6 @@ When you are about to modify an interface, check if the interface you are modify
 
 # Don't guess
 Prefer asking the user questions rather than guessing. When you are confused or have tried an approach and it doesn't work ALWAYS wait and ask the user for feedback.
+
+# Don't reimplement code
+Whenever you have trouble with an import, don't reimplement existing code, find a solution to fixing the imports or ask for help, but do not copy code or functionality that is implemented somewhere else in the codebase

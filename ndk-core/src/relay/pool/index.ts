@@ -320,56 +320,61 @@ export class NDKPool extends EventEmitter<{
      * @throws {Error} If any of the connection attempts result in an error or timeout.
      */
     public async connect(timeoutMs?: number): Promise<void> {
-        const promises: Promise<void>[] = [];
-
         this.status = "active";
+        this.debug(`Connecting to ${this.relays.size} relays${timeoutMs ? `, timeout ${timeoutMs}ms` : ""}...`);
 
-        this.debug(`Connecting to ${this.relays.size} relays${timeoutMs ? `, timeout ${timeoutMs}...` : ""}`);
+        const relaysToConnect = Array.from(this.autoConnectRelays.keys())
+            .map((url) => this.relays.get(url))
+            .filter((relay): relay is NDKRelay => !!relay);
 
-        const relaysToConnect = new Set(this.autoConnectRelays.keys());
-
-        for (const relayUrl of relaysToConnect) {
-            const relay = this.relays.get(relayUrl);
-            if (!relay) {
-                continue;
-            }
-
-            const connectPromise = new Promise<void>((resolve, reject) => {
+        // Start connecting all relays (if not already connected/connecting)
+        for (const relay of relaysToConnect) {
+            if (relay.status !== NDKRelayStatus.CONNECTED && relay.status !== NDKRelayStatus.CONNECTING) {
                 this.emit("relay:connecting", relay);
-                return relay.connect(timeoutMs).then(resolve).catch(reject);
-            });
-
-            if (timeoutMs) {
-                const timeoutPromise = new Promise<void>((_, reject) => {
-                    setTimeout(() => reject(`Timed out after ${timeoutMs}ms`), timeoutMs);
+                relay.connect().catch((e) => {
+                    this.debug(`Failed to connect to relay ${relay.url}: ${e ?? "No reason specified"}`);
                 });
-
-                promises.push(
-                    Promise.race([connectPromise, timeoutPromise]).catch((e) => {
-                        this.debug(`Failed to connect to relay ${relay.url}: ${e ?? "No reason specified"}`);
-                    }),
-                );
-            } else {
-                promises.push(connectPromise);
             }
         }
 
-        const maybeEmitConnect = () => {
-            const allConnected = this.stats().connected === this.relays.size;
-            const someConnected = this.stats().connected > 0;
+        // Helper to check if all relays are connected
+        const allConnected = () => relaysToConnect.every((r) => r.status === NDKRelayStatus.CONNECTED);
 
-            if (!allConnected && someConnected) {
-                this.emit("connect");
+        // Promise that resolves when all relays are connected
+        const allConnectedPromise = new Promise<void>((resolve) => {
+            if (allConnected()) {
+                resolve();
+                return;
             }
-        };
+            const listeners: Array<() => void> = [];
+            for (const relay of relaysToConnect) {
+                const handler = () => {
+                    if (allConnected()) {
+                        // Remove all listeners
+                        for (let i = 0; i < relaysToConnect.length; i++) {
+                            relaysToConnect[i].off("connect", listeners[i]);
+                        }
+                        resolve();
+                    }
+                };
+                listeners.push(handler);
+                relay.on("connect", handler);
+            }
+        });
 
-        // If we are running with a timeout, check if we need to emit a `connect` event
-        // in case some, but not all, relays were connected
-        if (timeoutMs) setTimeout(maybeEmitConnect, timeoutMs);
+        // Promise that resolves after the timeout
+        const timeoutPromise =
+            typeof timeoutMs === "number"
+                ? new Promise<void>((resolve) => setTimeout(resolve, timeoutMs))
+                : new Promise<void>(() => {
+                      /* never resolves if no timeout */
+                  });
 
-        await Promise.all(promises);
+        // Wait for either all relays to connect, or the timeout
+        await Promise.race([allConnectedPromise, timeoutPromise]);
 
-        maybeEmitConnect();
+        // Done: at this point, some relays may still be connecting, but we've waited up to the timeout
+        // (or less if all relays connected early)
     }
 
     private checkOnFlappingRelays() {

@@ -16,7 +16,7 @@ interface RelayMockOptions {
  */
 export class RelayMock extends EventEmitter {
     public url: string;
-    private _status: NDKRelayStatus = 0; // DISCONNECTED
+    private _status: NDKRelayStatus = NDKRelayStatus.DISCONNECTED;
     public messageLog: Array<{ direction: "in" | "out"; message: string }> = [];
     private activeSubscriptions: Map<string, NDKSubscription> = new Map();
     public validatedEvents: number = 0;
@@ -44,27 +44,27 @@ export class RelayMock extends EventEmitter {
 
     // Core methods matching NDKRelay interface
     async connect(): Promise<void> {
-        this._status = 1; // CONNECTING
+        this._status = NDKRelayStatus.CONNECTING;
 
         if (this.options.connectionDelay > 0) {
             await new Promise((resolve) => setTimeout(resolve, this.options.connectionDelay));
         }
 
-        this._status = 2; // CONNECTED
+        this._status = NDKRelayStatus.CONNECTED;
         this.emit("connect");
 
         if (this.options.simulateDisconnect) {
             setTimeout(() => {
-                this._status = 0; // DISCONNECTED
+                this._status = NDKRelayStatus.DISCONNECTED;
                 this.emit("disconnect");
             }, this.options.disconnectAfter);
         }
     }
 
     async disconnect(): Promise<void> {
-        this._status = 3; // DISCONNECTING
+        this._status = NDKRelayStatus.DISCONNECTING;
         await Promise.resolve();
-        this._status = 0; // DISCONNECTED
+        this._status = NDKRelayStatus.DISCONNECTED;
         this.emit("disconnect");
     }
 
@@ -73,7 +73,7 @@ export class RelayMock extends EventEmitter {
     }
 
     send(message: string): void {
-        if (this.status !== 2) {
+        if (this.status !== NDKRelayStatus.CONNECTED) {
             return;
         }
 
@@ -212,7 +212,7 @@ export class RelayMock extends EventEmitter {
     reset(): void {
         this.messageLog = [];
         this.activeSubscriptions.clear();
-        this._status = 0; // DISCONNECTED
+        this._status = NDKRelayStatus.DISCONNECTED;
         this.validatedEvents = 0;
         this.nonValidatedEvents = 0;
     }

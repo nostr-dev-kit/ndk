@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk
 
+## 2.14.3
+
+### Patch Changes
+
+- fix bug that causes ndk.connect() to return prematurely
+
 ## 2.14.2
 
 ### Patch Changes

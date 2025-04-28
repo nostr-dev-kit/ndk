@@ -28,3 +28,4 @@ docs/.vitepress/dist
 .ngit
 **/.repomix-output.txt
 cursor-tools.config.json
+coverage

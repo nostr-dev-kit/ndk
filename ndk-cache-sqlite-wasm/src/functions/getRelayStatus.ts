@@ -10,13 +10,17 @@ export function getRelayStatus(this: NDKCacheAdapterSqliteWasm, relayUrl: string
         CREATE TABLE IF NOT EXISTS relay_status (
             url TEXT PRIMARY KEY,
             info TEXT
-        );
+        )
     `;
+    if (!this.db) throw new Error("Database not initialized");
+
+    // Create table if it doesn't exist
     this.db.run(stmt);
-    const select = "SELECT info FROM relay_status WHERE url = ? LIMIT 1";
+
+    const select = "SELECT info FROM relay_status WHERE relay_url = ? LIMIT 1";
     const result = this.db.exec(select, [relayUrl]);
-    if (result && result[0] && result[0].values && result[0].values[0]) {
-        const infoStr = result[0].values[0][0];
+    if (result && result.values && result.values.length > 0) {
+        const infoStr = result.values[0][0];
         try {
             return JSON.parse(infoStr);
         } catch {

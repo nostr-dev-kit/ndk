@@ -12,8 +12,8 @@
         "lint": "biome check .",
         "clean": "turbo clean && rm -rf node_modules",
         "format": "biome format --write .",
-        "docs:dev": "vitepress dev docs",
-        "docs:build": "vitepress build docs",
+        "docs:dev": "bash ./prepare-docs.sh && npx vitepress dev docs",
+        "docs:build": "bash ./prepare-docs.sh && vitepress build docs",
         "changeset": "changeset",
         "cs": "changeset",
         "cs:ver": "changeset version",
@@ -44,6 +44,9 @@
         "turbo": "^2.5.1"
     },
     "dependencies": {
-        "@biomejs/biome": "^2.0.0-beta.1"
+        "@biomejs/biome": "^2.0.0-beta.1",
+        "mermaid": "^11.6.0",
+        "vitepress": "^1.6.3",
+        "vitepress-plugin-mermaid": "^2.0.17"
     }
 }

@@ -122,9 +122,4 @@ export interface NDKSessionsState {
      * @param data - Partial session data to merge.
      */
     updateSession: (pubkey: Hexpubkey, data: Partial<NDKUserSession>) => void;
-
-    // Removed functions based on requirements:
-    // - addSigner
-    // - removeSigner
-    // - muteItemForSession
 }

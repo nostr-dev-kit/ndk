@@ -318,8 +318,12 @@ export class NDKBlossom {
                 const url = `${baseUrl}/${hash}`;
 
                 // Create authenticated request
-                const options = await createAuthenticatedFetchOptions(this.ndk, serverUrl, {
-                    method: "DELETE",
+                const options = await createAuthenticatedFetchOptions(this.ndk, "delete", {
+                    sha256: hash,
+                    content: `Delete blob ${hash}`,
+                    fetchOptions: {
+                        method: "DELETE",
+                    },
                 });
 
                 // Send delete request
@@ -503,12 +507,17 @@ export class NDKBlossom {
  */
 async function createAuthenticatedFetchOptions(
     ndk: NDK,
-    serverUrl: string,
-    options: RequestInit = {},
+    action: "upload" | "delete" | "list" | "get",
+    options: {
+        sha256?: string | string[];
+        content?: string;
+        expirationSeconds?: number;
+        fetchOptions?: RequestInit;
+    } = {},
 ): Promise<RequestInit> {
-    // This is a placeholder, as this function would ideally come from the auth utility
-    // but we need to avoid circular dependencies
-    return options;
+    // Import the auth utility here to avoid circular dependencies
+    const { createAuthenticatedFetchOptions: authFn } = await import("./utils/auth");
+    return authFn(ndk, action, options);
 }
 
 // Export error types

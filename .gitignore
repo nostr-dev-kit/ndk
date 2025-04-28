@@ -1,6 +1,5 @@
 **/node_modules
 temp
-ndk-core/docs
 **/build
 **/dist
 **/lib
@@ -21,7 +20,6 @@ package-lock.json
 .turbo
 _local_
 .svelte-kit/
-ndk/docs
 .pnpm-store
 docs/.vitepress/cache
 docs/.vitepress/dist
@@ -29,3 +27,17 @@ docs/.vitepress/dist
 **/.repomix-output.txt
 cursor-tools.config.json
 coverage
+
+# Generated docs directories
+/docs/getting-started/
+/docs/internals/
+/docs/migration/
+/docs/tutorial/
+/docs/api-examples.md
+/docs/index.md
+/docs/snippets/
+/docs/cache/
+/docs/mobile/
+/docs/wallet/
+/docs/wrappers/
+/docs/hooks/

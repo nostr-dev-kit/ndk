@@ -1,4 +1,6 @@
 Package manager = bun
+Testing = vitest
+Monorepo = yes
 
 # Clean Code
 Don't try to fit solutions with existent patterns, unless explicitly told to, you can modify implementations and interfaces; prefer clean code over patching existing code just to prevent modifying an interface.

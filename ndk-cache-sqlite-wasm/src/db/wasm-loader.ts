@@ -6,10 +6,23 @@
 import { openIndexedDB, loadFromIndexedDB, saveToIndexedDB } from "./indexeddb-utils";
 
 export async function loadWasmAndInitDb(wasmUrl?: string, dbName: string = "ndk-cache"): Promise<any> {
-    const SQL = await import("sql.js");
+    let SQL, SQLModule;
     const config: any = {};
-    if (wasmUrl) config.locateFile = () => wasmUrl;
-    const SQLModule = await SQL.default(config);
+    try {
+        SQL = await import("sql.js");
+        if (wasmUrl) config.locateFile = () => wasmUrl;
+        SQLModule = await SQL.default(config);
+    } catch (err: any) {
+        console.error(
+            "[NDK-cache-sqlite-wasm] Failed to load the SQLite WASM binary." +
+                (wasmUrl ? ` Tried to fetch: ${wasmUrl}.` : "") +
+                " This usually means the WASM asset could not be found (e.g., 404 error). " +
+                "Please ensure the correct path is provided and the asset is available. " +
+                "Original error:",
+            err,
+        );
+        throw err;
+    }
 
     // Try to load from IndexedDB
     let db;

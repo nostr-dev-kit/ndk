@@ -1,4 +1,5 @@
 import type { NDKCacheAdapter } from "@nostr-dev-kit/ndk";
+import type { NDKCacheAdapterSqliteWasmOptions, WorkerMessage, WorkerResponse, SQLDatabase } from "./types";
 import { loadWasmAndInitDb } from "./db/wasm-loader";
 import { runMigrations } from "./db/migrations";
 import { setEvent } from "./functions/setEvent";
@@ -7,6 +8,7 @@ import { fetchProfile } from "./functions/fetchProfile";
 import { saveProfile } from "./functions/saveProfile";
 import { fetchProfileSync } from "./functions/fetchProfileSync";
 import { getAllProfilesSync } from "./functions/getAllProfilesSync";
+import { getProfiles } from "./functions/getProfiles";
 import { updateRelayStatus } from "./functions/updateRelayStatus";
 import { getRelayStatus } from "./functions/getRelayStatus";
 import { getDecryptedEvent } from "./functions/getDecryptedEvent";
@@ -17,18 +19,11 @@ import { discardUnpublishedEvent } from "./functions/discardUnpublishedEvent";
 import { query } from "./functions/query";
 import NDK from "@nostr-dev-kit/ndk";
 
-export interface NDKCacheAdapterSqliteWasmOptions {
-    dbName?: string;
-    wasmUrl?: string;
-    useWorker?: boolean;
-    workerUrl?: string;
-}
-
 export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
     public dbName: string;
     public wasmUrl?: string;
     public locking = false;
-    public db: any;
+    public db?: SQLDatabase;
     public ndk?: NDK;
 
     // Conditionally defined sync methods
@@ -39,7 +34,13 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
     private worker?: Worker;
     private workerUrl?: string;
     protected useWorker: boolean = false;
-    private pendingRequests: Map<string, { resolve: (value: any) => void; reject: (reason?: any) => void }> = new Map();
+    private pendingRequests: Map<
+        string,
+        {
+            resolve: (value: unknown) => void;
+            reject: (reason?: unknown) => void;
+        }
+    > = new Map();
     private nextRequestId: number = 0;
 
     constructor(options: NDKCacheAdapterSqliteWasmOptions = {}) {
@@ -58,7 +59,7 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
     /**
      * Loads WASM, initializes DB, and runs migrations, or initializes the worker.
      */
-    async initialize(ndk?: NDK) {
+    async initialize(ndk?: NDK): Promise<void> {
         this.ndk = ndk;
         if (this.useWorker) {
             await this.initializeWorker();
@@ -90,8 +91,31 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
 
         // Use module type for imports
         console.log("Creating Web Worker with URL:", effectiveWorkerUrl);
-        this.worker = new Worker(effectiveWorkerUrl, { type: "module" });
-        console.log("Web Worker created successfully");
+        try {
+            this.worker = new Worker(effectiveWorkerUrl, { type: "module" });
+            console.log("Web Worker created successfully");
+        } catch (err: any) {
+            const msg = err && err.message ? err.message.toLowerCase() : "";
+            if (
+                msg.includes("404") ||
+                msg.includes("not found") ||
+                msg.includes("failed to fetch") ||
+                msg.includes("networkerror") ||
+                msg.includes("could not load") ||
+                msg.includes("cannot find")
+            ) {
+                console.error(
+                    `[NDK-cache-sqlite-wasm] Failed to load worker file at "${effectiveWorkerUrl}".\n` +
+                        "This usually means the worker asset is missing or not served correctly (e.g., 404 error).\n" +
+                        "Please ensure the worker file exists at the specified URL and is accessible to the browser. " +
+                        "Check your bundler configuration and asset paths. See the documentation for details.",
+                    err,
+                );
+            } else {
+                console.error(`[NDK-cache-sqlite-wasm] Error while creating worker at "${effectiveWorkerUrl}":`, err);
+            }
+            throw err;
+        }
 
         this.worker.onmessage = (event: MessageEvent) => {
             console.log("Received message from worker:", event.data);
@@ -116,26 +140,20 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
             this.pendingRequests.clear();
         };
 
-        console.log("Web Worker event handlers set up");
-
         // Send initialization config to worker
-        console.log("Sending initialization config to worker");
-        return this.postWorkerMessage({
+        await this.postWorkerMessage<WorkerResponse>({
             type: "init",
             payload: {
                 dbName: this.dbName,
                 wasmUrl: this.wasmUrl,
             },
-        }).then((result) => {
-            console.log("Worker initialization complete, result:", result);
-            return result;
         });
     }
 
     /**
      * Helper to send messages to the worker and track responses.
      */
-    protected postWorkerMessage(message: any): Promise<any> {
+    protected async postWorkerMessage<T>(message: Omit<WorkerMessage, "id">): Promise<T> {
         if (!this.worker) {
             console.error("Worker not initialized");
             return Promise.reject(new Error("Worker not initialized"));
@@ -143,7 +161,10 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
         const id = `req-${this.nextRequestId++}`;
         console.log(`Posting message to worker (${id}):`, message);
         return new Promise((resolve, reject) => {
-            this.pendingRequests.set(id, { resolve, reject });
+            this.pendingRequests.set(id, {
+                resolve: resolve as (value: unknown) => void,
+                reject: reject as (reason?: unknown) => void,
+            });
             this.worker!.postMessage({ ...message, id });
             console.log(`Message posted to worker (${id})`);
         });
@@ -154,7 +175,6 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
     public getEvent = getEvent.bind(this);
     public fetchProfile = fetchProfile.bind(this);
     public saveProfile = saveProfile.bind(this);
-    // fetchProfileSync and getAllProfilesSync are conditionally defined in the constructor
     public updateRelayStatus = updateRelayStatus.bind(this);
     public getRelayStatus = getRelayStatus.bind(this);
     public getDecryptedEvent = getDecryptedEvent.bind(this);
@@ -163,6 +183,7 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
     public getUnpublishedEvents = getUnpublishedEvents.bind(this);
     public discardUnpublishedEvent = discardUnpublishedEvent.bind(this);
     public query = query.bind(this);
+    public getProfiles = getProfiles.bind(this);
 }
 
 export default NDKCacheAdapterSqliteWasm;

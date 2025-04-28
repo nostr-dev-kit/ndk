@@ -12,8 +12,9 @@
         "jsx": "react-jsx",
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
-        "isolatedModules": true
+        "isolatedModules": true,
+        "types": ["vitest"]
     },
     "include": ["src/**/*"],
-    "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.test.tsx"]
+    "exclude": ["node_modules", "dist"]
 }

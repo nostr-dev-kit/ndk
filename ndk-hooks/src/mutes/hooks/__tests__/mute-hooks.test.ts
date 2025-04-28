@@ -127,50 +127,7 @@ describe("Mute Hooks", () => {
         });
     });
 
-    describe("useMuteItem", () => {
-        it("should mute a pubkey", () => {
-            // Create a user to mute
-            const user = new NDKUser({ pubkey: "user-to-mute" });
-
-            // Create a mock mute function
-            const mockMuteFn = vi.fn();
-            vi.spyOn(hooksModule, "useMuteItem").mockImplementation(() => mockMuteFn);
-
-            // Call the mocked hook
-            const muteItemFn = hooksModule.useMuteItem();
-            muteItemFn(user);
-
-            // Verify the mock function was called
-            expect(mockMuteFn).toHaveBeenCalledWith(user);
-
-            // Verify the underlying store function would be called correctly
-            // This is testing the implementation of useMuteItem indirectly
-            mockStore.muteItem("current-user", "user-to-mute", "pubkey", undefined);
-            expect(mockStore.muteItem).toHaveBeenCalledWith("current-user", "user-to-mute", "pubkey", undefined);
-        });
-    });
-
-    describe("useUnmuteItem", () => {
-        it("should unmute a pubkey", () => {
-            // Create a user to unmute
-            const user = new NDKUser({ pubkey: "user-to-unmute" });
-
-            // Create a mock unmute function
-            const mockUnmuteFn = vi.fn();
-            vi.spyOn(hooksModule, "useUnmuteItem").mockImplementation(() => mockUnmuteFn);
-
-            // Call the mocked hook
-            const unmuteItemFn = hooksModule.useUnmuteItem();
-            unmuteItemFn(user);
-
-            // Verify the mock function was called
-            expect(mockUnmuteFn).toHaveBeenCalledWith(user);
-
-            // Verify the underlying store function would be called correctly
-            mockStore.unmuteItem("current-user", "user-to-unmute", "pubkey", undefined);
-            expect(mockStore.unmuteItem).toHaveBeenCalledWith("current-user", "user-to-unmute", "pubkey", undefined);
-        });
-    });
+    // Removed obsolete useMuteItem and useUnmuteItem tests: these hooks no longer exist.
 
     describe("useIsItemMuted", () => {
         it("should check if a pubkey is muted", () => {
@@ -195,27 +152,5 @@ describe("Mute Hooks", () => {
         });
     });
 
-    describe("usePublishMuteList", () => {
-        it("should publish the mute list", async () => {
-            // Setup: Mock publishMuteList to return a mock event
-            const mockEvent = createMockEvent({});
-            mockStore.publishMuteList.mockResolvedValue(mockEvent);
-
-            // Create a mock publish function
-            const mockPublishFn = vi.fn().mockResolvedValue(mockEvent);
-            vi.spyOn(hooksModule, "usePublishMuteList").mockImplementation(() => mockPublishFn);
-
-            // Call the mocked hook
-            const publishMuteListFn = hooksModule.usePublishMuteList();
-            const publishedEvent = await publishMuteListFn();
-
-            // Verify the mock function was called and returned the event
-            expect(mockPublishFn).toHaveBeenCalled();
-            expect(publishedEvent).toBe(mockEvent);
-
-            // Verify the underlying store function would be called correctly
-            await mockStore.publishMuteList("current-user");
-            expect(mockStore.publishMuteList).toHaveBeenCalledWith("current-user");
-        });
-    });
+    // Removed obsolete usePublishMuteList test suite: this hook no longer exists and publishing is handled automatically by mute/unmute.
 });

@@ -6,6 +6,8 @@ import type { NDKCacheAdapterSqliteWasm } from "../index";
  * Stores relay info as a JSON string in a dedicated table.
  */
 export function updateRelayStatus(this: NDKCacheAdapterSqliteWasm, relayUrl: string, info: NDKCacheRelayInfo): void {
+    if (!this.db) throw new Error("Database not initialized");
+
     const stmt = `
         CREATE TABLE IF NOT EXISTS relay_status (
             url TEXT PRIMARY KEY,

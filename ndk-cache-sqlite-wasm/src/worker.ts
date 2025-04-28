@@ -115,6 +115,31 @@ self.onmessage = async (event: MessageEvent) => {
                 stmtAll.free();
                 break;
             }
+            case "getProfiles": {
+                // payload: { field: string, contains: string }
+                const { field, contains } = payload;
+                const sql = `
+                    SELECT pubkey, profile
+                    FROM profiles
+                    WHERE json_extract(profile, '$.${field}') LIKE ?
+                `;
+                const param = `%${contains}%`;
+                const stmt = db.prepare(sql, [param]);
+                result = [];
+                while (stmt.step()) {
+                    const row = stmt.getAsObject();
+                    try {
+                        result.push({
+                            pubkey: row.pubkey,
+                            profile: JSON.parse(row.profile),
+                        });
+                    } catch {
+                        // skip invalid profile
+                    }
+                }
+                stmt.free();
+                break;
+            }
             case "export":
                 result = db.export();
                 break;

@@ -11,7 +11,7 @@ import type { NDKCacheAdapterSqliteWasm } from "../index";
 export async function getEvent(this: NDKCacheAdapterSqliteWasm, id: string): Promise<NDKEvent | null> {
     const stmt = "SELECT raw FROM events WHERE id = ? AND deleted = 0 LIMIT 1";
     if (this.useWorker) {
-        const result = await this.postWorkerMessage({
+        const result = await this.postWorkerMessage<{ raw?: string }>({
             type: "get",
             payload: {
                 sql: stmt,
@@ -29,8 +29,8 @@ export async function getEvent(this: NDKCacheAdapterSqliteWasm, id: string): Pro
     } else {
         if (!this.db) throw new Error("DB not initialized");
         const result = this.db.exec(stmt, [id]);
-        if (result && result[0] && result[0].values && result[0].values[0]) {
-            const raw = result[0].values[0][0];
+        if (result && result.values && result.values.length > 0) {
+            const raw = result.values[0][0];
             try {
                 return JSON.parse(raw);
             } catch {

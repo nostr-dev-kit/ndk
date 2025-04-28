@@ -2,29 +2,25 @@ import type { NDKCacheAdapterSqliteWasm } from "../index";
 import { NDKEvent, NDKSubscription, NDKFilter } from "@nostr-dev-kit/ndk";
 import { deserialize, matchFilter } from "@nostr-dev-kit/ndk";
 
+import type { SQLQueryResult } from "../types";
+
 /**
  * Utility to normalize DB rows from `{ columns, values }` to array of objects.
  */
-function normalizeDbRows(rows: any[]): any[] {
-    if (!Array.isArray(rows) || rows.length === 0) {
+function normalizeDbRows(queryResult: SQLQueryResult): Record<string, any>[] {
+    if (!queryResult || !queryResult.columns || !queryResult.values) {
         return [];
     }
 
-    const first = rows[0];
-    if (Array.isArray(first.columns) && Array.isArray(first.values)) {
-        return rows.flatMap((row) => {
-            return row.values.map((cellVals: any[]) => {
-                const obj: Record<string, any> = {};
-                row.columns.forEach((col: string, idx: number) => {
-                    obj[col] = cellVals[idx];
-                });
-                return obj;
-            });
-        });
-    }
+    const { columns, values } = queryResult;
 
-    // fallback: assume already “normalized”
-    return rows;
+    return values.map((row) => {
+        const obj: Record<string, any> = {};
+        columns.forEach((col, idx) => {
+            obj[col] = row[idx];
+        });
+        return obj;
+    });
 }
 
 /**

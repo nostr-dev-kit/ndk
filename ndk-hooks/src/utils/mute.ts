@@ -23,7 +23,7 @@ export const isMuted = (event: NDKEvent, criteria: MuteCriteria | null | undefin
     if (eventIds.size > 0 || hashtags.size > 0) {
         for (const tag of event.tags) {
             if (tag[0] === "e" && eventIds.has(tag[1])) return true;
-            if (tag[0] === "t" && hashtags.has(tag[1])) return true;
+            if (tag[0] === "t" && [...hashtags].some((h) => h.toLowerCase() === tag[1]?.toLowerCase())) return true;
         }
     }
 

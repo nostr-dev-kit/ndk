@@ -45,12 +45,16 @@ export async function uploadToServer(
         const uploadUrl = `${baseUrl}/upload`;
 
         // Create authenticated fetch options
-        const authOptions = await createAuthenticatedFetchOptions(ndk, serverUrl, {
-            method: "PUT",
-            body: file,
-            headers: {
-                "Content-Type": file.type || "application/octet-stream",
-                ...options.headers,
+        const authOptions = await createAuthenticatedFetchOptions(ndk, "upload", {
+            sha256: hash,
+            content: `Upload ${file.name}`,
+            fetchOptions: {
+                method: "PUT",
+                body: file,
+                headers: {
+                    "Content-Type": file.type || "application/octet-stream",
+                    ...options.headers,
+                },
             },
         });
 

@@ -1,4 +1,5 @@
-import { describe, expect, it, beforeEach, vi, afterEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+/// <reference types="vitest" />
 import { renderHook, act, waitFor } from "@testing-library/react";
 import { useNDKSessionMonitor } from "../use-ndk-session-monitor";
 import { MockSessionStorageAdapter } from "../../storage/__tests__/mock-storage-adapter";

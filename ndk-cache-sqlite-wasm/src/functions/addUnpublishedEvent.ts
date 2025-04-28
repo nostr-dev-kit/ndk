@@ -13,6 +13,7 @@ export function addUnpublishedEvent(
     relayUrls: string[],
     lastTryAt: number = Date.now(),
 ): void {
+    if (!this.db) throw new Error("Database not initialized");
     const stmt = `
         INSERT OR REPLACE INTO unpublished_events (
             id, event, relays, lastTryAt

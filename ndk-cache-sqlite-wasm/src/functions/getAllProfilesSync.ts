@@ -10,11 +10,16 @@ import type { NDKCacheAdapterSqliteWasm } from "../index";
  * See CHANGELOG.md for details.
  */
 export function getAllProfilesSync(this: NDKCacheAdapterSqliteWasm): Map<Hexpubkey, NDKCacheEntry<NDKUserProfile>> {
+    if (!this.db) throw new Error("Database not initialized");
+
+    // Initialize the Map to store profiles
+    const profiles = new Map<Hexpubkey, NDKCacheEntry<NDKUserProfile>>();
+
     const stmt = "SELECT pubkey, profile, updated_at FROM profiles";
     const result = this.db.exec(stmt);
-    const profiles = new Map<Hexpubkey, NDKCacheEntry<NDKUserProfile>>();
-    if (result && result[0] && result[0].values) {
-        for (const row of result[0].values) {
+
+    if (result && result.values && result.values.length > 0) {
+        for (const row of result.values) {
             const [pubkey, profileStr, updatedAt] = row;
             try {
                 const profile = JSON.parse(profileStr);

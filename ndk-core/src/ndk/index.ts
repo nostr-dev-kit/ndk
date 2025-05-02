@@ -754,21 +754,6 @@ export class NDK extends EventEmitter<{
     }
 
     /**
-     * Publish an event to a relay
-     * @param event event to publish
-     * @param relaySet explicit relay set to use
-     * @param timeoutMs timeout in milliseconds to wait for the event to be published
-     * @returns The relays the event was published to
-     *
-     * @deprecated Use `event.publish()` instead
-     */
-    public async publish(event: NDKEvent, relaySet?: NDKRelaySet, timeoutMs?: number): Promise<Set<NDKRelay>> {
-        this.debug("Deprecated: Use `event.publish()` instead");
-
-        return event.publish(relaySet, timeoutMs);
-    }
-
-    /**
      * Attempts to fetch an event from a tag, following relay hints and
      * other best practices.
      * @param tag Tag to fetch the event from

@@ -84,6 +84,16 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
     private nostrConnectSecret?: string;
 
     /**
+     * 
+     * Don't instantiate this directly. Use the static methods instead.
+     * 
+     * @example:
+     * // for bunker:// flow
+     * const signer = NDKNip46Signer.bunker(ndk, "bunker://<connection-token>")
+     * const signer = NDKNip46Signer.bunker(ndk, "<your-nip05>"); // with nip05 flow
+     * // for nostrconnect:// flow
+     * const signer = NDKNip46Signer.nostrconnect(ndk, "wss://relay.example.com")
+     * 
      * @param ndk - The NDK instance to use
      * @param userOrConnectionToken - The public key, or a connection token, of the npub that wants to be published as
      * @param localSigner - The signer that will be used to request events to be signed
@@ -219,6 +229,11 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
     }
 
     public async blockUntilReady(): Promise<NDKUser> {
+        // Ensure bunkerPubkey is set before any logic
+        if (!this.bunkerPubkey && !this.nostrConnectSecret && !this.nip05) {
+            throw new Error("Bunker pubkey not set");
+        }
+
         if (this.nostrConnectSecret) return this.blockUntilReadyNostrConnect();
         
         if (this.nip05 && !this.userPubkey) {

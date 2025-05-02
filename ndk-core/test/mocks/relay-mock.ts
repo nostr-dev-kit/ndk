@@ -1,7 +1,7 @@
 import { EventEmitter } from "node:events";
-import { NDKEvent } from "src/events";
-import { NDKRelayStatus } from "src/relay";
-import { NDKSubscription, NDKFilter } from "src/subscription";
+import { NDKEvent } from "../../src/events";
+import { NDKRelayStatus } from "../../src/relay";
+import { NDKSubscription, NDKFilter } from "../../src/subscription";
 
 interface RelayMockOptions {
     simulateDisconnect?: boolean;

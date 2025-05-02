@@ -1,5 +1,5 @@
-import { NDKEvent } from "src/events/index.js";
-import { NDKPrivateKeySigner } from "src/signers/private-key";
+import { NDKEvent } from "../../src/events";
+import { NDKPrivateKeySigner } from "../../src/signers/private-key";
 
 /**
  * EventGenerator for testing purposes

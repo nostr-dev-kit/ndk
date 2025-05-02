@@ -1,8 +1,8 @@
-import { NDKPrivateKeySigner } from "src/signers/private-key/index.js";
-import { NDK } from "src/ndk/index.js";
+import { NDKPrivateKeySigner } from "../../src/signers/private-key";
+import { NDK } from "../../src/ndk";
 import { EventGenerator } from "../mocks/event-generator";
-import { NDKUser } from "src/user";
-import { NDKEvent } from "src";
+import { NDKUser } from "../../src/user";
+import { NDKEvent } from "../../src";
 
 type Names = "alice" | "bob" | "carol" | "dave" | "eve";
 

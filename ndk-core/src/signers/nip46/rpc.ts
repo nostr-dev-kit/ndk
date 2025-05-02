@@ -80,6 +80,7 @@ export class NDKNostrRpc extends EventEmitter {
                     this.emit("request", parsedEvent);
                 } else {
                     this.emit(`response-${parsedEvent.id}`, parsedEvent);
+                    this.emit("response", parsedEvent);
                 }
             } catch (e) {
                 this.debug("error parsing event", e, event.rawEvent());

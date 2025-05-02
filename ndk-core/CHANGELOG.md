@@ -1,5 +1,17 @@
 # @nostr-dev-kit/ndk
 
+## 2.14.6
+
+### Patch Changes
+
+- add NIP-46 nostrconnect:// support
+
+## 2.14.5
+
+### Patch Changes
+
+- bump
+
 ## 2.14.4
 
 ### Patch Changes

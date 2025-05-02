@@ -13,6 +13,11 @@ import type { NDKRpcResponse } from "./rpc.js";
 import { NDKNostrRpc } from "./rpc.js";
 import { ndkSignerFromPayload } from "../deserialization.js";
 import { registerSigner } from "../registry.js";
+import {
+    NostrConnectOptions,
+    generateNostrConnectUri,
+    nostrConnectGenerateSecret
+} from "./nostrconnect.js";
 /**
  * This NDKSigner implements NIP-46, which allows remote signing of events.
  * This class is meant to be used client-side, paired with the NDKNip46Backend or a NIP-46 backend (like Nostr-Connect)
@@ -61,7 +66,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
      * An optional secret value provided to connect to the bunker
      */
     public secret?: string | null;
-    public localSigner: NDKSigner;
+    public localSigner: NDKPrivateKeySigner;
     private nip05?: string;
     public rpc: NDKNostrRpc;
     private debug: debug.Debugger;
@@ -69,39 +74,83 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
     private subscription: NDKSubscription | undefined;
 
     /**
-     * @param ndk - The NDK instance to use
-     * @param remoteNip05 - The nip05 that wants to be published as
-     * @param localSigner - The signer that will be used to request events to be signed
+     * If using nostrconnect://, stores the nostrConnectURI
      */
-    public constructor(ndk: NDK, remoteNip05: string, localSigner?: NDKSigner);
+    public nostrConnectUri?: string;
+
+    /**
+     * The random secret used for nostrconnect:// flows.
+     */
+    private nostrConnectSecret?: string;
 
     /**
      * @param ndk - The NDK instance to use
      * @param userOrConnectionToken - The public key, or a connection token, of the npub that wants to be published as
      * @param localSigner - The signer that will be used to request events to be signed
      */
-    public constructor(ndk: NDK, userOrConnectionToken: string, localSigner?: NDKSigner) {
+    public constructor(ndk: NDK, userOrConnectionToken?: string, localSigner?: NDKPrivateKeySigner | string, relayUrls?: string[], nostrConnectOptions?: NostrConnectOptions) {
         super();
 
         this.ndk = ndk;
         this.debug = ndk.debug.extend("nip46:signer");
-
-        if (userOrConnectionToken.startsWith("bunker://")) {
-            this.connectionTokenInit(userOrConnectionToken);
-        } else {
-            this.nip05Init(userOrConnectionToken);
-        }
+        this.relayUrls = relayUrls;
 
         if (!localSigner) {
             this.localSigner = NDKPrivateKeySigner.generate();
         } else {
-            this.localSigner = localSigner;
+            if (typeof localSigner === "string") {
+                this.localSigner = new NDKPrivateKeySigner(localSigner);
+            } else {
+                this.localSigner = localSigner;
+            }
+        }
+
+        if (!userOrConnectionToken) {
+            this.nostrconnectFlowInit(nostrConnectOptions);
+        } else if (userOrConnectionToken.startsWith("bunker://")) {
+            this.bunkerFlowInit(userOrConnectionToken);
+        } else {
+            this.nip05Init(userOrConnectionToken);
         }
 
         this.rpc = new NDKNostrRpc(this.ndk, this.localSigner, this.debug, this.relayUrls);
     }
 
-    private connectionTokenInit(connectionToken: string) {
+    /**
+     * Connnect with a bunker:// flow
+     * @param ndk 
+     * @param userOrConnectionToken bunker:// connection string
+     * @param localSigner If you have previously authenticated with this signer, you can restore the session by providing the previously authenticated key
+     */
+    static bunker(ndk: NDK, userOrConnectionToken?: string, localSigner?: NDKPrivateKeySigner | string): NDKNip46Signer {
+        return new NDKNip46Signer(ndk, userOrConnectionToken, localSigner);
+    }
+
+    /**
+     * Connect with a nostrconnect:// flow
+     * @param ndk
+     * @param relay - Relay used to connect with the signer
+     * @param localSigner If you have previously authenticated with this signer, you can restore the session by providing the previously authenticated key
+     */
+    static nostrconnect(ndk: NDK, relay: string, localSigner?: NDKPrivateKeySigner | string, nostrConnectOptions?: NostrConnectOptions): NDKNip46Signer {
+        return new NDKNip46Signer(ndk, undefined, localSigner, [relay], nostrConnectOptions);
+    }
+
+    private nostrconnectFlowInit(nostrConnectOptions?: NostrConnectOptions) {
+        // generate secret
+        this.nostrConnectSecret = nostrConnectGenerateSecret();
+
+        // build URI
+        const pubkey = this.localSigner.pubkey;
+        this.nostrConnectUri = generateNostrConnectUri(
+            pubkey,
+            this.nostrConnectSecret,
+            this.relayUrls?.[0],
+            nostrConnectOptions
+        );
+    }
+
+    private bunkerFlowInit(connectionToken: string) {
         const bunkerUrl = new URL(connectionToken);
         const bunkerPubkey = bunkerUrl.hostname || bunkerUrl.pathname.replace(/^\/\//, "");
         const userPubkey = bunkerUrl.searchParams.get("pubkey");
@@ -151,7 +200,27 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
         return this._user;
     }
 
+    public async blockUntilReadyNostrConnect(): Promise<NDKUser> {
+        return new Promise((resolve, reject) => {
+            const connect = (response: NDKRpcResponse) => {
+                if (response.result === this.nostrConnectSecret) {
+                    this._user = response.event.author;
+                    this.userPubkey = response.event.pubkey;
+                    this.bunkerPubkey = response.event.pubkey;
+
+                    this.rpc.off("response", connect);
+                    resolve(this._user);
+                }
+            };
+            
+            this.startListening();
+            this.rpc.on("response", connect);
+        });
+    }
+
     public async blockUntilReady(): Promise<NDKUser> {
+        if (this.nostrConnectSecret) return this.blockUntilReadyNostrConnect();
+        
         if (this.nip05 && !this.userPubkey) {
             const user = await NDKUser.fromNip05(this.nip05, this.ndk);
 
@@ -194,6 +263,11 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
                 }
             });
         });
+    }
+
+    public stop() {
+        this.subscription?.stop();
+        this.subscription = undefined;
     }
 
     public async getPublicKey(): Promise<Hexpubkey> {
@@ -357,6 +431,10 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
         const localSigner = await ndkSignerFromPayload(payload.localSignerPayload, ndk);
         if (!localSigner) {
             throw new Error("Failed to deserialize local signer for NIP-46");
+        }
+
+        if (!(localSigner instanceof NDKPrivateKeySigner)) {
+            throw new Error("Local signer must be an instance of NDKPrivateKeySigner");
         }
 
         let signer: NDKNip46Signer;

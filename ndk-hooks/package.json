@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/ndk-hooks",
-    "version": "1.1.25",
+    "version": "1.1.26",
     "description": "React hooks for the Nostr Development Kit (NDK)",
     "type": "module",
     "main": "dist/index.cjs",
@@ -31,8 +31,8 @@
         "test:watch": "vitest --watch"
     },
     "dependencies": {
-        "@nostr-dev-kit/ndk": "^2.14.6",
-        "@nostr-dev-kit/ndk-wallet": "0.5.10",
+        "@nostr-dev-kit/ndk": "^2.14.7",
+        "@nostr-dev-kit/ndk-wallet": "0.5.11",
         "@testing-library/react": "^14.1.2",
         "immer": "^10.1.1",
         "zustand": "^5"

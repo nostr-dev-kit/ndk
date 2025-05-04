@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk
 
+## 2.14.7
+
+### Patch Changes
+
+- include README in build
+
 ## 2.14.6
 
 ### Patch Changes

@@ -1,12 +1,10 @@
+import { enableMapSet } from "immer";
+enableMapSet();
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { createMockEvent, createMockMuteListEvent } from "./fixtures";
 import { useNDKMutes } from "../index";
-import { enableMapSet } from "immer";
 import type { MuteItemType, NDKUserMutes } from "../types";
 import type { NDKEvent } from "@nostr-dev-kit/ndk";
-
-// Enable Map and Set support for Immer
-enableMapSet();
 
 // Create a mock store for testing
 const createMockStore = () => {

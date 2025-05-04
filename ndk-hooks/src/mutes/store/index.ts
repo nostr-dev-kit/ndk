@@ -1,4 +1,3 @@
-import { enableMapSet } from "immer";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import type { Hexpubkey, NDKEvent } from "@nostr-dev-kit/ndk";
@@ -9,9 +8,6 @@ import { mute } from "./mute";
 import { unmute } from "./unmute";
 import { setActivePubkey } from "./set-active-pubkey";
 import { addExtraMuteItems } from "./add-extra-mute-items";
-
-// Enable Map and Set support for Immer
-enableMapSet();
 
 /**
  * Create the mute store

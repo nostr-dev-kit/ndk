@@ -1,10 +1,7 @@
 import type NDK from "@nostr-dev-kit/ndk";
-import { enableMapSet } from "immer";
 import { type StateCreator, create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
-// Enable Map and Set support for Immer
-enableMapSet();
 import type { Hexpubkey, NDKSigner, NDKUser } from "@nostr-dev-kit/ndk";
 import type { NDKSessionsState, NDKUserSession, SessionStartOptions } from "./types";
 
@@ -24,7 +21,7 @@ const sessionStateCreator: StateCreator<NDKSessionsState, [["zustand/immer", nev
     ndk: undefined, // Add NDK instance holder
     sessions: new Map<Hexpubkey, NDKUserSession>(),
     signers: new Map<Hexpubkey, NDKSigner>(), // Keep signers map for addSession logic
-    activePubkey: null,
+    activePubkey: undefined,
 
     // Initialization
     init: (ndkInstance: NDK) => init(set, ndkInstance),

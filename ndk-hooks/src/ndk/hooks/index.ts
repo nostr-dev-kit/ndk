@@ -1,9 +1,9 @@
 import type NDK from "@nostr-dev-kit/ndk";
-import type { NDKEvent, NDKPublishError, NDKUser } from "@nostr-dev-kit/ndk"; // Add NDKUser
+import type { NDKEvent, NDKPublishError, NDKUser } from "@nostr-dev-kit/ndk";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useUserProfilesStore } from "../../profiles/store";
-import { useNDKSessions } from "../../session/store"; // Import session store hook
-import { type NDKStoreState, useNDKStore } from "../store"; // Corrected path
+import { useNDKSessions } from "../../session/store";
+import { useNDKStore } from "../store";
 import { useNDKMutes } from "../../mutes/store";
 
 /**

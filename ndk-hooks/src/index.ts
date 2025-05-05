@@ -1,7 +1,3 @@
-import { enableMapSet } from "immer";
-// Enable Map and Set support for Immer
-enableMapSet();
-
 export * from "./session/hooks/index.js";
 export * from "./session/hooks/signers.js";
 export * from "./session/hooks/sessions.js";

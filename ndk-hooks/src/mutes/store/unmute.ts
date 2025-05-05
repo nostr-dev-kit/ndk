@@ -13,7 +13,7 @@ import { identifyMuteItem } from "../utils/identify-mute-item";
  * @param pubkey The user's public key (optional, uses active pubkey if undefined)
  */
 export const unmute = (
-    set: (updater: (state: NDKMutesState) => void) => void,
+    set: (partial: Partial<NDKMutesState> | ((state: NDKMutesState) => Partial<NDKMutesState>)) => void,
     get: () => NDKMutesState,
     item: MuteableItem,
     pubkey?: Hexpubkey,
@@ -43,35 +43,68 @@ export const unmute = (
         return;
     }
 
-    // all guards passed—now do exactly one Immer producer
-    set((draft) => {
+    set((state) => {
         const { type, value } = identified;
+        const userMutes = state.mutes.get(userPubkey);
+        if (!userMutes) return {};
+
+        // Clone sets for immutability
+        const pubkeys = new Set(userMutes.pubkeys);
+        const eventIds = new Set(userMutes.eventIds);
+        const hashtags = new Set(userMutes.hashtags);
+        const words = new Set(userMutes.words);
+        const muteEvent = userMutes.muteListEvent ? NDKList.from(userMutes.muteListEvent) : undefined;
+
+        if (!muteEvent) {
+            console.warn("unmute: No existing mute list event to modify.");
+            return {};
+        }
 
         switch (type) {
             case "pubkey":
-                draft.mutes.get(userPubkey)!.pubkeys.delete(value);
+                pubkeys.delete(value);
                 muteEvent.tags = muteEvent.tags.filter((tag) => !(tag[0] === "p" && tag[1] === value));
                 break;
             case "event":
-                draft.mutes.get(userPubkey)!.eventIds.delete(value);
+                eventIds.delete(value);
                 muteEvent.tags = muteEvent.tags.filter((tag) => !(tag[0] === "e" && tag[1] === value));
                 break;
             case "hashtag":
-                draft.mutes.get(userPubkey)!.hashtags.delete(value);
+                hashtags.delete(value);
                 muteEvent.tags = muteEvent.tags.filter((tag) => !(tag[0] === "t" && tag[1] === value));
                 break;
             case "word":
-                draft.mutes.get(userPubkey)!.words.delete(value);
+                words.delete(value);
                 muteEvent.tags = muteEvent.tags.filter((tag) => !(tag[0] === "word" && tag[1] === value));
                 break;
         }
 
-        if (draft.activePubkey === userPubkey) {
-            draft.muteCriteria = computeMuteCriteria(draft.mutes.get(userPubkey)!, draft.extraMutes);
-            draft.muteList = NDKList.from(muteEvent);
+        const updatedUserMutes = {
+            ...userMutes,
+            pubkeys,
+            eventIds,
+            hashtags,
+            words,
+            muteListEvent: muteEvent,
+        };
+
+        // Clone mutes map and set updated user mutes
+        const newMutes = new Map(state.mutes);
+        newMutes.set(userPubkey, updatedUserMutes);
+
+        let update: Partial<NDKMutesState> = { mutes: newMutes };
+
+        if (state.activePubkey === userPubkey) {
+            update = {
+                ...update,
+                muteCriteria: computeMuteCriteria(updatedUserMutes, state.extraMutes),
+                muteList: NDKList.from(muteEvent),
+            };
         }
 
-        // publish after all draft mutations
-        muteEvent.publishReplaceable();
+        // Publish after state update (side effect)
+        setTimeout(() => muteEvent.publishReplaceable(), 0);
+
+        return update;
     });
 };

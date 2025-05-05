@@ -1,5 +1,3 @@
-import { enableMapSet } from "immer";
-enableMapSet();
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { createMockEvent, createMockMuteListEvent } from "./fixtures";
 import { useNDKMutes } from "../index";

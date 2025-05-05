@@ -30,7 +30,7 @@ import {
  * const ndk = new NDK()
  * const nip05 = await prompt("enter your scheme-05") // Get a NIP-05 the user wants to login with
  * const privateKey = localStorage.getItem("nip46-local-key") // If we have a private key previously saved, use it
- * const signer = new NDKNip46Signer(ndk, nip05, privateKey) // Create a signer with (or without) a private key
+ * const signer = NDKNip46Signer.bunker(ndk, nip05, privateKey) // Create a signer with (or without) a private key
  *
  * // Save generated private key for future use
  * localStorage.setItem("nip46-local-key", signer.localSigner.privateKey)
@@ -98,7 +98,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
      * @param userOrConnectionToken - The public key, or a connection token, of the npub that wants to be published as
      * @param localSigner - The signer that will be used to request events to be signed
      */
-    public constructor(ndk: NDK, userOrConnectionToken?: string, localSigner?: NDKPrivateKeySigner | string, relayUrls?: string[], nostrConnectOptions?: NostrConnectOptions) {
+    public constructor(ndk: NDK, userOrConnectionToken?: string | false, localSigner?: NDKPrivateKeySigner | string, relayUrls?: string[], nostrConnectOptions?: NostrConnectOptions) {
         super();
 
         this.ndk = ndk;
@@ -115,7 +115,8 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
             }
         }
 
-        if (!userOrConnectionToken) {
+        if (userOrConnectionToken === false) {
+        } else if (!userOrConnectionToken) {
             this.nostrconnectFlowInit(nostrConnectOptions);
         } else if (userOrConnectionToken.startsWith("bunker://")) {
             this.bunkerFlowInit(userOrConnectionToken);
@@ -455,22 +456,17 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
         let signer: NDKNip46Signer;
 
         // Reconstruct based on whether nip05 was originally used
-        if (payload.nip05) {
-            signer = new NDKNip46Signer(ndk, payload.nip05, localSigner);
-            signer.userPubkey = payload.userPubkey;
-            signer.bunkerPubkey = payload.bunkerPubkey;
-            signer.relayUrls = payload.relayUrls;
-            signer.secret = payload.secret;
-        } else {
-            // Reconstruct using connection token parameters (implicitly)
-            // Let's adapt the constructor logic slightly for this case
-            // We'll use the userPubkey as the primary identifier in the constructor
-            signer = new NDKNip46Signer(ndk, payload.userPubkey, localSigner);
-            signer.bunkerPubkey = payload.bunkerPubkey;
-            signer.relayUrls = payload.relayUrls;
-            signer.secret = payload.secret;
-        }
+        signer = new NDKNip46Signer(ndk, false, localSigner, payload.relayUrls);
+        signer.userPubkey = payload.userPubkey;
+        signer.bunkerPubkey = payload.bunkerPubkey;
+        signer.relayUrls = payload.relayUrls;
+        signer.secret = payload.secret;
 
+        // Ensure the _user property is set after deserialization
+        if (payload.userPubkey) {
+            signer._user = new NDKUser({ pubkey: payload.userPubkey });
+            if (signer._user) signer._user.ndk = ndk;
+        }
         return signer;
     }
 }

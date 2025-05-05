@@ -75,6 +75,8 @@ export interface NDKMutesState {
      */
     muteCriteria: MuteCriteria;
 
+    init(ndk: NDK): void;
+
     /**
      * Initialize mutes for a user
      * @param pubkey The pubkey of the user

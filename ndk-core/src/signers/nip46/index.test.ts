@@ -54,6 +54,19 @@ describe("NDKNip46Signer", () => {
     bob = await UserGenerator.getUser("bob");
     localSigner = SignerGenerator.getSigner("alice");
   });
+  
+  it("can serialize and deserialize and serialize again without error", async () => {
+    const signer = new NDKNip46Signer(ndk, alice.pubkey, localSigner);
+
+    // First serialization
+    const payload = signer.toPayload();
+
+    // Deserialization
+    const deserialized = await NDKNip46Signer.fromPayload(payload, ndk);
+
+    // Second serialization (should not throw)
+    expect(() => deserialized.toPayload()).not.toThrow();
+  });
 
   function makeEvent(pubkey: string): NostrEvent {
     return {

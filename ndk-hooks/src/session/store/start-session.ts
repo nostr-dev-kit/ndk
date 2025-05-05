@@ -1,33 +1,32 @@
 import type { Hexpubkey, NDKEvent, NDKFilter, NDKRelay } from "@nostr-dev-kit/ndk";
 import { NDKCashuMintList, NDKKind, profileFromEvent } from "@nostr-dev-kit/ndk";
-import type { Draft } from "immer";
 import type { NDKSessionsState, NDKUserSession, SessionStartOptions } from "./types";
 import { useNDKMutes } from "../../mutes/store";
 
-function handleProfileEvent(event: NDKEvent, sessionDraft: Draft<NDKUserSession>): void {
+function handleProfileEvent(event: NDKEvent, session: NDKUserSession): void {
     const profile = profileFromEvent(event);
     if (profile) {
         profile.created_at = event.created_at;
-        sessionDraft.profile = profile;
+        session.profile = profile;
     }
 }
 
-function handleContactsEvent(event: NDKEvent, sessionDraft: Draft<NDKUserSession>): void {
+function handleContactsEvent(event: NDKEvent, session: NDKUserSession): void {
     const followSet = new Set<Hexpubkey>(event.tags.filter((t) => t[0] === "p").map((t) => t[1]));
-    sessionDraft.followSet = followSet;
+    session.followSet = followSet;
 }
 
-function handleOtherEvent(event: NDKEvent, sessionDraft: Draft<NDKUserSession>, opts?: SessionStartOptions): void {
-    const existingEvent = sessionDraft.events.get(event.kind);
+function handleOtherEvent(event: NDKEvent, session: NDKUserSession, opts?: SessionStartOptions): void {
+    const existingEvent = session.events.get(event.kind);
     // Only update if the new event is newer
     if (!existingEvent || event.created_at > existingEvent.created_at) {
-        sessionDraft.events.set(event.kind, event);
+        session.events.set(event.kind, event);
     }
 
     const klassWrapper = opts?.events?.get(event.kind);
     if (klassWrapper) {
         const wrappedEvent = klassWrapper.from(event);
-        if (wrappedEvent) sessionDraft.events.set(event.kind, wrappedEvent);
+        if (wrappedEvent) session.events.set(event.kind, wrappedEvent);
     }
 }
 
@@ -38,12 +37,12 @@ function handleOtherEvent(event: NDKEvent, sessionDraft: Draft<NDKUserSession>, 
  */
 function handleKindFollowEvent(
     event: NDKEvent,
-    sessionDraft: Draft<NDKUserSession>,
+    session: NDKUserSession,
     followed = true,
     last_updated_at = event.created_at,
 ): void {
     const kindFollowSet =
-        sessionDraft.kindFollowSet ??
+        session.kindFollowSet ??
         new Map<NDKKind, Map<Hexpubkey, { followed: boolean; last_updated_at: number }>>();
 
     // get all the kind numbers in the follow event
@@ -67,7 +66,7 @@ function handleKindFollowEvent(
         }
     }
 
-    sessionDraft.kindFollowSet = kindFollowSet;
+    session.kindFollowSet = kindFollowSet;
 }
 
 /**
@@ -75,8 +74,8 @@ function handleKindFollowEvent(
  * we need to go through the kindFollowSet and remove the pubkey if the event we have now is newer
  * @returns
  */
-function handkeEventDeletion(event: NDKEvent, sessionDraft: Draft<NDKUserSession>): void {
-    const kindFollowSet = sessionDraft.kindFollowSet;
+function handkeEventDeletion(event: NDKEvent, session: NDKUserSession): void {
+    const kindFollowSet = session.kindFollowSet;
 
     if (!kindFollowSet) return;
 
@@ -86,12 +85,12 @@ function handkeEventDeletion(event: NDKEvent, sessionDraft: Draft<NDKUserSession
 
         const followEventDeleted = event.ndk.fetchEventSync(eTag[1]);
         if (!followEventDeleted?.[0]) continue;
-        handleKindFollowEvent(followEventDeleted[0], sessionDraft, false, event.created_at);
+        handleKindFollowEvent(followEventDeleted[0], session, false, event.created_at);
     }
 }
 
-function processEvent(event: NDKEvent, sessionDraft: Draft<NDKUserSession>, opts?: SessionStartOptions): void {
-    const knownEventForKind = sessionDraft.events?.get(event.kind);
+function processEvent(event: NDKEvent, session: NDKUserSession, opts?: SessionStartOptions): void {
+    const knownEventForKind = session.events?.get(event.kind);
 
     if (!(!knownEventForKind || knownEventForKind.created_at < event.created_at) && event.isReplaceable()) {
         return;
@@ -100,28 +99,28 @@ function processEvent(event: NDKEvent, sessionDraft: Draft<NDKUserSession>, opts
     try {
         switch (event.kind) {
             case NDKKind.Metadata:
-                handleProfileEvent(event, sessionDraft);
+                handleProfileEvent(event, session);
                 break;
             case NDKKind.Contacts:
-                handleContactsEvent(event, sessionDraft);
+                handleContactsEvent(event, session);
                 break;
             case NDKKind.MuteList:
                 useNDKMutes.getState().loadMuteList(event);
                 break;
             case 967:
-                handleKindFollowEvent(event, sessionDraft);
+                handleKindFollowEvent(event, session);
                 break;
             case NDKKind.EventDeletion:
-                handkeEventDeletion(event, sessionDraft);
+                handkeEventDeletion(event, session);
                 break;
             default:
-                handleOtherEvent(event, sessionDraft, opts);
+                handleOtherEvent(event, session, opts);
         }
 
         // add the event
-        sessionDraft.events.set(event.kind, event);
+        session.events.set(event.kind, event);
     } catch (error) {
-        console.error(`Error processing event kind ${event.kind} for ${sessionDraft.pubkey}:`, error, event);
+        console.error(`Error processing event kind ${event.kind} for ${session.pubkey}:`, error, event);
     }
 }
 
@@ -146,7 +145,7 @@ function buildSessionFilter(pubkey: string, opts: SessionStartOptions): NDKFilte
 }
 
 export const startSession = (
-    set: (fn: (draft: Draft<NDKSessionsState>) => void) => void,
+    set: (partial: Partial<NDKSessionsState> | ((state: NDKSessionsState) => Partial<NDKSessionsState>)) => void,
     get: () => NDKSessionsState,
     pubkey: Hexpubkey,
     opts: SessionStartOptions,
@@ -165,11 +164,13 @@ export const startSession = (
     // Stop existing subscription if present
     if (existingSession.subscription) {
         existingSession.subscription.stop();
-        set((draft) => {
-            const session = draft.sessions.get(pubkey);
-            if (session) {
-                session.subscription = undefined;
-            }
+        set((state) => {
+            const session = state.sessions.get(pubkey);
+            if (!session) return {};
+            const updatedSession = { ...session, subscription: undefined };
+            const newSessions = new Map(state.sessions);
+            newSessions.set(pubkey, updatedSession);
+            return { sessions: newSessions };
         });
     }
 
@@ -185,24 +186,32 @@ export const startSession = (
 
     const onEvent = (event: NDKEvent, relay?: NDKRelay) => {
         console.log("handle session event", event.pubkey.slice(0, 6), event.kind, relay?.url);
-        set((draft) => {
-            const session = draft.sessions.get(pubkey);
-            if (!session) return; // Session might have been removed while processing
-            processEvent(event, session, opts);
+        set((state) => {
+            const session = state.sessions.get(pubkey);
+            if (!session) return {};
+            // Clone session and events map for immutability
+            const updatedSession: NDKUserSession = { ...session, events: new Map(session.events) };
+            // Process event (mutates updatedSession)
+            processEvent(event, updatedSession, opts);
+            const newSessions = new Map(state.sessions);
+            newSessions.set(pubkey, updatedSession);
+            return { sessions: newSessions };
         });
     };
 
     const onEvents = (events: NDKEvent[]) => {
-        set((draft) => {
-            const session = draft.sessions.get(pubkey);
-            if (!session) return; // Session might have been removed
-
-            // Process all cached events modifying the draft session
+        set((state) => {
+            const session = state.sessions.get(pubkey);
+            if (!session) return {};
+            // Clone session and events map for immutability
+            const updatedSession: NDKUserSession = { ...session, events: new Map(session.events) };
             for (const event of events) {
-                processEvent(event, session, opts);
+                processEvent(event, updatedSession, opts);
             }
-            // Single update to the store after processing all cached events
+            const newSessions = new Map(state.sessions);
+            newSessions.set(pubkey, updatedSession);
             console.debug(`Processed ${events.length} cached events for ${pubkey}`);
+            return { sessions: newSessions };
         });
     };
 
@@ -211,10 +220,12 @@ export const startSession = (
     const sub = ndk.subscribe(filters, { closeOnEose: false, addSinceFromCache: true }, { onEvent, onEvents });
 
     // Store the subscription handle
-    set((draft) => {
-        const session = draft.sessions.get(pubkey);
-        if (session) {
-            session.subscription = sub;
-        }
+    set((state) => {
+        const session = state.sessions.get(pubkey);
+        if (!session) return {};
+        const updatedSession = { ...session, subscription: sub };
+        const newSessions = new Map(state.sessions);
+        newSessions.set(pubkey, updatedSession);
+        return { sessions: newSessions };
     });
 };

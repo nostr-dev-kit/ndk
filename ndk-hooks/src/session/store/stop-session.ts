@@ -1,10 +1,9 @@
 // src/session/store/stop-session.ts
-import type { Draft } from "immer";
 import type { Hexpubkey } from "@nostr-dev-kit/ndk";
 import type { NDKSessionsState } from "./types";
 
 export const stopSession = (
-    set: (fn: (draft: Draft<NDKSessionsState>) => void) => void,
+    set: (partial: Partial<NDKSessionsState> | ((state: NDKSessionsState) => Partial<NDKSessionsState>)) => void,
     get: () => NDKSessionsState,
     pubkey: Hexpubkey,
 ): void => {
@@ -18,12 +17,14 @@ export const stopSession = (
             console.error(`Error stopping subscription for ${pubkey}:`, error);
         }
 
-        // Remove subscription handle from state
-        set((draft) => {
-            const draftSession = draft.sessions.get(pubkey);
-            if (draftSession) {
-                draftSession.subscription = undefined; // Set to undefined instead of deleting
-            }
+        // Remove subscription handle from state immutably
+        set((state) => {
+            const session = state.sessions.get(pubkey);
+            if (!session) return {};
+            const updatedSession = { ...session, subscription: undefined };
+            const newSessions = new Map(state.sessions);
+            newSessions.set(pubkey, updatedSession);
+            return { sessions: newSessions };
         });
     } else {
         console.debug(`No active subscription found for session ${pubkey} to stop.`);

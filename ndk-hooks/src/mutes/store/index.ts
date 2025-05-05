@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { immer } from "zustand/middleware/immer";
 import type { Hexpubkey, NDKEvent } from "@nostr-dev-kit/ndk";
 import type { NDKMutesState, NDKUserMutes, MuteableItem } from "./types";
 import { initMutes } from "./init";
@@ -14,7 +13,7 @@ import { addExtraMuteItems } from "./add-extra-mute-items";
  */
 import NDK, { NDKList } from "@nostr-dev-kit/ndk";
 
-const mutesStateCreator = (set: (state: any) => void, get: () => NDKMutesState) => ({
+const mutesStateCreator = (set: (partial: Partial<NDKMutesState> | ((state: NDKMutesState) => Partial<NDKMutesState>)) => void, get: () => NDKMutesState) => ({
     ndk: undefined, // Will be set by init
     mutes: new Map<string, NDKUserMutes>(),
     extraMutes: {
@@ -36,9 +35,7 @@ const mutesStateCreator = (set: (state: any) => void, get: () => NDKMutesState) 
      * Initialize the mute store with an NDK instance.
      */
     init: (ndkInstance: NDK) => {
-        set((state: NDKMutesState) => {
-            state.ndk = ndkInstance;
-        });
+        set({ ndk: ndkInstance });
     },
 
     initMutes: (pubkey: Hexpubkey) => initMutes(set, get, pubkey),
@@ -49,10 +46,4 @@ const mutesStateCreator = (set: (state: any) => void, get: () => NDKMutesState) 
     addExtraMuteItems: (items: MuteableItem[]) => addExtraMuteItems(set, get, items),
 });
 
-// Create the store using the Immer middleware
-/**
- * Factory function to create a Zustand store for NDK mutes, given an NDK instance.
- */
-export const useNDKMutes = create(immer(mutesStateCreator));
-// Export the state type
-export type { NDKMutesState };
+export const useNDKMutes = create(mutesStateCreator);

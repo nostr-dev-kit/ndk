@@ -1,6 +1,5 @@
 import type NDK from "@nostr-dev-kit/ndk";
 import { type StateCreator, create } from "zustand";
-import { immer } from "zustand/middleware/immer";
 
 import type { Hexpubkey, NDKSigner, NDKUser } from "@nostr-dev-kit/ndk";
 import type { NDKSessionsState, NDKUserSession, SessionStartOptions } from "./types";
@@ -16,8 +15,7 @@ import { updateSession } from "./update-session";
 /**
  * Zustand store for managing NDK user sessions.
  */
-// Define the state creator with Immer middleware type
-const sessionStateCreator: StateCreator<NDKSessionsState, [["zustand/immer", never]]> = (set, get) => ({
+const sessionStateCreator: StateCreator<NDKSessionsState> = (set, get) => ({
     ndk: undefined, // Add NDK instance holder
     sessions: new Map<Hexpubkey, NDKUserSession>(),
     signers: new Map<Hexpubkey, NDKSigner>(), // Keep signers map for addSession logic
@@ -50,8 +48,4 @@ const sessionStateCreator: StateCreator<NDKSessionsState, [["zustand/immer", nev
     updateSession: (pubkey: Hexpubkey, data: Partial<NDKUserSession>) => updateSession(set, get, pubkey, data),
 });
 
-// Create the store using the Immer middleware
-export const useNDKSessions = create(immer(sessionStateCreator));
-
-// Export the state type directly from types.ts for external use
-export type { NDKSessionsState };
+export const useNDKSessions = create(sessionStateCreator);

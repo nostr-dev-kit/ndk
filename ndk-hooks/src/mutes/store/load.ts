@@ -11,8 +11,12 @@ import { EMPTY_MUTE_CRITERIA } from "../hooks";
  * @param pubkey The user's public key
  * @param event The mute list event (kind 10000)
  */
-export const loadMuteList = (set: (state: any) => void, get: () => NDKMutesState, event: NDKEvent) => {
-    set((state: any) => {
+export const loadMuteList = (
+    set: (partial: Partial<NDKMutesState> | ((state: NDKMutesState) => Partial<NDKMutesState>)) => void,
+    get: () => NDKMutesState,
+    event: NDKEvent
+) => {
+    set((state) => {
         const pubkey = event.pubkey;
 
         // Initialize mutes if they don't exist
@@ -21,30 +25,40 @@ export const loadMuteList = (set: (state: any) => void, get: () => NDKMutesState
         }
 
         const userMutes = state.mutes.get(pubkey) ?? EMPTY_MUTE_CRITERIA;
-        if (!userMutes) return;
+        if (!userMutes) return {};
 
-        const newMutedPubkeys = new Set<Hexpubkey>();
-        const newMutedEvents = new Set<string>();
-        const newMutedHashtags = new Set<string>();
-        const newMutedWords = new Set<string>();
+        // Clone userMutes for immutability
+        const updatedUserMutes = {
+            ...userMutes,
+            pubkeys: new Set<Hexpubkey>(),
+            eventIds: new Set<string>(),
+            hashtags: new Set<string>(),
+            words: new Set<string>(),
+            muteListEvent: NDKList.from(event),
+        };
 
         for (const tag of event.tags) {
-            if (tag[0] === "p") newMutedPubkeys.add(tag[1]);
-            else if (tag[0] === "e") newMutedEvents.add(tag[1]);
-            else if (tag[0] === "t") newMutedHashtags.add(tag[1]);
-            else if (tag[0] === "word") newMutedWords.add(tag[1]);
+            if (tag[0] === "p") updatedUserMutes.pubkeys.add(tag[1]);
+            else if (tag[0] === "e") updatedUserMutes.eventIds.add(tag[1]);
+            else if (tag[0] === "t") updatedUserMutes.hashtags.add(tag[1]);
+            else if (tag[0] === "word") updatedUserMutes.words.add(tag[1]);
         }
 
-        userMutes.pubkeys = newMutedPubkeys;
-        userMutes.eventIds = newMutedEvents;
-        userMutes.hashtags = newMutedHashtags;
-        userMutes.words = newMutedWords;
-        userMutes.muteListEvent = event;
+        // Clone mutes map and set updated user mutes
+        const newMutes = new Map(state.mutes);
+        newMutes.set(pubkey, updatedUserMutes);
 
-        // Update muteCriteria if this is the active pubkey
+        let update: Partial<NDKMutesState> = { mutes: newMutes };
+
+        // Update muteCriteria and muteList if this is the active pubkey
         if (state.activePubkey === pubkey) {
-            state.muteCriteria = computeMuteCriteria(userMutes, state.extraMutes);
-            state.muteList = NDKList.from(event);
+            update = {
+                ...update,
+                muteCriteria: computeMuteCriteria(updatedUserMutes, state.extraMutes),
+                muteList: NDKList.from(event),
+            };
         }
+
+        return update;
     });
 };

@@ -7,10 +7,15 @@ import { computeMuteCriteria } from "../utils/compute-mute-criteria";
  * @param set Zustand set function
  * @param pubkey The pubkey to set as active
  */
-export function setActivePubkey(set: (fn: (draft: NDKMutesState) => void) => void, pubkey: Hexpubkey | null) {
+export function setActivePubkey(
+    set: (partial: Partial<NDKMutesState> | ((state: NDKMutesState) => Partial<NDKMutesState>)) => void,
+    pubkey: Hexpubkey | null
+) {
     set((state) => {
-        state.activePubkey = pubkey;
         const userMutes = pubkey ? state.mutes.get(pubkey) : undefined;
-        state.muteCriteria = computeMuteCriteria(userMutes, state.extraMutes);
+        return {
+            activePubkey: pubkey,
+            muteCriteria: computeMuteCriteria(userMutes, state.extraMutes),
+        };
     });
 }

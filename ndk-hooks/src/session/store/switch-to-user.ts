@@ -1,5 +1,4 @@
 import type { Hexpubkey, NDKSigner } from "@nostr-dev-kit/ndk";
-import type { Draft } from "immer";
 import { useNDKStore } from "../../ndk/store";
 import { useNDKMutes } from "../../mutes/store";
 import type { NDKSessionsState } from "./types";
@@ -12,7 +11,7 @@ import type { NDKSessionsState } from "./types";
  * @see useNDKSessionSwitch in src/session/hooks/index.ts
  */
 export const switchToUser = (
-    set: (fn: (draft: Draft<NDKSessionsState>) => void) => void,
+    set: (partial: Partial<NDKSessionsState> | ((state: NDKSessionsState) => Partial<NDKSessionsState>)) => void,
     get: () => NDKSessionsState,
     pubkey: Hexpubkey | null,
 ): void => {
@@ -40,15 +39,22 @@ export const switchToUser = (
     // Set NDK signer (can be undefined if no signer is associated with the session)
     useNDKStore.getState().setSigner(signer);
 
-    // Update active pubkey and lastActive timestamp
-    set((draft) => {
-        draft.activePubkey = pubkey;
+    // Update active pubkey and lastActive timestamp immutably
+    set((state) => {
+        let newSessions = state.sessions;
+        let newActivePubkey: Hexpubkey | undefined = pubkey === null ? undefined : pubkey;
         if (pubkey) {
-            const draftSession = draft.sessions.get(pubkey);
-            if (draftSession) {
-                draftSession.lastActive = Date.now() / 1000;
+            const session = state.sessions.get(pubkey);
+            if (session) {
+                const updatedSession = { ...session, lastActive: Date.now() / 1000 };
+                newSessions = new Map(state.sessions);
+                newSessions.set(pubkey, updatedSession);
             }
         }
+        return {
+            activePubkey: newActivePubkey,
+            sessions: newSessions,
+        };
     });
 
     // Synchronize with mute store

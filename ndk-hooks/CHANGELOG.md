@@ -1,5 +1,39 @@
 # @nostr-dev-kit/ndk-hooks
 
+## 1.1.31
+
+### Patch Changes
+
+- bump
+
+## 1.1.30
+
+### Patch Changes
+
+- remove immer dependency
+
+## 1.1.29
+
+### Patch Changes
+
+- move call to enableMapSet() to the entry point
+
+## 1.1.28
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.14.9
+    - @nostr-dev-kit/ndk-wallet@0.5.13
+
+## 1.1.27
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.14.8
+    - @nostr-dev-kit/ndk-wallet@0.5.12
+
 ## 1.1.26
 
 ### Patch Changes

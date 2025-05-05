@@ -174,6 +174,9 @@ export enum NDKKind {
     GroupAdmins = 39001, // NIP-29
     GroupMembers = 39002, // NIP-29
 
+    FollowPack = 39089,
+    MediaFollowPack = 39092,
+
     // NIP-89: App Metadata
     AppRecommendation = 31989,
     AppHandler = 31990,

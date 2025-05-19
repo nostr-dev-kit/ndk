@@ -9,7 +9,7 @@ import { computeMuteCriteria } from "../utils/compute-mute-criteria";
  */
 export function setActivePubkey(
     set: (partial: Partial<NDKMutesState> | ((state: NDKMutesState) => Partial<NDKMutesState>)) => void,
-    pubkey: Hexpubkey | null
+    pubkey: Hexpubkey | null,
 ) {
     set((state) => {
         const userMutes = pubkey ? state.mutes.get(pubkey) : undefined;

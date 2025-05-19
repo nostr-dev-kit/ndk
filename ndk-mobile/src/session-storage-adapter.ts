@@ -1,5 +1,4 @@
 import * as SecureStore from "expo-secure-store";
-import type { Hexpubkey } from "@nostr-dev-kit/ndk";
 import { loadSessionsFromStorage, type NDKSessionStorageAdapter } from "@nostr-dev-kit/ndk-hooks";
 
 /**

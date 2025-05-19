@@ -13,11 +13,7 @@ import type { NDKRpcResponse } from "./rpc.js";
 import { NDKNostrRpc } from "./rpc.js";
 import { ndkSignerFromPayload } from "../deserialization.js";
 import { registerSigner } from "../registry.js";
-import {
-    NostrConnectOptions,
-    generateNostrConnectUri,
-    nostrConnectGenerateSecret
-} from "./nostrconnect.js";
+import { NostrConnectOptions, generateNostrConnectUri, nostrConnectGenerateSecret } from "./nostrconnect.js";
 /**
  * This NDKSigner implements NIP-46, which allows remote signing of events.
  * This class is meant to be used client-side, paired with the NDKNip46Backend or a NIP-46 backend (like Nostr-Connect)
@@ -84,21 +80,27 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
     private nostrConnectSecret?: string;
 
     /**
-     * 
+     *
      * Don't instantiate this directly. Use the static methods instead.
-     * 
+     *
      * @example:
      * // for bunker:// flow
      * const signer = NDKNip46Signer.bunker(ndk, "bunker://<connection-token>")
      * const signer = NDKNip46Signer.bunker(ndk, "<your-nip05>"); // with nip05 flow
      * // for nostrconnect:// flow
      * const signer = NDKNip46Signer.nostrconnect(ndk, "wss://relay.example.com")
-     * 
+     *
      * @param ndk - The NDK instance to use
      * @param userOrConnectionToken - The public key, or a connection token, of the npub that wants to be published as
      * @param localSigner - The signer that will be used to request events to be signed
      */
-    public constructor(ndk: NDK, userOrConnectionToken?: string | false, localSigner?: NDKPrivateKeySigner | string, relayUrls?: string[], nostrConnectOptions?: NostrConnectOptions) {
+    public constructor(
+        ndk: NDK,
+        userOrConnectionToken?: string | false,
+        localSigner?: NDKPrivateKeySigner | string,
+        relayUrls?: string[],
+        nostrConnectOptions?: NostrConnectOptions,
+    ) {
         super();
 
         this.ndk = ndk;
@@ -129,11 +131,15 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
 
     /**
      * Connnect with a bunker:// flow
-     * @param ndk 
+     * @param ndk
      * @param userOrConnectionToken bunker:// connection string
      * @param localSigner If you have previously authenticated with this signer, you can restore the session by providing the previously authenticated key
      */
-    static bunker(ndk: NDK, userOrConnectionToken?: string, localSigner?: NDKPrivateKeySigner | string): NDKNip46Signer {
+    static bunker(
+        ndk: NDK,
+        userOrConnectionToken?: string,
+        localSigner?: NDKPrivateKeySigner | string,
+    ): NDKNip46Signer {
         return new NDKNip46Signer(ndk, userOrConnectionToken, localSigner);
     }
 
@@ -143,7 +149,12 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
      * @param relay - Relay used to connect with the signer
      * @param localSigner If you have previously authenticated with this signer, you can restore the session by providing the previously authenticated key
      */
-    static nostrconnect(ndk: NDK, relay: string, localSigner?: NDKPrivateKeySigner | string, nostrConnectOptions?: NostrConnectOptions): NDKNip46Signer {
+    static nostrconnect(
+        ndk: NDK,
+        relay: string,
+        localSigner?: NDKPrivateKeySigner | string,
+        nostrConnectOptions?: NostrConnectOptions,
+    ): NDKNip46Signer {
         return new NDKNip46Signer(ndk, undefined, localSigner, [relay], nostrConnectOptions);
     }
 
@@ -157,7 +168,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
             pubkey,
             this.nostrConnectSecret,
             this.relayUrls?.[0],
-            nostrConnectOptions
+            nostrConnectOptions,
         );
     }
 
@@ -223,7 +234,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
                     resolve(this._user);
                 }
             };
-            
+
             this.startListening();
             this.rpc.on("response", connect);
         });
@@ -236,7 +247,7 @@ export class NDKNip46Signer extends EventEmitter implements NDKSigner {
         }
 
         if (this.nostrConnectSecret) return this.blockUntilReadyNostrConnect();
-        
+
         if (this.nip05 && !this.userPubkey) {
             const user = await NDKUser.fromNip05(this.nip05, this.ndk);
 

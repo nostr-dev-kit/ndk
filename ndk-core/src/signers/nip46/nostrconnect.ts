@@ -33,7 +33,7 @@ export function generateNostrConnectUri(
     pubkey: string,
     secret: string,
     relay?: string,
-    options?: NostrConnectOptions
+    options?: NostrConnectOptions,
 ): string {
     const meta = {
         name: options?.name ? encodeURIComponent(options.name) : "",

@@ -13,7 +13,10 @@ import { addExtraMuteItems } from "./add-extra-mute-items";
  */
 import NDK, { NDKList } from "@nostr-dev-kit/ndk";
 
-const mutesStateCreator = (set: (partial: Partial<NDKMutesState> | ((state: NDKMutesState) => Partial<NDKMutesState>)) => void, get: () => NDKMutesState) => ({
+const mutesStateCreator = (
+    set: (partial: Partial<NDKMutesState> | ((state: NDKMutesState) => Partial<NDKMutesState>)) => void,
+    get: () => NDKMutesState,
+) => ({
     ndk: undefined, // Will be set by init
     mutes: new Map<string, NDKUserMutes>(),
     extraMutes: {

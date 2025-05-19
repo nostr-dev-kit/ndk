@@ -48,7 +48,7 @@ export class NDKFollowPack extends NDKEvent {
      */
     get image(): string | undefined {
         // Look for an "imeta" tag first
-        const imetaTag = this.tags.find(tag => tag[0] === "imeta");
+        const imetaTag = this.tags.find((tag) => tag[0] === "imeta");
         if (imetaTag) {
             const imeta = mapImetaTag(imetaTag);
             if (imeta.url) return imeta.url;
@@ -68,7 +68,7 @@ export class NDKFollowPack extends NDKEvent {
      */
     set image(value: string | NDKImetaTag | undefined) {
         // Remove existing "imeta" and "image" tags
-        this.tags = this.tags.filter(tag => tag[0] !== "imeta" && tag[0] !== "image");
+        this.tags = this.tags.filter((tag) => tag[0] !== "imeta" && tag[0] !== "image");
 
         if (typeof value === "string") {
             if (value !== undefined) {
@@ -89,16 +89,14 @@ export class NDKFollowPack extends NDKEvent {
      * Gets all pubkeys from p tags.
      */
     get pubkeys(): string[] {
-        return this.tags
-            .filter(tag => tag[0] === "p" && typeof tag[1] === "string")
-            .map(tag => tag[1]);
+        return this.tags.filter((tag) => tag[0] === "p" && typeof tag[1] === "string").map((tag) => tag[1]);
     }
 
     /**
      * Sets the pubkeys (replaces all p tags).
      */
     set pubkeys(pubkeys: string[]) {
-        this.tags = this.tags.filter(tag => tag[0] !== "p");
+        this.tags = this.tags.filter((tag) => tag[0] !== "p");
         for (const pubkey of pubkeys) {
             this.tags.push(["p", pubkey]);
         }
@@ -122,7 +120,7 @@ export class NDKFollowPack extends NDKEvent {
      * Helper to set or update a tag.
      */
     protected setTag(tagName: string, value: string | undefined) {
-        this.tags = this.tags.filter(tag => tag[0] !== tagName);
+        this.tags = this.tags.filter((tag) => tag[0] !== tagName);
         if (value !== undefined) {
             this.tags.push([tagName, value]);
         }

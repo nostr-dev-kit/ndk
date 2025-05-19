@@ -14,7 +14,7 @@ import { EMPTY_MUTE_CRITERIA } from "../hooks";
 export const loadMuteList = (
     set: (partial: Partial<NDKMutesState> | ((state: NDKMutesState) => Partial<NDKMutesState>)) => void,
     get: () => NDKMutesState,
-    event: NDKEvent
+    event: NDKEvent,
 ) => {
     set((state) => {
         const pubkey = event.pubkey;

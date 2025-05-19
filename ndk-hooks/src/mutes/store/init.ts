@@ -10,7 +10,7 @@ import type { Hexpubkey } from "@nostr-dev-kit/ndk";
 export const initMutes = (
     set: (partial: Partial<NDKMutesState> | ((state: NDKMutesState) => Partial<NDKMutesState>)) => void,
     get: () => NDKMutesState,
-    pubkey: Hexpubkey
+    pubkey: Hexpubkey,
 ) => {
     set((state) => {
         if (state.mutes.has(pubkey)) return {};

@@ -42,8 +42,7 @@ function handleKindFollowEvent(
     last_updated_at = event.created_at,
 ): void {
     const kindFollowSet =
-        session.kindFollowSet ??
-        new Map<NDKKind, Map<Hexpubkey, { followed: boolean; last_updated_at: number }>>();
+        session.kindFollowSet ?? new Map<NDKKind, Map<Hexpubkey, { followed: boolean; last_updated_at: number }>>();
 
     // get all the kind numbers in the follow event
     const kinds = event.getMatchingTags("k").map((t) => Number(t[1]));

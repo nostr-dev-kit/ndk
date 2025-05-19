@@ -7,19 +7,21 @@ import { SessionStartOptions } from "../../session/store/types";
 
 interface NDKHeadlessProps {
     ndk: NDKConstructorParams;
-    session: {
-        storage: NDKSessionStorageAdapter;
-        opts: SessionStartOptions;
-    } | false;
-};
+    session:
+        | {
+              storage: NDKSessionStorageAdapter;
+              opts: SessionStartOptions;
+          }
+        | false;
+}
 
 /**
  * Add a headless component to make it simpler to instantiate NDK in React apps.
- * 
+ *
  * @example
  * ```tsx
  * import { NDKHeadless } from "@nostr-dev-kit/ndk-hooks";
- * 
+ *
  * function App() {
  *   return (
  *     <>
@@ -32,10 +34,7 @@ interface NDKHeadlessProps {
  *  );
  * }
  */
-export function NDKHeadless({
-    ndk,
-    session = false,
-}: NDKHeadlessProps) {
+export function NDKHeadless({ ndk, session = false }: NDKHeadlessProps) {
     const initNDK = useNDKInit();
 
     useEffect(() => {
@@ -44,6 +43,6 @@ export function NDKHeadless({
     }, []);
 
     useNDKSessionMonitor(session ? session.storage : false, session ? session.opts : undefined);
-    
+
     return null;
 }

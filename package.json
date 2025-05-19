@@ -17,6 +17,7 @@
         "changeset": "changeset",
         "cs": "changeset",
         "cs:ver": "changeset version",
+        "test": "bun vitest",
         "cs:pub": "changeset publish",
         "version-packages": "changeset version",
         "release": "turbo build --filter=docs^... && changeset publish",

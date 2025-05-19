@@ -13,7 +13,7 @@ import { identifyMuteItem } from "../utils/identify-mute-item";
 export const addExtraMuteItems = (
     set: (partial: Partial<NDKMutesState> | ((state: NDKMutesState) => Partial<NDKMutesState>)) => void,
     get: () => NDKMutesState,
-    items: MuteableItem[]
+    items: MuteableItem[],
 ) => {
     set((state) => {
         // Clone sets for immutability

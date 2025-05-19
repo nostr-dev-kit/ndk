@@ -8,7 +8,7 @@ import { mapImetaTag } from "../../utils/imeta";
 const imetaObj: NDKImetaTag = {
     url: "https://example.com/image.png",
     alt: "Example image",
-    dim: "100x100"
+    dim: "100x100",
 };
 
 describe("NDKFollowPack", () => {
@@ -35,11 +35,11 @@ describe("NDKFollowPack", () => {
 
             fp.title = "Test Title";
             expect(fp.title).toBe("Test Title");
-            expect(fp.tags.find(t => t[0] === "title")).toEqual(["title", "Test Title"]);
+            expect(fp.tags.find((t) => t[0] === "title")).toEqual(["title", "Test Title"]);
 
             fp.title = undefined;
             expect(fp.title).toBeUndefined();
-            expect(fp.tags.find(t => t[0] === "title")).toBeUndefined();
+            expect(fp.tags.find((t) => t[0] === "title")).toBeUndefined();
         });
 
         it("should get/set identifier (d tag)", () => {
@@ -59,17 +59,17 @@ describe("NDKFollowPack", () => {
                 const fp = new NDKFollowPack();
                 fp.image = "https://example.com/image.png";
                 expect(fp.image).toBe("https://example.com/image.png");
-                expect(fp.tags.find(t => t[0] === "image")).toEqual(["image", "https://example.com/image.png"]);
+                expect(fp.tags.find((t) => t[0] === "image")).toEqual(["image", "https://example.com/image.png"]);
             });
 
             it("should get/set image with NDKImetaTag object", () => {
                 const fp = new NDKFollowPack();
                 fp.image = imetaObj;
                 // Should set both imeta and image tags
-                const imetaTag = fp.tags.find(t => t[0] === "imeta");
+                const imetaTag = fp.tags.find((t) => t[0] === "imeta");
                 expect(imetaTag).toBeDefined();
                 expect(mapImetaTag(imetaTag! as any).url).toBe(imetaObj.url);
-                expect(fp.tags.find(t => t[0] === "image")).toEqual(["image", imetaObj.url]);
+                expect(fp.tags.find((t) => t[0] === "image")).toEqual(["image", imetaObj.url]);
             });
 
             it("should prefer imeta over image when both are present", () => {
@@ -82,12 +82,12 @@ describe("NDKFollowPack", () => {
             it("should remove both imeta and image tags when image is set to undefined", () => {
                 const fp = new NDKFollowPack();
                 fp.image = imetaObj;
-                expect(fp.tags.find(t => t[0] === "imeta")).toBeDefined();
-                expect(fp.tags.find(t => t[0] === "image")).toBeDefined();
+                expect(fp.tags.find((t) => t[0] === "imeta")).toBeDefined();
+                expect(fp.tags.find((t) => t[0] === "image")).toBeDefined();
 
                 fp.image = undefined;
-                expect(fp.tags.find(t => t[0] === "imeta")).toBeUndefined();
-                expect(fp.tags.find(t => t[0] === "image")).toBeUndefined();
+                expect(fp.tags.find((t) => t[0] === "imeta")).toBeUndefined();
+                expect(fp.tags.find((t) => t[0] === "image")).toBeUndefined();
             });
         });
 
@@ -97,11 +97,11 @@ describe("NDKFollowPack", () => {
 
             fp.pubkeys = ["pk1", "pk2"];
             expect(fp.pubkeys).toEqual(["pk1", "pk2"]);
-            expect(fp.tags.filter(t => t[0] === "p").length).toBe(2);
+            expect(fp.tags.filter((t) => t[0] === "p").length).toBe(2);
 
             fp.pubkeys = [];
             expect(fp.pubkeys).toEqual([]);
-            expect(fp.tags.find(t => t[0] === "p")).toBeUndefined();
+            expect(fp.tags.find((t) => t[0] === "p")).toBeUndefined();
         });
 
         it("should get/set description", () => {
@@ -110,11 +110,11 @@ describe("NDKFollowPack", () => {
 
             fp.description = "A follow pack description";
             expect(fp.description).toBe("A follow pack description");
-            expect(fp.tags.find(t => t[0] === "description")).toEqual(["description", "A follow pack description"]);
+            expect(fp.tags.find((t) => t[0] === "description")).toEqual(["description", "A follow pack description"]);
 
             fp.description = undefined;
             expect(fp.description).toBeUndefined();
-            expect(fp.tags.find(t => t[0] === "description")).toBeUndefined();
+            expect(fp.tags.find((t) => t[0] === "description")).toBeUndefined();
         });
     });
 
@@ -122,19 +122,19 @@ describe("NDKFollowPack", () => {
         it("should remove tags when setting undefined values", () => {
             const fp = new NDKFollowPack();
             fp.title = "Test";
-            expect(fp.tags.find(t => t[0] === "title")).toBeDefined();
+            expect(fp.tags.find((t) => t[0] === "title")).toBeDefined();
 
             fp.title = undefined;
-            expect(fp.tags.find(t => t[0] === "title")).toBeUndefined();
+            expect(fp.tags.find((t) => t[0] === "title")).toBeUndefined();
         });
 
         it("should remove all p tags when setting pubkeys to empty array", () => {
             const fp = new NDKFollowPack();
             fp.pubkeys = ["pk1", "pk2"];
-            expect(fp.tags.filter(t => t[0] === "p").length).toBe(2);
+            expect(fp.tags.filter((t) => t[0] === "p").length).toBe(2);
 
             fp.pubkeys = [];
-            expect(fp.tags.find(t => t[0] === "p")).toBeUndefined();
+            expect(fp.tags.find((t) => t[0] === "p")).toBeUndefined();
         });
 
         it("should handle malformed or missing tags gracefully", () => {

@@ -131,7 +131,7 @@ export function useNDKInit() {
             initializeSessionStore(ndkInstance);
             initializeMutesStore(ndkInstance);
         },
-        [setNDK, initializeProfilesStore, initializeSessionStore],
+        [setNDK, initializeProfilesStore, initializeSessionStore, initializeMutesStore],
     );
 
     return initializeNDK;

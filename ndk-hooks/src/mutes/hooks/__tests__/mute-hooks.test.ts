@@ -96,7 +96,7 @@ describe("Mute Hooks", () => {
             expect(result.pubkeys.size).toBe(0);
             expect(result.eventIds.size).toBe(0);
             expect(result.hashtags.size).toBe(0);
-            expect(result.words && result.words.size).toBe(0);
+            expect(result.words?.size).toBe(0);
         });
     });
 

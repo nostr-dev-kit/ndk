@@ -16,12 +16,12 @@ export const isItemMuted = (get: () => NDKMutesState, pubkey: Hexpubkey, item: s
 
     switch (type) {
         case "pubkey":
-            return (userMutes && userMutes.pubkeys.has(item)) || extraMutes.pubkeys.has(item);
+            return userMutes?.pubkeys.has(item) || extraMutes.pubkeys.has(item);
         case "event":
-            return (userMutes && userMutes.eventIds.has(item)) || extraMutes.eventIds.has(item);
+            return userMutes?.eventIds.has(item) || extraMutes.eventIds.has(item);
         case "hashtag": {
             const lowerItem = item.toLowerCase();
-            return (userMutes && userMutes.hashtags.has(lowerItem)) || extraMutes.hashtags.has(lowerItem);
+            return userMutes?.hashtags.has(lowerItem) || extraMutes.hashtags.has(lowerItem);
         }
         case "word": {
             const lowerItem = item.toLowerCase();

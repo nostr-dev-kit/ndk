@@ -40,7 +40,7 @@ export function NDKHeadless({ ndk, session = false }: NDKHeadlessProps) {
     useEffect(() => {
         const _ndk = new NDK(ndk);
         initNDK(_ndk);
-    }, []);
+    }, [initNDK, ndk]);
 
     useNDKSessionMonitor(session ? session.storage : false, session ? session.opts : undefined);
 

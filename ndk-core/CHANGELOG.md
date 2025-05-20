@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk
 
+## 2.14.13
+
+### Patch Changes
+
+- enhance NDKDraft event handling and integrate wrapEvent function
+
 ## 2.14.12
 
 ### Patch Changes

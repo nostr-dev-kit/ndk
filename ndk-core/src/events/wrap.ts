@@ -14,6 +14,7 @@ import { NDKVideo } from "./kinds/video.js";
 import { NDKWiki } from "./kinds/wiki.js";
 import { NDKBlossomList } from "./kinds/blossom-list.js";
 import { NDKFollowPack } from "./kinds/follow-pack.js";
+import { NDKDraft } from "src/index.js";
 
 export function wrapEvent<T extends NDKEvent>(event: NDKEvent): T | Promise<T> | NDKEvent {
     const eventWrappingMap = new Map();
@@ -23,6 +24,7 @@ export function wrapEvent<T extends NDKEvent>(event: NDKEvent): T | Promise<T> |
         NDKCashuMintList,
         NDKArticle,
         NDKHighlight,
+        NDKDraft,
         NDKWiki,
         NDKNutzap,
         NDKSimpleGroupMemberList,

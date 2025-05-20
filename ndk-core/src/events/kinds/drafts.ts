@@ -3,6 +3,7 @@ import type { NDKRelaySet } from "../../relay/sets/index.js";
 import type { NDKSigner } from "../../signers/index.js";
 import type { NostrEvent } from "../index.js";
 import { NDKEvent } from "../index.js";
+import { wrapEvent } from "../wrap.js";
 import { NDKKind } from "./index.js";
 
 /**
@@ -18,7 +19,7 @@ import { NDKKind } from "./index.js";
  * draft.publish();
  */
 export class NDKDraft extends NDKEvent {
-    public _event: NostrEvent | undefined;
+    public _event?: NDKEvent;
     static kind = NDKKind.Draft;
     static kinds = [NDKKind.Draft, NDKKind.DraftCheckpoint];
 
@@ -47,7 +48,7 @@ export class NDKDraft extends NDKEvent {
      * Event that is to be saved.
      */
     set event(e: NDKEvent | NostrEvent) {
-        if (e instanceof NDKEvent) this._event = e.rawEvent();
+        if (!(e instanceof NDKEvent)) this._event = new NDKEvent(undefined, e);
         else this._event = e;
 
         this.prepareEvent();
@@ -76,7 +77,7 @@ export class NDKDraft extends NDKEvent {
      * @returns NDKEvent of the draft event or null if the draft event has been deleted (emptied).
      */
     async getEvent(signer?: NDKSigner) {
-        if (this._event) return new NDKEvent(this.ndk, this._event);
+        if (this._event) return this._event;
 
         signer ??= this.ndk?.signer;
         if (!signer) throw new Error("No signer available");
@@ -87,8 +88,8 @@ export class NDKDraft extends NDKEvent {
             try {
                 await this.decrypt(user, signer);
                 const payload = JSON.parse(this.content);
-                this._event = payload;
-                return new NDKEvent(this.ndk, payload);
+                this._event = await wrapEvent(new NDKEvent(this.ndk, payload));
+                return this._event;
             } catch (e) {
                 console.error(e);
                 return undefined;
@@ -103,7 +104,7 @@ export class NDKDraft extends NDKEvent {
         this.removeTag("k");
         if (this._event.kind) this.tags.push(["k", this._event.kind.toString()]);
 
-        this.content = JSON.stringify(this._event);
+        this.content = JSON.stringify(this._event.rawEvent());
     }
 
     /**

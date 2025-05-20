@@ -40,8 +40,8 @@ export function NDKHeadless({ ndk, session = false }: NDKHeadlessProps) {
     // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     useEffect(() => {
         const _ndk = new NDK(ndk);
-        _ndk.connect();
         initNDK(_ndk);
+        _ndk.connect();
     }, []);
 
     useNDKSessionMonitor(session ? session.storage : false, session ? session.opts : undefined);

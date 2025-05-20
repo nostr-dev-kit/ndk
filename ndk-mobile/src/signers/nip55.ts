@@ -1,19 +1,21 @@
-import debug from "debug";
-
 import type NDK from "@nostr-dev-kit/ndk";
 import { type NDKEncryptionScheme, type NDKSigner, NDKUser, type NostrEvent } from "@nostr-dev-kit/ndk";
 import { registerSigner } from "@nostr-dev-kit/ndk";
 import * as Nip55 from "expo-nip55";
+
+export type NDKNip55Permission = Nip55.Permission;
 
 export class NDKNip55Signer implements NDKSigner {
     private _pubkey: string;
     private _user?: NDKUser;
     public packageName: string;
     private ndk?: NDK;
+    public permissions: NDKNip55Permission[];
 
-    constructor(packageName: string, ndk?: NDK) {
+    constructor(packageName: string, ndk?: NDK, permissions: NDKNip55Permission[] = []) {
         this.packageName = packageName;
         this.ndk = ndk;
+        this.permissions = permissions;
     }
 
     /**
@@ -25,7 +27,7 @@ export class NDKNip55Signer implements NDKSigner {
 
         await Nip55.setPackageName(this.packageName);
 
-        const data = await Nip55.getPublicKey();
+        const data = await Nip55.getPublicKey(this.packageName, this.permissions);
         if (!data) throw new Error("No signer available found");
 
         this._user = new NDKUser({ npub: data.npub });
@@ -66,8 +68,9 @@ export class NDKNip55Signer implements NDKSigner {
      * @nip Optionally returns an array with single supported nip or empty, to check for truthy or falsy.
      * @return A promised list of any (or none) of these strings  ['nip04', 'nip44']
      */
-    async encryptionEnabled?(_scheme?: NDKEncryptionScheme): Promise<NDKEncryptionScheme[]> {
-        return [];
+    async encryptionEnabled?(scheme?: NDKEncryptionScheme): Promise<NDKEncryptionScheme[]> {
+        if (scheme) return [scheme];
+        return Promise.resolve(["nip04", "nip44"]);
     }
 
     /**
@@ -77,9 +80,17 @@ export class NDKNip55Signer implements NDKSigner {
      * @param value - The value to be encrypted.
      * @param nip - which NIP is being implemented ('nip04', 'nip44')
      */
-    async encrypt(_recipient: NDKUser, _value: string, _scheme?: NDKEncryptionScheme): Promise<string> {
-        return "";
+    async encrypt(recipient: NDKUser, value: string, scheme?: NDKEncryptionScheme): Promise<string> {
+        const randomId = Math.random().toString(36).substring(2, 15);
+        if (scheme === "nip04") {
+            const result = await Nip55.nip04Encrypt(this.packageName, value, randomId, recipient.pubkey, this._pubkey) as unknown as { result: string };
+            return result.result;
+        } else {
+            const result = await Nip55.nip44Encrypt(this.packageName, value, randomId, recipient.pubkey, this._pubkey) as unknown as { result: string };
+            return result.result;
+        }
     }
+
     /**
      * Decrypts the given value.
      * Implementing classes SHOULD equate legacy (only nip04) to nip == `nip04` || undefined
@@ -87,9 +98,17 @@ export class NDKNip55Signer implements NDKSigner {
      * @param value - The value to be decrypted
      * @param scheme - which NIP is being implemented ('nip04', 'nip44', 'nip49')
      */
-    async decrypt(_sender: NDKUser, _value: string, _scheme?: NDKEncryptionScheme): Promise<string> {
-        return "";
+    async decrypt(sender: NDKUser, value: string, scheme?: NDKEncryptionScheme): Promise<string> {
+        const randomId = Math.random().toString(36).substring(2, 15);
+        if (scheme === "nip04") {
+            const result = await Nip55.nip04Decrypt(this.packageName, value, randomId, this.pubkey, sender.pubkey) as unknown as { result: string };
+            return result.result;
+        } else {
+            const result = await Nip55.nip44Decrypt(this.packageName, value, randomId, this.pubkey, sender.pubkey) as unknown as { result: string };
+            return result.result;
+        }
     }
+
 
     /**
      * Serializes the signer's package name and pubkey.
@@ -137,7 +156,7 @@ export class NDKNip55Signer implements NDKSigner {
 
         return signer;
     }
-} // End of NDKNip55Signer class
+}
 
 // Register this signer type with the core registry *outside* the class definition
 // This ensures ndkSignerFromPayload can deserialize it.

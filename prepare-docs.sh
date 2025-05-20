@@ -7,6 +7,7 @@ DEXIE_DIR="ndk-cache-dexie"
 NOSTRCACHE_DIR="ndk-cache-nostr"
 SQLITE_WASM_DIR="ndk-cache-sqlite-wasm"
 MOBILE_DIR="ndk-mobile"
+BLOSSOM_DIR="ndk-blossom"
 WALLET_DIR="ndk-wallet"
 SVELTE_DIR="ndk-svelte"
 HOOKS_DIR="ndk-hooks"
@@ -87,6 +88,9 @@ copy_dir_contents "$SQLITE_WASM_DIR/docs" "$DOCS_DIR/cache/sqlite-wasm"
 # Mobile
 copy_dir_contents "$MOBILE_DIR/docs" "$DOCS_DIR/mobile"
 copy_dir_contents "$MOBILE_DIR/snippets" "$DOCS_DIR/snippets/mobile"
+
+# Blossom
+copy_dir_contents "$BLOSSOM_DIR/docs" "$DOCS_DIR"
 
 # Wallet
 copy_dir_contents "$WALLET_DIR/docs" "$DOCS_DIR/wallet"

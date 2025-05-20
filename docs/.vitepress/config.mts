@@ -84,6 +84,12 @@ export default defineConfig({
                 ],
             },
             {
+                text: "Blossom (Media)",
+                items: [
+                    { text: "Introduction", link: "/blossom/getting-started" },
+                ]
+            },
+            {
                 text: "Internals",
                 items: [{ text: "Subscription Lifecycle", link: "/internals/subscriptions" }],
             },

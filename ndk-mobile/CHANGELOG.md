@@ -1,5 +1,32 @@
 # @nostr-dev-kit/ndk-mobile
 
+## 0.7.12
+
+### Patch Changes
+
+- update expo-nip55
+
+## 0.7.11
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.14.11
+
+## 0.7.10
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.14.10
+
+## 0.7.9
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.14.8
+
 ## 0.7.8
 
 ### Patch Changes

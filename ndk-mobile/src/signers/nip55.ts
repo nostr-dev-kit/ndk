@@ -83,10 +83,22 @@ export class NDKNip55Signer implements NDKSigner {
     async encrypt(recipient: NDKUser, value: string, scheme?: NDKEncryptionScheme): Promise<string> {
         const randomId = Math.random().toString(36).substring(2, 15);
         if (scheme === "nip04") {
-            const result = await Nip55.nip04Encrypt(this.packageName, value, randomId, recipient.pubkey, this._pubkey) as unknown as { result: string };
+            const result = (await Nip55.nip04Encrypt(
+                this.packageName,
+                value,
+                randomId,
+                recipient.pubkey,
+                this._pubkey,
+            )) as unknown as { result: string };
             return result.result;
         } else {
-            const result = await Nip55.nip44Encrypt(this.packageName, value, randomId, recipient.pubkey, this._pubkey) as unknown as { result: string };
+            const result = (await Nip55.nip44Encrypt(
+                this.packageName,
+                value,
+                randomId,
+                recipient.pubkey,
+                this._pubkey,
+            )) as unknown as { result: string };
             return result.result;
         }
     }
@@ -101,14 +113,25 @@ export class NDKNip55Signer implements NDKSigner {
     async decrypt(sender: NDKUser, value: string, scheme?: NDKEncryptionScheme): Promise<string> {
         const randomId = Math.random().toString(36).substring(2, 15);
         if (scheme === "nip04") {
-            const result = await Nip55.nip04Decrypt(this.packageName, value, randomId, this.pubkey, sender.pubkey) as unknown as { result: string };
+            const result = (await Nip55.nip04Decrypt(
+                this.packageName,
+                value,
+                randomId,
+                this.pubkey,
+                sender.pubkey,
+            )) as unknown as { result: string };
             return result.result;
         } else {
-            const result = await Nip55.nip44Decrypt(this.packageName, value, randomId, this.pubkey, sender.pubkey) as unknown as { result: string };
+            const result = (await Nip55.nip44Decrypt(
+                this.packageName,
+                value,
+                randomId,
+                this.pubkey,
+                sender.pubkey,
+            )) as unknown as { result: string };
             return result.result;
         }
     }
-
 
     /**
      * Serializes the signer's package name and pubkey.

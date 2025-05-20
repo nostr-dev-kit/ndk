@@ -43,6 +43,9 @@ export enum NDKKind {
     GenericReply = 1111,
 
     Media = 1063,
+
+    DraftCheckpoint = 1234,
+
     Report = 1984,
     Label = 1985,
 

@@ -1,5 +1,19 @@
 # @nostr-dev-kit/ndk-cache-sqlite-wasm
 
+## 0.4.8
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.14.11
+
+## 0.4.7
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.14.10
+
 ## 0.4.6
 
 ### Patch Changes

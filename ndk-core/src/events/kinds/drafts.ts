@@ -1,4 +1,4 @@
-import type { NDK } from "../../ndk/index.js";
+import { NDK } from "../../ndk/index.js";
 import type { NDKRelaySet } from "../../relay/sets/index.js";
 import type { NDKSigner } from "../../signers/index.js";
 import type { NostrEvent } from "../index.js";
@@ -19,6 +19,8 @@ import { NDKKind } from "./index.js";
  */
 export class NDKDraft extends NDKEvent {
     public _event: NostrEvent | undefined;
+    static kind = NDKKind.Draft;
+    static kinds = [NDKKind.Draft, NDKKind.DraftCheckpoint];
 
     constructor(ndk: NDK | undefined, rawEvent?: NostrEvent | NDKEvent) {
         super(ndk, rawEvent);
@@ -49,6 +51,23 @@ export class NDKDraft extends NDKEvent {
         else this._event = e;
 
         this.prepareEvent();
+    }
+
+    /**
+     * Marks the event as a checkpoint for another draft event.
+     */
+    set checkpoint(parent: NDKDraft | null) {
+        if (parent) {
+            this.tags.push(parent.tagReference());
+            this.kind = NDKKind.DraftCheckpoint;
+        } else {
+            this.removeTag("a");
+            this.kind = NDKKind.Draft;
+        }
+    }
+
+    get isCheckpoint(): boolean {
+        return this.kind === NDKKind.DraftCheckpoint;
     }
 
     /**

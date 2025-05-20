@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk-hooks
 
+## 1.1.41
+
+### Patch Changes
+
+- connect on headless
+
 ## 1.1.40
 
 ### Patch Changes

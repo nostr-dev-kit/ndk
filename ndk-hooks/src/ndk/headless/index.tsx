@@ -7,7 +7,7 @@ import { SessionStartOptions } from "../../session/store/types";
 
 interface NDKHeadlessProps {
     ndk: NDKConstructorParams;
-    session:
+    session?:
         | {
               storage: NDKSessionStorageAdapter;
               opts: SessionStartOptions;
@@ -37,10 +37,11 @@ interface NDKHeadlessProps {
 export function NDKHeadless({ ndk, session = false }: NDKHeadlessProps) {
     const initNDK = useNDKInit();
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     useEffect(() => {
         const _ndk = new NDK(ndk);
         initNDK(_ndk);
-    }, [initNDK, ndk]);
+    }, []);
 
     useNDKSessionMonitor(session ? session.storage : false, session ? session.opts : undefined);
 

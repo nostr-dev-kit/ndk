@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk
 
+## 2.14.14
+
+### Patch Changes
+
+- update NDKDraft save method to use publishReplaceable
+
 ## 2.14.13
 
 ### Patch Changes

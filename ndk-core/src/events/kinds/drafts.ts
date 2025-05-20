@@ -123,6 +123,6 @@ export class NDKDraft extends NDKEvent {
 
         if (publish === false) return;
 
-        return this.publish(relaySet);
+        return this.publishReplaceable(relaySet);
     }
 }

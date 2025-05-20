@@ -1,5 +1,19 @@
 # @nostr-dev-kit/ndk-mobile
 
+## 0.8.2
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/ndk-hooks@1.1.40
+
+## 0.8.1
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/ndk-hooks@1.1.39
+
 ## 0.8.0
 
 ### Minor Changes

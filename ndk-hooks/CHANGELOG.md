@@ -1,5 +1,17 @@
 # @nostr-dev-kit/ndk-hooks
 
+## 1.1.40
+
+### Patch Changes
+
+- bump
+
+## 1.1.39
+
+### Patch Changes
+
+- update NDKHeadless useEffect dependencies for correct initialization
+
 ## 1.1.38
 
 ### Patch Changes

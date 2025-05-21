@@ -77,7 +77,8 @@ export async function uploadToServer(
                     xhr.addEventListener("load", () => {
                         if (xhr.status >= 200 && xhr.status < 300) {
                             try {
-                                return JSON.parse(xhr.responseText);
+                                const parsedResponse = JSON.parse(xhr.responseText);
+                                resolve(parsedResponse);
                             } catch (error) {
                                 reject(
                                     new NDKBlossomServerError(

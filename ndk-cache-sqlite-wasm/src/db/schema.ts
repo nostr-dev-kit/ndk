@@ -50,5 +50,15 @@ export const SCHEMA = {
             lastTryAt INTEGER
         );
     `,
+    event_tags: `
+        CREATE TABLE IF NOT EXISTS event_tags (
+            event_id TEXT NOT NULL,
+            tag TEXT NOT NULL,
+            value TEXT,
+            PRIMARY KEY (event_id, tag, value)
+        );
+        CREATE INDEX IF NOT EXISTS idx_event_tags_event_id ON event_tags(event_id);
+        CREATE INDEX IF NOT EXISTS idx_event_tags_tag ON event_tags(tag);
+    `,
     // Add more tables as needed to match ndk-mobile
 };

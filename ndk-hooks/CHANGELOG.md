@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk-hooks
 
+## 1.1.42
+
+### Patch Changes
+
+- attempt to connect in a different way
+
 ## 1.1.41
 
 ### Patch Changes

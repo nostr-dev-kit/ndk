@@ -65,7 +65,7 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
             await this.initializeWorker();
         } else {
             this.db = await loadWasmAndInitDb(this.wasmUrl, this.dbName);
-            await runMigrations(this.db);
+            await runMigrations(this.db!);
         }
     }
 
@@ -94,8 +94,16 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
         try {
             this.worker = new Worker(effectiveWorkerUrl, { type: "module" });
             console.log("Web Worker created successfully");
-        } catch (err: any) {
-            const msg = err && err.message ? err.message.toLowerCase() : "";
+        } catch (err: unknown) {
+            function hasMessage(e: unknown): e is { message: string } {
+                return (
+                    typeof e === "object" &&
+                    e !== null &&
+                    "message" in e &&
+                    typeof (e as { message: unknown }).message === "string"
+                );
+            }
+            const msg = hasMessage(err) ? err.message.toLowerCase() : "";
             if (
                 msg.includes("404") ||
                 msg.includes("not found") ||

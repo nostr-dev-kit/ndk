@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk-cache-sqlite-wasm
 
+## 0.4.13
+
+### Patch Changes
+
+- add event_tags schema and update runMigrations to include it; correct relay_url reference in getRelayStatus
+
 ## 0.4.12
 
 ### Patch Changes

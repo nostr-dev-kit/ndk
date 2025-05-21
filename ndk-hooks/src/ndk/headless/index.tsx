@@ -1,6 +1,6 @@
 import NDK, { NDKConstructorParams } from "@nostr-dev-kit/ndk";
 import { NDKSessionStorageAdapter } from "../../session/storage";
-import { useNDKInit } from "../hooks";
+import { useNDK, useNDKInit } from "../hooks";
 import { useEffect } from "react";
 import { useNDKSessionMonitor } from "../../session/hooks/use-ndk-session-monitor";
 import { SessionStartOptions } from "../../session/store/types";
@@ -36,13 +36,17 @@ interface NDKHeadlessProps {
  */
 export function NDKHeadless({ ndk, session = false }: NDKHeadlessProps) {
     const initNDK = useNDKInit();
+    const { ndk: ndkInstance } = useNDK();
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     useEffect(() => {
-        const _ndk = new NDK(ndk);
-        initNDK(_ndk);
-        _ndk.connect();
+        const ndkInstance = new NDK(ndk);
+        initNDK(ndkInstance);
     }, []);
+
+    useEffect(() => {
+        ndkInstance?.connect();
+    }, [ndkInstance]);
 
     useNDKSessionMonitor(session ? session.storage : false, session ? session.opts : undefined);
 

@@ -60,5 +60,4 @@ export const SCHEMA = {
         CREATE INDEX IF NOT EXISTS idx_event_tags_event_id ON event_tags(event_id);
         CREATE INDEX IF NOT EXISTS idx_event_tags_tag ON event_tags(tag);
     `,
-    // Add more tables as needed to match ndk-mobile
 };

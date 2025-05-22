@@ -1,16 +1,16 @@
-import NDK, { NDKUser, NDKEvent, NDKFilter, mapImetaTag, NDKBlossomList, NDKImetaTag } from "@nostr-dev-kit/ndk";
-import { BlossomUploadOptions, ErrorCodes, SHA256Calculator } from "../types";
-import { createAuthenticatedFetchOptions } from "../utils/auth";
-import { fetchWithRetry, extractResponseJson } from "../utils/http";
-import { defaultSHA256Calculator } from "../utils/sha256";
+import NDK, { NDKFilter, mapImetaTag, NDKImetaTag } from "@nostr-dev-kit/ndk";
+import {BlossomUploadOptions, ErrorCodes} from "../types";
+import {createAuthenticatedFetchOptions} from "../utils/auth";
+import {extractResponseJson, fetchWithRetry} from "../utils/http";
+import {defaultSHA256Calculator} from "../utils/sha256";
 import {
-    NDKBlossomUploadError,
-    NDKBlossomServerError,
-    NDKBlossomNotFoundError,
     NDKBlossomAuthError,
+    NDKBlossomNotFoundError,
+    NDKBlossomServerError,
+    NDKBlossomUploadError,
 } from "../utils/errors";
-import { DebugLogger } from "../utils/logger";
-import { extractHashFromUrl } from "../healing/url-healing";
+import {DebugLogger} from "../utils/logger";
+import {extractHashFromUrl} from "../healing/url-healing";
 import NDKBlossom from "../blossom";
 
 const logger = new DebugLogger("ndk:blossom:uploader");
@@ -77,7 +77,8 @@ export async function uploadToServer(
                     xhr.addEventListener("load", () => {
                         if (xhr.status >= 200 && xhr.status < 300) {
                             try {
-                                return JSON.parse(xhr.responseText);
+                                const parsedResponse = JSON.parse(xhr.responseText);
+                                resolve(parsedResponse);
                             } catch (error) {
                                 reject(
                                     new NDKBlossomServerError(
@@ -168,6 +169,7 @@ export async function uploadToServer(
 /**
  * Upload a file to a user's Blossom servers
  *
+ * @param ndkBlossom - NDKBlossom instance
  * @param file File to upload
  * @param options Upload options
  * @returns Blob metadata with imeta format

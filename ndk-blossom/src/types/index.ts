@@ -28,6 +28,16 @@ export interface BlossomServerList {
  */
 export interface BlossomUploadOptions {
     /**
+     * If provided, always use this server for upload (bypasses blossom list and fallback).
+     */
+    server?: string;
+
+    /**
+     * If no blossom servers are available or all fail, use this server as a fallback.
+     */
+    fallbackServer?: string;
+
+    /**
      * Maximum number of retry attempts for network requests
      */
     maxRetries?: number;

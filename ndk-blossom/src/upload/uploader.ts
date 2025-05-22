@@ -179,35 +179,26 @@ export async function uploadFile(
 ): Promise<NDKImetaTag> {
     logger.debug(`Starting file upload`, { fileName: file.name, fileType: file.type, fileSize: file.size });
 
-    // Get user's Blossom server list
-    const serverList = await ndkBlossom.getServerList();
-    if (!serverList) {
-        throw new NDKBlossomUploadError(
-            "No Blossom server list found in user profile. Add servers to your profile before uploading.",
-            ErrorCodes.SERVER_LIST_EMPTY,
-        );
-    }
-
-    let serverUrls: string[];
-    try {
-        serverUrls = serverList.servers;
-    } catch (error) {
-        if (error instanceof NDKBlossomNotFoundError) {
-            // No server list found
+    // If a specific server is provided, use only that server
+    if (options.server) {
+        try {
+            const result = await uploadToServer(ndkBlossom.ndk, file, options.server, options);
+            logger.debug(`Upload successful to specified server ${options.server}`);
+            return result;
+        } catch (error) {
+            logger.error(`Upload to specified server ${options.server} failed:`, error);
             throw new NDKBlossomUploadError(
-                "No Blossom servers found in user profile. Add servers to your profile before uploading.",
-                ErrorCodes.SERVER_LIST_EMPTY,
+                `Upload failed on specified server: ${options.server}: ${(error as Error).message}`,
+                ErrorCodes.UPLOAD_FAILED,
             );
         }
-        throw error;
     }
 
-    // Check if server list is empty
-    if (!serverUrls.length) {
-        throw new NDKBlossomUploadError(
-            "No Blossom servers found in user profile. Add servers to your profile before uploading.",
-            ErrorCodes.SERVER_LIST_EMPTY,
-        );
+    // Get user's Blossom server list
+    const serverList = await ndkBlossom.getServerList();
+    let serverUrls: string[] = [];
+    if (serverList && Array.isArray(serverList.servers)) {
+        serverUrls = serverList.servers;
     }
 
     // Try each server in order
@@ -242,6 +233,18 @@ export async function uploadFile(
                 }
                 // If action is 'skip', we continue to the next server
             }
+        }
+    }
+
+    // If all blossom servers failed and fallbackServer is provided, try it
+    if (options.fallbackServer) {
+        try {
+            const result = await uploadToServer(ndkBlossom.ndk, file, options.fallbackServer, options);
+            logger.debug(`Upload successful to fallback server ${options.fallbackServer}`);
+            return result;
+        } catch (error) {
+            logger.error(`Upload to fallback server ${options.fallbackServer} failed:`, error);
+            errors.push({ serverUrl: options.fallbackServer, error: error as Error });
         }
     }
 

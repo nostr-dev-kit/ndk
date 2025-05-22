@@ -38,6 +38,42 @@ await ndk.connect();
 
 NDK-Blossom makes it easy to upload files to Blossom servers. It automatically tries the user's preferred Blossom servers until it succeeds.
 
+### Upload with Fallback and Custom Server Options
+
+You can control which server(s) are used for uploads by passing options to the `upload` method:
+
+#### Fallback Server
+
+If the user's Blossom server list is empty or all uploads fail, you can provide a fallback server:
+
+```typescript
+await blossom.upload(file, {
+    fallbackServer: "https://your-fallback-blossom.example.com"
+});
+```
+
+#### Custom Server (Bypass Blossom List)
+
+To always use a specific server and skip the user's Blossom list entirely:
+
+```typescript
+await blossom.upload(file, {
+    server: "https://your-custom-blossom.example.com"
+});
+```
+
+#### Option Reference
+
+| Option          | Type     | Description                                                                                 |
+|-----------------|----------|---------------------------------------------------------------------------------------------|
+| `server`        | string   | If provided, always use this server for upload (bypasses blossom list and fallback).         |
+| `fallbackServer`| string   | If no blossom servers are available or all fail, use this server as a fallback.             |
+| `maxRetries`    | number   | Maximum number of retry attempts for network requests.                                      |
+| `retryDelay`    | number   | Delay between retry attempts in milliseconds.                                               |
+| `headers`       | object   | Additional headers to include in the upload request.                                        |
+| `onProgress`    | function | Callback for upload progress.                                                               |
+
+See the [API documentation](./) for more details.
 ```typescript
 import { imetaTagToTag } from '@nostr-dev-kit/ndk/lib/utils/imeta';
 

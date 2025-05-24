@@ -1,3 +1,6 @@
+// Import the actual sql.js types
+import type initSqlJs from "sql.js";
+
 export interface NDKCacheAdapterSqliteWasmOptions {
     dbName?: string;
     wasmUrl?: string;
@@ -8,28 +11,27 @@ export interface NDKCacheAdapterSqliteWasmOptions {
 export type WorkerMessage = {
     id: string;
     type: string;
-    payload?: any;
+    payload?: unknown;
 };
 
 export type WorkerResponse = {
     id: string;
-    result?: any;
+    result?: unknown;
     error?: {
         message: string;
         stack?: string;
     };
 };
 
-export interface SQLQueryResult {
-    columns: string[];
-    values: any[][];
-}
+// Re-export sql.js types for convenience
+export type QueryExecResult = initSqlJs.QueryExecResult;
+export type Database = initSqlJs.Database;
 
-export type SQLDatabase = {
-    run: (sql: string, params?: any[]) => void;
-    exec: (sql: string, params?: any[]) => SQLQueryResult;
-    export: () => Uint8Array;
-    close: () => void;
+// Extended Database type that includes our custom methods added in wasm-loader
+export type SQLDatabase = Database & {
     _scheduleSave: () => void;
     saveToIndexedDB: () => Promise<void>;
 };
+
+// Legacy type alias for backward compatibility
+export type SQLQueryResult = QueryExecResult;

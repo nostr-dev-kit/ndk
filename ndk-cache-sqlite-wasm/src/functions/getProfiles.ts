@@ -39,15 +39,15 @@ export async function getProfiles(
         if (!this.db) throw new Error("Database not initialized");
         // Query all profiles and filter in JS
         const stmt = "SELECT pubkey, profile FROM profiles";
-        const result = this.db.exec(stmt);
+        const results = this.db.exec(stmt);
         const map = new Map<Hexpubkey, NDKUserProfile>();
-        if (result && result.values && result.values.length > 0) {
-            for (const row of result.values) {
+        if (results && results.length > 0 && results[0].values && results[0].values.length > 0) {
+            for (const row of results[0].values) {
                 const [pubkey, profileStr] = row;
                 try {
-                    const profile = JSON.parse(profileStr);
-                    if (filter(pubkey, profile)) {
-                        map.set(pubkey, profile);
+                    const profile = JSON.parse(profileStr as string);
+                    if (filter(pubkey as string, profile)) {
+                        map.set(pubkey as string, profile);
                     }
                 } catch {
                     // skip invalid profile

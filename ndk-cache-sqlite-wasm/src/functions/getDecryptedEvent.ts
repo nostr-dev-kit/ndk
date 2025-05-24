@@ -8,14 +8,16 @@ export function getDecryptedEvent(this: NDKCacheAdapterSqliteWasm, eventId: NDKE
     if (!this.db) throw new Error("Database not initialized");
 
     const stmt = "SELECT event FROM decrypted_events WHERE id = ? LIMIT 1";
-    const result = this.db.exec(stmt, [eventId]);
-    if (result && result.values && result.values.length > 0) {
-        const eventStr = result.values[0][0];
+    const results = this.db.exec(stmt, [eventId]);
+    if (results && results.length > 0 && results[0].values && results[0].values.length > 0) {
+        const eventStr = results[0].values[0][0] as string;
         try {
             return JSON.parse(eventStr);
         } catch {
             return null;
         }
+    } else {
+        console.warn("[WASM] No decrypted event found for ID:", eventId);
     }
     return null;
 }

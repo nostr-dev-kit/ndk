@@ -1,8 +1,6 @@
-const DB_KEY_PREFIX = "ndk-cache-sqlite-wasm:";
-
 export function openIndexedDB(dbName: string): Promise<IDBDatabase> {
     return new Promise((resolve, reject) => {
-        const request = indexedDB.open(DB_KEY_PREFIX + dbName, 1);
+        const request = indexedDB.open(dbName, 1);
         request.onupgradeneeded = () => {
             request.result.createObjectStore("db", { keyPath: "id" });
         };
@@ -28,7 +26,9 @@ export async function saveToIndexedDB(dbName: string, data: Uint8Array): Promise
         const tx = db.transaction("db", "readwrite");
         const store = tx.objectStore("db");
         const putReq = store.put({ id: "main", data });
-        putReq.onsuccess = () => resolve();
+        putReq.onsuccess = () => {
+            resolve();
+        };
         putReq.onerror = () => reject(putReq.error);
     });
 }

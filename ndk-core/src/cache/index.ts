@@ -5,6 +5,7 @@ import type { Hexpubkey, ProfilePointer } from "../user/index.js";
 import type { NDKUserProfile } from "../user/profile.js";
 import type { NDKLnUrlData } from "../zapper/ln.js";
 import type { NDKNutzapState } from "../types.js";
+import NDK from "src/index.js";
 
 export type NDKCacheEntry<T> = T & {
     cachedAt?: number;
@@ -22,6 +23,9 @@ export interface NDKCacheAdapter {
      * Weather the cache is ready.
      */
     ready?: boolean;
+
+    initializeAsync?(ndk: NDK): Promise<void>;
+    initialize?(ndk: NDK): void;
 
     /**
      * Either synchronously or asynchronously queries the cache.

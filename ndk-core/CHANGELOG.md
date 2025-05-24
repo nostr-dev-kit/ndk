@@ -1,5 +1,23 @@
 # @nostr-dev-kit/ndk
 
+## 2.14.22
+
+### Patch Changes
+
+- correct pubkey
+
+## 2.14.21
+
+### Patch Changes
+
+- decrypt from the right person
+
+## 2.14.20
+
+### Patch Changes
+
+- p-tag counterparty
+
 ## 2.14.19
 
 ### Patch Changes

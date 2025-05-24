@@ -2,12 +2,18 @@ import type { NDKCacheAdapterSqliteWasm } from "../index";
 import { NDKEvent, NDKSubscription, NDKFilter } from "@nostr-dev-kit/ndk";
 import { deserialize, matchFilter } from "@nostr-dev-kit/ndk";
 
-import type { SQLQueryResult } from "../types";
+import type { QueryExecResult } from "../types";
 
 /**
  * Utility to normalize DB rows from `{ columns, values }` to array of objects.
  */
-function normalizeDbRows(queryResult: SQLQueryResult): Record<string, any>[] {
+function normalizeDbRows(queryResults: QueryExecResult[]): Record<string, unknown>[] {
+    if (!queryResults || queryResults.length === 0) {
+        return [];
+    }
+
+    // Take the first result (sql.js exec returns an array of results)
+    const queryResult = queryResults[0];
     if (!queryResult || !queryResult.columns || !queryResult.values) {
         return [];
     }
@@ -15,7 +21,7 @@ function normalizeDbRows(queryResult: SQLQueryResult): Record<string, any>[] {
     const { columns, values } = queryResult;
 
     return values.map((row) => {
-        const obj: Record<string, any> = {};
+        const obj: Record<string, unknown> = {};
         columns.forEach((col, idx) => {
             obj[col] = row[idx];
         });
@@ -108,8 +114,6 @@ export function query(this: NDKCacheAdapterSqliteWasm, subscription: NDKSubscrip
             if (normalizedEvents && normalizedEvents.length > 0)
                 addResults(foundEvents(subscription, normalizedEvents, filter));
         } else {
-            // eslint-disable-next-line no-console
-            console.log("\t👀 no logic on how to run this query in the sqlite wasm cache", JSON.stringify(filter));
         }
     }
 

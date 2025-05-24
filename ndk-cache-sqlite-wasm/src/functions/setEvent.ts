@@ -21,7 +21,17 @@ export async function setEvent(
     `;
     const tags = JSON.stringify(event.tags ?? []);
     const raw = event.serialize(true, true);
-    const values = [event.id, event.pubkey, event.created_at, event.kind, tags, event.content, event.sig, raw, 0];
+    const values = [
+        event.id ?? "",
+        event.pubkey ?? "",
+        event.created_at ?? 0,
+        event.kind ?? 0,
+        tags,
+        event.content ?? "",
+        event.sig ?? "",
+        raw,
+        0,
+    ];
 
     if (this.useWorker) {
         // Worker mode: send command, return promise

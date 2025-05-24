@@ -16,14 +16,14 @@ export function getAllProfilesSync(this: NDKCacheAdapterSqliteWasm): Map<Hexpubk
     const profiles = new Map<Hexpubkey, NDKCacheEntry<NDKUserProfile>>();
 
     const stmt = "SELECT pubkey, profile, updated_at FROM profiles";
-    const result = this.db.exec(stmt);
+    const results = this.db.exec(stmt);
 
-    if (result && result.values && result.values.length > 0) {
-        for (const row of result.values) {
+    if (results && results.length > 0 && results[0].values && results[0].values.length > 0) {
+        for (const row of results[0].values) {
             const [pubkey, profileStr, updatedAt] = row;
             try {
-                const profile = JSON.parse(profileStr);
-                profiles.set(pubkey, { ...profile, cachedAt: updatedAt });
+                const profile = JSON.parse(profileStr as string);
+                profiles.set(pubkey as string, { ...profile, cachedAt: updatedAt as number });
             } catch {
                 // skip invalid profile
             }

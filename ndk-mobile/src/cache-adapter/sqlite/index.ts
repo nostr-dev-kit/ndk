@@ -125,7 +125,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
      *
      * This should be called before using it.
      */
-    public initialize() {
+    public initialize(): void {
         const startTime = performance.now();
         let { user_version: schemaVersion } = this.db.getFirstSync("PRAGMA user_version;") as {
             user_version: number;

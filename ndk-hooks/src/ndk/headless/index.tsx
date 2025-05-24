@@ -41,7 +41,21 @@ export function NDKHeadless({ ndk, session = false }: NDKHeadlessProps) {
     // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     useEffect(() => {
         const ndkInstance = new NDK(ndk);
-        initNDK(ndkInstance);
+
+        // if it has an initialization function, call it and await it
+        if (typeof ndkInstance.cacheAdapter?.initializeAsync === "function") {
+            ndkInstance.cacheAdapter
+                .initializeAsync(ndkInstance)
+                .catch((error) => {
+                    console.error("Failed to initialize NDK cache adapter:", error);
+                })
+                .finally(() => {
+                    initNDK(ndkInstance);
+                });
+        } else {
+            ndkInstance.cacheAdapter?.initialize?.(ndkInstance);
+            initNDK(ndkInstance);
+        }
     }, []);
 
     useEffect(() => {

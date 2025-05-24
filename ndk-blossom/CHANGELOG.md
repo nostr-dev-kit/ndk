@@ -1,5 +1,26 @@
 # @nostr-dev-kit/ndk-blossom
 
+## 0.1.21
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.14.22
+
+## 0.1.20
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.14.21
+
+## 0.1.19
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.14.20
+
 ## 0.1.18
 
 ### Patch Changes

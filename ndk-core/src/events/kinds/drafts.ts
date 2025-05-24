@@ -96,7 +96,15 @@ export class NDKDraft extends NDKEvent {
 
         if (this.content && this.content.length > 0) {
             try {
-                await this.decrypt(this.author, signer);
+                const ownPubkey = signer.pubkey;
+                const pubkeys = [this.tagValue("p"), this.pubkey].filter(Boolean);
+
+                // if there is a pubkey that is not ours, use that
+                const counterpartyPubkey = pubkeys.find((pubkey) => pubkey !== ownPubkey);
+                let user: NDKUser;
+                user = new NDKUser({ pubkey: counterpartyPubkey ?? ownPubkey });
+
+                await this.decrypt(user, signer);
                 const payload = JSON.parse(this.content);
                 this._event = await wrapEvent(new NDKEvent(this.ndk, payload));
                 return this._event;
@@ -130,6 +138,12 @@ export class NDKDraft extends NDKEvent {
         // Get the user
         const user = this.counterparty || (await signer.user());
         await this.encrypt(user, signer);
+
+        if (this.counterparty) {
+            const pubkey = this.counterparty.pubkey;
+            this.removeTag("p");
+            this.tags.push(["p", pubkey]);
+        }
 
         if (publish === false) return;
 

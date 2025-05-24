@@ -1,10 +1,6 @@
-// src/worker.ts
-console.log("Worker script module loading...");
 import initSqlJs from "sql.js";
 import { loadFromIndexedDB, saveToIndexedDB } from "./db/indexeddb-utils";
 import { runMigrations } from "./db/migrations";
-
-console.log("Worker script imports loaded");
 
 let db: any = null;
 let SQL: any = null;
@@ -40,26 +36,19 @@ function patchDbPersistence(database: any) {
 }
 
 async function initializeDatabase(config: { dbName: string; wasmUrl?: string }) {
-    console.log("Worker: initializeDatabase called with config:", config);
     dbName = config.dbName || "ndk-cache";
     try {
         const sqlJsConfig: any = {};
         if (config.wasmUrl) {
             sqlJsConfig.locateFile = () => config.wasmUrl;
-            console.log(`Worker: Loading WASM from ${config.wasmUrl}`);
         } else {
-            console.log("Worker: No WASM URL provided, using default");
         }
-        console.log("Worker: Initializing SQL.js with config:", sqlJsConfig);
         SQL = await initSqlJs(sqlJsConfig);
-        console.log("Worker: SQL.js initialized successfully");
 
         const savedData = await loadFromIndexedDB(dbName);
         if (savedData) {
-            console.log(`Worker: Loading DB ${dbName} from IndexedDB (${savedData.byteLength} bytes)`);
             db = new SQL.Database(new Uint8Array(savedData));
         } else {
-            console.log(`Worker: Creating new DB ${dbName}`);
             db = new SQL.Database();
         }
         patchDbPersistence(db);
@@ -68,8 +57,6 @@ async function initializeDatabase(config: { dbName: string; wasmUrl?: string }) 
 
         // Initial save after migrations (in case schema changed)
         scheduleSave();
-
-        console.log(`Worker: Database ${dbName} initialized.`);
     } catch (error) {
         console.error("Worker: Database initialization failed", error);
         throw error;
@@ -77,14 +64,11 @@ async function initializeDatabase(config: { dbName: string; wasmUrl?: string }) 
 }
 
 self.onmessage = async (event: MessageEvent) => {
-    console.log("Worker: Received message:", event.data);
     const { id, type, payload } = event.data;
 
     try {
         if (type === "init") {
-            console.log("Worker: Processing init message");
             await initializeDatabase(payload);
-            console.log("Worker: Database initialized, sending response");
             self.postMessage({ id, result: "initialized" });
             return;
         }
@@ -147,7 +131,6 @@ self.onmessage = async (event: MessageEvent) => {
             default:
                 throw new Error(`Unknown command type: ${type}`);
         }
-        console.log(`Worker: Command ${type} completed, sending result for request ${id}`);
         self.postMessage({ id, result });
     } catch (error: any) {
         console.error(`Worker: Error processing command ${id} (${type}):`, error);
@@ -159,5 +142,3 @@ self.onmessage = async (event: MessageEvent) => {
 self.addEventListener("error", (event) => {
     console.error("Worker: Uncaught error:", event.message, event.error);
 });
-
-console.log("Worker script loaded.");

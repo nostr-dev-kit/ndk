@@ -18,9 +18,9 @@ export function getRelayStatus(this: NDKCacheAdapterSqliteWasm, relayUrl: string
     this.db.run(stmt);
 
     const select = "SELECT info FROM relay_status WHERE url = ? LIMIT 1";
-    const result = this.db.exec(select, [relayUrl]);
-    if (result && result.values && result.values.length > 0) {
-        const infoStr = result.values[0][0];
+    const results = this.db.exec(select, [relayUrl]);
+    if (results && results.length > 0 && results[0].values && results[0].values.length > 0) {
+        const infoStr = results[0].values[0][0] as string;
         try {
             return JSON.parse(infoStr);
         } catch {

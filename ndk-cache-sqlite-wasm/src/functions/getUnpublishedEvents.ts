@@ -12,15 +12,15 @@ export async function getUnpublishedEvents(
 
     const events: { event: NDKEvent; relays?: string[]; lastTryAt?: number }[] = [];
     const stmt = "SELECT id, event, relays, lastTryAt FROM unpublished_events";
-    const result = this.db.exec(stmt);
+    const results = this.db.exec(stmt);
 
-    if (result && result.values && result.values.length > 0) {
-        for (const row of result.values) {
+    if (results && results.length > 0 && results[0].values && results[0].values.length > 0) {
+        for (const row of results[0].values) {
             const [id, eventStr, relaysStr, lastTryAt] = row;
             try {
-                const event = JSON.parse(eventStr);
-                const relays = relaysStr ? JSON.parse(relaysStr) : [];
-                events.push({ event, relays, lastTryAt });
+                const event = JSON.parse(eventStr as string);
+                const relays = relaysStr ? JSON.parse(relaysStr as string) : [];
+                events.push({ event, relays, lastTryAt: lastTryAt as number });
             } catch {
                 // skip invalid
             }

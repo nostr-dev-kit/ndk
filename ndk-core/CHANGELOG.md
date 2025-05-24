@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk
 
+## 2.14.19
+
+### Patch Changes
+
+- Add Draft Proposal support
+
 ## 2.14.18
 
 ### Patch Changes

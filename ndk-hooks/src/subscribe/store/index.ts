@@ -1,4 +1,5 @@
-import type { NDKEvent, NDKSubscription } from "@nostr-dev-kit/ndk";
+import type { NDKEvent, NDKSubscription, NDKFilter } from "@nostr-dev-kit/ndk";
+import { matchFilter } from "@nostr-dev-kit/ndk";
 import { createStore } from "zustand/vanilla";
 
 /**
@@ -24,6 +25,7 @@ export interface SubscribeStore<T extends NDKEvent> {
     addEvents: (events: T[]) => void;
     removeEventId: (id: string) => void;
     filterMutedEvents: (muteFilter: (event: NDKEvent) => boolean) => void;
+    filterExistingEvents: (filters: NDKFilter[]) => void;
     setEose: () => void;
     reset: () => void;
 }
@@ -212,6 +214,24 @@ export const createSubscribeStore = <T extends NDKEvent>(bufferMs: number | fals
 
                 for (const [id, event] of currentEventMap.entries()) {
                     if (!muteFilter(event)) {
+                        newEventMap.set(id, event);
+                    }
+                }
+
+                const newEvents = Array.from(newEventMap.values());
+                set({ eventMap: newEventMap, events: newEvents });
+            },
+
+            filterExistingEvents: (filters: NDKFilter[]) => {
+                const state = get();
+                const currentEventMap = state.eventMap;
+                const newEventMap = new Map<string, T>();
+
+                for (const [id, event] of currentEventMap.entries()) {
+                    // Check if the event matches at least one of the filters
+                    const matchesAnyFilter = filters.some((filter) => matchFilter(filter, event.rawEvent()));
+
+                    if (matchesAnyFilter) {
                         newEventMap.set(id, event);
                     }
                 }

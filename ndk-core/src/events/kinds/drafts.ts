@@ -1,3 +1,4 @@
+import { NDKUser } from "src/user/index.js";
 import { NDK } from "../../ndk/index.js";
 import type { NDKRelaySet } from "../../relay/sets/index.js";
 import type { NDKSigner } from "../../signers/index.js";
@@ -22,6 +23,12 @@ export class NDKDraft extends NDKEvent {
     public _event?: NDKEvent;
     static kind = NDKKind.Draft;
     static kinds = [NDKKind.Draft, NDKKind.DraftCheckpoint];
+
+    /**
+     * Can be used to include a different pubkey as part of the draft.
+     * This is useful when we want to make the draft a proposal for a different user to publish.
+     */
+    public counterparty?: NDKUser;
 
     constructor(ndk: NDK | undefined, rawEvent?: NostrEvent | NDKEvent) {
         super(ndk, rawEvent);
@@ -71,6 +78,11 @@ export class NDKDraft extends NDKEvent {
         return this.kind === NDKKind.DraftCheckpoint;
     }
 
+    get isProposal(): boolean {
+        const pTag = this.tagValue("p");
+        return !!pTag && pTag !== this.pubkey;
+    }
+
     /**
      * Gets the event.
      * @param param0
@@ -82,11 +94,9 @@ export class NDKDraft extends NDKEvent {
         signer ??= this.ndk?.signer;
         if (!signer) throw new Error("No signer available");
 
-        const user = await signer.user();
-
         if (this.content && this.content.length > 0) {
             try {
-                await this.decrypt(user, signer);
+                await this.decrypt(this.author, signer);
                 const payload = JSON.parse(this.content);
                 this._event = await wrapEvent(new NDKEvent(this.ndk, payload));
                 return this._event;
@@ -118,7 +128,7 @@ export class NDKDraft extends NDKEvent {
         if (!signer) throw new Error("No signer available");
 
         // Get the user
-        const user = await signer.user();
+        const user = this.counterparty || (await signer.user());
         await this.encrypt(user, signer);
 
         if (publish === false) return;

@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/ndk-svelte",
-    "version": "2.4.23",
+    "version": "2.4.24",
     "description": "This package provides convenience functionalities to make usage of NDK with Svelte nicer.",
     "main": "./dist/index.js",
     "module": "./dist/index.mjs",
@@ -46,7 +46,7 @@
     "author": "pablof7z",
     "license": "MIT",
     "dependencies": {
-        "@nostr-dev-kit/ndk": "2.14.18"
+        "@nostr-dev-kit/ndk": "2.14.19"
     },
     "peerDependencies": {
         "svelte": "*"

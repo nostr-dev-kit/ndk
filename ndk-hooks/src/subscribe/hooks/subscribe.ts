@@ -40,8 +40,11 @@ export function useSubscribe<T extends NDKEvent, R = T[]>(
             subRef.current = null;
         }
 
+        const state = store.getState();
+        state.filterExistingEvents(filters);
+
         const setupSubscription = () => {
-            const currentFilters = filters as NDKFilter[];
+            const currentFilters = filters;
             const handleEvent = (event: NDKEvent) => {
                 if (!opts.includeDeleted && event.hasTag("deleted")) {
                     return;

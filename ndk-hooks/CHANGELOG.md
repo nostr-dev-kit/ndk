@@ -1,5 +1,17 @@
 # @nostr-dev-kit/ndk-hooks
 
+## 1.1.44
+
+### Patch Changes
+
+- change when we re-filter the store
+
+## 1.1.43
+
+### Patch Changes
+
+- fix bug where events were being kept on the store when they didn't belong
+
 ## 1.1.42
 
 ### Patch Changes

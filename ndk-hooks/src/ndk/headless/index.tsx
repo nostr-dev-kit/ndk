@@ -43,17 +43,25 @@ export function NDKHeadless({ ndk, session = false }: NDKHeadlessProps) {
         const ndkInstance = new NDK(ndk);
 
         // if it has an initialization function, call it and await it
+        console.log("Initializing NDK with options:");
         if (typeof ndkInstance.cacheAdapter?.initializeAsync === "function") {
+            console.log("Using async cache adapter initialization");
             ndkInstance.cacheAdapter
                 .initializeAsync(ndkInstance)
+                .then(() => {
+                    console.log("NDK cache adapter initialized successfully");
+                })
                 .catch((error) => {
                     console.error("Failed to initialize NDK cache adapter:", error);
                 })
                 .finally(() => {
+                    console.log("Calling initNDK");
                     initNDK(ndkInstance);
                 });
         } else {
+            console.log("Using sync cache adapter initialization");
             ndkInstance.cacheAdapter?.initialize?.(ndkInstance);
+            console.log("NDK cache adapter initialized successfully");
             initNDK(ndkInstance);
         }
     }, []);

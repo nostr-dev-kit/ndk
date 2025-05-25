@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk
 
+## 2.14.23
+
+### Patch Changes
+
+- 7476407: add optional initialize functions to cache adapter interface
+
 ## 2.14.22
 
 ### Patch Changes

@@ -1,5 +1,19 @@
 # @nostr-dev-kit/ndk-hooks
 
+## 1.2.0
+
+### Minor Changes
+
+- bump headless
+
+## 1.1.45
+
+### Patch Changes
+
+- 7476407: initialize or async-initialize cache adapter during setup
+- Updated dependencies [7476407]
+    - @nostr-dev-kit/ndk@2.14.23
+
 ## 1.1.44
 
 ### Patch Changes

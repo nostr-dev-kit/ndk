@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk-cache-sqlite-wasm
 
+## 0.5.8
+
+### Patch Changes
+
+- correct types
+
 ## 0.5.7
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/ndk-cache-sqlite-wasm",
-    "version": "0.5.7",
+    "version": "0.5.8",
     "description": "SQLite WASM cache adapter for NDK, compatible with browser and JS environments.",
     "main": "dist/index.mjs",
     "module": "dist/index.mjs",
@@ -26,7 +26,7 @@
         "sql.js": "^1.8.0"
     },
     "devDependencies": {
-        "@nostr-dev-kit/ndk": "^2.14",
+        "@nostr-dev-kit/ndk": "^2.14.23",
         "@types/sql.js": "^1.4.9",
         "typescript": "^5.0.0"
     },

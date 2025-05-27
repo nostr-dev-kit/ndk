@@ -628,6 +628,123 @@ describe("NDKEvent", () => {
                 expect(reply2.tags).toContainEqual(["k", reply1.kind?.toString()]);
             });
         });
+
+        describe("forceNip22 parameter", () => {
+            it("maintains backward compatibility when forceNip22 is not provided", async () => {
+                // Create a kind 1 event
+                const op = await fixture.eventFactory.createSignedTextNote("Hello world", "alice");
+
+                // Create reply without forceNip22 parameter
+                fixture.setupSigner("bob");
+                const reply = op.reply();
+
+                // Should behave as before - kind 1 reply to kind 1 event
+                expect(reply.kind).toBe(1);
+                expect(reply.tags).toContainEqual(["e", op.id, "", "root", op.pubkey]);
+                expect(reply.tags).toContainEqual(["p", op.pubkey]);
+            });
+
+            it("maintains backward compatibility when forceNip22 is explicitly false", async () => {
+                // Create a kind 1 event
+                const op = await fixture.eventFactory.createSignedTextNote("Hello world", "alice");
+
+                // Create reply with forceNip22: false
+                fixture.setupSigner("bob");
+                const reply = op.reply(false);
+
+                // Should behave as before - kind 1 reply to kind 1 event
+                expect(reply.kind).toBe(1);
+                expect(reply.tags).toContainEqual(["e", op.id, "", "root", op.pubkey]);
+                expect(reply.tags).toContainEqual(["p", op.pubkey]);
+            });
+
+            it("forces kind 1111 when replying to kind 1 event with forceNip22: true", async () => {
+                // Create a kind 1 event
+                const op = await fixture.eventFactory.createSignedTextNote("Hello world", "alice");
+
+                // Create reply with forceNip22: true
+                fixture.setupSigner("bob");
+                const reply = op.reply(true);
+
+                // Should create kind 1111 reply instead of kind 1
+                expect(reply.kind).toBe(1111); // GenericReply kind
+
+                // Should have proper NIP-22 tagging
+                expect(reply.tags).toContainEqual(["e", op.id, "", op.pubkey]);
+                expect(reply.tags).toContainEqual(["E", op.id, "", op.pubkey]);
+                expect(reply.tags).toContainEqual(["K", "1"]);
+                expect(reply.tags).toContainEqual(["k", "1"]);
+                expect(reply.tags).toContainEqual(["P", op.pubkey]);
+                expect(reply.tags).toContainEqual(["p", op.pubkey]);
+            });
+
+            it("forces kind 1111 when replying to non-kind 1 event with forceNip22: true", async () => {
+                // Create a non-kind 1 event (Article)
+                const article = new NDKEvent(ndk, { kind: NDKKind.Article, content: "Article content" });
+                article.tags.push(["d", "test-article"]);
+                await SignerGenerator.sign(article, "alice");
+
+                // Create reply with forceNip22: true
+                fixture.setupSigner("bob");
+                const reply = article.reply(true);
+
+                // Should create kind 1111 reply (same as default behavior for non-kind 1)
+                expect(reply.kind).toBe(1111); // GenericReply kind
+
+                // Should have proper NIP-22 tagging for addressable event
+                expect(reply.tags).toContainEqual(["a", article.tagId(), ""]);
+                expect(reply.tags).toContainEqual(["A", article.tagId(), ""]);
+                expect(reply.tags).toContainEqual(["K", article.kind?.toString()]);
+                expect(reply.tags).toContainEqual(["k", article.kind?.toString()]);
+                expect(reply.tags).toContainEqual(["P", article.pubkey]);
+                expect(reply.tags).toContainEqual(["p", article.pubkey]);
+            });
+
+            it("preserves existing thread structure when using forceNip22 on kind 1 events", async () => {
+                // Create thread with root and one reply
+                const [root, reply1] = await fixture.eventFactory.createEventChain("Hello world", "alice", [
+                    { content: "First reply", author: "bob" },
+                ]);
+
+                // Create a second reply to the first reply with forceNip22: true
+                fixture.setupSigner("carol");
+                const reply2 = reply1.reply(true);
+
+                // Should create kind 1111 reply
+                expect(reply2.kind).toBe(1111);
+
+                // Should preserve thread structure with proper tagging
+                // When forceNip22 is true, it doesn't preserve the traditional thread structure
+                // Instead it uses NIP-22 style tagging
+                expect(reply2.tags).toContainEqual(["e", reply1.id, "", reply1.pubkey]);
+                expect(reply2.tags).toContainEqual(["E", reply1.id, "", reply1.pubkey]);
+                expect(reply2.tags).toContainEqual(["p", root.pubkey]);
+                expect(reply2.tags).toContainEqual(["p", reply1.pubkey]);
+
+                // Should have NIP-22 specific tags
+                expect(reply2.tags).toContainEqual(["k", "1"]);
+            });
+
+            it("handles mixed thread with both kind 1 and kind 1111 replies", async () => {
+                // Create root kind 1 event
+                const root = await fixture.eventFactory.createSignedTextNote("Root post", "alice");
+
+                // Create normal kind 1 reply
+                fixture.setupSigner("bob");
+                const normalReply = root.reply();
+                expect(normalReply.kind).toBe(1);
+
+                // Create forced NIP-22 reply to the same root
+                fixture.setupSigner("carol");
+                const forcedReply = root.reply(true);
+                expect(forcedReply.kind).toBe(1111);
+
+                // Both should reference the same root but with different tagging styles
+                expect(normalReply.tags).toContainEqual(["e", root.id, "", "root", root.pubkey]);
+                expect(forcedReply.tags).toContainEqual(["e", root.id, "", root.pubkey]);
+                expect(forcedReply.tags).toContainEqual(["E", root.id, "", root.pubkey]);
+            });
+        });
     });
 
     describe("react", () => {

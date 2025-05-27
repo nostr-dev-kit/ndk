@@ -936,11 +936,13 @@ export class NDKEvent extends EventEmitter {
      * This function will use NIP-22 when appropriate (i.e. replies to non-kind:1 events).
      * This function does not have side-effects; it will just return an event with the appropriate tags
      * to generate the reply event; the caller is responsible for publishing the event.
+     *
+     * @param forceNip22 - Optional flag to force NIP-22 style replies (kind 1111) regardless of the original event's kind
      */
-    public reply(): NDKEvent {
+    public reply(forceNip22?: boolean): NDKEvent {
         const reply = new NDKEvent(this.ndk);
 
-        if (this.kind === 1) {
+        if (this.kind === 1 && !forceNip22) {
             reply.kind = 1;
             const opHasETag = this.hasTag("e");
 

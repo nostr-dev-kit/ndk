@@ -629,4 +629,42 @@ describe("NDKEvent", () => {
             });
         });
     });
+
+    describe("react", () => {
+        it("adds a k-tag when reacting to non-kind-1 events", async () => {
+            const targetEvent = new NDKEvent(ndk, { kind: 6, content: "repost content" });
+            targetEvent.id = "target-event-id";
+            targetEvent.pubkey = user1.pubkey;
+
+            const mockSigner = {
+                user: vi.fn().mockResolvedValue(user2),
+                sign: vi.fn().mockResolvedValue(undefined),
+            };
+            ndk.signer = mockSigner as any;
+
+            const reaction = await targetEvent.react("👍", false);
+
+            expect(reaction.kind).toBe(NDKKind.Reaction);
+            expect(reaction.content).toBe("👍");
+            expect(reaction.tags).toContainEqual(["k", "6"]);
+        });
+
+        it("does not add a k-tag when reacting to kind-1 events", async () => {
+            const targetEvent = new NDKEvent(ndk, { kind: 1, content: "text note" });
+            targetEvent.id = "target-event-id";
+            targetEvent.pubkey = user1.pubkey;
+
+            const mockSigner = {
+                user: vi.fn().mockResolvedValue(user2),
+                sign: vi.fn().mockResolvedValue(undefined),
+            };
+            ndk.signer = mockSigner as any;
+
+            const reaction = await targetEvent.react("👍", false);
+
+            expect(reaction.kind).toBe(NDKKind.Reaction);
+            expect(reaction.content).toBe("👍");
+            expect(reaction.tags.find((tag) => tag[0] === "k")).toBeUndefined();
+        });
+    });
 });

@@ -893,6 +893,11 @@ export class NDKEvent extends EventEmitter {
         } as NostrEvent);
         e.tag(this);
 
+        // add a [ "k", kind ] for all non-kind:1 events
+        if (this.kind !== NDKKind.Text) {
+            e.tags.push(["k", `${this.kind}`]);
+        }
+
         if (publish) await e.publish();
 
         return e;

@@ -65,9 +65,7 @@ export class NDKRelayConnectivity {
      * @returns A Promise that resolves when the connection is established, or rejects if the connection fails.
      */
     async connect(timeoutMs?: number, reconnect = true): Promise<void> {
-        if (
-            (this._status !== NDKRelayStatus.RECONNECTING && this._status !== NDKRelayStatus.DISCONNECTED)
-        ) {
+        if (this._status !== NDKRelayStatus.RECONNECTING && this._status !== NDKRelayStatus.DISCONNECTED) {
             this.debug(
                 "Relay requested to be connected but was in state %s or it had a reconnect timeout",
                 this._status,

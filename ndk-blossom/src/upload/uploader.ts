@@ -1,16 +1,16 @@
 import NDK, { NDKFilter, mapImetaTag, NDKImetaTag } from "@nostr-dev-kit/ndk";
-import {BlossomUploadOptions, ErrorCodes} from "../types";
-import {createAuthenticatedFetchOptions} from "../utils/auth";
-import {extractResponseJson, fetchWithRetry} from "../utils/http";
-import {defaultSHA256Calculator} from "../utils/sha256";
+import { BlossomUploadOptions, ErrorCodes } from "../types";
+import { createAuthenticatedFetchOptions } from "../utils/auth";
+import { extractResponseJson, fetchWithRetry } from "../utils/http";
+import { defaultSHA256Calculator } from "../utils/sha256";
 import {
     NDKBlossomAuthError,
     NDKBlossomNotFoundError,
     NDKBlossomServerError,
     NDKBlossomUploadError,
 } from "../utils/errors";
-import {DebugLogger} from "../utils/logger";
-import {extractHashFromUrl} from "../healing/url-healing";
+import { DebugLogger } from "../utils/logger";
+import { extractHashFromUrl } from "../healing/url-healing";
 import NDKBlossom from "../blossom";
 
 const logger = new DebugLogger("ndk:blossom:uploader");

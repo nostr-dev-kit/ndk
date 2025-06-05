@@ -39,10 +39,6 @@ import { PaymentHandler, type PaymentWithOptionalZapInfo } from "./payment.js";
 import { WalletState } from "./state/index.js";
 import { createInTxEvent, createOutTxEvent } from "./txs.js";
 
-const _startTime = Date.now();
-
-function log(_msg: string) {}
-
 /**
  * This class tracks state of a NIP-60 wallet
  */
@@ -82,15 +78,12 @@ export class NDKCashuWallet extends NDKWallet {
         this.ndk = ndk;
         this.paymentHandler = new PaymentHandler(this);
         this.state = new WalletState(this);
-
-        log("NDK Cashu Wallet constructor");
     }
 
     /**
      * Generates a backup event for this wallet
      */
     async backup(publish = true) {
-        log("NDK Cashu Wallet generating backup");
         // check if we have a key to backup
         if (this.privkeys.size === 0) throw new Error("no privkey to backup");
 
@@ -198,8 +191,6 @@ export class NDKCashuWallet extends NDKWallet {
      * with the relays, for example, by saving the time the wallet has emitted a "ready" event.
      */
     start(opts?: NDKSubscriptionOptions & { pubkey?: Hexpubkey; since?: number }): Promise<void> {
-        log("NDK Cashu Wallet starting");
-
         const activeUser = this.ndk?.activeUser;
 
         if (this.status === NDKWalletStatus.READY) return Promise.resolve();
@@ -227,23 +218,19 @@ export class NDKCashuWallet extends NDKWallet {
         const subOpts: NDKSubscriptionOptions = opts ?? {};
         subOpts.subId ??= "cashu-wallet-state";
 
-        log(`Subscribing to ${JSON.stringify(filters)} and opts ${JSON.stringify(opts)}`);
-
         return new Promise<void>((resolve) => {
-            this.sub = this.ndk.subscribe(filters, { ...subOpts, relaySet: this.relaySet }, false); // Pass relaySet via opts
+            this.sub = this.ndk.subscribe(filters, { ...subOpts, relaySet: this.relaySet }, false);
 
             this.sub.on("event:dup", eventDupHandler.bind(this));
             this.sub.on("event", (event: NDKEvent) => {
-                log(`Event ${event.kind} received`);
                 eventHandler.call(this, event);
             });
             this.sub.on("eose", () => {
-                log("Eose received");
                 this.emit("ready");
                 this.status = NDKWalletStatus.READY;
                 resolve();
             });
-            this.sub.start(true);
+            this.sub.start();
         });
     }
 

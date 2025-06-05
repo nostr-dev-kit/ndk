@@ -1,10 +1,11 @@
-import type { NDKEvent } from "@nostr-dev-kit/ndk";
-import type { NDKCacheAdapterSqlite } from "../index";
+import { NDKEvent } from "@nostr-dev-kit/ndk";
+import type { DatabaseWrapper } from "../db/database";
+import type NDK from "@nostr-dev-kit/ndk";
 
 /**
  * Retrieves an event by ID from the SQLite database using better-sqlite3.
  */
-export async function getEvent(this: NDKCacheAdapterSqlite, id: string): Promise<NDKEvent | null> {
+export async function getEvent(this: { db?: DatabaseWrapper; ndk?: NDK }, id: string): Promise<NDKEvent | null> {
     const stmt = "SELECT raw FROM events WHERE id = ? AND deleted = 0 LIMIT 1";
 
     if (!this.db) throw new Error("DB not initialized");
@@ -15,7 +16,8 @@ export async function getEvent(this: NDKCacheAdapterSqlite, id: string): Promise
 
         if (result && result.raw) {
             try {
-                return JSON.parse(result.raw);
+                const eventData = JSON.parse(result.raw);
+                return new NDKEvent(this.ndk, eventData);
             } catch {
                 return null;
             }

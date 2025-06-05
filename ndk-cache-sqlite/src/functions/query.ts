@@ -1,12 +1,13 @@
-import type { NDKCacheAdapterSqlite } from "../index";
-import { NDKEvent, NDKSubscription, NDKFilter } from "@nostr-dev-kit/ndk";
+import type { DatabaseWrapper } from "../db/database";
+import { NDKEvent, NDKSubscription, NDKFilter, type NDKRawEvent } from "@nostr-dev-kit/ndk";
 import { deserialize, matchFilter } from "@nostr-dev-kit/ndk";
+import type NDK from "@nostr-dev-kit/ndk";
 
 /**
  * Query events from the SQLite DB using NDKSubscription filters.
  * Adapted from the WASM adapter to use better-sqlite3.
  */
-export function query(this: NDKCacheAdapterSqlite, subscription: NDKSubscription): NDKEvent[] {
+export function query(this: { db?: DatabaseWrapper; ndk?: NDK }, subscription: NDKSubscription): NDKEvent[] {
     if (!this.db) throw new Error("Database not initialized");
 
     const cacheFilters = filterForCache(subscription);
@@ -25,7 +26,9 @@ export function query(this: NDKCacheAdapterSqlite, subscription: NDKSubscription
         if (hasHashtagFilter) {
             for (const key in filter) {
                 if (key.startsWith("#") && key.length === 2) {
-                    const tagValues = Array.isArray((filter as any)[key]) ? (filter as any)[key] : [];
+                    const tagValues = Array.isArray((filter as Record<string, unknown>)[key])
+                        ? ((filter as Record<string, unknown>)[key] as string[])
+                        : [];
                     const placeholders = tagValues.map(() => "?").join(",");
                     const sql = `
                         SELECT * FROM events
@@ -104,12 +107,16 @@ function filterForCache(subscription: NDKSubscription): NDKFilter[] {
 /**
  * Helper to process DB records and return NDKEvent[].
  */
-function foundEvents(subscription: NDKSubscription, records: any[], filter?: NDKFilter): NDKEvent[] {
+function foundEvents(
+    subscription: NDKSubscription,
+    records: Record<string, unknown>[],
+    filter?: NDKFilter,
+): NDKEvent[] {
     const result: NDKEvent[] = [];
     let now: number | undefined;
 
     for (const record of records) {
-        const event = foundEvent(subscription, record, record.relay, filter);
+        const event = foundEvent(subscription, record, record.relay as string | undefined, filter);
         if (event) {
             const expiration = event.tagValue("expiration");
             if (expiration) {
@@ -128,13 +135,13 @@ function foundEvents(subscription: NDKSubscription, records: any[], filter?: NDK
  */
 function foundEvent(
     subscription: NDKSubscription,
-    record: any,
+    record: Record<string, unknown>,
     relayUrl: string | undefined,
     filter?: NDKFilter,
 ): NDKEvent | null {
     try {
-        const deserializedEvent = deserialize(record.raw);
-        if (filter && !matchFilter(filter, deserializedEvent as any)) return null;
+        const deserializedEvent = deserialize(record.raw as string);
+        if (filter && !matchFilter(filter, deserializedEvent as NDKRawEvent)) return null;
         const ndkEvent = new NDKEvent(undefined, deserializedEvent);
         return ndkEvent;
     } catch (e) {

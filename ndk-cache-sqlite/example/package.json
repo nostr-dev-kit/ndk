@@ -11,7 +11,7 @@
     },
     "dependencies": {
         "@nostr-dev-kit/ndk": "^2.14.23",
-        "@nostr-dev-kit/ndk-cache-sqlite": "workspace:*"
+        "better-sqlite3": "^9.0.0"
     },
     "devDependencies": {
         "@types/node": "^20.0.0",

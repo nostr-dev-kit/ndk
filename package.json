@@ -29,6 +29,7 @@
         "ndk-cache-dexie",
         "ndk-cache-redis",
         "ndk-cache-nostr",
+        "ndk-cache-sqlite",
         "ndk-svelte",
         "ndk-hooks",
         "ndk-mobile",

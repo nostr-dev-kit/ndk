@@ -47,7 +47,7 @@ export class DatabaseWrapper {
     /**
      * Prepare a statement
      */
-    prepare(sql: string) {
+    prepare(sql: string): any {
         return this.db.prepare(sql);
     }
 

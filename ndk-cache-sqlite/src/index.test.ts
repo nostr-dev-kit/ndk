@@ -82,7 +82,7 @@ describe("NDKCacheAdapterSqlite", () => {
             expect(retrievedEvent?.content).toBe("Test content");
         });
 
-        it("should query events by filter", () => {
+        it("should query events by filter", async () => {
             const event = new NDKEvent();
             event.id = "query-test-event";
             event.pubkey = "alice";
@@ -93,7 +93,12 @@ describe("NDKCacheAdapterSqlite", () => {
             event.sig = "test-signature";
 
             // Store the event first
-            adapter.setEvent(event, []);
+            await adapter.setEvent(event, []);
+
+            // Verify the event was stored by trying to retrieve it directly
+            const storedEvent = await adapter.getEvent("query-test-event");
+            expect(storedEvent).toBeDefined();
+            expect(storedEvent?.pubkey).toBe("alice");
 
             // Create a subscription with filters
             const filter: NDKFilter = { authors: ["alice"], kinds: [1] };

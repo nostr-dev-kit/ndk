@@ -142,7 +142,7 @@ function foundEvent(
     try {
         const deserializedEvent = deserialize(record.raw as string);
         if (filter && !matchFilter(filter, deserializedEvent as NDKRawEvent)) return null;
-        const ndkEvent = new NDKEvent(undefined, deserializedEvent);
+        const ndkEvent = new NDKEvent(subscription.ndk, deserializedEvent);
         return ndkEvent;
     } catch (e) {
         console.error("failed to deserialize event", e, record.raw);

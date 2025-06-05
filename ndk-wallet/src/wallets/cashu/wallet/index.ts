@@ -197,12 +197,12 @@ export class NDKCashuWallet extends NDKWallet {
      * used by storing at the app level a time in which we know we were able to communicate
      * with the relays, for example, by saving the time the wallet has emitted a "ready" event.
      */
-    start(opts?: NDKSubscriptionOptions & { pubkey?: Hexpubkey; since?: number }) {
+    start(opts?: NDKSubscriptionOptions & { pubkey?: Hexpubkey; since?: number }): Promise<void> {
         log("NDK Cashu Wallet starting");
 
         const activeUser = this.ndk?.activeUser;
 
-        if (this.status === NDKWalletStatus.READY) return;
+        if (this.status === NDKWalletStatus.READY) return Promise.resolve();
         this.status = NDKWalletStatus.LOADING;
 
         const pubkey = opts?.pubkey ?? activeUser?.pubkey;
@@ -229,19 +229,22 @@ export class NDKCashuWallet extends NDKWallet {
 
         log(`Subscribing to ${JSON.stringify(filters)} and opts ${JSON.stringify(opts)}`);
 
-        this.sub = this.ndk.subscribe(filters, { ...subOpts, relaySet: this.relaySet }, false); // Pass relaySet via opts
+        return new Promise<void>((resolve) => {
+            this.sub = this.ndk.subscribe(filters, { ...subOpts, relaySet: this.relaySet }, false); // Pass relaySet via opts
 
-        this.sub.on("event:dup", eventDupHandler.bind(this));
-        this.sub.on("event", (event: NDKEvent) => {
-            log(`Event ${event.kind} received`);
-            eventHandler.call(this, event);
+            this.sub.on("event:dup", eventDupHandler.bind(this));
+            this.sub.on("event", (event: NDKEvent) => {
+                log(`Event ${event.kind} received`);
+                eventHandler.call(this, event);
+            });
+            this.sub.on("eose", () => {
+                log("Eose received");
+                this.emit("ready");
+                this.status = NDKWalletStatus.READY;
+                resolve();
+            });
+            this.sub.start(true);
         });
-        this.sub.on("eose", () => {
-            log("Eose received");
-            this.emit("ready");
-            this.status = NDKWalletStatus.READY;
-        });
-        this.sub.start(true);
     }
 
     stop() {

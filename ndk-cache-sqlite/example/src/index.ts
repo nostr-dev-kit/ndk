@@ -1,5 +1,5 @@
 import NDK, { NDKEvent, NDKSubscriptionCacheUsage } from "@nostr-dev-kit/ndk";
-import { NDKCacheAdapterSqlite } from "../../src/index.js";
+import NDKCacheAdapterSqlite, { NDKCacheAdapterSqlite as NamedExport } from "../../src/index.ts";
 import * as fs from "fs";
 
 const CACHE_DB_PATH = "./cache.db";

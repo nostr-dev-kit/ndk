@@ -1,5 +1,21 @@
 # @nostr-dev-kit/ndk-mobile
 
+## 0.8.21
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/ndk-wallet@0.6.2
+    - @nostr-dev-kit/ndk-hooks@1.2.2
+
+## 0.8.20
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/ndk-wallet@0.6.1
+    - @nostr-dev-kit/ndk-hooks@1.2.1
+
 ## 0.8.19
 
 ### Patch Changes

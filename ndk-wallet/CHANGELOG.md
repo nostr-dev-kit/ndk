@@ -1,5 +1,17 @@
 # @nostr-dev-kit/ndk-cache-redis
 
+## 0.6.2
+
+### Patch Changes
+
+- bump
+
+## 0.6.1
+
+### Patch Changes
+
+- make wallet.start() wait until the wallet is ready
+
 ## 0.6.0
 
 ### Minor Changes

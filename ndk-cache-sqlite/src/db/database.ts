@@ -47,7 +47,7 @@ export class DatabaseWrapper {
     /**
      * Prepare a statement
      */
-    prepare(sql: string): any {
+    prepare(sql: string): import("better-sqlite3").Statement {
         return this.db.prepare(sql);
     }
 

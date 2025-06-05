@@ -1,12 +1,12 @@
 import type { NDKCacheAdapter, NDKCacheRelayInfo } from "@nostr-dev-kit/ndk";
-import type {
+import {
     NDKEvent,
-    NDKEventId,
-    NDKFilter,
-    NDKSubscription,
-    NDKRelay,
-    Hexpubkey,
-    NDKUserProfile,
+    type NDKEventId,
+    type NDKFilter,
+    type NDKSubscription,
+    type NDKRelay,
+    type Hexpubkey,
+    type NDKUserProfile,
 } from "@nostr-dev-kit/ndk";
 import type { NDKCacheAdapterSqliteOptions } from "./types";
 import { DatabaseWrapper, initializeDatabase } from "./db/database";
@@ -51,25 +51,84 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     public getRelayStatus = getRelayStatus.bind(this);
 
     public getDecryptedEvent = (eventId: NDKEventId): NDKEvent | null => {
-        // Implementation will be added
-        return null;
+        if (!this.db) throw new Error("Database not initialized");
+
+        try {
+            const stmt = this.db.getDatabase().prepare("SELECT event FROM decrypted_events WHERE id = ?");
+            const row = stmt.get(eventId) as { event: string } | undefined;
+
+            if (row) {
+                const eventData = JSON.parse(row.event);
+                return new NDKEvent(this.ndk, eventData);
+            }
+            return null;
+        } catch (e) {
+            console.error("Error getting decrypted event:", e);
+            return null;
+        }
     };
 
     public addDecryptedEvent = (event: NDKEvent): void => {
-        // Implementation will be added
+        if (!this.db) throw new Error("Database not initialized");
+
+        try {
+            const stmt = this.db
+                .getDatabase()
+                .prepare("INSERT OR REPLACE INTO decrypted_events (id, event) VALUES (?, ?)");
+            stmt.run(event.id, JSON.stringify(event.rawEvent()));
+        } catch (e) {
+            console.error("Error adding decrypted event:", e);
+        }
     };
 
     public addUnpublishedEvent = (event: NDKEvent, relayUrls: string[]): void => {
-        // Implementation will be added
+        if (!this.db) throw new Error("Database not initialized");
+
+        try {
+            const stmt = this.db
+                .getDatabase()
+                .prepare(
+                    "INSERT OR REPLACE INTO unpublished_events (id, event, relays, lastTryAt) VALUES (?, ?, ?, ?)",
+                );
+            const now = Math.floor(Date.now() / 1000);
+            stmt.run(event.id, JSON.stringify(event.rawEvent()), JSON.stringify(relayUrls), now);
+        } catch (e) {
+            console.error("Error adding unpublished event:", e);
+        }
     };
 
     public getUnpublishedEvents = async (): Promise<{ event: NDKEvent; relays?: string[]; lastTryAt?: number }[]> => {
-        // Implementation will be added
-        return [];
+        if (!this.db) throw new Error("Database not initialized");
+
+        try {
+            const stmt = this.db.getDatabase().prepare("SELECT * FROM unpublished_events");
+            const rows = stmt.all() as { id: string; event: string; relays: string; lastTryAt: number }[];
+
+            return rows.map((row) => {
+                const eventData = JSON.parse(row.event);
+                const event = new NDKEvent(this.ndk, eventData);
+                const relays = JSON.parse(row.relays);
+                return {
+                    event,
+                    relays,
+                    lastTryAt: row.lastTryAt,
+                };
+            });
+        } catch (e) {
+            console.error("Error getting unpublished events:", e);
+            return [];
+        }
     };
 
     public discardUnpublishedEvent = (eventId: NDKEventId): void => {
-        // Implementation will be added
+        if (!this.db) throw new Error("Database not initialized");
+
+        try {
+            const stmt = this.db.getDatabase().prepare("DELETE FROM unpublished_events WHERE id = ?");
+            stmt.run(eventId);
+        } catch (e) {
+            console.error("Error discarding unpublished event:", e);
+        }
     };
 
     /**

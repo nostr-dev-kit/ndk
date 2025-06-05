@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk
 
+## 2.14.24
+
+### Patch Changes
+
+- add way to foce using nip-22 reply
+
 ## 2.14.23
 
 ### Patch Changes

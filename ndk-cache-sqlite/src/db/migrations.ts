@@ -13,4 +13,5 @@ export function runMigrations(db: SQLiteDatabase): void {
     db.exec(SCHEMA.decrypted_events);
     db.exec(SCHEMA.unpublished_events);
     db.exec(SCHEMA.event_tags);
+    db.exec(SCHEMA.relay_status);
 }

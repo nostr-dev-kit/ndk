@@ -15,6 +15,9 @@ import { getEvent } from "./functions/getEvent";
 import { fetchProfile } from "./functions/fetchProfile";
 import { saveProfile } from "./functions/saveProfile";
 import { query } from "./functions/query";
+import { getProfiles } from "./functions/getProfiles";
+import { updateRelayStatus } from "./functions/updateRelayStatus";
+import { getRelayStatus } from "./functions/getRelayStatus";
 import NDK from "@nostr-dev-kit/ndk";
 
 export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
@@ -43,16 +46,9 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     public fetchProfile = fetchProfile.bind(this);
     public saveProfile = saveProfile.bind(this);
     public query = query.bind(this);
-
-    // Placeholder methods for functions not yet implemented
-    public updateRelayStatus = (relayUrl: string, info: NDKCacheRelayInfo): void => {
-        // Implementation will be added
-    };
-
-    public getRelayStatus = (relayUrl: string): NDKCacheRelayInfo | undefined => {
-        // Implementation will be added
-        return undefined;
-    };
+    public getProfiles = getProfiles.bind(this);
+    public updateRelayStatus = updateRelayStatus.bind(this);
+    public getRelayStatus = getRelayStatus.bind(this);
 
     public getDecryptedEvent = (eventId: NDKEventId): NDKEvent | null => {
         // Implementation will be added
@@ -74,13 +70,6 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
 
     public discardUnpublishedEvent = (eventId: NDKEventId): void => {
         // Implementation will be added
-    };
-
-    public getProfiles = async (
-        filter: (pubkey: Hexpubkey, profile: NDKUserProfile) => boolean,
-    ): Promise<Map<Hexpubkey, NDKUserProfile> | undefined> => {
-        // Implementation will be added
-        return undefined;
     };
 
     /**

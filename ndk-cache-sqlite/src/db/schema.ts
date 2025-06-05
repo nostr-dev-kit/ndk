@@ -60,4 +60,11 @@ export const SCHEMA = {
         CREATE INDEX IF NOT EXISTS idx_event_tags_event_id ON event_tags(event_id);
         CREATE INDEX IF NOT EXISTS idx_event_tags_tag ON event_tags(tag);
     `,
+    relay_status: `
+        CREATE TABLE IF NOT EXISTS relay_status (
+            url TEXT PRIMARY KEY,
+            last_connected_at INTEGER,
+            dont_connect_before INTEGER
+        );
+    `,
 };

@@ -8,6 +8,7 @@
         "build:hooks": "cd ndk-hooks && bun run build",
         "build:mobile": "cd ndk-mobile && bun run build",
         "build:blossom": "cd ndk-blossom && bun run build",
+        "build:cache-sqlite": "cd ndk-cache-sqlite && bun run build",
         "dev": "turbo dev --no-cache --continue",
         "lint": "biome check .",
         "clean": "turbo clean && rm -rf node_modules",

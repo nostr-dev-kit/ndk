@@ -25,6 +25,10 @@
             "outputs": ["dist/**"],
             "dependsOn": ["ndk-core#build"]
         },
+        "ndk-cache-sqlite#build": {
+            "outputs": ["dist/**"],
+            "dependsOn": ["ndk-core#build"]
+        },
         "test": {
             "outputs": ["coverage/**"],
             "dependsOn": ["build"]

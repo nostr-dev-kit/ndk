@@ -13,11 +13,11 @@
     },
     "dependencies": {
         "@nostr-dev-kit/ndk": "^2.14.23",
-        "better-sqlite3": "^9.0.0"
+        "better-sqlite3": "^9.6.0"
     },
     "devDependencies": {
         "@types/node": "^20.0.0",
-        "typescript": "^5.0.0",
-        "tsx": "^4.0.0"
+        "tsx": "^4.0.0",
+        "typescript": "^5.0.0"
     }
 }

@@ -44,7 +44,9 @@ export async function setEvent(
             const deleteTagsStmt = db.prepare("DELETE FROM event_tags WHERE event_id = ?");
             deleteTagsStmt.run(event.id);
 
-            const insertTagStmt = db.prepare("INSERT INTO event_tags (event_id, tag, value) VALUES (?, ?, ?)");
+            const insertTagStmt = db.prepare(
+                "INSERT OR IGNORE INTO event_tags (event_id, tag, value) VALUES (?, ?, ?)",
+            );
 
             for (const tag of event.tags) {
                 if (tag.length >= 2) {

@@ -39,6 +39,9 @@ export * from "./events/kinds/subscriptions/subscription-start.js";
 export * from "./events/kinds/subscriptions/tier.js";
 export * from "./events/kinds/video.js";
 export * from "./events/kinds/wiki.js";
+export * from "./events/kinds/project.js";
+export * from "./events/kinds/task.js";
+export * from "./events/kinds/project-template.js";
 
 export * from "./events/wrap.js";
 

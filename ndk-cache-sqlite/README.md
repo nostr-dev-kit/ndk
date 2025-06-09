@@ -36,6 +36,8 @@ const ndk = new NDK({
   // ... other NDK options
 });
 
+// Initialize the cache adapter
+await cache.initializeAsync(ndk);
 await ndk.connect();
 ```
 

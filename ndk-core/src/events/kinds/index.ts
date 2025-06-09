@@ -46,6 +46,7 @@ export enum NDKKind {
 
     DraftCheckpoint = 1234,
 
+    Task = 1934,
     Report = 1984,
     Label = 1985,
 
@@ -133,11 +134,13 @@ export enum NDKKind {
     ImageCurationSet = 30006,
     InterestSet = 30015,
     InterestsList = NDKKind.InterestSet, // Deprecated but left for backwards compatibility
+    ProjectTemplate = 30717,
     EmojiSet = 30030,
     ModularArticle = 30040,
     ModularArticleItem = 30041,
     Wiki = 30818,
     Draft = 31234,
+    Project = 31933,
     SubscriptionTier = 37001,
 
     EcashMintRecommendation = 38000,

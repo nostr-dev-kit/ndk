@@ -1,6 +1,6 @@
 import type { DatabaseWrapper } from "../db/database";
 import { NDKEvent, NDKSubscription, NDKFilter, type NDKRawEvent } from "@nostr-dev-kit/ndk";
-import { deserialize, matchFilter } from "@nostr-dev-kit/ndk";
+import { matchFilter } from "@nostr-dev-kit/ndk";
 import type NDK from "@nostr-dev-kit/ndk";
 
 /**
@@ -140,8 +140,17 @@ function foundEvent(
     filter?: NDKFilter,
 ): NDKEvent | null {
     try {
-        const deserializedEvent = deserialize(record.raw as string);
-        if (filter && !matchFilter(filter, deserializedEvent as NDKRawEvent)) return null;
+        // The raw field contains a JSON stringified event, so we need to parse it
+        const deserializedEvent = JSON.parse(record.raw as string);
+
+        if (filter) {
+            // Create a copy of the filter without limit for matchFilter
+            const { limit, ...filterForMatch } = filter;
+            if (!matchFilter(filterForMatch, deserializedEvent as NDKRawEvent)) {
+                return null;
+            }
+        }
+
         const ndkEvent = new NDKEvent(subscription.ndk, deserializedEvent);
         return ndkEvent;
     } catch (e) {

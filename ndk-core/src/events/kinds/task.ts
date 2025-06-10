@@ -9,6 +9,7 @@ import type { NDKProject } from "./project.js";
  */
 export class NDKTask extends NDKEvent {
     static kind = 1934;
+    static kinds = [1934];
 
     constructor(ndk?: NDK, rawEvent?: NostrEvent) {
         super(ndk, rawEvent);

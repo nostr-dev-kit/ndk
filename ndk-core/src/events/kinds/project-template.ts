@@ -8,6 +8,7 @@ import { NDKEvent } from "../index.js";
  */
 export class NDKProjectTemplate extends NDKEvent {
     static kind = 30717;
+    static kinds = [30717];
 
     constructor(ndk?: NDK, rawEvent?: NostrEvent) {
         super(ndk, rawEvent);

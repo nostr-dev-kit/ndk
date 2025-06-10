@@ -1,15 +1,15 @@
 import type { NostrEvent } from "../../index.js";
 import type { NDK } from "../../ndk/index.js";
-import { NDKArticle } from "./article.js";
 import { NDKPrivateKeySigner } from "../../signers/private-key/index.js";
-import type { NDKEvent } from "../index.js";
+import { NDKEvent } from "../index.js";
 
 /**
  * Represents a project event in Nostr (kind 31933).
  * Projects are a special type of article event used by TENEX and other project management tools.
  */
-export class NDKProject extends NDKArticle {
+export class NDKProject extends NDKEvent {
     static kind = 31933;
+    static kinds = [NDKProject.kind];
     private _signer: NDKPrivateKeySigner | undefined;
 
     constructor(ndk?: NDK, rawEvent?: NostrEvent) {
@@ -38,6 +38,24 @@ export class NDKProject extends NDKArticle {
 
     get repo(): string | undefined {
         return this.tagValue("repo");
+    }
+
+    get title(): string | undefined {
+        return this.tagValue("title");
+    }
+
+    set title(value: string | undefined) {
+        this.removeTag("title");
+        if (value) this.tags.push(["title", value]);
+    }
+
+    get picture(): string | undefined {
+        return this.tagValue("picture");
+    }
+
+    set picture(value: string | undefined) {
+        this.removeTag("picture");
+        if (value) this.tags.push(["picture", value]);
     }
 
     set description(value: string) {

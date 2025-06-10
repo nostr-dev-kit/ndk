@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/ndk-blossom",
-    "version": "0.1.23",
+    "version": "0.1.28",
     "description": "Blossom protocol support for NDK (Nostr Development Kit)",
     "main": "dist/index.js",
     "module": "dist/index.js",
@@ -39,10 +39,10 @@
     },
     "homepage": "https://github.com/nostr-dev-kit/ndk#readme",
     "dependencies": {
-        "@nostr-dev-kit/ndk": "2.14.24"
+        "@nostr-dev-kit/ndk": "2.14.29"
     },
     "peerDependencies": {
-        "@nostr-dev-kit/ndk": "2.14.24"
+        "@nostr-dev-kit/ndk": "2.14.29"
     },
     "devDependencies": {
         "@types/node": "^20.0.0",

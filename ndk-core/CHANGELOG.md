@@ -1,5 +1,35 @@
 # @nostr-dev-kit/ndk
 
+## 2.14.29
+
+### Patch Changes
+
+- Allow users to register their own wrapers
+
+## 2.14.28
+
+### Patch Changes
+
+- project picture functions
+
+## 2.14.27
+
+### Patch Changes
+
+- wrap new kinds
+
+## 2.14.26
+
+### Patch Changes
+
+- ndkproject title
+
+## 2.14.25
+
+### Patch Changes
+
+- add TENEX and Stacks kinds
+
 ## 2.14.24
 
 ### Patch Changes

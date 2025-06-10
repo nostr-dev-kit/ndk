@@ -14,11 +14,59 @@ import { NDKVideo } from "./kinds/video.js";
 import { NDKWiki } from "./kinds/wiki.js";
 import { NDKBlossomList } from "./kinds/blossom-list.js";
 import { NDKFollowPack } from "./kinds/follow-pack.js";
-import { NDKDraft } from "src/index.js";
+import { NDKDraft, NDKProjectTemplate, NDKTask } from "src/index.js";
+import { NDKProject } from "./kinds/project.js";
+
+type NDKEventClass = {
+    kinds: number[];
+    from(event: NDKEvent): NDKEvent;
+};
+
+const registeredEventClasses = new Set<NDKEventClass>();
+
+/**
+ * Register a custom event class that can be used with wrapEvent().
+ * The class must have a static 'kinds' property (array of numbers) and a static 'from' method.
+ *
+ * @param eventClass - The event class to register
+ * @example
+ * ```typescript
+ * class MyCustomEvent extends NDKEvent {
+ *     static kinds = [12345];
+ *     static from(event: NDKEvent) {
+ *         return new MyCustomEvent(event.ndk, event);
+ *     }
+ * }
+ * registerEventClass(MyCustomEvent);
+ * ```
+ */
+export function registerEventClass(eventClass: NDKEventClass): void {
+    registeredEventClasses.add(eventClass);
+}
+
+/**
+ * Unregister a previously registered event class.
+ *
+ * @param eventClass - The event class to unregister
+ */
+export function unregisterEventClass(eventClass: NDKEventClass): void {
+    registeredEventClasses.delete(eventClass);
+}
+
+/**
+ * Get all registered event classes.
+ *
+ * @returns Set of registered event classes
+ */
+export function getRegisteredEventClasses(): Set<NDKEventClass> {
+    return new Set(registeredEventClasses);
+}
 
 export function wrapEvent<T extends NDKEvent>(event: NDKEvent): T | Promise<T> | NDKEvent {
     const eventWrappingMap = new Map();
-    for (const klass of [
+
+    // Built-in event classes
+    const builtInClasses = [
         NDKImage,
         NDKVideo,
         NDKCashuMintList,
@@ -27,6 +75,9 @@ export function wrapEvent<T extends NDKEvent>(event: NDKEvent): T | Promise<T> |
         NDKDraft,
         NDKWiki,
         NDKNutzap,
+        NDKProject,
+        NDKTask,
+        NDKProjectTemplate,
         NDKSimpleGroupMemberList,
         NDKSimpleGroupMetadata,
         NDKSubscriptionTier,
@@ -35,7 +86,12 @@ export function wrapEvent<T extends NDKEvent>(event: NDKEvent): T | Promise<T> |
         NDKStory,
         NDKBlossomList,
         NDKFollowPack,
-    ]) {
+    ];
+
+    // Combine built-in and registered classes
+    const allClasses = [...builtInClasses, ...registeredEventClasses];
+
+    for (const klass of allClasses) {
         for (const kind of klass.kinds) {
             eventWrappingMap.set(kind, klass);
         }

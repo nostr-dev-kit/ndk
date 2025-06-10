@@ -258,3 +258,18 @@ This document outlines best practices for using the core Nostr Development Kit (
     ```
 
 Remember to handle errors gracefully throughout your application, especially during network operations like connecting, fetching, and publishing.
+
+* How to generate a new private key:
+const signer = NDKPrivateKey.generate();
+const { npub, nsec, pubkey } = signer;
+console.log("Generated a new nsec and npub", { npub, nsec });
+
+* Converting from/to npub/pubkey:
+const pubkey = "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52";
+const user = new NDKUser({ pubkey });
+const npub = user.npub; // we started with a pubkey and now we have the npub of that user.
+
+// the reverse also works:
+const user = new NDKUser({ npub });
+console.log(`npub ${npub} is pubkey ${user.pubkey}`);
+

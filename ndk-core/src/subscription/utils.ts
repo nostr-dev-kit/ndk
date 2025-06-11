@@ -165,10 +165,14 @@ export function filterForEventsTaggingId(id: string): NDKFilter | undefined {
  * @param id Bech32 of the event
  * @param ndk
  * @returns
+ * @example
+ * const bech32 = "nevent1qgs9kqvr4dkruv3t7n2pc6e6a7v9v2s5fprmwjv4gde8c4fe5y29v0spzamhxue69uhhyetvv9ujuurjd9kkzmpwdejhgtcqype6ycavy2e9zpx9mzeuekaahgw96ken0mzkcmgz40ljccwyrn88gxv2ewr";
+ * const { filter, relaySet } = filterAndRelaySetFromBech32(bech32, ndk);
+ * // filter => { ids: [...], authors: [...] }
  */
-export function filterAndRelaySetFromBech32(beche2: string, ndk: NDK): { filter: NDKFilter; relaySet?: NDKRelaySet } {
-    const filter = filterFromId(beche2);
-    const relays = relaysFromBech32(beche2, ndk);
+export function filterAndRelaySetFromBech32(bech32: string, ndk: NDK): { filter: NDKFilter; relaySet?: NDKRelaySet } {
+    const filter = filterFromId(bech32);
+    const relays = relaysFromBech32(bech32, ndk);
 
     if (relays.length === 0) return { filter };
 

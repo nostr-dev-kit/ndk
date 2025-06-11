@@ -34,7 +34,7 @@
         "docs"
     ],
     "scripts": {
-        "build": "tsc --emitDeclarationOnly && bun build ./src/index.ts --outfile ./dist/index.mjs --format esm --target node && bun build ./src/index.ts --outfile ./dist/index.js --format cjs --target node",
+        "build": "tsup src/index.ts --format cjs,esm --dts",
         "test": "vitest",
         "test:run": "vitest run",
         "prepublishOnly": "bun run build"
@@ -43,8 +43,9 @@
         "better-sqlite3": "^9.0.0"
     },
     "devDependencies": {
-        "@nostr-dev-kit/ndk": "^2.14.23",
+        "@nostr-dev-kit/ndk": "^2.14.29",
         "@types/better-sqlite3": "^7.6.8",
+        "tsup": "^8.0.0",
         "typescript": "^5.0.0",
         "vitest": "^1.0.0"
     },

@@ -15,7 +15,7 @@
     },
     "ndk-blossom": {
       "name": "@nostr-dev-kit/ndk-blossom",
-      "version": "0.1.23",
+      "version": "0.1.28",
       "dependencies": {
         "@nostr-dev-kit/ndk": "^2.0.0",
       },
@@ -31,7 +31,7 @@
     },
     "ndk-cache-dexie": {
       "name": "@nostr-dev-kit/ndk-cache-dexie",
-      "version": "2.6.25",
+      "version": "2.6.30",
       "dependencies": {
         "@nostr-dev-kit/ndk": "2.14.2",
         "debug": "^4.3.7",
@@ -53,7 +53,7 @@
     },
     "ndk-cache-nostr": {
       "name": "@nostr-dev-kit/ndk-cache-nostr",
-      "version": "0.1.36",
+      "version": "0.1.41",
       "dependencies": {
         "@nostr-dev-kit/ndk": "2.14.2",
         "debug": "^4.3.4",
@@ -69,7 +69,7 @@
     },
     "ndk-cache-redis": {
       "name": "@nostr-dev-kit/ndk-cache-redis",
-      "version": "0.1.22",
+      "version": "0.1.27",
       "dependencies": {
         "@nostr-dev-kit/ndk": "2.14.2",
         "ioredis": "^5.0.0",
@@ -88,8 +88,9 @@
         "better-sqlite3": "^9.0.0",
       },
       "devDependencies": {
-        "@nostr-dev-kit/ndk": "^2.14.23",
+        "@nostr-dev-kit/ndk": "^2.14.29",
         "@types/better-sqlite3": "^7.6.8",
+        "tsup": "^8.0.0",
         "typescript": "^5.0.0",
         "vitest": "^1.0.0",
       },
@@ -111,7 +112,7 @@
     },
     "ndk-core": {
       "name": "@nostr-dev-kit/ndk",
-      "version": "2.14.24",
+      "version": "2.14.29",
       "dependencies": {
         "@noble/curves": "^1.6.0",
         "@noble/hashes": "^1.5.0",
@@ -143,7 +144,7 @@
     },
     "ndk-hooks": {
       "name": "@nostr-dev-kit/ndk-hooks",
-      "version": "1.2.2",
+      "version": "1.2.3",
       "dependencies": {
         "@nostr-dev-kit/ndk": "^2.14.11",
         "@nostr-dev-kit/ndk-wallet": "0.5.13",
@@ -168,7 +169,7 @@
     },
     "ndk-mobile": {
       "name": "@nostr-dev-kit/ndk-mobile",
-      "version": "0.8.21",
+      "version": "0.8.27",
       "dependencies": {
         "@bacons/text-decoder": "^0.0.0",
         "@nostr-dev-kit/ndk": "2.14.11",
@@ -198,7 +199,7 @@
     },
     "ndk-svelte": {
       "name": "@nostr-dev-kit/ndk-svelte",
-      "version": "2.4.29",
+      "version": "2.4.34",
       "dependencies": {
         "@nostr-dev-kit/ndk": "2.14.2",
       },

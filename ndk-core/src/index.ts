@@ -43,6 +43,9 @@ export * from "./events/kinds/project.js";
 export * from "./events/kinds/task.js";
 export * from "./events/kinds/project-template.js";
 
+export * from "./events/kinds/directmessage.js";
+export * from "./events/chatroom.js";
+
 export * from "./events/wrap.js";
 
 export * from "./events/gift-wrapping.js";

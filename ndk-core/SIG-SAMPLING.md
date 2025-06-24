@@ -15,30 +15,34 @@ All invalid-signature detections—whether synchronous or asynchronous—will de
 ### Key Components
 
 1. **NDK Class** (`ndk-core/src/ndk/index.ts`):
-   - Contains configuration properties:
-     - `initialValidationRatio`: Starting validation ratio for new relays
-     - `lowestValidationRatio`: Minimum validation ratio for any relay
-     - `validationRatioFn`: Optional function to calculate validation ratio
-   - Emits `event:invalid-sig` events when invalid signatures are detected
+
+    - Contains configuration properties:
+        - `initialValidationRatio`: Starting validation ratio for new relays
+        - `lowestValidationRatio`: Minimum validation ratio for any relay
+        - `validationRatioFn`: Optional function to calculate validation ratio
+    - Emits `event:invalid-sig` events when invalid signatures are detected
 
 2. **NDKRelay Class** (`ndk-core/src/relay/index.ts`):
-   - Tracks validated and non-validated event counts
-   - Has methods to add validated/non-validated events
-   - Has `shouldValidateEvent` method (implementation needs to be enhanced)
+
+    - Tracks validated and non-validated event counts
+    - Has methods to add validated/non-validated events
+    - Has `shouldValidateEvent` method (implementation needs to be enhanced)
 
 3. **Signature Verification** (`ndk-core/src/events/signature.ts`):
-   - Contains verification logic
-   - Maintains `verifiedSignatures` map to track already verified event IDs
+
+    - Contains verification logic
+    - Maintains `verifiedSignatures` map to track already verified event IDs
 
 4. **NDKSubscription Class** (`ndk-core/src/subscription/index.ts`):
-   - Receives events from relays
-   - Calls verification methods on events
-   - Can check already verified signatures
+
+    - Receives events from relays
+    - Calls verification methods on events
+    - Can check already verified signatures
 
 5. **Test Utilities** (`ndk-test-utils/src/index.ts`):
-   - Provides mocks and helpers for testing
-   - Includes `RelayMock`, `RelayPoolMock`, and `EventGenerator`
-   - Offers `TestFixture` and time control utilities
+    - Provides mocks and helpers for testing
+    - Includes `RelayMock`, `RelayPoolMock`, and `EventGenerator`
+    - Offers `TestFixture` and time control utilities
 
 ## Implementation Plan
 
@@ -69,12 +73,12 @@ class NDKRelay {
 
     private updateValidationRatio(): void {
         if (!this.ndk) return;
-        
+
         // Use custom function if provided
         if (this.ndk.validationRatioFn) {
             this.currentValidationRatio = this.ndk.validationRatioFn(
-                this, 
-                this.validatedCount, 
+                this,
+                this.validatedCount,
                 this.nonValidatedCount
             );
             return;
@@ -87,16 +91,16 @@ class NDKRelay {
             this.ndk.lowestValidationRatio,
             this.ndk.initialValidationRatio * Math.exp(-0.01 * this.validatedCount)
         );
-        
+
         this.currentValidationRatio = newRatio;
     }
 
     public shouldValidateEvent(): boolean {
         if (!this.ndk) return true;
-        
+
         // Always validate if ratio is 1.0
         if (this.currentValidationRatio >= 1.0) return true;
-        
+
         // Otherwise, randomly decide based on ratio
         return Math.random() < this.currentValidationRatio;
     }
@@ -142,7 +146,7 @@ public eventReceived(
             if (relay) {
                 // Check if we need to verify this event based on sampling
                 const shouldVerify = relay.shouldValidateEvent();
-                
+
                 if (shouldVerify && !this.skipVerification) {
                     // Attempt verification
                     if (!ndkEvent.verifySignature(true) && !this.ndk.asyncSigVerification) {
@@ -151,7 +155,7 @@ public eventReceived(
                         this.ndk.reportInvalidSignature(ndkEvent, relay);
                         return;
                     }
-                    
+
                     // Track successful validation
                     relay.addValidatedEvent();
                 } else {
@@ -208,34 +212,38 @@ export class NDK extends EventEmitter<{
     // Existing events
     "signer:ready": (signer: NDKSigner) => void;
     "signer:required": () => void;
-    
+
     // Updated event to include the relay parameter
     "event:invalid-sig": (event: NDKEvent, relay: NDKRelay) => void;
-    
-    "event:publish-failed": (event: NDKEvent, error: NDKPublishError, relays: WebSocket["url"][]) => void;
+
+    "event:publish-failed": (
+        event: NDKEvent,
+        error: NDKPublishError,
+        relays: WebSocket["url"][]
+    ) => void;
 }> {
     // Existing properties and methods
-    
+
     /**
      * Centralized method to report an invalid signature, identifying the relay that provided it.
      * A single invalid signature means the relay is considered malicious.
      * All invalid signature detections (synchronous or asynchronous) should delegate to this method.
-     * 
+     *
      * @param event The event with an invalid signature
      * @param relay The relay that provided the invalid signature
      */
     public reportInvalidSignature(event: NDKEvent, relay: NDKRelay): void {
         this.debug(`Invalid signature detected from relay ${relay.url} for event ${event.id}`);
-        
+
         // Emit event with relay information
         this.emit("event:invalid-sig", event, relay);
-        
+
         // If auto-blacklisting is enabled, add the relay to the blacklist
         if (this.autoBlacklistInvalidRelays) {
             this.blacklistRelay(relay.url);
         }
     }
-    
+
     /**
      * Add a relay URL to the blacklist as it has been identified as malicious
      */
@@ -243,11 +251,11 @@ export class NDK extends EventEmitter<{
         if (!this.blacklistRelayUrls) {
             this.blacklistRelayUrls = [];
         }
-        
+
         if (!this.blacklistRelayUrls.includes(url)) {
             this.blacklistRelayUrls.push(url);
             this.debug(`Added relay to blacklist: ${url}`);
-            
+
             // Disconnect from this relay if connected
             const relay = this.pool.getRelay(url, false, false);
             if (relay) {
@@ -266,18 +274,18 @@ In `ndk-core/src/events/signature.ts`, modify the worker message handler to use 
 ```typescript
 function initSignatureVerification(worker: Worker) {
     // ... existing code ...
-    
+
     worker.onmessage = (e) => {
         const { id, valid } = e.data;
         const callback = callbacks.get(id);
-        
+
         if (callback) {
             callbacks.delete(id);
-            
+
             // Get the stored event and relay information
             const { event, relay, ndk } = eventContext.get(id) || {};
             eventContext.delete(id);
-            
+
             if (valid) {
                 verifiedSignatures.set(event.id, event.sig);
                 callback(true);
@@ -303,11 +311,11 @@ This would be part of the NDK class constructor in `ndk-core/src/ndk/index.ts`:
 ```typescript
 public constructor(opts: NDKConstructorParams = {}) {
     // Existing constructor code
-    
+
     this.initialValidationRatio = opts.initialValidationRatio || 1.0;
     this.lowestValidationRatio = opts.lowestValidationRatio || 0.1;
     this.autoBlacklistInvalidRelays = opts.autoBlacklistInvalidRelays || false;
-    
+
     // Set a default validation ratio function if none is provided
     this.validationRatioFn = opts.validationRatioFn || this.defaultValidationRatioFn;
 }
@@ -318,16 +326,16 @@ public constructor(opts: NDKConstructorParams = {}) {
  */
 private defaultValidationRatioFn(relay: NDKRelay, validatedCount: number, nonValidatedCount: number): number {
     if (validatedCount < 10) return this.initialValidationRatio;
-    
+
     // Calculate a logarithmically decreasing ratio that approaches the minimum
     // as more events are validated
     const totalEvents = validatedCount + nonValidatedCount;
     const trustFactor = Math.min(validatedCount / 100, 1); // Caps at 100 validated events
-    
-    const calculatedRatio = this.initialValidationRatio * 
-        (1 - trustFactor) + 
+
+    const calculatedRatio = this.initialValidationRatio *
+        (1 - trustFactor) +
         this.lowestValidationRatio * trustFactor;
-    
+
     return Math.max(calculatedRatio, this.lowestValidationRatio);
 }
 ```
@@ -341,7 +349,7 @@ In `ndk-core/src/ndk/index.ts`, update:
 ```typescript
 export interface NDKConstructorParams {
     // Existing parameters
-    
+
     /**
      * The signature verification validation ratio for new relays.
      * A value of 1.0 means verify all signatures, 0.5 means verify half, etc.
@@ -364,7 +372,7 @@ export interface NDKConstructorParams {
      * If not provided, a default algorithm will be used.
      */
     validationRatioFn?: NDKValidationRatioFn;
-    
+
     /**
      * When true, automatically blacklist relays that provide events with invalid signatures.
      * A single invalid signature is enough to mark a relay as malicious.
@@ -380,7 +388,7 @@ export interface NDKConstructorParams {
 
 For example:
 
-```markdown
+````markdown
 ## Signature Verification Sampling
 
 NDK includes support for signature verification sampling to improve performance while maintaining security.
@@ -397,29 +405,31 @@ If at any point an invalid signature is detected, the relay is immediately repor
 
 ```typescript
 const ndk = new NDK({
-  // Verify 100% of signatures from new relays
-  initialValidationRatio: 1.0,
-  
-  // Eventually drop to verifying only 10% of signatures from trusted relays
-  lowestValidationRatio: 0.1,
-  
-  // Optional custom function to determine validation ratio
-  validationRatioFn: (relay, validatedCount, nonValidatedCount) => {
-    // Custom logic to determine ratio
-    return Math.max(0.1, 1.0 - (validatedCount / 1000));
-  },
-  
-  // Automatically blacklist relays that send invalid signatures
-  autoBlacklistInvalidRelays: true
+    // Verify 100% of signatures from new relays
+    initialValidationRatio: 1.0,
+
+    // Eventually drop to verifying only 10% of signatures from trusted relays
+    lowestValidationRatio: 0.1,
+
+    // Optional custom function to determine validation ratio
+    validationRatioFn: (relay, validatedCount, nonValidatedCount) => {
+        // Custom logic to determine ratio
+        return Math.max(0.1, 1.0 - validatedCount / 1000);
+    },
+
+    // Automatically blacklist relays that send invalid signatures
+    autoBlacklistInvalidRelays: true,
 });
 
 // Listen for invalid signature events
 ndk.on("event:invalid-sig", (event, relay) => {
-  console.log(`Relay ${relay.url} sent an event with invalid signature: ${event.id}`);
-  // Custom handling...
+    console.log(`Relay ${relay.url} sent an event with invalid signature: ${event.id}`);
+    // Custom handling...
 });
 ```
-```
+````
+
+````
 
 ## Implementation Steps
 
@@ -464,230 +474,238 @@ The `ndk-test-utils` package provides several useful tools for testing our imple
 1. **Validation Ratio Calculation**
    ```typescript
    import { TestFixture, EventGenerator } from "@nostr-dev-kit/ndk/test";
-   
+
    test('validation ratio decreases with successful validations', () => {
      const fixture = new TestFixture();
      const ndk = fixture.ndk;
      ndk.initialValidationRatio = 1.0;
      ndk.lowestValidationRatio = 0.1;
-     
+
      const relay = new NDKRelay('wss://example.com', undefined, ndk);
-     
+
      // Initial ratio should be 1.0
      expect(relay.shouldValidateEvent()).toBe(true);
-     
+
      // Add 100 validated events using EventGenerator
      const eventGenerator = new EventGenerator();
      const events = eventGenerator.generateEvents(100); // Generate 100 valid events
-     
+
      // Simulate validation
      for (const event of events) {
        relay.addValidatedEvent();
      }
-     
+
      // Ratio should decrease but still be probabilistic
      // Run multiple checks to verify the ratio is roughly as expected
      let validationCount = 0;
      for (let i = 0; i < 1000; i++) {
        if (relay.shouldValidateEvent()) validationCount++;
      }
-     
+
      // With 100 validated events, we expect the ratio to be lower than initial
      // but still above the minimum
      expect(validationCount).toBeGreaterThan(100); // should be more than minimum
      expect(validationCount).toBeLessThan(900); // should be less than initial
    });
-   ```
+````
 
 2. **Custom Validation Function**
-   ```typescript
-   import { TestFixture } from "@nostr-dev-kit/ndk/test";
-   
-   test('custom validation function is applied', () => {
-     // Creating a custom function that always returns 0.5
-     const customFn = () => 0.5;
-     
-     const fixture = new TestFixture({
-       ndkOptions: {
-         initialValidationRatio: 1.0,
-         lowestValidationRatio: 0.1,
-         validationRatioFn: customFn
-       }
-     });
-     
-     const relay = new NDKRelay('wss://example.com', undefined, fixture.ndk);
-     
-     // Validate multiple times to check probability is ~0.5
-     let validationCount = 0;
-     for (let i = 0; i < 1000; i++) {
-       if (relay.shouldValidateEvent()) validationCount++;
-     }
-     
-     // Should be roughly 50%
-     expect(validationCount).toBeGreaterThan(400);
-     expect(validationCount).toBeLessThan(600);
-   });
-   ```
+
+    ```typescript
+    import { TestFixture } from "@nostr-dev-kit/ndk/test";
+
+    test("custom validation function is applied", () => {
+        // Creating a custom function that always returns 0.5
+        const customFn = () => 0.5;
+
+        const fixture = new TestFixture({
+            ndkOptions: {
+                initialValidationRatio: 1.0,
+                lowestValidationRatio: 0.1,
+                validationRatioFn: customFn,
+            },
+        });
+
+        const relay = new NDKRelay("wss://example.com", undefined, fixture.ndk);
+
+        // Validate multiple times to check probability is ~0.5
+        let validationCount = 0;
+        for (let i = 0; i < 1000; i++) {
+            if (relay.shouldValidateEvent()) validationCount++;
+        }
+
+        // Should be roughly 50%
+        expect(validationCount).toBeGreaterThan(400);
+        expect(validationCount).toBeLessThan(600);
+    });
+    ```
 
 ### Integration Tests
 
 1. **Invalid Signature Detection**
-   ```typescript
-   import { RelayMock, EventGenerator } from "@nostr-dev-kit/ndk/test";
-   
-   test('detects and reports invalid signatures', async () => {
-     // Create NDK instance with test configuration
-     const ndk = new NDK({ initialValidationRatio: 1.0 });
-     
-     // Create a mock relay
-     const mockRelay = new RelayMock(ndk, { url: 'wss://mock.com' });
-     
-     // Spy on reportInvalidSignature
-     const reportSpy = jest.spyOn(ndk, 'reportInvalidSignature');
-     
-     // Create event with invalid signature using EventGenerator
-     const eventGenerator = new EventGenerator();
-     const eventData = eventGenerator.generateEvent();
-     
-     // Modify signature to be invalid
-     eventData.sig = 'invalid-signature';
-     
-     // Create NDKEvent and subscription
-     const event = new NDKEvent(ndk, eventData);
-     const sub = new NDKSubscription(ndk, { kinds: [1] });
-     
-     // Process the event as if received from the relay
-     sub.eventReceived(event, mockRelay);
-     
-     // Verify reportInvalidSignature was called with correct parameters
-     expect(reportSpy).toHaveBeenCalledWith(expect.any(NDKEvent), mockRelay);
-     
-     // Verify the relay is considered malicious after a single invalid signature
-     if (ndk.autoBlacklistInvalidRelays) {
-       expect(ndk.blacklistRelayUrls).toContain(mockRelay.url);
-     }
-   });
-   ```
+
+    ```typescript
+    import { RelayMock, EventGenerator } from "@nostr-dev-kit/ndk/test";
+
+    test("detects and reports invalid signatures", async () => {
+        // Create NDK instance with test configuration
+        const ndk = new NDK({ initialValidationRatio: 1.0 });
+
+        // Create a mock relay
+        const mockRelay = new RelayMock(ndk, { url: "wss://mock.com" });
+
+        // Spy on reportInvalidSignature
+        const reportSpy = jest.spyOn(ndk, "reportInvalidSignature");
+
+        // Create event with invalid signature using EventGenerator
+        const eventGenerator = new EventGenerator();
+        const eventData = eventGenerator.generateEvent();
+
+        // Modify signature to be invalid
+        eventData.sig = "invalid-signature";
+
+        // Create NDKEvent and subscription
+        const event = new NDKEvent(ndk, eventData);
+        const sub = new NDKSubscription(ndk, { kinds: [1] });
+
+        // Process the event as if received from the relay
+        sub.eventReceived(event, mockRelay);
+
+        // Verify reportInvalidSignature was called with correct parameters
+        expect(reportSpy).toHaveBeenCalledWith(expect.any(NDKEvent), mockRelay);
+
+        // Verify the relay is considered malicious after a single invalid signature
+        if (ndk.autoBlacklistInvalidRelays) {
+            expect(ndk.blacklistRelayUrls).toContain(mockRelay.url);
+        }
+    });
+    ```
 
 2. **Event Emitting and Blacklisting Test**
-   ```typescript
-   import { RelayMock, EventGenerator } from "@nostr-dev-kit/ndk/test";
-   
-   test('emits event:invalid-sig event with relay and can blacklist', async () => {
-     // Create NDK with auto blacklisting
-     const ndk = new NDK({ 
-       autoBlacklistInvalidRelays: true 
-     });
-     
-     // Create mock relay
-     const mockRelay = new RelayMock(ndk, { url: 'wss://mock.com' });
-     
-     // Create listener for the event
-     const listener = jest.fn();
-     ndk.on('event:invalid-sig', listener);
-     
-     // Generate event
-     const eventGenerator = new EventGenerator();
-     const event = new NDKEvent(ndk, eventGenerator.generateEvent());
-     
-     // Trigger invalid signature report
-     ndk.reportInvalidSignature(event, mockRelay);
-     
-     // Verify listener was called with correct args
-     expect(listener).toHaveBeenCalledWith(event, mockRelay);
-     
-     // Verify relay was blacklisted
-     expect(ndk.blacklistRelayUrls).toContain(mockRelay.url);
-   });
-   ```
+
+    ```typescript
+    import { RelayMock, EventGenerator } from "@nostr-dev-kit/ndk/test";
+
+    test("emits event:invalid-sig event with relay and can blacklist", async () => {
+        // Create NDK with auto blacklisting
+        const ndk = new NDK({
+            autoBlacklistInvalidRelays: true,
+        });
+
+        // Create mock relay
+        const mockRelay = new RelayMock(ndk, { url: "wss://mock.com" });
+
+        // Create listener for the event
+        const listener = jest.fn();
+        ndk.on("event:invalid-sig", listener);
+
+        // Generate event
+        const eventGenerator = new EventGenerator();
+        const event = new NDKEvent(ndk, eventGenerator.generateEvent());
+
+        // Trigger invalid signature report
+        ndk.reportInvalidSignature(event, mockRelay);
+
+        // Verify listener was called with correct args
+        expect(listener).toHaveBeenCalledWith(event, mockRelay);
+
+        // Verify relay was blacklisted
+        expect(ndk.blacklistRelayUrls).toContain(mockRelay.url);
+    });
+    ```
 
 3. **Testing with Time Control**
-   ```typescript
-   import { TestFixture, withTimeControl } from "@nostr-dev-kit/ndk/test";
-   
-   test('ratio calculation over time', withTimeControl(async ({ advanceTime }) => {
-     const fixture = new TestFixture();
-     const ndk = fixture.ndk;
-     ndk.initialValidationRatio = 1.0;
-     ndk.lowestValidationRatio = 0.1;
-     
-     const relay = new NDKRelay('wss://example.com', undefined, ndk);
-     
-     // Add validated events over simulated time
-     for (let i = 0; i < 5; i++) {
-       relay.addValidatedEvent();
-       // Advance time by 1 hour
-       await advanceTime(60 * 60 * 1000);
-     }
-     
-     // Check ratio is still high with just a few validations
-     let validationCount = 0;
-     for (let i = 0; i < 100; i++) {
-       if (relay.shouldValidateEvent()) validationCount++;
-     }
-     
-     // Should still be high with just 5 events
-     expect(validationCount).toBeGreaterThan(80);
-     
-     // Add many more validated events
-     for (let i = 0; i < 95; i++) {
-       relay.addValidatedEvent();
-     }
-     
-     // Advance time by 1 day
-     await advanceTime(24 * 60 * 60 * 1000);
-     
-     // Check ratio has decreased significantly
-     validationCount = 0;
-     for (let i = 0; i < 100; i++) {
-       if (relay.shouldValidateEvent()) validationCount++;
-     }
-     
-     // Should now be much lower after 100 total validated events
-     expect(validationCount).toBeLessThan(50);
-     expect(validationCount).toBeGreaterThan(10); // But not below minimum
-   }));
-   ```
+
+    ```typescript
+    import { TestFixture, withTimeControl } from "@nostr-dev-kit/ndk/test";
+
+    test(
+        "ratio calculation over time",
+        withTimeControl(async ({ advanceTime }) => {
+            const fixture = new TestFixture();
+            const ndk = fixture.ndk;
+            ndk.initialValidationRatio = 1.0;
+            ndk.lowestValidationRatio = 0.1;
+
+            const relay = new NDKRelay("wss://example.com", undefined, ndk);
+
+            // Add validated events over simulated time
+            for (let i = 0; i < 5; i++) {
+                relay.addValidatedEvent();
+                // Advance time by 1 hour
+                await advanceTime(60 * 60 * 1000);
+            }
+
+            // Check ratio is still high with just a few validations
+            let validationCount = 0;
+            for (let i = 0; i < 100; i++) {
+                if (relay.shouldValidateEvent()) validationCount++;
+            }
+
+            // Should still be high with just 5 events
+            expect(validationCount).toBeGreaterThan(80);
+
+            // Add many more validated events
+            for (let i = 0; i < 95; i++) {
+                relay.addValidatedEvent();
+            }
+
+            // Advance time by 1 day
+            await advanceTime(24 * 60 * 60 * 1000);
+
+            // Check ratio has decreased significantly
+            validationCount = 0;
+            for (let i = 0; i < 100; i++) {
+                if (relay.shouldValidateEvent()) validationCount++;
+            }
+
+            // Should now be much lower after 100 total validated events
+            expect(validationCount).toBeLessThan(50);
+            expect(validationCount).toBeGreaterThan(10); // But not below minimum
+        })
+    );
+    ```
 
 4. **Testing Async Signature Verification**
-   ```typescript
-   import { RelayMock, EventGenerator } from "@nostr-dev-kit/ndk/test";
-   
-   test('centralizes invalid signature reporting from async verification', async () => {
-     // Create NDK with async verification
-     const worker = new Worker('path/to/signature-worker.js');
-     const ndk = new NDK({ 
-       signatureVerificationWorker: worker,
-       autoBlacklistInvalidRelays: true
-     });
-     
-     // Create a mock relay
-     const mockRelay = new RelayMock(ndk, { url: 'wss://mock.com' });
-     
-     // Spy on reportInvalidSignature
-     const reportSpy = jest.spyOn(ndk, 'reportInvalidSignature');
-     
-     // Generate event with invalid signature
-     const eventGenerator = new EventGenerator();
-     const event = eventGenerator.generateEvent();
-     event.sig = 'invalid-signature';
-     
-     // Mock the worker verification process
-     // This would normally be handled by the worker messaging
-     const ndkEvent = new NDKEvent(ndk, event);
-     ndkEvent.relay = mockRelay;
-     
-     // Simulate worker message for invalid signature
-     // (In reality this would happen asynchronously)
-     ndk.reportInvalidSignature(ndkEvent, mockRelay);
-     
-     // Verify reportInvalidSignature was called with correct parameters
-     expect(reportSpy).toHaveBeenCalledWith(ndkEvent, mockRelay);
-     
-     // Verify relay was blacklisted
-     expect(ndk.blacklistRelayUrls).toContain(mockRelay.url);
-   });
-   ```
+
+    ```typescript
+    import { RelayMock, EventGenerator } from "@nostr-dev-kit/ndk/test";
+
+    test("centralizes invalid signature reporting from async verification", async () => {
+        // Create NDK with async verification
+        const worker = new Worker("path/to/signature-worker.js");
+        const ndk = new NDK({
+            signatureVerificationWorker: worker,
+            autoBlacklistInvalidRelays: true,
+        });
+
+        // Create a mock relay
+        const mockRelay = new RelayMock(ndk, { url: "wss://mock.com" });
+
+        // Spy on reportInvalidSignature
+        const reportSpy = jest.spyOn(ndk, "reportInvalidSignature");
+
+        // Generate event with invalid signature
+        const eventGenerator = new EventGenerator();
+        const event = eventGenerator.generateEvent();
+        event.sig = "invalid-signature";
+
+        // Mock the worker verification process
+        // This would normally be handled by the worker messaging
+        const ndkEvent = new NDKEvent(ndk, event);
+        ndkEvent.relay = mockRelay;
+
+        // Simulate worker message for invalid signature
+        // (In reality this would happen asynchronously)
+        ndk.reportInvalidSignature(ndkEvent, mockRelay);
+
+        // Verify reportInvalidSignature was called with correct parameters
+        expect(reportSpy).toHaveBeenCalledWith(ndkEvent, mockRelay);
+
+        // Verify relay was blacklisted
+        expect(ndk.blacklistRelayUrls).toContain(mockRelay.url);
+    });
+    ```
 
 ## Conclusion
 
@@ -697,4 +715,4 @@ The centralized `reportInvalidSignature` method ensures consistent handling of i
 
 By extending the existing `event:invalid-sig` event to include relay information, we maintain backward compatibility while providing the necessary context to identify and potentially blacklist malicious relays.
 
-The implementation is flexible, allowing developers to configure the validation ratio parameters or provide their own custom ratio calculation function to suit their specific needs and threat models. 
+The implementation is flexible, allowing developers to configure the validation ratio parameters or provide their own custom ratio calculation function to suit their specific needs and threat models.

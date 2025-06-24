@@ -139,6 +139,9 @@ export const ErrorCodes = {
     // Optimization Errors
     SERVER_UNSUPPORTED: "SERVER_UNSUPPORTED",
     FORMAT_UNSUPPORTED: "FORMAT_UNSUPPORTED",
+
+    // SHA256 Calculator Errors
+    NO_SHA256_CALCULATOR: "NO_SHA256_CALCULATOR",
 } as const;
 
 export type ErrorCode = (typeof ErrorCodes)[keyof typeof ErrorCodes];

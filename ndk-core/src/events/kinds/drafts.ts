@@ -1,4 +1,4 @@
-import { NDKUser } from "src/user/index.js";
+import { NDKUser } from "../../user/index.js";
 import { NDK } from "../../ndk/index.js";
 import type { NDKRelaySet } from "../../relay/sets/index.js";
 import type { NDKSigner } from "../../signers/index.js";

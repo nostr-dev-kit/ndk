@@ -25,12 +25,12 @@ describe("Mock Relay Tests", () => {
     beforeEach(() => {
         // Create a new NDK instance
         ndk = new NDK();
-        
+
         // Create a mock relay
         relayMock = new RelayMock("wss://test.relay", {
-            simulateDisconnect: false,  // Don't randomly disconnect
-            connectionDelay: 100,       // Simulate 100ms connection delay
-            autoConnect: true           // Auto-connect when used
+            simulateDisconnect: false, // Don't randomly disconnect
+            connectionDelay: 100, // Simulate 100ms connection delay
+            autoConnect: true, // Auto-connect when used
         });
     });
 
@@ -41,7 +41,7 @@ describe("Mock Relay Tests", () => {
         // Create a subscription
         const sub = relayMock.subscribe({
             subId: "test-sub",
-            filters: [{ kinds: [1] }]  // Subscribe to text notes
+            filters: [{ kinds: [1] }], // Subscribe to text notes
         });
 
         // Simulate receiving an event
@@ -66,14 +66,14 @@ describe("Mock Relay Tests", () => {
 // Create a flaky relay that randomly disconnects
 const flakyRelay = new RelayMock("wss://flaky.relay", {
     simulateDisconnect: true,
-    disconnectChance: 0.3,  // 30% chance to disconnect on operations
-    connectionDelay: 500    // 500ms connection delay
+    disconnectChance: 0.3, // 30% chance to disconnect on operations
+    connectionDelay: 500, // 500ms connection delay
 });
 
 // Test reconnection behavior
 await flakyRelay.connect();
-await flakyRelay.simulateDisconnect();  // Force a disconnect
-await flakyRelay.connect();             // Should reconnect
+await flakyRelay.simulateDisconnect(); // Force a disconnect
+await flakyRelay.connect(); // Should reconnect
 ```
 
 ### Testing Event Publishing
@@ -88,7 +88,7 @@ const generator = new EventGenerator();
 const textNote = await generator.textNote("Test message");
 
 // Publish and verify
-const publishSpy = vitest.spyOn(relayMock, 'publish');
+const publishSpy = vitest.spyOn(relayMock, "publish");
 await relayMock.publish(textNote);
 
 expect(publishSpy).toHaveBeenCalledWith(textNote);
@@ -126,13 +126,14 @@ const relay2 = poolMock.getRelay("wss://relay2.test");
 
 // Test event propagation across relays
 const event = await generator.textNote("Test across relays");
-await relay1.simulateEvent(event);  // Simulate event on first relay
-await relay2.simulateEvent(event);  // Simulate same event on second relay
+await relay1.simulateEvent(event); // Simulate event on first relay
+await relay2.simulateEvent(event); // Simulate same event on second relay
 ```
 
 ## Best Practices
 
 1. Always clean up relays after tests:
+
 ```typescript
 afterEach(async () => {
     await relayMock.disconnect();
@@ -140,26 +141,29 @@ afterEach(async () => {
 ```
 
 2. Reset event generators between tests:
+
 ```typescript
 beforeEach(() => {
-    EventGenerator.setNDK(ndk);  // Reset with fresh NDK instance
+    EventGenerator.setNDK(ndk); // Reset with fresh NDK instance
 });
 ```
 
 3. Use realistic delays to simulate network conditions:
+
 ```typescript
 const relay = new RelayMock("wss://test.relay", {
-    connectionDelay: 100,    // Connection time
-    operationDelay: 50,     // Time for operations
-    disconnectDelay: 75     // Disconnection time
+    connectionDelay: 100, // Connection time
+    operationDelay: 50, // Time for operations
+    disconnectDelay: 75, // Disconnection time
 });
 ```
 
 4. Test error scenarios:
+
 ```typescript
 // Test failed connections
 const failingRelay = new RelayMock("wss://failing.relay", {
-    simulateConnectionError: true
+    simulateConnectionError: true,
 });
 
 try {
@@ -167,4 +171,4 @@ try {
 } catch (error) {
     expect(error).toBeDefined();
 }
-``` 
+```

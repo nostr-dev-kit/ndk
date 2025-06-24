@@ -110,8 +110,14 @@ it("should resolve early if all relays connect before the timeout", async () => 
 it("should resolve at timeout if no relays connect", async () => {
     const ndk = new NDK({});
     // Simulate relays that never connect
-    const stuckRelay1 = new RelayMock("wss://stuck1", { autoConnect: false, connectionDelay: 10000 });
-    const stuckRelay2 = new RelayMock("wss://stuck2", { autoConnect: false, connectionDelay: 10000 });
+    const stuckRelay1 = new RelayMock("wss://stuck1", {
+        autoConnect: false,
+        connectionDelay: 10000,
+    });
+    const stuckRelay2 = new RelayMock("wss://stuck2", {
+        autoConnect: false,
+        connectionDelay: 10000,
+    });
     ndk.pool.addRelay(stuckRelay1 as unknown as NDKRelay);
     ndk.pool.addRelay(stuckRelay2 as unknown as NDKRelay);
 

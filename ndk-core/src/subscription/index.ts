@@ -1,7 +1,7 @@
 import { EventEmitter } from "tseep";
 
-import type { NDKEventId, NostrEvent } from "../events/index.js";
-import { NDKEvent } from "../events/index.js";
+import type { NDKEventId, NostrEvent, NDKSignedEvent } from "../events/index.js";
+import { NDKEvent, createSignedEvent } from "../events/index.js";
 import type { NDKKind } from "../events/kinds/index.js";
 import { verifiedSignatures } from "../events/validation.js";
 import { wrapEvent } from "../events/wrap.js";
@@ -242,7 +242,7 @@ export class NDKSubscription extends EventEmitter<{
      * @param optimisticPublish - Whether the event was received from an optimistic publish.
      */
     event: (
-        event: NDKEvent,
+        event: NDKSignedEvent,
         relay: NDKRelay | undefined,
         sub: NDKSubscription,
         fromCache: boolean,
@@ -419,7 +419,10 @@ export class NDKSubscription extends EventEmitter<{
         const updateStateFromCacheResults = (events: NDKEvent[]) => {
             if (emitCachedEvents) {
                 for (const event of events) {
-                    if (!this.mostRecentCacheEventTimestamp || event.created_at > this.mostRecentCacheEventTimestamp) {
+                    if (
+                        event.created_at &&
+                        (!this.mostRecentCacheEventTimestamp || event.created_at > this.mostRecentCacheEventTimestamp)
+                    ) {
                         this.mostRecentCacheEventTimestamp = event.created_at;
                     }
                     this.eventReceived(event, undefined, true, false);
@@ -427,7 +430,10 @@ export class NDKSubscription extends EventEmitter<{
             } else {
                 cacheResult = [];
                 for (const event of events) {
-                    if (!this.mostRecentCacheEventTimestamp || event.created_at > this.mostRecentCacheEventTimestamp) {
+                    if (
+                        event.created_at &&
+                        (!this.mostRecentCacheEventTimestamp || event.created_at > this.mostRecentCacheEventTimestamp)
+                    ) {
                         this.mostRecentCacheEventTimestamp = event.created_at;
                     }
 
@@ -698,7 +704,9 @@ export class NDKSubscription extends EventEmitter<{
         if (wrapped instanceof Promise) {
             wrapped.then((e) => this.emitEvent(false, e, relay, fromCache, optimisticPublish));
         } else if (wrapped) {
-            this.emit("event", wrapped, relay, this, fromCache, optimisticPublish);
+            // Events from subscriptions are expected to be signed after validation
+            // We cast to NDKSignedEvent for type safety
+            this.emit("event", wrapped as NDKSignedEvent, relay, this, fromCache, optimisticPublish);
         }
     }
 

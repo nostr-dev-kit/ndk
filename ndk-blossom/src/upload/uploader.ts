@@ -2,7 +2,6 @@ import NDK, { NDKFilter, mapImetaTag, NDKImetaTag } from "@nostr-dev-kit/ndk";
 import { BlossomUploadOptions, ErrorCodes } from "../types";
 import { createAuthenticatedFetchOptions } from "../utils/auth";
 import { extractResponseJson, fetchWithRetry } from "../utils/http";
-import { defaultSHA256Calculator } from "../utils/sha256";
 import {
     NDKBlossomAuthError,
     NDKBlossomNotFoundError,
@@ -32,8 +31,15 @@ export async function uploadToServer(
 ): Promise<NDKImetaTag> {
     logger.debug(`Uploading file to ${serverUrl}`, { fileName: file.name, fileType: file.type, fileSize: file.size });
 
-    // Use the provided SHA256 calculator or the default one
-    const sha256Calculator = options.sha256Calculator || defaultSHA256Calculator;
+    // Use the provided SHA256 calculator (required)
+    if (!options.sha256Calculator) {
+        throw new NDKBlossomUploadError(
+            "SHA256Calculator is required for upload. Please provide one in options.",
+            "NO_SHA256_CALCULATOR",
+            serverUrl,
+        );
+    }
+    const sha256Calculator = options.sha256Calculator;
 
     // Calculate file hash
     const hash = await sha256Calculator.calculateSha256(file);

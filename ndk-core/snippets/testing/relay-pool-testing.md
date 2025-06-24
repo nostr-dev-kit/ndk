@@ -33,7 +33,9 @@ describe("Relay Pool Tests", () => {
         await relay2.connect();
 
         // Test event propagation
-        const event = { /* event data */ };
+        const event = {
+            /* event data */
+        };
         await relay1.simulateEvent(event);
         await relay2.simulateEvent(event);
     });
@@ -52,20 +54,18 @@ const generator = new EventGenerator();
 const events = await Promise.all([
     generator.textNote("Event 1"),
     generator.textNote("Event 2"),
-    generator.textNote("Event 3")
+    generator.textNote("Event 3"),
 ]);
 
 // Distribute events across relays
 const relays = [
     poolMock.getRelay("wss://relay1.test"),
     poolMock.getRelay("wss://relay2.test"),
-    poolMock.getRelay("wss://relay3.test")
+    poolMock.getRelay("wss://relay3.test"),
 ];
 
 // Simulate different events on different relays
-await Promise.all(
-    events.map((event, i) => relays[i].simulateEvent(event))
-);
+await Promise.all(events.map((event, i) => relays[i].simulateEvent(event)));
 ```
 
 ### Testing Relay Selection
@@ -90,7 +90,7 @@ expect(selectedRelay.url).toBeDefined();
 const stats = {
     relay1: 0,
     relay2: 0,
-    relay3: 0
+    relay3: 0,
 };
 
 // Simulate multiple selections
@@ -132,19 +132,17 @@ const eventHandler = (event) => {
 };
 
 // Subscribe to events on all relays
-poolMock.getAllRelays().forEach(relay => {
+poolMock.getAllRelays().forEach((relay) => {
     relay.subscribe({
         subId: "test",
         filters: [{ kinds: [1] }],
-        eventReceived: eventHandler
+        eventReceived: eventHandler,
     });
 });
 
 // Simulate same event on multiple relays
 const event = await generator.textNote("Duplicate event");
-await Promise.all(
-    poolMock.getAllRelays().map(relay => relay.simulateEvent(event))
-);
+await Promise.all(poolMock.getAllRelays().map((relay) => relay.simulateEvent(event)));
 
 // Verify deduplication
 expect(receivedEvents.size).toBe(1);
@@ -153,44 +151,46 @@ expect(receivedEvents.size).toBe(1);
 ## Best Practices
 
 1. Clean up after tests:
+
 ```typescript
 afterEach(() => {
     // Disconnect all relays
-    return Promise.all(
-        poolMock.getAllRelays().map(relay => relay.disconnect())
-    );
+    return Promise.all(poolMock.getAllRelays().map((relay) => relay.disconnect()));
 });
 ```
 
 2. Test connection states:
+
 ```typescript
 // Test connection states across pool
-const states = poolMock.getAllRelays().map(relay => relay.status);
+const states = poolMock.getAllRelays().map((relay) => relay.status);
 expect(states).toContain(2); // CONNECTED
 expect(states).not.toContain(0); // DISCONNECTED
 ```
 
 3. Test subscription management:
+
 ```typescript
 // Test subscription across pool
 const subId = "test-sub";
 const filter = { kinds: [1] };
 
-poolMock.getAllRelays().forEach(relay => {
+poolMock.getAllRelays().forEach((relay) => {
     relay.subscribe({
         subId,
         filters: [filter],
-        eventReceived: () => {}
+        eventReceived: () => {},
     });
 });
 
 // Verify subscriptions
-poolMock.getAllRelays().forEach(relay => {
+poolMock.getAllRelays().forEach((relay) => {
     expect(relay.hasSubscription(subId)).toBe(true);
 });
 ```
 
 4. Test error handling:
+
 ```typescript
 // Test error propagation
 const errorRelay = poolMock.getRelay("wss://relay1.test");
@@ -203,6 +203,7 @@ expect(errorHandler).toHaveBeenCalled();
 ```
 
 5. Test relay removal:
+
 ```typescript
 // Test removing relays from pool
 const relayUrl = "wss://relay1.test";
@@ -210,4 +211,4 @@ poolMock.removeRelay(relayUrl);
 
 expect(poolMock.getRelay(relayUrl)).toBeUndefined();
 expect(poolMock.getAllRelays()).not.toContain(relayUrl);
-``` 
+```

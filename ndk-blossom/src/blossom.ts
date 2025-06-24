@@ -144,7 +144,7 @@ export class NDKBlossom {
 
             // Set the SHA256 calculator if not provided in options
             if (!options.sha256Calculator) {
-                options.sha256Calculator = this.sha256Calculator;
+                options.sha256Calculator = this.getSHA256Calculator();
             }
 
             // Upload the file

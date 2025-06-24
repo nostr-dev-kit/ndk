@@ -9,9 +9,9 @@
         "preview": "vite preview"
     },
     "dependencies": {
-        "@nostr-dev-kit/ndk": "^2.0.0",
-        "@nostr-dev-kit/ndk-blossom": "^0.1.1",
-        "@nostr-dev-kit/ndk-hooks": "workspace:*",
+        "@nostr-dev-kit/ndk": "latest",
+        "@nostr-dev-kit/ndk-blossom": "file:../..",
+        "@nostr-dev-kit/ndk-hooks": "latest",
         "react": "^18.2.0",
         "react-dom": "^18.2.0"
     },

@@ -42,6 +42,7 @@ export * from "./events/kinds/wiki.js";
 export * from "./events/kinds/project.js";
 export * from "./events/kinds/task.js";
 export * from "./events/kinds/project-template.js";
+export * from "./events/kinds/thread.js";
 
 export * from "./events/wrap.js";
 
@@ -89,4 +90,7 @@ export * from "./utils/imeta.js";
 export * from "./utils/filter.js";
 
 // Re-export signature verification stats
-export { SignatureVerificationStats, startSignatureVerificationStats } from "./relay/signature-verification-stats.js";
+export {
+    SignatureVerificationStats,
+    startSignatureVerificationStats,
+} from "./relay/signature-verification-stats.js";

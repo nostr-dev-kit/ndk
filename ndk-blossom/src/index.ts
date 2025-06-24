@@ -14,7 +14,7 @@ export * from "./blossom";
 export { extractHashFromUrl } from "./healing/url-healing";
 
 // Export SHA256 utilities
-export { SHA256Calculator } from "./types";
+export type { SHA256Calculator } from "./types";
 export { DefaultSHA256Calculator, defaultSHA256Calculator } from "./utils/sha256";
 
 // Set default export

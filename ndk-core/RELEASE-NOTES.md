@@ -11,10 +11,11 @@ ndk-core
 A lot has changed under the hood to make space for performant access points, particularly synchronous access points.
 
 Worthy mentions:
-* The whole codebase has been migrated to use modern tooling: bun and vitest.
-* Very useful test helpers, until now, writing tests on clients was a pain, NDK now ships with @nostr-dev-kit/ndk/test which provides a `MockRelay` that provides access to very useful testing utilities.
-* Race condition bugs are now gone, no more dreaded "Not enough relays received this event" when publishing before connecting to relays.
+
+- The whole codebase has been migrated to use modern tooling: bun and vitest.
+- Very useful test helpers, until now, writing tests on clients was a pain, NDK now ships with @nostr-dev-kit/ndk/test which provides a `MockRelay` that provides access to very useful testing utilities.
+- Race condition bugs are now gone, no more dreaded "Not enough relays received this event" when publishing before connecting to relays.
 
 ndk-sqlite-wasm-cache-adapter
 
-A new cache adapter leveraging SQLite WASM is now available. This should be the preferred option to 
+A new cache adapter leveraging SQLite WASM is now available. This should be the preferred option to

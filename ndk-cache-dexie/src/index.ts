@@ -380,7 +380,7 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
                 id: event.tagId(),
                 pubkey: event.pubkey,
                 kind: event.kind,
-                createdAt: event.created_at,
+                createdAt: event.created_at ?? Date.now(),
                 relay: relay?.url,
                 event: event.serialize(this.saveSig, true),
             };

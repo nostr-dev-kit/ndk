@@ -1,5 +1,17 @@
 # @nostr-dev-kit/ndk
 
+## 2.14.31
+
+### Patch Changes
+
+- add NDKThread event
+
+## 2.14.30
+
+### Patch Changes
+
+- enhance NDKEvent with signed/unsigned type system and add related tests
+
 ## 2.14.29
 
 ### Patch Changes

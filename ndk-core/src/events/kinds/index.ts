@@ -11,7 +11,7 @@ export enum NDKKind {
 
     // NIP-29
     GroupChat = 9,
-    GroupNote = 11,
+    Thread = 11,
     GroupReply = 12,
     GiftWrapSeal = 13,
     // Gift Wrapped Rumors

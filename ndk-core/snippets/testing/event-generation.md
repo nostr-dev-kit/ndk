@@ -11,7 +11,7 @@ import { EventGenerator } from "@nostr-dev-kit/ndk/test";
 import { NDK } from "@nostr-dev-kit/ndk";
 
 const ndk = new NDK();
-EventGenerator.setNDK(ndk);  // Required setup
+EventGenerator.setNDK(ndk); // Required setup
 const generator = new EventGenerator();
 
 // Generate a text note (kind 1)
@@ -21,15 +21,11 @@ const textNote = await generator.textNote("Hello World");
 const metadata = await generator.metadata({
     name: "Test User",
     about: "Testing NDK",
-    picture: "https://example.com/avatar.jpg"
+    picture: "https://example.com/avatar.jpg",
 });
 
 // Generate contact list (kind 3)
-const contacts = await generator.contactList([
-    "pubkey1",
-    "pubkey2",
-    "pubkey3"
-]);
+const contacts = await generator.contactList(["pubkey1", "pubkey2", "pubkey3"]);
 ```
 
 ## Advanced Event Generation
@@ -43,20 +39,17 @@ const customEvent = await generator.createEvent({
     content: "Custom content",
     tags: [
         ["p", "pubkey1"],
-        ["e", "event1"]
-    ]
+        ["e", "event1"],
+    ],
 });
 
 // Create an encrypted direct message
-const encryptedDM = await generator.encryptedDM(
-    "recipient_pubkey",
-    "Secret message"
-);
+const encryptedDM = await generator.encryptedDM("recipient_pubkey", "Secret message");
 
 // Create a reaction event
 const reaction = await generator.reaction(
     "target_event_id",
-    "+"  // Like reaction
+    "+" // Like reaction
 );
 ```
 
@@ -71,8 +64,8 @@ const taggedEvent = await generator.createEvent({
         ["p", "pubkey1", "wss://relay.example"],
         ["e", "event1", "wss://relay.example", "reply"],
         ["t", "testing"],
-        ["r", "https://example.com"]
-    ]
+        ["r", "https://example.com"],
+    ],
 });
 ```
 
@@ -85,14 +78,14 @@ const paramEvent = await generator.createEvent({
     content: "Parametric content",
     created_at: Math.floor(Date.now() / 1000),
     tags: [],
-    pubkey: "custom_pubkey"  // Override default pubkey
+    pubkey: "custom_pubkey", // Override default pubkey
 });
 
 // Generate multiple events
 const events = await Promise.all([
     generator.textNote("First note"),
     generator.textNote("Second note"),
-    generator.textNote("Third note")
+    generator.textNote("Third note"),
 ]);
 ```
 
@@ -121,8 +114,8 @@ const replyEvent = await generator.createEvent({
     content: "Reply message",
     tags: [
         ["e", rootEvent.id, "", "root"],
-        ["p", rootEvent.pubkey]
-    ]
+        ["p", rootEvent.pubkey],
+    ],
 });
 
 // Create a reaction to the reply
@@ -142,7 +135,7 @@ const events = [];
 relay.subscribe({
     subId: "test",
     filters: [{ kinds: [1] }],
-    eventReceived: (event) => events.push(event)
+    eventReceived: (event) => events.push(event),
 });
 
 // Generate and simulate events
@@ -158,6 +151,7 @@ expect(events).toHaveLength(2);
 ## Best Practices
 
 1. Reset generator before tests:
+
 ```typescript
 beforeEach(() => {
     EventGenerator.setNDK(new NDK());
@@ -165,22 +159,25 @@ beforeEach(() => {
 ```
 
 2. Use consistent timestamps for deterministic testing:
+
 ```typescript
 const timestamp = Math.floor(Date.now() / 1000);
 const event = await generator.createEvent({
     kind: 1,
     content: "Test",
-    created_at: timestamp
+    created_at: timestamp,
 });
 ```
 
 3. Test event validation:
+
 ```typescript
 const event = await generator.textNote("Test");
 expect(event.verify()).resolves.toBe(true);
 ```
 
 4. Generate related events:
+
 ```typescript
 // Create a conversation thread
 const thread = [];
@@ -193,9 +190,9 @@ for (let i = 0; i < 3; i++) {
         content: `Reply ${i + 1}`,
         tags: [
             ["e", thread[i].id, "", "reply"],
-            ["p", thread[i].pubkey]
-        ]
+            ["p", thread[i].pubkey],
+        ],
     });
     thread.push(reply);
 }
-``` 
+```

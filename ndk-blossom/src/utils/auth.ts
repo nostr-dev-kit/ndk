@@ -86,7 +86,7 @@ export async function createAuthEvent(
 export function addAuthHeaders(headers: Record<string, string>, authEvent: NDKEvent): Record<string, string> {
     // Serialize and base64 encode the event according to BUD-01
     const serializedEvent = JSON.stringify(authEvent.rawEvent());
-    const encodedEvent = Buffer.from(serializedEvent).toString("base64");
+    const encodedEvent = btoa(serializedEvent);
 
     return {
         ...headers,

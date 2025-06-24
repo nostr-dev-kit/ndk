@@ -10,27 +10,23 @@ When you publish an event, NDK tracks the status of each relay:
 import NDK from "@nostr-dev-kit/ndk";
 
 const ndk = new NDK({
-    explicitRelayUrls: [
-        "wss://relay.damus.io",
-        "wss://relay.nostr.band",
-        "wss://nos.lol"
-    ]
+    explicitRelayUrls: ["wss://relay.damus.io", "wss://relay.nostr.band", "wss://nos.lol"],
 });
 
 await ndk.connect();
 
 const event = new NDKEvent(ndk, {
     kind: 1,
-    content: "Hello Nostr!"
+    content: "Hello Nostr!",
 });
 
 try {
     await event.publish();
-    
+
     // Get all relays where the event was successfully published
     console.log("Published to:", event.publishedToRelays);
     // Output: ["wss://relay.damus.io", "wss://nos.lol"]
-    
+
     // Check if published to a specific relay
     if (event.wasPublishedTo("wss://relay.damus.io")) {
         console.log("Successfully published to Damus relay");
@@ -38,7 +34,7 @@ try {
 } catch (error) {
     // Even if publish fails, you can see which relays succeeded
     console.log("Published to:", event.publishedToRelays);
-    
+
     // Get failed relays and their errors
     const failures = event.failedPublishesToRelays;
     for (const [relay, error] of failures) {
@@ -75,7 +71,7 @@ try {
     if (error instanceof NDKPublishError) {
         console.log("Published to", error.publishedToRelays.size, "relays");
         console.log("Failed on", error.errors.size, "relays");
-        
+
         // The event object still tracks all statuses
         console.log("Successful relays:", event.publishedToRelays);
         console.log("Failed relays:", Array.from(event.failedPublishesToRelays.keys()));
@@ -88,10 +84,10 @@ try {
 You can publish to specific relay sets and track their status:
 
 ```typescript
-const customRelaySet = NDKRelaySet.fromRelayUrls([
-    "wss://relay.snort.social",
-    "wss://relay.primal.net"
-], ndk);
+const customRelaySet = NDKRelaySet.fromRelayUrls(
+    ["wss://relay.snort.social", "wss://relay.primal.net"],
+    ndk
+);
 
 await event.publish(customRelaySet);
 
@@ -115,10 +111,7 @@ await event.publish();
 console.log("First publish:", event.publishedToRelays);
 
 // Republish to different relays
-const newRelaySet = NDKRelaySet.fromRelayUrls([
-    "wss://relay.nostr.bg",
-    "wss://nostr.wine"
-], ndk);
+const newRelaySet = NDKRelaySet.fromRelayUrls(["wss://relay.nostr.bg", "wss://nostr.wine"], ndk);
 
 await event.publish(newRelaySet);
 console.log("Second publish:", event.publishedToRelays);
@@ -130,12 +123,12 @@ console.log("Second publish:", event.publishedToRelays);
 You can use publish tracking to monitor relay performance:
 
 ```typescript
-const publishStats = new Map<string, { success: number, failure: number }>();
+const publishStats = new Map<string, { success: number; failure: number }>();
 
 // Track multiple publishes
 for (const event of events) {
     await event.publish();
-    
+
     for (const [relay, status] of event.publishRelayStatus) {
         const stats = publishStats.get(relay) || { success: 0, failure: 0 };
         if (status.status === "success") {
@@ -150,7 +143,7 @@ for (const event of events) {
 // Analyze relay performance
 for (const [relay, stats] of publishStats) {
     const total = stats.success + stats.failure;
-    const successRate = (stats.success / total * 100).toFixed(1);
+    const successRate = ((stats.success / total) * 100).toFixed(1);
     console.log(`${relay}: ${successRate}% success rate`);
 }
 ```

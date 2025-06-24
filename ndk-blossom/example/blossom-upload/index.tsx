@@ -16,6 +16,7 @@ import NDK, {
     useCurrentUserProfile,
     useNDKSessionSessions,
 } from "@nostr-dev-kit/ndk-hooks";
+import { NDKEvent } from "@nostr-dev-kit/ndk";
 import NDKBlossom from "@nostr-dev-kit/ndk-blossom";
 
 // Initialize NDK outside of any component
@@ -43,6 +44,9 @@ const App: React.FC = () => {
     // Blossom state
     const [blossomServers, setBlossomServers] = useState<string[]>([]);
     const [blossomLoading, setBlossomLoading] = useState(false);
+    // Server management state
+    const [newServerUrl, setNewServerUrl] = useState("");
+    const [savingServers, setSavingServers] = useState(false);
     const [file, setFile] = useState<File | null>(null);
     const [uploadProgress, setUploadProgress] = useState<number>(0);
     const [uploadStatus, setUploadStatus] = useState<string>("");
@@ -112,6 +116,77 @@ const App: React.FC = () => {
     const formatPubkey = (pubkey: string | null) => {
         if (!pubkey) return "None";
         return `${pubkey.substring(0, 8)}...${pubkey.substring(pubkey.length - 8)}`;
+    };
+
+    // Add a new server to the list
+    const addServer = async () => {
+        if (!newServerUrl.trim() || !currentUser || !ndk) {
+            alert("Please enter a valid server URL and make sure you are logged in");
+            return;
+        }
+
+        try {
+            // Normalize the URL
+            let url = newServerUrl.trim();
+            if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                url = "https://" + url;
+            }
+
+            // Add to local state immediately
+            const updatedServers = [...blossomServers, url];
+            setBlossomServers(updatedServers);
+            setNewServerUrl("");
+
+            // Save to the user's profile
+            await saveServerList(updatedServers);
+        } catch (error) {
+            alert(`Failed to add server: ${(error as Error).message}`);
+            // Revert local state on error
+            setBlossomServers(blossomServers);
+        }
+    };
+
+    // Remove a server from the list
+    const removeServer = async (serverToRemove: string) => {
+        if (!currentUser || !ndk) return;
+
+        try {
+            const updatedServers = blossomServers.filter((server) => server !== serverToRemove);
+            setBlossomServers(updatedServers);
+            await saveServerList(updatedServers);
+        } catch (error) {
+            alert(`Failed to remove server: ${(error as Error).message}`);
+            // Revert local state on error
+            setBlossomServers(blossomServers);
+        }
+    };
+
+    // Save the server list to the user's profile
+    const saveServerList = async (servers: string[]) => {
+        if (!currentUser || !ndk) return;
+
+        setSavingServers(true);
+        try {
+            const blossom = new NDKBlossom(ndk);
+            // Create or update the blossom server list
+            const serverList = await blossom.getServerList(currentUser);
+
+            if (serverList) {
+                // Update existing list
+                serverList.servers = servers;
+                await serverList.publish();
+            } else {
+                // Create new server list event
+                const event = new ndk.Event({
+                    kind: 10063, // Blossom server list kind
+                    content: "",
+                    tags: servers.map((server) => ["server", server]),
+                });
+                await event.publish();
+            }
+        } finally {
+            setSavingServers(false);
+        }
     };
 
     // File upload logic
@@ -234,16 +309,56 @@ const App: React.FC = () => {
                     <h2>Blossom Servers</h2>
                     {blossomLoading ? (
                         <p>Loading servers...</p>
-                    ) : blossomServers.length > 0 ? (
-                        <ul>
-                            {blossomServers.map((server, index) => (
-                                <li key={index} className="server-item">
-                                    <span>{server}</span>
-                                </li>
-                            ))}
-                        </ul>
                     ) : (
-                        <p>No Blossom servers found. You need to add servers to your profile.</p>
+                        <>
+                            {blossomServers.length > 0 ? (
+                                <ul>
+                                    {blossomServers.map((server, index) => (
+                                        <li key={index} className="server-item">
+                                            <span>{server}</span>
+                                            <button
+                                                type="button"
+                                                onClick={() => removeServer(server)}
+                                                disabled={savingServers}
+                                                style={{ backgroundColor: "#dc3545", marginLeft: "10px" }}
+                                            >
+                                                Remove
+                                            </button>
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p>No Blossom servers configured. Add some servers below to upload files.</p>
+                            )}
+
+                            {/* Add Server Form */}
+                            <div
+                                style={{
+                                    marginTop: "20px",
+                                    padding: "15px",
+                                    border: "1px solid #ddd",
+                                    borderRadius: "4px",
+                                }}
+                            >
+                                <h3>Add Blossom Server</h3>
+                                <p>Enter a Blossom server URL (e.g., blossom.oxtr.dev)</p>
+                                <input
+                                    type="text"
+                                    value={newServerUrl}
+                                    onChange={(e) => setNewServerUrl(e.target.value)}
+                                    placeholder="Enter server URL"
+                                    disabled={savingServers}
+                                    onKeyPress={(e) => e.key === "Enter" && addServer()}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={addServer}
+                                    disabled={savingServers || !newServerUrl.trim()}
+                                >
+                                    {savingServers ? "Saving..." : "Add Server"}
+                                </button>
+                            </div>
+                        </>
                     )}
                 </div>
             )}

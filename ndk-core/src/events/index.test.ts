@@ -207,13 +207,21 @@ describe("NDKEvent", () => {
                 pubkey: user1.pubkey,
             };
 
-            const event1 = new NDKEvent(ndk, { kind: 30000, content: eventData.content, pubkey: eventData.pubkey });
+            const event1 = new NDKEvent(ndk, {
+                kind: 30000,
+                content: eventData.content,
+                pubkey: eventData.pubkey,
+            });
             event1.tags = eventData.tags;
             event1.created_at = Math.floor(Date.now() / 1000 - 3600);
             event1.id = "id1";
             event1.sig = "sig1";
 
-            const event2 = new NDKEvent(ndk, { kind: 30000, content: eventData.content, pubkey: eventData.pubkey });
+            const event2 = new NDKEvent(ndk, {
+                kind: 30000,
+                content: eventData.content,
+                pubkey: eventData.pubkey,
+            });
             event2.tags = eventData.tags;
             event2.created_at = Math.floor(Date.now() / 1000);
             event2.id = "id2";
@@ -307,7 +315,11 @@ describe("NDKEvent", () => {
 
         it("adds a marker to the reference tag if provided with relay if its set", () => {
             const relay = new NDKRelay("wss://relay.nos.dev/", undefined, ndk);
-            const nip33event = new NDKEvent(ndk, { kind: 30000, content: "", pubkey: user1.pubkey });
+            const nip33event = new NDKEvent(ndk, {
+                kind: 30000,
+                content: "",
+                pubkey: user1.pubkey,
+            });
             nip33event.tags.push(["d", "d-code"]);
             nip33event.id = "eventid1";
             nip33event.relay = relay;
@@ -680,7 +692,10 @@ describe("NDKEvent", () => {
 
             it("forces kind 1111 when replying to non-kind 1 event with forceNip22: true", async () => {
                 // Create a non-kind 1 event (Article)
-                const article = new NDKEvent(ndk, { kind: NDKKind.Article, content: "Article content" });
+                const article = new NDKEvent(ndk, {
+                    kind: NDKKind.Article,
+                    content: "Article content",
+                });
                 article.tags.push(["d", "test-article"]);
                 await SignerGenerator.sign(article, "alice");
 

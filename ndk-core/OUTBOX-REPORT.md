@@ -7,16 +7,21 @@ The outbox model in Nostr is a decentralized relay selection strategy that solve
 ## The Outbox Model Concept
 
 ### Background and Problem
+
 Originally called the "Gossip Model" after the Gossip client that pioneered it, the outbox model addresses a critical challenge in Nostr: without coordination, users tend to centralize around the same large relays to ensure message delivery. This centralization weakens Nostr's censorship resistance - an attacker only needs to take down about 5 major relays to disrupt half the network.
 
 ### Core Principles
+
 The outbox model works similarly to the web/RSS model:
+
 - **Outbox Relays**: You post your content to your own designated relays
 - **Inbox Relays**: You designate relays where you want to receive messages
 - **Dynamic Discovery**: Clients discover and connect to relays based on where users actually post
 
 ### NIP-65 Specification
+
 The protocol is formalized in NIP-65, which defines:
+
 - **Kind 10002 events**: Relay list metadata containing read/write relay preferences
 - **Relay tags**: "r" tags with optional "read"/"write" markers
 - **Fallback to Kind 3**: Contact list events can contain relay information in their content
@@ -24,15 +29,16 @@ The protocol is formalized in NIP-65, which defines:
 ## NDK's Implementation Architecture
 
 ### 1. Outbox Tracker (`OutboxTracker`)
+
 The central component that maintains relay associations for users:
 
 ```typescript
 class OutboxTracker extends EventEmitter {
     public data: LRUCache<Hexpubkey, OutboxItem>;
-    
+
     // Tracks users and fetches their relay lists
-    async trackUsers(items: NDKUser[] | Hexpubkey[], skipCache = false)
-    
+    async trackUsers(items: NDKUser[] | Hexpubkey[], skipCache = false);
+
     // Each OutboxItem contains:
     // - readRelays: Set<WebSocket["url"]>
     // - writeRelays: Set<WebSocket["url"]>
@@ -41,6 +47,7 @@ class OutboxTracker extends EventEmitter {
 ```
 
 Key features:
+
 - **LRU Cache**: Stores up to 100,000 entries with 2-minute expiration
 - **Batch Processing**: Handles up to 400 users at a time
 - **Blacklist Filtering**: Removes blacklisted relays from discovered lists
@@ -56,10 +63,11 @@ function chooseRelayCombinationForPubkeys(
     pubkeys: Hexpubkey[],
     type: "write" | "read",
     { count = 2, preferredRelays }: Options
-): Map<WebSocket["url"], Hexpubkey[]>
+): Map<WebSocket["url"], Hexpubkey[]>;
 ```
 
 Selection algorithm:
+
 1. **Fetch relay lists** for all requested pubkeys
 2. **Prioritize connected relays** that are already in the pool
 3. **Use relay ranking** to select optimal relays when not all are needed
@@ -75,10 +83,11 @@ async function calculateRelaySetFromEvent(
     ndk: NDK,
     event: NDKEvent,
     requiredRelayCount?: number
-): Promise<NDKRelaySet>
+): Promise<NDKRelaySet>;
 ```
 
 Publishing strategy:
+
 1. **Author's write relays**: Primary destination from the author's relay list
 2. **Relay hints**: Extract from "a" and "e" tags (up to 5 unique URLs)
 3. **P-tagged user relays**: Include read relays of mentioned users (if < 5 tags)
@@ -90,10 +99,11 @@ Publishing strategy:
 The `getTopRelaysForAuthors` function ranks relays by usage:
 
 ```typescript
-function getTopRelaysForAuthors(ndk: NDK, authors: Hexpubkey[]): WebSocket["url"][]
+function getTopRelaysForAuthors(ndk: NDK, authors: Hexpubkey[]): WebSocket["url"][];
 ```
 
 Current implementation:
+
 - Counts how many authors write to each relay
 - Sorts relays by author count (most popular first)
 - TODO: Incorporate relay scoring for quality metrics
@@ -115,6 +125,7 @@ This ensures queries are sent only to relays where the requested authors actuall
 ## Implementation Flow
 
 ### Reading Events (Subscription)
+
 1. User creates subscription with author filter
 2. NDK checks OutboxTracker for author relay lists
 3. Missing relay lists are fetched from the network
@@ -123,6 +134,7 @@ This ensures queries are sent only to relays where the requested authors actuall
 6. Each relay receives only relevant author queries
 
 ### Writing Events (Publishing)
+
 1. User publishes an event
 2. NDK fetches author's write relays from OutboxTracker
 3. Additional relays added from tags and mentions
@@ -130,6 +142,7 @@ This ensures queries are sent only to relays where the requested authors actuall
 5. Successful publishes update relay statistics
 
 ### Dynamic Relay Discovery
+
 1. OutboxTracker monitors author queries
 2. Fetches relay lists (NIP-65) for tracked users
 3. Falls back to kind 3 contact lists if needed
@@ -147,21 +160,25 @@ This ensures queries are sent only to relays where the requested authors actuall
 ## Technical Details
 
 ### Relay List Storage (NIP-65)
+
 ```typescript
 class NDKRelayList extends NDKEvent {
-    get readRelayUrls(): WebSocket["url"][]  // "r" tags with "read" marker
-    get writeRelayUrls(): WebSocket["url"][] // "r" tags with "write" marker
-    get bothRelayUrls(): WebSocket["url"][]  // "r" tags without marker
+    get readRelayUrls(): WebSocket["url"][]; // "r" tags with "read" marker
+    get writeRelayUrls(): WebSocket["url"][]; // "r" tags with "write" marker
+    get bothRelayUrls(): WebSocket["url"][]; // "r" tags without marker
 }
 ```
 
 ### Outbox Pool Configuration
+
 NDK supports a separate pool for outbox operations:
+
 - `ndk.outboxPool`: Dedicated pool for fetching relay lists
 - Falls back to main pool if not configured
 - Enables separation of metadata queries from content
 
 ### Cache Integration
+
 - Relay lists are cached to reduce network requests
 - Unpublished events tracked for optimistic updates
 - Cache-first strategy with fallback to network

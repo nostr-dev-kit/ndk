@@ -60,7 +60,7 @@ export type NDKRawEvent = {
  */
 export class NDKEvent extends EventEmitter {
     public ndk?: NDK;
-    public created_at: number;
+    public created_at?: number;
     public content = "";
     public tags: NDKTag[] = [];
     public kind: NDKKind | number;
@@ -98,7 +98,7 @@ export class NDKEvent extends EventEmitter {
     constructor(ndk?: NDK, event?: Partial<NDKRawEvent> | NDKEvent) {
         super();
         this.ndk = ndk;
-        this.created_at = event?.created_at!;
+        this.created_at = event?.created_at;
         this.content = event?.content || "";
         this.tags = event?.tags || [];
         this.id = event?.id || "";
@@ -131,7 +131,7 @@ export class NDKEvent extends EventEmitter {
      */
     public rawEvent(): NDKRawEvent {
         return {
-            created_at: this.created_at,
+            created_at: this.created_at!,
             content: this.content,
             tags: this.tags,
             kind: this.kind,
@@ -1004,4 +1004,68 @@ const untrackedUnpublishedEvents = new Set([
 
 function shouldTrackUnpublishedEvent(event: NDKEvent): boolean {
     return !untrackedUnpublishedEvents.has(event.kind!);
+}
+
+/**
+ * Discriminated union types for signed and unsigned events
+ */
+
+/**
+ * An NDKEvent that has been signed and has all required fields for relay transmission
+ */
+export type NDKSignedEvent = NDKEvent & {
+    readonly signed: true;
+    id: string; // narrows string to required
+    sig: string; // narrows string | undefined to required string
+    created_at: number; // narrows number | undefined to required number
+};
+
+/**
+ * An NDKEvent that has not been signed yet
+ */
+export type NDKUnsignedEvent = NDKEvent & {
+    readonly signed: false;
+    id?: string;
+    sig?: string;
+    created_at?: number;
+};
+
+/**
+ * Union type representing either signed or unsigned NDKEvent
+ */
+export type NDKEventVariant = NDKSignedEvent | NDKUnsignedEvent;
+
+/**
+ * Type guard to check if an event is signed
+ */
+export function isSignedEvent(event: NDKEvent): event is NDKSignedEvent {
+    return !!(event.sig && event.id && event.created_at && event.created_at > 0);
+}
+
+/**
+ * Type guard to check if an event is unsigned
+ */
+export function isUnsignedEvent(event: NDKEvent): event is NDKUnsignedEvent {
+    return !isSignedEvent(event);
+}
+
+/**
+ * Assertion function for when you know an event must be signed
+ */
+export function assertSignedEvent(event: NDKEvent): asserts event is NDKSignedEvent {
+    if (!isSignedEvent(event)) {
+        throw new Error("Expected signed event but event is not signed");
+    }
+}
+
+/**
+ * Factory function to create a typed signed event (used internally by subscriptions)
+ */
+export function createSignedEvent(event: NDKEvent): NDKSignedEvent {
+    if (!isSignedEvent(event)) {
+        throw new Error("Cannot create signed event from unsigned event");
+    }
+    // TypeScript now knows this is NDKSignedEvent
+    Object.defineProperty(event, "signed", { value: true, writable: false, enumerable: false });
+    return event as NDKSignedEvent;
 }

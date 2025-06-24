@@ -27,5 +27,20 @@ export class DefaultSHA256Calculator implements SHA256Calculator {
 
 /**
  * Singleton instance of the default SHA256 calculator
+ * Created lazily to avoid issues in non-browser environments
  */
-export const defaultSHA256Calculator = new DefaultSHA256Calculator();
+let _defaultSHA256Calculator: DefaultSHA256Calculator | undefined;
+
+export function getDefaultSHA256Calculator(): SHA256Calculator {
+    if (!_defaultSHA256Calculator) {
+        _defaultSHA256Calculator = new DefaultSHA256Calculator();
+    }
+    return _defaultSHA256Calculator;
+}
+
+// For backwards compatibility, export as defaultSHA256Calculator
+export const defaultSHA256Calculator = {
+    calculateSha256: async (file: File) => {
+        return getDefaultSHA256Calculator().calculateSha256(file);
+    },
+} as SHA256Calculator;

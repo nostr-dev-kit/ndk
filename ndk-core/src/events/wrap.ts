@@ -14,8 +14,11 @@ import { NDKVideo } from "./kinds/video.js";
 import { NDKWiki } from "./kinds/wiki.js";
 import { NDKBlossomList } from "./kinds/blossom-list.js";
 import { NDKFollowPack } from "./kinds/follow-pack.js";
-import { NDKDraft, NDKProjectTemplate, NDKTask } from "src/index.js";
 import { NDKProject } from "./kinds/project.js";
+import { NDKThread } from "./kinds/thread.js";
+import { NDKDraft } from "./kinds/drafts.js";
+import { NDKTask } from "./kinds/task.js";
+import { NDKProjectTemplate } from "./kinds/project-template.js";
 
 type NDKEventClass = {
     kinds: number[];
@@ -86,6 +89,7 @@ export function wrapEvent<T extends NDKEvent>(event: NDKEvent): T | Promise<T> |
         NDKStory,
         NDKBlossomList,
         NDKFollowPack,
+        NDKThread,
     ];
 
     // Combine built-in and registered classes

@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk-blossom
 
+## 0.1.31
+
+### Patch Changes
+
+- make ndk-blossom browser-compatible and enhance example UX
+
 ## 0.1.30
 
 ### Patch Changes

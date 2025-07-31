@@ -65,7 +65,22 @@ export class NDKRelayConnectivity {
      * @returns A Promise that resolves when the connection is established, or rejects if the connection fails.
      */
     async connect(timeoutMs?: number, reconnect = true): Promise<void> {
-        if (this._status !== NDKRelayStatus.RECONNECTING && this._status !== NDKRelayStatus.DISCONNECTED) {
+        // Check if WebSocket exists but is not open (stale connection)
+        if (this.ws && this.ws.readyState !== WebSocket.OPEN && this.ws.readyState !== WebSocket.CONNECTING) {
+            this.debug("Cleaning up stale WebSocket connection");
+            try {
+                this.ws.close();
+            } catch (e) {
+                // Ignore errors when closing stale connection
+            }
+            this.ws = undefined;
+            this._status = NDKRelayStatus.DISCONNECTED;
+        }
+        
+        if (
+            (this._status !== NDKRelayStatus.RECONNECTING && this._status !== NDKRelayStatus.DISCONNECTED) ||
+            this.reconnectTimeout
+        ) {
             this.debug(
                 "Relay requested to be connected but was in state %s or it had a reconnect timeout",
                 this._status,
@@ -433,11 +448,13 @@ export class NDKRelayConnectivity {
                 // this.debug("Reconnect failed", err);
 
                 if (attempt < MAX_RECONNECT_ATTEMPTS) {
+                    // Use exponential backoff: (1000 * attempt)^2
+                    // This gives delays of 1s^2, 2s^2, 3s^2, etc.
                     setTimeout(
                         () => {
                             this.handleReconnection(attempt + 1);
                         },
-                        (1000 * (attempt + 1)) ^ 4,
+                        Math.pow(1000 * (attempt + 1), 2),
                     );
                 } else {
                     this.debug("Reconnect failed");
@@ -464,6 +481,13 @@ export class NDKRelayConnectivity {
             this.netDebug?.(message, this.ndkRelay, "send");
         } else {
             this.debug(`Not connected to ${this.ndkRelay.url} (%d), not sending message ${message}`, this._status);
+            
+            // If we think we're connected but WebSocket is not open, we have a stale connection
+            if (this._status >= NDKRelayStatus.CONNECTED && this.ws?.readyState !== WebSocket.OPEN) {
+                this.debug(`Stale connection detected, WebSocket state: ${this.ws?.readyState}`);
+                // Force disconnect and reconnect
+                this.onDisconnect();
+            }
         }
     }
 

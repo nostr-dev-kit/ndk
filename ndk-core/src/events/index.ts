@@ -969,17 +969,35 @@ export class NDKEvent extends EventEmitter {
                 reply.tags.push(...rootTags);
                 if (rootKind) reply.tags.push(["K", rootKind]);
 
-                const [type, id, _, ...extra] = this.tagReference();
-                const tag = [type, id, ...extra];
+                // Build parent reference tag without marker for NIP-22
+                let tag: NDKTag;
+                if (this.isParamReplaceable()) {
+                    tag = ["a", this.tagAddress()];
+                    const relayHint = this.relay?.url ?? "";
+                    if (relayHint) tag.push(relayHint);
+                } else {
+                    tag = ["e", this.tagId()];
+                    const relayHint = this.relay?.url ?? "";
+                    tag.push(relayHint);
+                    tag.push(this.pubkey);
+                }
                 reply.tags.push(tag);
             } else {
-                const [type, id, _, relayHint] = this.tagReference();
-                const tag = [type, id, relayHint ?? ""];
-                if (type === "e") tag.push(this.pubkey);
-                reply.tags.push(tag);
-                const uppercaseTag = [...tag];
-                uppercaseTag[0] = uppercaseTag[0].toUpperCase();
-                reply.tags.push(uppercaseTag);
+                // Build NIP-22 compliant tags without markers
+                let lowerTag: NDKTag;
+                let upperTag: NDKTag;
+                const relayHint = this.relay?.url ?? "";
+                
+                if (this.isParamReplaceable()) {
+                    lowerTag = ["a", this.tagAddress(), relayHint];
+                    upperTag = ["A", this.tagAddress(), relayHint];
+                } else {
+                    lowerTag = ["e", this.tagId(), relayHint, this.pubkey];
+                    upperTag = ["E", this.tagId(), relayHint, this.pubkey];
+                }
+                
+                reply.tags.push(lowerTag);
+                reply.tags.push(upperTag);
                 reply.tags.push(["K", this.kind?.toString()]);
                 reply.tags.push(["P", this.pubkey]);
             }

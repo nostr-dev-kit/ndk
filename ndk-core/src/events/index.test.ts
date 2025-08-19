@@ -759,6 +759,67 @@ describe("NDKEvent", () => {
                 expect(forcedReply.tags).toContainEqual(["e", root.id, "", root.pubkey]);
                 expect(forcedReply.tags).toContainEqual(["E", root.id, "", root.pubkey]);
             });
+
+            it("does not include markers in NIP-22 reply tags", async () => {
+                // Create a kind 1 event
+                const op = await fixture.eventFactory.createSignedTextNote("Hello world", "alice");
+                
+                // Create NIP-22 reply
+                fixture.setupSigner("bob");
+                const reply = op.reply(true);
+                
+                // Check that e and E tags don't have markers
+                const eTags = reply.tags.filter(t => t[0] === "e");
+                const ETags = reply.tags.filter(t => t[0] === "E");
+                
+                // NIP-22 tags should be: ["e", eventId, relayHint, pubkey]
+                // NOT: ["e", eventId, relayHint, marker, pubkey]
+                expect(eTags).toHaveLength(1);
+                expect(eTags[0]).toHaveLength(4); // tag name, event id, relay hint, pubkey
+                expect(eTags[0][0]).toBe("e");
+                expect(eTags[0][1]).toBe(op.id);
+                expect(eTags[0][2]).toBe(""); // empty relay hint
+                expect(eTags[0][3]).toBe(op.pubkey); // pubkey, not a marker
+                
+                expect(ETags).toHaveLength(1);
+                expect(ETags[0]).toHaveLength(4); // tag name, event id, relay hint, pubkey
+                expect(ETags[0][0]).toBe("E");
+                expect(ETags[0][1]).toBe(op.id);
+                expect(ETags[0][2]).toBe(""); // empty relay hint
+                expect(ETags[0][3]).toBe(op.pubkey); // pubkey, not a marker
+            });
+
+            it("does not include markers in NIP-22 reply tags for addressable events", async () => {
+                // Create an addressable event
+                const article = new NDKEvent(ndk, {
+                    kind: NDKKind.Article,
+                    content: "Article content",
+                });
+                article.tags.push(["d", "test-article"]);
+                await SignerGenerator.sign(article, "alice");
+                
+                // Create NIP-22 reply
+                fixture.setupSigner("bob");
+                const reply = article.reply();
+                
+                // Check that a and A tags don't have markers
+                const aTags = reply.tags.filter(t => t[0] === "a");
+                const ATags = reply.tags.filter(t => t[0] === "A");
+                
+                // NIP-22 tags for addressable events should be: ["a", address, relayHint]
+                // NOT: ["a", address, relayHint, marker]
+                expect(aTags).toHaveLength(1);
+                expect(aTags[0]).toHaveLength(3); // tag name, address, relay hint
+                expect(aTags[0][0]).toBe("a");
+                expect(aTags[0][1]).toBe(article.tagId());
+                expect(aTags[0][2]).toBe(""); // empty relay hint, no marker
+                
+                expect(ATags).toHaveLength(1);
+                expect(ATags[0]).toHaveLength(3); // tag name, address, relay hint
+                expect(ATags[0][0]).toBe("A");
+                expect(ATags[0][1]).toBe(article.tagId());
+                expect(ATags[0][2]).toBe(""); // empty relay hint, no marker
+            });
         });
     });
 

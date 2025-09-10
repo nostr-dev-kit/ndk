@@ -1,7 +1,7 @@
 import { nip19 } from "nostr-tools";
 
 import type { EventPointer, ProfilePointer } from "../user/index.js";
-import type { NDKTag } from "./index.js";
+import type { NDKTag, ContentTaggingOptions, NDKEvent } from "./index.js";
 
 export type ContentTag = {
     tags: NDKTag[];
@@ -106,7 +106,17 @@ export function generateHashtags(content: string): string[] {
     return Array.from(tag);
 }
 
-export async function generateContentTags(content: string, tags: NDKTag[] = []): Promise<ContentTag> {
+export async function generateContentTags(
+    content: string,
+    tags: NDKTag[] = [],
+    opts?: ContentTaggingOptions,
+    ctx?: NDKEvent
+): Promise<ContentTag> {
+    // Early return if content tagging is disabled
+    if (opts?.skipContentTagging) {
+        return { content, tags };
+    }
+
     const tagRegex = /(@|nostr:)(npub|nprofile|note|nevent|naddr)[a-zA-Z0-9]+/g;
 
     const promises: Promise<void>[] = [];
@@ -123,6 +133,15 @@ export async function generateContentTags(content: string, tags: NDKTag[] = []):
             const { type, data } = nip19.decode(entity);
             let t: NDKTag | undefined;
 
+            // Check if type should be filtered
+            if (opts?.filters) {
+                const shouldInclude = !opts.filters.includeTypes || opts.filters.includeTypes.includes(type as any);
+                const shouldExclude = opts.filters.excludeTypes?.includes(type as any);
+                if (!shouldInclude || shouldExclude) {
+                    return tag;
+                }
+            }
+
             switch (type) {
                 case "npub":
                     t = ["p", data as string];
@@ -135,7 +154,8 @@ export async function generateContentTags(content: string, tags: NDKTag[] = []):
                 case "note":
                     promises.push(
                         new Promise(async (resolve) => {
-                            addTagIfNew(["q", data, await maybeGetEventRelayUrl(entity)]);
+                            const relay = await maybeGetEventRelayUrl(entity);
+                            addTagIfNew(["q", data, relay]);
                             resolve();
                         }),
                     );
@@ -153,7 +173,7 @@ export async function generateContentTags(content: string, tags: NDKTag[] = []):
                             }
 
                             addTagIfNew(["q", id, relays[0]]);
-                            if (author) addTagIfNew(["p", author]);
+                            if (author && opts?.pTagOnQTags !== false) addTagIfNew(["p", author]);
                             resolve();
                         }),
                     );
@@ -171,7 +191,7 @@ export async function generateContentTags(content: string, tags: NDKTag[] = []):
                             }
 
                             addTagIfNew(["q", id, relays[0]]);
-                            addTagIfNew(["p", data.pubkey]);
+                            if (opts?.pTagOnQTags !== false) addTagIfNew(["p", data.pubkey]);
                             resolve();
                         }),
                     );
@@ -190,8 +210,21 @@ export async function generateContentTags(content: string, tags: NDKTag[] = []):
 
     await Promise.all(promises);
 
-    const newTags = generateHashtags(content).map((hashtag) => ["t", hashtag]);
-    tags = mergeTags(tags, newTags);
+    // Only add hashtags if not filtered out
+    if (!opts?.filters?.excludeTypes?.includes('hashtag')) {
+        const newTags = generateHashtags(content).map((hashtag) => ["t", hashtag]);
+        tags = mergeTags(tags, newTags);
+    }
+
+    // Copy p-tags from target event if requested
+    if (opts?.copyPTagsFromTarget && ctx) {
+        const pTags = ctx.getMatchingTags("p");
+        for (const pTag of pTags) {
+            if (!tags.find((t) => t[0] === "p" && t[1] === pTag[1])) {
+                tags.push(pTag);
+            }
+        }
+    }
 
     return { content, tags };
 }

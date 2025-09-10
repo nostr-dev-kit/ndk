@@ -31,6 +31,23 @@ const skipClientTagOnKinds = new Set([
 export type NDKEventId = string;
 export type NDKTag = string[];
 
+export type ParsedContentMatch = {
+    original: string;
+    decoded: string;
+    type: 'npub' | 'nprofile' | 'note' | 'nevent' | 'naddr';
+    data: any;
+};
+
+export type ContentTaggingOptions = {
+    skipContentTagging?: boolean;
+    pTagOnQTags?: boolean;
+    copyPTagsFromTarget?: boolean;
+    filters?: {
+        includeTypes?: Array<'npub' | 'nprofile' | 'note' | 'nevent' | 'naddr' | 'hashtag'>;
+        excludeTypes?: Array<'npub' | 'nprofile' | 'note' | 'nevent' | 'naddr' | 'hashtag'>;
+    };
+};
+
 export type NostrEvent = {
     created_at: number;
     content: string;
@@ -282,9 +299,10 @@ export class NDKEvent extends EventEmitter {
      * Return a NostrEvent object, trying to fill in missing fields
      * when possible, adding tags when necessary.
      * @param pubkey {string} The pubkey of the user who the event belongs to.
+     * @param opts {ContentTaggingOptions} Options for content tagging.
      * @returns {Promise<NostrEvent>} A promise that resolves to a NostrEvent.
      */
-    async toNostrEvent(pubkey?: string): Promise<NostrEvent> {
+    async toNostrEvent(pubkey?: string, opts?: ContentTaggingOptions): Promise<NostrEvent> {
         if (!pubkey && this.pubkey === "") {
             const user = await this.ndk?.signer?.user();
             this.pubkey = user?.pubkey || "";
@@ -294,7 +312,7 @@ export class NDKEvent extends EventEmitter {
             this.created_at = Math.floor(Date.now() / 1000);
         }
 
-        const { content, tags } = await this.generateTags();
+        const { content, tags } = await this.generateTags(opts);
         this.content = content || "";
         this.tags = tags;
 
@@ -449,9 +467,10 @@ export class NDKEvent extends EventEmitter {
      * It will generate tags.
      * Repleacable events will have their created_at field set to the current time.
      * @param signer {NDKSigner} The NDKSigner to use to sign the event
+     * @param opts {ContentTaggingOptions} Options for content tagging.
      * @returns {Promise<string>} A Promise that resolves to the signature of the signed event.
      */
-    public async sign(signer?: NDKSigner): Promise<string> {
+    public async sign(signer?: NDKSigner, opts?: ContentTaggingOptions): Promise<string> {
         if (!signer) {
             this.ndk?.assertSigner();
 
@@ -461,7 +480,7 @@ export class NDKEvent extends EventEmitter {
             this.author = await signer.user();
         }
 
-        const nostrEvent = await this.toNostrEvent();
+        const nostrEvent = await this.toNostrEvent(undefined, opts);
         this.sig = await signer.sign(nostrEvent);
 
         return this.sig;
@@ -487,15 +506,17 @@ export class NDKEvent extends EventEmitter {
      * @param relaySet {NDKRelaySet} The relaySet to publish the even to.
      * @param timeoutM {number} The timeout for the publish operation in milliseconds.
      * @param requiredRelayCount The number of relays that must receive the event for the publish to be considered successful.
+     * @param opts {ContentTaggingOptions} Options for content tagging.
      * @returns A promise that resolves to the relays the event was published to.
      */
     public async publish(
         relaySet?: NDKRelaySet,
         timeoutMs?: number,
         requiredRelayCount?: number,
+        opts?: ContentTaggingOptions,
     ): Promise<Set<NDKRelay>> {
         if (!requiredRelayCount) requiredRelayCount = 1;
-        if (!this.sig) await this.sign();
+        if (!this.sig) await this.sign(undefined, opts);
         if (!this.ndk) throw new Error("NDKEvent must be associated with an NDK instance to publish");
 
         if (!relaySet || relaySet.size === 0) {
@@ -538,13 +559,14 @@ export class NDKEvent extends EventEmitter {
     /**
      * Generates tags for users, notes, and other events tagged in content.
      * Will also generate random "d" tag for parameterized replaceable events where needed.
+     * @param opts {ContentTaggingOptions} Options for content tagging.
      * @returns {ContentTag} The tags and content of the event.
      */
-    async generateTags(): Promise<ContentTag> {
+    async generateTags(opts?: ContentTaggingOptions): Promise<ContentTag> {
         let tags: NDKTag[] = [];
 
         // don't autogenerate if there currently are tags
-        const g = await generateContentTags(this.content, this.tags);
+        const g = await generateContentTags(this.content, this.tags, opts, this);
         const content = g.content;
         tags = g.tags;
 

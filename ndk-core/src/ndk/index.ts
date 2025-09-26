@@ -27,8 +27,13 @@ import { setActiveUser } from "./active-user.js";
 import { getEntity } from "./entity.js";
 import { fetchEventFromTag } from "./fetch-event-from-tag.js";
 import { Queue } from "./queue/index.js";
+import { Nip77SyncManager } from "../sync/nip77/manager.js";
 
-export type NDKValidationRatioFn = (relay: NDKRelay, validatedCount: number, nonValidatedCount: number) => number;
+export type NDKValidationRatioFn = (
+    relay: NDKRelay,
+    validatedCount: number,
+    nonValidatedCount: number
+) => number;
 
 export type NDKNetDebug = (msg: string, relay: NDKRelay, direction?: "send" | "recv") => void;
 
@@ -38,7 +43,9 @@ export type NDKNetDebug = (msg: string, relay: NDKRelay, direction?: "send" | "r
 export interface NDKWalletInterface {
     lnPay?: LnPayCb;
     cashuPay?: CashuPayCb;
-    onPaymentComplete?: (results: Map<NDKZapSplit, NDKPaymentConfirmation | Error | undefined>) => void;
+    onPaymentComplete?: (
+        results: Map<NDKZapSplit, NDKPaymentConfirmation | Error | undefined>
+    ) => void;
 }
 
 export interface NDKConstructorParams {
@@ -256,7 +263,11 @@ export class NDK extends EventEmitter<{
      * @param error The error that caused the event to fail to publish
      * @param relays The relays that the event was attempted to be published to
      */
-    "event:publish-failed": (event: NDKEvent, error: NDKPublishError, relays: WebSocket["url"][]) => void;
+    "event:publish-failed": (
+        event: NDKEvent,
+        error: NDKPublishError,
+        relays: WebSocket["url"][]
+    ) => void;
 }> {
     private _explicitRelayUrls?: WebSocket["url"][];
     public blacklistRelayUrls?: WebSocket["url"][];
@@ -279,6 +290,7 @@ export class NDK extends EventEmitter<{
     public validationRatioFn?: NDKValidationRatioFn;
     public autoBlacklistInvalidRelays = false;
     public subManager: NDKSubscriptionManager;
+    public syncManager: Nip77SyncManager;
 
     /**
      * Private storage for the signature verification function
@@ -355,6 +367,7 @@ export class NDK extends EventEmitter<{
         this._explicitRelayUrls = opts.explicitRelayUrls || [];
         this.blacklistRelayUrls = opts.blacklistRelayUrls || DEFAULT_BLACKLISTED_RELAYS;
         this.subManager = new NDKSubscriptionManager();
+        this.syncManager = new Nip77SyncManager(this);
         this.pool = new NDKPool(opts.explicitRelayUrls || [], [], this);
         this.pool.name = "Main";
 
@@ -483,7 +496,11 @@ export class NDK extends EventEmitter<{
      * @param connect Whether to connect to the relay automatically
      * @returns
      */
-    public addExplicitRelay(urlOrRelay: string | NDKRelay, relayAuthPolicy?: NDKAuthPolicy, connect = true): NDKRelay {
+    public addExplicitRelay(
+        urlOrRelay: string | NDKRelay,
+        relayAuthPolicy?: NDKAuthPolicy,
+        connect = true
+    ): NDKRelay {
         let relay: NDKRelay;
 
         if (typeof urlOrRelay === "string") {
@@ -550,7 +567,7 @@ export class NDK extends EventEmitter<{
         if (this._signer && this.autoConnectUserRelays) {
             this.debug(
                 "Attempting to connect to user relays specified by signer %o",
-                await this._signer.relays?.(this),
+                await this._signer.relays?.(this)
             );
 
             if (this._signer.relays) {
@@ -577,7 +594,9 @@ export class NDK extends EventEmitter<{
      * @param relay The relay that provided the invalid signature
      */
     public reportInvalidSignature(event: NDKEvent, relay?: NDKRelay): void {
-        this.debug(`Invalid signature detected for event ${event.id}${relay ? ` from relay ${relay.url}` : ""}`);
+        this.debug(
+            `Invalid signature detected for event ${event.id}${relay ? ` from relay ${relay.url}` : ""}`
+        );
 
         // Emit event with relay information
         this.emit("event:invalid-sig", event, relay);
@@ -613,7 +632,11 @@ export class NDK extends EventEmitter<{
      * Default function to calculate validation ratio based on historical validation results.
      * The more events validated successfully, the lower the ratio goes (down to the minimum).
      */
-    private defaultValidationRatioFn(relay: NDKRelay, validatedCount: number, nonValidatedCount: number): number {
+    private defaultValidationRatioFn(
+        relay: NDKRelay,
+        validatedCount: number,
+        nonValidatedCount: number
+    ): number {
         if (validatedCount < 10) return this.initialValidationRatio;
 
         // Calculate a logarithmically decreasing ratio that approaches the minimum
@@ -621,7 +644,8 @@ export class NDK extends EventEmitter<{
         const trustFactor = Math.min(validatedCount / 100, 1); // Caps at 100 validated events
 
         const calculatedRatio =
-            this.initialValidationRatio * (1 - trustFactor) + this.lowestValidationRatio * trustFactor;
+            this.initialValidationRatio * (1 - trustFactor) +
+            this.lowestValidationRatio * trustFactor;
 
         return Math.max(calculatedRatio, this.lowestValidationRatio);
     }
@@ -699,17 +723,22 @@ export class NDK extends EventEmitter<{
         filters: NDKFilter | NDKFilter[],
         opts?: NDKSubscriptionOptions,
         autoStartOrRelaySet: NDKRelaySet | boolean | NDKSubscriptionEventHandlers = true,
-        _autoStart = true,
+        _autoStart = true
     ): NDKSubscription {
         let _relaySet: NDKRelaySet | undefined = opts?.relaySet;
         let autoStart: boolean | NDKSubscriptionEventHandlers = _autoStart;
 
         // For backwards compatibility, check if the first parameter is a relaySet
         if (autoStartOrRelaySet instanceof NDKRelaySet) {
-            console.warn("relaySet is deprecated, use opts.relaySet instead. This will be removed in version v2.14.0");
+            console.warn(
+                "relaySet is deprecated, use opts.relaySet instead. This will be removed in version v2.14.0"
+            );
             _relaySet = autoStartOrRelaySet;
             autoStart = _autoStart;
-        } else if (typeof autoStartOrRelaySet === "boolean" || typeof autoStartOrRelaySet === "object") {
+        } else if (
+            typeof autoStartOrRelaySet === "boolean" ||
+            typeof autoStartOrRelaySet === "object"
+        ) {
             autoStart = autoStartOrRelaySet;
         }
 
@@ -746,7 +775,8 @@ export class NDK extends EventEmitter<{
 
             setTimeout(() => {
                 const cachedEvents = subscription.start(!eventsHandler);
-                if (cachedEvents && cachedEvents.length > 0 && !!eventsHandler) eventsHandler(cachedEvents);
+                if (cachedEvents && cachedEvents.length > 0 && !!eventsHandler)
+                    eventsHandler(cachedEvents);
             }, 0);
         }
 
@@ -793,7 +823,7 @@ export class NDK extends EventEmitter<{
     public async fetchEvent(
         idOrFilter: string | NDKFilter | NDKFilter[],
         opts?: NDKSubscriptionOptions,
-        relaySetOrRelay?: NDKRelaySet | NDKRelay,
+        relaySetOrRelay?: NDKRelaySet | NDKRelay
     ): Promise<NDKEvent | null> {
         let filters: NDKFilter[];
         let relaySet: NDKRelaySet | undefined;
@@ -846,7 +876,7 @@ export class NDK extends EventEmitter<{
                 filters,
                 subscribeOpts,
                 // relaySet, // Removed: Passed via opts
-                false, // autoStart = false
+                false // autoStart = false
             );
 
             /** This is a workaround, for some reason we're leaking subscriptions that should EOSE and fetchEvent is not
@@ -884,7 +914,7 @@ export class NDK extends EventEmitter<{
     public async fetchEvents(
         filters: NDKFilter | NDKFilter[],
         opts?: NDKSubscriptionOptions,
-        relaySet?: NDKRelaySet,
+        relaySet?: NDKRelaySet
     ): Promise<Set<NDKEvent>> {
         return new Promise((resolve) => {
             const events: Map<string, NDKEvent> = new Map();
@@ -900,7 +930,7 @@ export class NDK extends EventEmitter<{
                 filters,
                 subscribeOpts,
                 // relaySet, // Removed: Passed via opts
-                false, // autoStart = false
+                false // autoStart = false
             );
 
             const onEvent = (event: NostrEvent | NDKEvent) => {

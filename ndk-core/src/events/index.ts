@@ -41,6 +41,8 @@ export type ParsedContentMatch = {
 export type ContentTaggingOptions = {
     skipContentTagging?: boolean;
     pTagOnQTags?: boolean;
+    pTagOnATags?: boolean;
+    pTags?: boolean;
     copyPTagsFromTarget?: boolean;
     filters?: {
         includeTypes?: Array<'npub' | 'nprofile' | 'note' | 'nevent' | 'naddr' | 'hashtag'>;
@@ -259,32 +261,39 @@ export class NDKEvent extends EventEmitter {
      * @param marker The marker to use in the tag.
      * @param skipAuthorTag Whether to explicitly skip adding the author tag of the event.
      * @param forceTag Force a specific tag to be used instead of the default "e" or "a" tag.
+     * @param opts Optional content tagging options to control p tag behavior.
      * @example
      * ```typescript
      * reply.tag(opEvent, "reply");
      * // reply.tags => [["e", <id>, <relay>, "reply"]]
      * ```
      */
-    public tag(target: NDKTag | NDKUser | NDKEvent, marker?: string, skipAuthorTag?: boolean, forceTag?: string): void {
+    public tag(target: NDKTag | NDKUser | NDKEvent, marker?: string, skipAuthorTag?: boolean, forceTag?: string, opts?: ContentTaggingOptions): void {
         let tags: NDKTag[] = [];
         const isNDKUser = (target as NDKUser).fetchProfile !== undefined;
 
         if (isNDKUser) {
             forceTag ??= "p";
+            // Only add p tag if not disabled
+            if (forceTag === "p" && opts?.pTags === false) {
+                return;
+            }
             const tag = [forceTag, (target as NDKUser).pubkey];
             if (marker) tag.push(...["", marker]);
             tags.push(tag);
         } else if (target instanceof NDKEvent) {
             const event = target as NDKEvent;
             skipAuthorTag ??= event?.pubkey === this.pubkey;
-            tags = event.referenceTags(marker, skipAuthorTag, forceTag);
+            tags = event.referenceTags(marker, skipAuthorTag, forceTag, opts);
 
             // tag p-tags in the event if they are not the same as the user signing this event
-            for (const pTag of event.getMatchingTags("p")) {
-                if (pTag[1] === this.pubkey) continue;
-                if (this.tags.find((t) => t[0] === "p" && t[1] === pTag[1])) continue;
+            if (opts?.pTags !== false) {
+                for (const pTag of event.getMatchingTags("p")) {
+                    if (pTag[1] === this.pubkey) continue;
+                    if (this.tags.find((t) => t[0] === "p" && t[1] === pTag[1])) continue;
 
-                this.tags.push(["p", pTag[1]]);
+                    this.tags.push(["p", pTag[1]]);
+                }
             }
         } else if (Array.isArray(target)) {
             tags = [target as NDKTag];
@@ -750,7 +759,7 @@ export class NDKEvent extends EventEmitter {
      *     event.referenceTags(); // [["e", "parent-id"]]
      * @returns {NDKTag} The NDKTag object referencing this event
      */
-    referenceTags(marker?: string, skipAuthorTag?: boolean, forceTag?: string): NDKTag[] {
+    referenceTags(marker?: string, skipAuthorTag?: boolean, forceTag?: string, opts?: ContentTaggingOptions): NDKTag[] {
         let tags: NDKTag[] = [];
 
         // NIP-33
@@ -786,7 +795,7 @@ export class NDKEvent extends EventEmitter {
         // NIP-29 h-tags
         tags = [...tags, ...this.getMatchingTags("h")];
 
-        if (!skipAuthorTag) tags.push(...this.author.referenceTags());
+        if (!skipAuthorTag && opts?.pTags !== false) tags.push(...this.author.referenceTags());
 
         return tags;
     }
@@ -960,8 +969,9 @@ export class NDKEvent extends EventEmitter {
      * to generate the reply event; the caller is responsible for publishing the event.
      *
      * @param forceNip22 - Optional flag to force NIP-22 style replies (kind 1111) regardless of the original event's kind
+     * @param opts - Optional content tagging options
      */
-    public reply(forceNip22?: boolean): NDKEvent {
+    public reply(forceNip22?: boolean, opts?: ContentTaggingOptions): NDKEvent {
         const reply = new NDKEvent(this.ndk);
 
         if (this.kind === 1 && !forceNip22) {
@@ -974,10 +984,10 @@ export class NDKEvent extends EventEmitter {
                     ...this.getMatchingTags("e"),
                     ...this.getMatchingTags("p"),
                     ...this.getMatchingTags("a"),
-                    ...this.referenceTags("reply"),
+                    ...this.referenceTags("reply", false, undefined, opts),
                 ];
             } else {
-                reply.tag(this, "root");
+                reply.tag(this, "root", false, undefined, opts);
             }
         } else {
             reply.kind = NDKKind.GenericReply;
@@ -1021,14 +1031,18 @@ export class NDKEvent extends EventEmitter {
                 reply.tags.push(lowerTag);
                 reply.tags.push(upperTag);
                 reply.tags.push(["K", this.kind?.toString()]);
-                reply.tags.push(["P", this.pubkey]);
+                if (opts?.pTags !== false && opts?.pTagOnATags !== false) {
+                    reply.tags.push(["P", this.pubkey]);
+                }
             }
 
             reply.tags.push(["k", this.kind?.toString()]);
 
-            // carry over all p tags
-            reply.tags.push(...this.getMatchingTags("p"));
-            reply.tags.push(["p", this.pubkey]);
+            // carry over all p tags if not disabled
+            if (opts?.pTags !== false) {
+                reply.tags.push(...this.getMatchingTags("p"));
+                reply.tags.push(["p", this.pubkey]);
+            }
         }
 
         return reply;

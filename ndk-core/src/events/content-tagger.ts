@@ -144,11 +144,15 @@ export async function generateContentTags(
 
             switch (type) {
                 case "npub":
-                    t = ["p", data as string];
+                    if (opts?.pTags !== false) {
+                        t = ["p", data as string];
+                    }
                     break;
 
                 case "nprofile":
-                    t = ["p", (data as ProfilePointer).pubkey as string];
+                    if (opts?.pTags !== false) {
+                        t = ["p", (data as ProfilePointer).pubkey as string];
+                    }
                     break;
 
                 case "note":
@@ -173,7 +177,7 @@ export async function generateContentTags(
                             }
 
                             addTagIfNew(["q", id, relays[0]]);
-                            if (author && opts?.pTagOnQTags !== false) addTagIfNew(["p", author]);
+                            if (author && opts?.pTags !== false && opts?.pTagOnQTags !== false) addTagIfNew(["p", author]);
                             resolve();
                         }),
                     );
@@ -191,7 +195,7 @@ export async function generateContentTags(
                             }
 
                             addTagIfNew(["q", id, relays[0]]);
-                            if (opts?.pTagOnQTags !== false) addTagIfNew(["p", data.pubkey]);
+                            if (opts?.pTags !== false && opts?.pTagOnQTags !== false && opts?.pTagOnATags !== false) addTagIfNew(["p", data.pubkey]);
                             resolve();
                         }),
                     );
@@ -217,7 +221,7 @@ export async function generateContentTags(
     }
 
     // Copy p-tags from target event if requested
-    if (opts?.copyPTagsFromTarget && ctx) {
+    if (opts?.pTags !== false && opts?.copyPTagsFromTarget && ctx) {
         const pTags = ctx.getMatchingTags("p");
         for (const pTag of pTags) {
             if (!tags.find((t) => t[0] === "p" && t[1] === pTag[1])) {

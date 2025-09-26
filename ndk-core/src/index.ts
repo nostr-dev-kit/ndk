@@ -89,6 +89,9 @@ export * from "./utils/get-users-relay-list.js";
 export * from "./utils/imeta.js";
 export * from "./utils/filter.js";
 
+// NIP-77 Negentropy sync
+export * from "./sync/index.js";
+
 // Re-export signature verification stats
 export {
     SignatureVerificationStats,

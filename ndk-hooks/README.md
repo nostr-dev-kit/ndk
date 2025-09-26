@@ -8,6 +8,7 @@
 
 - NDK instance management with `useNDKInit` and `useNDK`
 - Current user management with `useNDKCurrentUser`
+- User resolution from various formats with `useUser`
 - User profile management with `useProfileValue`
 - Multi-user session management
 - Event subscriptions with modern callback patterns

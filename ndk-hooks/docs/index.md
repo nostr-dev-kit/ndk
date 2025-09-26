@@ -120,27 +120,49 @@ function Signin() {
 }
 ```
 
-## Fetching User Profiles
+## Working with Users
+
+### Using the `useUser` Hook
+
+The `useUser` hook resolves various user identifier formats into an NDKUser instance:
+
+```tsx
+// Using hex pubkey
+const user = useUser("abc123...");
+
+// Using npub
+const user = useUser("npub1...");
+
+// Using nip05
+const user = useUser("alice@example.com");
+
+// Using nprofile
+const user = useUser("nprofile1...");
+```
+
+### Fetching User Profiles
 
 Easily fetch and display Nostr user profiles using the `useProfileValue` hook. It handles caching and fetching logic automatically.
 
-### Using the `useProfileValue` Hook
-
 The `useProfileValue` hook accepts two parameters:
-- `pubkey`: The public key of the user whose profile you want to fetch
+- `userOrPubkey`: An NDKUser instance, public key string, null, or undefined
 - `options`: An optional object with the following properties:
   - `refresh`: A boolean indicating whether to force a refresh of the profile
   - `subOpts`: NDKSubscriptionOptions to customize how the profile is fetched from relays
 
 ```tsx
-// Basic usage
+// Basic usage with pubkey
 const profile = useProfileValue(pubkey);
+
+// Using with NDKUser from useUser hook
+const user = useUser("alice@example.com");
+const profile = useProfileValue(user);
 
 // Force refresh the profile
 const profile = useProfileValue(pubkey, { refresh: true });
 
 // With subscription options
-const profile = useProfileValue(pubkey, {
+const profile = useProfileValue(user, {
   refresh: false,
   subOpts: {
     closeOnEose: true,
@@ -154,21 +176,28 @@ The hook returns the user's profile (NDKUserProfile) or undefined if the profile
 ```tsx
 // src/components/UserCard.tsx
 import React from 'react';
-import { useProfileValue } from '@nostr-dev-kit/ndk-hooks';
+import { useUser, useProfileValue } from '@nostr-dev-kit/ndk-hooks';
 
 interface UserCardProps {
-  pubkey: string;
+  userIdentifier: string; // Can be pubkey, npub, nip05, or nprofile
 }
 
-function UserCard({ pubkey }: UserCardProps) {
-  // Fetch profile with options
-  const profile = useProfileValue(pubkey, {
+function UserCard({ userIdentifier }: UserCardProps) {
+  // Resolve user from any identifier format
+  const user = useUser(userIdentifier);
+
+  // Fetch profile - will automatically fetch when user resolves
+  const profile = useProfileValue(user, {
     refresh: false, // Whether to force a refresh of the profile
     subOpts: { /* NDKSubscriptionOptions */ } // Options for the subscription
   });
 
+  if (!user) {
+    return <div>Resolving user...</div>;
+  }
+
   if (!profile) {
-    return <div>Loading profile for {pubkey.substring(0, 8)}...</div>;
+    return <div>Loading profile for {user.npub.substring(0, 12)}...</div>;
   }
 
   return (

@@ -4,13 +4,16 @@ import {
     serializeProfile,
     type Hexpubkey,
     type NDKSigner,
+    type NDKUser,
     type NDKUserProfile,
 } from "@nostr-dev-kit/ndk";
 import { UseProfileValueOptions } from "../types";
 import { useCallback, useEffect } from "react";
-import { useShallow } from "zustand/shallow";
+import { shallow } from "zustand/shallow";
 import { type UserProfilesStore, useUserProfilesStore } from "../store"; // Corrected import path
 import { useNDK } from "../../ndk/hooks";
+
+export { useUser } from "./use-user";
 
 /**
  * @deprecated Use `useProfileValue` instead.
@@ -23,18 +26,23 @@ export function useProfile(pubkey?: Hexpubkey | undefined, forceRefresh?: boolea
 /**
  * Get a user's profile.
  * Otherwise, it fetches the profile from the global profile store.
- * @param pubkey - The pubkey of the user to fetch
+ * @param userOrPubkey - The NDKUser, pubkey, null or undefined
  * @param opts - Options for fetching the profile
  * @returns The user profile or undefined if not available
  */
 export function useProfileValue(
-    pubkey?: Hexpubkey | undefined,
+    userOrPubkey?: Hexpubkey | NDKUser | null | undefined,
     opts?: UseProfileValueOptions,
 ): NDKUserProfile | undefined {
     const fetchProfile = useUserProfilesStore((state: UserProfilesStore) => state.fetchProfile);
 
-    const profileSelector = useShallow((state: UserProfilesStore) => (pubkey ? state.profiles.get(pubkey) : undefined));
-    const profile = useUserProfilesStore(profileSelector);
+    // Extract pubkey from NDKUser or use directly if it's a string
+    const pubkey = typeof userOrPubkey === 'string'
+        ? userOrPubkey
+        : userOrPubkey?.pubkey;
+
+    const profileSelector = (state: UserProfilesStore) => (pubkey ? state.profiles.get(pubkey) : undefined);
+    const profile = useUserProfilesStore(profileSelector) as NDKUserProfile | undefined;
 
     useEffect(() => {
         if (pubkey) {

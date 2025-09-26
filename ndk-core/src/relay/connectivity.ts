@@ -7,6 +7,8 @@ import type { NDK, NDKNetDebug } from "../ndk/index.js";
 import type { NDKFilter } from "../subscription";
 import type { NDKRelaySubscription } from "./subscription";
 import { NDKRelayKeepalive, probeRelayConnection } from "./keepalive";
+import { Nip77Messages } from "../sync/nip77/messages";
+import { NegentropyHandler } from "../sync/nip77/negentropy-handler";
 import type debug from "debug";
 
 const MAX_RECONNECT_ATTEMPTS = 5;
@@ -41,9 +43,10 @@ export class NDKRelayConnectivity {
     public openSubs: Map<string, NDKRelaySubscription> = new Map();
     private openCountRequests = new Map<string, CountResolver>();
     private openEventPublishes = new Map<string, EventPublishResolver[]>();
+    private openSyncHandlers = new Map<string, NegentropyHandler>();
     private serial = 0;
     public baseEoseTimeout = 4_400;
-    
+
     // Keepalive and monitoring
     private keepalive?: NDKRelayKeepalive;
     private wsStateMonitor?: ReturnType<typeof setInterval>;
@@ -60,61 +63,61 @@ export class NDKRelayConnectivity {
         this.ndk = ndk;
         this.setupMonitoring();
     }
-    
+
     /**
      * Sets up keepalive, WebSocket state monitoring, and sleep detection
      */
     private setupMonitoring(): void {
         // Setup keepalive to detect silent relays
         this.keepalive = new NDKRelayKeepalive(30000, async () => {
-            this.debug('Relay silence detected, probing connection');
+            this.debug("Relay silence detected, probing connection");
             const isAlive = await probeRelayConnection({
                 send: (msg: any[]) => this.send(JSON.stringify(msg)),
                 once: (event: string, handler: () => void) => {
                     const messageHandler = (e: MessageEvent) => {
                         try {
                             const data = JSON.parse(e.data);
-                            if (data[0] === 'EOSE' || data[0] === 'EVENT' || data[0] === 'NOTICE') {
+                            if (data[0] === "EOSE" || data[0] === "EVENT" || data[0] === "NOTICE") {
                                 handler();
-                                this.ws?.removeEventListener('message', messageHandler);
+                                this.ws?.removeEventListener("message", messageHandler);
                             }
-                        } catch {} 
+                        } catch {}
                     };
-                    this.ws?.addEventListener('message', messageHandler);
-                }
+                    this.ws?.addEventListener("message", messageHandler);
+                },
             });
-            
+
             if (!isAlive) {
-                this.debug('Probe failed, connection is stale');
+                this.debug("Probe failed, connection is stale");
                 this.handleStaleConnection();
             }
         });
-        
+
         // Monitor WebSocket readyState every 5 seconds
         this.wsStateMonitor = setInterval(() => {
             if (this._status === NDKRelayStatus.CONNECTED) {
                 if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
-                    this.debug('WebSocket died silently, reconnecting');
+                    this.debug("WebSocket died silently, reconnecting");
                     this.handleStaleConnection();
                 }
             }
         }, 5000);
-        
+
         // Detect system sleep by monitoring time gaps
         this.sleepDetector = setInterval(() => {
             const now = Date.now();
             const elapsed = now - this.lastSleepCheck;
-            
+
             // If more than 15 seconds elapsed (should be 10), system was likely suspended
             if (elapsed > 15000) {
                 this.debug(`Detected possible sleep/wake (${elapsed}ms gap)`);
                 this.handlePossibleWake();
             }
-            
+
             this.lastSleepCheck = now;
         }, 10000);
     }
-    
+
     /**
      * Handles detection of a stale connection
      */
@@ -123,14 +126,14 @@ export class NDKRelayConnectivity {
         this.wasIdle = true; // Mark as idle to reset backoff
         this.onDisconnect();
     }
-    
+
     /**
      * Handles possible system wake event
      */
     private handlePossibleWake(): void {
-        this.debug('System wake detected, checking all connections');
+        this.debug("System wake detected, checking all connections");
         this.wasIdle = true; // Reset backoff for wake scenario
-        
+
         // If we think we're connected but might not be, force reconnect
         if (this._status >= NDKRelayStatus.CONNECTED) {
             if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
@@ -143,15 +146,19 @@ export class NDKRelayConnectivity {
                         const messageHandler = (e: MessageEvent) => {
                             try {
                                 const data = JSON.parse(e.data);
-                                if (data[0] === 'EOSE' || data[0] === 'EVENT' || data[0] === 'NOTICE') {
+                                if (
+                                    data[0] === "EOSE" ||
+                                    data[0] === "EVENT" ||
+                                    data[0] === "NOTICE"
+                                ) {
                                     handler();
-                                    this.ws?.removeEventListener('message', messageHandler);
+                                    this.ws?.removeEventListener("message", messageHandler);
                                 }
-                            } catch {} 
+                            } catch {}
                         };
-                        this.ws?.addEventListener('message', messageHandler);
-                    }
-                }).then(isAlive => {
+                        this.ws?.addEventListener("message", messageHandler);
+                    },
+                }).then((isAlive) => {
                     if (!isAlive) {
                         this.handleStaleConnection();
                     }
@@ -159,7 +166,7 @@ export class NDKRelayConnectivity {
             }
         }
     }
-    
+
     /**
      * Resets the reconnection state for system-wide events
      * Used by NDKPool when detecting system sleep/wake
@@ -188,7 +195,11 @@ export class NDKRelayConnectivity {
      */
     async connect(timeoutMs?: number, reconnect = true): Promise<void> {
         // Check if WebSocket exists but is not open (stale connection)
-        if (this.ws && this.ws.readyState !== WebSocket.OPEN && this.ws.readyState !== WebSocket.CONNECTING) {
+        if (
+            this.ws &&
+            this.ws.readyState !== WebSocket.OPEN &&
+            this.ws.readyState !== WebSocket.CONNECTING
+        ) {
             this.debug("Cleaning up stale WebSocket connection");
             try {
                 this.ws.close();
@@ -198,14 +209,15 @@ export class NDKRelayConnectivity {
             this.ws = undefined;
             this._status = NDKRelayStatus.DISCONNECTED;
         }
-        
+
         if (
-            (this._status !== NDKRelayStatus.RECONNECTING && this._status !== NDKRelayStatus.DISCONNECTED) ||
+            (this._status !== NDKRelayStatus.RECONNECTING &&
+                this._status !== NDKRelayStatus.DISCONNECTED) ||
             this.reconnectTimeout
         ) {
             this.debug(
                 "Relay requested to be connected but was in state %s or it had a reconnect timeout",
-                this._status,
+                this._status
             );
             return;
         }
@@ -223,11 +235,16 @@ export class NDKRelayConnectivity {
         timeoutMs ??= this.timeoutMs;
         if (!this.timeoutMs && timeoutMs) this.timeoutMs = timeoutMs;
 
-        if (this.timeoutMs) this.connectTimeout = setTimeout(() => this.onConnectionError(reconnect), this.timeoutMs);
+        if (this.timeoutMs)
+            this.connectTimeout = setTimeout(
+                () => this.onConnectionError(reconnect),
+                this.timeoutMs
+            );
 
         try {
             this.updateConnectionStats.attempt();
-            if (this._status === NDKRelayStatus.DISCONNECTED) this._status = NDKRelayStatus.CONNECTING;
+            if (this._status === NDKRelayStatus.DISCONNECTED)
+                this._status = NDKRelayStatus.CONNECTING;
             else this._status = NDKRelayStatus.RECONNECTING;
 
             this.ws = new WebSocket(this.ndkRelay.url);
@@ -252,7 +269,7 @@ export class NDKRelayConnectivity {
      */
     public disconnect(): void {
         this._status = NDKRelayStatus.DISCONNECTING;
-        
+
         // Clean up monitoring
         this.keepalive?.stop();
         if (this.wsStateMonitor) {
@@ -263,7 +280,7 @@ export class NDKRelayConnectivity {
             clearInterval(this.sleepDetector);
             this.sleepDetector = undefined;
         }
-        
+
         try {
             this.ws?.close();
         } catch (e) {
@@ -305,11 +322,11 @@ export class NDKRelayConnectivity {
         }
         this.updateConnectionStats.connected();
         this._status = NDKRelayStatus.CONNECTED;
-        
+
         // Start keepalive monitoring
         this.keepalive?.start();
         this.wasIdle = false;
-        
+
         this.ndkRelay.emit("connect");
         this.ndkRelay.emit("ready");
     }
@@ -324,7 +341,7 @@ export class NDKRelayConnectivity {
     private onDisconnect() {
         this.netDebug?.("disconnected", this.ndkRelay);
         this.updateConnectionStats.disconnected();
-        
+
         // Stop keepalive when disconnected
         this.keepalive?.stop();
 
@@ -344,10 +361,10 @@ export class NDKRelayConnectivity {
      */
     private onMessage(event: MessageEvent): void {
         this.netDebug?.(event.data, this.ndkRelay, "recv");
-        
+
         // Record any activity from relay
         this.keepalive?.recordActivity();
-        
+
         try {
             const data = JSON.parse(event.data);
             const [cmd, id, ..._rest] = data;
@@ -381,7 +398,9 @@ export class NDKRelayConnectivity {
                 case "OK": {
                     const ok: boolean = data[2];
                     const reason: string = data[3];
-                    const ep = this.openEventPublishes.get(id) as EventPublishResolver[] | undefined;
+                    const ep = this.openEventPublishes.get(id) as
+                        | EventPublishResolver[]
+                        | undefined;
                     const firstEp = ep?.pop();
 
                     if (!ep || !firstEp) {
@@ -412,11 +431,22 @@ export class NDKRelayConnectivity {
                     this.onAuthRequested(data[1] as string);
                     return;
                 }
+                // NIP-77 Negentropy sync messages
+                case "NEG-OPEN":
+                case "NEG-MSG":
+                case "NEG-CLOSE":
+                case "NEG-ERR": {
+                    this.onNip77Message(data);
+                    return;
+                }
             }
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
-            this.debug(`Error parsing message from ${this.ndkRelay.url}: ${error.message}`, error?.stack);
+            this.debug(
+                `Error parsing message from ${this.ndkRelay.url}: ${error.message}`,
+                error?.stack
+            );
             return;
         }
     }
@@ -461,7 +491,10 @@ export class NDKRelayConnectivity {
                     }
 
                     const authenticate = async () => {
-                        if (this._status >= NDKRelayStatus.CONNECTED && this._status < NDKRelayStatus.AUTHENTICATED) {
+                        if (
+                            this._status >= NDKRelayStatus.CONNECTED &&
+                            this._status < NDKRelayStatus.AUTHENTICATED
+                        ) {
                             const event = new NDKEvent(this.ndk);
                             event.kind = NDKKind.ClientAuth;
                             event.tags = [
@@ -481,7 +514,10 @@ export class NDKRelayConnectivity {
                                     this.debug("Authentication failed", e);
                                 });
                         } else {
-                            this.debug("Authentication failed, it changed status, status is %d", this._status);
+                            this.debug(
+                                "Authentication failed, it changed status, status is %d",
+                                this._status
+                            );
                         }
                     };
 
@@ -543,7 +579,8 @@ export class NDKRelayConnectivity {
 
         const sum = durations.reduce((a, b) => a + b, 0);
         const avg = sum / durations.length;
-        const variance = durations.map((x) => (x - avg) ** 2).reduce((a, b) => a + b, 0) / durations.length;
+        const variance =
+            durations.map((x) => (x - avg) ** 2).reduce((a, b) => a + b, 0) / durations.length;
         const stdDev = Math.sqrt(variance);
         const isFlapping = stdDev < FLAPPING_THRESHOLD_MS;
 
@@ -581,15 +618,17 @@ export class NDKRelayConnectivity {
             this._status = NDKRelayStatus.FLAPPING;
             return;
         }
-        
+
         // Calculate reconnect delay based on whether we were idle
         let reconnectDelay: number;
-        
+
         if (this.wasIdle) {
             // After idle/sleep, use aggressive reconnection: 0s, 1s, 2s, 5s, 10s, 30s
             const aggressiveDelays = [0, 1000, 2000, 5000, 10000, 30000];
             reconnectDelay = aggressiveDelays[Math.min(attempt, aggressiveDelays.length - 1)];
-            this.debug(`Using aggressive reconnect after idle, attempt ${attempt}, delay ${reconnectDelay}ms`);
+            this.debug(
+                `Using aggressive reconnect after idle, attempt ${attempt}, delay ${reconnectDelay}ms`
+            );
         } else if (this.connectedAt) {
             // Recent disconnection, wait before reconnecting
             reconnectDelay = Math.max(0, 60000 - (Date.now() - this.connectedAt));
@@ -602,7 +641,7 @@ export class NDKRelayConnectivity {
         this.reconnectTimeout = setTimeout(() => {
             this.reconnectTimeout = undefined;
             this._status = NDKRelayStatus.RECONNECTING;
-            
+
             this.connect().catch((_err) => {
                 if (attempt < MAX_RECONNECT_ATTEMPTS) {
                     // Continue with next attempt
@@ -630,19 +669,26 @@ export class NDKRelayConnectivity {
     async send(message: string) {
         // Check if we've been idle for a while
         const idleTime = Date.now() - this.lastMessageSent;
-        if (idleTime > 120000) { // 2 minutes
+        if (idleTime > 120000) {
+            // 2 minutes
             this.wasIdle = true;
         }
-        
+
         if (this._status >= NDKRelayStatus.CONNECTED && this.ws?.readyState === WebSocket.OPEN) {
             this.ws?.send(message);
             this.netDebug?.(message, this.ndkRelay, "send");
             this.lastMessageSent = Date.now();
         } else {
-            this.debug(`Not connected to ${this.ndkRelay.url} (%d), not sending message ${message}`, this._status);
-            
+            this.debug(
+                `Not connected to ${this.ndkRelay.url} (%d), not sending message ${message}`,
+                this._status
+            );
+
             // If we think we're connected but WebSocket is not open, we have a stale connection
-            if (this._status >= NDKRelayStatus.CONNECTED && this.ws?.readyState !== WebSocket.OPEN) {
+            if (
+                this._status >= NDKRelayStatus.CONNECTED &&
+                this.ws?.readyState !== WebSocket.OPEN
+            ) {
                 this.debug(`Stale connection detected, WebSocket state: ${this.ws?.readyState}`);
                 // Force disconnect and reconnect
                 this.handleStaleConnection();
@@ -677,7 +723,9 @@ export class NDKRelayConnectivity {
         const ret = new Promise<string>((resolve, reject) => {
             const val = this.openEventPublishes.get(event.id!) ?? [];
             if (val.length > 0) {
-                console.warn(`Duplicate event publishing detected, you are publishing event ${event.id!} twice`);
+                console.warn(
+                    `Duplicate event publishing detected, you are publishing event ${event.id!} twice`
+                );
             }
 
             val.push({ resolve, reject });
@@ -725,6 +773,54 @@ export class NDKRelayConnectivity {
     }
 
     /**
+     * Handle incoming NIP-77 Negentropy sync messages
+     */
+    private onNip77Message(data: any[]): void {
+        const message = Nip77Messages.parse(data);
+        if (!message) {
+            this.debug("Failed to parse NIP-77 message");
+            return;
+        }
+
+        const handler = this.openSyncHandlers.get(message.subId);
+
+        if (message.cmd === "NEG-MSG" || message.cmd === "NEG-ERR" || message.cmd === "NEG-CLOSE") {
+            if (!handler) {
+                this.debug(`Received ${message.cmd} for unknown sync session ${message.subId}`);
+                return;
+            }
+            handler.handleMessage(message);
+
+            // Clean up if session is closed
+            if (message.cmd === "NEG-CLOSE" || message.cmd === "NEG-ERR") {
+                this.openSyncHandlers.delete(message.subId);
+            }
+        }
+    }
+
+    /**
+     * Start a NIP-77 Negentropy sync session
+     */
+    public startSync(filter: NDKFilter, events: NDKEvent[]): NegentropyHandler {
+        const subId = `sync:${this.serial++}`;
+        const handler = new NegentropyHandler(this.ndkRelay, filter, subId);
+
+        this.openSyncHandlers.set(subId, handler);
+        handler.setLocalEvents(events);
+
+        // Clean up on completion
+        handler.once("complete", () => {
+            this.openSyncHandlers.delete(subId);
+        });
+
+        handler.once("error", () => {
+            this.openSyncHandlers.delete(subId);
+        });
+
+        return handler;
+    }
+
+    /**
      * Utility functions to update the connection stats.
      */
     private updateConnectionStats = {
@@ -735,7 +831,9 @@ export class NDKRelayConnectivity {
 
         disconnected: () => {
             if (this._connectionStats.connectedAt) {
-                this._connectionStats.durations.push(Date.now() - this._connectionStats.connectedAt);
+                this._connectionStats.durations.push(
+                    Date.now() - this._connectionStats.connectedAt
+                );
 
                 if (this._connectionStats.durations.length > 100) {
                     this._connectionStats.durations.shift();

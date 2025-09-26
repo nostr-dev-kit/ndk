@@ -277,16 +277,17 @@ const EventContent: React.FC<EventContentProps> = ({
     return (
         <Text numberOfLines={numberOfLines} style={style} {...props}>
             {parts.map((part, index) => (
-                <RenderPart
-                    key={index}
-                    part={part}
-                    onUserPress={onUserPress}
-                    onHashtagPress={onHashtagPress}
-                    onUrlPress={onUrlPress}
-                    MentionComponent={MentionComponent}
-                    event={event}
-                    style={style}
-                />
+                <React.Fragment key={index}>
+                    <RenderPart
+                        part={part}
+                        onUserPress={onUserPress}
+                        onHashtagPress={onHashtagPress}
+                        onUrlPress={onUrlPress}
+                        MentionComponent={MentionComponent}
+                        event={event}
+                        style={style}
+                    />
+                </React.Fragment>
             ))}
         </Text>
     );

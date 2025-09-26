@@ -1,5 +1,42 @@
 # @nostr-dev-kit/ndk
 
+## 2.14.35
+
+### Patch Changes
+
+- feat: add pTagOnATags and pTags options to ContentTaggingOptions
+
+    Added two new options to ContentTaggingOptions for fine-grained control over p tag additions:
+    - `pTagOnATags`: Controls whether p tags are added when creating a tags (for addressable events)
+    - `pTags`: Disables all p tag additions when set to false
+
+    These options provide more flexibility for applications that need to control how p tags are added to events, particularly useful for privacy-conscious applications or specific protocol implementations.
+
+    The options are respected in:
+    - Content tagging (npub, nprofile, nevent, naddr references)
+    - Event replies (both NIP-01 and NIP-22 style)
+    - Event tagging via the tag() method
+    - Reference tag generation
+
+## 2.14.34
+
+### Patch Changes
+
+- d89dbc6: Add ContentTaggingOptions for flexible content tagging control
+    - Introduces ContentTaggingOptions interface to customize tag generation behavior
+    - Adds options to control reply tag inclusion (includeReplyTags)
+    - Adds configurable hashtag prefixes via hashtagPrefixes option
+    - Maintains backward compatibility with existing tag method signatures
+    - Includes comprehensive test coverage for new tagging options
+
+- fff020a: feat: add robust relay keepalive and reconnection handling
+    - Implement keepalive mechanism to detect silent relay disconnections
+    - Add WebSocket state monitoring to detect dead connections
+    - Implement sleep/wake detection for better reconnection after system suspend
+    - Add idle-aware reconnection with aggressive backoff after wake events
+    - Improve exponential backoff strategy with proper capping at 30s
+    - Add comprehensive test coverage for all new functionality
+
 ## 2.14.33
 
 ### Patch Changes
@@ -11,7 +48,6 @@
 ### Patch Changes
 
 - 9cb8407: Fix relay reconnection logic after long disconnections
-
     - Fixed exponential backoff calculation that was using XOR operator (^) instead of exponentiation
     - Added detection and cleanup of stale WebSocket connections after system sleep/resume
     - Improved connection state handling to prevent infinite reconnection loops
@@ -204,7 +240,6 @@
 ### Minor Changes
 
 - 5ab19ef: feat: Refactor session management and add persistence
-
     - **ndk-core:** Added signer serialization (`toPayload`, `fromPayload`) and deserialization (`ndkSignerFromPayload`, `signerRegistry`) framework.
     - **ndk-hooks:** (Breaking Change) Refactored session state into `useNDKSessions` store with new management functions (`addSigner`, `startSession`, `switchToUser`, etc.), removing old session logic.
     - **ndk-mobile:** Added persistent session storage using `expo-secure-store` (`session-storage.ts`, `useSessionMonitor`, `bootNDK`). Updated `NDKNip55Signer` for serialization and registration.

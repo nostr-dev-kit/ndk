@@ -1,5 +1,34 @@
 # @nostr-dev-kit/ndk-mobile
 
+## 0.8.35
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/ndk-hooks@1.2.5
+
+## 0.8.34
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.14.35
+
+## 0.8.33
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/ndk-hooks@1.2.4
+
+## 0.8.32
+
+### Patch Changes
+
+- Updated dependencies [d89dbc6]
+- Updated dependencies [fff020a]
+    - @nostr-dev-kit/ndk@2.14.34
+
 ## 0.8.31
 
 ### Patch Changes
@@ -495,7 +524,6 @@
 ### Minor Changes
 
 - 5ab19ef: feat: Refactor session management and add persistence
-
     - **ndk-core:** Added signer serialization (`toPayload`, `fromPayload`) and deserialization (`ndkSignerFromPayload`, `signerRegistry`) framework.
     - **ndk-hooks:** (Breaking Change) Refactored session state into `useNDKSessions` store with new management functions (`addSigner`, `startSession`, `switchToUser`, etc.), removing old session logic.
     - **ndk-mobile:** Added persistent session storage using `expo-secure-store` (`session-storage.ts`, `useSessionMonitor`, `bootNDK`). Updated `NDKNip55Signer` for serialization and registration.

@@ -8,7 +8,7 @@ This document outlines best practices for using the core Nostr Development Kit (
     ```typescript
     import NDK from "@nostr-dev-kit/ndk";
 
-    const explicitRelays = ["wss://relay.damus.io", "wss://relay.primal.net"];
+    const explicitRelays = ["wss://relay.primal.net"];
     const ndk = new NDK({ explicitRelayUrls: explicitRelays });
     ```
 *   **Connection Management:** Call `ndk.connect()` early in your application lifecycle. You can optionally pass a timeout. Monitor connection status using the `pool` events if needed.
@@ -29,11 +29,12 @@ This document outlines best practices for using the core Nostr Development Kit (
 ## 2. Signer / Session Management
 
 *   **Signer Initialization:** Instantiate and assign a signer to the `ndk.signer` property as early as possible.
-    *   **Private Key (Use with caution):** Suitable for backend services or CLI tools where the key is securely managed.
+    *   **Private Key:**
+        Note that you DON'T need to convert an nsec to hex format; NDK does that.
         ```typescript
         import NDK, { NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
 
-        const pkSigner = new NDKPrivateKeySigner("nsec...");
+        const pkSigner = new NDKPrivateKeySigner("nsec1...");
         const ndk = new NDK({ signer: pkSigner });
         ```
     *   **NIP-07 Signer:** For browser extensions like getalby, nos2x, etc. Check for `window.nostr`.
@@ -56,7 +57,6 @@ This document outlines best practices for using the core Nostr Development Kit (
         import NDK, { NDKNip46Signer } from "@nostr-dev-kit/ndk";
 
         const nip46Signer = new NDKNip46Signer(ndk, "npub_of_remote_signer", new NDKPrivateKeySigner("local_app_nsec..."));
-        nip46Signer.rpc.relay = ndk.pool.getRelay("wss://relay.nostrconnect.com");
         ndk.signer = nip46Signer;
 
         nip46Signer.connect().then(() => {
@@ -75,45 +75,91 @@ This document outlines best practices for using the core Nostr Development Kit (
 
 ## 3. Cache Adapters
 
-*   **Default (Memory):** NDK uses an in-memory cache by default (`NDKCacheAdapterMemory`). This is suitable for short-lived scripts or environments where persistence isn't needed.
-*   **Custom Adapters:** For persistence or more complex caching, implement a custom cache adapter conforming to the `NDKCacheAdapter` interface or use pre-built ones like `ndk-cache-dexie` (browser), `ndk-cache-redis` (server), or `ndk-cache-sqlite-wasm` (browser). Pass the adapter instance during `NDK` initialization.
+NDK applications greatly benefit from having some caching.
+*   **Custom Adapters:** For persistence or more complex caching, implement a custom cache adapter conforming to the `NDKCacheAdapter` interface or use pre-built ones like `ndk-cache-redis` (server), or `ndk-cache-sqlite-wasm` (browser). Pass the adapter instance during `NDK` initialization.
     ```typescript
     import NDK from "@nostr-dev-kit/ndk";
-
-
+    // Example with ndk-cache-redis for server-side:
+    // import { NDKRedisCacheAdapter } from "@nostr-dev-kit/ndk-cache-redis";
+    // const cacheAdapter = new NDKRedisCacheAdapter();
+    // const ndk = new NDK({ cacheAdapter });
     ```
 *   **Cache Usage:** NDK automatically uses the configured cache for profiles, events, and relay sets. Be mindful of cache invalidation if needed, although NDK handles replacing events based on NIP-01 rules (newer `created_at`).
 
 ## 4. Fetching Data via Subscriptions
 
-*   **Use `fetchEvents`:** This is the primary method for fetching events. It returns a promise resolving to a set of `NDKEvent` objects.
+*   **Avoid Loading States - Stream Data Instead:** Loading indicators are a code smell in Nostr applications. Data in Nostr can be slow to load and is never guaranteed to be complete, so applications should stream data in real-time rather than blocking with loading states. Users should see content immediately as it arrives, not wait behind a spinner.
+*   **Prefer `subscribe` for Event-Driven Patterns:** Nostr applications should be event-driven and leverage `subscribe` as the primary method for fetching data. This allows your UI to remain responsive and display data as it arrives. Don't wait for all data - start showing content immediately.
     ```typescript
-    const filter: NDKFilter = { kinds: [1], authors: ["pubkey..."], limit: 10 };
+    // PREFERRED: Process events as they arrive
+    const filter: NDKFilter = { kinds: [1], authors: ["pubkey..."], "#t": ["ndk"] };
+    // Option 1: Using event emitters
+    const sub = ndk.subscribe(filter, { closeOnEose: false });
+    sub.on("event", (event: NDKEvent) => {
+        // Update UI immediately as each event arrives
+        updateUI(event);
+    });
+    sub.on("eose", () => {
+        console.log("Initial batch complete, staying subscribed for new events");
+    });
+    
+    // Option 2: Using callback handlers (auto-starts)
+    const sub2 = ndk.subscribe(filter, { closeOnEose: false }, {
+        onEvent: (event: NDKEvent) => {
+            // Update UI immediately as each event arrives
+            updateUI(event);
+        },
+        onEose: () => {
+            console.log("Initial batch complete, staying subscribed for new events");
+        }
+    });
+    
+    // Option 3: Using onEvents for batched cache results
+    // onEvents receives cached events as an array immediately, before relay events arrive
+    const sub3 = ndk.subscribe(filter, { closeOnEose: false }, {
+        onEvents: (events: NDKEvent[]) => {
+            // Process all cached events at once - great for initial render
+            updateUIBatch(events);
+        },
+        onEvent: (event: NDKEvent) => {
+            // Still get individual events from relays after cache
+            updateUI(event);
+        }
+    });
+    ```
+*   **Avoid `fetchEvents` - It's Almost Never the Right Choice:** `fetchEvents` is the slowest approach and blocks until ALL events are received. It waits for all relays to respond before returning any data, whereas `subscribe` streams events immediately as they arrive from any relay. `fetchEvents` should only be used when there is absolutely nothing to do until all requested events arrive, which is almost never the case. Nostr applications cannot load data fast and reliably, so blocking all user actions until all data is received provides extremely poor UX.
+    ```typescript
+    // AVOID THIS ANTI-PATTERN - blocks everything until all events arrive
     const events: Set<NDKEvent> = await ndk.fetchEvents(filter);
     events.forEach(event => console.log(event.content));
-    ```
-*   **Use `subscribeEvents` for Real-time Updates:** For continuous updates, use `subscribeEvents`. It returns an `NDKSubscription` object. Remember to call `sub.stop()` when done.
-    ```typescript
-    const filter: NDKFilter = { kinds: [1], authors: ["pubkey..."], "#t": ["ndk"] };
-    const sub = ndk.subscribeEvents(filter, { closeOnEose: false });
-
-    sub.on("event", (event: NDKEvent) => {
-        console.log("Received real-time event:", event.content);
-    });
-
-    sub.on("eose", () => {
-        console.log("Initial events loaded, waiting for new ones...");
-    });
-
-    sub.start();
-
-
     ```
 *   **Subscription Options:** Utilize `NDKSubscriptionOptions` for fine-grained control:
     *   `closeOnEose`: Set to `false` for continuous subscriptions (default is `true`).
     *   `groupable`: Set to `false` if you need immediate events instead of waiting for the `groupableDelay` (default is `true`).
     *   `groupableDelay`: Time in ms to wait before emitting grouped events (default 100ms).
     *   `cacheUsage`: Control how the cache is used (`CacheOnly`, `RelayOnly`, `Both`, `PARALLEL`). `PARALLEL` often provides the best UX.
+    *   `wrap`: Set to `true` to automatically wrap events in their kind-specific classes (default is `false`). This provides type-safe access to event properties and methods.
+*   **Using `wrap: true` for Type-Safe Event Access:** When subscribing to events of specific kinds, use `wrap: true` to automatically convert generic `NDKEvent` objects into their specialized classes:
+    ```typescript
+    // Without wrap - manual tag extraction
+    const sub = ndk.subscribe({ kinds: [30023] }, { closeOnEose: false, {
+        onEvent: (event: NDKEvent) => {
+            const title = event.tagValue("title");  // Manual extraction
+            const summary = event.tagValue("summary");
+        }
+    });
+
+    // With wrap - type-safe specialized classes
+    const sub = ndk.subscribe({ kinds: [30023] }, { wrap: true, closeOnEose: false });
+    sub.on("event", (event: NDKEvent) => {
+        if (event instanceof NDKArticle) {
+            const title = event.title;  // Type-safe property
+            const summary = event.summary;  // Convenient getters
+            const image = event.image;  // All article-specific methods available
+        }
+    });
+    ```
+    Wrapped events provide convenient getters/setters for their specific data structures (articles, videos, lists, highlights, etc.).
 *   **Filter Specificity:** Use specific filters (kinds, authors, tags, ids) to minimize the data requested from relays. Avoid overly broad filters.
 *   **Fetching Single Events:** Use `fetchEvent` (singular) for fetching a single event by ID or filter, often useful for fetching profiles or specific referenced events.
 
@@ -160,12 +206,12 @@ This document outlines best practices for using the core Nostr Development Kit (
     }
     ```
 *   **Replaceable Events:** Use `publishReplaceable()` for kinds 0, 3, 10000-19999, and 30000-39999.
-    ```typescript
-    const profileEvent = new NDKEvent(ndk);
-    profileEvent.kind = 0;
-    profileEvent.content = JSON.stringify({ name: "New Name" });
-    await profileEvent.publishReplaceable();
-    ```
+    *   **Profile Updates:** For kind 0 events, use the ergonomic `NDKUser.publish()` method:
+        ```typescript
+        const user = ndk.activeUser; // or ndk.getUser({ pubkey: "..." })
+        user.profile = { name: "New Name", about: "Updated bio" };
+        await user.publish(); // Automatically serializes and publishes kind 0 event
+        ```
 *   **Parameterized Replaceable Events:** Set the `d` tag and use `publishReplaceable()`.
     ```typescript
     const articleEvent = new NDKEvent(ndk);
@@ -182,7 +228,7 @@ This document outlines best practices for using the core Nostr Development Kit (
 
 ## 7. Event-Kind Wrapping
 
-*   **Prefer Kind Wrappers:** Use the specific classes provided in `ndk-core/src/events/kinds/*` (e.g., `NDKArticle`, `NDKNote`, `NDKUserProfile`, `NDKHighlight`, `NDKRelayList`) instead of manipulating raw `NDKEvent` tags and content whenever possible.
+*   **Prefer Kind Wrappers:** Use the specific classes provided in `ndk-core/src/events/kinds/*` (e.g., `NDKArticle`, `NDKHighlight`, `NDKRelayList`, `NDKVideo`, `NDKList`) instead of manipulating raw `NDKEvent` tags and content whenever possible.
 *   **Instantiation:** Create wrappers directly or use the static `from(event)` method.
     ```typescript
     import { NDKArticle, NDKEvent } from "@nostr-dev-kit/ndk";
@@ -257,10 +303,8 @@ This document outlines best practices for using the core Nostr Development Kit (
 
     ```
 
-Remember to handle errors gracefully throughout your application, especially during network operations like connecting, fetching, and publishing.
-
 * How to generate a new private key:
-const signer = NDKPrivateKey.generate();
+const signer = NDKPrivateKeySigner.generate();
 const { npub, nsec, pubkey } = signer;
 console.log("Generated a new nsec and npub", { npub, nsec });
 

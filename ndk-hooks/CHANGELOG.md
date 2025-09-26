@@ -1,5 +1,19 @@
 # @nostr-dev-kit/ndk-hooks
 
+## 1.3.0
+
+### Minor Changes
+
+- Add useUser hook for flexible user resolution from various identifier formats
+    - New `useUser` hook that resolves pubkey, npub, nip05, or nprofile strings into NDKUser instances
+    - Enhanced `useProfileValue` to accept NDKUser instances in addition to pubkeys
+    - Enables seamless composition: `const profile = useProfileValue(useUser("alice@example.com"))`
+
+### Patch Changes
+
+- Updated dependencies [8bd22bd]
+    - @nostr-dev-kit/ndk@2.14.36
+
 ## 1.2.5
 
 ### Patch Changes

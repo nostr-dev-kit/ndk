@@ -7,8 +7,6 @@ import type { NDK, NDKNetDebug } from "../ndk/index.js";
 import type { NDKFilter } from "../subscription";
 import type { NDKRelaySubscription } from "./subscription";
 import { NDKRelayKeepalive, probeRelayConnection } from "./keepalive";
-import { Nip77Messages } from "../sync/nip77/messages";
-import { NegentropyHandler } from "../sync/nip77/negentropy-handler";
 import type debug from "debug";
 
 const MAX_RECONNECT_ATTEMPTS = 5;
@@ -43,7 +41,6 @@ export class NDKRelayConnectivity {
     public openSubs: Map<string, NDKRelaySubscription> = new Map();
     private openCountRequests = new Map<string, CountResolver>();
     private openEventPublishes = new Map<string, EventPublishResolver[]>();
-    private openSyncHandlers = new Map<string, NegentropyHandler>();
     private serial = 0;
     public baseEoseTimeout = 4_400;
 
@@ -431,14 +428,6 @@ export class NDKRelayConnectivity {
                     this.onAuthRequested(data[1] as string);
                     return;
                 }
-                // NIP-77 Negentropy sync messages
-                case "NEG-OPEN":
-                case "NEG-MSG":
-                case "NEG-CLOSE":
-                case "NEG-ERR": {
-                    this.onNip77Message(data);
-                    return;
-                }
             }
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -772,53 +761,7 @@ export class NDKRelayConnectivity {
         this.openSubs.set(relaySub.subId, relaySub);
     }
 
-    /**
-     * Handle incoming NIP-77 Negentropy sync messages
-     */
-    private onNip77Message(data: any[]): void {
-        const message = Nip77Messages.parse(data);
-        if (!message) {
-            this.debug("Failed to parse NIP-77 message");
-            return;
-        }
 
-        const handler = this.openSyncHandlers.get(message.subId);
-
-        if (message.cmd === "NEG-MSG" || message.cmd === "NEG-ERR" || message.cmd === "NEG-CLOSE") {
-            if (!handler) {
-                this.debug(`Received ${message.cmd} for unknown sync session ${message.subId}`);
-                return;
-            }
-            handler.handleMessage(message);
-
-            // Clean up if session is closed
-            if (message.cmd === "NEG-CLOSE" || message.cmd === "NEG-ERR") {
-                this.openSyncHandlers.delete(message.subId);
-            }
-        }
-    }
-
-    /**
-     * Start a NIP-77 Negentropy sync session
-     */
-    public startSync(filter: NDKFilter, events: NDKEvent[]): NegentropyHandler {
-        const subId = `sync:${this.serial++}`;
-        const handler = new NegentropyHandler(this.ndkRelay, filter, subId);
-
-        this.openSyncHandlers.set(subId, handler);
-        handler.setLocalEvents(events);
-
-        // Clean up on completion
-        handler.once("complete", () => {
-            this.openSyncHandlers.delete(subId);
-        });
-
-        handler.once("error", () => {
-            this.openSyncHandlers.delete(subId);
-        });
-
-        return handler;
-    }
 
     /**
      * Utility functions to update the connection stats.

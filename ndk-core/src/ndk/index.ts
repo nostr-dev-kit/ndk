@@ -27,7 +27,6 @@ import { setActiveUser } from "./active-user.js";
 import { getEntity } from "./entity.js";
 import { fetchEventFromTag } from "./fetch-event-from-tag.js";
 import { Queue } from "./queue/index.js";
-import { Nip77SyncManager } from "../sync/nip77/manager.js";
 
 export type NDKValidationRatioFn = (
     relay: NDKRelay,
@@ -290,7 +289,6 @@ export class NDK extends EventEmitter<{
     public validationRatioFn?: NDKValidationRatioFn;
     public autoBlacklistInvalidRelays = false;
     public subManager: NDKSubscriptionManager;
-    public syncManager: Nip77SyncManager;
 
     /**
      * Private storage for the signature verification function
@@ -367,7 +365,6 @@ export class NDK extends EventEmitter<{
         this._explicitRelayUrls = opts.explicitRelayUrls || [];
         this.blacklistRelayUrls = opts.blacklistRelayUrls || DEFAULT_BLACKLISTED_RELAYS;
         this.subManager = new NDKSubscriptionManager();
-        this.syncManager = new Nip77SyncManager(this);
         this.pool = new NDKPool(opts.explicitRelayUrls || [], [], this);
         this.pool.name = "Main";
 

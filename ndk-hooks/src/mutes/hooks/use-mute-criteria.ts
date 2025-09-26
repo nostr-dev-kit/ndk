@@ -18,7 +18,7 @@ export function useActiveMuteCriteria(): MuteCriteria {
 export function useMuteCriteria(pubkey?: string): MuteCriteria {
     const mutesForPubkey = useNDKMutes((s: NDKMutesState) => (pubkey ? s.mutes.get(pubkey) : EMPTY_MUTE_CRITERIA));
     const extraMutes = useNDKMutes((s: NDKMutesState) => s.extraMutes);
-    const [criteria, setCriteria] = useState<MuteCriteria>(EMPTY_MUTE_CRITERIA);
+    const [criteria, setCriteria] = useState(EMPTY_MUTE_CRITERIA);
 
     useEffect(() => {
         // combine the mutes from the store and the extra mutes

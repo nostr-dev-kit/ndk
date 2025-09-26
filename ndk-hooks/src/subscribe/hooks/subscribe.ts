@@ -23,13 +23,13 @@ export function useSubscribe<T extends NDKEvent, R = T[]>(
 
     const muteFilter = useMuteFilter();
 
-    const storeRef = useRef<ReturnType<typeof createSubscribeStore<T>> | null>(null);
+    const storeRef = useRef(null);
     if (!storeRef.current) {
-        storeRef.current = createSubscribeStore<T>(opts.bufferMs);
+        storeRef.current = createSubscribeStore(opts.bufferMs);
     }
     const store = storeRef.current;
 
-    const subRef = useRef<NDKSubscription | null>(null);
+    const subRef = useRef(null);
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: <we only one to depend on the explicit dependencies>
     useEffect(() => {
@@ -115,8 +115,8 @@ export function useSubscribe<T extends NDKEvent, R = T[]>(
         }
     }, [muteFilter, store, opts.includeMuted]);
 
-    const events = useStore(store, (s) => s.events);
-    const eose = useStore(store, (s) => s.eose);
+    const events = useStore(store, (s: any) => s.events);
+    const eose = useStore(store, (s: any) => s.eose);
 
     return { events, eose };
 }

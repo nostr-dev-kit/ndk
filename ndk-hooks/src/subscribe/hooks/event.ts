@@ -23,7 +23,7 @@ export function useEvent<T extends NDKEvent>(
     opts: UseSubscribeOptions = {},
     dependencies: unknown[] = [],
 ): NDKEvent | null {
-    const [event, setEvent] = useState<T>();
+    const [event, setEvent] = useState();
     const { ndk } = useNDK();
 
     dependencies.push(!!idOrFilter);

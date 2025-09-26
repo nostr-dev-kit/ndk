@@ -42,11 +42,11 @@ export function useObserver<T extends NDKEvent>(
     dependencies: unknown[] = [],
 ): T[] {
     const { ndk } = useNDK();
-    const sub = useRef<NDKSubscription | null>(null);
-    const [events, setEvents] = useState<NDKEvent[]>([]);
-    const buffer = useRef<NDKEvent[]>([]);
-    const bufferTimeout = useRef<NodeJS.Timeout | number | null>(null);
-    const addedEventIds = useRef(new Set<string>());
+    const sub = useRef(null);
+    const [events, setEvents] = useState([]);
+    const buffer = useRef([]);
+    const bufferTimeout = useRef(null);
+    const addedEventIds = useRef(new Set());
     const muteFilter = useMuteFilter();
 
     dependencies.push(!!filters);
@@ -79,7 +79,7 @@ export function useObserver<T extends NDKEvent>(
             buffer.current.push(event);
             if (!bufferTimeout.current) {
                 bufferTimeout.current = setTimeout(() => {
-                    setEvents((prev) => [...prev, ...buffer.current]);
+                    setEvents((prev: any) => [...prev, ...buffer.current]);
                     buffer.current = [];
                     bufferTimeout.current = null;
                 }, 50);

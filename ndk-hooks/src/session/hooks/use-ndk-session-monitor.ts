@@ -171,14 +171,14 @@ export function useNDKSessionMonitor(sessionStorage: NDKSessionStorageAdapter | 
     }, [currentUser?.pubkey, ndk, sessionStorage]);
 
     // Infer the session data type from the 'sessions' map returned by the hook
-    const prevSessionsRef = useRef<typeof sessions>(new Map());
+    const prevSessionsRef = useRef(new Map());
     useEffect(() => {
         if (!sessionStorage) return;
 
         const currentSessions = sessions;
         const prevSessions = prevSessionsRef.current;
 
-        prevSessions.forEach((_, pubkey: Hexpubkey) => {
+        prevSessions.forEach((_value: any, pubkey: Hexpubkey) => {
             if (!currentSessions.has(pubkey)) {
                 console.log(`Session ${pubkey} detected as removed, updating storage.`);
                 removeStoredSession(sessionStorage, pubkey);

@@ -19,5 +19,5 @@ export function addUnpublishedEvent(
             id, event, relays, lastTryAt
         ) VALUES (?, ?, ?, ?)
     `;
-    this.db.run(stmt, [event.id, JSON.stringify(event), JSON.stringify(relayUrls), lastTryAt]);
+    this.db.run(stmt, [event.id, event.serialize(true, true), JSON.stringify(relayUrls), lastTryAt]);
 }

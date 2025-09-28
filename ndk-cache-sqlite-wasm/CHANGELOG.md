@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk-cache-sqlite-wasm
 
+## 0.5.9
+
+### Patch Changes
+
+- Fix circular structure error when adding unpublished and decrypted events by using event.serialize() instead of JSON.stringify()
+
 ## 0.5.8
 
 ### Patch Changes

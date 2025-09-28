@@ -12,5 +12,5 @@ export function addDecryptedEvent(this: NDKCacheAdapterSqliteWasm, event: NDKEve
             id, event
         ) VALUES (?, ?)
     `;
-    this.db.run(stmt, [event.id, JSON.stringify(event)]);
+    this.db.run(stmt, [event.id, event.serialize(true, true)]);
 }

@@ -23,7 +23,8 @@
         "test": "bun test",
         "test:watch": "bun test --watch",
         "lint": "biome check .",
-        "format": "biome format --write ."
+        "format": "biome format --write .",
+        "docs": "typedoc"
     },
     "repository": {
         "type": "git",
@@ -57,6 +58,8 @@
         "@cashu/crypto": "0.3.4",
         "@webbtc/webln-types": "^3.0.0",
         "nock": "^13.5.6",
-        "tsup": "^8.4.0"
+        "tsup": "^8.4.0",
+        "typedoc": "^0.28.13",
+        "typedoc-plugin-markdown": "^4.9.0"
     }
 }

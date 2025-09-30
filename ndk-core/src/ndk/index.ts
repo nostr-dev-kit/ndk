@@ -1,5 +1,6 @@
 import debug from "debug";
 import type { NostrEvent } from "nostr-tools";
+import { nip19 } from "nostr-tools";
 import { EventEmitter } from "tseep";
 import type { NDKCacheAdapter } from "../cache/index.js";
 import dedupEvent from "../events/dedup.js";
@@ -188,6 +189,15 @@ export interface NDKConstructorParams {
      * @default true
      */
     autoBlacklistInvalidRelays?: boolean;
+
+    /**
+     * Filter validation mode for subscriptions.
+     *
+     * @default "validate" - Throws an error when filters contain undefined values
+     * "fix" - Automatically removes undefined values from filters
+     * "ignore" - Skip validation entirely (legacy behavior)
+     */
+    filterValidationMode?: "validate" | "fix" | "ignore";
 }
 
 export interface GetUserParams extends NDKUserParams {
@@ -288,6 +298,7 @@ export class NDK extends EventEmitter<{
     public lowestValidationRatio = 0.1;
     public validationRatioFn?: NDKValidationRatioFn;
     public autoBlacklistInvalidRelays = false;
+    public filterValidationMode: "validate" | "fix" | "ignore" = "validate";
     public subManager: NDKSubscriptionManager;
 
     /**
@@ -419,6 +430,7 @@ export class NDK extends EventEmitter<{
         this.lowestValidationRatio = opts.lowestValidationRatio || 0.1;
         this.autoBlacklistInvalidRelays = opts.autoBlacklistInvalidRelays || false;
         this.validationRatioFn = opts.validationRatioFn || this.defaultValidationRatioFn;
+        this.filterValidationMode = opts.filterValidationMode || "validate";
 
         try {
             this.httpFetch = fetch;
@@ -650,10 +662,46 @@ export class NDK extends EventEmitter<{
     /**
      * Get a NDKUser object
      *
-     * @param opts
-     * @returns
+     * @param opts - User parameters object or a string (npub, nprofile, or hex pubkey)
+     * @returns NDKUser instance
+     *
+     * @example
+     * ```typescript
+     * // Using parameters object
+     * const user1 = ndk.getUser({ pubkey: "hex..." });
+     *
+     * // Using npub string
+     * const user2 = ndk.getUser("npub1...");
+     *
+     * // Using nprofile string (includes relay hints)
+     * const user3 = ndk.getUser("nprofile1...");
+     *
+     * // Using hex pubkey directly
+     * const user4 = ndk.getUser("deadbeef...");
+     * ```
      */
-    public getUser(opts: GetUserParams): NDKUser {
+    public getUser(opts: GetUserParams | string): NDKUser {
+        // Handle string input
+        if (typeof opts === 'string') {
+            // Check if it's a NIP-19 encoded string
+            if (opts.startsWith('npub1')) {
+                const { type, data } = nip19.decode(opts);
+                if (type !== 'npub') throw new Error(`Invalid npub: ${opts}`);
+                return this.getUser({ pubkey: data });
+            } else if (opts.startsWith('nprofile1')) {
+                const { type, data } = nip19.decode(opts);
+                if (type !== 'nprofile') throw new Error(`Invalid nprofile: ${opts}`);
+                return this.getUser({
+                    pubkey: data.pubkey,
+                    relayUrls: data.relays
+                });
+            } else {
+                // Assume it's a hex pubkey
+                return this.getUser({ pubkey: opts });
+            }
+        }
+
+        // Original implementation for object parameter
         const user = new NDKUser(opts);
         user.ndk = this;
         return user;

@@ -48,6 +48,10 @@ Sometimes you have a specific need or are certain that you won't be requesting m
 const sub = ndk.subscribe({ kinds: [1], "#t": ["nostr"] }, { groupable: false });
 ```
 
+## Filter Validation
+
+NDK automatically validates subscription filters to prevent runtime errors. By default, filters containing `undefined` values or invalid data will throw an error, helping you catch bugs early. See the [Filter Validation](./filter-validation.md) guide for more details on validation modes and best practices.
+
 This will make the REQ for `kind:1` events to hit the relays immediately and skip the `100ms` (default) grouping window.
 
 If you want to change the grouping delay you can do so by setting the `groupingDelay` option

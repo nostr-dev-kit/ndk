@@ -11,8 +11,12 @@ import type { NDKPool } from "../relay/pool/index.js";
 import { calculateRelaySetsFromFilters } from "../relay/sets/calculate";
 import { NDKRelaySet } from "../relay/sets/index.js";
 import { queryFullyFilled } from "./utils.js";
+import { NDKFilterValidationMode, processFilters } from "../utils/filter-validation.js";
 
 export type NDKSubscriptionInternalId = string;
+
+// Re-export filter validation utilities
+export { NDKFilterValidationMode, processFilters } from "../utils/filter-validation.js";
 
 export type NDKSubscriptionDelayedType = "at-least" | "at-most";
 
@@ -318,7 +322,17 @@ export class NDKSubscription extends EventEmitter<{
         this.ndk = ndk;
         this.opts = { ...defaultOpts, ...(opts || {}) };
         this.pool = this.opts.pool || ndk.pool;
-        this.filters = Array.isArray(filters) ? filters : [filters];
+
+        // Process filters based on NDK's filter validation mode
+        const rawFilters = Array.isArray(filters) ? filters : [filters];
+        const validationMode = ndk.filterValidationMode === "validate"
+            ? NDKFilterValidationMode.VALIDATE
+            : ndk.filterValidationMode === "fix"
+                ? NDKFilterValidationMode.FIX
+                : NDKFilterValidationMode.IGNORE;
+
+        this.filters = processFilters(rawFilters, validationMode, ndk.debug);
+
         this.subId = subId || this.opts.subId;
         this.internalId = Math.random().toString(36).substring(7);
         this.debug = ndk.debug.extend(`subscription[${this.opts.subId ?? this.internalId}]`);

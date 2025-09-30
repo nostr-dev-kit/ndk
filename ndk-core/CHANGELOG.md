@@ -1,5 +1,27 @@
 # @nostr-dev-kit/ndk
 
+## 2.14.37
+
+### Patch Changes
+
+- 2886111: Add filter validation to prevent undefined values in subscription filters
+
+    Prevents runtime errors in cache adapters (especially SQLite WASM) that cannot handle undefined values in parameterized queries.
+
+    The NDK constructor now accepts a `filterValidationMode` option:
+
+    - `"validate"` (default): Throws an error when filters contain undefined values
+    - `"fix"`: Automatically removes undefined values from filters
+    - `"ignore"`: Skip validation entirely (legacy behavior)
+
+    This fixes the "Wrong API use: tried to bind a value of an unknown type (undefined)" error in sqlite-wasm cache adapter.
+
+- 96341c3: Remove old NIP-60 migration code and legacy wallet kind 37375
+
+    - Removed `getOldWallets` function and `migrateCashuWallet` from ndk-wallet
+    - Removed `LegacyCashuWallet = 37375` kind definition from ndk-core
+    - Cleaned up all references to the legacy migration code
+
 ## 2.14.36
 
 ### Patch Changes
@@ -7,6 +29,7 @@
 - 8bd22bd: feat: add robust relay keepalive and reconnection handling
 
     Implement comprehensive relay connection monitoring and recovery:
+
     - Add keepalive mechanism to detect silent/stale relay connections
     - Monitor WebSocket readyState every 5 seconds to catch dead connections
     - Detect system sleep/wake events by monitoring time gaps
@@ -24,12 +47,14 @@
 - feat: add pTagOnATags and pTags options to ContentTaggingOptions
 
     Added two new options to ContentTaggingOptions for fine-grained control over p tag additions:
+
     - `pTagOnATags`: Controls whether p tags are added when creating a tags (for addressable events)
     - `pTags`: Disables all p tag additions when set to false
 
     These options provide more flexibility for applications that need to control how p tags are added to events, particularly useful for privacy-conscious applications or specific protocol implementations.
 
     The options are respected in:
+
     - Content tagging (npub, nprofile, nevent, naddr references)
     - Event replies (both NIP-01 and NIP-22 style)
     - Event tagging via the tag() method
@@ -40,6 +65,7 @@
 ### Patch Changes
 
 - d89dbc6: Add ContentTaggingOptions for flexible content tagging control
+
     - Introduces ContentTaggingOptions interface to customize tag generation behavior
     - Adds options to control reply tag inclusion (includeReplyTags)
     - Adds configurable hashtag prefixes via hashtagPrefixes option
@@ -65,6 +91,7 @@
 ### Patch Changes
 
 - 9cb8407: Fix relay reconnection logic after long disconnections
+
     - Fixed exponential backoff calculation that was using XOR operator (^) instead of exponentiation
     - Added detection and cleanup of stale WebSocket connections after system sleep/resume
     - Improved connection state handling to prevent infinite reconnection loops

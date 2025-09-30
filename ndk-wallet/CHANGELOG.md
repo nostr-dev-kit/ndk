@@ -1,5 +1,19 @@
 # @nostr-dev-kit/ndk-cache-redis
 
+## 0.6.3
+
+### Patch Changes
+
+- 96341c3: Remove old NIP-60 migration code and legacy wallet kind 37375
+
+    - Removed `getOldWallets` function and `migrateCashuWallet` from ndk-wallet
+    - Removed `LegacyCashuWallet = 37375` kind definition from ndk-core
+    - Cleaned up all references to the legacy migration code
+
+- Updated dependencies [2886111]
+- Updated dependencies [96341c3]
+    - @nostr-dev-kit/ndk@2.14.37
+
 ## 0.6.2
 
 ### Patch Changes

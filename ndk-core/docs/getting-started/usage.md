@@ -48,6 +48,49 @@ const ndk = new NDK({
 await ndk.connect();
 ```
 
+## Creating Users
+
+NDK provides flexible ways to create user objects, including support for NIP-19 encoded identifiers:
+
+```typescript
+// From hex pubkey
+const user1 = ndk.getUser({ pubkey: "3bf0c63fcb93463407af97a5e5ee64fa883d107ef9e558472c4eb9aaaefa459d" });
+
+// From npub (NIP-19 encoded)
+const user2 = ndk.getUser("npub1n0sturny6w9zn2wwexju3m6asu7zh7jnv2jt2kx6tlmfhs7thq0qnflahe");
+
+// From nprofile (includes relay hints)
+const user3 = ndk.getUser("nprofile1qqsrhuxx8l9ex335q7he0f09aej04zpazpl0ne2cgukyawd24mayt8gpp4mhxue69uhhytnc9e3k7mgpz4mhxue69uhkg6nzv9ejuumpv34kytnrdaksjlyr9p");
+
+// The method automatically detects the format
+const user4 = ndk.getUser("deadbeef..."); // Assumes hex pubkey
+```
+
+## Working with NIP-19 Identifiers
+
+NDK re-exports NIP-19 utilities for encoding and decoding Nostr identifiers:
+
+```typescript
+import { nip19 } from '@nostr-dev-kit/ndk';
+
+// Encode a pubkey as npub
+const npub = nip19.npubEncode("3bf0c63fcb93463407af97a5e5ee64fa883d107ef9e558472c4eb9aaaefa459d");
+
+// Decode any NIP-19 identifier
+const decoded = nip19.decode("npub1...");
+console.log(decoded.type); // "npub"
+console.log(decoded.data); // hex pubkey
+
+// Encode events
+const nevent = nip19.neventEncode({
+    id: eventId,
+    relays: ["wss://relay.example.com"],
+    author: authorPubkey
+});
+```
+
+See the [NIP-19 tutorial](/tutorial/nip19.html) for comprehensive examples and use cases.
+
 ## Usage with React Hooks (`ndk-hooks`)
 
 When using the `ndk-hooks` package in a React application, the initialization process involves creating the NDK instance and then using the `useNDKInit` hook to make it available to the rest of your application via Zustand stores.

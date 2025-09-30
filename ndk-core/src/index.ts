@@ -89,6 +89,8 @@ export * from "./utils/get-users-relay-list.js";
 export * from "./utils/imeta.js";
 export * from "./utils/filter.js";
 
+// Re-export nip19 utilities for lightweight data conversion
+export * as nip19 from "./nip19/index.js";
 
 // Re-export signature verification stats
 export {

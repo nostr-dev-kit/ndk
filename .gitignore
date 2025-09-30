@@ -41,6 +41,7 @@ coverage
 /docs/wallet/
 /docs/wrappers/
 /docs/hooks/
+**/docs/api/
 ndk-cache-sqlite/example/cache.db
 
 # TENEX project files

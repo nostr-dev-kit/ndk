@@ -173,9 +173,6 @@ export enum NDKKind {
     HorizontalVideo = 34235,
     VerticalVideo = 34236,
 
-    // Legacy Cashu Wallet
-    LegacyCashuWallet = 37375,
-
     GroupMetadata = 39000, // NIP-29
     GroupAdmins = 39001, // NIP-29
     GroupMembers = 39002, // NIP-29

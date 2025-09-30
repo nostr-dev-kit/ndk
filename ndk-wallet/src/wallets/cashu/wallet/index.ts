@@ -15,7 +15,7 @@ import type {
     NDKZapDetails,
 } from "@nostr-dev-kit/ndk";
 import type NDK from "@nostr-dev-kit/ndk";
-import { NDKEvent, NDKKind, NDKPrivateKeySigner, type NDKRelaySet } from "@nostr-dev-kit/ndk";
+import { NDKEvent, NDKKind, NDKPrivateKeySigner, NDKRelaySet, NDKCashuMintList, NDKSubscriptionCacheUsage } from "@nostr-dev-kit/ndk";
 import {
     NDKWallet,
     type NDKWalletBalance,
@@ -184,13 +184,51 @@ export class NDKCashuWallet extends NDKWallet {
     }
 
     /**
+     * Fetches relay configuration for the wallet according to NIP-60.
+     * First tries to get relays from kind 10019 (CashuMintList),
+     * falls back to NIP-65 (kind 10002) relays if not found.
+     */
+    private async fetchWalletRelays(pubkey: string): Promise<NDKRelaySet | undefined> {
+        // Try to fetch kind 10019 (CashuMintList) event
+        const mintListEvent = await this.ndk.fetchEvent(
+            { kinds: [NDKKind.CashuMintList], authors: [pubkey] },
+            { cacheUsage: NDKSubscriptionCacheUsage.PARALLEL },
+        );
+
+        if (mintListEvent) {
+            const mintList = NDKCashuMintList.from(mintListEvent);
+            if (mintList.relays.length > 0) {
+                return NDKRelaySet.fromRelayUrls(mintList.relays, this.ndk!);
+            }
+        }
+
+        // Fallback to NIP-65 relays (kind 10002)
+        const relayListEvent = await this.ndk.fetchEvent(
+            { kinds: [NDKKind.RelayList], authors: [pubkey] },
+            { cacheUsage: NDKSubscriptionCacheUsage.PARALLEL },
+        );
+
+        if (relayListEvent) {
+            const relayUrls = relayListEvent.tags
+                .filter((tag) => tag[0] === "r")
+                .map((tag) => tag[1]);
+            if (relayUrls.length > 0) {
+                return NDKRelaySet.fromRelayUrls(relayUrls, this.ndk!);
+            }
+        }
+
+        // No specific relays found, will use default NDK relays
+        return undefined;
+    }
+
+    /**
      * Starts monitoring the wallet.
      *
      * Use `since` to start syncing state from a specific timestamp. This should be
      * used by storing at the app level a time in which we know we were able to communicate
      * with the relays, for example, by saving the time the wallet has emitted a "ready" event.
      */
-    start(opts?: NDKSubscriptionOptions & { pubkey?: Hexpubkey; since?: number }): Promise<void> {
+    async start(opts?: NDKSubscriptionOptions & { pubkey?: Hexpubkey; since?: number }): Promise<void> {
         const activeUser = this.ndk?.activeUser;
 
         if (this.status === NDKWalletStatus.READY) return Promise.resolve();
@@ -198,6 +236,11 @@ export class NDKCashuWallet extends NDKWallet {
 
         const pubkey = opts?.pubkey ?? activeUser?.pubkey;
         if (!pubkey) throw new Error("no pubkey");
+
+        // Fetch wallet relays according to NIP-60
+        if (!this.relaySet) {
+            this.relaySet = await this.fetchWalletRelays(pubkey);
+        }
 
         const filters: NDKFilter[] = [
             { kinds: [NDKKind.CashuToken], authors: [pubkey] },

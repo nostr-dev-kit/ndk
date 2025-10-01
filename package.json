@@ -32,6 +32,8 @@
         "ndk-cache-nostr",
         "ndk-cache-sqlite",
         "ndk-svelte",
+        "ndk-svelte5",
+        "ndk-svelte5/examples/*",
         "ndk-hooks",
         "ndk-mobile",
         "ndk-svelte-components",

@@ -333,6 +333,10 @@ export class NDKSubscription extends EventEmitter<{
 
         this.filters = processFilters(rawFilters, validationMode, ndk.debug);
 
+        if (this.filters.length === 0) {
+            throw new Error("Subscription must have at least one filter");
+        }
+
         this.subId = subId || this.opts.subId;
         this.internalId = Math.random().toString(36).substring(7);
         this.debug = ndk.debug.extend(`subscription[${this.opts.subId ?? this.internalId}]`);

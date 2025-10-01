@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk-hooks
 
+## 1.3.2
+
+### Patch Changes
+
+- bump
+
 ## 1.3.1
 
 ### Patch Changes

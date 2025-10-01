@@ -1,5 +1,13 @@
 # @nostr-dev-kit/ndk
 
+## 2.14.38
+
+### Patch Changes
+
+- Prevent subscriptions with empty filters array
+
+    Subscriptions now throw an error if created with an empty filters array, preventing undefined filter errors in queryFullyFilled and filterIncludesIds functions.
+
 ## 2.14.37
 
 ### Patch Changes

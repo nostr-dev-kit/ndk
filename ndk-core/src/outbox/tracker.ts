@@ -85,9 +85,17 @@ export class OutboxTracker extends EventEmitter {
                 this.data.set(pubkey, new OutboxItem("user"));
             }
 
+            // Extract relay hints from NDKUser objects
+            const relayHints = new Map<Hexpubkey, string[]>();
+            for (const item of slice) {
+                if (item instanceof NDKUser && item.relayUrls.length > 0) {
+                    relayHints.set(item.pubkey, item.relayUrls);
+                }
+            }
+
             promises.push(
                 new Promise((resolve) => {
-                    getRelayListForUsers(pubkeys, this.ndk, skipCache)
+                    getRelayListForUsers(pubkeys, this.ndk, skipCache, 1000, relayHints)
                         .then((relayLists: Map<Hexpubkey, NDKRelayList>) => {
                             for (const [pubkey, relayList] of relayLists) {
                                 let outboxItem = this.data.get(pubkey)!;
@@ -119,9 +127,13 @@ export class OutboxTracker extends EventEmitter {
 
                                     this.data.set(pubkey, outboxItem);
 
-                                    // this.debug(
-                                    //     `Adding ${outboxItem.readRelays.size} read relays and ${outboxItem.writeRelays.size} write relays for ${pubkey}, %o`, relayList?.rawEvent()
-                                    // );
+                                    // Emit event so subscriptions can update their relay connections
+                                    this.emit("user:relay-list-updated", pubkey, outboxItem);
+
+                                    this.debug(
+                                        `Adding ${outboxItem.readRelays.size} read relays and ${outboxItem.writeRelays.size} write relays for ${pubkey}`,
+                                        relayList?.rawEvent(),
+                                    );
                                 }
                             }
                         })

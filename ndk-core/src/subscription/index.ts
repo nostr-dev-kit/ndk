@@ -325,11 +325,12 @@ export class NDKSubscription extends EventEmitter<{
 
         // Process filters based on NDK's filter validation mode
         const rawFilters = Array.isArray(filters) ? filters : [filters];
-        const validationMode = ndk.filterValidationMode === "validate"
-            ? NDKFilterValidationMode.VALIDATE
-            : ndk.filterValidationMode === "fix"
-                ? NDKFilterValidationMode.FIX
-                : NDKFilterValidationMode.IGNORE;
+        const validationMode =
+            ndk.filterValidationMode === "validate"
+                ? NDKFilterValidationMode.VALIDATE
+                : ndk.filterValidationMode === "fix"
+                  ? NDKFilterValidationMode.FIX
+                  : NDKFilterValidationMode.IGNORE;
 
         this.filters = processFilters(rawFilters, validationMode, ndk.debug);
 
@@ -603,6 +604,33 @@ export class NDKSubscription extends EventEmitter<{
         for (const [relayUrl, filters] of this.relayFilters) {
             const relay = this.pool.getRelay(relayUrl, true, true, filters);
             relay.subscribe(this, filters);
+        }
+    }
+
+    /**
+     * Refresh relay connections when outbox data becomes available.
+     * This recalculates which relays should receive this subscription and
+     * connects to any newly discovered relays.
+     */
+    public refreshRelayConnections(): void {
+        // Don't refresh if we're using an explicit relay set
+        if (this.relaySet && this.relaySet.relays.size > 0) {
+            return;
+        }
+
+        // Recalculate relay sets with updated outbox data
+        const updatedRelaySets = calculateRelaySetsFromFilters(this.ndk, this.filters, this.pool);
+
+        // Find new relays that aren't already in our subscription
+        for (const [relayUrl, filters] of updatedRelaySets) {
+            if (!this.relayFilters?.has(relayUrl)) {
+                // Add to our relay filters
+                this.relayFilters?.set(relayUrl, filters);
+
+                // Connect to the relay and subscribe
+                const relay = this.pool.getRelay(relayUrl, true, true, filters);
+                relay.subscribe(this, filters);
+            }
         }
     }
 

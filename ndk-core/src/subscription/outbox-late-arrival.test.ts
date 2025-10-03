@@ -5,7 +5,7 @@ import { NDKEvent } from "../events";
 import { RelayMock } from "../../test/mocks/relay-mock";
 import { RelayPoolMock } from "../../test/mocks/relay-pool-mock";
 import { OutboxTracker } from "../outbox/tracker";
-import { NDKRelayList } from "../events/kinds/NDKRelayList";
+import { NDKRelayList } from "../events/kinds/relay-list";
 import { UserGenerator, SignerGenerator } from "../../test/helpers/test-fixtures";
 
 describe("Subscription with late-arriving relay list", () => {
@@ -29,7 +29,12 @@ describe("Subscription with late-arriving relay list", () => {
 
         // Override getRelay to handle author relays when they're requested
         const originalGetRelay = pool.getRelay.bind(pool);
-        pool.getRelay = (url: string, connect = false, createIfNotExists = false, filters?: any) => {
+        pool.getRelay = (
+            url: string,
+            connect = false,
+            createIfNotExists = false,
+            filters?: any,
+        ) => {
             if (url === "wss://relay.damus.io") {
                 if (!pool.mockRelays.has(url)) {
                     pool.addRelay(authorRelay1);
@@ -70,16 +75,19 @@ describe("Subscription with late-arriving relay list", () => {
 
         // Verify: REQ sent only to explicit relay initially
         const explicitMessages = explicitRelay.messageLog.filter(
-            (m) => m.direction === "out" && m.message.includes("REQ") && m.message.includes("10019"),
+            (m) =>
+                m.direction === "out" && m.message.includes("REQ") && m.message.includes("10019"),
         );
         expect(explicitMessages.length).toBeGreaterThan(0);
 
         // Verify: Author's relays have NOT received REQ yet
         const authorRelay1Messages = authorRelay1.messageLog.filter(
-            (m) => m.direction === "out" && m.message.includes("REQ") && m.message.includes("10019"),
+            (m) =>
+                m.direction === "out" && m.message.includes("REQ") && m.message.includes("10019"),
         );
         const authorRelay2Messages = authorRelay2.messageLog.filter(
-            (m) => m.direction === "out" && m.message.includes("REQ") && m.message.includes("10019"),
+            (m) =>
+                m.direction === "out" && m.message.includes("REQ") && m.message.includes("10019"),
         );
         expect(authorRelay1Messages.length).toBe(0);
         expect(authorRelay2Messages.length).toBe(0);
@@ -116,10 +124,12 @@ describe("Subscription with late-arriving relay list", () => {
         // EXPECTED: Subscription should NOW be connected to author's relays
         // This is the assertion that will FAIL until we implement the fix
         const authorRelay1MessagesAfter = authorRelay1.messageLog.filter(
-            (m) => m.direction === "out" && m.message.includes("REQ") && m.message.includes("10019"),
+            (m) =>
+                m.direction === "out" && m.message.includes("REQ") && m.message.includes("10019"),
         );
         const authorRelay2MessagesAfter = authorRelay2.messageLog.filter(
-            (m) => m.direction === "out" && m.message.includes("REQ") && m.message.includes("10019"),
+            (m) =>
+                m.direction === "out" && m.message.includes("REQ") && m.message.includes("10019"),
         );
 
         // These assertions will fail until we implement the fix
@@ -152,7 +162,8 @@ describe("Subscription with late-arriving relay list", () => {
 
         // Count initial REQs to explicit relay
         const initialReqs = explicitRelay.messageLog.filter(
-            (m) => m.direction === "out" && m.message.includes("REQ") && m.message.includes("10019"),
+            (m) =>
+                m.direction === "out" && m.message.includes("REQ") && m.message.includes("10019"),
         );
 
         // Simulate relay list update with same relay
@@ -163,7 +174,8 @@ describe("Subscription with late-arriving relay list", () => {
 
         // Verify: No duplicate REQs sent
         const finalReqs = explicitRelay.messageLog.filter(
-            (m) => m.direction === "out" && m.message.includes("REQ") && m.message.includes("10019"),
+            (m) =>
+                m.direction === "out" && m.message.includes("REQ") && m.message.includes("10019"),
         );
         expect(finalReqs.length).toBe(initialReqs.length);
 

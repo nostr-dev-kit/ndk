@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import type { NostrEvent } from "../../events/index.js";
 import { NDKEvent } from "../../events/index.js";
-import { NDKRelayList } from "../../events/kinds/NDKRelayList.js";
+import { NDKRelayList } from "../../events/kinds/relay-list.js";
 import { NDK } from "../../ndk/index.js";
 import { NDKPrivateKeySigner } from "../../signers/private-key/index.js";
 import type { Hexpubkey, NDKUser } from "../../user/index.js";

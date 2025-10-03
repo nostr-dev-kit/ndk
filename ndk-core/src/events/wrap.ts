@@ -18,7 +18,7 @@ import { NDKThread } from "./kinds/thread.js";
 import { NDKDraft } from "./kinds/drafts.js";
 import { NDKTask } from "./kinds/task.js";
 import { NDKProjectTemplate } from "./kinds/project-template.js";
-import { NDKRelayList } from "./kinds/NDKRelayList.js";
+import { NDKRelayList } from "./kinds/relay-list.js";
 import { NDKRepost } from "./kinds/repost.js";
 import { NDKClassified } from "./kinds/classified.js";
 import { NDKAppHandlerEvent } from "./kinds/nip89/app-handler.js";

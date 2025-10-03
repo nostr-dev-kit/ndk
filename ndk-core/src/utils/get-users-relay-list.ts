@@ -1,5 +1,5 @@
 import type { NDKEvent } from "../events/index.js";
-import { NDKRelayList, relayListFromKind3 } from "../events/kinds/NDKRelayList.js";
+import { NDKRelayList, relayListFromKind3 } from "../events/kinds/relay-list.js";
 import { NDKKind } from "../events/kinds/index.js";
 import type { NDK } from "../ndk/index.js";
 import type { NDKRelay } from "../relay/index.js";
@@ -58,7 +58,8 @@ export async function getRelayListForUsers(
 
         // get list of relay lists from cache
         for (const relayList of cachedList) {
-            if (relayList.kind === 10002) relayLists.set(relayList.pubkey, NDKRelayList.from(relayList));
+            if (relayList.kind === 10002)
+                relayLists.set(relayList.pubkey, NDKRelayList.from(relayList));
         }
 
         for (const relayList of cachedList) {
@@ -71,7 +72,9 @@ export async function getRelayListForUsers(
         }
 
         // remove the pubkeys we found from the list
-        pubkeys = pubkeys.filter((pubkey) => !relayLists.has(pubkey) && !fromContactList.has(pubkey));
+        pubkeys = pubkeys.filter(
+            (pubkey) => !relayLists.has(pubkey) && !fromContactList.has(pubkey),
+        );
     }
 
     // if we have no pubkeys left, return the results

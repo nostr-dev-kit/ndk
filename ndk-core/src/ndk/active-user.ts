@@ -2,7 +2,7 @@ import createDebug from "debug";
 import type { NDKEvent } from "../events/index.js";
 import { NDKKind } from "../events/kinds/index.js";
 import NDKList from "../events/kinds/lists/index.js";
-import type { NDKRelayList } from "../events/kinds/NDKRelayList.js";
+import type { NDKRelayList } from "../events/kinds/relay-list.js";
 import { NDKRelay } from "../relay/index.js";
 import type { NDKFilter } from "../subscription/index.js";
 import type { NDKUser } from "../user/index.js";

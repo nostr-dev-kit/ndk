@@ -62,12 +62,12 @@ export class RelayPoolMock {
 
     // Add this method to support the NDKSubscription implementation
     permanentAndConnectedRelays(): RelayMock[] {
-        return Array.from(this.relays).filter((relay) => relay.status === 2); // CONNECTED
+        return Array.from(this.relays).filter((relay) => relay.status === 5); // CONNECTED
     }
 
     // Add this method to support the eoseReceived method in NDKSubscription
     connectedRelays(): RelayMock[] {
-        return Array.from(this.relays).filter((relay) => relay.status === 2); // CONNECTED
+        return Array.from(this.relays).filter((relay) => relay.status === 5); // CONNECTED
     }
 
     // Add this method to support the NDKSubscription implementation
@@ -140,4 +140,12 @@ export class RelayPoolMock {
             });
         }
     }
+
+    // Add useTemporaryRelay method (required by NDK)
+    useTemporaryRelay(_relay: RelayMock, _filters?: NDKFilter[], _subscription?: any): void {
+        // Mock implementation - no-op for testing
+    }
+
+    // Add blacklistRelayUrls property (required by outbox tracker)
+    blacklistRelayUrls: Set<string> = new Set();
 }

@@ -26,7 +26,7 @@ describe("Filter Validation", () => {
         ndk = new NDK({
             explicitRelayUrls: ["wss://relay.test.com"],
             // Start with validate mode by default
-            filterValidationMode: "validate"
+            filterValidationMode: "validate",
         });
 
         // Replace the relay pool with our mock
@@ -47,7 +47,7 @@ describe("Filter Validation", () => {
             const badFilter: NDKFilter = {
                 // @ts-ignore - Intentionally passing bad data
                 authors: [validPubkey1, undefined, validPubkey2],
-                kinds: [NDKKind.Text]
+                kinds: [NDKKind.Text],
             };
 
             expect(() => {
@@ -59,7 +59,7 @@ describe("Filter Validation", () => {
             const badFilter: NDKFilter = {
                 authors: [validPubkey1],
                 // @ts-ignore - Intentionally passing bad data
-                kinds: [NDKKind.Text, undefined, NDKKind.Metadata]
+                kinds: [NDKKind.Text, undefined, NDKKind.Metadata],
             };
 
             expect(() => {
@@ -71,7 +71,7 @@ describe("Filter Validation", () => {
             const badFilter: NDKFilter = {
                 // @ts-ignore - Intentionally passing bad data
                 ids: [validEventId1, undefined, validEventId2],
-                kinds: [NDKKind.Text]
+                kinds: [NDKKind.Text],
             };
 
             expect(() => {
@@ -83,7 +83,7 @@ describe("Filter Validation", () => {
             const badFilter: NDKFilter = {
                 kinds: [NDKKind.Text],
                 // @ts-ignore - Intentionally passing bad data
-                "#t": ["bitcoin", undefined, "nostr"]
+                "#t": ["bitcoin", undefined, "nostr"],
             };
 
             expect(() => {
@@ -94,7 +94,7 @@ describe("Filter Validation", () => {
         it("should NOT throw when filter is valid", () => {
             const goodFilter: NDKFilter = {
                 authors: [validPubkey1, validPubkey2],
-                kinds: [NDKKind.Text, NDKKind.Metadata]
+                kinds: [NDKKind.Text, NDKKind.Metadata],
             };
 
             expect(() => {
@@ -110,12 +110,14 @@ describe("Filter Validation", () => {
                 // @ts-ignore - Intentionally passing bad data
                 kinds: [NDKKind.Text, undefined],
                 // @ts-ignore - Intentionally passing bad data
-                "#t": ["bitcoin", undefined]
+                "#t": ["bitcoin", undefined],
             };
 
             expect(() => {
                 ndk.subscribe(badFilter);
-            }).toThrow(/Filter\[0\]\.authors\[1\] is undefined.*Filter\[0\]\.kinds\[1\] is undefined.*Filter\[0\]\.#t\[1\] is undefined/s);
+            }).toThrow(
+                /Filter\[0\]\.authors\[1\] is undefined.*Filter\[0\]\.kinds\[1\] is undefined.*Filter\[0\]\.#t\[1\] is undefined/s,
+            );
         });
     });
 
@@ -128,23 +130,23 @@ describe("Filter Validation", () => {
             const badFilter: NDKFilter = {
                 // @ts-ignore - Intentionally passing bad data
                 authors: [validPubkey1, undefined, validPubkey2],
-                kinds: [NDKKind.Text]
+                kinds: [NDKKind.Text],
             };
 
             const relaySet = new NDKRelaySet(new Set([mockRelay as unknown as NDKRelay]), ndk);
             const sub = new NDKSubscription(ndk, badFilter, {
                 subId: "test-sub-fix-authors",
-                relaySet
+                relaySet,
             });
 
             // Start the subscription
             sub.start();
 
             // Wait a bit for the subscription to be sent
-            await new Promise(resolve => setTimeout(resolve, 10));
+            await new Promise((resolve) => setTimeout(resolve, 10));
 
             // Check what was sent to the relay
-            const sentMessages = mockRelay.messageLog.filter(m => m.direction === "out");
+            const sentMessages = mockRelay.messageLog.filter((m) => m.direction === "out");
             expect(sentMessages).toHaveLength(1);
 
             const sentMessage = JSON.parse(sentMessages[0].message);
@@ -162,19 +164,19 @@ describe("Filter Validation", () => {
             const badFilter: NDKFilter = {
                 authors: [validPubkey1],
                 // @ts-ignore - Intentionally passing bad data
-                kinds: [NDKKind.Text, undefined, NDKKind.Metadata]
+                kinds: [NDKKind.Text, undefined, NDKKind.Metadata],
             };
 
             const relaySet = new NDKRelaySet(new Set([mockRelay as unknown as NDKRelay]), ndk);
             const sub = new NDKSubscription(ndk, badFilter, {
                 subId: "test-sub-fix-kinds",
-                relaySet
+                relaySet,
             });
 
             sub.start();
-            await new Promise(resolve => setTimeout(resolve, 10));
+            await new Promise((resolve) => setTimeout(resolve, 10));
 
-            const sentMessages = mockRelay.messageLog.filter(m => m.direction === "out");
+            const sentMessages = mockRelay.messageLog.filter((m) => m.direction === "out");
             const sentMessage = JSON.parse(sentMessages[0].message);
             const sentFilter = sentMessage[2];
 
@@ -190,19 +192,19 @@ describe("Filter Validation", () => {
                 // @ts-ignore - Intentionally passing bad data
                 "#t": ["bitcoin", undefined, "nostr"],
                 // @ts-ignore - Intentionally passing bad data
-                "#p": [undefined, validPubkey1]
+                "#p": [undefined, validPubkey1],
             };
 
             const relaySet = new NDKRelaySet(new Set([mockRelay as unknown as NDKRelay]), ndk);
             const sub = new NDKSubscription(ndk, badFilter, {
                 subId: "test-sub-fix-tags",
-                relaySet
+                relaySet,
             });
 
             sub.start();
-            await new Promise(resolve => setTimeout(resolve, 10));
+            await new Promise((resolve) => setTimeout(resolve, 10));
 
-            const sentMessages = mockRelay.messageLog.filter(m => m.direction === "out");
+            const sentMessages = mockRelay.messageLog.filter((m) => m.direction === "out");
             const sentMessage = JSON.parse(sentMessages[0].message);
             const sentFilter = sentMessage[2];
 
@@ -216,19 +218,19 @@ describe("Filter Validation", () => {
             const badFilter: NDKFilter = {
                 // @ts-ignore - Intentionally passing bad data
                 authors: [undefined, undefined], // All undefined
-                kinds: [NDKKind.Text]
+                kinds: [NDKKind.Text],
             };
 
             const relaySet = new NDKRelaySet(new Set([mockRelay as unknown as NDKRelay]), ndk);
             const sub = new NDKSubscription(ndk, badFilter, {
                 subId: "test-sub-fix-empty",
-                relaySet
+                relaySet,
             });
 
             sub.start();
-            await new Promise(resolve => setTimeout(resolve, 10));
+            await new Promise((resolve) => setTimeout(resolve, 10));
 
-            const sentMessages = mockRelay.messageLog.filter(m => m.direction === "out");
+            const sentMessages = mockRelay.messageLog.filter((m) => m.direction === "out");
             const sentMessage = JSON.parse(sentMessages[0].message);
             const sentFilter = sentMessage[2];
 
@@ -249,7 +251,7 @@ describe("Filter Validation", () => {
             const badFilter: NDKFilter = {
                 // @ts-ignore - Intentionally passing bad data
                 authors: [validPubkey1, undefined, validPubkey2],
-                kinds: [NDKKind.Text]
+                kinds: [NDKKind.Text],
             };
 
             expect(() => {
@@ -262,19 +264,19 @@ describe("Filter Validation", () => {
             const badFilter: NDKFilter = {
                 // @ts-ignore - Intentionally passing bad data
                 authors: [validPubkey1, undefined, validPubkey2],
-                kinds: [NDKKind.Text]
+                kinds: [NDKKind.Text],
             };
 
             const relaySet = new NDKRelaySet(new Set([mockRelay as unknown as NDKRelay]), ndk);
             const sub = new NDKSubscription(ndk, badFilter, {
                 subId: "test-sub-ignore",
-                relaySet
+                relaySet,
             });
 
             sub.start();
-            await new Promise(resolve => setTimeout(resolve, 10));
+            await new Promise((resolve) => setTimeout(resolve, 10));
 
-            const sentMessages = mockRelay.messageLog.filter(m => m.direction === "out");
+            const sentMessages = mockRelay.messageLog.filter((m) => m.direction === "out");
             const sentMessage = JSON.parse(sentMessages[0].message);
             const sentFilter = sentMessage[2];
 
@@ -294,13 +296,13 @@ describe("Filter Validation", () => {
                 {
                     // @ts-ignore
                     authors: [validPubkey1, undefined],
-                    kinds: [NDKKind.Text]
+                    kinds: [NDKKind.Text],
                 },
                 {
                     authors: [validPubkey2],
                     // @ts-ignore
-                    kinds: [NDKKind.Metadata, undefined]
-                }
+                    kinds: [NDKKind.Metadata, undefined],
+                },
             ];
 
             expect(() => {
@@ -315,25 +317,25 @@ describe("Filter Validation", () => {
                 {
                     // @ts-ignore
                     authors: [validPubkey1, undefined],
-                    kinds: [NDKKind.Text]
+                    kinds: [NDKKind.Text],
                 },
                 {
                     authors: [validPubkey2],
                     // @ts-ignore
-                    kinds: [NDKKind.Metadata, undefined]
-                }
+                    kinds: [NDKKind.Metadata, undefined],
+                },
             ];
 
             const relaySet = new NDKRelaySet(new Set([mockRelay as unknown as NDKRelay]), ndk);
             const sub = new NDKSubscription(ndk, badFilters, {
                 subId: "test-sub-multi-fix",
-                relaySet
+                relaySet,
             });
 
             sub.start();
-            await new Promise(resolve => setTimeout(resolve, 10));
+            await new Promise((resolve) => setTimeout(resolve, 10));
 
-            const sentMessages = mockRelay.messageLog.filter(m => m.direction === "out");
+            const sentMessages = mockRelay.messageLog.filter((m) => m.direction === "out");
             const sentMessage = JSON.parse(sentMessages[0].message);
 
             // Filters are at indices 2 and 3 in the REQ message
@@ -361,7 +363,7 @@ describe("Filter Validation", () => {
             expect(() => {
                 const sub = ndk.subscribe({
                     // @ts-ignore
-                    authors: [undefined, validPubkey1]
+                    authors: [undefined, validPubkey1],
                 });
                 sub.stop();
             }).not.toThrow();
@@ -371,7 +373,7 @@ describe("Filter Validation", () => {
             expect(() => {
                 const sub = ndk.subscribe({
                     // @ts-ignore
-                    authors: [undefined, validPubkey1]
+                    authors: [undefined, validPubkey1],
                 });
                 sub.stop();
             }).not.toThrow();
@@ -393,24 +395,27 @@ describe("Filter Validation", () => {
             const filter: NDKFilter = {
                 // @ts-ignore - This is what would happen in real code
                 authors: userIds.map(getUserPubkey),
-                kinds: [NDKKind.Text, NDKKind.Article]
+                kinds: [NDKKind.Text, NDKKind.Article],
             };
 
             const relaySet = new NDKRelaySet(new Set([mockRelay as unknown as NDKRelay]), ndk);
             const sub = new NDKSubscription(ndk, filter, {
                 subId: "real-world-test",
-                relaySet
+                relaySet,
             });
 
             sub.start();
-            await new Promise(resolve => setTimeout(resolve, 10));
+            await new Promise((resolve) => setTimeout(resolve, 10));
 
-            const sentMessages = mockRelay.messageLog.filter(m => m.direction === "out");
+            const sentMessages = mockRelay.messageLog.filter((m) => m.direction === "out");
             const sentMessage = JSON.parse(sentMessages[0].message);
             const sentFilter = sentMessage[2];
 
             // Should have removed the undefined value
-            expect(sentFilter.authors).toEqual(["0000000000000000000000000000000000000000000000000000000000000004", "0000000000000000000000000000000000000000000000000000000000000005"]);
+            expect(sentFilter.authors).toEqual([
+                "0000000000000000000000000000000000000000000000000000000000000004",
+                "0000000000000000000000000000000000000000000000000000000000000005",
+            ]);
 
             sub.stop();
         });

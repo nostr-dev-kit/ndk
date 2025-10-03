@@ -7,18 +7,18 @@ export class NDKRelayKeepalive {
     private timer?: ReturnType<typeof setTimeout>;
     private readonly timeout: number;
     private isRunning = false;
-    
+
     /**
      * @param timeout - Time in milliseconds to wait before considering connection stale (default 30s)
      * @param onSilenceDetected - Callback when silence is detected
      */
     constructor(
         timeout = 30000,
-        private onSilenceDetected: () => void
+        private onSilenceDetected: () => void,
     ) {
         this.timeout = timeout;
     }
-    
+
     /**
      * Records activity from the relay, resetting the silence timer
      */
@@ -28,7 +28,7 @@ export class NDKRelayKeepalive {
             this.resetTimer();
         }
     }
-    
+
     /**
      * Starts monitoring for relay silence
      */
@@ -38,7 +38,7 @@ export class NDKRelayKeepalive {
         this.lastActivity = Date.now();
         this.resetTimer();
     }
-    
+
     /**
      * Stops monitoring for relay silence
      */
@@ -49,12 +49,12 @@ export class NDKRelayKeepalive {
             this.timer = undefined;
         }
     }
-    
+
     private resetTimer(): void {
         if (this.timer) {
             clearTimeout(this.timer);
         }
-        
+
         this.timer = setTimeout(() => {
             const silenceTime = Date.now() - this.lastActivity;
             if (silenceTime >= this.timeout) {
@@ -76,36 +76,43 @@ export class NDKRelayKeepalive {
  * @param relay - The relay to probe
  * @returns Promise that resolves to true if relay responds, false otherwise
  */
-export async function probeRelayConnection(relay: { send: (msg: any[]) => void, once: (event: string, handler: () => void) => void }): Promise<boolean> {
+export async function probeRelayConnection(relay: {
+    send: (msg: any[]) => void;
+    once: (event: string, handler: () => void) => void;
+}): Promise<boolean> {
     const probeId = `probe-${Math.random().toString(36).substring(7)}`;
-    
+
     return new Promise((resolve) => {
         let responded = false;
-        
+
         const timeout = setTimeout(() => {
             if (!responded) {
                 responded = true;
-                relay.send(['CLOSE', probeId]);
+                relay.send(["CLOSE", probeId]);
                 resolve(false);
             }
         }, 5000);
-        
+
         const handler = () => {
             if (!responded) {
                 responded = true;
                 clearTimeout(timeout);
-                relay.send(['CLOSE', probeId]);
+                relay.send(["CLOSE", probeId]);
                 resolve(true);
             }
         };
-        
-        relay.once('message', handler);
-        
+
+        relay.once("message", handler);
+
         // Send minimal REQ that should trigger immediate EOSE
         // Using a non-existent kind and limit 0 for minimal overhead
-        relay.send(['REQ', probeId, { 
-            kinds: [99999],
-            limit: 0 
-        }]);
+        relay.send([
+            "REQ",
+            probeId,
+            {
+                kinds: [99999],
+                limit: 0,
+            },
+        ]);
     });
 }

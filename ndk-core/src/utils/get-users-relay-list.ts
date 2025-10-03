@@ -17,6 +17,9 @@ export async function getRelayListForUser(pubkey: Hexpubkey, ndk: NDK): Promise<
  * Fetches a map of relay lists for a number of users
  * @param pubkeys
  * @param ndk
+ * @param skipCache
+ * @param timeout
+ * @param relayHints - Optional map of pubkey to relay URLs to augment the relay set for fetching that user's relay list
  * @returns
  */
 export async function getRelayListForUsers(
@@ -24,11 +27,22 @@ export async function getRelayListForUsers(
     ndk: NDK,
     skipCache = false,
     timeout = 1000,
+    relayHints?: Map<Hexpubkey, string[]>,
 ): Promise<Map<Hexpubkey, NDKRelayList>> {
     const pool = ndk.outboxPool || ndk.pool;
     const set = new Set<NDKRelay>();
 
     for (const relay of pool.relays.values()) set.add(relay);
+
+    // Add relays from hints to augment the relay set
+    if (relayHints) {
+        for (const hints of relayHints.values()) {
+            for (const url of hints) {
+                const relay = pool.getRelay(url, true, true);
+                if (relay) set.add(relay);
+            }
+        }
+    }
 
     const relayLists = new Map<Hexpubkey, NDKRelayList>();
     const fromContactList = new Map<Hexpubkey, NDKEvent>();
@@ -80,7 +94,7 @@ export async function getRelayListForUsers(
             };
             if (relaySet) subscribeOpts.relaySet = relaySet;
 
-            ndk.subscribe({ kinds: [3, 10002], authors: pubkeys }, subscribeOpts, {
+            const sub = ndk.subscribe({ kinds: [3, 10002], authors: pubkeys }, subscribeOpts, {
                 onEvent: (event) => {
                     if (event.kind === NDKKind.RelayList) {
                         const existingEvent = relayListEvents.get(event.pubkey);

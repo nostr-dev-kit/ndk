@@ -74,19 +74,25 @@ export function chooseRelayCombinationForPubkeys(
     // Go through the pubkeys that have relays
     for (const [author, authorRelays] of pubkeysToRelays.entries()) {
         let missingRelayCount = count;
+        const addedRelaysForAuthor = new Set<WebSocket["url"]>();
 
         // Go through the relays for this author and add them to the relayToAuthorsMap until we have enough (relayGoalPerAuthor)
         // If we are already connected to some of this user's relays, add those first
         for (const relay of connectedRelays) {
             if (authorRelays.has(relay.url)) {
                 addAuthorToRelay(author, relay.url);
+                addedRelaysForAuthor.add(relay.url);
                 missingRelayCount--;
             }
         }
 
         for (const authorRelay of authorRelays) {
+            // Skip if we already added this relay for this author
+            if (addedRelaysForAuthor.has(authorRelay)) continue;
+
             if (relayToAuthorsMap.has(authorRelay)) {
                 addAuthorToRelay(author, authorRelay);
+                addedRelaysForAuthor.add(authorRelay);
                 missingRelayCount--;
             }
         }
@@ -98,8 +104,12 @@ export function chooseRelayCombinationForPubkeys(
         for (const relay of sortedRelays) {
             if (missingRelayCount <= 0) break;
 
+            // Skip if we already added this relay for this author
+            if (addedRelaysForAuthor.has(relay)) continue;
+
             if (authorRelays.has(relay)) {
                 addAuthorToRelay(author, relay);
+                addedRelaysForAuthor.add(relay);
                 missingRelayCount--;
             }
         }

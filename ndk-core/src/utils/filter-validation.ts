@@ -27,7 +27,7 @@ export enum NDKFilterValidationMode {
     /**
      * Skip validation entirely (legacy behavior).
      */
-    IGNORE = "ignore"
+    IGNORE = "ignore",
 }
 
 /**
@@ -57,7 +57,7 @@ export enum NDKFilterValidationMode {
 export function processFilters(
     filters: NDKFilter[],
     mode: NDKFilterValidationMode = NDKFilterValidationMode.VALIDATE,
-    debug?: Debugger
+    debug?: Debugger,
 ): NDKFilter[] {
     if (mode === NDKFilterValidationMode.IGNORE) {
         return filters;
@@ -70,7 +70,7 @@ export function processFilters(
     });
 
     if (mode === NDKFilterValidationMode.VALIDATE && issues.length > 0) {
-        throw new Error(`Invalid filter(s) detected:\n${issues.join('\n')}`);
+        throw new Error(`Invalid filter(s) detected:\n${issues.join("\n")}`);
     }
 
     return processedFilters;
@@ -84,7 +84,7 @@ function processFilter(
     mode: NDKFilterValidationMode,
     filterIndex: number,
     issues: string[],
-    debug?: Debugger
+    debug?: Debugger,
 ): NDKFilter {
     const isValidating = mode === NDKFilterValidationMode.VALIDATE;
     const cleanedFilter = isValidating ? filter : { ...filter };
@@ -99,7 +99,7 @@ function processFilter(
                 } else {
                     debug?.(`Fixed: Removed undefined value at ids[${idx}]`);
                 }
-            } else if (typeof id !== 'string') {
+            } else if (typeof id !== "string") {
                 if (isValidating) {
                     issues.push(`Filter[${filterIndex}].ids[${idx}] is not a string (got ${typeof id})`);
                 } else {
@@ -131,7 +131,7 @@ function processFilter(
                 } else {
                     debug?.(`Fixed: Removed undefined value at authors[${idx}]`);
                 }
-            } else if (typeof author !== 'string') {
+            } else if (typeof author !== "string") {
                 if (isValidating) {
                     issues.push(`Filter[${filterIndex}].authors[${idx}] is not a string (got ${typeof author})`);
                 } else {
@@ -139,7 +139,9 @@ function processFilter(
                 }
             } else if (!/^[0-9a-f]{64}$/i.test(author)) {
                 if (isValidating) {
-                    issues.push(`Filter[${filterIndex}].authors[${idx}] is not a valid 64-char hex pubkey: "${author}"`);
+                    issues.push(
+                        `Filter[${filterIndex}].authors[${idx}] is not a valid 64-char hex pubkey: "${author}"`,
+                    );
                 } else {
                     debug?.(`Fixed: Removed invalid hex pubkey at authors[${idx}]`);
                 }
@@ -163,7 +165,7 @@ function processFilter(
                 } else {
                     debug?.(`Fixed: Removed undefined value at kinds[${idx}]`);
                 }
-            } else if (typeof kind !== 'number') {
+            } else if (typeof kind !== "number") {
                 if (isValidating) {
                     issues.push(`Filter[${filterIndex}].kinds[${idx}] is not a number (got ${typeof kind})`);
                 } else {
@@ -193,7 +195,7 @@ function processFilter(
 
     // Process tag filters (e.g., #e, #p, #t, #a) - values must be strings
     for (const key in filter) {
-        if (key.startsWith('#') && key.length === 2) {
+        if (key.startsWith("#") && key.length === 2) {
             const tagValues = filter[key as `#${string}`];
             if (Array.isArray(tagValues)) {
                 const validValues: string[] = [];
@@ -204,7 +206,7 @@ function processFilter(
                         } else {
                             debug?.(`Fixed: Removed undefined value at ${key}[${idx}]`);
                         }
-                    } else if (typeof value !== 'string') {
+                    } else if (typeof value !== "string") {
                         if (isValidating) {
                             issues.push(`Filter[${filterIndex}].${key}[${idx}] is not a string (got ${typeof value})`);
                         } else {
@@ -212,9 +214,11 @@ function processFilter(
                         }
                     } else {
                         // For #e and #p tags, validate as hex strings
-                        if ((key === '#e' || key === '#p') && !/^[0-9a-f]{64}$/i.test(value)) {
+                        if ((key === "#e" || key === "#p") && !/^[0-9a-f]{64}$/i.test(value)) {
                             if (isValidating) {
-                                issues.push(`Filter[${filterIndex}].${key}[${idx}] is not a valid 64-char hex string: "${value}"`);
+                                issues.push(
+                                    `Filter[${filterIndex}].${key}[${idx}] is not a valid 64-char hex string: "${value}"`,
+                                );
                             } else {
                                 debug?.(`Fixed: Removed invalid hex string at ${key}[${idx}]`);
                             }
@@ -233,7 +237,7 @@ function processFilter(
 
     // Clean up undefined fields in fix mode
     if (!isValidating) {
-        Object.keys(cleanedFilter).forEach(key => {
+        Object.keys(cleanedFilter).forEach((key) => {
             if (cleanedFilter[key as keyof NDKFilter] === undefined) {
                 delete cleanedFilter[key as keyof NDKFilter];
             }

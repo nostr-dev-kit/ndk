@@ -7,13 +7,7 @@
     "excludeExternals": true,
     "excludePrivate": true,
     "excludeProtected": true,
-    "exclude": [
-        "**/*.test.ts",
-        "**/*.d.ts",
-        "**/test/**",
-        "**/tests/**",
-        "**/__tests__/**"
-    ],
+    "exclude": ["**/*.test.ts", "**/*.d.ts", "**/test/**", "**/tests/**", "**/__tests__/**"],
     "skipErrorChecking": true,
     "categorizeByGroup": true,
     "navigation": {

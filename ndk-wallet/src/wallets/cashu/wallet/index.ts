@@ -15,7 +15,14 @@ import type {
     NDKZapDetails,
 } from "@nostr-dev-kit/ndk";
 import type NDK from "@nostr-dev-kit/ndk";
-import { NDKEvent, NDKKind, NDKPrivateKeySigner, NDKRelaySet, NDKCashuMintList, NDKSubscriptionCacheUsage } from "@nostr-dev-kit/ndk";
+import {
+    NDKEvent,
+    NDKKind,
+    NDKPrivateKeySigner,
+    NDKRelaySet,
+    NDKCashuMintList,
+    NDKSubscriptionCacheUsage,
+} from "@nostr-dev-kit/ndk";
 import {
     NDKWallet,
     type NDKWalletBalance,
@@ -72,6 +79,8 @@ export class NDKCashuWallet extends NDKWallet {
     public state: WalletState;
 
     public relaySet?: NDKRelaySet;
+
+    private _mintList?: NDKCashuMintList;
 
     constructor(ndk: NDK) {
         super(ndk);
@@ -192,7 +201,7 @@ export class NDKCashuWallet extends NDKWallet {
         // Try to fetch kind 10019 (CashuMintList) event
         const mintListEvent = await this.ndk.fetchEvent(
             { kinds: [NDKKind.CashuMintList], authors: [pubkey] },
-            { cacheUsage: NDKSubscriptionCacheUsage.PARALLEL },
+            { cacheUsage: NDKSubscriptionCacheUsage.PARALLEL, subId: "cashu-wallet-relays" },
         );
 
         if (mintListEvent) {
@@ -209,9 +218,7 @@ export class NDKCashuWallet extends NDKWallet {
         );
 
         if (relayListEvent) {
-            const relayUrls = relayListEvent.tags
-                .filter((tag) => tag[0] === "r")
-                .map((tag) => tag[1]);
+            const relayUrls = relayListEvent.tags.filter((tag) => tag[0] === "r").map((tag) => tag[1]);
             if (relayUrls.length > 0) {
                 return NDKRelaySet.fromRelayUrls(relayUrls, this.ndk!);
             }
@@ -268,7 +275,10 @@ export class NDKCashuWallet extends NDKWallet {
             this.sub.on("event", (event: NDKEvent) => {
                 eventHandler.call(this, event);
             });
-            this.sub.on("eose", () => {
+            this.sub.on("eose", async () => {
+                // Fetch the mint list for nutzap reception configuration
+                await this.fetchMintList();
+
                 this.emit("ready");
                 this.status = NDKWalletStatus.READY;
                 resolve();
@@ -495,6 +505,43 @@ export class NDKCashuWallet extends NDKWallet {
         return Object.entries(availableBalances)
             .filter(([_, balance]) => balance >= amount)
             .map(([mint]) => mint);
+    }
+
+    /**
+     * Gets the wallet's published mint list for nutzap reception (NIP-61).
+     * This is fetched from the user's kind:10019 event.
+     */
+    get mintList(): NDKCashuMintList | undefined {
+        return this._mintList;
+    }
+
+    /**
+     * Fetches the wallet's mint list from relays.
+     * This is used for configuring nutzap reception.
+     */
+    async fetchMintList(): Promise<NDKCashuMintList | undefined> {
+        if (!this.ndk) return undefined;
+
+        const user = this.ndk.activeUser || (await this.ndk.signer?.user());
+        if (!user) return undefined;
+
+        const event = await this.ndk.fetchEvent(
+            {
+                kinds: [NDKKind.CashuMintList],
+                authors: [user.pubkey],
+            },
+            {
+                cacheUsage: NDKSubscriptionCacheUsage.PARALLEL,
+                subId: "cashu-mint-list",
+            },
+        );
+
+        if (event) {
+            this._mintList = NDKCashuMintList.from(event);
+            return this._mintList;
+        }
+
+        return undefined;
     }
 }
 

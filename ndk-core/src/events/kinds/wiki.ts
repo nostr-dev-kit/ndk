@@ -44,7 +44,6 @@ export class NDKWiki extends NDKArticle {
  * Users can request other users to get their entries merged into someone else's entry by creating a `kind:818` event.
  */
 export class NDKWikiMergeRequest extends NDKEvent {
-    static kind = NDKKind.WikiMergeRequest;
     static kinds = [NDKKind.WikiMergeRequest];
 
     static from(event: NDKEvent) {

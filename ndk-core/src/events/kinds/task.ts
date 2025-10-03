@@ -1,6 +1,7 @@
 import type { NostrEvent } from "../../index.js";
 import type { NDK } from "../../ndk/index.js";
 import { NDKEvent } from "../index.js";
+import { NDKKind } from "./index.js";
 import type { NDKProject } from "./project.js";
 
 /**
@@ -8,12 +9,12 @@ import type { NDKProject } from "./project.js";
  * Tasks are regular events with kind 1934.
  */
 export class NDKTask extends NDKEvent {
-    static kind = 1934;
-    static kinds = [1934];
+    static kind = NDKKind.Task;
+    static kinds = [NDKKind.Task];
 
     constructor(ndk?: NDK, rawEvent?: NostrEvent) {
         super(ndk, rawEvent);
-        this.kind = 1934;
+        this.kind = NDKKind.Task;
     }
 
     static from(event: NDKEvent): NDKTask {

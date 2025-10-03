@@ -1,6 +1,5 @@
 import type { NDKEvent } from "./index.js";
 import { NDKArticle } from "./kinds/article.js";
-import { NDKCashuToken } from "./kinds/cashu/token.js";
 import { NDKHighlight } from "./kinds/highlight.js";
 import { NDKImage } from "./kinds/image.js";
 import { NDKList } from "./kinds/lists/index.js";
@@ -11,7 +10,7 @@ import { NDKSimpleGroupMetadata } from "./kinds/simple-group/metadata.js";
 import { NDKStory } from "./kinds/story.js";
 import { NDKSubscriptionTier } from "./kinds/subscriptions/tier.js";
 import { NDKVideo } from "./kinds/video.js";
-import { NDKWiki } from "./kinds/wiki.js";
+import { NDKWiki, NDKWikiMergeRequest } from "./kinds/wiki.js";
 import { NDKBlossomList } from "./kinds/blossom-list.js";
 import { NDKFollowPack } from "./kinds/follow-pack.js";
 import { NDKProject } from "./kinds/project.js";
@@ -19,6 +18,13 @@ import { NDKThread } from "./kinds/thread.js";
 import { NDKDraft } from "./kinds/drafts.js";
 import { NDKTask } from "./kinds/task.js";
 import { NDKProjectTemplate } from "./kinds/project-template.js";
+import { NDKRelayList } from "./kinds/NDKRelayList.js";
+import { NDKRepost } from "./kinds/repost.js";
+import { NDKClassified } from "./kinds/classified.js";
+import { NDKAppHandlerEvent } from "./kinds/nip89/app-handler.js";
+import { NDKDVMJobFeedback } from "./kinds/dvm/feedback.js";
+import { NDKSubscriptionStart } from "./kinds/subscriptions/subscription-start.js";
+import { NDKSubscriptionReceipt } from "./kinds/subscriptions/receipt.js";
 
 type NDKEventClass = {
     kinds: number[];
@@ -77,6 +83,7 @@ export function wrapEvent<T extends NDKEvent>(event: NDKEvent): T | Promise<T> |
         NDKHighlight,
         NDKDraft,
         NDKWiki,
+        NDKWikiMergeRequest,
         NDKNutzap,
         NDKProject,
         NDKTask,
@@ -84,12 +91,18 @@ export function wrapEvent<T extends NDKEvent>(event: NDKEvent): T | Promise<T> |
         NDKSimpleGroupMemberList,
         NDKSimpleGroupMetadata,
         NDKSubscriptionTier,
-        NDKCashuToken,
+        NDKSubscriptionStart,
+        NDKSubscriptionReceipt,
         NDKList,
+        NDKRelayList,
         NDKStory,
         NDKBlossomList,
         NDKFollowPack,
         NDKThread,
+        NDKRepost,
+        NDKClassified,
+        NDKAppHandlerEvent,
+        NDKDVMJobFeedback,
     ];
 
     // Combine built-in and registered classes

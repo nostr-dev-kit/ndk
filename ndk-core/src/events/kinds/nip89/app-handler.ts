@@ -13,6 +13,7 @@ import { NDKKind } from "../index.js";
  */
 export class NDKAppHandlerEvent extends NDKEvent {
     private profile: NDKUserProfile | null | undefined;
+    static kinds = [NDKKind.AppHandler];
 
     constructor(ndk?: NDK, rawEvent?: NostrEvent) {
         super(ndk, rawEvent);

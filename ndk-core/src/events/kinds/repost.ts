@@ -13,6 +13,7 @@ type classWithConvertFunction<T> = {
  */
 export class NDKRepost<T> extends NDKEvent {
     private _repostedEvents: T[] | undefined;
+    static kinds = [6, 16]; // Repost, GenericRepost
 
     static from(event: NDKEvent) {
         return new NDKRepost(event.ndk, event.rawEvent());

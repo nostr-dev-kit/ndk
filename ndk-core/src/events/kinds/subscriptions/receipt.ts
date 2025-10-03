@@ -20,6 +20,7 @@ type ValidPeriod = { start: Date; end: Date };
  */
 export class NDKSubscriptionReceipt extends NDKEvent {
     private debug: debug.Debugger;
+    static kinds = [NDKKind.SubscriptionReceipt];
 
     constructor(ndk: NDK | undefined, rawEvent?: NostrEvent) {
         super(ndk, rawEvent);

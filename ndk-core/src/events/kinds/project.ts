@@ -2,19 +2,20 @@ import type { NostrEvent } from "../../index.js";
 import type { NDK } from "../../ndk/index.js";
 import { NDKPrivateKeySigner } from "../../signers/private-key/index.js";
 import { NDKEvent } from "../index.js";
+import { NDKKind } from "./index.js";
 
 /**
  * Represents a project event in Nostr (kind 31933).
  * Projects are a special type of article event used by TENEX and other project management tools.
  */
 export class NDKProject extends NDKEvent {
-    static kind = 31933;
-    static kinds = [NDKProject.kind];
+    static kind = NDKKind.Project;
+    static kinds = [NDKKind.Project];
     private _signer: NDKPrivateKeySigner | undefined;
 
     constructor(ndk?: NDK, rawEvent?: NostrEvent) {
         super(ndk, rawEvent);
-        this.kind = 31933;
+        this.kind = NDKKind.Project;
     }
 
     static from(event: NDKEvent): NDKProject {

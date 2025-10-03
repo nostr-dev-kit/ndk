@@ -30,6 +30,7 @@ import { NDKSubscriptionTier } from "./tier";
  */
 export class NDKSubscriptionStart extends NDKEvent {
     private debug: debug.Debugger;
+    static kinds = [NDKKind.Subscribe];
 
     constructor(ndk: NDK | undefined, rawEvent?: NostrEvent) {
         super(ndk, rawEvent);

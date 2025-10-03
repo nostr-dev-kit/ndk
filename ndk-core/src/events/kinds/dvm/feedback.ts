@@ -11,6 +11,8 @@ export enum NDKDvmJobFeedbackStatus {
 }
 
 export class NDKDVMJobFeedback extends NDKEvent {
+    static kinds = [NDKKind.DVMJobFeedback];
+
     constructor(ndk?: NDK, event?: NostrEvent) {
         super(ndk, event);
         this.kind ??= NDKKind.DVMJobFeedback;

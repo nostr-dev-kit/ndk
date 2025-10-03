@@ -1,18 +1,19 @@
 import type { NostrEvent } from "../../index.js";
 import type { NDK } from "../../ndk/index.js";
 import { NDKEvent } from "../index.js";
+import { NDKKind } from "./index.js";
 
 /**
  * Represents a project template event in Nostr (kind 30717).
  * Templates are parameterized replaceable events used to define reusable project structures.
  */
 export class NDKProjectTemplate extends NDKEvent {
-    static kind = 30717;
-    static kinds = [30717];
+    static kind = NDKKind.ProjectTemplate;
+    static kinds = [NDKKind.ProjectTemplate];
 
     constructor(ndk?: NDK, rawEvent?: NostrEvent) {
         super(ndk, rawEvent);
-        this.kind = 30717;
+        this.kind = NDKKind.ProjectTemplate;
     }
 
     static from(event: NDKEvent): NDKProjectTemplate {

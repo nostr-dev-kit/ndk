@@ -143,7 +143,10 @@ export enum NDKKind {
     Project = 31933,
     SubscriptionTier = 37001,
 
+    // NIP-87: Cashu & Fedimint Mints
     EcashMintRecommendation = 38000,
+    CashuMintAnnouncement = 38172,
+    FedimintMintAnnouncement = 38173,
 
     HighlightSet = 39802,
     CategorizedHighlightList = NDKKind.HighlightSet, // Deprecated but left for backwards compatibility

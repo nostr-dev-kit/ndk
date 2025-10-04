@@ -27,6 +27,10 @@ export class NDKWoT {
     private loaded = false;
 
     constructor(ndk: NDK, rootPubkey: string) {
+        if (!this.isValidPubkey(rootPubkey)) {
+            throw new Error(`Invalid root pubkey: ${rootPubkey}`);
+        }
+
         this.ndk = ndk;
         this.rootPubkey = rootPubkey;
 
@@ -119,8 +123,14 @@ export class NDKWoT {
         const follows: string[] = [];
 
         for (const tag of event.tags) {
-            if (tag[0] === "p" && tag[1] && this.isValidPubkey(tag[1])) {
-                follows.push(tag[1]);
+            if (tag[0] === "p") {
+                const pubkey = tag[1];
+                // Only add if pubkey exists and is valid 64-char hex
+                if (pubkey && typeof pubkey === "string" && this.isValidPubkey(pubkey)) {
+                    follows.push(pubkey);
+                } else if (pubkey) {
+                    d("Skipping invalid p-tag pubkey: %s", pubkey);
+                }
             }
         }
 

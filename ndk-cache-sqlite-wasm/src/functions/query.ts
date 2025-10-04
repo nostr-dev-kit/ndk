@@ -33,8 +33,25 @@ function normalizeDbRows(queryResults: QueryExecResult[]): Record<string, unknow
  * Query events from the WASM-backed SQLite DB using NDKSubscription filters.
  * Mirrors the logic of the mobile adapter, but uses async/await and WASM DB API.
  */
-export function query(this: NDKCacheAdapterSqliteWasm, subscription: NDKSubscription): NDKEvent[] {
-    if (!this.db) throw new Error("Database not initialized");
+export function query(
+    this: NDKCacheAdapterSqliteWasm,
+    subscription: NDKSubscription,
+): NDKEvent[] | Promise<NDKEvent[]> {
+    if (!this.ready || !this.db) {
+        if (this.initializationPromise) {
+            return this.initializationPromise.then(() => {
+                if (!this.db) return [];
+                return queryDb(this, subscription);
+            });
+        }
+        return [];
+    }
+
+    return queryDb(this, subscription);
+}
+
+function queryDb(adapter: NDKCacheAdapterSqliteWasm, subscription: NDKSubscription): NDKEvent[] {
+    if (!adapter.db) return [];
 
     const cacheFilters = filterForCache(subscription);
     const results = new Map<string, NDKEvent>();
@@ -61,7 +78,7 @@ export function query(this: NDKCacheAdapterSqliteWasm, subscription: NDKSubscrip
                         ORDER BY created_at DESC
                     `;
                     const params = [key[1], ...tagValues];
-                    const events = this.db.exec(sql, params);
+                    const events = adapter.db.exec(sql, params);
                     const normalizedEvents = normalizeDbRows(events);
                     if (normalizedEvents && normalizedEvents.length > 0)
                         addResults(foundEvents(subscription, normalizedEvents, filter));
@@ -76,7 +93,7 @@ export function query(this: NDKCacheAdapterSqliteWasm, subscription: NDKSubscrip
                 ORDER BY created_at DESC
             `;
             const params = [...filter.authors, ...filter.kinds];
-            const events = this.db.exec(sql, params);
+            const events = adapter.db.exec(sql, params);
             const normalizedEvents = normalizeDbRows(events);
             if (normalizedEvents && normalizedEvents.length > 0)
                 addResults(foundEvents(subscription, normalizedEvents, filter));
@@ -87,7 +104,7 @@ export function query(this: NDKCacheAdapterSqliteWasm, subscription: NDKSubscrip
                 ORDER BY created_at DESC
             `;
             const params = filter.authors;
-            const events = this.db.exec(sql, params);
+            const events = adapter.db.exec(sql, params);
             const normalizedEvents = normalizeDbRows(events);
             if (normalizedEvents && normalizedEvents.length > 0)
                 addResults(foundEvents(subscription, normalizedEvents, filter));
@@ -98,7 +115,7 @@ export function query(this: NDKCacheAdapterSqliteWasm, subscription: NDKSubscrip
                 ORDER BY created_at DESC
             `;
             const params = filter.kinds;
-            const events = this.db.exec(sql, params);
+            const events = adapter.db.exec(sql, params);
             const normalizedEvents = normalizeDbRows(events);
             if (normalizedEvents && normalizedEvents.length > 0)
                 addResults(foundEvents(subscription, normalizedEvents, filter));
@@ -109,7 +126,7 @@ export function query(this: NDKCacheAdapterSqliteWasm, subscription: NDKSubscrip
                 ORDER BY created_at DESC
             `;
             const params = filter.ids;
-            const events = this.db.exec(sql, params);
+            const events = adapter.db.exec(sql, params);
             const normalizedEvents = normalizeDbRows(events);
             if (normalizedEvents && normalizedEvents.length > 0)
                 addResults(foundEvents(subscription, normalizedEvents, filter));

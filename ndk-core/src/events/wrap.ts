@@ -25,6 +25,9 @@ import { NDKAppHandlerEvent } from "./kinds/nip89/app-handler.js";
 import { NDKDVMJobFeedback } from "./kinds/dvm/feedback.js";
 import { NDKSubscriptionStart } from "./kinds/subscriptions/subscription-start.js";
 import { NDKSubscriptionReceipt } from "./kinds/subscriptions/receipt.js";
+import { NDKCashuMint } from "./kinds/cashu/mint.js";
+import { NDKFedimintMint } from "./kinds/cashu/fedimint.js";
+import { NDKMintRecommendation } from "./kinds/cashu/mint-recommendation.js";
 
 type NDKEventClass = {
     kinds: number[];
@@ -103,6 +106,9 @@ export function wrapEvent<T extends NDKEvent>(event: NDKEvent): T | Promise<T> |
         NDKClassified,
         NDKAppHandlerEvent,
         NDKDVMJobFeedback,
+        NDKCashuMint,
+        NDKFedimintMint,
+        NDKMintRecommendation,
     ];
 
     // Combine built-in and registered classes

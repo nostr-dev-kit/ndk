@@ -1,4 +1,141 @@
-# Migrating from ndk-svelte to ndk-svelte5
+# Migration Guide
+
+## Table of Contents
+1. [New createNDK API](#new-createndk-api)
+2. [Migrating from ndk-svelte](#migrating-from-ndk-svelte)
+
+---
+
+# New createNDK API
+
+## Simplified Initialization
+
+ndk-svelte5 now provides `createNDK()` - a one-liner that replaces verbose initialization.
+
+### Before (Old Pattern)
+
+```typescript
+import NDK from '@nostr-dev-kit/ndk';
+import { initStores } from '@nostr-dev-kit/ndk-svelte5';
+
+const ndk = new NDK({
+  explicitRelayUrls: ['wss://relay.damus.io', 'wss://nos.lol']
+});
+
+initStores(ndk).then(() => {
+  ndk.connect();
+});
+```
+
+### After (New Pattern)
+
+```typescript
+import { createNDK } from '@nostr-dev-kit/ndk-svelte5';
+
+const ndk = createNDK();
+```
+
+That's it! No more boilerplate.
+
+## What createNDK Does
+
+`createNDK()` automatically:
+- Creates the NDK instance
+- Connects to relays (uses sensible defaults)
+- Initializes all stores: sessions, profiles, mutes, wallet, pool, wot
+- Restores sessions from localStorage
+
+## Default Configuration
+
+With zero configuration:
+- **Relays**: wss://relay.damus.io, wss://nos.lol, wss://relay.nostr.band
+- **Auto-connect**: true
+- **Session storage**: localStorage
+- **WoT**: disabled (opt-in)
+
+## Configuration Options
+
+### Custom Relays
+```typescript
+const ndk = createNDK({
+  explicitRelayUrls: ['wss://relay.damus.io']
+});
+```
+
+### Disable Auto-Connect
+```typescript
+const ndk = createNDK({ autoConnect: false });
+await ndk.connect(); // connect manually
+```
+
+### Ephemeral Sessions
+```typescript
+const ndk = createNDK({ sessionStorage: false });
+```
+
+### Auto-Load WoT
+```typescript
+const ndk = createNDK({
+  wot: { depth: 2, maxFollows: 1000 }
+});
+
+// Note: autoReload is not supported in createNDK() options
+// Enable it manually from component context:
+import { wot } from '@nostr-dev-kit/ndk-svelte5';
+import { onMount } from 'svelte';
+
+onMount(() => {
+  wot.enableAutoReload();
+});
+```
+
+### All Options
+```typescript
+const ndk = createNDK({
+  // Relay configuration
+  explicitRelayUrls: ['wss://relay.damus.io'],
+
+  // Auto-connect
+  autoConnect: true,
+
+  // Session persistence
+  sessionStorage: false, // or custom adapter
+
+  // Web of Trust
+  wot: { depth: 2, maxFollows: 1000 },
+
+  // Any NDK constructor options
+  outboxRelayUrls: ['wss://purplepag.es'],
+  enableOutboxModel: true,
+});
+```
+
+## Migration from Old Pattern
+
+Simply replace your initialization code:
+
+```diff
+- import NDK from '@nostr-dev-kit/ndk';
+- import { initStores } from '@nostr-dev-kit/ndk-svelte5';
++ import { createNDK } from '@nostr-dev-kit/ndk-svelte5';
+
+- const ndk = new NDK({
+-   explicitRelayUrls: ['wss://relay.damus.io']
+- });
+-
+- initStores(ndk).then(() => {
+-   ndk.connect();
+- });
++ const ndk = createNDK();
+```
+
+## Note
+
+The old `initStores()` pattern still works - no breaking changes. But `createNDK()` is recommended for new code.
+
+---
+
+# Migrating from ndk-svelte
 
 ## Overview
 

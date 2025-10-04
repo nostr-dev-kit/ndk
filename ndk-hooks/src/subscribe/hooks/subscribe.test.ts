@@ -57,7 +57,6 @@ describe("useSubscribe", () => {
     describe("filterExistingEvents", () => {
         it("should filter events based on NDK filters", () => {
             const store = createSubscribeStore(false);
-            const state = store.getState();
 
             // Add some test events
             const event1 = {
@@ -88,25 +87,24 @@ describe("useSubscribe", () => {
             } as unknown as NDKEvent;
 
             // Add events to store
-            state.addEvent(event1);
-            state.addEvent(event2);
-            state.addEvent(event3);
+            store.getState().addEvent(event1);
+            store.getState().addEvent(event2);
+            store.getState().addEvent(event3);
 
             // Verify all events are in store
-            expect(state.events).toHaveLength(3);
+            expect(store.getState().events).toHaveLength(3);
 
             // Filter by kind 1 only
             const filters: NDKFilter[] = [{ kinds: [1] }];
-            state.filterExistingEvents(filters);
+            store.getState().filterExistingEvents(filters);
 
             // Should only have events with kind 1
-            expect(state.events).toHaveLength(2);
-            expect(state.events.every((e) => e.kind === 1)).toBe(true);
+            expect(store.getState().events).toHaveLength(2);
+            expect(store.getState().events.every((e) => e.kind === 1)).toBe(true);
         });
 
         it("should keep events that match any of multiple filters", () => {
             const store = createSubscribeStore(false);
-            const state = store.getState();
 
             const event1 = {
                 kind: 1,
@@ -135,24 +133,24 @@ describe("useSubscribe", () => {
                 once: vi.fn(),
             } as unknown as NDKEvent;
 
-            state.addEvent(event1);
-            state.addEvent(event2);
-            state.addEvent(event3);
+            store.getState().addEvent(event1);
+            store.getState().addEvent(event2);
+            store.getState().addEvent(event3);
 
             // Filter by kind 1 OR author alice
             const filters: NDKFilter[] = [{ kinds: [1] }, { authors: ["alice"] }];
-            state.filterExistingEvents(filters);
+            store.getState().filterExistingEvents(filters);
 
             // Should have event1 (kind 1) and event2 (author alice)
-            expect(state.events).toHaveLength(2);
-            expect(state.events.some((e) => e.tagId() === "event1")).toBe(true);
-            expect(state.events.some((e) => e.tagId() === "event2")).toBe(true);
-            expect(state.events.some((e) => e.tagId() === "event3")).toBe(false);
+            const events = store.getState().events;
+            expect(events).toHaveLength(2);
+            expect(events.some((e) => e.tagId() === "event1")).toBe(true);
+            expect(events.some((e) => e.tagId() === "event2")).toBe(true);
+            expect(events.some((e) => e.tagId() === "event3")).toBe(false);
         });
 
         it("should remove all events when no filters match", () => {
             const store = createSubscribeStore(false);
-            const state = store.getState();
 
             const event1 = {
                 kind: 1,
@@ -163,14 +161,14 @@ describe("useSubscribe", () => {
                 once: vi.fn(),
             } as unknown as NDKEvent;
 
-            state.addEvent(event1);
-            expect(state.events).toHaveLength(1);
+            store.getState().addEvent(event1);
+            expect(store.getState().events).toHaveLength(1);
 
             // Filter by kind that doesn't exist
             const filters: NDKFilter[] = [{ kinds: [999] } as unknown as NDKFilter];
-            state.filterExistingEvents(filters);
+            store.getState().filterExistingEvents(filters);
 
-            expect(state.events).toHaveLength(0);
+            expect(store.getState().events).toHaveLength(0);
         });
     });
 });

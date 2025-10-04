@@ -1,5 +1,37 @@
 # @nostr-dev-kit/ndk
 
+## 2.15.0
+
+### Minor Changes
+
+- Implement dynamic subscription relay refresh for outbox model
+    - Add `refreshRelayConnections` method to NDKSubscription for dynamic relay set updates
+    - Implement outbox tracker event emission when relay lists are updated
+    - Add NDK listener for outbox updates that refreshes affected subscriptions
+    - Add relay hints support to outbox tracker from NDKUser objects
+    - Add NIP-19 tutorial documentation and tests
+    - Add outbox late arrival test for subscription edge cases
+
+    This enables subscriptions to automatically discover and connect to new relays when user relay lists become available, improving outbox model efficiency and real-time subscription performance.
+
+- Implement automatic mute filtering for subscriptions
+    - Add `muteFilter` configurable function to NDK class for custom mute logic
+    - Add `includeMuted` subscription option to control mute filtering behavior
+    - Implement automatic mute filtering in `NDKSubscription.eventReceived()`
+    - Default mute filter checks `ndk.mutedIds` for muted authors and events
+    - Mute list (kind 10000) is automatically fetched when active user is set
+
+    This enables applications to automatically filter out muted content by default, with the ability to opt-in to include muted events when needed (e.g., for moderation interfaces). The mute filter is configurable, allowing applications to implement custom mute logic beyond the default pubkey/event ID checking.
+
+### Patch Changes
+
+- Fix: prevent subscriptions with empty filters array
+    - Add validation to prevent subscription creation with empty filters array
+    - Improve subscription robustness and prevent potential relay errors
+    - Add better error handling for invalid subscription parameters
+
+    This fixes a potential issue where subscriptions could be created with empty filters, which could cause unexpected behavior or errors when communicating with relays.
+
 ## 2.14.38
 
 ### Patch Changes
@@ -17,7 +49,6 @@
     Prevents runtime errors in cache adapters (especially SQLite WASM) that cannot handle undefined values in parameterized queries.
 
     The NDK constructor now accepts a `filterValidationMode` option:
-
     - `"validate"` (default): Throws an error when filters contain undefined values
     - `"fix"`: Automatically removes undefined values from filters
     - `"ignore"`: Skip validation entirely (legacy behavior)
@@ -25,7 +56,6 @@
     This fixes the "Wrong API use: tried to bind a value of an unknown type (undefined)" error in sqlite-wasm cache adapter.
 
 - 96341c3: Remove old NIP-60 migration code and legacy wallet kind 37375
-
     - Removed `getOldWallets` function and `migrateCashuWallet` from ndk-wallet
     - Removed `LegacyCashuWallet = 37375` kind definition from ndk-core
     - Cleaned up all references to the legacy migration code
@@ -37,7 +67,6 @@
 - 8bd22bd: feat: add robust relay keepalive and reconnection handling
 
     Implement comprehensive relay connection monitoring and recovery:
-
     - Add keepalive mechanism to detect silent/stale relay connections
     - Monitor WebSocket readyState every 5 seconds to catch dead connections
     - Detect system sleep/wake events by monitoring time gaps
@@ -55,14 +84,12 @@
 - feat: add pTagOnATags and pTags options to ContentTaggingOptions
 
     Added two new options to ContentTaggingOptions for fine-grained control over p tag additions:
-
     - `pTagOnATags`: Controls whether p tags are added when creating a tags (for addressable events)
     - `pTags`: Disables all p tag additions when set to false
 
     These options provide more flexibility for applications that need to control how p tags are added to events, particularly useful for privacy-conscious applications or specific protocol implementations.
 
     The options are respected in:
-
     - Content tagging (npub, nprofile, nevent, naddr references)
     - Event replies (both NIP-01 and NIP-22 style)
     - Event tagging via the tag() method
@@ -73,7 +100,6 @@
 ### Patch Changes
 
 - d89dbc6: Add ContentTaggingOptions for flexible content tagging control
-
     - Introduces ContentTaggingOptions interface to customize tag generation behavior
     - Adds options to control reply tag inclusion (includeReplyTags)
     - Adds configurable hashtag prefixes via hashtagPrefixes option
@@ -99,7 +125,6 @@
 ### Patch Changes
 
 - 9cb8407: Fix relay reconnection logic after long disconnections
-
     - Fixed exponential backoff calculation that was using XOR operator (^) instead of exponentiation
     - Added detection and cleanup of stale WebSocket connections after system sleep/resume
     - Improved connection state handling to prevent infinite reconnection loops

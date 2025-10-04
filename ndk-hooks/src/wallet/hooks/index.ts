@@ -1,67 +1,91 @@
-import type { NDKWallet } from "@nostr-dev-kit/ndk-wallet";
-import { useCallback } from "react";
+import { NDKCashuWallet } from "@nostr-dev-kit/ndk-wallet";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { create } from "zustand";
 import { useNDK } from "../../ndk/hooks";
-import type { NDKCashuMintList } from "@nostr-dev-kit/ndk";
+import { NDKKind, type NDKCashuMintList, type NDKNutzap } from "@nostr-dev-kit/ndk";
 import { NDKNutzapMonitor, type NDKNutzapMonitorStore } from "@nostr-dev-kit/ndk-wallet";
-import { useEffect, useMemo, useState } from "react";
 import { useNDKCurrentUser } from "../../ndk/hooks";
 
-interface WalletHookState {
-    activeWallet: NDKWallet | null;
-    balance: number | null;
-    setActiveWallet: (wallet: NDKWallet | null) => void;
-    setBalance: (balance: number | null) => void;
-}
-
-const useInternalWalletStore = create<WalletHookState>((set) => ({
-    activeWallet: null,
-    balance: null,
-    setActiveWallet: (wallet) => set({ activeWallet: wallet }),
-    setBalance: (balance) => set({ balance: balance }),
-}));
-
 /**
- * Hook to manage the active NDK Wallet instance and its balance.
+ * Hook to manage the user's NDK Cashu Wallet instance and its balance.
+ * Automatically loads the wallet from the user's NIP-60 events.
  */
 export const useNDKWallet = () => {
     const { ndk } = useNDK();
-    const activeWallet = useInternalWalletStore((s) => s.activeWallet);
-    const storeSetActiveWallet = useInternalWalletStore((s) => s.setActiveWallet);
-    const balance = useInternalWalletStore((s) => s.balance);
-    const setBalance = useInternalWalletStore((s) => s.setBalance);
+    const currentUser = useNDKCurrentUser();
+    const [wallet, setWallet] = useState(null as NDKCashuWallet | null);
+    const [balance, setBalance] = useState(0);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null as Error | null);
 
-    const setActiveWallet = useCallback(
-        (wallet: NDKWallet | null) => {
-            if (!ndk) return;
-            let debounceTimer: number | NodeJS.Timeout | undefined;
+    // Load wallet from user's events on mount
+    useEffect(() => {
+        if (!ndk || !currentUser?.pubkey) {
+            setLoading(false);
+            return;
+        }
 
-            storeSetActiveWallet(wallet);
-            ndk.wallet = wallet ?? undefined;
+        const loadWallet = async () => {
+            try {
+                setLoading(true);
+                setError(null);
 
-            const updateBalance = () => {
-                if (debounceTimer) clearTimeout(debounceTimer);
-                debounceTimer = setTimeout(() => {
-                    const balanceObj = wallet?.balance;
-                    const amount = balanceObj?.amount ?? null;
-                    setBalance(amount);
-                }, 50);
-            };
+                const event = await ndk.fetchEvent({
+                    kinds: [NDKKind.CashuWallet],
+                    authors: [currentUser.pubkey],
+                });
 
-            if (wallet) {
-                wallet.on("ready", updateBalance);
-                wallet.on("balance_updated", updateBalance);
-                wallet.updateBalance?.();
-            } else {
-                setBalance(null);
+                if (event) {
+                    const w = await NDKCashuWallet.from(event);
+                    if (w) {
+                        setWallet(w);
+                        ndk.wallet = w;
+                        await w.start();
+                    }
+                } else {
+                    // No wallet found - this is not an error, user just hasn't created one yet
+                    setWallet(null);
+                }
+            } catch (e) {
+                console.error("Failed to load wallet:", e);
+                setError(e as Error);
+            } finally {
+                setLoading(false);
             }
-        },
-        [ndk, storeSetActiveWallet, setBalance],
-    );
+        };
 
-    return { activeWallet, setActiveWallet, balance, setBalance };
+        loadWallet();
+    }, [ndk, currentUser?.pubkey]);
+
+    // React to wallet balance changes
+    useEffect(() => {
+        if (!wallet) {
+            setBalance(0);
+            return;
+        }
+
+        const updateBalance = () => {
+            const amount = wallet.balance?.amount ?? 0;
+            setBalance(amount);
+        };
+
+        // Initial balance
+        updateBalance();
+
+        // Listen for updates
+        wallet.on("balance_updated", updateBalance);
+        wallet.on("ready", updateBalance);
+
+        return () => {
+            wallet.off("balance_updated", updateBalance);
+            wallet.off("ready", updateBalance);
+        };
+    }, [wallet]);
+
+    return { wallet, balance, loading, error };
 };
 
+// Singleton store for nutzap monitor to prevent duplicate monitors
 interface NutzapMonitorHookState {
     nutzapMonitor: NDKNutzapMonitor | null;
     setNutzapMonitor: (monitor: NDKNutzapMonitor | null) => void;
@@ -74,19 +98,19 @@ const useInternalNutzapMonitorStore = create<NutzapMonitorHookState>((set) => ({
 
 /**
  * Hook to manage and interact with the NDKNutzapMonitor.
- * It initializes the monitor based on the current user and active wallet,
- * using the generic NDK cache adapter for persistence if available.
- *
- * @param mintList - Optional mint list for the monitor.
- * @param start - Whether to automatically start the monitor.
+ * Uses a singleton pattern to prevent duplicate monitors from competing for nutzaps.
+ * The monitor will use the wallet's published mint list (kind:10019) for configuration.
  */
-export const useNDKNutzapMonitor = (mintList?: NDKCashuMintList, start = false) => {
+export const useNutzapMonitor = () => {
     const { ndk } = useNDK();
     const currentUser = useNDKCurrentUser();
-    const { activeWallet } = useNDKWallet();
+    const { wallet } = useNDKWallet();
     const nutzapMonitor = useInternalNutzapMonitorStore((s) => s.nutzapMonitor);
     const setNutzapMonitor = useInternalNutzapMonitorStore((s) => s.setNutzapMonitor);
-    const [monitorStarted, setMonitorStarted] = useState(false);
+
+    const [nutzaps, setNutzaps] = useState([] as NDKNutzap[]);
+    const [isMonitoring, setIsMonitoring] = useState(false);
+    const [error, setError] = useState(null as Error | null);
 
     const monitorStore = useMemo((): NDKNutzapMonitorStore | undefined => {
         if (ndk?.cacheAdapter?.getAllNutzapStates && ndk?.cacheAdapter?.setNutzapState) {
@@ -100,58 +124,91 @@ export const useNDKNutzapMonitor = (mintList?: NDKCashuMintList, start = false) 
         return undefined;
     }, [ndk?.cacheAdapter]);
 
+    // Create or update singleton monitor when wallet changes
     useEffect(() => {
-        if (!ndk || !currentUser?.pubkey || !activeWallet) {
+        if (!ndk || !currentUser || !wallet) {
             if (nutzapMonitor) {
                 nutzapMonitor.stop();
                 setNutzapMonitor(null);
-                setMonitorStarted(false);
+                setIsMonitoring(false);
             }
             return;
         }
 
-        if (!nutzapMonitor && start) {
+        // Create new monitor only if needed
+        if (!nutzapMonitor || nutzapMonitor.wallet !== wallet) {
             const monitor = new NDKNutzapMonitor(ndk, currentUser, {
-                mintList,
                 store: monitorStore,
             });
-            monitor.wallet = activeWallet;
-            setNutzapMonitor(monitor);
-        } else if (nutzapMonitor) {
-            if (nutzapMonitor.wallet?.walletId !== activeWallet.walletId) {
-                nutzapMonitor.wallet = activeWallet;
-            }
-            if (nutzapMonitor.mintList !== mintList) {
-                nutzapMonitor.mintList = mintList;
-            }
-        }
-    }, [ndk, currentUser, activeWallet, mintList, monitorStore, nutzapMonitor, setNutzapMonitor, start]);
+            monitor.wallet = wallet;
 
-    useEffect(() => {
-        if (start && nutzapMonitor && !monitorStarted) {
-            nutzapMonitor
-                .start({
-                    filter: { limit: 100 },
-                    opts: { skipVerification: true },
-                })
-                .then(() => {
-                    setMonitorStarted(true);
-                })
-                .catch((err: Error) => {
-                    console.error("Failed to start NDKNutzapMonitor", err);
-                });
-        } else if (!start && nutzapMonitor && monitorStarted) {
-            nutzapMonitor.stop();
-            setMonitorStarted(false);
+            // Get mintList from wallet if available
+            if ("mintList" in wallet && wallet.mintList) {
+                monitor.mintList = wallet.mintList as NDKCashuMintList;
+            }
+
+            setNutzapMonitor(monitor);
         }
+    }, [ndk, currentUser, wallet, monitorStore, nutzapMonitor, setNutzapMonitor]);
+
+    // Listen for nutzaps
+    useEffect(() => {
+        if (!nutzapMonitor) return;
+
+        const handleSeen = (nutzap: NDKNutzap) => {
+            setNutzaps((prev: NDKNutzap[]) => [...prev, nutzap]);
+        };
+
+        const handleRedeemed = (nutzaps: NDKNutzap[]) => {
+            // Remove redeemed nutzaps from the list
+            const redeemedIds = new Set(nutzaps.map((n) => n.id));
+            setNutzaps((prev: NDKNutzap[]) => prev.filter((n) => !redeemedIds.has(n.id)));
+        };
+
+        nutzapMonitor.on("seen", handleSeen);
+        nutzapMonitor.on("redeemed", handleRedeemed);
 
         return () => {
-            if (nutzapMonitor && monitorStarted) {
-                nutzapMonitor.stop();
-                setMonitorStarted(false);
-            }
+            nutzapMonitor.off("seen", handleSeen);
+            nutzapMonitor.off("redeemed", handleRedeemed);
         };
-    }, [start, nutzapMonitor, monitorStarted]);
+    }, [nutzapMonitor]);
 
-    return { nutzapMonitor };
+    // Explicit control methods
+    const start = useCallback(async () => {
+        if (!nutzapMonitor) {
+            setError(new Error("No monitor initialized - wallet not loaded"));
+            return;
+        }
+        try {
+            setError(null);
+            await nutzapMonitor.start({
+                filter: { limit: 100 },
+                opts: { skipVerification: true },
+            });
+            setIsMonitoring(true);
+        } catch (e) {
+            console.error("Failed to start nutzap monitor:", e);
+            setError(e as Error);
+            setIsMonitoring(false);
+        }
+    }, [nutzapMonitor]);
+
+    const stop = useCallback(() => {
+        if (nutzapMonitor) {
+            nutzapMonitor.stop();
+            setIsMonitoring(false);
+        }
+    }, [nutzapMonitor]);
+
+    return {
+        nutzaps,
+        isMonitoring,
+        error,
+        start,
+        stop,
+    };
 };
+
+// Export the old name with deprecation notice for backwards compatibility
+export const useNDKNutzapMonitor = useNutzapMonitor;

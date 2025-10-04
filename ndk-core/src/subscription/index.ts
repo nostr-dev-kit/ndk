@@ -158,6 +158,14 @@ export interface NDKSubscriptionOptions {
      * This option implies cacheUsage: CACHE_FIRST.
      */
     addSinceFromCache?: boolean;
+
+    /**
+     * Include muted events in subscription results.
+     * When false (default), events that match ndk.muteFilter are filtered out.
+     * When true, muted events are included.
+     * @default false
+     */
+    includeMuted?: boolean;
 }
 
 /**
@@ -171,6 +179,7 @@ export const defaultOpts: NDKSubscriptionOptions = {
     groupableDelay: 100,
     groupableDelayType: "at-most",
     cacheUnconstrainFilter: ["limit", "since", "until"],
+    includeMuted: false,
 };
 
 /**
@@ -704,6 +713,12 @@ export class NDKSubscription extends EventEmitter<{
                 if (this.ndk.cacheAdapter && !this.opts.dontSaveToCache) {
                     this.ndk.cacheAdapter.setEvent(ndkEvent, this.filters, relay);
                 }
+            }
+
+            // Apply mute filter
+            if (!this.opts.includeMuted && this.ndk.muteFilter(ndkEvent)) {
+                this.debug("Event muted, skipping");
+                return;
             }
 
             // emit it

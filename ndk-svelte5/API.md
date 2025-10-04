@@ -4,6 +4,28 @@ Complete TypeScript API definitions for ndk-svelte5.
 
 ## Core Types
 
+### Initialization
+
+```typescript
+/**
+ * Initialize global stores with an NDK instance
+ * @param ndk - NDK instance
+ * @param options - Configuration options
+ */
+async function initStores(
+  ndk: NDKSvelte,
+  options?: {
+    /**
+     * Storage adapter for session persistence
+     * - undefined (default): uses NDKSessionLocalStorage (browser localStorage)
+     * - NDKSessionStorageAdapter: custom storage implementation
+     * - false: disables session persistence
+     */
+    sessionStorage?: NDKSessionStorageAdapter | false;
+  }
+): Promise<void>;
+```
+
 ### NDKSvelte
 
 ```typescript
@@ -343,6 +365,7 @@ interface SessionStore {
 
   /**
    * Login with a signer
+   * Sessions are automatically persisted to storage if configured
    * @param signer - NDK signer (NIP-07, NIP-46, NIP-55)
    * @param setActive - Whether to set as active session
    */
@@ -355,16 +378,19 @@ interface SessionStore {
 
   /**
    * Switch to a different session
+   * Active session is persisted to storage if configured
    */
   switch(pubkey: string): void;
 
   /**
    * Logout a specific user
+   * Session is removed from storage if configured
    */
   logout(pubkey?: string): void;
 
   /**
    * Logout all users
+   * All sessions are removed from storage if configured
    */
   logoutAll(): void;
 
@@ -372,6 +398,43 @@ interface SessionStore {
    * Get a session by pubkey
    */
   get(pubkey: string): Session | undefined;
+}
+
+/**
+ * Storage adapter interface for session persistence
+ */
+interface NDKSessionStorageAdapter {
+  /**
+   * Get an item from storage by key
+   */
+  getItem(key: string): string | null;
+
+  /**
+   * Set an item in storage
+   */
+  setItem(key: string, value: string): void;
+
+  /**
+   * Delete an item from storage
+   */
+  deleteItem(key: string): void;
+}
+
+/**
+ * Default localStorage implementation
+ */
+class NDKSessionLocalStorage implements NDKSessionStorageAdapter {
+  getItem(key: string): string | null;
+  setItem(key: string, value: string): void;
+  deleteItem(key: string): void;
+}
+
+/**
+ * Stored session structure
+ */
+interface StoredSession {
+  pubkey: string;
+  signerPayload?: string; // Serialized signer payload from signer.toPayload()
 }
 
 interface Session {

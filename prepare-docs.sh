@@ -9,6 +9,7 @@ SQLITE_WASM_DIR="ndk-cache-sqlite-wasm"
 MOBILE_DIR="ndk-mobile"
 BLOSSOM_DIR="ndk-blossom"
 WALLET_DIR="ndk-wallet"
+WOT_DIR="ndk-wot"
 SVELTE_DIR="ndk-svelte"
 HOOKS_DIR="ndk-hooks"
 
@@ -26,6 +27,7 @@ rm -rf \
     "$DOCS_DIR/cache" \
     "$DOCS_DIR/mobile" \
     "$DOCS_DIR/wallet" \
+    "$DOCS_DIR/wot" \
     "$DOCS_DIR/wrappers" \
     "$DOCS_DIR/hooks"
 # Create target directories
@@ -39,6 +41,7 @@ mkdir -p \
     "$DOCS_DIR/wallet" \
     "$DOCS_DIR/wallet" \
     "$DOCS_DIR/snippets/wallet" \
+    "$DOCS_DIR/wot" \
     "$DOCS_DIR/wrappers" \
     "$DOCS_DIR/hooks"
 # --- Copy functions ---
@@ -95,6 +98,9 @@ copy_dir_contents "$BLOSSOM_DIR/docs" "$DOCS_DIR"
 # Wallet
 copy_dir_contents "$WALLET_DIR/docs" "$DOCS_DIR/wallet"
 copy_dir_contents "$WALLET_DIR/snippets" "$DOCS_DIR/snippets/wallet"
+
+# WOT
+copy_dir_contents "$WOT_DIR/docs" "$DOCS_DIR/wot"
 
 # Svelte
 copy_file "$SVELTE_DIR/docs/wrappers/svelte.md" "$DOCS_DIR/wrappers"

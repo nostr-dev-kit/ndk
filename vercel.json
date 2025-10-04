@@ -1,0 +1,6 @@
+{
+    "buildCommand": "cd ndk-svelte5-learn && bun run build",
+    "installCommand": "bun install",
+    "outputDirectory": "ndk-svelte5-learn/.svelte-kit",
+    "framework": "sveltekit"
+}

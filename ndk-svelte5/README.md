@@ -26,6 +26,7 @@ ndk-svelte5 embraces **Svelte 5's reactive primitives** to create a library that
 - **Global Stores**: Profiles, sessions, mutes, and wallet
 - **Advanced Features**: ReactiveEvent and ReactiveFilter classes
 - **Wallet Integration**: Full support for Cashu, NWC, and WebLN wallets
+- **Payment Tracking**: Reactive payment/transaction tracking with pending state management
 - **Nutzap Monitoring**: Automatic nutzap detection and redemption
 - **Test Coverage**: 119 tests passing across all core functionality
 
@@ -42,6 +43,40 @@ ndk-svelte5 embraces **Svelte 5's reactive primitives** to create a library that
 pnpm add @nostr-dev-kit/ndk-svelte5
 ```
 
+## Setup
+
+Initialize NDK and global stores in your app:
+
+```typescript
+// lib/ndk.ts
+import { NDKSvelte } from '@nostr-dev-kit/ndk-svelte5';
+import { initStores } from '@nostr-dev-kit/ndk-svelte5';
+
+export const ndk = new NDKSvelte({
+  explicitRelayUrls: [
+    'wss://relay.damus.io',
+    'wss://relay.nostr.band',
+  ],
+});
+
+// Initialize stores with session persistence (default: localStorage)
+await initStores(ndk);
+
+await ndk.connect();
+```
+
+**Session Persistence:**
+Sessions are automatically persisted to localStorage by default. Users stay logged in across page reloads.
+
+```typescript
+// Disable persistence (sessions only in memory)
+await initStores(ndk, { sessionStorage: false });
+
+// Custom storage (e.g., React Native)
+import { MyCustomStorage } from './storage';
+await initStores(ndk, { sessionStorage: new MyCustomStorage() });
+```
+
 ## Core Concepts
 
 ### 1. Reactive Subscriptions
@@ -56,10 +91,11 @@ import { NDKKind } from '@nostr-dev-kit/ndk';
 // Create a reactive subscription
 const notes = ndk.subscribeReactive([{ kinds: [NDKKind.Text], limit: 50 }]);
 
-// Access reactive state directly
-$inspect(notes.events); // Array of events
-$inspect(notes.eosed);  // EOSE flag
-$inspect(notes.count);  // Event count
+// Properties are $state runes that automatically trigger reactivity
+// when accessed in Svelte templates or $effect blocks
+$inspect(notes.events); // Array of events (reactive)
+$inspect(notes.eosed);  // EOSE flag (reactive)
+$inspect(notes.count);  // Event count (derived)
 </script>
 
 {#each notes.events as note}
@@ -70,6 +106,8 @@ $inspect(notes.count);  // Event count
   <span>No notes yet</span>
 {/if}
 ```
+
+**Automatic reactivity**: The `events`, `eosed`, `error`, `status`, and `refCount` properties are `$state` runes that automatically trigger reactivity when events arrive and the UI accesses them.
 
 **Automatic cleanup**: The subscription stops when the component unmounts. No manual cleanup needed.
 
@@ -111,8 +149,10 @@ const currentUser = sessions.current;
 sessions.login(signer);
 sessions.logout();
 
-// Mute management
+// Mute management - automatically filters subscriptions
 mutes.add({ pubkey: 'hex...' });
+mutes.add({ word: 'spam' });      // Mute by keyword
+mutes.add({ hashtag: 'nsfw' });   // Mute by hashtag
 const isMuted = mutes.check({ pubkey });
 </script>
 
@@ -149,11 +189,8 @@ const highlights = ndk.subscribe(
     // Buffer events for performance (default: 30ms)
     bufferMs: 30,
 
-    // Filter deleted events automatically
-    skipDeleted: true,
-
-    // Filter muted content
-    skipMuted: true,
+    // Include muted content (mutes are filtered by default)
+    includeMuted: true,
 
     // Convert events to specific class
     eventClass: NDKHighlight,
@@ -264,7 +301,7 @@ import { UserProfile, UserAvatar, UserName } from '@nostr-dev-kit/ndk-svelte5/co
 
 ## Session Management
 
-Built-in multi-user session support:
+Built-in multi-user session support with automatic persistence:
 
 ```svelte
 <script lang="ts">
@@ -335,6 +372,49 @@ interface Session {
 }
 ```
 
+### Session Persistence
+
+Sessions are automatically persisted to localStorage and restored on page reload:
+
+```typescript
+import { initStores, NDKSessionLocalStorage } from '@nostr-dev-kit/ndk-svelte5';
+
+// Default: uses localStorage (sessions persist across page reloads)
+await initStores(ndk);
+
+// Use custom storage adapter (e.g., for React Native)
+import { MyCustomStorage } from './storage';
+await initStores(ndk, { sessionStorage: new MyCustomStorage() });
+
+// Disable persistence
+await initStores(ndk, { sessionStorage: false });
+```
+
+**What gets persisted:**
+- All logged-in sessions (signer payloads)
+- Active session (which user was active)
+- Sessions are automatically restored when `initStores()` is called
+
+**Custom Storage Adapter:**
+
+```typescript
+import { NDKSessionStorageAdapter } from '@nostr-dev-kit/ndk-svelte5';
+
+class MyCustomStorage implements NDKSessionStorageAdapter {
+  getItem(key: string): string | null {
+    // Your storage implementation
+  }
+
+  setItem(key: string, value: string): void {
+    // Your storage implementation
+  }
+
+  deleteItem(key: string): void {
+    // Your storage implementation
+  }
+}
+```
+
 ### Session Store API
 
 The session store provides convenient reactive accessors for current session data:
@@ -359,7 +439,7 @@ sessions.getSessionEvent(kind)   // Get event by kind for current session
 
 ## Mute Management
 
-Powerful muting with automatic filtering:
+Powerful muting with automatic filtering across all subscriptions:
 
 ```svelte
 <script lang="ts">
@@ -372,8 +452,8 @@ const isTagMuted = mutes.check({ hashtag: 'spam' });
 
 // Add mutes
 mutes.add({ pubkey: 'hex...' });
-mutes.add({ word: 'spam' });
-mutes.add({ hashtag: 'scam' });
+mutes.add({ word: 'spam' });       // Keyword filtering
+mutes.add({ hashtag: 'scam' });    // Hashtag filtering
 mutes.add({ eventId: 'hex...' });
 
 // Remove mutes
@@ -382,8 +462,8 @@ mutes.remove({ pubkey: 'hex...' });
 // Clear all mutes
 mutes.clear();
 
-// Automatically publish mute list (NIP-51)
-mutes.publish();
+// Publish mute list to your relays (NIP-51)
+await mutes.publish();
 
 // All muted items (reactive)
 $inspect(mutes.pubkeys);   // Set<string>
@@ -391,14 +471,38 @@ $inspect(mutes.words);     // Set<string>
 $inspect(mutes.hashtags);  // Set<string>
 $inspect(mutes.eventIds);  // Set<string>
 </script>
+```
 
-<!-- Subscriptions automatically filter muted content -->
+### Automatic Filtering
+
+**All subscriptions automatically filter muted content by default.** The `mutes` store integrates with NDK's core mute filter, so muted events never reach your UI.
+
+```svelte
 <script lang="ts">
-const notes = ndk.subscribe([{ kinds: [1] }], {
-  skipMuted: true // Default behavior
+// Muted content is automatically filtered out
+const notes = ndk.subscribe([{ kinds: [1] }]);
+
+// Opt-in to include muted content (e.g., for moderation UI)
+const allNotes = ndk.subscribe([{ kinds: [1] }], {
+  includeMuted: true
 });
+
+// Check if an event is muted
+{#each allNotes.events as note}
+  {#if note.muted()}
+    <div class="muted">This content is muted</div>
+  {:else}
+    <div>{note.content}</div>
+  {/if}
+{/each}
 </script>
 ```
+
+The `mutes` store provides advanced filtering beyond the default:
+- **Pubkey muting**: Block content from specific users
+- **Keyword muting**: Filter posts containing specific words
+- **Hashtag muting**: Hide posts with specific hashtags
+- **Event muting**: Block specific events by ID
 
 ## Wallet Integration
 
@@ -443,6 +547,134 @@ import { WalletBalance, WalletHistory, PaymentButton } from '@nostr-dev-kit/ndk-
 <WalletBalance />
 <WalletHistory limit={10} />
 <PaymentButton {amount} {recipient} />
+```
+
+## Payment Tracking
+
+Real-time payment tracking with automatic pending-to-confirmed transitions:
+
+```svelte
+<script lang="ts">
+import { payments, PaymentMonitor } from '@nostr-dev-kit/ndk-svelte5';
+import { onMount } from 'svelte';
+
+// Initialize payment tracking
+onMount(() => {
+  payments.init(ndk, currentUser.pubkey);
+
+  // Start monitoring payment events (kind 7376, 9321, 9735)
+  const monitor = new PaymentMonitor(ndk, currentUser.pubkey);
+  monitor.start();
+
+  return () => monitor.stop();
+});
+
+// Reactive payment state
+$inspect(payments.history);      // Transaction[] - all transactions sorted by time
+$inspect(payments.pending);      // PendingPayment[] - pending payments only
+$inspect(payments.byTarget);     // Map<string, Transaction[]> - grouped by target
+</script>
+```
+
+### Payment Runes
+
+Use reactive payment runes in components:
+
+```svelte
+<script lang="ts">
+import {
+  useZapAmount,
+  useIsZapped,
+  useTransactions,
+  usePendingPayments,
+  zap
+} from '@nostr-dev-kit/ndk-svelte5';
+
+// Reactive zap state for a target
+const zapAmount = useZapAmount(event);
+const isZapped = useIsZapped(event);
+
+// Reactive transaction lists
+const allTxs = useTransactions();
+const outgoingTxs = useTransactions({ direction: 'out' });
+const recentTxs = useTransactions({ limit: 10 });
+const pending = usePendingPayments();
+
+// Send a zap with automatic tracking
+async function handleZap() {
+  await zap(event, 1000, { comment: 'Great post!' });
+  // Payment automatically appears in pending, then transitions to confirmed
+}
+</script>
+
+{#if isZapped}
+  <span>⚡ Zapped {zapAmount} sats</span>
+{:else}
+  <button onclick={handleZap}>⚡ Zap</button>
+{/if}
+```
+
+### Reactive Transaction Wrapper
+
+Rich transaction objects with computed properties:
+
+```svelte
+<script lang="ts">
+import { ReactiveTransaction } from '@nostr-dev-kit/ndk-svelte5';
+
+const tx = ReactiveTransaction.from(transaction);
+
+// Reactive computed properties
+$inspect(tx.isPending);        // boolean
+$inspect(tx.isConfirmed);      // boolean
+$inspect(tx.isFailed);         // boolean
+$inspect(tx.isIncoming);       // boolean
+$inspect(tx.isOutgoing);       // boolean
+$inspect(tx.formattedAmount);  // "+1,000 sats" or "-1,000 sats"
+$inspect(tx.relativeTime);     // "2m ago", "5h ago", etc.
+</script>
+
+<div class:pending={tx.isPending}>
+  <span>{tx.isIncoming ? '↓' : '↑'}</span>
+  <span>{tx.formattedAmount}</span>
+  <span>{tx.relativeTime}</span>
+</div>
+```
+
+### Built-in Components
+
+Pre-built payment UI components:
+
+```svelte
+<script lang="ts">
+import { ZapButton, TransactionList } from '@nostr-dev-kit/ndk-svelte5/components';
+</script>
+
+<!-- Zap button with automatic tracking -->
+<ZapButton target={event} amount={21} comment="Nice!" />
+
+<!-- Transaction history -->
+<TransactionList limit={10} direction="out" />
+```
+
+### How It Works
+
+The payment tracking system solves the "pending transaction" problem:
+
+1. **Instant Visibility**: When a payment starts, it appears immediately with an internal ID
+2. **Multi-source Tracking**: Monitors kind 7376 (spending history), 9321 (nutzaps), 9735 (zap receipts)
+3. **Smart Matching**: Automatically matches receipts to pending payments by recipient + timestamp
+4. **Status Transitions**: Pending → Complete → Confirmed (or Failed)
+5. **Unified View**: Merges all sources into single transaction list
+
+```typescript
+// Internal flow:
+zap(target, 1000)
+  → addPending() creates internal ID
+  → payment appears in UI immediately
+  → zapper emits 'complete' event
+  → receipt arrives (kind 9735)
+  → automatic matching transitions pending to confirmed
 ```
 
 ## Advanced Patterns
@@ -778,11 +1010,11 @@ stores/
 See the [examples](./examples) directory for complete working examples:
 
 - [Basic Feed](./examples/basic-feed) - Simple note feed with profiles ✅
+- [Nutsack](./examples/nutsack) - NIP-60 Cashu wallet with payment tracking ✅
 
 ### Coming Soon
 
 - Multi-user App - Account switching and management
-- Wallet Integration - Payment flows and nutzap monitoring
 - Real-time Chat - Messaging with DMs
 - Advanced Patterns - Complex reactive patterns
 
@@ -803,11 +1035,19 @@ class NDKSvelte extends NDK {
 
 ```typescript
 class EventSubscription<T extends NDKEvent> {
-  // Reactive state
-  events: T[];
-  eosed: boolean;
-  count: number; // derived
-  isEmpty: boolean; // derived
+  // Reactive $state properties - automatically trigger updates when accessed
+  events: T[];                  // Reactive array of events
+  eosed: boolean;               // Reactive EOSE flag
+  error?: Error;                // Reactive error state
+  status: ConnectionStatus;     // Reactive connection status ('connecting' | 'connected' | 'disconnected' | 'error')
+  refCount: number;             // Reactive reference count
+
+  // Derived getters
+  count: number;                // Derived from events.length
+  isEmpty: boolean;             // Derived from events.length === 0
+
+  // Filter property
+  filters: NDKFilter[];         // Current filters
 
   // Methods
   start(): void;
@@ -820,6 +1060,7 @@ class EventSubscription<T extends NDKEvent> {
   remove(eventId: string): void;
   ref(): number;
   unref(): number;
+  setMuteFilter(filter: (event: NDKEvent) => boolean): void;
 }
 ```
 
@@ -840,6 +1081,56 @@ interface SubscriptionOptions {
   onEose?: () => void;
 }
 ```
+
+## Troubleshooting
+
+### Reactivity Not Working?
+
+If you find that `subscribeReactive` isn't updating your UI:
+
+1. **Make sure you're accessing properties in Svelte templates or reactive contexts** - The `events`, `eosed`, `status`, `error`, and `refCount` properties are `$state` runes that only track changes when accessed in reactive contexts like:
+   - Svelte templates (`{#each subscription.events as event}`)
+   - `$effect` blocks
+   - `$derived` expressions
+
+2. **Example of reactive access:**
+   ```svelte
+   <script lang="ts">
+   const sub = ndk.subscribeReactive([{ kinds: [1] }]);
+
+   // ✅ Good - accessed in template, automatically reactive
+   </script>
+
+   {#each sub.events as event}
+     <div>{event.content}</div>
+   {/each}
+
+   <!-- ✅ Good - accessed in effect -->
+   <script lang="ts">
+   $effect(() => {
+     console.log('Events updated:', sub.events.length);
+   });
+   </script>
+   ```
+
+3. **Example of non-reactive access:**
+   ```svelte
+   <script lang="ts">
+   const sub = ndk.subscribeReactive([{ kinds: [1] }]);
+
+   // ❌ Bad - accessing in regular JavaScript doesn't create reactive dependency
+   function logEvents() {
+     console.log(sub.events.length); // Won't track changes
+   }
+   </script>
+   ```
+
+### Key Points About Svelte 5 Reactivity
+
+- `$state` variables are reactive, but **you must access them in reactive contexts** for Svelte to track changes
+- Simply reading a value in regular JavaScript doesn't create a reactive dependency
+- Always access subscription properties in templates, `$effect`, or `$derived` to ensure reactivity
+- **Arrays are mutated in place** - The subscription internally uses `.length = 0` and `.push()` to mutate the events array rather than replacing it, which ensures Svelte's reactivity system detects changes
 
 ## Philosophy & Design Decisions
 

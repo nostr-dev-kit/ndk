@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/ndk-cache-sqlite",
-    "version": "0.1.1",
+    "version": "1.0.0",
     "description": "SQLite cache adapter for NDK using better-sqlite3, compatible with Node.js environments.",
     "keywords": [
         "nostr",
@@ -43,7 +43,7 @@
         "better-sqlite3": "^9.0.0"
     },
     "devDependencies": {
-        "@nostr-dev-kit/ndk": "^2.14.29",
+        "@nostr-dev-kit/ndk": "^2.15.0",
         "@types/better-sqlite3": "^7.6.8",
         "tsup": "^8.0.0",
         "typescript": "^5.0.0",
@@ -54,6 +54,6 @@
         "node": ">=18.0.0"
     },
     "peerDependencies": {
-        "@nostr-dev-kit/ndk": "^2.14.0"
+        "@nostr-dev-kit/ndk": "^2.15.0"
     }
 }

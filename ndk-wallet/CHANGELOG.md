@@ -1,11 +1,30 @@
 # @nostr-dev-kit/ndk-cache-redis
 
+## 0.7.0
+
+### Minor Changes
+
+- Add cashu mint list support for nutzap reception
+    - Add `mintList` getter and `fetchMintList` method to NDKCashuWallet
+    - Implement automatic mint list fetching during wallet initialization
+    - Support NIP-61 nutzap reception configuration through mint lists
+    - Add comprehensive test coverage for mint list functionality
+    - Add subId parameters for better subscription tracking
+
+    This enables wallets to properly configure nutzap reception by fetching and exposing their published mint lists (kind:10019 events), supporting the NIP-61 specification for enhanced cashu token interoperability.
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.15.0
+
 ## 0.6.3
 
 ### Patch Changes
 
 - 96341c3: Remove old NIP-60 migration code and legacy wallet kind 37375
-
     - Removed `getOldWallets` function and `migrateCashuWallet` from ndk-wallet
     - Removed `LegacyCashuWallet = 37375` kind definition from ndk-core
     - Cleaned up all references to the legacy migration code

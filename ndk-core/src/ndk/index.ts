@@ -108,6 +108,14 @@ export interface NDKConstructorParams {
     mutedIds?: Map<Hexpubkey | NDKEventId, string>;
 
     /**
+     * Custom filter function to determine if an event should be muted.
+     * Defaults to checking if event.pubkey or event.id is in mutedIds.
+     * @param event - The event to check
+     * @returns true if the event should be muted
+     */
+    muteFilter?: (event: NDKEvent) => boolean;
+
+    /**
      * Client name to add to events' tag
      */
     clientName?: string;
@@ -279,6 +287,7 @@ export class NDK extends EventEmitter<{
     public devWriteRelaySet?: NDKRelaySet;
     public outboxTracker?: OutboxTracker;
     public mutedIds: Map<Hexpubkey | NDKEventId, string>;
+    public muteFilter: (event: NDKEvent) => boolean;
     public clientName?: string;
     public clientNip89?: string;
     public queuesZapConfig: Queue<NDKLnUrlData | undefined>;
@@ -412,6 +421,19 @@ export class NDK extends EventEmitter<{
         this.signer = opts.signer;
         this.cacheAdapter = opts.cacheAdapter;
         this.mutedIds = opts.mutedIds || new Map();
+
+        // Default mute filter checks mutedIds
+        this.muteFilter =
+            opts.muteFilter ||
+            ((event: NDKEvent) => {
+                // Check if author is muted
+                if (this.mutedIds.has(event.pubkey)) return true;
+
+                // Check if event ID is muted
+                if (event.id && this.mutedIds.has(event.id)) return true;
+
+                return false;
+            });
 
         if (opts.devWriteRelayUrls) {
             this.devWriteRelaySet = NDKRelaySet.fromRelayUrls(opts.devWriteRelayUrls, this);

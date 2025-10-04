@@ -48,6 +48,10 @@ Sometimes you have a specific need or are certain that you won't be requesting m
 const sub = ndk.subscribe({ kinds: [1], "#t": ["nostr"] }, { groupable: false });
 ```
 
+## Mute Filtering
+
+By default, NDK automatically filters out events from muted users and muted event IDs. When you set an active user, their mute list (kind 10000) is automatically fetched and applied to all subscriptions. See the [Mute Filtering](./mute-filtering.md) guide for more details on customizing mute behavior and including muted content when needed.
+
 ## Filter Validation
 
 NDK automatically validates subscription filters to prevent runtime errors. By default, filters containing `undefined` values or invalid data will throw an error, helping you catch bugs early. See the [Filter Validation](./filter-validation.md) guide for more details on validation modes and best practices.

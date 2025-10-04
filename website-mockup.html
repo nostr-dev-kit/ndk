@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nostr Development - Own Your Internet</title>
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --surface: #141414;
+            --border: #262626;
+            --text: #fafafa;
+            --text-secondary: #a3a3a3;
+            --text-tertiary: #525252;
+            --purple: #8B5CF6;
+            --purple-dim: #7C3AED;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Typography */
+        h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            letter-spacing: -0.04em;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        p {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        code {
+            font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+            background: var(--surface);
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+            font-size: 0.9em;
+            border: 1px solid var(--border);
+        }
+
+        /* Layout */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+        }
+
+        nav .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        nav .logo {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        nav .links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+
+        nav a:hover {
+            color: var(--text);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        section {
+            padding: 8rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Hero */
+        .hero {
+            padding-top: 12rem;
+            padding-bottom: 12rem;
+        }
+
+        .hero h1 {
+            background: linear-gradient(135deg, var(--text) 0%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            max-width: 900px;
+        }
+
+        .hero p {
+            max-width: 600px;
+            font-size: 1.25rem;
+            margin-bottom: 3rem;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 0.875rem 2rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--purple);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--purple-dim);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--text-secondary);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        /* Problem Cards */
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .problem-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 2.5rem;
+            transition: border-color 0.2s;
+        }
+
+        .problem-card:hover {
+            border-color: var(--text-tertiary);
+        }
+
+        .problem-card .icon {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .problem-card h3 {
+            color: var(--text);
+        }
+
+        .problem-card p {
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+
+        /* Principles */
+        .principles {
+            background: var(--surface);
+        }
+
+        .principle-list {
+            display: grid;
+            gap: 3rem;
+            margin-top: 4rem;
+        }
+
+        .principle {
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+        }
+
+        .principle-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--purple);
+            font-variant-numeric: tabular-nums;
+            min-width: 80px;
+        }
+
+        .principle-content h3 {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Code Block */
+        .code-example {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-top: 3rem;
+            overflow-x: auto;
+        }
+
+        .code-example pre {
+            font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .code-comment {
+            color: var(--text-tertiary);
+        }
+
+        .code-string {
+            color: var(--success);
+        }
+
+        .code-keyword {
+            color: var(--purple);
+        }
+
+        /* Stats */
+        .stats {
+            display: flex;
+            gap: 4rem;
+            margin-top: 4rem;
+        }
+
+        .stat {
+            flex: 1;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--purple);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* Footer */
+        footer {
+            padding: 4rem 0;
+            border-top: 1px solid var(--border);
+        }
+
+        footer .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        footer p {
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="/" class="logo">⚡ Nostr.dev</a>
+            <ul class="links">
+                <li><a href="#why">Why Nostr</a></li>
+                <li><a href="#learn">Learn</a></li>
+                <li><a href="#build">Build</a></li>
+                <li><a href="#tools">Tools</a></li>
+                <li><a href="#community">Community</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Build the internet users own, not rent</h1>
+            <p>
+                A simple protocol that enables censorship-resistant global networks.
+                Own your identity. Own your data. Build applications that last.
+            </p>
+            <div class="btn-group">
+                <a href="#learn" class="btn btn-primary">Start Building</a>
+                <a href="#why" class="btn btn-secondary">Why Nostr?</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="why">
+        <div class="container">
+            <h2>What's broken</h2>
+            <p>The current internet centralizes control, locks your data, and mediates your relationships. We can do better.</p>
+
+            <div class="problem-grid">
+                <div class="problem-card">
+                    <span class="icon">👤</span>
+                    <h3>Identity captured</h3>
+                    <p>Your social graph, reputation, and connections are owned by platforms. Switch services, lose everything.</p>
+                </div>
+
+                <div class="problem-card">
+                    <span class="icon">🔒</span>
+                    <h3>Data locked in silos</h3>
+                    <p>Your content lives in walled gardens. No portability, no interoperability, no real ownership.</p>
+                </div>
+
+                <div class="problem-card">
+                    <span class="icon">💰</span>
+                    <h3>Money controlled</h3>
+                    <p>Payments flow through intermediaries who extract fees, surveil transactions, and can freeze your funds.</p>
+                </div>
+
+                <div class="problem-card">
+                    <span class="icon">🚫</span>
+                    <h3>Expression mediated</h3>
+                    <p>Platforms decide what you can say, see, and build. Algorithms control your reach. Exit costs are infinite.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="principles">
+        <div class="container">
+            <h2>The Nostr answer</h2>
+            <p>Protocols > Platforms. Build applications where trust becomes optional and freedom is enforced mathematically.</p>
+
+            <div class="principle-list">
+                <div class="principle">
+                    <div class="principle-number">01</div>
+                    <div class="principle-content">
+                        <h3>Verifiable by default</h3>
+                        <p>Every event is cryptographically signed. Users verify authenticity without trusting intermediaries. Identity is your keypair.</p>
+                    </div>
+                </div>
+
+                <div class="principle">
+                    <div class="principle-number">02</div>
+                    <div class="principle-content">
+                        <h3>Exit costs near zero</h3>
+                        <p>Don't like a relay? Switch instantly. Your identity and data move with you. No lock-in, no permission needed.</p>
+                    </div>
+                </div>
+
+                <div class="principle">
+                    <div class="principle-number">03</div>
+                    <div class="principle-content">
+                        <h3>Embrace chaos</h3>
+                        <p>Permissionless innovation. Anyone can build clients, relays, or new use cases. No approval required. Just ship.</p>
+                    </div>
+                </div>
+
+                <div class="principle">
+                    <div class="principle-number">04</div>
+                    <div class="principle-content">
+                        <h3>Native value exchange</h3>
+                        <p>Bitcoin integration built-in. Send sats as easily as sending messages. Value-for-value, no middlemen.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <pre><span class="code-comment">// Your first nostr event in 10 lines</span>
+<span class="code-keyword">import</span> NDK <span class="code-keyword">from</span> <span class="code-string">"@nostr-dev-kit/ndk"</span>;
+
+<span class="code-keyword">const</span> ndk = <span class="code-keyword">new</span> NDK({ explicitRelayUrls: [<span class="code-string">"wss://relay.damus.io"</span>] });
+<span class="code-keyword">await</span> ndk.connect();
+
+<span class="code-keyword">const</span> event = <span class="code-keyword">new</span> NDKEvent(ndk);
+event.kind = 1;
+event.content = <span class="code-string">"Hello, decentralized world!"</span>;
+<span class="code-keyword">await</span> event.publish();</pre>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="container">
+            <h2>Join the builders</h2>
+            <p>Thousands of developers building the next generation of sovereign applications.</p>
+
+            <div class="stats">
+                <div class="stat">
+                    <span class="stat-number">400+</span>
+                    <span class="stat-label">Public relays</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">200+</span>
+                    <span class="stat-label">Active clients</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">15M+</span>
+                    <span class="stat-label">Events per day</span>
+                </div>
+            </div>
+
+            <div style="margin-top: 4rem;">
+                <a href="#learn" class="btn btn-primary">Start building with Nostr</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>Built with Nostr Development Kit</p>
+            <p style="color: var(--text-tertiary);">Protocols > Platforms</p>
+        </div>
+    </footer>
+</body>
+</html>

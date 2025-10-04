@@ -17,6 +17,10 @@ import { addUnpublishedEvent } from "./functions/addUnpublishedEvent";
 import { getUnpublishedEvents } from "./functions/getUnpublishedEvents";
 import { discardUnpublishedEvent } from "./functions/discardUnpublishedEvent";
 import { query } from "./functions/query";
+import { loadCashuMintInfo } from "./functions/loadCashuMintInfo";
+import { saveCashuMintInfo } from "./functions/saveCashuMintInfo";
+import { loadCashuMintKeys } from "./functions/loadCashuMintKeys";
+import { saveCashuMintKeys } from "./functions/saveCashuMintKeys";
 import NDK from "@nostr-dev-kit/ndk";
 
 export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
@@ -25,6 +29,7 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
     public locking = false;
     public db?: SQLDatabase;
     public ndk?: NDK;
+    public ready = false;
 
     // Conditionally defined sync methods
     public fetchProfileSync?: typeof fetchProfileSync;
@@ -42,6 +47,7 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
         }
     > = new Map();
     private nextRequestId: number = 0;
+    protected initializationPromise?: Promise<void>;
 
     constructor(options: NDKCacheAdapterSqliteWasmOptions = {}) {
         this.dbName = options.dbName || "ndk-cache";
@@ -60,13 +66,22 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
      * Loads WASM, initializes DB, and runs migrations, or initializes the worker.
      */
     async initializeAsync(ndk?: NDK): Promise<void> {
-        this.ndk = ndk;
-        if (this.useWorker) {
-            await this.initializeWorker();
-        } else {
-            this.db = await loadWasmAndInitDb(this.wasmUrl, this.dbName);
-            await runMigrations(this.db!);
+        if (this.initializationPromise) {
+            return this.initializationPromise;
         }
+
+        this.initializationPromise = (async () => {
+            this.ndk = ndk;
+            if (this.useWorker) {
+                await this.initializeWorker();
+            } else {
+                this.db = await loadWasmAndInitDb(this.wasmUrl, this.dbName);
+                await runMigrations(this.db!);
+            }
+            this.ready = true;
+        })();
+
+        return this.initializationPromise;
     }
 
     /**
@@ -180,6 +195,38 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
     public discardUnpublishedEvent = discardUnpublishedEvent.bind(this);
     public query = query.bind(this);
     public getProfiles = getProfiles.bind(this);
+
+    // Cashu mint caching
+    public async loadCashuMintInfo(mintUrl: string, maxAgeInSecs?: number) {
+        await this.ensureInitialized();
+        if (!this.db) return undefined;
+        return loadCashuMintInfo(this.db, mintUrl, maxAgeInSecs);
+    }
+
+    public async saveCashuMintInfo(mintUrl: string, info: import("@nostr-dev-kit/ndk").CashuMintInfo) {
+        await this.ensureInitialized();
+        if (!this.db) return;
+        saveCashuMintInfo(this.db, mintUrl, info);
+    }
+
+    public async loadCashuMintKeys(mintUrl: string, maxAgeInSecs?: number) {
+        await this.ensureInitialized();
+        if (!this.db) return undefined;
+        return loadCashuMintKeys(this.db, mintUrl, maxAgeInSecs);
+    }
+
+    public async saveCashuMintKeys(mintUrl: string, keys: import("@nostr-dev-kit/ndk").CashuMintKeys[]) {
+        await this.ensureInitialized();
+        if (!this.db) return;
+        saveCashuMintKeys(this.db, mintUrl, keys);
+    }
+
+    private async ensureInitialized(): Promise<void> {
+        if (this.ready) return;
+        if (this.initializationPromise) {
+            await this.initializationPromise;
+        }
+    }
 }
 
 export default NDKCacheAdapterSqliteWasm;

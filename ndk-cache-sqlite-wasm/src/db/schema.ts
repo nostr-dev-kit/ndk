@@ -60,4 +60,18 @@ export const SCHEMA = {
         CREATE INDEX IF NOT EXISTS idx_event_tags_event_id ON event_tags(event_id);
         CREATE INDEX IF NOT EXISTS idx_event_tags_tag ON event_tags(tag);
     `,
+    cashu_mint_info: `
+        CREATE TABLE IF NOT EXISTS cashu_mint_info (
+            mint_url TEXT PRIMARY KEY,
+            info TEXT NOT NULL,
+            cached_at INTEGER NOT NULL
+        );
+    `,
+    cashu_mint_keys: `
+        CREATE TABLE IF NOT EXISTS cashu_mint_keys (
+            mint_url TEXT PRIMARY KEY,
+            keys TEXT NOT NULL,
+            cached_at INTEGER NOT NULL
+        );
+    `,
 };

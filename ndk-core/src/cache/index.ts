@@ -7,6 +7,29 @@ import type { NDKLnUrlData } from "../zapper/ln.js";
 import type { NDKNutzapState } from "../types.js";
 import NDK from "src/index.js";
 
+/**
+ * Cashu mint information (from @cashu/cashu-ts)
+ */
+export type CashuMintInfo = {
+    name?: string;
+    pubkey?: string;
+    version?: string;
+    description?: string;
+    description_long?: string;
+    contact?: Array<Array<string>>;
+    motd?: string;
+    nuts?: Record<string, unknown>;
+};
+
+/**
+ * Cashu mint keys (from @cashu/cashu-ts)
+ */
+export type CashuMintKeys = {
+    id: string;
+    unit: string;
+    keys: Record<number, string>;
+};
+
 export type NDKCacheEntry<T> = T & {
     cachedAt?: number;
 };
@@ -153,6 +176,36 @@ export interface NDKCacheAdapter {
      * @param stateChange The partial state change to apply.
      */
     setNutzapState?(id: NDKEventId, stateChange: Partial<NDKNutzapState>): Promise<void>;
+
+    /**
+     * Loads cached Cashu mint information.
+     * @param mintUrl The URL of the mint.
+     * @param maxAgeInSecs Maximum age of cached data in seconds (optional).
+     * @returns The mint info, or undefined if not cached or expired.
+     */
+    loadCashuMintInfo?(mintUrl: string, maxAgeInSecs?: number): Promise<CashuMintInfo | undefined>;
+
+    /**
+     * Saves Cashu mint information to the cache.
+     * @param mintUrl The URL of the mint.
+     * @param info The mint information to cache.
+     */
+    saveCashuMintInfo?(mintUrl: string, info: CashuMintInfo): Promise<void>;
+
+    /**
+     * Loads cached Cashu mint keys (keysets).
+     * @param mintUrl The URL of the mint.
+     * @param maxAgeInSecs Maximum age of cached data in seconds (optional).
+     * @returns Array of mint keys, or undefined if not cached or expired.
+     */
+    loadCashuMintKeys?(mintUrl: string, maxAgeInSecs?: number): Promise<CashuMintKeys[] | undefined>;
+
+    /**
+     * Saves Cashu mint keys (keysets) to the cache.
+     * @param mintUrl The URL of the mint.
+     * @param keys Array of mint keys to cache.
+     */
+    saveCashuMintKeys?(mintUrl: string, keys: CashuMintKeys[]): Promise<void>;
 }
 
 export type NDKCacheRelayInfo = {

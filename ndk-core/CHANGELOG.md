@@ -1,5 +1,26 @@
 # @nostr-dev-kit/ndk
 
+## 2.15.2
+
+### Patch Changes
+
+- b7e7f92: Register NIP-87 event kinds (NDKCashuMint, NDKFedimintMint, NDKMintRecommendation) in event wrapper and export from main index
+
+## 2.15.1
+
+### Patch Changes
+
+- 73c6a2f: Add Cashu mint info and keyset caching support to cache adapter interface. New optional methods allow cache adapters to store and retrieve mint metadata and keysets, improving wallet performance by eliminating redundant network requests.
+- fad1f3d: Add NIP-87 ecash mint announcement event kinds: NDKCashuMint (kind 38172), NDKFedimintMint (kind 38173), and NDKMintRecommendation (kind 38000) for mint discovery and user recommendations.
+- Add NIP-87 event wrappers for ecash mint announcements and recommendations
+
+    Adds support for NIP-87 (Cashu & Fedimint Mints) with three new event classes:
+    - `NDKCashuMint` (kind 38172): Cashu mint announcements with URL, supported NUTs, and network metadata
+    - `NDKFedimintMint` (kind 38173): Fedimint federation announcements with invite codes, modules, and network metadata
+    - `NDKMintRecommendation` (kind 38000): Parameterized-replaceable events for recommending and reviewing ecash mints
+
+    All classes include proper getters/setters for NIP-87 tags and are automatically wrapped by `wrapEvent()`.
+
 ## 2.15.0
 
 ### Minor Changes

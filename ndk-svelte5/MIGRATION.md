@@ -76,16 +76,7 @@ const ndk = createNDK({ sessionStorage: false });
 ### Auto-Load WoT
 ```typescript
 const ndk = createNDK({
-  wot: { depth: 2, maxFollows: 1000 }
-});
-
-// Note: autoReload is not supported in createNDK() options
-// Enable it manually from component context:
-import { wot } from '@nostr-dev-kit/ndk-svelte5';
-import { onMount } from 'svelte';
-
-onMount(() => {
-  wot.enableAutoReload();
+  wot: { depth: 2, maxFollows: 1000, autoReload: true }
 });
 ```
 

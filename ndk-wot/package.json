@@ -1,52 +1,59 @@
 {
-    "name": "@nostr-dev-kit/ndk-wot",
-    "version": "0.2.0",
-    "description": "Web of Trust utilities for NDK",
-    "type": "module",
-    "main": "./dist/index.js",
-    "module": "./dist/index.js",
-    "types": "./dist/index.d.ts",
-    "exports": {
-        "import": {
-            "types": "./dist/index.d.ts",
-            "default": "./dist/index.js"
-        },
-        "require": {
-            "types": "./dist/index.d.ts",
-            "default": "./dist/index.js"
-        }
-    },
-    "scripts": {
-        "dev": "bun run build --watch",
-        "build": "tsup src/index.ts --format cjs,esm --dts",
-        "clean": "rm -rf dist",
-        "test": "bun test",
-        "test:watch": "bun test --watch",
-        "lint": "biome check .",
-        "format": "biome format --write ."
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/nostr-dev-kit/ndk.git"
-    },
-    "keywords": [
-        "nostr",
-        "web-of-trust",
-        "wot",
-        "trust"
-    ],
-    "author": "pablof7z",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/nostr-dev-kit/ndk/issues"
-    },
-    "homepage": "https://github.com/nostr-dev-kit/ndk",
-    "dependencies": {
-        "@nostr-dev-kit/ndk": "^2.15.0",
-        "debug": "^4.3.4",
-        "typescript": "^5.8.2"
-    },
-    "devDependencies": {
-        "tsup": "^8.4.0"
+  "name": "@nostr-dev-kit/ndk-wot",
+  "version": "0.2.7",
+  "description": "Web of Trust utilities for NDK",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.cjs"
+      }
     }
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "dev": "bun run build --watch",
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "clean": "rm -rf dist",
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "lint": "biome check .",
+    "format": "biome format --write ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nostr-dev-kit/ndk.git"
+  },
+  "keywords": [
+    "nostr",
+    "web-of-trust",
+    "wot",
+    "trust"
+  ],
+  "author": "pablof7z",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nostr-dev-kit/ndk/issues"
+  },
+  "homepage": "https://github.com/nostr-dev-kit/ndk",
+  "dependencies": {
+    "@nostr-dev-kit/ndk": "^2.15.2",
+    "debug": "^4.3.4",
+    "typescript": "^5.8.2"
+  },
+  "devDependencies": {
+    "tsup": "^8.4.0"
+  }
 }

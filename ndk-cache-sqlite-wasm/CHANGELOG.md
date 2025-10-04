@@ -1,5 +1,38 @@
 # @nostr-dev-kit/ndk-cache-sqlite-wasm
 
+## 0.6.1
+
+### Patch Changes
+
+- b7e7f92: Fix "Database not initialized" race condition by making query function wait for initialization to complete
+
+## 0.6.0
+
+### Minor Changes
+
+- 73c6a2f: Implement Cashu mint info and keyset caching in SQLite WASM adapter. Adds database tables and functions for storing/retrieving mint metadata and keysets with expiration tracking and comprehensive debug logging.
+
+## 0.5.13
+
+### Patch Changes
+
+- Fix race condition when subscriptions start before cache initialization completes
+
+    Previously, if a subscription started before `initializeAsync()` completed, the cache adapter would throw "Database not initialized" errors. This was a common footgun in apps where NDK subscriptions started immediately on load.
+
+    The cache adapter now gracefully handles early queries by:
+    - Returning a Promise that waits for initialization if called during init
+    - Returning an empty array if called before initialization starts
+    - Setting a `ready` flag to track initialization state
+
+    This allows apps to start subscriptions immediately without waiting for cache initialization - they'll simply get cache hits once the database is ready.
+
+## 0.5.12
+
+### Patch Changes
+
+- Add Cashu mint caching support with `loadCashuMintInfo`, `saveCashuMintInfo`, `loadCashuMintKeys`, and `saveCashuMintKeys` methods
+
 ## 0.5.10
 
 ### Patch Changes
@@ -9,7 +42,6 @@
     Prevents runtime errors in cache adapters (especially SQLite WASM) that cannot handle undefined values in parameterized queries.
 
     The NDK constructor now accepts a `filterValidationMode` option:
-
     - `"validate"` (default): Throws an error when filters contain undefined values
     - `"fix"`: Automatically removes undefined values from filters
     - `"ignore"`: Skip validation entirely (legacy behavior)
@@ -176,7 +208,6 @@
     This release adds optional Web Worker support to the NDK Cache SQLite WASM adapter. Users can now opt-in to running database operations in a separate thread, which prevents UI blocking during intensive operations.
 
     ## Features
-
     - Added `useWorker` and `workerUrl` options to the adapter configuration
     - Implemented a Web Worker script that handles database operations
     - Modified all database methods to work in both main thread and Web Worker modes
@@ -247,7 +278,6 @@
     This release introduces the `ndk-cache-sqlite-wasm` package, a browser-compatible SQLite cache adapter for NDK, designed to match the features and API of the ndk-mobile SQLite adapter.
 
     ### Features
-
     - Implements the full NDKCacheAdapter interface, including:
         - Event caching (setEvent, getEvent, etc.)
         - Profile caching (fetchProfile, saveProfile, etc.)
@@ -262,7 +292,6 @@
     - Documentation is symlinked into the main docs/cache directory.
 
     ### Usage
-
     - Adapter is loaded and initialized automatically, including WASM and migrations.
     - No manual persistence required; database is loaded and saved automatically.
     - Example page demonstrates bulk event writing, reading, and performance measurement.
@@ -270,7 +299,6 @@
     ### Task summary
 
     This work included:
-
     - Designing a modular, maintainable package structure.
     - Implementing all required and advanced cache methods in their own files.
     - Ensuring full feature parity with ndk-mobile's SQLite adapter.

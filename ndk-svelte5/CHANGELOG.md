@@ -1,5 +1,67 @@
 # Changelog
 
+## 3.0.0
+
+### Minor Changes
+
+- 73c6a2f: Wire up automatic Cashu mint caching in wallet store. When a cache adapter is available, mint metadata and keysets are automatically cached during wallet initialization, completely transparent to app developers.
+
+### Patch Changes
+
+- Updated dependencies [73c6a2f]
+- Updated dependencies [fad1f3d]
+    - @nostr-dev-kit/ndk@2.17.0
+
+## 2.0.0
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.16.0
+
+## 1.4.1
+
+### Patch Changes
+
+- fix: properly implement WoT auto-reload without hacks
+
+    **The Problem:**
+    The original fix for the effect_orphan error introduced a hacky workaround that silently ignored the `autoReload` parameter, creating unnecessary technical debt and API confusion.
+
+    **The Root Cause:**
+    WoT store was designed as a singleton that "reloaded" when sessions changed. This was fundamentally wrong because:
+    1. WoT is per-user (tied to a specific pubkey)
+    2. Each session needs its own WoT instance
+    3. Using `$effect` to watch session changes was a hack to work around bad architecture
+
+    **The Proper Fix:**
+    1. **Session-scoped WoT**: Changed WoT from singleton to a map of `pubkey -> NDKWoT`. Each session gets its own WoT instance.
+    2. **Reactive derivation**: Use `$derived` to automatically switch to the current session's WoT - pure reactivity, no effects needed.
+    3. **Observer pattern for auto-reload**: Added `sessions.onSessionChange()` callback system that works outside component context - plain JavaScript, no Svelte primitives.
+
+    **Technical Changes:**
+    - `WoTStore` now maintains `Map<pubkey, NDKWoT>` instead of single instance
+    - Current WoT is derived from current session using `$derived`
+    - `SessionStore` has callback system for session changes
+    - Auto-reload works correctly at module scope via callbacks
+    - Removed all `$effect` usage from stores
+    - Removed hacky parameter stripping from `initStores`
+
+    **Result:**
+    - No more silently ignored parameters
+    - `createNDK({ wot: { autoReload: true } })` works as expected
+    - Cleaner architecture: WoT per session, not global singleton
+    - No hacks, no workarounds, no technical debt
+
+- fix: validate root pubkey in NDKWoT constructor
+
+    Added validation to ensure the root pubkey passed to NDKWoT constructor is a valid 64-character hex string. This prevents invalid pubkeys from being used in filter authors arrays, which would cause errors when building the WoT graph at depth > 0.
+
+    The validation happens in the constructor and throws an error with a clear message if an invalid pubkey is provided. This catches issues early rather than failing deep in the fetchEvents call.
+
+- Updated dependencies
+    - @nostr-dev-kit/ndk-wot@0.2.1
+
 ## 1.4.0
 
 ### Minor Changes

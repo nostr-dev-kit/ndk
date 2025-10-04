@@ -1,5 +1,20 @@
 # @nostr-dev-kit/ndk-mobile
 
+## 0.8.43
+
+### Patch Changes
+
+- Updated dependencies [b7e7f92]
+    - @nostr-dev-kit/ndk@2.17.1
+
+## 0.8.42
+
+### Patch Changes
+
+- Updated dependencies [73c6a2f]
+- Updated dependencies [fad1f3d]
+    - @nostr-dev-kit/ndk@2.17.0
+
 ## 0.8.40
 
 ### Patch Changes

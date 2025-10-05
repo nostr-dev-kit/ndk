@@ -6,7 +6,7 @@ import { NDKEvent } from '../src/events/index.js';
 import { NDKPrivateKeySigner } from '../src/signers/private-key/index.js';
 
 describe('Subscription Dispatching Performance', () => {
-    bench('dispatch 1000 events with 10 subscriptions', async () => {
+    bench('dispatch 1000 events with 10 subscriptions', () => {
         const ndk = new NDK();
         const manager = new NDKSubscriptionManager();
 
@@ -31,7 +31,7 @@ describe('Subscription Dispatching Performance', () => {
         }
     });
 
-    bench('dispatch 1000 events with 50 subscriptions', async () => {
+    bench('dispatch 1000 events with 50 subscriptions', () => {
         const ndk = new NDK();
         const manager = new NDKSubscriptionManager();
 
@@ -56,7 +56,7 @@ describe('Subscription Dispatching Performance', () => {
         }
     });
 
-    bench('dispatch 1000 events with 100 subscriptions', async () => {
+    bench('dispatch 1000 events with 100 subscriptions', () => {
         const ndk = new NDK();
         const manager = new NDKSubscriptionManager();
 
@@ -81,7 +81,7 @@ describe('Subscription Dispatching Performance', () => {
         }
     });
 
-    bench('dispatch 5000 events with 100 subscriptions (stress test)', async () => {
+    bench('dispatch 5000 events with 100 subscriptions (stress test)', () => {
         const ndk = new NDK();
         const manager = new NDKSubscriptionManager();
 
@@ -110,7 +110,7 @@ describe('Subscription Dispatching Performance', () => {
         }
     });
 
-    bench('dispatch with mixed subscription types', async () => {
+    bench('dispatch with mixed subscription types', () => {
         const ndk = new NDK();
         const manager = new NDKSubscriptionManager();
 

@@ -1,4 +1,5 @@
 import { type VerifiedEvent, matchFilters } from "nostr-tools";
+import { LRUCache } from "typescript-lru-cache";
 import type { NDKEventId, NostrEvent } from "../events/index.js";
 import type { NDKRelay } from "../relay/index.js";
 import type { NDKSubscription } from "./index.js";
@@ -10,7 +11,12 @@ export type NDKSubscriptionId = string;
  */
 export class NDKSubscriptionManager {
     public subscriptions: Map<NDKSubscriptionId, NDKSubscription>;
-    public seenEvents = new Map<NDKEventId, NDKRelay[]>();
+
+    // Use LRU cache instead of unbounded Map to prevent memory leaks
+    public seenEvents = new LRUCache<NDKEventId, NDKRelay[]>({
+        maxSize: 10000, // Keep last 10k events
+        entryExpirationTimeInMS: 5 * 60 * 1000 // 5 minutes
+    });
 
     constructor() {
         this.subscriptions = new Map();

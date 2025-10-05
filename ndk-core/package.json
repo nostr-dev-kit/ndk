@@ -50,6 +50,8 @@
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
     "test:ui": "vitest --ui",
+    "benchmark": "vitest bench --run",
+    "benchmark:watch": "vitest bench",
     "lint": "prettier --check . && eslint .",
     "compile": "tsc",
     "posttest": "bun run lint",

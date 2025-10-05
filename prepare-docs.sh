@@ -12,6 +12,7 @@ WALLET_DIR="ndk-wallet"
 WOT_DIR="ndk-wot"
 SVELTE_DIR="ndk-svelte"
 HOOKS_DIR="ndk-hooks"
+SESSIONS_DIR="ndk-sessions"
 
 # Clean previous copied docs, careful not to remove .vitepress or package.json
 echo "Cleaning previous docs..."
@@ -29,7 +30,8 @@ rm -rf \
     "$DOCS_DIR/wallet" \
     "$DOCS_DIR/wot" \
     "$DOCS_DIR/wrappers" \
-    "$DOCS_DIR/hooks"
+    "$DOCS_DIR/hooks" \
+    "$DOCS_DIR/sessions"
 # Create target directories
 echo "Creating target directories..."
 mkdir -p \
@@ -43,7 +45,8 @@ mkdir -p \
     "$DOCS_DIR/snippets/wallet" \
     "$DOCS_DIR/wot" \
     "$DOCS_DIR/wrappers" \
-    "$DOCS_DIR/hooks"
+    "$DOCS_DIR/hooks" \
+    "$DOCS_DIR/sessions"
 # --- Copy functions ---
 copy_dir_contents() {
     local src_dir=$1
@@ -107,5 +110,8 @@ copy_file "$SVELTE_DIR/docs/wrappers/svelte.md" "$DOCS_DIR/wrappers"
 
 # Hooks
 copy_dir_contents "$HOOKS_DIR/docs" "$DOCS_DIR/hooks"
+
+# Sessions
+copy_file "$SESSIONS_DIR/README.md" "$DOCS_DIR/sessions"
 
 echo "Docs preparation complete."

@@ -1,0 +1,23 @@
+{
+  "sessions": [
+    [
+      "a55c14a9bf12270e7f1a7f29a4a74e8e8fe8557fea27d737cd191768faaa846d",
+      {
+        "pubkey": "a55c14a9bf12270e7f1a7f29a4a74e8e8fe8557fea27d737cd191768faaa846d",
+        "signerPayload": "{\"type\":\"private-key\",\"payload\":\"9062a06cfc926ffc8d9f1cd48f02f9982019ffcd344bb7b4ebe96d97bc857d93\"}",
+        "lastActive": 1759647653
+      }
+    ],
+    [
+      "06aa06197b0c55ee35b883be0c8f36d8aa864b0b6983a6c77c82c869e36ac7d2",
+      {
+        "pubkey": "06aa06197b0c55ee35b883be0c8f36d8aa864b0b6983a6c77c82c869e36ac7d2",
+        "signerPayload": "{\"type\":\"private-key\",\"payload\":\"30fb9be9c3cbcb9446d6e7230b6020f4dfc2b60977331cea548c3ae96e4fb03b\"}",
+        "lastActive": 0
+      }
+    ]
+  ],
+  "activePubkey": "a55c14a9bf12270e7f1a7f29a4a74e8e8fe8557fea27d737cd191768faaa846d",
+  "version": 1,
+  "updatedAt": 1759647653636
+}

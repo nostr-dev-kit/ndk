@@ -108,6 +108,11 @@ export interface NDKConstructorParams {
     mutedIds?: Map<Hexpubkey | NDKEventId, string>;
 
     /**
+     * Muted words (case-insensitive)
+     */
+    mutedWords?: Set<string>;
+
+    /**
      * Custom filter function to determine if an event should be muted.
      * Defaults to checking if event.pubkey or event.id is in mutedIds.
      * @param event - The event to check
@@ -287,6 +292,7 @@ export class NDK extends EventEmitter<{
     public devWriteRelaySet?: NDKRelaySet;
     public outboxTracker?: OutboxTracker;
     public mutedIds: Map<Hexpubkey | NDKEventId, string>;
+    public mutedWords: Set<string>;
     public muteFilter: (event: NDKEvent) => boolean;
     public clientName?: string;
     public clientNip89?: string;
@@ -421,8 +427,26 @@ export class NDK extends EventEmitter<{
         this.signer = opts.signer;
         this.cacheAdapter = opts.cacheAdapter;
         this.mutedIds = opts.mutedIds || new Map();
+        this.mutedWords = opts.mutedWords || new Set();
 
-        // Default mute filter checks mutedIds
+        // Helper to check if a kind has text content worth filtering
+        const isContentKind = (kind: number): boolean => {
+            // Text notes
+            if (kind === 1) return true;
+            // Long-form content
+            if (kind === 30023) return true;
+            // DMs and Giftwraps
+            if (kind === 4 || kind === 1059) return true;
+            // Badges
+            if (kind === 30009) return true;
+            // Live chat messages
+            if (kind === 1311) return true;
+            // Regular events (comments, etc)
+            if (kind >= 1000 && kind < 10000) return true;
+            return false;
+        };
+
+        // Default mute filter checks mutedIds and mutedWords
         this.muteFilter =
             opts.muteFilter ||
             ((event: NDKEvent) => {
@@ -431,6 +455,15 @@ export class NDK extends EventEmitter<{
 
                 // Check if event ID is muted
                 if (event.id && this.mutedIds.has(event.id)) return true;
+
+                // Check if content contains muted words (only for content kinds)
+                // Performance: only check if we have muted words AND this is a content kind
+                if (event.content && this.mutedWords.size > 0 && isContentKind(event.kind)) {
+                    const lowerContent = event.content.toLowerCase();
+                    for (const word of this.mutedWords) {
+                        if (lowerContent.includes(word)) return true;
+                    }
+                }
 
                 return false;
             });
@@ -574,8 +607,9 @@ export class NDK extends EventEmitter<{
         if (user && differentUser) {
             setActiveUser.call(this, user);
         } else if (!user) {
-            // reset mutedIds
+            // reset mutedIds and mutedWords
             this.mutedIds = new Map();
+            this.mutedWords = new Set();
         }
     }
 

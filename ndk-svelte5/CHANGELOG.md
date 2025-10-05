@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.0.1
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/sessions@0.2.0
+
 ## 3.0.0
 
 ### Minor Changes

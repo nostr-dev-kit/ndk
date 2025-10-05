@@ -9,7 +9,7 @@ A ground-up reimagining of NDK for Svelte 5, built with runes, designed for beau
 ndk-svelte5 embraces **Svelte 5's reactive primitives** to create a library that feels native, performs beautifully, and makes building Nostr apps a joy.
 
 - **Runes-first**: Reactive classes using `$state`, `$derived`, and `$effect`
-- **Global stores**: For shared state (profiles, sessions, mutes)
+- **Namespaced stores**: All stores under single NDK instance
 - **Zero compromises**: No backwards compatibility, pure Svelte 5
 - **Performance-focused**: Buffered updates, smart deduplication
 - **TypeScript-native**: Full type safety and inference
@@ -23,7 +23,7 @@ ndk-svelte5 embraces **Svelte 5's reactive primitives** to create a library that
 ### ✅ Implemented Features
 
 - **Core Subscriptions**: Reactive EventSubscription with automatic cleanup
-- **Global Stores**: Profiles, sessions, mutes, and wallet
+- **Namespaced Stores**: Sessions, WoT, wallet, payments, and pool
 - **Advanced Features**: ReactiveEvent and ReactiveFilter classes
 - **Wallet Integration**: Full support for Cashu, NWC, and WebLN wallets
 - **Payment Tracking**: Reactive payment/transaction tracking with pending state management
@@ -45,43 +45,32 @@ pnpm add @nostr-dev-kit/ndk-svelte5
 
 ## Setup
 
-Initialize NDK and global stores in your app:
+Initialize NDK in your app:
 
 ```typescript
 // lib/ndk.ts
 import { NDKSvelte } from '@nostr-dev-kit/ndk-svelte5';
-import { initStores } from '@nostr-dev-kit/ndk-svelte5';
+import NDKCacheDexie from '@nostr-dev-kit/ndk-cache-dexie';
 
 export const ndk = new NDKSvelte({
   explicitRelayUrls: [
     'wss://relay.damus.io',
     'wss://relay.nostr.band',
   ],
+  cacheAdapter: new NDKCacheDexie({ dbName: 'my-app' })
 });
 
-// Initialize stores with session persistence (default: localStorage)
-await initStores(ndk);
-
-await ndk.connect();
+ndk.connect();
 ```
 
 **Session Persistence:**
 Sessions are automatically persisted to localStorage by default. Users stay logged in across page reloads.
 
-```typescript
-// Disable persistence (sessions only in memory)
-await initStores(ndk, { sessionStorage: false });
-
-// Custom storage (e.g., React Native)
-import { MyCustomStorage } from './storage';
-await initStores(ndk, { sessionStorage: new MyCustomStorage() });
-```
-
 ## Core Concepts
 
 ### 1. Reactive Subscriptions
 
-The heart of ndk-svelte5 is the `EventSubscription` class - a reactive, self-managing subscription.
+The heart of ndk-svelte5 is the `subscribe()` method - a reactive, self-managing subscription.
 
 ```svelte
 <script lang="ts">
@@ -89,7 +78,7 @@ import { ndk } from '$lib/ndk';
 import { NDKKind } from '@nostr-dev-kit/ndk';
 
 // Create a reactive subscription
-const notes = ndk.subscribeReactive([{ kinds: [NDKKind.Text], limit: 50 }]);
+const notes = ndk.subscribe({ kinds: [NDKKind.Text], limit: 50 });
 
 // Properties are $state runes that automatically trigger reactivity
 // when accessed in Svelte templates or $effect blocks
@@ -133,30 +122,33 @@ $inspect(event.replyCount);   // Live reply count
 </button>
 ```
 
-### 3. Global Stores
+### 3. Namespaced Stores
 
-For shared state across your app, ndk-svelte5 provides global stores using Svelte's `$state` API:
+All stores are namespaced under the NDK instance:
 
 ```svelte
 <script lang="ts">
-import { profiles, sessions, mutes } from '@nostr-dev-kit/ndk-svelte5/stores';
-
-// Profile store - automatically fetches and caches profiles
-const profile = profiles.get(pubkey);
+import { ndk } from '$lib/ndk';
 
 // Session management
-const currentUser = sessions.current;
-sessions.login(signer);
-sessions.logout();
+const currentUser = ndk.sessions.current;
+await ndk.sessions.login(signer);
+ndk.sessions.logout();
 
-// Mute management - automatically filters subscriptions
-mutes.add({ pubkey: 'hex...' });
-mutes.add({ word: 'spam' });      // Mute by keyword
-mutes.add({ hashtag: 'nsfw' });   // Mute by hashtag
-const isMuted = mutes.check({ pubkey });
+// Web of Trust
+await ndk.wot.load();
+const score = ndk.wot.getScore(pubkey);
+
+// Wallet
+ndk.wallet.set(myWallet);
+const balance = ndk.wallet.balance;
+
+// Payments
+const amount = ndk.payments.getZapAmount(event);
+
+// Pool
+const connected = ndk.pool.connectedCount;
 </script>
-
-<img src={profile?.image} alt={profile?.name} />
 ```
 
 ## Subscription API
@@ -167,9 +159,7 @@ const isMuted = mutes.check({ pubkey });
 <script lang="ts">
 import { ndk } from '$lib/ndk';
 
-const sub = ndk.subscribe([
-  { kinds: [1], authors: [pubkey], limit: 100 }
-]);
+const sub = ndk.subscribe({ kinds: [1], authors: [pubkey], limit: 100 });
 
 // The subscription has reactive properties
 sub.events  // T[] - sorted by created_at desc
@@ -184,13 +174,10 @@ sub.isEmpty // boolean (derived)
 ```svelte
 <script lang="ts">
 const highlights = ndk.subscribe(
-  [{ kinds: [9802], limit: 50 }],
+  { kinds: [9802], limit: 50 },
   {
     // Buffer events for performance (default: 30ms)
     bufferMs: 30,
-
-    // Include muted content (mutes are filtered by default)
-    includeMuted: true,
 
     // Convert events to specific class
     eventClass: NDKHighlight,
@@ -203,32 +190,6 @@ const highlights = ndk.subscribe(
     onEose: () => console.log('EOSE reached'),
   }
 );
-</script>
-```
-
-### Advanced: Reposts
-
-Automatically fetch reposted events:
-
-```svelte
-<script lang="ts">
-const highlights = ndk.subscribe(
-  [{ kinds: [9802], '#t': ['nostr'] }],
-  {
-    // Also fetch reposts (kind 16)
-    reposts: {
-      filters: [{ kinds: [16], '#k': ['9802'], '#t': ['nostr'] }],
-      // Reposts will be automatically resolved and merged
-    }
-  }
-);
-
-// Access repost information
-{#each highlights.events as highlight}
-  {#if highlight.reposts?.length}
-    Reposted by {highlight.reposts.length} users
-  {/if}
-{/each}
 </script>
 ```
 
@@ -253,256 +214,135 @@ sub.remove(eventId);
 </script>
 ```
 
-## Profile Store
-
-The profile store automatically fetches, caches, and keeps profiles up-to-date:
-
-```svelte
-<script lang="ts">
-import { profiles } from '@nostr-dev-kit/ndk-svelte5/stores';
-
-// Get a profile (fetches if not cached)
-const profile = profiles.get(pubkey);
-
-// Profile is reactive - updates automatically
-$inspect(profile); // { name, image, about, ... }
-
-// Batch fetch multiple profiles
-await profiles.fetch([pubkey1, pubkey2, pubkey3]);
-
-// Update current user's profile
-await profiles.update({
-  name: 'New Name',
-  image: 'https://...',
-  about: 'Bio',
-});
-
-// Listen to profile updates
-$effect(() => {
-  if (profile) {
-    console.log('Profile updated:', profile.name);
-  }
-});
-</script>
-```
-
-### Profile Components
-
-```svelte
-<script lang="ts">
-import { UserProfile, UserAvatar, UserName } from '@nostr-dev-kit/ndk-svelte5/components';
-</script>
-
-<!-- Automatic profile fetching and rendering -->
-<UserAvatar {pubkey} size="lg" />
-<UserName {pubkey} />
-<UserProfile {pubkey} />
-```
-
 ## Session Management
 
 Built-in multi-user session support with automatic persistence:
 
 ```svelte
 <script lang="ts">
-import { sessions } from '@nostr-dev-kit/ndk-svelte5/stores';
+import { ndk } from '$lib/ndk';
+import { NDKNip07Signer } from '@nostr-dev-kit/ndk';
 
 // Current session (reactive)
-const current = sessions.current;
-$inspect(current?.pubkey);
-$inspect(current?.profile);
+const current = $derived(ndk.sessions.current);
+const profile = $derived(ndk.sessions.profile);
+const follows = $derived(ndk.sessions.follows);
 
-// Reactive accessors for current session data
-$inspect(sessions.follows);  // Set<string> - followed pubkeys
-$inspect(sessions.mutes);    // Set<string> - muted pubkeys
-$inspect(sessions.profile);  // NDKUserProfile | undefined
+async function login() {
+  const signer = new NDKNip07Signer();
+  await ndk.sessions.login(signer);
+}
 
-// Get session events by kind
-const contactList = sessions.getSessionEvent(3);      // Kind 3: Contacts
-const muteList = sessions.getSessionEvent(10000);     // Kind 10000: Mutes
-const relayList = sessions.getSessionEvent(10002);    // Kind 10002: Relays
-
-// Login with NIP-07, NIP-46, or NIP-55
-await sessions.login(signer);
-
-// Add multiple accounts
-await sessions.add(signer2);
-
-// Switch between accounts
-sessions.switch(pubkey);
-
-// Logout
-sessions.logout(pubkey); // specific user
-sessions.logoutAll();    // all users
-
-// All sessions
-$inspect(sessions.all); // Session[]
+function logout() {
+  ndk.sessions.logout();
+}
 </script>
 
-<!-- UI Example -->
 {#if current}
-  <UserProfile pubkey={current.pubkey} />
-  <p>Following {sessions.follows.size} accounts</p>
-  <button onclick={() => sessions.logout()}>Logout</button>
+  <div>
+    <p>Logged in as {profile?.name || 'Anonymous'}</p>
+    <p>Following {follows.size} accounts</p>
+    <button onclick={logout}>Logout</button>
+  </div>
 {:else}
-  <button onclick={handleLogin}>Login</button>
+  <button onclick={login}>Login</button>
 {/if}
-
-<!-- Account switcher -->
-<select onchange={(e) => sessions.switch(e.target.value)}>
-  {#each sessions.all as session}
-    <option value={session.pubkey}>{session.profile?.name}</option>
-  {/each}
-</select>
 ```
 
-### Session State
-
-Each session includes:
+### Session API
 
 ```typescript
-interface Session {
-  pubkey: string;
-  signer: NDKSigner;
-  profile?: NDKUserProfile;
-  follows: Set<string>;     // Following list
-  mutes: Set<string>;       // Muted users
-  relays: NDKRelaySet;      // User's relays
-  events: Map<number, NDKEvent>; // Cached replaceable events
-}
-```
-
-### Session Persistence
-
-Sessions are automatically persisted to localStorage and restored on page reload:
-
-```typescript
-import { initStores, NDKSessionLocalStorage } from '@nostr-dev-kit/ndk-svelte5';
-
-// Default: uses localStorage (sessions persist across page reloads)
-await initStores(ndk);
-
-// Use custom storage adapter (e.g., for React Native)
-import { MyCustomStorage } from './storage';
-await initStores(ndk, { sessionStorage: new MyCustomStorage() });
-
-// Disable persistence
-await initStores(ndk, { sessionStorage: false });
-```
-
-**What gets persisted:**
-- All logged-in sessions (signer payloads)
-- Active session (which user was active)
-- Sessions are automatically restored when `initStores()` is called
-
-**Custom Storage Adapter:**
-
-```typescript
-import { NDKSessionStorageAdapter } from '@nostr-dev-kit/ndk-svelte5';
-
-class MyCustomStorage implements NDKSessionStorageAdapter {
-  getItem(key: string): string | null {
-    // Your storage implementation
-  }
-
-  setItem(key: string, value: string): void {
-    // Your storage implementation
-  }
-
-  deleteItem(key: string): void {
-    // Your storage implementation
-  }
-}
-```
-
-### Session Store API
-
-The session store provides convenient reactive accessors for current session data:
-
-```typescript
-// Reactive getters (return data for current session)
-sessions.current    // Session | undefined
-sessions.all        // Session[]
-sessions.follows    // Set<string> - empty Set if no session
-sessions.mutes      // Set<string> - empty Set if no session
-sessions.profile    // NDKUserProfile | undefined
+// Reactive getters
+ndk.sessions.current      // NDKSession | undefined
+ndk.sessions.currentUser  // NDKUser | undefined
+ndk.sessions.profile      // NDKUserProfile | undefined
+ndk.sessions.follows      // Set<Hexpubkey>
+ndk.sessions.all          // NDKSession[]
 
 // Methods
-sessions.login(signer)           // Login and set as active
-sessions.add(signer)             // Add without switching
-sessions.switch(pubkey)          // Switch active session
-sessions.logout(pubkey?)         // Logout (current or specific)
-sessions.logoutAll()             // Clear all sessions
-sessions.get(pubkey)             // Get specific session
-sessions.getSessionEvent(kind)   // Get event by kind for current session
+await ndk.sessions.login(signer, options?)
+await ndk.sessions.add(signer, options?)
+ndk.sessions.switch(pubkey)
+ndk.sessions.logout(pubkey?)
+ndk.sessions.logoutAll()
+ndk.sessions.get(pubkey)
+ndk.sessions.getSessionEvent(kind)
+```
+
+## Web of Trust
+
+Powerful WoT filtering and ranking:
+
+```svelte
+<script lang="ts">
+import { ndk } from '$lib/ndk';
+import { onMount } from 'svelte';
+
+onMount(async () => {
+  if (ndk.sessions.current) {
+    // Load WoT data
+    await ndk.wot.load({ maxDepth: 2 });
+
+    // Enable automatic filtering on all subscriptions
+    ndk.wot.enableAutoFilter({
+      maxDepth: 2,
+      minScore: 0.5,
+      includeUnknown: false
+    });
+  }
+});
+
+// Subscriptions automatically filter by WoT when enabled
+const notes = ndk.subscribe({ kinds: [1], limit: 100 });
+</script>
+```
+
+### WoT API
+
+```typescript
+// Load WoT data
+await ndk.wot.load({ maxDepth?: number, maxFollows?: number, timeout?: number })
+
+// Enable/disable automatic filtering
+ndk.wot.enableAutoFilter(options?)
+ndk.wot.disableAutoFilter()
+
+// Query WoT
+ndk.wot.getScore(pubkey)              // number (0-1)
+ndk.wot.getDistance(pubkey)           // number | null
+ndk.wot.includes(pubkey, options?)    // boolean
+ndk.wot.shouldFilterEvent(event)      // boolean
+ndk.wot.rankEvents(events, options?)  // T[]
+
+// State
+ndk.wot.loaded                        // boolean
+ndk.wot.autoFilterEnabled             // boolean
 ```
 
 ## Mute Management
 
-Powerful muting with automatic filtering across all subscriptions:
+Mute management is handled directly by NDK core:
 
 ```svelte
 <script lang="ts">
-import { mutes } from '@nostr-dev-kit/ndk-svelte5/stores';
+import { ndk } from '$lib/ndk';
+
+// Mute lists are automatically loaded when user logs in
 
 // Check if muted
-const isMuted = mutes.check({ pubkey });
-const isWordMuted = mutes.check({ content: 'badword' });
-const isTagMuted = mutes.check({ hashtag: 'spam' });
+const isMuted = ndk.mutedIds.has(pubkey);
+const isWordMuted = ndk.muteFilter(event);
 
-// Add mutes
-mutes.add({ pubkey: 'hex...' });
-mutes.add({ word: 'spam' });       // Keyword filtering
-mutes.add({ hashtag: 'scam' });    // Hashtag filtering
-mutes.add({ eventId: 'hex...' });
+// Mute/unmute
+ndk.mutedIds.set(pubkey, "p");
+ndk.mutedIds.delete(pubkey);
 
-// Remove mutes
-mutes.remove({ pubkey: 'hex...' });
-
-// Clear all mutes
-mutes.clear();
-
-// Publish mute list to your relays (NIP-51)
-await mutes.publish();
-
-// All muted items (reactive)
-$inspect(mutes.pubkeys);   // Set<string>
-$inspect(mutes.words);     // Set<string>
-$inspect(mutes.hashtags);  // Set<string>
-$inspect(mutes.eventIds);  // Set<string>
+ndk.mutedWords.add("spam");
+ndk.mutedWords.delete("spam");
 </script>
 ```
 
-### Automatic Filtering
-
-**All subscriptions automatically filter muted content by default.** The `mutes` store integrates with NDK's core mute filter, so muted events never reach your UI.
-
-```svelte
-<script lang="ts">
-// Muted content is automatically filtered out
-const notes = ndk.subscribe([{ kinds: [1] }]);
-
-// Opt-in to include muted content (e.g., for moderation UI)
-const allNotes = ndk.subscribe([{ kinds: [1] }], {
-  includeMuted: true
-});
-
-// Check if an event is muted
-{#each allNotes.events as note}
-  {#if note.muted()}
-    <div class="muted">This content is muted</div>
-  {:else}
-    <div>{note.content}</div>
-  {/if}
-{/each}
-</script>
-```
-
-The `mutes` store provides advanced filtering beyond the default:
-- **Pubkey muting**: Block content from specific users
-- **Keyword muting**: Filter posts containing specific words
-- **Hashtag muting**: Hide posts with specific hashtags
-- **Event muting**: Block specific events by ID
+**Performance Note:** Word filtering only runs on content kinds (1, 30023, 4, 1059, 30009, 1311, and kinds 1000-9999). Non-content events are not checked for muted words for performance.
 
 ## Wallet Integration
 
@@ -510,43 +350,33 @@ Seamless integration with ndk-wallet:
 
 ```svelte
 <script lang="ts">
-import { wallet } from '@nostr-dev-kit/ndk-svelte5/wallet';
+import { ndk } from '$lib/ndk';
 import { NDKCashuWallet } from '@nostr-dev-kit/ndk-wallet';
 
-// Create wallet
+// Create and set wallet
 const cashuWallet = new NDKCashuWallet(ndk);
-wallet.set(cashuWallet);
+await cashuWallet.init();
+ndk.wallet.set(cashuWallet);
 
 // Reactive wallet state
-$inspect(wallet.balance);        // number
-$inspect(wallet.balanceByMint);  // Map<string, number>
-$inspect(wallet.connected);      // boolean
-$inspect(wallet.type);           // 'cashu' | 'nwc' | 'webln'
-
-// Send payment
-const result = await wallet.pay({
-  amount: 1000,
-  recipient: pubkey,
-  comment: 'Thanks!',
-});
-
-// Receive nutzaps
-const monitor = wallet.nutzaps.monitor();
-$inspect(monitor.pending);   // Nutzap[]
-$inspect(monitor.redeemed);  // Nutzap[]
-
-// Wallet history
-$inspect(wallet.history); // Transaction[]
+const balance = $derived(ndk.wallet.balance);
+const connected = $derived(!!ndk.wallet.wallet);
 </script>
 
-<!-- Wallet UI Components -->
-<script lang="ts">
-import { WalletBalance, WalletHistory, PaymentButton } from '@nostr-dev-kit/ndk-svelte5/wallet';
-</script>
+<p>Balance: {balance} sats</p>
+```
 
-<WalletBalance />
-<WalletHistory limit={10} />
-<PaymentButton {amount} {recipient} />
+### Wallet API
+
+```typescript
+// Set/clear wallet
+ndk.wallet.set(wallet)
+ndk.wallet.clear()
+await ndk.wallet.refreshBalance()
+
+// State
+ndk.wallet.wallet    // NDKWallet | undefined
+ndk.wallet.balance   // number
 ```
 
 ## Payment Tracking
@@ -555,126 +385,69 @@ Real-time payment tracking with automatic pending-to-confirmed transitions:
 
 ```svelte
 <script lang="ts">
-import { payments, PaymentMonitor } from '@nostr-dev-kit/ndk-svelte5';
-import { onMount } from 'svelte';
-
-// Initialize payment tracking
-onMount(() => {
-  payments.init(ndk, currentUser.pubkey);
-
-  // Start monitoring payment events (kind 7376, 9321, 9735)
-  const monitor = new PaymentMonitor(ndk, currentUser.pubkey);
-  monitor.start();
-
-  return () => monitor.stop();
-});
+import { ndk } from '$lib/ndk';
 
 // Reactive payment state
-$inspect(payments.history);      // Transaction[] - all transactions sorted by time
-$inspect(payments.pending);      // PendingPayment[] - pending payments only
-$inspect(payments.byTarget);     // Map<string, Transaction[]> - grouped by target
-</script>
-```
+const history = $derived(ndk.payments.history);
+const pending = $derived(ndk.payments.pending);
+const byTarget = $derived(ndk.payments.byTarget);
 
-### Payment Runes
-
-Use reactive payment runes in components:
-
-```svelte
-<script lang="ts">
-import {
-  useZapAmount,
-  useIsZapped,
-  useTransactions,
-  usePendingPayments,
-  zap
-} from '@nostr-dev-kit/ndk-svelte5';
-
-// Reactive zap state for a target
-const zapAmount = useZapAmount(event);
-const isZapped = useIsZapped(event);
-
-// Reactive transaction lists
-const allTxs = useTransactions();
-const outgoingTxs = useTransactions({ direction: 'out' });
-const recentTxs = useTransactions({ limit: 10 });
-const pending = usePendingPayments();
-
-// Send a zap with automatic tracking
-async function handleZap() {
-  await zap(event, 1000, { comment: 'Great post!' });
-  // Payment automatically appears in pending, then transitions to confirmed
-}
+// Check zap status
+const amount = ndk.payments.getZapAmount(event);
+const isZapped = ndk.payments.isZapped(event);
 </script>
 
 {#if isZapped}
-  <span>⚡ Zapped {zapAmount} sats</span>
-{:else}
-  <button onclick={handleZap}>⚡ Zap</button>
+  <span>⚡ Zapped {amount} sats</span>
 {/if}
 ```
 
-### Reactive Transaction Wrapper
-
-Rich transaction objects with computed properties:
-
-```svelte
-<script lang="ts">
-import { ReactiveTransaction } from '@nostr-dev-kit/ndk-svelte5';
-
-const tx = ReactiveTransaction.from(transaction);
-
-// Reactive computed properties
-$inspect(tx.isPending);        // boolean
-$inspect(tx.isConfirmed);      // boolean
-$inspect(tx.isFailed);         // boolean
-$inspect(tx.isIncoming);       // boolean
-$inspect(tx.isOutgoing);       // boolean
-$inspect(tx.formattedAmount);  // "+1,000 sats" or "-1,000 sats"
-$inspect(tx.relativeTime);     // "2m ago", "5h ago", etc.
-</script>
-
-<div class:pending={tx.isPending}>
-  <span>{tx.isIncoming ? '↓' : '↑'}</span>
-  <span>{tx.formattedAmount}</span>
-  <span>{tx.relativeTime}</span>
-</div>
-```
-
-### Built-in Components
-
-Pre-built payment UI components:
-
-```svelte
-<script lang="ts">
-import { ZapButton, TransactionList } from '@nostr-dev-kit/ndk-svelte5/components';
-</script>
-
-<!-- Zap button with automatic tracking -->
-<ZapButton target={event} amount={21} comment="Nice!" />
-
-<!-- Transaction history -->
-<TransactionList limit={10} direction="out" />
-```
-
-### How It Works
-
-The payment tracking system solves the "pending transaction" problem:
-
-1. **Instant Visibility**: When a payment starts, it appears immediately with an internal ID
-2. **Multi-source Tracking**: Monitors kind 7376 (spending history), 9321 (nutzaps), 9735 (zap receipts)
-3. **Smart Matching**: Automatically matches receipts to pending payments by recipient + timestamp
-4. **Status Transitions**: Pending → Complete → Confirmed (or Failed)
-5. **Unified View**: Merges all sources into single transaction list
+### Payments API
 
 ```typescript
-// Internal flow:
-zap(target, 1000)
-  → addPending() creates internal ID
-  → payment appears in UI immediately
-  → zapper emits 'complete' event
-  → receipt arrives (kind 9735)
-  → automatic matching transitions pending to confirmed
+// Query payments
+ndk.payments.getZapAmount(target)  // number
+ndk.payments.isZapped(target)      // boolean
+
+// State
+ndk.payments.history     // Transaction[]
+ndk.payments.pending     // PendingPayment[]
+ndk.payments.byTarget    // Map<string, Transaction[]>
+```
+
+## Relay Pool Monitoring
+
+Monitor relay connections:
+
+```svelte
+<script lang="ts">
+import { ndk } from '$lib/ndk';
+
+const connected = $derived(ndk.pool.connectedCount);
+const connecting = $derived(ndk.pool.connectingCount);
+const relays = $derived(ndk.pool.getConnectedRelays());
+</script>
+
+<p>Connected: {connected} | Connecting: {connecting}</p>
+
+<ul>
+  {#each relays as relay}
+    <li>{relay.url}</li>
+  {/each}
+</ul>
+```
+
+### Pool API
+
+```typescript
+// Query relays
+ndk.pool.getRelay(url)           // RelayInfo | undefined
+ndk.pool.getConnectedRelays()    // RelayInfo[]
+
+// State
+ndk.pool.relays            // Map<string, RelayInfo>
+ndk.pool.connectedCount    // number
+ndk.pool.connectingCount   // number
 ```
 
 ## Advanced Patterns
@@ -685,7 +458,7 @@ Create derived reactive state from subscriptions:
 
 ```svelte
 <script lang="ts">
-const notes = ndk.subscribe([{ kinds: [1], authors: [pubkey] }]);
+const notes = ndk.subscribe({ kinds: [1], authors: [pubkey] });
 
 // Derived state using $derived
 const recentNotes = $derived(
@@ -698,10 +471,6 @@ const notesByDay = $derived(
     (acc[day] ??= []).push(note);
     return acc;
   }, {} as Record<string, NDKEvent[]>)
-);
-
-const hasMedia = $derived(
-  notes.events.some(n => n.content.includes('https://'))
 );
 </script>
 ```
@@ -743,7 +512,7 @@ Run side effects when subscription state changes:
 
 ```svelte
 <script lang="ts">
-const notes = ndk.subscribe([{ kinds: [1] }]);
+const notes = ndk.subscribe({ kinds: [1] });
 
 // Run effect when new events arrive
 $effect(() => {
@@ -762,35 +531,13 @@ $effect(() => {
 </script>
 ```
 
-### Pagination
-
-Built-in pagination support:
-
-```svelte
-<script lang="ts">
-import { InfiniteScroll } from '@nostr-dev-kit/ndk-svelte5/components';
-
-const notes = ndk.subscribe([{ kinds: [1], limit: 20 }]);
-
-async function loadMore() {
-  await notes.fetchMore(20); // Fetch 20 more
-}
-</script>
-
-<InfiniteScroll on:loadmore={loadMore}>
-  {#each notes.events as note}
-    <EventCard {note} />
-  {/each}
-</InfiniteScroll>
-```
-
 ### Proper Use of EOSE
 
 The `eosed` flag is for **performance optimization and analytics**, not loading states:
 
 ```svelte
 <script lang="ts">
-const notes = ndk.subscribe([{ kinds: [1] }]);
+const notes = ndk.subscribe({ kinds: [1] });
 
 // ✅ Good: Trigger pagination after initial load
 $effect(() => {
@@ -802,7 +549,7 @@ $effect(() => {
 // ✅ Good: Performance analytics
 $effect(() => {
   if (notes.eosed) {
-    console.log(`Loaded ${notes.count} events from ${relay.url}`);
+    console.log(`Loaded ${notes.count} events`);
   }
 });
 
@@ -816,42 +563,6 @@ $effect(() => {
 {/each}
 ```
 
-### Reference Counting
-
-Share subscriptions across components for performance:
-
-```ts
-// lib/stores/highlights.ts
-import { ndk } from '$lib/ndk';
-
-export const highlightsSubscription = ndk.subscribe(
-  [{ kinds: [9802], limit: 100 }],
-  { autoStart: false }
-);
-```
-
-```svelte
-<!-- Component A -->
-<script lang="ts">
-import { highlightsSubscription } from '$lib/stores/highlights';
-import { onMount, onDestroy } from 'svelte';
-
-onMount(() => highlightsSubscription.ref());
-onDestroy(() => highlightsSubscription.unref());
-</script>
-
-<!-- Component B -->
-<script lang="ts">
-import { highlightsSubscription } from '$lib/stores/highlights';
-import { onMount, onDestroy } from 'svelte';
-
-onMount(() => highlightsSubscription.ref());
-onDestroy(() => highlightsSubscription.unref());
-</script>
-```
-
-Both components share the same subscription. It starts when the first mounts, stops when the last unmounts.
-
 ## Performance
 
 ### Buffered Updates
@@ -861,16 +572,14 @@ By default, events are buffered for 30ms to batch DOM updates:
 ```svelte
 <script lang="ts">
 // High-frequency updates (default)
-const sub1 = ndk.subscribe([filters], {
+const sub1 = ndk.subscribe(filters, {
   bufferMs: 30 // Batch updates every 30ms
 });
 
 // Real-time updates (no buffering)
-const sub2 = ndk.subscribe([filters], {
+const sub2 = ndk.subscribe(filters, {
   bufferMs: false // Update immediately
 });
-
-// After EOSE, buffering automatically reduces to 16ms (~60fps)
 </script>
 ```
 
@@ -891,22 +600,6 @@ const sub = ndk.subscribe([
 </script>
 ```
 
-### Virtual Lists
-
-For large lists, use virtual scrolling:
-
-```svelte
-<script lang="ts">
-import { VirtualList } from '@nostr-dev-kit/ndk-svelte5/components';
-
-const notes = ndk.subscribe([{ kinds: [1], limit: 1000 }]);
-</script>
-
-<VirtualList items={notes.events} let:item>
-  <EventCard event={item} />
-</VirtualList>
-```
-
 ## Type Safety
 
 Full TypeScript support with smart type inference:
@@ -917,26 +610,12 @@ import { NDKHighlight } from '@nostr-dev-kit/ndk';
 
 // Type is inferred as EventSubscription<NDKHighlight>
 const highlights = ndk.subscribe<NDKHighlight>(
-  [{ kinds: [9802] }],
+  { kinds: [9802] },
   { eventClass: NDKHighlight }
 );
 
 // highlights.events is NDKHighlight[]
 highlights.events[0].highlightedContent; // Type-safe
-
-// Custom event types
-class CustomEvent extends NDKEvent {
-  get specialProperty() {
-    return this.tagValue('special');
-  }
-}
-
-const custom = ndk.subscribe<CustomEvent>(
-  [{ kinds: [30000] }],
-  { eventClass: CustomEvent }
-);
-
-// custom.events[0].specialProperty is accessible
 ```
 
 ## Migration from ndk-svelte
@@ -946,7 +625,7 @@ const custom = ndk.subscribe<CustomEvent>(
 <script lang="ts">
 import { onDestroy } from 'svelte';
 
-const store = $ndk.storeSubscribe([{ kinds: [1] }]);
+const store = $ndk.storeSubscribe({ kinds: [1] });
 
 onDestroy(() => {
   store.unsubscribe();
@@ -959,7 +638,7 @@ onDestroy(() => {
 
 <!-- New (ndk-svelte5) -->
 <script lang="ts">
-const sub = ndk.subscribe([{ kinds: [1] }]);
+const sub = ndk.subscribe({ kinds: [1] });
 // No manual cleanup needed
 </script>
 
@@ -974,13 +653,14 @@ const sub = ndk.subscribe([{ kinds: [1] }]);
 
 ```
 NDKSvelte (extends NDK)
-├── subscribe() → EventSubscription<T>
-├── profiles → ProfileStore
-├── sessions → SessionStore
-├── mutes → MuteStore
-└── wallet → WalletStore
+├── subscribe() → Subscription<T>
+├── sessions → ReactiveSessionsStore
+├── wot → ReactiveWoTStore
+├── wallet → ReactiveWalletStore
+├── payments → ReactivePaymentsStore
+└── pool → ReactivePoolStore
 
-EventSubscription<T>
+Subscription<T>
 ├── events: T[] (reactive)
 ├── eosed: boolean (reactive)
 ├── count: number (derived)
@@ -993,16 +673,6 @@ ReactiveEvent (extends NDKEvent)
 ├── reactions: Map<string, number> (reactive)
 ├── zaps: number (reactive)
 └── replies: number (reactive)
-```
-
-### Store Architecture
-
-```
-stores/
-├── profiles.svelte.ts    - Global profile cache
-├── sessions.svelte.ts    - Multi-user session management
-├── mutes.svelte.ts       - Mute management
-└── wallet.svelte.ts      - Wallet state
 ```
 
 ## Examples
@@ -1024,30 +694,38 @@ See the [examples](./examples) directory for complete working examples:
 
 ```typescript
 class NDKSvelte extends NDK {
+  // Namespaced stores
+  sessions: ReactiveSessionsStore;
+  wot: ReactiveWoTStore;
+  wallet: ReactiveWalletStore;
+  payments: ReactivePaymentsStore;
+  pool: ReactivePoolStore;
+
+  // Subscription
   subscribe<T extends NDKEvent>(
     filters: NDKFilter | NDKFilter[],
     opts?: SubscriptionOptions
-  ): EventSubscription<T>;
+  ): Subscription<T>;
 }
 ```
 
-### EventSubscription
+### Subscription
 
 ```typescript
-class EventSubscription<T extends NDKEvent> {
-  // Reactive $state properties - automatically trigger updates when accessed
-  events: T[];                  // Reactive array of events
-  eosed: boolean;               // Reactive EOSE flag
-  error?: Error;                // Reactive error state
-  status: ConnectionStatus;     // Reactive connection status ('connecting' | 'connected' | 'disconnected' | 'error')
-  refCount: number;             // Reactive reference count
+class Subscription<T extends NDKEvent> {
+  // Reactive $state properties
+  events: T[];
+  eosed: boolean;
+  error?: Error;
+  status: ConnectionStatus;
+  refCount: number;
 
   // Derived getters
-  count: number;                // Derived from events.length
-  isEmpty: boolean;             // Derived from events.length === 0
+  count: number;
+  isEmpty: boolean;
 
   // Filter property
-  filters: NDKFilter[];         // Current filters
+  filters: NDKFilter[];
 
   // Methods
   start(): void;
@@ -1060,7 +738,6 @@ class EventSubscription<T extends NDKEvent> {
   remove(eventId: string): void;
   ref(): number;
   unref(): number;
-  setMuteFilter(filter: (event: NDKEvent) => boolean): void;
 }
 ```
 
@@ -1070,13 +747,9 @@ class EventSubscription<T extends NDKEvent> {
 interface SubscriptionOptions {
   bufferMs?: number | false;
   skipDeleted?: boolean;
-  skipMuted?: boolean;
   eventClass?: typeof NDKEvent;
   relaySet?: NDKRelaySet;
   autoStart?: boolean;
-  reposts?: {
-    filters: NDKFilter[];
-  };
   onEvent?: (event: NDKEvent, relay?: NDKRelay) => void;
   onEose?: () => void;
 }
@@ -1086,51 +759,33 @@ interface SubscriptionOptions {
 
 ### Reactivity Not Working?
 
-If you find that `subscribeReactive` isn't updating your UI:
+Make sure you're accessing properties in Svelte templates or reactive contexts:
 
-1. **Make sure you're accessing properties in Svelte templates or reactive contexts** - The `events`, `eosed`, `status`, `error`, and `refCount` properties are `$state` runes that only track changes when accessed in reactive contexts like:
-   - Svelte templates (`{#each subscription.events as event}`)
-   - `$effect` blocks
-   - `$derived` expressions
+```svelte
+<script lang="ts">
+const sub = ndk.subscribe({ kinds: [1] });
 
-2. **Example of reactive access:**
-   ```svelte
-   <script lang="ts">
-   const sub = ndk.subscribeReactive([{ kinds: [1] }]);
+// ✅ Good - accessed in template, automatically reactive
+</script>
 
-   // ✅ Good - accessed in template, automatically reactive
-   </script>
+{#each sub.events as event}
+  <div>{event.content}</div>
+{/each}
 
-   {#each sub.events as event}
-     <div>{event.content}</div>
-   {/each}
-
-   <!-- ✅ Good - accessed in effect -->
-   <script lang="ts">
-   $effect(() => {
-     console.log('Events updated:', sub.events.length);
-   });
-   </script>
-   ```
-
-3. **Example of non-reactive access:**
-   ```svelte
-   <script lang="ts">
-   const sub = ndk.subscribeReactive([{ kinds: [1] }]);
-
-   // ❌ Bad - accessing in regular JavaScript doesn't create reactive dependency
-   function logEvents() {
-     console.log(sub.events.length); // Won't track changes
-   }
-   </script>
-   ```
+<!-- ✅ Good - accessed in effect -->
+<script lang="ts">
+$effect(() => {
+  console.log('Events updated:', sub.events.length);
+});
+</script>
+```
 
 ### Key Points About Svelte 5 Reactivity
 
 - `$state` variables are reactive, but **you must access them in reactive contexts** for Svelte to track changes
 - Simply reading a value in regular JavaScript doesn't create a reactive dependency
 - Always access subscription properties in templates, `$effect`, or `$derived` to ensure reactivity
-- **Arrays are mutated in place** - The subscription internally uses `.length = 0` and `.push()` to mutate the events array rather than replacing it, which ensures Svelte's reactivity system detects changes
+- **Arrays are mutated in place** - The subscription internally uses `.length = 0` and `.push()` to mutate the events array rather than replacing it
 
 ## Philosophy & Design Decisions
 
@@ -1142,9 +797,9 @@ Svelte 5's runes provide fine-grained reactivity that's perfect for real-time da
 
 Breaking free from legacy patterns lets us build something truly modern. ndk-svelte5 is designed for new projects and future-looking apps.
 
-### Why Global Stores?
+### Why Namespaced Stores?
 
-Some state (profiles, sessions, mutes) is truly global. Svelte 5 still recommends stores for shared state - we use them where appropriate.
+Namespacing stores under the NDK instance prevents global pollution and makes the API clearer. Everything related to NDK is accessible through a single import.
 
 ### Why Beautiful APIs?
 

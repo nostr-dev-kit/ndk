@@ -34,6 +34,7 @@
         "ndk-svelte",
         "ndk-hooks",
         "ndk-mobile",
+        "ndk-sessions",
         "ndk-svelte5",
         "ndk-svelte5/examples/test-app",
         "ndk-svelte5/examples/sessions-demo",

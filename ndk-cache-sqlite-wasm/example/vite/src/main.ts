@@ -1,11 +1,14 @@
 import "./style.css";
 
 import NDKCacheAdapterSqliteWasm from "@nostr-dev-kit/ndk-cache-sqlite-wasm";
+import NDK, { NDKEvent } from "@nostr-dev-kit/ndk";
+
+const ndk = new NDK();
 
 // Minimal Nostr event structure for demo
 function createDemoEvent(value: string) {
     const now = Math.floor(Date.now() / 1000);
-    return {
+    const event = new NDKEvent(ndk, {
         id: crypto.randomUUID(),
         pubkey: "demo-pubkey",
         created_at: now,
@@ -13,7 +16,8 @@ function createDemoEvent(value: string) {
         tags: [],
         content: value,
         sig: "demo-sig",
-    };
+    });
+    return event;
 }
 
 let lastEventId: string | null = null;
@@ -55,7 +59,7 @@ async function init() {
     resultDiv.textContent = "Initializing database...";
     try {
         console.log("Initializing adapter...");
-        await adapter.initialize();
+        await adapter.initializeAsync();
         console.log("Adapter initialized successfully");
         resultDiv.textContent = "Database initialized. Ready!";
     } catch (e) {
@@ -93,7 +97,7 @@ document.getElementById("retrieve")!.onclick = async () => {
         console.log("Retrieving event:", lastEventId);
         // getEvent only takes an id parameter, not a filter
         const event = await adapter.getEvent(lastEventId);
-        console.log("Event retrieved:", event ? "success" : "not found");
+        console.log("Event retrieved:", event ? "success" : "not found", event);
         if (event) {
             resultDiv.textContent = `Retrieved event: ${JSON.stringify(event, null, 2)}`;
         } else {

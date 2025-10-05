@@ -101,5 +101,12 @@ function processMuteList(this: NDK, muteList: NDKEvent) {
         this.mutedIds.set(item[1], item[0]);
     }
 
-    debug("Added %d users to mute list", list.items.length);
+    // Extract muted words from "word" tags
+    for (const tag of muteList.tags) {
+        if (tag[0] === "word" && tag[1]) {
+            this.mutedWords.add(tag[1].toLowerCase());
+        }
+    }
+
+    debug("Added %d users and %d words to mute list", list.items.length, this.mutedWords.size);
 }

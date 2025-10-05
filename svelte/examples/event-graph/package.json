@@ -1,0 +1,22 @@
+{
+    "name": "event-graph-example",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview"
+    },
+    "dependencies": {
+        "@nostr-dev-kit/ndk": "^2.15.0",
+        "@nostr-dev-kit/ndk-cache-sqlite-wasm": "^0.6.1",
+        "@nostr-dev-kit/svelte": "^0.1.0"
+    },
+    "devDependencies": {
+        "@sveltejs/vite-plugin-svelte": "^4.0.0",
+        "svelte": "^5.23.0",
+        "typescript": "^5.0.0",
+        "vite": "^6.0.0"
+    }
+}

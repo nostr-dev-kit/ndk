@@ -1,0 +1,23 @@
+{
+    "name": "ndk-svelte5-nutsack-wallet",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview"
+    },
+    "dependencies": {
+        "@nostr-dev-kit/ndk": "^2.15.2",
+        "@nostr-dev-kit/ndk-cache-sqlite-wasm": "^0.5.11",
+        "@nostr-dev-kit/svelte": "../..",
+        "@nostr-dev-kit/ndk-wallet": "file:../../../../ndk-wallet",
+        "qrcode": "^1.5.4"
+    },
+    "devDependencies": {
+        "@sveltejs/vite-plugin-svelte": "^5.0.2",
+        "svelte": "^5.18.1",
+        "vite": "^6.0.0"
+    }
+}

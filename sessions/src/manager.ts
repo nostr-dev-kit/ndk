@@ -129,6 +129,15 @@ export class NDKSessionManager {
     }
 
     /**
+     * Check if a session is read-only (no signer available)
+     */
+    isReadOnly(pubkey?: Hexpubkey): boolean {
+        const targetPubkey = pubkey ?? this.getCurrentState().activePubkey;
+        if (!targetPubkey) return true;
+        return !this.getCurrentState().signers.has(targetPubkey);
+    }
+
+    /**
      * Login with a signer or user
      *
      * @example

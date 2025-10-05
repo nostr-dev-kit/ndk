@@ -4,6 +4,7 @@ temp
 **/dist
 **/lib
 !ndk-svelte-components/src/lib/
+!svelte/src/lib/
 **/.vscode
 justfile
 package-lock.json

@@ -1,9 +1,10 @@
 import type { NDKEvent, NDKFilter, NDKSubscription } from "@nostr-dev-kit/ndk";
 import { useEffect, useRef } from "react";
 import { useStore } from "zustand";
+import type { StoreApi } from "zustand/vanilla";
 import { useMuteFilter } from "../../mutes/hooks/use-mute-filter";
 import { useNDK } from "../../ndk/hooks";
-import { createSubscribeStore } from "../store";
+import { createSubscribeStore, type SubscribeStore } from "../store";
 import type { UseSubscribeOptions } from ".";
 
 /**
@@ -23,13 +24,13 @@ export function useSubscribe<T extends NDKEvent, R = T[]>(
 
     const muteFilter = useMuteFilter();
 
-    const storeRef = useRef(null);
+    const storeRef = useRef(null as StoreApi<SubscribeStore<T>> | null);
     if (!storeRef.current) {
-        storeRef.current = createSubscribeStore(opts.bufferMs);
+        storeRef.current = createSubscribeStore<T>(opts.bufferMs);
     }
     const store = storeRef.current;
 
-    const subRef = useRef(null);
+    const subRef = useRef(null as NDKSubscription | null);
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: <we only one to depend on the explicit dependencies>
     useEffect(() => {

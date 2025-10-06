@@ -23,13 +23,13 @@ export function formatFilters(filters: NDKFilter[]): string {
             const parts: string[] = [];
 
             if (f.ids?.length) {
-                parts.push(`ids:[${formatArray(f.ids, (id) => id.slice(0, 8))}]`);
+                parts.push(`ids:[${formatArray(f.ids, (id) => String(id).slice(0, 8))}]`);
             }
             if (f.kinds?.length) {
                 parts.push(`kinds:[${formatArray(f.kinds)}]`);
             }
             if (f.authors?.length) {
-                parts.push(`authors:[${formatArray(f.authors, (a) => a.slice(0, 8))}]`);
+                parts.push(`authors:[${formatArray(f.authors, (a) => String(a).slice(0, 8))}]`);
             }
             if (f.since) {
                 parts.push(`since:${f.since}`);
@@ -41,13 +41,13 @@ export function formatFilters(filters: NDKFilter[]): string {
                 parts.push(`limit:${f.limit}`);
             }
             if (f.search) {
-                parts.push(`search:"${f.search.slice(0, 20)}"`);
+                parts.push(`search:"${String(f.search).slice(0, 20)}"`);
             }
 
             // Handle tag filters like #e, #p, etc.
             for (const [key, value] of Object.entries(f)) {
                 if (key.startsWith("#") && Array.isArray(value) && value.length > 0) {
-                    parts.push(`${key}:[${formatArray(value, (v) => v.slice(0, 8))}]`);
+                    parts.push(`${key}:[${formatArray(value, (v) => String(v).slice(0, 8))}]`);
                 }
             }
 

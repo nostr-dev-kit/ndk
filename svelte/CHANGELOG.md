@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.2.0
+
+### Minor Changes
+
+- b035fa3: Add read-only session support to ReactiveSessionsStore
+
+    Updated the Svelte 5 sessions store to support read-only sessions:
+    - `login()` and `add()` methods now accept both NDKSigner and NDKUser
+    - Added `isReadOnly(pubkey?)` method to check if a session has signer access
+    - Sessions created with just an NDKUser are automatically read-only
+
+### Patch Changes
+
+- Updated dependencies [a912a2c]
+- Updated dependencies [4b71e74]
+- Updated dependencies [446b753]
+    - @nostr-dev-kit/ndk@2.15.3
+    - @nostr-dev-kit/sessions@0.2.0
+    - @nostr-dev-kit/wot@0.3.0
+
 ## 3.0.1
 
 ### Patch Changes

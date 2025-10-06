@@ -1,6 +1,6 @@
 {
     "name": "ndk-svelte5-wot-demo",
-    "version": "0.1.6",
+    "version": "0.1.7",
     "private": true,
     "type": "module",
     "scripts": {
@@ -9,9 +9,9 @@
         "preview": "vite preview"
     },
     "dependencies": {
-        "@nostr-dev-kit/ndk": "^2.15.2",
+        "@nostr-dev-kit/ndk": "^2.15.3",
         "@nostr-dev-kit/svelte": "../..",
-        "@nostr-dev-kit/wot": "^0.2.1",
+        "@nostr-dev-kit/wot": "^0.3.0",
         "nostr-tools": "^2.10.2"
     },
     "devDependencies": {

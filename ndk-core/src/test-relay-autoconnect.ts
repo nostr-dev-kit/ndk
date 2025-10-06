@@ -4,8 +4,10 @@ import debug from "debug";
 
 debug.enable("ndk,ndk:outbox-tracker");
 
+import type { NDKEvent } from "./events/index.js";
 import { NDKKind } from "./events/kinds/index.js";
-import { NDK, type NDKEvent, type NDKFilter } from "./ndk/index.js";
+import type { NDKFilter } from "./subscription/index.js";
+import { NDK } from "./ndk/index.js";
 import type { NDKRelay } from "./relay/index.js";
 
 const npub = process.argv[2];
@@ -120,7 +122,10 @@ async function run() {
     process.on("SIGINT", () => {
         console.log("\n\nShutting down...");
         sub.stop();
-        ndk.pool.disconnect();
+        // Disconnect all relays
+        for (const relay of ndk.pool.relays.values()) {
+            relay.disconnect();
+        }
         process.exit(0);
     });
 }

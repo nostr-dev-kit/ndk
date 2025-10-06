@@ -21,7 +21,7 @@ async function getUserRelayList(this: NDK, user: NDKUser): Promise<NDKRelayList 
         }
     }
 
-    debug("Connected to %d user relays", userRelays.relays.size);
+    debug("Connected to %d user relays", userRelays.relays.length);
     return userRelays;
 }
 

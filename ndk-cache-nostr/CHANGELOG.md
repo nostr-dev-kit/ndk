@@ -1,5 +1,16 @@
 # @nostr-dev-kit/ndk-cache-nostr
 
+## 0.1.56
+
+### Patch Changes
+
+- 26c6222: Migrate to new subscription event pattern to eliminate race conditions
+
+    Updated subscription handling to use `.on()` event handlers instead of inline callbacks, matching the recent NDK core refactoring to prevent subscription race conditions with onEvent/onEose/onClose handlers.
+
+- Updated dependencies [a912a2c]
+    - @nostr-dev-kit/ndk@2.15.3
+
 ## 0.1.55
 
 ### Patch Changes

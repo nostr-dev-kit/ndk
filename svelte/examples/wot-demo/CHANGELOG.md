@@ -1,5 +1,14 @@
 # ndk-svelte5-wot-demo
 
+## 0.1.7
+
+### Patch Changes
+
+- Updated dependencies [a912a2c]
+- Updated dependencies [446b753]
+    - @nostr-dev-kit/ndk@2.15.3
+    - @nostr-dev-kit/wot@0.3.0
+
 ## 0.1.6
 
 ### Patch Changes

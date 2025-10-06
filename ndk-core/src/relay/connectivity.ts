@@ -66,7 +66,7 @@ export class NDKRelayConnectivity {
      */
     private setupMonitoring(): void {
         // Setup keepalive to detect silent relays
-        this.keepalive = new NDKRelayKeepalive(30000, async () => {
+        this.keepalive = new NDKRelayKeepalive(120000, async () => {
             this.debug("Relay silence detected, probing connection");
             const isAlive = await probeRelayConnection({
                 send: (msg: any[]) => this.send(JSON.stringify(msg)),
@@ -352,10 +352,23 @@ export class NDKRelayConnectivity {
             const data = JSON.parse(event.data);
             const [cmd, id, ..._rest] = data;
 
+            // Check for registered protocol handlers first
+            const handler = this.ndkRelay.getProtocolHandler(cmd);
+            if (handler) {
+                handler(this.ndkRelay, data);
+                return;
+            }
+
             switch (cmd) {
                 case "EVENT": {
                     const so = this.openSubs.get(id);
                     const event = data[2] as NostrEvent;
+                    console.log("[NDK-RELAY] EVENT received:", {
+                        eventId: event.id?.substring(0, 8),
+                        relayUrl: this.url,
+                        subId: id,
+                        hasSub: !!so,
+                    });
                     if (!so) {
                         this.debug(`Received event for unknown subscription ${id}`);
                         return;

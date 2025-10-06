@@ -225,6 +225,12 @@ export interface NDKSubscriptionEventHandlers {
      * @param sub The NDKSubscription instance that reached EOSE.
      */
     onEose?: (sub: NDKSubscription) => void;
+
+    /**
+     * Called when the subscription is closed.
+     * @param sub The NDKSubscription instance that was closed.
+     */
+    onClose?: (sub: NDKSubscription) => void;
 }
 
 /**
@@ -745,8 +751,12 @@ export class NDK extends EventEmitter<{
      *
      * @example Basic subscription
      * ```typescript
-     * const sub = ndk.subscribe({ kinds: [1], authors: [pubkey] });
-     * sub.on("event", (event) => console.log("Kind 1 event:", event.content));
+     * const sub = ndk.subscribe(
+     *   { kinds: [1], authors: [pubkey] },
+     *   {
+     *     onEvent: (event) => console.log("Kind 1 event:", event.content)
+     *   }
+     * );
      * ```
      *
      * @example Subscription with options and direct handlers
@@ -789,8 +799,19 @@ export class NDK extends EventEmitter<{
             autoStart = autoStartOrRelaySet;
         }
 
+        // Merge event handlers from autoStart into opts
+        let eventsHandler: ((events: NDKEvent[]) => void) | undefined;
+        const finalOpts = { relaySet: _relaySet, ...opts };
+
+        if (autoStart && typeof autoStart === "object") {
+            if (autoStart.onEvent) finalOpts.onEvent = autoStart.onEvent;
+            if (autoStart.onEose) finalOpts.onEose = autoStart.onEose;
+            if (autoStart.onClose) finalOpts.onClose = autoStart.onClose;
+            if (autoStart.onEvents) eventsHandler = autoStart.onEvents;
+        }
+
         // NDKSubscription constructor now handles relaySet/relayUrls from opts
-        const subscription = new NDKSubscription(this, filters, { relaySet: _relaySet, ...opts });
+        const subscription = new NDKSubscription(this, filters, finalOpts);
         this.subManager.add(subscription);
 
         const pool = subscription.pool; // Use the pool determined by the subscription options
@@ -813,13 +834,6 @@ export class NDK extends EventEmitter<{
         }
 
         if (autoStart) {
-            let eventsHandler: ((events: NDKEvent[]) => void) | undefined;
-            if (typeof autoStart === "object") {
-                if (autoStart.onEvent) subscription.on("event", autoStart.onEvent);
-                if (autoStart.onEose) subscription.on("eose", autoStart.onEose);
-                if (autoStart.onEvents) eventsHandler = autoStart.onEvents;
-            }
-
             setTimeout(() => {
                 const cachedEvents = subscription.start(!eventsHandler);
                 if (cachedEvents && cachedEvents.length > 0 && !!eventsHandler) eventsHandler(cachedEvents);
@@ -968,13 +982,6 @@ export class NDK extends EventEmitter<{
             };
             if (relaySet) subscribeOpts.relaySet = relaySet;
 
-            const relaySetSubscription = this.subscribe(
-                filters,
-                subscribeOpts,
-                // relaySet, // Removed: Passed via opts
-                false, // autoStart = false
-            );
-
             const onEvent = (event: NostrEvent | NDKEvent) => {
                 let _event: NDKEvent;
                 if (!(event instanceof NDKEvent)) _event = new NDKEvent(undefined, event);
@@ -991,19 +998,23 @@ export class NDK extends EventEmitter<{
                 events.set(dedupKey, _event);
             };
 
+            const relaySetSubscription = this.subscribe(
+                filters,
+                {
+                    ...subscribeOpts,
+                    onEvent,
+                    onEose: () => {
+                        resolve(new Set(events.values()));
+                    }
+                }
+            );
+
             // We want to inspect duplicated events
             // so we can dedup them
-            relaySetSubscription.on("event", onEvent);
             // relaySetSubscription.on("event:dup", (rawEvent: NostrEvent) => {
             //     const ndkEvent = new NDKEvent(undefined, rawEvent);
             //     onEvent(ndkEvent)
             // });
-
-            relaySetSubscription.on("eose", () => {
-                resolve(new Set(events.values()));
-            });
-
-            relaySetSubscription.start();
         });
     }
 

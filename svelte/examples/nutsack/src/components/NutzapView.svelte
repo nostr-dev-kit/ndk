@@ -44,25 +44,11 @@
     error = '';
 
     try {
-      let pubkey = input.trim();
+      const user = await ndk.fetchUser(input.trim());
 
-      // Check if it's a NIP-05 identifier
-      if (input.includes('@') && !input.includes('npub')) {
-        // Resolve NIP-05
-        const profile = await ndk.getUserFromNip05(input);
-        if (profile) {
-          pubkey = profile.pubkey;
-        } else {
-          throw new Error('Could not resolve NIP-05 identifier');
-        }
-      } else if (input.startsWith('npub')) {
-        // Decode npub
-        const user = new NDKUserClass({ npub: input });
-        pubkey = user.pubkey;
+      if (!user) {
+        throw new Error('Could not resolve user identifier');
       }
-
-      const user = new NDKUserClass({ pubkey });
-      user.ndk = ndk;
 
       // Fetch user profile
       await user.fetchProfile();
@@ -124,24 +110,25 @@
 
         // Fetch kind 10019 events for all contacts
         const pubkeys = contactArray.map(c => c.pubkey);
-        const subscription = ndk.subscribe(
+        ndk.subscribe(
           { kinds: [10019], authors: pubkeys },
-          { closeOnEose: true }
+          {
+            closeOnEose: true,
+            onEvent: (event) => {
+              has10019.add(event.pubkey);
+              has10019 = has10019; // Force reactivity
+
+              // Re-sort contacts to prioritize those with kind 10019
+              contacts = contacts.sort((a, b) => {
+                const aHas = has10019.has(a.pubkey);
+                const bHas = has10019.has(b.pubkey);
+                if (aHas && !bHas) return -1;
+                if (!aHas && bHas) return 1;
+                return 0;
+              });
+            }
+          }
         );
-
-        subscription.on('event', (event) => {
-          has10019.add(event.pubkey);
-          has10019 = has10019; // Force reactivity
-
-          // Re-sort contacts to prioritize those with kind 10019
-          contacts = contacts.sort((a, b) => {
-            const aHas = has10019.has(a.pubkey);
-            const bHas = has10019.has(b.pubkey);
-            if (aHas && !bHas) return -1;
-            if (!aHas && bHas) return 1;
-            return 0;
-          });
-        });
 
         // Fetch profiles for all contacts
         contactArray.forEach(async (contact) => {

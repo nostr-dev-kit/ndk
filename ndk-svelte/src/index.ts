@@ -315,14 +315,21 @@ class NDKSvelte extends NDK {
                 filters.push(...opts.repostsFilters);
             }
 
-            store.subscription = this.subscribe(filters, { ...opts, relaySet }, false); // Pass relaySet via opts
+            const eoseCallbacks: (() => void)[] = [];
+            if (opts?.onEose) eoseCallbacks.push(opts.onEose);
 
-            store.subscription.on("event", (event: NDKEvent, relay?: NDKRelay) => {
-                handleEvent(event);
-                if (opts?.onEvent) opts.onEvent(event, relay);
+            store.subscription = this.subscribe(filters, {
+                ...opts,
+                relaySet,
+                onEvent: (event: NDKEvent, relay?: NDKRelay) => {
+                    handleEvent(event);
+                    if (opts?.onEvent) opts.onEvent(event, relay);
+                },
+                onEose: () => {
+                    store.eosed = true;
+                    eoseCallbacks.forEach(cb => cb());
+                }
             });
-
-            store.subscription.start();
 
             store.unsubscribe = () => {
                 store.subscription?.stop();
@@ -330,15 +337,9 @@ class NDKSvelte extends NDK {
             };
 
             store.onEose = (cb) => {
-                store.subscription?.on("eose", () => {
-                    store.eosed = true;
-                    cb();
-                });
+                eoseCallbacks.push(cb);
+                if (store.eosed) cb();
             };
-
-            if (opts?.onEose) {
-                store.onEose(opts.onEose);
-            }
         };
 
         if (autoStart) {

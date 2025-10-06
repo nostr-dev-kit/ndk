@@ -269,21 +269,23 @@ export class NDKCashuWallet extends NDKWallet {
         subOpts.subId ??= "cashu-wallet-state";
 
         return new Promise<void>((resolve) => {
-            this.sub = this.ndk.subscribe(filters, { ...subOpts, relaySet: this.relaySet }, false);
+            this.sub = this.ndk.subscribe(filters, {
+                ...subOpts,
+                relaySet: this.relaySet,
+                onEvent: (event: NDKEvent) => {
+                    eventHandler.call(this, event);
+                },
+                onEose: async () => {
+                    // Fetch the mint list for nutzap reception configuration
+                    await this.fetchMintList();
+
+                    this.emit("ready");
+                    this.status = NDKWalletStatus.READY;
+                    resolve();
+                }
+            });
 
             this.sub.on("event:dup", eventDupHandler.bind(this));
-            this.sub.on("event", (event: NDKEvent) => {
-                eventHandler.call(this, event);
-            });
-            this.sub.on("eose", async () => {
-                // Fetch the mint list for nutzap reception configuration
-                await this.fetchMintList();
-
-                this.emit("ready");
-                this.status = NDKWalletStatus.READY;
-                resolve();
-            });
-            this.sub.start();
         });
     }
 

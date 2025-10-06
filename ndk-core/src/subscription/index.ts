@@ -166,6 +166,30 @@ export interface NDKSubscriptionOptions {
      * @default false
      */
     includeMuted?: boolean;
+
+    /**
+     * Called for each event received by the subscription.
+     * This eliminates the race condition of subscribing and then attaching event handlers.
+     * @param event The received NDKEvent.
+     * @param relay The relay the event was received from (undefined if from cache).
+     * @param subscription The subscription that received the event.
+     * @param fromCache Whether the event came from cache.
+     * @param optimisticPublish Whether this is an optimistic publish event.
+     */
+    onEvent?: (event: NDKEvent, relay?: NDKRelay, subscription?: NDKSubscription, fromCache?: boolean, optimisticPublish?: boolean) => void;
+
+    /**
+     * Called when the subscription receives an EOSE (End of Stored Events) marker
+     * from all connected relays.
+     * @param subscription The subscription that reached EOSE.
+     */
+    onEose?: (subscription: NDKSubscription) => void;
+
+    /**
+     * Called when the subscription is closed.
+     * @param subscription The subscription that was closed.
+     */
+    onClose?: (subscription: NDKSubscription) => void;
 }
 
 /**
@@ -207,10 +231,14 @@ export const defaultOpts: NDKSubscriptionOptions = {
  * * {NDKSubscription} subscription - The subscription that was closed.
  *
  * @example
- * const sub = ndk.subscribe({ kinds: [1] }); // Get all kind:1s
- * sub.on("event", (event) => console.log(event.content); // Show the content
- * sub.on("eose", () => console.log("All relays have reached the end of the event stream"));
- * sub.on("close", () => console.log("Subscription closed"));
+ * const sub = ndk.subscribe(
+ *   { kinds: [1] }, // Get all kind:1s
+ *   {
+ *     onEvent: (event) => console.log(event.content), // Show the content
+ *     onEose: () => console.log("All relays have reached the end of the event stream"),
+ *     onClose: () => console.log("Subscription closed")
+ *   }
+ * );
  * setTimeout(() => sub.stop(), 10000); // Stop the subscription after 10 seconds
  *
  * @description
@@ -222,8 +250,13 @@ export const defaultOpts: NDKSubscriptionOptions = {
  * This can be disabled by setting the `skipValidation` option to `true`.
  *
  * @example
- * const sub = ndk.subscribe({ kinds: [1] }, { skipValidation: false });
- * sub.on("event", (event) => console.log(event.content); // Only valid events will be received
+ * const sub = ndk.subscribe(
+ *   { kinds: [1] },
+ *   {
+ *     skipValidation: false,
+ *     onEvent: (event) => console.log(event.content) // Only valid events will be received
+ *   }
+ * );
  */
 export class NDKSubscription extends EventEmitter<{
     cacheEose: () => void;
@@ -363,6 +396,17 @@ export class NDKSubscription extends EventEmitter<{
         this.closeOnEose = this.opts.closeOnEose || false;
         this.skipOptimisticPublishEvent = this.opts.skipOptimisticPublishEvent || false;
         this.cacheUnconstrainFilter = this.opts.cacheUnconstrainFilter;
+
+        // Attach event handlers from options to eliminate race condition
+        if (this.opts.onEvent) {
+            this.on("event", this.opts.onEvent);
+        }
+        if (this.opts.onEose) {
+            this.on("eose", this.opts.onEose);
+        }
+        if (this.opts.onClose) {
+            this.on("close", this.opts.onClose);
+        }
     }
 
     /**
@@ -693,7 +737,12 @@ export class NDKSubscription extends EventEmitter<{
                         ndkEvent.relay = relay;
 
                         // Attempt verification
-                        if (!this.ndk.asyncSigVerification) {
+                        if (this.ndk.asyncSigVerification) {
+                            // Async verification - call verifySignature but don't wait for result
+                            // The validation stats will be tracked in the async callback
+                            ndkEvent.verifySignature(true);
+                        } else {
+                            // Sync verification - check result immediately
                             if (!ndkEvent.verifySignature(true)) {
                                 this.debug("Event failed signature validation", event);
                                 // Report the invalid signature with relay information through the centralized method

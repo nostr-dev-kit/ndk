@@ -122,15 +122,16 @@ export class NDKNip46Backend {
     public async start() {
         this.localUser = await this.signer.user();
 
-        const sub = this.ndk.subscribe(
+        this.ndk.subscribe(
             {
                 kinds: [24133 as number],
                 "#p": [this.localUser.pubkey],
             },
-            { closeOnEose: false },
+            {
+                closeOnEose: false,
+                onEvent: (e) => this.handleIncomingEvent(e)
+            },
         );
-
-        sub.on("event", (e) => this.handleIncomingEvent(e));
     }
 
     public handlers: { [method: string]: IEventHandlingStrategy } = {

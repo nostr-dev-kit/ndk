@@ -61,38 +61,34 @@ export class NDKNostrRpc extends EventEmitter {
      * Subscribe to a filter. This function will resolve once the subscription is ready.
      */
     public subscribe(filter: NDKFilter): Promise<NDKSubscription> {
-        const sub = this.ndk.subscribe(
-            filter,
-            {
-                closeOnEose: false,
-                groupable: false,
-                cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY,
-                pool: this.pool,
-                relaySet: this.relaySet,
-            },
-            false,
-        );
-
-        sub.on("event", async (event: NDKEvent) => {
-            try {
-                const parsedEvent = await this.parseEvent(event);
-                if ((parsedEvent as NDKRpcRequest).method) {
-                    this.emit("request", parsedEvent);
-                } else {
-                    this.emit(`response-${parsedEvent.id}`, parsedEvent);
-                    this.emit("response", parsedEvent);
-                }
-            } catch (e) {
-                this.debug("error parsing event", e, event.rawEvent());
-            }
-        });
-
         return new Promise((resolve) => {
-            sub.on("eose", () => {
-                this.debug("eosed");
-                resolve(sub);
-            });
-            sub.start();
+            const sub = this.ndk.subscribe(
+                filter,
+                {
+                    closeOnEose: false,
+                    groupable: false,
+                    cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY,
+                    pool: this.pool,
+                    relaySet: this.relaySet,
+                    onEvent: async (event: NDKEvent) => {
+                        try {
+                            const parsedEvent = await this.parseEvent(event);
+                            if ((parsedEvent as NDKRpcRequest).method) {
+                                this.emit("request", parsedEvent);
+                            } else {
+                                this.emit(`response-${parsedEvent.id}`, parsedEvent);
+                                this.emit("response", parsedEvent);
+                            }
+                        } catch (e) {
+                            this.debug("error parsing event", e, event.rawEvent());
+                        }
+                    },
+                    onEose: () => {
+                        this.debug("eosed");
+                        resolve(sub);
+                    }
+                }
+            );
         });
     }
 

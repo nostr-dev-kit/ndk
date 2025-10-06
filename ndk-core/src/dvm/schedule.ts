@@ -78,44 +78,44 @@ export async function dvmSchedule(
 
     let res: NDKSubscription | undefined;
 
-    if (waitForConfirmationForMs) {
-        res = ndk.subscribe(
-            {
-                kinds: [NDKKind.DVMEventSchedule + 1000, NDKKind.DVMJobFeedback],
-                ...scheduleEvent.filter(),
-            },
-            { groupable: false, closeOnEose: false },
-        );
-    }
+    const schedulePromise = new Promise<NDKDVMJobFeedback | NDKEvent | string | undefined>((resolve, reject) => {
+        if (waitForConfirmationForMs) {
+            res = ndk.subscribe(
+                {
+                    kinds: [NDKKind.DVMEventSchedule + 1000, NDKKind.DVMJobFeedback],
+                    ...scheduleEvent.filter(),
+                },
+                {
+                    groupable: false,
+                    closeOnEose: false,
+                    onEvent: async (e: NDKEvent) => {
+                        res?.stop();
+                        if (e.kind === NDKKind.DVMJobFeedback) {
+                            const feedback = await NDKDVMJobFeedback.from(e);
+                            if (feedback.status === "error") {
+                                const statusTag = feedback.getMatchingTags("status");
+                                reject(statusTag?.[2] ?? feedback);
+                            } else {
+                                resolve(feedback);
+                            }
+                        }
+
+                        resolve(e);
+                    }
+                },
+            );
+        }
+
+        scheduleEvent.publish().then(() => {
+            if (!waitForConfirmationForMs) resolve(undefined);
+        });
+    });
 
     const timeoutPromise = new Promise<string>((reject) => {
         setTimeout(() => {
             res?.stop();
             reject("Timeout waiting for an answer from the DVM");
         }, waitForConfirmationForMs);
-    });
-
-    const schedulePromise = new Promise<NDKDVMJobFeedback | NDKEvent | string | undefined>((resolve, reject) => {
-        if (waitForConfirmationForMs) {
-            res?.on("event", async (e: NDKEvent) => {
-                res?.stop();
-                if (e.kind === NDKKind.DVMJobFeedback) {
-                    const feedback = await NDKDVMJobFeedback.from(e);
-                    if (feedback.status === "error") {
-                        const statusTag = feedback.getMatchingTags("status");
-                        reject(statusTag?.[2] ?? feedback);
-                    } else {
-                        resolve(feedback);
-                    }
-                }
-
-                resolve(e);
-            });
-        }
-
-        scheduleEvent.publish().then(() => {
-            if (!waitForConfirmationForMs) resolve(undefined);
-        });
     });
 
     return new Promise<NDKEvent | string | undefined>((resolve, reject) => {

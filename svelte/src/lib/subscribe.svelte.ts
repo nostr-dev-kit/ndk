@@ -189,11 +189,10 @@ export function createSubscription<T extends NDKEvent = NDKEvent>(
         subscription = NDK.prototype.subscribe.call(ndk, currentFilters, {
             ...opts,
             closeOnEose: false,
-        });
-
-        subscription.on("event", handleEvent);
-        subscription.on("eose", () => {
-            _eosed = true;
+            onEvent: handleEvent,
+            onEose: () => {
+                _eosed = true;
+            }
         });
     }
 

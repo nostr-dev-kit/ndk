@@ -23,36 +23,37 @@ export async function waitForResponse<M extends keyof NDKNWCResponseMap>(
                 "#e": [request.id],
                 limit: 1,
             },
-            { groupable: false, pool: this.pool },
-            this.relaySet,
-        );
+            {
+                groupable: false,
+                pool: this.pool,
+                relaySet: this.relaySet,
+                onEvent: async (event: NDKEvent) => {
+                    try {
+                        await event.decrypt(event.author, this.signer);
+                        const content = JSON.parse(event.content);
 
-        sub.on("event", async (event: NDKEvent) => {
-            try {
-                await event.decrypt(event.author, this.signer);
-                const content = JSON.parse(event.content);
-
-                if (content.error) {
-                    reject(content);
-                } else {
-                    resolve(content);
+                        if (content.error) {
+                            reject(content);
+                        } else {
+                            resolve(content);
+                        }
+                    } catch (e: any) {
+                        console.error("error decrypting event", e);
+                        reject({
+                            result_type: "error",
+                            error: {
+                                code: "failed_to_parse_response",
+                                message: e.message,
+                            },
+                        });
+                    } finally {
+                        sub.stop();
+                    }
+                },
+                onEose: () => {
+                    sendRequest();
                 }
-            } catch (e: any) {
-                console.error("error decrypting event", e);
-                reject({
-                    result_type: "error",
-                    error: {
-                        code: "failed_to_parse_response",
-                        message: e.message,
-                    },
-                });
-            } finally {
-                sub.stop();
             }
-        });
-
-        sub.on("eose", () => {
-            sendRequest();
-        });
+        );
     });
 }

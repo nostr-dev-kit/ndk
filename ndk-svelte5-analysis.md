@@ -548,7 +548,7 @@ ndk-svelte5/src/lib/
 └── components/                      # UI components
     ├── Avatar.svelte
     ├── BlossomImage.svelte
-    ├── ContentRenderer.svelte
+    ├── EventContent.svelte
     ├── TransactionList.svelte
     └── ZapButton.svelte
 ```

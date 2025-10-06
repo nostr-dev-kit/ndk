@@ -76,7 +76,7 @@
 ### Components
 - ✅ **Avatar** - User avatar display
 - ✅ **BlossomImage** - Blossom image with error healing
-- ✅ **ContentRenderer** - Content rendering with mentions
+- ✅ **EventContent** - Content rendering with mentions
 
 ### Build & Package
 - ✅ **TypeScript compilation** - Full type definitions generated
@@ -208,7 +208,7 @@ The foundation is comprehensive with:
 - ✅ **Stores**: profiles, sessions, mutes, wallet (4 stores)
 - ✅ **Reactive Classes**: ReactiveEvent, ReactiveFilter
 - ✅ **Utilities**: BlossomUrl, BlossomUpload
-- ✅ **Components**: Avatar, BlossomImage, ContentRenderer
+- ✅ **Components**: Avatar, BlossomImage, EventContent
 - ✅ **Build**: Full TypeScript definitions, proper package exports
 - ✅ **Documentation**: Comprehensive API docs and examples
 

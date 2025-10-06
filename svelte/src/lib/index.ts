@@ -20,6 +20,7 @@ export {
 // Components
 export { default as Avatar } from "./components/Avatar.svelte";
 export { default as BlossomImage } from "./components/BlossomImage.svelte";
+export { default as EventContent } from "./components/EventContent.svelte";
 export { type CreateNDKOptions, createNDK } from "./ndk.svelte.js";
 export { NDKSvelte } from "./ndk-svelte.svelte.js";
 // Payment runes

@@ -117,7 +117,7 @@
         return { type, content: uri, data: decoded.data };
       }
     } catch (error) {
-      console.warn('[ContentRenderer] Failed to decode Nostr URI:', uri);
+      console.warn('[EventContent] Failed to decode Nostr URI:', uri);
     }
 
     return { type: 'text', content: `nostr:${uri}` };

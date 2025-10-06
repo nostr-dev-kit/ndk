@@ -2,7 +2,7 @@
   import type NDK from '@nostr-dev-kit/ndk';
   import type { NDKEvent, NDKUser } from '@nostr-dev-kit/ndk';
   import { Avatar } from '@nostr-dev-kit/svelte';
-  import ContentRenderer from '../../../src/lib/components/ContentRenderer.svelte';
+  import EventContent from '../../../src/lib/components/EventContent.svelte';
 
   interface Props {
     ndk: NDK;
@@ -477,7 +477,7 @@
                 {#if isJSON(event.content)}
                   <pre class="json-content">{formatJSON(event.content)}</pre>
                 {:else}
-                  <ContentRenderer content={event.content} emojiTags={event.tags} event={event} />
+                  <EventContent content={event.content} emojiTags={event.tags} event={event} />
                 {/if}
               </div>
             {/if}

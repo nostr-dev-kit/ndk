@@ -1,7 +1,7 @@
 <script lang="ts">
   import { type NDKEvent } from '@nostr-dev-kit/ndk';
   import Avatar from '../../../../src/lib/components/Avatar.svelte';
-  import ContentRenderer from '../../../../src/lib/components/ContentRenderer.svelte';
+  import EventContent from '../../../../src/lib/components/EventContent.svelte';
 
   interface Props {
     bookmark: NDKEvent;
@@ -72,7 +72,7 @@
     <h3 class="title">{title}</h3>
     {#if description}
       <div class="description">
-        <ContentRenderer content={description} emojiTags={bookmark.tags} event={bookmark} />
+        <EventContent content={description} emojiTags={bookmark.tags} event={bookmark} />
       </div>
     {/if}
   </div>

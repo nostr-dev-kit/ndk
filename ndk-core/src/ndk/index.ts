@@ -21,6 +21,7 @@ import { NDKSubscriptionManager } from "../subscription/manager.js";
 import { filterFromId, isNip33AValue, relaysFromBech32 } from "../subscription/utils.js";
 import type { Hexpubkey, NDKUserParams, ProfilePointer } from "../user/index.js";
 import { NDKUser } from "../user/index.js";
+import { AIGuardrails } from "../utils/ai-guardrails.js";
 import { normalizeRelayUrl } from "../utils/normalize-url.js";
 import type { CashuPayCb, LnPayCb, NDKPaymentConfirmation, NDKZapSplit } from "../zapper/index.js";
 import type { NDKLnUrlData } from "../zapper/ln.js";
@@ -183,6 +184,31 @@ export interface NDKConstructorParams {
      * "ignore" - Skip validation entirely (legacy behavior)
      */
     filterValidationMode?: "validate" | "fix" | "ignore";
+
+    /**
+     * AI Guardrails - Runtime validation to catch common mistakes.
+     *
+     * @default false - Guardrails are disabled (zero performance impact)
+     *
+     * @example Enable all guardrails
+     * ```typescript
+     * const ndk = new NDK({ aiGuardrails: true });
+     * ```
+     *
+     * @example Enable with exceptions
+     * ```typescript
+     * const ndk = new NDK({
+     *   aiGuardrails: { skip: new Set(['filter-large-limit']) }
+     * });
+     * ```
+     *
+     * @example Programmatic control
+     * ```typescript
+     * ndk.aiGuardrails.skip('fetch-events-usage');
+     * ndk.aiGuardrails.enable('filter-bech32-in-array');
+     * ```
+     */
+    aiGuardrails?: boolean | { skip?: Set<string> };
 }
 
 export interface GetUserParams extends NDKUserParams {
@@ -196,7 +222,6 @@ export interface GetUserParams extends NDKUserParams {
 }
 
 export const DEFAULT_OUTBOX_RELAYS = ["wss://purplepag.es/", "wss://nos.lol/"];
-
 
 /**
  * Defines handlers that can be passed to `ndk.subscribe` via the `autoStart` parameter
@@ -278,6 +303,7 @@ export class NDK extends EventEmitter<{
     public validationRatioFn?: NDKValidationRatioFn;
     public filterValidationMode: "validate" | "fix" | "ignore" = "validate";
     public subManager: NDKSubscriptionManager;
+    public aiGuardrails: AIGuardrails;
 
     /**
      * Private storage for the signature verification function
@@ -423,6 +449,7 @@ export class NDK extends EventEmitter<{
         this.lowestValidationRatio = opts.lowestValidationRatio || 0.1;
         this.validationRatioFn = opts.validationRatioFn || this.defaultValidationRatioFn;
         this.filterValidationMode = opts.filterValidationMode || "validate";
+        this.aiGuardrails = new AIGuardrails(opts.aiGuardrails || false);
 
         try {
             this.httpFetch = fetch;
@@ -590,9 +617,7 @@ export class NDK extends EventEmitter<{
 
         // Emit event with relay information
         this.emit("event:invalid-sig", event, relay);
-
     }
-
 
     /**
      * Default function to calculate validation ratio based on historical validation results.
@@ -940,27 +965,23 @@ export class NDK extends EventEmitter<{
                 resolve(fetchedEvent);
             }, 10000);
 
-            const s = this.subscribe(
-                filters,
-                subscribeOpts,
-                {
-                    onEvent: (event: NDKEvent) => {
-                        event.ndk = this;
+            const s = this.subscribe(filters, subscribeOpts, {
+                onEvent: (event: NDKEvent) => {
+                    event.ndk = this;
 
-                        // We only emit immediately when the event is not replaceable
-                        if (!event.isReplaceable()) {
-                            clearTimeout(t2);
-                            resolve(event);
-                        } else if (!fetchedEvent || fetchedEvent.created_at! < event.created_at!) {
-                            fetchedEvent = event;
-                        }
-                    },
-                    onEose: () => {
+                    // We only emit immediately when the event is not replaceable
+                    if (!event.isReplaceable()) {
                         clearTimeout(t2);
-                        resolve(fetchedEvent);
+                        resolve(event);
+                    } else if (!fetchedEvent || fetchedEvent.created_at! < event.created_at!) {
+                        fetchedEvent = event;
                     }
-                }
-            );
+                },
+                onEose: () => {
+                    clearTimeout(t2);
+                    resolve(fetchedEvent);
+                },
+            });
         });
     }
 
@@ -972,6 +993,17 @@ export class NDK extends EventEmitter<{
         opts?: NDKSubscriptionOptions,
         relaySet?: NDKRelaySet,
     ): Promise<Set<NDKEvent>> {
+        // AI Guardrail: Warn about using fetchEvents
+        this.aiGuardrails.warn(
+            "fetch-events-usage",
+            "fetchEvents() is a BLOCKING operation that waits for EOSE.\n" +
+                "In most cases, you should use subscribe() instead:\n\n" +
+                "  ❌ BAD:  const events = await ndk.fetchEvents(filter);\n" +
+                "  ✅ GOOD: ndk.subscribe(filter, { onEvent: (e) => ... });\n\n" +
+                "Only use fetchEvents() when you MUST block until data arrives.",
+            "For one-time queries, use fetchEvent() instead of fetchEvents() when expecting a single result.",
+        );
+
         return new Promise((resolve) => {
             const events: Map<string, NDKEvent> = new Map();
 
@@ -998,16 +1030,13 @@ export class NDK extends EventEmitter<{
                 events.set(dedupKey, _event);
             };
 
-            const relaySetSubscription = this.subscribe(
-                filters,
-                {
-                    ...subscribeOpts,
-                    onEvent,
-                    onEose: () => {
-                        resolve(new Set(events.values()));
-                    }
-                }
-            );
+            const relaySetSubscription = this.subscribe(filters, {
+                ...subscribeOpts,
+                onEvent,
+                onEose: () => {
+                    resolve(new Set(events.values()));
+                },
+            });
 
             // We want to inspect duplicated events
             // so we can dedup them

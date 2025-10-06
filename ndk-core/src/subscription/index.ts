@@ -176,7 +176,13 @@ export interface NDKSubscriptionOptions {
      * @param fromCache Whether the event came from cache.
      * @param optimisticPublish Whether this is an optimistic publish event.
      */
-    onEvent?: (event: NDKEvent, relay?: NDKRelay, subscription?: NDKSubscription, fromCache?: boolean, optimisticPublish?: boolean) => void;
+    onEvent?: (
+        event: NDKEvent,
+        relay?: NDKRelay,
+        subscription?: NDKSubscription,
+        fromCache?: boolean,
+        optimisticPublish?: boolean,
+    ) => void;
 
     /**
      * Called when the subscription receives an EOSE (End of Stored Events) marker
@@ -374,7 +380,7 @@ export class NDKSubscription extends EventEmitter<{
                   ? NDKFilterValidationMode.FIX
                   : NDKFilterValidationMode.IGNORE;
 
-        this.filters = processFilters(rawFilters, validationMode, ndk.debug);
+        this.filters = processFilters(rawFilters, validationMode, ndk.debug, ndk);
 
         if (this.filters.length === 0) {
             throw new Error("Subscription must have at least one filter");
@@ -703,6 +709,7 @@ export class NDKSubscription extends EventEmitter<{
         optimisticPublish = false,
     ) {
         const eventId = event.id! as NDKEventId;
+
 
         const eventAlreadySeen = this.eventFirstSeen.has(eventId);
         let ndkEvent: NDKEvent;

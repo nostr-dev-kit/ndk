@@ -486,6 +486,95 @@ export class NDKEvent extends EventEmitter {
      * @returns {Promise<string>} A Promise that resolves to the signature of the signed event.
      */
     public async sign(signer?: NDKSigner, opts?: ContentTaggingOptions): Promise<string> {
+        // AI Guardrails
+        if (this.ndk && this.ndk.aiGuardrails.isEnabled()) {
+            const guardrails = this.ndk.aiGuardrails;
+
+            // Check for missing kind
+            if (this.kind === undefined || this.kind === null) {
+                guardrails.error(
+                    "event-missing-kind",
+                    "Cannot sign event without 'kind'. Set event.kind before signing.",
+                    "Example: event.kind = 1; // for text note",
+                    false, // Fatal error - cannot be disabled
+                );
+            }
+
+            // Check for object content
+            if (typeof this.content === "object") {
+                guardrails.error(
+                    "event-content-is-object",
+                    "Event content is an object. Content must be a string.",
+                    "Use JSON.stringify() for structured data: event.content = JSON.stringify(data)",
+                    false, // Fatal error - cannot be disabled
+                );
+            }
+
+            // Check for param replaceable without d-tag
+            if (this.isParamReplaceable() && !this.dTag) {
+                guardrails.warn(
+                    "event-param-replaceable-no-dtag",
+                    `Parameterized replaceable event (kind ${this.kind}) without d-tag. Event will use empty string "".`,
+                    'Set event.dTag = "your-identifier" before signing.',
+                );
+            }
+
+            // Check for milliseconds instead of seconds
+            if (this.created_at && this.created_at > 10000000000) {
+                guardrails.error(
+                    "event-created-at-milliseconds",
+                    `Event created_at (${this.created_at}) looks like milliseconds.`,
+                    "Use SECONDS, not milliseconds: Math.floor(Date.now() / 1000), not Date.now()",
+                    false, // Fatal error - cannot be disabled
+                );
+            }
+
+            // Check for invalid p-tags (must be 64-char hex pubkeys)
+            const pTags = this.getMatchingTags("p");
+            pTags.forEach((tag, idx) => {
+                if (tag[1] && !/^[0-9a-f]{64}$/i.test(tag[1])) {
+                    guardrails.error(
+                        "tag-invalid-p-tag",
+                        `p-tag[${idx}] has invalid pubkey: "${tag[1]}". Must be 64-char hex.`,
+                        tag[1].startsWith("npub")
+                            ? "Use ndkUser.pubkey instead of npub. Example: event.tags.push(['p', ndkUser.pubkey])"
+                            : "p-tags must contain valid hex pubkeys (64 characters, 0-9a-f)",
+                        false, // Fatal error - cannot be disabled
+                    );
+                }
+            });
+
+            // Check for invalid e-tags (must be 64-char hex event IDs)
+            const eTags = this.getMatchingTags("e");
+            eTags.forEach((tag, idx) => {
+                if (tag[1] && !/^[0-9a-f]{64}$/i.test(tag[1])) {
+                    guardrails.error(
+                        "tag-invalid-e-tag",
+                        `e-tag[${idx}] has invalid event ID: "${tag[1]}". Must be 64-char hex.`,
+                        tag[1].startsWith("note") || tag[1].startsWith("nevent")
+                            ? "Use event.id instead of bech32. Example: event.tags.push(['e', referencedEvent.id])"
+                            : "e-tags must contain valid hex event IDs (64 characters, 0-9a-f)",
+                        false, // Fatal error - cannot be disabled
+                    );
+                }
+            });
+
+            // Check for manual reply markers instead of using .reply()
+            if (this.kind === 1) {
+                // Check for e-tags with "reply" or "root" markers
+                const eTagsWithMarkers = this.tags.filter(
+                    (tag) => tag[0] === "e" && (tag[3] === "reply" || tag[3] === "root"),
+                );
+                if (eTagsWithMarkers.length > 0) {
+                    guardrails.warn(
+                        "event-manual-reply-markers",
+                        `Event has ${eTagsWithMarkers.length} e-tag(s) with manual reply/root markers.`,
+                        "Use event.reply(parentEvent) instead of manually adding e-tags with markers. NDK handles reply threading automatically.",
+                    );
+                }
+            }
+        }
+
         if (!signer) {
             this.ndk?.assertSigner();
 

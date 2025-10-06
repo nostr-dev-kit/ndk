@@ -22,8 +22,8 @@ export function useEvent<T extends NDKEvent>(
     idOrFilter: string | NDKFilter | NDKFilter[] | false,
     opts: UseSubscribeOptions = {},
     dependencies: unknown[] = [],
-): NDKEvent | null {
-    const [event, setEvent] = useState();
+): T | null | undefined {
+    const [event, setEvent] = useState(undefined as T | null | undefined);
     const { ndk } = useNDK();
 
     dependencies.push(!!idOrFilter);
@@ -33,11 +33,11 @@ export function useEvent<T extends NDKEvent>(
             if (!ndk || !idOrFilter) return;
 
             const events = await ndk.fetchEvent(idOrFilter, opts);
-            setEvent(events as T);
+            setEvent(events as T | null);
         }
 
         fetchEvent();
     }, dependencies);
 
-    return event as T;
+    return event;
 }

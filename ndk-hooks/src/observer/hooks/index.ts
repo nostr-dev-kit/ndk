@@ -102,7 +102,7 @@ export function useObserver<T extends NDKEvent>(
                 },
                 onEvents: (events) => {
                     const filtered = !opts.includeMuted ? events.filter((e) => !muteFilter(e)) : events;
-                    setEvents(filtered);
+                    setEvents(filtered as T[]);
                 },
             },
         );

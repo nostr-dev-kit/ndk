@@ -1,4 +1,6 @@
-import NDK, { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
+import type NDK from "@nostr-dev-kit/ndk";
+import { type NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
+import { filterNegentropyRelays, ndkSync } from "@nostr-dev-kit/sync";
 import createDebug from "debug";
 
 const d = createDebug("ndk-wot");
@@ -18,6 +20,15 @@ export interface WoTBuildOptions {
 
     /** Timeout for building the graph in ms */
     timeout?: number;
+
+    /** Use negentropy sync for batch kind:3 fetching */
+    useNegentropy?: boolean;
+
+    /** Minimum number of authors before using negentropy (default: 5) */
+    negentropyMinAuthors?: number;
+
+    /** Specific relay URLs to use for sync (if not provided, uses all connected relays) */
+    relayUrls?: string[];
 }
 
 export class NDKWoT {
@@ -46,9 +57,22 @@ export class NDKWoT {
      * Build the WOT graph
      */
     async load(options: WoTBuildOptions): Promise<void> {
-        const { depth, maxFollows = 1000, timeout } = options;
+        const {
+            depth,
+            maxFollows = 1000,
+            timeout,
+            useNegentropy = true,
+            negentropyMinAuthors = 5,
+            relayUrls,
+        } = options;
 
-        d("Building WOT graph for %s with depth %d", this.rootPubkey, depth);
+        d(
+            "Building WOT graph for %s with depth %d (negentropy: %s, minAuthors: %d)",
+            this.rootPubkey,
+            depth,
+            useNegentropy,
+            negentropyMinAuthors,
+        );
 
         const startTime = Date.now();
         const processedUsers = new Set<string>();
@@ -70,9 +94,11 @@ export class NDKWoT {
             d("Processing %d users at depth %d", usersAtDepth.length, currentDepth);
 
             // Fetch follows for all users at this depth
-            const followEvents = await this.ndk.fetchEvents({
-                kinds: [NDKKind.Contacts],
+            // Use negentropy when we have enough authors to make it worthwhile
+            const followEvents = await this.fetchContactLists({
                 authors: usersAtDepth,
+                useNegentropy: useNegentropy && usersAtDepth.length >= negentropyMinAuthors,
+                relayUrls,
             });
 
             for (const event of followEvents) {
@@ -107,6 +133,102 @@ export class NDKWoT {
 
         this.loaded = true;
         d("WOT graph built with %d nodes in %dms", this.nodes.size, Date.now() - startTime);
+    }
+
+    /**
+     * Fetch contact lists efficiently using negentropy when beneficial
+     */
+    private async fetchContactLists(options: {
+        authors: string[];
+        useNegentropy: boolean;
+        relayUrls?: string[];
+    }): Promise<Set<NDKEvent>> {
+        const { authors, useNegentropy, relayUrls } = options;
+
+        if (!useNegentropy) {
+            // Use regular subscription-based fetch for small batches or when negentropy is disabled
+            d("Fetching %d contact lists using subscription", authors.length);
+            return await this.fetchViaSubscription(authors);
+        }
+
+        // Try negentropy sync for efficient batch fetching
+        d("Attempting negentropy sync for %d contact lists", authors.length);
+
+        try {
+            const syncOptions: any = { autoFetch: true };
+
+            // Use specific relays if provided, or filter to negentropy-compatible relays
+            if (relayUrls) {
+                syncOptions.relayUrls = relayUrls;
+            } else if (this.ndk.pool?.relays) {
+                // Filter to only relays that support negentropy
+                const allRelayUrls = Array.from(this.ndk.pool.relays.keys());
+                const negentropyRelays = await filterNegentropyRelays(allRelayUrls);
+
+                if (negentropyRelays.length > 0) {
+                    d("Found %d negentropy-compatible relays out of %d", negentropyRelays.length, allRelayUrls.length);
+                    syncOptions.relayUrls = negentropyRelays;
+                } else {
+                    d("No negentropy-compatible relays found, falling back to subscription");
+                    return await this.fetchViaSubscription(authors);
+                }
+            }
+
+            const result = await ndkSync.call(
+                this.ndk,
+                {
+                    kinds: [NDKKind.Contacts],
+                    authors,
+                },
+                syncOptions,
+            );
+
+            d(
+                "Negentropy sync completed: %d events, %d needed, %d we have",
+                result.events.length,
+                result.need.size,
+                result.have.size,
+            );
+
+            return new Set(result.events);
+        } catch (error) {
+            d("Negentropy sync failed, falling back to subscription: %s", error);
+
+            // Fallback to subscription-based fetch
+            return await this.fetchViaSubscription(authors);
+        }
+    }
+
+    /**
+     * Fetch contact lists using subscription (reliable method)
+     */
+    private async fetchViaSubscription(authors: string[]): Promise<Set<NDKEvent>> {
+        return new Promise((resolve, reject) => {
+            const events = new Set<NDKEvent>();
+            const timeout = setTimeout(() => {
+                sub.stop();
+                reject(new Error(`Timeout fetching contact lists for ${authors.length} authors`));
+            }, 30000);
+
+            const sub = this.ndk.subscribe(
+                {
+                    kinds: [NDKKind.Contacts],
+                    authors,
+                },
+                { closeOnEose: true },
+            );
+
+            sub.on("event", (event: NDKEvent) => {
+                events.add(event);
+            });
+
+            sub.on("eose", () => {
+                clearTimeout(timeout);
+                sub.stop();
+                d("Subscription fetch completed: %d events", events.size);
+                resolve(events);
+            });
+        });
     }
 
     /**

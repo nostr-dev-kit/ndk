@@ -4,13 +4,7 @@
  */
 
 import type { NDKRelay, NDKRelayInformation } from "@nostr-dev-kit/ndk";
-import { fetchRelayInformation as ndkFetchRelayInformation } from "@nostr-dev-kit/ndk";
-
-/**
- * NIP-11 Relay Information Document structure.
- * @deprecated Use NDKRelayInformation from @nostr-dev-kit/ndk instead
- */
-export type RelayInformation = NDKRelayInformation;
+import { fetchRelayInformation } from "@nostr-dev-kit/ndk";
 
 /**
  * Check if a relay supports NIP-77 (Negentropy).
@@ -33,7 +27,7 @@ export type RelayInformation = NDKRelayInformation;
 export async function supportsNegentropy(relay: NDKRelay | string): Promise<boolean> {
     try {
         const info = typeof relay === "string"
-            ? await ndkFetchRelayInformation(relay)
+            ? await fetchRelayInformation(relay)
             : await relay.fetchInfo();
         return info.supported_nips?.includes(77) ?? false;
     } catch (_error) {
@@ -41,22 +35,6 @@ export async function supportsNegentropy(relay: NDKRelay | string): Promise<bool
         return false;
     }
 }
-
-/**
- * Fetch NIP-11 relay information document.
- *
- * @param relayUrl - WebSocket URL of the relay (wss://...)
- * @returns Promise<RelayInformation> - The relay's information document
- * @deprecated Use fetchRelayInformation from @nostr-dev-kit/ndk or relay.fetchInfo() instead
- *
- * @example
- * ```typescript
- * const info = await fetchRelayInformation("wss://relay.damus.io");
- * console.log(`Relay: ${info.name}`);
- * console.log(`Supported NIPs: ${info.supported_nips?.join(", ")}`);
- * ```
- */
-export const fetchRelayInformation = ndkFetchRelayInformation;
 
 /**
  * Filter relays to only those supporting NIP-77.
@@ -106,7 +84,7 @@ export async function getRelayCapabilities(relay: NDKRelay | string): Promise<Re
 
     try {
         const info = typeof relay === "string"
-            ? await ndkFetchRelayInformation(relay)
+            ? await fetchRelayInformation(relay)
             : await relay.fetchInfo();
 
         return {
@@ -138,6 +116,6 @@ export interface RelayCapabilities {
     version?: string;
     supportedNips: number[];
     supportsNegentropy: boolean;
-    limitations?: RelayInformation["limitation"];
+    limitations?: NDKRelayInformation["limitation"];
     error?: string;
 }

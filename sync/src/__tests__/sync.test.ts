@@ -2,17 +2,17 @@
  * Test suite for NDK sync functionality
  */
 
-import { beforeEach, describe, expect, jest, test } from "@jest/globals";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import NDK from "@nostr-dev-kit/ndk";
 import { type NDKSyncOptions, type NDKSyncResult, ndkSync } from "../index.js";
 
 // Mock NDK and dependencies
-jest.mock("@nostr-dev-kit/ndk", () => {
+vi.mock("@nostr-dev-kit/ndk", () => {
     return {
         __esModule: true,
-        default: jest.fn().mockImplementation(() => ({
+        default: vi.fn().mockImplementation(() => ({
             cacheAdapter: {
-                setEvent: jest.fn(),
+                setEvent: vi.fn(),
             },
             pool: {
                 relays: new Map([
@@ -22,32 +22,32 @@ jest.mock("@nostr-dev-kit/ndk", () => {
                             url: "wss://relay.damus.io",
                             connected: true,
                             connectivity: {
-                                send: jest.fn(),
+                                send: vi.fn(),
                             },
-                            registerProtocolHandler: jest.fn(),
-                            unregisterProtocolHandler: jest.fn(),
-                            once: jest.fn(),
-                            off: jest.fn(),
+                            registerProtocolHandler: vi.fn(),
+                            unregisterProtocolHandler: vi.fn(),
+                            once: vi.fn(),
+                            off: vi.fn(),
                         },
                     ],
                 ]),
             },
-            subscribe: jest.fn(() => ({
-                on: jest.fn(),
-                stop: jest.fn(),
+            subscribe: vi.fn(() => ({
+                on: vi.fn(),
+                stop: vi.fn(),
             })),
         })),
         NDKRelaySet: {
-            fromRelayUrls: jest.fn(() => ({
+            fromRelayUrls: vi.fn(() => ({
                 relays: new Set([
                     {
                         url: "wss://relay.damus.io",
                         connected: true,
-                        connectivity: { send: jest.fn() },
-                        registerProtocolHandler: jest.fn(),
-                        unregisterProtocolHandler: jest.fn(),
-                        once: jest.fn(),
-                        off: jest.fn(),
+                        connectivity: { send: vi.fn() },
+                        registerProtocolHandler: vi.fn(),
+                        unregisterProtocolHandler: vi.fn(),
+                        once: vi.fn(),
+                        off: vi.fn(),
                     },
                 ]),
             })),
@@ -158,7 +158,7 @@ describe("NDK Sync Package", () => {
             const singleFilter = { kinds: [1] };
 
             // Mock the actual sync to avoid full implementation
-            const _mockSync = jest.fn().mockResolvedValue({
+            const _mockSync = vi.fn().mockResolvedValue({
                 events: [],
                 need: new Set(),
                 have: new Set(),

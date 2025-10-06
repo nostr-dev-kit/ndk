@@ -1,5 +1,24 @@
 # @nostr-dev-kit/sync
 
+## Unreleased
+
+### Patch Changes
+
+- Use centralized NIP-11 implementation from @nostr-dev-kit/ndk
+  - Removed local `RelayInformation` type - use `NDKRelayInformation` from ndk-core
+  - Removed local `fetchRelayInformation` function - use the one from ndk-core
+  - Updated `supportsNegentropy` and `getRelayCapabilities` to use `relay.fetchInfo()` when passed an NDKRelay instance
+  - Breaking change: `RelayInformation` and `fetchRelayInformation` are no longer exported from @nostr-dev-kit/sync
+  - Migration: Import from @nostr-dev-kit/ndk instead
+
+  ```typescript
+  // Before
+  import { fetchRelayInformation, RelayInformation } from "@nostr-dev-kit/sync";
+
+  // After
+  import { fetchRelayInformation, NDKRelayInformation } from "@nostr-dev-kit/ndk";
+  ```
+
 ## 0.2.0
 
 ### Minor Changes

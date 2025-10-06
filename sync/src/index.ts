@@ -29,8 +29,46 @@
  * ```
  */
 
+import NDK, { type NDKFilter, type NDKSubscription } from "@nostr-dev-kit/ndk";
 import { ndkSync } from "./ndk-sync.js";
-import { syncAndSubscribe } from "./sync-subscribe.js";
+import { syncAndSubscribe, type SyncAndSubscribeOptions } from "./sync-subscribe.js";
+import type { NDKSyncOptions, NDKSyncResult } from "./types.js";
+
+// TypeScript declaration merging
+declare module "@nostr-dev-kit/ndk" {
+    interface NDK {
+        /**
+         * Perform NIP-77 Negentropy sync with relays.
+         *
+         * @param filters - Filters to sync
+         * @param opts - Sync options
+         * @returns Sync result with events, need, and have sets
+         */
+        sync(filters: NDKFilter | NDKFilter[], opts?: NDKSyncOptions): Promise<NDKSyncResult>;
+
+        /**
+         * Subscribe and sync - ensures complete event coverage without missing events.
+         *
+         * This function:
+         * 1. Immediately starts a live subscription with limit: 0 to catch new events
+         * 2. Returns the subscription right away (non-blocking)
+         * 3. In the background, syncs historical events from each relay
+         * 4. All synced events automatically flow to the subscription
+         *
+         * @param filters - NDK filter(s) to sync and subscribe to
+         * @param opts - Subscription options with sync callbacks
+         * @returns NDKSubscription that receives both live and historical events
+         */
+        syncAndSubscribe(
+            filters: NDKFilter | NDKFilter[],
+            opts?: SyncAndSubscribeOptions,
+        ): Promise<NDKSubscription>;
+    }
+}
+
+// Attach methods to NDK prototype for better DX
+(NDK.prototype as any).sync = ndkSync;
+(NDK.prototype as any).syncAndSubscribe = syncAndSubscribe;
 
 // Re-export the main sync functions
 export { ndkSync, syncAndSubscribe };
@@ -56,13 +94,9 @@ export type { SyncAndSubscribeOptions } from "./sync-subscribe.js";
 // Export types
 export type { Bound, NDKSyncOptions, NDKSyncResult, StorageItem } from "./types.js";
 export { NegentropyMode } from "./types.js";
-export type {
-    RelayCapabilities,
-    RelayInformation,
-} from "./utils/relay-capabilities.js";
+export type { RelayCapabilities } from "./utils/relay-capabilities.js";
 // Export relay capability checking utilities
 export {
-    fetchRelayInformation,
     filterNegentropyRelays,
     getRelayCapabilities,
     supportsNegentropy,

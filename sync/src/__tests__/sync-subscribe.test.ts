@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, jest, test } from "@jest/globals";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import type { NDKRelay } from "@nostr-dev-kit/ndk";
 import NDK from "@nostr-dev-kit/ndk";
 import { ndkSync } from "../ndk-sync.js";
@@ -6,16 +6,16 @@ import { syncAndSubscribe } from "../sync-subscribe.js";
 
 // Mock cache adapter
 const mockCacheAdapter = {
-    query: jest.fn().mockResolvedValue([]),
-    setEvent: jest.fn().mockResolvedValue(undefined),
+    query: vi.fn().mockResolvedValue([]),
+    setEvent: vi.fn().mockResolvedValue(undefined),
 };
 
 // Mock ndkSync to avoid needing real negentropy
-jest.mock("../ndk-sync.js", () => ({
-    ndkSync: jest.fn(),
+vi.mock("../ndk-sync.js", () => ({
+    ndkSync: vi.fn(),
 }));
 
-const mockNdkSync = ndkSync as jest.MockedFunction<typeof ndkSync>;
+const mockNdkSync = ndkSync as vi.MockedFunction<typeof ndkSync>;
 
 describe("syncAndSubscribe", () => {
     let ndk: NDK;
@@ -23,7 +23,7 @@ describe("syncAndSubscribe", () => {
 
     beforeEach(() => {
         // Reset mocks
-        jest.clearAllMocks();
+        vi.clearAllMocks();
 
         // Mock ndkSync to return successful result
         mockNdkSync.mockResolvedValue({
@@ -41,7 +41,7 @@ describe("syncAndSubscribe", () => {
         // Mock relay
         mockRelay = {
             url: "wss://relay.test.com",
-            connect: jest.fn().mockResolvedValue(undefined),
+            connect: vi.fn().mockResolvedValue(undefined),
         } as any;
 
         // Mock pool with relay
@@ -50,14 +50,14 @@ describe("syncAndSubscribe", () => {
         } as any;
 
         // Mock subscribe method
-        ndk.subscribe = jest.fn().mockReturnValue({
-            on: jest.fn(),
-            stop: jest.fn(),
-            eventReceived: jest.fn(),
+        ndk.subscribe = vi.fn().mockReturnValue({
+            on: vi.fn(),
+            stop: vi.fn(),
+            eventReceived: vi.fn(),
         } as any);
 
         // Mock fetchEvents
-        ndk.fetchEvents = jest.fn().mockResolvedValue(new Set());
+        ndk.fetchEvents = vi.fn().mockResolvedValue(new Set());
     });
 
     test("should return subscription immediately", async () => {
@@ -97,7 +97,7 @@ describe("syncAndSubscribe", () => {
     // Note: Callback tests are skipped because they require a full NDK environment
     // that's complex to mock in Bun's test runner. These are better tested in E2E scenarios.
     test.skip("should call onRelaySynced callback", async () => {
-        const onRelaySynced = jest.fn();
+        const onRelaySynced = vi.fn();
 
         await syncAndSubscribe.call(
             ndk,
@@ -117,7 +117,7 @@ describe("syncAndSubscribe", () => {
     });
 
     test.skip("should call onSyncComplete callback", async () => {
-        const onSyncComplete = jest.fn();
+        const onSyncComplete = vi.fn();
 
         await syncAndSubscribe.call(
             ndk,
@@ -137,7 +137,7 @@ describe("syncAndSubscribe", () => {
         // Remove cache adapter
         ndk.cacheAdapter = undefined;
 
-        const onSyncComplete = jest.fn();
+        const onSyncComplete = vi.fn();
 
         const sub = await syncAndSubscribe.call(
             ndk,
@@ -157,8 +157,8 @@ describe("syncAndSubscribe", () => {
     });
 
     test("should pass through subscription options", async () => {
-        const onEvent = jest.fn();
-        const onEose = jest.fn();
+        const onEvent = vi.fn();
+        const onEose = vi.fn();
 
         await syncAndSubscribe.call(
             ndk,
@@ -218,7 +218,7 @@ describe("syncAndSubscribe", () => {
         );
 
         // Should create a relay set from URLs
-        const call = (ndk.subscribe as jest.MockedFunction<any>).mock.calls[0];
+        const call = (ndk.subscribe as vi.MockedFunction<any>).mock.calls[0];
         expect(call[1]).toHaveProperty("relaySet");
         expect(call[1].relaySet).toBeDefined();
     });

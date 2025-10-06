@@ -208,9 +208,3 @@ async function fetchNeededEvents(this: NDK, relay: NDKRelay, need: Set<string>):
         }, TIMEOUTS.EVENT_FETCH);
     });
 }
-
-/**
- * Note: To use this as a method on NDK instances, you can either:
- * 1. Call it as a standalone function: ndkSync.call(ndk, filters, opts)
- * 2. Or manually attach it: NDK.prototype.sync = ndkSync
- */

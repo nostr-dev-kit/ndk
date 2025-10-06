@@ -2,7 +2,7 @@
  * Test suite for Negentropy core functionality
  */
 
-import { beforeEach, describe, expect, test } from "@jest/globals";
+import { beforeEach, describe, expect, test } from "vitest";
 import { FRAME_SIZE_LIMITS } from "../constants.js";
 import { Negentropy } from "../negentropy/core.js";
 import { NegentropyStorage } from "../negentropy/storage.js";

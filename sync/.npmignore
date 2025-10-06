@@ -7,7 +7,7 @@ src/*test*.ts
 *.spec.ts
 TESTING.md
 tsconfig.json
-jest.config.cjs
+vitest.config.ts
 
 # Build artifacts
 .turbo

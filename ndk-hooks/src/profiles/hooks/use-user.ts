@@ -26,7 +26,7 @@ import { useNDK } from "../../ndk/hooks";
  */
 export function useUser(input?: string): NDKUser | undefined {
     const { ndk } = useNDK();
-    const [user, setUser] = useState();
+    const [user, setUser] = useState(undefined as NDKUser | undefined);
 
     useEffect(() => {
         if (!input || !ndk) {

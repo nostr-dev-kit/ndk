@@ -27,7 +27,8 @@ export { default as RelayList } from "./components/RelayList.svelte";
 export { default as RelayPoolTabs } from "./components/RelayPoolTabs.svelte";
 export { default as RelayConnectionStatus } from "./components/RelayConnectionStatus.svelte";
 export { default as RelayAddForm } from "./components/RelayAddForm.svelte";
-export { type CreateNDKOptions, createNDK } from "./ndk.svelte.js";
+export { default as TransactionList } from "./components/TransactionList.svelte";
+export { default as ZapButton } from "./components/ZapButton.svelte";
 export { NDKSvelte } from "./ndk-svelte.svelte.js";
 // Payment runes
 export {
@@ -60,9 +61,9 @@ export type { ReactivePoolStore, RelayInfo, RelayStatus } from "./stores/pool.sv
 export type { ReactiveSessionsStore } from "./stores/sessions.svelte.js";
 export type { ReactiveWalletStore } from "./stores/wallet.svelte.js";
 export type { ReactiveWoTStore, WoTFilterOptions, WoTLoadOptions, WoTRankOptions } from "./stores/wot.svelte.js";
-export type { SubscribeOptions, Subscription } from "./subscribe.svelte.js";
-// Subscription
-export { createSubscription } from "./subscribe.svelte.js";
+export type { SubscribeOptions, SyncSubscribeOptions, Subscription } from "./subscribe.svelte.js";
+// Subscription - can be used as standalone function or via ndk.$subscribe()
+export { createSubscription, createSyncSubscription } from "./subscribe.svelte.js";
 // User helpers
 export { type UserStore, useUser } from "./user.svelte.js";
 // WoT runes

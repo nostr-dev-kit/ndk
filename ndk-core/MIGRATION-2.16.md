@@ -6,6 +6,44 @@ NDK 2.16 introduces significant architectural changes that improve separation of
 
 ## Breaking Changes
 
+### 0. Package Rename: @nostr-dev-kit/ndk-blossom → @nostr-dev-kit/blossom
+
+The Blossom package has been renamed to remove the redundant "ndk-" prefix.
+
+**Before:**
+```typescript
+import { NDKBlossom } from '@nostr-dev-kit/ndk-blossom';
+```
+
+**After:**
+```typescript
+import { NDKBlossom } from '@nostr-dev-kit/blossom';
+```
+
+**Migration Steps:**
+
+1. Update your package.json:
+   ```diff
+   - "@nostr-dev-kit/ndk-blossom": "^2.0.0"
+   + "@nostr-dev-kit/blossom": "^2.0.0"
+   ```
+
+2. Update all imports throughout your codebase:
+   ```bash
+   # Find all files that need updating
+   grep -r "@nostr-dev-kit/ndk-blossom" .
+
+   # Replace in all files (macOS/BSD)
+   find . -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" \) \
+     -exec sed -i '' 's/@nostr-dev-kit\/ndk-blossom/@nostr-dev-kit\/blossom/g' {} +
+
+   # Or for Linux:
+   find . -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" \) \
+     -exec sed -i 's/@nostr-dev-kit\/ndk-blossom/@nostr-dev-kit\/blossom/g' {} +
+   ```
+
+All functionality remains identical - only the package name has changed.
+
 ### 1. Removed Properties from NDK
 
 The following properties have been removed from the NDK class:

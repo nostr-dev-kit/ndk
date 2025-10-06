@@ -1,4 +1,4 @@
-import type { NDKNutzapMonitor, NDKWallet, NDKWalletBalance } from "@nostr-dev-kit/ndk-wallet";
+import type { NDKNutzapMonitor, NDKWallet, NDKWalletBalance } from "@nostr-dev-kit/wallet";
 import { create } from "zustand";
 
 interface WalletState {

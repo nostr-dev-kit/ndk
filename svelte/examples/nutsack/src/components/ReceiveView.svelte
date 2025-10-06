@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { WalletAPI } from '../lib/useWallet.svelte.js';
-  import type { NDKCashuDeposit } from '@nostr-dev-kit/ndk-wallet';
+  import type { NDKCashuDeposit } from '@nostr-dev-kit/wallet';
   import QRCode from './QRCode.svelte';
 
   interface Props {

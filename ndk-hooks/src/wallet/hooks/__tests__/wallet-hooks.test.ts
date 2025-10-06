@@ -1,5 +1,5 @@
 import { NDKKind } from "@nostr-dev-kit/ndk";
-import { NDKCashuWallet } from "@nostr-dev-kit/ndk-wallet";
+import { NDKCashuWallet } from "@nostr-dev-kit/wallet";
 import { renderHook, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useNDKWallet } from "../index";
@@ -12,7 +12,7 @@ vi.mock("@nostr-dev-kit/ndk", () => ({
     },
 }));
 
-vi.mock("@nostr-dev-kit/ndk-wallet", () => ({
+vi.mock("@nostr-dev-kit/wallet", () => ({
     NDKCashuWallet: vi.fn().mockImplementation(() => ({
         start: vi.fn().mockResolvedValue(undefined),
         on: vi.fn(),

@@ -1,5 +1,5 @@
 import { type NDKCashuMintList, NDKKind, type NDKNutzap } from "@nostr-dev-kit/ndk";
-import { NDKCashuWallet, NDKNutzapMonitor, type NDKNutzapMonitorStore } from "@nostr-dev-kit/ndk-wallet";
+import { NDKCashuWallet, NDKNutzapMonitor, type NDKNutzapMonitorStore } from "@nostr-dev-kit/wallet";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { create } from "zustand";
 import { useNDK, useNDKCurrentUser } from "../../ndk/hooks";

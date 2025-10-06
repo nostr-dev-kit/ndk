@@ -7,13 +7,18 @@
     "exports": {
         ".": {
             "types": "./dist/index.d.ts",
+            "svelte": "./dist/index.js",
             "import": "./dist/index.js"
         },
         "./stores": {
             "types": "./dist/stores/index.d.ts",
+            "svelte": "./dist/stores/index.js",
             "import": "./dist/stores/index.js"
         },
-        "./components/*": "./dist/components/*"
+        "./components/*": {
+            "svelte": "./dist/components/*",
+            "import": "./dist/components/*"
+        }
     },
     "files": [
         "dist",
@@ -45,22 +50,23 @@
         "svelte": "^5.0.0"
     },
     "dependencies": {
-        "@nostr-dev-kit/ndk": "^2.15.3",
-        "@nostr-dev-kit/wot": "^0.3.0",
-        "@nostr-dev-kit/sessions": "^0.2.0"
+        "@nostr-dev-kit/ndk": "workspace:^",
+        "@nostr-dev-kit/wot": "workspace:^",
+        "@nostr-dev-kit/sessions": "workspace:^",
+        "@nostr-dev-kit/cache-sqlite-wasm": "workspace:^"
     },
     "devDependencies": {
-        "@nostr-dev-kit/ndk-wallet": "^0.7.2",
+        "@nostr-dev-kit/wallet": "workspace:^",
         "@sveltejs/adapter-auto": "^3.0.0",
         "@sveltejs/kit": "^2.0.0",
         "@sveltejs/package": "^2.0.0",
-        "@sveltejs/vite-plugin-svelte": "^4.0.0",
+        "@sveltejs/vite-plugin-svelte": "^6.2.1",
         "@types/node": "^22.0.0",
         "@vitest/browser": "^3.2.4",
         "playwright": "^1.55.1",
         "prettier": "^3.0.0",
         "prettier-plugin-svelte": "^3.0.0",
-        "svelte": "^5.23.0",
+        "svelte": "^5.39.9",
         "svelte-check": "^4.0.0",
         "tslib": "^2.6.0",
         "typescript": "^5.0.0",

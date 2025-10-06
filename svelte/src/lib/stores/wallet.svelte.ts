@@ -1,5 +1,5 @@
 import type NDK from "@nostr-dev-kit/ndk";
-import type { NDKWallet, NDKWalletBalance } from "@nostr-dev-kit/ndk-wallet";
+import type { NDKWallet, NDKWalletBalance } from "@nostr-dev-kit/wallet";
 
 /**
  * Reactive wrapper around wallet

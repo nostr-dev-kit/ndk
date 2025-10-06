@@ -19,7 +19,7 @@ export default defineConfig({
             formats: ["es"],
         },
         rollupOptions: {
-            external: ["svelte", "@nostr-dev-kit/ndk", "@nostr-dev-kit/ndk-wallet"],
+            external: ["svelte", "@nostr-dev-kit/ndk", "@nostr-dev-kit/wallet"],
         },
     },
     test: {

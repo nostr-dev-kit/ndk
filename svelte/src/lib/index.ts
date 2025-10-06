@@ -21,6 +21,12 @@ export {
 export { default as Avatar } from "./components/Avatar.svelte";
 export { default as BlossomImage } from "./components/BlossomImage.svelte";
 export { default as EventContent } from "./components/EventContent.svelte";
+export { default as RelayManager } from "./components/RelayManager.svelte";
+export { default as RelayCard } from "./components/RelayCard.svelte";
+export { default as RelayList } from "./components/RelayList.svelte";
+export { default as RelayPoolTabs } from "./components/RelayPoolTabs.svelte";
+export { default as RelayConnectionStatus } from "./components/RelayConnectionStatus.svelte";
+export { default as RelayAddForm } from "./components/RelayAddForm.svelte";
 export { type CreateNDKOptions, createNDK } from "./ndk.svelte.js";
 export { NDKSvelte } from "./ndk-svelte.svelte.js";
 // Payment runes
@@ -40,6 +46,14 @@ export type {
     TransactionType,
 } from "./payments/types.js";
 export { type ProfileStore, useProfile } from "./profile.svelte.js";
+// Relay management
+export {
+    createRelayManager,
+    type EnrichedRelayInfo,
+    type PoolType,
+    type RelayInformation,
+    RelayManager as RelayManagerClass,
+} from "./relay-manager.svelte.js";
 export type { ReactivePaymentsStore } from "./stores/payments.svelte.js";
 export type { ReactivePoolStore, RelayInfo, RelayStatus } from "./stores/pool.svelte.js";
 // Store types (for typing ndk.* properties)

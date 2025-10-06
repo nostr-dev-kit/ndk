@@ -8,6 +8,7 @@ import type { NDKUser } from "../user/index.js";
 import { normalizeRelayUrl } from "../utils/normalize-url.js";
 import type { NDKAuthPolicy } from "./auth-policies.js";
 import { NDKRelayConnectivity } from "./connectivity.js";
+import { fetchRelayInformation, type NDKRelayInformation } from "./nip11.js";
 import { NDKRelayPublisher } from "./publisher.js";
 import type { NDKRelayScore } from "./score.js";
 import { SignatureVerificationStats, startSignatureVerificationStats } from "./signature-verification-stats.js";
@@ -115,6 +116,11 @@ export class NDKRelay extends EventEmitter<{
      * Allows external packages to handle non-standard relay messages.
      */
     private protocolHandlers = new Map<string, NDKProtocolHandler>();
+
+    /**
+     * Cached relay information from NIP-11.
+     */
+    private _relayInfo?: NDKRelayInformation;
 
     /**
      * The lowest validation ratio this relay can reach.
@@ -342,6 +348,39 @@ export class NDKRelay extends EventEmitter<{
     public getProtocolHandler(messageType: string): NDKProtocolHandler | undefined {
         return this.protocolHandlers.get(messageType);
     }
+
+    /**
+     * Fetches relay information (NIP-11) from the relay.
+     * Results are cached, pass force=true to bypass cache.
+     *
+     * @param force Force a fresh fetch, bypassing cache
+     * @returns The relay information document
+     * @throws Error if the fetch fails
+     *
+     * @example
+     * ```typescript
+     * const info = await relay.fetchInfo();
+     * console.log(`Relay: ${info.name}`);
+     * console.log(`Supported NIPs: ${info.supported_nips?.join(', ')}`);
+     * ```
+     */
+    public async fetchInfo(force = false): Promise<NDKRelayInformation> {
+        if (!force && this._relayInfo) {
+            return this._relayInfo;
+        }
+
+        this._relayInfo = await fetchRelayInformation(this.url);
+        return this._relayInfo;
+    }
+
+    /**
+     * Returns cached relay information if available, undefined otherwise.
+     * Use fetchInfo() to retrieve fresh information.
+     */
+    public get info(): NDKRelayInformation | undefined {
+        return this._relayInfo;
+    }
 }
 
 export { SignatureVerificationStats, startSignatureVerificationStats };
+export { fetchRelayInformation, type NDKRelayInformation } from "./nip11.js";

@@ -3,43 +3,14 @@
  * Uses NIP-11 (Relay Information Document) to check for NIP-77 support.
  */
 
-import type { NDKRelay } from "@nostr-dev-kit/ndk";
+import type { NDKRelay, NDKRelayInformation } from "@nostr-dev-kit/ndk";
+import { fetchRelayInformation as ndkFetchRelayInformation } from "@nostr-dev-kit/ndk";
 
 /**
  * NIP-11 Relay Information Document structure.
+ * @deprecated Use NDKRelayInformation from @nostr-dev-kit/ndk instead
  */
-export interface RelayInformation {
-    name?: string;
-    description?: string;
-    pubkey?: string;
-    contact?: string;
-    supported_nips?: number[];
-    software?: string;
-    version?: string;
-    limitation?: {
-        max_message_length?: number;
-        max_subscriptions?: number;
-        max_filters?: number;
-        max_limit?: number;
-        max_subid_length?: number;
-        min_prefix?: number;
-        max_event_tags?: number;
-        max_content_length?: number;
-        min_pow_difficulty?: number;
-        auth_required?: boolean;
-        payment_required?: boolean;
-    };
-    relay_countries?: string[];
-    language_tags?: string[];
-    tags?: string[];
-    posting_policy?: string;
-    payments_url?: string;
-    fees?: {
-        admission?: { amount: number; unit: string }[];
-        subscription?: { amount: number; unit: string; period: number }[];
-        publication?: { kinds: number[]; amount: number; unit: string }[];
-    };
-}
+export type RelayInformation = NDKRelayInformation;
 
 /**
  * Check if a relay supports NIP-77 (Negentropy).
@@ -60,10 +31,10 @@ export interface RelayInformation {
  * ```
  */
 export async function supportsNegentropy(relay: NDKRelay | string): Promise<boolean> {
-    const relayUrl = typeof relay === "string" ? relay : relay.url;
-
     try {
-        const info = await fetchRelayInformation(relayUrl);
+        const info = typeof relay === "string"
+            ? await ndkFetchRelayInformation(relay)
+            : await relay.fetchInfo();
         return info.supported_nips?.includes(77) ?? false;
     } catch (_error) {
         // If we can't fetch relay info, assume no support
@@ -76,6 +47,7 @@ export async function supportsNegentropy(relay: NDKRelay | string): Promise<bool
  *
  * @param relayUrl - WebSocket URL of the relay (wss://...)
  * @returns Promise<RelayInformation> - The relay's information document
+ * @deprecated Use fetchRelayInformation from @nostr-dev-kit/ndk or relay.fetchInfo() instead
  *
  * @example
  * ```typescript
@@ -84,24 +56,7 @@ export async function supportsNegentropy(relay: NDKRelay | string): Promise<bool
  * console.log(`Supported NIPs: ${info.supported_nips?.join(", ")}`);
  * ```
  */
-export async function fetchRelayInformation(relayUrl: string): Promise<RelayInformation> {
-    // Convert wss:// to https://
-    const httpUrl = relayUrl.replace(/^wss?:\/\//, (match) => {
-        return match.startsWith("wss") ? "https://" : "http://";
-    });
-
-    const response = await fetch(httpUrl, {
-        headers: {
-            Accept: "application/nostr+json",
-        },
-    });
-
-    if (!response.ok) {
-        throw new Error(`Failed to fetch relay information: ${response.status} ${response.statusText}`);
-    }
-
-    return await response.json();
-}
+export const fetchRelayInformation = ndkFetchRelayInformation;
 
 /**
  * Filter relays to only those supporting NIP-77.
@@ -150,7 +105,9 @@ export async function getRelayCapabilities(relay: NDKRelay | string): Promise<Re
     const relayUrl = typeof relay === "string" ? relay : relay.url;
 
     try {
-        const info = await fetchRelayInformation(relayUrl);
+        const info = typeof relay === "string"
+            ? await ndkFetchRelayInformation(relay)
+            : await relay.fetchInfo();
 
         return {
             url: relayUrl,

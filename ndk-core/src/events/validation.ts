@@ -53,8 +53,11 @@ export function verifySignature(this: NDKEvent, persist: boolean): boolean | und
     try {
         // Use async verification if enabled (either via worker or custom function)
         if (this.ndk?.asyncSigVerification) {
+            // Capture the relay in a closure before the async call
+            const relayForVerification = this.relay;
+
             // verifySignatureAsync will use either the custom function or the worker
-            verifySignatureAsync(this, persist, this.relay)
+            verifySignatureAsync(this, persist, relayForVerification)
                 .then((result) => {
                     if (persist) {
                         this.signatureVerified = result;
@@ -62,12 +65,17 @@ export function verifySignature(this: NDKEvent, persist: boolean): boolean | und
                     }
 
                     if (!result) {
-                        if (this.relay) {
-                            this.ndk?.reportInvalidSignature(this, this.relay);
+                        if (relayForVerification) {
+                            this.ndk?.reportInvalidSignature(this, relayForVerification);
                         } else {
                             this.ndk?.reportInvalidSignature(this);
                         }
                         verifiedSignatures.set(this.id, false);
+                    } else {
+                        // Track successful validation
+                        if (relayForVerification) {
+                            relayForVerification.addValidatedEvent();
+                        }
                     }
                 })
                 .catch((err) => {

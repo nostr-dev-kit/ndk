@@ -10,12 +10,19 @@ import type { NDKAuthPolicy } from "./auth-policies.js";
 import { NDKRelayConnectivity } from "./connectivity.js";
 import { NDKRelayPublisher } from "./publisher.js";
 import type { NDKRelayScore } from "./score.js";
+import { SignatureVerificationStats, startSignatureVerificationStats } from "./signature-verification-stats.js";
 import { NDKRelaySubscriptionManager } from "./sub-manager.js";
 import type { NDKRelaySubscription } from "./subscription.js";
-import { SignatureVerificationStats, startSignatureVerificationStats } from "./signature-verification-stats.js";
 
 /** @deprecated Use `WebSocket['url']` instead. */
 export type NDKRelayUrl = WebSocket["url"];
+
+/**
+ * Protocol handler function type for handling custom relay messages.
+ * @param relay The relay that received the message
+ * @param message The parsed message array from the relay
+ */
+export type NDKProtocolHandler = (relay: NDKRelay, message: unknown[]) => void;
 
 export enum NDKRelayStatus {
     DISCONNECTING = 0, // 0
@@ -102,6 +109,12 @@ export class NDKRelay extends EventEmitter<{
     public subs: NDKRelaySubscriptionManager;
     private publisher: NDKRelayPublisher;
     public authPolicy?: NDKAuthPolicy;
+
+    /**
+     * Protocol handlers for custom relay message types (e.g., NEG-OPEN, NEG-MSG).
+     * Allows external packages to handle non-standard relay messages.
+     */
+    private protocolHandlers = new Map<string, NDKProtocolHandler>();
 
     /**
      * The lowest validation ratio this relay can reach.
@@ -290,6 +303,45 @@ export class NDKRelay extends EventEmitter<{
 
     public req: (relaySub: NDKRelaySubscription) => void;
     public close: (subId: string) => void;
+
+    /**
+     * Registers a protocol handler for a specific message type.
+     * This allows external packages to handle custom relay messages (e.g., NIP-77 NEG-* messages).
+     *
+     * @param messageType The message type to handle (e.g., "NEG-OPEN", "NEG-MSG")
+     * @param handler The function to call when a message of this type is received
+     *
+     * @example
+     * ```typescript
+     * relay.registerProtocolHandler('NEG-MSG', (relay, message) => {
+     *   console.log('Received NEG-MSG:', message);
+     * });
+     * ```
+     */
+    public registerProtocolHandler(messageType: string, handler: NDKProtocolHandler): void {
+        this.protocolHandlers.set(messageType, handler);
+    }
+
+    /**
+     * Unregisters a protocol handler for a specific message type.
+     *
+     * @param messageType The message type to stop handling
+     */
+    public unregisterProtocolHandler(messageType: string): void {
+        this.protocolHandlers.delete(messageType);
+    }
+
+    /**
+     * Checks if a protocol handler is registered for a message type.
+     * This is used internally by the connectivity layer to route messages.
+     *
+     * @internal
+     * @param messageType The message type to check
+     * @returns The handler function if registered, undefined otherwise
+     */
+    public getProtocolHandler(messageType: string): NDKProtocolHandler | undefined {
+        return this.protocolHandlers.get(messageType);
+    }
 }
 
 export { SignatureVerificationStats, startSignatureVerificationStats };

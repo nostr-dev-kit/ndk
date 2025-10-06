@@ -8,6 +8,7 @@ import type {
 import type { NDKFilterFingerprint } from "../subscription/grouping";
 import { mergeFilters } from "../subscription/grouping";
 import type { NDKSubscriptionManager } from "../subscription/manager";
+import { formatFilters } from "../subscription/utils/format-filters";
 import type { NDKRelay } from ".";
 import { NDKRelayStatus } from ".";
 
@@ -112,12 +113,11 @@ export class NDKRelaySubscription {
 
     public addItem(subscription: NDKSubscription, filters: NDKFilter[]) {
         this.debug("Adding item", {
-            filters,
+            filters: formatFilters(filters),
             internalId: subscription.internalId,
             status: this.status,
             fingerprint: this.fingerprint,
             id: this.subId,
-            items: this.items,
             itemsSize: this.items.size,
         });
         if (this.items.has(subscription.internalId)) return;
@@ -150,7 +150,11 @@ export class NDKRelaySubscription {
                 this.evaluateExecutionPlan(subscription);
                 break;
             case NDKRelaySubscriptionStatus.CLOSED:
-                this.debug("Subscription is closed, cannot add new items %o (%o)", subscription, filters);
+                this.debug("Subscription is closed, cannot add new items", {
+                    filters: formatFilters(filters),
+                    subId: subscription.subId,
+                    internalId: subscription.internalId,
+                });
                 throw new Error("Cannot add new items to a closed subscription");
         }
     }
@@ -291,8 +295,6 @@ export class NDKRelaySubscription {
             this.debug("No items to execute; this relay was probably too slow to respond and the caller gave up", {
                 status: this.status,
                 fingerprint: this.fingerprint,
-                items: this.items,
-                itemsSize: this.items.size,
                 id: this.id,
                 subId: this.subId,
             });
@@ -303,8 +305,8 @@ export class NDKRelaySubscription {
         this.debug("Executing on relay ready", {
             status: this.status,
             fingerprint: this.fingerprint,
-            items: this.items,
             itemsSize: this.items.size,
+            filters: formatFilters(this.compileFilters()),
         });
 
         this.status = NDKRelaySubscriptionStatus.PENDING;
@@ -357,7 +359,6 @@ export class NDKRelaySubscription {
                 status: this.status,
                 id: this.subId,
                 fingerprint: this.fingerprint,
-                items: this.items,
                 itemsSize: this.items.size,
             });
             this.relay.once("ready", this.executeOnRelayReady);
@@ -377,6 +378,10 @@ export class NDKRelaySubscription {
 
     public onstart() {}
     public onevent(event: NostrEvent) {
+        console.log("[NDK-RELAY-SUB] onevent called:", {
+            eventId: event.id?.substring(0, 8),
+            relayUrl: this.relay?.url,
+        });
         this.topSubManager.dispatchEvent(event, this.relay);
     }
 
@@ -403,11 +408,10 @@ export class NDKRelaySubscription {
 
             if (subscription.closeOnEose) {
                 this.debug("Removing item because of EOSE", {
-                    filters: subscription.filters,
+                    filters: formatFilters(subscription.filters),
                     internalId: subscription.internalId,
                     status: this.status,
                     fingerprint: this.fingerprint,
-                    items: this.items,
                     itemsSize: this.items.size,
                 });
                 this.removeItem(subscription);
@@ -435,8 +439,8 @@ export class NDKRelaySubscription {
         const mergedFilters: NDKFilter[] = [];
         const filters = Array.from(this.items.values()).map((item) => item.filters);
         if (!filters[0]) {
-            this.debug("👀 No filters to merge", this.items);
-            console.error("BUG: No filters to merge!", this.items);
+            this.debug("👀 No filters to merge", { itemsSize: this.items.size });
+            console.error("BUG: No filters to merge!", { itemsSize: this.items.size, subId: this.subId });
             return [];
         }
         const filterCount = filters[0].length;

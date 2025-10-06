@@ -1,7 +1,8 @@
-import NDK, { NDKEvent } from "@nostr-dev-kit/ndk";
+import type NDK from "@nostr-dev-kit/ndk";
+import { NDKEvent } from "@nostr-dev-kit/ndk";
+import { ErrorCodes } from "../types";
 import { BLOSSOM_AUTH_EVENT_KIND } from "./constants";
 import { NDKBlossomAuthError } from "./errors";
-import { ErrorCodes } from "../types";
 import { DebugLogger } from "./logger";
 
 const logger = new DebugLogger("ndk:blossom:auth");

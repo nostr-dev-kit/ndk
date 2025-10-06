@@ -1,14 +1,14 @@
-import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { resolve } from "path";
+import { defineConfig } from "vite";
 
 // https://vitejs.dev/config/
 export default defineConfig({
     plugins: [react()],
     resolve: {
         alias: {
-            // This allows importing from the local ndk-blossom and ndk/ndk-hooks source
-            "@nostr-dev-kit/ndk-blossom": resolve(__dirname, "../../src"),
+            // This allows importing from the local blossom and ndk/ndk-hooks source
+            "@nostr-dev-kit/blossom": resolve(__dirname, "../../src"),
             "@nostr-dev-kit/ndk": resolve(__dirname, "../../../ndk-core/src"),
             "@nostr-dev-kit/ndk-hooks": resolve(__dirname, "../../../ndk-hooks/src"),
         },

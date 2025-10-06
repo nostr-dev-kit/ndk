@@ -1,4 +1,4 @@
-import { ErrorCode } from "../types";
+import type { ErrorCode } from "../types";
 
 /**
  * Base error class for NDK-Blossom

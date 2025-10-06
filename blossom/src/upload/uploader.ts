@@ -1,16 +1,17 @@
-import NDK, { NDKFilter, mapImetaTag, NDKImetaTag } from "@nostr-dev-kit/ndk";
-import { BlossomUploadOptions, ErrorCodes } from "../types";
+import type NDK from "@nostr-dev-kit/ndk";
+import { mapImetaTag, type NDKFilter, type NDKImetaTag } from "@nostr-dev-kit/ndk";
+import type NDKBlossom from "../blossom";
+import { extractHashFromUrl } from "../healing/url-healing";
+import { type BlossomUploadOptions, ErrorCodes } from "../types";
 import { createAuthenticatedFetchOptions } from "../utils/auth";
-import { extractResponseJson, fetchWithRetry } from "../utils/http";
 import {
     NDKBlossomAuthError,
     NDKBlossomNotFoundError,
     NDKBlossomServerError,
     NDKBlossomUploadError,
 } from "../utils/errors";
+import { extractResponseJson, fetchWithRetry } from "../utils/http";
 import { DebugLogger } from "../utils/logger";
-import { extractHashFromUrl } from "../healing/url-healing";
-import NDKBlossom from "../blossom";
 
 const logger = new DebugLogger("ndk:blossom:uploader");
 

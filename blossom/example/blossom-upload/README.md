@@ -54,6 +54,6 @@ bun run dev
 
 ## Notes
 
-- This example uses the local version of the ndk-blossom package from the parent directory
+- This example uses the local version of the blossom package from the parent directory
 - The uploaded files are stored on the Blossom servers associated with your Nostr account
 - A Nostr event (kind 1) is published with the uploaded file metadata when the upload is successful

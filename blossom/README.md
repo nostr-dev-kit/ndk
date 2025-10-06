@@ -17,20 +17,20 @@ NDK-Blossom is an extension for [NDK (Nostr Development Kit)](https://github.com
 
 ```bash
 # Using npm
-npm install @nostr-dev-kit/ndk-blossom
+npm install @nostr-dev-kit/blossom
 
 # Using yarn
-yarn add @nostr-dev-kit/ndk-blossom
+yarn add @nostr-dev-kit/blossom
 
 # Using bun
-bun add @nostr-dev-kit/ndk-blossom
+bun add @nostr-dev-kit/blossom
 ```
 
 ## Quick Start
 
 ```typescript
 import { NDK } from '@nostr-dev-kit/ndk';
-import { NDKBlossom } from '@nostr-dev-kit/ndk-blossom';
+import { NDKBlossom } from '@nostr-dev-kit/blossom';
 import { imetaTagToTag } from '@nostr-dev-kit/ndk/lib/utils/imeta';
 
 // Create NDK instance
@@ -108,7 +108,7 @@ NDK-Blossom allows you to provide your own SHA256 calculation implementation:
 
 ```typescript
 import { NDK } from '@nostr-dev-kit/ndk';
-import { NDKBlossom, SHA256Calculator } from '@nostr-dev-kit/ndk-blossom';
+import { NDKBlossom, SHA256Calculator } from '@nostr-dev-kit/blossom';
 
 // Create NDK instance
 const ndk = new NDK();

@@ -1,4 +1,4 @@
-# @nostr-dev-kit/ndk-blossom
+# @nostr-dev-kit/blossom
 
 ## 2.0.2
 
@@ -85,7 +85,7 @@
 
 ### Patch Changes
 
-- make ndk-blossom browser-compatible and enhance example UX
+- make blossom browser-compatible and enhance example UX
 
 ## 0.1.30
 
@@ -182,7 +182,7 @@
 
 ### Patch Changes
 
-- fallbackServer and server optiosn on ndk-blossom upload
+- fallbackServer and server optiosn on blossom upload
 
 ## 0.1.16
 
@@ -291,4 +291,4 @@
 
 ### Patch Changes
 
-- 5443e0f: Add ndk-blossom
+- 5443e0f: Add blossom

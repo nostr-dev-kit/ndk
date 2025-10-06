@@ -1,24 +1,25 @@
-import NDK, { NDKUser, NDKImetaTag, NDKEvent, NDKKind, NDKBlossomList, wrapEvent } from "@nostr-dev-kit/ndk";
-import {
+import type NDK from "@nostr-dev-kit/ndk";
+import { NDKBlossomList, NDKEvent, type NDKImetaTag, NDKKind, type NDKUser, wrapEvent } from "@nostr-dev-kit/ndk";
+import { fixUrl, getBlobUrlByHash } from "./healing/url-healing";
+import type {
+    BlossomOptimizationOptions,
     BlossomRetryOptions,
     BlossomServerConfig,
     BlossomUploadOptions,
-    BlossomOptimizationOptions,
     SHA256Calculator,
 } from "./types";
+import { uploadFile } from "./upload/uploader";
+import { DEFAULT_RETRY_OPTIONS } from "./utils/constants";
 import {
-    NDKBlossomError,
-    NDKBlossomUploadError,
-    NDKBlossomServerError,
     NDKBlossomAuthError,
+    NDKBlossomError,
     NDKBlossomNotFoundError,
     NDKBlossomOptimizationError,
+    NDKBlossomServerError,
+    NDKBlossomUploadError,
 } from "./utils/errors";
-import { DEFAULT_RETRY_OPTIONS } from "./utils/constants";
-import { Logger, DebugLogger, CustomLogger } from "./utils/logger";
-import { uploadFile } from "./upload/uploader";
-import { fixUrl, getBlobUrlByHash } from "./healing/url-healing";
 import { checkBlobExists, fetchWithRetry } from "./utils/http";
+import { CustomLogger, DebugLogger, type Logger } from "./utils/logger";
 import { defaultSHA256Calculator } from "./utils/sha256";
 
 /**

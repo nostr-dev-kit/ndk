@@ -6,9 +6,9 @@
  * (binary data like images, videos, etc.) stored on Blossom servers.
  */
 
+export * from "./blossom";
 // Export the main class and types from the blossom module
 export { default as NDKBlossom } from "./blossom";
-export * from "./blossom";
 
 // Export utility functions for direct usage if needed
 export { extractHashFromUrl } from "./healing/url-healing";

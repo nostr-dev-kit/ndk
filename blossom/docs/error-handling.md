@@ -14,7 +14,7 @@ import {
     NDKBlossomServerError,
     NDKBlossomAuthError,
     NDKBlossomNotFoundError
-} from '@nostr-dev-kit/ndk-blossom';
+} from '@nostr-dev-kit/blossom';
 ```
 
 All errors extend from `NDKBlossomError`, which includes:

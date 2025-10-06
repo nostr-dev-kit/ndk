@@ -1,6 +1,6 @@
 # NDK-Blossom Specification
 
-This document outlines the specifications for the `@nostr-dev-kit/ndk-blossom` package, which extends the [Nostr Development Kit (NDK)](https://github.com/nostr-dev-kit/ndk) with support for the [Blossom protocol](https://github.com/hzrd149/blossom) for handling binary data in the nostr ecosystem.
+This document outlines the specifications for the `@nostr-dev-kit/blossom` package, which extends the [Nostr Development Kit (NDK)](https://github.com/nostr-dev-kit/ndk) with support for the [Blossom protocol](https://github.com/hzrd149/blossom) for handling binary data in the nostr ecosystem.
 
 ## Core Concepts
 

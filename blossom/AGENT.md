@@ -79,7 +79,7 @@ When a blob URL fails, clients:
 
 ```typescript
 import NDK from '@nostr-dev-kit/ndk';
-import NDKBlossom from '@nostr-dev-kit/ndk-blossom';
+import NDKBlossom from '@nostr-dev-kit/blossom';
 
 const ndk = new NDK({
   explicitRelayUrls: ['wss://relay.damus.io'],
@@ -88,7 +88,7 @@ const ndk = new NDK({
 const blossom = new NDKBlossom(ndk);
 
 // IMPORTANT: Set SHA256 calculator for browser/node compatibility
-import { defaultSHA256Calculator } from '@nostr-dev-kit/ndk-blossom';
+import { defaultSHA256Calculator } from '@nostr-dev-kit/blossom';
 blossom.setSHA256Calculator(defaultSHA256Calculator);
 ```
 

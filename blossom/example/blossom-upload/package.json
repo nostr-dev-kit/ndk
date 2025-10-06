@@ -1,5 +1,5 @@
 {
-    "name": "ndk-blossom-upload-example",
+    "name": "blossom-upload-example",
     "private": true,
     "version": "0.1.0",
     "type": "module",
@@ -10,7 +10,7 @@
     },
     "dependencies": {
         "@nostr-dev-kit/ndk": "latest",
-        "@nostr-dev-kit/ndk-blossom": "file:../..",
+        "@nostr-dev-kit/blossom": "file:../..",
         "@nostr-dev-kit/ndk-hooks": "latest",
         "react": "^18.2.0",
         "react-dom": "^18.2.0"

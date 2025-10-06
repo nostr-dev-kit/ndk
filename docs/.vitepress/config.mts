@@ -49,10 +49,11 @@ export default defineConfig({
             {
                 text: "Cache Adapters",
                 items: [
+                    { text: "In-memory LRU", link: "/cache/memory" },
                     { text: "In-memory + dexie", link: "/cache/dexie" },
                     { text: "Local Nostr Relay", link: "/cache/nostr" },
-                    { 
-                        text: "SQLite (WASM)", 
+                    {
+                        text: "SQLite (WASM)",
                         link: "/cache/sqlite-wasm/INDEX",
                         items: [
                             { text: "Bundling", link: "/cache/sqlite-wasm/bundling" },

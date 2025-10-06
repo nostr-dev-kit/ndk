@@ -4,6 +4,7 @@ set -e # Exit immediately if a command exits with a non-zero status.
 DOCS_DIR="docs"
 CORE_DIR="ndk-core"
 DEXIE_DIR="ndk-cache-dexie"
+MEMORY_DIR="cache-memory"
 NOSTRCACHE_DIR="ndk-cache-nostr"
 SQLITE_WASM_DIR="ndk-cache-sqlite-wasm"
 MOBILE_DIR="ndk-mobile"
@@ -85,6 +86,8 @@ copy_dir_contents "$CORE_DIR/snippets" "$DOCS_DIR/snippets"
 # Cache Dexie
 copy_file "$DEXIE_DIR/docs/cache/dexie.md" "$DOCS_DIR/cache"
 
+# Cache Memory
+copy_file "$MEMORY_DIR/docs/cache/memory.md" "$DOCS_DIR/cache"
 
 # Cache Nostr
 copy_file "$NOSTRCACHE_DIR/docs/cache/nostr.md" "$DOCS_DIR/cache"

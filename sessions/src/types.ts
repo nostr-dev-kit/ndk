@@ -17,6 +17,27 @@ export interface NDKSession {
     kindFollowSet?: Map<NDKKind, Map<Hexpubkey, { followed: boolean; last_updated_at: number }>>;
 
     /**
+     * Muted IDs (from kind 10000)
+     * Map<id, type> where type is "p" for pubkey or "e" for event
+     */
+    muteSet?: Map<string, string>;
+
+    /**
+     * Muted words (from kind 10000 "word" tags)
+     */
+    mutedWords?: Set<string>;
+
+    /**
+     * Blocked relay URLs (from kind 10001)
+     */
+    blockedRelays?: Set<string>;
+
+    /**
+     * User's relay list (from kind 10002)
+     */
+    relayList?: Map<string, { read: boolean; write: boolean }>;
+
+    /**
      * Events that are unique per kind (replaceable events)
      */
     events: Map<NDKKind, NDKEvent | null>;
@@ -50,10 +71,37 @@ export interface SessionStartOptions {
     follows?: boolean | NDKKind[];
 
     /**
+     * Fetch mute list (kind 10000)
+     */
+    mutes?: boolean;
+
+    /**
+     * Fetch blocked relay list (kind 10001)
+     */
+    blockedRelays?: boolean;
+
+    /**
+     * Fetch user's relay list (kind 10002)
+     */
+    relayList?: boolean;
+
+    /**
      * Fetch specific replaceable event kinds
      * Map keys are NDKKind, values are the events to fetch
      */
     events?: Map<NDKKind, NDKEvent>;
+
+    /**
+     * Set the muteFilter on NDK based on session's mute data
+     * @default true
+     */
+    setMuteFilter?: boolean;
+
+    /**
+     * Set the relayConnectionFilter on NDK based on session's blocked relays
+     * @default true
+     */
+    setRelayConnectionFilter?: boolean;
 }
 
 /**
@@ -64,6 +112,10 @@ export interface SerializedSession {
     signerPayload?: string; // NDKSigner's toPayload() result
     profile?: NDKUserProfile;
     followSet?: Hexpubkey[];
+    muteSet?: Array<[string, string]>; // Serialized as array of tuples
+    mutedWords?: string[];
+    blockedRelays?: string[];
+    relayList?: Array<[string, { read: boolean; write: boolean }]>; // Serialized as array of tuples
     lastActive: number;
 }
 

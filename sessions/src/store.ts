@@ -133,11 +133,11 @@ export function createSessionStore() {
                     kinds,
                     authors: [pubkey],
                 },
-                { closeOnEose: false }
+                { closeOnEose: false, subId: 'session' },
+                {
+                    onEvent: (event) => handleIncomingEvent(event, pubkey, get)
+                }
             );
-
-            // Handle events
-            subscription.on('event', (event) => handleIncomingEvent(event, pubkey, get));
 
             // Update session with subscription
             get().updateSession(pubkey, { subscription });
@@ -160,6 +160,9 @@ export function createSessionStore() {
                 set({ activePubkey: undefined });
                 if (state.ndk) {
                     state.ndk.signer = undefined;
+                    // Clear filters when no session is active
+                    state.ndk.muteFilter = undefined;
+                    state.ndk.relayConnectionFilter = undefined;
                 }
                 return;
             }
@@ -177,9 +180,42 @@ export function createSessionStore() {
             // Switch active session
             set({ activePubkey: pubkey });
 
-            // Update NDK signer
+            // Update NDK signer and filters
             if (state.ndk) {
                 state.ndk.signer = signer;
+
+                // Set muteFilter based on session's mute data
+                if (session.muteSet || session.mutedWords) {
+                    state.ndk.muteFilter = (event) => {
+                        // Check if author is muted
+                        if (session.muteSet?.has(event.pubkey)) return true;
+
+                        // Check if event ID is muted
+                        if (event.id && session.muteSet?.has(event.id)) return true;
+
+                        // Check if content contains muted words
+                        if (event.content && session.mutedWords && session.mutedWords.size > 0) {
+                            const lowerContent = event.content.toLowerCase();
+                            for (const word of session.mutedWords) {
+                                if (lowerContent.includes(word)) return true;
+                            }
+                        }
+
+                        return false;
+                    };
+                } else {
+                    state.ndk.muteFilter = undefined;
+                }
+
+                // Set relayConnectionFilter based on session's blocked relays
+                if (session.blockedRelays && session.blockedRelays.size > 0) {
+                    state.ndk.relayConnectionFilter = (relayUrl) => {
+                        // Block connection if relay is in blockedRelays
+                        return !session.blockedRelays!.has(relayUrl);
+                    };
+                } else {
+                    state.ndk.relayConnectionFilter = undefined;
+                }
             }
         },
 
@@ -204,14 +240,15 @@ export function createSessionStore() {
             if (state.activePubkey === pubkey) {
                 const remainingSessions = Array.from(newSessions.keys());
                 if (remainingSessions.length > 0) {
-                    updates.activePubkey = remainingSessions[0];
-                    if (state.ndk) {
-                        state.ndk.signer = newSigners.get(remainingSessions[0]);
-                    }
+                    // Use switchToUser to handle all the state updates including muteFilter
+                    get().switchToUser(remainingSessions[0]);
+                    return; // switchToUser already sets the state
                 } else {
                     updates.activePubkey = undefined;
                     if (state.ndk) {
                         state.ndk.signer = undefined;
+                        state.ndk.muteFilter = undefined;
+                        state.ndk.relayConnectionFilter = undefined;
                     }
                 }
             }
@@ -254,6 +291,18 @@ function buildSubscriptionKinds(opts: SessionStartOptions): NDKKind[] {
         }
     }
 
+    if (opts.mutes) {
+        kinds.push(10000); // Mute list
+    }
+
+    if (opts.blockedRelays) {
+        kinds.push(10001); // Block relay list
+    }
+
+    if (opts.relayList) {
+        kinds.push(10002); // User relay list
+    }
+
     if (opts.events) {
         for (const kind of opts.events.keys()) {
             kinds.push(kind);
@@ -284,6 +333,24 @@ function handleIncomingEvent(
     // Process contact list
     if (event.kind === 3) {
         handleContactListEvent(event, pubkey, getState);
+        return;
+    }
+
+    // Process mute list
+    if (event.kind === 10000) {
+        handleMuteListEvent(event, pubkey, getState);
+        return;
+    }
+
+    // Process block relay list
+    if (event.kind === 10001) {
+        handleBlockRelayListEvent(event, pubkey, getState);
+        return;
+    }
+
+    // Process user relay list
+    if (event.kind === 10002) {
+        handleRelayListEvent(event, pubkey, getState);
         return;
     }
 
@@ -322,6 +389,75 @@ function handleContactListEvent(
         }
     }
     getState().updateSession(pubkey, { followSet });
+}
+
+/**
+ * Process mute list event (kind 10000)
+ */
+function handleMuteListEvent(
+    event: NDKEvent,
+    pubkey: Hexpubkey,
+    getState: () => SessionStore
+): void {
+    const muteSet = new Map<string, string>();
+    const mutedWords = new Set<string>();
+
+    for (const tag of event.tags) {
+        // Handle muted pubkeys and events
+        if ((tag[0] === 'p' || tag[0] === 'e') && tag[1]) {
+            muteSet.set(tag[1], tag[0]);
+        }
+        // Handle muted words
+        if (tag[0] === 'word' && tag[1]) {
+            mutedWords.add(tag[1].toLowerCase());
+        }
+    }
+
+    getState().updateSession(pubkey, { muteSet, mutedWords });
+}
+
+/**
+ * Process block relay list event (kind 10001)
+ */
+function handleBlockRelayListEvent(
+    event: NDKEvent,
+    pubkey: Hexpubkey,
+    getState: () => SessionStore
+): void {
+    const blockedRelays = new Set<string>();
+
+    for (const tag of event.tags) {
+        if (tag[0] === 'relay' && tag[1]) {
+            blockedRelays.add(tag[1]);
+        }
+    }
+
+    getState().updateSession(pubkey, { blockedRelays });
+}
+
+/**
+ * Process user relay list event (kind 10002)
+ */
+function handleRelayListEvent(
+    event: NDKEvent,
+    pubkey: Hexpubkey,
+    getState: () => SessionStore
+): void {
+    const relayList = new Map<string, { read: boolean; write: boolean }>();
+
+    for (const tag of event.tags) {
+        if (tag[0] === 'r' && tag[1]) {
+            const url = tag[1];
+            const config = tag[2];
+
+            relayList.set(url, {
+                read: !config || config === 'read',
+                write: !config || config === 'write'
+            });
+        }
+    }
+
+    getState().updateSession(pubkey, { relayList });
 }
 
 /**

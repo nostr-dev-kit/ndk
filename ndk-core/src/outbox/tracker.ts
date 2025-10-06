@@ -105,23 +105,24 @@ export class OutboxTracker extends EventEmitter {
                                     outboxItem.readRelays = new Set(normalize(relayList.readRelayUrls));
                                     outboxItem.writeRelays = new Set(normalize(relayList.writeRelayUrls));
 
-                                    // remove all blacklisted relays
-                                    for (const relayUrl of outboxItem.readRelays) {
-                                        if (this.ndk.pool.blacklistRelayUrls.has(relayUrl)) {
-                                            // this.debug(
-                                            //     `removing blacklisted relay ${relayUrl} from read relays`
-                                            // );
-                                            outboxItem.readRelays.delete(relayUrl);
+                                    // remove all blocked relays
+                                    if (this.ndk.relayConnectionFilter) {
+                                        for (const relayUrl of outboxItem.readRelays) {
+                                            if (!this.ndk.relayConnectionFilter(relayUrl)) {
+                                                // this.debug(
+                                                //     `removing blocked relay ${relayUrl} from read relays`
+                                                // );
+                                                outboxItem.readRelays.delete(relayUrl);
+                                            }
                                         }
-                                    }
 
-                                    // remove all blacklisted relays
-                                    for (const relayUrl of outboxItem.writeRelays) {
-                                        if (this.ndk.pool.blacklistRelayUrls.has(relayUrl)) {
-                                            // this.debug(
-                                            //     `removing blacklisted relay ${relayUrl} from write relays`
-                                            // );
-                                            outboxItem.writeRelays.delete(relayUrl);
+                                        for (const relayUrl of outboxItem.writeRelays) {
+                                            if (!this.ndk.relayConnectionFilter(relayUrl)) {
+                                                // this.debug(
+                                                //     `removing blocked relay ${relayUrl} from write relays`
+                                                // );
+                                                outboxItem.writeRelays.delete(relayUrl);
+                                            }
                                         }
                                     }
 

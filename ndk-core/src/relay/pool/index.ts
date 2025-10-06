@@ -45,7 +45,6 @@ export class NDKPool extends EventEmitter<{
     private _relays = new Map<WebSocket["url"], NDKRelay>();
     private status: "idle" | "active" = "idle";
     public autoConnectRelays = new Set<WebSocket["url"]>();
-    public poolBlacklistRelayUrls = new Set<WebSocket["url"]>();
     private debug: debug.Debugger;
     private temporaryRelayTimers = new Map<WebSocket["url"], NodeJS.Timeout>();
     private flappingRelays: Set<WebSocket["url"]> = new Set();
@@ -57,21 +56,14 @@ export class NDKPool extends EventEmitter<{
     private disconnectionTimes = new Map<WebSocket["url"], number>();
     private systemEventDetector?: ReturnType<typeof setTimeout>;
 
-    get blacklistRelayUrls() {
-        const val = new Set(this.ndk.blacklistRelayUrls);
-        this.poolBlacklistRelayUrls.forEach((url) => val.add(url));
-        return val;
-    }
 
     /**
      * @param relayUrls - The URLs of the relays to connect to.
-     * @param blacklistedRelayUrls - URLs to blacklist for this pool IN ADDITION to those blacklisted at the ndk-level
      * @param ndk - The NDK instance.
      * @param opts - Options for the pool.
      */
     public constructor(
         relayUrls: WebSocket["url"][],
-        blacklistedRelayUrls: WebSocket["url"][],
         ndk: NDK,
         {
             debug,
@@ -86,8 +78,6 @@ export class NDKPool extends EventEmitter<{
         if (name) this._name = name;
         this.ndk = ndk;
         this.relayUrls = relayUrls;
-
-        this.poolBlacklistRelayUrls = new Set(blacklistedRelayUrls);
 
         this.ndk.pools.push(this);
     }
@@ -161,15 +151,16 @@ export class NDKPool extends EventEmitter<{
      */
     public addRelay(relay: NDKRelay, connect = true) {
         const isAlreadyInPool = this.relays.has(relay.url);
-        const isBlacklisted = this.blacklistRelayUrls?.has(relay.url);
         const isCustomRelayUrl = relay.url.includes("/npub1");
         let reconnect = true;
 
         const relayUrl = relay.url;
 
         if (isAlreadyInPool) return;
-        if (isBlacklisted) {
-            this.debug(`Refusing to add relay ${relayUrl}: blacklisted`);
+
+        // Check if relay connection is allowed using the filter
+        if (this.ndk.relayConnectionFilter && !this.ndk.relayConnectionFilter(relayUrl)) {
+            this.debug(`Refusing to add relay ${relayUrl}: blocked by relayConnectionFilter`);
             return;
         }
         if (isCustomRelayUrl) {

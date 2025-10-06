@@ -94,8 +94,6 @@ export class SignatureVerificationStats {
         console.log(
             `  Lowest Validation Ratio: ${stats.lowestValidationRatio.toFixed(4)} (${(stats.lowestValidationRatio * 100).toFixed(2)}%)`,
         );
-        console.log(`  Auto-blacklist Invalid Relays: ${stats.autoBlacklistInvalidRelays ? "Yes" : "No"}`);
-        console.log(`  Blacklisted Relays: ${stats.blacklistedRelayCount}`);
         console.log("===========================================\n");
     }
 
@@ -134,8 +132,6 @@ export class SignatureVerificationStats {
             relayStats,
             initialValidationRatio: this.ndk.initialValidationRatio,
             lowestValidationRatio: this.ndk.lowestValidationRatio,
-            autoBlacklistInvalidRelays: this.ndk.autoBlacklistInvalidRelays,
-            blacklistedRelayCount: this.ndk.blacklistRelayUrls?.length || 0,
         };
     }
 }

@@ -40,7 +40,7 @@ export class NDKNostrRpc extends EventEmitter {
 
         // if we have relays, we create a separate pool for it
         if (relayUrls) {
-            this.pool = new NDKPool(relayUrls, [], ndk, {
+            this.pool = new NDKPool(relayUrls, ndk, {
                 debug: debug.extend("rpc-pool"),
                 name: "Nostr RPC",
             });

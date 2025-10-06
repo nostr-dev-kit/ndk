@@ -9,9 +9,9 @@
         "preview": "vite preview"
     },
     "dependencies": {
-        "@nostr-dev-kit/ndk": "^2.15.2",
-        "@nostr-dev-kit/svelte": "^0.1.0",
-        "@nostr-dev-kit/sessions": "^0.1.0",
+        "@nostr-dev-kit/ndk": "workspace:*",
+        "@nostr-dev-kit/svelte": "workspace:*",
+        "@nostr-dev-kit/sessions": "workspace:*",
         "qrcode": "^1.5.4"
     },
     "devDependencies": {

@@ -1,6 +1,6 @@
 {
   "name": "@nostr-dev-kit/sessions",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Framework-agnostic session management for NDK with multi-account support",
   "type": "module",
   "main": "dist/index.cjs",
@@ -31,7 +31,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@nostr-dev-kit/ndk": "^2.15.2",
+    "@nostr-dev-kit/ndk": "workspace:*",
     "zustand": "^5"
   },
   "devDependencies": {

@@ -1,10 +1,6 @@
 import createDebug from "debug";
-import type { NDKEvent } from "../events/index.js";
-import { NDKKind } from "../events/kinds/index.js";
-import NDKList from "../events/kinds/lists/index.js";
 import type { NDKRelayList } from "../events/kinds/relay-list.js";
 import { NDKRelay } from "../relay/index.js";
-import type { NDKFilter } from "../subscription/index.js";
 import type { NDKUser } from "../user/index.js";
 import { getRelayListForUser } from "../utils/get-users-relay-list.js";
 import type { NDK } from "./index.js";
@@ -25,88 +21,21 @@ async function getUserRelayList(this: NDK, user: NDKUser): Promise<NDKRelayList 
         }
     }
 
+    debug("Connected to %d user relays", userRelays.relays.size);
     return userRelays;
 }
 
 export async function setActiveUser(this: NDK, user: NDKUser) {
+    // Only connect to user's relays if autoConnectUserRelays is true
+    if (!this.autoConnectUserRelays) return;
+
     const pool = this.outboxPool || this.pool;
 
     if (pool.connectedRelays.length > 0) {
-        setActiveUserConnected.call(this, user);
+        await getUserRelayList.call(this, user);
     } else {
-        pool.once("connect", () => {
-            setActiveUserConnected.call(this, user);
+        pool.once("connect", async () => {
+            await getUserRelayList.call(this, user);
         });
     }
-}
-
-async function setActiveUserConnected(this: NDK, user: NDKUser) {
-    const userRelays = await getUserRelayList.call(this, user);
-
-    const filters: NDKFilter[] = [
-        {
-            kinds: [NDKKind.BlockRelayList],
-            authors: [user.pubkey],
-        },
-    ];
-
-    if (this.autoFetchUserMutelist) {
-        filters[0].kinds?.push(NDKKind.MuteList);
-    }
-
-    const events: Map<NDKKind, NDKEvent> = new Map();
-    const relaySet = userRelays ? userRelays.relaySet : undefined;
-
-    this.subscribe(
-        filters,
-        { subId: "active-user-settings", closeOnEose: true, relaySet },
-        {
-            onEvent: (event) => {
-                const prevEvent = events.get(event.kind!);
-
-                if (prevEvent && prevEvent.created_at! >= event.created_at!) return;
-                events.set(event.kind!, event);
-            },
-            onEose: () => {
-                for (const event of events.values()) {
-                    processEvent.call(this, event);
-                }
-            },
-        },
-    );
-}
-
-async function processEvent(this: NDK, event: NDKEvent) {
-    if (event.kind === NDKKind.BlockRelayList) {
-        processBlockRelayList.call(this, event);
-    } else if (event.kind === NDKKind.MuteList) {
-        processMuteList.call(this, event);
-    }
-}
-
-function processBlockRelayList(this: NDK, event: NDKEvent) {
-    const list = NDKList.from(event);
-
-    for (const item of list.items) {
-        this.pool.blacklistRelayUrls.add(item[0]);
-    }
-
-    debug("Added %d relays to relay blacklist", list.items.length);
-}
-
-function processMuteList(this: NDK, muteList: NDKEvent) {
-    const list = NDKList.from(muteList);
-
-    for (const item of list.items) {
-        this.mutedIds.set(item[1], item[0]);
-    }
-
-    // Extract muted words from "word" tags
-    for (const tag of muteList.tags) {
-        if (tag[0] === "word" && tag[1]) {
-            this.mutedWords.add(tag[1].toLowerCase());
-        }
-    }
-
-    debug("Added %d users and %d words to mute list", list.items.length, this.mutedWords.size);
 }

@@ -154,16 +154,30 @@ export class ReactiveSessionsStore {
      * Logout (remove) a session
      */
     logout(pubkey?: Hexpubkey): void {
-        this.#manager.logout(pubkey);
+        const targetPubkey = pubkey ?? this.activePubkey;
+        this.#manager.logout(targetPubkey);
+
+        // If this was the last session, clear storage completely
+        if (this.sessions.size === 0) {
+            this.#manager.clear().catch((error) => {
+                console.error("[ndk-svelte5] Failed to clear sessions from storage:", error);
+            });
+        }
     }
 
     /**
      * Logout all sessions
      */
     logoutAll(): void {
-        for (const pubkey of this.sessions.keys()) {
+        // Clear all sessions from the manager
+        const pubkeys = Array.from(this.sessions.keys());
+        for (const pubkey of pubkeys) {
             this.#manager.logout(pubkey);
         }
+        // Clear persisted sessions from storage
+        this.#manager.clear().catch((error) => {
+            console.error("[ndk-svelte5] Failed to clear sessions from storage:", error);
+        });
     }
 
     /**

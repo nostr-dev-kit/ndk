@@ -628,12 +628,12 @@ export class NDKEvent extends EventEmitter {
     }
 
     public muted(): string | null {
-        const authorMutedEntry = this.ndk?.mutedIds.get(this.pubkey);
-        if (authorMutedEntry && authorMutedEntry === "p") return "author";
-
-        const eventTagReference = this.tagReference();
-        const eventMutedEntry = this.ndk?.mutedIds.get(eventTagReference[1]);
-        if (eventMutedEntry && eventMutedEntry === eventTagReference[0]) return "event";
+        // Check if the event is muted using the muteFilter
+        if (this.ndk?.muteFilter && this.ndk.muteFilter(this)) {
+            // We can't determine the specific reason anymore without accessing the mute data
+            // The muteFilter just returns true/false
+            return "muted";
+        }
 
         return null;
     }

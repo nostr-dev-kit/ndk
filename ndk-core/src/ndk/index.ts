@@ -49,11 +49,6 @@ export interface NDKConstructorParams {
     explicitRelayUrls?: string[];
 
     /**
-     * Relays we should never connect to
-     */
-    blacklistRelayUrls?: string[];
-
-    /**
      * When this is set, we always write only to this relays.
      */
     devWriteRelayUrls?: string[];
@@ -64,7 +59,7 @@ export interface NDKConstructorParams {
     outboxRelayUrls?: string[];
 
     /**
-     * Enable outbox model (defaults to false)
+     * Enable outbox model (defaults to true)
      */
     enableOutboxModel?: boolean;
 
@@ -75,12 +70,6 @@ export interface NDKConstructorParams {
      * @default true
      */
     autoConnectUserRelays?: boolean;
-
-    /**
-     * Automatically fetch user's mutelist
-     * @default true
-     */
-    autoFetchUserMutelist?: boolean;
 
     /**
      * Signer to use for signing events by default
@@ -103,22 +92,18 @@ export interface NDKConstructorParams {
     netDebug?: NDKNetDebug;
 
     /**
-     * Muted pubkeys and eventIds
-     */
-    mutedIds?: Map<Hexpubkey | NDKEventId, string>;
-
-    /**
-     * Muted words (case-insensitive)
-     */
-    mutedWords?: Set<string>;
-
-    /**
      * Custom filter function to determine if an event should be muted.
-     * Defaults to checking if event.pubkey or event.id is in mutedIds.
      * @param event - The event to check
      * @returns true if the event should be muted
      */
     muteFilter?: (event: NDKEvent) => boolean;
+
+    /**
+     * Custom filter function to determine if a relay connection should be allowed.
+     * @param relayUrl - The relay URL to check
+     * @returns true if the connection should be allowed, false to block it
+     */
+    relayConnectionFilter?: (relayUrl: string) => boolean;
 
     /**
      * Client name to add to events' tag
@@ -191,13 +176,6 @@ export interface NDKConstructorParams {
     signatureVerificationFunction?: (event: NDKEvent) => Promise<boolean>;
 
     /**
-     * Whether to automatically blacklist relays that provide invalid signatures.
-     *
-     * @default true
-     */
-    autoBlacklistInvalidRelays?: boolean;
-
-    /**
      * Filter validation mode for subscriptions.
      *
      * @default "validate" - Throws an error when filters contain undefined values
@@ -219,14 +197,6 @@ export interface GetUserParams extends NDKUserParams {
 
 export const DEFAULT_OUTBOX_RELAYS = ["wss://purplepag.es/", "wss://nos.lol/"];
 
-/**
- * TODO: Move this to a outbox policy
- */
-export const DEFAULT_BLACKLISTED_RELAYS = [
-    "wss://brb.io/", // BRB
-    "wss://nostr.mutinywallet.com/", // Don't try to read from this relay since it's a write-only relay
-    // "wss://purplepag.es/", // This is a hack, since this is a mostly read-only relay, but not fully. Once we have relay routing this can be removed so it only receives the supported kinds
-];
 
 /**
  * Defines handlers that can be passed to `ndk.subscribe` via the `autoStart` parameter
@@ -282,7 +252,6 @@ export class NDK extends EventEmitter<{
     "event:publish-failed": (event: NDKEvent, error: NDKPublishError, relays: WebSocket["url"][]) => void;
 }> {
     private _explicitRelayUrls?: WebSocket["url"][];
-    public blacklistRelayUrls?: WebSocket["url"][];
     public pool: NDKPool;
     public outboxPool?: NDKPool;
     private _signer?: NDKSigner;
@@ -291,9 +260,8 @@ export class NDK extends EventEmitter<{
     public debug: debug.Debugger;
     public devWriteRelaySet?: NDKRelaySet;
     public outboxTracker?: OutboxTracker;
-    public mutedIds: Map<Hexpubkey | NDKEventId, string>;
-    public mutedWords: Set<string>;
-    public muteFilter: (event: NDKEvent) => boolean;
+    public muteFilter?: (event: NDKEvent) => boolean;
+    public relayConnectionFilter?: (relayUrl: string) => boolean;
     public clientName?: string;
     public clientNip89?: string;
     public queuesZapConfig: Queue<NDKLnUrlData | undefined>;
@@ -302,7 +270,6 @@ export class NDK extends EventEmitter<{
     public initialValidationRatio = 1.0;
     public lowestValidationRatio = 0.1;
     public validationRatioFn?: NDKValidationRatioFn;
-    public autoBlacklistInvalidRelays = false;
     public filterValidationMode: "validate" | "fix" | "ignore" = "validate";
     public subManager: NDKSubscriptionManager;
 
@@ -369,7 +336,6 @@ export class NDK extends EventEmitter<{
     readonly netDebug?: NDKNetDebug;
 
     public autoConnectUserRelays = true;
-    public autoFetchUserMutelist = true;
 
     public walletConfig?: NDKWalletInterface;
 
@@ -379,9 +345,8 @@ export class NDK extends EventEmitter<{
         this.debug = opts.debug || debug("ndk");
         this.netDebug = opts.netDebug;
         this._explicitRelayUrls = opts.explicitRelayUrls || [];
-        this.blacklistRelayUrls = opts.blacklistRelayUrls || DEFAULT_BLACKLISTED_RELAYS;
         this.subManager = new NDKSubscriptionManager();
-        this.pool = new NDKPool(opts.explicitRelayUrls || [], [], this);
+        this.pool = new NDKPool(opts.explicitRelayUrls || [], this);
         this.pool.name = "Main";
 
         this.pool.on("relay:auth", async (relay: NDKRelay, challenge: string) => {
@@ -391,15 +356,14 @@ export class NDK extends EventEmitter<{
         });
 
         this.autoConnectUserRelays = opts.autoConnectUserRelays ?? true;
-        this.autoFetchUserMutelist = opts.autoFetchUserMutelist ?? true;
 
         this.clientName = opts.clientName;
         this.clientNip89 = opts.clientNip89;
 
         this.relayAuthDefaultPolicy = opts.relayAuthDefaultPolicy;
 
-        if (opts.enableOutboxModel) {
-            this.outboxPool = new NDKPool(opts.outboxRelayUrls || DEFAULT_OUTBOX_RELAYS, [], this, {
+        if (!(opts.enableOutboxModel === false)) {
+            this.outboxPool = new NDKPool(opts.outboxRelayUrls || DEFAULT_OUTBOX_RELAYS, this, {
                 debug: this.debug.extend("outbox-pool"),
                 name: "Outbox Pool",
             });
@@ -426,47 +390,8 @@ export class NDK extends EventEmitter<{
 
         this.signer = opts.signer;
         this.cacheAdapter = opts.cacheAdapter;
-        this.mutedIds = opts.mutedIds || new Map();
-        this.mutedWords = opts.mutedWords || new Set();
-
-        // Helper to check if a kind has text content worth filtering
-        const isContentKind = (kind: number): boolean => {
-            // Text notes
-            if (kind === 1) return true;
-            // Long-form content
-            if (kind === 30023) return true;
-            // DMs and Giftwraps
-            if (kind === 4 || kind === 1059) return true;
-            // Badges
-            if (kind === 30009) return true;
-            // Live chat messages
-            if (kind === 1311) return true;
-            // Regular events (comments, etc)
-            if (kind >= 1000 && kind < 10000) return true;
-            return false;
-        };
-
-        // Default mute filter checks mutedIds and mutedWords
-        this.muteFilter =
-            opts.muteFilter ||
-            ((event: NDKEvent) => {
-                // Check if author is muted
-                if (this.mutedIds.has(event.pubkey)) return true;
-
-                // Check if event ID is muted
-                if (event.id && this.mutedIds.has(event.id)) return true;
-
-                // Check if content contains muted words (only for content kinds)
-                // Performance: only check if we have muted words AND this is a content kind
-                if (event.content && this.mutedWords.size > 0 && isContentKind(event.kind)) {
-                    const lowerContent = event.content.toLowerCase();
-                    for (const word of this.mutedWords) {
-                        if (lowerContent.includes(word)) return true;
-                    }
-                }
-
-                return false;
-            });
+        this.muteFilter = opts.muteFilter;
+        this.relayConnectionFilter = opts.relayConnectionFilter;
 
         if (opts.devWriteRelayUrls) {
             this.devWriteRelaySet = NDKRelaySet.fromRelayUrls(opts.devWriteRelayUrls, this);
@@ -490,7 +415,6 @@ export class NDK extends EventEmitter<{
 
         this.initialValidationRatio = opts.initialValidationRatio || 1.0;
         this.lowestValidationRatio = opts.lowestValidationRatio || 0.1;
-        this.autoBlacklistInvalidRelays = opts.autoBlacklistInvalidRelays || false;
         this.validationRatioFn = opts.validationRatioFn || this.defaultValidationRatioFn;
         this.filterValidationMode = opts.filterValidationMode || "validate";
 
@@ -596,8 +520,6 @@ export class NDK extends EventEmitter<{
      *
      * This function will automatically connect to the user's relays if
      * `autoConnectUserRelays` is set to true.
-     *
-     * It will also fetch the user's mutelist if `autoFetchUserMutelist` is set to true.
      */
     public set activeUser(user: NDKUser | undefined) {
         const differentUser = this._activeUser?.pubkey !== user?.pubkey;
@@ -606,10 +528,6 @@ export class NDK extends EventEmitter<{
 
         if (user && differentUser) {
             setActiveUser.call(this, user);
-        } else if (!user) {
-            // reset mutedIds and mutedWords
-            this.mutedIds = new Map();
-            this.mutedWords = new Set();
         }
     }
 
@@ -667,32 +585,8 @@ export class NDK extends EventEmitter<{
         // Emit event with relay information
         this.emit("event:invalid-sig", event, relay);
 
-        // If auto-blacklisting is enabled and we have a relay, add the relay to the blacklist
-        if (this.autoBlacklistInvalidRelays && relay) {
-            this.blacklistRelay(relay.url);
-        }
     }
 
-    /**
-     * Add a relay URL to the blacklist as it has been identified as malicious
-     */
-    public blacklistRelay(url: string): void {
-        if (!this.blacklistRelayUrls) {
-            this.blacklistRelayUrls = [];
-        }
-
-        if (!this.blacklistRelayUrls.includes(url)) {
-            this.blacklistRelayUrls.push(url);
-            this.debug(`Added relay to blacklist: ${url}`);
-
-            // Disconnect from this relay if connected
-            const relay = this.pool.getRelay(url, false, false);
-            if (relay) {
-                relay.disconnect();
-                this.debug(`Disconnected from blacklisted relay: ${url}`);
-            }
-        }
-    }
 
     /**
      * Default function to calculate validation ratio based on historical validation results.
@@ -714,6 +608,7 @@ export class NDK extends EventEmitter<{
     /**
      * Get a NDKUser object
      *
+     * @deprecated Use `fetchUser` instead - this method will be removed in the next major version
      * @param opts - User parameters object or a string (npub, nprofile, or hex pubkey)
      * @returns NDKUser instance
      *
@@ -761,12 +656,72 @@ export class NDK extends EventEmitter<{
 
     /**
      * Get a NDKUser from a NIP05
+     * @deprecated Use `fetchUser` instead - this method will be removed in the next major version
      * @param nip05 NIP-05 ID
      * @param skipCache Skip cache
      * @returns
      */
     async getUserFromNip05(nip05: string, skipCache = false): Promise<NDKUser | undefined> {
         return NDKUser.fromNip05(nip05, this, skipCache);
+    }
+
+    /**
+     * Fetch a NDKUser from a string identifier
+     *
+     * Supports multiple input formats:
+     * - NIP-05 identifiers (e.g., "pablo@test.com" or "test.com")
+     * - npub (NIP-19 encoded public key)
+     * - nprofile (NIP-19 encoded profile with optional relay hints)
+     * - Hex public key
+     *
+     * @param input - String identifier for the user (NIP-05, npub, nprofile, or hex pubkey)
+     * @param skipCache - Skip cache when resolving NIP-05 (only applies to NIP-05 lookups)
+     * @returns Promise resolving to NDKUser or undefined if not found
+     *
+     * @example
+     * ```typescript
+     * // Using NIP-05
+     * const user1 = await ndk.fetchUser("pablo@test.com");
+     * const user2 = await ndk.fetchUser("test.com"); // defaults to _@test.com
+     *
+     * // Using npub
+     * const user3 = await ndk.fetchUser("npub1...");
+     *
+     * // Using nprofile (includes relay hints)
+     * const user4 = await ndk.fetchUser("nprofile1...");
+     *
+     * // Using hex pubkey
+     * const user5 = await ndk.fetchUser("deadbeef...");
+     * ```
+     */
+    public async fetchUser(input: string, skipCache = false): Promise<NDKUser | undefined> {
+        // Check if it's a NIP-05 identifier (contains @ or . indicating a domain)
+        if (input.includes("@") || (input.includes(".") && !input.startsWith("n"))) {
+            return NDKUser.fromNip05(input, this, skipCache);
+        }
+
+        // Check if it's a NIP-19 encoded string
+        if (input.startsWith("npub1")) {
+            const { type, data } = nip19.decode(input);
+            if (type !== "npub") throw new Error(`Invalid npub: ${input}`);
+            const user = new NDKUser({ pubkey: data });
+            user.ndk = this;
+            return user;
+        } else if (input.startsWith("nprofile1")) {
+            const { type, data } = nip19.decode(input);
+            if (type !== "nprofile") throw new Error(`Invalid nprofile: ${input}`);
+            const user = new NDKUser({
+                pubkey: data.pubkey,
+                relayUrls: data.relays,
+            });
+            user.ndk = this;
+            return user;
+        } else {
+            // Assume it's a hex pubkey
+            const user = new NDKUser({ pubkey: input });
+            user.ndk = this;
+            return user;
+        }
     }
 
     /**
@@ -963,13 +918,6 @@ export class NDK extends EventEmitter<{
             };
             if (relaySet) subscribeOpts.relaySet = relaySet;
 
-            const s = this.subscribe(
-                filters,
-                subscribeOpts,
-                // relaySet, // Removed: Passed via opts
-                false, // autoStart = false
-            );
-
             /** This is a workaround, for some reason we're leaking subscriptions that should EOSE and fetchEvent is not
              * seeing them; this is a temporary fix until we find the bug.
              */
@@ -978,24 +926,27 @@ export class NDK extends EventEmitter<{
                 resolve(fetchedEvent);
             }, 10000);
 
-            s.on("event", (event: NDKEvent) => {
-                event.ndk = this;
+            const s = this.subscribe(
+                filters,
+                subscribeOpts,
+                {
+                    onEvent: (event: NDKEvent) => {
+                        event.ndk = this;
 
-                // We only emit immediately when the event is not replaceable
-                if (!event.isReplaceable()) {
-                    clearTimeout(t2);
-                    resolve(event);
-                } else if (!fetchedEvent || fetchedEvent.created_at! < event.created_at!) {
-                    fetchedEvent = event;
+                        // We only emit immediately when the event is not replaceable
+                        if (!event.isReplaceable()) {
+                            clearTimeout(t2);
+                            resolve(event);
+                        } else if (!fetchedEvent || fetchedEvent.created_at! < event.created_at!) {
+                            fetchedEvent = event;
+                        }
+                    },
+                    onEose: () => {
+                        clearTimeout(t2);
+                        resolve(fetchedEvent);
+                    }
                 }
-            });
-
-            s.on("eose", () => {
-                clearTimeout(t2);
-                resolve(fetchedEvent);
-            });
-
-            s.start();
+            );
         });
     }
 

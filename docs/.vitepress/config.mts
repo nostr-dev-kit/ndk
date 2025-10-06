@@ -71,9 +71,16 @@ export default defineConfig({
                 ],
             },
             {
+                text: "Sync & Negentropy",
+                items: [
+                    { text: "Introduction", link: "/sync/index" },
+                ],
+            },
+            {
                 text: "Web of Trust",
                 items: [
                     { text: "Introduction", link: "/wot/index" },
+                    { text: "Negentropy Integration", link: "/wot/negentropy" },
                 ],
             },
             {

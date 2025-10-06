@@ -96,24 +96,23 @@ export default class NDKNostrCacheAdapter implements NDKCacheAdapter {
                 _("Notice received %o", notice);
             });
 
-            this.ndk.subscribe(
-                subscription.filters,
-                {
-                    subId: subscription.subId,
-                    closeOnEose: true,
-                    relaySet: this.relaySet,
-                    onEvent: (event) => {
-                        subscription.eventReceived(event, undefined, true);
-                        events.push(event);
-                        _("Event received %d", event.kind);
-                    },
-                    onEose: () => {
-                        _("Eose received");
-                        this.relay.off("notice", onRelayNotice);
-                        resolve(events);
-                    }
-                }
-            );
+            const sub = this.ndk.subscribe(subscription.filters, {
+                subId: subscription.subId,
+                closeOnEose: true,
+                relaySet: this.relaySet,
+            });
+
+            sub.on("event", (event) => {
+                subscription.eventReceived(event, undefined, true);
+                events.push(event);
+                _("Event received %d", event.kind);
+            });
+
+            sub.on("eose", () => {
+                _("Eose received");
+                this.relay.off("notice", onRelayNotice);
+                resolve(events);
+            });
         });
     }
 
@@ -145,24 +144,24 @@ export default class NDKNostrCacheAdapter implements NDKCacheAdapter {
                 let publishedEvents = 0;
                 return new Promise<void>((resolve, reject) => {
                     d("Hydrating %o", subscription.filters);
-                    this.fallbackNdk.subscribe(
-                        subscription.filters,
-                        {
-                            closeOnEose: true,
-                            onEvent: (event) => {
-                                this.hydrateLocalRelayWithEvent(event);
-                                publishedEvents++;
-                            },
-                            onEose: () => {
-                                d("Hydrated %d events", publishedEvents);
-                                resolve();
-                            },
-                            onClose: () => {
-                                d("Hydration closed");
-                                reject();
-                            }
-                        }
-                    );
+                    const sub = this.fallbackNdk.subscribe(subscription.filters, {
+                        closeOnEose: true,
+                    });
+
+                    sub.on("event", (event) => {
+                        this.hydrateLocalRelayWithEvent(event);
+                        publishedEvents++;
+                    });
+
+                    sub.on("eose", () => {
+                        d("Hydrated %d events", publishedEvents);
+                        resolve();
+                    });
+
+                    sub.on("close", () => {
+                        d("Hydration closed");
+                        reject();
+                    });
                 });
             },
         });

@@ -50,3 +50,4 @@ ndk-cache-sqlite/example/cache.db
 ndk-svelte5/examples
 .vercel
 .playwright-mcp
+svelte/examples/basic-feed/public/

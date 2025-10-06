@@ -2,7 +2,7 @@
 
 ## Executive Summary
 
-After deep analysis of ndk-core, ndk-wallet, ndk-wot, and ndk-svelte5, I've identified **fundamental architectural issues** in ndk-svelte5 that violate the design principles established by the other NDK packages.
+After deep analysis of ndk-core, ndk-wallet, wot, and ndk-svelte5, I've identified **fundamental architectural issues** in ndk-svelte5 that violate the design principles established by the other NDK packages.
 
 **Core Problem**: ndk-svelte5 creates unnecessary abstractions, global singletons, and wrapper stores that duplicate functionality already present in ndk-core and other packages.
 
@@ -23,7 +23,7 @@ After deep analysis of ndk-core, ndk-wallet, ndk-wot, and ndk-svelte5, I've iden
 - **Clear interface**: `lnPay()`, `cashuPay()`, `balance` getter
 - **No wrappers**: You use wallet instances directly
 
-### ndk-wot Design Principles
+### wot Design Principles
 - **Instance-based**: `new NDKWoT(ndk, rootPubkey)`
 - **Pure functions**: `filterByWoT()`, `rankByWoT()` as standalone functions
 - **No global state**: Create instances as needed
@@ -122,7 +122,7 @@ export async function initStores(ndk: NDKSvelte, options) {
 </script>
 ```
 
-**Violation**: ndk-wallet doesn't have a global wallet store. ndk-wot doesn't have a global wot store. Why does ndk-svelte5?
+**Violation**: ndk-wallet doesn't have a global wallet store. wot doesn't have a global wot store. Why does ndk-svelte5?
 
 **Fix**: Make stores context-based or instance-based, not global.
 
@@ -243,7 +243,7 @@ const profile = await profiles.get(pubkey); // Returns promise
 3. **Hidden behavior**: Auto-filter on ALL subscriptions is surprising
 
 **Violations**:
-- ndk-wot is designed to be instantiated: `new NDKWoT(ndk, pubkey)`
+- wot is designed to be instantiated: `new NDKWoT(ndk, pubkey)`
 - You're supposed to use it directly
 - Filtering is via pure functions: `filterByWoT(wot, events, options)`
 
@@ -565,7 +565,7 @@ await user.fetchProfile();
 
 ```svelte
 <script lang="ts">
-  import { NDKWoT, filterByWoT } from '@nostr-dev-kit/ndk-wot';
+  import { NDKWoT, filterByWoT } from '@nostr-dev-kit/wot';
   import { createSubscription } from '@nostr-dev-kit/ndk-svelte5';
 
   const wot = $state(new NDKWoT(ndk, user.pubkey));
@@ -625,7 +625,7 @@ import { profiles, wallet, wot } from '@nostr-dev-kit/ndk-svelte5';
 ```typescript
 import NDK from '@nostr-dev-kit/ndk';
 import { NDKCashuWallet } from '@nostr-dev-kit/ndk-wallet';
-import { NDKWoT } from '@nostr-dev-kit/ndk-wot';
+import { NDKWoT } from '@nostr-dev-kit/wot';
 ```
 ```
 
@@ -711,7 +711,7 @@ import { NDKWoT } from '@nostr-dev-kit/ndk-wot';
 
 The fundamental issue is **unnecessary abstraction layers**.
 
-ndk-core, ndk-wallet, and ndk-wot are designed to be used directly. They have clean APIs, are composable, and follow explicit patterns.
+ndk-core, ndk-wallet, and wot are designed to be used directly. They have clean APIs, are composable, and follow explicit patterns.
 
 ndk-svelte5 should **enhance** that with Svelte-specific reactivity, not **replace** it with wrapper stores.
 

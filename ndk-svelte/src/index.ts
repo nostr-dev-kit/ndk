@@ -327,8 +327,8 @@ class NDKSvelte extends NDK {
                 },
                 onEose: () => {
                     store.eosed = true;
-                    eoseCallbacks.forEach(cb => cb());
-                }
+                    eoseCallbacks.forEach((cb) => cb());
+                },
             });
 
             store.unsubscribe = () => {

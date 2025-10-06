@@ -1,21 +1,22 @@
-import React, { useEffect, useState } from "react";
+import type React from "react";
+import { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import NDK, {
-    useNDKInit,
     NDKNip07Signer,
     NDKPrivateKeySigner,
     NDKSessionLocalStorage,
     useAvailableSessions,
-    useNDKSessionSwitch,
+    useCurrentUserProfile,
+    useFollows,
     useNDK,
-    useNDKCurrentUser,
     useNDKCurrentPubkey,
-    useNDKSessionMonitor,
+    useNDKCurrentUser,
+    useNDKInit,
     useNDKSessionLogin,
     useNDKSessionLogout,
-    useFollows,
-    useCurrentUserProfile,
+    useNDKSessionMonitor,
     useNDKSessionSessions,
+    useNDKSessionSwitch,
 } from "../../src";
 
 // Initialize NDK outside of any component

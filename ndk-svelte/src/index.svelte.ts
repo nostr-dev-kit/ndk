@@ -82,19 +82,16 @@ class NDKSvelte extends NDK {
 
         // Create the subscription
         // The relaySet, if provided, is already within the opts object
-        const subscription = this.subscribe(
-            Array.isArray(filters) ? filters : [filters],
-            {
-                ...opts, // opts already contains relaySet if it was passed
-                onEvent: (event, relay) => {
-                    processEvent(event);
-                    if (opts?.onEvent) opts.onEvent(event, relay);
-                },
-                onEose: () => {
-                    if (opts?.onEose) opts.onEose();
-                }
-            }
-        );
+        const subscription = this.subscribe(Array.isArray(filters) ? filters : [filters], {
+            ...opts, // opts already contains relaySet if it was passed
+            onEvent: (event, relay) => {
+                processEvent(event);
+                if (opts?.onEvent) opts.onEvent(event, relay);
+            },
+            onEose: () => {
+                if (opts?.onEose) opts.onEose();
+            },
+        });
 
         // Cleanup when the component or context is destroyed
         onDestroy(() => {

@@ -6,20 +6,20 @@ NDK-Blossom extends NDK with support for the [Blossom protocol](https://github.c
 
 ```bash
 # Using npm
-npm install @nostr-dev-kit/ndk-blossom
+npm install @nostr-dev-kit/blossom
 
 # Using yarn
-yarn add @nostr-dev-kit/ndk-blossom
+yarn add @nostr-dev-kit/blossom
 
 # Using bun
-bun add @nostr-dev-kit/ndk-blossom
+bun add @nostr-dev-kit/blossom
 ```
 
 ## Basic Setup
 
 ```typescript
 import { NDK } from '@nostr-dev-kit/ndk';
-import { NDKBlossom } from '@nostr-dev-kit/ndk-blossom';
+import { NDKBlossom } from '@nostr-dev-kit/blossom';
 
 // Create an NDK instance
 const ndk = new NDK({

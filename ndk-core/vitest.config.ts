@@ -11,7 +11,7 @@ export default defineConfig({
             reporter: ["text", "json", "html"],
         },
         benchmark: {
-            include: ['benchmarks/**/*.bench.ts'],
+            include: ["benchmarks/**/*.bench.ts"],
         },
     },
 });

@@ -1,5 +1,6 @@
-import NDK, { NDKEvent, NDKSubscriptionCacheUsage } from "@nostr-dev-kit/ndk";
+import NDK, { type NDKEvent, NDKSubscriptionCacheUsage } from "@nostr-dev-kit/ndk";
 import * as CacheModule from "../../src/index.js";
+
 const NDKCacheAdapterSqlite = CacheModule.default.NDKCacheAdapterSqlite;
 
 import * as fs from "fs";

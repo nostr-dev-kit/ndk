@@ -1,7 +1,8 @@
 // Global test setup for ndk-cache-sqlite
-import { beforeEach, afterEach } from "vitest";
+
 import * as fs from "fs";
 import * as path from "path";
+import { afterEach, beforeEach } from "vitest";
 
 // Clean up test databases before and after each test
 beforeEach(() => {

@@ -1,62 +1,62 @@
 {
-  "name": "@nostr-dev-kit/ndk-hooks",
-  "version": "1.3.4",
-  "description": "React hooks for the Nostr Development Kit (NDK)",
-  "type": "module",
-  "main": "dist/index.cjs",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.cjs"
-      }
-    }
-  },
-  "files": [
-    "dist",
-    "README.md"
-  ],
-  "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
-    "dev": "bun run build --watch",
-    "lint": "biome check .",
-    "format": "biome format . --write",
-    "test": "vitest",
-    "test:watch": "vitest --watch"
-  },
-  "dependencies": {
-    "@nostr-dev-kit/ndk": "^2.15.2",
-    "@nostr-dev-kit/ndk-wallet": "0.7.1",
-    "@testing-library/react": "^14.1.2",
-    "zustand": "^5"
-  },
-  "peerDependencies": {
-    "react": "*"
-  },
-  "devDependencies": {
-    "@types/react": "^18.2.0",
-    "jsdom": "^26.1.0",
-    "tsup": "^8",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "typescript": "^5.8.2",
-    "vitest": "^1.6.1",
-    "vite": "^4.4.9",
-    "esbuild": "^0.17.19",
-    "zustand": "^5.0.3"
-  },
-  "keywords": [
-    "nostr",
-    "ndk",
-    "react",
-    "hooks"
-  ],
-  "author": "_@f7z.io",
-  "license": "MIT"
+    "name": "@nostr-dev-kit/ndk-hooks",
+    "version": "1.3.4",
+    "description": "React hooks for the Nostr Development Kit (NDK)",
+    "type": "module",
+    "main": "dist/index.cjs",
+    "module": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "exports": {
+        ".": {
+            "import": {
+                "types": "./dist/index.d.ts",
+                "default": "./dist/index.js"
+            },
+            "require": {
+                "types": "./dist/index.d.ts",
+                "default": "./dist/index.cjs"
+            }
+        }
+    },
+    "files": [
+        "dist",
+        "README.md"
+    ],
+    "scripts": {
+        "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+        "dev": "bun run build --watch",
+        "lint": "biome check .",
+        "format": "biome format . --write",
+        "test": "vitest",
+        "test:watch": "vitest --watch"
+    },
+    "dependencies": {
+        "@nostr-dev-kit/ndk": "^2.15.2",
+        "@nostr-dev-kit/ndk-wallet": "0.7.1",
+        "@testing-library/react": "^14.1.2",
+        "zustand": "^5"
+    },
+    "peerDependencies": {
+        "react": "*"
+    },
+    "devDependencies": {
+        "@types/react": "^18.2.0",
+        "jsdom": "^26.1.0",
+        "tsup": "^8",
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1",
+        "typescript": "^5.8.2",
+        "vitest": "^1.6.1",
+        "vite": "^4.4.9",
+        "esbuild": "^0.17.19",
+        "zustand": "^5.0.3"
+    },
+    "keywords": [
+        "nostr",
+        "ndk",
+        "react",
+        "hooks"
+    ],
+    "author": "_@f7z.io",
+    "license": "MIT"
 }

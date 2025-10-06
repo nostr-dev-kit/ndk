@@ -49,3 +49,4 @@ ndk-cache-sqlite/example/cache.db
 .tenex/
 ndk-svelte5/examples
 .vercel
+.playwright-mcp

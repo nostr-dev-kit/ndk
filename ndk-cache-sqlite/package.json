@@ -1,59 +1,59 @@
 {
-  "name": "@nostr-dev-kit/ndk-cache-sqlite",
-  "version": "3.0.0",
-  "description": "SQLite cache adapter for NDK using better-sqlite3, compatible with Node.js environments.",
-  "keywords": [
-    "nostr",
-    "ndk",
-    "cache",
-    "sqlite",
-    "better-sqlite3"
-  ],
-  "author": "Nostr Dev Kit Contributors",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/nostr-dev-kit/ndk.git",
-    "directory": "ndk-cache-sqlite"
-  },
-  "bugs": {
-    "url": "https://github.com/nostr-dev-kit/ndk/issues"
-  },
-  "homepage": "https://github.com/nostr-dev-kit/ndk/tree/master/ndk-cache-sqlite",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+    "name": "@nostr-dev-kit/ndk-cache-sqlite",
+    "version": "3.0.0",
+    "description": "SQLite cache adapter for NDK using better-sqlite3, compatible with Node.js environments.",
+    "keywords": [
+        "nostr",
+        "ndk",
+        "cache",
+        "sqlite",
+        "better-sqlite3"
+    ],
+    "author": "Nostr Dev Kit Contributors",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/nostr-dev-kit/ndk.git",
+        "directory": "ndk-cache-sqlite"
+    },
+    "bugs": {
+        "url": "https://github.com/nostr-dev-kit/ndk/issues"
+    },
+    "homepage": "https://github.com/nostr-dev-kit/ndk/tree/master/ndk-cache-sqlite",
+    "main": "dist/index.js",
+    "module": "dist/index.mjs",
+    "types": "dist/index.d.ts",
+    "exports": {
+        ".": {
+            "import": "./dist/index.mjs",
+            "require": "./dist/index.js",
+            "types": "./dist/index.d.ts"
+        }
+    },
+    "files": [
+        "dist",
+        "docs"
+    ],
+    "scripts": {
+        "build": "tsup src/index.ts --format cjs,esm --dts",
+        "test": "vitest",
+        "test:run": "vitest run",
+        "prepublishOnly": "bun run build"
+    },
+    "dependencies": {
+        "better-sqlite3": "^9.0.0"
+    },
+    "devDependencies": {
+        "@nostr-dev-kit/ndk": "^2.15.2",
+        "@types/better-sqlite3": "^7.6.8",
+        "tsup": "^8.0.0",
+        "typescript": "^5.0.0",
+        "vitest": "^1.0.0"
+    },
+    "license": "MIT",
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "peerDependencies": {
+        "@nostr-dev-kit/ndk": "^2.15.2"
     }
-  },
-  "files": [
-    "dist",
-    "docs"
-  ],
-  "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts",
-    "test": "vitest",
-    "test:run": "vitest run",
-    "prepublishOnly": "bun run build"
-  },
-  "dependencies": {
-    "better-sqlite3": "^9.0.0"
-  },
-  "devDependencies": {
-    "@nostr-dev-kit/ndk": "^2.15.2",
-    "@types/better-sqlite3": "^7.6.8",
-    "tsup": "^8.0.0",
-    "typescript": "^5.0.0",
-    "vitest": "^1.0.0"
-  },
-  "license": "MIT",
-  "engines": {
-    "node": ">=18.0.0"
-  },
-  "peerDependencies": {
-    "@nostr-dev-kit/ndk": "^2.15.2"
-  }
 }

@@ -21,7 +21,7 @@
             "outputs": ["dist/**"],
             "dependsOn": ["ndk-core#build", "ndk-wallet#build", "ndk-hooks#build"]
         },
-        "ndk-blossom#build": {
+        "blossom#build": {
             "outputs": ["dist/**"],
             "dependsOn": ["ndk-core#build"]
         },

@@ -3,7 +3,7 @@
  * Uses sql.js and persists the database in IndexedDB.
  * Automatically saves the database 1000ms after the last write.
  */
-import { openIndexedDB, loadFromIndexedDB, saveToIndexedDB } from "./indexeddb-utils";
+import { loadFromIndexedDB, openIndexedDB, saveToIndexedDB } from "./indexeddb-utils";
 
 export async function loadWasmAndInitDb(wasmUrl?: string, dbName: string = "ndk-cache"): Promise<any> {
     let SQL, SQLModule;
@@ -49,7 +49,7 @@ export async function loadWasmAndInitDb(wasmUrl?: string, dbName: string = "ndk-
 
     // Patch run/exec to schedule save after writes
     const origRun = db.run;
-    db.run = function (sql: string, params?: any[] | Record<string, any>) {
+    db.run = (sql: string, params?: any[] | Record<string, any>) => {
         const result = origRun.call(db, sql, params);
         (db as any)._scheduleSave();
         return result;

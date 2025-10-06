@@ -1,15 +1,13 @@
 import type NDK from "@nostr-dev-kit/ndk";
-import { type StateCreator, create } from "zustand";
-
 import type { Hexpubkey, NDKSigner, NDKUser } from "@nostr-dev-kit/ndk";
-import type { NDKSessionsState, NDKUserSession, SessionStartOptions } from "./types";
-
+import { create, type StateCreator } from "zustand";
 import { addSession } from "./add-session";
 import { init } from "./init";
 import { removeSession } from "./remove-session";
 import { startSession } from "./start-session";
 import { stopSession } from "./stop-session";
 import { switchToUser } from "./switch-to-user";
+import type { NDKSessionsState, NDKUserSession, SessionStartOptions } from "./types";
 import { updateSession } from "./update-session";
 
 /**

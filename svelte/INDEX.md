@@ -139,7 +139,7 @@ const notes = ndk.subscribe([{ kinds: [1] }]);
 
 ```svelte
 <script>
-import { profiles, sessions, mutes } from '@nostr-dev-kit/ndk-svelte5/stores';
+import { profiles, sessions, mutes } from '@nostr-dev-kit/svelte/stores';
 
 // Profiles auto-fetch
 const profile = profiles.get(pubkey);
@@ -214,7 +214,7 @@ const notes = ndk.subscribe([{ kinds: [1] }]);
 ### With Profiles
 ```svelte
 <script>
-import { profiles } from '@nostr-dev-kit/ndk-svelte5/stores';
+import { profiles } from '@nostr-dev-kit/svelte/stores';
 
 const notes = ndk.subscribe([{ kinds: [1] }]);
 </script>
@@ -231,7 +231,7 @@ const notes = ndk.subscribe([{ kinds: [1] }]);
 ### With Authentication
 ```svelte
 <script>
-import { sessions } from '@nostr-dev-kit/ndk-svelte5/stores';
+import { sessions } from '@nostr-dev-kit/svelte/stores';
 
 async function login() {
   await sessions.login(signer);

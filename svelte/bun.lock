@@ -2,7 +2,7 @@
   "lockfileVersion": 1,
   "workspaces": {
     "": {
-      "name": "@nostr-dev-kit/ndk-svelte5",
+      "name": "@nostr-dev-kit/svelte",
       "dependencies": {
         "@nostr-dev-kit/ndk": "^2.14.37",
       },

@@ -1,7 +1,7 @@
 import type NDK from "@nostr-dev-kit/ndk";
 import type { Hexpubkey, NDKUserProfile } from "@nostr-dev-kit/ndk";
-import { UseProfileValueOptions } from "../types";
 import { create } from "zustand";
+import type { UseProfileValueOptions } from "../types";
 import { fetchProfileImplementation } from "./fetch-profile";
 import { initializeProfilesStore } from "./initialize";
 import { setProfileImplementation } from "./set-profile";

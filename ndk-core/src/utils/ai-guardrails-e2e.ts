@@ -1,11 +1,12 @@
 #!/usr/bin/env tsx
+
 /**
  * E2E script to demonstrate AI Guardrails in action.
  * Run with: npx tsx ndk-core/src/utils/ai-guardrails-e2e.ts
  */
 
-import { NDK } from "../ndk/index.js";
 import { NDKEvent } from "../events/index.js";
+import { NDK } from "../ndk/index.js";
 import { NDKPrivateKeySigner } from "../signers/private-key/index.js";
 
 const RED = "\x1b[31m";

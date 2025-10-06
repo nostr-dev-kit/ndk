@@ -1,5 +1,5 @@
-import { EventGenerator } from "../../test";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { EventGenerator } from "../../test";
 import type { NDKEvent } from "../events/index.js";
 import { NDK } from "../ndk/index.js";
 import { NDKSubscription } from "../subscription/index.js";

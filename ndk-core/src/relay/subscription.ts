@@ -378,10 +378,6 @@ export class NDKRelaySubscription {
 
     public onstart() {}
     public onevent(event: NostrEvent) {
-        console.log("[NDK-RELAY-SUB] onevent called:", {
-            eventId: event.id?.substring(0, 8),
-            relayUrl: this.relay?.url,
-        });
         this.topSubManager.dispatchEvent(event, this.relay);
     }
 

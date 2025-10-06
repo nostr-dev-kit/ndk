@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import NDK, { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
-import { NDKWoT } from "./wot.js";
+import NDK, { type NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
+import { beforeEach, describe, expect, it } from "vitest";
 import { filterByWoT, rankByWoT } from "./filter.js";
+import { NDKWoT } from "./wot.js";
 
 describe("NDKWoT", () => {
     let ndk: NDK;

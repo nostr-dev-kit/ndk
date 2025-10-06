@@ -11,7 +11,7 @@ import { NoActiveSessionError } from "./utils/errors";
 export class AuthManager {
     constructor(
         private store: SessionStore,
-        private getStore: () => SessionStore
+        private getStore: () => SessionStore,
     ) {}
 
     /**

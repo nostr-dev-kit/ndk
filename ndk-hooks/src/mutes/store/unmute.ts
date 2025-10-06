@@ -1,9 +1,8 @@
-import type { NDKMutesState } from "./types";
 import type { Hexpubkey } from "@nostr-dev-kit/ndk";
 import NDK, { NDKEvent, NDKKind, NDKList } from "@nostr-dev-kit/ndk";
-import type { MuteableItem } from "./types";
 import { computeMuteCriteria } from "../utils/compute-mute-criteria";
 import { identifyMuteItem } from "../utils/identify-mute-item";
+import type { MuteableItem, NDKMutesState } from "./types";
 
 /**
  * Unmutes an item (pubkey, event, hashtag, or word) for a user in the mute store.

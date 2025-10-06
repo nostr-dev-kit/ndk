@@ -7,13 +7,13 @@ import type { NDKSubscription } from "../../subscription/index.js";
 import type { NDKEncryptionScheme } from "../../types.js";
 import type { Hexpubkey } from "../../user/index.js";
 import { NDKUser } from "../../user/index.js";
+import { ndkSignerFromPayload } from "../deserialization.js";
 import type { NDKSigner } from "../index.js";
 import { NDKPrivateKeySigner } from "../private-key/index.js";
+import { registerSigner } from "../registry.js";
+import { generateNostrConnectUri, type NostrConnectOptions, nostrConnectGenerateSecret } from "./nostrconnect.js";
 import type { NDKRpcResponse } from "./rpc.js";
 import { NDKNostrRpc } from "./rpc.js";
-import { ndkSignerFromPayload } from "../deserialization.js";
-import { registerSigner } from "../registry.js";
-import { NostrConnectOptions, generateNostrConnectUri, nostrConnectGenerateSecret } from "./nostrconnect.js";
 /**
  * This NDKSigner implements NIP-46, which allows remote signing of events.
  * This class is meant to be used client-side, paired with the NDKNip46Backend or a NIP-46 backend (like Nostr-Connect)

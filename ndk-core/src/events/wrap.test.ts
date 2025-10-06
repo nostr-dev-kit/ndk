@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { NDKEvent } from "./index.js";
-import { wrapEvent, registerEventClass, unregisterEventClass, getRegisteredEventClasses } from "./wrap.js";
+import { beforeEach, describe, expect, it } from "vitest";
 import type { NostrEvent } from "./index.js";
+import { NDKEvent } from "./index.js";
+import { getRegisteredEventClasses, registerEventClass, unregisterEventClass, wrapEvent } from "./wrap.js";
 
 class TestCustomEvent extends NDKEvent {
     static kinds = [99999];

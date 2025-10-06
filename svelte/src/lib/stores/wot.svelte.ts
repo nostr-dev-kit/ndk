@@ -2,11 +2,11 @@ import type NDK from "@nostr-dev-kit/ndk";
 import type { NDKEvent } from "@nostr-dev-kit/ndk";
 import {
     NDKWoT,
-    type WoTBuildOptions,
-    rankByWoT,
     type WoTFilterOptions as NDKWoTFilterOptions,
     type WoTRankOptions as NDKWoTRankOptions,
-} from "@nostr-dev-kit/ndk-wot";
+    rankByWoT,
+    type WoTBuildOptions,
+} from "@nostr-dev-kit/wot";
 import type { ReactiveSessionsStore } from "./sessions.svelte.js";
 
 export interface WoTLoadOptions {

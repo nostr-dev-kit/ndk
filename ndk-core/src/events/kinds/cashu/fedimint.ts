@@ -37,7 +37,7 @@ export class NDKFedimintMint extends NDKEvent {
      * Invite codes (multiple allowed)
      */
     get inviteCodes(): string[] {
-        return this.getMatchingTags("u").map(t => t[1]);
+        return this.getMatchingTags("u").map((t) => t[1]);
     }
 
     set inviteCodes(values: string[]) {
@@ -51,7 +51,7 @@ export class NDKFedimintMint extends NDKEvent {
      * Supported modules
      */
     get modules(): string[] {
-        return this.getMatchingTags("modules").map(t => t[1]);
+        return this.getMatchingTags("modules").map((t) => t[1]);
     }
 
     set modules(values: string[]) {

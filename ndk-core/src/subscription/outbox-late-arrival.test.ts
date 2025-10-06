@@ -1,12 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { NDK } from "../ndk";
-import { NDKSubscription } from "./index";
-import { NDKEvent } from "../events";
+import { SignerGenerator, UserGenerator } from "../../test/helpers/test-fixtures";
 import { RelayMock } from "../../test/mocks/relay-mock";
 import { RelayPoolMock } from "../../test/mocks/relay-pool-mock";
-import { OutboxTracker } from "../outbox/tracker";
+import { NDKEvent } from "../events";
 import { NDKRelayList } from "../events/kinds/relay-list";
-import { UserGenerator, SignerGenerator } from "../../test/helpers/test-fixtures";
+import { NDK } from "../ndk";
+import { OutboxTracker } from "../outbox/tracker";
+import { NDKSubscription } from "./index";
 
 describe("Subscription with late-arriving relay list", () => {
     let ndk: NDK;

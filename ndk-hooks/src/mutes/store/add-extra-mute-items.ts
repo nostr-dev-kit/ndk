@@ -1,7 +1,6 @@
-import type { NDKMutesState, MuteableItem } from "./types";
-
 import { computeMuteCriteria } from "../utils/compute-mute-criteria";
 import { identifyMuteItem } from "../utils/identify-mute-item";
+import type { MuteableItem, NDKMutesState } from "./types";
 
 /**
  * Adds multiple extra mute items to the application-level mute store.

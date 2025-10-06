@@ -1,7 +1,7 @@
 import type NDK from "@nostr-dev-kit/ndk";
-import type { Hexpubkey, NDKSigner, NDKUser, NDKUserProfile, NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
-import { NDKSessionManager, LocalStorage } from "@nostr-dev-kit/sessions";
-import type { NDKSession, LoginOptions, SessionStartOptions } from "@nostr-dev-kit/sessions";
+import type { Hexpubkey, NDKEvent, NDKKind, NDKSigner, NDKUser, NDKUserProfile } from "@nostr-dev-kit/ndk";
+import type { LoginOptions, NDKSession, SessionStartOptions } from "@nostr-dev-kit/sessions";
+import { LocalStorage, NDKSessionManager } from "@nostr-dev-kit/sessions";
 
 /**
  * Reactive wrapper around NDKSessionManager

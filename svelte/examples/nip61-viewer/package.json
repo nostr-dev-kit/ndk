@@ -9,9 +9,9 @@
         "preview": "vite preview"
     },
     "dependencies": {
-        "@nostr-dev-kit/ndk": "^2.15.0",
-        "@nostr-dev-kit/svelte": "file:../..",
-        "@nostr-dev-kit/ndk-cache-sqlite-wasm": "^0.5.10"
+        "@nostr-dev-kit/ndk": "workspace:*",
+        "@nostr-dev-kit/svelte": "workspace:*",
+        "@nostr-dev-kit/ndk-cache-sqlite-wasm": "workspace:*"
     },
     "devDependencies": {
         "@sveltejs/vite-plugin-svelte": "^5.0.4",

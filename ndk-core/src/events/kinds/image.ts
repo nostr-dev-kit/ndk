@@ -1,8 +1,8 @@
-import { NDKKind } from ".";
+import type { NDK } from "../../ndk";
+import { imetaTagToTag, mapImetaTag, type NDKImetaTag } from "../../utils/imeta";
 import type { NostrEvent } from "..";
 import { NDKEvent } from "..";
-import type { NDK } from "../../ndk";
-import { type NDKImetaTag, imetaTagToTag, mapImetaTag } from "../../utils/imeta";
+import { NDKKind } from ".";
 
 /**
  * Represents an image.

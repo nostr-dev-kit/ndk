@@ -1,6 +1,6 @@
-import { EventGenerator, RelayPoolMock } from "../test";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import NDK, { NDKSubscription, type NDKFilter, NDKKind, type NDKEvent, type NDKRelay, NDKRelaySet } from "./index";
+import { EventGenerator, RelayPoolMock } from "../test";
+import NDK, { type NDKEvent, type NDKFilter, NDKKind, type NDKRelay, NDKRelaySet, NDKSubscription } from "./index";
 
 describe("NDKSubscription", () => {
     let ndk: NDK;
@@ -14,7 +14,7 @@ describe("NDKSubscription", () => {
         EventGenerator.setNDK(ndk);
 
         // Replace the relay pool with our mock
-        // @ts-ignore - We're intentionally replacing the pool for testing
+        // @ts-expect-error - We're intentionally replacing the pool for testing
         ndk.pool = pool;
 
         // Add some mock relays

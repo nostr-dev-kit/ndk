@@ -1,4 +1,4 @@
-import { NDKKind, type NDKEvent } from "@nostr-dev-kit/ndk";
+import { type NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
 
 /**
  * Processes a Kind 10000 (Mute List) event to extract muted items.

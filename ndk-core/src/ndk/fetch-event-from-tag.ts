@@ -1,9 +1,9 @@
-import type { NDK } from ".";
 import type { NDKEvent, NDKTag } from "../events";
 import { getRelaysForSync } from "../outbox/write";
 import { NDKRelaySet } from "../relay/sets";
 import { calculateRelaySetsFromFilters } from "../relay/sets/calculate";
 import type { NDKSubscriptionOptions } from "../subscription";
+import type { NDK } from ".";
 
 /**
  * Options on how to handle when a relay hint doesn't respond
@@ -111,7 +111,7 @@ export async function fetchEventFromTag(
         if (event) return event;
     }
 
-    let result: NDKEvent | null | undefined = undefined;
+    let result: NDKEvent | null | undefined;
 
     const relay = isValidHint(hint) ? this.pool.getRelay(hint, false, true, [{ ids: [id] }]) : undefined;
 

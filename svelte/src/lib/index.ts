@@ -1,65 +1,57 @@
 // Core exports
-export { NDKSvelte } from "./ndk-svelte.svelte.js";
-export { createNDK, type CreateNDKOptions } from "./ndk.svelte.js";
 
-// Subscription
-export { createSubscription } from "./subscribe.svelte.js";
-export type { Subscription, SubscribeOptions } from "./subscribe.svelte.js";
-
-// Store types (for typing ndk.* properties)
-export type { ReactiveSessionsStore } from "./stores/sessions.svelte.js";
-export type { ReactiveWoTStore } from "./stores/wot.svelte.js";
-export type { ReactiveWalletStore } from "./stores/wallet.svelte.js";
-export type { ReactivePaymentsStore } from "./stores/payments.svelte.js";
-export type { ReactivePoolStore, RelayInfo, RelayStatus } from "./stores/pool.svelte.js";
-
+// Re-export session types from ndk-sessions
+export type { LoginOptions, NDKSession, SessionStartOptions } from "@nostr-dev-kit/sessions";
+// Re-export WoT utilities
+export { createWoTComparator, filterByWoT, rankByWoT } from "@nostr-dev-kit/wot";
 // Blossom
 export {
     BlossomUpload,
-    useBlossomUpload,
-    type UploadStatus,
     type UploadProgress,
     type UploadState,
+    type UploadStatus,
+    useBlossomUpload,
 } from "./blossom-upload.svelte.js";
 export {
     BlossomUrl,
-    useBlossomUrl,
     type UrlStatus,
+    useBlossomUrl,
 } from "./blossom-url.svelte.js";
-
-// User helpers
-export { useUser, type User } from "./user.svelte.js";
-
 // Components
 export { default as Avatar } from "./components/Avatar.svelte";
 export { default as BlossomImage } from "./components/BlossomImage.svelte";
-
+export { type CreateNDKOptions, createNDK } from "./ndk.svelte.js";
+export { NDKSvelte } from "./ndk-svelte.svelte.js";
 // Payment runes
 export {
-    useZapAmount,
     useIsZapped,
-    useTargetTransactions,
     usePendingPayments,
+    useTargetTransactions,
     useTransactions,
+    useZapAmount,
     zap,
 } from "./payments/runes.svelte.js";
 export type {
-    Transaction,
     PendingPayment,
-    TransactionType,
-    TransactionStatus,
+    Transaction,
     TransactionDirection,
+    TransactionStatus,
+    TransactionType,
 } from "./payments/types.js";
-
+export { type ProfileStore, useProfile } from "./profile.svelte.js";
+export type { ReactivePaymentsStore } from "./stores/payments.svelte.js";
+export type { ReactivePoolStore, RelayInfo, RelayStatus } from "./stores/pool.svelte.js";
+// Store types (for typing ndk.* properties)
+export type { ReactiveSessionsStore } from "./stores/sessions.svelte.js";
+export type { ReactiveWalletStore } from "./stores/wallet.svelte.js";
+export type { ReactiveWoTStore, WoTFilterOptions, WoTLoadOptions, WoTRankOptions } from "./stores/wot.svelte.js";
+export type { SubscribeOptions, Subscription } from "./subscribe.svelte.js";
+// Subscription
+export { createSubscription } from "./subscribe.svelte.js";
+// User helpers
+export { type UserStore, useUser } from "./user.svelte.js";
 // WoT runes
-export { useWoTScore, useWoTDistance, useIsInWoT } from "./wot-runes.svelte.js";
-export type { WoTFilterOptions, WoTRankOptions, WoTLoadOptions } from "./stores/wot.svelte.js";
-
-// Re-export WoT utilities
-export { filterByWoT, rankByWoT, createWoTComparator } from "@nostr-dev-kit/ndk-wot";
-
-// Re-export session types from ndk-sessions
-export type { NDKSession, LoginOptions, SessionStartOptions } from "@nostr-dev-kit/sessions";
+export { useIsInWoT, useWoTDistance, useWoTScore } from "./wot-runes.svelte.js";
 
 // Constants
 export const DEFAULT_BUFFER_MS = 30;

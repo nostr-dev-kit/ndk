@@ -1,5 +1,10 @@
-import NDK, { type NDKEvent, type NDKFilter, type NDKSubscription, type NDKSubscriptionOptions } from "@nostr-dev-kit/ndk";
-import type { WoTFilterOptions, WoTRankOptions } from "@nostr-dev-kit/ndk-wot";
+import NDK, {
+    type NDKEvent,
+    type NDKFilter,
+    type NDKSubscription,
+    type NDKSubscriptionOptions,
+} from "@nostr-dev-kit/ndk";
+import type { WoTFilterOptions, WoTRankOptions } from "@nostr-dev-kit/wot";
 import type { NDKSvelte } from "./ndk-svelte.svelte.js";
 
 export interface SubscribeOptions extends NDKSubscriptionOptions {
@@ -192,7 +197,7 @@ export function createSubscription<T extends NDKEvent = NDKEvent>(
             onEvent: handleEvent,
             onEose: () => {
                 _eosed = true;
-            }
+            },
         });
     }
 

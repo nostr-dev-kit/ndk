@@ -1,8 +1,7 @@
 import type { NDKEvent } from "@nostr-dev-kit/ndk";
 import { NDKKind } from "@nostr-dev-kit/ndk";
 import type { NDKNWCWallet } from ".";
-import type { NDKNWCResponseBase } from "./types";
-import type { NDKNWCResponseMap } from "./types";
+import type { NDKNWCResponseBase, NDKNWCResponseMap } from "./types";
 
 export async function waitForResponse<M extends keyof NDKNWCResponseMap>(
     this: NDKNWCWallet,
@@ -52,8 +51,8 @@ export async function waitForResponse<M extends keyof NDKNWCResponseMap>(
                 },
                 onEose: () => {
                     sendRequest();
-                }
-            }
+                },
+            },
         );
     });
 }

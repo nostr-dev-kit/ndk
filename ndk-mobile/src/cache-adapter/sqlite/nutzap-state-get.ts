@@ -1,5 +1,5 @@
-import { NDKNutzap, NdkNutzapStatus } from "@nostr-dev-kit/ndk";
 import type { NDKEventId, NDKNutzapState } from "@nostr-dev-kit/ndk";
+import { NDKNutzap, NdkNutzapStatus } from "@nostr-dev-kit/ndk";
 import type { NDKCacheAdapterSqlite } from "./index.js";
 
 // Define database row type for type checking - specific to this implementation

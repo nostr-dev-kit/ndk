@@ -1,5 +1,5 @@
-import type { NDKEvent, NDKEventId } from "./index.js";
 import type { NDKRelay } from "../relay/index.js";
+import type { NDKEvent, NDKEventId } from "./index.js";
 
 let worker: Worker | undefined;
 

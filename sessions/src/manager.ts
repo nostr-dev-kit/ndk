@@ -1,11 +1,11 @@
 import type NDK from "@nostr-dev-kit/ndk";
 import type { Hexpubkey, NDKSigner, NDKUser } from "@nostr-dev-kit/ndk";
-import { createSessionStore } from "./store";
-import type { SessionStore } from "./store";
-import type { LoginOptions, NDKSession, SessionStartOptions } from "./types";
-import type { SessionStorage } from "./storage/types";
 import { AuthManager } from "./auth-manager";
 import { PersistenceManager } from "./persistence-manager";
+import type { SessionStorage } from "./storage/types";
+import type { SessionStore } from "./store";
+import { createSessionStore } from "./store";
+import type { LoginOptions, NDKSession, SessionStartOptions } from "./types";
 import { debounce } from "./utils";
 
 export interface SessionManagerOptions {
@@ -62,14 +62,8 @@ export class NDKSessionManager {
         this.store.getState().init(ndk);
 
         // Initialize managers
-        this.authManager = new AuthManager(
-            this.store.getState(),
-            () => this.store.getState()
-        );
-        this.persistenceManager = new PersistenceManager(
-            this.options.storage,
-            () => this.store.getState()
-        );
+        this.authManager = new AuthManager(this.store.getState(), () => this.store.getState());
+        this.persistenceManager = new PersistenceManager(this.options.storage, () => this.store.getState());
 
         // Setup auto-save if enabled
         if (this.options.autoSave && this.options.storage) {
@@ -224,7 +218,7 @@ export class NDKSessionManager {
      */
     destroy(): void {
         const state = this.getCurrentState();
-        
+
         // Stop all session subscriptions
         for (const pubkey of state.sessions.keys()) {
             state.stopSession(pubkey);
@@ -239,7 +233,7 @@ export class NDKSessionManager {
     private setupAutoSave(): void {
         const debouncedPersist = debounce(() => {
             this.persistenceManager.persist().catch((error) => {
-                console.error('Failed to auto-save sessions:', error);
+                console.error("Failed to auto-save sessions:", error);
             });
         }, this.options.saveDebounceMs!);
 

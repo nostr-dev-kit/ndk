@@ -1,6 +1,6 @@
-import { describe, it, expect } from "vitest";
-import { isMuted } from "../mute";
+import { describe, expect, it } from "vitest";
 import { createMockEvent, createMockMuteListEvent } from "../../mutes/store/__tests__/fixtures";
+import { isMuted } from "../mute";
 
 describe("mute utilities", () => {
     describe("isMuted", () => {
@@ -107,10 +107,10 @@ describe("mute utilities", () => {
         it("should handle null or undefined criteria gracefully", () => {
             const event = createMockEvent({});
 
-            // @ts-ignore - Testing with null criteria
+            // @ts-expect-error - Testing with null criteria
             expect(isMuted(event, null)).toBe(false);
 
-            // @ts-ignore - Testing with undefined criteria
+            // @ts-expect-error - Testing with undefined criteria
             expect(isMuted(event, undefined)).toBe(false);
         });
 

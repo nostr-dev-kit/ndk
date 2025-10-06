@@ -1,7 +1,7 @@
 // src/session/store/add-session.ts
 import { type Hexpubkey, type NDKSigner, NDKUser } from "@nostr-dev-kit/ndk";
-import { useNDKStore } from "../../ndk/store";
 import { useNDKMutes } from "../../mutes/store";
+import { useNDKStore } from "../../ndk/store";
 import type { NDKSessionsState, NDKUserSession } from "./types";
 
 /**
@@ -26,7 +26,7 @@ export const addSession = async (
     setActive = true,
 ): Promise<Hexpubkey> => {
     let user: NDKUser;
-    let signer: NDKSigner | undefined = undefined;
+    let signer: NDKSigner | undefined;
     let userPubkey: Hexpubkey;
 
     if (userOrSigner instanceof NDKUser) {

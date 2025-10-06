@@ -1,10 +1,8 @@
-import { NDKCashuWallet } from "@nostr-dev-kit/ndk-wallet";
+import { type NDKCashuMintList, NDKKind, type NDKNutzap } from "@nostr-dev-kit/ndk";
+import { NDKCashuWallet, NDKNutzapMonitor, type NDKNutzapMonitorStore } from "@nostr-dev-kit/ndk-wallet";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { create } from "zustand";
-import { useNDK } from "../../ndk/hooks";
-import { NDKKind, type NDKCashuMintList, type NDKNutzap } from "@nostr-dev-kit/ndk";
-import { NDKNutzapMonitor, type NDKNutzapMonitorStore } from "@nostr-dev-kit/ndk-wallet";
-import { useNDKCurrentUser } from "../../ndk/hooks";
+import { useNDK, useNDKCurrentUser } from "../../ndk/hooks";
 
 /**
  * Hook to manage the user's NDK Cashu Wallet instance and its balance.

@@ -1,77 +1,77 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import NDK, { NDKPrivateKeySigner } from '@nostr-dev-kit/ndk';
-import { NDKSessionManager } from '../src/manager';
-import { MemoryStorage } from '../src/storage';
+import NDK, { NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { NDKSessionManager } from "../src/manager";
+import { MemoryStorage } from "../src/storage";
+import { createSessionStore } from "../src/store";
 import {
+    NDKNotInitializedError,
+    NoActiveSessionError,
     SessionError,
+    SessionNotFoundError,
     SignerDeserializationError,
     StorageError,
-    SessionNotFoundError,
-    NoActiveSessionError,
-    NDKNotInitializedError,
-} from '../src/utils/errors';
-import { createSessionStore } from '../src/store';
+} from "../src/utils/errors";
 
-describe('Error Handling', () => {
+describe("Error Handling", () => {
     let ndk: NDK;
     let manager: NDKSessionManager;
 
     beforeEach(() => {
-        ndk = new NDK({ explicitRelayUrls: ['wss://relay.example.com'] });
+        ndk = new NDK({ explicitRelayUrls: ["wss://relay.example.com"] });
         manager = new NDKSessionManager(ndk);
     });
 
-    describe('Session Errors', () => {
-        it('should throw NoActiveSessionError when logging out without active session', () => {
+    describe("Session Errors", () => {
+        it("should throw NoActiveSessionError when logging out without active session", () => {
             expect(() => manager.logout()).toThrow(NoActiveSessionError);
-            expect(() => manager.logout()).toThrow('No active session');
+            expect(() => manager.logout()).toThrow("No active session");
         });
 
-        it('should throw SessionNotFoundError when switching to non-existent session', () => {
-            const fakeKey = 'nonexistentpubkey';
+        it("should throw SessionNotFoundError when switching to non-existent session", () => {
+            const fakeKey = "nonexistentpubkey";
             expect(() => manager.switchTo(fakeKey)).toThrow(SessionNotFoundError);
             expect(() => manager.switchTo(fakeKey)).toThrow(`Session not found for pubkey: ${fakeKey}`);
         });
 
-        it('should throw SessionNotFoundError when starting session for non-existent pubkey', () => {
-            const fakeKey = 'nonexistentpubkey';
+        it("should throw SessionNotFoundError when starting session for non-existent pubkey", () => {
+            const fakeKey = "nonexistentpubkey";
             expect(() => manager.startSession(fakeKey, { profile: true })).toThrow(SessionNotFoundError);
         });
     });
 
-    describe('Storage Errors', () => {
-        it('should throw StorageError when restoring without storage configured', async () => {
+    describe("Storage Errors", () => {
+        it("should throw StorageError when restoring without storage configured", async () => {
             await expect(manager.restore()).rejects.toThrow(StorageError);
-            await expect(manager.restore()).rejects.toThrow('No storage configured');
+            await expect(manager.restore()).rejects.toThrow("No storage configured");
         });
 
-        it('should throw StorageError when persisting without storage configured', async () => {
+        it("should throw StorageError when persisting without storage configured", async () => {
             await expect(manager.persist()).rejects.toThrow(StorageError);
-            await expect(manager.persist()).rejects.toThrow('No storage configured');
+            await expect(manager.persist()).rejects.toThrow("No storage configured");
         });
 
-        it('should throw StorageError when clearing without storage configured', async () => {
+        it("should throw StorageError when clearing without storage configured", async () => {
             await expect(manager.clear()).rejects.toThrow(StorageError);
-            await expect(manager.clear()).rejects.toThrow('No storage configured');
+            await expect(manager.clear()).rejects.toThrow("No storage configured");
         });
 
-        it('should handle storage load failures gracefully', async () => {
+        it("should handle storage load failures gracefully", async () => {
             const mockStorage = new MemoryStorage();
-            vi.spyOn(mockStorage, 'load').mockRejectedValue(new Error('Read error'));
-            
+            vi.spyOn(mockStorage, "load").mockRejectedValue(new Error("Read error"));
+
             const storageManager = new NDKSessionManager(ndk, {
-                storage: mockStorage
+                storage: mockStorage,
             });
 
             await expect(storageManager.restore()).rejects.toThrow(Error);
         });
 
-        it('should handle storage save failures gracefully', async () => {
+        it("should handle storage save failures gracefully", async () => {
             const mockStorage = new MemoryStorage();
-            vi.spyOn(mockStorage, 'save').mockRejectedValue(new Error('Write error'));
-            
+            vi.spyOn(mockStorage, "save").mockRejectedValue(new Error("Write error"));
+
             const storageManager = new NDKSessionManager(ndk, {
-                storage: mockStorage
+                storage: mockStorage,
             });
 
             // Add a session first
@@ -82,8 +82,8 @@ describe('Error Handling', () => {
         });
     });
 
-    describe('Signer Deserialization Errors', () => {
-        it('should continue loading sessions even if signer deserialization fails', async () => {
+    describe("Signer Deserialization Errors", () => {
+        it("should continue loading sessions even if signer deserialization fails", async () => {
             const storage = new MemoryStorage();
             const manager1 = new NDKSessionManager(ndk, { storage });
 
@@ -92,116 +92,114 @@ describe('Error Handling', () => {
             const user = await signer.user();
             await manager1.login(signer);
             await manager1.persist(); // Explicitly persist before corrupting
-            
+
             // Corrupt the saved data to simulate deserialization failure
             const saved = await storage.load();
             const sessions = saved.sessions;
             sessions.forEach((session) => {
-                session.signerPayload = 'invalid-signer-payload';
+                session.signerPayload = "invalid-signer-payload";
             });
             await storage.save(sessions, saved.activePubkey);
 
             // Create new manager and restore
             const manager2 = new NDKSessionManager(ndk, { storage });
-            
+
             // Should not throw, but log warning
-            const consoleWarnSpy = vi.spyOn(console, 'warn');
+            const consoleWarnSpy = vi.spyOn(console, "warn");
             await manager2.restore();
-            
+
             // Session should be restored without signer
             expect(manager2.getSessions().size).toBe(1);
             expect(consoleWarnSpy).toHaveBeenCalled();
-            
+
             consoleWarnSpy.mockRestore();
         });
     });
 
-    describe('NDK Initialization Errors', () => {
-        it('should throw NDKNotInitializedError when starting session without NDK', () => {
+    describe("NDK Initialization Errors", () => {
+        it("should throw NDKNotInitializedError when starting session without NDK", () => {
             const store = createSessionStore();
-            
+
             // Try to start session without initializing NDK
             expect(() => {
-                store.getState().startSession('fakepubkey', { profile: true });
+                store.getState().startSession("fakepubkey", { profile: true });
             }).toThrow(NDKNotInitializedError);
             expect(() => {
-                store.getState().startSession('fakepubkey', { profile: true });
-            }).toThrow('NDK not initialized. Call init() first.');
+                store.getState().startSession("fakepubkey", { profile: true });
+            }).toThrow("NDK not initialized. Call init() first.");
         });
     });
 
-    describe('Auto-save Error Handling', () => {
-        it('should log error when auto-save fails', async () => {
+    describe("Auto-save Error Handling", () => {
+        it("should log error when auto-save fails", async () => {
             const mockStorage = new MemoryStorage();
-            const consoleErrorSpy = vi.spyOn(console, 'error');
-            
+            const consoleErrorSpy = vi.spyOn(console, "error");
+
             const storageManager = new NDKSessionManager(ndk, {
                 storage: mockStorage,
                 autoSave: true,
-                saveDebounceMs: 10
+                saveDebounceMs: 10,
             });
 
             // Mock save to throw error
-            vi.spyOn(mockStorage, 'save').mockRejectedValue(new Error('Save failed'));
+            vi.spyOn(mockStorage, "save").mockRejectedValue(new Error("Save failed"));
 
             // Trigger auto-save
             const signer = NDKPrivateKeySigner.generate();
             await storageManager.login(signer);
 
             // Wait for debounced save
-            await new Promise(resolve => setTimeout(resolve, 50));
+            await new Promise((resolve) => setTimeout(resolve, 50));
 
-            expect(consoleErrorSpy).toHaveBeenCalledWith(
-                'Failed to auto-save sessions:',
-                expect.any(Error)
-            );
+            expect(consoleErrorSpy).toHaveBeenCalledWith("Failed to auto-save sessions:", expect.any(Error));
 
             consoleErrorSpy.mockRestore();
         });
     });
 
-    describe('Profile Parsing Errors', () => {
-        it('should handle invalid profile JSON gracefully', () => {
-            const consoleErrorSpy = vi.spyOn(console, 'error');
+    describe("Profile Parsing Errors", () => {
+        it("should handle invalid profile JSON gracefully", () => {
+            const consoleErrorSpy = vi.spyOn(console, "error");
             const store = createSessionStore();
-            
+
             // Initialize NDK
             store.getState().init(ndk);
-            
+
             // Add a session
-            const pubkey = 'testpubkey';
+            const pubkey = "testpubkey";
             store.getState().sessions = new Map([
-                [pubkey, {
+                [
                     pubkey,
-                    events: new Map(),
-                    lastActive: Date.now()
-                }]
+                    {
+                        pubkey,
+                        events: new Map(),
+                        lastActive: Date.now(),
+                    },
+                ],
             ]);
 
             // Simulate receiving event with invalid JSON
             const invalidEvent = {
                 kind: 0, // Profile event
-                content: 'invalid json {',
-                tags: []
+                content: "invalid json {",
+                tags: [],
             } as any;
 
             // This should not throw, just log error
-            const handler = store.getState().__internal_test_handleProfileEvent || 
-                            ((event: any, pubkey: string) => {
-                                try {
-                                    const profile = JSON.parse(event.content);
-                                    store.getState().updateSession(pubkey, { profile });
-                                } catch (error) {
-                                    console.error('Failed to parse profile:', error);
-                                }
-                            });
+            const handler =
+                store.getState().__internal_test_handleProfileEvent ||
+                ((event: any, pubkey: string) => {
+                    try {
+                        const profile = JSON.parse(event.content);
+                        store.getState().updateSession(pubkey, { profile });
+                    } catch (error) {
+                        console.error("Failed to parse profile:", error);
+                    }
+                });
 
             handler(invalidEvent, pubkey);
 
-            expect(consoleErrorSpy).toHaveBeenCalledWith(
-                'Failed to parse profile:',
-                expect.any(Error)
-            );
+            expect(consoleErrorSpy).toHaveBeenCalledWith("Failed to parse profile:", expect.any(Error));
 
             consoleErrorSpy.mockRestore();
         });

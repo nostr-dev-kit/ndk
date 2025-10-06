@@ -1,6 +1,6 @@
 <script lang="ts">
   import { ndk } from './lib/ndk';
-  import { NDKWoT, filterByWoT, rankByWoT } from '@nostr-dev-kit/ndk-wot';
+  import { NDKWoT, filterByWoT, rankByWoT } from '@nostr-dev-kit/wot';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import { nip19 } from 'nostr-tools';
 

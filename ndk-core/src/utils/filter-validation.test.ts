@@ -1,10 +1,10 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { NDK } from "../ndk";
-import { NDKFilter, NDKSubscription } from "../subscription";
-import { RelayPoolMock, RelayMock } from "../../test";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { type RelayMock, RelayPoolMock } from "../../test";
 import { NDKKind } from "../events/kinds";
+import { NDK } from "../ndk";
+import type { NDKRelay } from "../relay";
 import { NDKRelaySet } from "../relay/sets";
-import { NDKRelay } from "../relay";
+import { type NDKFilter, NDKSubscription } from "../subscription";
 
 describe("Filter Validation", () => {
     let ndk: NDK;
@@ -30,7 +30,7 @@ describe("Filter Validation", () => {
         });
 
         // Replace the relay pool with our mock
-        // @ts-ignore - We're intentionally replacing the pool for testing
+        // @ts-expect-error - We're intentionally replacing the pool for testing
         ndk.pool = pool;
 
         // Add a mock relay
@@ -45,7 +45,7 @@ describe("Filter Validation", () => {
     describe("Validate mode (default)", () => {
         it("should throw an error when filter contains undefined in authors array", () => {
             const badFilter: NDKFilter = {
-                // @ts-ignore - Intentionally passing bad data
+                // @ts-expect-error - Intentionally passing bad data
                 authors: [validPubkey1, undefined, validPubkey2],
                 kinds: [NDKKind.Text],
             };
@@ -58,7 +58,7 @@ describe("Filter Validation", () => {
         it("should throw an error when filter contains undefined in kinds array", () => {
             const badFilter: NDKFilter = {
                 authors: [validPubkey1],
-                // @ts-ignore - Intentionally passing bad data
+                // @ts-expect-error - Intentionally passing bad data
                 kinds: [NDKKind.Text, undefined, NDKKind.Metadata],
             };
 
@@ -69,7 +69,7 @@ describe("Filter Validation", () => {
 
         it("should throw an error when filter contains undefined in ids array", () => {
             const badFilter: NDKFilter = {
-                // @ts-ignore - Intentionally passing bad data
+                // @ts-expect-error - Intentionally passing bad data
                 ids: [validEventId1, undefined, validEventId2],
                 kinds: [NDKKind.Text],
             };
@@ -82,7 +82,7 @@ describe("Filter Validation", () => {
         it("should throw an error when filter contains undefined in tag filters", () => {
             const badFilter: NDKFilter = {
                 kinds: [NDKKind.Text],
-                // @ts-ignore - Intentionally passing bad data
+                // @ts-expect-error - Intentionally passing bad data
                 "#t": ["bitcoin", undefined, "nostr"],
             };
 
@@ -105,11 +105,11 @@ describe("Filter Validation", () => {
 
         it("should provide detailed error message with all issues", () => {
             const badFilter: NDKFilter = {
-                // @ts-ignore - Intentionally passing bad data
+                // @ts-expect-error - Intentionally passing bad data
                 authors: [validPubkey1, undefined],
-                // @ts-ignore - Intentionally passing bad data
+                // @ts-expect-error - Intentionally passing bad data
                 kinds: [NDKKind.Text, undefined],
-                // @ts-ignore - Intentionally passing bad data
+                // @ts-expect-error - Intentionally passing bad data
                 "#t": ["bitcoin", undefined],
             };
 
@@ -128,7 +128,7 @@ describe("Filter Validation", () => {
 
         it("should remove undefined values from authors and send clean filter to relay", async () => {
             const badFilter: NDKFilter = {
-                // @ts-ignore - Intentionally passing bad data
+                // @ts-expect-error - Intentionally passing bad data
                 authors: [validPubkey1, undefined, validPubkey2],
                 kinds: [NDKKind.Text],
             };
@@ -163,7 +163,7 @@ describe("Filter Validation", () => {
         it("should remove undefined values from kinds and send clean filter to relay", async () => {
             const badFilter: NDKFilter = {
                 authors: [validPubkey1],
-                // @ts-ignore - Intentionally passing bad data
+                // @ts-expect-error - Intentionally passing bad data
                 kinds: [NDKKind.Text, undefined, NDKKind.Metadata],
             };
 
@@ -189,9 +189,9 @@ describe("Filter Validation", () => {
         it("should remove undefined values from tag filters and send clean filter to relay", async () => {
             const badFilter: NDKFilter = {
                 kinds: [NDKKind.Text],
-                // @ts-ignore - Intentionally passing bad data
+                // @ts-expect-error - Intentionally passing bad data
                 "#t": ["bitcoin", undefined, "nostr"],
-                // @ts-ignore - Intentionally passing bad data
+                // @ts-expect-error - Intentionally passing bad data
                 "#p": [undefined, validPubkey1],
             };
 
@@ -216,7 +216,7 @@ describe("Filter Validation", () => {
 
         it("should handle filters that become empty after fixing", async () => {
             const badFilter: NDKFilter = {
-                // @ts-ignore - Intentionally passing bad data
+                // @ts-expect-error - Intentionally passing bad data
                 authors: [undefined, undefined], // All undefined
                 kinds: [NDKKind.Text],
             };
@@ -249,7 +249,7 @@ describe("Filter Validation", () => {
 
         it("should pass filters with undefined values as-is without throwing", () => {
             const badFilter: NDKFilter = {
-                // @ts-ignore - Intentionally passing bad data
+                // @ts-expect-error - Intentionally passing bad data
                 authors: [validPubkey1, undefined, validPubkey2],
                 kinds: [NDKKind.Text],
             };
@@ -262,7 +262,7 @@ describe("Filter Validation", () => {
 
         it("should send filters with undefined values to relay (will likely cause issues)", async () => {
             const badFilter: NDKFilter = {
-                // @ts-ignore - Intentionally passing bad data
+                // @ts-expect-error - Intentionally passing bad data
                 authors: [validPubkey1, undefined, validPubkey2],
                 kinds: [NDKKind.Text],
             };
@@ -294,13 +294,13 @@ describe("Filter Validation", () => {
 
             const badFilters: NDKFilter[] = [
                 {
-                    // @ts-ignore
+                    // @ts-expect-error
                     authors: [validPubkey1, undefined],
                     kinds: [NDKKind.Text],
                 },
                 {
                     authors: [validPubkey2],
-                    // @ts-ignore
+                    // @ts-expect-error
                     kinds: [NDKKind.Metadata, undefined],
                 },
             ];
@@ -315,13 +315,13 @@ describe("Filter Validation", () => {
 
             const badFilters: NDKFilter[] = [
                 {
-                    // @ts-ignore
+                    // @ts-expect-error
                     authors: [validPubkey1, undefined],
                     kinds: [NDKKind.Text],
                 },
                 {
                     authors: [validPubkey2],
-                    // @ts-ignore
+                    // @ts-expect-error
                     kinds: [NDKKind.Metadata, undefined],
                 },
             ];
@@ -354,7 +354,7 @@ describe("Filter Validation", () => {
             // Test validate mode
             ndk.filterValidationMode = "validate";
             expect(() => {
-                // @ts-ignore
+                // @ts-expect-error
                 ndk.subscribe({ authors: [undefined, validPubkey1] });
             }).toThrow();
 
@@ -362,7 +362,7 @@ describe("Filter Validation", () => {
             ndk.filterValidationMode = "fix";
             expect(() => {
                 const sub = ndk.subscribe({
-                    // @ts-ignore
+                    // @ts-expect-error
                     authors: [undefined, validPubkey1],
                 });
                 sub.stop();
@@ -372,7 +372,7 @@ describe("Filter Validation", () => {
             ndk.filterValidationMode = "ignore";
             expect(() => {
                 const sub = ndk.subscribe({
-                    // @ts-ignore
+                    // @ts-expect-error
                     authors: [undefined, validPubkey1],
                 });
                 sub.stop();
@@ -393,7 +393,7 @@ describe("Filter Validation", () => {
             };
 
             const filter: NDKFilter = {
-                // @ts-ignore - This is what would happen in real code
+                // @ts-expect-error - This is what would happen in real code
                 authors: userIds.map(getUserPubkey),
                 kinds: [NDKKind.Text, NDKKind.Article],
             };

@@ -1,7 +1,7 @@
-import { useMemo } from "react";
 import { NDKEvent, NDKUser } from "@nostr-dev-kit/ndk";
-import { useActiveMuteCriteria } from "./use-mute-criteria";
+import { useMemo } from "react";
 import type { MuteableItem, MuteItemType } from "../store/types";
+import { useActiveMuteCriteria } from "./use-mute-criteria";
 
 /**
  * React hook to check if an item is muted for the current user.

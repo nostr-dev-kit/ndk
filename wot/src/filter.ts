@@ -1,6 +1,6 @@
-import { NDKEvent } from "@nostr-dev-kit/ndk";
-import { NDKWoT } from "./wot.js";
+import type { NDKEvent } from "@nostr-dev-kit/ndk";
 import createDebug from "debug";
+import type { NDKWoT } from "./wot.js";
 
 const d = createDebug("ndk-wot:filter");
 

@@ -1,6 +1,7 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import type NDK from "@nostr-dev-kit/ndk";
+import { NDKCashuMintList, NDKEvent, NDKKind, NDKSubscriptionCacheUsage } from "@nostr-dev-kit/ndk";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { NDKCashuWallet } from "../index";
-import NDK, { NDKEvent, NDKKind, NDKCashuMintList, NDKSubscriptionCacheUsage } from "@nostr-dev-kit/ndk";
 
 // Mock NDK modules
 vi.mock("@nostr-dev-kit/ndk", async () => {

@@ -6,8 +6,8 @@ import {
     type NDKSubscriptionOptions,
 } from "@nostr-dev-kit/ndk";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useNDK } from "../../ndk/hooks";
 import { useMuteFilter } from "../../mutes/hooks/use-mute-filter";
+import { useNDK } from "../../ndk/hooks";
 
 /**
  * Subscribes to NDK events based on the provided filters and returns the matching events.

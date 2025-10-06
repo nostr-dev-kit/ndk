@@ -1,9 +1,8 @@
-import { createStore } from 'zustand/vanilla';
 import type NDK from "@nostr-dev-kit/ndk";
-import { NDKUser, NDKKind } from "@nostr-dev-kit/ndk";
-import type { Hexpubkey, NDKSigner, NDKEvent } from "@nostr-dev-kit/ndk";
+import type { Hexpubkey, NDKEvent, NDKKind, NDKSigner, NDKUser } from "@nostr-dev-kit/ndk";
+import { createStore } from "zustand/vanilla";
 import type { NDKSession, SessionStartOptions, SessionState } from "./types";
-import { SessionNotFoundError, NDKNotInitializedError } from "./utils/errors";
+import { NDKNotInitializedError, SessionNotFoundError } from "./utils/errors";
 
 export interface SessionStoreActions {
     /**
@@ -63,7 +62,7 @@ export function createSessionStore() {
             let signer: NDKSigner | undefined;
 
             // Check if it's a signer
-            if ('user' in userOrSigner && typeof userOrSigner.user === 'function') {
+            if ("user" in userOrSigner && typeof userOrSigner.user === "function") {
                 signer = userOrSigner as NDKSigner;
                 user = await signer.user();
             } else {
@@ -133,10 +132,10 @@ export function createSessionStore() {
                     kinds,
                     authors: [pubkey],
                 },
-                { closeOnEose: false, subId: 'session' },
+                { closeOnEose: false, subId: "session" },
                 {
-                    onEvent: (event) => handleIncomingEvent(event, pubkey, get)
-                }
+                    onEvent: (event) => handleIncomingEvent(event, pubkey, get),
+                },
             );
 
             // Update session with subscription
@@ -316,11 +315,7 @@ function buildSubscriptionKinds(opts: SessionStartOptions): NDKKind[] {
  * Handle incoming event from subscription.
  * Processes profiles, follows, and other events appropriately.
  */
-function handleIncomingEvent(
-    event: NDKEvent,
-    pubkey: Hexpubkey,
-    getState: () => SessionStore
-): void {
+function handleIncomingEvent(event: NDKEvent, pubkey: Hexpubkey, getState: () => SessionStore): void {
     const currentSession = getState().sessions.get(pubkey);
     if (!currentSession) return;
 
@@ -361,30 +356,22 @@ function handleIncomingEvent(
 /**
  * Process profile metadata event
  */
-function handleProfileEvent(
-    event: NDKEvent,
-    pubkey: Hexpubkey,
-    getState: () => SessionStore
-): void {
+function handleProfileEvent(event: NDKEvent, pubkey: Hexpubkey, getState: () => SessionStore): void {
     try {
         const profile = JSON.parse(event.content);
         getState().updateSession(pubkey, { profile });
     } catch (error) {
-        console.error('Failed to parse profile:', error);
+        console.error("Failed to parse profile:", error);
     }
 }
 
 /**
  * Process contact list event
  */
-function handleContactListEvent(
-    event: NDKEvent,
-    pubkey: Hexpubkey,
-    getState: () => SessionStore
-): void {
+function handleContactListEvent(event: NDKEvent, pubkey: Hexpubkey, getState: () => SessionStore): void {
     const followSet = new Set<Hexpubkey>();
     for (const tag of event.tags) {
-        if (tag[0] === 'p' && tag[1]) {
+        if (tag[0] === "p" && tag[1]) {
             followSet.add(tag[1]);
         }
     }
@@ -394,21 +381,17 @@ function handleContactListEvent(
 /**
  * Process mute list event (kind 10000)
  */
-function handleMuteListEvent(
-    event: NDKEvent,
-    pubkey: Hexpubkey,
-    getState: () => SessionStore
-): void {
+function handleMuteListEvent(event: NDKEvent, pubkey: Hexpubkey, getState: () => SessionStore): void {
     const muteSet = new Map<string, string>();
     const mutedWords = new Set<string>();
 
     for (const tag of event.tags) {
         // Handle muted pubkeys and events
-        if ((tag[0] === 'p' || tag[0] === 'e') && tag[1]) {
+        if ((tag[0] === "p" || tag[0] === "e") && tag[1]) {
             muteSet.set(tag[1], tag[0]);
         }
         // Handle muted words
-        if (tag[0] === 'word' && tag[1]) {
+        if (tag[0] === "word" && tag[1]) {
             mutedWords.add(tag[1].toLowerCase());
         }
     }
@@ -419,15 +402,11 @@ function handleMuteListEvent(
 /**
  * Process block relay list event (kind 10001)
  */
-function handleBlockRelayListEvent(
-    event: NDKEvent,
-    pubkey: Hexpubkey,
-    getState: () => SessionStore
-): void {
+function handleBlockRelayListEvent(event: NDKEvent, pubkey: Hexpubkey, getState: () => SessionStore): void {
     const blockedRelays = new Set<string>();
 
     for (const tag of event.tags) {
-        if (tag[0] === 'relay' && tag[1]) {
+        if (tag[0] === "relay" && tag[1]) {
             blockedRelays.add(tag[1]);
         }
     }
@@ -438,21 +417,17 @@ function handleBlockRelayListEvent(
 /**
  * Process user relay list event (kind 10002)
  */
-function handleRelayListEvent(
-    event: NDKEvent,
-    pubkey: Hexpubkey,
-    getState: () => SessionStore
-): void {
+function handleRelayListEvent(event: NDKEvent, pubkey: Hexpubkey, getState: () => SessionStore): void {
     const relayList = new Map<string, { read: boolean; write: boolean }>();
 
     for (const tag of event.tags) {
-        if (tag[0] === 'r' && tag[1]) {
+        if (tag[0] === "r" && tag[1]) {
             const url = tag[1];
             const config = tag[2];
 
             relayList.set(url, {
-                read: !config || config === 'read',
-                write: !config || config === 'write'
+                read: !config || config === "read",
+                write: !config || config === "write",
             });
         }
     }
@@ -467,10 +442,10 @@ function handleReplaceableEvent(
     event: NDKEvent,
     session: NDKSession,
     pubkey: Hexpubkey,
-    getState: () => SessionStore
+    getState: () => SessionStore,
 ): void {
     if (event.kind === undefined) return;
-    
+
     session.events.set(event.kind, event);
     getState().updateSession(pubkey, { events: new Map(session.events) });
 }

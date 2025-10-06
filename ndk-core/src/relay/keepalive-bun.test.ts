@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, mock } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
 import { NDKRelayKeepalive, probeRelayConnection } from "./keepalive";
 
 describe("NDKRelayKeepalive", () => {

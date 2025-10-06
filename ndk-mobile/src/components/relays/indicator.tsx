@@ -1,8 +1,6 @@
 import type { NDKRelay } from "@nostr-dev-kit/ndk";
-import React from "react";
-
 import { NDKRelayStatus } from "@nostr-dev-kit/ndk";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 
 const CONNECTIVITY_STATUS_COLORS: Record<NDKRelayStatus, string> = {

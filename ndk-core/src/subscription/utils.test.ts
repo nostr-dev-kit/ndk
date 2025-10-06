@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { type NDKFilter, NDKSubscription } from ".";
 import { NDK } from "../ndk";
+import { type NDKFilter, NDKSubscription } from ".";
 import { filterForEventsTaggingId, filterFromId, generateSubId } from "./utils";
 
 const ndk = new NDK();

@@ -12,13 +12,11 @@
  * @package @nostr-dev-kit/ndk-mobile
  */
 
-import { type NDKEvent, NDKKind, NDKUser } from "@nostr-dev-kit/ndk-hooks";
+import { type NDKEvent, NDKKind, NDKUser, useNDK, useProfileValue } from "@nostr-dev-kit/ndk-hooks";
 import { Image } from "expo-image";
 // biome-ignore lint/style/useImportType: <explanation>
-import React from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, type TextProps } from "react-native";
-import { useNDK, useProfileValue } from "@nostr-dev-kit/ndk-hooks";
 
 const styles = StyleSheet.create({
     mention: {
@@ -209,7 +207,7 @@ function RenderPart({
         }
     }
 
-    const hashtagMatch = part.match(/^#([\p{L}\p{N}_\-]+)/u);
+    const hashtagMatch = part.match(/^#([\p{L}\p{N}_-]+)/u);
     if (hashtagMatch) {
         return (
             <RenderHashtag
@@ -271,7 +269,7 @@ const EventContent: React.FC<EventContentProps> = ({
 
     const contentToRender = content || event?.content || "";
     const parts = contentToRender.split(
-        /(\s+|(?=https?:\/\/)|(?<=\s)#[\p{L}\p{N}_\-]+|(?<=\s)nostr:[a-zA-Z0-9]+|:[a-zA-Z0-9_+-]+:)/u,
+        /(\s+|(?=https?:\/\/)|(?<=\s)#[\p{L}\p{N}_-]+|(?<=\s)nostr:[a-zA-Z0-9]+|:[a-zA-Z0-9_+-]+:)/u,
     );
 
     return (

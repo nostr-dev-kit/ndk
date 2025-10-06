@@ -1,8 +1,8 @@
-import { describe, it, expect } from "vitest";
-import { NDKFollowPack } from "./follow-pack";
-import { NDKKind } from "./index";
+import { describe, expect, it } from "vitest";
 import type { NDKImetaTag } from "../../utils/imeta";
 import { mapImetaTag } from "../../utils/imeta";
+import { NDKFollowPack } from "./follow-pack";
+import { NDKKind } from "./index";
 
 // Helper imeta tag object
 const imetaObj: NDKImetaTag = {

@@ -1,11 +1,11 @@
-import { bench, describe } from 'vitest';
-import { NDK } from '../src/ndk/index.js';
-import { NDKEvent } from '../src/events/index.js';
-import { NDKPrivateKeySigner } from '../src/signers/private-key/index.js';
-import { verifiedSignatures } from '../src/events/validation.js';
+import { bench, describe } from "vitest";
+import { NDKEvent } from "../src/events/index.js";
+import { verifiedSignatures } from "../src/events/validation.js";
+import { NDK } from "../src/ndk/index.js";
+import { NDKPrivateKeySigner } from "../src/signers/private-key/index.js";
 
-describe('Signature Verification Performance', () => {
-    bench('verify 100 unique signatures', async () => {
+describe("Signature Verification Performance", () => {
+    bench("verify 100 unique signatures", async () => {
         const ndk = new NDK();
         const signer = NDKPrivateKeySigner.generate();
 
@@ -17,7 +17,7 @@ describe('Signature Verification Performance', () => {
                 kind: 1,
                 content: `test ${i}`,
                 tags: [],
-                created_at: Math.floor(Date.now() / 1000)
+                created_at: Math.floor(Date.now() / 1000),
             });
             event.pubkey = (await signer.user()).pubkey;
             await event.sign(signer);
@@ -30,7 +30,7 @@ describe('Signature Verification Performance', () => {
         }
     });
 
-    bench('verify 100 signatures with 50% cache hit rate', async () => {
+    bench("verify 100 signatures with 50% cache hit rate", async () => {
         const ndk = new NDK();
         const signer = NDKPrivateKeySigner.generate();
 
@@ -44,7 +44,7 @@ describe('Signature Verification Performance', () => {
                 kind: 1,
                 content: `test ${i}`,
                 tags: [],
-                created_at: Math.floor(Date.now() / 1000)
+                created_at: Math.floor(Date.now() / 1000),
             });
             event.pubkey = (await signer.user()).pubkey;
             await event.sign(signer);
@@ -59,7 +59,7 @@ describe('Signature Verification Performance', () => {
         }
     });
 
-    bench('signature cache overflow - 2000 signatures', async () => {
+    bench("signature cache overflow - 2000 signatures", async () => {
         const ndk = new NDK();
         const signer = NDKPrivateKeySigner.generate();
 
@@ -73,7 +73,7 @@ describe('Signature Verification Performance', () => {
                 kind: 1,
                 content: `test ${i}`,
                 tags: [],
-                created_at: Math.floor(Date.now() / 1000)
+                created_at: Math.floor(Date.now() / 1000),
             });
             event.pubkey = (await signer.user()).pubkey;
             await event.sign(signer);

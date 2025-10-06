@@ -1,6 +1,5 @@
 import type NDK from "@nostr-dev-kit/ndk";
-import { type NDKEncryptionScheme, type NDKSigner, NDKUser, type NostrEvent } from "@nostr-dev-kit/ndk";
-import { registerSigner } from "@nostr-dev-kit/ndk";
+import { type NDKEncryptionScheme, type NDKSigner, NDKUser, type NostrEvent, registerSigner } from "@nostr-dev-kit/ndk";
 import * as Nip55 from "expo-nip55";
 
 export type NDKNip55Permission = Nip55.Permission;

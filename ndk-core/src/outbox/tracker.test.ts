@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { NDK } from "../ndk/index.js";
-import { NDKUser } from "../user/index.js";
 import { NDKRelay } from "../relay/index.js";
 import { NDKPool } from "../relay/pool/index.js";
+import { NDKUser } from "../user/index.js";
 import { OutboxTracker } from "./tracker.js";
 
 describe("OutboxTracker", () => {

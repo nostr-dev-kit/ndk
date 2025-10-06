@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
 import type { NDKUser } from "@nostr-dev-kit/ndk";
+import { useEffect, useState } from "react";
 import { useNDK } from "../../ndk/hooks";
 
 /**
@@ -36,25 +36,9 @@ export function useUser(input?: string): NDKUser | undefined {
 
         const processInput = async () => {
             try {
-                // Check if it's a hex pubkey (64 chars of hex)
-                if (/^[0-9a-fA-F]{64}$/.test(input)) {
-                    setUser(ndk.getUser({ pubkey: input }));
-                }
-                // Check if it's an npub
-                else if (input.startsWith("npub1")) {
-                    setUser(ndk.getUser({ npub: input }));
-                }
-                // Check if it's an nprofile
-                else if (input.startsWith("nprofile1")) {
-                    setUser(ndk.getUser({ nprofile: input }));
-                }
-                // Assume it's a nip05
-                else if (input.includes("@") || input.includes(".")) {
-                    const user = await ndk.getUserFromNip05(input);
-                    setUser(user || undefined);
-                } else {
-                    setUser(undefined);
-                }
+                // fetchUser handles all formats: hex, npub, nprofile, and NIP-05
+                const user = await ndk.fetchUser(input);
+                setUser(user || undefined);
             } catch (e) {
                 setUser(undefined);
             }

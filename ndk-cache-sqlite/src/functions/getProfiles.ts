@@ -1,4 +1,4 @@
-import type { NDKUserProfile, Hexpubkey } from "@nostr-dev-kit/ndk";
+import type { Hexpubkey, NDKUserProfile } from "@nostr-dev-kit/ndk";
 import type { NDKCacheAdapterSqlite } from "../index";
 
 /**
@@ -26,7 +26,6 @@ export async function getProfiles(
                 }
             } catch (e) {
                 console.error("Error parsing profile:", e);
-                continue;
             }
         }
 

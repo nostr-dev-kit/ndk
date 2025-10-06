@@ -1,6 +1,6 @@
-import { EventGenerator } from "../../test";
 import { nip19 } from "nostr-tools";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { EventGenerator } from "../../test";
 import { NDK } from "../ndk";
 import { NDKRelay } from "../relay";
 import { NDKPrivateKeySigner } from "../signers/private-key";

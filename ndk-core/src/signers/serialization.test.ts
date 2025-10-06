@@ -127,14 +127,14 @@ describe("Signer Serialization/Deserialization", () => {
                     throw new Error("Mock Error: userPubkey not set before blockUntilReady mock");
                 }
                 // Access private 'ndk' for the mock setup
-                // @ts-ignore - Accessing private member for test mock
+                // @ts-expect-error - Accessing private member for test mock
                 const instanceNdk = this.ndk as NDK;
                 if (!instanceNdk) {
                     throw new Error("Mock Error: NDK instance not available in blockUntilReady mock");
                 }
                 const user = instanceNdk.getUser({ pubkey: this.userPubkey });
                 // Set the private _user via assignment for the mock
-                // @ts-ignore - Accessing private member for test mock
+                // @ts-expect-error - Accessing private member for test mock
                 this._user = user;
                 return user;
             });

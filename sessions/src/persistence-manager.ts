@@ -1,11 +1,11 @@
 import type { Hexpubkey } from "@nostr-dev-kit/ndk";
 import { NDKUser as NDKUserClass } from "@nostr-dev-kit/ndk";
+import { serializeSession } from "./serialization/session";
+import { deserializeSigner } from "./serialization/signer";
 import type { SessionStorage } from "./storage/types";
 import type { SessionStore } from "./store";
 import type { SerializedSession } from "./types";
-import { serializeSession } from "./serialization/session";
-import { deserializeSigner } from "./serialization/signer";
-import { StorageError, SignerDeserializationError } from "./utils/errors";
+import { SignerDeserializationError, StorageError } from "./utils/errors";
 
 /**
  * Manages session persistence and restoration.
@@ -14,7 +14,7 @@ import { StorageError, SignerDeserializationError } from "./utils/errors";
 export class PersistenceManager {
     constructor(
         private storage: SessionStorage | undefined,
-        private getStore: () => SessionStore
+        private getStore: () => SessionStore,
     ) {}
 
     /**
@@ -22,7 +22,7 @@ export class PersistenceManager {
      */
     async restore(): Promise<void> {
         if (!this.storage) {
-            throw new StorageError('No storage configured');
+            throw new StorageError("No storage configured");
         }
 
         const { sessions: serializedSessions, activePubkey } = await this.storage.load();
@@ -43,7 +43,7 @@ export class PersistenceManager {
      */
     async persist(): Promise<void> {
         if (!this.storage) {
-            throw new StorageError('No storage configured');
+            throw new StorageError("No storage configured");
         }
 
         const serialized = await this.serializeAllSessions();
@@ -55,7 +55,7 @@ export class PersistenceManager {
      */
     async clear(): Promise<void> {
         if (!this.storage) {
-            throw new StorageError('No storage configured');
+            throw new StorageError("No storage configured");
         }
 
         await this.storage.clear();
@@ -66,9 +66,9 @@ export class PersistenceManager {
      */
     private async restoreSession(pubkey: Hexpubkey, serialized: SerializedSession): Promise<void> {
         const store = this.getStore();
-        
+
         // Attempt to restore signer
-        let signer = undefined;
+        let signer;
         if (serialized.signerPayload) {
             try {
                 signer = await deserializeSigner(serialized.signerPayload, store.ndk);
@@ -81,9 +81,7 @@ export class PersistenceManager {
         }
 
         // Create user (with or without signer)
-        const user = signer
-            ? await signer.user()
-            : store.ndk?.getUser({ pubkey }) ?? new NDKUserClass({ pubkey });
+        const user = signer ? await signer.user() : (store.ndk?.getUser({ pubkey }) ?? new NDKUserClass({ pubkey }));
 
         // Add session without activating
         await store.addSession(signer || user, false);
@@ -92,6 +90,10 @@ export class PersistenceManager {
         store.updateSession(pubkey, {
             profile: serialized.profile,
             followSet: serialized.followSet ? new Set(serialized.followSet) : undefined,
+            muteSet: serialized.muteSet ? new Map(serialized.muteSet) : undefined,
+            mutedWords: serialized.mutedWords ? new Set(serialized.mutedWords) : undefined,
+            blockedRelays: serialized.blockedRelays ? new Set(serialized.blockedRelays) : undefined,
+            relayList: serialized.relayList ? new Map(serialized.relayList) : undefined,
             lastActive: serialized.lastActive,
         });
     }

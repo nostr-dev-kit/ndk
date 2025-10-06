@@ -6,7 +6,7 @@
       "dependencies": {
         "@nostr-dev-kit/ndk": "^2.15.0",
         "@nostr-dev-kit/ndk-cache-sqlite-wasm": "^0.5.10",
-        "@nostr-dev-kit/ndk-svelte5": "file:../..",
+        "@nostr-dev-kit/svelte": "file:../..",
       },
       "devDependencies": {
         "@sveltejs/vite-plugin-svelte": "^5.0.4",
@@ -105,7 +105,7 @@
 
     "@nostr-dev-kit/ndk-cache-sqlite-wasm": ["@nostr-dev-kit/ndk-cache-sqlite-wasm@0.5.11", "", { "dependencies": { "sql.js": "^1.8.0" } }, "sha512-klW7t5VFDmsVNO4jxBIS8mr/FI2yku40hxwd+NoM4DAwFBG4PF40tPD+tn6McNg7/mmcdKLedLCxqDJAmawmcw=="],
 
-    "@nostr-dev-kit/ndk-svelte5": ["@nostr-dev-kit/ndk-svelte5@file:../..", { "dependencies": { "@nostr-dev-kit/ndk": "^2.15.2", "@nostr-dev-kit/ndk-wot": "^0.2.6" }, "devDependencies": { "@nostr-dev-kit/ndk-wallet": "^0.7.0", "@sveltejs/adapter-auto": "^3.0.0", "@sveltejs/kit": "^2.0.0", "@sveltejs/package": "^2.0.0", "@sveltejs/vite-plugin-svelte": "^4.0.0", "@types/node": "^22.0.0", "@vitest/browser": "^3.2.4", "playwright": "^1.55.1", "prettier": "^3.0.0", "prettier-plugin-svelte": "^3.0.0", "svelte": "^5.23.0", "svelte-check": "^4.0.0", "tslib": "^2.6.0", "typescript": "^5.0.0", "vite": "^6.0.0", "vitest": "^2.0.0", "vitest-browser-svelte": "^1.1.0" }, "peerDependencies": { "@nostr-dev-kit/ndk": "^2.15.2", "svelte": "^5.0.0" } }],
+    "@nostr-dev-kit/svelte": ["@nostr-dev-kit/svelte@file:../..", { "dependencies": { "@nostr-dev-kit/ndk": "^2.15.2", "@nostr-dev-kit/ndk-wot": "^0.2.6" }, "devDependencies": { "@nostr-dev-kit/ndk-wallet": "^0.7.0", "@sveltejs/adapter-auto": "^3.0.0", "@sveltejs/kit": "^2.0.0", "@sveltejs/package": "^2.0.0", "@sveltejs/vite-plugin-svelte": "^4.0.0", "@types/node": "^22.0.0", "@vitest/browser": "^3.2.4", "playwright": "^1.55.1", "prettier": "^3.0.0", "prettier-plugin-svelte": "^3.0.0", "svelte": "^5.23.0", "svelte-check": "^4.0.0", "tslib": "^2.6.0", "typescript": "^5.0.0", "vite": "^6.0.0", "vitest": "^2.0.0", "vitest-browser-svelte": "^1.1.0" }, "peerDependencies": { "@nostr-dev-kit/ndk": "^2.15.2", "svelte": "^5.0.0" } }],
 
     "@nostr-dev-kit/ndk-wallet": ["@nostr-dev-kit/ndk-wallet@0.7.1", "", { "dependencies": { "@nostr-dev-kit/ndk": "^2.15.0", "debug": "^4.3.4", "light-bolt11-decoder": "^3.0.0", "tseep": "^1.3.1", "typescript": "^5.8.2", "webln": "^0.3.2" }, "peerDependencies": { "@cashu/cashu-ts": "^2.1", "@cashu/crypto": "*" } }, "sha512-Gun88viV+vsKRTobk/9/b/z3fVWvdpWu9hQNCBSD1/QjCUYhy/DvpX+lTd7bq2lBPU52gqck8e1irj10UJaSfA=="],
 
@@ -499,7 +499,7 @@
 
     "@cashu/crypto/@scure/bip39": ["@scure/bip39@1.6.0", "", { "dependencies": { "@noble/hashes": "~1.8.0", "@scure/base": "~1.2.5" } }, "sha512-+lF0BbLiJNwVlev4eKelw1WWLaiKXw7sSl8T6FvBlWkdX+94aGJ4o8XjUdlyhTCjd8c+B3KT3JfS8P0bLRNU6A=="],
 
-    "@nostr-dev-kit/ndk-svelte5/@sveltejs/vite-plugin-svelte": ["@sveltejs/vite-plugin-svelte@4.0.4", "", { "dependencies": { "@sveltejs/vite-plugin-svelte-inspector": "^3.0.0-next.0||^3.0.0", "debug": "^4.3.7", "deepmerge": "^4.3.1", "kleur": "^4.1.5", "magic-string": "^0.30.12", "vitefu": "^1.0.3" }, "peerDependencies": { "svelte": "^5.0.0-next.96 || ^5.0.0", "vite": "^5.0.0" } }, "sha512-0ba1RQ/PHen5FGpdSrW7Y3fAMQjrXantECALeOiOdBdzR5+5vPP6HVZRLmZaQL+W8m++o+haIAKq5qT+MiZ7VA=="],
+    "@nostr-dev-kit/svelte/@sveltejs/vite-plugin-svelte": ["@sveltejs/vite-plugin-svelte@4.0.4", "", { "dependencies": { "@sveltejs/vite-plugin-svelte-inspector": "^3.0.0-next.0||^3.0.0", "debug": "^4.3.7", "deepmerge": "^4.3.1", "kleur": "^4.1.5", "magic-string": "^0.30.12", "vitefu": "^1.0.3" }, "peerDependencies": { "svelte": "^5.0.0-next.96 || ^5.0.0", "vite": "^5.0.0" } }, "sha512-0ba1RQ/PHen5FGpdSrW7Y3fAMQjrXantECALeOiOdBdzR5+5vPP6HVZRLmZaQL+W8m++o+haIAKq5qT+MiZ7VA=="],
 
     "@scure/bip32/@noble/curves": ["@noble/curves@1.1.0", "", { "dependencies": { "@noble/hashes": "1.3.1" } }, "sha512-091oBExgENk/kGj3AZmtBDMpxQPDtxQABR2B9lb1JbVTs6ytdzZNwvhxQ4MWasRNEzlbEH8jCWFCwhF/Obj5AA=="],
 
@@ -545,7 +545,7 @@
 
     "vitest/vite": ["vite@5.4.20", "", { "dependencies": { "esbuild": "^0.21.3", "postcss": "^8.4.43", "rollup": "^4.20.0" }, "optionalDependencies": { "fsevents": "~2.3.3" }, "peerDependencies": { "@types/node": "^18.0.0 || >=20.0.0", "less": "*", "lightningcss": "^1.21.0", "sass": "*", "sass-embedded": "*", "stylus": "*", "sugarss": "*", "terser": "^5.4.0" }, "optionalPeers": ["@types/node", "less", "lightningcss", "sass", "sass-embedded", "stylus", "sugarss", "terser"], "bin": { "vite": "bin/vite.js" } }, "sha512-j3lYzGC3P+B5Yfy/pfKNgVEg4+UtcIJcVRt2cDjIOmhLourAqPqf8P7acgxeiSgUB7E3p2P8/3gNIgDLpwzs4g=="],
 
-    "@nostr-dev-kit/ndk-svelte5/@sveltejs/vite-plugin-svelte/@sveltejs/vite-plugin-svelte-inspector": ["@sveltejs/vite-plugin-svelte-inspector@3.0.1", "", { "dependencies": { "debug": "^4.3.7" }, "peerDependencies": { "@sveltejs/vite-plugin-svelte": "^4.0.0-next.0||^4.0.0", "svelte": "^5.0.0-next.96 || ^5.0.0", "vite": "^5.0.0" } }, "sha512-2CKypmj1sM4GE7HjllT7UKmo4Q6L5xFRd7VMGEWhYnZ+wc6AUVU01IBd7yUi6WnFndEwWoMNOd6e8UjoN0nbvQ=="],
+    "@nostr-dev-kit/svelte/@sveltejs/vite-plugin-svelte/@sveltejs/vite-plugin-svelte-inspector": ["@sveltejs/vite-plugin-svelte-inspector@3.0.1", "", { "dependencies": { "debug": "^4.3.7" }, "peerDependencies": { "@sveltejs/vite-plugin-svelte": "^4.0.0-next.0||^4.0.0", "svelte": "^5.0.0-next.96 || ^5.0.0", "vite": "^5.0.0" } }, "sha512-2CKypmj1sM4GE7HjllT7UKmo4Q6L5xFRd7VMGEWhYnZ+wc6AUVU01IBd7yUi6WnFndEwWoMNOd6e8UjoN0nbvQ=="],
 
     "@scure/bip32/@noble/curves/@noble/hashes": ["@noble/hashes@1.3.1", "", {}, "sha512-EbqwksQwz9xDRGfDST86whPBgM65E0OH/pCgqW0GBVzO22bNE+NuIbeTb714+IfSjU3aRk47EUvXIb5bTsenKA=="],
 

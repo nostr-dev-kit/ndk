@@ -1,5 +1,5 @@
-import type { WalletState } from ".";
 import type { MintUrl } from "../../mint/utils";
+import type { WalletState } from ".";
 import type { GetOpts } from "./proofs";
 
 export function getBalance(this: WalletState, opts?: GetOpts) {

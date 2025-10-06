@@ -20,13 +20,7 @@
         }
     },
     "files": {
-        "includes": [
-            "**/*.{js,ts,jsx,tsx,json}",
-            "!**/dist/**",
-            "!**/docs/.vitepress/cache/**",
-            "!ndk-cache-sqlite-wasm/example/**",
-            "!**/node_modules/**"
-        ],
+        "includes": ["**/*.{js,ts,jsx,tsx,json}"],
         "ignoreUnknown": true
     }
 }

@@ -1,6 +1,5 @@
+import { deserialize, matchFilter, NDKEvent, type NDKFilter, type NDKSubscription } from "@nostr-dev-kit/ndk";
 import type { NDKCacheAdapterSqliteWasm } from "../index";
-import { NDKEvent, NDKSubscription, NDKFilter } from "@nostr-dev-kit/ndk";
-import { deserialize, matchFilter } from "@nostr-dev-kit/ndk";
 
 import type { QueryExecResult } from "../types";
 
@@ -37,13 +36,24 @@ export function query(
     this: NDKCacheAdapterSqliteWasm,
     subscription: NDKSubscription,
 ): NDKEvent[] | Promise<NDKEvent[]> {
-    if (!this.ready || !this.db) {
+    if (!this.ready) {
         if (this.initializationPromise) {
             return this.initializationPromise.then(() => {
+                if (this.useWorker) {
+                    return Promise.resolve([]);
+                }
                 if (!this.db) return [];
                 return queryDb(this, subscription);
             });
         }
+        return [];
+    }
+
+    if (this.useWorker) {
+        return Promise.resolve([]);
+    }
+
+    if (!this.db) {
         return [];
     }
 

@@ -1,5 +1,5 @@
 import debug from "debug";
-import { NDK } from "../ndk/index.js";
+import type { NDK } from "../ndk/index.js";
 
 /**
  * SignatureVerificationStats - A class to track and report signature verification statistics

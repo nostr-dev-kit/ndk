@@ -23,7 +23,7 @@ import {
     NDKWalletStatus,
     type NDKWalletTypes,
 } from "../index.js";
-import { MintInterface, getCashuWallet } from "../mint.js";
+import { getCashuWallet, MintInterface } from "../mint.js";
 import { redeemNutzaps } from "./nutzap.js";
 import { sendReq } from "./req.js";
 import type {
@@ -33,6 +33,7 @@ import type {
     NDKNWCResponseBase,
     NDKNWCResponseMap,
 } from "./types.js";
+
 const d = createDebug("ndk-wallet:nwc");
 
 export type NDKNWCWalletEvents = NDKWalletEvents & {
@@ -122,7 +123,7 @@ export class NDKNWCWallet extends NDKWallet {
     private getPool(relayUrls: string[]) {
         for (const pool of this.ndk.pools) if (pool.name === "NWC") return pool;
 
-        return new NDKPool(relayUrls, [], this.ndk, { name: "NWC" });
+        return new NDKPool(relayUrls, this.ndk, { name: "NWC" });
     }
 
     async lnPay(payment: LnPaymentInfo): Promise<NDKPaymentConfirmationLN | undefined> {

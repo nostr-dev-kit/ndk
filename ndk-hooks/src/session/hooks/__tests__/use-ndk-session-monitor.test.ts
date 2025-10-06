@@ -1,8 +1,8 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 /// <reference types="vitest" />
-import { renderHook, act, waitFor } from "@testing-library/react";
-import { useNDKSessionMonitor } from "../use-ndk-session-monitor";
+import { act, renderHook, waitFor } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { MockSessionStorageAdapter } from "../../storage/__tests__/mock-storage-adapter";
+import { useNDKSessionMonitor } from "../use-ndk-session-monitor";
 
 // Mock NDK and related objects
 const mockNDK = {

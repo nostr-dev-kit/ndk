@@ -129,7 +129,7 @@ export class NDKNip46Backend {
             },
             {
                 closeOnEose: false,
-                onEvent: (e) => this.handleIncomingEvent(e)
+                onEvent: (e) => this.handleIncomingEvent(e),
             },
         );
     }

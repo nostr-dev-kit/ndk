@@ -1,11 +1,11 @@
-# @nostr-dev-kit/ndk-wot
+# @nostr-dev-kit/wot
 
 Web of Trust utilities for NDK.
 
 ## Installation
 
 ```bash
-npm install @nostr-dev-kit/ndk-wot
+npm install @nostr-dev-kit/wot
 ```
 
 ## Usage
@@ -14,7 +14,7 @@ npm install @nostr-dev-kit/ndk-wot
 
 ```typescript
 import NDK from "@nostr-dev-kit/ndk";
-import { NDKWoT } from "@nostr-dev-kit/ndk-wot";
+import { NDKWoT } from "@nostr-dev-kit/wot";
 
 const ndk = new NDK();
 await ndk.connect();
@@ -33,7 +33,7 @@ console.log(`WOT has ${wot.size} users`);
 ### Filter Events
 
 ```typescript
-import { filterByWoT } from "@nostr-dev-kit/ndk-wot";
+import { filterByWoT } from "@nostr-dev-kit/wot";
 
 // Fetch events broadly
 const events = await ndk.fetchEvents({ kinds: [1], limit: 500 });
@@ -53,7 +53,7 @@ const strictest = filterByWoT(wot, events, { maxDepth: 1 });
 ### Rank Events
 
 ```typescript
-import { rankByWoT } from "@nostr-dev-kit/ndk-wot";
+import { rankByWoT } from "@nostr-dev-kit/wot";
 
 // Rank events by WOT
 const ranked = rankByWoT(wot, events, {
@@ -70,7 +70,7 @@ const custom = rankByWoT(wot, events, {
 });
 
 // Or create a comparator for manual sorting
-import { createWoTComparator } from "@nostr-dev-kit/ndk-wot";
+import { createWoTComparator } from "@nostr-dev-kit/wot";
 
 const comparator = createWoTComparator(wot, { algorithm: "distance" });
 events.sort(comparator);

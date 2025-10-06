@@ -4,15 +4,14 @@ import NDK, {
     NDKEvent,
     type NDKEventId,
     NDKNutzap,
-    NDKNutzapState,
+    type NDKNutzapState,
     NDKPrivateKeySigner,
     type NDKUser,
 } from "@nostr-dev-kit/ndk";
 import { mockNutzap } from "@nostr-dev-kit/ndk/test";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import * as CashuMintModule from "../wallets/cashu/mint.js";
-import { NDKCashuWallet } from "../wallets/cashu/wallet/index.js";
-import { NDKCashuWalletBackup } from "../wallets/cashu/wallet/index.js";
+import { NDKCashuWallet, NDKCashuWalletBackup } from "../wallets/cashu/wallet/index.js";
 import { fetchPage } from "./fetch-page.js";
 import { NDKNutzapMonitor, type NDKNutzapMonitorStore } from "./index";
 import * as SpendStatusModule from "./spend-status.js";
@@ -575,7 +574,7 @@ describe("NDKNutzapMonitor", () => {
             const originalFrom = NDKNutzap.from;
 
             // Use ts-ignore here because we're intentionally mocking a static method
-            // @ts-ignore - mocking static method
+            // @ts-expect-error - mocking static method
             NDKNutzap.from = vi.fn().mockImplementation(async (_event: NDKEvent) => {
                 // Return our mock nutzap
                 return nutzap;
@@ -588,7 +587,7 @@ describe("NDKNutzapMonitor", () => {
             if (subOptions && typeof subOptions === "object" && "onEvent" in subOptions) {
                 const nutzapEvent = new NDKEvent(ndk);
                 nutzapEvent.id = nutzap.id;
-                // @ts-ignore - suppressing type error for testing
+                // @ts-expect-error - suppressing type error for testing
                 subOptions.onEvent(nutzapEvent);
             }
 
@@ -596,7 +595,7 @@ describe("NDKNutzapMonitor", () => {
             expect(eventHandlerSpy).toHaveBeenCalled();
 
             // Restore the original function
-            // @ts-ignore - restoring original method
+            // @ts-expect-error - restoring original method
             NDKNutzap.from = originalFrom;
         });
 
@@ -661,7 +660,7 @@ describe("NDKNutzapMonitor", () => {
 
             // Create a method to access the private updateNutzapState method
             const updateState = (id: string, state: Partial<NDKNutzapState>) => {
-                // @ts-ignore - accessing private method for testing
+                // @ts-expect-error - accessing private method for testing
                 return monitor.updateNutzapState(id, state);
             };
 

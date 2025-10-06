@@ -1,7 +1,7 @@
-import { NDKEvent, NDKFilter } from "@nostr-dev-kit/ndk";
+import type { NDKEvent, NDKFilter } from "@nostr-dev-kit/ndk";
 import { useEffect, useState } from "react";
-import { UseSubscribeOptions } from ".";
 import { useNDK } from "../../ndk/hooks";
+import type { UseSubscribeOptions } from ".";
 
 /**
  * Fetches an event.

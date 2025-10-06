@@ -1,35 +1,35 @@
 // Removed duplicate import line
 import type { CashuWallet, Proof } from "@cashu/cashu-ts";
 import type NDK from "@nostr-dev-kit/ndk";
+import type { NDKNutzapState } from "@nostr-dev-kit/ndk";
 import {
-    NDKKind,
-    NDKNutzap,
-    NDKPrivateKeySigner,
-    NDKSubscriptionCacheUsage, // Import value
     cashuPubkeyToNostrPubkey,
-    proofP2pk,
     // Types
     type NDKCashuMintList,
     type NDKEvent,
     type NDKEventId,
     type NDKFilter,
+    NDKKind,
+    NDKNutzap,
+    NDKPrivateKeySigner,
     type NDKRelaySet,
     type NDKSubscription,
+    NDKSubscriptionCacheUsage, // Import value
     type NDKSubscriptionOptions,
     type NDKUser,
+    NdkNutzapStatus,
+    proofP2pk,
 } from "@nostr-dev-kit/ndk";
-import { NdkNutzapStatus } from "@nostr-dev-kit/ndk";
-import type { NDKNutzapState } from "@nostr-dev-kit/ndk";
 import { EventEmitter } from "tseep";
 import { NDKCashuWallet, NDKCashuWalletBackup } from "../wallets/cashu/wallet/index.js";
 import type { NDKWallet } from "../wallets/index.js";
 import {
+    getCashuWallet,
     type MintInfoLoadedCb,
     type MintInfoNeededCb,
     type MintInterface,
     type MintKeysLoadedCb,
     type MintKeysNeededCb,
-    getCashuWallet,
 } from "../wallets/mint.js";
 import { fetchPage } from "./fetch-page.js";
 import { type GroupedNutzaps, groupNutzaps } from "./group-nutzaps.js";

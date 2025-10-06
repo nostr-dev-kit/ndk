@@ -1,4 +1,4 @@
-import type { NDKEvent, NDKSubscription, NDKFilter } from "@nostr-dev-kit/ndk";
+import type { NDKEvent, NDKFilter, NDKSubscription } from "@nostr-dev-kit/ndk";
 import { matchFilter } from "@nostr-dev-kit/ndk";
 import { createStore } from "zustand/vanilla";
 

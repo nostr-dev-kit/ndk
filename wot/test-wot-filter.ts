@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
-import NDK, { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
-import { NDKWoT } from "./src/wot.js";
+import NDK, { type NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
 import { filterByWoT } from "./src/filter.js";
+import { NDKWoT } from "./src/wot.js";
 
 const EXPLICIT_RELAYS = ["wss://relay.damus.io", "wss://relay.primal.net", "wss://nos.lol", "wss://relay.nostr.band"];
 

@@ -1,21 +1,21 @@
 import type { Hexpubkey } from "@nostr-dev-kit/ndk";
 import { type NDKSigner, type NDKUser, ndkSignerFromPayload } from "@nostr-dev-kit/ndk";
-import type { SessionStartOptions } from "../store/types";
 import { useEffect, useRef } from "react";
+import { useNDK, useNDKCurrentUser } from "../../ndk/hooks";
 import {
     addOrUpdateStoredSession,
     clearActivePubkey,
     getActivePubkey,
     loadSessionsFromStorage,
-    NDKSessionStorageAdapter,
+    type NDKSessionStorageAdapter,
     removeStoredSession,
     storeActivePubkey,
 } from "../storage";
-import { useNDK, useNDKCurrentUser } from "../../ndk/hooks";
+import type { SessionStartOptions } from "../store/types";
+import { useNDKSessionStart, useNDKSessionStop } from "./control";
 import { useNDKSessionLogin } from "./index";
 import { useNDKSessionSessions } from "./sessions";
 import { useNDKSessionSigners } from "./signers";
-import { useNDKSessionStart, useNDKSessionStop } from "./control";
 
 /**
  * Interface for a stored user session, mirroring the structure used for persistence.
@@ -64,7 +64,7 @@ export function useNDKSessionMonitor(sessionStorage: NDKSessionStorageAdapter | 
                     const { pubkey, signerPayload } = storedSession;
                     try {
                         const user: NDKUser = ndk.getUser({ pubkey });
-                        let signer: NDKSigner | undefined = undefined;
+                        let signer: NDKSigner | undefined;
 
                         if (signerPayload) {
                             signer = await ndkSignerFromPayload(signerPayload, ndk);

@@ -8,8 +8,8 @@ import {
     type NDKRelaySet,
     type NostrEvent,
 } from "@nostr-dev-kit/ndk";
-import type { JournalEntry, ProofC, WalletState, WalletTokenChange } from ".";
 import type { MintUrl } from "../../mint/utils";
+import type { JournalEntry, ProofC, WalletState, WalletTokenChange } from ".";
 import type { WalletProofChange } from "./index.js";
 
 export type UpdateStateResult = {

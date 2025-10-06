@@ -1,17 +1,17 @@
+import type { NDKConstructorParams, NDKEvent, NDKFilter } from "@nostr-dev-kit/ndk";
 import NDK from "@nostr-dev-kit/ndk";
-import type { NDKConstructorParams, NDKFilter, NDKEvent } from "@nostr-dev-kit/ndk";
-import { createReactiveSessions } from "./stores/sessions.svelte.js";
-import { createReactiveWoT } from "./stores/wot.svelte.js";
-import { createReactiveWallet } from "./stores/wallet.svelte.js";
-import { createReactivePayments } from "./stores/payments.svelte.js";
-import { createReactivePool } from "./stores/pool.svelte.js";
-import { createReactiveSubscription } from "./subscribe.svelte.js";
-import type { SubscribeOptions, Subscription } from "./subscribe.svelte.js";
-import type { ReactiveSessionsStore } from "./stores/sessions.svelte.js";
-import type { ReactiveWoTStore } from "./stores/wot.svelte.js";
-import type { ReactiveWalletStore } from "./stores/wallet.svelte.js";
 import type { ReactivePaymentsStore } from "./stores/payments.svelte.js";
+import { createReactivePayments } from "./stores/payments.svelte.js";
 import type { ReactivePoolStore } from "./stores/pool.svelte.js";
+import { createReactivePool } from "./stores/pool.svelte.js";
+import type { ReactiveSessionsStore } from "./stores/sessions.svelte.js";
+import { createReactiveSessions } from "./stores/sessions.svelte.js";
+import type { ReactiveWalletStore } from "./stores/wallet.svelte.js";
+import { createReactiveWallet } from "./stores/wallet.svelte.js";
+import type { ReactiveWoTStore } from "./stores/wot.svelte.js";
+import { createReactiveWoT } from "./stores/wot.svelte.js";
+import type { SubscribeOptions, Subscription } from "./subscribe.svelte.js";
+import { createReactiveSubscription } from "./subscribe.svelte.js";
 
 /**
  * NDK Svelte 5 - Reactive NDK instance
@@ -77,7 +77,7 @@ export class NDKSvelte extends NDK {
      */
     subscribe<T extends NDKEvent = NDKEvent>(
         filters: NDKFilter | NDKFilter[] | (() => NDKFilter | NDKFilter[] | undefined),
-        opts?: SubscribeOptions
+        opts?: SubscribeOptions,
     ): Subscription<T> {
         return createReactiveSubscription<T>(this, filters, opts);
     }

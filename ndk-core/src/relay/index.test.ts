@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { NDK } from "../ndk/index.js";
-import { NDKRelay } from "./index.js";
-import { NDKRelayStatus } from "./index.js";
+import { NDKRelay, NDKRelayStatus } from "./index.js";
 
 const ndk = new NDK();
 const relayUrl = "ws://localhost/";

@@ -1,6 +1,6 @@
-import type { NDKFilter } from "../subscription/index.js";
 import type { Debugger } from "debug";
 import type { NDK } from "../ndk/index.js";
+import type { NDKFilter } from "../subscription/index.js";
 import { GuardrailCheckId } from "./ai-guardrails.js";
 
 /**

@@ -1,11 +1,11 @@
+import type NDK from "src/index.js";
 import type { NDKEvent, NDKEventId } from "../events/index.js";
 import type { NDKRelay } from "../relay/index.js";
 import type { NDKFilter, NDKSubscription } from "../subscription/index.js";
+import type { NDKNutzapState } from "../types.js";
 import type { Hexpubkey, ProfilePointer } from "../user/index.js";
 import type { NDKUserProfile } from "../user/profile.js";
 import type { NDKLnUrlData } from "../zapper/ln.js";
-import type { NDKNutzapState } from "../types.js";
-import NDK from "src/index.js";
 
 /**
  * Cashu mint information (from @cashu/cashu-ts)

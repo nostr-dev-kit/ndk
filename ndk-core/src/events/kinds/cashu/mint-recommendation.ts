@@ -51,7 +51,7 @@ export class NDKMintRecommendation extends NDKEvent {
      * Mint connection URLs/invite codes (multiple allowed)
      */
     get urls(): string[] {
-        return this.getMatchingTags("u").map(t => t[1]);
+        return this.getMatchingTags("u").map((t) => t[1]);
     }
 
     set urls(values: string[]) {
@@ -65,11 +65,11 @@ export class NDKMintRecommendation extends NDKEvent {
      * Pointers to specific mint events
      * Returns array of {kind, identifier, relay} objects
      */
-    get mintEventPointers(): Array<{kind: number, identifier: string, relay?: string}> {
-        return this.getMatchingTags("a").map(t => ({
+    get mintEventPointers(): Array<{ kind: number; identifier: string; relay?: string }> {
+        return this.getMatchingTags("a").map((t) => ({
             kind: Number(t[1].split(":")[0]),
             identifier: t[1].split(":")[2],
-            relay: t[2]
+            relay: t[2],
         }));
     }
 

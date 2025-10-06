@@ -1,12 +1,12 @@
-import { bench, describe } from 'vitest';
-import { NDK } from '../src/ndk/index.js';
-import { NDKSubscriptionManager } from '../src/subscription/manager.js';
-import { NDKSubscription } from '../src/subscription/index.js';
-import { NDKEvent } from '../src/events/index.js';
-import { NDKPrivateKeySigner } from '../src/signers/private-key/index.js';
+import { bench, describe } from "vitest";
+import { NDKEvent } from "../src/events/index.js";
+import { NDK } from "../src/ndk/index.js";
+import { NDKPrivateKeySigner } from "../src/signers/private-key/index.js";
+import { NDKSubscription } from "../src/subscription/index.js";
+import { NDKSubscriptionManager } from "../src/subscription/manager.js";
 
-describe('Subscription Dispatching Performance', () => {
-    bench('dispatch 1000 events with 10 subscriptions', () => {
+describe("Subscription Dispatching Performance", () => {
+    bench("dispatch 1000 events with 10 subscriptions", () => {
         const ndk = new NDK();
         const manager = new NDKSubscriptionManager();
 
@@ -23,15 +23,15 @@ describe('Subscription Dispatching Performance', () => {
                 kind: 1,
                 pubkey: `author${i % 10}`,
                 created_at: Math.floor(Date.now() / 1000),
-                content: 'test',
+                content: "test",
                 tags: [],
-                sig: 'sig'
+                sig: "sig",
             };
             manager.dispatchEvent(event);
         }
     });
 
-    bench('dispatch 1000 events with 50 subscriptions', () => {
+    bench("dispatch 1000 events with 50 subscriptions", () => {
         const ndk = new NDK();
         const manager = new NDKSubscriptionManager();
 
@@ -48,15 +48,15 @@ describe('Subscription Dispatching Performance', () => {
                 kind: 1,
                 pubkey: `author${i % 50}`,
                 created_at: Math.floor(Date.now() / 1000),
-                content: 'test',
+                content: "test",
                 tags: [],
-                sig: 'sig'
+                sig: "sig",
             };
             manager.dispatchEvent(event);
         }
     });
 
-    bench('dispatch 1000 events with 100 subscriptions', () => {
+    bench("dispatch 1000 events with 100 subscriptions", () => {
         const ndk = new NDK();
         const manager = new NDKSubscriptionManager();
 
@@ -73,25 +73,27 @@ describe('Subscription Dispatching Performance', () => {
                 kind: 1,
                 pubkey: `author${i % 100}`,
                 created_at: Math.floor(Date.now() / 1000),
-                content: 'test',
+                content: "test",
                 tags: [],
-                sig: 'sig'
+                sig: "sig",
             };
             manager.dispatchEvent(event);
         }
     });
 
-    bench('dispatch 5000 events with 100 subscriptions (stress test)', () => {
+    bench("dispatch 5000 events with 100 subscriptions (stress test)", () => {
         const ndk = new NDK();
         const manager = new NDKSubscriptionManager();
 
         // Create 100 subscriptions with varied filters
         for (let i = 0; i < 100; i++) {
             const kinds = [1, 3, 6, 7];
-            const sub = new NDKSubscription(ndk, [{
-                kinds: [kinds[i % 4]],
-                authors: [`author${i}`, `author${(i + 1) % 100}`]
-            }]);
+            const sub = new NDKSubscription(ndk, [
+                {
+                    kinds: [kinds[i % 4]],
+                    authors: [`author${i}`, `author${(i + 1) % 100}`],
+                },
+            ]);
             manager.add(sub);
         }
 
@@ -102,15 +104,15 @@ describe('Subscription Dispatching Performance', () => {
                 kind: [1, 3, 6, 7][i % 4],
                 pubkey: `author${i % 100}`,
                 created_at: Math.floor(Date.now() / 1000),
-                content: 'test',
+                content: "test",
                 tags: [],
-                sig: 'sig'
+                sig: "sig",
             };
             manager.dispatchEvent(event);
         }
     });
 
-    bench('dispatch with mixed subscription types', () => {
+    bench("dispatch with mixed subscription types", () => {
         const ndk = new NDK();
         const manager = new NDKSubscriptionManager();
 
@@ -138,9 +140,9 @@ describe('Subscription Dispatching Performance', () => {
                 kind: [1, 3, 6][i % 3],
                 pubkey: `author${i % 50}`,
                 created_at: Math.floor(Date.now() / 1000),
-                content: 'test',
+                content: "test",
                 tags: [],
-                sig: 'sig'
+                sig: "sig",
             };
             manager.dispatchEvent(event);
         }

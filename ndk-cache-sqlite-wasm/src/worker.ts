@@ -80,14 +80,19 @@ self.onmessage = async (event: MessageEvent) => {
         let result: any;
         switch (type) {
             case "run":
-                result = db.run(payload.sql, payload.params);
+                db.run(payload.sql, payload.params);
+                result = undefined;
                 break;
             case "exec":
                 result = db.exec(payload.sql, payload.params);
                 break;
             case "get": {
                 const stmt = db.prepare(payload.sql, payload.params);
-                result = stmt.getAsObject();
+                if (stmt.step()) {
+                    result = stmt.getAsObject();
+                } else {
+                    result = null;
+                }
                 stmt.free();
                 break;
             }

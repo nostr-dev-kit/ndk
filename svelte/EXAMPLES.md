@@ -55,7 +55,7 @@ Fetch and display a user's profile with automatic updates.
 
 ```svelte
 <script lang="ts">
-import { profiles, sessions } from '@nostr-dev-kit/ndk-svelte5/stores';
+import { profiles, sessions } from '@nostr-dev-kit/svelte/stores';
 
 interface Props {
   pubkey: string;
@@ -98,7 +98,7 @@ A chat room using NIP-29 (group chats) or NIP-28 (public channels).
 ```svelte
 <script lang="ts">
 import { ndk } from '$lib/ndk';
-import { sessions } from '@nostr-dev-kit/ndk-svelte5/stores';
+import { sessions } from '@nostr-dev-kit/svelte/stores';
 import { NDKKind, NDKEvent } from '@nostr-dev-kit/ndk';
 
 interface Props {
@@ -235,7 +235,7 @@ A button that zaps an event with wallet integration.
 
 ```svelte
 <script lang="ts">
-import { wallet } from '@nostr-dev-kit/ndk-svelte5/wallet';
+import { wallet } from '@nostr-dev-kit/svelte/wallet';
 import type { NDKEvent } from '@nostr-dev-kit/ndk';
 
 interface Props {
@@ -300,7 +300,7 @@ Switch between multiple logged-in accounts.
 
 ```svelte
 <script lang="ts">
-import { sessions } from '@nostr-dev-kit/ndk-svelte5/stores';
+import { sessions } from '@nostr-dev-kit/svelte/stores';
 
 let showMenu = $state(false);
 
@@ -369,7 +369,7 @@ Advanced muting with word filters and custom criteria.
 ```svelte
 <script lang="ts">
 import { ndk } from '$lib/ndk';
-import { mutes } from '@nostr-dev-kit/ndk-svelte5/stores';
+import { mutes } from '@nostr-dev-kit/svelte/stores';
 import { NDKKind } from '@nostr-dev-kit/ndk';
 
 const notes = ndk.subscribe([
@@ -437,7 +437,7 @@ Complete wallet UI with balance, history, and payments.
 
 ```svelte
 <script lang="ts">
-import { wallet } from '@nostr-dev-kit/ndk-svelte5/wallet';
+import { wallet } from '@nostr-dev-kit/svelte/wallet';
 import { NDKCashuWallet } from '@nostr-dev-kit/ndk-wallet';
 import { ndk } from '$lib/ndk';
 
@@ -532,7 +532,7 @@ Publish events with optimistic UI updates.
 ```svelte
 <script lang="ts">
 import { ndk } from '$lib/ndk';
-import { sessions } from '@nostr-dev-kit/ndk-svelte5/stores';
+import { sessions } from '@nostr-dev-kit/svelte/stores';
 import { NDKEvent, NDKKind } from '@nostr-dev-kit/ndk';
 
 const notes = ndk.subscribe([
@@ -647,7 +647,7 @@ Combine multiple subscriptions with derived state:
 ```svelte
 <script lang="ts">
 import { ndk } from '$lib/ndk';
-import { sessions } from '@nostr-dev-kit/ndk-svelte5/stores';
+import { sessions } from '@nostr-dev-kit/svelte/stores';
 
 // Get current user's notes
 const myNotes = ndk.subscribe([

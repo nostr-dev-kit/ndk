@@ -155,7 +155,7 @@ To verify the fix works:
 
 ```svelte
 <script lang="ts">
-import { NDKSvelte } from '@nostr-dev-kit/ndk-svelte5';
+import { NDKSvelte } from '@nostr-dev-kit/svelte';
 
 const ndk = new NDKSvelte({
   explicitRelayUrls: ['wss://relay.damus.io']

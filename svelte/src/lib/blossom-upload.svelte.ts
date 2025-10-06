@@ -1,5 +1,5 @@
-import type { NDKBlossom } from "@nostr-dev-kit/ndk-blossom";
 import type { NDKImetaTag } from "@nostr-dev-kit/ndk";
+import type { NDKBlossom } from "@nostr-dev-kit/blossom";
 
 export type UploadStatus = "idle" | "uploading" | "success" | "error";
 

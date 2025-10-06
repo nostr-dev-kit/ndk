@@ -1,6 +1,11 @@
-import { type NDKEvent, NDKEventId, type NDKRelay, type NDKSubscription, type NostrEvent } from "@nostr-dev-kit/ndk";
-
-import { NDKKind } from "@nostr-dev-kit/ndk";
+import {
+    type NDKEvent,
+    NDKEventId,
+    NDKKind,
+    type NDKRelay,
+    type NDKSubscription,
+    type NostrEvent,
+} from "@nostr-dev-kit/ndk";
 import type { NDKCashuWallet } from "../wallet";
 import { handleEventDeletion } from "./deletion";
 import { handleQuote } from "./quote";

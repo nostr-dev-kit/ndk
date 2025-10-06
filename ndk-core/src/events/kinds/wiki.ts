@@ -1,5 +1,5 @@
-import { NDKKind } from ".";
 import { NDKEvent } from "../index.js";
+import { NDKKind } from ".";
 import { NDKArticle } from "./article";
 
 /**

@@ -1,4 +1,4 @@
-# @nostr-dev-kit/ndk-wot
+# @nostr-dev-kit/wot
 
 ## 0.2.7
 
@@ -22,7 +22,7 @@
 
 ### Minor Changes
 
-- Initial release of @nostr-dev-kit/ndk-wot - Web of Trust utilities for NDK
+- Initial release of @nostr-dev-kit/wot - Web of Trust utilities for NDK
 
     Features:
     - Build WoT graph from contact lists with configurable depth

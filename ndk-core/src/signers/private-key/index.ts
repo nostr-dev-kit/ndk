@@ -1,8 +1,6 @@
-import type { UnsignedEvent } from "nostr-tools";
-import { finalizeEvent, generateSecretKey, getPublicKey, nip04, nip44 } from "nostr-tools";
-
 import { bytesToHex, hexToBytes } from "@noble/hashes/utils";
-import { nip19 } from "nostr-tools";
+import type { UnsignedEvent } from "nostr-tools";
+import { finalizeEvent, generateSecretKey, getPublicKey, nip04, nip19, nip44 } from "nostr-tools";
 import type { NostrEvent } from "../../events/index.js";
 import type { NDK } from "../../ndk/index.js";
 import type { NDKEncryptionScheme } from "../../types.js";
@@ -35,6 +33,11 @@ export class NDKPrivateKeySigner implements NDKSigner {
      * Create a new signer from a private key.
      * @param privateKey - The private key to use in hex form or nsec.
      * @param ndk - The NDK instance to use.
+     *
+     * @ai-guardrail
+     * If you have an nsec (bech32-encoded private key starting with "nsec1"), you can pass it directly
+     * to this constructor without decoding it first. The constructor handles both hex and nsec formats automatically.
+     * DO NOT use nip19.decode() to convert nsec to hex before passing it here - just pass the nsec string directly.
      */
     public constructor(privateKeyOrNsec: Uint8Array | string, ndk?: NDK) {
         // If it's a string, it can be either a hex encoded private key or an nsec.

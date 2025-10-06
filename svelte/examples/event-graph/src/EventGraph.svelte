@@ -1,9 +1,11 @@
 <script lang="ts">
+  import type NDK from '@nostr-dev-kit/ndk';
   import type { NDKEvent, NDKUser } from '@nostr-dev-kit/ndk';
-  import Avatar from '../../../src/lib/components/Avatar.svelte';
+  import { Avatar } from '@nostr-dev-kit/svelte';
   import ContentRenderer from '../../../src/lib/components/ContentRenderer.svelte';
 
   interface Props {
+    ndk: NDK;
     events: NDKEvent[];
     user: NDKUser;
     connectedRelays: string[];
@@ -11,7 +13,7 @@
     onFetchKind: (kind: number) => Promise<void>;
   }
 
-  let { events, user, connectedRelays = [], onAddRelay, onFetchKind }: Props = $props();
+  let { ndk, events, user, connectedRelays = [], onAddRelay, onFetchKind }: Props = $props();
 
   let newRelayUrl = $state('');
   let addingRelay = $state(false);
@@ -301,7 +303,7 @@
   <div class="user-info">
     <div class="user-header">
       <div class="user-profile">
-        <Avatar pubkey={user.pubkey} size={80} class="user-avatar" />
+        <Avatar {ndk} pubkey={user.pubkey} size={80} class="user-avatar" />
         <div class="user-details">
           <h2>{displayName()}</h2>
           {#if userProfile?.nip05}

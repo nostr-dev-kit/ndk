@@ -1,18 +1,18 @@
 # Web of Trust (WOT)
 
-`@nostr-dev-kit/ndk-wot` provides Web of Trust utilities for filtering and ranking content based on your social graph.
+`@nostr-dev-kit/wot` provides Web of Trust utilities for filtering and ranking content based on your social graph.
 
 ## Installation
 
 ```bash
-npm install @nostr-dev-kit/ndk-wot
+npm install @nostr-dev-kit/wot
 ```
 
 ## Quick Start
 
 ```typescript
 import NDK from "@nostr-dev-kit/ndk";
-import { NDKWoT, filterByWoT, rankByWoT } from "@nostr-dev-kit/ndk-wot";
+import { NDKWoT, filterByWoT, rankByWoT } from "@nostr-dev-kit/wot";
 
 const ndk = new NDK();
 await ndk.connect();
@@ -57,7 +57,7 @@ You can integrate WOT with NDK's `muteFilter` to automatically filter out users 
 
 ```typescript
 import NDK, { NDKEvent } from "@nostr-dev-kit/ndk";
-import { NDKWoT } from "@nostr-dev-kit/ndk-wot";
+import { NDKWoT } from "@nostr-dev-kit/wot";
 
 const ndk = new NDK();
 await ndk.connect();

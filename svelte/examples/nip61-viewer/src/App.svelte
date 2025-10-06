@@ -30,7 +30,7 @@
     subscription = null;
 
     try {
-      const user = await ndk.getUserFromNip05(nip05Input.trim());
+      const user = await ndk.fetchUser(nip05Input.trim());
 
       if (!user) {
         error = 'NIP-05 not found or invalid';

@@ -1,6 +1,6 @@
-import type { NDKEvent, Hexpubkey } from "@nostr-dev-kit/ndk";
+import type { Hexpubkey, NDKEvent } from "@nostr-dev-kit/ndk";
 import { NDKNutzap, zapInvoiceFromEvent } from "@nostr-dev-kit/ndk";
-import type { Transaction, TransactionDirection, TransactionType, TransactionStatus } from "./types.js";
+import type { Transaction, TransactionDirection, TransactionStatus, TransactionType } from "./types.js";
 
 /**
  * Parse a kind:7376 spending history event into a Transaction.
@@ -21,7 +21,8 @@ export function parseSpendingHistory(event: NDKEvent, currentUser: Hexpubkey): T
     }
 
     const directionValue = decrypted.find(([k]) => k === "direction")?.[1];
-    const direction: TransactionDirection = directionValue === "in" || directionValue === "out" ? directionValue : "out";
+    const direction: TransactionDirection =
+        directionValue === "in" || directionValue === "out" ? directionValue : "out";
     const amount = parseInt(decrypted.find(([k]) => k === "amount")?.[1] ?? "0");
 
     const createdTokens = event.tags.filter(([t, , , marker]) => t === "e" && marker === "created").map(([, id]) => id);

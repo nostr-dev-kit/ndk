@@ -101,7 +101,7 @@ export async function dvmSchedule(
                         }
 
                         resolve(e);
-                    }
+                    },
                 },
             );
         }

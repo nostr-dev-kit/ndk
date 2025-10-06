@@ -1,13 +1,13 @@
 import type { NostrEvent } from "nostr-tools";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
-import type { NDKZapDetails } from ".";
-import { NDKZapper } from ".";
 import { NDKEvent } from "../events";
 import { NDKCashuMintList } from "../events/kinds/nutzap/mint-list";
 import { NDK } from "../ndk";
 import { NDKPrivateKeySigner } from "../signers/private-key";
 import type { NDKUser } from "../user";
 import type { NDKUserProfile } from "../user/profile";
+import type { NDKZapDetails } from ".";
+import { NDKZapper } from ".";
 import type { LnPaymentInfo } from "./ln";
 import type { CashuPaymentInfo } from "./nip61";
 

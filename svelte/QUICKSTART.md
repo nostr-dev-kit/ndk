@@ -5,7 +5,7 @@ Get up and running with ndk-svelte5 in 5 minutes.
 ## Installation
 
 ```bash
-pnpm add @nostr-dev-kit/ndk-svelte5 @nostr-dev-kit/ndk svelte@^5.0.0
+pnpm add @nostr-dev-kit/svelte @nostr-dev-kit/ndk svelte@^5.0.0
 ```
 
 ## Setup NDK
@@ -14,7 +14,7 @@ Create your NDK instance:
 
 ```typescript
 // src/lib/ndk.ts
-import { NDKSvelte } from '@nostr-dev-kit/ndk-svelte5';
+import { NDKSvelte } from '@nostr-dev-kit/svelte';
 
 export const ndk = new NDKSvelte({
   explicitRelayUrls: [
@@ -71,7 +71,7 @@ That's it! Events stream in automatically and render as they arrive. No manual c
 ```svelte
 <script lang="ts">
 import { ndk } from '$lib/ndk';
-import { profiles } from '@nostr-dev-kit/ndk-svelte5/stores';
+import { profiles } from '@nostr-dev-kit/svelte/stores';
 
 const notes = ndk.subscribe([{ kinds: [1], limit: 50 }]);
 
@@ -99,7 +99,7 @@ Profiles are fetched and cached automatically!
 
 ```svelte
 <script lang="ts">
-import { sessions } from '@nostr-dev-kit/ndk-svelte5/stores';
+import { sessions } from '@nostr-dev-kit/svelte/stores';
 
 async function login() {
   // Use NIP-07 (browser extension)

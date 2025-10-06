@@ -1,13 +1,13 @@
-import type { NDKRelay, NDKRelayConnectionStats } from ".";
-import { NDKRelayStatus } from ".";
-import { NDKEvent } from "../events/index.js";
+import type debug from "debug";
 import type { NostrEvent } from "../events/index.js";
+import { NDKEvent } from "../events/index.js";
 import { NDKKind } from "../events/kinds";
 import type { NDK, NDKNetDebug } from "../ndk/index.js";
 import type { NDKFilter } from "../subscription";
-import type { NDKRelaySubscription } from "./subscription";
+import type { NDKRelay, NDKRelayConnectionStats } from ".";
+import { NDKRelayStatus } from ".";
 import { NDKRelayKeepalive, probeRelayConnection } from "./keepalive";
-import type debug from "debug";
+import type { NDKRelaySubscription } from "./subscription";
 
 const MAX_RECONNECT_ATTEMPTS = 5;
 const FLAPPING_THRESHOLD_MS = 1000;
@@ -363,12 +363,6 @@ export class NDKRelayConnectivity {
                 case "EVENT": {
                     const so = this.openSubs.get(id);
                     const event = data[2] as NostrEvent;
-                    console.log("[NDK-RELAY] EVENT received:", {
-                        eventId: event.id?.substring(0, 8),
-                        relayUrl: this.url,
-                        subId: id,
-                        hasSub: !!so,
-                    });
                     if (!so) {
                         this.debug(`Received event for unknown subscription ${id}`);
                         return;
@@ -608,7 +602,7 @@ export class NDKRelayConnectivity {
             reconnectDelay = Math.max(0, 60000 - (Date.now() - this.connectedAt));
         } else {
             // Standard exponential backoff: 1s, 2s, 4s, 8s, 16s, 30s max
-            reconnectDelay = Math.min(1000 * Math.pow(2, attempt), 30000);
+            reconnectDelay = Math.min(1000 * 2 ** attempt, 30000);
             this.debug(`Using standard backoff, attempt ${attempt}, delay ${reconnectDelay}ms`);
         }
 

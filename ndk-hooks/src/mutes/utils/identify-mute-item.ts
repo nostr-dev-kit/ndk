@@ -1,6 +1,5 @@
 import { NDKEvent, NDKUser } from "@nostr-dev-kit/ndk";
-import type { MuteItemType } from "../store/types";
-import type { MuteableItem } from "../store/types";
+import type { MuteableItem, MuteItemType } from "../store/types";
 
 /**
  * Identifies the type and value of a mutable item

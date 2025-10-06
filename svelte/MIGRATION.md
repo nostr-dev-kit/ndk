@@ -16,7 +16,7 @@ ndk-svelte5 now provides `createNDK()` - a one-liner that replaces verbose initi
 
 ```typescript
 import NDK from '@nostr-dev-kit/ndk';
-import { initStores } from '@nostr-dev-kit/ndk-svelte5';
+import { initStores } from '@nostr-dev-kit/svelte';
 
 const ndk = new NDK({
   explicitRelayUrls: ['wss://relay.damus.io', 'wss://nos.lol']
@@ -30,7 +30,7 @@ initStores(ndk).then(() => {
 ### After (New Pattern)
 
 ```typescript
-import { createNDK } from '@nostr-dev-kit/ndk-svelte5';
+import { createNDK } from '@nostr-dev-kit/svelte';
 
 const ndk = createNDK();
 ```
@@ -107,8 +107,8 @@ Simply replace your initialization code:
 
 ```diff
 - import NDK from '@nostr-dev-kit/ndk';
-- import { initStores } from '@nostr-dev-kit/ndk-svelte5';
-+ import { createNDK } from '@nostr-dev-kit/ndk-svelte5';
+- import { initStores } from '@nostr-dev-kit/svelte';
++ import { createNDK } from '@nostr-dev-kit/svelte';
 
 - const ndk = new NDK({
 -   explicitRelayUrls: ['wss://relay.damus.io']
@@ -289,7 +289,7 @@ onMount(async () => {
 **ndk-svelte5:**
 ```svelte
 <script lang="ts">
-import { profiles } from '@nostr-dev-kit/ndk-svelte5/stores';
+import { profiles } from '@nostr-dev-kit/svelte/stores';
 
 const profile = $derived(profiles.get(pubkey));
 </script>
@@ -323,7 +323,7 @@ async function login() {
 **ndk-svelte5:**
 ```svelte
 <script lang="ts">
-import { sessions } from '@nostr-dev-kit/ndk-svelte5/stores';
+import { sessions } from '@nostr-dev-kit/svelte/stores';
 
 async function login() {
   const signer = /* get signer */;
@@ -375,7 +375,7 @@ async function login() {
 pnpm remove @nostr-dev-kit/ndk-svelte
 
 # Add new package
-pnpm add @nostr-dev-kit/ndk-svelte5
+pnpm add @nostr-dev-kit/svelte
 ```
 
 ### 2. Update Svelte
@@ -397,7 +397,7 @@ const ndk = new NDKSvelte({ explicitRelayUrls: [...] });
 
 **After:**
 ```typescript
-import { NDKSvelte } from '@nostr-dev-kit/ndk-svelte5';
+import { NDKSvelte } from '@nostr-dev-kit/svelte';
 
 const ndk = new NDKSvelte({ explicitRelayUrls: [...] });
 ```
@@ -438,7 +438,7 @@ Delete all `onDestroy()` cleanup code - it's automatic now!
 Add profile, session, and mute management:
 
 ```typescript
-import { profiles, sessions, mutes } from '@nostr-dev-kit/ndk-svelte5/stores';
+import { profiles, sessions, mutes } from '@nostr-dev-kit/svelte/stores';
 ```
 
 ### 7. Update Components
@@ -446,7 +446,7 @@ import { profiles, sessions, mutes } from '@nostr-dev-kit/ndk-svelte5/stores';
 Use built-in components where possible:
 
 ```svelte
-import { UserAvatar, UserName } from '@nostr-dev-kit/ndk-svelte5/components';
+import { UserAvatar, UserName } from '@nostr-dev-kit/svelte/components';
 
 <UserAvatar {pubkey} size="lg" />
 <UserName {pubkey} />
@@ -506,7 +506,7 @@ onMount(async () => {
 **After:**
 ```svelte
 <script lang="ts">
-import { profiles } from '@nostr-dev-kit/ndk-svelte5/stores';
+import { profiles } from '@nostr-dev-kit/svelte/stores';
 
 const profile = $derived(profiles.get(pubkey));
 </script>
@@ -563,7 +563,7 @@ No more `onDestroy()` needed - cleanup is automatic.
 ### 3. Different Import Path
 
 **Before:** `@nostr-dev-kit/ndk-svelte`
-**After:** `@nostr-dev-kit/ndk-svelte5`
+**After:** `@nostr-dev-kit/svelte`
 
 ### 4. Options Object
 
@@ -589,7 +589,7 @@ import NDKSvelte from '@nostr-dev-kit/ndk-svelte';
 const oldNdk = new NDKSvelte({ ... });
 
 // New code using ndk-svelte5
-import { NDKSvelte as NDKSvelte5 } from '@nostr-dev-kit/ndk-svelte5';
+import { NDKSvelte as NDKSvelte5 } from '@nostr-dev-kit/svelte';
 const ndk = new NDKSvelte5({ ... });
 ```
 

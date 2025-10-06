@@ -1,5 +1,11 @@
 # @nostr-dev-kit/sessions
 
+## 0.1.1
+
+### Patch Changes
+
+- bump
+
 ## 0.1.0
 
 ### Minor Changes

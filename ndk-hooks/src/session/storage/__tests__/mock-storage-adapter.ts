@@ -1,4 +1,4 @@
-import { NDKSessionStorageAdapter } from "../index";
+import type { NDKSessionStorageAdapter } from "../index";
 
 /**
  * Mock implementation of NDKSessionStorageAdapter for testing.

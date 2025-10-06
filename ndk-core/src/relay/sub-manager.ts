@@ -1,9 +1,8 @@
-import type { NDKRelay } from ".";
 import type { NDKFilterFingerprint } from "../subscription/grouping.js";
 import { filterFingerprint } from "../subscription/grouping.js";
-import type { NDKSubscription } from "../subscription/index.js";
-import type { NDKFilter } from "../subscription/index.js";
+import type { NDKFilter, NDKSubscription } from "../subscription/index.js";
 import type { NDKSubscriptionManager } from "../subscription/manager";
+import type { NDKRelay } from ".";
 import { NDKRelaySubscription, NDKRelaySubscriptionStatus } from "./subscription";
 
 /**

@@ -1,6 +1,6 @@
 import { nip19 } from "nostr-tools";
-import { NDK } from "./index.js";
 import { NDKUser } from "../user/index.js";
+import { NDK } from "./index.js";
 
 describe("ndk.getUser() with NIP-19 strings", () => {
     let ndk: NDK;

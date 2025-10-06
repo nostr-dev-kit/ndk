@@ -1,7 +1,7 @@
 import type { Hexpubkey, NDKEvent, NDKFilter, NDKRelay } from "@nostr-dev-kit/ndk";
 import { NDKCashuMintList, NDKKind, profileFromEvent } from "@nostr-dev-kit/ndk";
-import type { NDKSessionsState, NDKUserSession, SessionStartOptions } from "./types";
 import { useNDKMutes } from "../../mutes/store";
+import type { NDKSessionsState, NDKUserSession, SessionStartOptions } from "./types";
 
 function handleProfileEvent(event: NDKEvent, session: NDKUserSession): void {
     const profile = profileFromEvent(event);

@@ -3,7 +3,7 @@
 NDK comes with an interface to make zapping as simple as possible.
 
 ```ts
-const user = await ndk.getUserFromNip05("pablo@f7z.io");
+const user = await ndk.fetchUser("pablo@f7z.io");
 const lnPay = ({ pr: string }) => {
     console.log("please pay to complete the zap", pr);
 };

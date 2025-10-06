@@ -1,5 +1,5 @@
-import { NDKBlossom } from "@nostr-dev-kit/ndk-blossom";
 import type { NDKUser } from "@nostr-dev-kit/ndk";
+import type { NDKBlossom } from "@nostr-dev-kit/blossom";
 
 export type UrlStatus = "pending" | "loading" | "success" | "error" | "healing";
 

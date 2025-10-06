@@ -1,7 +1,11 @@
 <script lang="ts">
   import { onDestroy } from "svelte"
   import { NDKSvelte } from "@nostr-dev-kit/svelte"
-  import { useUser } from "@nostr-dev-kit/svelte"
+  import { useUser, useProfile } from "@nostr-dev-kit/svelte"
+  import SigVerifyWorker from './sig-verify.worker.ts?worker'
+
+  // Initialize signature verification worker
+  const sigVerifyWorker = new SigVerifyWorker()
 
   // Initialize NDK with reactive stores
   const ndk = new NDKSvelte({
@@ -9,7 +13,10 @@
       'wss://relay.damus.io',
       'wss://nos.lol',
       'wss://relay.nostr.band'
-    ]
+    ],
+    signatureVerificationWorker: sigVerifyWorker,
+    initialValidationRatio: 1.0,
+    lowestValidationRatio: 0.1,
   })
 
   // Connect to relays
@@ -233,10 +240,11 @@
       </div>
     {/each}
   {:else if route === '/p/:identifier' && params.identifier}
-    {@const user = useUser(ndk, params.identifier)}
-    {@const userNotes = user.pubkey ? ndk.subscribe({
+    {@const userStore = useUser(ndk, params.identifier)}
+    {@const profileStore = useProfile(ndk, userStore.user?.pubkey)}
+    {@const userNotes = userStore.user?.pubkey ? ndk.subscribe({
       kinds: [1],
-      authors: [user.pubkey],
+      authors: [userStore.user.pubkey],
       limit: 1
     }) : null}
 
@@ -252,23 +260,23 @@
       </div>
       <div class="profile-field">
         <span class="label">Pubkey:</span>
-        <span class="value">{user.pubkey || 'Loading...'}</span>
+        <span class="value">{userStore.user?.pubkey || 'Loading...'}</span>
       </div>
       <div class="profile-field">
         <span class="label">Npub:</span>
-        <span class="value">{user.npub || 'Loading...'}</span>
+        <span class="value">{userStore.user?.npub || 'Loading...'}</span>
       </div>
       <div class="profile-field">
         <span class="label">Name:</span>
-        <span class="value">{user.profile?.name || 'Loading...'}</span>
+        <span class="value">{profileStore.profile?.name || (profileStore.fetching ? 'Loading...' : '-')}</span>
       </div>
       <div class="profile-field">
         <span class="label">Display Name:</span>
-        <span class="value">{user.profile?.displayName || user.profile?.display_name || '-'}</span>
+        <span class="value">{profileStore.profile?.displayName || profileStore.profile?.display_name || '-'}</span>
       </div>
       <div class="profile-field">
         <span class="label">About:</span>
-        <span class="value">{user.profile?.about || '-'}</span>
+        <span class="value">{profileStore.profile?.about || '-'}</span>
       </div>
     </div>
 

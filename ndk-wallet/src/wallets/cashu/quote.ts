@@ -1,9 +1,6 @@
 import type NDK from "@nostr-dev-kit/ndk";
 import type { NostrEvent } from "@nostr-dev-kit/ndk";
-
-import { NDKKind } from "@nostr-dev-kit/ndk";
-
-import { NDKEvent } from "@nostr-dev-kit/ndk";
+import { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
 import { getBolt11ExpiresAt } from "../../utils/ln";
 import type { NDKCashuWallet } from "./wallet/index.js";
 

@@ -1,6 +1,6 @@
 import debug from "debug";
-import type { Hexpubkey, NostrEvent } from "../../../index.js";
 import type NDK from "../../../index.js";
+import type { Hexpubkey, NostrEvent } from "../../../index.js";
 import { NDKEvent, NDKKind, NDKUser } from "../../../index.js";
 import type { Proof } from "./proof.js";
 

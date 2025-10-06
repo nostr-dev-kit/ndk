@@ -1,4 +1,4 @@
-# @nostr-dev-kit/ndk-svelte5
+# @nostr-dev-kit/svelte
 
 > Modern, performant, and beautiful Svelte 5 integration for NDK
 
@@ -40,7 +40,7 @@ ndk-svelte5 embraces **Svelte 5's reactive primitives** to create a library that
 ## Installation
 
 ```bash
-pnpm add @nostr-dev-kit/ndk-svelte5
+pnpm add @nostr-dev-kit/svelte
 ```
 
 ## Setup
@@ -49,7 +49,7 @@ Initialize NDK in your app:
 
 ```typescript
 // lib/ndk.ts
-import { NDKSvelte } from '@nostr-dev-kit/ndk-svelte5';
+import { NDKSvelte } from '@nostr-dev-kit/svelte';
 import NDKCacheDexie from '@nostr-dev-kit/ndk-cache-dexie';
 
 export const ndk = new NDKSvelte({
@@ -106,7 +106,7 @@ Events become reactive objects with `$state` properties:
 
 ```svelte
 <script lang="ts">
-import { ReactiveEvent } from '@nostr-dev-kit/ndk-svelte5';
+import { ReactiveEvent } from '@nostr-dev-kit/svelte';
 
 const event = ReactiveEvent.from(rawEvent);
 
@@ -481,7 +481,7 @@ Build dynamic filters that automatically update subscriptions:
 
 ```svelte
 <script lang="ts">
-import { ReactiveFilter } from '@nostr-dev-kit/ndk-svelte5';
+import { ReactiveFilter } from '@nostr-dev-kit/svelte';
 
 let selectedAuthor = $state('');
 let selectedKind = $state(1);

@@ -1,6 +1,6 @@
 # Blossom Upload
 
-Reactive utilities for managing file uploads with `@nostr-dev-kit/ndk-blossom`.
+Reactive utilities for managing file uploads with `@nostr-dev-kit/blossom`.
 
 ## Overview
 
@@ -11,15 +11,15 @@ The `BlossomUpload` class provides reactive state management for uploading files
 Make sure you have both packages installed:
 
 ```bash
-npm install @nostr-dev-kit/ndk-svelte5 @nostr-dev-kit/ndk-blossom
+npm install @nostr-dev-kit/svelte @nostr-dev-kit/blossom
 ```
 
 ## Basic Usage
 
 ```svelte
 <script lang="ts">
-  import { NDKBlossom } from '@nostr-dev-kit/ndk-blossom';
-  import { useBlossomUpload } from '@nostr-dev-kit/ndk-svelte5';
+  import { NDKBlossom } from '@nostr-dev-kit/blossom';
+  import { useBlossomUpload } from '@nostr-dev-kit/svelte';
   import { ndk } from './ndk-instance'; // Your NDK instance
 
   const blossom = new NDKBlossom(ndk);
@@ -156,8 +156,8 @@ Resets the upload state to initial values:
 
 ```svelte
 <script lang="ts">
-  import { NDKBlossom } from '@nostr-dev-kit/ndk-blossom';
-  import { useBlossomUpload } from '@nostr-dev-kit/ndk-svelte5';
+  import { NDKBlossom } from '@nostr-dev-kit/blossom';
+  import { useBlossomUpload } from '@nostr-dev-kit/svelte';
   import { ndk } from './ndk-instance';
 
   const blossom = new NDKBlossom(ndk);
@@ -193,8 +193,8 @@ Resets the upload state to initial values:
 
 ```svelte
 <script lang="ts">
-  import { NDKBlossom } from '@nostr-dev-kit/ndk-blossom';
-  import { useBlossomUpload } from '@nostr-dev-kit/ndk-svelte5';
+  import { NDKBlossom } from '@nostr-dev-kit/blossom';
+  import { useBlossomUpload } from '@nostr-dev-kit/svelte';
   import { ndk } from './ndk-instance';
 
   const blossom = new NDKBlossom(ndk);
@@ -241,8 +241,8 @@ Upload a file and include it in a nostr event:
 
 ```svelte
 <script lang="ts">
-  import { NDKBlossom } from '@nostr-dev-kit/ndk-blossom';
-  import { useBlossomUpload } from '@nostr-dev-kit/ndk-svelte5';
+  import { NDKBlossom } from '@nostr-dev-kit/blossom';
+  import { useBlossomUpload } from '@nostr-dev-kit/svelte';
   import { imetaTagToTag } from '@nostr-dev-kit/ndk/lib/utils/imeta';
   import { ndk } from './ndk-instance';
 
@@ -275,8 +275,8 @@ Upload a file and include it in a nostr event:
 
 ```svelte
 <script lang="ts">
-  import { NDKBlossom } from '@nostr-dev-kit/ndk-blossom';
-  import { useBlossomUpload } from '@nostr-dev-kit/ndk-svelte5';
+  import { NDKBlossom } from '@nostr-dev-kit/blossom';
+  import { useBlossomUpload } from '@nostr-dev-kit/svelte';
   import { ndk } from './ndk-instance';
 
   const blossom = new NDKBlossom(ndk);
@@ -302,5 +302,5 @@ Upload a file and include it in a nostr event:
 
 ## See Also
 
-- [NDK Blossom Documentation](https://github.com/nostr-dev-kit/ndk/tree/master/ndk-blossom)
+- [NDK Blossom Documentation](https://github.com/nostr-dev-kit/ndk/tree/master/blossom)
 - [Blossom Protocol](https://github.com/hzrd149/blossom)

@@ -1,8 +1,8 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { renderHook, waitFor } from "@testing-library/react";
-import { useNDKWallet } from "../index";
-import { NDKCashuWallet } from "@nostr-dev-kit/ndk-wallet";
 import { NDKKind } from "@nostr-dev-kit/ndk";
+import { NDKCashuWallet } from "@nostr-dev-kit/ndk-wallet";
+import { renderHook, waitFor } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { useNDKWallet } from "../index";
 
 // Mock NDK modules
 vi.mock("@nostr-dev-kit/ndk", () => ({

@@ -1,70 +1,70 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { NDKSvelte } from "../ndk-svelte.svelte";
 import { EventEmitter } from "tseep";
+import { beforeEach, describe, expect, it } from "vitest";
+import { NDKSvelte } from "../ndk-svelte.svelte";
 
 // Mock wallet class
 class MockWallet extends EventEmitter {
-	type = "cashu";
-	#balance = 1000;
+    type = "cashu";
+    #balance = 1000;
 
-	async balance() {
-		return { amount: this.#balance, unit: "sats" };
-	}
+    async balance() {
+        return { amount: this.#balance, unit: "sats" };
+    }
 
-	async refreshBalance() {
-		this.emit("balance_updated");
-		return this.#balance;
-	}
+    async refreshBalance() {
+        this.emit("balance_updated");
+        return this.#balance;
+    }
 
-	setBalance(amount: number) {
-		this.#balance = amount;
-	}
+    setBalance(amount: number) {
+        this.#balance = amount;
+    }
 }
 
 describe("WalletStore", () => {
-	let ndk: NDKSvelte;
+    let ndk: NDKSvelte;
 
-	beforeEach(() => {
-		ndk = new NDKSvelte({ explicitRelayUrls: ["wss://relay.test"] });
-	});
+    beforeEach(() => {
+        ndk = new NDKSvelte({ explicitRelayUrls: ["wss://relay.test"] });
+    });
 
-	it("should initialize with default state", () => {
-		expect(ndk.wallet).toBeDefined();
-		expect(ndk.wallet.balance).toBe(0);
-		expect(ndk.wallet.wallet).toBeUndefined();
-	});
+    it("should initialize with default state", () => {
+        expect(ndk.wallet).toBeDefined();
+        expect(ndk.wallet.balance).toBe(0);
+        expect(ndk.wallet.wallet).toBeUndefined();
+    });
 
-	it("should set wallet and update state", async () => {
-		const mockWallet = new MockWallet() as any;
+    it("should set wallet and update state", async () => {
+        const mockWallet = new MockWallet() as any;
 
-		ndk.wallet.set(mockWallet);
+        ndk.wallet.set(mockWallet);
 
-		// Wait for async balance refresh
-		await new Promise((resolve) => setTimeout(resolve, 10));
+        // Wait for async balance refresh
+        await new Promise((resolve) => setTimeout(resolve, 10));
 
-		expect(ndk.wallet.wallet).toBe(mockWallet);
-		expect(ndk.wallet.balance).toBe(1000);
-	});
+        expect(ndk.wallet.wallet).toBe(mockWallet);
+        expect(ndk.wallet.balance).toBe(1000);
+    });
 
-	it("should update balance when wallet emits balance_updated", async () => {
-		const mockWallet = new MockWallet() as any;
-		ndk.wallet.set(mockWallet);
+    it("should update balance when wallet emits balance_updated", async () => {
+        const mockWallet = new MockWallet() as any;
+        ndk.wallet.set(mockWallet);
 
-		mockWallet.setBalance(2000);
-		mockWallet.emit("balance_updated");
+        mockWallet.setBalance(2000);
+        mockWallet.emit("balance_updated");
 
-		await ndk.wallet.refreshBalance();
+        await ndk.wallet.refreshBalance();
 
-		expect(ndk.wallet.balance).toBe(2000);
-	});
+        expect(ndk.wallet.balance).toBe(2000);
+    });
 
-	it("should clear wallet", () => {
-		const mockWallet = new MockWallet() as any;
-		ndk.wallet.set(mockWallet);
+    it("should clear wallet", () => {
+        const mockWallet = new MockWallet() as any;
+        ndk.wallet.set(mockWallet);
 
-		ndk.wallet.clear();
+        ndk.wallet.clear();
 
-		expect(ndk.wallet.balance).toBe(0);
-		expect(ndk.wallet.wallet).toBeUndefined();
-	});
+        expect(ndk.wallet.balance).toBe(0);
+        expect(ndk.wallet.wallet).toBeUndefined();
+    });
 });

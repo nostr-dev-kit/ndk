@@ -1,8 +1,8 @@
-import type { NDKMutesState } from "./types";
-import { NDKList, type Hexpubkey, type NDKEvent } from "@nostr-dev-kit/ndk";
-import { initMutes } from "./init";
-import { computeMuteCriteria } from "../utils/compute-mute-criteria";
+import { type Hexpubkey, type NDKEvent, NDKList } from "@nostr-dev-kit/ndk";
 import { EMPTY_MUTE_CRITERIA } from "../hooks";
+import { computeMuteCriteria } from "../utils/compute-mute-criteria";
+import { initMutes } from "./init";
+import type { NDKMutesState } from "./types";
 
 /**
  * Loads a mute list event into the mute store for a user.

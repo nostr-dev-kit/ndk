@@ -5,7 +5,7 @@
  * when using NDK, especially useful for LLM-generated code.
  */
 
-import NDK, { NDKEvent, GuardrailCheckId } from "@nostr-dev-kit/ndk";
+import NDK, { GuardrailCheckId, NDKEvent } from "@nostr-dev-kit/ndk";
 import { nip19 } from "nostr-tools";
 
 // Example 1: Enable all guardrails (recommended for development)
@@ -165,5 +165,3 @@ async function llmGeneratedCode() {
 }
 
 await llmGeneratedCode();
-
-export {};

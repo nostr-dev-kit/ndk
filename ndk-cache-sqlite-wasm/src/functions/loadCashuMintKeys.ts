@@ -1,16 +1,10 @@
-import type { Database } from "sql.js";
 import type { CashuMintKeys } from "@nostr-dev-kit/ndk";
+import type { Database } from "sql.js";
 
-export function loadCashuMintKeys(
-    db: Database,
-    mintUrl: string,
-    maxAgeInSecs?: number,
-): CashuMintKeys[] | undefined {
+export function loadCashuMintKeys(db: Database, mintUrl: string, maxAgeInSecs?: number): CashuMintKeys[] | undefined {
     const now = Math.floor(Date.now() / 1000);
 
-    const stmt = db.prepare(
-        "SELECT keys, cached_at FROM cashu_mint_keys WHERE mint_url = ?",
-    );
+    const stmt = db.prepare("SELECT keys, cached_at FROM cashu_mint_keys WHERE mint_url = ?");
     stmt.bind([mintUrl]);
 
     if (stmt.step()) {
@@ -19,7 +13,9 @@ export function loadCashuMintKeys(
 
         // Check if expired
         if (maxAgeInSecs && now - cachedAt > maxAgeInSecs) {
-            console.debug(`🗄️ [Cache] Mint keys for ${mintUrl} expired (age: ${now - cachedAt}s, max: ${maxAgeInSecs}s)`);
+            console.debug(
+                `🗄️ [Cache] Mint keys for ${mintUrl} expired (age: ${now - cachedAt}s, max: ${maxAgeInSecs}s)`,
+            );
             stmt.free();
             return undefined;
         }

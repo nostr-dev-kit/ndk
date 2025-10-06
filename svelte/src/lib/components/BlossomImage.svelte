@@ -1,6 +1,6 @@
 <script lang="ts">
   import { useBlossomUrl } from '../blossom-url.svelte.js';
-  import type { NDKBlossom } from '@nostr-dev-kit/ndk-blossom';
+  import type { NDKBlossom } from '@nostr-dev-kit/blossom';
   import type { NDKUser } from '@nostr-dev-kit/ndk';
 
   interface Props {

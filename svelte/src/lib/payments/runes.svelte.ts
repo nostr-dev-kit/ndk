@@ -132,7 +132,7 @@ export async function zap(
     ndk: NDKSvelte,
     target: NDKEvent | NDKUser,
     amount: number,
-    opts?: { comment?: string; delay?: number }
+    opts?: { comment?: string; delay?: number },
 ) {
     const { NDKZapper } = await import("@nostr-dev-kit/ndk");
 

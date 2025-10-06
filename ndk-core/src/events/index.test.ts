@@ -1,13 +1,13 @@
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { SignerGenerator, TestFixture } from "../../test";
-import { vi, describe, it, expect, beforeEach } from "vitest";
-import { NDKEvent } from ".";
 import { NDK } from "../ndk";
 import { NDKRelay } from "../relay";
 import { NDKRelaySet } from "../relay/sets";
 import { NDKPrivateKeySigner } from "../signers/private-key";
 import { NDKUser } from "../user";
-import type { NIP73EntityType } from "./nip73";
+import { NDKEvent } from ".";
 import { NDKKind } from "./kinds";
+import type { NIP73EntityType } from "./nip73";
 
 const ndk = new NDK();
 

@@ -892,9 +892,9 @@ export class ReactiveTransaction {
 <!-- examples/wallet-app/src/App.svelte -->
 <script lang="ts">
   import { ndk } from './lib/ndk.js';
-  import { payments } from '@nostr-dev-kit/ndk-svelte5/stores';
-  import { PaymentMonitor } from '@nostr-dev-kit/ndk-svelte5/payments';
-  import { sessions } from '@nostr-dev-kit/ndk-svelte5/stores';
+  import { payments } from '@nostr-dev-kit/svelte/stores';
+  import { PaymentMonitor } from '@nostr-dev-kit/svelte/payments';
+  import { sessions } from '@nostr-dev-kit/svelte/stores';
 
   import TransactionList from './components/TransactionList.svelte';
   import ZapButton from './components/ZapButton.svelte';
@@ -930,7 +930,7 @@ export class ReactiveTransaction {
 <!-- Post.svelte -->
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
-  import { useZapAmount, useIsZapped } from '@nostr-dev-kit/ndk-svelte5/payments';
+  import { useZapAmount, useIsZapped } from '@nostr-dev-kit/svelte/payments';
   import ZapButton from './ZapButton.svelte';
 
   interface Props {
@@ -979,7 +979,7 @@ src/lib/components/
 ### Global Store
 
 ```typescript
-import { payments } from '@nostr-dev-kit/ndk-svelte5/stores';
+import { payments } from '@nostr-dev-kit/svelte/stores';
 
 // Reactive state (all $derived)
 payments.transactions    // All confirmed transactions
@@ -1005,7 +1005,7 @@ import {
   useTransactions,
   usePendingPayments,
   zap
-} from '@nostr-dev-kit/ndk-svelte5/payments';
+} from '@nostr-dev-kit/svelte/payments';
 
 // In component
 const amount = useZapAmount(event);       // Reactive number
@@ -1020,7 +1020,7 @@ await zap(target, 21, { comment: 'GM!' });
 ### Monitoring
 
 ```typescript
-import { PaymentMonitor } from '@nostr-dev-kit/ndk-svelte5/payments';
+import { PaymentMonitor } from '@nostr-dev-kit/svelte/payments';
 
 const monitor = new PaymentMonitor(ndk, pubkey);
 monitor.start();

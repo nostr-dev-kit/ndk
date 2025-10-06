@@ -1,5 +1,5 @@
-import type { NDKEvent, Hexpubkey, NDKUser, NDKList } from "@nostr-dev-kit/ndk";
-import NDK from "@nostr-dev-kit/ndk";
+import type NDK from "@nostr-dev-kit/ndk";
+import type { Hexpubkey, NDKEvent, NDKList, NDKUser } from "@nostr-dev-kit/ndk";
 
 /**
  * Mute criteria used for filtering events

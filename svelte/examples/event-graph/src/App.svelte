@@ -25,7 +25,7 @@
 
     try {
       // Resolve NIP-05 identifier
-      const resolvedUser = await ndk.getUserFromNip05(nip05Input.trim());
+      const resolvedUser = await ndk.fetchUser(nip05Input.trim());
 
       if (!resolvedUser) {
         error = `Could not resolve NIP-05 identifier: ${nip05Input}`;
@@ -156,7 +156,7 @@
   {/if}
 
   {#if user && events.length > 0}
-    <EventGraph {events} {user} {connectedRelays} onAddRelay={handleAddRelay} onFetchKind={handleFetchKind} />
+    <EventGraph {ndk} {events} {user} {connectedRelays} onAddRelay={handleAddRelay} onFetchKind={handleFetchKind} />
   {/if}
 </div>
 

@@ -1,5 +1,4 @@
-import { NDKRelay, NDKSubscription } from "../index.js";
-import NDK, { type NDKEventId } from "../index.js";
+import NDK, { type NDKEventId, NDKRelay, NDKSubscription } from "../index.js";
 import { NDKSubscriptionManager } from "./manager.js";
 
 const ndk = new NDK();

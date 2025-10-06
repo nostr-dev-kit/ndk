@@ -11,7 +11,7 @@
     "dependencies": {
         "@nostr-dev-kit/ndk": "^2.15.2",
         "@nostr-dev-kit/svelte": "../..",
-        "@nostr-dev-kit/ndk-wot": "^0.2.1",
+        "@nostr-dev-kit/wot": "^0.2.1",
         "nostr-tools": "^2.10.2"
     },
     "devDependencies": {

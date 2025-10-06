@@ -74,7 +74,7 @@ export function groupContent(parts: ParsedPart[]): ParsedPart[] {
 
             buffer.value.push(part);
         } else {
-            let nextPartsAreNoops: boolean | undefined = undefined;
+            let nextPartsAreNoops: boolean | undefined;
 
             for (const nextPart of parts.slice(index + 1)) {
                 const isNewline = nextPart.type === NEWLINE;

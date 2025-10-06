@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { WalletAPI } from '../lib/useWallet.svelte.js';
-  import { wallet as walletStore } from '@nostr-dev-kit/svelte/stores';
-  import type { ProofEntry } from '@nostr-dev-kit/svelte/stores';
+  import { wallet as walletStore } from '../lib/ndk.js';
+  import type { ProofEntry } from '@nostr-dev-kit/ndk-wallet';
   import { CheckStateEnum } from '@cashu/cashu-ts';
 
   interface Props {

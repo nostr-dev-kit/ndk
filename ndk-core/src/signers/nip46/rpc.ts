@@ -1,6 +1,4 @@
 import { EventEmitter } from "tseep";
-
-import type { NDKSigner } from "..";
 import type { NostrEvent } from "../../events";
 import { NDKEvent } from "../../events";
 import { NDKKind } from "../../events/kinds";
@@ -9,6 +7,7 @@ import { NDKRelayAuthPolicies } from "../../relay/auth-policies";
 import { NDKPool } from "../../relay/pool";
 import { NDKRelaySet } from "../../relay/sets";
 import { type NDKFilter, type NDKSubscription, NDKSubscriptionCacheUsage } from "../../subscription";
+import type { NDKSigner } from "..";
 
 export interface NDKRpcRequest {
     id: string;
@@ -62,33 +61,30 @@ export class NDKNostrRpc extends EventEmitter {
      */
     public subscribe(filter: NDKFilter): Promise<NDKSubscription> {
         return new Promise((resolve) => {
-            const sub = this.ndk.subscribe(
-                filter,
-                {
-                    closeOnEose: false,
-                    groupable: false,
-                    cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY,
-                    pool: this.pool,
-                    relaySet: this.relaySet,
-                    onEvent: async (event: NDKEvent) => {
-                        try {
-                            const parsedEvent = await this.parseEvent(event);
-                            if ((parsedEvent as NDKRpcRequest).method) {
-                                this.emit("request", parsedEvent);
-                            } else {
-                                this.emit(`response-${parsedEvent.id}`, parsedEvent);
-                                this.emit("response", parsedEvent);
-                            }
-                        } catch (e) {
-                            this.debug("error parsing event", e, event.rawEvent());
+            const sub = this.ndk.subscribe(filter, {
+                closeOnEose: false,
+                groupable: false,
+                cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY,
+                pool: this.pool,
+                relaySet: this.relaySet,
+                onEvent: async (event: NDKEvent) => {
+                    try {
+                        const parsedEvent = await this.parseEvent(event);
+                        if ((parsedEvent as NDKRpcRequest).method) {
+                            this.emit("request", parsedEvent);
+                        } else {
+                            this.emit(`response-${parsedEvent.id}`, parsedEvent);
+                            this.emit("response", parsedEvent);
                         }
-                    },
-                    onEose: () => {
-                        this.debug("eosed");
-                        resolve(sub);
+                    } catch (e) {
+                        this.debug("error parsing event", e, event.rawEvent());
                     }
-                }
-            );
+                },
+                onEose: () => {
+                    this.debug("eosed");
+                    resolve(sub);
+                },
+            });
         });
     }
 

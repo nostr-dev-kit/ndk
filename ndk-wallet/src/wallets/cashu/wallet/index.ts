@@ -1,5 +1,6 @@
 import type { CashuWallet, SendResponse } from "@cashu/cashu-ts";
 import { getDecodedToken } from "@cashu/cashu-ts";
+import type NDK from "@nostr-dev-kit/ndk";
 import type {
     CashuPaymentInfo,
     Hexpubkey,
@@ -14,15 +15,15 @@ import type {
     NDKTag,
     NDKZapDetails,
 } from "@nostr-dev-kit/ndk";
-import type NDK from "@nostr-dev-kit/ndk";
 import {
+    NDKCashuMintList,
     NDKEvent,
     NDKKind,
     NDKPrivateKeySigner,
     NDKRelaySet,
-    NDKCashuMintList,
     NDKSubscriptionCacheUsage,
 } from "@nostr-dev-kit/ndk";
+import { ndkSync } from "@nostr-dev-kit/sync";
 import {
     NDKWallet,
     type NDKWalletBalance,
@@ -30,8 +31,8 @@ import {
     type NDKWalletTypes,
     type RedeemNutzapsOpts,
 } from "../../index.js";
-import { NDKCashuDepositMonitor } from "../deposit-monitor.js";
 import { NDKCashuDeposit } from "../deposit.js";
+import { NDKCashuDepositMonitor } from "../deposit-monitor.js";
 import { eventDupHandler, eventHandler } from "../event-handlers/index.js";
 import type { MintUrl } from "../mint/utils.js";
 import { consolidateTokens } from "../validate.js";
@@ -265,6 +266,60 @@ export class NDKCashuWallet extends NDKWallet {
             filters[2].since = opts.since;
         }
 
+        // Use sync if cache adapter is available, otherwise fall back to subscription
+        if (this.ndk.cacheAdapter) {
+            try {
+                // Perform initial sync using Negentropy
+                const syncResult = await ndkSync.call(this.ndk, filters, {
+                    relaySet: this.relaySet,
+                    autoFetch: true,
+                });
+
+                // Process synced events
+                for (const event of syncResult.events) {
+                    eventHandler.call(this, event);
+                }
+
+                // Start live subscription for new events
+                const subOpts: NDKSubscriptionOptions = opts ?? {};
+                subOpts.subId ??= "cashu-wallet-state";
+
+                const liveFilters = filters.map((f) => ({
+                    ...f,
+                    since: Math.floor(Date.now() / 1000),
+                }));
+
+                this.sub = this.ndk.subscribe(liveFilters, {
+                    ...subOpts,
+                    relaySet: this.relaySet,
+                    closeOnEose: false,
+                    onEvent: (event: NDKEvent) => {
+                        eventHandler.call(this, event);
+                    },
+                });
+
+                this.sub.on("event:dup", eventDupHandler.bind(this));
+
+                // Fetch the mint list for nutzap reception configuration
+                await this.fetchMintList();
+
+                this.emit("ready");
+                this.status = NDKWalletStatus.READY;
+            } catch (error) {
+                console.error("Sync failed, falling back to subscription:", error);
+                // Fall back to regular subscription if sync fails
+                await this.startWithSubscription(filters, opts);
+            }
+        } else {
+            // No cache adapter - use regular subscription
+            await this.startWithSubscription(filters, opts);
+        }
+    }
+
+    /**
+     * Starts wallet monitoring using traditional subscription (fallback when sync unavailable)
+     */
+    private async startWithSubscription(filters: NDKFilter[], opts?: NDKSubscriptionOptions): Promise<void> {
         const subOpts: NDKSubscriptionOptions = opts ?? {};
         subOpts.subId ??= "cashu-wallet-state";
 
@@ -282,7 +337,7 @@ export class NDKCashuWallet extends NDKWallet {
                     this.emit("ready");
                     this.status = NDKWalletStatus.READY;
                     resolve();
-                }
+                },
             });
 
             this.sub.on("event:dup", eventDupHandler.bind(this));

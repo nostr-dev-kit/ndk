@@ -2,11 +2,11 @@ import NDK, {
     NDKEvent,
     NDKKind,
     NDKPrivateKeySigner,
-    NDKSubscription,
-    type NostrEvent,
-    type NDKUser,
-    NDKSubscriptionCacheUsage,
     NDKRelay,
+    NDKSubscription,
+    NDKSubscriptionCacheUsage,
+    type NDKUser,
+    type NostrEvent,
 } from "@nostr-dev-kit/ndk";
 import Redis from "ioredis";
 import NDKRedisCacheAdapter from ".";

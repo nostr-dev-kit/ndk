@@ -1,5 +1,5 @@
-import { NDKEvent } from "src/events";
-import { NDKFilter } from "src/subscription";
+import type { NDKEvent } from "src/events";
+import type { NDKFilter } from "src/subscription";
 import { RelayMock } from "./relay-mock";
 
 export class RelayPoolMock {

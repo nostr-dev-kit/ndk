@@ -4,7 +4,6 @@
   import WalletView from './components/WalletView.svelte';
   import LoginView from './components/LoginView.svelte';
   import WalletOnboardingFlow from './components/WalletOnboardingFlow.svelte';
-  import { payments } from '@nostr-dev-kit/svelte';
   import { useWallet } from './lib/useWallet.svelte.js';
 
   let isConnecting = $state(true);
@@ -17,10 +16,7 @@
   $effect(() => {
     const currentSession = ndk.sessions.current;
 
-    // Initialize payment tracking when user logs in
     if (currentSession) {
-      payments.init(ndk, currentSession.pubkey);
-
       // Check if onboarding is needed
       if (wallet.needsOnboarding) {
         showOnboarding = true;

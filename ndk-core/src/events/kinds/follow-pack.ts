@@ -1,9 +1,9 @@
+import type { Hexpubkey } from "src/user/index.js";
 import type { NDK } from "../../ndk/index.js";
-import { NDKEvent, NDKRawEvent } from "../index.js";
-import { NDKKind } from "./index.js";
 import type { NDKImetaTag } from "../../utils/imeta.js";
 import { imetaTagToTag, mapImetaTag } from "../../utils/imeta.js";
-import { Hexpubkey } from "src/user/index.js";
+import { NDKEvent, type NDKRawEvent } from "../index.js";
+import { NDKKind } from "./index.js";
 
 /**
  * Represents a FollowPack or MediaFollowPack event.

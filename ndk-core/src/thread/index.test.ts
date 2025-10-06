@@ -1,17 +1,17 @@
+import type { NDKEventId, NostrEvent } from "../events";
+import { NDKEvent } from "../events";
+import { NDK } from "../ndk";
+import { NDKPrivateKeySigner } from "../signers/private-key";
 import {
     eventIsPartOfThread,
     eventIsReply,
-    eventThreads,
     eventsBySameAuthor,
+    eventThreads,
     getEventReplyId,
     getReplyTag,
     getRootEventId,
     getRootTag,
 } from ".";
-import type { NDKEventId, NostrEvent } from "../events";
-import { NDKEvent } from "../events";
-import { NDK } from "../ndk";
-import { NDKPrivateKeySigner } from "../signers/private-key";
 
 const ndk = new NDK();
 ndk.signer = NDKPrivateKeySigner.generate();

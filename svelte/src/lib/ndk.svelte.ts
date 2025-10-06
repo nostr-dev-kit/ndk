@@ -22,8 +22,6 @@ export interface CreateNDKOptions extends Partial<NDKConstructorParams> {
     cacheDbName?: string;
 }
 
-const DEFAULT_RELAYS = ["wss://relay.damus.io", "wss://nos.lol", "wss://relay.nostr.band"];
-
 /**
  * Create and initialize an NDKSvelte instance with all reactive stores.
  *
@@ -61,15 +59,10 @@ const DEFAULT_RELAYS = ["wss://relay.damus.io", "wss://nos.lol", "wss://relay.no
  * ```
  */
 export function createNDK(options: CreateNDKOptions = {}): NDKSvelte {
-    const {
-        autoConnect = true,
-        cache = true,
-        cacheDbName = "ndk-cache",
-        ...ndkOptions
-    } = options;
+    const { autoConnect = true, cache = true, cacheDbName = "ndk-cache", ...ndkOptions } = options;
 
     // Use default relays if none provided
-    const explicitRelayUrls = ndkOptions.explicitRelayUrls || DEFAULT_RELAYS;
+    const explicitRelayUrls = ndkOptions.explicitRelayUrls;
 
     // Setup cache adapter if enabled and not already provided
     let cacheAdapter = ndkOptions.cacheAdapter;
@@ -107,7 +100,7 @@ export function createNDK(options: CreateNDKOptions = {}): NDKSvelte {
     const ndk = new NDKSvelte({
         ...ndkOptions,
         explicitRelayUrls,
-        cacheAdapter: cache === false ? undefined : (cacheAdapter || ndkOptions.cacheAdapter),
+        cacheAdapter: cache === false ? undefined : cacheAdapter || ndkOptions.cacheAdapter,
     });
 
     // Auto-connect if enabled

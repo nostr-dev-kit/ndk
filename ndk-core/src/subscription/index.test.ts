@@ -1,7 +1,7 @@
-import { vi, describe, it, expect } from "vitest"; // Added describe, it, expect
-import { NDKSubscription } from ".";
+import { describe, expect, it, vi } from "vitest"; // Added describe, it, expect
 import { NDKEvent } from "../events";
 import { NDK } from "../ndk";
+import { NDKSubscription } from ".";
 
 const ndk = new NDK();
 const invalidEvent = new NDKEvent(ndk, {

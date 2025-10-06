@@ -56,7 +56,6 @@ export class NDKPool extends EventEmitter<{
     private disconnectionTimes = new Map<WebSocket["url"], number>();
     private systemEventDetector?: ReturnType<typeof setTimeout>;
 
-
     /**
      * @param relayUrls - The URLs of the relays to connect to.
      * @param ndk - The NDK instance.

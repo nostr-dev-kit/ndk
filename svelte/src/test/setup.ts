@@ -29,7 +29,7 @@ class ReactiveValue<T> {
 }
 
 // Mock $state
-(globalThis as any).$state = function <T>(initialValue: T): T {
+(globalThis as any).$state = <T>(initialValue: T): T => {
     if (typeof initialValue === "object" && initialValue !== null) {
         // For objects and arrays, return a proxy that tracks changes
         return new Proxy(initialValue, {
@@ -43,17 +43,13 @@ class ReactiveValue<T> {
 };
 
 // Mock $derived
-(globalThis as any).$derived = function <T>(fn: () => T): T {
-    return fn();
-};
+(globalThis as any).$derived = <T>(fn: () => T): T => fn();
 
 // Mock $derived.by
-(globalThis as any).$derived.by = function <T>(fn: () => T): T {
-    return fn();
-};
+(globalThis as any).$derived.by = <T>(fn: () => T): T => fn();
 
 // Mock $effect
-(globalThis as any).$effect = function (fn: () => void | (() => void)) {
+(globalThis as any).$effect = (fn: () => void | (() => void)) => {
     const cleanup = fn();
     // In tests, we don't need to track effects, but return a no-op cleanup
     return () => {
@@ -62,6 +58,4 @@ class ReactiveValue<T> {
 };
 
 // Mock $props (for components)
-(globalThis as any).$props = function <T>(): T {
-    return {} as T;
-};
+(globalThis as any).$props = <T>(): T => ({}) as T;

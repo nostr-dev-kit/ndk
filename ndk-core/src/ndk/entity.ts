@@ -1,6 +1,6 @@
 import { nip19 } from "nostr-tools";
-import type { NDK } from ".";
 import type { ProfilePointer } from "../user/index.js";
+import type { NDK } from ".";
 
 /**
  *

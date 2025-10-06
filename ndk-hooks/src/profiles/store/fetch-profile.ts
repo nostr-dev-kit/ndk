@@ -1,6 +1,6 @@
-import type { UserProfilesStore } from ".";
-import { UseProfileValueOptions } from "../types";
 import { inSeconds } from "../../utils/time";
+import type { UseProfileValueOptions } from "../types";
+import type { UserProfilesStore } from ".";
 
 export const fetchProfileImplementation = (
     set: (fn: (state: UserProfilesStore) => Partial<UserProfilesStore>) => void,

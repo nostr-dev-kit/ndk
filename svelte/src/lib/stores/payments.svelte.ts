@@ -1,7 +1,7 @@
 import type NDK from "@nostr-dev-kit/ndk";
-import type { NDKZapper, Hexpubkey, NDKEvent, NDKUser } from "@nostr-dev-kit/ndk";
+import type { Hexpubkey, NDKEvent, NDKUser, NDKZapper } from "@nostr-dev-kit/ndk";
 import type { PendingPayment, Transaction } from "../payments/types.js";
-import { randomId, getZapperTarget, targetToId } from "../payments/types.js";
+import { getZapperTarget, randomId, targetToId } from "../payments/types.js";
 
 /**
  * Reactive wrapper around payments
@@ -34,7 +34,7 @@ export class ReactivePaymentsStore {
         const id = targetToId(target);
         const transactions = this.byTarget.get(id) || [];
         return transactions.some(
-            (tx) => tx.type === "zap_sent" && (tx.status === "complete" || tx.status === "pending")
+            (tx) => tx.type === "zap_sent" && (tx.status === "complete" || tx.status === "pending"),
         );
     }
 

@@ -1,6 +1,6 @@
+import type NDK from "@nostr-dev-kit/ndk";
 import type { NDKSigner } from "@nostr-dev-kit/ndk";
 import { ndkSignerFromPayload } from "@nostr-dev-kit/ndk";
-import type NDK from "@nostr-dev-kit/ndk";
 import { SignerDeserializationError } from "../utils/errors";
 
 /**
@@ -25,11 +25,11 @@ export async function deserializeSigner(payload: string, ndk?: NDK): Promise<NDK
     try {
         const signer = await ndkSignerFromPayload(payload, ndk);
         if (!signer) {
-            throw new Error('NDK returned undefined signer');
+            throw new Error("NDK returned undefined signer");
         }
         return signer;
     } catch (error) {
-        const message = error instanceof Error ? error.message : 'Unknown error';
+        const message = error instanceof Error ? error.message : "Unknown error";
         throw new SignerDeserializationError(`Failed to deserialize signer: ${message}`);
     }
 }

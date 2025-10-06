@@ -27,21 +27,20 @@
     }
   });
 
-  // Get initials from profile name or pubkey
+  // Computed values
   const initials = $derived(() => {
-    if (profile?.name) {
-      return profile.name[0].toUpperCase();
-    }
-    return pubkey.slice(0, 2).toUpperCase();
+    const name = profile?.name;
+    return name ? name[0].toUpperCase() : pubkey.slice(0, 2).toUpperCase();
   });
 
   const imageUrl = $derived(profile?.image);
+  const altText = $derived(profile?.name || `${pubkey.slice(0, 8)}...`);
 </script>
 
 {#if imageUrl}
   <img
     src={imageUrl}
-    alt={profile?.name || pubkey.slice(0, 8)}
+    alt={altText}
     class="avatar {className}"
     style="width: {size}px; height: {size}px;"
   />

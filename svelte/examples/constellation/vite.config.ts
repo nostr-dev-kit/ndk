@@ -1,5 +1,5 @@
-import { defineConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
+import { defineConfig } from "vite";
 
 export default defineConfig({
     plugins: [
@@ -16,5 +16,11 @@ export default defineConfig({
         fs: {
             allow: [".."],
         },
+    },
+    worker: {
+        format: "es",
+    },
+    build: {
+        target: "esnext",
     },
 });

@@ -1,15 +1,20 @@
 <script lang="ts">
-  import { NDKSvelte } from "@nostr-dev-kit/svelte"
+  import { NDKSvelte, useUser, useProfile } from "@nostr-dev-kit/svelte"
   import { NDKPrivateKeySigner, NDKNip07Signer, NDKNip46Signer } from "@nostr-dev-kit/ndk"
   import QRCode from "qrcode"
+  import SigVerifyWorker from './sig-verify.worker.ts?worker'
+
+  // Initialize signature verification worker
+  const sigVerifyWorker = new SigVerifyWorker()
 
   // Initialize NDK with reactive stores
   const ndk = new NDKSvelte({
     explicitRelayUrls: [
-      'wss://relay.damus.io',
-      'wss://nos.lol',
-      'wss://relay.nostr.band'
-    ]
+      'wss://relay.primal.net'
+    ],
+    signatureVerificationWorker: sigVerifyWorker,
+    initialValidationRatio: 1.0,
+    lowestValidationRatio: 0.1,
   })
 
   // Connect to relays
@@ -17,6 +22,10 @@
   ndk.connect().then(() => {
     initialized = true
   })
+
+  const currentProfileStore = $derived(
+    ndk.sessions.current ? useProfile(ndk, ndk.sessions.current.pubkey) : null
+  )
 
   // Login form state
   let showLoginModal = $state(false)
@@ -33,7 +42,11 @@
   // Generate a new signer for demo
   async function generateAndLogin() {
     const signer = NDKPrivateKeySigner.generate()
-    await ndk.sessions.login(signer)
+    await ndk.sessions.login(signer, {
+      profile: true,
+      follows: true,
+      mutes: true
+    })
   }
 
   // Login with NIP-07 (browser extension)
@@ -42,7 +55,11 @@
     loginError = ''
     try {
       const signer = new NDKNip07Signer()
-      await ndk.sessions.login(signer)
+      await ndk.sessions.login(signer, {
+        profile: true,
+        follows: true,
+        mutes: true
+      })
       showLoginModal = false
     } catch (error) {
       loginError = error instanceof Error ? error.message : 'Failed to connect to extension'
@@ -62,7 +79,11 @@
     loginError = ''
     try {
       const signer = new NDKPrivateKeySigner(nsecInput.trim())
-      await ndk.sessions.login(signer)
+      await ndk.sessions.login(signer, {
+        profile: true,
+        follows: true,
+        mutes: true
+      })
       nsecInput = ''
       showLoginModal = false
     } catch (error) {
@@ -84,7 +105,11 @@
     try {
       const signer = new NDKNip46Signer(ndk, bunkerInput.trim())
       await signer.blockUntilReady()
-      await ndk.sessions.login(signer)
+      await ndk.sessions.login(signer, {
+        profile: true,
+        follows: true,
+        mutes: true
+      })
       bunkerInput = ''
       showLoginModal = false
     } catch (error) {
@@ -119,7 +144,11 @@
 
       // Wait for the remote signer to scan and connect
       await signer.blockUntilReady()
-      await ndk.sessions.login(signer)
+      await ndk.sessions.login(signer, {
+        profile: true,
+        follows: true,
+        mutes: true
+      })
 
       // Reset state and close modal
       nostrConnectUri = undefined
@@ -135,7 +164,11 @@
   // Login with another account
   async function addAnotherAccount() {
     const signer = NDKPrivateKeySigner.generate()
-    await ndk.sessions.add(signer)
+    await ndk.sessions.add(signer, {
+      profile: true,
+      follows: true,
+      mutes: true
+    })
   }
 
   // Switch to a different session
@@ -464,20 +497,30 @@
           <div class="info-row">
             <span class="info-label">Profile Name:</span>
             <span class="info-value" data-testid="profile-name">
-              {ndk.sessions.profile?.name || ndk.sessions.profile?.display_name || ndk.sessions.profile?.displayName || '(no name set)'}
+              {#if currentProfileStore?.fetching}
+                Loading...
+              {:else}
+                {currentProfileStore?.profile?.name || currentProfileStore?.profile?.display_name || currentProfileStore?.profile?.displayName || '(no name set)'}
+              {/if}
             </span>
           </div>
           <div class="info-row">
             <span class="info-label">About:</span>
-            <span class="info-value">{ndk.sessions.profile?.about || '(no bio)'}</span>
+            <span class="info-value">
+              {#if currentProfileStore?.fetching}
+                Loading...
+              {:else}
+                {currentProfileStore?.profile?.about || '(no bio)'}
+              {/if}
+            </span>
           </div>
           <div class="info-row">
             <span class="info-label">Follows:</span>
-            <span class="info-value" data-testid="follows-count">{ndk.sessions.follows.size} pubkeys
+            <span class="info-value" data-testid="follows-count">{ndk.sessions.follows.size} pubkeys</span>
           </div>
           <div class="info-row">
             <span class="info-label">Mutes:</span>
-            <span class="info-value">{ndk.mutedIds.size} pubkeys</span>
+            <span class="info-value">{ndk.sessions.mutes.size} pubkeys</span>
           </div>
         </div>
 
@@ -513,13 +556,13 @@
                 <span style="font-family: monospace; font-size: 12px; margin-left: 8px;">
                   {session.pubkey.slice(0, 16)}...
                 </span>
-                {#if sessions.current?.pubkey === session.pubkey}
+                {#if ndk.sessions.current?.pubkey === session.pubkey}
                   <span class="badge active">Active</span>
                 {/if}
               </div>
-              {#if sessions.current?.pubkey !== session.pubkey}
-                <button 
-                  class="secondary" 
+              {#if ndk.sessions.current?.pubkey !== session.pubkey}
+                <button
+                  class="secondary"
                   onclick={() => switchSession(session.pubkey)}
                   data-testid="switch-session"
                 >
@@ -527,10 +570,12 @@
                 </button>
               {/if}
             </div>
-            <div style="margin-top: 10px; font-size: 13px; color: #666;">
-              <div>Follows: {session.follows.size}</div>
-              <div>Mutes: {session.mutes.size}</div>
-            </div>
+            {#if ndk.sessions.current?.pubkey === session.pubkey}
+              <div style="margin-top: 10px; font-size: 13px; color: #666;">
+                <div>Follows: {ndk.sessions.follows.size}</div>
+                <div>Mutes: {ndk.sessions.mutes.size}</div>
+              </div>
+            {/if}
           </div>
         {/each}
       {/if}

@@ -1,8 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { renderHook, act } from "@testing-library/react";
-import { useSubscribe } from "./subscribe";
 import type { NDKEvent, NDKFilter } from "@nostr-dev-kit/ndk";
+import { act, renderHook } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createSubscribeStore } from "../store";
+import { useSubscribe } from "./subscribe";
 
 // Mock NDK and related modules
 vi.mock("@nostr-dev-kit/ndk", () => ({

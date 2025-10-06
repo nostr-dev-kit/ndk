@@ -156,7 +156,7 @@ ndk-svelte5/
 
 ```typescript
 // Setup
-import { NDKSvelte, initStores } from '@nostr-dev-kit/ndk-svelte5';
+import { NDKSvelte, initStores } from '@nostr-dev-kit/svelte';
 
 const ndk = new NDKSvelte({
   explicitRelayUrls: ['wss://relay.damus.io']
@@ -170,7 +170,7 @@ ndk.connect();
 <!-- Use it -->
 <script lang="ts">
 import { ndk } from '$lib/ndk';
-import { profiles, sessions, mutes } from '@nostr-dev-kit/ndk-svelte5/stores';
+import { profiles, sessions, mutes } from '@nostr-dev-kit/svelte/stores';
 
 // Subscribe (auto-cleanup!)
 const notes = ndk.subscribe([{ kinds: [1], limit: 50 }]);

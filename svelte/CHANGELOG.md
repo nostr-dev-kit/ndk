@@ -67,7 +67,7 @@
     The validation happens in the constructor and throws an error with a clear message if an invalid pubkey is provided. This catches issues early rather than failing deep in the fetchEvents call.
 
 - Updated dependencies
-    - @nostr-dev-kit/ndk-wot@0.2.1
+    - @nostr-dev-kit/wot@0.2.1
 
 ## 1.4.0
 
@@ -126,7 +126,7 @@
 
     // After (works correctly)
     import { onMount } from "svelte";
-    import { wot } from "@nostr-dev-kit/ndk-svelte5";
+    import { wot } from "@nostr-dev-kit/svelte";
 
     const ndk = createNDK({
         wot: { depth: 2 },
@@ -149,7 +149,7 @@
 
     ```typescript
     import NDK from "@nostr-dev-kit/ndk";
-    import { initStores } from "@nostr-dev-kit/ndk-svelte5";
+    import { initStores } from "@nostr-dev-kit/svelte";
 
     const ndk = new NDK({
         explicitRelayUrls: ["wss://relay.damus.io", "wss://nos.lol"],
@@ -163,7 +163,7 @@
     **After:**
 
     ```typescript
-    import { createNDK } from "@nostr-dev-kit/ndk-svelte5";
+    import { createNDK } from "@nostr-dev-kit/svelte";
 
     const ndk = createNDK();
     ```
@@ -193,7 +193,7 @@
 
     ```typescript
     import NDK from "@nostr-dev-kit/ndk";
-    import { initStores } from "@nostr-dev-kit/ndk-svelte5";
+    import { initStores } from "@nostr-dev-kit/svelte";
 
     const ndk = new NDK({
         explicitRelayUrls: ["wss://relay.damus.io", "wss://nos.lol"],
@@ -207,7 +207,7 @@
     **After:**
 
     ```typescript
-    import { createNDK } from "@nostr-dev-kit/ndk-svelte5";
+    import { createNDK } from "@nostr-dev-kit/svelte";
 
     const ndk = createNDK();
     ```
@@ -234,12 +234,12 @@
     - WoT ranking support (distance, score, followers algorithms)
     - Reactive runes: `useWoTScore`, `useWoTDistance`, `useIsInWoT`
     - Session-aware auto-reload
-    - Re-export filtering utilities from @nostr-dev-kit/ndk-wot
+    - Re-export filtering utilities from @nostr-dev-kit/wot
 
 ### Patch Changes
 
 - Updated dependencies
-    - @nostr-dev-kit/ndk-wot@0.2.0
+    - @nostr-dev-kit/wot@0.2.0
 
 ## 1.0.2
 

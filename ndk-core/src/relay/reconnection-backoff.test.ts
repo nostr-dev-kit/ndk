@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 
 describe("Reconnection backoff calculation", () => {
     describe("OLD BROKEN implementation (fixed)", () => {
@@ -10,7 +10,7 @@ describe("Reconnection backoff calculation", () => {
             const wrongDelay = (1000 * (attempt + 1)) ^ 4;
 
             // Old broken calculation (exponentiation) - also wrong
-            const oldBrokenDelay = Math.pow(1000 * (attempt + 1), 2);
+            const oldBrokenDelay = (1000 * (attempt + 1)) ** 2;
 
             // XOR would give us 2004 (2000 XOR 4 = 2004)
             expect(wrongDelay).toBe(2004);
@@ -26,7 +26,7 @@ describe("Reconnection backoff calculation", () => {
             const oldDelays = [];
 
             for (let attempt = 0; attempt < 5; attempt++) {
-                const delay = Math.pow(1000 * (attempt + 1), 2);
+                const delay = (1000 * (attempt + 1)) ** 2;
                 oldDelays.push(delay);
             }
 
@@ -47,7 +47,7 @@ describe("Reconnection backoff calculation", () => {
 
             for (let attempt = 0; attempt < 7; attempt++) {
                 // New correct calculation: exponential with cap
-                const delay = Math.min(1000 * Math.pow(2, attempt), 30000);
+                const delay = Math.min(1000 * 2 ** attempt, 30000);
                 delays.push(delay);
             }
 
@@ -77,11 +77,11 @@ describe("Reconnection backoff calculation", () => {
 
         it("comparison: old vs new delays", () => {
             // Old delay for attempt 1
-            const oldDelay = Math.pow(1000 * (1 + 1), 2);
+            const oldDelay = (1000 * (1 + 1)) ** 2;
             expect(oldDelay).toBe(4000000); // 66.7 minutes!
 
             // New delay for attempt 1
-            const newDelay = Math.min(1000 * Math.pow(2, 1), 30000);
+            const newDelay = Math.min(1000 * 2 ** 1, 30000);
             expect(newDelay).toBe(2000); // 2 seconds
 
             // Improvement factor

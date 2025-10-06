@@ -1,9 +1,9 @@
 import createDebug from "debug";
-import type { NDKRelay } from ".";
 import { NDKEvent } from "../events/index.js";
 import { NDKKind } from "../events/kinds/index.js";
 import type { NDK } from "../ndk/index.js";
 import type { NDKSigner } from "../signers/index.js";
+import type { NDKRelay } from ".";
 import type { NDKPool } from "./pool/index.js";
 
 /**

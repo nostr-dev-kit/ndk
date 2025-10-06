@@ -126,8 +126,8 @@
 The core foundation is **production-ready** for basic usage:
 
 ```typescript
-import { NDKSvelte, initStores } from '@nostr-dev-kit/ndk-svelte5';
-import { profiles, sessions, mutes } from '@nostr-dev-kit/ndk-svelte5/stores';
+import { NDKSvelte, initStores } from '@nostr-dev-kit/svelte';
+import { profiles, sessions, mutes } from '@nostr-dev-kit/svelte/stores';
 
 // Create NDK instance
 const ndk = new NDKSvelte({

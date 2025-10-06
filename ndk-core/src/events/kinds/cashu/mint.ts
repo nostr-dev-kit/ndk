@@ -49,7 +49,7 @@ export class NDKCashuMint extends NDKEvent {
      * Supported NUT protocols
      */
     get nuts(): string[] {
-        return this.getMatchingTags("nuts").map(t => t[1]);
+        return this.getMatchingTags("nuts").map((t) => t[1]);
     }
 
     set nuts(values: string[]) {

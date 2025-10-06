@@ -4,7 +4,7 @@
 
 ```typescript
 // src/lib/ndk.ts
-import { NDKSvelte, initStores } from '@nostr-dev-kit/ndk-svelte5';
+import { NDKSvelte, initStores } from '@nostr-dev-kit/svelte';
 
 export const ndk = new NDKSvelte({
   explicitRelayUrls: [
@@ -48,7 +48,7 @@ const notes = ndk.subscribe([{ kinds: [1], limit: 50 }]);
 ```svelte
 <script lang="ts">
 import { ndk } from '$lib/ndk';
-import { profiles } from '@nostr-dev-kit/ndk-svelte5/stores';
+import { profiles } from '@nostr-dev-kit/svelte/stores';
 
 const notes = ndk.subscribe([{ kinds: [1], limit: 50 }]);
 </script>
@@ -70,7 +70,7 @@ const notes = ndk.subscribe([{ kinds: [1], limit: 50 }]);
 
 ```svelte
 <script lang="ts">
-import { sessions } from '@nostr-dev-kit/ndk-svelte5/stores';
+import { sessions } from '@nostr-dev-kit/svelte/stores';
 import { NDKNip07Signer } from '@nostr-dev-kit/ndk';
 
 async function login() {
@@ -124,7 +124,7 @@ const notes = ndk.subscribe([{ kinds: [1] }], {
 ```svelte
 <script lang="ts">
 import { ndk } from '$lib/ndk';
-import { mutes } from '@nostr-dev-kit/ndk-svelte5/stores';
+import { mutes } from '@nostr-dev-kit/svelte/stores';
 
 // Automatically filters muted content
 const notes = ndk.subscribe([{ kinds: [1] }], {

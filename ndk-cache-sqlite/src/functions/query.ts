@@ -1,7 +1,6 @@
-import type { DatabaseWrapper } from "../db/database";
-import { NDKEvent, NDKSubscription, NDKFilter, type NDKRawEvent } from "@nostr-dev-kit/ndk";
-import { matchFilter } from "@nostr-dev-kit/ndk";
 import type NDK from "@nostr-dev-kit/ndk";
+import { matchFilter, NDKEvent, type NDKFilter, type NDKRawEvent, type NDKSubscription } from "@nostr-dev-kit/ndk";
+import type { DatabaseWrapper } from "../db/database";
 
 /**
  * Query events from the SQLite DB using NDKSubscription filters.

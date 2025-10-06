@@ -1,4 +1,4 @@
-import { type NDKEvent, type NDKFilter, type NDKRelay } from "@nostr-dev-kit/ndk";
+import type { NDKEvent, NDKFilter, NDKRelay } from "@nostr-dev-kit/ndk";
 import type { DatabaseWrapper } from "../db/database";
 
 /**

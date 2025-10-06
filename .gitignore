@@ -51,3 +51,8 @@ ndk-svelte5/examples
 .vercel
 .playwright-mcp
 svelte/examples/basic-feed/public/
+
+# Test and benchmark files
+.test-sessions.json
+**/baseline-timing.ts
+**/current-timing.ts

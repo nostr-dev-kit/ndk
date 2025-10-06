@@ -6,6 +6,12 @@ import { useUserProfilesStore } from "../../profiles/store";
 import { useNDKSessions } from "../../session/store";
 import { useNDKStore } from "../store";
 
+type UnpublishedEventEntry = {
+    event: NDKEvent;
+    relays?: string[];
+    lastTryAt?: number;
+};
+
 /**
  * Hook to access the NDK instance
  */
@@ -45,18 +51,18 @@ export const useNDKCurrentUser = (): NDKUser | null => {
  */
 export function useNDKUnpublishedEvents() {
     const { ndk } = useNDK();
-    const [unpublishedEvents, setUnpublishedEvents] = useState([]);
-    const state = useRef([]);
+    const [unpublishedEvents, setUnpublishedEvents] = useState([] as UnpublishedEventEntry[]);
+    const state = useRef([] as UnpublishedEventEntry[]);
 
     const updateStateFromCache = useCallback(async () => {
         if (!ndk?.cacheAdapter?.getUnpublishedEvents) return;
         const entries = await ndk.cacheAdapter.getUnpublishedEvents();
-        const previousEntries = new Set(state.current?.map((e: any) => e.event.id));
+        const previousEntries = new Set(state.current?.map((e: UnpublishedEventEntry) => e.event.id));
         const newEntries = [];
 
         let changed = entries.length !== state.current?.length;
         if (!changed) {
-            const currentIds = new Set(state.current.map((e: any) => e.event.id));
+            const currentIds = new Set(state.current.map((e: UnpublishedEventEntry) => e.event.id));
             for (const entry of entries) {
                 if (!currentIds.has(entry.event.id)) {
                     changed = true;
@@ -73,7 +79,7 @@ export function useNDKUnpublishedEvents() {
 
             for (const entry of freshEntries) {
                 entry.event.on("published", () => {
-                    state.current = state.current?.filter((e: any) => e.event.id !== entry.event.id);
+                    state.current = state.current?.filter((e: UnpublishedEventEntry) => e.event.id !== entry.event.id);
                     setUnpublishedEvents(state.current);
                 });
             }

@@ -3,6 +3,7 @@
     "private": true,
     "scripts": {
         "build": "turbo build",
+        "build:libs": "turbo build --filter='./ndk-core' --filter='./ndk-wallet' --filter='./ndk-hooks' --filter='./ndk-mobile' --filter='./blossom' --filter='./ndk-cache-*' --filter='./cache-memory' --filter='./ndk-svelte' --filter='./ndk-svelte-components' --filter='./sessions' --filter='./sync' --filter='./wot' --filter='./svelte'",
         "build:core": "cd ndk-core && bun run build",
         "build:wallet": "cd ndk-wallet && bun run build",
         "build:hooks": "cd ndk-hooks && bun run build",

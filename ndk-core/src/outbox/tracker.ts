@@ -97,6 +97,9 @@ export class OutboxTracker extends EventEmitter {
                 new Promise((resolve) => {
                     getRelayListForUsers(pubkeys, this.ndk, skipCache, 1000, relayHints)
                         .then((relayLists: Map<Hexpubkey, NDKRelayList>) => {
+                            this.debug(
+                                `Received relay lists for ${relayLists.size} pubkeys out of ${pubkeys.length} requested`,
+                            );
                             for (const [pubkey, relayList] of relayLists) {
                                 let outboxItem = this.data.get(pubkey)!;
                                 outboxItem ??= new OutboxItem("user");

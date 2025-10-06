@@ -1,10 +1,10 @@
 import type { NDKEvent } from "../events/index.js";
-import { NDKRelayList, relayListFromKind3 } from "../events/kinds/relay-list.js";
 import { NDKKind } from "../events/kinds/index.js";
+import { NDKRelayList, relayListFromKind3 } from "../events/kinds/relay-list.js";
 import type { NDK } from "../ndk/index.js";
 import type { NDKRelay } from "../relay/index.js";
-import type { NDKSubscriptionOptions } from "../subscription/index.js";
 import { NDKRelaySet } from "../relay/sets/index.js";
+import type { NDKSubscriptionOptions } from "../subscription/index.js";
 import { NDKSubscriptionCacheUsage } from "../subscription/index.js";
 import type { Hexpubkey } from "../user/index.js";
 
@@ -81,6 +81,8 @@ export async function getRelayListForUsers(
     const contactListEvents = new Map<Hexpubkey, NDKEvent>();
 
     return new Promise<Map<Hexpubkey, NDKRelayList>>((resolve) => {
+        let resolved = false;
+
         const handleSubscription = async () => {
             // Get from relays the missing pubkeys
             // Prepare options, including the relaySet if available
@@ -107,6 +109,12 @@ export async function getRelayListForUsers(
                     }
                 },
                 onEose: () => {
+                    if (resolved) return;
+                    resolved = true;
+
+                    ndk.debug(
+                        `[getRelayListForUsers] EOSE - relayListEvents: ${relayListEvents.size}, contactListEvents: ${contactListEvents.size}`,
+                    );
                     // Get all kind 10002 events
                     for (const event of relayListEvents.values()) {
                         relayLists.set(event.pubkey, NDKRelayList.from(event));
@@ -122,13 +130,39 @@ export async function getRelayListForUsers(
                         if (list) relayLists.set(pubkey, list);
                     }
 
+                    ndk.debug(
+                        `[getRelayListForUsers] Returning ${relayLists.size} relay lists for ${pubkeys.length} pubkeys`,
+                    );
                     resolve(relayLists);
                 },
             });
 
+            // Check if any relays are still connecting or disconnected
+            const hasDisconnectedRelays = Array.from(set).some(
+                (relay) => relay.status <= 2, // DISCONNECTING, DISCONNECTED, or RECONNECTING
+            );
+            const hasConnectingRelays = Array.from(set).some(
+                (relay) => relay.status === 4, // CONNECTING
+            );
+
+            // Use a longer timeout if relays are still connecting or disconnected
+            // Otherwise use the provided timeout (EOSE should resolve it)
+            let effectiveTimeout = timeout;
+            if (hasDisconnectedRelays || hasConnectingRelays) {
+                effectiveTimeout = timeout + 3000; // Give 3 extra seconds for connection + response
+            }
+
+            ndk.debug(
+                `[getRelayListForUsers] Setting fallback timeout to ${effectiveTimeout}ms (disconnected: ${hasDisconnectedRelays}, connecting: ${hasConnectingRelays})`,
+            );
+
             setTimeout(() => {
-                resolve(relayLists);
-            }, timeout);
+                if (!resolved) {
+                    resolved = true;
+                    ndk.debug(`[getRelayListForUsers] Timeout reached, returning ${relayLists.size} relay lists`);
+                    resolve(relayLists);
+                }
+            }, effectiveTimeout);
         };
 
         handleSubscription();

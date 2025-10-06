@@ -1,7 +1,7 @@
 import { EventEmitter } from "tseep";
 
-import type { NDKEventId, NostrEvent, NDKSignedEvent } from "../events/index.js";
-import { NDKEvent, createSignedEvent } from "../events/index.js";
+import type { NDKEventId, NDKSignedEvent, NostrEvent } from "../events/index.js";
+import { createSignedEvent, NDKEvent } from "../events/index.js";
 import type { NDKKind } from "../events/kinds/index.js";
 import { verifiedSignatures } from "../events/validation.js";
 import { wrapEvent } from "../events/wrap.js";
@@ -10,8 +10,8 @@ import type { NDKRelay } from "../relay";
 import type { NDKPool } from "../relay/pool/index.js";
 import { calculateRelaySetsFromFilters } from "../relay/sets/calculate";
 import { NDKRelaySet } from "../relay/sets/index.js";
-import { queryFullyFilled } from "./utils.js";
 import { NDKFilterValidationMode, processFilters } from "../utils/filter-validation.js";
+import { queryFullyFilled } from "./utils.js";
 
 export type NDKSubscriptionInternalId = string;
 
@@ -709,7 +709,6 @@ export class NDKSubscription extends EventEmitter<{
         optimisticPublish = false,
     ) {
         const eventId = event.id! as NDKEventId;
-
 
         const eventAlreadySeen = this.eventFirstSeen.has(eventId);
         let ndkEvent: NDKEvent;

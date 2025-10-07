@@ -241,4 +241,220 @@ describe("NDKSessionManager", () => {
             expect(callback).toHaveBeenCalled();
         });
     });
+
+    describe("ndk.signer management", () => {
+        it("should set ndk.signer when logging in with a signer", async () => {
+            const signer = NDKPrivateKeySigner.generate();
+            await manager.login(signer);
+
+            expect(ndk.signer).toBe(signer);
+        });
+
+        it("should not set ndk.signer when logging in with a user (read-only)", async () => {
+            const signer = NDKPrivateKeySigner.generate();
+            const user = await signer.user();
+
+            await manager.login(user);
+
+            expect(ndk.signer).toBeUndefined();
+        });
+
+        it("should update ndk.signer when switching sessions", async () => {
+            const signer1 = NDKPrivateKeySigner.generate();
+            const signer2 = NDKPrivateKeySigner.generate();
+            const user1 = await signer1.user();
+            const user2 = await signer2.user();
+
+            await manager.login(signer1);
+            await manager.login(signer2);
+
+            expect(ndk.signer).toBe(signer2);
+
+            manager.switchTo(user1.pubkey);
+
+            expect(ndk.signer).toBe(signer1);
+        });
+
+        it("should clear ndk.signer when logging out last session", async () => {
+            const signer = NDKPrivateKeySigner.generate();
+            await manager.login(signer);
+
+            expect(ndk.signer).toBe(signer);
+
+            manager.logout();
+
+            expect(ndk.signer).toBeUndefined();
+        });
+
+        it("should not set ndk.signer when setActive is false", async () => {
+            const signer1 = NDKPrivateKeySigner.generate();
+            const signer2 = NDKPrivateKeySigner.generate();
+
+            await manager.login(signer1, { setActive: true });
+            expect(ndk.signer).toBe(signer1);
+
+            await manager.login(signer2, { setActive: false });
+            expect(ndk.signer).toBe(signer1);
+        });
+    });
+
+    describe("filter management", () => {
+        it("should set muteFilter when session has mutes", async () => {
+            const signer = NDKPrivateKeySigner.generate();
+            const user = await signer.user();
+
+            await manager.login(signer);
+
+            // Add muted pubkeys
+            const mutedPubkey = "deadbeef";
+            manager.getCurrentState().updateSession(user.pubkey, {
+                muteSet: new Map([["deadbeef", "p"]]),
+            });
+
+            // Switch to trigger filter update
+            manager.switchTo(user.pubkey);
+
+            expect(ndk.muteFilter).toBeDefined();
+
+            // Test filter blocks muted pubkey
+            const mockEvent = { pubkey: mutedPubkey, content: "test" } as any;
+            expect(ndk.muteFilter!(mockEvent)).toBe(true);
+        });
+
+        it("should set muteFilter to block muted words", async () => {
+            const signer = NDKPrivateKeySigner.generate();
+            const user = await signer.user();
+
+            await manager.login(signer);
+
+            // Add muted words
+            manager.getCurrentState().updateSession(user.pubkey, {
+                mutedWords: new Set(["spam", "scam"]),
+            });
+
+            manager.switchTo(user.pubkey);
+
+            expect(ndk.muteFilter).toBeDefined();
+
+            // Test filter blocks muted words
+            const spamEvent = { pubkey: "test", content: "This is spam content" } as any;
+            expect(ndk.muteFilter!(spamEvent)).toBe(true);
+
+            const scamEvent = { pubkey: "test", content: "SCAM alert" } as any;
+            expect(ndk.muteFilter!(scamEvent)).toBe(true);
+
+            const normalEvent = { pubkey: "test", content: "Normal content" } as any;
+            expect(ndk.muteFilter!(normalEvent)).toBe(false);
+        });
+
+        it("should clear muteFilter when switching to session without mutes", async () => {
+            const signer1 = NDKPrivateKeySigner.generate();
+            const signer2 = NDKPrivateKeySigner.generate();
+            const user1 = await signer1.user();
+            const user2 = await signer2.user();
+
+            await manager.login(signer1);
+            await manager.login(signer2);
+
+            // Add mutes to user1
+            manager.getCurrentState().updateSession(user1.pubkey, {
+                muteSet: new Map([["deadbeef", "p"]]),
+            });
+
+            manager.switchTo(user1.pubkey);
+            expect(ndk.muteFilter).toBeDefined();
+
+            // Switch to user2 without mutes
+            manager.switchTo(user2.pubkey);
+            expect(ndk.muteFilter).toBeUndefined();
+        });
+
+        it("should set relayConnectionFilter when session has blocked relays", async () => {
+            const signer = NDKPrivateKeySigner.generate();
+            const user = await signer.user();
+
+            await manager.login(signer);
+
+            // Add blocked relays
+            manager.getCurrentState().updateSession(user.pubkey, {
+                blockedRelays: new Set(["wss://spam.relay"]),
+            });
+
+            manager.switchTo(user.pubkey);
+
+            expect(ndk.relayConnectionFilter).toBeDefined();
+
+            // Test filter blocks the relay
+            expect(ndk.relayConnectionFilter!("wss://spam.relay")).toBe(false);
+            expect(ndk.relayConnectionFilter!("wss://good.relay")).toBe(true);
+        });
+
+        it("should clear filters when logging out last session", async () => {
+            const signer = NDKPrivateKeySigner.generate();
+            const user = await signer.user();
+
+            await manager.login(signer);
+
+            manager.getCurrentState().updateSession(user.pubkey, {
+                muteSet: new Map([["deadbeef", "p"]]),
+                blockedRelays: new Set(["wss://spam.relay"]),
+            });
+
+            manager.switchTo(user.pubkey);
+            expect(ndk.muteFilter).toBeDefined();
+            expect(ndk.relayConnectionFilter).toBeDefined();
+
+            manager.logout();
+
+            expect(ndk.muteFilter).toBeUndefined();
+            expect(ndk.relayConnectionFilter).toBeUndefined();
+        });
+
+        it("should clear filters when switching to null", async () => {
+            const signer = NDKPrivateKeySigner.generate();
+            const user = await signer.user();
+
+            await manager.login(signer);
+
+            manager.getCurrentState().updateSession(user.pubkey, {
+                muteSet: new Map([["deadbeef", "p"]]),
+            });
+
+            manager.switchTo(user.pubkey);
+            expect(ndk.muteFilter).toBeDefined();
+
+            manager.switchTo(null);
+
+            expect(ndk.muteFilter).toBeUndefined();
+        });
+    });
+
+    describe("read-only sessions", () => {
+        it("should return true for isReadOnly when session has no signer", async () => {
+            const signer = NDKPrivateKeySigner.generate();
+            const user = await signer.user();
+
+            await manager.login(user);
+
+            expect(manager.isReadOnly()).toBe(true);
+        });
+
+        it("should return false for isReadOnly when session has signer", async () => {
+            const signer = NDKPrivateKeySigner.generate();
+
+            await manager.login(signer);
+
+            expect(manager.isReadOnly()).toBe(false);
+        });
+    });
+
+    describe("edge cases", () => {
+        it("should throw when logging out with no active session", () => {
+            expect(() => manager.logout()).toThrow();
+        });
+
+        it("should throw when switching to non-existent session", () => {
+            expect(() => manager.switchTo("nonexistent")).toThrow();
+        });
+    });
 });

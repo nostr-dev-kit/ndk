@@ -83,7 +83,7 @@ export interface NDKCacheAdapter {
      * Special purpose
      */
     fetchProfile?(pubkey: Hexpubkey): Promise<NDKCacheEntry<NDKUserProfile> | null>;
-    saveProfile?(pubkey: Hexpubkey, profile: NDKUserProfile): void;
+    saveProfile?(pubkey: Hexpubkey, profile: NDKUserProfile): void | Promise<void>;
 
     /**
      * Fetches profiles that match the given filter.
@@ -97,7 +97,10 @@ export interface NDKCacheAdapter {
         filter: (pubkey: Hexpubkey, profile: NDKUserProfile) => boolean,
     ) => Promise<Map<Hexpubkey, NDKUserProfile> | undefined>;
 
-    loadNip05?(nip05: string, maxAgeForMissing?: number): Promise<ProfilePointer | null | "missing">;
+    loadNip05?(
+        nip05: string,
+        maxAgeForMissing?: number,
+    ): Promise<ProfilePointer | null | "missing">;
     saveNip05?(nip05: string, profile: ProfilePointer | null): void;
 
     /**
@@ -117,29 +120,31 @@ export interface NDKCacheAdapter {
     /**
      * Updates information about the relay.
      */
-    updateRelayStatus?(relayUrl: WebSocket["url"], info: NDKCacheRelayInfo): void;
+    updateRelayStatus?(relayUrl: WebSocket["url"], info: NDKCacheRelayInfo): void | Promise<void>;
 
     /**
      * Fetches information about the relay.
      */
-    getRelayStatus?(relayUrl: WebSocket["url"]): NDKCacheRelayInfo | undefined;
+    getRelayStatus?(relayUrl: WebSocket["url"]): NDKCacheRelayInfo | undefined | Promise<NDKCacheRelayInfo | undefined>;
 
     /**
      * Tracks a publishing event.
      * @param event
      * @param relayUrls List of relays that the event will be published to.
      */
-    addUnpublishedEvent?(event: NDKEvent, relayUrls: WebSocket["url"][]): void;
+    addUnpublishedEvent?(event: NDKEvent, relayUrls: WebSocket["url"][]): void | Promise<void>;
 
     /**
      * Fetches all unpublished events.
      */
-    getUnpublishedEvents?(): Promise<{ event: NDKEvent; relays?: WebSocket["url"][]; lastTryAt?: number }[]>;
+    getUnpublishedEvents?(): Promise<
+        { event: NDKEvent; relays?: WebSocket["url"][]; lastTryAt?: number }[]
+    >;
 
     /**
      * Removes an unpublished event.
      */
-    discardUnpublishedEvent?(eventId: NDKEventId): void;
+    discardUnpublishedEvent?(eventId: NDKEventId): void | Promise<void>;
 
     /**
      * Called when the cache is ready.
@@ -151,13 +156,13 @@ export interface NDKCacheAdapter {
      * @param eventId - The ID of the decrypted event to get.
      * @returns The decrypted event, or null if it doesn't exist.
      */
-    getDecryptedEvent?(eventId: NDKEventId): NDKEvent | null;
+    getDecryptedEvent?(eventId: NDKEventId): NDKEvent | null | Promise<NDKEvent | null>;
 
     /**
      * Store a decrypted event in the cache.
      * @param event - The decrypted event to store.
      */
-    addDecryptedEvent?(event: NDKEvent): void;
+    addDecryptedEvent?(event: NDKEvent): void | Promise<void>;
 
     /**
      * Cleans up the cache. This is called when the user logs out.
@@ -198,7 +203,10 @@ export interface NDKCacheAdapter {
      * @param maxAgeInSecs Maximum age of cached data in seconds (optional).
      * @returns Array of mint keys, or undefined if not cached or expired.
      */
-    loadCashuMintKeys?(mintUrl: string, maxAgeInSecs?: number): Promise<CashuMintKeys[] | undefined>;
+    loadCashuMintKeys?(
+        mintUrl: string,
+        maxAgeInSecs?: number,
+    ): Promise<CashuMintKeys[] | undefined>;
 
     /**
      * Saves Cashu mint keys (keysets) to the cache.

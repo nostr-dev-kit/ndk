@@ -150,8 +150,19 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
         };
 
         this.worker.onerror = (event: ErrorEvent) => {
+            const errorMsg = event.message || 'unknown error';
+            console.error(
+                `[NDK-cache-sqlite-wasm] ❌ Worker failed: ${errorMsg}\n\n` +
+                `🔧 Common solutions:\n` +
+                `1. Copy worker.js and sql-wasm.wasm to your public directory:\n` +
+                `   cp node_modules/@nostr-dev-kit/cache-sqlite-wasm/dist/worker.js public/\n` +
+                `   cp node_modules/@nostr-dev-kit/cache-sqlite-wasm/dist/sql-wasm.wasm public/\n\n` +
+                `2. Ensure your bundler serves the public directory correctly\n\n` +
+                `3. Check browser DevTools Network tab for 404 errors on worker.js\n\n` +
+                `Current workerUrl: ${effectiveWorkerUrl}`
+            );
             // Reject all pending requests on catastrophic worker failure
-            this.pendingRequests.forEach((p) => p.reject(new Error(`Worker failed: ${event.message}`)));
+            this.pendingRequests.forEach((p) => p.reject(new Error(`Worker failed: ${errorMsg}. Check console for setup instructions.`)));
             this.pendingRequests.clear();
         };
 

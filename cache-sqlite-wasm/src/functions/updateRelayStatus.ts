@@ -4,20 +4,38 @@ import type { NDKCacheAdapterSqliteWasm } from "../index";
 /**
  * Updates relay status in the SQLite WASM database.
  * Stores relay info as a JSON string in a dedicated table.
+ * Supports both worker and direct database modes.
  */
-export function updateRelayStatus(this: NDKCacheAdapterSqliteWasm, relayUrl: string, info: NDKCacheRelayInfo): void {
-    if (!this.db) throw new Error("Database not initialized");
-
-    const stmt = `
+export async function updateRelayStatus(this: NDKCacheAdapterSqliteWasm, relayUrl: string, info: NDKCacheRelayInfo): Promise<void> {
+    const createStmt = `
         CREATE TABLE IF NOT EXISTS relay_status (
             url TEXT PRIMARY KEY,
             info TEXT
         );
     `;
-    this.db.run(stmt);
-    const upsert = `
+    const upsertStmt = `
         INSERT OR REPLACE INTO relay_status (url, info)
         VALUES (?, ?)
     `;
-    this.db.run(upsert, [relayUrl, JSON.stringify(info)]);
+
+    if (this.useWorker) {
+        await this.postWorkerMessage({
+            type: "run",
+            payload: {
+                sql: createStmt,
+                params: [],
+            },
+        });
+        await this.postWorkerMessage({
+            type: "run",
+            payload: {
+                sql: upsertStmt,
+                params: [relayUrl, JSON.stringify(info)],
+            },
+        });
+    } else {
+        if (!this.db) throw new Error("Database not initialized");
+        this.db.run(createStmt);
+        this.db.run(upsertStmt, [relayUrl, JSON.stringify(info)]);
+    }
 }

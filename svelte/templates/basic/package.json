@@ -1,0 +1,40 @@
+{
+    "name": "@nostr-dev-kit/svelte-template-basic",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite dev",
+        "build": "vite build",
+        "preview": "vite preview",
+        "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+        "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+        "test": "playwright test",
+        "test:ui": "playwright test --ui"
+    },
+    "dependencies": {
+        "@nostr-dev-kit/ndk": "workspace:*",
+        "@nostr-dev-kit/cache-sqlite-wasm": "workspace:*",
+        "@nostr-dev-kit/svelte": "workspace:*",
+        "shadcn-svelte": "^1.0.8",
+        "bits-ui": "^1.1.8",
+        "tailwind-merge": "^2.6.0",
+        "clsx": "^2.1.1",
+        "tailwind-variants": "^0.3.0",
+        "lucide-svelte": "^0.469.0"
+    },
+    "devDependencies": {
+        "@playwright/test": "^1.49.1",
+        "@sveltejs/adapter-auto": "^6.1.1",
+        "@sveltejs/kit": "^2.15.3",
+        "@sveltejs/vite-plugin-svelte": "^6.2.1",
+        "@types/node": "^22.10.5",
+        "autoprefixer": "^10.4.20",
+        "postcss": "^8.4.49",
+        "svelte": "^5.39.9",
+        "svelte-check": "^4.2.0",
+        "tailwindcss": "^3.4.17",
+        "typescript": "^5.9.3",
+        "vite": "^7.1.9"
+    }
+}

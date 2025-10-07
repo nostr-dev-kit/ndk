@@ -107,12 +107,15 @@ export async function calculateRelaySetFromEvent(
  * The filter is broken up into the filter that each relay should receive.
  * @param ndk
  * @param filter
+ * @param pool
+ * @param relayGoalPerAuthor - Number of relays to query for each author (default: 2)
  * @returns Promise<NDKRelaySet>
  */
 export function calculateRelaySetsFromFilter(
     ndk: NDK,
     filters: NDKFilter[],
     pool: NDKPool,
+    relayGoalPerAuthor?: number,
 ): Map<WebSocket["url"], NDKFilter[]> {
     const result = new Map<WebSocket["url"], NDKFilter[]>();
     const authors = new Set<Hexpubkey>();
@@ -126,7 +129,7 @@ export function calculateRelaySetsFromFilter(
     // if this filter has authors, get write relays for each
     // one of them and add them to the map
     if (authors.size > 0) {
-        const authorToRelaysMap = getRelaysForFilterWithAuthors(ndk, Array.from(authors));
+        const authorToRelaysMap = getRelaysForFilterWithAuthors(ndk, Array.from(authors), relayGoalPerAuthor);
 
         // initialize all result with all the relayUrls we are going to return
         for (const relayUrl of authorToRelaysMap.keys()) {
@@ -185,13 +188,16 @@ export function calculateRelaySetsFromFilter(
  * Calculates a number of RelaySets for each filter.
  * @param ndk
  * @param filters
+ * @param pool
+ * @param relayGoalPerAuthor - Number of relays to query for each author (default: 2)
  */
 export function calculateRelaySetsFromFilters(
     ndk: NDK,
     filters: NDKFilter[],
     pool: NDKPool,
+    relayGoalPerAuthor?: number,
 ): Map<WebSocket["url"], NDKFilter[]> {
-    const a = calculateRelaySetsFromFilter(ndk, filters, pool);
+    const a = calculateRelaySetsFromFilter(ndk, filters, pool, relayGoalPerAuthor);
 
     return a;
 }

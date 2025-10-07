@@ -168,6 +168,26 @@ export interface NDKSubscriptionOptions {
     includeMuted?: boolean;
 
     /**
+     * Number of relays to query for each author in the subscription.
+     * This controls the outbox model relay selection when the filter has authors.
+     * Higher values improve redundancy but increase bandwidth usage.
+     * @default 2
+     * @example
+     * // Query 3 relays for each author
+     * ndk.subscribe(
+     *   { kinds: [1], authors: ["alice", "bob"] },
+     *   { relayGoalPerAuthor: 3 }
+     * );
+     * @example
+     * // Use all available relays for each author
+     * ndk.subscribe(
+     *   { kinds: [1], authors: ["alice", "bob"] },
+     *   { relayGoalPerAuthor: Infinity }
+     * );
+     */
+    relayGoalPerAuthor?: number;
+
+    /**
      * Called for each event received by the subscription.
      * This eliminates the race condition of subscribing and then attaching event handlers.
      * @param event The received NDKEvent.
@@ -592,7 +612,7 @@ export class NDKSubscription extends EventEmitter<{
             // check if the pool monitor is already in the relayFilters
             if (this.relayFilters?.has(relay.url)) return;
 
-            const calc = calculateRelaySetsFromFilters(this.ndk, this.filters, this.pool);
+            const calc = calculateRelaySetsFromFilters(this.ndk, this.filters, this.pool, this.opts.relayGoalPerAuthor);
 
             // check if the new relay is included
             if (calc.get(relay.url)) {
@@ -651,7 +671,7 @@ export class NDKSubscription extends EventEmitter<{
         }
 
         if (!this.relaySet || this.relaySet.relays.size === 0) {
-            this.relayFilters = calculateRelaySetsFromFilters(this.ndk, filters, this.pool);
+            this.relayFilters = calculateRelaySetsFromFilters(this.ndk, filters, this.pool, this.opts.relayGoalPerAuthor);
         } else {
             this.relayFilters = new Map();
             for (const relay of this.relaySet.relays) {
@@ -678,7 +698,7 @@ export class NDKSubscription extends EventEmitter<{
         }
 
         // Recalculate relay sets with updated outbox data
-        const updatedRelaySets = calculateRelaySetsFromFilters(this.ndk, this.filters, this.pool);
+        const updatedRelaySets = calculateRelaySetsFromFilters(this.ndk, this.filters, this.pool, this.opts.relayGoalPerAuthor);
 
         // Find new relays that aren't already in our subscription
         for (const [relayUrl, filters] of updatedRelaySets) {

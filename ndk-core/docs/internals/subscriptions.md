@@ -10,6 +10,26 @@ const subscription = ndk.subscribe({ kinds: [1], authors: ["123", "456", "678"] 
 
 Since the application level didn't explicitly provide a relay-set, which is the most common use case, NDK will calculate a relay set based on the outbox model plus a variety of some other factors.
 
+## Relay Selection for Authors
+
+When a subscription includes an `authors` filter, NDK uses the outbox model to determine which relays to query for each author. By default, NDK will query **2 relays** for each author, but this can be customized using the `relayGoalPerAuthor` option:
+
+```ts
+// Query 3 relays for each author instead of the default 2
+const subscription = ndk.subscribe(
+  { kinds: [1], authors: ["123", "456", "678"] },
+  { relayGoalPerAuthor: 3 }
+);
+
+// Use all available relays for each author
+const subscription = ndk.subscribe(
+  { kinds: [1], authors: ["123", "456", "678"] },
+  { relayGoalPerAuthor: Infinity }
+);
+```
+
+Higher values improve redundancy and reduce the chance of missing events, but increase bandwidth usage and the number of relay connections. Lower values reduce resource usage but may miss events if a relay is down or doesn't have the event. Setting `relayGoalPerAuthor: Infinity` will query all available relays for each author.
+
 So the first thing we'll do before talking to relays is, decide to _which_ relays we should talk to.
 
 The `calculateRelaySetsFromFilters` function will take care of this and provide us with a map of relay URLs and filters for each relay.

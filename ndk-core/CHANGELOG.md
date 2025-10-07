@@ -1,5 +1,29 @@
 # @nostr-dev-kit/ndk
 
+## Unreleased
+
+### Minor Changes
+
+- Add NIP-11 relay information document support
+  - New `NDKRelayInformation` interface with complete NIP-11 fields (metadata, limitations, fees, retention policies, etc.)
+  - New `fetchRelayInformation(url)` function to fetch NIP-11 info from any relay URL
+  - New `relay.fetchInfo()` method with automatic caching
+  - New `relay.info` getter for cached relay information
+
+  This enables applications to query relay capabilities, limitations, and metadata programmatically. Useful for checking supported NIPs, relay policies, fees, and restrictions before connecting or publishing.
+
+  ```typescript
+  // Via relay instance (with caching)
+  const relay = ndk.pool.relays.get("wss://relay.damus.io");
+  const info = await relay.fetchInfo();
+  console.log(`Relay: ${info.name}`);
+  console.log(`Supported NIPs: ${info.supported_nips}`);
+
+  // Direct fetch
+  import { fetchRelayInformation } from "@nostr-dev-kit/ndk";
+  const info = await fetchRelayInformation("wss://relay.damus.io");
+  ```
+
 ## 2.15.3
 
 ### Patch Changes

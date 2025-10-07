@@ -1,18 +1,58 @@
 <script lang="ts">
 	import { useTransactions } from '../payments/runes.svelte.js';
+	import type { NDKSvelte } from '$lib/ndk-svelte.svelte.js';
+	import type { Transaction } from '../payments/types.js';
 
 	interface Props {
+		ndk: NDKSvelte;
 		limit?: number;
 		direction?: 'in' | 'out';
 	}
 
-	let { limit, direction }: Props = $props();
+	let { ndk, limit, direction }: Props = $props();
 
 	// Reactive transaction list
-	const transactions = useTransactions({ limit, direction });
+	const transactions = useTransactions(ndk, { limit, direction });
 
-	// Use transactions directly
-	const reactiveTxs = $derived(transactions);
+	// Access the value property with computed properties
+	const reactiveTxs = $derived(transactions.value.map(tx => enrichTransaction(tx)));
+
+	// Helper to enrich transactions with computed properties
+	function enrichTransaction(tx: Transaction) {
+		const isPending = tx.status === 'pending';
+		const isFailed = tx.status === 'failed';
+		const isIncoming = tx.direction === 'in';
+		const isOutgoing = tx.direction === 'out';
+
+		const formattedAmount = `${isOutgoing ? '-' : '+'} ${tx.amount} ${tx.unit}`;
+
+		const relativeTime = formatRelativeTime(tx.timestamp);
+
+		return {
+			...tx,
+			isPending,
+			isFailed,
+			isIncoming,
+			isOutgoing,
+			formattedAmount,
+			relativeTime,
+		};
+	}
+
+	function formatRelativeTime(timestamp: number): string {
+		const now = Date.now();
+		const diff = now - timestamp;
+		const seconds = Math.floor(diff / 1000);
+		const minutes = Math.floor(seconds / 60);
+		const hours = Math.floor(minutes / 60);
+		const days = Math.floor(hours / 24);
+
+		if (seconds < 60) return 'just now';
+		if (minutes < 60) return `${minutes}m ago`;
+		if (hours < 24) return `${hours}h ago`;
+		if (days < 7) return `${days}d ago`;
+		return new Date(timestamp).toLocaleDateString();
+	}
 </script>
 
 <div class="transaction-list">

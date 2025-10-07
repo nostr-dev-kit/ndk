@@ -1,6 +1,7 @@
 <script lang="ts">
   import { ndk } from './lib/ndk';
   import { NDKUser } from '@nostr-dev-kit/ndk';
+  import { SvelteMap } from 'svelte/reactivity';
   import BookmarkCard from './components/BookmarkCard.svelte';
   import AddBookmarkModal from './components/AddBookmarkModal.svelte';
   import TagCloud from './components/TagCloud.svelte';
@@ -48,7 +49,7 @@
   // Extract all tags with counts
   const tagCounts = $derived(
     (() => {
-      const counts = new Map();
+      const counts = new SvelteMap<string, number>();
       for (const bookmark of bookmarks) {
         const tags = bookmark.tags.filter((t) => t[0] === 't');
         for (const [, tag] of tags) {

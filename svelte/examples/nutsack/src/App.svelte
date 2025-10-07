@@ -7,24 +7,15 @@
   import { useWallet } from './lib/useWallet.svelte.js';
 
   let isConnecting = $state(true);
-  let showOnboarding = $state(false);
 
   // Initialize wallet
   const wallet = useWallet(ndk);
 
-  // React to session changes
-  $effect(() => {
+  // Derive onboarding state from session and wallet state
+  const showOnboarding = $derived.by(() => {
     const currentSession = ndk.$sessions.current;
-
-    if (currentSession) {
-      // Check if onboarding is needed
-      if (wallet.needsOnboarding) {
-        showOnboarding = true;
-      }
-    } else {
-      // Cleanup when user logs out
-      showOnboarding = false;
-    }
+    if (!currentSession) return false;
+    return wallet.needsOnboarding;
   });
 
   onMount(async () => {
@@ -39,7 +30,7 @@
   async function handleOnboardingComplete(config: { mints: string[]; relays: string[] }) {
     try {
       await wallet.setupWallet(config);
-      showOnboarding = false;
+      // showOnboarding will automatically become false when wallet.needsOnboarding becomes false
     } catch (error) {
       console.error('Failed to setup wallet:', error);
       throw error;

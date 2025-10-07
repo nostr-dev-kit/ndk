@@ -23,7 +23,7 @@ export function mergeTransactions(
     // Parse kind:7376 spending history
     for (const event of spendingHistory.values()) {
         try {
-            transactions.push(parseSpendingHistory(event, currentUser));
+            transactions.push(parseSpendingHistory(event));
         } catch (e) {
             console.error("Failed to parse spending history event:", e);
         }

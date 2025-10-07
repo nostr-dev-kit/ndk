@@ -1,7 +1,11 @@
 <script lang="ts">
-  import { nip19, type AddressPointer, type EventPointer, type ProfilePointer } from 'nostr-tools';
+  import { nip19 } from 'nostr-tools';
   import type NDK from '@nostr-dev-kit/ndk';
   import type { NDKUserProfile } from '@nostr-dev-kit/ndk';
+
+  type AddressPointer = nip19.AddressPointer;
+  type EventPointer = nip19.EventPointer;
+  type ProfilePointer = nip19.ProfilePointer;
 
   interface Props {
     ndk: NDK;
@@ -112,7 +116,7 @@
 
       const type = typeMap[prefix];
       if (type) {
-        return { type, content: uri, data: decoded.data };
+        return { type, content: uri, data: decoded.data as string | ProfilePointer | EventPointer | AddressPointer };
       }
     } catch {
       console.warn('[EventContent] Failed to decode Nostr URI:', uri);

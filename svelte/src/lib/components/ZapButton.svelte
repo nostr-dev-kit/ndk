@@ -1,25 +1,27 @@
 <script lang="ts">
 	import type { NDKEvent, NDKUser } from '@nostr-dev-kit/ndk';
 	import { useZapAmount, useIsZapped, zap } from '../payments/runes.svelte.js';
+	import type { NDKSvelte } from '$lib/ndk-svelte.svelte.js';
 
 	interface Props {
+		ndk: NDKSvelte;
 		target: NDKEvent | NDKUser;
 		amount?: number;
 		comment?: string;
 		class?: string;
 	}
 
-	let { target, amount = 21, comment, class: className }: Props = $props();
+	let { ndk, target, amount = 21, comment, class: className }: Props = $props();
 
 	// Reactive state
-	const zapAmount = useZapAmount(target);
-	const isZapped = useIsZapped(target);
+	const zapAmount = useZapAmount(ndk, target);
+	const isZapped = useIsZapped(ndk, target);
 	let zapping = $state(false);
 
 	async function handleZap() {
 		zapping = true;
 		try {
-			await zap(target, amount, { comment });
+			await zap(ndk, target, amount, { comment });
 		} catch (error) {
 			console.error('Zap failed:', error);
 		} finally {
@@ -30,14 +32,14 @@
 
 <button
 	onclick={handleZap}
-	disabled={zapping || isZapped}
+	disabled={zapping || isZapped.value}
 	class="zap-button {className ?? ''}"
-	class:zapped={isZapped}
+	class:zapped={isZapped.value}
 >
 	{#if zapping}
 		⏳ Zapping...
-	{:else if isZapped}
-		⚡ Zapped ({zapAmount})
+	{:else if isZapped.value}
+		⚡ Zapped ({zapAmount.value})
 	{:else}
 		⚡ Zap {amount}
 	{/if}

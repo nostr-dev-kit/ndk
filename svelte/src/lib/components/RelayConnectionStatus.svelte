@@ -16,7 +16,7 @@
     lg: 'w-4 h-4',
   };
 
-  const statusConfig = $derived(() => {
+  const statusConfig = $derived.by(() => {
     switch (status) {
       case 'connected':
         return {
@@ -54,13 +54,13 @@
 
 <div class="relay-status inline-flex items-center gap-2 {className}">
   <div class="relative {sizeClasses[size]}">
-    <div class="absolute inset-0 rounded-full {statusConfig().color}"></div>
-    {#if statusConfig().pulse}
-      <div class="absolute inset-0 rounded-full {statusConfig().color} animate-ping opacity-75"></div>
+    <div class="absolute inset-0 rounded-full {statusConfig.color}"></div>
+    {#if statusConfig.pulse}
+      <div class="absolute inset-0 rounded-full {statusConfig.color} animate-ping opacity-75"></div>
     {/if}
   </div>
   {#if showLabel}
-    <span class="text-sm font-medium">{statusConfig().label}</span>
+    <span class="text-sm font-medium">{statusConfig.label}</span>
   {/if}
 </div>
 

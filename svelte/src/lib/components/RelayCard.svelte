@@ -75,7 +75,7 @@
 </script>
 
 <div class="relay-card">
-  <div class="relay-card-header" onclick={() => (isExpanded = !isExpanded)} role="button" tabindex="0">
+  <div class="relay-card-header" onclick={() => (isExpanded = !isExpanded)} onkeydown={(e) => e.key === 'Enter' && (isExpanded = !isExpanded)} role="button" tabindex="0">
     <div class="relay-card-header-left">
       <RelayConnectionStatus status={relay.status} size="md" />
       {#if relay.nip11?.icon}

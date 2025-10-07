@@ -7,10 +7,11 @@ Efficient event synchronization using set reconciliation to minimize bandwidth u
 ## Features
 
 - **Bandwidth Efficient**: Uses Negentropy protocol to identify differences without transferring full event data
+- **Automatic Fallback**: Falls back to standard `fetchEvents` for relays without NIP-77 support
+- **Capability Tracking**: Caches which relays support Negentropy to optimize future syncs
 - **Cache Integration**: Automatically populates NDK cache with synced events
-- **Sequential Multi-Relay**: Syncs with multiple relays sequentially for optimal efficiency
-- **Flexible API**: Simple `await ndk.sync(filters)` interface
-- **Auto-Fetch**: Optionally fetches missing events automatically
+- **Sequential Multi-Relay**: Syncs with multiple relays for optimal efficiency
+- **Clean API**: Type-safe class-based interface
 
 ## Installation
 
@@ -27,11 +28,13 @@ bun add @nostr-dev-kit/sync
 
 ## Usage
 
-### Basic Sync
+### Recommended: NDKSync Class
+
+The `NDKSync` class provides a clean, stateful API with automatic relay capability tracking:
 
 ```typescript
 import NDK from '@nostr-dev-kit/ndk';
-import { ndkSync } from '@nostr-dev-kit/sync';
+import { NDKSync } from '@nostr-dev-kit/sync';
 
 const ndk = new NDK({
   explicitRelayUrls: ['wss://relay.damus.io'],
@@ -40,8 +43,11 @@ const ndk = new NDK({
 
 await ndk.connect();
 
+// Create sync instance (caches relay capabilities)
+const sync = new NDKSync(ndk);
+
 // Sync recent notes from a user
-const result = await ndkSync.call(ndk, {
+const result = await sync.sync({
   kinds: [1],
   authors: [pubkey],
   since: Math.floor(Date.now() / 1000) - 86400  // Last 24h
@@ -52,64 +58,16 @@ console.log(`Needed ${result.need.size} events from relays`);
 console.log(`Have ${result.have.size} events relays don't`);
 ```
 
-Alternatively, you can attach it to NDK's prototype:
-
-```typescript
-import NDK from '@nostr-dev-kit/ndk';
-import { ndkSync } from '@nostr-dev-kit/sync';
-
-// Attach to prototype (once, at app startup)
-NDK.prototype.sync = ndkSync;
-
-// Now use as a method
-const ndk = new NDK({ ... });
-const result = await ndk.sync(filters);
-```
-
-### Sync Without Auto-Fetch
-
-```typescript
-const result = await ndk.sync(filters, {
-  autoFetch: false
-});
-
-// Manually decide what to fetch
-if (result.need.size > 100) {
-  console.log('Too many to fetch now, schedule for later');
-} else {
-  await ndk.fetchEvents({ ids: Array.from(result.need) });
-}
-```
-
-### Sync With Specific Relays
-
-```typescript
-const result = await ndk.sync(filters, {
-  relayUrls: ['wss://relay.nostr.band', 'wss://nos.lol']
-});
-```
-
-### Background Cache Warming
-
-```typescript
-// Good for background sync to populate cache
-await ndk.sync(filters, {
-  autoFetch: true,  // Fetch and cache events
-  skipCache: false  // Save to cache (default)
-});
-
-// Later, subscriptions will be instant from cache
-const sub = ndk.subscribe(filters);
-```
-
 ### Sync + Subscribe (Recommended)
 
-The `syncAndSubscribe` function combines efficient syncing with live subscriptions, ensuring you don't miss any events during the sync process:
+The `syncAndSubscribe` method combines efficient syncing with live subscriptions, ensuring you don't miss any events during the sync process:
 
 ```typescript
-import { syncAndSubscribe } from '@nostr-dev-kit/sync';
+import { NDKSync } from '@nostr-dev-kit/sync';
 
-const sub = await syncAndSubscribe.call(ndk,
+const sync = new NDKSync(ndk);
+
+const sub = await sync.syncAndSubscribe(
   { kinds: [1], authors: [pubkey] },
   {
     onEvent: (event) => {
@@ -131,8 +89,9 @@ const sub = await syncAndSubscribe.call(ndk,
 **How it works:**
 1. Immediately starts a subscription with `limit: 0` to catch new events
 2. Returns the subscription right away (non-blocking)
-3. Background: Syncs historical events from each relay sequentially
-   - Uses Negentropy where available
+3. Background: Syncs historical events from each relay
+   - Checks capability cache to determine if relay supports Negentropy
+   - Uses Negentropy where available (efficient)
    - Falls back to `fetchEvents` for non-Negentropy relays
 4. All synced events automatically flow to the subscription
 
@@ -142,54 +101,116 @@ const sub = await syncAndSubscribe.call(ndk,
 - DM synchronization
 - Any scenario where you need complete event coverage
 
-## Checking Relay Support
+### Static Methods
 
-Most relays don't support NIP-77 yet. Check before syncing:
-
-### Check if a relay supports NIP-77
+If you don't need persistent capability tracking, use static methods:
 
 ```typescript
-import { supportsNegentropy } from '@nostr-dev-kit/sync';
+import { NDKSync } from '@nostr-dev-kit/sync';
 
+// One-off sync
+const result = await NDKSync.sync(ndk, { kinds: [1], limit: 100 });
+
+// One-off sync and subscribe
+const sub = await NDKSync.syncAndSubscribe(ndk, { kinds: [1] });
+```
+
+### Checking Relay Capabilities
+
+The `NDKSync` class automatically tracks which relays support Negentropy:
+
+```typescript
+const sync = new NDKSync(ndk);
+
+// Check if a relay supports Negentropy
 const relay = ndk.pool.relays.get("wss://relay.example.com");
-const supported = await supportsNegentropy(relay);
+const supported = await sync.checkRelaySupport(relay);
 
-if (supported) {
-  const result = await ndk.sync(filters);
+// Get all relays that support Negentropy
+const negentropyRelays = await sync.getNegentropyRelays();
+
+// Get cached capability info
+const capability = sync.getRelayCapability("wss://relay.example.com");
+console.log(capability?.supportsNegentropy);
+console.log(capability?.lastChecked);
+
+// Clear cache for a specific relay (e.g., after relay update)
+sync.clearCapabilityCache("wss://relay.example.com");
+
+// Clear all capability cache
+sync.clearCapabilityCache();
+```
+
+### Sync Options
+
+```typescript
+// Sync with specific relays
+const result = await sync.sync(filters, {
+  relayUrls: ['wss://relay.nostr.band', 'wss://nos.lol']
+});
+
+// Sync without auto-fetch
+const result = await sync.sync(filters, {
+  autoFetch: false
+});
+
+// Manually fetch if needed
+if (result.need.size > 100) {
+  console.log('Too many to fetch now, schedule for later');
 } else {
-  console.log("Relay doesn't support NIP-77");
+  await ndk.fetchEvents({ ids: Array.from(result.need) });
 }
 ```
 
-### Filter relays to only those with NIP-77 support
+### Background Cache Warming
 
 ```typescript
-import { filterNegentropyRelays } from '@nostr-dev-kit/sync';
+// Good for background sync to populate cache
+await sync.sync(filters, {
+  autoFetch: true,  // Fetch and cache events
+  skipCache: false  // Save to cache (default)
+});
 
-const allRelays = ["wss://relay1.com", "wss://relay2.com", "wss://relay3.com"];
-const syncRelays = await filterNegentropyRelays(allRelays);
-
-if (syncRelays.length > 0) {
-  const result = await ndk.sync(filters, { relayUrls: syncRelays });
-} else {
-  console.log("No relays support NIP-77");
-}
+// Later, subscriptions will be instant from cache
+const sub = ndk.subscribe(filters);
 ```
 
-### Get detailed relay capabilities
+## Utility Functions
+
+For checking relay support without creating an `NDKSync` instance:
 
 ```typescript
-import { getRelayCapabilities } from '@nostr-dev-kit/sync';
+import { supportsNegentropy, getRelayCapabilities, filterNegentropyRelays } from '@nostr-dev-kit/sync';
 
+// Check if a relay supports NIP-77
+const supported = await supportsNegentropy("wss://relay.example.com");
+
+// Get detailed relay capabilities
 const caps = await getRelayCapabilities("wss://relay.damus.io");
 console.log(`Negentropy: ${caps.supportsNegentropy}`);
 console.log(`Software: ${caps.software} ${caps.version}`);
 console.log(`Supported NIPs: ${caps.supportedNips.join(", ")}`);
+
+// Filter relays to only those with NIP-77 support
+const allRelays = ["wss://relay1.com", "wss://relay2.com", "wss://relay3.com"];
+const syncRelays = await filterNegentropyRelays(allRelays);
 ```
 
-## API
+## API Reference
 
-### `ndk.sync(filters, options?)`
+### `NDKSync` Class
+
+#### Constructor
+
+```typescript
+new NDKSync(ndk: NDK)
+```
+
+Creates a new sync instance with relay capability tracking.
+
+#### Methods
+
+##### `sync(filters, options?)`
 
 Performs NIP-77 sync with relays.
 
@@ -199,7 +220,63 @@ Performs NIP-77 sync with relays.
 
 **Returns:** Promise<NDKSyncResult>
 
-### NDKSyncOptions
+##### `syncAndSubscribe(filters, options?)`
+
+Combines sync with live subscription for complete event coverage.
+
+**Parameters:**
+- `filters`: NDKFilter | NDKFilter[] - Filters to sync and subscribe
+- `options?`: SyncAndSubscribeOptions - Subscription options with sync callbacks
+
+**Returns:** Promise<NDKSubscription>
+
+##### `checkRelaySupport(relay)`
+
+Check if a relay supports Negentropy (uses cache when available).
+
+**Parameters:**
+- `relay`: NDKRelay - Relay to check
+
+**Returns:** Promise<boolean>
+
+##### `getNegentropyRelays(relays?)`
+
+Get all relays that support Negentropy.
+
+**Parameters:**
+- `relays?`: NDKRelay[] - Optional specific relays to check (defaults to all NDK relays)
+
+**Returns:** Promise<NDKRelay[]>
+
+##### `getRelayCapability(relayUrl)`
+
+Get cached capability info for a relay.
+
+**Parameters:**
+- `relayUrl`: string - Relay URL
+
+**Returns:** RelayCapability | undefined
+
+##### `clearCapabilityCache(relayUrl?)`
+
+Clear capability cache.
+
+**Parameters:**
+- `relayUrl?`: string - Optional specific relay URL (clears all if omitted)
+
+#### Static Methods
+
+##### `NDKSync.sync(ndk, filters, options?)`
+
+Static convenience method for one-off syncs.
+
+##### `NDKSync.syncAndSubscribe(ndk, filters, options?)`
+
+Static convenience method for one-off sync+subscribe.
+
+### Types
+
+#### `NDKSyncOptions`
 
 ```typescript
 interface NDKSyncOptions {
@@ -214,7 +291,7 @@ interface NDKSyncOptions {
 }
 ```
 
-### NDKSyncResult
+#### `NDKSyncResult`
 
 ```typescript
 interface NDKSyncResult {
@@ -224,86 +301,43 @@ interface NDKSyncResult {
 }
 ```
 
-### Relay Capability Functions
+#### `SyncAndSubscribeOptions`
 
-#### `supportsNegentropy(relay)`
-
-Check if a relay supports NIP-77.
-
-**Parameters:**
-- `relay`: NDKRelay | string - Relay instance or URL
-
-**Returns:** Promise<boolean>
-
-**Example:**
 ```typescript
-const supported = await supportsNegentropy("wss://relay.example.com");
+interface SyncAndSubscribeOptions extends NDKSubscriptionOptions {
+  onRelaySynced?: (relay: NDKRelay, eventCount: number) => void;
+  onSyncComplete?: () => void;
+  relaySet?: NDKRelaySet;
+  relayUrls?: string[];
+}
 ```
 
-#### `filterNegentropyRelays(relays)`
+#### `RelayCapability`
 
-Filter an array of relays to only those supporting NIP-77.
-
-**Parameters:**
-- `relays`: (NDKRelay | string)[] - Array of relays or URLs
-
-**Returns:** Promise<string[]> - Array of relay URLs that support NIP-77
-
-**Example:**
 ```typescript
-const syncRelays = await filterNegentropyRelays([
-  "wss://relay1.com",
-  "wss://relay2.com"
-]);
-```
-
-#### `getRelayCapabilities(relay)`
-
-Get detailed relay information including NIP-77 support.
-
-**Parameters:**
-- `relay`: NDKRelay | string - Relay instance or URL
-
-**Returns:** Promise<RelayCapabilities>
-
-**Example:**
-```typescript
-const caps = await getRelayCapabilities("wss://relay.damus.io");
-console.log(caps.supportsNegentropy); // boolean
-console.log(caps.supportedNips);      // number[]
-console.log(caps.software);           // string | undefined
-```
-
-#### `fetchRelayInformation(relayUrl)`
-
-Fetch the raw NIP-11 relay information document.
-
-**Parameters:**
-- `relayUrl`: string - WebSocket URL of the relay
-
-**Returns:** Promise<RelayInformation> - NIP-11 document
-
-**Example:**
-```typescript
-const info = await fetchRelayInformation("wss://relay.damus.io");
-console.log(info.name);
-console.log(info.supported_nips);
+interface RelayCapability {
+  supportsNegentropy: boolean;
+  lastChecked: number;
+  lastError?: string;
+}
 ```
 
 ## How It Works
 
 1. **Cache Query**: Queries NDK cache for events matching filters
 2. **Storage Build**: Builds Negentropy storage from cached events
-3. **Sync Session**: Exchanges compact messages with relay to identify differences
-4. **Event Fetch**: Automatically fetches missing events (if autoFetch: true)
-5. **Cache Update**: Saves fetched events to cache for future use
+3. **Capability Check**: Checks if relay supports NIP-77 (cached for 1 hour)
+4. **Sync Session**: For Negentropy relays, exchanges compact messages to identify differences
+5. **Fallback**: For non-Negentropy relays, uses standard `fetchEvents`
+6. **Event Fetch**: Automatically fetches missing events (if autoFetch: true)
+7. **Cache Update**: Saves fetched events to cache for future use
 
 ### Sequential Multi-Relay Sync
 
 When syncing with multiple relays:
 
 ```typescript
-const result = await ndk.sync(filters, {
+const result = await sync.sync(filters, {
   relayUrls: ['wss://relay1.com', 'wss://relay2.com']
 });
 ```
@@ -319,17 +353,17 @@ This approach is bandwidth-efficient: later relays see events from earlier relay
 
 ```typescript
 try {
-  const result = await ndk.sync(filters);
+  const result = await sync.sync(filters);
 } catch (error) {
   if (error.message.includes('cache adapter')) {
     console.error('Sync requires a cache adapter');
-  } else if (error.message.includes('negentropy')) {
-    console.error('Relay doesn't support NIP-77');
   } else {
     console.error('Sync failed:', error);
   }
 }
 ```
+
+Note: Relays without NIP-77 support automatically fall back to `fetchEvents` - no error is thrown.
 
 ## Advanced Usage
 
@@ -353,6 +387,18 @@ const initialMsg = await neg.initiate();
 const { nextMessage, have, need } = await neg.reconcile(response);
 ```
 
+### Low-Level Functions
+
+For advanced usage without the `NDKSync` class:
+
+```typescript
+import { ndkSync, syncAndSubscribe } from '@nostr-dev-kit/sync';
+
+// Direct function calls
+const result = await ndkSync.call(ndk, filters, options);
+const sub = await syncAndSubscribe.call(ndk, filters, options);
+```
+
 ## Protocol Details
 
 This package implements [NIP-77](https://nips.nostr.com/77) - Negentropy Protocol for set reconciliation.
@@ -362,10 +408,11 @@ This package implements [NIP-77](https://nips.nostr.com/77) - Negentropy Protoco
 - XOR-based fingerprinting for efficient comparison
 - Variable-length encoding for compact messages
 - Frame size limiting to prevent oversized messages
+- Automatic fallback to standard REQ/EVENT for non-supporting relays
 
 ## Performance
 
-Negentropy is extremely bandwidth-efficient:
+Negentropy is extremely bandwidth-efficient when relays support it:
 
 - **Small differences**: ~1-2 KB of messages to sync 1000s of events
 - **Large differences**: Scales logarithmically with set size
@@ -410,7 +457,7 @@ This will:
 - Connect to multiple relays
 - Start a live subscription immediately (non-blocking)
 - Sync historical events in the background
-- Show progress for each relay
+- Show progress for each relay (Negentropy vs fallback)
 - Display live events as they arrive in real-time
 - Keep running to demonstrate live subscription
 

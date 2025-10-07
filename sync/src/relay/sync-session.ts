@@ -131,12 +131,6 @@ export class SyncSession extends EventEmitter<{
             // Convert hex payload to Uint8Array
             const query = hexToUint8Array(payload);
 
-            // Debug logging
-            if (process.env.DEBUG_SYNC) {
-                console.log(`[Sync Debug] Received NEG-MSG payload length: ${query.length} bytes`);
-                console.log(`[Sync Debug] Payload hex (first 100 chars): ${payload.substring(0, 100)}`);
-            }
-
             // Process with negentropy
             const result = await this.negentropy.reconcile(query);
 

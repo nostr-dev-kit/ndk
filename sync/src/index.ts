@@ -3,13 +3,13 @@
  *
  * NIP-77 Negentropy sync protocol implementation for NDK.
  *
- * This package extends NDK with efficient event synchronization capabilities
- * using the Negentropy set reconciliation protocol.
+ * Provides efficient event synchronization using the Negentropy set reconciliation
+ * protocol with automatic fallback for relays that don't support it.
  *
  * @example
  * ```typescript
  * import NDK from '@nostr-dev-kit/ndk';
- * import '@nostr-dev-kit/sync';  // Adds .sync() method to NDK
+ * import { NDKSync } from '@nostr-dev-kit/sync';
  *
  * const ndk = new NDK({
  *   explicitRelayUrls: ['wss://relay.damus.io'],
@@ -18,59 +18,38 @@
  *
  * await ndk.connect();
  *
- * // Sync recent notes from a user
- * const result = await ndk.sync({
+ * // Recommended: Use NDKSync class (tracks relay capabilities)
+ * const sync = new NDKSync(ndk);
+ *
+ * // Sync recent notes
+ * const result = await sync.sync({
  *   kinds: [1],
  *   authors: [pubkey],
  *   since: Math.floor(Date.now() / 1000) - 86400
  * });
  *
  * console.log(`Synced ${result.events.length} events`);
+ *
+ * // Sync and subscribe
+ * const sub = await sync.syncAndSubscribe({ kinds: [1] }, {
+ *   onRelaySynced: (relay, count) => {
+ *     console.log(`${relay.url}: ${count} events`);
+ *   }
+ * });
+ *
+ * // Alternative: Static methods
+ * await NDKSync.sync(ndk, { kinds: [1] });
+ * await NDKSync.syncAndSubscribe(ndk, { kinds: [1] });
  * ```
  */
 
-import NDK, { type NDKFilter, type NDKSubscription } from "@nostr-dev-kit/ndk";
 import { ndkSync } from "./ndk-sync.js";
 import { syncAndSubscribe, type SyncAndSubscribeOptions } from "./sync-subscribe.js";
-import type { NDKSyncOptions, NDKSyncResult } from "./types.js";
 
-// TypeScript declaration merging
-declare module "@nostr-dev-kit/ndk" {
-    interface NDK {
-        /**
-         * Perform NIP-77 Negentropy sync with relays.
-         *
-         * @param filters - Filters to sync
-         * @param opts - Sync options
-         * @returns Sync result with events, need, and have sets
-         */
-        sync(filters: NDKFilter | NDKFilter[], opts?: NDKSyncOptions): Promise<NDKSyncResult>;
+// Export main class
+export { NDKSync } from "./ndk-sync-class.js";
 
-        /**
-         * Subscribe and sync - ensures complete event coverage without missing events.
-         *
-         * This function:
-         * 1. Immediately starts a live subscription with limit: 0 to catch new events
-         * 2. Returns the subscription right away (non-blocking)
-         * 3. In the background, syncs historical events from each relay
-         * 4. All synced events automatically flow to the subscription
-         *
-         * @param filters - NDK filter(s) to sync and subscribe to
-         * @param opts - Subscription options with sync callbacks
-         * @returns NDKSubscription that receives both live and historical events
-         */
-        syncAndSubscribe(
-            filters: NDKFilter | NDKFilter[],
-            opts?: SyncAndSubscribeOptions,
-        ): Promise<NDKSubscription>;
-    }
-}
-
-// Attach methods to NDK prototype for better DX
-(NDK.prototype as any).sync = ndkSync;
-(NDK.prototype as any).syncAndSubscribe = syncAndSubscribe;
-
-// Re-export the main sync functions
+// Export low-level functions for advanced usage
 export { ndkSync, syncAndSubscribe };
 
 export { Accumulator } from "./negentropy/accumulator.js";

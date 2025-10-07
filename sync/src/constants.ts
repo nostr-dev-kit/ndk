@@ -27,6 +27,8 @@ export const TIMEOUTS = {
     CACHE_QUERY: 5000,
     /** Event fetch timeout (10 seconds) */
     EVENT_FETCH: 10000,
+    /** Relay connection timeout (30 seconds) */
+    RELAY_CONNECTION: 30000,
 } as const;
 
 /**

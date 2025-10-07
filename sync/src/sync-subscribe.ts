@@ -12,6 +12,7 @@ import NDK, {
     type NDKSubscription,
     type NDKSubscriptionOptions,
 } from "@nostr-dev-kit/ndk";
+import { TIMEOUTS } from "./constants.js";
 import { ndkSync } from "./ndk-sync.js";
 
 export interface SyncAndSubscribeOptions extends NDKSubscriptionOptions {
@@ -102,33 +103,68 @@ export async function syncAndSubscribe(
 
     // 2. Background: sync historical events from each relay
     if (this.cacheAdapter) {
-        // Don't await - run in background
-        (async () => {
-            for (const relay of relays) {
+        // Track completion across all relays
+        let completedCount = 0;
+        const totalRelays = relays.length;
+
+        const syncWithRelay = async (relay: NDKRelay) => {
+            try {
+                // Try Negentropy sync first
+                const result = await ndkSync.call(this, filterArray, {
+                    relaySet: new NDKRelaySet(new Set([relay]), this),
+                    autoFetch: true, // Fetched events automatically route to subscription
+                });
+
+                opts.onRelaySynced?.(relay, result.events.length);
+            } catch (_error) {
+                // Relay doesn't support Negentropy - fallback to fetchEvents
                 try {
-                    // Try Negentropy sync first
-                    const result = await ndkSync.call(this, filterArray, {
+                    const events = await this.fetchEvents(filterArray, {
                         relaySet: new NDKRelaySet(new Set([relay]), this),
-                        autoFetch: true, // Fetched events automatically route to subscription
+                        subId: 'sync-fetch-fallback',
+                        groupable: false
                     });
 
-                    opts.onRelaySynced?.(relay, result.events.length);
-                } catch (_error) {
-                    // Relay doesn't support Negentropy - fallback to fetchEvents
-                    try {
-                        const events = await this.fetchEvents(filterArray, {
-                            relaySet: new NDKRelaySet(new Set([relay]), this),
-                        });
-
-                        opts.onRelaySynced?.(relay, events.size);
-                    } catch (fetchError) {
-                        console.error(`[syncAndSubscribe] Failed to sync/fetch from ${relay.url}:`, fetchError);
-                    }
+                    opts.onRelaySynced?.(relay, events.size);
+                } catch (fetchError) {
+                    console.error(`[syncAndSubscribe] Failed to sync/fetch from ${relay.url}:`, fetchError);
+                }
+            } finally {
+                completedCount++;
+                if (completedCount === totalRelays) {
+                    opts.onSyncComplete?.();
                 }
             }
+        };
 
-            opts.onSyncComplete?.();
-        })();
+        // Start sync for each relay (don't wait sequentially)
+        for (const relay of relays) {
+            if (relay.connected) {
+                // Relay is connected, sync immediately
+                syncWithRelay(relay);
+            } else {
+                // Relay not connected yet, wait for it to come online
+                let completed = false;
+                const onReady = () => {
+                    if (completed) return;
+                    completed = true;
+                    relay.off("ready", onReady);
+                    syncWithRelay(relay);
+                };
+                relay.once("ready", onReady);
+
+                // Also handle case where relay never connects
+                setTimeout(() => {
+                    if (completed) return;
+                    completed = true;
+                    relay.off("ready", onReady);
+                    completedCount++;
+                    if (completedCount === totalRelays) {
+                        opts.onSyncComplete?.();
+                    }
+                }, TIMEOUTS.RELAY_CONNECTION);
+            }
+        }
     } else {
         // No cache adapter - can't sync, just use the subscription
         // Call onSyncComplete immediately since there's no sync to do

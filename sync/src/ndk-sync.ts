@@ -48,8 +48,31 @@ export async function ndkSync(
         have: new Set<NDKEventId>(),
     };
 
-    // Sequential sync with each relay
-    for (const relay of relays) {
+    // Sync with each relay in parallel
+    const syncPromises = relays.map(async (relay) => {
+        // Wait for relay to be ready if not connected
+        if (!relay.connected) {
+            await new Promise<void>((resolve) => {
+                const onReady = () => {
+                    relay.off("ready", onReady);
+                    resolve();
+                };
+                relay.once("ready", onReady);
+
+                // Timeout if relay doesn't connect
+                setTimeout(() => {
+                    relay.off("ready", onReady);
+                    resolve();
+                }, TIMEOUTS.RELAY_CONNECTION);
+            });
+        }
+
+        // If still not connected after waiting, skip this relay
+        if (!relay.connected) {
+            console.warn(`[NDK Sync] Relay ${relay.url} did not connect in time, skipping`);
+            return;
+        }
+
         try {
             await syncWithRelay.call(this, relay, filterArray, opts, result);
         } catch (error) {
@@ -62,7 +85,10 @@ export async function ndkSync(
                 opts.onRelayError(relay, error instanceof Error ? error : new Error(String(error)));
             }
         }
-    }
+    });
+
+    // Wait for all syncs to complete
+    await Promise.all(syncPromises);
 
     return result;
 }

@@ -235,14 +235,11 @@ export function createSessionStore() {
                 signers: newSigners,
             };
 
-            // If this was the active session, switch to another
+            // If this was the active session, handle active state
             if (state.activePubkey === pubkey) {
                 const remainingSessions = Array.from(newSessions.keys());
-                if (remainingSessions.length > 0) {
-                    // Use switchToUser to handle all the state updates including muteFilter
-                    get().switchToUser(remainingSessions[0]);
-                    return; // switchToUser already sets the state
-                } else {
+                if (remainingSessions.length === 0) {
+                    // No sessions left, clear active state
                     updates.activePubkey = undefined;
                     if (state.ndk) {
                         state.ndk.signer = undefined;
@@ -252,7 +249,17 @@ export function createSessionStore() {
                 }
             }
 
+            // Apply the session removal
             set(updates);
+
+            // After removing, switch to another session if needed
+            if (state.activePubkey === pubkey) {
+                const remainingSessions = Array.from(newSessions.keys());
+                if (remainingSessions.length > 0) {
+                    // Switch to the next available session
+                    get().switchToUser(remainingSessions[0]);
+                }
+            }
         },
 
         updateSession: (pubkey: Hexpubkey, data: Partial<NDKSession>) => {

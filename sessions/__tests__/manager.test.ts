@@ -113,6 +113,36 @@ describe("NDKSessionManager", () => {
 
             expect(manager.activePubkey).toBe(user1.pubkey);
         });
+
+        it("should actually remove sessions when logging out multiple times", async () => {
+            // Regression test for bug where sessions were only switched, not removed
+            const signer1 = NDKPrivateKeySigner.generate();
+            const signer2 = NDKPrivateKeySigner.generate();
+            const user1 = await signer1.user();
+            const user2 = await signer2.user();
+
+            await manager.login(signer1);
+            await manager.login(signer2);
+
+            expect(manager.getSessions().size).toBe(2);
+            expect(manager.activePubkey).toBe(user2.pubkey);
+
+            // Logout first active session
+            manager.logout();
+
+            // Verify session was actually removed, not just switched
+            expect(manager.getSessions().size).toBe(1);
+            expect(manager.getSession(user2.pubkey)).toBeUndefined();
+            expect(manager.activePubkey).toBe(user1.pubkey);
+
+            // Logout second session
+            manager.logout();
+
+            // Verify both sessions are removed
+            expect(manager.getSessions().size).toBe(0);
+            expect(manager.getSession(user1.pubkey)).toBeUndefined();
+            expect(manager.activePubkey).toBeUndefined();
+        });
     });
 
     describe("switchTo", () => {

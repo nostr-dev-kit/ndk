@@ -11,7 +11,7 @@
         },
         "wallet#build": {
             "outputs": ["dist/**"],
-            "dependsOn": ["ndk-core#build"]
+            "dependsOn": ["ndk-core#build", "sync#build"]
         },
         "ndk-hooks#build": {
             "outputs": ["dist/**"],
@@ -28,6 +28,14 @@
         "cache-sqlite#build": {
             "outputs": ["dist/**"],
             "dependsOn": ["ndk-core#build"]
+        },
+        "sync#build": {
+            "outputs": ["dist/**"],
+            "dependsOn": ["ndk-core#build"]
+        },
+        "wot#build": {
+            "outputs": ["dist/**"],
+            "dependsOn": ["ndk-core#build", "sync#build"]
         },
         "test": {
             "outputs": ["coverage/**"],

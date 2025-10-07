@@ -50,6 +50,7 @@
     "homepage": "https://github.com/nostr-dev-kit/ndk",
     "dependencies": {
         "@nostr-dev-kit/ndk": "workspace:^",
+        "@nostr-dev-kit/sync": "workspace:^",
         "debug": "^4.3.4",
         "typescript": "^5.8.2"
     },

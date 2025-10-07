@@ -14,7 +14,7 @@ The core of `ndk-hooks` revolves around a shared NDK instance. Initialize it onc
 import NDK, { NDKNip07Signer, NDKPrivateKeySigner, NDKSigner } from "@nostr-dev-kit/ndk";
 
 // An optional in-browser cache adapter
-import NDKCacheAdapterDexie from "@nostr-dev-kit/ndk-cache-dexie";
+import NDKCacheAdapterDexie from "@nostr-dev-kit/cache-dexie";
 import { NDKSessionLocalStorage, useNDKInit, useNDKSessionMonitor } from "@nostr-dev-kit/ndk-hooks";
 import { useEffect } from "react";
 

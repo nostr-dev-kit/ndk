@@ -28,7 +28,7 @@ ndk.connect();
 <script lang="ts">
 import { ndk } from '$lib/ndk';
 
-const notes = ndk.subscribe([{ kinds: [1], limit: 50 }]);
+const notes = ndk.$subscribe([{ kinds: [1], limit: 50 }]);
 </script>
 
 {#each notes.events as note (note.id)}
@@ -50,7 +50,7 @@ const notes = ndk.subscribe([{ kinds: [1], limit: 50 }]);
 import { ndk } from '$lib/ndk';
 import { profiles } from '@nostr-dev-kit/svelte/stores';
 
-const notes = ndk.subscribe([{ kinds: [1], limit: 50 }]);
+const notes = ndk.$subscribe([{ kinds: [1], limit: 50 }]);
 </script>
 
 {#each notes.events as note}
@@ -95,7 +95,7 @@ async function login() {
 <script lang="ts">
 import { ndk } from '$lib/ndk';
 
-const notes = ndk.subscribe([{ kinds: [1] }], {
+const notes = ndk.$subscribe([{ kinds: [1] }], {
   onError: (error) => console.error('Error:', error),
   onStatusChange: (status) => console.log('Status:', status),
   autoReconnect: true,
@@ -127,7 +127,7 @@ import { ndk } from '$lib/ndk';
 import { mutes } from '@nostr-dev-kit/svelte/stores';
 
 // Automatically filters muted content
-const notes = ndk.subscribe([{ kinds: [1] }], {
+const notes = ndk.$subscribe([{ kinds: [1] }], {
   skipMuted: true
 });
 
@@ -179,7 +179,7 @@ async function publish() {
 // lib/stores/highlights.ts
 import { ndk } from '$lib/ndk';
 
-export const highlightsSubscription = ndk.subscribe(
+export const highlightsSubscription = ndk.$subscribe(
   [{ kinds: [9802], limit: 100 }],
   { autoStart: false }
 );
@@ -221,7 +221,7 @@ class CustomArticle extends NDKEvent {
 }
 
 // Use it
-const articles = ndk.subscribe<CustomArticle>(
+const articles = ndk.$subscribe<CustomArticle>(
   [{ kinds: [30023] }],
   { eventClass: CustomArticle }
 );

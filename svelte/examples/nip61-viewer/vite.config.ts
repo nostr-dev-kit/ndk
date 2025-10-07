@@ -10,7 +10,7 @@ export default defineConfig({
         }),
     ],
     optimizeDeps: {
-        exclude: ["@nostr-dev-kit/ndk-cache-sqlite-wasm"],
+        exclude: ["@nostr-dev-kit/cache-sqlite-wasm"],
     },
     server: {
         fs: {

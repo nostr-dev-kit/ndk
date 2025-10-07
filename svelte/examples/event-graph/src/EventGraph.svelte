@@ -76,7 +76,7 @@
 
   // Process events into daily grouped data
   const processedData = $derived(() => {
-    const dayMap = new Map<string, DayData>();
+    const dayMap = new Map();
 
     // Initialize last 7 days
     for (let i = 6; i >= 0; i--) {
@@ -111,7 +111,7 @@
 
   // Get all unique kinds
   const allKinds = $derived(() => {
-    const kindSet = new Set<number>();
+    const kindSet = new Set();
     for (const day of processedData()) {
       for (const kind of Object.keys(day.kinds)) {
         kindSet.add(Number(kind));
@@ -144,7 +144,7 @@
 
   // Track relay sources - include ALL relays even with 0 events
   const relayStats = $derived(() => {
-    const stats = new Map<string, number>();
+    const stats = new Map();
 
     // Initialize all connected relays with 0
     for (const relayUrl of connectedRelays) {

@@ -113,5 +113,3 @@ export class ReactivePoolStore {
 export function createReactivePool(ndk: NDK): ReactivePoolStore {
     return new ReactivePoolStore(ndk);
 }
-
-export type { ReactivePoolStore };

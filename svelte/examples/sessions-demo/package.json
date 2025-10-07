@@ -17,8 +17,8 @@
     "devDependencies": {
         "@sveltejs/vite-plugin-svelte": "^6.2.1",
         "@types/qrcode": "^1.5.5",
-        "svelte": "^5.39.8",
+        "svelte": "^5.39.9",
         "typescript": "^5.9.3",
-        "vite": "^7.1.9"
+        "vite": "^6.3.6"
     }
 }

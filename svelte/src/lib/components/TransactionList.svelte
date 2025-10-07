@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { useTransactions } from '../payments/runes.svelte.js';
-	import { ReactiveTransaction } from '../payments/reactive-transaction.svelte.js';
 
 	interface Props {
 		limit?: number;
@@ -12,8 +11,8 @@
 	// Reactive transaction list
 	const transactions = useTransactions({ limit, direction });
 
-	// Wrap in reactive class
-	const reactiveTxs = $derived(transactions.map((tx) => ReactiveTransaction.from(tx)));
+	// Use transactions directly
+	const reactiveTxs = $derived(transactions);
 </script>
 
 <div class="transaction-list">

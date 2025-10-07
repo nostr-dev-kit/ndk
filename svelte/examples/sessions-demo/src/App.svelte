@@ -24,7 +24,7 @@
   })
 
   const currentProfileStore = $derived(
-    ndk.sessions.current ? useProfile(ndk, ndk.sessions.current.pubkey) : null
+    ndk.$sessions.current ? useProfile(ndk, ndk.$sessions.current.pubkey) : null
   )
 
   // Login form state
@@ -42,7 +42,7 @@
   // Generate a new signer for demo
   async function generateAndLogin() {
     const signer = NDKPrivateKeySigner.generate()
-    await ndk.sessions.login(signer, {
+    await ndk.$sessions.login(signer, {
       profile: true,
       follows: true,
       mutes: true
@@ -55,7 +55,7 @@
     loginError = ''
     try {
       const signer = new NDKNip07Signer()
-      await ndk.sessions.login(signer, {
+      await ndk.$sessions.login(signer, {
         profile: true,
         follows: true,
         mutes: true
@@ -79,7 +79,7 @@
     loginError = ''
     try {
       const signer = new NDKPrivateKeySigner(nsecInput.trim())
-      await ndk.sessions.login(signer, {
+      await ndk.$sessions.login(signer, {
         profile: true,
         follows: true,
         mutes: true
@@ -105,7 +105,7 @@
     try {
       const signer = new NDKNip46Signer(ndk, bunkerInput.trim())
       await signer.blockUntilReady()
-      await ndk.sessions.login(signer, {
+      await ndk.$sessions.login(signer, {
         profile: true,
         follows: true,
         mutes: true
@@ -144,7 +144,7 @@
 
       // Wait for the remote signer to scan and connect
       await signer.blockUntilReady()
-      await ndk.sessions.login(signer, {
+      await ndk.$sessions.login(signer, {
         profile: true,
         follows: true,
         mutes: true
@@ -164,7 +164,7 @@
   // Login with another account
   async function addAnotherAccount() {
     const signer = NDKPrivateKeySigner.generate()
-    await ndk.sessions.add(signer, {
+    await ndk.$sessions.add(signer, {
       profile: true,
       follows: true,
       mutes: true
@@ -173,17 +173,17 @@
 
   // Switch to a different session
   function switchSession(pubkey: string) {
-    ndk.sessions.switch(pubkey)
+    ndk.$sessions.switch(pubkey)
   }
 
   // Logout current session
   function logout() {
-    ndk.sessions.logout()
+    ndk.$sessions.logout()
   }
 
   // Logout all sessions
   function logoutAll() {
-    ndk.sessions.logoutAll()
+    ndk.$sessions.logoutAll()
   }
 
   // Open login modal
@@ -462,7 +462,7 @@
     <!-- Login Section -->
     <div class="section">
       <h2>Login Controls</h2>
-      {#if !ndk.sessions.current}
+      {#if !ndk.$sessions.current}
         <button onclick={openLoginModal} data-testid="login-existing">
           Login with Existing Account
         </button>
@@ -488,11 +488,11 @@
     <!-- Current Session Info -->
     <div class="section">
       <h2>Current Session</h2>
-      {#if ndk.sessions.current}
+      {#if ndk.$sessions.current}
         <div class="info-box">
           <div class="info-row">
             <span class="info-label">Pubkey:</span>
-            <span class="info-value" data-testid="current-pubkey">{ndk.sessions.current.pubkey}</span>
+            <span class="info-value" data-testid="current-pubkey">{ndk.$sessions.current.pubkey}</span>
           </div>
           <div class="info-row">
             <span class="info-label">Profile Name:</span>
@@ -516,19 +516,19 @@
           </div>
           <div class="info-row">
             <span class="info-label">Follows:</span>
-            <span class="info-value" data-testid="follows-count">{ndk.sessions.follows.size} pubkeys</span>
+            <span class="info-value" data-testid="follows-count">{ndk.$sessions.follows.size} pubkeys</span>
           </div>
           <div class="info-row">
             <span class="info-label">Mutes:</span>
-            <span class="info-value">{ndk.sessions.mutes.size} pubkeys</span>
+            <span class="info-value">{ndk.$sessions.mutes.size} pubkeys</span>
           </div>
         </div>
 
         <!-- Follows List -->
-        {#if ndk.sessions.follows.size > 0}
+        {#if ndk.$sessions.follows.size > 0}
           <h3 style="margin-top: 20px;">Following:</h3>
           <div class="follows-list" data-testid="follows-list">
-            {#each Array.from(ndk.sessions.follows) as followPubkey}
+            {#each Array.from(ndk.$sessions.follows) as followPubkey}
               <div class="follow-item">{followPubkey.slice(0, 16)}...</div>
             {/each}
           </div>
@@ -540,14 +540,14 @@
 
     <!-- All Sessions -->
     <div class="section">
-      <h2>All Sessions ({ndk.sessions.all.length})</h2>
-      {#if ndk.sessions.all.length === 0}
+      <h2>All Sessions ({ndk.$sessions.all.length})</h2>
+      {#if ndk.$sessions.all.length === 0}
         <div class="empty">No sessions available.</div>
       {:else}
-        {#each ndk.sessions.all as session}
+        {#each ndk.$sessions.all as session}
           <div 
             class="session-card" 
-            class:active={ndk.sessions.current?.pubkey === session.pubkey}
+            class:active={ndk.$sessions.current?.pubkey === session.pubkey}
             data-testid="session-card"
           >
             <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -556,11 +556,11 @@
                 <span style="font-family: monospace; font-size: 12px; margin-left: 8px;">
                   {session.pubkey.slice(0, 16)}...
                 </span>
-                {#if ndk.sessions.current?.pubkey === session.pubkey}
+                {#if ndk.$sessions.current?.pubkey === session.pubkey}
                   <span class="badge active">Active</span>
                 {/if}
               </div>
-              {#if ndk.sessions.current?.pubkey !== session.pubkey}
+              {#if ndk.$sessions.current?.pubkey !== session.pubkey}
                 <button
                   class="secondary"
                   onclick={() => switchSession(session.pubkey)}
@@ -570,10 +570,10 @@
                 </button>
               {/if}
             </div>
-            {#if ndk.sessions.current?.pubkey === session.pubkey}
+            {#if ndk.$sessions.current?.pubkey === session.pubkey}
               <div style="margin-top: 10px; font-size: 13px; color: #666;">
-                <div>Follows: {ndk.sessions.follows.size}</div>
-                <div>Mutes: {ndk.sessions.mutes.size}</div>
+                <div>Follows: {ndk.$sessions.follows.size}</div>
+                <div>Mutes: {ndk.$sessions.mutes.size}</div>
               </div>
             {/if}
           </div>

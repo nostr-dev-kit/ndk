@@ -1,14 +1,13 @@
 <script lang="ts">
   import { nip19, type AddressPointer, type EventPointer, type ProfilePointer } from 'nostr-tools';
   import type NDK from '@nostr-dev-kit/ndk';
-  import type { NDKEvent, NDKUserProfile } from '@nostr-dev-kit/ndk';
+  import type { NDKUserProfile } from '@nostr-dev-kit/ndk';
 
   interface Props {
     ndk: NDK;
     content?: string;
     class?: string;
     emojiTags?: string[][];
-    event?: NDKEvent;
     onMentionClick?: (pubkey: string) => void;
     onEventClick?: (eventId: string) => void;
     onLinkClick?: (url: string) => void;
@@ -19,7 +18,6 @@
     content = '',
     class: className = '',
     emojiTags = [],
-    event,
     onMentionClick,
     onEventClick,
     onLinkClick,
@@ -77,7 +75,7 @@
   // ============================================================================
 
   function buildEmojiMap(tags: string[][]): Map<string, string> {
-    const emojiMap = new Map<string, string>();
+    const emojiMap = new Map();
 
     for (const [type, shortcode, url] of tags) {
       if (type === 'emoji' && shortcode && url) {
@@ -116,7 +114,7 @@
       if (type) {
         return { type, content: uri, data: decoded.data };
       }
-    } catch (error) {
+    } catch {
       console.warn('[EventContent] Failed to decode Nostr URI:', uri);
     }
 
@@ -382,7 +380,7 @@
     {:else if segment.type === 'image-grid'}
       {@const images = segment.data as string[]}
       <div class="image-grid grid-{Math.min(images.length, 3)}">
-        {#each images as imageUrl}
+        {#each images as imageUrl (imageUrl)}
           <img src={imageUrl} alt="" loading="lazy" class="grid-image" />
         {/each}
       </div>

@@ -12,7 +12,7 @@ import { targetToId } from "./types.js";
  * ```
  */
 export function useZapAmount(ndk: NDKSvelte, target: NDKUser | NDKEvent) {
-    const value = $derived(ndk.payments.getZapAmount(target));
+    const value = $derived(ndk.$payments.getZapAmount(target));
 
     return {
         get value() {
@@ -33,7 +33,7 @@ export function useZapAmount(ndk: NDKSvelte, target: NDKUser | NDKEvent) {
  * ```
  */
 export function useIsZapped(ndk: NDKSvelte, target: NDKUser | NDKEvent) {
-    const value = $derived(ndk.payments.isZapped(target));
+    const value = $derived(ndk.$payments.isZapped(target));
 
     return {
         get value() {
@@ -55,7 +55,7 @@ export function useIsZapped(ndk: NDKSvelte, target: NDKUser | NDKEvent) {
  */
 export function useTargetTransactions(ndk: NDKSvelte, target: NDKUser | NDKEvent) {
     const id = targetToId(target);
-    const value = $derived(ndk.payments.byTarget.get(id) ?? []);
+    const value = $derived(ndk.$payments.byTarget.get(id) ?? []);
 
     return {
         get value() {
@@ -76,7 +76,7 @@ export function useTargetTransactions(ndk: NDKSvelte, target: NDKUser | NDKEvent
  * ```
  */
 export function usePendingPayments(ndk: NDKSvelte) {
-    const value = $derived(ndk.payments.pending);
+    const value = $derived(ndk.$payments.pending);
 
     return {
         get value() {
@@ -98,7 +98,7 @@ export function usePendingPayments(ndk: NDKSvelte) {
  */
 export function useTransactions(ndk: NDKSvelte, opts?: { direction?: "in" | "out"; type?: string; limit?: number }) {
     const value = $derived.by(() => {
-        let txs = ndk.payments.history;
+        let txs = ndk.$payments.history;
 
         if (opts?.direction) {
             txs = txs.filter((tx) => "direction" in tx && tx.direction === opts.direction);
@@ -136,8 +136,8 @@ export async function zap(
 ) {
     const { NDKZapper } = await import("@nostr-dev-kit/ndk");
 
-    if (!ndk.wallet.wallet) throw new Error("No wallet connected");
-    const session = ndk.sessions.current;
+    if (!ndk.$wallet.wallet) throw new Error("No wallet connected");
+    const session = ndk.$sessions.current;
     if (!session) throw new Error("No active session");
 
     const zapper = new NDKZapper(target, amount, "msat", {
@@ -145,7 +145,7 @@ export async function zap(
     });
 
     // Auto-track
-    ndk.payments.addPending(zapper, session.pubkey);
+    ndk.$payments.addPending(zapper, session.pubkey);
 
     // Execute with optional delay
     if (opts?.delay) {

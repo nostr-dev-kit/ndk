@@ -53,9 +53,9 @@
 
     try {
       const signer = new NDKNip07Signer();
-      await ndk.sessions.login(signer);
+      await ndk.$sessions.login(signer);
 
-      const currentSession = ndk.sessions.current;
+      const currentSession = ndk.$sessions.current;
       if (!currentSession) {
         error = 'Failed to login. Please install a NIP-07 extension like Alby or nos2x.';
         return;
@@ -74,7 +74,7 @@
     console.log('[App] Creating subscription for pubkey:', pubkey, 'kind:', selectedKind);
 
     // Subscribe to the selected event kind - events and eosed are reactive properties
-    subscription = ndk.subscribe([
+    subscription = ndk.$subscribe([
       {
         kinds: [selectedKind],
         authors: [pubkey]

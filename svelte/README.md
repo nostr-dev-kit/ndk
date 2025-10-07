@@ -50,7 +50,7 @@ Initialize NDK in your app:
 ```typescript
 // lib/ndk.ts
 import { NDKSvelte } from '@nostr-dev-kit/svelte';
-import NDKCacheDexie from '@nostr-dev-kit/ndk-cache-dexie';
+import NDKCacheDexie from '@nostr-dev-kit/cache-dexie';
 
 export const ndk = new NDKSvelte({
   explicitRelayUrls: [
@@ -78,7 +78,7 @@ import { ndk } from '$lib/ndk';
 import { NDKKind } from '@nostr-dev-kit/ndk';
 
 // Create a reactive subscription
-const notes = ndk.subscribe({ kinds: [NDKKind.Text], limit: 50 });
+const notes = ndk.$subscribe({ kinds: [NDKKind.Text], limit: 50 });
 
 // Properties are $state runes that automatically trigger reactivity
 // when accessed in Svelte templates or $effect blocks
@@ -131,20 +131,20 @@ All stores are namespaced under the NDK instance:
 import { ndk } from '$lib/ndk';
 
 // Session management
-const currentUser = ndk.sessions.current;
-await ndk.sessions.login(signer);
-ndk.sessions.logout();
+const currentUser = ndk.$sessions.current;
+await ndk.$sessions.login(signer);
+ndk.$sessions.logout();
 
 // Web of Trust
-await ndk.wot.load();
-const score = ndk.wot.getScore(pubkey);
+await ndk.$wot.load();
+const score = ndk.$wot.getScore(pubkey);
 
 // Wallet
-ndk.wallet.set(myWallet);
-const balance = ndk.wallet.balance;
+ndk.$wallet.set(myWallet);
+const balance = ndk.$wallet.balance;
 
 // Payments
-const amount = ndk.payments.getZapAmount(event);
+const amount = ndk.$payments.getZapAmount(event);
 
 // Pool
 const connected = ndk.pool.connectedCount;
@@ -159,7 +159,7 @@ const connected = ndk.pool.connectedCount;
 <script lang="ts">
 import { ndk } from '$lib/ndk';
 
-const sub = ndk.subscribe({ kinds: [1], authors: [pubkey], limit: 100 });
+const sub = ndk.$subscribe({ kinds: [1], authors: [pubkey], limit: 100 });
 
 // The subscription has reactive properties
 sub.events  // T[] - sorted by created_at desc
@@ -173,7 +173,7 @@ sub.isEmpty // boolean (derived)
 
 ```svelte
 <script lang="ts">
-const highlights = ndk.subscribe(
+const highlights = ndk.$subscribe(
   { kinds: [9802], limit: 50 },
   {
     // Buffer events for performance (default: 30ms)
@@ -197,7 +197,7 @@ const highlights = ndk.subscribe(
 
 ```svelte
 <script lang="ts">
-const sub = ndk.subscribe([filters], { autoStart: false });
+const sub = ndk.$subscribe([filters], { autoStart: false });
 
 // Manual control
 sub.start();
@@ -224,17 +224,17 @@ import { ndk } from '$lib/ndk';
 import { NDKNip07Signer } from '@nostr-dev-kit/ndk';
 
 // Current session (reactive)
-const current = $derived(ndk.sessions.current);
-const profile = $derived(ndk.sessions.profile);
-const follows = $derived(ndk.sessions.follows);
+const current = $derived(ndk.$sessions.current);
+const profile = $derived(ndk.$sessions.profile);
+const follows = $derived(ndk.$sessions.follows);
 
 async function login() {
   const signer = new NDKNip07Signer();
-  await ndk.sessions.login(signer);
+  await ndk.$sessions.login(signer);
 }
 
 function logout() {
-  ndk.sessions.logout();
+  ndk.$sessions.logout();
 }
 </script>
 
@@ -253,20 +253,20 @@ function logout() {
 
 ```typescript
 // Reactive getters
-ndk.sessions.current      // NDKSession | undefined
-ndk.sessions.currentUser  // NDKUser | undefined
-ndk.sessions.profile      // NDKUserProfile | undefined
-ndk.sessions.follows      // Set<Hexpubkey>
-ndk.sessions.all          // NDKSession[]
+ndk.$sessions.current      // NDKSession | undefined
+ndk.$sessions.currentUser  // NDKUser | undefined
+ndk.$sessions.profile      // NDKUserProfile | undefined
+ndk.$sessions.follows      // Set<Hexpubkey>
+ndk.$sessions.all          // NDKSession[]
 
 // Methods
-await ndk.sessions.login(signer, options?)
-await ndk.sessions.add(signer, options?)
-ndk.sessions.switch(pubkey)
-ndk.sessions.logout(pubkey?)
-ndk.sessions.logoutAll()
-ndk.sessions.get(pubkey)
-ndk.sessions.getSessionEvent(kind)
+await ndk.$sessions.login(signer, options?)
+await ndk.$sessions.add(signer, options?)
+ndk.$sessions.switch(pubkey)
+ndk.$sessions.logout(pubkey?)
+ndk.$sessions.logoutAll()
+ndk.$sessions.get(pubkey)
+ndk.$sessions.getSessionEvent(kind)
 ```
 
 ## Web of Trust
@@ -279,12 +279,12 @@ import { ndk } from '$lib/ndk';
 import { onMount } from 'svelte';
 
 onMount(async () => {
-  if (ndk.sessions.current) {
+  if (ndk.$sessions.current) {
     // Load WoT data
-    await ndk.wot.load({ maxDepth: 2 });
+    await ndk.$wot.load({ maxDepth: 2 });
 
     // Enable automatic filtering on all subscriptions
-    ndk.wot.enableAutoFilter({
+    ndk.$wot.enableAutoFilter({
       maxDepth: 2,
       minScore: 0.5,
       includeUnknown: false
@@ -293,7 +293,7 @@ onMount(async () => {
 });
 
 // Subscriptions automatically filter by WoT when enabled
-const notes = ndk.subscribe({ kinds: [1], limit: 100 });
+const notes = ndk.$subscribe({ kinds: [1], limit: 100 });
 </script>
 ```
 
@@ -301,22 +301,22 @@ const notes = ndk.subscribe({ kinds: [1], limit: 100 });
 
 ```typescript
 // Load WoT data
-await ndk.wot.load({ maxDepth?: number, maxFollows?: number, timeout?: number })
+await ndk.$wot.load({ maxDepth?: number, maxFollows?: number, timeout?: number })
 
 // Enable/disable automatic filtering
-ndk.wot.enableAutoFilter(options?)
-ndk.wot.disableAutoFilter()
+ndk.$wot.enableAutoFilter(options?)
+ndk.$wot.disableAutoFilter()
 
 // Query WoT
-ndk.wot.getScore(pubkey)              // number (0-1)
-ndk.wot.getDistance(pubkey)           // number | null
-ndk.wot.includes(pubkey, options?)    // boolean
-ndk.wot.shouldFilterEvent(event)      // boolean
-ndk.wot.rankEvents(events, options?)  // T[]
+ndk.$wot.getScore(pubkey)              // number (0-1)
+ndk.$wot.getDistance(pubkey)           // number | null
+ndk.$wot.includes(pubkey, options?)    // boolean
+ndk.$wot.shouldFilterEvent(event)      // boolean
+ndk.$wot.rankEvents(events, options?)  // T[]
 
 // State
-ndk.wot.loaded                        // boolean
-ndk.wot.autoFilterEnabled             // boolean
+ndk.$wot.loaded                        // boolean
+ndk.$wot.autoFilterEnabled             // boolean
 ```
 
 ## Mute Management
@@ -356,11 +356,11 @@ import { NDKCashuWallet } from '@nostr-dev-kit/ndk-wallet';
 // Create and set wallet
 const cashuWallet = new NDKCashuWallet(ndk);
 await cashuWallet.init();
-ndk.wallet.set(cashuWallet);
+ndk.$wallet.set(cashuWallet);
 
 // Reactive wallet state
-const balance = $derived(ndk.wallet.balance);
-const connected = $derived(!!ndk.wallet.wallet);
+const balance = $derived(ndk.$wallet.balance);
+const connected = $derived(!!ndk.$wallet.wallet);
 </script>
 
 <p>Balance: {balance} sats</p>
@@ -370,13 +370,13 @@ const connected = $derived(!!ndk.wallet.wallet);
 
 ```typescript
 // Set/clear wallet
-ndk.wallet.set(wallet)
-ndk.wallet.clear()
-await ndk.wallet.refreshBalance()
+ndk.$wallet.set(wallet)
+ndk.$wallet.clear()
+await ndk.$wallet.refreshBalance()
 
 // State
-ndk.wallet.wallet    // NDKWallet | undefined
-ndk.wallet.balance   // number
+ndk.$wallet.wallet    // NDKWallet | undefined
+ndk.$wallet.balance   // number
 ```
 
 ## Payment Tracking
@@ -388,13 +388,13 @@ Real-time payment tracking with automatic pending-to-confirmed transitions:
 import { ndk } from '$lib/ndk';
 
 // Reactive payment state
-const history = $derived(ndk.payments.history);
-const pending = $derived(ndk.payments.pending);
-const byTarget = $derived(ndk.payments.byTarget);
+const history = $derived(ndk.$payments.history);
+const pending = $derived(ndk.$payments.pending);
+const byTarget = $derived(ndk.$payments.byTarget);
 
 // Check zap status
-const amount = ndk.payments.getZapAmount(event);
-const isZapped = ndk.payments.isZapped(event);
+const amount = ndk.$payments.getZapAmount(event);
+const isZapped = ndk.$payments.isZapped(event);
 </script>
 
 {#if isZapped}
@@ -406,13 +406,13 @@ const isZapped = ndk.payments.isZapped(event);
 
 ```typescript
 // Query payments
-ndk.payments.getZapAmount(target)  // number
-ndk.payments.isZapped(target)      // boolean
+ndk.$payments.getZapAmount(target)  // number
+ndk.$payments.isZapped(target)      // boolean
 
 // State
-ndk.payments.history     // Transaction[]
-ndk.payments.pending     // PendingPayment[]
-ndk.payments.byTarget    // Map<string, Transaction[]>
+ndk.$payments.history     // Transaction[]
+ndk.$payments.pending     // PendingPayment[]
+ndk.$payments.byTarget    // Map<string, Transaction[]>
 ```
 
 ## Relay Pool Monitoring
@@ -458,7 +458,7 @@ Create derived reactive state from subscriptions:
 
 ```svelte
 <script lang="ts">
-const notes = ndk.subscribe({ kinds: [1], authors: [pubkey] });
+const notes = ndk.$subscribe({ kinds: [1], authors: [pubkey] });
 
 // Derived state using $derived
 const recentNotes = $derived(
@@ -492,7 +492,7 @@ filter.kinds = [selectedKind];
 filter.authors = selectedAuthor ? [selectedAuthor] : undefined;
 
 // Subscription updates when filter changes
-const events = ndk.subscribe(filter);
+const events = ndk.$subscribe(filter);
 </script>
 
 <select bind:value={selectedKind}>
@@ -512,7 +512,7 @@ Run side effects when subscription state changes:
 
 ```svelte
 <script lang="ts">
-const notes = ndk.subscribe({ kinds: [1] });
+const notes = ndk.$subscribe({ kinds: [1] });
 
 // Run effect when new events arrive
 $effect(() => {
@@ -537,7 +537,7 @@ The `eosed` flag is for **performance optimization and analytics**, not loading 
 
 ```svelte
 <script lang="ts">
-const notes = ndk.subscribe({ kinds: [1] });
+const notes = ndk.$subscribe({ kinds: [1] });
 
 // ✅ Good: Trigger pagination after initial load
 $effect(() => {
@@ -572,12 +572,12 @@ By default, events are buffered for 30ms to batch DOM updates:
 ```svelte
 <script lang="ts">
 // High-frequency updates (default)
-const sub1 = ndk.subscribe(filters, {
+const sub1 = ndk.$subscribe(filters, {
   bufferMs: 30 // Batch updates every 30ms
 });
 
 // Real-time updates (no buffering)
-const sub2 = ndk.subscribe(filters, {
+const sub2 = ndk.$subscribe(filters, {
   bufferMs: false // Update immediately
 });
 </script>
@@ -590,7 +590,7 @@ Events are automatically deduplicated using NDK's deduplication keys:
 ```svelte
 <script lang="ts">
 // Duplicate events are automatically filtered
-const sub = ndk.subscribe([
+const sub = ndk.$subscribe([
   { kinds: [1], authors: [pubkey] },
   { kinds: [1], '#p': [pubkey] }
 ]);
@@ -609,7 +609,7 @@ import { ndk } from '$lib/ndk';
 import { NDKHighlight } from '@nostr-dev-kit/ndk';
 
 // Type is inferred as EventSubscription<NDKHighlight>
-const highlights = ndk.subscribe<NDKHighlight>(
+const highlights = ndk.$subscribe<NDKHighlight>(
   { kinds: [9802] },
   { eventClass: NDKHighlight }
 );
@@ -638,7 +638,7 @@ onDestroy(() => {
 
 <!-- New (ndk-svelte5) -->
 <script lang="ts">
-const sub = ndk.subscribe({ kinds: [1] });
+const sub = ndk.$subscribe({ kinds: [1] });
 // No manual cleanup needed
 </script>
 
@@ -653,12 +653,12 @@ const sub = ndk.subscribe({ kinds: [1] });
 
 ```
 NDKSvelte (extends NDK)
-├── subscribe() → Subscription<T>
-├── sessions → ReactiveSessionsStore
-├── wot → ReactiveWoTStore
-├── wallet → ReactiveWalletStore
-├── payments → ReactivePaymentsStore
-└── pool → ReactivePoolStore
+├── $subscribe() → Subscription<T>
+├── $sessions → ReactiveSessionsStore
+├── $wot → ReactiveWoTStore
+├── $wallet → ReactiveWalletStore
+├── $payments → ReactivePaymentsStore
+└── $pool → ReactivePoolStore
 
 Subscription<T>
 ├── events: T[] (reactive)
@@ -694,15 +694,15 @@ See the [examples](./examples) directory for complete working examples:
 
 ```typescript
 class NDKSvelte extends NDK {
-  // Namespaced stores
-  sessions: ReactiveSessionsStore;
-  wot: ReactiveWoTStore;
-  wallet: ReactiveWalletStore;
-  payments: ReactivePaymentsStore;
-  pool: ReactivePoolStore;
+  // Reactive stores ($ prefix indicates reactive state)
+  $sessions: ReactiveSessionsStore;
+  $wot: ReactiveWoTStore;
+  $wallet: ReactiveWalletStore;
+  $payments: ReactivePaymentsStore;
+  $pool: ReactivePoolStore;
 
-  // Subscription
-  subscribe<T extends NDKEvent>(
+  // Reactive subscription
+  $subscribe<T extends NDKEvent>(
     filters: NDKFilter | NDKFilter[],
     opts?: SubscriptionOptions
   ): Subscription<T>;
@@ -763,7 +763,7 @@ Make sure you're accessing properties in Svelte templates or reactive contexts:
 
 ```svelte
 <script lang="ts">
-const sub = ndk.subscribe({ kinds: [1] });
+const sub = ndk.$subscribe({ kinds: [1] });
 
 // ✅ Good - accessed in template, automatically reactive
 </script>

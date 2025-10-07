@@ -4,6 +4,7 @@ import NDK, {
     type NDKSubscription,
     type NDKSubscriptionOptions,
 } from "@nostr-dev-kit/ndk";
+import { NDKSync, type SyncAndSubscribeOptions } from "@nostr-dev-kit/sync";
 import type { WoTFilterOptions, WoTRankOptions } from "@nostr-dev-kit/wot";
 import type { NDKSvelte } from "./ndk-svelte.svelte.js";
 
@@ -32,6 +33,8 @@ export interface SubscribeOptions extends NDKSubscriptionOptions {
     wotRank?: WoTRankOptions;
 }
 
+export interface SyncSubscribeOptions extends SubscribeOptions, SyncAndSubscribeOptions {}
+
 export interface Subscription<T extends NDKEvent = NDKEvent> {
     // Reactive reads
     get events(): T[];
@@ -46,43 +49,19 @@ export interface Subscription<T extends NDKEvent = NDKEvent> {
 }
 
 /**
- * Create a reactive Nostr subscription
- *
- * Returns an object with reactive getters that work in templates and $effect.
- * Events are automatically deduplicated and sorted by created_at (newest first).
- *
- * @example
- * ```svelte
- * <script lang="ts">
- *   import { createSubscription } from '@nostr-dev-kit/svelte';
- *
- *   // Static filters
- *   const notes = createSubscription(ndk, { kinds: [1], limit: 50 });
- *
- *   // Reactive filters - automatically restarts when kind changes
- *   let kind = $state(1);
- *   const reactiveNotes = createSubscription(ndk, () => ({
- *     kinds: [kind],
- *     limit: 50
- *   }));
- *
- *   $effect(() => {
- *     console.log('New notes:', notes.count);
- *   });
- * </script>
- *
- * {#each notes.events as note}
- *   <div>{note.content}</div>
- * {/each}
- * ```
+ * Internal shared subscription implementation
  */
-export function createSubscription<T extends NDKEvent = NDKEvent>(
+function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
     ndk: NDKSvelte,
     filters: NDKFilter | NDKFilter[] | (() => NDKFilter | NDKFilter[] | undefined),
-    opts: SubscribeOptions = {},
+    opts: SubscribeOptions,
+    subscribeMethod: (
+        filters: NDKFilter[],
+        opts: NDKSubscriptionOptions,
+    ) => NDKSubscription | Promise<NDKSubscription>,
 ): Subscription<T> {
     // Get WoT store from NDK instance
-    const wot = ndk.wot;
+    const wot = ndk.$wot;
     let _events = $state<T[]>([]);
     let _eosed = $state(false);
 
@@ -189,9 +168,7 @@ export function createSubscription<T extends NDKEvent = NDKEvent>(
     function start() {
         if (subscription) return;
 
-        // Call NDK.subscribe() directly to avoid infinite recursion
-        // (NDKSvelte.subscribe is shadowed and returns a reactive Subscription instead of NDKSubscription)
-        subscription = NDK.prototype.subscribe.call(ndk, currentFilters, {
+        const result = subscribeMethod(currentFilters, {
             ...opts,
             closeOnEose: false,
             onEvent: handleEvent,
@@ -199,6 +176,18 @@ export function createSubscription<T extends NDKEvent = NDKEvent>(
                 _eosed = true;
             },
         });
+
+        if (result instanceof Promise) {
+            result
+                .then((sub) => {
+                    subscription = sub;
+                })
+                .catch((error) => {
+                    console.error("[createSubscription] Failed to start subscription:", error);
+                });
+        } else {
+            subscription = result;
+        }
     }
 
     function stop() {
@@ -240,6 +229,107 @@ export function createSubscription<T extends NDKEvent = NDKEvent>(
 }
 
 /**
+ * Create a reactive Nostr subscription
+ *
+ * Returns an object with reactive getters that work in templates and $effect.
+ * Events are automatically deduplicated and sorted by created_at (newest first).
+ *
+ * @example
+ * ```svelte
+ * <script lang="ts">
+ *   import { createSubscription } from '@nostr-dev-kit/svelte';
+ *
+ *   // Static filters
+ *   const notes = createSubscription(ndk, { kinds: [1], limit: 50 });
+ *
+ *   // Reactive filters - automatically restarts when kind changes
+ *   let kind = $state(1);
+ *   const reactiveNotes = createSubscription(ndk, () => ({
+ *     kinds: [kind],
+ *     limit: 50
+ *   }));
+ *
+ *   $effect(() => {
+ *     console.log('New notes:', notes.count);
+ *   });
+ * </script>
+ *
+ * {#each notes.events as note}
+ *   <div>{note.content}</div>
+ * {/each}
+ * ```
+ */
+export function createSubscription<T extends NDKEvent = NDKEvent>(
+    ndk: NDKSvelte,
+    filters: NDKFilter | NDKFilter[] | (() => NDKFilter | NDKFilter[] | undefined),
+    opts: SubscribeOptions = {},
+): Subscription<T> {
+    return createSubscriptionInternal<T>(ndk, filters, opts, (filters, subOpts) => {
+        // Call NDK.subscribe() directly to avoid infinite recursion
+        // (NDKSvelte.subscribe is shadowed and returns a reactive Subscription instead of NDKSubscription)
+        return NDK.prototype.subscribe.call(ndk, filters, subOpts);
+    });
+}
+
+/**
  * Alias for createSubscription - used internally by NDKSvelte
  */
 export const createReactiveSubscription = createSubscription;
+
+/**
+ * Create a reactive Nostr subscription with Negentropy sync
+ *
+ * This combines efficient syncing with live subscriptions to ensure complete event coverage
+ * without missing any events during the sync process.
+ *
+ * Returns an object with reactive getters that work in templates and $effect.
+ * Events are automatically deduplicated and sorted by created_at (newest first).
+ *
+ * The function:
+ * 1. Immediately starts a live subscription to catch new events
+ * 2. Returns the reactive subscription right away (non-blocking)
+ * 3. In the background, syncs historical events from each relay using Negentropy
+ * 4. All synced events automatically appear in the reactive state
+ *
+ * @example
+ * ```svelte
+ * <script lang="ts">
+ *   import { createSyncSubscription } from '@nostr-dev-kit/svelte';
+ *
+ *   // Static filters with sync
+ *   const notes = createSyncSubscription(ndk, { kinds: [1], limit: 50 }, {
+ *     onRelaySynced: (relay, count) => {
+ *       console.log(`Synced ${count} events from ${relay.url}`);
+ *     },
+ *     onSyncComplete: () => {
+ *       console.log('All relays synced!');
+ *     }
+ *   });
+ *
+ *   // Reactive filters - automatically restarts when kind changes
+ *   let kind = $state(1);
+ *   const reactiveNotes = createSyncSubscription(ndk, () => ({
+ *     kinds: [kind],
+ *     limit: 50
+ *   }));
+ *
+ *   $effect(() => {
+ *     console.log('Total notes:', notes.count, 'EOSED:', notes.eosed);
+ *   });
+ * </script>
+ *
+ * {#each notes.events as note}
+ *   <div>{note.content}</div>
+ * {/each}
+ * ```
+ */
+export function createSyncSubscription<T extends NDKEvent = NDKEvent>(
+    ndk: NDKSvelte,
+    filters: NDKFilter | NDKFilter[] | (() => NDKFilter | NDKFilter[] | undefined),
+    opts: SyncSubscribeOptions = {},
+): Subscription<T> {
+    return createSubscriptionInternal<T>(ndk, filters, opts, (filters, subOpts) => {
+        // Use NDKSync class for clean, type-safe sync operations
+        return NDKSync.syncAndSubscribe(ndk, filters, subOpts);
+    });
+}

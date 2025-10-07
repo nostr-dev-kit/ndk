@@ -173,7 +173,7 @@ import { ndk } from '$lib/ndk';
 import { profiles, sessions, mutes } from '@nostr-dev-kit/svelte/stores';
 
 // Subscribe (auto-cleanup!)
-const notes = ndk.subscribe([{ kinds: [1], limit: 50 }]);
+const notes = ndk.$subscribe([{ kinds: [1], limit: 50 }]);
 
 // Get profile (auto-fetches!)
 const profile = profiles.get(pubkey);
@@ -199,7 +199,7 @@ async function login() {
 ### 1. Zero Manual Cleanup
 ```svelte
 <script>
-const notes = ndk.subscribe([{ kinds: [1] }]);
+const notes = ndk.$subscribe([{ kinds: [1] }]);
 // That's it! Auto-cleanup with $effect
 </script>
 ```
@@ -209,14 +209,14 @@ No EOSE-based loading states. Events render as they stream in.
 
 ### 3. Automatic Mute Integration
 ```typescript
-const notes = ndk.subscribe([filters], {
+const notes = ndk.$subscribe([filters], {
   skipMuted: true // Default behavior
 });
 ```
 
 ### 4. Error Handling
 ```typescript
-const notes = ndk.subscribe([filters], {
+const notes = ndk.$subscribe([filters], {
   onError: (err) => console.error(err),
   onStatusChange: (status) => console.log(status),
   autoReconnect: true
@@ -225,7 +225,7 @@ const notes = ndk.subscribe([filters], {
 
 ### 5. Type Safety
 ```typescript
-const highlights = ndk.subscribe<NDKHighlight>(
+const highlights = ndk.$subscribe<NDKHighlight>(
   [{ kinds: [9802] }],
   { eventClass: NDKHighlight }
 );

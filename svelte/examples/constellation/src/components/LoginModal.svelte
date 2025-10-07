@@ -41,7 +41,7 @@
 
       const signer = new NDKNip07Signer();
       await signer.blockUntilReady();
-      await ndk.sessions.login(signer);
+      await ndk.$sessions.login(signer);
 
       await fetchUserRelays();
       onClose();
@@ -64,7 +64,7 @@
     try {
       const signer = new NDKNip46Signer(ndk, bunkerUrl);
       await signer.blockUntilReady();
-      await ndk.sessions.login(signer);
+      await ndk.$sessions.login(signer);
 
       await fetchUserRelays();
       onClose();
@@ -105,7 +105,7 @@
       await signer.blockUntilReady();
       clearTimeout(timeout);
 
-      await ndk.sessions.login(signer);
+      await ndk.$sessions.login(signer);
 
       await fetchUserRelays();
       onClose();
@@ -134,7 +134,7 @@
 
       const privateKey = decoded.data as Uint8Array;
       const signer = new NDKPrivateKeySigner(privateKey);
-      await ndk.sessions.login(signer);
+      await ndk.$sessions.login(signer);
 
       await fetchUserRelays();
       onClose();
@@ -174,7 +174,7 @@
       const decoded = nip19.decode(generatedNsec);
       const privateKey = decoded.data as Uint8Array;
       const signer = new NDKPrivateKeySigner(privateKey);
-      await ndk.sessions.login(signer);
+      await ndk.$sessions.login(signer);
 
       await fetchUserRelays();
       onClose();

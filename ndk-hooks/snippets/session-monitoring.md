@@ -12,7 +12,7 @@ This snippet demonstrates how to set up session monitoring in a React applicatio
 import NDK, { NDKNip07Signer, NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
 
 // An optional in-browser cache adapter
-import NDKCacheAdapterDexie from "@nostr-dev-kit/ndk-cache-dexie";
+import NDKCacheAdapterDexie from "@nostr-dev-kit/cache-dexie";
 import { NDKSessionLocalStorage, useNDKInit, useNDKSessionMonitor } from "@nostr-dev-kit/ndk-hooks";
 import { useEffect } from "react";
 

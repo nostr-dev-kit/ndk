@@ -49,8 +49,7 @@
     },
     "homepage": "https://github.com/nostr-dev-kit/ndk",
     "dependencies": {
-        "@nostr-dev-kit/ndk": "^2.15.3",
-        "@nostr-dev-kit/sync": "^0.2.0",
+        "@nostr-dev-kit/ndk": "workspace:^",
         "debug": "^4.3.4",
         "typescript": "^5.8.2"
     },

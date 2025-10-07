@@ -84,24 +84,7 @@ export function useProfile(ndk: NDKSvelte, pubkey: string | undefined, opts?: ND
     async function fetchProfile(pubkey: string) {
         console.log("Fetching profile for pubkey:", pubkey);
         try {
-            // Check cache first if available and not disabled
-            if (ndk.cacheAdapter && opts?.cacheUsage !== NDKSubscriptionCacheUsage.ONLY_RELAY) {
-                if (ndk.cacheAdapter.fetchProfileSync) {
-                    const cachedProfile = ndk.cacheAdapter.fetchProfileSync(pubkey);
-                    if (cachedProfile) {
-                        profile = cachedProfile;
-                        fetching = false;
-                        return;
-                    }
-                } else if (ndk.cacheAdapter.fetchProfile) {
-                    const cachedProfile = await ndk.cacheAdapter.fetchProfile(pubkey);
-                    if (cachedProfile) {
-                        profile = cachedProfile;
-                        fetching = false;
-                        return;
-                    }
-                }
-            }
+            const user = ndk.getUser({ pubkey });
 
             // Set up default options
             const defaultOpts: NDKSubscriptionOptions = {
@@ -116,26 +99,12 @@ export function useProfile(ndk: NDKSvelte, pubkey: string | undefined, opts?: ND
 
             console.log("Subscription options:", subscriptionOpts);
 
-            // Fetch profile event from relays
-            const profileEvent = await ndk.fetchEvent({ kinds: [0], authors: [pubkey] }, subscriptionOpts);
+            // Use NDK's built-in fetchProfile
+            await user.fetchProfile(subscriptionOpts);
 
-            console.log("Fetched profile event:", profileEvent);
+            console.log("Fetched profile:", user.profile);
 
-            if (profileEvent) {
-                try {
-                    const content = JSON.parse(profileEvent.content);
-                    profile = content as NDKUserProfile;
-
-                    // Save to cache if available
-                    if (ndk.cacheAdapter?.saveProfile) {
-                        ndk.cacheAdapter.saveProfile(pubkey, profile);
-                    }
-                } catch (e) {
-                    error = new Error(`Failed to parse profile: ${e}`);
-                }
-            } else {
-                profile = undefined;
-            }
+            profile = user.profile;
         } catch (err) {
             console.error("Error fetching profile:", err);
             error = err as Error;

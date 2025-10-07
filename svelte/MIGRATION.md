@@ -137,7 +137,7 @@ ndk-svelte5 is a complete reimagining for Svelte 5. It's **not backwards compati
 | Feature | ndk-svelte (Svelte 4) | ndk-svelte5 (Svelte 5) |
 |---------|----------------------|------------------------|
 | Reactivity | Stores (`$store`) | Runes (`$state`, `$derived`) |
-| API | `$ndk.storeSubscribe()` | `ndk.subscribe()` |
+| API | `$ndk.storeSubscribe()` | `ndk.$subscribe()` |
 | Cleanup | Manual `unsubscribe()` | Automatic |
 | Type Safety | Partial | Full |
 | Performance | Good | Excellent (buffered) |
@@ -171,7 +171,7 @@ onDestroy(() => {
 **ndk-svelte5:**
 ```svelte
 <script lang="ts">
-const notes = ndk.subscribe([{ kinds: [1] }]);
+const notes = ndk.$subscribe([{ kinds: [1] }]);
 </script>
 
 {#each notes.events as event}
@@ -208,7 +208,7 @@ const store = $ndk.storeSubscribe(
 <script lang="ts">
 import { NDKHighlight } from '@nostr-dev-kit/ndk';
 
-const highlights = ndk.subscribe<NDKHighlight>(
+const highlights = ndk.$subscribe<NDKHighlight>(
   [{ kinds: [9802] }],
   { eventClass: NDKHighlight }
 );
@@ -421,7 +421,7 @@ onDestroy(() => store.unsubscribe());
 **After:**
 ```svelte
 <script lang="ts">
-const notes = ndk.subscribe([{ kinds: [1] }]);
+const notes = ndk.$subscribe([{ kinds: [1] }]);
 </script>
 
 {#each notes.events as event}
@@ -474,7 +474,7 @@ onDestroy(() => feed.unsubscribe());
 **After:**
 ```svelte
 <script lang="ts">
-const feed = ndk.subscribe([{ kinds: [1], limit: 50 }]);
+const feed = ndk.$subscribe([{ kinds: [1], limit: 50 }]);
 </script>
 
 {#each feed.events as note}
@@ -537,7 +537,7 @@ const filtered = derived(allEvents, $events =>
 **After:**
 ```svelte
 <script lang="ts">
-const events = ndk.subscribe([{ kinds: [1] }], {
+const events = ndk.$subscribe([{ kinds: [1] }], {
   skipMuted: true // Automatic filtering
 });
 </script>

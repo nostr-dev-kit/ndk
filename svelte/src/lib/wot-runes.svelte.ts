@@ -13,7 +13,7 @@ import type { NDKSvelte } from "./ndk-svelte.svelte.js";
 export function useWoTScore(ndk: NDKSvelte, pubkey: string | (() => string)) {
     const score = $derived.by(() => {
         const pk = typeof pubkey === "function" ? pubkey() : pubkey;
-        return ndk.wot.getScore(pk);
+        return ndk.$wot.getScore(pk);
     });
 
     return {
@@ -36,7 +36,7 @@ export function useWoTScore(ndk: NDKSvelte, pubkey: string | (() => string)) {
 export function useWoTDistance(ndk: NDKSvelte, pubkey: string | (() => string)) {
     const distance = $derived.by(() => {
         const pk = typeof pubkey === "function" ? pubkey() : pubkey;
-        return ndk.wot.getDistance(pk);
+        return ndk.$wot.getDistance(pk);
     });
 
     return {
@@ -60,7 +60,7 @@ export function useWoTDistance(ndk: NDKSvelte, pubkey: string | (() => string)) 
 export function useIsInWoT(ndk: NDKSvelte, pubkey: string | (() => string), options?: { maxDepth?: number }) {
     const inWoT = $derived.by(() => {
         const pk = typeof pubkey === "function" ? pubkey() : pubkey;
-        return ndk.wot.includes(pk, options);
+        return ndk.$wot.includes(pk, options);
     });
 
     return {

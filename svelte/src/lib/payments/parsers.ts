@@ -1,6 +1,6 @@
-import type { Hexpubkey, NDKEvent } from "@nostr-dev-kit/ndk";
+import type { Hexpubkey, NDKEvent, NDKUser } from "@nostr-dev-kit/ndk";
 import { NDKNutzap, zapInvoiceFromEvent } from "@nostr-dev-kit/ndk";
-import type { Transaction, TransactionDirection, TransactionStatus, TransactionType } from "./types.js";
+import type { Transaction, TransactionDirection, TransactionType } from "./types.js";
 
 /**
  * Parse a kind:7376 spending history event into a Transaction.
@@ -9,7 +9,7 @@ import type { Transaction, TransactionDirection, TransactionStatus, TransactionT
  * - .content: encrypted array of [["direction", "in|out"], ["amount", "123"], ...]
  * - tags: e-tags with markers "created", "destroyed", "redeemed"
  */
-export function parseSpendingHistory(event: NDKEvent, currentUser: Hexpubkey): Transaction {
+export function parseSpendingHistory(event: NDKEvent): Transaction {
     // Note: In production, content would need to be decrypted first
     // For now, assume it's already decrypted or plaintext for testing
     let decrypted: [string, string][];
@@ -130,7 +130,7 @@ export function pendingToTransaction(pending: {
     internalId: string;
     targetId: string;
     targetType: "user" | "event";
-    target?: any;
+    target?: NDKUser | NDKEvent;
     recipient: string;
     sender: string;
     amount: number;

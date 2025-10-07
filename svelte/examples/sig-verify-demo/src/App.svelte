@@ -38,7 +38,7 @@
   ndk.connect()
 
   // Subscribe to recent notes
-  const notes = ndk.subscribe(() => ({
+  const notes = ndk.$subscribe(() => ({
     kinds: [1],
     limit: 50
   }), {
@@ -245,7 +245,7 @@
     </div>
     <div class="stat-card">
       <div class="stat-label">Connected Relays</div>
-      <div class="stat-value">{ndk.poolStats.connectedCount}/{ndk.pool.relays.size}</div>
+      <div class="stat-value">{ndk.$pool.connectedCount}/{ndk.pool.relays.size}</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Verification Time</div>

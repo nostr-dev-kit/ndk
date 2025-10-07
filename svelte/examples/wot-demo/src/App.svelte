@@ -18,7 +18,7 @@
   let includeUnknown = $state(false);
 
   // Subscribe to kind:1 events
-  const sub = ndk.subscribe([
+  const sub = ndk.$subscribe([
     {
       kinds: [1],
       limit: 100
@@ -125,7 +125,6 @@
     }
 
     const distance = wot.getDistance(event.pubkey);
-    const score = wot.getScore(event.pubkey);
     const node = wot.getNode(event.pubkey);
 
     if (distance === 0) {

@@ -1,17 +1,11 @@
-import type NDK from "@nostr-dev-kit/ndk";
 import type { NDKWallet, NDKWalletBalance } from "@nostr-dev-kit/wallet";
 
 /**
  * Reactive wrapper around wallet
  */
 export class ReactiveWalletStore {
-    #ndk: NDK;
     balance = $state<number>(0);
     wallet = $state<NDKWallet | undefined>(undefined);
-
-    constructor(ndk: NDK) {
-        this.#ndk = ndk;
-    }
 
     /**
      * Set the active wallet and subscribe to balance updates
@@ -47,7 +41,7 @@ export class ReactiveWalletStore {
         if (!this.wallet) return;
 
         try {
-            const balance = await this.wallet.balance();
+            const balance = this.wallet.balance;
             this.balance = balance?.amount || 0;
         } catch (error) {
             console.error("[ndk-svelte5] Failed to refresh wallet balance:", error);
@@ -66,8 +60,6 @@ export class ReactiveWalletStore {
     }
 }
 
-export function createReactiveWallet(ndk: NDK): ReactiveWalletStore {
-    return new ReactiveWalletStore(ndk);
+export function createReactiveWallet(): ReactiveWalletStore {
+    return new ReactiveWalletStore();
 }
-
-export type { ReactiveWalletStore };

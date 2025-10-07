@@ -13,9 +13,9 @@
         "@nostr-dev-kit/svelte": "workspace:*"
     },
     "devDependencies": {
-        "@sveltejs/vite-plugin-svelte": "5.1.1",
+        "@sveltejs/vite-plugin-svelte": "6.2.1",
         "esbuild": "^0.25.10",
-        "svelte": "^5.14.6",
+        "svelte": "^5.39.9",
         "typescript": "^5.7.3",
         "vite": "6.3.6"
     }

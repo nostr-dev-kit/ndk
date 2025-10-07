@@ -134,5 +134,3 @@ export class ReactiveWoTStore {
 export function createReactiveWoT(ndk: NDK, sessions: ReactiveSessionsStore): ReactiveWoTStore {
     return new ReactiveWoTStore(ndk, sessions);
 }
-
-export type { ReactiveWoTStore, WoTFilterOptions, WoTRankOptions, WoTLoadOptions };

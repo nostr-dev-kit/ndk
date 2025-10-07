@@ -1,12 +1,6 @@
 <script lang="ts">
   import type { PoolType } from '../relay-manager.svelte.js';
 
-  interface TabConfig {
-    id: PoolType;
-    label: string;
-    icon?: string;
-  }
-
   interface Props {
     selected: PoolType;
     onSelect: (pool: PoolType) => void;
@@ -16,14 +10,26 @@
 
   let { selected, onSelect, counts, class: className = '' }: Props = $props();
 
-  const tabs: TabConfig[] = [
-    { id: 'all', label: 'All Relays', icon: '🌐' },
-    { id: 'read', label: 'Read', icon: '📖' },
-    { id: 'write', label: 'Write', icon: '✍️' },
-    { id: 'both', label: 'Read & Write', icon: '↔️' },
-    { id: 'temp', label: 'Temporary', icon: '⏱️' },
-    { id: 'blacklist', label: 'Blacklisted', icon: '🚫' },
-  ];
+  // Generate tabs from available pools
+  const tabs = $derived.by(() => {
+    const poolNames = counts ? Object.keys(counts) : [];
+
+    return poolNames.map(name => {
+      // Icon mapping
+      const iconMap: Record<string, string> = {
+        'all': '🌐',
+        'Main': '🏠',
+        'Outbox Pool': '📤',
+        'blacklist': '🚫',
+      };
+
+      return {
+        id: name,
+        label: name === 'all' ? 'All Relays' : name,
+        icon: iconMap[name] || '📡',
+      };
+    });
+  });
 
   function getCount(pool: PoolType): number | undefined {
     return counts?.[pool];
@@ -33,7 +39,7 @@
 <div class="relay-pool-tabs {className}">
   <div class="tabs-container">
     <div class="tabs-list" role="tablist">
-      {#each tabs as tab}
+      {#each tabs as tab (tab.id)}
         <button
           class="tab {selected === tab.id ? 'active' : ''}"
           role="tab"

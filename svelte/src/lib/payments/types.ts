@@ -1,7 +1,7 @@
 import type { NDKEvent, NDKUser, NDKZapper } from "@nostr-dev-kit/ndk";
 
 export type TransactionDirection = "in" | "out";
-export type TransactionStatus = "pending" | "complete" | "confirmed" | "failed";
+export type TransactionStatus = "pending" | "complete" | "confirmed" | "failed" | "delayed";
 
 export type TransactionType =
     | "zap_sent" // Outgoing lightning zap

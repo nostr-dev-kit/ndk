@@ -24,7 +24,7 @@ A simple feed that renders events as they stream in.
 import { ndk } from '$lib/ndk';
 import { NDKKind } from '@nostr-dev-kit/ndk';
 
-const notes = ndk.subscribe([
+const notes = ndk.$subscribe([
   { kinds: [NDKKind.Text], limit: 50 }
 ]);
 </script>
@@ -107,7 +107,7 @@ interface Props {
 
 let { channelId }: Props = $props();
 
-const messages = ndk.subscribe([
+const messages = ndk.$subscribe([
   { kinds: [NDKKind.ChannelMessage], '#e': [channelId] }
 ]);
 
@@ -179,7 +179,7 @@ interface Props {
 let { noteId }: Props = $props();
 
 // Get root note and all replies
-const events = ndk.subscribe([
+const events = ndk.$subscribe([
   { kinds: [NDKKind.Text], ids: [noteId] },
   { kinds: [NDKKind.Text], '#e': [noteId] }
 ]);
@@ -372,7 +372,7 @@ import { ndk } from '$lib/ndk';
 import { mutes } from '@nostr-dev-kit/svelte/stores';
 import { NDKKind } from '@nostr-dev-kit/ndk';
 
-const notes = ndk.subscribe([
+const notes = ndk.$subscribe([
   { kinds: [NDKKind.Text], limit: 100 }
 ], {
   skipMuted: true // Automatically filters muted content
@@ -535,7 +535,7 @@ import { ndk } from '$lib/ndk';
 import { sessions } from '@nostr-dev-kit/svelte/stores';
 import { NDKEvent, NDKKind } from '@nostr-dev-kit/ndk';
 
-const notes = ndk.subscribe([
+const notes = ndk.$subscribe([
   { kinds: [NDKKind.Text], limit: 50 }
 ]);
 
@@ -605,7 +605,7 @@ Handle connection errors and failures gracefully.
 <script lang="ts">
 import { ndk } from '$lib/ndk';
 
-const notes = ndk.subscribe([{ kinds: [1] }], {
+const notes = ndk.$subscribe([{ kinds: [1] }], {
   onError: (error) => {
     console.error('Subscription error:', error);
   },
@@ -650,12 +650,12 @@ import { ndk } from '$lib/ndk';
 import { sessions } from '@nostr-dev-kit/svelte/stores';
 
 // Get current user's notes
-const myNotes = ndk.subscribe([
+const myNotes = ndk.$subscribe([
   { kinds: [1], authors: [sessions.current?.pubkey || ''] }
 ]);
 
 // Get notes from people I follow
-const followNotes = ndk.subscribe([
+const followNotes = ndk.$subscribe([
   { kinds: [1], authors: Array.from(sessions.current?.follows || []) }
 ]);
 
@@ -693,7 +693,7 @@ interface Props {
 let { event }: Props = $props();
 
 // Subscribe to reactions for this event
-const reactions = ndk.subscribe([
+const reactions = ndk.$subscribe([
   { kinds: [7], '#e': [event.id] }
 ]);
 
@@ -730,7 +730,7 @@ async function react(emoji: string) {
 <script lang="ts">
 import { ndk } from '$lib/ndk';
 
-const notes = ndk.subscribe([
+const notes = ndk.$subscribe([
   { kinds: [1], limit: 20 }
 ]);
 

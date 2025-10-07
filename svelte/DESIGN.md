@@ -15,7 +15,7 @@ Svelte 5 introduces a new reactive paradigm. We don't wrap it or hide it - we ce
 ```svelte
 <!-- Beautiful, native Svelte 5 -->
 <script lang="ts">
-const notes = ndk.subscribe([{ kinds: [1] }]);
+const notes = ndk.$subscribe([{ kinds: [1] }]);
 </script>
 
 {#each notes.events as note}
@@ -51,7 +51,7 @@ This follows Svelte 5's guidance:
 
 ```svelte
 <script lang="ts">
-const notes = ndk.subscribe([{ kinds: [1] }]);
+const notes = ndk.$subscribe([{ kinds: [1] }]);
 // That's it. No onDestroy, no unsubscribe, nothing.
 </script>
 ```
@@ -79,7 +79,7 @@ After EOSE, buffering reduces to 16ms (~60fps) for responsive updates.
 ```svelte
 <script lang="ts">
 // Good: Clear, expressive
-const highlights = ndk.subscribe([{ kinds: [9802] }]);
+const highlights = ndk.$subscribe([{ kinds: [9802] }]);
 const profile = profiles.get(pubkey);
 const isMuted = mutes.check({ pubkey });
 
@@ -98,7 +98,7 @@ Names should be obvious. APIs should be predictable. Complexity should be hidden
 
 ```typescript
 // Types are inferred automatically
-const highlights = ndk.subscribe<NDKHighlight>(
+const highlights = ndk.$subscribe<NDKHighlight>(
   [{ kinds: [9802] }],
   { eventClass: NDKHighlight }
 );
@@ -211,13 +211,13 @@ After EOSE, we reduce to 16ms (60fps) for responsive real-time updates.
 **Configurable:**
 ```typescript
 // High-frequency, batched (default)
-ndk.subscribe([filters], { bufferMs: 30 });
+ndk.$subscribe([filters], { bufferMs: 30 });
 
 // Real-time, immediate
-ndk.subscribe([filters], { bufferMs: false });
+ndk.$subscribe([filters], { bufferMs: false });
 
 // Custom timing
-ndk.subscribe([filters], { bufferMs: 100 });
+ndk.$subscribe([filters], { bufferMs: 100 });
 ```
 
 **Edge cases handled:**
@@ -232,11 +232,11 @@ ndk.subscribe([filters], { bufferMs: 100 });
 
 ```typescript
 // Default behavior
-const notes = ndk.subscribe([{ kinds: [1] }]);
+const notes = ndk.$subscribe([{ kinds: [1] }]);
 // Automatically filters muted users and deleted events
 
 // Opt-out if needed
-const notes = ndk.subscribe([{ kinds: [1] }], {
+const notes = ndk.$subscribe([{ kinds: [1] }], {
   skipMuted: false,
   skipDeleted: false
 });
@@ -250,7 +250,7 @@ This follows the principle of **secure by default**. Most apps want this behavio
 
 ```typescript
 // lib/stores/highlights.ts
-export const highlightsSubscription = ndk.subscribe(
+export const highlightsSubscription = ndk.$subscribe(
   [{ kinds: [9802] }],
   { autoStart: false }
 );
@@ -289,7 +289,7 @@ sessions.current; // Active for entire app session
 mutes.check({ pubkey }); // Persisted to NIP-51 lists
 
 // subscriptions: View-specific, component-lifetime
-const notes = ndk.subscribe([filters]); // Lives with component
+const notes = ndk.$subscribe([filters]); // Lives with component
 ```
 
 Each store has different semantics and lifecycles. Separating them makes each simpler.
@@ -381,7 +381,7 @@ class ReactiveEvent extends NDKEvent {
 
     // Listen for related events
     $effect(() => {
-      const sub = ndk.subscribe([
+      const sub = ndk.$subscribe([
         { kinds: [5], '#e': [this.id] }, // Deletions
         { kinds: [7], '#e': [this.id] }, // Reactions
         { kinds: [9735], '#e': [this.id] } // Zaps
@@ -408,7 +408,7 @@ class ReactiveEvent extends NDKEvent {
 <script lang="ts">
 let events = $state<NDKEvent[]>([]);
 
-const sub = ndk.subscribe([filters]);
+const sub = ndk.$subscribe([filters]);
 sub.on('event', (e) => events.push(e));
 
 onDestroy(() => sub.stop());
@@ -424,7 +424,7 @@ onDestroy(() => sub.stop());
 **Better:**
 ```svelte
 <script lang="ts">
-const subscription = ndk.subscribe([filters]);
+const subscription = ndk.$subscribe([filters]);
 </script>
 
 {#each subscription.events as event}
@@ -479,7 +479,7 @@ sessions.login(signer); // Clear API
 
 ```typescript
 // Bad
-ndk.subscribe([filters], {
+ndk.$subscribe([filters], {
   onEvent: (event) => {
     if (!event.hasTag('deleted')) {
       if (!isMuted(event.pubkey)) {
@@ -493,7 +493,7 @@ ndk.subscribe([filters], {
 **Better:**
 ```typescript
 // Filtering is built-in
-const subscription = ndk.subscribe([filters], {
+const subscription = ndk.$subscribe([filters], {
   skipDeleted: true,
   skipMuted: true
 });
@@ -507,7 +507,7 @@ subscription.events;
 ```svelte
 <!-- Bad: Blocks UI on EOSE -->
 <script>
-const notes = ndk.subscribe([{ kinds: [1] }]);
+const notes = ndk.$subscribe([{ kinds: [1] }]);
 </script>
 
 {#if !notes.eosed}
@@ -529,7 +529,7 @@ const notes = ndk.subscribe([{ kinds: [1] }]);
 **Better approach - progressive rendering:**
 ```svelte
 <script>
-const notes = ndk.subscribe([{ kinds: [1] }]);
+const notes = ndk.$subscribe([{ kinds: [1] }]);
 </script>
 
 <!-- Just show events as they arrive -->
@@ -547,7 +547,7 @@ const notes = ndk.subscribe([{ kinds: [1] }]);
 ```svelte
 <script>
 // Show cached/optimistic content immediately
-const notes = ndk.subscribe([{ kinds: [1] }], {
+const notes = ndk.$subscribe([{ kinds: [1] }], {
   cache: true // Show cached events instantly
 });
 </script>
@@ -585,7 +585,7 @@ Pre-built components for common patterns:
 
 ```typescript
 // Persistent cache across sessions
-const notes = ndk.subscribe([filters], {
+const notes = ndk.$subscribe([filters], {
   cache: {
     adapter: IndexedDBAdapter,
     ttl: 3600

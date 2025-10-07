@@ -36,7 +36,7 @@ ndk.connect();
 import { ndk } from '$lib/ndk';
 
 // Subscribe to recent notes
-const notes = ndk.subscribe([
+const notes = ndk.$subscribe([
   { kinds: [1], limit: 50 }
 ]);
 </script>
@@ -73,7 +73,7 @@ That's it! Events stream in automatically and render as they arrive. No manual c
 import { ndk } from '$lib/ndk';
 import { profiles } from '@nostr-dev-kit/svelte/stores';
 
-const notes = ndk.subscribe([{ kinds: [1], limit: 50 }]);
+const notes = ndk.$subscribe([{ kinds: [1], limit: 50 }]);
 
 function getProfile(pubkey: string) {
   return profiles.get(pubkey);
@@ -158,7 +158,7 @@ async function publish() {
 
 ```svelte
 <script lang="ts">
-const notes = ndk.subscribe([
+const notes = ndk.$subscribe([
   { kinds: [1], authors: [pubkey], limit: 100 }
 ]);
 </script>
@@ -168,7 +168,7 @@ const notes = ndk.subscribe([
 
 ```svelte
 <script lang="ts">
-const events = ndk.subscribe([
+const events = ndk.$subscribe([
   { kinds: [1, 6, 16], limit: 50 }
 ]);
 </script>
@@ -178,7 +178,7 @@ const events = ndk.subscribe([
 
 ```svelte
 <script lang="ts">
-const notes = ndk.subscribe([
+const notes = ndk.$subscribe([
   { kinds: [1], '#t': ['nostr'], limit: 50 }
 ]);
 </script>
@@ -190,7 +190,7 @@ const notes = ndk.subscribe([
 <script lang="ts">
 const oneDayAgo = Math.floor(Date.now() / 1000) - 86400;
 
-const notes = ndk.subscribe([
+const notes = ndk.$subscribe([
   { kinds: [1], since: oneDayAgo, limit: 50 }
 ]);
 </script>
@@ -200,7 +200,7 @@ const notes = ndk.subscribe([
 
 ```svelte
 <script lang="ts">
-const notes = ndk.subscribe([
+const notes = ndk.$subscribe([
   { kinds: [1], limit: 20 }
 ]);
 
@@ -242,7 +242,7 @@ Create computed values with `$derived`:
 
 ```svelte
 <script lang="ts">
-const notes = ndk.subscribe([{ kinds: [1] }]);
+const notes = ndk.$subscribe([{ kinds: [1] }]);
 
 const recentNotes = $derived(notes.events.slice(0, 10));
 const noteCount = $derived(notes.events.length);
@@ -271,7 +271,7 @@ Use type parameters for custom event classes:
 <script lang="ts">
 import { NDKHighlight } from '@nostr-dev-kit/ndk';
 
-const highlights = ndk.subscribe<NDKHighlight>(
+const highlights = ndk.$subscribe<NDKHighlight>(
   [{ kinds: [9802] }],
   { eventClass: NDKHighlight }
 );
@@ -306,7 +306,7 @@ Profiles load asynchronously. They'll appear once fetched:
 Enable buffering (it's on by default):
 
 ```typescript
-const notes = ndk.subscribe([filters], {
+const notes = ndk.$subscribe([filters], {
   bufferMs: 30 // Batch updates every 30ms
 });
 ```

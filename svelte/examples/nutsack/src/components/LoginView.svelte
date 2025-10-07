@@ -14,7 +14,7 @@
 
     try {
       const signer = new NDKNip07Signer();
-      await ndk.sessions.login(signer);
+      await ndk.$sessions.login(signer);
     } catch (e) {
       error = 'Failed to connect with extension. Make sure you have a Nostr extension installed (Alby, nos2x, etc.)';
       console.error(e);
@@ -29,7 +29,7 @@
 
     try {
       const signer = NDKPrivateKeySigner.generate();
-      await ndk.sessions.login(signer);
+      await ndk.$sessions.login(signer);
 
       // Store the key for later (sessions store will also persist it)
       const privateKey = signer.privateKey;
@@ -61,7 +61,7 @@
 
     try {
       const signer = new NDKPrivateKeySigner(privateKeyInput.trim());
-      await ndk.sessions.login(signer);
+      await ndk.$sessions.login(signer);
 
       localStorage.setItem('nutsack-nsec', privateKeyInput.trim());
       privateKeyInput = '';

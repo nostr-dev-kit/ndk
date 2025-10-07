@@ -155,7 +155,7 @@ export class NDKWoT {
         d("Attempting negentropy sync for %d contact lists", authors.length);
 
         try {
-            const syncOptions: any = { autoFetch: true };
+            const syncOptions: any = { autoFetch: true, subId: 'wot-sync' };
 
             // Use specific relays if provided, or filter to negentropy-compatible relays
             if (relayUrls) {
@@ -215,7 +215,7 @@ export class NDKWoT {
                     kinds: [NDKKind.Contacts],
                     authors,
                 },
-                { closeOnEose: true },
+                { closeOnEose: true, subId: "wot-fetch", addSinceFromCache: true },
             );
 
             sub.on("event", (event: NDKEvent) => {

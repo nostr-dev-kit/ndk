@@ -121,7 +121,7 @@ ndk-svelte5/
 
 ```svelte
 <script>
-const notes = ndk.subscribe([{ kinds: [1] }]);
+const notes = ndk.$subscribe([{ kinds: [1] }]);
 // That's it! No onDestroy, no manual cleanup
 </script>
 ```
@@ -157,7 +157,7 @@ mutes.check({ content });
 ### 4. Type Safety
 
 ```typescript
-const highlights = ndk.subscribe<NDKHighlight>(
+const highlights = ndk.$subscribe<NDKHighlight>(
   [{ kinds: [9802] }],
   { eventClass: NDKHighlight }
 );
@@ -203,7 +203,7 @@ const highlights = ndk.subscribe<NDKHighlight>(
 ### Basic Subscription
 ```svelte
 <script>
-const notes = ndk.subscribe([{ kinds: [1] }]);
+const notes = ndk.$subscribe([{ kinds: [1] }]);
 </script>
 
 {#each notes.events as note}
@@ -216,7 +216,7 @@ const notes = ndk.subscribe([{ kinds: [1] }]);
 <script>
 import { profiles } from '@nostr-dev-kit/svelte/stores';
 
-const notes = ndk.subscribe([{ kinds: [1] }]);
+const notes = ndk.$subscribe([{ kinds: [1] }]);
 </script>
 
 {#each notes.events as note}
@@ -331,7 +331,7 @@ We explicitly call out bad patterns:
 **Most innovative feature:** Zero manual cleanup
 **Most requested feature:** Built-in profile/session stores
 **Most important pattern:** Progressive rendering
-**Most elegant API:** `ndk.subscribe()`
+**Most elegant API:** `ndk.$subscribe()`
 **Most practical doc:** EXAMPLES.md
 
 ## 📞 Contact

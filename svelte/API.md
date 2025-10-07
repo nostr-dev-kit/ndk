@@ -39,30 +39,35 @@ class NDKSvelte extends NDK {
    * @param opts - Subscription options
    * @returns EventSubscription instance with reactive state
    */
-  subscribe<T extends NDKEvent>(
+  $subscribe<T extends NDKEvent>(
     filters: NDKFilter | NDKFilter[],
     opts?: SubscriptionOptions<T>
   ): EventSubscription<T>;
 
   /**
-   * Global profile store
+   * Session management store (reactive)
    */
-  profiles: ProfileStore;
+  $sessions: ReactiveSessionsStore;
 
   /**
-   * Session management store
+   * Web of Trust store (reactive)
    */
-  sessions: SessionStore;
+  $wot: ReactiveWoTStore;
 
   /**
-   * Mute management store
+   * Wallet integration store (reactive)
    */
-  mutes: MuteStore;
+  $wallet: ReactiveWalletStore;
 
   /**
-   * Wallet integration store
+   * Payment tracking store (reactive)
    */
-  wallet: WalletStore;
+  $payments: ReactivePaymentsStore;
+
+  /**
+   * Pool monitoring store (reactive)
+   */
+  $pool: ReactivePoolStore;
 }
 ```
 
@@ -887,7 +892,7 @@ import { NDKHighlight } from '@nostr-dev-kit/ndk';
 import { ndk } from '$lib/ndk';
 
 // Type is inferred as EventSubscription<NDKHighlight>
-const highlights = ndk.subscribe<NDKHighlight>(
+const highlights = ndk.$subscribe<NDKHighlight>(
   [{ kinds: [9802] }],
   { eventClass: NDKHighlight }
 );
@@ -921,7 +926,7 @@ class CustomArticle extends NDKEvent {
 }
 
 // Use custom class
-const articles = ndk.subscribe<CustomArticle>(
+const articles = ndk.$subscribe<CustomArticle>(
   [{ kinds: [30023] }],
   { eventClass: CustomArticle }
 );

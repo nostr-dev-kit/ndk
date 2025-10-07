@@ -99,9 +99,9 @@
 
   onMount(async () => {
     // Load user's contacts
-    if (ndk.sessions.current) {
+    if (ndk.$sessions.current) {
       try {
-        const user = new NDKUserClass({ pubkey: ndk.sessions.current.pubkey });
+        const user = new NDKUserClass({ pubkey: ndk.$sessions.current.pubkey });
         user.ndk = ndk;
         const contactList = await user.follows();
         const contactArray = Array.from(contactList).slice(0, 20);

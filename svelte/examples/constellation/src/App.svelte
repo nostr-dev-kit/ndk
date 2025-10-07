@@ -10,7 +10,7 @@
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
 
   // Subscribe to bookmarks (kind 39701)
-  const subscription = ndk.subscribe([
+  const subscription = ndk.$subscribe([
     {
       kinds: [39701],
       limit: 100,
@@ -26,10 +26,10 @@
   let bookmarks = $derived(Array.from(subscription.events));
   let eosed = $derived(subscription.eosed);
   let currentUser = $derived((() => {
-    if (!ndk.sessions.current) return undefined;
-    const user = new NDKUser({ pubkey: ndk.sessions.current.pubkey });
+    if (!ndk.$sessions.current) return undefined;
+    const user = new NDKUser({ pubkey: ndk.$sessions.current.pubkey });
     user.ndk = ndk;
-    user.profile = ndk.sessions.current.profile;
+    user.profile = ndk.$sessions.current.profile;
     return user;
   })());
 

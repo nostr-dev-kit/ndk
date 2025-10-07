@@ -141,7 +141,7 @@ initStores(ndk);
 ndk.connect();
 
 // Subscribe to events
-const notes = ndk.subscribe([{ kinds: [1], limit: 50 }]);
+const notes = ndk.$subscribe([{ kinds: [1], limit: 50 }]);
 
 // Use profiles
 const profile = profiles.get(pubkey);

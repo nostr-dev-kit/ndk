@@ -25,6 +25,13 @@
   let isExpanded = $state(expanded);
   let copied = $state(false);
 
+  // Automatically fetch relay info when component mounts if not already loaded
+  $effect(() => {
+    if (!relay.nip11 && !relay.error && onFetchInfo) {
+      onFetchInfo(relay.url);
+    }
+  });
+
   function handleCopy() {
     if (onCopyUrl) {
       onCopyUrl(relay.url);
@@ -49,19 +56,20 @@
     return `${seconds}s`;
   }
 
-  const uptime = $derived(() => {
-    if (!relay.connectionStats.connectedAt) return null;
+  const uptime = $derived.by(() => {
+    if (!relay.connectionStats?.connectedAt) return null;
     const now = Date.now();
     return formatDuration(now - relay.connectionStats.connectedAt);
   });
 
-  const successRate = $derived(() => {
+  const successRate = $derived.by(() => {
+    if (!relay.connectionStats) return 0;
     const { attempts, success } = relay.connectionStats;
     if (attempts === 0) return 0;
     return Math.round((success / attempts) * 100);
   });
 
-  const displayUrl = $derived(() => {
+  const displayUrl = $derived.by(() => {
     return relay.url.replace(/^wss?:\/\//, '');
   });
 </script>
@@ -70,16 +78,19 @@
   <div class="relay-card-header" onclick={() => (isExpanded = !isExpanded)} role="button" tabindex="0">
     <div class="relay-card-header-left">
       <RelayConnectionStatus status={relay.status} size="md" />
+      {#if relay.nip11?.icon}
+        <img src={relay.nip11.icon} alt="{relay.nip11.name || relay.url} icon" class="relay-icon" />
+      {/if}
       <div class="relay-card-title">
         <div class="relay-card-name">
           {#if relay.nip11?.name}
             <span class="font-semibold">{relay.nip11.name}</span>
           {:else}
-            <span class="font-mono text-sm">{displayUrl()}</span>
+            <span class="font-mono text-sm">{displayUrl}</span>
           {/if}
         </div>
         {#if relay.nip11?.name}
-          <div class="relay-card-url">{displayUrl()}</div>
+          <div class="relay-card-url">{displayUrl}</div>
         {/if}
       </div>
     </div>
@@ -131,20 +142,20 @@
         <div class="stats-grid">
           <div class="stat-item">
             <span class="stat-label">Attempts</span>
-            <span class="stat-value">{relay.connectionStats.attempts}</span>
+            <span class="stat-value">{relay.connectionStats?.attempts ?? 0}</span>
           </div>
           <div class="stat-item">
             <span class="stat-label">Success</span>
-            <span class="stat-value">{relay.connectionStats.success}</span>
+            <span class="stat-value">{relay.connectionStats?.success ?? 0}</span>
           </div>
           <div class="stat-item">
             <span class="stat-label">Success Rate</span>
-            <span class="stat-value">{successRate()}%</span>
+            <span class="stat-value">{successRate}%</span>
           </div>
-          {#if uptime()}
+          {#if uptime}
             <div class="stat-item">
               <span class="stat-label">Uptime</span>
-              <span class="stat-value">{uptime()}</span>
+              <span class="stat-value">{uptime}</span>
             </div>
           {/if}
         </div>
@@ -170,7 +181,7 @@
               <div class="info-item">
                 <span class="info-label">Supported NIPs</span>
                 <div class="nips-list">
-                  {#each relay.nip11.supported_nips.sort((a, b) => a - b) as nip}
+                  {#each relay.nip11.supported_nips.sort((a, b) => a - b) as nip (nip)}
                     <span class="nip-badge">{nip}</span>
                   {/each}
                 </div>
@@ -216,12 +227,6 @@
             </div>
           </div>
         {/if}
-      {:else if !relay.error}
-        <div class="relay-section">
-          <button class="fetch-info-button" onclick={() => onFetchInfo?.(relay.url)}>
-            Fetch Relay Information (NIP-11)
-          </button>
-        </div>
       {/if}
 
       {#if relay.error}
@@ -294,6 +299,14 @@
     gap: 0.75rem;
     flex: 1;
     min-width: 0;
+  }
+
+  .relay-icon {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.375rem;
+    object-fit: cover;
+    flex-shrink: 0;
   }
 
   .relay-card-title {
@@ -457,23 +470,6 @@
     border-radius: 0.375rem;
     font-size: 0.75rem;
     font-weight: 600;
-  }
-
-  .fetch-info-button {
-    padding: 0.625rem 1rem;
-    background: var(--primary-color, #3b82f6);
-    color: white;
-    border: none;
-    border-radius: 0.5rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  .fetch-info-button:hover {
-    background: var(--primary-hover, #2563eb);
-    transform: translateY(-1px);
   }
 
   .relay-actions {

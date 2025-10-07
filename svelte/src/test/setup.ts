@@ -4,6 +4,8 @@
  * Provides mock implementations of $state and $derived for testing stores
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
+
 // Simple reactive implementation for tests
 class ReactiveValue<T> {
     #value: T;

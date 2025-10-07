@@ -28,7 +28,7 @@
   function logout() {
     if (confirm('Are you sure you want to logout?')) {
       localStorage.removeItem('nutsack-nsec');
-      ndk.sessions.logout();
+      ndk.$sessions.logout();
       location.reload();
     }
   }

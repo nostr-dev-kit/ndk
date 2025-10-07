@@ -10,14 +10,15 @@
     },
     "dependencies": {
         "@nostr-dev-kit/ndk": "^2.15.3",
+        "@nostr-dev-kit/cache-sqlite-wasm": "workspace:*",
         "@nostr-dev-kit/svelte": "../..",
         "@nostr-dev-kit/wot": "^0.3.0",
         "nostr-tools": "^2.10.2"
     },
     "devDependencies": {
-        "@sveltejs/vite-plugin-svelte": "5.1.1",
+        "@sveltejs/vite-plugin-svelte": "6.2.1",
         "esbuild": "^0.25.10",
-        "svelte": "^5.14.6",
+        "svelte": "^5.39.9",
         "typescript": "^5.7.3",
         "vite": "6.3.6"
     }

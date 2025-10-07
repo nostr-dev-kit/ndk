@@ -435,7 +435,7 @@ export class PaymentMonitor {
     this._started = true;
 
     // Subscribe to spending history (kind:7376)
-    const historySub = this.ndk.subscribe(
+    const historySub = this.ndk.$subscribe(
       [{ kinds: [7376], authors: [this.pubkey] }],
       { groupable: false }
     );
@@ -443,7 +443,7 @@ export class PaymentMonitor {
     this.subscriptions.set('history', historySub);
 
     // Subscribe to received nutzaps (kind:9321)
-    const nutzapSub = this.ndk.subscribe(
+    const nutzapSub = this.ndk.$subscribe(
       [{ kinds: [9321], '#p': [this.pubkey] }],
       { groupable: false }
     );
@@ -451,7 +451,7 @@ export class PaymentMonitor {
     this.subscriptions.set('nutzaps', nutzapSub);
 
     // Subscribe to zap receipts (kind:9735)
-    const zapSub = this.ndk.subscribe(
+    const zapSub = this.ndk.$subscribe(
       [{ kinds: [9735], '#p': [this.pubkey] }],
       { groupable: false }
     );

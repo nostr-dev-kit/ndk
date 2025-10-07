@@ -1,6 +1,20 @@
 <script lang="ts">
   import NDK, { NDKEvent, NDKUser } from '@nostr-dev-kit/ndk';
-  import { Avatar, EventContent, ZapButton, TransactionList } from '@nostr-dev-kit/svelte';
+  import {
+    Avatar,
+    BlossomImage,
+    EventContent,
+    ZapButton,
+    TransactionList,
+    RelayManager,
+    RelayCard,
+    RelayList,
+    RelayPoolTabs,
+    RelayConnectionStatus,
+    RelayAddForm,
+    createRelayManager,
+    type EnrichedRelayInfo
+  } from '@nostr-dev-kit/svelte';
 
   // Initialize NDK
   const ndk = new NDK({
@@ -14,12 +28,24 @@
 
   ndk.connect();
 
-  // Component examples state
-  type ComponentName = 'Avatar' | 'EventContent' | 'ZapButton' | 'TransactionList';
+  // Component categories and list
+  type ComponentName =
+    | 'Avatar'
+    | 'BlossomImage'
+    | 'EventContent'
+    | 'ZapButton'
+    | 'TransactionList'
+    | 'RelayManager'
+    | 'RelayCard'
+    | 'RelayList'
+    | 'RelayPoolTabs'
+    | 'RelayConnectionStatus'
+    | 'RelayAddForm';
+
   let selectedComponent = $state<ComponentName>('Avatar');
 
   // Avatar props
-  let avatarPubkey = $state('npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6'); // Jack Dorsey
+  let avatarPubkey = $state('fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52');
   let avatarSize = $state(80);
 
   // EventContent props
@@ -35,12 +61,11 @@
   let txListLimit = $state(10);
   let txListDirection = $state<'in' | 'out' | undefined>(undefined);
 
-  // Create a dummy user for testing
-  const testUser = ndk.getUser({
-    pubkey: '180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6'
-  });
+  // RelayConnectionStatus props
+  let relayStatus = $state<'connected' | 'connecting' | 'reconnecting' | 'disconnected'>('connected');
+  let relayStatusSize = $state<'sm' | 'md' | 'lg'>('md');
+  let relayStatusShowLabel = $state(true);
 
-  // Create a dummy event for testing
   const testEvent = new NDKEvent(ndk, {
     kind: 1,
     content: 'Test event',
@@ -49,11 +74,52 @@
     tags: [],
   });
 
-  const components = [
-    { name: 'Avatar', description: 'Display user avatars with automatic profile fetching' },
-    { name: 'EventContent', description: 'Render Nostr event content with rich formatting' },
-    { name: 'ZapButton', description: 'Send lightning zaps to users or events' },
-    { name: 'TransactionList', description: 'Display payment transactions' }
+  // Mock relay data for RelayCard
+  const mockRelay: EnrichedRelayInfo = {
+    url: 'wss://relay.damus.io',
+    read: true,
+    write: true,
+    status: 'connected',
+    connectionTime: 1234567890,
+    nip11: {
+      name: 'Damus Relay',
+      description: 'A relay for the Damus client',
+      supported_nips: [1, 2, 4, 9, 11, 12, 15, 16, 20, 22, 28, 33, 40],
+    }
+  };
+
+  const componentCategories = [
+    {
+      name: 'User & Content',
+      components: [
+        { name: 'Avatar', description: 'Display user avatars with automatic profile fetching' },
+        { name: 'EventContent', description: 'Render Nostr event content with rich formatting' },
+      ]
+    },
+    {
+      name: 'Payments',
+      components: [
+        { name: 'ZapButton', description: 'Send lightning zaps to users or events' },
+        { name: 'TransactionList', description: 'Display payment transactions' },
+      ]
+    },
+    {
+      name: 'Relay Management',
+      components: [
+        { name: 'RelayManager', description: 'Complete relay management interface' },
+        { name: 'RelayCard', description: 'Display individual relay information' },
+        { name: 'RelayList', description: 'List of relays with filtering' },
+        { name: 'RelayPoolTabs', description: 'Tabbed interface for relay pools' },
+        { name: 'RelayConnectionStatus', description: 'Visual relay connection status indicator' },
+        { name: 'RelayAddForm', description: 'Form to add new relays' },
+      ]
+    },
+    {
+      name: 'Media',
+      components: [
+        { name: 'BlossomImage', description: 'Display images from Blossom CDN with healing (requires NDKBlossom)' },
+      ]
+    }
   ] as const;
 </script>
 
@@ -65,15 +131,20 @@
     </div>
 
     <nav class="component-list">
-      {#each components as component}
-        <button
-          class="component-item"
-          class:active={selectedComponent === component.name}
-          onclick={() => selectedComponent = component.name}
-        >
-          <div class="component-name">{component.name}</div>
-          <div class="component-description">{component.description}</div>
-        </button>
+      {#each componentCategories as category}
+        <div class="category">
+          <div class="category-name">{category.name}</div>
+          {#each category.components as component}
+            <button
+              class="component-item"
+              class:active={selectedComponent === component.name}
+              onclick={() => selectedComponent = component.name as ComponentName}
+            >
+              <div class="component-name">{component.name}</div>
+              <div class="component-description">{component.description}</div>
+            </button>
+          {/each}
+        </div>
       {/each}
     </nav>
 
@@ -233,6 +304,182 @@
             <span class="help-text">Filter by transaction direction</span>
           </div>
         </div>
+
+      {:else if selectedComponent === 'RelayManager'}
+        <div class="demo-section">
+          <h3>Demo</h3>
+          <div class="demo-area full-width">
+            <RelayManager {ndk} />
+          </div>
+        </div>
+
+        <div class="controls-section">
+          <h3>Props</h3>
+          <p class="info">
+            RelayManager is a complete, self-contained relay management interface.
+            It only requires an NDK instance and handles all relay operations internally.
+          </p>
+          <div class="control-group">
+            <label>ndk <span class="required">*</span></label>
+            <span class="help-text">NDK instance for relay management</span>
+          </div>
+        </div>
+
+      {:else if selectedComponent === 'RelayCard'}
+        <div class="demo-section">
+          <h3>Demo</h3>
+          <div class="demo-area full-width">
+            <RelayCard relay={mockRelay} expanded={true} />
+          </div>
+        </div>
+
+        <div class="controls-section">
+          <h3>Props</h3>
+          <div class="control-group">
+            <label>relay <span class="required">*</span></label>
+            <span class="help-text">EnrichedRelayInfo object containing relay data</span>
+          </div>
+          <div class="control-group">
+            <label>expanded</label>
+            <span class="help-text">Whether to show expanded view by default</span>
+          </div>
+          <div class="control-group">
+            <label>onFetchInfo, onRemove, onBlacklist, onUnblacklist, onCopyUrl</label>
+            <span class="help-text">Optional callback functions for relay actions</span>
+          </div>
+        </div>
+
+      {:else if selectedComponent === 'RelayList'}
+        <div class="demo-section">
+          <h3>Demo</h3>
+          <div class="demo-area full-width">
+            <RelayList {ndk} />
+          </div>
+        </div>
+
+        <div class="controls-section">
+          <h3>Props</h3>
+          <div class="control-group">
+            <label>ndk <span class="required">*</span></label>
+            <span class="help-text">NDK instance for accessing relays</span>
+          </div>
+        </div>
+
+      {:else if selectedComponent === 'RelayPoolTabs'}
+        <div class="demo-section">
+          <h3>Demo</h3>
+          <div class="demo-area full-width">
+            <RelayPoolTabs {ndk} />
+          </div>
+        </div>
+
+        <div class="controls-section">
+          <h3>Props</h3>
+          <div class="control-group">
+            <label>ndk <span class="required">*</span></label>
+            <span class="help-text">NDK instance for relay pool management</span>
+          </div>
+        </div>
+
+      {:else if selectedComponent === 'RelayConnectionStatus'}
+        <div class="demo-section">
+          <h3>Demo</h3>
+          <div class="demo-area">
+            <div style="display: flex; gap: 2rem; align-items: center; flex-wrap: wrap;">
+              <RelayConnectionStatus
+                status={relayStatus}
+                size={relayStatusSize}
+                showLabel={relayStatusShowLabel}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="controls-section">
+          <h3>Props</h3>
+          <div class="control-group">
+            <label for="relay-status">status <span class="required">*</span></label>
+            <select id="relay-status" bind:value={relayStatus}>
+              <option value="connected">Connected</option>
+              <option value="connecting">Connecting</option>
+              <option value="reconnecting">Reconnecting</option>
+              <option value="disconnected">Disconnected</option>
+            </select>
+            <span class="help-text">Current relay connection status</span>
+          </div>
+
+          <div class="control-group">
+            <label for="relay-status-size">size</label>
+            <select id="relay-status-size" bind:value={relayStatusSize}>
+              <option value="sm">Small</option>
+              <option value="md">Medium</option>
+              <option value="lg">Large</option>
+            </select>
+            <span class="help-text">Size of the status indicator (default: md)</span>
+          </div>
+
+          <div class="control-group">
+            <label for="relay-status-label">
+              <input
+                id="relay-status-label"
+                type="checkbox"
+                bind:checked={relayStatusShowLabel}
+              />
+              Show Label
+            </label>
+            <span class="help-text">Display status text label</span>
+          </div>
+        </div>
+
+      {:else if selectedComponent === 'RelayAddForm'}
+        <div class="demo-section">
+          <h3>Demo</h3>
+          <div class="demo-area full-width">
+            <RelayAddForm {ndk} />
+          </div>
+        </div>
+
+        <div class="controls-section">
+          <h3>Props</h3>
+          <div class="control-group">
+            <label>ndk <span class="required">*</span></label>
+            <span class="help-text">NDK instance for adding relays</span>
+          </div>
+          <div class="control-group">
+            <label>onAdd</label>
+            <span class="help-text">Optional callback when a relay is added</span>
+          </div>
+        </div>
+
+      {:else if selectedComponent === 'BlossomImage'}
+        <div class="demo-section">
+          <h3>Demo</h3>
+          <div class="demo-area">
+            <p class="warning">
+              ⚠️ BlossomImage requires an NDKBlossom instance. See the component source for usage details.
+            </p>
+          </div>
+        </div>
+
+        <div class="controls-section">
+          <h3>Props</h3>
+          <div class="control-group">
+            <label>blossom <span class="required">*</span></label>
+            <span class="help-text">NDKBlossom instance</span>
+          </div>
+          <div class="control-group">
+            <label>user <span class="required">*</span></label>
+            <span class="help-text">NDKUser instance</span>
+          </div>
+          <div class="control-group">
+            <label>src <span class="required">*</span></label>
+            <span class="help-text">Image URL or Blossom hash</span>
+          </div>
+          <div class="control-group">
+            <label>width, height, alt, class</label>
+            <span class="help-text">Optional display properties</span>
+          </div>
+        </div>
       {/if}
     </div>
   </main>
@@ -289,7 +536,22 @@
     padding: 1rem 0.5rem;
     display: flex;
     flex-direction: column;
+    gap: 1rem;
+  }
+
+  .category {
+    display: flex;
+    flex-direction: column;
     gap: 0.25rem;
+  }
+
+  .category-name {
+    padding: 0.5rem 1rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: rgba(255, 255, 255, 0.4);
   }
 
   .component-item {
@@ -360,7 +622,7 @@
   }
 
   .content-body {
-    max-width: 800px;
+    max-width: 900px;
   }
 
   .demo-section {
@@ -385,9 +647,16 @@
     min-height: 120px;
   }
 
-  .demo-area.content-demo {
+  .demo-area.content-demo,
+  .demo-area.full-width {
     align-items: flex-start;
     justify-content: flex-start;
+  }
+
+  .demo-area.full-width {
+    padding: 0;
+    background: transparent;
+    border: none;
   }
 
   .controls-section h3 {
@@ -442,6 +711,10 @@
     margin-bottom: 0.5rem;
   }
 
+  .control-group input[type="checkbox"] {
+    margin-right: 0.5rem;
+  }
+
   .control-group textarea {
     resize: vertical;
     min-height: 100px;
@@ -474,6 +747,16 @@
     border-radius: 8px;
     font-size: 0.875rem;
     color: #fbbf24;
+  }
+
+  .info {
+    padding: 0.75rem 1rem;
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 8px;
+    font-size: 0.875rem;
+    color: #60a5fa;
+    line-height: 1.5;
   }
 
   /* Responsive */

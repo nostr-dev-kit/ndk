@@ -14,7 +14,7 @@
 
   // React to session changes
   $effect(() => {
-    const currentSession = ndk.sessions.current;
+    const currentSession = ndk.$sessions.current;
 
     if (currentSession) {
       // Check if onboarding is needed
@@ -29,7 +29,7 @@
 
   onMount(async () => {
     // Initialize sessions store
-    await ndk.sessions.init(ndk);
+    await ndk.$sessions.init(ndk);
 
     // Wait for NDK to be ready
     await ndkReady;
@@ -54,12 +54,12 @@
       <h1 class="gradient-text">Nutsack</h1>
       <p class="shimmer">Loading your wallet...</p>
     </div>
-  {:else if !ndk.sessions.current}
+  {:else if !ndk.$sessions.current}
     <LoginView />
   {:else if showOnboarding}
     <WalletOnboardingFlow {ndk} onComplete={handleOnboardingComplete} />
   {:else}
-    <WalletView user={ndk.getUser({ pubkey: ndk.sessions.current.pubkey })} />
+    <WalletView user={ndk.getUser({ pubkey: ndk.$sessions.current.pubkey })} />
   {/if}
 </main>
 

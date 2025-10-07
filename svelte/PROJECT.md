@@ -145,7 +145,7 @@ Events stream in and render immediately. No "loading" states based on EOSE.
 
 ```typescript
 // ✅ Good: Clear, concise
-const notes = ndk.subscribe([{ kinds: [1] }]);
+const notes = ndk.$subscribe([{ kinds: [1] }]);
 const profile = profiles.get(pubkey);
 
 // ❌ Bad: Verbose, unclear

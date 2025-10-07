@@ -1,6 +1,6 @@
 import type NDK from "@nostr-dev-kit/ndk";
 import type { NDKRelay } from "@nostr-dev-kit/ndk";
-import { NDKKind, NDKList, NDKRelayList } from "@nostr-dev-kit/ndk";
+import { fetchRelayInformation, NDKKind, NDKList, NDKRelayList } from "@nostr-dev-kit/ndk";
 import type { RelayStatus } from "./stores/pool.svelte.js";
 
 /**
@@ -35,7 +35,7 @@ export interface RelayInformation {
     fees?: {
         admission?: Array<{ amount: number; unit: string }>;
         subscription?: Array<{ amount: number; unit: string; period: number }>;
-        publication?: Array<{ kinds: number[]; amount: number; unit: string }>;
+        publication?: Array<{ kinds?: number[]; amount: number; unit: string }>;
     };
     icon?: string;
 }
@@ -56,28 +56,8 @@ export interface EnrichedRelayInfo {
     error?: string;
 }
 
-export type PoolType = "all" | "read" | "write" | "both" | "temp" | "blacklist";
+export type PoolType = string; // Pool name from ndk.pools
 
-/**
- * Fetch NIP-11 relay information document
- */
-async function fetchRelayInformation(relayUrl: string): Promise<RelayInformation> {
-    const httpUrl = relayUrl.replace(/^wss?:\/\//, (match) => {
-        return match.startsWith("wss") ? "https://" : "http://";
-    });
-
-    const response = await fetch(httpUrl, {
-        headers: {
-            Accept: "application/nostr+json",
-        },
-    });
-
-    if (!response.ok) {
-        throw new Error(`Failed to fetch relay information: ${response.status} ${response.statusText}`);
-    }
-
-    return await response.json();
-}
 
 /**
  * Reactive relay manager for NDK
@@ -100,6 +80,19 @@ export class RelayManager {
         this.#ndk = ndk;
         this.#setupPoolListeners();
         this.#loadRelayLists();
+    }
+
+    /**
+     * Get all available pool names from NDK
+     */
+    getPoolNames(): string[] {
+        const names = ["all"];
+        for (const pool of this.#ndk.pools) {
+            if (pool.name) {
+                names.push(pool.name);
+            }
+        }
+        return names;
     }
 
     /**
@@ -231,14 +224,22 @@ export class RelayManager {
             const nip11 = await fetchRelayInformation(relayUrl);
             const info = this.relayInfo.get(relayUrl);
             if (info) {
-                info.nip11 = nip11;
-                info.error = undefined;
+                // Create new object to trigger reactivity
+                this.relayInfo.set(relayUrl, {
+                    ...info,
+                    nip11,
+                    error: undefined,
+                });
                 this.relayInfo = new Map(this.relayInfo);
             }
         } catch (error) {
             const info = this.relayInfo.get(relayUrl);
             if (info) {
-                info.error = error instanceof Error ? error.message : String(error);
+                // Create new object to trigger reactivity
+                this.relayInfo.set(relayUrl, {
+                    ...info,
+                    error: error instanceof Error ? error.message : String(error),
+                });
                 this.relayInfo = new Map(this.relayInfo);
             }
         } finally {
@@ -381,44 +382,44 @@ export class RelayManager {
     getFilteredRelays(): EnrichedRelayInfo[] {
         const allRelays = Array.from(this.relayInfo.values());
 
-        switch (this.selectedPool) {
-            case "read":
-                return allRelays.filter((r) => r.isRead);
-            case "write":
-                return allRelays.filter((r) => r.isWrite);
-            case "both":
-                return allRelays.filter((r) => r.isBoth);
-            case "temp":
-                return allRelays.filter((r) => !r.isRead && !r.isWrite && !r.isBoth && !r.isBlacklisted);
-            case "blacklist":
-                return allRelays.filter((r) => r.isBlacklisted);
-            case "all":
-            default:
-                return allRelays.filter((r) => !r.isBlacklisted);
+        if (this.selectedPool === "all") {
+            return allRelays.filter((r) => !r.isBlacklisted);
         }
+
+        // Find the pool by name
+        const pool = this.#ndk.pools.find((p) => p.name === this.selectedPool);
+        if (!pool) {
+            return allRelays.filter((r) => !r.isBlacklisted);
+        }
+
+        // Get relay URLs from this pool
+        const poolRelayUrls = new Set(Array.from(pool.relays.values()).map((r) => r.url));
+
+        // Filter relays that are in this pool
+        return allRelays.filter((r) => poolRelayUrls.has(r.url) && !r.isBlacklisted);
     }
 
     /**
      * Get relay count by pool type
      */
-    getPoolCount(pool: PoolType): number {
+    getPoolCount(poolName: PoolType): number {
         const allRelays = Array.from(this.relayInfo.values());
 
-        switch (pool) {
-            case "read":
-                return allRelays.filter((r) => r.isRead).length;
-            case "write":
-                return allRelays.filter((r) => r.isWrite).length;
-            case "both":
-                return allRelays.filter((r) => r.isBoth).length;
-            case "temp":
-                return allRelays.filter((r) => !r.isRead && !r.isWrite && !r.isBoth && !r.isBlacklisted).length;
-            case "blacklist":
-                return allRelays.filter((r) => r.isBlacklisted).length;
-            case "all":
-            default:
-                return allRelays.filter((r) => !r.isBlacklisted).length;
+        if (poolName === "all") {
+            return allRelays.filter((r) => !r.isBlacklisted).length;
         }
+
+        // Find the pool by name
+        const pool = this.#ndk.pools.find((p) => p.name === poolName);
+        if (!pool) {
+            return 0;
+        }
+
+        // Get relay URLs from this pool
+        const poolRelayUrls = new Set(Array.from(pool.relays.values()).map((r) => r.url));
+
+        // Count relays that are in this pool
+        return allRelays.filter((r) => poolRelayUrls.has(r.url) && !r.isBlacklisted).length;
     }
 }
 

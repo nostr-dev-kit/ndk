@@ -11,14 +11,12 @@ import { LocalStorage, NDKSessionManager } from "@nostr-dev-kit/sessions";
  */
 export class ReactiveSessionsStore {
     #manager: NDKSessionManager;
-    #ndk: NDK;
 
     // Reactive state synced from Zustand store
     sessions = $state<Map<Hexpubkey, NDKSession>>(new Map());
     activePubkey = $state<Hexpubkey | undefined>(undefined);
 
     constructor(ndk: NDK) {
-        this.#ndk = ndk;
         this.#manager = new NDKSessionManager(ndk, {
             storage: new LocalStorage(),
             autoSave: true,
@@ -123,7 +121,7 @@ export class ReactiveSessionsStore {
      * @example
      * ```ts
      * // Full access with signer
-     * await ndk.sessions.login(signer, {
+     * await ndk.$sessions.login(signer, {
      *   profile: true,
      *   follows: true,
      *   setActive: true
@@ -131,7 +129,7 @@ export class ReactiveSessionsStore {
      *
      * // Read-only with user
      * const user = ndk.getUser({ pubkey: "hex..." });
-     * await ndk.sessions.login(user, {
+     * await ndk.$sessions.login(user, {
      *   profile: true,
      *   follows: true
      * });
@@ -224,5 +222,3 @@ export class ReactiveSessionsStore {
 export function createReactiveSessions(ndk: NDK): ReactiveSessionsStore {
     return new ReactiveSessionsStore(ndk);
 }
-
-export type { ReactiveSessionsStore };

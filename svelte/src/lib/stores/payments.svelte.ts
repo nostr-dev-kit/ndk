@@ -1,4 +1,3 @@
-import type NDK from "@nostr-dev-kit/ndk";
 import type { Hexpubkey, NDKEvent, NDKUser, NDKZapper } from "@nostr-dev-kit/ndk";
 import type { PendingPayment, Transaction } from "../payments/types.js";
 import { getZapperTarget, randomId, targetToId } from "../payments/types.js";
@@ -7,14 +6,9 @@ import { getZapperTarget, randomId, targetToId } from "../payments/types.js";
  * Reactive wrapper around payments
  */
 export class ReactivePaymentsStore {
-    #ndk: NDK;
     pending = $state<PendingPayment[]>([]);
     history = $state<Transaction[]>([]);
     byTarget = $state<Map<string, Transaction[]>>(new Map());
-
-    constructor(ndk: NDK) {
-        this.#ndk = ndk;
-    }
 
     /**
      * Get total zap amount sent to a target
@@ -114,8 +108,6 @@ export class ReactivePaymentsStore {
     }
 }
 
-export function createReactivePayments(ndk: NDK): ReactivePaymentsStore {
-    return new ReactivePaymentsStore(ndk);
+export function createReactivePayments(): ReactivePaymentsStore {
+    return new ReactivePaymentsStore();
 }
-
-export type { ReactivePaymentsStore };

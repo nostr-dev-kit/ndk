@@ -322,7 +322,7 @@ Here's a complete example showing how to set up session management in a React ap
 // src/components/NDKProvider.tsx
 import React, { useEffect } from 'react';
 import NDK, { NDKCacheAdapter } from '@nostr-dev-kit/ndk';
-import NDKCacheAdapterDexie from '@nostr-dev-kit/ndk-cache-dexie';
+import NDKCacheAdapterDexie from '@nostr-dev-kit/cache-dexie';
 import { 
   NDKSessionLocalStorage, 
   useNDKInit, 

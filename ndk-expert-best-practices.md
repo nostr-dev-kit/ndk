@@ -76,11 +76,11 @@ This document outlines best practices for using the core Nostr Development Kit (
 ## 3. Cache Adapters
 
 NDK applications greatly benefit from having some caching.
-*   **Custom Adapters:** For persistence or more complex caching, implement a custom cache adapter conforming to the `NDKCacheAdapter` interface or use pre-built ones like `ndk-cache-redis` (server), or `ndk-cache-sqlite-wasm` (browser). Pass the adapter instance during `NDK` initialization.
+*   **Custom Adapters:** For persistence or more complex caching, implement a custom cache adapter conforming to the `NDKCacheAdapter` interface or use pre-built ones like `cache-redis` (server), or `cache-sqlite-wasm` (browser). Pass the adapter instance during `NDK` initialization.
     ```typescript
     import NDK from "@nostr-dev-kit/ndk";
-    // Example with ndk-cache-redis for server-side:
-    // import { NDKRedisCacheAdapter } from "@nostr-dev-kit/ndk-cache-redis";
+    // Example with cache-redis for server-side:
+    // import { NDKRedisCacheAdapter } from "@nostr-dev-kit/cache-redis";
     // const cacheAdapter = new NDKRedisCacheAdapter();
     // const ndk = new NDK({ cacheAdapter });
     ```

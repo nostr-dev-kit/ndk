@@ -15,13 +15,17 @@
   const manager = createRelayManager(ndk);
 
   const filteredRelays = $derived(manager.getFilteredRelays());
-  const poolCounts = $derived({
-    all: manager.getPoolCount('all'),
-    read: manager.getPoolCount('read'),
-    write: manager.getPoolCount('write'),
-    both: manager.getPoolCount('both'),
-    temp: manager.getPoolCount('temp'),
-    blacklist: manager.getPoolCount('blacklist'),
+
+  // Get pool counts dynamically from available pools
+  const poolCounts = $derived.by(() => {
+    const counts: Record<string, number> = {};
+    const poolNames = manager.getPoolNames();
+
+    for (const name of poolNames) {
+      counts[name] = manager.getPoolCount(name);
+    }
+
+    return counts;
   });
 
   function handlePoolSelect(pool: PoolType) {
@@ -56,14 +60,12 @@
     navigator.clipboard.writeText(url);
   }
 
-  const emptyMessages = {
-    all: 'No relays connected. Add a relay to get started.',
-    read: 'No read relays configured. Add a relay with read access.',
-    write: 'No write relays configured. Add a relay with write access.',
-    both: 'No relays configured for both read and write.',
-    temp: 'No temporary relays. Temporary relays are automatically added by NDK and will be removed when no longer needed.',
-    blacklist: 'No blacklisted relays. Blacklisted relays will not be used for any connections.',
-  };
+  const emptyMessage = $derived.by(() => {
+    if (manager.selectedPool === 'all') {
+      return 'No relays connected. Add a relay to get started.';
+    }
+    return `No relays in the "${manager.selectedPool}" pool.`;
+  });
 </script>
 
 <div class="relay-manager {className}">
@@ -74,11 +76,9 @@
         Manage your Nostr relay connections and view detailed information about each relay.
       </p>
     </div>
-    {#if manager.selectedPool !== 'blacklist'}
-      <div class="header-actions">
-        <RelayAddForm onAdd={handleAddRelay} />
-      </div>
-    {/if}
+    <div class="header-actions">
+      <RelayAddForm onAdd={handleAddRelay} />
+    </div>
   </div>
 
   <RelayPoolTabs
@@ -95,12 +95,8 @@
       onBlacklist={handleBlacklistRelay}
       onUnblacklist={handleUnblacklistRelay}
       onCopyUrl={handleCopyUrl}
-      emptyMessage={emptyMessages[manager.selectedPool]}
-    >
-      {#if manager.selectedPool === 'all' || manager.selectedPool === 'read' || manager.selectedPool === 'write' || manager.selectedPool === 'both'}
-        <RelayAddForm onAdd={handleAddRelay} />
-      {/if}
-    </RelayList>
+      emptyMessage={emptyMessage}
+    />
   </div>
 </div>
 

@@ -20,7 +20,7 @@
 
   // Group proofs by mint
   let groupedProofs = $derived.by(() => {
-    const groups = new Map<string, ProofEntry[]>();
+    const groups = new Map();
     for (const entry of proofEntries) {
       const current = groups.get(entry.mint) || [];
       current.push(entry);
@@ -30,7 +30,7 @@
   });
 
   let mintBalances = $derived.by(() => {
-    const balances = new Map<string, number>();
+    const balances = new Map();
     for (const entry of proofEntries) {
       if (entry.state === 'available') {
         balances.set(entry.mint, (balances.get(entry.mint) || 0) + entry.proof.amount);

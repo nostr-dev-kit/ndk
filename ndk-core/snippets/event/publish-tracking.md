@@ -86,7 +86,7 @@ You can publish to specific relay sets and track their status:
 ```typescript
 const customRelaySet = NDKRelaySet.fromRelayUrls(
     ["wss://relay.snort.social", "wss://relay.primal.net"],
-    ndk
+    ndk,
 );
 
 await event.publish(customRelaySet);

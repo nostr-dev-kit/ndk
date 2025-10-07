@@ -4,25 +4,46 @@
 
 ### Minor Changes
 
+- Add NIP-49 encrypted private key (ncryptsec) support
+    - New `NDKPrivateKeySigner.fromNcryptsec(ncryptsec, password, ndk?)` static method to create signers from encrypted private keys
+    - New `signer.encryptToNcryptsec(password, logn?, ksb?)` method to encrypt private keys with a password
+    - Re-exported `nip49` utilities from nostr-tools for direct access to `encrypt()` and `decrypt()` functions
+    - Supports configurable security parameters (log_n for computational cost, key security byte)
+
+    This enables secure storage of private keys with password protection, ideal for web applications that need to persist keys in localStorage or other client-side storage.
+
+    ```typescript
+    // Encrypt a private key
+    const signer = NDKPrivateKeySigner.generate();
+    const ncryptsec = signer.encryptToNcryptsec("my-password");
+    localStorage.setItem("encrypted_key", ncryptsec);
+
+    // Restore from encrypted key
+    const restoredSigner = NDKPrivateKeySigner.fromNcryptsec(
+        localStorage.getItem("encrypted_key"),
+        "my-password",
+    );
+    ```
+
 - Add NIP-11 relay information document support
-  - New `NDKRelayInformation` interface with complete NIP-11 fields (metadata, limitations, fees, retention policies, etc.)
-  - New `fetchRelayInformation(url)` function to fetch NIP-11 info from any relay URL
-  - New `relay.fetchInfo()` method with automatic caching
-  - New `relay.info` getter for cached relay information
+    - New `NDKRelayInformation` interface with complete NIP-11 fields (metadata, limitations, fees, retention policies, etc.)
+    - New `fetchRelayInformation(url)` function to fetch NIP-11 info from any relay URL
+    - New `relay.fetchInfo()` method with automatic caching
+    - New `relay.info` getter for cached relay information
 
-  This enables applications to query relay capabilities, limitations, and metadata programmatically. Useful for checking supported NIPs, relay policies, fees, and restrictions before connecting or publishing.
+    This enables applications to query relay capabilities, limitations, and metadata programmatically. Useful for checking supported NIPs, relay policies, fees, and restrictions before connecting or publishing.
 
-  ```typescript
-  // Via relay instance (with caching)
-  const relay = ndk.pool.relays.get("wss://relay.damus.io");
-  const info = await relay.fetchInfo();
-  console.log(`Relay: ${info.name}`);
-  console.log(`Supported NIPs: ${info.supported_nips}`);
+    ```typescript
+    // Via relay instance (with caching)
+    const relay = ndk.pool.relays.get("wss://relay.damus.io");
+    const info = await relay.fetchInfo();
+    console.log(`Relay: ${info.name}`);
+    console.log(`Supported NIPs: ${info.supported_nips}`);
 
-  // Direct fetch
-  import { fetchRelayInformation } from "@nostr-dev-kit/ndk";
-  const info = await fetchRelayInformation("wss://relay.damus.io");
-  ```
+    // Direct fetch
+    import { fetchRelayInformation } from "@nostr-dev-kit/ndk";
+    const info = await fetchRelayInformation("wss://relay.damus.io");
+    ```
 
 ## 2.15.3
 

@@ -18,7 +18,10 @@ export type NDKFilterFingerprint = string;
  *
  * @returns The fingerprint, or undefined if the filters are not groupable.
  */
-export function filterFingerprint(filters: NDKFilter[], closeOnEose: boolean): NDKFilterFingerprint | undefined {
+export function filterFingerprint(
+    filters: NDKFilter[],
+    closeOnEose: boolean,
+): NDKFilterFingerprint | undefined {
     const elements: string[] = [];
 
     for (const filter of filters) {

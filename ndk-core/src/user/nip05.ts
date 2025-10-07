@@ -39,7 +39,10 @@ export async function getNip05For(
             const [_, name = "_", domain] = match;
 
             try {
-                const res = await _fetch(`https://${domain}/.well-known/nostr.json?name=${name}`, fetchOpts);
+                const res = await _fetch(
+                    `https://${domain}/.well-known/nostr.json?name=${name}`,
+                    fetchOpts,
+                );
                 const { names, relays, nip46 } = parseNIP05Result(await res.json());
 
                 const pubkey = names[name.toLowerCase()];
@@ -89,7 +92,9 @@ function parseNIP05Result(json: any): NIP05Result {
         result.relays = {};
         for (const [pubkey, relays] of Object.entries(json.relays)) {
             if (typeof pubkey === "string" && Array.isArray(relays)) {
-                result.relays[pubkey] = relays.filter((relay: unknown) => typeof relay === "string");
+                result.relays[pubkey] = relays.filter(
+                    (relay: unknown) => typeof relay === "string",
+                );
             }
         }
     }

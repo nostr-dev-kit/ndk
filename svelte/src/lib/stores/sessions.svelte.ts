@@ -13,7 +13,8 @@ export class ReactiveSessionsStore {
     #manager: NDKSessionManager;
 
     // Reactive state synced from Zustand store
-    sessions = $state<Map<Hexpubkey, NDKSession>>(new Map());
+    // Using Record instead of Map to avoid Proxy issues with $state
+    sessions = $state<Record<Hexpubkey, NDKSession>>({});
     activePubkey = $state<Hexpubkey | undefined>(undefined);
 
     constructor(ndk: NDK) {
@@ -24,7 +25,12 @@ export class ReactiveSessionsStore {
 
         // Sync Zustand state to Svelte reactive state
         this.#manager.subscribe((state) => {
-            this.sessions = new Map(state.sessions);
+            // Convert Map to Record
+            const sessionsObj: Record<Hexpubkey, NDKSession> = {};
+            state.sessions.forEach((session, pubkey) => {
+                sessionsObj[pubkey] = session;
+            });
+            this.sessions = sessionsObj;
             this.activePubkey = state.activePubkey;
 
             // Sync signer to NDK
@@ -47,7 +53,7 @@ export class ReactiveSessionsStore {
      */
     get current(): NDKSession | undefined {
         if (!this.activePubkey) return undefined;
-        return this.sessions.get(this.activePubkey);
+        return this.sessions[this.activePubkey];
     }
 
     /**
@@ -110,7 +116,7 @@ export class ReactiveSessionsStore {
      * Get all sessions as array
      */
     get all(): NDKSession[] {
-        return Array.from(this.sessions.values());
+        return Object.values(this.sessions);
     }
 
     /**
@@ -153,10 +159,18 @@ export class ReactiveSessionsStore {
      */
     logout(pubkey?: Hexpubkey): void {
         const targetPubkey = pubkey ?? this.activePubkey;
+        if (!targetPubkey) return;
+
         this.#manager.logout(targetPubkey);
 
+        // Update local state immediately
+        delete this.sessions[targetPubkey];
+        if (this.activePubkey === targetPubkey) {
+            this.activePubkey = undefined;
+        }
+
         // If this was the last session, clear storage completely
-        if (this.sessions.size === 0) {
+        if (Object.keys(this.sessions).length === 0) {
             this.#manager.clear().catch((error) => {
                 console.error("[ndk-svelte5] Failed to clear sessions from storage:", error);
             });
@@ -168,10 +182,15 @@ export class ReactiveSessionsStore {
      */
     logoutAll(): void {
         // Clear all sessions from the manager
-        const pubkeys = Array.from(this.sessions.keys());
+        const pubkeys = Object.keys(this.sessions);
         for (const pubkey of pubkeys) {
             this.#manager.logout(pubkey);
         }
+
+        // Update local state immediately
+        this.sessions = {};
+        this.activePubkey = undefined;
+
         // Clear persisted sessions from storage
         this.#manager.clear().catch((error) => {
             console.error("[ndk-svelte5] Failed to clear sessions from storage:", error);
@@ -189,7 +208,7 @@ export class ReactiveSessionsStore {
      * Get a specific session
      */
     get(pubkey: Hexpubkey): NDKSession | undefined {
-        return this.sessions.get(pubkey);
+        return this.sessions[pubkey];
     }
 
     /**

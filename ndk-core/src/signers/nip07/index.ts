@@ -126,7 +126,11 @@ export class NDKNip07Signer implements NDKSigner {
         return enabled;
     }
 
-    public async encrypt(recipient: NDKUser, value: string, nip: NDKEncryptionScheme = "nip04"): Promise<string> {
+    public async encrypt(
+        recipient: NDKUser,
+        value: string,
+        nip: NDKEncryptionScheme = "nip04",
+    ): Promise<string> {
         if (!(await this.encryptionEnabled(nip)))
             throw new Error(`${nip}encryption is not available from your browser extension`);
         await this.waitForExtension();
@@ -135,7 +139,11 @@ export class NDKNip07Signer implements NDKSigner {
         return this.queueEncryption(nip, "encrypt", recipientHexPubKey, value);
     }
 
-    public async decrypt(sender: NDKUser, value: string, nip: NDKEncryptionScheme = "nip04"): Promise<string> {
+    public async decrypt(
+        sender: NDKUser,
+        value: string,
+        nip: NDKEncryptionScheme = "nip04",
+    ): Promise<string> {
         if (!(await this.encryptionEnabled(nip)))
             throw new Error(`${nip}encryption is not available from your browser extension`);
         await this.waitForExtension();

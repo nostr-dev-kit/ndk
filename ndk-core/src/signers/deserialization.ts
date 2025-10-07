@@ -7,7 +7,10 @@ import { signerRegistry } from "./registry.js";
  * @param ndk Optional NDK instance, required by some signers.
  * @returns An instance of the specific signer class, or undefined if the type is unknown.
  */
-export async function ndkSignerFromPayload(payloadString: string, ndk?: NDK): Promise<NDKSigner | undefined> {
+export async function ndkSignerFromPayload(
+    payloadString: string,
+    ndk?: NDK,
+): Promise<NDKSigner | undefined> {
     let parsed: NDKSignerPayload;
 
     try {
@@ -18,7 +21,11 @@ export async function ndkSignerFromPayload(payloadString: string, ndk?: NDK): Pr
     }
     // Ensure the payload has a valid type field
     if (!parsed || typeof (parsed as any).type !== "string") {
-        console.error("Failed to parse signer payload string", payloadString, new Error("Missing type field"));
+        console.error(
+            "Failed to parse signer payload string",
+            payloadString,
+            new Error("Missing type field"),
+        );
         return undefined;
     }
 

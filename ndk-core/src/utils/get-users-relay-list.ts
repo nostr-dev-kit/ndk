@@ -58,7 +58,8 @@ export async function getRelayListForUsers(
 
         // get list of relay lists from cache
         for (const relayList of cachedList) {
-            if (relayList.kind === 10002) relayLists.set(relayList.pubkey, NDKRelayList.from(relayList));
+            if (relayList.kind === 10002)
+                relayLists.set(relayList.pubkey, NDKRelayList.from(relayList));
         }
 
         for (const relayList of cachedList) {
@@ -71,7 +72,9 @@ export async function getRelayListForUsers(
         }
 
         // remove the pubkeys we found from the list
-        pubkeys = pubkeys.filter((pubkey) => !relayLists.has(pubkey) && !fromContactList.has(pubkey));
+        pubkeys = pubkeys.filter(
+            (pubkey) => !relayLists.has(pubkey) && !fromContactList.has(pubkey),
+        );
     }
 
     // if we have no pubkeys left, return the results
@@ -159,7 +162,9 @@ export async function getRelayListForUsers(
             setTimeout(() => {
                 if (!resolved) {
                     resolved = true;
-                    ndk.debug(`[getRelayListForUsers] Timeout reached, returning ${relayLists.size} relay lists`);
+                    ndk.debug(
+                        `[getRelayListForUsers] Timeout reached, returning ${relayLists.size} relay lists`,
+                    );
                     resolve(relayLists);
                 }
             }, effectiveTimeout);

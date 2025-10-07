@@ -40,7 +40,11 @@ export function signatureVerificationInit(w: Worker) {
  * @param relay The relay that provided the event (optional)
  * @returns A promise that resolves to a boolean indicating if the signature is valid
  */
-export async function verifySignatureAsync(event: NDKEvent, _persist: boolean, relay?: NDKRelay): Promise<boolean> {
+export async function verifySignatureAsync(
+    event: NDKEvent,
+    _persist: boolean,
+    relay?: NDKRelay,
+): Promise<boolean> {
     // Measure total time spent in signature verification
     const ndkInstance = event.ndk!;
     const start = Date.now();

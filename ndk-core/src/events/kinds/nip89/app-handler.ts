@@ -31,7 +31,8 @@ export class NDKAppHandlerEvent extends NDKEvent {
 
     get isValid(): boolean {
         const combinations = new Map<string, string>();
-        const combinationFromTag = (tag: NDKTag): string => [tag[0], tag[2]].join(":").toLowerCase();
+        const combinationFromTag = (tag: NDKTag): string =>
+            [tag[0], tag[2]].join(":").toLowerCase();
         const tagsToInspect = ["web", "android", "ios"];
 
         for (const tag of this.tags) {

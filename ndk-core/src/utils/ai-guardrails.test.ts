@@ -71,7 +71,9 @@ describe("AIGuardrails", () => {
 
         it("should include hint in error message", () => {
             const guards = new AIGuardrails(true);
-            expect(() => guards.error("test", "Test error", "This is a hint")).toThrow(/This is a hint/);
+            expect(() => guards.error("test", "Test error", "This is a hint")).toThrow(
+                /This is a hint/,
+            );
         });
 
         it("should include skip instructions in error message", () => {

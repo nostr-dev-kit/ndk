@@ -77,7 +77,9 @@ export async function fetchRelayInformation(relayUrl: string): Promise<NDKRelayI
     });
 
     if (!response.ok) {
-        throw new Error(`Failed to fetch relay information: ${response.status} ${response.statusText}`);
+        throw new Error(
+            `Failed to fetch relay information: ${response.status} ${response.statusText}`,
+        );
     }
 
     const data = await response.json();

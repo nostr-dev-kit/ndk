@@ -89,7 +89,10 @@ describe("NDKPool System-wide Disconnection Detection", () => {
 
     describe("checkForSystemWideDisconnection", () => {
         it("should detect when >50% of relays disconnect within 5 seconds", () => {
-            const handleSystemWideReconnectionSpy = vi.spyOn(pool as any, "handleSystemWideReconnection");
+            const handleSystemWideReconnectionSpy = vi.spyOn(
+                pool as any,
+                "handleSystemWideReconnection",
+            );
 
             // Simulate 3 out of 5 relays disconnecting rapidly
             const now = Date.now();
@@ -103,7 +106,10 @@ describe("NDKPool System-wide Disconnection Detection", () => {
         });
 
         it("should not trigger for fewer disconnections", () => {
-            const handleSystemWideReconnectionSpy = vi.spyOn(pool as any, "handleSystemWideReconnection");
+            const handleSystemWideReconnectionSpy = vi.spyOn(
+                pool as any,
+                "handleSystemWideReconnection",
+            );
 
             // Only 2 out of 5 relays (40%)
             const now = Date.now();
@@ -116,7 +122,10 @@ describe("NDKPool System-wide Disconnection Detection", () => {
         });
 
         it("should not trigger for disconnections spread over time", () => {
-            const handleSystemWideReconnectionSpy = vi.spyOn(pool as any, "handleSystemWideReconnection");
+            const handleSystemWideReconnectionSpy = vi.spyOn(
+                pool as any,
+                "handleSystemWideReconnection",
+            );
 
             // 3 relays, but disconnected over 10 seconds
             const now = Date.now();
@@ -130,7 +139,10 @@ describe("NDKPool System-wide Disconnection Detection", () => {
         });
 
         it("should require at least 2 relays in pool", () => {
-            const handleSystemWideReconnectionSpy = vi.spyOn(pool as any, "handleSystemWideReconnection");
+            const handleSystemWideReconnectionSpy = vi.spyOn(
+                pool as any,
+                "handleSystemWideReconnection",
+            );
 
             // Create a pool with only 1 relay
             const singlePool = new NDKPool(["wss://single.relay"], [], mockNDK);
@@ -238,7 +250,10 @@ describe("NDKPool System-wide Disconnection Detection", () => {
         });
 
         it("should distinguish system events from individual relay issues", () => {
-            const handleSystemWideReconnectionSpy = vi.spyOn(pool as any, "handleSystemWideReconnection");
+            const handleSystemWideReconnectionSpy = vi.spyOn(
+                pool as any,
+                "handleSystemWideReconnection",
+            );
 
             // Simulate gradual disconnections (not system-wide)
             pool["recordDisconnection"](mockRelays[0]);

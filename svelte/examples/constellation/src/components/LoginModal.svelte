@@ -152,15 +152,9 @@
         generatedNpub = user.npub;
       });
 
-      // Get the private key as hex string
-      const privateKeyHex = signer.privateKey;
-      if (privateKeyHex) {
-        // Convert hex string to Uint8Array for nip19.nsecEncode
-        const privateKeyBytes = new Uint8Array(privateKeyHex.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16)));
-        generatedNsec = nip19.nsecEncode(privateKeyBytes);
-        newAccountGenerated = true;
-        error = null;
-      }
+      generatedNsec = signer.nsec;
+      newAccountGenerated = true;
+      error = null;
     } catch (err) {
       error = err instanceof Error ? err.message : 'Failed to generate new account';
     }

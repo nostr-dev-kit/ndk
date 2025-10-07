@@ -6,7 +6,11 @@ import type { NDK } from "../../ndk";
 import { NDKRelayAuthPolicies } from "../../relay/auth-policies";
 import { NDKPool } from "../../relay/pool";
 import { NDKRelaySet } from "../../relay/sets";
-import { type NDKFilter, type NDKSubscription, NDKSubscriptionCacheUsage } from "../../subscription";
+import {
+    type NDKFilter,
+    type NDKSubscription,
+    NDKSubscriptionCacheUsage,
+} from "../../subscription";
 import type { NDKSigner } from "..";
 
 export interface NDKRpcRequest {
@@ -101,10 +105,18 @@ export class NDKNostrRpc extends EventEmitter {
         let decryptedContent: string;
 
         try {
-            decryptedContent = await this.signer.decrypt(remoteUser, event.content, this.encryptionType);
+            decryptedContent = await this.signer.decrypt(
+                remoteUser,
+                event.content,
+                this.encryptionType,
+            );
         } catch (_e) {
             const otherEncryptionType = this.encryptionType === "nip04" ? "nip44" : "nip04";
-            decryptedContent = await this.signer.decrypt(remoteUser, event.content, otherEncryptionType);
+            decryptedContent = await this.signer.decrypt(
+                remoteUser,
+                event.content,
+                otherEncryptionType,
+            );
             this.encryptionType = otherEncryptionType;
         }
 

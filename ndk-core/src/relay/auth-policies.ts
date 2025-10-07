@@ -13,7 +13,10 @@ import type { NDKPool } from "./pool/index.js";
  * @param relay The relay that requested authentication.
  * @param challenge The challenge that the relay sent.
  */
-type NDKAuthPolicy = (relay: NDKRelay, challenge: string) => Promise<boolean | undefined | NDKEvent>;
+type NDKAuthPolicy = (
+    relay: NDKRelay,
+    challenge: string,
+) => Promise<boolean | undefined | NDKEvent>;
 
 /**
  * This policy will disconnect from relays that request authentication.

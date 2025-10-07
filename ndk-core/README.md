@@ -10,8 +10,8 @@
 - Outbox model support
 - Relay connection pool with automatic reconnection and failover
 - Flexible subscription API with caching, batching, and auto-closing
-- Event creation, validation, and wrappers for major NIPs (e.g., NIP-01, NIP-04, NIP-07, NIP-18, NIP-57, NIP-60, NIP-61)
-- Signer adapters: private key, browser extension (NIP-07), remote signing (NIP-46)
+- Event creation, validation, and wrappers for major NIPs (e.g., NIP-01, NIP-04, NIP-07, NIP-18, NIP-49, NIP-57, NIP-60, NIP-61)
+- Signer adapters: private key, encrypted keys (NIP-49), browser extension (NIP-07), remote signing (NIP-46)
 - Pluggable cache adapters (Redis, Dexie, SQLite, etc.)
 - Data Vending Machine support (NIP-90)
 - Zap utilities (NIP-57, NIP-61)

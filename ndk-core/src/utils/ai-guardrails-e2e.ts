@@ -150,7 +150,9 @@ async function runTests() {
     });
 
     console.log(`${GREEN}=== All tests completed ===${RESET}`);
-    console.log(`\n${YELLOW}Note: All guardrails throw AND log to console.error (visible above)${RESET}`);
+    console.log(
+        `\n${YELLOW}Note: All guardrails throw AND log to console.error (visible above)${RESET}`,
+    );
     process.exit(0);
 }
 

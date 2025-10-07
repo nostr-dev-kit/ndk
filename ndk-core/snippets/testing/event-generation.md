@@ -49,7 +49,7 @@ const encryptedDM = await generator.encryptedDM("recipient_pubkey", "Secret mess
 // Create a reaction event
 const reaction = await generator.reaction(
     "target_event_id",
-    "+" // Like reaction
+    "+", // Like reaction
 );
 ```
 

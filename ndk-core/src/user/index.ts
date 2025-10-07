@@ -159,7 +159,9 @@ export class NDKUser {
         };
         const [userProfile, mintListEvent] = await Promise.all([
             promiseWithTimeout(this.fetchProfile()),
-            promiseWithTimeout(this.ndk.fetchEvent({ kinds: [NDKKind.CashuMintList], authors: [this.pubkey] })),
+            promiseWithTimeout(
+                this.ndk.fetchEvent({ kinds: [NDKKind.CashuMintList], authors: [this.pubkey] }),
+            ),
         ]);
 
         const res: Map<NDKZapMethod, NDKZapMethodInfo> = new Map();
@@ -190,7 +192,11 @@ export class NDKUser {
      * @param skipCache {boolean} Whether to skip the cache or not
      * @returns {NDKUser | undefined} An NDKUser if one is found for the given NIP-05, undefined otherwise.
      */
-    static async fromNip05(nip05Id: string, ndk: NDK, skipCache = false): Promise<NDKUser | undefined> {
+    static async fromNip05(
+        nip05Id: string,
+        ndk: NDK,
+        skipCache = false,
+    ): Promise<NDKUser | undefined> {
         if (!ndk) throw new Error("No NDK instance found");
 
         const opts: RequestInit = {};
@@ -249,7 +255,10 @@ export class NDKUser {
         opts.groupableDelay ??= 250;
 
         if (!setMetadataEvent) {
-            setMetadataEvent = await this.ndk.fetchEvent({ kinds: [0], authors: [this.pubkey] }, opts);
+            setMetadataEvent = await this.ndk.fetchEvent(
+                { kinds: [0], authors: [this.pubkey] },
+                opts,
+            );
         }
 
         if (!setMetadataEvent) return null;
@@ -257,7 +266,12 @@ export class NDKUser {
         // return the most recent profile
         this.profile = profileFromEvent(setMetadataEvent);
 
-        if (storeProfileEvent && this.profile && this.ndk.cacheAdapter && this.ndk.cacheAdapter.saveProfile) {
+        if (
+            storeProfileEvent &&
+            this.profile &&
+            this.ndk.cacheAdapter &&
+            this.ndk.cacheAdapter.saveProfile
+        ) {
             this.ndk.cacheAdapter.saveProfile(this.pubkey, this.profile);
         }
 

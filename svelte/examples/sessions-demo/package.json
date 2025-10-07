@@ -19,6 +19,6 @@
         "@types/qrcode": "^1.5.5",
         "svelte": "^5.39.9",
         "typescript": "^5.9.3",
-        "vite": "^6.3.6"
+        "vite": "^7.1.9"
     }
 }

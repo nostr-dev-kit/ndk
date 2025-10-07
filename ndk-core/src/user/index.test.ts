@@ -23,7 +23,9 @@ describe("NDKUser", () => {
 
             const user = new NDKUser(opts);
 
-            expect(user.npub).toEqual("npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft");
+            expect(user.npub).toEqual(
+                "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft",
+            );
         });
 
         it("sets npub from provided hexpubkey", () => {
@@ -32,7 +34,9 @@ describe("NDKUser", () => {
             };
 
             const user = new NDKUser(opts);
-            expect(user.npub).toEqual("npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft");
+            expect(user.npub).toEqual(
+                "npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft",
+            );
         });
 
         it("sets relayUrls from provided relayUrls", () => {
@@ -53,7 +57,9 @@ describe("NDKUser", () => {
 
             const user = new NDKUser(opts);
 
-            expect(user.pubkey).toEqual("fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52");
+            expect(user.pubkey).toEqual(
+                "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52",
+            );
             expect(user.relayUrls).toEqual(["wss://pyramid.fiatjaf.com", "wss://f7z.io"]);
         });
     });
@@ -66,7 +72,9 @@ describe("NDKUser", () => {
 
             const pubkey = user.pubkey;
 
-            expect(pubkey).toEqual("fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52");
+            expect(pubkey).toEqual(
+                "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52",
+            );
         });
     });
 

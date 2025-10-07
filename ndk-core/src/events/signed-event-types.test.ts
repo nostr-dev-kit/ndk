@@ -84,7 +84,9 @@ describe("NDKEvent signed/unsigned type system", () => {
         unsignedEvent.created_at = Date.now() / 1000;
 
         // Should throw
-        expect(() => assertSignedEvent(unsignedEvent)).toThrow("Expected signed event but event is not signed");
+        expect(() => assertSignedEvent(unsignedEvent)).toThrow(
+            "Expected signed event but event is not signed",
+        );
     });
 
     it("should create signed event type from signed event", () => {
@@ -111,11 +113,15 @@ describe("NDKEvent signed/unsigned type system", () => {
         event.content = "test";
         // Missing created_at, id, and sig
 
-        expect(() => createSignedEvent(event)).toThrow("Cannot create signed event from unsigned event");
+        expect(() => createSignedEvent(event)).toThrow(
+            "Cannot create signed event from unsigned event",
+        );
 
         // Even with created_at, still needs id and sig
         event.created_at = Date.now() / 1000;
-        expect(() => createSignedEvent(event)).toThrow("Cannot create signed event from unsigned event");
+        expect(() => createSignedEvent(event)).toThrow(
+            "Cannot create signed event from unsigned event",
+        );
     });
 
     it("should demonstrate type-safe subscription usage", () => {

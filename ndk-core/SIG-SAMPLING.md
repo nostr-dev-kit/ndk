@@ -15,7 +15,6 @@ All invalid-signature detections—whether synchronous or asynchronous—will de
 ### Key Components
 
 1. **NDK Class** (`ndk-core/src/ndk/index.ts`):
-
     - Contains configuration properties:
         - `initialValidationRatio`: Starting validation ratio for new relays
         - `lowestValidationRatio`: Minimum validation ratio for any relay
@@ -23,18 +22,15 @@ All invalid-signature detections—whether synchronous or asynchronous—will de
     - Emits `event:invalid-sig` events when invalid signatures are detected
 
 2. **NDKRelay Class** (`ndk-core/src/relay/index.ts`):
-
     - Tracks validated and non-validated event counts
     - Has methods to add validated/non-validated events
     - Has `shouldValidateEvent` method (implementation needs to be enhanced)
 
 3. **Signature Verification** (`ndk-core/src/events/signature.ts`):
-
     - Contains verification logic
     - Maintains `verifiedSignatures` map to track already verified event IDs
 
 4. **NDKSubscription Class** (`ndk-core/src/subscription/index.ts`):
-
     - Receives events from relays
     - Calls verification methods on events
     - Can check already verified signatures
@@ -79,7 +75,7 @@ class NDKRelay {
             this.currentValidationRatio = this.ndk.validationRatioFn(
                 this,
                 this.validatedCount,
-                this.nonValidatedCount
+                this.nonValidatedCount,
             );
             return;
         }
@@ -89,7 +85,7 @@ class NDKRelay {
         // But never go below lowestValidationRatio
         const newRatio = Math.max(
             this.ndk.lowestValidationRatio,
-            this.ndk.initialValidationRatio * Math.exp(-0.01 * this.validatedCount)
+            this.ndk.initialValidationRatio * Math.exp(-0.01 * this.validatedCount),
         );
 
         this.currentValidationRatio = newRatio;
@@ -219,7 +215,7 @@ export class NDK extends EventEmitter<{
     "event:publish-failed": (
         event: NDKEvent,
         error: NDKPublishError,
-        relays: WebSocket["url"][]
+        relays: WebSocket["url"][],
     ) => void;
 }> {
     // Existing properties and methods
@@ -662,7 +658,7 @@ The `ndk-test-utils` package provides several useful tools for testing our imple
             // Should now be much lower after 100 total validated events
             expect(validationCount).toBeLessThan(50);
             expect(validationCount).toBeGreaterThan(10); // But not below minimum
-        })
+        }),
     );
     ```
 

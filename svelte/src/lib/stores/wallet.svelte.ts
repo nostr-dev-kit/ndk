@@ -31,6 +31,9 @@ export class ReactiveWalletStore {
     #handleBalanceUpdate = (balance?: NDKWalletBalance): void => {
         if (balance) {
             this.balance = balance.amount || 0;
+        } else {
+            // If no balance is provided, refresh it
+            void this.refreshBalance();
         }
     };
 

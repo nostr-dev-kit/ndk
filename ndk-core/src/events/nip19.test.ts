@@ -16,7 +16,9 @@ describe("NDKEvent", () => {
             event.tags.push(["d", "1234"]);
 
             const a = event.encode();
-            expect(a).toBe("naddr1qvzqqqr4xqpzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqqzrzv3nxsl6m2ff");
+            expect(a).toBe(
+                "naddr1qvzqqqr4xqpzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqqzrzv3nxsl6m2ff",
+            );
         });
 
         it("encodes NIP-33 events with relay when it's known", async () => {

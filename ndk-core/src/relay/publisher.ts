@@ -73,13 +73,21 @@ export class NDKRelayPublisher {
             /**
              * If we're already connected, publish the event right now
              */
-            return Promise.race([publishConnected(), timeoutPromise]).catch(onError).finally(onFinally);
+            return Promise.race([publishConnected(), timeoutPromise])
+                .catch(onError)
+                .finally(onFinally);
         }
         if (this.ndkRelay.status <= NDKRelayStatus.DISCONNECTED) {
-            console.warn("Relay is disconnected, trying to connect to publish an event", this.ndkRelay.url);
+            console.warn(
+                "Relay is disconnected, trying to connect to publish an event",
+                this.ndkRelay.url,
+            );
             this.ndkRelay.connect();
         } else {
-            console.warn("Relay not connected, waiting for connection to publish an event", this.ndkRelay.url);
+            console.warn(
+                "Relay not connected, waiting for connection to publish an event",
+                this.ndkRelay.url,
+            );
         }
 
         /**

@@ -78,7 +78,8 @@ describe("NDKNip46Signer", () => {
 
     describe("bunker flow", () => {
         it("initializes with bunker:// connection token", () => {
-            const token = "bunker://bunkerpubkey?pubkey=userpubkey&relay=wss://relay.example.com&secret=shh";
+            const token =
+                "bunker://bunkerpubkey?pubkey=userpubkey&relay=wss://relay.example.com&secret=shh";
             const signer = NDKNip46Signer.bunker(ndk, token, localSigner);
 
             expect(signer.bunkerPubkey).toBe("bunkerpubkey");
@@ -93,7 +94,8 @@ describe("NDKNip46Signer", () => {
         });
 
         it("blockUntilReady resolves user on ack", async () => {
-            const token = "bunker://bunkerpubkey?pubkey=userpubkey&relay=wss://relay.example.com&secret=shh";
+            const token =
+                "bunker://bunkerpubkey?pubkey=userpubkey&relay=wss://relay.example.com&secret=shh";
             const signer = NDKNip46Signer.bunker(ndk, token, localSigner);
 
             // Mock rpc and subscription
@@ -109,7 +111,13 @@ describe("NDKNip46Signer", () => {
 
             // Simulate sendRequest callback
             (mockRpc.sendRequest as any).mockImplementation(
-                (_bunkerPubkey: string, _method: string, _params: any[], _kind: number, cb: Function) => {
+                (
+                    _bunkerPubkey: string,
+                    _method: string,
+                    _params: any[],
+                    _kind: number,
+                    cb: Function,
+                ) => {
                     cb({ result: "ack" });
                 },
             );
@@ -128,7 +136,13 @@ describe("NDKNip46Signer", () => {
 
             const event: NostrEvent = makeEvent("userpubkey");
             (mockRpc.sendRequest as any).mockImplementation(
-                (_bunkerPubkey: string, _method: string, _params: any[], _kind: number, cb: Function) => {
+                (
+                    _bunkerPubkey: string,
+                    _method: string,
+                    _params: any[],
+                    _kind: number,
+                    cb: Function,
+                ) => {
                     cb({ result: JSON.stringify({ sig: "signature" }) });
                 },
             );
@@ -145,7 +159,13 @@ describe("NDKNip46Signer", () => {
             (signer as any).bunkerPubkey = "bunkerpubkey";
 
             (mockRpc.sendRequest as any).mockImplementation(
-                (_bunkerPubkey: string, method: string, params: any[], _kind: number, cb: Function) => {
+                (
+                    _bunkerPubkey: string,
+                    method: string,
+                    params: any[],
+                    _kind: number,
+                    cb: Function,
+                ) => {
                     if (method.endsWith("encrypt")) cb({ result: "encrypted" });
                     else if (method.endsWith("decrypt")) cb({ result: "decrypted" });
                 },
@@ -201,7 +221,13 @@ describe("NDKNip46Signer", () => {
 
             const event: NostrEvent = makeEvent("userpubkey");
             (mockRpc.sendRequest as any).mockImplementation(
-                (_bunkerPubkey: string, _method: string, _params: any[], _kind: number, cb: Function) => {
+                (
+                    _bunkerPubkey: string,
+                    _method: string,
+                    _params: any[],
+                    _kind: number,
+                    cb: Function,
+                ) => {
                     cb({ result: JSON.stringify({ sig: "signature" }) });
                 },
             );
@@ -217,7 +243,13 @@ describe("NDKNip46Signer", () => {
             (signer as any).bunkerPubkey = "bunkerpubkey";
 
             (mockRpc.sendRequest as any).mockImplementation(
-                (_bunkerPubkey: string, method: string, params: any[], _kind: number, cb: Function) => {
+                (
+                    _bunkerPubkey: string,
+                    method: string,
+                    params: any[],
+                    _kind: number,
+                    cb: Function,
+                ) => {
                     if (method.endsWith("encrypt")) cb({ result: "encrypted" });
                     else if (method.endsWith("decrypt")) cb({ result: "decrypted" });
                 },
@@ -261,7 +293,13 @@ describe("NDKNip46Signer", () => {
             (signer as any).bunkerPubkey = "bunkerpubkey";
 
             (mockRpc.sendRequest as any).mockImplementation(
-                (_bunkerPubkey: string, _method: string, _params: any[], _kind: number, cb: Function) => {
+                (
+                    _bunkerPubkey: string,
+                    _method: string,
+                    _params: any[],
+                    _kind: number,
+                    cb: Function,
+                ) => {
                     cb({ error: "sign error" });
                 },
             );
@@ -277,7 +315,13 @@ describe("NDKNip46Signer", () => {
             (signer as any).bunkerPubkey = "bunkerpubkey";
 
             (mockRpc.sendRequest as any).mockImplementation(
-                (_bunkerPubkey: string, _method: string, _params: any[], _kind: number, cb: Function) => {
+                (
+                    _bunkerPubkey: string,
+                    _method: string,
+                    _params: any[],
+                    _kind: number,
+                    cb: Function,
+                ) => {
                     cb({ error: "encryption error" });
                 },
             );

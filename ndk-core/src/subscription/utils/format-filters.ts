@@ -11,8 +11,13 @@ import type { NDKFilter } from "../index.js";
  */
 const MAX_ITEMS = 3;
 
-function formatArray(items: (string | number)[], formatter?: (item: string | number) => string): string {
-    const formatted = formatter ? items.slice(0, MAX_ITEMS).map(formatter) : items.slice(0, MAX_ITEMS);
+function formatArray(
+    items: (string | number)[],
+    formatter?: (item: string | number) => string,
+): string {
+    const formatted = formatter
+        ? items.slice(0, MAX_ITEMS).map(formatter)
+        : items.slice(0, MAX_ITEMS);
     const display = formatted.join(",");
     return items.length > MAX_ITEMS ? `${display}+${items.length - MAX_ITEMS}` : display;
 }

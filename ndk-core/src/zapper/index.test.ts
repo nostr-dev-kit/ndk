@@ -147,6 +147,8 @@ describe("getZapMethod", () => {
         const nip57Method = zapMethodMap.get("nip57");
         expect(nip57Method).toBeDefined();
         expect((nip57Method as any).lud16).toBe("pablo@primal.net");
-        expect((nip57Method as any).lud06).toBe("lnurl1dp68gurn8ghj7um5v93kketj9ehx2amn9wf6x7mp0xyyp6");
+        expect((nip57Method as any).lud06).toBe(
+            "lnurl1dp68gurn8ghj7um5v93kketj9ehx2amn9wf6x7mp0xyyp6",
+        );
     });
 });

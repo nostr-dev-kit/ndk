@@ -9,7 +9,7 @@ class MockWallet extends EventEmitter {
     type = "cashu";
     #balance = 1000;
 
-    async balance() {
+    get balance() {
         return { amount: this.#balance, unit: "sats" };
     }
 

@@ -238,7 +238,13 @@ export class NDKStorySticker<T extends NDKStoryStickerType = NDKStoryStickerType
                 value = this.value as string;
         }
 
-        const tag: NDKTag = ["sticker", this.type, value, coordinates(this.position), dimension(this.dimension)];
+        const tag: NDKTag = [
+            "sticker",
+            this.type,
+            value,
+            coordinates(this.position),
+            dimension(this.dimension),
+        ];
 
         if (this.properties) {
             for (const [key, propValue] of Object.entries(this.properties)) {

@@ -7,7 +7,15 @@ const sampleUser = new NDKUser({
     pubkey: "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52",
 });
 
-const sampleTag: NDKTag = ["sticker", "text", "Hello world!", "540,960", "500x150", "style bold", "rot 15"];
+const sampleTag: NDKTag = [
+    "sticker",
+    "text",
+    "Hello world!",
+    "540,960",
+    "500x150",
+    "style bold",
+    "rot 15",
+];
 
 const invalidEvent = {
     created_at: 1740489132,

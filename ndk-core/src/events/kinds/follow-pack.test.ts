@@ -59,7 +59,10 @@ describe("NDKFollowPack", () => {
                 const fp = new NDKFollowPack();
                 fp.image = "https://example.com/image.png";
                 expect(fp.image).toBe("https://example.com/image.png");
-                expect(fp.tags.find((t) => t[0] === "image")).toEqual(["image", "https://example.com/image.png"]);
+                expect(fp.tags.find((t) => t[0] === "image")).toEqual([
+                    "image",
+                    "https://example.com/image.png",
+                ]);
             });
 
             it("should get/set image with NDKImetaTag object", () => {
@@ -110,7 +113,10 @@ describe("NDKFollowPack", () => {
 
             fp.description = "A follow pack description";
             expect(fp.description).toBe("A follow pack description");
-            expect(fp.tags.find((t) => t[0] === "description")).toEqual(["description", "A follow pack description"]);
+            expect(fp.tags.find((t) => t[0] === "description")).toEqual([
+                "description",
+                "A follow pack description",
+            ]);
 
             fp.description = undefined;
             expect(fp.description).toBeUndefined();

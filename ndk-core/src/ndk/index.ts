@@ -30,7 +30,11 @@ import { getEntity } from "./entity.js";
 import { fetchEventFromTag } from "./fetch-event-from-tag.js";
 import { Queue } from "./queue/index.js";
 
-export type NDKValidationRatioFn = (relay: NDKRelay, validatedCount: number, nonValidatedCount: number) => number;
+export type NDKValidationRatioFn = (
+    relay: NDKRelay,
+    validatedCount: number,
+    nonValidatedCount: number,
+) => number;
 
 export type NDKNetDebug = (msg: string, relay: NDKRelay, direction?: "send" | "recv") => void;
 
@@ -40,7 +44,9 @@ export type NDKNetDebug = (msg: string, relay: NDKRelay, direction?: "send" | "r
 export interface NDKWalletInterface {
     lnPay?: LnPayCb;
     cashuPay?: CashuPayCb;
-    onPaymentComplete?: (results: Map<NDKZapSplit, NDKPaymentConfirmation | Error | undefined>) => void;
+    onPaymentComplete?: (
+        results: Map<NDKZapSplit, NDKPaymentConfirmation | Error | undefined>,
+    ) => void;
 }
 
 export interface NDKConstructorParams {
@@ -280,7 +286,11 @@ export class NDK extends EventEmitter<{
      * @param error The error that caused the event to fail to publish
      * @param relays The relays that the event was attempted to be published to
      */
-    "event:publish-failed": (event: NDKEvent, error: NDKPublishError, relays: WebSocket["url"][]) => void;
+    "event:publish-failed": (
+        event: NDKEvent,
+        error: NDKPublishError,
+        relays: WebSocket["url"][],
+    ) => void;
 }> {
     private _explicitRelayUrls?: WebSocket["url"][];
     public pool: NDKPool;
@@ -413,7 +423,9 @@ export class NDK extends EventEmitter<{
                     );
 
                     if (isRelevant && typeof subscription.refreshRelayConnections === "function") {
-                        this.debug(`Refreshing relay connections for subscription ${subscription.internalId}`);
+                        this.debug(
+                            `Refreshing relay connections for subscription ${subscription.internalId}`,
+                        );
                         subscription.refreshRelayConnections();
                     }
                 }
@@ -524,7 +536,11 @@ export class NDK extends EventEmitter<{
      * @param connect Whether to connect to the relay automatically
      * @returns
      */
-    public addExplicitRelay(urlOrRelay: string | NDKRelay, relayAuthPolicy?: NDKAuthPolicy, connect = true): NDKRelay {
+    public addExplicitRelay(
+        urlOrRelay: string | NDKRelay,
+        relayAuthPolicy?: NDKAuthPolicy,
+        connect = true,
+    ): NDKRelay {
         let relay: NDKRelay;
 
         if (typeof urlOrRelay === "string") {
@@ -613,7 +629,9 @@ export class NDK extends EventEmitter<{
      * @param relay The relay that provided the invalid signature
      */
     public reportInvalidSignature(event: NDKEvent, relay?: NDKRelay): void {
-        this.debug(`Invalid signature detected for event ${event.id}${relay ? ` from relay ${relay.url}` : ""}`);
+        this.debug(
+            `Invalid signature detected for event ${event.id}${relay ? ` from relay ${relay.url}` : ""}`,
+        );
 
         // Emit event with relay information
         this.emit("event:invalid-sig", event, relay);
@@ -623,7 +641,11 @@ export class NDK extends EventEmitter<{
      * Default function to calculate validation ratio based on historical validation results.
      * The more events validated successfully, the lower the ratio goes (down to the minimum).
      */
-    private defaultValidationRatioFn(relay: NDKRelay, validatedCount: number, nonValidatedCount: number): number {
+    private defaultValidationRatioFn(
+        relay: NDKRelay,
+        validatedCount: number,
+        nonValidatedCount: number,
+    ): number {
         if (validatedCount < 10) return this.initialValidationRatio;
 
         // Calculate a logarithmically decreasing ratio that approaches the minimum
@@ -631,7 +653,8 @@ export class NDK extends EventEmitter<{
         const trustFactor = Math.min(validatedCount / 100, 1); // Caps at 100 validated events
 
         const calculatedRatio =
-            this.initialValidationRatio * (1 - trustFactor) + this.lowestValidationRatio * trustFactor;
+            this.initialValidationRatio * (1 - trustFactor) +
+            this.lowestValidationRatio * trustFactor;
 
         return Math.max(calculatedRatio, this.lowestValidationRatio);
     }
@@ -817,10 +840,15 @@ export class NDK extends EventEmitter<{
 
         // For backwards compatibility, check if the first parameter is a relaySet
         if (autoStartOrRelaySet instanceof NDKRelaySet) {
-            console.warn("relaySet is deprecated, use opts.relaySet instead. This will be removed in version v2.14.0");
+            console.warn(
+                "relaySet is deprecated, use opts.relaySet instead. This will be removed in version v2.14.0",
+            );
             _relaySet = autoStartOrRelaySet;
             autoStart = _autoStart;
-        } else if (typeof autoStartOrRelaySet === "boolean" || typeof autoStartOrRelaySet === "object") {
+        } else if (
+            typeof autoStartOrRelaySet === "boolean" ||
+            typeof autoStartOrRelaySet === "object"
+        ) {
             autoStart = autoStartOrRelaySet;
         }
 
@@ -861,7 +889,8 @@ export class NDK extends EventEmitter<{
         if (autoStart) {
             setTimeout(() => {
                 const cachedEvents = subscription.start(!eventsHandler);
-                if (cachedEvents && cachedEvents.length > 0 && !!eventsHandler) eventsHandler(cachedEvents);
+                if (cachedEvents && cachedEvents.length > 0 && !!eventsHandler)
+                    eventsHandler(cachedEvents);
             }, 0);
         }
 

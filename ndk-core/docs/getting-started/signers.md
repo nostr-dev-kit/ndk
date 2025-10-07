@@ -79,3 +79,72 @@ console.log("Welcome", user.npub);
 // if you didn't have a localNsec you should store it for future sessions of your app
 save(signer.localSigner.nsec)
 ```
+### Using a Private Key Signer
+
+NDK provides `NDKPrivateKeySigner` for managing in-memory private keys. This is useful for development, testing, or applications that manage keys locally.
+
+#### Basic Usage
+
+```ts
+import { NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
+
+// Generate a new private key
+const signer = NDKPrivateKeySigner.generate();
+console.log("nsec:", signer.nsec);
+console.log("npub:", signer.npub);
+
+// Or load from an existing key
+const signer = new NDKPrivateKeySigner("nsec1...");
+```
+
+#### Password-Protected Keys (NIP-49)
+
+NDK supports NIP-49 encrypted private keys (ncryptsec format) for secure storage:
+
+```ts
+import { NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
+
+// Encrypt a private key with a password
+const signer = NDKPrivateKeySigner.generate();
+const password = "user-chosen-password";
+const ncryptsec = signer.encryptToNcryptsec(password);
+
+// Store ncryptsec securely (e.g., in localStorage)
+localStorage.setItem("encrypted_key", ncryptsec);
+
+// Later, restore the signer from encrypted key
+const storedKey = localStorage.getItem("encrypted_key");
+const restoredSigner = NDKPrivateKeySigner.fromNcryptsec(storedKey, password);
+console.log("Restored pubkey:", restoredSigner.pubkey);
+```
+
+**Security Parameters:**
+
+The `encryptToNcryptsec` method accepts optional parameters for security tuning:
+
+```ts
+// Higher security (slower, more resistant to brute force)
+const ncryptsec = signer.encryptToNcryptsec(password, 20); // log_n = 20 (~2 seconds, 1GB memory)
+
+// Default security (faster)
+const ncryptsec = signer.encryptToNcryptsec(password, 16); // log_n = 16 (~100ms, 64MB memory)
+
+// With key security byte (0x00, 0x01, or 0x02)
+const ncryptsec = signer.encryptToNcryptsec(password, 16, 0x02);
+```
+
+**Direct NIP-49 utilities:**
+
+NDK also re-exports NIP-49 utilities for advanced use cases:
+
+```ts
+import { nip49 } from "@nostr-dev-kit/ndk";
+import { hexToBytes, bytesToHex } from "@noble/hashes/utils";
+
+// Encrypt raw bytes
+const privateKeyBytes = hexToBytes("14c226dbdd865d5e...");
+const ncryptsec = nip49.encrypt(privateKeyBytes, password);
+
+// Decrypt to raw bytes
+const decryptedBytes = nip49.decrypt(ncryptsec, password);
+```

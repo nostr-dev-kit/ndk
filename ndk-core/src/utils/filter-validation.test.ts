@@ -307,7 +307,9 @@ describe("Filter Validation", () => {
 
             expect(() => {
                 ndk.subscribe(badFilters);
-            }).toThrow(/Filter\[0\]\.authors\[1\] is undefined.*Filter\[1\]\.kinds\[1\] is undefined/s);
+            }).toThrow(
+                /Filter\[0\]\.authors\[1\] is undefined.*Filter\[1\]\.kinds\[1\] is undefined/s,
+            );
         });
 
         it("should fix all filters in fix mode", async () => {
@@ -387,8 +389,10 @@ describe("Filter Validation", () => {
             const getUserPubkey = (id: string) => {
                 if (id === "deleted_user") return undefined;
                 // Return valid hex pubkeys
-                if (id === "user1") return "0000000000000000000000000000000000000000000000000000000000000004";
-                if (id === "user3") return "0000000000000000000000000000000000000000000000000000000000000005";
+                if (id === "user1")
+                    return "0000000000000000000000000000000000000000000000000000000000000004";
+                if (id === "user3")
+                    return "0000000000000000000000000000000000000000000000000000000000000005";
                 return undefined;
             };
 

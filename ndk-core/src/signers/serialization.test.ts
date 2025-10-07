@@ -1,5 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import NDK, { NDKNip07Signer, NDKNip46Signer, NDKPrivateKeySigner, NDKUser, ndkSignerFromPayload } from "../index.js";
+import NDK, {
+    NDKNip07Signer,
+    NDKNip46Signer,
+    NDKPrivateKeySigner,
+    NDKUser,
+    ndkSignerFromPayload,
+} from "../index.js";
 
 // Mock window.nostr for NIP-07 tests
 const mockNostr = {
@@ -13,7 +19,9 @@ const mockNostr = {
         encrypt: vi.fn().mockResolvedValue("encrypted44"),
         decrypt: vi.fn().mockResolvedValue("decrypted44"),
     },
-    getRelays: vi.fn().mockResolvedValue({ "wss://relay.example.com": { read: true, write: true } }),
+    getRelays: vi
+        .fn()
+        .mockResolvedValue({ "wss://relay.example.com": { read: true, write: true } }),
 };
 
 describe("Signer Serialization/Deserialization", () => {
@@ -130,7 +138,9 @@ describe("Signer Serialization/Deserialization", () => {
                 // @ts-expect-error - Accessing private member for test mock
                 const instanceNdk = this.ndk as NDK;
                 if (!instanceNdk) {
-                    throw new Error("Mock Error: NDK instance not available in blockUntilReady mock");
+                    throw new Error(
+                        "Mock Error: NDK instance not available in blockUntilReady mock",
+                    );
                 }
                 const user = instanceNdk.getUser({ pubkey: this.userPubkey });
                 // Set the private _user via assignment for the mock
@@ -152,7 +162,9 @@ describe("Signer Serialization/Deserialization", () => {
         expect(restoredNip46Signer.relayUrls).toEqual(relayUrls);
         expect(restoredNip46Signer.secret).toBe(secret);
         expect(restoredNip46Signer.localSigner).toBeInstanceOf(NDKPrivateKeySigner);
-        expect((restoredNip46Signer.localSigner as NDKPrivateKeySigner).privateKey).toBe(localSigner.privateKey);
+        expect((restoredNip46Signer.localSigner as NDKPrivateKeySigner).privateKey).toBe(
+            localSigner.privateKey,
+        );
 
         // Now trigger the mocked blockUntilReady by calling user()
         const restoredUser = await restoredNip46Signer.user();
@@ -186,7 +198,9 @@ describe("Signer Serialization/Deserialization", () => {
 
     it("throws error for unknown signer type", async () => {
         const unknownPayload = JSON.stringify({ type: "unknown-signer", payload: {} });
-        await expect(ndkSignerFromPayload(unknownPayload, ndk)).rejects.toThrow("Unknown signer type: unknown-signer");
+        await expect(ndkSignerFromPayload(unknownPayload, ndk)).rejects.toThrow(
+            "Unknown signer type: unknown-signer",
+        );
     });
 
     it("throws error if signer's fromPayload throws", async () => {

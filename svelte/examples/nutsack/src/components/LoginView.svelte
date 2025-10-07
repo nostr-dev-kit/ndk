@@ -32,11 +32,8 @@
       await ndk.$sessions.login(signer);
 
       // Store the key for later (sessions store will also persist it)
-      const privateKey = signer.privateKey;
-      if (privateKey) {
-        localStorage.setItem('nutsack-nsec', privateKey);
-        console.log('🔑 New private key stored. Keep it safe!');
-      }
+      localStorage.setItem('nutsack-nsec', signer.nsec);
+      console.log('🔑 New private key stored. Keep it safe!');
     } catch (e) {
       error = 'Failed to create new account';
       console.error(e);

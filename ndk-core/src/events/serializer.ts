@@ -8,7 +8,11 @@ export type NDKEventSerialized = string;
  * @param this - The event object to serialize.
  * @returns A string representation of the serialized event.
  */
-export function serialize(this: NDKEvent | NostrEvent, includeSig = false, includeId = false): NDKEventSerialized {
+export function serialize(
+    this: NDKEvent | NostrEvent,
+    includeSig = false,
+    includeId = false,
+): NDKEventSerialized {
     const payload = [0, this.pubkey, this.created_at, this.kind, this.tags, this.content];
     if (includeSig) payload.push(this.sig);
     if (includeId) payload.push(this.id);

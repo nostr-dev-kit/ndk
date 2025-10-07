@@ -12,7 +12,12 @@ import { NDKKind } from ".";
  */
 export class NDKVideo extends NDKEvent {
     static kind = NDKKind.Video;
-    static kinds = [NDKKind.HorizontalVideo, NDKKind.VerticalVideo, NDKKind.ShortVideo, NDKKind.Video];
+    static kinds = [
+        NDKKind.HorizontalVideo,
+        NDKKind.VerticalVideo,
+        NDKKind.ShortVideo,
+        NDKKind.Video,
+    ];
     private _imetas: NDKImetaTag[] | undefined;
 
     /**
@@ -107,7 +112,8 @@ export class NDKVideo extends NDKEvent {
         if (!this.kind) {
             if (this.imetas?.[0]?.dim) {
                 const [width, height] = this.imetas[0].dim.split("x");
-                const isPortrait = width && height && Number.parseInt(width) < Number.parseInt(height);
+                const isPortrait =
+                    width && height && Number.parseInt(width) < Number.parseInt(height);
                 const isShort = this.duration && this.duration < 120;
                 if (isShort && isPortrait) this.kind = NDKKind.ShortVideo;
                 else this.kind = NDKKind.Video;

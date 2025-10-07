@@ -90,7 +90,11 @@ export class NDKRelaySubscription {
      *
      * @param fingerprint The fingerprint of this subscription.
      */
-    constructor(relay: NDKRelay, fingerprint: NDKFilterFingerprint | null, topSubManager: NDKSubscriptionManager) {
+    constructor(
+        relay: NDKRelay,
+        fingerprint: NDKFilterFingerprint | null,
+        topSubManager: NDKSubscriptionManager,
+    ) {
         this.relay = relay;
         this.topSubManager = topSubManager;
         this.debug = relay.debug.extend(`sub[${this.id}]`);
@@ -292,12 +296,15 @@ export class NDKRelaySubscription {
     private executeOnRelayReady = () => {
         if (this.status !== NDKRelaySubscriptionStatus.WAITING) return;
         if (this.items.size === 0) {
-            this.debug("No items to execute; this relay was probably too slow to respond and the caller gave up", {
-                status: this.status,
-                fingerprint: this.fingerprint,
-                id: this.id,
-                subId: this.subId,
-            });
+            this.debug(
+                "No items to execute; this relay was probably too slow to respond and the caller gave up",
+                {
+                    status: this.status,
+                    fingerprint: this.fingerprint,
+                    id: this.id,
+                    subId: this.subId,
+                },
+            );
             this.cleanup();
             return;
         }
@@ -335,9 +342,12 @@ export class NDKRelaySubscription {
         } else {
             // relays don't like to have the subscription close before they eose back,
             // so wait until we eose before closing the old subscription
-            this.debug("We are abandoning an opened subscription, once it EOSE's, the handler will close it", {
-                oldSubId,
-            });
+            this.debug(
+                "We are abandoning an opened subscription, once it EOSE's, the handler will close it",
+                {
+                    oldSubId,
+                },
+            );
         }
         this._subId = undefined;
         this.status = NDKRelaySubscriptionStatus.PENDING;
@@ -436,7 +446,10 @@ export class NDKRelaySubscription {
         const filters = Array.from(this.items.values()).map((item) => item.filters);
         if (!filters[0]) {
             this.debug("👀 No filters to merge", { itemsSize: this.items.size });
-            console.error("BUG: No filters to merge!", { itemsSize: this.items.size, subId: this.subId });
+            console.error("BUG: No filters to merge!", {
+                itemsSize: this.items.size,
+                subId: this.subId,
+            });
             return [];
         }
         const filterCount = filters[0].length;

@@ -63,7 +63,11 @@ export class NDKAppSettings extends NDKEvent {
         return this.settings[key];
     }
 
-    public async publishReplaceable(relaySet?: NDKRelaySet, timeoutMs?: number, requiredRelayCount?: number) {
+    public async publishReplaceable(
+        relaySet?: NDKRelaySet,
+        timeoutMs?: number,
+        requiredRelayCount?: number,
+    ) {
         this.content = JSON.stringify(this.settings);
 
         return super.publishReplaceable(relaySet, timeoutMs, requiredRelayCount);

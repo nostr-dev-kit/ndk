@@ -264,10 +264,13 @@ describe("NDKEvent", () => {
 
         describe("mentions", () => {
             it("handles NIP-27 mentions", async () => {
-                event.content = "hello nostr:npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft!";
+                event.content =
+                    "hello nostr:npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft!";
                 const nostrEvent = await event.toNostrEvent();
                 const mentionTag = nostrEvent.tags.find(
-                    (t) => t[0] === "p" && t[1] === "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52",
+                    (t) =>
+                        t[0] === "p" &&
+                        t[1] === "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52",
                 );
                 expect(mentionTag).toBeTruthy();
             });
@@ -372,7 +375,9 @@ describe("NDKEvent", () => {
             const event2 = new NDKEvent(ndk, { kind: 1, content: "" });
 
             expect(event1.replaceableDTag()).toEqual("d-code");
-            expect(() => event2.replaceableDTag()).toThrowError("Event is not a parameterized replaceable event");
+            expect(() => event2.replaceableDTag()).toThrowError(
+                "Event is not a parameterized replaceable event",
+            );
         });
     });
 
@@ -413,7 +418,10 @@ describe("NDKEvent", () => {
             const event = new NDKEvent(ndk, { kind: 1 });
             event.tagExternal("e32b4890-b9ea-4aef-a0bf-54b787833dc5", "podcast:guid");
 
-            expect(event.tags).toContainEqual(["i", "podcast:guid:e32b4890-b9ea-4aef-a0bf-54b787833dc5"]);
+            expect(event.tags).toContainEqual([
+                "i",
+                "podcast:guid:e32b4890-b9ea-4aef-a0bf-54b787833dc5",
+            ]);
             expect(event.tags).toContainEqual(["k", "podcast:guid"]);
         });
 
@@ -435,7 +443,11 @@ describe("NDKEvent", () => {
 
         it("adds a marker URL when provided", () => {
             const event = new NDKEvent(ndk, { kind: 1 });
-            event.tagExternal("e32b4890-b9ea-4aef-a0bf-54b787833dc5", "podcast:guid", "https://example.com/marker");
+            event.tagExternal(
+                "e32b4890-b9ea-4aef-a0bf-54b787833dc5",
+                "podcast:guid",
+                "https://example.com/marker",
+            );
 
             expect(event.tags).toContainEqual([
                 "i",
@@ -481,9 +493,11 @@ describe("NDKEvent", () => {
 
             it("carries over the root event of the OP", async () => {
                 // Create thread with root and one reply
-                const [root, reply1] = await fixture.eventFactory.createEventChain("Hello world", "alice", [
-                    { content: "First reply", author: "bob" },
-                ]);
+                const [root, reply1] = await fixture.eventFactory.createEventChain(
+                    "Hello world",
+                    "alice",
+                    [{ content: "First reply", author: "bob" }],
+                );
 
                 // Create a second reply to the first reply
                 fixture.setupSigner("carol");
@@ -509,9 +523,11 @@ describe("NDKEvent", () => {
 
             it("adds a reply marker for non-root events", async () => {
                 // Create thread with root and one reply
-                const [_root, reply1] = await fixture.eventFactory.createEventChain("Hello world", "alice", [
-                    { content: "First reply", author: "bob" },
-                ]);
+                const [_root, reply1] = await fixture.eventFactory.createEventChain(
+                    "Hello world",
+                    "alice",
+                    [{ content: "First reply", author: "bob" }],
+                );
 
                 // Create a second reply to the first reply
                 fixture.setupSigner("carol");
@@ -536,9 +552,11 @@ describe("NDKEvent", () => {
 
             it("carries over the p-tags from the root event", async () => {
                 // Create thread with root and one reply
-                const [root, reply1] = await fixture.eventFactory.createEventChain("Hello world", "alice", [
-                    { content: "First reply", author: "bob" },
-                ]);
+                const [root, reply1] = await fixture.eventFactory.createEventChain(
+                    "Hello world",
+                    "alice",
+                    [{ content: "First reply", author: "bob" }],
+                );
 
                 // Create a second reply to the first reply
                 fixture.setupSigner("carol");
@@ -717,9 +735,11 @@ describe("NDKEvent", () => {
 
             it("preserves existing thread structure when using forceNip22 on kind 1 events", async () => {
                 // Create thread with root and one reply
-                const [root, reply1] = await fixture.eventFactory.createEventChain("Hello world", "alice", [
-                    { content: "First reply", author: "bob" },
-                ]);
+                const [root, reply1] = await fixture.eventFactory.createEventChain(
+                    "Hello world",
+                    "alice",
+                    [{ content: "First reply", author: "bob" }],
+                );
 
                 // Create a second reply to the first reply with forceNip22: true
                 fixture.setupSigner("carol");

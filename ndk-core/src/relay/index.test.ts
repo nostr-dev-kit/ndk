@@ -46,7 +46,9 @@ describe("NDKRelay", () => {
     describe("disconnect", () => {
         it("it doesn't try and disconnect if it already is disconnected", async () => {
             const mockedDisconnect = vi.spyOn(relay.connectivity, "disconnect");
-            vi.spyOn(relay.connectivity, "status", "get").mockReturnValue(NDKRelayStatus.DISCONNECTED);
+            vi.spyOn(relay.connectivity, "status", "get").mockReturnValue(
+                NDKRelayStatus.DISCONNECTED,
+            );
             relay.disconnect();
             expect(relay.status).toEqual(NDKRelayStatus.DISCONNECTED);
             expect(mockedDisconnect).not.toHaveBeenCalled();

@@ -80,7 +80,12 @@ export class NDKRelaySet {
      * @param connect - whether to connect to the relay immediately if it was already in the pool but not connected
      * @returns NDKRelaySet
      */
-    static fromRelayUrls(relayUrls: readonly string[], ndk: NDK, connect = true, pool?: NDKPool): NDKRelaySet {
+    static fromRelayUrls(
+        relayUrls: readonly string[],
+        ndk: NDK,
+        connect = true,
+        pool?: NDKPool,
+    ): NDKRelaySet {
         pool = pool ?? ndk.pool;
 
         if (!pool) throw new Error("No pool provided");
@@ -95,8 +100,16 @@ export class NDKRelaySet {
 
                 relays.add(relay);
             } else {
-                const temporaryRelay = new NDKRelay(normalizeRelayUrl(url), ndk?.relayAuthDefaultPolicy, ndk);
-                pool.useTemporaryRelay(temporaryRelay, undefined, `requested from fromRelayUrls ${relayUrls}`);
+                const temporaryRelay = new NDKRelay(
+                    normalizeRelayUrl(url),
+                    ndk?.relayAuthDefaultPolicy,
+                    ndk,
+                );
+                pool.useTemporaryRelay(
+                    temporaryRelay,
+                    undefined,
+                    `requested from fromRelayUrls ${relayUrls}`,
+                );
                 relays.add(temporaryRelay);
             }
         }
@@ -151,7 +164,11 @@ export class NDKRelaySet {
      * }
      * ```
      */
-    public async publish(event: NDKEvent, timeoutMs?: number, requiredRelayCount = 1): Promise<Set<NDKRelay>> {
+    public async publish(
+        event: NDKEvent,
+        timeoutMs?: number,
+        requiredRelayCount = 1,
+    ): Promise<Set<NDKRelay>> {
         // Set to track relays that successfully received the event.
         // This set is populated both by promise resolutions and by relay:published events
         // We use a Set data structure to ensure each relay is only counted once
@@ -209,7 +226,10 @@ export class NDKRelaySet {
                               // we don't want to incorrectly mark it as timed out
                               if (!publishedToRelays.has(relay)) {
                                   // Record the specific timeout error for this relay
-                                  errors.set(relay, new Error(`Publish timeout after ${timeoutMs}ms`));
+                                  errors.set(
+                                      relay,
+                                      new Error(`Publish timeout after ${timeoutMs}ms`),
+                                  );
                                   // Signal that this relay's publish operation has failed
                                   resolve(false);
                               }

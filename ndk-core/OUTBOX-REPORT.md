@@ -62,7 +62,7 @@ function chooseRelayCombinationForPubkeys(
     ndk: NDK,
     pubkeys: Hexpubkey[],
     type: "write" | "read",
-    { count = 2, preferredRelays }: Options
+    { count = 2, preferredRelays }: Options,
 ): Map<WebSocket["url"], Hexpubkey[]>;
 ```
 
@@ -82,7 +82,7 @@ The `calculateRelaySetFromEvent` function determines where to publish:
 async function calculateRelaySetFromEvent(
     ndk: NDK,
     event: NDKEvent,
-    requiredRelayCount?: number
+    requiredRelayCount?: number,
 ): Promise<NDKRelaySet>;
 ```
 

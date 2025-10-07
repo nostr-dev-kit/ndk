@@ -85,7 +85,9 @@ describe("filterForEventsTaggingId", () => {
             "naddr1qvzqqqr4gupzpjjwt0eqm6as279wf079c0j42jysp2t4s37u8pg5w2dfyktxgkntqqxnzde38yen2desxqmn2d3332u3ff",
         );
         expect(filter).toEqual({
-            "#a": ["30023:ca4e5bf20debb0578ae4bfc5c3e55548900a975847dc38514729a92596645a6b:1719357007561"],
+            "#a": [
+                "30023:ca4e5bf20debb0578ae4bfc5c3e55548900a975847dc38514729a92596645a6b:1719357007561",
+            ],
         });
     });
 });

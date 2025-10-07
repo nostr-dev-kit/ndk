@@ -49,7 +49,7 @@
   // Extract all tags with counts
   const tagCounts = $derived(
     (() => {
-      const counts = new SvelteMap<string, number>();
+      const counts = new Map();
       for (const bookmark of bookmarks) {
         const tags = bookmark.tags.filter((t) => t[0] === 't');
         for (const [, tag] of tags) {

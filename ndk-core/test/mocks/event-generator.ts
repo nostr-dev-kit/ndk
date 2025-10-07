@@ -80,7 +80,11 @@ export class EventGenerator {
         return event;
     }
 
-    static async createEncryptedDirectMessage(content: string, from: string, to: string): Promise<NDKEvent> {
+    static async createEncryptedDirectMessage(
+        content: string,
+        from: string,
+        to: string,
+    ): Promise<NDKEvent> {
         if (!EventGenerator.ndk) {
             throw new Error("NDK not set in EventGenerator. Call setNDK first.");
         }
@@ -129,7 +133,9 @@ export class EventGenerator {
         }
 
         if (kind < 30000 || kind > 39999) {
-            throw new Error(`Invalid parameterized replaceable event kind: ${kind}. Must be between 30000-39999.`);
+            throw new Error(
+                `Invalid parameterized replaceable event kind: ${kind}. Must be between 30000-39999.`,
+            );
         }
 
         if (!pubkey) {

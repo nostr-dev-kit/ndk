@@ -1,6 +1,6 @@
 import { deserialize, matchFilter, NDKEvent, type NDKFilter, type NDKSubscription } from "@nostr-dev-kit/ndk";
 import type { NDKCacheAdapterSqliteWasm } from "../index";
-
+import { type EventRelay } from "./getEventRelays";
 import type { QueryExecResult } from "../types";
 
 /**
@@ -38,12 +38,12 @@ export function query(
 ): NDKEvent[] | Promise<NDKEvent[]> {
     if (!this.ready) {
         if (this.initializationPromise) {
-            return this.initializationPromise.then(() => {
+            return this.initializationPromise.then(async () => {
                 if (this.useWorker) {
                     return Promise.resolve([]);
                 }
                 if (!this.db) return [];
-                return queryDb(this, subscription);
+                return await queryDb(this, subscription);
             });
         }
         return [];
@@ -60,7 +60,7 @@ export function query(
     return queryDb(this, subscription);
 }
 
-function queryDb(adapter: NDKCacheAdapterSqliteWasm, subscription: NDKSubscription): NDKEvent[] {
+async function queryDb(adapter: NDKCacheAdapterSqliteWasm, subscription: NDKSubscription): Promise<NDKEvent[]> {
     if (!adapter.db) return [];
 
     const cacheFilters = filterForCache(subscription);
@@ -144,6 +144,16 @@ function queryDb(adapter: NDKCacheAdapterSqliteWasm, subscription: NDKSubscripti
         }
     }
 
+    // Fetch relay provenance for all found events
+    const eventIds = Array.from(results.keys());
+    const relayData = await adapter.getEventRelays(eventIds);
+
+    // Restore relays on events
+    for (const [eventId, event] of results) {
+        const relays = relayData.get(eventId) || [];
+        restoreRelaysOnEvent(event, relays, subscription);
+    }
+
     return Array.from(results.values());
 }
 
@@ -201,5 +211,29 @@ function foundEvent(
         // eslint-disable-next-line no-console
         console.error("failed to deserialize event", e, record.raw);
         return null;
+    }
+}
+
+/**
+ * Restores relay provenance on an NDKEvent after retrieval from cache.
+ * Sets the primary relay and registers all relays in the subscription manager.
+ */
+function restoreRelaysOnEvent(event: NDKEvent, relays: EventRelay[], subscription: NDKSubscription): void {
+    if (relays.length === 0) return;
+
+    // Set the first relay as the primary relay
+    const primaryRelay = subscription.pool.getRelay(relays[0].url, false);
+    if (primaryRelay) {
+        event.relay = primaryRelay;
+    }
+
+    // Register all relays in seenEvents for the onRelays getter
+    if (subscription.ndk) {
+        for (const relayData of relays) {
+            const relay = subscription.pool.getRelay(relayData.url, false);
+            if (relay) {
+                subscription.ndk.subManager.seenEvent(event.id, relay);
+            }
+        }
     }
 }

@@ -47,6 +47,12 @@ export interface UnpublishedEvent {
     lastTryAt?: number;
 }
 
+export interface EventRelay {
+    eventId: string;
+    relayUrl: string;
+    seenAt: number;
+}
+
 export class Database extends Dexie {
     profiles!: Table<Profile>;
     events!: Table<Event>;
@@ -55,10 +61,11 @@ export class Database extends Dexie {
     lnurl!: Table<Lnurl>;
     relayStatus!: Table<RelayStatus>;
     unpublishedEvents!: Table<UnpublishedEvent>;
+    eventRelays!: Table<EventRelay>;
 
     constructor(name: string) {
         super(name);
-        this.version(15).stores({
+        this.version(16).stores({
             profiles: "&pubkey",
             events: "&id, kind",
             eventTags: "&tagValue",
@@ -66,6 +73,7 @@ export class Database extends Dexie {
             lnurl: "&pubkey",
             relayStatus: "&url",
             unpublishedEvents: "&id",
+            eventRelays: "[eventId+relayUrl], eventId",
         });
     }
 }

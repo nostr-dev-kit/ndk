@@ -1,5 +1,5 @@
 {
-    "name": "@nostr-dev-kit/ndk-cache-sqlite",
+    "name": "@nostr-dev-kit/cache-sqlite",
     "version": "3.0.0",
     "description": "SQLite cache adapter for NDK using better-sqlite3, compatible with Node.js environments.",
     "keywords": [
@@ -13,12 +13,12 @@
     "repository": {
         "type": "git",
         "url": "https://github.com/nostr-dev-kit/ndk.git",
-        "directory": "ndk-cache-sqlite"
+        "directory": "cache-sqlite"
     },
     "bugs": {
         "url": "https://github.com/nostr-dev-kit/ndk/issues"
     },
-    "homepage": "https://github.com/nostr-dev-kit/ndk/tree/master/ndk-cache-sqlite",
+    "homepage": "https://github.com/nostr-dev-kit/ndk/tree/master/cache-sqlite",
     "main": "dist/index.js",
     "module": "dist/index.mjs",
     "types": "dist/index.d.ts",

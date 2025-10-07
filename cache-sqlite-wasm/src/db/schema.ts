@@ -1,5 +1,5 @@
 /**
- * Database schema for ndk-cache-sqlite-wasm.
+ * Database schema for cache-sqlite-wasm.
  * Mirrors the schema used in ndk-mobile's SQLite adapter.
  *
  * This is a TypeScript representation of the SQL schema.
@@ -73,5 +73,14 @@ export const SCHEMA = {
             keys TEXT NOT NULL,
             cached_at INTEGER NOT NULL
         );
+    `,
+    event_relays: `
+        CREATE TABLE IF NOT EXISTS event_relays (
+            event_id TEXT NOT NULL,
+            relay_url TEXT NOT NULL,
+            seen_at INTEGER NOT NULL,
+            PRIMARY KEY (event_id, relay_url)
+        );
+        CREATE INDEX IF NOT EXISTS idx_event_relays_event_id ON event_relays(event_id);
     `,
 };

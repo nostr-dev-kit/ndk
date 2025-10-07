@@ -28,7 +28,7 @@ This ensures:
 When initializing the adapter, you must provide URLs for the worker and WASM file that are accessible from the browser:
 
 ```typescript
-import { NDKCacheAdapterSqliteWasm } from '@nostr-dev-kit/ndk-cache-sqlite-wasm';
+import { NDKCacheAdapterSqliteWasm } from '@nostr-dev-kit/cache-sqlite-wasm';
 
 const adapter = new NDKCacheAdapterSqliteWasm({
   useWorker: true,

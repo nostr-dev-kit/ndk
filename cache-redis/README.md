@@ -1,4 +1,4 @@
-# ndk-cache-redis
+# cache-redis
 
 NDK cache adapter for redis.
 
@@ -10,13 +10,13 @@ a query is using precisely `kinds` and `authors` filtering.
 ### Install
 
 ```
-npm add @nostr-dev-kit/ndk-cache-redis
+npm add @nostr-dev-kit/cache-redis
 ```
 
 ### Add as a cache adapter
 
 ```ts
-import NDKRedisCacheAdapter from "@nostr-dev-kit/ndk-cache-redis";
+import NDKRedisCacheAdapter from "@nostr-dev-kit/cache-redis";
 
 const cacheAdapter = new NDKRedisCacheAdapter();
 const ndk = new NDK({ cacheAdapter });

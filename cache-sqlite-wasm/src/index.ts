@@ -10,6 +10,7 @@ import { fetchProfileSync } from "./functions/fetchProfileSync";
 import { getAllProfilesSync } from "./functions/getAllProfilesSync";
 import { getDecryptedEvent } from "./functions/getDecryptedEvent";
 import { getEvent } from "./functions/getEvent";
+import { getEventRelays } from "./functions/getEventRelays";
 import { getProfiles } from "./functions/getProfiles";
 import { getRelayStatus } from "./functions/getRelayStatus";
 import { getUnpublishedEvents } from "./functions/getUnpublishedEvents";
@@ -184,6 +185,7 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
     // Modular method bindings (public field initializers)
     public setEvent = setEvent.bind(this);
     public getEvent = getEvent.bind(this);
+    public getEventRelays = getEventRelays.bind(this);
     public fetchProfile = fetchProfile.bind(this);
     public saveProfile = saveProfile.bind(this);
     public updateRelayStatus = updateRelayStatus.bind(this);

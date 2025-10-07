@@ -1,6 +1,6 @@
 /**
- * Database schema for ndk-cache-sqlite.
- * Mirrors the schema used in ndk-cache-sqlite-wasm for compatibility.
+ * Database schema for cache-sqlite.
+ * Mirrors the schema used in cache-sqlite-wasm for compatibility.
  *
  * This is a TypeScript representation of the SQL schema.
  * The actual SQL statements will be used in migrations.ts.
@@ -66,5 +66,14 @@ export const SCHEMA = {
             last_connected_at INTEGER,
             dont_connect_before INTEGER
         );
+    `,
+    event_relays: `
+        CREATE TABLE IF NOT EXISTS event_relays (
+            event_id TEXT NOT NULL,
+            relay_url TEXT NOT NULL,
+            seen_at INTEGER NOT NULL,
+            PRIMARY KEY (event_id, relay_url)
+        );
+        CREATE INDEX IF NOT EXISTS idx_event_relays_event_id ON event_relays(event_id);
     `,
 };

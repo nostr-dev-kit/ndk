@@ -77,6 +77,10 @@ export default class NDKMemoryCacheAdapter implements NDKCacheAdapter {
     }
 
     async setEvent(event: NDKEvent, _filters: NDKFilter<NDKKind>[], _relay?: NDKRelay): Promise<void> {
+        // Ensure relay is set on the event
+        if (_relay && !event.relay) {
+            event.relay = _relay;
+        }
         this.events.set(event.id, event);
     }
 

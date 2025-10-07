@@ -5,7 +5,7 @@ SQLite cache adapter for NDK using better-sqlite3, compatible with Node.js envir
 ## Features
 
 - **Node.js Compatible**: Uses better-sqlite3 for native Node.js SQLite support
-- **Schema Compatibility**: Uses the same database schema as ndk-cache-sqlite-wasm for easy migration
+- **Schema Compatibility**: Uses the same database schema as cache-sqlite-wasm for easy migration
 - **High Performance**: Leverages better-sqlite3's synchronous API for optimal performance
 - **Full NDK Integration**: Implements the complete NDKCacheAdapter interface
 - **TypeScript Support**: Full TypeScript definitions included
@@ -13,18 +13,18 @@ SQLite cache adapter for NDK using better-sqlite3, compatible with Node.js envir
 ## Installation
 
 ```bash
-npm install @nostr-dev-kit/ndk-cache-sqlite
+npm install @nostr-dev-kit/cache-sqlite
 # or
-yarn add @nostr-dev-kit/ndk-cache-sqlite
+yarn add @nostr-dev-kit/cache-sqlite
 # or
-bun add @nostr-dev-kit/ndk-cache-sqlite
+bun add @nostr-dev-kit/cache-sqlite
 ```
 
 ## Usage
 
 ```typescript
 import NDK from '@nostr-dev-kit/ndk';
-import { NDKCacheAdapterSqlite } from '@nostr-dev-kit/ndk-cache-sqlite';
+import { NDKCacheAdapterSqlite } from '@nostr-dev-kit/cache-sqlite';
 
 const cache = new NDKCacheAdapterSqlite({
   dbPath: './ndk-cache.db', // Optional: custom database path
@@ -52,7 +52,7 @@ interface NDKCacheAdapterSqliteOptions {
 
 ## Database Schema
 
-The adapter uses the same schema as ndk-cache-sqlite-wasm:
+The adapter uses the same schema as cache-sqlite-wasm:
 
 - `events` - Stores Nostr events
 - `profiles` - Stores user profiles
@@ -64,7 +64,7 @@ The adapter uses the same schema as ndk-cache-sqlite-wasm:
 
 ## Compatibility
 
-This package is designed to be a drop-in replacement for ndk-cache-sqlite-wasm in Node.js environments. The database schema is identical, allowing for easy migration between the two adapters.
+This package is designed to be a drop-in replacement for cache-sqlite-wasm in Node.js environments. The database schema is identical, allowing for easy migration between the two adapters.
 
 ## Development
 

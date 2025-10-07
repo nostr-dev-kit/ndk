@@ -1,4 +1,4 @@
-# ndk-cache-sqlite-wasm
+# cache-sqlite-wasm
 
 A SQLite-backed cache adapter for NDK, running in the browser or any JS environment with WASM support.
 
@@ -6,7 +6,7 @@ A SQLite-backed cache adapter for NDK, running in the browser or any JS environm
 
 ```ts
 import NDK from "@nostr-dev-kit/ndk";
-import NDKCacheAdapterSqliteWasm from "@nostr-dev-kit/ndk-cache-sqlite-wasm";
+import NDKCacheAdapterSqliteWasm from "@nostr-dev-kit/cache-sqlite-wasm";
 
 // Create the adapter (optionally specify dbName)
 const cacheAdapter = new NDKCacheAdapterSqliteWasm({ dbName: "my-ndk-cache" });
@@ -109,7 +109,7 @@ The adapter provides both synchronous and asynchronous methods, matching the NDK
 
 ```ts
 import NDK from "@nostr-dev-kit/ndk";
-import NDKCacheAdapterSqliteWasm from "@nostr-dev-kit/ndk-cache-sqlite-wasm";
+import NDKCacheAdapterSqliteWasm from "@nostr-dev-kit/cache-sqlite-wasm";
 
 const cacheAdapter = new NDKCacheAdapterSqliteWasm();
 await cacheAdapter.initialize();
@@ -122,7 +122,7 @@ const ndk = new NDK({ cacheAdapter });
 
 ```ts
 import NDK from "@nostr-dev-kit/ndk";
-import NDKCacheAdapterSqliteWasm from "@nostr-dev-kit/ndk-cache-sqlite-wasm";
+import NDKCacheAdapterSqliteWasm from "@nostr-dev-kit/cache-sqlite-wasm";
 
 const cacheAdapter = new NDKCacheAdapterSqliteWasm({
   useWorker: true,

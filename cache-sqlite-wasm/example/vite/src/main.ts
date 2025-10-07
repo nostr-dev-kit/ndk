@@ -1,7 +1,7 @@
 import "./style.css";
 
 import NDK, { NDKEvent } from "@nostr-dev-kit/ndk";
-import NDKCacheAdapterSqliteWasm from "@nostr-dev-kit/ndk-cache-sqlite-wasm";
+import NDKCacheAdapterSqliteWasm from "@nostr-dev-kit/cache-sqlite-wasm";
 
 const ndk = new NDK();
 
@@ -31,7 +31,7 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
       <div id="result" style="margin-top:1em;color:#333"></div>
     </div>
     <p class="read-the-docs">
-      This demo uses <code>ndk-cache-sqlite-wasm</code> in Web Worker mode via Vite.<br>
+      This demo uses <code>cache-sqlite-wasm</code> in Web Worker mode via Vite.<br>
       Open the console to see logs and errors.
     </p>
   </div>

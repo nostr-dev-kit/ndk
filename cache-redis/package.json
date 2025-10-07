@@ -1,5 +1,5 @@
 {
-    "name": "@nostr-dev-kit/ndk-cache-redis",
+    "name": "@nostr-dev-kit/cache-redis",
     "version": "0.1.42",
     "description": "NDK Redis Cache Adapter",
     "type": "module",

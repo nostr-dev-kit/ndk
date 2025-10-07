@@ -48,10 +48,19 @@ export default class RedisAdapter implements NDKCacheAdapter {
             const event = await this.redis.get(eventId);
             if (!event) continue;
 
-            const parsedEvent = JSON.parse(event);
+            const parsedEvent = JSON.parse(event) as NostrEventWithRelay;
 
             const ndkEvent = new NDKEvent(subscription.ndk, parsedEvent);
-            subscription.eventReceived(ndkEvent, undefined, true);
+
+            // Restore relay provenance
+            const relay = parsedEvent.relay ? subscription.pool.getRelay(parsedEvent.relay, false) : undefined;
+            if (relay) {
+                ndkEvent.relay = relay;
+                // Register in seenEvents for onRelays getter
+                subscription.ndk?.subManager.seenEvent(ndkEvent.id, relay);
+            }
+
+            subscription.eventReceived(ndkEvent, relay, true);
             events.push(ndkEvent);
         }
     }

@@ -1,4 +1,4 @@
-# Nostr Cache Adapter
+# cache-nostr
 
 NDK cache adapter using a nostr relay as the database.
 
@@ -12,14 +12,14 @@ This cache adapter is meant to be run against a local relay. This adapter will g
 ### Install
 
 ```
-npm add @nostr-dev-kit/ndk-cache-nostr
+npm add @nostr-dev-kit/cache-nostr
 
 ```
 
 ### Add as a cache adapter
 
 ```ts
-import NDKCacheAdapterNostr from "@nostr-dev-kit/ndk-cache-nostr";
+import NDKCacheAdapterNostr from "@nostr-dev-kit/cache-nostr";
 
 const cacheAdapter = new NDKCacheAdapterNostr({
     relayUrl: 'ws://localhost:5577',

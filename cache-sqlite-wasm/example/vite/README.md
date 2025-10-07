@@ -1,6 +1,6 @@
-# Vite Example: ndk-cache-sqlite-wasm with Web Worker
+# Vite Example: cache-sqlite-wasm with Web Worker
 
-This example demonstrates how to use the `ndk-cache-sqlite-wasm` library in a Vite application with Web Worker support.
+This example demonstrates how to use the `cache-sqlite-wasm` library in a Vite application with Web Worker support.
 
 ## Features
 
@@ -50,7 +50,7 @@ example/vite/
     sql-wasm.wasm     # SQLite WASM binary
   src/
     main.ts           # Demo logic
-    ndk-cache-sqlite-wasm-shim.d.ts # TypeScript shim for local dev
+    cache-sqlite-wasm-shim.d.ts # TypeScript shim for local dev
   README.md
   index.html
   ...
@@ -64,4 +64,4 @@ example/vite/
   bun build ../../src/worker.ts --outfile ./public/worker.js --format esm --target browser
   ```
 
-- The adapter import assumes the package is available as `@nostr-dev-kit/ndk-cache-sqlite-wasm`. Adjust the import path if using a local build.
+- The adapter import assumes the package is available as `@nostr-dev-kit/cache-sqlite-wasm`. Adjust the import path if using a local build.

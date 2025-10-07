@@ -1,4 +1,4 @@
-// Global test setup for ndk-cache-sqlite
+// Global test setup for cache-sqlite
 
 import * as fs from "fs";
 import * as path from "path";

@@ -1,4 +1,4 @@
-# ndk-cache-dexie
+# cache-dexie
 
 NDK cache adapter for [Dexie](https://dexie.org/). Dexie is a wrapper around IndexedDB, an in-browser database.
 
@@ -9,13 +9,13 @@ NDK will attempt to use the Dexie adapter to store users, events, and tags. The 
 ### Install
 
 ```
-pnpm add @nostr-dev-kit/ndk-cache-dexie
+pnpm add @nostr-dev-kit/cache-dexie
 ```
 
 ### Add as a cache adapter
 
 ```ts
-import NDKCacheAdapterDexie from "@nostr-dev-kit/ndk-cache-dexie";
+import NDKCacheAdapterDexie from "@nostr-dev-kit/cache-dexie";
 
 const dexieAdapter = new NDKCacheAdapterDexie({ dbName: 'your-db-name' });
 const ndk = new NDK({cacheAdapter: dexieAdapter, ...other config options});

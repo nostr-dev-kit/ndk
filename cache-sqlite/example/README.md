@@ -107,7 +107,7 @@ If no events are loaded from the relay:
 
 If you see TypeScript import errors:
 - Make sure you're running the example from the correct directory
-- Ensure the parent `ndk-cache-sqlite` package is built: `cd .. && bun run build`
+- Ensure the parent `cache-sqlite` package is built: `cd .. && bun run build`
 
 ### Database Errors
 

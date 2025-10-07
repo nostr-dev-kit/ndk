@@ -1,5 +1,5 @@
 {
-    "name": "@nostr-dev-kit/ndk-cache-nostr",
+    "name": "@nostr-dev-kit/cache-nostr",
     "version": "0.1.56",
     "description": "NDK cache adapter that uses a local nostr relay.",
     "main": "./dist/index.js",

@@ -56,6 +56,14 @@ export async function setEvent(
                 }
             }
         }
+
+        // Store relay provenance
+        if (_relay?.url) {
+            const insertRelayStmt = db.prepare(
+                "INSERT OR IGNORE INTO event_relays (event_id, relay_url, seen_at) VALUES (?, ?, ?)",
+            );
+            insertRelayStmt.run(event.id, _relay.url, Date.now());
+        }
     } catch (e) {
         console.error("Error storing event:", e);
         throw e;

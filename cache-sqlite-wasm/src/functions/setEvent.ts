@@ -42,11 +42,31 @@ export async function setEvent(
                 params: values,
             },
         });
+
+        // Store relay provenance
+        if (_relay?.url) {
+            await this.postWorkerMessage({
+                type: "run",
+                payload: {
+                    sql: "INSERT OR IGNORE INTO event_relays (event_id, relay_url, seen_at) VALUES (?, ?, ?)",
+                    params: [event.id, _relay.url, Date.now()],
+                },
+            });
+        }
     } else {
         // Main thread: run directly, but still async for consistency
         if (!this.db) throw new Error("DB not initialized");
         try {
             this.db.run(stmt, values);
+
+            // Store relay provenance
+            if (_relay?.url) {
+                this.db.run("INSERT OR IGNORE INTO event_relays (event_id, relay_url, seen_at) VALUES (?, ?, ?)", [
+                    event.id,
+                    _relay.url,
+                    Date.now(),
+                ]);
+            }
         } catch (e) {
             throw e;
         }

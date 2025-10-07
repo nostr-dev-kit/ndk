@@ -1,13 +1,13 @@
 {
-    "name": "@nostr-dev-kit/ndk-cache-dexie",
+    "name": "@nostr-dev-kit/cache-dexie",
     "version": "2.6.45",
     "description": "NDK Dexie Cache Adapter",
     "license": "MIT",
     "docs": "typedoc",
     "bugs": {
-        "url": "https://github.com/nostr-dev-kit/ndk-cache-dexie/issues"
+        "url": "https://github.com/nostr-dev-kit/cache-dexie/issues"
     },
-    "homepage": "https://github.com/nostr-dev-kit/ndk-cache-dexie#readme",
+    "homepage": "https://github.com/nostr-dev-kit/cache-dexie#readme",
     "main": "./dist/index.js",
     "module": "./dist/index.mjs",
     "exports": {

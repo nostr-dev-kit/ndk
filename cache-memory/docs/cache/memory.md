@@ -53,8 +53,8 @@ The memory cache adapter is ideal for:
 - Development and testing
 
 For persistent caching across sessions, consider:
-- `@nostr-dev-kit/ndk-cache-dexie` (IndexedDB)
-- `@nostr-dev-kit/ndk-cache-sqlite` (SQLite)
+- `@nostr-dev-kit/cache-dexie` (IndexedDB)
+- `@nostr-dev-kit/cache-sqlite` (SQLite)
 
 # License
 

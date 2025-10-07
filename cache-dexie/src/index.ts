@@ -397,6 +397,19 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
             for (const tag of indexableTags) {
                 this.eventTags.add(tag[0] + tag[1], event.tagId());
             }
+
+            // Store relay provenance
+            if (relay?.url) {
+                db.eventRelays
+                    .put({
+                        eventId: event.id,
+                        relayUrl: relay.url,
+                        seenAt: Date.now(),
+                    })
+                    .catch((e) => {
+                        this.debug("Failed to store relay provenance", e);
+                    });
+            }
         }
     }
 

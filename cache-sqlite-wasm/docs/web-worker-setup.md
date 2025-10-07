@@ -1,6 +1,6 @@
-# Web Worker Setup for ndk-cache-sqlite-wasm
+# Web Worker Setup for cache-sqlite-wasm
 
-This guide provides detailed instructions for setting up and configuring the Web Worker mode in the `ndk-cache-sqlite-wasm` adapter across different frameworks and environments.
+This guide provides detailed instructions for setting up and configuring the Web Worker mode in the `cache-sqlite-wasm` adapter across different frameworks and environments.
 
 ## Overview
 
@@ -54,14 +54,14 @@ const profile = await cacheAdapter.fetchProfile(pubkey);
 1. **Copy the required files to your public directory**:
 
    ```bash
-   cp node_modules/@nostr-dev-kit/ndk-cache-sqlite-wasm/dist/worker.js public/
-   cp node_modules/@nostr-dev-kit/ndk-cache-sqlite-wasm/dist/sql-wasm.wasm public/
+   cp node_modules/@nostr-dev-kit/cache-sqlite-wasm/dist/worker.js public/
+   cp node_modules/@nostr-dev-kit/cache-sqlite-wasm/dist/sql-wasm.wasm public/
    ```
 
 2. **Configure the adapter**:
 
    ```typescript
-   import NDKCacheAdapterSqliteWasm from "@nostr-dev-kit/ndk-cache-sqlite-wasm";
+   import NDKCacheAdapterSqliteWasm from "@nostr-dev-kit/cache-sqlite-wasm";
 
    const cacheAdapter = new NDKCacheAdapterSqliteWasm({
      useWorker: true,
@@ -81,14 +81,14 @@ const profile = await cacheAdapter.fetchProfile(pubkey);
 1. **Copy the required files to your public directory**:
 
    ```bash
-   cp node_modules/@nostr-dev-kit/ndk-cache-sqlite-wasm/dist/worker.js public/
-   cp node_modules/@nostr-dev-kit/ndk-cache-sqlite-wasm/dist/sql-wasm.wasm public/
+   cp node_modules/@nostr-dev-kit/cache-sqlite-wasm/dist/worker.js public/
+   cp node_modules/@nostr-dev-kit/cache-sqlite-wasm/dist/sql-wasm.wasm public/
    ```
 
 2. **Configure the adapter**:
 
    ```typescript
-   import NDKCacheAdapterSqliteWasm from "@nostr-dev-kit/ndk-cache-sqlite-wasm";
+   import NDKCacheAdapterSqliteWasm from "@nostr-dev-kit/cache-sqlite-wasm";
 
    const cacheAdapter = new NDKCacheAdapterSqliteWasm({
      useWorker: true,
@@ -103,8 +103,8 @@ const profile = await cacheAdapter.fetchProfile(pubkey);
 
    ```typescript
    // Import the files to ensure they're included in the build
-   import workerUrl from "@nostr-dev-kit/ndk-cache-sqlite-wasm/dist/worker.js?url";
-   import wasmUrl from "@nostr-dev-kit/ndk-cache-sqlite-wasm/dist/sql-wasm.wasm?url";
+   import workerUrl from "@nostr-dev-kit/cache-sqlite-wasm/dist/worker.js?url";
+   import wasmUrl from "@nostr-dev-kit/cache-sqlite-wasm/dist/sql-wasm.wasm?url";
 
    const cacheAdapter = new NDKCacheAdapterSqliteWasm({
      useWorker: true,
@@ -160,7 +160,7 @@ If you encounter cross-origin issues:
 
 ```typescript
 import NDK from "@nostr-dev-kit/ndk";
-import NDKCacheAdapterSqliteWasm from "@nostr-dev-kit/ndk-cache-sqlite-wasm";
+import NDKCacheAdapterSqliteWasm from "@nostr-dev-kit/cache-sqlite-wasm";
 
 // Initialize the adapter with Web Worker mode
 const cacheAdapter = new NDKCacheAdapterSqliteWasm({

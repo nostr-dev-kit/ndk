@@ -81,6 +81,7 @@ export class NDKCashuWallet extends NDKWallet {
     public relaySet?: NDKRelaySet;
 
     private _walletEvent?: NDKEvent;
+    private _walletRelays: string[] = [];
 
     constructor(ndk: NDK) {
         super(ndk);
@@ -186,6 +187,8 @@ export class NDKCashuWallet extends NDKWallet {
                 this.mints.push(tag[1]);
             } else if (tag[0] === "privkey") {
                 await this.addPrivkey(tag[1]);
+            } else if (tag[0] === "relay") {
+                this._walletRelays.push(tag[1]);
             }
         }
 
@@ -206,17 +209,13 @@ export class NDKCashuWallet extends NDKWallet {
 
     /**
      * Fetches relay configuration for the wallet according to NIP-60.
-     * First tries to get relays from "relay" tags in the 17375 wallet event,
+     * First tries to get relays from encrypted wallet relays,
      * falls back to NIP-65 (kind 10002) relays if not found.
      */
     private async fetchWalletRelays(pubkey: string): Promise<NDKRelaySet | undefined> {
-        // First check for relay tags in the wallet event (kind 17375)
-        if (this._walletEvent) {
-            const relayTags = this._walletEvent.tags.filter((tag) => tag[0] === "relay");
-            if (relayTags.length > 0) {
-                const relayUrls = relayTags.map((tag) => tag[1]);
-                return NDKRelaySet.fromRelayUrls(relayUrls, this.ndk!);
-            }
+        // First check for relay URLs from encrypted wallet content
+        if (this._walletRelays.length > 0) {
+            return NDKRelaySet.fromRelayUrls(this._walletRelays, this.ndk!);
         }
 
         // Fallback to NIP-65 relays (kind 10002)
@@ -458,21 +457,26 @@ export class NDKCashuWallet extends NDKWallet {
     private walletPayload(): NDKTag[] {
         const privkeys = Array.from(this.privkeys.values()).map((signer) => signer.privateKey!);
 
-        return payloadForEvent(privkeys, this.mints);
+        const payload = payloadForEvent(privkeys, this.mints);
+
+        // Add relay tags to encrypted payload
+        if (this._walletRelays.length > 0) {
+            payload.push(...this._walletRelays.map((relay) => ["relay", relay] as NDKTag));
+        }
+
+        return payload;
     }
 
     async publish() {
+        // Populate wallet relays from relaySet if it exists
+        if (this.relaySet) {
+            this._walletRelays = Array.from(this.relaySet.relays).map((relay) => relay.url);
+        }
+
         const event = new NDKEvent(this.ndk, {
             content: JSON.stringify(this.walletPayload()),
             kind: NDKKind.CashuWallet,
         });
-
-        // Add relay tags if relaySet exists
-        if (this.relaySet) {
-            for (const relay of this.relaySet.relays) {
-                event.tags.push(["relay", relay.url]);
-            }
-        }
 
         const user = await this.ndk?.signer?.user();
         await event.encrypt(user, undefined, "nip44");

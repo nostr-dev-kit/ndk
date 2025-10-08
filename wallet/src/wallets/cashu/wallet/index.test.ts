@@ -54,14 +54,14 @@ vi.mock("./txs.js", () => {
 });
 
 // Create mocks for the NDK event and other dependencies
-const createMockEvent = () => {
+const createMockEvent = (rawEventData?: any) => {
     return {
         ndk: {},
-        content: "",
-        kind: NDKKind.CashuWallet,
-        tags: [],
-        pubkey: "mock-pubkey",
-        created_at: Date.now() / 1000,
+        content: rawEventData?.content || "",
+        kind: rawEventData?.kind || NDKKind.CashuWallet,
+        tags: rawEventData?.tags || [],
+        pubkey: rawEventData?.pubkey || "mock-pubkey",
+        created_at: rawEventData?.created_at || Date.now() / 1000,
         id: "mock-id",
         sig: "mock-sig",
         tagId: vi.fn().mockReturnValue("mock-tag-id"),
@@ -76,7 +76,7 @@ const createMockEvent = () => {
 // Mock the NDK event constructor with necessary NDKKind values
 vi.mock("@nostr-dev-kit/ndk", async () => {
     return {
-        NDKEvent: vi.fn().mockImplementation(() => createMockEvent()),
+        NDKEvent: vi.fn().mockImplementation((_ndk, rawEvent) => createMockEvent(rawEvent)),
         NDKKind: {
             CashuWallet: 5300,
             CashuWalletBackup: 5301,
@@ -288,6 +288,69 @@ describe("NDKCashuWallet", () => {
 
             expect(wallet.getCashuWallet).toHaveBeenCalledWith("https://mock-mint.com");
             // The assertion for update is now handled in the mockImplementation above
+        });
+    });
+
+    describe("Relay Configuration", () => {
+        it("should encrypt relay tags in wallet payload", async () => {
+            // Setup relaySet
+            const mockRelay1 = { url: "wss://relay1.com" };
+            const mockRelay2 = { url: "wss://relay2.com" };
+            wallet.relaySet = {
+                relays: new Set([mockRelay1, mockRelay2]),
+            } as any;
+
+            // Publish wallet
+            await wallet.publish();
+
+            // Get the mocked NDKEvent constructor and check what it was called with
+            const NDKEvent = (await import("@nostr-dev-kit/ndk")).NDKEvent as any;
+            const lastCall = NDKEvent.mock.calls[NDKEvent.mock.calls.length - 1];
+            const eventInit = lastCall[1];
+
+            // Parse the content to verify relay tags are included in encrypted payload
+            const payload = JSON.parse(eventInit.content);
+            const relayTags = payload.filter((tag: any) => tag[0] === "relay");
+
+            expect(relayTags.length).toBe(2);
+            expect(relayTags).toContainEqual(["relay", "wss://relay1.com"]);
+            expect(relayTags).toContainEqual(["relay", "wss://relay2.com"]);
+        });
+
+        it("should load relay tags from encrypted content", async () => {
+            const testWallet = new NDKCashuWallet(ndk);
+
+            const encryptedContent = JSON.stringify([
+                ["mint", "https://mint1.com"],
+                ["privkey", "test-privkey"],
+                ["relay", "wss://relay1.com"],
+                ["relay", "wss://relay2.com"],
+            ]);
+
+            // Create a mock event with encrypted relay tags
+            const mockEvent = {
+                ndk,
+                kind: NDKKind.CashuWallet,
+                content: encryptedContent,
+                decrypt: vi.fn().mockResolvedValue(undefined),
+                tags: [],
+                rawEvent: vi.fn().mockReturnValue({
+                    kind: NDKKind.CashuWallet,
+                    content: encryptedContent,
+                    tags: [],
+                    pubkey: "test-pubkey",
+                    created_at: Math.floor(Date.now() / 1000),
+                }),
+            } as any;
+
+            // Load from event
+            await testWallet.loadFromEvent(mockEvent);
+
+            // Verify relays were loaded
+            expect((testWallet as any)._walletRelays).toEqual([
+                "wss://relay1.com",
+                "wss://relay2.com",
+            ]);
         });
     });
 });

@@ -3,10 +3,12 @@ import NDK, {
     NDKCashuMintList,
     NDKEvent,
     type NDKEventId,
+    NDKKind,
     NDKNutzap,
     type NDKNutzapState,
     NDKPrivateKeySigner,
     type NDKUser,
+    NdkNutzapStatus,
 } from "@nostr-dev-kit/ndk";
 import { mockNutzap } from "@nostr-dev-kit/ndk/test";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -166,6 +168,7 @@ describe("NDKNutzapMonitor", () => {
 
             // Mock the fetchEvents function
             const mockBackupEvent = new NDKEvent(ndk);
+            mockBackupEvent.kind = NDKKind.CashuWalletBackup;
             const backup = new NDKCashuWalletBackup(ndk);
             backup.privkeys = [backupSigner1.privateKey!, backupSigner2.privateKey!];
 
@@ -184,6 +187,117 @@ describe("NDKNutzapMonitor", () => {
 
             expect(monitor.privkeys.has(pubkey1)).toBe(true);
             expect(monitor.privkeys.has(pubkey2)).toBe(true);
+        });
+
+        it("should load private keys from kind 17375 wallet config events", async () => {
+            // Create wallet config signers
+            const walletSigner1 = NDKPrivateKeySigner.generate();
+            const walletSigner2 = NDKPrivateKeySigner.generate();
+
+            // Create a mock wallet config event
+            const mockWalletEvent = new NDKEvent(ndk);
+            mockWalletEvent.kind = NDKKind.CashuWallet;
+            mockWalletEvent.content = JSON.stringify([
+                ["mint", "https://testmint.com"],
+                ["privkey", walletSigner1.privateKey!],
+                ["privkey", walletSigner2.privateKey!],
+            ]);
+
+            // Mock decrypt to set the content
+            vi.spyOn(mockWalletEvent, "decrypt").mockResolvedValue(undefined);
+
+            // Mock the fetchEvents method
+            ndk.fetchEvents = vi.fn().mockResolvedValue(new Set([mockWalletEvent]));
+
+            // Call getBackupKeys
+            await monitor.getBackupKeys();
+
+            // Check that the private keys were added
+            const pubkey1 = (await walletSigner1.user()).pubkey;
+            const pubkey2 = (await walletSigner2.user()).pubkey;
+
+            expect(monitor.privkeys.has(pubkey1)).toBe(true);
+            expect(monitor.privkeys.has(pubkey2)).toBe(true);
+        });
+
+        it("should load private keys from both kind 375 and kind 17375 events", async () => {
+            // Create signers for both event types
+            const backupSigner = NDKPrivateKeySigner.generate();
+            const walletSigner = NDKPrivateKeySigner.generate();
+
+            // Create a backup event (kind 375)
+            const mockBackupEvent = new NDKEvent(ndk);
+            mockBackupEvent.kind = NDKKind.CashuWalletBackup;
+            const backup = new NDKCashuWalletBackup(ndk);
+            backup.privkeys = [backupSigner.privateKey!];
+
+            // Create a wallet config event (kind 17375)
+            const mockWalletEvent = new NDKEvent(ndk);
+            mockWalletEvent.kind = NDKKind.CashuWallet;
+            mockWalletEvent.content = JSON.stringify([
+                ["mint", "https://testmint.com"],
+                ["privkey", walletSigner.privateKey!],
+            ]);
+
+            // Mock decrypt to set the content
+            vi.spyOn(mockWalletEvent, "decrypt").mockResolvedValue(undefined);
+
+            // Mock the fetchEvents method to return both events
+            ndk.fetchEvents = vi.fn().mockResolvedValue(new Set([mockBackupEvent, mockWalletEvent]));
+
+            // Mock the from method to return our backup
+            vi.spyOn(NDKCashuWalletBackup, "from").mockResolvedValue(backup);
+
+            // Call getBackupKeys
+            await monitor.getBackupKeys();
+
+            // Check that private keys from both events were added
+            const backupPubkey = (await backupSigner.user()).pubkey;
+            const walletPubkey = (await walletSigner.user()).pubkey;
+
+            expect(monitor.privkeys.has(backupPubkey)).toBe(true);
+            expect(monitor.privkeys.has(walletPubkey)).toBe(true);
+        });
+
+        it("should handle decryption errors for kind 17375 wallet config events gracefully", async () => {
+            // Create a wallet config event that will fail to decrypt
+            const mockWalletEvent = new NDKEvent(ndk);
+            mockWalletEvent.kind = NDKKind.CashuWallet;
+
+            // Mock decrypt to throw an error
+            vi.spyOn(mockWalletEvent, "decrypt").mockRejectedValue(new Error("Decryption failed"));
+
+            // Mock the fetchEvents method
+            ndk.fetchEvents = vi.fn().mockResolvedValue(new Set([mockWalletEvent]));
+
+            // Spy on console.error
+            const errorSpy = vi.spyOn(console, "error");
+
+            // Call getBackupKeys - should not throw
+            await expect(monitor.getBackupKeys()).resolves.not.toThrow();
+
+            // Verify error was logged
+            expect(errorSpy).toHaveBeenCalledWith(
+                "failed to decrypt wallet config event",
+                expect.any(String),
+                expect.any(Error),
+            );
+        });
+
+        it("should fetch both kind 375 and kind 17375 events in a single subscription", async () => {
+            // Mock the fetchEvents method
+            const fetchEventsSpy = vi.fn().mockResolvedValue(new Set());
+            ndk.fetchEvents = fetchEventsSpy;
+
+            // Call getBackupKeys
+            await monitor.getBackupKeys();
+
+            // Verify fetchEvents was called with both kinds
+            expect(fetchEventsSpy).toHaveBeenCalledWith(
+                [{ kinds: [NDKKind.CashuWalletBackup, NDKKind.CashuWallet], authors: [user.pubkey] }],
+                undefined,
+                monitor.relaySet,
+            );
         });
 
         it.skip("should handle errors when loading backup events", async () => {

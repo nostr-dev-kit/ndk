@@ -6,6 +6,7 @@ import type { NDKCacheAdapterSqliteWasm } from "../index";
  * Supports both worker and direct database modes.
  */
 export async function addDecryptedEvent(this: NDKCacheAdapterSqliteWasm, event: NDKEvent): Promise<void> {
+    const serialized = event.serialize(true, true);
     const stmt = `
         INSERT OR REPLACE INTO decrypted_events (
             id, event
@@ -17,11 +18,11 @@ export async function addDecryptedEvent(this: NDKCacheAdapterSqliteWasm, event: 
             type: "run",
             payload: {
                 sql: stmt,
-                params: [event.id, event.serialize(true, true)],
+                params: [event.id, serialized],
             },
         });
     } else {
         if (!this.db) throw new Error("Database not initialized");
-        this.db.run(stmt, [event.id, event.serialize(true, true)]);
+        this.db.run(stmt, [event.id, serialized]);
     }
 }

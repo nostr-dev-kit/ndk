@@ -245,7 +245,7 @@ $effect(() => {
 
 ### React (coming soon)
 ```typescript
-import { useWoTView } from '@nostr-dev-kit/ndk-hooks';
+import { useWoTView } from '@nostr-dev-kit/react';
 
 function Feed() {
   const [depth, setDepth] = useState(2);

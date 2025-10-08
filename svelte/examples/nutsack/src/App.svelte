@@ -19,9 +19,6 @@
   });
 
   onMount(async () => {
-    // Initialize sessions store
-    await ndk.$sessions.init(ndk);
-
     // Wait for NDK to be ready
     await ndkReady;
     isConnecting = false;

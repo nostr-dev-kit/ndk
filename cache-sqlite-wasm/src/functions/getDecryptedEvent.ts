@@ -1,4 +1,4 @@
-import type { NDKEvent, NDKEventId } from "@nostr-dev-kit/ndk";
+import { NDKEvent, type NDKEventId, deserialize } from "@nostr-dev-kit/ndk";
 import type { NDKCacheAdapterSqliteWasm } from "../index";
 
 /**
@@ -19,8 +19,10 @@ export async function getDecryptedEvent(this: NDKCacheAdapterSqliteWasm, eventId
 
         if (result && result.event) {
             try {
-                return JSON.parse(result.event);
-            } catch {
+                const nostrEvent = deserialize(result.event);
+                return new NDKEvent(this.ndk, nostrEvent);
+            } catch (e) {
+                console.error('[getDecryptedEvent] Parse error:', e);
                 return null;
             }
         }
@@ -32,7 +34,8 @@ export async function getDecryptedEvent(this: NDKCacheAdapterSqliteWasm, eventId
         if (results && results.length > 0 && results[0].values && results[0].values.length > 0) {
             const eventStr = results[0].values[0][0] as string;
             try {
-                return JSON.parse(eventStr);
+                const nostrEvent = deserialize(eventStr);
+                return new NDKEvent(this.ndk, nostrEvent);
             } catch {
                 return null;
             }

@@ -11,7 +11,7 @@
     "dependencies": {
         "@nostr-dev-kit/ndk": "latest",
         "@nostr-dev-kit/blossom": "file:../..",
-        "@nostr-dev-kit/ndk-hooks": "latest",
+        "@nostr-dev-kit/react": "latest",
         "react": "^18.2.0",
         "react-dom": "^18.2.0"
     },

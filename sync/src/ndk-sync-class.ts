@@ -14,18 +14,18 @@ import type { NDKSyncOptions, NDKSyncResult } from "./types.js";
 import { getRelayCapabilities, supportsNegentropy } from "./utils/relay-capabilities.js";
 
 /**
- * Relay capability tracking
+ * Sync package metadata stored in relay cache
  */
-interface RelayCapability {
-    supportsNegentropy: boolean;
-    lastChecked: number;
+interface SyncRelayMetadata {
+    supportsNegentropy?: boolean;
+    lastChecked?: number;
     lastError?: string;
 }
 
 /**
  * NDKSync - Stateful sync manager
  *
- * Tracks which relays support Negentropy and provides clean sync APIs.
+ * Tracks which relays support Negentropy using persistent cache and provides clean sync APIs.
  *
  * @example
  * ```typescript
@@ -46,7 +46,6 @@ interface RelayCapability {
  */
 export class NDKSync {
     private ndk: NDK;
-    private relayCapabilities: Map<string, RelayCapability> = new Map();
     private readonly CAPABILITY_CACHE_TTL = 3600000; // 1 hour
 
     constructor(ndk: NDK) {
@@ -55,31 +54,40 @@ export class NDKSync {
 
     /**
      * Check if a relay supports Negentropy
-     * Uses cached result if available and fresh
+     * Uses persistent cache if available
      */
     async checkRelaySupport(relay: NDKRelay): Promise<boolean> {
-        const cached = this.relayCapabilities.get(relay.url);
-        const now = Date.now();
+        // Check persistent cache first
+        const status = await this.ndk.cacheAdapter?.getRelayStatus?.(relay.url);
+        const syncMeta = status?.metadata?.sync as SyncRelayMetadata | undefined;
 
-        // Return cached if fresh
-        if (cached && now - cached.lastChecked < this.CAPABILITY_CACHE_TTL) {
-            return cached.supportsNegentropy;
+        const now = Date.now();
+        if (syncMeta && syncMeta.lastChecked && now - syncMeta.lastChecked < this.CAPABILITY_CACHE_TTL) {
+            return syncMeta.supportsNegentropy ?? false;
         }
 
         // Check relay capabilities
         try {
             const supports = await supportsNegentropy(relay);
-            this.relayCapabilities.set(relay.url, {
-                supportsNegentropy: supports,
-                lastChecked: now,
+            await this.ndk.cacheAdapter?.updateRelayStatus?.(relay.url, {
+                metadata: {
+                    sync: {
+                        supportsNegentropy: supports,
+                        lastChecked: now,
+                    },
+                },
             });
             return supports;
         } catch (error) {
-            // On error, assume no support and cache briefly
-            this.relayCapabilities.set(relay.url, {
-                supportsNegentropy: false,
-                lastChecked: now,
-                lastError: error instanceof Error ? error.message : "Unknown error",
+            // On error, assume no support and cache
+            await this.ndk.cacheAdapter?.updateRelayStatus?.(relay.url, {
+                metadata: {
+                    sync: {
+                        supportsNegentropy: false,
+                        lastChecked: now,
+                        lastError: error instanceof Error ? error.message : "Unknown error",
+                    },
+                },
             });
             return false;
         }
@@ -100,20 +108,30 @@ export class NDKSync {
     }
 
     /**
-     * Get relay capability info
+     * Get relay capability info from persistent cache
      */
-    getRelayCapability(relayUrl: string): RelayCapability | undefined {
-        return this.relayCapabilities.get(relayUrl);
+    async getRelayCapability(relayUrl: string): Promise<SyncRelayMetadata | undefined> {
+        const status = await this.ndk.cacheAdapter?.getRelayStatus?.(relayUrl);
+        return status?.metadata?.sync as SyncRelayMetadata | undefined;
     }
 
     /**
-     * Clear capability cache (useful for testing or after relay updates)
+     * Clear capability cache for a specific relay or all relays
+     * Useful for testing or after relay updates
      */
-    clearCapabilityCache(relayUrl?: string): void {
+    async clearCapabilityCache(relayUrl?: string): Promise<void> {
         if (relayUrl) {
-            this.relayCapabilities.delete(relayUrl);
+            // Clear only the sync metadata for this relay
+            // undefined values are deleted by updateRelayStatus
+            await this.ndk.cacheAdapter?.updateRelayStatus?.(relayUrl, {
+                metadata: {
+                    sync: undefined as any,
+                },
+            });
         } else {
-            this.relayCapabilities.clear();
+            // We can't easily clear all sync metadata without enumerating all relays
+            // So this is now a no-op, or could be enhanced if needed
+            console.warn("clearCapabilityCache() without relayUrl is not supported with persistent cache");
         }
     }
 
@@ -193,6 +211,18 @@ export class NDKSync {
                         const result = await ndkSync.call(this.ndk, filterArray, {
                             relaySet: new NDKRelaySet(new Set([relay]), this.ndk),
                             autoFetch: true,
+                            onRelayError: async (errorRelay, error) => {
+                                // Mark relay as not supporting negentropy when sync fails
+                                await this.ndk.cacheAdapter?.updateRelayStatus?.(errorRelay.url, {
+                                    metadata: {
+                                        sync: {
+                                            supportsNegentropy: false,
+                                            lastChecked: Date.now(),
+                                            lastError: error.message,
+                                        },
+                                    },
+                                });
+                            },
                         });
                         opts.onRelaySynced?.(relay, result.events.length);
                     } else {
@@ -207,10 +237,14 @@ export class NDKSync {
                 } catch (error) {
                     console.error(`[NDKSync] Failed to sync from ${relay.url}:`, error);
                     // Mark relay as not supporting negentropy on error
-                    this.relayCapabilities.set(relay.url, {
-                        supportsNegentropy: false,
-                        lastChecked: Date.now(),
-                        lastError: error instanceof Error ? error.message : "Unknown error",
+                    await this.ndk.cacheAdapter?.updateRelayStatus?.(relay.url, {
+                        metadata: {
+                            sync: {
+                                supportsNegentropy: false,
+                                lastChecked: Date.now(),
+                                lastError: error instanceof Error ? error.message : "Unknown error",
+                            },
+                        },
                     });
                 } finally {
                     completedCount++;

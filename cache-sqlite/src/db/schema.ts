@@ -64,7 +64,12 @@ export const SCHEMA = {
         CREATE TABLE IF NOT EXISTS relay_status (
             url TEXT PRIMARY KEY,
             last_connected_at INTEGER,
-            dont_connect_before INTEGER
+            dont_connect_before INTEGER,
+            consecutive_failures INTEGER,
+            last_failure_at INTEGER,
+            nip11_data TEXT,
+            nip11_fetched_at INTEGER,
+            metadata TEXT
         );
     `,
     event_relays: `

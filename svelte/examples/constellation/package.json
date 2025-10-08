@@ -1,6 +1,6 @@
 {
     "name": "ndk-svelte5-constellation",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "private": true,
     "type": "module",
     "scripts": {
@@ -9,9 +9,9 @@
         "preview": "vite preview"
     },
     "dependencies": {
-        "@nostr-dev-kit/ndk": "workspace:*",
-        "@nostr-dev-kit/cache-sqlite-wasm": "workspace:*",
-        "@nostr-dev-kit/svelte": "workspace:*",
+        "@nostr-dev-kit/ndk": "^2.16.0",
+        "@nostr-dev-kit/cache-sqlite-wasm": "^0.6.1",
+        "@nostr-dev-kit/svelte": "^1.0.0",
         "qrcode": "^1.5.4"
     },
     "devDependencies": {

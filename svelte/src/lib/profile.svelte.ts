@@ -1,128 +1,64 @@
-import type { NDKSubscriptionOptions, NDKUserProfile } from "@nostr-dev-kit/ndk";
-import { NDKSubscriptionCacheUsage } from "@nostr-dev-kit/ndk";
+import type { NDKUserProfile } from "@nostr-dev-kit/ndk";
 import type { NDKSvelte } from "./ndk-svelte.svelte";
 
-export interface ProfileStore {
-    profile: NDKUserProfile | undefined;
-    fetching: boolean;
-    error: Error | undefined;
-}
-
 /**
- * Fetches and maintains a reactive user profile for a given pubkey
+ * Reactively fetch a user profile by pubkey
  *
- * @param ndk - NDK instance
- * @param pubkey - User's public key (can be undefined)
- * @param opts - Optional NDK subscription options for the profile fetch
- * @returns Reactive profile store
+ * Returns a reactive proxy to the profile that updates when the pubkey changes.
+ * Use it directly as if it were an NDKUserProfile - all property access is reactive.
  *
  * @example
  * ```svelte
  * <script lang="ts">
- *   import { useUser, useProfile } from '@nostr-dev-kit/svelte';
- *
- *   const userStore = useUser(ndk, 'npub1...');
- *   const profileStore = useProfile(ndk, userStore.user?.pubkey);
+ *   const user = ndk.$fetchUser(() => identifier);
+ *   const profile = ndk.$fetchProfile(() => user?.pubkey);
  * </script>
  *
- * <div>
- *   {#if profileStore.profile}
- *     <h2>{profileStore.profile.name}</h2>
- *     <p>{profileStore.profile.about}</p>
- *     <img src={profileStore.profile.image} alt={profileStore.profile.name} />
- *   {:else if profileStore.fetching}
- *     <p>Loading profile...</p>
- *   {:else if profileStore.error}
- *     <p>Error: {profileStore.error.message}</p>
- *   {/if}
- * </div>
- * ```
- *
- * @example With custom subscription options
- * ```svelte
- * <script>
- *   const profileStore = useProfile(ndk, pubkey, {
- *     cacheUsage: NDKSubscriptionCacheUsage.ONLY_RELAY,
- *     closeOnEose: true,
- *     groupable: false
- *   });
- * </script>
+ * {#if profile}
+ *   <h1>{profile.name}</h1>
+ *   <p>{profile.about}</p>
+ * {/if}
  * ```
  */
-export function useProfile(ndk: NDKSvelte, pubkey: string | undefined, opts?: NDKSubscriptionOptions): ProfileStore {
-    let profile = $state<NDKUserProfile | undefined>(undefined);
-    let fetching = $state(false);
-    let error = $state<Error | undefined>(undefined);
-    let currentPubkey = $state<string | undefined>(undefined);
+export function createFetchProfile(ndk: NDKSvelte, pubkey: () => string | undefined) {
+    let _profile = $state<NDKUserProfile | undefined>(undefined);
 
-    console.log("useProfile called with pubkey:", pubkey);
+    const derivedPubkey = $derived(pubkey());
 
-    $effect.root(() => {
-        $effect(() => {
-            // If pubkey hasn't changed, don't refetch
-            if (pubkey === currentPubkey) {
-                return;
-            }
+    $effect(() => {
+        const pk = derivedPubkey;
+        if (!pk) {
+            _profile = undefined;
+            return;
+        }
 
-            currentPubkey = pubkey;
-
-            if (!pubkey) {
-                profile = undefined;
-                error = undefined;
-                fetching = false;
-                return;
-            }
-
-            fetching = true;
-            error = undefined;
-
-            // Fetch the profile
-            fetchProfile(pubkey);
-        });
+        const user = ndk.getUser({ pubkey: pk });
+        user.fetchProfile({ closeOnEose: true, groupable: true, groupableDelay: 250 })
+            .then(() => {
+                _profile = user.profile;
+            })
+            .catch(() => {
+                _profile = undefined;
+            });
     });
 
-    async function fetchProfile(pubkey: string) {
-        console.log("Fetching profile for pubkey:", pubkey);
-        try {
-            const user = ndk.getUser({ pubkey });
-
-            // Set up default options
-            const defaultOpts: NDKSubscriptionOptions = {
-                closeOnEose: true,
-                groupable: true,
-                groupableDelay: 250,
-                cacheUsage: NDKSubscriptionCacheUsage.PARALLEL,
-            };
-
-            // Merge with provided options
-            const subscriptionOpts = { ...defaultOpts, ...opts };
-
-            console.log("Subscription options:", subscriptionOpts);
-
-            // Use NDK's built-in fetchProfile
-            await user.fetchProfile(subscriptionOpts);
-
-            console.log("Fetched profile:", user.profile);
-
-            profile = user.profile;
-        } catch (err) {
-            console.error("Error fetching profile:", err);
-            error = err as Error;
-            profile = undefined;
-        } finally {
-            fetching = false;
+    // Return a proxy that forwards all access to the reactive _profile
+    return new Proxy({} as NDKUserProfile | undefined, {
+        get(_target, prop) {
+            if (_profile && prop in _profile) {
+                const value = _profile[prop as keyof NDKUserProfile];
+                return typeof value === 'function' ? value.bind(_profile) : value;
+            }
+            return undefined;
+        },
+        has(_target, prop) {
+            return _profile ? prop in _profile : false;
+        },
+        ownKeys() {
+            return _profile ? Reflect.ownKeys(_profile) : [];
+        },
+        getOwnPropertyDescriptor(_target, prop) {
+            return _profile ? Reflect.getOwnPropertyDescriptor(_profile, prop) : undefined;
         }
-    }
-
-    return {
-        get profile() {
-            return profile;
-        },
-        get fetching() {
-            return fetching;
-        },
-        get error() {
-            return error;
-        },
-    };
+    });
 }

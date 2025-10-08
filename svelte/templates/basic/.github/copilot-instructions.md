@@ -65,8 +65,9 @@ await relay.connect();
 
 ### Fetching Profile Data
 ```ts
-const user = useUser(ndk, 'npub1...');
-const profile = useProfile(ndk, user.pubkey);
+const identifier = $derived(npub);
+const user = ndk.$fetchUser(() => identifier);
+const profile = ndk.$fetchProfile(() => user?.pubkey);
 ```
 
 ### Customizing Theme

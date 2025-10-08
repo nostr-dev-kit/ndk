@@ -106,12 +106,12 @@ await ndk.cacheAdapter?.setNutzapState?.(nutzapId, {
 
 If you are creating a custom cache adapter and want it to support nutzap state persistence, you need to implement the `getAllNutzapStates` and `setNutzapState` methods.
 
-NDK Mobile (`@nostr-dev-kit/ndk-mobile`) provides an implementation using SQLite via its `NDKCacheAdapterSqlite`. If you use this adapter with your NDK instance, nutzap state persistence will work automatically.
+NDK Mobile (`@nostr-dev-kit/mobile`) provides an implementation using SQLite via its `NDKCacheAdapterSqlite`. If you use this adapter with your NDK instance, nutzap state persistence will work automatically.
 
 ```typescript
 // Example: Initializing NDK with the SQLite adapter from ndk-mobile
 import NDK from "@nostr-dev-kit/ndk";
-import { NDKCacheAdapterSqlite } from "@nostr-dev-kit/ndk-mobile";
+import { NDKCacheAdapterSqlite } from "@nostr-dev-kit/mobile";
 
 const cacheAdapter = new NDKCacheAdapterSqlite("my-ndk-cache.db");
 await cacheAdapter.initialize(); // Important: Initialize the adapter

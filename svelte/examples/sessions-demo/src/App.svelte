@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { NDKSvelte, useUser, useProfile } from "@nostr-dev-kit/svelte"
+  import { NDKSvelte } from "@nostr-dev-kit/svelte"
   import { NDKPrivateKeySigner, NDKNip07Signer, NDKNip46Signer } from "@nostr-dev-kit/ndk"
   import QRCode from "qrcode"
   import SigVerifyWorker from './sig-verify.worker.ts?worker'
@@ -23,8 +23,8 @@
     initialized = true
   })
 
-  const currentProfileStore = $derived(
-    ndk.$sessions.current ? useProfile(ndk, ndk.$sessions.current.pubkey) : null
+  const currentProfile = $derived(
+    ndk.$sessions.current ? ndk.$fetchProfile(() => ndk.$sessions.current?.pubkey) : null
   )
 
   // Login form state
@@ -497,21 +497,13 @@
           <div class="info-row">
             <span class="info-label">Profile Name:</span>
             <span class="info-value" data-testid="profile-name">
-              {#if currentProfileStore?.fetching}
-                Loading...
-              {:else}
-                {currentProfileStore?.profile?.name || currentProfileStore?.profile?.display_name || currentProfileStore?.profile?.displayName || '(no name set)'}
-              {/if}
+              {currentProfile?.name || currentProfile?.display_name || currentProfile?.displayName || '(no name set)'}
             </span>
           </div>
           <div class="info-row">
             <span class="info-label">About:</span>
             <span class="info-value">
-              {#if currentProfileStore?.fetching}
-                Loading...
-              {:else}
-                {currentProfileStore?.profile?.about || '(no bio)'}
-              {/if}
+              {currentProfile?.about || '(no bio)'}
             </span>
           </div>
           <div class="info-row">

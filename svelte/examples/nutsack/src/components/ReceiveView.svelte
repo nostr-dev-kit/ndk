@@ -74,7 +74,7 @@
       depositInstance = deposit;
 
       // Listen for deposit completion
-      deposit.on('success', (amount) => {
+      deposit.on('success', () => {
         success = { amount };
         mintAmount = '';
         depositInstance = null;
@@ -87,13 +87,9 @@
         isCheckingPayment = false;
       });
 
-      // Start the deposit flow
-      await deposit.start();
-
-      // Get the lightning invoice
-      if (deposit.pr) {
-        depositInvoice = deposit.pr;
-      }
+      // Start the deposit flow and get the lightning invoice
+      const bolt11 = await deposit.start();
+      depositInvoice = bolt11;
 
     } catch (e: any) {
       error = e.message || 'Failed to create mint request';
@@ -111,7 +107,7 @@
 
     try {
       // Check if the deposit has been paid
-      await depositInstance.checkStatus();
+      await depositInstance.check();
     } catch (e: any) {
       error = e.message || 'Failed to check payment status';
       console.error(e);

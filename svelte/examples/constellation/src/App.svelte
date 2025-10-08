@@ -11,7 +11,7 @@
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
 
   // Subscribe to bookmarks (kind 39701)
-  const subscription = ndk.$subscribe([
+  const subscription = ndk.$subscribe(() => [
     {
       kinds: [39701],
       limit: 100,

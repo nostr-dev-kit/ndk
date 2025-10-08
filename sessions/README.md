@@ -6,7 +6,7 @@ Framework-agnostic session management for NDK with multi-account support and per
 
 - 🔐 **Multi-account support** - Manage multiple Nostr accounts simultaneously
 - 💾 **Flexible persistence** - Built-in localStorage, filesystem, and memory storage
-- 🔄 **Auto-sync** - Automatically fetch profiles, follows, and events
+- 🔄 **Auto-sync** - Automatically fetch follows, mutes, relays, and events
 - 🎯 **Framework-agnostic** - Works with React, Svelte, Vue, vanilla JS, Node.js, etc.
 - 🔌 **Minimal boilerplate** - Simple, intuitive API
 - 🎨 **Full TypeScript** - Complete type safety
@@ -36,8 +36,8 @@ const sessions = new NDKSessionManager(ndk);
 // Login
 const signer = new NDKPrivateKeySigner(myNsec);
 await sessions.login(signer, {
-  profile: true,    // Auto-fetch profile
   follows: true,    // Auto-fetch follows
+  mutes: true,      // Auto-fetch mutes
   setActive: true   // Set as active session
 });
 
@@ -81,8 +81,8 @@ await sessions.restore();
 // Login
 const signer = new NDKPrivateKeySigner(process.env.NOSTR_NSEC);
 await sessions.login(signer, {
-  profile: true,
-  follows: true
+  follows: true,
+  mutes: true
 });
 
 // Use active session
@@ -125,8 +125,8 @@ import { NDKUser } from '@nostr-dev-kit/ndk';
 // Create read-only session without signer
 const user = ndk.getUser({ pubkey: somePubkey });
 await sessions.login(user, {
-  profile: true,
-  follows: true
+  follows: true,
+  relayList: true
 });
 
 // User data is fetched and cached, but can't sign events
@@ -148,24 +148,39 @@ unsubscribe();
 
 ```typescript
 await sessions.login(signer, {
-  // Fetch user profile (kind 0)
-  profile: true,
-
   // Fetch contact list (kind 3)
   follows: true,
 
+  // Fetch mute list (kind 10000)
+  mutes: true,
+
+  // Fetch blocked relay list (kind 10001)
+  blockedRelays: true,
+
+  // Fetch user's relay list (kind 10002)
+  relayList: true,
+
+  // Fetch NIP-60 wallet (kind 17375)
+  wallet: true,
+
   // Fetch additional event kinds
   events: new Map([
-    [10002, null], // NIP-65 relay list
     [30078, null], // NIP-78 app data
-  ])
+  ]),
+
+  // Automatically set muteFilter on NDK (default: true)
+  setMuteFilter: true,
+
+  // Automatically set relayConnectionFilter on NDK (default: true)
+  setRelayConnectionFilter: true
 });
 
 // Access session data
 const session = sessions.activeSession;
-console.log('Profile:', session.profile);
 console.log('Following:', session.followSet?.size, 'users');
-console.log('Relay list:', session.events.get(10002));
+console.log('Muted:', session.muteSet?.size, 'items');
+console.log('Relay list:', session.relayList);
+console.log('App data:', session.events.get(30078));
 ```
 
 ### Manual Persistence
@@ -209,11 +224,24 @@ new NDKSessionManager(ndk: NDK, options?: SessionManagerOptions)
 
 Login with a signer or user.
 
+**Options:**
+- `follows?: boolean | NDKKind[]` - Fetch contact list (kind 3) and optional kind-scoped follows
+- `mutes?: boolean` - Fetch mute list (kind 10000)
+- `blockedRelays?: boolean` - Fetch blocked relay list (kind 10001)
+- `relayList?: boolean` - Fetch user's relay list (kind 10002)
+- `wallet?: boolean` - Fetch NIP-60 wallet (kind 17375)
+- `events?: Map<NDKKind, NDKEvent>` - Fetch specific replaceable event kinds
+- `setMuteFilter?: boolean` - Set muteFilter on NDK based on session's mute data (default: `true`)
+- `setRelayConnectionFilter?: boolean` - Set relayConnectionFilter on NDK based on session's blocked relays (default: `true`)
+- `setActive?: boolean` - Set this session as active immediately
+
 ```typescript
 await sessions.login(signer, {
-  profile: true,
   follows: true,
-  events: new Map([[10002, null]]),
+  mutes: true,
+  relayList: true,
+  wallet: true,
+  events: new Map([[30078, null]]),
   setActive: true
 });
 ```
@@ -254,7 +282,7 @@ Get the active session.
 
 **`activeUser: NDKUser | undefined`**
 
-Get the active user with profile data.
+Get the active user.
 
 **`activePubkey: Hexpubkey | undefined`**
 
@@ -311,7 +339,7 @@ interface SessionStorage {
 ### React (with ndk-hooks)
 
 ```typescript
-// Coming soon: useNDKSessions hook in @nostr-dev-kit/ndk-hooks
+// Coming soon: useNDKSessions hook in @nostr-dev-kit/react
 ```
 
 ### Svelte 5 (with ndk-svelte5)

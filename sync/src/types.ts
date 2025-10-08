@@ -47,8 +47,9 @@ export interface NDKSyncOptions {
     /**
      * Callback for relay errors during sync.
      * Useful for debugging and monitoring.
+     * Can be async to perform operations like cache updates.
      */
-    onRelayError?: (relay: import("@nostr-dev-kit/ndk").NDKRelay, error: Error) => void;
+    onRelayError?: (relay: import("@nostr-dev-kit/ndk").NDKRelay, error: Error) => void | Promise<void>;
 }
 
 /**

@@ -414,8 +414,21 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
     }
 
     public updateRelayStatus(url: string, info: NDKCacheRelayInfo): void {
-        const val = { url, updatedAt: Date.now(), ...info };
-        this.relayInfo.set(url, val);
+        const existing = this.relayInfo.get(url);
+
+        // Deep merge metadata field, shallow merge others
+        const merged = {
+            url,
+            updatedAt: Date.now(),
+            ...existing,
+            ...info,
+            metadata: {
+                ...existing?.metadata,
+                ...info.metadata,
+            },
+        };
+
+        this.relayInfo.set(url, merged);
     }
 
     public getRelayStatus(url: string): NDKCacheRelayInfo | undefined {
@@ -424,6 +437,10 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
             return {
                 lastConnectedAt: a.lastConnectedAt,
                 dontConnectBefore: a.dontConnectBefore,
+                consecutiveFailures: a.consecutiveFailures,
+                lastFailureAt: a.lastFailureAt,
+                nip11: a.nip11,
+                metadata: a.metadata,
             };
         }
     }

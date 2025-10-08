@@ -165,7 +165,28 @@ export default class NDKMemoryCacheAdapter implements NDKCacheAdapter {
     }
 
     updateRelayStatus(relayUrl: WebSocket["url"], info: NDKCacheRelayInfo): void {
-        this.relayStatus.set(relayUrl, info);
+        const existing = this.relayStatus.get(relayUrl);
+
+        // Deep merge metadata field, shallow merge others
+        const merged: NDKCacheRelayInfo = {
+            ...existing,
+            ...info,
+            metadata: {
+                ...existing?.metadata,
+                ...info.metadata,
+            },
+        };
+
+        // Remove undefined namespace keys
+        if (merged.metadata) {
+            for (const [key, value] of Object.entries(merged.metadata)) {
+                if (value === undefined) {
+                    delete merged.metadata[key];
+                }
+            }
+        }
+
+        this.relayStatus.set(relayUrl, merged);
     }
 
     getRelayStatus(relayUrl: WebSocket["url"]): NDKCacheRelayInfo | undefined {

@@ -1,4 +1,4 @@
-import type { CashuWallet, SendResponse } from "@cashu/cashu-ts";
+import type { CashuWallet, GetInfoResponse, SendResponse } from "@cashu/cashu-ts";
 import { getDecodedToken } from "@cashu/cashu-ts";
 import type NDK from "@nostr-dev-kit/ndk";
 import {
@@ -618,6 +618,15 @@ export class NDKCashuWallet extends NDKWallet {
         return Object.entries(availableBalances)
             .filter(([_, balance]) => balance >= amount)
             .map(([mint]) => mint);
+    }
+
+    /**
+     * Gets mint information for a specific mint URL.
+     * Returns cached info if available, otherwise fetches from the mint.
+     */
+    async getMintInfo(mintUrl: string): Promise<GetInfoResponse | undefined> {
+        const cashuWallet = await this.getCashuWallet(mintUrl);
+        return await cashuWallet.mint.getInfo();
     }
 }
 

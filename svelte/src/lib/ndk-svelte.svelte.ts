@@ -1,5 +1,7 @@
 import type { NDKConstructorParams, NDKEvent, NDKFilter } from "@nostr-dev-kit/ndk";
 import NDK from "@nostr-dev-kit/ndk";
+import { LocalStorage, NDKSessionManager } from "@nostr-dev-kit/sessions";
+import type { SessionManagerOptions } from "@nostr-dev-kit/sessions";
 import type { ReactivePaymentsStore } from "./stores/payments.svelte.js";
 import { createReactivePayments } from "./stores/payments.svelte.js";
 import type { ReactivePoolStore } from "./stores/pool.svelte.js";
@@ -12,6 +14,15 @@ import type { ReactiveWoTStore } from "./stores/wot.svelte.js";
 import { createReactiveWoT } from "./stores/wot.svelte.js";
 import type { SubscribeOptions, Subscription } from "./subscribe.svelte.js";
 import { createSubscription } from "./subscribe.svelte.js";
+import { createFetchUser } from "./user.svelte.js";
+import { createFetchProfile } from "./profile.svelte.js";
+
+export interface NDKSvelteParams extends NDKConstructorParams {
+    /**
+     * Session manager options
+     */
+    sessionOptions?: SessionManagerOptions;
+}
 
 /**
  * NDK Svelte 5 - Reactive NDK instance
@@ -48,13 +59,26 @@ export class NDKSvelte extends NDK {
     $payments!: ReactivePaymentsStore;
     $pool!: ReactivePoolStore;
 
-    constructor(params: NDKConstructorParams = {}) {
+    constructor(params: NDKSvelteParams = {}) {
         super(params);
 
+        // Create session manager with options from params
+        const sessionManager = new NDKSessionManager(this, {
+            storage: new LocalStorage(),
+            autoSave: true,
+            fetches: {
+                follows: true,
+                mutes: true,
+                wallet: true,
+            },
+            ...params.sessionOptions,
+        });
+
         // Initialize reactive stores
-        this.$sessions = createReactiveSessions(this);
+        // Both stores subscribe independently to session manager
+        this.$wallet = createReactiveWallet(this, sessionManager);
+        this.$sessions = createReactiveSessions(sessionManager);
         this.$wot = createReactiveWoT(this, this.$sessions);
-        this.$wallet = createReactiveWallet();
         this.$payments = createReactivePayments();
         this.$pool = createReactivePool(this);
     }
@@ -68,7 +92,7 @@ export class NDKSvelte extends NDK {
      *
      * @example
      * ```ts
-     * const notes = ndk.$subscribe({ kinds: [1], limit: 50 });
+     * const notes = ndk.$subscribe(() => ({ kinds: [1], limit: 50 }));
      *
      * // Reactive access in templates
      * {#each notes.events as note}
@@ -77,9 +101,51 @@ export class NDKSvelte extends NDK {
      * ```
      */
     $subscribe<T extends NDKEvent = NDKEvent>(
-        filters: NDKFilter | NDKFilter[] | (() => NDKFilter | NDKFilter[] | undefined),
+        filters: () => NDKFilter | NDKFilter[] | undefined,
         opts?: SubscribeOptions,
     ): Subscription<T> {
         return createSubscription<T>(this, filters, opts);
+    }
+
+    /**
+     * Reactively fetch a user by identifier
+     *
+     * Returns a reactive proxy to the user that updates when the identifier changes.
+     * Use it directly as if it were an NDKUser - all property access is reactive.
+     *
+     * @example
+     * ```ts
+     * const identifier = $derived($page.params.id);
+     * const user = ndk.$fetchUser(() => identifier);
+     *
+     * // In template
+     * {#if user}
+     *   <div>{user.npub}</div>
+     * {/if}
+     * ```
+     */
+    $fetchUser(identifier: () => string | undefined) {
+        return createFetchUser(this, identifier);
+    }
+
+    /**
+     * Reactively fetch a user profile by pubkey
+     *
+     * Returns a reactive proxy to the profile that updates when the pubkey changes.
+     * Use it directly as if it were an NDKUserProfile - all property access is reactive.
+     *
+     * @example
+     * ```ts
+     * const user = ndk.$fetchUser(() => identifier);
+     * const profile = ndk.$fetchProfile(() => user?.pubkey);
+     *
+     * // In template
+     * {#if profile}
+     *   <h1>{profile.name}</h1>
+     * {/if}
+     * ```
+     */
+    $fetchProfile(pubkey: () => string | undefined) {
+        return createFetchProfile(this, pubkey);
     }
 }

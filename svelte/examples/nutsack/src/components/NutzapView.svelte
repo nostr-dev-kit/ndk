@@ -2,8 +2,7 @@
   import type { WalletAPI } from '../lib/useWallet.svelte.js';
   import type { NDKUser } from '@nostr-dev-kit/ndk';
   import ndk from '../lib/ndk';
-  import { NDKUser as NDKUserClass } from '@nostr-dev-kit/ndk';
-  import { zap } from '@nostr-dev-kit/svelte';
+  import { zap, useZapInfo } from '@nostr-dev-kit/svelte';
 
   interface Props {
     wallet: WalletAPI;
@@ -20,8 +19,6 @@
   let isSending = $state(false);
   let error = $state('');
   let success = $state(false);
-  let contacts = $state<NDKUser[]>([]);
-  let profileRefresh = $state(0); // Used to trigger reactivity
   let has10019 = $state<Set<string>>(new Set()); // Track which users have kind 10019
 
   const quickAmounts = [1000, 5000, 10000, 21000, 50000, 100000];
@@ -29,6 +26,24 @@
   const balance = $derived(wallet.balance || 0);
   const amountNum = $derived(Number(amount) || 0);
   const canSend = $derived(resolvedUser && amountNum > 0 && amountNum <= balance && !isSending);
+
+  // Get zap info for resolved user
+  const zapInfo = useZapInfo(() => resolvedUser || undefined);
+
+  // Track expanded state for payment methods
+  let expandedMethods = $state<Set<string>>(new Set());
+
+  function toggleMethod(method: string) {
+    if (expandedMethods.has(method)) {
+      expandedMethods.delete(method);
+    } else {
+      expandedMethods.add(method);
+    }
+    expandedMethods = expandedMethods; // Force reactivity
+  }
+
+  // Get reactive follows from session - just the pubkeys
+  const followPubkeys = $derived(Array.from(ndk.$sessions.follows).slice(0, 20));
 
   function formatBalance(sats: number): string {
     return new Intl.NumberFormat('en-US').format(sats);
@@ -69,8 +84,7 @@
     error = '';
 
     try {
-      // Use the real zap function from payment tracking
-      await zap(resolvedUser, amountNum, { comment: comment || undefined });
+      await zap(ndk, resolvedUser, amountNum, comment ? { comment } : undefined);
 
       success = true;
 
@@ -89,63 +103,30 @@
     }
   }
 
-  function selectContact(user: NDKUser) {
+  async function selectContact(user: NDKUser) {
+    await user.fetchProfile();
     resolvedUser = user;
     recipientInput = user.profile?.nip05 || user.npub;
   }
 
-  // Load contacts on mount
-  import { onMount } from 'svelte';
+  // Subscribe to kind 10019 events for follows
+  $effect(() => {
+    if (followPubkeys.length === 0) return;
 
-  onMount(async () => {
-    // Load user's contacts
-    if (ndk.$sessions.current) {
-      try {
-        const user = new NDKUserClass({ pubkey: ndk.$sessions.current.pubkey });
-        user.ndk = ndk;
-        const contactList = await user.follows();
-        const contactArray = Array.from(contactList).slice(0, 20);
-
-        contacts = contactArray;
-
-        // Fetch kind 10019 events for all contacts
-        const pubkeys = contactArray.map(c => c.pubkey);
-        ndk.subscribe(
-          { kinds: [10019], authors: pubkeys },
-          {
-            closeOnEose: true,
-            onEvent: (event) => {
-              has10019.add(event.pubkey);
-              has10019 = has10019; // Force reactivity
-
-              // Re-sort contacts to prioritize those with kind 10019
-              contacts = contacts.sort((a, b) => {
-                const aHas = has10019.has(a.pubkey);
-                const bHas = has10019.has(b.pubkey);
-                if (aHas && !bHas) return -1;
-                if (!aHas && bHas) return 1;
-                return 0;
-              });
-            }
-          }
-        );
-
-        // Fetch profiles for all contacts
-        contactArray.forEach(async (contact) => {
-          contact.ndk = ndk;
-          try {
-            await contact.fetchProfile();
-            // Force reactivity by updating the array
-            contacts = [...contacts];
-            profileRefresh++;
-          } catch (e) {
-            console.error(`Failed to fetch profile for ${contact.pubkey}:`, e);
-          }
-        });
-      } catch (e) {
-        console.error('Failed to load contacts:', e);
+    const sub = ndk.subscribe(
+      { kinds: [10019], authors: followPubkeys },
+      {
+        closeOnEose: true,
+        onEvent: (event) => {
+          has10019.add(event.pubkey);
+          has10019 = has10019; // Force reactivity
+        }
       }
-    }
+    );
+
+    return () => {
+      sub?.stop();
+    };
   });
 </script>
 
@@ -190,35 +171,42 @@
       </div>
 
       <!-- Contacts List -->
-      {#if contacts.length > 0 && !resolvedUser}
+      {#if followPubkeys.length > 0 && !resolvedUser}
         <div class="contacts-section">
-          <h4>Recent Contacts</h4>
+          <h4>Follows</h4>
           <div class="contacts-scroll">
-            {#each contacts as contact (contact.pubkey)}
-              {@const _ = profileRefresh}
+            {#each followPubkeys.sort((a, b) => {
+              const aHas = has10019.has(a);
+              const bHas = has10019.has(b);
+              if (aHas && !bHas) return -1;
+              if (!aHas && bHas) return 1;
+              return 0;
+            }) as pubkey (pubkey)}
+              {@const user = ndk.getUser({ pubkey })}
+              {@const profile = ndk.$fetchProfile(() => pubkey)}
               <button
                 class="contact-item"
-                class:has-cashu={has10019.has(contact.pubkey)}
-                onclick={() => selectContact(contact)}
+                class:has-cashu={has10019.has(pubkey)}
+                onclick={() => selectContact(user)}
               >
                 <div class="avatar-container">
-                  {#if contact.profile?.image}
-                    <img src={contact.profile.image} alt="" class="contact-avatar" />
+                  {#if profile?.image}
+                    <img src={profile.image} alt="" class="contact-avatar" />
                   {:else}
                     <div class="contact-avatar-placeholder">
-                      {contact.profile?.name?.charAt(0).toUpperCase() || contact.pubkey.charAt(0).toUpperCase()}
+                      {profile?.name?.charAt(0).toUpperCase() || pubkey.charAt(0).toUpperCase()}
                     </div>
                   {/if}
-                  {#if has10019.has(contact.pubkey)}
+                  {#if has10019.has(pubkey)}
                     <div class="cashu-badge" title="Has Cashu wallet">🥜</div>
                   {/if}
                 </div>
                 <div class="contact-info">
                   <div class="contact-name">
-                    {contact.profile?.displayName || contact.profile?.name || contact.pubkey.slice(0, 8) + '...'}
+                    {profile?.displayName || profile?.name || pubkey.slice(0, 8) + '...'}
                   </div>
-                  {#if contact.profile?.nip05}
-                    <div class="contact-nip05">{contact.profile.nip05}</div>
+                  {#if profile?.nip05}
+                    <div class="contact-nip05">{profile.nip05}</div>
                   {/if}
                 </div>
               </button>
@@ -251,6 +239,116 @@
             {/if}
           </div>
         </div>
+
+        <!-- Zap Info Display -->
+        {#if zapInfo.isLoading}
+          <div class="zap-info loading">
+            <div class="zap-info-header">
+              <span class="spinner-inline"></span>
+              Loading payment methods...
+            </div>
+          </div>
+        {:else if zapInfo.methods.size > 0}
+          <div class="zap-info">
+            <div class="zap-info-header">💰 Payment methods available</div>
+            <div class="zap-methods">
+              {#if zapInfo.methods.has('nip61')}
+                {@const nip61Info = zapInfo.methods.get('nip61')}
+                {@const isExpanded = expandedMethods.has('nip61')}
+                <button class="zap-method cashu" onclick={() => toggleMethod('nip61')}>
+                  <div class="method-header">
+                    <div class="method-icon">🥜</div>
+                    <div class="method-title">
+                      <div class="method-name">Cashu (NIP-61)</div>
+                      <div class="method-summary">
+                        {#if nip61Info?.mints && nip61Info.mints.length > 0}
+                          {nip61Info.mints.length} mint{nip61Info.mints.length !== 1 ? 's' : ''} accepted
+                        {/if}
+                      </div>
+                    </div>
+                    <div class="expand-icon" class:expanded={isExpanded}>
+                      ›
+                    </div>
+                  </div>
+                  {#if isExpanded}
+                    <div class="method-body" onclick={(e) => e.stopPropagation()}>
+                      {#if nip61Info?.mints && nip61Info.mints.length > 0}
+                        <div class="info-section">
+                          <div class="info-label">Mints ({nip61Info.mints.length}):</div>
+                          <div class="info-list">
+                            {#each nip61Info.mints as mint}
+                              <div class="info-item mint-url">{mint}</div>
+                            {/each}
+                          </div>
+                        </div>
+                      {/if}
+                      {#if nip61Info?.relays && nip61Info.relays.length > 0}
+                        <div class="info-section">
+                          <div class="info-label">Relays ({nip61Info.relays.length}):</div>
+                          <div class="info-list">
+                            {#each nip61Info.relays as relay}
+                              <div class="info-item relay-url">{relay}</div>
+                            {/each}
+                          </div>
+                        </div>
+                      {/if}
+                      {#if nip61Info?.p2pk}
+                        <div class="info-section">
+                          <div class="info-label">P2PK Lock:</div>
+                          <div class="info-item p2pk">{nip61Info.p2pk.slice(0, 16)}...{nip61Info.p2pk.slice(-8)}</div>
+                        </div>
+                      {/if}
+                    </div>
+                  {/if}
+                </button>
+              {/if}
+              {#if zapInfo.methods.has('nip57')}
+                {@const nip57Info = zapInfo.methods.get('nip57')}
+                {@const isExpanded = expandedMethods.has('nip57')}
+                <button class="zap-method lightning" onclick={() => toggleMethod('nip57')}>
+                  <div class="method-header">
+                    <div class="method-icon">⚡</div>
+                    <div class="method-title">
+                      <div class="method-name">Lightning (NIP-57)</div>
+                      <div class="method-summary">
+                        {#if nip57Info?.lud16}
+                          {nip57Info.lud16}
+                        {:else if nip57Info?.lud06}
+                          LNURL configured
+                        {/if}
+                      </div>
+                    </div>
+                    <div class="expand-icon" class:expanded={isExpanded}>
+                      ›
+                    </div>
+                  </div>
+                  {#if isExpanded}
+                    <div class="method-body" onclick={(e) => e.stopPropagation()}>
+                      {#if nip57Info?.lud16}
+                        <div class="info-section">
+                          <div class="info-label">Lightning Address:</div>
+                          <div class="info-item lud16">{nip57Info.lud16}</div>
+                        </div>
+                      {:else if nip57Info?.lud06}
+                        <div class="info-section">
+                          <div class="info-label">LNURL:</div>
+                          <div class="info-item lud06">{nip57Info.lud06}</div>
+                        </div>
+                      {/if}
+                    </div>
+                  {/if}
+                </button>
+              {/if}
+            </div>
+          </div>
+        {:else if !zapInfo.isLoading}
+          <div class="zap-info empty">
+            <div class="zap-info-header">⚠️ No payment methods configured</div>
+            <div class="zap-info-message">
+              This user hasn't configured any payment methods yet.
+            </div>
+          </div>
+        {/if}
 
         <!-- Amount Input -->
         <div class="form-section">
@@ -534,6 +632,188 @@
     font-size: 0.875rem;
     color: rgba(249, 115, 22, 0.9);
     margin-top: 0.125rem;
+  }
+
+  .zap-info {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .zap-info.loading {
+    padding: 0.75rem;
+  }
+
+  .zap-info.empty {
+    border-color: rgba(251, 191, 36, 0.3);
+    background: rgba(251, 191, 36, 0.05);
+  }
+
+  .zap-info-header {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .zap-info-message {
+    font-size: 0.8125rem;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .zap-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .zap-method {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .zap-method:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .zap-method.cashu {
+    border-color: rgba(249, 115, 22, 0.2);
+    background: rgba(249, 115, 22, 0.05);
+  }
+
+  .zap-method.cashu:hover {
+    background: rgba(249, 115, 22, 0.08);
+    border-color: rgba(249, 115, 22, 0.3);
+  }
+
+  .zap-method.lightning {
+    border-color: rgba(234, 179, 8, 0.2);
+    background: rgba(234, 179, 8, 0.05);
+  }
+
+  .zap-method.lightning:hover {
+    background: rgba(234, 179, 8, 0.08);
+    border-color: rgba(234, 179, 8, 0.3);
+  }
+
+  .method-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .method-icon {
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+  }
+
+  .method-title {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+  }
+
+  .method-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .method-summary {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .expand-icon {
+    font-size: 1.5rem;
+    color: rgba(255, 255, 255, 0.5);
+    transform: rotate(0deg);
+    transition: transform 0.2s ease;
+    line-height: 1;
+  }
+
+  .expand-icon.expanded {
+    transform: rotate(90deg);
+  }
+
+  .method-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-left: 3rem;
+  }
+
+  .info-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  .info-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.7);
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+  }
+
+  .info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .info-item {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-family: 'SF Mono', Monaco, monospace;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 0.375rem 0.5rem;
+    border-radius: 4px;
+    overflow-wrap: break-word;
+    word-break: break-all;
+  }
+
+  .info-item.mint-url {
+    color: rgba(249, 115, 22, 0.9);
+  }
+
+  .info-item.relay-url {
+    color: rgba(34, 197, 94, 0.9);
+  }
+
+  .info-item.p2pk {
+    color: rgba(168, 85, 247, 0.9);
+  }
+
+  .info-item.lud16,
+  .info-item.lud06 {
+    color: rgba(234, 179, 8, 0.9);
   }
 
   .amount-display {

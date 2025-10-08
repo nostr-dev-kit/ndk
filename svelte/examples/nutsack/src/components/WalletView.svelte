@@ -10,9 +10,11 @@
   import TransactionList from './TransactionList.svelte';
   import SettingsView from './SettingsView.svelte';
   import ProofManagementView from './ProofManagementView.svelte';
+  import TokensView from './TokensView.svelte';
   import BlacklistedMintsView from './BlacklistedMintsView.svelte';
-  import MintManagementView from './MintManagementView.svelte';
+  import WalletConfigView from './WalletConfigView.svelte';
   import NutzapSettingsView from './NutzapSettingsView.svelte';
+  import DebugView from './DebugView.svelte';
 
   interface Props {
     user: NDKUser;
@@ -22,7 +24,7 @@
 
   const wallet = useWallet(ndk);
 
-  let currentView = $state<'wallet' | 'send' | 'receive' | 'nutzap' | 'settings' | 'proofs' | 'blacklist' | 'mints' | 'nutzaps'>('wallet');
+  let currentView = $state<'wallet' | 'send' | 'receive' | 'nutzap' | 'settings' | 'proofs' | 'tokens' | 'blacklist' | 'mints' | 'nutzaps' | 'debug'>('wallet');
   let showScanner = $state(false);
 
   function logout() {
@@ -108,19 +110,30 @@
         wallet={wallet}
         onBack={() => currentView = 'settings'}
       />
+    {:else if currentView === 'tokens'}
+      <TokensView
+        wallet={wallet}
+        onBack={() => currentView = 'settings'}
+      />
     {:else if currentView === 'blacklist'}
       <BlacklistedMintsView
         wallet={wallet}
         onBack={() => currentView = 'settings'}
       />
     {:else if currentView === 'mints'}
-      <MintManagementView
+      <WalletConfigView
         wallet={wallet}
+        ndk={ndk}
         onBack={() => currentView = 'settings'}
       />
     {:else if currentView === 'nutzaps'}
       <NutzapSettingsView
         wallet={wallet}
+        onBack={() => currentView = 'settings'}
+      />
+    {:else if currentView === 'debug'}
+      <DebugView
+        ndk={ndk}
         onBack={() => currentView = 'settings'}
       />
     {/if}

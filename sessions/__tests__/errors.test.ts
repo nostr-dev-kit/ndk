@@ -6,7 +6,6 @@ import { createSessionStore } from "../src/store";
 import {
     NDKNotInitializedError,
     NoActiveSessionError,
-    SessionError,
     SessionNotFoundError,
     SignerDeserializationError,
     StorageError,
@@ -152,54 +151,6 @@ describe("Error Handling", () => {
             await new Promise((resolve) => setTimeout(resolve, 50));
 
             expect(consoleErrorSpy).toHaveBeenCalledWith("Failed to auto-save sessions:", expect.any(Error));
-
-            consoleErrorSpy.mockRestore();
-        });
-    });
-
-    describe("Profile Parsing Errors", () => {
-        it("should handle invalid profile JSON gracefully", () => {
-            const consoleErrorSpy = vi.spyOn(console, "error");
-            const store = createSessionStore();
-
-            // Initialize NDK
-            store.getState().init(ndk);
-
-            // Add a session
-            const pubkey = "testpubkey";
-            store.getState().sessions = new Map([
-                [
-                    pubkey,
-                    {
-                        pubkey,
-                        events: new Map(),
-                        lastActive: Date.now(),
-                    },
-                ],
-            ]);
-
-            // Simulate receiving event with invalid JSON
-            const invalidEvent = {
-                kind: 0, // Profile event
-                content: "invalid json {",
-                tags: [],
-            } as any;
-
-            // This should not throw, just log error
-            const handler =
-                store.getState().__internal_test_handleProfileEvent ||
-                ((event: any, pubkey: string) => {
-                    try {
-                        const profile = JSON.parse(event.content);
-                        store.getState().updateSession(pubkey, { profile });
-                    } catch (error) {
-                        console.error("Failed to parse profile:", error);
-                    }
-                });
-
-            handler(invalidEvent, pubkey);
-
-            expect(consoleErrorSpy).toHaveBeenCalledWith("Failed to parse profile:", expect.any(Error));
 
             consoleErrorSpy.mockRestore();
         });

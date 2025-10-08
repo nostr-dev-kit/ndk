@@ -1,70 +1,135 @@
-import type { NDKUser } from "@nostr-dev-kit/ndk";
+import type { NDKUser, NDKZapMethod, NDKZapMethodInfo } from "@nostr-dev-kit/ndk";
 import type { NDKSvelte } from "./ndk-svelte.svelte";
 
-export interface UserStore {
-    user: NDKUser | undefined;
-    fetching: boolean;
-    error: Error | undefined;
-}
-
 /**
- * Resolves a user identifier (npub, NIP-05, hex pubkey, or nprofile) to a reactive user object
- * Note: This does NOT fetch the profile. Use useProfile() for profile data.
+ * Reactively fetch a user by identifier
+ *
+ * Returns a reactive proxy to the user that updates when the identifier changes.
+ * Use it directly as if it were an NDKUser - all property access is reactive.
  *
  * @example
  * ```svelte
  * <script lang="ts">
- *   import { useUser, useProfile } from '@nostr-dev-kit/svelte';
- *
- *   const userStore = useUser(ndk, 'npub1...');
- *   const profile = useProfile(ndk, userStore.user?.pubkey);
+ *   const identifier = $derived($page.params.id);
+ *   const user = ndk.$fetchUser(() => identifier);
  * </script>
  *
- * <div>
- *   {#if userStore.user}
- *     <span>{userStore.user.npub}</span>
- *     {#if profile}
- *       <span>{profile.name}</span>
- *     {/if}
- *   {/if}
- * </div>
+ * {#if user}
+ *   <div>{user.npub}</div>
+ * {/if}
  * ```
  */
-export function useUser(ndk: NDKSvelte, identifier: string): UserStore {
-    let user = $state<NDKUser | undefined>(undefined);
-    let fetching = $state(false);
-    let error = $state<Error | undefined>(undefined);
+export function createFetchUser(ndk: NDKSvelte, identifier: () => string | undefined) {
+    let _user = $state<NDKUser | undefined>(undefined);
 
-    $effect.root(() => {
-        $effect(() => {
-            if (!identifier) {
-                user = undefined;
-                error = undefined;
-                return;
+    const derivedIdentifier = $derived(identifier());
+
+    $effect(() => {
+        const id = derivedIdentifier;
+        if (!id) {
+            _user = undefined;
+            return;
+        }
+
+        ndk.fetchUser(id)
+            .then((fetchedUser) => {
+                _user = fetchedUser || undefined;
+            })
+            .catch(() => {
+                _user = undefined;
+            });
+    });
+
+    // Return a proxy that forwards all access to the reactive _user
+    return new Proxy({} as NDKUser | undefined, {
+        get(_target, prop) {
+            if (_user && prop in _user) {
+                const value = _user[prop as keyof NDKUser];
+                return typeof value === "function" ? value.bind(_user) : value;
             }
+            return undefined;
+        },
+        has(_target, prop) {
+            return _user ? prop in _user : false;
+        },
+        ownKeys() {
+            return _user ? Reflect.ownKeys(_user) : [];
+        },
+        getOwnPropertyDescriptor(_target, prop) {
+            return _user ? Reflect.getOwnPropertyDescriptor(_user, prop) : undefined;
+        },
+    });
+}
 
-            fetching = true;
+export type ZapInfo = {
+    methods: Map<NDKZapMethod, NDKZapMethodInfo>;
+    isLoading: boolean;
+    error?: string;
+};
+
+/**
+ * Reactively fetch zap information for a user
+ *
+ * Returns reactive zap method information (NIP-57 lud06/lud16, NIP-61 mint list)
+ * that updates when the user changes.
+ *
+ * @param user - Reactive function that returns the user to fetch zap info for
+ * @param timeoutMs - Optional timeout for fetching zap info (default: 2500ms)
+ *
+ * @example
+ * ```svelte
+ * <script lang="ts">
+ *   const user = ndk.$fetchUser(() => npub);
+ *   const zapInfo = useZapInfo(() => user);
+ * </script>
+ *
+ * {#if zapInfo.isLoading}
+ *   Loading...
+ * {:else if zapInfo.methods.has('nip57')}
+ *   {@const nip57Info = zapInfo.methods.get('nip57')}
+ *   <div>LN: {nip57Info.lud16 || nip57Info.lud06}</div>
+ * {/if}
+ * ```
+ */
+export function useZapInfo(user: () => NDKUser | undefined, timeoutMs: number = 2500): ZapInfo {
+    let methods = $state<Map<NDKZapMethod, NDKZapMethodInfo>>(new Map());
+    let isLoading = $state(false);
+    let error = $state<string | undefined>(undefined);
+
+    const derivedUser = $derived(user());
+
+    $effect(() => {
+        const currentUser = derivedUser;
+
+        if (!currentUser) {
+            methods = new Map();
+            isLoading = false;
             error = undefined;
-            ndk.fetchUser(identifier)
-                .then((fetchedUser) => {
-                    user = fetchedUser || undefined;
-                })
-                .catch((err) => {
-                    error = err;
-                    user = undefined;
-                })
-                .finally(() => {
-                    fetching = false;
-                });
-        });
+            return;
+        }
+
+        isLoading = true;
+        error = undefined;
+
+        currentUser
+            .getZapInfo(timeoutMs)
+            .then((zapMethods) => {
+                methods = zapMethods;
+                isLoading = false;
+            })
+            .catch((e) => {
+                error = e.message || "Failed to fetch zap info";
+                methods = new Map();
+                isLoading = false;
+            });
     });
 
     return {
-        get user() {
-            return user;
+        get methods() {
+            return methods;
         },
-        get fetching() {
-            return fetching;
+        get isLoading() {
+            return isLoading;
         },
         get error() {
             return error;

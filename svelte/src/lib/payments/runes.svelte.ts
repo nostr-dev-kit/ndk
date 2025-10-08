@@ -1,4 +1,4 @@
-import type { NDKEvent, NDKUser } from "@nostr-dev-kit/ndk";
+import { NDKEvent, NDKZapper, type NDKUser } from "@nostr-dev-kit/ndk";
 import type { NDKSvelte } from "../ndk-svelte.svelte.js";
 import { targetToId } from "./types.js";
 
@@ -134,11 +134,28 @@ export async function zap(
     amount: number,
     opts?: { comment?: string; delay?: number },
 ) {
-    const { NDKZapper } = await import("@nostr-dev-kit/ndk");
+    console.log('[zap] Starting zap flow', {
+        target: target instanceof NDKEvent ? 'event' : 'user',
+        targetId: target.id || (target as any).pubkey,
+        amount,
+        unit: 'msat',
+        comment: opts?.comment,
+    });
 
-    if (!ndk.$wallet.wallet) throw new Error("No wallet connected");
+    if (!ndk.$wallet.wallet) {
+        console.error('[zap] No wallet connected');
+        throw new Error("No wallet connected");
+    }
     const session = ndk.$sessions.current;
-    if (!session) throw new Error("No active session");
+    if (!session) {
+        console.error('[zap] No active session');
+        throw new Error("No active session");
+    }
+
+    console.log('[zap] Creating NDKZapper', {
+        walletType: ndk.$wallet.wallet?.type,
+        sessionPubkey: session.pubkey,
+    });
 
     const zapper = new NDKZapper(target, amount, "msat", {
         comment: opts?.comment,
@@ -146,15 +163,37 @@ export async function zap(
 
     // Auto-track
     ndk.$payments.addPending(zapper, session.pubkey);
+    console.log('[zap] Added pending payment to tracking');
 
     // Execute with optional delay
     if (opts?.delay) {
-        return new Promise((resolve) => {
+        console.log('[zap] Delaying zap execution by', opts.delay, 'ms');
+        return new Promise((resolve, reject) => {
             setTimeout(() => {
-                zapper.zap().then(resolve);
+                zapper.zap().then(resolve).catch(reject);
             }, opts.delay);
         });
     }
 
-    return zapper.zap();
+    console.log('[zap] Executing zap immediately');
+    try {
+        const result = await zapper.zap();
+
+        // Check for partial failures
+        const failures = Array.from(result.values()).filter(r => r instanceof Error);
+        if (failures.length > 0) {
+            console.warn('[zap] Zap completed with some failures', {
+                total: result.size,
+                failed: failures.length,
+                errors: failures.map(e => (e as Error).message),
+            });
+        } else {
+            console.log('[zap] Zap completed successfully', result);
+        }
+
+        return result;
+    } catch (error) {
+        console.error('[zap] Zap failed completely', error);
+        throw error;
+    }
 }

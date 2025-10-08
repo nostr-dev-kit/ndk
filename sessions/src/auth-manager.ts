@@ -24,10 +24,8 @@ export class AuthManager {
         // Add session
         const pubkey = await this.store.addSession(userOrSigner, setActive);
 
-        // Start fetching data if requested
-        if (this.shouldStartFetching(startOptions)) {
-            this.store.startSession(pubkey, startOptions);
-        }
+        // Start fetching data (startSession handles empty options)
+        this.store.startSession(pubkey, startOptions);
 
         return pubkey;
     }
@@ -49,12 +47,5 @@ export class AuthManager {
      */
     switchTo(pubkey: Hexpubkey | null): void {
         this.store.switchToUser(pubkey);
-    }
-
-    /**
-     * Determine if fetching should start based on options
-     */
-    private shouldStartFetching(options: LoginOptions): boolean {
-        return !!(options.profile || options.follows || options.events);
     }
 }

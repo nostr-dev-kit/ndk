@@ -1,5 +1,11 @@
 # @nostr-dev-kit/wot
 
+## 0.3.1
+
+### Patch Changes
+
+- bump
+
 ## 0.3.0
 
 ### Minor Changes

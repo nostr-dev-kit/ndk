@@ -1,5 +1,22 @@
 # @nostr-dev-kit/ndk-cache-redis
 
+## 0.8.1
+
+### Patch Changes
+
+- bump
+
+## 0.8.0
+
+### Minor Changes
+
+- e596023: Export NIP-87 mint store and wallet config store utilities
+
+### Patch Changes
+
+- Updated dependencies [e596023]
+    - @nostr-dev-kit/ndk@2.16.0
+
 ## 0.7.2
 
 ### Patch Changes

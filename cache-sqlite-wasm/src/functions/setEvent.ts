@@ -1,4 +1,5 @@
 import type { NDKEvent, NDKFilter, NDKRelay } from "@nostr-dev-kit/ndk";
+import { NDKKind, profileFromEvent } from "@nostr-dev-kit/ndk";
 import type { NDKCacheAdapterSqliteWasm } from "../index";
 
 /**
@@ -8,19 +9,23 @@ import type { NDKCacheAdapterSqliteWasm } from "../index";
  * Adapted for Web Worker support: now always async.
  * If useWorker is true, sends command to worker; else, runs on main thread.
  */
-export async function setEvent(
-    this: NDKCacheAdapterSqliteWasm,
-    event: NDKEvent,
-    _filters: NDKFilter[],
-    _relay?: NDKRelay,
-): Promise<void> {
+function setEventSync(db: any, event: NDKEvent | any, relay?: NDKRelay | { url: string }): void {
     const stmt = `
         INSERT OR REPLACE INTO events (
             id, pubkey, created_at, kind, tags, content, sig, raw, deleted
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     const tags = JSON.stringify(event.tags ?? []);
-    const raw = event.serialize(true, true);
+    // Store the complete event as a JSON array: [id, pubkey, created_at, kind, tags, content, sig]
+    const raw = JSON.stringify([
+        event.id,
+        event.pubkey,
+        event.created_at,
+        event.kind,
+        event.tags ?? [],
+        event.content,
+        event.sig,
+    ]);
     const values = [
         event.id ?? "",
         event.pubkey ?? "",
@@ -33,42 +38,74 @@ export async function setEvent(
         0,
     ];
 
-    if (this.useWorker) {
-        // Worker mode: send command, return promise
-        await this.postWorkerMessage({
-            type: "run",
-            payload: {
-                sql: stmt,
-                params: values,
-            },
-        });
+    db.run(stmt, values);
 
-        // Store relay provenance
-        if (_relay?.url) {
-            await this.postWorkerMessage({
-                type: "run",
-                payload: {
-                    sql: "INSERT OR IGNORE INTO event_relays (event_id, relay_url, seen_at) VALUES (?, ?, ?)",
-                    params: [event.id, _relay.url, Date.now()],
-                },
-            });
-        }
-    } else {
-        // Main thread: run directly, but still async for consistency
-        if (!this.db) throw new Error("DB not initialized");
-        try {
-            this.db.run(stmt, values);
+    // Store relay provenance
+    if (relay?.url) {
+        db.run("INSERT OR IGNORE INTO event_relays (event_id, relay_url, seen_at) VALUES (?, ?, ?)", [
+            event.id,
+            relay.url,
+            Date.now(),
+        ]);
+    }
 
-            // Store relay provenance
-            if (_relay?.url) {
-                this.db.run("INSERT OR IGNORE INTO event_relays (event_id, relay_url, seen_at) VALUES (?, ?, ?)", [
+    // Store event tags for efficient querying (only single-letter indexable tags)
+    if (event.tags && event.tags.length > 0) {
+        for (const tag of event.tags) {
+            if (tag.length >= 2 && tag[0].length === 1) {
+                db.run("INSERT OR IGNORE INTO event_tags (event_id, tag, value) VALUES (?, ?, ?)", [
                     event.id,
-                    _relay.url,
-                    Date.now(),
+                    tag[0],
+                    tag[1] || null,
                 ]);
             }
+        }
+    }
+
+    // Extract and save profile from kind:0 events
+    if (event.kind === NDKKind.Metadata || event.kind === 0) {
+        try {
+            const profile = typeof event.content === 'string' ? JSON.parse(event.content) : event.content;
+            if (profile && event.pubkey) {
+                db.run(
+                    "INSERT OR REPLACE INTO profiles (pubkey, profile, updated_at) VALUES (?, ?, ?)",
+                    [event.pubkey, JSON.stringify(profile), event.created_at ?? Date.now()]
+                );
+            }
         } catch (e) {
-            throw e;
+            // Invalid profile JSON, skip
         }
     }
 }
+
+export async function setEvent(
+    this: NDKCacheAdapterSqliteWasm,
+    event: NDKEvent,
+    _filters: NDKFilter[],
+    _relay?: NDKRelay,
+): Promise<void> {
+    if (this.useWorker) {
+        // Worker mode: send the entire event data, let worker handle all SQL
+        await this.postWorkerMessage({
+            type: "setEvent",
+            payload: {
+                event: {
+                    id: event.id,
+                    pubkey: event.pubkey,
+                    created_at: event.created_at,
+                    kind: event.kind,
+                    tags: event.tags,
+                    content: event.content,
+                    sig: event.sig,
+                },
+                relay: _relay?.url,
+            },
+        });
+    } else {
+        // Main thread: run directly
+        if (!this.db) throw new Error("DB not initialized");
+        setEventSync(this.db, event, _relay);
+    }
+}
+
+export { setEventSync };

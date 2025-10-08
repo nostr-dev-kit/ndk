@@ -18,7 +18,7 @@
   let includeUnknown = $state(false);
 
   // Subscribe to kind:1 events
-  const sub = ndk.$subscribe([
+  const sub = ndk.$subscribe(() => [
     {
       kinds: [1],
       limit: 100

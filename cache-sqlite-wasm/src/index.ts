@@ -22,7 +22,10 @@ import { saveCashuMintKeys } from "./functions/saveCashuMintKeys";
 import { saveProfile } from "./functions/saveProfile";
 import { setEvent } from "./functions/setEvent";
 import { updateRelayStatus } from "./functions/updateRelayStatus";
+import { getCacheStats } from "./functions/getCacheStats";
 import type { NDKCacheAdapterSqliteWasmOptions, SQLDatabase, WorkerMessage, WorkerResponse } from "./types";
+
+export type { CacheStats } from "./functions/getCacheStats";
 
 export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
     public dbName: string;
@@ -208,6 +211,7 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
     public discardUnpublishedEvent = discardUnpublishedEvent.bind(this);
     public query = query.bind(this);
     public getProfiles = getProfiles.bind(this);
+    public getCacheStats = getCacheStats.bind(this);
 
     // Cashu mint caching
     public async loadCashuMintInfo(mintUrl: string, maxAgeInSecs?: number) {
@@ -234,7 +238,7 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
         saveCashuMintKeys(this.db, mintUrl, keys);
     }
 
-    private async ensureInitialized(): Promise<void> {
+    public async ensureInitialized(): Promise<void> {
         if (this.ready) return;
         if (this.initializationPromise) {
             await this.initializationPromise;

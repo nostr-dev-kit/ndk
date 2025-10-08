@@ -1,5 +1,5 @@
 import type NDK from "@nostr-dev-kit/ndk";
-import type { Hexpubkey, NDKEvent, NDKKind, NDKSigner, NDKUser } from "@nostr-dev-kit/ndk";
+import { type Hexpubkey, type NDKEvent, NDKKind, NDKRelayList, type NDKSigner, type NDKUser } from "@nostr-dev-kit/ndk";
 import { createStore } from "zustand/vanilla";
 import type { NDKSession, SessionStartOptions, SessionState } from "./types";
 import { NDKNotInitializedError, SessionNotFoundError } from "./utils/errors";
@@ -208,9 +208,10 @@ export function createSessionStore() {
 
                 // Set relayConnectionFilter based on session's blocked relays
                 if (session.blockedRelays && session.blockedRelays.size > 0) {
+                    const blockedRelays = session.blockedRelays;
                     state.ndk.relayConnectionFilter = (relayUrl) => {
                         // Block connection if relay is in blockedRelays
-                        return !session.blockedRelays!.has(relayUrl);
+                        return !blockedRelays.has(relayUrl);
                     };
                 } else {
                     state.ndk.relayConnectionFilter = undefined;
@@ -286,27 +287,27 @@ export function createSessionStore() {
 function buildSubscriptionKinds(opts: SessionStartOptions): NDKKind[] {
     const kinds: NDKKind[] = [];
 
-    if (opts.profile) {
-        kinds.push(0); // Profile metadata
-    }
-
     if (opts.follows) {
-        kinds.push(3); // Contact list
+        kinds.push(NDKKind.Contacts); // Contact list
         if (Array.isArray(opts.follows)) {
             kinds.push(...opts.follows);
         }
     }
 
     if (opts.mutes) {
-        kinds.push(10000); // Mute list
+        kinds.push(NDKKind.MuteList); // Mute list
     }
 
     if (opts.blockedRelays) {
-        kinds.push(10001); // Block relay list
+        kinds.push(NDKKind.BlockRelayList); // Block relay list
     }
 
     if (opts.relayList) {
-        kinds.push(10002); // User relay list
+        kinds.push(NDKKind.RelayList); // User relay list
+    }
+
+    if (opts.wallet) {
+        kinds.push(NDKKind.CashuWallet, NDKKind.CashuMintList); // NIP-60 wallet
     }
 
     if (opts.events) {
@@ -320,38 +321,32 @@ function buildSubscriptionKinds(opts: SessionStartOptions): NDKKind[] {
 
 /**
  * Handle incoming event from subscription.
- * Processes profiles, follows, and other events appropriately.
+ * Processes follows, mutes, and other events appropriately.
  */
 function handleIncomingEvent(event: NDKEvent, pubkey: Hexpubkey, getState: () => SessionStore): void {
     const currentSession = getState().sessions.get(pubkey);
     if (!currentSession) return;
 
-    // Process profile metadata
-    if (event.kind === 0) {
-        handleProfileEvent(event, pubkey, getState);
-        return;
-    }
-
     // Process contact list
-    if (event.kind === 3) {
+    if (event.kind === NDKKind.Contacts) {
         handleContactListEvent(event, pubkey, getState);
         return;
     }
 
     // Process mute list
-    if (event.kind === 10000) {
+    if (event.kind === NDKKind.MuteList) {
         handleMuteListEvent(event, pubkey, getState);
         return;
     }
 
     // Process block relay list
-    if (event.kind === 10001) {
+    if (event.kind === NDKKind.BlockRelayList) {
         handleBlockRelayListEvent(event, pubkey, getState);
         return;
     }
 
     // Process user relay list
-    if (event.kind === 10002) {
+    if (event.kind === NDKKind.RelayList) {
         handleRelayListEvent(event, pubkey, getState);
         return;
     }
@@ -361,34 +356,43 @@ function handleIncomingEvent(event: NDKEvent, pubkey: Hexpubkey, getState: () =>
 }
 
 /**
- * Process profile metadata event
- */
-function handleProfileEvent(event: NDKEvent, pubkey: Hexpubkey, getState: () => SessionStore): void {
-    try {
-        const profile = JSON.parse(event.content);
-        getState().updateSession(pubkey, { profile });
-    } catch (error) {
-        console.error("Failed to parse profile:", error);
-    }
-}
-
-/**
  * Process contact list event
  */
 function handleContactListEvent(event: NDKEvent, pubkey: Hexpubkey, getState: () => SessionStore): void {
+    const session = getState().sessions.get(pubkey);
+    if (!session || event.kind === undefined) return;
+
+    const existingEvent = session.events.get(event.kind);
+    if (existingEvent) {
+        if (existingEvent.id === event.id) return;
+        if ((existingEvent.created_at ?? 0) > (event.created_at ?? 0)) return;
+    }
+
     const followSet = new Set<Hexpubkey>();
     for (const tag of event.tags) {
         if (tag[0] === "p" && tag[1]) {
             followSet.add(tag[1]);
         }
     }
-    getState().updateSession(pubkey, { followSet });
+
+    // Update both followSet and store the event
+    session.events.set(event.kind, event);
+    getState().updateSession(pubkey, { followSet, events: new Map(session.events) });
 }
 
 /**
  * Process mute list event (kind 10000)
  */
 function handleMuteListEvent(event: NDKEvent, pubkey: Hexpubkey, getState: () => SessionStore): void {
+    const session = getState().sessions.get(pubkey);
+    if (!session || event.kind === undefined) return;
+
+    const existingEvent = session.events.get(event.kind);
+    if (existingEvent) {
+        if (existingEvent.id === event.id) return;
+        if ((existingEvent.created_at ?? 0) > (event.created_at ?? 0)) return;
+    }
+
     const muteSet = new Map<string, string>();
     const mutedWords = new Set<string>();
 
@@ -403,13 +407,24 @@ function handleMuteListEvent(event: NDKEvent, pubkey: Hexpubkey, getState: () =>
         }
     }
 
-    getState().updateSession(pubkey, { muteSet, mutedWords });
+    // Update both mute data and store the event
+    session.events.set(event.kind, event);
+    getState().updateSession(pubkey, { muteSet, mutedWords, events: new Map(session.events) });
 }
 
 /**
  * Process block relay list event (kind 10001)
  */
 function handleBlockRelayListEvent(event: NDKEvent, pubkey: Hexpubkey, getState: () => SessionStore): void {
+    const session = getState().sessions.get(pubkey);
+    if (!session || event.kind === undefined) return;
+
+    const existingEvent = session.events.get(event.kind);
+    if (existingEvent) {
+        if (existingEvent.id === event.id) return;
+        if ((existingEvent.created_at ?? 0) > (event.created_at ?? 0)) return;
+    }
+
     const blockedRelays = new Set<string>();
 
     for (const tag of event.tags) {
@@ -418,28 +433,50 @@ function handleBlockRelayListEvent(event: NDKEvent, pubkey: Hexpubkey, getState:
         }
     }
 
-    getState().updateSession(pubkey, { blockedRelays });
+    // Update both blockedRelays and store the event
+    session.events.set(event.kind, event);
+    getState().updateSession(pubkey, { blockedRelays, events: new Map(session.events) });
 }
 
 /**
  * Process user relay list event (kind 10002)
  */
 function handleRelayListEvent(event: NDKEvent, pubkey: Hexpubkey, getState: () => SessionStore): void {
+    const session = getState().sessions.get(pubkey);
+    if (!session || event.kind === undefined) return;
+
+    const existingEvent = session.events.get(event.kind);
+    if (existingEvent) {
+        if (existingEvent.id === event.id) return;
+        if ((existingEvent.created_at ?? 0) > (event.created_at ?? 0)) return;
+    }
+
+    const relayListEvent = NDKRelayList.from(event);
     const relayList = new Map<string, { read: boolean; write: boolean }>();
 
-    for (const tag of event.tags) {
-        if (tag[0] === "r" && tag[1]) {
-            const url = tag[1];
-            const config = tag[2];
+    // Add read-only relays
+    for (const url of relayListEvent.readRelayUrls) {
+        relayList.set(url, { read: true, write: false });
+    }
 
-            relayList.set(url, {
-                read: !config || config === "read",
-                write: !config || config === "write",
-            });
+    // Add write-only relays
+    for (const url of relayListEvent.writeRelayUrls) {
+        const existing = relayList.get(url);
+        if (existing) {
+            existing.write = true;
+        } else {
+            relayList.set(url, { read: false, write: true });
         }
     }
 
-    getState().updateSession(pubkey, { relayList });
+    // Add both read and write relays
+    for (const url of relayListEvent.bothRelayUrls) {
+        relayList.set(url, { read: true, write: true });
+    }
+
+    // Update both relayList and store the event
+    session.events.set(event.kind, event);
+    getState().updateSession(pubkey, { relayList, events: new Map(session.events) });
 }
 
 /**
@@ -452,6 +489,14 @@ function handleReplaceableEvent(
     getState: () => SessionStore,
 ): void {
     if (event.kind === undefined) return;
+
+    const existingEvent = session.events.get(event.kind);
+
+    // Skip if we already have this exact event or a newer one
+    if (existingEvent) {
+        if (existingEvent.id === event.id) return;
+        if ((existingEvent.created_at ?? 0) > (event.created_at ?? 0)) return;
+    }
 
     session.events.set(event.kind, event);
     getState().updateSession(pubkey, { events: new Map(session.events) });

@@ -29,8 +29,8 @@
 |---------|---------|-------------|
 | [`@nostr-dev-kit/svelte`](./svelte) | ![npm](https://img.shields.io/npm/v/@nostr-dev-kit/svelte) | Modern Svelte 5 integration with reactive runes |
 | [`ndk-svelte-components`](./ndk-svelte-components) | ![npm](https://img.shields.io/npm/v/ndk-svelte-components) | Pre-built Svelte components |
-| [`ndk-hooks`](./ndk-hooks) | ![npm](https://img.shields.io/npm/v/@nostr-dev-kit/ndk-hooks) | React hooks for NDK |
-| [`ndk-mobile`](./ndk-mobile) | ![npm](https://img.shields.io/npm/v/@nostr-dev-kit/ndk-mobile) | React Native integration |
+| [`@nostr-dev-kit/react`](./react) | ![npm](https://img.shields.io/npm/v/@nostr-dev-kit/react) | React hooks for NDK |
+| [`@nostr-dev-kit/mobile`](./mobile) | ![npm](https://img.shields.io/npm/v/@nostr-dev-kit/mobile) | React Native integration |
 
 ### Advanced Features
 
@@ -39,7 +39,7 @@
 | [`@nostr-dev-kit/sessions`](./sessions) | ![npm](https://img.shields.io/npm/v/@nostr-dev-kit/sessions) | Multi-account session management with persistence |
 | [`@nostr-dev-kit/wot`](./wot) | ![npm](https://img.shields.io/npm/v/@nostr-dev-kit/wot) | Web of Trust filtering and ranking |
 | [`@nostr-dev-kit/sync`](./sync) | ![npm](https://img.shields.io/npm/v/@nostr-dev-kit/sync) | NIP-77 Negentropy set reconciliation |
-| [`@nostr-dev-kit/ndk-wallet`](./ndk-wallet) | ![npm](https://img.shields.io/npm/v/@nostr-dev-kit/ndk-wallet) | Wallet integration (Cashu, NWC, WebLN) |
+| [`@nostr-dev-kit/wallet`](./wallet) | ![npm](https://img.shields.io/npm/v/@nostr-dev-kit/wallet) | Wallet integration (Cashu, NWC, WebLN) |
 | [`@nostr-dev-kit/blossom`](./blossom) | ![npm](https://img.shields.io/npm/v/@nostr-dev-kit/blossom) | Blossom media server protocol |
 
 ### Cache Adapters
@@ -79,7 +79,7 @@ notes.eosed;   // EOSE flag (reactive)
 ### React
 
 ```typescript
-import { useSubscription } from '@nostr-dev-kit/ndk-hooks';
+import { useSubscription } from '@nostr-dev-kit/react';
 
 function Feed() {
   const { events, eosed } = useSubscription({ kinds: [1], limit: 50 });
@@ -179,7 +179,7 @@ const follows = ndk.sessions.follows;
 Seamless wallet support for Cashu, NWC, and WebLN:
 
 ```typescript
-import { NDKCashuWallet } from '@nostr-dev-kit/ndk-wallet';
+import { NDKCashuWallet } from '@nostr-dev-kit/wallet';
 
 const wallet = new NDKCashuWallet(ndk);
 await wallet.init();
@@ -252,7 +252,7 @@ await wallet.cashuPay({ amount: 1000, unit: 'sat', target: event });
 - [Sessions](./sessions/README.md)
 - [Web of Trust](./wot/README.md)
 - [Negentropy Sync](./sync/README.md)
-- [Wallet](./ndk-wallet/README.md)
+- [Wallet](./wallet/README.md)
 
 ## Examples
 

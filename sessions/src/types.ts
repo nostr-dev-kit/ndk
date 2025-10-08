@@ -1,20 +1,11 @@
 import type NDK from "@nostr-dev-kit/ndk";
-import type {
-    Hexpubkey,
-    NDKEvent,
-    NDKKind,
-    NDKSigner,
-    NDKSubscription,
-    NDKUser,
-    NDKUserProfile,
-} from "@nostr-dev-kit/ndk";
+import type { Hexpubkey, NDKEvent, NDKKind, NDKSigner, NDKSubscription } from "@nostr-dev-kit/ndk";
 
 /**
  * User session data
  */
 export interface NDKSession {
     pubkey: Hexpubkey;
-    profile?: NDKUserProfile;
     followSet?: Set<Hexpubkey>;
 
     /**
@@ -65,11 +56,6 @@ export interface NDKSession {
  */
 export interface SessionStartOptions {
     /**
-     * Fetch user profile
-     */
-    profile?: boolean;
-
-    /**
      * Fetch contacts (follows)
      * - true: Fetch default contact list (kind 3)
      * - false: Don't fetch contacts
@@ -93,6 +79,11 @@ export interface SessionStartOptions {
     relayList?: boolean;
 
     /**
+     * Fetch NIP-60 wallet (kind 17375)
+     */
+    wallet?: boolean;
+
+    /**
      * Fetch specific replaceable event kinds
      * Map keys are NDKKind, values are the events to fetch
      */
@@ -113,16 +104,11 @@ export interface SessionStartOptions {
 
 /**
  * Serialized session data for storage
+ * Only persists identity and signer - all data comes from NDK cache
  */
 export interface SerializedSession {
     pubkey: Hexpubkey;
     signerPayload?: string; // NDKSigner's toPayload() result
-    profile?: NDKUserProfile;
-    followSet?: Hexpubkey[];
-    muteSet?: Array<[string, string]>; // Serialized as array of tuples
-    mutedWords?: string[];
-    blockedRelays?: string[];
-    relayList?: Array<[string, { read: boolean; write: boolean }]>; // Serialized as array of tuples
     lastActive: number;
 }
 

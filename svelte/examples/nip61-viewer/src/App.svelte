@@ -1,7 +1,8 @@
 <script lang="ts">
   import { ndk, ndkReady } from './lib/ndk';
-  import { NDKNip07Signer, type NDKEvent } from '@nostr-dev-kit/ndk';
+  import { NDKNip07Signer, type NDKEvent, NDKRelaySet } from '@nostr-dev-kit/ndk';
   import type { EventSubscription } from '@nostr-dev-kit/svelte';
+  import { NDKSync } from '@nostr-dev-kit/sync';
 
   type EventKind = 10019 | 10002;
 
@@ -11,6 +12,11 @@
   let subscription = $state<EventSubscription<NDKEvent> | null>(null);
   let ready = $state(false);
   let selectedKind = $state<EventKind>(10019);
+
+  // Sync test state
+  let syncAttempts = $state(0);
+  let syncError = $state<string | null>(null);
+  let syncing = $state(false);
 
   const eventKinds: { value: EventKind; label: string; description: string }[] = [
     { value: 10019, label: 'NIP-61 Wallet Config', description: 'Cashu wallet configuration (mints, relays, p2pk)' },
@@ -74,7 +80,7 @@
     console.log('[App] Creating subscription for pubkey:', pubkey, 'kind:', selectedKind);
 
     // Subscribe to the selected event kind - events and eosed are reactive properties
-    subscription = ndk.$subscribe([
+    subscription = ndk.$subscribe(() => [
       {
         kinds: [selectedKind],
         authors: [pubkey]
@@ -141,6 +147,40 @@
       lookupNip05();
     }
   }
+
+  async function testSync() {
+    syncing = true;
+    syncError = null;
+    syncAttempts++;
+
+    try {
+      console.log(`[Sync Test] Attempt #${syncAttempts} - Starting sync with relay.primal.net`);
+
+      // Ensure relay is connected
+      const relay = ndk.pool.getRelay('wss://relay.primal.net/');
+      if (!relay) {
+        ndk.addExplicitRelay('wss://relay.primal.net/', undefined);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+
+      const sync = new NDKSync(ndk);
+      const relaySet = NDKRelaySet.fromRelayUrls(['wss://relay.primal.net/'], ndk);
+
+      const result = await sync.sync(
+        { kinds: [1], authors: ['fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52'], limit: 10 },
+        { relaySet, timeout: 10000 }
+      );
+
+      console.log(`[Sync Test] Attempt #${syncAttempts} - Success! Events:`, result.events.length);
+      syncError = `Success! Synced ${result.events.length} events`;
+    } catch (e) {
+      const errorMsg = e instanceof Error ? e.message : String(e);
+      console.error(`[Sync Test] Attempt #${syncAttempts} - Error:`, errorMsg);
+      syncError = errorMsg;
+    } finally {
+      syncing = false;
+    }
+  }
 </script>
 
 <main>
@@ -187,6 +227,19 @@
       <button onclick={login} disabled={loading} class="login-btn">
         {loading ? 'Loading...' : 'Login & View My Events'}
       </button>
+
+      <div class="separator">Test</div>
+
+      <div class="sync-test">
+        <button onclick={testSync} disabled={syncing} class="sync-btn" data-testid="sync-test-button">
+          {syncing ? 'Syncing...' : `Test Sync (Attempt #${syncAttempts})`}
+        </button>
+        {#if syncError}
+          <div class="sync-result" data-testid="sync-result">
+            {syncError}
+          </div>
+        {/if}
+      </div>
     </div>
 
     {#if error}
@@ -394,6 +447,29 @@
 
   .login-btn:hover:not(:disabled) {
     background-color: #535bf2;
+  }
+
+  .sync-test {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .sync-btn {
+    background-color: #ff6b6b;
+    color: white;
+  }
+
+  .sync-btn:hover:not(:disabled) {
+    background-color: #ff5252;
+  }
+
+  .sync-result {
+    padding: 0.5rem;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-family: monospace;
   }
 
   button:disabled {

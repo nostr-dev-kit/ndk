@@ -1,4 +1,4 @@
-import type { NDKEventId, NDKRawEvent, NDKUserProfile } from "@nostr-dev-kit/ndk";
+import type { NDKEventId, NDKRawEvent, NDKRelayInformation, NDKUserProfile } from "@nostr-dev-kit/ndk";
 import Dexie, { type Table } from "dexie";
 
 export interface Profile extends NDKUserProfile {
@@ -38,6 +38,13 @@ export interface RelayStatus {
     updatedAt: number;
     lastConnectedAt?: number;
     dontConnectBefore?: number;
+    consecutiveFailures?: number;
+    lastFailureAt?: number;
+    nip11?: {
+        data: NDKRelayInformation;
+        fetchedAt: number;
+    };
+    metadata?: Record<string, Record<string, unknown>>;
 }
 
 export interface UnpublishedEvent {
@@ -65,7 +72,7 @@ export class Database extends Dexie {
 
     constructor(name: string) {
         super(name);
-        this.version(16).stores({
+        this.version(17).stores({
             profiles: "&pubkey",
             events: "&id, kind",
             eventTags: "&tagValue",

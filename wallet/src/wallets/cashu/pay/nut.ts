@@ -24,27 +24,47 @@ export async function createToken(
     recipientMints?: MintUrl[],
     p2pk?: string,
 ): Promise<WalletOperation<TokenCreationResult> | null> {
+    console.log('[createToken] Starting token creation', {
+        amount,
+        recipientMints,
+        p2pk,
+    });
+
     p2pk = ensureIsCashuPubkey(p2pk);
     const myMintsWithEnoughBalance = wallet.getMintsWithBalance(amount);
+    console.log('[createToken] My mints with enough balance', myMintsWithEnoughBalance);
+
     const hasRecipientMints = recipientMints && recipientMints.length > 0;
     const mintsInCommon = hasRecipientMints
         ? findMintsInCommon([recipientMints, myMintsWithEnoughBalance])
         : myMintsWithEnoughBalance;
 
+    console.log('[createToken] Mints in common', {
+        hasRecipientMints,
+        mintsInCommon,
+    });
+
     for (const mint of mintsInCommon) {
+        console.log('[createToken] Attempting to create token in mint', mint);
         try {
             const res = await createTokenInMint(wallet, mint, amount, p2pk);
 
             if (res) {
+                console.log('[createToken] Successfully created token in mint', mint);
                 return res;
             }
-        } catch (_e) {}
+            console.log('[createToken] Failed to create token in mint', mint);
+        } catch (e: any) {
+            console.error('[createToken] Error creating token in mint', mint, e);
+        }
     }
 
     if (hasRecipientMints) {
+        console.log('[createToken] Attempting cross-mint transfer');
         return await createTokenWithMintTransfer(wallet, amount, recipientMints, p2pk);
     }
 
+    console.error('[createToken] All token creation attempts failed');
     return null;
 }
 
@@ -60,7 +80,11 @@ async function createTokenInMint(
     amount: number,
     p2pk?: string,
 ): Promise<WalletOperation<TokenCreationResult> | null> {
+    console.log('[createTokenInMint] Starting', { mint, amount, p2pk });
+
     const cashuWallet = await wallet.getCashuWallet(mint);
+    console.log('[createTokenInMint] Got cashu wallet for mint', mint);
+
     try {
         const result = await withProofReserve<TokenCreationResult>(
             wallet,
@@ -69,9 +93,19 @@ async function createTokenInMint(
             amount,
             amount,
             async (proofsToUse, allOurProofs) => {
+                console.log('[createTokenInMint] Inside withProofReserve callback', {
+                    proofsToUseCount: proofsToUse.length,
+                    allOurProofsCount: allOurProofs.length,
+                });
+
                 const sendResult = await cashuWallet.send(amount, proofsToUse, {
                     pubkey: p2pk,
                     proofsWeHave: allOurProofs,
+                });
+
+                console.log('[createTokenInMint] Send result', {
+                    sendCount: sendResult.send.length,
+                    keepCount: sendResult.keep.length,
                 });
 
                 return {
@@ -85,8 +119,11 @@ async function createTokenInMint(
             },
         );
 
+        console.log('[createTokenInMint] Success', result);
         return result;
-    } catch (_e: any) {}
+    } catch (e: any) {
+        console.error('[createTokenInMint] Error', { mint, error: e.message, stack: e.stack });
+    }
 
     return null;
 }

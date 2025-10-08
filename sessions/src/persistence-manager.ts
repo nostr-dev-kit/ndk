@@ -63,6 +63,7 @@ export class PersistenceManager {
 
     /**
      * Restore a single session from serialized data
+     * Only restores identity and signer - data will be fetched from relays/cache
      */
     private async restoreSession(pubkey: Hexpubkey, serialized: SerializedSession): Promise<void> {
         const store = this.getStore();
@@ -86,14 +87,8 @@ export class PersistenceManager {
         // Add session without activating
         await store.addSession(signer || user, false);
 
-        // Restore cached data
+        // Restore lastActive timestamp
         store.updateSession(pubkey, {
-            profile: serialized.profile,
-            followSet: serialized.followSet ? new Set(serialized.followSet) : undefined,
-            muteSet: serialized.muteSet ? new Map(serialized.muteSet) : undefined,
-            mutedWords: serialized.mutedWords ? new Set(serialized.mutedWords) : undefined,
-            blockedRelays: serialized.blockedRelays ? new Set(serialized.blockedRelays) : undefined,
-            relayList: serialized.relayList ? new Map(serialized.relayList) : undefined,
             lastActive: serialized.lastActive,
         });
     }

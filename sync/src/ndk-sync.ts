@@ -82,7 +82,7 @@ export async function ndkSync(
 
             // Optionally emit error for debugging
             if (opts.onRelayError) {
-                opts.onRelayError(relay, error instanceof Error ? error : new Error(String(error)));
+                await opts.onRelayError(relay, error instanceof Error ? error : new Error(String(error)));
             }
         }
     });

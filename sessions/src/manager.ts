@@ -23,6 +23,11 @@ export interface SessionManagerOptions {
      * Debounce time for auto-save in milliseconds (default: 500)
      */
     saveDebounceMs?: number;
+
+    /**
+     * What to fetch for all sessions (on login and restore)
+     */
+    fetches?: SessionStartOptions;
 }
 
 /**
@@ -108,11 +113,7 @@ export class NDKSessionManager {
         const state = this.getCurrentState();
         if (!session || !state.ndk) return undefined;
 
-        const user = state.ndk.getUser({ pubkey: session.pubkey });
-        if (session.profile) {
-            user.profile = session.profile;
-        }
-        return user;
+        return state.ndk.getUser({ pubkey: session.pubkey });
     }
 
     /**
@@ -137,15 +138,15 @@ export class NDKSessionManager {
      * @example
      * ```typescript
      * const signer = new NDKPrivateKeySigner(nsec);
-     * await sessions.login(signer, {
-     *   profile: true,
-     *   follows: true,
-     *   setActive: true
-     * });
+     * await sessions.login(signer, { setActive: true });
      * ```
      */
-    async login(userOrSigner: NDKUser | NDKSigner, options: LoginOptions = {}): Promise<Hexpubkey> {
-        return this.authManager.login(userOrSigner, options);
+    async login(userOrSigner: NDKUser | NDKSigner, options: { setActive?: boolean } = {}): Promise<Hexpubkey> {
+        const loginOptions: LoginOptions = {
+            ...this.options.fetches,
+            setActive: options.setActive,
+        };
+        return this.authManager.login(userOrSigner, loginOptions);
     }
 
     /**
@@ -196,7 +197,15 @@ export class NDKSessionManager {
      * Restore sessions from storage
      */
     async restore(): Promise<void> {
-        return this.persistenceManager.restore();
+        await this.persistenceManager.restore();
+
+        // Start fetching data for all restored sessions
+        if (this.options.fetches) {
+            const state = this.getCurrentState();
+            for (const pubkey of state.sessions.keys()) {
+                state.startSession(pubkey, this.options.fetches);
+            }
+        }
     }
 
     /**

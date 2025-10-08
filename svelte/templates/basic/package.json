@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/svelte-template-basic",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "private": true,
     "type": "module",
     "scripts": {
@@ -13,9 +13,9 @@
         "test:ui": "playwright test --ui"
     },
     "dependencies": {
-        "@nostr-dev-kit/ndk": "workspace:*",
-        "@nostr-dev-kit/cache-sqlite-wasm": "workspace:*",
-        "@nostr-dev-kit/svelte": "workspace:*",
+        "@nostr-dev-kit/ndk": "^2.16.0",
+        "@nostr-dev-kit/cache-sqlite-wasm": "^0.6.1",
+        "@nostr-dev-kit/svelte": "^1.0.0",
         "shadcn-svelte": "^1.0.8",
         "bits-ui": "^1.1.8",
         "tailwind-merge": "^2.6.0",

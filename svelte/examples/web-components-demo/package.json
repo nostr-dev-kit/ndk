@@ -1,0 +1,10 @@
+{
+  "name": "nostr-user-card-remote-demo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Demo showcasing remote usage of Nostr User Card web components",
+  "scripts": {
+    "dev": "python3 -m http.server 3000",
+    "preview": "python3 -m http.server 8080"
+  }
+}

@@ -15,7 +15,7 @@ import NDK, {
     useNDKSessionMonitor,
     useNDKSessionSessions,
     useNDKSessionSwitch,
-} from "@nostr-dev-kit/ndk-hooks";
+} from "@nostr-dev-kit/react";
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";

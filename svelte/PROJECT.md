@@ -223,7 +223,7 @@ const profile = $profiles.getProfile(pubkey);
 
 ### Optional
 - `@nostr-dev-kit/ndk-wallet` - Wallet functionality
-- `@nostr-dev-kit/ndk-mobile` - Mobile signer support
+- `@nostr-dev-kit/mobile` - Mobile signer support
 
 ### Dev
 - `vite` - Build tool

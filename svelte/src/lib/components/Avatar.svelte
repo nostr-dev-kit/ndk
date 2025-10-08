@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { useProfile } from '../profile.svelte.js';
-    import type { NDKSvelte } from '$lib/ndk-svelte.svelte.js';
+  import type { NDKSvelte } from '$lib/ndk-svelte.svelte.js';
 
   interface Props {
     ndk: NDKSvelte;
@@ -11,16 +10,16 @@
 
   let { ndk, pubkey, size = 40, class: className = '' }: Props = $props();
 
-  const profileStore = useProfile(ndk, pubkey);
+  const profile = ndk.$fetchProfile(() => pubkey);
 
   // Computed values
   const initials = $derived.by(() => {
-    const name = profileStore.profile?.name;
+    const name = profile?.name;
     return name ? name[0].toUpperCase() : pubkey.slice(0, 2).toUpperCase();
   });
 
-  const imageUrl = $derived(profileStore.profile?.image);
-  const altText = $derived(profileStore.profile?.name || `${pubkey.slice(0, 8)}...`);
+  const imageUrl = $derived(profile?.image);
+  const altText = $derived(profile?.name || `${pubkey.slice(0, 8)}...`);
 </script>
 
 {#if imageUrl}

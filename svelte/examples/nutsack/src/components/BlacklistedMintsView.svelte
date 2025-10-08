@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { WalletAPI } from '../lib/useWallet.svelte.js';
-  import { wallet as walletStore } from '../lib/ndk.js';
 
   interface Props {
     wallet: WalletAPI;
@@ -9,7 +8,8 @@
 
   let { wallet, onBack }: Props = $props();
 
-  let blacklistedMints = $derived(walletStore.blacklistedMints);
+  // TODO: blacklistedMints not yet exposed in WalletAPI
+  let blacklistedMints = $derived([]);
   let availableMints = $derived(wallet.mints.map(m => m.url));
 
   let showAddSheet = $state(false);
@@ -26,7 +26,8 @@
     error = '';
 
     try {
-      await walletStore.blacklistMint(mintUrl);
+      // TODO: blacklistMint not yet exposed in WalletAPI
+      console.warn('Blacklist mint not implemented:', mintUrl);
       manualMintUrl = '';
       showAddSheet = false;
     } catch (e: any) {
@@ -40,7 +41,8 @@
     error = '';
 
     try {
-      await walletStore.unblacklistMint(mintUrl);
+      // TODO: unblacklistMint not yet exposed in WalletAPI
+      console.warn('Unblacklist mint not implemented:', mintUrl);
     } catch (e: any) {
       error = e.message || 'Failed to remove mint from blacklist';
     }

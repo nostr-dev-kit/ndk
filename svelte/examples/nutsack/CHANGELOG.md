@@ -1,5 +1,23 @@
 # ndk-svelte5-nutsack-wallet
 
+## 0.1.3
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/svelte@1.0.1
+
+## 0.1.2
+
+### Patch Changes
+
+- Updated dependencies [e596023]
+- Updated dependencies [e596023]
+- Updated dependencies [e596023]
+    - @nostr-dev-kit/ndk@2.16.0
+    - @nostr-dev-kit/svelte@1.0.0
+    - @nostr-dev-kit/wallet@0.8.0
+
 ## 0.1.1
 
 ### Patch Changes

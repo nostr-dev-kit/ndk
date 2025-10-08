@@ -1,21 +1,19 @@
 import type { CashuWallet, Proof } from "@cashu/cashu-ts";
 import type NDK from "@nostr-dev-kit/ndk";
-import {
-    type CashuPaymentInfo,
-    type LnPaymentInfo,
-    type NDKEvent,
-    type NDKNutzap,
-    type NDKPaymentConfirmation,
-    type NDKPaymentConfirmationCashu,
-    type NDKPaymentConfirmationLN,
-    NDKPrivateKeySigner,
-    type NDKRelay,
-    type NDKWalletInterface,
-    type NDKZapDetails,
-    type NDKZapSplit,
+import type {
+    CashuPaymentInfo,
+    LnPaymentInfo,
+    NDKEvent,
+    NDKNutzap,
+    NDKPaymentConfirmation,
+    NDKPaymentConfirmationCashu,
+    NDKPaymentConfirmationLN,
+    NDKRelay,
+    NDKWalletInterface,
+    NDKZapDetails,
+    NDKZapSplit,
 } from "@nostr-dev-kit/ndk";
 import { EventEmitter } from "tseep";
-import { NDKCashuWallet } from "./cashu/wallet";
 import {
     getCashuWallet,
     type MintInfoLoadedCb,
@@ -24,7 +22,6 @@ import {
     type MintKeysLoadedCb,
     type MintKeysNeededCb,
 } from "./mint";
-import { NDKNWCWallet } from "./nwc";
 
 /**
  * Different types of wallets supported.
@@ -56,6 +53,7 @@ export type NDKWalletEvents = {
     balance_updated: (balance?: NDKWalletBalance) => void;
     insufficient_balance: (info: { amount: number; pr: string }) => void;
     warning: (warning: { msg: string; event?: NDKEvent; relays?: NDKRelay[] }) => void;
+    status_changed: (status: NDKWalletStatus) => void;
 };
 
 export class NDKWallet extends EventEmitter<NDKWalletEvents> implements NDKWalletInterface, MintInterface {

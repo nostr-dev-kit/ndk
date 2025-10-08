@@ -1,6 +1,9 @@
 import initSqlJs from "sql.js";
 import { loadFromIndexedDB, saveToIndexedDB } from "./db/indexeddb-utils";
 import { runMigrations } from "./db/migrations";
+import { getCacheStatsSync } from "./functions/getCacheStats";
+import { setEventSync } from "./functions/setEvent";
+import { querySync } from "./functions/query";
 
 let db: any = null;
 let SQL: any = null;
@@ -133,6 +136,21 @@ self.onmessage = async (event: MessageEvent) => {
             case "export":
                 result = db.export();
                 break;
+            case "getCacheStats":
+                result = getCacheStatsSync(db);
+                break;
+            case "setEvent": {
+                const { event, relay } = payload;
+                const relayObj = relay ? { url: relay } : undefined;
+                setEventSync(db, event, relayObj);
+                result = undefined;
+                break;
+            }
+            case "query": {
+                const { filters } = payload;
+                result = querySync(db, filters);
+                break;
+            }
             default:
                 throw new Error(`Unknown command type: ${type}`);
         }

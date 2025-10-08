@@ -6,7 +6,7 @@
     wallet: WalletAPI;
     user: NDKUser;
     onBack: () => void;
-    onNavigate?: (view: 'proofs' | 'blacklist' | 'mints' | 'nutzaps') => void;
+    onNavigate?: (view: 'proofs' | 'tokens' | 'blacklist' | 'mints' | 'nutzaps' | 'debug') => void;
   }
 
   let { wallet, user, onBack, onNavigate }: Props = $props();
@@ -48,10 +48,10 @@
     <h3>Wallet</h3>
 
     <button class="nav-button" onclick={() => onNavigate?.('mints')}>
-      <div class="nav-icon">🏦</div>
+      <div class="nav-icon">⚙️</div>
       <div class="nav-label">
-        <div class="nav-title">Mints</div>
-        <div class="nav-subtitle">Manage your mints</div>
+        <div class="nav-title">Wallet Configuration</div>
+        <div class="nav-subtitle">Manage mints and relays</div>
       </div>
       <div class="nav-arrow">›</div>
     </button>
@@ -61,6 +61,15 @@
       <div class="nav-label">
         <div class="nav-title">Zap Settings</div>
         <div class="nav-subtitle">Configure nutzap reception</div>
+      </div>
+      <div class="nav-arrow">›</div>
+    </button>
+
+    <button class="nav-button" onclick={() => onNavigate?.('tokens')}>
+      <div class="nav-icon">🎫</div>
+      <div class="nav-label">
+        <div class="nav-title">Token History</div>
+        <div class="nav-subtitle">View tokens and proofs by event</div>
       </div>
       <div class="nav-arrow">›</div>
     </button>
@@ -79,6 +88,20 @@
       <div class="nav-label">
         <div class="nav-title">Blocked Mints</div>
         <div class="nav-subtitle">Manage mint blacklist</div>
+      </div>
+      <div class="nav-arrow">›</div>
+    </button>
+  </div>
+
+  <!-- Developer Tools -->
+  <div class="section">
+    <h3>Developer</h3>
+
+    <button class="nav-button" onclick={() => onNavigate?.('debug')}>
+      <div class="nav-icon">🔧</div>
+      <div class="nav-label">
+        <div class="nav-title">Debug</div>
+        <div class="nav-subtitle">View cache statistics</div>
       </div>
       <div class="nav-arrow">›</div>
     </button>

@@ -1,4 +1,4 @@
-import { deserialize, matchFilter, NDKEvent, type NDKFilter, type NDKSubscription } from "@nostr-dev-kit/ndk";
+import { matchFilter, NDKEvent, type NDKFilter, type NDKSubscription } from "@nostr-dev-kit/ndk";
 import type { NDKCacheAdapterSqliteWasm } from "../index";
 import { type EventRelay } from "./getEventRelays";
 import type { QueryExecResult } from "../types";
@@ -40,7 +40,7 @@ export function query(
         if (this.initializationPromise) {
             return this.initializationPromise.then(async () => {
                 if (this.useWorker) {
-                    return Promise.resolve([]);
+                    return await queryWorker.call(this, subscription);
                 }
                 if (!this.db) return [];
                 return await queryDb(this, subscription);
@@ -50,7 +50,7 @@ export function query(
     }
 
     if (this.useWorker) {
-        return Promise.resolve([]);
+        return queryWorker.call(this, subscription);
     }
 
     if (!this.db) {
@@ -60,20 +60,45 @@ export function query(
     return queryDb(this, subscription);
 }
 
-async function queryDb(adapter: NDKCacheAdapterSqliteWasm, subscription: NDKSubscription): Promise<NDKEvent[]> {
-    if (!adapter.db) return [];
-
+async function queryWorker(this: NDKCacheAdapterSqliteWasm, subscription: NDKSubscription): Promise<NDKEvent[]> {
+    // Send filters to worker, let it handle all SQL logic
     const cacheFilters = filterForCache(subscription);
-    const results = new Map<string, NDKEvent>();
 
-    // Helper to add events to the result map
-    const addResults = (events: NDKEvent[]) => {
+    const result = await this.postWorkerMessage<any>({
+        type: "query",
+        payload: {
+            filters: cacheFilters,
+            cacheUnconstrainFilter: subscription.cacheUnconstrainFilter,
+        },
+    });
+
+    // Process raw event data returned from worker
+    const results = new Map<string, NDKEvent>();
+    for (const filter of cacheFilters) {
+        const events = foundEvents(subscription, result, filter);
         for (const event of events) {
             if (event && event.id) results.set(event.id, event);
         }
-    };
+    }
 
-    for (const filter of cacheFilters) {
+    // Fetch relay provenance for all found events
+    const eventIds = Array.from(results.keys());
+    const relayData = await this.getEventRelays(eventIds);
+
+    // Restore relays on events
+    for (const [eventId, event] of results) {
+        const relays = relayData.get(eventId) || [];
+        restoreRelaysOnEvent(event, relays, subscription);
+    }
+
+    return Array.from(results.values());
+}
+
+// Sync query function that can be used both in main thread and worker
+export function querySync(db: any, filters: NDKFilter[]): any[] {
+    const allRecords: any[] = [];
+
+    for (const filter of filters) {
         const hasHashtagFilter = Object.keys(filter).some((key) => key.startsWith("#") && key.length === 2);
 
         if (hasHashtagFilter) {
@@ -84,63 +109,79 @@ async function queryDb(adapter: NDKCacheAdapterSqliteWasm, subscription: NDKSubs
                     const sql = `
                         SELECT * FROM events
                         INNER JOIN event_tags ON events.id = event_tags.event_id
-                        WHERE event_tags.tag = ? AND event_tags.value IN (${placeholders})
+                        WHERE events.deleted = 0 AND event_tags.tag = ? AND event_tags.value IN (${placeholders})
                         ORDER BY created_at DESC
                     `;
                     const params = [key[1], ...tagValues];
-                    const events = adapter.db.exec(sql, params);
+                    const events = db.exec(sql, params);
                     const normalizedEvents = normalizeDbRows(events);
-                    if (normalizedEvents && normalizedEvents.length > 0)
-                        addResults(foundEvents(subscription, normalizedEvents, filter));
+                    allRecords.push(...normalizedEvents);
                     break;
                 }
             }
         } else if (filter.authors && filter.kinds) {
             const sql = `
                 SELECT * FROM events
-                WHERE pubkey IN (${filter.authors.map(() => "?").join(",")})
+                WHERE deleted = 0
+                AND pubkey IN (${filter.authors.map(() => "?").join(",")})
                 AND kind IN (${filter.kinds.map(() => "?").join(",")})
                 ORDER BY created_at DESC
             `;
             const params = [...filter.authors, ...filter.kinds];
-            const events = adapter.db.exec(sql, params);
+            const events = db.exec(sql, params);
             const normalizedEvents = normalizeDbRows(events);
-            if (normalizedEvents && normalizedEvents.length > 0)
-                addResults(foundEvents(subscription, normalizedEvents, filter));
+            allRecords.push(...normalizedEvents);
         } else if (filter.authors) {
             const sql = `
                 SELECT * FROM events
-                WHERE pubkey IN (${filter.authors.map(() => "?").join(",")})
+                WHERE deleted = 0
+                AND pubkey IN (${filter.authors.map(() => "?").join(",")})
                 ORDER BY created_at DESC
             `;
             const params = filter.authors;
-            const events = adapter.db.exec(sql, params);
+            const events = db.exec(sql, params);
             const normalizedEvents = normalizeDbRows(events);
-            if (normalizedEvents && normalizedEvents.length > 0)
-                addResults(foundEvents(subscription, normalizedEvents, filter));
+            allRecords.push(...normalizedEvents);
         } else if (filter.kinds) {
             const sql = `
                 SELECT * FROM events
-                WHERE kind IN (${filter.kinds.map(() => "?").join(",")})
+                WHERE deleted = 0
+                AND kind IN (${filter.kinds.map(() => "?").join(",")})
                 ORDER BY created_at DESC
             `;
             const params = filter.kinds;
-            const events = adapter.db.exec(sql, params);
+            const events = db.exec(sql, params);
             const normalizedEvents = normalizeDbRows(events);
-            if (normalizedEvents && normalizedEvents.length > 0)
-                addResults(foundEvents(subscription, normalizedEvents, filter));
+            allRecords.push(...normalizedEvents);
         } else if (filter.ids) {
             const sql = `
                 SELECT * FROM events
-                WHERE id IN (${filter.ids.map(() => "?").join(",")})
+                WHERE deleted = 0
+                AND id IN (${filter.ids.map(() => "?").join(",")})
                 ORDER BY created_at DESC
             `;
             const params = filter.ids;
-            const events = adapter.db.exec(sql, params);
+            const events = db.exec(sql, params);
             const normalizedEvents = normalizeDbRows(events);
-            if (normalizedEvents && normalizedEvents.length > 0)
-                addResults(foundEvents(subscription, normalizedEvents, filter));
-        } else {
+            allRecords.push(...normalizedEvents);
+        }
+    }
+
+    return allRecords;
+}
+
+async function queryDb(adapter: NDKCacheAdapterSqliteWasm, subscription: NDKSubscription): Promise<NDKEvent[]> {
+    if (!adapter.db) return [];
+
+    const cacheFilters = filterForCache(subscription);
+    const allRecords = querySync(adapter.db, cacheFilters);
+
+    // Process records into events
+    const results = new Map<string, NDKEvent>();
+    for (const filter of cacheFilters) {
+        const events = foundEvents(subscription, allRecords, filter);
+        for (const event of events) {
+            if (event && event.id) results.set(event.id, event);
         }
     }
 
@@ -203,13 +244,31 @@ function foundEvent(
     filter?: NDKFilter,
 ): NDKEvent | null {
     try {
-        const deserializedEvent = deserialize(record.raw);
-        if (filter && !matchFilter(filter, deserializedEvent as any)) return null;
-        const ndkEvent = new NDKEvent(undefined, deserializedEvent);
+        // Parse the raw event - handle both array and object formats for backwards compatibility
+        const rawParsed = JSON.parse(record.raw);
+        let eventData: any;
+
+        if (Array.isArray(rawParsed)) {
+            // New format: [id, pubkey, created_at, kind, tags, content, sig]
+            eventData = {
+                id: rawParsed[0],
+                pubkey: rawParsed[1],
+                created_at: rawParsed[2],
+                kind: rawParsed[3],
+                tags: rawParsed[4],
+                content: rawParsed[5],
+                sig: rawParsed[6],
+            };
+        } else {
+            // Old format: direct object
+            eventData = rawParsed;
+        }
+
+        if (filter && !matchFilter(filter, eventData as any)) return null;
+        const ndkEvent = new NDKEvent(undefined, eventData);
         return ndkEvent;
     } catch (e) {
-        // eslint-disable-next-line no-console
-        console.error("failed to deserialize event", e, record.raw);
+        console.error("failed to deserialize event", e, "record:", record, "record.raw:", record.raw);
         return null;
     }
 }

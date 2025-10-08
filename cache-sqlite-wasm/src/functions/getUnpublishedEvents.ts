@@ -13,7 +13,7 @@ export async function getUnpublishedEvents(
 
     if (this.useWorker) {
         const results = await this.postWorkerMessage<Array<{ id: string; event: string; relays: string; lastTryAt: number }>>({
-            type: "query",
+            type: "all",
             payload: {
                 sql: stmt,
                 params: [],

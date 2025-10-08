@@ -212,21 +212,15 @@ describe("NDKSessionManager", () => {
     });
 
     describe("activeUser", () => {
-        it("should return active user with profile", async () => {
+        it("should return active user", async () => {
             const signer = NDKPrivateKeySigner.generate();
             const user = await signer.user();
 
             await manager.login(signer);
 
-            // Update session with profile
-            manager.getCurrentState().updateSession(user.pubkey, {
-                profile: { name: "Test User", about: "Test" },
-            });
-
             const activeUser = manager.activeUser;
             expect(activeUser).toBeDefined();
             expect(activeUser?.pubkey).toBe(user.pubkey);
-            expect(activeUser?.profile?.name).toBe("Test User");
         });
     });
 

@@ -7,12 +7,12 @@ DEXIE_DIR="cache-dexie"
 MEMORY_DIR="cache-memory"
 NOSTRCACHE_DIR="cache-nostr"
 SQLITE_WASM_DIR="cache-sqlite-wasm"
-MOBILE_DIR="ndk-mobile"
+MOBILE_DIR="mobile"
 BLOSSOM_DIR="blossom"
 WALLET_DIR="wallet"
 WOT_DIR="wot"
 SVELTE_DIR="svelte"
-HOOKS_DIR="ndk-hooks"
+HOOKS_DIR="react"
 SESSIONS_DIR="sessions"
 
 # Clean previous copied docs, careful not to remove .vitepress or package.json
@@ -115,6 +115,6 @@ copy_file "$SVELTE_DIR/docs/wrappers/svelte.md" "$DOCS_DIR/wrappers"
 copy_dir_contents "$HOOKS_DIR/docs" "$DOCS_DIR/hooks"
 
 # Sessions
-copy_file "$SESSIONS_DIR/README.md" "$DOCS_DIR/sessions"
+copy_dir_contents "$SESSIONS_DIR/docs" "$DOCS_DIR/sessions"
 
 echo "Docs preparation complete."

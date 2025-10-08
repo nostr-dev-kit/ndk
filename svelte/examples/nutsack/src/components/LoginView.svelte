@@ -1,6 +1,5 @@
 <script lang="ts">
   import { NDKPrivateKeySigner, NDKNip07Signer } from '@nostr-dev-kit/ndk';
-  import {  } from '@nostr-dev-kit/svelte';
   import ndk from '../lib/ndk';
 
   let isLoading = $state(false);

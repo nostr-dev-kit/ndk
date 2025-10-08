@@ -1,13 +1,16 @@
-import type NDK from "@nostr-dev-kit/ndk";
-import type { Hexpubkey, NDKEvent, NDKKind, NDKSigner, NDKUser, NDKUserProfile } from "@nostr-dev-kit/ndk";
-import type { LoginOptions, NDKSession, SessionStartOptions } from "@nostr-dev-kit/sessions";
-import { LocalStorage, NDKSessionManager } from "@nostr-dev-kit/sessions";
+import type { Hexpubkey, NDKEvent, NDKKind, NDKSigner, NDKUser } from "@nostr-dev-kit/ndk";
+import { NDKKind as Kind } from "@nostr-dev-kit/ndk";
+import type { NDKSession, SessionStartOptions } from "@nostr-dev-kit/sessions";
+import type { NDKSessionManager } from "@nostr-dev-kit/sessions";
 
 /**
  * Reactive wrapper around NDKSessionManager
  *
  * Provides Svelte 5 reactive access to session state using $state runes.
  * Wraps the framework-agnostic ndk-sessions package.
+ *
+ * This store is purely focused on session state - wallet logic is handled
+ * by ReactiveWalletStore which subscribes to the same session manager.
  */
 export class ReactiveSessionsStore {
     #manager: NDKSessionManager;
@@ -17,11 +20,8 @@ export class ReactiveSessionsStore {
     sessions = $state<Record<Hexpubkey, NDKSession>>({});
     activePubkey = $state<Hexpubkey | undefined>(undefined);
 
-    constructor(ndk: NDK) {
-        this.#manager = new NDKSessionManager(ndk, {
-            storage: new LocalStorage(),
-            autoSave: true,
-        });
+    constructor(sessionManager: NDKSessionManager) {
+        this.#manager = sessionManager;
 
         // Sync Zustand state to Svelte reactive state
         this.#manager.subscribe((state) => {
@@ -36,8 +36,8 @@ export class ReactiveSessionsStore {
             // Sync signer to NDK
             if (state.activePubkey) {
                 const signer = state.signers.get(state.activePubkey);
-                if (signer) {
-                    ndk.signer = signer;
+                if (signer && state.ndk) {
+                    state.ndk.signer = signer;
                 }
             }
         });
@@ -61,13 +61,6 @@ export class ReactiveSessionsStore {
      */
     get currentUser(): NDKUser | undefined {
         return this.#manager.activeUser;
-    }
-
-    /**
-     * Get current user profile
-     */
-    get profile(): NDKUserProfile | undefined {
-        return this.current?.profile;
     }
 
     /**
@@ -113,6 +106,13 @@ export class ReactiveSessionsStore {
     }
 
     /**
+     * Get wallet event (kind 17375) for current session
+     */
+    get walletEvent(): NDKEvent | null | undefined {
+        return this.getSessionEvent(Kind.CashuWallet as NDKKind);
+    }
+
+    /**
      * Get all sessions as array
      */
     get all(): NDKSession[] {
@@ -127,21 +127,14 @@ export class ReactiveSessionsStore {
      * @example
      * ```ts
      * // Full access with signer
-     * await ndk.$sessions.login(signer, {
-     *   profile: true,
-     *   follows: true,
-     *   setActive: true
-     * });
+     * await ndk.$sessions.login(signer, { setActive: true });
      *
      * // Read-only with user
      * const user = ndk.getUser({ pubkey: "hex..." });
-     * await ndk.$sessions.login(user, {
-     *   profile: true,
-     *   follows: true
-     * });
+     * await ndk.$sessions.login(user);
      * ```
      */
-    async login(userOrSigner: NDKUser | NDKSigner, options?: LoginOptions): Promise<Hexpubkey> {
+    async login(userOrSigner: NDKUser | NDKSigner, options?: { setActive?: boolean }): Promise<Hexpubkey> {
         return await this.#manager.login(userOrSigner, options);
     }
 
@@ -150,8 +143,8 @@ export class ReactiveSessionsStore {
      * - With signer: Full access session
      * - With user: Read-only session
      */
-    async add(userOrSigner: NDKUser | NDKSigner, options?: SessionStartOptions): Promise<Hexpubkey> {
-        return await this.#manager.login(userOrSigner, { ...options, setActive: false });
+    async add(userOrSigner: NDKUser | NDKSigner): Promise<Hexpubkey> {
+        return await this.#manager.login(userOrSigner, { setActive: false });
     }
 
     /**
@@ -238,6 +231,6 @@ export class ReactiveSessionsStore {
 /**
  * Create reactive sessions store
  */
-export function createReactiveSessions(ndk: NDK): ReactiveSessionsStore {
-    return new ReactiveSessionsStore(ndk);
+export function createReactiveSessions(sessionManager: NDKSessionManager): ReactiveSessionsStore {
+    return new ReactiveSessionsStore(sessionManager);
 }

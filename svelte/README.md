@@ -225,7 +225,8 @@ import { NDKNip07Signer } from '@nostr-dev-kit/ndk';
 
 // Current session (reactive)
 const current = $derived(ndk.$sessions.current);
-const profile = $derived(ndk.$sessions.profile);
+const currentUser = $derived(ndk.$sessions.currentUser);
+const profile = ndk.$fetchProfile(() => currentUser?.pubkey);
 const follows = $derived(ndk.$sessions.follows);
 
 async function login() {
@@ -255,19 +256,55 @@ function logout() {
 // Reactive getters
 ndk.$sessions.current      // NDKSession | undefined
 ndk.$sessions.currentUser  // NDKUser | undefined
-ndk.$sessions.profile      // NDKUserProfile | undefined
 ndk.$sessions.follows      // Set<Hexpubkey>
+ndk.$sessions.mutes        // Map<string, string>
+ndk.$sessions.mutedWords   // Set<string>
+ndk.$sessions.blockedRelays // Set<string>
+ndk.$sessions.relayList    // Map<string, { read: boolean; write: boolean }>
 ndk.$sessions.all          // NDKSession[]
 
 // Methods
-await ndk.$sessions.login(signer, options?)
-await ndk.$sessions.add(signer, options?)
+await ndk.$sessions.login(signer, options?) // options: { setActive?: boolean }
+await ndk.$sessions.add(signer)
 ndk.$sessions.switch(pubkey)
 ndk.$sessions.logout(pubkey?)
 ndk.$sessions.logoutAll()
 ndk.$sessions.get(pubkey)
 ndk.$sessions.getSessionEvent(kind)
+ndk.$sessions.walletEvent  // Get NIP-60 wallet event
+
+// Login options
+{
+  setActive?: boolean       // Set as active session (default: true)
+}
+
+// Note: What to fetch (follows, mutes, wallet, etc.) is configured once
+// at the NDKSvelte level, not per-login. All sessions fetch the same data.
 ```
+
+### Automatic Wallet Loading
+
+Sessions automatically fetch and load wallets (configured at the NDKSvelte level):
+1. Fetches the user's NIP-60 wallet event (kind 17375)
+2. Instantiates an `NDKCashuWallet` from the wallet event
+3. Starts wallet monitoring
+4. Sets it on `ndk.$wallet` so you can immediately access `ndk.$wallet.balance`
+
+```svelte
+<script lang="ts">
+import { ndk } from '$lib/ndk';
+
+// Login - wallet loads automatically
+await ndk.$sessions.login(signer);
+
+// Wallet is now ready to use
+const balance = $derived(ndk.$wallet.balance);
+</script>
+
+<p>Balance: {balance} sats</p>
+```
+
+When you switch sessions or logout, the wallet updates automatically based on the active session's wallet.
 
 ## Web of Trust
 

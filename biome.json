@@ -22,5 +22,11 @@
     "files": {
         "includes": ["**/*.{js,ts,jsx,tsx,json}"],
         "ignoreUnknown": true
+    },
+    "vcs": {
+        "enabled": true,
+        "clientKind": "git",
+        "useIgnoreFile": true,
+        "defaultBranch": "master"
     }
 }

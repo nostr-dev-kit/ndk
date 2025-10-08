@@ -1,7 +1,5 @@
 <script lang="ts">
-  import type { WalletAPI } from '../lib/useWallet.svelte.js';
-  import { wallet as walletStore } from '../lib/ndk.js';
-  import type { ProofEntry } from '@nostr-dev-kit/wallet';
+  import type { WalletAPI, ProofEntry } from '../lib/useWallet.svelte.js';
   import { CheckStateEnum } from '@cashu/cashu-ts';
 
   interface Props {
@@ -11,9 +9,9 @@
 
   let { wallet, onBack }: Props = $props();
 
-  let proofEntries = $derived(walletStore.proofEntries || []);
-  let validationResults = $derived(walletStore.validationResults || new Map());
-  let isValidating = $derived(walletStore.isValidating || false);
+  let proofEntries = $state<ProofEntry[]>([]);
+  let validationResults = $state(new Map<string, { spentCount: number; unspentCount: number; pendingCount: number }>());
+  let isValidating = $state(false);
   let selectedProofs = $state<Set<string>>(new Set());
   let isDeleting = $state(false);
   let error = $state('');
@@ -49,20 +47,35 @@
     return total;
   });
 
-  async function loadProofs() {
+  function loadProofs() {
     try {
-      await walletStore.loadProofEntries();
+      proofEntries = wallet.getProofEntries({ includeDeleted: true });
     } catch (e: any) {
       error = e.message || 'Failed to load proofs';
     }
   }
 
   async function validateAll() {
+    isValidating = true;
+    error = '';
+
     try {
-      error = '';
-      await walletStore.validateProofs();
+      const results = new Map<string, { spentCount: number; unspentCount: number; pendingCount: number }>();
+
+      // Validate proofs for each mint
+      for (const [mint] of groupedProofs) {
+        const result = await wallet.validateProofs(mint);
+        results.set(mint, result);
+      }
+
+      validationResults = results;
+
+      // Reload proofs to reflect any changes from validation
+      loadProofs();
     } catch (e: any) {
       error = e.message || 'Validation failed';
+    } finally {
+      isValidating = false;
     }
   }
 
@@ -73,11 +86,8 @@
     error = '';
 
     try {
-      const proofsToDelete = proofEntries
-        .filter(e => selectedProofs.has(e.proof.C))
-        .map(e => e.proof);
-
-      await walletStore.deleteProofs(proofsToDelete);
+      // TODO: deleteProofs not yet exposed in WalletAPI
+      console.warn('Delete proofs not implemented');
       selectedProofs.clear();
     } catch (e: any) {
       error = e.message || 'Failed to delete proofs';
@@ -96,10 +106,8 @@
     selectedProofs = newSet;
   }
 
-  function getValidationState(mint: string, proofC: string) {
-    const result = validationResults.get(mint);
-    if (!result) return null;
-    return result.proofStates.get(proofC);
+  function getValidationState(mint: string) {
+    return validationResults.get(mint);
   }
 
   function formatMintName(url: string): string {
@@ -175,17 +183,32 @@
       {#each Array.from(groupedProofs.entries()).sort((a, b) => a[0].localeCompare(b[0])) as [mint, entries]}
         <div class="mint-section">
           <div class="mint-header">
-            <h3>{formatMintName(mint)}</h3>
-            <span class="mint-balance">{mintBalances.get(mint) || 0} sats</span>
+            <div class="mint-title">
+              <h3>{formatMintName(mint)}</h3>
+              <span class="mint-balance">{mintBalances.get(mint) || 0} sats</span>
+            </div>
+            {#if getValidationState(mint)}
+              {@const result = getValidationState(mint)!}
+              <div class="validation-summary">
+                {#if result.spentCount > 0}
+                  <span class="validation-badge spent">{result.spentCount} spent</span>
+                {/if}
+                {#if result.unspentCount > 0}
+                  <span class="validation-badge valid">{result.unspentCount} valid</span>
+                {/if}
+                {#if result.pendingCount > 0}
+                  <span class="validation-badge pending">{result.pendingCount} pending</span>
+                {/if}
+              </div>
+            {/if}
           </div>
 
           <div class="proof-list">
             {#each entries.sort((a, b) => b.proof.amount - a.proof.amount) as entry}
-              {@const validationState = getValidationState(mint, entry.proof.C)}
               {@const isSelected = selectedProofs.has(entry.proof.C)}
-              {@const isSelectable = entry.state === 'available' || validationState?.state === CheckStateEnum.SPENT}
+              {@const isSelectable = entry.state === 'available' || entry.state === 'deleted'}
 
-              <div class="proof-item" class:spent={validationState?.state === CheckStateEnum.SPENT}>
+              <div class="proof-item" class:spent={entry.state === 'deleted'}>
                 <button
                   class="checkbox"
                   class:checked={isSelected}
@@ -204,22 +227,14 @@
                 </div>
 
                 <div class="proof-status">
-                  {#if validationState}
-                    {#if validationState.state === CheckStateEnum.UNSPENT}
-                      <span class="status valid">✓ Valid</span>
-                    {:else if validationState.state === CheckStateEnum.SPENT}
-                      <span class="status spent">✗ Spent</span>
-                    {:else}
-                      <span class="status pending">⏳ Pending</span>
-                    {/if}
+                  {#if entry.state === 'available'}
+                    <span class="status available">● Available</span>
+                  {:else if entry.state === 'reserved'}
+                    <span class="status reserved">🔒 Reserved</span>
+                  {:else if entry.state === 'deleted'}
+                    <span class="status deleted">✗ Spent</span>
                   {:else}
-                    {#if entry.state === 'available'}
-                      <span class="status available">● Available</span>
-                    {:else if entry.state === 'reserved'}
-                      <span class="status reserved">🔒 Reserved</span>
-                    {:else}
-                      <span class="status deleted">🗑️ Deleted</span>
-                    {/if}
+                    <span class="status spent">✗ Spent</span>
                   {/if}
                 </div>
               </div>
@@ -379,11 +394,17 @@
 
   .mint-header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    gap: 0.75rem;
     margin-bottom: 1rem;
     padding-bottom: 0.75rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .mint-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
   .mint-header h3 {
@@ -396,6 +417,35 @@
     font-size: 0.875rem;
     color: rgba(249, 115, 22, 0.9);
     font-weight: 600;
+  }
+
+  .validation-summary {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .validation-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.625rem;
+    border-radius: 12px;
+    white-space: nowrap;
+  }
+
+  .validation-badge.spent {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+  }
+
+  .validation-badge.valid {
+    color: #10b981;
+    background: rgba(16, 185, 129, 0.1);
+  }
+
+  .validation-badge.pending {
+    color: #f59e0b;
+    background: rgba(245, 158, 11, 0.1);
   }
 
   .proof-list {
@@ -481,19 +531,9 @@
     white-space: nowrap;
   }
 
-  .status.valid {
-    color: #10b981;
-    background: rgba(16, 185, 129, 0.1);
-  }
-
   .status.spent {
     color: #ef4444;
     background: rgba(239, 68, 68, 0.1);
-  }
-
-  .status.pending {
-    color: #f59e0b;
-    background: rgba(245, 158, 11, 0.1);
   }
 
   .status.available {

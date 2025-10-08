@@ -1,5 +1,14 @@
 # ndk-svelte5-sessions-demo
 
+## 0.1.12
+
+### Patch Changes
+
+- Updated dependencies [e596023]
+- Updated dependencies [e596023]
+    - @nostr-dev-kit/ndk@2.16.0
+    - @nostr-dev-kit/svelte@1.0.0
+
 ## 0.1.11
 
 ### Patch Changes

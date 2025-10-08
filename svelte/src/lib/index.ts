@@ -2,6 +2,7 @@
 
 // Re-export session types from ndk-sessions
 export type { LoginOptions, NDKSession, SessionStartOptions } from "@nostr-dev-kit/sessions";
+export { NDKWalletStatus } from "@nostr-dev-kit/wallet";
 // Re-export WoT utilities
 export { createWoTComparator, filterByWoT, rankByWoT } from "@nostr-dev-kit/wot";
 // Blossom
@@ -21,12 +22,12 @@ export {
 export { default as Avatar } from "./components/Avatar.svelte";
 export { default as BlossomImage } from "./components/BlossomImage.svelte";
 export { default as EventContent } from "./components/EventContent.svelte";
-export { default as RelayManager } from "./components/RelayManager.svelte";
-export { default as RelayCard } from "./components/RelayCard.svelte";
-export { default as RelayList } from "./components/RelayList.svelte";
-export { default as RelayPoolTabs } from "./components/RelayPoolTabs.svelte";
-export { default as RelayConnectionStatus } from "./components/RelayConnectionStatus.svelte";
 export { default as RelayAddForm } from "./components/RelayAddForm.svelte";
+export { default as RelayCard } from "./components/RelayCard.svelte";
+export { default as RelayConnectionStatus } from "./components/RelayConnectionStatus.svelte";
+export { default as RelayList } from "./components/RelayList.svelte";
+export { default as RelayManager } from "./components/RelayManager.svelte";
+export { default as RelayPoolTabs } from "./components/RelayPoolTabs.svelte";
 export { default as TransactionList } from "./components/TransactionList.svelte";
 export { default as ZapButton } from "./components/ZapButton.svelte";
 export { NDKSvelte } from "./ndk-svelte.svelte.js";
@@ -46,7 +47,7 @@ export type {
     TransactionStatus,
     TransactionType,
 } from "./payments/types.js";
-export { type ProfileStore, useProfile } from "./profile.svelte.js";
+export { createFetchProfile } from "./profile.svelte.js";
 // Relay management
 export {
     createRelayManager,
@@ -61,11 +62,11 @@ export type { ReactivePoolStore, RelayInfo, RelayStatus } from "./stores/pool.sv
 export type { ReactiveSessionsStore } from "./stores/sessions.svelte.js";
 export type { ReactiveWalletStore } from "./stores/wallet.svelte.js";
 export type { ReactiveWoTStore, WoTFilterOptions, WoTLoadOptions, WoTRankOptions } from "./stores/wot.svelte.js";
-export type { SubscribeOptions, SyncSubscribeOptions, Subscription } from "./subscribe.svelte.js";
+export type { SubscribeOptions, Subscription, SyncSubscribeOptions } from "./subscribe.svelte.js";
 // Subscription - can be used as standalone function or via ndk.$subscribe()
 export { createSubscription, createSyncSubscription } from "./subscribe.svelte.js";
 // User helpers
-export { type UserStore, useUser } from "./user.svelte.js";
+export { createFetchUser, useZapInfo, type ZapInfo } from "./user.svelte.js";
 // WoT runes
 export { useIsInWoT, useWoTDistance, useWoTScore } from "./wot-runes.svelte.js";
 

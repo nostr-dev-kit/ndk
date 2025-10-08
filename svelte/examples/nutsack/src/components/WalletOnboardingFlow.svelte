@@ -3,7 +3,7 @@
   import type NDK from '@nostr-dev-kit/ndk';
   import RelaySelector from './RelaySelector.svelte';
   import MintSelector from './MintSelector.svelte';
-  import { MintDiscoveryService } from '../lib/mintDiscoveryService.svelte.js';
+  import { createMintDiscoveryStore } from '@nostr-dev-kit/wallet';
 
   interface Props {
     ndk: NDK;
@@ -21,8 +21,16 @@
   let selectedMints = $state<Set<string>>(new Set());
 
   // Mint discovery
-  let mintDiscovery = $state<MintDiscoveryService | undefined>();
-  let discoveredMints = $derived(mintDiscovery?.mints || []);
+  const mintStore = createMintDiscoveryStore(ndk, { network: 'mainnet', timeout: 0 });
+  let discoveredMints = $state<any[]>([]);
+
+  // Subscribe to the Zustand store
+  $effect(() => {
+    const unsubscribe = mintStore.subscribe((state) => {
+      discoveredMints = state.mints;
+    });
+    return unsubscribe;
+  });
 
   // UI state
   let isSettingUp = $state(false);
@@ -66,12 +74,8 @@
       return () => clearInterval(pulseInterval);
     }, 500);
 
-    // Start mint discovery
-    mintDiscovery = new MintDiscoveryService(ndk);
-    mintDiscovery.start();
-
     return () => {
-      mintDiscovery?.stop();
+      mintStore.getState().stop();
     };
   });
 

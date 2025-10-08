@@ -87,14 +87,23 @@ export default defineConfig({
                 text: "Wrappers",
                 items: [
                     { text: "NDK Svelte", link: "/wrappers/svelte" },
-                    { 
-                        text: "NDK React Hooks", 
+                    {
+                        text: "NDK React Hooks",
                         link: "/hooks/index",
                         items: [
                             { text: "Session Management", link: "/hooks/session-management" },
                             { text: "Muting", link: "/hooks/muting" }
                         ]
                     }
+                ],
+            },
+            {
+                text: "Sessions",
+                items: [
+                    { text: "Introduction", link: "/sessions/index" },
+                    { text: "Quick Start", link: "/sessions/quick-start" },
+                    { text: "API Reference", link: "/sessions/api" },
+                    { text: "Migration Guide", link: "/sessions/migration" }
                 ],
             },
             {

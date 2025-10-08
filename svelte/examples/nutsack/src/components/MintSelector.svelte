@@ -1,8 +1,8 @@
 <script lang="ts">
-  import type { DiscoveredMint } from '../lib/mintDiscoveryService.svelte.js';
+  import type { MintMetadata } from '@nostr-dev-kit/wallet';
 
   interface Props {
-    discoveredMints: DiscoveredMint[];
+    discoveredMints: MintMetadata[];
     selectedMints: Set<string>;
     onSelectionChange?: (mints: Set<string>) => void;
   }
@@ -16,6 +16,15 @@
   let showManualInput = $state(false);
   let manualMintUrl = $state('');
   let manualMintError = $state('');
+
+  function getHostnameFromUrl(url: string): string {
+    try {
+      return new URL(url).hostname;
+    } catch {
+      // If URL parsing fails, return the url as-is
+      return url;
+    }
+  }
 
   function toggleMint(url: string) {
     const newSelection = new Set(selectedMints);
@@ -120,26 +129,31 @@
       {#each discoveredMints as mint}
         <button class="mint-item" class:selected={selectedMints.has(mint.url)} onclick={() => toggleMint(mint.url)}>
           <div class="mint-icon">
-            {#if mint.metadata?.iconURL}
-              <img src={mint.metadata.iconURL} alt={mint.name} />
+            {#if mint.icon}
+              <img src={mint.icon} alt={mint.name || mint.url} />
             {:else}
               <div class="icon-placeholder">🏦</div>
             {/if}
           </div>
 
           <div class="mint-info">
-            <div class="mint-name">{mint.name}</div>
-            {#if mint.description || mint.metadata?.description}
+            <div class="mint-name">{mint.name || getHostnameFromUrl(mint.url)}</div>
+            {#if mint.description}
               <div class="mint-description">
-                {mint.description || mint.metadata?.description}
+                {mint.description}
               </div>
             {/if}
             <div class="mint-url">{mint.url}</div>
-            {#if mint.recommendedBy.length > 0}
+            {#if mint.recommendations.length > 0}
               <div class="mint-recommendations">
-                ⭐ Recommended by {mint.recommendedBy.length} user{mint.recommendedBy.length === 1
+                ⭐ Recommended by {mint.recommendations.length} user{mint.recommendations.length === 1
                   ? ''
                   : 's'}
+              </div>
+            {/if}
+            {#if mint.isOnline !== undefined}
+              <div class="mint-status" class:online={mint.isOnline}>
+                {mint.isOnline ? '🟢 Online' : '🔴 Offline'}
               </div>
             {/if}
           </div>
@@ -170,7 +184,7 @@
             </div>
 
             <div class="mint-info">
-              <div class="mint-name">{new URL(mintUrl).hostname}</div>
+              <div class="mint-name">{getHostnameFromUrl(mintUrl)}</div>
               <div class="mint-url">{mintUrl}</div>
             </div>
 
@@ -400,6 +414,16 @@
     font-size: 0.8125rem;
     color: rgba(234, 179, 8, 0.9);
     margin-top: 0.25rem;
+  }
+
+  .mint-status {
+    font-size: 0.75rem;
+    color: rgba(239, 68, 68, 0.9);
+    margin-top: 0.25rem;
+  }
+
+  .mint-status.online {
+    color: rgba(34, 197, 94, 0.9);
   }
 
   .check-icon {

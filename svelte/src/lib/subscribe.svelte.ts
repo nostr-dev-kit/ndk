@@ -53,7 +53,7 @@ export interface Subscription<T extends NDKEvent = NDKEvent> {
  */
 function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
     ndk: NDKSvelte,
-    filters: NDKFilter | NDKFilter[] | (() => NDKFilter | NDKFilter[] | undefined),
+    filters: () => NDKFilter | NDKFilter[] | undefined,
     opts: SubscribeOptions,
     subscribeMethod: (
         filters: NDKFilter[],
@@ -70,34 +70,25 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
 
     const dedupeKey = opts.dedupeKey ?? ((e: NDKEvent) => e.deduplicationKey());
 
-    // Check if filters is a function (reactive)
-    const isFilterFunction = typeof filters === "function";
     let currentFilters: NDKFilter[];
 
-    // Set up reactive filters if function provided
-    if (isFilterFunction) {
-        const derivedFilters = $derived.by(() => {
-            const result = filters();
-            if (!result) return [];
-            return Array.isArray(result) ? result : [result];
-        });
+    // Set up reactive filters
+    const derivedFilters = $derived.by(() => {
+        const result = filters();
+        if (!result) return [];
+        return Array.isArray(result) ? result : [result];
+    });
 
-        $effect(() => {
-            const newFilters = derivedFilters;
-            if (newFilters.length === 0) {
-                stop();
-                return;
-            }
+    $effect(() => {
+        const newFilters = derivedFilters;
+        if (newFilters.length === 0) {
+            stop();
+            return;
+        }
 
-            currentFilters = newFilters;
-            restart();
-        });
-    } else {
-        // Static filters
-        currentFilters = Array.isArray(filters) ? filters : [filters];
-        // Auto-start for static filters
-        start();
-    }
+        currentFilters = newFilters;
+        restart();
+    });
 
     function handleEvent(event: NDKEvent) {
         const transformed = opts.transform ? opts.transform<T>(event) : (event as T);
@@ -239,15 +230,15 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
  * <script lang="ts">
  *   import { createSubscription } from '@nostr-dev-kit/svelte';
  *
- *   // Static filters
- *   const notes = createSubscription(ndk, { kinds: [1], limit: 50 });
- *
  *   // Reactive filters - automatically restarts when kind changes
  *   let kind = $state(1);
- *   const reactiveNotes = createSubscription(ndk, () => ({
+ *   const notes = createSubscription(ndk, () => ({
  *     kinds: [kind],
  *     limit: 50
  *   }));
+ *
+ *   // Static filters - wrap in function
+ *   const staticNotes = createSubscription(ndk, () => ({ kinds: [1], limit: 50 }));
  *
  *   $effect(() => {
  *     console.log('New notes:', notes.count);
@@ -261,7 +252,7 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
  */
 export function createSubscription<T extends NDKEvent = NDKEvent>(
     ndk: NDKSvelte,
-    filters: NDKFilter | NDKFilter[] | (() => NDKFilter | NDKFilter[] | undefined),
+    filters: () => NDKFilter | NDKFilter[] | undefined,
     opts: SubscribeOptions = {},
 ): Subscription<T> {
     return createSubscriptionInternal<T>(ndk, filters, opts, (filters, subOpts) => {
@@ -296,8 +287,8 @@ export const createReactiveSubscription = createSubscription;
  * <script lang="ts">
  *   import { createSyncSubscription } from '@nostr-dev-kit/svelte';
  *
- *   // Static filters with sync
- *   const notes = createSyncSubscription(ndk, { kinds: [1], limit: 50 }, {
+ *   // Reactive filters with sync
+ *   const notes = createSyncSubscription(ndk, () => ({ kinds: [1], limit: 50 }), {
  *     onRelaySynced: (relay, count) => {
  *       console.log(`Synced ${count} events from ${relay.url}`);
  *     },
@@ -325,7 +316,7 @@ export const createReactiveSubscription = createSubscription;
  */
 export function createSyncSubscription<T extends NDKEvent = NDKEvent>(
     ndk: NDKSvelte,
-    filters: NDKFilter | NDKFilter[] | (() => NDKFilter | NDKFilter[] | undefined),
+    filters: () => NDKFilter | NDKFilter[] | undefined,
     opts: SyncSubscribeOptions = {},
 ): Subscription<T> {
     return createSubscriptionInternal<T>(ndk, filters, opts, (filters, subOpts) => {

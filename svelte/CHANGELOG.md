@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.0.1
+
+### Patch Changes
+
+- remove useUser and useProfile
+
+## 1.0.0
+
+### Patch Changes
+
+- e596023: Fix wallet balance refresh when balance update is called without a balance parameter
+- Updated dependencies [e596023]
+    - @nostr-dev-kit/ndk@2.16.0
+
 ## 0.2.0
 
 ### Minor Changes

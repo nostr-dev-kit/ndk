@@ -65,22 +65,44 @@ export class PaymentHandler {
      * Swaps tokens to a specific amount, optionally locking to a p2pk.
      */
     async cashuPay(payment: NDKZapDetails<CashuPaymentInfo>): Promise<NDKPaymentConfirmationCashu | undefined> {
+        console.log('[PaymentHandler.cashuPay] Starting cashu payment', {
+            originalAmount: payment.amount,
+            unit: payment.unit,
+            mints: payment.mints,
+            p2pk: payment.p2pk,
+            allowIntramintFallback: payment.allowIntramintFallback,
+        });
+
         const satPayment = { ...payment };
         if (satPayment.unit?.startsWith("msat")) {
             satPayment.amount = satPayment.amount / 1000;
             satPayment.unit = "sat";
+            console.log('[PaymentHandler.cashuPay] Converted msat to sat', {
+                newAmount: satPayment.amount,
+                newUnit: satPayment.unit,
+            });
         }
 
+        console.log('[PaymentHandler.cashuPay] Creating token with mints', payment.mints);
         let createResult = await createToken(this.wallet, satPayment.amount, payment.mints, payment.p2pk);
-        if (!createResult) {
+
+        if (!createResult?.result) {
+            console.log('[PaymentHandler.cashuPay] Token creation failed with specified mints');
             if (payment.allowIntramintFallback) {
+                console.log('[PaymentHandler.cashuPay] Attempting intramint fallback');
                 createResult = await createToken(this.wallet, satPayment.amount, undefined, payment.p2pk);
             }
 
-            if (!createResult) {
+            if (!createResult?.result) {
+                console.error('[PaymentHandler.cashuPay] Token creation failed completely');
                 return;
             }
         }
+
+        console.log('[PaymentHandler.cashuPay] Token created successfully', {
+            proofsCount: createResult.result.proofs.length,
+            mint: createResult.result.mint,
+        });
 
         createOutTxEvent(this.wallet.ndk, satPayment, createResult, this.wallet.relaySet);
 

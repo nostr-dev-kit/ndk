@@ -27,6 +27,11 @@ export interface SyncAndSubscribeOptions extends NDKSubscriptionOptions {
     onSyncComplete?: () => void;
 
     /**
+     * Called when a relay error occurs during sync
+     */
+    onRelayError?: (relay: NDKRelay, error: Error) => void | Promise<void>;
+
+    /**
      * Relay set or URLs to use (optional, uses default NDK relays if not provided)
      */
     relaySet?: NDKRelaySet;

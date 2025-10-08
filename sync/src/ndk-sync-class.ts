@@ -136,6 +136,74 @@ export class NDKSync {
     }
 
     /**
+     * Mark a relay as not supporting negentropy in the cache
+     * @private
+     */
+    private async markRelayAsNotSupporting(relayUrl: string, error: Error): Promise<void> {
+        await this.ndk.cacheAdapter?.updateRelayStatus?.(relayUrl, {
+            metadata: {
+                sync: {
+                    supportsNegentropy: false,
+                    lastChecked: Date.now(),
+                    lastError: error.message,
+                },
+            },
+        });
+    }
+
+    /**
+     * Create an onRelayError handler that updates cache and calls user callback
+     * @private
+     */
+    private createErrorHandler(userCallback?: (relay: NDKRelay, error: Error) => void | Promise<void>) {
+        return async (relay: NDKRelay, error: Error) => {
+            await userCallback?.(relay, error);
+            await this.markRelayAsNotSupporting(relay.url, error);
+        };
+    }
+
+    /**
+     * Sync with a single relay, with automatic fallback to fetchEvents if negentropy not supported
+     * @private
+     */
+    private async syncSingleRelay(
+        relay: NDKRelay,
+        filters: NDKFilter[],
+        opts: NDKSyncOptions = {},
+    ): Promise<NDKSyncResult> {
+        const supportsNeg = await this.checkRelaySupport(relay);
+
+        if (supportsNeg) {
+            // Use Negentropy sync - errors are handled by onRelayError in opts
+            return await ndkSync.call(this.ndk, filters, {
+                ...opts,
+                relaySet: new NDKRelaySet(new Set([relay]), this.ndk),
+            });
+        }
+
+        // Fallback to fetchEvents when negentropy not supported
+        const events = await this.ndk.fetchEvents(filters, {
+            relaySet: new NDKRelaySet(new Set([relay]), this.ndk),
+            subId: "sync-fetch-fallback",
+            groupable: false,
+        });
+
+        // Save to cache if not skipping and autoFetch enabled (default true)
+        if (!opts.skipCache && opts.autoFetch !== false && this.ndk.cacheAdapter) {
+            for (const event of events) {
+                await this.ndk.cacheAdapter.setEvent(event, filters, relay);
+            }
+        }
+
+        // Convert Set<NDKEvent> to NDKSyncResult format
+        return {
+            events: Array.from(events),
+            need: new Set(),
+            have: new Set(),
+        };
+    }
+
+    /**
      * Perform NIP-77 Negentropy sync with relays
      *
      * @param filters - Filters to sync
@@ -143,7 +211,53 @@ export class NDKSync {
      * @returns Sync result with events, need, and have sets
      */
     async sync(filters: NDKFilter | NDKFilter[], opts?: NDKSyncOptions): Promise<NDKSyncResult> {
-        return ndkSync.call(this.ndk, filters, opts);
+        const filterArray = Array.isArray(filters) ? filters : [filters];
+
+        // Determine relay set
+        const relaySet =
+            opts?.relaySet || (opts?.relayUrls ? NDKRelaySet.fromRelayUrls(opts.relayUrls, this.ndk) : undefined);
+
+        const relays = relaySet ? Array.from(relaySet.relays) : Array.from(this.ndk.pool?.relays?.values() || []);
+
+        if (relays.length === 0) {
+            console.warn("[NDK Sync] No relays available for sync");
+            return {
+                events: [],
+                need: new Set(),
+                have: new Set(),
+            };
+        }
+
+        // Result accumulators
+        const result: NDKSyncResult = {
+            events: [],
+            need: new Set(),
+            have: new Set(),
+        };
+
+        // Merge options with error handler
+        const mergedOpts: NDKSyncOptions = {
+            ...opts,
+            onRelayError: this.createErrorHandler(opts?.onRelayError),
+        };
+
+        // Sync with each relay in parallel (with fallback for non-negentropy relays)
+        await Promise.all(
+            relays.map(async (relay) => {
+                try {
+                    const relayResult = await this.syncSingleRelay(relay, filterArray, mergedOpts);
+
+                    // Merge results
+                    result.events.push(...relayResult.events);
+                    for (const id of relayResult.need) result.need.add(id);
+                    for (const id of relayResult.have) result.have.add(id);
+                } catch (error) {
+                    console.error(`[NDK Sync] Failed to sync with relay ${relay.url}:`, error);
+                }
+            }),
+        );
+
+        return result;
     }
 
     /**
@@ -202,50 +316,14 @@ export class NDKSync {
             const totalRelays = relays.length;
 
             const syncWithRelay = async (relay: NDKRelay) => {
-                // Check if relay supports negentropy
-                const supportsNeg = await this.checkRelaySupport(relay);
-
                 try {
-                    if (supportsNeg) {
-                        // Use Negentropy sync
-                        const result = await ndkSync.call(this.ndk, filterArray, {
-                            relaySet: new NDKRelaySet(new Set([relay]), this.ndk),
-                            autoFetch: true,
-                            onRelayError: async (errorRelay, error) => {
-                                // Mark relay as not supporting negentropy when sync fails
-                                await this.ndk.cacheAdapter?.updateRelayStatus?.(errorRelay.url, {
-                                    metadata: {
-                                        sync: {
-                                            supportsNegentropy: false,
-                                            lastChecked: Date.now(),
-                                            lastError: error.message,
-                                        },
-                                    },
-                                });
-                            },
-                        });
-                        opts.onRelaySynced?.(relay, result.events.length);
-                    } else {
-                        // Fallback to fetchEvents
-                        const events = await this.ndk.fetchEvents(filterArray, {
-                            relaySet: new NDKRelaySet(new Set([relay]), this.ndk),
-                            subId: "sync-fetch-fallback",
-                            groupable: false,
-                        });
-                        opts.onRelaySynced?.(relay, events.size);
-                    }
+                    const result = await this.syncSingleRelay(relay, filterArray, {
+                        autoFetch: true,
+                        onRelayError: this.createErrorHandler(opts.onRelayError),
+                    });
+                    opts.onRelaySynced?.(relay, result.events.length);
                 } catch (error) {
                     console.error(`[NDKSync] Failed to sync from ${relay.url}:`, error);
-                    // Mark relay as not supporting negentropy on error
-                    await this.ndk.cacheAdapter?.updateRelayStatus?.(relay.url, {
-                        metadata: {
-                            sync: {
-                                supportsNegentropy: false,
-                                lastChecked: Date.now(),
-                                lastError: error instanceof Error ? error.message : "Unknown error",
-                            },
-                        },
-                    });
                 } finally {
                     completedCount++;
                     if (completedCount === totalRelays) {

@@ -31,7 +31,7 @@ describe("NDKPool System-wide Disconnection Detection", () => {
             "wss://relay5.test",
         ];
 
-        pool = new NDKPool(relayUrls, new Set(), mockNDK);
+        pool = new NDKPool(relayUrls, mockNDK);
 
         // Get references to the created relays
         mockRelays = Array.from(pool.relays.values());
@@ -149,7 +149,7 @@ describe("NDKPool System-wide Disconnection Detection", () => {
             );
 
             // Create a pool with only 1 relay
-            const singlePool = new NDKPool(["wss://single.relay"], [], mockNDK);
+            const singlePool = new NDKPool(["wss://single.relay"], mockNDK);
             singlePool["disconnectionTimes"].set("wss://single.relay", Date.now());
 
             singlePool["checkForSystemWideDisconnection"]();
@@ -168,12 +168,27 @@ describe("NDKPool System-wide Disconnection Detection", () => {
         });
 
         it("should reconnect disconnected relays", () => {
-            // Set some relays as disconnected
-            mockRelays[0].status = NDKRelayStatus.DISCONNECTED;
-            mockRelays[1].status = NDKRelayStatus.DISCONNECTED;
-            mockRelays[2].status = NDKRelayStatus.CONNECTED;
-            mockRelays[3].status = NDKRelayStatus.CONNECTING;
-            mockRelays[4].status = NDKRelayStatus.DISCONNECTED;
+            // Set some relays as disconnected using Object.defineProperty
+            Object.defineProperty(mockRelays[0], "status", {
+                get: vi.fn(() => NDKRelayStatus.DISCONNECTED),
+                configurable: true,
+            });
+            Object.defineProperty(mockRelays[1], "status", {
+                get: vi.fn(() => NDKRelayStatus.DISCONNECTED),
+                configurable: true,
+            });
+            Object.defineProperty(mockRelays[2], "status", {
+                get: vi.fn(() => NDKRelayStatus.CONNECTED),
+                configurable: true,
+            });
+            Object.defineProperty(mockRelays[3], "status", {
+                get: vi.fn(() => NDKRelayStatus.CONNECTING),
+                configurable: true,
+            });
+            Object.defineProperty(mockRelays[4], "status", {
+                get: vi.fn(() => NDKRelayStatus.DISCONNECTED),
+                configurable: true,
+            });
 
             pool["handleSystemWideReconnection"]();
 

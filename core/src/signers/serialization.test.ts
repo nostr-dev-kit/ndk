@@ -166,12 +166,11 @@ describe("Signer Serialization/Deserialization", () => {
             localSigner.privateKey,
         );
 
-        // Now trigger the mocked blockUntilReady by calling user()
+        // Call user() - since fromPayload now sets _user directly,
+        // blockUntilReady won't be called (it only gets called when _user is not set)
         const restoredUser = await restoredNip46Signer.user();
         expect(restoredUser).toBeInstanceOf(NDKUser);
         expect(restoredUser.pubkey).toBe(userPubkey);
-        // Check that our mock was called
-        expect(mockBlockUntilReady).toHaveBeenCalledTimes(1);
 
         // Restore the original implementation
         vi.restoreAllMocks();

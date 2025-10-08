@@ -451,12 +451,13 @@ export class NDKPool extends EventEmitter<{
      * Handles system-wide reconnection (e.g., after sleep/wake or network change)
      */
     private handleSystemWideReconnection() {
-        this.debug("Initiating system-wide reconnection with reset backoff");
-
-        // Clear the system event detector if it exists
+        // If we're already in a system-wide reconnection period, skip
         if (this.systemEventDetector) {
-            clearTimeout(this.systemEventDetector);
+            this.debug("System-wide reconnection already in progress, skipping");
+            return;
         }
+
+        this.debug("Initiating system-wide reconnection with reset backoff");
 
         // Prevent multiple system-wide reconnections
         this.systemEventDetector = setTimeout(() => {

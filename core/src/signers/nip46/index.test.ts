@@ -52,7 +52,9 @@ describe("NDKNip46Signer", () => {
     });
 
     it("can serialize and deserialize and serialize again without error", async () => {
-        const signer = new NDKNip46Signer(ndk, alice.pubkey, localSigner);
+        // Use bunker:// URL to properly initialize bunkerPubkey and userPubkey
+        const bunkerUrl = `bunker://${bob.pubkey}?pubkey=${alice.pubkey}&relay=wss://relay.nsec.app`;
+        const signer = new NDKNip46Signer(ndk, bunkerUrl, localSigner);
 
         // First serialization
         const payload = signer.toPayload();

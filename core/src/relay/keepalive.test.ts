@@ -101,6 +101,15 @@ describe("NDKRelayKeepalive", () => {
 });
 
 describe("probeRelayConnection", () => {
+    beforeEach(() => {
+        vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+        vi.clearAllTimers();
+        vi.useRealTimers();
+    });
+
     it("should resolve true when relay responds with EOSE", async () => {
         const mockRelay = {
             send: vi.fn(),

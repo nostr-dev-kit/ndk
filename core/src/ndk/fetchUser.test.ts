@@ -127,7 +127,8 @@ describe("ndk.fetchUser()", () => {
         it("should handle empty string", async () => {
             const user = await ndk.fetchUser("");
             expect(user).toBeInstanceOf(NDKUser);
-            expect(user?.pubkey).toBe("");
+            // Empty string is not a valid pubkey, so accessing pubkey should throw
+            expect(() => user?.pubkey).toThrow("npub not set");
         });
 
         it("should handle strings starting with 'n' but not valid NIP-19", async () => {

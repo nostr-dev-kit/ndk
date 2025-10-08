@@ -90,6 +90,8 @@ async function smartSync() {
     // Note: This part requires a cache adapter and would actually sync
     // Commented out for this example
     /*
+    import { NDKSync } from '@nostr-dev-kit/sync';
+
     const ndk = new NDK({
         explicitRelayUrls: syncRelays,
         cacheAdapter: myCacheAdapter
@@ -97,7 +99,7 @@ async function smartSync() {
 
     await ndk.connect();
 
-    const result = await ndkSync.call(ndk, {
+    const result = await NDKSync.sync(ndk, {
         kinds: [1],
         limit: 10
     });
@@ -121,7 +123,7 @@ async function checkBeforeSync() {
         // Note: Actual sync code would go here
         // const ndk = new NDK({ explicitRelayUrls: [relayUrl], cacheAdapter });
         // await ndk.connect();
-        // const result = await ndkSync.call(ndk, filters);
+        // const result = await NDKSync.sync(ndk, filters);
     } else {
         console.log("✗ Relay doesn't support NIP-77. Using fallback strategy...");
         console.log("Fallback: Using regular subscription instead");

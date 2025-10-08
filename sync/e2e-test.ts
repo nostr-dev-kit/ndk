@@ -10,7 +10,7 @@
  */
 
 import NDK, { type NDKEvent, type NDKFilter } from "@nostr-dev-kit/ndk";
-import { ndkSync } from "./src/index.js";
+import { NDKSync } from "./src/index.js";
 
 // Simple in-memory cache adapter for testing
 class InMemoryCache {
@@ -90,7 +90,7 @@ function section(msg: string) {
 // Helper to wrap sync with timeout
 async function syncWithTimeout(ndk: NDK, filter: NDKFilter | NDKFilter[], opts?: any): Promise<any> {
     return Promise.race([
-        ndkSync.call(ndk, filter, opts),
+        NDKSync.sync(ndk, filter, opts),
         new Promise((_, reject) =>
             setTimeout(() => reject(new Error("Sync timeout - relay may not support NIP-77")), SYNC_TIMEOUT),
         ),

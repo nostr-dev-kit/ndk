@@ -387,17 +387,6 @@ const initialMsg = await neg.initiate();
 const { nextMessage, have, need } = await neg.reconcile(response);
 ```
 
-### Low-Level Functions
-
-For advanced usage without the `NDKSync` class:
-
-```typescript
-import { ndkSync, syncAndSubscribe } from '@nostr-dev-kit/sync';
-
-// Direct function calls
-const result = await ndkSync.call(ndk, filters, options);
-const sub = await syncAndSubscribe.call(ndk, filters, options);
-```
 
 ## Protocol Details
 

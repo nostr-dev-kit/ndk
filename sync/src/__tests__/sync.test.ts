@@ -4,7 +4,8 @@
 
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import NDK from "@nostr-dev-kit/ndk";
-import { type NDKSyncOptions, type NDKSyncResult, ndkSync } from "../index.js";
+import { ndkSync } from "../ndk-sync.js";
+import type { NDKSyncOptions, NDKSyncResult } from "../types.js";
 
 // Mock NDK and dependencies
 vi.mock("@nostr-dev-kit/ndk", () => {

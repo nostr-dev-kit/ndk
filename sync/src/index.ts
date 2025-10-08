@@ -43,14 +43,13 @@
  * ```
  */
 
-import { ndkSync } from "./ndk-sync.js";
 import { syncAndSubscribe, type SyncAndSubscribeOptions } from "./sync-subscribe.js";
 
-// Export main class
+// Export main class - USE THIS
 export { NDKSync } from "./ndk-sync-class.js";
 
-// Export low-level functions for advanced usage
-export { ndkSync, syncAndSubscribe };
+// Export syncAndSubscribe (uses NDKSync internally)
+export { syncAndSubscribe };
 
 export { Accumulator } from "./negentropy/accumulator.js";
 // Export core classes (for advanced usage)

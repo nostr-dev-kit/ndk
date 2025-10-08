@@ -1,6 +1,6 @@
 import type NDK from "@nostr-dev-kit/ndk";
 import { type NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
-import { filterNegentropyRelays, ndkSync } from "@nostr-dev-kit/sync";
+import { NDKSync } from "@nostr-dev-kit/sync";
 import createDebug from "debug";
 
 const d = createDebug("ndk-wot");
@@ -156,25 +156,12 @@ export class NDKWoT {
 
         try {
             const syncOptions: any = { autoFetch: true, subId: 'wot-sync' };
-
-            // Use specific relays if provided, or filter to negentropy-compatible relays
             if (relayUrls) {
                 syncOptions.relayUrls = relayUrls;
-            } else if (this.ndk.pool?.relays) {
-                // Filter to only relays that support negentropy
-                const allRelayUrls = Array.from(this.ndk.pool.relays.keys());
-                const negentropyRelays = await filterNegentropyRelays(allRelayUrls);
-
-                if (negentropyRelays.length > 0) {
-                    d("Found %d negentropy-compatible relays out of %d", negentropyRelays.length, allRelayUrls.length);
-                    syncOptions.relayUrls = negentropyRelays;
-                } else {
-                    d("No negentropy-compatible relays found, falling back to subscription");
-                    return await this.fetchViaSubscription(authors);
-                }
             }
 
-            const result = await ndkSync.call(
+            // NDKSync handles relay capability checking, caching, and automatic fallback
+            const result = await NDKSync.sync(
                 this.ndk,
                 {
                     kinds: [NDKKind.Contacts],

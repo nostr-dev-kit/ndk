@@ -63,12 +63,17 @@ export class NDKSync {
 
         const now = Date.now();
         if (syncMeta && syncMeta.lastChecked && now - syncMeta.lastChecked < this.CAPABILITY_CACHE_TTL) {
+            console.debug(
+                `[NDK Sync] Using cached negentropy support for ${relay.url}: ${syncMeta.supportsNegentropy}`,
+            );
             return syncMeta.supportsNegentropy ?? false;
         }
 
         // Check relay capabilities
+        console.debug(`[NDK Sync] Checking negentropy support for ${relay.url}...`);
         try {
             const supports = await supportsNegentropy(relay);
+            console.debug(`[NDK Sync] ${relay.url} negentropy support: ${supports}`);
             await this.ndk.cacheAdapter?.updateRelayStatus?.(relay.url, {
                 metadata: {
                     sync: {
@@ -80,6 +85,7 @@ export class NDKSync {
             return supports;
         } catch (error) {
             // On error, assume no support and cache
+            console.debug(`[NDK Sync] Error checking ${relay.url}, assuming no negentropy support`);
             await this.ndk.cacheAdapter?.updateRelayStatus?.(relay.url, {
                 metadata: {
                     sync: {
@@ -175,6 +181,7 @@ export class NDKSync {
 
         if (supportsNeg) {
             // Use Negentropy sync - errors are handled by onRelayError in opts
+            console.debug(`[NDK Sync] Using negentropy sync for ${relay.url}`);
             return await ndkSync.call(this.ndk, filters, {
                 ...opts,
                 relaySet: new NDKRelaySet(new Set([relay]), this.ndk),
@@ -182,6 +189,7 @@ export class NDKSync {
         }
 
         // Fallback to fetchEvents when negentropy not supported
+        console.debug(`[NDK Sync] Using fetchEvents fallback for ${relay.url}`);
         const events = await this.ndk.fetchEvents(filters, {
             relaySet: new NDKRelaySet(new Set([relay]), this.ndk),
             subId: "sync-fetch-fallback",

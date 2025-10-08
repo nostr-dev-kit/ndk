@@ -21,7 +21,7 @@ import {
     type NDKTag,
     type NDKZapDetails,
 } from "@nostr-dev-kit/ndk";
-import { ndkSync } from "@nostr-dev-kit/sync";
+import { NDKSync } from "@nostr-dev-kit/sync";
 import {
     createMintCacheCallbacks,
     NDKWallet,
@@ -310,8 +310,8 @@ export class NDKCashuWallet extends NDKWallet {
             try {
                 const syncStartTime = Date.now();
 
-                // Perform initial sync using Negentropy
-                const syncResult = await ndkSync.call(this.ndk, filters, {
+                // Perform initial sync using Negentropy with capability caching and fallback
+                const syncResult = await NDKSync.sync(this.ndk, filters, {
                     relaySet: this.relaySet,
                     autoFetch: true,
                 });

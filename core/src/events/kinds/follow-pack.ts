@@ -90,7 +90,13 @@ export class NDKFollowPack extends NDKEvent {
      * Gets all pubkeys from p tags.
      */
     get pubkeys(): Hexpubkey[] {
-        return Array.from(new Set(this.tags.filter((tag) => tag[0] === "p").map((tag) => tag[1])));
+        return Array.from(
+            new Set(
+                this.tags
+                    .filter((tag) => tag[0] === "p" && tag[1])
+                    .map((tag) => tag[1]),
+            ),
+        );
     }
 
     /**

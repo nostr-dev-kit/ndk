@@ -3,7 +3,7 @@ import { NDK } from "../ndk";
 import { type NDKFilter, NDKSubscription } from ".";
 import { filterForEventsTaggingId, filterFromId, generateSubId } from "./utils";
 
-const ndk = new NDK();
+const ndk = new NDK({ filterValidationMode: "ignore" });
 
 describe("generateSubId", () => {
     it("generates a subId based on the subscriptions' subIds", () => {

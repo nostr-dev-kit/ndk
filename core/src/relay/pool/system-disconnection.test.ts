@@ -11,9 +11,10 @@ describe("NDKPool System-wide Disconnection Detection", () => {
     beforeEach(() => {
         vi.useFakeTimers();
 
+        const mockDebugFn = vi.fn();
         mockNDK = {
             debug: {
-                extend: vi.fn(() => vi.fn()),
+                extend: vi.fn(() => mockDebugFn),
             },
             pools: [],
             blacklistRelayUrls: new Set(),
@@ -37,7 +38,11 @@ describe("NDKPool System-wide Disconnection Detection", () => {
 
         // Mock relay properties and methods
         mockRelays.forEach((relay) => {
-            relay.status = NDKRelayStatus.CONNECTED;
+            // Mock the status getter
+            Object.defineProperty(relay, "status", {
+                get: vi.fn(() => NDKRelayStatus.CONNECTED),
+                configurable: true,
+            });
             relay.connectivity = {
                 resetReconnectionState: vi.fn(),
                 connect: vi.fn().mockResolvedValue(undefined),
@@ -229,7 +234,10 @@ describe("NDKPool System-wide Disconnection Detection", () => {
 
             // Simulate rapid disconnections of multiple relays
             mockRelays.slice(0, 3).forEach((relay) => {
-                relay.status = NDKRelayStatus.DISCONNECTED;
+                Object.defineProperty(relay, "status", {
+                    get: vi.fn(() => NDKRelayStatus.DISCONNECTED),
+                    configurable: true,
+                });
                 // Trigger disconnect handler
                 pool["recordDisconnection"](relay);
                 pool.emit("relay:disconnect", relay);

@@ -14,15 +14,13 @@ import { getEventRelays } from "./functions/getEventRelays";
 import { getProfiles } from "./functions/getProfiles";
 import { getRelayStatus } from "./functions/getRelayStatus";
 import { getUnpublishedEvents } from "./functions/getUnpublishedEvents";
-import { loadCashuMintInfo } from "./functions/loadCashuMintInfo";
-import { loadCashuMintKeys } from "./functions/loadCashuMintKeys";
 import { query } from "./functions/query";
-import { saveCashuMintInfo } from "./functions/saveCashuMintInfo";
-import { saveCashuMintKeys } from "./functions/saveCashuMintKeys";
 import { saveProfile } from "./functions/saveProfile";
 import { setEvent } from "./functions/setEvent";
 import { updateRelayStatus } from "./functions/updateRelayStatus";
 import { getCacheStats } from "./functions/getCacheStats";
+import { getCacheData } from "./functions/getCacheData";
+import { setCacheData } from "./functions/setCacheData";
 import type { NDKCacheAdapterSqliteWasmOptions, SQLDatabase, WorkerMessage, WorkerResponse } from "./types";
 
 export type { CacheStats } from "./functions/getCacheStats";
@@ -213,29 +211,17 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
     public getProfiles = getProfiles.bind(this);
     public getCacheStats = getCacheStats.bind(this);
 
-    // Cashu mint caching
-    public async loadCashuMintInfo(mintUrl: string, maxAgeInSecs?: number) {
+    // Generic cache data storage
+    public async getCacheData<T>(namespace: string, key: string, maxAgeInSecs?: number): Promise<T | undefined> {
         await this.ensureInitialized();
         if (!this.db) return undefined;
-        return loadCashuMintInfo(this.db, mintUrl, maxAgeInSecs);
+        return getCacheData<T>(this.db, namespace, key, maxAgeInSecs);
     }
 
-    public async saveCashuMintInfo(mintUrl: string, info: import("@nostr-dev-kit/ndk").CashuMintInfo) {
+    public async setCacheData<T>(namespace: string, key: string, data: T): Promise<void> {
         await this.ensureInitialized();
         if (!this.db) return;
-        saveCashuMintInfo(this.db, mintUrl, info);
-    }
-
-    public async loadCashuMintKeys(mintUrl: string, maxAgeInSecs?: number) {
-        await this.ensureInitialized();
-        if (!this.db) return undefined;
-        return loadCashuMintKeys(this.db, mintUrl, maxAgeInSecs);
-    }
-
-    public async saveCashuMintKeys(mintUrl: string, keys: import("@nostr-dev-kit/ndk").CashuMintKeys[]) {
-        await this.ensureInitialized();
-        if (!this.db) return;
-        saveCashuMintKeys(this.db, mintUrl, keys);
+        setCacheData<T>(this.db, namespace, key, data);
     }
 
     public async ensureInitialized(): Promise<void> {

@@ -23,6 +23,7 @@ import {
 } from "@nostr-dev-kit/ndk";
 import { ndkSync } from "@nostr-dev-kit/sync";
 import {
+    createMintCacheCallbacks,
     NDKWallet,
     type NDKWalletBalance,
     NDKWalletStatus,
@@ -86,6 +87,15 @@ export class NDKCashuWallet extends NDKWallet {
         this.ndk = ndk;
         this.paymentHandler = new PaymentHandler(this);
         this.state = new WalletState(this);
+
+        // Setup mint info/keys caching callbacks if cache adapter supports generic cache
+        if (ndk.cacheAdapter?.getCacheData && ndk.cacheAdapter?.setCacheData) {
+            const callbacks = createMintCacheCallbacks(ndk.cacheAdapter);
+            this.onMintInfoNeeded = callbacks.onMintInfoNeeded;
+            this.onMintInfoLoaded = callbacks.onMintInfoLoaded;
+            this.onMintKeysNeeded = callbacks.onMintKeysNeeded;
+            this.onMintKeysLoaded = callbacks.onMintKeysLoaded;
+        }
     }
 
     /**

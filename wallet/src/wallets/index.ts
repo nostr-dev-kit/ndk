@@ -15,6 +15,7 @@ import type {
 } from "@nostr-dev-kit/ndk";
 import { EventEmitter } from "tseep";
 import {
+    createMintCacheCallbacks,
     getCashuWallet,
     type MintInfoLoadedCb,
     type MintInfoNeededCb,
@@ -22,6 +23,8 @@ import {
     type MintKeysLoadedCb,
     type MintKeysNeededCb,
 } from "./mint";
+
+export { createMintCacheCallbacks };
 
 /**
  * Different types of wallets supported.

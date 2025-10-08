@@ -8,29 +8,6 @@ import type { Hexpubkey, ProfilePointer } from "../user/index.js";
 import type { NDKUserProfile } from "../user/profile.js";
 import type { NDKLnUrlData } from "../zapper/ln.js";
 
-/**
- * Cashu mint information (from @cashu/cashu-ts)
- */
-export type CashuMintInfo = {
-    name?: string;
-    pubkey?: string;
-    version?: string;
-    description?: string;
-    description_long?: string;
-    contact?: Array<Array<string>>;
-    motd?: string;
-    nuts?: Record<string, unknown>;
-};
-
-/**
- * Cashu mint keys (from @cashu/cashu-ts)
- */
-export type CashuMintKeys = {
-    id: string;
-    unit: string;
-    keys: Record<number, string>;
-};
-
 export type NDKCacheEntry<T> = T & {
     cachedAt?: number;
 };
@@ -186,37 +163,22 @@ export interface NDKCacheAdapter {
     setNutzapState?(id: NDKEventId, stateChange: Partial<NDKNutzapState>): Promise<void>;
 
     /**
-     * Loads cached Cashu mint information.
-     * @param mintUrl The URL of the mint.
-     * @param maxAgeInSecs Maximum age of cached data in seconds (optional).
-     * @returns The mint info, or undefined if not cached or expired.
+     * Generic key-value cache storage for packages.
+     * Packages should namespace their keys (e.g., "wallet:mint:info:https://mint.url").
+     * @param namespace The namespace for the data (e.g., "wallet", "sync")
+     * @param key The key within the namespace
+     * @param maxAgeInSecs Maximum age of cached data in seconds (optional)
+     * @returns The cached data, or undefined if not cached or expired
      */
-    loadCashuMintInfo?(mintUrl: string, maxAgeInSecs?: number): Promise<CashuMintInfo | undefined>;
+    getCacheData?<T>(namespace: string, key: string, maxAgeInSecs?: number): Promise<T | undefined>;
 
     /**
-     * Saves Cashu mint information to the cache.
-     * @param mintUrl The URL of the mint.
-     * @param info The mint information to cache.
+     * Generic key-value cache storage for packages.
+     * @param namespace The namespace for the data (e.g., "wallet", "sync")
+     * @param key The key within the namespace
+     * @param data The data to cache
      */
-    saveCashuMintInfo?(mintUrl: string, info: CashuMintInfo): Promise<void>;
-
-    /**
-     * Loads cached Cashu mint keys (keysets).
-     * @param mintUrl The URL of the mint.
-     * @param maxAgeInSecs Maximum age of cached data in seconds (optional).
-     * @returns Array of mint keys, or undefined if not cached or expired.
-     */
-    loadCashuMintKeys?(
-        mintUrl: string,
-        maxAgeInSecs?: number,
-    ): Promise<CashuMintKeys[] | undefined>;
-
-    /**
-     * Saves Cashu mint keys (keysets) to the cache.
-     * @param mintUrl The URL of the mint.
-     * @param keys Array of mint keys to cache.
-     */
-    saveCashuMintKeys?(mintUrl: string, keys: CashuMintKeys[]): Promise<void>;
+    setCacheData?<T>(namespace: string, key: string, data: T): Promise<void>;
 }
 
 /**

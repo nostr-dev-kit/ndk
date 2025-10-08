@@ -5,7 +5,7 @@ import type { NDKNutzapState } from "@nostr-dev-kit/ndk";
 import {
     cashuPubkeyToNostrPubkey,
     // Types
-    type NDKCashuMintList,
+    NDKCashuMintList,
     type NDKEvent,
     type NDKEventId,
     type NDKFilter,
@@ -198,12 +198,13 @@ export class NDKNutzapMonitor
     }
 
     /**
-     * Loads kind:375 backup events from this user to find all backup keys this user might have used.
+     * Loads kind:375 backup events and kind:17375 wallet config events from this user
+     * to find all backup keys this user might have used.
      */
     public async getBackupKeys() {
-        // load backup events from relayset if we have one
+        // load backup events and wallet config events from relayset if we have one
         const backupEvents = await this.ndk.fetchEvents(
-            [{ kinds: [NDKKind.CashuWalletBackup], authors: [this.user.pubkey] }],
+            [{ kinds: [NDKKind.CashuWalletBackup, NDKKind.CashuWallet], authors: [this.user.pubkey] }],
             undefined,
             this.relaySet,
         );
@@ -213,15 +214,37 @@ export class NDKNutzapMonitor
 
         // add the keys to the privkeys map
         for (const event of backupEvents) {
-            const backup = await NDKCashuWalletBackup.from(event);
-            if (!backup) continue;
-            for (const privkey of backup.privkeys) {
-                if (keysNotFound.has(privkey)) keysNotFound.delete(privkey);
+            if (event.kind === NDKKind.CashuWalletBackup) {
+                const backup = await NDKCashuWalletBackup.from(event);
+                if (!backup) continue;
+                for (const privkey of backup.privkeys) {
+                    if (keysNotFound.has(privkey)) keysNotFound.delete(privkey);
+                    try {
+                        const signer = new NDKPrivateKeySigner(privkey);
+                        this.addPrivkey(signer);
+                    } catch (e) {
+                        console.error("failed to add privkey", privkey, e);
+                    }
+                }
+            } else if (event.kind === NDKKind.CashuWallet) {
+                // Handle kind 17375 wallet config events
                 try {
-                    const signer = new NDKPrivateKeySigner(privkey);
-                    this.addPrivkey(signer);
+                    await event.decrypt();
+                    const content = JSON.parse(event.content);
+                    for (const tag of content) {
+                        if (tag[0] === "privkey") {
+                            const privkey = tag[1];
+                            if (keysNotFound.has(privkey)) keysNotFound.delete(privkey);
+                            try {
+                                const signer = new NDKPrivateKeySigner(privkey);
+                                this.addPrivkey(signer);
+                            } catch (e) {
+                                console.error("failed to add privkey from wallet config", privkey, e);
+                            }
+                        }
+                    }
                 } catch (e) {
-                    console.error("failed to add privkey", privkey, e);
+                    console.error("failed to decrypt wallet config event", event.encode(), e);
                 }
             }
         }
@@ -232,6 +255,30 @@ export class NDKNutzapMonitor
             backup.privkeys = Array.from(keysNotFound);
             await backup.save(this.relaySet);
         }
+    }
+
+    /**
+     * Fetches the wallet's mint list from relays.
+     * This is used for checking if incoming nutzaps match advertised preferences.
+     */
+    async fetchMintList(): Promise<NDKCashuMintList | undefined> {
+        const event = await this.ndk.fetchEvent(
+            {
+                kinds: [NDKKind.CashuMintList],
+                authors: [this.user.pubkey],
+            },
+            {
+                cacheUsage: NDKSubscriptionCacheUsage.PARALLEL,
+                subId: "cashu-mint-list",
+            },
+        );
+
+        if (event) {
+            this.mintList = NDKCashuMintList.from(event);
+            return this.mintList;
+        }
+
+        return undefined;
     }
 
     /**
@@ -247,6 +294,16 @@ export class NDKNutzapMonitor
 
         // if we are already running, stop the current subscription
         if (this.sub) this.sub.stop();
+
+        // Fetch mint list if not already set
+        if (!this.mintList) {
+            try {
+                const mintList = await this.fetchMintList();
+                log(`Fetched mint list with ${mintList?.mints.length ?? 0} mints`);
+            } catch (e) {
+                console.error("❌ Failed to fetch mint list", e);
+            }
+        }
 
         try {
             await this.getBackupKeys();

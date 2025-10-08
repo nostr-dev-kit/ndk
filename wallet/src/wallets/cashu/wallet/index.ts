@@ -1,27 +1,25 @@
 import type { CashuWallet, SendResponse } from "@cashu/cashu-ts";
 import { getDecodedToken } from "@cashu/cashu-ts";
 import type NDK from "@nostr-dev-kit/ndk";
-import type {
-    CashuPaymentInfo,
-    Hexpubkey,
-    LnPaymentInfo,
-    NDKFilter,
-    NDKNutzap,
-    NDKPaymentConfirmationCashu,
-    NDKPaymentConfirmationLN,
-    NDKRelay,
-    NDKSubscription,
-    NDKSubscriptionOptions,
-    NDKTag,
-    NDKZapDetails,
-} from "@nostr-dev-kit/ndk";
 import {
-    NDKCashuMintList,
+    type CashuPaymentInfo,
+    type Hexpubkey,
+    type LnPaymentInfo,
     NDKEvent,
+    type NDKFilter,
     NDKKind,
+    type NDKNutzap,
+    type NDKPaymentConfirmationCashu,
+    type NDKPaymentConfirmationLN,
     NDKPrivateKeySigner,
+    type NDKRelay,
+    NDKRelayList,
     NDKRelaySet,
+    type NDKSubscription,
     NDKSubscriptionCacheUsage,
+    type NDKSubscriptionOptions,
+    type NDKTag,
+    type NDKZapDetails,
 } from "@nostr-dev-kit/ndk";
 import { ndkSync } from "@nostr-dev-kit/sync";
 import {
@@ -81,7 +79,7 @@ export class NDKCashuWallet extends NDKWallet {
 
     public relaySet?: NDKRelaySet;
 
-    private _mintList?: NDKCashuMintList;
+    private _walletEvent?: NDKEvent;
 
     constructor(ndk: NDK) {
         super(ndk);
@@ -182,6 +180,9 @@ export class NDKCashuWallet extends NDKWallet {
         }
 
         await this.getP2pk();
+
+        // Store the original wallet event (not the clone) for relay extraction
+        this._walletEvent = event;
     }
 
     static async from(event: NDKEvent): Promise<NDKCashuWallet | undefined> {
@@ -195,20 +196,16 @@ export class NDKCashuWallet extends NDKWallet {
 
     /**
      * Fetches relay configuration for the wallet according to NIP-60.
-     * First tries to get relays from kind 10019 (CashuMintList),
+     * First tries to get relays from "relay" tags in the 17375 wallet event,
      * falls back to NIP-65 (kind 10002) relays if not found.
      */
     private async fetchWalletRelays(pubkey: string): Promise<NDKRelaySet | undefined> {
-        // Try to fetch kind 10019 (CashuMintList) event
-        const mintListEvent = await this.ndk.fetchEvent(
-            { kinds: [NDKKind.CashuMintList], authors: [pubkey] },
-            { cacheUsage: NDKSubscriptionCacheUsage.PARALLEL, subId: "cashu-wallet-relays" },
-        );
-
-        if (mintListEvent) {
-            const mintList = NDKCashuMintList.from(mintListEvent);
-            if (mintList.relays.length > 0) {
-                return NDKRelaySet.fromRelayUrls(mintList.relays, this.ndk!);
+        // First check for relay tags in the wallet event (kind 17375)
+        if (this._walletEvent) {
+            const relayTags = this._walletEvent.tags.filter((tag) => tag[0] === "relay");
+            if (relayTags.length > 0) {
+                const relayUrls = relayTags.map((tag) => tag[1]);
+                return NDKRelaySet.fromRelayUrls(relayUrls, this.ndk!);
             }
         }
 
@@ -219,10 +216,7 @@ export class NDKCashuWallet extends NDKWallet {
         );
 
         if (relayListEvent) {
-            const relayUrls = relayListEvent.tags.filter((tag) => tag[0] === "r").map((tag) => tag[1]);
-            if (relayUrls.length > 0) {
-                return NDKRelaySet.fromRelayUrls(relayUrls, this.ndk!);
-            }
+            return NDKRelayList.from(relayListEvent).relaySet;
         }
 
         // No specific relays found, will use default NDK relays
@@ -237,17 +231,26 @@ export class NDKCashuWallet extends NDKWallet {
      * with the relays, for example, by saving the time the wallet has emitted a "ready" event.
      */
     async start(opts?: NDKSubscriptionOptions & { pubkey?: Hexpubkey; since?: number }): Promise<void> {
+        const startTime = Date.now();
+        console.log(`[${new Date().toISOString()}] [NDKCashuWallet.start] Starting wallet initialization`);
+
         const activeUser = this.ndk?.activeUser;
 
         if (this.status === NDKWalletStatus.READY) return Promise.resolve();
-        this.status = NDKWalletStatus.LOADING;
+
+        this.setStatus(NDKWalletStatus.LOADING);
 
         const pubkey = opts?.pubkey ?? activeUser?.pubkey;
         if (!pubkey) throw new Error("no pubkey");
 
         // Fetch wallet relays according to NIP-60
         if (!this.relaySet) {
+            console.log(`[${new Date().toISOString()}] [NDKCashuWallet.start] Fetching wallet relays`);
             this.relaySet = await this.fetchWalletRelays(pubkey);
+            console.log(
+                `[${new Date().toISOString()}] [NDKCashuWallet.start] Wallet relays fetched:`,
+                this.relaySet?.relays.size ?? 0,
+            );
         }
 
         const filters: NDKFilter[] = [
@@ -266,19 +269,55 @@ export class NDKCashuWallet extends NDKWallet {
             filters[2].since = opts.since;
         }
 
+        // Load from cache first to show optimistic state
+        if (this.ndk.cacheAdapter) {
+            console.log(`[${new Date().toISOString()}] [NDKCashuWallet.start] Loading events from cache`);
+            const cacheLoadStart = Date.now();
+
+            const cacheEvents: NDKEvent[] = [];
+
+            // Try direct query first
+            const events = await this.ndk.fetchEvents([{ kinds: [NDKKind.CashuToken], authors: [pubkey] }], {
+                cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE,
+            });
+            cacheEvents.push(...events);
+
+            console.log(
+                `[${new Date().toISOString()}] [NDKCashuWallet.start] Loaded ${cacheEvents.length} events from cache in ${Date.now() - cacheLoadStart}ms`,
+            );
+
+            // Process cached events
+            for (const event of cacheEvents) {
+                eventHandler.call(this, event);
+            }
+
+            // Emit balance update after loading from cache
+            this.emit("balance_updated");
+        }
+
         // Use sync if cache adapter is available, otherwise fall back to subscription
         if (this.ndk.cacheAdapter) {
             try {
+                const syncStartTime = Date.now();
+
                 // Perform initial sync using Negentropy
                 const syncResult = await ndkSync.call(this.ndk, filters, {
                     relaySet: this.relaySet,
                     autoFetch: true,
                 });
 
+                console.log(
+                    `[${new Date().toISOString()}] [NDKCashuWallet.start] Sync completed in ${Date.now() - syncStartTime}ms, processing ${syncResult.events.length} events`,
+                );
+
                 // Process synced events
+                const processStartTime = Date.now();
                 for (const event of syncResult.events) {
                     eventHandler.call(this, event);
                 }
+                console.log(
+                    `[${new Date().toISOString()}] [NDKCashuWallet.start] Events processed in ${Date.now() - processStartTime}ms`,
+                );
 
                 // Start live subscription for new events
                 const subOpts: NDKSubscriptionOptions = opts ?? {};
@@ -286,9 +325,10 @@ export class NDKCashuWallet extends NDKWallet {
 
                 const liveFilters = filters.map((f) => ({
                     ...f,
-                    since: Math.floor(Date.now() / 1000),
+                    since: Math.floor(Date.now() / 1000) - 60,
                 }));
 
+                console.log(`[${new Date().toISOString()}] [NDKCashuWallet.start] Starting live subscription`);
                 this.sub = this.ndk.subscribe(liveFilters, {
                     ...subOpts,
                     relaySet: this.relaySet,
@@ -296,21 +336,24 @@ export class NDKCashuWallet extends NDKWallet {
                     onEvent: (event: NDKEvent) => {
                         eventHandler.call(this, event);
                     },
+                    onEventDup: eventDupHandler.bind(this),
                 });
 
-                this.sub.on("event:dup", eventDupHandler.bind(this));
-
-                // Fetch the mint list for nutzap reception configuration
-                await this.fetchMintList();
-
                 this.emit("ready");
-                this.status = NDKWalletStatus.READY;
+                this.setStatus(NDKWalletStatus.READY);
+                console.log(
+                    `[${new Date().toISOString()}] [NDKCashuWallet.start] Wallet ready (total time: ${Date.now() - startTime}ms)`,
+                );
             } catch (error) {
-                console.error("Sync failed, falling back to subscription:", error);
+                console.error(
+                    `[${new Date().toISOString()}] [NDKCashuWallet.start] Sync failed, falling back to subscription:`,
+                    error,
+                );
                 // Fall back to regular subscription if sync fails
                 await this.startWithSubscription(filters, opts);
             }
         } else {
+            console.log(`[${new Date().toISOString()}] [NDKCashuWallet.start] No cache adapter, using subscription`);
             // No cache adapter - use regular subscription
             await this.startWithSubscription(filters, opts);
         }
@@ -331,22 +374,27 @@ export class NDKCashuWallet extends NDKWallet {
                     eventHandler.call(this, event);
                 },
                 onEose: async () => {
-                    // Fetch the mint list for nutzap reception configuration
-                    await this.fetchMintList();
-
                     this.emit("ready");
-                    this.status = NDKWalletStatus.READY;
+                    this.setStatus(NDKWalletStatus.READY);
                     resolve();
                 },
+                onEventDup: eventDupHandler.bind(this),
             });
-
-            this.sub.on("event:dup", eventDupHandler.bind(this));
         });
     }
 
     stop() {
         this.sub?.stop();
-        this.status = NDKWalletStatus.INITIAL;
+        this.setStatus(NDKWalletStatus.INITIAL);
+    }
+
+    private setStatus(status: NDKWalletStatus) {
+        if (this.status !== status) {
+            const oldStatus = this.status;
+            this.status = status;
+            console.log(`[${new Date().toISOString()}] [NDKCashuWallet] Status changed: ${oldStatus} -> ${status}`);
+            this.emit("status_changed", status);
+        }
     }
 
     /**
@@ -408,6 +456,14 @@ export class NDKCashuWallet extends NDKWallet {
             content: JSON.stringify(this.walletPayload()),
             kind: NDKKind.CashuWallet,
         });
+
+        // Add relay tags if relaySet exists
+        if (this.relaySet) {
+            for (const relay of this.relaySet.relays) {
+                event.tags.push(["relay", relay.url]);
+            }
+        }
+
         const user = await this.ndk?.signer?.user();
         await event.encrypt(user, undefined, "nip44");
 
@@ -562,43 +618,6 @@ export class NDKCashuWallet extends NDKWallet {
         return Object.entries(availableBalances)
             .filter(([_, balance]) => balance >= amount)
             .map(([mint]) => mint);
-    }
-
-    /**
-     * Gets the wallet's published mint list for nutzap reception (NIP-61).
-     * This is fetched from the user's kind:10019 event.
-     */
-    get mintList(): NDKCashuMintList | undefined {
-        return this._mintList;
-    }
-
-    /**
-     * Fetches the wallet's mint list from relays.
-     * This is used for configuring nutzap reception.
-     */
-    async fetchMintList(): Promise<NDKCashuMintList | undefined> {
-        if (!this.ndk) return undefined;
-
-        const user = this.ndk.activeUser || (await this.ndk.signer?.user());
-        if (!user) return undefined;
-
-        const event = await this.ndk.fetchEvent(
-            {
-                kinds: [NDKKind.CashuMintList],
-                authors: [user.pubkey],
-            },
-            {
-                cacheUsage: NDKSubscriptionCacheUsage.PARALLEL,
-                subId: "cashu-mint-list",
-            },
-        );
-
-        if (event) {
-            this._mintList = NDKCashuMintList.from(event);
-            return this._mintList;
-        }
-
-        return undefined;
     }
 }
 

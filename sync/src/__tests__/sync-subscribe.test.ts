@@ -1,4 +1,10 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
+
+// Mock ndkSync to avoid needing real negentropy
+vi.mock("../ndk-sync.js", () => ({
+    ndkSync: vi.fn(),
+}));
+
 import type { NDKRelay } from "@nostr-dev-kit/ndk";
 import NDK from "@nostr-dev-kit/ndk";
 import { ndkSync } from "../ndk-sync.js";
@@ -9,11 +15,6 @@ const mockCacheAdapter = {
     query: vi.fn().mockResolvedValue([]),
     setEvent: vi.fn().mockResolvedValue(undefined),
 };
-
-// Mock ndkSync to avoid needing real negentropy
-vi.mock("../ndk-sync.js", () => ({
-    ndkSync: vi.fn(),
-}));
 
 const mockNdkSync = ndkSync as vi.MockedFunction<typeof ndkSync>;
 
@@ -42,11 +43,16 @@ describe("syncAndSubscribe", () => {
         mockRelay = {
             url: "wss://relay.test.com",
             connect: vi.fn().mockResolvedValue(undefined),
+            connected: true,
+            once: vi.fn(),
+            off: vi.fn(),
+            on: vi.fn(),
         } as any;
 
         // Mock pool with relay
         ndk.pool = {
             relays: new Map([[mockRelay.url, mockRelay]]),
+            useTemporaryRelay: vi.fn(),
         } as any;
 
         // Mock subscribe method
@@ -184,6 +190,10 @@ describe("syncAndSubscribe", () => {
     test("should use custom relay set if provided", async () => {
         const customRelay = {
             url: "wss://custom.relay.com",
+            connected: true,
+            once: vi.fn(),
+            off: vi.fn(),
+            on: vi.fn(),
         } as any;
 
         const customRelaySet = {

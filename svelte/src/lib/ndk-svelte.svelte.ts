@@ -1,4 +1,4 @@
-import type { NDKConstructorParams, NDKEvent, NDKFilter } from "@nostr-dev-kit/ndk";
+import type { NDKConstructorParams, NDKEvent, NDKFilter, NDKUser } from "@nostr-dev-kit/ndk";
 import NDK from "@nostr-dev-kit/ndk";
 import { LocalStorage, NDKSessionManager } from "@nostr-dev-kit/sessions";
 import type { SessionManagerOptions } from "@nostr-dev-kit/sessions";
@@ -80,6 +80,9 @@ export class NDKSvelte extends NDK {
     $payments!: ReactivePaymentsStore;
     $pool!: ReactivePoolStore;
 
+    // Private reactive state for active user
+    #activeUser = $state<NDKUser | undefined>(undefined);
+
     constructor(params: NDKSvelteParams = {}) {
         super(params);
 
@@ -120,6 +123,15 @@ export class NDKSvelte extends NDK {
         // Initialize stores that don't require sessions
         this.$payments = createReactivePayments();
         this.$pool = createReactivePool(this);
+
+        // Sync active user from NDK to reactive state
+        // Listen to activeUser:change event to update reactive state
+        this.on("activeUser:change", (user) => {
+            this.#activeUser = user;
+        });
+
+        // Initialize with current active user if already set
+        this.#activeUser = this.activeUser;
     }
 
     /**
@@ -196,5 +208,28 @@ export class NDKSvelte extends NDK {
      */
     $fetchProfile(pubkey: () => string | undefined) {
         return createFetchProfile(this, pubkey);
+    }
+
+    /**
+     * Reactively access the current active user
+     *
+     * Returns a reactive value that updates when the active user changes.
+     * The active user is set when:
+     * - A signer is assigned to NDK
+     * - A read-only user session is created (via sessions manager)
+     * - activeUser is set directly on the NDK instance
+     *
+     * @example
+     * ```ts
+     * const currentUser = ndk.$currentUser();
+     *
+     * // In template
+     * {#if currentUser}
+     *   <div>Logged in as {currentUser.npub}</div>
+     * {/if}
+     * ```
+     */
+    $currentUser() {
+        return this.#activeUser;
     }
 }

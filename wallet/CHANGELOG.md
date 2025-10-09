@@ -1,5 +1,24 @@
 # @nostr-dev-kit/ndk-cache-redis
 
+## 0.8.2
+
+### Patch Changes
+
+- 3407126: Fix negentropy relay capability caching and add fallback support
+    - Fixed async callback race condition where cache updates weren't awaited
+    - Added DRY refactoring with `syncSingleRelay()` helper method
+    - Implemented automatic fallback to `fetchEvents` for relays without negentropy support
+    - Both `sync()` and `syncAndSubscribe()` now try all relays and automatically fall back when needed
+    - Events are properly cached even when using fallback mechanism
+    - Updated wallet to use `NDKSync` class instead of low-level `ndkSync` function for proper capability caching
+
+- Updated dependencies [344c313]
+- Updated dependencies [2adef59]
+- Updated dependencies [3407126]
+- Updated dependencies [344c313]
+    - @nostr-dev-kit/ndk@2.17.0
+    - @nostr-dev-kit/sync@0.3.0
+
 ## 0.8.1
 
 ### Patch Changes

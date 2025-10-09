@@ -21,3 +21,7 @@ wallet.on("timeout", (method: string) => console.log('Unable to complete the ope
 ```
 
 Now whenever you want to pay something, the wallet will be called. Refer to the Nutsack adapter to see more details of the interface.
+
+## Configuration
+
+- [NIP-60 Wallet Configuration](./nip60-configuration.md) - How to add/remove mints and relays

@@ -35,11 +35,19 @@ The `NDKCashuWallet` implements the NIP-60 specification, providing a fully-feat
 ```typescript
 import { NDKCashuWallet } from "@nostr-dev-kit/ndk-wallet";
 
-// Create a Cashu wallet
-const wallet = new NDKCashuWallet(ndk);
+// Create a new wallet with initial configuration
+const wallet = await NDKCashuWallet.create(
+  ndk,
+  ['https://mint.example.com'],           // mints
+  ['wss://relay.example.com']             // relays (optional)
+);
 
-// Add mints
-wallet.addMint("https://mint.example.com");
+// Or load an existing wallet from an event
+const existingWallet = await NDKCashuWallet.from(walletEvent);
+
+// Configure mints and relays (modify directly, then publish)
+wallet.mints = [...wallet.mints, 'https://another-mint.com'];
+await wallet.publish();
 
 // Get wallet balance
 const balance = await wallet.getBalance();
@@ -113,6 +121,7 @@ wallet.on("balance_changed", (newBalance) => {
 
 For more detailed documentation on specific components:
 
+- [NIP-60 Wallet Configuration](./docs/nip60-configuration.md) - How to add/remove mints and relays
 - [NIP-60 Cashu Wallet](./docs/cashu-wallet.md)
 - [Nutzap Monitor](./docs/nutzap-monitor.md)
 - [Nutzap Monitor State Store](./docs/nutzap-monitor-state-store.md)

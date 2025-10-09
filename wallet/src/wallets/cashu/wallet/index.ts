@@ -1,5 +1,5 @@
 import type { CashuWallet, GetInfoResponse, SendResponse } from "@cashu/cashu-ts";
-import { getDecodedToken } from "@cashu/cashu-ts";
+import { getDecodedToken, getEncodedToken } from "@cashu/cashu-ts";
 import type NDK from "@nostr-dev-kit/ndk";
 import {
     type CashuPaymentInfo,
@@ -48,6 +48,12 @@ import { createInTxEvent, createOutTxEvent } from "./txs.js";
 
 /**
  * This class tracks state of a NIP-60 wallet
+ *
+ * @example
+ * // Modify mints and relays directly, then publish
+ * wallet.mints = [...wallet.mints, 'https://mint.example.com'];
+ * wallet.relaySet = NDKRelaySet.fromRelayUrls(['wss://relay.example.com'], ndk);
+ * await wallet.publish();
  */
 export class NDKCashuWallet extends NDKWallet {
     get type(): NDKWalletTypes {
@@ -62,6 +68,20 @@ export class NDKCashuWallet extends NDKWallet {
     static kind = NDKKind.CashuWallet;
     static kinds = [NDKKind.CashuWallet];
 
+    /**
+     * List of mint URLs configured for this wallet.
+     * Modify directly to add/remove mints, then call publish() to save.
+     *
+     * @example
+     * // Add a mint
+     * wallet.mints = [...wallet.mints, 'https://mint.example.com'];
+     * await wallet.publish();
+     *
+     * @example
+     * // Remove a mint
+     * wallet.mints = wallet.mints.filter(url => url !== 'https://old-mint.com');
+     * await wallet.publish();
+     */
     public mints: string[] = [];
     public privkeys = new Map<string, NDKPrivateKeySigner>();
     public signer?: NDKPrivateKeySigner;
@@ -78,9 +98,23 @@ export class NDKCashuWallet extends NDKWallet {
     public paymentHandler: PaymentHandler;
     public state: WalletState;
 
+    /**
+     * Relay set for wallet events (kinds 7374, 7375, 7376).
+     * Modify directly to add/remove relays, then call publish() to save.
+     * If undefined, falls back to NIP-65 relay list.
+     *
+     * @example
+     * // Set relays
+     * wallet.relaySet = NDKRelaySet.fromRelayUrls(['wss://relay1.com', 'wss://relay2.com'], ndk);
+     * await wallet.publish();
+     *
+     * @example
+     * // Clear relays (use NIP-65 fallback)
+     * wallet.relaySet = undefined;
+     * await wallet.publish();
+     */
     public relaySet?: NDKRelaySet;
 
-    private _walletEvent?: NDKEvent;
     private _walletRelays: string[] = [];
 
     constructor(ndk: NDK) {
@@ -172,6 +206,31 @@ export class NDKCashuWallet extends NDKWallet {
     }
 
     /**
+     * Creates a cashu token that can be sent to someone.
+     * This method mints the specified amount and returns an encoded token string.
+     *
+     * @param amount - Amount in satoshis to send
+     * @param memo - Optional memo to include in the token
+     * @returns Encoded cashu token string
+     *
+     * @example
+     * const token = await wallet.send(1000, "Coffee payment");
+     * // token is a cashu token string that can be shared
+     */
+    async send(amount: number, memo?: string): Promise<string> {
+        if (this.mints.length === 0) throw new Error("No mints configured");
+
+        const result = await this.mintNuts([amount]);
+        if (!result) throw new Error("Failed to create token");
+
+        return getEncodedToken({
+            mint: this.mints[0],
+            proofs: result.send,
+            memo,
+        });
+    }
+
+    /**
      * Loads a wallet information from an event
      * @param event
      */
@@ -193,9 +252,6 @@ export class NDKCashuWallet extends NDKWallet {
         }
 
         await this.getP2pk();
-
-        // Store the original wallet event (not the clone) for relay extraction
-        this._walletEvent = event;
     }
 
     static async from(event: NDKEvent): Promise<NDKCashuWallet | undefined> {
@@ -203,6 +259,46 @@ export class NDKCashuWallet extends NDKWallet {
 
         const wallet = new NDKCashuWallet(event.ndk);
         await wallet.loadFromEvent(event);
+
+        return wallet;
+    }
+
+    /**
+     * Creates a new NIP-60 wallet with the specified configuration.
+     * Generates a private key, publishes the wallet event (kind 17375), and creates a backup (kind 375).
+     *
+     * @param ndk - NDK instance
+     * @param mints - Array of mint URLs to configure
+     * @param relays - Optional array of relay URLs for wallet events
+     * @returns The newly created and published wallet
+     *
+     * @example
+     * const wallet = await NDKCashuWallet.create(
+     *   ndk,
+     *   ['https://mint.example.com'],
+     *   ['wss://relay.example.com']
+     * );
+     */
+    static async create(ndk: NDK, mints: string[], relays?: string[]): Promise<NDKCashuWallet> {
+        const wallet = new NDKCashuWallet(ndk);
+
+        // Generate and add a private key
+        const signer = NDKPrivateKeySigner.generate();
+        await wallet.addPrivkey(signer.privateKey!);
+
+        // Set mints
+        wallet.mints = mints;
+
+        // Set relays if provided
+        if (relays && relays.length > 0) {
+            wallet.relaySet = NDKRelaySet.fromRelayUrls(relays, ndk);
+        }
+
+        // Publish wallet event (kind 17375)
+        await wallet.publish();
+
+        // Create and publish backup (kind 375)
+        await wallet.backup(true);
 
         return wallet;
     }
@@ -467,6 +563,22 @@ export class NDKCashuWallet extends NDKWallet {
         return payload;
     }
 
+    /**
+     * Publishes the wallet configuration (kind 17375) to save changes.
+     * Call this after modifying mints or relaySet to persist the configuration.
+     *
+     * The wallet event contains encrypted mint URLs, private keys, and relay URLs.
+     *
+     * @example
+     * // Add a mint and save
+     * wallet.mints.push('https://mint.example.com');
+     * await wallet.publish();
+     *
+     * @example
+     * // Update relays and save
+     * wallet.relaySet = NDKRelaySet.fromRelayUrls(['wss://relay.example.com'], ndk);
+     * await wallet.publish();
+     */
     async publish() {
         // Populate wallet relays from relaySet if it exists
         if (this.relaySet) {

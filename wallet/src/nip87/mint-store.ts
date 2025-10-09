@@ -43,14 +43,37 @@ export interface MintDiscoveryState {
     stop: () => void;
 }
 
-async function fetchMintInfo(url: string): Promise<{
+async function fetchMintInfo(url: string, ndk: NDK): Promise<{
     isOnline: boolean;
     info?: any;
 }> {
+    // Try cache first
+    if (ndk.cacheAdapter?.getCacheData) {
+        try {
+            const cached = await ndk.cacheAdapter.getCacheData<any>("wallet:mint:info", url);
+            if (cached) {
+                return { isOnline: true, info: cached };
+            }
+        } catch (e) {
+            console.error("Error reading mint info from cache:", e);
+        }
+    }
+
+    // Cache miss, fetch from network
     try {
         const response = await fetch(`${url}/v1/info`);
         if (response.ok) {
             const info = await response.json();
+
+            // Cache the result
+            if (ndk.cacheAdapter?.setCacheData) {
+                try {
+                    await ndk.cacheAdapter.setCacheData("wallet:mint:info", url, info);
+                } catch (e) {
+                    console.error("Error caching mint info:", e);
+                }
+            }
+
             return { isOnline: true, info };
         }
         return { isOnline: false };
@@ -176,7 +199,7 @@ export function createMintDiscoveryStore(ndk: NDK, options: MintDiscoveryOptions
         }));
 
         // Fetch mint info in background and update reactively
-        fetchMintInfo(url).then(({ isOnline, info }) => {
+        fetchMintInfo(url, ndk).then(({ isOnline, info }) => {
             const existing = mintsMap.get(url);
             if (!existing) return;
 

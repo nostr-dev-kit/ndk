@@ -1044,16 +1044,7 @@ export class NDK extends EventEmitter<{
         opts?: NDKSubscriptionOptions,
         relaySet?: NDKRelaySet,
     ): Promise<Set<NDKEvent>> {
-        // AI Guardrail: Warn about using fetchEvents
-        this.aiGuardrails.warn(
-            "fetch-events-usage",
-            "fetchEvents() is a BLOCKING operation that waits for EOSE.\n" +
-                "In most cases, you should use subscribe() instead:\n\n" +
-                "  ❌ BAD:  const events = await ndk.fetchEvents(filter);\n" +
-                "  ✅ GOOD: ndk.subscribe(filter, { onEvent: (e) => ... });\n\n" +
-                "Only use fetchEvents() when you MUST block until data arrives.",
-            "For one-time queries, use fetchEvent() instead of fetchEvents() when expecting a single result.",
-        );
+        this.aiGuardrails?.ndk?.fetchingEvents(filters);
 
         return new Promise((resolve) => {
             const events: Map<string, NDKEvent> = new Map();

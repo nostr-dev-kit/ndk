@@ -42,6 +42,8 @@
 import type { NDKEvent } from "../events/index.js";
 import type { NDK } from "../ndk/index.js";
 import type { NDKRelay } from "../relay/index.js";
+import * as eventGuardrails from "./event/signing.js";
+import * as ndkFetchEventsGuardrails from "./ndk/fetch-events.js";
 import { checkCachePresence } from "./ndk.js";
 import type { AIGuardrailsMode } from "./types.js";
 
@@ -54,9 +56,51 @@ export * from "./types.js";
 export class AIGuardrails {
     private enabled: boolean = false;
     private skipSet: Set<string> = new Set();
+    private extensions: Map<string, any> = new Map();
 
     constructor(mode: AIGuardrailsMode = false) {
         this.setMode(mode);
+    }
+
+    /**
+     * Register an extension namespace with custom guardrail hooks.
+     * This allows external packages to add their own guardrails.
+     *
+     * @example
+     * ```typescript
+     * // In NDKSvelte package:
+     * ndk.aiGuardrails.register('ndkSvelte', {
+     *   constructing: (params) => {
+     *     if (!params.session) {
+     *       warn('ndksvelte-no-session', 'NDKSvelte instantiated without session parameter...');
+     *     }
+     *   }
+     * });
+     *
+     * // In NDKSvelte constructor:
+     * this.ndk.aiGuardrails?.ndkSvelte?.constructing(params);
+     * ```
+     */
+    register(namespace: string, hooks: any): void {
+        if (this.extensions.has(namespace)) {
+            console.warn(`AIGuardrails: Extension '${namespace}' already registered, overwriting`);
+        }
+
+        // Wrap hooks to check if enabled
+        const wrappedHooks: any = {};
+        for (const [key, fn] of Object.entries(hooks)) {
+            if (typeof fn === 'function') {
+                wrappedHooks[key] = (...args: any[]) => {
+                    if (!this.enabled) return;
+                    (fn as Function)(...args, this.shouldCheck.bind(this), this.error.bind(this), this.warn.bind(this));
+                };
+            }
+        }
+
+        this.extensions.set(namespace, wrappedHooks);
+
+        // Dynamically attach to this instance
+        (this as any)[namespace] = wrappedHooks;
     }
 
     /**
@@ -176,38 +220,74 @@ export class AIGuardrails {
     }
 
     /**
-     * Called when an event is received from a relay.
-     * Can be used for monitoring, stats, pattern detection.
+     * NDK-related guardrails
      */
-    eventReceived(_event: NDKEvent, _relay: NDKRelay): void {
-        if (!this.enabled) return;
-        // Future: Add event reception monitoring
-    }
+    ndk = {
+        /**
+         * Called when fetchEvents is about to be called
+         */
+        fetchingEvents: (filters: any) => {
+            if (!this.enabled) return;
+            ndkFetchEventsGuardrails.fetchingEvents(filters, this.warn.bind(this));
+        },
+    };
 
     /**
-     * Called before an event is published.
-     * Can check for common publishing mistakes.
+     * Event-related guardrails
      */
-    eventPublishing(_event: NDKEvent): void {
-        if (!this.enabled) return;
-        // Future: Add publishing checks
-    }
+    event = {
+        /**
+         * Called when an event is about to be signed
+         */
+        signing: (event: NDKEvent) => {
+            if (!this.enabled) return;
+            eventGuardrails.signing(
+                event,
+                this.error.bind(this),
+                this.warn.bind(this),
+            );
+        },
+
+        /**
+         * Called before an event is published
+         */
+        publishing: (_event: NDKEvent) => {
+            if (!this.enabled) return;
+            // Future: Add publishing checks
+        },
+
+        /**
+         * Called when an event is received from a relay
+         */
+        received: (_event: NDKEvent, _relay: NDKRelay) => {
+            if (!this.enabled) return;
+            // Future: Add event reception monitoring
+        },
+    };
 
     /**
-     * Called when a subscription is created.
-     * Can monitor subscription patterns and usage.
+     * Subscription-related guardrails
      */
-    subscriptionCreated(_filters: any[], _opts?: any): void {
-        if (!this.enabled) return;
-        // Future: Add subscription monitoring
-    }
+    subscription = {
+        /**
+         * Called when a subscription is created
+         */
+        created: (_filters: any[], _opts?: any) => {
+            if (!this.enabled) return;
+            // Future: Add subscription monitoring
+        },
+    };
 
     /**
-     * Called when a relay connection is established.
-     * Can monitor connection patterns and health.
+     * Relay-related guardrails
      */
-    relayConnected(_relay: NDKRelay): void {
-        if (!this.enabled) return;
-        // Future: Add relay monitoring
-    }
+    relay = {
+        /**
+         * Called when a relay connection is established
+         */
+        connected: (_relay: NDKRelay) => {
+            if (!this.enabled) return;
+            // Future: Add relay monitoring
+        },
+    };
 }

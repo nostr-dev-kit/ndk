@@ -2,6 +2,7 @@ import type { NDKConstructorParams, NDKEvent, NDKFilter } from "@nostr-dev-kit/n
 import NDK from "@nostr-dev-kit/ndk";
 import { LocalStorage, NDKSessionManager } from "@nostr-dev-kit/sessions";
 import type { SessionManagerOptions } from "@nostr-dev-kit/sessions";
+import * as ndkSvelteGuardrails from "./ai-guardrails/constructor.js";
 import type { ReactivePaymentsStore } from "./stores/payments.svelte.js";
 import { createReactivePayments } from "./stores/payments.svelte.js";
 import type { ReactivePoolStore } from "./stores/pool.svelte.js";
@@ -84,22 +85,7 @@ export class NDKSvelte extends NDK {
 
         // Register NDKSvelte guardrails
         this.aiGuardrails?.register('ndkSvelte', {
-            constructing: (p: NDKSvelteParams, error: any, warn: any) => {
-                if (!p.session) {
-                    warn(
-                        "ndksvelte-no-session",
-                        "NDKSvelte instantiated without 'session' parameter.\n\n" +
-                        "Session support is disabled. This means:\n" +
-                        "  • No login/logout functionality\n" +
-                        "  • No wallet integration ($wallet store unavailable)\n" +
-                        "  • No automatic session persistence\n" +
-                        "  • No follows/mutes management\n\n" +
-                        "Most interactive apps need session support.",
-                        "Enable sessions: new NDKSvelte({ session: true })\n" +
-                        "Or with custom options: new NDKSvelte({ session: { follows: true, wallet: true } })"
-                    );
-                }
-            }
+            constructing: ndkSvelteGuardrails.constructing,
         });
 
         // Announce construction to guardrails
@@ -107,7 +93,7 @@ export class NDKSvelte extends NDK {
 
         // Only create session manager if explicitly requested
         if (params.session) {
-            const sessionOptions = params.session === true
+            const sessionOptions: SessionManagerOptions = params.session === true
                 ? {
                     storage: new LocalStorage(),
                     autoSave: true,

@@ -89,10 +89,15 @@ export class AIGuardrails {
         // Wrap hooks to check if enabled
         const wrappedHooks: any = {};
         for (const [key, fn] of Object.entries(hooks)) {
-            if (typeof fn === 'function') {
+            if (typeof fn === "function") {
                 wrappedHooks[key] = (...args: any[]) => {
                     if (!this.enabled) return;
-                    (fn as Function)(...args, this.shouldCheck.bind(this), this.error.bind(this), this.warn.bind(this));
+                    (fn as Function)(
+                        ...args,
+                        this.shouldCheck.bind(this),
+                        this.error.bind(this),
+                        this.warn.bind(this),
+                    );
                 };
             }
         }
@@ -241,11 +246,7 @@ export class AIGuardrails {
          */
         signing: (event: NDKEvent) => {
             if (!this.enabled) return;
-            eventGuardrails.signing(
-                event,
-                this.error.bind(this),
-                this.warn.bind(this),
-            );
+            eventGuardrails.signing(event, this.error.bind(this), this.warn.bind(this));
         },
 
         /**

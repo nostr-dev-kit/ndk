@@ -20,6 +20,7 @@ export const GuardrailCheckId = {
 
     // Filter-related
     FILTER_BECH32_IN_ARRAY: "filter-bech32-in-array",
+    FILTER_INVALID_HEX: "filter-invalid-hex",
     FILTER_ONLY_LIMIT: "filter-only-limit",
     FILTER_LARGE_LIMIT: "filter-large-limit",
     FILTER_EMPTY: "filter-empty",

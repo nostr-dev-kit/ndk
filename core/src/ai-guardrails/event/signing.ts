@@ -4,7 +4,12 @@
 
 import type { NDKEvent } from "../../events/index.js";
 
-type ErrorFn = (id: string, message: string, hint?: string, canDisable?: boolean) => never | undefined;
+type ErrorFn = (
+    id: string,
+    message: string,
+    hint?: string,
+    canDisable?: boolean,
+) => never | undefined;
 type WarnFn = (id: string, message: string, hint?: string) => never | undefined;
 
 /**
@@ -112,7 +117,7 @@ function checkManualReplyMarkers(event: NDKEvent, warn: WarnFn): void {
             warn(
                 "event-manual-reply-markers",
                 `Event has ${eTagsWithMarkers.length} e-tag(s) with manual reply/root markers.`,
-                "Use event.reply(parentEvent) instead of manually adding e-tags with markers. NDK handles reply threading automatically.",
+                `Reply events must be created using the .reply() method:\n\n   const replyEvent = originalEvent.reply();\n   replyEvent.content = 'good point!';\n   await replyEvent.publish();\n\nDo NOT manually add e-tags with reply/root markers. NDK handles all reply threading automatically.`,
             );
         }
     }
@@ -122,11 +127,7 @@ function checkManualReplyMarkers(event: NDKEvent, warn: WarnFn): void {
  * Called when an event is about to be signed.
  * Runs all signing-related checks.
  */
-export function signing(
-    event: NDKEvent,
-    error: ErrorFn,
-    warn: WarnFn,
-): void {
+export function signing(event: NDKEvent, error: ErrorFn, warn: WarnFn): void {
     checkMissingKind(event, error);
     checkContentIsObject(event, error);
     checkParamReplaceableNoDtag(event, warn);

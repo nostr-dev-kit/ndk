@@ -288,11 +288,18 @@ export interface NDKSubscriptionEventHandlers {
  * The NDK class is the main entry point to the library.
  *
  * @emits signer:ready when a signer is ready
+ * @emits activeUser:change when the active user changes
  * @emits invalid-signature when an event with an invalid signature is received
  */
 export class NDK extends EventEmitter<{
     "signer:ready": (signer: NDKSigner) => void;
     "signer:required": () => void;
+
+    /**
+     * Emitted when the active user changes.
+     * This can happen when a signer is set or when activeUser is set directly.
+     */
+    "activeUser:change": (user: NDKUser | undefined) => void;
 
     /**
      * Emitted when an event with an invalid signature is received.
@@ -596,6 +603,10 @@ export class NDK extends EventEmitter<{
         const differentUser = this._activeUser?.pubkey !== user?.pubkey;
 
         this._activeUser = user;
+
+        if (differentUser) {
+            this.emit("activeUser:change", user);
+        }
 
         if (user && differentUser) {
             setActiveUser.call(this, user);
@@ -992,6 +1003,11 @@ export class NDK extends EventEmitter<{
             filters = idOrFilter;
         } else {
             filters = [idOrFilter];
+        }
+
+        // Run guardrails check on the filter when it's passed as an object (not a string)
+        if (typeof idOrFilter !== "string") {
+            this.aiGuardrails?.ndk?.fetchingEvents(filters);
         }
 
         if (filters.length === 0) {

@@ -137,8 +137,6 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
         const newFilters = derivedFilters;
         const newNdkOpts = derivedNdkOpts;
 
-        console.log('[subscribe.svelte.ts] $effect triggered, filters:', JSON.stringify(newFilters));
-
         if (newFilters.length === 0) {
             stop();
             return;
@@ -179,14 +177,15 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
     function updateEvents() {
         const wrapperOpts = derivedWrapperOpts;
         let events = Array.from(eventMap.values());
+        let wotSorted = false;
 
         // Apply WoT filtering if enabled and WoT store exists
-        if (wot) {
+        if (wot && wot.loaded) {
             const shouldApplyWoTFilter =
                 wrapperOpts.wot !== false && // Not explicitly disabled
                 (wrapperOpts.wot || wot.autoFilterEnabled); // Has override config or global filter enabled
 
-            if (shouldApplyWoTFilter && wot.loaded) {
+            if (shouldApplyWoTFilter) {
                 // Filter by WoT
                 events = events.filter((event) => {
                     // Use override config if provided, otherwise use auto-filter logic
@@ -213,15 +212,14 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
             }
 
             // Apply WoT ranking if specified
-            if (wrapperOpts.wotRank && wot.loaded) {
+            if (wrapperOpts.wotRank) {
                 events = wot.rankEvents(events, wrapperOpts.wotRank) as typeof events;
+                wotSorted = true;
             }
         }
 
         // Default sort by created_at descending (newest first) when WoT ranking is not applied
-        if (!wot || !wrapperOpts.wotRank || !wot.loaded) {
-            events.sort((a, b) => (b.created_at || 0) - (a.created_at || 0));
-        }
+        if (!wotSorted) events.sort((a, b) => (b.created_at || 0) - (a.created_at || 0));
 
         _events = events as T[];
     }
@@ -256,13 +254,24 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
         subscription = undefined;
     }
 
+    let isRestarting = false;
+
     function restart() {
-        console.log('[subscribe.svelte.ts] Restarting subscription');
+        if (isRestarting) {
+            return;
+        }
+        isRestarting = true;
+
         stop();
         eventMap.clear();
         _events = [];
         _eosed = false;
         start();
+
+        // Reset flag on next microtask to batch synchronous calls
+        queueMicrotask(() => {
+            isRestarting = false;
+        });
     }
 
     function clear() {

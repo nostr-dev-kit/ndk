@@ -12,16 +12,36 @@ import type { ReactiveWalletStore } from "./stores/wallet.svelte.js";
 import { createReactiveWallet } from "./stores/wallet.svelte.js";
 import type { ReactiveWoTStore } from "./stores/wot.svelte.js";
 import { createReactiveWoT } from "./stores/wot.svelte.js";
-import type { SubscribeOptions, Subscription } from "./subscribe.svelte.js";
+import type { SubscribeConfig, Subscription } from "./subscribe.svelte.js";
 import { createSubscription } from "./subscribe.svelte.js";
 import { createFetchUser } from "./user.svelte.js";
 import { createFetchProfile } from "./profile.svelte.js";
 
 export interface NDKSvelteParams extends NDKConstructorParams {
     /**
-     * Session manager options
+     * Enable session management and wallet functionality
+     * - false (default): No sessions, no wallet, no auto-login
+     * - true: Enable sessions with default settings (follows, mutes, wallet)
+     * - SessionManagerOptions: Enable sessions with custom settings
+     *
+     * @example
+     * ```ts
+     * // No sessions (default)
+     * const ndk = new NDKSvelte({ explicitRelayUrls: [...] });
+     *
+     * // Sessions with defaults
+     * const ndk = new NDKSvelte({ session: true });
+     *
+     * // Sessions with custom settings
+     * const ndk = new NDKSvelte({
+     *   session: {
+     *     follows: true,
+     *     wallet: false
+     *   }
+     * });
+     * ```
      */
-    sessionOptions?: SessionManagerOptions;
+    session?: boolean | SessionManagerOptions;
 }
 
 /**
@@ -53,32 +73,65 @@ export interface NDKSvelteParams extends NDKConstructorParams {
  */
 export class NDKSvelte extends NDK {
     // Reactive stores with $ prefix (Svelte convention for reactive state)
-    $sessions!: ReactiveSessionsStore;
-    $wot!: ReactiveWoTStore;
-    $wallet!: ReactiveWalletStore;
+    $sessions?: ReactiveSessionsStore;
+    $wot?: ReactiveWoTStore;
+    $wallet?: ReactiveWalletStore;
     $payments!: ReactivePaymentsStore;
     $pool!: ReactivePoolStore;
 
     constructor(params: NDKSvelteParams = {}) {
         super(params);
 
-        // Create session manager with options from params
-        const sessionManager = new NDKSessionManager(this, {
-            storage: new LocalStorage(),
-            autoSave: true,
-            fetches: {
-                follows: true,
-                mutes: true,
-                wallet: true,
-            },
-            ...params.sessionOptions,
+        // Register NDKSvelte guardrails
+        this.aiGuardrails?.register('ndkSvelte', {
+            constructing: (p: NDKSvelteParams, error: any, warn: any) => {
+                if (!p.session) {
+                    warn(
+                        "ndksvelte-no-session",
+                        "NDKSvelte instantiated without 'session' parameter.\n\n" +
+                        "Session support is disabled. This means:\n" +
+                        "  • No login/logout functionality\n" +
+                        "  • No wallet integration ($wallet store unavailable)\n" +
+                        "  • No automatic session persistence\n" +
+                        "  • No follows/mutes management\n\n" +
+                        "Most interactive apps need session support.",
+                        "Enable sessions: new NDKSvelte({ session: true })\n" +
+                        "Or with custom options: new NDKSvelte({ session: { follows: true, wallet: true } })"
+                    );
+                }
+            }
         });
 
-        // Initialize reactive stores
-        // Both stores subscribe independently to session manager
-        this.$wallet = createReactiveWallet(this, sessionManager);
-        this.$sessions = createReactiveSessions(sessionManager);
-        this.$wot = createReactiveWoT(this, this.$sessions);
+        // Announce construction to guardrails
+        (this.aiGuardrails as any)?.ndkSvelte?.constructing(params);
+
+        // Only create session manager if explicitly requested
+        if (params.session) {
+            const sessionOptions = params.session === true
+                ? {
+                    storage: new LocalStorage(),
+                    autoSave: true,
+                    fetches: {
+                        follows: true,
+                        mutes: true,
+                        wallet: true,
+                    }
+                }
+                : {
+                    storage: new LocalStorage(),
+                    autoSave: true,
+                    ...params.session,
+                };
+
+            const sessionManager = new NDKSessionManager(this, sessionOptions);
+
+            // Initialize session-dependent stores
+            this.$wallet = createReactiveWallet(this, sessionManager);
+            this.$sessions = createReactiveSessions(sessionManager);
+            this.$wot = createReactiveWoT(this, this.$sessions);
+        }
+
+        // Initialize stores that don't require sessions
         this.$payments = createReactivePayments();
         this.$pool = createReactivePool(this);
     }
@@ -90,9 +143,20 @@ export class NDKSvelte extends NDK {
      * The $ prefix indicates this returns reactive Svelte state.
      * For callback-based subscriptions, use the base subscribe() method.
      *
+     * All config properties are reactive - subscription automatically restarts when filters
+     * or NDK options (relayUrls, pool, etc.) change, and re-processes events when wrapper
+     * options (wot, etc.) change.
+     *
      * @example
      * ```ts
-     * const notes = ndk.$subscribe(() => ({ kinds: [1], limit: 50 }));
+     * // Reactive config - automatically restarts when kind or relays change
+     * let kind = $state(1);
+     * let selectedRelays = $state(['wss://relay.damus.io']);
+     *
+     * const notes = ndk.$subscribe(() => ({
+     *   filters: [{ kinds: [kind], limit: 50 }],
+     *   relayUrls: selectedRelays
+     * }));
      *
      * // Reactive access in templates
      * {#each notes.events as note}
@@ -101,10 +165,9 @@ export class NDKSvelte extends NDK {
      * ```
      */
     $subscribe<T extends NDKEvent = NDKEvent>(
-        filters: () => NDKFilter | NDKFilter[] | undefined,
-        opts?: SubscribeOptions,
+        config: () => SubscribeConfig | undefined,
     ): Subscription<T> {
-        return createSubscription<T>(this, filters, opts);
+        return createSubscription<T>(this, config);
     }
 
     /**

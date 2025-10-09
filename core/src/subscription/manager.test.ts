@@ -41,4 +41,24 @@ describe("NDKSubscriptionManager", () => {
         const seenRelays = manager.seenEvents.get(eventId);
         expect(seenRelays).toContain(relay);
     });
+
+    it("should not add duplicate relays with the same URL", () => {
+        const eventId: NDKEventId = "event2";
+        const relay = new NDKRelay("wss://f7z.io/", undefined, ndk);
+
+        // Call seenEvent multiple times with the same relay
+        manager.seenEvent(eventId, relay);
+        manager.seenEvent(eventId, relay);
+        manager.seenEvent(eventId, relay);
+        manager.seenEvent(eventId, relay);
+        manager.seenEvent(eventId, relay);
+        manager.seenEvent(eventId, relay);
+        manager.seenEvent(eventId, relay);
+        manager.seenEvent(eventId, relay);
+
+        const seenRelays = manager.seenEvents.get(eventId);
+        expect(seenRelays).toBeDefined();
+        expect(seenRelays?.length).toBe(1);
+        expect(seenRelays?.[0]).toBe(relay);
+    });
 });

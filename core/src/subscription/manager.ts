@@ -39,7 +39,9 @@ export class NDKSubscriptionManager {
 
     public seenEvent(eventId: NDKEventId, relay: NDKRelay) {
         const current = this.seenEvents.get(eventId) || [];
-        current.push(relay);
+        if (!current.some((r) => r.url === relay.url)) {
+            current.push(relay);
+        }
         this.seenEvents.set(eventId, current);
     }
 

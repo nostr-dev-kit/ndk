@@ -18,7 +18,7 @@ describe("Event Deduplication and onRelays tracking", () => {
         if (!ndk.subManager) {
             (ndk as any).subManager = {
                 seenEvents: new Map(),
-                seenEvent: function(eventId: string, relay: NDKRelay) {
+                seenEvent: function (eventId: string, relay: NDKRelay) {
                     if (!this.seenEvents.has(eventId)) {
                         this.seenEvents.set(eventId, []);
                     }
@@ -26,7 +26,7 @@ describe("Event Deduplication and onRelays tracking", () => {
                     if (!relays.includes(relay)) {
                         relays.push(relay);
                     }
-                }
+                },
             };
         }
         relay1 = new NDKRelay("wss://relay1.example.com", undefined, ndk);
@@ -42,7 +42,7 @@ describe("Event Deduplication and onRelays tracking", () => {
         it("should accumulate relays in onRelays as duplicates arrive", () => {
             subscription = new NDKSubscription(ndk, [{ kinds: [1] }], {
                 skipValidation: true,
-                skipVerification: true
+                skipVerification: true,
             });
 
             // Create a test event
@@ -53,7 +53,7 @@ describe("Event Deduplication and onRelays tracking", () => {
                 kind: 1,
                 tags: [],
                 content: "Test event content",
-                sig: "test-signature"
+                sig: "test-signature",
             };
 
             // Track events emitted
@@ -133,7 +133,7 @@ describe("Event Deduplication and onRelays tracking", () => {
         it("should not add the same relay twice to onRelays", () => {
             subscription = new NDKSubscription(ndk, [{ kinds: [1] }], {
                 skipValidation: true,
-                skipVerification: true
+                skipVerification: true,
             });
 
             const rawEvent: NostrEvent = {
@@ -143,7 +143,7 @@ describe("Event Deduplication and onRelays tracking", () => {
                 kind: 1,
                 tags: [],
                 content: "Test event content",
-                sig: "test-signature"
+                sig: "test-signature",
             };
 
             let ndkEvent: NDKEvent | undefined;
@@ -170,7 +170,7 @@ describe("Event Deduplication and onRelays tracking", () => {
         it("should handle events arriving without relay information", () => {
             subscription = new NDKSubscription(ndk, [{ kinds: [1] }], {
                 skipValidation: true,
-                skipVerification: true
+                skipVerification: true,
             });
 
             const rawEvent: NostrEvent = {
@@ -180,7 +180,7 @@ describe("Event Deduplication and onRelays tracking", () => {
                 kind: 1,
                 tags: [],
                 content: "Test event content",
-                sig: "test-signature"
+                sig: "test-signature",
             };
 
             let ndkEvent: NDKEvent | undefined;
@@ -210,7 +210,7 @@ describe("Event Deduplication and onRelays tracking", () => {
         it("should emit event:dup with correct parameters", (done) => {
             subscription = new NDKSubscription(ndk, [{ kinds: [1] }], {
                 skipValidation: true,
-                skipVerification: true
+                skipVerification: true,
             });
 
             const rawEvent: NostrEvent = {
@@ -220,7 +220,7 @@ describe("Event Deduplication and onRelays tracking", () => {
                 kind: 1,
                 tags: [],
                 content: "Test event content",
-                sig: "test-signature"
+                sig: "test-signature",
             };
 
             let firstEventTime: number;
@@ -229,20 +229,23 @@ describe("Event Deduplication and onRelays tracking", () => {
                 firstEventTime = Date.now();
             });
 
-            subscription.on("event:dup", (event: NDKEvent, relay?: NDKRelay, timeSinceFirstSeen?: number) => {
-                // Verify event is the correct one
-                expect(event.id).toBe("test-event-dup-params");
+            subscription.on(
+                "event:dup",
+                (event: NDKEvent, relay?: NDKRelay, timeSinceFirstSeen?: number) => {
+                    // Verify event is the correct one
+                    expect(event.id).toBe("test-event-dup-params");
 
-                // Verify relay is passed correctly
-                expect(relay).toBe(relay2);
+                    // Verify relay is passed correctly
+                    expect(relay).toBe(relay2);
 
-                // Verify timeSinceFirstSeen is reasonable (should be small but > 0)
-                expect(timeSinceFirstSeen).toBeDefined();
-                expect(timeSinceFirstSeen).toBeGreaterThanOrEqual(0);
-                expect(timeSinceFirstSeen).toBeLessThan(100); // Should be very quick in test
+                    // Verify timeSinceFirstSeen is reasonable (should be small but > 0)
+                    expect(timeSinceFirstSeen).toBeDefined();
+                    expect(timeSinceFirstSeen).toBeGreaterThanOrEqual(0);
+                    expect(timeSinceFirstSeen).toBeLessThan(100); // Should be very quick in test
 
-                done();
-            });
+                    done();
+                },
+            );
 
             // First event from relay1
             subscription.eventReceived(rawEvent, relay1, false);
@@ -257,7 +260,7 @@ describe("Event Deduplication and onRelays tracking", () => {
         it("should emit 'event' for first occurrence and 'event:dup' for subsequent ones", () => {
             subscription = new NDKSubscription(ndk, [{ kinds: [1] }], {
                 skipValidation: true,
-                skipVerification: true
+                skipVerification: true,
             });
 
             const rawEvent: NostrEvent = {
@@ -267,7 +270,7 @@ describe("Event Deduplication and onRelays tracking", () => {
                 kind: 1,
                 tags: [],
                 content: "Test event content",
-                sig: "test-signature"
+                sig: "test-signature",
             };
 
             const emissions: string[] = [];
@@ -296,7 +299,7 @@ describe("Event Deduplication and onRelays tracking", () => {
         it("should correctly identify which relay sent the duplicate", () => {
             subscription = new NDKSubscription(ndk, [{ kinds: [1] }], {
                 skipValidation: true,
-                skipVerification: true
+                skipVerification: true,
             });
 
             const rawEvent: NostrEvent = {
@@ -306,7 +309,7 @@ describe("Event Deduplication and onRelays tracking", () => {
                 kind: 1,
                 tags: [],
                 content: "Test event content",
-                sig: "test-signature"
+                sig: "test-signature",
             };
 
             const duplicateRelays: (NDKRelay | undefined)[] = [];
@@ -340,7 +343,7 @@ describe("Event Deduplication and onRelays tracking", () => {
         it("should handle rapid duplicate arrivals", () => {
             subscription = new NDKSubscription(ndk, [{ kinds: [1] }], {
                 skipValidation: true,
-                skipVerification: true
+                skipVerification: true,
             });
 
             const rawEvent: NostrEvent = {
@@ -350,7 +353,7 @@ describe("Event Deduplication and onRelays tracking", () => {
                 kind: 1,
                 tags: [],
                 content: "Test event content",
-                sig: "test-signature"
+                sig: "test-signature",
             };
 
             let eventCount = 0;
@@ -387,7 +390,7 @@ describe("Event Deduplication and onRelays tracking", () => {
         it("should maintain separate onRelays for different events", () => {
             subscription = new NDKSubscription(ndk, [{ kinds: [1] }], {
                 skipValidation: true,
-                skipVerification: true
+                skipVerification: true,
             });
 
             const event1: NostrEvent = {
@@ -397,7 +400,7 @@ describe("Event Deduplication and onRelays tracking", () => {
                 kind: 1,
                 tags: [],
                 content: "Event 1",
-                sig: "sig-1"
+                sig: "sig-1",
             };
 
             const event2: NostrEvent = {
@@ -407,7 +410,7 @@ describe("Event Deduplication and onRelays tracking", () => {
                 kind: 1,
                 tags: [],
                 content: "Event 2",
-                sig: "sig-2"
+                sig: "sig-2",
             };
 
             const events = new Map<string, NDKEvent>();

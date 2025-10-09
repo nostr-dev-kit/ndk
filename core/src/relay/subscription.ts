@@ -124,7 +124,9 @@ export class NDKRelaySubscription {
             id: this.subId,
             itemsSize: this.items.size,
         });
-        if (this.items.has(subscription.internalId)) return;
+        if (this.items.has(subscription.internalId)) {
+            return;
+        }
 
         subscription.on("close", this.removeItem.bind(this, subscription));
         this.items.set(subscription.internalId, { subscription, filters });
@@ -444,20 +446,17 @@ export class NDKRelaySubscription {
     private compileFilters(): NDKFilter[] {
         const mergedFilters: NDKFilter[] = [];
         const filters = Array.from(this.items.values()).map((item) => item.filters);
+
         if (!filters[0]) {
             this.debug("👀 No filters to merge", { itemsSize: this.items.size });
-            console.error("BUG: No filters to merge!", {
-                itemsSize: this.items.size,
-                subId: this.subId,
-            });
             return [];
         }
         const filterCount = filters[0].length;
 
         for (let i = 0; i < filterCount; i++) {
             const allFiltersAtIndex = filters.map((filter) => filter[i]);
-
-            mergedFilters.push(...mergeFilters(allFiltersAtIndex));
+            const merged = mergeFilters(allFiltersAtIndex);
+            mergedFilters.push(...merged);
         }
 
         return mergedFilters;

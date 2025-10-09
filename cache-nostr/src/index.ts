@@ -183,6 +183,11 @@ export default class NDKNostrCacheAdapter implements NDKCacheAdapter {
     async setEvent(event: NDKEvent, _filters: NDKFilter<NDKKind>[], _relay?: NDKRelay | undefined): Promise<void> {
         this.hydrateLocalRelayWithEvent(event);
     }
+
+    setEventDup(event: NDKEvent, _relay: NDKRelay): void {
+        // Cache-nostr doesn't need to do anything special for duplicates
+        // The event is already in the local relay cache, no need to re-publish
+    }
 }
 
 const timeout = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));

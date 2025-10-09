@@ -38,6 +38,14 @@ export interface NDKCacheAdapter {
     setEvent(event: NDKEvent, filters: NDKFilter[], relay?: NDKRelay): Promise<void>;
 
     /**
+     * Called when we receive a duplicate event from a relay.
+     * This associates the relay with an existing cached event without re-processing the event data.
+     * @param event - The duplicate event received.
+     * @param relay - The relay that sent the duplicate event.
+     */
+    setEventDup?(event: NDKEvent, relay: NDKRelay): Promise<void> | void;
+
+    /**
      * Called when an event is deleted by the client.
      * Cache adapters should remove the event from their cache.
      * @param eventIds - The ids of the events that were deleted.

@@ -1,6 +1,4 @@
 import type {
-    CashuMintInfo,
-    CashuMintKeys,
     Hexpubkey,
     NDKCacheAdapter,
     NDKCacheEntry,
@@ -39,8 +37,7 @@ export default class NDKMemoryCacheAdapter implements NDKCacheAdapter {
     private unpublishedEvents: Map<NDKEventId, { event: NDKEvent; relays?: WebSocket["url"][]; lastTryAt?: number }>;
     private decryptedEvents: Map<NDKEventId, NDKEvent>;
     private nutzapStates: Map<NDKEventId, NDKNutzapState>;
-    private cashuMintInfo: LRUCache<string, { info: CashuMintInfo; cachedAt: number }>;
-    private cashuMintKeys: LRUCache<string, { keys: CashuMintKeys[]; cachedAt: number }>;
+    private cacheData: LRUCache<string, { data: unknown; cachedAt: number }>;
 
     constructor(options: NDKMemoryCacheAdapterOptions = {}) {
         const maxSize = options.maxSize ?? 5000;
@@ -54,8 +51,7 @@ export default class NDKMemoryCacheAdapter implements NDKCacheAdapter {
         this.unpublishedEvents = new Map();
         this.decryptedEvents = new Map();
         this.nutzapStates = new Map();
-        this.cashuMintInfo = new LRUCache<string, { info: CashuMintInfo; cachedAt: number }>({ maxSize: 100 });
-        this.cashuMintKeys = new LRUCache<string, { keys: CashuMintKeys[]; cachedAt: number }>({ maxSize: 100 });
+        this.cacheData = new LRUCache<string, { data: unknown; cachedAt: number }>({ maxSize: 1000 });
 
         d("Initialized with maxSize=%d, profileMaxSize=%d", maxSize, profileMaxSize);
     }
@@ -82,6 +78,14 @@ export default class NDKMemoryCacheAdapter implements NDKCacheAdapter {
             event.relay = _relay;
         }
         this.events.set(event.id, event);
+    }
+
+    setEventDup(event: NDKEvent, relay: NDKRelay): void {
+        // Memory adapter doesn't track multiple relays per event
+        // Just ensure the event exists in cache
+        if (!this.events.has(event.id)) {
+            this.events.set(event.id, event);
+        }
     }
 
     async deleteEventIds(eventIds: NDKEventId[]): Promise<void> {
@@ -222,8 +226,7 @@ export default class NDKMemoryCacheAdapter implements NDKCacheAdapter {
         this.unpublishedEvents.clear();
         this.decryptedEvents.clear();
         this.nutzapStates.clear();
-        this.cashuMintInfo.clear();
-        this.cashuMintKeys.clear();
+        this.cacheData.clear();
         d("Cache cleared");
     }
 
@@ -236,8 +239,9 @@ export default class NDKMemoryCacheAdapter implements NDKCacheAdapter {
         this.nutzapStates.set(id, { ...current, ...stateChange });
     }
 
-    async loadCashuMintInfo(mintUrl: string, maxAgeInSecs?: number): Promise<CashuMintInfo | undefined> {
-        const cached = this.cashuMintInfo.get(mintUrl);
+    async getCacheData<T>(namespace: string, key: string, maxAgeInSecs?: number): Promise<T | undefined> {
+        const cacheKey = `${namespace}:${key}`;
+        const cached = this.cacheData.get(cacheKey);
         if (!cached) return undefined;
 
         if (maxAgeInSecs !== undefined) {
@@ -247,28 +251,11 @@ export default class NDKMemoryCacheAdapter implements NDKCacheAdapter {
             }
         }
 
-        return cached.info;
+        return cached.data as T;
     }
 
-    async saveCashuMintInfo(mintUrl: string, info: CashuMintInfo): Promise<void> {
-        this.cashuMintInfo.set(mintUrl, { info, cachedAt: Date.now() });
-    }
-
-    async loadCashuMintKeys(mintUrl: string, maxAgeInSecs?: number): Promise<CashuMintKeys[] | undefined> {
-        const cached = this.cashuMintKeys.get(mintUrl);
-        if (!cached) return undefined;
-
-        if (maxAgeInSecs !== undefined) {
-            const ageInSecs = (Date.now() - cached.cachedAt) / 1000;
-            if (ageInSecs > maxAgeInSecs) {
-                return undefined;
-            }
-        }
-
-        return cached.keys;
-    }
-
-    async saveCashuMintKeys(mintUrl: string, keys: CashuMintKeys[]): Promise<void> {
-        this.cashuMintKeys.set(mintUrl, { keys, cachedAt: Date.now() });
+    async setCacheData<T>(namespace: string, key: string, data: T): Promise<void> {
+        const cacheKey = `${namespace}:${key}`;
+        this.cacheData.set(cacheKey, { data, cachedAt: Date.now() });
     }
 }

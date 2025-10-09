@@ -79,18 +79,17 @@ describe("getCacheStats", () => {
         expect(stats.totalProfiles).toBe(2);
     });
 
-    it("should count cashu mint data", async () => {
+    it("should count cache data", async () => {
         const mintUrl = "https://mint.example.com";
         const mintInfo = { name: "Test Mint", version: "1.0" };
         const mintKeys = [{ id: "key1", amount: 1, pubkey: "pk1" }];
 
-        await cache.saveCashuMintInfo(mintUrl, mintInfo as any);
-        await cache.saveCashuMintKeys(mintUrl, mintKeys as any);
+        await cache.setCacheData("wallet:mint:info", mintUrl, mintInfo);
+        await cache.setCacheData("wallet:mint:keys", mintUrl, mintKeys);
 
         const stats = await cache.getCacheStats();
 
-        expect(stats.cashuMintInfo).toBe(1);
-        expect(stats.cashuMintKeys).toBe(1);
+        expect(stats.cacheData).toBe(2);
     });
 });
 

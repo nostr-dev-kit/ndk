@@ -3,6 +3,7 @@ import { loadFromIndexedDB, saveToIndexedDB } from "./db/indexeddb-utils";
 import { runMigrations } from "./db/migrations";
 import { getCacheStatsSync } from "./functions/getCacheStats";
 import { setEventSync } from "./functions/setEvent";
+import { setEventDupSync } from "./functions/setEventDup";
 import { querySync } from "./functions/query";
 
 let db: any = null;
@@ -143,6 +144,14 @@ self.onmessage = async (event: MessageEvent) => {
                 const { event, relay } = payload;
                 const relayObj = relay ? { url: relay } : undefined;
                 setEventSync(db, event, relayObj);
+                result = undefined;
+                break;
+            }
+            case "setEventDup": {
+                const { eventId, relayUrl } = payload;
+                const event = { id: eventId };
+                const relay = relayUrl ? { url: relayUrl } : undefined;
+                setEventDupSync(db, event, relay);
                 result = undefined;
                 break;
             }

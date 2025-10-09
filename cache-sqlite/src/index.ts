@@ -41,6 +41,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
 
     // Modular method bindings (public field initializers)
     public setEvent = setEvent.bind(this);
+    public setEventDup = this._setEventDup.bind(this);
     public getEvent = getEvent.bind(this);
     public fetchProfile = fetchProfile.bind(this);
     public saveProfile = saveProfile.bind(this);
@@ -48,6 +49,20 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     public getProfiles = getProfiles.bind(this);
     public updateRelayStatus = updateRelayStatus.bind(this);
     public getRelayStatus = getRelayStatus.bind(this);
+
+    private _setEventDup(event: NDKEvent, relay: NDKRelay): void {
+        if (!this.db) throw new Error("Database not initialized");
+        if (!relay?.url || !event.id) return;
+
+        try {
+            const stmt = this.db
+                .getDatabase()
+                .prepare("INSERT OR IGNORE INTO event_relays (event_id, relay_url, seen_at) VALUES (?, ?, ?)");
+            stmt.run(event.id, relay.url, Date.now());
+        } catch (e) {
+            console.error("Error storing duplicate event relay:", e);
+        }
+    }
 
     public getDecryptedEvent = (eventId: NDKEventId): NDKEvent | null => {
         if (!this.db) throw new Error("Database not initialized");

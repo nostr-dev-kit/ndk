@@ -413,6 +413,21 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
         }
     }
 
+    public setEventDup(event: NDKEvent, relay: NDKRelay): void {
+        // For duplicate events, just track the relay provenance
+        if (relay?.url) {
+            db.eventRelays
+                .put({
+                    eventId: event.id,
+                    relayUrl: relay.url,
+                    seenAt: Date.now(),
+                })
+                .catch((e) => {
+                    this.debug("Failed to store relay provenance for duplicate event", e);
+                });
+        }
+    }
+
     public updateRelayStatus(url: string, info: NDKCacheRelayInfo): void {
         const existing = this.relayInfo.get(url);
 

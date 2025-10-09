@@ -8,8 +8,7 @@ export interface CacheStats {
     totalEventTags: number;
     totalDecryptedEvents: number;
     totalUnpublishedEvents: number;
-    cashuMintInfo: number;
-    cashuMintKeys: number;
+    cacheData: number;
     eventRelays: number;
 }
 
@@ -52,8 +51,7 @@ export function getCacheStatsSync(db: SQLDatabase): CacheStats {
     const totalEventTagsResult = db.exec(`SELECT COUNT(*) FROM event_tags`);
     const totalDecryptedEventsResult = db.exec(`SELECT COUNT(*) FROM decrypted_events`);
     const totalUnpublishedEventsResult = db.exec(`SELECT COUNT(*) FROM unpublished_events`);
-    const cashuMintInfoResult = db.exec(`SELECT COUNT(*) FROM cashu_mint_info`);
-    const cashuMintKeysResult = db.exec(`SELECT COUNT(*) FROM cashu_mint_keys`);
+    const cacheDataResult = db.exec(`SELECT COUNT(*) FROM cache_data`);
     const eventRelaysResult = db.exec(`SELECT COUNT(*) FROM event_relays`);
 
     return {
@@ -63,8 +61,7 @@ export function getCacheStatsSync(db: SQLDatabase): CacheStats {
         totalEventTags: (totalEventTagsResult[0]?.values[0]?.[0] as number) || 0,
         totalDecryptedEvents: (totalDecryptedEventsResult[0]?.values[0]?.[0] as number) || 0,
         totalUnpublishedEvents: (totalUnpublishedEventsResult[0]?.values[0]?.[0] as number) || 0,
-        cashuMintInfo: (cashuMintInfoResult[0]?.values[0]?.[0] as number) || 0,
-        cashuMintKeys: (cashuMintKeysResult[0]?.values[0]?.[0] as number) || 0,
+        cacheData: (cacheDataResult[0]?.values[0]?.[0] as number) || 0,
         eventRelays: (eventRelaysResult[0]?.values[0]?.[0] as number) || 0,
     };
 }

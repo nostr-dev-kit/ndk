@@ -1,9 +1,12 @@
 <script lang="ts">
+  import { onDestroy } from 'svelte';
+  import { SvelteMap } from 'svelte/reactivity';
   import type { WalletAPI } from '../lib/useWallet.svelte.js';
   import { NDKRelaySet } from '@nostr-dev-kit/ndk';
-  import { NDKCashuWallet } from '@nostr-dev-kit/wallet';
+  import { NDKCashuWallet, createMintDiscoveryStore } from '@nostr-dev-kit/wallet';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { GetInfoResponse } from '@cashu/cashu-ts';
+  import MintSelector from './MintSelector.svelte';
 
   interface Props {
     wallet: WalletAPI;
@@ -17,6 +20,27 @@
   let pendingMints = $state<string[]>([]);
   let pendingRelays = $state<string[]>([]);
 
+  // Browse mode
+  let showBrowse = $state(false);
+  let selectedBrowseMints = $state(new Set<string>());
+
+  // Mint discovery
+  const mintStore = createMintDiscoveryStore(ndk, { network: 'mainnet', timeout: 0 });
+  let discoveredMints = $state<any[]>([]);
+
+  // Subscribe to the Zustand store
+  $effect(() => {
+    const unsubscribe = mintStore.subscribe((state) => {
+      discoveredMints = state.mints;
+    });
+    return unsubscribe;
+  });
+
+  // Cleanup on destroy
+  onDestroy(() => {
+    mintStore.getState().stop();
+  });
+
   // Initialize local state from wallet
   $effect(() => {
     pendingMints = (wallet.mints || []).map(m => m.url);
@@ -27,7 +51,7 @@
   const relays = $derived(wallet.relays || []);
 
   // Check if there are unsaved changes
-  const hasChanges = $derived(() => {
+  const hasChanges = $derived.by(() => {
     const currentMints = (wallet.mints || []).map(m => m.url).sort().join(',');
     const localMints = pendingMints.slice().sort().join(',');
     const currentRelays = (wallet.relays || []).sort().join(',');
@@ -42,7 +66,7 @@
   let successMessage = $state('');
   let isSaving = $state(false);
   let activeTab = $state<'mints' | 'relays'>('mints');
-  let mintInfoMap = $state<Map<string, GetInfoResponse>>(new Map());
+  let mintInfoMap = $state(new SvelteMap<string, GetInfoResponse>());
 
   // Load mint info for pending mints
   $effect(() => {
@@ -57,8 +81,6 @@
           const info = await w.getMintInfo(url);
           if (info) {
             mintInfoMap.set(url, info);
-            // Trigger reactivity
-            mintInfoMap = new Map(mintInfoMap);
           }
         } catch (e) {
           console.error('Failed to load mint info for', url, e);
@@ -114,6 +136,24 @@
     successMessage = '';
   }
 
+  function toggleBrowse() {
+    showBrowse = !showBrowse;
+    if (showBrowse) {
+      // Pre-select already added mints
+      selectedBrowseMints = new Set(pendingMints);
+    }
+  }
+
+  function addSelectedMints() {
+    // Add selected mints that aren't already in the list
+    const newMints = Array.from(selectedBrowseMints).filter(url => !pendingMints.includes(url));
+    if (newMints.length > 0) {
+      pendingMints = [...pendingMints, ...newMints];
+    }
+    showBrowse = false;
+    selectedBrowseMints = new Set();
+  }
+
   async function saveChanges() {
     isSaving = true;
     error = '';
@@ -153,9 +193,7 @@
 
 <div class="wallet-config">
   <div class="view-header">
-    <button class="back-button" onclick={onBack}>← Back</button>
     <h2>Wallet Configuration</h2>
-    <div></div>
   </div>
 
   {#if error}
@@ -166,7 +204,7 @@
     <div class="success-message">{successMessage}</div>
   {/if}
 
-  {#if hasChanges()}
+  {#if hasChanges}
     <div class="unsaved-changes-banner">
       <div class="banner-content">
         <span class="banner-icon">⚠️</span>
@@ -205,37 +243,63 @@
 
   {#if activeTab === 'mints'}
     <!-- Mints Tab -->
-    <div class="info-card">
-      <p>
-        Mints store your ecash tokens. You can use multiple mints for better privacy and redundancy.
-      </p>
-    </div>
+    {#if showBrowse}
+      <!-- Browse Mints View -->
+      <div class="browse-view">
+        <h3 class="browse-title">Browse Recommended Mints</h3>
 
-    <!-- Add Mint Form -->
-    <div class="add-form">
-      <input
-        type="url"
-        bind:value={newMintUrl}
-        placeholder="https://mint.example.com"
-      />
-      <button
-        class="primary"
-        onclick={addMint}
-        disabled={!newMintUrl.trim()}
-      >
-        Add
-      </button>
-    </div>
+        <MintSelector {discoveredMints} bind:selectedMints={selectedBrowseMints} {ndk} />
 
-    <!-- Mint List -->
-    {#if pendingMints.length === 0}
-      <div class="empty-state">
-        <div class="empty-icon">🏦</div>
-        <p>No mints configured</p>
-        <p class="hint">Add a mint URL to start using your wallet</p>
+        <div class="browse-actions">
+          <button class="button-secondary" onclick={toggleBrowse}>
+            Cancel
+          </button>
+          <button class="button-primary" onclick={addSelectedMints}>
+            Add {selectedBrowseMints.size > 0 ? `${selectedBrowseMints.size} ` : ''}Selected Mint{selectedBrowseMints.size === 1 ? '' : 's'}
+          </button>
+        </div>
       </div>
     {:else}
-      <div class="item-list">
+      <!-- My Mints View -->
+      <div class="info-card">
+        <p>
+          Mints store your ecash tokens. You can use multiple mints for better privacy and redundancy.
+        </p>
+      </div>
+
+      <!-- Add Mint Form -->
+      <div class="add-form">
+        <input
+          type="url"
+          bind:value={newMintUrl}
+          placeholder="https://mint.example.com"
+        />
+        <button
+          class="primary"
+          onclick={addMint}
+          disabled={!newMintUrl.trim()}
+        >
+          Add
+        </button>
+        <button
+          class="button-browse"
+          onclick={toggleBrowse}
+        >
+          🔍 Browse
+        </button>
+      </div>
+    {/if}
+
+    <!-- Mint List -->
+    {#if !showBrowse}
+      {#if pendingMints.length === 0}
+        <div class="empty-state">
+          <div class="empty-icon">🏦</div>
+          <p>No mints configured</p>
+          <p class="hint">Add a mint URL to start using your wallet</p>
+        </div>
+      {:else}
+        <div class="item-list">
         {#each pendingMints as mintUrl}
           {@const mintData = mints.find(m => m.url === mintUrl)}
           {@const mintInfo = mintInfoMap.get(mintUrl)}
@@ -262,7 +326,8 @@
             </button>
           </div>
         {/each}
-      </div>
+        </div>
+      {/if}
     {/if}
   {:else}
     <!-- Relays Tab -->
@@ -322,21 +387,10 @@
   }
 
   .view-header {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  .back-button {
-    padding: 0.5rem 1rem;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
+    margin-bottom: 0.5rem;
   }
 
   h2 {
-    text-align: center;
     margin: 0;
     font-size: 1.5rem;
     font-weight: 700;
@@ -520,6 +574,81 @@
   .add-form button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+  }
+
+  .button-browse {
+    padding: 0.8em 1.5em;
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: 8px;
+    color: #10b981;
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .button-browse:hover {
+    background: rgba(16, 185, 129, 0.25);
+    border-color: rgba(16, 185, 129, 0.5);
+    transform: translateY(-1px);
+  }
+
+  .browse-view {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .browse-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.95);
+    margin: 0;
+  }
+
+  .browse-actions {
+    display: flex;
+    gap: 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .button-primary {
+    flex: 1;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .button-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(249, 115, 22, 0.4);
+  }
+
+  .button-secondary {
+    flex: 1;
+    padding: 1rem 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: white;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .button-secondary:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
   }
 
   .empty-state {

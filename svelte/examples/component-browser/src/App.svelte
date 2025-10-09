@@ -1,9 +1,10 @@
 <script lang="ts">
-  import NDK, { NDKEvent, NDKUser } from '@nostr-dev-kit/ndk';
+  import { NDKEvent } from '@nostr-dev-kit/ndk';
   import {
     Avatar,
     BlossomImage,
     EventContent,
+    NostrEditor,
     ZapButton,
     TransactionList,
     RelayManager,
@@ -13,11 +14,12 @@
     RelayConnectionStatus,
     RelayAddForm,
     createRelayManager,
-    type EnrichedRelayInfo
+    type EnrichedRelayInfo,
+    NDKSvelte
   } from '@nostr-dev-kit/svelte';
 
   // Initialize NDK
-  const ndk = new NDK({
+  const ndk = new NDKSvelte({
     explicitRelayUrls: [
       'wss://relay.damus.io',
       'wss://nos.lol',
@@ -33,6 +35,7 @@
     | 'Avatar'
     | 'BlossomImage'
     | 'EventContent'
+    | 'NostrEditor'
     | 'ZapButton'
     | 'TransactionList'
     | 'RelayManager'
@@ -94,6 +97,7 @@
       components: [
         { name: 'Avatar', description: 'Display user avatars with automatic profile fetching' },
         { name: 'EventContent', description: 'Render Nostr event content with rich formatting' },
+        { name: 'NostrEditor', description: 'Rich text editor for Nostr with entity support' },
       ]
     },
     {
@@ -451,6 +455,60 @@
           </div>
         </div>
 
+      {:else if selectedComponent === 'NostrEditor'}
+        <div class="demo-section">
+          <h3>Demo</h3>
+          <div class="demo-area full-width editor-demo">
+            <NostrEditor
+              {ndk}
+              placeholder="Write something... Try pasting a nostr:npub or nostr:nevent link!"
+              autofocus={false}
+              onUpdate={(editor) => {
+                console.log('Editor content:', editor.getText());
+              }}
+            />
+          </div>
+        </div>
+
+        <div class="controls-section">
+          <h3>Features</h3>
+          <ul class="features-list">
+            <li>✅ Automatic nostr entity parsing (nprofile, nevent, naddr)</li>
+            <li>✅ User mentions with profile fetching via NDK</li>
+            <li>✅ Event references with content preview</li>
+            <li>✅ Image and video support</li>
+            <li>✅ Markdown formatting</li>
+            <li>✅ File upload support (with custom handler)</li>
+            <li>✅ Bolt11 invoice support</li>
+          </ul>
+
+          <h3>Props</h3>
+          <div class="control-group">
+            <label>ndk <span class="required">*</span></label>
+            <span class="help-text">NDKSvelte instance for entity resolution</span>
+          </div>
+          <div class="control-group">
+            <label>content</label>
+            <span class="help-text">Initial content (string or JSONContent)</span>
+          </div>
+          <div class="control-group">
+            <label>placeholder</label>
+            <span class="help-text">Placeholder text (default: "Write something...")</span>
+          </div>
+          <div class="control-group">
+            <label>autofocus</label>
+            <span class="help-text">Auto focus on mount (default: false)</span>
+          </div>
+          <div class="control-group">
+            <label>nostrOptions</label>
+            <span class="help-text">Custom nostr-editor options (file upload, etc.)</span>
+          </div>
+          <div class="control-group">
+            <label>onUpdate, onReady</label>
+            <span class="help-text">Callback functions for editor events</span>
+          </div>
+        </div>
+
       {:else if selectedComponent === 'BlossomImage'}
         <div class="demo-section">
           <h3>Demo</h3>
@@ -657,6 +715,29 @@
     padding: 0;
     background: transparent;
     border: none;
+  }
+
+  .demo-area.editor-demo {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 1rem;
+  }
+
+  .features-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 2rem 0;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .features-list li {
+    padding: 0.5rem 0;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9375rem;
   }
 
   .controls-section h3 {

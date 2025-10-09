@@ -138,12 +138,8 @@
             <div class="stat-label">Unpublished Events</div>
           </div>
           <div class="stat-card">
-            <div class="stat-value">{stats.cashuMintInfo.toLocaleString()}</div>
-            <div class="stat-label">Cashu Mint Info</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value">{stats.cashuMintKeys.toLocaleString()}</div>
-            <div class="stat-label">Cashu Mint Keys</div>
+            <div class="stat-value">{stats.cacheData.toLocaleString()}</div>
+            <div class="stat-label">Cache Data</div>
           </div>
         </div>
       </div>

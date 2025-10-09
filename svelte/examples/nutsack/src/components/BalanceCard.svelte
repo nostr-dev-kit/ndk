@@ -42,13 +42,6 @@
 </script>
 
 <div class="balance-card">
-  <div class="balance-header">
-    <div class="balance-label">Total Balance</div>
-    <button class="details-toggle" onclick={() => showDetails = !showDetails}>
-      {showDetails ? '▼' : '▶'}
-    </button>
-  </div>
-
   <div class="balance-amount">
     <span class="amount gradient-text">{formatBalance(balance)}</span>
     <span class="unit">sats</span>
@@ -70,11 +63,6 @@
   {:else if wallet.status === 'error'}
     <div class="status-badge error">
       ⚠️ Error loading wallet
-    </div>
-  {:else if balance === 0}
-    <div class="empty-state">
-      <p>Your wallet is empty</p>
-      <p class="hint">Tap Receive to add funds</p>
     </div>
   {/if}
 
@@ -117,36 +105,13 @@
       </div>
     </div>
   {/if}
-
-  <!-- Decorative elements -->
-  <div class="glow-orb orb-1"></div>
-  <div class="glow-orb orb-2"></div>
 </div>
 
 <style>
   .balance-card {
     position: relative;
-    background: linear-gradient(135deg, rgba(249, 115, 22, 0.08) 0%, rgba(10, 10, 10, 0.6) 100%);
-    border: 1px solid rgba(249, 115, 22, 0.2);
-    border-radius: 24px;
     padding: 2rem;
     overflow: hidden;
-    backdrop-filter: blur(20px);
-  }
-
-  .balance-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.5rem;
-  }
-
-  .balance-label {
-    font-size: 0.875rem;
-    color: rgba(255, 255, 255, 0.6);
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
   }
 
   .balance-toggle {
@@ -223,26 +188,6 @@
     to { transform: rotate(360deg); }
   }
 
-  .empty-state {
-    margin-top: 1rem;
-    padding: 1.5rem;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px dashed rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    text-align: center;
-  }
-
-  .empty-state p {
-    margin: 0;
-    color: rgba(255, 255, 255, 0.6);
-  }
-
-  .empty-state .hint {
-    margin-top: 0.5rem;
-    font-size: 0.875rem;
-    color: rgba(249, 115, 22, 0.8);
-  }
-
   .mint-breakdown {
     margin-top: 1.5rem;
     padding-top: 1.5rem;
@@ -305,29 +250,5 @@
     font-size: 0.75rem;
     color: rgba(255, 255, 255, 0.6);
     margin-top: 0.125rem;
-  }
-
-  .glow-orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(60px);
-    opacity: 0.3;
-    pointer-events: none;
-  }
-
-  .orb-1 {
-    width: 200px;
-    height: 200px;
-    background: radial-gradient(circle, #f97316 0%, transparent 70%);
-    top: -100px;
-    right: -100px;
-  }
-
-  .orb-2 {
-    width: 150px;
-    height: 150px;
-    background: radial-gradient(circle, #ea580c 0%, transparent 70%);
-    bottom: -75px;
-    left: -75px;
   }
 </style>

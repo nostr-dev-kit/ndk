@@ -74,19 +74,9 @@
     console.log('[App] Creating subscription for pubkey:', pubkey, 'kind:', selectedKind);
 
     // Subscribe to the selected event kind - events and eosed are reactive properties
-    subscription = ndk.$subscribe(() => [
-      {
-        kinds: [selectedKind],
-        authors: [pubkey]
-      }
-    ], {
-      onEvent: (event) => {
-        console.log('[App] Event received:', event.kind, event.id, 'Total events:', subscription?.events.length);
-      },
-      onEose: () => {
-        console.log('[App] EOSE received, events:', subscription?.events.length);
-      }
-    });
+    subscription = ndk.$subscribe(() => ({
+      filters: [{ kinds: [selectedKind], authors: [pubkey] }],
+    }));
 
     console.log('[App] Subscription created');
   }

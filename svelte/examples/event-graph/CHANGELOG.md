@@ -1,5 +1,18 @@
 # event-graph-example
 
+## 0.1.3
+
+### Patch Changes
+
+- Updated dependencies [344c313]
+- Updated dependencies [2adef59]
+- Updated dependencies [3407126]
+- Updated dependencies [344c313]
+    - @nostr-dev-kit/ndk@2.17.0
+    - @nostr-dev-kit/cache-sqlite-wasm@0.7.0
+    - @nostr-dev-kit/sync@0.3.0
+    - @nostr-dev-kit/svelte@2.0.0
+
 ## 0.1.2
 
 ### Patch Changes

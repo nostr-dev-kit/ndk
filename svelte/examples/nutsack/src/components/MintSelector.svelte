@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { MintMetadata } from '@nostr-dev-kit/wallet';
+  import { fetchMintAuditStats, type AuditStats } from '../lib/audit';
 
   interface Props {
     discoveredMints: MintMetadata[];
@@ -16,6 +17,7 @@
   let showManualInput = $state(false);
   let manualMintUrl = $state('');
   let manualMintError = $state('');
+  let auditStatsMap = $state<Map<string, AuditStats>>(new Map());
 
   function getHostnameFromUrl(url: string): string {
     try {
@@ -87,6 +89,25 @@
       (mintUrl) => !discoveredMints.some((m) => m.url === mintUrl)
     )
   );
+
+  // Fetch audit stats for discovered mints
+  $effect(() => {
+    if (discoveredMints.length > 0) {
+      discoveredMints.forEach(async (mint) => {
+        if (!auditStatsMap.has(mint.url)) {
+          const stats = await fetchMintAuditStats(mint.url);
+          if (stats) {
+            auditStatsMap.set(mint.url, stats);
+            auditStatsMap = new Map(auditStatsMap);
+          }
+        }
+      });
+    }
+  });
+
+  function formatTime(ms: number): string {
+    return `${(ms / 1000).toFixed(1)}s`;
+  }
 </script>
 
 <div class="mint-selector">
@@ -128,6 +149,14 @@
     <div class="mint-list">
       {#each discoveredMints as mint}
         <button class="mint-item" class:selected={selectedMints.has(mint.url)} onclick={() => toggleMint(mint.url)}>
+          <div class="checkbox-container">
+            <div class="checkbox" class:checked={selectedMints.has(mint.url)}>
+              {#if selectedMints.has(mint.url)}
+                <div class="checkmark">✓</div>
+              {/if}
+            </div>
+          </div>
+
           <div class="mint-icon">
             {#if mint.icon}
               <img src={mint.icon} alt={mint.name || mint.url} />
@@ -156,11 +185,28 @@
                 {mint.isOnline ? '🟢 Online' : '🔴 Offline'}
               </div>
             {/if}
+            {#if auditStatsMap.has(mint.url)}
+              {@const stats = auditStatsMap.get(mint.url)!}
+              <div class="audit-stats">
+                <div class="stat-item" class:good={stats.successRate >= 95} class:warning={stats.successRate < 95 && stats.successRate >= 85} class:bad={stats.successRate < 85}>
+                  <span class="stat-label">Success:</span>
+                  <span class="stat-value">{stats.successRate.toFixed(1)}%</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">Avg Fee:</span>
+                  <span class="stat-value">{stats.avgFee.toFixed(0)} sats</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">Avg Time:</span>
+                  <span class="stat-value">{formatTime(stats.avgTime)}</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">Swaps:</span>
+                  <span class="stat-value">{stats.totalSwaps}</span>
+                </div>
+              </div>
+            {/if}
           </div>
-
-          {#if selectedMints.has(mint.url)}
-            <div class="check-icon">✓</div>
-          {/if}
         </button>
       {/each}
     </div>
@@ -426,11 +472,34 @@
     color: rgba(34, 197, 94, 0.9);
   }
 
-  .check-icon {
-    font-size: 1.25rem;
-    color: #10b981;
-    flex-shrink: 0;
-    align-self: center;
+  .checkbox-container {
+    display: flex;
+    align-items: center;
+    padding-left: 0.25rem;
+  }
+
+  .checkbox {
+    width: 24px;
+    height: 24px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .checkbox.checked {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border-color: #10b981;
+  }
+
+  .checkmark {
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    line-height: 1;
   }
 
   .remove-button {
@@ -509,5 +578,46 @@
 
   .count-icon {
     color: #10b981;
+  }
+
+  .audit-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    font-size: 0.75rem;
+  }
+
+  .stat-label {
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+  }
+
+  .stat-value {
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 600;
+    font-family: monospace;
+  }
+
+  .stat-item.good .stat-value {
+    color: #10b981;
+  }
+
+  .stat-item.warning .stat-value {
+    color: #f59e0b;
+  }
+
+  .stat-item.bad .stat-value {
+    color: #ef4444;
   }
 </style>

@@ -1,5 +1,53 @@
 # Changelog
 
+## 2.0.2
+
+### Patch Changes
+
+- Enhanced EventContent component with inline avatars and granular entity callbacks
+    - Added small avatar display next to user mentions (npub/nprofile)
+    - Component can now accept an NDKEvent directly via `event` prop, automatically extracting content and emoji tags
+    - Replaced generic onEventClick with specific callbacks:
+        - onNoteClick for note1 references (receives eventId)
+        - onNeventClick for nevent1 references (receives full EventPointer)
+        - onNaddrClick for naddr1 references (receives full AddressPointer)
+    - Apps now have complete control over entity click handling
+    - Added comprehensive JSDoc documentation with examples
+
+## 2.0.1
+
+### Patch Changes
+
+- bump
+- Updated dependencies
+    - @nostr-dev-kit/sessions@0.3.1
+    - @nostr-dev-kit/ndk@2.17.1
+    - @nostr-dev-kit/sync@0.3.1
+    - @nostr-dev-kit/wot@0.3.3
+
+## 2.0.0
+
+### Patch Changes
+
+- 344c313: Fix zap error handling and add method to query recipient payment methods
+    - Fixed NDKZapper.zap() to properly throw errors when all payment attempts fail
+    - Added getRecipientZapMethods() to query what payment methods recipients accept
+    - Enhanced svelte zap function to log partial failures
+    - Updated zap documentation with error handling and method querying examples
+
+- Updated dependencies [344c313]
+- Updated dependencies [344c313]
+- Updated dependencies [2adef59]
+- Updated dependencies [344c313]
+- Updated dependencies [3407126]
+- Updated dependencies [344c313]
+    - @nostr-dev-kit/sessions@0.3.0
+    - @nostr-dev-kit/ndk@2.17.0
+    - @nostr-dev-kit/cache-sqlite-wasm@0.7.0
+    - @nostr-dev-kit/sync@0.3.0
+    - @nostr-dev-kit/wot@0.3.2
+    - @nostr-dev-kit/wallet@0.8.2
+
 ## 1.0.1
 
 ### Patch Changes

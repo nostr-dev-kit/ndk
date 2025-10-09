@@ -11,11 +11,9 @@
     const user = ndk.$fetchUser(() => identifier);
     const profile = ndk.$fetchProfile(() => user?.pubkey);
 
-    const events = ndk.$subscribe(() => user ? [{
-        kinds: [NDKKind.Text],
-        authors: [user.pubkey],
-        limit: 50
-    }] : undefined);
+    const events = ndk.$subscribe(() => user ? ({
+        filters: [{ kinds: [NDKKind.Text], authors: [user.pubkey], limit: 50 }],
+    }) : undefined);
 
     let followersCount = $state(0);
     let followingCount = $state(0);

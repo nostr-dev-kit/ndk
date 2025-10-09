@@ -22,6 +22,37 @@ export {
 export { default as Avatar } from "./components/Avatar.svelte";
 export { default as BlossomImage } from "./components/BlossomImage.svelte";
 export { default as EventContent } from "./components/EventContent.svelte";
+export { default as EmbeddedEvent } from "./components/embedded-event/EmbeddedEvent.svelte";
+export { default as MentionPreview } from "./components/embedded-event/MentionPreview.svelte";
+export { default as HashtagPreview } from "./components/embedded-event/HashtagPreview.svelte";
+
+// EventContent customization - components
+export {
+  setEventContentComponents,
+  getEventContentComponents,
+  resetEventContentComponents,
+  mergeComponentRegistries,
+  type EventContentComponents,
+  type MentionComponentProps,
+  type EmbeddedEventComponentProps,
+  type HashtagComponentProps,
+  type EmojiComponentProps,
+  type LinkComponentProps,
+  type MediaComponentProps,
+  type ImageGridComponentProps
+} from "./components/event-content-components.js";
+
+// EventContent customization - handlers
+export {
+  EventContentHandlersProxy,
+  type EventContentHandlers
+} from "./components/event-content-handlers.js";
+export { default as NostrEditor } from "./components/editor/NostrEditor.svelte";
+export { default as NProfileNodeView } from "./components/editor/nodes/NProfileNodeView.svelte";
+export { default as NEventNodeView } from "./components/editor/nodes/NEventNodeView.svelte";
+export { default as NAddrNodeView } from "./components/editor/nodes/NAddrNodeView.svelte";
+export { default as ImageNodeView } from "./components/editor/nodes/ImageNodeView.svelte";
+export { default as VideoNodeView } from "./components/editor/nodes/VideoNodeView.svelte";
 export { default as RelayAddForm } from "./components/RelayAddForm.svelte";
 export { default as RelayCard } from "./components/RelayCard.svelte";
 export { default as RelayConnectionStatus } from "./components/RelayConnectionStatus.svelte";
@@ -60,9 +91,9 @@ export type { ReactivePaymentsStore } from "./stores/payments.svelte.js";
 export type { ReactivePoolStore, RelayInfo, RelayStatus } from "./stores/pool.svelte.js";
 // Store types (for typing ndk.* properties)
 export type { ReactiveSessionsStore } from "./stores/sessions.svelte.js";
-export type { ReactiveWalletStore } from "./stores/wallet.svelte.js";
+export type { Mint, ReactiveWalletStore, Transaction } from "./stores/wallet.svelte.js";
 export type { ReactiveWoTStore, WoTFilterOptions, WoTLoadOptions, WoTRankOptions } from "./stores/wot.svelte.js";
-export type { SubscribeOptions, Subscription, SyncSubscribeOptions } from "./subscribe.svelte.js";
+export type { SubscribeConfig, Subscription, SyncSubscribeConfig } from "./subscribe.svelte.js";
 // Subscription - can be used as standalone function or via ndk.$subscribe()
 export { createSubscription, createSyncSubscription } from "./subscribe.svelte.js";
 // User helpers

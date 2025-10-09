@@ -115,14 +115,13 @@
 
     const sub = ndk.subscribe(
       { kinds: [10019], authors: followPubkeys },
-      {
-        closeOnEose: true,
-        onEvent: (event) => {
-          has10019.add(event.pubkey);
-          has10019 = has10019; // Force reactivity
-        }
-      }
+      { closeOnEose: true }
     );
+
+    sub.on('event', (event) => {
+      has10019.add(event.pubkey);
+      has10019 = has10019; // Force reactivity
+    });
 
     return () => {
       sub?.stop();

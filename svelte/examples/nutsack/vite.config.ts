@@ -24,5 +24,14 @@ export default defineConfig({
     },
     build: {
         target: "esnext",
+        manifest: true,
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    vendor: ['svelte'],
+                    ndk: ['@nostr-dev-kit/ndk', '@nostr-dev-kit/wallet'],
+                },
+            },
+        },
     },
 });

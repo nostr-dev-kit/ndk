@@ -1,5 +1,15 @@
 # ndk-svelte5-nip61-viewer
 
+## 0.1.3
+
+### Patch Changes
+
+- Updated dependencies [344c313]
+- Updated dependencies [344c313]
+    - @nostr-dev-kit/ndk@2.17.0
+    - @nostr-dev-kit/cache-sqlite-wasm@0.7.0
+    - @nostr-dev-kit/svelte@2.0.0
+
 ## 0.1.2
 
 ### Patch Changes

@@ -1,5 +1,17 @@
 # ndk-svelte5-sessions-demo
 
+## 0.1.13
+
+### Patch Changes
+
+- Updated dependencies [344c313]
+- Updated dependencies [344c313]
+- Updated dependencies [344c313]
+- Updated dependencies [344c313]
+    - @nostr-dev-kit/sessions@0.3.0
+    - @nostr-dev-kit/ndk@2.17.0
+    - @nostr-dev-kit/svelte@2.0.0
+
 ## 0.1.12
 
 ### Patch Changes

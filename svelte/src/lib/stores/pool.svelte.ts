@@ -1,5 +1,5 @@
 import type NDK from "@nostr-dev-kit/ndk";
-import type { NDKRelay } from "@nostr-dev-kit/ndk";
+import { NDKRelayStatus, type NDKRelay } from "@nostr-dev-kit/ndk";
 
 export type RelayStatus = "connected" | "connecting" | "disconnected" | "reconnecting";
 
@@ -38,10 +38,32 @@ export class ReactivePoolStore {
             return;
         }
 
+        // Initialize with existing relays
+        for (const relay of pool.relays.values()) {
+            this.#initializeRelay(relay);
+        }
+
         // Listen to relay events
         pool.on("relay:connect", this.#handleRelayConnect);
         pool.on("relay:disconnect", this.#handleRelayDisconnect);
         pool.on("relay:connecting", this.#handleRelayConnecting);
+    }
+
+    #initializeRelay(relay: NDKRelay): void {
+        const status = relay.connectivity.status;
+        let relayStatus: RelayStatus;
+
+        if (status >= NDKRelayStatus.CONNECTED) {
+            relayStatus = "connected";
+        } else if (status === NDKRelayStatus.CONNECTING) {
+            relayStatus = "connecting";
+        } else if (status === NDKRelayStatus.RECONNECTING) {
+            relayStatus = "reconnecting";
+        } else {
+            relayStatus = "disconnected";
+        }
+
+        this.#updateRelay(relay, relayStatus);
     }
 
     #handleRelayConnect = (relay: NDKRelay): void => {

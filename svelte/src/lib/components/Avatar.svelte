@@ -18,7 +18,7 @@
     return name ? name[0].toUpperCase() : pubkey.slice(0, 2).toUpperCase();
   });
 
-  const imageUrl = $derived(profile?.image);
+  const imageUrl = $derived(profile?.picture);
   const altText = $derived(profile?.name || `${pubkey.slice(0, 8)}...`);
 </script>
 

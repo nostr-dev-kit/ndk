@@ -8,10 +8,9 @@
     let showFeed = $state(false);
     let noteContent = $state('');
 
-    const feed = $derived(showFeed ? ndk.$subscribe(() => [{
-        kinds: [NDKKind.Text],
-        limit: 20
-    }]) : undefined);
+    const feed = $derived(showFeed ? ndk.$subscribe(() => ({
+        filters: [{ kinds: [NDKKind.Text], limit: 20 }],
+    })) : undefined);
 
     function loadFeed() {
         showFeed = true;

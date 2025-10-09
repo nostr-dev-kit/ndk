@@ -18,12 +18,9 @@
   let includeUnknown = $state(false);
 
   // Subscribe to kind:1 events
-  const sub = ndk.$subscribe(() => [
-    {
-      kinds: [1],
-      limit: 100
-    }
-  ]);
+  const sub = ndk.$subscribe(() => ({
+    filters: [{ kinds: [1], limit: 100 }],
+  }));
 
   // Filtered and ranked events based on WOT
   const filteredEvents = $derived.by(() => {

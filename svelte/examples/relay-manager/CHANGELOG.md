@@ -1,5 +1,14 @@
 # relay-manager-example
 
+## 0.0.3
+
+### Patch Changes
+
+- Updated dependencies [344c313]
+- Updated dependencies [344c313]
+    - @nostr-dev-kit/ndk@2.17.0
+    - @nostr-dev-kit/svelte@2.0.0
+
 ## 0.0.2
 
 ### Patch Changes

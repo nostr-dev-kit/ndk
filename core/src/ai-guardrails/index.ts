@@ -57,6 +57,7 @@ export class AIGuardrails {
     private enabled: boolean = false;
     private skipSet: Set<string> = new Set();
     private extensions: Map<string, any> = new Map();
+    private _nextCallDisabled: Set<string> | 'all' | null = null;
 
     constructor(mode: AIGuardrailsMode = false) {
         this.setMode(mode);
@@ -132,7 +133,14 @@ export class AIGuardrails {
      * Check if a specific guardrail check should run.
      */
     shouldCheck(id: string): boolean {
-        return this.enabled && !this.skipSet.has(id);
+        if (!this.enabled) return false;
+        if (this.skipSet.has(id)) return false;
+
+        // Check if this ID is disabled for the next call
+        if (this._nextCallDisabled === 'all') return false;
+        if (this._nextCallDisabled && this._nextCallDisabled.has(id)) return false;
+
+        return true;
     }
 
     /**
@@ -154,6 +162,16 @@ export class AIGuardrails {
      */
     getSkipped(): string[] {
         return Array.from(this.skipSet);
+    }
+
+    /**
+     * Capture the current _nextCallDisabled set and clear it atomically.
+     * This is used by hook methods to handle one-time guardrail disabling.
+     */
+    captureAndClearNextCallDisabled(): Set<string> | 'all' | null {
+        const captured = this._nextCallDisabled;
+        this._nextCallDisabled = null;
+        return captured;
     }
 
     /**

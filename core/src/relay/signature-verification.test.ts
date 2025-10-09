@@ -43,7 +43,8 @@ describe("Signature Verification Sampling", () => {
     test("custom validation function is applied", () => {
         // Creating a custom function that returns 0.5 regardless of validation counts
         // Match the expected signature to avoid binding issues
-        const customFn = (_relay: NDKRelay, _validatedCount: number, _nonValidatedCount: number) => 0.5;
+        const customFn = (_relay: NDKRelay, _validatedCount: number, _nonValidatedCount: number) =>
+            0.5;
 
         const customNdk = new NDK({
             initialValidationRatio: 1.0,
@@ -57,7 +58,7 @@ describe("Signature Verification Sampling", () => {
         // Note: NDK's constructor might set this differently based on implementation
         // For now, just verify that shouldValidateEvent works probabilistically
         const validationCount = Array.from({ length: 1000 }, () =>
-            customRelay.shouldValidateEvent() ? 1 : 0
+            customRelay.shouldValidateEvent() ? 1 : 0,
         ).reduce((a, b) => a + b, 0);
 
         // Should be roughly 50% if custom function is applied, or 100% if default is used

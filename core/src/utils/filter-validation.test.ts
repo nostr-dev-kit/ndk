@@ -424,4 +424,376 @@ describe("Filter Validation", () => {
             sub.stop();
         });
     });
+
+    describe("AI Guardrails - Bech32 in filter arrays", () => {
+        beforeEach(() => {
+            // Enable AI guardrails for these tests
+            ndk = new NDK({
+                explicitRelayUrls: ["wss://relay.test.com"],
+                filterValidationMode: "validate",
+                aiGuardrails: true,
+            });
+
+            // @ts-expect-error - We're intentionally replacing the pool for testing
+            ndk.pool = pool;
+            mockRelay = pool.addMockRelay("wss://relay.test.com");
+        });
+
+        describe("bech32 in ids array", () => {
+            it("should throw fatal error when ids contains note1 bech32", () => {
+                const badFilter: NDKFilter = {
+                    ids: ["note1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqsq8l0j"],
+                    kinds: [1],
+                };
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/AI_GUARDRAILS/);
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/ids\[0\] contains bech32/);
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/Use filterFromId\(\)/);
+            });
+
+            it("should throw fatal error when ids contains nevent1 bech32", () => {
+                const badFilter: NDKFilter = {
+                    ids: [
+                        "nevent1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqs9p2gz3",
+                    ],
+                    kinds: [1],
+                };
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/AI_GUARDRAILS/);
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/ids\[0\] contains bech32/);
+            });
+
+            it("should fall back to standard validation when trying to skip the check", () => {
+                // Reinitialize with skip set
+                ndk = new NDK({
+                    explicitRelayUrls: ["wss://relay.test.com"],
+                    filterValidationMode: "validate",
+                    aiGuardrails: {
+                        skip: new Set(["filter-bech32-in-array"]),
+                    },
+                });
+
+                // @ts-expect-error
+                ndk.pool = pool;
+
+                const badFilter: NDKFilter = {
+                    ids: ["note1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqsq8l0j"],
+                    kinds: [1],
+                };
+
+                // Should still throw, but from standard filter validation (not AI guardrails)
+                // because bech32 is not a valid 64-char hex string
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/Invalid filter\(s\) detected/);
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/is not a valid 64-char hex string/);
+            });
+
+            it("should allow valid hex ids", () => {
+                const goodFilter: NDKFilter = {
+                    ids: [validEventId1, validEventId2],
+                    kinds: [1],
+                };
+
+                expect(() => {
+                    const sub = ndk.subscribe(goodFilter);
+                    sub.stop();
+                }).not.toThrow();
+            });
+        });
+
+        describe("bech32 in authors array", () => {
+            it("should throw fatal error when authors contains npub bech32", () => {
+                const badFilter: NDKFilter = {
+                    authors: ["npub1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqwv37l"],
+                    kinds: [1],
+                };
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/AI_GUARDRAILS/);
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/authors\[0\] contains bech32/);
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/Use ndkUser\.pubkey instead/);
+            });
+
+            it("should throw fatal error when authors contains nprofile bech32", () => {
+                const badFilter: NDKFilter = {
+                    authors: [
+                        "nprofile1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqs0enayy",
+                    ],
+                    kinds: [1],
+                };
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/AI_GUARDRAILS/);
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/authors\[0\] contains bech32/);
+            });
+
+            it("should throw fatal error for multiple authors with one being bech32", () => {
+                const badFilter: NDKFilter = {
+                    authors: [
+                        validPubkey1,
+                        "npub1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqwv37l",
+                        validPubkey2,
+                    ],
+                    kinds: [1],
+                };
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/AI_GUARDRAILS/);
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/authors\[1\] contains bech32/);
+            });
+
+            it("should allow valid hex pubkeys", () => {
+                const goodFilter: NDKFilter = {
+                    authors: [validPubkey1, validPubkey2, validPubkey3],
+                    kinds: [1],
+                };
+
+                expect(() => {
+                    const sub = ndk.subscribe(goodFilter);
+                    sub.stop();
+                }).not.toThrow();
+            });
+        });
+
+        describe("bech32 in tag filters", () => {
+            it("should throw fatal error when #e tag contains note1 bech32", () => {
+                const badFilter: NDKFilter = {
+                    kinds: [1],
+                    "#e": ["note1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqsq8l0j"],
+                };
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/AI_GUARDRAILS/);
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/#e\[0\] contains bech32/);
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/Use filterFromId\(\) or nip19\.decode\(\)/);
+            });
+
+            it("should throw fatal error when #p tag contains npub bech32", () => {
+                const badFilter: NDKFilter = {
+                    kinds: [1],
+                    "#p": ["npub1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqwv37l"],
+                };
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/AI_GUARDRAILS/);
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/#p\[0\] contains bech32/);
+            });
+
+            it("should throw fatal error for naddr in #a tag filter", () => {
+                const badFilter: NDKFilter = {
+                    kinds: [1],
+                    "#a": [
+                        "naddr1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqsdtpwtk",
+                    ],
+                };
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/AI_GUARDRAILS/);
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/#a\[0\] has invalid format/);
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/Must be "kind:pubkey:d-tag"/);
+            });
+
+            it("should allow valid hex values in #e and #p tags", () => {
+                const goodFilter: NDKFilter = {
+                    kinds: [1],
+                    "#e": [validEventId1, validEventId2],
+                    "#p": [validPubkey1, validPubkey2],
+                };
+
+                expect(() => {
+                    const sub = ndk.subscribe(goodFilter);
+                    sub.stop();
+                }).not.toThrow();
+            });
+
+            it("should allow non-hex strings in custom tag filters", () => {
+                const goodFilter: NDKFilter = {
+                    kinds: [1],
+                    "#t": ["bitcoin", "nostr", "programming"],
+                    "#d": ["my-article-identifier"],
+                };
+
+                expect(() => {
+                    const sub = ndk.subscribe(goodFilter);
+                    sub.stop();
+                }).not.toThrow();
+            });
+        });
+
+        describe("all bech32 formats", () => {
+            const bech32Formats = [
+                { prefix: "note1", description: "note (event ID)" },
+                { prefix: "npub1", description: "npub (public key)" },
+                { prefix: "naddr1", description: "naddr (addressable event)" },
+                { prefix: "nevent1", description: "nevent (event with relay hints)" },
+                { prefix: "nprofile1", description: "nprofile (profile with relay hints)" },
+            ];
+
+            bech32Formats.forEach(({ prefix, description }) => {
+                it(`should detect and reject ${description}`, () => {
+                    const badFilter: NDKFilter = {
+                        authors: [`${prefix}qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq`],
+                        kinds: [1],
+                    };
+
+                    expect(() => {
+                        ndk.subscribe(badFilter);
+                    }).toThrow(/AI_GUARDRAILS/);
+
+                    expect(() => {
+                        ndk.subscribe(badFilter);
+                    }).toThrow(/contains bech32/);
+                });
+            });
+        });
+
+        describe("error messages and hints", () => {
+            it("should provide helpful hint for ids with bech32", () => {
+                const badFilter: NDKFilter = {
+                    ids: ["note1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqsq8l0j"],
+                    kinds: [1],
+                };
+
+                try {
+                    ndk.subscribe(badFilter);
+                    expect.fail("Should have thrown");
+                } catch (error: any) {
+                    expect(error.message).toContain("IDs must be hex, not bech32");
+                    expect(error.message).toContain("Use filterFromId() to decode bech32 first");
+                    expect(error.message).toContain('@nostr-dev-kit/ndk"');
+                }
+            });
+
+            it("should provide helpful hint for authors with bech32", () => {
+                const badFilter: NDKFilter = {
+                    authors: ["npub1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqwv37l"],
+                    kinds: [1],
+                };
+
+                try {
+                    ndk.subscribe(badFilter);
+                    expect.fail("Should have thrown");
+                } catch (error: any) {
+                    expect(error.message).toContain("Authors must be hex pubkeys, not npub");
+                    expect(error.message).toContain("Use ndkUser.pubkey instead");
+                    expect(error.message).toContain("{ authors: [ndkUser.pubkey] }");
+                }
+            });
+
+            it("should provide helpful hint for tag filters with bech32", () => {
+                const badFilter: NDKFilter = {
+                    kinds: [1],
+                    "#e": ["note1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqsq8l0j"],
+                };
+
+                try {
+                    ndk.subscribe(badFilter);
+                    expect.fail("Should have thrown");
+                } catch (error: any) {
+                    expect(error.message).toContain("Tag values must be decoded");
+                    expect(error.message).toContain("Use filterFromId() or nip19.decode()");
+                }
+            });
+
+            it("should catch invalid pubkeys from kind:3 follow lists", () => {
+                const badFilter: NDKFilter = {
+                    authors: [
+                        validPubkey1,
+                        "Follow List", // Invalid entry from corrupted follow list
+                        validPubkey2,
+                        "highlig", // Another invalid entry
+                    ],
+                    kinds: [1],
+                };
+
+                try {
+                    ndk.subscribe(badFilter);
+                    expect.fail("Should have thrown");
+                } catch (error: any) {
+                    expect(error.message).toContain("AI_GUARDRAILS ERROR");
+                    expect(error.message).toContain("is not a valid 64-char hex pubkey");
+                    expect(error.message).toContain('"Follow List"');
+                    expect(error.message).toContain("Kind:3 follow lists can contain invalid entries");
+                    expect(error.message).toContain('labels ("Follow List")');
+                    expect(error.message).toContain('partial strings ("highlig")');
+                    expect(error.message).toContain("You MUST validate all pubkeys");
+                    expect(error.message).toContain(
+                        "const validPubkeys = pubkeys.filter(p => /^[0-9a-f]{64}$/i.test(p));",
+                    );
+                }
+            });
+        });
+
+        describe("multiple bech32 errors in one filter", () => {
+            it("should throw on first bech32 error encountered (ids checked first)", () => {
+                const badFilter: NDKFilter = {
+                    ids: ["note1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqsq8l0j"],
+                    authors: ["npub1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqwv37l"],
+                    "#e": [
+                        "nevent1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqs9p2gz3",
+                    ],
+                    kinds: [1],
+                };
+
+                try {
+                    ndk.subscribe(badFilter);
+                    expect.fail("Should have thrown");
+                } catch (error: any) {
+                    // Guardrails throw on first error, so we only see the ids error
+                    expect(error.message).toContain("ids[0] contains bech32");
+                    expect(error.message).toContain("AI_GUARDRAILS ERROR");
+                }
+            });
+        });
+    });
 });

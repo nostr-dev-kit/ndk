@@ -4,7 +4,6 @@ import _debug from "debug";
 import Redis from "ioredis";
 import { matchFilter } from "nostr-tools";
 
-type NostrEventWithRelay = NostrEvent & { relay?: string };
 interface RedisAdapterOptions {
     debug?: debug.IDebugger;
     expirationTime?: number;
@@ -29,7 +28,7 @@ export default class RedisAdapter implements NDKCacheAdapter {
 
     public async query(subscription: NDKSubscription): Promise<NDKEvent[]> {
         this.debug("query redis status", this.redis.status);
-        if (this.redis.status !== "connect") return [];
+        if (this.redis.status !== "ready") return [];
 
         const events: NDKEvent[] = [];
         for (const filter of subscription.filters) {
@@ -48,29 +47,48 @@ export default class RedisAdapter implements NDKCacheAdapter {
             const event = await this.redis.get(eventId);
             if (!event) continue;
 
-            const parsedEvent = JSON.parse(event) as NostrEventWithRelay;
+            const parsedEvent = JSON.parse(event) as NostrEvent;
 
             const ndkEvent = new NDKEvent(subscription.ndk, parsedEvent);
 
-            // Restore relay provenance
-            const relay = parsedEvent.relay ? subscription.pool.getRelay(parsedEvent.relay, false) : undefined;
-            if (relay) {
-                ndkEvent.relay = relay;
-                // Register in seenEvents for onRelays getter
-                subscription.ndk?.subManager.seenEvent(ndkEvent.id, relay);
+            // Restore all relays this event was seen on
+            const relayUrls = await this.redis.smembers(this.relaySetKey(eventId));
+            if (relayUrls?.length) {
+                // Set the first relay as the primary relay
+                const firstRelayUrl = relayUrls[0];
+                const firstRelay = subscription.pool.getRelay(firstRelayUrl, false);
+                if (firstRelay) {
+                    ndkEvent.relay = firstRelay;
+                }
+
+                // Register all relays in seenEvents for onRelays getter
+                for (const relayUrl of relayUrls) {
+                    const relay = subscription.pool.getRelay(relayUrl, false);
+                    if (relay) {
+                        subscription.ndk?.subManager.seenEvent(ndkEvent.id, relay);
+                    }
+                }
+
+                subscription.eventReceived(ndkEvent, firstRelay, true);
+            } else {
+                subscription.eventReceived(ndkEvent, undefined, true);
             }
 
-            subscription.eventReceived(ndkEvent, relay, true);
             events.push(ndkEvent);
         }
     }
 
-    private async storeEvent(event: NostrEventWithRelay, relay: NDKRelay) {
-        event.relay = relay.url;
+    private async storeEvent(event: NostrEvent, relay: NDKRelay) {
         try {
+            // Store the event without relay information
             const eventStr = JSON.stringify(event);
             await this.redis.set(event.id!, eventStr);
             await this.redis.expire(event.id!, this.expirationTime);
+
+            // Store relay information separately in a set
+            const relaySetKey = this.relaySetKey(event.id!);
+            await this.redis.sadd(relaySetKey, relay.url);
+            await this.redis.expire(relaySetKey, this.expirationTime);
         } catch (err) {
             this.debug("Error storing event", err);
         }
@@ -87,7 +105,13 @@ export default class RedisAdapter implements NDKCacheAdapter {
         if (!exists) {
             await this.storeEvent(event, relay);
         } else {
+            // Event exists, just add the relay to the relay set
             await this.redis.expire(event.id!, this.expirationTime);
+
+            // Add relay to the relay set
+            const relaySetKey = this.relaySetKey(event.id!);
+            await this.redis.sadd(relaySetKey, relay.url);
+            await this.redis.expire(relaySetKey, this.expirationTime);
         }
     }
 
@@ -107,8 +131,11 @@ export default class RedisAdapter implements NDKCacheAdapter {
     }
 
     public async setEvent(event: NDKEvent, filters: NDKFilter[], relay: NDKRelay): Promise<void> {
-        this.debug("setEvent redis status", this.redis.status);
-        if (this.redis.status !== "connect") return;
+        this.debug("setEvent", relay.url);
+        if (this.redis.status !== "ready") {
+            this.debug("Redis not ready, skipping setEvent");
+            return;
+        }
         const rawEvent = event.rawEvent();
 
         if (filters.length === 1) {
@@ -126,16 +153,40 @@ export default class RedisAdapter implements NDKCacheAdapter {
         }
     }
 
+    /**
+     * Handles duplicate events by recording relay provenance.
+     * Just adds the relay to the set of relays this event has been seen on.
+     */
+    public async setEventDup(event: NDKEvent, relay: NDKRelay): Promise<void> {
+        if (this.redis.status !== "ready") return;
+
+        const relaySetKey = this.relaySetKey(event.id);
+        await this.redis.sadd(relaySetKey, relay.url);
+        await this.redis.expire(relaySetKey, this.expirationTime);
+    }
+
+    /**
+     * Add a relay to the set of relays an event has been seen on.
+     * This is useful for tracking relay provenance even for duplicate events.
+     */
+    public async addEventRelay(eventId: string, relay: NDKRelay): Promise<void> {
+        if (this.redis.status !== "ready") return;
+
+        const relaySetKey = this.relaySetKey(eventId);
+        await this.redis.sadd(relaySetKey, relay.url);
+        await this.redis.expire(relaySetKey, this.expirationTime);
+    }
+
     public async loadNip05?(nip05: string, maxAgeForMissing?: number): Promise<ProfilePointer | null | "missing"> {
         this.debug("loadNip05 redis status", this.redis.status);
-        if (this.redis.status !== "connect") return null;
+        if (this.redis.status !== "ready") return null;
         const profile = await this.redis.get(this.nip05Key(nip05));
         return profile ? JSON.parse(profile) : null;
     }
 
     public async saveNip05?(nip05: string, profile: ProfilePointer | null): Promise<void> {
         this.debug("saveNip05 redis status", this.redis.status);
-        if (this.redis.status !== "connect") return;
+        if (this.redis.status !== "ready") return;
         try {
             const profileStr = JSON.stringify(profile);
             await this.redis.set(this.nip05Key(nip05), profileStr);
@@ -147,5 +198,9 @@ export default class RedisAdapter implements NDKCacheAdapter {
 
     private nip05Key(nip05: string): string {
         return `nip05:${nip05}`;
+    }
+
+    private relaySetKey(eventId: string): string {
+        return `relays:${eventId}`;
     }
 }

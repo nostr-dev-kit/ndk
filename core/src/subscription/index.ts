@@ -861,6 +861,14 @@ export class NDKSubscription extends EventEmitter<{
                 );
             }
 
+            // Store the duplicate event's relay information in cache
+            // This ensures all relays that have seen the event are recorded
+            if (!fromCache && !optimisticPublish && relay && this.ndk.cacheAdapter?.setEventDup && !this.opts.dontSaveToCache) {
+                // Get or create the NDKEvent instance
+                ndkEvent ??= event instanceof NDKEvent ? event : new NDKEvent(this.ndk, event);
+                this.ndk.cacheAdapter.setEventDup(ndkEvent, relay);
+            }
+
             if (relay) {
                 // Check if we've already verified this event id's signature
                 const signature = verifiedSignatures.get(eventId);

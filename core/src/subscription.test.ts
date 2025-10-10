@@ -1,13 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { EventGenerator, RelayPoolMock } from "../test";
-import NDK, {
-    type NDKEvent,
-    type NDKFilter,
-    NDKKind,
-    type NDKRelay,
-    NDKRelaySet,
-    NDKSubscription,
-} from "./index";
+import NDK, { type NDKEvent, type NDKFilter, NDKKind, type NDKRelay, NDKRelaySet, NDKSubscription } from "./index";
 
 describe("NDKSubscription", () => {
     let ndk: NDK;

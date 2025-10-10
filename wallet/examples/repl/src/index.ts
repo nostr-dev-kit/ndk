@@ -99,8 +99,8 @@ async function main() {
             let existingRelays: string[] = [];
 
             if (mintListEvent) {
-                existingMints = mintListEvent.getMatchingTags("mint").map(t => t[1]);
-                existingRelays = mintListEvent.getMatchingTags("relay").map(t => t[1]);
+                existingMints = mintListEvent.getMatchingTags("mint").map((t) => t[1]);
+                existingRelays = mintListEvent.getMatchingTags("relay").map((t) => t[1]);
             }
 
             if (existingMints.length > 0 || existingRelays.length > 0) {

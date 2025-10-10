@@ -24,7 +24,7 @@ export async function createToken(
     recipientMints?: MintUrl[],
     p2pk?: string,
 ): Promise<WalletOperation<TokenCreationResult> | null> {
-    console.log('[createToken] Starting token creation', {
+    console.log("[createToken] Starting token creation", {
         amount,
         recipientMints,
         p2pk,
@@ -32,39 +32,39 @@ export async function createToken(
 
     p2pk = ensureIsCashuPubkey(p2pk);
     const myMintsWithEnoughBalance = wallet.getMintsWithBalance(amount);
-    console.log('[createToken] My mints with enough balance', myMintsWithEnoughBalance);
+    console.log("[createToken] My mints with enough balance", myMintsWithEnoughBalance);
 
     const hasRecipientMints = recipientMints && recipientMints.length > 0;
     const mintsInCommon = hasRecipientMints
         ? findMintsInCommon([recipientMints, myMintsWithEnoughBalance])
         : myMintsWithEnoughBalance;
 
-    console.log('[createToken] Mints in common', {
+    console.log("[createToken] Mints in common", {
         hasRecipientMints,
         mintsInCommon,
     });
 
     for (const mint of mintsInCommon) {
-        console.log('[createToken] Attempting to create token in mint', mint);
+        console.log("[createToken] Attempting to create token in mint", mint);
         try {
             const res = await createTokenInMint(wallet, mint, amount, p2pk);
 
             if (res) {
-                console.log('[createToken] Successfully created token in mint', mint);
+                console.log("[createToken] Successfully created token in mint", mint);
                 return res;
             }
-            console.log('[createToken] Failed to create token in mint', mint);
+            console.log("[createToken] Failed to create token in mint", mint);
         } catch (e: any) {
-            console.error('[createToken] Error creating token in mint', mint, e);
+            console.error("[createToken] Error creating token in mint", mint, e);
         }
     }
 
     if (hasRecipientMints) {
-        console.log('[createToken] Attempting cross-mint transfer');
+        console.log("[createToken] Attempting cross-mint transfer");
         return await createTokenWithMintTransfer(wallet, amount, recipientMints, p2pk);
     }
 
-    console.error('[createToken] All token creation attempts failed');
+    console.error("[createToken] All token creation attempts failed");
     return null;
 }
 
@@ -80,10 +80,10 @@ async function createTokenInMint(
     amount: number,
     p2pk?: string,
 ): Promise<WalletOperation<TokenCreationResult> | null> {
-    console.log('[createTokenInMint] Starting', { mint, amount, p2pk });
+    console.log("[createTokenInMint] Starting", { mint, amount, p2pk });
 
     const cashuWallet = await wallet.getCashuWallet(mint);
-    console.log('[createTokenInMint] Got cashu wallet for mint', mint);
+    console.log("[createTokenInMint] Got cashu wallet for mint", mint);
 
     try {
         const result = await withProofReserve<TokenCreationResult>(
@@ -93,7 +93,7 @@ async function createTokenInMint(
             amount,
             amount,
             async (proofsToUse, allOurProofs) => {
-                console.log('[createTokenInMint] Inside withProofReserve callback', {
+                console.log("[createTokenInMint] Inside withProofReserve callback", {
                     proofsToUseCount: proofsToUse.length,
                     allOurProofsCount: allOurProofs.length,
                 });
@@ -103,7 +103,7 @@ async function createTokenInMint(
                     proofsWeHave: allOurProofs,
                 });
 
-                console.log('[createTokenInMint] Send result', {
+                console.log("[createTokenInMint] Send result", {
                     sendCount: sendResult.send.length,
                     keepCount: sendResult.keep.length,
                 });
@@ -119,10 +119,10 @@ async function createTokenInMint(
             },
         );
 
-        console.log('[createTokenInMint] Success', result);
+        console.log("[createTokenInMint] Success", result);
         return result;
     } catch (e: any) {
-        console.error('[createTokenInMint] Error', { mint, error: e.message, stack: e.stack });
+        console.error("[createTokenInMint] Error", { mint, error: e.message, stack: e.stack });
     }
 
     return null;

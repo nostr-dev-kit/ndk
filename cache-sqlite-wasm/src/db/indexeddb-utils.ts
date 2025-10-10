@@ -1,7 +1,7 @@
 export function openIndexedDB(dbName: string): Promise<IDBDatabase> {
     return new Promise((resolve, reject) => {
-        if (typeof indexedDB === 'undefined') {
-            reject(new Error('IndexedDB not available'));
+        if (typeof indexedDB === "undefined") {
+            reject(new Error("IndexedDB not available"));
             return;
         }
         const request = indexedDB.open(dbName, 1);

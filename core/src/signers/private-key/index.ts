@@ -108,11 +108,7 @@ export class NDKPrivateKeySigner implements NDKSigner {
      * console.log('encrypted key:', ncryptsec);
      * ```
      */
-    public encryptToNcryptsec(
-        password: string,
-        logn: number = 16,
-        ksb: 0x00 | 0x01 | 0x02 = 0x02,
-    ): string {
+    public encryptToNcryptsec(password: string, logn: number = 16, ksb: 0x00 | 0x01 | 0x02 = 0x02): string {
         if (!this._privateKey) throw new Error("Private key not available");
         return nip49.encrypt(this._privateKey, password, logn, ksb);
     }
@@ -141,11 +137,7 @@ export class NDKPrivateKeySigner implements NDKSigner {
      * console.log('your pubkey is', signer.pubkey);
      * ```
      */
-    public static fromNcryptsec(
-        ncryptsec: string,
-        password: string,
-        ndk?: NDK,
-    ): NDKPrivateKeySigner {
+    public static fromNcryptsec(ncryptsec: string, password: string, ndk?: NDK): NDKPrivateKeySigner {
         const privateKeyBytes = nip49.decrypt(ncryptsec, password);
         return new NDKPrivateKeySigner(privateKeyBytes, ndk);
     }
@@ -186,41 +178,27 @@ export class NDKPrivateKeySigner implements NDKSigner {
         return enabled;
     }
 
-    public async encrypt(
-        recipient: NDKUser,
-        value: string,
-        scheme?: NDKEncryptionScheme,
-    ): Promise<string> {
+    public async encrypt(recipient: NDKUser, value: string, scheme?: NDKEncryptionScheme): Promise<string> {
         if (!this._privateKey || !this.privateKey) {
             throw Error("Attempted to encrypt without a private key");
         }
 
         const recipientHexPubKey = recipient.pubkey;
         if (scheme === "nip44") {
-            const conversationKey = nip44.v2.utils.getConversationKey(
-                this._privateKey,
-                recipientHexPubKey,
-            );
+            const conversationKey = nip44.v2.utils.getConversationKey(this._privateKey, recipientHexPubKey);
             return await nip44.v2.encrypt(value, conversationKey);
         }
         return await nip04.encrypt(this._privateKey, recipientHexPubKey, value);
     }
 
-    public async decrypt(
-        sender: NDKUser,
-        value: string,
-        scheme?: NDKEncryptionScheme,
-    ): Promise<string> {
+    public async decrypt(sender: NDKUser, value: string, scheme?: NDKEncryptionScheme): Promise<string> {
         if (!this._privateKey || !this.privateKey) {
             throw Error("Attempted to decrypt without a private key");
         }
 
         const senderHexPubKey = sender.pubkey;
         if (scheme === "nip44") {
-            const conversationKey = nip44.v2.utils.getConversationKey(
-                this._privateKey,
-                senderHexPubKey,
-            );
+            const conversationKey = nip44.v2.utils.getConversationKey(this._privateKey, senderHexPubKey);
             return await nip44.v2.decrypt(value, conversationKey);
         }
         return await nip04.decrypt(this._privateKey, senderHexPubKey, value);
@@ -245,10 +223,7 @@ export class NDKPrivateKeySigner implements NDKSigner {
      * @param ndk Optional NDK instance.
      * @returns An instance of NDKPrivateKeySigner.
      */
-    public static async fromPayload(
-        payloadString: string,
-        ndk?: NDK,
-    ): Promise<NDKPrivateKeySigner> {
+    public static async fromPayload(payloadString: string, ndk?: NDK): Promise<NDKPrivateKeySigner> {
         const payload = JSON.parse(payloadString);
 
         if (payload.type !== "private-key") {

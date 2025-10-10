@@ -43,12 +43,7 @@ export type Nip46PermitCallback = (params: Nip46PermitCallbackParams) => Promise
 export type Nip46ApplyTokenCallback = (pubkey: string, token: string) => Promise<void>;
 
 export interface IEventHandlingStrategy {
-    handle(
-        backend: NDKNip46Backend,
-        id: string,
-        remotePubkey: string,
-        params: string[],
-    ): Promise<string | undefined>;
+    handle(backend: NDKNip46Backend, id: string, remotePubkey: string, params: string[]): Promise<string | undefined>;
 }
 
 /**

@@ -1,7 +1,6 @@
 import type { Hexpubkey, NDKEvent, NDKKind, NDKSigner, NDKUser } from "@nostr-dev-kit/ndk";
 import { NDKKind as Kind } from "@nostr-dev-kit/ndk";
-import type { NDKSession, SessionStartOptions } from "@nostr-dev-kit/sessions";
-import type { NDKSessionManager } from "@nostr-dev-kit/sessions";
+import type { NDKSession, NDKSessionManager, SessionStartOptions } from "@nostr-dev-kit/sessions";
 
 /**
  * Reactive wrapper around NDKSessionManager

@@ -20,11 +20,11 @@ export interface SubscribeConfig {
     /**
      * NDK subscription options
      */
-    pool?: NDKSubscriptionOptions['pool'];
+    pool?: NDKSubscriptionOptions["pool"];
     closeOnEose?: boolean;
     groupable?: boolean;
     groupableDelay?: number;
-    cacheUsage?: NDKSubscriptionOptions['cacheUsage'];
+    cacheUsage?: NDKSubscriptionOptions["cacheUsage"];
     subId?: string;
     maxEventsToReturn?: number;
     /**
@@ -47,7 +47,7 @@ export interface SubscribeConfig {
     wotRank?: WoTRankOptions;
 }
 
-export interface SyncSubscribeConfig extends Omit<SubscribeConfig, 'filters'>, SyncAndSubscribeOptions {
+export interface SyncSubscribeConfig extends Omit<SubscribeConfig, "filters">, SyncAndSubscribeOptions {
     /**
      * Nostr filters for the subscription
      */
@@ -72,10 +72,7 @@ export interface Subscription<T extends NDKEvent = NDKEvent> {
 function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
     ndk: NDKSvelte,
     config: () => SubscribeConfig | SyncSubscribeConfig | undefined,
-    subscribeMethod: (
-        filters: NDKFilter[],
-        opts: NDKSubscriptionOptions,
-    ) => NDKSubscription | Promise<NDKSubscription>,
+    subscribeMethod: (filters: NDKFilter[], opts: NDKSubscriptionOptions) => NDKSubscription | Promise<NDKSubscription>,
 ): Subscription<T> {
     // Get WoT store from NDK instance
     const wot = ndk.$wot;

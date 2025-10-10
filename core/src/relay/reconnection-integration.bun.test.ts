@@ -88,11 +88,7 @@ describe("Reconnection Integration", () => {
 
     describe("System-wide detection", () => {
         it("should detect system-wide disconnection", () => {
-            const checkSystemWide = (
-                disconnections: number[],
-                totalRelays: number,
-                threshold = 0.5,
-            ) => {
+            const checkSystemWide = (disconnections: number[], totalRelays: number, threshold = 0.5) => {
                 const now = Date.now();
                 const recentDisconnections = disconnections.filter((time) => now - time < 5000);
                 return totalRelays > 1 && recentDisconnections.length > totalRelays * threshold;

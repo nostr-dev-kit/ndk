@@ -1,5 +1,13 @@
 import type NDK from "@nostr-dev-kit/ndk";
-import { type Hexpubkey, isValidPubkey, type NDKEvent, NDKKind, NDKRelayList, type NDKSigner, type NDKUser } from "@nostr-dev-kit/ndk";
+import {
+    type Hexpubkey,
+    isValidPubkey,
+    type NDKEvent,
+    NDKKind,
+    NDKRelayList,
+    type NDKSigner,
+    type NDKUser,
+} from "@nostr-dev-kit/ndk";
 import { createStore } from "zustand/vanilla";
 import type { NDKSession, SessionStartOptions, SessionState } from "./types";
 import { NDKNotInitializedError, SessionNotFoundError } from "./utils/errors";

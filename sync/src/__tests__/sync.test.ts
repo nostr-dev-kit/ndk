@@ -2,8 +2,8 @@
  * Test suite for NDK sync functionality
  */
 
-import { beforeEach, describe, expect, test, vi } from "vitest";
 import NDK from "@nostr-dev-kit/ndk";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import { ndkSync } from "../ndk-sync.js";
 import type { NDKSyncOptions, NDKSyncResult } from "../types.js";
 

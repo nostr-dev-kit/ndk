@@ -73,7 +73,7 @@ export class AIGuardrails {
     private enabled: boolean = false;
     private skipSet: Set<string> = new Set();
     private extensions: Map<string, any> = new Map();
-    private _nextCallDisabled: Set<string> | 'all' | null = null;
+    private _nextCallDisabled: Set<string> | "all" | null = null;
     private _replyEvents: WeakSet<NDKEvent> = new WeakSet();
 
     constructor(mode: AIGuardrailsMode = false) {
@@ -110,12 +110,7 @@ export class AIGuardrails {
             if (typeof fn === "function") {
                 wrappedHooks[key] = (...args: any[]) => {
                     if (!this.enabled) return;
-                    (fn as Function)(
-                        ...args,
-                        this.shouldCheck.bind(this),
-                        this.error.bind(this),
-                        this.warn.bind(this),
-                    );
+                    (fn as Function)(...args, this.shouldCheck.bind(this), this.error.bind(this), this.warn.bind(this));
                 };
             }
         }
@@ -154,7 +149,7 @@ export class AIGuardrails {
         if (this.skipSet.has(id)) return false;
 
         // Check if this ID is disabled for the next call
-        if (this._nextCallDisabled === 'all') return false;
+        if (this._nextCallDisabled === "all") return false;
         if (this._nextCallDisabled && this._nextCallDisabled.has(id)) return false;
 
         return true;
@@ -185,7 +180,7 @@ export class AIGuardrails {
      * Capture the current _nextCallDisabled set and clear it atomically.
      * This is used by hook methods to handle one-time guardrail disabling.
      */
-    captureAndClearNextCallDisabled(): Set<string> | 'all' | null {
+    captureAndClearNextCallDisabled(): Set<string> | "all" | null {
         const captured = this._nextCallDisabled;
         this._nextCallDisabled = null;
         return captured;
@@ -196,12 +191,7 @@ export class AIGuardrails {
      * Also logs to console.error in case the throw gets swallowed.
      * @param canDisable - If false, this is a fatal error that cannot be disabled (default: true)
      */
-    error(
-        id: string,
-        message: string,
-        hint?: string,
-        canDisable: boolean = true,
-    ): never | undefined {
+    error(id: string, message: string, hint?: string, canDisable: boolean = true): never | undefined {
         if (!this.shouldCheck(id)) return;
 
         const fullMessage = this.formatMessage(id, "ERROR", message, hint, canDisable);
@@ -282,12 +272,7 @@ export class AIGuardrails {
          */
         signing: (event: NDKEvent) => {
             if (!this.enabled) return;
-            eventGuardrails.signing(
-                event,
-                this.error.bind(this),
-                this.warn.bind(this),
-                this._replyEvents,
-            );
+            eventGuardrails.signing(event, this.error.bind(this), this.warn.bind(this), this._replyEvents);
         },
 
         /**

@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import NDK, { NDKEvent, NDKKind, NDKSubscription, NDKSubscriptionCacheUsage } from "@nostr-dev-kit/ndk";
+import { beforeEach, describe, expect, it } from "vitest";
 import { NDKCacheAdapterSqliteWasm } from "../src/index";
-import NDK, { NDKEvent, NDKKind, NDKSubscriptionCacheUsage, NDKSubscription } from "@nostr-dev-kit/ndk";
 
 describe("Debug production issue", () => {
     let cache: NDKCacheAdapterSqliteWasm;
@@ -27,7 +27,7 @@ describe("Debug production issue", () => {
             });
             event.id = `test-event-id-${i}`;
             event.sig = `test-sig-${i}`;
-            
+
             await cache.setEvent(event, [{ kinds: [NDKKind.CashuToken] }]);
         }
 
@@ -47,10 +47,13 @@ describe("Debug production issue", () => {
         const events1 = await ndk.fetchEvents([{ kinds: [NDKKind.CashuToken] }], {
             cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE,
         });
-        
+
         console.log("fetchEvents returned, size:", events1.size);
-        console.log("fetchEvents events:", Array.from(events1).map(e => e.id));
-        
+        console.log(
+            "fetchEvents events:",
+            Array.from(events1).map((e) => e.id),
+        );
+
         expect(events1.size).toBe(5);
     });
 });

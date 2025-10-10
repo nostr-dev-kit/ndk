@@ -58,7 +58,6 @@ export interface EnrichedRelayInfo {
 
 export type PoolType = string; // Pool name from ndk.pools
 
-
 /**
  * Reactive relay manager for NDK
  * Manages relay connections, NIP-11 info, and relay lists
@@ -312,7 +311,7 @@ export class RelayManager {
         // Remove from relay list
         if (this.relayList) {
             this.relayList.tags = this.relayList.tags.filter(
-                (tag) => !((tag[0] === "r" || tag[0] === "relay") && tag[1] === url)
+                (tag) => !((tag[0] === "r" || tag[0] === "relay") && tag[1] === url),
             );
             await this.relayList.publish();
         }
@@ -360,7 +359,7 @@ export class RelayManager {
         if (!this.blacklist) return;
 
         this.blacklist.tags = this.blacklist.tags.filter(
-            (tag) => !((tag[0] === "relay" || tag[0] === "r") && tag[1] === url)
+            (tag) => !((tag[0] === "relay" || tag[0] === "r") && tag[1] === url),
         );
 
         this.blacklistedUrls.delete(url);

@@ -34,7 +34,7 @@ describe("mint-store", () => {
             const store = createMintDiscoveryStore(ndk, { network: "mainnet", timeout: 0 });
 
             // Wait a bit for async operations
-            await new Promise(resolve => setTimeout(resolve, 100));
+            await new Promise((resolve) => setTimeout(resolve, 100));
 
             // Verify the store was created successfully
             expect(store.getState()).toBeDefined();
@@ -65,7 +65,7 @@ describe("mint-store", () => {
             const mintUrl = "https://test-mint.com";
 
             // Wait for async operations
-            await new Promise(resolve => setTimeout(resolve, 200));
+            await new Promise((resolve) => setTimeout(resolve, 200));
 
             // Verify setCacheData was called to cache the fetched info
             // Note: This will only happen if a mint announcement is received
@@ -91,7 +91,7 @@ describe("mint-store", () => {
             const store = createMintDiscoveryStore(ndk, { network: "mainnet", timeout: 0 });
 
             // Wait for async operations
-            await new Promise(resolve => setTimeout(resolve, 100));
+            await new Promise((resolve) => setTimeout(resolve, 100));
 
             // Should have attempted to fetch from network
             // (In a real scenario with mint announcements)
@@ -119,7 +119,7 @@ describe("mint-store", () => {
             const store = createMintDiscoveryStore(ndk, { network: "mainnet", timeout: 0 });
 
             // Wait for async operations
-            await new Promise(resolve => setTimeout(resolve, 100));
+            await new Promise((resolve) => setTimeout(resolve, 100));
 
             // Should not throw despite cache write error
             expect(() => store.getState().stop()).not.toThrow();
@@ -135,7 +135,7 @@ describe("mint-store", () => {
             const store = createMintDiscoveryStore(ndk, { network: "mainnet", timeout: 0 });
 
             // Wait for async operations
-            await new Promise(resolve => setTimeout(resolve, 100));
+            await new Promise((resolve) => setTimeout(resolve, 100));
 
             // Should handle error gracefully
             expect(() => store.getState().stop()).not.toThrow();
@@ -147,14 +147,11 @@ describe("mint-store", () => {
             const store = createMintDiscoveryStore(ndk, { network: "mainnet", timeout: 0 });
 
             // Wait a bit
-            await new Promise(resolve => setTimeout(resolve, 50));
+            await new Promise((resolve) => setTimeout(resolve, 50));
 
             // If getCacheData was called, verify the namespace
             if (mockCacheAdapter.getCacheData.mock.calls.length > 0) {
-                expect(mockCacheAdapter.getCacheData).toHaveBeenCalledWith(
-                    "wallet:mint:info",
-                    expect.any(String)
-                );
+                expect(mockCacheAdapter.getCacheData).toHaveBeenCalledWith("wallet:mint:info", expect.any(String));
             }
 
             store.getState().stop();

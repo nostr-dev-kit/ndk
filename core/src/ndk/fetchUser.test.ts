@@ -39,10 +39,7 @@ describe("ndk.fetchUser()", () => {
             const user = await ndk.fetchUser(testNprofile);
             expect(user).toBeInstanceOf(NDKUser);
             expect(user?.pubkey).toBe(testPubkey);
-            expect(user?.relayUrls).toEqual([
-                "wss://relay1.example.com",
-                "wss://relay2.example.com",
-            ]);
+            expect(user?.relayUrls).toEqual(["wss://relay1.example.com", "wss://relay2.example.com"]);
             expect(user?.ndk).toBe(ndk);
         });
 

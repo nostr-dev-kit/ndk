@@ -1,8 +1,9 @@
 import type { NDKConstructorParams, NDKEvent, NDKFilter, NDKUser } from "@nostr-dev-kit/ndk";
 import NDK from "@nostr-dev-kit/ndk";
-import { LocalStorage, NDKSessionManager } from "@nostr-dev-kit/sessions";
 import type { SessionManagerOptions } from "@nostr-dev-kit/sessions";
+import { LocalStorage, NDKSessionManager } from "@nostr-dev-kit/sessions";
 import * as ndkSvelteGuardrails from "./ai-guardrails/constructor.js";
+import { createFetchProfile } from "./profile.svelte.js";
 import type { ReactivePaymentsStore } from "./stores/payments.svelte.js";
 import { createReactivePayments } from "./stores/payments.svelte.js";
 import type { ReactivePoolStore } from "./stores/pool.svelte.js";
@@ -16,7 +17,6 @@ import { createReactiveWoT } from "./stores/wot.svelte.js";
 import type { SubscribeConfig, Subscription } from "./subscribe.svelte.js";
 import { createSubscription } from "./subscribe.svelte.js";
 import { createFetchUser } from "./user.svelte.js";
-import { createFetchProfile } from "./profile.svelte.js";
 
 export interface NDKSvelteParams extends NDKConstructorParams {
     /**
@@ -87,7 +87,7 @@ export class NDKSvelte extends NDK {
         super(params);
 
         // Register NDKSvelte guardrails
-        this.aiGuardrails?.register('ndkSvelte', {
+        this.aiGuardrails?.register("ndkSvelte", {
             constructing: ndkSvelteGuardrails.constructing,
         });
 
@@ -96,21 +96,22 @@ export class NDKSvelte extends NDK {
 
         // Only create session manager if explicitly requested
         if (params.session) {
-            const sessionOptions: SessionManagerOptions = params.session === true
-                ? {
-                    storage: new LocalStorage(),
-                    autoSave: true,
-                    fetches: {
-                        follows: true,
-                        mutes: true,
-                        wallet: true,
-                    }
-                }
-                : {
-                    storage: new LocalStorage(),
-                    autoSave: true,
-                    ...params.session,
-                };
+            const sessionOptions: SessionManagerOptions =
+                params.session === true
+                    ? {
+                          storage: new LocalStorage(),
+                          autoSave: true,
+                          fetches: {
+                              follows: true,
+                              mutes: true,
+                              wallet: true,
+                          },
+                      }
+                    : {
+                          storage: new LocalStorage(),
+                          autoSave: true,
+                          ...params.session,
+                      };
 
             const sessionManager = new NDKSessionManager(this, sessionOptions);
 
@@ -162,9 +163,7 @@ export class NDKSvelte extends NDK {
      * {/each}
      * ```
      */
-    $subscribe<T extends NDKEvent = NDKEvent>(
-        config: () => SubscribeConfig | undefined,
-    ): Subscription<T> {
+    $subscribe<T extends NDKEvent = NDKEvent>(config: () => SubscribeConfig | undefined): Subscription<T> {
         return createSubscription<T>(this, config);
     }
 

@@ -1,7 +1,7 @@
 import NDK, { NDKEvent, NDKSubscription } from "@nostr-dev-kit/ndk";
-import { describe, expect, it, beforeEach, afterEach } from "vitest";
-import NDKCacheAdapterDexie from "./index";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { db } from "./db";
+import NDKCacheAdapterDexie from "./index";
 
 describe("setEventDup", () => {
     let adapter: NDKCacheAdapterDexie;
@@ -10,10 +10,10 @@ describe("setEventDup", () => {
     beforeEach(async () => {
         ndk = new NDK();
         adapter = new NDKCacheAdapterDexie({
-            dbName: "test-setEventDup-" + Math.random().toString(36)
+            dbName: "test-setEventDup-" + Math.random().toString(36),
         });
         // Wait for the cache to warm up
-        await new Promise<void>(resolve => {
+        await new Promise<void>((resolve) => {
             if (adapter.ready) {
                 resolve();
             } else {
@@ -37,7 +37,8 @@ describe("setEventDup", () => {
         event.kind = 1;
         event.content = "Test event";
         event.tags = [];
-        event.sig = "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc";
+        event.sig =
+            "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc";
 
         // Create mock relays
         const relay1 = { url: "wss://relay1.example.com" } as any;
@@ -52,12 +53,12 @@ describe("setEventDup", () => {
         adapter.setEventDup(event, relay3);
 
         // Wait for async operations to complete
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 100));
 
         // Query the eventRelays table to verify all relays are stored
         const relays = await db.eventRelays.where({ eventId: event.id }).toArray();
         expect(relays).toHaveLength(3);
-        const relayUrls = relays.map(r => r.relayUrl);
+        const relayUrls = relays.map((r) => r.relayUrl);
         expect(relayUrls).toContain("wss://relay1.example.com");
         expect(relayUrls).toContain("wss://relay2.example.com");
         expect(relayUrls).toContain("wss://relay3.example.com");
@@ -71,7 +72,8 @@ describe("setEventDup", () => {
         event.kind = 1;
         event.content = "Test";
         event.tags = [];
-        event.sig = "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc";
+        event.sig =
+            "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc";
 
         const relay = { url: "wss://relay.example.com" } as any;
 
@@ -83,7 +85,7 @@ describe("setEventDup", () => {
         adapter.setEventDup(event, relay);
 
         // Wait for async operations
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 100));
 
         // Should still only have the relay once (Dexie's put with primary key handles this)
         const relays = await db.eventRelays.where({ eventId: event.id, relayUrl: "wss://relay.example.com" }).toArray();
@@ -100,7 +102,7 @@ describe("setEventDup", () => {
         expect(() => adapter.setEventDup(event, relay)).not.toThrow();
 
         // Wait a bit for the async db.eventRelays.put to complete
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 100));
 
         // Relay association should be created even if event doesn't exist
         const relays = await db.eventRelays.where({ eventId: event.id }).toArray();
@@ -116,7 +118,8 @@ describe("setEventDup", () => {
         event.kind = 1;
         event.content = "Test relay preservation";
         event.tags = [];
-        event.sig = "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc";
+        event.sig =
+            "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc";
 
         const relay1 = { url: "wss://relay1.example.com/" } as any;
         const relay2 = { url: "wss://relay2.example.com/" } as any;
@@ -128,12 +131,12 @@ describe("setEventDup", () => {
         adapter.setEventDup(event, relay3);
 
         // Wait for async operations
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 100));
 
         // Verify all relays are in database
         const relays = await db.eventRelays.where({ eventId: event.id }).toArray();
         expect(relays).toHaveLength(3);
-        const relayUrls = relays.map(r => r.relayUrl);
+        const relayUrls = relays.map((r) => r.relayUrl);
         expect(relayUrls).toContain("wss://relay1.example.com/");
         expect(relayUrls).toContain("wss://relay2.example.com/");
         expect(relayUrls).toContain("wss://relay3.example.com/");

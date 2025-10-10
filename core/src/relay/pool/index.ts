@@ -112,11 +112,7 @@ export class NDKPool extends EventEmitter<{
      * @param relay - The relay to add to the pool.
      * @param removeIfUnusedAfter - The time in milliseconds to wait before removing the relay from the pool after it is no longer used.
      */
-    public useTemporaryRelay(
-        relay: NDKRelay,
-        removeIfUnusedAfter = 30000,
-        filters?: NDKFilter[] | string,
-    ) {
+    public useTemporaryRelay(relay: NDKRelay, removeIfUnusedAfter = 30000, filters?: NDKFilter[] | string) {
         const relayAlreadyInPool = this.relays.has(relay.url);
 
         // check if the relay is already in the pool
@@ -281,12 +277,7 @@ export class NDKPool extends EventEmitter<{
      *
      * New relays will be attempted to be connected.
      */
-    public getRelay(
-        url: WebSocket["url"],
-        connect = true,
-        temporary = false,
-        filters?: NDKFilter[],
-    ): NDKRelay {
+    public getRelay(url: WebSocket["url"], connect = true, temporary = false, filters?: NDKFilter[]): NDKRelay {
         let relay = this.relays.get(normalizeRelayUrl(url));
 
         if (!relay) {
@@ -330,9 +321,7 @@ export class NDKPool extends EventEmitter<{
      */
     public async connect(timeoutMs?: number): Promise<void> {
         this.status = "active";
-        this.debug(
-            `Connecting to ${this.relays.size} relays${timeoutMs ? `, timeout ${timeoutMs}ms` : ""}...`,
-        );
+        this.debug(`Connecting to ${this.relays.size} relays${timeoutMs ? `, timeout ${timeoutMs}ms` : ""}...`);
 
         const relaysToConnect = Array.from(this.autoConnectRelays.keys())
             .map((url) => this.relays.get(url))
@@ -340,22 +329,16 @@ export class NDKPool extends EventEmitter<{
 
         // Start connecting all relays (if not already connected/connecting)
         for (const relay of relaysToConnect) {
-            if (
-                relay.status !== NDKRelayStatus.CONNECTED &&
-                relay.status !== NDKRelayStatus.CONNECTING
-            ) {
+            if (relay.status !== NDKRelayStatus.CONNECTED && relay.status !== NDKRelayStatus.CONNECTING) {
                 this.emit("relay:connecting", relay);
                 relay.connect().catch((e) => {
-                    this.debug(
-                        `Failed to connect to relay ${relay.url}: ${e ?? "No reason specified"}`,
-                    );
+                    this.debug(`Failed to connect to relay ${relay.url}: ${e ?? "No reason specified"}`);
                 });
             }
         }
 
         // Helper to check if all relays are connected
-        const allConnected = () =>
-            relaysToConnect.every((r) => r.status === NDKRelayStatus.CONNECTED);
+        const allConnected = () => relaysToConnect.every((r) => r.status === NDKRelayStatus.CONNECTED);
 
         // Promise that resolves when all relays are connected
         const allConnectedPromise = new Promise<void>((resolve) => {
@@ -471,14 +454,9 @@ export class NDKPool extends EventEmitter<{
                 relay.connectivity.resetReconnectionState();
 
                 // Reconnect if not connected
-                if (
-                    relay.status !== NDKRelayStatus.CONNECTED &&
-                    relay.status !== NDKRelayStatus.CONNECTING
-                ) {
+                if (relay.status !== NDKRelayStatus.CONNECTED && relay.status !== NDKRelayStatus.CONNECTING) {
                     relay.connect().catch((e) => {
-                        this.debug(
-                            `Failed to reconnect relay ${relay.url} after system event: ${e}`,
-                        );
+                        this.debug(`Failed to reconnect relay ${relay.url} after system event: ${e}`);
                     });
                 }
             }
@@ -541,16 +519,12 @@ export class NDKPool extends EventEmitter<{
     }
 
     public connectedRelays(): NDKRelay[] {
-        return Array.from(this.relays.values()).filter(
-            (relay) => relay.status >= NDKRelayStatus.CONNECTED,
-        );
+        return Array.from(this.relays.values()).filter((relay) => relay.status >= NDKRelayStatus.CONNECTED);
     }
 
     public permanentAndConnectedRelays(): NDKRelay[] {
         return Array.from(this.relays.values()).filter(
-            (relay) =>
-                relay.status >= NDKRelayStatus.CONNECTED &&
-                !this.temporaryRelayTimers.has(relay.url),
+            (relay) => relay.status >= NDKRelayStatus.CONNECTED && !this.temporaryRelayTimers.has(relay.url),
         );
     }
 

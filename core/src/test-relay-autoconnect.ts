@@ -6,9 +6,9 @@ debug.enable("ndk,ndk:outbox-tracker");
 
 import type { NDKEvent } from "./events/index.js";
 import { NDKKind } from "./events/kinds/index.js";
-import type { NDKFilter } from "./subscription/index.js";
 import { NDK } from "./ndk/index.js";
 import type { NDKRelay } from "./relay/index.js";
+import type { NDKFilter } from "./subscription/index.js";
 
 const npub = process.argv[2];
 
@@ -111,9 +111,7 @@ async function run() {
         console.log("\nEnd of stored events");
         console.log("\nFinal stats:");
         console.log(`Connected relays: ${connectedRelays.size}`);
-        console.log(
-            `Total events received: ${Array.from(eventsPerRelay.values()).reduce((a, b) => a + b, 0)}`,
-        );
+        console.log(`Total events received: ${Array.from(eventsPerRelay.values()).reduce((a, b) => a + b, 0)}`);
         console.log("\nEvents per relay:");
         for (const [relayUrl, eventCount] of eventsPerRelay.entries()) {
             console.log(`  ${relayUrl}: ${eventCount}`);

@@ -3,7 +3,7 @@
  * and doesn't retry relays known not to support it
  */
 
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { NDKSync } from "../ndk-sync-class.js";
 
 // Define inline to avoid import issues in tests

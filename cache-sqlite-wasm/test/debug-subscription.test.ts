@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { NDKCacheAdapterSqliteWasm } from "../src/index";
 import NDK, { NDKEvent, NDKKind, NDKSubscriptionCacheUsage } from "@nostr-dev-kit/ndk";
+import { beforeEach, describe, expect, it } from "vitest";
+import { NDKCacheAdapterSqliteWasm } from "../src/index";
 
 describe("Debug subscription flow", () => {
     let cache: NDKCacheAdapterSqliteWasm;
@@ -50,11 +50,11 @@ describe("Debug subscription flow", () => {
                 onEose: () => {
                     console.log("Got EOSE, event count:", eventCount);
                 },
-            }
+            },
         );
 
         // Wait a bit for events to arrive
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 100));
 
         console.log("Final event count:", eventCount);
         expect(eventCount).toBe(1);

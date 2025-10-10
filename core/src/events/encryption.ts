@@ -29,28 +29,18 @@ export async function encrypt(
         (() => {
             const pTags = this.getMatchingTags("p");
             if (pTags.length !== 1) {
-                throw new Error(
-                    "No recipient could be determined and no explicit recipient was provided",
-                );
+                throw new Error("No recipient could be determined and no explicit recipient was provided");
             }
             return this.ndk.getUser({ pubkey: pTags[0][1] });
         })();
 
     if (scheme === "nip44" && (await isEncryptionEnabled(currentSigner, "nip44"))) {
-        encrypted = (await currentSigner.encrypt(
-            currentRecipient,
-            this.content,
-            "nip44",
-        )) as string;
+        encrypted = (await currentSigner.encrypt(currentRecipient, this.content, "nip44")) as string;
     }
 
     // support for encrypting events via legacy `nip04`. adapted from Coracle
     if ((!encrypted || scheme === "nip04") && (await isEncryptionEnabled(currentSigner, "nip04"))) {
-        encrypted = (await currentSigner.encrypt(
-            currentRecipient,
-            this.content,
-            "nip04",
-        )) as string;
+        encrypted = (await currentSigner.encrypt(currentRecipient, this.content, "nip04")) as string;
     }
 
     if (!encrypted) throw new Error("Failed to encrypt event.");
@@ -95,11 +85,7 @@ export async function decrypt(
     ) {
         decrypted = (await currentSigner.decrypt(currentSender, this.content, "nip04")) as string;
     }
-    if (
-        !decrypted &&
-        currentScheme === "nip44" &&
-        (await isEncryptionEnabled(currentSigner, "nip44"))
-    ) {
+    if (!decrypted && currentScheme === "nip44" && (await isEncryptionEnabled(currentSigner, "nip44"))) {
         decrypted = (await currentSigner.decrypt(currentSender, this.content, "nip44")) as string;
     }
     if (!decrypted) throw new Error("Failed to decrypt event.");
@@ -112,10 +98,7 @@ export async function decrypt(
     }
 }
 
-async function isEncryptionEnabled(
-    signer: NDKSigner,
-    scheme?: NDKEncryptionScheme,
-): Promise<boolean> {
+async function isEncryptionEnabled(signer: NDKSigner, scheme?: NDKEncryptionScheme): Promise<boolean> {
     if (!signer.encryptionEnabled) return false;
     if (!scheme) return true;
     return Boolean(await signer.encryptionEnabled(scheme));

@@ -218,13 +218,10 @@ describe("NDKRelaySet publish", () => {
         let emittedEvent = false;
         let emittedRelays: Set<NDKRelay> | undefined;
 
-        event.on(
-            "published",
-            (data: { relaySet: NDKRelaySet; publishedToRelays: Set<NDKRelay> }) => {
-                emittedEvent = true;
-                emittedRelays = data.publishedToRelays;
-            },
-        );
+        event.on("published", (data: { relaySet: NDKRelaySet; publishedToRelays: Set<NDKRelay> }) => {
+            emittedEvent = true;
+            emittedRelays = data.publishedToRelays;
+        });
 
         await relaySet.publish(event);
 

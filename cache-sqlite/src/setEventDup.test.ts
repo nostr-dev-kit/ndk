@@ -43,7 +43,8 @@ describe("setEventDup", () => {
         event.kind = 1;
         event.content = "Test event";
         event.tags = [];
-        event.sig = "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc";
+        event.sig =
+            "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc";
 
         // Create mock relays
         const relay1 = { url: "wss://relay1.example.com" } as any;
@@ -64,10 +65,10 @@ describe("setEventDup", () => {
             .all(event.id) as Array<{ relay_url: string }>;
 
         expect(relays).toHaveLength(3);
-        expect(relays.map(r => r.relay_url)).toEqual([
+        expect(relays.map((r) => r.relay_url)).toEqual([
             "wss://relay1.example.com",
             "wss://relay2.example.com",
-            "wss://relay3.example.com"
+            "wss://relay3.example.com",
         ]);
     });
 
@@ -97,7 +98,8 @@ describe("setEventDup", () => {
         event.kind = 1;
         event.content = "Test";
         event.tags = [];
-        event.sig = "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc";
+        event.sig =
+            "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc";
 
         const relay = { url: "wss://relay.example.com" } as any;
 
@@ -126,7 +128,8 @@ describe("setEventDup", () => {
         event.kind = 1;
         event.content = "Test event for relay preservation";
         event.tags = [];
-        event.sig = "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc";
+        event.sig =
+            "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc";
 
         // Mock relays - need to be in pool for query to restore them
         const relay1 = ndk.pool.getRelay("wss://relay1.example.com", true, true);
@@ -141,9 +144,11 @@ describe("setEventDup", () => {
         adapter.setEventDup(event, relay3);
 
         // Create subscription to query the event
-        const subscription = new NDKSubscription(ndk, [{
-            ids: ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"]
-        }]);
+        const subscription = new NDKSubscription(ndk, [
+            {
+                ids: ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"],
+            },
+        ]);
 
         // Query from cache
         const events = await adapter.query(subscription);
@@ -152,7 +157,7 @@ describe("setEventDup", () => {
         const cachedEvent = events[0];
 
         // Check that all relays are in onRelays
-        const relayUrls = cachedEvent.onRelays.map(r => r.url);
+        const relayUrls = cachedEvent.onRelays.map((r) => r.url);
         expect(relayUrls).toContain("wss://relay1.example.com/");
         expect(relayUrls).toContain("wss://relay2.example.com/");
         expect(relayUrls).toContain("wss://relay3.example.com/");

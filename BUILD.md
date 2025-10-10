@@ -2,6 +2,8 @@
 
 NDK is structured as a monorepo using `bun` as the package manager.
 
+Make sure to install bun 1.0.0 to [avoid this issue](https://github.com/oven-sh/bun/issues/4988).
+
 ```
 git clone https://github.com/nostr-dev-kit/ndk
 cd ndk

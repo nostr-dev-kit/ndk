@@ -307,9 +307,7 @@ describe("Filter Validation", () => {
 
             expect(() => {
                 ndk.subscribe(badFilters);
-            }).toThrow(
-                /Filter\[0\]\.authors\[1\] is undefined.*Filter\[1\]\.kinds\[1\] is undefined/s,
-            );
+            }).toThrow(/Filter\[0\]\.authors\[1\] is undefined.*Filter\[1\]\.kinds\[1\] is undefined/s);
         });
 
         it("should fix all filters in fix mode", async () => {
@@ -389,10 +387,8 @@ describe("Filter Validation", () => {
             const getUserPubkey = (id: string) => {
                 if (id === "deleted_user") return undefined;
                 // Return valid hex pubkeys
-                if (id === "user1")
-                    return "0000000000000000000000000000000000000000000000000000000000000004";
-                if (id === "user3")
-                    return "0000000000000000000000000000000000000000000000000000000000000005";
+                if (id === "user1") return "0000000000000000000000000000000000000000000000000000000000000004";
+                if (id === "user3") return "0000000000000000000000000000000000000000000000000000000000000005";
                 return undefined;
             };
 
@@ -461,9 +457,7 @@ describe("Filter Validation", () => {
 
             it("should throw fatal error when ids contains nevent1 bech32", () => {
                 const badFilter: NDKFilter = {
-                    ids: [
-                        "nevent1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqs9p2gz3",
-                    ],
+                    ids: ["nevent1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqs9p2gz3"],
                     kinds: [1],
                 };
 
@@ -540,9 +534,7 @@ describe("Filter Validation", () => {
 
             it("should throw fatal error when authors contains nprofile bech32", () => {
                 const badFilter: NDKFilter = {
-                    authors: [
-                        "nprofile1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqs0enayy",
-                    ],
+                    authors: ["nprofile1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqs0enayy"],
                     kinds: [1],
                 };
 
@@ -625,9 +617,7 @@ describe("Filter Validation", () => {
             it("should throw fatal error for naddr in #a tag filter", () => {
                 const badFilter: NDKFilter = {
                     kinds: [1],
-                    "#a": [
-                        "naddr1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqsdtpwtk",
-                    ],
+                    "#a": ["naddr1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqsdtpwtk"],
                 };
 
                 expect(() => {
@@ -779,9 +769,7 @@ describe("Filter Validation", () => {
                 const badFilter: NDKFilter = {
                     ids: ["note1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqsq8l0j"],
                     authors: ["npub1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqwv37l"],
-                    "#e": [
-                        "nevent1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqs9p2gz3",
-                    ],
+                    "#e": ["nevent1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqs9p2gz3"],
                     kinds: [1],
                 };
 

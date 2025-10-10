@@ -25,10 +25,7 @@ export class NDKRepost<T> extends NDKEvent {
      * @param klass Optional class to convert the events to.
      * @returns
      */
-    async repostedEvents(
-        klass?: classWithConvertFunction<T>,
-        opts?: NDKSubscriptionOptions,
-    ): Promise<T[]> {
+    async repostedEvents(klass?: classWithConvertFunction<T>, opts?: NDKSubscriptionOptions): Promise<T[]> {
         const items: T[] = [];
 
         if (!this.ndk) throw new Error("NDK instance not set");
@@ -51,9 +48,7 @@ export class NDKRepost<T> extends NDKEvent {
      * Returns the reposted event IDs.
      */
     repostedEventIds(): string[] {
-        return this.tags
-            .filter((t: NDKTag) => t[0] === "e" || t[0] === "a")
-            .map((t: NDKTag) => t[1]);
+        return this.tags.filter((t: NDKTag) => t[0] === "e" || t[0] === "a").map((t: NDKTag) => t[1]);
     }
 }
 

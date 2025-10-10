@@ -82,10 +82,7 @@ export class NDKProject extends NDKEvent {
             this._signer = NDKPrivateKeySigner.generate();
             await this.encryptAndSaveNsec();
         } else {
-            const decryptedKey = await this.ndk?.signer?.decrypt(
-                this.ndk.activeUser!,
-                encryptedKey,
-            );
+            const decryptedKey = await this.ndk?.signer?.decrypt(this.ndk.activeUser!, encryptedKey);
             if (!decryptedKey) {
                 throw new Error("Failed to decrypt project key or missing signer context.");
             }

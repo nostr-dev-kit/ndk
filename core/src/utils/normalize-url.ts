@@ -71,9 +71,7 @@ const hasCustomProtocol = (urlString: string) => {
     try {
         const { protocol } = new URL(urlString);
 
-        return (
-            protocol.endsWith(":") && !protocol.includes(".") && !supportedProtocols.has(protocol)
-        );
+        return protocol.endsWith(":") && !protocol.includes(".") && !supportedProtocols.has(protocol);
     } catch {
         return false;
     }
@@ -267,10 +265,7 @@ export function normalizeUrl(urlString: string, options: any = {}) {
         urlObject.hostname = urlObject.hostname.replace(/\.$/, "");
 
         // Remove `www.`
-        if (
-            options.stripWWW &&
-            /^www\.(?!www\.)[a-z\-\d]{1,63}\.[a-z.\-\d]{2,63}$/.test(urlObject.hostname)
-        ) {
+        if (options.stripWWW && /^www\.(?!www\.)[a-z\-\d]{1,63}\.[a-z.\-\d]{2,63}$/.test(urlObject.hostname)) {
             // Each label should be max 63 at length (min: 1).
             // Source: https://en.wikipedia.org/wiki/Hostname#Restrictions_on_valid_host_names
             // Each TLD should be up to 63 characters long (min: 2).

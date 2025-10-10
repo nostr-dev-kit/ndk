@@ -11,8 +11,8 @@
  * Run: npx tsx examples/relay-metadata-demo.ts
  */
 
-import NDK from "../../core/dist/index.js";
 import NDKCacheAdapterSqlite from "../../cache-sqlite/dist/index.js";
+import NDK from "../../core/dist/index.js";
 import { NDKSync } from "../dist/index.js";
 
 const RELAY_URL = "wss://relay.damus.io";

@@ -55,8 +55,7 @@ export async function dvmSchedule(
         if (!event.sig) throw new Error("Event not signed");
         if (!event.created_at) throw new Error("Event has no date");
         if (!dvm) throw new Error("No DVM specified");
-        if (event.created_at <= Date.now() / 1000)
-            throw new Error("Event needs to be in the future");
+        if (event.created_at <= Date.now() / 1000) throw new Error("Event needs to be in the future");
     }
 
     const scheduleEvent = new NDKDVMRequest(ndk, {
@@ -79,40 +78,38 @@ export async function dvmSchedule(
 
     let res: NDKSubscription | undefined;
 
-    const schedulePromise = new Promise<NDKDVMJobFeedback | NDKEvent | string | undefined>(
-        (resolve, reject) => {
-            if (waitForConfirmationForMs) {
-                res = ndk.subscribe(
-                    {
-                        kinds: [NDKKind.DVMEventSchedule + 1000, NDKKind.DVMJobFeedback],
-                        ...scheduleEvent.filter(),
-                    },
-                    {
-                        groupable: false,
-                        closeOnEose: false,
-                        onEvent: async (e: NDKEvent) => {
-                            res?.stop();
-                            if (e.kind === NDKKind.DVMJobFeedback) {
-                                const feedback = await NDKDVMJobFeedback.from(e);
-                                if (feedback.status === "error") {
-                                    const statusTag = feedback.getMatchingTags("status");
-                                    reject(statusTag?.[2] ?? feedback);
-                                } else {
-                                    resolve(feedback);
-                                }
+    const schedulePromise = new Promise<NDKDVMJobFeedback | NDKEvent | string | undefined>((resolve, reject) => {
+        if (waitForConfirmationForMs) {
+            res = ndk.subscribe(
+                {
+                    kinds: [NDKKind.DVMEventSchedule + 1000, NDKKind.DVMJobFeedback],
+                    ...scheduleEvent.filter(),
+                },
+                {
+                    groupable: false,
+                    closeOnEose: false,
+                    onEvent: async (e: NDKEvent) => {
+                        res?.stop();
+                        if (e.kind === NDKKind.DVMJobFeedback) {
+                            const feedback = await NDKDVMJobFeedback.from(e);
+                            if (feedback.status === "error") {
+                                const statusTag = feedback.getMatchingTags("status");
+                                reject(statusTag?.[2] ?? feedback);
+                            } else {
+                                resolve(feedback);
                             }
+                        }
 
-                            resolve(e);
-                        },
+                        resolve(e);
                     },
-                );
-            }
+                },
+            );
+        }
 
-            scheduleEvent.publish().then(() => {
-                if (!waitForConfirmationForMs) resolve(undefined);
-            });
-        },
-    );
+        scheduleEvent.publish().then(() => {
+            if (!waitForConfirmationForMs) resolve(undefined);
+        });
+    });
 
     const timeoutPromise = new Promise<string>((reject) => {
         setTimeout(() => {

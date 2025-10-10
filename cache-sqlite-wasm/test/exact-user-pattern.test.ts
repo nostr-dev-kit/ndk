@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { NDKCacheAdapterSqliteWasm } from "../src/index";
 import NDK, { NDKEvent, NDKKind, NDKSubscriptionCacheUsage } from "@nostr-dev-kit/ndk";
+import { beforeEach, describe, expect, it } from "vitest";
+import { NDKCacheAdapterSqliteWasm } from "../src/index";
 
 describe("Exact user pattern", () => {
     let cache: NDKCacheAdapterSqliteWasm;
@@ -38,10 +38,10 @@ describe("Exact user pattern", () => {
         const events1 = await ndk.fetchEvents([{ kinds: [NDKKind.CashuToken] }], {
             cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE,
         });
-        
+
         console.log("events1.size:", events1.size);
         console.log("events1:", Array.from(events1));
-        
+
         expect(events1.size).toBe(1);
     });
 });

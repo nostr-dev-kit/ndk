@@ -23,20 +23,11 @@ export function matchFilter(filter: NDKFilter, event: NDKRawEvent): boolean {
             if (tagName === "t") {
                 // only make lower case if the tag is 't', no need to do lowercase for most other things
                 const values = filter[`#${tagName}`]?.map((v: string) => v.toLowerCase());
-                if (
-                    values &&
-                    !event.tags.find(
-                        ([t, v]) => t === tagName && values?.indexOf(v.toLowerCase()) !== -1,
-                    )
-                )
+                if (values && !event.tags.find(([t, v]) => t === tagName && values?.indexOf(v.toLowerCase()) !== -1))
                     return false;
             } else {
                 const values = filter[`#${tagName}`];
-                if (
-                    values &&
-                    !event.tags.find(([t, v]) => t === tagName && values?.indexOf(v) !== -1)
-                )
-                    return false;
+                if (values && !event.tags.find(([t, v]) => t === tagName && values?.indexOf(v) !== -1)) return false;
             }
         }
     }

@@ -1,5 +1,5 @@
 import type NDK from "@nostr-dev-kit/ndk";
-import { NDKRelayStatus, type NDKRelay } from "@nostr-dev-kit/ndk";
+import { type NDKRelay, NDKRelayStatus } from "@nostr-dev-kit/ndk";
 
 export type RelayStatus = "connected" | "connecting" | "disconnected" | "reconnecting";
 

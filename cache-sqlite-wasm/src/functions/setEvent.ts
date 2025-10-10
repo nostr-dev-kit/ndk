@@ -65,12 +65,13 @@ function setEventSync(db: any, event: NDKEvent | any, relay?: NDKRelay | { url: 
     // Extract and save profile from kind:0 events
     if (event.kind === NDKKind.Metadata || event.kind === 0) {
         try {
-            const profile = typeof event.content === 'string' ? JSON.parse(event.content) : event.content;
+            const profile = typeof event.content === "string" ? JSON.parse(event.content) : event.content;
             if (profile && event.pubkey) {
-                db.run(
-                    "INSERT OR REPLACE INTO profiles (pubkey, profile, updated_at) VALUES (?, ?, ?)",
-                    [event.pubkey, JSON.stringify(profile), event.created_at ?? Date.now()]
-                );
+                db.run("INSERT OR REPLACE INTO profiles (pubkey, profile, updated_at) VALUES (?, ?, ?)", [
+                    event.pubkey,
+                    JSON.stringify(profile),
+                    event.created_at ?? Date.now(),
+                ]);
             }
         } catch (e) {
             // Invalid profile JSON, skip

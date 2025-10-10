@@ -347,10 +347,7 @@ describe("NDKCashuWallet", () => {
             await testWallet.loadFromEvent(mockEvent);
 
             // Verify relays were loaded
-            expect((testWallet as any)._walletRelays).toEqual([
-                "wss://relay1.com",
-                "wss://relay2.com",
-            ]);
+            expect((testWallet as any)._walletRelays).toEqual(["wss://relay1.com", "wss://relay2.com"]);
         });
     });
 });

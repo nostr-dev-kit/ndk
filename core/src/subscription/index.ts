@@ -403,12 +403,7 @@ export class NDKSubscription extends EventEmitter<{
      */
     public cacheUnconstrainFilter?: Array<keyof NDKFilter>;
 
-    public constructor(
-        ndk: NDK,
-        filters: NDKFilter | NDKFilter[],
-        opts?: NDKSubscriptionOptions,
-        subId?: string,
-    ) {
+    public constructor(ndk: NDK, filters: NDKFilter | NDKFilter[], opts?: NDKSubscriptionOptions, subId?: string) {
         super();
         this.ndk = ndk;
         this.opts = { ...defaultOpts, ...(opts || {}) };
@@ -498,9 +493,7 @@ export class NDKSubscription extends EventEmitter<{
         // explicitly told to not query the cache
         if (this.opts?.cacheUsage === NDKSubscriptionCacheUsage.ONLY_RELAY) return false;
 
-        const hasNonEphemeralKind = this.filters.some((f) =>
-            f.kinds?.some((k) => kindIsEphemeral(k)),
-        );
+        const hasNonEphemeralKind = this.filters.some((f) => f.kinds?.some((k) => kindIsEphemeral(k)));
         if (hasNonEphemeralKind) return true;
 
         return true;
@@ -544,8 +537,7 @@ export class NDKSubscription extends EventEmitter<{
             for (const event of events) {
                 if (
                     event.created_at &&
-                    (!this.mostRecentCacheEventTimestamp ||
-                        event.created_at > this.mostRecentCacheEventTimestamp)
+                    (!this.mostRecentCacheEventTimestamp || event.created_at > this.mostRecentCacheEventTimestamp)
                 ) {
                     this.mostRecentCacheEventTimestamp = event.created_at;
                 }
@@ -626,12 +618,7 @@ export class NDKSubscription extends EventEmitter<{
             // check if the pool monitor is already in the relayFilters
             if (this.relayFilters?.has(relay.url)) return;
 
-            const calc = calculateRelaySetsFromFilters(
-                this.ndk,
-                this.filters,
-                this.pool,
-                this.opts.relayGoalPerAuthor,
-            );
+            const calc = calculateRelaySetsFromFilters(this.ndk, this.filters, this.pool, this.opts.relayGoalPerAuthor);
 
             // check if the new relay is included
             if (calc.get(relay.url)) {
@@ -827,38 +814,17 @@ export class NDKSubscription extends EventEmitter<{
 
             // emit it
             if (!optimisticPublish || this.skipOptimisticPublishEvent !== true) {
-                this.emitEvent(
-                    this.opts?.wrap ?? false,
-                    ndkEvent,
-                    relay,
-                    fromCache,
-                    optimisticPublish,
-                );
+                this.emitEvent(this.opts?.wrap ?? false, ndkEvent, relay, fromCache, optimisticPublish);
                 // mark the eventId as seen
                 this.eventFirstSeen.set(eventId, Date.now());
             }
         } else {
             const timeSinceFirstSeen = Date.now() - (this.eventFirstSeen.get(eventId) || 0);
-            this.emit(
-                "event:dup",
-                event,
-                relay,
-                timeSinceFirstSeen,
-                this,
-                fromCache,
-                optimisticPublish,
-            );
+            this.emit("event:dup", event, relay, timeSinceFirstSeen, this, fromCache, optimisticPublish);
 
             // Call onEventDup handler if provided
             if (this.opts?.onEventDup) {
-                this.opts.onEventDup(
-                    event,
-                    relay,
-                    timeSinceFirstSeen,
-                    this,
-                    fromCache,
-                    optimisticPublish,
-                );
+                this.opts.onEventDup(event, relay, timeSinceFirstSeen, this, fromCache, optimisticPublish);
             }
 
             // Store the duplicate event's relay information in cache
@@ -885,8 +851,7 @@ export class NDKSubscription extends EventEmitter<{
                     } else {
                         // Signatures don't match - this is a malicious relay!
                         // One invalid signature means the relay is considered evil
-                        const eventToReport =
-                            event instanceof NDKEvent ? event : new NDKEvent(this.ndk, event);
+                        const eventToReport = event instanceof NDKEvent ? event : new NDKEvent(this.ndk, event);
                         this.ndk.reportInvalidSignature(eventToReport, relay);
                     }
                 }
@@ -912,14 +877,7 @@ export class NDKSubscription extends EventEmitter<{
         } else if (wrapped) {
             // Events from subscriptions are expected to be signed after validation
             // We cast to NDKSignedEvent for type safety
-            this.emit(
-                "event",
-                wrapped as NDKSignedEvent,
-                relay,
-                this,
-                fromCache,
-                optimisticPublish,
-            );
+            this.emit("event", wrapped as NDKSignedEvent, relay, this, fromCache, optimisticPublish);
         }
     }
 
@@ -935,9 +893,7 @@ export class NDKSubscription extends EventEmitter<{
         this.debug("EOSE received from %s", relay.url);
         this.eosesSeen.add(relay);
 
-        let lastEventSeen = this.lastEventReceivedAt
-            ? Date.now() - this.lastEventReceivedAt
-            : undefined;
+        let lastEventSeen = this.lastEventReceivedAt ? Date.now() - this.lastEventReceivedAt : undefined;
 
         const hasSeenAllEoses = this.eosesSeen.size === this.relayFilters?.size;
         const queryFilled = queryFullyFilled(this);
@@ -976,8 +932,7 @@ export class NDKSubscription extends EventEmitter<{
             // that have already sent an EOSE, the more
             // relays that have sent an EOSE, the less time we should wait
             // for the next one
-            const percentageOfRelaysThatHaveSentEose =
-                this.eosesSeen.size / connectedRelaysWithFilters.length;
+            const percentageOfRelaysThatHaveSentEose = this.eosesSeen.size / connectedRelaysWithFilters.length;
 
             this.debug("Percentage of relays that have sent EOSE", {
                 subId: this.subId,
@@ -988,8 +943,7 @@ export class NDKSubscription extends EventEmitter<{
 
             // If less than 2 and 50% of relays have EOSEd don't add a timeout yet
             if (this.eosesSeen.size >= 2 && percentageOfRelaysThatHaveSentEose >= 0.5) {
-                timeToWaitForNextEose =
-                    timeToWaitForNextEose * (1 - percentageOfRelaysThatHaveSentEose);
+                timeToWaitForNextEose = timeToWaitForNextEose * (1 - percentageOfRelaysThatHaveSentEose);
 
                 if (timeToWaitForNextEose === 0) {
                     performEose("time to wait was 0");
@@ -999,9 +953,7 @@ export class NDKSubscription extends EventEmitter<{
                 if (this.eoseTimeout) clearTimeout(this.eoseTimeout);
 
                 const sendEoseTimeout = () => {
-                    lastEventSeen = this.lastEventReceivedAt
-                        ? Date.now() - this.lastEventReceivedAt
-                        : undefined;
+                    lastEventSeen = this.lastEventReceivedAt ? Date.now() - this.lastEventReceivedAt : undefined;
 
                     // If we have seen an event in the past 20ms don't emit an EOSE due to a timeout, events
                     // are still being received

@@ -120,11 +120,7 @@ export class TestEventFactory {
      * @param kind The kind of the event (defaults to 1)
      * @returns The signed event
      */
-    async createSignedTextNote(
-        content: string,
-        user: NDKUser | Names | undefined,
-        kind = 1,
-    ): Promise<any> {
+    async createSignedTextNote(content: string, user: NDKUser | Names | undefined, kind = 1): Promise<any> {
         let pubkey: string;
         let signer: NDKPrivateKeySigner;
 
@@ -154,11 +150,7 @@ export class TestEventFactory {
      * @param toUser The recipient
      * @returns The created event (not necessarily signed)
      */
-    async createDirectMessage(
-        content: string,
-        fromUser: NDKUser | Names,
-        toUser: NDKUser | Names,
-    ): Promise<any> {
+    async createDirectMessage(content: string, fromUser: NDKUser | Names, toUser: NDKUser | Names): Promise<any> {
         let fromPubkey: string;
         let toPubkey: string;
 
@@ -196,12 +188,7 @@ export class TestEventFactory {
      * @param kind The kind of the reply (defaults to same as original for kind 1, or 1111 for other kinds)
      * @returns The created reply event (not necessarily signed)
      */
-    async createReply(
-        originalEvent: any,
-        content: string,
-        fromUser: NDKUser | Names,
-        kind?: number,
-    ): Promise<any> {
+    async createReply(originalEvent: any, content: string, fromUser: NDKUser | Names, kind?: number): Promise<any> {
         let fromPubkey: string;
 
         if (typeof fromUser === "string") {

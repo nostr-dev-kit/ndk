@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { NDKCacheAdapterSqliteWasm } from "../src/index";
 import NDK, { NDKEvent, NDKKind, NDKSubscriptionCacheUsage } from "@nostr-dev-kit/ndk";
+import { beforeEach, describe, expect, it } from "vitest";
+import { NDKCacheAdapterSqliteWasm } from "../src/index";
 
 describe("Worker mode test", () => {
     let cache: NDKCacheAdapterSqliteWasm;
@@ -39,7 +39,7 @@ describe("Worker mode test", () => {
         const events1 = await ndk.fetchEvents([{ kinds: [NDKKind.CashuToken] }], {
             cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE,
         });
-        
+
         console.log("Worker mode events1.size:", events1.size);
         expect(events1.size).toBe(1);
     });

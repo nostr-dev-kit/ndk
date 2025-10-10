@@ -175,7 +175,7 @@ describe("relay tracking", () => {
 
                 // Verify that onRelays returns all relays (with normalized URLs)
                 const onRelays = retrievedEvent.onRelays;
-                const relayUrls = onRelays.map(r => r.url);
+                const relayUrls = onRelays.map((r) => r.url);
 
                 expect(relayUrls).toContain("ws://relay1.com/");
                 expect(relayUrls).toContain("ws://relay2.com/");

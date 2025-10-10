@@ -94,11 +94,7 @@ export class NDKNutzap extends NDKEvent {
             }
 
             // Handle non-array case
-            if (
-                typeof payload === "object" &&
-                payload !== null &&
-                typeof payload[1]?.data === "string"
-            ) {
+            if (typeof payload === "object" && payload !== null && typeof payload[1]?.data === "string") {
                 return payload[1].data;
             }
         } catch (e) {
@@ -115,6 +111,7 @@ export class NDKNutzap extends NDKEvent {
      */
     get p2pk(): string | undefined {
         const rawP2pk = this.rawP2pk;
+        // biome-ignore lint/suspicious/useGetterReturn: <should return>
         if (!rawP2pk) return;
         return rawP2pk.startsWith("02") ? rawP2pk.slice(2) : rawP2pk;
     }
@@ -138,8 +135,7 @@ export class NDKNutzap extends NDKEvent {
 
     set unit(value: string | undefined) {
         this.removeTag("unit");
-        if (value?.startsWith("msat"))
-            throw new Error("msat is not allowed, use sat denomination instead");
+        if (value?.startsWith("msat")) throw new Error("msat is not allowed, use sat denomination instead");
         if (value) this.tag(["unit", value]);
     }
 

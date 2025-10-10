@@ -7,7 +7,11 @@ import type { NDKCacheAdapterSqliteWasm } from "../index";
  * Merges metadata field with existing data.
  * Supports both worker and direct database modes.
  */
-export async function updateRelayStatus(this: NDKCacheAdapterSqliteWasm, relayUrl: string, info: NDKCacheRelayInfo): Promise<void> {
+export async function updateRelayStatus(
+    this: NDKCacheAdapterSqliteWasm,
+    relayUrl: string,
+    info: NDKCacheRelayInfo,
+): Promise<void> {
     const createStmt = `
         CREATE TABLE IF NOT EXISTS relay_status (
             url TEXT PRIMARY KEY,

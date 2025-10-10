@@ -41,7 +41,7 @@ export function updateRelayStatus(this: NDKCacheAdapterSqlite, relayUrl: string,
             info.lastFailureAt ?? existing?.lastFailureAt ?? null,
             info.nip11 ? JSON.stringify(info.nip11.data) : existing?.nip11 ? JSON.stringify(existing.nip11.data) : null,
             info.nip11?.fetchedAt ?? existing?.nip11?.fetchedAt ?? null,
-            Object.keys(mergedMetadata).length > 0 ? JSON.stringify(mergedMetadata) : null
+            Object.keys(mergedMetadata).length > 0 ? JSON.stringify(mergedMetadata) : null,
         );
     } catch (e) {
         console.error("Error updating relay status:", e);

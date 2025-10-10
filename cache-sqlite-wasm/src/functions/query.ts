@@ -1,7 +1,7 @@
 import { matchFilter, NDKEvent, type NDKFilter, type NDKSubscription } from "@nostr-dev-kit/ndk";
 import type { NDKCacheAdapterSqliteWasm } from "../index";
-import { type EventRelay } from "./getEventRelays";
 import type { QueryExecResult } from "../types";
+import type { EventRelay } from "./getEventRelays";
 
 /**
  * Utility to normalize DB rows from `{ columns, values }` to array of objects.

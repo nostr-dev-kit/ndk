@@ -1,11 +1,14 @@
-import { NDKEvent, type NDKEventId, deserialize } from "@nostr-dev-kit/ndk";
+import { deserialize, NDKEvent, type NDKEventId } from "@nostr-dev-kit/ndk";
 import type { NDKCacheAdapterSqliteWasm } from "../index";
 
 /**
  * Retrieves a decrypted event by ID from the SQLite WASM database.
  * Supports both worker and direct database modes.
  */
-export async function getDecryptedEvent(this: NDKCacheAdapterSqliteWasm, eventId: NDKEventId): Promise<NDKEvent | null> {
+export async function getDecryptedEvent(
+    this: NDKCacheAdapterSqliteWasm,
+    eventId: NDKEventId,
+): Promise<NDKEvent | null> {
     const stmt = "SELECT event FROM decrypted_events WHERE id = ? LIMIT 1";
 
     if (this.useWorker) {
@@ -22,7 +25,7 @@ export async function getDecryptedEvent(this: NDKCacheAdapterSqliteWasm, eventId
                 const nostrEvent = deserialize(result.event);
                 return new NDKEvent(this.ndk, nostrEvent);
             } catch (e) {
-                console.error('[getDecryptedEvent] Parse error:', e);
+                console.error("[getDecryptedEvent] Parse error:", e);
                 return null;
             }
         }

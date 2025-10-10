@@ -73,9 +73,7 @@ export class SignatureVerificationStats {
             stats.relayStats.sort((a, b) => a.url.localeCompare(b.url));
 
             stats.relayStats.forEach((relayStat) => {
-                console.log(
-                    `\n  ${relayStat.url} ${relayStat.connected ? "(connected)" : "(disconnected)"}`,
-                );
+                console.log(`\n  ${relayStat.url} ${relayStat.connected ? "(connected)" : "(disconnected)"}`);
                 console.log(`    Validated Events: ${relayStat.validatedCount}`);
                 console.log(`    Non-validated Events: ${relayStat.nonValidatedCount}`);
                 console.log(`    Total Events: ${relayStat.totalEvents}`);
@@ -145,10 +143,7 @@ export class SignatureVerificationStats {
  * @param intervalMs - How often to print stats (in milliseconds)
  * @returns The created SignatureVerificationStats instance
  */
-export function startSignatureVerificationStats(
-    ndk: NDK,
-    intervalMs = 10000,
-): SignatureVerificationStats {
+export function startSignatureVerificationStats(ndk: NDK, intervalMs = 10000): SignatureVerificationStats {
     const stats = new SignatureVerificationStats(ndk, intervalMs);
     stats.start();
     return stats;

@@ -2,9 +2,9 @@ import initSqlJs from "sql.js";
 import { loadFromIndexedDB, saveToIndexedDB } from "./db/indexeddb-utils";
 import { runMigrations } from "./db/migrations";
 import { getCacheStatsSync } from "./functions/getCacheStats";
+import { querySync } from "./functions/query";
 import { setEventSync } from "./functions/setEvent";
 import { setEventDupSync } from "./functions/setEventDup";
-import { querySync } from "./functions/query";
 
 let db: any = null;
 let SQL: any = null;

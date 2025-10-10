@@ -43,15 +43,12 @@
         "blossom",
         "cache-sqlite-wasm",
         "svelte/examples/component-browser",
-        "svelte/examples/constellation",
         "svelte/examples/event-graph",
-        "svelte/examples/nip61-viewer",
+        "svelte/examples/feed-viewer",
         "svelte/examples/nutsack",
-        "svelte/examples/relay-manager",
         "svelte/examples/sessions-demo",
-        "svelte/examples/sig-verify-demo",
-        "svelte/examples/wot-demo",
-        "svelte/templates/basic"
+        "projects/Voces",
+        "projects/solidjs"
     ],
     "engines": {
         "node": ">=16.0"
@@ -63,6 +60,7 @@
     },
     "dependencies": {
         "@biomejs/biome": "^2.2.5",
+        "esbuild": "^0.25.10",
         "mermaid": "^11.6.0",
         "vitepress": "^1.6.3",
         "vitepress-plugin-mermaid": "^2.0.17"

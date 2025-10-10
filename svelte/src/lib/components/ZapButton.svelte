@@ -33,7 +33,8 @@
 <button
 	onclick={handleZap}
 	disabled={zapping || isZapped.value}
-	class="zap-button {className ?? ''}"
+	class="zap-button"
+	class:custom={className}
 	class:zapped={isZapped.value}
 >
 	{#if zapping}

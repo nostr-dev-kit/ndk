@@ -182,8 +182,8 @@
   const isReaction = $derived(fetchedEvent && fetchedEvent.kind === 7);
 
   // Get reaction content
-  const reactionContent = $derived(() => {
-    if (!isReaction || !fetchedEvent) return '';
+  const reactionContent = $derived.by(() => {
+    if (!isReaction || !fetchedEvent) return { type: 'text', content: '' };
 
     // Check for custom emoji reaction
     const emojiTag = fetchedEvent.tags.find(t => t[0] === 'emoji');
@@ -209,7 +209,7 @@
   {:else if fetchedEvent}
     {#if isReaction}
       <!-- Reaction display -->
-      {@const reaction = reactionContent()}
+      {@const reaction = reactionContent}
       <div class="reaction-content">
         {#if reaction.type === 'emoji'}
           <img src={reaction.url} alt={reaction.name} class="reaction-emoji" />

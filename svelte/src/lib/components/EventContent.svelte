@@ -151,7 +151,6 @@
             <iframe
               src={`https://www.youtube.com/embed/${videoId}`}
               title="YouTube video"
-              frameborder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowfullscreen
               class="youtube-embed"

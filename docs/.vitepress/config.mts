@@ -10,7 +10,7 @@ export default defineConfig({
         // https://vitepress.dev/reference/default-theme-config
         nav: [
             { text: "Home", link: "/" },
-            { text: "API Reference", link: "/api/", target: "_blank" },
+            // { text: "API Reference", link: "/api/", target: "_blank" },
             { text: "Code Snippets", link: "/snippets/" },
             { text: "Wiki", link: "https://wikifreedia.xyz/?c=NDK", target: "_blank" },
         ],

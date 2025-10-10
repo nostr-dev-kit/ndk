@@ -126,8 +126,8 @@ export async function syncAndSubscribe(
                 try {
                     const events = await this.fetchEvents(filterArray, {
                         relaySet: new NDKRelaySet(new Set([relay]), this),
-                        subId: 'sync-fetch-fallback',
-                        groupable: false
+                        subId: "sync-fetch-fallback",
+                        groupable: false,
                     });
 
                     opts.onRelaySynced?.(relay, events.size);

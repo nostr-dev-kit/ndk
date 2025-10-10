@@ -89,7 +89,6 @@ describe("NDK Sync Package", () => {
                 autoFetch: true,
                 frameSizeLimit: 50000,
                 timeout: 30000,
-                skipCache: false,
                 relayUrls: ["wss://relay.damus.io"],
                 onRelayError: (relay, error) => {
                     console.error("Relay error:", relay.url, error.message);

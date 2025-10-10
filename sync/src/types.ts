@@ -39,12 +39,6 @@ export interface NDKSyncOptions {
     timeout?: number;
 
     /**
-     * Skip saving synced events to cache.
-     * @default false
-     */
-    skipCache?: boolean;
-
-    /**
      * Callback for relay errors during sync.
      * Useful for debugging and monitoring.
      * Can be async to perform operations like cache updates.

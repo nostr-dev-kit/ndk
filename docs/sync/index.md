@@ -103,11 +103,10 @@ interface NDKSyncOptions {
   // Relay selection
   relaySet?: NDKRelaySet;      // Explicit relay set
   relayUrls?: string[];         // Or relay URLs
-  
+
   // Behavior
   autoFetch?: boolean;          // Auto-fetch events (default: true)
   frameSizeLimit?: number;      // Message size limit (default: 50000)
-  skipCache?: boolean;          // Don't save to cache (default: false)
 }
 ```
 

@@ -167,8 +167,7 @@ if (result.need.size > 100) {
 ```typescript
 // Good for background sync to populate cache
 await sync.sync(filters, {
-  autoFetch: true,  // Fetch and cache events
-  skipCache: false  // Save to cache (default)
+  autoFetch: true  // Fetch and cache events
 });
 
 // Later, subscriptions will be instant from cache
@@ -287,7 +286,6 @@ interface NDKSyncOptions {
   // Behavior
   autoFetch?: boolean;            // Auto-fetch events (default: true)
   frameSizeLimit?: number;        // Message size limit (default: 50000)
-  skipCache?: boolean;            // Don't save to cache (default: false)
 }
 ```
 

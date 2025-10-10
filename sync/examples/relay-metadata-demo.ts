@@ -85,7 +85,9 @@ async function main() {
     const relayStatus = await cacheAdapter.getRelayStatus(RELAY_URL);
     if (relayStatus) {
         console.log("\n📊 Cached Relay Status:");
-        console.log(`   Last Connected: ${relayStatus.lastConnectedAt ? new Date(relayStatus.lastConnectedAt).toISOString() : "never"}`);
+        console.log(
+            `   Last Connected: ${relayStatus.lastConnectedAt ? new Date(relayStatus.lastConnectedAt).toISOString() : "never"}`,
+        );
         console.log(`   Consecutive Failures: ${relayStatus.consecutiveFailures || 0}`);
 
         if (relayStatus.nip11) {
@@ -98,7 +100,9 @@ async function main() {
         if (relayStatus.metadata?.sync) {
             console.log(`\n   Sync Package Metadata:`);
             console.log(`     Supports Negentropy: ${relayStatus.metadata.sync.supportsNegentropy ?? "unknown"}`);
-            console.log(`     Last Checked: ${relayStatus.metadata.sync.lastChecked ? new Date(relayStatus.metadata.sync.lastChecked as number).toISOString() : "never"}`);
+            console.log(
+                `     Last Checked: ${relayStatus.metadata.sync.lastChecked ? new Date(relayStatus.metadata.sync.lastChecked as number).toISOString() : "never"}`,
+            );
             if (relayStatus.metadata.sync.lastError) {
                 console.log(`     Last Error: ${relayStatus.metadata.sync.lastError}`);
             }

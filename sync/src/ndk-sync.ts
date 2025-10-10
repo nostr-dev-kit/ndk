@@ -148,8 +148,8 @@ async function syncWithRelay(
             const events = await fetchNeededEvents.call(this, relay, need);
             result.events.push(...events);
 
-            // Save to cache unless skipCache is set
-            if (!opts.skipCache && this.cacheAdapter) {
+            // Save to cache
+            if (this.cacheAdapter) {
                 await saveFetchedEventsToCache.call(this, events, filterArray, relay);
             }
         }

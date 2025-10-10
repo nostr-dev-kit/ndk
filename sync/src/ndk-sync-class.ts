@@ -196,13 +196,6 @@ export class NDKSync {
             groupable: false,
         });
 
-        // Save to cache if not skipping and autoFetch enabled (default true)
-        if (!opts.skipCache && opts.autoFetch !== false && this.ndk.cacheAdapter) {
-            for (const event of events) {
-                await this.ndk.cacheAdapter.setEvent(event, filters, relay);
-            }
-        }
-
         // Convert Set<NDKEvent> to NDKSyncResult format
         return {
             events: Array.from(events),

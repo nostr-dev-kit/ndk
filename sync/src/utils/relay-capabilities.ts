@@ -26,9 +26,7 @@ import { fetchRelayInformation } from "@nostr-dev-kit/ndk";
  */
 export async function supportsNegentropy(relay: NDKRelay | string): Promise<boolean> {
     try {
-        const info = typeof relay === "string"
-            ? await fetchRelayInformation(relay)
-            : await relay.fetchInfo();
+        const info = typeof relay === "string" ? await fetchRelayInformation(relay) : await relay.fetchInfo();
         return info.supported_nips?.includes(77) ?? false;
     } catch (_error) {
         // If we can't fetch relay info, assume no support
@@ -83,9 +81,7 @@ export async function getRelayCapabilities(relay: NDKRelay | string): Promise<Re
     const relayUrl = typeof relay === "string" ? relay : relay.url;
 
     try {
-        const info = typeof relay === "string"
-            ? await fetchRelayInformation(relay)
-            : await relay.fetchInfo();
+        const info = typeof relay === "string" ? await fetchRelayInformation(relay) : await relay.fetchInfo();
 
         return {
             url: relayUrl,

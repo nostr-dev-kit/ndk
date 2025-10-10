@@ -1,5 +1,5 @@
-import type { NDKFilter } from "../subscription/index.js";
 import type { Debugger } from "debug";
+import type { NDKFilter } from "../subscription/index.js";
 
 /**
  * Filter validation modes for NDK subscriptions.

@@ -1,24 +1,24 @@
 import type { NDKEvent } from "./index.js";
 import { NDKArticle } from "./kinds/article.js";
+import { NDKBlossomList } from "./kinds/blossom-list.js";
 import { NDKCashuToken } from "./kinds/cashu/token.js";
+import { NDKDraft } from "./kinds/drafts.js";
+import { NDKFollowPack } from "./kinds/follow-pack.js";
 import { NDKHighlight } from "./kinds/highlight.js";
 import { NDKImage } from "./kinds/image.js";
 import { NDKList } from "./kinds/lists/index.js";
 import { NDKNutzap } from "./kinds/nutzap/index.js";
 import { NDKCashuMintList } from "./kinds/nutzap/mint-list.js";
+import { NDKProject } from "./kinds/project.js";
+import { NDKProjectTemplate } from "./kinds/project-template.js";
 import { NDKSimpleGroupMemberList } from "./kinds/simple-group/member-list.js";
 import { NDKSimpleGroupMetadata } from "./kinds/simple-group/metadata.js";
 import { NDKStory } from "./kinds/story.js";
 import { NDKSubscriptionTier } from "./kinds/subscriptions/tier.js";
+import { NDKTask } from "./kinds/task.js";
+import { NDKThread } from "./kinds/thread.js";
 import { NDKVideo } from "./kinds/video.js";
 import { NDKWiki } from "./kinds/wiki.js";
-import { NDKBlossomList } from "./kinds/blossom-list.js";
-import { NDKFollowPack } from "./kinds/follow-pack.js";
-import { NDKProject } from "./kinds/project.js";
-import { NDKThread } from "./kinds/thread.js";
-import { NDKDraft } from "./kinds/drafts.js";
-import { NDKTask } from "./kinds/task.js";
-import { NDKProjectTemplate } from "./kinds/project-template.js";
 
 type NDKEventClass = {
     kinds: number[];

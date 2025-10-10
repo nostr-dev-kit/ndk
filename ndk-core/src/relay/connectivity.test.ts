@@ -1,7 +1,7 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { NDKRelayConnectivity } from "./connectivity";
-import { NDKRelay, NDKRelayStatus } from "./index";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { NDK } from "../ndk";
+import { NDKRelayConnectivity } from "./connectivity";
+import { type NDKRelay, NDKRelayStatus } from "./index";
 
 // Mock WebSocket
 class MockWebSocket {
@@ -24,7 +24,7 @@ class MockWebSocket {
     }
 }
 
-// @ts-ignore
+// @ts-expect-error
 global.WebSocket = MockWebSocket as any;
 global.WebSocket.CONNECTING = 0;
 global.WebSocket.OPEN = 1;

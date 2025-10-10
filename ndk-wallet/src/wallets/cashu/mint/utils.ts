@@ -1,5 +1,5 @@
-import type { Hexpubkey, NDKEvent, NDKFilter } from "@nostr-dev-kit/ndk";
 import type NDK from "@nostr-dev-kit/ndk";
+import type { Hexpubkey, NDKEvent, NDKFilter } from "@nostr-dev-kit/ndk";
 import { NDKKind } from "@nostr-dev-kit/ndk";
 
 export type MintUrl = string;

@@ -1,12 +1,5 @@
 import type NDK from "@nostr-dev-kit/ndk";
-import {
-    type Hexpubkey,
-    type NDKEvent,
-    NDKKind,
-    type NDKSigner,
-    type NDKUser,
-    type NDKUserProfile,
-} from "@nostr-dev-kit/ndk";
+import type { Hexpubkey, NDKEvent, NDKKind, NDKSigner, NDKUser, NDKUserProfile } from "@nostr-dev-kit/ndk";
 import { useCallback, useMemo } from "react";
 import { useNDK, useNDKCurrentPubkey } from "../../ndk/hooks";
 import { useProfileValue } from "../../profiles/hooks";

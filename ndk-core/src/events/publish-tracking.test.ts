@@ -1,9 +1,8 @@
-import { NDKEvent } from "./index.js";
 import { NDK } from "../ndk/index.js";
 import { NDKRelay } from "../relay/index.js";
-import { NDKRelaySet } from "../relay/sets/index.js";
-import { NDKPublishError } from "../relay/sets/index.js";
+import { NDKPublishError, NDKRelaySet } from "../relay/sets/index.js";
 import { NDKPrivateKeySigner } from "../signers/private-key/index.js";
+import { NDKEvent } from "./index.js";
 
 describe("NDKEvent publish tracking", () => {
     let ndk: NDK;

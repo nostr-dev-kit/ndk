@@ -2,8 +2,8 @@ import type { NDK } from "../../../ndk/index.js";
 import { NDKRelay } from "../../../relay/index.js";
 import type { NDKFilter } from "../../../subscription/index.js";
 import { NDKUser } from "../../../user/index.js";
-import { NDKEvent } from "../../index.js";
 import type { NDKEventId, NDKTag, NostrEvent } from "../../index.js";
+import { NDKEvent } from "../../index.js";
 import { NDKKind } from "../index.js";
 
 export type NDKListItem = NDKRelay | NDKUser | NDKEvent;

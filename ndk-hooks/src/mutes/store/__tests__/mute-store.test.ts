@@ -1,8 +1,8 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
-import { createMockEvent, createMockMuteListEvent } from "./fixtures";
+import type { NDKEvent } from "@nostr-dev-kit/ndk";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useNDKMutes } from "../index";
 import type { MuteItemType, NDKUserMutes } from "../types";
-import type { NDKEvent } from "@nostr-dev-kit/ndk";
+import { createMockEvent, createMockMuteListEvent } from "./fixtures";
 
 // Create a mock store for testing
 const createMockStore = () => {

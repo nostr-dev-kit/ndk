@@ -1,11 +1,10 @@
-import { SCHEMA } from "./schema";
-
 /**
  * Runs all necessary database migrations.
  * Applies the schema for events, profiles, nutzap_monitor_state, decrypted_events, and unpublished_events tables.
  * @param db The SQLite WASM database instance
  */
 import type { SQLDatabase } from "../types";
+import { SCHEMA } from "./schema";
 export async function runMigrations(db: SQLDatabase): Promise<void> {
     db.exec?.(SCHEMA.events);
     db.exec?.(SCHEMA.profiles);

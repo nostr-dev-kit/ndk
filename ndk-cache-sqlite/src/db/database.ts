@@ -1,8 +1,8 @@
 import Database from "better-sqlite3";
-import { runMigrations } from "./migrations";
-import type { SQLiteDatabase, QueryExecResult } from "../types";
-import * as path from "path";
 import * as fs from "fs";
+import * as path from "path";
+import type { QueryExecResult, SQLiteDatabase } from "../types";
+import { runMigrations } from "./migrations";
 
 /**
  * Database wrapper class for better-sqlite3

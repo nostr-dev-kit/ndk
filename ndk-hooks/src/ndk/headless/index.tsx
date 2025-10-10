@@ -1,9 +1,9 @@
-import NDK, { NDKConstructorParams } from "@nostr-dev-kit/ndk";
-import { NDKSessionStorageAdapter } from "../../session/storage";
-import { useNDK, useNDKInit } from "../hooks";
+import NDK, { type NDKConstructorParams } from "@nostr-dev-kit/ndk";
 import { useEffect } from "react";
 import { useNDKSessionMonitor } from "../../session/hooks/use-ndk-session-monitor";
-import { SessionStartOptions } from "../../session/store/types";
+import type { NDKSessionStorageAdapter } from "../../session/storage";
+import type { SessionStartOptions } from "../../session/store/types";
+import { useNDK, useNDKInit } from "../hooks";
 
 interface NDKHeadlessProps {
     ndk: NDKConstructorParams;

@@ -1,4 +1,4 @@
-import { type MarkedExtension, type TokenizerAndRendererExtension, type TokensList, marked } from "marked";
+import { type MarkedExtension, marked, type TokenizerAndRendererExtension, type TokensList } from "marked";
 import markedFootnote from "marked-footnote";
 import { gfmHeadingId } from "marked-gfm-heading-id";
 import { mangle } from "marked-mangle";

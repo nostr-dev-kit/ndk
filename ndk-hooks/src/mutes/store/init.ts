@@ -1,5 +1,5 @@
-import type { NDKMutesState } from "./types";
 import type { Hexpubkey } from "@nostr-dev-kit/ndk";
+import type { NDKMutesState } from "./types";
 
 /**
  * Initializes mute data for a user in the mute store.

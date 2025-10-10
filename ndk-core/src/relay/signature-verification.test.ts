@@ -1,7 +1,7 @@
-import { describe, expect, test, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
+import { NDKEvent } from "../events/index";
 import { NDK } from "../ndk/index";
 import { NDKRelay } from "./index";
-import { NDKEvent } from "../events/index";
 
 describe("Signature Verification Sampling", () => {
     let ndk: NDK;

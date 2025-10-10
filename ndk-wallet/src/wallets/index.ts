@@ -1,5 +1,4 @@
-import type { Proof } from "@cashu/cashu-ts";
-import type { CashuWallet } from "@cashu/cashu-ts";
+import type { CashuWallet, Proof } from "@cashu/cashu-ts";
 import type NDK from "@nostr-dev-kit/ndk";
 import {
     type CashuPaymentInfo,
@@ -18,12 +17,12 @@ import {
 import { EventEmitter } from "tseep";
 import { NDKCashuWallet } from "./cashu/wallet";
 import {
+    getCashuWallet,
     type MintInfoLoadedCb,
     type MintInfoNeededCb,
     type MintInterface,
     type MintKeysLoadedCb,
     type MintKeysNeededCb,
-    getCashuWallet,
 } from "./mint";
 import { NDKNWCWallet } from "./nwc";
 

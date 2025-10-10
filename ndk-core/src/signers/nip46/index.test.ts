@@ -1,12 +1,12 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
-import { RelayMock, UserGenerator, SignerGenerator } from "../../../test";
-import { NDKNip46Signer } from "./index";
-import { NDKUser } from "../../user/index";
-import { NDKPrivateKeySigner } from "../private-key/index";
-import { NDKNostrRpc } from "./rpc";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { RelayMock, SignerGenerator, UserGenerator } from "../../../test";
+import type { NostrEvent } from "../../events/index";
 import type { NDK } from "../../ndk/index";
 import type { NDKSubscription } from "../../subscription/index";
-import type { NostrEvent } from "../../events/index";
+import { NDKUser } from "../../user/index";
+import type { NDKPrivateKeySigner } from "../private-key/index";
+import { NDKNip46Signer } from "./index";
+import type { NDKNostrRpc } from "./rpc";
 
 // Helper to create a mock NDK instance
 function createMockNDK() {

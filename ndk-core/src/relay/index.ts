@@ -10,9 +10,9 @@ import type { NDKAuthPolicy } from "./auth-policies.js";
 import { NDKRelayConnectivity } from "./connectivity.js";
 import { NDKRelayPublisher } from "./publisher.js";
 import type { NDKRelayScore } from "./score.js";
+import { SignatureVerificationStats, startSignatureVerificationStats } from "./signature-verification-stats.js";
 import { NDKRelaySubscriptionManager } from "./sub-manager.js";
 import type { NDKRelaySubscription } from "./subscription.js";
-import { SignatureVerificationStats, startSignatureVerificationStats } from "./signature-verification-stats.js";
 
 /** @deprecated Use `WebSocket['url']` instead. */
 export type NDKRelayUrl = WebSocket["url"];

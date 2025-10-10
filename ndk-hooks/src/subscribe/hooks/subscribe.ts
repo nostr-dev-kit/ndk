@@ -1,10 +1,10 @@
 import type { NDKEvent, NDKFilter, NDKSubscription } from "@nostr-dev-kit/ndk";
 import { useEffect, useRef } from "react";
 import { useStore } from "zustand";
+import { useMuteFilter } from "../../mutes/hooks/use-mute-filter";
 import { useNDK } from "../../ndk/hooks";
 import { createSubscribeStore } from "../store";
-import { useMuteFilter } from "../../mutes/hooks/use-mute-filter";
-import { UseSubscribeOptions } from ".";
+import type { UseSubscribeOptions } from ".";
 
 /**
  * React hook for subscribing to Nostr events

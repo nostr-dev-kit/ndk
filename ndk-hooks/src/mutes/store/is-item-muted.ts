@@ -1,5 +1,5 @@
-import type { NDKMutesState, MuteItemType } from "./types";
 import type { Hexpubkey } from "@nostr-dev-kit/ndk";
+import type { MuteItemType, NDKMutesState } from "./types";
 
 /**
  * Checks if an item (pubkey, event, hashtag, or word) is muted for a user.

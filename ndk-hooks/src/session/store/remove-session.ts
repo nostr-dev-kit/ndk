@@ -37,8 +37,8 @@ export const removeSession = (
         newSigners.delete(pubkey);
 
         let nextActivePubkey: Hexpubkey | undefined = current.activePubkey;
-        let nextActiveSigner: NDKSigner | undefined = undefined;
-        let ndk = current.ndk;
+        let nextActiveSigner: NDKSigner | undefined;
+        const ndk = current.ndk;
 
         if (wasActive) {
             // Find the remaining session with the most recent lastActive time

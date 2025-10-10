@@ -1,5 +1,5 @@
-import { Hexpubkey } from "@nostr-dev-kit/ndk";
-import { StoredSession } from "../hooks/use-ndk-session-monitor";
+import type { Hexpubkey } from "@nostr-dev-kit/ndk";
+import type { StoredSession } from "../hooks/use-ndk-session-monitor";
 
 // Storage keys
 const SESSIONS_STORE_KEY = "ndk-saved-sessions";

@@ -1,13 +1,13 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
+import { NDK } from "../ndk/index.js";
 import {
-    NDKEvent,
-    isSignedEvent,
-    isUnsignedEvent,
     assertSignedEvent,
     createSignedEvent,
+    isSignedEvent,
+    isUnsignedEvent,
+    NDKEvent,
     type NDKSignedEvent,
 } from "./index.js";
-import { NDK } from "../ndk/index.js";
 
 describe("NDKEvent signed/unsigned type system", () => {
     const ndk = new NDK();

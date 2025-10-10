@@ -1,17 +1,17 @@
-import { create } from "zustand";
-import type { Hexpubkey, NDKEvent } from "@nostr-dev-kit/ndk";
-import type { NDKMutesState, NDKUserMutes, MuteableItem } from "./types";
-import { initMutes } from "./init";
-import { loadMuteList } from "./load";
-import { mute } from "./mute";
-import { unmute } from "./unmute";
-import { setActivePubkey } from "./set-active-pubkey";
-import { addExtraMuteItems } from "./add-extra-mute-items";
-
 /**
  * Create the mute store
  */
-import NDK, { NDKList } from "@nostr-dev-kit/ndk";
+import type NDK from "@nostr-dev-kit/ndk";
+import type { Hexpubkey, NDKEvent } from "@nostr-dev-kit/ndk";
+import { NDKList } from "@nostr-dev-kit/ndk";
+import { create } from "zustand";
+import { addExtraMuteItems } from "./add-extra-mute-items";
+import { initMutes } from "./init";
+import { loadMuteList } from "./load";
+import { mute } from "./mute";
+import { setActivePubkey } from "./set-active-pubkey";
+import type { MuteableItem, NDKMutesState, NDKUserMutes } from "./types";
+import { unmute } from "./unmute";
 
 const mutesStateCreator = (
     set: (partial: Partial<NDKMutesState> | ((state: NDKMutesState) => Partial<NDKMutesState>)) => void,

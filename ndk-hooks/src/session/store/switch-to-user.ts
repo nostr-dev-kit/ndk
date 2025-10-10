@@ -1,6 +1,6 @@
 import type { Hexpubkey, NDKSigner } from "@nostr-dev-kit/ndk";
-import { useNDKStore } from "../../ndk/store";
 import { useNDKMutes } from "../../mutes/store";
+import { useNDKStore } from "../../ndk/store";
 import type { NDKSessionsState } from "./types";
 
 /**
@@ -22,7 +22,7 @@ export const switchToUser = (
         return;
     }
 
-    let signer: NDKSigner | undefined = undefined;
+    let signer: NDKSigner | undefined;
 
     if (pubkey !== null) {
         // Activate user
@@ -42,7 +42,7 @@ export const switchToUser = (
     // Update active pubkey and lastActive timestamp immutably
     set((state) => {
         let newSessions = state.sessions;
-        let newActivePubkey: Hexpubkey | undefined = pubkey === null ? undefined : pubkey;
+        const newActivePubkey: Hexpubkey | undefined = pubkey === null ? undefined : pubkey;
         if (pubkey) {
             const session = state.sessions.get(pubkey);
             if (session) {

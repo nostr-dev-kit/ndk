@@ -1,21 +1,19 @@
 import createDebug from "debug";
-import type { NDKTag } from "../events";
-import type { NDKEvent } from "../events";
+import { EventEmitter } from "tseep";
+import type { NDKEvent, NDKTag } from "../events";
+import { NDKNutzap } from "../events/kinds/nutzap";
 import type { NDK } from "../ndk";
+import { NDKRelaySet } from "../relay/sets";
 import type { NDKSigner } from "../signers";
 import type { Hexpubkey } from "../user";
 import { NDKUser } from "../user";
-
-import { EventEmitter } from "tseep";
-import { NDKNutzap } from "../events/kinds/nutzap";
-import { NDKRelaySet } from "../relay/sets";
 import { getRelayListForUsers } from "../utils/get-users-relay-list";
 import {
+    getNip57ZapSpecFromLud,
     type LnPaymentInfo,
     type NDKLnUrlData,
     type NDKPaymentConfirmationLN,
     type NDKZapConfirmationLN,
-    getNip57ZapSpecFromLud,
 } from "./ln";
 import { generateZapRequest } from "./nip57";
 import type { CashuPaymentInfo, NDKPaymentConfirmationCashu, NDKZapConfirmationCashu } from "./nip61";

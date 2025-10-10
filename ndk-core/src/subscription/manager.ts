@@ -1,4 +1,4 @@
-import { type VerifiedEvent, matchFilters } from "nostr-tools";
+import { matchFilters, type VerifiedEvent } from "nostr-tools";
 import type { NDKEventId, NostrEvent } from "../events/index.js";
 import type { NDKRelay } from "../relay/index.js";
 import type { NDKSubscription } from "./index.js";

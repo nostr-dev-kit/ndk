@@ -1,10 +1,10 @@
-import type { NDKMutesState } from "./types";
+import type NDK from "@nostr-dev-kit/ndk";
 import type { Hexpubkey } from "@nostr-dev-kit/ndk";
-import { initMutes } from "./init";
+import { NDKEvent, NDKKind, NDKList } from "@nostr-dev-kit/ndk";
 import { computeMuteCriteria } from "../utils/compute-mute-criteria";
-import NDK, { NDKEvent, NDKKind, NDKList } from "@nostr-dev-kit/ndk";
-import type { MuteableItem } from "./types";
 import { identifyMuteItem } from "../utils/identify-mute-item";
+import { initMutes } from "./init";
+import type { MuteableItem, NDKMutesState } from "./types";
 
 export function newMuteList(ndk: NDK) {
     const list = new NDKList(ndk);

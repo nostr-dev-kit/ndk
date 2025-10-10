@@ -1,7 +1,7 @@
 import { CashuMint, CashuWallet } from "@cashu/cashu-ts";
 import type { LnPaymentInfo } from "@nostr-dev-kit/ndk";
-import type { NDKWebLNWallet } from ".";
 import type { NutPayment } from "../cashu/pay/nut";
+import type { NDKWebLNWallet } from ".";
 
 export class NDKLnPay {
     public wallet: NDKWebLNWallet;

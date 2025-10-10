@@ -1,6 +1,8 @@
 import type NDK from "@nostr-dev-kit/ndk";
 import {
+    deserialize,
     type Hexpubkey,
+    matchFilter,
     type NDKCacheAdapter,
     type NDKCacheEntry,
     NDKEvent,
@@ -11,8 +13,6 @@ import {
     type NDKRelay,
     type NDKSubscription,
     type NDKUserProfile,
-    deserialize,
-    matchFilter,
     profileFromEvent,
 } from "@nostr-dev-kit/ndk";
 import * as SQLite from "expo-sqlite";

@@ -1,6 +1,5 @@
+import { deserialize, matchFilter, NDKEvent, type NDKFilter, type NDKSubscription } from "@nostr-dev-kit/ndk";
 import type { NDKCacheAdapterSqliteWasm } from "../index";
-import { NDKEvent, NDKSubscription, NDKFilter } from "@nostr-dev-kit/ndk";
-import { deserialize, matchFilter } from "@nostr-dev-kit/ndk";
 
 import type { QueryExecResult } from "../types";
 

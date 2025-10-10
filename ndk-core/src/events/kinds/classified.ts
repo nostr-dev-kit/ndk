@@ -1,8 +1,7 @@
 import type { NDK } from "../../ndk/index.js";
 import type { ContentTag } from "../content-tagger.js";
+import type { NDKTag, NostrEvent } from "../index.js";
 import { NDKEvent } from "../index.js";
-import type { NostrEvent } from "../index.js";
-import type { NDKTag } from "../index.js";
 import { NDKKind } from "./index.js";
 
 interface NDKClassifiedPriceTag {

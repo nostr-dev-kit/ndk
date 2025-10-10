@@ -1,9 +1,9 @@
-import type { NDKUser } from ".";
 import type { NostrEvent } from "../events";
 import { NDKEvent } from "../events";
 import { NDKKind } from "../events/kinds";
 import NDKList from "../events/kinds/lists";
 import { NDKSubscriptionCacheUsage } from "../subscription";
+import type { NDKUser } from ".";
 
 /**
  * Pins an event

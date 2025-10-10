@@ -1,4 +1,4 @@
-import type { Database, Statement, RunResult } from "better-sqlite3";
+import type { Database, RunResult, Statement } from "better-sqlite3";
 
 export interface NDKCacheAdapterSqliteOptions {
     dbPath?: string;

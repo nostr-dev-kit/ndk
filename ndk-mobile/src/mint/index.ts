@@ -5,7 +5,6 @@
  * with SQLite persistence.
  */
 
-export * from "./mint-methods.js";
-
 // Re-export Cashu types for convenience
-export type { MintInfoResponse, StoredMintInfo, MintKeys, StoredMintKeys } from "../types/cashu.js";
+export type { MintInfoResponse, MintKeys, StoredMintInfo, StoredMintKeys } from "../types/cashu.js";
+export * from "./mint-methods.js";

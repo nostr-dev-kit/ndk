@@ -1,23 +1,24 @@
-import React, { useEffect, useState, useRef } from "react";
-import { createRoot } from "react-dom/client";
+import { NDKEvent } from "@nostr-dev-kit/ndk";
+import NDKBlossom from "@nostr-dev-kit/ndk-blossom";
 import NDK, {
-    useNDKInit,
     NDKNip07Signer,
     NDKPrivateKeySigner,
     NDKSessionLocalStorage,
     useAvailableSessions,
-    useNDKSessionSwitch,
+    useCurrentUserProfile,
     useNDK,
-    useNDKCurrentUser,
     useNDKCurrentPubkey,
-    useNDKSessionMonitor,
+    useNDKCurrentUser,
+    useNDKInit,
     useNDKSessionLogin,
     useNDKSessionLogout,
-    useCurrentUserProfile,
+    useNDKSessionMonitor,
     useNDKSessionSessions,
+    useNDKSessionSwitch,
 } from "@nostr-dev-kit/ndk-hooks";
-import { NDKEvent } from "@nostr-dev-kit/ndk";
-import NDKBlossom from "@nostr-dev-kit/ndk-blossom";
+import type React from "react";
+import { useEffect, useRef, useState } from "react";
+import { createRoot } from "react-dom/client";
 
 // Initialize NDK outside of any component
 const ndkInstance = new NDK({

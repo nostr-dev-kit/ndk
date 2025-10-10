@@ -1,6 +1,5 @@
-import { TestFixture } from "../../test";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { NDKEvent, type NostrEvent } from ".";
+import { TestFixture } from "../../test";
 import type { NDKCacheAdapter } from "../cache";
 import { NDK } from "../ndk";
 import type { NDKSigner } from "../signers";
@@ -8,6 +7,7 @@ import { NDKNip07Signer } from "../signers/nip07";
 import { NDKNip46Signer } from "../signers/nip46";
 import { NDKPrivateKeySigner } from "../signers/private-key";
 import { NDKUser } from "../user";
+import { NDKEvent, type NostrEvent } from ".";
 import * as giftWrappingModule from "./gift-wrapping";
 import { NDKKind } from "./kinds";
 
@@ -249,7 +249,7 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
         const message = await fixture.eventFactory.createDirectMessage("hello world", "alice", "bob");
         message.kind = 14; // Override kind to match test requirements
 
-        /** @ts-ignore */
+        /** @ts-expect-error */
         globalThis.window = {
             ...globalThis.window,
             nostr: {
@@ -297,7 +297,7 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
         const message = await fixture.eventFactory.createDirectMessage("hello world", "alice", "bob");
         message.kind = 14; // Override kind to match test requirements
 
-        /** @ts-ignore */
+        /** @ts-expect-error */
         globalThis.window = {
             ...globalThis.window,
             nostr: {

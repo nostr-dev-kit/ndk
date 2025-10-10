@@ -1,4 +1,4 @@
-import { SHA256Calculator } from "../types";
+import type { SHA256Calculator } from "../types";
 
 /**
  * Default implementation of SHA256 calculator

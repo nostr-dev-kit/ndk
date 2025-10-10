@@ -1,8 +1,8 @@
-import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { RelayMock } from "../../../test/mocks/relay-mock.js";
 import { NDK } from "../../ndk/index.js";
 import { NDKRelay, NDKRelayStatus } from "../index.js";
 import { NDKRelaySet } from "../sets/index.js";
-import { RelayMock } from "../../../test/mocks/relay-mock.js";
 
 describe("NDKPool", () => {
     it("refuses connecting to blacklisted relays", async () => {

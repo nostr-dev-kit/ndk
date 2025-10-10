@@ -1,5 +1,5 @@
 import type { NDKTag } from "../events";
-import { type NDKImetaTag, imetaTagToTag, mapImetaTag } from "./imeta";
+import { imetaTagToTag, mapImetaTag, type NDKImetaTag } from "./imeta";
 
 describe("mapImetaTag", () => {
     test("should map a single key-value pair correctly", () => {

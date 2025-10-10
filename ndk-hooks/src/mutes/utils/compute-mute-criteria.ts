@@ -1,4 +1,4 @@
-import type { NDKUserMutes, MuteCriteria } from "../store/types";
+import type { MuteCriteria, NDKUserMutes } from "../store/types";
 
 /**
  * Combines two mute sources (user mutes and extra mutes) into a single MuteCriteria.

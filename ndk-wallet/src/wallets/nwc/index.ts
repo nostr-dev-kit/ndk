@@ -23,7 +23,7 @@ import {
     NDKWalletStatus,
     type NDKWalletTypes,
 } from "../index.js";
-import { MintInterface, getCashuWallet } from "../mint.js";
+import { getCashuWallet, MintInterface } from "../mint.js";
 import { redeemNutzaps } from "./nutzap.js";
 import { sendReq } from "./req.js";
 import type {
@@ -33,6 +33,7 @@ import type {
     NDKNWCResponseBase,
     NDKNWCResponseMap,
 } from "./types.js";
+
 const d = createDebug("ndk-wallet:nwc");
 
 export type NDKNWCWalletEvents = NDKWalletEvents & {

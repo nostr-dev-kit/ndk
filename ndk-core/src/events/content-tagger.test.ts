@@ -1,5 +1,5 @@
 import { generateContentTags } from "./content-tagger";
-import type { NDKTag, ContentTaggingOptions, NDKEvent } from "./index.js";
+import type { ContentTaggingOptions, NDKEvent, NDKTag } from "./index.js";
 
 describe("await generateContentTags", () => {
     it("doesnt retag events that were quoted", async () => {

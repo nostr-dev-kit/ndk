@@ -1,6 +1,6 @@
+import type { NDKEvent } from "../events";
 import type { NDKRelay } from ".";
 import { NDKRelayStatus } from ".";
-import type { NDKEvent } from "../events";
 
 export class NDKRelayPublisher {
     private ndkRelay: NDKRelay;

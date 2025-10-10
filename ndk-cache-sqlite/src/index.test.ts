@@ -1,8 +1,7 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { NDKCacheAdapterSqlite } from "./index";
-import { NDKEvent, NDKSubscription, NDKFilter } from "@nostr-dev-kit/ndk";
-import NDK from "@nostr-dev-kit/ndk";
+import NDK, { NDKEvent, type NDKFilter, NDKSubscription } from "@nostr-dev-kit/ndk";
 import * as fs from "fs";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { NDKCacheAdapterSqlite } from "./index";
 
 describe("NDKCacheAdapterSqlite", () => {
     let adapter: NDKCacheAdapterSqlite;

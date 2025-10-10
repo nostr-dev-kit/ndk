@@ -15,7 +15,7 @@ import { NDKKind } from "./kinds/index.js";
 import { encode } from "./nip19.js";
 import type { NIP73EntityType } from "./nip73.js";
 import { repost } from "./repost.js";
-import { type NDKEventSerialized, deserialize, serialize } from "./serializer.js";
+import { deserialize, type NDKEventSerialized, serialize } from "./serializer.js";
 import { getEventHash, validate, verifySignature } from "./validation.js";
 
 const skipClientTagOnKinds = new Set([

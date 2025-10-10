@@ -1,4 +1,4 @@
-import { type NDKNutzap, cashuPubkeyToNostrPubkey, proofP2pk } from "@nostr-dev-kit/ndk";
+import { cashuPubkeyToNostrPubkey, type NDKNutzap, proofP2pk } from "@nostr-dev-kit/ndk";
 import type { NDKNutzapMonitor } from ".";
 
 export type GroupedNutzaps = {

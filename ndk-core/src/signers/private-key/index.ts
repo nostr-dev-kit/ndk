@@ -1,8 +1,6 @@
-import type { UnsignedEvent } from "nostr-tools";
-import { finalizeEvent, generateSecretKey, getPublicKey, nip04, nip44 } from "nostr-tools";
-
 import { bytesToHex, hexToBytes } from "@noble/hashes/utils";
-import { nip19 } from "nostr-tools";
+import type { UnsignedEvent } from "nostr-tools";
+import { finalizeEvent, generateSecretKey, getPublicKey, nip04, nip19, nip44 } from "nostr-tools";
 import type { NostrEvent } from "../../events/index.js";
 import type { NDK } from "../../ndk/index.js";
 import type { NDKEncryptionScheme } from "../../types.js";

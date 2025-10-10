@@ -1,11 +1,10 @@
-import { NDKKind } from ".";
-import type { NostrEvent } from "..";
-import { NDKEvent } from "..";
 import type { NDK } from "../../ndk";
 import type { NDKImetaTag } from "../../utils/imeta";
-import { imetaTagToTag } from "../../utils/imeta";
-import { mapImetaTag } from "../../utils/imeta";
+import { imetaTagToTag, mapImetaTag } from "../../utils/imeta";
+import type { NostrEvent } from "..";
+import { NDKEvent } from "..";
 import type { ContentTag } from "../content-tagger";
+import { NDKKind } from ".";
 
 /**
  * Represents a horizontal or vertical video.

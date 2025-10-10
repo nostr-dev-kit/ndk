@@ -1,5 +1,5 @@
-import { useCallback, useMemo } from "react";
 import type { Hexpubkey, NDKEvent } from "@nostr-dev-kit/ndk";
+import { useCallback, useMemo } from "react";
 import { isMuted } from "../../utils/mute";
 import type { MuteCriteria } from "../store/types";
 import { useActiveMuteCriteria } from "./use-mute-criteria";

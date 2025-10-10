@@ -1,6 +1,6 @@
 import type { NDK } from "../../ndk/index.js";
 import type { NDKUser } from "../../user/index.js";
-import { type NDKImetaTag, imetaTagToTag, mapImetaTag } from "../../utils/imeta.js";
+import { imetaTagToTag, mapImetaTag, type NDKImetaTag } from "../../utils/imeta.js";
 import type { ContentTag } from "../content-tagger.js";
 import { NDKEvent, type NDKTag, type NostrEvent } from "../index.js";
 import { NDKKind } from "./index.js";

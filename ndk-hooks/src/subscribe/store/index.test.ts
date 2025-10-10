@@ -1,6 +1,6 @@
-import { describe, it, expect, vi } from "vitest";
-import { createSubscribeStore } from "./index";
 import type { NDKEvent, NDKFilter } from "@nostr-dev-kit/ndk";
+import { describe, expect, it, vi } from "vitest";
+import { createSubscribeStore } from "./index";
 
 // Mock the matchFilter function
 vi.mock("@nostr-dev-kit/ndk", () => ({

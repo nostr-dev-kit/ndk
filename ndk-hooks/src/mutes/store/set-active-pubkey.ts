@@ -1,6 +1,6 @@
-import type { NDKMutesState } from "./types";
 import type { Hexpubkey } from "@nostr-dev-kit/ndk";
 import { computeMuteCriteria } from "../utils/compute-mute-criteria";
+import type { NDKMutesState } from "./types";
 
 /**
  * Sets the active pubkey for mute operations in the mute store.

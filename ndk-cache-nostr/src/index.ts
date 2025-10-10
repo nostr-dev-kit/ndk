@@ -1,16 +1,16 @@
-import {
+import type { NDKEvent, NDKSubscription } from "@nostr-dev-kit/ndk";
+import NDK, {
     type NDKCacheAdapter,
     NDKCacheRelayInfo,
     type NDKFilter,
     type NDKKind,
     NDKLnUrlData,
+    type NDKRelay,
     NDKRelaySet,
     NDKUserProfile,
     NostrEvent,
     ProfilePointer,
 } from "@nostr-dev-kit/ndk";
-import NDK, { type NDKRelay } from "@nostr-dev-kit/ndk";
-import type { NDKEvent, NDKSubscription } from "@nostr-dev-kit/ndk";
 import createDebugger from "debug";
 import { Queue } from "./queue";
 

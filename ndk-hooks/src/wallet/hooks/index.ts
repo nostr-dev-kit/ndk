@@ -1,11 +1,9 @@
-import type { NDKWallet } from "@nostr-dev-kit/ndk-wallet";
-import { useCallback } from "react";
-import { create } from "zustand";
-import { useNDK } from "../../ndk/hooks";
 import type { NDKCashuMintList } from "@nostr-dev-kit/ndk";
+import type { NDKWallet } from "@nostr-dev-kit/ndk-wallet";
 import { NDKNutzapMonitor, type NDKNutzapMonitorStore } from "@nostr-dev-kit/ndk-wallet";
-import { useEffect, useMemo, useState } from "react";
-import { useNDKCurrentUser } from "../../ndk/hooks";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { create } from "zustand";
+import { useNDK, useNDKCurrentUser } from "../../ndk/hooks";
 
 interface WalletHookState {
     activeWallet: NDKWallet | null;

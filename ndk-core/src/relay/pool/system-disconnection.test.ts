@@ -1,7 +1,7 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { NDKPool } from "./index";
-import { NDKRelay, NDKRelayStatus } from "../index";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { NDK } from "../../ndk";
+import { type NDKRelay, NDKRelayStatus } from "../index";
+import { NDKPool } from "./index";
 
 describe("NDKPool System-wide Disconnection Detection", () => {
     let pool: NDKPool;

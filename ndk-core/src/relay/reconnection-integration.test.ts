@@ -1,10 +1,10 @@
-import { describe, it, expect } from "bun:test";
+import { describe, expect, it } from "bun:test";
 
 describe("Reconnection Integration", () => {
     describe("Backoff calculations", () => {
         it("should use correct standard exponential backoff", () => {
             const calculateStandardBackoff = (attempt: number) => {
-                return Math.min(1000 * Math.pow(2, attempt), 30000);
+                return Math.min(1000 * 2 ** attempt, 30000);
             };
 
             expect(calculateStandardBackoff(0)).toBe(1000); // 1s
@@ -35,12 +35,12 @@ describe("Reconnection Integration", () => {
         it("should be much faster than old broken implementation", () => {
             // Old broken calculation
             const oldBrokenDelay = (attempt: number) => {
-                return Math.pow(1000 * (attempt + 1), 2);
+                return (1000 * (attempt + 1)) ** 2;
             };
 
             // New correct calculation
             const newDelay = (attempt: number) => {
-                return Math.min(1000 * Math.pow(2, attempt), 30000);
+                return Math.min(1000 * 2 ** attempt, 30000);
             };
 
             // Compare first attempt

@@ -1,11 +1,11 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
 import { type NDKEvent, NDKUser } from "@nostr-dev-kit/ndk";
-import { createMockEvent } from "../../store/__tests__/fixtures";
-import { useNDKMutes } from "../../store";
-import * as sessionStore from "../../../session/store";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import * as ndkHooks from "../../../ndk/hooks";
-import * as hooksModule from "../index";
+import * as sessionStore from "../../../session/store";
 import { isMuted } from "../../../utils/mute";
+import { useNDKMutes } from "../../store";
+import { createMockEvent } from "../../store/__tests__/fixtures";
+import * as hooksModule from "../index";
 
 // Create a mock store for testing
 const createMockStore = () => {

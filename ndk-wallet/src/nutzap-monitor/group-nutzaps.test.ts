@@ -1,4 +1,4 @@
-import { type NDKNutzap, cashuPubkeyToNostrPubkey } from "@nostr-dev-kit/ndk";
+import { cashuPubkeyToNostrPubkey, type NDKNutzap } from "@nostr-dev-kit/ndk";
 import { describe, expect, test, vi } from "vitest";
 import { GroupedNutzaps, groupNutzaps } from "./group-nutzaps";
 import { type NDKNutzapMonitor, NdkNutzapStatus } from "./index";

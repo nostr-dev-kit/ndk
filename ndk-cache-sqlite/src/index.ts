@@ -1,24 +1,23 @@
 import type { NDKCacheAdapter, NDKCacheRelayInfo } from "@nostr-dev-kit/ndk";
-import {
+import NDK, {
+    type Hexpubkey,
     NDKEvent,
     type NDKEventId,
     type NDKFilter,
-    type NDKSubscription,
     type NDKRelay,
-    type Hexpubkey,
+    type NDKSubscription,
     type NDKUserProfile,
 } from "@nostr-dev-kit/ndk";
-import type { NDKCacheAdapterSqliteOptions } from "./types";
-import { DatabaseWrapper, initializeDatabase } from "./db/database";
-import { setEvent } from "./functions/setEvent";
-import { getEvent } from "./functions/getEvent";
+import { type DatabaseWrapper, initializeDatabase } from "./db/database";
 import { fetchProfile } from "./functions/fetchProfile";
-import { saveProfile } from "./functions/saveProfile";
-import { query } from "./functions/query";
+import { getEvent } from "./functions/getEvent";
 import { getProfiles } from "./functions/getProfiles";
-import { updateRelayStatus } from "./functions/updateRelayStatus";
 import { getRelayStatus } from "./functions/getRelayStatus";
-import NDK from "@nostr-dev-kit/ndk";
+import { query } from "./functions/query";
+import { saveProfile } from "./functions/saveProfile";
+import { setEvent } from "./functions/setEvent";
+import { updateRelayStatus } from "./functions/updateRelayStatus";
+import type { NDKCacheAdapterSqliteOptions } from "./types";
 
 export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     public dbPath?: string;

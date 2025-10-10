@@ -1,7 +1,7 @@
 import type { SessionStartOptions } from "@nostr-dev-kit/ndk-hooks";
 import { useNDKSessionMonitor } from "@nostr-dev-kit/ndk-hooks";
 import { useEffect, useRef, useState } from "react";
-import { NDKSessionExpoSecureStore, migrateLegacyLogin } from "./session-storage-adapter.js";
+import { migrateLegacyLogin, NDKSessionExpoSecureStore } from "./session-storage-adapter.js";
 
 /**
  * Hook to monitor NDK session state and persist changes to secure storage.

@@ -1,5 +1,6 @@
 import type { CashuWallet, SendResponse } from "@cashu/cashu-ts";
 import { getDecodedToken } from "@cashu/cashu-ts";
+import type NDK from "@nostr-dev-kit/ndk";
 import type {
     CashuPaymentInfo,
     Hexpubkey,
@@ -14,13 +15,12 @@ import type {
     NDKTag,
     NDKZapDetails,
 } from "@nostr-dev-kit/ndk";
-import type NDK from "@nostr-dev-kit/ndk";
 import {
+    NDKCashuMintList,
     NDKEvent,
     NDKKind,
     NDKPrivateKeySigner,
     NDKRelaySet,
-    NDKCashuMintList,
     NDKSubscriptionCacheUsage,
 } from "@nostr-dev-kit/ndk";
 import {
@@ -30,8 +30,8 @@ import {
     type NDKWalletTypes,
     type RedeemNutzapsOpts,
 } from "../../index.js";
-import { NDKCashuDepositMonitor } from "../deposit-monitor.js";
 import { NDKCashuDeposit } from "../deposit.js";
+import { NDKCashuDepositMonitor } from "../deposit-monitor.js";
 import { eventDupHandler, eventHandler } from "../event-handlers/index.js";
 import type { MintUrl } from "../mint/utils.js";
 import { consolidateTokens } from "../validate.js";

@@ -1,4 +1,3 @@
-import { NDKEvent, type NDKRelay, deserialize, profileFromEvent } from "@nostr-dev-kit/ndk";
 import type {
     Hexpubkey,
     NDKCacheAdapter,
@@ -12,6 +11,7 @@ import type {
     NostrEvent,
     ProfilePointer,
 } from "@nostr-dev-kit/ndk";
+import { deserialize, NDKEvent, type NDKRelay, profileFromEvent } from "@nostr-dev-kit/ndk";
 import createDebug from "debug";
 import { matchFilter } from "nostr-tools";
 import { type EventTagCacheEntry, eventTagsDump, eventTagsWarmUp } from "./caches/event-tags.js";
@@ -27,7 +27,7 @@ import {
     unpublishedEventsWarmUp,
 } from "./caches/unpublished-events.js";
 import { type ZapperCacheEntry, zapperDump, zapperWarmUp } from "./caches/zapper.js";
-import { type Event, type Profile, type RelayStatus, type UnpublishedEvent, createDatabase, db } from "./db.js";
+import { createDatabase, db, type Event, type Profile, type RelayStatus, type UnpublishedEvent } from "./db.js";
 import { CacheHandler } from "./lru-cache.js";
 
 export { db } from "./db";

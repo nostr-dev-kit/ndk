@@ -1,6 +1,4 @@
 import { EventEmitter } from "tseep";
-
-import type { NDKSigner } from "..";
 import type { NostrEvent } from "../../events";
 import { NDKEvent } from "../../events";
 import { NDKKind } from "../../events/kinds";
@@ -9,6 +7,7 @@ import { NDKRelayAuthPolicies } from "../../relay/auth-policies";
 import { NDKPool } from "../../relay/pool";
 import { NDKRelaySet } from "../../relay/sets";
 import { type NDKFilter, type NDKSubscription, NDKSubscriptionCacheUsage } from "../../subscription";
+import type { NDKSigner } from "..";
 
 export interface NDKRpcRequest {
     id: string;

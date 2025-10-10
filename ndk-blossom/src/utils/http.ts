@@ -1,8 +1,7 @@
-import { NDKBlossomServerError } from "./errors";
+import { type BlossomRetryOptions, ErrorCodes } from "../types";
 import { DEFAULT_HEADERS, DEFAULT_RETRY_OPTIONS, SERVER_ERROR_STATUS_CODES } from "./constants";
-import { BlossomRetryOptions } from "../types";
-import { Logger, DebugLogger } from "./logger";
-import { ErrorCodes } from "../types";
+import { NDKBlossomServerError } from "./errors";
+import { DebugLogger, type Logger } from "./logger";
 
 // Default logger
 const defaultLogger = new DebugLogger();
@@ -38,7 +37,7 @@ export async function fetchWithRetry(
     let attempts = 0;
 
     // Function to calculate the next delay using exponential backoff
-    const getNextDelay = () => retry.retryDelay * Math.pow(retry.backoffFactor, attempts);
+    const getNextDelay = () => retry.retryDelay * retry.backoffFactor ** attempts;
 
     while (attempts <= retry.maxRetries) {
         try {

@@ -1,6 +1,5 @@
 import type { NDKCacheAdapter, NDKFilter, NostrEvent, ProfilePointer } from "@nostr-dev-kit/ndk";
-import { NDKRelay } from "@nostr-dev-kit/ndk";
-import { NDKEvent, type NDKSubscription } from "@nostr-dev-kit/ndk";
+import { NDKEvent, type NDKRelay, type NDKSubscription } from "@nostr-dev-kit/ndk";
 import _debug from "debug";
 import Redis from "ioredis";
 import { matchFilter } from "nostr-tools";

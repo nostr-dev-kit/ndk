@@ -1,6 +1,6 @@
+import type NDK from "@nostr-dev-kit/ndk";
 import { NDKEvent } from "@nostr-dev-kit/ndk";
 import type { DatabaseWrapper } from "../db/database";
-import type NDK from "@nostr-dev-kit/ndk";
 
 /**
  * Retrieves an event by ID from the SQLite database using better-sqlite3.

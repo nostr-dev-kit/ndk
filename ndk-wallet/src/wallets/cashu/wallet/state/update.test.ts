@@ -1,9 +1,8 @@
-import { NDKCashuToken } from "@nostr-dev-kit/ndk";
-import NDK from "@nostr-dev-kit/ndk";
+import NDK, { NDKCashuToken } from "@nostr-dev-kit/ndk";
 import { mockProof } from "@nostr-dev-kit/ndk/test";
 import { beforeEach, describe, expect, it } from "vitest";
-import type { WalletProofChange, WalletState } from ".";
 import { NDKCashuWallet } from "..";
+import type { WalletProofChange, WalletState } from ".";
 import { calculateNewState } from "./update";
 
 const ndk = new NDK();

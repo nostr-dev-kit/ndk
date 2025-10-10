@@ -1,5 +1,5 @@
-import { SCHEMA } from "./schema";
 import type { SQLiteDatabase } from "../types";
+import { SCHEMA } from "./schema";
 
 /**
  * Runs all necessary database migrations.

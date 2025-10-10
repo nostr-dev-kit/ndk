@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
 import type { NDKUser } from "@nostr-dev-kit/ndk";
+import { useEffect, useState } from "react";
 import { useNDK } from "../../ndk/hooks";
 
 /**

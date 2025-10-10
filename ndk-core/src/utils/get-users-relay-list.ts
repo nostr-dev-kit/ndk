@@ -1,10 +1,10 @@
 import type { NDKEvent } from "../events/index.js";
-import { NDKRelayList, relayListFromKind3 } from "../events/kinds/NDKRelayList.js";
 import { NDKKind } from "../events/kinds/index.js";
+import { NDKRelayList, relayListFromKind3 } from "../events/kinds/NDKRelayList.js";
 import type { NDK } from "../ndk/index.js";
 import type { NDKRelay } from "../relay/index.js";
-import type { NDKSubscriptionOptions } from "../subscription/index.js";
 import { NDKRelaySet } from "../relay/sets/index.js";
+import type { NDKSubscriptionOptions } from "../subscription/index.js";
 import { NDKSubscriptionCacheUsage } from "../subscription/index.js";
 import type { Hexpubkey } from "../user/index.js";
 

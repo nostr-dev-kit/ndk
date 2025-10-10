@@ -1,5 +1,5 @@
-import * as SecureStore from "expo-secure-store";
 import { loadSessionsFromStorage, type NDKSessionStorageAdapter } from "@nostr-dev-kit/ndk-hooks";
+import * as SecureStore from "expo-secure-store";
 
 /**
  * Implementation of NDKSessionStorageAdapter using Expo's SecureStore.

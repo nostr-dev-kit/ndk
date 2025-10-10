@@ -1,4 +1,4 @@
-import type { NDKEventId, NDKUserProfile, NDKRawEvent } from "@nostr-dev-kit/ndk";
+import type { NDKEventId, NDKRawEvent, NDKUserProfile } from "@nostr-dev-kit/ndk";
 import Dexie, { type Table } from "dexie";
 
 export interface Profile extends NDKUserProfile {

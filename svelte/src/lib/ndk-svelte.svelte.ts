@@ -221,7 +221,7 @@ export class NDKSvelte extends NDK {
      *
      * @example
      * ```ts
-     * const currentUser = ndk.$currentUser();
+     * const currentUser = ndk.$currentUser;
      *
      * // In template
      * {#if currentUser}
@@ -229,7 +229,7 @@ export class NDKSvelte extends NDK {
      * {/if}
      * ```
      */
-    $currentUser() {
+    get $currentUser() {
         return this.#activeUser;
     }
 }

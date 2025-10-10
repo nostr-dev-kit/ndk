@@ -37,6 +37,7 @@ export function useEvent<T extends NDKEvent>(
         }
 
         fetchEvent();
+        // biome-ignore lint/correctness/useExhaustiveDependencies: <not array literal>
     }, dependencies);
 
     return event as T;

@@ -111,6 +111,7 @@ export class NDKNutzap extends NDKEvent {
      */
     get p2pk(): string | undefined {
         const rawP2pk = this.rawP2pk;
+        // biome-ignore lint/suspicious/useGetterReturn: <should return>
         if (!rawP2pk) return;
         return rawP2pk.startsWith("02") ? rawP2pk.slice(2) : rawP2pk;
     }

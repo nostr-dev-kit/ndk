@@ -314,8 +314,8 @@ const App: React.FC = () => {
                         <>
                             {blossomServers.length > 0 ? (
                                 <ul>
-                                    {blossomServers.map((server, index) => (
-                                        <li key={index} className="server-item">
+                                    {blossomServers.map((server) => (
+                                        <li key={server} className="server-item">
                                             <span>{server}</span>
                                             <button
                                                 type="button"

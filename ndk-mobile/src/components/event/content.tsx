@@ -275,6 +275,7 @@ const EventContent: React.FC<EventContentProps> = ({
     return (
         <Text numberOfLines={numberOfLines} style={style} {...props}>
             {parts.map((part, index) => (
+                // biome-ignore lint/suspicious/noArrayIndexKey: <no index>
                 <React.Fragment key={index}>
                     <RenderPart
                         part={part}

@@ -130,11 +130,8 @@ import { sessions } from './ndk-setup'; // Your session manager instance
 
 function LoginComponent() {
   const handleLogin = async () => {
-    await sessions.login(signer, {
-      follows: true,
-      mutes: true,
-      setActive: true
-    });
+    // Configure fetches in session manager constructor instead
+    await sessions.login(signer);
   };
 
   const handleLogout = () => {
@@ -270,7 +267,11 @@ export const ndk = new NDK({ explicitRelayUrls: [...] });
 
 export const sessions = new NDKSessionManager(ndk, {
   storage: new LocalStorage(),
-  autoSave: true
+  autoSave: true,
+  fetches: {
+    follows: true,
+    mutes: true
+  }
 });
 
 // Initialize once
@@ -314,11 +315,8 @@ function LoginButton() {
 
   const handleLogin = async () => {
     const signer = new NDKPrivateKeySigner(nsec);
-    await sessions.login(signer, {
-      follows: true,
-      mutes: true,
-      setActive: true
-    });
+    // Fetches configured in session manager constructor
+    await sessions.login(signer);
   };
 
   return currentUser ? (
@@ -409,7 +407,10 @@ import { NDKSessionManager, LocalStorage } from '@nostr-dev-kit/sessions';
 export const ndk = new NDK({ explicitRelayUrls: [...] });
 
 export const sessions = new NDKSessionManager(ndk, {
-  storage: new LocalStorage()
+  storage: new LocalStorage(),
+  fetches: {
+    follows: true
+  }
 });
 
 // Initialize

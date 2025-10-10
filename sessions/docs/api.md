@@ -23,6 +23,7 @@ interface SessionManagerOptions {
   storage?: SessionStorage;      // Storage backend (default: MemoryStorage)
   autoSave?: boolean;            // Auto-persist on changes (default: true)
   saveDebounceMs?: number;       // Debounce time for auto-save (default: 500ms)
+  fetches?: SessionStartOptions; // What to fetch on login/restore
 }
 ```
 
@@ -34,7 +35,11 @@ import { NDKSessionManager, LocalStorage } from '@nostr-dev-kit/sessions';
 const sessions = new NDKSessionManager(ndk, {
   storage: new LocalStorage(),
   autoSave: true,
-  saveDebounceMs: 500
+  saveDebounceMs: 500,
+  fetches: {
+    follows: true,
+    mutes: true
+  }
 });
 ```
 
@@ -42,51 +47,18 @@ const sessions = new NDKSessionManager(ndk, {
 
 #### login()
 
-Login with a signer or user and optionally fetch session data.
+Login with a signer or user.
 
 ```typescript
 async login(
   userOrSigner: NDKUser | NDKSigner,
-  options?: SessionLoginOptions
+  options?: { setActive?: boolean }
 ): Promise<Hexpubkey>
 ```
 
 **Parameters:**
 - `userOrSigner` - An NDKSigner for full sessions or NDKUser for read-only
-- `options?: SessionLoginOptions` - Configuration for data fetching
-
-**SessionLoginOptions:**
-
-```typescript
-interface SessionLoginOptions {
-  // Fetch contact list (kind 3) and optional kind-scoped follows
-  follows?: boolean | NDKKind[];
-
-  // Fetch mute list (kind 10000)
-  mutes?: boolean;
-
-  // Fetch blocked relay list (kind 10001)
-  blockedRelays?: boolean;
-
-  // Fetch user's relay list (kind 10002)
-  relayList?: boolean;
-
-  // Fetch NIP-60 wallet (kind 17375)
-  wallet?: boolean;
-
-  // Fetch specific replaceable event kinds
-  events?: Map<NDKKind, NDKEvent | null>;
-
-  // Set muteFilter on NDK based on session's mute data (default: true)
-  setMuteFilter?: boolean;
-
-  // Set relayConnectionFilter on NDK based on blocked relays (default: true)
-  setRelayConnectionFilter?: boolean;
-
-  // Set this session as active immediately (default: false)
-  setActive?: boolean;
-}
-```
+- `options?: { setActive?: boolean }` - Whether to set as active session (default: true)
 
 **Returns:** `Promise<Hexpubkey>` - The public key of the logged-in user
 
@@ -95,16 +67,21 @@ interface SessionLoginOptions {
 ```typescript
 const signer = new NDKPrivateKeySigner(nsec);
 
-const pubkey = await sessions.login(signer, {
-  follows: true,
-  mutes: true,
-  relayList: true,
-  wallet: true,
-  events: new Map([[30078, null]]), // Fetch app data
-  setActive: true
+// Configure fetches in constructor
+const sessions = new NDKSessionManager(ndk, {
+  fetches: {
+    follows: true,
+    mutes: true,
+    relayList: true,
+    wallet: true
+  }
 });
 
+const pubkey = await sessions.login(signer);
 console.log('Logged in:', pubkey);
+
+// Or don't set as active
+const pubkey2 = await sessions.login(signer2, { setActive: false });
 ```
 
 #### logout()

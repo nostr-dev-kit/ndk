@@ -58,20 +58,24 @@ if (sessions.activeUser) {
 
 ### 4. Login
 
-Login with a signer and automatically fetch user data:
+Login with a signer. To automatically fetch user data, configure `fetches` in the constructor:
 
 ```typescript
 import { NDKPrivateKeySigner } from '@nostr-dev-kit/ndk';
 
-const signer = new NDKPrivateKeySigner(nsecKey);
-
-await sessions.login(signer, {
-  follows: true,      // Fetch contact list
-  mutes: true,        // Fetch mute list
-  relayList: true,    // Fetch relay list
-  wallet: true,       // Fetch NIP-60 wallet
-  setActive: true     // Set as active session
+const sessions = new NDKSessionManager(ndk, {
+  storage: new LocalStorage(),
+  autoSave: true,
+  fetches: {
+    follows: true,      // Fetch contact list
+    mutes: true,        // Fetch mute list
+    relayList: true,    // Fetch relay list
+    wallet: true        // Fetch NIP-60 wallet
+  }
 });
+
+const signer = new NDKPrivateKeySigner(nsecKey);
+await sessions.login(signer);
 
 // Access session data
 console.log('Following:', sessions.activeSession?.followSet?.size, 'users');
@@ -116,13 +120,13 @@ const sessions = new NDKSessionManager(ndk, {
 ### Login Multiple Accounts
 
 ```typescript
-// Login first account
+// Login first account (automatically active)
 const signer1 = new NDKPrivateKeySigner(nsec1);
-const pubkey1 = await sessions.login(signer1, { setActive: true });
+const pubkey1 = await sessions.login(signer1);
 
 // Login second account
 const signer2 = new NDKPrivateKeySigner(nsec2);
-const pubkey2 = await sessions.login(signer2);
+const pubkey2 = await sessions.login(signer2, { setActive: false });
 
 console.log('Accounts:', sessions.getSessions().size);
 ```
@@ -166,15 +170,18 @@ unsubscribe();
 
 ## Read-Only Sessions
 
-Create a read-only session without a signer:
+Create a read-only session without a signer. Configure `fetches` in the constructor:
 
 ```typescript
-const user = ndk.getUser({ pubkey: somePubkey });
-
-await sessions.login(user, {
-  follows: true,
-  relayList: true
+const sessions = new NDKSessionManager(ndk, {
+  fetches: {
+    follows: true,
+    relayList: true
+  }
 });
+
+const user = ndk.getUser({ pubkey: somePubkey });
+await sessions.login(user);
 
 // Data is fetched and cached, but user can't sign events
 ```
@@ -184,13 +191,15 @@ await sessions.login(user, {
 ```typescript
 import { NDKNip07Signer } from '@nostr-dev-kit/ndk';
 
-const signer = new NDKNip07Signer();
-
-await sessions.login(signer, {
-  follows: true,
-  mutes: true,
-  setActive: true
+const sessions = new NDKSessionManager(ndk, {
+  fetches: {
+    follows: true,
+    mutes: true
+  }
 });
+
+const signer = new NDKNip07Signer();
+await sessions.login(signer);
 ```
 
 ## CLI Example
@@ -208,7 +217,10 @@ await ndk.connect();
 
 const sessions = new NDKSessionManager(ndk, {
   storage: new FileStorage('./.ndk-sessions.json'),
-  autoSave: true
+  autoSave: true,
+  fetches: {
+    follows: true
+  }
 });
 
 // Restore previous session
@@ -220,10 +232,7 @@ if (!sessions.activeUser) {
   if (!nsec) throw new Error('NOSTR_NSEC not set');
 
   const signer = new NDKPrivateKeySigner(nsec);
-  await sessions.login(signer, {
-    follows: true,
-    setActive: true
-  });
+  await sessions.login(signer);
 
   console.log('Logged in as', sessions.activeUser.npub);
 } else {

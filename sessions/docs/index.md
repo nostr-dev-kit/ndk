@@ -67,7 +67,12 @@ await ndk.connect();
 
 const sessions = new NDKSessionManager(ndk, {
   storage: new LocalStorage(),
-  autoSave: true
+  autoSave: true,
+  fetches: {
+    follows: true,
+    mutes: true,
+    relayList: true
+  }
 });
 
 // Restore previous sessions
@@ -75,12 +80,7 @@ await sessions.restore();
 
 // Login with auto-fetch
 const signer = new NDKPrivateKeySigner(nsec);
-await sessions.login(signer, {
-  follows: true,
-  mutes: true,
-  relayList: true,
-  setActive: true
-});
+await sessions.login(signer);
 
 console.log('Active user:', sessions.activeUser);
 console.log('Follows:', sessions.activeSession?.followSet?.size);

@@ -42,8 +42,10 @@ export interface SessionManagerOptions {
  * const ndk = new NDK({ explicitRelayUrls: ['wss://relay.damus.io'] });
  * await ndk.connect();
  *
- * const sessions = new NDKSessionManager(ndk);
- * await sessions.login(signer, { profile: true, follows: true });
+ * const sessions = new NDKSessionManager(ndk, {
+ *     fetches: { follows: true }
+ * });
+ * await sessions.login(signer);
  *
  * console.log('Active user:', sessions.activeUser);
  * ```
@@ -138,7 +140,7 @@ export class NDKSessionManager {
      * @example
      * ```typescript
      * const signer = new NDKPrivateKeySigner(nsec);
-     * await sessions.login(signer, { setActive: true });
+     * await sessions.login(signer);
      * ```
      */
     async login(userOrSigner: NDKUser | NDKSigner, options: { setActive?: boolean } = {}): Promise<Hexpubkey> {

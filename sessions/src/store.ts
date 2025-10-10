@@ -1,5 +1,5 @@
 import type NDK from "@nostr-dev-kit/ndk";
-import { type Hexpubkey, type NDKEvent, NDKKind, NDKRelayList, type NDKSigner, type NDKUser } from "@nostr-dev-kit/ndk";
+import { type Hexpubkey, isValidPubkey, type NDKEvent, NDKKind, NDKRelayList, type NDKSigner, type NDKUser } from "@nostr-dev-kit/ndk";
 import { createStore } from "zustand/vanilla";
 import type { NDKSession, SessionStartOptions, SessionState } from "./types";
 import { NDKNotInitializedError, SessionNotFoundError } from "./utils/errors";
@@ -370,7 +370,7 @@ function handleContactListEvent(event: NDKEvent, pubkey: Hexpubkey, getState: ()
 
     const followSet = new Set<Hexpubkey>();
     for (const tag of event.tags) {
-        if (tag[0] === "p" && tag[1]) {
+        if (tag[0] === "p" && tag[1] && isValidPubkey(tag[1])) {
             followSet.add(tag[1]);
         }
     }

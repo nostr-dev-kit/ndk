@@ -5,8 +5,8 @@
 You can pass an object with several options to a newly created instance of NDK.
 
 -   `explicitRelayUrls` – an array of relay URLs.
--   `signer` - an instance of a [signer](#signers).
--   `cacheAdapter` - an instance of a [Cache Adapter](#caching)
+-   `signer` - an instance of a [signer](signers.md).
+-   `cacheAdapter` - an instance of a [cache adapter](/cache/nostr)
 -   `debug` - Debug instance to use for logging. Defaults to `debug("ndk")`.
 
 ```ts
@@ -30,7 +30,7 @@ const nip07signer = new NDKNip07Signer();
 const ndk = new NDK({ signer: nip07signer });
 ```
 
-Note: In normal client use, it's best practice to instantiate NDK as a singleton class. [See more below](#architecture-decisions--suggestions).
+Note: In normal client use, it's best practice to instantiate NDK as a singleton class. [See more below](#architecture-decisions-suggestions).
 
 ## Connecting
 
@@ -143,8 +143,6 @@ export default App;
 *   In your main App or Provider component, get the `initializeNDK` function from `useNDKInit`.
 *   Use `useEffect` with an empty dependency array (or `[initializeNDK]`) to call `initializeNDK(ndk)` once on mount.
 *   This sets up the necessary Zustand stores. Other `ndk-hooks` will access the initialized `ndk` instance from the store and handle its readiness internally.
-
----
 
 
 ## Architecture decisions & suggestions

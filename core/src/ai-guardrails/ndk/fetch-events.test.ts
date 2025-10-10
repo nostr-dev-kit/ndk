@@ -7,7 +7,7 @@ describe("fetchingEvents guardrail", () => {
             const warn = vi.fn();
             const filters = { ids: ["abc123"] };
 
-            fetchingEvents(filters, warn);
+            fetchingEvents(filters, undefined, warn);
 
             expect(warn).toHaveBeenCalled();
             expect(warn.mock.calls[0][0]).toBe("fetch-events-usage");
@@ -22,7 +22,7 @@ describe("fetchingEvents guardrail", () => {
             const warn = vi.fn();
             const filters = [{ ids: ["abc123"] }];
 
-            fetchingEvents(filters, warn);
+            fetchingEvents(filters, undefined, warn);
 
             expect(warn).toHaveBeenCalled();
             expect(warn.mock.calls[0][0]).toBe("fetch-events-usage");
@@ -38,7 +38,7 @@ describe("fetchingEvents guardrail", () => {
                 "#d": ["identifier"],
             };
 
-            fetchingEvents(filters, warn);
+            fetchingEvents(filters, undefined, warn);
 
             expect(warn).toHaveBeenCalled();
             expect(warn.mock.calls[0][0]).toBe("fetch-events-usage");
@@ -56,7 +56,7 @@ describe("fetchingEvents guardrail", () => {
             const warn = vi.fn();
             const filters = { ids: ["abc123", "def456"] };
 
-            fetchingEvents(filters, warn);
+            fetchingEvents(filters, undefined, warn);
 
             expect(warn).toHaveBeenCalledWith(
                 "fetch-events-usage",
@@ -70,7 +70,7 @@ describe("fetchingEvents guardrail", () => {
             const warn = vi.fn();
             const filters = { kinds: [1], authors: ["pubkey123"] };
 
-            fetchingEvents(filters, warn);
+            fetchingEvents(filters, undefined, warn);
 
             expect(warn).toHaveBeenCalledWith(
                 "fetch-events-usage",
@@ -83,7 +83,7 @@ describe("fetchingEvents guardrail", () => {
             const warn = vi.fn();
             const filters = [{ ids: ["abc123"] }, { ids: ["def456"] }];
 
-            fetchingEvents(filters, warn);
+            fetchingEvents(filters, undefined, warn);
 
             expect(warn).toHaveBeenCalledWith(
                 "fetch-events-usage",
@@ -96,7 +96,70 @@ describe("fetchingEvents guardrail", () => {
             const warn = vi.fn();
             const filters = { kinds: [1] };
 
-            fetchingEvents(filters, warn);
+            fetchingEvents(filters, undefined, warn);
+
+            expect(warn).toHaveBeenCalledWith(
+                "fetch-events-usage",
+                expect.stringContaining("In most cases, you should use subscribe()"),
+                expect.any(String),
+            );
+        });
+    });
+
+    describe("replaceable events", () => {
+        it("should NOT warn for ONLY_CACHE usage", () => {
+            const warn = vi.fn();
+            const filters = { kinds: [1], authors: ["pubkey123"] };
+            const opts = { cacheUsage: "ONLY_CACHE" as any };
+
+            fetchingEvents(filters, opts, warn);
+
+            expect(warn).not.toHaveBeenCalled();
+        });
+
+        it("should NOT warn for kind 0 (profile) with authors", () => {
+            const warn = vi.fn();
+            const filters = {
+                kinds: [0],
+                authors: ["fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"],
+            };
+
+            fetchingEvents(filters, undefined, warn);
+
+            expect(warn).not.toHaveBeenCalled();
+        });
+
+        it("should NOT warn for kind 3 (contacts) with authors", () => {
+            const warn = vi.fn();
+            const filters = {
+                kinds: [3],
+                authors: ["fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"],
+            };
+
+            fetchingEvents(filters, undefined, warn);
+
+            expect(warn).not.toHaveBeenCalled();
+        });
+
+        it("should NOT warn for kind 10002 (relay metadata) with authors", () => {
+            const warn = vi.fn();
+            const filters = {
+                kinds: [10002],
+                authors: ["fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"],
+            };
+
+            fetchingEvents(filters, undefined, warn);
+
+            expect(warn).not.toHaveBeenCalled();
+        });
+
+        it("should warn for kind 10002 WITHOUT authors", () => {
+            const warn = vi.fn();
+            const filters = {
+                kinds: [10002],
+            };
+
+            fetchingEvents(filters, undefined, warn);
 
             expect(warn).toHaveBeenCalledWith(
                 "fetch-events-usage",
@@ -111,7 +174,7 @@ describe("fetchingEvents guardrail", () => {
             const warn = vi.fn();
             const filters: any[] = [];
 
-            fetchingEvents(filters, warn);
+            fetchingEvents(filters, undefined, warn);
 
             expect(warn).toHaveBeenCalledWith(
                 "fetch-events-usage",
@@ -124,7 +187,7 @@ describe("fetchingEvents guardrail", () => {
             const warn = vi.fn();
             const filters = { limit: 10 };
 
-            fetchingEvents(filters, warn);
+            fetchingEvents(filters, undefined, warn);
 
             expect(warn).toHaveBeenCalledWith(
                 "fetch-events-usage",
@@ -141,7 +204,7 @@ describe("fetchingEvents guardrail", () => {
                 authors: ["pubkey123"],
             };
 
-            fetchingEvents(filters, warn);
+            fetchingEvents(filters, undefined, warn);
 
             expect(warn).toHaveBeenCalledWith(
                 "fetch-events-usage",

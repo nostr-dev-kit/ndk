@@ -31,6 +31,22 @@
  * ndk.aiGuardrails.enable('filter-bech32-in-array');
  * ```
  *
+ * @example Temporarily disable for one call
+ * ```typescript
+ * // Disable all guardrails for one call
+ * ndk.guardrailOff().fetchEvents({ kinds: [1] });
+ *
+ * // Disable specific guardrail for one call
+ * ndk.guardrailOff('fetch-events-usage').fetchEvents({ kinds: [1] });
+ *
+ * // Disable multiple guardrails for one call
+ * ndk.guardrailOff(['fetch-events-usage', 'filter-large-limit'])
+ *    .fetchEvents({ kinds: [1], limit: 5000 });
+ *
+ * // Next call has guardrails re-enabled automatically
+ * ndk.fetchEvents({ kinds: [1] }); // Guardrails active again
+ * ```
+ *
  * @example Hook usage in core code
  * ```typescript
  * // Clean, type-safe hook calls
@@ -58,6 +74,7 @@ export class AIGuardrails {
     private skipSet: Set<string> = new Set();
     private extensions: Map<string, any> = new Map();
     private _nextCallDisabled: Set<string> | 'all' | null = null;
+    private _replyEvents: WeakSet<NDKEvent> = new WeakSet();
 
     constructor(mode: AIGuardrailsMode = false) {
         this.setMode(mode);
@@ -222,7 +239,8 @@ export class AIGuardrails {
         }
 
         if (canDisable) {
-            output += `\n\n🔇 To disable this check:\n   ndk.aiGuardrails.skip('${id}')`;
+            output += `\n\n🔇 To disable this check:\n   ndk.guardrailOff('${id}').yourMethod()  // For one call`;
+            output += `\n   ndk.aiGuardrails.skip('${id}')  // Permanently`;
             output += `\n   or set: ndk.aiGuardrails = { skip: new Set(['${id}']) }`;
         }
 
@@ -249,9 +267,9 @@ export class AIGuardrails {
         /**
          * Called when fetchEvents is about to be called
          */
-        fetchingEvents: (filters: any) => {
+        fetchingEvents: (filters: any, opts?: any) => {
             if (!this.enabled) return;
-            ndkFetchEventsGuardrails.fetchingEvents(filters, this.warn.bind(this));
+            ndkFetchEventsGuardrails.fetchingEvents(filters, opts, this.warn.bind(this));
         },
     };
 
@@ -264,7 +282,12 @@ export class AIGuardrails {
          */
         signing: (event: NDKEvent) => {
             if (!this.enabled) return;
-            eventGuardrails.signing(event, this.error.bind(this), this.warn.bind(this));
+            eventGuardrails.signing(
+                event,
+                this.error.bind(this),
+                this.warn.bind(this),
+                this._replyEvents,
+            );
         },
 
         /**
@@ -281,6 +304,15 @@ export class AIGuardrails {
         received: (_event: NDKEvent, _relay: NDKRelay) => {
             if (!this.enabled) return;
             // Future: Add event reception monitoring
+        },
+
+        /**
+         * Called when a reply event is being created via .reply()
+         * This allows guardrails to track legitimate reply events
+         */
+        creatingReply: (event: NDKEvent) => {
+            if (!this.enabled) return;
+            this._replyEvents.add(event);
         },
     };
 

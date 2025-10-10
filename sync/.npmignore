@@ -1,0 +1,18 @@
+# Development files
+e2e-*.ts
+examples/
+src/__tests__/
+src/*test*.ts
+*.test.ts
+*.spec.ts
+TESTING.md
+tsconfig.json
+vitest.config.ts
+
+# Build artifacts
+.turbo
+dist/
+node_modules/
+
+# Git
+.git

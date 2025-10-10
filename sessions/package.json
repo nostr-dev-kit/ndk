@@ -1,0 +1,52 @@
+{
+    "name": "@nostr-dev-kit/sessions",
+    "version": "0.3.1",
+    "description": "Framework-agnostic session management for NDK with multi-account support",
+    "type": "module",
+    "main": "dist/index.cjs",
+    "module": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "exports": {
+        ".": {
+            "import": {
+                "types": "./dist/index.d.ts",
+                "default": "./dist/index.js"
+            },
+            "require": {
+                "types": "./dist/index.d.ts",
+                "default": "./dist/index.cjs"
+            }
+        }
+    },
+    "files": [
+        "dist",
+        "README.md"
+    ],
+    "scripts": {
+        "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+        "dev": "bun run build --watch",
+        "lint": "biome check .",
+        "format": "biome format . --write",
+        "test": "vitest run",
+        "test:watch": "vitest"
+    },
+    "dependencies": {
+        "@nostr-dev-kit/ndk": "^2.17.1",
+        "zustand": "^5"
+    },
+    "devDependencies": {
+        "tsup": "^8",
+        "typescript": "^5.8.2",
+        "vitest": "^1.6.1",
+        "vite": "^4.4.9"
+    },
+    "keywords": [
+        "nostr",
+        "ndk",
+        "sessions",
+        "authentication",
+        "multi-account"
+    ],
+    "author": "_@f7z.io",
+    "license": "MIT"
+}

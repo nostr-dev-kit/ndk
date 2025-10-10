@@ -1,5 +1,6 @@
 import { NDKKind } from "../events/kinds/index.js";
 import type { NDKSubscriptionOptions } from "../subscription/index.js";
+import { isValidPubkey } from "../utils/filter-validation.js";
 import { type Hexpubkey, NDKUser } from "./index.js";
 
 /**
@@ -23,7 +24,9 @@ export async function follows(
         const pubkeys = new Set<Hexpubkey>();
 
         contactListEvent.tags.forEach((tag: string[]) => {
-            if (tag[0] === "p") pubkeys.add(tag[1]);
+            if (tag[0] === "p" && tag[1] && isValidPubkey(tag[1])) {
+                pubkeys.add(tag[1]);
+            }
         });
 
         if (outbox) {

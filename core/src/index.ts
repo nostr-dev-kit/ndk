@@ -84,6 +84,7 @@ export * from "./user/index.js";
 export * from "./user/pin.js";
 export * from "./user/profile.js";
 export * from "./utils/filter.js";
+export { isValidPubkey } from "./utils/filter-validation.js";
 export * from "./utils/get-users-relay-list.js";
 export * from "./utils/imeta.js";
 export * from "./utils/normalize-url.js";

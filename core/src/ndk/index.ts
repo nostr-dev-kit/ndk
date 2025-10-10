@@ -1014,7 +1014,7 @@ export class NDK extends EventEmitter<{
             throw new Error(`Invalid filter: ${JSON.stringify(idOrFilter)}`);
         }
 
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             let fetchedEvent: NDKEvent | null = null;
 
             // Prepare options, including the relaySet if available
@@ -1029,6 +1029,7 @@ export class NDK extends EventEmitter<{
              */
             const t2 = setTimeout(() => {
                 s.stop();
+                this.aiGuardrails['_nextCallDisabled'] = null;
                 resolve(fetchedEvent);
             }, 10000);
 
@@ -1039,6 +1040,7 @@ export class NDK extends EventEmitter<{
                     // We only emit immediately when the event is not replaceable
                     if (!event.isReplaceable()) {
                         clearTimeout(t2);
+                        this.aiGuardrails['_nextCallDisabled'] = null;
                         resolve(event);
                     } else if (!fetchedEvent || fetchedEvent.created_at! < event.created_at!) {
                         fetchedEvent = event;
@@ -1046,6 +1048,7 @@ export class NDK extends EventEmitter<{
                 },
                 onEose: () => {
                     clearTimeout(t2);
+                    this.aiGuardrails['_nextCallDisabled'] = null;
                     resolve(fetchedEvent);
                 },
             });
@@ -1060,7 +1063,7 @@ export class NDK extends EventEmitter<{
         opts?: NDKSubscriptionOptions,
         relaySet?: NDKRelaySet,
     ): Promise<Set<NDKEvent>> {
-        this.aiGuardrails?.ndk?.fetchingEvents(filters);
+        this.aiGuardrails?.ndk?.fetchingEvents(filters, opts);
 
         return new Promise((resolve) => {
             const events: Map<string, NDKEvent> = new Map();
@@ -1092,6 +1095,7 @@ export class NDK extends EventEmitter<{
                 ...subscribeOpts,
                 onEvent,
                 onEose: () => {
+                    this.aiGuardrails['_nextCallDisabled'] = null;
                     resolve(new Set(events.values()));
                 },
             });
@@ -1116,6 +1120,39 @@ export class NDK extends EventEmitter<{
     }
 
     public getEntity = getEntity.bind(this);
+
+    /**
+     * Temporarily disable AI guardrails for the next method call.
+     *
+     * @param ids - Optional guardrail IDs to disable. If omitted, all guardrails are disabled for the next call.
+     *              Can be a single string or an array of strings.
+     * @returns This NDK instance for method chaining
+     *
+     * @example Disable all guardrails for one call
+     * ```typescript
+     * ndk.guardrailOff().fetchEvents({ kinds: [1] });
+     * ```
+     *
+     * @example Disable specific guardrail
+     * ```typescript
+     * ndk.guardrailOff('fetch-events-usage').fetchEvents({ kinds: [1] });
+     * ```
+     *
+     * @example Disable multiple guardrails
+     * ```typescript
+     * ndk.guardrailOff(['fetch-events-usage', 'filter-large-limit']).fetchEvents({ kinds: [1], limit: 5000 });
+     * ```
+     */
+    public guardrailOff(ids?: string | string[]): this {
+        if (!ids) {
+            this.aiGuardrails['_nextCallDisabled'] = 'all';
+        } else if (typeof ids === 'string') {
+            this.aiGuardrails['_nextCallDisabled'] = new Set([ids]);
+        } else {
+            this.aiGuardrails['_nextCallDisabled'] = new Set(ids);
+        }
+        return this;
+    }
 
     set wallet(wallet: NDKWalletInterface | undefined) {
         if (!wallet) {

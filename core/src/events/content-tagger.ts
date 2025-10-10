@@ -1,6 +1,7 @@
 import { nip19 } from "nostr-tools";
 
 import type { EventPointer, ProfilePointer } from "../user/index.js";
+import { isValidPubkey } from "../utils/filter-validation.js";
 import type { ContentTaggingOptions, NDKEvent, NDKTag } from "./index.js";
 
 export type ContentTag = {
@@ -231,6 +232,7 @@ export async function generateContentTags(
     if (opts?.pTags !== false && opts?.copyPTagsFromTarget && ctx) {
         const pTags = ctx.getMatchingTags("p");
         for (const pTag of pTags) {
+            if (!pTag[1] || !isValidPubkey(pTag[1])) continue;
             if (!tags.find((t) => t[0] === "p" && t[1] === pTag[1])) {
                 tags.push(pTag);
             }

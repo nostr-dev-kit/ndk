@@ -7,6 +7,7 @@ import type { NDKRelaySet } from "../relay/sets/index.js";
 import type { NDKSigner } from "../signers/index.js";
 import type { NDKFilter } from "../subscription/index.js";
 import type { NDKUser } from "../user/index.js";
+import { isValidPubkey } from "../utils/filter-validation.js";
 import { type ContentTag, generateContentTags, mergeTags } from "./content-tagger.js";
 import { decrypt, encrypt } from "./encryption.js";
 import { fetchReplyEvent, fetchRootEvent, fetchTaggedEvent } from "./fetch-tagged-event.js";
@@ -295,6 +296,7 @@ export class NDKEvent extends EventEmitter {
             // tag p-tags in the event if they are not the same as the user signing this event
             if (opts?.pTags !== false) {
                 for (const pTag of event.getMatchingTags("p")) {
+                    if (!pTag[1] || !isValidPubkey(pTag[1])) continue;
                     if (pTag[1] === this.pubkey) continue;
                     if (this.tags.find((t) => t[0] === "p" && t[1] === pTag[1])) continue;
 
@@ -996,6 +998,7 @@ export class NDKEvent extends EventEmitter {
      */
     public reply(forceNip22?: boolean, opts?: ContentTaggingOptions): NDKEvent {
         const reply = new NDKEvent(this.ndk);
+        this.ndk?.aiGuardrails?.event?.creatingReply(reply);
 
         if (this.kind === 1 && !forceNip22) {
             reply.kind = 1;

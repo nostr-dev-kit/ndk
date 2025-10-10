@@ -1,5 +1,6 @@
 import type { Hexpubkey } from "src/user/index.js";
 import type { NDK } from "../../ndk/index.js";
+import { isValidPubkey } from "../../utils/filter-validation.js";
 import type { NDKImetaTag } from "../../utils/imeta.js";
 import { imetaTagToTag, mapImetaTag } from "../../utils/imeta.js";
 import { NDKEvent, type NDKRawEvent } from "../index.js";
@@ -93,7 +94,7 @@ export class NDKFollowPack extends NDKEvent {
         return Array.from(
             new Set(
                 this.tags
-                    .filter((tag) => tag[0] === "p" && tag[1])
+                    .filter((tag) => tag[0] === "p" && tag[1] && isValidPubkey(tag[1]))
                     .map((tag) => tag[1]),
             ),
         );

@@ -4,6 +4,23 @@ import type { NDK } from "../ndk/index.js";
 import type { NDKFilter } from "../subscription/index.js";
 
 /**
+ * Validates if a string is a valid nostr pubkey (64-character hex string).
+ *
+ * @param pubkey - The string to validate
+ * @returns true if the string is a valid pubkey, false otherwise
+ *
+ * @example
+ * ```typescript
+ * if (isValidPubkey(pubkey)) {
+ *     // Safe to use
+ * }
+ * ```
+ */
+export function isValidPubkey(pubkey: string): boolean {
+    return typeof pubkey === "string" && /^[0-9a-f]{64}$/i.test(pubkey);
+}
+
+/**
  * Filter validation modes for NDK subscriptions.
  *
  * @example
@@ -280,13 +297,16 @@ function processFilter(
  */
 function runAIGuardrailsForFilter(filter: NDKFilter, filterIndex: number, ndk: NDK): void {
     const guards = ndk.aiGuardrails;
+    const filterPreview = JSON.stringify(filter, null, 2);
 
     // Check 1: Filter contains only limit
     if (Object.keys(filter).length === 1 && filter.limit !== undefined) {
         guards.error(
             GuardrailCheckId.FILTER_ONLY_LIMIT,
-            `Filter[${filterIndex}] contains only 'limit' without any filtering criteria. This will fetch random events.`,
-            `Add filtering criteria like 'kinds', 'authors', or '#e' tags. Example: { kinds: [1], limit: 10 }`,
+            `Filter[${filterIndex}] contains only 'limit' without any filtering criteria.\n\n` +
+                `📦 Your filter:\n${filterPreview}\n\n` +
+                `⚠️  This will fetch random events from relays without any criteria.`,
+            `Add filtering criteria:\n   ✅ { kinds: [1], limit: 10 }\n   ✅ { authors: [pubkey], limit: 10 }\n   ❌ { limit: 10 }`,
         );
     }
 
@@ -294,7 +314,9 @@ function runAIGuardrailsForFilter(filter: NDKFilter, filterIndex: number, ndk: N
     if (Object.keys(filter).length === 0) {
         guards.error(
             GuardrailCheckId.FILTER_EMPTY,
-            `Filter[${filterIndex}] is empty. This will request all events from relays.`,
+            `Filter[${filterIndex}] is empty.\n\n` +
+                `📦 Your filter:\n${filterPreview}\n\n` +
+                `⚠️  This will request ALL events from relays, which is never what you want.`,
             `Add filtering criteria like 'kinds', 'authors', or tags.`,
             false, // Fatal error - cannot be disabled
         );
@@ -304,17 +326,25 @@ function runAIGuardrailsForFilter(filter: NDKFilter, filterIndex: number, ndk: N
     if (filter.limit !== undefined && filter.limit > 1000) {
         guards.warn(
             GuardrailCheckId.FILTER_LARGE_LIMIT,
-            `Filter[${filterIndex}] has a very large limit: ${filter.limit}. This can cause performance issues.`,
-            `Consider using a smaller limit and pagination, or using a subscription instead.`,
+            `Filter[${filterIndex}] has a very large limit.\n\n` +
+                `📦 Your filter:\n${filterPreview}\n\n` +
+                `⚠️  limit: ${filter.limit} can cause performance issues and relay rejection.`,
+            `Consider:\n   • Using a smaller limit (e.g., 100-500) with pagination\n   • Using subscribe() for continuous updates\n   • Breaking into multiple smaller queries`,
         );
     }
 
     // Check 4: since > until
     if (filter.since !== undefined && filter.until !== undefined && filter.since > filter.until) {
+        const sinceDate = new Date(filter.since * 1000).toISOString();
+        const untilDate = new Date(filter.until * 1000).toISOString();
         guards.error(
             GuardrailCheckId.FILTER_SINCE_AFTER_UNTIL,
-            `Filter[${filterIndex}] has 'since' (${filter.since}) > 'until' (${filter.until}). No events will match.`,
-            `Make sure 'since' is before 'until'. Both are Unix timestamps in seconds.`,
+            `Filter[${filterIndex}] has 'since' AFTER 'until'.\n\n` +
+                `📦 Your filter:\n${filterPreview}\n\n` +
+                `❌ since: ${filter.since} (${sinceDate})\n` +
+                `❌ until: ${filter.until} (${untilDate})\n\n` +
+                `No events can match this time range!`,
+            `'since' must be BEFORE 'until'. Both are Unix timestamps in seconds.`,
             false, // Fatal error - cannot be disabled
         );
     }

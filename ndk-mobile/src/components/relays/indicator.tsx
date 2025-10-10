@@ -18,7 +18,6 @@ const CONNECTIVITY_STATUS_COLORS: Record<NDKRelayStatus, string> = {
 export default function RelayConnectivityIndicator({ relay }: { relay: NDKRelay }) {
     const [color, setColor] = useState(CONNECTIVITY_STATUS_COLORS[relay.status]);
 
-    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     useEffect(() => {
         relay.on("connect", () => setColor(CONNECTIVITY_STATUS_COLORS[relay.status]));
         relay.on("disconnect", () => setColor(CONNECTIVITY_STATUS_COLORS[relay.status]));

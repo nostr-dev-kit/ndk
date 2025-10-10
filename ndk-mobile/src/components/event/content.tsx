@@ -14,7 +14,6 @@
 
 import { type NDKEvent, NDKKind, NDKUser, useNDK, useProfileValue } from "@nostr-dev-kit/ndk-hooks";
 import { Image } from "expo-image";
-// biome-ignore lint/style/useImportType: <explanation>
 import React, { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, type TextProps } from "react-native";
 

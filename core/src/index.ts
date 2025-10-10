@@ -30,6 +30,7 @@ export * from "./events/kinds/dvm/index.js";
 export * from "./events/kinds/follow-pack.js";
 export * from "./events/kinds/highlight.js";
 export * from "./events/kinds/image.js";
+export * from "./events/kinds/interest-list.js";
 export * from "./events/kinds/lists/index.js";
 export * from "./events/kinds/nip89/app-handler.js";
 export * from "./events/kinds/nutzap/index.js";

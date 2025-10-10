@@ -1,5 +1,15 @@
 # @nostr-dev-kit/react
 
+## 1.3.8
+
+### Patch Changes
+
+- Updated dependencies [344c313]
+- Updated dependencies [3407126]
+- Updated dependencies [344c313]
+    - @nostr-dev-kit/ndk@2.17.0
+    - @nostr-dev-kit/wallet@0.8.2
+
 ## 1.3.7
 
 ### Patch Changes

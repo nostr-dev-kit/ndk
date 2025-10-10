@@ -1,5 +1,45 @@
 # @nostr-dev-kit/ndk
 
+## 2.17.2
+
+### Minor Changes
+
+- 8315d5e: Add activeUser:change event to NDK and $currentUser() reactive accessor to NDKSvelte
+    - NDK now emits an `activeUser:change` event whenever the active user changes (via signer, direct assignment, or read-only sessions)
+    - NDKSvelte adds a `$currentUser()` method that returns a reactive value tracking the active user
+    - This properly handles all scenarios including read-only sessions without signers
+    - Fixes race condition where signer:ready event fired before activeUser was set
+
+- d9d5662: Refactor AI guardrails to be extensible and clean
+    - Remove inline guardrail checks from core business logic (88+ lines reduced to simple announcements)
+    - Create organized guardrail modules with individual check functions
+    - Add registration system for external packages to provide their own guardrails
+    - Business logic now cleanly announces actions without embedding validation
+    - NDKSvelte warns when instantiated without session parameter
+
+### Patch Changes
+
+- 6fb3a7f: test: add comprehensive event deduplication and onRelays tracking tests
+
+    Adds test coverage for event deduplication behavior and onRelays accumulation. Tests verify that:
+    - onRelays correctly accumulates relays as duplicate events arrive
+    - event:dup is emitted with proper parameters (event, relay, timeSinceFirstSeen)
+    - First event occurrence triggers 'event' while subsequent ones trigger 'event:dup'
+    - The relay parameter in event:dup correctly identifies which relay sent the duplicate
+    - Edge cases like rapid duplicates and events without relay info are handled correctly
+
+- 028367b: feat(cache-redis): add support for tracking multiple relays per event
+
+    The Redis cache adapter now properly tracks all relays an event has been seen from:
+    - Stores relay information in a separate Redis Set (`relays:{eventId}`) to track provenance
+    - Accumulates relays without duplicating entries using Redis Sets
+    - Restores all relay information when querying cached events
+    - Implements `setEventDup` method to handle relay tracking for duplicate events
+    - Registers all relays with NDK's subscription manager for proper `onRelays` behavior
+    - Fixes Redis connection status checks (now using 'ready' instead of 'connect')
+
+    This ensures proper relay provenance tracking which is essential for outbox model support and understanding event distribution across the network.
+
 ## 2.17.1
 
 ### Patch Changes

@@ -1,5 +1,27 @@
 # @nostr-dev-kit/ndk-cache-redis
 
+## 0.1.47
+
+### Patch Changes
+
+- 028367b: feat(cache-redis): add support for tracking multiple relays per event
+
+    The Redis cache adapter now properly tracks all relays an event has been seen from:
+    - Stores relay information in a separate Redis Set (`relays:{eventId}`) to track provenance
+    - Accumulates relays without duplicating entries using Redis Sets
+    - Restores all relay information when querying cached events
+    - Implements `setEventDup` method to handle relay tracking for duplicate events
+    - Registers all relays with NDK's subscription manager for proper `onRelays` behavior
+    - Fixes Redis connection status checks (now using 'ready' instead of 'connect')
+
+    This ensures proper relay provenance tracking which is essential for outbox model support and understanding event distribution across the network.
+
+- Updated dependencies [8315d5e]
+- Updated dependencies [d9d5662]
+- Updated dependencies [6fb3a7f]
+- Updated dependencies [028367b]
+    - @nostr-dev-kit/ndk@2.18.0
+
 ## 0.1.46
 
 ### Patch Changes

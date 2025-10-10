@@ -1,5 +1,33 @@
 # @nostr-dev-kit/ndk-mobile
 
+## 0.8.50
+
+### Patch Changes
+
+- Updated dependencies [8315d5e]
+- Updated dependencies [d9d5662]
+- Updated dependencies [6fb3a7f]
+- Updated dependencies [028367b]
+    - @nostr-dev-kit/ndk@2.18.0
+
+## 0.8.49
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.17.1
+
+## 0.8.48
+
+### Patch Changes
+
+- Updated dependencies [344c313]
+- Updated dependencies [3407126]
+- Updated dependencies [344c313]
+    - @nostr-dev-kit/ndk@2.17.0
+    - @nostr-dev-kit/wallet@0.8.2
+    - @nostr-dev-kit/react@1.3.8
+
 ## 0.8.47
 
 ### Patch Changes

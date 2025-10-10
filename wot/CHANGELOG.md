@@ -1,5 +1,46 @@
 # @nostr-dev-kit/wot
 
+## 0.3.3
+
+### Patch Changes
+
+- bump
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.17.1
+    - @nostr-dev-kit/sync@0.3.1
+
+## 0.3.2
+
+### Patch Changes
+
+- 2adef59: Remove ndkSync function from public API - use NDKSync class instead
+
+    **BREAKING**: The low-level `ndkSync` function is no longer exported. All packages should use the `NDKSync` class which provides:
+    - Automatic relay capability caching
+    - Fallback to fetchEvents for non-negentropy relays
+    - Proper error handling and retry logic
+
+    **Migration**:
+
+    ```typescript
+    // Before
+    import { ndkSync } from "@nostr-dev-kit/sync";
+    const result = await ndkSync.call(ndk, filters, opts);
+
+    // After
+    import { NDKSync } from "@nostr-dev-kit/sync";
+    const result = await NDKSync.sync(ndk, filters, opts);
+    ```
+
+    Updated wot package to use NDKSync, removing duplicate relay filtering logic.
+
+- Updated dependencies [344c313]
+- Updated dependencies [2adef59]
+- Updated dependencies [3407126]
+- Updated dependencies [344c313]
+    - @nostr-dev-kit/ndk@2.17.0
+    - @nostr-dev-kit/sync@0.3.0
+
 ## 0.3.1
 
 ### Patch Changes

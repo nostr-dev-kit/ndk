@@ -1,5 +1,52 @@
 # Changelog
 
+## 3.0.0
+
+### Minor Changes
+
+- 8315d5e: Add activeUser:change event to NDK and $currentUser() reactive accessor to NDKSvelte
+    - NDK now emits an `activeUser:change` event whenever the active user changes (via signer, direct assignment, or read-only sessions)
+    - NDKSvelte adds a `$currentUser()` method that returns a reactive value tracking the active user
+    - This properly handles all scenarios including read-only sessions without signers
+    - Fixes race condition where signer:ready event fired before activeUser was set
+
+- d9d5662: Refactor AI guardrails to be extensible and clean
+    - Remove inline guardrail checks from core business logic (88+ lines reduced to simple announcements)
+    - Create organized guardrail modules with individual check functions
+    - Add registration system for external packages to provide their own guardrails
+    - Business logic now cleanly announces actions without embedding validation
+    - NDKSvelte warns when instantiated without session parameter
+
+- 691ba4d: Refactor EventContent component with extensible architecture and new editor
+    - Complete refactor of EventContent component for better modularity and customization
+    - Add customizable component registry for mentions, events, hashtags, links, media, and emojis
+    - Add extensible handlers system for click events and interactions via EventContentHandlersProxy
+    - Split parsing logic into reusable utilities (event-content-utils.ts)
+    - Add new embedded event components (EmbeddedEvent, MentionPreview, HashtagPreview)
+    - Add NostrEditor component with TipTap integration for rich text editing
+    - Add editor node views for nprofile, nevent, naddr, images, and videos
+    - Export new components and utilities for full customization
+
+- 691ba4d: Enhance ReactiveWalletStore with comprehensive API and reactive state
+    - Add reactive mints, relays, and transactions getters
+    - Add balance getter for total wallet balance
+    - Add send, receive, redeem, zapInvoice, and deposit methods
+    - Export Mint and Transaction types from wallet store
+    - Improve wallet initialization and lifecycle management
+    - Add comprehensive documentation for wallet API
+
+### Patch Changes
+
+- 691ba4d: Fix ReactivePoolStore to initialize with existing relay connections
+    - Initialize pool store with existing relay statuses on creation
+    - Properly reflect connected relays that were established before store initialization
+
+- Updated dependencies [8315d5e]
+- Updated dependencies [d9d5662]
+- Updated dependencies [6fb3a7f]
+- Updated dependencies [028367b]
+    - @nostr-dev-kit/ndk@2.18.0
+
 ## 2.0.2
 
 ### Patch Changes

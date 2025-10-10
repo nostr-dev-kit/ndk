@@ -69,11 +69,7 @@ export class NDKHighlight extends NDKEvent {
     }
 
     getArticleTag(): NDKTag | undefined {
-        return (
-            this.getMatchingTags("a")[0] ||
-            this.getMatchingTags("e")[0] ||
-            this.getMatchingTags("r")[0]
-        );
+        return this.getMatchingTags("a")[0] || this.getMatchingTags("e")[0] || this.getMatchingTags("r")[0];
     }
 
     async getArticle(): Promise<NDKArticle | NDKEvent | string | undefined> {

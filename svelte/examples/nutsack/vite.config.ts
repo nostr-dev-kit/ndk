@@ -28,8 +28,8 @@ export default defineConfig({
         rollupOptions: {
             output: {
                 manualChunks: {
-                    vendor: ['svelte'],
-                    ndk: ['@nostr-dev-kit/ndk', '@nostr-dev-kit/wallet'],
+                    vendor: ["svelte"],
+                    ndk: ["@nostr-dev-kit/ndk", "@nostr-dev-kit/wallet"],
                 },
             },
         },

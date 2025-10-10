@@ -126,17 +126,13 @@ function processFilter(
                 }
             } else if (typeof id !== "string") {
                 if (isValidating) {
-                    issues.push(
-                        `Filter[${filterIndex}].ids[${idx}] is not a string (got ${typeof id})`,
-                    );
+                    issues.push(`Filter[${filterIndex}].ids[${idx}] is not a string (got ${typeof id})`);
                 } else {
                     debug?.(`Fixed: Removed non-string value at ids[${idx}] (was ${typeof id})`);
                 }
             } else if (!/^[0-9a-f]{64}$/i.test(id)) {
                 if (isValidating) {
-                    issues.push(
-                        `Filter[${filterIndex}].ids[${idx}] is not a valid 64-char hex string: "${id}"`,
-                    );
+                    issues.push(`Filter[${filterIndex}].ids[${idx}] is not a valid 64-char hex string: "${id}"`);
                 } else {
                     debug?.(`Fixed: Removed invalid hex string at ids[${idx}]`);
                 }
@@ -162,13 +158,9 @@ function processFilter(
                 }
             } else if (typeof author !== "string") {
                 if (isValidating) {
-                    issues.push(
-                        `Filter[${filterIndex}].authors[${idx}] is not a string (got ${typeof author})`,
-                    );
+                    issues.push(`Filter[${filterIndex}].authors[${idx}] is not a string (got ${typeof author})`);
                 } else {
-                    debug?.(
-                        `Fixed: Removed non-string value at authors[${idx}] (was ${typeof author})`,
-                    );
+                    debug?.(`Fixed: Removed non-string value at authors[${idx}] (was ${typeof author})`);
                 }
             } else if (!/^[0-9a-f]{64}$/i.test(author)) {
                 if (isValidating) {
@@ -200,13 +192,9 @@ function processFilter(
                 }
             } else if (typeof kind !== "number") {
                 if (isValidating) {
-                    issues.push(
-                        `Filter[${filterIndex}].kinds[${idx}] is not a number (got ${typeof kind})`,
-                    );
+                    issues.push(`Filter[${filterIndex}].kinds[${idx}] is not a number (got ${typeof kind})`);
                 } else {
-                    debug?.(
-                        `Fixed: Removed non-number value at kinds[${idx}] (was ${typeof kind})`,
-                    );
+                    debug?.(`Fixed: Removed non-number value at kinds[${idx}] (was ${typeof kind})`);
                 }
             } else if (!Number.isInteger(kind)) {
                 if (isValidating) {
@@ -216,9 +204,7 @@ function processFilter(
                 }
             } else if (kind < 0 || kind > 65535) {
                 if (isValidating) {
-                    issues.push(
-                        `Filter[${filterIndex}].kinds[${idx}] is out of valid range (0-65535): ${kind}`,
-                    );
+                    issues.push(`Filter[${filterIndex}].kinds[${idx}] is out of valid range (0-65535): ${kind}`);
                 } else {
                     debug?.(`Fixed: Removed out-of-range kind at kinds[${idx}]: ${kind}`);
                 }
@@ -247,13 +233,9 @@ function processFilter(
                         }
                     } else if (typeof value !== "string") {
                         if (isValidating) {
-                            issues.push(
-                                `Filter[${filterIndex}].${key}[${idx}] is not a string (got ${typeof value})`,
-                            );
+                            issues.push(`Filter[${filterIndex}].${key}[${idx}] is not a string (got ${typeof value})`);
                         } else {
-                            debug?.(
-                                `Fixed: Removed non-string value at ${key}[${idx}] (was ${typeof value})`,
-                            );
+                            debug?.(`Fixed: Removed non-string value at ${key}[${idx}] (was ${typeof value})`);
                         }
                     } else {
                         // For #e and #p tags, validate as hex strings
@@ -272,8 +254,7 @@ function processFilter(
                 });
 
                 if (!isValidating) {
-                    cleanedFilter[key as `#${string}`] =
-                        validValues.length > 0 ? validValues : undefined;
+                    cleanedFilter[key as `#${string}`] = validValues.length > 0 ? validValues : undefined;
                 }
             }
         }

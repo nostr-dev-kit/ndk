@@ -5,14 +5,15 @@ import { ndkReady } from "./lib/ndk";
 import { initPWA } from "./lib/pwa";
 
 // Register service worker
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-            .then(registration => {
-                console.log('SW registered:', registration);
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+        navigator.serviceWorker
+            .register("/sw.js")
+            .then((registration) => {
+                console.log("SW registered:", registration);
             })
-            .catch(error => {
-                console.log('SW registration failed:', error);
+            .catch((error) => {
+                console.log("SW registration failed:", error);
             });
     });
 }

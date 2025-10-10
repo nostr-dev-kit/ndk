@@ -1,6 +1,6 @@
-import { describe, it, expect } from "vitest";
-import { encrypt, decrypt } from "./index.js";
-import { hexToBytes, bytesToHex } from "@noble/hashes/utils";
+import { bytesToHex, hexToBytes } from "@noble/hashes/utils";
+import { describe, expect, it } from "vitest";
+import { decrypt, encrypt } from "./index.js";
 
 describe("NIP-49 - ncryptsec", () => {
     const password = "test-password-123";
@@ -93,10 +93,7 @@ describe("NIP-49 - ncryptsec", () => {
         it("should throw error for wrong prefix", () => {
             // Use nsec (wrong prefix) instead of ncryptsec
             expect(() => {
-                decrypt(
-                    "nsec1vl029mgpspedva04g90vltkh6fvh240zqtv9k0t9af8935ke9laqsnlfe5",
-                    password,
-                );
+                decrypt("nsec1vl029mgpspedva04g90vltkh6fvh240zqtv9k0t9af8935ke9laqsnlfe5", password);
             }).toThrow(/prefix/);
         });
     });

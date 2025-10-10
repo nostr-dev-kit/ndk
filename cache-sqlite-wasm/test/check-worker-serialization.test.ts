@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 
 describe("Worker postMessage serialization", () => {
     it("should check how data is serialized across worker boundary", () => {
@@ -11,7 +11,7 @@ describe("Worker postMessage serialization", () => {
             tags: "[]",
             content: "test token",
             sig: "sig",
-            raw: "[\"event-id\",\"pubkey\",1759871760,7375,[],\"test token\",\"sig\"]",
+            raw: '["event-id","pubkey",1759871760,7375,[],"test token","sig"]',
             deleted: 0,
         };
 

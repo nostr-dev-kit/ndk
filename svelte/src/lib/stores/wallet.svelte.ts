@@ -1,7 +1,13 @@
 import type NDK from "@nostr-dev-kit/ndk";
-import { NDKKind as Kind, type Hexpubkey, type NDKEvent, type NDKKind } from "@nostr-dev-kit/ndk";
+import { type Hexpubkey, NDKKind as Kind, type NDKEvent, type NDKKind } from "@nostr-dev-kit/ndk";
 import type { NDKSessionManager } from "@nostr-dev-kit/sessions";
-import { NDKCashuWallet, type NDKCashuDeposit, type NDKWallet, type NDKWalletBalance, NDKWalletStatus } from "@nostr-dev-kit/wallet";
+import {
+    type NDKCashuDeposit,
+    NDKCashuWallet,
+    type NDKWallet,
+    type NDKWalletBalance,
+    NDKWalletStatus,
+} from "@nostr-dev-kit/wallet";
 
 export interface Mint {
     url: string;
@@ -78,11 +84,16 @@ export class ReactiveWalletStore {
         const startTime = Date.now();
 
         if (this.#currentWalletEventId) {
-            console.log(`[${new Date().toISOString()}] [ReactiveWalletStore.#syncWallet] Wallet event changed from ${this.#currentWalletEventId} to ${walletEvent.id}, created_at: ${walletEvent.created_at}`);
+            console.log(
+                `[${new Date().toISOString()}] [ReactiveWalletStore.#syncWallet] Wallet event changed from ${this.#currentWalletEventId} to ${walletEvent.id}, created_at: ${walletEvent.created_at}`,
+            );
         }
 
         try {
-            console.log(`[${new Date().toISOString()}] [ReactiveWalletStore.#syncWallet] Instantiating wallet from event`, { eventId: walletEvent.id, created_at: walletEvent.created_at });
+            console.log(
+                `[${new Date().toISOString()}] [ReactiveWalletStore.#syncWallet] Instantiating wallet from event`,
+                { eventId: walletEvent.id, created_at: walletEvent.created_at },
+            );
 
             // Instantiate wallet from event
             const wallet = await NDKCashuWallet.from(walletEvent);
@@ -92,17 +103,26 @@ export class ReactiveWalletStore {
                 this.set(wallet);
                 this.#currentWalletEventId = walletEvent.id;
 
-                console.log(`[${new Date().toISOString()}] [ReactiveWalletStore.#syncWallet] Starting wallet monitoring`);
+                console.log(
+                    `[${new Date().toISOString()}] [ReactiveWalletStore.#syncWallet] Starting wallet monitoring`,
+                );
                 const walletStartTime = Date.now();
 
                 // Start wallet monitoring (will load from cache first, then sync)
                 await wallet.start({ pubkey });
-                console.log(`[${new Date().toISOString()}] [ReactiveWalletStore.#syncWallet] Wallet started in ${Date.now() - walletStartTime}ms`);
+                console.log(
+                    `[${new Date().toISOString()}] [ReactiveWalletStore.#syncWallet] Wallet started in ${Date.now() - walletStartTime}ms`,
+                );
 
-                console.log(`[${new Date().toISOString()}] [ReactiveWalletStore.#syncWallet] Wallet sync completed (total time: ${Date.now() - startTime}ms)`);
+                console.log(
+                    `[${new Date().toISOString()}] [ReactiveWalletStore.#syncWallet] Wallet sync completed (total time: ${Date.now() - startTime}ms)`,
+                );
             }
         } catch (error) {
-            console.error(`[${new Date().toISOString()}] [ReactiveWalletStore.#syncWallet] Failed to load wallet from event:`, error);
+            console.error(
+                `[${new Date().toISOString()}] [ReactiveWalletStore.#syncWallet] Failed to load wallet from event:`,
+                error,
+            );
         }
     }
 
@@ -162,9 +182,7 @@ export class ReactiveWalletStore {
      * Handle status change events from wallet
      */
     #handleStatusChange = (status: NDKWalletStatus): void => {
-        console.log(
-            `[${new Date().toISOString()}] [ReactiveWalletStore] Wallet status changed to: ${status}`,
-        );
+        console.log(`[${new Date().toISOString()}] [ReactiveWalletStore] Wallet status changed to: ${status}`);
         this.status = status;
     };
 

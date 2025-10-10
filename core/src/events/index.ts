@@ -512,11 +512,7 @@ export class NDKEvent extends EventEmitter {
      * @param requiredRelayCount
      * @returns
      */
-    public async publishReplaceable(
-        relaySet?: NDKRelaySet,
-        timeoutMs?: number,
-        requiredRelayCount?: number,
-    ) {
+    public async publishReplaceable(relaySet?: NDKRelaySet, timeoutMs?: number, requiredRelayCount?: number) {
         this.id = "";
         this.created_at = Math.floor(Date.now() / 1000);
         this.sig = "";
@@ -540,14 +536,12 @@ export class NDKEvent extends EventEmitter {
     ): Promise<Set<NDKRelay>> {
         if (!requiredRelayCount) requiredRelayCount = 1;
         if (!this.sig) await this.sign(undefined, opts);
-        if (!this.ndk)
-            throw new Error("NDKEvent must be associated with an NDK instance to publish");
+        if (!this.ndk) throw new Error("NDKEvent must be associated with an NDK instance to publish");
 
         if (!relaySet || relaySet.size === 0) {
             // If we have a devWriteRelaySet, use it to publish all events
             relaySet =
-                this.ndk.devWriteRelaySet ||
-                (await calculateRelaySetFromEvent(this.ndk, this, requiredRelayCount));
+                this.ndk.devWriteRelaySet || (await calculateRelaySetFromEvent(this.ndk, this, requiredRelayCount));
         }
 
         // If the published event is a delete event, notify the cache if there is one
@@ -674,11 +668,7 @@ export class NDKEvent extends EventEmitter {
      * For all other kinds this will be the event id
      */
     deduplicationKey(): string {
-        if (
-            this.kind === 0 ||
-            this.kind === 3 ||
-            (this.kind && this.kind >= 10000 && this.kind < 20000)
-        ) {
+        if (this.kind === 0 || this.kind === 3 || (this.kind && this.kind >= 10000 && this.kind < 20000)) {
             return `${this.kind}:${this.pubkey}`;
         }
         return this.tagId();
@@ -779,12 +769,7 @@ export class NDKEvent extends EventEmitter {
      *     event.referenceTags(); // [["e", "parent-id"]]
      * @returns {NDKTag} The NDKTag object referencing this event
      */
-    referenceTags(
-        marker?: string,
-        skipAuthorTag?: boolean,
-        forceTag?: string,
-        opts?: ContentTaggingOptions,
-    ): NDKTag[] {
+    referenceTags(marker?: string, skipAuthorTag?: boolean, forceTag?: string, opts?: ContentTaggingOptions): NDKTag[] {
         let tags: NDKTag[] = [];
 
         // NIP-33

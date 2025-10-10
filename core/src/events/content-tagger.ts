@@ -136,8 +136,7 @@ export async function generateContentTags(
 
             // Check if type should be filtered
             if (opts?.filters) {
-                const shouldInclude =
-                    !opts.filters.includeTypes || opts.filters.includeTypes.includes(type as any);
+                const shouldInclude = !opts.filters.includeTypes || opts.filters.includeTypes.includes(type as any);
                 const shouldExclude = opts.filters.excludeTypes?.includes(type as any);
                 if (!shouldInclude || shouldExclude) {
                     return tag;
@@ -198,11 +197,7 @@ export async function generateContentTags(
                             }
 
                             addTagIfNew(["q", id, relays[0]]);
-                            if (
-                                opts?.pTags !== false &&
-                                opts?.pTagOnQTags !== false &&
-                                opts?.pTagOnATags !== false
-                            )
+                            if (opts?.pTags !== false && opts?.pTagOnQTags !== false && opts?.pTagOnATags !== false)
                                 addTagIfNew(["p", data.pubkey]);
                             resolve();
                         }),

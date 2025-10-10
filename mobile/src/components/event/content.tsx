@@ -14,7 +14,6 @@
 
 import { type NDKEvent, NDKKind, NDKUser, useNDK, useProfileValue } from "@nostr-dev-kit/react";
 import { Image } from "expo-image";
-// biome-ignore lint/style/useImportType: <explanation>
 import React, { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, type TextProps } from "react-native";
 
@@ -275,6 +274,7 @@ const EventContent: React.FC<EventContentProps> = ({
     return (
         <Text numberOfLines={numberOfLines} style={style} {...props}>
             {parts.map((part, index) => (
+                // biome-ignore lint/suspicious/noArrayIndexKey: <no key>
                 <React.Fragment key={index}>
                     <RenderPart
                         part={part}

@@ -43,7 +43,10 @@ export interface MintDiscoveryState {
     stop: () => void;
 }
 
-async function fetchMintInfo(url: string, ndk: NDK): Promise<{
+async function fetchMintInfo(
+    url: string,
+    ndk: NDK,
+): Promise<{
     isOnline: boolean;
     info?: any;
 }> {

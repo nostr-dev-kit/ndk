@@ -1,7 +1,7 @@
 import "./style.css";
 
-import NDK, { NDKEvent } from "@nostr-dev-kit/ndk";
 import NDKCacheAdapterSqliteWasm from "@nostr-dev-kit/cache-sqlite-wasm";
+import NDK, { NDKEvent } from "@nostr-dev-kit/ndk";
 
 const ndk = new NDK();
 

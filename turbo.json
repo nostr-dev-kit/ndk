@@ -9,25 +9,33 @@
         "ndk-core#build": {
             "outputs": ["dist/**"]
         },
-        "ndk-wallet#build": {
+        "wallet#build": {
             "outputs": ["dist/**"],
-            "dependsOn": ["ndk-core#build"]
+            "dependsOn": ["ndk-core#build", "sync#build"]
         },
         "ndk-hooks#build": {
             "outputs": ["dist/**"],
-            "dependsOn": ["ndk-core#build", "ndk-wallet#build"]
+            "dependsOn": ["ndk-core#build", "wallet#build"]
         },
         "ndk-mobile#build": {
             "outputs": ["dist/**"],
-            "dependsOn": ["ndk-core#build", "ndk-wallet#build", "ndk-hooks#build"]
+            "dependsOn": ["ndk-core#build", "wallet#build", "ndk-hooks#build"]
         },
-        "ndk-blossom#build": {
+        "blossom#build": {
             "outputs": ["dist/**"],
             "dependsOn": ["ndk-core#build"]
         },
-        "ndk-cache-sqlite#build": {
+        "cache-sqlite#build": {
             "outputs": ["dist/**"],
             "dependsOn": ["ndk-core#build"]
+        },
+        "sync#build": {
+            "outputs": ["dist/**"],
+            "dependsOn": ["ndk-core#build"]
+        },
+        "wot#build": {
+            "outputs": ["dist/**"],
+            "dependsOn": ["ndk-core#build", "sync#build"]
         },
         "test": {
             "outputs": ["coverage/**"],

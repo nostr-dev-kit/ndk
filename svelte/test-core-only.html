@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Core NDK - Duplicate Filters</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #00ff00;
+        }
+        #log {
+            background: #000;
+            padding: 20px;
+            border: 1px solid #00ff00;
+            border-radius: 4px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        .header {
+            color: #ffff00;
+            font-weight: bold;
+        }
+        .error {
+            color: #ff0000;
+        }
+        .success {
+            color: #00ff00;
+        }
+        .info {
+            color: #00ffff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Core NDK Test - Duplicate Filter Issue</h1>
+    <div id="log"></div>
+
+    <script type="module">
+        // Import core NDK directly
+        import NDK from '../core/dist/index.mjs';
+
+        const logDiv = document.getElementById('log');
+
+        function log(message, className = '') {
+            const line = document.createElement('div');
+            line.className = className;
+            line.textContent = message;
+            logDiv.appendChild(line);
+            console.log(message);
+        }
+
+        async function runTest() {
+            log('=== Testing with CORE NDK (not svelte) ===', 'header');
+            log('');
+
+            // Create NDK with outbox disabled and single explicit relay
+            log('Creating NDK with:');
+            log('  - explicitRelayUrls: ["wss://relay.nostr.band"]');
+            log('  - enableOutboxModel: false');
+            log('');
+
+            const ndk = new NDK({
+                explicitRelayUrls: ['wss://relay.nostr.band'],
+                enableOutboxModel: false,
+            });
+
+            // Make ndk global for debugging
+            window.ndk = ndk;
+
+            // Connect to the explicit relay
+            log('Connecting to relay.nostr.band...', 'info');
+            await ndk.connect();
+
+            // Wait for connection
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            log('Connected!', 'success');
+            log('');
+
+            log('=== Creating subscription with CORE NDK ===', 'header');
+            log('Filter: { kinds: [1], limit: 1 }');
+            log('Relay URLs: ["wss://relay.nostr.band", "wss://f7z.io"]');
+            log('closeOnEose: false');
+            log('');
+
+            // Create subscription with specific relay URLs using CORE NDK
+            const subscription = ndk.subscribe(
+                { kinds: [1], limit: 1 },  // Filter
+                {
+                    relayUrls: ['wss://relay.nostr.band', 'wss://f7z.io'],
+                    closeOnEose: false,
+                    groupable: false, // Try with groupable false first
+                }
+            );
+
+            // Make subscription global for debugging
+            window.subscription = subscription;
+
+            log('Subscription created and started', 'info');
+            log('');
+
+            // Listen for events
+            let eventCount = 0;
+            subscription.on('event', (event) => {
+                eventCount++;
+                log(`Event #${eventCount} received: ${event.id}`, 'success');
+            });
+
+            subscription.on('eose', () => {
+                log('EOSE received', 'info');
+            });
+
+            log('=== Monitoring for 5 seconds ===', 'header');
+            log('Check browser console for [compileFilters] and [addItem] logs');
+            log('');
+
+            await new Promise(resolve => setTimeout(resolve, 5000));
+
+            log('');
+            log('=== Test with groupable: true ===', 'header');
+
+            // Stop first subscription
+            subscription.stop();
+
+            // Try with groupable true
+            const subscription2 = ndk.subscribe(
+                { kinds: [1], limit: 1 },  // Filter
+                {
+                    relayUrls: ['wss://relay.nostr.band', 'wss://f7z.io'],
+                    closeOnEose: false,
+                    groupable: true, // Now try with groupable true
+                }
+            );
+
+            window.subscription2 = subscription2;
+
+            log('Second subscription created with groupable: true', 'info');
+            log('');
+
+            await new Promise(resolve => setTimeout(resolve, 3000));
+
+            log('');
+            log('=== Test Complete ===', 'header');
+            log('Check browser console for:');
+            log('1. [compileFilters] logs showing items.size');
+            log('2. [addItem] logs showing when subscriptions are added');
+            log('3. Final mergedFilters showing if filters are duplicated');
+            log('');
+            log('You can also inspect:');
+            log('  window.ndk - the NDK instance');
+            log('  window.subscription - first subscription (groupable: false)');
+            log('  window.subscription2 - second subscription (groupable: true)');
+            log('');
+            log('=== IMPORTANT ===', 'header');
+            log('Open Network tab and look for WebSocket messages');
+            log('Check if REQ messages have duplicate filters');
+        }
+
+        // Run the test
+        runTest().catch(err => {
+            log(`Error: ${err.message}`, 'error');
+            console.error(err);
+        });
+    </script>
+</body>
+</html>

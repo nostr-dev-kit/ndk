@@ -4,6 +4,7 @@ temp
 **/dist
 **/lib
 !ndk-svelte-components/src/lib/
+!svelte/src/lib/
 **/.vscode
 justfile
 package-lock.json
@@ -44,7 +45,16 @@ coverage
 /docs/wrappers/
 /docs/hooks/
 **/docs/api/
-ndk-cache-sqlite/example/cache.db
+cache-sqlite/example/cache.db
 
 # TENEX project files
 .tenex/
+ndk-svelte5/examples
+.vercel
+.playwright-mcp
+svelte/examples/basic-feed/public/
+
+# Test and benchmark files
+.test-sessions.json
+**/baseline-timing.ts
+**/current-timing.ts

@@ -1,5 +1,13 @@
 # @nostr-dev-kit/wot
 
+## 0.3.4
+
+### Patch Changes
+
+- bump
+- Updated dependencies
+    - @nostr-dev-kit/sync@0.3.2
+
 ## 0.3.3
 
 ### Patch Changes

@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.0.3
+
+### Patch Changes
+
+- bump
+- Updated dependencies
+    - @nostr-dev-kit/sessions@0.3.2
+    - @nostr-dev-kit/sync@0.3.2
+    - @nostr-dev-kit/wallet@0.8.3
+    - @nostr-dev-kit/wot@0.3.4
+
 ## 3.0.0
 
 ### Minor Changes

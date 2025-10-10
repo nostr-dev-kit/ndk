@@ -126,17 +126,13 @@ function processFilter(
                 }
             } else if (typeof id !== "string") {
                 if (isValidating) {
-                    issues.push(
-                        `Filter[${filterIndex}].ids[${idx}] is not a string (got ${typeof id})`,
-                    );
+                    issues.push(`Filter[${filterIndex}].ids[${idx}] is not a string (got ${typeof id})`);
                 } else {
                     debug?.(`Fixed: Removed non-string value at ids[${idx}] (was ${typeof id})`);
                 }
             } else if (!/^[0-9a-f]{64}$/i.test(id)) {
                 if (isValidating) {
-                    issues.push(
-                        `Filter[${filterIndex}].ids[${idx}] is not a valid 64-char hex string: "${id}"`,
-                    );
+                    issues.push(`Filter[${filterIndex}].ids[${idx}] is not a valid 64-char hex string: "${id}"`);
                 } else {
                     debug?.(`Fixed: Removed invalid hex string at ids[${idx}]`);
                 }
@@ -162,13 +158,9 @@ function processFilter(
                 }
             } else if (typeof author !== "string") {
                 if (isValidating) {
-                    issues.push(
-                        `Filter[${filterIndex}].authors[${idx}] is not a string (got ${typeof author})`,
-                    );
+                    issues.push(`Filter[${filterIndex}].authors[${idx}] is not a string (got ${typeof author})`);
                 } else {
-                    debug?.(
-                        `Fixed: Removed non-string value at authors[${idx}] (was ${typeof author})`,
-                    );
+                    debug?.(`Fixed: Removed non-string value at authors[${idx}] (was ${typeof author})`);
                 }
             } else if (!/^[0-9a-f]{64}$/i.test(author)) {
                 if (isValidating) {
@@ -200,13 +192,9 @@ function processFilter(
                 }
             } else if (typeof kind !== "number") {
                 if (isValidating) {
-                    issues.push(
-                        `Filter[${filterIndex}].kinds[${idx}] is not a number (got ${typeof kind})`,
-                    );
+                    issues.push(`Filter[${filterIndex}].kinds[${idx}] is not a number (got ${typeof kind})`);
                 } else {
-                    debug?.(
-                        `Fixed: Removed non-number value at kinds[${idx}] (was ${typeof kind})`,
-                    );
+                    debug?.(`Fixed: Removed non-number value at kinds[${idx}] (was ${typeof kind})`);
                 }
             } else if (!Number.isInteger(kind)) {
                 if (isValidating) {
@@ -216,9 +204,7 @@ function processFilter(
                 }
             } else if (kind < 0 || kind > 65535) {
                 if (isValidating) {
-                    issues.push(
-                        `Filter[${filterIndex}].kinds[${idx}] is out of valid range (0-65535): ${kind}`,
-                    );
+                    issues.push(`Filter[${filterIndex}].kinds[${idx}] is out of valid range (0-65535): ${kind}`);
                 } else {
                     debug?.(`Fixed: Removed out-of-range kind at kinds[${idx}]: ${kind}`);
                 }
@@ -247,13 +233,9 @@ function processFilter(
                         }
                     } else if (typeof value !== "string") {
                         if (isValidating) {
-                            issues.push(
-                                `Filter[${filterIndex}].${key}[${idx}] is not a string (got ${typeof value})`,
-                            );
+                            issues.push(`Filter[${filterIndex}].${key}[${idx}] is not a string (got ${typeof value})`);
                         } else {
-                            debug?.(
-                                `Fixed: Removed non-string value at ${key}[${idx}] (was ${typeof value})`,
-                            );
+                            debug?.(`Fixed: Removed non-string value at ${key}[${idx}] (was ${typeof value})`);
                         }
                     } else {
                         // For #e and #p tags, validate as hex strings
@@ -272,8 +254,7 @@ function processFilter(
                 });
 
                 if (!isValidating) {
-                    cleanedFilter[key as `#${string}`] =
-                        validValues.length > 0 ? validValues : undefined;
+                    cleanedFilter[key as `#${string}`] = validValues.length > 0 ? validValues : undefined;
                 }
             }
         }
@@ -319,17 +300,6 @@ function runAIGuardrailsForFilter(filter: NDKFilter, filterIndex: number, ndk: N
                 `⚠️  This will request ALL events from relays, which is never what you want.`,
             `Add filtering criteria like 'kinds', 'authors', or tags.`,
             false, // Fatal error - cannot be disabled
-        );
-    }
-
-    // Check 3: Massive limit values
-    if (filter.limit !== undefined && filter.limit > 1000) {
-        guards.warn(
-            GuardrailCheckId.FILTER_LARGE_LIMIT,
-            `Filter[${filterIndex}] has a very large limit.\n\n` +
-                `📦 Your filter:\n${filterPreview}\n\n` +
-                `⚠️  limit: ${filter.limit} can cause performance issues and relay rejection.`,
-            `Consider:\n   • Using a smaller limit (e.g., 100-500) with pagination\n   • Using subscribe() for continuous updates\n   • Breaking into multiple smaller queries`,
         );
     }
 
@@ -437,17 +407,31 @@ function runAIGuardrailsForFilter(filter: NDKFilter, filterIndex: number, ndk: N
         }
     }
 
-    // Check 7: Invalid #a tag format
+    // Check 7: Invalid #a tag format and kind
     if (filter["#a"]) {
         const aTags = filter["#a"];
         aTags?.forEach((aTag, idx) => {
-            if (typeof aTag === "string" && !/^\d+:[0-9a-f]{64}:.*$/.test(aTag)) {
-                guards.error(
-                    GuardrailCheckId.FILTER_INVALID_A_TAG,
-                    `Filter[${filterIndex}].#a[${idx}] has invalid format: "${aTag}". Must be "kind:pubkey:d-tag".`,
-                    `Example: "30023:fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52:my-article"`,
-                    false, // Fatal error - cannot be disabled
-                );
+            if (typeof aTag === "string") {
+                // Check basic format first
+                if (!/^\d+:[0-9a-f]{64}:.*$/.test(aTag)) {
+                    guards.error(
+                        GuardrailCheckId.FILTER_INVALID_A_TAG,
+                        `Filter[${filterIndex}].#a[${idx}] has invalid format: "${aTag}". Must be "kind:pubkey:d-tag".`,
+                        `Example: "30023:fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52:my-article"`,
+                        false, // Fatal error - cannot be disabled
+                    );
+                } else {
+                    // Extract and validate kind is addressable (30000-39999)
+                    const kind = Number.parseInt(aTag.split(":")[0], 10);
+                    if (kind < 30000 || kind > 39999) {
+                        guards.error(
+                            GuardrailCheckId.FILTER_INVALID_A_TAG,
+                            `Filter[${filterIndex}].#a[${idx}] uses non-addressable kind ${kind}: "${aTag}". #a filters are only for addressable events (kinds 30000-39999).`,
+                            `Addressable events include:\n   • 30000-30039: Parameterized Replaceable Events (profiles, settings, etc.)\n   • 30040-39999: Other addressable events\n\nFor regular events (kind ${kind}), use:\n   • #e filter for specific event IDs\n   • kinds + authors filters for event queries`,
+                            false, // Fatal error - cannot be disabled
+                        );
+                    }
+                }
             }
         });
     }

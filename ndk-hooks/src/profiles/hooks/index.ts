@@ -37,9 +37,7 @@ export function useProfileValue(
     const fetchProfile = useUserProfilesStore((state: UserProfilesStore) => state.fetchProfile);
 
     // Extract pubkey from NDKUser or use directly if it's a string
-    const pubkey = typeof userOrPubkey === 'string'
-        ? userOrPubkey
-        : userOrPubkey?.pubkey;
+    const pubkey = typeof userOrPubkey === "string" ? userOrPubkey : userOrPubkey?.pubkey;
 
     const profileSelector = (state: UserProfilesStore) => (pubkey ? state.profiles.get(pubkey) : undefined);
     const profile = useUserProfilesStore(profileSelector) as NDKUserProfile | undefined;

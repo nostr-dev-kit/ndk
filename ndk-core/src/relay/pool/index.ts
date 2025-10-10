@@ -52,7 +52,7 @@ export class NDKPool extends EventEmitter<{
     // A map to store timeouts for each flapping relay.
     private backoffTimes: Map<string, number> = new Map();
     private ndk: NDK;
-    
+
     // System-wide disconnection detection
     private disconnectionTimes = new Map<WebSocket["url"], number>();
     private systemEventDetector?: ReturnType<typeof setTimeout>;
@@ -402,75 +402,76 @@ export class NDKPool extends EventEmitter<{
     private recordDisconnection(relay: NDKRelay) {
         const now = Date.now();
         this.disconnectionTimes.set(relay.url, now);
-        
+
         // Clean up old disconnection times (older than 10 seconds)
         for (const [url, time] of this.disconnectionTimes.entries()) {
             if (now - time > 10000) {
                 this.disconnectionTimes.delete(url);
             }
         }
-        
+
         // Check if this might be a system-wide event
         this.checkForSystemWideDisconnection();
     }
-    
+
     /**
      * Checks if multiple relays disconnected simultaneously, indicating a system event
      */
     private checkForSystemWideDisconnection() {
         const now = Date.now();
         const recentDisconnections: number[] = [];
-        
+
         // Count disconnections in the last 5 seconds
         for (const time of this.disconnectionTimes.values()) {
             if (now - time < 5000) {
                 recentDisconnections.push(time);
             }
         }
-        
+
         // If more than 50% of relays disconnected within 5 seconds, it's likely a system event
         if (recentDisconnections.length > this.relays.size / 2 && this.relays.size > 1) {
-            this.debug(`System-wide disconnection detected: ${recentDisconnections.length}/${this.relays.size} relays disconnected`);
+            this.debug(
+                `System-wide disconnection detected: ${recentDisconnections.length}/${this.relays.size} relays disconnected`,
+            );
             this.handleSystemWideReconnection();
         }
     }
-    
+
     /**
      * Handles system-wide reconnection (e.g., after sleep/wake or network change)
      */
     private handleSystemWideReconnection() {
-        this.debug('Initiating system-wide reconnection with reset backoff');
-        
+        this.debug("Initiating system-wide reconnection with reset backoff");
+
         // Clear the system event detector if it exists
         if (this.systemEventDetector) {
             clearTimeout(this.systemEventDetector);
         }
-        
+
         // Prevent multiple system-wide reconnections
         this.systemEventDetector = setTimeout(() => {
             this.systemEventDetector = undefined;
         }, 10000);
-        
+
         // Reset backoff for all relays and force reconnection
         for (const relay of this.relays.values()) {
             if (relay.connectivity) {
                 // Reset reconnection state for system-wide event
                 relay.connectivity.resetReconnectionState();
-                
+
                 // Reconnect if not connected
-                if (relay.status !== NDKRelayStatus.CONNECTED && 
-                    relay.status !== NDKRelayStatus.CONNECTING) {
+                if (relay.status !== NDKRelayStatus.CONNECTED && relay.status !== NDKRelayStatus.CONNECTING) {
                     relay.connect().catch((e) => {
                         this.debug(`Failed to reconnect relay ${relay.url} after system event: ${e}`);
                     });
                 }
             }
         }
-        
+
         // Clear disconnection times after handling
         this.disconnectionTimes.clear();
     }
-    
+
     private handleFlapping(relay: NDKRelay) {
         this.debug(`Relay ${relay.url} is flapping`);
 

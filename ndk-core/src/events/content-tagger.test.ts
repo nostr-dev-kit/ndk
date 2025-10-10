@@ -158,42 +158,44 @@ describe("await generateContentTags", () => {
         it("skips content tagging when skipContentTagging is true", async () => {
             const content = "Hello @npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft #tag1";
             const opts: ContentTaggingOptions = { skipContentTagging: true };
-            
+
             const { content: processedContent, tags: processedTags } = await generateContentTags(content, [], opts);
-            
+
             expect(processedContent).toEqual(content);
             expect(processedTags).toEqual([]);
         });
 
         it("always uses q-tag for note references", async () => {
             const content = "Check this out: nostr:note1d2mheza0d5z5yycucu94nw37e6gyl4vwl6gavyku86rshkhexq6q30s0g7";
-            
+
             const { tags: processedTags } = await generateContentTags(content, []);
-            
+
             expect(processedTags).toEqual([
-                ["q", "6ab77c8baf6d0542131cc70b59ba3ece904fd58efe91d612dc3e870bdaf93034", ""]
+                ["q", "6ab77c8baf6d0542131cc70b59ba3ece904fd58efe91d612dc3e870bdaf93034", ""],
             ]);
         });
 
         it("skips p-tags on q-tags when pTagOnQTags is false", async () => {
-            const content = "Hello @nevent1qqsykmtd4zplclt56wfkkzjwplyw6q8a2p0fqf8p46wedlqayct0uhqppemhxue69uhkummn9ekx7mp0qgstryqhtnh5qlze8utuz42gpmdp5th87myyx78w7r5hx5lc0mjexqqrqsqqqqqpyazpkc";
+            const content =
+                "Hello @nevent1qqsykmtd4zplclt56wfkkzjwplyw6q8a2p0fqf8p46wedlqayct0uhqppemhxue69uhkummn9ekx7mp0qgstryqhtnh5qlze8utuz42gpmdp5th87myyx78w7r5hx5lc0mjexqqrqsqqqqqpyazpkc";
             const opts: ContentTaggingOptions = { pTagOnQTags: false };
-            
+
             const { tags: processedTags } = await generateContentTags(content, [], opts);
-            
+
             expect(processedTags).toEqual([
-                ["q", "4b6d6da883fc7d74d3936b0a4e0fc8ed00fd505e9024e1ae9d96fc1d2616fe5c", "wss://nos.lol/"]
+                ["q", "4b6d6da883fc7d74d3936b0a4e0fc8ed00fd505e9024e1ae9d96fc1d2616fe5c", "wss://nos.lol/"],
             ]);
         });
 
         it("includes p-tags on q-tags by default", async () => {
-            const content = "Hello @nevent1qqsykmtd4zplclt56wfkkzjwplyw6q8a2p0fqf8p46wedlqayct0uhqppemhxue69uhkummn9ekx7mp0qgstryqhtnh5qlze8utuz42gpmdp5th87myyx78w7r5hx5lc0mjexqqrqsqqqqqpyazpkc";
-            
+            const content =
+                "Hello @nevent1qqsykmtd4zplclt56wfkkzjwplyw6q8a2p0fqf8p46wedlqayct0uhqppemhxue69uhkummn9ekx7mp0qgstryqhtnh5qlze8utuz42gpmdp5th87myyx78w7r5hx5lc0mjexqqrqsqqqqqpyazpkc";
+
             const { tags: processedTags } = await generateContentTags(content, []);
-            
+
             expect(processedTags).toEqual([
                 ["q", "4b6d6da883fc7d74d3936b0a4e0fc8ed00fd505e9024e1ae9d96fc1d2616fe5c", "wss://nos.lol/"],
-                ["p", "b190175cef407c593f17c155480eda1a2ee7f6c84378eef0e97353f87ee59300"]
+                ["p", "b190175cef407c593f17c155480eda1a2ee7f6c84378eef0e97353f87ee59300"],
             ]);
         });
 
@@ -205,58 +207,57 @@ describe("await generateContentTags", () => {
                     if (tag === "p") {
                         return [
                             ["p", "pubkey1"],
-                            ["p", "pubkey2"]
+                            ["p", "pubkey2"],
                         ];
                     }
                     return [];
-                }
+                },
             } as unknown as NDKEvent;
-            
+
             const { tags: processedTags } = await generateContentTags(content, [], opts, mockEvent);
-            
+
             expect(processedTags).toEqual([
                 ["p", "pubkey1"],
-                ["p", "pubkey2"]
+                ["p", "pubkey2"],
             ]);
         });
 
         it("excludes hashtag processing when excluded in filters", async () => {
             const content = "Hello #bitcoin #nostr";
             const opts: ContentTaggingOptions = {
-                filters: { excludeTypes: ['hashtag'] }
+                filters: { excludeTypes: ["hashtag"] },
             };
-            
+
             const { tags: processedTags } = await generateContentTags(content, [], opts);
-            
+
             expect(processedTags).toEqual([]);
         });
 
         it("only includes specified types when includeTypes is set", async () => {
-            const content = "Hello @npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft and #bitcoin and nostr:note1d2mheza0d5z5yycucu94nw37e6gyl4vwl6gavyku86rshkhexq6q30s0g7";
+            const content =
+                "Hello @npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft and #bitcoin and nostr:note1d2mheza0d5z5yycucu94nw37e6gyl4vwl6gavyku86rshkhexq6q30s0g7";
             const opts: ContentTaggingOptions = {
-                filters: { includeTypes: ['npub'] }
+                filters: { includeTypes: ["npub"] },
             };
-            
+
             const { tags: processedTags } = await generateContentTags(content, [], opts);
-            
+
             expect(processedTags).toEqual([
                 ["p", "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"],
-                ["t", "bitcoin"]
+                ["t", "bitcoin"],
             ]);
         });
 
         it("excludes specified types when excludeTypes is set", async () => {
-            const content = "Hello @npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft and nostr:note1d2mheza0d5z5yycucu94nw37e6gyl4vwl6gavyku86rshkhexq6q30s0g7";
+            const content =
+                "Hello @npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft and nostr:note1d2mheza0d5z5yycucu94nw37e6gyl4vwl6gavyku86rshkhexq6q30s0g7";
             const opts: ContentTaggingOptions = {
-                filters: { excludeTypes: ['note'] }
+                filters: { excludeTypes: ["note"] },
             };
-            
-            const { tags: processedTags } = await generateContentTags(content, [], opts);
-            
-            expect(processedTags).toEqual([
-                ["p", "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"]
-            ]);
-        });
 
+            const { tags: processedTags } = await generateContentTags(content, [], opts);
+
+            expect(processedTags).toEqual([["p", "fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52"]]);
+        });
     });
 });

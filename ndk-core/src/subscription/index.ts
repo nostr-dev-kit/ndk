@@ -325,11 +325,12 @@ export class NDKSubscription extends EventEmitter<{
 
         // Process filters based on NDK's filter validation mode
         const rawFilters = Array.isArray(filters) ? filters : [filters];
-        const validationMode = ndk.filterValidationMode === "validate"
-            ? NDKFilterValidationMode.VALIDATE
-            : ndk.filterValidationMode === "fix"
-                ? NDKFilterValidationMode.FIX
-                : NDKFilterValidationMode.IGNORE;
+        const validationMode =
+            ndk.filterValidationMode === "validate"
+                ? NDKFilterValidationMode.VALIDATE
+                : ndk.filterValidationMode === "fix"
+                  ? NDKFilterValidationMode.FIX
+                  : NDKFilterValidationMode.IGNORE;
 
         this.filters = processFilters(rawFilters, validationMode, ndk.debug);
 

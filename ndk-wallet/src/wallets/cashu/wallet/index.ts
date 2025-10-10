@@ -15,7 +15,14 @@ import type {
     NDKZapDetails,
 } from "@nostr-dev-kit/ndk";
 import type NDK from "@nostr-dev-kit/ndk";
-import { NDKEvent, NDKKind, NDKPrivateKeySigner, NDKRelaySet, NDKCashuMintList, NDKSubscriptionCacheUsage } from "@nostr-dev-kit/ndk";
+import {
+    NDKEvent,
+    NDKKind,
+    NDKPrivateKeySigner,
+    NDKRelaySet,
+    NDKCashuMintList,
+    NDKSubscriptionCacheUsage,
+} from "@nostr-dev-kit/ndk";
 import {
     NDKWallet,
     type NDKWalletBalance,
@@ -209,9 +216,7 @@ export class NDKCashuWallet extends NDKWallet {
         );
 
         if (relayListEvent) {
-            const relayUrls = relayListEvent.tags
-                .filter((tag) => tag[0] === "r")
-                .map((tag) => tag[1]);
+            const relayUrls = relayListEvent.tags.filter((tag) => tag[0] === "r").map((tag) => tag[1]);
             if (relayUrls.length > 0) {
                 return NDKRelaySet.fromRelayUrls(relayUrls, this.ndk!);
             }

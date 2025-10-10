@@ -110,7 +110,7 @@ export async function generateContentTags(
     content: string,
     tags: NDKTag[] = [],
     opts?: ContentTaggingOptions,
-    ctx?: NDKEvent
+    ctx?: NDKEvent,
 ): Promise<ContentTag> {
     // Early return if content tagging is disabled
     if (opts?.skipContentTagging) {
@@ -177,7 +177,8 @@ export async function generateContentTags(
                             }
 
                             addTagIfNew(["q", id, relays[0]]);
-                            if (author && opts?.pTags !== false && opts?.pTagOnQTags !== false) addTagIfNew(["p", author]);
+                            if (author && opts?.pTags !== false && opts?.pTagOnQTags !== false)
+                                addTagIfNew(["p", author]);
                             resolve();
                         }),
                     );
@@ -195,7 +196,8 @@ export async function generateContentTags(
                             }
 
                             addTagIfNew(["q", id, relays[0]]);
-                            if (opts?.pTags !== false && opts?.pTagOnQTags !== false && opts?.pTagOnATags !== false) addTagIfNew(["p", data.pubkey]);
+                            if (opts?.pTags !== false && opts?.pTagOnQTags !== false && opts?.pTagOnATags !== false)
+                                addTagIfNew(["p", data.pubkey]);
                             resolve();
                         }),
                     );
@@ -215,7 +217,7 @@ export async function generateContentTags(
     await Promise.all(promises);
 
     // Only add hashtags if not filtered out
-    if (!opts?.filters?.excludeTypes?.includes('hashtag')) {
+    if (!opts?.filters?.excludeTypes?.includes("hashtag")) {
         const newTags = generateHashtags(content).map((hashtag) => ["t", hashtag]);
         tags = mergeTags(tags, newTags);
     }

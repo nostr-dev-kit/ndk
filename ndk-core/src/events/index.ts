@@ -34,7 +34,7 @@ export type NDKTag = string[];
 export type ParsedContentMatch = {
     original: string;
     decoded: string;
-    type: 'npub' | 'nprofile' | 'note' | 'nevent' | 'naddr';
+    type: "npub" | "nprofile" | "note" | "nevent" | "naddr";
     data: any;
 };
 
@@ -45,8 +45,8 @@ export type ContentTaggingOptions = {
     pTags?: boolean;
     copyPTagsFromTarget?: boolean;
     filters?: {
-        includeTypes?: Array<'npub' | 'nprofile' | 'note' | 'nevent' | 'naddr' | 'hashtag'>;
-        excludeTypes?: Array<'npub' | 'nprofile' | 'note' | 'nevent' | 'naddr' | 'hashtag'>;
+        includeTypes?: Array<"npub" | "nprofile" | "note" | "nevent" | "naddr" | "hashtag">;
+        excludeTypes?: Array<"npub" | "nprofile" | "note" | "nevent" | "naddr" | "hashtag">;
     };
 };
 
@@ -268,7 +268,13 @@ export class NDKEvent extends EventEmitter {
      * // reply.tags => [["e", <id>, <relay>, "reply"]]
      * ```
      */
-    public tag(target: NDKTag | NDKUser | NDKEvent, marker?: string, skipAuthorTag?: boolean, forceTag?: string, opts?: ContentTaggingOptions): void {
+    public tag(
+        target: NDKTag | NDKUser | NDKEvent,
+        marker?: string,
+        skipAuthorTag?: boolean,
+        forceTag?: string,
+        opts?: ContentTaggingOptions,
+    ): void {
         let tags: NDKTag[] = [];
         const isNDKUser = (target as NDKUser).fetchProfile !== undefined;
 
@@ -1019,7 +1025,7 @@ export class NDKEvent extends EventEmitter {
                 let lowerTag: NDKTag;
                 let upperTag: NDKTag;
                 const relayHint = this.relay?.url ?? "";
-                
+
                 if (this.isParamReplaceable()) {
                     lowerTag = ["a", this.tagAddress(), relayHint];
                     upperTag = ["A", this.tagAddress(), relayHint];
@@ -1027,7 +1033,7 @@ export class NDKEvent extends EventEmitter {
                     lowerTag = ["e", this.tagId(), relayHint, this.pubkey];
                     upperTag = ["E", this.tagId(), relayHint, this.pubkey];
                 }
-                
+
                 reply.tags.push(lowerTag);
                 reply.tags.push(upperTag);
                 reply.tags.push(["K", this.kind?.toString()]);

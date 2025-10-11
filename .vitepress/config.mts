@@ -21,6 +21,8 @@ export default defineConfig({
         'blossom/docs/:slug*': 'blossom/:slug*',
         'mobile/:slug.md': 'mobile/:slug.md',
         'mobile/docs/:slug*': 'mobile/:slug*',
+        'sessions/:slug.md': 'sessions/:slug.md',
+        'sessions/docs/:slug*': 'sessions/:slug*',
     },
     themeConfig: {
         // https://vitepress.dev/reference/default-theme-config
@@ -110,7 +112,7 @@ export default defineConfig({
                 text: "Sessions",
                 collapsed: true,
                 items: [
-                    { text: "Introduction", link: "/sessions/index" },
+                    { text: "Introduction", link: "/sessions/README" },
                     { text: "Quick Start", link: "/sessions/quick-start" },
                     { text: "API Reference", link: "/sessions/api" },
                     { text: "Migration Guide", link: "/sessions/migration" }

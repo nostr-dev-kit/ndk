@@ -30,6 +30,8 @@ export default defineConfig({
         'mobile/docs/:slug*': 'mobile/:slug*',
         'sessions/:slug.md': 'sessions/:slug.md',
         'sessions/docs/:slug*': 'sessions/:slug*',
+        'wallet/:slug.md': 'wallet/:slug.md',
+        'wallet/docs/:slug*': 'wallet/:slug*',
         'wot/:slug.md': 'wot/:slug.md'
     },
     themeConfig: {
@@ -71,9 +73,17 @@ export default defineConfig({
                 text: "Wallet",
                 collapsed: true,
                 items: [
-                    { text: "Introduction", link: "/wallet/index" },
-                    { text: "Nutsack (NIP-60)", link: "/wallet/nutsack" },
-                    { text: "Nutzaps", link: "/wallet/nutzaps" },
+                    { text: "Introduction", link: "/wallet/README" },
+                    {
+                        text: "NDKCashuWallet (NIP-60)",
+                        link: "/wallet/nip60-configuration",
+                        items: [
+                            { text: "Nutsack", link: "/wallet/nutsack" },
+                            { text: "Nutzaps", link: "/wallet/nutzaps" },
+                            { text: "Nutzap Monitor", link: "/wallet/nutzap-monitor" },
+                            { text: "Monitor State Store", link: "/wallet/nutzap-monitor-state-store" },
+                        ]
+                    },
                 ],
             },
             {

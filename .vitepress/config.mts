@@ -12,6 +12,11 @@ export default defineConfig({
             dark: 'github-dark'
         }
     },
+    rewrites: {
+        'docs/:slug.md': ':slug.md',
+        'core/docs/:slug*': 'core/:slug*',
+        'core/docs/:subdir/:slug*': 'core/:subdir/:slug*'
+    },
     themeConfig: {
         // https://vitepress.dev/reference/default-theme-config
         nav: [
@@ -26,13 +31,14 @@ export default defineConfig({
             {
                 text: "Getting Started",
                 items: [
-                    { text: "Introduction", link: "/getting-started/introduction" },
-                    { text: "Usage", link: "/getting-started/usage" },
-                    { text: "Signers", link: "/getting-started/signers" },
+                    { text: "Introduction", link: "/core/getting-started/introduction" },
+                    { text: "Usage", link: "/core/getting-started/usage" },
+                    { text: "Signers", link: "/core/getting-started/signers" },
                 ],
             },
             {
                 text: "Tutorial",
+                collapsed: true,
                 items: [
                     { text: "Local-first", link: "/tutorial/local-first" },
                     { text: "Publishing", link: "/tutorial/publishing" },
@@ -48,6 +54,7 @@ export default defineConfig({
             },
             {
                 text: "Cache Adapters",
+                collapsed: true,
                 items: [
                     { text: "In-memory LRU", link: "/cache/memory" },
                     { text: "In-memory + dexie", link: "/cache/dexie" },
@@ -64,6 +71,7 @@ export default defineConfig({
             },
             {
                 text: "Wallet",
+                collapsed: true,
                 items: [
                     { text: "Introduction", link: "/wallet/index" },
                     { text: "Nutsack (NIP-60)", link: "/wallet/nutsack" },
@@ -72,12 +80,14 @@ export default defineConfig({
             },
             {
                 text: "Sync & Negentropy",
+                collapsed: true,
                 items: [
                     { text: "Introduction", link: "/sync/index" },
                 ],
             },
             {
                 text: "Web of Trust",
+                collapsed: true,
                 items: [
                     { text: "Introduction", link: "/wot/index" },
                     { text: "Negentropy Integration", link: "/wot/negentropy" },
@@ -85,6 +95,7 @@ export default defineConfig({
             },
             {
                 text: "Wrappers",
+                collapsed: true,
                 items: [
                     { text: "NDK Svelte", link: "/wrappers/svelte" },
                     {
@@ -99,6 +110,7 @@ export default defineConfig({
             },
             {
                 text: "Sessions",
+                collapsed: true,
                 items: [
                     { text: "Introduction", link: "/sessions/index" },
                     { text: "Quick Start", link: "/sessions/quick-start" },
@@ -108,6 +120,7 @@ export default defineConfig({
             },
             {
                 text: "Mobile",
+                collapsed: true,
                 items: [
                     { text: "Introduction", link: "/mobile/index" },
                     { text: "Session", link: "/mobile/session" },
@@ -116,12 +129,14 @@ export default defineConfig({
             },
             {
                 text: "Blossom (Media)",
+                collapsed: true,
                 items: [
                     { text: "Introduction", link: "/blossom/getting-started" },
                 ]
             },
             {
                 text: "Internals",
+                collapsed: true,
                 items: [{ text: "Subscription Lifecycle", link: "/internals/subscriptions" }],
             },
         ],

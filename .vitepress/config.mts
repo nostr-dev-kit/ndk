@@ -19,6 +19,8 @@ export default defineConfig({
         'sync/docs/:slug*': 'sync/:slug*',
         'blossom/:slug.md': 'blossom/:slug.md',
         'blossom/docs/:slug*': 'blossom/:slug*',
+        'mobile/:slug.md': 'mobile/:slug.md',
+        'mobile/docs/:slug*': 'mobile/:slug*',
     },
     themeConfig: {
         // https://vitepress.dev/reference/default-theme-config
@@ -118,16 +120,19 @@ export default defineConfig({
                 text: "Mobile",
                 collapsed: true,
                 items: [
-                    { text: "Introduction", link: "/mobile/index" },
+                    { text: "Introduction", link: "/mobile/README" },
                     { text: "Session", link: "/mobile/session" },
                     { text: "Wallet", link: "/mobile/wallet" },
+                    { text: "Subscriptions", link: "/mobile/subscriptions" },
+                    { text: "Nutzaps", link: "/mobile/nutzaps" },
+                    { text: "Mint", link: "/mobile/mint" },
                 ],
             },
             {
                 text: "Blossom (Media)",
                 collapsed: true,
                 items: [
-                    { text: "Intro", link: "/blossom/README" },
+                    { text: "Introduction", link: "/blossom/README" },
                     { text: "Getting Started", link: "/blossom/getting-started" },
                     { text: "Error Handling", link: "/blossom/error-handling" },
                     { text: "Mirroring", link: "/blossom/mirroring" },

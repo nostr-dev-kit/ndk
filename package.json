@@ -15,7 +15,7 @@
         "clean": "turbo clean && rm -rf node_modules",
         "format": "biome format --write .",
         "docs:dev": "npx vitepress dev",
-        "docs:build": "bash ./prepare-docs.sh && vitepress build docs",
+        "docs:build": "vitepress build",
         "changeset": "changeset",
         "cs": "changeset",
         "cs:ver": "changeset version",

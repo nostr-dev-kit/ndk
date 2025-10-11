@@ -44,7 +44,7 @@
         "cache-sqlite-wasm"
     ],
     "engines": {
-        "node": ">=16.0"
+        "node": ">=22.0"
     },
     "packageManager": "bun@1.3.0",
     "devDependencies": {

@@ -4,7 +4,7 @@ import { defineConfig } from "vitepress";
 export default defineConfig({
     title: "NDK",
     description: "NDK Docs",
-    base: "/ndk/",
+    // base: "/ndk/",
     ignoreDeadLinks: true,
     markdown: {
         theme: {

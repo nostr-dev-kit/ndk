@@ -15,7 +15,9 @@ export default defineConfig({
     rewrites: {
         'docs/:slug.md': ':slug.md',
         'core/docs/:slug*': 'core/:slug*',
-        'core/docs/:subdir/:slug*': 'core/:subdir/:slug*'
+        'core/docs/:subdir/:slug*': 'core/:subdir/:slug*',
+        'sync/docs/:slug*': 'sync/:slug*',
+        'blossom/docs/:slug*': 'blossom/:slug*',
     },
     themeConfig: {
         // https://vitepress.dev/reference/default-theme-config
@@ -40,16 +42,16 @@ export default defineConfig({
                 text: "Tutorial",
                 collapsed: true,
                 items: [
-                    { text: "Local-first", link: "/tutorial/local-first" },
-                    { text: "Publishing", link: "/tutorial/publishing" },
+                    { text: "Local-first", link: "/core/tutorial/local-first" },
+                    { text: "Publishing", link: "/core/tutorial/publishing" },
                     {
                         text: "Subscription Management",
-                        link: "/tutorial/subscription-management",
+                        link: "/core/tutorial/subscription-management",
                     },
-                    { text: "Mute Filtering", link: "/tutorial/mute-filtering" },
-                    { text: "Signer Persistence", link: "/tutorial/signer-persistence" },
-                    { text: "Speed", link: "/tutorial/speed" },
-                    { text: "Zaps", link: "/tutorial/zaps" },
+                    { text: "Mute Filtering", link: "/core/tutorial/mute-filtering" },
+                    { text: "Signer Persistence", link: "/core/tutorial/signer-persistence" },
+                    { text: "Speed", link: "/core/tutorial/speed" },
+                    { text: "Zaps", link: "/core/tutorial/zaps" },
                 ],
             },
             {
@@ -76,13 +78,6 @@ export default defineConfig({
                     { text: "Introduction", link: "/wallet/index" },
                     { text: "Nutsack (NIP-60)", link: "/wallet/nutsack" },
                     { text: "Nutzaps", link: "/wallet/nutzaps" },
-                ],
-            },
-            {
-                text: "Sync & Negentropy",
-                collapsed: true,
-                items: [
-                    { text: "Introduction", link: "/sync/index" },
                 ],
             },
             {
@@ -132,12 +127,36 @@ export default defineConfig({
                 collapsed: true,
                 items: [
                     { text: "Introduction", link: "/blossom/getting-started" },
+                    { text: "Error Handling", link: "/blossom/error-handling" },
+                    { text: "Mirroring", link: "/blossom/mirroring" },
+                    { text: "Optimization", link: "/blossom/optimization" },
                 ]
             },
             {
-                text: "Internals",
+                text: "Advanced Topics",
                 collapsed: true,
-                items: [{ text: "Subscription Lifecycle", link: "/internals/subscriptions" }],
+                items: [
+                    {
+                        text: "AI Guardrails",
+                        link: "/core/advanced/ai-guardrails"
+                    },
+                    {
+                        text: "Subscription Lifecycle",
+                        link: "/core/advanced/subscription-internals"
+                    },
+                    {
+                        text: "Event Class Registration",
+                        link: "/core/advanced/event-class-registration"
+                    },
+                    {
+                        text: "Relay Metadata Caching",
+                        link: "/core/advanced/relay-metadata-caching"
+                    },
+                    {
+                        text: "Sync & Negentropy",
+                        link: "/sync"
+                    },
+                ],
             },
         ],
 

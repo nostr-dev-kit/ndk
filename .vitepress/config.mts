@@ -68,25 +68,6 @@ export default defineConfig({
                 ],
             },
             {
-                text: "Cache Adapters",
-                collapsed: true,
-                items: [
-                    { text: "Memory / LRU", link: "/cache/memory/README" },
-                    { text: "Dexie / IndexedDB", link: "cache/dexie/README" },
-                    { text: "Local Nostr Relay", link: "/cache/nostr/README" },
-                    { text: "Redis", link: "/cache/redis/README" },
-                    { text: "SQLite", link: "/cache/sqlite/README" },
-                    {
-                        text: "SQLite WASM",
-                        link: "/cache/sqlite-wasm/README",
-                        items: [
-                            { text: "Bundling", link: "/cache/sqlite-wasm/bundling" },
-                            { text: "Web Worker Setup", link: "/cache/sqlite-wasm/web-worker-setup" }
-                        ]
-                    },
-                ],
-            },
-            {
                 text: "Wallet",
                 collapsed: true,
                 items: [
@@ -170,6 +151,25 @@ export default defineConfig({
                     {
                         text: "Web of Trust (WOT)",
                         link: "/wot/README"
+                    },
+                    {
+                        text: "Cache Adapters",
+                        collapsed: true,
+                        items: [
+                            { text: "Memory / LRU", link: "/cache/memory/README" },
+                            { text: "Dexie / IndexedDB", link: "cache/dexie/README" },
+                            { text: "Local Nostr Relay", link: "/cache/nostr/README" },
+                            { text: "Redis", link: "/cache/redis/README" },
+                            { text: "SQLite", link: "/cache/sqlite/README" },
+                            {
+                                text: "SQLite WASM",
+                                link: "/cache/sqlite-wasm/README",
+                                items: [
+                                    { text: "Bundling", link: "/cache/sqlite-wasm/bundling" },
+                                    { text: "Web Worker Setup", link: "/cache/sqlite-wasm/web-worker-setup" }
+                                ]
+                            },
+                        ],
                     },
                 ],
             },

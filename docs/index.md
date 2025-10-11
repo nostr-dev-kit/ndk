@@ -8,7 +8,7 @@ hero:
   actions:
     - theme: brand
       text: Documentation
-      link: /getting-started/introduction.html
+      link: /core/getting-started/introduction
     - theme: secondary
       text: Github Repository
       link: https://github.com/nostr-dev-kit/ndk/

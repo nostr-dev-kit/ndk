@@ -14,6 +14,13 @@ export default defineConfig({
     },
     rewrites: {
         'docs/:slug.md': ':slug.md',
+        'cache-dexie/:slug.md': 'cache/dexie/:slug.md',
+        'cache-memory/:slug.md': 'cache/memory/:slug.md',
+        'cache-nostr/:slug.md': 'cache/nostr/:slug.md',
+        'cache-redis/:slug.md': 'cache/redis/:slug.md',
+        'cache-sqlite/:slug.md': 'cache/sqlite/:slug.md',
+        'cache-sqlite-wasm/:slug.md': 'cache/sqlite-wasm/:slug.md',
+        'cache-sqlite-wasm/docs/:slug.md': 'cache/sqlite-wasm/:slug.md',
         'core/docs/:slug*': 'core/:slug*',
         'core/docs/:subdir/:slug*': 'core/:subdir/:slug*',
         'sync/docs/:slug*': 'sync/:slug*',
@@ -23,6 +30,7 @@ export default defineConfig({
         'mobile/docs/:slug*': 'mobile/:slug*',
         'sessions/:slug.md': 'sessions/:slug.md',
         'sessions/docs/:slug*': 'sessions/:slug*',
+        'wot/:slug.md': 'wot/:slug.md'
     },
     themeConfig: {
         // https://vitepress.dev/reference/default-theme-config
@@ -63,12 +71,14 @@ export default defineConfig({
                 text: "Cache Adapters",
                 collapsed: true,
                 items: [
-                    { text: "In-memory LRU", link: "/cache/memory" },
-                    { text: "In-memory + dexie", link: "/cache/dexie" },
-                    { text: "Local Nostr Relay", link: "/cache/nostr" },
+                    { text: "Memory / LRU", link: "/cache/memory/README" },
+                    { text: "Dexie / IndexedDB", link: "cache/dexie/README" },
+                    { text: "Local Nostr Relay", link: "/cache/nostr/README" },
+                    { text: "Redis", link: "/cache/redis/README" },
+                    { text: "SQLite", link: "/cache/sqlite/README" },
                     {
-                        text: "SQLite (WASM)",
-                        link: "/cache/sqlite-wasm/INDEX",
+                        text: "SQLite WASM",
+                        link: "/cache/sqlite-wasm/README",
                         items: [
                             { text: "Bundling", link: "/cache/sqlite-wasm/bundling" },
                             { text: "Web Worker Setup", link: "/cache/sqlite-wasm/web-worker-setup" }
@@ -83,14 +93,6 @@ export default defineConfig({
                     { text: "Introduction", link: "/wallet/index" },
                     { text: "Nutsack (NIP-60)", link: "/wallet/nutsack" },
                     { text: "Nutzaps", link: "/wallet/nutzaps" },
-                ],
-            },
-            {
-                text: "Web of Trust",
-                collapsed: true,
-                items: [
-                    { text: "Introduction", link: "/wot/index" },
-                    { text: "Negentropy Integration", link: "/wot/negentropy" },
                 ],
             },
             {
@@ -164,6 +166,10 @@ export default defineConfig({
                     {
                         text: "Sync & Negentropy",
                         link: "/sync"
+                    },
+                    {
+                        text: "Web of Trust (WOT)",
+                        link: "/wot/README"
                     },
                 ],
             },

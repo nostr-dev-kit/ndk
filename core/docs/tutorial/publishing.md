@@ -2,7 +2,7 @@
 
 ## Optimistic publish lifecycle
 
-Read more about the [local-first](./local-first.md) mode of operation.
+Read more about the [local-first](local-first.md) mode of operation.
 
 ## Publishing Replaceable Events
 

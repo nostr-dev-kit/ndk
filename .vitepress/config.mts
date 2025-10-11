@@ -32,6 +32,10 @@ export default defineConfig({
         'sessions/docs/:slug*': 'sessions/:slug*',
         'wallet/:slug.md': 'wallet/:slug.md',
         'wallet/docs/:slug*': 'wallet/:slug*',
+        'react/:slug.md': 'react/:slug.md',
+        'react/docs/:slug*': 'react/:slug*',
+        'svelte/:slug.md': 'svelte/:slug.md',
+        'svelte/docs/:slug*': 'svelte/:slug*',
         'wot/:slug.md': 'wot/:slug.md'
     },
     themeConfig: {
@@ -90,13 +94,20 @@ export default defineConfig({
                 text: "Wrappers",
                 collapsed: true,
                 items: [
-                    { text: "NDK Svelte", link: "/wrappers/svelte" },
                     {
-                        text: "NDK React Hooks",
-                        link: "/hooks/index",
+                        text: "Svelte",
+                        link: "/svelte/README",
                         items: [
-                            { text: "Session Management", link: "/hooks/session-management" },
-                            { text: "Muting", link: "/hooks/muting" }
+                            { text: "Blossom", link: "/svelte/blossom-upload" },
+                        ]
+                    },
+                    {
+                        text: "React",
+                        link: "/react/README",
+                        items: [
+                            { text: "Getting Started", link: "/react/getting-started" },
+                            { text: "Muting", link: "/react/muting" },
+                            { text: "Session Management", link: "/react/session-management" },
                         ]
                     }
                 ],

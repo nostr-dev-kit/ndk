@@ -1,7 +1,6 @@
 **/node_modules
 temp
 .idea
-bun.lockb
 **/build
 **/dist
 **/lib

@@ -41,12 +41,7 @@
         "wallet",
         "wot",
         "blossom",
-        "cache-sqlite-wasm",
-        "svelte/examples/component-browser",
-        "svelte/examples/event-graph",
-        "svelte/examples/feed-viewer",
-        "svelte/examples/nutsack",
-        "svelte/examples/sessions-demo"
+        "cache-sqlite-wasm"
     ],
     "engines": {
         "node": ">=16.0"

@@ -1,14 +1,14 @@
 {
     "name": "@nostr-dev-kit/mobile",
-    "version": "0.8.50",
+    "version": "0.8.51",
     "description": "NDK Mobile",
     "private": false,
     "license": "MIT",
     "dependencies": {
         "@bacons/text-decoder": "^0.0.0",
         "@nostr-dev-kit/ndk": "2.17.2",
-        "@nostr-dev-kit/react": "1.3.8",
-        "@nostr-dev-kit/wallet": "0.8.2",
+        "@nostr-dev-kit/react": "1.3.9",
+        "@nostr-dev-kit/wallet": "0.8.3",
         "buffer": "^6.0.3",
         "expo-image": "~2.0.7",
         "expo-nip55": "^0.1.7",

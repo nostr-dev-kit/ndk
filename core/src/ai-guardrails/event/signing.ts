@@ -50,25 +50,6 @@ function checkContentIsObject(event: NDKEvent, error: ErrorFn): void {
 }
 
 /**
- * Check that param replaceable events have a d-tag
- */
-function checkParamReplaceableNoDtag(event: NDKEvent, warn: WarnFn): void {
-    if (event.isParamReplaceable() && !event.dTag) {
-        const contentPreview = event.content ? event.content.substring(0, 50) : '';
-        warn(
-            "event-param-replaceable-no-dtag",
-            `Parameterized replaceable event (kind ${event.kind}) without d-tag.\n\n` +
-                `📦 Event data:\n` +
-                `   • kind: ${event.kind}\n` +
-                `   • content: ${contentPreview ? `"${contentPreview}${event.content.length > 50 ? '...' : ''}"` : '(empty)'}\n` +
-                `   • dTag: ${event.dTag || '(not set)'} ⚠️\n\n` +
-                `Event will use empty string "" as the identifier, which may cause replacement issues.`,
-            'Set event.dTag = "your-identifier" before signing to properly identify this event.',
-        );
-    }
-}
-
-/**
  * Check that created_at is in seconds, not milliseconds
  */
 function checkCreatedAtMilliseconds(event: NDKEvent, error: ErrorFn): void {
@@ -188,7 +169,6 @@ export function signing(
 ): void {
     checkMissingKind(event, error);
     checkContentIsObject(event, error);
-    checkParamReplaceableNoDtag(event, warn);
     checkCreatedAtMilliseconds(event, error);
     checkInvalidPTags(event, error);
     checkInvalidETags(event, error);

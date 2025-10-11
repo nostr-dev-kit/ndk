@@ -1,5 +1,12 @@
 # @nostr-dev-kit/react
 
+## 1.3.9
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/wallet@0.8.3
+
 ## 1.3.8
 
 ### Patch Changes

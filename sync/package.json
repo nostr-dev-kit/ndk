@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/sync",
-    "version": "0.3.1",
+    "version": "0.3.2",
     "description": "NIP-77 Negentropy sync protocol implementation for NDK",
     "type": "module",
     "main": "dist/index.cjs",

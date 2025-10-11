@@ -17,6 +17,7 @@ export default defineConfig({
         'core/docs/:slug*': 'core/:slug*',
         'core/docs/:subdir/:slug*': 'core/:subdir/:slug*',
         'sync/docs/:slug*': 'sync/:slug*',
+        'blossom/:slug.md': 'blossom/:slug.md',
         'blossom/docs/:slug*': 'blossom/:slug*',
     },
     themeConfig: {
@@ -126,7 +127,8 @@ export default defineConfig({
                 text: "Blossom (Media)",
                 collapsed: true,
                 items: [
-                    { text: "Introduction", link: "/blossom/getting-started" },
+                    { text: "Intro", link: "/blossom/README" },
+                    { text: "Getting Started", link: "/blossom/getting-started" },
                     { text: "Error Handling", link: "/blossom/error-handling" },
                     { text: "Mirroring", link: "/blossom/mirroring" },
                     { text: "Optimization", link: "/blossom/optimization" },

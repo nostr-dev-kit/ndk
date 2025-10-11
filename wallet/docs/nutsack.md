@@ -1,4 +1,4 @@
-# NIP-60 (Nutack) wallets
+# NIP-60 (Nutsack) wallets
 
 NIP-60 provides wallets that are available to any nostr application immediately; the goal of NIP-60 is to provide the same
 seamless experience nostr users expect from their apps with regards to the immediate aailability of their data, to their money.

@@ -31,7 +31,7 @@ export default defineConfig({
         'sessions/:slug.md': 'sessions/:slug.md',
         'sessions/docs/:slug*': 'sessions/:slug*',
         'wallet/:slug.md': 'wallet/:slug.md',
-        'wallet/docs/:slug*': 'wallet/:slug*',
+        'wallet/docs/:slug*': 'wallet/docs/:slug*',
         'react/:slug.md': 'react/:slug.md',
         'react/docs/:slug*': 'react/:slug*',
         'svelte/:slug.md': 'svelte/:slug.md',
@@ -78,14 +78,16 @@ export default defineConfig({
                 collapsed: true,
                 items: [
                     { text: "Introduction", link: "/wallet/README" },
+                    { text: "WebLN Wallet", link: '/wallet/docs/NDKWebLNWallet'},
+                    { text: "NWC Wallet", link: '/wallet/docs/NDKNWCWallet'},
                     {
-                        text: "NDKCashuWallet (NIP-60)",
-                        link: "/wallet/nip60-configuration",
+                        text: "CashuWallet (NIP-60)",
+                        link: "/wallet/docs/NDKCashuWallet",
                         items: [
-                            { text: "Nutsack", link: "/wallet/nutsack" },
-                            { text: "Nutzaps", link: "/wallet/nutzaps" },
-                            { text: "Nutzap Monitor", link: "/wallet/nutzap-monitor" },
-                            { text: "Monitor State Store", link: "/wallet/nutzap-monitor-state-store" },
+                            { text: "Nutsack", link: "/wallet/docs/nutsack" },
+                            { text: "Nutzaps", link: "/wallet/docs/nutzaps" },
+                            { text: "Nutzap Monitor", link: "/wallet/docs/nutzap-monitor" },
+                            { text: "Monitor State Store", link: "/wallet/docs/nutzap-monitor-state-store" },
                         ]
                     },
                 ],

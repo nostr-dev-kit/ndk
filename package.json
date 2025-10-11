@@ -14,7 +14,7 @@
         "lint": "biome check .",
         "clean": "turbo clean && rm -rf node_modules",
         "format": "biome format --write .",
-        "docs:dev": "bash ./prepare-docs.sh && npx vitepress dev docs",
+        "docs:dev": "npx vitepress dev",
         "docs:build": "bash ./prepare-docs.sh && vitepress build docs",
         "changeset": "changeset",
         "cs": "changeset",
@@ -46,9 +46,7 @@
         "svelte/examples/event-graph",
         "svelte/examples/feed-viewer",
         "svelte/examples/nutsack",
-        "svelte/examples/sessions-demo",
-        "projects/Voces",
-        "projects/solidjs"
+        "svelte/examples/sessions-demo"
     ],
     "engines": {
         "node": ">=16.0"

@@ -54,22 +54,21 @@ export default defineConfig({
                 items: [
                     { text: "Introduction", link: "/core/getting-started/introduction" },
                     { text: "Usage", link: "/core/getting-started/usage" },
-                    { text: "Signers", link: "/core/getting-started/signers" },
+
                 ],
             },
             {
-                text: "Tutorial",
-                collapsed: true,
+                text: "Fundamentals",
+                collapsed: false,
                 items: [
                     { text: "Local-first", link: "/core/tutorial/local-first" },
+                    { text: "Signers", link: "/core/getting-started/signers" },
                     { text: "Publishing", link: "/core/tutorial/publishing" },
                     {
                         text: "Subscription Management",
                         link: "/core/tutorial/subscription-management",
                     },
                     { text: "Mute Filtering", link: "/core/tutorial/mute-filtering" },
-                    { text: "Signer Persistence", link: "/core/tutorial/signer-persistence" },
-                    { text: "Speed", link: "/core/tutorial/speed" },
                     { text: "Zaps", link: "/core/tutorial/zaps" },
                 ],
             },
@@ -151,6 +150,14 @@ export default defineConfig({
                 text: "Advanced Topics",
                 collapsed: true,
                 items: [
+                    {
+                        text: "Signer Persistence",
+                        link: "/core/tutorial/signer-persistence"
+                    },
+                    {
+                        text: "Speed / Performance",
+                        link: "/core/tutorial/speed"
+                    },
                     {
                         text: "AI Guardrails",
                         link: "/core/advanced/ai-guardrails"

@@ -42,9 +42,9 @@ export default defineConfig({
         // https://vitepress.dev/reference/default-theme-config
         nav: [
             { text: "Home", link: "/" },
-            { text: "API Reference", link: "/api/", target: "_blank" },
-            { text: "Cookbook", link: "/cookbook/" },
-            { text: "Snippets", link: "/snippets/" },
+            // { text: "API Reference", link: "/api/", target: "_blank" },
+            // { text: "Cookbook", link: "/cookbook/" },
+            { text: "Snippets", link: "/core/snippets/" },
             { text: "Wiki", link: "https://wikifreedia.xyz/?c=NDK", target: "_blank" },
         ],
 
@@ -54,6 +54,7 @@ export default defineConfig({
                 items: [
                     { text: "Introduction", link: "/core/getting-started/introduction" },
                     { text: "Usage", link: "/core/getting-started/usage" },
+                    { text: "Debugging", link: "/core/getting-started/debugging" },
 
                 ],
             },

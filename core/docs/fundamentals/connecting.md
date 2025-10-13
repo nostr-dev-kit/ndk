@@ -7,7 +7,7 @@ This section will briefly explain the different mechanmisms through which NDK ca
 Because NOSTR is decentralized and comprised of thousands of relays, it's important to read up on the 
 advised ways of connecting to relays.
 
-We strongly advise you to use the "Outbox Model" in addition or replacement of specifying explicit relays.
+We strongly advise you to use the "[Outbox Model](/core/fundamentals/connecting.html#outbox-model)" in addition or replacement of specifying explicit relays.
 :::
 
 ## Specify Relays

@@ -1,5 +1,7 @@
 # Debugging
 
+## Enable Debug Mode 
+
 NDK uses the `debug` package to assist in understanding what's happening behind the hood. If you are building a package
 that runs on the server define the `DEBUG` envionment variable like
 
@@ -25,3 +27,21 @@ const netDebug = (msg: string, relay: NDKRelay, direction?: "send" | "recv") = {
 
 ndk = new NDK({ netDebug });
 ```
+
+## Development Relays
+
+When you're developing an application you can initialise NDK with the `devWriteRelayUrls` property to tell the NDK
+instance to write to specific relays:
+
+```ts
+import NDK from "@nostr-dev-kit/ndk";
+
+const ndk = new NDK({
+    devWriteRelayUrls: ["wss://staging.relay", "wss://another.test.relay"],
+});
+
+await ndk.connect();
+```
+
+This will write new events to those relays only. Note that if you have provided relays in
+`explicitRelayUrls` these will also be used to write events to. 

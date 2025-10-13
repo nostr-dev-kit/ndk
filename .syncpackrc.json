@@ -1,0 +1,21 @@
+{
+  "$schema": "https://unpkg.com/syncpack@13.0.4/dist/schema.json",
+  "versionGroups": [
+    {
+      "label": "Internal @nostr-dev-kit packages should use workspace protocol or stay in sync",
+      "packages": ["**"],
+      "dependencies": ["@nostr-dev-kit/**"],
+      "dependencyTypes": ["prod", "dev", "peer"],
+      "policy": "sameRange"
+    }
+  ],
+  "semverGroups": [
+    {
+      "label": "Use caret ranges for all dependencies",
+      "packages": ["**"],
+      "dependencies": ["**"],
+      "dependencyTypes": ["prod", "dev", "peer"],
+      "range": "^"
+    }
+  ]
+}

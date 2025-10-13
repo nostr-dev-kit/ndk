@@ -36,17 +36,17 @@
     },
     "dependencies": {
         "@nostr-dev-kit/ndk": "^2.17.6",
-        "nostr-tools": "^2.10.2",
+        "nostr-tools": "^2.17.0",
         "tseep": "^1.3.1"
     },
     "devDependencies": {
         "@nostr-dev-kit/cache-memory": "^2.7.6",
         "@nostr-dev-kit/cache-dexie": "^2.7.6",
         "@nostr-dev-kit/cache-nostr": "^0.1.65",
-        "tsup": "^8",
-        "typescript": "^5.8.2",
-        "vitest": "^1.6.1",
-        "vite": "^4.4.9"
+        "tsup": "^8.4.0",
+        "typescript": "^5.9.3",
+        "vitest": "^3.2.4",
+        "vite": "^7.1.9"
     },
     "keywords": [
         "nostr",

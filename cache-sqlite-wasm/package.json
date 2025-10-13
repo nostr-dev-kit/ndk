@@ -31,7 +31,7 @@
         "@types/node": "^24.7.0",
         "@types/sql.js": "^1.4.9",
         "jsdom": "^27.0.0",
-        "typescript": "^5.0.0",
+        "typescript": "^5.9.3",
         "vitest": "^3.2.4"
     },
     "license": "MIT"

@@ -21,10 +21,10 @@ yarn add @nostr-dev-kit/ndk
 ```sh [bun]
 bun add @nostr-dev-kit/ndk
 ```
+:::
 
 NDK is compatible with node v16+
 
-:::
 
 ## Other packages
 

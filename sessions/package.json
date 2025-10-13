@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/sessions",
-    "version": "0.6.0",
+    "version": "0.6.1",
     "description": "Framework-agnostic session management for NDK with multi-account support",
     "type": "module",
     "main": "dist/index.cjs",

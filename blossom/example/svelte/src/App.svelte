@@ -82,7 +82,7 @@ async function logout() {
 }
 
 async function switchSession(pubkey: string) {
-    ndk.$sessions?.switch(pubkey);
+    await ndk.$sessions?.switchTo(pubkey);
 }
 
 function formatPubkey(pubkey: string | null): string {

@@ -41,7 +41,7 @@ describe("SessionsStore", () => {
         await ndk.$sessions.add(signer2);
 
         const pubkey2 = (await signer2.user()).pubkey;
-        ndk.$sessions.switch(pubkey2);
+        await ndk.$sessions.switch(pubkey2);
 
         expect(ndk.$sessions.current?.pubkey).toBe(pubkey2);
     });

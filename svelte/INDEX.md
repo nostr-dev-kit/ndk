@@ -146,7 +146,7 @@ const profile = profiles.get(pubkey);
 
 // Multi-user sessions
 sessions.login(signer);
-sessions.switch(pubkey);
+await sessions.switch(pubkey);
 
 // Content filtering
 mutes.add({ pubkey });

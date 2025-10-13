@@ -142,7 +142,7 @@ describe("NDKSvelte Reactive Getters", () => {
             await ndk.$sessions?.login(signer2, { setActive: true });
             expect(ndk.$currentSession?.pubkey).toBe(user2.pubkey);
 
-            ndk.$sessions?.switch(user1.pubkey);
+            await ndk.$sessions?.switch(user1.pubkey);
             expect(ndk.$currentSession?.pubkey).toBe(user1.pubkey);
         });
 

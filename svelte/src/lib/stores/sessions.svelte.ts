@@ -193,8 +193,15 @@ export class ReactiveSessionsStore {
     /**
      * Switch to a different session
      */
-    switch(pubkey: Hexpubkey | null): void {
-        this.#manager.switchTo(pubkey);
+    async switch(pubkey: Hexpubkey | null): Promise<void> {
+        await this.#manager.switchTo(pubkey);
+    }
+
+    /**
+     * Switch to a different session (alias for switch)
+     */
+    async switchTo(pubkey: Hexpubkey | null): Promise<void> {
+        await this.#manager.switchTo(pubkey);
     }
 
     /**

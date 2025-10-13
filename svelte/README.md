@@ -266,7 +266,7 @@ ndk.$sessions.all          // NDKSession[]
 // Methods
 await ndk.$sessions.login(signer, options?) // options: { setActive?: boolean }
 await ndk.$sessions.add(signer)
-ndk.$sessions.switch(pubkey)
+await ndk.$sessions.switch(pubkey)
 ndk.$sessions.logout(pubkey?)
 ndk.$sessions.logoutAll()
 ndk.$sessions.get(pubkey)

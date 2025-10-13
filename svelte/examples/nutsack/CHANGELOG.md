@@ -1,5 +1,12 @@
 # svelte-nutsack-wallet
 
+## 0.1.21
+
+### Patch Changes
+
+- Updated dependencies [a6722f6]
+    - @nostr-dev-kit/svelte@2.0.12
+
 ## 0.1.20
 
 ### Patch Changes

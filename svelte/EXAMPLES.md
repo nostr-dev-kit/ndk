@@ -315,7 +315,7 @@ async function handleAddAccount() {
 }
 
 function switchAccount(pubkey: string) {
-  sessions.switch(pubkey);
+  await sessions.switch(pubkey);
   showMenu = false;
 }
 

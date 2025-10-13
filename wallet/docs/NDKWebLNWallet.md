@@ -95,7 +95,10 @@ Make sure to await the promise to fully refresh the balance.
 
 ## Nostr Zaps
 
-To send Zaps using the WebLn wallet there are a few other steps to follow:
+Lightning Zaps on the Nostr network are described in[ NIP-57](https://nostr-nips.com/nip-57).
+
+The full protocol (Step 1 to 9) is described in the respective docs. In the below example we will
+refer to the steps described in the Nostr Implementation Protocol (NIP).
 
 ```typescript
 
@@ -106,6 +109,7 @@ import {
     NDKZapper
 } from "@nostr-dev-kit/ndk";
 
+// Step 01: Calculate lnurl
 const lud06 = '';
 const lud16 = 'pablof7z@primal.net';
 
@@ -118,6 +122,7 @@ const lnMeta = await getNip57ZapSpecFromLud(
     ndk, // pass NDK instance
 );
 
+// Step 03: General Zap request
 const target = new NDKUser({ npub: '' }); // User you want to zap
 const amount = 1000; // amount in MSats
 
@@ -131,6 +136,8 @@ const zapRequest = await generateZapRequest(
     relays, // optional relays to send zapReceipt to 
     message, // message
 );
+
+// Step 04 to 07: Retrieve invoice
 
 // create zapper instance and get lightning invoice
 const zapper = new NDKZapper(target, amount, "msat", { ndk });
@@ -153,6 +160,8 @@ const invoiceTimestamp = timestampSection[0]
     ? Number(timestampSection[0].value)
     : Math.floor(Date.now() / 1000);
 
+
+// Step 08: Publish zap receipt
 const zapReceiptEvent = new NDKEvent(ndk);
 zapReceiptEvent.content = "";
 zapReceiptEvent.kind = NDKKind.Zap;

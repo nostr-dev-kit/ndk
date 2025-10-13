@@ -1,5 +1,11 @@
 # svelte-nutsack-wallet
 
+## 0.1.20
+
+### Patch Changes
+
+- @nostr-dev-kit/svelte@2.0.11
+
 ## 0.1.19
 
 ### Patch Changes

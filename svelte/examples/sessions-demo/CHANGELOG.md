@@ -1,5 +1,13 @@
 # svelte-sessions-demo
 
+## 0.1.17
+
+### Patch Changes
+
+- Updated dependencies [28881de]
+    - @nostr-dev-kit/sessions@0.6.0
+    - @nostr-dev-kit/svelte@2.0.11
+
 ## 0.1.16
 
 ### Patch Changes

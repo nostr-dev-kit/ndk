@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.0.11
+
+### Patch Changes
+
+- Updated dependencies [28881de]
+    - @nostr-dev-kit/sessions@0.6.0
+
 ## 2.0.10
 
 ### Patch Changes

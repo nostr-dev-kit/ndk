@@ -82,7 +82,7 @@
         "vitest": "^3.1.2"
     },
     "peerDependencies": {
-        "nostr-tools": "^2"
+        "nostr-tools": ">=2.7.1 <2.16.1"
     },
     "dependencies": {
         "@codesandbox/sandpack-client": "^2.19.8",

@@ -155,10 +155,10 @@ describe("NDKSessionManager", () => {
             await manager.login(signer1);
             await manager.login(signer2);
 
-            manager.switchTo(user1.pubkey);
+            await manager.switchTo(user1.pubkey);
             expect(manager.activePubkey).toBe(user1.pubkey);
 
-            manager.switchTo(user2.pubkey);
+            await manager.switchTo(user2.pubkey);
             expect(manager.activePubkey).toBe(user2.pubkey);
         });
 
@@ -166,7 +166,7 @@ describe("NDKSessionManager", () => {
             const signer = NDKPrivateKeySigner.generate();
             await manager.login(signer);
 
-            manager.switchTo(null);
+            await manager.switchTo(null);
 
             expect(manager.activePubkey).toBeUndefined();
         });
@@ -264,7 +264,7 @@ describe("NDKSessionManager", () => {
 
             expect(ndk.signer).toBe(signer2);
 
-            manager.switchTo(user1.pubkey);
+            await manager.switchTo(user1.pubkey);
 
             expect(ndk.signer).toBe(signer1);
         });
@@ -306,7 +306,7 @@ describe("NDKSessionManager", () => {
             });
 
             // Switch to trigger filter update
-            manager.switchTo(user.pubkey);
+            await manager.switchTo(user.pubkey);
 
             expect(ndk.muteFilter).toBeDefined();
 
@@ -326,7 +326,7 @@ describe("NDKSessionManager", () => {
                 mutedWords: new Set(["spam", "scam"]),
             });
 
-            manager.switchTo(user.pubkey);
+            await manager.switchTo(user.pubkey);
 
             expect(ndk.muteFilter).toBeDefined();
 
@@ -355,11 +355,11 @@ describe("NDKSessionManager", () => {
                 muteSet: new Map([["deadbeef", "p"]]),
             });
 
-            manager.switchTo(user1.pubkey);
+            await manager.switchTo(user1.pubkey);
             expect(ndk.muteFilter).toBeDefined();
 
             // Switch to user2 without mutes
-            manager.switchTo(user2.pubkey);
+            await manager.switchTo(user2.pubkey);
             expect(ndk.muteFilter).toBeUndefined();
         });
 
@@ -374,7 +374,7 @@ describe("NDKSessionManager", () => {
                 blockedRelays: new Set(["wss://spam.relay"]),
             });
 
-            manager.switchTo(user.pubkey);
+            await manager.switchTo(user.pubkey);
 
             expect(ndk.relayConnectionFilter).toBeDefined();
 
@@ -394,7 +394,7 @@ describe("NDKSessionManager", () => {
                 blockedRelays: new Set(["wss://spam.relay"]),
             });
 
-            manager.switchTo(user.pubkey);
+            await manager.switchTo(user.pubkey);
             expect(ndk.muteFilter).toBeDefined();
             expect(ndk.relayConnectionFilter).toBeDefined();
 
@@ -414,10 +414,10 @@ describe("NDKSessionManager", () => {
                 muteSet: new Map([["deadbeef", "p"]]),
             });
 
-            manager.switchTo(user.pubkey);
+            await manager.switchTo(user.pubkey);
             expect(ndk.muteFilter).toBeDefined();
 
-            manager.switchTo(null);
+            await manager.switchTo(null);
 
             expect(ndk.muteFilter).toBeUndefined();
         });
@@ -447,8 +447,8 @@ describe("NDKSessionManager", () => {
             expect(() => manager.logout()).toThrow();
         });
 
-        it("should throw when switching to non-existent session", () => {
-            expect(() => manager.switchTo("nonexistent")).toThrow();
+        it("should throw when switching to non-existent session", async () => {
+            await expect(manager.switchTo("nonexistent")).rejects.toThrow();
         });
     });
 

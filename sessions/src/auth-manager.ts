@@ -45,7 +45,7 @@ export class AuthManager {
     /**
      * Switch to a different session
      */
-    switchTo(pubkey: Hexpubkey | null): void {
-        this.store.switchToUser(pubkey);
+    async switchTo(pubkey: Hexpubkey | null): Promise<void> {
+        await this.store.switchToUser(pubkey);
     }
 }

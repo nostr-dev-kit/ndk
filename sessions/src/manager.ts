@@ -163,8 +163,8 @@ export class NDKSessionManager {
     /**
      * Switch to a different session
      */
-    switchTo(pubkey: Hexpubkey | null): void {
-        this.authManager.switchTo(pubkey);
+    async switchTo(pubkey: Hexpubkey | null): Promise<void> {
+        await this.authManager.switchTo(pubkey);
     }
 
     /**

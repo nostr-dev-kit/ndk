@@ -229,9 +229,7 @@ export class NDKSvelte extends NDK {
      * ```
      */
     get $currentUser() {
-        // Prefer #activeUser (which syncs from NDK's activeUser)
-        // but fallback to session manager's currentUser when sessions are enabled
-        return this.#activeUser ?? this.$sessions?.currentUser;
+        return this.#activeUser;
     }
 
     /**
@@ -243,7 +241,7 @@ export class NDKSvelte extends NDK {
      * ```
      */
     get $activeUser() {
-        return this.#activeUser ?? this.$sessions?.currentUser;
+        return this.#activeUser;
     }
 
     /**
@@ -263,8 +261,7 @@ export class NDKSvelte extends NDK {
      * ```
      */
     get $currentPubkey() {
-        const user = this.#activeUser ?? this.$sessions?.currentUser;
-        return user?.pubkey;
+        return this.#activeUser?.pubkey;
     }
 
     /**

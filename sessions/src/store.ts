@@ -62,7 +62,7 @@ export interface SessionStoreActions {
     /**
      * Switch to a different session
      */
-    switchToUser: (pubkey: Hexpubkey | null) => void;
+    switchToUser: (pubkey: Hexpubkey | null) => Promise<void>;
 
     /**
      * Remove a session
@@ -134,6 +134,9 @@ export function createSessionStore() {
                 updates.activePubkey = pubkey;
                 if (state.ndk && signer) {
                     state.ndk.signer = signer;
+                    // Explicitly set activeUser to ensure immediate synchronization
+                    user.ndk = state.ndk;
+                    state.ndk.activeUser = user;
                 }
             }
 
@@ -194,13 +197,14 @@ export function createSessionStore() {
             }
         },
 
-        switchToUser: (pubkey: Hexpubkey | null) => {
+        switchToUser: async (pubkey: Hexpubkey | null) => {
             const state = get();
 
             if (pubkey === null) {
                 set({ activePubkey: undefined });
                 if (state.ndk) {
                     state.ndk.signer = undefined;
+                    state.ndk.activeUser = undefined;
                     // Clear filters when no session is active
                     state.ndk.muteFilter = undefined;
                     state.ndk.relayConnectionFilter = undefined;
@@ -224,6 +228,14 @@ export function createSessionStore() {
             // Update NDK signer and filters
             if (state.ndk) {
                 state.ndk.signer = signer;
+
+                // Explicitly set activeUser to ensure immediate synchronization
+                // The signer setter also does this but asynchronously, so we need to do it here too
+                if (signer) {
+                    const user = await signer.user();
+                    user.ndk = state.ndk;
+                    state.ndk.activeUser = user;
+                }
 
                 // Set muteFilter based on session's mute data
                 if (session.muteSet || session.mutedWords) {
@@ -299,8 +311,10 @@ export function createSessionStore() {
             if (state.activePubkey === pubkey) {
                 const remainingSessions = Array.from(newSessions.keys());
                 if (remainingSessions.length > 0) {
-                    // Switch to the next available session
-                    get().switchToUser(remainingSessions[0]);
+                    // Switch to the next available session (fire-and-forget)
+                    get().switchToUser(remainingSessions[0]).catch((error) => {
+                        console.error("Failed to switch session after removal:", error);
+                    });
                 }
             }
         },

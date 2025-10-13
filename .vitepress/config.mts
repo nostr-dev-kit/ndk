@@ -62,15 +62,16 @@ export default defineConfig({
                 text: "Fundamentals",
                 collapsed: false,
                 items: [
-                    { text: "Local-first", link: "/core/tutorial/local-first" },
+                    { text: "Connecting", link: "/core/fundamentals/connecting" },
                     { text: "Signers", link: "/core/getting-started/signers" },
                     { text: "Publishing", link: "/core/tutorial/publishing" },
+                    { text: "Zaps", link: "/core/tutorial/zaps" },
+                    { text: "Local-first", link: "/core/tutorial/local-first" },
                     {
                         text: "Subscription Management",
                         link: "/core/tutorial/subscription-management",
                     },
                     { text: "Mute Filtering", link: "/core/tutorial/mute-filtering" },
-                    { text: "Zaps", link: "/core/tutorial/zaps" },
                 ],
             },
             {

@@ -143,9 +143,7 @@ await wallet.lnPay({
     pr: invoice,
 });
 
-// send a zap to confirm
-setCurrentlyDoing("Publishing Zap Request");
-
+// extract the timestamp from the invoice
 const invoiceDecoded = decode(invoice);
 const timestampSection = invoiceDecoded.sections.filter(
     (section) => section.name === "timestamp",

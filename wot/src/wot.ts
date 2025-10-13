@@ -155,7 +155,7 @@ export class NDKWoT {
         d("Attempting negentropy sync for %d contact lists", authors.length);
 
         try {
-            const syncOptions: any = { autoFetch: true, subId: 'wot-sync' };
+            const syncOptions: any = { autoFetch: true, subId: "wot-sync" };
             if (relayUrls) {
                 syncOptions.relayUrls = relayUrls;
             }

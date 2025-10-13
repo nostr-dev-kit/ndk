@@ -46,9 +46,7 @@
         "svelte/examples/event-graph",
         "svelte/examples/feed-viewer",
         "svelte/examples/nutsack",
-        "svelte/examples/sessions-demo",
-        "projects/Voces",
-        "projects/solidjs"
+        "svelte/examples/sessions-demo"
     ],
     "engines": {
         "node": ">=16.0"

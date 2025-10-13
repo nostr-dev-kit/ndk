@@ -1,4 +1,4 @@
-# ndk-svelte5 Project Overview
+# svelte Project Overview
 
 ## Vision
 
@@ -8,7 +8,7 @@ A modern, beautiful, and performant Svelte 5 integration for NDK that makes buil
 
 **Phase: Design & Documentation** ✨
 
-This is the north star - a complete vision of what ndk-svelte5 will be. The API design is complete, ready for implementation.
+This is the north star - a complete vision of what svelte will be. The API design is complete, ready for implementation.
 
 ## What We've Defined
 
@@ -56,7 +56,7 @@ This is the north star - a complete vision of what ndk-svelte5 will be. The API 
 ## Architecture
 
 ```
-ndk-svelte5/
+svelte/
 ├── src/
 │   ├── lib/
 │   │   ├── index.ts                    # Main NDKSvelte class

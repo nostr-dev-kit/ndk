@@ -435,4 +435,19 @@ function runAIGuardrailsForFilter(filter: NDKFilter, filterIndex: number, ndk: N
             }
         });
     }
+
+    // Check 8: Hashtag filters with # prefix
+    if (filter["#t"]) {
+        const tTags = filter["#t"];
+        tTags?.forEach((tag, idx) => {
+            if (typeof tag === "string" && tag.startsWith("#")) {
+                guards.error(
+                    GuardrailCheckId.FILTER_HASHTAG_WITH_PREFIX,
+                    `Filter[${filterIndex}].#t[${idx}] contains hashtag with # prefix: "${tag}". Hashtag values should NOT include the # symbol.`,
+                    `Remove the # prefix from hashtag filters:\n   ✅ { "#t": ["nostr"] }\n   ❌ { "#t": ["#nostr"] }`,
+                    false, // Fatal error - cannot be disabled
+                );
+            }
+        });
+    }
 }

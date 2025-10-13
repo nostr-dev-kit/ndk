@@ -8,7 +8,7 @@ describe("SessionsStore", () => {
     let signer2: NDKPrivateKeySigner;
 
     beforeEach(async () => {
-        ndk = new NDKSvelte({ explicitRelayUrls: ["wss://relay.test"] });
+        ndk = new NDKSvelte({ explicitRelayUrls: ["wss://relay.test"], session: true });
 
         // Create test signers
         signer1 = NDKPrivateKeySigner.generate();

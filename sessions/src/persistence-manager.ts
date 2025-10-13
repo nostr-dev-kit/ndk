@@ -87,9 +87,10 @@ export class PersistenceManager {
         // Add session without activating
         await store.addSession(signer || user, false);
 
-        // Restore lastActive timestamp
+        // Restore lastActive timestamp and preferences
         store.updateSession(pubkey, {
             lastActive: serialized.lastActive,
+            preferences: serialized.preferences,
         });
     }
 

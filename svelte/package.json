@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/svelte",
-    "version": "2.0.3",
+    "version": "2.0.10",
     "description": "Modern, performant, and beautiful Svelte 5 integration for NDK",
     "type": "module",
     "svelte": "./dist/index.js",
@@ -47,16 +47,16 @@
     "author": "pablof7z",
     "license": "MIT",
     "peerDependencies": {
-        "@nostr-dev-kit/ndk": "^2.17.1",
+        "@nostr-dev-kit/ndk": "^2.17.6",
         "svelte": "^5.0.0"
     },
     "dependencies": {
-        "@nostr-dev-kit/cache-sqlite-wasm": "^0.7.0",
-        "@nostr-dev-kit/ndk": "^2.17.1",
-        "@nostr-dev-kit/sessions": "^0.3.2",
-        "@nostr-dev-kit/sync": "^0.3.2",
+        "@nostr-dev-kit/cache-sqlite-wasm": "^0.8.1",
+        "@nostr-dev-kit/ndk": "^2.17.6",
+        "@nostr-dev-kit/sessions": "^0.5.0",
+        "@nostr-dev-kit/sync": "^0.3.4",
         "@nostr-dev-kit/wallet": "^0.8.3",
-        "@nostr-dev-kit/wot": "^0.3.4",
+        "@nostr-dev-kit/wot": "^0.3.6",
         "@tiptap/core": "^2.6.6",
         "@tiptap/extension-image": "^2.6.6",
         "@tiptap/extension-link": "^2.6.6",
@@ -96,10 +96,10 @@
     "repository": {
         "type": "git",
         "url": "https://github.com/nostr-dev-kit/ndk.git",
-        "directory": "ndk-svelte5"
+        "directory": "svelte"
     },
     "bugs": {
         "url": "https://github.com/nostr-dev-kit/ndk/issues"
     },
-    "homepage": "https://github.com/nostr-dev-kit/ndk/tree/master/ndk-svelte5#readme"
+    "homepage": "https://github.com/nostr-dev-kit/ndk/tree/master/svelte#readme"
 }

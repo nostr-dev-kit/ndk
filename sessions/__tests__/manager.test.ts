@@ -451,4 +451,182 @@ describe("NDKSessionManager", () => {
             expect(() => manager.switchTo("nonexistent")).toThrow();
         });
     });
+
+    describe("wallet preferences", () => {
+        it("should enable wallet for a session", async () => {
+            const signer = NDKPrivateKeySigner.generate();
+            const user = await signer.user();
+
+            await manager.login(signer);
+
+            expect(manager.isWalletEnabled()).toBe(false);
+
+            manager.enableWallet();
+
+            expect(manager.isWalletEnabled()).toBe(true);
+
+            const session = manager.getSession(user.pubkey);
+            expect(session?.preferences?.walletEnabled).toBe(true);
+        });
+
+        it("should disable wallet for a session", async () => {
+            const signer = NDKPrivateKeySigner.generate();
+            const user = await signer.user();
+
+            await manager.login(signer);
+
+            manager.enableWallet();
+            expect(manager.isWalletEnabled()).toBe(true);
+
+            manager.disableWallet();
+            expect(manager.isWalletEnabled()).toBe(false);
+
+            const session = manager.getSession(user.pubkey);
+            expect(session?.preferences?.walletEnabled).toBe(false);
+        });
+
+        it("should enable wallet for a specific session", async () => {
+            const signer1 = NDKPrivateKeySigner.generate();
+            const signer2 = NDKPrivateKeySigner.generate();
+            const user1 = await signer1.user();
+            const user2 = await signer2.user();
+
+            await manager.login(signer1);
+            await manager.login(signer2);
+
+            manager.enableWallet(user1.pubkey);
+
+            expect(manager.isWalletEnabled(user1.pubkey)).toBe(true);
+            expect(manager.isWalletEnabled(user2.pubkey)).toBe(false);
+        });
+
+        it("should persist wallet preferences", async () => {
+            const storage = new MemoryStorage();
+            const manager1 = new NDKSessionManager(ndk, { storage });
+
+            const signer = NDKPrivateKeySigner.generate();
+            const user = await signer.user();
+
+            await manager1.login(signer);
+            manager1.enableWallet();
+            await manager1.persist();
+
+            // Create new manager with same storage
+            const manager2 = new NDKSessionManager(ndk, { storage });
+            await manager2.restore();
+
+            expect(manager2.isWalletEnabled(user.pubkey)).toBe(true);
+        });
+
+        it("should restore sessions with saved wallet preferences", async () => {
+            const storage = new MemoryStorage();
+            const manager1 = new NDKSessionManager(ndk, {
+                storage,
+                fetches: { follows: true },
+            });
+
+            const signer = NDKPrivateKeySigner.generate();
+            const user = await signer.user();
+
+            await manager1.login(signer);
+            manager1.enableWallet();
+            await manager1.persist();
+
+            // Create new manager with same storage
+            const manager2 = new NDKSessionManager(ndk, {
+                storage,
+                fetches: { follows: true },
+            });
+
+            // Spy on startSession to verify wallet is enabled
+            const startSessionSpy = vi.spyOn(manager2.getCurrentState(), "startSession");
+
+            await manager2.restore();
+
+            // Verify wallet preference was loaded
+            expect(manager2.isWalletEnabled(user.pubkey)).toBe(true);
+
+            // Verify startSession was called with wallet: true
+            expect(startSessionSpy).toHaveBeenCalledWith(user.pubkey, {
+                follows: true,
+                wallet: true,
+            });
+        });
+
+        it("should respect saved wallet preference over default", async () => {
+            const storage = new MemoryStorage();
+            const manager1 = new NDKSessionManager(ndk, {
+                storage,
+                fetches: { wallet: false }, // default is false
+            });
+
+            const signer = NDKPrivateKeySigner.generate();
+            const user = await signer.user();
+
+            await manager1.login(signer);
+            manager1.enableWallet(); // user enabled it
+            await manager1.persist();
+
+            // Create new manager with same default
+            const manager2 = new NDKSessionManager(ndk, {
+                storage,
+                fetches: { wallet: false }, // default is still false
+            });
+
+            await manager2.restore();
+
+            // Should use saved preference (true) instead of default (false)
+            expect(manager2.isWalletEnabled(user.pubkey)).toBe(true);
+        });
+
+        it("should fall back to default when no preference is saved", async () => {
+            const storage = new MemoryStorage();
+            const manager1 = new NDKSessionManager(ndk, {
+                storage,
+                fetches: { wallet: true }, // default is true
+            });
+
+            const signer = NDKPrivateKeySigner.generate();
+            const user = await signer.user();
+
+            await manager1.login(signer);
+            // Don't set any preference
+            await manager1.persist();
+
+            // Create new manager with same default
+            const manager2 = new NDKSessionManager(ndk, {
+                storage,
+                fetches: { wallet: true },
+            });
+
+            await manager2.restore();
+
+            // Should use default (true) since no preference was saved
+            const startSessionSpy = vi.spyOn(manager2.getCurrentState(), "startSession");
+            await manager2.restore();
+
+            expect(startSessionSpy).toHaveBeenCalledWith(user.pubkey, {
+                wallet: true,
+            });
+        });
+
+        it("should return false for isWalletEnabled when no session is active", () => {
+            expect(manager.isWalletEnabled()).toBe(false);
+        });
+
+        it("should handle enableWallet when no session is active", () => {
+            // Should not throw
+            expect(() => manager.enableWallet()).not.toThrow();
+        });
+
+        it("should handle disableWallet when no session is active", () => {
+            // Should not throw
+            expect(() => manager.disableWallet()).not.toThrow();
+        });
+
+        it("should handle enableWallet for non-existent session", () => {
+            // Should not throw
+            expect(() => manager.enableWallet("nonexistent")).not.toThrow();
+        });
+    });
 });

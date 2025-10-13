@@ -9,8 +9,8 @@ export default defineConfig({
         alias: {
             // This allows importing from the local blossom and ndk/ndk-hooks source
             "@nostr-dev-kit/blossom": resolve(__dirname, "../../src"),
-            "@nostr-dev-kit/ndk": resolve(__dirname, "../../../ndk-core/src"),
-            "@nostr-dev-kit/react": resolve(__dirname, "../../../ndk-hooks/src"),
+            "@nostr-dev-kit/ndk": resolve(__dirname, "../../../core/src"),
+            "@nostr-dev-kit/react": resolve(__dirname, "../../../react/src"),
         },
     },
     optimizeDeps: {

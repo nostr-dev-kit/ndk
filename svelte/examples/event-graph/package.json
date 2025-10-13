@@ -1,6 +1,6 @@
 {
     "name": "event-graph-example",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "private": true,
     "type": "module",
     "scripts": {
@@ -9,9 +9,9 @@
         "preview": "vite preview"
     },
     "dependencies": {
-        "@nostr-dev-kit/ndk": "^2.17.2",
-        "@nostr-dev-kit/cache-sqlite-wasm": "^0.7.0",
-        "@nostr-dev-kit/svelte": "^2.0.2",
+        "@nostr-dev-kit/ndk": "^2.17.5",
+        "@nostr-dev-kit/cache-sqlite-wasm": "^0.8.0",
+        "@nostr-dev-kit/svelte": "^2.0.9",
         "@nostr-dev-kit/sync": "^0.3.0"
     },
     "devDependencies": {

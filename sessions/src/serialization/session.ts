@@ -11,5 +11,6 @@ export async function serializeSession(session: NDKSession, signer?: NDKSigner):
         pubkey: session.pubkey,
         signerPayload: signer ? await serializeSigner(signer) : undefined,
         lastActive: session.lastActive,
+        preferences: session.preferences,
     };
 }

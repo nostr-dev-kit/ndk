@@ -1,6 +1,6 @@
-# ndk-svelte5 API Reference
+# svelte API Reference
 
-Complete TypeScript API definitions for ndk-svelte5.
+Complete TypeScript API definitions for svelte.
 
 ## Core Types
 

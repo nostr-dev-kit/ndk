@@ -93,10 +93,7 @@ describe("NIP-49 - ncryptsec", () => {
         it("should throw error for wrong prefix", () => {
             // Use nsec (wrong prefix) instead of ncryptsec
             expect(() => {
-                decrypt(
-                    "nsec1vl029mgpspedva04g90vltkh6fvh240zqtv9k0t9af8935ke9laqsnlfe5",
-                    password,
-                );
+                decrypt("nsec1vl029mgpspedva04g90vltkh6fvh240zqtv9k0t9af8935ke9laqsnlfe5", password);
             }).toThrow(/prefix/);
         });
     });

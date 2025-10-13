@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/sync",
-    "version": "0.3.2",
+    "version": "0.3.4",
     "description": "NIP-77 Negentropy sync protocol implementation for NDK",
     "type": "module",
     "main": "dist/index.cjs",
@@ -35,7 +35,7 @@
         "example:relay-check": "bun run examples/check-relay-support.ts"
     },
     "dependencies": {
-        "@nostr-dev-kit/ndk": "^2.17.1",
+        "@nostr-dev-kit/ndk": "^2.17.3",
         "nostr-tools": "^2.10.2",
         "tseep": "^1.3.1"
     },

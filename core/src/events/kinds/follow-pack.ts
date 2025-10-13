@@ -92,11 +92,7 @@ export class NDKFollowPack extends NDKEvent {
      */
     get pubkeys(): Hexpubkey[] {
         return Array.from(
-            new Set(
-                this.tags
-                    .filter((tag) => tag[0] === "p" && tag[1] && isValidPubkey(tag[1]))
-                    .map((tag) => tag[1]),
-            ),
+            new Set(this.tags.filter((tag) => tag[0] === "p" && tag[1] && isValidPubkey(tag[1])).map((tag) => tag[1])),
         );
     }
 

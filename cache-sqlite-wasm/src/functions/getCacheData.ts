@@ -1,11 +1,6 @@
 import type { Database } from "sql.js";
 
-export function getCacheData<T>(
-    db: Database,
-    namespace: string,
-    key: string,
-    maxAgeInSecs?: number,
-): T | undefined {
+export function getCacheData<T>(db: Database, namespace: string, key: string, maxAgeInSecs?: number): T | undefined {
     const now = Math.floor(Date.now() / 1000);
 
     const stmt = db.prepare("SELECT data, cached_at FROM cache_data WHERE namespace = ? AND key = ?");

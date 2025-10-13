@@ -22,12 +22,12 @@ const blossom = new NDKBlossom(ndk);
 const upload = useBlossomUpload(blossom);
 
 // Session state - using NDKSvelte reactive APIs
-const currentUser = $derived(ndk.$currentUser);
+const currentUser = ndk.$currentUser;
 const currentProfile = ndk.$fetchProfile(() => currentUser?.pubkey);
 let allSessions = $derived(ndk.$sessions?.sessions ?? {});
 
 // Get blossom server list directly from active session
-const currentSession = $derived(ndk.$sessions?.activeSession);
+const currentSession = ndk.$currentSession;
 const blossomServerList = $derived(
     currentSession?.events.get(NDKKind.BlossomList) as NDKBlossomList | null
 );

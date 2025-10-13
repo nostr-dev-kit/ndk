@@ -2,9 +2,14 @@ import initSqlJs from "sql.js";
 import { loadFromIndexedDB, saveToIndexedDB } from "./db/indexeddb-utils";
 import { runMigrations } from "./db/migrations";
 import { getCacheStatsSync } from "./functions/getCacheStats";
+import { querySync } from "./functions/query";
 import { setEventSync } from "./functions/setEvent";
 import { setEventDupSync } from "./functions/setEventDup";
-import { querySync } from "./functions/query";
+
+// Protocol version for cache worker
+// Format: matches @nostr-dev-kit/cache-sqlite-wasm package version
+const PROTOCOL_VERSION = "0.8.0";
+const PROTOCOL_NAME = "ndk-cache-sqlite";
 
 let db: any = null;
 let SQL: any = null;
@@ -163,10 +168,20 @@ self.onmessage = async (event: MessageEvent) => {
             default:
                 throw new Error(`Unknown command type: ${type}`);
         }
-        self.postMessage({ id, result });
+        self.postMessage({
+            _protocol: PROTOCOL_NAME,
+            _version: PROTOCOL_VERSION,
+            id,
+            result
+        });
     } catch (error: any) {
         console.error(`Worker: Error processing command ${id} (${type}):`, error);
-        self.postMessage({ id, error: { message: error.message, stack: error.stack } });
+        self.postMessage({
+            _protocol: PROTOCOL_NAME,
+            _version: PROTOCOL_VERSION,
+            id,
+            error: { message: error.message, stack: error.stack }
+        });
     }
 };
 

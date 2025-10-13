@@ -159,15 +159,16 @@
     const minutes = Math.floor(seconds / 60);
     const hours = Math.floor(minutes / 60);
     const days = Math.floor(hours / 24);
+    const weeks = Math.floor(days / 7);
 
-    if (days > 7) {
+    if (weeks > 0) {
       return date.toLocaleDateString();
     } else if (days > 0) {
-      return `${days}d ago`;
+      return `${days}d`;
     } else if (hours > 0) {
-      return `${hours}h ago`;
+      return `${hours}h`;
     } else if (minutes > 0) {
-      return `${minutes}m ago`;
+      return `${minutes}m`;
     } else {
       return 'just now';
     }

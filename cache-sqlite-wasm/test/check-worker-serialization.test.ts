@@ -11,7 +11,7 @@ describe("Worker postMessage serialization", () => {
             tags: "[]",
             content: "test token",
             sig: "sig",
-            raw: "[\"event-id\",\"pubkey\",1759871760,7375,[],\"test token\",\"sig\"]",
+            raw: '["event-id","pubkey",1759871760,7375,[],"test token","sig"]',
             deleted: 0,
         };
 

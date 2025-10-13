@@ -47,7 +47,7 @@ export function createFetchProfile(ndk: NDKSvelte, pubkey: () => string | undefi
         get(_target, prop) {
             if (_profile && prop in _profile) {
                 const value = _profile[prop as keyof NDKUserProfile];
-                return typeof value === 'function' ? value.bind(_profile) : value;
+                return typeof value === "function" ? value.bind(_profile) : value;
             }
             return undefined;
         },
@@ -59,6 +59,6 @@ export function createFetchProfile(ndk: NDKSvelte, pubkey: () => string | undefi
         },
         getOwnPropertyDescriptor(_target, prop) {
             return _profile ? Reflect.getOwnPropertyDescriptor(_profile, prop) : undefined;
-        }
+        },
     });
 }

@@ -1,10 +1,10 @@
-# ndk-svelte5 Documentation Index
+# svelte Documentation Index
 
 **Status:** 🎨 Design Phase Complete - Ready for Implementation
 
 ## 📚 Documentation (4,170 lines)
 
-This is the complete north star for ndk-svelte5 - a modern, beautiful, performant Svelte 5 integration for NDK.
+This is the complete north star for svelte - a modern, beautiful, performant Svelte 5 integration for NDK.
 
 ### Core Documentation
 
@@ -96,7 +96,7 @@ This is the complete north star for ndk-svelte5 - a modern, beautiful, performan
 ## 🏗️ Architecture
 
 ```
-ndk-svelte5/
+svelte/
 ├── Core Classes
 │   ├── NDKSvelte (extends NDK)
 │   ├── EventSubscription<T> (reactive subscription)
@@ -187,7 +187,7 @@ const highlights = ndk.$subscribe<NDKHighlight>(
 
 ## 🔄 Comparison with ndk-svelte
 
-| Aspect | ndk-svelte | ndk-svelte5 |
+| Aspect | ndk-svelte | svelte |
 |--------|------------|-------------|
 | Svelte Version | 4 | 5 |
 | Reactivity | Stores | Runes |
@@ -302,7 +302,7 @@ This is the north star. Help us build it!
 
 ### Why "North Star"?
 
-This documentation represents our vision - what ndk-svelte5 *will be*. It's:
+This documentation represents our vision - what svelte *will be*. It's:
 - Complete and detailed
 - Practical and tested (conceptually)
 - Ready to guide implementation

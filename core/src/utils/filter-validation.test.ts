@@ -775,6 +775,74 @@ describe("Filter Validation", () => {
             });
         });
 
+        describe("hashtag filters with # prefix", () => {
+            it("should throw fatal error when #t filter contains hashtag with # prefix", () => {
+                const badFilter: NDKFilter = {
+                    kinds: [1],
+                    "#t": ["#nostr"],
+                };
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/AI_GUARDRAILS/);
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/#t\[0\] contains hashtag with # prefix/);
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/"#nostr"/);
+            });
+
+            it("should throw fatal error for multiple hashtags with # prefix", () => {
+                const badFilter: NDKFilter = {
+                    kinds: [1],
+                    "#t": ["#bitcoin", "#nostr", "programming"],
+                };
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/AI_GUARDRAILS/);
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/#t\[0\] contains hashtag with # prefix/);
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/"#bitcoin"/);
+            });
+
+            it("should allow valid hashtags without # prefix", () => {
+                const goodFilter: NDKFilter = {
+                    kinds: [1],
+                    "#t": ["bitcoin", "nostr", "programming"],
+                };
+
+                expect(() => {
+                    const sub = ndk.subscribe(goodFilter);
+                    sub.stop();
+                }).not.toThrow();
+            });
+
+            it("should provide helpful hint about removing # prefix", () => {
+                const badFilter: NDKFilter = {
+                    kinds: [1],
+                    "#t": ["#nostr"],
+                };
+
+                try {
+                    ndk.subscribe(badFilter);
+                    expect.fail("Should have thrown");
+                } catch (error: any) {
+                    expect(error.message).toContain("Remove the # prefix from hashtag filters");
+                    expect(error.message).toContain('✅ { "#t": ["nostr"] }');
+                    expect(error.message).toContain('❌ { "#t": ["#nostr"] }');
+                }
+            });
+        });
+
         describe("error messages and hints", () => {
             it("should provide helpful hint for ids with bech32", () => {
                 const badFilter: NDKFilter = {

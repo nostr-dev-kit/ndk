@@ -79,4 +79,11 @@ export const SCHEMA = {
         );
         CREATE INDEX IF NOT EXISTS idx_event_relays_event_id ON event_relays(event_id);
     `,
+    nip05: `
+        CREATE TABLE IF NOT EXISTS nip05 (
+            nip05 TEXT PRIMARY KEY,
+            profile TEXT,
+            fetched_at INTEGER NOT NULL
+        );
+    `,
 };

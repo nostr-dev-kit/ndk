@@ -40,7 +40,7 @@ Visit [/ndk/cookbook/](/ndk/cookbook/) to browse all recipes.
 ### By Package
 
 - **ndk-core** - Core functionality, events, relays
-- **ndk-svelte5** - Svelte 5 reactive patterns
+- **svelte** - Svelte 5 reactive patterns
 - **ndk-mobile** - React Native mobile apps
 - **ndk-wallet** - Payment and wallet integration
 
@@ -95,7 +95,7 @@ cookbook/
 │   ├── events/
 │   ├── relays/
 │   └── signers/
-├── svelte5/              # ndk-svelte5 recipes
+├── svelte5/              # svelte recipes
 │   ├── authentication/
 │   └── state-management/
 ├── mobile/               # ndk-mobile recipes

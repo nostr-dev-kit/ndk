@@ -12,7 +12,9 @@ export async function getUnpublishedEvents(
     const stmt = "SELECT id, event, relays, lastTryAt FROM unpublished_events";
 
     if (this.useWorker) {
-        const results = await this.postWorkerMessage<Array<{ id: string; event: string; relays: string; lastTryAt: number }>>({
+        const results = await this.postWorkerMessage<
+            Array<{ id: string; event: string; relays: string; lastTryAt: number }>
+        >({
             type: "all",
             payload: {
                 sql: stmt,

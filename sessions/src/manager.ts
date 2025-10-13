@@ -182,6 +182,91 @@ export class NDKSessionManager {
     }
 
     /**
+     * Enable wallet fetching for a session
+     *
+     * @param pubkey - Session to enable wallet for. If not provided, uses active session.
+     *
+     * @example
+     * ```typescript
+     * // User wants to use wallet features
+     * sessions.enableWallet(userPubkey);
+     * ```
+     */
+    enableWallet(pubkey?: Hexpubkey): void {
+        const targetPubkey = pubkey ?? this.getCurrentState().activePubkey;
+        if (!targetPubkey) return;
+
+        const state = this.getCurrentState();
+        const session = state.sessions.get(targetPubkey);
+        if (!session) return;
+
+        // Update preference
+        state.updatePreferences(targetPubkey, { walletEnabled: true });
+
+        // If wallet is not already being fetched, restart the session with wallet enabled
+        const currentSubscription = session.subscription;
+        if (currentSubscription) {
+            // Stop current subscription and restart with wallet
+            state.stopSession(targetPubkey);
+            state.startSession(targetPubkey, { ...this.options.fetches, wallet: true });
+        } else {
+            // No active subscription, just update preference
+            // Will be used when session starts
+        }
+    }
+
+    /**
+     * Disable wallet fetching for a session
+     *
+     * @param pubkey - Session to disable wallet for. If not provided, uses active session.
+     *
+     * @example
+     * ```typescript
+     * // User wants to disable wallet features
+     * sessions.disableWallet(userPubkey);
+     * ```
+     */
+    disableWallet(pubkey?: Hexpubkey): void {
+        const targetPubkey = pubkey ?? this.getCurrentState().activePubkey;
+        if (!targetPubkey) return;
+
+        const state = this.getCurrentState();
+        const session = state.sessions.get(targetPubkey);
+        if (!session) return;
+
+        // Update preference
+        state.updatePreferences(targetPubkey, { walletEnabled: false });
+
+        // If session is running, restart without wallet
+        const currentSubscription = session.subscription;
+        if (currentSubscription) {
+            state.stopSession(targetPubkey);
+            state.startSession(targetPubkey, { ...this.options.fetches, wallet: false });
+        }
+    }
+
+    /**
+     * Check if wallet fetching is enabled for a session
+     *
+     * @param pubkey - Session to check. If not provided, uses active session.
+     * @returns true if wallet fetching is enabled
+     *
+     * @example
+     * ```typescript
+     * if (!sessions.isWalletEnabled()) {
+     *   // Show UI prompt to enable wallet
+     * }
+     * ```
+     */
+    isWalletEnabled(pubkey?: Hexpubkey): boolean {
+        const targetPubkey = pubkey ?? this.getCurrentState().activePubkey;
+        if (!targetPubkey) return false;
+
+        const session = this.getCurrentState().sessions.get(targetPubkey);
+        return session?.preferences?.walletEnabled ?? false;
+    }
+
+    /**
      * Subscribe to state changes
      *
      * @example
@@ -205,7 +290,18 @@ export class NDKSessionManager {
         if (this.options.fetches) {
             const state = this.getCurrentState();
             for (const pubkey of state.sessions.keys()) {
-                state.startSession(pubkey, this.options.fetches);
+                const session = state.sessions.get(pubkey);
+                if (!session) continue;
+
+                // Respect saved wallet preference, or fall back to default
+                const walletEnabled = session.preferences?.walletEnabled ?? this.options.fetches.wallet ?? false;
+
+                const fetches = {
+                    ...this.options.fetches,
+                    wallet: walletEnabled,
+                };
+
+                state.startSession(pubkey, fetches);
             }
         }
     }

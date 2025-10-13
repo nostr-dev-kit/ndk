@@ -223,9 +223,9 @@ Built-in multi-user session support with automatic persistence:
 import { ndk } from '$lib/ndk';
 import { NDKNip07Signer } from '@nostr-dev-kit/ndk';
 
-// Current session (reactive)
-const current = ndk.$currentSession;
-const currentUser = ndk.$currentUser;
+// Current session (reactive) - wrap getters in $derived() to make them reactive
+const current = $derived(ndk.$currentSession);
+const currentUser = $derived(ndk.$currentUser);
 const profile = ndk.$fetchProfile(() => currentUser?.pubkey);
 const follows = $derived(ndk.$sessions.follows);
 

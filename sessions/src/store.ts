@@ -1,8 +1,42 @@
 import type NDK from "@nostr-dev-kit/ndk";
-import { type Hexpubkey, isValidPubkey, type NDKEvent, NDKKind, NDKRelayList, type NDKSigner, type NDKUser } from "@nostr-dev-kit/ndk";
+import {
+    type Hexpubkey,
+    isValidPubkey,
+    type NDKEvent,
+    NDKKind,
+    NDKRelayList,
+    type NDKSigner,
+    type NDKUser,
+} from "@nostr-dev-kit/ndk";
 import { createStore } from "zustand/vanilla";
 import type { NDKSession, SessionStartOptions, SessionState } from "./types";
 import { NDKNotInitializedError, SessionNotFoundError } from "./utils/errors";
+
+/**
+ * Normalize session options by converting eventConstructors to events Map
+ */
+function normalizeSessionOptions(opts: SessionStartOptions): SessionStartOptions {
+    // If no eventConstructors, return as-is
+    if (!opts.eventConstructors || opts.eventConstructors.length === 0) {
+        return opts;
+    }
+
+    // Create events Map from eventConstructors
+    const eventsMap = new Map(opts.events);
+
+    for (const constructor of opts.eventConstructors) {
+        for (const kind of constructor.kinds) {
+            eventsMap.set(kind, constructor);
+        }
+    }
+
+    // Return normalized options with events Map and without eventConstructors
+    return {
+        ...opts,
+        events: eventsMap,
+        eventConstructors: undefined,
+    };
+}
 
 export interface SessionStoreActions {
     /**
@@ -39,6 +73,11 @@ export interface SessionStoreActions {
      * Update session data
      */
     updateSession: (pubkey: Hexpubkey, data: Partial<NDKSession>) => void;
+
+    /**
+     * Update session preferences
+     */
+    updatePreferences: (pubkey: Hexpubkey, preferences: Partial<import("./types").SessionPreferences>) => void;
 }
 
 export type SessionStore = SessionState & SessionStoreActions;
@@ -120,8 +159,11 @@ export function createSessionStore() {
                 session.subscription.stop();
             }
 
+            // Normalize options by converting eventConstructors to events Map
+            const normalizedOpts = normalizeSessionOptions(opts);
+
             // Build subscription kinds
-            const kinds = buildSubscriptionKinds(opts);
+            const kinds = buildSubscriptionKinds(normalizedOpts);
             if (kinds.length === 0) {
                 return; // Nothing to fetch
             }
@@ -134,7 +176,7 @@ export function createSessionStore() {
                 },
                 { closeOnEose: false, subId: "session" },
                 {
-                    onEvent: (event) => handleIncomingEvent(event, pubkey, get),
+                    onEvent: (event) => handleIncomingEvent(event, pubkey, normalizedOpts, get),
                 },
             );
 
@@ -277,6 +319,18 @@ export function createSessionStore() {
 
             set({ sessions: newSessions });
         },
+
+        updatePreferences: (pubkey: Hexpubkey, preferences: Partial<import("./types").SessionPreferences>) => {
+            const state = get();
+            const session = state.sessions.get(pubkey);
+
+            if (!session) {
+                return;
+            }
+
+            const updatedPreferences = { ...session.preferences, ...preferences };
+            get().updateSession(pubkey, { preferences: updatedPreferences });
+        },
     }));
 }
 
@@ -323,7 +377,12 @@ function buildSubscriptionKinds(opts: SessionStartOptions): NDKKind[] {
  * Handle incoming event from subscription.
  * Processes follows, mutes, and other events appropriately.
  */
-function handleIncomingEvent(event: NDKEvent, pubkey: Hexpubkey, getState: () => SessionStore): void {
+function handleIncomingEvent(
+    event: NDKEvent,
+    pubkey: Hexpubkey,
+    opts: SessionStartOptions,
+    getState: () => SessionStore,
+): void {
     const currentSession = getState().sessions.get(pubkey);
     if (!currentSession) return;
 
@@ -352,7 +411,7 @@ function handleIncomingEvent(event: NDKEvent, pubkey: Hexpubkey, getState: () =>
     }
 
     // Store other replaceable events
-    handleReplaceableEvent(event, currentSession, pubkey, getState);
+    handleReplaceableEvent(event, currentSession, pubkey, opts, getState);
 }
 
 /**
@@ -486,6 +545,7 @@ function handleReplaceableEvent(
     event: NDKEvent,
     session: NDKSession,
     pubkey: Hexpubkey,
+    opts: SessionStartOptions,
     getState: () => SessionStore,
 ): void {
     if (event.kind === undefined) return;
@@ -498,6 +558,10 @@ function handleReplaceableEvent(
         if ((existingEvent.created_at ?? 0) > (event.created_at ?? 0)) return;
     }
 
-    session.events.set(event.kind, event);
+    // Check if there's an event class to wrap this event
+    const eventClass = opts.events?.get(event.kind);
+    const wrappedEvent = eventClass && typeof eventClass.from === "function" ? eventClass.from(event) : event;
+
+    session.events.set(event.kind, wrappedEvent);
     getState().updateSession(pubkey, { events: new Map(session.events) });
 }

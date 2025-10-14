@@ -39,7 +39,7 @@ describe("Worker mode test", () => {
         const events1 = await ndk.fetchEvents([{ kinds: [NDKKind.CashuToken] }], {
             cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE,
         });
-        
+
         console.log("Worker mode events1.size:", events1.size);
         expect(events1.size).toBe(1);
     });

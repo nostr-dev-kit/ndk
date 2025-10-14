@@ -50,11 +50,11 @@ describe("Debug subscription flow", () => {
                 onEose: () => {
                     console.log("Got EOSE, event count:", eventCount);
                 },
-            }
+            },
         );
 
         // Wait a bit for events to arrive
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 100));
 
         console.log("Final event count:", eventCount);
         expect(eventCount).toBe(1);

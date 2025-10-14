@@ -87,7 +87,7 @@ export class NDKSvelte extends NDK {
         super(params);
 
         // Register NDKSvelte guardrails
-        this.aiGuardrails?.register('ndkSvelte', {
+        this.aiGuardrails?.register("ndkSvelte", {
             constructing: ndkSvelteGuardrails.constructing,
         });
 
@@ -96,21 +96,22 @@ export class NDKSvelte extends NDK {
 
         // Only create session manager if explicitly requested
         if (params.session) {
-            const sessionOptions: SessionManagerOptions = params.session === true
-                ? {
-                    storage: new LocalStorage(),
-                    autoSave: true,
-                    fetches: {
-                        follows: true,
-                        mutes: true,
-                        wallet: true,
-                    }
-                }
-                : {
-                    storage: new LocalStorage(),
-                    autoSave: true,
-                    ...params.session,
-                };
+            const sessionOptions: SessionManagerOptions =
+                params.session === true
+                    ? {
+                          storage: new LocalStorage(),
+                          autoSave: true,
+                          fetches: {
+                              follows: true,
+                              mutes: true,
+                              wallet: true,
+                          },
+                      }
+                    : {
+                          storage: new LocalStorage(),
+                          autoSave: true,
+                          ...params.session,
+                      };
 
             const sessionManager = new NDKSessionManager(this, sessionOptions);
 
@@ -162,9 +163,7 @@ export class NDKSvelte extends NDK {
      * {/each}
      * ```
      */
-    $subscribe<T extends NDKEvent = NDKEvent>(
-        config: () => SubscribeConfig | undefined,
-    ): Subscription<T> {
+    $subscribe<T extends NDKEvent = NDKEvent>(config: () => SubscribeConfig | undefined): Subscription<T> {
         return createSubscription<T>(this, config);
     }
 
@@ -231,5 +230,57 @@ export class NDKSvelte extends NDK {
      */
     get $currentUser() {
         return this.#activeUser;
+    }
+
+    /**
+     * Alias for $currentUser
+     *
+     * @example
+     * ```ts
+     * const user = ndk.$activeUser;
+     * ```
+     */
+    get $activeUser() {
+        return this.#activeUser;
+    }
+
+    /**
+     * Reactively access the current active user's pubkey
+     *
+     * Returns a reactive value that updates when the active user changes.
+     * Returns undefined if no user is active.
+     *
+     * @example
+     * ```ts
+     * const pubkey = ndk.$currentPubkey;
+     *
+     * // In template
+     * {#if pubkey}
+     *   <div>Pubkey: {pubkey}</div>
+     * {/if}
+     * ```
+     */
+    get $currentPubkey() {
+        return this.#activeUser?.pubkey;
+    }
+
+    /**
+     * Reactively access the current active session
+     *
+     * Returns a reactive value that updates when the active session changes.
+     * Returns undefined if sessions are not enabled or no session is active.
+     *
+     * @example
+     * ```ts
+     * const currentSession = ndk.$currentSession;
+     *
+     * // In template
+     * {#if currentSession}
+     *   <div>Session: {currentSession.pubkey}</div>
+     * {/if}
+     * ```
+     */
+    get $currentSession() {
+        return this.$sessions?.current;
     }
 }

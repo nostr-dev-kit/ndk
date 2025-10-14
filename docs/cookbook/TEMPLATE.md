@@ -4,7 +4,7 @@ description: A brief 1-2 sentence description of what this recipe teaches
 tags: ['ndk-core', 'tag1', 'tag2', 'tag3']
 difficulty: beginner|intermediate|advanced
 timeToRead: 10
-package: ndk-core|ndk-svelte5|ndk-mobile|ndk-wallet
+package: ndk-core|svelte|ndk-mobile|ndk-wallet
 author: Your Name
 dateAdded: 2024-03-04
 ---
@@ -149,7 +149,7 @@ Provide a full, copy-pasteable example:
 
 ### Package
 - The main NDK package used
-- Options: ndk-core, ndk-svelte5, ndk-mobile, ndk-wallet, ndk-react
+- Options: ndk-core, svelte, ndk-mobile, ndk-wallet, ndk-react
 
 ### Author
 - Your name or handle

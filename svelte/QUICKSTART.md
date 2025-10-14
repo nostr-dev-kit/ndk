@@ -1,6 +1,6 @@
 # Quick Start Guide
 
-Get up and running with ndk-svelte5 in 5 minutes.
+Get up and running with svelte in 5 minutes.
 
 ## Installation
 

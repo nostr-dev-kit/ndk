@@ -1,4 +1,4 @@
-# ndk-svelte5 Implementation Status
+# svelte Implementation Status
 
 ## ✅ Completed (Core Foundation)
 
@@ -174,7 +174,7 @@ mutes.add({ pubkey });
 ## 📦 File Structure
 
 ```
-ndk-svelte5/
+svelte/
 ├── src/
 │   └── lib/
 │       ├── ndk-svelte.ts              (NDKSvelte class)
@@ -201,7 +201,7 @@ ndk-svelte5/
 
 ## 🎉 Summary
 
-**ndk-svelte5 is production-ready with extensive features implemented!**
+**svelte is production-ready with extensive features implemented!**
 
 The foundation is comprehensive with:
 - ✅ **Core**: EventSubscription with reactive runes

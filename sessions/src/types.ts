@@ -49,6 +49,19 @@ export interface NDKSession {
      * Last time this session was active (seconds)
      */
     lastActive: number;
+
+    /**
+     * User preferences for this session
+     */
+    preferences?: SessionPreferences;
+}
+
+/**
+ * Event class constructor with static kinds property and from method
+ */
+export interface NDKEventConstructor {
+    kinds: NDKKind[];
+    from(event: NDKEvent): NDKEvent;
 }
 
 /**
@@ -85,9 +98,21 @@ export interface SessionStartOptions {
 
     /**
      * Fetch specific replaceable event kinds
-     * Map keys are NDKKind, values are the events to fetch
+     * Map keys are NDKKind, values are event class constructors with a static from method
      */
-    events?: Map<NDKKind, NDKEvent>;
+    events?: Map<NDKKind, { from(event: NDKEvent): NDKEvent }>;
+
+    /**
+     * Event class constructors to register for automatic wrapping
+     * This is a more ergonomic alternative to the events option
+     * @example
+     * ```typescript
+     * eventConstructors: [NDKBlossomList, NDKArticle]
+     * // Instead of:
+     * // events: new Map([[NDKKind.BlossomList, NDKBlossomList], [NDKKind.Article, NDKArticle]])
+     * ```
+     */
+    eventConstructors?: NDKEventConstructor[];
 
     /**
      * Set the muteFilter on NDK based on session's mute data
@@ -103,6 +128,16 @@ export interface SessionStartOptions {
 }
 
 /**
+ * User preferences for a session
+ */
+export interface SessionPreferences {
+    /**
+     * Whether wallet fetching should be enabled for this session
+     */
+    walletEnabled?: boolean;
+}
+
+/**
  * Serialized session data for storage
  * Only persists identity and signer - all data comes from NDK cache
  */
@@ -110,6 +145,7 @@ export interface SerializedSession {
     pubkey: Hexpubkey;
     signerPayload?: string; // NDKSigner's toPayload() result
     lastActive: number;
+    preferences?: SessionPreferences;
 }
 
 /**

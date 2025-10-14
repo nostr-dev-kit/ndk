@@ -13,6 +13,7 @@ import {
     type NDKRelay,
     type NDKSubscription,
     type NDKUserProfile,
+    type ProfilePointer,
     profileFromEvent,
 } from "@nostr-dev-kit/ndk";
 import * as SQLite from "expo-sqlite";
@@ -474,6 +475,53 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                 ],
             );
         })();
+    }
+
+    async loadNip05(nip05: string, maxAgeForMissing = 3600): Promise<ProfilePointer | null | "missing"> {
+        try {
+            const result = this.db.getFirstSync("SELECT profile, fetched_at FROM nip05 WHERE nip05 = ?;", [nip05]) as
+                | {
+                      profile: string | null;
+                      fetched_at: number;
+                  }
+                | undefined;
+
+            if (!result) return "missing";
+
+            const now = Date.now();
+
+            if (result.profile === null) {
+                // Failed lookup cached - check if it's expired
+                if (result.fetched_at + maxAgeForMissing * 1000 < now) {
+                    return "missing";
+                }
+                return null;
+            }
+
+            try {
+                return JSON.parse(result.profile);
+            } catch {
+                return "missing";
+            }
+        } catch (e) {
+            console.error("Error loading NIP-05", e, { nip05 });
+            return "missing";
+        }
+    }
+
+    saveNip05(nip05: string, profile: ProfilePointer | null): void {
+        try {
+            const profileStr = profile ? JSON.stringify(profile) : null;
+            const fetchedAt = Date.now();
+
+            this.bufferWrite("INSERT OR REPLACE INTO nip05 (nip05, profile, fetched_at) VALUES (?, ?, ?);", [
+                nip05,
+                profileStr,
+                fetchedAt,
+            ]);
+        } catch (e) {
+            console.error("Error saving NIP-05", e, { nip05 });
+        }
     }
 
     private _unpublishedEvents: LoadedUnpublishedEvent[] = [];

@@ -1,6 +1,6 @@
 {
-    "name": "ndk-svelte5-nutsack-wallet",
-    "version": "0.1.7",
+    "name": "svelte-nutsack-wallet",
+    "version": "0.1.20",
     "private": true,
     "type": "module",
     "scripts": {

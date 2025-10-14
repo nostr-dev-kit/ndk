@@ -28,24 +28,24 @@ export { default as HashtagPreview } from "./components/embedded-event/HashtagPr
 
 // EventContent customization - components
 export {
-  setEventContentComponents,
-  getEventContentComponents,
-  resetEventContentComponents,
-  mergeComponentRegistries,
-  type EventContentComponents,
-  type MentionComponentProps,
-  type EmbeddedEventComponentProps,
-  type HashtagComponentProps,
-  type EmojiComponentProps,
-  type LinkComponentProps,
-  type MediaComponentProps,
-  type ImageGridComponentProps
+    setEventContentComponents,
+    getEventContentComponents,
+    resetEventContentComponents,
+    mergeComponentRegistries,
+    type EventContentComponents,
+    type MentionComponentProps,
+    type EmbeddedEventComponentProps,
+    type HashtagComponentProps,
+    type EmojiComponentProps,
+    type LinkComponentProps,
+    type MediaComponentProps,
+    type ImageGridComponentProps,
 } from "./components/event-content-components.js";
 
 // EventContent customization - handlers
 export {
-  EventContentHandlersProxy,
-  type EventContentHandlers
+    EventContentHandlersProxy,
+    type EventContentHandlers,
 } from "./components/event-content-handlers.js";
 export { default as NostrEditor } from "./components/editor/NostrEditor.svelte";
 export { default as NProfileNodeView } from "./components/editor/nodes/NProfileNodeView.svelte";

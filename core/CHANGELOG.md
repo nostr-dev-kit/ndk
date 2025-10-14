@@ -1,5 +1,116 @@
 # @nostr-dev-kit/ndk
 
+## 2.17.6
+
+### Patch Changes
+
+- Improve event serialization error messages to show which specific properties are invalid or missing, including their expected types and actual values. This makes debugging serialization failures much easier by providing detailed context instead of the generic "can't serialize event with wrong or missing properties" error.
+- Add protocol versioning and validation to prevent worker message format mismatches
+
+    **Problem:** Apps using NDK with SQLite WASM cache could crash with "object is not iterable" errors when stale or mismatched worker files were deployed. The signature verification handler would receive messages from the cache worker (or vice versa) and fail to parse them.
+
+    **Solution:**
+    1. **Message Format Validation**: The signature verification handler now validates incoming messages and logs clear, actionable errors when it receives incompatible formats, guiding developers to update their worker files.
+    2. **Protocol Versioning**: Both workers now include protocol metadata in their messages:
+        - Signature worker: Uses protocol name `ndk-sig-verify` with NDK version
+        - Cache worker: Uses protocol name `ndk-cache-sqlite` with cache-sqlite-wasm version
+    3. **Version Checking**: Message handlers detect and warn about version mismatches between library code and deployed worker files, helping developers identify when worker files need to be updated.
+
+    **Benefits:**
+    - No more silent failures or cryptic errors
+    - Clear guidance when worker files are stale or misconfigured
+    - Easier debugging of worker-related issues
+    - Future-proof protocol evolution
+
+    **Migration:** No breaking changes. Existing apps will see helpful error messages if they have worker mismatches, guiding them to fix the issue.
+
+## 2.17.5
+
+### Patch Changes
+
+- Retry event publishing after successful authentication when relay returns auth-required
+
+    When a relay responds to an event publish with `OK false "auth-required:"`, NDK now automatically:
+    1. Holds the publish promise instead of immediately rejecting it
+    2. Triggers the authentication flow via the relay's auth policy
+    3. Retries the event publish after successful authentication
+    4. Resolves or rejects the original publish promise based on the retry result
+
+    If authentication fails, all pending publishes that were waiting for auth are rejected with an appropriate error message.
+
+    Additionally, proper cleanup of pending publishes is now performed on relay disconnection to prevent memory leaks and ensure promises don't hang indefinitely.
+
+    This ensures that publishing operations seamlessly handle authentication requirements without the caller needing to manually retry. The publish will only fail or succeed once the authentication flow completes.
+
+- Improve error message when serializing invalid events
+
+    When gift wrapping fails due to invalid event properties, the error message now clearly indicates which properties are missing or invalid instead of just saying "can't serialize event with wrong or missing properties". The error now includes:
+    - Which specific properties are invalid
+    - What type/format each property should be
+    - The full event object for debugging
+
+- Add exclusiveRelay option to enforce relay provenance in subscriptions
+
+    Adds a new `exclusiveRelay` option to `NDKSubscriptionOptions` that restricts event delivery to only those from the specified relay set. When enabled:
+    - Events from other relays are rejected even if they match the subscription filters
+    - Optimistic publish events are only accepted if `skipOptimisticPublishEvent` is false
+    - Cached events are accepted if they were previously seen on a relay in the subscription's relay set
+    - Live events are only accepted if they come from a relay in the subscription's relay set
+
+    This is useful for scenarios requiring strict relay provenance, such as:
+    - Fetching events exclusively from a specific relay
+    - Implementing relay-based isolation or routing
+    - Testing relay-specific behavior
+
+    Example:
+
+    ```typescript
+    // Only receive events from relay-a.com, ignore matches from other relays
+    ndk.subscribe({ kinds: [1] }, { relayUrls: ["wss://relay-a.com"], exclusiveRelay: true });
+    ```
+
+- Add AI guardrails to prevent hashtag # prefix in tags and filters
+
+    NDK now validates that hashtags do not include the # prefix in both event tags and subscription filters:
+
+    **Event validation (at signing time):**
+    - Checks all `t` tags to ensure values don't start with #
+    - Throws fatal error with helpful message if # prefix is detected
+    - Guides developers to use `['t', 'nostr']` instead of `['t', '#nostr']`
+
+    **Filter validation (at subscription time):**
+    - Checks all `#t` filter values to ensure they don't start with #
+    - Throws fatal error with helpful message if # prefix is detected
+    - Guides developers to use `{ "#t": ["nostr"] }` instead of `{ "#t": ["#nostr"] }`
+
+    This prevents a common mistake where developers include the # symbol in hashtag values, which breaks proper hashtag indexing and querying on relays.
+
+## 2.17.4
+
+### Patch Changes
+
+- Add exclusiveRelay option for relay-specific subscriptions
+
+    Adds a new `exclusiveRelay` boolean option to `NDKSubscriptionOptions` that allows subscriptions to only accept events from their specified relaySet/relayUrls, ignoring cross-subscription matching from other relays.
+
+    When `exclusiveRelay: true`:
+    - Events are only delivered if they come from a relay in the subscription's relaySet
+    - Cached events are checked against their known relay provenance
+    - Optimistic publishes respect the skipOptimisticPublishEvent setting
+
+    When `exclusiveRelay: false` (default):
+    - Maintains current behavior with cross-subscription matching
+    - Events matching the filter from any relay are delivered
+
+    This is useful for scenarios requiring strict relay provenance, such as fetching events exclusively from a specific relay or implementing relay-based isolation.
+
+## 2.17.3
+
+### Patch Changes
+
+- 8678b1f: Add AI guardrail to validate #a tag filters only use addressable event kinds (30000-39999)
+- c901395: Remove param replaceable event d-tag warning from signing guardrails
+
 ## 2.17.2
 
 ### Minor Changes

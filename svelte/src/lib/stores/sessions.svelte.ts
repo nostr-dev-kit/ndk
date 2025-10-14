@@ -44,7 +44,7 @@ export class ReactiveSessionsStore {
 
         // Restore sessions on init
         this.#manager.restore().catch((error) => {
-            console.error("[ndk-svelte5] Failed to restore sessions:", error);
+            console.error("[svelte] Failed to restore sessions:", error);
         });
     }
 
@@ -165,7 +165,7 @@ export class ReactiveSessionsStore {
         // If this was the last session, clear storage completely
         if (Object.keys(this.sessions).length === 0) {
             this.#manager.clear().catch((error) => {
-                console.error("[ndk-svelte5] Failed to clear sessions from storage:", error);
+                console.error("[svelte] Failed to clear sessions from storage:", error);
             });
         }
     }
@@ -186,7 +186,7 @@ export class ReactiveSessionsStore {
 
         // Clear persisted sessions from storage
         this.#manager.clear().catch((error) => {
-            console.error("[ndk-svelte5] Failed to clear sessions from storage:", error);
+            console.error("[svelte] Failed to clear sessions from storage:", error);
         });
     }
 

@@ -13,8 +13,8 @@
 
   // Derive onboarding state from session and wallet state
   const showOnboarding = $derived.by(() => {
-    const currentSession = ndk.$sessions.current;
-    if (!currentSession) return false;
+    const currentUser = ndk.$currentUser;
+    if (!currentUser) return false;
     return wallet.needsOnboarding;
   });
 
@@ -42,12 +42,12 @@
       <h1 class="gradient-text">Nutsack</h1>
       <p class="shimmer">Loading your wallet...</p>
     </div>
-  {:else if !ndk.$sessions.current}
+  {:else if !ndk.$currentUser}
     <LoginView />
   {:else if showOnboarding}
     <WalletOnboardingFlow {ndk} onComplete={handleOnboardingComplete} />
   {:else}
-    <WalletView user={ndk.getUser({ pubkey: ndk.$sessions.current.pubkey })} />
+    <WalletView user={ndk.$currentUser} />
   {/if}
 </main>
 

@@ -27,7 +27,7 @@ describe("WalletStore", () => {
     let ndk: NDKSvelte;
 
     beforeEach(() => {
-        ndk = new NDKSvelte({ explicitRelayUrls: ["wss://relay.test"] });
+        ndk = new NDKSvelte({ explicitRelayUrls: ["wss://relay.test"], session: true });
     });
 
     it("should initialize with default state", () => {

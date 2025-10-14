@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { NDKEvent } from "../events";
+import type { NDKEvent } from "../events";
 import { NDK } from "../ndk";
 import { NDKRelay } from "../relay";
 import { NDKSubscription } from "./index";
@@ -229,23 +229,20 @@ describe("Event Deduplication and onRelays tracking", () => {
                 firstEventTime = Date.now();
             });
 
-            subscription.on(
-                "event:dup",
-                (event: NDKEvent, relay?: NDKRelay, timeSinceFirstSeen?: number) => {
-                    // Verify event is the correct one
-                    expect(event.id).toBe("test-event-dup-params");
+            subscription.on("event:dup", (event: NDKEvent, relay?: NDKRelay, timeSinceFirstSeen?: number) => {
+                // Verify event is the correct one
+                expect(event.id).toBe("test-event-dup-params");
 
-                    // Verify relay is passed correctly
-                    expect(relay).toBe(relay2);
+                // Verify relay is passed correctly
+                expect(relay).toBe(relay2);
 
-                    // Verify timeSinceFirstSeen is reasonable (should be small but > 0)
-                    expect(timeSinceFirstSeen).toBeDefined();
-                    expect(timeSinceFirstSeen).toBeGreaterThanOrEqual(0);
-                    expect(timeSinceFirstSeen).toBeLessThan(100); // Should be very quick in test
+                // Verify timeSinceFirstSeen is reasonable (should be small but > 0)
+                expect(timeSinceFirstSeen).toBeDefined();
+                expect(timeSinceFirstSeen).toBeGreaterThanOrEqual(0);
+                expect(timeSinceFirstSeen).toBeLessThan(100); // Should be very quick in test
 
-                    done();
-                },
-            );
+                done();
+            });
 
             // First event from relay1
             subscription.eventReceived(rawEvent, relay1, false);

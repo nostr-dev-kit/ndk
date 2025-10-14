@@ -41,6 +41,7 @@ export class NDKRelayConnectivity {
     public openSubs: Map<string, NDKRelaySubscription> = new Map();
     private openCountRequests = new Map<string, CountResolver>();
     private openEventPublishes = new Map<string, EventPublishResolver[]>();
+    private pendingAuthPublishes = new Map<string, NostrEvent>();
     private serial = 0;
     public baseEoseTimeout = 4_400;
 
@@ -143,11 +144,7 @@ export class NDKRelayConnectivity {
                         const messageHandler = (e: MessageEvent) => {
                             try {
                                 const data = JSON.parse(e.data);
-                                if (
-                                    data[0] === "EOSE" ||
-                                    data[0] === "EVENT" ||
-                                    data[0] === "NOTICE"
-                                ) {
+                                if (data[0] === "EOSE" || data[0] === "EVENT" || data[0] === "NOTICE") {
                                     handler();
                                     this.ws?.removeEventListener("message", messageHandler);
                                 }
@@ -192,11 +189,7 @@ export class NDKRelayConnectivity {
      */
     async connect(timeoutMs?: number, reconnect = true): Promise<void> {
         // Check if WebSocket exists but is not open (stale connection)
-        if (
-            this.ws &&
-            this.ws.readyState !== WebSocket.OPEN &&
-            this.ws.readyState !== WebSocket.CONNECTING
-        ) {
+        if (this.ws && this.ws.readyState !== WebSocket.OPEN && this.ws.readyState !== WebSocket.CONNECTING) {
             this.debug("Cleaning up stale WebSocket connection");
             try {
                 this.ws.close();
@@ -208,8 +201,7 @@ export class NDKRelayConnectivity {
         }
 
         if (
-            (this._status !== NDKRelayStatus.RECONNECTING &&
-                this._status !== NDKRelayStatus.DISCONNECTED) ||
+            (this._status !== NDKRelayStatus.RECONNECTING && this._status !== NDKRelayStatus.DISCONNECTED) ||
             this.reconnectTimeout
         ) {
             this.debug(
@@ -232,16 +224,11 @@ export class NDKRelayConnectivity {
         timeoutMs ??= this.timeoutMs;
         if (!this.timeoutMs && timeoutMs) this.timeoutMs = timeoutMs;
 
-        if (this.timeoutMs)
-            this.connectTimeout = setTimeout(
-                () => this.onConnectionError(reconnect),
-                this.timeoutMs,
-            );
+        if (this.timeoutMs) this.connectTimeout = setTimeout(() => this.onConnectionError(reconnect), this.timeoutMs);
 
         try {
             this.updateConnectionStats.attempt();
-            if (this._status === NDKRelayStatus.DISCONNECTED)
-                this._status = NDKRelayStatus.CONNECTING;
+            if (this._status === NDKRelayStatus.DISCONNECTED) this._status = NDKRelayStatus.CONNECTING;
             else this._status = NDKRelayStatus.RECONNECTING;
 
             this.ws = new WebSocket(this.ndkRelay.url);
@@ -342,6 +329,9 @@ export class NDKRelayConnectivity {
         // Stop keepalive when disconnected
         this.keepalive?.stop();
 
+        // Clear any pending publish/auth promises to prevent memory leaks
+        this.clearPendingPublishes(new Error(`Relay ${this.ndkRelay.url} disconnected`));
+
         if (this._status === NDKRelayStatus.CONNECTED) {
             this.handleReconnection();
         }
@@ -402,9 +392,7 @@ export class NDKRelayConnectivity {
                 case "OK": {
                     const ok: boolean = data[2];
                     const reason: string = data[3];
-                    const ep = this.openEventPublishes.get(id) as
-                        | EventPublishResolver[]
-                        | undefined;
+                    const ep = this.openEventPublishes.get(id) as EventPublishResolver[] | undefined;
                     const firstEp = ep?.pop();
 
                     if (!ep || !firstEp) {
@@ -412,12 +400,50 @@ export class NDKRelayConnectivity {
                         return;
                     }
 
-                    if (ok) firstEp.resolve(reason);
-                    else firstEp.reject(new Error(reason));
+                    if (ok) {
+                        firstEp.resolve(reason);
+                        // Clean up the pending auth publish since it succeeded
+                        this.pendingAuthPublishes.delete(id);
+                    } else {
+                        // Check if this is an auth-required error
+                        // Different relays use different error messages for auth requirements
+                        const isAuthRequired =
+                            reason &&
+                            (reason.toLowerCase().includes("auth-required") ||
+                                reason.toLowerCase().includes("not authorized") ||
+                                reason.toLowerCase().includes("blocked: not authorized"));
+
+                        if (isAuthRequired) {
+                            // Get the pending event from pendingAuthPublishes
+                            const event = this.pendingAuthPublishes.get(id);
+                            if (event) {
+                                this.debug("Publish failed due to auth-required, will retry after auth", id);
+                                // Don't reject yet - keep the resolver for retry after auth
+                                // Put the resolver back so we can resolve/reject it after auth
+                                ep.push(firstEp);
+                                this.openEventPublishes.set(id, ep);
+                            } else {
+                                // Event not found in pending, reject normally
+                                firstEp.reject(new Error(reason));
+                            }
+                        } else {
+                            firstEp.reject(new Error(reason));
+                            // Clean up the pending auth publish for non-auth errors
+                            this.pendingAuthPublishes.delete(id);
+                        }
+                    }
 
                     if (ep.length === 0) {
                         this.openEventPublishes.delete(id);
-                    } else {
+                    } else if (
+                        !ok &&
+                        !(
+                            reason?.toLowerCase().includes("auth-required") ||
+                            reason?.toLowerCase().includes("not authorized") ||
+                            reason?.toLowerCase().includes("blocked: not authorized")
+                        )
+                    ) {
+                        // Only clear the publish map if it's not auth-required
                         this.openEventPublishes.set(id, ep);
                     }
                     return;
@@ -439,10 +465,7 @@ export class NDKRelayConnectivity {
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
-            this.debug(
-                `Error parsing message from ${this.ndkRelay.url}: ${error.message}`,
-                error?.stack,
-            );
+            this.debug(`Error parsing message from ${this.ndkRelay.url}: ${error.message}`, error?.stack);
             return;
         }
     }
@@ -487,10 +510,7 @@ export class NDKRelayConnectivity {
                     }
 
                     const authenticate = async () => {
-                        if (
-                            this._status >= NDKRelayStatus.CONNECTED &&
-                            this._status < NDKRelayStatus.AUTHENTICATED
-                        ) {
+                        if (this._status >= NDKRelayStatus.CONNECTED && this._status < NDKRelayStatus.AUTHENTICATED) {
                             const event = new NDKEvent(this.ndk);
                             event.kind = NDKKind.ClientAuth;
                             event.tags = [
@@ -503,17 +523,16 @@ export class NDKRelayConnectivity {
                                     this._status = NDKRelayStatus.AUTHENTICATED;
                                     this.ndkRelay.emit("authed");
                                     this.debug("Authentication successful");
+                                    this.retryPendingAuthPublishes();
                                 })
                                 .catch((e) => {
                                     this._status = NDKRelayStatus.AUTH_REQUESTED;
                                     this.ndkRelay.emit("auth:failed", e);
                                     this.debug("Authentication failed", e);
+                                    this.rejectPendingAuthPublishes(e);
                                 });
                         } else {
-                            this.debug(
-                                "Authentication failed, it changed status, status is %d",
-                                this._status,
-                            );
+                            this.debug("Authentication failed, it changed status, status is %d", this._status);
                         }
                     };
 
@@ -575,8 +594,7 @@ export class NDKRelayConnectivity {
 
         const sum = durations.reduce((a, b) => a + b, 0);
         const avg = sum / durations.length;
-        const variance =
-            durations.map((x) => (x - avg) ** 2).reduce((a, b) => a + b, 0) / durations.length;
+        const variance = durations.map((x) => (x - avg) ** 2).reduce((a, b) => a + b, 0) / durations.length;
         const stdDev = Math.sqrt(variance);
         const isFlapping = stdDev < FLAPPING_THRESHOLD_MS;
 
@@ -622,9 +640,7 @@ export class NDKRelayConnectivity {
             // After idle/sleep, use aggressive reconnection: 0s, 1s, 2s, 5s, 10s, 30s
             const aggressiveDelays = [0, 1000, 2000, 5000, 10000, 30000];
             reconnectDelay = aggressiveDelays[Math.min(attempt, aggressiveDelays.length - 1)];
-            this.debug(
-                `Using aggressive reconnect after idle, attempt ${attempt}, delay ${reconnectDelay}ms`,
-            );
+            this.debug(`Using aggressive reconnect after idle, attempt ${attempt}, delay ${reconnectDelay}ms`);
         } else if (this.connectedAt) {
             // Recent disconnection, wait before reconnecting
             reconnectDelay = Math.max(0, 60000 - (Date.now() - this.connectedAt));
@@ -675,16 +691,10 @@ export class NDKRelayConnectivity {
             this.netDebug?.(message, this.ndkRelay, "send");
             this.lastMessageSent = Date.now();
         } else {
-            this.debug(
-                `Not connected to ${this.ndkRelay.url} (%d), not sending message ${message}`,
-                this._status,
-            );
+            this.debug(`Not connected to ${this.ndkRelay.url} (%d), not sending message ${message}`, this._status);
 
             // If we think we're connected but WebSocket is not open, we have a stale connection
-            if (
-                this._status >= NDKRelayStatus.CONNECTED &&
-                this.ws?.readyState !== WebSocket.OPEN
-            ) {
+            if (this._status >= NDKRelayStatus.CONNECTED && this.ws?.readyState !== WebSocket.OPEN) {
                 this.debug(`Stale connection detected, WebSocket state: ${this.ws?.readyState}`);
                 // Force disconnect and reconnect
                 this.handleStaleConnection();
@@ -709,6 +719,74 @@ export class NDKRelayConnectivity {
     }
 
     /**
+     * Clears all pending publish promises by rejecting them with the provided error.
+     * This is called on disconnection to prevent memory leaks and ensure promises
+     * don't hang indefinitely.
+     * @param error The error to reject the promises with
+     */
+    private clearPendingPublishes(error: Error): void {
+        // Reject any promises waiting for auth-required retry
+        // rejectPendingAuthPublishes handles both pendingAuthPublishes and openEventPublishes
+        this.rejectPendingAuthPublishes(error);
+
+        // Clear any other outstanding publishes not related to auth
+        for (const [eventId, resolvers] of this.openEventPublishes.entries()) {
+            while (resolvers.length > 0) {
+                const resolver = resolvers.shift();
+                if (resolver) {
+                    resolver.reject(error);
+                }
+            }
+            this.openEventPublishes.delete(eventId);
+        }
+    }
+
+    /**
+     * Retries all pending publishes that failed due to auth-required.
+     * Called after successful authentication.
+     */
+    private retryPendingAuthPublishes(): void {
+        if (this.pendingAuthPublishes.size === 0) return;
+
+        this.debug(`Retrying ${this.pendingAuthPublishes.size} pending publishes after auth`);
+
+        for (const [eventId, event] of this.pendingAuthPublishes.entries()) {
+            this.debug(`Retrying publish for event ${eventId}`);
+            // Resend the event
+            this.send(`["EVENT",${JSON.stringify(event)}]`);
+        }
+
+        // Clear the pending publishes - they're now back in openEventPublishes waiting for OK
+        this.pendingAuthPublishes.clear();
+    }
+
+    /**
+     * Rejects all pending publishes that failed due to auth-required.
+     * Called when authentication fails.
+     */
+    private rejectPendingAuthPublishes(error: Error): void {
+        if (this.pendingAuthPublishes.size === 0) return;
+
+        this.debug(`Rejecting ${this.pendingAuthPublishes.size} pending publishes due to auth failure`);
+
+        for (const [eventId] of this.pendingAuthPublishes.entries()) {
+            const ep = this.openEventPublishes.get(eventId);
+            if (ep && ep.length > 0) {
+                const resolver = ep.pop();
+                if (resolver) {
+                    resolver.reject(new Error(`Authentication failed: ${error.message}`));
+                }
+
+                if (ep.length === 0) {
+                    this.openEventPublishes.delete(eventId);
+                }
+            }
+        }
+
+        this.pendingAuthPublishes.clear();
+    }
+
+    /**
      * Publishes an NDK event to the relay and returns a promise that resolves with the result.
      *
      * @param event - The NDK event to publish.
@@ -719,14 +797,16 @@ export class NDKRelayConnectivity {
         const ret = new Promise<string>((resolve, reject) => {
             const val = this.openEventPublishes.get(event.id!) ?? [];
             if (val.length > 0) {
-                console.warn(
-                    `Duplicate event publishing detected, you are publishing event ${event.id!} twice`,
-                );
+                console.warn(`Duplicate event publishing detected, you are publishing event ${event.id!} twice`);
             }
 
             val.push({ resolve, reject });
             this.openEventPublishes.set(event.id!, val);
         });
+
+        // Store the event in case we need to retry after auth
+        this.pendingAuthPublishes.set(event.id!, event);
+
         this.send(`["EVENT",${JSON.stringify(event)}]`);
         return ret;
     }
@@ -779,9 +859,7 @@ export class NDKRelayConnectivity {
 
         disconnected: () => {
             if (this._connectionStats.connectedAt) {
-                this._connectionStats.durations.push(
-                    Date.now() - this._connectionStats.connectedAt,
-                );
+                this._connectionStats.durations.push(Date.now() - this._connectionStats.connectedAt);
 
                 if (this._connectionStats.durations.length > 100) {
                     this._connectionStats.durations.shift();

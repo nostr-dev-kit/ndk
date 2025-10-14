@@ -39,7 +39,7 @@ describe("Debug query", () => {
         const results = await cache.query(sub);
         console.log("Query results:", results);
         console.log("Query results length:", results.length);
-        
+
         expect(results.length).toBe(1);
     });
 });

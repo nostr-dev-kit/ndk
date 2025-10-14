@@ -1,5 +1,82 @@
 # @nostr-dev-kit/ndk-mobile
 
+## 0.9.1
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.17.6
+
+## 0.9.0
+
+### Minor Changes
+
+- Add NIP-05 verification caching to SQLite adapters
+
+    Implements NIP-05 verification result caching in both cache-sqlite-wasm and mobile SQLite adapters to prevent unnecessary network requests. Both successful and failed verifications are now cached with smart expiration:
+    - Successful verifications are cached indefinitely
+    - Failed verifications are cached for 1 hour (configurable) to prevent hammering down/non-existent endpoints
+    - Expired failed verifications return "missing" to trigger retry
+    - Fresh failed verifications return null to prevent re-fetch
+
+    This brings feature parity with cache-dexie and cache-memory adapters.
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.17.5
+
+## 0.8.56
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.17.4
+
+## 0.8.55
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/wallet@0.8.6
+    - @nostr-dev-kit/react@1.3.12
+
+## 0.8.54
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/wallet@0.8.5
+    - @nostr-dev-kit/react@1.3.11
+
+## 0.8.53
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/wallet@0.8.4
+    - @nostr-dev-kit/react@1.3.10
+
+## 0.8.52
+
+### Patch Changes
+
+- Updated dependencies [8678b1f]
+- Updated dependencies [c901395]
+    - @nostr-dev-kit/ndk@2.17.3
+
+## 0.8.51
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/wallet@0.8.3
+    - @nostr-dev-kit/react@1.3.9
+
 ## 0.8.50
 
 ### Patch Changes

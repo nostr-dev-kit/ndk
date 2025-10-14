@@ -83,10 +83,7 @@ export interface NDKCacheAdapter {
         filter: (pubkey: Hexpubkey, profile: NDKUserProfile) => boolean,
     ) => Promise<Map<Hexpubkey, NDKUserProfile> | undefined>;
 
-    loadNip05?(
-        nip05: string,
-        maxAgeForMissing?: number,
-    ): Promise<ProfilePointer | null | "missing">;
+    loadNip05?(nip05: string, maxAgeForMissing?: number): Promise<ProfilePointer | null | "missing">;
     saveNip05?(nip05: string, profile: ProfilePointer | null): void;
 
     /**
@@ -111,9 +108,7 @@ export interface NDKCacheAdapter {
     /**
      * Fetches information about the relay.
      */
-    getRelayStatus?(
-        relayUrl: WebSocket["url"],
-    ): NDKCacheRelayInfo | undefined | Promise<NDKCacheRelayInfo | undefined>;
+    getRelayStatus?(relayUrl: WebSocket["url"]): NDKCacheRelayInfo | undefined | Promise<NDKCacheRelayInfo | undefined>;
 
     /**
      * Tracks a publishing event.
@@ -125,9 +120,7 @@ export interface NDKCacheAdapter {
     /**
      * Fetches all unpublished events.
      */
-    getUnpublishedEvents?(): Promise<
-        { event: NDKEvent; relays?: WebSocket["url"][]; lastTryAt?: number }[]
-    >;
+    getUnpublishedEvents?(): Promise<{ event: NDKEvent; relays?: WebSocket["url"][]; lastTryAt?: number }[]>;
 
     /**
      * Removes an unpublished event.

@@ -42,7 +42,7 @@ On login, automatically fetch:
 
 Works seamlessly with:
 - React (via `@nostr-dev-kit/react`)
-- Svelte 5 (via `@nostr-dev-kit/ndk-svelte5`)
+- Svelte 5 (via `@nostr-dev-kit/svelte`)
 - Mobile (React Native via `@nostr-dev-kit/mobile`)
 - Vanilla JavaScript
 - Node.js/CLI applications
@@ -137,5 +137,5 @@ All session state changes are observable via the subscribe pattern, making it ea
 For framework-specific implementations using sessions:
 
 - **React** - See [`@nostr-dev-kit/react` hooks documentation](/hooks/session-management)
-- **Svelte 5** - See [`@nostr-dev-kit/ndk-svelte5` documentation](/wrappers/svelte)
+- **Svelte 5** - See [`@nostr-dev-kit/svelte` documentation](/wrappers/svelte)
 - **Mobile** - See [`@nostr-dev-kit/mobile` documentation](/mobile/session)

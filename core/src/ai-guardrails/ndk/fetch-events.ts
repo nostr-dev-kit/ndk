@@ -60,7 +60,7 @@ function isReplaceableEventFilter(filters: any): boolean {
     }
 
     // Check all filters to see if they're only requesting NON-PARAMETERIZED replaceable events
-    return filterArray.every(filter => {
+    return filterArray.every((filter) => {
         if (!filter.kinds || !Array.isArray(filter.kinds) || filter.kinds.length === 0) {
             return false;
         }
@@ -87,20 +87,27 @@ function isReplaceableEventFilter(filters: any): boolean {
 function formatFilter(filter: any): string {
     const formatted = JSON.stringify(filter, null, 2);
     // Indent each line for better readability in the error message
-    return formatted.split('\n').map((line, idx) => idx === 0 ? line : `   ${line}`).join('\n');
+    return formatted
+        .split("\n")
+        .map((line, idx) => (idx === 0 ? line : `   ${line}`))
+        .join("\n");
 }
 
 /**
  * Warn about using fetchEvents (blocking operation)
  */
-export function fetchingEvents(filters: NDKFilter | NDKFilter[], opts: NDKSubscriptionOptions | undefined, warn: WarnFn): void {
+export function fetchingEvents(
+    filters: NDKFilter | NDKFilter[],
+    opts: NDKSubscriptionOptions | undefined,
+    warn: WarnFn,
+): void {
     // Skip warning if using ONLY_CACHE - not hitting relays at all
     if (opts?.cacheUsage === ("ONLY_CACHE" as NDKSubscriptionCacheUsage)) {
         return;
     }
 
     const filterArray = Array.isArray(filters) ? filters : [filters];
-    const formattedFilters = filterArray.map(formatFilter).join('\n\n   ---\n\n   ');
+    const formattedFilters = filterArray.map(formatFilter).join("\n\n   ---\n\n   ");
 
     // Special case: Check if this looks like a manually decoded naddr
     if (isNip33Pattern(filters)) {
@@ -108,7 +115,9 @@ export function fetchingEvents(filters: NDKFilter | NDKFilter[], opts: NDKSubscr
         warn(
             "fetch-events-usage",
             "For fetching a NIP-33 addressable event, use fetchEvent() with the naddr directly.\n\n" +
-                "📦 Your filter:\n   " + formattedFilters + "\n\n" +
+                "📦 Your filter:\n   " +
+                formattedFilters +
+                "\n\n" +
                 "  ❌ BAD:  const decoded = nip19.decode(naddr);\n" +
                 "           const events = await ndk.fetchEvents({\n" +
                 "             kinds: [decoded.data.kind],\n" +
@@ -127,8 +136,12 @@ export function fetchingEvents(filters: NDKFilter | NDKFilter[], opts: NDKSubscr
         warn(
             "fetch-events-usage",
             "For fetching a single event, use fetchEvent() instead.\n\n" +
-                "📦 Your filter:\n   " + formattedFilters + "\n\n" +
-                "💡 Looking for event: " + eventId + "\n\n" +
+                "📦 Your filter:\n   " +
+                formattedFilters +
+                "\n\n" +
+                "💡 Looking for event: " +
+                eventId +
+                "\n\n" +
                 "  ❌ BAD:  const events = await ndk.fetchEvents({ ids: [eventId] });\n" +
                 "  ✅ GOOD: const event = await ndk.fetchEvent(eventId);\n" +
                 "  ✅ GOOD: const event = await ndk.fetchEvent('note1...');\n" +
@@ -142,19 +155,19 @@ export function fetchingEvents(filters: NDKFilter | NDKFilter[], opts: NDKSubscr
     } else {
         // Analyze the filter to provide more context
         let filterAnalysis = "";
-        const hasLimit = filterArray.some(f => f.limit !== undefined);
-        const totalKinds = new Set(filterArray.flatMap(f => f.kinds || [])).size;
-        const totalAuthors = new Set(filterArray.flatMap(f => f.authors || [])).size;
+        const hasLimit = filterArray.some((f) => f.limit !== undefined);
+        const totalKinds = new Set(filterArray.flatMap((f) => f.kinds || [])).size;
+        const totalAuthors = new Set(filterArray.flatMap((f) => f.authors || [])).size;
 
         if (hasLimit) {
-            const maxLimit = Math.max(...filterArray.map(f => f.limit || 0));
-            filterAnalysis += `\n   • Limit: ${maxLimit} event${maxLimit !== 1 ? 's' : ''}`;
+            const maxLimit = Math.max(...filterArray.map((f) => f.limit || 0));
+            filterAnalysis += `\n   • Limit: ${maxLimit} event${maxLimit !== 1 ? "s" : ""}`;
         }
         if (totalKinds > 0) {
-            filterAnalysis += `\n   • Kinds: ${totalKinds} type${totalKinds !== 1 ? 's' : ''}`;
+            filterAnalysis += `\n   • Kinds: ${totalKinds} type${totalKinds !== 1 ? "s" : ""}`;
         }
         if (totalAuthors > 0) {
-            filterAnalysis += `\n   • Authors: ${totalAuthors} author${totalAuthors !== 1 ? 's' : ''}`;
+            filterAnalysis += `\n   • Authors: ${totalAuthors} author${totalAuthors !== 1 ? "s" : ""}`;
         }
 
         // General warning for fetchEvents usage
@@ -162,8 +175,12 @@ export function fetchingEvents(filters: NDKFilter | NDKFilter[], opts: NDKSubscr
             "fetch-events-usage",
             "fetchEvents() is a BLOCKING operation that waits for EOSE.\n" +
                 "In most cases, you should use subscribe() instead.\n\n" +
-                "📦 Your filter" + (filterArray.length > 1 ? "s" : "") + ":\n   " + formattedFilters +
-                (filterAnalysis ? "\n\n📊 Filter analysis:" + filterAnalysis : "") + "\n\n" +
+                "📦 Your filter" +
+                (filterArray.length > 1 ? "s" : "") +
+                ":\n   " +
+                formattedFilters +
+                (filterAnalysis ? "\n\n📊 Filter analysis:" + filterAnalysis : "") +
+                "\n\n" +
                 "  ❌ BAD:  const events = await ndk.fetchEvents(filter);\n" +
                 "  ✅ GOOD: ndk.subscribe(filter, { onEvent: (e) => ... });\n\n" +
                 "Only use fetchEvents() when you MUST block until data arrives.",

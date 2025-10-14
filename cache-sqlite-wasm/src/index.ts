@@ -8,20 +8,22 @@ import { discardUnpublishedEvent } from "./functions/discardUnpublishedEvent";
 import { fetchProfile } from "./functions/fetchProfile";
 import { fetchProfileSync } from "./functions/fetchProfileSync";
 import { getAllProfilesSync } from "./functions/getAllProfilesSync";
+import { getCacheData } from "./functions/getCacheData";
+import { getCacheStats } from "./functions/getCacheStats";
 import { getDecryptedEvent } from "./functions/getDecryptedEvent";
 import { getEvent } from "./functions/getEvent";
 import { getEventRelays } from "./functions/getEventRelays";
 import { getProfiles } from "./functions/getProfiles";
 import { getRelayStatus } from "./functions/getRelayStatus";
 import { getUnpublishedEvents } from "./functions/getUnpublishedEvents";
+import { loadNip05 } from "./functions/loadNip05";
 import { query } from "./functions/query";
+import { saveNip05 } from "./functions/saveNip05";
 import { saveProfile } from "./functions/saveProfile";
+import { setCacheData } from "./functions/setCacheData";
 import { setEvent } from "./functions/setEvent";
 import { setEventDup } from "./functions/setEventDup";
 import { updateRelayStatus } from "./functions/updateRelayStatus";
-import { getCacheStats } from "./functions/getCacheStats";
-import { getCacheData } from "./functions/getCacheData";
-import { setCacheData } from "./functions/setCacheData";
 import type { NDKCacheAdapterSqliteWasmOptions, SQLDatabase, WorkerMessage, WorkerResponse } from "./types";
 
 export type { CacheStats } from "./functions/getCacheStats";
@@ -139,7 +141,32 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
         }
 
         this.worker.onmessage = (event: MessageEvent) => {
-            const { id, result, error } = event.data;
+            const data = event.data;
+
+            // Handle protocol metadata
+            if (data._protocol && data._protocol !== 'ndk-cache-sqlite') {
+                console.error(
+                    '[NDK Cache SQLite WASM] ❌ Wrong worker protocol!',
+                    `\n\nExpected: ndk-cache-sqlite`,
+                    `\nReceived: ${data._protocol}`,
+                    '\n\nThis means the wrong worker instance was passed to the cache adapter.',
+                    '\nMake sure you are using the correct worker file for the cache.'
+                );
+                return;
+            }
+
+            // Check version compatibility (warn if mismatch)
+            if (data._version && data._version !== '0.8.0') {
+                console.warn(
+                    '[NDK Cache SQLite WASM] ⚠️  Worker version mismatch!',
+                    `\nLibrary version: 0.8.0`,
+                    `\nWorker version: ${data._version}`,
+                    '\n\nUpdate your worker file:',
+                    '\n  cp node_modules/@nostr-dev-kit/cache-sqlite-wasm/dist/worker.js public/'
+                );
+            }
+
+            const { id, result, error } = data;
             const pending = this.pendingRequests.get(id);
             if (pending) {
                 if (error) {
@@ -152,19 +179,21 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
         };
 
         this.worker.onerror = (event: ErrorEvent) => {
-            const errorMsg = event.message || 'unknown error';
+            const errorMsg = event.message || "unknown error";
             console.error(
                 `[NDK-cache-sqlite-wasm] ❌ Worker failed: ${errorMsg}\n\n` +
-                `🔧 Common solutions:\n` +
-                `1. Copy worker.js and sql-wasm.wasm to your public directory:\n` +
-                `   cp node_modules/@nostr-dev-kit/cache-sqlite-wasm/dist/worker.js public/\n` +
-                `   cp node_modules/@nostr-dev-kit/cache-sqlite-wasm/dist/sql-wasm.wasm public/\n\n` +
-                `2. Ensure your bundler serves the public directory correctly\n\n` +
-                `3. Check browser DevTools Network tab for 404 errors on worker.js\n\n` +
-                `Current workerUrl: ${effectiveWorkerUrl}`
+                    `🔧 Common solutions:\n` +
+                    `1. Copy worker.js and sql-wasm.wasm to your public directory:\n` +
+                    `   cp node_modules/@nostr-dev-kit/cache-sqlite-wasm/dist/worker.js public/\n` +
+                    `   cp node_modules/@nostr-dev-kit/cache-sqlite-wasm/dist/sql-wasm.wasm public/\n\n` +
+                    `2. Ensure your bundler serves the public directory correctly\n\n` +
+                    `3. Check browser DevTools Network tab for 404 errors on worker.js\n\n` +
+                    `Current workerUrl: ${effectiveWorkerUrl}`,
             );
             // Reject all pending requests on catastrophic worker failure
-            this.pendingRequests.forEach((p) => p.reject(new Error(`Worker failed: ${errorMsg}. Check console for setup instructions.`)));
+            this.pendingRequests.forEach((p) =>
+                p.reject(new Error(`Worker failed: ${errorMsg}. Check console for setup instructions.`)),
+            );
             this.pendingRequests.clear();
         };
 
@@ -212,6 +241,8 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
     public query = query.bind(this);
     public getProfiles = getProfiles.bind(this);
     public getCacheStats = getCacheStats.bind(this);
+    public loadNip05 = loadNip05.bind(this);
+    public saveNip05 = saveNip05.bind(this);
 
     // Generic cache data storage
     public async getCacheData<T>(namespace: string, key: string, maxAgeInSecs?: number): Promise<T | undefined> {

@@ -1,5 +1,38 @@
 # @nostr-dev-kit/ndk-cache-nostr
 
+## 0.1.65
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.17.6
+
+## 0.1.64
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.17.5
+
+## 0.1.63
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.17.4
+
+## 0.1.62
+
+### Patch Changes
+
+- Updated dependencies [8678b1f]
+- Updated dependencies [c901395]
+    - @nostr-dev-kit/ndk@2.17.3
+
 ## 0.1.61
 
 ### Patch Changes

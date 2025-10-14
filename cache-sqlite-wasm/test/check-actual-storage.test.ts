@@ -25,28 +25,28 @@ describe("Check actual storage format", () => {
         });
         event.id = "test-event-id";
         event.sig = "test-sig";
-        
+
         await cache.setEvent(event, [{ kinds: [NDKKind.CashuToken] }]);
 
         // Now directly query the DB to see what's stored
         if (cache.db) {
             const result = cache.db.exec("SELECT * FROM events WHERE id = ?", ["test-event-id"]);
             console.log("DB query result:", result);
-            
+
             if (result[0] && result[0].values.length > 0) {
                 const row = result[0].values[0];
                 const columns = result[0].columns;
-                
+
                 console.log("Columns:", columns);
                 console.log("Row:", row);
-                
+
                 // Find the raw column
                 const rawIndex = columns.indexOf("raw");
                 if (rawIndex !== -1) {
                     const rawValue = row[rawIndex];
                     console.log("Raw value:", rawValue);
                     console.log("Raw value type:", typeof rawValue);
-                    
+
                     const parsed = JSON.parse(rawValue as string);
                     console.log("Parsed raw:", parsed);
                     console.log("Is array?", Array.isArray(parsed));

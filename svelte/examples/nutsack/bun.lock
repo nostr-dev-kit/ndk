@@ -2,7 +2,7 @@
   "lockfileVersion": 1,
   "workspaces": {
     "": {
-      "name": "ndk-svelte5-nutsack-wallet",
+      "name": "svelte-nutsack-wallet",
       "dependencies": {
         "@nostr-dev-kit/ndk": "^2.15.2",
         "@nostr-dev-kit/ndk-cache-sqlite-wasm": "^0.5.11",

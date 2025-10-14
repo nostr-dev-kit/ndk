@@ -79,11 +79,7 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
         fixture.ndk.signer = sendSigner;
 
         // Create a DM
-        const sendEvent = await fixture.eventFactory.createDirectMessage(
-            "Test content",
-            "alice",
-            "bob",
-        );
+        const sendEvent = await fixture.eventFactory.createDirectMessage("Test content", "alice", "bob");
 
         const original = sendEvent.content;
         await sendEvent.encrypt(receiveUser, sendSigner, "nip04");
@@ -198,11 +194,7 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
             sig: "c94e74533b482aa8eeeb54ae72a5303e0b21f62909ca43c8ef06b0357412d6f8a92f96e1a205102753777fd25321a58fba3fb384eee114bd53ce6c06a1c22bab",
         });
 
-        const decryptedSender = await giftWrappingModule.giftUnwrap(
-            encryptedForSender,
-            sendUser,
-            sendPKSigner,
-        );
+        const decryptedSender = await giftWrappingModule.giftUnwrap(encryptedForSender, sendUser, sendPKSigner);
         expect(decryptedSender.content).toBe("Hola, que tal?");
     });
 
@@ -217,11 +209,7 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
         fixture.ndk.signer = sendSigner;
 
         // Create a direct message
-        const message = await fixture.eventFactory.createDirectMessage(
-            "hello world",
-            "alice",
-            "bob",
-        );
+        const message = await fixture.eventFactory.createDirectMessage("hello world", "alice", "bob");
         message.kind = 14; // Override kind to match test requirements
 
         // Mock gift wrap and unwrap
@@ -258,11 +246,7 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
         fixture.ndk.signer = sendSigner;
 
         // Create a direct message
-        const message = await fixture.eventFactory.createDirectMessage(
-            "hello world",
-            "alice",
-            "bob",
-        );
+        const message = await fixture.eventFactory.createDirectMessage("hello world", "alice", "bob");
         message.kind = 14; // Override kind to match test requirements
 
         /** @ts-expect-error */
@@ -270,8 +254,7 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
             ...globalThis.window,
             nostr: {
                 getPublicKey: () => Promise.resolve(sendUser.pubkey),
-                signEvent: async (e: NostrEvent) =>
-                    Promise.resolve({ sig: await sendSigner.sign(e) }),
+                signEvent: async (e: NostrEvent) => Promise.resolve({ sig: await sendSigner.sign(e) }),
                 nip44: createNip44(sendSigner, receiveSigner),
             },
         };
@@ -311,11 +294,7 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
         fixture.ndk.signer = sendSigner;
 
         // Create a direct message
-        const message = await fixture.eventFactory.createDirectMessage(
-            "hello world",
-            "alice",
-            "bob",
-        );
+        const message = await fixture.eventFactory.createDirectMessage("hello world", "alice", "bob");
         message.kind = 14; // Override kind to match test requirements
 
         /** @ts-expect-error */
@@ -323,8 +302,7 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
             ...globalThis.window,
             nostr: {
                 getPublicKey: () => Promise.resolve(receiveUser.pubkey),
-                signEvent: async (e: NostrEvent) =>
-                    Promise.resolve({ sig: await receiveSigner.sign(e) }),
+                signEvent: async (e: NostrEvent) => Promise.resolve({ sig: await receiveSigner.sign(e) }),
                 nip44: createNip44(sendSigner, receiveSigner),
             },
         };
@@ -363,11 +341,7 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
         fixture.ndk.signer = sendSigner;
 
         // Create a direct message
-        const message = await fixture.eventFactory.createDirectMessage(
-            "hello world",
-            "alice",
-            "bob",
-        );
+        const message = await fixture.eventFactory.createDirectMessage("hello world", "alice", "bob");
         message.kind = 14; // Override kind to match test requirements
 
         const send46Signer = new NDKNip46Signer(
@@ -392,14 +366,12 @@ describe("NDKEvent encryption (Nip44 & Nip59)", () => {
         send46Signer.rpc.sendRequest = mockSendRequest;
 
         // Mock giftWrap to call sendRequest with the right method
-        vi.spyOn(giftWrappingModule, "giftWrap").mockImplementation(
-            async (event, _recipient, _signer, params = {}) => {
-                const method = params.scheme === "nip04" ? "nip04_encrypt" : "nip44_encrypt";
-                mockSendRequest("", method, {}, 0, () => {});
-                const wrapped = new NDKEvent(event.ndk);
-                return wrapped;
-            },
-        );
+        vi.spyOn(giftWrappingModule, "giftWrap").mockImplementation(async (event, _recipient, _signer, params = {}) => {
+            const method = params.scheme === "nip04" ? "nip04_encrypt" : "nip44_encrypt";
+            mockSendRequest("", method, {}, 0, () => {});
+            const wrapped = new NDKEvent(event.ndk);
+            return wrapped;
+        });
 
         await giftWrappingModule.giftWrap(message, receiveUser, send46Signer);
         expect(mockSendRequest).toHaveBeenCalled();

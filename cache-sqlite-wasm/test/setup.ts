@@ -27,6 +27,6 @@ const mockIndexedDB = {
 global.indexedDB = mockIndexedDB as any;
 
 // Also mock it on window for jsdom
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
     (window as any).indexedDB = mockIndexedDB;
 }

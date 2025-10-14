@@ -1,5 +1,42 @@
 # @nostr-dev-kit/ndk-cache-sqlite-wasm
 
+## 0.8.1
+
+### Patch Changes
+
+- Add protocol versioning and validation to prevent worker message format mismatches
+
+    **Problem:** Apps using NDK with SQLite WASM cache could crash with "object is not iterable" errors when stale or mismatched worker files were deployed. The signature verification handler would receive messages from the cache worker (or vice versa) and fail to parse them.
+
+    **Solution:**
+    1. **Message Format Validation**: The signature verification handler now validates incoming messages and logs clear, actionable errors when it receives incompatible formats, guiding developers to update their worker files.
+    2. **Protocol Versioning**: Both workers now include protocol metadata in their messages:
+        - Signature worker: Uses protocol name `ndk-sig-verify` with NDK version
+        - Cache worker: Uses protocol name `ndk-cache-sqlite` with cache-sqlite-wasm version
+    3. **Version Checking**: Message handlers detect and warn about version mismatches between library code and deployed worker files, helping developers identify when worker files need to be updated.
+
+    **Benefits:**
+    - No more silent failures or cryptic errors
+    - Clear guidance when worker files are stale or misconfigured
+    - Easier debugging of worker-related issues
+    - Future-proof protocol evolution
+
+    **Migration:** No breaking changes. Existing apps will see helpful error messages if they have worker mismatches, guiding them to fix the issue.
+
+## 0.8.0
+
+### Minor Changes
+
+- Add NIP-05 verification caching to SQLite adapters
+
+    Implements NIP-05 verification result caching in both cache-sqlite-wasm and mobile SQLite adapters to prevent unnecessary network requests. Both successful and failed verifications are now cached with smart expiration:
+    - Successful verifications are cached indefinitely
+    - Failed verifications are cached for 1 hour (configurable) to prevent hammering down/non-existent endpoints
+    - Expired failed verifications return "missing" to trigger retry
+    - Fresh failed verifications return null to prevent re-fetch
+
+    This brings feature parity with cache-dexie and cache-memory adapters.
+
 ## 0.7.0
 
 ### Minor Changes

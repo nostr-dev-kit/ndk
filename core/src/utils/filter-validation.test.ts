@@ -307,9 +307,7 @@ describe("Filter Validation", () => {
 
             expect(() => {
                 ndk.subscribe(badFilters);
-            }).toThrow(
-                /Filter\[0\]\.authors\[1\] is undefined.*Filter\[1\]\.kinds\[1\] is undefined/s,
-            );
+            }).toThrow(/Filter\[0\]\.authors\[1\] is undefined.*Filter\[1\]\.kinds\[1\] is undefined/s);
         });
 
         it("should fix all filters in fix mode", async () => {
@@ -389,10 +387,8 @@ describe("Filter Validation", () => {
             const getUserPubkey = (id: string) => {
                 if (id === "deleted_user") return undefined;
                 // Return valid hex pubkeys
-                if (id === "user1")
-                    return "0000000000000000000000000000000000000000000000000000000000000004";
-                if (id === "user3")
-                    return "0000000000000000000000000000000000000000000000000000000000000005";
+                if (id === "user1") return "0000000000000000000000000000000000000000000000000000000000000004";
+                if (id === "user3") return "0000000000000000000000000000000000000000000000000000000000000005";
                 return undefined;
             };
 
@@ -461,9 +457,7 @@ describe("Filter Validation", () => {
 
             it("should throw fatal error when ids contains nevent1 bech32", () => {
                 const badFilter: NDKFilter = {
-                    ids: [
-                        "nevent1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqs9p2gz3",
-                    ],
+                    ids: ["nevent1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqs9p2gz3"],
                     kinds: [1],
                 };
 
@@ -540,9 +534,7 @@ describe("Filter Validation", () => {
 
             it("should throw fatal error when authors contains nprofile bech32", () => {
                 const badFilter: NDKFilter = {
-                    authors: [
-                        "nprofile1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqs0enayy",
-                    ],
+                    authors: ["nprofile1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqs0enayy"],
                     kinds: [1],
                 };
 
@@ -625,9 +617,7 @@ describe("Filter Validation", () => {
             it("should throw fatal error for naddr in #a tag filter", () => {
                 const badFilter: NDKFilter = {
                     kinds: [1],
-                    "#a": [
-                        "naddr1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqsdtpwtk",
-                    ],
+                    "#a": ["naddr1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqsdtpwtk"],
                 };
 
                 expect(() => {
@@ -641,6 +631,94 @@ describe("Filter Validation", () => {
                 expect(() => {
                     ndk.subscribe(badFilter);
                 }).toThrow(/Must be "kind:pubkey:d-tag"/);
+            });
+
+            it("should throw fatal error for non-addressable kind in #a tag filter", () => {
+                const badFilter: NDKFilter = {
+                    kinds: [1],
+                    "#a": ["20:fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52:undefined"],
+                };
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/AI_GUARDRAILS/);
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/#a\[0\] uses non-addressable kind 20/);
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/#a filters are only for addressable events \(kinds 30000-39999\)/);
+            });
+
+            it("should throw for kind 1 in #a tag", () => {
+                const badFilter: NDKFilter = {
+                    kinds: [1],
+                    "#a": ["1:fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52:test"],
+                };
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/uses non-addressable kind 1/);
+            });
+
+            it("should throw for kind 29999 (just below addressable range) in #a tag", () => {
+                const badFilter: NDKFilter = {
+                    kinds: [1],
+                    "#a": ["29999:fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52:test"],
+                };
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/uses non-addressable kind 29999/);
+            });
+
+            it("should throw for kind 40000 (just above addressable range) in #a tag", () => {
+                const badFilter: NDKFilter = {
+                    kinds: [1],
+                    "#a": ["40000:fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52:test"],
+                };
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/uses non-addressable kind 40000/);
+            });
+
+            it("should allow valid addressable kind 30000 in #a tag", () => {
+                const goodFilter: NDKFilter = {
+                    kinds: [1],
+                    "#a": ["30000:fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52:test"],
+                };
+
+                expect(() => {
+                    const sub = ndk.subscribe(goodFilter);
+                    sub.stop();
+                }).not.toThrow();
+            });
+
+            it("should allow valid addressable kind 30023 (article) in #a tag", () => {
+                const goodFilter: NDKFilter = {
+                    kinds: [1],
+                    "#a": ["30023:fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52:my-article"],
+                };
+
+                expect(() => {
+                    const sub = ndk.subscribe(goodFilter);
+                    sub.stop();
+                }).not.toThrow();
+            });
+
+            it("should allow valid addressable kind 39999 (max range) in #a tag", () => {
+                const goodFilter: NDKFilter = {
+                    kinds: [1],
+                    "#a": ["39999:fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52:test"],
+                };
+
+                expect(() => {
+                    const sub = ndk.subscribe(goodFilter);
+                    sub.stop();
+                }).not.toThrow();
             });
 
             it("should allow valid hex values in #e and #p tags", () => {
@@ -694,6 +772,74 @@ describe("Filter Validation", () => {
                         ndk.subscribe(badFilter);
                     }).toThrow(/contains bech32/);
                 });
+            });
+        });
+
+        describe("hashtag filters with # prefix", () => {
+            it("should throw fatal error when #t filter contains hashtag with # prefix", () => {
+                const badFilter: NDKFilter = {
+                    kinds: [1],
+                    "#t": ["#nostr"],
+                };
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/AI_GUARDRAILS/);
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/#t\[0\] contains hashtag with # prefix/);
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/"#nostr"/);
+            });
+
+            it("should throw fatal error for multiple hashtags with # prefix", () => {
+                const badFilter: NDKFilter = {
+                    kinds: [1],
+                    "#t": ["#bitcoin", "#nostr", "programming"],
+                };
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/AI_GUARDRAILS/);
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/#t\[0\] contains hashtag with # prefix/);
+
+                expect(() => {
+                    ndk.subscribe(badFilter);
+                }).toThrow(/"#bitcoin"/);
+            });
+
+            it("should allow valid hashtags without # prefix", () => {
+                const goodFilter: NDKFilter = {
+                    kinds: [1],
+                    "#t": ["bitcoin", "nostr", "programming"],
+                };
+
+                expect(() => {
+                    const sub = ndk.subscribe(goodFilter);
+                    sub.stop();
+                }).not.toThrow();
+            });
+
+            it("should provide helpful hint about removing # prefix", () => {
+                const badFilter: NDKFilter = {
+                    kinds: [1],
+                    "#t": ["#nostr"],
+                };
+
+                try {
+                    ndk.subscribe(badFilter);
+                    expect.fail("Should have thrown");
+                } catch (error: any) {
+                    expect(error.message).toContain("Remove the # prefix from hashtag filters");
+                    expect(error.message).toContain('✅ { "#t": ["nostr"] }');
+                    expect(error.message).toContain('❌ { "#t": ["#nostr"] }');
+                }
             });
         });
 
@@ -779,9 +925,7 @@ describe("Filter Validation", () => {
                 const badFilter: NDKFilter = {
                     ids: ["note1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqsq8l0j"],
                     authors: ["npub1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqwv37l"],
-                    "#e": [
-                        "nevent1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqs9p2gz3",
-                    ],
+                    "#e": ["nevent1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqs9p2gz3"],
                     kinds: [1],
                 };
 

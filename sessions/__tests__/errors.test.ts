@@ -26,10 +26,10 @@ describe("Error Handling", () => {
             expect(() => manager.logout()).toThrow("No active session");
         });
 
-        it("should throw SessionNotFoundError when switching to non-existent session", () => {
+        it("should throw SessionNotFoundError when switching to non-existent session", async () => {
             const fakeKey = "nonexistentpubkey";
-            expect(() => manager.switchTo(fakeKey)).toThrow(SessionNotFoundError);
-            expect(() => manager.switchTo(fakeKey)).toThrow(`Session not found for pubkey: ${fakeKey}`);
+            await expect(manager.switchTo(fakeKey)).rejects.toThrow(SessionNotFoundError);
+            await expect(manager.switchTo(fakeKey)).rejects.toThrow(`Session not found for pubkey: ${fakeKey}`);
         });
 
         it("should throw SessionNotFoundError when starting session for non-existent pubkey", () => {

@@ -129,11 +129,7 @@ export function calculateRelaySetsFromFilter(
     // if this filter has authors, get write relays for each
     // one of them and add them to the map
     if (authors.size > 0) {
-        const authorToRelaysMap = getRelaysForFilterWithAuthors(
-            ndk,
-            Array.from(authors),
-            relayGoalPerAuthor,
-        );
+        const authorToRelaysMap = getRelaysForFilterWithAuthors(ndk, Array.from(authors), relayGoalPerAuthor);
 
         // initialize all result with all the relayUrls we are going to return
         for (const relayUrl of authorToRelaysMap.keys()) {

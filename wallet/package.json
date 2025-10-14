@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/wallet",
-    "version": "0.8.2",
+    "version": "0.8.6",
     "description": "NDK Wallet",
     "type": "module",
     "main": "./dist/index.js",
@@ -46,18 +46,18 @@
         "@cashu/crypto": "*"
     },
     "dependencies": {
-        "@nostr-dev-kit/ndk": "^2.17.0",
-        "@nostr-dev-kit/sync": "^0.3.0",
-        "debug": "^4.3.4",
-        "light-bolt11-decoder": "^3.0.0",
+        "@nostr-dev-kit/ndk": "^2.17.6",
+        "@nostr-dev-kit/sync": "^0.3.4",
+        "debug": "^4.3.7",
+        "light-bolt11-decoder": "^3.2.0",
         "tseep": "^1.3.1",
-        "typescript": "^5.8.2",
+        "typescript": "^5.9.3",
         "webln": "^0.3.2",
-        "zustand": "^5.0.2"
+        "zustand": "^5.0.3"
     },
     "devDependencies": {
-        "@cashu/cashu-ts": "2.1.0",
-        "@cashu/crypto": "0.3.4",
+        "@cashu/cashu-ts": "^2.1",
+        "@cashu/crypto": "*",
         "@webbtc/webln-types": "^3.0.0",
         "nock": "^13.5.6",
         "tsup": "^8.4.0",

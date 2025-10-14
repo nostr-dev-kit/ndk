@@ -161,14 +161,14 @@ title: NDK Cookbook
   </p>
 
   <div class="recipe-tags">
-    <span class="tag">#ndk-svelte5</span>
+    <span class="tag">#svelte</span>
     <span class="tag">#authentication</span>
     <span class="tag">#multi-session</span>
     <span class="tag">#session-management</span>
   </div>
 
   <div class="recipe-meta">
-    <span class="recipe-meta-item">📦 ndk-svelte5</span>
+    <span class="recipe-meta-item">📦 svelte</span>
     <span class="recipe-meta-item">⭐⭐⭐ Advanced</span>
     <span class="recipe-meta-item">⏱ 20 min</span>
     <div class="stats">
@@ -189,7 +189,7 @@ title: NDK Cookbook
   </p>
 
   <div class="recipe-tags">
-    <span class="tag">#ndk-svelte5</span>
+    <span class="tag">#svelte</span>
     <span class="tag">#authentication</span>
     <span class="tag">#nip-07</span>
     <span class="tag">#nip-46</span>
@@ -197,7 +197,7 @@ title: NDK Cookbook
   </div>
 
   <div class="recipe-meta">
-    <span class="recipe-meta-item">📦 ndk-svelte5</span>
+    <span class="recipe-meta-item">📦 svelte</span>
     <span class="recipe-meta-item">⭐⭐ Intermediate</span>
     <span class="recipe-meta-item">⏱ 15 min</span>
     <div class="stats">
@@ -362,7 +362,7 @@ title: NDK Cookbook
 
 <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.5rem 0;">
   <a href="#" class="tag">#ndk-core</a>
-  <a href="#" class="tag">#ndk-svelte5</a>
+  <a href="#" class="tag">#svelte</a>
   <a href="#" class="tag">#authentication</a>
   <a href="#" class="tag">#events</a>
   <a href="#" class="tag">#relays</a>

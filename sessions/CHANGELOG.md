@@ -1,5 +1,105 @@
 # @nostr-dev-kit/sessions
 
+## 0.6.0
+
+### Minor Changes
+
+- 28881de: Add ergonomic `eventConstructors` option for registering event classes
+
+    Adds a new `eventConstructors` option to session configuration that provides a more ergonomic API for registering custom event classes. Instead of manually creating a `Map<NDKKind, Constructor>`, you can now pass an array of event class constructors that have a static `kinds` property.
+
+    **Before:**
+
+    ```typescript
+    await sessions.login(signer, {
+        events: new Map([
+            [NDKKind.BlossomList, NDKBlossomList],
+            [NDKKind.Article, NDKArticle],
+        ]),
+    });
+    ```
+
+    **After:**
+
+    ```typescript
+    await sessions.login(signer, {
+        eventConstructors: [NDKBlossomList, NDKArticle],
+    });
+    ```
+
+    The implementation uses the static `kinds` property on each constructor to automatically map kinds to their constructors. Both options can be used together and will be merged.
+
+## 0.5.0
+
+### Minor Changes
+
+- Add ergonomic `eventConstructors` option for registering event classes
+
+    Adds a new `eventConstructors` option to session configuration that provides a more ergonomic API for registering custom event classes. Instead of manually creating a `Map<NDKKind, Constructor>`, you can now pass an array of event class constructors that have a static `kinds` property.
+
+    **Before:**
+
+    ```typescript
+    await sessions.login(signer, {
+        events: new Map([
+            [NDKKind.BlossomList, NDKBlossomList],
+            [NDKKind.Article, NDKArticle],
+        ]),
+    });
+    ```
+
+    **After:**
+
+    ```typescript
+    await sessions.login(signer, {
+        eventConstructors: [NDKBlossomList, NDKArticle],
+    });
+    ```
+
+    The implementation uses the static `kinds` property on each constructor to automatically map kinds to their constructors. Both options can be used together and will be merged.
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.17.6
+
+## 0.4.2
+
+### Patch Changes
+
+- Fix zustand bundling issue causing React import errors in non-React environments by marking zustand as external dependency
+
+## 0.4.1
+
+### Patch Changes
+
+- Update @nostr-dev-kit/ndk dependency to ^2.17.3
+
+## 0.4.0
+
+### Minor Changes
+
+- Add runtime wallet control with persistent preferences
+
+    Sessions now supports runtime control of wallet fetching with persistent user preferences:
+    - `enableWallet(pubkey?)` - Enable wallet fetching and save preference
+    - `disableWallet(pubkey?)` - Disable wallet fetching and save preference
+    - `isWalletEnabled(pubkey?)` - Check if wallet is enabled for a session
+
+    This allows apps to:
+    1. Ask users for consent before enabling wallet features
+    2. Remember user's wallet preference across sessions
+    3. Have different wallet settings per account
+
+    Preferences are automatically persisted and restored with sessions.
+
+## 0.3.2
+
+### Patch Changes
+
+- bump
+
 ## 0.3.1
 
 ### Patch Changes

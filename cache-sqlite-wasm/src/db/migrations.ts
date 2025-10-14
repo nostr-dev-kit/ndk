@@ -14,4 +14,5 @@ export async function runMigrations(db: SQLDatabase): Promise<void> {
     db.exec?.(SCHEMA.event_tags);
     db.exec?.(SCHEMA.cache_data);
     db.exec?.(SCHEMA.event_relays);
+    db.exec?.(SCHEMA.nip05);
 }

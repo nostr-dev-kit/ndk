@@ -111,9 +111,7 @@ async function run() {
         console.log("\nEnd of stored events");
         console.log("\nFinal stats:");
         console.log(`Connected relays: ${connectedRelays.size}`);
-        console.log(
-            `Total events received: ${Array.from(eventsPerRelay.values()).reduce((a, b) => a + b, 0)}`,
-        );
+        console.log(`Total events received: ${Array.from(eventsPerRelay.values()).reduce((a, b) => a + b, 0)}`);
         console.log("\nEvents per relay:");
         for (const [relayUrl, eventCount] of eventsPerRelay.entries()) {
             console.log(`  ${relayUrl}: ${eventCount}`);

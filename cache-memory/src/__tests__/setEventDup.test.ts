@@ -20,7 +20,8 @@ describe("setEventDup", () => {
         event.kind = 1;
         event.content = "Test event";
         event.tags = [];
-        event.sig = "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc";
+        event.sig =
+            "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc";
 
         // Create mock relays
         const relay1 = { url: "wss://relay1.example.com" } as any;
@@ -33,9 +34,11 @@ describe("setEventDup", () => {
         expect(() => adapter.setEventDup(event, relay2)).not.toThrow();
 
         // Verify event is still in cache by querying
-        const subscription = new NDKSubscription(ndk, [{
-            ids: [event.id]
-        }]);
+        const subscription = new NDKSubscription(ndk, [
+            {
+                ids: [event.id],
+            },
+        ]);
         const events = adapter.query(subscription);
         expect(events).toHaveLength(1);
         expect(events[0].id).toBe(event.id);
@@ -49,7 +52,8 @@ describe("setEventDup", () => {
         event.kind = 1;
         event.content = "Test";
         event.tags = [];
-        event.sig = "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc";
+        event.sig =
+            "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc";
 
         const relay = { url: "wss://relay.example.com" } as any;
 
@@ -57,9 +61,11 @@ describe("setEventDup", () => {
         adapter.setEventDup(event, relay);
 
         // Should add the event to cache - verify by querying
-        const subscription = new NDKSubscription(ndk, [{
-            ids: [event.id]
-        }]);
+        const subscription = new NDKSubscription(ndk, [
+            {
+                ids: [event.id],
+            },
+        ]);
         const events = adapter.query(subscription);
         expect(events).toHaveLength(1);
         expect(events[0].id).toBe(event.id);
@@ -73,7 +79,8 @@ describe("setEventDup", () => {
         event.kind = 1;
         event.content = "Test";
         event.tags = [];
-        event.sig = "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc";
+        event.sig =
+            "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc";
 
         const relay1 = { url: "wss://relay1.example.com" } as any;
         const relay2 = { url: "wss://relay2.example.com" } as any;
@@ -86,9 +93,11 @@ describe("setEventDup", () => {
         adapter.setEventDup(event, relay1); // Duplicate
 
         // Verify event is in cache
-        const subscription = new NDKSubscription(ndk, [{
-            ids: [event.id]
-        }]);
+        const subscription = new NDKSubscription(ndk, [
+            {
+                ids: [event.id],
+            },
+        ]);
         const events = adapter.query(subscription);
         expect(events).toHaveLength(1);
         expect(events[0].id).toBe(event.id);

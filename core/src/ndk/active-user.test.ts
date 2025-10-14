@@ -81,7 +81,7 @@ describe("activeUser:change event", () => {
         ndk.signer = mockSigner as any;
 
         // Wait for async user() call to complete
-        await new Promise(resolve => setTimeout(resolve, 10));
+        await new Promise((resolve) => setTimeout(resolve, 10));
 
         expect(listener).toHaveBeenCalled();
         expect(listener.mock.calls[0][0]).toBe(mockUser);

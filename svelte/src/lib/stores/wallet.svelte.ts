@@ -1,7 +1,13 @@
 import type NDK from "@nostr-dev-kit/ndk";
 import { NDKKind as Kind, type Hexpubkey, type NDKEvent, type NDKKind } from "@nostr-dev-kit/ndk";
 import type { NDKSessionManager } from "@nostr-dev-kit/sessions";
-import { NDKCashuWallet, type NDKCashuDeposit, type NDKWallet, type NDKWalletBalance, NDKWalletStatus } from "@nostr-dev-kit/wallet";
+import {
+    NDKCashuWallet,
+    type NDKCashuDeposit,
+    type NDKWallet,
+    type NDKWalletBalance,
+    NDKWalletStatus,
+} from "@nostr-dev-kit/wallet";
 
 export interface Mint {
     url: string;
@@ -75,15 +81,7 @@ export class ReactiveWalletStore {
      * Sync wallet from session's wallet event (kind 17375)
      */
     async #syncWallet(walletEvent: NDKEvent, pubkey: Hexpubkey): Promise<void> {
-        const startTime = Date.now();
-
-        if (this.#currentWalletEventId) {
-            console.log(`[${new Date().toISOString()}] [ReactiveWalletStore.#syncWallet] Wallet event changed from ${this.#currentWalletEventId} to ${walletEvent.id}, created_at: ${walletEvent.created_at}`);
-        }
-
         try {
-            console.log(`[${new Date().toISOString()}] [ReactiveWalletStore.#syncWallet] Instantiating wallet from event`, { eventId: walletEvent.id, created_at: walletEvent.created_at });
-
             // Instantiate wallet from event
             const wallet = await NDKCashuWallet.from(walletEvent);
 
@@ -92,17 +90,11 @@ export class ReactiveWalletStore {
                 this.set(wallet);
                 this.#currentWalletEventId = walletEvent.id;
 
-                console.log(`[${new Date().toISOString()}] [ReactiveWalletStore.#syncWallet] Starting wallet monitoring`);
-                const walletStartTime = Date.now();
-
                 // Start wallet monitoring (will load from cache first, then sync)
                 await wallet.start({ pubkey });
-                console.log(`[${new Date().toISOString()}] [ReactiveWalletStore.#syncWallet] Wallet started in ${Date.now() - walletStartTime}ms`);
-
-                console.log(`[${new Date().toISOString()}] [ReactiveWalletStore.#syncWallet] Wallet sync completed (total time: ${Date.now() - startTime}ms)`);
             }
         } catch (error) {
-            console.error(`[${new Date().toISOString()}] [ReactiveWalletStore.#syncWallet] Failed to load wallet from event:`, error);
+            console.error(`[ReactiveWalletStore] Failed to load wallet from event:`, error);
         }
     }
 
@@ -110,12 +102,6 @@ export class ReactiveWalletStore {
      * Set the active wallet and subscribe to balance updates
      */
     set(wallet: NDKWallet): void {
-        console.log("[ReactiveWalletStore] Setting wallet", {
-            walletType: wallet.type,
-            hasCashuPay: !!wallet.cashuPay,
-            hasLnPay: !!wallet.lnPay,
-        });
-
         // Unsubscribe from previous wallet if any
         if (this.#wallet) {
             this.#wallet.off("balance_updated", this.#handleBalanceUpdate);
@@ -126,17 +112,7 @@ export class ReactiveWalletStore {
         this.status = wallet.status;
 
         // Register wallet with NDK so its payment methods are available to NDKZapper
-        console.log("[ReactiveWalletStore] Registering wallet with NDK", {
-            hasNdk: !!this.#ndk,
-            walletHasLnPay: !!wallet.lnPay,
-            walletHasCashuPay: !!wallet.cashuPay,
-        });
         this.#ndk.wallet = wallet;
-        console.log("[ReactiveWalletStore] After setting ndk.wallet", {
-            ndkHasWalletConfig: !!this.#ndk.walletConfig,
-            walletConfigHasLnPay: !!this.#ndk.walletConfig?.lnPay,
-            walletConfigHasCashuPay: !!this.#ndk.walletConfig?.cashuPay,
-        });
 
         // Subscribe to balance updates
         wallet.on("balance_updated", this.#handleBalanceUpdate);
@@ -162,9 +138,6 @@ export class ReactiveWalletStore {
      * Handle status change events from wallet
      */
     #handleStatusChange = (status: NDKWalletStatus): void => {
-        console.log(
-            `[${new Date().toISOString()}] [ReactiveWalletStore] Wallet status changed to: ${status}`,
-        );
         this.status = status;
     };
 
@@ -178,7 +151,7 @@ export class ReactiveWalletStore {
             const balance = this.#wallet.balance;
             this.balance = balance?.amount || 0;
         } catch (error) {
-            console.error("[ndk-svelte5] Failed to refresh wallet balance:", error);
+            console.error("[svelte] Failed to refresh wallet balance:", error);
         }
     }
 

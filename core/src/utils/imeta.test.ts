@@ -21,10 +21,7 @@ describe("mapImetaTag", () => {
     });
 
     test("should handle fallback as an array", () => {
-        const tag: NDKTag = [
-            "imeta",
-            "fallback https://fallback1.com fallback https://fallback2.com",
-        ];
+        const tag: NDKTag = ["imeta", "fallback https://fallback1.com fallback https://fallback2.com"];
         const result = mapImetaTag(tag);
         const expected: NDKImetaTag = {
             fallback: ["https://fallback1.com", "https://fallback2.com"],
@@ -33,10 +30,7 @@ describe("mapImetaTag", () => {
     });
 
     test("should handle mixed key-value pairs with fallbacks", () => {
-        const tag: NDKTag = [
-            "imeta",
-            "url https://example.com fallback https://fallback1.com alt image",
-        ];
+        const tag: NDKTag = ["imeta", "url https://example.com fallback https://fallback1.com alt image"];
         const result = mapImetaTag(tag);
         const expected: NDKImetaTag = {
             url: "https://example.com",
@@ -77,12 +71,7 @@ describe("exampleFunction", () => {
             alt: "example",
             dim: "800x600",
         };
-        const expectedOutput: NDKTag = [
-            "imeta",
-            "url https://example.com",
-            "alt example",
-            "dim 800x600",
-        ];
+        const expectedOutput: NDKTag = ["imeta", "url https://example.com", "alt example", "dim 800x600"];
         const result = imetaTagToTag(input);
         expect(result).toEqual(expectedOutput);
     });

@@ -1,5 +1,31 @@
 # @nostr-dev-kit/ndk-cache-redis
 
+## 0.8.6
+
+### Patch Changes
+
+- Bump version for zustand/vanilla import fix
+
+## 0.8.5
+
+### Patch Changes
+
+- Fix zustand import to use vanilla API instead of React-dependent main export
+
+## 0.8.4
+
+### Patch Changes
+
+- Fix zustand bundling issue causing React import errors in non-React environments by marking zustand as external dependency
+
+## 0.8.3
+
+### Patch Changes
+
+- bump
+- Updated dependencies
+    - @nostr-dev-kit/sync@0.3.2
+
 ## 0.8.2
 
 ### Patch Changes

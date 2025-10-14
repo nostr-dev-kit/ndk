@@ -44,9 +44,7 @@ describe("NDKNutzap", () => {
 
             expect(nutzap.rawP2pk).toBe(testPubkey);
             // p2pk should remove the "02" prefix if present
-            expect(nutzap.p2pk).toBe(
-                "b85cb23753546871fe6d1c20641120499a4ec60decd712e76708bb0fef19a7a1",
-            );
+            expect(nutzap.p2pk).toBe("b85cb23753546871fe6d1c20641120499a4ec60decd712e76708bb0fef19a7a1");
         });
 
         test("should handle non-array secret format", () => {
@@ -187,12 +185,8 @@ describe("NDKNutzap", () => {
             const nutzap = NDKNutzap.from(nutzapWrapper);
 
             // Verify p2pk extraction
-            expect(nutzap?.rawP2pk).toBe(
-                "02b85cb23753546871fe6d1c20641120499a4ec60decd712e76708bb0fef19a7a1",
-            );
-            expect(nutzap?.p2pk).toBe(
-                "b85cb23753546871fe6d1c20641120499a4ec60decd712e76708bb0fef19a7a1",
-            );
+            expect(nutzap?.rawP2pk).toBe("02b85cb23753546871fe6d1c20641120499a4ec60decd712e76708bb0fef19a7a1");
+            expect(nutzap?.p2pk).toBe("b85cb23753546871fe6d1c20641120499a4ec60decd712e76708bb0fef19a7a1");
         });
     });
 });

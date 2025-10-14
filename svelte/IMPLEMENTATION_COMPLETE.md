@@ -1,8 +1,8 @@
-# 🎉 ndk-svelte5 Core Implementation Complete!
+# 🎉 svelte Core Implementation Complete!
 
 ## What We Built
 
-A production-ready foundation for ndk-svelte5 - a modern, performant, beautiful Svelte 5 integration for NDK.
+A production-ready foundation for svelte - a modern, performant, beautiful Svelte 5 integration for NDK.
 
 ### 📊 Stats
 
@@ -127,7 +127,7 @@ class MuteStore {
 ## 📁 File Structure
 
 ```
-ndk-svelte5/
+svelte/
 ├── src/lib/
 │   ├── ndk-svelte.ts              ✅ 29 lines
 │   ├── subscription.svelte.ts      ✅ 376 lines
@@ -298,7 +298,7 @@ All documentation is complete:
 
 ## 🎉 Conclusion
 
-**ndk-svelte5 is born!**
+**svelte is born!**
 
 From concept to implementation in one focused session:
 - 4,170 lines of design documentation

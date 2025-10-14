@@ -1,4 +1,4 @@
-# ndk-svelte5 Examples
+# svelte Examples
 
 Beautiful, real-world patterns for building Nostr apps with Svelte 5.
 
@@ -793,7 +793,7 @@ $effect(() => {
 
 ---
 
-These examples show the power and elegance of ndk-svelte5. Notice how:
+These examples show the power and elegance of svelte. Notice how:
 
 - No manual cleanup needed
 - Events render progressively as they arrive

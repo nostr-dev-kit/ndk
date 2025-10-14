@@ -2,7 +2,7 @@
   "lockfileVersion": 1,
   "workspaces": {
     "": {
-      "name": "ndk-svelte5-component-browser",
+      "name": "svelte-component-browser",
       "dependencies": {
         "@nostr-dev-kit/ndk": "link:../../../ndk-core",
         "@nostr-dev-kit/svelte": "link:../..",

@@ -89,11 +89,11 @@ describe("Relay Provenance", () => {
         await adapter.setEvent(event, [], relay1);
 
         // Simulate receiving same event from relay2
-        await new Promise(resolve => setTimeout(resolve, 10)); // Small delay to ensure different timestamp
+        await new Promise((resolve) => setTimeout(resolve, 10)); // Small delay to ensure different timestamp
         await adapter.setEvent(event, [], relay2);
 
         // Simulate receiving same event from relay3
-        await new Promise(resolve => setTimeout(resolve, 10));
+        await new Promise((resolve) => setTimeout(resolve, 10));
         await adapter.setEvent(event, [], relay3);
 
         // Create subscription to query the event
@@ -111,9 +111,9 @@ describe("Relay Provenance", () => {
         // onRelays getter should include all relays
         const seenRelays = cachedEvent.onRelays;
         expect(seenRelays).toHaveLength(3);
-        expect(seenRelays.map(r => r.url)).toContain("wss://relay1.example.com");
-        expect(seenRelays.map(r => r.url)).toContain("wss://relay2.example.com");
-        expect(seenRelays.map(r => r.url)).toContain("wss://relay3.example.com");
+        expect(seenRelays.map((r) => r.url)).toContain("wss://relay1.example.com");
+        expect(seenRelays.map((r) => r.url)).toContain("wss://relay2.example.com");
+        expect(seenRelays.map((r) => r.url)).toContain("wss://relay3.example.com");
     });
 
     it("should preserve first-seen timestamp", async () => {
@@ -136,7 +136,7 @@ describe("Relay Provenance", () => {
         await adapter.setEvent(event, [], relay1);
 
         // Wait and try to store from same relay again
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 100));
         const secondSeenTime = Date.now();
         await adapter.setEvent(event, [], relay1);
 

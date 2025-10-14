@@ -18,11 +18,12 @@
         "docs:build": "vitepress build",
         "changeset": "changeset",
         "cs": "changeset",
-        "cs:ver": "changeset version",
+        "cs:ver": "changeset version && bunx syncpack fix-mismatches",
+        "cs:check": "bunx syncpack list-mismatches",
         "test": "bun vitest",
-        "cs:pub": "changeset publish",
+        "cs:pub": "bun cs:check && changeset publish",
         "version-packages": "changeset version",
-        "release": "turbo build --filter=docs^... && changeset publish",
+        "release": "bun cs:check && turbo build --filter=docs^... && changeset publish",
         "docs:preview": "vitepress preview"
     },
     "type": "module",
@@ -41,7 +42,12 @@
         "wallet",
         "wot",
         "blossom",
-        "cache-sqlite-wasm"
+        "cache-sqlite-wasm",
+        "svelte/examples/component-browser",
+        "svelte/examples/event-graph",
+        "svelte/examples/feed-viewer",
+        "svelte/examples/nutsack",
+        "svelte/examples/sessions-demo"
     ],
     "engines": {
         "node": ">=22.0"
@@ -49,6 +55,7 @@
     "packageManager": "bun@1.3.0",
     "devDependencies": {
         "svelte": "^5.39.9",
+        "syncpack": "^13.0.4",
         "turbo": "^2.5.3"
     },
     "dependencies": {

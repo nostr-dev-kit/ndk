@@ -11,7 +11,7 @@
 
 ## Executive Summary
 
-The nutsack wallet example has been reviewed and tested. **CRITICAL SESSION BUG FIXED** ✅ - the app now properly uses ndk-svelte5's session store for authentication. However, **CRITICAL DEPOSIT BUGS FOUND** ❌ in the minting/deposit functionality.
+The nutsack wallet example has been reviewed and tested. **CRITICAL SESSION BUG FIXED** ✅ - the app now properly uses svelte's session store for authentication. However, **CRITICAL DEPOSIT BUGS FOUND** ❌ in the minting/deposit functionality.
 
 ### Test Results Overview
 
@@ -32,7 +32,7 @@ The nutsack wallet example has been reviewed and tested. **CRITICAL SESSION BUG 
 ### 🔧 Bug #1: Session Detection Not Working (FIXED)
 
 **Original Issue:**
-- App used manual `ndk.activeUser` tracking instead of ndk-svelte5's session store
+- App used manual `ndk.activeUser` tracking instead of svelte's session store
 - `ndk.activeUser` is not reactive, so login didn't trigger UI updates
 - User remained on LoginView even after successful authentication
 
@@ -53,9 +53,9 @@ $effect(() => {
 - Added `sessions.init(ndk)` in App.svelte onMount
 
 **Files Modified:**
-- `/ndk-svelte5/examples/nutsack/src/App.svelte`
-- `/ndk-svelte5/examples/nutsack/src/components/LoginView.svelte`
-- `/ndk-svelte5/examples/nutsack/src/lib/useWallet.svelte.ts`
+- `/svelte/examples/nutsack/src/App.svelte`
+- `/svelte/examples/nutsack/src/components/LoginView.svelte`
+- `/svelte/examples/nutsack/src/lib/useWallet.svelte.ts`
 
 **Verification:** ✅ Login now works perfectly - app transitions from LoginView to WalletView successfully
 
@@ -103,7 +103,7 @@ const deposit = wallet.deposit(amount, selectedMint);
 ```
 
 **Files Modified:**
-- `/ndk-svelte5/examples/nutsack/src/components/ReceiveView.svelte`
+- `/svelte/examples/nutsack/src/components/ReceiveView.svelte`
 
 **Verification:** ✅ Now defaults to Deposit tab with dropdown to select from configured mints
 
@@ -125,7 +125,7 @@ const deposit = wallet.deposit(amount, selectedMint);
 - `deposit.pr` is `undefined` or not set correctly
 - UI conditionally renders invoice box only if `depositInvoice` is truthy
 
-**Code Location:** `/ndk-svelte5/examples/nutsack/src/components/ReceiveView.svelte:79-81`
+**Code Location:** `/svelte/examples/nutsack/src/components/ReceiveView.svelte:79-81`
 ```typescript
 // Get the lightning invoice
 if (deposit.pr) {
@@ -288,7 +288,7 @@ $effect(() => {
 4. ⏳ **TODO:** Fix auto-check behavior
 5. ⏳ **TODO:** Test complete deposit flow with testnet Lightning
 6. ⏳ **TODO:** Test nutzap functionality between two accounts
-7. ⏳ **TODO:** Create cookbooks for ndk-svelte5-learn
+7. ⏳ **TODO:** Create cookbooks for svelte-learn
 
 ---
 
@@ -313,7 +313,7 @@ $effect(() => {
 ### Cookbook Topics Identified
 
 1. Basic wallet setup and initialization
-2. Session management with ndk-svelte5
+2. Session management with svelte
 3. Creating and handling deposits
 4. Sending and receiving nutzaps
 5. Transaction history display
@@ -325,7 +325,7 @@ $effect(() => {
 
 ## Conclusion
 
-**Session bug successfully fixed** - the app now properly detects login and manages sessions using ndk-svelte5's session store. This was the critical blocker preventing any wallet functionality from working.
+**Session bug successfully fixed** - the app now properly detects login and manages sessions using svelte's session store. This was the critical blocker preventing any wallet functionality from working.
 
 **Deposit flow has serious issues** that need investigation at the ndk-wallet level. The missing invoice and aggressive auto-checking make the feature unusable for testing.
 

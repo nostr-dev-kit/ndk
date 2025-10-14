@@ -20,7 +20,10 @@ export function getEventRelays(db: DatabaseWrapper, eventIds: string[]): Map<str
         ORDER BY event_id, seen_at ASC
     `;
 
-    const rows = db.getDatabase().prepare(sql).all(...eventIds) as Array<{
+    const rows = db
+        .getDatabase()
+        .prepare(sql)
+        .all(...eventIds) as Array<{
         event_id: string;
         relay_url: string;
         seen_at: number;

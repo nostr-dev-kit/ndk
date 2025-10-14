@@ -24,7 +24,7 @@
   })
 
   const currentProfile = $derived(
-    ndk.$sessions.current ? ndk.$fetchProfile(() => ndk.$sessions.current?.pubkey) : null
+    ndk.$currentUser ? ndk.$fetchProfile(() => ndk.$currentUser?.pubkey) : null
   )
 
   // Login form state

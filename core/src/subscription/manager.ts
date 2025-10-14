@@ -78,13 +78,43 @@ export class NDKSubscriptionManager {
         const subscriptions = this.subscriptions.values();
         const matchingSubs = [];
 
+        // First pass: Filter matching
         for (const sub of subscriptions) {
             if (matchFilters(sub.filters, event as VerifiedEvent)) {
                 matchingSubs.push(sub);
             }
         }
 
+        // Second pass: Relay provenance check for exclusive subscriptions
         for (const sub of matchingSubs) {
+            if (sub.exclusiveRelay && sub.relaySet) {
+                let shouldAccept = false;
+
+                if (optimisticPublish) {
+                    // Optimistic publishes are accepted if the subscription allows them
+                    shouldAccept = !sub.skipOptimisticPublishEvent;
+                } else if (!relay) {
+                    // Event from cache - check if any of the event's known relays
+                    // are in the subscription's relaySet
+                    const eventOnRelays = this.seenEvents.get(event.id!) || [];
+                    shouldAccept = eventOnRelays.some((r) => sub.relaySet!.relays.has(r));
+                } else {
+                    // Live event from a relay - check if the relay is in the subscription's relaySet
+                    shouldAccept = sub.relaySet.relays.has(relay);
+                }
+
+                if (!shouldAccept) {
+                    // Optionally log that an exclusive subscription rejected an event
+                    sub.debug.extend("exclusive-relay")(
+                        "Rejected event %s from %s (relay not in exclusive set)",
+                        event.id,
+                        relay?.url || (optimisticPublish ? "optimistic" : "cache"),
+                    );
+                    continue; // Skip this subscription
+                }
+            }
+
+            // Deliver the event to the subscription
             sub.eventReceived(event, relay, false, optimisticPublish);
         }
     }

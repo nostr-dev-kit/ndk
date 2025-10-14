@@ -142,11 +142,7 @@ export function eventReplies(op: NDKEvent, events: NDKEvent[], threadEventIds: S
  * @param eventsByAuthor A map of all candidate events by the original author
  * @returns True if the event is part of the thread, false otherwise
  */
-export function eventIsPartOfThread(
-    op: NDKEvent,
-    event: NDKEvent,
-    eventsByAuthor: Map<NDKEventId, NDKEvent>,
-): boolean {
+export function eventIsPartOfThread(op: NDKEvent, event: NDKEvent, eventsByAuthor: Map<NDKEventId, NDKEvent>): boolean {
     // must be same author
     if (op.pubkey !== event.pubkey) return false;
 

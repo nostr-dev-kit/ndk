@@ -26,6 +26,7 @@ export const GuardrailCheckId = {
     FILTER_EMPTY: "filter-empty",
     FILTER_SINCE_AFTER_UNTIL: "filter-since-after-until",
     FILTER_INVALID_A_TAG: "filter-invalid-a-tag",
+    FILTER_HASHTAG_WITH_PREFIX: "filter-hashtag-with-prefix",
 
     // fetchEvents anti-pattern
     FETCH_EVENTS_USAGE: "fetch-events-usage",
@@ -45,6 +46,7 @@ export const GuardrailCheckId = {
     TAG_DUPLICATE: "tag-duplicate",
     TAG_INVALID_P_TAG: "tag-invalid-p-tag",
     TAG_INVALID_E_TAG: "tag-invalid-e-tag",
+    TAG_HASHTAG_WITH_PREFIX: "tag-hashtag-with-prefix",
 
     // Subscription
     SUBSCRIBE_NOT_STARTED: "subscribe-not-started",

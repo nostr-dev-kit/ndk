@@ -1,4 +1,4 @@
-# ndk-svelte5 Design Philosophy
+# svelte Design Philosophy
 
 ## Vision
 

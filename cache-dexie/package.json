@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/cache-dexie",
-    "version": "2.7.2",
+    "version": "2.7.6",
     "description": "NDK Dexie Cache Adapter",
     "license": "MIT",
     "docs": "typedoc",
@@ -44,20 +44,20 @@
     ],
     "devDependencies": {
         "@types/debug": "^4.1.12",
-        "@types/node": "^22.6.1",
+        "@types/node": "^24.7.0",
         "fake-indexeddb": "^6.0.0",
         "prettier": "^3.3.3",
         "ts-node": "^10.9.2",
-        "tsup": "^8.3.0",
-        "typedoc": "^0.28.0",
-        "typedoc-plugin-markdown": "^4.5.0",
-        "vitest": "^1.2.0"
+        "tsup": "^8.4.0",
+        "typedoc": "^0.28.13",
+        "typedoc-plugin-markdown": "^4.9.0",
+        "vitest": "^3.2.4"
     },
     "dependencies": {
-        "@nostr-dev-kit/ndk": "2.17.2",
+        "@nostr-dev-kit/ndk": "^2.17.6",
         "debug": "^4.3.7",
         "dexie": "^4.0.8",
-        "nostr-tools": "^2.4.0",
+        "nostr-tools": "^2.17.0",
         "typescript-lru-cache": "^2.0.0"
     }
 }

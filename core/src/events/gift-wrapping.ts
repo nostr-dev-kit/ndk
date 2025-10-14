@@ -68,8 +68,7 @@ export async function giftUnwrap(
         const rumorSender = new NDKUser({ pubkey: seal.pubkey });
         const rumor = JSON.parse(await signer.decrypt(rumorSender, seal.content, scheme));
         if (!rumor) throw new Error("Failed to decrypt seal");
-        if (rumor.pubkey !== seal.pubkey)
-            throw new Error("Invalid GiftWrap, sender validation failed!");
+        if (rumor.pubkey !== seal.pubkey) throw new Error("Invalid GiftWrap, sender validation failed!");
 
         return new NDKEvent(event.ndk, rumor as NostrEvent);
     } catch (_e) {

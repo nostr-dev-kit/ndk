@@ -1,8 +1,6 @@
-import { NDKEvent } from "@nostr-dev-kit/ndk";
+import NDK, { NDKBlossomList, NDKEvent, NDKNip07Signer, NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
 import NDKBlossom from "@nostr-dev-kit/blossom";
-import NDK, {
-    NDKNip07Signer,
-    NDKPrivateKeySigner,
+import {
     NDKSessionLocalStorage,
     useAvailableSessions,
     useCurrentUserProfile,
@@ -178,12 +176,9 @@ const App: React.FC = () => {
                 await serverList.publish();
             } else {
                 // Create new server list event
-                const event = new ndk.Event({
-                    kind: 10063, // Blossom server list kind
-                    content: "",
-                    tags: servers.map((server) => ["server", server]),
-                });
-                await event.publish();
+                const newServerList = new NDKBlossomList(ndk);
+                newServerList.servers = servers;
+                await newServerList.publish();
             }
         } finally {
             setSavingServers(false);

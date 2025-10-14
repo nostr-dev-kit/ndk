@@ -86,7 +86,7 @@ describe("fetchEvent guardrails", () => {
         try {
             await Promise.race([
                 ndk.fetchEvent(naddrFilter, { closeOnEose: true }),
-                new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), 100))
+                new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), 100)),
             ]);
         } catch (error: any) {
             if (error.message !== "timeout") {
@@ -115,7 +115,7 @@ describe("fetchEvent guardrails", () => {
             // We wrap in a promise race to avoid waiting for network
             await Promise.race([
                 ndk.guardrailOff().fetchEvent(naddrFilter, { closeOnEose: true }),
-                new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), 100))
+                new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), 100)),
             ]);
         } catch (error: any) {
             if (error.message !== "timeout") {
@@ -149,8 +149,8 @@ describe("fetchEvent guardrails", () => {
         // Test that guardrailOff('id') suppresses the specific error
         try {
             await Promise.race([
-                ndk.guardrailOff('fetch-events-usage').fetchEvent(naddrFilter, { closeOnEose: true }),
-                new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), 100))
+                ndk.guardrailOff("fetch-events-usage").fetchEvent(naddrFilter, { closeOnEose: true }),
+                new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), 100)),
             ]);
         } catch (error: any) {
             if (error.message !== "timeout") {
@@ -183,8 +183,10 @@ describe("fetchEvent guardrails", () => {
         // Test that guardrailOff(['id1', 'id2']) suppresses the errors
         try {
             await Promise.race([
-                ndk.guardrailOff(['fetch-events-usage', 'some-other-check']).fetchEvent(naddrFilter, { closeOnEose: true }),
-                new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), 100))
+                ndk
+                    .guardrailOff(["fetch-events-usage", "some-other-check"])
+                    .fetchEvent(naddrFilter, { closeOnEose: true }),
+                new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), 100)),
             ]);
         } catch (error: any) {
             if (error.message !== "timeout") {

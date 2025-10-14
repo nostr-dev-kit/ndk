@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach } from "vitest";
 import { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
+import { beforeEach, describe, expect, it } from "vitest";
 import NDKCacheSqliteWasm from "../index";
 
 describe("getCacheStats", () => {

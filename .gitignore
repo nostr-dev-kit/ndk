@@ -48,7 +48,7 @@ cache-sqlite/example/cache.db
 
 # TENEX project files
 .tenex/
-ndk-svelte5/examples
+svelte/examples
 .vercel
 .playwright-mcp
 svelte/examples/basic-feed/public/

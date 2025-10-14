@@ -1,5 +1,95 @@
 # Changelog
 
+## 2.0.11
+
+### Patch Changes
+
+- Updated dependencies [28881de]
+    - @nostr-dev-kit/sessions@0.6.0
+
+## 2.0.10
+
+### Patch Changes
+
+- Add convenient reactive getters for current user and session state
+    - Add `$activeUser` getter as an alias for `$currentUser`
+    - Add `$currentPubkey` getter to directly access the active user's pubkey
+    - Add `$currentSession` getter to directly access the active session
+
+    These getters simplify common patterns like:
+    - Before: `const currentSession = $derived(ndk.$sessions?.current);`
+    - After: `const currentSession = ndk.$currentSession;`
+
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.17.6
+    - @nostr-dev-kit/sessions@0.5.0
+    - @nostr-dev-kit/cache-sqlite-wasm@0.8.1
+
+## 2.0.9
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.17.5
+    - @nostr-dev-kit/cache-sqlite-wasm@0.8.0
+
+## 2.0.8
+
+### Patch Changes
+
+- bump
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.17.4
+
+## 2.0.7
+
+### Patch Changes
+
+- bump
+
+## 2.0.6
+
+### Patch Changes
+
+- Update @nostr-dev-kit/ndk dependency to ^2.17.3
+- Updated dependencies
+    - @nostr-dev-kit/sessions@0.4.1
+    - @nostr-dev-kit/sync@0.3.4
+    - @nostr-dev-kit/wot@0.3.6
+
+## 2.0.5
+
+### Patch Changes
+
+- bump
+- Updated dependencies
+    - @nostr-dev-kit/sync@0.3.3
+    - @nostr-dev-kit/wot@0.3.5
+
+## 2.0.4
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/sessions@0.4.0
+
+## 2.0.3
+
+### Patch Changes
+
+- bump
+- Updated dependencies
+    - @nostr-dev-kit/sessions@0.3.2
+    - @nostr-dev-kit/sync@0.3.2
+    - @nostr-dev-kit/wallet@0.8.3
+    - @nostr-dev-kit/wot@0.3.4
+
 ## 3.0.0
 
 ### Minor Changes
@@ -354,7 +444,7 @@
 
 ### Minor Changes
 
-- Add Web of Trust (WoT) support to ndk-svelte5
+- Add Web of Trust (WoT) support to svelte
 
     Features:
     - Global `wot` store with reactive WoT graph
@@ -400,7 +490,7 @@
 - Updated dependencies
     - @nostr-dev-kit/ndk@2.15.0
 
-All notable changes to ndk-svelte5 will be documented in this file.
+All notable changes to svelte will be documented in this file.
 
 ## [0.1.0] - 2025-10-01
 

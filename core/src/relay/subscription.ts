@@ -129,7 +129,7 @@ export class NDKRelaySubscription {
 
         if (this.status !== NDKRelaySubscriptionStatus.RUNNING) {
             // if we have an explicit subId in this subscription, append it to the subId
-            if (subscription.subId && (!this._subId || this._subId.length < 48)) {
+            if (subscription.subId && (!this._subId || this._subId.length < 25)) {
                 if (
                     this.status === NDKRelaySubscriptionStatus.INITIAL ||
                     this.status === NDKRelaySubscriptionStatus.PENDING
@@ -318,7 +318,16 @@ export class NDKRelaySubscription {
     private finalizeSubId() {
         // if we have subId parts, join those
         if (this.subIdParts.size > 0) {
-            this._subId = Array.from(this.subIdParts).join("-");
+            // Truncate individual parts and limit total length
+            const parts = Array.from(this.subIdParts).map((part) => part.substring(0, 10));
+            let joined = parts.join("-");
+
+            // Ensure total subId doesn't exceed reasonable length (20 chars + 5 for random)
+            if (joined.length > 20) {
+                joined = joined.substring(0, 20);
+            }
+
+            this._subId = joined;
         } else {
             this._subId = this.fingerprint.slice(0, 15);
         }

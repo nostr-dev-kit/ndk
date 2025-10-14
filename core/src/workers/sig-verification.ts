@@ -1,6 +1,11 @@
 import { schnorr } from "@noble/curves/secp256k1";
 import { sha256 } from "@noble/hashes/sha256";
 
+// Protocol version for signature verification worker
+// Format: [major, minor, patch] matching @nostr-dev-kit/ndk package version
+const PROTOCOL_VERSION = "2.17.5";
+const PROTOCOL_NAME = "ndk-sig-verify";
+
 /**
  * This is a web worker that verifies the signature of an event.
  */

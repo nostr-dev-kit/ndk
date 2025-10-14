@@ -34,7 +34,7 @@ export class ReactivePoolStore {
         const pool = this.#ndk.pool;
 
         if (!pool) {
-            console.error("[ndk-svelte5] Pool not initialized, skipping event listeners");
+            console.error("[svelte] Pool not initialized, skipping event listeners");
             return;
         }
 

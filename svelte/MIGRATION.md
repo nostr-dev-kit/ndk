@@ -10,7 +10,7 @@
 
 ## Simplified Initialization
 
-ndk-svelte5 now provides `createNDK()` - a one-liner that replaces verbose initialization.
+svelte now provides `createNDK()` - a one-liner that replaces verbose initialization.
 
 ### Before (Old Pattern)
 
@@ -130,11 +130,11 @@ The old `initStores()` pattern still works - no breaking changes. But `createNDK
 
 ## Overview
 
-ndk-svelte5 is a complete reimagining for Svelte 5. It's **not backwards compatible** - it's a fresh start with modern patterns.
+svelte is a complete reimagining for Svelte 5. It's **not backwards compatible** - it's a fresh start with modern patterns.
 
 ## Key Differences
 
-| Feature | ndk-svelte (Svelte 4) | ndk-svelte5 (Svelte 5) |
+| Feature | ndk-svelte (Svelte 4) | svelte (Svelte 5) |
 |---------|----------------------|------------------------|
 | Reactivity | Stores (`$store`) | Runes (`$state`, `$derived`) |
 | API | `$ndk.storeSubscribe()` | `ndk.$subscribe()` |
@@ -168,7 +168,7 @@ onDestroy(() => {
 {/each}
 ```
 
-**ndk-svelte5:**
+**svelte:**
 ```svelte
 <script lang="ts">
 const notes = ndk.$subscribe([{ kinds: [1] }]);
@@ -203,7 +203,7 @@ const store = $ndk.storeSubscribe(
 {/each}
 ```
 
-**ndk-svelte5:**
+**svelte:**
 ```svelte
 <script lang="ts">
 import { NDKHighlight } from '@nostr-dev-kit/ndk';
@@ -245,7 +245,7 @@ onDestroy(() => {
 {/each}
 ```
 
-**ndk-svelte5:**
+**svelte:**
 ```svelte
 <script lang="ts">
 import { onMount, onDestroy } from 'svelte';
@@ -286,7 +286,7 @@ onMount(async () => {
 {/if}
 ```
 
-**ndk-svelte5:**
+**svelte:**
 ```svelte
 <script lang="ts">
 import { profiles } from '@nostr-dev-kit/svelte/stores';
@@ -320,7 +320,7 @@ async function login() {
 </script>
 ```
 
-**ndk-svelte5:**
+**svelte:**
 ```svelte
 <script lang="ts">
 import { sessions } from '@nostr-dev-kit/svelte/stores';
@@ -345,7 +345,7 @@ async function login() {
 
 ### Subscriptions
 
-| ndk-svelte | ndk-svelte5 | Notes |
+| ndk-svelte | svelte | Notes |
 |------------|-------------|-------|
 | `storeSubscribe()` | `subscribe()` | Cleaner name |
 | `store.unsubscribe()` | Automatic | No manual cleanup |
@@ -357,7 +357,7 @@ async function login() {
 
 ### Options
 
-| ndk-svelte | ndk-svelte5 | Notes |
+| ndk-svelte | svelte | Notes |
 |------------|-------------|-------|
 | `closeOnEose` | `autoStart` | More intuitive |
 | Third param for class | `eventClass` option | Named parameter |
@@ -588,7 +588,7 @@ You can run both libraries side-by-side during migration:
 import NDKSvelte from '@nostr-dev-kit/ndk-svelte';
 const oldNdk = new NDKSvelte({ ... });
 
-// New code using ndk-svelte5
+// New code using svelte
 import { NDKSvelte as NDKSvelte5 } from '@nostr-dev-kit/svelte';
 const ndk = new NDKSvelte5({ ... });
 ```
@@ -601,13 +601,13 @@ Migrate components one by one, then remove the old package when done.
 
 Svelte 5 is a fundamental shift. Embracing runes fully requires new patterns that don't map to the old API.
 
-### Can I use ndk-svelte5 with Svelte 4?
+### Can I use svelte with Svelte 4?
 
-No. ndk-svelte5 requires Svelte 5. Continue using ndk-svelte for Svelte 4 projects.
+No. svelte requires Svelte 5. Continue using ndk-svelte for Svelte 4 projects.
 
 ### Will ndk-svelte be maintained?
 
-ndk-svelte will receive critical bug fixes, but new features will only be added to ndk-svelte5.
+ndk-svelte will receive critical bug fixes, but new features will only be added to svelte.
 
 ### Is the migration worth it?
 

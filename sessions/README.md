@@ -165,7 +165,7 @@ await sessions.login(signer, {
 
   // Fetch additional event kinds
   events: new Map([
-    [30078, null], // NIP-78 app data
+    [30078, undefined], // NIP-78 app data
   ]),
 
   // Automatically set muteFilter on NDK (default: true)
@@ -182,6 +182,74 @@ console.log('Muted:', session.muteSet?.size, 'items');
 console.log('Relay list:', session.relayList);
 console.log('App data:', session.events.get(30078));
 ```
+
+### Custom Event Classes
+
+You can provide custom NDKEvent subclasses to automatically wrap events as they're received. This is useful for adding custom methods or properties to specific event kinds:
+
+```typescript
+import { NDKEvent, NDKKind } from '@nostr-dev-kit/ndk';
+import { NDKBlossomList } from '@nostr-dev-kit/ndk';
+
+// Define a custom event class for kind 10015 (Interest Lists)
+class NDKInterestList extends NDKEvent {
+  static kinds = [10015 as NDKKind]; // Required for eventConstructors option
+
+  static from(event: NDKEvent): NDKInterestList {
+    return new NDKInterestList(event.ndk, event.rawEvent());
+  }
+
+  get interests(): string[] {
+    return this.getMatchingTags('t').map(tag => tag[1]);
+  }
+
+  addInterest(interest: string): void {
+    this.tags.push(['t', interest]);
+  }
+}
+
+// Option 1: Using eventConstructors (recommended - more ergonomic)
+await sessions.login(signer, {
+  follows: true,
+  eventConstructors: [NDKBlossomList, NDKInterestList]
+});
+
+// Option 2: Using events Map (explicit)
+await sessions.login(signer, {
+  follows: true,
+  events: new Map([
+    [10015, NDKInterestList], // Wrap kind 10015 with custom class
+    [30078, undefined],        // Fetch kind 30078 as regular NDKEvent
+  ])
+});
+
+// Access the wrapped event with custom methods
+const session = sessions.activeSession;
+const interestList = session.events.get(10015) as NDKInterestList;
+console.log('User interests:', interestList.interests);
+
+// Use custom methods
+interestList.addInterest('nostr');
+await interestList.publish();
+```
+
+**Key features:**
+- **Automatic wrapping** - Events are wrapped using the class's `.from()` method
+- **Type safety** - Cast to your custom class for full TypeScript support
+- **Custom methods** - Add domain-specific methods and computed properties
+- **Inheritance** - Custom classes extend NDKEvent, so all standard methods work
+- **Ergonomic API** - Use `eventConstructors` array for cleaner syntax
+
+**Requirements:**
+- Custom class must extend `NDKEvent`
+- Must implement a static `from(event: NDKEvent)` method
+- Must have a static `kinds` array property (when using `eventConstructors`)
+- The `from()` method should return an instance of your custom class
+
+**eventConstructors vs events:**
+- `eventConstructors` - More ergonomic, uses the class's static `kinds` property
+- `events` - More explicit, requires manual kind-to-class mapping
+- Both options can be used together and will be merged
 
 ### Manual Persistence
 
@@ -201,6 +269,67 @@ await sessions.restore();
 
 // Clear storage
 await sessions.clear();
+```
+
+### Runtime Wallet Control
+
+Sessions supports runtime control of wallet fetching, allowing apps to enable/disable wallet features based on user preferences:
+
+```typescript
+// Start session without wallet
+const sessions = new NDKSessionManager(ndk, {
+  fetches: { follows: true }
+});
+
+await sessions.login(signer);
+
+// Later, when user wants to use wallet features
+if (!sessions.isWalletEnabled()) {
+  // App shows UI prompt: "Enable wallet for zaps?"
+  const userConsent = await askUser();
+
+  if (userConsent) {
+    // Enable wallet and remember preference
+    sessions.enableWallet();
+  }
+}
+
+// Check wallet state
+console.log('Wallet enabled:', sessions.isWalletEnabled());
+
+// Disable wallet
+sessions.disableWallet();
+```
+
+**Key features:**
+- **Runtime control** - Enable/disable wallet after session starts
+- **Persistent preferences** - User's choice is saved and restored
+- **Per-session** - Each account can have different wallet settings
+
+**Usage patterns:**
+
+```typescript
+// 1. Wallet app (always enable)
+const sessions = new NDKSessionManager(ndk, {
+  fetches: { wallet: true }
+});
+
+// 2. Social app (ask user first time)
+const sessions = new NDKSessionManager(ndk, {
+  fetches: { wallet: false } // disabled by default
+});
+await sessions.restore(); // respects saved preferences
+
+// When user tries to zap
+if (!sessions.isWalletEnabled()) {
+  if (await confirm("Enable wallet?")) {
+    sessions.enableWallet(); // saves preference
+  }
+}
+
+// 3. Multi-account with per-user preferences
+sessions.enableWallet(userPubkey1);  // enable for user 1
+sessions.disableWallet(userPubkey2); // disable for user 2
 ```
 
 ## API Reference
@@ -230,18 +359,37 @@ Login with a signer or user.
 - `blockedRelays?: boolean` - Fetch blocked relay list (kind 10001)
 - `relayList?: boolean` - Fetch user's relay list (kind 10002)
 - `wallet?: boolean` - Fetch NIP-60 wallet (kind 17375)
-- `events?: Map<NDKKind, NDKEvent>` - Fetch specific replaceable event kinds
+- `events?: Map<NDKKind, any>` - Fetch specific replaceable event kinds. Value can be:
+  - A custom NDKEvent subclass with a static `from()` method to wrap events
+  - `undefined` to fetch as regular NDKEvent
+- `eventConstructors?: NDKEventConstructor[]` - Array of event class constructors to register. More ergonomic alternative to `events`. Each constructor must have:
+  - A static `kinds` array property listing the kinds it handles
+  - A static `from(event: NDKEvent)` method to wrap events
 - `setMuteFilter?: boolean` - Set muteFilter on NDK based on session's mute data (default: `true`)
 - `setRelayConnectionFilter?: boolean` - Set relayConnectionFilter on NDK based on session's blocked relays (default: `true`)
 - `setActive?: boolean` - Set this session as active immediately
 
 ```typescript
+// Using eventConstructors (recommended)
 await sessions.login(signer, {
   follows: true,
   mutes: true,
   relayList: true,
   wallet: true,
-  events: new Map([[30078, null]]),
+  eventConstructors: [NDKBlossomList, CustomInterestList],
+  setActive: true
+});
+
+// Using events Map (explicit)
+await sessions.login(signer, {
+  follows: true,
+  mutes: true,
+  relayList: true,
+  wallet: true,
+  events: new Map([
+    [10015, CustomInterestList], // Wrap with custom class
+    [30078, undefined]            // Regular NDKEvent
+  ]),
   setActive: true
 });
 ```
@@ -273,6 +421,18 @@ Subscribe to state changes.
 **`destroy(): void`**
 
 Cleanup and stop all subscriptions.
+
+**`enableWallet(pubkey?): void`**
+
+Enable wallet fetching for a session. If no pubkey provided, uses active session. Updates preference and restarts subscription with wallet enabled.
+
+**`disableWallet(pubkey?): void`**
+
+Disable wallet fetching for a session. If no pubkey provided, uses active session. Updates preference and restarts subscription without wallet.
+
+**`isWalletEnabled(pubkey?): boolean`**
+
+Check if wallet fetching is enabled for a session. If no pubkey provided, uses active session. Returns saved preference or false if not set.
 
 #### Properties
 
@@ -342,10 +502,10 @@ interface SessionStorage {
 // Coming soon: useNDKSessions hook in @nostr-dev-kit/react
 ```
 
-### Svelte 5 (with ndk-svelte5)
+### Svelte 5 (with svelte)
 
 ```typescript
-// Coming soon: sessions store in @nostr-dev-kit/ndk-svelte5
+// Coming soon: sessions store in @nostr-dev-kit/svelte
 ```
 
 ### Vanilla Store Access

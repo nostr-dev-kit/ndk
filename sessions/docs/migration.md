@@ -397,7 +397,7 @@ If you're using Svelte, migration is similar:
 import { ndk } from '$lib/stores/ndk';
 ```
 
-### After (sessions with ndk-svelte5)
+### After (sessions with svelte)
 
 ```typescript
 // ndk.svelte.ts

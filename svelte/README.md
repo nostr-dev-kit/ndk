@@ -6,7 +6,7 @@ A ground-up reimagining of NDK for Svelte 5, built with runes, designed for beau
 
 ## Philosophy
 
-ndk-svelte5 embraces **Svelte 5's reactive primitives** to create a library that feels native, performs beautifully, and makes building Nostr apps a joy.
+svelte embraces **Svelte 5's reactive primitives** to create a library that feels native, performs beautifully, and makes building Nostr apps a joy.
 
 - **Runes-first**: Reactive classes using `$state`, `$derived`, and `$effect`
 - **Namespaced stores**: All stores under single NDK instance
@@ -70,7 +70,7 @@ Sessions are automatically persisted to localStorage by default. Users stay logg
 
 ### 1. Reactive Subscriptions
 
-The heart of ndk-svelte5 is the `subscribe()` method - a reactive, self-managing subscription.
+The heart of svelte is the `subscribe()` method - a reactive, self-managing subscription.
 
 ```svelte
 <script lang="ts">
@@ -224,8 +224,8 @@ import { ndk } from '$lib/ndk';
 import { NDKNip07Signer } from '@nostr-dev-kit/ndk';
 
 // Current session (reactive)
-const current = $derived(ndk.$sessions.current);
-const currentUser = $derived(ndk.$sessions.currentUser);
+const current = ndk.$currentSession;
+const currentUser = ndk.$currentUser;
 const profile = ndk.$fetchProfile(() => currentUser?.pubkey);
 const follows = $derived(ndk.$sessions.follows);
 
@@ -673,7 +673,7 @@ onDestroy(() => {
   {event.content}
 {/each}
 
-<!-- New (ndk-svelte5) -->
+<!-- New (svelte) -->
 <script lang="ts">
 const sub = ndk.$subscribe({ kinds: [1] });
 // No manual cleanup needed
@@ -832,7 +832,7 @@ Svelte 5's runes provide fine-grained reactivity that's perfect for real-time da
 
 ### Why Not Backwards Compatible?
 
-Breaking free from legacy patterns lets us build something truly modern. ndk-svelte5 is designed for new projects and future-looking apps.
+Breaking free from legacy patterns lets us build something truly modern. svelte is designed for new projects and future-looking apps.
 
 ### Why Namespaced Stores?
 

@@ -1,5 +1,21 @@
 # @nostr-dev-kit/wot
 
+## 0.3.6
+
+### Patch Changes
+
+- Update @nostr-dev-kit/ndk dependency to ^2.17.3
+- Updated dependencies
+    - @nostr-dev-kit/sync@0.3.4
+
+## 0.3.5
+
+### Patch Changes
+
+- bump
+- Updated dependencies
+    - @nostr-dev-kit/sync@0.3.3
+
 ## 0.3.4
 
 ### Patch Changes

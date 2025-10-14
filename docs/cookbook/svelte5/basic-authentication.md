@@ -1,10 +1,10 @@
 ---
 title: Complete Authentication Flow with NIP-07, nsec, and NIP-46
 description: Implement a complete authentication system supporting browser extensions, private keys, and remote signers
-tags: ['ndk-svelte5', 'authentication', 'nip-07', 'nip-46', 'sessions']
+tags: ['svelte', 'authentication', 'nip-07', 'nip-46', 'sessions']
 difficulty: intermediate
 timeToRead: 15
-package: ndk-svelte5
+package: svelte
 author: NDK Team
 dateAdded: 2024-03-04
 ---
@@ -25,7 +25,7 @@ This cookbook demonstrates how to implement a complete authentication system in 
 ## Prerequisites
 
 ```bash
-npm install @nostr-dev-kit/ndk @nostr-dev-kit/ndk-svelte5 qrcode
+npm install @nostr-dev-kit/ndk @nostr-dev-kit/svelte qrcode
 ```
 
 ## Basic Setup
@@ -34,7 +34,7 @@ First, initialize NDK and the session stores:
 
 ```typescript
 import NDK from "@nostr-dev-kit/ndk"
-import { sessions, initStores } from "@nostr-dev-kit/ndk-svelte5"
+import { sessions, initStores } from "@nostr-dev-kit/svelte"
 
 // Initialize NDK with your relay configuration
 const ndk = new NDK({
@@ -156,7 +156,7 @@ Here's a complete Svelte 5 component with all login methods:
 <script lang="ts">
   import NDK from "@nostr-dev-kit/ndk"
   import { NDKPrivateKeySigner, NDKNip07Signer, NDKNip46Signer } from "@nostr-dev-kit/ndk"
-  import { sessions, initStores } from "@nostr-dev-kit/ndk-svelte5"
+  import { sessions, initStores } from "@nostr-dev-kit/svelte"
   import QRCode from "qrcode"
 
   const ndk = new NDK({

@@ -134,25 +134,25 @@ export async function zap(
     amount: number,
     opts?: { comment?: string; delay?: number },
 ) {
-    console.log('[zap] Starting zap flow', {
-        target: target instanceof NDKEvent ? 'event' : 'user',
+    console.log("[zap] Starting zap flow", {
+        target: target instanceof NDKEvent ? "event" : "user",
         targetId: target.id || (target as any).pubkey,
         amount,
-        unit: 'msat',
+        unit: "msat",
         comment: opts?.comment,
     });
 
     if (!ndk.$wallet.wallet) {
-        console.error('[zap] No wallet connected');
+        console.error("[zap] No wallet connected");
         throw new Error("No wallet connected");
     }
     const session = ndk.$sessions.current;
     if (!session) {
-        console.error('[zap] No active session');
+        console.error("[zap] No active session");
         throw new Error("No active session");
     }
 
-    console.log('[zap] Creating NDKZapper', {
+    console.log("[zap] Creating NDKZapper", {
         walletType: ndk.$wallet.wallet?.type,
         sessionPubkey: session.pubkey,
     });
@@ -163,11 +163,11 @@ export async function zap(
 
     // Auto-track
     ndk.$payments.addPending(zapper, session.pubkey);
-    console.log('[zap] Added pending payment to tracking');
+    console.log("[zap] Added pending payment to tracking");
 
     // Execute with optional delay
     if (opts?.delay) {
-        console.log('[zap] Delaying zap execution by', opts.delay, 'ms');
+        console.log("[zap] Delaying zap execution by", opts.delay, "ms");
         return new Promise((resolve, reject) => {
             setTimeout(() => {
                 zapper.zap().then(resolve).catch(reject);
@@ -175,25 +175,25 @@ export async function zap(
         });
     }
 
-    console.log('[zap] Executing zap immediately');
+    console.log("[zap] Executing zap immediately");
     try {
         const result = await zapper.zap();
 
         // Check for partial failures
-        const failures = Array.from(result.values()).filter(r => r instanceof Error);
+        const failures = Array.from(result.values()).filter((r) => r instanceof Error);
         if (failures.length > 0) {
-            console.warn('[zap] Zap completed with some failures', {
+            console.warn("[zap] Zap completed with some failures", {
                 total: result.size,
                 failed: failures.length,
-                errors: failures.map(e => (e as Error).message),
+                errors: failures.map((e) => (e as Error).message),
             });
         } else {
-            console.log('[zap] Zap completed successfully', result);
+            console.log("[zap] Zap completed successfully", result);
         }
 
         return result;
     } catch (error) {
-        console.error('[zap] Zap failed completely', error);
+        console.error("[zap] Zap failed completely", error);
         throw error;
     }
 }

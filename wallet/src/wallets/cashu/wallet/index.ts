@@ -336,9 +336,6 @@ export class NDKCashuWallet extends NDKWallet {
      * with the relays, for example, by saving the time the wallet has emitted a "ready" event.
      */
     async start(opts?: NDKSubscriptionOptions & { pubkey?: Hexpubkey; since?: number }): Promise<void> {
-        const startTime = Date.now();
-        console.log(`[${new Date().toISOString()}] [NDKCashuWallet.start] Starting wallet initialization`);
-
         const activeUser = this.ndk?.activeUser;
 
         if (this.status === NDKWalletStatus.READY) return Promise.resolve();
@@ -350,12 +347,7 @@ export class NDKCashuWallet extends NDKWallet {
 
         // Fetch wallet relays according to NIP-60
         if (!this.relaySet) {
-            console.log(`[${new Date().toISOString()}] [NDKCashuWallet.start] Fetching wallet relays`);
             this.relaySet = await this.fetchWalletRelays(pubkey);
-            console.log(
-                `[${new Date().toISOString()}] [NDKCashuWallet.start] Wallet relays fetched:`,
-                this.relaySet?.relays.size ?? 0,
-            );
         }
 
         const filters: NDKFilter[] = [
@@ -376,9 +368,6 @@ export class NDKCashuWallet extends NDKWallet {
 
         // Load from cache first to show optimistic state
         if (this.ndk.cacheAdapter) {
-            console.log(`[${new Date().toISOString()}] [NDKCashuWallet.start] Loading events from cache`);
-            const cacheLoadStart = Date.now();
-
             const cacheEvents: NDKEvent[] = [];
 
             // Try direct query first
@@ -386,10 +375,6 @@ export class NDKCashuWallet extends NDKWallet {
                 cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE,
             });
             cacheEvents.push(...events);
-
-            console.log(
-                `[${new Date().toISOString()}] [NDKCashuWallet.start] Loaded ${cacheEvents.length} events from cache in ${Date.now() - cacheLoadStart}ms`,
-            );
 
             // Process cached events
             for (const event of cacheEvents) {
@@ -403,26 +388,16 @@ export class NDKCashuWallet extends NDKWallet {
         // Use sync if cache adapter is available, otherwise fall back to subscription
         if (this.ndk.cacheAdapter) {
             try {
-                const syncStartTime = Date.now();
-
                 // Perform initial sync using Negentropy with capability caching and fallback
                 const syncResult = await NDKSync.sync(this.ndk, filters, {
                     relaySet: this.relaySet,
                     autoFetch: true,
                 });
 
-                console.log(
-                    `[${new Date().toISOString()}] [NDKCashuWallet.start] Sync completed in ${Date.now() - syncStartTime}ms, processing ${syncResult.events.length} events`,
-                );
-
                 // Process synced events
-                const processStartTime = Date.now();
                 for (const event of syncResult.events) {
                     eventHandler.call(this, event);
                 }
-                console.log(
-                    `[${new Date().toISOString()}] [NDKCashuWallet.start] Events processed in ${Date.now() - processStartTime}ms`,
-                );
 
                 // Start live subscription for new events
                 const subOpts: NDKSubscriptionOptions = opts ?? {};
@@ -433,7 +408,6 @@ export class NDKCashuWallet extends NDKWallet {
                     since: Math.floor(Date.now() / 1000) - 60,
                 }));
 
-                console.log(`[${new Date().toISOString()}] [NDKCashuWallet.start] Starting live subscription`);
                 this.sub = this.ndk.subscribe(liveFilters, {
                     ...subOpts,
                     relaySet: this.relaySet,
@@ -446,19 +420,12 @@ export class NDKCashuWallet extends NDKWallet {
 
                 this.emit("ready");
                 this.setStatus(NDKWalletStatus.READY);
-                console.log(
-                    `[${new Date().toISOString()}] [NDKCashuWallet.start] Wallet ready (total time: ${Date.now() - startTime}ms)`,
-                );
             } catch (error) {
-                console.error(
-                    `[${new Date().toISOString()}] [NDKCashuWallet.start] Sync failed, falling back to subscription:`,
-                    error,
-                );
+                console.error(`[NDKCashuWallet] Sync failed, falling back to subscription:`, error);
                 // Fall back to regular subscription if sync fails
                 await this.startWithSubscription(filters, opts);
             }
         } else {
-            console.log(`[${new Date().toISOString()}] [NDKCashuWallet.start] No cache adapter, using subscription`);
             // No cache adapter - use regular subscription
             await this.startWithSubscription(filters, opts);
         }
@@ -495,9 +462,7 @@ export class NDKCashuWallet extends NDKWallet {
 
     private setStatus(status: NDKWalletStatus) {
         if (this.status !== status) {
-            const oldStatus = this.status;
             this.status = status;
-            console.log(`[${new Date().toISOString()}] [NDKCashuWallet] Status changed: ${oldStatus} -> ${status}`);
             this.emit("status_changed", status);
         }
     }

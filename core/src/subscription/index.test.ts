@@ -74,9 +74,7 @@ describe("NDKSubscriptionFilters", () => {
             const mockedEmit = vi.spyOn(sub, "emit" as any);
             const mockedValidate = vi.spyOn(invalidEvent, "validate");
             // Mock verifySignature to explicitly return false
-            const mockedVerify = vi
-                .spyOn(invalidEvent, "verifySignature")
-                .mockImplementation(() => false);
+            const mockedVerify = vi.spyOn(invalidEvent, "verifySignature").mockImplementation(() => false);
 
             // Create a mock relay object with the required methods
             const mockRelay = {
@@ -98,11 +96,7 @@ describe("NDKSubscriptionFilters", () => {
         });
 
         it("does not skip invalid events when validation and verification is disabled", () => {
-            const sub = new NDKSubscription(
-                ndk,
-                {},
-                { skipValidation: true, skipVerification: true },
-            );
+            const sub = new NDKSubscription(ndk, {}, { skipValidation: true, skipVerification: true });
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const mockedEmit = vi.spyOn(sub, "emit" as any);
             const mockedValidate = vi.spyOn(invalidEvent, "validate");

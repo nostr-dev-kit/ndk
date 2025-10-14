@@ -1,6 +1,6 @@
 import type NDK from "@nostr-dev-kit/ndk";
 import { NDKCashuMintAnnouncement, NDKKind, NDKMintRecommendation, type NDKSubscription } from "@nostr-dev-kit/ndk";
-import { create } from "zustand";
+import { createStore } from "zustand/vanilla";
 
 export interface MintMetadata {
     url: string;
@@ -43,7 +43,10 @@ export interface MintDiscoveryState {
     stop: () => void;
 }
 
-async function fetchMintInfo(url: string, ndk: NDK): Promise<{
+async function fetchMintInfo(
+    url: string,
+    ndk: NDK,
+): Promise<{
     isOnline: boolean;
     info?: any;
 }> {
@@ -91,7 +94,7 @@ export function createMintDiscoveryStore(ndk: NDK, options: MintDiscoveryOptions
 
     const mintsMap = new Map<string, MintMetadata>();
 
-    const store = create<MintDiscoveryState>((set, get) => ({
+    const store = createStore<MintDiscoveryState>()((set, get) => ({
         mints: [],
         progress: {
             announcementsFound: 0,

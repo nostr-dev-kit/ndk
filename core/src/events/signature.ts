@@ -12,6 +12,25 @@ export function signatureVerificationInit(w: Worker) {
     worker = w;
 
     worker.onmessage = (msg: MessageEvent) => {
+        // Validate message format - signature worker sends [eventId, boolean]
+        if (!Array.isArray(msg.data) || msg.data.length !== 2) {
+            console.error(
+                '[NDK] ❌ Signature verification worker received incompatible message format.',
+                '\n\n📋 Expected format: [eventId, boolean]',
+                '\n📦 Received:', msg.data,
+                '\n\n🔍 This likely means:',
+                '\n  1. You have a STALE worker.js file that needs updating',
+                '\n  2. Version mismatch between @nostr-dev-kit/ndk and deployed worker',
+                '\n  3. Wrong worker is being used for signature verification',
+                '\n\n✅ Solution: Update your worker files:',
+                '\n  cp node_modules/@nostr-dev-kit/ndk/dist/workers/sig-verification.js public/',
+                '\n  cp node_modules/@nostr-dev-kit/cache-sqlite-wasm/dist/worker.js public/',
+                '\n\n💡 Or use Vite/bundler imports instead of static files:',
+                '\n  import SigWorker from "@nostr-dev-kit/ndk/workers/sig-verification?worker"'
+            );
+            return;
+        }
+
         const [eventId, result] = msg.data as [NDKEventId, boolean];
 
         const record = processingQueue[eventId];
@@ -40,11 +59,7 @@ export function signatureVerificationInit(w: Worker) {
  * @param relay The relay that provided the event (optional)
  * @returns A promise that resolves to a boolean indicating if the signature is valid
  */
-export async function verifySignatureAsync(
-    event: NDKEvent,
-    _persist: boolean,
-    relay?: NDKRelay,
-): Promise<boolean> {
+export async function verifySignatureAsync(event: NDKEvent, _persist: boolean, relay?: NDKRelay): Promise<boolean> {
     // Measure total time spent in signature verification
     const ndkInstance = event.ndk!;
     const start = Date.now();

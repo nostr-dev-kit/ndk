@@ -15,11 +15,7 @@ function setEventDupSync(db: any, event: NDKEvent | any, relay?: NDKRelay | { ur
     }
 }
 
-export async function setEventDup(
-    this: NDKCacheAdapterSqliteWasm,
-    event: NDKEvent,
-    relay: NDKRelay,
-): Promise<void> {
+export async function setEventDup(this: NDKCacheAdapterSqliteWasm, event: NDKEvent, relay: NDKRelay): Promise<void> {
     if (this.useWorker) {
         await this.postWorkerMessage({
             type: "setEventDup",

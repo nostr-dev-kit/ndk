@@ -1,4 +1,107 @@
-# ndk-svelte5-nutsack-wallet
+# svelte-nutsack-wallet
+
+## 0.1.20
+
+### Patch Changes
+
+- @nostr-dev-kit/svelte@2.0.11
+
+## 0.1.19
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.17.6
+    - @nostr-dev-kit/svelte@2.0.10
+    - @nostr-dev-kit/cache-sqlite-wasm@0.8.1
+
+## 0.1.18
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.17.5
+    - @nostr-dev-kit/cache-sqlite-wasm@0.8.0
+    - @nostr-dev-kit/svelte@2.0.9
+
+## 0.1.17
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.17.4
+    - @nostr-dev-kit/svelte@2.0.8
+
+## 0.1.16
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/wallet@0.8.6
+
+## 0.1.15
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/wallet@0.8.5
+
+## 0.1.14
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/svelte@2.0.7
+
+## 0.1.13
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/wallet@0.8.4
+
+## 0.1.12
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/svelte@2.0.6
+
+## 0.1.11
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/svelte@2.0.5
+
+## 0.1.10
+
+### Patch Changes
+
+- Updated dependencies [8678b1f]
+- Updated dependencies [c901395]
+    - @nostr-dev-kit/ndk@2.17.3
+
+## 0.1.9
+
+### Patch Changes
+
+- @nostr-dev-kit/svelte@2.0.4
+
+## 0.1.8
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/svelte@2.0.3
+    - @nostr-dev-kit/wallet@0.8.3
 
 ## 0.1.7
 

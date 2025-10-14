@@ -1,10 +1,10 @@
 ---
 title: Multi-Session Management with Account Switcher
 description: Manage multiple Nostr accounts simultaneously with session switching and profile management
-tags: ['ndk-svelte5', 'authentication', 'multi-session', 'session-management']
+tags: ['svelte', 'authentication', 'multi-session', 'session-management']
 difficulty: advanced
 timeToRead: 20
-package: ndk-svelte5
+package: svelte
 author: NDK Team
 dateAdded: 2024-03-04
 ---
@@ -38,7 +38,7 @@ Use `sessions.add()` to add an additional session without logging out of the cur
 
 ```typescript
 import { NDKPrivateKeySigner } from "@nostr-dev-kit/ndk"
-import { sessions } from "@nostr-dev-kit/ndk-svelte5"
+import { sessions } from "@nostr-dev-kit/svelte"
 
 async function addAnotherAccount(nsecKey: string) {
   try {
@@ -55,7 +55,7 @@ async function addAnotherAccount(nsecKey: string) {
 
 ```typescript
 import { NDKPrivateKeySigner } from "@nostr-dev-kit/ndk"
-import { sessions } from "@nostr-dev-kit/ndk-svelte5"
+import { sessions } from "@nostr-dev-kit/svelte"
 
 async function generateAndAddAccount() {
   const signer = NDKPrivateKeySigner.generate()
@@ -132,7 +132,7 @@ Here's a beautiful dropdown session switcher:
 <script lang="ts">
   import NDK from "@nostr-dev-kit/ndk"
   import { NDKPrivateKeySigner, NDKNip07Signer } from "@nostr-dev-kit/ndk"
-  import { sessions, initStores } from "@nostr-dev-kit/ndk-svelte5"
+  import { sessions, initStores } from "@nostr-dev-kit/svelte"
 
   const ndk = new NDK({
     explicitRelayUrls: ['wss://relay.damus.io', 'wss://nos.lol']
@@ -299,7 +299,7 @@ A simple list showing all sessions:
 
 ```svelte
 <script lang="ts">
-  import { sessions } from "@nostr-dev-kit/ndk-svelte5"
+  import { sessions } from "@nostr-dev-kit/svelte"
 
   function switchSession(pubkey: string) {
     sessions.switch(pubkey)
@@ -367,7 +367,7 @@ A simple list showing all sessions:
 
 ```svelte
 <script lang="ts">
-  import { sessions } from "@nostr-dev-kit/ndk-svelte5"
+  import { sessions } from "@nostr-dev-kit/svelte"
 
   // This will automatically update when session switches
   $effect(() => {

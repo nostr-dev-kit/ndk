@@ -1,4 +1,4 @@
-# ndk-svelte5-component-browser
+# svelte-component-browser
 
 ## 0.1.3
 

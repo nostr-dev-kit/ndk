@@ -42,14 +42,12 @@ describe("OutboxTracker", () => {
         const mockPool = ndk.pool || new NDKPool();
 
         // Mock getRelay to track which relays are requested
-        vi.spyOn(mockPool, "getRelay").mockImplementation(
-            (url: string, connect?: boolean, temporary?: boolean) => {
-                requestedRelays.add(url);
-                // Create a mock relay with ndk instance
-                const relay = new NDKRelay(url, undefined, ndk);
-                return relay;
-            },
-        );
+        vi.spyOn(mockPool, "getRelay").mockImplementation((url: string, connect?: boolean, temporary?: boolean) => {
+            requestedRelays.add(url);
+            // Create a mock relay with ndk instance
+            const relay = new NDKRelay(url, undefined, ndk);
+            return relay;
+        });
 
         ndk.pool = mockPool;
         ndk.outboxPool = mockPool;

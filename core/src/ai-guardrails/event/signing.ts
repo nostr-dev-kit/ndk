@@ -4,12 +4,7 @@
 
 import type { NDKEvent } from "../../events/index.js";
 
-type ErrorFn = (
-    id: string,
-    message: string,
-    hint?: string,
-    canDisable?: boolean,
-) => never | undefined;
+type ErrorFn = (id: string, message: string, hint?: string, canDisable?: boolean) => never | undefined;
 type WarnFn = (id: string, message: string, hint?: string) => never | undefined;
 
 /**
@@ -21,8 +16,8 @@ function checkMissingKind(event: NDKEvent, error: ErrorFn): void {
             "event-missing-kind",
             `Cannot sign event without 'kind'.\n\n` +
                 `📦 Event data:\n` +
-                `   • content: ${event.content ? `"${event.content.substring(0, 50)}${event.content.length > 50 ? '...' : ''}"` : '(empty)'}\n` +
-                `   • tags: ${event.tags.length} tag${event.tags.length !== 1 ? 's' : ''}\n` +
+                `   • content: ${event.content ? `"${event.content.substring(0, 50)}${event.content.length > 50 ? "..." : ""}"` : "(empty)"}\n` +
+                `   • tags: ${event.tags.length} tag${event.tags.length !== 1 ? "s" : ""}\n` +
                 `   • kind: ${event.kind} ❌\n\n` +
                 `Set event.kind before signing.`,
             "Example: event.kind = 1; // for text note",
@@ -40,7 +35,7 @@ function checkContentIsObject(event: NDKEvent, error: ErrorFn): void {
         error(
             "event-content-is-object",
             `Event content is an object. Content must be a string.\n\n` +
-                `📦 Your content (${typeof event.content}):\n${contentPreview}${JSON.stringify(event.content).length > 200 ? '...' : ''}\n\n` +
+                `📦 Your content (${typeof event.content}):\n${contentPreview}${JSON.stringify(event.content).length > 200 ? "..." : ""}\n\n` +
                 `❌ event.content = { ... }  // WRONG\n` +
                 `✅ event.content = JSON.stringify({ ... })  // CORRECT`,
             "Use JSON.stringify() for structured data: event.content = JSON.stringify(data)",
@@ -84,7 +79,7 @@ function checkInvalidPTags(event: NDKEvent, error: ErrorFn): void {
                     `📦 Your tag:\n   ${tagPreview}\n\n` +
                     `❌ Invalid value: "${tag[1]}"\n` +
                     `   • Length: ${tag[1].length} (expected 64)\n` +
-                    `   • Format: ${tag[1].startsWith('npub') ? 'bech32 (npub)' : 'unknown'}\n\n` +
+                    `   • Format: ${tag[1].startsWith("npub") ? "bech32 (npub)" : "unknown"}\n\n` +
                     `p-tags MUST contain 64-character hex pubkeys.`,
                 tag[1].startsWith("npub")
                     ? "Use ndkUser.pubkey instead of npub:\n   ✅ event.tags.push(['p', ndkUser.pubkey])\n   ❌ event.tags.push(['p', 'npub1...'])"
@@ -110,7 +105,7 @@ function checkInvalidETags(event: NDKEvent, error: ErrorFn): void {
                     `📦 Your tag:\n   ${tagPreview}\n\n` +
                     `❌ Invalid value: "${tag[1]}"\n` +
                     `   • Length: ${tag[1].length} (expected 64)\n` +
-                    `   • Format: ${isBech32 ? 'bech32 (note/nevent)' : 'unknown'}\n\n` +
+                    `   • Format: ${isBech32 ? "bech32 (note/nevent)" : "unknown"}\n\n` +
                     `e-tags MUST contain 64-character hex event IDs.`,
                 isBech32
                     ? "Use event.id instead of bech32:\n   ✅ event.tags.push(['e', referencedEvent.id])\n   ❌ event.tags.push(['e', 'note1...'])"
@@ -124,22 +119,16 @@ function checkInvalidETags(event: NDKEvent, error: ErrorFn): void {
 /**
  * Check for manual reply markers (should use .reply() instead)
  */
-function checkManualReplyMarkers(
-    event: NDKEvent,
-    warn: WarnFn,
-    replyEvents: WeakSet<NDKEvent>,
-): void {
+function checkManualReplyMarkers(event: NDKEvent, warn: WarnFn, replyEvents: WeakSet<NDKEvent>): void {
     if (event.kind !== 1) return;
 
     // If this event was created via .reply(), skip the check
     if (replyEvents.has(event)) return;
 
-    const eTagsWithMarkers = event.tags.filter(
-        (tag) => tag[0] === "e" && (tag[3] === "reply" || tag[3] === "root"),
-    );
+    const eTagsWithMarkers = event.tags.filter((tag) => tag[0] === "e" && (tag[3] === "reply" || tag[3] === "root"));
 
     if (eTagsWithMarkers.length > 0) {
-        const tagList = eTagsWithMarkers.map((tag, idx) => `   ${idx + 1}. ${JSON.stringify(tag)}`).join('\n');
+        const tagList = eTagsWithMarkers.map((tag, idx) => `   ${idx + 1}. ${JSON.stringify(tag)}`).join("\n");
         warn(
             "event-manual-reply-markers",
             `Event has ${eTagsWithMarkers.length} e-tag(s) with manual reply/root markers.\n\n` +
@@ -158,19 +147,36 @@ function checkManualReplyMarkers(
 }
 
 /**
+ * Check that hashtag tags don't include the # prefix
+ */
+function checkHashtagsWithPrefix(event: NDKEvent, error: ErrorFn): void {
+    const tTags = event.getMatchingTags("t");
+    tTags.forEach((tag, idx) => {
+        if (tag[1] && tag[1].startsWith("#")) {
+            const tagPreview = JSON.stringify(tag);
+            error(
+                "tag-hashtag-with-prefix",
+                `t-tag[${idx}] contains hashtag with # prefix.\n\n` +
+                    `📦 Your tag:\n   ${tagPreview}\n\n` +
+                    `❌ Invalid value: "${tag[1]}"\n\n` +
+                    `Hashtag tags should NOT include the # symbol.`,
+                `Remove the # prefix from hashtag tags:\n   ✅ event.tags.push(['t', 'nostr'])\n   ❌ event.tags.push(['t', '#nostr'])`,
+                false, // Fatal error - cannot be disabled
+            );
+        }
+    });
+}
+
+/**
  * Called when an event is about to be signed.
  * Runs all signing-related checks.
  */
-export function signing(
-    event: NDKEvent,
-    error: ErrorFn,
-    warn: WarnFn,
-    replyEvents: WeakSet<NDKEvent>,
-): void {
+export function signing(event: NDKEvent, error: ErrorFn, warn: WarnFn, replyEvents: WeakSet<NDKEvent>): void {
     checkMissingKind(event, error);
     checkContentIsObject(event, error);
     checkCreatedAtMilliseconds(event, error);
     checkInvalidPTags(event, error);
     checkInvalidETags(event, error);
+    checkHashtagsWithPrefix(event, error);
     checkManualReplyMarkers(event, warn, replyEvents);
 }

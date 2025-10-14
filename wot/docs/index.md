@@ -226,11 +226,11 @@ rankByWoT(wot, events, { algorithm: "followers" });
 
 ## Integration with Reactive Frameworks
 
-Use with `ndk-svelte5` or `ndk-hooks` for reactive WOT views:
+Use with `svelte` or `ndk-hooks` for reactive WOT views:
 
 ### Svelte 5 (coming soon)
 ```typescript
-import { wotView } from '@nostr-dev-kit/ndk-svelte5';
+import { wotView } from '@nostr-dev-kit/svelte';
 
 const view = wotView(wot, events, {
   maxDepth: $state(2),

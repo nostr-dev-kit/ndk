@@ -307,9 +307,23 @@ export const migrations = [
                     event TEXT NOT NULL,
                     decrypted_at INTEGER NOT NULL
                 );
-                
-                CREATE INDEX IF NOT EXISTS idx_decrypted_events_event_id 
+
+                CREATE INDEX IF NOT EXISTS idx_decrypted_events_event_id
                 ON decrypted_events (event_id);
+            `);
+        },
+    },
+
+    {
+        version: 16,
+        up: (db: SQLite.SQLiteDatabase) => {
+            // Create a new table for caching NIP-05 verification results
+            db.execSync(`
+                CREATE TABLE IF NOT EXISTS nip05 (
+                    nip05 TEXT PRIMARY KEY,
+                    profile TEXT,
+                    fetched_at INTEGER NOT NULL
+                );
             `);
         },
     },

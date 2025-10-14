@@ -21,7 +21,7 @@ export default defineConfig({
             { text: "Home", link: "/" },
             // { text: "API Reference", link: "/api/", target: "_blank" },
             // { text: "Cookbook", link: "/cookbook/" },
-            { text: "Snippets", link: "/core/docs/snippets/" },
+            { text: "Snippets", link: "/docs/snippets.md" },
             { text: "Wiki", link: "https://wikifreedia.xyz/?c=NDK", target: "_blank" },
         ],
 
@@ -40,9 +40,9 @@ export default defineConfig({
                 collapsed: false,
                 items: [
                     { text: "Events", link: "/core/docs/fundamentals/events" },
+                    { text: "Publishing", link: "/core/docs/fundamentals/publishing" },
                     { text: "Connecting", link: "/core/docs/fundamentals/connecting" },
                     { text: "Signers", link: "/core/docs/fundamentals/signers" },
-                    { text: "Publishing", link: "/core/docs/tutorial/publishing" },
                     { text: "Zaps", link: "/core/docs/tutorial/zaps" },
                     { text: "Local-first", link: "/core/docs/tutorial/local-first" },
                     {

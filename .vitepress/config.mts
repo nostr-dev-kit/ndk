@@ -14,29 +14,6 @@ export default defineConfig({
     },
     rewrites: {
         'docs/:slug.md': ':slug.md',
-        'cache-dexie/:slug.md': 'cache/dexie/:slug.md',
-        'cache-memory/:slug.md': 'cache/memory/:slug.md',
-        'cache-nostr/:slug.md': 'cache/nostr/:slug.md',
-        'cache-redis/:slug.md': 'cache/redis/:slug.md',
-        'cache-sqlite/:slug.md': 'cache/sqlite/:slug.md',
-        'cache-sqlite-wasm/:slug.md': 'cache/sqlite-wasm/:slug.md',
-        'cache-sqlite-wasm/docs/:slug.md': 'cache/sqlite-wasm/:slug.md',
-        'core/docs/:slug*': 'core/:slug*',
-        'core/docs/:subdir/:slug*': 'core/:subdir/:slug*',
-        'sync/docs/:slug*': 'sync/:slug*',
-        'blossom/:slug.md': 'blossom/:slug.md',
-        'blossom/docs/:slug*': 'blossom/:slug*',
-        'mobile/:slug.md': 'mobile/:slug.md',
-        'mobile/docs/:slug*': 'mobile/:slug*',
-        'sessions/:slug.md': 'sessions/:slug.md',
-        'sessions/docs/:slug*': 'sessions/:slug*',
-        'wallet/:slug.md': 'wallet/:slug.md',
-        'wallet/docs/:slug*': 'wallet/docs/:slug*',
-        'react/:slug.md': 'react/:slug.md',
-        'react/docs/:slug*': 'react/:slug*',
-        'svelte/:slug.md': 'svelte/:slug.md',
-        'svelte/docs/:slug*': 'svelte/:slug*',
-        'wot/:slug.md': 'wot/:slug.md'
     },
     themeConfig: {
         // https://vitepress.dev/reference/default-theme-config
@@ -44,7 +21,7 @@ export default defineConfig({
             { text: "Home", link: "/" },
             // { text: "API Reference", link: "/api/", target: "_blank" },
             // { text: "Cookbook", link: "/cookbook/" },
-            { text: "Snippets", link: "/core/snippets/" },
+            { text: "Snippets", link: "/core/docs/snippets/" },
             { text: "Wiki", link: "https://wikifreedia.xyz/?c=NDK", target: "_blank" },
         ],
 
@@ -52,9 +29,9 @@ export default defineConfig({
             {
                 text: "Getting Started",
                 items: [
-                    { text: "Introduction", link: "/core/getting-started/introduction" },
-                    { text: "Usage", link: "/core/getting-started/usage" },
-                    { text: "Debugging", link: "/core/getting-started/debugging" },
+                    { text: "Introduction", link: "/core/docs/getting-started/introduction" },
+                    { text: "Usage", link: "/core/docs/getting-started/usage" },
+                    { text: "Debugging", link: "/core/docs/getting-started/debugging" },
                     { text: "Changelog", link: "/docs/changelogs.md" },
                 ],
             },
@@ -62,16 +39,17 @@ export default defineConfig({
                 text: "Fundamentals",
                 collapsed: false,
                 items: [
-                    { text: "Connecting", link: "/core/fundamentals/connecting" },
-                    { text: "Signers", link: "/core/getting-started/signers" },
-                    { text: "Publishing", link: "/core/tutorial/publishing" },
-                    { text: "Zaps", link: "/core/tutorial/zaps" },
-                    { text: "Local-first", link: "/core/tutorial/local-first" },
+                    { text: "Events", link: "/core/docs/fundamentals/events" },
+                    { text: "Connecting", link: "/core/docs/fundamentals/connecting" },
+                    { text: "Signers", link: "/core/docs/fundamentals/signers" },
+                    { text: "Publishing", link: "/core/docs/tutorial/publishing" },
+                    { text: "Zaps", link: "/core/docs/tutorial/zaps" },
+                    { text: "Local-first", link: "/core/docs/tutorial/local-first" },
                     {
                         text: "Subscription Management",
-                        link: "/core/tutorial/subscription-management",
+                        link: "/core/docs/tutorial/subscription-management",
                     },
-                    { text: "Mute Filtering", link: "/core/tutorial/mute-filtering" },
+                    { text: "Mute Filtering", link: "/core/docs/tutorial/mute-filtering" },
                 ],
             },
             {
@@ -155,27 +133,27 @@ export default defineConfig({
                 items: [
                     {
                         text: "Signer Persistence",
-                        link: "/core/tutorial/signer-persistence"
+                        link: "/core/docs/tutorial/signer-persistence"
                     },
                     {
                         text: "Speed / Performance",
-                        link: "/core/tutorial/speed"
+                        link: "/core/docs/tutorial/speed"
                     },
                     {
                         text: "AI Guardrails",
-                        link: "/core/advanced/ai-guardrails"
+                        link: "/core/docs/advanced/ai-guardrails"
                     },
                     {
                         text: "Subscription Lifecycle",
-                        link: "/core/advanced/subscription-internals"
+                        link: "/core/docs/advanced/subscription-internals"
                     },
                     {
                         text: "Event Class Registration",
-                        link: "/core/advanced/event-class-registration"
+                        link: "/core/docs/advanced/event-class-registration"
                     },
                     {
                         text: "Relay Metadata Caching",
-                        link: "/core/advanced/relay-metadata-caching"
+                        link: "/core/docs/advanced/relay-metadata-caching"
                     },
                     {
                         text: "Sync & Negentropy",

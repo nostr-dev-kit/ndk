@@ -40,6 +40,6 @@ await ndk.connect();
 Make sure to wait for the `connect()` promise to resolve before using NDK after which
 you can start interacting with relays.
 
-Different ways to connect to relays are explained in the [connecting](/core/fundamentals/connecting) section.
+Different ways to connect to relays are explained in the [connecting](/core/docs/fundamentals/connecting.md) section.
 
 

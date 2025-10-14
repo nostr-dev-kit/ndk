@@ -182,11 +182,13 @@ export class NDKSync {
         }
 
         // Fallback to fetchEvents when negentropy not supported
-        const events = await this.ndk.fetchEvents(filters, {
-            relaySet: new NDKRelaySet(new Set([relay]), this.ndk),
-            subId: "sync-fetch-fallback",
-            groupable: false,
-        });
+        const events = await this.ndk
+            .guardrailOff('fetch-events-usage')
+            .fetchEvents(filters, {
+                relaySet: new NDKRelaySet(new Set([relay]), this.ndk),
+                subId: "sync-fetch-fallback",
+                groupable: false,
+            });
 
         // Convert Set<NDKEvent> to NDKSyncResult format
         return {

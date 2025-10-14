@@ -55,7 +55,7 @@ export default defineConfig({
                     { text: "Introduction", link: "/core/getting-started/introduction" },
                     { text: "Usage", link: "/core/getting-started/usage" },
                     { text: "Debugging", link: "/core/getting-started/debugging" },
-
+                    { text: "Changelog", link: "/docs/changelogs.md" },
                 ],
             },
             {
@@ -102,6 +102,7 @@ export default defineConfig({
                         link: "/svelte/README",
                         items: [
                             { text: "Blossom", link: "/svelte/blossom-upload" },
+                            { text: "Changelog", link: "/svelte/CHANGELOG.md" },
                         ]
                     },
                     {

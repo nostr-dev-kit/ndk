@@ -6,18 +6,19 @@ We maintain changelogs for each package in the multi-repo. Please consult the in
 
 * [@nostr-dev-kit/core](/core/README.md) -> [CHANGELOG.md](/core/CHANGELOG)
 
-### Extras
+## Extras
+
 * [@nostr-dev-kit/blossom](/blossom/README.html) -> [CHANGELOG.md](/blossom/CHANGELOG)
 * [@nostr-dev-kit/sessions](/sessions/README.html) -> [CHANGELOG.md](/sessions/CHANGELOG)
 * [@nostr-dev-kit/sync](/sync) -> [CHANGELOG.md](/sync/CHANGELOG)
 * [@nostr-dev-kit/wallet](/wallet/README.html) -> [CHANGELOG.md](/wallet/CHANGELOG)
 * [@nostr-dev-kit/wot](/wot/README.html) -> [CHANGELOG.md](/wot/CHANGELOG)
 
-### Framework Integrations
+## Framework Integrations
 * [@nostr-dev-kit/react](/react/README) -> [CHANGELOG.md](/react/CHANGELOG)
 * [@nostr-dev-kit/svelte](/svelte/README) -> [CHANGELOG.md](/svelte/CHANGELOG)
 
-### Cache Adapters
+## Cache Adapters
 
 * [@nostr-dev-kit/cache-memory](/cache/memory/README.html) -> [CHANGELOG.md](/cache-memory/CHANGELOG)
 * [@nostr-dev-kit/cache-nostr](/cache/nostr/README.html) -> [CHANGELOG.md](/cache-nostr/CHANGELOG)

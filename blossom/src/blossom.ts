@@ -112,16 +112,28 @@ export class NDKBlossom {
     }
 
     public async getServerList(user?: NDKUser): Promise<NDKBlossomList | undefined> {
-        if (this._serverList) return this._serverList;
+        if (this._serverList) {
+            this.logger.debug(`Using cached server list with ${this._serverList.servers.length} servers`);
+            return this._serverList;
+        }
 
         user ??= this.ndk.activeUser;
-        if (!user) throw new NDKBlossomError("No user available to fetch server list", "NO_SIGNER");
+        if (!user) {
+            this.logger.error("No user available to fetch server list");
+            throw new NDKBlossomError("No user available to fetch server list", "NO_SIGNER");
+        }
 
+        this.logger.debug(`Fetching server list for user ${user.pubkey}`);
         const filter = { kinds: NDKBlossomList.kinds, authors: [user.pubkey] };
         const event = await this.ndk.fetchEvent(filter);
-        if (!event) return undefined;
+
+        if (!event) {
+            this.logger.warn(`No blossom server list event found for user ${user.pubkey}`);
+            return undefined;
+        }
 
         this._serverList = wrapEvent(event) as NDKBlossomList;
+        this.logger.debug(`Found server list with ${this._serverList.servers.length} servers: ${this._serverList.servers.join(', ')}`);
         return this._serverList;
     }
 

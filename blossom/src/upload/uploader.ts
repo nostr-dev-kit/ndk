@@ -187,6 +187,12 @@ export async function uploadFile(
     options: BlossomUploadOptions = {},
 ): Promise<NDKImetaTag> {
     logger.debug(`Starting file upload`, { fileName: file.name, fileType: file.type, fileSize: file.size });
+    logger.debug(`Upload options:`, {
+        hasServer: !!options.server,
+        hasFallbackServer: !!options.fallbackServer,
+        fallbackServer: options.fallbackServer,
+        allOptions: options
+    });
 
     // If a specific server is provided, use only that server
     if (options.server) {
@@ -258,8 +264,35 @@ export async function uploadFile(
     }
 
     // If we get here, all servers failed
+    const errorDetails = errors.map((e) => {
+        const err = e.error;
+        let details = `${e.serverUrl}: ${err.message}`;
+
+        if (err instanceof NDKBlossomServerError) {
+            details += ` (status: ${err.status}, code: ${err.code})`;
+            if (err.cause) {
+                details += ` - ${err.cause.message}`;
+            }
+        } else if (err instanceof NDKBlossomAuthError) {
+            details += ` (auth error, code: ${err.code})`;
+        } else if (err instanceof NDKBlossomUploadError) {
+            details += ` (code: ${err.code})`;
+            if (err.cause) {
+                details += ` - cause: ${err.cause.message}`;
+            }
+        }
+
+        return details;
+    });
+
+    const errorMessage = serverUrls.length === 0
+        ? `No blossom servers configured. Please add servers to your profile or provide a fallbackServer. ${options.fallbackServer ? `Fallback server also failed: ${errorDetails[0] || 'unknown error'}` : ''}`
+        : `Upload failed on all ${serverUrls.length} configured server(s)${options.fallbackServer ? ' and fallback server' : ''}:\n${errorDetails.join('\n')}`;
+
+    logger.error(errorMessage);
+
     throw new NDKBlossomUploadError(
-        `Upload failed on all servers: ${errors.map((e) => `${e.serverUrl}: ${e.error.message}`).join(", ")}`,
+        errorMessage,
         ErrorCodes.ALL_SERVERS_FAILED,
     );
 }

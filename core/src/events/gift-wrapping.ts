@@ -14,11 +14,17 @@ export type GiftWrapParams = {
 
 /**
  * Instantiate a new (Nip59 gift wrapped) NDKEvent from any NDKEvent
- * @param event
- * @param recipient
- * @param signer
- * @param params
- * @returns
+ *
+ * NIP-17 AI Guardrails - Common Mistakes to Avoid:
+ * ❌ DON'T sign the rumor event before passing it to giftWrap (it should be unsigned)
+ * ❌ DON'T use the wrapper's created_at for display - use the rumor's created_at
+ * ❌ DON'T forget to publish to BOTH sender and recipient relays (per NIP-17)
+ *
+ * @param event - The rumor event to wrap (will auto-set pubkey if missing)
+ * @param recipient - The recipient's NDKUser
+ * @param signer - The signer (defaults to event.ndk.signer)
+ * @param params - Optional parameters (scheme, rumorKind, wrapTags)
+ * @returns The gift-wrapped event (kind 1059)
  */
 export async function giftWrap(
     event: NDKEvent,
@@ -35,6 +41,18 @@ export async function giftWrap(
     if (!_signer) throw new Error("no signer");
     if (!_signer.encryptionEnabled || !_signer.encryptionEnabled(params.scheme))
         throw new Error("signer is not able to giftWrap");
+
+    // Auto-set pubkey if not present
+    if (!event.pubkey) {
+        const sender = await _signer.user();
+        event.pubkey = sender.pubkey;
+    }
+
+    // AI Guardrail: Warn if the rumor is already signed
+    if (event.sig) {
+        console.warn("⚠️ NIP-17 Warning: Rumor event should not be signed. The signature will be removed during gift wrapping.");
+    }
+
     const rumor = getRumorEvent(event, params?.rumorKind);
     const seal = await getSealEvent(rumor, recipient, _signer, params.scheme);
     const wrap = await getWrapEvent(seal, recipient, params);

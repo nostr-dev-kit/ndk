@@ -94,7 +94,7 @@
 <div class="content-renderer {className}">
   {#each segments as segment, index (index)}
     {#if segment.type === 'text'}
-      <span class="whitespace-pre-wrap break-words">{segment.content}</span>
+      <span class="whitespace-pre-wrap break-words">{segment.content.trim()}</span>
     {:else if segment.type === 'emoji'}
       <img
         src={segment.data as string}

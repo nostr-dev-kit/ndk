@@ -55,11 +55,11 @@ jobs:
                 ./prepare-docs.sh
             - name: Generate TypeDoc API documentation
               run: |
-                cd ndk-core
+                cd core
                 npx typedoc --options typedoc.json
                 cd ..
                 mkdir -p docs/.vitepress/dist/api
-                cp -r ndk-core/typedoc-docs/* docs/.vitepress/dist/api/
+                cp -r core/typedoc-docs/* docs/.vitepress/dist/api/
             - name: Build VitePress site
               run: |
                 cd docs

@@ -2,7 +2,7 @@
 set -e # Exit immediately if a command exits with a non-zero status.
 
 DOCS_DIR="docs"
-CORE_DIR="ndk-core"
+CORE_DIR="core"
 DEXIE_DIR="cache-dexie"
 MEMORY_DIR="cache-memory"
 NOSTRCACHE_DIR="cache-nostr"

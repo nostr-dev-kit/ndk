@@ -21,7 +21,7 @@
 
 | Package | Version | Description |
 |---------|---------|-------------|
-| [`@nostr-dev-kit/ndk`](./ndk-core) | ![npm](https://img.shields.io/npm/v/@nostr-dev-kit/ndk) | Core NDK library with event handling, subscriptions, and relay management |
+| [`@nostr-dev-kit/ndk`](./core) | ![npm](https://img.shields.io/npm/v/@nostr-dev-kit/ndk) | Core NDK library with event handling, subscriptions, and relay management |
 
 ### Framework Integration
 

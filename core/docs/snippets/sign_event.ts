@@ -6,4 +6,4 @@ const ndk = new NDK({ signer: nip07signer });
 const event = new NDKEvent(ndk);
 event.kind = 1;
 event.content = "Hello world";
-await event.sign();
+await event.sign(); // [!code focus]

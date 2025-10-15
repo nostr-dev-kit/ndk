@@ -155,8 +155,14 @@ Once the signer is initialized, you can use it to sign and [publish](/core/docs/
 const ndkEvent = new NDKEvent(ndk);
 ndkEvent.kind = 1;
 ndkEvent.content = "Hello, world!";
-await ndkEvent.sign();
+await ndkEvent.sign(); // [!code focus]
 ```
+
+## Combining signers
+
+You can specify the use of a different signer to sign with different pubkeys.
+
+<<< @/core/docs/snippets/sign_event_with_other_signers.ts
 
 ## Read Public key
 

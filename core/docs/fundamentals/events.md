@@ -37,23 +37,12 @@ of the [NIP-51](https://nostr-nips.com/nip-51) specification `kind:10015` events
 
 ## Signing Events
 
-> [!NOTE]
-> Please note that the behavior of `.sign()` is assuming you have a valid signer instance.  
-> More about the different signers in the [signer documentation](/core/docs/fundamentals/signers.md).
-
-### Default Signer
-
 NDK uses the default signer `ndk.signer` to sign events.
 
 <<< @/core/docs/snippets/sign_event.ts
 
 Read more about signers in [the signer documentation](/core/docs/fundamentals/signers.md)
 
-### Other signers
-
-You can specify the use of a different signer to sign with different pubkeys.
-
-<<< @/core/docs/snippets/sign_event_with_other_signers.ts
 
 ## More examples
 

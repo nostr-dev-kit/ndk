@@ -1,11 +1,4 @@
-# Signing events with different signers
-
-NDK uses the default signer `ndk.signer` to sign events.
-
-But you can specify the use of a different signer to sign with different pubkeys.
-
-```ts
-import { NDKPrivateKeySigner, NDKEvent } from "@nostr-dev-kit/ndk";
+import { NDKEvent, NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
 
 const signer1 = NDKPrivateKeySigner.generate();
 const pubkey1 = signer1.pubkey;
@@ -26,4 +19,3 @@ event2.content = "Hello world";
 await event2.sign(signer2);
 
 event2.pubkey === pubkey2; // true
-```

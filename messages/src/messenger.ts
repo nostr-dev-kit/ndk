@@ -4,6 +4,7 @@ import { giftUnwrap } from "@nostr-dev-kit/ndk";
 import { NDKConversation } from "./conversation";
 import { NIP17Protocol } from "./protocols/nip17";
 import { MemoryAdapter } from "./storage/memory";
+import { CacheModuleStorage } from "./storage/cache-module";
 import type {
     MessengerOptions,
     StorageAdapter,
@@ -28,11 +29,14 @@ export class NDKMessenger extends EventEmitter {
     constructor(ndk: NDK, options?: MessengerOptions) {
         super();
         this.ndk = ndk;
-        this.storage = options?.storage || new MemoryAdapter();
 
         if (!ndk.signer) {
             throw new Error("NDK must have a signer configured");
         }
+
+        // Auto-detect cache adapter if no storage provided
+        // Note: CacheModuleStorage requires the pubkey, which we'll get during start()
+        this.storage = options?.storage || new MemoryAdapter();
 
         this.nip17 = new NIP17Protocol(ndk, ndk.signer);
 
@@ -53,6 +57,14 @@ export class NDKMessenger extends EventEmitter {
 
         const user = await this.ndk.signer.user();
         this.myPubkey = user.pubkey;
+
+        // Upgrade to cache-based storage if NDK has a cache adapter and we're using MemoryAdapter
+        if (
+            this.storage instanceof MemoryAdapter &&
+            this.ndk.cacheAdapter?.registerModule
+        ) {
+            this.storage = new CacheModuleStorage(this.ndk.cacheAdapter, this.myPubkey);
+        }
 
         // Load existing conversations from storage
         await this.loadConversations();

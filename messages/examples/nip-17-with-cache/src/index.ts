@@ -11,7 +11,7 @@ import 'fake-indexeddb/auto';
 
 import NDK, { NDKPrivateKeySigner } from '@nostr-dev-kit/ndk';
 import NDKCacheAdapterDexie from '@nostr-dev-kit/cache-dexie';
-import { NDKMessenger, CacheModuleStorage } from '@nostr-dev-kit/messages';
+import { NDKMessenger } from '@nostr-dev-kit/messages';
 import { Command } from 'commander';
 import chalk from 'chalk';
 import { readFileSync } from 'fs';
@@ -58,10 +58,8 @@ async function setupNDK() {
 
     await ndk.connect();
 
-    // Create messenger with cache-based storage
-    const messenger = new NDKMessenger(ndk, {
-        storage: new CacheModuleStorage(cacheAdapter, ndk.activeUser!.pubkey),
-    });
+    // Create messenger - it will automatically use the cache adapter!
+    const messenger = new NDKMessenger(ndk);
 
     await messenger.start();
 

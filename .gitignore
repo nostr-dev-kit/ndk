@@ -25,6 +25,7 @@ _local_
 docs/.vitepress/cache
 docs/.vitepress/dist
 .ngit
+.idea
 **/.repomix-output.txt
 cursor-tools.config.json
 coverage

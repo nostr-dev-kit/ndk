@@ -1,17 +1,41 @@
 # Code Snippets
 
-This section contains a growing collection of code snippets demonstrating how to perform specific tasks with NDK. Each snippet is focused on a single, targeted use case to help you quickly find solutions for common implementation needs.
+This section contains a growing collection of code snippets demonstrating how to perform specific tasks with NDK. 
+Each snippet is focused on a single, targeted use case to help you find solutions for common implementation needs.
 
-## Categories
+Snippets are grouped by category. Some of them are listed in more than one category.
 
-Snippets are organized into the following categories:
+## Events
+
+### Creating a basic event
+
+<<< @/core/docs/snippets/create_event.ts
+
+### Tagging users
+
+<<< @/core/docs/snippets/tag_user.ts
+
+### Signing events
+
+<<< @/core/docs/snippets/sign_event.ts
+
+## Signers
+
+### Signing events
+
+<<< @/core/docs/snippets/sign_event.ts
+
+### Different signers
+
+<<< @/core/docs/snippets/sign_event_with_other_signers.ts
+
+
+## Not migrated yet
+
 
 - [User](./user/)
     - [Generate Keys](./user/generate-keys.md) - Generate a new key pair and obtain all formats (private key, public key, nsec, npub)
     - [Get Profile](./user/get-profile.md) - Fetch and handle user profile information
-- [Event](./event/)
-    - [Basic](./event/basic.md) - Generate a basic Nostr event
-    - [Tagging Users and Events](./event/tagging-users-and-events.md) - Add tags to mention users and events
 - [Mobile](./mobile/)
     - [Basics]
         - [Initialize NDK + SQLite cache](./mobile/ndk/initializing-ndk.md) - Set up NDK with SQLite caching for mobile apps

@@ -127,17 +127,24 @@ For more detailed documentation on specific components:
 - [Nutzap Monitor State Store](./docs/nutzap-monitor-state-store.md)
 - [NWC Client](./docs/nwc-client.md)
 
-## Installation
+## Install
 
-```bash
-npm install @nostr-dev-kit/ndk-wallet
+::: code-group
+
+```sh [npm]
+npm i @nostr-dev-kit/ndk-wallet
 ```
 
-## Requirements
+```sh [pnpm]
+pnpm add @nostr-dev-kit/ndk-wallet
+```
 
-- `@nostr-dev-kit/ndk`: Peer dependency
-- Modern browser or Node.js environment
+```sh [yarn]
+yarn add @nostr-dev-kit/ndk-wallet
+```
 
-## License
+```sh [bun]
+bun add @nostr-dev-kit/ndk-wallet
+```
+:::
 
-MIT

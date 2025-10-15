@@ -29,7 +29,7 @@
         }
     },
     "files": {
-        "includes": ["**/*.{js,ts,jsx,tsx,json}"],
+        "includes": ["**/*.{js,ts,jsx,tsx,json}", "!/core/docs/snippets"],
         "ignoreUnknown": true
     },
     "vcs": {

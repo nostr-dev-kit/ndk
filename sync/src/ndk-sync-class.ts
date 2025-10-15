@@ -11,7 +11,7 @@ import { TIMEOUTS } from "./constants.js";
 import { ndkSync } from "./ndk-sync.js";
 import type { SyncAndSubscribeOptions } from "./sync-subscribe.js";
 import type { NDKSyncOptions, NDKSyncResult } from "./types.js";
-import { getRelayCapabilities, supportsNegentropy } from "./utils/relay-capabilities.js";
+import { supportsNegentropy } from "./utils/relay-capabilities.js";
 
 /**
  * Sync package metadata stored in relay cache

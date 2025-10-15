@@ -1,4 +1,3 @@
-import type { NostrEvent } from "nostr-tools";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { NDKEvent } from "../events";
 import { NDKCashuMintList } from "../events/kinds/nutzap/mint-list";

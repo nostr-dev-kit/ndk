@@ -13,12 +13,12 @@ export default defineConfig({
         }
     },
     rewrites: {
-        'docs/:slug.md': ':slug.md',
+        'docs/index.md': 'index.md',
     },
     themeConfig: {
         // https://vitepress.dev/reference/default-theme-config
         nav: [
-            { text: "Home", link: "/" },
+            { text: "Home", link: "/docs/index.md" },
             // { text: "API Reference", link: "/api/", target: "_blank" },
             // { text: "Cookbook", link: "/cookbook/" },
             { text: "Snippets", link: "/docs/snippets.md" },
@@ -40,9 +40,9 @@ export default defineConfig({
                 collapsed: false,
                 items: [
                     { text: "Events", link: "/core/docs/fundamentals/events" },
+                    { text: "Signers", link: "/core/docs/fundamentals/signers" },
                     { text: "Publishing", link: "/core/docs/fundamentals/publishing" },
                     { text: "Connecting", link: "/core/docs/fundamentals/connecting" },
-                    { text: "Signers", link: "/core/docs/fundamentals/signers" },
                     { text: "Zaps", link: "/core/docs/tutorial/zaps" },
                     { text: "Local-first", link: "/core/docs/tutorial/local-first" },
                     {

@@ -1,0 +1,447 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Tahoma', 'Verdana', sans-serif;
+  font-size: 11px;
+  background: linear-gradient(180deg, #c6d9f1 0%, #f5f9ff 100%);
+  overflow: hidden;
+  height: 100vh;
+}
+
+#app {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* ICQ Window Styles */
+.icq-window {
+  background: #eff3f6;
+  border: 1px solid #7c95c1;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  font-size: 11px;
+  width: 280px;
+  height: 500px;
+}
+
+.icq-window-large {
+  width: 650px;
+  height: 500px;
+}
+
+.icq-titlebar {
+  background: linear-gradient(180deg, #4584d3 0%, #1c5cb3 100%);
+  color: white;
+  padding: 4px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: move;
+  font-weight: bold;
+  font-size: 11px;
+  border-bottom: 1px solid #1a4d8f;
+}
+
+.icq-titlebar-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 4px;
+}
+
+.icq-titlebar-text {
+  flex: 1;
+}
+
+.icq-titlebar-buttons {
+  display: flex;
+  gap: 2px;
+}
+
+.icq-titlebar-button {
+  width: 16px;
+  height: 14px;
+  background: #eff3f6;
+  border: 1px solid #7c95c1;
+  border-radius: 2px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  color: #000;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.icq-titlebar-button:hover {
+  background: #fff;
+}
+
+.icq-titlebar-button:active {
+  background: #d0d0d0;
+}
+
+/* Login Screen */
+.icq-login {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: linear-gradient(180deg, #ffffff 0%, #eff3f6 100%);
+}
+
+.icq-logo {
+  font-size: 32px;
+  font-weight: bold;
+  color: #1c5cb3;
+  margin-bottom: 10px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.icq-login-form {
+  width: 100%;
+  max-width: 220px;
+}
+
+.icq-input-group {
+  margin-bottom: 12px;
+}
+
+.icq-label {
+  display: block;
+  margin-bottom: 4px;
+  color: #333;
+  font-weight: bold;
+}
+
+.icq-input {
+  width: 100%;
+  padding: 4px 6px;
+  border: 1px solid #7c95c1;
+  background: white;
+  font-family: 'Tahoma', sans-serif;
+  font-size: 11px;
+}
+
+.icq-input:focus {
+  outline: 1px solid #4584d3;
+}
+
+.icq-button {
+  width: 100%;
+  padding: 6px 12px;
+  background: linear-gradient(180deg, #f0f4f8 0%, #d8e2ed 100%);
+  border: 1px solid #7c95c1;
+  border-radius: 2px;
+  cursor: pointer;
+  font-family: 'Tahoma', sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  color: #000;
+}
+
+.icq-button:hover {
+  background: linear-gradient(180deg, #ffffff 0%, #e8f0f8 100%);
+}
+
+.icq-button:active {
+  background: linear-gradient(180deg, #d0dae8 0%, #c0ccd8 100%);
+}
+
+.icq-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Main Interface */
+.icq-main {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* Buddy List */
+.icq-buddy-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: white;
+}
+
+.icq-status-bar {
+  background: linear-gradient(180deg, #f0f4f8 0%, #e0e8f0 100%);
+  border-bottom: 1px solid #b8c8d8;
+  padding: 6px 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icq-status-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid #666;
+}
+
+.icq-status-indicator.online {
+  background: #00ff00;
+  box-shadow: 0 0 4px #00ff00;
+}
+
+.icq-status-indicator.away {
+  background: #ffff00;
+}
+
+.icq-status-indicator.offline {
+  background: #cccccc;
+}
+
+.icq-user-info {
+  flex: 1;
+  font-weight: bold;
+}
+
+.icq-contacts-header {
+  background: linear-gradient(180deg, #e8f0f8 0%, #d0dae8 100%);
+  border-bottom: 1px solid #b8c8d8;
+  padding: 4px 8px;
+  font-weight: bold;
+  color: #333;
+}
+
+.icq-contacts-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.icq-contact {
+  padding: 6px 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  border-bottom: 1px solid #e8e8e8;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+}
+
+.icq-contact:hover {
+  background: #f0f8ff;
+}
+
+.icq-contact.selected {
+  background: #4584d3;
+  color: white;
+}
+
+.icq-contact-status {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid #666;
+  flex-shrink: 0;
+}
+
+.icq-contact-status.online {
+  background: #00ff00;
+}
+
+.icq-contact-status.away {
+  background: #ffff00;
+}
+
+.icq-contact-status.offline {
+  background: #cccccc;
+}
+
+.icq-contact-name {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.icq-contact-unread {
+  background: #ff0000;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 9px;
+  font-weight: bold;
+}
+
+/* Chat Window */
+.icq-chat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-left: 1px solid #b8c8d8;
+}
+
+.icq-chat-header {
+  background: linear-gradient(180deg, #e8f0f8 0%, #d0dae8 100%);
+  border-bottom: 1px solid #b8c8d8;
+  padding: 6px 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icq-chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+  background: white;
+}
+
+.icq-message {
+  margin-bottom: 12px;
+}
+
+.icq-message-sender {
+  font-weight: bold;
+  color: #1c5cb3;
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.icq-message-time {
+  color: #999;
+  font-size: 9px;
+  font-weight: normal;
+}
+
+.icq-message-content {
+  padding: 4px 8px;
+  background: #f0f8ff;
+  border: 1px solid #d0e4f5;
+  border-radius: 2px;
+  word-wrap: break-word;
+}
+
+.icq-message.me .icq-message-sender {
+  color: #d35d00;
+}
+
+.icq-message.me .icq-message-content {
+  background: #fff8e8;
+  border-color: #f5e8c8;
+}
+
+.icq-chat-input-area {
+  border-top: 1px solid #b8c8d8;
+  background: #f8f8f8;
+  padding: 8px;
+}
+
+.icq-chat-input {
+  width: 100%;
+  min-height: 60px;
+  padding: 6px 8px;
+  border: 1px solid #b8c8d8;
+  background: white;
+  font-family: 'Tahoma', sans-serif;
+  font-size: 11px;
+  resize: vertical;
+}
+
+.icq-chat-input:focus {
+  outline: 1px solid #4584d3;
+}
+
+.icq-chat-buttons {
+  margin-top: 6px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.icq-button-small {
+  padding: 4px 12px;
+  background: linear-gradient(180deg, #f0f4f8 0%, #d8e2ed 100%);
+  border: 1px solid #7c95c1;
+  border-radius: 2px;
+  cursor: pointer;
+  font-family: 'Tahoma', sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  color: #000;
+}
+
+.icq-button-small:hover {
+  background: linear-gradient(180deg, #ffffff 0%, #e8f0f8 100%);
+}
+
+.icq-button-small:active {
+  background: linear-gradient(180deg, #d0dae8 0%, #c0ccd8 100%);
+}
+
+/* Status message */
+.icq-status-message {
+  text-align: center;
+  color: #999;
+  font-style: italic;
+  padding: 20px;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 16px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-left: 1px solid #d0d0d0;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #f0f4f8 0%, #d8e2ed 100%);
+  border: 1px solid #7c95c1;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #ffffff 0%, #e8f0f8 100%);
+}
+
+/* Loading spinner */
+.icq-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  color: #666;
+}
+
+.icq-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #d0d0d0;
+  border-top-color: #4584d3;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

@@ -1,0 +1,34 @@
+{
+    "name": "@nostr-dev-kit/nip-17-example",
+    "version": "0.0.1",
+    "private": true,
+    "description": "NIP-17 Private Direct Messages CLI example for NDK",
+    "type": "module",
+    "scripts": {
+        "dev": "tsx src/index.ts",
+        "build": "tsup src/index.ts --format esm --dts",
+        "start": "node dist/index.js"
+    },
+    "keywords": [
+        "nostr",
+        "ndk",
+        "nip-17",
+        "gift-wrap",
+        "private-messages"
+    ],
+    "author": "Nostr Dev Kit Contributors",
+    "license": "MIT",
+    "dependencies": {
+        "@nostr-dev-kit/ndk": "workspace:*",
+        "nostr-tools": "^2.17.0",
+        "chalk": "^5.3.0",
+        "cli-table3": "^0.6.3",
+        "ora": "^8.0.1"
+    },
+    "devDependencies": {
+        "@types/node": "^20.0.0",
+        "tsup": "^8.0.0",
+        "tsx": "^4.7.0",
+        "typescript": "^5.3.3"
+    }
+}

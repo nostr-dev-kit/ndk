@@ -12,6 +12,177 @@ export type NDKCacheEntry<T> = T & {
     cachedAt?: number;
 };
 
+/**
+ * Cache module definition for packages to extend the cache with their own data structures.
+ * Packages define their schemas, indexes, and migrations.
+ */
+export interface CacheModuleDefinition {
+    /**
+     * Unique namespace for this module (e.g., "messages", "wallet", "sync")
+     */
+    namespace: string;
+
+    /**
+     * Current version of this module's schema
+     */
+    version: number;
+
+    /**
+     * Collection definitions for this module
+     */
+    collections: {
+        [name: string]: {
+            /**
+             * Primary key field name
+             */
+            primaryKey: string;
+
+            /**
+             * Fields to create indexes on for efficient querying
+             */
+            indexes?: string[];
+
+            /**
+             * Optional schema definition (for validation or TypeScript generation)
+             */
+            schema?: Record<string, any>;
+
+            /**
+             * Compound indexes for multi-field queries
+             */
+            compoundIndexes?: Array<string[]>;
+        };
+    };
+
+    /**
+     * Migration functions keyed by version number
+     * Version 1 is the initial setup, 2+ are upgrades
+     */
+    migrations: {
+        [version: number]: (adapter: CacheModuleMigrationContext) => Promise<void>;
+    };
+}
+
+/**
+ * Migration context passed to module migration functions
+ */
+export interface CacheModuleMigrationContext {
+    /**
+     * Get a collection by name within the module's namespace
+     */
+    getCollection(name: string): Promise<CacheModuleCollection<any>>;
+
+    /**
+     * Create a new collection
+     */
+    createCollection(name: string, definition: CacheModuleDefinition['collections'][string]): Promise<void>;
+
+    /**
+     * Delete a collection
+     */
+    deleteCollection(name: string): Promise<void>;
+
+    /**
+     * Add an index to a collection
+     */
+    addIndex(collection: string, field: string | string[]): Promise<void>;
+
+    /**
+     * Current version being migrated from
+     */
+    fromVersion: number;
+
+    /**
+     * Target version being migrated to
+     */
+    toVersion: number;
+}
+
+/**
+ * Collection interface for module data access
+ */
+export interface CacheModuleCollection<T> {
+    /**
+     * Get an item by its primary key
+     */
+    get(id: string): Promise<T | null>;
+
+    /**
+     * Get multiple items by their primary keys
+     */
+    getMany(ids: string[]): Promise<T[]>;
+
+    /**
+     * Save an item (upsert)
+     */
+    save(item: T): Promise<void>;
+
+    /**
+     * Save multiple items (bulk upsert)
+     */
+    saveMany(items: T[]): Promise<void>;
+
+    /**
+     * Delete an item by its primary key
+     */
+    delete(id: string): Promise<void>;
+
+    /**
+     * Delete multiple items by their primary keys
+     */
+    deleteMany(ids: string[]): Promise<void>;
+
+    /**
+     * Query items by a single field
+     */
+    findBy(field: string, value: any): Promise<T[]>;
+
+    /**
+     * Query items with multiple conditions
+     */
+    where(conditions: Record<string, any>): Promise<T[]>;
+
+    /**
+     * Get all items in the collection
+     */
+    all(): Promise<T[]>;
+
+    /**
+     * Count items matching conditions
+     */
+    count(conditions?: Record<string, any>): Promise<number>;
+
+    /**
+     * Clear all items from the collection
+     */
+    clear(): Promise<void>;
+}
+
+/**
+ * Storage interface for cache modules that bridges to NDKCacheAdapter
+ */
+export interface CacheModuleStorage {
+    /**
+     * Register a cache module with the adapter
+     */
+    registerModule(module: CacheModuleDefinition): Promise<void>;
+
+    /**
+     * Get a collection from a module
+     */
+    getCollection<T>(namespace: string, collection: string): Promise<CacheModuleCollection<T>>;
+
+    /**
+     * Check if a module is registered
+     */
+    hasModule(namespace: string): boolean;
+
+    /**
+     * Get the current version of a module
+     */
+    getModuleVersion(namespace: string): Promise<number>;
+}
+
 export interface NDKCacheAdapter {
     /**
      * Whether this cache adapter is expected to be fast.
@@ -180,6 +351,21 @@ export interface NDKCacheAdapter {
      * @param data The data to cache
      */
     setCacheData?<T>(namespace: string, key: string, data: T): Promise<void>;
+
+    /**
+     * Cache module support - Register a module with its schema and migrations
+     * @param module Module definition with schema, indexes, and migrations
+     * @returns Promise that resolves when the module is registered and migrations are complete
+     */
+    registerModule?(module: CacheModuleDefinition): Promise<void>;
+
+    /**
+     * Cache module support - Get a collection from a registered module
+     * @param namespace Module namespace
+     * @param collection Collection name within the module
+     * @returns Collection interface for data operations
+     */
+    getModuleCollection?<T>(namespace: string, collection: string): Promise<CacheModuleCollection<T>>;
 }
 
 /**

@@ -1,0 +1,26 @@
+{
+  "name": "nip-17-chat-example",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Example NIP-17 chat application using @nostr-dev-kit/messages",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "send": "tsx src/index.ts send",
+    "list": "tsx src/index.ts list",
+    "read": "tsx src/index.ts read",
+    "listen": "tsx src/index.ts listen",
+    "relay-list": "tsx src/index.ts relay-list",
+    "generate-keys": "tsx generate-keys.ts"
+  },
+  "dependencies": {
+    "@nostr-dev-kit/messages": "workspace:*",
+    "@nostr-dev-kit/ndk": "workspace:*",
+    "nostr-tools": "^2.17.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.7.0",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.3"
+  }
+}

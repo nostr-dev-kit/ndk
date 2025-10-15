@@ -732,7 +732,6 @@
 - c83166a: bump
 - 6e16e06: Enhance SQLite adapter to support decrypted events storage and retrieval.
 - import changes
-- df73b9b: add <EventContent> component
 - Updated dependencies [c83166a]
 - Updated dependencies [5ab19ef]
 - Updated dependencies [6e16e06]
@@ -746,7 +745,7 @@
 
 ### Patch Changes
 
-- add <EventContent> component
+- add `EventContent` component
 
 ## 0.4.4
 

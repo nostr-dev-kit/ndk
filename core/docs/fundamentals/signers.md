@@ -1,43 +1,58 @@
 # Signers
 
-NDK uses signers _optionally_ passed in to sign events. Note that it is possible to use NDK without signing events (e.g. [to get someone's profile](https://github.com/nostr-dev-kit/ndk-cli/blob/master/src/commands/profile.ts)).
+All events on the Nostr protocol are signed through a keypair 
+(described in [NIP-01](https://nostr-nips.com/nip-01#events-and-signatures)).
 
-Signing adapters can be passed in when NDK is instantiated or later during runtime.
+In NDK this is taken care of by the `NDKSigner` interface that can be passed in during initialization or later during
+runtime.
 
-### Using a NIP-07 browser extension (e.g. Alby, nos2x)
+## Different Signing Methods
 
-Instatiate NDK with a NIP-07 signer
+### Browser Extensions
+
+A common way to use NDK is to use a browser extension which is described in [NIP-07](https://nostr-nips.com/nip-07). 
+This mechanism allows the user to sign events with a browser extension to not share their private key 
+with the application. 
+
+The most used browser extensions are [Nos2x](https://github.com/fiatjaf/nos2x) and [Alby](https://getalby.com/alby-extension).
 
 ```ts
 // Import the package, NIP-07 signer and NDK event
 import NDK, { NDKEvent, NDKNip07Signer } from "@nostr-dev-kit/ndk";
 
-const nip07signer = new NDKNip07Signer();
-const ndk = new NDK({ signer: nip07signer });
+const signer = new NDKNip07Signer();
+const ndk = new NDK({ signer });
 ```
 
-NDK can now ask for permission, via their NIP-07 extension, to...
+Anytime you call `sign()` or `publish()` on an [NDK Event](/core/docs/fundamentals/events.html) the browser
+extension will prompt the user to sign the event.
 
-**Read the user's public key**
+### Private Key Signer
+
+NDK provides `NDKPrivateKeySigner` for managing in-memory private keys. This is useful for development, testing, or applications that manage keys locally.
+
+> [!WARNING]
+> We strongly recommend not using this in production. Requiring users to share their private key is a security
+> risk and should be avoided in favor of using [a browser extension](/core/docs/fundamentals/signers.html#browser-extensions) 
+> or [a remote signer](/core/docs/fundamentals/signers.html#remote-signer).
+
+The private key signer takes the private key in the `nsec` format.
 
 ```ts
-nip07signer.user().then(async (user) => {
-    if (!!user.npub) {
-        console.log("Permission granted to read their public key:", user.npub);
-    }
-});
+import { NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
+
+// Generate a new private key
+const signer = NDKPrivateKeySigner.generate();
+console.log("nsec:", signer.nsec);
+console.log("npub:", signer.npub);
 ```
 
-**Sign & publish events**
+This library can also [help with generating new keys](/core/docs/fundamentals/signers.html#generate-keys).
 
-```ts
-const ndkEvent = new NDKEvent(ndk);
-ndkEvent.kind = 1;
-ndkEvent.content = "Hello, world!";
-ndkEvent.publish(); // This will trigger the extension to ask the user to confirm signing.
-```
 
-### Using a Remote Signer (NIP-46)
+### Remote Signer
+
+(NIP-46)
 
 #### bunker://
 * Create a `NDKNip46Signer`, optionally providing the local signer if you are restoring a connection that was already generated in your app:
@@ -78,23 +93,6 @@ console.log("Welcome", user.npub);
 
 // if you didn't have a localNsec you should store it for future sessions of your app
 save(signer.localSigner.nsec)
-```
-### Using a Private Key Signer
-
-NDK provides `NDKPrivateKeySigner` for managing in-memory private keys. This is useful for development, testing, or applications that manage keys locally.
-
-#### Basic Usage
-
-```ts
-import { NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
-
-// Generate a new private key
-const signer = NDKPrivateKeySigner.generate();
-console.log("nsec:", signer.nsec);
-console.log("npub:", signer.npub);
-
-// Or load from an existing key
-const signer = new NDKPrivateKeySigner("nsec1...");
 ```
 
 #### Password-Protected Keys (NIP-49)
@@ -148,3 +146,43 @@ const ncryptsec = nip49.encrypt(privateKeyBytes, password);
 // Decrypt to raw bytes
 const decryptedBytes = nip49.decrypt(ncryptsec, password);
 ```
+
+## Sign Events
+
+Once the signer is initialized, you can use it to sign and [publish](/core/docs/fundamentals/publishing.html) events:
+
+```ts
+const ndkEvent = new NDKEvent(ndk);
+ndkEvent.kind = 1;
+ndkEvent.content = "Hello, world!";
+await ndkEvent.sign();
+```
+
+## Read Public key
+
+
+**Read the user's public key**
+
+```ts
+nip07signer.user().then(async (user) => {
+    if (!!user.npub) {
+        console.log("Permission granted to read their public key:", user.npub);
+    }
+});
+```
+
+## Generate Keys
+
+Perhaps the only time we really want you to use the `NDKPrivateKeySigner` is to help you generate new keys as the signer
+provides helper methods to do just that:
+
+```ts
+import { NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
+
+// Generate a new private key
+const signer = NDKPrivateKeySigner.generate();
+console.log("nsec:", signer.nsec);
+console.log("npub:", signer.npub);
+```
+
+

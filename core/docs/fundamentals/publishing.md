@@ -1,5 +1,8 @@
 # Publishing Events
 
+Publishing events means sending them to one or multiple relays as described in 
+[NIP-01](https://nostr-nips.com/nip-01#communication-between-clients-and-relays).
+
 NDK provides easy ways to publish events and manage the status of that event.
 
 > [!NOTE]

@@ -1,6 +1,6 @@
-import { describe, expect, it, beforeEach } from "vitest";
-import { NDK } from "../../ndk";
+import { beforeEach, describe, expect, it } from "vitest";
 import { NDKEvent } from "../../events";
+import { NDK } from "../../ndk";
 import { NDKPrivateKeySigner } from "../../signers/private-key";
 
 describe("Event Signing Guardrails - Hashtag Tags", () => {

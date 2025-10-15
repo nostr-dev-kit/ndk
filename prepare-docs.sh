@@ -23,7 +23,6 @@ rm -rf \
     "$DOCS_DIR/migration" \
     "$DOCS_DIR/tutorial" \
     "$DOCS_DIR/api-examples.md" \
-    "$DOCS_DIR/index.md" \
     "$DOCS_DIR/snippets" \
     "$DOCS_DIR/snippets" \
     "$DOCS_DIR/cache" \

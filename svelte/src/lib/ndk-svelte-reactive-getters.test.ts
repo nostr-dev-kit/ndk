@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { NDKSvelte } from "./ndk-svelte.svelte.js";
 import { NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
+import { beforeEach, describe, expect, it } from "vitest";
+import { NDKSvelte } from "./ndk-svelte.svelte.js";
 
 describe("NDKSvelte Reactive Getters", () => {
     let ndk: NDKSvelte;

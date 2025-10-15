@@ -1,6 +1,6 @@
-import { describe, it, expect, vi } from "vitest";
-import { NDK } from "./index.js";
+import { describe, expect, it, vi } from "vitest";
 import { NDKUser } from "../user/index.js";
+import { NDK } from "./index.js";
 
 describe("activeUser:change event", () => {
     it("should emit activeUser:change when activeUser is set", () => {

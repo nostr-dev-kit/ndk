@@ -1,6 +1,6 @@
-import { describe, expect, test, beforeEach } from "bun:test";
-import NDKCacheAdapterSqliteWasm from "../src/index";
+import { beforeEach, describe, expect, test } from "bun:test";
 import type { ProfilePointer } from "@nostr-dev-kit/ndk";
+import NDKCacheAdapterSqliteWasm from "../src/index";
 
 describe("NIP-05 caching", () => {
     let cache: NDKCacheAdapterSqliteWasm;

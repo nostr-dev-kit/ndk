@@ -1,4 +1,4 @@
-import { NDKEvent, NDKZapper, type NDKUser } from "@nostr-dev-kit/ndk";
+import { NDKEvent, type NDKUser, NDKZapper } from "@nostr-dev-kit/ndk";
 import type { NDKSvelte } from "../ndk-svelte.svelte.js";
 import { targetToId } from "./types.js";
 

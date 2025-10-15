@@ -1,6 +1,6 @@
 import type {
-    CacheModuleDefinition,
     CacheModuleCollection,
+    CacheModuleDefinition,
     Hexpubkey,
     NDKCacheAdapter,
     NDKCacheRelayInfo,
@@ -16,6 +16,7 @@ import type {
 import { deserialize, NDKEvent, type NDKRelay, profileFromEvent } from "@nostr-dev-kit/ndk";
 import createDebug from "debug";
 import { matchFilter } from "nostr-tools";
+import { DexieCacheModuleManager } from "./cache-module.js";
 import { type EventTagCacheEntry, eventTagsDump, eventTagsWarmUp } from "./caches/event-tags.js";
 import { type EventCacheEntry, eventsDump, eventsWarmUp } from "./caches/events.js";
 import { type Nip05CacheEntry, nip05Dump, nip05WarmUp } from "./caches/nip05.js";
@@ -31,7 +32,6 @@ import {
 import { type ZapperCacheEntry, zapperDump, zapperWarmUp } from "./caches/zapper.js";
 import { createDatabase, db, type Event, type Profile, type RelayStatus, type UnpublishedEvent } from "./db.js";
 import { CacheHandler } from "./lru-cache.js";
-import { DexieCacheModuleManager } from "./cache-module.js";
 
 export { db } from "./db";
 

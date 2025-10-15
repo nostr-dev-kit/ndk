@@ -133,7 +133,9 @@ export class NDKBlossom {
         }
 
         this._serverList = wrapEvent(event) as NDKBlossomList;
-        this.logger.debug(`Found server list with ${this._serverList.servers.length} servers: ${this._serverList.servers.join(', ')}`);
+        this.logger.debug(
+            `Found server list with ${this._serverList.servers.length} servers: ${this._serverList.servers.join(", ")}`,
+        );
         return this._serverList;
     }
 

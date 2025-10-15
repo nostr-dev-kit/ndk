@@ -1,5 +1,5 @@
-import { readFileSync, writeFileSync, existsSync } from 'fs';
-import type { StorageAdapter, NDKMessage, ConversationMeta } from '@nostr-dev-kit/messages';
+import type { ConversationMeta, NDKMessage, StorageAdapter } from "@nostr-dev-kit/messages";
+import { existsSync, readFileSync, writeFileSync } from "fs";
 
 interface StoredData {
     messages: NDKMessage[];
@@ -13,7 +13,7 @@ export class FileStorageAdapter implements StorageAdapter {
     private data: StoredData;
     private filePath: string;
 
-    constructor(filePath: string = './conversations.json') {
+    constructor(filePath: string = "./conversations.json") {
         this.filePath = filePath;
         this.data = this.load();
     }
@@ -21,10 +21,10 @@ export class FileStorageAdapter implements StorageAdapter {
     private load(): StoredData {
         if (existsSync(this.filePath)) {
             try {
-                const content = readFileSync(this.filePath, 'utf-8');
+                const content = readFileSync(this.filePath, "utf-8");
                 return JSON.parse(content);
             } catch (error) {
-                console.error('Failed to load storage:', error);
+                console.error("Failed to load storage:", error);
             }
         }
         return { messages: [], conversations: [] };
@@ -34,7 +34,7 @@ export class FileStorageAdapter implements StorageAdapter {
         try {
             writeFileSync(this.filePath, JSON.stringify(this.data, null, 2));
         } catch (error) {
-            console.error('Failed to save storage:', error);
+            console.error("Failed to save storage:", error);
         }
     }
 
@@ -43,11 +43,11 @@ export class FileStorageAdapter implements StorageAdapter {
         const serializedMessage = {
             ...message,
             sender: { pubkey: message.sender.pubkey },
-            recipient: message.recipient ? { pubkey: message.recipient.pubkey } : undefined
+            recipient: message.recipient ? { pubkey: message.recipient.pubkey } : undefined,
         };
 
         // Check for duplicates
-        const existingIndex = this.data.messages.findIndex(m => m.id === message.id);
+        const existingIndex = this.data.messages.findIndex((m) => m.id === message.id);
         if (existingIndex >= 0) {
             this.data.messages[existingIndex] = serializedMessage as any;
         } else {
@@ -55,7 +55,7 @@ export class FileStorageAdapter implements StorageAdapter {
         }
 
         // Update conversation metadata
-        const conversation = this.data.conversations.find(c => c.id === message.conversationId);
+        const conversation = this.data.conversations.find((c) => c.id === message.conversationId);
         if (conversation) {
             conversation.lastMessageAt = message.timestamp;
             if (!message.read && message.sender.pubkey !== message.recipient?.pubkey) {
@@ -68,7 +68,7 @@ export class FileStorageAdapter implements StorageAdapter {
 
     async getMessages(conversationId: string, limit?: number): Promise<NDKMessage[]> {
         let messages = this.data.messages
-            .filter(m => m.conversationId === conversationId)
+            .filter((m) => m.conversationId === conversationId)
             .sort((a, b) => a.timestamp - b.timestamp);
 
         if (limit && messages.length > limit) {
@@ -80,13 +80,13 @@ export class FileStorageAdapter implements StorageAdapter {
 
     async markAsRead(messageIds: string[]): Promise<void> {
         for (const id of messageIds) {
-            const message = this.data.messages.find(m => m.id === id);
+            const message = this.data.messages.find((m) => m.id === id);
             if (message) {
                 const wasUnread = !message.read;
                 message.read = true;
 
                 if (wasUnread) {
-                    const conversation = this.data.conversations.find(c => c.id === message.conversationId);
+                    const conversation = this.data.conversations.find((c) => c.id === message.conversationId);
                     if (conversation && conversation.unreadCount > 0) {
                         conversation.unreadCount--;
                     }
@@ -98,12 +98,12 @@ export class FileStorageAdapter implements StorageAdapter {
 
     async getConversations(userId: string): Promise<ConversationMeta[]> {
         return this.data.conversations
-            .filter(c => c.participants.includes(userId))
+            .filter((c) => c.participants.includes(userId))
             .sort((a, b) => (b.lastMessageAt || 0) - (a.lastMessageAt || 0));
     }
 
     async saveConversation(conversation: ConversationMeta): Promise<void> {
-        const existingIndex = this.data.conversations.findIndex(c => c.id === conversation.id);
+        const existingIndex = this.data.conversations.findIndex((c) => c.id === conversation.id);
         if (existingIndex >= 0) {
             this.data.conversations[existingIndex] = conversation;
         } else {
@@ -113,12 +113,12 @@ export class FileStorageAdapter implements StorageAdapter {
     }
 
     async deleteMessage(messageId: string): Promise<void> {
-        const index = this.data.messages.findIndex(m => m.id === messageId);
+        const index = this.data.messages.findIndex((m) => m.id === messageId);
         if (index >= 0) {
             const message = this.data.messages[index];
 
             if (!message.read) {
-                const conversation = this.data.conversations.find(c => c.id === message.conversationId);
+                const conversation = this.data.conversations.find((c) => c.id === message.conversationId);
                 if (conversation && conversation.unreadCount > 0) {
                     conversation.unreadCount--;
                 }

@@ -75,7 +75,7 @@ export interface CacheModuleMigrationContext {
     /**
      * Create a new collection
      */
-    createCollection(name: string, definition: CacheModuleDefinition['collections'][string]): Promise<void>;
+    createCollection(name: string, definition: CacheModuleDefinition["collections"][string]): Promise<void>;
 
     /**
      * Delete a collection

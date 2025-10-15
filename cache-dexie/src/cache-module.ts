@@ -1,10 +1,6 @@
-import type {
-    CacheModuleDefinition,
-    CacheModuleCollection,
-    CacheModuleMigrationContext,
-} from "@nostr-dev-kit/ndk";
-import Dexie, { type Table } from "dexie";
+import type { CacheModuleCollection, CacheModuleDefinition, CacheModuleMigrationContext } from "@nostr-dev-kit/ndk";
 import createDebug from "debug";
+import Dexie, { type Table } from "dexie";
 
 const debug = createDebug("ndk:dexie-adapter:modules");
 
@@ -22,7 +18,10 @@ interface ModuleMetadata {
  * Implementation of CacheModuleCollection using Dexie Table
  */
 class DexieModuleCollection<T> implements CacheModuleCollection<T> {
-    constructor(private db: Dexie, private tableName: string) {}
+    constructor(
+        private db: Dexie,
+        private tableName: string,
+    ) {}
 
     private get table(): Table<T> {
         return (this.db as any)[this.tableName] as Table<T>;
@@ -34,7 +33,7 @@ class DexieModuleCollection<T> implements CacheModuleCollection<T> {
     }
 
     async getMany(ids: string[]): Promise<T[]> {
-        const results = await this.table.where(':id').anyOf(ids).toArray();
+        const results = await this.table.where(":id").anyOf(ids).toArray();
         return results;
     }
 
@@ -51,7 +50,7 @@ class DexieModuleCollection<T> implements CacheModuleCollection<T> {
     }
 
     async deleteMany(ids: string[]): Promise<void> {
-        await this.table.where(':id').anyOf(ids).delete();
+        await this.table.where(":id").anyOf(ids).delete();
     }
 
     async findBy(field: string, value: any): Promise<T[]> {
@@ -62,7 +61,7 @@ class DexieModuleCollection<T> implements CacheModuleCollection<T> {
         let collection = this.table.toCollection();
 
         for (const [field, value] of Object.entries(conditions)) {
-            collection = collection.and(item => (item as any)[field] === value);
+            collection = collection.and((item) => (item as any)[field] === value);
         }
 
         return await collection.toArray();
@@ -80,7 +79,7 @@ class DexieModuleCollection<T> implements CacheModuleCollection<T> {
         let collection = this.table.toCollection();
 
         for (const [field, value] of Object.entries(conditions)) {
-            collection = collection.and(item => (item as any)[field] === value);
+            collection = collection.and((item) => (item as any)[field] === value);
         }
 
         return await collection.count();
@@ -120,7 +119,7 @@ export class DexieCacheModuleManager {
             await this.moduleDb.open();
         }
 
-        const metadataTable = this.moduleDb.table('moduleMetadata');
+        const metadataTable = this.moduleDb.table("moduleMetadata");
         const existingMetadata = await metadataTable.get(module.namespace);
         const currentVersion = existingMetadata?.version || 0;
 
@@ -151,7 +150,7 @@ export class DexieCacheModuleManager {
             }
 
             if (collDef.compoundIndexes) {
-                const compounds = collDef.compoundIndexes.map(fields => `[${fields.join("+")}]`);
+                const compounds = collDef.compoundIndexes.map((fields) => `[${fields.join("+")}]`);
                 indexString += `, ${compounds.join(", ")}`;
             }
 
@@ -221,7 +220,7 @@ export class DexieCacheModuleManager {
         const table = (this.moduleDb as any)[tableName];
 
         if (!table) {
-            const metadata = await this.moduleDb.table('moduleMetadata').get(namespace);
+            const metadata = await this.moduleDb.table("moduleMetadata").get(namespace);
             if (!metadata) {
                 throw new Error(`Module ${namespace} not registered`);
             }
@@ -246,7 +245,7 @@ export class DexieCacheModuleManager {
             await this.moduleDb.open();
         }
 
-        const metadata = await this.moduleDb.table('moduleMetadata').get(namespace);
+        const metadata = await this.moduleDb.table("moduleMetadata").get(namespace);
         return metadata?.version || 0;
     }
 }

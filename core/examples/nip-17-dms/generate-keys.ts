@@ -1,8 +1,7 @@
 #!/usr/bin/env tsx
 
-import { generateSecretKey } from "nostr-tools/pure";
 import { nip19 } from "nostr-tools";
-import { getPublicKey } from "nostr-tools/pure";
+import { generateSecretKey, getPublicKey } from "nostr-tools/pure";
 
 const aliceKey = generateSecretKey();
 const bobKey = generateSecretKey();

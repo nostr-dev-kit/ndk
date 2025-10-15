@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 import NDK, { NDKPrivateKeySigner, NDKUser } from "@nostr-dev-kit/ndk";
-import { nip19 } from "nostr-tools";
 import chalk from "chalk";
+import { nip19 } from "nostr-tools";
 import ora from "ora";
 import { DMManager } from "./dm-manager.js";
 
@@ -288,7 +288,7 @@ function parsePrivateKey(nsecOrHex: string): string {
         if (decoded.type !== "nsec") {
             throw new Error("Invalid nsec format");
         }
-        return Buffer.from(decoded.data).toString('hex');
+        return Buffer.from(decoded.data).toString("hex");
     }
     return nsecOrHex;
 }
@@ -299,7 +299,7 @@ function parseUserIdentifier(npubOrHex: string): string {
         if (decoded.type !== "npub") {
             throw new Error("Invalid npub format");
         }
-        return Buffer.from(decoded.data).toString('hex');
+        return Buffer.from(decoded.data).toString("hex");
     }
     return npubOrHex;
 }

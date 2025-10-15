@@ -1,17 +1,11 @@
+import type NDK from "@nostr-dev-kit/ndk";
+import { giftUnwrap, type NDKEvent, NDKKind, NDKRelaySet, type NDKSubscription, NDKUser } from "@nostr-dev-kit/ndk";
 import { EventEmitter } from "eventemitter3";
-import NDK, { NDKEvent, NDKKind, NDKRelaySet, NDKSubscription, NDKUser } from "@nostr-dev-kit/ndk";
-import { giftUnwrap } from "@nostr-dev-kit/ndk";
 import { NDKConversation } from "./conversation";
 import { NIP17Protocol } from "./protocols/nip17";
-import { MemoryAdapter } from "./storage/memory";
 import { CacheModuleStorage } from "./storage/cache-module";
-import type {
-    MessengerOptions,
-    StorageAdapter,
-    NDKMessage,
-    ConversationMeta,
-    ErrorEvent
-} from "./types";
+import { MemoryAdapter } from "./storage/memory";
+import type { ConversationMeta, ErrorEvent, MessengerOptions, NDKMessage, StorageAdapter } from "./types";
 
 /**
  * Main orchestrator class for messaging functionality.
@@ -59,10 +53,7 @@ export class NDKMessenger extends EventEmitter {
         this.myPubkey = user.pubkey;
 
         // Upgrade to cache-based storage if NDK has a cache adapter and we're using MemoryAdapter
-        if (
-            this.storage instanceof MemoryAdapter &&
-            this.ndk.cacheAdapter?.registerModule
-        ) {
+        if (this.storage instanceof MemoryAdapter && this.ndk.cacheAdapter?.registerModule) {
             this.storage = new CacheModuleStorage(this.ndk.cacheAdapter, this.myPubkey);
         }
 
@@ -110,7 +101,7 @@ export class NDKMessenger extends EventEmitter {
         }
 
         // Create conversation ID (sorted pubkeys)
-        const conversationId = [this.myPubkey!, user.pubkey].sort().join(':');
+        const conversationId = [this.myPubkey!, user.pubkey].sort().join(":");
 
         // Check if conversation exists
         let conversation = this.conversations.get(conversationId);
@@ -122,18 +113,18 @@ export class NDKMessenger extends EventEmitter {
         conversation = new NDKConversation(
             conversationId,
             [new NDKUser({ pubkey: this.myPubkey! }), user],
-            'nip17', // Default to NIP-17 for now
+            "nip17", // Default to NIP-17 for now
             this.storage,
             this.myPubkey!,
-            this.nip17
+            this.nip17,
         );
 
         // Save conversation metadata
         const meta: ConversationMeta = {
             id: conversationId,
             participants: [this.myPubkey!, user.pubkey],
-            protocol: 'nip17',
-            unreadCount: 0
+            protocol: "nip17",
+            unreadCount: 0,
         };
         await this.storage.saveConversation(meta);
 
@@ -141,12 +132,12 @@ export class NDKMessenger extends EventEmitter {
         this.conversations.set(conversationId, conversation);
 
         // Forward conversation events to messenger
-        conversation.on('message', (message: NDKMessage) => {
-            this.emit('message', message);
+        conversation.on("message", (message: NDKMessage) => {
+            this.emit("message", message);
         });
 
-        conversation.on('error', (error: ErrorEvent) => {
-            this.emit('error', error);
+        conversation.on("error", (error: ErrorEvent) => {
+            this.emit("error", error);
         });
 
         return conversation;
@@ -187,9 +178,7 @@ export class NDKMessenger extends EventEmitter {
                 continue;
             }
             // Create NDKUser objects for participants
-            const participants = meta.participants.map(pubkey =>
-                new NDKUser({ pubkey })
-            );
+            const participants = meta.participants.map((pubkey) => new NDKUser({ pubkey }));
 
             // Create conversation instance
             const conversation = new NDKConversation(
@@ -198,7 +187,7 @@ export class NDKMessenger extends EventEmitter {
                 meta.protocol,
                 this.storage,
                 this.myPubkey,
-                this.nip17
+                this.nip17,
             );
 
             // Load messages into the conversation
@@ -216,12 +205,12 @@ export class NDKMessenger extends EventEmitter {
             this.conversations.set(meta.id, conversation);
 
             // Forward events
-            conversation.on('message', (message: NDKMessage) => {
-                this.emit('message', message);
+            conversation.on("message", (message: NDKMessage) => {
+                this.emit("message", message);
             });
 
-            conversation.on('error', (error: ErrorEvent) => {
-                this.emit('error', error);
+            conversation.on("error", (error: ErrorEvent) => {
+                this.emit("error", error);
             });
         }
     }
@@ -239,7 +228,7 @@ export class NDKMessenger extends EventEmitter {
 
         // Create subscription options
         const subOptions: any = {
-            closeOnEose: false
+            closeOnEose: false,
         };
 
         // Use specific relays if available
@@ -252,9 +241,9 @@ export class NDKMessenger extends EventEmitter {
         this.subscription = this.ndk.subscribe(
             {
                 kinds: [NDKKind.GiftWrap],
-                "#p": [this.myPubkey]
+                "#p": [this.myPubkey],
             },
-            subOptions
+            subOptions,
         );
 
         this.subscription.on("event", async (wrappedEvent: NDKEvent) => {
@@ -281,9 +270,8 @@ export class NDKMessenger extends EventEmitter {
             const message = this.nip17.rumorToMessage(rumor, this.myPubkey);
 
             // Get or create conversation
-            const otherPubkey = message.sender.pubkey === this.myPubkey
-                ? message.recipient?.pubkey
-                : message.sender.pubkey;
+            const otherPubkey =
+                message.sender.pubkey === this.myPubkey ? message.recipient?.pubkey : message.sender.pubkey;
 
             if (!otherPubkey) return;
 
@@ -294,19 +282,19 @@ export class NDKMessenger extends EventEmitter {
             await conversation._handleIncomingMessage(message);
 
             // Emit global message event
-            this.emit('message', message);
+            this.emit("message", message);
 
             // Check if this creates a new conversation
             if (conversation.getMessages.length === 1) {
-                this.emit('conversation-created', conversation);
+                this.emit("conversation-created", conversation);
             }
         } catch (error) {
             const errorEvent: ErrorEvent = {
-                type: 'decryption-failed',
+                type: "decryption-failed",
                 message: `Failed to decrypt message: ${error}`,
-                error: error as Error
+                error: error as Error,
             };
-            this.emit('error', errorEvent);
+            this.emit("error", errorEvent);
         }
     }
 
@@ -315,7 +303,7 @@ export class NDKMessenger extends EventEmitter {
      */
     destroy(): void {
         this.stop();
-        this.conversations.forEach(conv => conv.destroy());
+        this.conversations.forEach((conv) => conv.destroy());
         this.conversations.clear();
         this.removeAllListeners();
     }

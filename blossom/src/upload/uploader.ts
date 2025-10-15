@@ -191,7 +191,7 @@ export async function uploadFile(
         hasServer: !!options.server,
         hasFallbackServer: !!options.fallbackServer,
         fallbackServer: options.fallbackServer,
-        allOptions: options
+        allOptions: options,
     });
 
     // If a specific server is provided, use only that server
@@ -285,16 +285,14 @@ export async function uploadFile(
         return details;
     });
 
-    const errorMessage = serverUrls.length === 0
-        ? `No blossom servers configured. Please add servers to your profile or provide a fallbackServer. ${options.fallbackServer ? `Fallback server also failed: ${errorDetails[0] || 'unknown error'}` : ''}`
-        : `Upload failed on all ${serverUrls.length} configured server(s)${options.fallbackServer ? ' and fallback server' : ''}:\n${errorDetails.join('\n')}`;
+    const errorMessage =
+        serverUrls.length === 0
+            ? `No blossom servers configured. Please add servers to your profile or provide a fallbackServer. ${options.fallbackServer ? `Fallback server also failed: ${errorDetails[0] || "unknown error"}` : ""}`
+            : `Upload failed on all ${serverUrls.length} configured server(s)${options.fallbackServer ? " and fallback server" : ""}:\n${errorDetails.join("\n")}`;
 
     logger.error(errorMessage);
 
-    throw new NDKBlossomUploadError(
-        errorMessage,
-        ErrorCodes.ALL_SERVERS_FAILED,
-    );
+    throw new NDKBlossomUploadError(errorMessage, ErrorCodes.ALL_SERVERS_FAILED);
 }
 
 /**

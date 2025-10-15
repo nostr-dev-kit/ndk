@@ -1,9 +1,9 @@
 import type NDK from "@nostr-dev-kit/ndk";
-import { NDKKind as Kind, type Hexpubkey, type NDKEvent, type NDKKind } from "@nostr-dev-kit/ndk";
+import { type Hexpubkey, NDKKind as Kind, type NDKEvent, type NDKKind } from "@nostr-dev-kit/ndk";
 import type { NDKSessionManager } from "@nostr-dev-kit/sessions";
 import {
-    NDKCashuWallet,
     type NDKCashuDeposit,
+    NDKCashuWallet,
     type NDKWallet,
     type NDKWalletBalance,
     NDKWalletStatus,

@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 test.describe("Relay Manager", () => {
     test("should display relay manager with default relays", async ({ page }) => {

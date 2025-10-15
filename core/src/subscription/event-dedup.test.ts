@@ -1,9 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { NDKEvent } from "../events";
+import type { NDKEvent, NostrEvent } from "../events";
 import { NDK } from "../ndk";
 import { NDKRelay } from "../relay";
 import { NDKSubscription } from "./index";
-import type { NostrEvent } from "../events";
 
 describe("Event Deduplication and onRelays tracking", () => {
     let ndk: NDK;

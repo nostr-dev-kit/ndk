@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import NDK, { NDKEvent, NDKKind, NDKSubscription, NDKSubscriptionCacheUsage } from "@nostr-dev-kit/ndk";
+import { beforeEach, describe, expect, it } from "vitest";
 import { NDKCacheAdapterSqliteWasm } from "../src/index";
-import NDK, { NDKEvent, NDKKind, NDKSubscriptionCacheUsage, NDKSubscription } from "@nostr-dev-kit/ndk";
 
 describe("Debug production issue", () => {
     let cache: NDKCacheAdapterSqliteWasm;

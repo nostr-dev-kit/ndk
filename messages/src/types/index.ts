@@ -3,7 +3,7 @@ import type { NDKUser, NostrEvent } from "@nostr-dev-kit/ndk";
 /**
  * Supported messaging protocols
  */
-export type MessageProtocol = 'nip17' | 'mls';
+export type MessageProtocol = "nip17" | "mls";
 
 /**
  * Universal message interface that works for both NIP-17 and MLS
@@ -110,19 +110,12 @@ export interface ConversationMeta {
 /**
  * Event types for conversations
  */
-export type ConversationEventType =
-    | 'message'
-    | 'state-change'
-    | 'error';
+export type ConversationEventType = "message" | "state-change" | "error";
 
 /**
  * State change event types
  */
-export type StateChangeType =
-    | 'member-added'
-    | 'member-removed'
-    | 'key-rotation'
-    | 'protocol-upgrade';
+export type StateChangeType = "member-added" | "member-removed" | "key-rotation" | "protocol-upgrade";
 
 /**
  * State change event
@@ -137,7 +130,7 @@ export interface StateChangeEvent {
  * Error event
  */
 export interface ErrorEvent {
-    type: 'decryption-failed' | 'send-failed' | 'subscription-failed' | 'unknown';
+    type: "decryption-failed" | "send-failed" | "subscription-failed" | "unknown";
     message: string;
     error?: Error;
 }

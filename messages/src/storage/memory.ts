@@ -1,4 +1,4 @@
-import type { StorageAdapter, NDKMessage, ConversationMeta } from "../types";
+import type { ConversationMeta, NDKMessage, StorageAdapter } from "../types";
 
 /**
  * In-memory storage adapter for messages and conversations.

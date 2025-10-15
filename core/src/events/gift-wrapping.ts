@@ -50,7 +50,9 @@ export async function giftWrap(
 
     // AI Guardrail: Warn if the rumor is already signed
     if (event.sig) {
-        console.warn("⚠️ NIP-17 Warning: Rumor event should not be signed. The signature will be removed during gift wrapping.");
+        console.warn(
+            "⚠️ NIP-17 Warning: Rumor event should not be signed. The signature will be removed during gift wrapping.",
+        );
     }
 
     const rumor = getRumorEvent(event, params?.rumorKind);

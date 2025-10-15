@@ -1,5 +1,14 @@
-import NDK, { NDKEvent, NDKKind, NDKRelaySet, NDKUser, NDKSigner, type NostrEvent } from "@nostr-dev-kit/ndk";
-import { giftWrap, giftUnwrap } from "@nostr-dev-kit/ndk";
+import type NDK from "@nostr-dev-kit/ndk";
+import {
+    giftUnwrap,
+    giftWrap,
+    NDKEvent,
+    NDKKind,
+    NDKRelaySet,
+    type NDKSigner,
+    NDKUser,
+    type NostrEvent,
+} from "@nostr-dev-kit/ndk";
 import { getEventHash } from "nostr-tools/pure";
 import type { NDKMessage } from "../types";
 
@@ -10,7 +19,7 @@ import type { NDKMessage } from "../types";
 export class NIP17Protocol {
     constructor(
         private ndk: NDK,
-        private signer: NDKSigner
+        private signer: NDKSigner,
     ) {}
 
     /**
@@ -79,23 +88,21 @@ export class NIP17Protocol {
 
         // Determine if this is incoming or outgoing
         const isOutgoing = rumor.pubkey === myPubkey;
-        const otherPubkey = isOutgoing
-            ? rumor.tags.find(t => t[0] === 'p')?.[1] || ''
-            : rumor.pubkey;
+        const otherPubkey = isOutgoing ? rumor.tags.find((t) => t[0] === "p")?.[1] || "" : rumor.pubkey;
 
         // Create conversation ID (sorted pubkeys for consistency)
-        const conversationId = [myPubkey, otherPubkey].sort().join(':');
+        const conversationId = [myPubkey, otherPubkey].sort().join(":");
 
         return {
             id: rumor.id,
-            content: rumor.content || '',
+            content: rumor.content || "",
             sender: new NDKUser({ pubkey: rumor.pubkey }),
             recipient: isOutgoing ? new NDKUser({ pubkey: otherPubkey }) : new NDKUser({ pubkey: myPubkey }),
             timestamp: rumor.created_at || Math.floor(Date.now() / 1000),
-            protocol: 'nip17',
+            protocol: "nip17",
             read: isOutgoing, // Outgoing messages are automatically "read"
             rumor,
-            conversationId
+            conversationId,
         };
     }
 

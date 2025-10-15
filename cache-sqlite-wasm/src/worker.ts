@@ -172,7 +172,7 @@ self.onmessage = async (event: MessageEvent) => {
             _protocol: PROTOCOL_NAME,
             _version: PROTOCOL_VERSION,
             id,
-            result
+            result,
         });
     } catch (error: any) {
         console.error(`Worker: Error processing command ${id} (${type}):`, error);
@@ -180,7 +180,7 @@ self.onmessage = async (event: MessageEvent) => {
             _protocol: PROTOCOL_NAME,
             _version: PROTOCOL_VERSION,
             id,
-            error: { message: error.message, stack: error.stack }
+            error: { message: error.message, stack: error.stack },
         });
     }
 };

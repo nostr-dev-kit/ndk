@@ -4,85 +4,85 @@ import type { CacheModuleDefinition } from "@nostr-dev-kit/ndk";
  * Cache module definition for the messages package
  */
 export const messagesCacheModule: CacheModuleDefinition = {
-    namespace: 'messages',
+    namespace: "messages",
     version: 1,
 
     collections: {
         messages: {
-            primaryKey: 'id',
-            indexes: ['conversationId', 'timestamp', 'sender', 'recipient'],
+            primaryKey: "id",
+            indexes: ["conversationId", "timestamp", "sender", "recipient"],
             compoundIndexes: [
-                ['conversationId', 'timestamp'], // For fetching conversation messages in order
-                ['recipient', 'read'], // For fetching unread messages for a user
+                ["conversationId", "timestamp"], // For fetching conversation messages in order
+                ["recipient", "read"], // For fetching unread messages for a user
             ],
             schema: {
-                id: 'string',
-                content: 'string',
-                sender: 'string', // pubkey
-                recipient: 'string?', // pubkey, optional for group messages
-                timestamp: 'number',
-                protocol: 'string',
-                read: 'boolean',
-                rumor: 'object?',
-                conversationId: 'string',
-            }
+                id: "string",
+                content: "string",
+                sender: "string", // pubkey
+                recipient: "string?", // pubkey, optional for group messages
+                timestamp: "number",
+                protocol: "string",
+                read: "boolean",
+                rumor: "object?",
+                conversationId: "string",
+            },
         },
 
         conversations: {
-            primaryKey: 'id',
-            indexes: ['lastMessageAt'],
+            primaryKey: "id",
+            indexes: ["lastMessageAt"],
             compoundIndexes: [
-                ['participants'], // For finding conversations by participant
+                ["participants"], // For finding conversations by participant
             ],
             schema: {
-                id: 'string',
-                participants: 'string[]', // array of pubkeys
-                name: 'string?',
-                avatar: 'string?',
-                lastMessageAt: 'number?',
-                unreadCount: 'number',
-                protocol: 'string',
-                metadata: 'object?',
-            }
+                id: "string",
+                participants: "string[]", // array of pubkeys
+                name: "string?",
+                avatar: "string?",
+                lastMessageAt: "number?",
+                unreadCount: "number",
+                protocol: "string",
+                metadata: "object?",
+            },
         },
 
         // For future MLS support
         mlsGroups: {
-            primaryKey: 'id',
-            indexes: ['createdAt'],
+            primaryKey: "id",
+            indexes: ["createdAt"],
             schema: {
-                id: 'string',
-                groupId: 'string',
-                epoch: 'number',
-                members: 'string[]',
-                createdAt: 'number',
-                updatedAt: 'number',
-                treeHash: 'string',
-                confirmedTranscriptHash: 'string',
-                interimTranscriptHash: 'string',
-                groupContext: 'string', // serialized binary
-            }
+                id: "string",
+                groupId: "string",
+                epoch: "number",
+                members: "string[]",
+                createdAt: "number",
+                updatedAt: "number",
+                treeHash: "string",
+                confirmedTranscriptHash: "string",
+                interimTranscriptHash: "string",
+                groupContext: "string", // serialized binary
+            },
         },
 
         // Track which relays are used for DMs
         dmRelays: {
-            primaryKey: 'pubkey',
-            indexes: ['updatedAt'],
+            primaryKey: "pubkey",
+            indexes: ["updatedAt"],
             schema: {
-                pubkey: 'string',
-                relays: 'string[]',
-                updatedAt: 'number',
-            }
-        }
+                pubkey: "string",
+                relays: "string[]",
+                updatedAt: "number",
+            },
+        },
     },
 
     migrations: {
         1: async (context) => {
             // Initial setup - create all collections
-            await context.createCollection('messages', messagesCacheModule.collections.messages);
-            await context.createCollection('conversations', messagesCacheModule.collections.conversations);
-            await context.createCollection('mlsGroups', messagesCacheModule.collections.mlsGroups);
-            await context.createCollection('dmRelays', messagesCacheModule.collections.dmRelays);
+            await context.createCollection("messages", messagesCacheModule.collections.messages);
+            await context.createCollection("conversations", messagesCacheModule.collections.conversations);
+            await context.createCollection("mlsGroups", messagesCacheModule.collections.mlsGroups);
+            await context.createCollection("dmRelays", messagesCacheModule.collections.dmRelays);
         },
 
         // Future migrations would go here
@@ -90,7 +90,7 @@ export const messagesCacheModule: CacheModuleDefinition = {
         //     // Add new field or index
         //     await context.addIndex('messages', 'newField');
         // }
-    }
+    },
 };
 
 /**
@@ -102,7 +102,7 @@ export interface CachedMessage {
     sender: string;
     recipient?: string;
     timestamp: number;
-    protocol: 'nip17' | 'mls';
+    protocol: "nip17" | "mls";
     read: boolean;
     rumor?: any;
     conversationId: string;
@@ -115,7 +115,7 @@ export interface CachedConversation {
     avatar?: string;
     lastMessageAt?: number;
     unreadCount: number;
-    protocol: 'nip17' | 'mls';
+    protocol: "nip17" | "mls";
     metadata?: Record<string, any>;
 }
 

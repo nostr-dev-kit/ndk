@@ -7,29 +7,29 @@
  */
 
 // Set up fake-indexeddb for Node.js environment
-import 'fake-indexeddb/auto';
+import "fake-indexeddb/auto";
 
-import NDK, { NDKPrivateKeySigner } from '@nostr-dev-kit/ndk';
-import NDKCacheAdapterDexie from '@nostr-dev-kit/cache-dexie';
-import { NDKMessenger } from '@nostr-dev-kit/messages';
-import { Command } from 'commander';
-import chalk from 'chalk';
-import { readFileSync } from 'fs';
+import NDKCacheAdapterDexie from "@nostr-dev-kit/cache-dexie";
+import { NDKMessenger } from "@nostr-dev-kit/messages";
+import NDK, { NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
+import chalk from "chalk";
+import { Command } from "commander";
+import { readFileSync } from "fs";
 
 // Load keys
 let keys: { alice: string; bob: string };
 try {
-    const keysContent = readFileSync('./keys.json', 'utf-8');
+    const keysContent = readFileSync("./keys.json", "utf-8");
     keys = JSON.parse(keysContent);
 } catch {
-    console.error(chalk.red('❌ Keys not found. Run `bun run generate-keys` first.'));
+    console.error(chalk.red("❌ Keys not found. Run `bun run generate-keys` first."));
     process.exit(1);
 }
 
 // Choose which user to run as (default: alice)
-const currentUser = process.env.USER || 'alice';
+const currentUser = process.env.USER || "alice";
 const privateKey = keys[currentUser as keyof typeof keys];
-const otherUser = currentUser === 'alice' ? 'bob' : 'alice';
+const otherUser = currentUser === "alice" ? "bob" : "alice";
 const otherKey = keys[otherUser as keyof typeof keys];
 
 if (!privateKey) {
@@ -47,11 +47,7 @@ async function setupNDK() {
 
     // Initialize NDK with cache
     const ndk = new NDK({
-        explicitRelayUrls: [
-            'wss://relay.damus.io',
-            'wss://nos.lol',
-            'wss://relay.nostr.band'
-        ],
+        explicitRelayUrls: ["wss://relay.damus.io", "wss://nos.lol", "wss://relay.nostr.band"],
         signer: new NDKPrivateKeySigner(privateKey),
         cacheAdapter,
     });
@@ -69,14 +65,14 @@ async function setupNDK() {
 const program = new Command();
 
 program
-    .name('nip17-cache-demo')
+    .name("nip17-cache-demo")
     .description(`NIP-17 DM client with cache integration (running as ${chalk.blue(currentUser)})`)
-    .version('1.0.0');
+    .version("1.0.0");
 
 program
-    .command('send')
-    .description('Send a message to the other user')
-    .argument('<message>', 'Message to send')
+    .command("send")
+    .description("Send a message to the other user")
+    .argument("<message>", "Message to send")
     .action(async (message: string) => {
         const { ndk, messenger } = await setupNDK();
 
@@ -84,31 +80,31 @@ program
         const recipientPubkey = (await signer.user()).pubkey;
         const recipient = ndk.getUser({ pubkey: recipientPubkey });
 
-        console.log(chalk.cyan('📤 Sending message...'));
+        console.log(chalk.cyan("📤 Sending message..."));
 
         try {
             const sentMessage = await messenger.sendMessage(recipient, message);
-            console.log(chalk.green('✅ Message sent!'));
+            console.log(chalk.green("✅ Message sent!"));
             console.log(chalk.gray(`ID: ${sentMessage.id}`));
             console.log(chalk.gray(`To: ${recipient.npub}`));
             console.log(chalk.gray(`Content: ${sentMessage.content}`));
         } catch (error) {
-            console.error(chalk.red('❌ Failed to send message:'), error);
+            console.error(chalk.red("❌ Failed to send message:"), error);
         }
 
         process.exit(0);
     });
 
 program
-    .command('list')
-    .description('List all conversations')
+    .command("list")
+    .description("List all conversations")
     .action(async () => {
         const { messenger } = await setupNDK();
 
         const conversations = await messenger.getConversations();
 
         if (conversations.length === 0) {
-            console.log(chalk.yellow('No conversations found'));
+            console.log(chalk.yellow("No conversations found"));
         } else {
             console.log(chalk.cyan(`📂 Found ${conversations.length} conversation(s):\n`));
 
@@ -117,14 +113,14 @@ program
                 const unreadCount = conv.getUnreadCount();
                 const lastMessage = conv.getLastMessage();
 
-                console.log(chalk.blue(`Conversation with ${otherParticipant?.npub || 'unknown'}`));
+                console.log(chalk.blue(`Conversation with ${otherParticipant?.npub || "unknown"}`));
                 console.log(chalk.gray(`  ID: ${conv.id}`));
                 console.log(chalk.gray(`  Protocol: ${conv.protocol}`));
                 console.log(chalk.gray(`  Unread: ${unreadCount}`));
 
                 if (lastMessage) {
                     const preview = lastMessage.content.substring(0, 50);
-                    console.log(chalk.gray(`  Last: "${preview}${lastMessage.content.length > 50 ? '...' : ''}"`));
+                    console.log(chalk.gray(`  Last: "${preview}${lastMessage.content.length > 50 ? "..." : ""}"`));
                 }
                 console.log();
             }
@@ -134,9 +130,9 @@ program
     });
 
 program
-    .command('read')
-    .description('Read conversation with the other user')
-    .option('-l, --limit <number>', 'Number of messages to show', '10')
+    .command("read")
+    .description("Read conversation with the other user")
+    .option("-l, --limit <number>", "Number of messages to show", "10")
     .action(async (options) => {
         const { ndk, messenger } = await setupNDK();
 
@@ -148,10 +144,10 @@ program
         const messages = await conversation.getMessages(parseInt(options.limit));
 
         if (messages.length === 0) {
-            console.log(chalk.yellow('No messages in this conversation'));
+            console.log(chalk.yellow("No messages in this conversation"));
         } else {
             console.log(chalk.cyan(`💬 Conversation with ${otherNDKUser.npub}\n`));
-            console.log(chalk.gray('(Messages are persisted in IndexedDB via Dexie)\n'));
+            console.log(chalk.gray("(Messages are persisted in IndexedDB via Dexie)\n"));
 
             const myPubkey = messenger.myPubkey;
 
@@ -168,28 +164,28 @@ program
 
             // Mark as read
             await conversation.markAsRead();
-            console.log(chalk.gray('\n✓ Marked as read'));
+            console.log(chalk.gray("\n✓ Marked as read"));
         }
 
         process.exit(0);
     });
 
 program
-    .command('listen')
-    .description('Listen for incoming messages (real-time)')
+    .command("listen")
+    .description("Listen for incoming messages (real-time)")
     .action(async () => {
         const { messenger } = await setupNDK();
 
-        console.log(chalk.cyan('👂 Listening for messages...'));
-        console.log(chalk.gray('Messages are automatically saved to cache'));
-        console.log(chalk.gray('Press Ctrl+C to stop\n'));
+        console.log(chalk.cyan("👂 Listening for messages..."));
+        console.log(chalk.gray("Messages are automatically saved to cache"));
+        console.log(chalk.gray("Press Ctrl+C to stop\n"));
 
         // Listen for all messages
-        messenger.on('message', (message) => {
+        messenger.on("message", (message) => {
             const timestamp = new Date(message.timestamp * 1000).toLocaleString();
             console.log(chalk.green(`\n[${timestamp}] New message from ${message.sender.npub}:`));
             console.log(message.content);
-            console.log(chalk.gray('(Saved to cache)'));
+            console.log(chalk.gray("(Saved to cache)"));
         });
 
         // Keep the process running
@@ -197,12 +193,12 @@ program
     });
 
 program
-    .command('stats')
-    .description('Show cache statistics')
+    .command("stats")
+    .description("Show cache statistics")
     .action(async () => {
         const { ndk, messenger } = await setupNDK();
 
-        console.log(chalk.cyan('📊 Cache Statistics:\n'));
+        console.log(chalk.cyan("📊 Cache Statistics:\n"));
 
         const conversations = await messenger.getConversations();
         let totalMessages = 0;
@@ -219,25 +215,25 @@ program
         console.log(chalk.gray(`Total messages: ${totalMessages}`));
         console.log(chalk.gray(`Unread messages: ${totalUnread}`));
         console.log();
-        console.log(chalk.yellow('💡 Data persists across sessions using IndexedDB'));
+        console.log(chalk.yellow("💡 Data persists across sessions using IndexedDB"));
 
         process.exit(0);
     });
 
 program
-    .command('clear')
-    .description('Clear all cached messages')
+    .command("clear")
+    .description("Clear all cached messages")
     .action(async () => {
         const { messenger } = await setupNDK();
 
-        console.log(chalk.yellow('⚠️  Clearing all cached messages...'));
+        console.log(chalk.yellow("⚠️  Clearing all cached messages..."));
 
         const storage = (messenger as any).storage;
         if (storage?.clear) {
             await storage.clear();
-            console.log(chalk.green('✅ Cache cleared'));
+            console.log(chalk.green("✅ Cache cleared"));
         } else {
-            console.log(chalk.red('❌ Unable to clear cache'));
+            console.log(chalk.red("❌ Unable to clear cache"));
         }
 
         process.exit(0);

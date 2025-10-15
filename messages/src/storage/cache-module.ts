@@ -1,7 +1,7 @@
-import type { NDKCacheAdapter, CacheModuleCollection } from "@nostr-dev-kit/ndk";
+import type { CacheModuleCollection, NDKCacheAdapter } from "@nostr-dev-kit/ndk";
 import { NDKUser } from "@nostr-dev-kit/ndk";
-import type { NDKMessage, StorageAdapter, ConversationMeta } from "../types";
-import { messagesCacheModule, type CachedMessage, type CachedConversation } from "../cache-module";
+import { type CachedConversation, type CachedMessage, messagesCacheModule } from "../cache-module";
+import type { ConversationMeta, NDKMessage, StorageAdapter } from "../types";
 
 /**
  * Storage adapter that uses the NDK cache module system
@@ -13,7 +13,7 @@ export class CacheModuleStorage implements StorageAdapter {
 
     constructor(
         private cache: NDKCacheAdapter,
-        private myPubkey: string
+        private myPubkey: string,
     ) {}
 
     /**
@@ -29,13 +29,10 @@ export class CacheModuleStorage implements StorageAdapter {
 
         // Get collections if the cache supports modules
         if (this.cache.getModuleCollection) {
-            this.messagesCollection = await this.cache.getModuleCollection<CachedMessage>(
-                'messages',
-                'messages'
-            );
+            this.messagesCollection = await this.cache.getModuleCollection<CachedMessage>("messages", "messages");
             this.conversationsCollection = await this.cache.getModuleCollection<CachedConversation>(
-                'messages',
-                'conversations'
+                "messages",
+                "conversations",
             );
         }
 
@@ -90,7 +87,7 @@ export class CacheModuleStorage implements StorageAdapter {
                 id: message.conversationId,
                 participants: [...new Set(participants)], // Deduplicate
                 lastMessageAt: message.timestamp,
-                unreadCount: (!message.read && message.sender.pubkey !== this.myPubkey) ? 1 : 0,
+                unreadCount: !message.read && message.sender.pubkey !== this.myPubkey ? 1 : 0,
                 protocol: message.protocol,
             };
 
@@ -103,7 +100,7 @@ export class CacheModuleStorage implements StorageAdapter {
         if (!this.messagesCollection) return [];
 
         // Find messages for this conversation, sorted by timestamp
-        const cachedMessages = await this.messagesCollection.findBy('conversationId', conversationId);
+        const cachedMessages = await this.messagesCollection.findBy("conversationId", conversationId);
 
         // Sort by timestamp
         cachedMessages.sort((a, b) => a.timestamp - b.timestamp);
@@ -115,7 +112,7 @@ export class CacheModuleStorage implements StorageAdapter {
         }
 
         // Convert back to NDKMessage format
-        return messages.map(cached => ({
+        return messages.map((cached) => ({
             id: cached.id,
             content: cached.content,
             sender: new NDKUser({ pubkey: cached.sender }),
@@ -157,15 +154,13 @@ export class CacheModuleStorage implements StorageAdapter {
         const allConversations = await this.conversationsCollection.all();
 
         // Filter for conversations that include this user
-        const userConversations = allConversations.filter(conv =>
-            conv.participants.includes(userId)
-        );
+        const userConversations = allConversations.filter((conv) => conv.participants.includes(userId));
 
         // Sort by last message timestamp (most recent first)
         userConversations.sort((a, b) => (b.lastMessageAt || 0) - (a.lastMessageAt || 0));
 
         // Convert to ConversationMeta format
-        return userConversations.map(conv => ({
+        return userConversations.map((conv) => ({
             id: conv.id,
             participants: conv.participants,
             name: conv.name,
@@ -186,7 +181,7 @@ export class CacheModuleStorage implements StorageAdapter {
             avatar: conversation.avatar,
             lastMessageAt: conversation.lastMessageAt,
             unreadCount: conversation.unreadCount,
-            protocol: 'nip17', // Default for now
+            protocol: "nip17", // Default for now
         };
 
         await this.conversationsCollection.save(cachedConversation);

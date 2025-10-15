@@ -1,14 +1,14 @@
-import { EventEmitter } from "eventemitter3";
 import { NDKUser } from "@nostr-dev-kit/ndk";
-import type {
-    NDKMessage,
-    MessageProtocol,
-    StorageAdapter,
-    ConversationEventType,
-    StateChangeEvent,
-    ErrorEvent
-} from "./types";
+import { EventEmitter } from "eventemitter3";
 import type { NIP17Protocol } from "./protocols/nip17";
+import type {
+    ConversationEventType,
+    ErrorEvent,
+    MessageProtocol,
+    NDKMessage,
+    StateChangeEvent,
+    StorageAdapter,
+} from "./types";
 
 /**
  * Represents a conversation between users.
@@ -29,7 +29,7 @@ export class NDKConversation extends EventEmitter {
         protocol: MessageProtocol,
         storage: StorageAdapter,
         myPubkey: string,
-        nip17?: NIP17Protocol
+        nip17?: NIP17Protocol,
     ) {
         super();
         this.id = id;
@@ -44,9 +44,9 @@ export class NDKConversation extends EventEmitter {
      * Send a message in this conversation
      */
     async sendMessage(content: string): Promise<NDKMessage> {
-        if (this.protocol === 'nip17' && this.nip17) {
+        if (this.protocol === "nip17" && this.nip17) {
             // For NIP-17, send to the other participant
-            const recipient = this.participants.find(p => p.pubkey !== this.myPubkey);
+            const recipient = this.participants.find((p) => p.pubkey !== this.myPubkey);
             if (!recipient) {
                 throw new Error("No recipient found in conversation");
             }
@@ -57,14 +57,14 @@ export class NDKConversation extends EventEmitter {
 
                 // Create NDKMessage from the sent message
                 const message: NDKMessage = {
-                    id: wrappedEvent.id || '',
+                    id: wrappedEvent.id || "",
                     content,
                     sender: new NDKUser({ pubkey: this.myPubkey }),
                     recipient,
                     timestamp: Math.floor(Date.now() / 1000),
-                    protocol: 'nip17',
+                    protocol: "nip17",
                     read: true, // Our own messages are always "read"
-                    conversationId: this.id
+                    conversationId: this.id,
                 };
 
                 // Save to storage
@@ -74,16 +74,16 @@ export class NDKConversation extends EventEmitter {
                 this.messages.push(message);
 
                 // Emit the message event
-                this.emit('message', message);
+                this.emit("message", message);
 
                 return message;
             } catch (error) {
                 const errorEvent: ErrorEvent = {
-                    type: 'send-failed',
+                    type: "send-failed",
                     message: `Failed to send message: ${error}`,
-                    error: error as Error
+                    error: error as Error,
                 };
-                this.emit('error', errorEvent);
+                this.emit("error", errorEvent);
                 throw error;
             }
         } else {
@@ -111,13 +111,13 @@ export class NDKConversation extends EventEmitter {
      * Mark all messages as read
      */
     async markAsRead(): Promise<void> {
-        const unreadMessages = this.messages.filter(m => !m.read);
+        const unreadMessages = this.messages.filter((m) => !m.read);
         if (unreadMessages.length > 0) {
-            const messageIds = unreadMessages.map(m => m.id);
+            const messageIds = unreadMessages.map((m) => m.id);
             await this.storage.markAsRead(messageIds);
 
             // Update local messages
-            unreadMessages.forEach(m => m.read = true);
+            unreadMessages.forEach((m) => (m.read = true));
         }
     }
 
@@ -125,14 +125,14 @@ export class NDKConversation extends EventEmitter {
      * Get unread count
      */
     getUnreadCount(): number {
-        return this.messages.filter(m => !m.read && m.sender.pubkey !== this.myPubkey).length;
+        return this.messages.filter((m) => !m.read && m.sender.pubkey !== this.myPubkey).length;
     }
 
     /**
      * Get the other participant in a two-person conversation
      */
     getOtherParticipant(): NDKUser | undefined {
-        return this.participants.find(p => p.pubkey !== this.myPubkey);
+        return this.participants.find((p) => p.pubkey !== this.myPubkey);
     }
 
     /**
@@ -147,7 +147,7 @@ export class NDKConversation extends EventEmitter {
      */
     async _handleIncomingMessage(message: NDKMessage): Promise<void> {
         // Check for duplicates
-        const exists = this.messages.find(m => m.id === message.id);
+        const exists = this.messages.find((m) => m.id === message.id);
         if (!exists) {
             // Add to messages
             this.messages.push(message);
@@ -159,7 +159,7 @@ export class NDKConversation extends EventEmitter {
             await this.storage.saveMessage(message);
 
             // Emit event
-            this.emit('message', message);
+            this.emit("message", message);
         }
     }
 
@@ -167,14 +167,14 @@ export class NDKConversation extends EventEmitter {
      * Handle a state change (for future MLS support)
      */
     _handleStateChange(event: StateChangeEvent): void {
-        this.emit('state-change', event);
+        this.emit("state-change", event);
     }
 
     /**
      * Handle an error
      */
     _handleError(error: ErrorEvent): void {
-        this.emit('error', error);
+        this.emit("error", error);
     }
 
     /**

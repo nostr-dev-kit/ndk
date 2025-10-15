@@ -1,10 +1,11 @@
 #!/usr/bin/env tsx
+
 /**
  * Generate test keys for the NIP-17 chat example
  */
 
-import { generateSecretKey, getPublicKey } from "nostr-tools/pure";
 import { nip19 } from "nostr-tools";
+import { generateSecretKey, getPublicKey } from "nostr-tools/pure";
 
 function generateIdentity(name: string) {
     const secretKey = generateSecretKey();

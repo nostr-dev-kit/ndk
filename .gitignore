@@ -19,6 +19,8 @@ package-lock.json
 *.tgz
 .DS_Store
 .turbo
+.idea
+bun.lockb
 _local_
 .svelte-kit/
 .pnpm-store

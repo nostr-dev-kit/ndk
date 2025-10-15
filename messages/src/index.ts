@@ -1,26 +1,24 @@
 // Main classes
-export { NDKMessenger } from './messenger';
-export { NDKConversation } from './conversation';
-
-// Protocols
-export { NIP17Protocol } from './protocols/nip17';
-
-// Storage
-export { MemoryAdapter } from './storage/memory';
-export * from './storage/index';
 
 // Cache module
-export { messagesCacheModule } from './cache-module';
+export { messagesCacheModule } from "./cache-module";
+export { NDKConversation } from "./conversation";
+export { NDKMessenger } from "./messenger";
+// Protocols
+export { NIP17Protocol } from "./protocols/nip17";
+export * from "./storage/index";
+// Storage
+export { MemoryAdapter } from "./storage/memory";
 
 // Types
 export type {
-    NDKMessage,
+    ConversationEventType,
+    ConversationMeta,
+    ErrorEvent,
     MessageProtocol,
     MessengerOptions,
-    StorageAdapter,
-    ConversationMeta,
-    ConversationEventType,
-    StateChangeType,
+    NDKMessage,
     StateChangeEvent,
-    ErrorEvent
-} from './types';
+    StateChangeType,
+    StorageAdapter,
+} from "./types";

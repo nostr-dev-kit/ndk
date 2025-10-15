@@ -1,5 +1,5 @@
-import NDK, { NDKEvent, NDKKind, NDKRelaySet, NDKUser, type NDKSigner } from "@nostr-dev-kit/ndk";
-import { giftWrap, giftUnwrap } from "@nostr-dev-kit/ndk";
+import type NDK from "@nostr-dev-kit/ndk";
+import { giftUnwrap, giftWrap, NDKEvent, NDKKind, NDKRelaySet, type NDKSigner, type NDKUser } from "@nostr-dev-kit/ndk";
 import { getEventHash } from "nostr-tools";
 import { ConversationStorage, type StoredMessage } from "./storage.js";
 

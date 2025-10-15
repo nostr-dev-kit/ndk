@@ -1,21 +1,18 @@
 #!/usr/bin/env tsx
+
 /**
  * NIP-17 Chat Example using @nostr-dev-kit/messages
  *
  * This demonstrates the new high-level messaging API that simplifies NIP-17 implementation.
  */
 
+import { type NDKMessage, NDKMessenger } from "@nostr-dev-kit/messages";
 import NDK, { NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
-import { NDKMessenger, type NDKMessage } from "@nostr-dev-kit/messages";
 import { nip19 } from "nostr-tools";
 import { FileStorageAdapter } from "./file-storage.js";
 
 // Default relays for the example
-const DEFAULT_RELAYS = [
-    "wss://relay.damus.io",
-    "wss://nos.lol",
-    "wss://relay.nostr.band",
-];
+const DEFAULT_RELAYS = ["wss://relay.damus.io", "wss://nos.lol", "wss://relay.nostr.band"];
 
 /**
  * Initialize NDK and the messenger
@@ -27,7 +24,7 @@ async function initializeMessenger(nsec: string): Promise<NDKMessenger> {
         throw new Error("Invalid nsec");
     }
     const secretKey = decoded.data as Uint8Array;
-    const secretKeyHex = Buffer.from(secretKey).toString('hex');
+    const secretKeyHex = Buffer.from(secretKey).toString("hex");
 
     // Initialize NDK
     const signer = new NDKPrivateKeySigner(secretKeyHex);
@@ -41,7 +38,7 @@ async function initializeMessenger(nsec: string): Promise<NDKMessenger> {
 
     // Initialize messenger with file storage
     const messenger = new NDKMessenger(ndk, {
-        storage: new FileStorageAdapter('./conversations.json')
+        storage: new FileStorageAdapter("./conversations.json"),
     });
 
     await messenger.start();
@@ -116,9 +113,10 @@ async function listConversations(nsec: string) {
             console.log(`   Unread: ${unreadCount > 0 ? `📬 ${unreadCount} new` : "✓ All read"}`);
 
             if (lastMessage) {
-                const preview = lastMessage.content.length > 50
-                    ? lastMessage.content.substring(0, 47) + "..."
-                    : lastMessage.content;
+                const preview =
+                    lastMessage.content.length > 50
+                        ? lastMessage.content.substring(0, 47) + "..."
+                        : lastMessage.content;
                 const timestamp = new Date(lastMessage.timestamp * 1000).toLocaleString();
                 const direction = lastMessage.sender.pubkey === messenger.myPubkey ? "You" : "Them";
                 console.log(`   Last: [${timestamp}] ${direction}: ${preview}`);
@@ -188,7 +186,7 @@ async function listen(nsec: string, duration: number = 30) {
     const messenger = await initializeMessenger(nsec);
 
     // Set up message handler
-    messenger.on('message', (message: NDKMessage) => {
+    messenger.on("message", (message: NDKMessage) => {
         // Only show incoming messages (not our own)
         if (message.sender.pubkey !== messenger.myPubkey) {
             const timestamp = new Date(message.timestamp * 1000).toLocaleTimeString();
@@ -202,21 +200,21 @@ async function listen(nsec: string, duration: number = 30) {
         }
     });
 
-    messenger.on('conversation-created', (conversation) => {
+    messenger.on("conversation-created", (conversation) => {
         const other = conversation.getOtherParticipant();
         if (other) {
             console.log(`\n🎉 New conversation started with ${nip19.npubEncode(other.pubkey)}`);
         }
     });
 
-    messenger.on('error', (error) => {
-        console.error('\n❌ Error:', error.message);
+    messenger.on("error", (error) => {
+        console.error("\n❌ Error:", error.message);
     });
 
     console.log("Waiting for messages... (Press Ctrl+C to stop)");
 
     // Keep listening for the specified duration
-    await new Promise(resolve => setTimeout(resolve, duration * 1000));
+    await new Promise((resolve) => setTimeout(resolve, duration * 1000));
 
     console.log("\n⏱️  Listening period ended");
     messenger.destroy();

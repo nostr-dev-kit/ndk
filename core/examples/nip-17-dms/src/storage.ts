@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, existsSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import type { NostrEvent } from "@nostr-dev-kit/ndk";
 
 export interface StoredMessage {

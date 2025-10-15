@@ -1,6 +1,6 @@
 # Changelogs
 
-We maintain changelogs for each package in the multi-repo. Please consult the individual changelogs for more details.
+We maintain changelogs for each package in the multi-repo. Consult the individual changelogs for more details.
 
 ## Core
 

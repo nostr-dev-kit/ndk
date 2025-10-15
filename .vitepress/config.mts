@@ -1,4 +1,4 @@
-import { defineConfig } from "vitepress";
+import {defineConfig} from "vitepress";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -19,6 +19,7 @@ export default defineConfig({
         // https://vitepress.dev/reference/default-theme-config
         nav: [
             { text: "Home", link: "/docs/index.md" },
+            {text: "About Nostr", link: "/core/docs/about-nostr"},
             // { text: "API Reference", link: "/api/", target: "_blank" },
             // { text: "Cookbook", link: "/cookbook/" },
             { text: "Snippets", link: "/docs/snippets.md" },
@@ -27,12 +28,19 @@ export default defineConfig({
 
         sidebar: [
             {
+                text: "Nostr Development Kit",
+                items: [
+                    {text: "Introduction", link: "/core/docs/introduction"},
+                    {text: "Contributing", link: "/docs/contributing.md"},
+                    {text: "Changelog", link: "/docs/changelogs.md"},
+                ],
+            },
+            {
                 text: "Getting Started",
                 items: [
-                    { text: "Introduction", link: "/core/docs/getting-started/introduction" },
+                    {text: "Installing", link: "/core/docs/getting-started/installing"},
+                    {text: "Debugging", link: "/core/docs/getting-started/debugging"},
                     { text: "Usage", link: "/core/docs/getting-started/usage" },
-                    { text: "Debugging", link: "/core/docs/getting-started/debugging" },
-                    { text: "Changelog", link: "/docs/changelogs.md" },
                 ],
             },
             {

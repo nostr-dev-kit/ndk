@@ -99,9 +99,7 @@ This is the complete north star for svelte - a modern, beautiful, performant Sve
 svelte/
 ├── Core Classes
 │   ├── NDKSvelte (extends NDK)
-│   ├── EventSubscription<T> (reactive subscription)
-│   ├── ReactiveEvent (event with live state)
-│   └── ReactiveFilter (dynamic filters)
+│   └── EventSubscription<T> (reactive subscription)
 │
 ├── Global Stores
 │   ├── profiles (profile cache)

@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.1.0
+
+### Minor Changes
+
+- Updated dependencies [ad1a3ee]
+- Updated dependencies [a56276b]
+- Updated dependencies [ed3110a]
+- Updated dependencies [9b67ee6]
+- Updated dependencies [66db51d]
+    - @nostr-dev-kit/ndk@2.17.7
+    - @nostr-dev-kit/sync@0.3.5
+
 ## 2.0.12
 
 ### Patch Changes
@@ -533,21 +545,6 @@ Core features implemented and tested. Ready for early adopters and testing.
     - Filter mutation: `changeFilters()`
     - Pagination: `fetchMore()`
 
-#### Reactive Classes
-
-- **ReactiveEvent**: Events with live reactive properties
-    - `deleted` - Tracks deletion status
-    - `reactions` - Live reaction counts by emoji
-    - `zaps` - Total zap amount in sats
-    - `replyCount` - Live reply count
-    - Methods: `addReaction()`, `createReply()`, `destroy()`
-
-- **ReactiveFilter**: Dynamic filters that auto-update subscriptions
-    - Reactive properties: `ids`, `kinds`, `authors`, `since`, `until`, `limit`
-    - Tag filter support: `setTag()`, `getTag()`
-    - Utilities: `toFilter()`, `clone()`, `merge()`, `clear()`
-    - `isEmpty` derived property
-
 #### Global Stores
 
 **Profile Store**
@@ -612,8 +609,6 @@ Core features implemented and tested. Ready for early adopters and testing.
 - 119 tests passing
 - Test coverage across all features:
     - EventSubscription (22 tests)
-    - ReactiveEvent (13 tests)
-    - ReactiveFilter (22 tests)
     - Profile store (7 tests)
     - Session store (19 tests)
     - Mute store (12 tests)

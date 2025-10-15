@@ -1,5 +1,16 @@
 # @nostr-dev-kit/sync
 
+## 0.3.5
+
+### Patch Changes
+
+- 66db51d: Remove unused import in ndk-sync-class
+- Updated dependencies [ad1a3ee]
+- Updated dependencies [a56276b]
+- Updated dependencies [ed3110a]
+- Updated dependencies [9b67ee6]
+    - @nostr-dev-kit/ndk@2.17.7
+
 ## 0.3.4
 
 ### Patch Changes

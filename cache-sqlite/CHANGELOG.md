@@ -1,5 +1,15 @@
 # @nostr-dev-kit/ndk-cache-sqlite
 
+## 6.1.0
+
+### Minor Changes
+
+- Updated dependencies [ad1a3ee]
+- Updated dependencies [a56276b]
+- Updated dependencies [ed3110a]
+- Updated dependencies [9b67ee6]
+    - @nostr-dev-kit/ndk@2.17.7
+
 ## 6.0.0
 
 ### Patch Changes
@@ -8,7 +18,7 @@
 - Updated dependencies [d9d5662]
 - Updated dependencies [6fb3a7f]
 - Updated dependencies [028367b]
-    - @nostr-dev-kit/ndk@2.18.0
+    - @nostr-dev-kit/ndk@2.17.6
 
 ## 5.0.0
 

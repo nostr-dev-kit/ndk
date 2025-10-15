@@ -24,7 +24,6 @@ svelte embraces **Svelte 5's reactive primitives** to create a library that feel
 
 - **Core Subscriptions**: Reactive EventSubscription with automatic cleanup
 - **Namespaced Stores**: Sessions, WoT, wallet, payments, and pool
-- **Advanced Features**: ReactiveEvent and ReactiveFilter classes
 - **Wallet Integration**: Full support for Cashu, NWC, and WebLN wallets
 - **Payment Tracking**: Reactive payment/transaction tracking with pending state management
 - **Nutzap Monitoring**: Automatic nutzap detection and redemption
@@ -100,29 +99,7 @@ $inspect(notes.count);  // Event count (derived)
 
 **Automatic cleanup**: The subscription stops when the component unmounts. No manual cleanup needed.
 
-### 2. Reactive Event Classes
-
-Events become reactive objects with `$state` properties:
-
-```svelte
-<script lang="ts">
-import { ReactiveEvent } from '@nostr-dev-kit/svelte';
-
-const event = ReactiveEvent.from(rawEvent);
-
-// Reactive properties automatically update
-$inspect(event.deleted);      // Becomes true if event gets deleted
-$inspect(event.reactions);    // Live count of reactions
-$inspect(event.zaps);         // Live zap amount in sats
-$inspect(event.replyCount);   // Live reply count
-</script>
-
-<button onclick={() => event.addReaction('🔥')}>
-  {event.reactions.get('🔥') || 0} 🔥
-</button>
-```
-
-### 3. Namespaced Stores
+### 2. Namespaced Stores
 
 All stores are namespaced under the NDK instance:
 
@@ -512,37 +489,6 @@ const notesByDay = $derived(
 </script>
 ```
 
-### Reactive Filters
-
-Build dynamic filters that automatically update subscriptions:
-
-```svelte
-<script lang="ts">
-import { ReactiveFilter } from '@nostr-dev-kit/svelte';
-
-let selectedAuthor = $state('');
-let selectedKind = $state(1);
-
-// Reactive filter that updates automatically
-const filter = new ReactiveFilter();
-filter.kinds = [selectedKind];
-filter.authors = selectedAuthor ? [selectedAuthor] : undefined;
-
-// Subscription updates when filter changes
-const events = ndk.$subscribe(filter);
-</script>
-
-<select bind:value={selectedKind}>
-  <option value={1}>Notes</option>
-  <option value={30023}>Long-form</option>
-</select>
-
-<!-- Events update automatically when filters change -->
-{#each events.events as event}
-  <EventCard {event} />
-{/each}
-```
-
 ### Effect Hooks
 
 Run side effects when subscription state changes:
@@ -704,12 +650,6 @@ Subscription<T>
 ├── isEmpty: boolean (derived)
 ├── start(), stop(), restart()
 └── changeFilters(), clear()
-
-ReactiveEvent (extends NDKEvent)
-├── deleted: boolean (reactive)
-├── reactions: Map<string, number> (reactive)
-├── zaps: number (reactive)
-└── replies: number (reactive)
 ```
 
 ## Examples

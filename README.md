@@ -28,7 +28,6 @@
 | Package | Version | Description |
 |---------|---------|-------------|
 | [`@nostr-dev-kit/svelte`](./svelte) | ![npm](https://img.shields.io/npm/v/@nostr-dev-kit/svelte) | Modern Svelte 5 integration with reactive runes |
-| [`ndk-svelte-components`](./ndk-svelte-components) | ![npm](https://img.shields.io/npm/v/ndk-svelte-components) | Pre-built Svelte components |
 | [`@nostr-dev-kit/react`](./react) | ![npm](https://img.shields.io/npm/v/@nostr-dev-kit/react) | React hooks for NDK |
 | [`@nostr-dev-kit/mobile`](./mobile) | ![npm](https://img.shields.io/npm/v/@nostr-dev-kit/mobile) | React Native integration |
 

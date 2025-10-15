@@ -137,7 +137,7 @@ export function fetchingEvents(
     } else if (isSingleIdLookup(filters)) {
         // If this looks like a single ID lookup, suggest fetchEvent() instead
         const filter = filterArray[0];
-        const eventId = filter.ids[0];
+        const eventId = filter.ids?.[0];
         warn(
             "fetch-events-usage",
             "For fetching a single event, use fetchEvent() instead.\n\n" +

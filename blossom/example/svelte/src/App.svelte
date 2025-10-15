@@ -22,14 +22,12 @@ const blossom = new NDKBlossom(ndk);
 const upload = useBlossomUpload(blossom);
 
 // Session state - using NDKSvelte reactive APIs
-const currentUser = ndk.$currentUser;
-const currentProfile = ndk.$fetchProfile(() => currentUser?.pubkey);
+const currentProfile = ndk.$fetchProfile(() => ndk.$currentPubkey);
 let allSessions = $derived(ndk.$sessions?.sessions ?? {});
 
 // Get blossom server list directly from active session
-const currentSession = ndk.$currentSession;
 const blossomServerList = $derived(
-    currentSession?.events.get(NDKKind.BlossomList) as NDKBlossomList | null
+    ndk.$currentSession?.events.get(NDKKind.BlossomList) as NDKBlossomList | null
 );
 const blossomServers = $derived(blossomServerList?.servers ?? []);
 
@@ -76,13 +74,13 @@ async function generateAndLogin() {
 }
 
 async function logout() {
-    if (currentUser) {
-        ndk.$sessions?.logout(currentUser.pubkey);
+    if (ndk.$currentUser) {
+        ndk.$sessions?.logout(ndk.$currentUser.pubkey);
     }
 }
 
 async function switchSession(pubkey: string) {
-    ndk.$sessions?.switch(pubkey);
+    await ndk.$sessions?.switchTo(pubkey);
 }
 
 function formatPubkey(pubkey: string | null): string {
@@ -91,7 +89,7 @@ function formatPubkey(pubkey: string | null): string {
 }
 
 async function addServer() {
-    if (!newServerUrl.trim() || !currentUser || !ndk) {
+    if (!newServerUrl.trim() || !ndk.$currentUser || !ndk) {
         alert("Please enter a valid server URL and make sure you are logged in");
         return;
     }
@@ -123,7 +121,7 @@ async function addServer() {
 }
 
 async function removeServer(serverToRemove: string) {
-    if (!currentUser || !ndk || !blossomServerList) return;
+    if (!ndk.$currentUser || !ndk || !blossomServerList) return;
 
     savingServers = true;
     try {
@@ -145,7 +143,7 @@ function handleFileSelect(e: Event) {
 }
 
 async function uploadFile() {
-    if (!selectedFile || !currentUser) {
+    if (!selectedFile || !ndk.$currentUser) {
         alert("Please select a file and make sure you are logged in");
         return;
     }
@@ -169,7 +167,7 @@ async function uploadFile() {
     <!-- Current Session Info -->
     <div class="card">
         <h2>Current Session</h2>
-        {#if currentUser}
+        {#if ndk.$currentPubkey}
             <div>
                 <img
                     src={currentProfile?.image || "https://via.placeholder.com/50"}
@@ -179,7 +177,7 @@ async function uploadFile() {
                 <div>
                     <h3>{currentProfile?.displayName || currentProfile?.name || "Anonymous User"}</h3>
                     <p>{currentProfile?.about || "No bio available"}</p>
-                    <p>Pubkey: {formatPubkey(currentUser.pubkey)}</p>
+                    <p>Pubkey: {formatPubkey(ndk.$currentPubkey)}</p>
                 </div>
                 <button type="button" onclick={logout}>Logout</button>
             </div>
@@ -196,12 +194,12 @@ async function uploadFile() {
                 <p>Select a session to switch:</p>
                 <div>
                     {#each Object.entries(allSessions) as [pubkey, session] (pubkey)}
-                        <div class="session-item" class:active={pubkey === currentUser?.pubkey}>
+                        <div class="session-item" class:active={pubkey === ndk.$currentPubkey}>
                             <div>
                                 <strong>{session.profile?.displayName || session.profile?.name || "Anonymous User"}</strong>
                                 <p>Pubkey: {formatPubkey(pubkey)}</p>
                             </div>
-                            {#if pubkey !== currentUser?.pubkey}
+                            {#if pubkey !== ndk.$currentPubkey}
                                 <button type="button" onclick={() => switchSession(pubkey)}>
                                     Switch to this session
                                 </button>
@@ -218,7 +216,7 @@ async function uploadFile() {
     </div>
 
     <!-- Blossom Servers -->
-    {#if currentUser}
+    {#if ndk.$currentUser}
         <div class="card">
             <h2>Blossom Servers</h2>
             {#if blossomServers.length > 0}
@@ -264,7 +262,7 @@ async function uploadFile() {
     {/if}
 
     <!-- File Upload -->
-    {#if currentUser}
+    {#if ndk.$currentUser}
         <div class="card">
             <h2>File Upload</h2>
             <label class="file-input-label">
@@ -320,7 +318,7 @@ async function uploadFile() {
     {/if}
 
     <!-- Login Options -->
-    {#if !currentUser}
+    {#if !ndk.$currentUser}
         <div class="card">
             <h2>Login Options</h2>
 

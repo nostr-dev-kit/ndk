@@ -75,20 +75,20 @@
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
-    color: var(--accent-color, #8b5cf6);
+    color: var(--accent-color);
     text-decoration: none;
     font-weight: 500;
     transition: all 0.2s;
     vertical-align: middle;
     padding: 0.125rem 0.375rem;
-    border-radius: 9999px !important;
-    background: var(--mention-background, rgba(139, 92, 246, 0.1));
+    border-radius: 9999px;
+    background: var(--mention-background);
   }
 
   .mention-inline:hover {
     opacity: 0.8;
     text-decoration: underline;
-    background: var(--mention-background-hover, rgba(139, 92, 246, 0.15));
+    background: var(--mention-background-hover);
   }
 
   .mention-inline :global(.mention-avatar) {
@@ -97,6 +97,6 @@
 
   .mention-name {
     font-weight: 600;
-    color: var(--text-primary, #111827);
+    color: currentColor;
   }
 </style>

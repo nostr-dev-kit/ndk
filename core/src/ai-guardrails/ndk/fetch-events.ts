@@ -2,9 +2,10 @@
  * NDK fetchEvents guardrails
  */
 
-import type { NDKFilter, NDKSubscriptionOptions, NDKSubscriptionCacheUsage } from "../../subscription/index.js";
+import type { NDKFilter, NDKSubscriptionCacheUsage, NDKSubscriptionOptions } from "../../subscription/index.js";
 
 type WarnFn = (id: string, message: string, hint?: string) => never | undefined;
+type ShouldWarnRatioFn = () => boolean;
 
 /**
  * Check if filter matches the NIP-33 pattern (decoded naddr)
@@ -100,7 +101,11 @@ export function fetchingEvents(
     filters: NDKFilter | NDKFilter[],
     opts: NDKSubscriptionOptions | undefined,
     warn: WarnFn,
+    shouldWarnRatio: ShouldWarnRatioFn,
+    incrementCount: () => void,
 ): void {
+    // Track this fetchEvents call
+    incrementCount();
     // Skip warning if using ONLY_CACHE - not hitting relays at all
     if (opts?.cacheUsage === ("ONLY_CACHE" as NDKSubscriptionCacheUsage)) {
         return;
@@ -132,7 +137,7 @@ export function fetchingEvents(
     } else if (isSingleIdLookup(filters)) {
         // If this looks like a single ID lookup, suggest fetchEvent() instead
         const filter = filterArray[0];
-        const eventId = filter.ids[0];
+        const eventId = filter.ids?.[0];
         warn(
             "fetch-events-usage",
             "For fetching a single event, use fetchEvent() instead.\n\n" +
@@ -153,6 +158,11 @@ export function fetchingEvents(
         // Don't warn, just skip
         return;
     } else {
+        // Check if we should warn based on usage ratio
+        if (!shouldWarnRatio()) {
+            return;
+        }
+
         // Analyze the filter to provide more context
         let filterAnalysis = "";
         const hasLimit = filterArray.some((f) => f.limit !== undefined);

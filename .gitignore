@@ -20,6 +20,8 @@ package-lock.json
 *.tgz
 .DS_Store
 .turbo
+.idea
+bun.lockb
 _local_
 .svelte-kit/
 .pnpm-store
@@ -58,3 +60,4 @@ svelte/examples/basic-feed/public/
 .test-sessions.json
 **/baseline-timing.ts
 **/current-timing.ts
+.playwright-mcp

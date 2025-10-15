@@ -680,64 +680,6 @@ interface Nutzap {
 }
 ```
 
-## Reactive Event Types
-
-### ReactiveEvent
-
-```typescript
-class ReactiveEvent extends NDKEvent {
-  /**
-   * Whether this event has been deleted
-   * @reactive - Updates when deletion event is received
-   */
-  readonly deleted: boolean;
-
-  /**
-   * Map of reaction emoji to count
-   * @reactive - Updates when reactions are received
-   */
-  readonly reactions: Map<string, number>;
-
-  /**
-   * Total zap amount in millisats
-   * @reactive - Updates when zaps are received
-   */
-  readonly zaps: number;
-
-  /**
-   * Number of replies
-   * @reactive - Updates when replies are received
-   */
-  readonly replies: number;
-
-  /**
-   * Repost events (if using reposts option)
-   * @reactive
-   */
-  readonly reposts?: NDKEvent[];
-
-  /**
-   * React to this event
-   */
-  react(emoji: string): Promise<void>;
-
-  /**
-   * Zap this event
-   */
-  zap(amount: number, comment?: string): Promise<void>;
-
-  /**
-   * Reply to this event
-   */
-  reply(content: string): Promise<NDKEvent>;
-
-  /**
-   * Delete this event
-   */
-  delete(reason?: string): Promise<void>;
-}
-```
-
 ## Component Types
 
 ### Component Props
@@ -799,62 +741,6 @@ interface VirtualListProps<T> {
   items: T[];
   itemHeight: number | ((item: T) => number);
   class?: string;
-}
-```
-
-## Utility Types
-
-### ReactiveFilter
-
-```typescript
-class ReactiveFilter implements NDKFilter {
-  /**
-   * Event kinds to filter
-   * @reactive - Changing this updates subscriptions using this filter
-   */
-  kinds?: number[];
-
-  /**
-   * Author pubkeys to filter
-   * @reactive
-   */
-  authors?: string[];
-
-  /**
-   * Event IDs to filter
-   * @reactive
-   */
-  ids?: string[];
-
-  /**
-   * Generic tags to filter
-   * @reactive
-   */
-  [key: `#${string}`]: string[] | undefined;
-
-  /**
-   * Time range filters
-   * @reactive
-   */
-  since?: number;
-  until?: number;
-
-  /**
-   * Limit
-   * @reactive
-   */
-  limit?: number;
-
-  /**
-   * Search query
-   * @reactive
-   */
-  search?: string;
-
-  /**
-   * Convert to plain NDKFilter object
-   */
-  toFilter(): NDKFilter;
 }
 ```
 

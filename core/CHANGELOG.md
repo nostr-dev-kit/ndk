@@ -1,5 +1,46 @@
 # @nostr-dev-kit/ndk
 
+## 2.17.7
+
+### Patch Changes
+
+- ed3110a: Improve NIP-17 gift wrapping developer experience
+    - Auto-set rumor.pubkey in giftWrap() if not present - eliminates common "can't serialize event" errors
+    - Add AI guardrails with JSDoc warnings for common NIP-17 mistakes (signing rumors, using wrong timestamps, forgetting to publish to sender relays)
+    - Add runtime warning when rumor is already signed
+    - Improve documentation in gift-wrapping.ts with clear guidance on NIP-17 best practices
+
+
+- ad1a3ee: Improve AI guardrails with ratio-based fetchEvents warnings
+
+    AI guardrails now track the ratio of fetchEvents to subscribe calls and only warn when fetchEvents usage exceeds 50% AND total calls exceed 6. This prevents false positives for legitimate fetchEvents usage patterns while still catching code that overuses fetchEvents when subscribe would be more appropriate.
+
+    The guardrails now:
+    - Track both fetchEvents and subscribe call counts
+    - Only warn when the ratio indicates a pattern of misuse (>50% fetchEvents with >6 total calls)
+    - Allow legitimate single/few fetchEvents calls without warnings
+    - Provide more accurate guidance for subscription-based architectures
+
+- a56276b: Fix subscription ID length exceeding relay limits
+
+    When multiple subscriptions with custom subId values were grouped together, NDK could generate subscription IDs exceeding 64+ characters, causing relays to reject them with "ERROR: bad req: subscription id too long".
+
+    Changes:
+    - Truncate individual subId parts to 10 characters maximum
+    - Limit combined subscription ID to 20 characters before adding random suffix
+    - Reduce length check threshold from 48 to 25 characters
+    - Final subscription IDs are now guaranteed to be ≤ 26 characters
+
+- 9b67ee6: Replace nostr-tools dependency with native NIP-57 zap request implementation
+
+    Removed dependency on nostr-tools' `makeZapRequest` function and implemented native NIP-57 compliant zap request generation. This provides better control over the implementation and adds support for the optional `k` tag (event kind) in zap requests for improved compatibility with modern nostr implementations.
+
+    Changes:
+    - Native implementation of kind 9734 zap request generation
+    - Added `k` tag support for event zaps (per NIP-57 specification)
+    - Comprehensive test coverage for all zap request scenarios
+    - No breaking changes to the public API
+
 ## 2.17.6
 
 ### Patch Changes

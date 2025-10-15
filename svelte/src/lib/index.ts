@@ -22,37 +22,35 @@ export {
 export { default as Avatar } from "./components/Avatar.svelte";
 export { default as BlossomImage } from "./components/BlossomImage.svelte";
 export { default as EventContent } from "./components/EventContent.svelte";
+export { default as NostrEditor } from "./components/editor/NostrEditor.svelte";
+export { default as ImageNodeView } from "./components/editor/nodes/ImageNodeView.svelte";
+export { default as NAddrNodeView } from "./components/editor/nodes/NAddrNodeView.svelte";
+export { default as NEventNodeView } from "./components/editor/nodes/NEventNodeView.svelte";
+export { default as NProfileNodeView } from "./components/editor/nodes/NProfileNodeView.svelte";
+export { default as VideoNodeView } from "./components/editor/nodes/VideoNodeView.svelte";
 export { default as EmbeddedEvent } from "./components/embedded-event/EmbeddedEvent.svelte";
-export { default as MentionPreview } from "./components/embedded-event/MentionPreview.svelte";
 export { default as HashtagPreview } from "./components/embedded-event/HashtagPreview.svelte";
-
+export { default as MentionPreview } from "./components/embedded-event/MentionPreview.svelte";
 // EventContent customization - components
 export {
-    setEventContentComponents,
-    getEventContentComponents,
-    resetEventContentComponents,
-    mergeComponentRegistries,
-    type EventContentComponents,
-    type MentionComponentProps,
     type EmbeddedEventComponentProps,
-    type HashtagComponentProps,
     type EmojiComponentProps,
+    type EventContentComponents,
+    getEventContentComponents,
+    type HashtagComponentProps,
+    type ImageGridComponentProps,
     type LinkComponentProps,
     type MediaComponentProps,
-    type ImageGridComponentProps,
+    type MentionComponentProps,
+    mergeComponentRegistries,
+    resetEventContentComponents,
+    setEventContentComponents,
 } from "./components/event-content-components.js";
-
 // EventContent customization - handlers
 export {
-    EventContentHandlersProxy,
     type EventContentHandlers,
+    EventContentHandlersProxy,
 } from "./components/event-content-handlers.js";
-export { default as NostrEditor } from "./components/editor/NostrEditor.svelte";
-export { default as NProfileNodeView } from "./components/editor/nodes/NProfileNodeView.svelte";
-export { default as NEventNodeView } from "./components/editor/nodes/NEventNodeView.svelte";
-export { default as NAddrNodeView } from "./components/editor/nodes/NAddrNodeView.svelte";
-export { default as ImageNodeView } from "./components/editor/nodes/ImageNodeView.svelte";
-export { default as VideoNodeView } from "./components/editor/nodes/VideoNodeView.svelte";
 export { default as RelayAddForm } from "./components/RelayAddForm.svelte";
 export { default as RelayCard } from "./components/RelayCard.svelte";
 export { default as RelayConnectionStatus } from "./components/RelayConnectionStatus.svelte";

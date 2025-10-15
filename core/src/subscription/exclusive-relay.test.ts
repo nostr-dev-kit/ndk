@@ -1,10 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { NDKEvent } from "../events";
+import type { NDKEvent, NostrEvent } from "../events";
 import { NDK } from "../ndk";
 import { NDKRelay } from "../relay";
 import { NDKRelaySet } from "../relay/sets";
 import { NDKSubscription } from "./index";
-import type { NostrEvent } from "../events";
 
 describe("Exclusive Relay Subscriptions", () => {
     let ndk: NDK;

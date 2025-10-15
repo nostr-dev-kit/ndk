@@ -2,7 +2,7 @@
 set -e # Exit immediately if a command exits with a non-zero status.
 
 DOCS_DIR="docs"
-CORE_DIR="ndk-core"
+CORE_DIR="core"
 DEXIE_DIR="cache-dexie"
 MEMORY_DIR="cache-memory"
 NOSTRCACHE_DIR="cache-nostr"
@@ -23,7 +23,6 @@ rm -rf \
     "$DOCS_DIR/migration" \
     "$DOCS_DIR/tutorial" \
     "$DOCS_DIR/api-examples.md" \
-    "$DOCS_DIR/index.md" \
     "$DOCS_DIR/snippets" \
 Re    "$DOCS_DIR/cache" \
     "$DOCS_DIR/mobile" \

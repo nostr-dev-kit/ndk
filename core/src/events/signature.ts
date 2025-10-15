@@ -15,18 +15,19 @@ export function signatureVerificationInit(w: Worker) {
         // Validate message format - signature worker sends [eventId, boolean]
         if (!Array.isArray(msg.data) || msg.data.length !== 2) {
             console.error(
-                '[NDK] ❌ Signature verification worker received incompatible message format.',
-                '\n\n📋 Expected format: [eventId, boolean]',
-                '\n📦 Received:', msg.data,
-                '\n\n🔍 This likely means:',
-                '\n  1. You have a STALE worker.js file that needs updating',
-                '\n  2. Version mismatch between @nostr-dev-kit/ndk and deployed worker',
-                '\n  3. Wrong worker is being used for signature verification',
-                '\n\n✅ Solution: Update your worker files:',
-                '\n  cp node_modules/@nostr-dev-kit/ndk/dist/workers/sig-verification.js public/',
-                '\n  cp node_modules/@nostr-dev-kit/cache-sqlite-wasm/dist/worker.js public/',
-                '\n\n💡 Or use Vite/bundler imports instead of static files:',
-                '\n  import SigWorker from "@nostr-dev-kit/ndk/workers/sig-verification?worker"'
+                "[NDK] ❌ Signature verification worker received incompatible message format.",
+                "\n\n📋 Expected format: [eventId, boolean]",
+                "\n📦 Received:",
+                msg.data,
+                "\n\n🔍 This likely means:",
+                "\n  1. You have a STALE worker.js file that needs updating",
+                "\n  2. Version mismatch between @nostr-dev-kit/ndk and deployed worker",
+                "\n  3. Wrong worker is being used for signature verification",
+                "\n\n✅ Solution: Update your worker files:",
+                "\n  cp node_modules/@nostr-dev-kit/ndk/dist/workers/sig-verification.js public/",
+                "\n  cp node_modules/@nostr-dev-kit/cache-sqlite-wasm/dist/worker.js public/",
+                "\n\n💡 Or use Vite/bundler imports instead of static files:",
+                '\n  import SigWorker from "@nostr-dev-kit/ndk/workers/sig-verification?worker"',
             );
             return;
         }

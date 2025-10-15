@@ -21,14 +21,13 @@
 
 | Package | Version | Description |
 |---------|---------|-------------|
-| [`@nostr-dev-kit/ndk`](./ndk-core) | ![npm](https://img.shields.io/npm/v/@nostr-dev-kit/ndk) | Core NDK library with event handling, subscriptions, and relay management |
+| [`@nostr-dev-kit/ndk`](./core) | ![npm](https://img.shields.io/npm/v/@nostr-dev-kit/ndk) | Core NDK library with event handling, subscriptions, and relay management |
 
 ### Framework Integration
 
 | Package | Version | Description |
 |---------|---------|-------------|
 | [`@nostr-dev-kit/svelte`](./svelte) | ![npm](https://img.shields.io/npm/v/@nostr-dev-kit/svelte) | Modern Svelte 5 integration with reactive runes |
-| [`ndk-svelte-components`](./ndk-svelte-components) | ![npm](https://img.shields.io/npm/v/ndk-svelte-components) | Pre-built Svelte components |
 | [`@nostr-dev-kit/react`](./react) | ![npm](https://img.shields.io/npm/v/@nostr-dev-kit/react) | React hooks for NDK |
 | [`@nostr-dev-kit/mobile`](./mobile) | ![npm](https://img.shields.io/npm/v/@nostr-dev-kit/mobile) | React Native integration |
 
@@ -36,6 +35,7 @@
 
 | Package | Version | Description |
 |---------|---------|-------------|
+| [`@nostr-dev-kit/messages`](./messages) | ![npm](https://img.shields.io/npm/v/@nostr-dev-kit/messages) | High-level messaging with NIP-17 DMs and conversation management |
 | [`@nostr-dev-kit/sessions`](./sessions) | ![npm](https://img.shields.io/npm/v/@nostr-dev-kit/sessions) | Multi-account session management with persistence |
 | [`@nostr-dev-kit/wot`](./wot) | ![npm](https://img.shields.io/npm/v/@nostr-dev-kit/wot) | Web of Trust filtering and ranking |
 | [`@nostr-dev-kit/sync`](./sync) | ![npm](https://img.shields.io/npm/v/@nostr-dev-kit/sync) | NIP-77 Negentropy set reconciliation |
@@ -239,8 +239,15 @@ await wallet.cashuPay({ amount: 1000, unit: 'sat', target: event });
 
 ### Caching
 - Multiple adapters (memory, IndexedDB, SQLite, Redis)
+- Extensible module system for package-specific collections
 - Automatic cache invalidation
 - Server-side and client-side support
+
+### Developer Experience
+- **AI Guardrails** - Optional runtime validation to catch common mistakes
+- Educational error messages with actionable fixes
+- Granular configuration (enable/disable specific checks)
+- Zero performance impact when disabled
 
 ## Documentation
 
@@ -248,6 +255,7 @@ await wallet.cashuPay({ amount: 1000, unit: 'sat', target: event });
 
 ### Package Documentation
 
+- [Messages](./messages/README.md)
 - [Svelte 5 Integration](./svelte/README.md)
 - [Sessions](./sessions/README.md)
 - [Web of Trust](./wot/README.md)

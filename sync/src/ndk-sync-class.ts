@@ -11,7 +11,7 @@ import { TIMEOUTS } from "./constants.js";
 import { ndkSync } from "./ndk-sync.js";
 import type { SyncAndSubscribeOptions } from "./sync-subscribe.js";
 import type { NDKSyncOptions, NDKSyncResult } from "./types.js";
-import { getRelayCapabilities, supportsNegentropy } from "./utils/relay-capabilities.js";
+import { supportsNegentropy } from "./utils/relay-capabilities.js";
 
 /**
  * Sync package metadata stored in relay cache
@@ -182,7 +182,7 @@ export class NDKSync {
         }
 
         // Fallback to fetchEvents when negentropy not supported
-        const events = await this.ndk.fetchEvents(filters, {
+        const events = await this.ndk.guardrailOff("fetch-events-usage").fetchEvents(filters, {
             relaySet: new NDKRelaySet(new Set([relay]), this.ndk),
             subId: "sync-fetch-fallback",
             groupable: false,

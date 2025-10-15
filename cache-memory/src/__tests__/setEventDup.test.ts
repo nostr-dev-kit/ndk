@@ -1,5 +1,5 @@
 import NDK, { NDKEvent, NDKSubscription } from "@nostr-dev-kit/ndk";
-import { describe, expect, it, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import NDKCacheAdapterMemory from "../index";
 
 describe("setEventDup", () => {

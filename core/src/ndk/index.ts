@@ -870,6 +870,9 @@ export class NDK extends EventEmitter<{
         const subscription = new NDKSubscription(this, filters, finalOpts);
         this.subManager.add(subscription);
 
+        // Track subscription creation for guardrails
+        this.aiGuardrails?.subscription?.created(Array.isArray(filters) ? filters : [filters], finalOpts);
+
         const pool = subscription.pool; // Use the pool determined by the subscription options
 
         // Signal to the relays that they are explicitly being used if a relaySet was provided/created

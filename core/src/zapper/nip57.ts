@@ -1,5 +1,3 @@
-import type { NostrEvent } from "nostr-tools";
-import { nip57 } from "nostr-tools";
 import type { NDKTag } from "../events";
 import { NDKEvent } from "../events";
 import type { NDK } from "../ndk";
@@ -7,6 +5,20 @@ import type { NDKSigner } from "../signers";
 import type { NDKUser } from "../user";
 import type { NDKLnUrlData } from "./ln.js";
 
+/**
+ * Generates a NIP-57 zap request (kind 9734)
+ *
+ * @param target - The user or event being zapped
+ * @param ndk - NDK instance
+ * @param data - LNURL data containing callback endpoint
+ * @param pubkey - Recipient's pubkey
+ * @param amount - Amount to zap in millisatoshis
+ * @param relays - Relay URLs for the zap receipt
+ * @param comment - Optional comment for the zap
+ * @param tags - Additional tags to include
+ * @param signer - Signer to use for signing the zap request
+ * @returns The signed zap request event
+ */
 export async function generateZapRequest(
     target: NDKEvent | NDKUser,
     ndk: NDK,
@@ -19,26 +31,32 @@ export async function generateZapRequest(
     signer?: NDKSigner,
 ): Promise<NDKEvent | null> {
     const zapEndpoint = data.callback;
-    const zapRequest = nip57.makeZapRequest({
-        profile: pubkey,
 
-        // set the event to null since nostr-tools doesn't support nip-33 zaps
-        event: null,
-        amount,
-        comment: comment || "",
-        relays: relays.slice(0, 4),
-    });
+    // Create the base zap request event (kind 9734)
+    const event = new NDKEvent(ndk);
+    event.kind = 9734;
+    event.content = comment || "";
+    event.tags = [
+        ["relays", ...relays.slice(0, 4)],
+        ["amount", amount.toString()],
+        ["lnurl", zapEndpoint],
+        ["p", pubkey],
+    ];
 
-    // add the event tag if it exists; this supports both 'e' and 'a' tags
+    // Add event reference tags if target is an event
+    // This supports both regular events (e tag) and addressable events (a tag)
     if (target instanceof NDKEvent) {
-        const tags = target.referenceTags();
-        const nonPTags = tags.filter((tag) => tag[0] !== "p");
-        zapRequest.tags.push(...nonPTags);
+        const referenceTags = target.referenceTags();
+        const nonPTags = referenceTags.filter((tag) => tag[0] !== "p");
+        event.tags.push(...nonPTags);
+
+        // Add k tag with the kind of the target event (NIP-57)
+        if (target.kind !== undefined) {
+            event.tags.push(["k", target.kind.toString()]);
+        }
     }
 
-    zapRequest.tags.push(["lnurl", zapEndpoint]);
-
-    const event = new NDKEvent(ndk, zapRequest as NostrEvent);
+    // Add any additional tags
     if (tags) {
         event.tags = event.tags.concat(tags);
     }

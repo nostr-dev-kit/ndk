@@ -75,6 +75,8 @@ export class AIGuardrails {
     private extensions: Map<string, any> = new Map();
     private _nextCallDisabled: Set<string> | "all" | null = null;
     private _replyEvents: WeakSet<NDKEvent> = new WeakSet();
+    private _fetchEventsCount: number = 0;
+    private _subscribeCount: number = 0;
 
     constructor(mode: AIGuardrailsMode = false) {
         this.setMode(mode);
@@ -187,6 +189,33 @@ export class AIGuardrails {
     }
 
     /**
+     * Increment fetchEvents call counter for ratio tracking.
+     */
+    incrementFetchEventsCount(): void {
+        this._fetchEventsCount++;
+    }
+
+    /**
+     * Increment subscribe call counter for ratio tracking.
+     */
+    incrementSubscribeCount(): void {
+        this._subscribeCount++;
+    }
+
+    /**
+     * Check if fetchEvents usage ratio exceeds the threshold.
+     * Returns true if more than 50% of calls are fetchEvents AND total calls > 6.
+     */
+    shouldWarnAboutFetchEventsRatio(): boolean {
+        const totalCalls = this._fetchEventsCount + this._subscribeCount;
+        if (totalCalls <= 6) {
+            return false;
+        }
+        const ratio = this._fetchEventsCount / totalCalls;
+        return ratio > 0.5;
+    }
+
+    /**
      * Throw an error if the check should run.
      * Also logs to console.error in case the throw gets swallowed.
      * @param canDisable - If false, this is a fatal error that cannot be disabled (default: true)
@@ -259,7 +288,13 @@ export class AIGuardrails {
          */
         fetchingEvents: (filters: any, opts?: any) => {
             if (!this.enabled) return;
-            ndkFetchEventsGuardrails.fetchingEvents(filters, opts, this.warn.bind(this));
+            ndkFetchEventsGuardrails.fetchingEvents(
+                filters,
+                opts,
+                this.warn.bind(this),
+                this.shouldWarnAboutFetchEventsRatio.bind(this),
+                this.incrementFetchEventsCount.bind(this),
+            );
         },
     };
 
@@ -310,7 +345,7 @@ export class AIGuardrails {
          */
         created: (_filters: any[], _opts?: any) => {
             if (!this.enabled) return;
-            // Future: Add subscription monitoring
+            this.incrementSubscribeCount();
         },
     };
 

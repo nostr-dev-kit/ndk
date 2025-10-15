@@ -1,9 +1,9 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { NDK } from "../ndk";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { NDKEvent } from "../events";
+import { NDK } from "../ndk";
 import { NDKPrivateKeySigner } from "../signers/private-key";
-import { NDKRelay } from "./index";
 import type { NDKRelayAuthPolicy } from "./auth-policies";
+import { NDKRelay } from "./index";
 
 describe("Auth-required publish retry", () => {
     let ndk: NDK;

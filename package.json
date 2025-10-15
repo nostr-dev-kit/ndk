@@ -1,30 +1,46 @@
 {
     "name": "@nostr-dev-kit/monorepo",
+    "dependencies": {
+        "@biomejs/biome": "^2.2.5",
+        "esbuild": "^0.25.11",
+        "mermaid": "^11.6.0",
+        "vitepress": "^1.6.3",
+        "vitepress-plugin-mermaid": "^2.0.17"
+    },
+    "devDependencies": {
+        "svelte": "^5.39.9",
+        "syncpack": "^13.0.4",
+        "turbo": "^2.5.3"
+    },
+    "engines": {
+        "node": ">=22.0"
+    },
+    "packageManager": "bun@1.3.0",
     "private": true,
     "scripts": {
         "build": "turbo build",
-        "build:libs": "turbo build --filter='./core' --filter='./wallet' --filter='./react' --filter='./mobile' --filter='./blossom' --filter='./cache-*' --filter='./cache-memory' --filter='./sessions' --filter='./sync' --filter='./wot' --filter='./svelte'",
-        "build:core": "cd core && bun run build",
-        "build:wallet": "cd wallet && bun run build",
-        "build:hooks": "cd react && bun run build",
-        "build:mobile": "cd mobile && bun run build",
         "build:blossom": "cd blossom && bun run build",
         "build:cache-sqlite": "cd cache-sqlite && bun run build",
-        "dev": "turbo dev --no-cache --continue",
-        "lint": "biome check .",
-        "clean": "turbo clean && rm -rf node_modules",
-        "format": "biome format --write .",
-        "docs:dev": "npx vitepress dev",
-        "docs:build": "vitepress build",
+        "build:core": "cd core && bun run build",
+        "build:hooks": "cd react && bun run build",
+        "build:libs": "turbo build --filter='./core' --filter='./wallet' --filter='./react' --filter='./mobile' --filter='./blossom' --filter='./cache-*' --filter='./cache-memory' --filter='./sessions' --filter='./sync' --filter='./wot' --filter='./svelte'",
+        "build:mobile": "cd mobile && bun run build",
+        "build:wallet": "cd wallet && bun run build",
         "changeset": "changeset",
+        "clean": "turbo clean && rm -rf node_modules",
         "cs": "changeset",
-        "cs:ver": "changeset version && bunx syncpack fix-mismatches",
         "cs:check": "bunx syncpack list-mismatches",
-        "test": "bun vitest",
         "cs:pub": "bun cs:check && changeset publish",
-        "version-packages": "changeset version",
+        "cs:ver": "changeset version && bunx syncpack fix-mismatches",
+        "dev": "turbo dev --no-cache --continue",
+        "docs:build": "vitepress build docs",
+        "docs:dev": "npx vitepress dev docs",
+        "docs:preview": "vitepress preview",
+        "format": "biome format --write .",
+        "lint": "biome check .",
         "release": "bun cs:check && turbo build --filter=docs^... && changeset publish",
-        "docs:preview": "vitepress preview"
+        "test": "bun vitest",
+        "version-packages": "changeset version"
     },
     "type": "module",
     "workspaces": [
@@ -36,33 +52,13 @@
         "cache-sqlite",
         "react",
         "mobile",
+        "messages",
         "sessions",
         "sync",
         "svelte",
         "wallet",
         "wot",
         "blossom",
-        "cache-sqlite-wasm",
-        "svelte/examples/component-browser",
-        "svelte/examples/event-graph",
-        "svelte/examples/feed-viewer",
-        "svelte/examples/nutsack",
-        "svelte/examples/sessions-demo"
-    ],
-    "engines": {
-        "node": ">=22.0"
-    },
-    "packageManager": "bun@1.3.0",
-    "devDependencies": {
-        "svelte": "^5.39.9",
-        "syncpack": "^13.0.4",
-        "turbo": "^2.5.3"
-    },
-    "dependencies": {
-        "@biomejs/biome": "^2.2.5",
-        "esbuild": "^0.25.10",
-        "mermaid": "^11.6.0",
-        "vitepress": "^1.6.3",
-        "vitepress-plugin-mermaid": "^2.0.17"
-    }
+        "cache-sqlite-wasm"
+    ]
 }

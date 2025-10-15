@@ -1,8 +1,9 @@
 import type { NDKConstructorParams, NDKEvent, NDKFilter, NDKUser } from "@nostr-dev-kit/ndk";
 import NDK from "@nostr-dev-kit/ndk";
-import { LocalStorage, NDKSessionManager } from "@nostr-dev-kit/sessions";
 import type { SessionManagerOptions } from "@nostr-dev-kit/sessions";
+import { LocalStorage, NDKSessionManager } from "@nostr-dev-kit/sessions";
 import * as ndkSvelteGuardrails from "./ai-guardrails/constructor.js";
+import { createFetchProfile } from "./profile.svelte.js";
 import type { ReactivePaymentsStore } from "./stores/payments.svelte.js";
 import { createReactivePayments } from "./stores/payments.svelte.js";
 import type { ReactivePoolStore } from "./stores/pool.svelte.js";
@@ -16,7 +17,6 @@ import { createReactiveWoT } from "./stores/wot.svelte.js";
 import type { SubscribeConfig, Subscription } from "./subscribe.svelte.js";
 import { createSubscription } from "./subscribe.svelte.js";
 import { createFetchUser } from "./user.svelte.js";
-import { createFetchProfile } from "./profile.svelte.js";
 
 export interface NDKSvelteParams extends NDKConstructorParams {
     /**

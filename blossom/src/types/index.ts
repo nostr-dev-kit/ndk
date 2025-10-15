@@ -1,4 +1,4 @@
-import { type NDKEvent, NDKUser } from "@nostr-dev-kit/ndk";
+import type { NDKEvent } from "@nostr-dev-kit/ndk";
 
 // Blob Descriptor returned from server
 export interface BlossomBlobDescriptor {

@@ -1,5 +1,5 @@
+import type { BlossomUploadOptions, NDKBlossom } from "@nostr-dev-kit/blossom";
 import type { NDKImetaTag } from "@nostr-dev-kit/ndk";
-import type { NDKBlossom } from "@nostr-dev-kit/blossom";
 
 export type UploadStatus = "idle" | "uploading" | "success" | "error";
 
@@ -49,14 +49,15 @@ export class BlossomUpload {
         };
     }
 
-    async upload(file: File): Promise<NDKImetaTag> {
+    async upload(file: File, options?: BlossomUploadOptions): Promise<NDKImetaTag> {
         this.#status = "uploading";
         this.#progress = { loaded: 0, total: file.size, percentage: 0 };
         this.#result = null;
         this.#error = null;
 
         try {
-            const result = await this.blossom.upload(file, {
+            const mergedOptions = {
+                ...options,
                 onProgress: (progress) => {
                     const percentage = Math.round((progress.loaded / progress.total) * 100);
                     this.#progress = {
@@ -66,7 +67,8 @@ export class BlossomUpload {
                     };
                     return "continue";
                 },
-            });
+            };
+            const result = await this.blossom.upload(file, mergedOptions);
 
             this.#status = "success";
             this.#result = result;

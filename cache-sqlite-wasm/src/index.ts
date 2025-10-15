@@ -144,25 +144,25 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
             const data = event.data;
 
             // Handle protocol metadata
-            if (data._protocol && data._protocol !== 'ndk-cache-sqlite') {
+            if (data._protocol && data._protocol !== "ndk-cache-sqlite") {
                 console.error(
-                    '[NDK Cache SQLite WASM] ❌ Wrong worker protocol!',
+                    "[NDK Cache SQLite WASM] ❌ Wrong worker protocol!",
                     `\n\nExpected: ndk-cache-sqlite`,
                     `\nReceived: ${data._protocol}`,
-                    '\n\nThis means the wrong worker instance was passed to the cache adapter.',
-                    '\nMake sure you are using the correct worker file for the cache.'
+                    "\n\nThis means the wrong worker instance was passed to the cache adapter.",
+                    "\nMake sure you are using the correct worker file for the cache.",
                 );
                 return;
             }
 
             // Check version compatibility (warn if mismatch)
-            if (data._version && data._version !== '0.8.0') {
+            if (data._version && data._version !== "0.8.0") {
                 console.warn(
-                    '[NDK Cache SQLite WASM] ⚠️  Worker version mismatch!',
+                    "[NDK Cache SQLite WASM] ⚠️  Worker version mismatch!",
                     `\nLibrary version: 0.8.0`,
                     `\nWorker version: ${data._version}`,
-                    '\n\nUpdate your worker file:',
-                    '\n  cp node_modules/@nostr-dev-kit/cache-sqlite-wasm/dist/worker.js public/'
+                    "\n\nUpdate your worker file:",
+                    "\n  cp node_modules/@nostr-dev-kit/cache-sqlite-wasm/dist/worker.js public/",
                 );
             }
 

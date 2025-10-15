@@ -6,9 +6,9 @@ debug.enable("ndk,ndk:outbox-tracker");
 
 import type { NDKEvent } from "./events/index.js";
 import { NDKKind } from "./events/kinds/index.js";
-import type { NDKFilter } from "./subscription/index.js";
 import { NDK } from "./ndk/index.js";
 import type { NDKRelay } from "./relay/index.js";
+import type { NDKFilter } from "./subscription/index.js";
 
 const npub = process.argv[2];
 

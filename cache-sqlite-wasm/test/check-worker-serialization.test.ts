@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 
 describe("Worker postMessage serialization", () => {
     it("should check how data is serialized across worker boundary", () => {

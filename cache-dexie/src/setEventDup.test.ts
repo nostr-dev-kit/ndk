@@ -1,7 +1,7 @@
 import NDK, { NDKEvent, NDKSubscription } from "@nostr-dev-kit/ndk";
-import { describe, expect, it, beforeEach, afterEach } from "vitest";
-import NDKCacheAdapterDexie from "./index";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { db } from "./db";
+import NDKCacheAdapterDexie from "./index";
 
 describe("setEventDup", () => {
     let adapter: NDKCacheAdapterDexie;

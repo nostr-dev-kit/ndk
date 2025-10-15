@@ -312,9 +312,11 @@ export function createSessionStore() {
                 const remainingSessions = Array.from(newSessions.keys());
                 if (remainingSessions.length > 0) {
                     // Switch to the next available session (fire-and-forget)
-                    get().switchToUser(remainingSessions[0]).catch((error) => {
-                        console.error("Failed to switch session after removal:", error);
-                    });
+                    get()
+                        .switchToUser(remainingSessions[0])
+                        .catch((error) => {
+                            console.error("Failed to switch session after removal:", error);
+                        });
                 }
             }
         },

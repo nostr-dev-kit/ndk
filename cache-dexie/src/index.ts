@@ -1,4 +1,6 @@
 import type {
+    CacheModuleCollection,
+    CacheModuleDefinition,
     Hexpubkey,
     NDKCacheAdapter,
     NDKCacheRelayInfo,
@@ -14,6 +16,7 @@ import type {
 import { deserialize, NDKEvent, type NDKRelay, profileFromEvent } from "@nostr-dev-kit/ndk";
 import createDebug from "debug";
 import { matchFilter } from "nostr-tools";
+import { DexieCacheModuleManager } from "./cache-module.js";
 import { type EventTagCacheEntry, eventTagsDump, eventTagsWarmUp } from "./caches/event-tags.js";
 import { type EventCacheEntry, eventsDump, eventsWarmUp } from "./caches/events.js";
 import { type Nip05CacheEntry, nip05Dump, nip05WarmUp } from "./caches/nip05.js";
@@ -77,11 +80,14 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
     public devMode = false;
     private saveSig: boolean;
     public _onReady?: () => void;
+    private moduleManager: DexieCacheModuleManager;
 
     constructor(opts: NDKCacheAdapterDexieOptions = {}) {
-        createDatabase(opts.dbName || "ndk");
+        const dbName = opts.dbName || "ndk";
+        createDatabase(dbName);
         this.debug = opts.debug || createDebug("ndk:dexie-adapter");
         this.saveSig = opts.saveSig || false;
+        this.moduleManager = new DexieCacheModuleManager(dbName);
         this.profiles = new CacheHandler<Profile>({
             maxSize: opts.profileCacheSize || 100000,
             dump: profilesDump(db.profiles, this.debug),
@@ -585,6 +591,20 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
             if (totalEvents >= limit) break;
         }
         return true;
+    }
+
+    /**
+     * Register a cache module with its schema and migrations
+     */
+    public async registerModule(module: CacheModuleDefinition): Promise<void> {
+        await this.moduleManager.registerModule(module);
+    }
+
+    /**
+     * Get a collection from a registered module
+     */
+    public async getModuleCollection<T>(namespace: string, collection: string): Promise<CacheModuleCollection<T>> {
+        return await this.moduleManager.getModuleCollection<T>(namespace, collection);
     }
 }
 

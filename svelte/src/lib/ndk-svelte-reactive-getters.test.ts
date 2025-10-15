@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { NDKSvelte } from "./ndk-svelte.svelte.js";
 import { NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
+import { beforeEach, describe, expect, it } from "vitest";
+import { NDKSvelte } from "./ndk-svelte.svelte.js";
 
 describe("NDKSvelte Reactive Getters", () => {
     let ndk: NDKSvelte;
@@ -142,7 +142,7 @@ describe("NDKSvelte Reactive Getters", () => {
             await ndk.$sessions?.login(signer2, { setActive: true });
             expect(ndk.$currentSession?.pubkey).toBe(user2.pubkey);
 
-            ndk.$sessions?.switch(user1.pubkey);
+            await ndk.$sessions?.switch(user1.pubkey);
             expect(ndk.$currentSession?.pubkey).toBe(user1.pubkey);
         });
 

@@ -1,5 +1,21 @@
 # @nostr-dev-kit/blossom
 
+## 6.1.0
+
+### Minor Changes
+
+- 878e54a: Improve blossom logging and error messages
+    - Add comprehensive debug logging throughout server list fetching and file upload flows
+    - Dramatically improve error messages when uploads fail - now shows detailed failure info for each server (status codes, error codes, causes)
+    - Better messaging when no servers are configured vs. when all servers fail
+    - Add logging of upload options for better debugging
+
+- Updated dependencies [ad1a3ee]
+- Updated dependencies [a56276b]
+- Updated dependencies [ed3110a]
+- Updated dependencies [9b67ee6]
+    - @nostr-dev-kit/ndk@2.17.7
+
 ## 6.0.4
 
 ### Patch Changes

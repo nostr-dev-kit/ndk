@@ -16,7 +16,7 @@ describe("fetchEvent guardrails", () => {
 
         try {
             await ndk.fetchEvent(naddrFilter);
-            expect.fail("Should have thrown a guardrails error");
+            throw new Error("Should have thrown a guardrails error");
         } catch (error: any) {
             expect(error.message).toContain("For fetching a NIP-33 addressable event");
             expect(error.message).toContain("use fetchEvent() with the naddr directly");
@@ -36,7 +36,7 @@ describe("fetchEvent guardrails", () => {
 
         try {
             await ndk.fetchEvent(idFilter);
-            expect.fail("Should have thrown a guardrails error");
+            throw new Error("Should have thrown a guardrails error");
         } catch (error: any) {
             expect(error.message).toContain("For fetching a single event");
             expect(error.message).toContain("use fetchEvent() instead");
@@ -44,28 +44,30 @@ describe("fetchEvent guardrails", () => {
         }
     });
 
-    it("should NOT warn when fetchEvent is called with a filter that is NOT a single event", async () => {
+    it("should NOT warn when fetchEvent is called with a filter that is NOT a single event and ratio threshold not exceeded", async () => {
         const ndk = new NDK({
             explicitRelayUrls: ["wss://relay.primal.net"],
             aiGuardrails: true,
         });
 
-        // This is a filter for multiple events - should not trigger the specific warnings
-        // The fetchEvents guardrail will still trigger, but with the "use subscribe()" message
+        // This is a filter for multiple events - should not trigger warnings
+        // because the ratio threshold hasn't been exceeded yet
         try {
-            await ndk.fetchEvent(
-                {
-                    kinds: [1],
-                    limit: 10,
-                },
-                { closeOnEose: true },
-            );
-            expect.fail("Should have thrown a guardrails error");
+            await Promise.race([
+                ndk.fetchEvent(
+                    {
+                        kinds: [1],
+                        limit: 10,
+                    },
+                    { closeOnEose: true },
+                ),
+                new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), 100)),
+            ]);
         } catch (error: any) {
-            // This should get the general "use subscribe()" warning, not the specific ones
-            expect(error.message).toContain("In most cases, you should use subscribe()");
-            expect(error.message).not.toContain("For fetching a NIP-33 addressable event");
-            expect(error.message).not.toContain("For fetching a single event");
+            // Should timeout, not throw a guardrails error
+            if (error.message !== "timeout") {
+                expect(error?.message || "").not.toContain("AI_GUARDRAILS");
+            }
         }
     });
 
@@ -128,7 +130,7 @@ describe("fetchEvent guardrails", () => {
         // Verify that the next call DOES trigger the guardrail
         try {
             await ndk.fetchEvent(naddrFilter);
-            expect.fail("Should have thrown a guardrails error");
+            throw new Error("Should have thrown a guardrails error");
         } catch (error: any) {
             expect(error.message).toContain("AI_GUARDRAILS");
         }
@@ -162,7 +164,7 @@ describe("fetchEvent guardrails", () => {
         // Verify that the next call DOES trigger the guardrail
         try {
             await ndk.fetchEvent(naddrFilter);
-            expect.fail("Should have thrown a guardrails error");
+            throw new Error("Should have thrown a guardrails error");
         } catch (error: any) {
             expect(error.message).toContain("AI_GUARDRAILS");
         }
@@ -198,7 +200,7 @@ describe("fetchEvent guardrails", () => {
         // Verify that the next call DOES trigger the guardrail
         try {
             await ndk.fetchEvent(naddrFilter);
-            expect.fail("Should have thrown a guardrails error");
+            throw new Error("Should have thrown a guardrails error");
         } catch (error: any) {
             expect(error.message).toContain("AI_GUARDRAILS");
         }

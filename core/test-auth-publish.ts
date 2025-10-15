@@ -1,11 +1,12 @@
 #!/usr/bin/env bun
+
 /**
  * Test script to demonstrate auth-required publish retry
  * Usage: bun run test-auth-publish.ts --nsec <your-nsec> --msg "your message"
  */
 
-import { NDK } from "./src/ndk";
 import { NDKEvent } from "./src/events";
+import { NDK } from "./src/ndk";
 import { NDKPrivateKeySigner } from "./src/signers/private-key";
 
 // Parse command line arguments

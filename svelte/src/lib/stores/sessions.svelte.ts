@@ -1,7 +1,6 @@
 import type { Hexpubkey, NDKEvent, NDKKind, NDKSigner, NDKUser } from "@nostr-dev-kit/ndk";
 import { NDKKind as Kind } from "@nostr-dev-kit/ndk";
-import type { NDKSession, SessionStartOptions } from "@nostr-dev-kit/sessions";
-import type { NDKSessionManager } from "@nostr-dev-kit/sessions";
+import type { NDKSession, NDKSessionManager, SessionStartOptions } from "@nostr-dev-kit/sessions";
 
 /**
  * Reactive wrapper around NDKSessionManager
@@ -193,8 +192,15 @@ export class ReactiveSessionsStore {
     /**
      * Switch to a different session
      */
-    switch(pubkey: Hexpubkey | null): void {
-        this.#manager.switchTo(pubkey);
+    async switch(pubkey: Hexpubkey | null): Promise<void> {
+        await this.#manager.switchTo(pubkey);
+    }
+
+    /**
+     * Switch to a different session (alias for switch)
+     */
+    async switchTo(pubkey: Hexpubkey | null): Promise<void> {
+        await this.#manager.switchTo(pubkey);
     }
 
     /**

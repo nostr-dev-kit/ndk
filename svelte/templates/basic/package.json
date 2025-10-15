@@ -28,7 +28,7 @@
         "@sveltejs/adapter-auto": "^6.1.1",
         "@sveltejs/kit": "^2.15.3",
         "@sveltejs/vite-plugin-svelte": "^6.2.1",
-        "@types/node": "^22.10.5",
+        "@types/node": "^24.7.0",
         "autoprefixer": "^10.4.20",
         "postcss": "^8.4.49",
         "svelte": "^5.39.9",

@@ -1,6 +1,6 @@
 import { NDKKind } from "../events/kinds/index.js";
 import type { NDKSubscriptionOptions } from "../subscription/index.js";
-import { isValidPubkey } from "../utils/filter-validation.js";
+import { isValidPubkey } from "../utils/validation.js";
 import { type Hexpubkey, NDKUser } from "./index.js";
 
 /**

@@ -2,23 +2,7 @@ import type { Debugger } from "debug";
 import { GuardrailCheckId } from "../ai-guardrails/index.js";
 import type { NDK } from "../ndk/index.js";
 import type { NDKFilter } from "../subscription/index.js";
-
-/**
- * Validates if a string is a valid nostr pubkey (64-character hex string).
- *
- * @param pubkey - The string to validate
- * @returns true if the string is a valid pubkey, false otherwise
- *
- * @example
- * ```typescript
- * if (isValidPubkey(pubkey)) {
- *     // Safe to use
- * }
- * ```
- */
-export function isValidPubkey(pubkey: string): boolean {
-    return typeof pubkey === "string" && /^[0-9a-f]{64}$/i.test(pubkey);
-}
+import { isValidHex64 } from "./validation.js";
 
 /**
  * Filter validation modes for NDK subscriptions.
@@ -130,7 +114,7 @@ function processFilter(
                 } else {
                     debug?.(`Fixed: Removed non-string value at ids[${idx}] (was ${typeof id})`);
                 }
-            } else if (!/^[0-9a-f]{64}$/i.test(id)) {
+            } else if (!isValidHex64(id)) {
                 if (isValidating) {
                     issues.push(`Filter[${filterIndex}].ids[${idx}] is not a valid 64-char hex string: "${id}"`);
                 } else {
@@ -162,7 +146,7 @@ function processFilter(
                 } else {
                     debug?.(`Fixed: Removed non-string value at authors[${idx}] (was ${typeof author})`);
                 }
-            } else if (!/^[0-9a-f]{64}$/i.test(author)) {
+            } else if (!isValidHex64(author)) {
                 if (isValidating) {
                     issues.push(
                         `Filter[${filterIndex}].authors[${idx}] is not a valid 64-char hex pubkey: "${author}"`,
@@ -239,7 +223,7 @@ function processFilter(
                         }
                     } else {
                         // For #e and #p tags, validate as hex strings
-                        if ((key === "#e" || key === "#p") && !/^[0-9a-f]{64}$/i.test(value)) {
+                        if ((key === "#e" || key === "#p") && !isValidHex64(value)) {
                             if (isValidating) {
                                 issues.push(
                                     `Filter[${filterIndex}].${key}[${idx}] is not a valid 64-char hex string: "${value}"`,
@@ -321,7 +305,6 @@ function runAIGuardrailsForFilter(filter: NDKFilter, filterIndex: number, ndk: N
 
     // Check 5: Invalid hex strings in filter arrays
     const bech32Regex = /^n(addr|event|ote|pub|profile)1/;
-    const hexRegex = /^[0-9a-f]{64}$/i;
 
     if (filter.ids) {
         filter.ids.forEach((id, idx) => {
@@ -336,7 +319,7 @@ function runAIGuardrailsForFilter(filter: NDKFilter, filterIndex: number, ndk: N
                     );
                 }
                 // Then check for any invalid hex string (catches garbage data)
-                else if (!hexRegex.test(id)) {
+                else if (!isValidHex64(id)) {
                     guards.error(
                         GuardrailCheckId.FILTER_INVALID_HEX,
                         `Filter[${filterIndex}].ids[${idx}] is not a valid 64-char hex string: "${id}"`,
@@ -361,7 +344,7 @@ function runAIGuardrailsForFilter(filter: NDKFilter, filterIndex: number, ndk: N
                     );
                 }
                 // Then check for any invalid hex string (catches garbage data from follow lists)
-                else if (!hexRegex.test(author)) {
+                else if (!isValidHex64(author)) {
                     guards.error(
                         GuardrailCheckId.FILTER_INVALID_HEX,
                         `Filter[${filterIndex}].authors[${idx}] is not a valid 64-char hex pubkey: "${author}"`,
@@ -392,7 +375,7 @@ function runAIGuardrailsForFilter(filter: NDKFilter, filterIndex: number, ndk: N
                                 );
                             }
                             // Then check for any invalid hex string
-                            else if (!hexRegex.test(value)) {
+                            else if (!isValidHex64(value)) {
                                 guards.error(
                                     GuardrailCheckId.FILTER_INVALID_HEX,
                                     `Filter[${filterIndex}].${key}[${idx}] is not a valid 64-char hex string: "${value}"`,

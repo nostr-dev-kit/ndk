@@ -1,7 +1,7 @@
 import { nip19 } from "nostr-tools";
 
 import type { EventPointer, ProfilePointer } from "../user/index.js";
-import { isValidPubkey } from "../utils/filter-validation.js";
+import { isValidPubkey } from "../utils/validation.js";
 import type { ContentTaggingOptions, NDKEvent, NDKTag } from "./index.js";
 
 export type ContentTag = {

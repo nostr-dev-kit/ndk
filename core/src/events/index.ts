@@ -7,7 +7,7 @@ import type { NDKRelaySet } from "../relay/sets/index.js";
 import type { NDKSigner } from "../signers/index.js";
 import type { NDKFilter } from "../subscription/index.js";
 import type { NDKUser } from "../user/index.js";
-import { isValidPubkey } from "../utils/filter-validation.js";
+import { isValidPubkey } from "../utils/validation.js";
 import { type ContentTag, generateContentTags, mergeTags } from "./content-tagger.js";
 import { decrypt, encrypt } from "./encryption.js";
 import { fetchReplyEvent, fetchRootEvent, fetchTaggedEvent } from "./fetch-tagged-event.js";

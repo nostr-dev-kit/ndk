@@ -4,6 +4,27 @@
 
 A ground-up reimagining of NDK for Svelte 5, built with runes, designed for beauty and performance.
 
+---
+
+## 🔴 Critical API Note for AI Assistants
+
+**The `$subscribe()` method takes a CALLBACK FUNCTION, not direct config:**
+
+```typescript
+// ✅ CORRECT - callback function returning config
+const notes = ndk.$subscribe(() => ({
+  filters: [{ kinds: [1], limit: 50 }]
+}));
+
+// ❌ WRONG - direct config (this API doesn't exist)
+const notes = ndk.$subscribe({ kinds: [1], limit: 50 });
+const notes = ndk.$subscribe([{ kinds: [1] }]);
+```
+
+This enables reactive filters and conditional subscriptions. See examples in `svelte/templates/basic` and `svelte/examples/feed-viewer` for correct usage.
+
+---
+
 ## Philosophy
 
 svelte embraces **Svelte 5's reactive primitives** to create a library that feels native, performs beautifully, and makes building Nostr apps a joy.
@@ -69,15 +90,19 @@ Sessions are automatically persisted to localStorage by default. Users stay logg
 
 ### 1. Reactive Subscriptions
 
-The heart of svelte is the `subscribe()` method - a reactive, self-managing subscription.
+The heart of svelte is the `$subscribe()` method - a reactive, self-managing subscription.
+
+**IMPORTANT**: `$subscribe()` takes a **callback function** that returns your config. This enables reactive filters and conditional subscriptions.
 
 ```svelte
 <script lang="ts">
 import { ndk } from '$lib/ndk';
 import { NDKKind } from '@nostr-dev-kit/ndk';
 
-// Create a reactive subscription
-const notes = ndk.$subscribe({ kinds: [NDKKind.Text], limit: 50 });
+// Create a reactive subscription - note the callback function () => ({ ... })
+const notes = ndk.$subscribe(() => ({
+  filters: [{ kinds: [NDKKind.Text], limit: 50 }]
+}));
 
 // Properties are $state runes that automatically trigger reactivity
 // when accessed in Svelte templates or $effect blocks
@@ -130,13 +155,17 @@ const connected = ndk.pool.connectedCount;
 
 ## Subscription API
 
+> **⚠️ Documentation Update Notice**: Many examples in this README show outdated syntax (without callback functions). The correct API requires a callback: `ndk.$subscribe(() => ({ filters: [...] }))`. See the updated examples above and in the template projects for correct usage.
+
 ### Basic Usage
 
 ```svelte
 <script lang="ts">
 import { ndk } from '$lib/ndk';
 
-const sub = ndk.$subscribe({ kinds: [1], authors: [pubkey], limit: 100 });
+const sub = ndk.$subscribe(() => ({
+  filters: [{ kinds: [1], authors: [pubkey], limit: 100 }]
+}));
 
 // The subscription has reactive properties
 sub.events  // T[] - sorted by created_at desc
@@ -652,12 +681,69 @@ Subscription<T>
 └── changeFilters(), clear()
 ```
 
+## Reactive Fetching
+
+### Fetch Single Event
+
+```svelte
+<script lang="ts">
+import { ndk } from '$lib/ndk';
+
+// By bech32 ID (most common)
+const eventId = $derived($page.params.id);
+const event = ndk.$fetchEvent(() => eventId); // "note1..." or "nevent1..."
+
+// By filter
+const latestNote = ndk.$fetchEvent(() => ({
+  kinds: [1],
+  authors: [pubkey],
+  limit: 1
+}));
+
+// Conditional fetch
+const event = ndk.$fetchEvent(() => {
+  if (!shouldFetch || !eventId) return undefined;
+  return eventId;
+});
+</script>
+
+{#if event}
+  <article>{event.content}</article>
+{/if}
+```
+
+### Fetch Multiple Events
+
+```svelte
+<script lang="ts">
+import { ndk } from '$lib/ndk';
+
+const pubkey = $state('hex...');
+const notes = ndk.$fetchEvents(() => ({
+  kinds: [1],
+  authors: [pubkey],
+  limit: 20
+}));
+
+// Multiple filters
+const events = ndk.$fetchEvents(() => [
+  { kinds: [1], authors: [pubkey1], limit: 10 },
+  { kinds: [1], authors: [pubkey2], limit: 10 }
+]);
+</script>
+
+{#each notes as note}
+  <article>{note.content}</article>
+{/each}
+```
+
 ## Examples
 
 See the [examples](./examples) directory for complete working examples:
 
 - [Basic Feed](./examples/basic-feed) - Simple note feed with profiles ✅
 - [Nutsack](./examples/nutsack) - NIP-60 Cashu wallet with payment tracking ✅
+- [Fetch Event Demo](./examples/fetch-event-demo.md) - Event fetching patterns ✅
 
 ### Coming Soon
 
@@ -680,9 +766,14 @@ class NDKSvelte extends NDK {
 
   // Reactive subscription
   $subscribe<T extends NDKEvent>(
-    filters: NDKFilter | NDKFilter[],
-    opts?: SubscriptionOptions
+    config: () => SubscribeConfig | undefined
   ): Subscription<T>;
+
+  // Reactive fetching
+  $fetchUser(identifier: () => string | undefined): NDKUser | undefined;
+  $fetchProfile(pubkey: () => string | undefined): NDKUserProfile | undefined;
+  $fetchEvent(idOrFilter: () => string | NDKFilter | NDKFilter[] | undefined): NDKEvent | undefined;
+  $fetchEvents(filters: () => NDKFilter | NDKFilter[] | undefined): NDKEvent[];
 }
 ```
 

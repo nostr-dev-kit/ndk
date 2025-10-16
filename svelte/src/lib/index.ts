@@ -95,6 +95,8 @@ export type { ReactiveWoTStore, WoTFilterOptions, WoTLoadOptions, WoTRankOptions
 export type { SubscribeConfig, Subscription, SyncSubscribeConfig } from "./subscribe.svelte.js";
 // Subscription - can be used as standalone function or via ndk.$subscribe()
 export { createSubscription, createSyncSubscription } from "./subscribe.svelte.js";
+// Event fetching - can be used as standalone function or via ndk.$fetchEvent() / ndk.$fetchEvents()
+export { createFetchEvent, createFetchEvents } from "./event.svelte.js";
 // User helpers
 export { createFetchUser, useZapInfo, type ZapInfo } from "./user.svelte.js";
 // WoT runes

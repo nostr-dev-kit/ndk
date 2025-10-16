@@ -1,14 +1,14 @@
 {
     "name": "@nostr-dev-kit/monorepo",
     "dependencies": {
-        "@biomejs/biome": "^2.2.5",
+        "@biomejs/biome": "^2.2.6",
         "esbuild": "^0.25.11",
         "mermaid": "^11.6.0",
         "vitepress": "^1.6.3",
         "vitepress-plugin-mermaid": "^2.0.17"
     },
     "devDependencies": {
-        "svelte": "^5.39.9",
+        "svelte": "^5.40.1",
         "syncpack": "^13.0.4",
         "turbo": "^2.5.3"
     },

@@ -326,6 +326,25 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
  *   <div>{note.content}</div>
  * {/each}
  * ```
+ *
+ * @example
+ * ```svelte
+ * <script lang="ts">
+ *   // Conditional subscription - return undefined to prevent subscription
+ *   let selectedRelay = $state<string | undefined>();
+ *   let isEnabled = $state(false);
+ *
+ *   const notes = createSubscription(ndk, () => {
+ *     // No subscription until both conditions are met
+ *     if (!selectedRelay || !isEnabled) return undefined;
+ *
+ *     return {
+ *       filters: [{ kinds: [1], limit: 20 }],
+ *       relayUrls: [selectedRelay]
+ *     };
+ *   });
+ * </script>
+ * ```
  */
 export function createSubscription<T extends NDKEvent = NDKEvent>(
     ndk: NDKSvelte,

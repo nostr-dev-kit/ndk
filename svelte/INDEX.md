@@ -119,7 +119,9 @@ svelte/
 
 ```svelte
 <script>
-const notes = ndk.$subscribe([{ kinds: [1] }]);
+const notes = ndk.$subscribe(() => ({
+  filters: [{ kinds: [1] }]
+}));
 // That's it! No onDestroy, no manual cleanup
 </script>
 ```
@@ -201,7 +203,9 @@ const highlights = ndk.$subscribe<NDKHighlight>(
 ### Basic Subscription
 ```svelte
 <script>
-const notes = ndk.$subscribe([{ kinds: [1] }]);
+const notes = ndk.$subscribe(() => ({
+  filters: [{ kinds: [1] }]
+}));
 </script>
 
 {#each notes.events as note}
@@ -214,7 +218,9 @@ const notes = ndk.$subscribe([{ kinds: [1] }]);
 <script>
 import { profiles } from '@nostr-dev-kit/svelte/stores';
 
-const notes = ndk.$subscribe([{ kinds: [1] }]);
+const notes = ndk.$subscribe(() => ({
+  filters: [{ kinds: [1] }]
+}));
 </script>
 
 {#each notes.events as note}

@@ -3,7 +3,9 @@ import NDK from "@nostr-dev-kit/ndk";
 import type { SessionManagerOptions } from "@nostr-dev-kit/sessions";
 import { LocalStorage, NDKSessionManager } from "@nostr-dev-kit/sessions";
 import * as ndkSvelteGuardrails from "./ai-guardrails/constructor.js";
+import * as subscribeGuardrails from "./ai-guardrails/subscribe.js";
 import { createFetchProfile } from "./profile.svelte.js";
+import { createFetchEvent, createFetchEvents } from "./event.svelte.js";
 import type { ReactivePaymentsStore } from "./stores/payments.svelte.js";
 import { createReactivePayments } from "./stores/payments.svelte.js";
 import type { ReactivePoolStore } from "./stores/pool.svelte.js";
@@ -69,7 +71,7 @@ export interface NDKSvelteParams extends NDKConstructorParams {
  * const session = ndk.$sessions.current;
  * const score = ndk.$wot.getScore(pubkey);
  * const balance = ndk.$wallet.balance;
- * const notes = ndk.$subscribe({ kinds: [1], limit: 50 });
+ * const notes = ndk.$subscribe(() => ({ filters: [{ kinds: [1], limit: 50 }] }));
  * ```
  */
 export class NDKSvelte extends NDK {
@@ -89,6 +91,11 @@ export class NDKSvelte extends NDK {
         // Register NDKSvelte guardrails
         this.aiGuardrails?.register("ndkSvelte", {
             constructing: ndkSvelteGuardrails.constructing,
+        });
+
+        // Register subscribe guardrails
+        this.aiGuardrails?.register("ndkSvelteSubscribe", {
+            subscribing: subscribeGuardrails.subscribing,
         });
 
         // Announce construction to guardrails
@@ -162,8 +169,28 @@ export class NDKSvelte extends NDK {
      *   <div>{note.content}</div>
      * {/each}
      * ```
+     *
+     * @example
+     * ```ts
+     * // Conditional subscription - return undefined to prevent subscription
+     * let selectedRelay = $state<string | undefined>();
+     * let isEnabled = $state(false);
+     *
+     * const notes = ndk.$subscribe(() => {
+     *   // No subscription until both conditions are met
+     *   if (!selectedRelay || !isEnabled) return undefined;
+     *
+     *   return {
+     *     filters: [{ kinds: [1], limit: 20 }],
+     *     relayUrls: [selectedRelay]
+     *   };
+     * });
+     * ```
      */
     $subscribe<T extends NDKEvent = NDKEvent>(config: () => SubscribeConfig | undefined): Subscription<T> {
+        // Announce to guardrails for validation
+        (this.aiGuardrails as any)?.ndkSvelteSubscribe?.subscribing(config);
+
         return createSubscription<T>(this, config);
     }
 
@@ -207,6 +234,84 @@ export class NDKSvelte extends NDK {
      */
     $fetchProfile(pubkey: () => string | undefined) {
         return createFetchProfile(this, pubkey);
+    }
+
+    /**
+     * Reactively fetch a single event
+     *
+     * Returns a reactive proxy to the event that updates when the identifier/filter changes.
+     * Use it directly as if it were an NDKEvent - all property access is reactive.
+     *
+     * @param idOrFilter - Callback returning event ID (bech32), filter, or undefined
+     *
+     * @example
+     * ```ts
+     * // Fetch by event ID (bech32 format)
+     * const eventId = $derived($page.params.id);
+     * const event = ndk.$fetchEvent(() => eventId); // "note1..." or "nevent1..."
+     *
+     * // In template
+     * {#if event}
+     *   <div>{event.content}</div>
+     * {/if}
+     * ```
+     *
+     * @example
+     * ```ts
+     * // Fetch by filter
+     * const event = ndk.$fetchEvent(() => ({
+     *   kinds: [0],
+     *   authors: [pubkey],
+     *   limit: 1
+     * }));
+     * ```
+     *
+     * @example
+     * ```ts
+     * // Conditional fetch - return undefined to prevent fetching
+     * const event = ndk.$fetchEvent(() => {
+     *   if (!eventId) return undefined;
+     *   return eventId;
+     * });
+     * ```
+     */
+    $fetchEvent(idOrFilter: () => string | NDKFilter | NDKFilter[] | undefined) {
+        return createFetchEvent(this, idOrFilter);
+    }
+
+    /**
+     * Reactively fetch multiple events
+     *
+     * Returns a reactive array of events that updates when the filters change.
+     *
+     * @param filters - Callback returning filters or undefined
+     *
+     * @example
+     * ```ts
+     * const pubkey = $state('hex...');
+     * const events = ndk.$fetchEvents(() => ({
+     *   kinds: [1],
+     *   authors: [pubkey],
+     *   limit: 10
+     * }));
+     *
+     * // In template
+     * {#each events as event}
+     *   <div>{event.content}</div>
+     * {/each}
+     * ```
+     *
+     * @example
+     * ```ts
+     * // Conditional fetch - return undefined to prevent fetching
+     * const events = ndk.$fetchEvents(() => {
+     *   if (!shouldFetch) return undefined;
+     *   return { kinds: [1], authors: [pubkey] };
+     * });
+     * ```
+     */
+    $fetchEvents(filters: () => NDKFilter | NDKFilter[] | undefined) {
+        return createFetchEvents(this, filters);
     }
 
     /**

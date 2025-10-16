@@ -1,5 +1,54 @@
 # Changelog
 
+## 2.3.0
+
+### Minor Changes
+
+- 1307288: Add reactive event fetching methods with consistent ergonomics:
+
+    **$fetchEvent()**:
+    - Reactively fetch a single event by bech32 ID (note1..., nevent1...) or filter
+    - Returns reactive proxy to NDKEvent that updates when identifier/filter changes
+    - Supports conditional fetching by returning undefined
+    - Automatic cleanup and refetching
+
+    **$fetchEvents()**:
+    - Reactively fetch multiple events by single or multiple filters
+    - Returns reactive array of NDKEvent[] that updates when filters change
+    - Supports conditional fetching by returning undefined
+    - Automatic cleanup and refetching
+
+    Both methods follow the same callback-based API as $subscribe, $fetchUser, and $fetchProfile for consistent developer experience.
+
+## 2.2.0
+
+### Minor Changes
+
+- 76c4685: Add Name component for displaying user names from Nostr profiles with customizable field selection
+
+### Patch Changes
+
+- bcef3e7: Add LRU cache with 1000 entries for $fetchProfile to improve performance and reduce redundant network requests
+- d5b4753: Wallet configuration and management improvements:
+
+    **NDKCashuWallet**:
+    - Add `send()` method to create cashu tokens for sending amounts
+    - Add `update()` method to update wallet configuration (mints and relays) with proper replaceable event publishing
+    - Add static `create()` factory method for easy wallet creation with initial configuration
+
+    **ReactiveWalletStore (Svelte)**:
+    - Add reactive Svelte 5 store for wallet state management
+    - Automatic session integration with NDKSessionManager
+    - Reactive balance, status, and wallet state using $state runes
+    - Convenience methods and getters for mints, relays, and transactions
+
+- Updated dependencies [59a97a5]
+- Updated dependencies [28ebbe1]
+- Updated dependencies [d5b4753]
+    - @nostr-dev-kit/ndk@2.17.9
+    - @nostr-dev-kit/cache-sqlite-wasm@0.8.2
+    - @nostr-dev-kit/wallet@0.8.7
+
 ## 2.1.0
 
 ### Minor Changes

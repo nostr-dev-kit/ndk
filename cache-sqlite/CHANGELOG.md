@@ -1,5 +1,26 @@
 # @nostr-dev-kit/ndk-cache-sqlite
 
+## 6.1.1
+
+### Patch Changes
+
+- 59a97a5: Ensure async cache adapters are fully initialized before NDK operations. Cache initialization now happens during `connect()` alongside relay connections, and subscriptions wait for cache readiness before starting.
+
+    SQLite WASM cache improvements:
+    - Add initialization guards to all cache functions to prevent race conditions
+    - Implement proper database migration versioning system (v2)
+    - Support multi-field profile search (search across name, displayName, nip05 simultaneously)
+    - Remove verbose migration logging (keep only errors)
+    - Bump version to 0.8.1
+
+- 28ebbe1: Fix NIP-17 gift-wrapped message decryption caching. Previously, decrypted events were being repeatedly decrypted because the cache key (wrapper ID) didn't match the stored key (rumor ID). Now properly caches decrypted gift-wrapped messages using the wrapper event ID as the cache key, eliminating redundant decryption operations.
+
+    Adds comprehensive tests to verify cache behavior with gift-wrapped events.
+
+- Updated dependencies [59a97a5]
+- Updated dependencies [28ebbe1]
+    - @nostr-dev-kit/ndk@2.17.9
+
 ## 6.1.0
 
 ### Minor Changes

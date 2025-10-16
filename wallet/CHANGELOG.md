@@ -1,5 +1,26 @@
 # @nostr-dev-kit/ndk-cache-redis
 
+## 0.8.7
+
+### Patch Changes
+
+- d5b4753: Wallet configuration and management improvements:
+
+    **NDKCashuWallet**:
+    - Add `send()` method to create cashu tokens for sending amounts
+    - Add `update()` method to update wallet configuration (mints and relays) with proper replaceable event publishing
+    - Add static `create()` factory method for easy wallet creation with initial configuration
+
+    **ReactiveWalletStore (Svelte)**:
+    - Add reactive Svelte 5 store for wallet state management
+    - Automatic session integration with NDKSessionManager
+    - Reactive balance, status, and wallet state using $state runes
+    - Convenience methods and getters for mints, relays, and transactions
+
+- Updated dependencies [59a97a5]
+- Updated dependencies [28ebbe1]
+    - @nostr-dev-kit/ndk@2.17.9
+
 ## 0.8.6
 
 ### Patch Changes

@@ -22,6 +22,7 @@ export {
 export { default as Avatar } from "./components/Avatar.svelte";
 export { default as BlossomImage } from "./components/BlossomImage.svelte";
 export { default as EventContent } from "./components/EventContent.svelte";
+export { default as Name } from "./components/Name.svelte";
 export { default as NostrEditor } from "./components/editor/NostrEditor.svelte";
 export { default as ImageNodeView } from "./components/editor/nodes/ImageNodeView.svelte";
 export { default as NAddrNodeView } from "./components/editor/nodes/NAddrNodeView.svelte";

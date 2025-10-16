@@ -5,19 +5,23 @@ import type { NDKCacheAdapterSqliteWasm } from "../index";
  * Filter descriptor for getProfiles in worker mode.
  */
 export type ProfileFilterDescriptor = {
-    field: string;
+    field?: string;
+    fields?: string[];
     contains: string;
 };
 
 /**
  * Fetches profiles that match the given filter.
- * - In worker mode, accepts a filter descriptor ({ field, contains }) and queries the worker.
+ * - In worker mode, accepts a filter descriptor ({ field, contains } or { fields, contains }) and queries the worker.
+ *   Use `fields` to search across multiple profile fields (e.g., ['name', 'displayName', 'nip05']).
  * - In non-worker mode, accepts a filter function and queries the DB directly.
  */
 export async function getProfiles(
     this: NDKCacheAdapterSqliteWasm,
     filter: ((pubkey: Hexpubkey, profile: NDKUserProfile) => boolean) | ProfileFilterDescriptor,
 ): Promise<Map<Hexpubkey, NDKUserProfile>> {
+    await this.ensureInitialized();
+
     if (this.useWorker) {
         if (typeof filter === "function") {
             throw new Error("In worker mode, getProfiles only supports filter descriptors, not functions.");

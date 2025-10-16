@@ -21,6 +21,8 @@ export async function saveNip05(
     const profileStr = profile ? JSON.stringify(profile) : null;
     const fetchedAt = Date.now();
 
+    await this.ensureInitialized();
+
     if (this.useWorker) {
         await this.postWorkerMessage({
             type: "run",

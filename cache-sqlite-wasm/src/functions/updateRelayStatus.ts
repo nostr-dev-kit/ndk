@@ -45,6 +45,8 @@ export async function updateRelayStatus(
         }
     }
 
+    await this.ensureInitialized();
+
     if (this.useWorker) {
         await this.postWorkerMessage({
             type: "run",

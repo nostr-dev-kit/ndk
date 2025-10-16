@@ -6,7 +6,7 @@ import type { NDKCacheAdapterSqlite } from "../index";
  */
 export async function getProfiles(
     this: NDKCacheAdapterSqlite,
-    filter: (pubkey: Hexpubkey, profile: NDKUserProfile) => boolean,
+    filter: ((pubkey: Hexpubkey, profile: NDKUserProfile) => boolean) | { field?: string; fields?: string[]; contains: string },
 ): Promise<Map<Hexpubkey, NDKUserProfile> | undefined> {
     if (!this.db) throw new Error("Database not initialized");
 
@@ -18,10 +18,22 @@ export async function getProfiles(
 
         const result = new Map<Hexpubkey, NDKUserProfile>();
 
+        // Convert descriptor filter to function if needed
+        const filterFn = typeof filter === 'function'
+            ? filter
+            : (pubkey: Hexpubkey, profile: NDKUserProfile) => {
+                const searchLower = filter.contains.toLowerCase();
+                const fields = filter.fields || (filter.field ? [filter.field] : ['name', 'displayName', 'nip05']);
+                return fields.some(field => {
+                    const value = (profile as any)[field];
+                    return typeof value === 'string' && value.toLowerCase().includes(searchLower);
+                });
+            };
+
         for (const row of rows) {
             try {
                 const profile = JSON.parse(row.profile) as NDKUserProfile;
-                if (filter(row.pubkey, profile)) {
+                if (filterFn(row.pubkey, profile)) {
                     result.set(row.pubkey, profile);
                 }
             } catch (e) {

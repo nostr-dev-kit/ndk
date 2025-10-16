@@ -20,6 +20,8 @@ export async function addUnpublishedEvent(
         ) VALUES (?, ?, ?, ?)
     `;
 
+    await this.ensureInitialized();
+
     if (this.useWorker) {
         await this.postWorkerMessage({
             type: "run",

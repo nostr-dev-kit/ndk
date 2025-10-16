@@ -60,6 +60,11 @@ export interface EventRelay {
     seenAt: number;
 }
 
+export interface DecryptedEvent {
+    id: NDKEventId;
+    event: string;
+}
+
 export class Database extends Dexie {
     profiles!: Table<Profile>;
     events!: Table<Event>;
@@ -69,10 +74,11 @@ export class Database extends Dexie {
     relayStatus!: Table<RelayStatus>;
     unpublishedEvents!: Table<UnpublishedEvent>;
     eventRelays!: Table<EventRelay>;
+    decryptedEvents!: Table<DecryptedEvent>;
 
     constructor(name: string) {
         super(name);
-        this.version(17).stores({
+        this.version(18).stores({
             profiles: "&pubkey",
             events: "&id, kind",
             eventTags: "&tagValue",
@@ -81,6 +87,7 @@ export class Database extends Dexie {
             relayStatus: "&url",
             unpublishedEvents: "&id",
             eventRelays: "[eventId+relayUrl], eventId",
+            decryptedEvents: "&id",
         });
     }
 }

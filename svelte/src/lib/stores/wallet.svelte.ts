@@ -283,6 +283,21 @@ export class ReactiveWalletStore {
         await wallet.start({ pubkey: session });
         this.set(wallet);
     }
+
+    /**
+     * Update existing wallet configuration (mints and relays)
+     * If no wallet exists, creates a new one instead.
+     */
+    async updateWallet(config: { mints: string[]; relays?: string[] }): Promise<void> {
+        const wallet = this.#wallet;
+        if (!(wallet instanceof NDKCashuWallet)) {
+            // No wallet exists, create one
+            return this.setupWallet(config);
+        }
+
+        // Update existing wallet using the new update method
+        await wallet.update(config);
+    }
 }
 
 export function createReactiveWallet(ndk: NDK, sessionManager: NDKSessionManager): ReactiveWalletStore {

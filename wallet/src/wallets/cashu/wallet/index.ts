@@ -562,6 +562,48 @@ export class NDKCashuWallet extends NDKWallet {
     }
 
     /**
+     * Updates wallet configuration (mints and relays) and publishes the changes.
+     * Uses publishReplaceable to ensure the event replaces the previous wallet configuration.
+     *
+     * @param config - Configuration object with mints and optional relays
+     *
+     * @example
+     * // Update mints only
+     * await wallet.update({ mints: ['https://mint.example.com'] });
+     *
+     * @example
+     * // Update both mints and relays
+     * await wallet.update({
+     *   mints: ['https://mint.example.com'],
+     *   relays: ['wss://relay.example.com']
+     * });
+     */
+    async update(config: { mints: string[]; relays?: string[] }) {
+        // Update mints
+        this.mints = config.mints;
+
+        // Update relays
+        if (config.relays && config.relays.length > 0) {
+            this.relaySet = NDKRelaySet.fromRelayUrls(config.relays, this.ndk);
+            this._walletRelays = config.relays;
+        } else {
+            this.relaySet = undefined;
+            this._walletRelays = [];
+        }
+
+        // Create wallet event
+        const event = new NDKEvent(this.ndk, {
+            content: JSON.stringify(this.walletPayload()),
+            kind: NDKKind.CashuWallet,
+        });
+
+        const user = await this.ndk?.signer?.user();
+        await event.encrypt(user, undefined, "nip44");
+
+        return event.publishReplaceable(this.relaySet);
+    }
+
+    /**
      * Prepares a deposit
      * @param amount
      * @param mint

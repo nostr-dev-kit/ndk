@@ -52,7 +52,11 @@ This library can also [help with generating new keys](/core/docs/fundamentals/si
 
 ### Remote Signer
 
-(NIP-46)
+A Nostr remote signer is an application or device that securely stores your private key and signs Nostr events on
+your behalf, preventing you from having to expose the key clients.
+
+It works by establishing a secure connection, as described in [NIP-46](https://nostr-nips.com/nip-46), with a Nostr
+client and then receiving signing requests via push notifications to approve or deny.
 
 #### bunker://
 * Create a `NDKNip46Signer`, optionally providing the local signer if you are restoring a connection that was already generated in your app:

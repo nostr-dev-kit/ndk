@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk
 
+## 2.17.8
+
+### Patch Changes
+
+- Cache decrypted NIP-17 events to avoid redundant decryption. The `giftUnwrap` function now checks the cache adapter for previously decrypted events and stores newly decrypted events, significantly improving performance when handling NIP-17 gift-wrapped messages.
+
 ## 2.17.7
 
 ### Patch Changes
@@ -9,7 +15,6 @@
     - Add AI guardrails with JSDoc warnings for common NIP-17 mistakes (signing rumors, using wrong timestamps, forgetting to publish to sender relays)
     - Add runtime warning when rumor is already signed
     - Improve documentation in gift-wrapping.ts with clear guidance on NIP-17 best practices
-
 
 - ad1a3ee: Improve AI guardrails with ratio-based fetchEvents warnings
 

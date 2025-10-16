@@ -635,7 +635,6 @@ export class NDK extends EventEmitter<{
 
         // Initialize cache adapter if it has async initialization
         if (this.cacheAdapter?.initializeAsync) {
-            this.debug("Initializing cache adapter");
             connections.push(this.cacheAdapter.initializeAsync(this));
         }
 

@@ -11,6 +11,8 @@ export async function getDecryptedEvent(
 ): Promise<NDKEvent | null> {
     const stmt = "SELECT event FROM decrypted_events WHERE id = ? LIMIT 1";
 
+    await this.ensureInitialized();
+
     if (this.useWorker) {
         const result = await this.postWorkerMessage<{ event?: string }>({
             type: "get",

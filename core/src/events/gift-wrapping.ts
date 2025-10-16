@@ -71,26 +71,38 @@ export async function giftUnwrap(
     signer?: NDKSigner,
     scheme: NDKEncryptionScheme = "nip44",
 ): Promise<NDKEvent> {
-    const _sender = sender || new NDKUser({ pubkey: event.pubkey });
-    let _signer = signer;
-    if (!_signer) {
-        if (!event.ndk) throw new Error("no signer available for giftUnwrap");
-        _signer = event.ndk.signer;
+    // Check cache first
+    if (event.ndk?.cacheAdapter?.getDecryptedEvent) {
+        const cached = await event.ndk.cacheAdapter.getDecryptedEvent(event.id);
+        if (cached) {
+            return cached;
+        }
     }
-    if (!signer) throw new Error("no signer");
+
+    const _sender = sender || new NDKUser({ pubkey: event.pubkey });
+    const _signer = signer || event.ndk?.signer;
+    if (!_signer) throw new Error("no signer");
+
     try {
-        const seal = JSON.parse(await signer.decrypt(_sender, event.content, scheme)) as NostrEvent;
+        const seal = JSON.parse(await _signer.decrypt(_sender, event.content, scheme)) as NostrEvent;
         if (!seal) throw new Error("Failed to decrypt wrapper");
 
         if (!new NDKEvent(undefined, seal).verifySignature(false))
             throw new Error("GiftSeal signature verification failed!");
 
         const rumorSender = new NDKUser({ pubkey: seal.pubkey });
-        const rumor = JSON.parse(await signer.decrypt(rumorSender, seal.content, scheme));
+        const rumor = JSON.parse(await _signer.decrypt(rumorSender, seal.content, scheme));
         if (!rumor) throw new Error("Failed to decrypt seal");
         if (rumor.pubkey !== seal.pubkey) throw new Error("Invalid GiftWrap, sender validation failed!");
 
-        return new NDKEvent(event.ndk, rumor as NostrEvent);
+        const rumorEvent = new NDKEvent(event.ndk, rumor as NostrEvent);
+
+        // Cache the decrypted rumor using the wrapper ID as the key
+        if (event.ndk?.cacheAdapter?.addDecryptedEvent) {
+            await event.ndk.cacheAdapter.addDecryptedEvent(event.id, rumorEvent);
+        }
+
+        return rumorEvent;
     } catch (_e) {
         return Promise.reject("Got error unwrapping event! See console log.");
     }

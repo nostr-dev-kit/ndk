@@ -202,10 +202,23 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
     }
 
     public async getProfiles(
-        fn: (pubkey: Hexpubkey, profile: NDKUserProfile) => boolean,
+        filter: ((pubkey: Hexpubkey, profile: NDKUserProfile) => boolean) | { field?: string; fields?: string[]; contains: string },
     ): Promise<Map<Hexpubkey, NDKUserProfile> | undefined> {
         if (!this.profiles) return;
-        return this.profiles.getAllWithFilter(fn);
+
+        // Convert descriptor filter to function if needed
+        const filterFn = typeof filter === 'function'
+            ? filter
+            : (pubkey: Hexpubkey, profile: NDKUserProfile) => {
+                const searchLower = filter.contains.toLowerCase();
+                const fields = filter.fields || (filter.field ? [filter.field] : ['name', 'displayName', 'nip05']);
+                return fields.some(field => {
+                    const value = (profile as any)[field];
+                    return typeof value === 'string' && value.toLowerCase().includes(searchLower);
+                });
+            };
+
+        return this.profiles.getAllWithFilter(filterFn);
     }
 
     public saveProfile(pubkey: Hexpubkey, profile: NDKUserProfile) {
@@ -605,6 +618,37 @@ export default class NDKCacheAdapterDexie implements NDKCacheAdapter {
      */
     public async getModuleCollection<T>(namespace: string, collection: string): Promise<CacheModuleCollection<T>> {
         return await this.moduleManager.getModuleCollection<T>(namespace, collection);
+    }
+
+    /**
+     * Get a decrypted event from the cache by its wrapper ID
+     */
+    public async getDecryptedEvent(wrapperId: NDKEventId): Promise<NDKEvent | null> {
+        try {
+            const decrypted = await db.decryptedEvents.get(wrapperId);
+            if (decrypted) {
+                const nostrEvent = JSON.parse(decrypted.event);
+                return new NDKEvent(undefined, nostrEvent);
+            }
+            return null;
+        } catch (e) {
+            console.error(`[cache-dexie] Error getting decrypted event for wrapper ${wrapperId}:`, e);
+            return null;
+        }
+    }
+
+    /**
+     * Add a decrypted event to the cache
+     */
+    public async addDecryptedEvent(wrapperId: NDKEventId, decryptedEvent: NDKEvent): Promise<void> {
+        try {
+            await db.decryptedEvents.put({
+                id: wrapperId,
+                event: JSON.stringify(decryptedEvent.rawEvent()),
+            });
+        } catch (e) {
+            console.error(`[cache-dexie] Error adding decrypted event for wrapper ${wrapperId}:`, e);
+        }
     }
 }
 

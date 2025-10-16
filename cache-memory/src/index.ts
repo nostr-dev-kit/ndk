@@ -116,11 +116,24 @@ export default class NDKMemoryCacheAdapter implements NDKCacheAdapter {
     }
 
     async getProfiles(
-        filter: (pubkey: Hexpubkey, profile: NDKUserProfile) => boolean,
+        filter: ((pubkey: Hexpubkey, profile: NDKUserProfile) => boolean) | { field?: string; fields?: string[]; contains: string },
     ): Promise<Map<Hexpubkey, NDKUserProfile> | undefined> {
         const map = new Map<Hexpubkey, NDKUserProfile>();
+
+        // Convert descriptor filter to function if needed
+        const filterFn = typeof filter === 'function'
+            ? filter
+            : (pubkey: Hexpubkey, profile: NDKUserProfile) => {
+                const searchLower = filter.contains.toLowerCase();
+                const fields = filter.fields || (filter.field ? [filter.field] : ['name', 'displayName', 'nip05']);
+                return fields.some(field => {
+                    const value = (profile as any)[field];
+                    return typeof value === 'string' && value.toLowerCase().includes(searchLower);
+                });
+            };
+
         this.profiles.forEach((profileEntry, pubkey) => {
-            if (filter(pubkey, profileEntry)) {
+            if (filterFn(pubkey, profileEntry)) {
                 map.set(pubkey, profileEntry);
             }
         });
@@ -209,12 +222,12 @@ export default class NDKMemoryCacheAdapter implements NDKCacheAdapter {
         this.unpublishedEvents.delete(eventId);
     }
 
-    getDecryptedEvent(eventId: NDKEventId): NDKEvent | null {
-        return this.decryptedEvents.get(eventId) ?? null;
+    getDecryptedEvent(wrapperId: NDKEventId): NDKEvent | null {
+        return this.decryptedEvents.get(wrapperId) ?? null;
     }
 
-    addDecryptedEvent(event: NDKEvent): void {
-        this.decryptedEvents.set(event.id, event);
+    addDecryptedEvent(wrapperId: NDKEventId, decryptedEvent: NDKEvent): void {
+        this.decryptedEvents.set(wrapperId, decryptedEvent);
     }
 
     async clear(): Promise<void> {

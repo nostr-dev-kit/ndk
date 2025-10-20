@@ -210,7 +210,12 @@ export class NDKSessionManager {
         if (!ndk) throw new Error("NDK not initialized");
 
         const signer = opts?.signer ?? NDKPrivateKeySigner.generate();
-        const pubkey = await this.login(signer, { setActive: true });
+
+        // Only login if signer was not provided (i.e., we generated a new one)
+        if (!opts?.signer) {
+            await this.login(signer, { setActive: true });
+        }
+
         const publish = opts?.publish !== false;
         const events: NDKEvent[] = [];
 

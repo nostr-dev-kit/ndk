@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk
 
+## 2.17.10
+
+### Patch Changes
+
+- Fix Buffer reference error in signature verification worker by replacing Node.js Buffer API with browser-compatible hexToBytes function
+
 ## 2.17.9
 
 ### Patch Changes

@@ -412,14 +412,22 @@ const connected = $derived(!!ndk.$wallet.wallet);
 ### Wallet API
 
 ```typescript
+// Save wallet configuration (creates or updates)
+// Publishes both the wallet config (kind 17375) and mint list (kind 10019) for nutzap reception
+await ndk.$wallet.save({
+  mints: ['https://mint.example.com'],
+  relays: ['wss://relay.example.com']
+})
+
 // Set/clear wallet
 ndk.$wallet.set(wallet)
 ndk.$wallet.clear()
 await ndk.$wallet.refreshBalance()
 
 // State
-ndk.$wallet.wallet    // NDKWallet | undefined
 ndk.$wallet.balance   // number
+ndk.$wallet.mints     // Mint[]
+ndk.$wallet.relays    // string[]
 ```
 
 ## Payment Tracking

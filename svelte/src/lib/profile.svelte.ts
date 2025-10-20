@@ -1,6 +1,7 @@
 import type { NDKUserProfile } from "@nostr-dev-kit/ndk";
 import type { NDKSvelte } from "./ndk-svelte.svelte";
 import { LRUCache } from "./utils/lru-cache.js";
+import { validateCallback } from "./utils/validate-callback.js";
 
 // Global LRU cache for profile fetches (1000 entries)
 const profileCache = new LRUCache<string, NDKUserProfile>(1000);
@@ -24,7 +25,8 @@ const profileCache = new LRUCache<string, NDKUserProfile>(1000);
  * {/if}
  * ```
  */
-export function createFetchProfile(ndk: NDKSvelte, pubkey: () => string | undefined) {
+export function createFetchProfile(ndk: NDKSvelte, pubkey: () => string | undefined): NDKUserProfile | undefined {
+    validateCallback(pubkey, '$fetchProfile', 'pubkey');
     let _profile = $state<NDKUserProfile | undefined>(undefined);
 
     const derivedPubkey = $derived(pubkey());
@@ -75,5 +77,5 @@ export function createFetchProfile(ndk: NDKSvelte, pubkey: () => string | undefi
         getOwnPropertyDescriptor(_target, prop) {
             return _profile ? Reflect.getOwnPropertyDescriptor(_profile, prop) : undefined;
         },
-    });
+    }) as NDKUserProfile | undefined;
 }

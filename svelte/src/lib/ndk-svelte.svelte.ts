@@ -1,4 +1,4 @@
-import type { NDKConstructorParams, NDKEvent, NDKFilter, NDKUser } from "@nostr-dev-kit/ndk";
+import type { NDKConstructorParams, NDKEvent, NDKFilter, NDKUser, NDKUserProfile } from "@nostr-dev-kit/ndk";
 import NDK from "@nostr-dev-kit/ndk";
 import type { SessionManagerOptions } from "@nostr-dev-kit/sessions";
 import { LocalStorage, NDKSessionManager } from "@nostr-dev-kit/sessions";
@@ -155,19 +155,35 @@ export class NDKSvelte extends NDK {
      *
      * @example
      * ```ts
-     * // Reactive config - automatically restarts when kind or relays change
-     * let kind = $state(1);
-     * let selectedRelays = $state(['wss://relay.damus.io']);
-     *
-     * const notes = ndk.$subscribe(() => ({
-     *   filters: [{ kinds: [kind], limit: 50 }],
-     *   relayUrls: selectedRelays
-     * }));
+     * // Shorthand: Return filter directly (automatically wrapped)
+     * const notes = ndk.$subscribe(() => ({ kinds: [1], limit: 50 }));
      *
      * // Reactive access in templates
      * {#each notes.events as note}
      *   <div>{note.content}</div>
      * {/each}
+     * ```
+     *
+     * @example
+     * ```ts
+     * // Shorthand: Return array of filters (automatically wrapped)
+     * const events = ndk.$subscribe(() => [
+     *   { kinds: [1], authors: [pubkey1] },
+     *   { kinds: [1], authors: [pubkey2] }
+     * ]);
+     * ```
+     *
+     * @example
+     * ```ts
+     * // Full config - use when you need additional options
+     * let kind = $state(1);
+     * let selectedRelays = $state(['wss://relay.damus.io']);
+     *
+     * const notes = ndk.$subscribe(() => ({
+     *   filters: [{ kinds: [kind], limit: 50 }],
+     *   relayUrls: selectedRelays,
+     *   wot: { minScore: 0.5 }
+     * }));
      * ```
      *
      * @example
@@ -187,7 +203,7 @@ export class NDKSvelte extends NDK {
      * });
      * ```
      */
-    $subscribe<T extends NDKEvent = NDKEvent>(config: () => SubscribeConfig | undefined): Subscription<T> {
+    $subscribe<T extends NDKEvent = NDKEvent>(config: () => SubscribeConfig | NDKFilter | NDKFilter[] | undefined): Subscription<T> {
         // Announce to guardrails for validation
         (this.aiGuardrails as any)?.ndkSvelteSubscribe?.subscribing(config);
 
@@ -211,7 +227,7 @@ export class NDKSvelte extends NDK {
      * {/if}
      * ```
      */
-    $fetchUser(identifier: () => string | undefined) {
+    $fetchUser(identifier: () => string | undefined): NDKUser | undefined {
         return createFetchUser(this, identifier);
     }
 
@@ -232,7 +248,7 @@ export class NDKSvelte extends NDK {
      * {/if}
      * ```
      */
-    $fetchProfile(pubkey: () => string | undefined) {
+    $fetchProfile(pubkey: () => string | undefined): NDKUserProfile | undefined {
         return createFetchProfile(this, pubkey);
     }
 
@@ -242,7 +258,14 @@ export class NDKSvelte extends NDK {
      * Returns a reactive proxy to the event that updates when the identifier/filter changes.
      * Use it directly as if it were an NDKEvent - all property access is reactive.
      *
+     * **Event Wrapping (Default: Enabled)**
+     * - Events are automatically wrapped in their kind-specific classes (e.g., NDKArticle for kind 30023)
+     * - Invalid events that fail wrapper validation are silently dropped, returning undefined
+     * - This protects your app from receiving malformed events
+     * - To disable wrapping, pass `{ wrap: false }` as the second argument
+     *
      * @param idOrFilter - Callback returning event ID (bech32), filter, or undefined
+     * @param options - Optional fetch options. Use `{ wrap: false }` to disable automatic wrapping and validation
      *
      * @example
      * ```ts
@@ -254,6 +277,26 @@ export class NDKSvelte extends NDK {
      * {#if event}
      *   <div>{event.content}</div>
      * {/if}
+     * ```
+     *
+     * @example
+     * ```ts
+     * import type { NDKArticle } from "@nostr-dev-kit/ndk";
+     *
+     * // Type the result as NDKArticle to access article-specific properties
+     * const article = ndk.$fetchEvent<NDKArticle>(() => naddr);
+     *
+     * // In template
+     * {#if article}
+     *   <h1>{article.title}</h1>
+     *   <div>{article.content}</div>
+     * {/if}
+     * ```
+     *
+     * @example
+     * ```ts
+     * // Disable automatic wrapping
+     * const event = ndk.$fetchEvent(() => eventId, { wrap: false });
      * ```
      *
      * @example
@@ -275,8 +318,11 @@ export class NDKSvelte extends NDK {
      * });
      * ```
      */
-    $fetchEvent(idOrFilter: () => string | NDKFilter | NDKFilter[] | undefined) {
-        return createFetchEvent(this, idOrFilter);
+    $fetchEvent<T extends NDKEvent = NDKEvent>(
+        idOrFilter: () => string | NDKFilter | NDKFilter[] | undefined,
+        options?: import("./event.svelte").FetchEventOptions,
+    ): T | undefined {
+        return createFetchEvent<T>(this, idOrFilter, options);
     }
 
     /**
@@ -284,7 +330,14 @@ export class NDKSvelte extends NDK {
      *
      * Returns a reactive array of events that updates when the filters change.
      *
+     * **Event Wrapping (Default: Enabled)**
+     * - Events are automatically wrapped in their kind-specific classes (e.g., NDKArticle for kind 30023)
+     * - Invalid events that fail wrapper validation are silently dropped from the results
+     * - This protects your app from receiving malformed events
+     * - To disable wrapping, pass `{ wrap: false }` as the second argument
+     *
      * @param filters - Callback returning filters or undefined
+     * @param options - Optional fetch options. Use `{ wrap: false }` to disable automatic wrapping and validation
      *
      * @example
      * ```ts
@@ -303,6 +356,30 @@ export class NDKSvelte extends NDK {
      *
      * @example
      * ```ts
+     * import type { NDKArticle } from "@nostr-dev-kit/ndk";
+     *
+     * // Type the result as NDKArticle[] to access article-specific properties
+     * const articles = ndk.$fetchEvents<NDKArticle>(() => ({
+     *   kinds: [30023],
+     *   authors: [pubkey],
+     *   limit: 10
+     * }));
+     *
+     * // In template
+     * {#each articles as article}
+     *   <h2>{article.title}</h2>
+     *   <div>{article.content}</div>
+     * {/each}
+     * ```
+     *
+     * @example
+     * ```ts
+     * // Disable automatic wrapping
+     * const events = ndk.$fetchEvents(() => ({ kinds: [1] }), { wrap: false });
+     * ```
+     *
+     * @example
+     * ```ts
      * // Conditional fetch - return undefined to prevent fetching
      * const events = ndk.$fetchEvents(() => {
      *   if (!shouldFetch) return undefined;
@@ -310,8 +387,11 @@ export class NDKSvelte extends NDK {
      * });
      * ```
      */
-    $fetchEvents(filters: () => NDKFilter | NDKFilter[] | undefined) {
-        return createFetchEvents(this, filters);
+    $fetchEvents<T extends NDKEvent = NDKEvent>(
+        filters: () => NDKFilter | NDKFilter[] | undefined,
+        options?: import("./event.svelte").FetchEventOptions,
+    ): T[] {
+        return createFetchEvents<T>(this, filters, options);
     }
 
     /**

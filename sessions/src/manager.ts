@@ -153,65 +153,111 @@ export class NDKSessionManager {
     }
 
     /**
-     * Create a new account with optional profile, relays, and wallet
+     * Create a new account with optional profile, relays, wallet, and follows
      *
-     * @param options - Configuration for the new account
-     * @param options.profile - Optional profile metadata (kind:0)
-     * @param options.relays - Optional relay list for NIP-65 (kind:10002)
-     * @param options.wallet - Optional wallet configuration for NIP-60
-     * @param options.wallet.mints - Mint URLs for the wallet
-     * @param options.wallet.relays - Optional relays for wallet events
-     * @returns The pubkey and signer for the new account
+     * @param data - Account data to create
+     * @param data.profile - Optional profile metadata (kind:0)
+     * @param data.relays - Optional relay list for NIP-65 (kind:10002)
+     * @param data.wallet - Optional wallet configuration for NIP-60
+     * @param data.wallet.mints - Mint URLs for the wallet
+     * @param data.wallet.relays - Optional relays for wallet events
+     * @param data.follows - Optional list of pubkeys to follow (kind:3)
+     * @param opts - Behavior options
+     * @param opts.publish - Whether to publish events immediately (default: true)
+     * @param opts.signer - Optional signer to use instead of generating a new one
+     * @returns The signer and signed events array
      *
      * @example
      * ```typescript
-     * const { pubkey, signer } = await sessions.createAccount({
+     * // Publish immediately with generated signer
+     * const { signer, events } = await sessions.createAccount({
      *   profile: { name: 'Alice', about: 'Hello Nostr!' },
      *   relays: ['wss://relay.damus.io', 'wss://relay.primal.net'],
-     *   wallet: {
-     *     mints: ['https://mint.minibits.cash'],
-     *     relays: ['wss://relay.damus.io']
-     *   }
+     *   follows: ['pubkey1...', 'pubkey2...']
      * });
+     *
+     * // Use existing signer
+     * const mySigner = NDKPrivateKeySigner.generate();
+     * const { signer, events } = await sessions.createAccount({
+     *   profile: { name: 'Alice', about: 'Hello Nostr!' }
+     * }, { signer: mySigner });
+     *
+     * // Get signed events without publishing
+     * const { signer, events } = await sessions.createAccount({
+     *   profile: { name: 'Alice', about: 'Hello Nostr!' },
+     *   relays: ['wss://relay.damus.io', 'wss://relay.primal.net']
+     * }, { publish: false });
+     * // events array will contain signed events when publish is false
      * ```
      */
-    async createAccount(options?: {
-        profile?: NDKUserProfile;
-        relays?: string[];
-        wallet?: {
-            mints: string[];
+    async createAccount(
+        data?: {
+            profile?: NDKUserProfile;
             relays?: string[];
-        };
-    }): Promise<{ pubkey: Hexpubkey; signer: NDKPrivateKeySigner }> {
+            wallet?: {
+                mints: string[];
+                relays?: string[];
+            };
+            follows?: Hexpubkey[];
+        },
+        opts?: {
+            publish?: boolean;
+            signer?: NDKPrivateKeySigner;
+        }
+    ): Promise<{ signer: NDKPrivateKeySigner; events: NDKEvent[] }> {
         const state = this.getCurrentState();
         const ndk = state.ndk;
         if (!ndk) throw new Error("NDK not initialized");
 
-        const signer = NDKPrivateKeySigner.generate();
+        const signer = opts?.signer ?? NDKPrivateKeySigner.generate();
         const pubkey = await this.login(signer, { setActive: true });
+        const publish = opts?.publish !== false;
+        const events: NDKEvent[] = [];
 
-        if (options?.profile) {
+        if (data?.profile) {
             const profileEvent = new NDKEvent(ndk, {
                 kind: NDKKind.Metadata,
-                content: JSON.stringify(options.profile),
+                content: JSON.stringify(data.profile),
             });
-            profileEvent.sig = await profileEvent.sign(signer);
-            await profileEvent.publish();
+            await profileEvent.sign(signer);
+            if (publish) {
+                await profileEvent.publish();
+            } else {
+                events.push(profileEvent);
+            }
         }
 
-        if (options?.relays && options.relays.length > 0) {
+        if (data?.relays && data.relays.length > 0) {
             const relayList = new NDKRelayList(ndk);
-            relayList.bothRelayUrls = options.relays;
-            relayList.sig = await relayList.sign(signer);
-            await relayList.publish();
+            relayList.bothRelayUrls = data.relays;
+            await relayList.sign(signer);
+            if (publish) {
+                await relayList.publish();
+            } else {
+                events.push(relayList);
+            }
         }
 
-        if (options?.wallet) {
+        if (data?.wallet) {
             const { NDKCashuWallet } = await import("@nostr-dev-kit/wallet");
-            await NDKCashuWallet.create(ndk, options.wallet.mints, options.wallet.relays);
+            await NDKCashuWallet.create(ndk, data.wallet.mints, data.wallet.relays);
         }
 
-        return { pubkey, signer };
+        if (data?.follows && data.follows.length > 0) {
+            const contactList = new NDKEvent(ndk, {
+                kind: NDKKind.Contacts,
+                tags: data.follows.map((pubkey) => ["p", pubkey]),
+                content: "",
+            });
+            await contactList.sign(signer);
+            if (publish) {
+                await contactList.publish();
+            } else {
+                events.push(contactList);
+            }
+        }
+
+        return { signer, events };
     }
 
     /**

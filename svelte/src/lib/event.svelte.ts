@@ -1,5 +1,14 @@
-import type { NDKEvent, NDKFilter } from "@nostr-dev-kit/ndk";
+import type { NDKEvent, NDKFilter, NDKSubscriptionOptions } from "@nostr-dev-kit/ndk";
 import type { NDKSvelte } from "./ndk-svelte.svelte";
+import { validateCallback } from "./utils/validate-callback.js";
+
+export interface FetchEventOptions {
+    /**
+     * Whether to wrap events in kind-specific classes.
+     * @default true
+     */
+    wrap?: boolean;
+}
 
 /**
  * Reactively fetch a single event
@@ -7,7 +16,14 @@ import type { NDKSvelte } from "./ndk-svelte.svelte";
  * Returns a reactive proxy to the event that updates when the identifier/filter changes.
  * Use it directly as if it were an NDKEvent - all property access is reactive.
  *
+ * **Event Wrapping (Default: Enabled)**
+ * - Events are automatically wrapped in their kind-specific classes (e.g., NDKArticle for kind 30023)
+ * - Invalid events that fail wrapper validation are silently dropped, returning undefined
+ * - This protects your app from receiving malformed events
+ * - To disable wrapping, pass `{ wrap: false }` as the second argument
+ *
  * @param idOrFilter - Callback returning event ID (bech32), filter, or undefined
+ * @param options - Optional fetch options. Use `{ wrap: false }` to disable automatic wrapping and validation
  *
  * @example
  * ```svelte
@@ -20,6 +36,29 @@ import type { NDKSvelte } from "./ndk-svelte.svelte";
  * {#if event}
  *   <div>{event.content}</div>
  * {/if}
+ * ```
+ *
+ * @example
+ * ```svelte
+ * <script lang="ts">
+ *   import type { NDKArticle } from "@nostr-dev-kit/ndk";
+ *
+ *   // Type the result as NDKArticle to access article-specific properties
+ *   const article = ndk.$fetchEvent<NDKArticle>(() => naddr);
+ * </script>
+ *
+ * {#if article}
+ *   <h1>{article.title}</h1>
+ *   <div>{article.content}</div>
+ * {/if}
+ * ```
+ *
+ * @example
+ * ```svelte
+ * <script lang="ts">
+ *   // Disable automatic wrapping
+ *   const event = ndk.$fetchEvent(() => eventId, { wrap: false });
+ * </script>
  * ```
  *
  * @example
@@ -45,13 +84,17 @@ import type { NDKSvelte } from "./ndk-svelte.svelte";
  * </script>
  * ```
  */
-export function createFetchEvent(
+export function createFetchEvent<T extends NDKEvent = NDKEvent>(
     ndk: NDKSvelte,
     idOrFilter: () => string | NDKFilter | NDKFilter[] | undefined,
-) {
-    let _event = $state<NDKEvent | undefined>(undefined);
+    options?: FetchEventOptions,
+): T | undefined {
+    validateCallback(idOrFilter, '$fetchEvent', 'idOrFilter');
+    let _event = $state<T | undefined>(undefined);
 
     const derivedIdOrFilter = $derived(idOrFilter());
+
+    const wrap = options?.wrap ?? true;
 
     $effect(() => {
         const f = derivedIdOrFilter;
@@ -60,9 +103,9 @@ export function createFetchEvent(
             return;
         }
 
-        ndk.fetchEvent(f)
+        ndk.fetchEvent(f, { wrap })
             .then((fetchedEvent) => {
-                _event = fetchedEvent || undefined;
+                _event = (fetchedEvent as T) || undefined;
             })
             .catch(() => {
                 _event = undefined;
@@ -70,10 +113,10 @@ export function createFetchEvent(
     });
 
     // Return a proxy that forwards all access to the reactive _event
-    return new Proxy({} as NDKEvent | undefined, {
+    return new Proxy({} as T | undefined, {
         get(_target, prop) {
             if (_event && prop in _event) {
-                const value = _event[prop as keyof NDKEvent];
+                const value = _event[prop as keyof T];
                 return typeof value === "function" ? value.bind(_event) : value;
             }
             return undefined;
@@ -87,7 +130,7 @@ export function createFetchEvent(
         getOwnPropertyDescriptor(_target, prop) {
             return _event ? Reflect.getOwnPropertyDescriptor(_event, prop) : undefined;
         },
-    });
+    }) as T | undefined;
 }
 
 /**
@@ -95,7 +138,14 @@ export function createFetchEvent(
  *
  * Returns a reactive array of events that updates when the filters change.
  *
+ * **Event Wrapping (Default: Enabled)**
+ * - Events are automatically wrapped in their kind-specific classes (e.g., NDKArticle for kind 30023)
+ * - Invalid events that fail wrapper validation are silently dropped from the results
+ * - This protects your app from receiving malformed events
+ * - To disable wrapping, pass `{ wrap: false }` as the second argument
+ *
  * @param filters - Callback returning filters or undefined
+ * @param options - Optional fetch options. Use `{ wrap: false }` to disable automatic wrapping and validation
  *
  * @example
  * ```svelte
@@ -116,6 +166,33 @@ export function createFetchEvent(
  * @example
  * ```svelte
  * <script lang="ts">
+ *   import type { NDKArticle } from "@nostr-dev-kit/ndk";
+ *
+ *   // Type the result as NDKArticle[] to access article-specific properties
+ *   const articles = ndk.$fetchEvents<NDKArticle>(() => ({
+ *     kinds: [30023],
+ *     authors: [pubkey],
+ *     limit: 10
+ *   }));
+ * </script>
+ *
+ * {#each articles as article}
+ *   <h2>{article.title}</h2>
+ *   <div>{article.content}</div>
+ * {/each}
+ * ```
+ *
+ * @example
+ * ```svelte
+ * <script lang="ts">
+ *   // Disable automatic wrapping
+ *   const events = ndk.$fetchEvents(() => ({ kinds: [1] }), { wrap: false });
+ * </script>
+ * ```
+ *
+ * @example
+ * ```svelte
+ * <script lang="ts">
  *   // Conditional fetch - return undefined to prevent fetching
  *   const events = ndk.$fetchEvents(() => {
  *     if (!shouldFetch) return undefined;
@@ -127,13 +204,17 @@ export function createFetchEvent(
  * </script>
  * ```
  */
-export function createFetchEvents(
+export function createFetchEvents<T extends NDKEvent = NDKEvent>(
     ndk: NDKSvelte,
     filters: () => NDKFilter | NDKFilter[] | undefined,
-) {
-    let _events = $state<NDKEvent[]>([]);
+    options?: FetchEventOptions,
+): T[] {
+    validateCallback(filters, '$fetchEvents', 'filters');
+    let _events = $state<T[]>([]);
 
     const derivedFilters = $derived(filters());
+
+    const wrap = options?.wrap ?? true;
 
     $effect(() => {
         const f = derivedFilters;
@@ -142,9 +223,9 @@ export function createFetchEvents(
             return;
         }
 
-        ndk.fetchEvents(f)
+        ndk.fetchEvents(f, { wrap })
             .then((fetchedEvents) => {
-                _events = Array.from(fetchedEvents);
+                _events = Array.from(fetchedEvents) as T[];
             })
             .catch(() => {
                 _events = [];

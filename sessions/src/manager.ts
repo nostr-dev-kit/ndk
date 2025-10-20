@@ -1,5 +1,6 @@
 import type NDK from "@nostr-dev-kit/ndk";
-import type { Hexpubkey, NDKSigner, NDKUser } from "@nostr-dev-kit/ndk";
+import type { Hexpubkey, NDKSigner, NDKUser, NDKUserProfile } from "@nostr-dev-kit/ndk";
+import { NDKEvent, NDKKind, NDKPrivateKeySigner, NDKRelayList } from "@nostr-dev-kit/ndk";
 import { AuthManager } from "./auth-manager";
 import { PersistenceManager } from "./persistence-manager";
 import type { SessionStorage } from "./storage/types";
@@ -149,6 +150,68 @@ export class NDKSessionManager {
             setActive: options.setActive,
         };
         return this.authManager.login(userOrSigner, loginOptions);
+    }
+
+    /**
+     * Create a new account with optional profile, relays, and wallet
+     *
+     * @param options - Configuration for the new account
+     * @param options.profile - Optional profile metadata (kind:0)
+     * @param options.relays - Optional relay list for NIP-65 (kind:10002)
+     * @param options.wallet - Optional wallet configuration for NIP-60
+     * @param options.wallet.mints - Mint URLs for the wallet
+     * @param options.wallet.relays - Optional relays for wallet events
+     * @returns The pubkey and signer for the new account
+     *
+     * @example
+     * ```typescript
+     * const { pubkey, signer } = await sessions.createAccount({
+     *   profile: { name: 'Alice', about: 'Hello Nostr!' },
+     *   relays: ['wss://relay.damus.io', 'wss://relay.primal.net'],
+     *   wallet: {
+     *     mints: ['https://mint.minibits.cash'],
+     *     relays: ['wss://relay.damus.io']
+     *   }
+     * });
+     * ```
+     */
+    async createAccount(options?: {
+        profile?: NDKUserProfile;
+        relays?: string[];
+        wallet?: {
+            mints: string[];
+            relays?: string[];
+        };
+    }): Promise<{ pubkey: Hexpubkey; signer: NDKPrivateKeySigner }> {
+        const state = this.getCurrentState();
+        const ndk = state.ndk;
+        if (!ndk) throw new Error("NDK not initialized");
+
+        const signer = NDKPrivateKeySigner.generate();
+        const pubkey = await this.login(signer, { setActive: true });
+
+        if (options?.profile) {
+            const profileEvent = new NDKEvent(ndk, {
+                kind: NDKKind.Metadata,
+                content: JSON.stringify(options.profile),
+            });
+            profileEvent.sig = await profileEvent.sign(signer);
+            await profileEvent.publish();
+        }
+
+        if (options?.relays && options.relays.length > 0) {
+            const relayList = new NDKRelayList(ndk);
+            relayList.bothRelayUrls = options.relays;
+            relayList.sig = await relayList.sign(signer);
+            await relayList.publish();
+        }
+
+        if (options?.wallet) {
+            const { NDKCashuWallet } = await import("@nostr-dev-kit/wallet");
+            await NDKCashuWallet.create(ndk, options.wallet.mints, options.wallet.relays);
+        }
+
+        return { pubkey, signer };
     }
 
     /**

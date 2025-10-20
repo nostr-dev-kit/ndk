@@ -42,6 +42,8 @@ export class ReactiveWalletStore {
     #ndk: NDK;
     #sessionManager: NDKSessionManager;
     #currentWalletEventId?: string;
+    #currentPubkey?: string;
+    #syncing = false;
 
     constructor(ndk: NDK, sessionManager: NDKSessionManager) {
         this.#ndk = ndk;
@@ -49,30 +51,64 @@ export class ReactiveWalletStore {
 
         // Subscribe to session manager and react to wallet events
         sessionManager.subscribe((state) => {
+            console.log('[ReactiveWalletStore.subscribe] Callback fired', {
+                activePubkey: state.activePubkey,
+                sessionCount: state.sessions.size,
+                syncing: this.#syncing,
+                currentPubkey: this.#currentPubkey,
+                currentWalletEventId: this.#currentWalletEventId
+            });
+
             const activePubkey = state.activePubkey;
             if (!activePubkey) {
                 // No active session, clear wallet
+                console.log('[ReactiveWalletStore.subscribe] No active pubkey, calling clear()');
                 this.clear();
                 return;
             }
 
             const session = state.sessions.get(activePubkey);
+            console.log('[ReactiveWalletStore.subscribe] Session:', {
+                hasSession: !!session,
+                eventCount: session?.events?.size
+            });
+
             const walletEvent = session?.events.get(Kind.CashuWallet as NDKKind);
+            console.log('[ReactiveWalletStore.subscribe] Wallet event:', {
+                hasWalletEvent: !!walletEvent,
+                walletEventId: walletEvent?.id
+            });
+
+            // Check if active pubkey changed
+            const pubkeyChanged = this.#currentPubkey && this.#currentPubkey !== activePubkey;
+            console.log('[ReactiveWalletStore.subscribe] Pubkey changed:', pubkeyChanged);
 
             if (!walletEvent) {
-                // No wallet event, clear wallet if it was set
-                if (this.#wallet) {
+                // Only clear wallet if we're on the SAME pubkey and wallet event disappeared
+                // Don't clear if we switched to a different pubkey that doesn't have a wallet yet
+                if (this.#wallet && !pubkeyChanged) {
+                    console.log('[ReactiveWalletStore.subscribe] No wallet event on same pubkey, calling clear()');
                     this.clear();
+                } else {
+                    console.log('[ReactiveWalletStore.subscribe] No wallet event but pubkey changed or no wallet set, skipping clear()');
                 }
                 return;
             }
 
             // Check if we already have this wallet loaded
-            if (walletEvent.id === this.#currentWalletEventId) {
+            if (walletEvent.id === this.#currentWalletEventId && activePubkey === this.#currentPubkey) {
+                console.log('[ReactiveWalletStore.subscribe] Same wallet event and pubkey, returning');
+                return;
+            }
+
+            // Skip if we're already syncing to prevent race conditions
+            if (this.#syncing) {
+                console.log('[ReactiveWalletStore] Already syncing, skipping duplicate call');
                 return;
             }
 
             // Sync wallet from event
+            console.log('[ReactiveWalletStore.subscribe] Calling #syncWallet');
             this.#syncWallet(walletEvent, activePubkey);
         });
     }
@@ -81,20 +117,38 @@ export class ReactiveWalletStore {
      * Sync wallet from session's wallet event (kind 17375)
      */
     async #syncWallet(walletEvent: NDKEvent, pubkey: Hexpubkey): Promise<void> {
+        console.log('[ReactiveWalletStore] #syncWallet called', { eventId: walletEvent.id, pubkey });
+        this.#syncing = true;
         try {
             // Instantiate wallet from event
+            console.log('[ReactiveWalletStore] Calling NDKCashuWallet.from()...');
             const wallet = await NDKCashuWallet.from(walletEvent);
+            console.log('[ReactiveWalletStore] Wallet created:', wallet);
+            console.log('[ReactiveWalletStore] Wallet type:', typeof wallet);
+            console.log('[ReactiveWalletStore] Wallet truthy check:', !!wallet);
+            console.log('[ReactiveWalletStore] Wallet === undefined:', wallet === undefined);
 
             if (wallet) {
+                console.log('[ReactiveWalletStore] INSIDE if (wallet) block - wallet exists!');
+
+                // Set current wallet event ID and pubkey FIRST to prevent re-syncing during start()
+                this.#currentWalletEventId = walletEvent.id;
+                this.#currentPubkey = pubkey;
+
                 // Set wallet on store BEFORE starting so UI can show immediately
                 this.set(wallet);
-                this.#currentWalletEventId = walletEvent.id;
 
                 // Start wallet monitoring (will load from cache first, then sync)
+                console.log('[ReactiveWalletStore] Starting wallet...');
                 await wallet.start({ pubkey });
+                console.log('[ReactiveWalletStore] Wallet started');
+            } else {
+                console.log('[ReactiveWalletStore] WALLET IS FALSY - skipping set()');
             }
         } catch (error) {
             console.error(`[ReactiveWalletStore] Failed to load wallet from event:`, error);
+        } finally {
+            this.#syncing = false;
         }
     }
 
@@ -102,24 +156,30 @@ export class ReactiveWalletStore {
      * Set the active wallet and subscribe to balance updates
      */
     set(wallet: NDKWallet): void {
+        console.log('[ReactiveWalletStore.set] Called with wallet:', wallet);
         // Unsubscribe from previous wallet if any
         if (this.#wallet) {
             this.#wallet.off("balance_updated", this.#handleBalanceUpdate);
             this.#wallet.off("status_changed", this.#handleStatusChange);
         }
 
+        console.log('[ReactiveWalletStore.set] Setting #wallet');
         this.#wallet = wallet;
         this.status = wallet.status;
+        console.log('[ReactiveWalletStore.set] Wallet set, status:', this.status);
 
         // Register wallet with NDK so its payment methods are available to NDKZapper
         this.#ndk.wallet = wallet;
+        console.log('[ReactiveWalletStore.set] Registered with NDK');
 
         // Subscribe to balance updates
         wallet.on("balance_updated", this.#handleBalanceUpdate);
         wallet.on("status_changed", this.#handleStatusChange);
+        console.log('[ReactiveWalletStore.set] Event listeners attached');
 
         // Get initial balance
         void this.refreshBalance();
+        console.log('[ReactiveWalletStore.set] Completed');
     }
 
     /**
@@ -159,6 +219,7 @@ export class ReactiveWalletStore {
      * Clear the wallet
      */
     clear(): void {
+        console.log('[ReactiveWalletStore.clear] Clearing wallet');
         if (this.#wallet) {
             this.#wallet.off("balance_updated", this.#handleBalanceUpdate);
             this.#wallet.off("status_changed", this.#handleStatusChange);
@@ -167,9 +228,11 @@ export class ReactiveWalletStore {
         this.balance = 0;
         this.status = NDKWalletStatus.INITIAL;
         this.#currentWalletEventId = undefined;
+        this.#currentPubkey = undefined;
 
         // Clear wallet from NDK
         this.#ndk.wallet = undefined;
+        console.log('[ReactiveWalletStore.clear] Wallet cleared');
     }
 
     // Convenience getters
@@ -232,6 +295,25 @@ export class ReactiveWalletStore {
     get needsOnboarding(): boolean {
         const wallet = this.#wallet;
         return !wallet || (wallet instanceof NDKCashuWallet && wallet.mints.length === 0);
+    }
+
+    /**
+     * Get the wallet's private key (first privkey)
+     */
+    get privkey(): string | undefined {
+        const wallet = this.#wallet;
+        if (!(wallet instanceof NDKCashuWallet)) return undefined;
+        const privkeys = Array.from(wallet.privkeys);
+        return privkeys.length > 0 ? privkeys[0] : undefined;
+    }
+
+    /**
+     * Get the wallet's relay set
+     */
+    get relaySet() {
+        const wallet = this.#wallet;
+        if (!(wallet instanceof NDKCashuWallet)) return undefined;
+        return wallet.relaySet;
     }
 
     // Method delegates

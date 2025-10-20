@@ -1,6 +1,8 @@
 import { EventEmitter } from "tseep";
 import { beforeEach, describe, expect, it } from "vitest";
 import { NDKSvelte } from "../ndk-svelte.svelte";
+import { NDKKind } from "@nostr-dev-kit/ndk";
+import { NDKEvent } from "@nostr-dev-kit/ndk";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -8,6 +10,9 @@ import { NDKSvelte } from "../ndk-svelte.svelte";
 class MockWallet extends EventEmitter {
     type = "cashu";
     #balance = 1000;
+    status = "initial";
+    mints: string[] = [];
+    privkeys = new Set<string>();
 
     get balance() {
         return { amount: this.#balance, unit: "sats" };
@@ -20,6 +25,10 @@ class MockWallet extends EventEmitter {
 
     setBalance(amount: number) {
         this.#balance = amount;
+    }
+
+    async start() {
+        // Mock start method
     }
 }
 

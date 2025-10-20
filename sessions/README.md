@@ -349,9 +349,74 @@ new NDKSessionManager(ndk: NDK, options?: SessionManagerOptions)
 
 #### Methods
 
+**`createAccount(options?): Promise<{ pubkey: Hexpubkey; signer: NDKPrivateKeySigner }>`**
+
+Create a new Nostr account with a generated private key and optional initial setup.
+
+**Options:**
+- `profile?: NDKUserProfile` - Profile metadata to publish as kind:0 (name, about, picture, etc.)
+- `relays?: string[]` - Relay URLs to publish as NIP-65 relay list (kind:10002)
+- `wallet?: { mints: string[], relays?: string[] }` - NIP-60 wallet configuration
+  - `mints` - Array of mint URLs for Cashu wallet
+  - `relays` - Optional relay URLs for wallet events (defaults to main relays if not specified)
+
+**Returns:** Object containing the new account's pubkey and signer.
+
+```typescript
+// Create bare account
+const { pubkey, signer } = await sessions.createAccount();
+console.log('New account created:', pubkey);
+console.log('Private key:', signer.privateKey);
+
+// Create account with profile
+const { pubkey } = await sessions.createAccount({
+  profile: {
+    name: 'Alice',
+    about: 'Hello Nostr!',
+    picture: 'https://example.com/avatar.jpg'
+  }
+});
+
+// Create account with relay list
+const { pubkey } = await sessions.createAccount({
+  relays: [
+    'wss://relay.damus.io',
+    'wss://relay.primal.net'
+  ]
+});
+
+// Create account with wallet
+const { pubkey } = await sessions.createAccount({
+  wallet: {
+    mints: ['https://mint.minibits.cash'],
+    relays: ['wss://relay.damus.io']
+  }
+});
+
+// Create fully configured account
+const { pubkey, signer } = await sessions.createAccount({
+  profile: { name: 'Alice', about: 'New to Nostr' },
+  relays: ['wss://relay.damus.io', 'wss://relay.primal.net'],
+  wallet: {
+    mints: ['https://mint.minibits.cash'],
+    relays: ['wss://relay.damus.io']
+  }
+});
+
+// Save the nsec for the user
+console.log('Your private key (keep safe!):', signer.privateKey);
+```
+
+**Notes:**
+- The account is automatically logged in and set as active
+- Profile is published as kind:0 event
+- Relays are published as kind:10002 event (NIP-65)
+- Wallet creates both kind:17375 (wallet config) and kind:10019 (backup) events
+- Returns the signer so you can show the user their private key for backup
+
 **`login(userOrSigner, options?): Promise<Hexpubkey>`**
 
-Login with a signer or user.
+Login with an existing signer or user.
 
 **Options:**
 - `follows?: boolean | NDKKind[]` - Fetch contact list (kind 3) and optional kind-scoped follows

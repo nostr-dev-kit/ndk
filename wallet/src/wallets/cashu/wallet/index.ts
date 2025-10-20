@@ -235,12 +235,16 @@ export class NDKCashuWallet extends NDKWallet {
      * @param event
      */
     async loadFromEvent(event: NDKEvent) {
+        console.log('[NDKCashuWallet.loadFromEvent] Starting, event:', event.id);
         // clone the event
         const _event = new NDKEvent(event.ndk, event.rawEvent());
+        console.log('[NDKCashuWallet.loadFromEvent] Cloned event, calling decrypt');
 
         await _event.decrypt();
+        console.log('[NDKCashuWallet.loadFromEvent] Decrypted, content:', _event.content);
 
         const content = JSON.parse(_event.content);
+        console.log('[NDKCashuWallet.loadFromEvent] Parsed content:', content);
         for (const tag of content) {
             if (tag[0] === "mint") {
                 this.mints.push(tag[1]);
@@ -251,14 +255,24 @@ export class NDKCashuWallet extends NDKWallet {
             }
         }
 
+        console.log('[NDKCashuWallet.loadFromEvent] Loaded mints:', this.mints);
         await this.getP2pk();
+        console.log('[NDKCashuWallet.loadFromEvent] Completed');
     }
 
     static async from(event: NDKEvent): Promise<NDKCashuWallet | undefined> {
+        console.log('[NDKCashuWallet.from] Starting, event:', event.id);
         if (!event.ndk) throw new Error("no ndk instance on event");
 
+        console.log('[NDKCashuWallet.from] Creating wallet instance');
         const wallet = new NDKCashuWallet(event.ndk);
+        console.log('[NDKCashuWallet.from] Wallet created, wallet is:', wallet);
+        console.log('[NDKCashuWallet.from] Wallet type:', typeof wallet);
+        console.log('[NDKCashuWallet.from] Wallet instanceof NDKCashuWallet:', wallet instanceof NDKCashuWallet);
+        console.log('[NDKCashuWallet.from] Calling loadFromEvent');
         await wallet.loadFromEvent(event);
+        console.log('[NDKCashuWallet.from] loadFromEvent completed, wallet is:', wallet);
+        console.log('[NDKCashuWallet.from] About to return wallet');
 
         return wallet;
     }

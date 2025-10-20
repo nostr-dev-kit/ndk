@@ -538,6 +538,8 @@ export class NDKEvent extends EventEmitter {
         if (!this.sig) await this.sign(undefined, opts);
         if (!this.ndk) throw new Error("NDKEvent must be associated with an NDK instance to publish");
 
+        this.ndk.aiGuardrails?.event?.publishing(this);
+
         if (!relaySet || relaySet.size === 0) {
             // If we have a devWriteRelaySet, use it to publish all events
             relaySet =

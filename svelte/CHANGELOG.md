@@ -1,5 +1,82 @@
 # Changelog
 
+## 2.4.1
+
+### Patch Changes
+
+- e864ddd: Fix Avatar component creating duplicate subscriptions when user changes
+
+## 2.4.0
+
+### Minor Changes
+
+- feat(svelte): add shorthand filter syntax for $subscribe
+
+    **New Feature:**
+    - `$subscribe` now accepts filters directly without requiring a `filters` wrapper for cleaner, more concise code
+    - Shorthand examples:
+        - Single filter: `ndk.$subscribe(() => ({ kinds: [1], limit: 50 }))`
+        - Array of filters: `ndk.$subscribe(() => [{ kinds: [1] }, { kinds: [3] }])`
+    - The full config syntax with `filters` property still works when you need additional options like `relayUrls`, `wot`, etc.
+    - Filter objects are automatically detected by checking for common filter properties (kinds, authors, ids, since, until, limit, etc.)
+    - Updated documentation with examples showing both shorthand and full config syntax
+    - Added test coverage for shorthand syntax
+
+### Patch Changes
+
+- fix(svelte): add runtime validation for callback parameters in reactive methods
+    - All reactive `# Changelog methods now validate that parameters are functions and throw descriptive TypeErrors when non-functions are passed
+    - Affected methods: `$subscribe`, `$fetchUser`, `$fetchProfile`, `$fetchEvent`, `$fetchEvents`, and `useZapInfo`
+    - Error messages include the function name, parameter name, and usage examples
+    - Added comprehensive test coverage for validation logic
+    - Prevents confusing Svelte runtime errors when developers accidentally pass values directly instead of callbacks
+
+    **Example error message:**
+
+    ```
+    TypeError: $subscribe expects config to be a function, but received object.
+    Example: ndk.$subscribe(() => value) instead of ndk.$subscribe(value)
+    ```
+
+## 2.3.2
+
+### Patch Changes
+
+- fix(svelte): add runtime validation for callback parameters in reactive methods
+    - All reactive `# Changelog methods now validate that parameters are functions and throw descriptive TypeErrors when non-functions are passed
+    - Affected methods: `$subscribe`, `$fetchUser`, `$fetchProfile`, `$fetchEvent`, `$fetchEvents`, and `useZapInfo`
+    - Error messages include the function name, parameter name, and usage examples
+    - Added comprehensive test coverage for validation logic
+    - Prevents confusing Svelte runtime errors when developers accidentally pass values directly instead of callbacks
+
+- feat(svelte): add automatic event wrapping and generic typing to $fetchEvent and $fetchEvents
+
+    **Breaking Change in Default Behavior:**
+    - $fetchEvent and $fetchEvents now automatically use `wrap: true` by default to wrap events in their kind-specific classes (e.g., NDKArticle for kind 30023)
+    - Invalid events that fail wrapper validation are silently dropped (return undefined), protecting apps from malformed data
+    - To disable wrapping, pass `{ wrap: false }` as the second argument
+
+    **New Features:**
+    - Added generic type parameter support: `ndk.$fetchEvent<NDKArticle>(() => naddr)` and `ndk.$fetchEvents<NDKArticle>(() => filters)`
+    - Added optional `FetchEventOptions` parameter to both methods to control wrapping behavior
+    - Examples:
+        - `ndk.$fetchEvent(() => eventId)` - automatically wrapped (default)
+        - `ndk.$fetchEvent(() => eventId, { wrap: false })` - no wrapping
+        - `ndk.$fetchEvent<NDKArticle>(() => naddr)` - typed and wrapped
+
+    **Documentation & Tests:**
+    - Updated documentation with examples showing typed usage and options
+    - Added tests for automatic wrapping functionality
+    - Added tests for wrap override options
+
+## 2.3.1
+
+### Patch Changes
+
+- minor bugfix on Avatar component
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.17.10
+
 ## 2.3.0
 
 ### Minor Changes

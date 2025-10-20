@@ -1,5 +1,6 @@
 <script lang="ts">
   import { NDKEvent } from '@nostr-dev-kit/ndk';
+  import NDKCacheAdapterSqliteWasm from '@nostr-dev-kit/cache-sqlite-wasm';
   import {
     Avatar,
     BlossomImage,
@@ -17,18 +18,53 @@
     type EnrichedRelayInfo,
     NDKSvelte
   } from '@nostr-dev-kit/svelte';
+  import Settings from './Settings.svelte';
+  import { settings, type CacheMode } from './settingsStore.svelte';
 
-  // Initialize NDK
-  const ndk = new NDKSvelte({
-    explicitRelayUrls: [
-      'wss://relay.damus.io',
-      'wss://nos.lol',
-      'wss://relay.nostr.band'
-    ],
-    enableOutboxModel: false
+  // Initialize NDK with cache based on settings
+  async function createNDK() {
+    const cacheMode = settings.cacheMode;
+    let cacheAdapter: NDKCacheAdapterSqliteWasm | undefined;
+
+    if (cacheMode === 'worker') {
+      cacheAdapter = new NDKCacheAdapterSqliteWasm({
+        dbName: 'ndk-component-browser',
+        useWorker: true,
+        workerUrl: '/worker.js',
+        wasmUrl: '/sql-wasm.wasm'
+      });
+      await cacheAdapter.initializeAsync();
+    } else if (cacheMode === 'non-worker') {
+      cacheAdapter = new NDKCacheAdapterSqliteWasm({
+        dbName: 'ndk-component-browser',
+        useWorker: false,
+        wasmUrl: '/sql-wasm.wasm'
+      });
+      await cacheAdapter.initializeAsync();
+    }
+
+    const ndkInstance = new NDKSvelte({
+      explicitRelayUrls: [
+        'wss://relay.damus.io',
+        'wss://nos.lol',
+        'wss://relay.nostr.band'
+      ],
+      enableOutboxModel: false,
+      cacheAdapter
+    });
+
+    ndkInstance.connect();
+
+    return ndkInstance;
+  }
+
+  let ndk = $state<NDKSvelte | undefined>(undefined);
+
+  $effect(() => {
+    createNDK().then((instance) => {
+      ndk = instance;
+    });
   });
-
-  ndk.connect();
 
   // Component categories and list
   type ComponentName =
@@ -43,7 +79,8 @@
     | 'RelayList'
     | 'RelayPoolTabs'
     | 'RelayConnectionStatus'
-    | 'RelayAddForm';
+    | 'RelayAddForm'
+    | 'Settings';
 
   let selectedComponent = $state<ComponentName>('Avatar');
 
@@ -69,13 +106,13 @@
   let relayStatusSize = $state<'sm' | 'md' | 'lg'>('md');
   let relayStatusShowLabel = $state(true);
 
-  const testEvent = new NDKEvent(ndk, {
+  let testEvent = $derived(ndk ? new NDKEvent(ndk, {
     kind: 1,
     content: 'Test event',
     pubkey: '180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6',
     created_at: Math.floor(Date.now() / 1000),
     tags: [],
-  });
+  }) : undefined);
 
   // Mock relay data for RelayCard
   const mockRelay: EnrichedRelayInfo = {
@@ -123,18 +160,32 @@
       components: [
         { name: 'BlossomImage', description: 'Display images from Blossom CDN with healing (requires NDKBlossom)' },
       ]
+    },
+    {
+      name: 'Configuration',
+      components: [
+        { name: 'Settings', description: 'Configure cache and other application settings' },
+      ]
     }
   ] as const;
 </script>
 
-<div class="app">
-  <aside class="sidebar">
-    <div class="sidebar-header">
+{#if !ndk}
+  <div class="loading-screen">
+    <div class="loading-content">
       <h1>NDK Svelte 5</h1>
-      <p class="subtitle">Component Browser</p>
+      <p>Initializing...</p>
     </div>
+  </div>
+{:else}
+  <div class="app">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h1>NDK Svelte 5</h1>
+        <p class="subtitle">Component Browser</p>
+      </div>
 
-    <nav class="component-list">
+      <nav class="component-list">
       {#each componentCategories as category}
         <div class="category">
           <div class="category-name">{category.name}</div>
@@ -233,11 +284,13 @@
         <div class="demo-section">
           <h3>Demo</h3>
           <div class="demo-area">
-            <ZapButton
-              target={testEvent}
-              amount={zapAmount}
-              comment={zapComment}
-            />
+            {#if testEvent}
+              <ZapButton
+                target={testEvent}
+                amount={zapAmount}
+                comment={zapComment}
+              />
+            {/if}
           </div>
           <p class="warning">
             ⚠️ Note: This is a demo button. Actual zapping requires a connected wallet.
@@ -538,12 +591,42 @@
             <span class="help-text">Optional display properties</span>
           </div>
         </div>
+
+      {:else if selectedComponent === 'Settings'}
+        <Settings />
       {/if}
     </div>
   </main>
-</div>
+  </div>
+{/if}
 
 <style>
+  .loading-screen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: #0a0a0a;
+  }
+
+  .loading-content {
+    text-align: center;
+  }
+
+  .loading-content h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+  }
+
+  .loading-content p {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.875rem;
+  }
   :global(body) {
     margin: 0;
     padding: 0;

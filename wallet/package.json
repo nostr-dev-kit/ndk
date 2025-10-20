@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/wallet",
-    "version": "0.8.7",
+    "version": "0.8.8",
     "description": "NDK Wallet",
     "type": "module",
     "main": "./dist/index.js",

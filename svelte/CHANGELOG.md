@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.4.2
+
+### Patch Changes
+
+- bump
+- Updated dependencies
+    - @nostr-dev-kit/wallet@0.8.8
+
 ## 2.4.1
 
 ### Patch Changes

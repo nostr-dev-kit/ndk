@@ -10,7 +10,7 @@
 
   // TODO: blacklistedMints not yet exposed in WalletAPI
   let blacklistedMints = $derived([]);
-  let availableMints = $derived(wallet.mints.map(m => m.url));
+  let availableMints = $derived(wallet.mints);
 
   let showAddSheet = $state(false);
   let manualMintUrl = $state('');

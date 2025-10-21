@@ -4,18 +4,14 @@
   import WalletView from './components/WalletView.svelte';
   import LoginView from './components/LoginView.svelte';
   import WalletOnboardingFlow from './components/WalletOnboardingFlow.svelte';
-  import { useWallet } from './lib/useWallet.svelte.js';
 
   let isConnecting = $state(true);
-
-  // Initialize wallet
-  const wallet = useWallet(ndk);
 
   // Derive onboarding state from session and wallet state
   const showOnboarding = $derived.by(() => {
     const currentUser = ndk.$currentUser;
     if (!currentUser) return false;
-    return wallet.needsOnboarding;
+    return ndk.$wallet.needsOnboarding;
   });
 
   onMount(async () => {
@@ -26,8 +22,8 @@
 
   async function handleOnboardingComplete(config: { mints: string[]; relays: string[] }) {
     try {
-      await wallet.setupWallet(config);
-      // showOnboarding will automatically become false when wallet.needsOnboarding becomes false
+      await ndk.$wallet.save(config);
+      // showOnboarding will automatically become false when ndk.$wallet.needsOnboarding becomes false
     } catch (error) {
       console.error('Failed to setup wallet:', error);
       throw error;

@@ -425,9 +425,10 @@ ndk.$wallet.clear()
 await ndk.$wallet.refreshBalance()
 
 // State
-ndk.$wallet.balance   // number
-ndk.$wallet.mints     // Mint[]
-ndk.$wallet.relays    // string[]
+ndk.$wallet.balance      // number
+ndk.$wallet.mints        // string[] - configured mint URLs
+ndk.$wallet.mintBalances // Mint[] - mints with balances (including 0 balance)
+ndk.$wallet.relays       // string[]
 ```
 
 ## Payment Tracking

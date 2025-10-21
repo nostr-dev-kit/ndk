@@ -3,18 +3,15 @@ import type { NDKEvent, NostrEvent } from ".";
 export type NDKEventSerialized = string;
 
 /**
- * Safely creates a summary of an event for error messages, avoiding circular reference issues.
+ * Safely gets event details for error messages, avoiding circular reference issues.
  */
-function getEventSummary(event: NDKEvent | NostrEvent): string {
-    const summary = {
-        id: event.id,
-        kind: event.kind,
-        pubkey: event.pubkey,
-        created_at: event.created_at,
-        tags: event.tags,
-        content: event.content?.substring(0, 100) + (event.content?.length > 100 ? "..." : ""),
-    };
-    return JSON.stringify(summary);
+function getEventDetails(event: NDKEvent | NostrEvent): string {
+    // If it's an NDKEvent with the inspect getter, use it
+    if ("inspect" in event && typeof event.inspect === "string") {
+        return event.inspect;
+    }
+    // Fallback for NostrEvent
+    return JSON.stringify(event);
 }
 
 /**
@@ -27,27 +24,27 @@ function validateForSerialization(event: NDKEvent | NostrEvent): void {
     // Fast path checks with immediate throws - no allocations on happy path
     if (typeof event.kind !== "number") {
         throw new Error(
-            `Can't serialize event with invalid properties: kind (must be number, got ${typeof event.kind}). Event: ${getEventSummary(event)}`,
+            `Can't serialize event with invalid properties: kind (must be number, got ${typeof event.kind}). Event: ${getEventDetails(event)}`,
         );
     }
     if (typeof event.content !== "string") {
         throw new Error(
-            `Can't serialize event with invalid properties: content (must be string, got ${typeof event.content}). Event: ${getEventSummary(event)}`,
+            `Can't serialize event with invalid properties: content (must be string, got ${typeof event.content}). Event: ${getEventDetails(event)}`,
         );
     }
     if (typeof event.created_at !== "number") {
         throw new Error(
-            `Can't serialize event with invalid properties: created_at (must be number, got ${typeof event.created_at}). Event: ${getEventSummary(event)}`,
+            `Can't serialize event with invalid properties: created_at (must be number, got ${typeof event.created_at}). Event: ${getEventDetails(event)}`,
         );
     }
     if (typeof event.pubkey !== "string") {
         throw new Error(
-            `Can't serialize event with invalid properties: pubkey (must be string, got ${typeof event.pubkey}). Event: ${getEventSummary(event)}`,
+            `Can't serialize event with invalid properties: pubkey (must be string, got ${typeof event.pubkey}). Event: ${getEventDetails(event)}`,
         );
     }
     if (!Array.isArray(event.tags)) {
         throw new Error(
-            `Can't serialize event with invalid properties: tags (must be array, got ${typeof event.tags}). Event: ${getEventSummary(event)}`,
+            `Can't serialize event with invalid properties: tags (must be array, got ${typeof event.tags}). Event: ${getEventDetails(event)}`,
         );
     }
     // Validate tag structure
@@ -55,13 +52,13 @@ function validateForSerialization(event: NDKEvent | NostrEvent): void {
         const tag = event.tags[i];
         if (!Array.isArray(tag)) {
             throw new Error(
-                `Can't serialize event with invalid properties: tags[${i}] (must be array, got ${typeof tag}). Event: ${getEventSummary(event)}`,
+                `Can't serialize event with invalid properties: tags[${i}] (must be array, got ${typeof tag}). Event: ${getEventDetails(event)}`,
             );
         }
         for (let j = 0; j < tag.length; j++) {
             if (typeof tag[j] !== "string") {
                 throw new Error(
-                    `Can't serialize event with invalid properties: tags[${i}][${j}] (must be string, got ${typeof tag[j]}). Event: ${getEventSummary(event)}`,
+                    `Can't serialize event with invalid properties: tags[${i}][${j}] (must be string, got ${typeof tag[j]}). Event: ${getEventDetails(event)}`,
                 );
             }
         }

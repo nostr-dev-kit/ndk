@@ -10,7 +10,7 @@
   let showDetails = $state(false);
 
   const balance = $derived(wallet.balance || 0);
-  const mints = $derived(wallet.mints || []);
+  const mints = $derived(wallet.mintBalances || []);
 
   // Calculate mint percentages for pie chart
   const mintData = $derived(() => {

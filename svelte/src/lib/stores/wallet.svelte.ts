@@ -193,30 +193,41 @@ export class ReactiveWalletStore {
     // Convenience getters
 
     /**
-     * Get mints with balances
+     * Get configured mint URLs
      */
-    get mints(): Mint[] {
+    get mints(): string[] {
+        const wallet = this.#wallet;
+        if (!wallet || !(wallet instanceof NDKCashuWallet)) return [];
+        return wallet.mints;
+    }
+
+    /**
+     * Get all mints with their balances (including configured mints with 0 balance)
+     */
+    get mintBalances(): Mint[] {
         const wallet = this.#wallet;
         if (!wallet || !(wallet instanceof NDKCashuWallet)) return [];
 
         const balances = wallet.state.getMintsBalance();
-        const mints: Mint[] = [];
+        const configuredMints = wallet.mints;
+        const mintMap = new Map<string, number>();
 
+        // First, add all configured mints with 0 balance
+        for (const url of configuredMints) {
+            mintMap.set(url, 0);
+        }
+
+        // Then update with actual balances
         for (const [url, balance] of Object.entries(balances)) {
-            if (typeof balance === "number" && balance > 0) {
-                mints.push({ url, balance });
+            if (typeof balance === "number") {
+                mintMap.set(url, balance);
             }
         }
 
-        // If we have a total balance but no per-mint breakdown, use the configured mints
-        if (mints.length === 0 && this.balance > 0) {
-            const configuredMints = wallet.mints;
-            if (configuredMints.length > 0) {
-                return configuredMints.map((url) => ({ url, balance: this.balance }));
-            }
-        }
-
-        return mints.sort((a, b) => b.balance - a.balance);
+        // Convert to array and sort by balance
+        return Array.from(mintMap.entries())
+            .map(([url, balance]) => ({ url, balance }))
+            .sort((a, b) => b.balance - a.balance);
     }
 
     /**

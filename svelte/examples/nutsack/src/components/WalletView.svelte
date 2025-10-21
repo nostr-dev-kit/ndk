@@ -1,7 +1,5 @@
 <script lang="ts">
   import type { NDKUser } from '@nostr-dev-kit/ndk';
-  import { useWallet } from '../lib/useWallet.svelte.js';
-  import {  } from '@nostr-dev-kit/svelte';
   import ndk from '../lib/ndk';
   import BalanceCard from './BalanceCard.svelte';
   import SendView from './SendView.svelte';
@@ -22,7 +20,7 @@
 
   let { user }: Props = $props();
 
-  const wallet = useWallet(ndk);
+  const wallet = ndk.$wallet;
 
   type TabView = 'wallet' | 'send' | 'receive' | 'nutzap' | 'settings';
   type SettingsSubView = 'proofs' | 'tokens' | 'blacklist' | 'mints' | 'nutzaps' | 'debug';

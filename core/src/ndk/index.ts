@@ -396,6 +396,7 @@ export class NDK extends EventEmitter<{
 
     public autoConnectUserRelays = true;
 
+    private _wallet?: NDKWalletInterface;
     public walletConfig?: NDKWalletInterface;
 
     public constructor(opts: NDKConstructorParams = {}) {
@@ -1136,12 +1137,18 @@ export class NDK extends EventEmitter<{
 
     set wallet(wallet: NDKWalletInterface | undefined) {
         if (!wallet) {
+            this._wallet = undefined;
             this.walletConfig = undefined;
             return;
         }
 
+        this._wallet = wallet;
         this.walletConfig ??= {};
         this.walletConfig.lnPay = wallet?.lnPay?.bind(wallet);
         this.walletConfig.cashuPay = wallet?.cashuPay?.bind(wallet);
+    }
+
+    get wallet(): NDKWalletInterface | undefined {
+        return this._wallet;
     }
 }

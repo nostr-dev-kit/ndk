@@ -142,27 +142,22 @@ export async function zap(
         comment: opts?.comment,
     });
 
-    if (!ndk.$wallet.wallet) {
+    if (!ndk.wallet) {
         console.error("[zap] No wallet connected");
         throw new Error("No wallet connected");
     }
-    const session = ndk.$sessions.current;
-    if (!session) {
+
+    if (!ndk.$currentPubkey) {
         console.error("[zap] No active session");
         throw new Error("No active session");
     }
-
-    console.log("[zap] Creating NDKZapper", {
-        walletType: ndk.$wallet.wallet?.type,
-        sessionPubkey: session.pubkey,
-    });
-
+    
     const zapper = new NDKZapper(target, amount, "msat", {
         comment: opts?.comment,
     });
 
     // Auto-track
-    ndk.$payments.addPending(zapper, session.pubkey);
+    ndk.$payments.addPending(zapper, ndk.$currentPubkey);
     console.log("[zap] Added pending payment to tracking");
 
     // Execute with optional delay

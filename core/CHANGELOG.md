@@ -1,10 +1,30 @@
 # @nostr-dev-kit/ndk
 
+## 2.18.0
+
+### Minor Changes
+
+- Allow follow/unfollow methods to accept hex pubkeys directly
+
+    The `follow` and `unfollow` methods now accept both `NDKUser` objects and hex pubkey strings for both the target user and the `currentFollowList` parameter. This provides more flexibility when working with follow lists, allowing direct use of pubkey strings without needing to wrap them in NDKUser objects.
+
+## 2.17.11
+
+### Patch Changes
+
+- Allow follow/unfollow methods to accept hex pubkeys directly
+
+    The `follow` and `unfollow` methods now accept both `NDKUser` objects and hex pubkey strings for both the target user and the `currentFollowList` parameter. This provides more flexibility when working with follow lists, allowing direct use of pubkey strings without needing to wrap them in NDKUser objects.
+
+- Add getter for ndk.wallet to return wallet instance
+
+    Previously, `ndk.wallet` was write-only (setter without getter), causing it to always return `undefined` when accessed. Now stores and returns the actual wallet instance while maintaining backward compatibility with `ndk.walletConfig` for zapping functionality.
+
 ## 2.17.10
 
 ### Patch Changes
 
-- Fix Buffer reference error in signature verification worker by replacing Node.js Buffer API with browser-compatible hexToBytes function
+- eb8d400: Add AI guardrail for replaceable events with old timestamps. Warns when calling `publish()` on a replaceable event (kind 0, 3, 10k-20k, 30k-40k) with a `created_at` older than 10 seconds, guiding developers to use `publishReplaceable()` instead to ensure proper event replacement on relays.
 
 ## 2.17.9
 

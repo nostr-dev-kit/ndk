@@ -1,5 +1,12 @@
 # @nostr-dev-kit/messages
 
+## 1.0.0
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.18.0
+
 ## 0.1.0
 
 ### Minor Changes

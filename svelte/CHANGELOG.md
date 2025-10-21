@@ -1,5 +1,26 @@
 # Changelog
 
+## 3.0.0
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.18.0
+    - @nostr-dev-kit/wallet@0.8.10
+    - @nostr-dev-kit/sync@0.3.6
+
+## 2.4.4
+
+### Patch Changes
+
+- 4482b62: Fix wallet store API: `mints` now returns `string[]` of configured mint URLs (not filtered by balance), and add `mintBalances` getter that returns all mints with their balances including configured mints with 0 balance
+- Updated dependencies
+- Updated dependencies [6c5f645]
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.17.11
+    - @nostr-dev-kit/sessions@0.6.3
+
 ## 2.4.3
 
 ### Patch Changes

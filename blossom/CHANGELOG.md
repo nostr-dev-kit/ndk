@@ -1,5 +1,12 @@
 # @nostr-dev-kit/blossom
 
+## 7.0.0
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.18.0
+
 ## 6.1.0
 
 ### Minor Changes

@@ -41,13 +41,13 @@
     },
     "devDependencies": {
         "@types/react": "^18.2.0",
-        "jsdom": "^27.0.0",
+        "jsdom": "^27.0.1",
         "tsup": "^8.4.0",
         "react": "*",
         "react-dom": "^18.3.1",
         "typescript": "^5.9.3",
         "vitest": "^3.2.4",
-        "vite": "^7.1.9",
+        "vite": "^7.1.11",
         "esbuild": "^0.25.11",
         "zustand": "^5.0.3"
     },

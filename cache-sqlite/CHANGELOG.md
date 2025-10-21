@@ -1,5 +1,12 @@
 # @nostr-dev-kit/ndk-cache-sqlite
 
+## 7.0.0
+
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/ndk@2.18.0
+
 ## 6.1.1
 
 ### Patch Changes

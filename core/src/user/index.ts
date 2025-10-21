@@ -159,7 +159,9 @@ export class NDKUser {
         };
         const [userProfile, mintListEvent] = await Promise.all([
             promiseWithTimeout(this.fetchProfile()),
-            promiseWithTimeout(this.ndk.fetchEvent({ kinds: [NDKKind.CashuMintList], authors: [this.pubkey] })),
+            promiseWithTimeout(
+                this.ndk.fetchEvent({ kinds: [NDKKind.CashuMintList], authors: [this.pubkey] }),
+            ),
         ]);
 
         const res: Map<NDKZapMethod, NDKZapMethodInfo> = new Map();
@@ -190,7 +192,11 @@ export class NDKUser {
      * @param skipCache {boolean} Whether to skip the cache or not
      * @returns {NDKUser | undefined} An NDKUser if one is found for the given NIP-05, undefined otherwise.
      */
-    static async fromNip05(nip05Id: string, ndk: NDK, skipCache = false): Promise<NDKUser | undefined> {
+    static async fromNip05(
+        nip05Id: string,
+        ndk: NDK,
+        skipCache = false,
+    ): Promise<NDKUser | undefined> {
         if (!ndk) throw new Error("No NDK instance found");
 
         const opts: RequestInit = {};
@@ -249,7 +255,10 @@ export class NDKUser {
         opts.groupableDelay ??= 250;
 
         if (!setMetadataEvent) {
-            setMetadataEvent = await this.ndk.fetchEvent({ kinds: [0], authors: [this.pubkey] }, opts);
+            setMetadataEvent = await this.ndk.fetchEvent(
+                { kinds: [0], authors: [this.pubkey] },
+                opts,
+            );
         }
 
         if (!setMetadataEvent) return null;
@@ -257,7 +266,12 @@ export class NDKUser {
         // return the most recent profile
         this.profile = profileFromEvent(setMetadataEvent);
 
-        if (storeProfileEvent && this.profile && this.ndk.cacheAdapter && this.ndk.cacheAdapter.saveProfile) {
+        if (
+            storeProfileEvent &&
+            this.profile &&
+            this.ndk.cacheAdapter &&
+            this.ndk.cacheAdapter.saveProfile
+        ) {
             this.ndk.cacheAdapter.saveProfile(this.pubkey, this.profile);
         }
 
@@ -328,14 +342,14 @@ export class NDKUser {
     /**
      * Add a follow to this user's contact list
      *
-     * @param newFollow {NDKUser} The user to follow
-     * @param currentFollowList {Set<NDKUser>} The current follow list
+     * @param newFollow {NDKUser | Hexpubkey} The user to follow
+     * @param currentFollowList {Set<NDKUser | Hexpubkey>} The current follow list
      * @param kind {NDKKind} The kind to use for this contact list (defaults to `3`)
      * @returns {Promise<boolean>} True if the follow was added, false if the follow already exists
      */
     public async follow(
-        newFollow: NDKUser,
-        currentFollowList?: Set<NDKUser>,
+        newFollow: NDKUser | Hexpubkey,
+        currentFollowList?: Set<NDKUser | Hexpubkey>,
         kind = NDKKind.Contacts,
     ): Promise<boolean> {
         if (!this.ndk) throw new Error("No NDK instance found");
@@ -346,7 +360,12 @@ export class NDKUser {
             currentFollowList = await this.follows(undefined, undefined, kind);
         }
 
-        if (currentFollowList.has(newFollow)) {
+        const newFollowPubkey = typeof newFollow === "string" ? newFollow : newFollow.pubkey;
+        const isAlreadyFollowing = Array.from(currentFollowList).some((item) =>
+            typeof item === "string" ? item === newFollowPubkey : item.pubkey === newFollowPubkey,
+        );
+
+        if (isAlreadyFollowing) {
             return false;
         }
 
@@ -354,9 +373,12 @@ export class NDKUser {
 
         const event = new NDKEvent(this.ndk, { kind } as NostrEvent);
 
-        // This is a horrible hack and I need to fix it
         for (const follow of currentFollowList) {
-            event.tag(follow);
+            if (typeof follow === "string") {
+                event.tags.push(["p", follow]);
+            } else {
+                event.tag(follow);
+            }
         }
 
         await event.publish();
@@ -366,14 +388,14 @@ export class NDKUser {
     /**
      * Remove a follow from this user's contact list
      *
-     * @param user {NDKUser} The user to unfollow
-     * @param currentFollowList {Set<NDKUser>} The current follow list
+     * @param user {NDKUser | Hexpubkey} The user to unfollow
+     * @param currentFollowList {Set<NDKUser | Hexpubkey>} The current follow list
      * @param kind {NDKKind} The kind to use for this contact list (defaults to `3`)
      * @returns The relays were the follow list was published or false if the user wasn't found
      */
     public async unfollow(
-        user: NDKUser,
-        currentFollowList?: Set<NDKUser>,
+        user: NDKUser | Hexpubkey,
+        currentFollowList?: Set<NDKUser | Hexpubkey>,
         kind = NDKKind.Contacts,
     ): Promise<Set<NDKRelay> | boolean> {
         if (!this.ndk) throw new Error("No NDK instance found");
@@ -384,11 +406,13 @@ export class NDKUser {
             currentFollowList = await this.follows(undefined, undefined, kind);
         }
 
-        // find the user that has the same pubkey
-        const newUserFollowList = new Set<NDKUser>();
+        const unfollowPubkey = typeof user === "string" ? user : user.pubkey;
+        const newUserFollowList = new Set<NDKUser | Hexpubkey>();
         let foundUser = false;
+
         for (const follow of currentFollowList) {
-            if (follow.pubkey !== user.pubkey) {
+            const followPubkey = typeof follow === "string" ? follow : follow.pubkey;
+            if (followPubkey !== unfollowPubkey) {
                 newUserFollowList.add(follow);
             } else {
                 foundUser = true;
@@ -399,9 +423,12 @@ export class NDKUser {
 
         const event = new NDKEvent(this.ndk, { kind } as NostrEvent);
 
-        // Tag users from the new follow list
         for (const follow of newUserFollowList) {
-            event.tag(follow);
+            if (typeof follow === "string") {
+                event.tags.push(["p", follow]);
+            } else {
+                event.tag(follow);
+            }
         }
 
         return await event.publish();

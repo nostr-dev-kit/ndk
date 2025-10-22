@@ -7,27 +7,11 @@ Snippets are grouped by category. Some of them are listed in more than one categ
 
 ## Events
 
-### Creating a basic event
-
-<<< @/core/docs/snippets/create_event.ts
-
-### Tagging users
-
-<<< @/core/docs/snippets/tag_user.ts
-
-### Signing events
-
-<<< @/core/docs/snippets/sign_event.ts
+<!--@include: ./snippets/events.md -->
 
 ## Signers
 
-### Signing events
-
-<<< @/core/docs/snippets/sign_event.ts
-
-### Different signers
-
-<<< @/core/docs/snippets/sign_event_with_other_signers.ts
+<!--@include: ./snippets/signers.md -->
 
 
 ## Not migrated yet

@@ -5,8 +5,8 @@
 You can pass an object with several options to a newly created instance of NDK.
 
 - `explicitRelayUrls` – an array of relay URLs.
-- `signer` - an instance of a [signer](#signers).
-- `cacheAdapter` - an instance of a [Cache Adapter](#caching)
+- `signer` - an instance of a [signer](/core/docs/fundamentals/signers.html).
+- `cacheAdapter` - an instance of a [cache adapter](#caching)
 - `debug` - Debug instance to use for logging. Defaults to `debug("ndk")`.
 
 ```ts

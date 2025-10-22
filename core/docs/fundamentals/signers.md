@@ -68,24 +68,7 @@ To add remote signing support to your application, there are a few things you ne
 
 Create a `NDKNip46Signer` with the bunker connection string and local keypair.
 
-```ts
-// provided by the user
-const signerConnectionString = 'bunker://....';
-
-// local keypair generated when signer if first initialised
-const clientKeypair = NDKPrivateKeySigner.generate(); //
-const clientNsec = clientKeypair.nsec;
-
-// initiate NIP-46 signer
-const signer = NDKNip46Signer.bunker(ndk, signerConnectionString, clientNsec);
-
-// promise will resolve once the `kind:24133` event is received
-const user = await signer.blockUntilReady();
-
-console.log("Welcome", user.npub);
-```
-
-
+<<< @/core/docs/snippets/sign_with_bunker.ts
 
 ## Sign Events
 
@@ -122,13 +105,11 @@ nip07signer.user().then(async (user) => {
 Perhaps the only time we really want you to use the `NDKPrivateKeySigner` is to help you generate new keys as the signer
 provides helper methods to do just that:
 
-```ts
-import { NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
+<<< @/core/docs/snippets/key_create.ts
 
-// Generate a new private key
-const signer = NDKPrivateKeySigner.generate();
-console.log("nsec:", signer.nsec);
-console.log("npub:", signer.npub);
-```
+## Code Snippets
 
+More snippets and examples can be found in the [snippets directory](/docs/snippets.md).
+
+<!--@include: @/docs/snippets/signers.md -->
 

@@ -43,7 +43,8 @@ NDK uses the default signer `ndk.signer` to sign events.
 
 Read more about signers in [the signer documentation](/core/docs/fundamentals/signers.md)
 
+## Code Snippets
 
-## More examples
+More snippets and examples can be found in the [snippets directory](/docs/snippets.md).
 
-Additional example snippets of events can be found in the [snippets directory](/docs/snippets.md).
+<!--@include: @/docs/snippets/events.md -->

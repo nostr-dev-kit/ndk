@@ -12,7 +12,6 @@
   let newRelayUrl = $state<string>('');
   let debugLogs = $state<string[]>([]);
   let isSubscribed = $state(false);
-  let subscribedRelayUrls = $state<string[]>([]);
 
   function addDebugLog(message: string) {
     const timestamp = new Date().toLocaleTimeString();
@@ -53,16 +52,7 @@
       return;
     }
 
-    // Stop existing subscription if any
-    if (isSubscribed) {
-      notes.stop();
-      notes.clear();
-      addDebugLog('🔄 Restarting subscription...');
-    }
-
-    // Snapshot the selected relays at subscription time
     const relays = Array.from(selectedRelayUrls);
-    subscribedRelayUrls = relays;
     isSubscribed = true;
     addDebugLog(`🔔 Subscribing to ${relays.length} relay(s): ${relays.join(', ')}`);
   }
@@ -79,14 +69,14 @@
     return statusMap;
   });
 
-  // Create reactive subscription that only queries subscribed relays
+  // Create reactive subscription that automatically restarts when dependencies change
   const notes = ndk.$subscribe(() => {
     if (!isSubscribed) return undefined;
-    if (subscribedRelayUrls.length === 0) return undefined;
+    if (selectedRelayUrls.size === 0) return undefined;
 
     return {
       filters: [{ kinds: [1], limit: 1 }],
-      relayUrls: subscribedRelayUrls,
+      relayUrls: Array.from(selectedRelayUrls),
       closeOnEose: false,
     };
   });
@@ -202,7 +192,7 @@
             <strong>Selected Relays:</strong> {selectedRelayUrls.size}
           </div>
           <div class="stat">
-            <strong>Connected:</strong> {ndk.$pool.connectedCount}
+            <strong>Connected:</strong> {ndk.$pool.connectedCount} / {ndk.$pool.relays.size}
           </div>
           <div class="stat">
             <strong>Events:</strong> {notes.count}

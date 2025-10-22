@@ -1,10 +1,12 @@
 # Working with NIP-19 Identifiers
 
-NDK provides comprehensive support for NIP-19 identifiers (npub, nprofile, nevent, etc.), both for encoding/decoding data and for working with NDK entities.
+NDK provides comprehensive support for NIP-19 identifiers (npub, nprofile, nevent, etc.), both for encoding/decoding
+data and for working with NDK entities.
 
 ## Direct NIP-19 Utilities
 
-NDK re-exports all NIP-19 utilities from nostr-tools for lightweight data conversion without needing to instantiate NDK objects:
+NDK re-exports all NIP-19 utilities from nostr-tools for lightweight data conversion without needing to instantiate NDK
+objects:
 
 ```typescript
 import { nip19 } from '@nostr-dev-kit/ndk';
@@ -181,6 +183,6 @@ function isNpub(str: string): boolean {
 2. **Include relay hints for better discovery**: When sharing events or profiles, include 2-3 relay hints
 3. **Handle decoding errors**: Always wrap `nip19.decode()` in try-catch blocks
 4. **Use the right tool**:
-   - Use `nip19` utilities for pure data conversion
-   - Use `ndk.getUser()` when you need an NDK User object
-   - Use `event.encode()` for encoding existing NDK events
+    - Use `nip19` utilities for pure data conversion
+    - Use `ndk.getUser()` when you need an NDK User object
+    - Use `event.encode()` for encoding existing NDK events

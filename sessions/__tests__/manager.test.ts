@@ -1,4 +1,4 @@
-import NDK, { NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
+import NDK, { NDKKind, NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { NDKSessionManager } from "../src/manager";
 import { MemoryStorage } from "../src/storage";
@@ -627,6 +627,33 @@ describe("NDKSessionManager", () => {
         it("should handle enableWallet for non-existent session", () => {
             // Should not throw
             expect(() => manager.enableWallet("nonexistent")).not.toThrow();
+        });
+    });
+
+    describe("createAccount", () => {
+        it("should create a new account with generated signer", async () => {
+            const result = await manager.createAccount();
+
+            expect(result.pubkey).toBeDefined();
+            expect(result.signer).toBeInstanceOf(NDKPrivateKeySigner);
+            expect(manager.getSessions().size).toBe(1);
+            expect(manager.activePubkey).toBe(result.pubkey);
+        });
+
+        it("should set the created account as active", async () => {
+            const result = await manager.createAccount();
+
+            expect(manager.activePubkey).toBe(result.pubkey);
+            expect(ndk.signer).toBe(result.signer);
+        });
+
+        it("should return pubkey and signer", async () => {
+            const result = await manager.createAccount();
+
+            expect(result).toHaveProperty('pubkey');
+            expect(result).toHaveProperty('signer');
+            expect(typeof result.pubkey).toBe('string');
+            expect(result.signer).toBeInstanceOf(NDKPrivateKeySigner);
         });
     });
 });

@@ -27,6 +27,7 @@ import { updateRelayStatus } from "./functions/updateRelayStatus";
 import type { NDKCacheAdapterSqliteWasmOptions, SQLDatabase, WorkerMessage, WorkerResponse } from "./types";
 
 export type { CacheStats } from "./functions/getCacheStats";
+export type { ProfileFilterDescriptor } from "./functions/getProfiles";
 
 export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
     public dbName: string;
@@ -156,10 +157,10 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
             }
 
             // Check version compatibility (warn if mismatch)
-            if (data._version && data._version !== "0.8.0") {
+            if (data._version && data._version !== "0.8.1") {
                 console.warn(
                     "[NDK Cache SQLite WASM] ⚠️  Worker version mismatch!",
-                    `\nLibrary version: 0.8.0`,
+                    `\nLibrary version: 0.8.1`,
                     `\nWorker version: ${data._version}`,
                     "\n\nUpdate your worker file:",
                     "\n  cp node_modules/@nostr-dev-kit/cache-sqlite-wasm/dist/worker.js public/",

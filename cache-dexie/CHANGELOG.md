@@ -1,5 +1,17 @@
 # @nostr-dev-kit/ndk-cache-dexie
 
+## 2.7.7
+
+### Patch Changes
+
+- 28ebbe1: Fix NIP-17 gift-wrapped message decryption caching. Previously, decrypted events were being repeatedly decrypted because the cache key (wrapper ID) didn't match the stored key (rumor ID). Now properly caches decrypted gift-wrapped messages using the wrapper event ID as the cache key, eliminating redundant decryption operations.
+
+    Adds comprehensive tests to verify cache behavior with gift-wrapped events.
+
+- Updated dependencies [59a97a5]
+- Updated dependencies [28ebbe1]
+    - @nostr-dev-kit/ndk@2.17.9
+
 ## 2.7.6
 
 ### Patch Changes

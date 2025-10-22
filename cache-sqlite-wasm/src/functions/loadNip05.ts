@@ -16,6 +16,8 @@ export async function loadNip05(
 ): Promise<ProfilePointer | null | "missing"> {
     const stmt = "SELECT profile, fetched_at FROM nip05 WHERE nip05 = ? LIMIT 1";
 
+    await this.ensureInitialized();
+
     if (this.useWorker) {
         const result = await this.postWorkerMessage<{ profile?: string; fetched_at?: number }>({
             type: "get",

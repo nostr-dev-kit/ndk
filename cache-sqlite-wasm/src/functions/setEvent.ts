@@ -85,6 +85,9 @@ export async function setEvent(
     _filters: NDKFilter[],
     _relay?: NDKRelay,
 ): Promise<void> {
+    // Ensure the adapter is initialized before trying to use it
+    await this.ensureInitialized();
+
     if (this.useWorker) {
         // Worker mode: send the entire event data, let worker handle all SQL
         await this.postWorkerMessage({

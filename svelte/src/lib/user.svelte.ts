@@ -1,5 +1,6 @@
 import type { NDKUser, NDKZapMethod, NDKZapMethodInfo } from "@nostr-dev-kit/ndk";
 import type { NDKSvelte } from "./ndk-svelte.svelte";
+import { validateCallback } from "./utils/validate-callback.js";
 
 /**
  * Reactively fetch a user by identifier
@@ -19,7 +20,8 @@ import type { NDKSvelte } from "./ndk-svelte.svelte";
  * {/if}
  * ```
  */
-export function createFetchUser(ndk: NDKSvelte, identifier: () => string | undefined) {
+export function createFetchUser(ndk: NDKSvelte, identifier: () => string | undefined): NDKUser | undefined {
+    validateCallback(identifier, '$fetchUser', 'identifier');
     let _user = $state<NDKUser | undefined>(undefined);
 
     const derivedIdentifier = $derived(identifier());
@@ -58,7 +60,7 @@ export function createFetchUser(ndk: NDKSvelte, identifier: () => string | undef
         getOwnPropertyDescriptor(_target, prop) {
             return _user ? Reflect.getOwnPropertyDescriptor(_user, prop) : undefined;
         },
-    });
+    }) as NDKUser | undefined;
 }
 
 export type ZapInfo = {
@@ -92,6 +94,7 @@ export type ZapInfo = {
  * ```
  */
 export function useZapInfo(user: () => NDKUser | undefined, timeoutMs: number = 2500): ZapInfo {
+    validateCallback(user, 'useZapInfo', 'user');
     let methods = $state<Map<NDKZapMethod, NDKZapMethodInfo>>(new Map());
     let isLoading = $state(false);
     let error = $state<string | undefined>(undefined);

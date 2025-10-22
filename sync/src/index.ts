@@ -43,7 +43,7 @@
  * ```
  */
 
-import { type SyncAndSubscribeOptions, syncAndSubscribe } from "./sync-subscribe.js";
+import { syncAndSubscribe } from "./sync-subscribe.js";
 
 // Export main class - USE THIS
 export { NDKSync } from "./ndk-sync-class.js";

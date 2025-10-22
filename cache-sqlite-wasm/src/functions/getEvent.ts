@@ -10,6 +10,8 @@ import type { NDKCacheAdapterSqliteWasm } from "../index";
  */
 export async function getEvent(this: NDKCacheAdapterSqliteWasm, id: string): Promise<NDKEvent | null> {
     const stmt = "SELECT raw FROM events WHERE id = ? AND deleted = 0 LIMIT 1";
+    await this.ensureInitialized();
+
     if (this.useWorker) {
         const result = await this.postWorkerMessage<{ raw?: string }>({
             type: "get",

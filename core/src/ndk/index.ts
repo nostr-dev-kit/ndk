@@ -21,6 +21,7 @@ import { NDKSubscriptionManager } from "../subscription/manager.js";
 import { filterFromId, isNip33AValue, relaysFromBech32 } from "../subscription/utils.js";
 import type { NDKUserParams, ProfilePointer } from "../user/index.js";
 import { NDKUser } from "../user/index.js";
+import { isValidNip05 } from "../utils/validation.js";
 import { normalizeRelayUrl } from "../utils/normalize-url.js";
 import type { CashuPayCb, LnPayCb, NDKPaymentConfirmation, NDKZapSplit } from "../zapper/index.js";
 import type { NDKLnUrlData } from "../zapper/ln.js";
@@ -626,10 +627,15 @@ export class NDK extends EventEmitter<{
             }
         }
 
-        const connections = [this.pool.connect(timeoutMs)];
+        const connections: Promise<void>[] = [this.pool.connect(timeoutMs)];
 
         if (this.outboxPool) {
             connections.push(this.outboxPool.connect(timeoutMs));
+        }
+
+        // Initialize cache adapter if it has async initialization
+        if (this.cacheAdapter?.initializeAsync) {
+            connections.push(this.cacheAdapter.initializeAsync(this));
         }
 
         return Promise.allSettled(connections).then(() => {});
@@ -758,12 +764,9 @@ export class NDK extends EventEmitter<{
      */
     public async fetchUser(input: string, skipCache = false): Promise<NDKUser | undefined> {
         // Check if it's a NIP-05 identifier (contains @ or . indicating a domain)
-        if (input.includes("@") || (input.includes(".") && !input.startsWith("n"))) {
+        if (isValidNip05(input)) {
             return NDKUser.fromNip05(input, this, skipCache);
-        }
-
-        // Check if it's a NIP-19 encoded string
-        if (input.startsWith("npub1")) {
+        } else if (input.startsWith("npub1")) {
             const { type, data } = nip19.decode(input);
             if (type !== "npub") throw new Error(`Invalid npub: ${input}`);
             const user = new NDKUser({ pubkey: data });
@@ -893,7 +896,12 @@ export class NDK extends EventEmitter<{
         }
 
         if (autoStart) {
-            setTimeout(() => {
+            setTimeout(async () => {
+                // Ensure cache is ready before starting subscription
+                if (this.cacheAdapter?.initializeAsync && !this.cacheAdapter.ready) {
+                    await this.cacheAdapter.initializeAsync(this);
+                }
+
                 const cachedEvents = subscription.start(!eventsHandler);
                 if (cachedEvents && cachedEvents.length > 0 && !!eventsHandler) eventsHandler(cachedEvents);
             }, 0);

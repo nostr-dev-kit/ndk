@@ -1,6 +1,6 @@
 import type { Hexpubkey } from "src/user/index.js";
 import type { NDK } from "../../ndk/index.js";
-import { isValidPubkey } from "../../utils/filter-validation.js";
+import { isValidPubkey } from "../../utils/validation.js";
 import type { NDKImetaTag } from "../../utils/imeta.js";
 import { imetaTagToTag, mapImetaTag } from "../../utils/imeta.js";
 import { NDKEvent, type NDKRawEvent } from "../index.js";

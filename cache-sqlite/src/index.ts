@@ -64,12 +64,12 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
         }
     }
 
-    public getDecryptedEvent = (eventId: NDKEventId): NDKEvent | null => {
+    public getDecryptedEvent = (wrapperId: NDKEventId): NDKEvent | null => {
         if (!this.db) throw new Error("Database not initialized");
 
         try {
             const stmt = this.db.getDatabase().prepare("SELECT event FROM decrypted_events WHERE id = ?");
-            const row = stmt.get(eventId) as { event: string } | undefined;
+            const row = stmt.get(wrapperId) as { event: string } | undefined;
 
             if (row) {
                 const eventData = JSON.parse(row.event);
@@ -82,14 +82,14 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
         }
     };
 
-    public addDecryptedEvent = (event: NDKEvent): void => {
+    public addDecryptedEvent = (wrapperId: NDKEventId, decryptedEvent: NDKEvent): void => {
         if (!this.db) throw new Error("Database not initialized");
 
         try {
             const stmt = this.db
                 .getDatabase()
                 .prepare("INSERT OR REPLACE INTO decrypted_events (id, event) VALUES (?, ?)");
-            stmt.run(event.id, JSON.stringify(event.rawEvent()));
+            stmt.run(wrapperId, JSON.stringify(decryptedEvent.rawEvent()));
         } catch (e) {
             console.error("Error adding decrypted event:", e);
         }

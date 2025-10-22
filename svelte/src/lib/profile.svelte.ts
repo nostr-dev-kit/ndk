@@ -1,5 +1,10 @@
 import type { NDKUserProfile } from "@nostr-dev-kit/ndk";
 import type { NDKSvelte } from "./ndk-svelte.svelte";
+import { LRUCache } from "./utils/lru-cache.js";
+import { validateCallback } from "./utils/validate-callback.js";
+
+// Global LRU cache for profile fetches (1000 entries)
+const profileCache = new LRUCache<string, NDKUserProfile>(1000);
 
 /**
  * Reactively fetch a user profile by pubkey
@@ -20,7 +25,8 @@ import type { NDKSvelte } from "./ndk-svelte.svelte";
  * {/if}
  * ```
  */
-export function createFetchProfile(ndk: NDKSvelte, pubkey: () => string | undefined) {
+export function createFetchProfile(ndk: NDKSvelte, pubkey: () => string | undefined): NDKUserProfile | undefined {
+    validateCallback(pubkey, '$fetchProfile', 'pubkey');
     let _profile = $state<NDKUserProfile | undefined>(undefined);
 
     const derivedPubkey = $derived(pubkey());
@@ -32,10 +38,21 @@ export function createFetchProfile(ndk: NDKSvelte, pubkey: () => string | undefi
             return;
         }
 
+        // Check cache first
+        const cachedProfile = profileCache.get(pk);
+        if (cachedProfile) {
+            _profile = cachedProfile;
+            return;
+        }
+
         const user = ndk.getUser({ pubkey: pk });
         user.fetchProfile({ closeOnEose: true, groupable: true, groupableDelay: 250 })
             .then(() => {
-                _profile = user.profile;
+                if (user.profile) {
+                    // Update cache with fetched profile
+                    profileCache.set(pk, user.profile);
+                    _profile = user.profile;
+                }
             })
             .catch(() => {
                 _profile = undefined;
@@ -60,5 +77,5 @@ export function createFetchProfile(ndk: NDKSvelte, pubkey: () => string | undefi
         getOwnPropertyDescriptor(_target, prop) {
             return _profile ? Reflect.getOwnPropertyDescriptor(_profile, prop) : undefined;
         },
-    });
+    }) as NDKUserProfile | undefined;
 }

@@ -1,5 +1,34 @@
 # @nostr-dev-kit/ndk
 
+## 2.17.10
+
+### Patch Changes
+
+- Fix Buffer reference error in signature verification worker by replacing Node.js Buffer API with browser-compatible hexToBytes function
+
+## 2.17.9
+
+### Patch Changes
+
+- 59a97a5: Ensure async cache adapters are fully initialized before NDK operations. Cache initialization now happens during `connect()` alongside relay connections, and subscriptions wait for cache readiness before starting.
+
+    SQLite WASM cache improvements:
+    - Add initialization guards to all cache functions to prevent race conditions
+    - Implement proper database migration versioning system (v2)
+    - Support multi-field profile search (search across name, displayName, nip05 simultaneously)
+    - Remove verbose migration logging (keep only errors)
+    - Bump version to 0.8.1
+
+- 28ebbe1: Fix NIP-17 gift-wrapped message decryption caching. Previously, decrypted events were being repeatedly decrypted because the cache key (wrapper ID) didn't match the stored key (rumor ID). Now properly caches decrypted gift-wrapped messages using the wrapper event ID as the cache key, eliminating redundant decryption operations.
+
+    Adds comprehensive tests to verify cache behavior with gift-wrapped events.
+
+## 2.17.8
+
+### Patch Changes
+
+- Cache decrypted NIP-17 events to avoid redundant decryption. The `giftUnwrap` function now checks the cache adapter for previously decrypted events and stores newly decrypted events, significantly improving performance when handling NIP-17 gift-wrapped messages.
+
 ## 2.17.7
 
 ### Patch Changes
@@ -9,7 +38,6 @@
     - Add AI guardrails with JSDoc warnings for common NIP-17 mistakes (signing rumors, using wrong timestamps, forgetting to publish to sender relays)
     - Add runtime warning when rumor is already signed
     - Improve documentation in gift-wrapping.ts with clear guidance on NIP-17 best practices
-
 
 - ad1a3ee: Improve AI guardrails with ratio-based fetchEvents warnings
 

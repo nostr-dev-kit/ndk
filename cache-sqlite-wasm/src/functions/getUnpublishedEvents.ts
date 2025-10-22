@@ -11,6 +11,8 @@ export async function getUnpublishedEvents(
 ): Promise<{ event: NDKEvent; relays?: string[]; lastTryAt?: number }[]> {
     const stmt = "SELECT id, event, relays, lastTryAt FROM unpublished_events";
 
+    await this.ensureInitialized();
+
     if (this.useWorker) {
         const results = await this.postWorkerMessage<
             Array<{ id: string; event: string; relays: string; lastTryAt: number }>

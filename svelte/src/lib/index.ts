@@ -22,6 +22,7 @@ export {
 export { default as Avatar } from "./components/Avatar.svelte";
 export { default as BlossomImage } from "./components/BlossomImage.svelte";
 export { default as EventContent } from "./components/EventContent.svelte";
+export { default as Name } from "./components/Name.svelte";
 export { default as NostrEditor } from "./components/editor/NostrEditor.svelte";
 export { default as ImageNodeView } from "./components/editor/nodes/ImageNodeView.svelte";
 export { default as NAddrNodeView } from "./components/editor/nodes/NAddrNodeView.svelte";
@@ -94,6 +95,8 @@ export type { ReactiveWoTStore, WoTFilterOptions, WoTLoadOptions, WoTRankOptions
 export type { SubscribeConfig, Subscription, SyncSubscribeConfig } from "./subscribe.svelte.js";
 // Subscription - can be used as standalone function or via ndk.$subscribe()
 export { createSubscription, createSyncSubscription } from "./subscribe.svelte.js";
+// Event fetching - can be used as standalone function or via ndk.$fetchEvent() / ndk.$fetchEvents()
+export { createFetchEvent, createFetchEvents, type FetchEventOptions } from "./event.svelte.js";
 // User helpers
 export { createFetchUser, useZapInfo, type ZapInfo } from "./user.svelte.js";
 // WoT runes

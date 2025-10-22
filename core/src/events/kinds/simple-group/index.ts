@@ -2,7 +2,7 @@ import type { NDK } from "../../../ndk/index.js";
 import type { NDKRelaySet } from "../../../relay/sets/index.js";
 import type { NDKSigner } from "../../../signers/index.js";
 import type { Hexpubkey, NDKUser } from "../../../user/index.js";
-import { isValidPubkey } from "../../../utils/filter-validation.js";
+import { isValidPubkey } from "../../../utils/validation.js";
 import type { NDKTag, NostrEvent } from "../..";
 import { NDKEvent } from "../..";
 import { NDKKind } from "..";

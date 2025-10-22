@@ -244,14 +244,21 @@ export interface NDKCacheAdapter {
 
     /**
      * Fetches profiles that match the given filter.
-     * @param filter
+     * @param filter - Either a filter function or a filter descriptor object
      * @returns NDKUserProfiles that match the filter.
      * @example
+     * // Using a filter function
      * const searchFunc = (pubkey, profile) => profile.name.toLowerCase().includes("alice");
      * const allAliceProfiles = await cache.getProfiles(searchFunc);
+     *
+     * @example
+     * // Using a filter descriptor (supported by some cache adapters like cache-sqlite-wasm)
+     * const aliceProfiles = await cache.getProfiles({ field: 'name', contains: 'alice' });
+     * // Or search multiple fields
+     * const aliceProfiles = await cache.getProfiles({ fields: ['name', 'displayName'], contains: 'alice' });
      */
     getProfiles?: (
-        filter: (pubkey: Hexpubkey, profile: NDKUserProfile) => boolean,
+        filter: ((pubkey: Hexpubkey, profile: NDKUserProfile) => boolean) | { field?: string; fields?: string[]; contains: string },
     ) => Promise<Map<Hexpubkey, NDKUserProfile> | undefined>;
 
     loadNip05?(nip05: string, maxAgeForMissing?: number): Promise<ProfilePointer | null | "missing">;
@@ -304,17 +311,18 @@ export interface NDKCacheAdapter {
     onReady?(callback: () => void): void;
 
     /**
-     * Get a decrypted event from the cache by ID.
-     * @param eventId - The ID of the decrypted event to get.
-     * @returns The decrypted event, or null if it doesn't exist.
+     * Get a decrypted event from the cache by its wrapper ID.
+     * @param wrapperId - The ID of the gift-wrapped event (kind 1059).
+     * @returns The decrypted rumor event, or null if it doesn't exist.
      */
-    getDecryptedEvent?(eventId: NDKEventId): NDKEvent | null | Promise<NDKEvent | null>;
+    getDecryptedEvent?(wrapperId: NDKEventId): NDKEvent | null | Promise<NDKEvent | null>;
 
     /**
      * Store a decrypted event in the cache.
-     * @param event - The decrypted event to store.
+     * @param wrapperId - The ID of the gift-wrapped event (kind 1059) to use as the cache key.
+     * @param decryptedEvent - The decrypted rumor event to store.
      */
-    addDecryptedEvent?(event: NDKEvent): void | Promise<void>;
+    addDecryptedEvent?(wrapperId: NDKEventId, decryptedEvent: NDKEvent): void | Promise<void>;
 
     /**
      * Cleans up the cache. This is called when the user logs out.

@@ -1,10 +1,12 @@
 # Filter Validation
 
-NDK provides automatic validation and fixing of subscription filters to prevent runtime errors in cache adapters and relay communications.
+NDK provides automatic validation and fixing of subscription filters to prevent runtime errors in cache adapters and
+relay communications.
 
 ## The Problem
 
-When creating filters programmatically, it's easy to accidentally include `undefined` values in arrays, especially when using `.map()` operations or conditional logic. These undefined values can cause:
+When creating filters programmatically, it's easy to accidentally include `undefined` values in arrays, especially when
+using `.map()` operations or conditional logic. These undefined values can cause:
 
 - Runtime errors in cache adapters (especially SQLite WASM: "Wrong API use: tried to bind a value of an unknown type")
 - Invalid requests sent to relays
@@ -34,7 +36,8 @@ ndk.subscribe(filter); // Throws: "Invalid filter(s) detected..."
 
 ### 2. Fix Mode
 
-Automatically removes invalid values from filters, useful for production environments where you want to be lenient with data.
+Automatically removes invalid values from filters, useful for production environments where you want to be lenient with
+data.
 
 ```typescript
 const ndk = new NDK({
@@ -73,16 +76,19 @@ const ndk = new NDK({
 The filter validation checks for:
 
 ### 1. Undefined Values
+
 - Removes or reports `undefined` in any filter array
 
 ### 2. Type Validation
+
 - **authors**: Must be strings and valid 64-character hex pubkeys
 - **ids**: Must be strings and valid 64-character hex event IDs
 - **kinds**: Must be numbers, integers between 0-65535
 - **Tag filters** (#e, #p, etc.): Must be strings
-  - #e and #p tags: Must be valid 64-character hex strings
+    - #e and #p tags: Must be valid 64-character hex strings
 
 ### 3. Invalid Data
+
 - Non-string values in string arrays
 - Non-numeric values in kinds array
 - Invalid hex strings where required

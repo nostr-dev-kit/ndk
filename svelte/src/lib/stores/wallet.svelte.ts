@@ -42,6 +42,8 @@ export class ReactiveWalletStore {
     #ndk: NDK;
     #sessionManager: NDKSessionManager;
     #currentWalletEventId?: string;
+    #currentPubkey?: string;
+    #syncing = false;
 
     constructor(ndk: NDK, sessionManager: NDKSessionManager) {
         this.#ndk = ndk;
@@ -59,16 +61,25 @@ export class ReactiveWalletStore {
             const session = state.sessions.get(activePubkey);
             const walletEvent = session?.events.get(Kind.CashuWallet as NDKKind);
 
+            // Check if active pubkey changed
+            const pubkeyChanged = this.#currentPubkey && this.#currentPubkey !== activePubkey;
+
             if (!walletEvent) {
-                // No wallet event, clear wallet if it was set
-                if (this.#wallet) {
+                // Only clear wallet if we're on the SAME pubkey and wallet event disappeared
+                // Don't clear if we switched to a different pubkey that doesn't have a wallet yet
+                if (this.#wallet && !pubkeyChanged) {
                     this.clear();
                 }
                 return;
             }
 
             // Check if we already have this wallet loaded
-            if (walletEvent.id === this.#currentWalletEventId) {
+            if (walletEvent.id === this.#currentWalletEventId && activePubkey === this.#currentPubkey) {
+                return;
+            }
+
+            // Skip if we're already syncing to prevent race conditions
+            if (this.#syncing) {
                 return;
             }
 
@@ -81,20 +92,26 @@ export class ReactiveWalletStore {
      * Sync wallet from session's wallet event (kind 17375)
      */
     async #syncWallet(walletEvent: NDKEvent, pubkey: Hexpubkey): Promise<void> {
+        this.#syncing = true;
         try {
             // Instantiate wallet from event
             const wallet = await NDKCashuWallet.from(walletEvent);
 
             if (wallet) {
+                // Set current wallet event ID and pubkey FIRST to prevent re-syncing during start()
+                this.#currentWalletEventId = walletEvent.id;
+                this.#currentPubkey = pubkey;
+
                 // Set wallet on store BEFORE starting so UI can show immediately
                 this.set(wallet);
-                this.#currentWalletEventId = walletEvent.id;
 
                 // Start wallet monitoring (will load from cache first, then sync)
                 await wallet.start({ pubkey });
             }
         } catch (error) {
             console.error(`[ReactiveWalletStore] Failed to load wallet from event:`, error);
+        } finally {
+            this.#syncing = false;
         }
     }
 
@@ -167,6 +184,7 @@ export class ReactiveWalletStore {
         this.balance = 0;
         this.status = NDKWalletStatus.INITIAL;
         this.#currentWalletEventId = undefined;
+        this.#currentPubkey = undefined;
 
         // Clear wallet from NDK
         this.#ndk.wallet = undefined;
@@ -175,30 +193,41 @@ export class ReactiveWalletStore {
     // Convenience getters
 
     /**
-     * Get mints with balances
+     * Get configured mint URLs
      */
-    get mints(): Mint[] {
+    get mints(): string[] {
+        const wallet = this.#wallet;
+        if (!wallet || !(wallet instanceof NDKCashuWallet)) return [];
+        return wallet.mints;
+    }
+
+    /**
+     * Get all mints with their balances (including configured mints with 0 balance)
+     */
+    get mintBalances(): Mint[] {
         const wallet = this.#wallet;
         if (!wallet || !(wallet instanceof NDKCashuWallet)) return [];
 
         const balances = wallet.state.getMintsBalance();
-        const mints: Mint[] = [];
+        const configuredMints = wallet.mints;
+        const mintMap = new Map<string, number>();
 
+        // First, add all configured mints with 0 balance
+        for (const url of configuredMints) {
+            mintMap.set(url, 0);
+        }
+
+        // Then update with actual balances
         for (const [url, balance] of Object.entries(balances)) {
-            if (typeof balance === "number" && balance > 0) {
-                mints.push({ url, balance });
+            if (typeof balance === "number") {
+                mintMap.set(url, balance);
             }
         }
 
-        // If we have a total balance but no per-mint breakdown, use the configured mints
-        if (mints.length === 0 && this.balance > 0) {
-            const configuredMints = wallet.mints;
-            if (configuredMints.length > 0) {
-                return configuredMints.map((url) => ({ url, balance: this.balance }));
-            }
-        }
-
-        return mints.sort((a, b) => b.balance - a.balance);
+        // Convert to array and sort by balance
+        return Array.from(mintMap.entries())
+            .map(([url, balance]) => ({ url, balance }))
+            .sort((a, b) => b.balance - a.balance);
     }
 
     /**
@@ -232,6 +261,25 @@ export class ReactiveWalletStore {
     get needsOnboarding(): boolean {
         const wallet = this.#wallet;
         return !wallet || (wallet instanceof NDKCashuWallet && wallet.mints.length === 0);
+    }
+
+    /**
+     * Get the wallet's private key (first privkey)
+     */
+    get privkey(): string | undefined {
+        const wallet = this.#wallet;
+        if (!(wallet instanceof NDKCashuWallet)) return undefined;
+        const privkeys = Array.from(wallet.privkeys);
+        return privkeys.length > 0 ? privkeys[0] : undefined;
+    }
+
+    /**
+     * Get the wallet's relay set
+     */
+    get relaySet() {
+        const wallet = this.#wallet;
+        if (!(wallet instanceof NDKCashuWallet)) return undefined;
+        return wallet.relaySet;
     }
 
     // Method delegates
@@ -273,15 +321,39 @@ export class ReactiveWalletStore {
     }
 
     /**
-     * Create and publish a new wallet
+     * Save wallet configuration (mints and relays).
+     * Creates a new wallet if none exists, or updates the existing one.
+     * Also publishes the CashuMintList (kind 10019) for nutzap reception.
+     *
+     * @param config - Wallet configuration with mints and optional relays
+     * @returns Promise that resolves when wallet is saved
+     *
+     * @example
+     * // Create or update wallet
+     * await ndk.$wallet.save({
+     *   mints: ['https://mint.example.com'],
+     *   relays: ['wss://relay.example.com']
+     * });
      */
-    async setupWallet(config: { mints: string[]; relays?: string[] }): Promise<void> {
-        const session = this.#sessionManager.getState().activePubkey;
-        if (!session) throw new Error("No active session");
+    async save(config: { mints: string[]; relays?: string[] }): Promise<void> {
+        let wallet = this.#wallet;
 
-        const wallet = await NDKCashuWallet.create(this.#ndk, config.mints, config.relays);
-        await wallet.start({ pubkey: session });
-        this.set(wallet);
+        if (!(wallet instanceof NDKCashuWallet)) {
+            // No wallet exists, create one
+            const session = this.#sessionManager.getState().activePubkey;
+            if (!session) throw new Error("No active session");
+
+            const newWallet = await NDKCashuWallet.create(this.#ndk, config.mints, config.relays);
+            await newWallet.start({ pubkey: session });
+            this.set(newWallet);
+            wallet = newWallet;
+        } else {
+            // Update existing wallet
+            await wallet.update(config);
+        }
+
+        // Publish CashuMintList (kind 10019) for nutzap reception
+        await wallet.publishMintList();
     }
 }
 

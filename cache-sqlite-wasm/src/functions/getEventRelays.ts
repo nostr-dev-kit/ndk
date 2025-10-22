@@ -50,6 +50,8 @@ export async function getEventRelays(
 
     let rows: Array<{ event_id: string; relay_url: string; seen_at: number }>;
 
+    await this.ensureInitialized();
+
     if (this.useWorker) {
         const result = await this.postWorkerMessage({
             type: "exec",

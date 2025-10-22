@@ -8,7 +8,7 @@ import { setEventDupSync } from "./functions/setEventDup";
 
 // Protocol version for cache worker
 // Format: matches @nostr-dev-kit/cache-sqlite-wasm package version
-const PROTOCOL_VERSION = "0.8.0";
+const PROTOCOL_VERSION = "0.8.1";
 const PROTOCOL_NAME = "ndk-cache-sqlite";
 
 let db: any = null;
@@ -115,15 +115,27 @@ self.onmessage = async (event: MessageEvent) => {
                 break;
             }
             case "getProfiles": {
-                // payload: { field: string, contains: string }
-                const { field, contains } = payload;
+                // payload: { field?: string, fields?: string[], contains: string }
+                const { field, fields, contains } = payload;
+                const searchFields = fields || (field ? [field] : []);
+
+                if (searchFields.length === 0) {
+                    throw new Error("Either 'field' or 'fields' must be provided");
+                }
+
+                const conditions = searchFields
+                    .map((f: string) => `json_extract(profile, '$.${f}') LIKE ?`)
+                    .join(' OR ');
+
                 const sql = `
                     SELECT pubkey, profile
                     FROM profiles
-                    WHERE json_extract(profile, '$.${field}') LIKE ?
+                    WHERE ${conditions}
                 `;
                 const param = `%${contains}%`;
-                const stmt = db.prepare(sql, [param]);
+                const params = searchFields.map(() => param);
+
+                const stmt = db.prepare(sql, params);
                 result = [];
                 while (stmt.step()) {
                     const row = stmt.getAsObject();

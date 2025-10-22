@@ -18,6 +18,8 @@ export async function saveProfile(
     const profileStr = JSON.stringify(profile);
     const updatedAt = Math.floor(Date.now() / 1000);
 
+    await this.ensureInitialized();
+
     if (this.useWorker) {
         await this.postWorkerMessage({
             type: "run",

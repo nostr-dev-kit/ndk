@@ -3,7 +3,7 @@
 This snippet demonstrates how to create, configure, and use an NDKCashuWallet for managing Cashu tokens.
 
 ```typescript
-import NDK, { NDKKind, NDKCashuMintList } from "@nostr-dev-kit/ndk";
+import NDK, { NDKKind } from "@nostr-dev-kit/ndk";
 import { NDKCashuWallet, NDKWalletStatus } from "@nostr-dev-kit/ndk-wallet";
 
 /**
@@ -28,13 +28,9 @@ async function setupCashuWallet(ndk: NDK, mints: string[], relays: string[]) {
     // configure reception of NIP-61 nutzaps for the user
     // this publishes an event that tells others who want to zap
     // this user the information they need to publish a NIP-61 nutzap.
-    const mintlistForNutzapReception = new NDKCashuMintList(ndk);
-    mintlistForNutzapReception.relays = wallet.relays;
-    mintlistForNutzapReception.mints = wallet.mints;
-    mintlistForNutzapReception.p2pk = wallet.p2pk;
-    await mintlistForNutzapReception.publish();
-    console.log('published he nutzap mintlist event to receive nutzaps', mintlistForNutzapReception.rawEvent())
-    
+    await wallet.publishMintList();
+    console.log('published the nutzap mintlist event to receive nutzaps')
+
     return wallet;
 }
 

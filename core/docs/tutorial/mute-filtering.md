@@ -1,10 +1,12 @@
 # Mute Filtering
 
-NDK provides automatic mute filtering for subscriptions, allowing applications to automatically hide content from muted users or muted events.
+NDK provides automatic mute filtering for subscriptions, allowing applications to automatically hide content from muted
+users or muted events.
 
 ## How It Works
 
 When you set an active user, NDK automatically:
+
 1. Fetches the user's mute list (kind 10000, per [NIP-51](https://nips.nostr.com/51))
 2. Populates `ndk.mutedIds` with muted pubkeys and event IDs
 3. Applies mute filtering to all subscriptions by default

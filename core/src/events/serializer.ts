@@ -3,6 +3,18 @@ import type { NDKEvent, NostrEvent } from ".";
 export type NDKEventSerialized = string;
 
 /**
+ * Safely gets event details for error messages, avoiding circular reference issues.
+ */
+function getEventDetails(event: NDKEvent | NostrEvent): string {
+    // If it's an NDKEvent with the inspect getter, use it
+    if ("inspect" in event && typeof event.inspect === "string") {
+        return event.inspect;
+    }
+    // Fallback for NostrEvent
+    return JSON.stringify(event);
+}
+
+/**
  * Validates event properties before serialization and throws a detailed error if invalid.
  * Optimized for the happy path - fails fast with minimal overhead for valid events.
  * @param event - The event to validate
@@ -12,27 +24,27 @@ function validateForSerialization(event: NDKEvent | NostrEvent): void {
     // Fast path checks with immediate throws - no allocations on happy path
     if (typeof event.kind !== "number") {
         throw new Error(
-            `Can't serialize event with invalid properties: kind (must be number, got ${typeof event.kind}). Event: ${JSON.stringify(event)}`,
+            `Can't serialize event with invalid properties: kind (must be number, got ${typeof event.kind}). Event: ${getEventDetails(event)}`,
         );
     }
     if (typeof event.content !== "string") {
         throw new Error(
-            `Can't serialize event with invalid properties: content (must be string, got ${typeof event.content}). Event: ${JSON.stringify(event)}`,
+            `Can't serialize event with invalid properties: content (must be string, got ${typeof event.content}). Event: ${getEventDetails(event)}`,
         );
     }
     if (typeof event.created_at !== "number") {
         throw new Error(
-            `Can't serialize event with invalid properties: created_at (must be number, got ${typeof event.created_at}). Event: ${JSON.stringify(event)}`,
+            `Can't serialize event with invalid properties: created_at (must be number, got ${typeof event.created_at}). Event: ${getEventDetails(event)}`,
         );
     }
     if (typeof event.pubkey !== "string") {
         throw new Error(
-            `Can't serialize event with invalid properties: pubkey (must be string, got ${typeof event.pubkey}). Event: ${JSON.stringify(event)}`,
+            `Can't serialize event with invalid properties: pubkey (must be string, got ${typeof event.pubkey}). Event: ${getEventDetails(event)}`,
         );
     }
     if (!Array.isArray(event.tags)) {
         throw new Error(
-            `Can't serialize event with invalid properties: tags (must be array, got ${typeof event.tags}). Event: ${JSON.stringify(event)}`,
+            `Can't serialize event with invalid properties: tags (must be array, got ${typeof event.tags}). Event: ${getEventDetails(event)}`,
         );
     }
     // Validate tag structure
@@ -40,13 +52,13 @@ function validateForSerialization(event: NDKEvent | NostrEvent): void {
         const tag = event.tags[i];
         if (!Array.isArray(tag)) {
             throw new Error(
-                `Can't serialize event with invalid properties: tags[${i}] (must be array, got ${typeof tag}). Event: ${JSON.stringify(event)}`,
+                `Can't serialize event with invalid properties: tags[${i}] (must be array, got ${typeof tag}). Event: ${getEventDetails(event)}`,
             );
         }
         for (let j = 0; j < tag.length; j++) {
             if (typeof tag[j] !== "string") {
                 throw new Error(
-                    `Can't serialize event with invalid properties: tags[${i}][${j}] (must be string, got ${typeof tag[j]}). Event: ${JSON.stringify(event)}`,
+                    `Can't serialize event with invalid properties: tags[${i}][${j}] (must be string, got ${typeof tag[j]}). Event: ${getEventDetails(event)}`,
                 );
             }
         }

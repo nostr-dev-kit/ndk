@@ -313,9 +313,9 @@ export class AIGuardrails {
         /**
          * Called before an event is published
          */
-        publishing: (_event: NDKEvent) => {
+        publishing: (event: NDKEvent) => {
             if (!this.enabled) return;
-            // Future: Add publishing checks
+            eventGuardrails.publishing(event, this.warn.bind(this));
         },
 
         /**

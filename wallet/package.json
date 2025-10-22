@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/wallet",
-    "version": "0.8.6",
+    "version": "0.8.8",
     "description": "NDK Wallet",
     "type": "module",
     "main": "./dist/index.js",
@@ -46,7 +46,7 @@
         "@cashu/crypto": "*"
     },
     "dependencies": {
-        "@nostr-dev-kit/ndk": "^2.17.6",
+        "@nostr-dev-kit/ndk": "^2.17.9",
         "@nostr-dev-kit/sync": "^0.3.4",
         "debug": "^4.3.7",
         "light-bolt11-decoder": "^3.2.0",

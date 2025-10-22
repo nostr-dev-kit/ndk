@@ -18,6 +18,8 @@ export async function getRelayStatus(
     `;
     const selectStmt = "SELECT info FROM relay_status WHERE url = ? LIMIT 1";
 
+    await this.ensureInitialized();
+
     if (this.useWorker) {
         await this.postWorkerMessage({
             type: "run",

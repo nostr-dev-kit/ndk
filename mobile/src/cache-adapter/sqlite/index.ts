@@ -666,14 +666,14 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     }
 
     /**
-     * Get a decrypted event from the database by ID.
+     * Get a decrypted event from the database by its wrapper ID.
      *
-     * @param eventId - The ID of the decrypted event to get.
-     * @returns The decrypted event, or null if it doesn't exist.
+     * @param wrapperId - The ID of the gift-wrapped event (kind 1059).
+     * @returns The decrypted rumor event, or null if it doesn't exist.
      */
-    public getDecryptedEvent(eventId: NDKEventId): NDKEvent | null {
+    public getDecryptedEvent(wrapperId: NDKEventId): NDKEvent | null {
         try {
-            const row = this.db.getFirstSync("SELECT event FROM decrypted_events WHERE event_id = ?;", [eventId]) as
+            const row = this.db.getFirstSync("SELECT event FROM decrypted_events WHERE event_id = ?;", [wrapperId]) as
                 | { event: string }
                 | undefined;
 
@@ -681,7 +681,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
 
             return new NDKEvent(undefined, deserialize(row.event));
         } catch (e) {
-            console.error("Error getting decrypted event", e, { eventId });
+            console.error("Error getting decrypted event", e, { wrapperId });
             return null;
         }
     }
@@ -689,9 +689,10 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
     /**
      * Store a decrypted event in the database.
      *
-     * @param event - The decrypted event to store.
+     * @param wrapperId - The ID of the gift-wrapped event (kind 1059) to use as the cache key.
+     * @param decryptedEvent - The decrypted rumor event to store.
      */
-    public addDecryptedEvent(event: NDKEvent): void {
+    public addDecryptedEvent(wrapperId: NDKEventId, decryptedEvent: NDKEvent): void {
         // No longer need onReady wrapper
         (() => {
             const now = Date.now();
@@ -702,7 +703,7 @@ export class NDKCacheAdapterSqlite implements NDKCacheAdapter {
                     event,
                     decrypted_at
                 ) VALUES (?, ?, ?);`,
-                [event.id, event.serialize(true, true), now],
+                [wrapperId, decryptedEvent.serialize(true, true), now],
             );
         })();
     }

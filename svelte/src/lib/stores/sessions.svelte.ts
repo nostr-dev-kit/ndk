@@ -1,4 +1,4 @@
-import type { Hexpubkey, NDKEvent, NDKKind, NDKSigner, NDKUser } from "@nostr-dev-kit/ndk";
+import type { Hexpubkey, NDKEvent, NDKKind, NDKSigner, NDKUser, NDKUserProfile, NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
 import { NDKKind as Kind } from "@nostr-dev-kit/ndk";
 import type { NDKSession, NDKSessionManager, SessionStartOptions } from "@nostr-dev-kit/sessions";
 
@@ -231,6 +231,28 @@ export class ReactiveSessionsStore {
      */
     isReadOnly(pubkey?: Hexpubkey): boolean {
         return this.#manager.isReadOnly(pubkey);
+    }
+
+    /**
+     * Create a new account with optional profile, relays, wallet, and follows
+     * Delegates to the underlying session manager's createAccount method
+     */
+    async createAccount(
+        data?: {
+            profile?: NDKUserProfile;
+            relays?: string[];
+            wallet?: {
+                mints: string[];
+                relays?: string[];
+            };
+            follows?: Hexpubkey[];
+        },
+        opts?: {
+            publish?: boolean;
+            signer?: NDKPrivateKeySigner;
+        }
+    ): Promise<{ signer: NDKPrivateKeySigner; events: NDKEvent[] }> {
+        return await this.#manager.createAccount(data, opts);
     }
 }
 

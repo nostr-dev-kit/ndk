@@ -93,8 +93,9 @@ export async function decrypt(
     this.content = decrypted;
 
     // Cache the decrypted event if we have a cache adapter that supports it
+    // For regular encrypted events (not gift-wrapped), the event ID itself is the cache key
     if (this.ndk?.cacheAdapter?.addDecryptedEvent) {
-        this.ndk.cacheAdapter.addDecryptedEvent(this);
+        this.ndk.cacheAdapter.addDecryptedEvent(this.id, this);
     }
 }
 

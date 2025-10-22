@@ -5,6 +5,7 @@ import {
     type CashuPaymentInfo,
     type Hexpubkey,
     type LnPaymentInfo,
+    NDKCashuMintList,
     NDKEvent,
     type NDKFilter,
     NDKKind,
@@ -559,6 +560,65 @@ export class NDKCashuWallet extends NDKWallet {
         await event.encrypt(user, undefined, "nip44");
 
         return event.publish(this.relaySet);
+    }
+
+    /**
+     * Publishes the CashuMintList (kind 10019) for nutzap reception.
+     * This public event tells others which mints and relays to use when sending nutzaps.
+     *
+     * @example
+     * await wallet.publishMintList();
+     */
+    async publishMintList() {
+        const mintList = new NDKCashuMintList(this.ndk);
+        mintList.mints = this.mints;
+        if (this.relaySet) {
+            mintList.relays = Array.from(this.relaySet.relays).map((relay) => relay.url);
+        }
+        mintList.p2pk = this.p2pk;
+        return mintList.publishReplaceable(this.relaySet);
+    }
+
+    /**
+     * Updates wallet configuration (mints and relays) and publishes the changes.
+     * Uses publishReplaceable to ensure the event replaces the previous wallet configuration.
+     *
+     * @param config - Configuration object with mints and optional relays
+     *
+     * @example
+     * // Update mints only
+     * await wallet.update({ mints: ['https://mint.example.com'] });
+     *
+     * @example
+     * // Update both mints and relays
+     * await wallet.update({
+     *   mints: ['https://mint.example.com'],
+     *   relays: ['wss://relay.example.com']
+     * });
+     */
+    async update(config: { mints: string[]; relays?: string[] }) {
+        // Update mints
+        this.mints = config.mints;
+
+        // Update relays
+        if (config.relays && config.relays.length > 0) {
+            this.relaySet = NDKRelaySet.fromRelayUrls(config.relays, this.ndk);
+            this._walletRelays = config.relays;
+        } else {
+            this.relaySet = undefined;
+            this._walletRelays = [];
+        }
+
+        // Create wallet event
+        const event = new NDKEvent(this.ndk, {
+            content: JSON.stringify(this.walletPayload()),
+            kind: NDKKind.CashuWallet,
+        });
+
+        const user = await this.ndk?.signer?.user();
+        await event.encrypt(user, undefined, "nip44");
+
+        return event.publishReplaceable(this.relaySet);
     }
 
     /**

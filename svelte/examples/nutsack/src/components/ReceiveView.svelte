@@ -27,7 +27,7 @@
   // Set default mint when mints become available
   $effect(() => {
     if (availableMints.length > 0 && !selectedMint) {
-      selectedMint = availableMints[0].url;
+      selectedMint = availableMints[0];
     }
   });
 

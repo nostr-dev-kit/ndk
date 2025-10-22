@@ -7,7 +7,7 @@ import type { NDKRelaySet } from "../relay/sets/index.js";
 import type { NDKSigner } from "../signers/index.js";
 import type { NDKFilter } from "../subscription/index.js";
 import type { NDKUser } from "../user/index.js";
-import { isValidPubkey } from "../utils/filter-validation.js";
+import { isValidPubkey } from "../utils/validation.js";
 import { type ContentTag, generateContentTags, mergeTags } from "./content-tagger.js";
 import { decrypt, encrypt } from "./encryption.js";
 import { fetchReplyEvent, fetchRootEvent, fetchTaggedEvent } from "./fetch-tagged-event.js";
@@ -537,6 +537,8 @@ export class NDKEvent extends EventEmitter {
         if (!requiredRelayCount) requiredRelayCount = 1;
         if (!this.sig) await this.sign(undefined, opts);
         if (!this.ndk) throw new Error("NDKEvent must be associated with an NDK instance to publish");
+
+        this.ndk.aiGuardrails?.event?.publishing(this);
 
         if (!relaySet || relaySet.size === 0) {
             // If we have a devWriteRelaySet, use it to publish all events

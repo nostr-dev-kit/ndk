@@ -9,9 +9,10 @@
         "preview": "vite preview"
     },
     "dependencies": {
+        "@nostr-dev-kit/cache-sqlite-wasm": "^0.8.1",
         "@nostr-dev-kit/ndk": "^2.17.6",
-        "@nostr-dev-kit/svelte": "^2.0.11",
         "@nostr-dev-kit/sessions": "^0.6.0",
+        "@nostr-dev-kit/svelte": "workspace:*",
         "qrcode": "^1.5.4"
     },
     "devDependencies": {

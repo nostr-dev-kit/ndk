@@ -168,6 +168,41 @@ function checkHashtagsWithPrefix(event: NDKEvent, error: ErrorFn): void {
 }
 
 /**
+ * Check that replaceable events use publishReplaceable() when modified
+ */
+function checkReplaceableWithOldTimestamp(event: NDKEvent, warn: WarnFn): void {
+    if (event.kind === undefined || event.kind === null || !event.created_at) return;
+    if (!event.isReplaceable()) return;
+
+    const nowSeconds = Math.floor(Date.now() / 1000);
+    const ageSeconds = nowSeconds - event.created_at;
+    const TEN_SECONDS = 10;
+
+    if (ageSeconds > TEN_SECONDS) {
+        const ageMinutes = Math.floor(ageSeconds / 60);
+        const ageDescription = ageMinutes > 0 ? `${ageMinutes} minute${ageMinutes !== 1 ? "s" : ""}` : `${ageSeconds} seconds`;
+
+        warn(
+            "event-replaceable-old-timestamp",
+            `Publishing a replaceable event with an old created_at timestamp.\n\n` +
+                `📦 Event details:\n` +
+                `   • kind: ${event.kind} (replaceable)\n` +
+                `   • created_at: ${event.created_at}\n` +
+                `   • age: ${ageDescription} old\n` +
+                `   • current time: ${nowSeconds}\n\n` +
+                `⚠️  This is wrong and will be rejected by relays.`,
+            `For replaceable events, use publishReplaceable():\n\n` +
+                `   ✅ CORRECT:\n` +
+                `   await event.publishReplaceable();\n` +
+                `   // Automatically updates created_at to now\n\n` +
+                `   ❌ WRONG:\n` +
+                `   await event.publish();\n` +
+                `   // Uses old created_at`,
+        );
+    }
+}
+
+/**
  * Called when an event is about to be signed.
  * Runs all signing-related checks.
  */
@@ -179,4 +214,12 @@ export function signing(event: NDKEvent, error: ErrorFn, warn: WarnFn, replyEven
     checkInvalidETags(event, error);
     checkHashtagsWithPrefix(event, error);
     checkManualReplyMarkers(event, warn, replyEvents);
+}
+
+/**
+ * Called when an event is about to be published.
+ * Runs all publishing-related checks.
+ */
+export function publishing(event: NDKEvent, warn: WarnFn): void {
+    checkReplaceableWithOldTimestamp(event, warn);
 }

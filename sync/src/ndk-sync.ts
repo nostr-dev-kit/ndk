@@ -218,6 +218,8 @@ async function fetchNeededEvents(this: NDK, relay: NDKRelay, need: Set<string>):
             {
                 closeOnEose: true,
                 relaySet,
+                exclusiveRelay: true,
+                groupable: false,
                 onEvent: (event: NDKEvent) => {
                     events.push(event);
                 },

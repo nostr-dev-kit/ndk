@@ -7,6 +7,7 @@ import NDK, {
 import { NDKSync, type SyncAndSubscribeOptions } from "@nostr-dev-kit/sync";
 import type { WoTFilterOptions, WoTRankOptions } from "@nostr-dev-kit/wot";
 import type { NDKSvelte } from "./ndk-svelte.svelte.js";
+import { validateCallback } from "./utils/validate-callback.js";
 
 export interface SubscribeConfig {
     /**
@@ -71,7 +72,7 @@ export interface Subscription<T extends NDKEvent = NDKEvent> {
  */
 function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
     ndk: NDKSvelte,
-    config: () => SubscribeConfig | SyncSubscribeConfig | undefined,
+    config: () => SubscribeConfig | SyncSubscribeConfig | NDKFilter | NDKFilter[] | undefined,
     subscribeMethod: (filters: NDKFilter[], opts: NDKSubscriptionOptions) => NDKSubscription | Promise<NDKSubscription>,
 ): Subscription<T> {
     // Get WoT store from NDK instance
@@ -86,7 +87,34 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
     let currentNdkOpts: NDKSubscriptionOptions;
 
     // Derive reactive config
-    const derivedConfig = $derived.by(() => config());
+    const derivedConfig = $derived.by(() => {
+        const rawConfig = config();
+        if (!rawConfig) return rawConfig;
+
+        // If config has 'filters' property, use it as-is
+        if ('filters' in rawConfig) {
+            return rawConfig;
+        }
+
+        // Check if this is an array (array of filters)
+        if (Array.isArray(rawConfig)) {
+            // This is an array of filters, wrap it
+            return { filters: rawConfig as NDKFilter[] } as SubscribeConfig;
+        }
+
+        // Check if this looks like a filter object (has filter properties but no 'filters' key)
+        // Common filter properties: kinds, authors, ids, since, until, limit, etc.
+        const filterProps = ['kinds', 'authors', 'ids', 'since', 'until', 'limit', '#e', '#p', '#a', '#d', '#t', 'search'];
+        const hasFilterProp = filterProps.some(prop => prop in rawConfig);
+
+        if (hasFilterProp) {
+            // This is a filter object, wrap it in a filters property
+            return { filters: rawConfig as NDKFilter } as SubscribeConfig;
+        }
+
+        // Return as-is (might be undefined or malformed)
+        return rawConfig;
+    });
 
     // Extract filters
     const derivedFilters = $derived.by(() => {
@@ -326,11 +354,31 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
  *   <div>{note.content}</div>
  * {/each}
  * ```
+ *
+ * @example
+ * ```svelte
+ * <script lang="ts">
+ *   // Conditional subscription - return undefined to prevent subscription
+ *   let selectedRelay = $state<string | undefined>();
+ *   let isEnabled = $state(false);
+ *
+ *   const notes = createSubscription(ndk, () => {
+ *     // No subscription until both conditions are met
+ *     if (!selectedRelay || !isEnabled) return undefined;
+ *
+ *     return {
+ *       filters: [{ kinds: [1], limit: 20 }],
+ *       relayUrls: [selectedRelay]
+ *     };
+ *   });
+ * </script>
+ * ```
  */
 export function createSubscription<T extends NDKEvent = NDKEvent>(
     ndk: NDKSvelte,
-    config: () => SubscribeConfig | undefined,
+    config: () => SubscribeConfig | NDKFilter | NDKFilter[] | undefined,
 ): Subscription<T> {
+    validateCallback(config, '$subscribe', 'config');
     return createSubscriptionInternal<T>(ndk, config, (filters, subOpts) => {
         return ndk.subscribe(filters, subOpts);
     });
@@ -391,8 +439,9 @@ export function createSubscription<T extends NDKEvent = NDKEvent>(
  */
 export function createSyncSubscription<T extends NDKEvent = NDKEvent>(
     ndk: NDKSvelte,
-    config: () => SyncSubscribeConfig | undefined,
+    config: () => SyncSubscribeConfig | NDKFilter | NDKFilter[] | undefined,
 ): Subscription<T> {
+    validateCallback(config, '$syncSubscribe', 'config');
     return createSubscriptionInternal<T>(ndk, config, (filters, subOpts) => {
         // Use NDKSync class for clean, type-safe sync operations
         return NDKSync.syncAndSubscribe(ndk, filters, subOpts);

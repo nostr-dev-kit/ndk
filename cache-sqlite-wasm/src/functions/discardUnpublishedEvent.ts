@@ -7,6 +7,8 @@ import type { NDKCacheAdapterSqliteWasm } from "../index";
 export async function discardUnpublishedEvent(this: NDKCacheAdapterSqliteWasm, eventId: string): Promise<void> {
     const stmt = "DELETE FROM unpublished_events WHERE id = ?";
 
+    await this.ensureInitialized();
+
     if (this.useWorker) {
         await this.postWorkerMessage({
             type: "run",

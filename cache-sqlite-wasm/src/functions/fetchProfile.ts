@@ -11,6 +11,8 @@ export async function fetchProfile(
 ): Promise<NDKCacheEntry<NDKUserProfile> | null> {
     const stmt = "SELECT profile, updated_at FROM profiles WHERE pubkey = ? LIMIT 1";
 
+    await this.ensureInitialized();
+
     if (this.useWorker) {
         const result = await this.postWorkerMessage<{ profile?: string; updated_at?: number }>({
             type: "get",

@@ -19,7 +19,6 @@ export default defineConfig({
         // https://vitepress.dev/reference/default-theme-config
         nav: [
             { text: "Home", link: "/docs/index.md" },
-            {text: "About Nostr", link: "/core/docs/about-nostr"},
             // { text: "API Reference", link: "/api/", target: "_blank" },
             // { text: "Cookbook", link: "/cookbook/" },
             { text: "Snippets", link: "/docs/snippets.md" },
@@ -30,6 +29,7 @@ export default defineConfig({
             {
                 items: [
                     {text: "Introduction", link: "/core/docs/introduction"},
+                    {text: "About Nostr", link: "/core/docs/about-nostr"},
                     {text: "Contributing", link: "/docs/contributing.md"},
                     {text: "Changelog", link: "/docs/changelogs.md"},
                 ],

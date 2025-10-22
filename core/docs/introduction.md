@@ -2,6 +2,10 @@
 
 NDK is a TypeScript/JavaScript library that simplifies building Nostr clients, relays, and related applications.
 
+> [!WARNING]
+> The documentation of the NDK project is under heavy construction.
+> [More information available in open pull request](https://github.com/nostr-dev-kit/ndk/pull/344).
+
 ## Features
 
 - Outbox model support

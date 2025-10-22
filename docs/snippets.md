@@ -13,6 +13,13 @@ Snippets are grouped by category. Some of them are listed in more than one categ
 
 <!--@include: ./snippets/signers.md -->
 
+## Publishing
+
+<!--@include: ./snippets/publishing.md -->
+
+## Connecting
+
+<!--@include: ./snippets/connecting.md -->
 
 ## Not migrated yet
 

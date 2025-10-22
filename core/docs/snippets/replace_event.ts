@@ -14,4 +14,4 @@ await event.publish();
 await event.publish();
 
 // this will create a new event and publish it
-await event.publishReplaceable(); // [!code focus]
+await event.publishReplaceable();

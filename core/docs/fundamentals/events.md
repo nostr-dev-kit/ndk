@@ -28,13 +28,6 @@ The resulting event will look like:
 
 <<< @/core/docs/snippets/tag_user_result.json
 
-## Interest event
-
-Interest events are used to tell the network about your interest in a particular topic. Those events and are making use
-of the [NIP-51](https://nostr-nips.com/nip-51) specification `kind:10015` events.
-
-<<< @/core/docs/snippets/interest_event.ts
-
 ## Signing Events
 
 NDK uses the default signer `ndk.signer` to sign events.

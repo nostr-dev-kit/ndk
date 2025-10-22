@@ -1,13 +1,15 @@
 # Publishing Events
 
-Publishing events means sending them to one or multiple relays as described in 
-[NIP-01](https://nostr-nips.com/nip-01#communication-between-clients-and-relays).
-
-NDK provides easy ways to publish events and manage the status of that event.
+Publishing events means sending them to one or multiple relays as described in
+[NIP-01](https://nostr-nips.com/nip-01#communication-between-clients-and-relays). NDK provides easy ways to publish
+events and manage the status of that event.
 
 > [!NOTE]
-> Please note that the behavior of `.publish()` requires a valid signer and will only publish the events to the
-configured relays. More about relay interaction in the [connecting documentation](/core/docs/fundamentals/connecting.md).
+> Please note that the behavior of `.publish()` requires a valid [signer](/core/docs/fundamentals/signers.html) and
+> will only publish the events to the configured relays.
+> More about relay interaction in the [connecting documentation](/core/docs/fundamentals/connecting.md).
+
+[//]: # (Read more about the [local-first]&#40;local-first.md&#41; mode of operation.)
 
 ## Publishing Events
 
@@ -39,6 +41,8 @@ and `created_at` to allow for easy replacement: `event.publishReplaceable()`
 - `event.publishStatus` - Overall status: "pending", "success", or "error"
 - `event.publishError` - Error if the overall publish failed
 
-## More
+## Code Snippets
 
-Read more about the [local-first](local-first.md) mode of operation.
+More snippets and examples can be found in the [snippets directory](/docs/snippets.md).
+
+<!--@include: @/docs/snippets/publishing.md -->

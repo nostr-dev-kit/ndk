@@ -75,15 +75,18 @@ Create a `NDKNip46Signer` with the bunker connection string and local keypair.
 Once the signer is initialized, you can use it to sign and [publish](/core/docs/fundamentals/publishing.html) events:
 
 ```ts
-const ndkEvent = new NDKEvent(ndk);
-ndkEvent.kind = 1;
-ndkEvent.content = "Hello, world!";
-await ndkEvent.sign(); // [!code focus]
+const event = new NDKEvent(ndk);
+event.kind = 1;
+event.content = "Hello, world!";
+await event.sign(); // [!code focus]
 ```
 
 ## Combining signers
 
-You can specify the use of a different signer to sign with different pubkeys.
+You can specify the use of a different signer to sign with different keys.
+
+> [!TIP]
+> If you plan on allowing multiple signers we recommend using [@nostr-dev-kit/sessions](/sessions/README.html).
 
 <<< @/core/docs/snippets/sign_event_with_other_signers.ts
 
@@ -102,8 +105,8 @@ nip07signer.user().then(async (user) => {
 
 ## Generate Keys
 
-Perhaps the only time we really want you to use the `NDKPrivateKeySigner` is to help you generate new keys as the signer
-provides helper methods to do just that:
+One good case where weo do want you to use `NDKPrivateKeySigner` is to help you generate keys as the signer
+provides helper methods:
 
 <<< @/core/docs/snippets/key_create.ts
 

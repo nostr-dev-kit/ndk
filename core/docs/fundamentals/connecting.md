@@ -29,37 +29,14 @@ advised ways of connecting to relays. We strongly advise you to use the "[Outbox
 
 The simplest way to get NDK to connect to relays is to specify them:
 
-```ts
-// Import the package
-import NDK from "@nostr-dev-kit/ndk";
-
-// Create a new NDK instance with explicit relays
-const ndk = new NDK({
-    explicitRelayUrls: ["wss://a.relay", "wss://another.relay"],
-});
-
-// Now connect to specified relays
-await ndk.connect();
-```
+<<< @/core/docs/snippets/connect_explicit.ts
 
 Make sure to wait for the `connect()` promise to resolve before using NDK after which
 you can start interacting with relays.
 
 Explicit relays can also be added using the `addExplicitRelay()` method.
 
-```ts
-// Import the package
-import NDK from "@nostr-dev-kit/ndk";
-
-// Create a new NDK instance with explicit relays
-const ndk = new NDK();
-
-ndk.addExplicitRelay("wss://a.relay");
-ndk.addExplicitRelay("wss://another.relay");
-
-// Now connect to specified relays
-await ndk.connect();
-```
+<<< @/core/docs/snippets/connect_explicit_alt.ts
 
 ### User preferred relays
 
@@ -68,14 +45,7 @@ settings. Once you
 link up a signer and you have `autoConnectUserRelays` enabled (on by default) NDK will fetch your `kind:10002` event
 ([NIP-65](https://nostr-nips.com/nip-65)) and add discovered relays specified to a 2nd pool of connected relays.
 
-```ts
-// Import NDK + NIP07 signer
-import NDK, { NDKNip07Signer } from "@nostr-dev-kit/ndk";
-
-// Create a new NDK instance with signer (provided the signer implements the getRelays() method)
-const nip07signer = new NDKNip07Signer();
-const ndk = new NDK({ signer: nip07signer });
-```
+<<< @/core/docs/snippets/connect_nip07.ts
 
 ### Outbox Model
 
@@ -104,15 +74,7 @@ https://primal.net/e/nevent1qqs2txvkjpa6fdlhxdtqmyk2tzzchpaa4vrfgx7h20539u5k9lzg
 During local development you might want to specify a list of relays to write to. THis can be done by using
 `devWriteRelayUrls` which will
 
-```ts
-import NDK from "@nostr-dev-kit/ndk";
-
-const ndk = new NDK({
-    devWriteRelayUrls: ["wss://staging.relay", "wss://another.test.relay"],
-});
-
-await ndk.connect();
-```
+<<< @/core/docs/snippets/connect_dev_relays.ts
 
 This will write new events to those relays only. Note that if you have provided relays in
 `explicitRelayUrls` these will also be used to write events to.
@@ -122,28 +84,7 @@ This will write new events to those relays only. Note that if you have provided 
 Under the hood NDK uses different sets of relays to send and receive messages. You can tap into that pool logic by
 using the `NDKPool` class.
 
-```typescript
-
-import NDK, {NDKEvent, NDKPool} from "@nostr-dev-kit/ndk";
-
-const ndk = new NDK();
-
-const largeRelays = new NDKPool([
-    `wss://relay.damus.io`, 
-    'wss://premium.primal.net'
-], ndk);
-largeRelays.addRelay(`wss://nos.lol`)
-
-const nicheRelays = new NDKPool([
-    `wss://asad`, 
-    'wss://premisadasdum.primal.net'
-], ndk);
-
-largeRelays.connect();
-
-ndk.pools.length; // 2
-
-```
+<<< @/core/docs/snippets/connect_pools.ts
 
 Note that if you have outbox enabled you will have an extra pool in the `ndk.pools` array reserved for user provided
 relays.

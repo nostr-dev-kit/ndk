@@ -95,7 +95,7 @@ export default defineConfig({
                         text: "React",
                         link: "/react/README",
                         items: [
-                            { text: "Getting Started", link: "/react/getting-started" },
+                            {text: "Getting Started", link: "/react/docs/getting-started"},
                             { text: "Muting", link: "/react/muting" },
                             { text: "Session Management", link: "/react/session-management" },
                         ]

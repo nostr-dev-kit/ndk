@@ -3,14 +3,42 @@
 `@nostr-dev-kit/react` provides a set of React hooks and utilities to seamlessly integrate Nostr functionality into your
 React applications using the Nostr Development Kit (NDK).
 
-This library simplifies managing Nostr data, user sessions, and subscriptions within a React application.
+This library simplifies managing Nostr data, user sessions, and event subscriptions within a React application.
 
 ## Initialization
 
-NDK React revolves around a shared (singleton) NDK instance. Initialize it at the root of your application using
-the `useNDKInit` hook.
+NDK React package revolves around a shared NDK instance. Initialize it once at the root of your application using the
+`useNDKInit` hook.
 
-This ensures all hooks and stores use the same/shared NDK instance and configuration.
+This ensures all hooks and stores use the same NDK configuration.
+
+### Headless Component
+
+```tsx
+'use client';
+
+import { useNDK, useNDKInit } from "@nostr-dev-kit/react";
+
+/**
+ * Use an NDKHeadless component to initialize NDK to prevent application-rerenders
+ * when there are changes to the NDK or session state. Include this headless component in your app layout 
+ * to initialize NDK correctly.
+ */
+export function NDKHeadless() {
+    const initializeNDK = useNDKInit();
+    const { ndk } = useNDK();
+
+    useEffect(() => {
+        initializeNDK({
+            explicitRelayUrls: [ 'wss://relay.damus.io'],
+        });
+    }, [initializeNDK]);
+
+    return null;
+}
+```
+
+Notice that this NDK instance is not connected. [Read about connecting](/core/docs/fundamentals/connecting.html).
 
 ### Provider Pattern
 
@@ -76,37 +104,10 @@ function App() {
 export default App;
 ```
 
-### Headless Component
-
-```tsx
-'use client';
-
-import { useNDK, useNDKInit } from "@nostr-dev-kit/react";
-
-/**
- * Use an NDKHeadless component to initialize NDK to prevent application-rerenders
- * when there are changes to the NDK or session state. Include this headless component in your app layout 
- * to initialize NDK correctly.
- */
-export function NDKHeadless() {
-    const initializeNDK = useNDKInit();
-    const { ndk } = useNDK();
-
-    useEffect(() => {
-        initializeNDK({
-            explicitRelayUrls: [ 'wss://relay.damus.io'],
-        });
-    }, [initializeNDK]);
-
-    return null;
-}
-```
-
-Notice that this NDK instance is not connected. [Read about connecting](/core/docs/fundamentals/connecting.html).
-
 ## Using the NDK Instance
 
-Once initialized, you can access the NDK instance anywhere in your component tree using the `useNDK` hook if needed, although many hooks use it implicitly.
+Once initialized, you can access the NDK instance anywhere in your component tree using the `useNDK` hook if needed,
+although many hooks use it implicitly.
 
 ```tsx
 import { useNDK } from '@nostr-dev-kit/react';
@@ -167,13 +168,15 @@ const user = useUser("nprofile1...");
 
 ### Fetching User Profiles
 
-Easily fetch and display Nostr user profiles using the `useProfileValue` hook. It handles caching and fetching logic automatically.
+Easily fetch and display Nostr user profiles using the `useProfileValue` hook. It handles caching and fetching logic
+automatically.
 
 The `useProfileValue` hook accepts two parameters:
+
 - `userOrPubkey`: An NDKUser instance, public key string, null, or undefined
 - `options`: An optional object with the following properties:
-  - `refresh`: A boolean indicating whether to force a refresh of the profile
-  - `subOpts`: NDKSubscriptionOptions to customize how the profile is fetched from relays
+    - `refresh`: A boolean indicating whether to force a refresh of the profile
+    - `subOpts`: NDKSubscriptionOptions to customize how the profile is fetched from relays
 
 ```tsx
 // Basic usage with pubkey
@@ -244,11 +247,10 @@ function UserCard({ userIdentifier }: UserCardProps) {
 export default UserCard;
 ```
 
-
-
 ## Subscribing to Events
 
-Use the `useSubscribe` hook for subscribing to Nostr events based on filters. It returns the events found in a stable set.
+Use the `useSubscribe` hook for subscribing to Nostr events based on filters. It returns the events found in a stable
+set.
 
 ```tsx
 // src/components/NoteFeed.tsx
@@ -294,7 +296,8 @@ export default NoteFeed;
 
 ### Fetching a Single Event with `useEvent`
 
-The `useEvent` hook allows you to fetch a single event by its ID or using a filter. This is useful when you need to retrieve and display a specific event, such as an article, note, or any other Nostr content.
+The `useEvent` hook allows you to fetch a single event by its ID or using a filter. This is useful when you need to
+retrieve and display a specific event, such as an article, note, or any other Nostr content.
 
 ```tsx
 // src/components/EventViewer.tsx
@@ -327,11 +330,13 @@ export default EventViewer;
 ```
 
 The `useEvent` hook accepts three parameters:
+
 - `idOrFilter`: A string ID, an NDKFilter object, or an array of NDKFilter objects to fetch the event
 - `opts`: Optional UseSubscribeOptions to customize how the event is fetched
 - `dependencies`: Optional array of dependencies that will trigger a refetch when changed
 
 The hook returns:
+
 - `undefined` while the event is being loaded
 - `null` if the event was not found
 - The event object if it was found
@@ -342,9 +347,11 @@ This makes it easy to handle loading states and display appropriate UI for each 
 
 `@nostr-dev-kit/react` provides several other specialized hooks:
 
-*   `useFollows()`: Fetches the follow list of the active user.
-*   `useNDKWallet()`: Manages wallet connections (e.g., NWC) (via `import of "@nostr-dev-kit/react/wallet"`)
-*   `useNDKNutzapMonitor()`: Monitors for incoming zaps via Nutzap. (via `import of "@nostr-dev-kit/react/wallet"`)
+* `useFollows()`: Fetches the follow list of the active user.
+* `useNDKWallet()`: Manages wallet connections (e.g., NWC) (via `import of "@nostr-dev-kit/react/wallet"`)
+* `useNDKNutzapMonitor()`: Monitors for incoming zaps via Nutzap. (via `import of "@nostr-dev-kit/react/wallet"`)
+
 ## Muting
 
-See [Muting Documentation](./muting.md) for details on how to mute, unmute, and check mute status for users, events, hashtags, and words using NDK React hooks.
+See [Muting Documentation](./muting.md) for details on how to mute, unmute, and check mute status for users, events,
+hashtags, and words using NDK React hooks.

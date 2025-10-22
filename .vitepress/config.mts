@@ -28,7 +28,6 @@ export default defineConfig({
 
         sidebar: [
             {
-                text: "Nostr Development Kit",
                 items: [
                     {text: "Introduction", link: "/core/docs/introduction"},
                     {text: "Contributing", link: "/docs/contributing.md"},

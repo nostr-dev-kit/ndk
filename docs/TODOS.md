@@ -27,8 +27,8 @@ Some notes:
     - [ ] ...
 - [x] Link to snippets on key pages
 - [ ] Try to find (or remove) API reference link
-- [ ] Advanced
-- [ ] more
+- [ ] Remove warnings (homepage and main intro) about Docs WIP
+- [ ] Remove ✅ ❌ ⛔ icons
 
 ### Changes made that need double check
 

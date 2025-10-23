@@ -12,17 +12,6 @@ export async function updateRelayStatus(
     relayUrl: string,
     info: NDKCacheRelayInfo,
 ): Promise<void> {
-    const createStmt = `
-        CREATE TABLE IF NOT EXISTS relay_status (
-            url TEXT PRIMARY KEY,
-            info TEXT
-        );
-    `;
-    const upsertStmt = `
-        INSERT OR REPLACE INTO relay_status (url, info)
-        VALUES (?, ?)
-    `;
-
     // Get existing data to merge metadata
     const existing = await this.getRelayStatus(relayUrl);
 
@@ -47,24 +36,23 @@ export async function updateRelayStatus(
 
     await this.ensureInitialized();
 
+    // Update LRU cache immediately
+    this.metadataCache?.setRelayInfo(relayUrl, merged);
+
     if (this.useWorker) {
         await this.postWorkerMessage({
-            type: "run",
+            type: "updateRelayStatus",
             payload: {
-                sql: createStmt,
-                params: [],
-            },
-        });
-        await this.postWorkerMessage({
-            type: "run",
-            payload: {
-                sql: upsertStmt,
-                params: [relayUrl, JSON.stringify(merged)],
+                relayUrl,
+                info: JSON.stringify(merged),
             },
         });
     } else {
         if (!this.db) throw new Error("Database not initialized");
-        this.db.run(createStmt);
-        this.db.run(upsertStmt, [relayUrl, JSON.stringify(merged)]);
+        this.db.run("CREATE TABLE IF NOT EXISTS relay_status (url TEXT PRIMARY KEY, info TEXT)");
+        this.db.run(
+            "INSERT OR REPLACE INTO relay_status (url, info) VALUES (?, ?)",
+            [relayUrl, JSON.stringify(merged)]
+        );
     }
 }

@@ -5,20 +5,15 @@ import type { NDKCacheAdapterSqliteWasm } from "../index";
  * Supports both worker and direct database modes.
  */
 export async function discardUnpublishedEvent(this: NDKCacheAdapterSqliteWasm, eventId: string): Promise<void> {
-    const stmt = "DELETE FROM unpublished_events WHERE id = ?";
-
     await this.ensureInitialized();
 
     if (this.useWorker) {
         await this.postWorkerMessage({
-            type: "run",
-            payload: {
-                sql: stmt,
-                params: [eventId],
-            },
+            type: "discardUnpublishedEvent",
+            payload: { id: eventId },
         });
     } else {
         if (!this.db) throw new Error("Database not initialized");
-        this.db.run(stmt, [eventId]);
+        this.db.run("DELETE FROM unpublished_events WHERE id = ?", [eventId]);
     }
 }

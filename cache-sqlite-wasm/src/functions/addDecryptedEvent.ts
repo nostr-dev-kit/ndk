@@ -11,22 +11,20 @@ export async function addDecryptedEvent(this: NDKCacheAdapterSqliteWasm, wrapper
     await this.ensureInitialized();
 
     const serialized = decryptedEvent.serialize(true, true);
-    const stmt = `
-        INSERT OR REPLACE INTO decrypted_events (
-            id, event
-        ) VALUES (?, ?)
-    `;
 
     if (this.useWorker) {
         await this.postWorkerMessage({
-            type: "run",
+            type: "addDecryptedEvent",
             payload: {
-                sql: stmt,
-                params: [wrapperId, serialized],
+                wrapperId,
+                serialized,
             },
         });
     } else {
         if (!this.db) throw new Error("Database not initialized");
-        this.db.run(stmt, [wrapperId, serialized]);
+        this.db.run(
+            "INSERT OR REPLACE INTO decrypted_events (id, event) VALUES (?, ?)",
+            [wrapperId, serialized]
+        );
     }
 }

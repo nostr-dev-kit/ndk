@@ -100,9 +100,9 @@ describe("setEvent", () => {
 
         await cache.setEvent(event, [], relay as any);
 
-        // Check relay was saved
-        const result = cache.db!.exec("SELECT * FROM event_relays WHERE event_id = ?", [event.id]);
+        // Check relay was saved in events.relay_url
+        const result = cache.db!.exec("SELECT relay_url FROM events WHERE id = ?", [event.id]);
         expect(result[0].values).toHaveLength(1);
-        expect(result[0].values[0][1]).toBe(relay.url);
+        expect(result[0].values[0][0]).toBe(relay.url);
     });
 });

@@ -17,11 +17,14 @@ export const SCHEMA = {
             content TEXT,
             sig TEXT,
             raw TEXT,
-            deleted INTEGER DEFAULT 0
+            deleted INTEGER DEFAULT 0,
+            relay_url TEXT
         );
         CREATE INDEX IF NOT EXISTS idx_events_pubkey ON events(pubkey);
         CREATE INDEX IF NOT EXISTS idx_events_kind ON events(kind);
         CREATE INDEX IF NOT EXISTS idx_events_created_at ON events(created_at);
+        CREATE INDEX IF NOT EXISTS idx_events_kind_created_at ON events(kind, created_at);
+        CREATE INDEX IF NOT EXISTS idx_events_pubkey_created_at ON events(pubkey, created_at);
     `,
     profiles: `
         CREATE TABLE IF NOT EXISTS profiles (
@@ -59,6 +62,7 @@ export const SCHEMA = {
         );
         CREATE INDEX IF NOT EXISTS idx_event_tags_event_id ON event_tags(event_id);
         CREATE INDEX IF NOT EXISTS idx_event_tags_tag ON event_tags(tag);
+        CREATE INDEX IF NOT EXISTS idx_event_tags_tag_value ON event_tags(tag, value);
     `,
     cache_data: `
         CREATE TABLE IF NOT EXISTS cache_data (
@@ -69,15 +73,6 @@ export const SCHEMA = {
             PRIMARY KEY (namespace, key)
         );
         CREATE INDEX IF NOT EXISTS idx_cache_data_namespace ON cache_data(namespace);
-    `,
-    event_relays: `
-        CREATE TABLE IF NOT EXISTS event_relays (
-            event_id TEXT NOT NULL,
-            relay_url TEXT NOT NULL,
-            seen_at INTEGER NOT NULL,
-            PRIMARY KEY (event_id, relay_url)
-        );
-        CREATE INDEX IF NOT EXISTS idx_event_relays_event_id ON event_relays(event_id);
     `,
     nip05: `
         CREATE TABLE IF NOT EXISTS nip05 (

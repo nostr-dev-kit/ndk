@@ -1,4 +1,4 @@
-import initSqlJs from "sql.js";
+import initSqlJs, { type Database } from "sql.js";
 import { loadFromIndexedDB, saveToIndexedDB } from "./db/indexeddb-utils";
 import { runMigrations } from "./db/migrations";
 import { getCacheStatsSync } from "./functions/getCacheStats";
@@ -11,8 +11,8 @@ import { encodeEvents, type EventForEncoding } from "./binary/encoder";
 const PROTOCOL_VERSION = "0.8.1";
 const PROTOCOL_NAME = "ndk-cache-sqlite";
 
-let db: any = null;
-let SQL: any = null;
+let db: Database | null = null;
+let SQL: initSqlJs.SqlJsStatic | null = null;
 let dbName: string = "ndk-cache";
 
 let saveTimeout: number | null = null;
@@ -37,11 +37,10 @@ function scheduleSave() {
 }
 
 // Patch db.run to schedule save after each write
-function patchDbPersistence(database: any) {
-    const origRun = database.run;
-    database.run = function (sql: string, params?: any[] | Record<string, any>) {
-        // Assuming origRun has the correct signature from the Database type
-        const result = origRun.call(this, sql, params);
+function patchDbPersistence(database: Database): void {
+    const origRun = database.run.bind(database);
+    database.run = function (sql: string, params?: initSqlJs.BindParams) {
+        const result = origRun(sql, params);
         scheduleSave();
         return result;
     };
@@ -56,7 +55,6 @@ async function initializeDatabase(config: {
         const sqlJsConfig: any = {};
         if (config.wasmUrl) {
             sqlJsConfig.locateFile = () => config.wasmUrl;
-        } else {
         }
         SQL = await initSqlJs(sqlJsConfig);
 
@@ -68,7 +66,7 @@ async function initializeDatabase(config: {
         }
         patchDbPersistence(db);
 
-        await runMigrations(db);
+        await runMigrations(db as any);
 
         // Initial save after migrations (in case schema changed)
         scheduleSave();
@@ -249,8 +247,8 @@ self.onmessage = async (event: MessageEvent) => {
                     const row = stmt.getAsObject();
                     try {
                         result.push({
-                            pubkey: row.pubkey,
-                            profile: JSON.parse(row.profile),
+                            pubkey: row.pubkey as string,
+                            profile: JSON.parse(row.profile as string),
                         });
                     } catch {
                         // skip invalid profile
@@ -263,7 +261,7 @@ self.onmessage = async (event: MessageEvent) => {
                 result = db.export();
                 break;
             case "getCacheStats":
-                result = getCacheStatsSync(db);
+                result = getCacheStatsSync(db as any);
                 break;
             case "setEvent": {
                 const { event, relay } = payload;

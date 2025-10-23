@@ -158,6 +158,42 @@ describe("NDKSvelte Reactive Getters", () => {
         });
     });
 
+    describe("$follows", () => {
+        it("should return empty array when sessions are not enabled", () => {
+            const ndkNoSessions = new NDKSvelte({
+                explicitRelayUrls: ["wss://relay.test"],
+            });
+
+            expect(ndkNoSessions.$follows).toEqual([]);
+            expect(Array.isArray(ndkNoSessions.$follows)).toBe(true);
+        });
+
+        it("should return empty array when no session is active", () => {
+            expect(ndk.$follows).toEqual([]);
+            expect(Array.isArray(ndk.$follows)).toBe(true);
+        });
+
+        it("should return follows array after login", async () => {
+            const signer = NDKPrivateKeySigner.generate();
+            await ndk.$sessions?.login(signer, { setActive: true });
+
+            // Initially should be empty (no follows fetched yet)
+            expect(ndk.$follows).toEqual([]);
+            expect(Array.isArray(ndk.$follows)).toBe(true);
+        });
+
+        it("should return empty array after logout", async () => {
+            const signer = NDKPrivateKeySigner.generate();
+            const user = await signer.user();
+
+            await ndk.$sessions?.login(signer, { setActive: true });
+            expect(Array.isArray(ndk.$follows)).toBe(true);
+
+            ndk.$sessions?.logout(user.pubkey);
+            expect(ndk.$follows).toEqual([]);
+        });
+    });
+
     describe("Reactive getters integration", () => {
         it("should all update together when logging in", async () => {
             const signer = NDKPrivateKeySigner.generate();

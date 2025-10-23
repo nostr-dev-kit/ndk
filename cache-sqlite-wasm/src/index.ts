@@ -1,5 +1,5 @@
 import type NDK from "@nostr-dev-kit/ndk";
-import type { NDKCacheAdapter } from "@nostr-dev-kit/ndk";
+import type { NDKCacheAdapter, NDKEvent } from "@nostr-dev-kit/ndk";
 import { runMigrations } from "./db/migrations";
 import { loadWasmAndInitDb } from "./db/wasm-loader";
 import { addDecryptedEvent } from "./functions/addDecryptedEvent";
@@ -38,9 +38,20 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
     public ndk?: NDK;
     public ready = false;
 
-    // Conditionally defined sync methods
-    public fetchProfileSync?: typeof fetchProfileSync;
-    public getAllProfilesSync?: typeof getAllProfilesSync;
+    // Sync methods - only available in non-worker mode
+    public fetchProfileSync(pubkey: Parameters<typeof fetchProfileSync>[0]): ReturnType<typeof fetchProfileSync> {
+        if (this.useWorker) {
+            throw new Error("fetchProfileSync is not available in worker mode. Use fetchProfile() instead.");
+        }
+        return fetchProfileSync.call(this, pubkey);
+    }
+
+    public getAllProfilesSync(): ReturnType<typeof getAllProfilesSync> {
+        if (this.useWorker) {
+            throw new Error("getAllProfilesSync is not available in worker mode.");
+        }
+        return getAllProfilesSync.call(this);
+    }
 
     // Web Worker integration
     private worker?: Worker;
@@ -73,10 +84,6 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
 
         // Initialize metadata cache (always enabled for worker mode)
         this.metadataCache = new MetadataLRUCache(options.metadataLruSize || 1000);
-
-        // Enable sync methods
-        this.fetchProfileSync = fetchProfileSync.bind(this);
-        this.getAllProfilesSync = getAllProfilesSync.bind(this);
     }
 
     /**
@@ -115,7 +122,6 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
                 console.error("Failed to determine worker URL automatically. Please provide 'workerUrl' option.", e);
                 throw new Error("Worker URL configuration error.");
             }
-        } else {
         }
 
         // Use module type for imports
@@ -288,23 +294,70 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
         });
     }
 
-    // Modular method bindings (public field initializers)
-    public setEvent = setEvent.bind(this);
-    public getEvent = getEvent.bind(this);
-    public fetchProfile = fetchProfile.bind(this);
-    public saveProfile = saveProfile.bind(this);
-    public updateRelayStatus = updateRelayStatus.bind(this);
-    public getRelayStatus = getRelayStatus.bind(this);
-    public getDecryptedEvent = getDecryptedEvent.bind(this);
-    public addDecryptedEvent = addDecryptedEvent.bind(this);
-    public addUnpublishedEvent = addUnpublishedEvent.bind(this);
-    public getUnpublishedEvents = getUnpublishedEvents.bind(this);
-    public discardUnpublishedEvent = discardUnpublishedEvent.bind(this);
-    public query = query.bind(this);
-    public getProfiles = getProfiles.bind(this);
-    public getCacheStats = getCacheStats.bind(this);
-    public loadNip05 = loadNip05.bind(this);
-    public saveNip05 = saveNip05.bind(this);
+    // Cache operation methods
+    public async setEvent(event: Parameters<typeof setEvent>[0], filters: Parameters<typeof setEvent>[1], relay?: Parameters<typeof setEvent>[2]): Promise<void> {
+        return setEvent.call(this, event, filters, relay);
+    }
+
+    public async getEvent(eventId: string): Promise<NDKEvent | null> {
+        return getEvent.call(this, eventId);
+    }
+
+    public async fetchProfile(pubkey: Parameters<typeof fetchProfile>[0]): ReturnType<typeof fetchProfile> {
+        return fetchProfile.call(this, pubkey);
+    }
+
+    public async saveProfile(pubkey: Parameters<typeof saveProfile>[0], profile: Parameters<typeof saveProfile>[1]): ReturnType<typeof saveProfile> {
+        return saveProfile.call(this, pubkey, profile);
+    }
+
+    public async updateRelayStatus(relayUrl: Parameters<typeof updateRelayStatus>[0], status: Parameters<typeof updateRelayStatus>[1]): ReturnType<typeof updateRelayStatus> {
+        return updateRelayStatus.call(this, relayUrl, status);
+    }
+
+    public async getRelayStatus(relayUrl: Parameters<typeof getRelayStatus>[0]): ReturnType<typeof getRelayStatus> {
+        return getRelayStatus.call(this, relayUrl);
+    }
+
+    public async getDecryptedEvent(eventId: Parameters<typeof getDecryptedEvent>[0]): ReturnType<typeof getDecryptedEvent> {
+        return getDecryptedEvent.call(this, eventId);
+    }
+
+    public async addDecryptedEvent(wrapperId: string, decryptedEvent: NDKEvent): Promise<void> {
+        return addDecryptedEvent.call(this, wrapperId, decryptedEvent);
+    }
+
+    public async addUnpublishedEvent(event: NDKEvent, relayUrls: string[], lastTryAt: number = Date.now()): Promise<void> {
+        return addUnpublishedEvent.call(this, event, relayUrls, lastTryAt);
+    }
+
+    public async getUnpublishedEvents(): ReturnType<typeof getUnpublishedEvents> {
+        return getUnpublishedEvents.call(this);
+    }
+
+    public async discardUnpublishedEvent(eventId: Parameters<typeof discardUnpublishedEvent>[0]): ReturnType<typeof discardUnpublishedEvent> {
+        return discardUnpublishedEvent.call(this, eventId);
+    }
+
+    public query(subscription: Parameters<typeof query>[0]): ReturnType<typeof query> {
+        return query.call(this, subscription);
+    }
+
+    public async getProfiles(opts: Parameters<typeof getProfiles>[0]): ReturnType<typeof getProfiles> {
+        return getProfiles.call(this, opts);
+    }
+
+    public async getCacheStats(): ReturnType<typeof getCacheStats> {
+        return getCacheStats.call(this);
+    }
+
+    public async loadNip05(nip05: Parameters<typeof loadNip05>[0]): ReturnType<typeof loadNip05> {
+        return loadNip05.call(this, nip05);
+    }
+
+    public async saveNip05(nip05: Parameters<typeof saveNip05>[0], profile: Parameters<typeof saveNip05>[1]): ReturnType<typeof saveNip05> {
+        return saveNip05.call(this, nip05, profile);
+    }
 
     /**
      * Get metadata cache status

@@ -1,6 +1,7 @@
 import type { NDKEvent, NDKFilter, NDKRelay } from "@nostr-dev-kit/ndk";
 import { NDKKind, profileFromEvent } from "@nostr-dev-kit/ndk";
 import type { NDKCacheAdapterSqliteWasm } from "../index";
+import type { Database } from "../types";
 
 /**
  * Stores an event in the SQLite WASM database.
@@ -9,7 +10,7 @@ import type { NDKCacheAdapterSqliteWasm } from "../index";
  * Adapted for Web Worker support: now always async.
  * If useWorker is true, sends command to worker; else, runs on main thread.
  */
-function setEventSync(db: any, event: NDKEvent | any, relay?: NDKRelay | { url: string }): void {
+function setEventSync(db: Database, event: NDKEvent, relay?: NDKRelay | { url: string }): void {
     const stmt = `
         INSERT OR REPLACE INTO events (
             id, pubkey, created_at, kind, tags, content, sig, raw, deleted, relay_url

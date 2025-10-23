@@ -512,4 +512,33 @@ export class NDKSvelte extends NDK {
     get $currentSession() {
         return this.$sessions?.current;
     }
+
+    /**
+     * Reactively access the current session's follow list
+     *
+     * Returns a reactive array of hex pubkeys that the current user follows.
+     * Returns an empty array if sessions are not enabled or no session is active.
+     * Automatically updates when the session's follow list changes.
+     *
+     * @example
+     * ```ts
+     * const follows = ndk.$follows;
+     *
+     * // In template
+     * {#each follows as pubkey}
+     *   <UserCard {pubkey} />
+     * {/each}
+     * ```
+     *
+     * @example
+     * ```ts
+     * // Use in subscriptions
+     * const feed = ndk.$subscribe(() => ({
+     *   filters: [{ kinds: [1], authors: ndk.$follows, limit: 50 }]
+     * }));
+     * ```
+     */
+    get $follows(): Hexpubkey[] {
+        return Array.from(this.$sessions?.follows ?? []);
+    }
 }

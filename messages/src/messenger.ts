@@ -243,16 +243,16 @@ export class NDKMessenger extends EventEmitter {
                 kinds: [NDKKind.GiftWrap],
                 "#p": [this.myPubkey],
             },
-            subOptions,
+            {
+                ...subOptions,
+                onEvent: async (wrappedEvent: NDKEvent) => {
+                    await this.handleIncomingMessage(wrappedEvent);
+                },
+                onEose: () => {
+                    console.log("Messages subscription active");
+                },
+            },
         );
-
-        this.subscription.on("event", async (wrappedEvent: NDKEvent) => {
-            await this.handleIncomingMessage(wrappedEvent);
-        });
-
-        this.subscription.on("eose", () => {
-            console.log("Messages subscription active");
-        });
     }
 
     /**

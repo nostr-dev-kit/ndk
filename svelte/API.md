@@ -68,6 +68,13 @@ class NDKSvelte extends NDK {
    * Pool monitoring store (reactive)
    */
   $pool: ReactivePoolStore;
+
+  /**
+   * Create a reactive zap subscription
+   * @param config - Callback function returning zap config or undefined
+   * @returns ZapSubscription instance with reactive state
+   */
+  $zaps(config: () => ZapConfig | undefined): ZapSubscription;
 }
 ```
 
@@ -680,6 +687,159 @@ interface Nutzap {
 }
 ```
 
+### ZapStore
+
+```typescript
+import type { NDKEvent, NDKUser, NDKNutzap } from '@nostr-dev-kit/ndk';
+
+/**
+ * Configuration for zap subscription
+ */
+interface ZapConfig {
+  /**
+   * Target to get zaps for (event or user)
+   */
+  target: NDKEvent | NDKUser;
+
+  /**
+   * Only return validated zaps
+   * @default false
+   */
+  validated?: boolean;
+
+  /**
+   * Filter by zap method
+   */
+  method?: ZapMethod;
+
+  /**
+   * Limit number of zaps returned
+   */
+  limit?: number;
+}
+
+/**
+ * Reactive zap subscription
+ */
+interface ZapSubscription {
+  /**
+   * All zap events (both NIP-57 and NIP-61)
+   * @reactive
+   */
+  readonly events: NDKEvent[];
+
+  /**
+   * Total number of zaps
+   * @derived
+   */
+  readonly count: number;
+
+  /**
+   * Total amount zapped in sats
+   * @derived
+   */
+  readonly totalAmount: number;
+
+  /**
+   * Whether subscription has reached end of stored events
+   * @reactive
+   */
+  readonly eosed: boolean;
+
+  /**
+   * NIP-57 lightning zaps only (kind 9735)
+   * @derived
+   */
+  readonly lightningZaps: NDKEvent[];
+
+  /**
+   * NIP-61 nutzaps only (kind 9321)
+   * @derived
+   */
+  readonly nutzaps: NDKNutzap[];
+
+  /**
+   * Stop the subscription
+   */
+  stop(): void;
+
+  /**
+   * Start the subscription
+   */
+  start(): void;
+
+  /**
+   * Clear all events
+   */
+  clear(): void;
+}
+
+type ZapMethod = "nip57" | "nip61";
+```
+
+#### Zap Validation Functions
+
+```typescript
+/**
+ * Validate a NIP-57 zap receipt (kind 9735)
+ *
+ * Validates:
+ * - Has bolt11 tag
+ * - Has description tag with valid zap request JSON
+ * - Zap request has valid signature
+ * - Recipient pubkey matches (if target is provided)
+ * - Event ID matches (if target is an event)
+ */
+function validateNip57Zap(zapEvent: NDKEvent, target?: NDKEvent | NDKUser): boolean;
+
+/**
+ * Validate a NIP-61 nutzap (kind 9321)
+ *
+ * Validates:
+ * - Exactly 1 p-tag (recipient)
+ * - Exactly 1 u-tag (mint)
+ * - At most 1 e-tag (zapped event)
+ * - At least 1 proof
+ * - Recipient pubkey matches (if target is provided)
+ * - Event ID matches (if target is an event)
+ */
+function validateNip61Zap(zapEvent: NDKEvent, target?: NDKEvent | NDKUser): boolean;
+
+/**
+ * Validate any zap event (auto-detects NIP-57 or NIP-61)
+ */
+function validateZap(zapEvent: NDKEvent, target?: NDKEvent | NDKUser): boolean;
+```
+
+#### Zap Utility Functions
+
+```typescript
+/**
+ * Get the amount from any zap event (in sats)
+ */
+function getZapAmount(zapEvent: NDKEvent): number;
+
+/**
+ * Get the sender from any zap event
+ */
+function getZapSender(zapEvent: NDKEvent): NDKUser | undefined;
+
+/**
+ * Get the comment from any zap event
+ */
+function getZapComment(zapEvent: NDKEvent): string | undefined;
+
+/**
+ * Get the zap method type
+ */
+function getZapMethod(zapEvent: NDKEvent): ZapMethod | undefined;
+
+/**
+ * Check if a user has zapped a target
+ */
+function hasZappedBy(zaps: NDKEvent[], pubkey: string): boolean;
+```
+
 ## Component Types
 
 ### Component Props
@@ -820,6 +980,72 @@ const articles = ndk.$subscribe<CustomArticle>(
 // Type-safe access to custom properties
 articles.events[0].title;
 articles.events[0].summary;
+```
+
+### Zap Subscriptions
+
+```svelte
+<script lang="ts">
+  import { ndk } from '$lib/ndk';
+  import { getZapAmount, getZapSender } from '@nostr-dev-kit/ndk-svelte';
+
+  export let event: NDKEvent;
+
+  // Subscribe to all zaps for an event
+  const zaps = ndk.$zaps(() => ({ target: event }));
+</script>
+
+<div>
+  {zaps.totalAmount} sats from {zaps.count} zaps
+</div>
+
+{#each zaps.events as zap}
+  <div>{getZapAmount(zap)} sats</div>
+{/each}
+```
+
+```svelte
+<script lang="ts">
+  import { ndk } from '$lib/ndk';
+  import { getZapAmount, getZapSender } from '@nostr-dev-kit/ndk-svelte';
+
+  export let event: NDKEvent;
+
+  // Only validated NIP-57 lightning zaps
+  const lightningZaps = ndk.$zaps(() => ({
+    target: event,
+    validated: true,
+    method: 'nip57'
+  }));
+</script>
+
+{#each lightningZaps.events as zap}
+  <div>{getZapSender(zap)?.npub()} zapped {getZapAmount(zap)} sats</div>
+{/each}
+```
+
+```svelte
+<script lang="ts">
+  import { ndk } from '$lib/ndk';
+
+  export let user: NDKUser;
+
+  // Conditional subscription
+  let showZaps = $state(false);
+
+  const zaps = ndk.$zaps(() => {
+    if (!showZaps) return undefined;
+    return { target: user, validated: true };
+  });
+</script>
+
+<button onclick={() => showZaps = !showZaps}>
+  Toggle Zaps
+</button>
+
+{#if showZaps}
+  <div>Total: {zaps.totalAmount} sats</div>
+{/if}
 ```
 
 ## Constants

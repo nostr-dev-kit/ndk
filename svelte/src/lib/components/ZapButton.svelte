@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { NDKEvent, NDKUser } from '@nostr-dev-kit/ndk';
-	import { useZapAmount, useIsZapped, zap } from '../payments/runes.svelte.js';
+	import { createZapAmount, createIsZapped, zap } from '../payments/runes.svelte.js';
 	import type { NDKSvelte } from '$lib/ndk-svelte.svelte.js';
 
 	interface Props {
@@ -14,8 +14,8 @@
 	let { ndk, target, amount = 21, comment, class: className }: Props = $props();
 
 	// Reactive state
-	const zapAmount = useZapAmount(ndk, target);
-	const isZapped = useIsZapped(ndk, target);
+	const zapAmount = createZapAmount(ndk, target);
+	const isZapped = createIsZapped(ndk, target);
 	let zapping = $state(false);
 
 	async function handleZap() {

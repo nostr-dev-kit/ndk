@@ -4,7 +4,6 @@ import type initSqlJs from "sql.js";
 export interface NDKCacheAdapterSqliteWasmOptions {
     dbName?: string;
     wasmUrl?: string;
-    useWorker?: boolean;
     workerUrl?: string;
 
     // Metadata LRU cache

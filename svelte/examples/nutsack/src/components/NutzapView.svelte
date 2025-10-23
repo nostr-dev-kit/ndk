@@ -2,7 +2,7 @@
   import type { WalletAPI } from '../lib/useWallet.svelte.js';
   import type { NDKUser } from '@nostr-dev-kit/ndk';
   import ndk from '../lib/ndk';
-  import { zap, useZapInfo } from '@nostr-dev-kit/svelte';
+  import { zap, createZapInfo } from '@nostr-dev-kit/svelte';
 
   interface Props {
     wallet: WalletAPI;
@@ -28,7 +28,7 @@
   const canSend = $derived(resolvedUser && amountNum > 0 && amountNum <= balance && !isSending);
 
   // Get zap info for resolved user
-  const zapInfo = useZapInfo(() => resolvedUser || undefined);
+  const zapInfo = createZapInfo(() => resolvedUser || undefined);
 
   // Track expanded state for payment methods
   let expandedMethods = $state<Set<string>>(new Set());

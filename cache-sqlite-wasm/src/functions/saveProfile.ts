@@ -2,8 +2,7 @@ import type { NDKUserProfile } from "@nostr-dev-kit/ndk";
 import type { NDKCacheAdapterSqliteWasm } from "../index";
 
 /**
- * Saves a user profile by pubkey to the SQLite WASM database.
- * Supports both worker and direct database modes.
+ * Saves a user profile by pubkey to the SQLite WASM database via worker.
  */
 export async function saveProfile(
     this: NDKCacheAdapterSqliteWasm,
@@ -19,20 +18,12 @@ export async function saveProfile(
     const entry = { ...profile, cachedAt: updatedAt };
     this.metadataCache?.setProfile(pubkey, entry);
 
-    if (this.useWorker) {
-        await this.postWorkerMessage({
-            type: "saveProfile",
-            payload: {
-                pubkey,
-                profile: profileStr,
-                updatedAt,
-            },
-        });
-    } else {
-        if (!this.db) throw new Error("Database not initialized");
-        this.db.run(
-            "INSERT OR REPLACE INTO profiles (pubkey, profile, updated_at) VALUES (?, ?, ?)",
-            [pubkey, profileStr, updatedAt]
-        );
-    }
+    await this.postWorkerMessage({
+        type: "saveProfile",
+        payload: {
+            pubkey,
+            profile: profileStr,
+            updatedAt,
+        },
+    });
 }

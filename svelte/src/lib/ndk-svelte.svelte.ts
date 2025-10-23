@@ -1,4 +1,4 @@
-import type { NDKConstructorParams, NDKEvent, NDKFilter, NDKUser, NDKUserProfile } from "@nostr-dev-kit/ndk";
+import type { NDKConstructorParams, NDKEvent, NDKFilter, NDKRelay, NDKUser, NDKUserProfile, Hexpubkey } from "@nostr-dev-kit/ndk";
 import NDK from "@nostr-dev-kit/ndk";
 import type { SessionManagerOptions } from "@nostr-dev-kit/sessions";
 import { LocalStorage, NDKSessionManager } from "@nostr-dev-kit/sessions";
@@ -21,6 +21,38 @@ import { createSubscription } from "./subscribe.svelte.js";
 import type { MetaSubscribeConfig, MetaSubscription } from "./meta-subscribe.svelte.js";
 import { createMetaSubscription } from "./meta-subscribe.svelte.js";
 import { createFetchUser } from "./user.svelte.js";
+
+/**
+ * Reactive follows list with add/remove methods
+ */
+class ReactiveFollows extends Array<Hexpubkey> {
+    #sessions?: ReactiveSessionsStore;
+
+    constructor(follows: Hexpubkey[], sessions?: ReactiveSessionsStore) {
+        super(...follows);
+        this.#sessions = sessions;
+    }
+
+    /**
+     * Add a follow (publishes to network)
+     */
+    async add(pubkey: Hexpubkey): Promise<boolean> {
+        const user = this.#sessions?.currentUser;
+        if (!user) throw new Error("No active user");
+        const followSet = this.#sessions?.follows ?? new Set();
+        return await user.follow(pubkey, followSet);
+    }
+
+    /**
+     * Remove a follow (publishes to network)
+     */
+    async remove(pubkey: Hexpubkey): Promise<Set<NDKRelay> | boolean> {
+        const user = this.#sessions?.currentUser;
+        if (!user) throw new Error("No active user");
+        const followSet = this.#sessions?.follows ?? new Set();
+        return await user.unfollow(pubkey, followSet);
+    }
+}
 
 export interface NDKSvelteParams extends NDKConstructorParams {
     /**
@@ -520,6 +552,8 @@ export class NDKSvelte extends NDK {
      * Returns an empty array if sessions are not enabled or no session is active.
      * Automatically updates when the session's follow list changes.
      *
+     * Includes add() and remove() methods to modify the follow list and publish to the network.
+     *
      * @example
      * ```ts
      * const follows = ndk.$follows;
@@ -537,8 +571,16 @@ export class NDKSvelte extends NDK {
      *   filters: [{ kinds: [1], authors: ndk.$follows, limit: 50 }]
      * }));
      * ```
+     *
+     * @example
+     * ```ts
+     * // Add/remove follows
+     * await ndk.$follows.add(pubkey);
+     * await ndk.$follows.remove(pubkey);
+     * ```
      */
-    get $follows(): Hexpubkey[] {
-        return Array.from(this.$sessions?.follows ?? []);
+    get $follows(): ReactiveFollows {
+        const followsArray = Array.from(this.$sessions?.follows ?? []);
+        return new ReactiveFollows(followsArray, this.$sessions);
     }
 }

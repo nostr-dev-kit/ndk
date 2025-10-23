@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { useTransactions } from '../payments/runes.svelte.js';
+	import { createTransactions } from '../payments/runes.svelte.js';
 	import type { NDKSvelte } from '$lib/ndk-svelte.svelte.js';
 	import type { Transaction } from '../payments/types.js';
 
@@ -12,7 +12,7 @@
 	let { ndk, limit, direction }: Props = $props();
 
 	// Reactive transaction list
-	const transactions = useTransactions(ndk, { limit, direction });
+	const transactions = createTransactions(ndk, { limit, direction });
 
 	// Access the value property with computed properties
 	const reactiveTxs = $derived(transactions.value.map(tx => enrichTransaction(tx)));

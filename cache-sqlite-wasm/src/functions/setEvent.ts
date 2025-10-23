@@ -97,22 +97,16 @@ export async function setEvent(
     // Ensure the adapter is initialized before trying to use it
     await this.ensureInitialized();
 
-    if (this.useWorker) {
-        // Worker mode: batch events to reduce worker communication
-        await this.batchEvent({
-            id: event.id,
-            pubkey: event.pubkey,
-            created_at: event.created_at,
-            kind: event.kind,
-            tags: event.tags,
-            content: event.content,
-            sig: event.sig,
-        }, _relay?.url);
-    } else {
-        // Main thread: run directly
-        if (!this.db) throw new Error("DB not initialized");
-        setEventSync(this.db, event, _relay);
-    }
+    // Batch events to reduce worker communication
+    await this.batchEvent({
+        id: event.id,
+        pubkey: event.pubkey,
+        created_at: event.created_at,
+        kind: event.kind,
+        tags: event.tags,
+        content: event.content,
+        sig: event.sig,
+    }, _relay?.url);
 }
 
 export { setEventSync };

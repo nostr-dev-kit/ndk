@@ -11,12 +11,12 @@ export {
     type UploadProgress,
     type UploadState,
     type UploadStatus,
-    useBlossomUpload,
+    createBlossomUpload,
 } from "./blossom-upload.svelte.js";
 export {
     BlossomUrl,
     type UrlStatus,
-    useBlossomUrl,
+    createBlossomUrl,
 } from "./blossom-url.svelte.js";
 // Components
 export { default as Avatar } from "./components/Avatar.svelte";
@@ -63,11 +63,11 @@ export { default as ZapButton } from "./components/ZapButton.svelte";
 export { NDKSvelte } from "./ndk-svelte.svelte.js";
 // Payment runes
 export {
-    useIsZapped,
-    usePendingPayments,
-    useTargetTransactions,
-    useTransactions,
-    useZapAmount,
+    createIsZapped,
+    createPendingPayments,
+    createTargetTransactions,
+    createTransactions,
+    createZapAmount,
     zap,
 } from "./payments/runes.svelte.js";
 export type {
@@ -98,9 +98,9 @@ export { createSubscription, createSyncSubscription } from "./subscribe.svelte.j
 // Event fetching - can be used as standalone function or via ndk.$fetchEvent() / ndk.$fetchEvents()
 export { createFetchEvent, createFetchEvents, type FetchEventOptions } from "./event.svelte.js";
 // User helpers
-export { createFetchUser, useZapInfo, type ZapInfo } from "./user.svelte.js";
+export { createFetchUser, createZapInfo, type ZapInfo } from "./user.svelte.js";
 // WoT runes
-export { useIsInWoT, useWoTDistance, useWoTScore } from "./wot-runes.svelte.js";
+export { createIsInWoT, createWoTDistance, createWoTScore } from "./wot-runes.svelte.js";
 
 // Constants
 export const DEFAULT_BUFFER_MS = 30;

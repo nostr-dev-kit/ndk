@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { useBlossomUrl } from '../blossom-url.svelte.js';
+  import { createBlossomUrl } from '../blossom-url.svelte.js';
   import type { NDKBlossom } from '@nostr-dev-kit/blossom';
   import type { NDKUser } from '@nostr-dev-kit/ndk';
 
@@ -23,7 +23,7 @@
     height
   }: Props = $props();
 
-  const blossomUrl = useBlossomUrl(blossom, user, src);
+  const blossomUrl = createBlossomUrl(blossom, user, src);
 
   const widthStyle = $derived(width ? `width: ${width}px;` : '');
   const heightStyle = $derived(height ? `height: ${height}px;` : '');

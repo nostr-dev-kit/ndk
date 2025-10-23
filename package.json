@@ -18,7 +18,7 @@
     "packageManager": "bun@1.0.0",
     "private": true,
     "scripts": {
-        "prepare": "turbo build",
+        "prepare": "bun install && turbo build",
         "build": "turbo build",
         "build:blossom": "cd blossom && bun run build",
         "build:cache-sqlite": "cd cache-sqlite && bun run build",

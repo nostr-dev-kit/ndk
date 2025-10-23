@@ -37,6 +37,10 @@
             "outputs": ["dist/**"],
             "dependsOn": ["core#build", "sync#build"]
         },
+        "sessions#build": {
+            "outputs": ["dist/**"],
+            "dependsOn": ["core#build", "wallet#build"]
+        },
         "test": {
             "outputs": ["coverage/**"],
             "dependsOn": ["build"]

@@ -44,29 +44,27 @@ async function loadEventsFromRelay(ndk: NDK): Promise<NDKEvent[]> {
     console.log(`✅ Connected to ${RELAY_URL}`);
 
     // Subscribe to recent kind 1 notes (text notes)
-    const subscription = ndk.subscribe(
-        {
-            kinds: [1],
-            limit: 10,
-        },
-        {
-            cacheUsage: NDKSubscriptionCacheUsage.PARALLEL,
-            closeOnEose: true,
-        },
-    );
-
     const events: NDKEvent[] = [];
 
     return new Promise((resolve) => {
-        subscription.on("event", (event: NDKEvent) => {
-            events.push(event);
-            console.log(`📝 Received event ${event.id?.slice(0, 8)}... from ${event.author.npub.slice(0, 12)}...`);
-        });
-
-        subscription.on("eose", () => {
-            console.log(`✅ End of stored events reached. Loaded ${events.length} events from relay`);
-            resolve(events);
-        });
+        const subscription = ndk.subscribe(
+            {
+                kinds: [1],
+                limit: 10,
+            },
+            {
+                cacheUsage: NDKSubscriptionCacheUsage.PARALLEL,
+                closeOnEose: true,
+                onEvent: (event: NDKEvent) => {
+                    events.push(event);
+                    console.log(`📝 Received event ${event.id?.slice(0, 8)}... from ${event.author.npub.slice(0, 12)}...`);
+                },
+                onEose: () => {
+                    console.log(`✅ End of stored events reached. Loaded ${events.length} events from relay`);
+                    resolve(events);
+                },
+            },
+        );
 
         // Timeout after 10 seconds
         setTimeout(() => {
@@ -80,27 +78,23 @@ async function validateCacheRetrieval(ndk: NDK, originalEvents: NDKEvent[]): Pro
     console.log("\n🔍 Validating cache retrieval with CACHE_ONLY mode...");
 
     // Create a new subscription with CACHE_ONLY to verify events are in cache
-    const cacheSubscription = ndk.subscribe(
-        {
-            kinds: [1],
-            limit: 10,
-        },
-        {
-            cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE,
-            closeOnEose: true,
-        },
-    );
-
     const cachedEvents: NDKEvent[] = [];
 
     return new Promise((resolve) => {
-        cacheSubscription.on("event", (event: NDKEvent) => {
-            cachedEvents.push(event);
-            console.log(`💾 Retrieved cached event ${event.id?.slice(0, 8)}... from cache`);
-        });
-
-        cacheSubscription.on("eose", () => {
-            console.log(`✅ Cache retrieval complete. Found ${cachedEvents.length} events in cache`);
+        const cacheSubscription = ndk.subscribe(
+            {
+                kinds: [1],
+                limit: 10,
+            },
+            {
+                cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE,
+                closeOnEose: true,
+                onEvent: (event: NDKEvent) => {
+                    cachedEvents.push(event);
+                    console.log(`💾 Retrieved cached event ${event.id?.slice(0, 8)}... from cache`);
+                },
+                onEose: () => {
+                    console.log(`✅ Cache retrieval complete. Found ${cachedEvents.length} events in cache`);
 
             // Validate that we got events from cache
             if (cachedEvents.length > 0) {

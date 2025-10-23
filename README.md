@@ -105,10 +105,10 @@ const ndk = new NDK({
 
 await ndk.connect();
 
-const sub = ndk.subscribe({ kinds: [1], limit: 50 });
-
-sub.on('event', (event) => {
-  console.log('New note:', event.content);
+const sub = ndk.subscribe({ kinds: [1], limit: 50 }, {
+  onEvent: (event) => {
+    console.log('New note:', event.content);
+  }
 });
 ```
 

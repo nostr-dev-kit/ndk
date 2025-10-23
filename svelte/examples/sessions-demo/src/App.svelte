@@ -18,7 +18,6 @@
     // Create and initialize cache adapter BEFORE creating NDK singleton
     const cacheAdapter = new NDKCacheAdapterSqliteWasm({
       dbName: "sessions-demo-cache",
-      useWorker: true,
       workerUrl: "/worker.js",
       wasmUrl: "/sql-wasm.wasm"
     })

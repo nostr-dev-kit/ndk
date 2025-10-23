@@ -5,6 +5,7 @@ import { querySync } from "./functions/query";
 import { setEventSync } from "./functions/setEvent";
 import { encodeEvents, type EventForEncoding } from "./binary/encoder";
 import type { CacheStats } from "./functions/getCacheStats";
+import { PACKAGE_VERSION, PROTOCOL_NAME } from "./version";
 
 // Helper function for getting cache stats within worker
 function getCacheStatsSync(db: Database): CacheStats {
@@ -43,10 +44,6 @@ function getCacheStatsSync(db: Database): CacheStats {
     };
 }
 
-// Protocol version for cache worker
-// Format: matches @nostr-dev-kit/cache-sqlite-wasm package version
-const PROTOCOL_VERSION = "0.8.1";
-const PROTOCOL_NAME = "ndk-cache-sqlite";
 
 let db: Database | null = null;
 let SQL: initSqlJs.SqlJsStatic | null = null;
@@ -399,7 +396,7 @@ self.onmessage = async (event: MessageEvent) => {
 
         const response = {
             _protocol: PROTOCOL_NAME,
-            _version: PROTOCOL_VERSION,
+            _version: PACKAGE_VERSION,
             id,
             result,
         };
@@ -420,7 +417,7 @@ self.onmessage = async (event: MessageEvent) => {
         console.error(`Worker: Error processing command ${id} (${type}):`, error);
         const errorResponse = {
             _protocol: PROTOCOL_NAME,
-            _version: PROTOCOL_VERSION,
+            _version: PACKAGE_VERSION,
             id,
             error: { message: error.message, stack: error.stack },
         };

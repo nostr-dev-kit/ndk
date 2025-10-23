@@ -26,18 +26,11 @@
     const cacheMode = settings.cacheMode;
     let cacheAdapter: NDKCacheAdapterSqliteWasm | undefined;
 
-    if (cacheMode === 'worker') {
+    if (cacheMode === 'worker' || cacheMode === 'non-worker') {
+      // SQLite WASM adapter is now worker-only
       cacheAdapter = new NDKCacheAdapterSqliteWasm({
         dbName: 'ndk-component-browser',
-        useWorker: true,
         workerUrl: '/worker.js',
-        wasmUrl: '/sql-wasm.wasm'
-      });
-      await cacheAdapter.initializeAsync();
-    } else if (cacheMode === 'non-worker') {
-      cacheAdapter = new NDKCacheAdapterSqliteWasm({
-        dbName: 'ndk-component-browser',
-        useWorker: false,
         wasmUrl: '/sql-wasm.wasm'
       });
       await cacheAdapter.initializeAsync();

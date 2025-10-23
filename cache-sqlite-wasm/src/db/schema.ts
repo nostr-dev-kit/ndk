@@ -33,12 +33,6 @@ export const SCHEMA = {
             updated_at INTEGER
         );
     `,
-    nutzap_monitor_state: `
-        CREATE TABLE IF NOT EXISTS nutzap_monitor_state (
-            id TEXT PRIMARY KEY,
-            state TEXT
-        );
-    `,
     decrypted_events: `
         CREATE TABLE IF NOT EXISTS decrypted_events (
             id TEXT PRIMARY KEY,

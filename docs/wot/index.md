@@ -81,10 +81,11 @@ ndk.muteFilter = (event: NDKEvent) => {
 };
 
 // Now all subscriptions automatically filter by WOT
-const sub = ndk.subscribe({ kinds: [1], limit: 100 });
-sub.on('event', (event) => {
-    // Only events from WOT users will appear here
-    console.log(event.content);
+const sub = ndk.subscribe({ kinds: [1], limit: 100 }, {
+    onEvent: (event) => {
+        // Only events from WOT users will appear here
+        console.log(event.content);
+    }
 });
 ```
 

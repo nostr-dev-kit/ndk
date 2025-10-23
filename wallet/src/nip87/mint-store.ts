@@ -147,24 +147,9 @@ export function createMintDiscoveryStore(ndk: NDK, options: MintDiscoveryOptions
             kinds: [NDKKind.CashuMintAnnouncement],
             limit: 100,
         },
-        { closeOnEose: false },
-    );
-
-    // Subscribe to recommendations (kind 38000)
-    const recFilter: any = {
-        kinds: [NDKKind.EcashMintRecommendation],
-        "#k": [NDKKind.CashuMintAnnouncement.toString()],
-        limit: 500,
-    };
-
-    if (followUsers && followUsers.length > 0) {
-        recFilter.authors = followUsers;
-    }
-
-    recSub = ndk.subscribe(recFilter, { closeOnEose: false });
-
-    // Process mint announcements
-    mintSub.on("event", async (event) => {
+        {
+            closeOnEose: false,
+            onEvent: async (event) => {
         const mint = await NDKCashuMintAnnouncement.from(event);
         if (!mint) return;
 
@@ -220,10 +205,24 @@ export function createMintDiscoveryStore(ndk: NDK, options: MintDiscoveryOptions
 
             store.setState({ mints: Array.from(mintsMap.values()) });
         });
-    });
+            },
+        },
+    );
 
-    // Process recommendations
-    recSub.on("event", async (event) => {
+    // Subscribe to recommendations (kind 38000)
+    const recFilter: any = {
+        kinds: [NDKKind.EcashMintRecommendation],
+        "#k": [NDKKind.CashuMintAnnouncement.toString()],
+        limit: 500,
+    };
+
+    if (followUsers && followUsers.length > 0) {
+        recFilter.authors = followUsers;
+    }
+
+    recSub = ndk.subscribe(recFilter, {
+        closeOnEose: false,
+        onEvent: async (event) => {
         const rec = await NDKMintRecommendation.from(event);
         if (!rec) return;
 
@@ -254,6 +253,7 @@ export function createMintDiscoveryStore(ndk: NDK, options: MintDiscoveryOptions
                 },
             }));
         }
+        },
     });
 
     // Auto-stop after timeout

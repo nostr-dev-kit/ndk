@@ -34,6 +34,3 @@ export type SQLDatabase = Database & {
     _scheduleSave: () => void;
     saveToIndexedDB: () => Promise<void>;
 };
-
-// Legacy type alias for backward compatibility
-export type SQLQueryResult = QueryExecResult;

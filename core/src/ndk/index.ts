@@ -230,6 +230,29 @@ export interface NDKConstructorParams {
      * @see https://github.com/nostr-dev-kit/ndk/tree/master/ndk/src/ai-guardrails
      */
     aiGuardrails?: boolean | { skip?: Set<string> };
+
+    /**
+     * Optional grace period (in seconds) for future timestamps.
+     *
+     * When set, subscriptions will automatically discard events where
+     * `created_at` is more than this many seconds ahead of the current time.
+     * This helps protect against malicious relays sending events with
+     * manipulated timestamps.
+     *
+     * Set to `undefined` (default) to disable this check and accept all events
+     * regardless of timestamp.
+     *
+     * @default undefined
+     *
+     * @example Reject events more than 5 minutes in the future
+     * ```typescript
+     * const ndk = new NDK({
+     *   explicitRelayUrls: ['wss://relay.primal.net'],
+     *   futureTimestampGrace: 300 // 5 minutes
+     * });
+     * ```
+     */
+    futureTimestampGrace?: number;
 }
 
 export interface GetUserParams extends NDKUserParams {
@@ -332,6 +355,7 @@ export class NDK extends EventEmitter<{
     public filterValidationMode: "validate" | "fix" | "ignore" = "validate";
     public subManager: NDKSubscriptionManager;
     public aiGuardrails: AIGuardrails;
+    public futureTimestampGrace?: number;
 
     /**
      * Private storage for the signature verification function
@@ -476,6 +500,7 @@ export class NDK extends EventEmitter<{
         this.validationRatioFn = opts.validationRatioFn || this.defaultValidationRatioFn;
         this.filterValidationMode = opts.filterValidationMode || "validate";
         this.aiGuardrails = new AIGuardrails(opts.aiGuardrails || false);
+        this.futureTimestampGrace = opts.futureTimestampGrace;
 
         // Trigger guardrails hook for NDK instantiation
         this.aiGuardrails.ndkInstantiated(this);

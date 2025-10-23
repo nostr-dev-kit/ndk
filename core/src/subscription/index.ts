@@ -774,6 +774,22 @@ export class NDKSubscription extends EventEmitter<{
         if (event instanceof NDKEvent) ndkEvent = event;
 
         if (!eventAlreadySeen) {
+            // Check future timestamp grace if configured
+            if (this.ndk.futureTimestampGrace !== undefined && event.created_at) {
+                const currentTime = Math.floor(Date.now() / 1000);
+                const timeDifference = event.created_at - currentTime;
+
+                if (timeDifference > this.ndk.futureTimestampGrace) {
+                    this.debug(
+                        "Event discarded: timestamp %d is %d seconds in the future (grace: %d seconds)",
+                        event.created_at,
+                        timeDifference,
+                        this.ndk.futureTimestampGrace,
+                    );
+                    return;
+                }
+            }
+
             // generate the ndkEvent
             ndkEvent ??= new NDKEvent(this.ndk, event);
             ndkEvent.ndk = this.ndk;

@@ -1,6 +1,73 @@
-import type { Hexpubkey, NDKEvent, NDKKind, NDKSigner, NDKUser, NDKUserProfile, NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
+import type { Hexpubkey, NDKEvent, NDKKind, NDKRelay, NDKSigner, NDKUser, NDKUserProfile, NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
 import { NDKKind as Kind } from "@nostr-dev-kit/ndk";
 import type { NDKSession, NDKSessionManager, SessionStartOptions } from "@nostr-dev-kit/sessions";
+
+/**
+ * Proxy object for follows that extends Set with add/remove methods
+ * that publish to the network
+ */
+class FollowsProxy {
+    #store: ReactiveSessionsStore;
+    #followSet: Set<Hexpubkey>;
+
+    constructor(store: ReactiveSessionsStore, followSet: Set<Hexpubkey>) {
+        this.#store = store;
+        this.#followSet = followSet;
+    }
+
+    /**
+     * Add a follow to the current user's contact list
+     *
+     * @param pubkey - The pubkey to follow
+     * @returns Promise that resolves to true if follow was added, false if already following
+     */
+    async add(pubkey: Hexpubkey): Promise<boolean> {
+        const user = this.#store.currentUser;
+        if (!user) throw new Error("No active user");
+        return await user.follow(pubkey, this.#followSet);
+    }
+
+    /**
+     * Remove a follow from the current user's contact list
+     *
+     * @param pubkey - The pubkey to unfollow
+     * @returns Promise that resolves to the relays where the update was published, or false if not following
+     */
+    async remove(pubkey: Hexpubkey): Promise<Set<NDKRelay> | boolean> {
+        const user = this.#store.currentUser;
+        if (!user) throw new Error("No active user");
+        return await user.unfollow(pubkey, this.#followSet);
+    }
+
+    // Delegate all Set methods to the underlying Set
+    has(pubkey: Hexpubkey): boolean {
+        return this.#followSet.has(pubkey);
+    }
+
+    get size(): number {
+        return this.#followSet.size;
+    }
+
+    [Symbol.iterator]() {
+        return this.#followSet[Symbol.iterator]();
+    }
+
+    values() {
+        return this.#followSet.values();
+    }
+
+    keys() {
+        return this.#followSet.keys();
+    }
+
+    entries() {
+        return this.#followSet.entries();
+    }
+
+    forEach(callback: (value: Hexpubkey, key: Hexpubkey, set: Set<Hexpubkey>) => void, thisArg?: any) {
+        return this.#followSet.forEach(callback, thisArg);
+    }
+}
 
 /**
  * Reactive wrapper around NDKSessionManager
@@ -64,9 +131,25 @@ export class ReactiveSessionsStore {
 
     /**
      * Get follows set for current session
+     *
+     * Returns a FollowsProxy that works like a Set but has async add/remove methods
+     * that publish changes to the network.
+     *
+     * @example
+     * ```ts
+     * // Use as a Set
+     * const isFollowing = ndk.$sessions.follows.has(pubkey);
+     * const count = ndk.$sessions.follows.size;
+     * for (const pubkey of ndk.$sessions.follows) { ... }
+     *
+     * // Add/remove follows (publishes to network)
+     * await ndk.$sessions.follows.add(pubkey);
+     * await ndk.$sessions.follows.remove(pubkey);
+     * ```
      */
-    get follows(): Set<Hexpubkey> {
-        return this.current?.followSet ?? new Set();
+    get follows(): FollowsProxy {
+        const followSet = this.current?.followSet ?? new Set();
+        return new FollowsProxy(this, followSet);
     }
 
     /**

@@ -88,6 +88,6 @@ export class BlossomUpload {
     }
 }
 
-export function useBlossomUpload(blossom: NDKBlossom): BlossomUpload {
+export function createBlossomUpload(blossom: NDKBlossom): BlossomUpload {
     return new BlossomUpload(blossom);
 }

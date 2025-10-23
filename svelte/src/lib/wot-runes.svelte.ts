@@ -6,11 +6,11 @@ import type { NDKSvelte } from "./ndk-svelte.svelte.js";
  *
  * @example
  * ```ts
- * const score = useWoTScore(ndk, pubkey);
+ * const score = createWoTScore(ndk, pubkey);
  * {score.value}
  * ```
  */
-export function useWoTScore(ndk: NDKSvelte, pubkey: string | (() => string)) {
+export function createWoTScore(ndk: NDKSvelte, pubkey: string | (() => string)) {
     const score = $derived.by(() => {
         const pk = typeof pubkey === "function" ? pubkey() : pubkey;
         return ndk.$wot.getScore(pk);
@@ -29,11 +29,11 @@ export function useWoTScore(ndk: NDKSvelte, pubkey: string | (() => string)) {
  *
  * @example
  * ```ts
- * const distance = useWoTDistance(ndk, pubkey);
+ * const distance = createWoTDistance(ndk, pubkey);
  * {distance.value}
  * ```
  */
-export function useWoTDistance(ndk: NDKSvelte, pubkey: string | (() => string)) {
+export function createWoTDistance(ndk: NDKSvelte, pubkey: string | (() => string)) {
     const distance = $derived.by(() => {
         const pk = typeof pubkey === "function" ? pubkey() : pubkey;
         return ndk.$wot.getDistance(pk);
@@ -51,13 +51,13 @@ export function useWoTDistance(ndk: NDKSvelte, pubkey: string | (() => string)) 
  *
  * @example
  * ```ts
- * const inWoT = useIsInWoT(ndk, pubkey, { maxDepth: 2 });
+ * const inWoT = createIsInWoT(ndk, pubkey, { maxDepth: 2 });
  * {#if inWoT.value}
  *   <span>In your WoT</span>
  * {/if}
  * ```
  */
-export function useIsInWoT(ndk: NDKSvelte, pubkey: string | (() => string), options?: { maxDepth?: number }) {
+export function createIsInWoT(ndk: NDKSvelte, pubkey: string | (() => string), options?: { maxDepth?: number }) {
     const inWoT = $derived.by(() => {
         const pk = typeof pubkey === "function" ? pubkey() : pubkey;
         return ndk.$wot.includes(pk, options);

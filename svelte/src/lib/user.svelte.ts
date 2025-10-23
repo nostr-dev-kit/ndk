@@ -82,7 +82,7 @@ export type ZapInfo = {
  * ```svelte
  * <script lang="ts">
  *   const user = ndk.$fetchUser(() => npub);
- *   const zapInfo = useZapInfo(() => user);
+ *   const zapInfo = createZapInfo(() => user);
  * </script>
  *
  * {#if zapInfo.isLoading}
@@ -93,8 +93,8 @@ export type ZapInfo = {
  * {/if}
  * ```
  */
-export function useZapInfo(user: () => NDKUser | undefined, timeoutMs: number = 2500): ZapInfo {
-    validateCallback(user, 'useZapInfo', 'user');
+export function createZapInfo(user: () => NDKUser | undefined, timeoutMs: number = 2500): ZapInfo {
+    validateCallback(user, 'createZapInfo', 'user');
     let methods = $state<Map<NDKZapMethod, NDKZapMethodInfo>>(new Map());
     let isLoading = $state(false);
     let error = $state<string | undefined>(undefined);

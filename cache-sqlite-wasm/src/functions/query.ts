@@ -39,25 +39,13 @@ export function query(
     if (!this.ready) {
         if (this.initializationPromise) {
             return this.initializationPromise.then(async () => {
-                if (this.useWorker) {
-                    return await queryWorker.call(this, subscription);
-                }
-                if (!this.db) return [];
-                return await queryDb(this, subscription);
+                return await queryWorker.call(this, subscription);
             });
         }
         return [];
     }
 
-    if (this.useWorker) {
-        return queryWorker.call(this, subscription);
-    }
-
-    if (!this.db) {
-        return [];
-    }
-
-    return queryDb(this, subscription);
+    return queryWorker.call(this, subscription);
 }
 
 async function queryWorker(this: NDKCacheAdapterSqliteWasm, subscription: NDKSubscription): Promise<NDKEvent[]> {
@@ -192,36 +180,6 @@ export function querySync(db: Database, filters: NDKFilter[], subId?: string): R
     return allRecords;
 }
 
-async function queryDb(adapter: NDKCacheAdapterSqliteWasm, subscription: NDKSubscription): Promise<NDKEvent[]> {
-    if (!adapter.db) return [];
-
-    const cacheFilters = filterForCache(subscription);
-    const allRecords = querySync(adapter.db, cacheFilters, subscription.subId);
-
-    // Process records into events
-    const results = new Map<string, NDKEvent>();
-
-    for (const filter of cacheFilters) {
-        const eventsWithRelay = foundEvents(subscription, allRecords, filter);
-        for (const { event, relayUrl } of eventsWithRelay) {
-            if (event && event.id) {
-                results.set(event.id, event);
-                // Set relay on event if we have one
-                if (relayUrl) {
-                    const relay = subscription.pool.getRelay(relayUrl, false);
-                    if (relay) {
-                        event.relay = relay;
-                        if (subscription.ndk) {
-                            subscription.ndk.subManager.seenEvent(event.id, relay);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    return Array.from(results.values());
-}
 
 /**
  * Helper to adjust filters for cache, similar to mobile implementation.

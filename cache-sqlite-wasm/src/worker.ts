@@ -1,10 +1,47 @@
 import initSqlJs, { type Database } from "sql.js";
 import { loadFromIndexedDB, saveToIndexedDB } from "./db/indexeddb-utils";
 import { runMigrations } from "./db/migrations";
-import { getCacheStatsSync } from "./functions/getCacheStats";
 import { querySync } from "./functions/query";
 import { setEventSync } from "./functions/setEvent";
 import { encodeEvents, type EventForEncoding } from "./binary/encoder";
+import type { CacheStats } from "./functions/getCacheStats";
+
+// Helper function for getting cache stats within worker
+function getCacheStatsSync(db: Database): CacheStats {
+    // Get events grouped by kind
+    const eventsByKindResult = db.exec(`
+        SELECT kind, COUNT(*) as count
+        FROM events
+        WHERE deleted = 0
+        GROUP BY kind
+        ORDER BY kind
+    `);
+
+    const eventsByKind: Record<number, number> = {};
+    if (eventsByKindResult[0]) {
+        for (const row of eventsByKindResult[0].values) {
+            eventsByKind[row[0] as number] = row[1] as number;
+        }
+    }
+
+    // Get total counts for each table
+    const totalEventsResult = db.exec(`SELECT COUNT(*) FROM events WHERE deleted = 0`);
+    const totalProfilesResult = db.exec(`SELECT COUNT(*) FROM profiles`);
+    const totalEventTagsResult = db.exec(`SELECT COUNT(*) FROM event_tags`);
+    const totalDecryptedEventsResult = db.exec(`SELECT COUNT(*) FROM decrypted_events`);
+    const totalUnpublishedEventsResult = db.exec(`SELECT COUNT(*) FROM unpublished_events`);
+    const cacheDataResult = db.exec(`SELECT COUNT(*) FROM cache_data`);
+
+    return {
+        eventsByKind,
+        totalEvents: (totalEventsResult[0]?.values[0]?.[0] as number) || 0,
+        totalProfiles: (totalProfilesResult[0]?.values[0]?.[0] as number) || 0,
+        totalEventTags: (totalEventTagsResult[0]?.values[0]?.[0] as number) || 0,
+        totalDecryptedEvents: (totalDecryptedEventsResult[0]?.values[0]?.[0] as number) || 0,
+        totalUnpublishedEvents: (totalUnpublishedEventsResult[0]?.values[0]?.[0] as number) || 0,
+        cacheData: (cacheDataResult[0]?.values[0]?.[0] as number) || 0,
+    };
+}
 
 // Protocol version for cache worker
 // Format: matches @nostr-dev-kit/cache-sqlite-wasm package version
@@ -261,7 +298,7 @@ self.onmessage = async (event: MessageEvent) => {
                 result = db.export();
                 break;
             case "getCacheStats":
-                result = getCacheStatsSync(db as any);
+                result = getCacheStatsSync(db);
                 break;
             case "setEvent": {
                 const { event, relay } = payload;

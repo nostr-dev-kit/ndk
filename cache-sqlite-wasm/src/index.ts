@@ -1,13 +1,9 @@
 import type NDK from "@nostr-dev-kit/ndk";
 import type { NDKCacheAdapter, NDKEvent } from "@nostr-dev-kit/ndk";
-import { runMigrations } from "./db/migrations";
-import { loadWasmAndInitDb } from "./db/wasm-loader";
 import { addDecryptedEvent } from "./functions/addDecryptedEvent";
 import { addUnpublishedEvent } from "./functions/addUnpublishedEvent";
 import { discardUnpublishedEvent } from "./functions/discardUnpublishedEvent";
 import { fetchProfile } from "./functions/fetchProfile";
-import { fetchProfileSync } from "./functions/fetchProfileSync";
-import { getAllProfilesSync } from "./functions/getAllProfilesSync";
 import { getCacheData } from "./functions/getCacheData";
 import { getCacheStats } from "./functions/getCacheStats";
 import { getDecryptedEvent } from "./functions/getDecryptedEvent";
@@ -22,7 +18,7 @@ import { saveProfile } from "./functions/saveProfile";
 import { setCacheData } from "./functions/setCacheData";
 import { setEvent } from "./functions/setEvent";
 import { updateRelayStatus } from "./functions/updateRelayStatus";
-import type { NDKCacheAdapterSqliteWasmOptions, SQLDatabase, WorkerMessage, WorkerResponse } from "./types";
+import type { NDKCacheAdapterSqliteWasmOptions, WorkerMessage, WorkerResponse } from "./types";
 import { decodeEvents } from "./binary/decoder";
 import { MetadataLRUCache } from "./cache/metadata-lru";
 
@@ -34,29 +30,12 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
     public dbName: string;
     public wasmUrl?: string;
     public locking = false;
-    public db?: SQLDatabase;
     public ndk?: NDK;
     public ready = false;
-
-    // Sync methods - only available in non-worker mode
-    public fetchProfileSync(pubkey: Parameters<typeof fetchProfileSync>[0]): ReturnType<typeof fetchProfileSync> {
-        if (this.useWorker) {
-            throw new Error("fetchProfileSync is not available in worker mode. Use fetchProfile() instead.");
-        }
-        return fetchProfileSync.call(this, pubkey);
-    }
-
-    public getAllProfilesSync(): ReturnType<typeof getAllProfilesSync> {
-        if (this.useWorker) {
-            throw new Error("getAllProfilesSync is not available in worker mode.");
-        }
-        return getAllProfilesSync.call(this);
-    }
 
     // Web Worker integration
     private worker?: Worker;
     private workerUrl?: string;
-    protected useWorker: boolean = false;
     private pendingRequests: Map<
         string,
         {
@@ -79,15 +58,14 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
     constructor(options: NDKCacheAdapterSqliteWasmOptions = {}) {
         this.dbName = options.dbName || "ndk-cache";
         this.wasmUrl = options.wasmUrl;
-        this.useWorker = options.useWorker ?? false;
         this.workerUrl = options.workerUrl;
 
-        // Initialize metadata cache (always enabled for worker mode)
+        // Initialize metadata cache
         this.metadataCache = new MetadataLRUCache(options.metadataLruSize || 1000);
     }
 
     /**
-     * Loads WASM, initializes DB, and runs migrations, or initializes the worker.
+     * Initializes the worker.
      */
     async initializeAsync(ndk?: NDK): Promise<void> {
         if (this.initializationPromise) {
@@ -96,12 +74,7 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
 
         this.initializationPromise = (async () => {
             this.ndk = ndk;
-            if (this.useWorker) {
-                await this.initializeWorker();
-            } else {
-                this.db = await loadWasmAndInitDb(this.wasmUrl, this.dbName);
-                await runMigrations(this.db!);
-            }
+            await this.initializeWorker();
             this.ready = true;
         })();
 
@@ -343,8 +316,8 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
         return query.call(this, subscription);
     }
 
-    public async getProfiles(opts: Parameters<typeof getProfiles>[0]): ReturnType<typeof getProfiles> {
-        return getProfiles.call(this, opts);
+    public async getProfiles(filter: ((pubkey: string, profile: import("@nostr-dev-kit/ndk").NDKUserProfile) => boolean) | import("./functions/getProfiles").ProfileFilterDescriptor): Promise<Map<string, import("@nostr-dev-kit/ndk").NDKUserProfile> | undefined> {
+        return getProfiles.call(this, filter);
     }
 
     public async getCacheStats(): ReturnType<typeof getCacheStats> {
@@ -376,14 +349,19 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
     // Generic cache data storage
     public async getCacheData<T>(namespace: string, key: string, maxAgeInSecs?: number): Promise<T | undefined> {
         await this.ensureInitialized();
-        if (!this.db) return undefined;
-        return getCacheData<T>(this.db, namespace, key, maxAgeInSecs);
+        const result = await this.postWorkerMessage<T | undefined>({
+            type: "getCacheData",
+            payload: { namespace, key, maxAgeInSecs }
+        });
+        return result;
     }
 
     public async setCacheData<T>(namespace: string, key: string, data: T): Promise<void> {
         await this.ensureInitialized();
-        if (!this.db) return;
-        setCacheData<T>(this.db, namespace, key, data);
+        await this.postWorkerMessage({
+            type: "setCacheData",
+            payload: { namespace, key, data }
+        });
     }
 
     public async ensureInitialized(): Promise<void> {

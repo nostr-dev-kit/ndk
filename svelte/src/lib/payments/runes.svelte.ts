@@ -7,11 +7,11 @@ import { targetToId } from "./types.js";
  *
  * @example
  * ```ts
- * const amount = useZapAmount(ndk, event);
+ * const amount = createZapAmount(ndk, event);
  * {amount.value} sats
  * ```
  */
-export function useZapAmount(ndk: NDKSvelte, target: NDKUser | NDKEvent) {
+export function createZapAmount(ndk: NDKSvelte, target: NDKUser | NDKEvent) {
     const value = $derived(ndk.$payments.getZapAmount(target));
 
     return {
@@ -26,13 +26,13 @@ export function useZapAmount(ndk: NDKSvelte, target: NDKUser | NDKEvent) {
  *
  * @example
  * ```ts
- * const zapped = useIsZapped(ndk, event);
+ * const zapped = createIsZapped(ndk, event);
  * {#if zapped.value}
  *   <span>Already zapped</span>
  * {/if}
  * ```
  */
-export function useIsZapped(ndk: NDKSvelte, target: NDKUser | NDKEvent) {
+export function createIsZapped(ndk: NDKSvelte, target: NDKUser | NDKEvent) {
     const value = $derived(ndk.$payments.isZapped(target));
 
     return {
@@ -47,13 +47,13 @@ export function useIsZapped(ndk: NDKSvelte, target: NDKUser | NDKEvent) {
  *
  * @example
  * ```ts
- * const transactions = useTargetTransactions(ndk, event);
+ * const transactions = createTargetTransactions(ndk, event);
  * {#each transactions.value as tx}
  *   <div>{tx.amount} sats</div>
  * {/each}
  * ```
  */
-export function useTargetTransactions(ndk: NDKSvelte, target: NDKUser | NDKEvent) {
+export function createTargetTransactions(ndk: NDKSvelte, target: NDKUser | NDKEvent) {
     const id = targetToId(target);
     const value = $derived(ndk.$payments.byTarget.get(id) ?? []);
 
@@ -69,13 +69,13 @@ export function useTargetTransactions(ndk: NDKSvelte, target: NDKUser | NDKEvent
  *
  * @example
  * ```ts
- * const pending = usePendingPayments(ndk);
+ * const pending = createPendingPayments(ndk);
  * {#each pending.value as payment}
  *   <div>Pending: {payment.amount} sats</div>
  * {/each}
  * ```
  */
-export function usePendingPayments(ndk: NDKSvelte) {
+export function createPendingPayments(ndk: NDKSvelte) {
     const value = $derived(ndk.$payments.pending);
 
     return {
@@ -90,13 +90,13 @@ export function usePendingPayments(ndk: NDKSvelte) {
  *
  * @example
  * ```ts
- * const history = useTransactions(ndk, { direction: 'out', limit: 10 });
+ * const history = createTransactions(ndk, { direction: 'out', limit: 10 });
  * {#each history.value as tx}
  *   <div>{tx.amount} sats</div>
  * {/each}
  * ```
  */
-export function useTransactions(ndk: NDKSvelte, opts?: { direction?: "in" | "out"; type?: string; limit?: number }) {
+export function createTransactions(ndk: NDKSvelte, opts?: { direction?: "in" | "out"; type?: string; limit?: number }) {
     const value = $derived.by(() => {
         let txs = ndk.$payments.history;
 

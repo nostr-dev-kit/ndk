@@ -558,10 +558,7 @@ export class NDKSubscription extends EventEmitter<{
      * by this function. If you will use those returned events, you should
      * set emitCachedEvents to false to prevent seeing them as duplicate events.
      */
-    public start(
-        emitCachedEvents = true,
-        onEventsHandler?: (events: NDKEvent[]) => void,
-    ): NDKEvent[] | null {
+    public start(emitCachedEvents = true): NDKEvent[] | null {
         let cacheResult: NDKEvent[] | Promise<NDKEvent[]>;
 
         const updateStateFromCacheResults = (events: NDKEvent[]) => {
@@ -618,8 +615,8 @@ export class NDKSubscription extends EventEmitter<{
                 if (this.shouldWaitForCache()) {
                     // If we need to wait for it
                     cacheResult.then((events) => {
-                        // If onEventsHandler provided, use batch processing
-                        if (onEventsHandler) {
+                        // If onEvents provided, use batch processing
+                        if (this.opts.onEvents) {
                             // Set NDK reference and calculate timestamp
                             let maxTimestamp = this.mostRecentCacheEventTimestamp || 0;
                             for (const event of events) {
@@ -630,7 +627,7 @@ export class NDKSubscription extends EventEmitter<{
                             }
                             this.mostRecentCacheEventTimestamp = maxTimestamp;
                             // Call the batch handler
-                            onEventsHandler(events);
+                            this.opts.onEvents(events);
                         } else {
                             // Regular processing (no batch handler provided)
                             updateStateFromCacheResults(events);
@@ -646,8 +643,8 @@ export class NDKSubscription extends EventEmitter<{
                     return null;
                 }
                 cacheResult.then((events) => {
-                    // If onEventsHandler provided, use batch processing
-                    if (onEventsHandler) {
+                    // If onEvents provided, use batch processing
+                    if (this.opts.onEvents) {
                         // Set NDK reference and calculate timestamp
                         let maxTimestamp = this.mostRecentCacheEventTimestamp || 0;
                         for (const event of events) {
@@ -658,7 +655,7 @@ export class NDKSubscription extends EventEmitter<{
                         }
                         this.mostRecentCacheEventTimestamp = maxTimestamp;
                         // Call the batch handler
-                        onEventsHandler(events);
+                        this.opts.onEvents(events);
                     } else {
                         // Regular processing (no batch handler provided)
                         updateStateFromCacheResults(events);
@@ -990,7 +987,6 @@ export class NDKSubscription extends EventEmitter<{
     private eosed = false;
 
     public eoseReceived(relay: NDKRelay): void {
-        this.debug("EOSE received from %s", relay.url);
         this.eosesSeen.add(relay);
 
         let lastEventSeen = this.lastEventReceivedAt ? Date.now() - this.lastEventReceivedAt : undefined;
@@ -999,7 +995,6 @@ export class NDKSubscription extends EventEmitter<{
         const queryFilled = queryFullyFilled(this);
 
         const performEose = (reason: string) => {
-            this.debug("Performing EOSE: %s %d", reason, this.eosed);
             if (this.eosed) return;
             if (this.eoseTimeout) clearTimeout(this.eoseTimeout);
             this.emit("eose", this);
@@ -1033,13 +1028,6 @@ export class NDKSubscription extends EventEmitter<{
             // relays that have sent an EOSE, the less time we should wait
             // for the next one
             const percentageOfRelaysThatHaveSentEose = this.eosesSeen.size / connectedRelaysWithFilters.length;
-
-            this.debug("Percentage of relays that have sent EOSE", {
-                subId: this.subId,
-                percentageOfRelaysThatHaveSentEose,
-                seen: this.eosesSeen.size,
-                total: connectedRelaysWithFilters.length,
-            });
 
             // If less than 2 and 50% of relays have EOSEd don't add a timeout yet
             if (this.eosesSeen.size >= 2 && percentageOfRelaysThatHaveSentEose >= 0.5) {

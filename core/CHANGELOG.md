@@ -1,5 +1,61 @@
 # @nostr-dev-kit/ndk
 
+## 3.0.0
+
+### Major Changes
+
+- b5bdb2c: BREAKING: Rename all use* functions to create* for consistency
+
+    All reactive utilities now consistently use the `create*` prefix to match Svelte idioms (like `createEventDispatcher`).
+
+    **Svelte package renames:**
+    - `useZapAmount` → `createZapAmount`
+    - `useIsZapped` → `createIsZapped`
+    - `useTargetTransactions` → `createTargetTransactions`
+    - `usePendingPayments` → `createPendingPayments`
+    - `useTransactions` → `createTransactions`
+    - `useWoTScore` → `createWoTScore`
+    - `useWoTDistance` → `createWoTDistance`
+    - `useIsInWoT` → `createIsInWoT`
+    - `useZapInfo` → `createZapInfo`
+    - `useBlossomUpload` → `createBlossomUpload`
+    - `useBlossomUrl` → `createBlossomUrl`
+
+    Migration: Replace all `use*` function calls with their `create*` equivalents in your Svelte components.
+
+### Minor Changes
+
+- b5bdb2c: Add NIP-69 P2P Order event support
+
+    Added support for NIP-69 P2P Order events (kind 38383), enabling peer-to-peer marketplace functionality. This includes event class registration and proper handling of P2P order events.
+
+- 72fc3b0: Subscription performance improvements and batch processing support
+    - Added `onEvents` callback option for batch processing of cached events
+    - Reduced default `groupableDelay` from 100ms to 10ms for faster subscription grouping
+    - Optimized cache result processing with single-pass timestamp calculation
+    - Added `onEventsHandler` parameter to `start()` method for direct batch handling
+    - Improved performance by eliminating per-event overhead in batch mode
+
+### Patch Changes
+
+- b8e7a06: Remove single event ID lookup warning from AI guardrails
+
+    Removed the overly strict warning that suggested using fetchEvent() for single ID lookups with fetchEvents(). This allows more flexibility when intentionally using fetchEvents() for single event queries.
+
+- ad7936b: Fix race condition that caused empty REQ messages to be sent to relays when subscriptions were closed before their scheduled execution time
+- b5bdb2c: Allow follow/unfollow to accept hex pubkeys directly
+
+    Enhanced follow and unfollow methods to accept hex pubkeys in addition to NDKUser objects, making the API more flexible and convenient when working with raw pubkeys.
+
+- 4b8d146: Add futureTimestampGrace option to protect against events with far-future timestamps
+
+    Added a new `futureTimestampGrace` optional parameter to the NDK constructor that allows filtering out events with timestamps too far in the future. When set, subscriptions will automatically discard events where `created_at` is more than the specified number of seconds ahead of the current time. This helps protect against malicious relays sending events with manipulated timestamps. Defaults to `undefined` (no filtering) for backward compatibility.
+
+- 8f116fa: Change NIP-46 default encryption from NIP-04 to NIP-44. NIP-44 is the newer, more secure encryption standard and is now used by default in modern bunker implementations. The RPC layer automatically falls back to NIP-04 when needed for compatibility.
+- 73adeb9: Add wallet getter to NDK class
+
+    Added a proper getter for the wallet property on the NDK class, allowing retrieval of the configured wallet instance. Previously only the setter was available.
+
 ## 2.18.0
 
 ### Minor Changes

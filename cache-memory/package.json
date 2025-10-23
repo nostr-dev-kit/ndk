@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/cache-memory",
-    "version": "2.7.7",
+    "version": "2.7.8",
     "description": "NDK In-Memory LRU Cache Adapter",
     "license": "MIT",
     "docs": "typedoc",
@@ -52,7 +52,7 @@
         "vitest": "^3.2.4"
     },
     "dependencies": {
-        "@nostr-dev-kit/ndk": "^2.17.9",
+        "@nostr-dev-kit/ndk": "^3.0.0",
         "debug": "^4.3.7",
         "nostr-tools": "^2.17.0",
         "typescript-lru-cache": "^2.0.0"

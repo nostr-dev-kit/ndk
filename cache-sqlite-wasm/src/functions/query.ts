@@ -1,6 +1,7 @@
 import { matchFilter, NDKEvent, type NDKFilter, type NDKSubscription } from "@nostr-dev-kit/ndk";
 import type { NDKCacheAdapterSqliteWasm } from "../index";
-import type { QueryExecResult } from "../types";
+import type { Database, QueryExecResult } from "../types";
+import type { EventForEncoding } from "../binary/encoder";
 
 /**
  * Utility to normalize DB rows from `{ columns, values }` to array of objects.
@@ -75,7 +76,7 @@ async function queryWorker(this: NDKCacheAdapterSqliteWasm, subscription: NDKSub
     // Import decoder dynamically to avoid circular dependency
     const { decodeEvents } = await import('../binary/decoder');
 
-    let eventsData: any[];
+    let eventsData: EventForEncoding[];
 
     try {
         eventsData = decodeEvents(result.buffer);
@@ -111,8 +112,8 @@ async function queryWorker(this: NDKCacheAdapterSqliteWasm, subscription: NDKSub
 }
 
 // Sync query function that can be used both in main thread and worker
-export function querySync(db: any, filters: NDKFilter[], subId?: string): any[] {
-    const allRecords: any[] = [];
+export function querySync(db: Database, filters: NDKFilter[], subId?: string): Record<string, unknown>[] {
+    const allRecords: Record<string, unknown>[] = [];
 
     for (const filter of filters) {
         const hasHashtagFilter = Object.keys(filter).some((key) => key.startsWith("#") && key.length === 2);
@@ -239,12 +240,12 @@ function filterForCache(subscription: NDKSubscription): NDKFilter[] {
 /**
  * Helper to process DB records and return events with relay data.
  */
-function foundEvents(subscription: NDKSubscription, records: any[], filter?: NDKFilter): EventWithRelay[] {
+function foundEvents(subscription: NDKSubscription, records: (Record<string, unknown> | EventForEncoding)[], filter?: NDKFilter): EventWithRelay[] {
     const result: EventWithRelay[] = [];
     let now: number | undefined;
 
     for (const record of records) {
-        const eventWithRelay = foundEvent(subscription, record, record.relay, filter);
+        const eventWithRelay = foundEvent(subscription, record, (record as any).relay, filter);
         if (eventWithRelay) {
             const expiration = eventWithRelay.event.tagValue("expiration");
             if (expiration) {
@@ -268,18 +269,18 @@ interface EventWithRelay {
  */
 function foundEvent(
     subscription: NDKSubscription,
-    record: any,
+    record: Record<string, unknown> | EventForEncoding,
     relayUrl: string | undefined,
     filter?: NDKFilter,
 ): EventWithRelay | null {
     try {
-        let eventData: any;
+        let eventData: Record<string, unknown>;
 
         // If record has raw field, parse it (from database storage)
         // If not, use record directly (from binary decoding)
-        if (record.raw !== undefined && record.raw !== null) {
+        if ('raw' in record && record.raw !== undefined && record.raw !== null) {
             // Parse the raw event - handle both array and object formats for backwards compatibility
-            const rawParsed = JSON.parse(record.raw);
+            const rawParsed = JSON.parse(record.raw as string);
 
             if (Array.isArray(rawParsed)) {
                 // New format: [id, pubkey, created_at, kind, tags, content, sig]
@@ -313,11 +314,11 @@ function foundEvent(
         const ndkEvent = new NDKEvent(undefined, eventData);
 
         // Get relay URL from record (first relay seen)
-        const relayUrl = record.relay_url || null;
+        const relayUrl = ('relay_url' in record ? record.relay_url as string : null) || null;
 
         return { event: ndkEvent, relayUrl };
     } catch (e) {
-        console.error("failed to deserialize event", e, "record:", record, "record.raw:", record.raw);
+        console.error("failed to deserialize event", e, "record:", record, "record.raw:", 'raw' in record ? record.raw : undefined);
         return null;
     }
 }

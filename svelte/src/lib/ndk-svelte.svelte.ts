@@ -21,6 +21,8 @@ import { createSubscription } from "./subscribe.svelte.js";
 import type { MetaSubscribeConfig, MetaSubscription } from "./meta-subscribe.svelte.js";
 import { createMetaSubscription } from "./meta-subscribe.svelte.js";
 import { createFetchUser } from "./user.svelte.js";
+import type { ZapConfig, ZapSubscription } from "./zaps.svelte.js";
+import { createZapSubscription } from "./zaps.svelte.js";
 
 /**
  * Reactive follows list with add/remove methods
@@ -582,5 +584,60 @@ export class NDKSvelte extends NDK {
     get $follows(): ReactiveFollows {
         const followsArray = Array.from(this.$sessions?.follows ?? []);
         return new ReactiveFollows(followsArray, this.$sessions);
+    }
+
+    /**
+     * Create a reactive zap subscription
+     *
+     * Returns an object with reactive getters for zap events on a target (event or user).
+     * Supports both NIP-57 (kind 9735) and NIP-61 (kind 9321) zaps.
+     *
+     * @example
+     * ```svelte
+     * <script lang="ts">
+     *   // Subscribe to all zaps for an event
+     *   const zaps = ndk.$zaps(() => ({ target: event }));
+     * </script>
+     *
+     * <div>
+     *   {zaps.totalAmount} sats from {zaps.count} zaps
+     * </div>
+     *
+     * {#each zaps.events as zap}
+     *   <div>{getZapAmount(zap)} sats</div>
+     * {/each}
+     * ```
+     *
+     * @example
+     * ```svelte
+     * <script lang="ts">
+     *   // Only validated NIP-57 lightning zaps
+     *   const lightningZaps = ndk.$zaps(() => ({
+     *     target: event,
+     *     validated: true,
+     *     method: 'nip57'
+     *   }));
+     * </script>
+     *
+     * {#each lightningZaps.events as zap}
+     *   <div>{getZapSender(zap).npub()} zapped {getZapAmount(zap)} sats</div>
+     * {/each}
+     * ```
+     *
+     * @example
+     * ```svelte
+     * <script lang="ts">
+     *   // Conditional subscription
+     *   let showZaps = $state(false);
+     *
+     *   const zaps = ndk.$zaps(() => {
+     *     if (!showZaps) return undefined;
+     *     return { target: event, validated: true };
+     *   });
+     * </script>
+     * ```
+     */
+    $zaps(config: () => ZapConfig | undefined): ZapSubscription {
+        return createZapSubscription(this, config);
     }
 }

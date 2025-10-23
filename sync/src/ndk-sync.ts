@@ -189,6 +189,11 @@ async function queryCache(this: NDK, filters: NDKFilter[]): Promise<NDKEvent[]> 
         const sub = this.subscribe(filters, {
             cacheUsage: NDKSubscriptionCacheUsage.ONLY_CACHE,
             closeOnEose: true,
+            // Batch handler for cached events (O(n) performance)
+            onEvents: (cachedEvents: NDKEvent[]) => {
+                events.push(...cachedEvents);
+            },
+            // Individual handler for any stragglers
             onEvent: (event: NDKEvent) => {
                 events.push(event);
             },

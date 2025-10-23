@@ -18,6 +18,8 @@ import type { ReactiveWoTStore } from "./stores/wot.svelte.js";
 import { createReactiveWoT } from "./stores/wot.svelte.js";
 import type { SubscribeConfig, Subscription } from "./subscribe.svelte.js";
 import { createSubscription } from "./subscribe.svelte.js";
+import type { MetaSubscribeConfig, MetaSubscription } from "./meta-subscribe.svelte.js";
+import { createMetaSubscription } from "./meta-subscribe.svelte.js";
 import { createFetchUser } from "./user.svelte.js";
 
 export interface NDKSvelteParams extends NDKConstructorParams {
@@ -208,6 +210,48 @@ export class NDKSvelte extends NDK {
         (this.aiGuardrails as any)?.ndkSvelteSubscribe?.subscribing(config);
 
         return createSubscription<T>(this, config);
+    }
+
+    /**
+     * Create a reactive meta-subscription
+     *
+     * Returns events pointed to by e-tags and a-tags, rather than the matching events themselves.
+     * Perfect for showing reposted content, commented articles, zapped notes, etc.
+     *
+     * @example
+     * ```ts
+     * // Show content reposted by people you follow
+     * const feed = ndk.$metaSubscribe(() => ({
+     *   filters: [{ kinds: [6, 16], authors: $follows }],
+     *   sort: 'tag-time'
+     * }));
+     *
+     * {#each feed.events as event}
+     *   {@const pointers = feed.eventsTagging(event)}
+     *   <Note {event}>
+     *     <span>Reposted by {pointers.length} people</span>
+     *   </Note>
+     * {/each}
+     * ```
+     *
+     * @example
+     * ```ts
+     * // Show articles commented on by your follows
+     * const articles = ndk.$metaSubscribe(() => ({
+     *   filters: [{ kinds: [1111], "#K": ["30023"], authors: $follows }],
+     *   sort: 'count'
+     * }));
+     *
+     * {#each articles.events as article}
+     *   {@const comments = articles.eventsTagging(article)}
+     *   <ArticleCard {article}>
+     *     <span>{comments.length} comments</span>
+     *   </ArticleCard>
+     * {/each}
+     * ```
+     */
+    $metaSubscribe<T extends NDKEvent = NDKEvent>(config: () => MetaSubscribeConfig | NDKFilter | NDKFilter[] | undefined): MetaSubscription<T> {
+        return createMetaSubscription<T>(this, config);
     }
 
     /**

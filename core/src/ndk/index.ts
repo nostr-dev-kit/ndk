@@ -848,17 +848,11 @@ export class NDK extends EventEmitter<{
      * ```typescript
      * const sub = ndk.subscribe(
      *   { kinds: [0], authors: [pubkey] },
-     *   { closeOnEose: true, cacheUsage: NDKSubscriptionCacheUsage.PARALLEL },
-     *   undefined, // Use default relay set calculation
-     *   {
-     *     onEvents: (events) => { // Renamed parameter
-     *       if (events.length > 0) {
-     *         console.log(`Got ${events.length} profile events from cache:`, events[0].content);
-     *       }
-     *     },
-     *     onEvent: (event) => { // Renamed parameter
-     *       console.log("Got profile update from relay:", event.content); // Clarified source
-     *     },
+     *   { 
+     *     closeOnEose: true,
+     *     cacheUsage: NDKSubscriptionCacheUsage.PARALLEL,
+     *     onEvents: (events) => console.log(`Got ${events.length} profile events from cache:`, events[0].content),
+     *     onEvent: (event) => console.log("Got profile update from relay:", event.content),
      *     onEose: () => console.log("Profile subscription finished.")
      *   }
      * );
@@ -885,14 +879,13 @@ export class NDK extends EventEmitter<{
         }
 
         // Merge event handlers from autoStart into opts
-        let eventsHandler: ((events: NDKEvent[]) => void) | undefined;
         const finalOpts = { relaySet: _relaySet, ...opts };
 
         if (autoStart && typeof autoStart === "object") {
             if (autoStart.onEvent) finalOpts.onEvent = autoStart.onEvent;
             if (autoStart.onEose) finalOpts.onEose = autoStart.onEose;
             if (autoStart.onClose) finalOpts.onClose = autoStart.onClose;
-            if (autoStart.onEvents) eventsHandler = autoStart.onEvents;
+            if (autoStart.onEvents) finalOpts.onEvents = autoStart.onEvents;
         }
 
         // NDKSubscription constructor now handles relaySet/relayUrls from opts
@@ -928,8 +921,7 @@ export class NDK extends EventEmitter<{
                     await this.cacheAdapter.initializeAsync(this);
                 }
 
-                const cachedEvents = subscription.start(!eventsHandler);
-                if (cachedEvents && cachedEvents.length > 0 && !!eventsHandler) eventsHandler(cachedEvents);
+                subscription.start();
             }, 0);
         }
 
@@ -1023,41 +1015,54 @@ export class NDK extends EventEmitter<{
         return new Promise((resolve, reject) => {
             let fetchedEvent: NDKEvent | null = null;
 
+            // Shared event processing logic
+            const processEvent = (event: NDKEvent) => {
+                event.ndk = this;
+
+                // We only emit immediately when the event is not replaceable
+                if (!event.isReplaceable()) {
+                    clearTimeout(t2);
+                    s?.stop();
+                    this.aiGuardrails["_nextCallDisabled"] = null;
+                    resolve(event);
+                } else if (!fetchedEvent || fetchedEvent.created_at! < event.created_at!) {
+                    fetchedEvent = event;
+                }
+            };
+
             // Prepare options, including the relaySet if available
             const subscribeOpts: NDKSubscriptionOptions = {
                 ...(opts || {}),
                 closeOnEose: true,
-            };
-            if (relaySet) subscribeOpts.relaySet = relaySet;
-
-            /** This is a workaround, for some reason we're leaking subscriptions that should EOSE and fetchEvent is not
-             * seeing them; this is a temporary fix until we find the bug.
-             */
-            const t2 = setTimeout(() => {
-                s.stop();
-                this.aiGuardrails["_nextCallDisabled"] = null;
-                resolve(fetchedEvent);
-            }, 10000);
-
-            const s = this.subscribe(filters, subscribeOpts, {
-                onEvent: (event: NDKEvent) => {
-                    event.ndk = this;
-
-                    // We only emit immediately when the event is not replaceable
-                    if (!event.isReplaceable()) {
-                        clearTimeout(t2);
-                        this.aiGuardrails["_nextCallDisabled"] = null;
-                        resolve(event);
-                    } else if (!fetchedEvent || fetchedEvent.created_at! < event.created_at!) {
-                        fetchedEvent = event;
+                // Batch handler for cached events
+                onEvents: (cachedEvents: NDKEvent[]) => {
+                    for (const event of cachedEvents) {
+                        processEvent(event);
                     }
+                },
+                // Individual handler for relay events
+                onEvent: (event: NDKEvent) => {
+                    processEvent(event);
                 },
                 onEose: () => {
                     clearTimeout(t2);
                     this.aiGuardrails["_nextCallDisabled"] = null;
                     resolve(fetchedEvent);
                 },
-            });
+            };
+            if (relaySet) subscribeOpts.relaySet = relaySet;
+
+            /** This is a workaround, for some reason we're leaking subscriptions that should EOSE and fetchEvent is not
+             * seeing them; this is a temporary fix until we find the bug.
+             */
+            let s: any;
+            const t2 = setTimeout(() => {
+                s.stop();
+                this.aiGuardrails["_nextCallDisabled"] = null;
+                resolve(fetchedEvent);
+            }, 10000);
+
+            s = this.subscribe(filters, subscribeOpts);
         });
     }
 
@@ -1074,14 +1079,8 @@ export class NDK extends EventEmitter<{
         return new Promise((resolve) => {
             const events: Map<string, NDKEvent> = new Map();
 
-            // Prepare options, including the relaySet if available
-            const subscribeOpts: NDKSubscriptionOptions = {
-                ...(opts || {}),
-                closeOnEose: true,
-            };
-            if (relaySet) subscribeOpts.relaySet = relaySet;
-
-            const onEvent = (event: NostrEvent | NDKEvent) => {
+            // Shared deduplication logic for both individual and batch events
+            const processEvent = (event: NostrEvent | NDKEvent): void => {
                 let _event: NDKEvent;
                 if (!(event instanceof NDKEvent)) _event = new NDKEvent(undefined, event);
                 else _event = event;
@@ -1097,14 +1096,24 @@ export class NDK extends EventEmitter<{
                 events.set(dedupKey, _event);
             };
 
-            const _relaySetSubscription = this.subscribe(filters, {
-                ...subscribeOpts,
-                onEvent,
+            // Prepare options, including the relaySet if available
+            const subscribeOpts: NDKSubscriptionOptions = {
+                ...(opts || {}),
+                closeOnEose: true,
+                onEvents: (cachedEvents: NDKEvent[]) => {
+                    for (const event of cachedEvents) {
+                        processEvent(event);
+                    }
+                },
+                onEvent: processEvent,
                 onEose: () => {
                     this.aiGuardrails["_nextCallDisabled"] = null;
                     resolve(new Set(events.values()));
                 },
-            });
+            };
+            if (relaySet) subscribeOpts.relaySet = relaySet;
+
+            const _relaySetSubscription = this.subscribe(filters, subscribeOpts);
 
             // We want to inspect duplicated events
             // so we can dedup them

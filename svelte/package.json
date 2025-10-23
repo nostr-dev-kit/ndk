@@ -27,6 +27,7 @@
     "scripts": {
         "dev": "svelte-package -w",
         "build": "svelte-package",
+        "prepare": "svelte-package",
         "check": "svelte-check --tsconfig ./tsconfig.json",
         "lint": "eslint . && prettier --check .",
         "lint:fix": "eslint --fix . && prettier --write .",

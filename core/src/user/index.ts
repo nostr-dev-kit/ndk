@@ -252,7 +252,7 @@ export class NDKUser {
         opts.cacheUsage ??= NDKSubscriptionCacheUsage.ONLY_RELAY;
         opts.closeOnEose ??= true;
         opts.groupable ??= true;
-        opts.groupableDelay ??= 250;
+        opts.groupableDelay ??= 25;
 
         if (!setMetadataEvent) {
             setMetadataEvent = await this.ndk.fetchEvent(

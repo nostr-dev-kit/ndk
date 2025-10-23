@@ -178,7 +178,16 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
         updateEvents();
     });
 
+    // Throttle updateEvents to batch relay event processing
+    let throttleTimer: ReturnType<typeof setTimeout> | undefined;
+    let lastUpdateTime = 0;
+    let relayEventsSinceLastUpdate = 0;
+    let totalRelayEvents = 0;
+
     function handleEvent(event: NDKEvent) {
+        totalRelayEvents++;
+        relayEventsSinceLastUpdate++;
+
         const wrapperOpts = derivedWrapperOpts;
         const key = dedupeKey(event as T);
 
@@ -196,7 +205,28 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
         }
 
         eventMap.set(key, event as T);
-        updateEvents();
+
+        // Throttle updateEvents to batch multiple rapid relay events
+        // Update at most once per 16ms (~1 frame at 60fps)
+        const now = Date.now();
+        const timeSinceLastUpdate = now - lastUpdateTime;
+
+        if (timeSinceLastUpdate >= 16) {
+            // Enough time has passed, update immediately
+            lastUpdateTime = now;
+            relayEventsSinceLastUpdate = 0;
+            updateEvents();
+        } else if (throttleTimer === undefined) {
+            // Schedule an update for the next throttle window
+            const delay = 16 - timeSinceLastUpdate;
+            throttleTimer = setTimeout(() => {
+                throttleTimer = undefined;
+                lastUpdateTime = Date.now();
+                relayEventsSinceLastUpdate = 0;
+                updateEvents();
+            }, delay);
+        }
+        // Else: timer already scheduled, just accumulate events
     }
 
     function updateEvents() {
@@ -255,6 +285,31 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
         const result = subscribeMethod(currentFilters, {
             ...currentNdkOpts,
             closeOnEose: false,
+            onEvents: (cachedEvents) => {
+                // Batch process all cached events at once
+                for (const event of cachedEvents) {
+                    const wrapperOpts = derivedWrapperOpts;
+                    const key = dedupeKey(event as T);
+
+                    // Skip if we already have this event (unless noDedupe)
+                    if (!wrapperOpts.noDedupe && eventMap.has(key)) {
+                        const existing = eventMap.get(key);
+                        if (existing) {
+                            // Keep the newer one (default to 0 if created_at is missing)
+                            const existingTime = existing.created_at || 0;
+                            const newTime = event.created_at || 0;
+                            if (existingTime >= newTime) {
+                                continue;
+                            }
+                        }
+                    }
+
+                    eventMap.set(key, event as T);
+                }
+
+                // Call updateEvents ONCE for all cached events
+                updateEvents();
+            },
             onEvent: handleEvent,
             onEose: () => {
                 _eosed = true;
@@ -277,6 +332,10 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
     function stop() {
         subscription?.stop();
         subscription = undefined;
+        if (throttleTimer !== undefined) {
+            clearTimeout(throttleTimer);
+            throttleTimer = undefined;
+        }
     }
 
     let isRestarting = false;
@@ -291,6 +350,8 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
         eventMap.clear();
         _events = [];
         _eosed = false;
+        relayEventsSinceLastUpdate = 0;
+        lastUpdateTime = 0;
         start();
 
         // Reset flag on next microtask to batch synchronous calls
@@ -300,9 +361,15 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
     }
 
     function clear() {
+        if (throttleTimer !== undefined) {
+            clearTimeout(throttleTimer);
+            throttleTimer = undefined;
+        }
         eventMap.clear();
         _events = [];
         _eosed = false;
+        relayEventsSinceLastUpdate = 0;
+        lastUpdateTime = 0;
     }
 
     return {

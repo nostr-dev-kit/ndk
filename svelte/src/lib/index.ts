@@ -99,6 +99,21 @@ export { createSubscription, createSyncSubscription } from "./subscribe.svelte.j
 export { createFetchEvent, createFetchEvents, type FetchEventOptions } from "./event.svelte.js";
 // User helpers
 export { createFetchUser, createZapInfo, type ZapInfo } from "./user.svelte.js";
+// Zap utilities and subscriptions
+export {
+    createZapSubscription,
+    getZapAmount,
+    getZapComment,
+    getZapMethod,
+    getZapSender,
+    hasZappedBy,
+    validateNip57Zap,
+    validateNip61Zap,
+    validateZap,
+    type ZapConfig,
+    type ZapMethod,
+    type ZapSubscription,
+} from "./zaps.svelte.js";
 // WoT runes
 export { createIsInWoT, createWoTDistance, createWoTScore } from "./wot-runes.svelte.js";
 

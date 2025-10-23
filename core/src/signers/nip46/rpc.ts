@@ -29,7 +29,7 @@ export class NDKNostrRpc extends EventEmitter {
     private signer: NDKSigner;
     private relaySet: NDKRelaySet | undefined;
     private debug: debug.Debugger;
-    public encryptionType: "nip04" | "nip44" = "nip04";
+    public encryptionType: "nip04" | "nip44" = "nip44";
     private pool: NDKPool | undefined;
 
     public constructor(ndk: NDK, signer: NDKSigner, debug: debug.Debugger, relayUrls?: string[]) {

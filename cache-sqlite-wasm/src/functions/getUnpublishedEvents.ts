@@ -9,19 +9,14 @@ import type { NDKCacheAdapterSqliteWasm } from "../index";
 export async function getUnpublishedEvents(
     this: NDKCacheAdapterSqliteWasm,
 ): Promise<{ event: NDKEvent; relays?: string[]; lastTryAt?: number }[]> {
-    const stmt = "SELECT id, event, relays, lastTryAt FROM unpublished_events";
-
     await this.ensureInitialized();
 
     if (this.useWorker) {
         const results = await this.postWorkerMessage<
             Array<{ id: string; event: string; relays: string; lastTryAt: number }>
         >({
-            type: "all",
-            payload: {
-                sql: stmt,
-                params: [],
-            },
+            type: "getUnpublishedEvents",
+            payload: {},
         });
 
         const events: { event: NDKEvent; relays?: string[]; lastTryAt?: number }[] = [];
@@ -41,7 +36,7 @@ export async function getUnpublishedEvents(
         if (!this.db) throw new Error("Database not initialized");
 
         const events: { event: NDKEvent; relays?: string[]; lastTryAt?: number }[] = [];
-        const results = this.db.exec(stmt);
+        const results = this.db.exec("SELECT id, event, relays, lastTryAt FROM unpublished_events");
 
         if (results && results.length > 0 && results[0].values && results[0].values.length > 0) {
             for (const row of results[0].values) {

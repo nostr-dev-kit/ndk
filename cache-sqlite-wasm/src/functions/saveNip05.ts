@@ -13,26 +13,28 @@ export async function saveNip05(
     nip05: string,
     profile: ProfilePointer | null,
 ): Promise<void> {
-    const stmt = `
-        INSERT OR REPLACE INTO nip05 (
-            nip05, profile, fetched_at
-        ) VALUES (?, ?, ?)
-    `;
     const profileStr = profile ? JSON.stringify(profile) : null;
     const fetchedAt = Date.now();
 
     await this.ensureInitialized();
 
+    // Update LRU cache immediately
+    this.metadataCache?.setNip05(nip05, { profile: profileStr, fetched_at: fetchedAt });
+
     if (this.useWorker) {
         await this.postWorkerMessage({
-            type: "run",
+            type: "saveNip05",
             payload: {
-                sql: stmt,
-                params: [nip05, profileStr, fetchedAt],
+                nip05,
+                profile: profileStr,
+                fetchedAt,
             },
         });
     } else {
         if (!this.db) throw new Error("Database not initialized");
-        this.db.run(stmt, [nip05, profileStr, fetchedAt]);
+        this.db.run(
+            "INSERT OR REPLACE INTO nip05 (nip05, profile, fetched_at) VALUES (?, ?, ?)",
+            [nip05, profileStr, fetchedAt]
+        );
     }
 }

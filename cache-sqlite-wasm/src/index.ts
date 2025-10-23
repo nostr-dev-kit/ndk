@@ -12,7 +12,6 @@ import { getCacheData } from "./functions/getCacheData";
 import { getCacheStats } from "./functions/getCacheStats";
 import { getDecryptedEvent } from "./functions/getDecryptedEvent";
 import { getEvent } from "./functions/getEvent";
-import { getEventRelays } from "./functions/getEventRelays";
 import { getProfiles } from "./functions/getProfiles";
 import { getRelayStatus } from "./functions/getRelayStatus";
 import { getUnpublishedEvents } from "./functions/getUnpublishedEvents";
@@ -22,12 +21,14 @@ import { saveNip05 } from "./functions/saveNip05";
 import { saveProfile } from "./functions/saveProfile";
 import { setCacheData } from "./functions/setCacheData";
 import { setEvent } from "./functions/setEvent";
-import { setEventDup } from "./functions/setEventDup";
 import { updateRelayStatus } from "./functions/updateRelayStatus";
 import type { NDKCacheAdapterSqliteWasmOptions, SQLDatabase, WorkerMessage, WorkerResponse } from "./types";
+import { decodeEvents } from "./binary/decoder";
+import { MetadataLRUCache } from "./cache/metadata-lru";
 
 export type { CacheStats } from "./functions/getCacheStats";
 export type { ProfileFilterDescriptor } from "./functions/getProfiles";
+export { MetadataLRUCache } from "./cache/metadata-lru";
 
 export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
     public dbName: string;
@@ -55,17 +56,27 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
     private nextRequestId: number = 0;
     protected initializationPromise?: Promise<void>;
 
+    // Performance optimizations
+    protected metadataCache: MetadataLRUCache;
+
+    // Event batching for worker mode
+    private eventBatch: Array<{ event: any; relay?: string; resolve: () => void; reject: (err: Error) => void }> = [];
+    private batchTimeout: ReturnType<typeof setTimeout> | null = null;
+    private readonly BATCH_DELAY_MS = 0; // Use microtask (0ms) for immediate batching
+    private readonly MAX_BATCH_SIZE = 100; // Maximum events per batch
+
     constructor(options: NDKCacheAdapterSqliteWasmOptions = {}) {
         this.dbName = options.dbName || "ndk-cache";
         this.wasmUrl = options.wasmUrl;
         this.useWorker = options.useWorker ?? false;
         this.workerUrl = options.workerUrl;
 
-        // Conditionally define sync methods only if not in worker mode
-        if (!this.useWorker) {
-            this.fetchProfileSync = fetchProfileSync.bind(this);
-            this.getAllProfilesSync = getAllProfilesSync.bind(this);
-        }
+        // Initialize metadata cache (always enabled for worker mode)
+        this.metadataCache = new MetadataLRUCache(options.metadataLruSize || 1000);
+
+        // Enable sync methods
+        this.fetchProfileSync = fetchProfileSync.bind(this);
+        this.getAllProfilesSync = getAllProfilesSync.bind(this);
     }
 
     /**
@@ -221,15 +232,65 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
                 resolve: resolve as (value: unknown) => void,
                 reject: reject as (reason?: unknown) => void,
             });
-            this.worker!.postMessage({ ...message, id });
+            const msg = { ...message, id };
+            this.worker!.postMessage(msg);
+        });
+    }
+
+    /**
+     * Flushes the batched events to the worker
+     */
+    private async flushEventBatch(): Promise<void> {
+        if (this.eventBatch.length === 0) return;
+
+        const batch = this.eventBatch;
+        this.eventBatch = [];
+        this.batchTimeout = null;
+
+        try {
+            await this.postWorkerMessage({
+                type: "setEventBatch",
+                payload: {
+                    events: batch.map(item => ({
+                        event: item.event,
+                        relay: item.relay
+                    }))
+                }
+            });
+            batch.forEach(item => item.resolve());
+        } catch (error) {
+            const err = error instanceof Error ? error : new Error(String(error));
+            batch.forEach(item => item.reject(err));
+        }
+    }
+
+    /**
+     * Adds an event to the batch and schedules a flush
+     * Protected so setEvent can access it
+     */
+    protected batchEvent(event: any, relay?: string): Promise<void> {
+        return new Promise((resolve, reject) => {
+            this.eventBatch.push({ event, relay, resolve, reject });
+
+            // Flush immediately if batch is full
+            if (this.eventBatch.length >= this.MAX_BATCH_SIZE) {
+                if (this.batchTimeout !== null) {
+                    clearTimeout(this.batchTimeout);
+                    this.batchTimeout = null;
+                }
+                this.flushEventBatch();
+            } else if (this.batchTimeout === null) {
+                // Schedule flush after delay
+                this.batchTimeout = setTimeout(() => {
+                    this.flushEventBatch();
+                }, this.BATCH_DELAY_MS);
+            }
         });
     }
 
     // Modular method bindings (public field initializers)
     public setEvent = setEvent.bind(this);
-    public setEventDup = setEventDup.bind(this);
     public getEvent = getEvent.bind(this);
-    public getEventRelays = getEventRelays.bind(this);
     public fetchProfile = fetchProfile.bind(this);
     public saveProfile = saveProfile.bind(this);
     public updateRelayStatus = updateRelayStatus.bind(this);
@@ -244,6 +305,20 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
     public getCacheStats = getCacheStats.bind(this);
     public loadNip05 = loadNip05.bind(this);
     public saveNip05 = saveNip05.bind(this);
+
+    /**
+     * Get metadata cache status
+     */
+    public getMetadataCacheStatus() {
+        return this.metadataCache.getMetrics();
+    }
+
+    /**
+     * Clear metadata cache
+     */
+    public clearMetadataCache(): void {
+        this.metadataCache.clear();
+    }
 
     // Generic cache data storage
     public async getCacheData<T>(namespace: string, key: string, maxAgeInSecs?: number): Promise<T | undefined> {

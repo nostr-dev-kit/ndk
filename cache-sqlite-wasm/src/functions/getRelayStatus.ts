@@ -10,36 +10,26 @@ export async function getRelayStatus(
     this: NDKCacheAdapterSqliteWasm,
     relayUrl: string,
 ): Promise<NDKCacheRelayInfo | undefined> {
-    const createStmt = `
-        CREATE TABLE IF NOT EXISTS relay_status (
-            url TEXT PRIMARY KEY,
-            info TEXT
-        )
-    `;
-    const selectStmt = "SELECT info FROM relay_status WHERE url = ? LIMIT 1";
-
     await this.ensureInitialized();
 
-    if (this.useWorker) {
-        await this.postWorkerMessage({
-            type: "run",
-            payload: {
-                sql: createStmt,
-                params: [],
-            },
-        });
+    // Check LRU cache first
+    const cached = this.metadataCache?.getRelayInfo(relayUrl);
+    if (cached) {
+        return cached;
+    }
 
+    if (this.useWorker) {
         const result = await this.postWorkerMessage<{ info?: string }>({
-            type: "get",
-            payload: {
-                sql: selectStmt,
-                params: [relayUrl],
-            },
+            type: "getRelayStatus",
+            payload: { relayUrl },
         });
 
         if (result && result.info) {
             try {
-                return JSON.parse(result.info);
+                const info = JSON.parse(result.info);
+                // Update LRU cache
+                this.metadataCache?.setRelayInfo(relayUrl, info);
+                return info;
             } catch {
                 return undefined;
             }
@@ -49,13 +39,16 @@ export async function getRelayStatus(
         if (!this.db) throw new Error("Database not initialized");
 
         // Create table if it doesn't exist
-        this.db.run(createStmt);
+        this.db.run("CREATE TABLE IF NOT EXISTS relay_status (url TEXT PRIMARY KEY, info TEXT)");
 
-        const results = this.db.exec(selectStmt, [relayUrl]);
+        const results = this.db.exec("SELECT info FROM relay_status WHERE url = ? LIMIT 1", [relayUrl]);
         if (results && results.length > 0 && results[0].values && results[0].values.length > 0) {
             const infoStr = results[0].values[0][0] as string;
             try {
-                return JSON.parse(infoStr);
+                const info = JSON.parse(infoStr);
+                // Update LRU cache
+                this.metadataCache?.setRelayInfo(relayUrl, info);
+                return info;
             } catch {
                 return undefined;
             }

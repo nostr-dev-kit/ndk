@@ -10,26 +10,29 @@ export async function saveProfile(
     pubkey: string,
     profile: NDKUserProfile,
 ): Promise<void> {
-    const stmt = `
-        INSERT OR REPLACE INTO profiles (
-            pubkey, profile, updated_at
-        ) VALUES (?, ?, ?)
-    `;
     const profileStr = JSON.stringify(profile);
     const updatedAt = Math.floor(Date.now() / 1000);
 
     await this.ensureInitialized();
 
+    // Update LRU cache immediately
+    const entry = { ...profile, cachedAt: updatedAt };
+    this.metadataCache?.setProfile(pubkey, entry);
+
     if (this.useWorker) {
         await this.postWorkerMessage({
-            type: "run",
+            type: "saveProfile",
             payload: {
-                sql: stmt,
-                params: [pubkey, profileStr, updatedAt],
+                pubkey,
+                profile: profileStr,
+                updatedAt,
             },
         });
     } else {
         if (!this.db) throw new Error("Database not initialized");
-        this.db.run(stmt, [pubkey, profileStr, updatedAt]);
+        this.db.run(
+            "INSERT OR REPLACE INTO profiles (pubkey, profile, updated_at) VALUES (?, ?, ?)",
+            [pubkey, profileStr, updatedAt]
+        );
     }
 }

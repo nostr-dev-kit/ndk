@@ -2,18 +2,27 @@ import type { NDKCacheEntry, NDKUserProfile } from "@nostr-dev-kit/ndk";
 import type { NDKCacheAdapterSqliteWasm } from "../index";
 
 /**
- * Synchronously fetches a user profile by pubkey from the SQLite WASM database.
- */
-/**
- * Synchronous profile fetch is NOT supported in Web Worker mode.
- * BREAKING CHANGE: If useWorker is true, this will throw.
- * See CHANGELOG.md for details.
+ * Synchronously fetches a user profile by pubkey.
+ * In worker mode, reads from LRU cache only.
+ * In non-worker mode, checks LRU first, then falls back to database.
  */
 export function fetchProfileSync(
     this: NDKCacheAdapterSqliteWasm,
     pubkey: string,
 ): NDKCacheEntry<NDKUserProfile> | null {
-    if (!this.db) throw new Error("Database not initialized");
+    // In worker mode, return from LRU cache only
+    if (this.useWorker) {
+        return this.metadataCache?.getProfile(pubkey) || null;
+    }
+
+    // In non-worker mode, check LRU first
+    const cached = this.metadataCache?.getProfile(pubkey);
+    if (cached) {
+        return cached;
+    }
+
+    // Fall back to database
+    if (!this.db) return null;
 
     const stmt = "SELECT profile, updated_at FROM profiles WHERE pubkey = ? LIMIT 1";
     const results = this.db.exec(stmt, [pubkey]);
@@ -21,7 +30,10 @@ export function fetchProfileSync(
         const [profileStr, updatedAt] = results[0].values[0];
         try {
             const profile = JSON.parse(profileStr as string);
-            return { ...profile, cachedAt: updatedAt };
+            const entry = { ...profile, cachedAt: updatedAt };
+            // Update LRU cache
+            this.metadataCache?.setProfile(pubkey, entry);
+            return entry;
         } catch {
             return null;
         }

@@ -9,16 +9,12 @@ import type { NDKCacheAdapterSqliteWasm } from "../index";
  * If useWorker is true, sends command to worker; else, runs on main thread.
  */
 export async function getEvent(this: NDKCacheAdapterSqliteWasm, id: string): Promise<NDKEvent | null> {
-    const stmt = "SELECT raw FROM events WHERE id = ? AND deleted = 0 LIMIT 1";
     await this.ensureInitialized();
 
     if (this.useWorker) {
         const result = await this.postWorkerMessage<{ raw?: string }>({
-            type: "get",
-            payload: {
-                sql: stmt,
-                params: [id],
-            },
+            type: "getEvent",
+            payload: { id },
         });
         if (result && result.raw) {
             try {
@@ -30,7 +26,7 @@ export async function getEvent(this: NDKCacheAdapterSqliteWasm, id: string): Pro
         return null;
     } else {
         if (!this.db) throw new Error("DB not initialized");
-        const results = this.db.exec(stmt, [id]);
+        const results = this.db.exec("SELECT raw FROM events WHERE id = ? AND deleted = 0 LIMIT 1", [id]);
         if (results && results.length > 0 && results[0].values && results[0].values.length > 0) {
             const raw = results[0].values[0][0] as string;
             try {

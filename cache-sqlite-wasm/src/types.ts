@@ -6,6 +6,9 @@ export interface NDKCacheAdapterSqliteWasmOptions {
     wasmUrl?: string;
     useWorker?: boolean;
     workerUrl?: string;
+
+    // Metadata LRU cache
+    metadataLruSize?: number; // Max metadata items (profiles, relay info, NIP-05) in LRU cache (default: 1000)
 }
 
 export type WorkerMessage = {

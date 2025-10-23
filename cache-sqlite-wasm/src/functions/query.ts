@@ -1,7 +1,6 @@
 import { matchFilter, NDKEvent, type NDKFilter, type NDKSubscription } from "@nostr-dev-kit/ndk";
 import type { NDKCacheAdapterSqliteWasm } from "../index";
 import type { QueryExecResult } from "../types";
-import type { EventRelay } from "./getEventRelays";
 
 /**
  * Utility to normalize DB rows from `{ columns, values }` to array of objects.
@@ -69,33 +68,50 @@ async function queryWorker(this: NDKCacheAdapterSqliteWasm, subscription: NDKSub
         payload: {
             filters: cacheFilters,
             cacheUnconstrainFilter: subscription.cacheUnconstrainFilter,
+            subId: subscription.subId,
         },
     });
 
-    // Process raw event data returned from worker
-    const results = new Map<string, NDKEvent>();
-    for (const filter of cacheFilters) {
-        const events = foundEvents(subscription, result, filter);
-        for (const event of events) {
-            if (event && event.id) results.set(event.id, event);
-        }
+    // Import decoder dynamically to avoid circular dependency
+    const { decodeEvents } = await import('../binary/decoder');
+
+    let eventsData: any[];
+
+    try {
+        eventsData = decodeEvents(result.buffer);
+    } catch (error) {
+        console.error('Failed to decode events from cache, cache may be corrupted:', error);
+        // Return empty results on decode error - cache will be rebuilt
+        return [];
     }
 
-    // Fetch relay provenance for all found events
-    const eventIds = Array.from(results.keys());
-    const relayData = await this.getEventRelays(eventIds);
+    // Process raw event data returned from worker
+    const results = new Map<string, NDKEvent>();
 
-    // Restore relays on events
-    for (const [eventId, event] of results) {
-        const relays = relayData.get(eventId) || [];
-        restoreRelaysOnEvent(event, relays, subscription);
+    for (const filter of cacheFilters) {
+        const eventsWithRelay = foundEvents(subscription, eventsData, filter);
+        for (const { event, relayUrl } of eventsWithRelay) {
+            if (event && event.id) {
+                results.set(event.id, event);
+                // Set relay on event if we have one
+                if (relayUrl) {
+                    const relay = subscription.pool.getRelay(relayUrl, false);
+                    if (relay) {
+                        event.relay = relay;
+                        if (subscription.ndk) {
+                            subscription.ndk.subManager.seenEvent(event.id, relay);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     return Array.from(results.values());
 }
 
 // Sync query function that can be used both in main thread and worker
-export function querySync(db: any, filters: NDKFilter[]): any[] {
+export function querySync(db: any, filters: NDKFilter[], subId?: string): any[] {
     const allRecords: any[] = [];
 
     for (const filter of filters) {
@@ -107,10 +123,11 @@ export function querySync(db: any, filters: NDKFilter[]): any[] {
                     const tagValues = Array.isArray((filter as any)[key]) ? (filter as any)[key] : [];
                     const placeholders = tagValues.map(() => "?").join(",");
                     const sql = `
-                        SELECT * FROM events
+                        SELECT events.*
+                        FROM events
                         INNER JOIN event_tags ON events.id = event_tags.event_id
                         WHERE events.deleted = 0 AND event_tags.tag = ? AND event_tags.value IN (${placeholders})
-                        ORDER BY created_at DESC
+                        ORDER BY events.created_at DESC
                     `;
                     const params = [key[1], ...tagValues];
                     const events = db.exec(sql, params);
@@ -121,11 +138,12 @@ export function querySync(db: any, filters: NDKFilter[]): any[] {
             }
         } else if (filter.authors && filter.kinds) {
             const sql = `
-                SELECT * FROM events
-                WHERE deleted = 0
-                AND pubkey IN (${filter.authors.map(() => "?").join(",")})
-                AND kind IN (${filter.kinds.map(() => "?").join(",")})
-                ORDER BY created_at DESC
+                SELECT events.*
+                FROM events
+                WHERE events.deleted = 0
+                AND events.pubkey IN (${filter.authors.map(() => "?").join(",")})
+                AND events.kind IN (${filter.kinds.map(() => "?").join(",")})
+                ORDER BY events.created_at DESC
             `;
             const params = [...filter.authors, ...filter.kinds];
             const events = db.exec(sql, params);
@@ -133,10 +151,11 @@ export function querySync(db: any, filters: NDKFilter[]): any[] {
             allRecords.push(...normalizedEvents);
         } else if (filter.authors) {
             const sql = `
-                SELECT * FROM events
-                WHERE deleted = 0
-                AND pubkey IN (${filter.authors.map(() => "?").join(",")})
-                ORDER BY created_at DESC
+                SELECT events.*
+                FROM events
+                WHERE events.deleted = 0
+                AND events.pubkey IN (${filter.authors.map(() => "?").join(",")})
+                ORDER BY events.created_at DESC
             `;
             const params = filter.authors;
             const events = db.exec(sql, params);
@@ -144,10 +163,11 @@ export function querySync(db: any, filters: NDKFilter[]): any[] {
             allRecords.push(...normalizedEvents);
         } else if (filter.kinds) {
             const sql = `
-                SELECT * FROM events
-                WHERE deleted = 0
-                AND kind IN (${filter.kinds.map(() => "?").join(",")})
-                ORDER BY created_at DESC
+                SELECT events.*
+                FROM events
+                WHERE events.deleted = 0
+                AND events.kind IN (${filter.kinds.map(() => "?").join(",")})
+                ORDER BY events.created_at DESC
             `;
             const params = filter.kinds;
             const events = db.exec(sql, params);
@@ -155,10 +175,11 @@ export function querySync(db: any, filters: NDKFilter[]): any[] {
             allRecords.push(...normalizedEvents);
         } else if (filter.ids) {
             const sql = `
-                SELECT * FROM events
-                WHERE deleted = 0
-                AND id IN (${filter.ids.map(() => "?").join(",")})
-                ORDER BY created_at DESC
+                SELECT events.*
+                FROM events
+                WHERE events.deleted = 0
+                AND events.id IN (${filter.ids.map(() => "?").join(",")})
+                ORDER BY events.created_at DESC
             `;
             const params = filter.ids;
             const events = db.exec(sql, params);
@@ -174,25 +195,28 @@ async function queryDb(adapter: NDKCacheAdapterSqliteWasm, subscription: NDKSubs
     if (!adapter.db) return [];
 
     const cacheFilters = filterForCache(subscription);
-    const allRecords = querySync(adapter.db, cacheFilters);
+    const allRecords = querySync(adapter.db, cacheFilters, subscription.subId);
 
     // Process records into events
     const results = new Map<string, NDKEvent>();
+
     for (const filter of cacheFilters) {
-        const events = foundEvents(subscription, allRecords, filter);
-        for (const event of events) {
-            if (event && event.id) results.set(event.id, event);
+        const eventsWithRelay = foundEvents(subscription, allRecords, filter);
+        for (const { event, relayUrl } of eventsWithRelay) {
+            if (event && event.id) {
+                results.set(event.id, event);
+                // Set relay on event if we have one
+                if (relayUrl) {
+                    const relay = subscription.pool.getRelay(relayUrl, false);
+                    if (relay) {
+                        event.relay = relay;
+                        if (subscription.ndk) {
+                            subscription.ndk.subManager.seenEvent(event.id, relay);
+                        }
+                    }
+                }
+            }
         }
-    }
-
-    // Fetch relay provenance for all found events
-    const eventIds = Array.from(results.keys());
-    const relayData = await adapter.getEventRelays(eventIds);
-
-    // Restore relays on events
-    for (const [eventId, event] of results) {
-        const relays = relayData.get(eventId) || [];
-        restoreRelaysOnEvent(event, relays, subscription);
     }
 
     return Array.from(results.values());
@@ -213,25 +237,30 @@ function filterForCache(subscription: NDKSubscription): NDKFilter[] {
 }
 
 /**
- * Helper to process DB records and return NDKEvent[].
+ * Helper to process DB records and return events with relay data.
  */
-function foundEvents(subscription: NDKSubscription, records: any[], filter?: NDKFilter): NDKEvent[] {
-    const result: NDKEvent[] = [];
+function foundEvents(subscription: NDKSubscription, records: any[], filter?: NDKFilter): EventWithRelay[] {
+    const result: EventWithRelay[] = [];
     let now: number | undefined;
 
     for (const record of records) {
-        const event = foundEvent(subscription, record, record.relay, filter);
-        if (event) {
-            const expiration = event.tagValue("expiration");
+        const eventWithRelay = foundEvent(subscription, record, record.relay, filter);
+        if (eventWithRelay) {
+            const expiration = eventWithRelay.event.tagValue("expiration");
             if (expiration) {
                 now ??= Math.floor(Date.now() / 1000);
                 if (now > Number.parseInt(expiration)) continue;
             }
-            result.push(event);
+            result.push(eventWithRelay);
             if (filter?.limit && result.length >= filter.limit) break;
         }
     }
     return result;
+}
+
+interface EventWithRelay {
+    event: NDKEvent;
+    relayUrl: string | null;
 }
 
 /**
@@ -242,57 +271,54 @@ function foundEvent(
     record: any,
     relayUrl: string | undefined,
     filter?: NDKFilter,
-): NDKEvent | null {
+): EventWithRelay | null {
     try {
-        // Parse the raw event - handle both array and object formats for backwards compatibility
-        const rawParsed = JSON.parse(record.raw);
         let eventData: any;
 
-        if (Array.isArray(rawParsed)) {
-            // New format: [id, pubkey, created_at, kind, tags, content, sig]
-            eventData = {
-                id: rawParsed[0],
-                pubkey: rawParsed[1],
-                created_at: rawParsed[2],
-                kind: rawParsed[3],
-                tags: rawParsed[4],
-                content: rawParsed[5],
-                sig: rawParsed[6],
-            };
+        // If record has raw field, parse it (from database storage)
+        // If not, use record directly (from binary decoding)
+        if (record.raw !== undefined && record.raw !== null) {
+            // Parse the raw event - handle both array and object formats for backwards compatibility
+            const rawParsed = JSON.parse(record.raw);
+
+            if (Array.isArray(rawParsed)) {
+                // New format: [id, pubkey, created_at, kind, tags, content, sig]
+                eventData = {
+                    id: rawParsed[0],
+                    pubkey: rawParsed[1],
+                    created_at: rawParsed[2],
+                    kind: rawParsed[3],
+                    tags: rawParsed[4],
+                    content: rawParsed[5],
+                    sig: rawParsed[6],
+                };
+            } else {
+                // Old format: direct object
+                eventData = rawParsed;
+            }
         } else {
-            // Old format: direct object
-            eventData = rawParsed;
+            // No raw field - record already has event fields directly (e.g., from binary decode)
+            eventData = {
+                id: record.id,
+                pubkey: record.pubkey,
+                created_at: record.created_at,
+                kind: record.kind,
+                tags: record.tags,
+                content: record.content,
+                sig: record.sig,
+            };
         }
 
         if (filter && !matchFilter(filter, eventData as any)) return null;
         const ndkEvent = new NDKEvent(undefined, eventData);
-        return ndkEvent;
+
+        // Get relay URL from record (first relay seen)
+        const relayUrl = record.relay_url || null;
+
+        return { event: ndkEvent, relayUrl };
     } catch (e) {
         console.error("failed to deserialize event", e, "record:", record, "record.raw:", record.raw);
         return null;
     }
 }
 
-/**
- * Restores relay provenance on an NDKEvent after retrieval from cache.
- * Sets the primary relay and registers all relays in the subscription manager.
- */
-function restoreRelaysOnEvent(event: NDKEvent, relays: EventRelay[], subscription: NDKSubscription): void {
-    if (relays.length === 0) return;
-
-    // Set the first relay as the primary relay
-    const primaryRelay = subscription.pool.getRelay(relays[0].url, false);
-    if (primaryRelay) {
-        event.relay = primaryRelay;
-    }
-
-    // Register all relays in seenEvents for the onRelays getter
-    if (subscription.ndk) {
-        for (const relayData of relays) {
-            const relay = subscription.pool.getRelay(relayData.url, false);
-            if (relay) {
-                subscription.ndk.subManager.seenEvent(event.id, relay);
-            }
-        }
-    }
-}

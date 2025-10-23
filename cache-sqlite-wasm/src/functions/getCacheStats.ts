@@ -9,7 +9,6 @@ export interface CacheStats {
     totalDecryptedEvents: number;
     totalUnpublishedEvents: number;
     cacheData: number;
-    eventRelays: number;
 }
 
 export async function getCacheStats(this: NDKCacheAdapterSqliteWasm): Promise<CacheStats> {
@@ -52,7 +51,6 @@ export function getCacheStatsSync(db: SQLDatabase): CacheStats {
     const totalDecryptedEventsResult = db.exec(`SELECT COUNT(*) FROM decrypted_events`);
     const totalUnpublishedEventsResult = db.exec(`SELECT COUNT(*) FROM unpublished_events`);
     const cacheDataResult = db.exec(`SELECT COUNT(*) FROM cache_data`);
-    const eventRelaysResult = db.exec(`SELECT COUNT(*) FROM event_relays`);
 
     return {
         eventsByKind,
@@ -62,6 +60,5 @@ export function getCacheStatsSync(db: SQLDatabase): CacheStats {
         totalDecryptedEvents: (totalDecryptedEventsResult[0]?.values[0]?.[0] as number) || 0,
         totalUnpublishedEvents: (totalUnpublishedEventsResult[0]?.values[0]?.[0] as number) || 0,
         cacheData: (cacheDataResult[0]?.values[0]?.[0] as number) || 0,
-        eventRelays: (eventRelaysResult[0]?.values[0]?.[0] as number) || 0,
     };
 }

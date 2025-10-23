@@ -14,24 +14,22 @@ export async function addUnpublishedEvent(
     relayUrls: string[],
     lastTryAt: number = Date.now(),
 ): Promise<void> {
-    const stmt = `
-        INSERT OR REPLACE INTO unpublished_events (
-            id, event, relays, lastTryAt
-        ) VALUES (?, ?, ?, ?)
-    `;
-
     await this.ensureInitialized();
 
     if (this.useWorker) {
         await this.postWorkerMessage({
-            type: "run",
+            type: "addUnpublishedEvent",
             payload: {
-                sql: stmt,
-                params: [event.id, event.serialize(true, true), JSON.stringify(relayUrls), lastTryAt],
+                id: event.id,
+                event: event.serialize(true, true),
+                relays: JSON.stringify(relayUrls),
             },
         });
     } else {
         if (!this.db) throw new Error("Database not initialized");
-        this.db.run(stmt, [event.id, event.serialize(true, true), JSON.stringify(relayUrls), lastTryAt]);
+        this.db.run(
+            "INSERT OR REPLACE INTO unpublished_events (id, event, relays, lastTryAt) VALUES (?, ?, ?, ?)",
+            [event.id, event.serialize(true, true), JSON.stringify(relayUrls), lastTryAt]
+        );
     }
 }

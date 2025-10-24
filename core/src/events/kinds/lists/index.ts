@@ -42,6 +42,7 @@ export class NDKList extends NDKEvent {
         NDKKind.SearchRelayList,
         NDKKind.BlockRelayList,
         NDKKind.BookmarkList,
+        NDKKind.RelayFeedList,
     ];
 
     /**
@@ -98,6 +99,9 @@ export class NDKList extends NDKEvent {
         }
         if (this.kind === NDKKind.DirectMessageReceiveRelayList) {
             return "Direct Message Receive Relays";
+        }
+        if (this.kind === NDKKind.RelayFeedList) {
+            return "Relay Feeds";
         }
         if (this.kind === NDKKind.InterestList) {
             return "Interests";

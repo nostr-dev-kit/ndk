@@ -17,6 +17,7 @@ import { NDKCashuMintList } from "./kinds/nutzap/mint-list.js";
 import { NDKProject } from "./kinds/project.js";
 import { NDKProjectTemplate } from "./kinds/project-template.js";
 import { NDKRelayList } from "./kinds/relay-list.js";
+import { NDKRelayFeedList } from "./kinds/relay-feed-list.js";
 import { NDKRepost } from "./kinds/repost.js";
 import { NDKSimpleGroupMemberList } from "./kinds/simple-group/member-list.js";
 import { NDKSimpleGroupMetadata } from "./kinds/simple-group/metadata.js";
@@ -98,6 +99,7 @@ export function wrapEvent<T extends NDKEvent>(event: NDKEvent): T | Promise<T> |
         NDKSubscriptionReceipt,
         NDKList,
         NDKRelayList,
+        NDKRelayFeedList,
         NDKStory,
         NDKBlossomList,
         NDKFollowPack,

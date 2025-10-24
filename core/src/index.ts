@@ -38,6 +38,7 @@ export * from "./events/kinds/nutzap/mint-list.js";
 export * from "./events/kinds/project.js";
 export * from "./events/kinds/project-template.js";
 export * from "./events/kinds/relay-list.js";
+export * from "./events/kinds/relay-feed-list.js";
 export * from "./events/kinds/repost.js";
 export * from "./events/kinds/simple-group/index.js";
 export * from "./events/kinds/simple-group/member-list.js";

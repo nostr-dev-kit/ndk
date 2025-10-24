@@ -1,13 +1,24 @@
 # Usage
 
-## Instantiate an NDK instance
+## Instantiate
 
-You can pass an object with several options to a newly created instance of NDK.
+To start using NDK, you need to create an instance of it.
 
-- `explicitRelayUrls` – an array of relay URLs.
-- `signer` - an instance of a [signer](/core/docs/fundamentals/signers.html).
-- `cacheAdapter` - an instance of a [cache adapter](#caching)
-- `debug` - Debug instance to use for logging. Defaults to `debug("ndk")`.
+
+```ts
+// Import the package
+import NDK from "@nostr-dev-kit/ndk";
+
+// Create a new NDK instance
+const ndk = new NDK();
+```
+
+This by itself won't do much as there are no connected relays but there might be cases
+where you want to have a NDK instance without connecting to any relays.
+
+## Connecting to Relays
+
+The simplest way to get NDK to connect to relays is to specify them:
 
 ```ts
 // Import the package
@@ -17,10 +28,28 @@ import NDK from "@nostr-dev-kit/ndk";
 const ndk = new NDK({
     explicitRelayUrls: ["wss://a.relay", "wss://another.relay"],
 });
+
+// Now connect to specified relays
+await ndk.connect();
 ```
 
-If the signer implements the `getRelays()` method, NDK will use the relays returned by that method as the explicit
-relays.
+Make sure to wait for the `connect()` promise to resolve before using NDK after which
+you can start interacting with relays.
+
+
+
+---
+
+You can pass an object with several options to a newly created instance of NDK.
+
+-   `explicitRelayUrls` – an array of relay URLs.
+-   `signer` - an instance of a [signer](#signers).
+-   `cacheAdapter` - an instance of a [Cache Adapter](#caching)
+-   `debug` - Debug instance to use for logging. Defaults to `debug("ndk")`.
+
+
+
+If the signer implements the `getRelays()` method, NDK will use the relays returned by that method as the explicit relays.
 
 ```ts
 // Import the package
@@ -31,24 +60,7 @@ const nip07signer = new NDKNip07Signer();
 const ndk = new NDK({ signer: nip07signer });
 ```
 
-Note: In normal client use, it's best practice to instantiate NDK as a singleton
-class. [See more below](#architecture-decisions--suggestions).
-
-## Connecting
-
-After you've instatiated NDK, you need to tell it to connect before you'll be able to interact with any relays.
-
-```ts
-// Import the package
-import NDK from "@nostr-dev-kit/ndk";
-
-// Create a new NDK instance with explicit relays
-const ndk = new NDK({
-    explicitRelayUrls: ["wss://a.relay", "wss://another.relay"],
-});
-// Now connect to specified relays
-await ndk.connect();
-```
+Note: In normal client use, it's best practice to instantiate NDK as a singleton class. [See more below](#architecture-decisions--suggestions). 
 
 ## Creating Users
 
@@ -72,8 +84,7 @@ const user5 = await ndk.fetchUser("test.com"); // Uses _@test.com
 const user6 = await ndk.fetchUser("deadbeef..."); // Assumes hex pubkey
 ```
 
-Note: `fetchUser` is async and returns a Promise. For NIP-05 lookups, it may return `undefined` if the address cannot be
-resolved.
+Note: `fetchUser` is async and returns a Promise. For NIP-05 lookups, it may return `undefined` if the address cannot be resolved.
 
 ## Working with NIP-19 Identifiers
 
@@ -102,15 +113,11 @@ See the [NIP-19 tutorial](/tutorial/nip19.html) for comprehensive examples and u
 
 ## Usage with React Hooks (`ndk-hooks`)
 
-When using the `ndk-hooks` package in a React application, the initialization process involves creating the NDK instance
-and then using the `useNDKInit` hook to make it available to the rest of your application via Zustand stores.
+When using the `ndk-hooks` package in a React application, the initialization process involves creating the NDK instance and then using the `useNDKInit` hook to make it available to the rest of your application via Zustand stores.
 
-This hook ensures that both the core NDK store and dependent stores (like the user profiles store) are properly
-initialized with the NDK instance.
+This hook ensures that both the core NDK store and dependent stores (like the user profiles store) are properly initialized with the NDK instance.
 
-It's recommended to create and connect your NDK instance outside of your React components, potentially in a dedicated
-setup file or at the root of your application. Then, use the `useNDKInit` hook within your main App component or a
-context provider to initialize the stores once the component mounts.
+It's recommended to create and connect your NDK instance outside of your React components, potentially in a dedicated setup file or at the root of your application. Then, use the `useNDKInit` hook within your main App component or a context provider to initialize the stores once the component mounts.
 
 ```tsx
 import React, { useEffect } from 'react'; // Removed useState
@@ -151,39 +158,33 @@ export default App;
 
 **Key Points:**
 
-* Create and configure your `NDK` instance globally or outside components.
-* Call `ndk.connect()` immediately after creation. Connection happens in the background.
-* In your main App or Provider component, get the `initializeNDK` function from `useNDKInit`.
-* Use `useEffect` with an empty dependency array (or `[initializeNDK]`) to call `initializeNDK(ndk)` once on mount.
-* This sets up the necessary Zustand stores. Other `ndk-hooks` will access the initialized `ndk` instance from the store
-  and handle its readiness internally.
+*   Create and configure your `NDK` instance globally or outside components.
+*   Call `ndk.connect()` immediately after creation. Connection happens in the background.
+*   In your main App or Provider component, get the `initializeNDK` function from `useNDKInit`.
+*   Use `useEffect` with an empty dependency array (or `[initializeNDK]`) to call `initializeNDK(ndk)` once on mount.
+*   This sets up the necessary Zustand stores. Other `ndk-hooks` will access the initialized `ndk` instance from the store and handle its readiness internally.
 
 ---
 
+
 ## Architecture decisions & suggestions
 
-- Users of NDK should instantiate a single NDK instance.
-- That instance tracks state with all relays connected, explicit and otherwise.
-- All relays are tracked in a single pool that handles connection errors/reconnection logic.
-- RelaySets are assembled ad-hoc as needed depending on the queries set, although some RelaySets might be long-lasting,
-  like the `explicitRelayUrls` specified by the user.
-- RelaySets are always a subset of the pool of all available relays.
+-   Users of NDK should instantiate a single NDK instance.
+-   That instance tracks state with all relays connected, explicit and otherwise.
+-   All relays are tracked in a single pool that handles connection errors/reconnection logic.
+-   RelaySets are assembled ad-hoc as needed depending on the queries set, although some RelaySets might be long-lasting, like the `explicitRelayUrls` specified by the user.
+-   RelaySets are always a subset of the pool of all available relays.
+
 
 ## Subscribing to Events
 
-Once connected, you can subscribe to events using `ndk.subscribe()`. You provide filters to specify the events you're
-interested in.
+Once connected, you can subscribe to events using `ndk.subscribe()`. You provide filters to specify the events you're interested in.
 
 ### Preferred Method: Direct Event Handlers
 
-The **recommended** way to handle events is to provide handler functions directly when calling `ndk.subscribe()`. This
-is done using the third argument (`autoStart`), which accepts an object containing `onEvent`, `onEvents`, and/or
-`onEose` callbacks.
+The **recommended** way to handle events is to provide handler functions directly when calling `ndk.subscribe()`. This is done using the third argument (`autoStart`), which accepts an object containing `onEvent`, `onEvents`, and/or `onEose` callbacks.
 
-**Why is this preferred?** Subscriptions can start receiving events (especially from a fast cache) almost immediately
-after `ndk.subscribe()` is called. By providing handlers directly, you ensure they are attached *before* any events are
-emitted, preventing potential race conditions where you might miss the first few events if you attached handlers later
-using `.on()`.
+**Why is this preferred?** Subscriptions can start receiving events (especially from a fast cache) almost immediately after `ndk.subscribe()` is called. By providing handlers directly, you ensure they are attached *before* any events are emitted, preventing potential race conditions where you might miss the first few events if you attached handlers later using `.on()`.
 
 ```typescript
 // Example with default relay calculation
@@ -232,25 +233,19 @@ ndk.subscribe(
 
 ### Efficient Cache Handling with `onEvents`
 
-Using the `onEvents` handler provides an efficient way to process events loaded from the cache. When you provide
-`onEvents`:
+Using the `onEvents` handler provides an efficient way to process events loaded from the cache. When you provide `onEvents`:
 
-1. If NDK finds matching events in its cache *synchronously* when the subscription starts, `onEvents` is called **once**
-   with an array of all those cached events.
-2. The `onEvent` handler is **skipped** for this initial batch of cached events.
-3. `onEvent` will still be called for any subsequent events received from relays or later asynchronous cache updates.
+1.  If NDK finds matching events in its cache *synchronously* when the subscription starts, `onEvents` is called **once** with an array of all those cached events.
+2.  The `onEvent` handler is **skipped** for this initial batch of cached events.
+3.  `onEvent` will still be called for any subsequent events received from relays or later asynchronous cache updates.
 
-This is ideal for scenarios like populating initial UI state, as it allows you to process the cached data in a single
-batch, preventing potentially numerous individual updates that would occur if `onEvent` were called for each cached
-item.
+This is ideal for scenarios like populating initial UI state, as it allows you to process the cached data in a single batch, preventing potentially numerous individual updates that would occur if `onEvent` were called for each cached item.
 
-If you *don't* provide `onEvents`, the standard `onEvent` handler will be triggered for every event, whether it comes
-from the cache or a relay.
+If you *don't* provide `onEvents`, the standard `onEvent` handler will be triggered for every event, whether it comes from the cache or a relay.
 
 ### Alternative Method: Attaching Handlers with `.on()`
 
-You can also attach event listeners *after* creating the subscription using the `.on()` method. While functional, be
-mindful of the potential race condition mentioned above, especially if you rely on immediate cache results.
+You can also attach event listeners *after* creating the subscription using the `.on()` method. While functional, be mindful of the potential race condition mentioned above, especially if you rely on immediate cache results.
 
 ```typescript
 // Subscribe using default relay calculation

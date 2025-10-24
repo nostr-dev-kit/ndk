@@ -22,7 +22,3 @@ const ndk = new NDK({cacheAdapter: dexieAdapter, ...other config options});
 ```
 
 🚨 Because Dexie only exists client-side, this cache adapter will not work in pure node.js environments. You'll need to make sure that you're using the right cache adapter in the right place (e.g. Redis on the backend, Dexie on the frontend).
-
-# License
-
-MIT

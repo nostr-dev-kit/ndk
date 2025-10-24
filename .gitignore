@@ -1,5 +1,6 @@
 **/node_modules
 temp
+.idea
 **/build
 **/dist
 **/lib
@@ -27,6 +28,7 @@ _local_
 docs/.vitepress/cache
 docs/.vitepress/dist
 .ngit
+.idea
 **/.repomix-output.txt
 cursor-tools.config.json
 coverage

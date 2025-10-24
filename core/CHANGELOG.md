@@ -1,5 +1,11 @@
 # @nostr-dev-kit/ndk
 
+## 3.0.0-beta.2
+
+### Minor Changes
+
+- Add NDKRelayFeedList wrapper for NIP-51 kind 10012 (Relay Feed List). This new class provides comprehensive support for managing user's favorite browsable relays and relay sets, with helper methods for adding/removing relay URLs and relay set references.
+
 ## 3.0.0
 
 ### Major Changes

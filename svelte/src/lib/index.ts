@@ -60,7 +60,7 @@ export { default as RelayManager } from "./components/RelayManager.svelte";
 export { default as RelayPoolTabs } from "./components/RelayPoolTabs.svelte";
 export { default as TransactionList } from "./components/TransactionList.svelte";
 export { default as ZapButton } from "./components/ZapButton.svelte";
-export { NDKSvelte } from "./ndk-svelte.svelte.js";
+export { NDKSvelte, createNDK, type NDKSvelteWithSession } from "./ndk-svelte.svelte.js";
 // Payment runes
 export {
     createIsZapped,
@@ -77,7 +77,6 @@ export type {
     TransactionStatus,
     TransactionType,
 } from "./payments/types.js";
-export { createFetchProfile } from "./profile.svelte.js";
 // Relay management
 export {
     createRelayManager,
@@ -95,10 +94,10 @@ export type { ReactiveWoTStore, WoTFilterOptions, WoTLoadOptions, WoTRankOptions
 export type { SubscribeConfig, Subscription, SyncSubscribeConfig } from "./subscribe.svelte.js";
 // Subscription - can be used as standalone function or via ndk.$subscribe()
 export { createSubscription, createSyncSubscription } from "./subscribe.svelte.js";
-// Event fetching - can be used as standalone function or via ndk.$fetchEvent() / ndk.$fetchEvents()
-export { createFetchEvent, createFetchEvents, type FetchEventOptions } from "./event.svelte.js";
+// Event fetching - can be used as standalone function or via ndk.$fetchEvents()
+export { createFetchEvents, type FetchEventsConfig, type FetchEventOptions } from "./event.svelte.js";
 // User helpers
-export { createFetchUser, createZapInfo, type ZapInfo } from "./user.svelte.js";
+export { createZapInfo, type ZapInfo } from "./user.svelte.js";
 // Zap utilities and subscriptions
 export {
     createZapSubscription,
@@ -116,10 +115,3 @@ export {
 } from "./zaps.svelte.js";
 // WoT runes
 export { createIsInWoT, createWoTDistance, createWoTScore } from "./wot-runes.svelte.js";
-
-// Constants
-export const DEFAULT_BUFFER_MS = 30;
-export const POST_EOSE_BUFFER_MS = 16;
-export const EOSE_TIMEOUT_MS = 5000;
-export const DEFAULT_PROFILE_TIMEOUT = 5000;
-export const MAX_REF_COUNT = 1000;

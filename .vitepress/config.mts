@@ -60,6 +60,21 @@ export default defineConfig({
                 ],
             },
             {
+                text: "Sessions",
+                collapsed: true,
+                items: [
+                    {text: "Introduction ✅", link: "/sessions/docs/introduction"},
+                    {text: "Quick Start ✅", link: "/sessions/docs/quick-start"},
+                    {text: "Storage Options ✅", link: "/sessions/docs/storage-options"},
+                    {text: "Multi-Account ✅", link: "/sessions/docs/multi-account"},
+                    {text: "Migration Guide ✅", link: "/sessions/docs/migration"},
+                    {text: "Advanced ❌", link: "/sessions/docs/advanced"},
+                    {text: "Best Practices ❌", link: "/sessions/docs/best-practices"},
+                    {text: "API Reference ✅", link: "/sessions/docs/api"},
+                    {text: "README ⛔", link: "/sessions/README"}
+                ],
+            },
+            {
                 text: "Wallet",
                 collapsed: true,
                 items: [
@@ -99,16 +114,6 @@ export default defineConfig({
                             {text: "Session Management ❌", link: "/react/session-management"},
                         ]
                     }
-                ],
-            },
-            {
-                text: "Sessions",
-                collapsed: true,
-                items: [
-                    {text: "Introduction ❌", link: "/sessions/README"},
-                    {text: "Quick Start ⛔", link: "/sessions/quick-start"},
-                    {text: "API Reference ⛔", link: "/sessions/api"},
-                    {text: "Migration Guide ⛔", link: "/sessions/migration"}
                 ],
             },
             {

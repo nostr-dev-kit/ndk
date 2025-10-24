@@ -1,6 +1,7 @@
 # Clean up documentation
 
 Full PR + progress available at https://github.com/nostr-dev-kit/ndk/pull/344
+Preview URL https://ndkdocs.asknostr.site/
 
 Some notes:
 

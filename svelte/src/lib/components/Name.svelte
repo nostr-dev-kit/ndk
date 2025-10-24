@@ -27,7 +27,17 @@
 
   let { ndk, pubkey, field = 'displayName', class: className = '' }: Props = $props();
 
-  const profile = ndk.$fetchProfile(() => pubkey);
+  let profile = $state(null);
+
+  $effect(() => {
+    if (!pubkey) {
+      profile = null;
+      return;
+    }
+
+    const user = ndk.getUser({ pubkey });
+    user.fetchProfile().then(p => profile = p);
+  });
 
   // Compute the display text based on the field prop
   const displayText = $derived.by(() => {

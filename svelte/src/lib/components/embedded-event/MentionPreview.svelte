@@ -36,8 +36,23 @@
     class: className = '',
   }: Props = $props();
 
-  const user = ndk.$fetchUser(() => bech32);
-  const profile = ndk.$fetchProfile(() => user?.pubkey);
+  let user = $state(null);
+  let profile = $state(null);
+
+  $effect(() => {
+    if (!bech32) {
+      user = null;
+      profile = null;
+      return;
+    }
+
+    ndk.fetchUser(bech32).then(u => {
+      user = u;
+      if (u?.pubkey) {
+        u.fetchProfile().then(p => profile = p);
+      }
+    });
+  });
 
   // Get display name
   const displayName = $derived.by(() => {

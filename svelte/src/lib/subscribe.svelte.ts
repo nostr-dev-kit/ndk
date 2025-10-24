@@ -9,25 +9,11 @@ import type { WoTFilterOptions, WoTRankOptions } from "@nostr-dev-kit/wot";
 import type { NDKSvelte } from "./ndk-svelte.svelte.js";
 import { validateCallback } from "./utils/validate-callback.js";
 
-export interface SubscribeConfig {
+export type SubscribeConfig = {
     /**
      * Nostr filters for the subscription
      */
     filters: NDKFilter | NDKFilter[];
-    /**
-     * Relay URLs to use for this subscription
-     */
-    relayUrls?: string[];
-    /**
-     * NDK subscription options
-     */
-    pool?: NDKSubscriptionOptions["pool"];
-    closeOnEose?: boolean;
-    groupable?: boolean;
-    groupableDelay?: number;
-    cacheUsage?: NDKSubscriptionOptions["cacheUsage"];
-    subId?: string;
-    maxEventsToReturn?: number;
     /**
      * Disable automatic de-duplication
      */
@@ -46,14 +32,32 @@ export interface SubscribeConfig {
      * Web of Trust ranking (applied after filtering)
      */
     wotRank?: WoTRankOptions;
-}
+} & NDKSubscriptionOptions;
 
-export interface SyncSubscribeConfig extends Omit<SubscribeConfig, "filters">, SyncAndSubscribeOptions {
+export type SyncSubscribeConfig = {
     /**
      * Nostr filters for the subscription
      */
     filters: NDKFilter | NDKFilter[];
-}
+    /**
+     * Disable automatic de-duplication
+     */
+    noDedupe?: boolean;
+    /**
+     * Custom dedupe key function
+     */
+    dedupeKey?: (event: NDKEvent) => string;
+    /**
+     * Web of Trust filtering
+     * - false: Disable WoT filtering even if globally enabled
+     * - WoTFilterOptions: Override global WoT settings
+     */
+    wot?: false | WoTFilterOptions;
+    /**
+     * Web of Trust ranking (applied after filtering)
+     */
+    wotRank?: WoTRankOptions;
+} & NDKSubscriptionOptions & SyncAndSubscribeOptions;
 
 export interface Subscription<T extends NDKEvent = NDKEvent> {
     // Reactive reads

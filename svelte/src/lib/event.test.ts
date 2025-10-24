@@ -1,14 +1,14 @@
 import { NDKArticle, NDKEvent, NDKKind, NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createFetchEvent, createFetchEvents } from "./event.svelte.js";
-import { NDKSvelte } from "./ndk-svelte.svelte.js";
+import { createNDK } from "./ndk-svelte.svelte.js";
 
 describe("Event Fetching", () => {
     let ndk: NDKSvelte;
     let signer: NDKPrivateKeySigner;
 
     beforeEach(() => {
-        ndk = new NDKSvelte({
+        ndk = createNDK({
             explicitRelayUrls: ["wss://relay.test"],
         });
         signer = NDKPrivateKeySigner.generate();
@@ -152,7 +152,7 @@ describe("Event Fetching", () => {
             expect(() => {
                 // @ts-expect-error - Testing runtime validation
                 createFetchEvents(ndk, { kinds: [1] });
-            }).toThrow("$fetchEvents expects filters to be a function");
+            }).toThrow("$fetchEvents expects config to be a function");
         });
 
         it("should throw TypeError when passed array directly", () => {
@@ -163,7 +163,7 @@ describe("Event Fetching", () => {
             expect(() => {
                 // @ts-expect-error - Testing runtime validation
                 createFetchEvents(ndk, [{ kinds: [1] }]);
-            }).toThrow("$fetchEvents expects filters to be a function");
+            }).toThrow("$fetchEvents expects config to be a function");
         });
 
         it("should return empty array when callback returns undefined", () => {

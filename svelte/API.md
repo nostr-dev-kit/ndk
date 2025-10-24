@@ -26,38 +26,120 @@ async function initStores(
 ): Promise<void>;
 ```
 
+### createNDK
+
+**Type-Safe Session Stores**: The `createNDK()` factory function uses TypeScript overloads to provide compile-time guarantees about store availability. When `session` is enabled, `$wallet`, `$sessions`, and `$wot` are guaranteed to be non-optional, eliminating the need for defensive optional chaining.
+
+```typescript
+import type { SessionManagerOptions } from '@nostr-dev-kit/sessions';
+import type { NDKSvelteParams, NDKSvelteWithSession } from '@nostr-dev-kit/svelte';
+
+// Overload: Session enabled
+function createNDK(
+  params: Omit<NDKSvelteParams, 'session'> & {
+    session: true | SessionManagerOptions
+  }
+): NDKSvelteWithSession;
+
+// Overload: No session
+function createNDK(params?: NDKSvelteParams): NDKSvelte;
+```
+
 ### NDKSvelte
 
 ```typescript
 import type NDK from '@nostr-dev-kit/ndk';
-import type { NDKEvent, NDKFilter, NDKRelaySet, NDKSigner } from '@nostr-dev-kit/ndk';
+import type { NDKEvent, NDKFilter, NDKUser, NDKUserProfile, Hexpubkey } from '@nostr-dev-kit/ndk';
+import type { FetchEventState, FetchProfileResult, FetchUserResult } from '@nostr-dev-kit/svelte';
 
 class NDKSvelte extends NDK {
   /**
    * Create a reactive subscription to Nostr events
-   * @param filters - NDK filters or array of filters
-   * @param opts - Subscription options
-   * @returns EventSubscription instance with reactive state
+   * @param config - Callback function returning subscription config, filters, or undefined
+   * @returns Subscription instance with reactive state
    */
   $subscribe<T extends NDKEvent>(
-    filters: NDKFilter | NDKFilter[],
-    opts?: SubscriptionOptions<T>
-  ): EventSubscription<T>;
+    config: () => SubscribeConfig | NDKFilter | NDKFilter[] | undefined
+  ): Subscription<T>;
+
+  /**
+   * Create a reactive meta-subscription (returns events pointed to by e-tags/a-tags)
+   * @param config - Callback function returning meta-subscription config or undefined
+   * @returns MetaSubscription instance with reactive state
+   */
+  $metaSubscribe<T extends NDKEvent>(
+    config: () => MetaSubscribeConfig | NDKFilter | NDKFilter[] | undefined
+  ): MetaSubscription<T>;
+
+  /**
+   * Reactively fetch a user by identifier
+   * @param identifier - Callback returning npub/hex pubkey/nip05 or undefined
+   * @returns Reactive object with ready property
+   */
+  $fetchUser(identifier: () => string | undefined): FetchUserResult;
+
+  /**
+   * Reactively fetch a user profile by pubkey
+   * @param pubkey - Callback returning hex pubkey or undefined
+   * @returns Reactive object with ready property
+   */
+  $fetchProfile(pubkey: () => string | undefined): FetchProfileResult;
+
+  /**
+   * Reactively fetch a single event
+   * @param idOrFilter - Callback returning event ID (bech32), filter, or undefined
+   * @param options - Optional fetch options (wrap: boolean)
+   * @returns Reactive state object with loading and event properties
+   */
+  $fetchEvent<T extends NDKEvent>(
+    idOrFilter: () => string | NDKFilter | NDKFilter[] | undefined,
+    options?: { wrap?: boolean }
+  ): FetchEventState<T>;
+
+  /**
+   * Reactively fetch multiple events
+   * @param config - Callback returning config or filters or undefined
+   * @returns Reactive array of events
+   *
+   * Supports all NDKSubscriptionOptions (relayUrls, pool, closeOnEose, groupable, cacheUsage, wrap, etc.)
+   *
+   * @example
+   * // Shorthand: Return filter directly
+   * const events = ndk.$fetchEvents(() => ({ kinds: [1], limit: 10 }));
+   *
+   * @example
+   * // Full config with options
+   * const events = ndk.$fetchEvents(() => ({
+   *   filters: [{ kinds: [1] }],
+   *   relayUrls: ['wss://relay.damus.io'],
+   *   closeOnEose: true
+   * }));
+   */
+  $fetchEvents<T extends NDKEvent>(
+    config: () => FetchEventsConfig | NDKFilter | NDKFilter[] | undefined
+  ): T[];
+
+  /**
+   * Create a reactive zap subscription
+   * @param config - Callback function returning zap config or undefined
+   * @returns ZapSubscription instance with reactive state
+   */
+  $zaps(config: () => ZapConfig | undefined): ZapSubscription;
 
   /**
    * Session management store (reactive)
    */
-  $sessions: ReactiveSessionsStore;
+  $sessions?: ReactiveSessionsStore;
 
   /**
    * Web of Trust store (reactive)
    */
-  $wot: ReactiveWoTStore;
+  $wot?: ReactiveWoTStore;
 
   /**
    * Wallet integration store (reactive)
    */
-  $wallet: ReactiveWalletStore;
+  $wallet?: ReactiveWalletStore;
 
   /**
    * Payment tracking store (reactive)
@@ -70,11 +152,74 @@ class NDKSvelte extends NDK {
   $pool: ReactivePoolStore;
 
   /**
-   * Create a reactive zap subscription
-   * @param config - Callback function returning zap config or undefined
-   * @returns ZapSubscription instance with reactive state
+   * Current active session (reactive getter, alias for $sessions.current)
    */
-  $zaps(config: () => ZapConfig | undefined): ZapSubscription;
+  readonly $currentSession: NDKSession | undefined;
+
+  /**
+   * Current active user (reactive getter)
+   */
+  readonly $currentUser: NDKUser | undefined;
+
+  /**
+   * Alias for $currentUser (reactive getter)
+   */
+  readonly $activeUser: NDKUser | undefined;
+
+  /**
+   * Current active user's pubkey (reactive getter)
+   */
+  readonly $currentPubkey: Hexpubkey | undefined;
+
+  /**
+   * Current session's follow list as reactive array with add/remove methods
+   */
+  readonly $follows: ReactiveFollows;
+}
+
+/**
+ * Reactive follows array with network publishing methods
+ */
+class ReactiveFollows extends Array<Hexpubkey> {
+  /**
+   * Add one or more follows (publishes once to network)
+   * @param pubkeys - Single hex pubkey or array of hex pubkeys to follow
+   * @returns Promise resolving to true if any new follows were added, false if all were already following
+   * @example
+   * // Add single follow
+   * await ndk.$follows.add("pubkey...");
+   *
+   * // Add multiple follows (single publish)
+   * await ndk.$follows.add(["pubkey1...", "pubkey2...", "pubkey3..."]);
+   */
+  add(pubkeys: Hexpubkey | Hexpubkey[]): Promise<boolean>;
+
+  /**
+   * Remove one or more follows (publishes once to network)
+   * @param pubkeys - Single hex pubkey or array of hex pubkeys to unfollow
+   * @returns Promise resolving to relays where update was published, or false if none were following
+   * @example
+   * // Remove single follow
+   * await ndk.$follows.remove("pubkey...");
+   *
+   * // Remove multiple follows (single publish)
+   * await ndk.$follows.remove(["pubkey1...", "pubkey2...", "pubkey3..."]);
+   */
+  remove(pubkeys: Hexpubkey | Hexpubkey[]): Promise<Set<NDKRelay> | boolean>;
+}
+
+/**
+ * Fetch result types with ready property
+ */
+type FetchUserResult = (NDKUser & { ready: true }) | { ready: false };
+type FetchProfileResult = (NDKUserProfile & { ready: true }) | { ready: false };
+
+/**
+ * Reactive state container for a fetched event
+ */
+class FetchEventState<T extends NDKEvent = NDKEvent> {
+  event: T | null;
+  loading: boolean;
 }
 ```
 
@@ -987,7 +1132,7 @@ articles.events[0].summary;
 ```svelte
 <script lang="ts">
   import { ndk } from '$lib/ndk';
-  import { getZapAmount, getZapSender } from '@nostr-dev-kit/ndk-svelte';
+  import { getZapAmount, getZapSender } from '@nostr-dev-kit/svelte';
 
   export let event: NDKEvent;
 
@@ -1007,7 +1152,7 @@ articles.events[0].summary;
 ```svelte
 <script lang="ts">
   import { ndk } from '$lib/ndk';
-  import { getZapAmount, getZapSender } from '@nostr-dev-kit/ndk-svelte';
+  import { getZapAmount, getZapSender } from '@nostr-dev-kit/svelte';
 
   export let event: NDKEvent;
 
@@ -1046,28 +1191,4 @@ articles.events[0].summary;
 {#if showZaps}
   <div>Total: {zaps.totalAmount} sats</div>
 {/if}
-```
-
-## Constants
-
-```typescript
-/**
- * Default buffer time in milliseconds
- */
-export const DEFAULT_BUFFER_MS = 30;
-
-/**
- * Post-EOSE buffer time in milliseconds (~60fps)
- */
-export const POST_EOSE_BUFFER_MS = 16;
-
-/**
- * Default profile fetch timeout
- */
-export const DEFAULT_PROFILE_TIMEOUT = 5000;
-
-/**
- * Maximum subscription reference count
- */
-export const MAX_REF_COUNT = 1000;
 ```

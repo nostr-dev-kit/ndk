@@ -1,11 +1,10 @@
-import type { NDKConstructorParams, NDKEvent, NDKFilter, NDKRelay, NDKUser, NDKUserProfile, Hexpubkey } from "@nostr-dev-kit/ndk";
-import NDK from "@nostr-dev-kit/ndk";
+import type { NDKConstructorParams, NDKFilter, NDKRelay, NDKUser, NDKUserProfile, Hexpubkey } from "@nostr-dev-kit/ndk";
+import NDK, { NDKEvent } from "@nostr-dev-kit/ndk";
 import type { SessionManagerOptions } from "@nostr-dev-kit/sessions";
 import { LocalStorage, NDKSessionManager } from "@nostr-dev-kit/sessions";
 import * as ndkSvelteGuardrails from "./ai-guardrails/constructor.js";
 import * as subscribeGuardrails from "./ai-guardrails/subscribe.js";
-import { createFetchProfile } from "./profile.svelte.js";
-import { createFetchEvent, createFetchEvents } from "./event.svelte.js";
+import { createFetchEvents } from "./event.svelte.js";
 import type { ReactivePaymentsStore } from "./stores/payments.svelte.js";
 import { createReactivePayments } from "./stores/payments.svelte.js";
 import type { ReactivePoolStore } from "./stores/pool.svelte.js";
@@ -20,7 +19,6 @@ import type { SubscribeConfig, Subscription } from "./subscribe.svelte.js";
 import { createSubscription } from "./subscribe.svelte.js";
 import type { MetaSubscribeConfig, MetaSubscription } from "./meta-subscribe.svelte.js";
 import { createMetaSubscription } from "./meta-subscribe.svelte.js";
-import { createFetchUser } from "./user.svelte.js";
 import type { ZapConfig, ZapSubscription } from "./zaps.svelte.js";
 import { createZapSubscription } from "./zaps.svelte.js";
 
@@ -36,23 +34,70 @@ class ReactiveFollows extends Array<Hexpubkey> {
     }
 
     /**
-     * Add a follow (publishes to network)
+     * Add one or more follows (publishes once to network)
+     * @param pubkeys - Single pubkey or array of pubkeys to follow
+     * @returns true if any new follows were added, false if all were already followed
      */
-    async add(pubkey: Hexpubkey): Promise<boolean> {
+    async add(pubkeys: Hexpubkey | Hexpubkey[]): Promise<boolean> {
         const user = this.#sessions?.currentUser;
         if (!user) throw new Error("No active user");
+        if (!user.ndk) throw new Error("No NDK instance found");
+
+        user.ndk.assertSigner();
+
+        const pubkeysArray = Array.isArray(pubkeys) ? pubkeys : [pubkeys];
         const followSet = this.#sessions?.follows ?? new Set();
-        return await user.follow(pubkey, followSet);
+
+        // Check if any pubkeys are new
+        const newPubkeys = pubkeysArray.filter(pk => !followSet.has(pk));
+        if (newPubkeys.length === 0) return false;
+
+        // Add all new pubkeys to the follow set
+        for (const pubkey of newPubkeys) {
+            followSet.add(pubkey);
+        }
+
+        // Publish once with updated follow list
+        const event = new NDKEvent(user.ndk, { kind: 3 } as any);
+        for (const pubkey of followSet) {
+            event.tags.push(["p", pubkey]);
+        }
+
+        await event.publish();
+        return true;
     }
 
     /**
-     * Remove a follow (publishes to network)
+     * Remove one or more follows (publishes once to network)
+     * @param pubkeys - Single pubkey or array of pubkeys to unfollow
+     * @returns Set of relays where published, or false if none were following
      */
-    async remove(pubkey: Hexpubkey): Promise<Set<NDKRelay> | boolean> {
+    async remove(pubkeys: Hexpubkey | Hexpubkey[]): Promise<Set<NDKRelay> | boolean> {
         const user = this.#sessions?.currentUser;
         if (!user) throw new Error("No active user");
+        if (!user.ndk) throw new Error("No NDK instance found");
+
+        user.ndk.assertSigner();
+
+        const pubkeysArray = Array.isArray(pubkeys) ? pubkeys : [pubkeys];
         const followSet = this.#sessions?.follows ?? new Set();
-        return await user.unfollow(pubkey, followSet);
+
+        // Check if any pubkeys are currently followed
+        const toRemove = pubkeysArray.filter(pk => followSet.has(pk));
+        if (toRemove.length === 0) return false;
+
+        // Remove pubkeys from the follow set
+        for (const pubkey of toRemove) {
+            followSet.delete(pubkey);
+        }
+
+        // Publish once with updated follow list
+        const event = new NDKEvent(user.ndk, { kind: 3 } as any);
+        for (const pubkey of followSet) {
+            event.tags.push(["p", pubkey]);
+        }
+
+        return await event.publish();
     }
 }
 
@@ -66,13 +111,13 @@ export interface NDKSvelteParams extends NDKConstructorParams {
      * @example
      * ```ts
      * // No sessions (default)
-     * const ndk = new NDKSvelte({ explicitRelayUrls: [...] });
+     * const ndk = createNDK({ explicitRelayUrls: [...] });
      *
      * // Sessions with defaults
-     * const ndk = new NDKSvelte({ session: true });
+     * const ndk = createNDK({ session: true });
      *
      * // Sessions with custom settings
-     * const ndk = new NDKSvelte({
+     * const ndk = createNDK({
      *   session: {
      *     follows: true,
      *     wallet: false
@@ -93,7 +138,7 @@ export interface NDKSvelteParams extends NDKConstructorParams {
  * ```ts
  * import { NDKSvelte } from '@nostr-dev-kit/svelte';
  *
- * const ndk = new NDKSvelte({
+ * const ndk = createNDK({
  *   explicitRelayUrls: ['wss://relay.damus.io']
  * });
  * ndk.connect();
@@ -288,137 +333,21 @@ export class NDKSvelte extends NDK {
         return createMetaSubscription<T>(this, config);
     }
 
-    /**
-     * Reactively fetch a user by identifier
-     *
-     * Returns a reactive proxy to the user that updates when the identifier changes.
-     * Use it directly as if it were an NDKUser - all property access is reactive.
-     *
-     * @example
-     * ```ts
-     * const identifier = $derived($page.params.id);
-     * const user = ndk.$fetchUser(() => identifier);
-     *
-     * // In template
-     * {#if user}
-     *   <div>{user.npub}</div>
-     * {/if}
-     * ```
-     */
-    $fetchUser(identifier: () => string | undefined): NDKUser | undefined {
-        return createFetchUser(this, identifier);
-    }
-
-    /**
-     * Reactively fetch a user profile by pubkey
-     *
-     * Returns a reactive proxy to the profile that updates when the pubkey changes.
-     * Use it directly as if it were an NDKUserProfile - all property access is reactive.
-     *
-     * @example
-     * ```ts
-     * const user = ndk.$fetchUser(() => identifier);
-     * const profile = ndk.$fetchProfile(() => user?.pubkey);
-     *
-     * // In template
-     * {#if profile}
-     *   <h1>{profile.name}</h1>
-     * {/if}
-     * ```
-     */
-    $fetchProfile(pubkey: () => string | undefined): NDKUserProfile | undefined {
-        return createFetchProfile(this, pubkey);
-    }
-
-    /**
-     * Reactively fetch a single event
-     *
-     * Returns a reactive proxy to the event that updates when the identifier/filter changes.
-     * Use it directly as if it were an NDKEvent - all property access is reactive.
-     *
-     * **Event Wrapping (Default: Enabled)**
-     * - Events are automatically wrapped in their kind-specific classes (e.g., NDKArticle for kind 30023)
-     * - Invalid events that fail wrapper validation are silently dropped, returning undefined
-     * - This protects your app from receiving malformed events
-     * - To disable wrapping, pass `{ wrap: false }` as the second argument
-     *
-     * @param idOrFilter - Callback returning event ID (bech32), filter, or undefined
-     * @param options - Optional fetch options. Use `{ wrap: false }` to disable automatic wrapping and validation
-     *
-     * @example
-     * ```ts
-     * // Fetch by event ID (bech32 format)
-     * const eventId = $derived($page.params.id);
-     * const event = ndk.$fetchEvent(() => eventId); // "note1..." or "nevent1..."
-     *
-     * // In template
-     * {#if event}
-     *   <div>{event.content}</div>
-     * {/if}
-     * ```
-     *
-     * @example
-     * ```ts
-     * import type { NDKArticle } from "@nostr-dev-kit/ndk";
-     *
-     * // Type the result as NDKArticle to access article-specific properties
-     * const article = ndk.$fetchEvent<NDKArticle>(() => naddr);
-     *
-     * // In template
-     * {#if article}
-     *   <h1>{article.title}</h1>
-     *   <div>{article.content}</div>
-     * {/if}
-     * ```
-     *
-     * @example
-     * ```ts
-     * // Disable automatic wrapping
-     * const event = ndk.$fetchEvent(() => eventId, { wrap: false });
-     * ```
-     *
-     * @example
-     * ```ts
-     * // Fetch by filter
-     * const event = ndk.$fetchEvent(() => ({
-     *   kinds: [0],
-     *   authors: [pubkey],
-     *   limit: 1
-     * }));
-     * ```
-     *
-     * @example
-     * ```ts
-     * // Conditional fetch - return undefined to prevent fetching
-     * const event = ndk.$fetchEvent(() => {
-     *   if (!eventId) return undefined;
-     *   return eventId;
-     * });
-     * ```
-     */
-    $fetchEvent<T extends NDKEvent = NDKEvent>(
-        idOrFilter: () => string | NDKFilter | NDKFilter[] | undefined,
-        options?: import("./event.svelte").FetchEventOptions,
-    ): T | undefined {
-        return createFetchEvent<T>(this, idOrFilter, options);
-    }
 
     /**
      * Reactively fetch multiple events
      *
      * Returns a reactive array of events that updates when the filters change.
+     * Supports all NDKSubscriptionOptions (relayUrls, pool, closeOnEose, groupable, cacheUsage, etc.)
      *
-     * **Event Wrapping (Default: Enabled)**
-     * - Events are automatically wrapped in their kind-specific classes (e.g., NDKArticle for kind 30023)
-     * - Invalid events that fail wrapper validation are silently dropped from the results
-     * - This protects your app from receiving malformed events
-     * - To disable wrapping, pass `{ wrap: false }` as the second argument
+     * All config properties are reactive - fetch automatically re-runs when filters
+     * or NDK options (relayUrls, pool, etc.) change.
      *
-     * @param filters - Callback returning filters or undefined
-     * @param options - Optional fetch options. Use `{ wrap: false }` to disable automatic wrapping and validation
+     * @param config - Callback returning config or filters or undefined
      *
      * @example
      * ```ts
+     * // Shorthand: Return filter directly (automatically wrapped)
      * const pubkey = $state('hex...');
      * const events = ndk.$fetchEvents(() => ({
      *   kinds: [1],
@@ -434,13 +363,24 @@ export class NDKSvelte extends NDK {
      *
      * @example
      * ```ts
+     * // Shorthand: Return array of filters (automatically wrapped)
+     * const events = ndk.$fetchEvents(() => [
+     *   { kinds: [1], authors: [pubkey1] },
+     *   { kinds: [1], authors: [pubkey2] }
+     * ]);
+     * ```
+     *
+     * @example
+     * ```ts
      * import type { NDKArticle } from "@nostr-dev-kit/ndk";
      *
-     * // Type the result as NDKArticle[] to access article-specific properties
+     * // Full config - use when you need additional options
+     * let selectedRelays = $state(['wss://relay.damus.io']);
+     *
      * const articles = ndk.$fetchEvents<NDKArticle>(() => ({
-     *   kinds: [30023],
-     *   authors: [pubkey],
-     *   limit: 10
+     *   filters: [{ kinds: [30023], limit: 10 }],
+     *   relayUrls: selectedRelays,
+     *   closeOnEose: true
      * }));
      *
      * // In template
@@ -452,24 +392,20 @@ export class NDKSvelte extends NDK {
      *
      * @example
      * ```ts
-     * // Disable automatic wrapping
-     * const events = ndk.$fetchEvents(() => ({ kinds: [1] }), { wrap: false });
-     * ```
-     *
-     * @example
-     * ```ts
      * // Conditional fetch - return undefined to prevent fetching
      * const events = ndk.$fetchEvents(() => {
      *   if (!shouldFetch) return undefined;
-     *   return { kinds: [1], authors: [pubkey] };
+     *   return {
+     *     filters: [{ kinds: [1], authors: [pubkey] }],
+     *     relayUrls: selectedRelays
+     *   };
      * });
      * ```
      */
     $fetchEvents<T extends NDKEvent = NDKEvent>(
-        filters: () => NDKFilter | NDKFilter[] | undefined,
-        options?: import("./event.svelte").FetchEventOptions,
+        config: () => import("./event.svelte").FetchEventsConfig | NDKFilter | NDKFilter[] | undefined,
     ): T[] {
-        return createFetchEvents<T>(this, filters, options);
+        return createFetchEvents<T>(this, config);
     }
 
     /**
@@ -550,25 +486,29 @@ export class NDKSvelte extends NDK {
     /**
      * Reactively access the current session's follow list
      *
-     * Returns a reactive array of hex pubkeys that the current user follows.
+     * Returns a reactive array (extends Array) of hex pubkeys that the current user follows.
      * Returns an empty array if sessions are not enabled or no session is active.
      * Automatically updates when the session's follow list changes.
      *
      * Includes add() and remove() methods to modify the follow list and publish to the network.
      *
+     * **Difference from `ndk.$sessions.follows`:**
+     * - `ndk.$follows` - Reactive array (best for templates and subscriptions)
+     * - `ndk.$sessions.follows` - FollowsProxy with Set-like interface (best for Set operations like `has()`, `size`)
+     *
+     * Both update reactively and both have `add()`/`remove()` methods that publish to the network.
+     *
      * @example
      * ```ts
-     * const follows = ndk.$follows;
-     *
-     * // In template
-     * {#each follows as pubkey}
+     * // Iterate over follows in a template
+     * {#each ndk.$follows as pubkey}
      *   <UserCard {pubkey} />
      * {/each}
      * ```
      *
      * @example
      * ```ts
-     * // Use in subscriptions
+     * // Use directly in subscriptions (as an array)
      * const feed = ndk.$subscribe(() => ({
      *   filters: [{ kinds: [1], authors: ndk.$follows, limit: 50 }]
      * }));
@@ -576,9 +516,22 @@ export class NDKSvelte extends NDK {
      *
      * @example
      * ```ts
-     * // Add/remove follows
+     * // Check count
+     * const followCount = ndk.$follows.length;
+     * ```
+     *
+     * @example
+     * ```ts
+     * // Add/remove follows (publishes to network)
      * await ndk.$follows.add(pubkey);
      * await ndk.$follows.remove(pubkey);
+     * ```
+     *
+     * @example
+     * ```ts
+     * // Array methods work
+     * const firstTen = ndk.$follows.slice(0, 10);
+     * const filtered = ndk.$follows.filter(pk => someCondition(pk));
      * ```
      */
     get $follows(): ReactiveFollows {
@@ -640,4 +593,53 @@ export class NDKSvelte extends NDK {
     $zaps(config: () => ZapConfig | undefined): ZapSubscription {
         return createZapSubscription(this, config);
     }
+}
+
+/**
+ * Type helper for NDKSvelte with session stores guaranteed to exist
+ */
+export type NDKSvelteWithSession = NDKSvelte & {
+    $sessions: ReactiveSessionsStore;
+    $wot: ReactiveWoTStore;
+    $wallet: ReactiveWalletStore;
+};
+
+/**
+ * Create an NDKSvelte instance with type-safe session stores
+ *
+ * When session is enabled, TypeScript guarantees that $wallet, $sessions, and $wot exist.
+ * This eliminates the need for optional chaining and provides better type safety.
+ *
+ * @example
+ * ```typescript
+ * // With sessions - stores are guaranteed to exist
+ * const ndk = createNDK({
+ *   explicitRelayUrls: ['wss://relay.damus.io'],
+ *   session: true
+ * });
+ * ndk.$wallet.balance; // ✅ No optional chaining needed
+ * ndk.$sessions.follows; // ✅ TypeScript knows these exist
+ * ```
+ *
+ * @example
+ * ```typescript
+ * // Without sessions - stores are optional
+ * const ndk = createNDK({
+ *   explicitRelayUrls: ['wss://relay.damus.io']
+ * });
+ * ndk.$wallet?.balance; // ⚠️ Must use optional chaining
+ * ```
+ */
+export function createNDK(
+    params: Omit<NDKSvelteParams, 'session'> & {
+        session: true | SessionManagerOptions
+    }
+): NDKSvelteWithSession;
+
+export function createNDK(
+    params?: NDKSvelteParams
+): NDKSvelte;
+
+export function createNDK(params: NDKSvelteParams = {}): NDKSvelte {
+    return new NDKSvelte(params);
 }

@@ -11,7 +11,17 @@
 
   let { ndk, pubkey, size = 40, class: className = '', style = '' }: Props = $props();
 
-  const profile = ndk.$fetchProfile(() => pubkey);
+  let profile = $state(null);
+
+  $effect(() => {
+    if (!pubkey) {
+      profile = null;
+      return;
+    }
+
+    const user = ndk.getUser({ pubkey });
+    user.fetchProfile().then(p => profile = p);
+  });
 
   // Computed values
   const initials = $derived.by(() => {

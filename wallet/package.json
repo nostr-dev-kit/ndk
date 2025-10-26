@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/wallet",
-    "version": "0.8.11-beta.1",
+    "version": "0.8.11-beta.14",
     "description": "NDK Wallet",
     "type": "module",
     "main": "./dist/index.js",
@@ -16,6 +16,14 @@
             "default": "./dist/index.js"
         }
     },
+    "files": [
+        "dist",
+        "src",
+        "README.md",
+        "docs",
+        "examples",
+        "snippets"
+    ],
     "scripts": {
         "dev": "bun run build --watch",
         "build": "tsup src/index.ts --format cjs,esm --dts",
@@ -47,8 +55,8 @@
         "@cashu/crypto": "*"
     },
     "dependencies": {
-        "@nostr-dev-kit/ndk": "^3.0.0-beta.1",
-        "@nostr-dev-kit/sync": "^0.4.0",
+        "@nostr-dev-kit/ndk": "3.0.0-beta.14",
+        "@nostr-dev-kit/sync": "0.4.0-beta.14",
         "debug": "^4.3.7",
         "light-bolt11-decoder": "^3.2.0",
         "tseep": "^1.3.1",

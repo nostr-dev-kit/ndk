@@ -4,6 +4,13 @@
 
 ### Patch Changes
 
+- Updated dependencies
+    - @nostr-dev-kit/ndk@3.0.0
+
+## 8.0.0
+
+### Patch Changes
+
 - Updated dependencies [b8e7a06]
 - Updated dependencies [ad7936b]
 - Updated dependencies [b5bdb2c]

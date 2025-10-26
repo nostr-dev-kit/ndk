@@ -21,6 +21,7 @@ import { NDKList } from "./lists/index.js";
  * @group Kind Wrapper
  */
 export class NDKRelayFeedList extends NDKList {
+    static kind = NDKKind.RelayFeedList;
     static kinds = [NDKKind.RelayFeedList];
 
     constructor(ndk?: NDK, rawEvent?: NostrEvent | NDKEvent) {
@@ -38,7 +39,7 @@ export class NDKRelayFeedList extends NDKList {
      * Gets all relay URLs from the list.
      */
     get relayUrls(): string[] {
-        return this.getItemsByTag("relay").map(tag => tag[1]);
+        return this.getMatchingTags("relay").map(tag => tag[1]);
     }
 
     /**
@@ -46,7 +47,7 @@ export class NDKRelayFeedList extends NDKList {
      * Returns them in the format "kind:pubkey:dtag".
      */
     get relaySets(): string[] {
-        return this.getItemsByTag("a").map(tag => tag[1]);
+        return this.getMatchingTags("a").map(tag => tag[1]);
     }
 
     /**
@@ -101,13 +102,6 @@ export class NDKRelayFeedList extends NDKList {
      */
     async removeRelaySet(relaySetNaddr: string, publish = true): Promise<void> {
         await this.removeItemByValue(relaySetNaddr, publish);
-    }
-
-    /**
-     * Gets items by tag name.
-     */
-    private getItemsByTag(tagName: string): string[][] {
-        return this.items.filter(tag => tag[0] === tagName);
     }
 }
 

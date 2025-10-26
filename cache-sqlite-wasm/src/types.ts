@@ -8,6 +8,10 @@ export interface NDKCacheAdapterSqliteWasmOptions {
 
     // Metadata LRU cache
     metadataLruSize?: number; // Max metadata items (profiles, relay info, NIP-05) in LRU cache (default: 1000)
+
+    // Persistence configuration
+    saveDebounceMs?: number; // Debounce time for saving to IndexedDB (default: 5000ms)
+    disableAutosave?: boolean; // Disable automatic persistence (default: false)
 }
 
 export type WorkerMessage = {

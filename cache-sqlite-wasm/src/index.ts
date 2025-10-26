@@ -56,10 +56,16 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
     private readonly BATCH_DELAY_MS = 0; // Use microtask (0ms) for immediate batching
     private readonly MAX_BATCH_SIZE = 100; // Maximum events per batch
 
+    // Persistence options
+    private saveDebounceMs?: number;
+    private disableAutosave?: boolean;
+
     constructor(options: NDKCacheAdapterSqliteWasmOptions = {}) {
         this.dbName = options.dbName || "ndk-cache";
         this.wasmUrl = options.wasmUrl;
         this.workerUrl = options.workerUrl;
+        this.saveDebounceMs = options.saveDebounceMs;
+        this.disableAutosave = options.disableAutosave;
 
         // Initialize metadata cache
         this.metadataCache = new MetadataLRUCache(options.metadataLruSize || 1000);
@@ -135,6 +141,12 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
         this.worker.onmessage = (event: MessageEvent) => {
             const data = event.data;
 
+            // Handle warmup profiles message
+            if (data.type === 'warmupProfiles') {
+                this.handleProfileWarmup(data.profiles);
+                return;
+            }
+
             // Handle protocol metadata
             if (data._protocol && data._protocol !== "ndk-cache-sqlite") {
                 console.error(
@@ -195,6 +207,8 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
             payload: {
                 dbName: this.dbName,
                 wasmUrl: this.wasmUrl,
+                saveDebounceMs: this.saveDebounceMs,
+                disableAutosave: this.disableAutosave,
             },
         });
     }
@@ -215,6 +229,15 @@ export class NDKCacheAdapterSqliteWasm implements NDKCacheAdapter {
             const msg = { ...message, id };
             this.worker!.postMessage(msg);
         });
+    }
+
+    /**
+     * Handles profile warmup data from worker
+     */
+    private handleProfileWarmup(profiles: Array<{ pubkey: string; profile: any }>): void {
+        for (const { pubkey, profile } of profiles) {
+            this.metadataCache.setProfile(pubkey, profile);
+        }
     }
 
     /**

@@ -266,12 +266,10 @@ await wallet.cashuPay({ amount: 1000, unit: 'sat', target: event });
 
 Explore working examples in the [examples directory](./svelte/examples):
 
-- **[Basic Feed](./svelte/examples/basic-feed)** - Simple note feed with profiles
+- **[Basic Feed](./svelte/examples/feed-viewer)** - Simple note feed with profiles
 - **[Nutsack](./svelte/examples/nutsack)** - NIP-60 Cashu wallet with payment tracking
 - **[Sessions Demo](./svelte/examples/sessions-demo)** - Multi-account session management
-- **[WoT Demo](./svelte/examples/wot-demo)** - Web of Trust filtering
 - **[Event Graph](./svelte/examples/event-graph)** - Event relationship visualization
-- **[Constellation](./svelte/examples/constellation)** - Full-featured Nostr client
 
 ## Real-World Applications
 

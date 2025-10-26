@@ -1,66 +1,98 @@
-import type { NDKUser, NDKZapMethod, NDKZapMethodInfo } from "@nostr-dev-kit/ndk";
+import { NDKUser, type NDKZapMethod, type NDKZapMethodInfo } from "@nostr-dev-kit/ndk";
 import type { NDKSvelte } from "./ndk-svelte.svelte";
 import { validateCallback } from "./utils/validate-callback.js";
+import { untrack } from "svelte";
+
+// Track in-flight user fetch requests to prevent duplicate fetches
+const inFlightUserRequests = new Map<string, Promise<NDKUser | null>>();
+
+export type FetchUserResult = NDKUser & {
+    $loaded: boolean;
+};
 
 /**
  * Reactively fetch a user by identifier
  *
- * Returns a reactive proxy to the user that updates when the identifier changes.
- * Use it directly as if it were an NDKUser - all property access is reactive.
+ * Returns a reactive user object with all user properties directly accessible.
+ * Use `$loaded` to check if the user has been fetched.
  *
  * @example
  * ```svelte
  * <script lang="ts">
- *   const identifier = $derived($page.params.id);
  *   const user = ndk.$fetchUser(() => identifier);
  * </script>
  *
- * {#if user}
+ * {#if user.$loaded}
  *   <div>{user.npub}</div>
+ * {:else}
+ *   <div>Loading...</div>
  * {/if}
  * ```
  */
-export function createFetchUser(ndk: NDKSvelte, identifier: () => string | undefined): NDKUser | undefined {
-    validateCallback(identifier, '$fetchUser', 'identifier');
-    let _user = $state<NDKUser | undefined>(undefined);
+export function createFetchUser(ndk: NDKSvelte, identifier: () => string | undefined): FetchUserResult {
+    validateCallback(identifier, "$fetchUser", "identifier");
+
+    // Initialize as class instance to preserve prototype/getters/methods
+    const instance = new NDKUser({});
+    (instance as any).$loaded = false; // Add dynamic $loaded property
+    const res = $state(instance as FetchUserResult);
 
     const derivedIdentifier = $derived(identifier());
 
+    function clearRes() {
+        // Mutate to clear all properties except $loaded, then set $loaded
+        Object.keys(res).forEach((key) => {
+            if (key !== "$loaded") delete res[key as keyof FetchUserResult];
+        });
+        res.$loaded = false;
+    }
+
     $effect(() => {
         const id = derivedIdentifier;
+
         if (!id) {
-            _user = undefined;
+            untrack(() => clearRes());
             return;
         }
 
-        ndk.fetchUser(id)
+        // Check if there's already an in-flight request for this identifier
+        let fetchPromise = inFlightUserRequests.get(id);
+
+        if (!fetchPromise) {
+            // No in-flight request, create a new one
+            console.log("→ starting new user fetch for", id.slice(0, 8));
+            fetchPromise = ndk.fetchUser(id).finally(() => {
+                console.log("✓ completed user fetch for", id.slice(0, 8));
+                inFlightUserRequests.delete(id);
+            });
+
+            inFlightUserRequests.set(id, fetchPromise);
+        } else {
+            console.log("⚡ reusing in-flight user request for", id.slice(0, 8));
+        }
+
+        // Clear user while loading
+        untrack(() => clearRes());
+
+        // Capture id in closure for async callbacks
+        const capturedId = id;
+
+        fetchPromise
             .then((fetchedUser) => {
-                _user = fetchedUser || undefined;
+                if (fetchedUser && derivedIdentifier === capturedId) {
+                    // Assign all user properties directly to res
+                    Object.assign(res, fetchedUser);
+                    res.$loaded = true;
+                }
             })
             .catch(() => {
-                _user = undefined;
+                if (derivedIdentifier === capturedId) {
+                    clearRes();
+                }
             });
     });
 
-    // Return a proxy that forwards all access to the reactive _user
-    return new Proxy({} as NDKUser | undefined, {
-        get(_target, prop) {
-            if (_user && prop in _user) {
-                const value = _user[prop as keyof NDKUser];
-                return typeof value === "function" ? value.bind(_user) : value;
-            }
-            return undefined;
-        },
-        has(_target, prop) {
-            return _user ? prop in _user : false;
-        },
-        ownKeys() {
-            return _user ? Reflect.ownKeys(_user) : [];
-        },
-        getOwnPropertyDescriptor(_target, prop) {
-            return _user ? Reflect.getOwnPropertyDescriptor(_user, prop) : undefined;
-        },
-    }) as NDKUser | undefined;
+    return res;
 }
 
 export type ZapInfo = {

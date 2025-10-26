@@ -1,5 +1,5 @@
 import type NDK from "@nostr-dev-kit/ndk";
-import { type Hexpubkey, NDKKind as Kind, type NDKEvent, type NDKKind } from "@nostr-dev-kit/ndk";
+import { type Hexpubkey, NDKKind as Kind, type NDKEvent, type NDKKind, type LnPaymentInfo } from "@nostr-dev-kit/ndk";
 import type { NDKSessionManager } from "@nostr-dev-kit/sessions";
 import {
     type NDKCashuDeposit,
@@ -318,6 +318,15 @@ export class ReactiveWalletStore {
         const wallet = this.#wallet;
         if (!(wallet instanceof NDKCashuWallet)) throw new Error("No wallet");
         return await wallet.getP2pk();
+    }
+
+    /**
+     * Pay a Lightning invoice
+     */
+    async lnPay(payment: LnPaymentInfo): Promise<any> {
+        const wallet = this.#wallet;
+        if (!(wallet instanceof NDKCashuWallet)) throw new Error("No wallet");
+        return wallet.lnPay(payment);
     }
 
     /**

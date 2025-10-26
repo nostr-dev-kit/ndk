@@ -593,6 +593,42 @@ export class NDKSvelte extends NDK {
     $zaps(config: () => ZapConfig | undefined): ZapSubscription {
         return createZapSubscription(this, config);
     }
+
+    /**
+     * Get the session event for a specific NDK event class
+     *
+     * Returns the session event matching the kind of the provided class.
+     * The event is already wrapped in the appropriate class by the session manager.
+     * Requires sessions to be enabled.
+     *
+     * @param eventClass - An NDK event class with a static `kinds` property
+     * @returns The session event for that kind, or undefined if not found or sessions not enabled
+     *
+     * @example
+     * ```ts
+     * import { NDKRelayFeedList } from "@nostr-dev-kit/ndk";
+     *
+     * const relayFeedList = ndk.$sessionEvent(NDKRelayFeedList);
+     * if (relayFeedList) {
+     *   console.log(relayFeedList.relayUrls);
+     * }
+     * ```
+     *
+     * @example
+     * ```ts
+     * import { NDKCashuMintAnnouncement } from "@nostr-dev-kit/ndk";
+     *
+     * const walletEvent = ndk.$sessionEvent(NDKCashuMintAnnouncement);
+     * ```
+     */
+    $sessionEvent<T extends NDKEvent>(
+        eventClass: { kinds: number[] }
+    ): T | undefined {
+        if (!this.$sessions) return undefined;
+
+        const kind = eventClass.kinds[0];
+        return this.$sessions.getSessionEvent(kind) as T | undefined;
+    }
 }
 
 /**

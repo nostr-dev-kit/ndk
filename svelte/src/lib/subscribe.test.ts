@@ -1,13 +1,13 @@
 import { NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
 import { beforeEach, describe, expect, it } from "vitest";
-import { NDKSvelte } from "./ndk-svelte.svelte.js";
+import { createNDK } from "./ndk-svelte.svelte.js";
 import { createSubscription } from "./subscribe.svelte.js";
 
 describe("Subscription Validation", () => {
     let ndk: NDKSvelte;
 
     beforeEach(() => {
-        ndk = new NDKSvelte({
+        ndk = createNDK({
             explicitRelayUrls: ["wss://relay.test"],
         });
         NDKPrivateKeySigner.generate();

@@ -1,6 +1,6 @@
 import { NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
 import { beforeEach, describe, expect, it } from "vitest";
-import { NDKSvelte } from "../ndk-svelte.svelte";
+import { createNDK, type NDKSvelte } from "../ndk-svelte.svelte";
 
 describe("SessionsStore", () => {
     let ndk: NDKSvelte;
@@ -8,7 +8,7 @@ describe("SessionsStore", () => {
     let signer2: NDKPrivateKeySigner;
 
     beforeEach(async () => {
-        ndk = new NDKSvelte({ explicitRelayUrls: ["wss://relay.test"], session: true });
+        ndk = createNDK({ explicitRelayUrls: ["wss://relay.test"], session: true });
 
         // Create test signers
         signer1 = NDKPrivateKeySigner.generate();

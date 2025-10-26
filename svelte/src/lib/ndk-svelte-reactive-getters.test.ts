@@ -1,12 +1,12 @@
-import { NDKPrivateKeySigner } from "@nostr-dev-kit/ndk";
+import { NDKEvent, NDKPrivateKeySigner, NDKRelayFeedList } from "@nostr-dev-kit/ndk";
 import { beforeEach, describe, expect, it } from "vitest";
-import { NDKSvelte } from "./ndk-svelte.svelte.js";
+import { createNDK } from "./ndk-svelte.svelte.js";
 
 describe("NDKSvelte Reactive Getters", () => {
     let ndk: NDKSvelte;
 
     beforeEach(() => {
-        ndk = new NDKSvelte({
+        ndk = createNDK({
             explicitRelayUrls: ["wss://relay.test"],
             session: true,
         });
@@ -108,7 +108,7 @@ describe("NDKSvelte Reactive Getters", () => {
 
     describe("$currentSession", () => {
         it("should return undefined when sessions are not enabled", () => {
-            const ndkNoSessions = new NDKSvelte({
+            const ndkNoSessions = createNDK({
                 explicitRelayUrls: ["wss://relay.test"],
             });
 
@@ -160,7 +160,7 @@ describe("NDKSvelte Reactive Getters", () => {
 
     describe("$follows", () => {
         it("should return empty array when sessions are not enabled", () => {
-            const ndkNoSessions = new NDKSvelte({
+            const ndkNoSessions = createNDK({
                 explicitRelayUrls: ["wss://relay.test"],
             });
 
@@ -232,6 +232,64 @@ describe("NDKSvelte Reactive Getters", () => {
 
             // Note: activeUser might still be set after logout if no event fires
             // This is OK since there's no active session anyway
+        });
+    });
+
+    describe("$sessionEvent", () => {
+        it("should return undefined when sessions are not enabled", () => {
+            const ndkNoSessions = createNDK({
+                explicitRelayUrls: ["wss://relay.test"],
+            });
+
+            expect(ndkNoSessions.$sessionEvent(NDKRelayFeedList)).toBeUndefined();
+        });
+
+        it("should return undefined when no session is active", () => {
+            expect(ndk.$sessionEvent(NDKRelayFeedList)).toBeUndefined();
+        });
+
+        it("should return undefined when session exists but event not loaded", async () => {
+            const signer = NDKPrivateKeySigner.generate();
+            await ndk.$sessions?.login(signer, { setActive: true });
+
+            // No relay feed list event has been loaded
+            const relayFeedList = ndk.$sessionEvent(NDKRelayFeedList);
+            expect(relayFeedList).toBeUndefined();
+        });
+
+        it("should return the session event when it exists", async () => {
+            const signer = NDKPrivateKeySigner.generate();
+            const user = await signer.user();
+
+            await ndk.$sessions?.login(signer, { setActive: true });
+
+            // Create and store a relay feed list event
+            const mockEvent = new NDKEvent(ndk, {
+                kind: 10012,
+                pubkey: user.pubkey,
+                content: "",
+                tags: [
+                    ["relay", "wss://relay.damus.io"],
+                    ["relay", "wss://nos.lol"]
+                ],
+                created_at: Math.floor(Date.now() / 1000),
+            });
+            mockEvent.id = "test-id";
+
+            // Manually set the event in the session
+            const session = ndk.$sessions?.current;
+            if (session) {
+                session.events.set(10012, NDKRelayFeedList.from(mockEvent));
+            }
+
+            // Now it should return the event
+            const relayFeedList = ndk.$sessionEvent(NDKRelayFeedList);
+            expect(relayFeedList).toBeDefined();
+            expect(relayFeedList).toBeInstanceOf(NDKRelayFeedList);
+            expect(relayFeedList?.relayUrls).toEqual([
+                "wss://relay.damus.io",
+                "wss://nos.lol"
+            ]);
         });
     });
 });

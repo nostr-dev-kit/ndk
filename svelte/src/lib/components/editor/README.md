@@ -15,10 +15,9 @@ A rich text editor for Nostr built with [nostr-editor](https://github.com/cesard
 
 ```svelte
 <script lang="ts">
-	import { NostrEditor } from '@nostr-dev-kit/svelte';
-	import { NDKSvelte } from '@nostr-dev-kit/svelte';
+	import { NostrEditor, createNDK } from '@nostr-dev-kit/svelte';
 
-	const ndk = new NDKSvelte({
+	const ndk = createNDK({
 		explicitRelayUrls: ['wss://relay.damus.io', 'wss://nos.lol']
 	});
 
@@ -88,7 +87,7 @@ A rich text editor for Nostr built with [nostr-editor](https://github.com/cesard
 	import { NostrEditor } from '@nostr-dev-kit/svelte';
 	import type { FileAttributes, UploadResult } from 'nostr-editor';
 
-	const ndk = new NDKSvelte({ ... });
+	const ndk = createNDK({ ... });
 
 	const nostrOptions = {
 		fileUpload: {

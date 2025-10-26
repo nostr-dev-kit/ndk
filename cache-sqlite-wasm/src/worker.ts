@@ -50,19 +50,32 @@ let SQL: initSqlJs.SqlJsStatic | null = null;
 let dbName: string = "ndk-cache";
 
 let saveTimeout: number | null = null;
-const SAVE_DEBOUNCE_MS = 500;
+let SAVE_DEBOUNCE_MS = 5000; // Increased from 500ms to reduce memory pressure
+let DISABLE_AUTOSAVE = false;
 
 // Debounced persistence: saves DB to IndexedDB after writes
 function scheduleSave() {
+    if (DISABLE_AUTOSAVE) {
+        return;
+    }
+
     if (saveTimeout !== null) {
         clearTimeout(saveTimeout);
     }
     saveTimeout = setTimeout(async () => {
         if (db && dbName) {
+            const startTime = performance.now();
             const data = db.export();
+            const exportTime = performance.now() - startTime;
+            const dbSizeMB = (data.byteLength / (1024 * 1024)).toFixed(2);
+
+            console.log(`[Worker] DB export: ${dbSizeMB}MB in ${exportTime.toFixed(0)}ms`);
 
             try {
+                const saveStartTime = performance.now();
                 await saveToIndexedDB(dbName, data);
+                const saveTime = performance.now() - saveStartTime;
+                console.log(`[Worker] DB save to IndexedDB: ${saveTime.toFixed(0)}ms`);
             } catch (err) {
                 console.error("[Worker Persistence] Failed to save DB to IndexedDB", err);
             }
@@ -83,8 +96,21 @@ function patchDbPersistence(database: Database): void {
 async function initializeDatabase(config: {
     dbName: string;
     wasmUrl?: string;
+    saveDebounceMs?: number;
+    disableAutosave?: boolean;
 }) {
     dbName = config.dbName || "ndk-cache";
+
+    // Apply persistence configuration
+    if (config.saveDebounceMs !== undefined) {
+        SAVE_DEBOUNCE_MS = config.saveDebounceMs;
+    }
+    if (config.disableAutosave !== undefined) {
+        DISABLE_AUTOSAVE = config.disableAutosave;
+    }
+
+    console.log(`[Worker] Persistence config: debounce=${SAVE_DEBOUNCE_MS}ms, autosave=${!DISABLE_AUTOSAVE}`);
+
     try {
         const sqlJsConfig: any = {};
         if (config.wasmUrl) {
@@ -104,9 +130,49 @@ async function initializeDatabase(config: {
 
         // Initial save after migrations (in case schema changed)
         scheduleSave();
+
+        // Warm up profile LRU cache
+        warmupProfileCache(db);
     } catch (error) {
         console.error("Worker: Database initialization failed", error);
         throw error;
+    }
+}
+
+function warmupProfileCache(database: Database) {
+    try {
+        // Get the most recently updated profiles to warm the cache
+        const stmt = database.prepare(`
+            SELECT pubkey, profile, updated_at
+            FROM profiles
+            ORDER BY updated_at DESC
+            LIMIT 500
+        `);
+
+        const profiles: Array<{ pubkey: string; profile: any }> = [];
+
+        while (stmt.step()) {
+            const row = stmt.getAsObject();
+            try {
+                profiles.push({
+                    pubkey: row.pubkey as string,
+                    profile: JSON.parse(row.profile as string),
+                });
+            } catch (e) {
+                // Skip invalid profile JSON
+            }
+        }
+        stmt.free();
+
+        // Send warmup data back to main thread to populate the LRU
+        if (profiles.length > 0) {
+            self.postMessage({
+                type: 'warmupProfiles',
+                profiles,
+            });
+        }
+    } catch (error) {
+        console.error("[Worker] Profile LRU warmup failed:", error);
     }
 }
 
@@ -388,6 +454,46 @@ self.onmessage = async (event: MessageEvent) => {
                         eventCount: 0,
                     };
                 }
+                break;
+            }
+            case "getCacheData": {
+                const { namespace, key, maxAgeInSecs } = payload;
+                const now = Math.floor(Date.now() / 1000);
+
+                const stmt = db.prepare("SELECT data, cached_at FROM cache_data WHERE namespace = ? AND key = ?");
+                stmt.bind([namespace, key]);
+
+                if (stmt.step()) {
+                    const row = stmt.getAsObject();
+                    const cachedAt = row.cached_at as number;
+
+                    // Check if expired
+                    if (maxAgeInSecs && now - cachedAt > maxAgeInSecs) {
+                        stmt.free();
+                        result = undefined;
+                        break;
+                    }
+
+                    result = JSON.parse(row.data as string);
+                    stmt.free();
+                } else {
+                    result = undefined;
+                    stmt.free();
+                }
+                break;
+            }
+            case "setCacheData": {
+                const { namespace, key, data } = payload;
+                const now = Math.floor(Date.now() / 1000);
+                const dataJson = JSON.stringify(data);
+
+                db.run("INSERT OR REPLACE INTO cache_data (namespace, key, data, cached_at) VALUES (?, ?, ?, ?)", [
+                    namespace,
+                    key,
+                    dataJson,
+                    now,
+                ]);
+                result = undefined;
                 break;
             }
             default:

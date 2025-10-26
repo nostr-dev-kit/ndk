@@ -1,0 +1,295 @@
+{
+  "$schema": "https://shadcn-svelte.com/schema/registry.json",
+  "name": "ndk-svelte",
+  "homepage": "https://ndk.fyi",
+  "aliases": {
+    "lib": "$lib",
+    "ndk": "@nostr-dev-kit/ndk",
+    "ndk-svelte": "@nostr-dev-kit/svelte",
+    "builders": "$lib/builders",
+    "ui": "$lib/ui",
+    "utils": "$lib/utils"
+  },
+  "items": [
+    {
+      "name": "note-card",
+      "type": "registry:block",
+      "title": "Note Card",
+      "description": "A complete note display component with reactions, replies, and zaps",
+      "registryDependencies": ["reactions", "replies"],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
+      "files": [
+        {
+          "path": "registry/ndk/note-card/note-card.svelte",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "reactions",
+      "type": "registry:component",
+      "title": "Reactions",
+      "description": "Reaction component with custom emoji support",
+      "registryDependencies": [],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
+      "files": [
+        {
+          "path": "registry/ndk/reactions/reactions.svelte",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "replies",
+      "type": "registry:component",
+      "title": "Replies",
+      "description": "Reply thread display and composition",
+      "registryDependencies": [],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
+      "files": [
+        {
+          "path": "registry/ndk/replies/replies.svelte",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "user-card",
+      "type": "registry:block",
+      "title": "User Card",
+      "description": "Profile display with avatar, bio, and follow button",
+      "registryDependencies": [],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
+      "files": [
+        {
+          "path": "registry/ndk/user/user-card/user-card.svelte",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "zap-button",
+      "type": "registry:component",
+      "title": "Zap Button",
+      "description": "Lightning payment button with amount selector",
+      "registryDependencies": [],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte", "@nostr-dev-kit/wallet"],
+      "files": [
+        {
+          "path": "registry/ndk/zap-button/zap-button.svelte",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "avatar",
+      "type": "registry:component",
+      "title": "Avatar",
+      "description": "User avatar display with fallback",
+      "registryDependencies": [],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
+      "files": [
+        {
+          "path": "registry/ndk/user/avatar/avatar.svelte",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "name",
+      "type": "registry:component",
+      "title": "Name",
+      "description": "Display user's name from their Nostr profile",
+      "registryDependencies": [],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
+      "files": [
+        {
+          "path": "registry/ndk/user/name/name.svelte",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "blossom-image",
+      "type": "registry:component",
+      "title": "Blossom Image",
+      "description": "Image component with Blossom CDN support",
+      "registryDependencies": [],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte", "@nostr-dev-kit/blossom"],
+      "files": [
+        {
+          "path": "registry/ndk/blossom-image/blossom-image.svelte",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "embedded-event",
+      "type": "registry:component",
+      "title": "Embedded Event",
+      "description": "Display embedded Nostr events with previews",
+      "registryDependencies": [],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
+      "files": [
+        {
+          "path": "registry/ndk/event/content/event/event.svelte",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "article-preview",
+      "type": "registry:component",
+      "title": "Article Preview",
+      "description": "Preview card for long-form articles",
+      "registryDependencies": [],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
+      "files": [
+        {
+          "path": "registry/ndk/event/cards/preview/article-preview/article-preview.svelte",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "note-preview",
+      "type": "registry:component",
+      "title": "Note Preview",
+      "description": "Preview card for notes",
+      "registryDependencies": [],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
+      "files": [
+        {
+          "path": "registry/ndk/event/cards/preview/note-preview/note-preview.svelte",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "mention-preview",
+      "type": "registry:component",
+      "title": "Mention Preview",
+      "description": "Preview for user mentions",
+      "registryDependencies": [],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
+      "files": [
+        {
+          "path": "registry/ndk/event/content/mention/mention.svelte",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "generic-preview",
+      "type": "registry:component",
+      "title": "Generic Preview",
+      "description": "Generic event preview fallback",
+      "registryDependencies": [],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
+      "files": [
+        {
+          "path": "registry/ndk/event/cards/preview/generic-preview/generic-preview.svelte",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "hashtag-preview",
+      "type": "registry:component",
+      "title": "Hashtag Preview",
+      "description": "Display hashtags with optional click handler",
+      "registryDependencies": [],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
+      "files": [
+        {
+          "path": "registry/ndk/event/content/hashtag/hashtag.svelte",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "event-content",
+      "type": "registry:component",
+      "title": "Event Content",
+      "description": "Rich event content renderer with automatic parsing of mentions, hashtags, media, and more",
+      "registryDependencies": ["mention-preview", "embedded-event", "hashtag-preview"],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte", "nostr-tools"],
+      "files": [
+        {
+          "path": "registry/ndk/event/content/event-content.svelte",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "relay-card",
+      "type": "registry:component",
+      "title": "Relay Card",
+      "description": "Display relay information and status",
+      "registryDependencies": [],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
+      "files": [
+        {
+          "path": "registry/ndk/relay-card/relay-card.svelte",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "relay-connection-status",
+      "type": "registry:component",
+      "title": "Relay Connection Status",
+      "description": "Show relay connection status indicator",
+      "registryDependencies": [],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
+      "files": [
+        {
+          "path": "registry/ndk/relay-connection-status/relay-connection-status.svelte",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "relay-list",
+      "type": "registry:component",
+      "title": "Relay List",
+      "description": "Display a list of relays with status",
+      "registryDependencies": [],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
+      "files": [
+        {
+          "path": "registry/ndk/relay-list/relay-list.svelte",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "relay-pool-tabs",
+      "type": "registry:component",
+      "title": "Relay Pool Tabs",
+      "description": "Tabbed interface for relay pool management",
+      "registryDependencies": [],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
+      "files": [
+        {
+          "path": "registry/ndk/relay-pool-tabs/relay-pool-tabs.svelte",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "relay-manager",
+      "type": "registry:component",
+      "title": "Relay Manager",
+      "description": "Complete relay management interface",
+      "registryDependencies": [],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
+      "files": [
+        {
+          "path": "registry/ndk/relay-manager/relay-manager.svelte",
+          "type": "registry:ui"
+        }
+      ]
+    }
+  ]
+}

@@ -18,48 +18,12 @@ export {
     type UrlStatus,
     createBlossomUrl,
 } from "./blossom-url.svelte.js";
-// Components
-export { default as Avatar } from "./components/Avatar.svelte";
-export { default as BlossomImage } from "./components/BlossomImage.svelte";
-export { default as EventContent } from "./components/EventContent.svelte";
-export { default as Name } from "./components/Name.svelte";
-export { default as NostrEditor } from "./components/editor/NostrEditor.svelte";
-export { default as ImageNodeView } from "./components/editor/nodes/ImageNodeView.svelte";
-export { default as NAddrNodeView } from "./components/editor/nodes/NAddrNodeView.svelte";
-export { default as NEventNodeView } from "./components/editor/nodes/NEventNodeView.svelte";
-export { default as NProfileNodeView } from "./components/editor/nodes/NProfileNodeView.svelte";
-export { default as VideoNodeView } from "./components/editor/nodes/VideoNodeView.svelte";
-export { default as EmbeddedEvent } from "./components/embedded-event/EmbeddedEvent.svelte";
-export { default as HashtagPreview } from "./components/embedded-event/HashtagPreview.svelte";
-export { default as MentionPreview } from "./components/embedded-event/MentionPreview.svelte";
-// EventContent customization - components
-export {
-    type EmbeddedEventComponentProps,
-    type EmojiComponentProps,
-    type EventContentComponents,
-    getEventContentComponents,
-    type HashtagComponentProps,
-    type ImageGridComponentProps,
-    type LinkComponentProps,
-    type MediaComponentProps,
-    type MentionComponentProps,
-    mergeComponentRegistries,
-    resetEventContentComponents,
-    setEventContentComponents,
-} from "./components/event-content-components.js";
-// EventContent customization - handlers
-export {
-    type EventContentHandlers,
-    EventContentHandlersProxy,
-} from "./components/event-content-handlers.js";
-export { default as RelayAddForm } from "./components/RelayAddForm.svelte";
-export { default as RelayCard } from "./components/RelayCard.svelte";
-export { default as RelayConnectionStatus } from "./components/RelayConnectionStatus.svelte";
-export { default as RelayList } from "./components/RelayList.svelte";
-export { default as RelayManager } from "./components/RelayManager.svelte";
-export { default as RelayPoolTabs } from "./components/RelayPoolTabs.svelte";
-export { default as TransactionList } from "./components/TransactionList.svelte";
-export { default as ZapButton } from "./components/ZapButton.svelte";
+
+
+// ============================================================================
+// Core NDK Svelte
+// ============================================================================
+
 export { NDKSvelte, createNDK, type NDKSvelteWithSession } from "./ndk-svelte.svelte.js";
 // Payment runes
 export {
@@ -115,3 +79,68 @@ export {
 } from "./zaps.svelte.js";
 // WoT runes
 export { createIsInWoT, createWoTDistance, createWoTScore } from "./wot-runes.svelte.js";
+
+// ============================================================================
+// Thread Builder
+// ============================================================================
+
+export {
+    createThreadView,
+    type ThreadView,
+    type ThreadNode,
+    type CreateThreadViewOptions,
+    type ThreadingMetadata
+} from "./builders/event/thread/index.js";
+
+// ============================================================================
+// Event Card Builder
+// ============================================================================
+
+export {
+    createEventCard,
+    type EventCardState
+} from "./builders/event/card/index.js";
+
+// ============================================================================
+// Event Content Rendering Builders
+// ============================================================================
+
+export {
+    createEventContent,
+    createEmbeddedEvent,
+    type CreateEmbeddedEventProps,
+    type CreateEventContentProps,
+    type EmbeddedEventState,
+    type EventContentState,
+} from "./builders/event-content/index.svelte.js";
+
+// ============================================================================
+// Profile Builder
+// ============================================================================
+
+export {
+    createProfileFetcher,
+    type CreateProfileFetcherProps,
+    type ProfileFetcherState,
+} from "./builders/profile/index.svelte.js";
+
+// Content parsing utilities
+export {
+    buildEmojiMap,
+    classifyMatch,
+    collectMatches,
+    createEmojiSegment,
+    decodeNostrUri,
+    extractYouTubeId,
+    groupConsecutiveImages,
+    isImage,
+    isVideo,
+    isYouTube,
+    parseContentToSegments,
+    PATTERNS,
+    type ParsedSegment,
+} from "./builders/event-content/utils.js";
+
+// Note: UI components are now available via the registry (shadcn-style)
+// Users should copy components from registry/ndk/* into their projects
+// This provides better customization and avoids version lock-in

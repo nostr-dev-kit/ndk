@@ -2,6 +2,13 @@
 
 ## 4.0.0
 
+### Patch Changes
+
+- Updated dependencies
+    - @nostr-dev-kit/ndk@3.0.0
+
+## 4.0.0
+
 ### Major Changes
 
 - b5bdb2c: BREAKING: Rename all use* functions to create* for consistency

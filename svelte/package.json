@@ -1,6 +1,6 @@
 {
     "name": "@nostr-dev-kit/svelte",
-    "version": "4.0.0-beta.1",
+    "version": "4.0.0",
     "description": "Modern, performant, and beautiful Svelte 5 integration for NDK",
     "type": "module",
     "svelte": "./dist/index.js",
@@ -48,16 +48,16 @@
     "author": "pablof7z",
     "license": "MIT",
     "peerDependencies": {
-        "@nostr-dev-kit/ndk": "^3.0.0-beta.1",
-        "svelte": "^5.41.1"
+        "@nostr-dev-kit/ndk": "^3.0.0",
+        "svelte": "^5.41.2"
     },
     "dependencies": {
-        "@nostr-dev-kit/cache-sqlite-wasm": "^1.0.0-beta.1",
-        "@nostr-dev-kit/ndk": "^3.0.0-beta.1",
-        "@nostr-dev-kit/sessions": "^0.6.4-beta.1",
-        "@nostr-dev-kit/sync": "^0.4.0",
-        "@nostr-dev-kit/wallet": "^0.8.11-beta.1",
-        "@nostr-dev-kit/wot": "^0.3.7",
+        "@nostr-dev-kit/cache-sqlite-wasm": "^1.0.0-beta.4",
+        "@nostr-dev-kit/ndk": "^3.0.0",
+        "@nostr-dev-kit/sessions": "^0.6.4-beta.2",
+        "@nostr-dev-kit/sync": "^0.4.0-beta.1",
+        "@nostr-dev-kit/wallet": "^0.8.11-beta.2",
+        "@nostr-dev-kit/wot": "^0.3.7-beta.1",
         "@tiptap/core": "^2.6.6",
         "@tiptap/extension-image": "^2.6.6",
         "@tiptap/extension-link": "^2.6.6",
@@ -84,7 +84,7 @@
         "playwright": "^1.56.1",
         "prettier": "^3.3.3",
         "prettier-plugin-svelte": "^3.0.0",
-        "svelte": "^5.41.1",
+        "svelte": "^5.41.2",
         "svelte-check": "^4.0.0",
         "svelte-eslint-parser": "^1.4.0",
         "tslib": "^2.6.0",

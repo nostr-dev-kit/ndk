@@ -1,12 +1,12 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { NDKSvelte } from './ndk-svelte.svelte.js';
+import { createNDK } from './ndk-svelte.svelte.js';
 import { createMetaSubscription } from './meta-subscribe.svelte.js';
 
 describe('Meta-Subscription Validation', () => {
     let ndk: NDKSvelte;
 
     beforeEach(() => {
-        ndk = new NDKSvelte({
+        ndk = createNDK({
             explicitRelayUrls: ['wss://relay.test']
         });
     });

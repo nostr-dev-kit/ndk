@@ -6,7 +6,7 @@
  *
  * @example
  * ```ts
- * import EventContent from '@nostr-dev-kit/ndk-svelte';
+ * import EventContent from '@nostr-dev-kit/svelte';
  *
  * // Set global handlers via static property
  * EventContent.handlers.onMentionClick = (bech32) => navigate(`/p/${bech32}`);

@@ -8,8 +8,25 @@
     import { NDKKind } from '@nostr-dev-kit/ndk';
 
     const identifier = $derived($page.params.id);
-    const user = ndk.$fetchUser(() => identifier);
-    const profile = ndk.$fetchProfile(() => user?.pubkey);
+
+    // Fetch user reactively
+    let user = $state(null);
+    let profile = $state(null);
+
+    $effect(() => {
+        if (!identifier) {
+            user = null;
+            profile = null;
+            return;
+        }
+
+        ndk.fetchUser(identifier).then(u => {
+            user = u;
+            if (u?.pubkey) {
+                u.fetchProfile().then(p => profile = p);
+            }
+        });
+    });
 
     const events = ndk.$subscribe(() => user ? ({
         filters: [{ kinds: [NDKKind.Text], authors: [user.pubkey], limit: 50 }],
@@ -19,7 +36,7 @@
     let followingCount = $state(0);
 
     $effect(() => {
-        if (!user) return;
+        if (!user?.pubkey) return;
 
         (async () => {
             const followers = await ndk.fetchEvents({

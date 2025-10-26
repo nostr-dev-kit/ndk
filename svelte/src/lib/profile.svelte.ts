@@ -1,81 +1,87 @@
 import type { NDKUserProfile } from "@nostr-dev-kit/ndk";
 import type { NDKSvelte } from "./ndk-svelte.svelte";
-import { LRUCache } from "./utils/lru-cache.js";
 import { validateCallback } from "./utils/validate-callback.js";
+import { untrack } from "svelte";
 
-// Global LRU cache for profile fetches (1000 entries)
-const profileCache = new LRUCache<string, NDKUserProfile>(1000);
+// Track in-flight profile fetch requests to prevent duplicate fetches
+const inFlightRequests = new Map<string, Promise<NDKUserProfile | null>>();
+
+export type FetchProfileResult = NDKUserProfile & {
+    $loaded: boolean;
+};
 
 /**
  * Reactively fetch a user profile by pubkey
  *
- * Returns a reactive proxy to the profile that updates when the pubkey changes.
- * Use it directly as if it were an NDKUserProfile - all property access is reactive.
+ * Returns a reactive profile object with all profile properties directly accessible.
+ * Use `$loaded` to check if the profile has been fetched.
  *
  * @example
  * ```svelte
  * <script lang="ts">
- *   const user = ndk.$fetchUser(() => identifier);
- *   const profile = ndk.$fetchProfile(() => user?.pubkey);
+ *   const profile = ndk.$fetchProfile(() => pubkey);
  * </script>
  *
- * {#if profile}
- *   <h1>{profile.name}</h1>
+ * {#if profile.$loaded}
+ *   <h1>{profile.name || 'Anonymous'}</h1>
  *   <p>{profile.about}</p>
  * {/if}
  * ```
  */
-export function createFetchProfile(ndk: NDKSvelte, pubkey: () => string | undefined): NDKUserProfile | undefined {
-    validateCallback(pubkey, '$fetchProfile', 'pubkey');
-    let _profile = $state<NDKUserProfile | undefined>(undefined);
+export function createFetchProfile(ndk: NDKSvelte, pubkey: () => string | undefined) {
+    validateCallback(pubkey, "$fetchProfile", "pubkey");
+    let profile = $state<NDKUserProfile>({});
 
     const derivedPubkey = $derived(pubkey());
+
+    function clearProfile() {
+        // Mutate to clear all properties without reassigning
+        Object.keys(profile).forEach((key) => delete profile[key]);
+    }
 
     $effect(() => {
         const pk = derivedPubkey;
         if (!pk) {
-            _profile = undefined;
+            untrack(() => clearProfile());
             return;
         }
 
-        // Check cache first
-        const cachedProfile = profileCache.get(pk);
-        if (cachedProfile) {
-            _profile = cachedProfile;
-            return;
+        console.log("trying to get profile of ", pk);
+
+        // Check if there's already an in-flight request for this pubkey
+        let fetchPromise = inFlightRequests.get(pk);
+
+        if (!fetchPromise) {
+            // No in-flight request, create a new one
+            const user = ndk.getUser({ pubkey: pk });
+            fetchPromise = user
+                .fetchProfile({ closeOnEose: true, groupable: true, groupableDelay: 250 })
+                .finally(() => {
+                    // Remove from in-flight requests when complete
+                    inFlightRequests.delete(pk);
+                });
+
+            inFlightRequests.set(pk, fetchPromise);
         }
 
-        const user = ndk.getUser({ pubkey: pk });
-        user.fetchProfile({ closeOnEose: true, groupable: true, groupableDelay: 250 })
-            .then(() => {
-                if (user.profile) {
-                    // Update cache with fetched profile
-                    profileCache.set(pk, user.profile);
-                    _profile = user.profile;
+        // Set empty state while loading (mutate)
+        untrack(() => clearProfile());
+
+        fetchPromise
+            .then((fetchedProfile) => {
+                console.log("fetched profile of ", pk, fetchedProfile);
+                if (fetchedProfile) {
+                    // Mutate to set new properties
+                    clearProfile(); // No untrack needed here—runs outside the $effect body
+                    Object.assign(profile, fetchedProfile);
+                } else {
+                    clearProfile();
                 }
             })
             .catch(() => {
-                _profile = undefined;
+                clearProfile();
             });
     });
 
-    // Return a proxy that forwards all access to the reactive _profile
-    return new Proxy({} as NDKUserProfile | undefined, {
-        get(_target, prop) {
-            if (_profile && prop in _profile) {
-                const value = _profile[prop as keyof NDKUserProfile];
-                return typeof value === "function" ? value.bind(_profile) : value;
-            }
-            return undefined;
-        },
-        has(_target, prop) {
-            return _profile ? prop in _profile : false;
-        },
-        ownKeys() {
-            return _profile ? Reflect.ownKeys(_profile) : [];
-        },
-        getOwnPropertyDescriptor(_target, prop) {
-            return _profile ? Reflect.getOwnPropertyDescriptor(_profile, prop) : undefined;
-        },
-    }) as NDKUserProfile | undefined;
+    return profile;
 }

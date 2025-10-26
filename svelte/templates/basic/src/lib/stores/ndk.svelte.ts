@@ -1,8 +1,8 @@
 import NDKCacheSqliteWasm from "@nostr-dev-kit/cache-sqlite-wasm";
-import { NDKSvelte } from '@nostr-dev-kit/svelte';
+import { createNDK } from '@nostr-dev-kit/svelte';
 import { browser } from '$app/environment';
 
-export const ndk = new NDKSvelte({
+export const ndk = createNDK({
     explicitRelayUrls: [
         'wss://relay.damus.io',
         'wss://relay.nostr.band',

@@ -1,6 +1,6 @@
 import { EventEmitter } from "tseep";
 import { beforeEach, describe, expect, it } from "vitest";
-import { NDKSvelte } from "../ndk-svelte.svelte";
+import { createNDK, type NDKSvelte } from "../ndk-svelte.svelte";
 import { NDKKind } from "@nostr-dev-kit/ndk";
 import { NDKEvent } from "@nostr-dev-kit/ndk";
 
@@ -36,7 +36,7 @@ describe("WalletStore", () => {
     let ndk: NDKSvelte;
 
     beforeEach(() => {
-        ndk = new NDKSvelte({ explicitRelayUrls: ["wss://relay.test"], session: true });
+        ndk = createNDK({ explicitRelayUrls: ["wss://relay.test"], session: true });
     });
 
     it("should initialize with default state", () => {

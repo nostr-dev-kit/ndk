@@ -6,7 +6,7 @@
  *
  * @example
  * ```ts
- * import { setEventContentComponents } from '@nostr-dev-kit/ndk-svelte';
+ * import { setEventContentComponents } from '@nostr-dev-kit/svelte';
  * import MyCustomMention from './MyCustomMention.svelte';
  *
  * // Override globally

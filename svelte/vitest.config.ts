@@ -14,10 +14,14 @@ export default defineConfig({
         extensions: [".mjs", ".js", ".ts", ".svelte", ".svelte.ts", ".svelte.js"],
     },
     test: {
-        environment: "jsdom",
+        browser: {
+            enabled: true,
+            name: "chromium",
+            provider: "playwright",
+            headless: true,
+        },
         globals: true,
-        include: ["src/**/*.test.ts", "src/**/*.spec.ts"],
-        setupFiles: ["./src/test/setup.ts"],
+        include: ["src/**/*.test.ts", "src/**/*.svelte.test.ts", "src/**/*.spec.ts"],
     },
     define: {
         "process.env.NODE_ENV": '"test"',

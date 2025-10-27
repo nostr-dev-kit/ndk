@@ -1,5 +1,5 @@
-import { NDKEvent, NDKKind, type Hexpubkey } from "@nostr-dev-kit/ndk";
-import type { NDKSvelte } from "../ndk-svelte.svelte.js";
+import { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
+import type { NDKSvelte } from "../../ndk-svelte.svelte.js";
 
 export interface ReactionStats {
     count: number;
@@ -8,7 +8,7 @@ export interface ReactionStats {
 }
 
 /**
- * Creates a reactive reaction button state manager
+ * Creates a reactive reaction action state manager
  *
  * @param ndk - The NDKSvelte instance
  * @param event - Function returning the event to react to
@@ -18,7 +18,7 @@ export interface ReactionStats {
  * @example
  * ```svelte
  * <script>
- *   const reaction = createReactionButton(ndk, () => event, () => "+");
+ *   const reaction = createReactionAction(ndk, () => event, () => "+");
  * </script>
  *
  * <button onclick={reaction.toggle}>
@@ -26,7 +26,7 @@ export interface ReactionStats {
  * </button>
  * ```
  */
-export function createReactionButton(
+export function createReactionAction(
     ndk: NDKSvelte,
     event: () => NDKEvent | undefined,
     content: () => string = () => "+"

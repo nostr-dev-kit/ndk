@@ -85,17 +85,46 @@
     { name: 'Components', path: '/docs/components' },
   ];
 
-  const components = [
-    { name: 'EventCard', path: '/components/event-card' },
-    { name: 'ArticleCard', path: '/components/article-card' },
-    { name: 'RelayCard', path: '/components/relay-card' },
-    { name: 'ReactionButton', path: '/components/reaction-button' },
-    { name: 'Avatar', path: '/components/avatar' },
-    { name: 'Name', path: '/components/name' },
-    { name: 'User Card', path: '/components/user-card' },
-    { name: 'User Profile', path: '/components/user-profile' },
-    { name: 'Event Content', path: '/components/event-content' },
-    { name: 'Follow Button', path: '/components/follow-button' },
+  const componentCategories = [
+    {
+      title: 'Actions',
+      items: [
+        { name: 'Follow', path: '/components/follow-action' },
+        { name: 'Reaction', path: '/components/reaction-action' },
+        { name: 'Reply', path: '/components/reply-action' },
+        { name: 'Repost', path: '/components/repost-action' },
+        { name: 'Mute', path: '/components/mute-action' },
+        { name: 'Zap', path: '/components/zap-action' },
+      ]
+    },
+    {
+      title: 'Events',
+      items: [
+        { name: 'EventCard', path: '/components/event-card' },
+        { name: 'EventContent', path: '/components/event-content' },
+      ]
+    },
+    {
+      title: 'User',
+      items: [
+        { name: 'Avatar', path: '/components/avatar' },
+        { name: 'Name', path: '/components/name' },
+        { name: 'UserCard', path: '/components/user-card' },
+        { name: 'UserProfile', path: '/components/user-profile' },
+      ]
+    },
+    {
+      title: 'Content',
+      items: [
+        { name: 'ArticleCard', path: '/components/article-card' },
+      ]
+    },
+    {
+      title: 'Relay',
+      items: [
+        { name: 'RelayCard', path: '/components/relay-card' },
+      ]
+    },
   ];
 
   let showLoginModal = $state(false);
@@ -199,17 +228,19 @@
         {/each}
       </div>
 
-      <div class="nav-section">
-        <h2 class="nav-title">Components</h2>
-        {#each components as component}
-          <a
-            href={component.path}
-            class:active={$page.url.pathname === component.path}
-          >
-            {component.name}
-          </a>
-        {/each}
-      </div>
+      {#each componentCategories as category}
+        <div class="nav-section">
+          <h2 class="nav-title">{category.title}</h2>
+          {#each category.items as component}
+            <a
+              href={component.path}
+              class:active={$page.url.pathname === component.path}
+            >
+              {component.name}
+            </a>
+          {/each}
+        </div>
+      {/each}
     </nav>
 
     <div class="sidebar-footer">

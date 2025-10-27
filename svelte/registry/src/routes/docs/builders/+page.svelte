@@ -394,7 +394,7 @@ relays.loading
         <h3>Pattern 4: Multiple Instances</h3>
         <p>Create a builder for each item in a list.</p>
         <pre><code>{`<script>
-  let events = $state([...]);
+  let events = $state([]);
 
   // Create a card for each event
   const cards = $derived(

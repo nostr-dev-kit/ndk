@@ -36,8 +36,13 @@ export function createFollowAction(
         }
 
         // NDKUser = user
-        const pubkey = t.pubkey;
-        return ndk.$follows.some(pk => pk === pubkey);
+        try {
+            const pubkey = t.pubkey;
+            return ndk.$follows.some(pk => pk === pubkey);
+        } catch {
+            // User doesn't have pubkey set yet (e.g., from createFetchUser before loaded)
+            return false;
+        }
     });
 
     async function toggle(): Promise<void> {
@@ -63,7 +68,14 @@ export function createFollowAction(
         }
 
         // NDKUser = user
-        const pubkey = t.pubkey;
+        let pubkey: string;
+        try {
+            pubkey = t.pubkey;
+        } catch {
+            // User doesn't have pubkey set yet
+            throw new Error("User not loaded yet");
+        }
+
         const isCurrentlyFollowing = ndk.$follows.some(pk => pk === pubkey);
 
         if (isCurrentlyFollowing) {

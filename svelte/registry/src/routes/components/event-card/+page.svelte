@@ -4,6 +4,7 @@
   import { EventCard, ReplyAction, RepostAction, ReactionAction } from '$lib/ndk/event-card';
   import type { ThreadingMetadata } from '$lib/ndk/event-card';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
+  import CodePreview from '$lib/components/code-preview.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -62,11 +63,24 @@
     <div class="loading">Loading real events...</div>
   {:else}
     <section class="demo">
-      <h2>Basic EventCard</h2>
-      <p class="demo-description">
-        A simple event card with header, content, and action buttons.
-      </p>
-      <div class="demo-container">
+      <CodePreview
+        title="Basic EventCard"
+        description="A simple event card with header, content, and action buttons."
+        code={`<EventCard.Root {ndk} {event}>
+  <div class="flex items-center justify-between p-4 border-b">
+    <div class="flex items-center gap-3 flex-1">
+      <EventCard.Header showMenu={false} class="!p-0 !border-0" />
+    </div>
+    <EventCard.Dropdown />
+  </div>
+  <EventCard.Content />
+  <EventCard.Actions>
+    <ReplyAction />
+    <RepostAction />
+    <ReactionAction />
+  </EventCard.Actions>
+</EventCard.Root>`}
+      >
         <EventCard.Root {ndk} event={exampleNote}>
           <div class="flex items-center justify-between p-4 border-b" style="border-bottom-color: #f0f0f0;">
             <div class="flex items-center gap-3 flex-1">
@@ -81,15 +95,21 @@
             <ReactionAction />
           </EventCard.Actions>
         </EventCard.Root>
-      </div>
+      </CodePreview>
     </section>
 
     <section class="demo">
-      <h2>Compact Variant</h2>
-      <p class="demo-description">
-        Minimal header with truncated content.
-      </p>
-      <div class="demo-container">
+      <CodePreview
+        title="Compact Variant"
+        description="Minimal header with truncated content."
+        code={`<EventCard.Root {ndk} {event}>
+  <EventCard.Header variant="compact" showMenu={false} />
+  <EventCard.Content truncate={100} />
+  <EventCard.Actions>
+    <ReactionAction emoji="🤙" />
+  </EventCard.Actions>
+</EventCard.Root>`}
+      >
         <EventCard.Root {ndk} event={exampleNote}>
           <EventCard.Header variant="compact" showMenu={false} />
           <EventCard.Content truncate={100} />
@@ -97,15 +117,23 @@
             <ReactionAction emoji="🤙" />
           </EventCard.Actions>
         </EventCard.Root>
-      </div>
+      </CodePreview>
     </section>
 
     <section class="demo">
-      <h2>Thread View with Lines</h2>
-      <p class="demo-description">
-        Event cards with thread lines showing conversation flow.
-      </p>
-      <div class="demo-container">
+      <CodePreview
+        title="Thread View with Lines"
+        description="Event cards with thread lines showing conversation flow."
+        code={`<EventCard.Root {event} {threading}>
+  <EventCard.ThreadLine />
+  <EventCard.Header variant="compact" />
+  <EventCard.Content />
+  <EventCard.Actions>
+    <ReplyAction />
+    <ReactionAction />
+  </EventCard.Actions>
+</EventCard.Root>`}
+      >
         <!-- Parent -->
         <EventCard.Root {ndk} event={threadNote} threading={threadingMetadata}>
           <EventCard.ThreadLine />
@@ -126,15 +154,25 @@
             <ReactionAction emoji="❤️" />
           </EventCard.Actions>
         </EventCard.Root>
-      </div>
+      </CodePreview>
     </section>
 
     <section class="demo">
-      <h2>Custom Composition</h2>
-      <p class="demo-description">
-        Full control over component arrangement and styling.
-      </p>
-      <div class="demo-container">
+      <CodePreview
+        title="Custom Composition"
+        description="Full control over component arrangement and styling."
+        code={`<EventCard.Root {ndk} {event} class="custom-card">
+  <div class="custom-layout">
+    <EventCard.Header variant="minimal" showTimestamp={false} />
+    <EventCard.Content />
+    <div class="custom-actions">
+      <ReactionAction emoji="🔥" />
+      <ReactionAction emoji="💯" />
+      <ReactionAction emoji="🚀" />
+    </div>
+  </div>
+</EventCard.Root>`}
+      >
         <EventCard.Root {ndk} event={exampleNote} class="custom-card">
           <div class="custom-layout">
             <EventCard.Header variant="minimal" showTimestamp={false} />
@@ -146,28 +184,41 @@
             </div>
           </div>
         </EventCard.Root>
-      </div>
+      </CodePreview>
     </section>
 
     <section class="demo">
-      <h2>Interactive Card</h2>
-      <p class="demo-description">
-        Clickable card that navigates to event page.
-      </p>
-      <div class="demo-container">
+      <CodePreview
+        title="Interactive Card"
+        description="Clickable card that navigates to event page."
+        code={`<EventCard.Root {ndk} {event} interactive>
+  <EventCard.Header />
+  <EventCard.Content truncate={150} />
+</EventCard.Root>`}
+      >
         <EventCard.Root {ndk} event={exampleNote} interactive>
           <EventCard.Header />
           <EventCard.Content truncate={150} />
         </EventCard.Root>
-      </div>
+      </CodePreview>
     </section>
 
     <section class="demo">
-      <h2>Dropdown Menu</h2>
-      <p class="demo-description">
-        Self-contained dropdown menu with event options (mute, report, copy, view raw).
-      </p>
-      <div class="demo-container">
+      <CodePreview
+        title="Dropdown Menu"
+        description="Self-contained dropdown menu with event options (mute, report, copy, view raw)."
+        code={`<EventCard.Root {ndk} {event}>
+  <div class="header-with-dropdown">
+    <EventCard.Header showMenu={false} />
+    <EventCard.Dropdown />
+  </div>
+  <EventCard.Content />
+  <EventCard.Actions>
+    <ReplyAction />
+    <ReactionAction />
+  </EventCard.Actions>
+</EventCard.Root>`}
+      >
         <EventCard.Root {ndk} event={exampleNote}>
           <div class="header-with-dropdown">
             <EventCard.Header showMenu={false} />
@@ -179,58 +230,7 @@
             <ReactionAction />
           </EventCard.Actions>
         </EventCard.Root>
-      </div>
-    </section>
-
-    <section class="code-examples">
-      <h2>Usage Examples</h2>
-
-      <div class="code-block">
-        <h3>Basic Usage</h3>
-        <pre><code>{`<EventCard.Root {ndk} {event}>
-  <EventCard.Header />
-  <EventCard.Content />
-  <EventCard.Actions>
-    <ReplyAction />
-    <RepostAction />
-    <ReactionAction />
-  </EventCard.Actions>
-</EventCard.Root>`}</code></pre>
-      </div>
-
-      <div class="code-block">
-        <h3>Thread View</h3>
-        <pre><code>{`<EventCard.Root {event} {threading}>
-  <EventCard.ThreadLine />
-  <EventCard.Header variant="compact" />
-  <EventCard.Content />
-  <EventCard.Actions>
-    <ReplyAction />
-    <ReactionAction />
-  </EventCard.Actions>
-</EventCard.Root>`}</code></pre>
-      </div>
-
-      <div class="code-block">
-        <h3>Custom Actions</h3>
-        <pre><code>{`<EventCard.Actions>
-  <ReactionAction emoji="🔥" />
-  <ReactionAction emoji="💯" />
-  <ReactionAction emoji="🚀" />
-  <CustomShareButton />
-</EventCard.Actions>`}</code></pre>
-      </div>
-
-      <div class="code-block">
-        <h3>Dropdown Menu</h3>
-        <pre><code>{`<EventCard.Root {ndk} {event}>
-  <div class="header-with-dropdown">
-    <EventCard.Header showMenu={false} />
-    <EventCard.Dropdown />
-  </div>
-  <EventCard.Content />
-</EventCard.Root>`}</code></pre>
-      </div>
+      </CodePreview>
     </section>
   {/if}
 </div>
@@ -268,27 +268,11 @@
     margin-bottom: 3rem;
   }
 
-  section h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin: 0 0 0.5rem 0;
-    color: #111827;
-  }
-
-  .demo-description {
-    color: #6b7280;
-    margin: 0 0 1rem 0;
-  }
-
   .demo {
     padding: 1.5rem;
     background: white;
     border: 1px solid #e5e7eb;
     border-radius: 0.75rem;
-  }
-
-  .demo-container {
-    padding: 1.5rem;
   }
 
   .custom-card :global(.custom-layout) {
@@ -305,43 +289,6 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-  }
-
-  .code-examples {
-    padding: 1.5rem;
-    background: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.75rem;
-  }
-
-  .code-block {
-    margin-bottom: 2rem;
-  }
-
-  .code-block:last-child {
-    margin-bottom: 0;
-  }
-
-  .code-block h3 {
-    font-size: 1rem;
-    font-weight: 600;
-    margin: 0 0 0.5rem 0;
-    color: #374151;
-  }
-
-  .code-block pre {
-    margin: 0;
-    padding: 1rem;
-    background: #1f2937;
-    border-radius: 0.5rem;
-    overflow-x: auto;
-  }
-
-  .code-block code {
-    font-family: 'Monaco', 'Menlo', monospace;
-    font-size: 0.875rem;
-    line-height: 1.5;
-    color: #e5e7eb;
   }
 
   .controls {
@@ -378,11 +325,5 @@
     outline: none;
     border-color: #8b5cf6;
     box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
-  }
-
-  .loading {
-    padding: 2rem;
-    text-align: center;
-    color: #6b7280;
   }
 </style>

@@ -101,9 +101,6 @@
   .event-card {
     /* Modern card shadow */
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
-
-    /* DEBUG: Visual guides */
-    /* outline: 2px solid red; */
   }
 
   .event-card:hover {

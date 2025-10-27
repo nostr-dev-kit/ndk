@@ -1,8 +1,8 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { createFollowButton, createFetchUser } from '@nostr-dev-kit/svelte';
-  import FollowButton from '$lib/components/follow-button.svelte';
+  import { createFollowAction, createFetchUser } from '@nostr-dev-kit/svelte';
+  import FollowAction from '$lib/ndk/actions/follow-action.svelte';
   import { UserProfile } from '$lib/ndk/user-profile';
 
   const ndk = getContext<NDKSvelte>('ndk');
@@ -10,7 +10,7 @@
   // Example user (pablo) - supports npub, nprofile, hex pubkey, nip05, etc.
   let npubInput = $state('npub1l2vyl2xd4j0g97thetkkxkqhqh4ejy42kxc70yevjv90jlak3p6sjegwrc');
   const exampleUser = createFetchUser(ndk, () => npubInput);
-  const examplePubkey = $derived(exampleUser.pubkey);
+  const examplePubkey = $derived(exampleUser.$loaded ? exampleUser.pubkey : undefined);
 
   // Example hashtags
   let hashtagInput = $state('bitcoin');
@@ -32,9 +32,9 @@
     setTimeout(() => (lastEvent = ''), 5000);
   }
 
-  // Builder examples - using createFollowButton directly
-  const customUserFollow = createFollowButton(ndk, () => exampleUser);
-  const customHashtagFollow = createFollowButton(ndk, () => hashtagInput);
+  // Builder examples - using createFollowAction directly
+  const customUserFollow = createFollowAction(ndk, () => exampleUser);
+  const customHashtagFollow = createFollowAction(ndk, () => hashtagInput);
 
   async function handleCustomToggle(type: 'user' | 'hashtag') {
     try {
@@ -55,7 +55,7 @@
 
 <div class="component-page">
   <header>
-    <h1>FollowButton</h1>
+    <h1>FollowAction</h1>
     <p>
       Follow/unfollow button for users and hashtags with multiple variants and customization
       options.
@@ -114,7 +114,7 @@
               <UserProfile.Avatar size={48} />
               <div class="user-info">
                 <UserProfile.Name />
-                <FollowButton
+                <FollowAction
                   {ndk}
                   target={exampleUser}
                   onfollowsuccess={handleFollowSuccess}
@@ -124,7 +124,7 @@
             </div>
           </UserProfile.Root>
         </div>
-        <pre><code>{`<FollowButton {ndk} target={user} />`}</code></pre>
+        <pre><code>{`<FollowAction {ndk} target={user} />`}</code></pre>
       </div>
 
       <!-- Primary Variant -->
@@ -137,7 +137,7 @@
               <UserProfile.Avatar size={48} />
               <div class="user-info">
                 <UserProfile.Name />
-                <FollowButton
+                <FollowAction
                   {ndk}
                   target={exampleUser}
                   variant="primary"
@@ -148,7 +148,7 @@
             </div>
           </UserProfile.Root>
         </div>
-        <pre><code>{`<FollowButton {ndk} target={user} variant="primary" />`}</code></pre>
+        <pre><code>{`<FollowAction {ndk} target={user} variant="primary" />`}</code></pre>
       </div>
 
       <!-- Without Icon -->
@@ -161,7 +161,7 @@
               <UserProfile.Avatar size={48} />
               <div class="user-info">
                 <UserProfile.Name />
-                <FollowButton
+                <FollowAction
                   {ndk}
                   target={exampleUser}
                   showIcon={false}
@@ -172,7 +172,7 @@
             </div>
           </UserProfile.Root>
         </div>
-        <pre><code>{`<FollowButton {ndk} target={user} showIcon={false} />`}</code></pre>
+        <pre><code>{`<FollowAction {ndk} target={user} showIcon={false} />`}</code></pre>
       </div>
 
       <!-- Custom Styling -->
@@ -185,7 +185,7 @@
               <UserProfile.Avatar size={48} />
               <div class="user-info">
                 <UserProfile.Name />
-                <FollowButton
+                <FollowAction
                   {ndk}
                   target={exampleUser}
                   class="px-6 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 font-semibold"
@@ -196,7 +196,7 @@
             </div>
           </UserProfile.Root>
         </div>
-        <pre><code>{`<FollowButton {ndk} target={user} class="custom-classes" />`}</code></pre>
+        <pre><code>{`<FollowAction {ndk} target={user} class="custom-classes" />`}</code></pre>
       </div>
     </div>
   </section>
@@ -229,7 +229,7 @@
           <div class="hashtag-display">
             <span class="hashtag-icon">#</span>
             <span class="hashtag-text">{hashtagInput}</span>
-            <FollowButton
+            <FollowAction
               {ndk}
               target={hashtagInput}
               onfollowsuccess={handleFollowSuccess}
@@ -237,7 +237,7 @@
             />
           </div>
         </div>
-        <pre><code>{`<FollowButton {ndk} target="bitcoin" />`}</code></pre>
+        <pre><code>{`<FollowAction {ndk} target="bitcoin" />`}</code></pre>
       </div>
 
       <!-- Primary Variant -->
@@ -248,7 +248,7 @@
           <div class="hashtag-display">
             <span class="hashtag-icon">#</span>
             <span class="hashtag-text">{hashtagInput}</span>
-            <FollowButton
+            <FollowAction
               {ndk}
               target={hashtagInput}
               variant="primary"
@@ -257,7 +257,7 @@
             />
           </div>
         </div>
-        <pre><code>{`<FollowButton {ndk} target="bitcoin" variant="primary" />`}</code></pre>
+        <pre><code>{`<FollowAction {ndk} target="bitcoin" variant="primary" />`}</code></pre>
       </div>
 
       <!-- Without Icon -->
@@ -268,7 +268,7 @@
           <div class="hashtag-display">
             <span class="hashtag-icon">#</span>
             <span class="hashtag-text">{hashtagInput}</span>
-            <FollowButton
+            <FollowAction
               {ndk}
               target={hashtagInput}
               showIcon={false}
@@ -277,7 +277,7 @@
             />
           </div>
         </div>
-        <pre><code>{`<FollowButton {ndk} target="bitcoin" showIcon={false} />`}</code></pre>
+        <pre><code>{`<FollowAction {ndk} target="bitcoin" showIcon={false} />`}</code></pre>
       </div>
 
       <!-- Custom Label -->
@@ -288,7 +288,7 @@
           <div class="hashtag-display">
             <span class="hashtag-icon">#</span>
             <span class="hashtag-text">{hashtagInput}</span>
-            <FollowButton
+            <FollowAction
               {ndk}
               target={hashtagInput}
               variant="primary"
@@ -296,12 +296,12 @@
               onfollowonerror={handleFollowError}
             >
               Subscribe
-            </FollowButton>
+            </FollowAction>
           </div>
         </div>
-        <pre><code>{`<FollowButton {ndk} target="bitcoin">
+        <pre><code>{`<FollowAction {ndk} target="bitcoin">
   Subscribe
-</FollowButton>`}</code></pre>
+</FollowAction>`}</code></pre>
       </div>
     </div>
   </section>
@@ -310,7 +310,7 @@
   <section class="showcase-section">
     <h2>Using the Builder Directly</h2>
     <p class="section-description">
-      For maximum control over your UI, use <code>createFollowButton()</code> directly without the
+      For maximum control over your UI, use <code>createFollowAction()</code> directly without the
       component. This gives you full control over the markup while still benefiting from reactive
       state management.
     </p>
@@ -338,7 +338,7 @@
             </div>
           </UserProfile.Root>
         </div>
-        <pre><code>{`const follow = createFollowButton(ndk, () => user);
+        <pre><code>{`const follow = createFollowAction(ndk, () => user);
 
 <button onclick={follow.toggle}>
   {follow.isFollowing ? '✓ Following' : '+ Follow'}
@@ -372,7 +372,7 @@
             </button>
           </div>
         </div>
-        <pre><code>{`const follow = createFollowButton(ndk, () => "bitcoin");
+        <pre><code>{`const follow = createFollowAction(ndk, () => "bitcoin");
 
 <button onclick={follow.toggle}>
   {follow.isFollowing ? 'Subscribed' : 'Subscribe'}
@@ -418,7 +418,7 @@
             </div>
           </UserProfile.Root>
         </div>
-        <pre><code>{`const follow = createFollowButton(ndk, () => user);
+        <pre><code>{`const follow = createFollowAction(ndk, () => user);
 
 <button onclick={follow.toggle}>
   {#if follow.isFollowing}
@@ -448,7 +448,7 @@
             </button>
           </div>
         </div>
-        <pre><code>{`const follow = createFollowButton(ndk, () => user);
+        <pre><code>{`const follow = createFollowAction(ndk, () => user);
 
 async function handleToggle() {
   try {
@@ -544,11 +544,11 @@ async function handleToggle() {
     <div class="api-section">
       <h3>Builder Function</h3>
       <p>
-        Use <code>createFollowButton()</code> to create custom follow button implementations:
+        Use <code>createFollowAction()</code> to create custom follow button implementations:
       </p>
-      <pre><code>{`import { createFollowButton } from '@nostr-dev-kit/svelte';
+      <pre><code>{`import { createFollowAction } from '@nostr-dev-kit/svelte';
 
-const followButton = createFollowButton(ndk, () => user);
+const followButton = createFollowAction(ndk, () => user);
 
 // Access reactive state
 followButton.isFollowing // boolean

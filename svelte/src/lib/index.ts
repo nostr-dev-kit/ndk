@@ -53,7 +53,7 @@ export { createSubscription, createSyncSubscription } from "./subscribe.svelte.j
 // Event fetching - can be used as standalone function or via ndk.$fetchEvents()
 export { createFetchEvents, type FetchEventsConfig, type FetchEventOptions } from "./event.svelte.js";
 // User helpers
-export { createZapInfo, type ZapInfo } from "./user.svelte.js";
+export { createFetchUser, createZapInfo, type ZapInfo } from "./user.svelte.js";
 // Zap utilities and subscriptions
 export {
     createZapSubscription,
@@ -85,13 +85,10 @@ export {
 } from "./builders/event/thread/index.js";
 
 // ============================================================================
-// Event Card Builder
+// Event Card Builder - REMOVED
 // ============================================================================
-
-export {
-    createEventCard,
-    type EventCardState
-} from "./builders/event/card/index.svelte.js";
+// createEventCard has been removed. Each action now manages its own state.
+// EventCard components access NDK and event directly from context.
 
 // ============================================================================
 // Event Content Rendering Builders
@@ -133,21 +130,21 @@ export {
 } from "./builders/relay/bookmarks.svelte.js";
 
 // ============================================================================
-// Follow Button Builder
+// Action Builders
 // ============================================================================
 
 export {
-    createFollowButton,
-} from "./builders/follow-button.svelte.js";
-
-// ============================================================================
-// Reaction Button Builder
-// ============================================================================
-
-export {
-    createReactionButton,
+    createFollowAction,
+    createReactionAction,
+    createReplyAction,
+    createRepostAction,
+    createMuteAction,
+    createZapAction,
     type ReactionStats,
-} from "./builders/reaction-button.svelte.js";
+    type ReplyStats,
+    type RepostStats,
+    type ZapStats,
+} from "./builders/actions/index.js";
 
 // Content parsing utilities
 export {

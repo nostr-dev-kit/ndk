@@ -1,9 +1,9 @@
 import type { NDKUser } from "@nostr-dev-kit/ndk";
 import { NDKInterestList } from "@nostr-dev-kit/ndk";
-import type { NDKSvelte } from "../ndk-svelte.svelte.js";
+import type { NDKSvelte } from "../../ndk-svelte.svelte.js";
 
 /**
- * Creates a reactive follow button state manager
+ * Creates a reactive follow action state manager
  *
  * @param ndk - The NDKSvelte instance
  * @param target - Function returning the target to follow (NDKUser or string hashtag)
@@ -12,15 +12,15 @@ import type { NDKSvelte } from "../ndk-svelte.svelte.js";
  * @example
  * ```svelte
  * <script>
- *   const followButton = createFollowButton(ndk, () => user);
+ *   const followAction = createFollowAction(ndk, () => user);
  * </script>
  *
- * <button onclick={followButton.toggle}>
- *   {followButton.isFollowing ? 'Unfollow' : 'Follow'}
+ * <button onclick={followAction.toggle}>
+ *   {followAction.isFollowing ? 'Unfollow' : 'Follow'}
  * </button>
  * ```
  */
-export function createFollowButton(
+export function createFollowAction(
     ndk: NDKSvelte,
     target: () => NDKUser | string | undefined
 ) {

@@ -1,9 +1,9 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { createReactionButton } from '@nostr-dev-kit/svelte';
+  import { createReactionAction } from '@nostr-dev-kit/svelte';
   import { NDKEvent, NDKKind } from '@nostr-dev-kit/ndk';
-  import ReactionButton from '$lib/ndk/reactions/reaction-button.svelte';
+  import ReactionAction from '$lib/ndk/actions/reaction-action.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -19,14 +19,14 @@
   sampleEvent.id = 'demo-event-reactions-showcase';
 
   // Builder examples
-  const likeReaction = createReactionButton(ndk, () => sampleEvent, () => "+");
-  const fireReaction = createReactionButton(ndk, () => sampleEvent, () => "🔥");
-  const rocketReaction = createReactionButton(ndk, () => sampleEvent, () => "🚀");
+  const likeReaction = createReactionAction(ndk, () => sampleEvent, () => "+");
+  const fireReaction = createReactionAction(ndk, () => sampleEvent, () => "🔥");
+  const rocketReaction = createReactionAction(ndk, () => sampleEvent, () => "🚀");
 </script>
 
 <div class="component-page">
   <header>
-    <h1>ReactionButton</h1>
+    <h1>ReactionAction</h1>
     <p>Simple reaction button with long-press emoji picker and NIP-30/NIP-51 support.</p>
   </header>
 
@@ -41,12 +41,12 @@
           <p>{sampleEvent.content}</p>
         </div>
         <div class="event-actions">
-          <ReactionButton {ndk} event={sampleEvent} />
+          <ReactionAction {ndk} event={sampleEvent} />
         </div>
       </div>
     </div>
     <div class="code-block">
-      <pre><code>{`<ReactionButton {ndk} event={event} />`}</code></pre>
+      <pre><code>{`<ReactionAction {ndk} event={event} />`}</code></pre>
     </div>
   </section>
 
@@ -61,12 +61,12 @@
           <p>{sampleEvent.content}</p>
         </div>
         <div class="event-actions">
-          <ReactionButton {ndk} event={sampleEvent} showCount={false} />
+          <ReactionAction {ndk} event={sampleEvent} showCount={false} />
         </div>
       </div>
     </div>
     <div class="code-block">
-      <pre><code>{`<ReactionButton {ndk} event={event} showCount={false} />`}</code></pre>
+      <pre><code>{`<ReactionAction {ndk} event={event} showCount={false} />`}</code></pre>
     </div>
   </section>
 
@@ -86,7 +86,7 @@
           <p>{sampleEvent.content}</p>
         </div>
         <div class="event-actions">
-          <ReactionButton {ndk} event={sampleEvent} />
+          <ReactionAction {ndk} event={sampleEvent} />
         </div>
       </div>
     </div>
@@ -117,16 +117,16 @@
           <p>{sampleEvent.content}</p>
         </div>
         <div class="event-actions">
-          <ReactionButton {ndk} event={sampleEvent} emoji="🔥" />
-          <ReactionButton {ndk} event={sampleEvent} emoji="🚀" />
-          <ReactionButton {ndk} event={sampleEvent} emoji="👍" />
+          <ReactionAction {ndk} event={sampleEvent} emoji="🔥" />
+          <ReactionAction {ndk} event={sampleEvent} emoji="🚀" />
+          <ReactionAction {ndk} event={sampleEvent} emoji="👍" />
         </div>
       </div>
     </div>
     <div class="code-block">
-      <pre><code>{`<ReactionButton {ndk} event={event} emoji="🔥" />
-<ReactionButton {ndk} event={event} emoji="🚀" />
-<ReactionButton {ndk} event={event} emoji="👍" />`}</code></pre>
+      <pre><code>{`<ReactionAction {ndk} event={event} emoji="🔥" />
+<ReactionAction {ndk} event={event} emoji="🚀" />
+<ReactionAction {ndk} event={event} emoji="👍" />`}</code></pre>
     </div>
   </section>
 
@@ -134,7 +134,7 @@
   <section class="demo">
     <h2>Using the Builder Directly</h2>
     <p class="demo-description">
-      For maximum control over your UI, use <code>createReactionButton()</code> directly without the
+      For maximum control over your UI, use <code>createReactionAction()</code> directly without the
       component. This gives you full control over the markup while still benefiting from reactive
       state management.
     </p>
@@ -175,7 +175,7 @@
     </div>
 
     <div class="code-block">
-      <pre><code>{`const reaction = createReactionButton(ndk, () => event, () => "+");
+      <pre><code>{`const reaction = createReactionAction(ndk, () => event, () => "+");
 
 <button onclick={reaction.toggle}>
   ❤️ {reaction.count}

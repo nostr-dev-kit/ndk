@@ -4,6 +4,7 @@
   import { createFollowAction, createFetchUser } from '@nostr-dev-kit/svelte';
   import FollowAction from '$lib/ndk/actions/follow-action.svelte';
   import { UserProfile } from '$lib/ndk/user-profile';
+  import CodePreview from '$lib/components/code-preview.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -105,99 +106,95 @@
 
     <div class="example-grid">
       <!-- Default Variant -->
-      <div class="example-card">
-        <h3>Default Variant</h3>
-        <p class="example-description">Simple text link style, perfect for inline use.</p>
-        <div class="preview">
-          <UserProfile.Root {ndk} pubkey={examplePubkey}>
-            <div class="user-display">
-              <UserProfile.Avatar size={48} />
-              <div class="user-info">
-                <UserProfile.Name />
-                <FollowAction
-                  {ndk}
-                  target={exampleUser}
-                  onfollowsuccess={handleFollowSuccess}
-                  onfollowonerror={handleFollowError}
-                />
-              </div>
+      <CodePreview
+        title="Default Variant"
+        description="Simple text link style, perfect for inline use."
+        code={`<FollowAction {ndk} target={user} />`}
+      >
+        <UserProfile.Root {ndk} pubkey={examplePubkey}>
+          <div class="user-display">
+            <UserProfile.Avatar size={48} />
+            <div class="user-info">
+              <UserProfile.Name />
+              <FollowAction
+                {ndk}
+                target={exampleUser}
+                onfollowsuccess={handleFollowSuccess}
+                onfollowonerror={handleFollowError}
+              />
             </div>
-          </UserProfile.Root>
-        </div>
-        <pre><code>{`<FollowAction {ndk} target={user} />`}</code></pre>
-      </div>
+          </div>
+        </UserProfile.Root>
+      </CodePreview>
 
       <!-- Primary Variant -->
-      <div class="example-card">
-        <h3>Primary Variant</h3>
-        <p class="example-description">Prominent button style for profile pages.</p>
-        <div class="preview">
-          <UserProfile.Root {ndk} pubkey={examplePubkey}>
-            <div class="user-display">
-              <UserProfile.Avatar size={48} />
-              <div class="user-info">
-                <UserProfile.Name />
-                <FollowAction
-                  {ndk}
-                  target={exampleUser}
-                  variant="primary"
-                  onfollowsuccess={handleFollowSuccess}
-                  onfollowonerror={handleFollowError}
-                />
-              </div>
+      <CodePreview
+        title="Primary Variant"
+        description="Prominent button style for profile pages."
+        code={`<FollowAction {ndk} target={user} variant="primary" />`}
+      >
+        <UserProfile.Root {ndk} pubkey={examplePubkey}>
+          <div class="user-display">
+            <UserProfile.Avatar size={48} />
+            <div class="user-info">
+              <UserProfile.Name />
+              <FollowAction
+                {ndk}
+                target={exampleUser}
+                variant="primary"
+                onfollowsuccess={handleFollowSuccess}
+                onfollowonerror={handleFollowError}
+              />
             </div>
-          </UserProfile.Root>
-        </div>
-        <pre><code>{`<FollowAction {ndk} target={user} variant="primary" />`}</code></pre>
-      </div>
+          </div>
+        </UserProfile.Root>
+      </CodePreview>
 
       <!-- Without Icon -->
-      <div class="example-card">
-        <h3>Without Icon</h3>
-        <p class="example-description">Text-only button, useful for compact layouts.</p>
-        <div class="preview">
-          <UserProfile.Root {ndk} pubkey={examplePubkey}>
-            <div class="user-display">
-              <UserProfile.Avatar size={48} />
-              <div class="user-info">
-                <UserProfile.Name />
-                <FollowAction
-                  {ndk}
-                  target={exampleUser}
-                  showIcon={false}
-                  onfollowsuccess={handleFollowSuccess}
-                  onfollowonerror={handleFollowError}
-                />
-              </div>
+      <CodePreview
+        title="Without Icon"
+        description="Text-only button, useful for compact layouts."
+        code={`<FollowAction {ndk} target={user} showIcon={false} />`}
+      >
+        <UserProfile.Root {ndk} pubkey={examplePubkey}>
+          <div class="user-display">
+            <UserProfile.Avatar size={48} />
+            <div class="user-info">
+              <UserProfile.Name />
+              <FollowAction
+                {ndk}
+                target={exampleUser}
+                showIcon={false}
+                onfollowsuccess={handleFollowSuccess}
+                onfollowonerror={handleFollowError}
+              />
             </div>
-          </UserProfile.Root>
-        </div>
-        <pre><code>{`<FollowAction {ndk} target={user} showIcon={false} />`}</code></pre>
-      </div>
+          </div>
+        </UserProfile.Root>
+      </CodePreview>
 
       <!-- Custom Styling -->
-      <div class="example-card">
-        <h3>Custom Styling</h3>
-        <p class="example-description">Override default styles with custom classes.</p>
-        <div class="preview">
-          <UserProfile.Root {ndk} pubkey={examplePubkey}>
-            <div class="user-display">
-              <UserProfile.Avatar size={48} />
-              <div class="user-info">
-                <UserProfile.Name />
-                <FollowAction
-                  {ndk}
-                  target={exampleUser}
-                  class="px-6 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 font-semibold"
-                  onfollowsuccess={handleFollowSuccess}
-                  onfollowonerror={handleFollowError}
-                />
-              </div>
+      <CodePreview
+        title="Custom Styling"
+        description="Override default styles with custom classes."
+        code={`<FollowAction {ndk} target={user} class="custom-classes" />`}
+      >
+        <UserProfile.Root {ndk} pubkey={examplePubkey}>
+          <div class="user-display">
+            <UserProfile.Avatar size={48} />
+            <div class="user-info">
+              <UserProfile.Name />
+              <FollowAction
+                {ndk}
+                target={exampleUser}
+                class="px-6 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 font-semibold"
+                onfollowsuccess={handleFollowSuccess}
+                onfollowonerror={handleFollowError}
+              />
             </div>
-          </UserProfile.Root>
-        </div>
-        <pre><code>{`<FollowAction {ndk} target={user} class="custom-classes" />`}</code></pre>
-      </div>
+          </div>
+        </UserProfile.Root>
+      </CodePreview>
     </div>
   </section>
 
@@ -222,87 +219,83 @@
 
     <div class="example-grid">
       <!-- Default Variant -->
-      <div class="example-card">
-        <h3>Default Hashtag</h3>
-        <p class="example-description">Simple hashtag follow button.</p>
-        <div class="preview">
-          <div class="hashtag-display">
-            <span class="hashtag-icon">#</span>
-            <span class="hashtag-text">{hashtagInput}</span>
-            <FollowAction
-              {ndk}
-              target={hashtagInput}
-              onfollowsuccess={handleFollowSuccess}
-              onfollowonerror={handleFollowError}
-            />
-          </div>
+      <CodePreview
+        title="Default Hashtag"
+        description="Simple hashtag follow button."
+        code={`<FollowAction {ndk} target="bitcoin" />`}
+      >
+        <div class="hashtag-display">
+          <span class="hashtag-icon">#</span>
+          <span class="hashtag-text">{hashtagInput}</span>
+          <FollowAction
+            {ndk}
+            target={hashtagInput}
+            onfollowsuccess={handleFollowSuccess}
+            onfollowonerror={handleFollowError}
+          />
         </div>
-        <pre><code>{`<FollowAction {ndk} target="bitcoin" />`}</code></pre>
-      </div>
+      </CodePreview>
 
       <!-- Primary Variant -->
-      <div class="example-card">
-        <h3>Primary Hashtag</h3>
-        <p class="example-description">Prominent hashtag follow button.</p>
-        <div class="preview">
-          <div class="hashtag-display">
-            <span class="hashtag-icon">#</span>
-            <span class="hashtag-text">{hashtagInput}</span>
-            <FollowAction
-              {ndk}
-              target={hashtagInput}
-              variant="primary"
-              onfollowsuccess={handleFollowSuccess}
-              onfollowonerror={handleFollowError}
-            />
-          </div>
+      <CodePreview
+        title="Primary Hashtag"
+        description="Prominent hashtag follow button."
+        code={`<FollowAction {ndk} target="bitcoin" variant="primary" />`}
+      >
+        <div class="hashtag-display">
+          <span class="hashtag-icon">#</span>
+          <span class="hashtag-text">{hashtagInput}</span>
+          <FollowAction
+            {ndk}
+            target={hashtagInput}
+            variant="primary"
+            onfollowsuccess={handleFollowSuccess}
+            onfollowonerror={handleFollowError}
+          />
         </div>
-        <pre><code>{`<FollowAction {ndk} target="bitcoin" variant="primary" />`}</code></pre>
-      </div>
+      </CodePreview>
 
       <!-- Without Icon -->
-      <div class="example-card">
-        <h3>Without Icon</h3>
-        <p class="example-description">Text-only hashtag button.</p>
-        <div class="preview">
-          <div class="hashtag-display">
-            <span class="hashtag-icon">#</span>
-            <span class="hashtag-text">{hashtagInput}</span>
-            <FollowAction
-              {ndk}
-              target={hashtagInput}
-              showIcon={false}
-              onfollowsuccess={handleFollowSuccess}
-              onfollowonerror={handleFollowError}
-            />
-          </div>
+      <CodePreview
+        title="Without Icon"
+        description="Text-only hashtag button."
+        code={`<FollowAction {ndk} target="bitcoin" showIcon={false} />`}
+      >
+        <div class="hashtag-display">
+          <span class="hashtag-icon">#</span>
+          <span class="hashtag-text">{hashtagInput}</span>
+          <FollowAction
+            {ndk}
+            target={hashtagInput}
+            showIcon={false}
+            onfollowsuccess={handleFollowSuccess}
+            onfollowonerror={handleFollowError}
+          />
         </div>
-        <pre><code>{`<FollowAction {ndk} target="bitcoin" showIcon={false} />`}</code></pre>
-      </div>
+      </CodePreview>
 
       <!-- Custom Label -->
-      <div class="example-card">
-        <h3>Custom Label</h3>
-        <p class="example-description">Use slot to customize button text.</p>
-        <div class="preview">
-          <div class="hashtag-display">
-            <span class="hashtag-icon">#</span>
-            <span class="hashtag-text">{hashtagInput}</span>
-            <FollowAction
-              {ndk}
-              target={hashtagInput}
-              variant="primary"
-              onfollowsuccess={handleFollowSuccess}
-              onfollowonerror={handleFollowError}
-            >
-              Subscribe
-            </FollowAction>
-          </div>
-        </div>
-        <pre><code>{`<FollowAction {ndk} target="bitcoin">
+      <CodePreview
+        title="Custom Label"
+        description="Use slot to customize button text."
+        code={`<FollowAction {ndk} target="bitcoin">
   Subscribe
-</FollowAction>`}</code></pre>
-      </div>
+</FollowAction>`}
+      >
+        <div class="hashtag-display">
+          <span class="hashtag-icon">#</span>
+          <span class="hashtag-text">{hashtagInput}</span>
+          <FollowAction
+            {ndk}
+            target={hashtagInput}
+            variant="primary"
+            onfollowsuccess={handleFollowSuccess}
+            onfollowonerror={handleFollowError}
+          >
+            Subscribe
+          </FollowAction>
+        </div>
+      </CodePreview>
     </div>
   </section>
 
@@ -317,108 +310,69 @@
 
     <div class="example-grid">
       <!-- Custom User Button -->
-      <div class="example-card">
-        <h3>Custom User Button</h3>
-        <p class="example-description">
-          Build your own button UI using the builder's reactive state.
-        </p>
-        <div class="preview">
-          <UserProfile.Root {ndk} pubkey={examplePubkey}>
-            <div class="user-display">
-              <UserProfile.Avatar size={48} />
-              <div class="user-info">
-                <UserProfile.Name />
-                <button
-                  class="custom-follow-btn"
-                  onclick={() => handleCustomToggle('user')}
-                >
-                  {customUserFollow.isFollowing ? '✓ Following' : '+ Follow'}
-                </button>
-              </div>
-            </div>
-          </UserProfile.Root>
-        </div>
-        <pre><code>{`const follow = createFollowAction(ndk, () => user);
+      <CodePreview
+        title="Custom User Button"
+        description="Build your own button UI using the builder's reactive state."
+        code={`const follow = createFollowAction(ndk, () => user);
 
 <button onclick={follow.toggle}>
   {follow.isFollowing ? '✓ Following' : '+ Follow'}
-</button>`}</code></pre>
-      </div>
+</button>`}
+      >
+        <UserProfile.Root {ndk} pubkey={examplePubkey}>
+          <div class="user-display">
+            <UserProfile.Avatar size={48} />
+            <div class="user-info">
+              <UserProfile.Name />
+              <button
+                class="custom-follow-btn"
+                onclick={() => handleCustomToggle('user')}
+              >
+                {customUserFollow.isFollowing ? '✓ Following' : '+ Follow'}
+              </button>
+            </div>
+          </div>
+        </UserProfile.Root>
+      </CodePreview>
 
       <!-- Custom Hashtag Button -->
-      <div class="example-card">
-        <h3>Custom Hashtag Button</h3>
-        <p class="example-description">Complete control over hashtag follow UI.</p>
-        <div class="preview">
-          <div class="hashtag-display">
-            <span class="hashtag-icon">#</span>
-            <span class="hashtag-text">{hashtagInput}</span>
-            <button
-              class="custom-hashtag-btn"
-              onclick={() => handleCustomToggle('hashtag')}
-            >
-              {#if customHashtagFollow.isFollowing}
-                <svg class="icon" fill="currentColor" viewBox="0 0 20 20">
-                  <path
-                    fill-rule="evenodd"
-                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-                Subscribed
-              {:else}
-                Subscribe
-              {/if}
-            </button>
-          </div>
-        </div>
-        <pre><code>{`const follow = createFollowAction(ndk, () => "bitcoin");
+      <CodePreview
+        title="Custom Hashtag Button"
+        description="Complete control over hashtag follow UI."
+        code={`const follow = createFollowAction(ndk, () => "bitcoin");
 
 <button onclick={follow.toggle}>
   {follow.isFollowing ? 'Subscribed' : 'Subscribe'}
-</button>`}</code></pre>
-      </div>
+</button>`}
+      >
+        <div class="hashtag-display">
+          <span class="hashtag-icon">#</span>
+          <span class="hashtag-text">{hashtagInput}</span>
+          <button
+            class="custom-hashtag-btn"
+            onclick={() => handleCustomToggle('hashtag')}
+          >
+            {#if customHashtagFollow.isFollowing}
+              <svg class="icon" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              Subscribed
+            {:else}
+              Subscribe
+            {/if}
+          </button>
+        </div>
+      </CodePreview>
 
       <!-- Toggle with Icon -->
-      <div class="example-card">
-        <h3>Icon-Only Toggle</h3>
-        <p class="example-description">Minimal icon-based follow toggle.</p>
-        <div class="preview">
-          <UserProfile.Root {ndk} pubkey={examplePubkey}>
-            <div class="user-display">
-              <UserProfile.Avatar size={48} />
-              <div class="user-info">
-                <UserProfile.Name />
-                <button
-                  class="icon-toggle-btn"
-                  onclick={() => handleCustomToggle('user')}
-                  title={customUserFollow.isFollowing ? 'Unfollow' : 'Follow'}
-                >
-                  {#if customUserFollow.isFollowing}
-                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                  {:else}
-                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                      />
-                    </svg>
-                  {/if}
-                </button>
-              </div>
-            </div>
-          </UserProfile.Root>
-        </div>
-        <pre><code>{`const follow = createFollowAction(ndk, () => user);
+      <CodePreview
+        title="Icon-Only Toggle"
+        description="Minimal icon-based follow toggle."
+        code={`const follow = createFollowAction(ndk, () => user);
 
 <button onclick={follow.toggle}>
   {#if follow.isFollowing}
@@ -426,29 +380,48 @@
   {:else}
     <PlusIcon />
   {/if}
-</button>`}</code></pre>
-      </div>
+</button>`}
+      >
+        <UserProfile.Root {ndk} pubkey={examplePubkey}>
+          <div class="user-display">
+            <UserProfile.Avatar size={48} />
+            <div class="user-info">
+              <UserProfile.Name />
+              <button
+                class="icon-toggle-btn"
+                onclick={() => handleCustomToggle('user')}
+                title={customUserFollow.isFollowing ? 'Unfollow' : 'Follow'}
+              >
+                {#if customUserFollow.isFollowing}
+                  <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                {:else}
+                  <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                    />
+                  </svg>
+                {/if}
+              </button>
+            </div>
+          </div>
+        </UserProfile.Root>
+      </CodePreview>
 
       <!-- Integration Example -->
-      <div class="example-card">
-        <h3>Full Integration</h3>
-        <p class="example-description">
-          Complete example showing state access and error handling.
-        </p>
-        <div class="preview">
-          <div class="integration-example">
-            <div class="status-badge">
-              {customUserFollow.isFollowing ? 'Following' : 'Not Following'}
-            </div>
-            <button
-              class="integration-btn"
-              onclick={() => handleCustomToggle('user')}
-            >
-              {customUserFollow.isFollowing ? 'Unfollow' : 'Follow'}
-            </button>
-          </div>
-        </div>
-        <pre><code>{`const follow = createFollowAction(ndk, () => user);
+      <CodePreview
+        title="Full Integration"
+        description="Complete example showing state access and error handling."
+        code={`const follow = createFollowAction(ndk, () => user);
 
 async function handleToggle() {
   try {
@@ -461,8 +434,20 @@ async function handleToggle() {
 
 <button onclick={handleToggle}>
   {follow.isFollowing ? 'Unfollow' : 'Follow'}
-</button>`}</code></pre>
-      </div>
+</button>`}
+      >
+        <div class="integration-example">
+          <div class="status-badge">
+            {customUserFollow.isFollowing ? 'Following' : 'Not Following'}
+          </div>
+          <button
+            class="integration-btn"
+            onclick={() => handleCustomToggle('user')}
+          >
+            {customUserFollow.isFollowing ? 'Unfollow' : 'Follow'}
+          </button>
+        </div>
+      </CodePreview>
     </div>
   </section>
 
@@ -681,36 +666,6 @@ await followButton.toggle();`}</code></pre>
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
-  }
-
-  .example-card {
-    background: hsl(var(--color-card));
-    border: 1px solid hsl(var(--color-border));
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-  }
-
-  .example-card h3 {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: hsl(var(--color-foreground));
-    margin: 0 0 0.5rem 0;
-  }
-
-  .example-description {
-    font-size: 0.875rem;
-    color: hsl(var(--color-muted-foreground));
-    margin: 0 0 1.5rem 0;
-  }
-
-  .preview {
-    padding: 2rem 1rem;
-    background: hsl(var(--color-muted) / 0.3);
-    border-radius: 0.375rem;
-    margin-bottom: 1rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
   }
 
   .user-display {

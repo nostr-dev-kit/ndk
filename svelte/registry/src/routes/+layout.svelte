@@ -133,11 +133,17 @@
   let loginError = $state('');
 
   // Profile fetcher for current user
-  const currentUserProfile = $derived(
-    ndk.$currentUser && ndk.$currentPubkey
-      ? createProfileFetcher({ ndk, user: () => ndk.$currentUser! })
-      : null
-  );
+  const currentUserProfile = $derived.by(() => {
+    if (!ndk.$currentUser || !ndk.$currentPubkey) return null;
+    try {
+      // Verify user has pubkey before creating profile fetcher
+      const user = ndk.$currentUser;
+      if (!user.pubkey) return null;
+      return createProfileFetcher({ ndk, user: () => user });
+    } catch {
+      return null;
+    }
+  });
 
   const avatarUrl = $derived(currentUserProfile?.profile?.picture);
   const displayName = $derived(

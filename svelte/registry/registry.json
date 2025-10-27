@@ -274,6 +274,60 @@
           "type": "registry:ui"
         }
       ]
+    },
+    {
+      "name": "article-card",
+      "type": "registry:block",
+      "title": "Article Card",
+      "description": "Composable article card components for NDKArticle - includes Portrait and Medium presets",
+      "registryDependencies": [],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
+      "files": [
+        {
+          "path": "registry/ndk/article-card/context.svelte.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "registry/ndk/article-card/article-card-root.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/article-card/article-card-image.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/article-card/article-card-title.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/article-card/article-card-summary.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/article-card/article-card-author.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/article-card/article-card-date.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/article-card/article-card-meta.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/article-card/presets/portrait.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/article-card/presets/medium.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/article-card/index.ts",
+          "type": "registry:lib"
+        }
+      ]
     }
   ]
 }

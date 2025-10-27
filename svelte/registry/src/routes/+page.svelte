@@ -47,47 +47,45 @@
 
 <style>
   .home {
-    max-width: 900px;
-    margin: 0 auto;
+    max-width: 1000px;
   }
 
   .hero {
-    text-align: center;
-    padding: 3rem 0;
-    border-bottom: 1px solid #e5e7eb;
+    padding: 4rem 0 3rem;
+    border-bottom: 1px solid hsl(var(--color-border));
     margin-bottom: 3rem;
   }
 
   .hero h1 {
-    font-size: 3rem;
-    font-weight: 800;
+    font-size: 3.5rem;
+    font-weight: 700;
     margin: 0 0 1rem 0;
-    background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: hsl(var(--color-foreground));
+    letter-spacing: -0.025em;
+    line-height: 1.1;
   }
 
   .subtitle {
     font-size: 1.25rem;
-    color: #6b7280;
-    margin: 0 0 1.5rem 0;
+    color: hsl(var(--color-muted-foreground));
+    margin: 0 0 2rem 0;
+    line-height: 1.6;
   }
 
   .badges {
     display: flex;
-    gap: 0.75rem;
-    justify-content: center;
+    gap: 0.5rem;
     flex-wrap: wrap;
   }
 
   .badge {
-    padding: 0.5rem 1rem;
-    background: #f3f4f6;
-    border-radius: 9999px;
+    padding: 0.375rem 0.75rem;
+    background: hsl(var(--color-secondary));
+    color: hsl(var(--color-secondary-foreground));
+    border-radius: 0.375rem;
     font-size: 0.875rem;
     font-weight: 500;
-    color: #374151;
+    border: 1px solid hsl(var(--color-border));
   }
 
   .intro {
@@ -95,31 +93,32 @@
   }
 
   .intro h2 {
-    font-size: 1.875rem;
+    font-size: 2rem;
     font-weight: 700;
     margin: 0 0 1rem 0;
-    color: #111827;
+    color: hsl(var(--color-foreground));
+    letter-spacing: -0.025em;
   }
 
   .intro p {
-    font-size: 1.125rem;
-    line-height: 1.75;
-    color: #4b5563;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: hsl(var(--color-muted-foreground));
   }
 
   .connection-status {
     margin-bottom: 3rem;
     padding: 1.5rem;
-    background: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.75rem;
+    background: hsl(var(--color-card));
+    border: 1px solid hsl(var(--color-border));
+    border-radius: 0.5rem;
   }
 
   .connection-status h3 {
     margin: 0 0 1rem 0;
-    font-size: 1.125rem;
+    font-size: 1rem;
     font-weight: 600;
-    color: #111827;
+    color: hsl(var(--color-foreground));
   }
 
   .status-grid {
@@ -132,24 +131,28 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.75rem;
-    background: #f9fafb;
-    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: hsl(var(--color-muted) / 0.5);
+    border-radius: 0.375rem;
+    border: 1px solid hsl(var(--color-border));
   }
 
   .relay-url {
-    font-family: monospace;
+    font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
     font-size: 0.875rem;
-    color: #374151;
+    color: hsl(var(--color-foreground));
   }
 
   .relay-state {
     font-size: 0.875rem;
     font-weight: 500;
-    color: #6b7280;
+    color: hsl(var(--color-muted-foreground));
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
 
   .relay-state.connected {
-    color: #059669;
+    color: hsl(142 76% 36%);
   }
 </style>

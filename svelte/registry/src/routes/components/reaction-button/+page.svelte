@@ -1,6 +1,7 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { createReactionButton } from '@nostr-dev-kit/svelte';
   import { NDKEvent, NDKKind } from '@nostr-dev-kit/ndk';
   import ReactionButton from '$lib/ndk/reactions/reaction-button.svelte';
 
@@ -16,6 +17,11 @@
   });
   // Set a predictable ID for the demo
   sampleEvent.id = 'demo-event-reactions-showcase';
+
+  // Builder examples
+  const likeReaction = createReactionButton(ndk, () => sampleEvent, () => "+");
+  const fireReaction = createReactionButton(ndk, () => sampleEvent, () => "🔥");
+  const rocketReaction = createReactionButton(ndk, () => sampleEvent, () => "🚀");
 </script>
 
 <div class="component-page">
@@ -121,6 +127,82 @@
       <pre><code>{`<ReactionButton {ndk} event={event} emoji="🔥" />
 <ReactionButton {ndk} event={event} emoji="🚀" />
 <ReactionButton {ndk} event={event} emoji="👍" />`}</code></pre>
+    </div>
+  </section>
+
+  <!-- Using Builder Directly -->
+  <section class="demo">
+    <h2>Using the Builder Directly</h2>
+    <p class="demo-description">
+      For maximum control over your UI, use <code>createReactionButton()</code> directly without the
+      component. This gives you full control over the markup while still benefiting from reactive
+      state management.
+    </p>
+
+    <div class="demo-container">
+      <div class="demo-event-card">
+        <div class="event-content">
+          <p>{sampleEvent.content}</p>
+        </div>
+        <div class="event-actions builder-examples">
+          <!-- Like button -->
+          <button class="custom-reaction-btn" onclick={likeReaction.toggle}>
+            <span class="emoji">❤️</span>
+            <span class="count">{likeReaction.count}</span>
+          </button>
+
+          <!-- Fire button -->
+          <button
+            class="custom-reaction-btn"
+            class:reacted={fireReaction.hasReacted}
+            onclick={fireReaction.toggle}
+          >
+            <span class="emoji">🔥</span>
+            <span class="count">{fireReaction.count}</span>
+          </button>
+
+          <!-- Rocket button -->
+          <button
+            class="custom-reaction-btn icon-only"
+            class:reacted={rocketReaction.hasReacted}
+            onclick={rocketReaction.toggle}
+            title={rocketReaction.hasReacted ? 'Remove reaction' : 'React with 🚀'}
+          >
+            🚀
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <pre><code>{`const reaction = createReactionButton(ndk, () => event, () => "+");
+
+<button onclick={reaction.toggle}>
+  ❤️ {reaction.count}
+</button>
+
+<button
+  class:reacted={reaction.hasReacted}
+  onclick={reaction.toggle}
+>
+  {reaction.hasReacted ? 'Unlike' : 'Like'} ({reaction.count})
+</button>`}</code></pre>
+    </div>
+
+    <div class="info-box">
+      <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <div>
+        <strong>Builder API:</strong>
+        <ul>
+          <li><code>reaction.hasReacted</code> - Boolean indicating if current user has reacted</li>
+          <li><code>reaction.count</code> - Total number of reactions with this emoji</li>
+          <li><code>reaction.allReactions</code> - Map of all reactions by emoji</li>
+          <li><code>reaction.toggle()</code> - Toggle reaction with the default emoji</li>
+          <li><code>reaction.react(emoji)</code> - React with a specific emoji</li>
+        </ul>
+      </div>
     </div>
   </section>
 
@@ -309,5 +391,61 @@
   .login-prompt p {
     color: #78350f;
     margin: 0;
+  }
+
+  /* Custom reaction button styles for builder examples */
+  .builder-examples {
+    gap: 1rem;
+  }
+
+  .custom-reaction-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .custom-reaction-btn:hover {
+    background: #f9fafb;
+    border-color: #d1d5db;
+  }
+
+  .custom-reaction-btn.reacted {
+    background: #eff6ff;
+    border-color: #3b82f6;
+    color: #1e40af;
+  }
+
+  .custom-reaction-btn.reacted:hover {
+    background: #dbeafe;
+  }
+
+  .custom-reaction-btn .emoji {
+    font-size: 1.125rem;
+    line-height: 1;
+  }
+
+  .custom-reaction-btn .count {
+    font-weight: 500;
+    color: #6b7280;
+    min-width: 1rem;
+    text-align: center;
+  }
+
+  .custom-reaction-btn.reacted .count {
+    color: #1e40af;
+  }
+
+  .custom-reaction-btn.icon-only {
+    padding: 0.5rem;
+    font-size: 1.125rem;
+    min-width: 2.5rem;
+    justify-content: center;
   }
 </style>

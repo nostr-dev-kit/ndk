@@ -4,6 +4,7 @@
   import { createReactionAction } from '@nostr-dev-kit/svelte';
   import { NDKEvent, NDKKind } from '@nostr-dev-kit/ndk';
   import ReactionAction from '$lib/ndk/actions/reaction-action.svelte';
+  import CodePreview from '$lib/components/code-preview.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -32,10 +33,11 @@
 
   <section class="demo">
     <h2>Basic Usage</h2>
-    <p class="demo-description">
-      Click to react with a heart. The button shows the current reaction count.
-    </p>
-    <div class="demo-container">
+    <CodePreview
+      title="Click to react"
+      description="Click to react with a heart. The button shows the current reaction count."
+      code={`<ReactionAction {ndk} event={event} />`}
+    >
       <div class="demo-event-card">
         <div class="event-content">
           <p>{sampleEvent.content}</p>
@@ -44,18 +46,16 @@
           <ReactionAction {ndk} event={sampleEvent} />
         </div>
       </div>
-    </div>
-    <div class="code-block">
-      <pre><code>{`<ReactionAction {ndk} event={event} />`}</code></pre>
-    </div>
+    </CodePreview>
   </section>
 
   <section class="demo">
     <h2>Without Count</h2>
-    <p class="demo-description">
-      Hide the reaction count by setting <code>showCount={false}</code>.
-    </p>
-    <div class="demo-container">
+    <CodePreview
+      title="Hide count"
+      description="Hide the reaction count by setting showCount={false}."
+      code={`<ReactionAction {ndk} event={event} showCount={false} />`}
+    >
       <div class="demo-event-card">
         <div class="event-content">
           <p>{sampleEvent.content}</p>
@@ -64,10 +64,7 @@
           <ReactionAction {ndk} event={sampleEvent} showCount={false} />
         </div>
       </div>
-    </div>
-    <div class="code-block">
-      <pre><code>{`<ReactionAction {ndk} event={event} showCount={false} />`}</code></pre>
-    </div>
+    </CodePreview>
   </section>
 
   <section class="demo">
@@ -80,7 +77,11 @@
       <li><strong>Your Emojis</strong> - Custom emojis from your NIP-51 kind:10030 list</li>
       <li><strong>Standard Emojis</strong> - Common reaction emojis</li>
     </ul>
-    <div class="demo-container">
+    <CodePreview
+      title="Long-press interaction"
+      description="Try long-pressing the reaction button to open the emoji picker"
+      code={`<ReactionAction {ndk} event={event} />`}
+    >
       <div class="demo-event-card">
         <div class="event-content">
           <p>{sampleEvent.content}</p>
@@ -89,7 +90,7 @@
           <ReactionAction {ndk} event={sampleEvent} />
         </div>
       </div>
-    </div>
+    </CodePreview>
     <div class="info-box">
       <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -108,10 +109,13 @@
 
   <section class="demo">
     <h2>Custom Default Emoji</h2>
-    <p class="demo-description">
-      Change the default emoji with the <code>emoji</code> prop.
-    </p>
-    <div class="demo-container">
+    <CodePreview
+      title="Custom emojis"
+      description="Change the default emoji with the emoji prop."
+      code={`<ReactionAction {ndk} event={event} emoji="🔥" />
+<ReactionAction {ndk} event={event} emoji="🚀" />
+<ReactionAction {ndk} event={event} emoji="👍" />`}
+    >
       <div class="demo-event-card">
         <div class="event-content">
           <p>{sampleEvent.content}</p>
@@ -122,12 +126,7 @@
           <ReactionAction {ndk} event={sampleEvent} emoji="👍" />
         </div>
       </div>
-    </div>
-    <div class="code-block">
-      <pre><code>{`<ReactionAction {ndk} event={event} emoji="🔥" />
-<ReactionAction {ndk} event={event} emoji="🚀" />
-<ReactionAction {ndk} event={event} emoji="👍" />`}</code></pre>
-    </div>
+    </CodePreview>
   </section>
 
   <!-- Using Builder Directly -->
@@ -139,7 +138,22 @@
       state management.
     </p>
 
-    <div class="demo-container">
+    <CodePreview
+      title="Builder pattern"
+      description="Use createReactionAction() for full control over your UI markup"
+      code={`const reaction = createReactionAction(ndk, () => event, () => "+");
+
+<button onclick={reaction.toggle}>
+  ❤️ {reaction.count}
+</button>
+
+<button
+  class:reacted={reaction.hasReacted}
+  onclick={reaction.toggle}
+>
+  {reaction.hasReacted ? 'Unlike' : 'Like'} ({reaction.count})
+</button>`}
+    >
       <div class="demo-event-card">
         <div class="event-content">
           <p>{sampleEvent.content}</p>
@@ -172,22 +186,7 @@
           </button>
         </div>
       </div>
-    </div>
-
-    <div class="code-block">
-      <pre><code>{`const reaction = createReactionAction(ndk, () => event, () => "+");
-
-<button onclick={reaction.toggle}>
-  ❤️ {reaction.count}
-</button>
-
-<button
-  class:reacted={reaction.hasReacted}
-  onclick={reaction.toggle}
->
-  {reaction.hasReacted ? 'Unlike' : 'Like'} ({reaction.count})
-</button>`}</code></pre>
-    </div>
+    </CodePreview>
 
     <div class="info-box">
       <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -274,10 +273,6 @@
     color: #8b5cf6;
   }
 
-  .demo-container {
-    margin-bottom: 1.5rem;
-  }
-
   .demo-event-card {
     background: white;
     border: 1px solid #e5e7eb;
@@ -301,24 +296,6 @@
     gap: 0.5rem;
     padding-top: 1rem;
     border-top: 1px solid #f3f4f6;
-  }
-
-  .code-block {
-    background: #1f2937;
-    border-radius: 0.5rem;
-    padding: 1rem;
-    overflow-x: auto;
-  }
-
-  .code-block pre {
-    margin: 0;
-  }
-
-  .code-block code {
-    color: #e5e7eb;
-    font-family: 'Courier New', monospace;
-    font-size: 0.875rem;
-    line-height: 1.6;
   }
 
   .feature-list {

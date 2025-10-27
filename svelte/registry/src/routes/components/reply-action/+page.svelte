@@ -4,6 +4,7 @@
   import { createReplyAction } from '@nostr-dev-kit/svelte';
   import { NDKEvent, NDKKind } from '@nostr-dev-kit/ndk';
   import ReplyAction from '$lib/ndk/actions/reply-action.svelte';
+  import CodePreview from '$lib/components/code-preview.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -27,11 +28,11 @@
   </header>
 
   <section class="demo">
-    <h2>Basic Usage</h2>
-    <p class="demo-description">
-      Click to open reply composer. The button shows the current reply count.
-    </p>
-    <div class="demo-container">
+    <CodePreview
+      title="Basic Usage"
+      description="Click to open reply composer. The button shows the current reply count."
+      code={`<ReplyAction {ndk} event={event} />`}
+    >
       <div class="demo-event-card">
         <div class="event-content">
           <p>{sampleEvent.content}</p>
@@ -40,18 +41,19 @@
           <ReplyAction {ndk} event={sampleEvent} />
         </div>
       </div>
-    </div>
-    <div class="code-block">
-      <pre><code>{`<ReplyAction {ndk} event={event} />`}</code></pre>
-    </div>
+    </CodePreview>
   </section>
 
   <section class="demo">
-    <h2>Using the Builder</h2>
-    <p class="demo-description">
-      Use <code>createReplyAction()</code> for custom UI implementations.
-    </p>
-    <div class="demo-container">
+    <CodePreview
+      title="Using the Builder"
+      description="Use createReplyAction() for custom UI implementations."
+      code={`const reply = createReplyAction(ndk, () => event);
+
+<button>
+  💬 {reply.count} {reply.count === 1 ? 'Reply' : 'Replies'}
+</button>`}
+    >
       <div class="demo-event-card">
         <div class="event-content">
           <p>{sampleEvent.content}</p>
@@ -62,14 +64,7 @@
           </button>
         </div>
       </div>
-    </div>
-    <div class="code-block">
-      <pre><code>{`const reply = createReplyAction(ndk, () => event);
-
-<button>
-  💬 {reply.count} {reply.count === 1 ? 'Reply' : 'Replies'}
-</button>`}</code></pre>
-    </div>
+    </CodePreview>
   </section>
 </div>
 
@@ -104,28 +99,6 @@
     border-bottom: none;
   }
 
-  h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin: 0 0 0.5rem 0;
-  }
-
-  .demo-description {
-    color: hsl(var(--color-muted-foreground));
-    margin: 0 0 1.5rem 0;
-  }
-
-  .demo-description code {
-    background: hsl(var(--color-muted));
-    padding: 0.125rem 0.375rem;
-    border-radius: 0.25rem;
-    font-size: 0.875rem;
-  }
-
-  .demo-container {
-    margin-bottom: 1.5rem;
-  }
-
   .demo-event-card {
     background: hsl(var(--color-card));
     border: 1px solid hsl(var(--color-border));
@@ -147,23 +120,6 @@
     gap: 0.5rem;
     padding-top: 1rem;
     border-top: 1px solid hsl(var(--color-border));
-  }
-
-  .code-block {
-    background: hsl(var(--color-muted));
-    border-radius: 0.5rem;
-    padding: 1rem;
-    overflow-x: auto;
-  }
-
-  .code-block pre {
-    margin: 0;
-  }
-
-  .code-block code {
-    font-family: 'Monaco', 'Courier New', monospace;
-    font-size: 0.875rem;
-    line-height: 1.6;
   }
 
   .custom-reply-btn {

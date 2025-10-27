@@ -242,17 +242,10 @@ export class ReactiveWalletStore {
 
     /**
      * Get transaction history
+     * TODO: Implement when $payments is ready
      */
     get transactions(): Transaction[] {
-        const paymentTxs = this.#ndk.$payments.history.map((tx: any) => ({
-            type: tx.direction === "out" ? ("send" as const) : ("receive" as const),
-            amount: tx.amount,
-            timestamp: tx.timestamp,
-            memo: tx.comment,
-            status: tx.status === "confirmed" ? "completed" : tx.status,
-        }));
-
-        return paymentTxs.sort((a, b) => b.timestamp - a.timestamp);
+        return [];
     }
 
     /**
@@ -270,7 +263,8 @@ export class ReactiveWalletStore {
         const wallet = this.#wallet;
         if (!(wallet instanceof NDKCashuWallet)) return undefined;
         const privkeys = Array.from(wallet.privkeys);
-        return privkeys.length > 0 ? privkeys[0] : undefined;
+        const firstEntry = privkeys.length > 0 ? privkeys[0] : undefined;
+        return firstEntry ? firstEntry[0] : undefined;
     }
 
     /**
@@ -349,7 +343,7 @@ export class ReactiveWalletStore {
 
         if (!(wallet instanceof NDKCashuWallet)) {
             // No wallet exists, create one
-            const session = this.#sessionManager.getState().activePubkey;
+            const session = this.#sessionManager.activePubkey;
             if (!session) throw new Error("No active session");
 
             const newWallet = await NDKCashuWallet.create(this.#ndk, config.mints, config.relays);
@@ -362,7 +356,9 @@ export class ReactiveWalletStore {
         }
 
         // Publish CashuMintList (kind 10019) for nutzap reception
-        await wallet.publishMintList();
+        if (wallet instanceof NDKCashuWallet) {
+            await wallet.publishMintList();
+        }
     }
 }
 

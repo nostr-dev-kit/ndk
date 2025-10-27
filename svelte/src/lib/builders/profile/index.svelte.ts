@@ -1,74 +1,106 @@
 import type { NDKUser, NDKUserProfile } from '@nostr-dev-kit/ndk';
 import type { NDKSvelte } from '$lib/ndk-svelte.svelte.js';
 
+// Track in-flight profile fetch requests to prevent duplicate fetches
+const inFlightRequests = new Map<string, Promise<NDKUserProfile | null>>();
+
 export interface ProfileFetcherState {
     profile: NDKUserProfile | null;
+    user: NDKUser | null;
     loading: boolean;
 }
 
 export interface CreateProfileFetcherProps {
     ndk: NDKSvelte;
-    user: NDKUser | string; // NDKUser instance or pubkey/npub
+    user: () => (NDKUser | string); // Function returning NDKUser instance or pubkey/npub
 }
 
 /**
  * Create reactive state for fetching a user profile
  *
- * Handles fetching and caching user profiles.
+ * Handles fetching and caching user profiles with deduplication.
  *
  * @example
  * ```ts
- * const profileFetcher = createProfileFetcher({ ndk, user: 'npub1...' });
+ * const profileFetcher = createProfileFetcher({ ndk, user: () => 'npub1...' });
  *
  * // Access state
  * profileFetcher.profile // User profile
+ * profileFetcher.user // NDKUser instance (available once loaded)
  * profileFetcher.loading // Loading state
  * ```
  */
 export function createProfileFetcher(props: CreateProfileFetcherProps): ProfileFetcherState {
-    const state = $state<{ profile: NDKUserProfile | null; loading: boolean }>({
+    const state = $state<{ profile: NDKUserProfile | null; user: NDKUser | null; loading: boolean }>({
         profile: null,
+        user: null,
         loading: true
     });
 
-    async function fetchProfile() {
+    async function fetchProfile(payload: NDKUser | string) {
         state.loading = true;
 
         try {
-            let ndkUser: NDKUser;
+            const ndkUser = typeof payload === 'string'
+                ? await props.ndk.fetchUser(payload)
+                : payload;
 
-            // Handle string (pubkey/npub) or NDKUser
-            if (typeof props.user === 'string') {
-                ndkUser = props.ndk.getUser({ pubkey: props.user });
-            } else {
-                ndkUser = props.user;
-            }
-
-            // Check if profile already cached
-            if (ndkUser.profile) {
-                state.profile = ndkUser.profile;
+            if (!ndkUser) {
+                state.profile = null;
+                state.user = null;
                 state.loading = false;
                 return;
             }
 
+            const pubkey = ndkUser.pubkey;
+
+            // Check if profile already cached
+            if (ndkUser.profile) {
+                state.profile = ndkUser.profile;
+                state.user = ndkUser;
+                state.loading = false;
+                return;
+            }
+
+            // Check if there's already an in-flight request for this pubkey
+            let fetchPromise = inFlightRequests.get(pubkey);
+
+            if (!fetchPromise) {
+                // No in-flight request, create a new one
+                fetchPromise = ndkUser
+                    .fetchProfile({ closeOnEose: true, groupable: true, groupableDelay: 250 })
+                    .finally(() => {
+                        // Remove from in-flight requests when complete
+                        inFlightRequests.delete(pubkey);
+                    });
+
+                inFlightRequests.set(pubkey, fetchPromise);
+            }
+
             // Fetch profile
-            const fetchedProfile = await ndkUser.fetchProfile();
+            const fetchedProfile = await fetchPromise;
             state.profile = fetchedProfile || null;
+            state.user = ndkUser;
         } catch (err) {
             console.error('Failed to fetch profile:', err);
             state.profile = null;
+            state.user = null;
         }
 
         state.loading = false;
     }
 
     $effect(() => {
-        if (props.user) fetchProfile();
+        const currentUser = props.user();
+        if (currentUser) fetchProfile(currentUser);
     });
 
     return {
         get profile() {
             return state.profile;
+        },
+        get user() {
+            return state.user;
         },
         get loading() {
             return state.loading;

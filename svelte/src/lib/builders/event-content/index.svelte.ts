@@ -15,9 +15,9 @@ export interface EventContentState {
 
 export interface CreateEventContentProps {
     ndk: NDKSvelte;
-    event?: NDKEvent;
-    content?: string;
-    emojiTags?: string[][];
+    event?: () => NDKEvent | undefined;
+    content?: () => string | undefined;
+    emojiTags?: () => string[][] | undefined;
 }
 
 /**
@@ -33,7 +33,7 @@ export interface CreateEventContentProps {
  *
  * @example
  * ```ts
- * const content = createEventContent({ ndk, event });
+ * const content = createEventContent({ ndk, event: () => myEvent });
  *
  * // Access parsed segments
  * content.segments // Array of parsed segments
@@ -42,9 +42,9 @@ export interface CreateEventContentProps {
  * ```
  */
 export function createEventContent(props: CreateEventContentProps): EventContentState {
-    const actualContent = $derived(props.event?.content ?? props.content ?? '');
+    const actualContent = $derived(props.event?.()?.content ?? props.content?.() ?? '');
     const actualEmojiTags = $derived(
-        props.event ? props.event.tags.filter(t => t[0] === 'emoji') : (props.emojiTags ?? [])
+        props.event?.() ? props.event().tags.filter(t => t[0] === 'emoji') : (props.emojiTags?.() ?? [])
     );
 
     const cleanedContent = $derived(actualContent.replace(/\[Image #\d+\]/gi, '').trim());
@@ -73,7 +73,7 @@ export interface EmbeddedEventState {
 
 export interface CreateEmbeddedEventProps {
     ndk: NDKSvelte;
-    bech32: string;
+    bech32: () => string;
 }
 
 /**
@@ -83,7 +83,7 @@ export interface CreateEmbeddedEventProps {
  *
  * @example
  * ```ts
- * const embedded = createEmbeddedEvent({ ndk, bech32: 'note1...' });
+ * const embedded = createEmbeddedEvent({ ndk, bech32: () => 'note1...' });
  *
  * // Access state
  * embedded.event // The fetched event
@@ -96,31 +96,27 @@ export function createEmbeddedEvent(props: CreateEmbeddedEventProps): EmbeddedEv
     let loading = $state(true);
     let error = $state<string | null>(null);
 
-    async function fetchEvent() {
-        if (!props.bech32 || !props.ndk) return;
+    $effect(() => {
+        const currentBech32 = props.bech32();
+        if (!currentBech32 || !props.ndk) return;
 
         loading = true;
         error = null;
 
-        try {
-            // NDK's fetchEvent accepts bech32 directly
-            const event = await props.ndk.fetchEvent(props.bech32);
-
-            if (event) {
-                fetchedEvent = event;
-            } else {
-                error = 'Event not found';
-            }
-        } catch (err) {
-            console.error('Failed to fetch embedded event:', err);
-            error = 'Failed to load event';
-        }
-
-        loading = false;
-    }
-
-    $effect(() => {
-        fetchEvent();
+        props.ndk.fetchEvent(currentBech32)
+            .then(event => {
+                if (event) {
+                    fetchedEvent = event;
+                } else {
+                    error = 'Event not found';
+                }
+                loading = false;
+            })
+            .catch(err => {
+                console.error('Failed to fetch embedded event:', err);
+                error = 'Failed to load event';
+                loading = false;
+            });
     });
 
     return {

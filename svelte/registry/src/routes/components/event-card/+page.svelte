@@ -1,40 +1,16 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { NDKEvent, NDKKind } from '@nostr-dev-kit/ndk';
   import { EventCard, ReplyAction, RepostAction, ReactionAction } from '$lib/ndk/event-card';
   import type { ThreadingMetadata } from '$lib/ndk/event-card';
+  import type { NDKEvent } from '@nostr-dev-kit/ndk';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
-  // Create example events
-  const exampleNote = new NDKEvent(ndk, {
-    kind: NDKKind.Text,
-    content: 'This is an example Nostr note! 🎉\n\nThe EventCard component can display any event type and is fully composable. You can mix and match the Header, Content, and Actions components however you like.',
-    pubkey: 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52',
-    created_at: Math.floor(Date.now() / 1000) - 3600,
-    tags: []
-  } as any);
-
-  const threadNote = new NDKEvent(ndk, {
-    kind: NDKKind.Text,
-    content: 'This is part of a thread with vertical lines showing the connection.',
-    pubkey: 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52',
-    created_at: Math.floor(Date.now() / 1000) - 7200,
-    tags: [
-      ['e', 'parent-event-id', '', 'reply']
-    ]
-  } as any);
-
-  const selfThreadNote = new NDKEvent(ndk, {
-    kind: NDKKind.Text,
-    content: 'When the same author replies to themselves, the thread line is styled differently.',
-    pubkey: 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52',
-    created_at: Math.floor(Date.now() / 1000) - 1800,
-    tags: [
-      ['e', threadNote.id, '', 'reply']
-    ]
-  } as any);
+  let neventInput = $state('nevent1qvzqqqqqqypzp75cf0tahv5z7plpdeaws7ex52nmnwgtwfr2g3m37r844evqrr6jqyxhwumn8ghj7e3h0ghxjme0qyd8wumn8ghj7urewfsk66ty9enxjct5dfskvtnrdakj7qpqn35mrh4hpc53m3qge6m0exys02lzz9j0sxdj5elwh3hc0e47v3qqpq0a0n');
+  let exampleNote = $state<NDKEvent | undefined>();
+  let threadNote = $state<NDKEvent | undefined>();
+  let selfThreadNote = $state<NDKEvent | undefined>();
 
   // Threading metadata examples
   const threadingMetadata: ThreadingMetadata = {
@@ -50,6 +26,18 @@
     depth: 1,
     isMainChain: true
   };
+
+  $effect(() => {
+    const input = neventInput;
+
+    ndk.fetchEvent(input).then(event => {
+      if (event) {
+        exampleNote = event;
+        threadNote = event;
+        selfThreadNote = event;
+      }
+    });
+  });
 </script>
 
 <div class="component-page">
@@ -58,108 +46,148 @@
     <p>Composable event display components for any NDKEvent type.</p>
   </header>
 
-  <section class="demo">
-    <h2>Basic EventCard</h2>
-    <p class="demo-description">
-      A simple event card with header, content, and action buttons.
-    </p>
-    <div class="demo-container">
-      <EventCard.Root {ndk} event={exampleNote}>
-        <EventCard.Header />
-        <EventCard.Content />
-        <EventCard.Actions>
-          <ReplyAction />
-          <RepostAction />
-          <ReactionAction />
-        </EventCard.Actions>
-      </EventCard.Root>
-    </div>
+  <section class="controls">
+    <label>
+      <span class="label-text">Test with different event (nevent, note, or event ID):</span>
+      <input
+        type="text"
+        bind:value={neventInput}
+        placeholder="nevent1... or note1... or hex event id"
+        class="nevent-input"
+      />
+    </label>
   </section>
 
-  <section class="demo">
-    <h2>Compact Variant</h2>
-    <p class="demo-description">
-      Minimal header with truncated content.
-    </p>
-    <div class="demo-container">
-      <EventCard.Root {ndk} event={exampleNote}>
-        <EventCard.Header variant="compact" showMenu={false} />
-        <EventCard.Content truncate={100} />
-        <EventCard.Actions>
-          <ReactionAction emoji="🤙" />
-        </EventCard.Actions>
-      </EventCard.Root>
-    </div>
-  </section>
-
-  <section class="demo">
-    <h2>Thread View with Lines</h2>
-    <p class="demo-description">
-      Event cards with thread lines showing conversation flow.
-    </p>
-    <div class="demo-container">
-      <!-- Parent -->
-      <EventCard.Root {ndk} event={threadNote} threading={threadingMetadata}>
-        <EventCard.ThreadLine />
-        <EventCard.Header variant="compact" />
-        <EventCard.Content />
-        <EventCard.Actions>
-          <ReplyAction />
-          <ReactionAction />
-        </EventCard.Actions>
-      </EventCard.Root>
-
-      <!-- Self-thread reply -->
-      <EventCard.Root {ndk} event={selfThreadNote} threading={selfThreadingMetadata}>
-        <EventCard.ThreadLine />
-        <EventCard.Header variant="compact" />
-        <EventCard.Content />
-        <EventCard.Actions>
-          <ReactionAction emoji="❤️" />
-        </EventCard.Actions>
-      </EventCard.Root>
-    </div>
-  </section>
-
-  <section class="demo">
-    <h2>Custom Composition</h2>
-    <p class="demo-description">
-      Full control over component arrangement and styling.
-    </p>
-    <div class="demo-container">
-      <EventCard.Root {ndk} event={exampleNote} class="custom-card">
-        <div class="custom-layout">
-          <EventCard.Header variant="minimal" showTimestamp={false} />
-          <EventCard.Content />
-          <div class="custom-actions">
-            <ReactionAction emoji="🔥" />
-            <ReactionAction emoji="💯" />
-            <ReactionAction emoji="🚀" />
+  {#if !exampleNote}
+    <div class="loading">Loading real events...</div>
+  {:else}
+    <section class="demo">
+      <h2>Basic EventCard</h2>
+      <p class="demo-description">
+        A simple event card with header, content, and action buttons.
+      </p>
+      <div class="demo-container">
+        <EventCard.Root {ndk} event={exampleNote}>
+          <div class="flex items-center justify-between p-4 border-b" style="border-bottom-color: #f0f0f0;">
+            <div class="flex items-center gap-3 flex-1">
+              <EventCard.Header showMenu={false} class="!p-0 !border-0" />
+            </div>
+            <EventCard.Dropdown />
           </div>
-        </div>
-      </EventCard.Root>
-    </div>
-  </section>
+          <EventCard.Content />
+          <EventCard.Actions>
+            <ReplyAction />
+            <RepostAction />
+            <ReactionAction />
+          </EventCard.Actions>
+        </EventCard.Root>
+      </div>
+    </section>
 
-  <section class="demo">
-    <h2>Interactive Card</h2>
-    <p class="demo-description">
-      Clickable card that navigates to event page.
-    </p>
-    <div class="demo-container">
-      <EventCard.Root {ndk} event={exampleNote} interactive>
-        <EventCard.Header />
-        <EventCard.Content truncate={150} />
-      </EventCard.Root>
-    </div>
-  </section>
+    <section class="demo">
+      <h2>Compact Variant</h2>
+      <p class="demo-description">
+        Minimal header with truncated content.
+      </p>
+      <div class="demo-container">
+        <EventCard.Root {ndk} event={exampleNote}>
+          <EventCard.Header variant="compact" showMenu={false} />
+          <EventCard.Content truncate={100} />
+          <EventCard.Actions>
+            <ReactionAction emoji="🤙" />
+          </EventCard.Actions>
+        </EventCard.Root>
+      </div>
+    </section>
 
-  <section class="code-examples">
-    <h2>Usage Examples</h2>
+    <section class="demo">
+      <h2>Thread View with Lines</h2>
+      <p class="demo-description">
+        Event cards with thread lines showing conversation flow.
+      </p>
+      <div class="demo-container">
+        <!-- Parent -->
+        <EventCard.Root {ndk} event={threadNote} threading={threadingMetadata}>
+          <EventCard.ThreadLine />
+          <EventCard.Header variant="compact" />
+          <EventCard.Content />
+          <EventCard.Actions>
+            <ReplyAction />
+            <ReactionAction />
+          </EventCard.Actions>
+        </EventCard.Root>
 
-    <div class="code-block">
-      <h3>Basic Usage</h3>
-      <pre><code>{`<EventCard.Root {ndk} {event}>
+        <!-- Self-thread reply -->
+        <EventCard.Root {ndk} event={selfThreadNote} threading={selfThreadingMetadata}>
+          <EventCard.ThreadLine />
+          <EventCard.Header variant="compact" />
+          <EventCard.Content />
+          <EventCard.Actions>
+            <ReactionAction emoji="❤️" />
+          </EventCard.Actions>
+        </EventCard.Root>
+      </div>
+    </section>
+
+    <section class="demo">
+      <h2>Custom Composition</h2>
+      <p class="demo-description">
+        Full control over component arrangement and styling.
+      </p>
+      <div class="demo-container">
+        <EventCard.Root {ndk} event={exampleNote} class="custom-card">
+          <div class="custom-layout">
+            <EventCard.Header variant="minimal" showTimestamp={false} />
+            <EventCard.Content />
+            <div class="custom-actions">
+              <ReactionAction emoji="🔥" />
+              <ReactionAction emoji="💯" />
+              <ReactionAction emoji="🚀" />
+            </div>
+          </div>
+        </EventCard.Root>
+      </div>
+    </section>
+
+    <section class="demo">
+      <h2>Interactive Card</h2>
+      <p class="demo-description">
+        Clickable card that navigates to event page.
+      </p>
+      <div class="demo-container">
+        <EventCard.Root {ndk} event={exampleNote} interactive>
+          <EventCard.Header />
+          <EventCard.Content truncate={150} />
+        </EventCard.Root>
+      </div>
+    </section>
+
+    <section class="demo">
+      <h2>Dropdown Menu</h2>
+      <p class="demo-description">
+        Self-contained dropdown menu with event options (mute, report, copy, view raw).
+      </p>
+      <div class="demo-container">
+        <EventCard.Root {ndk} event={exampleNote}>
+          <div class="header-with-dropdown">
+            <EventCard.Header showMenu={false} />
+            <EventCard.Dropdown />
+          </div>
+          <EventCard.Content />
+          <EventCard.Actions>
+            <ReplyAction />
+            <ReactionAction />
+          </EventCard.Actions>
+        </EventCard.Root>
+      </div>
+    </section>
+
+    <section class="code-examples">
+      <h2>Usage Examples</h2>
+
+      <div class="code-block">
+        <h3>Basic Usage</h3>
+        <pre><code>{`<EventCard.Root {ndk} {event}>
   <EventCard.Header />
   <EventCard.Content />
   <EventCard.Actions>
@@ -168,11 +196,11 @@
     <ReactionAction />
   </EventCard.Actions>
 </EventCard.Root>`}</code></pre>
-    </div>
+      </div>
 
-    <div class="code-block">
-      <h3>Thread View</h3>
-      <pre><code>{`<EventCard.Root {event} {threading}>
+      <div class="code-block">
+        <h3>Thread View</h3>
+        <pre><code>{`<EventCard.Root {event} {threading}>
   <EventCard.ThreadLine />
   <EventCard.Header variant="compact" />
   <EventCard.Content />
@@ -181,23 +209,42 @@
     <ReactionAction />
   </EventCard.Actions>
 </EventCard.Root>`}</code></pre>
-    </div>
+      </div>
 
-    <div class="code-block">
-      <h3>Custom Actions</h3>
-      <pre><code>{`<EventCard.Actions>
+      <div class="code-block">
+        <h3>Custom Actions</h3>
+        <pre><code>{`<EventCard.Actions>
   <ReactionAction emoji="🔥" />
   <ReactionAction emoji="💯" />
   <ReactionAction emoji="🚀" />
   <CustomShareButton />
 </EventCard.Actions>`}</code></pre>
-    </div>
-  </section>
+      </div>
+
+      <div class="code-block">
+        <h3>Dropdown Menu</h3>
+        <pre><code>{`<EventCard.Root {ndk} {event}>
+  <div class="header-with-dropdown">
+    <EventCard.Header showMenu={false} />
+    <EventCard.Dropdown />
+  </div>
+  <EventCard.Content />
+</EventCard.Root>`}</code></pre>
+      </div>
+    </section>
+  {/if}
 </div>
 
 <style>
   .component-page {
     max-width: 900px;
+  }
+
+  .loading {
+    padding: 2rem;
+    text-align: center;
+    color: #6b7280;
+    font-size: 1.125rem;
   }
 
   header {
@@ -242,9 +289,6 @@
 
   .demo-container {
     padding: 1.5rem;
-    background: #f9fafb;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.5rem;
   }
 
   .custom-card :global(.custom-layout) {
@@ -255,6 +299,12 @@
     display: flex;
     gap: 0.5rem;
     padding: 0.75rem 1rem;
+  }
+
+  .header-with-dropdown {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 
   .code-examples {
@@ -292,5 +342,47 @@
     font-size: 0.875rem;
     line-height: 1.5;
     color: #e5e7eb;
+  }
+
+  .controls {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+  }
+
+  .controls label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .label-text {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+  }
+
+  .nevent-input {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    font-family: 'Monaco', 'Menlo', monospace;
+    font-size: 0.875rem;
+    width: 100%;
+    max-width: 600px;
+  }
+
+  .nevent-input:focus {
+    outline: none;
+    border-color: #8b5cf6;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+  }
+
+  .loading {
+    padding: 2rem;
+    text-align: center;
+    color: #6b7280;
   }
 </style>

@@ -6,8 +6,7 @@ export default defineConfig({
 	plugins: [sveltekit()],
 	resolve: {
 		alias: {
-			'$lib': path.resolve('./lib'),
-			'$registry': path.resolve('./lib/ndk')
+			'@nostr-dev-kit/svelte/builders/event-content': path.resolve('../src/lib/builders/event-content')
 		}
 	}
 });

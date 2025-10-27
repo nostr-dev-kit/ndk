@@ -41,14 +41,6 @@ export type {
     TransactionStatus,
     TransactionType,
 } from "./payments/types.js";
-// Relay management
-export {
-    createRelayManager,
-    type EnrichedRelayInfo,
-    type PoolType,
-    type RelayInformation,
-    RelayManager as RelayManagerClass,
-} from "./relay-manager.svelte.js";
 export type { ReactivePaymentsStore } from "./stores/payments.svelte.js";
 export type { ReactivePoolStore, RelayInfo, RelayStatus } from "./stores/pool.svelte.js";
 // Store types (for typing ndk.* properties)
@@ -99,7 +91,7 @@ export {
 export {
     createEventCard,
     type EventCardState
-} from "./builders/event/card/index.js";
+} from "./builders/event/card/index.svelte.js";
 
 // ============================================================================
 // Event Content Rendering Builders
@@ -123,6 +115,22 @@ export {
     type CreateProfileFetcherProps,
     type ProfileFetcherState,
 } from "./builders/profile/index.svelte.js";
+
+// ============================================================================
+// Relay Builders
+// ============================================================================
+
+export {
+    createRelayInfo,
+    type RelayInfoState,
+    type RelayNIP11Info,
+} from "./builders/relay/info.svelte.js";
+
+export {
+    createBookmarkedRelayList,
+    type BookmarkedRelayListState,
+    type BookmarkedRelayWithStats,
+} from "./builders/relay/bookmarks.svelte.js";
 
 // Content parsing utilities
 export {

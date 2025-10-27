@@ -12,16 +12,56 @@
   },
   "items": [
     {
-      "name": "note-card",
+      "name": "event-card",
       "type": "registry:block",
-      "title": "Note Card",
-      "description": "A complete note display component with reactions, replies, and zaps",
-      "registryDependencies": ["reactions", "replies"],
+      "title": "Event Card",
+      "description": "Composable event card components with Context API - mix and match Root, Header, Content, Actions",
+      "registryDependencies": [],
       "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
       "files": [
         {
-          "path": "registry/ndk/note-card/note-card.svelte",
+          "path": "registry/ndk/event-card/context.svelte.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "registry/ndk/event-card/event-card-root.svelte",
           "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/event-card/event-card-header.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/event-card/event-card-content.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/event-card/event-card-actions.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/event-card/event-card-thread-line.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/event-card/actions/reply-action.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/event-card/actions/reaction-action.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/event-card/actions/repost-action.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/event-card/event-card-dropdown.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/event-card/index.ts",
+          "type": "registry:lib"
         }
       ]
     },
@@ -82,44 +122,16 @@
       ]
     },
     {
-      "name": "avatar",
+      "name": "event-content",
       "type": "registry:component",
-      "title": "Avatar",
-      "description": "User avatar display with fallback",
-      "registryDependencies": [],
+      "title": "Event Content",
+      "description": "Rich event content renderer with automatic parsing of mentions, hashtags, media, and more",
+      "registryDependencies": ["mention-preview", "embedded-event", "hashtag-preview"],
       "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
       "files": [
         {
-          "path": "registry/ndk/user/avatar/avatar.svelte",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "name",
-      "type": "registry:component",
-      "title": "Name",
-      "description": "Display user's name from their Nostr profile",
-      "registryDependencies": [],
-      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
-      "files": [
-        {
-          "path": "registry/ndk/user/name/name.svelte",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "blossom-image",
-      "type": "registry:component",
-      "title": "Blossom Image",
-      "description": "Image component with Blossom CDN support",
-      "registryDependencies": [],
-      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte", "@nostr-dev-kit/blossom"],
-      "files": [
-        {
-          "path": "registry/ndk/blossom-image/blossom-image.svelte",
-          "type": "registry:ui"
+          "path": "registry/ndk/event/content/event-content.svelte",
+          "type": "registry:component"
         }
       ]
     },
@@ -133,6 +145,34 @@
       "files": [
         {
           "path": "registry/ndk/event/content/event/event.svelte",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "mention-preview",
+      "type": "registry:component",
+      "title": "Mention Preview",
+      "description": "Preview for user mentions",
+      "registryDependencies": [],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
+      "files": [
+        {
+          "path": "registry/ndk/event/content/mention/mention.svelte",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "hashtag-preview",
+      "type": "registry:component",
+      "title": "Hashtag Preview",
+      "description": "Display hashtags with optional click handler",
+      "registryDependencies": [],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
+      "files": [
+        {
+          "path": "registry/ndk/event/content/hashtag/hashtag.svelte",
           "type": "registry:ui"
         }
       ]
@@ -166,20 +206,6 @@
       ]
     },
     {
-      "name": "mention-preview",
-      "type": "registry:component",
-      "title": "Mention Preview",
-      "description": "Preview for user mentions",
-      "registryDependencies": [],
-      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
-      "files": [
-        {
-          "path": "registry/ndk/event/content/mention/mention.svelte",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
       "name": "generic-preview",
       "type": "registry:component",
       "title": "Generic Preview",
@@ -190,34 +216,6 @@
         {
           "path": "registry/ndk/event/cards/preview/generic-preview/generic-preview.svelte",
           "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "hashtag-preview",
-      "type": "registry:component",
-      "title": "Hashtag Preview",
-      "description": "Display hashtags with optional click handler",
-      "registryDependencies": [],
-      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
-      "files": [
-        {
-          "path": "registry/ndk/event/content/hashtag/hashtag.svelte",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "event-content",
-      "type": "registry:component",
-      "title": "Event Content",
-      "description": "Rich event content renderer with automatic parsing of mentions, hashtags, media, and more",
-      "registryDependencies": ["mention-preview", "embedded-event", "hashtag-preview"],
-      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte", "nostr-tools"],
-      "files": [
-        {
-          "path": "registry/ndk/event/content/event-content.svelte",
-          "type": "registry:component"
         }
       ]
     },
@@ -273,20 +271,6 @@
       "files": [
         {
           "path": "registry/ndk/relay-pool-tabs/relay-pool-tabs.svelte",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "relay-manager",
-      "type": "registry:component",
-      "title": "Relay Manager",
-      "description": "Complete relay management interface",
-      "registryDependencies": [],
-      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
-      "files": [
-        {
-          "path": "registry/ndk/relay-manager/relay-manager.svelte",
           "type": "registry:ui"
         }
       ]

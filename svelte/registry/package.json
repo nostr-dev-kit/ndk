@@ -16,13 +16,19 @@
 		"@sveltejs/adapter-vercel": "^6.0.0",
 		"@sveltejs/kit": "^2.43.2",
 		"@sveltejs/vite-plugin-svelte": "^6.2.0",
+		"@tailwindcss/postcss": "4.0.0-beta.7",
+		"autoprefixer": "^10.4.21",
+		"postcss": "^8.5.6",
 		"svelte": "^5.39.5",
 		"svelte-check": "^4.3.2",
+		"tailwindcss": "4.0.0-beta.7",
 		"typescript": "^5.9.2",
 		"vite": "^7.1.7"
 	},
 	"dependencies": {
-		"@nostr-dev-kit/ndk": "^3.0.0-beta.2",
-		"@nostr-dev-kit/svelte": "link:../"
+		"@nostr-dev-kit/cache-sqlite-wasm": "beta",
+		"@nostr-dev-kit/ndk": "beta",
+		"@nostr-dev-kit/svelte": "link:../",
+		"shiki": "^3.14.0"
 	}
 }

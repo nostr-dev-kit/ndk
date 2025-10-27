@@ -40,11 +40,11 @@
     </p>
     <div class="demo-container">
       <RelayCard.Root {ndk} relayUrl={exampleRelays[0]}>
-        <div class="flex items-center gap-3 p-4 bg-white border border-gray-200 rounded-lg">
+        <div class="card-example">
           <RelayCard.Icon size={48} />
-          <div class="flex-1">
-            <RelayCard.Name class="font-semibold" />
-            <RelayCard.Url class="text-sm text-gray-500" />
+          <div class="card-content">
+            <RelayCard.Name class="card-name" />
+            <RelayCard.Url class="card-url" />
           </div>
         </div>
       </RelayCard.Root>
@@ -58,12 +58,12 @@
     </p>
     <div class="demo-container">
       <RelayCard.Root {ndk} relayUrl={exampleRelays[1]}>
-        <div class="p-4 bg-white border border-gray-200 rounded-lg">
-          <div class="flex items-center gap-3 mb-3">
+        <div class="card-with-description">
+          <div class="card-header">
             <RelayCard.Icon size={48} />
-            <div class="flex-1">
-              <RelayCard.Name class="font-semibold" />
-              <RelayCard.Url class="text-sm text-gray-500" />
+            <div class="card-content">
+              <RelayCard.Name class="card-name" />
+              <RelayCard.Url class="card-url" />
             </div>
           </div>
           <RelayCard.Description maxLines={3} />
@@ -79,12 +79,12 @@
     </p>
     <div class="demo-container">
       <RelayCard.Root {ndk} relayUrl={exampleRelays[0]}>
-        <div class="p-4 bg-white border border-gray-200 rounded-lg">
-          <div class="flex items-center gap-3 mb-3">
+        <div class="card-with-description">
+          <div class="card-header">
             <RelayCard.Icon size={48} />
-            <div class="flex-1">
-              <RelayCard.Name class="font-semibold" />
-              <RelayCard.Url class="text-sm text-gray-500" />
+            <div class="card-content">
+              <RelayCard.Name class="card-name" />
+              <RelayCard.Url class="card-url" />
             </div>
           </div>
           <RelayCard.BookmarkedBy bookmarks={followsBookmarks} max={5} />
@@ -100,16 +100,16 @@
     </p>
     <div class="demo-container">
       <RelayCard.Root {ndk} relayUrl={exampleRelays[2]}>
-        <div class="p-4 bg-white border border-gray-200 rounded-lg">
-          <div class="flex items-center gap-3">
+        <div class="card-with-description">
+          <div class="card-example">
             <RelayCard.Icon size={48} />
-            <div class="flex-1">
-              <RelayCard.Name class="font-semibold" />
-              <RelayCard.Url class="text-sm text-gray-500" />
+            <div class="card-content">
+              <RelayCard.Name class="card-name" />
+              <RelayCard.Url class="card-url" />
             </div>
             <RelayCard.BookmarkButton bookmarks={bookmarksWithToggle} />
           </div>
-          <div class="mt-3">
+          <div class="card-description">
             <RelayCard.Description maxLines={2} />
           </div>
         </div>
@@ -124,16 +124,16 @@
     </p>
     <div class="demo-container">
       <RelayCard.Root {ndk} relayUrl={exampleRelays[0]}>
-        <div class="p-4 bg-white border border-gray-200 rounded-lg">
-          <div class="flex items-center gap-3 mb-3">
+        <div class="card-with-description">
+          <div class="card-header">
             <RelayCard.Icon size={64} />
-            <div class="flex-1">
-              <RelayCard.Name class="font-bold text-lg" />
-              <RelayCard.Url class="text-sm text-gray-500" />
+            <div class="card-content">
+              <RelayCard.Name class="card-name" />
+              <RelayCard.Url class="card-url" />
             </div>
             <RelayCard.BookmarkButton bookmarks={bookmarksWithToggle} size="lg" />
           </div>
-          <RelayCard.Description maxLines={3} class="mb-3" />
+          <RelayCard.Description maxLines={3} class="card-description" />
           <RelayCard.BookmarkedBy bookmarks={followsBookmarks} />
         </div>
       </RelayCard.Root>
@@ -150,21 +150,21 @@
         <div class="space-y-3">
           {#each followsBookmarks.relays.slice(0, 5) as relay (relay.url)}
             <RelayCard.Root {ndk} relayUrl={relay.url}>
-              <div class="p-4 bg-white border border-gray-200 rounded-lg">
-                <div class="flex items-center gap-3">
+              <div class="card-with-description">
+                <div class="card-example">
                   <RelayCard.Icon size={48} />
-                  <div class="flex-1">
-                    <RelayCard.Name class="font-semibold" />
-                    <RelayCard.Url class="text-sm text-gray-500" />
+                  <div class="card-content">
+                    <RelayCard.Name class="card-name" />
+                    <RelayCard.Url class="card-url" />
                   </div>
-                  <div class="flex items-center gap-2">
-                    <span class="text-sm font-medium text-purple-600">
+                  <div class="card-actions">
+                    <span class="percentage-badge">
                       {relay.percentage.toFixed(0)}%
                     </span>
                     <RelayCard.BookmarkButton bookmarks={bookmarksWithToggle} />
                   </div>
                 </div>
-                <div class="mt-3">
+                <div class="card-description">
                   <RelayCard.BookmarkedBy
                     bookmarks={followsBookmarks}
                     max={5}
@@ -236,12 +236,12 @@
     font-size: 2.5rem;
     font-weight: 800;
     margin: 0 0 0.5rem 0;
-    color: #111827;
+    color: hsl(var(--color-foreground));
   }
 
   header p {
     font-size: 1.125rem;
-    color: #6b7280;
+    color: hsl(var(--color-muted-foreground));
     margin: 0;
   }
 
@@ -253,25 +253,25 @@
     font-size: 1.5rem;
     font-weight: 700;
     margin: 0 0 0.5rem 0;
-    color: #111827;
+    color: hsl(var(--color-foreground));
   }
 
   .demo-description {
-    color: #6b7280;
+    color: hsl(var(--color-muted-foreground));
     margin: 0 0 1rem 0;
   }
 
   .demo {
     padding: 1.5rem;
-    background: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.75rem;
+    background: hsl(var(--color-card));
+    border: 1px solid hsl(var(--color-border));
+    border-radius: 0.5rem;
   }
 
   .demo-container {
     padding: 1.5rem;
-    background: #f9fafb;
-    border: 1px solid #e5e7eb;
+    background: hsl(var(--color-muted) / 0.3);
+    border: 1px solid hsl(var(--color-border));
     border-radius: 0.5rem;
   }
 
@@ -281,9 +281,9 @@
 
   .code-examples {
     padding: 1.5rem;
-    background: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.75rem;
+    background: hsl(var(--color-card));
+    border: 1px solid hsl(var(--color-border));
+    border-radius: 0.5rem;
   }
 
   .code-block {
@@ -298,13 +298,14 @@
     font-size: 1rem;
     font-weight: 600;
     margin: 0 0 0.5rem 0;
-    color: #374151;
+    color: hsl(var(--color-foreground));
   }
 
   .code-block pre {
     margin: 0;
     padding: 1rem;
-    background: #1f2937;
+    background: hsl(var(--color-muted));
+    border: 1px solid hsl(var(--color-border));
     border-radius: 0.5rem;
     overflow-x: auto;
   }
@@ -313,6 +314,61 @@
     font-family: 'Monaco', 'Menlo', monospace;
     font-size: 0.875rem;
     line-height: 1.5;
-    color: #e5e7eb;
+    color: hsl(var(--color-foreground));
+  }
+
+  /* Card example styles */
+  :global(.card-example) {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: hsl(var(--color-card));
+    border: 1px solid hsl(var(--color-border));
+    border-radius: 0.5rem;
+  }
+
+  :global(.card-content) {
+    flex: 1;
+  }
+
+  :global(.card-name) {
+    font-weight: 600;
+    color: hsl(var(--color-foreground));
+  }
+
+  :global(.card-url) {
+    font-size: 0.875rem;
+    color: hsl(var(--color-muted-foreground));
+  }
+
+  :global(.card-with-description) {
+    padding: 1rem;
+    background: hsl(var(--color-card));
+    border: 1px solid hsl(var(--color-border));
+    border-radius: 0.5rem;
+  }
+
+  :global(.card-header) {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  :global(.card-description) {
+    margin-top: 0.75rem;
+  }
+
+  :global(.card-actions) {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  :global(.percentage-badge) {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: hsl(var(--color-primary));
   }
 </style>

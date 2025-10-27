@@ -132,6 +132,23 @@ export {
     type BookmarkedRelayWithStats,
 } from "./builders/relay/bookmarks.svelte.js";
 
+// ============================================================================
+// Follow Button Builder
+// ============================================================================
+
+export {
+    createFollowButton,
+} from "./builders/follow-button.svelte.js";
+
+// ============================================================================
+// Reaction Button Builder
+// ============================================================================
+
+export {
+    createReactionButton,
+    type ReactionStats,
+} from "./builders/reaction-button.svelte.js";
+
 // Content parsing utilities
 export {
     buildEmojiMap,

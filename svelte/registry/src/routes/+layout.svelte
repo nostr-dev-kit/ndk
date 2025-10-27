@@ -2,10 +2,43 @@
   import '../app.css';
   import { page } from '$app/stores';
   import { NDKSvelte, createProfileFetcher } from '@nostr-dev-kit/svelte';
-  import { NDKNip07Signer, NDKPrivateKeySigner } from '@nostr-dev-kit/ndk';
+  import { NDKInterestList, NDKNip07Signer, NDKPrivateKeySigner } from '@nostr-dev-kit/ndk';
   import NDKCacheAdapterSqliteWasm from '@nostr-dev-kit/cache-sqlite-wasm';
   import { setContext } from 'svelte';
-    import { LocalStorage } from '@nostr-dev-kit/sessions';
+  import { LocalStorage } from '@nostr-dev-kit/sessions';
+
+  let isDark = $state(false);
+
+  // Initialize dark mode from system preference or localStorage
+  $effect(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('theme');
+      if (stored === 'dark') {
+        isDark = true;
+        document.documentElement.classList.add('dark');
+      } else if (stored === 'light') {
+        isDark = false;
+        document.documentElement.classList.remove('dark');
+      } else {
+        // Follow system preference
+        isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (isDark) {
+          document.documentElement.classList.add('dark');
+        }
+      }
+    }
+  });
+
+  function toggleTheme() {
+    isDark = !isDark;
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }
 
   const cacheAdapter = new NDKCacheAdapterSqliteWasm({
     dbName: 'ndk-registry',
@@ -26,7 +59,10 @@
       fetches: {
         follows: true,
         mutes: true,
-        wallet: false
+        wallet: false,
+        eventConstructors: [
+          NDKInterestList
+        ]
       }
     }
   });
@@ -42,8 +78,16 @@
     });
   });
 
+  const docs = [
+    { name: 'Introduction', path: '/docs' },
+    { name: 'Architecture', path: '/docs/architecture' },
+    { name: 'Builders', path: '/docs/builders' },
+    { name: 'Components', path: '/docs/components' },
+  ];
+
   const components = [
     { name: 'EventCard', path: '/components/event-card' },
+    { name: 'ArticleCard', path: '/components/article-card' },
     { name: 'RelayCard', path: '/components/relay-card' },
     { name: 'ReactionButton', path: '/components/reaction-button' },
     { name: 'Avatar', path: '/components/avatar' },
@@ -51,6 +95,7 @@
     { name: 'User Card', path: '/components/user-card' },
     { name: 'User Profile', path: '/components/user-profile' },
     { name: 'Event Content', path: '/components/event-content' },
+    { name: 'Follow Button', path: '/components/follow-button' },
   ];
 
   let showLoginModal = $state(false);
@@ -102,21 +147,69 @@
 <div class="app">
   <aside class="sidebar">
     <div class="sidebar-header">
-      <h1>NDK Components</h1>
-      <p>Svelte 5 Registry</p>
+      <div class="logo-section">
+        <svg class="logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+          <path d="M2 17l10 5 10-5"/>
+          <path d="M2 12l10 5 10-5"/>
+        </svg>
+        <div>
+          <h1>NDK Components</h1>
+          <p>Svelte 5 Registry</p>
+        </div>
+      </div>
+      <button class="theme-toggle" onclick={toggleTheme} aria-label="Toggle theme">
+        {#if isDark}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+        {:else}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        {/if}
+      </button>
     </div>
+
     <nav class="nav">
-      <a href="/" class:active={$page.url.pathname === '/'}>
-        Home
-      </a>
-      {#each components as component}
-        <a
-          href={component.path}
-          class:active={$page.url.pathname === component.path}
-        >
-          {component.name}
+      <div class="nav-section">
+        <h2 class="nav-title">Getting Started</h2>
+        <a href="/" class:active={$page.url.pathname === '/'}>
+          Home
         </a>
-      {/each}
+      </div>
+
+      <div class="nav-section">
+        <h2 class="nav-title">Documentation</h2>
+        {#each docs as doc}
+          <a
+            href={doc.path}
+            class:active={$page.url.pathname === doc.path}
+          >
+            {doc.name}
+          </a>
+        {/each}
+      </div>
+
+      <div class="nav-section">
+        <h2 class="nav-title">Components</h2>
+        {#each components as component}
+          <a
+            href={component.path}
+            class:active={$page.url.pathname === component.path}
+          >
+            {component.name}
+          </a>
+        {/each}
+      </div>
     </nav>
 
     <div class="sidebar-footer">
@@ -258,7 +351,6 @@
     margin: 0;
     padding: 0;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background: #f9fafb;
   }
 
   .app {
@@ -268,8 +360,8 @@
 
   .sidebar {
     width: 280px;
-    background: white;
-    border-right: 1px solid #e5e7eb;
+    background: hsl(var(--color-background));
+    border-right: 1px solid hsl(var(--color-border));
     display: flex;
     flex-direction: column;
     position: fixed;
@@ -278,53 +370,115 @@
   }
 
   .sidebar-header {
-    padding: 2rem 1.5rem;
-    border-bottom: 1px solid #e5e7eb;
+    padding: 1.5rem 1.5rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .logo-section {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+  }
+
+  .logo {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: hsl(var(--color-primary));
+    flex-shrink: 0;
   }
 
   .sidebar-header h1 {
-    margin: 0 0 0.5rem 0;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #111827;
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: hsl(var(--color-foreground));
   }
 
   .sidebar-header p {
     margin: 0;
-    font-size: 0.875rem;
-    color: #6b7280;
+    font-size: 0.75rem;
+    color: hsl(var(--color-muted-foreground));
+  }
+
+  .theme-toggle {
+    width: 2rem;
+    height: 2rem;
+    padding: 0.375rem;
+    border: none;
+    background: transparent;
+    color: hsl(var(--color-muted-foreground));
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .theme-toggle:hover {
+    background: hsl(var(--color-accent));
+    color: hsl(var(--color-accent-foreground));
+  }
+
+  .theme-toggle svg {
+    width: 1rem;
+    height: 1rem;
   }
 
   .nav {
     display: flex;
     flex-direction: column;
-    padding: 1rem;
+    padding: 0 1rem;
+    gap: 1.5rem;
+    flex: 1;
+  }
+
+  .nav-section {
+    display: flex;
+    flex-direction: column;
     gap: 0.25rem;
   }
 
+  .nav-title {
+    margin: 0 0 0.5rem 0;
+    padding: 0 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: hsl(var(--color-muted-foreground));
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
   .nav a {
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
-    color: #374151;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    color: hsl(var(--color-muted-foreground));
     text-decoration: none;
     transition: all 0.2s;
     font-size: 0.875rem;
+    font-weight: 500;
   }
 
   .nav a:hover {
-    background: #f3f4f6;
-    color: #111827;
+    background: hsl(var(--color-accent));
+    color: hsl(var(--color-accent-foreground));
   }
 
   .nav a.active {
-    background: #8b5cf6;
-    color: white;
+    background: hsl(var(--color-accent));
+    color: hsl(var(--color-accent-foreground));
+    font-weight: 600;
   }
 
   .sidebar-footer {
     margin-top: auto;
     padding: 1rem;
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid hsl(var(--color-border));
   }
 
   .user-info {
@@ -352,8 +506,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: hsl(var(--color-primary));
+    color: hsl(var(--color-primary-foreground));
     font-weight: 600;
     font-size: 0.75rem;
   }
@@ -361,13 +515,13 @@
   .user-name {
     font-size: 0.875rem;
     font-weight: 500;
-    color: #374151;
+    color: hsl(var(--color-foreground));
   }
 
   .login-btn, .logout-btn {
     width: 100%;
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
     font-size: 0.875rem;
     font-weight: 500;
     border: none;
@@ -380,21 +534,21 @@
   }
 
   .login-btn {
-    background: #8b5cf6;
-    color: white;
+    background: hsl(var(--color-primary));
+    color: hsl(var(--color-primary-foreground));
   }
 
   .login-btn:hover {
-    background: #7c3aed;
+    opacity: 0.9;
   }
 
   .logout-btn {
-    background: #f3f4f6;
-    color: #374151;
+    background: hsl(var(--color-secondary));
+    color: hsl(var(--color-secondary-foreground));
   }
 
   .logout-btn:hover {
-    background: #e5e7eb;
+    background: hsl(var(--color-secondary) / 0.8);
   }
 
   .login-btn .icon {
@@ -407,7 +561,7 @@
     position: fixed;
     inset: 0;
     z-index: 50;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(4px);
   }
 
@@ -419,29 +573,30 @@
     z-index: 51;
     width: 90%;
     max-width: 500px;
-    background: white;
-    border-radius: 1rem;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    background: hsl(var(--color-card));
+    border: 1px solid hsl(var(--color-border));
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   }
 
   .modal-header {
     padding: 1.5rem;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid hsl(var(--color-border));
     display: flex;
     justify-content: space-between;
     align-items: start;
   }
 
   .modal-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #111827;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: hsl(var(--color-foreground));
     margin: 0;
   }
 
   .modal-subtitle {
     font-size: 0.875rem;
-    color: #6b7280;
+    color: hsl(var(--color-muted-foreground));
     margin: 0.25rem 0 0 0;
   }
 
@@ -450,18 +605,19 @@
     border: none;
     background: transparent;
     cursor: pointer;
-    border-radius: 0.5rem;
+    border-radius: 0.375rem;
     transition: background 0.2s;
+    color: hsl(var(--color-muted-foreground));
   }
 
   .modal-close:hover {
-    background: #f3f4f6;
+    background: hsl(var(--color-accent));
+    color: hsl(var(--color-accent-foreground));
   }
 
   .modal-close svg {
     width: 1.25rem;
     height: 1.25rem;
-    color: #6b7280;
   }
 
   .modal-body {
@@ -473,10 +629,10 @@
 
   .login-mode-toggle {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.25rem;
     padding: 0.25rem;
-    background: #f3f4f6;
-    border-radius: 0.5rem;
+    background: hsl(var(--color-muted));
+    border-radius: 0.375rem;
   }
 
   .toggle-btn {
@@ -485,20 +641,21 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    padding: 0.75rem 1rem;
+    padding: 0.5rem 1rem;
     border: none;
     background: transparent;
-    border-radius: 0.375rem;
+    border-radius: 0.25rem;
     cursor: pointer;
     font-size: 0.875rem;
     font-weight: 500;
-    color: #6b7280;
+    color: hsl(var(--color-muted-foreground));
     transition: all 0.2s;
   }
 
   .toggle-btn.active {
-    background: #8b5cf6;
-    color: white;
+    background: hsl(var(--color-background));
+    color: hsl(var(--color-foreground));
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   }
 
   .toggle-icon {
@@ -514,24 +671,25 @@
 
   .info-box {
     padding: 1rem;
-    border-radius: 0.5rem;
+    border-radius: 0.375rem;
     display: flex;
     gap: 0.75rem;
+    border: 1px solid hsl(var(--color-border));
   }
 
   .info-box.info {
-    background: #ede9fe;
-    border: 1px solid #c4b5fd;
+    background: hsl(var(--color-primary) / 0.1);
+    border-color: hsl(var(--color-primary) / 0.3);
   }
 
   .info-box.warning {
-    background: #fef3c7;
-    border: 1px solid #fcd34d;
+    background: hsl(40 100% 50% / 0.1);
+    border-color: hsl(40 100% 50% / 0.3);
   }
 
   .info-box.error {
-    background: #fee2e2;
-    border: 1px solid #fca5a5;
+    background: hsl(var(--color-destructive) / 0.1);
+    border-color: hsl(var(--color-destructive) / 0.3);
   }
 
   .info-icon {
@@ -542,55 +700,47 @@
   }
 
   .info-box.info .info-icon {
-    color: #7c3aed;
+    color: hsl(var(--color-primary));
   }
 
   .info-box.warning .info-icon {
-    color: #d97706;
+    color: hsl(40 100% 40%);
   }
 
   .info-box.error .info-icon {
-    color: #dc2626;
+    color: hsl(var(--color-destructive));
   }
 
   .info-box p {
     font-size: 0.875rem;
     margin: 0;
-  }
-
-  .info-box.info p {
-    color: #5b21b6;
-  }
-
-  .info-box.warning p {
-    color: #92400e;
-  }
-
-  .info-box.error p {
-    color: #991b1b;
+    color: hsl(var(--color-foreground));
   }
 
   .key-input {
     width: 100%;
-    padding: 0.75rem 1rem;
-    border: 2px solid #e5e7eb;
-    border-radius: 0.5rem;
-    font-size: 1rem;
-    transition: border-color 0.2s;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid hsl(var(--color-input));
+    background: hsl(var(--color-background));
+    color: hsl(var(--color-foreground));
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    transition: all 0.2s;
   }
 
   .key-input:focus {
     outline: none;
-    border-color: #8b5cf6;
+    border-color: hsl(var(--color-ring));
+    box-shadow: 0 0 0 3px hsl(var(--color-ring) / 0.2);
   }
 
   .submit-btn {
     width: 100%;
-    padding: 0.75rem 1rem;
-    background: #8b5cf6;
-    color: white;
+    padding: 0.5rem 1rem;
+    background: hsl(var(--color-primary));
+    color: hsl(var(--color-primary-foreground));
     border: none;
-    border-radius: 0.5rem;
+    border-radius: 0.375rem;
     font-size: 0.875rem;
     font-weight: 500;
     cursor: pointer;
@@ -602,7 +752,7 @@
   }
 
   .submit-btn:hover:not(:disabled) {
-    background: #7c3aed;
+    opacity: 0.9;
   }
 
   .submit-btn:disabled {
@@ -618,8 +768,8 @@
   .main {
     flex: 1;
     margin-left: 280px;
-    padding: 2rem;
-    max-width: 1200px;
+    padding: 3rem 2rem;
+    max-width: 1400px;
   }
 
   @media (max-width: 768px) {

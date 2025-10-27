@@ -38,7 +38,7 @@ export function createFollowAction(
         // NDKUser = user
         try {
             const pubkey = t.pubkey;
-            return ndk.$follows.some(pk => pk === pubkey);
+            return ndk.$currentSession?.followSet?.has(pubkey) ?? false;
         } catch {
             // User doesn't have pubkey set yet (e.g., from createFetchUser before loaded)
             return false;
@@ -57,7 +57,7 @@ export function createFollowAction(
             }
 
             const hashtag = t.toLowerCase();
-            if (interestList.hasInterest(hashtag)) {
+            if (isFollowing) {
                 interestList.removeInterest(hashtag);
             } else {
                 interestList.addInterest(hashtag);
@@ -76,9 +76,7 @@ export function createFollowAction(
             throw new Error("User not loaded yet");
         }
 
-        const isCurrentlyFollowing = ndk.$follows.some(pk => pk === pubkey);
-
-        if (isCurrentlyFollowing) {
+        if (isFollowing) {
             await ndk.$follows.remove(pubkey);
         } else {
             await ndk.$follows.add(pubkey);

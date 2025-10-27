@@ -3,6 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createBookmarkedRelayList } from '@nostr-dev-kit/svelte';
   import { RelayCard } from '$lib/ndk/relay-card';
+  import CodePreview from '$lib/components/code-preview.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -34,11 +35,19 @@
   </header>
 
   <section class="demo">
-    <h2>Basic Relay Card</h2>
-    <p class="demo-description">
-      Simple relay card showing icon, name, and URL.
-    </p>
-    <div class="demo-container">
+    <CodePreview
+      title="Basic Relay Card"
+      description="Simple relay card showing icon, name, and URL."
+      code={`<RelayCard.Root {ndk} relayUrl="wss://relay.damus.io">
+  <div class="card-example">
+    <RelayCard.Icon size={48} />
+    <div class="card-content">
+      <RelayCard.Name />
+      <RelayCard.Url />
+    </div>
+  </div>
+</RelayCard.Root>`}
+    >
       <RelayCard.Root {ndk} relayUrl={exampleRelays[0]}>
         <div class="card-example">
           <RelayCard.Icon size={48} />
@@ -48,15 +57,24 @@
           </div>
         </div>
       </RelayCard.Root>
-    </div>
+    </CodePreview>
   </section>
 
   <section class="demo">
-    <h2>With Description</h2>
-    <p class="demo-description">
-      Relay card with NIP-11 description text.
-    </p>
-    <div class="demo-container">
+    <CodePreview
+      title="With Description"
+      description="Relay card with NIP-11 description text."
+      code={`<RelayCard.Root {ndk} {relayUrl}>
+  <div class="card-header">
+    <RelayCard.Icon size={48} />
+    <div class="card-content">
+      <RelayCard.Name />
+      <RelayCard.Url />
+    </div>
+  </div>
+  <RelayCard.Description maxLines={3} />
+</RelayCard.Root>`}
+    >
       <RelayCard.Root {ndk} relayUrl={exampleRelays[1]}>
         <div class="card-with-description">
           <div class="card-header">
@@ -69,15 +87,24 @@
           <RelayCard.Description maxLines={3} />
         </div>
       </RelayCard.Root>
-    </div>
+    </CodePreview>
   </section>
 
   <section class="demo">
-    <h2>Bookmarked By</h2>
-    <p class="demo-description">
-      Shows avatars of users who have bookmarked this relay.
-    </p>
-    <div class="demo-container">
+    <CodePreview
+      title="Bookmarked By"
+      description="Shows avatars of users who have bookmarked this relay."
+      code={`<RelayCard.Root {ndk} {relayUrl}>
+  <div class="card-header">
+    <RelayCard.Icon size={48} />
+    <div class="card-content">
+      <RelayCard.Name />
+      <RelayCard.Url />
+    </div>
+  </div>
+  <RelayCard.BookmarkedBy bookmarks={followsBookmarks} max={5} />
+</RelayCard.Root>`}
+    >
       <RelayCard.Root {ndk} relayUrl={exampleRelays[0]}>
         <div class="card-with-description">
           <div class="card-header">
@@ -90,15 +117,25 @@
           <RelayCard.BookmarkedBy bookmarks={followsBookmarks} max={5} />
         </div>
       </RelayCard.Root>
-    </div>
+    </CodePreview>
   </section>
 
   <section class="demo">
-    <h2>With Bookmark Button</h2>
-    <p class="demo-description">
-      Toggle to bookmark/unbookmark relay (requires login).
-    </p>
-    <div class="demo-container">
+    <CodePreview
+      title="With Bookmark Button"
+      description="Toggle to bookmark/unbookmark relay (requires login)."
+      code={`<RelayCard.Root {ndk} {relayUrl}>
+  <div class="card-example">
+    <RelayCard.Icon size={48} />
+    <div class="card-content">
+      <RelayCard.Name />
+      <RelayCard.Url />
+    </div>
+    <RelayCard.BookmarkButton bookmarks={bookmarksWithToggle} />
+  </div>
+  <RelayCard.Description maxLines={2} />
+</RelayCard.Root>`}
+    >
       <RelayCard.Root {ndk} relayUrl={exampleRelays[2]}>
         <div class="card-with-description">
           <div class="card-example">
@@ -114,15 +151,26 @@
           </div>
         </div>
       </RelayCard.Root>
-    </div>
+    </CodePreview>
   </section>
 
   <section class="demo">
-    <h2>Full Card</h2>
-    <p class="demo-description">
-      Complete relay card with all features.
-    </p>
-    <div class="demo-container">
+    <CodePreview
+      title="Full Card"
+      description="Complete relay card with all features."
+      code={`<RelayCard.Root {ndk} {relayUrl}>
+  <div class="card-header">
+    <RelayCard.Icon size={64} />
+    <div class="card-content">
+      <RelayCard.Name />
+      <RelayCard.Url />
+    </div>
+    <RelayCard.BookmarkButton bookmarks={bookmarksWithToggle} size="lg" />
+  </div>
+  <RelayCard.Description maxLines={3} />
+  <RelayCard.BookmarkedBy bookmarks={followsBookmarks} />
+</RelayCard.Root>`}
+    >
       <RelayCard.Root {ndk} relayUrl={exampleRelays[0]}>
         <div class="card-with-description">
           <div class="card-header">
@@ -137,16 +185,35 @@
           <RelayCard.BookmarkedBy bookmarks={followsBookmarks} />
         </div>
       </RelayCard.Root>
-    </div>
+    </CodePreview>
   </section>
 
   {#if followsBookmarks.relays.length > 0}
     <section class="demo">
-      <h2>Top Relays from Follows</h2>
-      <p class="demo-description">
-        Most bookmarked relays by people you follow.
-      </p>
-      <div class="demo-container">
+      <CodePreview
+        title="Top Relays from Follows"
+        description="Most bookmarked relays by people you follow."
+        code={`<RelayCard.Root {ndk} relayUrl={relay.url}>
+  <div class="card-example">
+    <RelayCard.Icon size={48} />
+    <div class="card-content">
+      <RelayCard.Name />
+      <RelayCard.Url />
+    </div>
+    <div class="card-actions">
+      <span class="percentage-badge">
+        {relay.percentage.toFixed(0)}%
+      </span>
+      <RelayCard.BookmarkButton bookmarks={bookmarksWithToggle} />
+    </div>
+  </div>
+  <RelayCard.BookmarkedBy
+    bookmarks={followsBookmarks}
+    max={5}
+    showCount={true}
+  />
+</RelayCard.Root>`}
+      >
         <div class="space-y-3">
           {#each followsBookmarks.relays.slice(0, 5) as relay (relay.url)}
             <RelayCard.Root {ndk} relayUrl={relay.url}>
@@ -175,52 +242,9 @@
             </RelayCard.Root>
           {/each}
         </div>
-      </div>
+      </CodePreview>
     </section>
   {/if}
-
-  <section class="code-examples">
-    <h2>Usage Examples</h2>
-
-    <div class="code-block">
-      <h3>Basic Usage</h3>
-      <pre><code>{`<RelayCard.Root {ndk} relayUrl="wss://relay.damus.io">
-  <RelayCard.Icon />
-  <RelayCard.Name />
-  <RelayCard.Url />
-</RelayCard.Root>`}</code></pre>
-    </div>
-
-    <div class="code-block">
-      <h3>With Bookmarks</h3>
-      <pre><code>{`<script>
-  const follows = Array.from(ndk.$sessions?.follows || []);
-  const bookmarks = createBookmarkedRelayList({ ndk, authors: follows });
-<\/script>
-
-<RelayCard.Root {ndk} {relayUrl}>
-  <RelayCard.Icon />
-  <RelayCard.Name />
-  <RelayCard.BookmarkedBy {bookmarks} />
-</RelayCard.Root>`}</code></pre>
-    </div>
-
-    <div class="code-block">
-      <h3>With Toggle Bookmark</h3>
-      <pre><code>{`<script>
-  const bookmarks = createBookmarkedRelayList({
-    ndk,
-    authors: [...follows, ndk.$currentUser.pubkey]
-  });
-<\/script>
-
-<RelayCard.Root {ndk} {relayUrl}>
-  <RelayCard.Icon />
-  <RelayCard.Name />
-  <RelayCard.BookmarkButton {bookmarks} />
-</RelayCard.Root>`}</code></pre>
-    </div>
-  </section>
 </div>
 
 <style>
@@ -249,18 +273,6 @@
     margin-bottom: 3rem;
   }
 
-  section h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin: 0 0 0.5rem 0;
-    color: hsl(var(--color-foreground));
-  }
-
-  .demo-description {
-    color: hsl(var(--color-muted-foreground));
-    margin: 0 0 1rem 0;
-  }
-
   .demo {
     padding: 1.5rem;
     background: hsl(var(--color-card));
@@ -268,53 +280,8 @@
     border-radius: 0.5rem;
   }
 
-  .demo-container {
-    padding: 1.5rem;
-    background: hsl(var(--color-muted) / 0.3);
-    border: 1px solid hsl(var(--color-border));
-    border-radius: 0.5rem;
-  }
-
   .space-y-3 > * + * {
     margin-top: 0.75rem;
-  }
-
-  .code-examples {
-    padding: 1.5rem;
-    background: hsl(var(--color-card));
-    border: 1px solid hsl(var(--color-border));
-    border-radius: 0.5rem;
-  }
-
-  .code-block {
-    margin-bottom: 2rem;
-  }
-
-  .code-block:last-child {
-    margin-bottom: 0;
-  }
-
-  .code-block h3 {
-    font-size: 1rem;
-    font-weight: 600;
-    margin: 0 0 0.5rem 0;
-    color: hsl(var(--color-foreground));
-  }
-
-  .code-block pre {
-    margin: 0;
-    padding: 1rem;
-    background: hsl(var(--color-muted));
-    border: 1px solid hsl(var(--color-border));
-    border-radius: 0.5rem;
-    overflow-x: auto;
-  }
-
-  .code-block code {
-    font-family: 'Monaco', 'Menlo', monospace;
-    font-size: 0.875rem;
-    line-height: 1.5;
-    color: hsl(var(--color-foreground));
   }
 
   /* Card example styles */

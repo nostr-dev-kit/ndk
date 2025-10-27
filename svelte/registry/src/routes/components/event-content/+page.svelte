@@ -6,6 +6,7 @@
   import Mention from '$lib/ndk/event/content/mention/mention.svelte';
   import Hashtag from '$lib/ndk/event/content/hashtag/hashtag.svelte';
   import EmbeddedEvent from '$lib/ndk/event/content/event/event.svelte';
+  import CodePreview from '$lib/components/code-preview.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -72,41 +73,51 @@ https://www.youtube.com/watch?v=dQw4w9WgXcQ`,
   </header>
 
   <section class="demo">
-    <h2>Basic Content Rendering</h2>
-    <p class="demo-description">
-      Automatically detects and renders mentions, hashtags, links, and custom emojis.
-    </p>
-    <div class="demo-container">
+    <CodePreview
+      title="Basic Content Rendering"
+      description="Automatically detects and renders mentions, hashtags, links, and custom emojis."
+      code={`<EventContent {ndk} {event} />`}
+    >
       <EventContent {ndk} event={exampleEvent} />
-    </div>
+    </CodePreview>
   </section>
 
   <section class="demo">
-    <h2>Custom Emoji Support</h2>
-    <p class="demo-description">
-      Custom emojis from event tags are automatically rendered.
-    </p>
-    <div class="demo-container">
+    <CodePreview
+      title="Custom Emoji Support"
+      description="Custom emojis from event tags are automatically rendered."
+      code={`<EventContent {ndk} {event} />`}
+    >
       <EventContent {ndk} event={emojiEvent} />
-    </div>
+    </CodePreview>
   </section>
 
   <section class="demo">
-    <h2>Media Embedding</h2>
-    <p class="demo-description">
-      Images, videos, and YouTube links are automatically embedded.
-    </p>
-    <div class="demo-container">
+    <CodePreview
+      title="Media Embedding"
+      description="Images, videos, and YouTube links are automatically embedded."
+      code={`<EventContent {ndk} {event} />`}
+    >
       <EventContent {ndk} event={mediaEvent} />
-    </div>
+    </CodePreview>
   </section>
 
   <section class="demo">
-    <h2>Custom Snippets</h2>
-    <p class="demo-description">
-      Use custom snippets to override default rendering for any content type.
-    </p>
-    <div class="demo-container">
+    <CodePreview
+      title="Custom Snippets"
+      description="Use custom snippets to override default rendering for any content type."
+      code={`<EventContent {ndk} {event}>
+  {#snippet mention({ bech32 })}
+    <Mention {ndk} {bech32} />
+  {/snippet}
+  {#snippet hashtag({ tag })}
+    <Hashtag {tag} onclick={handleHashtagClick} />
+  {/snippet}
+  {#snippet eventRef({ bech32 })}
+    <EmbeddedEvent {ndk} {bech32} />
+  {/snippet}
+</EventContent>`}
+    >
       <EventContent {ndk} event={exampleEvent}>
         {#snippet mention({ bech32 })}
           <Mention {ndk} {bech32} />
@@ -118,15 +129,21 @@ https://www.youtube.com/watch?v=dQw4w9WgXcQ`,
           <EmbeddedEvent {ndk} {bech32} />
         {/snippet}
       </EventContent>
-    </div>
+    </CodePreview>
   </section>
 
   <section class="demo">
-    <h2>Custom Link Rendering</h2>
-    <p class="demo-description">
-      Override link rendering with your own component.
-    </p>
-    <div class="demo-container">
+    <CodePreview
+      title="Custom Link Rendering"
+      description="Override link rendering with your own component."
+      code={`<EventContent {ndk} {event}>
+  {#snippet link({ url })}
+    <a href={url} target="_blank" rel="noopener noreferrer" class="custom-link">
+      🔗 {url}
+    </a>
+  {/snippet}
+</EventContent>`}
+    >
       <EventContent {ndk} event={exampleEvent}>
         {#snippet link({ url })}
           <a href={url} target="_blank" rel="noopener noreferrer" class="custom-link">
@@ -134,73 +151,23 @@ https://www.youtube.com/watch?v=dQw4w9WgXcQ`,
           </a>
         {/snippet}
       </EventContent>
-    </div>
+    </CodePreview>
   </section>
 
   <section class="demo">
-    <h2>Plain Text Content</h2>
-    <p class="demo-description">
-      Works with plain text content without an event object.
-    </p>
-    <div class="demo-container">
+    <CodePreview
+      title="Plain Text Content"
+      description="Works with plain text content without an event object."
+      code={`<EventContent
+  {ndk}
+  content="Simple text with #hashtags and links: https://example.com"
+/>`}
+    >
       <EventContent
         {ndk}
         content="Simple text with #hashtags and links: https://example.com"
       />
-    </div>
-  </section>
-
-  <section class="code-examples">
-    <h2>Usage Examples</h2>
-
-    <div class="code-block">
-      <h3>Basic Usage</h3>
-      <pre><code>{`<EventContent {ndk} {event} />`}</code></pre>
-    </div>
-
-    <div class="code-block">
-      <h3>With Plain Text</h3>
-      <pre><code>{`<EventContent
-  {ndk}
-  content="Your text here..."
-/>`}</code></pre>
-    </div>
-
-    <div class="code-block">
-      <h3>Custom Mention Rendering</h3>
-      <pre><code>{`<EventContent {ndk} {event}>
-  {#snippet mention({ bech32 })}
-    <Mention {ndk} {bech32} />
-  {/snippet}
-</EventContent>`}</code></pre>
-    </div>
-
-    <div class="code-block">
-      <h3>Custom Hashtag Handler</h3>
-      <pre><code>{`<EventContent {ndk} {event}>
-  {#snippet hashtag({ tag })}
-    <Hashtag {tag} onclick={(t) => console.log(t)} />
-  {/snippet}
-</EventContent>`}</code></pre>
-    </div>
-
-    <div class="code-block">
-      <h3>Custom Event Embed</h3>
-      <pre><code>{`<EventContent {ndk} {event}>
-  {#snippet eventRef({ bech32 })}
-    <EmbeddedEvent {ndk} {bech32} />
-  {/snippet}
-</EventContent>`}</code></pre>
-    </div>
-
-    <div class="code-block">
-      <h3>Custom Media Rendering</h3>
-      <pre><code>{`<EventContent {ndk} {event}>
-  {#snippet media({ url })}
-    <CustomMediaPlayer {url} />
-  {/snippet}
-</EventContent>`}</code></pre>
-    </div>
+    </CodePreview>
   </section>
 </div>
 
@@ -230,30 +197,11 @@ https://www.youtube.com/watch?v=dQw4w9WgXcQ`,
     margin-bottom: 3rem;
   }
 
-  section h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin: 0 0 0.5rem 0;
-    color: #111827;
-  }
-
-  .demo-description {
-    color: #6b7280;
-    margin: 0 0 1rem 0;
-  }
-
   .demo {
     padding: 1.5rem;
     background: white;
     border: 1px solid #e5e7eb;
     border-radius: 0.75rem;
-  }
-
-  .demo-container {
-    padding: 1.5rem;
-    background: #f9fafb;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.5rem;
   }
 
   :global(.custom-link) {
@@ -267,42 +215,5 @@ https://www.youtube.com/watch?v=dQw4w9WgXcQ`,
 
   :global(.custom-link:hover) {
     text-decoration: underline;
-  }
-
-  .code-examples {
-    padding: 1.5rem;
-    background: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.75rem;
-  }
-
-  .code-block {
-    margin-bottom: 2rem;
-  }
-
-  .code-block:last-child {
-    margin-bottom: 0;
-  }
-
-  .code-block h3 {
-    font-size: 1rem;
-    font-weight: 600;
-    margin: 0 0 0.5rem 0;
-    color: #374151;
-  }
-
-  .code-block pre {
-    margin: 0;
-    padding: 1rem;
-    background: #1f2937;
-    border-radius: 0.5rem;
-    overflow-x: auto;
-  }
-
-  .code-block code {
-    font-family: 'Monaco', 'Menlo', monospace;
-    font-size: 0.875rem;
-    line-height: 1.5;
-    color: #e5e7eb;
   }
 </style>

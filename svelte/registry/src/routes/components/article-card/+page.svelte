@@ -3,6 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKArticle, NDKKind } from '@nostr-dev-kit/ndk';
   import { ArticleCard } from '$lib/ndk/article-card';
+  import CodePreview from '$lib/components/code-preview.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -63,23 +64,10 @@
 
   <!-- Portrait Preset -->
   <section class="mb-16">
-    <h2 class="text-2xl font-bold mb-2">Portrait Layout</h2>
-    <p class="text-muted-foreground mb-6">
-      Vertical card layout with image on top. Perfect for grid displays and featured content.
-    </p>
-
-    <div class="flex gap-6 overflow-x-auto pb-4">
-      {#if sampleArticle}
-        <ArticleCard.Portrait ndk={ndk} article={sampleArticle} />
-      {/if}
-      {#each articles.slice(0, 4) as article}
-        <ArticleCard.Portrait ndk={ndk} {article} />
-      {/each}
-    </div>
-
-    <details class="mt-6 p-4 border border-border rounded-lg">
-      <summary class="cursor-pointer font-semibold">View Code</summary>
-      <pre class="mt-4 p-4 bg-muted rounded-lg overflow-x-auto"><code>{`<ArticleCard.Portrait {ndk} {article} />
+    <CodePreview
+      title="Portrait Layout"
+      description="Vertical card layout with image on top. Perfect for grid displays and featured content."
+      code={`<ArticleCard.Portrait {ndk} {article} />
 
 <!-- With custom sizing -->
 <ArticleCard.Portrait
@@ -88,81 +76,67 @@
   width="w-[320px]"
   height="h-[400px]"
   imageHeight="h-56"
-/>`}</code></pre>
-    </details>
+/>`}
+    >
+      <div class="flex gap-6 overflow-x-auto pb-4">
+        {#if sampleArticle}
+          <ArticleCard.Portrait ndk={ndk} article={sampleArticle} />
+        {/if}
+        {#each articles.slice(0, 4) as article}
+          <ArticleCard.Portrait ndk={ndk} {article} />
+        {/each}
+      </div>
+    </CodePreview>
   </section>
 
   <!-- Medium Preset -->
   <section class="mb-16">
-    <h2 class="text-2xl font-bold mb-2">Medium Layout</h2>
-    <p class="text-muted-foreground mb-6">
-      Horizontal card layout with image on right. Ideal for list views and article feeds.
-    </p>
-
-    <div class="space-y-0 border border-border rounded-lg overflow-hidden">
-      {#if sampleArticle}
-        <ArticleCard.Medium ndk={ndk} article={sampleArticle} />
-      {/if}
-      {#each articles.slice(0, 3) as article}
-        <ArticleCard.Medium ndk={ndk} {article} />
-      {/each}
-    </div>
-
-    <details class="mt-6 p-4 border border-border rounded-lg">
-      <summary class="cursor-pointer font-semibold">View Code</summary>
-      <pre class="mt-4 p-4 bg-muted rounded-lg overflow-x-auto"><code>{`<ArticleCard.Medium {ndk} {article} />
+    <CodePreview
+      title="Medium Layout"
+      description="Horizontal card layout with image on right. Ideal for list views and article feeds."
+      code={`<ArticleCard.Medium {ndk} {article} />
 
 <!-- With different image sizes -->
 <ArticleCard.Medium {ndk} {article} imageSize="small" />
 <ArticleCard.Medium {ndk} {article} imageSize="medium" />
-<ArticleCard.Medium {ndk} {article} imageSize="large" />`}</code></pre>
-    </details>
+<ArticleCard.Medium {ndk} {article} imageSize="large" />`}
+    >
+      <div class="space-y-0 border border-border rounded-lg overflow-hidden">
+        {#if sampleArticle}
+          <ArticleCard.Medium ndk={ndk} article={sampleArticle} />
+        {/if}
+        {#each articles.slice(0, 3) as article}
+          <ArticleCard.Medium ndk={ndk} {article} />
+        {/each}
+      </div>
+    </CodePreview>
   </section>
 
   <!-- Image Size Variations -->
   <section class="mb-16">
-    <h2 class="text-2xl font-bold mb-2">Image Size Variations</h2>
-    <p class="text-muted-foreground mb-6">
-      Medium layout supports three image size options.
-    </p>
-
-    <div class="space-y-0 border border-border rounded-lg overflow-hidden">
-      {#if sampleArticle}
-        <ArticleCard.Medium ndk={ndk} article={sampleArticle} imageSize="small" />
-        <ArticleCard.Medium ndk={ndk} article={sampleArticle} imageSize="medium" />
-        <ArticleCard.Medium ndk={ndk} article={sampleArticle} imageSize="large" />
-      {/if}
-    </div>
+    <CodePreview
+      title="Image Size Variations"
+      description="Medium layout supports three image size options."
+      code={`<ArticleCard.Medium {ndk} {article} imageSize="small" />
+<ArticleCard.Medium {ndk} {article} imageSize="medium" />
+<ArticleCard.Medium {ndk} {article} imageSize="large" />`}
+    >
+      <div class="space-y-0 border border-border rounded-lg overflow-hidden">
+        {#if sampleArticle}
+          <ArticleCard.Medium ndk={ndk} article={sampleArticle} imageSize="small" />
+          <ArticleCard.Medium ndk={ndk} article={sampleArticle} imageSize="medium" />
+          <ArticleCard.Medium ndk={ndk} article={sampleArticle} imageSize="large" />
+        {/if}
+      </div>
+    </CodePreview>
   </section>
 
   <!-- Composable Example -->
   <section class="mb-16">
-    <h2 class="text-2xl font-bold mb-2">Composable Mode</h2>
-    <p class="text-muted-foreground mb-6">
-      Build custom layouts by composing individual components within ArticleCard.Root.
-    </p>
-
-    {#if sampleArticle}
-      <ArticleCard.Root ndk={ndk} article={sampleArticle}>
-        <div class="border border-border rounded-xl overflow-hidden bg-card max-w-2xl">
-          <ArticleCard.Image class="h-64" showGradient={true} />
-          <div class="p-6">
-            <ArticleCard.Title class="text-3xl mb-3" lines={3} />
-            <ArticleCard.Summary class="text-base mb-4" maxLength={250} lines={4} />
-            <div class="flex items-center justify-between pt-4 border-t border-border">
-              <ArticleCard.Meta showIcon={true} />
-              <button class="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
-                Read Article
-              </button>
-            </div>
-          </div>
-        </div>
-      </ArticleCard.Root>
-    {/if}
-
-    <details class="mt-6 p-4 border border-border rounded-lg">
-      <summary class="cursor-pointer font-semibold">View Code</summary>
-      <pre class="mt-4 p-4 bg-muted rounded-lg overflow-x-auto"><code>{`<ArticleCard.Root {ndk} {article}>
+    <CodePreview
+      title="Composable Mode"
+      description="Build custom layouts by composing individual components within ArticleCard.Root."
+      code={`<ArticleCard.Root {ndk} {article}>
   <div class="card">
     <ArticleCard.Image class="h-64" showGradient={true} />
     <div class="p-6">
@@ -171,8 +145,26 @@
       <ArticleCard.Meta showIcon={true} />
     </div>
   </div>
-</ArticleCard.Root>`}</code></pre>
-    </details>
+</ArticleCard.Root>`}
+    >
+      {#if sampleArticle}
+        <ArticleCard.Root ndk={ndk} article={sampleArticle}>
+          <div class="border border-border rounded-xl overflow-hidden bg-card max-w-2xl">
+            <ArticleCard.Image class="h-64" showGradient={true} />
+            <div class="p-6">
+              <ArticleCard.Title class="text-3xl mb-3" lines={3} />
+              <ArticleCard.Summary class="text-base mb-4" maxLength={250} lines={4} />
+              <div class="flex items-center justify-between pt-4 border-t border-border">
+                <ArticleCard.Meta showIcon={true} />
+                <button class="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
+                  Read Article
+                </button>
+              </div>
+            </div>
+          </div>
+        </ArticleCard.Root>
+      {/if}
+    </CodePreview>
   </section>
 
   <!-- Component API -->
@@ -274,16 +266,5 @@
 </div>
 
 <style>
-  details[open] summary {
-    margin-bottom: 1rem;
-  }
-
-  code {
-    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-  }
-
-  pre {
-    white-space: pre-wrap;
-    word-wrap: break-word;
-  }
+  /* No custom styles needed - using CodePreview component */
 </style>

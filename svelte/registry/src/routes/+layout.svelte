@@ -134,15 +134,10 @@
 
   // Profile fetcher for current user
   const currentUserProfile = $derived.by(() => {
+    // Only create profile fetcher if we have both currentUser and currentPubkey
+    // Don't try to access user.pubkey as it may throw if not set
     if (!ndk.$currentUser || !ndk.$currentPubkey) return null;
-    try {
-      // Verify user has pubkey before creating profile fetcher
-      const user = ndk.$currentUser;
-      if (!user.pubkey) return null;
-      return createProfileFetcher({ ndk, user: () => user });
-    } catch {
-      return null;
-    }
+    return createProfileFetcher({ ndk, user: () => ndk.$currentUser! });
   });
 
   const avatarUrl = $derived(currentUserProfile?.profile?.picture);

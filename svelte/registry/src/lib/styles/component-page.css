@@ -1,0 +1,148 @@
+/* Component page shared styles */
+.component-page {
+  max-width: 900px;
+}
+
+.component-page header {
+  margin-bottom: 2rem;
+}
+
+.component-page header h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin: 0 0 0.5rem 0;
+  color: hsl(var(--color-foreground));
+}
+
+.component-page header p {
+  font-size: 1.125rem;
+  color: hsl(var(--color-muted-foreground));
+  margin: 0;
+}
+
+.component-page section {
+  margin-bottom: 3rem;
+}
+
+.component-page section h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  color: hsl(var(--color-foreground));
+}
+
+.component-page .demo-description {
+  color: hsl(var(--color-muted-foreground));
+  margin: 0 0 1rem 0;
+}
+
+.component-page .demo {
+  padding: 1.5rem;
+  background: hsl(var(--color-card));
+  border: 1px solid hsl(var(--color-border));
+  border-radius: 0.5rem;
+}
+
+.component-page .demo-container {
+  padding: 1.5rem;
+  background: hsl(var(--color-muted) / 0.3);
+  border: 1px solid hsl(var(--color-border));
+  border-radius: 0.5rem;
+}
+
+.component-page .space-y-3 > * + * {
+  margin-top: 0.75rem;
+}
+
+.component-page .code-examples {
+  padding: 1.5rem;
+  background: hsl(var(--color-card));
+  border: 1px solid hsl(var(--color-border));
+  border-radius: 0.5rem;
+}
+
+.component-page .code-block {
+  margin-bottom: 2rem;
+}
+
+.component-page .code-block:last-child {
+  margin-bottom: 0;
+}
+
+.component-page .code-block h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  color: hsl(var(--color-foreground));
+}
+
+.component-page .code-block pre {
+  margin: 0;
+  padding: 1rem;
+  background: hsl(var(--color-muted));
+  border: 1px solid hsl(var(--color-border));
+  border-radius: 0.5rem;
+  overflow-x: auto;
+}
+
+.component-page .code-block code {
+  font-family: 'Monaco', 'Menlo', monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: hsl(var(--color-foreground));
+}
+
+/* Card example styles */
+.card-example {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: hsl(var(--color-card));
+  border: 1px solid hsl(var(--color-border));
+  border-radius: 0.5rem;
+}
+
+.card-content {
+  flex: 1;
+}
+
+.card-name {
+  font-weight: 600;
+  color: hsl(var(--color-foreground));
+}
+
+.card-url {
+  font-size: 0.875rem;
+  color: hsl(var(--color-muted-foreground));
+}
+
+.card-with-description {
+  padding: 1rem;
+  background: hsl(var(--color-card));
+  border: 1px solid hsl(var(--color-border));
+  border-radius: 0.5rem;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.card-description {
+  margin-top: 0.75rem;
+}
+
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.percentage-badge {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: hsl(var(--color-primary));
+}

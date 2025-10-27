@@ -123,14 +123,15 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
     // Extract filters
     const derivedFilters = $derived.by(() => {
         const cfg = derivedConfig;
-        if (!cfg?.filters) return [];
+        if (!cfg) return [];
+        if (!('filters' in cfg)) return [];
         return Array.isArray(cfg.filters) ? cfg.filters : [cfg.filters];
     });
 
     // Extract NDK subscription options (trigger restart when changed)
     const derivedNdkOpts = $derived.by(() => {
         const cfg = derivedConfig;
-        if (!cfg) return {};
+        if (!cfg || !('filters' in cfg)) return {};
 
         // Filter out our wrapper properties, keep everything else for NDK
         const { filters, noDedupe, dedupeKey, wot, wotRank, ...ndkOpts } = cfg;
@@ -141,7 +142,7 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
     // Extract wrapper options (just re-process when changed)
     const derivedWrapperOpts = $derived.by(() => {
         const cfg = derivedConfig;
-        if (!cfg) {
+        if (!cfg || !('filters' in cfg)) {
             return {
                 noDedupe: undefined,
                 dedupeKey: undefined,

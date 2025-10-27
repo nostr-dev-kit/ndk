@@ -2,6 +2,7 @@ import type NDKEvent from '@nostr-dev-kit/ndk';
 import type { NDKSvelte } from '$lib/ndk-svelte.svelte.js';
 import type { NDKUserProfile } from '@nostr-dev-kit/ndk';
 import { NDKKind, zapInvoiceFromEvent } from '@nostr-dev-kit/ndk';
+import { createProfileFetcher } from '$lib/builders/profile/index.svelte.js';
 
 export interface EventCardState {
   // Author
@@ -39,13 +40,13 @@ export function createEventCard({
   event,
 }: {
   ndk: NDKSvelte;
-  event: NDKEvent;
+  event: () => NDKEvent;
 }): EventCardState {
-  const author = event.author;
+  const currentEvent = $derived(event());
+  const author = $derived(currentEvent.author);
 
-  // Fetch author profile - manage as state
-  const profile = $state<NDKUserProfile | undefined>(author.profile);
-  let profileFetched = false;
+  // Use the shared profile fetcher for consistent behavior
+  const profileFetcher = createProfileFetcher({ ndk, user: () => author });
 
   // Lazy subscriptions - only created when accessed
   let repliesSub: ReturnType<typeof ndk.$subscribe> | undefined;
@@ -55,23 +56,15 @@ export function createEventCard({
 
   return {
     get profile() {
-      if (!profileFetched) {
-        profileFetched = true;
-        author.fetchProfile().then(p => {
-          if (p) {
-            Object.assign(profile, p);
-          }
-        });
-      }
-      return profile;
+      return profileFetcher.profile || undefined;
     },
 
     get replies() {
       if (!repliesSub) {
-        repliesSub = ndk.$subscribe(
-          { kinds: [NDKKind.Text], ...event.filter() },
-          { closeOnEose: false }
-        );
+        repliesSub = ndk.$subscribe(() => ({
+          filters: [{ kinds: [NDKKind.Text], ...currentEvent.filter() }],
+          opts: { closeOnEose: false }
+        }));
       }
 
       const replyEvents = Array.from(repliesSub.events || []);
@@ -85,10 +78,10 @@ export function createEventCard({
 
     get zaps() {
       if (!zapsSub) {
-        zapsSub = ndk.$subscribe(
-          { kinds: [9735], ...event.filter() },
-          { closeOnEose: false }
-        );
+        zapsSub = ndk.$subscribe(() => ({
+          filters: [{ kinds: [9735], ...currentEvent.filter() }],
+          opts: { closeOnEose: false }
+        }));
       }
 
       const zapEvents = Array.from(zapsSub.events || []);
@@ -106,10 +99,10 @@ export function createEventCard({
 
     get reposts() {
       if (!repostsSub) {
-        repostsSub = ndk.$subscribe(
-          { kinds: [NDKKind.Repost, NDKKind.GenericRepost], ...event.filter() },
-          { closeOnEose: false }
-        );
+        repostsSub = ndk.$subscribe(() => ({
+          filters: [{ kinds: [NDKKind.Repost, NDKKind.GenericRepost], ...currentEvent.filter() }],
+          opts: { closeOnEose: false }
+        }));
       }
 
       const repostEvents = Array.from(repostsSub.events || []);
@@ -123,10 +116,10 @@ export function createEventCard({
 
     get reactions() {
       if (!reactionsSub) {
-        reactionsSub = ndk.$subscribe(
-          { kinds: [NDKKind.Reaction], ...event.filter() },
-          { closeOnEose: false }
-        );
+        reactionsSub = ndk.$subscribe(() => ({
+          filters: [{ kinds: [NDKKind.Reaction], ...currentEvent.filter() }],
+          opts: { closeOnEose: false }
+        }));
       }
 
       const reactionEvents = Array.from(reactionsSub.events || []);

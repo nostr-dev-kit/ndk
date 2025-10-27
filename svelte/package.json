@@ -18,6 +18,11 @@
         "./components/*": {
             "svelte": "./dist/components/*",
             "import": "./dist/components/*"
+        },
+        "./builders/*": {
+            "types": "./src/lib/builders/*/index.d.ts",
+            "import": "./src/lib/builders/*/index.ts",
+            "default": "./src/lib/builders/*/index.ts"
         }
     },
     "files": [
@@ -37,8 +42,6 @@
         "format": "prettier --write .",
         "test": "vitest run",
         "test:watch": "vitest",
-        "storybook": "storybook dev -p 6006",
-        "build-storybook": "storybook build",
         "registry:build": "shadcn-svelte registry build --output static/r",
         "registry:serve": "bunx --bun serve@latest static -p 5173",
         "registry:dev": "bun run registry:build && bun run registry:serve"
@@ -80,12 +83,6 @@
         "tiptap-markdown": "^0.8.10"
     },
     "devDependencies": {
-        "@chromatic-com/storybook": "^4.1.1",
-        "@storybook/addon-a11y": "^9.1.15",
-        "@storybook/addon-docs": "^9.1.15",
-        "@storybook/addon-svelte-csf": "^5.0.10",
-        "@storybook/addon-vitest": "^9.1.15",
-        "@storybook/svelte-vite": "^9.1.15",
         "@sveltejs/adapter-auto": "^3.0.0",
         "@sveltejs/adapter-vercel": "^6.0.0",
         "@sveltejs/kit": "^2.47.2",
@@ -94,14 +91,12 @@
         "@types/node": "^24.9.0",
         "@vitest/browser": "^3.2.4",
         "eslint": "^9.38.0",
-        "eslint-plugin-storybook": "^9.1.15",
         "eslint-plugin-svelte": "^3.12.5",
         "globals": "^16.4.0",
         "playwright": "^1.56.1",
         "prettier": "^3.3.3",
         "prettier-plugin-svelte": "^3.0.0",
         "shadcn-svelte": "^1.0.10",
-        "storybook": "^9.1.15",
         "svelte": "^5.41.2",
         "svelte-check": "^4.0.0",
         "svelte-eslint-parser": "^1.4.0",

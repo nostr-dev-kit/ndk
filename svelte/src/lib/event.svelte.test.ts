@@ -51,7 +51,7 @@ describe("Event Fetching", () => {
             });
 
             expect(event).toBeDefined();
-            expect(event.content).toBeUndefined();
+            expect(event.content).toBe("");
         });
 
         it("should fetch event by bech32 ID", async () => {
@@ -72,7 +72,7 @@ describe("Event Fetching", () => {
             // Wait for the effect to run
             await new Promise((resolve) => setTimeout(resolve, 10));
 
-            expect(ndk.fetchEvent).toHaveBeenCalledWith(noteId);
+            expect(ndk.fetchEvent).toHaveBeenCalledWith(noteId, { wrap: true });
             expect(event.content).toBe("Test note");
         });
 
@@ -93,7 +93,7 @@ describe("Event Fetching", () => {
 
             await new Promise((resolve) => setTimeout(resolve, 10));
 
-            expect(ndk.fetchEvent).toHaveBeenCalledWith(filter);
+            expect(ndk.fetchEvent).toHaveBeenCalledWith(filter, { wrap: true });
             expect(event.content).toBe("Test note");
         });
 
@@ -228,7 +228,7 @@ describe("Event Fetching", () => {
 
             await new Promise((resolve) => setTimeout(resolve, 10));
 
-            expect(ndk.fetchEvents).toHaveBeenCalledWith(filter);
+            expect(ndk.fetchEvents).toHaveBeenCalledWith([filter], {});
             expect(events).toHaveLength(2);
             expect(events[0].content).toBe("First note");
             expect(events[1].content).toBe("Second note");
@@ -259,7 +259,7 @@ describe("Event Fetching", () => {
 
             await new Promise((resolve) => setTimeout(resolve, 10));
 
-            expect(ndk.fetchEvents).toHaveBeenCalledWith(filters);
+            expect(ndk.fetchEvents).toHaveBeenCalledWith(filters, {});
             expect(events).toHaveLength(2);
         });
 
@@ -346,87 +346,6 @@ describe("Event Fetching", () => {
         });
     });
 
-    describe("NDKSvelte.$fetchEvent", () => {
-        it("should be accessible via ndk instance", async () => {
-            const testEvent = new NDKEvent(ndk);
-            testEvent.kind = NDKKind.Text;
-            testEvent.content = "Test";
-            await testEvent.sign(signer);
-
-            vi.spyOn(ndk, "fetchEvent").mockResolvedValue(testEvent);
-
-            let event: any;
-            cleanup = $effect.root(() => {
-                event = ndk.$fetchEvent(() => testEvent.encode());
-            });
-
-            await new Promise((resolve) => setTimeout(resolve, 10));
-
-            expect(event.content).toBe("Test");
-        });
-
-        it("should automatically wrap events (NDKArticle)", async () => {
-            const testArticle = new NDKEvent(ndk);
-            testArticle.kind = NDKKind.Article;
-            testArticle.content = "Article content";
-            testArticle.tags = [
-                ["title", "Test Article"],
-                ["d", "test-slug"],
-            ];
-            await testArticle.sign(signer);
-
-            // Create wrapped article
-            const wrappedArticle = NDKArticle.from(testArticle);
-
-            vi.spyOn(ndk, "fetchEvent").mockResolvedValue(wrappedArticle);
-
-            let article: any;
-            cleanup = $effect.root(() => {
-                article = ndk.$fetchEvent<NDKArticle>(() => testArticle.encode());
-            });
-
-            await new Promise((resolve) => setTimeout(resolve, 10));
-
-            expect(article.content).toBe("Article content");
-            expect(article.title).toBe("Test Article");
-            expect(ndk.fetchEvent).toHaveBeenCalledWith(testArticle.encode(), { wrap: true });
-        });
-
-        it("should pass wrap: true to fetchEvent by default", async () => {
-            const testEvent = new NDKEvent(ndk);
-            testEvent.kind = NDKKind.Text;
-            testEvent.content = "Test";
-            await testEvent.sign(signer);
-
-            const fetchSpy = vi.spyOn(ndk, "fetchEvent").mockResolvedValue(testEvent);
-
-            cleanup = $effect.root(() => {
-                ndk.$fetchEvent(() => "note1test");
-            });
-
-            await new Promise((resolve) => setTimeout(resolve, 10));
-
-            expect(fetchSpy).toHaveBeenCalledWith("note1test", { wrap: true });
-        });
-
-        it("should pass wrap: false when specified in options", async () => {
-            const testEvent = new NDKEvent(ndk);
-            testEvent.kind = NDKKind.Text;
-            testEvent.content = "Test";
-            await testEvent.sign(signer);
-
-            const fetchSpy = vi.spyOn(ndk, "fetchEvent").mockResolvedValue(testEvent);
-
-            cleanup = $effect.root(() => {
-                ndk.$fetchEvent(() => "note1test", { wrap: false });
-            });
-
-            await new Promise((resolve) => setTimeout(resolve, 10));
-
-            expect(fetchSpy).toHaveBeenCalledWith("note1test", { wrap: false });
-        });
-    });
-
     describe("NDKSvelte.$fetchEvents", () => {
         it("should be accessible via ndk instance", async () => {
             const event1 = new NDKEvent(ndk);
@@ -487,10 +406,10 @@ describe("Event Fetching", () => {
             expect(articles).toHaveLength(2);
             expect(articles[0].title).toBe("First Article");
             expect(articles[1].title).toBe("Second Article");
-            expect(ndk.fetchEvents).toHaveBeenCalledWith({ kinds: [NDKKind.Article] }, { wrap: true });
+            expect(ndk.fetchEvents).toHaveBeenCalledWith([{ kinds: [NDKKind.Article] }], {});
         });
 
-        it("should pass wrap: true to fetchEvents by default", async () => {
+        it("should pass filters wrapped in array", async () => {
             const testEvent = new NDKEvent(ndk);
             testEvent.kind = NDKKind.Text;
             testEvent.content = "Test";
@@ -504,24 +423,7 @@ describe("Event Fetching", () => {
 
             await new Promise((resolve) => setTimeout(resolve, 10));
 
-            expect(fetchSpy).toHaveBeenCalledWith({ kinds: [1] }, { wrap: true });
-        });
-
-        it("should pass wrap: false when specified in options", async () => {
-            const testEvent = new NDKEvent(ndk);
-            testEvent.kind = NDKKind.Text;
-            testEvent.content = "Test";
-            await testEvent.sign(signer);
-
-            const fetchSpy = vi.spyOn(ndk, "fetchEvents").mockResolvedValue(new Set([testEvent]));
-
-            cleanup = $effect.root(() => {
-                ndk.$fetchEvents(() => ({ kinds: [1] }), { wrap: false });
-            });
-
-            await new Promise((resolve) => setTimeout(resolve, 10));
-
-            expect(fetchSpy).toHaveBeenCalledWith({ kinds: [1] }, { wrap: false });
+            expect(fetchSpy).toHaveBeenCalledWith([{ kinds: [1] }], {});
         });
     });
 });

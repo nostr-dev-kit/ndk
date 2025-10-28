@@ -1,5 +1,6 @@
-import { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
+import { NDKEvent, NDKKind, eventIsReply } from "@nostr-dev-kit/ndk";
 import type { NDKSvelte } from "../../ndk-svelte.svelte.js";
+import { resolveNDK } from "../resolve-ndk.svelte.js";
 
 export interface ReplyStats {
     count: number;
@@ -7,20 +8,20 @@ export interface ReplyStats {
 }
 
 export interface ReplyActionConfig {
-    ndk: NDKSvelte;
     event: NDKEvent | undefined;
 }
 
 /**
  * Creates a reactive reply action state manager
  *
- * @param config - Function returning configuration with ndk and event
+ * @param config - Function returning configuration with event
+ * @param ndk - Optional NDK instance (uses context if not provided)
  * @returns Object with reply state and reply function
  *
  * @example
  * ```svelte
  * <script>
- *   const replyAction = createReplyAction(() => ({ ndk, event }));
+ *   const replyAction = createReplyAction(() => ({ event }));
  * </script>
  *
  * <button onclick={() => replyAction.reply("Great post!")}>
@@ -29,19 +30,21 @@ export interface ReplyActionConfig {
  * ```
  */
 export function createReplyAction(
-    config: () => ReplyActionConfig
+    config: () => ReplyActionConfig,
+    ndk?: NDKSvelte
 ) {
+    const resolvedNDK = resolveNDK(ndk);
     // Subscribe to replies for this event
     let repliesSub = $state<ReturnType<NDKSvelte["$subscribe"]> | null>(null);
 
     $effect(() => {
-        const { ndk, event } = config();
+        const { event } = config();
         if (!event?.id) {
             repliesSub = null;
             return;
         }
 
-        repliesSub = ndk.$subscribe(() => ({
+        repliesSub = resolvedNDK.$subscribe(() => ({
             filters: [{
                 kinds: [NDKKind.Text, NDKKind.GenericReply],
                 ...event.filter(),
@@ -54,25 +57,30 @@ export function createReplyAction(
         const sub = repliesSub;
         if (!sub) return { count: 0, hasReplied: false };
 
-        const { ndk } = config();
-        const replies = sub.events;
+        const { event } = config();
+        if (!event?.id) return { count: 0, hasReplied: false };
+
+        // Use NDK's built-in eventIsReply to filter actual replies
+        const actualReplies = Array.from(sub.events).filter(replyEvent =>
+            eventIsReply(event, replyEvent)
+        );
 
         return {
-            count: replies.length,
-            hasReplied: ndk.$currentPubkey
-                ? Array.from(replies).some(r => r.pubkey === ndk.$currentPubkey)
+            count: actualReplies.length,
+            hasReplied: resolvedNDK.$currentPubkey
+                ? actualReplies.some(r => r.pubkey === resolvedNDK.$currentPubkey)
                 : false
         };
     });
 
     async function reply(content: string): Promise<NDKEvent> {
-        const { ndk, event } = config();
+        const { event } = config();
 
         if (!event?.id) {
             throw new Error("No event to reply to");
         }
 
-        if (!ndk.$currentPubkey) {
+        if (!resolvedNDK.$currentPubkey) {
             throw new Error("User must be logged in to reply");
         }
 

@@ -1,5 +1,6 @@
 import { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
 import type { NDKSvelte } from "../../ndk-svelte.svelte.js";
+import { resolveNDK } from "../resolve-ndk.svelte.js";
 
 export interface RepostStats {
     count: number;
@@ -8,7 +9,7 @@ export interface RepostStats {
 }
 
 export interface RepostActionConfig {
-    ndk: NDKSvelte;
+
     event: NDKEvent | undefined;
 }
 
@@ -21,7 +22,7 @@ export interface RepostActionConfig {
  * @example
  * ```svelte
  * <script>
- *   const repostAction = createRepostAction(() => ({ ndk, event }));
+ *   const repostAction = createRepostAction(() => ({ event }));
  * </script>
  *
  * <button onclick={repostAction.repost}>
@@ -34,19 +35,22 @@ export interface RepostActionConfig {
  * ```
  */
 export function createRepostAction(
-    config: () => RepostActionConfig
+    config: () => RepostActionConfig,
+    ndk?: NDKSvelte
 ) {
+    const resolvedNDK = resolveNDK(ndk);
+
     // Subscribe to reposts and quotes for this event
     let repostsSub = $state<ReturnType<NDKSvelte["$subscribe"]> | null>(null);
 
     $effect(() => {
-        const { ndk, event } = config();
+        const { event } = config();
         if (!event?.id) {
             repostsSub = null;
             return;
         }
 
-        repostsSub = ndk.$subscribe(() => ({
+        repostsSub = resolvedNDK.$subscribe(() => ({
             filters: [
                 // Regular reposts (kind 6 & 16) - use e.filter() for correct tag handling
                 {
@@ -70,9 +74,9 @@ export function createRepostAction(
         const reposts = sub.events;
 
         let userRepost: NDKEvent | undefined;
-        const hasReposted = ndk.$currentPubkey
+        const hasReposted = resolvedNDK.$currentPubkey
             ? Array.from(reposts).some(r => {
-                if (r.pubkey === ndk.$currentPubkey) {
+                if (r.pubkey === resolvedNDK.$currentPubkey) {
                     userRepost = r;
                     return true;
                 }
@@ -88,13 +92,13 @@ export function createRepostAction(
     });
 
     async function repost(): Promise<NDKEvent> {
-        const { ndk, event } = config();
+        const { event } = config();
 
         if (!event?.id) {
             throw new Error("No event to repost");
         }
 
-        if (!ndk.$currentPubkey) {
+        if (!resolvedNDK.$currentPubkey) {
             throw new Error("User must be logged in to repost");
         }
 
@@ -110,13 +114,13 @@ export function createRepostAction(
     }
 
     async function quote(content: string): Promise<NDKEvent> {
-        const { ndk, event } = config();
+        const { event } = config();
 
         if (!event?.id) {
             throw new Error("No event to quote");
         }
 
-        if (!ndk.$currentPubkey) {
+        if (!resolvedNDK.$currentPubkey) {
             throw new Error("User must be logged in to quote");
         }
 

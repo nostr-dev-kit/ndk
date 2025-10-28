@@ -1,5 +1,6 @@
 import { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
 import type { NDKSvelte } from "../../ndk-svelte.svelte.js";
+import { resolveNDK } from "../resolve-ndk.svelte.js";
 
 export interface EmojiReaction {
     emoji: string;
@@ -10,7 +11,6 @@ export interface EmojiReaction {
 }
 
 export interface ReactionActionConfig {
-    ndk: NDKSvelte;
     event: NDKEvent | undefined;
 }
 
@@ -23,13 +23,18 @@ export interface CustomEmojiData {
 /**
  * Creates a reactive reaction action state manager
  *
- * @param config - Function returning configuration with ndk and event
+ * @param config - Function returning configuration with event
+ * @param ndk - Optional NDK instance (uses context if not provided)
  * @returns Object with reaction state and react function
  *
  * @example
  * ```svelte
  * <script>
- *   const reaction = createReactionAction(() => ({ ndk, event: sampleEvent }));
+ *   // NDK from context
+ *   const reaction = createReactionAction(() => ({ event: sampleEvent }));
+ *
+ *   // Or with explicit NDK
+ *   const reaction = createReactionAction(() => ({ event: sampleEvent }), ndk);
  * </script>
  *
  * <!-- React with any emoji -->
@@ -41,28 +46,26 @@ export interface CustomEmojiData {
  * {#each reaction.all as { emoji, count, hasReacted, pubkeys }}
  *   <button onclick={() => reaction.react(emoji)}>
  *     {emoji} {count}
- *     <!-- Filter for followers on client side -->
- *     {#if pubkeys.filter(pk => ndk.$follows.some(f => f === pk)).length > 0}
- *       ({pubkeys.filter(pk => ndk.$follows.some(f => f === pk)).length} followers)
- *     {/if}
  *   </button>
  * {/each}
  * ```
  */
 export function createReactionAction(
-    config: () => ReactionActionConfig
+    config: () => ReactionActionConfig,
+    ndk?: NDKSvelte
 ) {
+    const resolvedNDK = resolveNDK(ndk);
     // Subscribe to reactions for this event
     let reactionsSub = $state<ReturnType<NDKSvelte["$subscribe"]> | null>(null);
 
     $effect(() => {
-        const { ndk, event } = config();
+        const { event } = config();
         if (!event?.id) {
             reactionsSub = null;
             return;
         }
 
-        reactionsSub = ndk.$subscribe(() => ({
+        reactionsSub = resolvedNDK.$subscribe(() => ({
             filters: [{
                 kinds: [NDKKind.Reaction],
                 "#e": [event.id]
@@ -75,7 +78,6 @@ export function createReactionAction(
         const sub = reactionsSub;
         if (!sub) return [];
 
-        const { ndk } = config();
         const reactions = sub.events;
         const byEmoji = new Map<string, { count: number; hasReacted: boolean; pubkeys: string[]; userReaction?: NDKEvent }>();
 
@@ -89,7 +91,7 @@ export function createReactionAction(
                 data.pubkeys.push(reaction.pubkey);
             }
 
-            if (reaction.pubkey === ndk.$currentPubkey) {
+            if (reaction.pubkey === resolvedNDK.$currentPubkey) {
                 data.hasReacted = true;
                 data.userReaction = reaction;
             }
@@ -104,13 +106,13 @@ export function createReactionAction(
     });
 
     async function react(emojiOrData: string | CustomEmojiData): Promise<void> {
-        const { ndk, event } = config();
+        const { event } = config();
 
         if (!event?.id) {
             throw new Error("No event to react to");
         }
 
-        if (!ndk.$currentPubkey) {
+        if (!resolvedNDK.$currentPubkey) {
             throw new Error("User must be logged in to react");
         }
 

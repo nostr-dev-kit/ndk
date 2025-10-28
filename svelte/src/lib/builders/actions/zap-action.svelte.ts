@@ -1,5 +1,6 @@
 import { NDKEvent, NDKKind, type NDKUser, zapInvoiceFromEvent } from "@nostr-dev-kit/ndk";
 import type { NDKSvelte } from "../../ndk-svelte.svelte.js";
+import { resolveNDK } from "../resolve-ndk.svelte.js";
 
 export interface ZapStats {
     count: number;
@@ -8,7 +9,7 @@ export interface ZapStats {
 }
 
 export interface ZapActionConfig {
-    ndk: NDKSvelte;
+
     target: NDKEvent | NDKUser | undefined;
 }
 
@@ -21,7 +22,7 @@ export interface ZapActionConfig {
  * @example
  * ```svelte
  * <script>
- *   const zapAction = createZapAction(() => ({ ndk, target: event }));
+ *   const zapAction = createZapAction(() => ({ target: event }));
  * </script>
  *
  * <button onclick={() => zapAction.zap(1000)}>
@@ -30,13 +31,16 @@ export interface ZapActionConfig {
  * ```
  */
 export function createZapAction(
-    config: () => ZapActionConfig
+    config: () => ZapActionConfig,
+    ndk?: NDKSvelte
 ) {
+    const resolvedNDK = resolveNDK(ndk);
+
     // Subscribe to zaps
     let zapsSub = $state<ReturnType<NDKSvelte["$subscribe"]> | null>(null);
 
     $effect(() => {
-        const { ndk, target } = config();
+        const { target } = config();
         if (!target) {
             zapsSub = null;
             return;
@@ -44,7 +48,7 @@ export function createZapAction(
 
         // For events, filter by event ID
         if (target instanceof NDKEvent && target.id) {
-            zapsSub = ndk.$subscribe(() => ({
+            zapsSub = resolvedNDK.$subscribe(() => ({
                 filters: [{
                     kinds: [9735],
                     "#e": [target.id]
@@ -56,7 +60,7 @@ export function createZapAction(
 
         // For users, filter by pubkey
         const pubkey = target instanceof NDKEvent ? target.pubkey : target.pubkey;
-        zapsSub = ndk.$subscribe(() => ({
+        zapsSub = resolvedNDK.$subscribe(() => ({
             filters: [{
                 kinds: [9735],
                 "#p": [pubkey]
@@ -76,8 +80,8 @@ export function createZapAction(
             sum + (invoice?.amount || 0), 0
         );
 
-        const hasZapped = ndk.$currentPubkey
-            ? zapInvoices.some(invoice => invoice?.zapper === ndk.$currentPubkey)
+        const hasZapped = resolvedNDK.$currentPubkey
+            ? zapInvoices.some(invoice => invoice?.zapper === resolvedNDK.$currentPubkey)
             : false;
 
         return {
@@ -88,13 +92,13 @@ export function createZapAction(
     });
 
     async function zap(amount: number, comment?: string): Promise<void> {
-        const { ndk, target } = config();
+        const { target } = config();
 
         if (!target) {
             throw new Error("No target to zap");
         }
 
-        if (!ndk.$currentPubkey) {
+        if (!resolvedNDK.$currentPubkey) {
             throw new Error("User must be logged in to zap");
         }
 

@@ -6,7 +6,6 @@ import { useProfileValue } from "../../profiles/hooks";
 import { useNDKSessions } from "../store";
 
 const EMPTY_SET = new Set<Hexpubkey>();
-const EMPTY_KIND_MAP = new Map<NDKKind, Map<Hexpubkey, { followed: boolean; last_updated_at: number }>>();
 
 /**
  * Hook to login a new session.
@@ -55,32 +54,12 @@ export const useNDKSessionSwitch = () => {
 
 /**
  * Returns the list of followed pubkeys for the active session.
- * Returns an empty array if there is no active session or no follows list.
+ * Returns an empty set if there is no active session or no follows list.
  */
 export const useFollows = (): Set<Hexpubkey> => {
-    const follows = useNDKSessions((s) =>
+    return useNDKSessions((s) =>
         s.activePubkey ? (s.sessions.get(s.activePubkey)?.followSet ?? EMPTY_SET) : EMPTY_SET,
     );
-    const followKinds = useNDKSessions((s) =>
-        s.activePubkey ? (s.sessions.get(s.activePubkey)?.kindFollowSet ?? EMPTY_KIND_MAP) : EMPTY_KIND_MAP,
-    );
-
-    const followSet = useMemo(() => {
-        const set = new Set<Hexpubkey>(follows);
-        for (const kinds of followKinds.values()) {
-            for (const [pubkey, { followed }] of kinds.entries()) {
-                if (followed) {
-                    set.add(pubkey);
-                } else {
-                    set.delete(pubkey);
-                }
-            }
-        }
-
-        return set;
-    }, [follows, followKinds]);
-
-    return followSet;
 };
 
 interface UseNDKSessionEventOptions<T extends NDKEvent> {

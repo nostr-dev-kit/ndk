@@ -21,40 +21,47 @@
     /** Force showing line regardless of threading metadata */
     forceShow?: boolean;
 
+    /** Avatar size (must match Header's avatarSize) - used to calculate line position */
+    avatarSize?: 'sm' | 'md' | 'lg';
+
     /** Additional CSS classes */
     class?: string;
   }
 
   let {
     forceShow = false,
+    avatarSize = 'md',
     class: className = ''
   }: Props = $props();
 
   const context = getContext<EventCardContext>(EVENT_CARD_CONTEXT_KEY);
-  const threading = context?.threading;
 
   // Determine if we should show the line
+  // Read directly from context.threading to maintain reactivity
   const showLine = $derived(
-    forceShow || threading?.showLineToNext
+    forceShow || context?.threading?.showLineToNext
   );
 
   // Determine line style based on thread type
   const lineClass = $derived.by(() => {
-    if (!threading) return 'thread-line';
+    if (!context?.threading) return 'thread-line';
 
     return cn(
       'thread-line',
-      threading.isSelfThread && 'thread-line--self',
+      context.threading.isSelfThread && 'thread-line--self',
       className
     );
   });
 
-  // Calculate position based on depth
-  const leftOffset = $derived(
-    threading?.depth
-      ? `calc(2rem + ${threading.depth * 1.5}rem)`
-      : '2rem'
+  // Calculate avatar center position based on size
+  // Avatar sizes: sm=32px, md=40px, lg=48px
+  // Position = avatar center (half of avatar width)
+  const avatarCenter = $derived(
+    avatarSize === 'sm' ? 16 : avatarSize === 'lg' ? 24 : 20
   );
+
+  // Line position: avatar center (no additional offset since Header has !p-0)
+  const leftOffset = $derived(`${avatarCenter}px`);
 </script>
 
 {#if showLine}
@@ -68,19 +75,19 @@
 <style>
   .thread-line {
     position: absolute;
-    top: 3.5rem; /* Start below avatar */
+    top: 48px; /* Start below avatar (40px height + 8px margin) */
     bottom: 0;
     width: 2px;
-    background: var(--border);
+    background: hsl(var(--border));
     pointer-events: none;
     z-index: 0;
   }
 
   /* Self-thread (same author) - different color/style */
   .thread-line--self {
-    background: var(--primary);
-    opacity: 0.5;
-    width: 3px;
+    background: hsl(var(--primary));
+    opacity: 0.6;
+    width: 2px;
   }
 
   /* Animation for new lines appearing */

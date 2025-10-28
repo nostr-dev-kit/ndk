@@ -7,50 +7,67 @@ export interface RepostStats {
     userRepost?: NDKEvent;
 }
 
+export interface RepostActionConfig {
+    ndk: NDKSvelte;
+    event: NDKEvent | undefined;
+}
+
 /**
  * Creates a reactive repost action state manager
  *
- * @param ndk - The NDKSvelte instance
- * @param event - Function returning the event to repost
- * @returns Object with repost state and toggle function
+ * @param config - Function returning configuration with ndk and event
+ * @returns Object with repost state, repost function, and quote function
  *
  * @example
  * ```svelte
  * <script>
- *   const repostAction = createRepostAction(ndk, () => event);
+ *   const repostAction = createRepostAction(() => ({ ndk, event }));
  * </script>
  *
- * <button onclick={repostAction.toggle}>
+ * <button onclick={repostAction.repost}>
  *   {repostAction.hasReposted ? 'Unrepost' : 'Repost'} ({repostAction.count})
+ * </button>
+ *
+ * <button onclick={() => repostAction.quote("Great post!")}>
+ *   Quote Post
  * </button>
  * ```
  */
 export function createRepostAction(
-    ndk: NDKSvelte,
-    event: () => NDKEvent | undefined
+    config: () => RepostActionConfig
 ) {
-    // Subscribe to reposts for this event
-    const repostsSub = ndk.$subscribe(() => {
-        const e = event();
-        if (!e?.id) return undefined;
+    // Subscribe to reposts and quotes for this event
+    const repostsSub = $derived.by(() => {
+        const { ndk, event } = config();
+        if (!event?.id) return null;
 
-        return {
-            filters: [{
-                kinds: [NDKKind.Repost, NDKKind.GenericRepost],
-                "#e": [e.id]
-            }],
-            opts: { closeOnEose: false }
-        };
+        return ndk.$subscribe(() => ({
+            filters: [
+                // Regular reposts (kind 6 & 16) - use e.filter() for correct tag handling
+                {
+                    kinds: [NDKKind.Repost, NDKKind.GenericRepost],
+                    ...event.filter()
+                },
+                // Quote posts with #q tag
+                {
+                    "#q": [event.tagId()]
+                }
+            ],
+            closeOnEose: false
+        }));
     });
 
     const stats = $derived.by((): RepostStats => {
-        const reposts = repostsSub.events;
-        const currentPubkey = ndk.$currentPubkey;
+        const sub = repostsSub;
+        if (!sub) return { count: 0, hasReposted: false };
+
+        const { ndk } = config();
+        const reposts = sub.events;
 
         let userRepost: NDKEvent | undefined;
-        const hasReposted = currentPubkey
+        const hasReposted = ndk.$currentPubkey
             ? Array.from(reposts).some(r => {
-                if (r.pubkey === currentPubkey) {
+                if (r.pubkey === ndk.$currentPubkey) {
                     userRepost = r;
                     return true;
                 }
@@ -65,9 +82,10 @@ export function createRepostAction(
         };
     });
 
-    async function toggle(): Promise<void> {
-        const e = event();
-        if (!e?.id) {
+    async function repost(): Promise<NDKEvent> {
+        const { ndk, event } = config();
+
+        if (!event?.id) {
             throw new Error("No event to repost");
         }
 
@@ -78,7 +96,7 @@ export function createRepostAction(
         // If already reposted, delete the repost
         if (stats.hasReposted && stats.userRepost) {
             await stats.userRepost.delete();
-            return;
+            return stats.userRepost;
         }
 
         // Otherwise, create a new repost (using kind 6 - generic repost)
@@ -86,12 +104,39 @@ export function createRepostAction(
             kind: NDKKind.GenericRepost,
             content: "",
             tags: [
-                ["e", e.id, e.relay?.url || ""],
-                ["p", e.pubkey]
+                ["e", event.id, event.relay?.url || ""],
+                ["p", event.pubkey]
             ]
         });
 
         await repostEvent.publish();
+        return repostEvent;
+    }
+
+    async function quote(content: string): Promise<NDKEvent> {
+        const { ndk, event } = config();
+
+        if (!event?.id) {
+            throw new Error("No event to quote");
+        }
+
+        if (!ndk.$currentUser) {
+            throw new Error("User must be logged in to quote");
+        }
+
+        // Create quote post (kind 1 with #q tag)
+        const quoteEvent = new NDKEvent(ndk, {
+            kind: NDKKind.Text,
+            content,
+            tags: [
+                ["q", event.tagId()],
+                ["e", event.id, event.relay?.url || "", "mention"],
+                ["p", event.pubkey]
+            ]
+        });
+
+        await quoteEvent.publish();
+        return quoteEvent;
     }
 
     return {
@@ -101,6 +146,7 @@ export function createRepostAction(
         get hasReposted() {
             return stats.hasReposted;
         },
-        toggle
+        repost,
+        quote
     };
 }

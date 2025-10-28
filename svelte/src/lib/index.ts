@@ -82,13 +82,7 @@ export {
     type ThreadNode,
     type CreateThreadViewOptions,
     type ThreadingMetadata
-} from "./builders/event/thread/index.js";
-
-// ============================================================================
-// Event Card Builder - REMOVED
-// ============================================================================
-// createEventCard has been removed. Each action now manages its own state.
-// EventCard components access NDK and event directly from context.
+} from "./builders/event/thread/index.svelte.js";
 
 // ============================================================================
 // Event Content Rendering Builders
@@ -140,7 +134,13 @@ export {
     createRepostAction,
     createMuteAction,
     createZapAction,
-    type ReactionStats,
+    type FollowActionConfig,
+    type ReactionActionConfig,
+    type ReplyActionConfig,
+    type RepostActionConfig,
+    type MuteActionConfig,
+    type ZapActionConfig,
+    type EmojiReaction,
     type ReplyStats,
     type RepostStats,
     type ZapStats,

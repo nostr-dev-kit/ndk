@@ -42,6 +42,7 @@ import Meta from './article-card-meta.svelte';
 // Preset layouts
 import Portrait from './presets/portrait.svelte';
 import Medium from './presets/medium.svelte';
+import MediumWithStats from './presets/medium-with-stats.svelte';
 
 // Export as namespace for dot notation
 export const ArticleCard = {
@@ -54,6 +55,7 @@ export const ArticleCard = {
   Meta,
   Portrait,
   Medium,
+  MediumWithStats,
 };
 
 // Export types

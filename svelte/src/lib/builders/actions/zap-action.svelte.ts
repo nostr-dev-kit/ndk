@@ -7,17 +7,21 @@ export interface ZapStats {
     hasZapped: boolean;
 }
 
+export interface ZapActionConfig {
+    ndk: NDKSvelte;
+    target: NDKEvent | NDKUser | undefined;
+}
+
 /**
  * Creates a reactive zap action state manager
  *
- * @param ndk - The NDKSvelte instance
- * @param target - Function returning the target to zap (NDKEvent or NDKUser)
+ * @param config - Function returning configuration with ndk and target
  * @returns Object with zap state and zap function
  *
  * @example
  * ```svelte
  * <script>
- *   const zapAction = createZapAction(ndk, () => event);
+ *   const zapAction = createZapAction(() => ({ ndk, target: event }));
  * </script>
  *
  * <button onclick={() => zapAction.zap(1000)}>
@@ -26,46 +30,48 @@ export interface ZapStats {
  * ```
  */
 export function createZapAction(
-    ndk: NDKSvelte,
-    target: () => NDKEvent | NDKUser | undefined
+    config: () => ZapActionConfig
 ) {
     // Subscribe to zaps
-    const zapsSub = ndk.$subscribe(() => {
-        const t = target();
-        if (!t) return undefined;
+    const zapsSub = $derived.by(() => {
+        const { ndk, target } = config();
+        if (!target) return null;
 
         // For events, filter by event ID
-        if (t instanceof NDKEvent && t.id) {
-            return {
+        if (target instanceof NDKEvent && target.id) {
+            return ndk.$subscribe(() => ({
                 filters: [{
                     kinds: [9735],
-                    "#e": [t.id]
+                    "#e": [target.id]
                 }],
-                opts: { closeOnEose: false }
-            };
+                closeOnEose: false
+            }));
         }
 
         // For users, filter by pubkey
-        const pubkey = t instanceof NDKEvent ? t.pubkey : t.pubkey;
-        return {
+        const pubkey = target instanceof NDKEvent ? target.pubkey : target.pubkey;
+        return ndk.$subscribe(() => ({
             filters: [{
                 kinds: [9735],
                 "#p": [pubkey]
             }],
-            opts: { closeOnEose: false }
-        };
+            closeOnEose: false
+        }));
     });
 
     const stats = $derived.by((): ZapStats => {
-        const zaps = Array.from(zapsSub.events);
+        const sub = zapsSub;
+        if (!sub) return { count: 0, totalAmount: 0, hasZapped: false };
+
+        const { ndk } = config();
+        const zaps = Array.from(sub.events);
         const zapInvoices = zaps.map(zapInvoiceFromEvent).filter(Boolean);
         const totalAmount = zapInvoices.reduce((sum, invoice) =>
             sum + (invoice?.amount || 0), 0
         );
 
-        const currentPubkey = ndk.$currentPubkey;
-        const hasZapped = currentPubkey
-            ? zapInvoices.some(invoice => invoice?.zapper === currentPubkey)
+        const hasZapped = ndk.$currentPubkey
+            ? zapInvoices.some(invoice => invoice?.zapper === ndk.$currentPubkey)
             : false;
 
         return {
@@ -76,8 +82,9 @@ export function createZapAction(
     });
 
     async function zap(amount: number, comment?: string): Promise<void> {
-        const t = target();
-        if (!t) {
+        const { ndk, target } = config();
+
+        if (!target) {
             throw new Error("No target to zap");
         }
 
@@ -86,7 +93,7 @@ export function createZapAction(
         }
 
         // Use NDK's zap functionality
-        await t.zap(amount * 1000, comment); // Convert sats to millisats
+        await target.zap(amount * 1000, comment); // Convert sats to millisats
     }
 
     return {

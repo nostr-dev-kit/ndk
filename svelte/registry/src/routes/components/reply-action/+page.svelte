@@ -8,17 +8,18 @@
 
   const ndk = getContext<NDKSvelte>('ndk');
 
-  // Create a sample event for demonstration
-  const sampleEvent = new NDKEvent(ndk, {
-    kind: NDKKind.Text,
-    content: 'This is a sample note to demonstrate replies!',
-    pubkey: 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52',
-    created_at: Math.floor(Date.now() / 1000),
-    tags: []
-  });
-  sampleEvent.id = 'demo-event-reply-showcase';
+  // Fetch a real event for demonstration
+  let sampleEvent = $state<NDKEvent | undefined>();
 
-  const replyState = createReplyAction(ndk, () => sampleEvent);
+  $effect(() => {
+    ndk.fetchEvent('nevent1qqsqqe0hd9e2y5mf7qffkfv4w4rxcv63rj458fqj9hn08cwrn23wnvgwrvg7j')
+      .then(event => {
+        if (event) sampleEvent = event;
+      })
+      .catch(err => console.error('Failed to fetch sample event:', err));
+  });
+
+  const replyState = $derived(sampleEvent ? createReplyAction(() => ({ ndk, event: sampleEvent! })) : null);
 </script>
 
 <div class="component-page">
@@ -27,45 +28,80 @@
     <p>Reply button with count display and reply composer.</p>
   </header>
 
-  <section class="demo">
-    <CodePreview
-      title="Basic Usage"
-      description="Click to open reply composer. The button shows the current reply count."
-      code={`<ReplyAction {ndk} event={event} />`}
-    >
-      <div class="demo-event-card">
-        <div class="event-content">
-          <p>{sampleEvent.content}</p>
+  {#if sampleEvent && replyState}
+    <section class="demo">
+      <h2>Basic Usage</h2>
+      <CodePreview
+        title="Basic ReplyAction"
+        description="Click to open reply composer. The button shows the current reply count."
+        code={`<ReplyAction {ndk} event={event} />`}
+      >
+        <div class="demo-event-card">
+          <div class="event-content">
+            <p>{sampleEvent.content}</p>
+          </div>
+          <div class="event-actions">
+            <ReplyAction {ndk} event={sampleEvent} />
+            <div class="count-display">
+              {replyState.count} {replyState.count === 1 ? 'reply' : 'replies'}
+            </div>
+          </div>
         </div>
-        <div class="event-actions">
-          <ReplyAction {ndk} event={sampleEvent} />
-        </div>
-      </div>
-    </CodePreview>
-  </section>
+      </CodePreview>
+    </section>
 
-  <section class="demo">
-    <CodePreview
-      title="Using the Builder"
-      description="Use createReplyAction() for custom UI implementations."
-      code={`const reply = createReplyAction(ndk, () => event);
+    <section class="demo">
+      <h2>Using the Builder with Count</h2>
+      <CodePreview
+        title="Custom Implementation with Count"
+        description="Build your own reply button showing the count"
+        code={`const reply = createReplyAction(() => ({ ndk, event }));
 
-<button>
-  💬 {reply.count} {reply.count === 1 ? 'Reply' : 'Replies'}
+<button onclick={() => reply.reply("Great post!")}>
+  💬 Reply ({reply.count})
 </button>`}
-    >
-      <div class="demo-event-card">
-        <div class="event-content">
-          <p>{sampleEvent.content}</p>
+      >
+        <div class="demo-event-card">
+          <div class="event-content">
+            <p>{sampleEvent.content}</p>
+          </div>
+          <div class="event-actions">
+            <button class="custom-reply-btn">
+              💬 Reply ({replyState.count})
+            </button>
+          </div>
         </div>
-        <div class="event-actions">
-          <button class="custom-reply-btn">
-            💬 {replyState.count} {replyState.count === 1 ? 'Reply' : 'Replies'}
-          </button>
+      </CodePreview>
+    </section>
+
+    <section class="demo">
+      <h2>Count Only Display</h2>
+      <CodePreview
+        title="Just Show the Count"
+        description="Display reply count without interaction"
+        code={`const reply = createReplyAction(() => ({ ndk, event }));
+
+<div class="stat">
+  {reply.count} {reply.count === 1 ? 'reply' : 'replies'}
+</div>`}
+      >
+        <div class="demo-event-card">
+          <div class="event-content">
+            <p>{sampleEvent.content}</p>
+          </div>
+          <div class="event-actions">
+            <div class="stat-display">
+              {replyState.count} {replyState.count === 1 ? 'reply' : 'replies'}
+            </div>
+          </div>
         </div>
-      </div>
-    </CodePreview>
-  </section>
+      </CodePreview>
+    </section>
+  {:else}
+    <section class="demo">
+      <p>Loading event...</p>
+    </section>
+  {/if}
 </div>
 
 <style>
@@ -99,6 +135,13 @@
     border-bottom: none;
   }
 
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0 0 1.5rem 0;
+    color: hsl(var(--color-foreground));
+  }
+
   .demo-event-card {
     background: hsl(var(--color-card));
     border: 1px solid hsl(var(--color-border));
@@ -113,11 +156,13 @@
   .event-content p {
     margin: 0;
     line-height: 1.6;
+    color: hsl(var(--color-foreground));
   }
 
   .event-actions {
     display: flex;
-    gap: 0.5rem;
+    gap: 1rem;
+    align-items: center;
     padding-top: 1rem;
     border-top: 1px solid hsl(var(--color-border));
   }
@@ -136,6 +181,21 @@
   }
 
   .custom-reply-btn:hover {
-    background: hsl(var(--color-accent));
+    background: hsl(var(--color-muted));
+  }
+
+  .count-display {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: hsl(var(--color-muted-foreground));
+    padding: 0.5rem 0.75rem;
+    background: hsl(var(--color-muted) / 0.5);
+    border-radius: 0.375rem;
+  }
+
+  .stat-display {
+    font-size: 1rem;
+    font-weight: 600;
+    color: hsl(var(--color-foreground));
   }
 </style>

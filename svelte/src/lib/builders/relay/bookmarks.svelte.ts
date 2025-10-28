@@ -152,15 +152,14 @@ export function createBookmarkedRelayList({
         }
 
         // Convert to array with current user bookmark status
-        const currentUserPubkey = ndk.$currentUser?.pubkey;
         return Array.from(relayDataMap.entries())
             .map(([url, data]) => ({
                 url,
                 count: data.count,
                 percentage: totalAuthors > 0 ? (data.count / totalAuthors) * 100 : 0,
                 pubkeys: Array.from(data.pubkeys),
-                isBookmarkedByCurrentUser: includesCurrentUser && currentUserPubkey
-                    ? data.pubkeys.has(currentUserPubkey)
+                isBookmarkedByCurrentUser: includesCurrentUser && ndk.$currentUser?.pubkey
+                    ? data.pubkeys.has(ndk.$currentUser.pubkey)
                     : false
             }))
             .sort((a, b) => b.count - a.count);

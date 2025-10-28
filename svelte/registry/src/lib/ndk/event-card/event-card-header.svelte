@@ -179,8 +179,5 @@
   .event-card-header {
     /* Prevent text selection when card is interactive */
     user-select: none;
-
-    /* DEBUG: Visual guide */
-    /* outline: 2px solid blue; */
   }
 </style>

@@ -99,6 +99,15 @@ class ReactiveFollows extends Array<Hexpubkey> {
 
         return await event.publish();
     }
+
+    /**
+     * Check if a pubkey is followed (O(1) lookup)
+     * @param pubkey - Pubkey to check
+     * @returns true if the pubkey is followed, false otherwise
+     */
+    has(pubkey: Hexpubkey): boolean {
+        return this.#sessions?.follows?.has(pubkey) ?? false;
+    }
 }
 
 export interface NDKSvelteParams extends NDKConstructorParams {
@@ -490,13 +499,13 @@ export class NDKSvelte extends NDK {
      * Returns an empty array if sessions are not enabled or no session is active.
      * Automatically updates when the session's follow list changes.
      *
-     * Includes add() and remove() methods to modify the follow list and publish to the network.
+     * Includes add(), remove(), and has() methods to work with the follow list.
      *
      * **Difference from `ndk.$sessions.follows`:**
      * - `ndk.$follows` - Reactive array (best for templates and subscriptions)
-     * - `ndk.$sessions.follows` - FollowsProxy with Set-like interface (best for Set operations like `has()`, `size`)
+     * - `ndk.$sessions.follows` - FollowsProxy with Set-like interface (best for Set operations)
      *
-     * Both update reactively and both have `add()`/`remove()` methods that publish to the network.
+     * Both update reactively and both have `add()`/`remove()`/`has()` methods.
      *
      * @example
      * ```ts
@@ -512,6 +521,12 @@ export class NDKSvelte extends NDK {
      * const feed = ndk.$subscribe(() => ({
      *   filters: [{ kinds: [1], authors: ndk.$follows, limit: 50 }]
      * }));
+     * ```
+     *
+     * @example
+     * ```ts
+     * // Check if following (O(1) lookup)
+     * const isFollowing = ndk.$follows.has(pubkey);
      * ```
      *
      * @example
@@ -537,6 +552,29 @@ export class NDKSvelte extends NDK {
     get $follows(): ReactiveFollows {
         const followsArray = Array.from(this.$sessions?.follows ?? []);
         return new ReactiveFollows(followsArray, this.$sessions);
+    }
+
+    /**
+     * Access mutes with mute/unmute methods
+     *
+     * Returns a MutesProxy that works like a Set but has async mute/unmute methods
+     * that publish changes to the network.
+     *
+     * @example
+     * ```ts
+     * // Use as a Set
+     * const isMuted = ndk.$mutes.has(pubkey);
+     * const count = ndk.$mutes.size;
+     * for (const pubkey of ndk.$mutes) { ... }
+     *
+     * // Mute/unmute users (publishes to network)
+     * await ndk.$mutes.mute(pubkey);
+     * await ndk.$mutes.unmute(pubkey);
+     * await ndk.$mutes.toggle(pubkey);
+     * ```
+     */
+    get $mutes() {
+        return this.$sessions?.mutes;
     }
 
     /**

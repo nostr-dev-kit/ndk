@@ -2,6 +2,7 @@ import type { Hexpubkey, NDKEvent, NDKKind, NDKSigner, NDKUser, NDKUserProfile, 
 import { NDKKind as Kind } from "@nostr-dev-kit/ndk";
 import type { NDKSession, NDKSessionManager, SessionStartOptions } from "@nostr-dev-kit/sessions";
 import { FollowsProxy } from "./follows.svelte";
+import { MutesProxy } from "./mutes.svelte";
 
 /**
  * Reactive wrapper around NDKSessionManager
@@ -87,10 +88,29 @@ export class ReactiveSessionsStore {
     }
 
     /**
-     * Get muted IDs for current session
+     * Get mutes for current session
+     *
+     * Returns a MutesProxy that works like a Set but has async mute/unmute methods
+     * that publish changes to the network.
+     *
+     * @example
+     * ```ts
+     * // Use as a Set
+     * const isMuted = ndk.$sessions.mutes.has(pubkey);
+     * const count = ndk.$sessions.mutes.size;
+     * for (const pubkey of ndk.$sessions.mutes) { ... }
+     *
+     * // Mute/unmute users (publishes to network)
+     * await ndk.$sessions.mutes.mute(pubkey);
+     * await ndk.$sessions.mutes.unmute(pubkey);
+     * await ndk.$sessions.mutes.toggle(pubkey);
+     * ```
      */
-    get mutes(): Map<string, string> {
-        return this.current?.muteSet ?? new Map();
+    get mutes(): MutesProxy {
+        // Convert Map<string, string> to Set<string> by taking keys
+        const muteMap = this.current?.muteSet ?? new Map();
+        const muteSet = new Set(muteMap.keys());
+        return new MutesProxy(this, muteSet);
     }
 
     /**

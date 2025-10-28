@@ -293,12 +293,12 @@ ndk.$currentSession        // NDKSession | undefined - alias for ndk.$sessions.c
 ndk.$currentUser           // NDKUser | undefined - alias for ndk.$sessions.currentUser
 ndk.$currentPubkey         // Hexpubkey | undefined - current user's pubkey
 ndk.$follows               // ReactiveFollows (array) - current session's follow list as array
-                           // Includes add() and remove() methods
+                           // Includes add(), remove(), and has() methods
 
 // Reactive getters on ndk.$sessions
 ndk.$sessions.current      // NDKSession | undefined
 ndk.$sessions.currentUser  // NDKUser | undefined
-ndk.$sessions.follows      // FollowsProxy (Set-like) - with add/remove methods
+ndk.$sessions.follows      // FollowsProxy (Set-like) - with add/remove/has methods
 ndk.$sessions.mutes        // Map<string, string>
 ndk.$sessions.mutedWords   // Set<string>
 ndk.$sessions.blockedRelays // Set<string>
@@ -326,12 +326,15 @@ ndk.$sessions.walletEvent  // Get NIP-60 wallet event
 
 ### Using `ndk.$follows`
 
-The `$follows` getter provides convenient array access to your follow list with add/remove methods:
+The `$follows` getter provides convenient array access to your follow list with add/remove/has methods:
 
 ```svelte
 <script lang="ts">
 // Use as an array
 const follows = ndk.$follows;
+
+// Check if following (O(1) lookup)
+const isFollowing = ndk.$follows.has(pubkey);
 
 // Add/remove follows
 async function followUser(pubkey: string) {
@@ -355,10 +358,10 @@ async function unfollowUser(pubkey: string) {
 ```
 
 **Difference between `ndk.$follows` and `ndk.$sessions.follows`:**
-- `ndk.$follows` - Reactive array (extends Array) with `add()`/`remove()` methods. Best for templates and subscriptions.
-- `ndk.$sessions.follows` - FollowsProxy (Set-like) with `add()`/`remove()` methods. Best when you need Set operations like `has()`, `size`, etc.
+- `ndk.$follows` - Reactive array (extends Array) with `add()`/`remove()`/`has()` methods. Best for templates and subscriptions.
+- `ndk.$sessions.follows` - FollowsProxy (Set-like) with `add()`/`remove()`/`has()` methods. Best when you need Set operations.
 
-Both update reactively and both have `add()`/`remove()` methods that publish to the network.
+Both update reactively and both have `add()`/`remove()`/`has()` methods that publish to the network (except `has()` which is read-only).
 ```
 
 ### Automatic Wallet Loading

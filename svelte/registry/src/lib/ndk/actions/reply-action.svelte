@@ -59,7 +59,7 @@
   const event = $derived(eventProp || ctx?.event);
 
   // Use the builder for reactive state
-  const replyState = createReplyAction(ndk, () => event);
+  const replyState = createReplyAction(() => ({ ndk, event }));
 
   // Local UI state
   let showReplyDialog = $state(false);

@@ -32,7 +32,7 @@
   });
 
   // Create follow action state
-  const followAction = createFollowAction(ndk, () => target);
+  const followAction = createFollowAction(() => ({ ndk, target }));
 
   // CSS classes based on variant and state
   const buttonClasses = $derived.by(() => {
@@ -55,7 +55,7 @@
     if (!ndk.$currentUser) return;
 
     try {
-      await followAction.toggle();
+      await followAction.follow();
 
       // Dispatch success event
       event.currentTarget?.dispatchEvent(

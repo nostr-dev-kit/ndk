@@ -8,16 +8,18 @@
 
   const ndk = getContext<NDKSvelte>('ndk');
 
-  const sampleEvent = new NDKEvent(ndk, {
-    kind: NDKKind.Text,
-    content: 'This is a sample note to demonstrate zaps!',
-    pubkey: 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52',
-    created_at: Math.floor(Date.now() / 1000),
-    tags: []
-  });
-  sampleEvent.id = 'demo-event-zap-showcase';
+  // Fetch a real event for demonstration
+  let sampleEvent = $state<NDKEvent | undefined>();
 
-  const zapState = createZapAction(ndk, () => sampleEvent);
+  $effect(() => {
+    ndk.fetchEvent('nevent1qqsqqe0hd9e2y5mf7qffkfv4w4rxcv63rj458fqj9hn08cwrn23wnvgwrvg7j')
+      .then(event => {
+        if (event) sampleEvent = event;
+      })
+      .catch(err => console.error('Failed to fetch sample event:', err));
+  });
+
+  const zapState = $derived(sampleEvent ? createZapAction(() => ({ ndk, target: sampleEvent! })) : null);
 </script>
 
 <div class="component-page">
@@ -26,62 +28,68 @@
     <p>Zap (lightning payment) button with amount display.</p>
   </header>
 
-  <section class="demo">
-    <CodePreview
-      title="Basic Usage"
-      description="Simple zap button with automatic amount tracking"
-      code={`<ZapAction {ndk} event={event} />`}
-    >
-      <div class="demo-event-card">
-        <div class="event-content">
-          <p>{sampleEvent.content}</p>
+  {#if sampleEvent && zapState}
+    <section class="demo">
+      <CodePreview
+        title="Basic Usage"
+        description="Simple zap button with automatic amount tracking"
+        code={`<ZapAction {ndk} event={event} />`}
+      >
+        <div class="demo-event-card">
+          <div class="event-content">
+            <p>{sampleEvent.content}</p>
+          </div>
+          <div class="event-actions">
+            <ZapAction {ndk} event={sampleEvent} />
+          </div>
         </div>
-        <div class="event-actions">
-          <ZapAction {ndk} event={sampleEvent} />
-        </div>
-      </div>
-    </CodePreview>
-  </section>
+      </CodePreview>
+    </section>
 
-  <section class="demo">
-    <CodePreview
-      title="Custom Amount"
-      description="Specify a custom zap amount in satoshis"
-      code={`<ZapAction {ndk} event={event} amount={5000} />`}
-    >
-      <div class="demo-event-card">
-        <div class="event-content">
-          <p>{sampleEvent.content}</p>
+    <section class="demo">
+      <CodePreview
+        title="Custom Amount"
+        description="Specify a custom zap amount in satoshis"
+        code={`<ZapAction {ndk} event={event} amount={5000} />`}
+      >
+        <div class="demo-event-card">
+          <div class="event-content">
+            <p>{sampleEvent.content}</p>
+          </div>
+          <div class="event-actions">
+            <ZapAction {ndk} event={sampleEvent} amount={5000} />
+          </div>
         </div>
-        <div class="event-actions">
-          <ZapAction {ndk} event={sampleEvent} amount={5000} />
-        </div>
-      </div>
-    </CodePreview>
-  </section>
+      </CodePreview>
+    </section>
 
-  <section class="demo">
-    <CodePreview
-      title="Using the Builder"
-      description="Create custom zap UI using the builder pattern"
-      code={`const zap = createZapAction(ndk, () => event);
+    <section class="demo">
+      <CodePreview
+        title="Using the Builder"
+        description="Create custom zap UI using the builder pattern"
+        code={`const zap = createZapAction(() => ({ ndk, target: event }));
 
 <button class:zapped={zap.hasZapped}>
   ⚡ {zap.totalAmount} sats
 </button>`}
-    >
-      <div class="demo-event-card">
-        <div class="event-content">
-          <p>{sampleEvent.content}</p>
+      >
+        <div class="demo-event-card">
+          <div class="event-content">
+            <p>{sampleEvent.content}</p>
+          </div>
+          <div class="event-actions">
+            <button class="custom-btn" class:zapped={zapState.hasZapped}>
+              ⚡ {zapState.totalAmount} sats
+            </button>
+          </div>
         </div>
-        <div class="event-actions">
-          <button class="custom-btn" class:zapped={zapState.hasZapped}>
-            ⚡ {zapState.totalAmount} sats
-          </button>
-        </div>
-      </div>
-    </CodePreview>
-  </section>
+      </CodePreview>
+    </section>
+  {:else}
+    <section class="demo">
+      <p>Loading event...</p>
+    </section>
+  {/if}
 </div>
 
 <style>

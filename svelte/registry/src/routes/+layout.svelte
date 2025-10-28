@@ -101,6 +101,7 @@
       title: 'Events',
       items: [
         { name: 'EventCard', path: '/components/event-card' },
+        { name: 'EventCard Thread', path: '/components/event-card-thread' },
         { name: 'EventContent', path: '/components/event-content' },
       ]
     },
@@ -487,23 +488,25 @@
   }
 
   .nav a {
-    padding: 0.5rem 0.75rem;
+    display: inline-block;
+    align-self: flex-start;
+    padding: 0.25rem 0.5rem;
     border-radius: 0.375rem;
     color: hsl(var(--color-muted-foreground));
     text-decoration: none;
-    transition: all 0.2s;
-    font-size: 0.875rem;
+    transition: all 0.15s ease-in-out;
+    font-size: 0.85rem;
     font-weight: 500;
   }
 
   .nav a:hover {
-    background: hsl(var(--color-accent));
-    color: hsl(var(--color-accent-foreground));
+    background: hsl(var(--color-accent) / 0.5);
+    color: hsl(var(--color-foreground));
   }
 
   .nav a.active {
     background: hsl(var(--color-accent));
-    color: hsl(var(--color-accent-foreground));
+    color: hsl(var(--color-foreground));
     font-weight: 600;
   }
 

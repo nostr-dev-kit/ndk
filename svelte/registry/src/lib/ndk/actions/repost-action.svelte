@@ -1,8 +1,3 @@
-<!--
-  @component RepostAction
-  Repost button with count display.
-  Can be used standalone OR within EventCard context.
--->
 <script lang="ts">
   import { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
@@ -24,7 +19,7 @@
   const ndk = $derived(ndkProp || ctx?.ndk);
   const event = $derived(eventProp || ctx?.event);
 
-  const repostState = createRepostAction(ndk, () => event);
+  const repostState = createRepostAction(() => ({ ndk, event }));
 
   async function handleRepost() {
     if (!ndk?.$currentUser) {
@@ -32,7 +27,7 @@
       return;
     }
     try {
-      await repostState.toggle();
+      await repostState.repost();
     } catch (error) {
       console.error('Failed to repost:', error);
     }

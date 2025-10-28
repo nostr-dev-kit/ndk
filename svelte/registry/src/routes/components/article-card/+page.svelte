@@ -131,6 +131,31 @@
     </CodePreview>
   </section>
 
+  <!-- Medium with Stats -->
+  <section class="mb-16">
+    <CodePreview
+      title="Medium with Stats"
+      description="Medium layout with engagement stats (reactions and replies). Stats footer is interactive while card content navigates to article."
+      code={`<ArticleCard.MediumWithStats {ndk} {article} />
+
+<!-- With custom image size -->
+<ArticleCard.MediumWithStats
+  {ndk}
+  {article}
+  imageSize="large"
+/>`}
+    >
+      <div class="space-y-0 border border-border rounded-lg overflow-hidden">
+        {#if sampleArticle}
+          <ArticleCard.MediumWithStats ndk={ndk} article={sampleArticle} />
+        {/if}
+        {#each articles.slice(0, 2) as article}
+          <ArticleCard.MediumWithStats ndk={ndk} {article} />
+        {/each}
+      </div>
+    </CodePreview>
+  </section>
+
   <!-- Composable Example -->
   <section class="mb-16">
     <CodePreview
@@ -256,6 +281,16 @@
         <h3 class="text-xl font-semibold mb-3">ArticleCard.Medium</h3>
         <p class="text-muted-foreground mb-4">
           Preset: Horizontal card with image on right.
+        </p>
+        <div class="bg-muted p-4 rounded-lg">
+          <code class="text-sm">imageSize?: "small" | "medium" | "large"</code>
+        </div>
+      </div>
+
+      <div class="border border-border rounded-lg p-6">
+        <h3 class="text-xl font-semibold mb-3">ArticleCard.MediumWithStats</h3>
+        <p class="text-muted-foreground mb-4">
+          Preset: Horizontal card with image on right and engagement stats footer.
         </p>
         <div class="bg-muted p-4 rounded-lg">
           <code class="text-sm">imageSize?: "small" | "medium" | "large"</code>

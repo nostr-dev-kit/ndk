@@ -1,140 +1,115 @@
 import { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
 import type { NDKSvelte } from "../../ndk-svelte.svelte.js";
 
-export interface ReactionStats {
+export interface EmojiReaction {
+    emoji: string;
     count: number;
     hasReacted: boolean;
+    pubkeys: string[];
     userReaction?: NDKEvent;
+}
+
+export interface ReactionActionConfig {
+    ndk: NDKSvelte;
+    event: NDKEvent | undefined;
 }
 
 /**
  * Creates a reactive reaction action state manager
  *
- * @param ndk - The NDKSvelte instance
- * @param event - Function returning the event to react to
- * @param content - Function returning the reaction content (emoji)
- * @returns Object with reaction state and toggle function
+ * @param config - Function returning configuration with ndk and event
+ * @returns Object with reaction state and react function
  *
  * @example
  * ```svelte
  * <script>
- *   const reaction = createReactionAction(ndk, () => event, () => "+");
+ *   const reaction = createReactionAction(() => ({ ndk, event: sampleEvent }));
  * </script>
  *
- * <button onclick={reaction.toggle}>
- *   {reaction.hasReacted ? 'Unlike' : 'Like'} ({reaction.count})
+ * <!-- React with any emoji -->
+ * <button onclick={() => reaction.react("+")}>
+ *   ❤️ {reaction.get("+")?.count ?? 0}
  * </button>
+ *
+ * <!-- Show all emoji reactions sorted by count -->
+ * {#each reaction.all as { emoji, count, hasReacted, pubkeys }}
+ *   <button onclick={() => reaction.react(emoji)}>
+ *     {emoji} {count}
+ *     <!-- Filter for followers on client side -->
+ *     {#if pubkeys.filter(pk => ndk.$follows.some(f => f === pk)).length > 0}
+ *       ({pubkeys.filter(pk => ndk.$follows.some(f => f === pk)).length} followers)
+ *     {/if}
+ *   </button>
+ * {/each}
  * ```
  */
 export function createReactionAction(
-    ndk: NDKSvelte,
-    event: () => NDKEvent | undefined,
-    content: () => string = () => "+"
+    config: () => ReactionActionConfig
 ) {
     // Subscribe to reactions for this event
-    const reactionsSub = ndk.$subscribe(() => {
-        const e = event();
-        if (!e?.id) return undefined;
+    let reactionsSub = $state<ReturnType<NDKSvelte["$subscribe"]> | null>(null);
 
-        return {
-            filters: [{
-                kinds: [NDKKind.Reaction],
-                "#e": [e.id]
-            }]
-        };
-    });
-
-    const stats = $derived.by((): ReactionStats => {
-        const reactions = reactionsSub.events;
-        const reactionContent = content();
-        const currentPubkey = ndk.$currentPubkey;
-
-        let count = 0;
-        let hasReacted = false;
-        let userReaction: NDKEvent | undefined;
-
-        for (const reaction of reactions) {
-            if (reaction.content === reactionContent) {
-                count++;
-                if (reaction.pubkey === currentPubkey) {
-                    hasReacted = true;
-                    userReaction = reaction;
-                }
-            }
-        }
-
-        return { count, hasReacted, userReaction };
-    });
-
-    // Get all reactions by emoji
-    const allReactions = $derived.by(() => {
-        const reactions = reactionsSub.events;
-        const byEmoji = new Map<string, ReactionStats>();
-
-        for (const reaction of reactions) {
-            const emoji = reaction.content;
-            const existing = byEmoji.get(emoji) || { count: 0, hasReacted: false };
-            existing.count++;
-
-            if (reaction.pubkey === ndk.$currentPubkey) {
-                existing.hasReacted = true;
-                existing.userReaction = reaction;
-            }
-
-            byEmoji.set(emoji, existing);
-        }
-
-        return byEmoji;
-    });
-
-    async function toggle(): Promise<void> {
-        const e = event();
-        if (!e?.id) {
-            throw new Error("No event to react to");
-        }
-
-        if (!ndk.$currentUser) {
-            throw new Error("User must be logged in to react");
-        }
-
-        const reactionContent = content();
-
-        // If already reacted, delete the reaction
-        if (stats.hasReacted && stats.userReaction) {
-            await stats.userReaction.delete();
+    $effect(() => {
+        const { ndk, event } = config();
+        if (!event?.id) {
+            reactionsSub = null;
             return;
         }
 
-        // Otherwise, create a new reaction
-        const reactionEvent = new NDKEvent(ndk, {
-            kind: NDKKind.Reaction,
-            content: reactionContent,
-            tags: [
-                ["e", e.id],
-                ["p", e.pubkey]
-            ]
-        });
+        reactionsSub = ndk.$subscribe(() => ({
+            filters: [{
+                kinds: [NDKKind.Reaction],
+                "#e": [event.id]
+            }]
+        }));
+    });
 
-        // Add relay hint if available
-        if (e.relay) {
-            reactionEvent.tags.push(["e", e.id, e.relay.url]);
+    // Get all reactions grouped by emoji, sorted by count
+    const all = $derived.by((): EmojiReaction[] => {
+        const sub = reactionsSub;
+        if (!sub) return [];
+
+        const { ndk } = config();
+        const reactions = sub.events;
+        const byEmoji = new Map<string, { count: number; hasReacted: boolean; pubkeys: string[]; userReaction?: NDKEvent }>();
+
+        for (const reaction of reactions) {
+            const emoji = reaction.content;
+            const data = byEmoji.get(emoji) || { count: 0, hasReacted: false, pubkeys: [] };
+            data.count++;
+
+            // Track all pubkeys who reacted
+            if (!data.pubkeys.includes(reaction.pubkey)) {
+                data.pubkeys.push(reaction.pubkey);
+            }
+
+            if (reaction.pubkey === ndk.$currentPubkey) {
+                data.hasReacted = true;
+                data.userReaction = reaction;
+            }
+
+            byEmoji.set(emoji, data);
         }
 
-        await reactionEvent.publish();
-    }
+        // Convert to sorted array
+        return Array.from(byEmoji.entries())
+            .map(([emoji, data]) => ({ emoji, ...data }))
+            .sort((a, b) => b.count - a.count);
+    });
 
-    async function react(reactionContent: string): Promise<void> {
-        const e = event();
-        if (!e?.id) {
+    async function react(emoji: string): Promise<void> {
+        const { ndk, event } = config();
+
+        if (!event?.id) {
             throw new Error("No event to react to");
         }
 
-        if (!ndk.$currentUser) {
+        if (!ndk.$currentPubkey) {
             throw new Error("User must be logged in to react");
         }
 
-        // Check if already reacted with this content
-        const existingReaction = allReactions.get(reactionContent);
+        // Check if already reacted with this emoji
+        const existingReaction = all.find(r => r.emoji === emoji);
         if (existingReaction?.hasReacted && existingReaction.userReaction) {
             await existingReaction.userReaction.delete();
             return;
@@ -143,32 +118,30 @@ export function createReactionAction(
         // Create new reaction
         const reactionEvent = new NDKEvent(ndk, {
             kind: NDKKind.Reaction,
-            content: reactionContent,
+            content: emoji,
             tags: [
-                ["e", e.id],
-                ["p", e.pubkey]
+                ["e", event.id],
+                ["p", event.pubkey]
             ]
         });
 
         // Add relay hint if available
-        if (e.relay) {
-            reactionEvent.tags.push(["e", e.id, e.relay.url]);
+        if (event.relay) {
+            reactionEvent.tags.push(["e", event.id, event.relay.url]);
         }
 
         await reactionEvent.publish();
     }
 
+    function get(emoji: string): EmojiReaction | undefined {
+        return all.find(r => r.emoji === emoji);
+    }
+
     return {
-        get hasReacted() {
-            return stats.hasReacted;
+        get all() {
+            return all;
         },
-        get count() {
-            return stats.count;
-        },
-        get allReactions() {
-            return allReactions;
-        },
-        toggle,
+        get,
         react
     };
 }

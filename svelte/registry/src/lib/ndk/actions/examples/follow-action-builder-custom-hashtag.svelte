@@ -10,7 +10,7 @@
 
   let { ndk, hashtag, onToggle }: Props = $props();
 
-  const follow = createFollowAction(() => ({ ndk, target: hashtag }));
+  const follow = createFollowAction(() => ({ target: hashtag }), ndk);
 </script>
 
 <div class="hashtag-display">

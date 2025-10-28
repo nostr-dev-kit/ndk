@@ -13,7 +13,7 @@
 
   let { ndk, user, pubkey, onToggle }: Props = $props();
 
-  const follow = createFollowAction(() => ({ ndk, target: user }));
+  const follow = createFollowAction(() => ({ target: user }), ndk);
 </script>
 
 <UserProfile.Root {ndk} {pubkey}>

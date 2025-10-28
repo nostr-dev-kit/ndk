@@ -11,7 +11,7 @@
 
   let { ndk, user, onToggle }: Props = $props();
 
-  const follow = createFollowAction(() => ({ ndk, target: user }));
+  const follow = createFollowAction(() => ({ target: user }), ndk);
 </script>
 
 <div class="integration-example">

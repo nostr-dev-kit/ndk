@@ -26,7 +26,7 @@
   const event = $derived(eventProp || ctx?.event);
   const target = $derived(event || user);
 
-  const zapState = createZapAction(ndk, () => target);
+  const zapState = createZapAction(() => ({ ndk, target }));
 
   async function handleZap() {
     if (!ndk?.$currentUser) {

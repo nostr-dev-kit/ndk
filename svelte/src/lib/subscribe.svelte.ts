@@ -79,8 +79,6 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
     config: () => SubscribeConfig | SyncSubscribeConfig | NDKFilter | NDKFilter[] | undefined,
     subscribeMethod: (filters: NDKFilter[], opts: NDKSubscriptionOptions) => NDKSubscription | Promise<NDKSubscription>,
 ): Subscription<T> {
-    // Get WoT store from NDK instance
-    const wot = ndk.$wot;
     let _events = $state<T[]>([]);
     let _eosed = $state(false);
 
@@ -240,10 +238,10 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
         let wotSorted = false;
 
         // Apply WoT filtering if enabled and WoT store exists
-        if (wot && wot.loaded) {
+        if (ndk.$wot && ndk.$wot.loaded) {
             const shouldApplyWoTFilter =
                 wrapperOpts.wot !== false && // Not explicitly disabled
-                (wrapperOpts.wot || wot.autoFilterEnabled); // Has override config or global filter enabled
+                (wrapperOpts.wot || ndk.$wot.autoFilterEnabled); // Has override config or global filter enabled
 
             if (shouldApplyWoTFilter) {
                 // Filter by WoT
@@ -252,28 +250,28 @@ function createSubscriptionInternal<T extends NDKEvent = NDKEvent>(
                     if (wrapperOpts.wot && typeof wrapperOpts.wot === "object") {
                         // Custom filter options for this subscription
                         const { maxDepth, minScore, includeUnknown = false } = wrapperOpts.wot;
-                        const inWoT = wot.includes(event.pubkey, { maxDepth });
+                        const inWoT = ndk.$wot.includes(event.pubkey, { maxDepth });
 
                         if (!inWoT) {
                             return includeUnknown;
                         }
 
                         if (minScore !== undefined) {
-                            const score = wot.getScore(event.pubkey);
+                            const score = ndk.$wot.getScore(event.pubkey);
                             return score >= minScore;
                         }
 
                         return true;
                     } else {
                         // Use global auto-filter
-                        return !wot.shouldFilterEvent(event);
+                        return !ndk.$wot.shouldFilterEvent(event);
                     }
                 });
             }
 
             // Apply WoT ranking if specified
             if (wrapperOpts.wotRank) {
-                events = wot.rankEvents(events, wrapperOpts.wotRank) as typeof events;
+                events = ndk.$wot.rankEvents(events, wrapperOpts.wotRank) as typeof events;
                 wotSorted = true;
             }
         }

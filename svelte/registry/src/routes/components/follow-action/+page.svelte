@@ -34,16 +34,16 @@
   }
 
   // Builder examples - using createFollowAction directly
-  const customUserFollow = createFollowAction(ndk, () => exampleUser);
-  const customHashtagFollow = createFollowAction(ndk, () => hashtagInput);
+  const customUserFollow = createFollowAction(() => ({ ndk, target: exampleUser }));
+  const customHashtagFollow = createFollowAction(() => ({ ndk, target: hashtagInput }));
 
   async function handleCustomToggle(type: 'user' | 'hashtag') {
     try {
       if (type === 'user') {
-        await customUserFollow.toggle();
+        await customUserFollow.follow();
         lastEvent = `Builder: ${customUserFollow.isFollowing ? 'Followed' : 'Unfollowed'} user`;
       } else {
-        await customHashtagFollow.toggle();
+        await customHashtagFollow.follow();
         lastEvent = `Builder: ${customHashtagFollow.isFollowing ? 'Followed' : 'Unfollowed'} #${hashtagInput}`;
       }
       setTimeout(() => (lastEvent = ''), 3000);
@@ -313,9 +313,9 @@
       <CodePreview
         title="Custom User Button"
         description="Build your own button UI using the builder's reactive state."
-        code={`const follow = createFollowAction(ndk, () => user);
+        code={`const follow = createFollowAction(() => ({ ndk, target: user }));
 
-<button onclick={follow.toggle}>
+<button onclick={follow.follow}>
   {follow.isFollowing ? '✓ Following' : '+ Follow'}
 </button>`}
       >
@@ -339,9 +339,9 @@
       <CodePreview
         title="Custom Hashtag Button"
         description="Complete control over hashtag follow UI."
-        code={`const follow = createFollowAction(ndk, () => "bitcoin");
+        code={`const follow = createFollowAction(() => ({ ndk, target: "bitcoin" }));
 
-<button onclick={follow.toggle}>
+<button onclick={follow.follow}>
   {follow.isFollowing ? 'Subscribed' : 'Subscribe'}
 </button>`}
       >
@@ -372,9 +372,9 @@
       <CodePreview
         title="Icon-Only Toggle"
         description="Minimal icon-based follow toggle."
-        code={`const follow = createFollowAction(ndk, () => user);
+        code={`const follow = createFollowAction(() => ({ ndk, target: user }));
 
-<button onclick={follow.toggle}>
+<button onclick={follow.follow}>
   {#if follow.isFollowing}
     <CheckIcon />
   {:else}
@@ -421,11 +421,11 @@
       <CodePreview
         title="Full Integration"
         description="Complete example showing state access and error handling."
-        code={`const follow = createFollowAction(ndk, () => user);
+        code={`const follow = createFollowAction(() => ({ ndk, target: user }));
 
 async function handleToggle() {
   try {
-    await follow.toggle();
+    await follow.follow();
     console.log('Success!', follow.isFollowing);
   } catch (error) {
     console.error('Failed:', error);
@@ -533,13 +533,13 @@ async function handleToggle() {
       </p>
       <pre><code>{`import { createFollowAction } from '@nostr-dev-kit/svelte';
 
-const followButton = createFollowAction(ndk, () => user);
+const followButton = createFollowAction(() => ({ ndk, target: user }));
 
 // Access reactive state
 followButton.isFollowing // boolean
 
-// Toggle follow/unfollow
-await followButton.toggle();`}</code></pre>
+// Follow/unfollow (toggles automatically)
+await followButton.follow();`}</code></pre>
     </div>
   </section>
 </div>

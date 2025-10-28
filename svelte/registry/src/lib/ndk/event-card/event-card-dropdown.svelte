@@ -15,7 +15,6 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import { EVENT_CARD_CONTEXT_KEY, type EventCardContext } from './context.svelte.js';
-  import { NDKEvent } from '@nostr-dev-kit/ndk';
   import { cn } from '$lib/utils';
 
   interface Props {
@@ -37,18 +36,9 @@
   let showMenu = $state(false);
   let showRawEventModal = $state(false);
 
-  // Fetch current user's mute list (kind 10000)
-  const muteListSubscription = ndk.$subscribe(
-    () => ndk.$currentUser?.pubkey ? ({
-      filters: [{ kinds: [10000], authors: [ndk.$currentUser.pubkey], limit: 1 }],
-      bufferMs: 100,
-    }) : undefined
-  );
-
   const isMuted = $derived.by(() => {
-    const muteList = muteListSubscription.events[0];
-    if (!muteList || !event.author) return false;
-    return muteList.tags.some(tag => tag[0] === 'p' && tag[1] === event.author.pubkey);
+    if (!event.author) return false;
+    return ndk.$mutes?.has(event.author.pubkey) ?? false;
   });
 
   async function copyToClipboard(text: string, label: string) {
@@ -80,31 +70,8 @@
     if (!ndk.$currentUser?.pubkey || !event.author) return;
 
     try {
-      let muteList = muteListSubscription.events[0];
-
-      if (!muteList) {
-        // Create new mute list
-        muteList = new NDKEvent(ndk as any);
-        muteList.kind = 10000;
-        muteList.content = '';
-        muteList.tags = [];
-      }
-
-      const pubkey = event.author.pubkey;
-
-      if (isMuted) {
-        // Remove from mute list
-        muteList.tags = muteList.tags.filter(tag => !(tag[0] === 'p' && tag[1] === pubkey));
-        console.log('User unmuted');
-      } else {
-        // Add to mute list
-        muteList.tags.push(['p', pubkey]);
-        console.log('User muted');
-      }
-
-      await muteList.sign();
-      await muteList.publishReplaceable();
-
+      await ndk.$mutes?.toggle(event.author.pubkey);
+      console.log(isMuted ? 'User muted' : 'User unmuted');
       showMenu = false;
     } catch (error) {
       console.error('Failed to toggle mute:', error);

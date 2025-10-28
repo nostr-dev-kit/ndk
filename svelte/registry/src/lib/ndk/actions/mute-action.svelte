@@ -16,7 +16,7 @@
 
   const { ndk, target, class: className = '' }: Props = $props();
 
-  const muteState = createMuteAction(ndk, () => target);
+  const muteState = createMuteAction(() => ({ ndk, target }));
 
   async function handleToggle() {
     if (!ndk.$currentUser) {
@@ -24,7 +24,7 @@
       return;
     }
     try {
-      await muteState.toggle();
+      await muteState.mute();
     } catch (error) {
       console.error('Failed to toggle mute:', error);
     }

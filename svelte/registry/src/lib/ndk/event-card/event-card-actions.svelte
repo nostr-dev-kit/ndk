@@ -70,9 +70,6 @@
     display: flex;
     flex-direction: row;
     gap: 3rem;
-
-    /* DEBUG: Visual guide */
-    /* outline: 2px solid orange; */
   }
 
   /* Consistent styling for action buttons */

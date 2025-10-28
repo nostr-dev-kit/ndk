@@ -93,9 +93,6 @@
     word-break: break-word;
     overflow-wrap: break-word;
     line-height: 1.5;
-
-    /* DEBUG: Visual guide */
-    /* outline: 2px solid green; */
   }
 
   .event-content-truncated {

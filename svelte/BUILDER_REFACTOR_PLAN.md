@@ -1,5 +1,17 @@
 # Builder API Refactor Plan
 
+## ✅ STATUS: COMPLETE
+
+Migration completed successfully! All builders, tests, and registry components have been updated to the new API pattern.
+
+### Summary
+- ✅ Created resolveNDK utility function
+- ✅ Migrated all 6 action builders (follow, reaction, reply, repost, zap, mute)
+- ✅ Migrated all 5 data builders (profile, event-content, embedded-event, thread-view, relay-info, bookmarked-relay-list)
+- ✅ Updated all registry components and examples
+- ✅ Fixed all tests (261 tests passing)
+- ✅ Updated documentation
+
 ## Goal
 Make all builders consistent with a cleaner API that auto-resolves NDK from context.
 

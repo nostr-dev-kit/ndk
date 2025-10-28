@@ -33,24 +33,30 @@ export function createZapAction(
     config: () => ZapActionConfig
 ) {
     // Subscribe to zaps
-    const zapsSub = $derived.by(() => {
+    let zapsSub = $state<ReturnType<NDKSvelte["$subscribe"]> | null>(null);
+
+    $effect(() => {
         const { ndk, target } = config();
-        if (!target) return null;
+        if (!target) {
+            zapsSub = null;
+            return;
+        }
 
         // For events, filter by event ID
         if (target instanceof NDKEvent && target.id) {
-            return ndk.$subscribe(() => ({
+            zapsSub = ndk.$subscribe(() => ({
                 filters: [{
                     kinds: [9735],
                     "#e": [target.id]
                 }],
                 closeOnEose: false
             }));
+            return;
         }
 
         // For users, filter by pubkey
         const pubkey = target instanceof NDKEvent ? target.pubkey : target.pubkey;
-        return ndk.$subscribe(() => ({
+        zapsSub = ndk.$subscribe(() => ({
             filters: [{
                 kinds: [9735],
                 "#p": [pubkey]
@@ -88,7 +94,7 @@ export function createZapAction(
             throw new Error("No target to zap");
         }
 
-        if (!ndk.$currentUser) {
+        if (!ndk.$currentPubkey) {
             throw new Error("User must be logged in to zap");
         }
 

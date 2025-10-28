@@ -1,13 +1,14 @@
 import type NDK from "@nostr-dev-kit/ndk";
 import type { Hexpubkey, NDKSigner, NDKUser } from "@nostr-dev-kit/ndk";
 import { create, type StateCreator } from "zustand";
+import { addMonitor } from "./add-monitor";
 import { addSession } from "./add-session";
 import { init } from "./init";
 import { removeSession } from "./remove-session";
 import { startSession } from "./start-session";
 import { stopSession } from "./stop-session";
 import { switchToUser } from "./switch-to-user";
-import type { NDKSessionsState, NDKUserSession, SessionStartOptions } from "./types";
+import type { MonitorItem, NDKSessionsState, NDKUserSession, SessionStartOptions } from "./types";
 import { updateSession } from "./update-session";
 
 /**
@@ -37,6 +38,8 @@ const sessionStateCreator: StateCreator<NDKSessionsState> = (set, get) => ({
     startSession: (pubkey: Hexpubkey, opts: SessionStartOptions) => startSession(set, get, pubkey, opts),
 
     stopSession: (pubkey: Hexpubkey) => stopSession(set, get, pubkey),
+
+    addMonitor: (monitor: MonitorItem[]) => addMonitor(set, get, monitor),
 
     switchToUser: (pubkey: Hexpubkey | null) => switchToUser(set, get, pubkey),
 

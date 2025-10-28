@@ -10,6 +10,7 @@ import type { NDKSessionsState, NDKUserSession } from "./types";
 const createDefaultSession = (pubkey: Hexpubkey): NDKUserSession => ({
     pubkey,
     events: new Map(),
+    subscriptions: [],
     lastActive: Date.now() / 1000,
 });
 

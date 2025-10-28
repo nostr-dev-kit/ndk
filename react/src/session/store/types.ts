@@ -20,31 +20,35 @@ export interface NDKUserSession {
     followSet?: Set<Hexpubkey>;
 
     /**
-     * Follows per kind.
-     *
-     * Each kind has a map where the key is the user's pubkey.
-     * We keep the followed boolean and the last updated timestamp,
-     * so that we can track delete events of the follow event.
-     */
-    kindFollowSet?: Map<NDKKind, Map<Hexpubkey, { followed: boolean; last_updated_at: number }>>;
-
-    /**
      * Events that are unique per kind, part of the session;
-     * we will keep a subscription permanently opened monitoring this
+     * we will keep subscriptions permanently opened monitoring these
      * event kinds
      */
     events: Map<NDKKind, NDKEvent | null>;
 
     /**
-     * The active subscription fetching session data.
+     * Active subscriptions fetching session data.
      */
-    subscription?: NDKSubscription;
+    subscriptions: NDKSubscription[];
 
     /**
      * Last time the session was set to be the active one (in seconds)
      */
     lastActive: number;
 }
+
+/**
+ * Event class constructor with static kinds property and from method
+ */
+export interface NDKEventConstructor {
+    kinds: NDKKind[];
+    from(event: NDKEvent): NDKEvent;
+}
+
+/**
+ * Monitor item - can be either an event constructor or a raw kind number
+ */
+export type MonitorItem = NDKEventConstructor | NDKKind;
 
 /**
  * Options for starting a user session subscription.
@@ -54,21 +58,22 @@ export interface SessionStartOptions {
     profile?: boolean;
 
     /**
-     * Fetch contacts (follows) for the user.
-     *
-     * true = Fetch default contact list
-     * false = Do not fetch contacts
-     * NDKKind[] = Fetch contact list + kind-scoped follows.
+     * Fetch contacts (follows) for the user - kind 3
      */
-    follows?: boolean | NDKKind[];
+    follows?: boolean;
 
     /**
-     * Fetch other specific replaceable event kinds (10k-20k, 30k-40k).
-     * Provide a map where keys are NDKKind and values are optional NDKFilters
-     * to apply specifically to that kind (e.g., for NIP-65 relay lists).
-     * If the value is null or undefined, a default filter `{ authors: [pubkey], kinds: [kind], limit: 1 }` is used.
+     * Monitor specific event kinds and/or event constructors
+     * @example
+     * ```typescript
+     * monitor: [NDKInterestList, 10050, 10051]
+     * // Monitors:
+     * // - NDKInterestList (wraps with constructor)
+     * // - Kind 10050 (as regular NDKEvent)
+     * // - Kind 10051 (as regular NDKEvent)
+     * ```
      */
-    events?: Map<NDKKind, NDKEventWithFrom<NDKEvent>>;
+    monitor?: MonitorItem[];
 }
 
 /**
@@ -108,6 +113,12 @@ export interface NDKSessionsState {
      * @param pubkey - The Hexpubkey of the session to stop.
      */
     stopSession: (pubkey: Hexpubkey) => void;
+
+    /**
+     * Add monitors to the active session
+     * @param monitor - Array of monitor items (event constructors or kind numbers)
+     */
+    addMonitor: (monitor: MonitorItem[]) => void;
 
     /**
      * Switches the active user session.

@@ -2,6 +2,7 @@ import type { NDKConstructorParams, NDKFilter, NDKRelay, NDKUser, NDKUserProfile
 import NDK, { NDKEvent } from "@nostr-dev-kit/ndk";
 import type { SessionManagerOptions } from "@nostr-dev-kit/sessions";
 import { LocalStorage, NDKSessionManager } from "@nostr-dev-kit/sessions";
+import { setContext, hasContext } from "svelte";
 import * as ndkSvelteGuardrails from "./ai-guardrails/constructor.js";
 import * as subscribeGuardrails from "./ai-guardrails/subscribe.js";
 import { createFetchEvents } from "./event.svelte.js";
@@ -193,6 +194,13 @@ export class NDKSvelte extends NDK {
 
         // Initialize with current active user if already set
         this.#activeUser = this.activeUser;
+
+        // Automatically set on Svelte context (only in component context)
+        try {
+            setContext('ndk', this);
+        } catch {
+            // Not in component context - that's fine
+        }
     }
 
     /**
@@ -602,7 +610,10 @@ export class NDKSvelte extends NDK {
      * The event is already wrapped in the appropriate class by the session manager.
      * Requires sessions to be enabled.
      *
-     * @param eventClass - An NDK event class with a static `kinds` property
+     * If the event kind is not currently being monitored, this method will automatically
+     * add it to the session's monitors and start fetching it.
+     *
+     * @param eventClass - An NDK event class with a static `kinds` property and `from` method
      * @returns The session event for that kind, or undefined if not found or sessions not enabled
      *
      * @example
@@ -620,15 +631,26 @@ export class NDKSvelte extends NDK {
      * import { NDKCashuMintAnnouncement } from "@nostr-dev-kit/ndk";
      *
      * const walletEvent = ndk.$sessionEvent(NDKCashuMintAnnouncement);
+     * // If this event type wasn't in the initial monitor list, it will be automatically added
      * ```
      */
     $sessionEvent<T extends NDKEvent>(
-        eventClass: { kinds: number[] }
+        eventClass: { kinds: number[]; from(event: NDKEvent): T }
     ): T | undefined {
         if (!this.$sessions) return undefined;
 
         const kind = eventClass.kinds[0];
-        return this.$sessions.getSessionEvent(kind) as T | undefined;
+        const event = this.$sessions.getSessionEvent(kind) as T | undefined;
+
+        // If event doesn't exist and we have an active session, add this event class to monitor
+        if (!event && this.$sessions.current) {
+            // Only add if we have a from method (i.e., it's a proper event constructor)
+            if (typeof eventClass.from === 'function') {
+                this.$sessions.addMonitor([eventClass]);
+            }
+        }
+
+        return event;
     }
 }
 

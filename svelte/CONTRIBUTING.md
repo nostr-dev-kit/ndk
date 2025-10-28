@@ -850,6 +850,128 @@ export function createEventCard(props) {
 
 ---
 
+## Maintaining Consistency Across the Codebase
+
+### CRITICAL: Inspect Existing Code After Creating New Functionality
+
+When you create a new builder or component, you MUST inspect the existing codebase to ensure consistency and leverage opportunities:
+
+#### After Creating a New Builder:
+
+1. **Review all existing builders** in `src/lib/builders/`
+   - Can any existing builders use this new builder internally?
+   - Does this builder replace duplicated logic in other builders?
+   - Should other builders be refactored to compose with this one?
+
+2. **Review all registry components** in `registry/src/lib/ndk/`
+   - Which components should use this new builder?
+   - Are components implementing logic that this builder now provides?
+   - Can you simplify existing components by using this builder?
+
+**Example:**
+```typescript
+// You create createProfileFetcher builder
+
+// MUST CHECK: Do any other builders fetch profiles?
+// Before:
+export function createEventCard(props) {
+    // ❌ Duplicated profile fetching
+    async function fetchAuthorProfile() {
+        return await props.ndk.fetchProfile(event.author);
+    }
+}
+
+// After: Refactor to use new builder
+export function createEventCard(props) {
+    // ✅ Use the new profile builder
+    const authorProfile = createProfileFetcher({
+        ndk: props.ndk,
+        user: () => props.event().author
+    });
+}
+```
+
+#### After Creating a New Component:
+
+1. **Review all existing components** in `registry/src/lib/ndk/`
+   - Can other components compose with this new component?
+   - Are there duplicated UI patterns this component could replace?
+   - Should other components import and use parts of this component?
+
+**Example:**
+```svelte
+<!-- You create UserProfile.Avatar component -->
+
+<!-- MUST CHECK: Do other components render avatars? -->
+<!-- Before: -->
+<!-- event-card-header.svelte -->
+<img src={profile?.picture} alt="" class="avatar" />
+
+<!-- After: Refactor to use new component -->
+<UserProfile.Avatar {ndk} user={event.author} size={40} />
+```
+
+#### After Creating a New Action Builder:
+
+Action builders are especially important to check across the codebase:
+
+```typescript
+// You create createZapAction builder
+
+// MUST CHECK ALL:
+// 1. Other action builders (can they use zap logic?)
+// 2. Event card components (should they show zap counts?)
+// 3. Profile components (should they show user's zaps?)
+
+// Example: Update event card to include zaps
+export function createEventCard(props) {
+    const replies = createReplyAction(...);
+    const reactions = createReactionAction(...);
+    const zaps = createZapAction(...); // ← Add new action
+
+    return { replies, reactions, zaps };
+}
+```
+
+### Where to Look
+
+When you create new functionality, systematically check:
+
+```bash
+# After creating a builder:
+1. src/lib/builders/**/*.ts        # Other builders
+2. registry/src/lib/ndk/**/*.svelte # All components
+3. src/lib/index.ts                 # Ensure exported
+
+# After creating a component:
+1. registry/src/lib/ndk/**/*.svelte # Other components
+2. registry/registry.json           # Ensure registered
+3. registry/src/routes/docs/**      # Update docs
+```
+
+### Why This Matters
+
+- **Prevents duplication** - Don't have the same logic in multiple places
+- **Ensures consistency** - All components/builders use the same patterns
+- **Leverages improvements** - New optimizations benefit everything
+- **Maintains quality** - Codebase stays clean and maintainable
+- **Better UX** - Users get consistent behavior across all components
+
+### Process Checklist
+
+After creating new functionality:
+
+1. ✅ Search for similar patterns in the codebase
+2. ✅ Identify opportunities to refactor existing code
+3. ✅ Update affected builders/components to use new functionality
+4. ✅ Update tests for modified code
+5. ✅ Update documentation to reflect changes
+6. ✅ Verify no duplicated logic remains
+
+**This is not optional.** Maintaining consistency is as important as creating the functionality itself.
+
+---
+
 ## Checklist
 
 ### Before Submitting a Builder:
@@ -862,6 +984,8 @@ export function createEventCard(props) {
 - [ ] Handles loading/error states
 - [ ] Has tests
 - [ ] Exported from `src/lib/index.ts`
+- [ ] **Inspected existing builders to see if they can leverage this new functionality**
+- [ ] **Inspected existing components to see if they should use this new builder**
 
 ### Before Submitting a Component:
 - [ ] Follows Root + Children pattern
@@ -874,6 +998,7 @@ export function createEventCard(props) {
 - [ ] Documented in docs pages
 - [ ] No app-specific logic
 - [ ] Uses CSS variables for theming
+- [ ] **Inspected existing components to see if they can leverage this new functionality**
 
 ### Before Extracting from App:
 - [ ] Identified reusable data logic

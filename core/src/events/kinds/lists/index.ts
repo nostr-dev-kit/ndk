@@ -31,6 +31,7 @@ export type NDKListItem = NDKRelay | NDKUser | NDKEvent;
  */
 export class NDKList extends NDKEvent {
     public _encryptedTags: NDKTag[] | undefined;
+    static kind = NDKKind.CategorizedBookmarkList;
     static kinds: NDKKind[] = [
         NDKKind.CategorizedBookmarkList,
         NDKKind.CommunityList,

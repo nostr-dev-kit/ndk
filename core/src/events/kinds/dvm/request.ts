@@ -3,6 +3,7 @@ import type { NDKSigner } from "../../../signers/index.js";
 import type { NDKUser } from "../../../user/index.js";
 import type { NDKTag, NostrEvent } from "../../index.js";
 import { NDKEvent } from "../../index.js";
+import { NDKKind } from "../index.js";
 import type { NDKDvmJobFeedbackStatus } from "./feedback.js";
 import { NDKDVMJobFeedback } from "./feedback.js";
 // import type { NDKDvmJobFeedbackStatus } from "./NDKDVMJobFeedback.js";
@@ -21,6 +22,19 @@ import { NDKDVMJobFeedback } from "./feedback.js";
  * await request.publish()
  */
 export class NDKDVMRequest extends NDKEvent {
+    static kind = NDKKind.DVMReqTextExtraction;
+    static kinds = [
+        NDKKind.DVMReqTextExtraction,
+        NDKKind.DVMReqTextSummarization,
+        NDKKind.DVMReqTextTranslation,
+        NDKKind.DVMReqTextGeneration,
+        NDKKind.DVMReqImageGeneration,
+        NDKKind.DVMReqTextToSpeech,
+        NDKKind.DVMReqDiscoveryNostrContent,
+        NDKKind.DVMReqDiscoveryNostrPeople,
+        NDKKind.DVMReqTimestamping,
+        NDKKind.DVMEventSchedule,
+    ];
     static from(event: NDKEvent) {
         return new NDKDVMRequest(event.ndk, event.rawEvent());
     }

@@ -1,8 +1,10 @@
 import type { NDKUser, NDKUserProfile } from '@nostr-dev-kit/ndk';
+import { SvelteMap } from 'svelte/reactivity';
 import type { NDKSvelte } from '$lib/ndk-svelte.svelte.js';
+import { resolveNDK } from '../resolve-ndk.svelte.js';
 
 // Track in-flight profile fetch requests to prevent duplicate fetches
-const inFlightRequests = new Map<string, Promise<NDKUserProfile | null>>();
+const inFlightRequests = new SvelteMap<string, Promise<NDKUserProfile | null>>();
 
 export interface ProfileFetcherState {
     profile: NDKUserProfile | null;
@@ -10,9 +12,8 @@ export interface ProfileFetcherState {
     loading: boolean;
 }
 
-export interface CreateProfileFetcherProps {
-    ndk: NDKSvelte;
-    user: () => (NDKUser | string); // Function returning NDKUser instance or pubkey/npub
+export interface ProfileFetcherConfig {
+    user: NDKUser | string; // NDKUser instance or pubkey/npub
 }
 
 /**
@@ -20,9 +21,16 @@ export interface CreateProfileFetcherProps {
  *
  * Handles fetching and caching user profiles with deduplication.
  *
+ * @param config - Function returning configuration with user
+ * @param ndk - Optional NDK instance (uses context if not provided)
+ *
  * @example
  * ```ts
- * const profileFetcher = createProfileFetcher({ ndk, user: () => 'npub1...' });
+ * // NDK from context
+ * const profileFetcher = createProfileFetcher(() => ({ user: 'npub1...' }));
+ *
+ * // Or with explicit NDK
+ * const profileFetcher = createProfileFetcher(() => ({ user: 'npub1...' }), ndk);
  *
  * // Access state
  * profileFetcher.profile // User profile
@@ -30,7 +38,11 @@ export interface CreateProfileFetcherProps {
  * profileFetcher.loading // Loading state
  * ```
  */
-export function createProfileFetcher(props: CreateProfileFetcherProps): ProfileFetcherState {
+export function createProfileFetcher(
+    config: () => ProfileFetcherConfig,
+    ndk?: NDKSvelte
+): ProfileFetcherState {
+    const resolvedNDK = resolveNDK(ndk);
     const state = $state<{ profile: NDKUserProfile | null; user: NDKUser | null; loading: boolean }>({
         profile: null,
         user: null,
@@ -42,7 +54,7 @@ export function createProfileFetcher(props: CreateProfileFetcherProps): ProfileF
 
         try {
             const ndkUser = typeof payload === 'string'
-                ? await props.ndk.fetchUser(payload)
+                ? await resolvedNDK.fetchUser(payload)
                 : payload;
 
             if (!ndkUser) {
@@ -91,8 +103,8 @@ export function createProfileFetcher(props: CreateProfileFetcherProps): ProfileF
     }
 
     $effect(() => {
-        const currentUser = props.user();
-        if (currentUser) fetchProfile(currentUser);
+        const { user } = config();
+        if (user) fetchProfile(user);
     });
 
     return {

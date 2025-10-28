@@ -25,17 +25,17 @@
 
 ## Builder Signature Pattern
 
-**All builders follow this pattern:**
+**NEW in v3.0 - All builders follow this pattern:**
 
 ```typescript
-// Signature: create[Feature](props: Create[Feature]Props): [Feature]State
-export function createFeature(props: CreateFeatureProps): FeatureState
+// Signature: create[Feature](config: () => Config, ndk?: NDKSvelte): State
+export function createFeature(config: () => FeatureConfig, ndk?: NDKSvelte): FeatureState
 
-// Props: Functions for reactive inputs
-export interface CreateFeatureProps {
-    ndk: NDKSvelte;           // Always required
-    event?: () => NDKEvent;   // ← Function!
-    user?: () => NDKUser;     // ← Function!
+// Config: NO ndk field, direct values
+export interface FeatureConfig {
+    event: NDKEvent;          // Direct value (not function!)
+    user?: NDKUser;           // Direct value (not function!)
+    showDetails?: boolean;    // Optional config
 }
 
 // Return: Object with getters
@@ -47,44 +47,69 @@ export interface FeatureState {
 }
 
 // Implementation
-return {
-    get data() { return state.data; },     // ← Getter!
-    get loading() { return state.loading; }, // ← Getter!
-    execute  // Methods don't need getters
-};
+import { resolveNDK } from '../resolve-ndk.svelte.js';
+
+export function createFeature(config: () => FeatureConfig, ndk?: NDKSvelte) {
+    const resolvedNDK = resolveNDK(ndk); // Auto-resolves from context
+
+    $effect(() => {
+        const { event } = config(); // Reactive tracking
+        // use resolvedNDK and config
+    });
+
+    return {
+        get data() { return state.data; },     // ← Getter!
+        get loading() { return state.loading; } // ← Getter!
+    };
+}
 ```
 
 **Why?**
-- Props are functions → Reactive tracking with `$effect`
+- Config is function → Reactive tracking with `$effect`
+- NDK separate param → Auto-resolves from Svelte context
 - Return has getters → Lazy evaluation + fine-grained reactivity
+
+**Usage:**
+```typescript
+// Most common - NDK from context
+const card = createEventCard(() => ({ event }));
+
+// Override when needed
+const card = createEventCard(() => ({ event }), customNDK);
+```
 
 ## Builder Template (Copy & Modify)
 
 ```typescript
 // src/lib/builders/[feature]/index.svelte.ts
 import type { NDKSvelte } from '$lib/ndk-svelte.svelte.js';
+import { resolveNDK } from '../resolve-ndk.svelte.js';
 
 export interface FeatureState {
     data: Data | null;
     loading: boolean;
 }
 
-export interface CreateFeatureProps {
-    ndk: NDKSvelte;
-    target: () => Target; // ← Function for reactivity
+export interface FeatureConfig {
+    target: Target;  // Direct value!
+    // NO ndk field
 }
 
-export function createFeature(props: CreateFeatureProps): FeatureState {
+export function createFeature(
+    config: () => FeatureConfig,
+    ndk?: NDKSvelte
+): FeatureState {
+    const resolvedNDK = resolveNDK(ndk); // Auto-resolve
     const state = $state({ data: null, loading: false });
 
     $effect(() => {
-        const t = props.target(); // Track changes
-        fetchData(t);
+        const { target } = config(); // Track changes
+        fetchData(target);
     });
 
     async function fetchData(target: Target) {
         state.loading = true;
-        state.data = await props.ndk.fetchSomething(target);
+        state.data = await resolvedNDK.fetchSomething(target);
         state.loading = false;
     }
 
@@ -167,13 +192,14 @@ export type { FeatureContext } from './context.svelte.js';
 
 ## Key Patterns Summary
 
-### Builder Signature
+### Builder Signature (v3.0)
 ```typescript
-create[Feature](props: Create[Feature]Props): [Feature]State
+create[Feature](config: () => Config, ndk?: NDKSvelte): State
 ```
-- **Props:** Functions for reactivity (`event: () => NDKEvent`)
+- **Config:** Function returning object with direct values (`event: NDKEvent`)
+- **NDK:** Optional parameter, auto-resolves from context
 - **Return:** Object with getters (`get data() { return state.data; }`)
-- **Interfaces:** Export both `Create[Feature]Props` and `[Feature]State`
+- **Interfaces:** Export `[Feature]Config` and `[Feature]State`
 
 ### Component Pattern
 ```svelte
@@ -188,10 +214,12 @@ create[Feature](props: Create[Feature]Props): [Feature]State
 
 ### Builders MUST:
 - ✅ Use `$state`, `$derived`, `$effect`
-- ✅ Accept functions: `event: () => NDKEvent`
+- ✅ Accept config function: `config: () => Config`
+- ✅ Use `resolveNDK(ndk)` to get NDK instance
 - ✅ Return getters: `get data() { return state.data; }`
 - ✅ Use NDK directly - NO wrappers
 - ✅ Export TypeScript types
+- ❌ NO `ndk` in config interface
 - ❌ NO UI code
 - ❌ NO backwards compatibility
 

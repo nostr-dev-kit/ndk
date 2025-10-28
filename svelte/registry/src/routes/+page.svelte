@@ -2,7 +2,7 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 
-  const ndk = getContext<NDKSvelte>('ndk');
+  const ndk = getContext<NDKSvelte>('ndk')!;
 </script>
 
 <div class="home">

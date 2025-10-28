@@ -104,17 +104,8 @@ export function createRepostAction(
             return stats.userRepost;
         }
 
-        // Otherwise, create a new repost (using kind 6 - generic repost)
-        const repostEvent = new NDKEvent(ndk, {
-            kind: NDKKind.GenericRepost,
-            content: "",
-            tags: [
-                ["e", event.id, event.relay?.url || ""],
-                ["p", event.pubkey]
-            ]
-        });
-
-        await repostEvent.publish();
+        // Otherwise, create a new repost using NDK's built-in method
+        const repostEvent = await event.repost(true);
         return repostEvent;
     }
 

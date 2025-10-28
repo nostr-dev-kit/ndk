@@ -14,6 +14,12 @@ export interface ReactionActionConfig {
     event: NDKEvent | undefined;
 }
 
+export interface CustomEmojiData {
+    emoji: string;
+    shortcode?: string;
+    url?: string;
+}
+
 /**
  * Creates a reactive reaction action state manager
  *
@@ -97,7 +103,7 @@ export function createReactionAction(
             .sort((a, b) => b.count - a.count);
     });
 
-    async function react(emoji: string): Promise<void> {
+    async function react(emojiOrData: string | CustomEmojiData): Promise<void> {
         const { ndk, event } = config();
 
         if (!event?.id) {
@@ -108,6 +114,8 @@ export function createReactionAction(
             throw new Error("User must be logged in to react");
         }
 
+        const emoji = typeof emojiOrData === 'string' ? emojiOrData : emojiOrData.emoji;
+
         // Check if already reacted with this emoji
         const existingReaction = all.find(r => r.emoji === emoji);
         if (existingReaction?.hasReacted && existingReaction.userReaction) {
@@ -115,19 +123,12 @@ export function createReactionAction(
             return;
         }
 
-        // Create new reaction
-        const reactionEvent = new NDKEvent(ndk, {
-            kind: NDKKind.Reaction,
-            content: emoji,
-            tags: [
-                ["e", event.id],
-                ["p", event.pubkey]
-            ]
-        });
+        // Use NDK's built-in react method
+        const reactionEvent = await event.react(emoji, false);
 
-        // Add relay hint if available
-        if (event.relay) {
-            reactionEvent.tags.push(["e", event.id, event.relay.url]);
+        // Add NIP-30 custom emoji tag if provided
+        if (typeof emojiOrData !== 'string' && emojiOrData.shortcode && emojiOrData.url) {
+            reactionEvent.tags.push(["emoji", emojiOrData.shortcode, emojiOrData.url]);
         }
 
         await reactionEvent.publish();

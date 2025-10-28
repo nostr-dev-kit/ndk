@@ -41,30 +41,11 @@ class ReactiveFollows extends Array<Hexpubkey> {
     async add(pubkeys: Hexpubkey | Hexpubkey[]): Promise<boolean> {
         const user = this.#sessions?.currentUser;
         if (!user) throw new Error("No active user");
-        if (!user.ndk) throw new Error("No NDK instance found");
 
-        user.ndk.assertSigner();
-
-        const pubkeysArray = Array.isArray(pubkeys) ? pubkeys : [pubkeys];
         const followSet = this.#sessions?.follows ?? new Set();
 
-        // Check if any pubkeys are new
-        const newPubkeys = pubkeysArray.filter(pk => !followSet.has(pk));
-        if (newPubkeys.length === 0) return false;
-
-        // Add all new pubkeys to the follow set
-        for (const pubkey of newPubkeys) {
-            followSet.add(pubkey);
-        }
-
-        // Publish once with updated follow list
-        const event = new NDKEvent(user.ndk, { kind: 3 } as any);
-        for (const pubkey of followSet) {
-            event.tags.push(["p", pubkey]);
-        }
-
-        await event.publish();
-        return true;
+        // Call core's follow() method once with the array
+        return await user.follow(pubkeys, followSet);
     }
 
     /**
@@ -75,29 +56,11 @@ class ReactiveFollows extends Array<Hexpubkey> {
     async remove(pubkeys: Hexpubkey | Hexpubkey[]): Promise<Set<NDKRelay> | boolean> {
         const user = this.#sessions?.currentUser;
         if (!user) throw new Error("No active user");
-        if (!user.ndk) throw new Error("No NDK instance found");
 
-        user.ndk.assertSigner();
-
-        const pubkeysArray = Array.isArray(pubkeys) ? pubkeys : [pubkeys];
         const followSet = this.#sessions?.follows ?? new Set();
 
-        // Check if any pubkeys are currently followed
-        const toRemove = pubkeysArray.filter(pk => followSet.has(pk));
-        if (toRemove.length === 0) return false;
-
-        // Remove pubkeys from the follow set
-        for (const pubkey of toRemove) {
-            followSet.delete(pubkey);
-        }
-
-        // Publish once with updated follow list
-        const event = new NDKEvent(user.ndk, { kind: 3 } as any);
-        for (const pubkey of followSet) {
-            event.tags.push(["p", pubkey]);
-        }
-
-        return await event.publish();
+        // Call core's unfollow() method once with the array
+        return await user.unfollow(pubkeys, followSet);
     }
 
     /**

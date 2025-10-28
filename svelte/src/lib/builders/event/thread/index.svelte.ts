@@ -1,7 +1,9 @@
 import { NDKEvent, type NDKSubscription } from "@nostr-dev-kit/ndk";
 import { NDKKind } from "@nostr-dev-kit/ndk";
 import { SvelteMap, SvelteSet } from "svelte/reactivity";
-import type { CreateThreadViewOptions, ThreadView, ThreadNode } from "./types.js";
+import type { NDKSvelte } from "../../../ndk-svelte.svelte.js";
+import { resolveNDK } from "../../resolve-ndk.svelte.js";
+import type { ThreadView, ThreadNode } from "./types.js";
 import {
     findRootId,
     buildParentChain,
@@ -11,6 +13,15 @@ import {
     buildThreadFilters,
     collectDescendantIds
 } from "./utils.js";
+
+export interface ThreadViewConfig {
+    /** The event to focus on (center of the thread view) */
+    focusedEvent: NDKEvent | string;
+    /** Maximum depth to traverse when building parent chain (default: 20) */
+    maxDepth?: number;
+    /** Event kinds to include in the thread (default: [1, 9802]) */
+    kinds?: number[];
+}
 
 /**
  * Create a reactive thread view for a Nostr event
@@ -26,10 +37,11 @@ import {
  *
  * @example
  * ```typescript
- * const thread = createThreadView({
- *   ndk,
- *   focusedEvent: mainEvent
- * });
+ * // NDK from context
+ * const thread = createThreadView(() => ({ focusedEvent: mainEvent }));
+ *
+ * // Or with explicit NDK
+ * const thread = createThreadView(() => ({ focusedEvent: mainEvent }), ndk);
  *
  * // Access reactive data
  * {#each thread.events as node}
@@ -54,12 +66,12 @@ import {
  * // Cleanup is automatic when component unmounts
  * ```
  */
-export function createThreadView({
-    ndk,
-    focusedEvent,
-    maxDepth = 20,
-    kinds = [NDKKind.Text, 9802]
-}: CreateThreadViewOptions): ThreadView {
+export function createThreadView(
+    config: () => ThreadViewConfig,
+    ndk?: NDKSvelte
+): ThreadView {
+    const resolvedNDK = resolveNDK(ndk);
+    const { focusedEvent, maxDepth = 20, kinds = [NDKKind.Text, 9802] } = config();
     // Internal reactive state
     let _events = $state<ThreadNode[]>([]);
     let _replies = $state<NDKEvent[]>([]);
@@ -84,7 +96,7 @@ export function createThreadView({
     async function initializeMainEvent() {
         if (typeof focusedEvent === 'string') {
             // Fetch the event if we only have an ID
-            const event = await ndk.fetchEvent(focusedEvent);
+            const event = await resolvedNDK.fetchEvent(focusedEvent);
             if (event) {
                 _main = event;
                 startThreadSubscription();
@@ -105,7 +117,7 @@ export function createThreadView({
         const filters = buildThreadFilters(rootId, _main.id, kinds);
 
         // Create subscription
-        subscription = ndk.subscribe(
+        subscription = resolvedNDK.subscribe(
             filters,
             {
                 closeOnEose: false,
@@ -176,7 +188,7 @@ export function createThreadView({
             // Add relay hint if available
             const relayUrls = node.relayHint ? [node.relayHint] : undefined;
 
-            const sub = ndk.subscribe(
+            const sub = resolvedNDK.subscribe(
                 filters,
                 {
                     closeOnEose: true,
@@ -222,7 +234,7 @@ export function createThreadView({
         if (descendantFilters.length === 0) return;
 
         // Subscribe to descendants
-        const descendantSub = ndk.subscribe(
+        const descendantSub = resolvedNDK.subscribe(
             descendantFilters,
             {
                 closeOnEose: true,
@@ -253,7 +265,7 @@ export function createThreadView({
             // Check if we already have it in our cache
             newMainEvent = eventMap.get(event) || null;
             if (!newMainEvent) {
-                const fetchedEvent = await ndk.fetchEvent(event);
+                const fetchedEvent = await resolvedNDK.fetchEvent(event);
                 if (fetchedEvent) {
                     newMainEvent = fetchedEvent;
                     eventMap.set(fetchedEvent.id, fetchedEvent);

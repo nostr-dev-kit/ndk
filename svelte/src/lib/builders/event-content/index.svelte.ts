@@ -1,5 +1,6 @@
 import type NDKEvent from '@nostr-dev-kit/ndk';
 import type { NDKSvelte } from '$lib/ndk-svelte.svelte.js';
+import { resolveNDK } from '../resolve-ndk.svelte.js';
 import {
     buildEmojiMap,
     parseContentToSegments,
@@ -13,11 +14,10 @@ export interface EventContentState {
     emojiMap: Map<string, string>;
 }
 
-export interface CreateEventContentProps {
-    ndk: NDKSvelte;
-    event?: () => NDKEvent | undefined;
-    content?: () => string | undefined;
-    emojiTags?: () => string[][] | undefined;
+export interface EventContentConfig {
+    event?: NDKEvent | undefined;
+    content?: string | undefined;
+    emojiTags?: string[][] | undefined;
 }
 
 /**
@@ -33,7 +33,11 @@ export interface CreateEventContentProps {
  *
  * @example
  * ```ts
- * const content = createEventContent({ ndk, event: () => myEvent });
+ * // NDK from context
+ * const content = createEventContent(() => ({ event: myEvent }));
+ *
+ * // Or with explicit NDK
+ * const content = createEventContent(() => ({ event: myEvent }), ndk);
  *
  * // Access parsed segments
  * content.segments // Array of parsed segments
@@ -41,10 +45,13 @@ export interface CreateEventContentProps {
  * content.emojiMap // Map of emoji shortcodes to URLs
  * ```
  */
-export function createEventContent(props: CreateEventContentProps): EventContentState {
-    const actualContent = $derived(props.event?.()?.content ?? props.content?.() ?? '');
+export function createEventContent(
+    config: () => EventContentConfig,
+    ndk?: NDKSvelte
+): EventContentState {
+    const actualContent = $derived(config().event?.content ?? config().content ?? '');
     const actualEmojiTags = $derived(
-        props.event?.() ? props.event().tags.filter(t => t[0] === 'emoji') : (props.emojiTags?.() ?? [])
+        config().event ? config().event.tags.filter(t => t[0] === 'emoji') : (config().emojiTags ?? [])
     );
 
     const cleanedContent = $derived(actualContent.replace(/\[Image #\d+\]/gi, '').trim());
@@ -71,9 +78,8 @@ export interface EmbeddedEventState {
     error: string | null;
 }
 
-export interface CreateEmbeddedEventProps {
-    ndk: NDKSvelte;
-    bech32: () => string;
+export interface EmbeddedEventConfig {
+    bech32: string;
 }
 
 /**
@@ -83,7 +89,11 @@ export interface CreateEmbeddedEventProps {
  *
  * @example
  * ```ts
- * const embedded = createEmbeddedEvent({ ndk, bech32: () => 'note1...' });
+ * // NDK from context
+ * const embedded = createEmbeddedEvent(() => ({ bech32: 'note1...' }));
+ *
+ * // Or with explicit NDK
+ * const embedded = createEmbeddedEvent(() => ({ bech32: 'note1...' }), ndk);
  *
  * // Access state
  * embedded.event // The fetched event
@@ -91,19 +101,23 @@ export interface CreateEmbeddedEventProps {
  * embedded.error // Error message if any
  * ```
  */
-export function createEmbeddedEvent(props: CreateEmbeddedEventProps): EmbeddedEventState {
+export function createEmbeddedEvent(
+    config: () => EmbeddedEventConfig,
+    ndk?: NDKSvelte
+): EmbeddedEventState {
+    const resolvedNDK = resolveNDK(ndk);
     let fetchedEvent = $state<NDKEvent | null>(null);
     let loading = $state(true);
     let error = $state<string | null>(null);
 
     $effect(() => {
-        const currentBech32 = props.bech32();
-        if (!currentBech32 || !props.ndk) return;
+        const { bech32: currentBech32 } = config();
+        if (!currentBech32) return;
 
         loading = true;
         error = null;
 
-        props.ndk.fetchEvent(currentBech32)
+        resolvedNDK.fetchEvent(currentBech32)
             .then(event => {
                 if (event) {
                     fetchedEvent = event;

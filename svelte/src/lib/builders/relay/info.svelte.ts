@@ -98,12 +98,20 @@ async function fetchRelayInfo(relayUrl: string): Promise<RelayNIP11Info> {
     }
 }
 
+export interface RelayInfoConfig {
+    relayUrl: string;
+}
+
 /**
  * Creates a reactive relay info fetcher that retrieves NIP-11 information
  *
  * @example
  * ```ts
- * const relay = createRelayInfo({ ndk, relayUrl: () => 'wss://relay.damus.io' });
+ * // NDK from context (NDK not used by this builder)
+ * const relay = createRelayInfo(() => ({ relayUrl: 'wss://relay.damus.io' }));
+ *
+ * // Or with explicit NDK (for consistency, though not used)
+ * const relay = createRelayInfo(() => ({ relayUrl: 'wss://relay.damus.io' }), ndk);
  *
  * // Access reactive state
  * console.log(relay.url);          // normalized URL
@@ -111,13 +119,11 @@ async function fetchRelayInfo(relayUrl: string): Promise<RelayNIP11Info> {
  * console.log(relay.loading);      // loading state
  * ```
  */
-export function createRelayInfo({
-    relayUrl
-}: {
-    ndk?: NDKSvelte;
-    relayUrl: () => string;
-}): RelayInfoState {
-    const normalizedUrl = $derived(normalizeRelayUrl(relayUrl()));
+export function createRelayInfo(
+    config: () => RelayInfoConfig,
+    ndk?: NDKSvelte
+): RelayInfoState {
+    const normalizedUrl = $derived(normalizeRelayUrl(config().relayUrl));
     let nip11 = $state<RelayNIP11Info | null>(null);
     let loading = $state(true);
     let error = $state<Error | null>(null);

@@ -1,4 +1,5 @@
 import type { NDKSvelte } from '../../ndk-svelte.svelte.js';
+import { resolveNDK } from '../resolve-ndk.svelte.js';
 import { NDKRelayFeedList, normalizeRelayUrl } from '@nostr-dev-kit/ndk';
 import { SvelteMap, SvelteSet } from 'svelte/reactivity';
 
@@ -38,6 +39,11 @@ export interface BookmarkedRelayListState {
     toggleBookmark(relayUrl: string): Promise<void>;
 }
 
+export interface BookmarkedRelayListConfig {
+    authors: string[];
+    includeCurrentUser?: boolean;
+}
+
 /**
  * Creates a reactive bookmarked relay list tracker
  *
@@ -49,59 +55,58 @@ export interface BookmarkedRelayListState {
  *
  * @example
  * ```ts
- * // Track follows' bookmarked relays (reactive)
- * const bookmarks = createBookmarkedRelayList({
- *   ndk,
- *   authors: () => Array.from(ndk.$sessions?.follows || [])
- * });
+ * // NDK from context - Track follows' bookmarked relays (reactive)
+ * const bookmarks = createBookmarkedRelayList(() => ({
+ *   authors: Array.from(ndk.$sessions?.follows || [])
+ * }));
+ *
+ * // Or with explicit NDK
+ * const bookmarks = createBookmarkedRelayList(() => ({
+ *   authors: Array.from(ndk.$sessions?.follows || [])
+ * }), ndk);
  *
  * console.log(bookmarks.relays); // Array of relays with stats
  * console.log(bookmarks.includesCurrentUser); // true (if logged in)
  * await bookmarks.toggleBookmark('wss://relay.damus.io');
  *
  * // Exclude current user
- * const bookmarksWithoutUser = createBookmarkedRelayList({
- *   ndk,
- *   authors: () => Array.from(ndk.$sessions?.follows || []),
+ * const bookmarksWithoutUser = createBookmarkedRelayList(() => ({
+ *   authors: Array.from(ndk.$sessions?.follows || []),
  *   includeCurrentUser: false
- * });
+ * }));
  *
  * console.log(bookmarksWithoutUser.includesCurrentUser); // false
  * ```
  */
-export function createBookmarkedRelayList({
-    ndk,
-    authors,
-    includeCurrentUser = true
-}: {
-    ndk: NDKSvelte;
-    authors: () => string[];
-    includeCurrentUser?: boolean;
-}): BookmarkedRelayListState {
+export function createBookmarkedRelayList(
+    config: () => BookmarkedRelayListConfig,
+    ndk?: NDKSvelte
+): BookmarkedRelayListState {
+    const resolvedNDK = resolveNDK(ndk);
     // Merge current user into authors list if enabled
     const effectiveAuthors = $derived.by(() => {
-        const authorsList = authors();
+        const { authors: authorsList, includeCurrentUser = true } = config();
 
-        if (!includeCurrentUser || !ndk.$currentPubkey) {
+        if (!includeCurrentUser || !resolvedNDK.$currentPubkey) {
             return authorsList;
         }
 
         // Add current user if not already in the list
         const authorsSet = new SvelteSet(authorsList);
-        if (!authorsSet.has(ndk.$currentPubkey)) {
-            return [...authorsList, ndk.$currentPubkey];
+        if (!authorsSet.has(resolvedNDK.$currentPubkey)) {
+            return [...authorsList, resolvedNDK.$currentPubkey];
         }
         return authorsList;
     });
 
     const includesCurrentUser = $derived(
-        includeCurrentUser && ndk.$currentPubkey
-            ? effectiveAuthors.includes(ndk.$currentPubkey)
+        config().includeCurrentUser !== false && resolvedNDK.$currentPubkey
+            ? effectiveAuthors.includes(resolvedNDK.$currentPubkey)
             : false
     );
 
     // Subscribe to kind 10012 (NDKRelayFeedList) from all authors
-    const subscription = ndk.$subscribe<NDKRelayFeedList>(() => {
+    const subscription = resolvedNDK.$subscribe<NDKRelayFeedList>(() => {
         if (effectiveAuthors.length === 0) return undefined;
 
         return {
@@ -112,11 +117,11 @@ export function createBookmarkedRelayList({
 
     // Get current user's relay feed list from subscription events
     const currentUserList = $derived.by(() => {
-        if (!includesCurrentUser || !ndk.$currentPubkey) return null;
+        if (!includesCurrentUser || !resolvedNDK.$currentPubkey) return null;
 
         // Find the current user's kind 10012 event in the subscription
         const userEvent = subscription.events.find(
-            event => event.pubkey === ndk.$currentPubkey
+            event => event.pubkey === resolvedNDK.$currentPubkey
         );
 
         return userEvent as NDKRelayFeedList | null;
@@ -159,8 +164,8 @@ export function createBookmarkedRelayList({
                 count: data.count,
                 percentage: totalAuthors > 0 ? (data.count / totalAuthors) * 100 : 0,
                 pubkeys: Array.from(data.pubkeys),
-                isBookmarkedByCurrentUser: includesCurrentUser && ndk.$currentUser?.pubkey
-                    ? data.pubkeys.has(ndk.$currentUser.pubkey)
+                isBookmarkedByCurrentUser: includesCurrentUser && resolvedNDK.$currentUser?.pubkey
+                    ? data.pubkeys.has(resolvedNDK.$currentUser.pubkey)
                     : false
             }))
             .sort((a, b) => b.count - a.count);
@@ -178,7 +183,7 @@ export function createBookmarkedRelayList({
     }
 
     async function toggleBookmark(relayUrl: string): Promise<void> {
-        if (!includesCurrentUser || !ndk.$currentUser) {
+        if (!includesCurrentUser || !resolvedNDK.$currentUser) {
             throw new Error('Cannot toggle bookmark: current user not in authors list');
         }
 
@@ -188,10 +193,10 @@ export function createBookmarkedRelayList({
         let list: NDKRelayFeedList;
         if (currentUserList) {
             // Clone the existing event to preserve all existing bookmarks
-            list = new NDKRelayFeedList(ndk);
+            list = new NDKRelayFeedList(resolvedNDK);
             list.tags = [...currentUserList.tags];
         } else {
-            list = new NDKRelayFeedList(ndk);
+            list = new NDKRelayFeedList(resolvedNDK);
         }
 
         const isCurrentlyBookmarked = isBookmarked(normalized);

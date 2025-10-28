@@ -10,6 +10,8 @@
     variant?: 'default' | 'outline' | 'primary';
     showIcon?: boolean;
     class?: string;
+    onfollowsuccess?: (e: CustomEvent) => void;
+    onfollowerror?: (e: CustomEvent) => void;
   }
 
   const {
@@ -32,7 +34,7 @@
   });
 
   // Create follow action state
-  const followAction = createFollowAction(() => ({ ndk, target }));
+  const followAction = createFollowAction(() => ({ target }), ndk);
 
   // CSS classes based on variant and state
   const buttonClasses = $derived.by(() => {

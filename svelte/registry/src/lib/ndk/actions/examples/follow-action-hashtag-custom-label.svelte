@@ -6,10 +6,10 @@
     ndk: NDKSvelte;
     hashtag: string;
     onfollowsuccess: (e: Event) => void;
-    onfollowonerror: (e: Event) => void;
+    onfollowerror: (e: Event) => void;
   }
 
-  let { ndk, hashtag, onfollowsuccess, onfollowonerror }: Props = $props();
+  let { ndk, hashtag, onfollowsuccess, onfollowerror }: Props = $props();
 </script>
 
 <div class="hashtag-display">
@@ -20,7 +20,7 @@
     target={hashtag}
     variant="primary"
     {onfollowsuccess}
-    {onfollowonerror}
+    {onfollowerror}
   >
     Subscribe
   </FollowAction>

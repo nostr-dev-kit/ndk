@@ -129,7 +129,7 @@
         description="Simple text link style, perfect for inline use."
         code={DefaultExampleRaw}
       >
-        <DefaultExample {ndk} user={exampleUser} pubkey={examplePubkey} onfollowsuccess={handleFollowSuccess} onfollowonerror={handleFollowError} />
+        <DefaultExample {ndk} user={exampleUser} pubkey={examplePubkey} onfollowsuccess={handleFollowSuccess} onfollowerror={handleFollowError} />
       </CodePreview>
 
       <CodePreview
@@ -137,7 +137,7 @@
         description="Prominent button style for profile pages."
         code={PrimaryExampleRaw}
       >
-        <PrimaryExample {ndk} user={exampleUser} pubkey={examplePubkey} onfollowsuccess={handleFollowSuccess} onfollowonerror={handleFollowError} />
+        <PrimaryExample {ndk} user={exampleUser} pubkey={examplePubkey} onfollowsuccess={handleFollowSuccess} onfollowerror={handleFollowError} />
       </CodePreview>
 
       <CodePreview
@@ -145,7 +145,7 @@
         description="Text-only button, useful for compact layouts."
         code={WithoutIconExampleRaw}
       >
-        <WithoutIconExample {ndk} user={exampleUser} pubkey={examplePubkey} onfollowsuccess={handleFollowSuccess} onfollowonerror={handleFollowError} />
+        <WithoutIconExample {ndk} user={exampleUser} pubkey={examplePubkey} onfollowsuccess={handleFollowSuccess} onfollowerror={handleFollowError} />
       </CodePreview>
 
       <CodePreview
@@ -153,7 +153,7 @@
         description="Override default styles with custom classes."
         code={CustomStylingExampleRaw}
       >
-        <CustomStylingExample {ndk} user={exampleUser} pubkey={examplePubkey} onfollowsuccess={handleFollowSuccess} onfollowonerror={handleFollowError} />
+        <CustomStylingExample {ndk} user={exampleUser} pubkey={examplePubkey} onfollowsuccess={handleFollowSuccess} onfollowerror={handleFollowError} />
       </CodePreview>
     </div>
   </section>
@@ -182,7 +182,7 @@
         description="Simple hashtag follow button."
         code={HashtagDefaultExampleRaw}
       >
-        <HashtagDefaultExample {ndk} hashtag={hashtagInput} onfollowsuccess={handleFollowSuccess} onfollowonerror={handleFollowError} />
+        <HashtagDefaultExample {ndk} hashtag={hashtagInput} onfollowsuccess={handleFollowSuccess} onfollowerror={handleFollowError} />
       </CodePreview>
 
       <CodePreview
@@ -190,7 +190,7 @@
         description="Prominent hashtag follow button."
         code={HashtagPrimaryExampleRaw}
       >
-        <HashtagPrimaryExample {ndk} hashtag={hashtagInput} onfollowsuccess={handleFollowSuccess} onfollowonerror={handleFollowError} />
+        <HashtagPrimaryExample {ndk} hashtag={hashtagInput} onfollowsuccess={handleFollowSuccess} onfollowerror={handleFollowError} />
       </CodePreview>
 
       <CodePreview
@@ -198,7 +198,7 @@
         description="Text-only hashtag button."
         code={HashtagWithoutIconExampleRaw}
       >
-        <HashtagWithoutIconExample {ndk} hashtag={hashtagInput} onfollowsuccess={handleFollowSuccess} onfollowonerror={handleFollowError} />
+        <HashtagWithoutIconExample {ndk} hashtag={hashtagInput} onfollowsuccess={handleFollowSuccess} onfollowerror={handleFollowError} />
       </CodePreview>
 
       <CodePreview
@@ -206,7 +206,7 @@
         description="Use slot to customize button text."
         code={HashtagCustomLabelExampleRaw}
       >
-        <HashtagCustomLabelExample {ndk} hashtag={hashtagInput} onfollowsuccess={handleFollowSuccess} onfollowonerror={handleFollowError} />
+        <HashtagCustomLabelExample {ndk} hashtag={hashtagInput} onfollowsuccess={handleFollowSuccess} onfollowerror={handleFollowError} />
       </CodePreview>
     </div>
   </section>

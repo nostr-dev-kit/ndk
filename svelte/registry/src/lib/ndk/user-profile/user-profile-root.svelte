@@ -90,7 +90,7 @@
 
   // Fetch profile (reactive to ndkUser changes)
   const profileFetcher = $derived(
-    ndkUser ? createProfileFetcher({ ndk, user: () => ndkUser! }) : null
+    ndkUser ? createProfileFetcher(() => ({ user: ndkUser! }), ndk) : null
   );
 
   // Hover card state

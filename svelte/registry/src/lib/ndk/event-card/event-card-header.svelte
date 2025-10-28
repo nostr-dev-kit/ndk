@@ -38,7 +38,7 @@
   const context = getContext<EventCardContext>(EVENT_CARD_CONTEXT_KEY);
 
   // Fetch author profile directly
-  const profileFetcher = createProfileFetcher({ ndk: context.ndk, user: () => context.event.author });
+  const profileFetcher = createProfileFetcher(() => ({ user: context.event.author }), context.ndk);
 
   // Format timestamp
   const timestamp = $derived.by(() => {
@@ -73,7 +73,7 @@
 <header
   class={cn(
     'event-card-header',
-    'flex items-center gap-3 p-4',
+    'flex items-center gap-3',
     'border-b',
     className
   )}

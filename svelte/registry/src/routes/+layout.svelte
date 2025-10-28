@@ -76,19 +76,17 @@
       'wss://relay.nostr.band',
       'wss://nos.lol'
     ],
-    // cacheAdapter,
+    cacheAdapter,
     ...(browser && {
       session: {
         autoSave: true,
         storage: new LocalStorage(),
-        fetches: {
-          follows: true,
-          mutes: true,
-          wallet: false,
-          monitor: [
-            NDKInterestList
-          ]
-        }
+        follows: true,
+        mutes: true,
+        wallet: false,
+        monitor: [
+          NDKInterestList
+        ]
       }
     })
   });
@@ -164,7 +162,7 @@
     // Only create profile fetcher if we have both currentUser and currentPubkey
     // Don't try to access user.pubkey as it may throw if not set
     if (!ndk.$currentUser || !ndk.$currentPubkey) return null;
-    return createProfileFetcher({ user: () => ndk.$currentUser! }, ndk;
+    return createProfileFetcher(() => ({ user: ndk.$currentUser! }), ndk);
   });
 
   const avatarUrl = $derived(currentUserProfile?.profile?.picture);

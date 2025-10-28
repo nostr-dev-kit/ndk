@@ -2,21 +2,42 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createFollowAction, createFetchUser } from '@nostr-dev-kit/svelte';
-  import FollowAction from '$lib/ndk/actions/follow-action.svelte';
-  import { UserProfile } from '$lib/ndk/user-profile';
   import CodePreview from '$lib/components/code-preview.svelte';
+
+  // Import examples
+  import DefaultExample from '$lib/ndk/actions/examples/follow-action-default.svelte';
+  import DefaultExampleRaw from '$lib/ndk/actions/examples/follow-action-default.svelte?raw';
+  import PrimaryExample from '$lib/ndk/actions/examples/follow-action-primary.svelte';
+  import PrimaryExampleRaw from '$lib/ndk/actions/examples/follow-action-primary.svelte?raw';
+  import WithoutIconExample from '$lib/ndk/actions/examples/follow-action-without-icon.svelte';
+  import WithoutIconExampleRaw from '$lib/ndk/actions/examples/follow-action-without-icon.svelte?raw';
+  import CustomStylingExample from '$lib/ndk/actions/examples/follow-action-custom-styling.svelte';
+  import CustomStylingExampleRaw from '$lib/ndk/actions/examples/follow-action-custom-styling.svelte?raw';
+  import HashtagDefaultExample from '$lib/ndk/actions/examples/follow-action-hashtag-default.svelte';
+  import HashtagDefaultExampleRaw from '$lib/ndk/actions/examples/follow-action-hashtag-default.svelte?raw';
+  import HashtagPrimaryExample from '$lib/ndk/actions/examples/follow-action-hashtag-primary.svelte';
+  import HashtagPrimaryExampleRaw from '$lib/ndk/actions/examples/follow-action-hashtag-primary.svelte?raw';
+  import HashtagWithoutIconExample from '$lib/ndk/actions/examples/follow-action-hashtag-without-icon.svelte';
+  import HashtagWithoutIconExampleRaw from '$lib/ndk/actions/examples/follow-action-hashtag-without-icon.svelte?raw';
+  import HashtagCustomLabelExample from '$lib/ndk/actions/examples/follow-action-hashtag-custom-label.svelte';
+  import HashtagCustomLabelExampleRaw from '$lib/ndk/actions/examples/follow-action-hashtag-custom-label.svelte?raw';
+  import BuilderCustomUserExample from '$lib/ndk/actions/examples/follow-action-builder-custom-user.svelte';
+  import BuilderCustomUserExampleRaw from '$lib/ndk/actions/examples/follow-action-builder-custom-user.svelte?raw';
+  import BuilderCustomHashtagExample from '$lib/ndk/actions/examples/follow-action-builder-custom-hashtag.svelte';
+  import BuilderCustomHashtagExampleRaw from '$lib/ndk/actions/examples/follow-action-builder-custom-hashtag.svelte?raw';
+  import BuilderIconToggleExample from '$lib/ndk/actions/examples/follow-action-builder-icon-toggle.svelte';
+  import BuilderIconToggleExampleRaw from '$lib/ndk/actions/examples/follow-action-builder-icon-toggle.svelte?raw';
+  import BuilderIntegrationExample from '$lib/ndk/actions/examples/follow-action-builder-integration.svelte';
+  import BuilderIntegrationExampleRaw from '$lib/ndk/actions/examples/follow-action-builder-integration.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
-  // Example user (pablo) - supports npub, nprofile, hex pubkey, nip05, etc.
   let npubInput = $state('npub1l2vyl2xd4j0g97thetkkxkqhqh4ejy42kxc70yevjv90jlak3p6sjegwrc');
   const exampleUser = createFetchUser(ndk, () => npubInput);
   const examplePubkey = $derived(exampleUser.$loaded ? exampleUser.pubkey : undefined);
 
-  // Example hashtags
   let hashtagInput = $state('bitcoin');
 
-  // Event handling
   let lastEvent = $state<string>('');
 
   function handleFollowSuccess(e: Event) {
@@ -33,7 +54,6 @@
     setTimeout(() => (lastEvent = ''), 5000);
   }
 
-  // Builder examples - using createFollowAction directly
   const customUserFollow = createFollowAction(() => ({ ndk, target: exampleUser }));
   const customHashtagFollow = createFollowAction(() => ({ ndk, target: hashtagInput }));
 
@@ -84,7 +104,6 @@
     <div class="event-toast">{lastEvent}</div>
   {/if}
 
-  <!-- User Following Examples -->
   <section class="showcase-section">
     <h2>Following Users</h2>
     <p class="section-description">
@@ -105,100 +124,40 @@
     </div>
 
     <div class="example-grid">
-      <!-- Default Variant -->
       <CodePreview
         title="Default Variant"
         description="Simple text link style, perfect for inline use."
-        code={`<FollowAction {ndk} target={user} />`}
+        code={DefaultExampleRaw}
       >
-        <UserProfile.Root {ndk} pubkey={examplePubkey}>
-          <div class="user-display">
-            <UserProfile.Avatar size={48} />
-            <div class="user-info">
-              <UserProfile.Name />
-              <FollowAction
-                {ndk}
-                target={exampleUser}
-                onfollowsuccess={handleFollowSuccess}
-                onfollowonerror={handleFollowError}
-              />
-            </div>
-          </div>
-        </UserProfile.Root>
+        <DefaultExample {ndk} user={exampleUser} pubkey={examplePubkey} onfollowsuccess={handleFollowSuccess} onfollowonerror={handleFollowError} />
       </CodePreview>
 
-      <!-- Primary Variant -->
       <CodePreview
         title="Primary Variant"
         description="Prominent button style for profile pages."
-        code={`<FollowAction {ndk} target={user} variant="primary" />`}
+        code={PrimaryExampleRaw}
       >
-        <UserProfile.Root {ndk} pubkey={examplePubkey}>
-          <div class="user-display">
-            <UserProfile.Avatar size={48} />
-            <div class="user-info">
-              <UserProfile.Name />
-              <FollowAction
-                {ndk}
-                target={exampleUser}
-                variant="primary"
-                onfollowsuccess={handleFollowSuccess}
-                onfollowonerror={handleFollowError}
-              />
-            </div>
-          </div>
-        </UserProfile.Root>
+        <PrimaryExample {ndk} user={exampleUser} pubkey={examplePubkey} onfollowsuccess={handleFollowSuccess} onfollowonerror={handleFollowError} />
       </CodePreview>
 
-      <!-- Without Icon -->
       <CodePreview
         title="Without Icon"
         description="Text-only button, useful for compact layouts."
-        code={`<FollowAction {ndk} target={user} showIcon={false} />`}
+        code={WithoutIconExampleRaw}
       >
-        <UserProfile.Root {ndk} pubkey={examplePubkey}>
-          <div class="user-display">
-            <UserProfile.Avatar size={48} />
-            <div class="user-info">
-              <UserProfile.Name />
-              <FollowAction
-                {ndk}
-                target={exampleUser}
-                showIcon={false}
-                onfollowsuccess={handleFollowSuccess}
-                onfollowonerror={handleFollowError}
-              />
-            </div>
-          </div>
-        </UserProfile.Root>
+        <WithoutIconExample {ndk} user={exampleUser} pubkey={examplePubkey} onfollowsuccess={handleFollowSuccess} onfollowonerror={handleFollowError} />
       </CodePreview>
 
-      <!-- Custom Styling -->
       <CodePreview
         title="Custom Styling"
         description="Override default styles with custom classes."
-        code={`<FollowAction {ndk} target={user} class="custom-classes" />`}
+        code={CustomStylingExampleRaw}
       >
-        <UserProfile.Root {ndk} pubkey={examplePubkey}>
-          <div class="user-display">
-            <UserProfile.Avatar size={48} />
-            <div class="user-info">
-              <UserProfile.Name />
-              <FollowAction
-                {ndk}
-                target={exampleUser}
-                class="px-6 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 font-semibold"
-                onfollowsuccess={handleFollowSuccess}
-                onfollowonerror={handleFollowError}
-              />
-            </div>
-          </div>
-        </UserProfile.Root>
+        <CustomStylingExample {ndk} user={exampleUser} pubkey={examplePubkey} onfollowsuccess={handleFollowSuccess} onfollowonerror={handleFollowError} />
       </CodePreview>
     </div>
   </section>
 
-  <!-- Hashtag Following Examples -->
   <section class="showcase-section">
     <h2>Following Hashtags</h2>
     <p class="section-description">
@@ -218,88 +177,40 @@
     </div>
 
     <div class="example-grid">
-      <!-- Default Variant -->
       <CodePreview
         title="Default Hashtag"
         description="Simple hashtag follow button."
-        code={`<FollowAction {ndk} target="bitcoin" />`}
+        code={HashtagDefaultExampleRaw}
       >
-        <div class="hashtag-display">
-          <span class="hashtag-icon">#</span>
-          <span class="hashtag-text">{hashtagInput}</span>
-          <FollowAction
-            {ndk}
-            target={hashtagInput}
-            onfollowsuccess={handleFollowSuccess}
-            onfollowonerror={handleFollowError}
-          />
-        </div>
+        <HashtagDefaultExample {ndk} hashtag={hashtagInput} onfollowsuccess={handleFollowSuccess} onfollowonerror={handleFollowError} />
       </CodePreview>
 
-      <!-- Primary Variant -->
       <CodePreview
         title="Primary Hashtag"
         description="Prominent hashtag follow button."
-        code={`<FollowAction {ndk} target="bitcoin" variant="primary" />`}
+        code={HashtagPrimaryExampleRaw}
       >
-        <div class="hashtag-display">
-          <span class="hashtag-icon">#</span>
-          <span class="hashtag-text">{hashtagInput}</span>
-          <FollowAction
-            {ndk}
-            target={hashtagInput}
-            variant="primary"
-            onfollowsuccess={handleFollowSuccess}
-            onfollowonerror={handleFollowError}
-          />
-        </div>
+        <HashtagPrimaryExample {ndk} hashtag={hashtagInput} onfollowsuccess={handleFollowSuccess} onfollowonerror={handleFollowError} />
       </CodePreview>
 
-      <!-- Without Icon -->
       <CodePreview
         title="Without Icon"
         description="Text-only hashtag button."
-        code={`<FollowAction {ndk} target="bitcoin" showIcon={false} />`}
+        code={HashtagWithoutIconExampleRaw}
       >
-        <div class="hashtag-display">
-          <span class="hashtag-icon">#</span>
-          <span class="hashtag-text">{hashtagInput}</span>
-          <FollowAction
-            {ndk}
-            target={hashtagInput}
-            showIcon={false}
-            onfollowsuccess={handleFollowSuccess}
-            onfollowonerror={handleFollowError}
-          />
-        </div>
+        <HashtagWithoutIconExample {ndk} hashtag={hashtagInput} onfollowsuccess={handleFollowSuccess} onfollowonerror={handleFollowError} />
       </CodePreview>
 
-      <!-- Custom Label -->
       <CodePreview
         title="Custom Label"
         description="Use slot to customize button text."
-        code={`<FollowAction {ndk} target="bitcoin">
-  Subscribe
-</FollowAction>`}
+        code={HashtagCustomLabelExampleRaw}
       >
-        <div class="hashtag-display">
-          <span class="hashtag-icon">#</span>
-          <span class="hashtag-text">{hashtagInput}</span>
-          <FollowAction
-            {ndk}
-            target={hashtagInput}
-            variant="primary"
-            onfollowsuccess={handleFollowSuccess}
-            onfollowonerror={handleFollowError}
-          >
-            Subscribe
-          </FollowAction>
-        </div>
+        <HashtagCustomLabelExample {ndk} hashtag={hashtagInput} onfollowsuccess={handleFollowSuccess} onfollowonerror={handleFollowError} />
       </CodePreview>
     </div>
   </section>
 
-  <!-- Using Builder Directly -->
   <section class="showcase-section">
     <h2>Using the Builder Directly</h2>
     <p class="section-description">
@@ -309,149 +220,40 @@
     </p>
 
     <div class="example-grid">
-      <!-- Custom User Button -->
       <CodePreview
         title="Custom User Button"
         description="Build your own button UI using the builder's reactive state."
-        code={`const follow = createFollowAction(() => ({ ndk, target: user }));
-
-<button onclick={follow.follow}>
-  {follow.isFollowing ? '✓ Following' : '+ Follow'}
-</button>`}
+        code={BuilderCustomUserExampleRaw}
       >
-        <UserProfile.Root {ndk} pubkey={examplePubkey}>
-          <div class="user-display">
-            <UserProfile.Avatar size={48} />
-            <div class="user-info">
-              <UserProfile.Name />
-              <button
-                class="custom-follow-btn"
-                onclick={() => handleCustomToggle('user')}
-              >
-                {customUserFollow.isFollowing ? '✓ Following' : '+ Follow'}
-              </button>
-            </div>
-          </div>
-        </UserProfile.Root>
+        <BuilderCustomUserExample {ndk} user={exampleUser} pubkey={examplePubkey} onToggle={() => handleCustomToggle('user')} />
       </CodePreview>
 
-      <!-- Custom Hashtag Button -->
       <CodePreview
         title="Custom Hashtag Button"
         description="Complete control over hashtag follow UI."
-        code={`const follow = createFollowAction(() => ({ ndk, target: "bitcoin" }));
-
-<button onclick={follow.follow}>
-  {follow.isFollowing ? 'Subscribed' : 'Subscribe'}
-</button>`}
+        code={BuilderCustomHashtagExampleRaw}
       >
-        <div class="hashtag-display">
-          <span class="hashtag-icon">#</span>
-          <span class="hashtag-text">{hashtagInput}</span>
-          <button
-            class="custom-hashtag-btn"
-            onclick={() => handleCustomToggle('hashtag')}
-          >
-            {#if customHashtagFollow.isFollowing}
-              <svg class="icon" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fill-rule="evenodd"
-                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-              Subscribed
-            {:else}
-              Subscribe
-            {/if}
-          </button>
-        </div>
+        <BuilderCustomHashtagExample {ndk} hashtag={hashtagInput} onToggle={() => handleCustomToggle('hashtag')} />
       </CodePreview>
 
-      <!-- Toggle with Icon -->
       <CodePreview
         title="Icon-Only Toggle"
         description="Minimal icon-based follow toggle."
-        code={`const follow = createFollowAction(() => ({ ndk, target: user }));
-
-<button onclick={follow.follow}>
-  {#if follow.isFollowing}
-    <CheckIcon />
-  {:else}
-    <PlusIcon />
-  {/if}
-</button>`}
+        code={BuilderIconToggleExampleRaw}
       >
-        <UserProfile.Root {ndk} pubkey={examplePubkey}>
-          <div class="user-display">
-            <UserProfile.Avatar size={48} />
-            <div class="user-info">
-              <UserProfile.Name />
-              <button
-                class="icon-toggle-btn"
-                onclick={() => handleCustomToggle('user')}
-                title={customUserFollow.isFollowing ? 'Unfollow' : 'Follow'}
-              >
-                {#if customUserFollow.isFollowing}
-                  <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                {:else}
-                  <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                    />
-                  </svg>
-                {/if}
-              </button>
-            </div>
-          </div>
-        </UserProfile.Root>
+        <BuilderIconToggleExample {ndk} user={exampleUser} pubkey={examplePubkey} onToggle={() => handleCustomToggle('user')} />
       </CodePreview>
 
-      <!-- Integration Example -->
       <CodePreview
         title="Full Integration"
         description="Complete example showing state access and error handling."
-        code={`const follow = createFollowAction(() => ({ ndk, target: user }));
-
-async function handleToggle() {
-  try {
-    await follow.follow();
-    console.log('Success!', follow.isFollowing);
-  } catch (error) {
-    console.error('Failed:', error);
-  }
-}
-
-<button onclick={handleToggle}>
-  {follow.isFollowing ? 'Unfollow' : 'Follow'}
-</button>`}
+        code={BuilderIntegrationExampleRaw}
       >
-        <div class="integration-example">
-          <div class="status-badge">
-            {customUserFollow.isFollowing ? 'Following' : 'Not Following'}
-          </div>
-          <button
-            class="integration-btn"
-            onclick={() => handleCustomToggle('user')}
-          >
-            {customUserFollow.isFollowing ? 'Unfollow' : 'Follow'}
-          </button>
-        </div>
+        <BuilderIntegrationExample {ndk} user={exampleUser} onToggle={() => handleCustomToggle('user')} />
       </CodePreview>
     </div>
   </section>
 
-  <!-- API Documentation -->
   <section class="showcase-section">
     <h2>API</h2>
 
@@ -549,18 +351,18 @@ await followButton.follow();`}</code></pre>
     max-width: 1200px;
   }
 
-  header {
+  .component-page > header {
     margin-bottom: 3rem;
   }
 
-  header h1 {
+  .component-page > header h1 {
     font-size: 2.5rem;
     font-weight: 700;
     color: hsl(var(--color-foreground));
     margin: 0 0 0.5rem 0;
   }
 
-  header p {
+  .component-page > header p {
     font-size: 1.125rem;
     color: hsl(var(--color-muted-foreground));
     margin: 0;
@@ -668,40 +470,6 @@ await followButton.follow();`}</code></pre>
     gap: 2rem;
   }
 
-  .user-display {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  .user-info {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .hashtag-display {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.5rem 1rem;
-    background: hsl(var(--color-background));
-    border: 1px solid hsl(var(--color-border));
-    border-radius: 0.5rem;
-  }
-
-  .hashtag-icon {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: hsl(var(--color-primary));
-  }
-
-  .hashtag-text {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: hsl(var(--color-foreground));
-  }
-
   pre {
     margin: 0;
     padding: 1rem;
@@ -768,106 +536,5 @@ await followButton.follow();`}</code></pre>
     border-radius: 0.25rem;
     font-size: 0.8125rem;
     color: hsl(var(--color-foreground));
-  }
-
-  /* Custom button styles for builder examples */
-  .custom-follow-btn {
-    padding: 0.5rem 1rem;
-    background: hsl(var(--color-primary));
-    color: hsl(var(--color-primary-foreground));
-    border: none;
-    border-radius: 0.375rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .custom-follow-btn:hover {
-    opacity: 0.9;
-  }
-
-  .custom-hashtag-btn {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    background: hsl(var(--color-accent));
-    color: hsl(var(--color-accent-foreground));
-    border: 1px solid hsl(var(--color-border));
-    border-radius: 0.375rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .custom-hashtag-btn:hover {
-    background: hsl(var(--color-accent) / 0.8);
-  }
-
-  .custom-hashtag-btn .icon {
-    width: 1rem;
-    height: 1rem;
-  }
-
-  .icon-toggle-btn {
-    width: 2rem;
-    height: 2rem;
-    padding: 0.375rem;
-    background: hsl(var(--color-muted));
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .icon-toggle-btn:hover {
-    background: hsl(var(--color-accent));
-  }
-
-  .icon-toggle-btn .icon {
-    width: 1rem;
-    height: 1rem;
-  }
-
-  .integration-example {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-    background: hsl(var(--color-background));
-    border: 1px solid hsl(var(--color-border));
-    border-radius: 0.5rem;
-  }
-
-  .status-badge {
-    padding: 0.25rem 0.75rem;
-    background: hsl(var(--color-primary) / 0.1);
-    color: hsl(var(--color-primary));
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .integration-btn {
-    padding: 0.5rem 1.5rem;
-    background: hsl(var(--color-primary));
-    color: hsl(var(--color-primary-foreground));
-    border: none;
-    border-radius: 0.375rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .integration-btn:hover {
-    opacity: 0.9;
   }
 </style>

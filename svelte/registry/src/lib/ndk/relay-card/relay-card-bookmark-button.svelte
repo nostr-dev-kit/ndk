@@ -39,9 +39,9 @@
     class: className = ''
   }: Props = $props();
 
-  const { relayInfo } = getContext<RelayCardContext>(RELAY_CARD_CONTEXT_KEY);
+  const context = getContext<RelayCardContext>(RELAY_CARD_CONTEXT_KEY);
 
-  const isBookmarked = $derived(bookmarks.isBookmarked(relayInfo.url));
+  const isBookmarked = $derived(bookmarks.isBookmarked(context.relayInfo.url));
   const canToggle = $derived(bookmarks.includesCurrentUser);
 
   let isLoading = $state(false);
@@ -56,7 +56,7 @@
 
     isLoading = true;
     try {
-      await bookmarks.toggleBookmark(relayInfo.url);
+      await bookmarks.toggleBookmark(context.relayInfo.url);
     } catch (error) {
       console.error('Failed to toggle bookmark:', error);
     } finally {

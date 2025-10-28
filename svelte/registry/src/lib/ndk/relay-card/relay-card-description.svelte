@@ -31,9 +31,9 @@
     maxLines = 2
   }: Props = $props();
 
-  const { relayInfo } = getContext<RelayCardContext>(RELAY_CARD_CONTEXT_KEY);
+  const context = getContext<RelayCardContext>(RELAY_CARD_CONTEXT_KEY);
 
-  const description = $derived(relayInfo.nip11?.description || '');
+  const description = $derived(context.relayInfo.nip11?.description || '');
 </script>
 
 {#if description}

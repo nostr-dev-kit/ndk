@@ -40,22 +40,22 @@
     class: className = ''
   }: Props = $props();
 
-  const { ndk, event } = getContext<EventCardContext>(EVENT_CARD_CONTEXT_KEY);
+  const context = getContext<EventCardContext>(EVENT_CARD_CONTEXT_KEY);
 
   // Truncate content if needed
   const displayContent = $derived.by(() => {
-    if (!truncate || !event.content) return event.content;
+    if (!truncate || !context.event.content) return context.event.content;
 
-    if (event.content.length <= truncate) return event.content;
+    if (context.event.content.length <= truncate) return context.event.content;
 
     // Find a good break point (word boundary)
     let truncateAt = truncate;
-    const lastSpace = event.content.lastIndexOf(' ', truncate);
+    const lastSpace = context.event.content.lastIndexOf(' ', truncate);
     if (lastSpace > truncate * 0.8) {
       truncateAt = lastSpace;
     }
 
-    return event.content.slice(0, truncateAt) + '...';
+    return context.event.content.slice(0, truncateAt) + '...';
   });
 </script>
 
@@ -68,17 +68,17 @@
     className
   )}
 >
-  {#if truncate && displayContent !== event.content}
+  {#if truncate && displayContent !== context.event.content}
     <!-- Show truncated content as plain text when truncating -->
     <div class="event-content-truncated">
       {displayContent}
     </div>
   {:else}
     <!-- Use EventContent for full rendering -->
-    {#key event.id}
+    {#key context.event.id}
       <EventContent
-        {ndk}
-        {event}
+        ndk={context.ndk}
+        event={context.event}
         {showMedia}
         {showLinkPreview}
         {highlightMentions}

@@ -1,13 +1,27 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { UserProfile } from '$lib/ndk/user-profile';
   import { nip19 } from 'nostr-tools';
   import CodePreview from '$lib/components/code-preview.svelte';
 
+  // Import examples
+  import AvatarOnlyExample from '$lib/ndk/user-profile/examples/avatar-only.svelte';
+  import AvatarOnlyExampleRaw from '$lib/ndk/user-profile/examples/avatar-only.svelte?raw';
+  import AvatarNameExample from '$lib/ndk/user-profile/examples/avatar-name.svelte';
+  import AvatarNameExampleRaw from '$lib/ndk/user-profile/examples/avatar-name.svelte?raw';
+  import AvatarNameHandleExample from '$lib/ndk/user-profile/examples/avatar-name-handle.svelte';
+  import AvatarNameHandleExampleRaw from '$lib/ndk/user-profile/examples/avatar-name-handle.svelte?raw';
+  import AvatarNameBioExample from '$lib/ndk/user-profile/examples/avatar-name-bio.svelte';
+  import AvatarNameBioExampleRaw from '$lib/ndk/user-profile/examples/avatar-name-bio.svelte?raw';
+  import FullProfileCardExample from '$lib/ndk/user-profile/examples/full-profile-card.svelte';
+  import FullProfileCardExampleRaw from '$lib/ndk/user-profile/examples/full-profile-card.svelte?raw';
+  import WithHoverCardExample from '$lib/ndk/user-profile/examples/with-hover-card.svelte';
+  import WithHoverCardExampleRaw from '$lib/ndk/user-profile/examples/with-hover-card.svelte?raw';
+  import AvatarGroupExample from '$lib/ndk/user-profile/examples/avatar-group.svelte';
+  import AvatarGroupExampleRaw from '$lib/ndk/user-profile/examples/avatar-group.svelte?raw';
+
   const ndk = getContext<NDKSvelte>('ndk');
 
-  // Reactive state for the main example pubkey
   let npubInput = $state('npub1l2vyl2xd4j0g97thetkkxkqhqh4ejy42kxc70yevjv90jlak3p6sjegwrc'); // pablo
   let examplePubkey = $derived.by(() => {
     try {
@@ -19,7 +33,6 @@
     return 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52';
   });
 
-  // Example pubkeys for AvatarGroup
   const examplePubkeys = [
     'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52', // pablo
     '3bf0c63fcb93463407af97a5e5ee64fa883d107ef9e558472c4eb9aaaefa459d', // fiatjaf
@@ -57,13 +70,9 @@
     <CodePreview
       title="Avatar Only"
       description="Just the user's avatar."
-      code={`<UserProfile.Root {ndk} {pubkey}>
-  <UserProfile.Avatar size={40} />
-</UserProfile.Root>`}
+      code={AvatarOnlyExampleRaw}
     >
-      <UserProfile.Root {ndk} pubkey={examplePubkey}>
-        <UserProfile.Avatar size={40} />
-      </UserProfile.Root>
+      <AvatarOnlyExample {ndk} pubkey={examplePubkey} />
     </CodePreview>
   </section>
 
@@ -71,9 +80,9 @@
     <CodePreview
       title="Avatar + Name"
       description="Avatar with display name in a horizontal layout."
-      code={`<UserProfile.Horizontal {ndk} {pubkey} />`}
+      code={AvatarNameExampleRaw}
     >
-      <UserProfile.Horizontal {ndk} pubkey={examplePubkey} />
+      <AvatarNameExample {ndk} pubkey={examplePubkey} />
     </CodePreview>
   </section>
 
@@ -81,9 +90,9 @@
     <CodePreview
       title="Avatar + Name + Handle"
       description="Avatar with display name and handle (@username) in a vertical stack."
-      code={`<UserProfile.Horizontal {ndk} {pubkey} showHandle />`}
+      code={AvatarNameHandleExampleRaw}
     >
-      <UserProfile.Horizontal {ndk} pubkey={examplePubkey} showHandle />
+      <AvatarNameHandleExample {ndk} pubkey={examplePubkey} />
     </CodePreview>
   </section>
 
@@ -91,25 +100,9 @@
     <CodePreview
       title="Avatar + Name + Bio"
       description="Avatar with display name and bio text."
-      code={`<UserProfile.Root {ndk} {pubkey}>
-  <div class="flex items-center gap-3">
-    <UserProfile.Avatar size={48} />
-    <div class="flex-1 min-w-0 flex flex-col">
-      <UserProfile.Name class="font-semibold" />
-      <UserProfile.Bio maxLines={2} class="text-sm" />
-    </div>
-  </div>
-</UserProfile.Root>`}
+      code={AvatarNameBioExampleRaw}
     >
-      <UserProfile.Root {ndk} pubkey={examplePubkey}>
-        <div class="flex items-center gap-3">
-          <UserProfile.Avatar size={48} />
-          <div class="flex-1 min-w-0 flex flex-col">
-            <UserProfile.Name class="font-semibold" />
-            <UserProfile.Bio maxLines={2} class="text-sm" />
-          </div>
-        </div>
-      </UserProfile.Root>
+      <AvatarNameBioExample {ndk} pubkey={examplePubkey} />
     </CodePreview>
   </section>
 
@@ -117,31 +110,9 @@
     <CodePreview
       title="Full Profile Card"
       description="Complete profile layout with all components."
-      code={`<UserProfile.Root {ndk} {pubkey}>
-  <div class="flex flex-col gap-4 max-w-md">
-    <div class="flex items-center gap-3">
-      <UserProfile.Avatar size={64} />
-      <div class="flex-1 min-w-0">
-        <UserProfile.Name class="font-bold text-lg" />
-        <UserProfile.Handle class="text-sm text-muted-foreground" />
-      </div>
-    </div>
-    <UserProfile.Bio maxLines={3} />
-  </div>
-</UserProfile.Root>`}
+      code={FullProfileCardExampleRaw}
     >
-      <UserProfile.Root {ndk} pubkey={examplePubkey}>
-        <div class="flex flex-col gap-4 max-w-md">
-          <div class="flex items-center gap-3">
-            <UserProfile.Avatar size={64} />
-            <div class="flex-1 min-w-0">
-              <UserProfile.Name class="font-bold text-lg" />
-              <UserProfile.Handle class="text-sm text-muted-foreground" />
-            </div>
-          </div>
-          <UserProfile.Bio maxLines={3} />
-        </div>
-      </UserProfile.Root>
+      <FullProfileCardExample {ndk} pubkey={examplePubkey} />
     </CodePreview>
   </section>
 
@@ -149,17 +120,9 @@
     <CodePreview
       title="With Hover Card"
       description="Hover over the avatars below to see the user profile card. The card appears after a 500ms delay and stays visible while hovering over the card itself."
-      code={`<UserProfile.Root {ndk} {pubkey} showHoverCard={true}>
-  <UserProfile.Avatar size={64} />
-</UserProfile.Root>`}
+      code={WithHoverCardExampleRaw}
     >
-      <div class="flex items-center gap-6 flex-wrap">
-        {#each examplePubkeys.slice(0, 3) as pubkey}
-          <UserProfile.Root {ndk} {pubkey} showHoverCard={true}>
-            <UserProfile.Avatar size={64} />
-          </UserProfile.Root>
-        {/each}
-      </div>
+      <WithHoverCardExample {ndk} pubkeys={examplePubkeys} />
     </CodePreview>
   </section>
 
@@ -167,65 +130,9 @@
     <CodePreview
       title="Avatar Group"
       description="Display multiple user avatars in a stacked layout with overflow count."
-      code={`<!-- Basic usage -->
-<UserProfile.AvatarGroup {ndk} pubkeys={['pubkey1', 'pubkey2', 'pubkey3']} />
-
-<!-- With overflow limit -->
-<UserProfile.AvatarGroup {ndk} pubkeys={allPubkeys} max={3} />
-
-<!-- Custom size and spacing -->
-<UserProfile.AvatarGroup
-  {ndk}
-  pubkeys={pubkeys}
-  size={32}
-  spacing="tight"
-/>
-
-<!-- With click handlers -->
-<UserProfile.AvatarGroup
-  {ndk}
-  pubkeys={pubkeys}
-  onAvatarClick={(user) => console.log('Clicked', user.pubkey)}
-  onOverflowClick={() => showAllUsers()}
-/>`}
+      code={AvatarGroupExampleRaw}
     >
-      <div class="flex flex-col gap-4">
-        <div>
-          <h4 class="text-sm font-medium mb-2">Basic (5 users)</h4>
-          <UserProfile.AvatarGroup {ndk} pubkeys={examplePubkeys} />
-        </div>
-
-        <div>
-          <h4 class="text-sm font-medium mb-2">With Overflow (7 users, max 3)</h4>
-          <UserProfile.AvatarGroup {ndk} pubkeys={manyPubkeys} max={3} />
-        </div>
-
-        <div>
-          <h4 class="text-sm font-medium mb-2">Different Sizes</h4>
-          <div class="flex items-center gap-4">
-            <UserProfile.AvatarGroup {ndk} pubkeys={examplePubkeys} size={32} max={3} />
-            <UserProfile.AvatarGroup {ndk} pubkeys={examplePubkeys} size={48} max={3} />
-          </div>
-        </div>
-
-        <div>
-          <h4 class="text-sm font-medium mb-2">Spacing Variants</h4>
-          <div class="flex flex-col gap-3">
-            <div class="flex items-center gap-3">
-              <span class="text-xs text-muted-foreground w-16">Tight:</span>
-              <UserProfile.AvatarGroup {ndk} pubkeys={examplePubkeys} spacing="tight" max={3} />
-            </div>
-            <div class="flex items-center gap-3">
-              <span class="text-xs text-muted-foreground w-16">Normal:</span>
-              <UserProfile.AvatarGroup {ndk} pubkeys={examplePubkeys} spacing="normal" max={3} />
-            </div>
-            <div class="flex items-center gap-3">
-              <span class="text-xs text-muted-foreground w-16">Loose:</span>
-              <UserProfile.AvatarGroup {ndk} pubkeys={examplePubkeys} spacing="loose" max={3} />
-            </div>
-          </div>
-        </div>
-      </div>
+      <AvatarGroupExample {ndk} {examplePubkeys} {manyPubkeys} />
     </CodePreview>
   </section>
 </div>
@@ -235,24 +142,24 @@
     max-width: 900px;
   }
 
-  header {
+  .component-page > header {
     margin-bottom: 2rem;
   }
 
-  header h1 {
+  .component-page > header h1 {
     font-size: 2.5rem;
     font-weight: 800;
     margin: 0 0 0.5rem 0;
     color: #111827;
   }
 
-  header p {
+  .component-page > header p {
     font-size: 1.125rem;
     color: #6b7280;
     margin: 0;
   }
 
-  section {
+  .component-page > section {
     margin-bottom: 3rem;
   }
 

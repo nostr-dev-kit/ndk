@@ -6,6 +6,8 @@ A reactive Nostr thread builder that handles the complexity of thread reconstruc
 
 - 🔍 **Smart tag parsing** - Automatically handles NIP-10 markers and legacy tag conventions
 - 🔄 **Reactive updates** - Thread structure updates automatically as events stream in
+- 🧵 **Thread continuation detection** - Separates same-author linear threads from other replies
+- 🌲 **Recursive descendant fetching** - Automatically discovers all thread events, even without root markers
 - 🕳️ **Missing event handling** - Treats missing events as first-class citizens with relay hints
 - 🎨 **UI metadata** - Provides hints for rendering vertical thread lines (Twitter/X style)
 - 🧭 **Navigation** - Focus on different events without rebuilding everything
@@ -24,15 +26,16 @@ const thread = createThreadView({
 });
 
 // Access reactive data
-thread.parents  // ThreadNode[] - parent chain from root to main
-thread.main     // NDKEvent - the focused event
-thread.replies  // NDKEvent[] - direct replies
+thread.events         // ThreadNode[] - complete linear thread chain
+thread.replies        // NDKEvent[] - replies to focused event only
+thread.otherReplies   // NDKEvent[] - replies to other events in thread
+thread.allReplies     // NDKEvent[] - all replies (replies + otherReplies)
+thread.focusedEventId // string | null - ID of the focused event
 
 // Navigate to different event
 await thread.focusOn(replyEvent);
 
-// Cleanup when done
-onDestroy(() => thread.cleanup());
+// Cleanup is automatic when component unmounts
 ```
 
 ## ThreadNode Structure
@@ -56,26 +59,36 @@ Each node in the parent chain includes:
 ## UI Implementation Example
 
 ```svelte
-{#each thread.parents as node}
-  <div class="relative">
-    {#if node.event}
-      <NoteCard event={node.event} />
-    {:else}
-      <MissingEventCard id={node.id} relayHint={node.relayHint} />
-    {/if}
+<!-- Linear thread chain -->
+{#each thread.events as node}
+  {#if node.event}
+    <div class="relative">
+      <!-- Check if this is the focused event -->
+      {#if node.event.id === thread.focusedEventId}
+        <NoteCard event={node.event} variant="focused" />
+      {:else}
+        <NoteCard event={node.event} />
+      {/if}
 
-    <!-- Vertical thread line -->
-    {#if node.threading?.showLineToNext}
-      <div class="thread-line"
-           class:self-thread={node.threading.isSelfThread} />
-    {/if}
-  </div>
+      <!-- Vertical thread line -->
+      {#if node.threading?.showLineToNext}
+        <div class="thread-line"
+             class:self-thread={node.threading.isSelfThread} />
+      {/if}
+    </div>
+  {:else}
+    <MissingEventCard id={node.id} relayHint={node.relayHint} />
+  {/if}
 {/each}
 
-<NoteCard event={thread.main} variant="focused" />
-
+<!-- Replies to focused event -->
 {#each thread.replies as reply}
-  <NoteCard event={reply} />
+  <NoteCard event={reply} variant="reply" />
+{/each}
+
+<!-- Replies to other events in thread (optional) -->
+{#each thread.otherReplies as reply}
+  <NoteCard event={reply} variant="other-reply" />
 {/each}
 ```
 
@@ -88,8 +101,10 @@ Each node in the parent chain includes:
 The builder handles:
 - Multiple tag convention detection
 - Parent chain walking with loop protection
+- Thread continuation detection (same-author linear chains)
+- Recursive descendant fetching (discovers full thread tree)
 - Missing event fetching with relay hints
-- Direct reply filtering
+- Direct reply filtering (excluding continuation events)
 - Reactive state management
 - Subscription lifecycle
 

@@ -1,28 +1,22 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { createMuteAction } from '@nostr-dev-kit/svelte';
   import { NDKUser } from '@nostr-dev-kit/ndk';
-  import MuteAction from '$lib/ndk/actions/mute-action.svelte';
   import CodePreview from '$lib/components/code-preview.svelte';
+
+  import BasicExample from '$lib/ndk/actions/examples/mute-action-basic.svelte';
+  import BasicExampleRaw from '$lib/ndk/actions/examples/mute-action-basic.svelte?raw';
+
+  import BuilderExample from '$lib/ndk/actions/examples/mute-action-builder.svelte';
+  import BuilderExampleRaw from '$lib/ndk/actions/examples/mute-action-builder.svelte?raw';
+
+  import DirectAPIExample from '$lib/ndk/actions/examples/mute-action-direct-api.svelte';
+  import DirectAPIExampleRaw from '$lib/ndk/actions/examples/mute-action-direct-api.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
   const sampleUser = new NDKUser({ pubkey: 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52' });
   sampleUser.ndk = ndk;
-
-  const muteState = createMuteAction(() => ({ ndk, target: sampleUser }));
-
-  // Direct $mutes API usage
-  const isMutedDirect = $derived(ndk.$mutes?.has(sampleUser.pubkey) ?? false);
-
-  async function handleDirectToggle() {
-    try {
-      await ndk.$mutes?.toggle(sampleUser.pubkey);
-    } catch (error) {
-      console.error('Failed to toggle mute:', error);
-    }
-  }
 </script>
 
 <div class="component-page">
@@ -53,12 +47,9 @@
     <CodePreview
       title="Basic Mute Action"
       description="Simple mute button component"
-      code={`<MuteAction {ndk} target={user} />`}
+      code={BasicExampleRaw}
     >
-      <div class="demo-card">
-        <p>User: {sampleUser.npub.slice(0, 16)}...</p>
-        <MuteAction {ndk} target={sampleUser} />
-      </div>
+      <BasicExample {ndk} user={sampleUser} />
     </CodePreview>
   </section>
 
@@ -67,18 +58,9 @@
     <CodePreview
       title="Builder Pattern"
       description="Using createMuteAction for custom implementations"
-      code={`const mute = createMuteAction(() => ({ ndk, target: user }));
-
-<button onclick={mute.mute} class:muted={mute.isMuted}>
-  {mute.isMuted ? '🔇 Muted' : '🔊 Mute'}
-</button>`}
+      code={BuilderExampleRaw}
     >
-      <div class="demo-card">
-        <p>User: {sampleUser.npub.slice(0, 16)}...</p>
-        <button class="custom-btn" class:muted={muteState.isMuted} onclick={muteState.mute}>
-          {muteState.isMuted ? '🔇 Muted' : '🔊 Mute'}
-        </button>
-      </div>
+      <BuilderExample {ndk} user={sampleUser} />
     </CodePreview>
   </section>
 
@@ -87,22 +69,9 @@
     <CodePreview
       title="Using ndk.$mutes Directly"
       description="Direct access to the mutes API for maximum flexibility"
-      code={`const isMuted = $derived(ndk.$mutes?.has(user.pubkey) ?? false);
-
-async function toggleMute() {
-  await ndk.$mutes?.toggle(user.pubkey);
-}
-
-<button onclick={toggleMute} class:muted={isMuted}>
-  {isMuted ? 'Unmute' : 'Mute'}
-</button>`}
+      code={DirectAPIExampleRaw}
     >
-      <div class="demo-card">
-        <p>User: {sampleUser.npub.slice(0, 16)}...</p>
-        <button class="direct-btn" class:muted={isMutedDirect} onclick={handleDirectToggle}>
-          {isMutedDirect ? 'Unmute' : 'Mute'}
-        </button>
-      </div>
+      <DirectAPIExample {ndk} user={sampleUser} />
     </CodePreview>
   </section>
 
@@ -135,10 +104,25 @@ const count = $derived(ndk.$mutes.size);`}</code></pre>
 </div>
 
 <style>
-  .component-page { max-width: 1200px; }
-  header { margin-bottom: 3rem; }
-  header h1 { font-size: 2.5rem; font-weight: 700; margin: 0 0 0.5rem 0; }
-  header p { font-size: 1.125rem; color: hsl(var(--color-muted-foreground)); margin: 0; }
+  .component-page {
+    max-width: 1200px;
+  }
+
+  .component-page > header {
+    margin-bottom: 3rem;
+  }
+
+  .component-page > header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .component-page > header p {
+    font-size: 1.125rem;
+    color: hsl(var(--color-muted-foreground));
+    margin: 0;
+  }
 
   .warning-box {
     padding: 1rem;
@@ -164,32 +148,21 @@ const count = $derived(ndk.$mutes.size);`}</code></pre>
     font-size: 0.875rem;
   }
 
-  .demo { margin-bottom: 3rem; padding-bottom: 3rem; border-bottom: 1px solid hsl(var(--color-border)); }
-  .demo:last-child { border-bottom: none; }
-  h2 { font-size: 1.5rem; font-weight: 600; margin: 0 0 1.5rem 0; color: hsl(var(--color-foreground)); }
-  .demo-card { background: hsl(var(--color-card)); border: 1px solid hsl(var(--color-border)); border-radius: 0.75rem; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; }
-  .demo-card p { margin: 0; color: hsl(var(--color-foreground)); }
+  .demo {
+    margin-bottom: 3rem;
+    padding-bottom: 3rem;
+    border-bottom: 1px solid hsl(var(--color-border));
+  }
 
-  .custom-btn,
-  .direct-btn {
-    padding: 0.5rem 1rem;
-    background: hsl(var(--color-card));
-    border: 1px solid hsl(var(--color-border));
-    border-radius: 0.5rem;
-    cursor: pointer;
-    transition: all 0.2s;
+  .demo:last-child {
+    border-bottom: none;
+  }
+
+  .component-page > section > h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0 0 1.5rem 0;
     color: hsl(var(--color-foreground));
-  }
-
-  .custom-btn:hover,
-  .direct-btn:hover {
-    background: hsl(var(--color-muted));
-  }
-
-  .custom-btn.muted,
-  .direct-btn.muted {
-    color: #ef4444;
-    border-color: #ef4444;
   }
 
   .api-docs {

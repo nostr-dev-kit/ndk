@@ -1,10 +1,23 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { EventCard, ReplyAction, RepostAction, ReactionAction } from '$lib/ndk/event-card';
   import type { ThreadingMetadata } from '$lib/ndk/event-card';
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import CodePreview from '$lib/components/code-preview.svelte';
+
+  // Import examples
+  import BasicExample from '$lib/ndk/event-card/examples/basic.svelte';
+  import BasicExampleRaw from '$lib/ndk/event-card/examples/basic.svelte?raw';
+  import CompactExample from '$lib/ndk/event-card/examples/compact.svelte';
+  import CompactExampleRaw from '$lib/ndk/event-card/examples/compact.svelte?raw';
+  import ThreadViewExample from '$lib/ndk/event-card/examples/thread-view.svelte';
+  import ThreadViewExampleRaw from '$lib/ndk/event-card/examples/thread-view.svelte?raw';
+  import CustomCompositionExample from '$lib/ndk/event-card/examples/custom-composition.svelte';
+  import CustomCompositionExampleRaw from '$lib/ndk/event-card/examples/custom-composition.svelte?raw';
+  import InteractiveExample from '$lib/ndk/event-card/examples/interactive.svelte';
+  import InteractiveExampleRaw from '$lib/ndk/event-card/examples/interactive.svelte?raw';
+  import DropdownExample from '$lib/ndk/event-card/examples/dropdown.svelte';
+  import DropdownExampleRaw from '$lib/ndk/event-card/examples/dropdown.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -66,35 +79,9 @@
       <CodePreview
         title="Basic EventCard"
         description="A simple event card with header, content, and action buttons."
-        code={`<EventCard.Root {ndk} {event}>
-  <div class="flex items-center justify-between p-4 border-b">
-    <div class="flex items-center gap-3 flex-1">
-      <EventCard.Header showMenu={false} class="!p-0 !border-0" />
-    </div>
-    <EventCard.Dropdown />
-  </div>
-  <EventCard.Content />
-  <EventCard.Actions>
-    <ReplyAction />
-    <RepostAction />
-    <ReactionAction />
-  </EventCard.Actions>
-</EventCard.Root>`}
+        code={BasicExampleRaw}
       >
-        <EventCard.Root {ndk} event={exampleNote}>
-          <div class="flex items-center justify-between p-4 border-b" style="border-bottom-color: #f0f0f0;">
-            <div class="flex items-center gap-3 flex-1">
-              <EventCard.Header showMenu={false} class="!p-0 !border-0" />
-            </div>
-            <EventCard.Dropdown />
-          </div>
-          <EventCard.Content />
-          <EventCard.Actions>
-            <ReplyAction />
-            <RepostAction />
-            <ReactionAction />
-          </EventCard.Actions>
-        </EventCard.Root>
+        <BasicExample {ndk} event={exampleNote} />
       </CodePreview>
     </section>
 
@@ -102,21 +89,9 @@
       <CodePreview
         title="Compact Variant"
         description="Minimal header with truncated content."
-        code={`<EventCard.Root {ndk} {event}>
-  <EventCard.Header variant="compact" showMenu={false} />
-  <EventCard.Content truncate={100} />
-  <EventCard.Actions>
-    <ReactionAction emoji="🤙" />
-  </EventCard.Actions>
-</EventCard.Root>`}
+        code={CompactExampleRaw}
       >
-        <EventCard.Root {ndk} event={exampleNote}>
-          <EventCard.Header variant="compact" showMenu={false} />
-          <EventCard.Content truncate={100} />
-          <EventCard.Actions>
-            <ReactionAction emoji="🤙" />
-          </EventCard.Actions>
-        </EventCard.Root>
+        <CompactExample {ndk} event={exampleNote} />
       </CodePreview>
     </section>
 
@@ -124,36 +99,9 @@
       <CodePreview
         title="Thread View with Lines"
         description="Event cards with thread lines showing conversation flow."
-        code={`<EventCard.Root {event} {threading}>
-  <EventCard.ThreadLine />
-  <EventCard.Header variant="compact" />
-  <EventCard.Content />
-  <EventCard.Actions>
-    <ReplyAction />
-    <ReactionAction />
-  </EventCard.Actions>
-</EventCard.Root>`}
+        code={ThreadViewExampleRaw}
       >
-        <!-- Parent -->
-        <EventCard.Root {ndk} event={threadNote} threading={threadingMetadata}>
-          <EventCard.ThreadLine />
-          <EventCard.Header variant="compact" />
-          <EventCard.Content />
-          <EventCard.Actions>
-            <ReplyAction />
-            <ReactionAction />
-          </EventCard.Actions>
-        </EventCard.Root>
-
-        <!-- Self-thread reply -->
-        <EventCard.Root {ndk} event={selfThreadNote} threading={selfThreadingMetadata}>
-          <EventCard.ThreadLine />
-          <EventCard.Header variant="compact" />
-          <EventCard.Content />
-          <EventCard.Actions>
-            <ReactionAction emoji="❤️" />
-          </EventCard.Actions>
-        </EventCard.Root>
+        <ThreadViewExample {ndk} {threadNote} {selfThreadNote} {threadingMetadata} {selfThreadingMetadata} />
       </CodePreview>
     </section>
 
@@ -161,29 +109,9 @@
       <CodePreview
         title="Custom Composition"
         description="Full control over component arrangement and styling."
-        code={`<EventCard.Root {ndk} {event} class="custom-card">
-  <div class="custom-layout">
-    <EventCard.Header variant="minimal" showTimestamp={false} />
-    <EventCard.Content />
-    <div class="custom-actions">
-      <ReactionAction emoji="🔥" />
-      <ReactionAction emoji="💯" />
-      <ReactionAction emoji="🚀" />
-    </div>
-  </div>
-</EventCard.Root>`}
+        code={CustomCompositionExampleRaw}
       >
-        <EventCard.Root {ndk} event={exampleNote} class="custom-card">
-          <div class="custom-layout">
-            <EventCard.Header variant="minimal" showTimestamp={false} />
-            <EventCard.Content />
-            <div class="custom-actions">
-              <ReactionAction emoji="🔥" />
-              <ReactionAction emoji="💯" />
-              <ReactionAction emoji="🚀" />
-            </div>
-          </div>
-        </EventCard.Root>
+        <CustomCompositionExample {ndk} event={exampleNote} />
       </CodePreview>
     </section>
 
@@ -191,15 +119,9 @@
       <CodePreview
         title="Interactive Card"
         description="Clickable card that navigates to event page."
-        code={`<EventCard.Root {ndk} {event} interactive>
-  <EventCard.Header />
-  <EventCard.Content truncate={150} />
-</EventCard.Root>`}
+        code={InteractiveExampleRaw}
       >
-        <EventCard.Root {ndk} event={exampleNote} interactive>
-          <EventCard.Header />
-          <EventCard.Content truncate={150} />
-        </EventCard.Root>
+        <InteractiveExample {ndk} event={exampleNote} />
       </CodePreview>
     </section>
 
@@ -207,88 +129,20 @@
       <CodePreview
         title="Dropdown Menu"
         description="Self-contained dropdown menu with event options (mute, report, copy, view raw)."
-        code={`<EventCard.Root {ndk} {event}>
-  <div class="header-with-dropdown">
-    <EventCard.Header showMenu={false} />
-    <EventCard.Dropdown />
-  </div>
-  <EventCard.Content />
-  <EventCard.Actions>
-    <ReplyAction />
-    <ReactionAction />
-  </EventCard.Actions>
-</EventCard.Root>`}
+        code={DropdownExampleRaw}
       >
-        <EventCard.Root {ndk} event={exampleNote}>
-          <div class="header-with-dropdown">
-            <EventCard.Header showMenu={false} />
-            <EventCard.Dropdown />
-          </div>
-          <EventCard.Content />
-          <EventCard.Actions>
-            <ReplyAction />
-            <ReactionAction />
-          </EventCard.Actions>
-        </EventCard.Root>
+        <DropdownExample {ndk} event={exampleNote} />
       </CodePreview>
     </section>
   {/if}
 </div>
 
 <style>
-  .component-page {
-    max-width: 900px;
-  }
-
   .loading {
     padding: 2rem;
     text-align: center;
     color: #6b7280;
     font-size: 1.125rem;
-  }
-
-  header {
-    margin-bottom: 2rem;
-  }
-
-  header h1 {
-    font-size: 2.5rem;
-    font-weight: 800;
-    margin: 0 0 0.5rem 0;
-    color: #111827;
-  }
-
-  header p {
-    font-size: 1.125rem;
-    color: #6b7280;
-    margin: 0;
-  }
-
-  section {
-    margin-bottom: 3rem;
-  }
-
-  .demo {
-    padding: 1.5rem;
-    background: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.75rem;
-  }
-
-  .custom-card :global(.custom-layout) {
-    padding: 1rem;
-  }
-
-  .custom-actions {
-    display: flex;
-    gap: 0.5rem;
-    padding: 0.75rem 1rem;
-  }
-
-  .header-with-dropdown {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
   }
 
   .controls {

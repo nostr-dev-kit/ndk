@@ -169,14 +169,15 @@ export const FEATURE_CONTEXT_KEY = Symbol.for('feature');
   import { getContext } from 'svelte';
   import { FEATURE_CONTEXT_KEY, type FeatureContext } from './context.svelte.js';
 
-  const { state } = getContext<FeatureContext>(FEATURE_CONTEXT_KEY);
+  // ✅ CORRECT: Keep context object (don't destructure!)
+  const context = getContext<FeatureContext>(FEATURE_CONTEXT_KEY);
 </script>
 
 <div class="feature-display">
-  {#if state.loading}
+  {#if context.state.loading}
     Loading...
   {:else}
-    {state.data}
+    {context.state.data}
   {/if}
 </div>
 ```
@@ -393,6 +394,18 @@ find registry/src/lib/ndk -name "*.svelte"
 ## Anti-Patterns
 
 ```typescript
+// ❌ BAD: Destructuring context (breaks reactivity!)
+<script>
+  const { event, ndk } = getContext(EVENT_CARD_CONTEXT_KEY);
+  // When event prop changes in root, this won't update!
+</script>
+
+// ✅ GOOD: Keep context object
+<script>
+  const context = getContext(EVENT_CARD_CONTEXT_KEY);
+  // Access via context.event - getters run each time
+</script>
+
 // ❌ BAD: Wrapper services
 class EventService {
     publish(content) { /* ... */ }
@@ -426,6 +439,86 @@ if ('oldProp' in props) { /* shim */ }
 // ✅ GOOD: Clean, modern only
 const value = props.newProp();
 ```
+
+## CRITICAL: Reactive Context Pattern
+
+### Why Context Must Use Getters
+
+When sharing data through Svelte context, **you MUST use getters** in the context object and **MUST NOT destructure** when consuming it. This is essential for reactivity.
+
+**The Problem:**
+```svelte
+<!-- Root sets context with getters ✅ -->
+<script>
+  let event = $props().event;
+
+  setContext(KEY, {
+    get event() { return event; }  // Getter
+  });
+</script>
+
+<!-- Child destructures context ❌ WRONG! -->
+<script>
+  const { event } = getContext(KEY);
+  // event is now a SNAPSHOT - won't update when parent's event changes!
+</script>
+
+<div>{event.content}</div>  <!-- Stale data! -->
+```
+
+**The Solution:**
+```svelte
+<!-- Child keeps context object ✅ CORRECT! -->
+<script>
+  const context = getContext(KEY);
+  // context.event runs the getter each time
+</script>
+
+<div>{context.event.content}</div>  <!-- Always fresh! -->
+```
+
+### Why Destructuring Breaks Reactivity
+
+When you destructure, JavaScript **captures the value at that moment**:
+
+```typescript
+const context = { get value() { return someState } };
+
+// Destructuring captures current value
+const { value } = context;  // ❌ value is now frozen
+
+// Accessing through object runs getter
+context.value;  // ✅ Runs getter, gets fresh value
+```
+
+### Pattern: Use $derived for Derived Values
+
+If you need to derive values from context, use `$derived`:
+
+```svelte
+<script>
+  const context = getContext(KEY);
+
+  // ✅ Reactive derived value
+  const displayName = $derived(
+    context.event.author?.profile?.displayName || 'Unknown'
+  );
+</script>
+
+<div>{displayName}</div>
+```
+
+### Performance: Getters Are Fast
+
+**Getters have minimal overhead:**
+- Modern JavaScript engines optimize property access
+- Svelte 5's fine-grained reactivity only updates what changed
+- No performance penalty compared to direct property access
+
+**From community research (2024-2025):**
+- Svelte 5 uses **Proxies** for state, which are highly optimized
+- Getter pattern is **standard practice** for reactive contexts
+- Comparable performance to direct property access in modern engines
 
 ## Decision Tree
 

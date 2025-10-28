@@ -36,10 +36,10 @@
     truncate = true
   }: Props = $props();
 
-  const { pubkey, profileFetcher } = getContext<UserProfileContext>(USER_PROFILE_CONTEXT_KEY);
+  const context = getContext<UserProfileContext>(USER_PROFILE_CONTEXT_KEY);
 
   const handle = $derived(
-    profileFetcher?.profile?.name || pubkey?.slice(0, 8) || 'unknown'
+    context.profileFetcher?.profile?.name || context.pubkey?.slice(0, 8) || 'unknown'
   );
 
   const displayText = $derived(showAt ? `@${handle}` : handle);

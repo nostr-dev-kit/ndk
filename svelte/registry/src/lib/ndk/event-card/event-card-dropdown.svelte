@@ -30,15 +30,15 @@
     showRelayInfo = true
   }: Props = $props();
 
-  const { ndk, event } = getContext<EventCardContext>(EVENT_CARD_CONTEXT_KEY);
+  const context = getContext<EventCardContext>(EVENT_CARD_CONTEXT_KEY);
 
   // UI state
   let showMenu = $state(false);
   let showRawEventModal = $state(false);
 
   const isMuted = $derived.by(() => {
-    if (!event.author) return false;
-    return ndk.$mutes?.has(event.author.pubkey) ?? false;
+    if (!context.event.author) return false;
+    return context.ndk.$mutes?.has(context.event.author.pubkey) ?? false;
   });
 
   async function copyToClipboard(text: string, label: string) {
@@ -52,12 +52,12 @@
   }
 
   function copyAuthorNprofile() {
-    const nprofile = event.author.nprofile;
+    const nprofile = context.event.author.nprofile;
     copyToClipboard(nprofile, 'author nprofile');
   }
 
   function copyEventId() {
-    const nevent = event.encode();
+    const nevent = context.event.encode();
     copyToClipboard(nevent, 'event ID');
   }
 
@@ -67,10 +67,10 @@
   }
 
   async function toggleMute() {
-    if (!ndk.$currentUser?.pubkey || !event.author) return;
+    if (!context.ndk.$currentUser?.pubkey || !context.event.author) return;
 
     try {
-      await ndk.$mutes?.toggle(event.author.pubkey);
+      await context.ndk.$mutes?.toggle(context.event.author.pubkey);
       console.log(isMuted ? 'User muted' : 'User unmuted');
       showMenu = false;
     } catch (error) {
@@ -79,7 +79,7 @@
   }
 
   function handleReport() {
-    console.log('Report event:', event.id);
+    console.log('Report event:', context.event.id);
     // TODO: Implement report modal
     showMenu = false;
   }
@@ -179,19 +179,19 @@
 
       <!-- Relay information -->
       {#if showRelayInfo}
-        {#if event.relay?.url}
+        {#if context.event.relay?.url}
           <div class="dropdown-divider"></div>
           <div class="dropdown-relay-info">
-            {event.relay.url}
+            {context.event.relay.url}
           </div>
-        {:else if event.onRelays && event.onRelays.length > 0}
+        {:else if context.event.onRelays && context.event.onRelays.length > 0}
           <div class="dropdown-divider"></div>
           <div class="dropdown-relay-info">
             <div class="dropdown-relay-count">
-              Seen on {event.onRelays.length} relay{event.onRelays.length === 1 ? '' : 's'}
+              Seen on {context.event.onRelays.length} relay{context.event.onRelays.length === 1 ? '' : 's'}
             </div>
             <div class="dropdown-relay-list">
-              {#each event.onRelays as relay (relay.url)}
+              {#each context.event.onRelays as relay (relay.url)}
                 <div class="dropdown-relay-badge">
                   {relay.url}
                 </div>
@@ -220,12 +220,12 @@
       </div>
 
       <div class="modal-body">
-        <pre class="raw-event-content">{event.rawEvent()}</pre>
+        <pre class="raw-event-content">{context.event.rawEvent()}</pre>
       </div>
 
       <div class="modal-footer">
         <button
-          onclick={() => copyToClipboard(JSON.stringify(event.rawEvent(), null, 2), 'raw event')}
+          onclick={() => copyToClipboard(JSON.stringify(context.event.rawEvent(), null, 2), 'raw event')}
           class="modal-button modal-button--secondary"
         >
           Copy to Clipboard

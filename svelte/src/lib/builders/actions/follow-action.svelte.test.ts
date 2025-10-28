@@ -37,7 +37,7 @@ describe("createFollowAction", () => {
         it("should return false when target is undefined", () => {
             let action: any;
             cleanup = $effect.root(() => {
-                action = createFollowAction(() => ({ ndk, target: undefined }));
+                action = createFollowAction(() => ({ target: undefined }), ndk);
             });
 
             expect(action.isFollowing).toBe(false);
@@ -49,7 +49,7 @@ describe("createFollowAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createFollowAction(() => ({ ndk, target: bob }));
+                action = createFollowAction(() => ({ target: bob }), ndk);
             });
 
             expect(action.isFollowing).toBe(false);
@@ -62,7 +62,7 @@ describe("createFollowAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createFollowAction(() => ({ ndk, target: bob }));
+                action = createFollowAction(() => ({ target: bob }), ndk);
             });
 
             expect(action.isFollowing).toBe(true);
@@ -74,7 +74,7 @@ describe("createFollowAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createFollowAction(() => ({ ndk, target: userWithoutPubkey }));
+                action = createFollowAction(() => ({ target: userWithoutPubkey }), ndk);
             });
 
             expect(action.isFollowing).toBe(false);
@@ -87,7 +87,7 @@ describe("createFollowAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createFollowAction(() => ({ ndk, target: undefined }));
+                action = createFollowAction(() => ({ target: undefined }), ndk);
             });
 
             await action.follow();
@@ -102,7 +102,7 @@ describe("createFollowAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createFollowAction(() => ({ ndk, target: bob }));
+                action = createFollowAction(() => ({ target: bob }), ndk);
             });
 
             await action.follow();
@@ -117,7 +117,7 @@ describe("createFollowAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createFollowAction(() => ({ ndk, target: bob }));
+                action = createFollowAction(() => ({ target: bob }), ndk);
             });
 
             await action.follow();
@@ -131,7 +131,7 @@ describe("createFollowAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createFollowAction(() => ({ ndk, target: userWithoutPubkey }));
+                action = createFollowAction(() => ({ target: userWithoutPubkey }), ndk);
             });
 
             await expect(action.follow()).rejects.toThrow("User not loaded yet");
@@ -146,7 +146,7 @@ describe("createFollowAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createFollowAction(() => ({ ndk, target: bob }));
+                action = createFollowAction(() => ({ target: bob }), ndk);
             });
 
             await waitForEffects();

@@ -3,28 +3,31 @@
   max-width: 900px;
 }
 
-.component-page header {
+/* Target only the page header, not component headers */
+.component-page > header {
   margin-bottom: 2rem;
 }
 
-.component-page header h1 {
+.component-page > header h1 {
   font-size: 2.5rem;
   font-weight: 800;
   margin: 0 0 0.5rem 0;
   color: hsl(var(--color-foreground));
 }
 
-.component-page header p {
+.component-page > header p {
   font-size: 1.125rem;
   color: hsl(var(--color-muted-foreground));
   margin: 0;
 }
 
-.component-page section {
+/* Target only direct section children */
+.component-page > section {
   margin-bottom: 3rem;
 }
 
-.component-page section h2 {
+/* Target only h2s that are direct children of sections, not nested in components */
+.component-page > section > h2 {
   font-size: 1.5rem;
   font-weight: 700;
   margin: 0 0 0.5rem 0;

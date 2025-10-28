@@ -32,9 +32,9 @@
     maxLines = 3
   }: Props = $props();
 
-  const { profileFetcher } = getContext<UserProfileContext>(USER_PROFILE_CONTEXT_KEY);
+  const context = getContext<UserProfileContext>(USER_PROFILE_CONTEXT_KEY);
 
-  const bio = $derived(profileFetcher?.profile?.about || '');
+  const bio = $derived(context.profileFetcher?.profile?.about || '');
 </script>
 
 {#if bio}

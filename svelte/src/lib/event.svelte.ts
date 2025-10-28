@@ -78,15 +78,11 @@ export function createFetchEvent<T extends NDKEvent = NDKEvent>(
 
         if (!fetchPromise) {
             // No in-flight request, create a new one
-            console.log("→ starting new event fetch for", cacheKey.slice(0, 30));
             fetchPromise = ndk.fetchEvent(f, { wrap }).finally(() => {
-                console.log("✓ completed event fetch for", cacheKey.slice(0, 30));
                 inFlightEventRequests.delete(cacheKey);
             });
 
             inFlightEventRequests.set(cacheKey, fetchPromise);
-        } else {
-            console.log("⚡ reusing in-flight event request for", cacheKey.slice(0, 30));
         }
 
         // Clear event while loading
@@ -258,18 +254,13 @@ export function createFetchEvents<T extends NDKEvent = NDKEvent>(
 
         if (!fetchPromise) {
             // No in-flight request, create a new one
-            console.log('→ starting new events fetch for', cacheKey.slice(0, 30));
             fetchPromise = ndk.fetchEvents(filters, ndkOpts)
                 .then((events) => events as unknown as NDKEvent)
                 .finally(() => {
-                    // Remove from in-flight requests when complete
-                    console.log('✓ completed events fetch for', cacheKey.slice(0, 30));
                     inFlightEventRequests.delete(cacheKey);
                 });
 
             inFlightEventRequests.set(cacheKey, fetchPromise);
-        } else {
-            console.log('⚡ reusing in-flight events request for', cacheKey.slice(0, 30));
         }
 
         // Clear events while loading

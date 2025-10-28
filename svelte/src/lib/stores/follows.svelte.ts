@@ -38,6 +38,20 @@ export class FollowsProxy {
         return await user.unfollow(pubkey, this.#followSet);
     }
 
+    /**
+     * Toggle follow status for a user
+     *
+     * @param pubkey - The pubkey to toggle
+     * @returns Promise that resolves when action is complete
+     */
+    async toggle(pubkey: Hexpubkey): Promise<void> {
+        if (this.#followSet.has(pubkey)) {
+            await this.remove(pubkey);
+        } else {
+            await this.add(pubkey);
+        }
+    }
+
     // Delegate all Set methods to the underlying Set
     has(pubkey: Hexpubkey): boolean {
         return this.#followSet.has(pubkey);

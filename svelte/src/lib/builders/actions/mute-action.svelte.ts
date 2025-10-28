@@ -38,7 +38,7 @@ export function createMuteAction(
         const { ndk, target } = config();
         if (!target) return;
 
-        if (!ndk.$currentUser) {
+        if (!ndk.$currentPubkey) {
             throw new Error("User must be logged in to mute");
         }
 

@@ -32,11 +32,16 @@ export function createReplyAction(
     config: () => ReplyActionConfig
 ) {
     // Subscribe to replies for this event
-    const repliesSub = $derived.by(() => {
-        const { ndk, event } = config();
-        if (!event?.id) return null;
+    let repliesSub = $state<ReturnType<NDKSvelte["$subscribe"]> | null>(null);
 
-        return ndk.$subscribe(() => ({
+    $effect(() => {
+        const { ndk, event } = config();
+        if (!event?.id) {
+            repliesSub = null;
+            return;
+        }
+
+        repliesSub = ndk.$subscribe(() => ({
             filters: [{
                 kinds: [NDKKind.Text, NDKKind.GenericReply],
                 ...event.filter(),
@@ -67,7 +72,7 @@ export function createReplyAction(
             throw new Error("No event to reply to");
         }
 
-        if (!ndk.$currentUser) {
+        if (!ndk.$currentPubkey) {
             throw new Error("User must be logged in to reply");
         }
 

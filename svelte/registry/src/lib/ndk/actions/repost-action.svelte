@@ -22,8 +22,7 @@
   const repostState = createRepostAction(() => ({ ndk, event }));
 
   async function handleRepost() {
-    if (!ndk?.$currentUser) {
-      console.log('User must be logged in to repost');
+    if (!ndk?.$currentPubkey) {
       return;
     }
     try {
@@ -36,7 +35,11 @@
 
 <button
   onclick={handleRepost}
-  class={cn('repost-action', repostState.hasReposted && 'repost-action--active', className)}
+  class={cn(
+    'inline-flex items-center gap-2 p-2 bg-transparent border-none cursor-pointer transition-colors',
+    repostState.hasReposted && 'text-green-500',
+    className
+  )}
   aria-label={`Repost (${repostState.count})`}
 >
   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -46,16 +49,3 @@
     <span>{repostState.count}</span>
   {/if}
 </button>
-
-<style>
-  .repost-action {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-  }
-  .repost-action--active { color: #10b981 !important; }
-</style>

@@ -37,11 +37,16 @@ export function createRepostAction(
     config: () => RepostActionConfig
 ) {
     // Subscribe to reposts and quotes for this event
-    const repostsSub = $derived.by(() => {
-        const { ndk, event } = config();
-        if (!event?.id) return null;
+    let repostsSub = $state<ReturnType<NDKSvelte["$subscribe"]> | null>(null);
 
-        return ndk.$subscribe(() => ({
+    $effect(() => {
+        const { ndk, event } = config();
+        if (!event?.id) {
+            repostsSub = null;
+            return;
+        }
+
+        repostsSub = ndk.$subscribe(() => ({
             filters: [
                 // Regular reposts (kind 6 & 16) - use e.filter() for correct tag handling
                 {
@@ -89,7 +94,7 @@ export function createRepostAction(
             throw new Error("No event to repost");
         }
 
-        if (!ndk.$currentUser) {
+        if (!ndk.$currentPubkey) {
             throw new Error("User must be logged in to repost");
         }
 
@@ -120,7 +125,7 @@ export function createRepostAction(
             throw new Error("No event to quote");
         }
 
-        if (!ndk.$currentUser) {
+        if (!ndk.$currentPubkey) {
             throw new Error("User must be logged in to quote");
         }
 

@@ -103,8 +103,7 @@
   }
 
   async function handleQuickReact() {
-    if (!ndk?.$currentUser) {
-      console.log('User must be logged in to react');
+    if (!ndk?.$currentPubkey) {
       return;
     }
 
@@ -116,8 +115,7 @@
   }
 
   async function handleEmojiSelect(emojiData: EmojiData) {
-    if (!ndk?.$currentUser) {
-      console.log('User must be logged in to react');
+    if (!ndk?.$currentPubkey) {
       return;
     }
 
@@ -151,8 +149,8 @@
 
 <button
   class={cn(
-    'reaction-button',
-    reaction.hasReacted && 'reaction-button--active',
+    'inline-flex items-center gap-2 p-2 bg-transparent border-none cursor-pointer transition-all duration-200 select-none touch-manipulation',
+    reaction.hasReacted && 'text-red-500',
     className
   )}
   onpointerdown={handlePointerDown}
@@ -163,7 +161,10 @@
   title="Click to react, long-press for more emojis"
 >
   <svg
-    class="heart-icon"
+    class={cn(
+      'flex-shrink-0',
+      reaction.hasReacted && 'animate-[heartbeat_0.3s_ease-in-out]'
+    )}
     xmlns="http://www.w3.org/2000/svg"
     width="18"
     height="18"
@@ -178,7 +179,7 @@
   </svg>
 
   {#if showCount && reaction.count > 0}
-    <span class="reaction-count">{reaction.count}</span>
+    <span class="text-sm font-medium min-w-4 text-center">{reaction.count}</span>
   {/if}
 </button>
 
@@ -191,43 +192,6 @@
 {/if}
 
 <style>
-  .reaction-button {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
-  }
-
-  .reaction-button--active {
-    color: #ef4444 !important;
-  }
-
-  .reaction-button--active:hover {
-    color: #ef4444 !important;
-  }
-
-  .reaction-button--active .heart-icon {
-    animation: heartbeat 0.3s ease-in-out;
-  }
-
-  .heart-icon {
-    flex-shrink: 0;
-  }
-
-  .reaction-count {
-    font-size: 0.875rem;
-    font-weight: 500;
-    min-width: 1rem;
-    text-align: center;
-  }
-
   @keyframes heartbeat {
     0%, 100% {
       transform: scale(1);

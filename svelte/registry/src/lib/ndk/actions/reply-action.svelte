@@ -68,8 +68,7 @@
 
   // Handle reply action
   async function handleReply() {
-    if (!ndk?.$currentUser) {
-      console.log('User must be logged in to reply');
+    if (!ndk?.$currentPubkey) {
       return;
     }
 
@@ -106,8 +105,8 @@
 <button
   onclick={handleReply}
   class={cn(
-    'reply-action',
-    replyState.hasReplied && 'reply-action--active',
+    'inline-flex items-center gap-2 p-2 bg-transparent border-none cursor-pointer transition-all duration-200',
+    replyState.hasReplied && 'text-purple-500',
     className
   )}
   aria-label={`Reply (${replyState.count} replies)`}
@@ -129,30 +128,39 @@
   </svg>
 
   {#if showCount && replyState.count > 0}
-    <span class="reply-count">{replyState.count}</span>
+    <span class="text-sm font-medium">{replyState.count}</span>
   {/if}
 </button>
 
 <!-- Reply Dialog (if using dialog mode) -->
 {#if showReplyDialog}
-  <div class="reply-dialog-container">
-    <div class="simple-modal">
-      <div class="modal-backdrop" onclick={() => showReplyDialog = false} />
-      <div class="modal-content">
-        <h3>Reply to {event?.author.profile?.displayName || 'note'}</h3>
-        <textarea
-          bind:value={replyContent}
-          placeholder="Write your reply..."
-          onkeydown={(e) => {
-            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-              sendReply();
-            }
-          }}
-        />
-        <div class="modal-actions">
-          <button onclick={() => showReplyDialog = false}>Cancel</button>
-          <button onclick={sendReply}>Send Reply</button>
-        </div>
+  <div class="fixed inset-0 z-50 flex items-center justify-center">
+    <div class="absolute inset-0 bg-black/50" onclick={() => showReplyDialog = false} />
+    <div class="relative bg-[var(--background)] border border-[var(--border)] rounded-lg p-6 w-[90%] max-w-[500px] flex flex-col gap-4">
+      <h3>Reply to {event?.author.profile?.displayName || 'note'}</h3>
+      <textarea
+        bind:value={replyContent}
+        placeholder="Write your reply..."
+        class="w-full min-h-[100px] p-2 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] resize-y"
+        onkeydown={(e) => {
+          if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+            sendReply();
+          }
+        }}
+      />
+      <div class="flex justify-end gap-2">
+        <button
+          onclick={() => showReplyDialog = false}
+          class="px-4 py-2 rounded-md border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] cursor-pointer hover:bg-[var(--muted)]"
+        >
+          Cancel
+        </button>
+        <button
+          onclick={sendReply}
+          class="px-4 py-2 rounded-md border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] cursor-pointer hover:bg-[var(--muted)]"
+        >
+          Send Reply
+        </button>
       </div>
     </div>
   </div>
@@ -160,10 +168,11 @@
 
 <!-- Inline Composer (if using inline mode) -->
 {#if showInlineComposer}
-  <div class="inline-composer">
+  <div class="w-full p-2 mt-2">
     <textarea
       bind:value={replyContent}
       placeholder="Write your reply..."
+      class="w-full min-h-[60px] p-2 border border-[var(--border)] rounded-md bg-[var(--background)] text-[var(--foreground)] resize-y"
       onkeydown={(e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
           e.preventDefault();
@@ -173,101 +182,3 @@
     />
   </div>
 {/if}
-
-<style>
-  .reply-action {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .reply-action--active {
-    color: #8b5cf6 !important;
-  }
-
-  .reply-count {
-    font-size: 0.875rem;
-    font-weight: 500;
-  }
-
-  /* Simple modal styles */
-  .simple-modal {
-    position: fixed;
-    inset: 0;
-    z-index: 50;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .modal-backdrop {
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-  }
-
-  .modal-content {
-    position: relative;
-    background: var(--background);
-    border: 1px solid var(--border);
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-    width: 90%;
-    max-width: 500px;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .modal-content textarea {
-    width: 100%;
-    min-height: 100px;
-    padding: 0.5rem;
-    border: 1px solid var(--border);
-    border-radius: 0.375rem;
-    background: var(--background);
-    color: var(--foreground);
-    resize: vertical;
-  }
-
-  .modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.5rem;
-  }
-
-  .modal-actions button {
-    padding: 0.5rem 1rem;
-    border-radius: 0.375rem;
-    border: 1px solid var(--border);
-    background: var(--background);
-    color: var(--foreground);
-    cursor: pointer;
-  }
-
-  .modal-actions button:hover {
-    background: var(--muted);
-  }
-
-  .inline-composer {
-    width: 100%;
-    padding: 0.5rem;
-    margin-top: 0.5rem;
-  }
-
-  .inline-composer textarea {
-    width: 100%;
-    min-height: 60px;
-    padding: 0.5rem;
-    border: 1px solid var(--border);
-    border-radius: 0.375rem;
-    background: var(--background);
-    color: var(--foreground);
-    resize: vertical;
-  }
-</style>

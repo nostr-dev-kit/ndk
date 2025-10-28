@@ -19,8 +19,7 @@
   const muteState = createMuteAction(() => ({ ndk, target }));
 
   async function handleToggle() {
-    if (!ndk.$currentUser) {
-      console.log('User must be logged in to mute');
+    if (!ndk.$currentPubkey) {
       return;
     }
     try {
@@ -33,7 +32,11 @@
 
 <button
   onclick={handleToggle}
-  class={cn('mute-action', muteState.isMuted && 'mute-action--active', className)}
+  class={cn(
+    'inline-flex items-center gap-2 p-2 bg-transparent border-none cursor-pointer transition-colors',
+    muteState.isMuted && 'text-red-500',
+    className
+  )}
   aria-label={muteState.isMuted ? 'Unmute' : 'Mute'}
 >
   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -45,16 +48,3 @@
   </svg>
   <span>{muteState.isMuted ? 'Unmute' : 'Mute'}</span>
 </button>
-
-<style>
-  .mute-action {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-  }
-  .mute-action--active { color: #ef4444 !important; }
-</style>

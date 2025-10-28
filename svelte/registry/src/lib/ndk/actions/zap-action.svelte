@@ -29,8 +29,7 @@
   const zapState = createZapAction(() => ({ ndk, target }));
 
   async function handleZap() {
-    if (!ndk?.$currentUser) {
-      console.log('User must be logged in to zap');
+    if (!ndk?.$currentPubkey) {
       return;
     }
     try {
@@ -43,7 +42,11 @@
 
 <button
   onclick={handleZap}
-  class={cn('zap-action', zapState.hasZapped && 'zap-action--active', className)}
+  class={cn(
+    'inline-flex items-center gap-2 p-2 bg-transparent border-none cursor-pointer transition-colors',
+    zapState.hasZapped && 'text-amber-500',
+    className
+  )}
   aria-label={`Zap (${zapState.totalAmount} sats)`}
 >
   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -53,16 +56,3 @@
     <span>{zapState.totalAmount}</span>
   {/if}
 </button>
-
-<style>
-  .zap-action {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-  }
-  .zap-action--active { color: #f59e0b !important; }
-</style>

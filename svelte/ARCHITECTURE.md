@@ -249,6 +249,43 @@ export function createAction(config: () => Config) {
 <div>{data}</div>
 ```
 
+## CRITICAL: Maintaining Consistency
+
+**After creating ANY new builder or component, you MUST:**
+
+### New Builder Created → Check:
+```bash
+# 1. Can other builders use it?
+grep -r "similar pattern" src/lib/builders/
+
+# 2. Should components use it?
+grep -r "similar pattern" registry/src/lib/ndk/
+
+# 3. Refactor duplicated logic
+# Example: New createProfileFetcher
+# → Update all builders that fetch profiles
+# → Update all components that fetch profiles
+```
+
+### New Component Created → Check:
+```bash
+# 1. Can other components compose with it?
+find registry/src/lib/ndk -name "*.svelte"
+
+# 2. Are there duplicated UI patterns?
+# Example: New UserProfile.Avatar
+# → Update all components that render avatars
+# → Replace <img> tags with <UserProfile.Avatar>
+```
+
+### Why This Matters:
+- Prevents code duplication
+- Ensures consistent behavior
+- Leverages improvements everywhere
+- **This is not optional**
+
+---
+
 ## Export Checklist
 
 ### New Builder:
@@ -257,6 +294,9 @@ export function createAction(config: () => Config) {
 3. Add to `src/lib/index.ts`
 4. Add tests in `*.svelte.test.ts`
 5. Document in `registry/src/routes/docs/builders/+page.svelte`
+6. **Inspect all existing builders - can they use this?**
+7. **Inspect all existing components - should they use this?**
+8. **Refactor any duplicated logic to use this new builder**
 
 ### New Component:
 1. Create in `registry/src/lib/ndk/[feature]/`
@@ -265,6 +305,8 @@ export function createAction(config: () => Config) {
 4. Create `index.ts` with namespace export
 5. Add to `registry/registry.json`
 6. Document in `registry/src/routes/docs/components/+page.svelte`
+7. **Inspect all existing components - can they compose with this?**
+8. **Refactor any duplicated UI patterns to use this new component**
 
 ## Anti-Patterns
 

@@ -54,7 +54,7 @@ describe("createZapAction", () => {
     describe("initialization", () => {
         it("should create subscription for event with id", async () => {
             cleanup = $effect.root(() => {
-                createZapAction(() => ({ ndk, target: testEvent }));
+                createZapAction(() => ({ target: testEvent }), ndk);
             });
 
             await waitForEffects();
@@ -64,7 +64,7 @@ describe("createZapAction", () => {
 
         it("should create subscription for user", async () => {
             cleanup = $effect.root(() => {
-                createZapAction(() => ({ ndk, target: testUser }));
+                createZapAction(() => ({ target: testUser }), ndk);
             });
 
             await waitForEffects();
@@ -74,7 +74,7 @@ describe("createZapAction", () => {
 
         it("should not create subscription when target is undefined", () => {
             cleanup = $effect.root(() => {
-                createZapAction(() => ({ ndk, target: undefined }));
+                createZapAction(() => ({ target: undefined }), ndk);
             });
 
             expect(ndk.$subscribe).not.toHaveBeenCalled();
@@ -87,7 +87,7 @@ describe("createZapAction", () => {
             eventWithoutId.pubkey = alice.pubkey;
 
             cleanup = $effect.root(() => {
-                createZapAction(() => ({ ndk, target: eventWithoutId }));
+                createZapAction(() => ({ target: eventWithoutId }), ndk);
             });
 
             await waitForEffects();
@@ -105,7 +105,7 @@ describe("createZapAction", () => {
             });
 
             cleanup = $effect.root(() => {
-                createZapAction(() => ({ ndk, target: testEvent }));
+                createZapAction(() => ({ target: testEvent }), ndk);
             });
 
             await waitForEffects();
@@ -128,7 +128,7 @@ describe("createZapAction", () => {
             });
 
             cleanup = $effect.root(() => {
-                createZapAction(() => ({ ndk, target: testUser }));
+                createZapAction(() => ({ target: testUser }), ndk);
             });
 
             await waitForEffects();
@@ -147,7 +147,7 @@ describe("createZapAction", () => {
         it("should return 0 when no subscription", () => {
             let action: any;
             cleanup = $effect.root(() => {
-                action = createZapAction(() => ({ ndk, target: undefined }));
+                action = createZapAction(() => ({ target: undefined }), ndk);
             });
 
             expect(action.count).toBe(0);
@@ -167,7 +167,7 @@ describe("createZapAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createZapAction(() => ({ ndk, target: testEvent }));
+                action = createZapAction(() => ({ target: testEvent }), ndk);
             });
 
             await waitForEffects();
@@ -179,7 +179,7 @@ describe("createZapAction", () => {
         it("should return 0 amount when no subscription", () => {
             let action: any;
             cleanup = $effect.root(() => {
-                action = createZapAction(() => ({ ndk, target: undefined }));
+                action = createZapAction(() => ({ target: undefined }), ndk);
             });
 
             expect(action.totalAmount).toBe(0);
@@ -194,7 +194,7 @@ describe("createZapAction", () => {
         it("should throw error when target is undefined", async () => {
             let action: any;
             cleanup = $effect.root(() => {
-                action = createZapAction(() => ({ ndk, target: undefined }));
+                action = createZapAction(() => ({ target: undefined }), ndk);
             });
 
             await expect(action.zap(1000)).rejects.toThrow("No target to zap");
@@ -205,7 +205,7 @@ describe("createZapAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createZapAction(() => ({ ndk, target: testEvent }));
+                action = createZapAction(() => ({ target: testEvent }), ndk);
             });
 
             await expect(action.zap(1000)).rejects.toThrow("User must be logged in to zap");
@@ -214,7 +214,7 @@ describe("createZapAction", () => {
         it("should call target.zap with amount in millisats", async () => {
             let action: any;
             cleanup = $effect.root(() => {
-                action = createZapAction(() => ({ ndk, target: testEvent }));
+                action = createZapAction(() => ({ target: testEvent }), ndk);
             });
 
             await action.zap(10); // 10 sats
@@ -225,7 +225,7 @@ describe("createZapAction", () => {
         it("should pass comment to target.zap", async () => {
             let action: any;
             cleanup = $effect.root(() => {
-                action = createZapAction(() => ({ ndk, target: testEvent }));
+                action = createZapAction(() => ({ target: testEvent }), ndk);
             });
 
             await action.zap(5, "Great post!");
@@ -236,7 +236,7 @@ describe("createZapAction", () => {
         it("should work with user targets", async () => {
             let action: any;
             cleanup = $effect.root(() => {
-                action = createZapAction(() => ({ ndk, target: testUser }));
+                action = createZapAction(() => ({ target: testUser }), ndk);
             });
 
             await action.zap(21);

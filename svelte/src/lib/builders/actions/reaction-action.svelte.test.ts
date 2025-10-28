@@ -49,7 +49,7 @@ describe("createReactionAction", () => {
     describe("initialization", () => {
         it("should create subscription when event has id", async () => {
             cleanup = $effect.root(() => {
-                createReactionAction(() => ({ ndk, event: testEvent }));
+                createReactionAction(() => ({ event: testEvent }), ndk);
             });
 
             await waitForEffects();
@@ -59,7 +59,7 @@ describe("createReactionAction", () => {
 
         it("should not create subscription when event is undefined", () => {
             cleanup = $effect.root(() => {
-                createReactionAction(() => ({ ndk, event: undefined }));
+                createReactionAction(() => ({ event: undefined }), ndk);
             });
 
             expect(ndk.$subscribe).not.toHaveBeenCalled();
@@ -71,7 +71,7 @@ describe("createReactionAction", () => {
             eventWithoutId.content = "Test";
 
             cleanup = $effect.root(() => {
-                createReactionAction(() => ({ ndk, event: eventWithoutId }));
+                createReactionAction(() => ({ event: eventWithoutId }), ndk);
             });
 
             expect(ndk.$subscribe).not.toHaveBeenCalled();
@@ -87,7 +87,7 @@ describe("createReactionAction", () => {
             });
 
             cleanup = $effect.root(() => {
-                createReactionAction(() => ({ ndk, event: testEvent }));
+                createReactionAction(() => ({ event: testEvent }), ndk);
             });
 
             await waitForEffects();
@@ -106,7 +106,7 @@ describe("createReactionAction", () => {
         it("should return empty array when no subscription", () => {
             let action: any;
             cleanup = $effect.root(() => {
-                action = createReactionAction(() => ({ ndk, event: undefined }));
+                action = createReactionAction(() => ({ event: undefined }), ndk);
             });
 
             expect(action.all).toEqual([]);
@@ -135,7 +135,7 @@ describe("createReactionAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createReactionAction(() => ({ ndk, event: testEvent }));
+                action = createReactionAction(() => ({ event: testEvent }), ndk);
             });
 
             await waitForEffects();
@@ -163,7 +163,7 @@ describe("createReactionAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createReactionAction(() => ({ ndk, event: testEvent }));
+                action = createReactionAction(() => ({ event: testEvent }), ndk);
             });
 
             await waitForEffects();
@@ -192,7 +192,7 @@ describe("createReactionAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createReactionAction(() => ({ ndk, event: testEvent }));
+                action = createReactionAction(() => ({ event: testEvent }), ndk);
             });
 
             await waitForEffects();
@@ -234,7 +234,7 @@ describe("createReactionAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createReactionAction(() => ({ ndk, event: testEvent }));
+                action = createReactionAction(() => ({ event: testEvent }), ndk);
             });
 
             await waitForEffects();
@@ -261,7 +261,7 @@ describe("createReactionAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createReactionAction(() => ({ ndk, event: testEvent }));
+                action = createReactionAction(() => ({ event: testEvent }), ndk);
             });
 
             await waitForEffects();
@@ -280,7 +280,7 @@ describe("createReactionAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createReactionAction(() => ({ ndk, event: testEvent }));
+                action = createReactionAction(() => ({ event: testEvent }), ndk);
             });
 
             await waitForEffects();
@@ -301,7 +301,7 @@ describe("createReactionAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createReactionAction(() => ({ ndk, event: testEvent }));
+                action = createReactionAction(() => ({ event: testEvent }), ndk);
             });
 
             await waitForEffects();
@@ -319,7 +319,7 @@ describe("createReactionAction", () => {
         it("should throw error when event is undefined", async () => {
             let action: any;
             cleanup = $effect.root(() => {
-                action = createReactionAction(() => ({ ndk, event: undefined }));
+                action = createReactionAction(() => ({ event: undefined }), ndk);
             });
 
             await expect(action.react("❤️")).rejects.toThrow("No event to react to");
@@ -332,7 +332,7 @@ describe("createReactionAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createReactionAction(() => ({ ndk, event: eventWithoutId }));
+                action = createReactionAction(() => ({ event: eventWithoutId }), ndk);
             });
 
             await expect(action.react("❤️")).rejects.toThrow("No event to react to");
@@ -343,7 +343,7 @@ describe("createReactionAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createReactionAction(() => ({ ndk, event: testEvent }));
+                action = createReactionAction(() => ({ event: testEvent }), ndk);
             });
 
             await expect(action.react("❤️")).rejects.toThrow("User must be logged in to react");
@@ -363,7 +363,7 @@ describe("createReactionAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createReactionAction(() => ({ ndk, event: testEvent }));
+                action = createReactionAction(() => ({ event: testEvent }), ndk);
             });
 
             await action.react("❤️");
@@ -387,7 +387,7 @@ describe("createReactionAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createReactionAction(() => ({ ndk, event: testEvent }));
+                action = createReactionAction(() => ({ event: testEvent }), ndk);
             });
 
             await waitForEffects();
@@ -411,7 +411,7 @@ describe("createReactionAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createReactionAction(() => ({ ndk, event: testEvent }));
+                action = createReactionAction(() => ({ event: testEvent }), ndk);
             });
 
             await action.react({
@@ -439,7 +439,7 @@ describe("createReactionAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createReactionAction(() => ({ ndk, event: testEvent }));
+                action = createReactionAction(() => ({ event: testEvent }), ndk);
             });
 
             await action.react("❤️");

@@ -48,7 +48,7 @@ describe("createReplyAction", () => {
     describe("initialization", () => {
         it("should create subscription when event has id", async () => {
             cleanup = $effect.root(() => {
-                createReplyAction(() => ({ ndk, event: testEvent }));
+                createReplyAction(() => ({ event: testEvent }), ndk);
             });
 
             // Wait for effect to run
@@ -61,7 +61,7 @@ describe("createReplyAction", () => {
 
         it("should not create subscription when event is undefined", () => {
             cleanup = $effect.root(() => {
-                createReplyAction(() => ({ ndk, event: undefined }));
+                createReplyAction(() => ({ event: undefined }), ndk);
             });
 
             expect(ndk.$subscribe).not.toHaveBeenCalled();
@@ -73,7 +73,7 @@ describe("createReplyAction", () => {
             eventWithoutId.content = "Test";
 
             cleanup = $effect.root(() => {
-                createReplyAction(() => ({ ndk, event: eventWithoutId }));
+                createReplyAction(() => ({ event: eventWithoutId }), ndk);
             });
 
             expect(ndk.$subscribe).not.toHaveBeenCalled();
@@ -84,7 +84,7 @@ describe("createReplyAction", () => {
         it("should return 0 when no subscription", () => {
             let action: any;
             cleanup = $effect.root(() => {
-                action = createReplyAction(() => ({ ndk, event: undefined }));
+                action = createReplyAction(() => ({ event: undefined }), ndk);
             });
 
             expect(action.count).toBe(0);
@@ -110,7 +110,7 @@ describe("createReplyAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createReplyAction(() => ({ ndk, event: testEvent }));
+                action = createReplyAction(() => ({ event: testEvent }), ndk);
             });
 
             await waitForEffects();
@@ -122,7 +122,7 @@ describe("createReplyAction", () => {
         it("should return false when no subscription", () => {
             let action: any;
             cleanup = $effect.root(() => {
-                action = createReplyAction(() => ({ ndk, event: undefined }));
+                action = createReplyAction(() => ({ event: undefined }), ndk);
             });
 
             expect(action.hasReplied).toBe(false);
@@ -142,7 +142,7 @@ describe("createReplyAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createReplyAction(() => ({ ndk, event: testEvent }));
+                action = createReplyAction(() => ({ event: testEvent }), ndk);
             });
 
             await waitForEffects();
@@ -161,7 +161,7 @@ describe("createReplyAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createReplyAction(() => ({ ndk, event: testEvent }));
+                action = createReplyAction(() => ({ event: testEvent }), ndk);
             });
 
             await waitForEffects();
@@ -181,7 +181,7 @@ describe("createReplyAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createReplyAction(() => ({ ndk, event: testEvent }));
+                action = createReplyAction(() => ({ event: testEvent }), ndk);
             });
 
             await waitForEffects();
@@ -211,7 +211,7 @@ describe("createReplyAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createReplyAction(() => ({ ndk, event: testEvent }));
+                action = createReplyAction(() => ({ event: testEvent }), ndk);
             });
 
             await waitForEffects();
@@ -224,7 +224,7 @@ describe("createReplyAction", () => {
         it("should throw error when event is undefined", async () => {
             let action: any;
             cleanup = $effect.root(() => {
-                action = createReplyAction(() => ({ ndk, event: undefined }));
+                action = createReplyAction(() => ({ event: undefined }), ndk);
             });
 
             await expect(action.reply("Test reply")).rejects.toThrow("No event to reply to");
@@ -237,7 +237,7 @@ describe("createReplyAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createReplyAction(() => ({ ndk, event: eventWithoutId }));
+                action = createReplyAction(() => ({ event: eventWithoutId }), ndk);
             });
 
             await expect(action.reply("Test reply")).rejects.toThrow("No event to reply to");
@@ -248,7 +248,7 @@ describe("createReplyAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createReplyAction(() => ({ ndk, event: testEvent }));
+                action = createReplyAction(() => ({ event: testEvent }), ndk);
             });
 
             await expect(action.reply("Test reply")).rejects.toThrow("User must be logged in to reply");
@@ -265,7 +265,7 @@ describe("createReplyAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createReplyAction(() => ({ ndk, event: testEvent }));
+                action = createReplyAction(() => ({ event: testEvent }), ndk);
             });
 
             const result = await action.reply("Test reply content");
@@ -284,7 +284,7 @@ describe("createReplyAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createReplyAction(() => ({ ndk, event: testEvent }));
+                action = createReplyAction(() => ({ event: testEvent }), ndk);
             });
 
             const result = await action.reply("My reply");
@@ -303,7 +303,7 @@ describe("createReplyAction", () => {
             });
 
             cleanup = $effect.root(() => {
-                createReplyAction(() => ({ ndk, event: testEvent }));
+                createReplyAction(() => ({ event: testEvent }), ndk);
             });
 
             // Wait for effect to run

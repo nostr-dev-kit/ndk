@@ -51,7 +51,7 @@ describe("createRepostAction", () => {
     describe("initialization", () => {
         it("should create subscription when event has id", async () => {
             cleanup = $effect.root(() => {
-                createRepostAction(() => ({ ndk, event: testEvent }));
+                createRepostAction(() => ({ event: testEvent }), ndk);
             });
 
             await waitForEffects();
@@ -61,7 +61,7 @@ describe("createRepostAction", () => {
 
         it("should not create subscription when event is undefined", () => {
             cleanup = $effect.root(() => {
-                createRepostAction(() => ({ ndk, event: undefined }));
+                createRepostAction(() => ({ event: undefined }), ndk);
             });
 
             expect(ndk.$subscribe).not.toHaveBeenCalled();
@@ -73,7 +73,7 @@ describe("createRepostAction", () => {
             eventWithoutId.content = "Test";
 
             cleanup = $effect.root(() => {
-                createRepostAction(() => ({ ndk, event: eventWithoutId }));
+                createRepostAction(() => ({ event: eventWithoutId }), ndk);
             });
 
             expect(ndk.$subscribe).not.toHaveBeenCalled();
@@ -89,7 +89,7 @@ describe("createRepostAction", () => {
             });
 
             cleanup = $effect.root(() => {
-                createRepostAction(() => ({ ndk, event: testEvent }));
+                createRepostAction(() => ({ event: testEvent }), ndk);
             });
 
             await waitForEffects();
@@ -118,7 +118,7 @@ describe("createRepostAction", () => {
         it("should return 0 when no subscription", () => {
             let action: any;
             cleanup = $effect.root(() => {
-                action = createRepostAction(() => ({ ndk, event: undefined }));
+                action = createRepostAction(() => ({ event: undefined }), ndk);
             });
 
             expect(action.count).toBe(0);
@@ -140,7 +140,7 @@ describe("createRepostAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createRepostAction(() => ({ ndk, event: testEvent }));
+                action = createRepostAction(() => ({ event: testEvent }), ndk);
             });
 
             await waitForEffects();
@@ -152,7 +152,7 @@ describe("createRepostAction", () => {
         it("should return false when no subscription", () => {
             let action: any;
             cleanup = $effect.root(() => {
-                action = createRepostAction(() => ({ ndk, event: undefined }));
+                action = createRepostAction(() => ({ event: undefined }), ndk);
             });
 
             expect(action.hasReposted).toBe(false);
@@ -172,7 +172,7 @@ describe("createRepostAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createRepostAction(() => ({ ndk, event: testEvent }));
+                action = createRepostAction(() => ({ event: testEvent }), ndk);
             });
 
             await waitForEffects();
@@ -191,7 +191,7 @@ describe("createRepostAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createRepostAction(() => ({ ndk, event: testEvent }));
+                action = createRepostAction(() => ({ event: testEvent }), ndk);
             });
 
             await waitForEffects();
@@ -210,7 +210,7 @@ describe("createRepostAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createRepostAction(() => ({ ndk, event: testEvent }));
+                action = createRepostAction(() => ({ event: testEvent }), ndk);
             });
 
             await waitForEffects();
@@ -233,7 +233,7 @@ describe("createRepostAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createRepostAction(() => ({ ndk, event: testEvent }));
+                action = createRepostAction(() => ({ event: testEvent }), ndk);
             });
 
             await waitForEffects();
@@ -246,7 +246,7 @@ describe("createRepostAction", () => {
         it("should throw error when event is undefined", async () => {
             let action: any;
             cleanup = $effect.root(() => {
-                action = createRepostAction(() => ({ ndk, event: undefined }));
+                action = createRepostAction(() => ({ event: undefined }), ndk);
             });
 
             await expect(action.repost()).rejects.toThrow("No event to repost");
@@ -259,7 +259,7 @@ describe("createRepostAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createRepostAction(() => ({ ndk, event: eventWithoutId }));
+                action = createRepostAction(() => ({ event: eventWithoutId }), ndk);
             });
 
             await expect(action.repost()).rejects.toThrow("No event to repost");
@@ -270,7 +270,7 @@ describe("createRepostAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createRepostAction(() => ({ ndk, event: testEvent }));
+                action = createRepostAction(() => ({ event: testEvent }), ndk);
             });
 
             await expect(action.repost()).rejects.toThrow("User must be logged in to repost");
@@ -285,7 +285,7 @@ describe("createRepostAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createRepostAction(() => ({ ndk, event: testEvent }));
+                action = createRepostAction(() => ({ event: testEvent }), ndk);
             });
 
             const result = await action.repost();
@@ -308,7 +308,7 @@ describe("createRepostAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createRepostAction(() => ({ ndk, event: testEvent }));
+                action = createRepostAction(() => ({ event: testEvent }), ndk);
             });
 
             await waitForEffects();
@@ -324,7 +324,7 @@ describe("createRepostAction", () => {
         it("should throw error when event is undefined", async () => {
             let action: any;
             cleanup = $effect.root(() => {
-                action = createRepostAction(() => ({ ndk, event: undefined }));
+                action = createRepostAction(() => ({ event: undefined }), ndk);
             });
 
             await expect(action.quote("Test quote")).rejects.toThrow("No event to quote");
@@ -337,7 +337,7 @@ describe("createRepostAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createRepostAction(() => ({ ndk, event: eventWithoutId }));
+                action = createRepostAction(() => ({ event: eventWithoutId }), ndk);
             });
 
             await expect(action.quote("Test quote")).rejects.toThrow("No event to quote");
@@ -348,7 +348,7 @@ describe("createRepostAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createRepostAction(() => ({ ndk, event: testEvent }));
+                action = createRepostAction(() => ({ event: testEvent }), ndk);
             });
 
             await expect(action.quote("Test quote")).rejects.toThrow("User must be logged in to quote");
@@ -365,7 +365,7 @@ describe("createRepostAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createRepostAction(() => ({ ndk, event: testEvent }));
+                action = createRepostAction(() => ({ event: testEvent }), ndk);
             });
 
             const result = await action.quote("Great post!");
@@ -390,7 +390,7 @@ describe("createRepostAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createRepostAction(() => ({ ndk, event: testEvent }));
+                action = createRepostAction(() => ({ event: testEvent }), ndk);
             });
 
             const result = await action.quote("My quote");

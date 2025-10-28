@@ -53,28 +53,33 @@ export interface CreateThreadViewOptions {
 }
 
 /**
- * A reactive thread view that maintains parent chain, focused event, and replies
+ * A reactive thread view that maintains a linear event chain and branch replies
+ * Cleanup is automatic via $effect when the component unmounts
  */
 export interface ThreadView {
-    /** Parent chain from root to the focused event (oldest first) */
-    readonly parents: ThreadNode[];
+    /**
+     * Complete linear thread from root through focused event to continuation
+     * UI can determine which is focused by comparing event.id to focusedEventId
+     */
+    readonly events: ThreadNode[];
 
-    /** The currently focused event */
-    readonly main: NDKEvent;
-
-    /** Direct replies to the focused event */
+    /** Replies to the focused event only */
     readonly replies: NDKEvent[];
+
+    /** Replies to other events in the thread (not the focused event) */
+    readonly otherReplies: NDKEvent[];
+
+    /** All replies to any event in the thread (replies + otherReplies) */
+    readonly allReplies: NDKEvent[];
+
+    /** ID of the currently focused event */
+    readonly focusedEventId: string | null;
 
     /**
      * Re-center the thread view on a different event
      * @param event - The event to focus on (or its ID)
      */
     focusOn(event: NDKEvent | string): Promise<void>;
-
-    /**
-     * Clean up subscriptions and resources
-     */
-    cleanup(): void;
 }
 
 /**

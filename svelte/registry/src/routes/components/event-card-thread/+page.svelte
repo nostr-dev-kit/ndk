@@ -8,7 +8,7 @@
   const ndk = getContext<NDKSvelte>('ndk');
 
   // Default nevent from the user
-  const DEFAULT_NEVENT = 'nevent1qqsxswyywccyh2dwgmwkxn86jq7v0a04zyw2e5zsws7eakxzvn9d9dczyphydppzm7m554ecwq4gsgaek2qk32atse2l4t9ks57dpms4mmhfxdkgym5';
+  const DEFAULT_NEVENT = 'nevent1qvzqqqqqqypzqzw53gd9m0sngp98993578tt5u3dgpgng6xawy7gaguv4xmmduk8qyg8wumn8ghj7mn0wd68ytnddakj7qghwaehxw309aex2mrp0yhxummnw3ezucnpdejz7qpqghp3frrq7j7ja6xqj40x4yrwvux7ymev27e2pvrgjd4gvzj7maassk7g7w';
 
   // Create thread view builder - handles everything automatically
   // This needs to be at the top level because it uses $state internally
@@ -26,7 +26,7 @@
     </p>
   </div>
 
-  {#if !thread.main}
+  {#if !thread.focusedEventId}
     <div class="flex items-center justify-center py-12">
       <div class="text-muted-foreground">Loading thread...</div>
     </div>
@@ -43,30 +43,37 @@
 
   const ndk = getContext<NDKSvelte>('ndk');
 
-  // Create thread view builder at top level - handles everything automatically
-  // It uses $state internally so it must be called at component top level
+  // Create thread view builder - handles everything automatically
   const thread = createThreadView({
     ndk,
     focusedEvent: 'nevent1...'  // Can be nevent string or NDKEvent
   });
 </script>
 
-<!-- Parent Chain with Missing Event Support -->
-{#each thread.parents as node}
+<!-- Linear Thread Chain -->
+{#each thread.events as node}
   {#if node.event}
     <EventCard.Root
       {ndk}
       event={node.event}
       threading={node.threading}
     >
-      <EventCard.ThreadLine />
-      <EventCard.Header variant="compact" />
-      <EventCard.Content />
-      <EventCard.Actions>
-        <ReplyAction />
-        <RepostAction />
-        <ReactionAction />
-      </EventCard.Actions>
+      <!-- Highlight the focused event -->
+      {#if node.event.id === thread.focusedEventId}
+        <div class="focused-event">
+          <EventCard.Header variant="default" />
+          <EventCard.Content />
+          <EventCard.Actions>
+            <ReplyAction />
+            <RepostAction />
+            <ReactionAction />
+          </EventCard.Actions>
+        </div>
+      {:else}
+        <EventCard.ThreadLine />
+        <EventCard.Header variant="compact" />
+        <EventCard.Content />
+      {/if}
     </EventCard.Root>
   {:else}
     <!-- Missing event placeholder -->
@@ -77,19 +84,21 @@
   {/if}
 {/each}
 
-<!-- Main Event (Highlighted) -->
-<EventCard.Root {ndk} event={thread.main}>
-  <EventCard.Header variant="default" />
-  <EventCard.Content />
-  <EventCard.Actions>
-    <ReplyAction />
-    <RepostAction />
-    <ReactionAction />
-  </EventCard.Actions>
-</EventCard.Root>
-
-<!-- Replies -->
+<!-- Replies to Focused Event -->
 {#each thread.replies as reply}
+  <EventCard.Root {ndk} event={reply}>
+    <EventCard.Header variant="compact" />
+    <EventCard.Content />
+    <EventCard.Actions>
+      <ReplyAction />
+      <RepostAction />
+      <ReactionAction />
+    </EventCard.Actions>
+  </EventCard.Root>
+{/each}
+
+<!-- Replies to Other Events in Thread -->
+{#each thread.otherReplies as reply}
   <EventCard.Root {ndk} event={reply}>
     <EventCard.Header variant="compact" />
     <EventCard.Content />
@@ -101,58 +110,106 @@
   </EventCard.Root>
 {/each}`}
       >
-        <div class="border border-border rounded-lg overflow-hidden bg-card">
-          <!-- Parent Chain -->
-          {#each thread.parents as node}
+        <div class="border border-border rounded-lg overflow-hidden">
+          <!-- Linear Thread Chain -->
+          {#each thread.events as node, index}
             {#if node.event}
             {#key node.event.id}
-              <EventCard.Root
-                {ndk}
-                event={node.event}
-                threading={node.threading}
-              >
-                <div class="relative border-b border-border hover:bg-muted/50 transition-colors">
-                  <EventCard.ThreadLine />
-                  <div class="p-4">
-                    <EventCard.Header variant="compact" />
-                    <EventCard.Content />
-                  </div>
+              <!-- Check if this is the focused event -->
+              {#if node.event.id === thread.focusedEventId}
+                <!-- Focused Event (Highlighted) -->
+                <div class="bg-accent/10 border-l-4 border-primary">
+                  <EventCard.Root {ndk} event={node.event}>
+                    <div
+                      class="bg-background cursor-pointer"
+                      onclick={() => thread.focusOn(node.event)}
+                      role="button"
+                      tabindex="0"
+                    >
+                      <EventCard.Header variant="default" />
+                      <div class="text-lg">
+                        <EventCard.Content class="text-xl" />
+                      </div>
+                      <EventCard.Actions>
+                        <ReplyAction />
+                        <RepostAction />
+                        <ReactionAction />
+                      </EventCard.Actions>
+                    </div>
+                  </EventCard.Root>
                 </div>
-              </EventCard.Root>
+              {:else}
+                <!-- Thread Event (Parent or Continuation) -->
+                <EventCard.Root
+                  {ndk}
+                  event={node.event}
+                  threading={node.threading}
+                >
+                  <div
+                    class="relative border-b border-border bg-background hover:bg-accent/5 transition-colors cursor-pointer"
+                    onclick={() => thread.focusOn(node.event)}
+                    role="button"
+                    tabindex="0"
+                  >
+                    <EventCard.ThreadLine />
+                    <div class="p-4">
+                      <EventCard.Header variant="compact" />
+                      <EventCard.Content />
+                    </div>
+                  </div>
+                </EventCard.Root>
+              {/if}
               {/key}
             {:else}
-              <div class="border-b border-border p-4 bg-muted/30 text-muted-foreground text-sm">
+              <div class="border-b border-border p-4 bg-background text-muted-foreground text-sm">
                 Missing event: {node.id.slice(0, 8)}...
                 {#if node.relayHint}(hint: {node.relayHint}){/if}
               </div>
             {/if}
           {/each}
 
-          <!-- Main Event (Highlighted) -->
-          <div class="bg-primary/5 border-l-4 border-primary">
-            <EventCard.Root {ndk} event={thread.main}>
-              <div class="p-6">
-                <EventCard.Header variant="default" />
-                <EventCard.Content />
-                <EventCard.Actions>
-                  <ReplyAction />
-                  <RepostAction />
-                  <ReactionAction />
-                </EventCard.Actions>
-              </div>
-            </EventCard.Root>
-          </div>
-
-          <!-- Replies Section -->
+          <!-- Replies to Focused Event -->
           {#if thread.replies.length > 0}
-            <div class="border-t border-border bg-muted/20 px-4 py-3">
-              <h3 class="text-sm font-semibold text-muted-foreground">
-                {thread.replies.length} {thread.replies.length === 1 ? 'Reply' : 'Replies'}
+            <div class="border-t border-border bg-purple-50 px-4 py-3">
+              <h3 class="text-sm font-semibold text-purple-700">
+                {thread.replies.length} {thread.replies.length === 1 ? 'Reply' : 'Replies'} to Focused Event
               </h3>
             </div>
             {#each thread.replies as reply}
               <EventCard.Root {ndk} event={reply}>
-                <div class="border-t border-border hover:bg-muted/50 transition-colors p-4">
+                <div
+                  class="border-t border-border bg-background hover:bg-accent/5 transition-colors p-4 cursor-pointer"
+                  onclick={() => thread.focusOn(reply)}
+                  role="button"
+                  tabindex="0"
+                >
+                  <EventCard.Header variant="compact" />
+                  <EventCard.Content />
+                  <EventCard.Actions>
+                    <ReplyAction />
+                    <RepostAction />
+                    <ReactionAction />
+                  </EventCard.Actions>
+                </div>
+              </EventCard.Root>
+            {/each}
+          {/if}
+
+          <!-- Replies to Other Events in Thread -->
+          {#if thread.otherReplies.length > 0}
+            <div class="border-t border-border bg-orange-50 px-4 py-3">
+              <h3 class="text-sm font-semibold text-orange-700">
+                {thread.otherReplies.length} {thread.otherReplies.length === 1 ? 'Reply' : 'Replies'} to Other Thread Events
+              </h3>
+            </div>
+            {#each thread.otherReplies as reply}
+              <EventCard.Root {ndk} event={reply}>
+                <div
+                  class="border-t border-border bg-background hover:bg-accent/5 transition-colors p-4 cursor-pointer"
+                  onclick={() => thread.focusOn(reply)}
+                  role="button"
+                  tabindex="0"
+                >
                   <EventCard.Header variant="compact" />
                   <EventCard.Content />
                   <EventCard.Actions>
@@ -179,17 +236,18 @@
   <EventCard.Content />
 </EventCard.Root>`}
       >
-        <div class="border border-border rounded-lg overflow-hidden bg-card">
-          {#each thread.parents.slice(0, 3) as node}
+        <div class="border border-border rounded-lg overflow-hidden">
+          {#each thread.events as node}
             {#if node.event}
               <EventCard.Root
                 {ndk}
                 event={node.event}
                 threading={node.threading}
+                class="!rounded-none !shadow-none !overflow-visible border-b border-border last:border-b-0"
               >
-                <div class="relative border-b border-border p-4">
+                <div class="relative bg-background hover:bg-accent/5 transition-colors p-4">
                   <EventCard.ThreadLine />
-                  <EventCard.Header variant="compact" />
+                  <EventCard.Header variant="compact" class="!p-0 !border-0 !mb-2" />
                   <EventCard.Content />
                 </div>
               </EventCard.Root>
@@ -210,18 +268,20 @@
   <EventCard.Actions variant="compact" />
 </EventCard.Root>`}
       >
-        <div class="border border-border rounded-lg overflow-hidden bg-card max-w-md">
-          {#each [thread.main, ...thread.replies.slice(0, 2)] as event}
-            <EventCard.Root {ndk} {event}>
-              <div class="border-b border-border last:border-b-0 p-3">
-                <EventCard.Header variant="compact" />
-                <EventCard.Content />
-                <EventCard.Actions variant="compact">
-                  <ReplyAction />
-                  <ReactionAction />
-                </EventCard.Actions>
-              </div>
-            </EventCard.Root>
+        <div class="border border-border rounded-lg overflow-hidden max-w-md">
+          {#each thread.events as node}
+            {#if node.event}
+              <EventCard.Root {ndk} event={node.event}>
+                <div class="border-b border-border last:border-b-0 bg-background hover:bg-accent/5 transition-colors p-3">
+                  <EventCard.Header variant="compact" />
+                  <EventCard.Content />
+                  <EventCard.Actions variant="compact">
+                    <ReplyAction />
+                    <ReactionAction />
+                  </EventCard.Actions>
+                </div>
+              </EventCard.Root>
+            {/if}
           {/each}
         </div>
       </CodePreview>
@@ -247,11 +307,13 @@
             &nbsp;&nbsp;kinds?: [1, 9802]<br/>
             &#125;);<br/><br/>
             // Returns:<br/>
-            thread.parents  // ThreadNode[] - with threading metadata<br/>
-            thread.main     // NDKEvent - focused event<br/>
-            thread.replies  // NDKEvent[] - direct replies<br/>
+            thread.events          // ThreadNode[] - complete linear chain<br/>
+            thread.replies         // NDKEvent[] - replies to focused event only<br/>
+            thread.otherReplies    // NDKEvent[] - replies to other thread events<br/>
+            thread.allReplies      // NDKEvent[] - all replies (replies + otherReplies)<br/>
+            thread.focusedEventId  // string | null - ID of focused event<br/>
             thread.focusOn(event)  // Navigate to different event<br/>
-            thread.cleanup()       // Clean up subscriptions
+            // Cleanup is automatic when component unmounts
           </code>
         </div>
       </div>
@@ -286,7 +348,9 @@
             ✓ Multiple tag convention support (NIP-10 + legacy)<br/>
             ✓ Missing event detection and fetching<br/>
             ✓ Relay hints from e-tags<br/>
-            ✓ Direct reply filtering<br/>
+            ✓ Recursive descendant fetching (finds all thread events)<br/>
+            ✓ Thread continuation detection (same-author linear chains)<br/>
+            ✓ Direct reply filtering (excludes continuation events)<br/>
             ✓ Reactive updates as events stream in<br/>
             ✓ Parent chain with loop protection<br/>
             ✓ Self-thread detection

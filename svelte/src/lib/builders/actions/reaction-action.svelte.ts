@@ -1,6 +1,7 @@
 import { NDKEvent, NDKKind } from "@nostr-dev-kit/ndk";
 import type { NDKSvelte } from "../../ndk-svelte.svelte.js";
 import { resolveNDK } from "../resolve-ndk.svelte.js";
+import { SvelteMap } from "svelte/reactivity";
 
 export interface EmojiReaction {
     emoji: string;
@@ -79,7 +80,7 @@ export function createReactionAction(
         if (!sub) return [];
 
         const reactions = sub.events;
-        const byEmoji = new Map<string, { count: number; hasReacted: boolean; pubkeys: string[]; userReaction?: NDKEvent }>();
+        const byEmoji = new SvelteMap<string, { count: number; hasReacted: boolean; pubkeys: string[]; userReaction?: NDKEvent }>();
 
         for (const reaction of reactions) {
             const emoji = reaction.content;

@@ -1,5 +1,6 @@
 import type { NDKSvelte } from '../../ndk-svelte.svelte.js';
 import { NDKRelayFeedList, normalizeRelayUrl } from '@nostr-dev-kit/ndk';
+import { SvelteMap, SvelteSet } from 'svelte/reactivity';
 
 /**
  * Relay with bookmark statistics
@@ -86,7 +87,7 @@ export function createBookmarkedRelayList({
         }
 
         // Add current user if not already in the list
-        const authorsSet = new Set(authorsList);
+        const authorsSet = new SvelteSet(authorsList);
         if (!authorsSet.has(ndk.$currentPubkey)) {
             return [...authorsList, ndk.$currentPubkey];
         }
@@ -126,7 +127,7 @@ export function createBookmarkedRelayList({
         const totalAuthors = effectiveAuthors.length;
         if (totalAuthors === 0) return [];
 
-        const relayDataMap = new Map<string, { count: number; pubkeys: Set<string> }>();
+        const relayDataMap = new SvelteMap<string, { count: number; pubkeys: SvelteSet<string> }>();
 
         // Process all kind 10012 events
         for (const event of subscription.events) {
@@ -144,7 +145,7 @@ export function createBookmarkedRelayList({
                     } else {
                         relayDataMap.set(normalized, {
                             count: 1,
-                            pubkeys: new Set([authorPubkey])
+                            pubkeys: new SvelteSet([authorPubkey])
                         });
                     }
                 }

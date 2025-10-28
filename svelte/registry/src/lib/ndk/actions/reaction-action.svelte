@@ -19,7 +19,7 @@
   ```
 -->
 <script lang="ts">
-  import { NDKEvent, NDKKind } from '@nostr-dev-kit/ndk';
+  import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createReactionAction } from '@nostr-dev-kit/svelte';
   import { getContext } from 'svelte';
@@ -68,7 +68,7 @@
   const event = $derived(eventProp || ctx?.event);
 
   // Use the builder for reactive state
-  const reaction = createReactionAction(ndk, () => event, () => emoji);
+  const reaction = createReactionAction(() => ({ ndk, event }));
 
   let showPicker = $state(false);
   let longPressTimer: ReturnType<typeof setTimeout> | null = null;
@@ -108,7 +108,7 @@
     }
 
     try {
-      await reaction.toggle();
+      await reaction.react(emoji);
     } catch (error) {
       console.error('Failed to react:', error);
     }
@@ -120,30 +120,10 @@
     }
 
     try {
-      await publishReaction(emojiData);
+      await reaction.react(emojiData);
     } catch (error) {
       console.error('Failed to publish reaction:', error);
     }
-  }
-
-  async function publishReaction(emojiData: EmojiData) {
-    if (!event?.id) return;
-
-    const reactionEvent = new NDKEvent(ndk, {
-      kind: NDKKind.Reaction,
-      content: emojiData.emoji,
-      tags: [
-        ['e', event.id],
-        ['p', event.pubkey]
-      ]
-    });
-
-    // Add custom emoji tag if this is a custom emoji (NIP-30)
-    if (emojiData.shortcode && emojiData.url) {
-      reactionEvent.tags.push(['emoji', emojiData.shortcode, emojiData.url]);
-    }
-
-    await reactionEvent.publish();
   }
 </script>
 

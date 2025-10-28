@@ -340,15 +340,15 @@ export class NDKUser {
     }
 
     /**
-     * Add a follow to this user's contact list
+     * Add one or more follows to this user's contact list
      *
-     * @param newFollow {NDKUser | Hexpubkey} The user to follow
+     * @param newFollow {NDKUser | Hexpubkey | Array} The user(s) to follow
      * @param currentFollowList {Set<NDKUser | Hexpubkey>} The current follow list
      * @param kind {NDKKind} The kind to use for this contact list (defaults to `3`)
-     * @returns {Promise<boolean>} True if the follow was added, false if the follow already exists
+     * @returns {Promise<boolean>} True if any follows were added, false if all already exist
      */
     public async follow(
-        newFollow: NDKUser | Hexpubkey,
+        newFollow: NDKUser | Hexpubkey | (NDKUser | Hexpubkey)[],
         currentFollowList?: Set<NDKUser | Hexpubkey>,
         kind = NDKKind.Contacts,
     ): Promise<boolean> {
@@ -360,16 +360,24 @@ export class NDKUser {
             currentFollowList = await this.follows(undefined, undefined, kind);
         }
 
-        const newFollowPubkey = typeof newFollow === "string" ? newFollow : newFollow.pubkey;
-        const isAlreadyFollowing = Array.from(currentFollowList).some((item) =>
-            typeof item === "string" ? item === newFollowPubkey : item.pubkey === newFollowPubkey,
-        );
+        const followsToAdd = Array.isArray(newFollow) ? newFollow : [newFollow];
+        let anyAdded = false;
 
-        if (isAlreadyFollowing) {
-            return false;
+        for (const follow of followsToAdd) {
+            const followPubkey = typeof follow === "string" ? follow : follow.pubkey;
+            const isAlreadyFollowing = Array.from(currentFollowList).some((item) =>
+                typeof item === "string" ? item === followPubkey : item.pubkey === followPubkey,
+            );
+
+            if (!isAlreadyFollowing) {
+                currentFollowList.add(follow);
+                anyAdded = true;
+            }
         }
 
-        currentFollowList.add(newFollow);
+        if (!anyAdded) {
+            return false;
+        }
 
         const event = new NDKEvent(this.ndk, { kind } as NostrEvent);
 
@@ -386,15 +394,15 @@ export class NDKUser {
     }
 
     /**
-     * Remove a follow from this user's contact list
+     * Remove one or more follows from this user's contact list
      *
-     * @param user {NDKUser | Hexpubkey} The user to unfollow
+     * @param user {NDKUser | Hexpubkey | Array} The user(s) to unfollow
      * @param currentFollowList {Set<NDKUser | Hexpubkey>} The current follow list
      * @param kind {NDKKind} The kind to use for this contact list (defaults to `3`)
-     * @returns The relays were the follow list was published or false if the user wasn't found
+     * @returns The relays where the follow list was published or false if none were found
      */
     public async unfollow(
-        user: NDKUser | Hexpubkey,
+        user: NDKUser | Hexpubkey | (NDKUser | Hexpubkey)[],
         currentFollowList?: Set<NDKUser | Hexpubkey>,
         kind = NDKKind.Contacts,
     ): Promise<Set<NDKRelay> | boolean> {
@@ -406,20 +414,24 @@ export class NDKUser {
             currentFollowList = await this.follows(undefined, undefined, kind);
         }
 
-        const unfollowPubkey = typeof user === "string" ? user : user.pubkey;
+        const usersToUnfollow = Array.isArray(user) ? user : [user];
+        const unfollowPubkeys = new Set(
+            usersToUnfollow.map((u) => (typeof u === "string" ? u : u.pubkey)),
+        );
+
         const newUserFollowList = new Set<NDKUser | Hexpubkey>();
-        let foundUser = false;
+        let foundAny = false;
 
         for (const follow of currentFollowList) {
             const followPubkey = typeof follow === "string" ? follow : follow.pubkey;
-            if (followPubkey !== unfollowPubkey) {
+            if (!unfollowPubkeys.has(followPubkey)) {
                 newUserFollowList.add(follow);
             } else {
-                foundUser = true;
+                foundAny = true;
             }
         }
 
-        if (!foundUser) return false;
+        if (!foundAny) return false;
 
         const event = new NDKEvent(this.ndk, { kind } as NostrEvent);
 

@@ -35,16 +35,16 @@
     class: className = ''
   }: Props = $props();
 
-  const { event, ndk } = getContext<EventCardContext>(EVENT_CARD_CONTEXT_KEY);
+  const context = getContext<EventCardContext>(EVENT_CARD_CONTEXT_KEY);
 
   // Fetch author profile directly
-  const profileFetcher = createProfileFetcher({ ndk, user: () => event.author });
+  const profileFetcher = createProfileFetcher({ ndk: context.ndk, user: () => context.event.author });
 
   // Format timestamp
   const timestamp = $derived.by(() => {
-    if (!event.created_at) return '';
+    if (!context.event.created_at) return '';
 
-    const date = new Date(event.created_at * 1000);
+    const date = new Date(context.event.created_at * 1000);
     const now = new Date();
     const diff = now.getTime() - date.getTime();
     const hours = Math.floor(diff / (1000 * 60 * 60));
@@ -83,8 +83,8 @@
   <div class="flex items-center gap-3 flex-1 min-w-0" onclick={stopPropagation}>
     {#if showAvatar}
       <Avatar
-        {ndk}
-        user={event.author}
+        ndk={context.ndk}
+        user={context.event.author}
         profile={profileFetcher.profile}
         size={avatarSize === 'sm' ? 32 : avatarSize === 'md' ? 40 : 48}
         class="flex-shrink-0"
@@ -96,15 +96,15 @@
         <!-- Full variant: name on top, handle below -->
         <div class="flex flex-col">
           <Name
-            {ndk}
-            user={event.author}
+            ndk={context.ndk}
+            user={context.event.author}
             profile={profileFetcher.profile}
             field="displayName"
             class="font-semibold text-[15px] text-foreground truncate"
           />
           <Name
-            {ndk}
-            user={event.author}
+            ndk={context.ndk}
+            user={context.event.author}
             profile={profileFetcher.profile}
             field="name"
             class="text-sm text-muted-foreground truncate"
@@ -114,15 +114,15 @@
         <!-- Compact: name and handle inline -->
         <div class="flex items-center gap-2 min-w-0">
           <Name
-            {ndk}
-            user={event.author}
+            ndk={context.ndk}
+            user={context.event.author}
             profile={profileFetcher.profile}
             field="displayName"
             class="font-semibold text-[15px] text-foreground truncate"
           />
           <Name
-            {ndk}
-            user={event.author}
+            ndk={context.ndk}
+            user={context.event.author}
             profile={profileFetcher.profile}
             field="name"
             class="text-sm text-muted-foreground truncate"
@@ -131,8 +131,8 @@
       {:else}
         <!-- Minimal: just name -->
         <Name
-          {ndk}
-          user={event.author}
+          ndk={context.ndk}
+          user={context.event.author}
           profile={profileFetcher.profile}
           field="displayName"
           class="font-semibold text-[15px] text-foreground truncate"
@@ -145,7 +145,7 @@
   <div class="flex items-center gap-3">
     {#if showTimestamp && timestamp}
       <time
-        datetime={new Date(event.created_at! * 1000).toISOString()}
+        datetime={new Date(context.event.created_at! * 1000).toISOString()}
         class="text-sm text-muted-foreground/70"
       >
         {timestamp}

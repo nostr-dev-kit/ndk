@@ -1,15 +1,29 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { createReactionAction } from '@nostr-dev-kit/svelte';
-  import { NDKEvent, NDKKind } from '@nostr-dev-kit/ndk';
-  import ReactionAction from '$lib/ndk/actions/reaction-action.svelte';
+  import { NDKEvent } from '@nostr-dev-kit/ndk';
   import CodePreview from '$lib/components/code-preview.svelte';
-  import AvatarGroup from '$lib/ndk/user-profile/avatar-group.svelte';
+
+  import BasicExample from '$lib/ndk/actions/examples/reaction-action-basic.svelte';
+  import BasicExampleRaw from '$lib/ndk/actions/examples/reaction-action-basic.svelte?raw';
+
+  import WithoutCountExample from '$lib/ndk/actions/examples/reaction-action-without-count.svelte';
+  import WithoutCountExampleRaw from '$lib/ndk/actions/examples/reaction-action-without-count.svelte?raw';
+
+  import LongPressExample from '$lib/ndk/actions/examples/reaction-action-long-press.svelte';
+  import LongPressExampleRaw from '$lib/ndk/actions/examples/reaction-action-long-press.svelte?raw';
+
+  import CustomEmojisExample from '$lib/ndk/actions/examples/reaction-action-custom-emojis.svelte';
+  import CustomEmojisExampleRaw from '$lib/ndk/actions/examples/reaction-action-custom-emojis.svelte?raw';
+
+  import BuilderExample from '$lib/ndk/actions/examples/reaction-action-builder.svelte';
+  import BuilderExampleRaw from '$lib/ndk/actions/examples/reaction-action-builder.svelte?raw';
+
+  import SlackStyleExample from '$lib/ndk/actions/examples/reaction-action-slack-style.svelte';
+  import SlackStyleExampleRaw from '$lib/ndk/actions/examples/reaction-action-slack-style.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
-  // Fetch a real event for demonstration
   let sampleEvent = $state<NDKEvent | undefined>();
 
   $effect(() => {
@@ -19,9 +33,6 @@
       })
       .catch(err => console.error('Failed to fetch sample event:', err));
   });
-
-  // Builder example for all reactions
-  const reaction = $derived(sampleEvent ? createReactionAction(() => ({ ndk, event: sampleEvent })) : null);
 </script>
 
 <div class="component-page">
@@ -30,22 +41,15 @@
     <p>Simple reaction button with long-press emoji picker and NIP-30/NIP-51 support.</p>
   </header>
 
-  {#if sampleEvent && reaction}
+  {#if sampleEvent}
   <section class="demo">
     <h2>Basic Usage</h2>
     <CodePreview
       title="Click to react"
       description="Click to react with a heart. The button shows the current reaction count."
-      code={`<ReactionAction {ndk} event={event} />`}
+      code={BasicExampleRaw}
     >
-      <div class="demo-event-card">
-        <div class="event-content">
-          <p>{sampleEvent.content}</p>
-        </div>
-        <div class="event-actions">
-          <ReactionAction {ndk} event={sampleEvent} />
-        </div>
-      </div>
+      <BasicExample {ndk} event={sampleEvent} />
     </CodePreview>
   </section>
 
@@ -54,16 +58,9 @@
     <CodePreview
       title="Hide count"
       description="Hide the reaction count by setting showCount={false}."
-      code={`<ReactionAction {ndk} event={event} showCount={false} />`}
+      code={WithoutCountExampleRaw}
     >
-      <div class="demo-event-card">
-        <div class="event-content">
-          <p>{sampleEvent.content}</p>
-        </div>
-        <div class="event-actions">
-          <ReactionAction {ndk} event={sampleEvent} showCount={false} />
-        </div>
-      </div>
+      <WithoutCountExample {ndk} event={sampleEvent} />
     </CodePreview>
   </section>
 
@@ -80,16 +77,9 @@
     <CodePreview
       title="Long-press interaction"
       description="Try long-pressing the reaction button to open the emoji picker"
-      code={`<ReactionAction {ndk} event={event} />`}
+      code={LongPressExampleRaw}
     >
-      <div class="demo-event-card">
-        <div class="event-content">
-          <p>{sampleEvent.content}</p>
-        </div>
-        <div class="event-actions">
-          <ReactionAction {ndk} event={sampleEvent} />
-        </div>
-      </div>
+      <LongPressExample {ndk} event={sampleEvent} />
     </CodePreview>
     <div class="info-box">
       <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -112,24 +102,12 @@
     <CodePreview
       title="Custom emojis"
       description="Change the default emoji with the emoji prop."
-      code={`<ReactionAction {ndk} event={event} emoji="🔥" />
-<ReactionAction {ndk} event={event} emoji="🚀" />
-<ReactionAction {ndk} event={event} emoji="👍" />`}
+      code={CustomEmojisExampleRaw}
     >
-      <div class="demo-event-card">
-        <div class="event-content">
-          <p>{sampleEvent.content}</p>
-        </div>
-        <div class="event-actions">
-          <ReactionAction {ndk} event={sampleEvent} emoji="🔥" />
-          <ReactionAction {ndk} event={sampleEvent} emoji="🚀" />
-          <ReactionAction {ndk} event={sampleEvent} emoji="👍" />
-        </div>
-      </div>
+      <CustomEmojisExample {ndk} event={sampleEvent} />
     </CodePreview>
   </section>
 
-  <!-- Using Builder Directly -->
   <section class="demo">
     <h2>Using the Builder Directly</h2>
     <p class="demo-description">
@@ -141,104 +119,17 @@
     <CodePreview
       title="Builder pattern"
       description="Use createReactionAction() for full control over your UI markup"
-      code={`const reaction = createReactionAction(() => ({ ndk, event }));
-
-<!-- React with any emoji -->
-<button onclick={() => reaction.react("+")}>
-  ❤️ {reaction.get("+")?.count ?? 0}
-</button>
-
-<button onclick={() => reaction.react("🔥")}>
-  🔥 {reaction.get("🔥")?.count ?? 0}
-</button>
-
-<button onclick={() => reaction.react("🚀")}>
-  🚀 {reaction.get("🚀")?.count ?? 0}
-</button>`}
+      code={BuilderExampleRaw}
     >
-      <div class="demo-event-card">
-        <div class="event-content">
-          <p>{sampleEvent.content}</p>
-        </div>
-        <div class="event-actions builder-examples">
-          <!-- Like button -->
-          <button class="custom-reaction-btn" onclick={() => reaction.react("+")}>
-            <span class="emoji">❤️</span>
-            <span class="count">{reaction.get("+")?.count ?? 0}</span>
-          </button>
-
-          <!-- Fire button -->
-          <button
-            class="custom-reaction-btn"
-            class:reacted={reaction.get("🔥")?.hasReacted}
-            onclick={() => reaction.react("🔥")}
-          >
-            <span class="emoji">🔥</span>
-            <span class="count">{reaction.get("🔥")?.count ?? 0}</span>
-          </button>
-
-          <!-- Rocket button -->
-          <button
-            class="custom-reaction-btn icon-only"
-            class:reacted={reaction.get("🚀")?.hasReacted}
-            onclick={() => reaction.react("🚀")}
-            title={reaction.get("🚀")?.hasReacted ? 'Remove reaction' : 'React with 🚀'}
-          >
-            🚀
-          </button>
-        </div>
-      </div>
+      <BuilderExample {ndk} event={sampleEvent} />
     </CodePreview>
 
     <CodePreview
       title="Slack-Style Reaction Pills"
       description="Display reactions as interactive pills with emoji, count, and hover tooltips showing who reacted. Client filters for followers."
-      code={`const reaction = createReactionAction(() => ({ ndk, event }));
-
-<!-- All reactions sorted by count, client filters followers -->
-{#each reaction.all as { emoji, count, hasReacted, pubkeys }}
-  <button
-    class="reaction-pill"
-    class:reacted={hasReacted}
-    onclick={() => reaction.react(emoji)}
-  >
-    <span class="emoji">{emoji}</span>
-    <span class="count">{count}</span>
-
-    <div class="hover-tooltip">
-      <AvatarGroup {ndk} pubkeys={pubkeys.slice(0, 3)} max={3} size={24} />
-      <span>{pubkeys.length} pubkeys.length > 1 ? 's' : ''}</span>
-    </div>
-  </button>
-{/each}`}
+      code={SlackStyleExampleRaw}
     >
-      <div class="demo-event-card">
-        <div class="event-content">
-          <p>{sampleEvent.content}</p>
-        </div>
-        <div class="slack-reactions">
-          {#each reaction.all as { emoji, count, hasReacted, pubkeys } (emoji)}
-            <button
-              class="reaction-pill"
-              class:reacted={hasReacted}
-              onclick={() => reaction.react(emoji)}
-            >
-              <span class="emoji">{emoji}</span>
-              <span class="count">{count}</span>
-
-              <div class="hover-tooltip">
-                <AvatarGroup {ndk} pubkeys={pubkeys.slice(0, 3)} max={3} size={24} spacing="tight" />
-                <span class="tooltip-text">
-                  {pubkeys.length} follower{pubkeys.length > 1 ? 's' : ''} reacted
-                </span>
-              </div>
-            </button>
-          {/each}
-          {#if reaction.all.length === 0}
-            <p class="no-reactions">No reactions yet</p>
-          {/if}
-        </div>
-      </div>
+      <SlackStyleExample {ndk} event={sampleEvent} />
     </CodePreview>
 
     <div class="info-box">
@@ -290,18 +181,18 @@
     padding: 2rem;
   }
 
-  header {
+  .component-page > header {
     margin-bottom: 3rem;
   }
 
-  h1 {
+  .component-page > header h1 {
     font-size: 2.5rem;
     font-weight: 700;
     margin: 0 0 0.5rem 0;
     color: hsl(var(--color-foreground));
   }
 
-  header p {
+  .component-page > header p {
     font-size: 1.125rem;
     color: hsl(var(--color-muted-foreground));
     margin: 0;
@@ -317,7 +208,7 @@
     border-bottom: none;
   }
 
-  h2 {
+  .component-page > section > h2 {
     font-size: 1.5rem;
     font-weight: 600;
     margin: 0 0 0.5rem 0;
@@ -336,31 +227,6 @@
     border-radius: 0.25rem;
     font-size: 0.875rem;
     color: hsl(var(--color-primary));
-  }
-
-  .demo-event-card {
-    background: hsl(var(--color-card));
-    border: 1px solid hsl(var(--color-border));
-    border-radius: 0.75rem;
-    padding: 1.5rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  }
-
-  .event-content {
-    margin-bottom: 1rem;
-  }
-
-  .event-content p {
-    margin: 0;
-    color: hsl(var(--color-foreground));
-    line-height: 1.6;
-  }
-
-  .event-actions {
-    display: flex;
-    gap: 0.5rem;
-    padding-top: 1rem;
-    border-top: 1px solid hsl(var(--color-border));
   }
 
   .feature-list {
@@ -433,165 +299,5 @@
   .login-prompt p {
     color: hsl(var(--color-muted-foreground));
     margin: 0;
-  }
-
-  /* Custom reaction button styles for builder examples */
-  .builder-examples {
-    gap: 1rem;
-  }
-
-  .custom-reaction-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    background: hsl(var(--color-card));
-    border: 1px solid hsl(var(--color-border));
-    border-radius: 0.5rem;
-    font-size: 0.875rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  .custom-reaction-btn:hover {
-    background: hsl(var(--color-muted));
-    border-color: hsl(var(--color-border));
-  }
-
-  .custom-reaction-btn.reacted {
-    background: hsl(var(--color-primary) / 0.1);
-    border-color: hsl(var(--color-primary));
-    color: hsl(var(--color-primary));
-  }
-
-  .custom-reaction-btn.reacted:hover {
-    background: hsl(var(--color-primary) / 0.2);
-  }
-
-  .custom-reaction-btn .emoji {
-    font-size: 1.125rem;
-    line-height: 1;
-  }
-
-  .custom-reaction-btn .count {
-    font-weight: 500;
-    color: hsl(var(--color-muted-foreground));
-    min-width: 1rem;
-    text-align: center;
-  }
-
-  .custom-reaction-btn.reacted .count {
-    color: hsl(var(--color-primary));
-  }
-
-  .custom-reaction-btn.icon-only {
-    padding: 0.5rem;
-    font-size: 1.125rem;
-    min-width: 2.5rem;
-    justify-content: center;
-  }
-
-  /* Slack-style reaction pills */
-  .slack-reactions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    padding-top: 1rem;
-    border-top: 1px solid hsl(var(--color-border));
-  }
-
-  .reaction-pill {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    padding: 0.25rem 0.625rem;
-    background: hsl(var(--color-card));
-    border: 1.5px solid hsl(var(--color-border));
-    border-radius: 1rem;
-    font-size: 0.875rem;
-    cursor: pointer;
-    transition: all 0.15s ease;
-  }
-
-  .reaction-pill:hover {
-    background: hsl(var(--color-muted) / 0.5);
-    border-color: hsl(var(--color-muted-foreground) / 0.3);
-    transform: translateY(-1px);
-  }
-
-  .reaction-pill.reacted {
-    background: hsl(var(--color-primary) / 0.12);
-    border-color: hsl(var(--color-primary) / 0.5);
-  }
-
-  .reaction-pill.reacted:hover {
-    background: hsl(var(--color-primary) / 0.18);
-    border-color: hsl(var(--color-primary) / 0.7);
-  }
-
-  .reaction-pill .emoji {
-    font-size: 1rem;
-    line-height: 1;
-  }
-
-  .reaction-pill .count {
-    font-weight: 600;
-    font-size: 0.8125rem;
-    color: hsl(var(--color-muted-foreground));
-  }
-
-  .reaction-pill.reacted .count {
-    color: hsl(var(--color-primary));
-  }
-
-  /* Hover tooltip */
-  .hover-tooltip {
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    margin-bottom: 0.5rem;
-    padding: 0.75rem 1rem;
-    background: hsl(var(--color-popover));
-    border: 1px solid hsl(var(--color-border));
-    border-radius: 0.5rem;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease;
-    white-space: nowrap;
-    z-index: 50;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .reaction-pill:hover .hover-tooltip {
-    opacity: 1;
-  }
-
-  .hover-tooltip::after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    border: 6px solid transparent;
-    border-top-color: hsl(var(--color-border));
-  }
-
-  .tooltip-text {
-    font-size: 0.75rem;
-    color: hsl(var(--color-muted-foreground));
-    font-weight: 500;
-  }
-
-  .no-reactions {
-    color: hsl(var(--color-muted-foreground));
-    text-align: center;
-    padding: 1rem;
-    font-style: italic;
   }
 </style>

@@ -31,11 +31,11 @@
     truncate = true
   }: Props = $props();
 
-  const { relayInfo } = getContext<RelayCardContext>(RELAY_CARD_CONTEXT_KEY);
+  const context = getContext<RelayCardContext>(RELAY_CARD_CONTEXT_KEY);
 
   const displayName = $derived(
-    relayInfo.nip11?.name ||
-    relayInfo.url.replace('wss://', '').replace('ws://', '')
+    context.relayInfo.nip11?.name ||
+    context.relayInfo.url.replace('wss://', '').replace('ws://', '')
   );
 </script>
 

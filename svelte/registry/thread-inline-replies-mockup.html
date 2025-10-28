@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thread Inline Replies Mockups</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .mockup-section {
+            margin-bottom: 60px;
+        }
+
+        .mockup-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .thread-header {
+            background: #d6e8ff;
+            padding: 8px 12px;
+            border-radius: 6px 6px 0 0;
+            font-size: 13px;
+            font-weight: 500;
+            color: #1a73e8;
+        }
+
+        .event-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            padding: 16px;
+            margin-bottom: 1px;
+            position: relative;
+        }
+
+        .event-card.focused {
+            background: #e8f5e9;
+            border-color: #4caf50;
+        }
+
+        .event-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #7c4dff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .event-meta {
+            flex: 1;
+        }
+
+        .event-author {
+            font-weight: 600;
+            font-size: 15px;
+            color: #1a1a1a;
+        }
+
+        .event-time {
+            font-size: 13px;
+            color: #757575;
+        }
+
+        .event-content {
+            font-size: 15px;
+            line-height: 1.5;
+            color: #1a1a1a;
+        }
+
+        /* Approach 1: Expandable Reply Indicator */
+        .reply-indicator {
+            margin-top: 12px;
+            padding: 8px 12px;
+            background: #f5f5f5;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #1a73e8;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s;
+        }
+
+        .reply-indicator:hover {
+            background: #e8f0fe;
+        }
+
+        .reply-indicator-icon {
+            font-size: 12px;
+        }
+
+        /* Approach 2: Inline Nested Replies */
+        .nested-replies {
+            margin-top: 12px;
+            margin-left: 20px;
+            border-left: 2px solid #e0e0e0;
+            padding-left: 12px;
+        }
+
+        .nested-reply {
+            background: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .nested-reply-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .nested-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #ff6b6b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 11px;
+        }
+
+        .nested-author {
+            font-weight: 600;
+            font-size: 13px;
+            color: #1a1a1a;
+        }
+
+        .nested-time {
+            font-size: 12px;
+            color: #757575;
+            margin-left: auto;
+        }
+
+        .nested-content {
+            font-size: 14px;
+            line-height: 1.4;
+            color: #333;
+        }
+
+        /* Approach 3: Badge on Event Card */
+        .reply-badge {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: #1a73e8;
+            color: white;
+            border-radius: 12px;
+            padding: 4px 10px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Approach 4: Thread Branch Line */
+        .thread-branch {
+            position: relative;
+            margin-left: 52px;
+            margin-top: 0;
+            margin-bottom: 8px;
+            padding-left: 12px;
+        }
+
+        .thread-branch::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: -8px;
+            width: 12px;
+            height: 32px;
+            border-left: 2px solid #1a73e8;
+            border-bottom: 2px solid #1a73e8;
+            border-bottom-left-radius: 8px;
+        }
+
+        .branch-reply {
+            background: #f0f7ff;
+            border: 1px solid #bbdefb;
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        .branch-reply-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 4px;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .branch-reply-content {
+            font-size: 13px;
+            color: #333;
+        }
+
+        /* Approach 5: Compact Inline Indicator */
+        .compact-reply-indicator {
+            margin-top: 8px;
+            padding: 6px 10px;
+            background: linear-gradient(to right, #e3f2fd, transparent);
+            border-left: 3px solid #1a73e8;
+            font-size: 12px;
+            color: #1565c0;
+            cursor: pointer;
+        }
+
+        .compact-reply-indicator:hover {
+            background: linear-gradient(to right, #bbdefb, transparent);
+        }
+    </style>
+</head>
+<body>
+    <h1 style="margin-bottom: 40px;">Thread Inline Replies - Design Mockups</h1>
+
+    <!-- Approach 1: Expandable Reply Indicator -->
+    <div class="mockup-section">
+        <div class="mockup-title">Approach 1: Expandable Reply Indicator</div>
+        <div class="thread-header">Thread: 6c166765ade2...</div>
+        <div class="event-card">
+            <div class="event-header">
+                <div class="avatar">PA</div>
+                <div class="event-meta">
+                    <div class="event-author">Pablo Testing Pubkey</div>
+                    <div class="event-time">33m</div>
+                </div>
+            </div>
+            <div class="event-content">This is the root.<br>👆 Time for a thread.</div>
+        </div>
+
+        <div class="event-card">
+            <div class="event-header">
+                <div class="avatar">PA</div>
+                <div class="event-meta">
+                    <div class="event-author">Pablo Testing Pubkey</div>
+                    <div class="event-time">31m</div>
+                </div>
+            </div>
+            <div class="event-content">#2 this is simple.</div>
+            <div class="reply-indicator">
+                <span class="reply-indicator-icon">↳</span>
+                <span>1 reply from outside this thread</span>
+                <span style="margin-left: auto;">▼</span>
+            </div>
+        </div>
+
+        <div class="event-card">
+            <div class="event-header">
+                <div class="avatar">PA</div>
+                <div class="event-meta">
+                    <div class="event-author">Pablo Testing Pubkey</div>
+                    <div class="event-time">31m</div>
+                </div>
+            </div>
+            <div class="event-content">#3 but rendering is not so straightforward</div>
+        </div>
+    </div>
+
+    <!-- Approach 4: Thread Branch Line -->
+    <div class="mockup-section">
+        <div class="mockup-title">Approach 4: Visual Thread Branch</div>
+        <div class="thread-header">Thread: 6c166765ade2...</div>
+        <div class="event-card">
+            <div class="event-header">
+                <div class="avatar">PA</div>
+                <div class="event-meta">
+                    <div class="event-author">Pablo Testing Pubkey</div>
+                    <div class="event-time">33m</div>
+                </div>
+            </div>
+            <div class="event-content">This is the root.<br>👆 Time for a thread.</div>
+        </div>
+
+        <div class="event-card" style="margin-bottom: 0;">
+            <div class="event-header">
+                <div class="avatar">PA</div>
+                <div class="event-meta">
+                    <div class="event-author">Pablo Testing Pubkey</div>
+                    <div class="event-time">31m</div>
+                </div>
+            </div>
+            <div class="event-content">#2 this is simple.</div>
+        </div>
+
+        <div class="thread-branch">
+            <div class="branch-reply">
+                <div class="branch-reply-header">
+                    <span>↳ AN (25f5562d...)</span>
+                    <span style="margin-left: auto; font-weight: normal; color: #757575;">9m</span>
+                </div>
+                <div class="branch-reply-content">yes, but, is it though? I'm replying to "#2 this is simple"</div>
+            </div>
+        </div>
+
+        <div class="event-card">
+            <div class="event-header">
+                <div class="avatar">PA</div>
+                <div class="event-meta">
+                    <div class="event-author">Pablo Testing Pubkey</div>
+                    <div class="event-time">31m</div>
+                </div>
+            </div>
+            <div class="event-content">#3 but rendering is not so straightforward</div>
+        </div>
+    </div>
+
+</body>
+</html>

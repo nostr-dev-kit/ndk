@@ -31,7 +31,7 @@
     </p>
 
     <pre><code>{`<!-- event-card-root.svelte -->
-<script>
+<`+`script>
   import { setContext } from 'svelte';
   import { createEventCard } from '@nostr-dev-kit/svelte';
 
@@ -44,18 +44,18 @@
     get event() { return event; },
     get state() { return state; }
   });
-</script>
+</`+`script>
 
 <article>
   {@render children?.()}
 </article>`}</code></pre>
 
     <pre><code>{`<!-- event-card-header.svelte -->
-<script>
+<`+`script>
   import { getContext } from 'svelte';
 
   const { event, state } = getContext(EVENT_CARD_CONTEXT_KEY);
-</script>
+</`+`script>
 
 <header>
   <img src={state.profile?.picture} alt="" />
@@ -83,9 +83,9 @@
 
     <pre><code>{`<!-- Your copy at src/lib/components/ui/event-card/
      event-card-header.svelte -->
-<script>
+<`+`script>
   import { fade } from 'svelte/transition';
-</script>
+</`+`script>
 
 <header transition:fade class="my-custom-styles">
   <div class="badge">Premium</div>
@@ -109,11 +109,11 @@
     <h3>Extract the Builder</h3>
     <p>Keep the builder, replace all UI with your own design.</p>
 
-    <pre><code>{`<script>
+    <pre><code>{`<`+`script>
   import { createEventCard } from '@nostr-dev-kit/svelte';
 
   const state = createEventCard({ ndk, event: () => event });
-</script>
+</`+`script>
 
 <div class="my-design">
   <h2>{state.profile?.displayName}</h2>
@@ -129,7 +129,7 @@
     </p>
 
     <pre><code>{`<!-- my-custom-engagement.svelte -->
-<script>
+<`+`script>
   import { getContext } from 'svelte';
   import { EVENT_CARD_CONTEXT_KEY } from './context.svelte';
 
@@ -140,7 +140,7 @@
     state.reactions.count +
     state.reposts.count
   );
-</script>
+</`+`script>
 
 <div class="engagement">
   Score: {engagementScore}

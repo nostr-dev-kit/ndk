@@ -176,24 +176,24 @@ https://www.youtube.com/watch?v=dQw4w9WgXcQ`,
     max-width: 900px;
   }
 
-  header {
+  .component-page > header {
     margin-bottom: 2rem;
   }
 
-  header h1 {
+  .component-page > header h1 {
     font-size: 2.5rem;
     font-weight: 800;
     margin: 0 0 0.5rem 0;
     color: #111827;
   }
 
-  header p {
+  .component-page > header p {
     font-size: 1.125rem;
     color: #6b7280;
     margin: 0;
   }
 
-  section {
+  .component-page > section {
     margin-bottom: 3rem;
   }
 

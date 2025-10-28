@@ -31,11 +31,11 @@
     truncate = true
   }: Props = $props();
 
-  const { relayInfo } = getContext<RelayCardContext>(RELAY_CARD_CONTEXT_KEY);
+  const context = getContext<RelayCardContext>(RELAY_CARD_CONTEXT_KEY);
 </script>
 
 <span class={cn('relay-card-url', size, truncate && 'relay-card-url-truncate', className)}>
-  {relayInfo.url}
+  {context.relayInfo.url}
 </span>
 
 <style>

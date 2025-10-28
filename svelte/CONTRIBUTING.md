@@ -543,11 +543,12 @@ export const FEATURE_CONTEXT_KEY = Symbol.for('feature-context');
   import { getContext } from 'svelte';
   import { FEATURE_CONTEXT_KEY, type FeatureContext } from './context.svelte.js';
 
-  const { ndk, event, state } = getContext<FeatureContext>(FEATURE_CONTEXT_KEY);
+  // ✅ CORRECT: Keep context object (don't destructure!)
+  const context = getContext<FeatureContext>(FEATURE_CONTEXT_KEY);
 </script>
 
 <header class="feature-header">
-  <span>{state.data?.someField}</span>
+  <span>{context.state.data?.someField}</span>
 </header>
 
 <style>
@@ -670,13 +671,15 @@ Add to `svelte/registry/registry.json`:
 ✅ **MUST:**
 - Follow Root + Children pattern for composability
 - Use builders for data logic (NO data fetching in components)
-- Use context with getters for reactivity
+- **Use context with getters for reactivity (DO NOT destructure context!)**
+- **Access context properties via `context.property` to maintain reactivity**
 - Support standalone mode where it makes sense (Avatar, Name, etc.)
 - Include meaningful CSS classes for customization
 - Use Svelte 5 syntax (`$props()`, `$derived`, snippets)
 - Include JSDoc comments describing usage
 
 ❌ **MUST NOT:**
+- **Destructure context (breaks reactivity!)** - Use `const context = getContext(...)` not `const { prop } = getContext(...)`
 - Implement data fetching logic (use builders)
 - Create wrapper services
 - Include app-specific business logic
@@ -1129,6 +1132,25 @@ After creating new functionality:
 ---
 
 ## Anti-Patterns to Avoid
+
+❌ **Destructuring Context (Breaks Reactivity!)**
+```svelte
+<!-- BAD - Context values won't update -->
+<script>
+  const { event, ndk } = getContext(KEY);
+  // When parent's event prop changes, this component won't see it!
+</script>
+<div>{event.content}</div>
+
+<!-- GOOD - Context values stay reactive -->
+<script>
+  const context = getContext(KEY);
+  // Getters run each time, always fresh data
+</script>
+<div>{context.event.content}</div>
+```
+
+**Why?** Destructuring captures values at that moment. The context object uses getters, which need to be called each time to get fresh values. See ARCHITECTURE.md for detailed explanation.
 
 ❌ **Creating Wrapper Services**
 ```typescript

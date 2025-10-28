@@ -49,15 +49,15 @@
     class: className = ''
   }: Props = $props();
 
-  const { ndk, relayInfo } = getContext<RelayCardContext>(RELAY_CARD_CONTEXT_KEY);
+  const context = getContext<RelayCardContext>(RELAY_CARD_CONTEXT_KEY);
 
-  const stats = $derived(bookmarks.getRelayStats(relayInfo.url));
+  const stats = $derived(bookmarks.getRelayStats(context.relayInfo.url));
   const pubkeys = $derived(stats?.pubkeys || []);
 </script>
 
 {#if pubkeys.length > 0}
   <div class={cn('relay-card-bookmarked-by', className)}>
-    <UserProfile.AvatarGroup {ndk} {pubkeys} {max} {size} {spacing} />
+    <UserProfile.AvatarGroup ndk={context.ndk} {pubkeys} {max} {size} {spacing} />
     {#if showCount && stats}
       <span class="relay-card-bookmarked-by-count">
         {stats.count} {stats.count === 1 ? 'follow' : 'follows'}

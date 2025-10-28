@@ -1,5 +1,6 @@
 import { NDKEvent, type NDKSubscription } from "@nostr-dev-kit/ndk";
 import { NDKKind } from "@nostr-dev-kit/ndk";
+import { SvelteMap, SvelteSet } from "svelte/reactivity";
 import type { CreateThreadViewOptions, ThreadView, ThreadNode } from "./types.js";
 import {
     findRootId,
@@ -67,13 +68,13 @@ export function createThreadView({
 
     // Subscription management
     let subscription: NDKSubscription | undefined;
-    let missingEventSubscriptions = new Map<string, NDKSubscription>();
+    let missingEventSubscriptions = new SvelteMap<string, NDKSubscription>();
 
     // Event cache for the current thread
-    let eventMap = new Map<string, NDKEvent>();
+    let eventMap = new SvelteMap<string, NDKEvent>();
 
     // Track which events we've already requested descendants for
-    let requestedDescendantIds = new Set<string>();
+    let requestedDescendantIds = new SvelteSet<string>();
 
     // Initialize main event
     $effect(() => {

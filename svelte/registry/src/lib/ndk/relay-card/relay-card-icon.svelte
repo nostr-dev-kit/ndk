@@ -27,10 +27,10 @@
     class: className = ''
   }: Props = $props();
 
-  const { relayInfo } = getContext<RelayCardContext>(RELAY_CARD_CONTEXT_KEY);
+  const context = getContext<RelayCardContext>(RELAY_CARD_CONTEXT_KEY);
 
-  const icon = $derived(relayInfo.nip11?.icon);
-  const name = $derived(relayInfo.nip11?.name || relayInfo.url);
+  const icon = $derived(context.relayInfo.nip11?.icon);
+  const name = $derived(context.relayInfo.nip11?.name || context.relayInfo.url);
 </script>
 
 {#if icon}

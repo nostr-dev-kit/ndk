@@ -14,6 +14,7 @@
 	let activeTab = $state<'preview' | 'code'>('preview');
 	let highlightedCode = $state<string>('');
 	let isLoading = $state(true);
+	let copySuccess = $state(false);
 
 	onMount(async () => {
 		try {
@@ -31,6 +32,18 @@
 			isLoading = false;
 		}
 	});
+
+	async function copyCode() {
+		try {
+			await navigator.clipboard.writeText(code);
+			copySuccess = true;
+			setTimeout(() => {
+				copySuccess = false;
+			}, 2000);
+		} catch (error) {
+			console.error('Failed to copy code:', error);
+		}
+	}
 </script>
 
 <div class="code-preview-card">
@@ -65,8 +78,44 @@
 				Loading syntax highlighting...
 			</div>
 		{:else}
-			<div class="code-container">
-				{@html highlightedCode}
+			<div class="code-wrapper">
+				<button class="copy-button" onclick={copyCode} title="Copy code">
+					{#if copySuccess}
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="16"
+							height="16"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						>
+							<polyline points="20 6 9 17 4 12"></polyline>
+						</svg>
+						Copied!
+					{:else}
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="16"
+							height="16"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						>
+							<rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+							<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+						</svg>
+						Copy
+					{/if}
+				</button>
+				<div class="code-container">
+					{@html highlightedCode}
+				</div>
 			</div>
 		{/if}
 	</div>
@@ -134,7 +183,7 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		background: hsl(var(--color-muted) / 0.3);
+		background: hsl(var(--color-muted));
 	}
 
 	.loading {
@@ -161,6 +210,39 @@
 		to {
 			transform: rotate(360deg);
 		}
+	}
+
+	.code-wrapper {
+		position: relative;
+	}
+
+	.copy-button {
+		position: absolute;
+		top: 1rem;
+		right: 1rem;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.5rem 0.75rem;
+		background: hsl(var(--color-card));
+		border: 1px solid hsl(var(--color-border));
+		border-radius: 0.375rem;
+		color: hsl(var(--color-foreground));
+		font-size: 0.875rem;
+		font-weight: 500;
+		cursor: pointer;
+		transition: all 0.2s;
+		z-index: 10;
+	}
+
+	.copy-button:hover {
+		background: hsl(var(--color-muted));
+		border-color: hsl(var(--color-primary));
+	}
+
+	.copy-button svg {
+		width: 16px;
+		height: 16px;
 	}
 
 	.code-container {

@@ -91,8 +91,20 @@ describe("createReplyAction", () => {
         });
 
         it("should return count from subscription events", async () => {
+            const reply1 = new NDKEvent(ndk);
+            reply1.kind = NDKKind.Text;
+            reply1.tags = [["e", testEvent.id, "", "reply"]];
+
+            const reply2 = new NDKEvent(ndk);
+            reply2.kind = NDKKind.Text;
+            reply2.tags = [["e", testEvent.id, "", "reply"]];
+
+            const reply3 = new NDKEvent(ndk);
+            reply3.kind = NDKKind.Text;
+            reply3.tags = [["e", testEvent.id, "", "reply"]];
+
             const mockSubscription = {
-                events: [new NDKEvent(ndk), new NDKEvent(ndk), new NDKEvent(ndk)],
+                events: [reply1, reply2, reply3],
             };
             vi.mocked(ndk.$subscribe).mockReturnValue(mockSubscription as any);
 
@@ -120,6 +132,7 @@ describe("createReplyAction", () => {
             vi.spyOn(ndk, "$currentPubkey", "get").mockReturnValue(undefined);
 
             const reply1 = new NDKEvent(ndk);
+            reply1.kind = NDKKind.Text;
             reply1.pubkey = bob.pubkey;
 
             const mockSubscription = {
@@ -138,6 +151,7 @@ describe("createReplyAction", () => {
 
         it("should return false when current user has not replied", async () => {
             const reply1 = new NDKEvent(ndk);
+            reply1.kind = NDKKind.Text;
             reply1.pubkey = bob.pubkey;
 
             const mockSubscription = {
@@ -156,7 +170,9 @@ describe("createReplyAction", () => {
 
         it("should return true when current user has replied", async () => {
             const reply1 = new NDKEvent(ndk);
+            reply1.kind = NDKKind.Text;
             reply1.pubkey = alice.pubkey;
+            reply1.tags = [["e", testEvent.id, "", "reply"]];
 
             const mockSubscription = {
                 events: [reply1],
@@ -174,13 +190,19 @@ describe("createReplyAction", () => {
 
         it("should return true when current user has one of multiple replies", async () => {
             const reply1 = new NDKEvent(ndk);
+            reply1.kind = NDKKind.Text;
             reply1.pubkey = bob.pubkey;
+            reply1.tags = [["e", testEvent.id, "", "reply"]];
 
             const reply2 = new NDKEvent(ndk);
+            reply2.kind = NDKKind.Text;
             reply2.pubkey = alice.pubkey;
+            reply2.tags = [["e", testEvent.id, "", "reply"]];
 
             const reply3 = new NDKEvent(ndk);
+            reply3.kind = NDKKind.Text;
             reply3.pubkey = bob.pubkey;
+            reply3.tags = [["e", testEvent.id, "", "reply"]];
 
             const mockSubscription = {
                 events: [reply1, reply2, reply3],

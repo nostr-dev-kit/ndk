@@ -1,6 +1,7 @@
 <script lang="ts">
   import '../app.css';
   import { page } from '$app/stores';
+  import { browser } from '$app/environment';
   import { NDKSvelte, createProfileFetcher } from '@nostr-dev-kit/svelte';
   import { NDKInterestList, NDKNip07Signer, NDKPrivateKeySigner } from '@nostr-dev-kit/ndk';
   import NDKCacheAdapterSqliteWasm from '@nostr-dev-kit/cache-sqlite-wasm';
@@ -53,18 +54,20 @@
       'wss://nos.lol'
     ],
     // cacheAdapter,
-    session: {
-      autoSave: true,
-      storage: new LocalStorage(),
-      fetches: {
-        follows: true,
-        mutes: true,
-        wallet: false,
-        eventConstructors: [
-          NDKInterestList
-        ]
+    ...(browser && {
+      session: {
+        autoSave: true,
+        storage: new LocalStorage(),
+        fetches: {
+          follows: true,
+          mutes: true,
+          wallet: false,
+          eventConstructors: [
+            NDKInterestList
+          ]
+        }
       }
-    }
+    })
   });
 
   setContext('ndk', ndk);

@@ -1,5 +1,6 @@
 import type { NDKSvelte } from '../../ndk-svelte.svelte.js';
 import { normalizeRelayUrl } from '@nostr-dev-kit/ndk';
+import { SvelteMap } from 'svelte/reactivity';
 
 /**
  * NIP-11 Relay Information Document
@@ -47,7 +48,7 @@ export interface RelayInfoState {
 }
 
 // Cache for NIP-11 info
-const relayInfoCache = new Map<string, { info: RelayNIP11Info; timestamp: number }>();
+const relayInfoCache = new SvelteMap<string, { info: RelayNIP11Info; timestamp: number }>();
 const CACHE_TTL = 1000 * 60 * 60; // 1 hour
 
 async function fetchRelayInfo(relayUrl: string): Promise<RelayNIP11Info> {

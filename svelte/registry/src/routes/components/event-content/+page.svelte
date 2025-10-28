@@ -2,15 +2,28 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKEvent, NDKKind } from '@nostr-dev-kit/ndk';
-  import EventContent from '$lib/ndk/event/content/event-content.svelte';
-  import Mention from '$lib/ndk/event/content/mention/mention.svelte';
-  import Hashtag from '$lib/ndk/event/content/hashtag/hashtag.svelte';
-  import EmbeddedEvent from '$lib/ndk/event/content/event/event.svelte';
   import CodePreview from '$lib/components/code-preview.svelte';
+
+  import BasicExample from '$lib/ndk/event-content/examples/basic.svelte';
+  import BasicExampleRaw from '$lib/ndk/event-content/examples/basic.svelte?raw';
+
+  import WithEmojisExample from '$lib/ndk/event-content/examples/with-emojis.svelte';
+  import WithEmojisExampleRaw from '$lib/ndk/event-content/examples/with-emojis.svelte?raw';
+
+  import WithMediaExample from '$lib/ndk/event-content/examples/with-media.svelte';
+  import WithMediaExampleRaw from '$lib/ndk/event-content/examples/with-media.svelte?raw';
+
+  import CustomSnippetsExample from '$lib/ndk/event-content/examples/custom-snippets.svelte';
+  import CustomSnippetsExampleRaw from '$lib/ndk/event-content/examples/custom-snippets.svelte?raw';
+
+  import CustomLinksExample from '$lib/ndk/event-content/examples/custom-links.svelte';
+  import CustomLinksExampleRaw from '$lib/ndk/event-content/examples/custom-links.svelte?raw';
+
+  import PlainTextExample from '$lib/ndk/event-content/examples/plain-text.svelte';
+  import PlainTextExampleRaw from '$lib/ndk/event-content/examples/plain-text.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
-  // Example event with various content types
   const exampleEvent = new NDKEvent(ndk, {
     kind: NDKKind.Text,
     content: `This is a rich content example! 🎉
@@ -32,7 +45,6 @@ Pretty cool, right? #awesome`,
     ]
   } as any);
 
-  // Event with custom emoji
   const emojiEvent = new NDKEvent(ndk, {
     kind: NDKKind.Text,
     content: 'Here are some custom emojis: :fire: :rocket: :heart:',
@@ -45,7 +57,6 @@ Pretty cool, right? #awesome`,
     ]
   } as any);
 
-  // Event with media
   const mediaEvent = new NDKEvent(ndk, {
     kind: NDKKind.Text,
     content: `Check out this image:
@@ -60,10 +71,6 @@ https://www.youtube.com/watch?v=dQw4w9WgXcQ`,
     created_at: Math.floor(Date.now() / 1000),
     tags: []
   } as any);
-
-  function handleHashtagClick(tag: string) {
-    console.log('Hashtag clicked:', tag);
-  }
 </script>
 
 <div class="component-page">
@@ -76,9 +83,9 @@ https://www.youtube.com/watch?v=dQw4w9WgXcQ`,
     <CodePreview
       title="Basic Content Rendering"
       description="Automatically detects and renders mentions, hashtags, links, and custom emojis."
-      code={`<EventContent {ndk} {event} />`}
+      code={BasicExampleRaw}
     >
-      <EventContent {ndk} event={exampleEvent} />
+      <BasicExample {ndk} event={exampleEvent} />
     </CodePreview>
   </section>
 
@@ -86,9 +93,9 @@ https://www.youtube.com/watch?v=dQw4w9WgXcQ`,
     <CodePreview
       title="Custom Emoji Support"
       description="Custom emojis from event tags are automatically rendered."
-      code={`<EventContent {ndk} {event} />`}
+      code={WithEmojisExampleRaw}
     >
-      <EventContent {ndk} event={emojiEvent} />
+      <WithEmojisExample {ndk} event={emojiEvent} />
     </CodePreview>
   </section>
 
@@ -96,9 +103,9 @@ https://www.youtube.com/watch?v=dQw4w9WgXcQ`,
     <CodePreview
       title="Media Embedding"
       description="Images, videos, and YouTube links are automatically embedded."
-      code={`<EventContent {ndk} {event} />`}
+      code={WithMediaExampleRaw}
     >
-      <EventContent {ndk} event={mediaEvent} />
+      <WithMediaExample {ndk} event={mediaEvent} />
     </CodePreview>
   </section>
 
@@ -106,29 +113,9 @@ https://www.youtube.com/watch?v=dQw4w9WgXcQ`,
     <CodePreview
       title="Custom Snippets"
       description="Use custom snippets to override default rendering for any content type."
-      code={`<EventContent {ndk} {event}>
-  {#snippet mention({ bech32 })}
-    <Mention {ndk} {bech32} />
-  {/snippet}
-  {#snippet hashtag({ tag })}
-    <Hashtag {tag} onclick={handleHashtagClick} />
-  {/snippet}
-  {#snippet eventRef({ bech32 })}
-    <EmbeddedEvent {ndk} {bech32} />
-  {/snippet}
-</EventContent>`}
+      code={CustomSnippetsExampleRaw}
     >
-      <EventContent {ndk} event={exampleEvent}>
-        {#snippet mention({ bech32 })}
-          <Mention {ndk} {bech32} />
-        {/snippet}
-        {#snippet hashtag({ tag })}
-          <Hashtag {tag} onclick={handleHashtagClick} />
-        {/snippet}
-        {#snippet eventRef({ bech32 })}
-          <EmbeddedEvent {ndk} {bech32} />
-        {/snippet}
-      </EventContent>
+      <CustomSnippetsExample {ndk} event={exampleEvent} />
     </CodePreview>
   </section>
 
@@ -136,21 +123,9 @@ https://www.youtube.com/watch?v=dQw4w9WgXcQ`,
     <CodePreview
       title="Custom Link Rendering"
       description="Override link rendering with your own component."
-      code={`<EventContent {ndk} {event}>
-  {#snippet link({ url })}
-    <a href={url} target="_blank" rel="noopener noreferrer" class="custom-link">
-      🔗 {url}
-    </a>
-  {/snippet}
-</EventContent>`}
+      code={CustomLinksExampleRaw}
     >
-      <EventContent {ndk} event={exampleEvent}>
-        {#snippet link({ url })}
-          <a href={url} target="_blank" rel="noopener noreferrer" class="custom-link">
-            🔗 {url}
-          </a>
-        {/snippet}
-      </EventContent>
+      <CustomLinksExample {ndk} event={exampleEvent} />
     </CodePreview>
   </section>
 
@@ -158,15 +133,9 @@ https://www.youtube.com/watch?v=dQw4w9WgXcQ`,
     <CodePreview
       title="Plain Text Content"
       description="Works with plain text content without an event object."
-      code={`<EventContent
-  {ndk}
-  content="Simple text with #hashtags and links: https://example.com"
-/>`}
+      code={PlainTextExampleRaw}
     >
-      <EventContent
-        {ndk}
-        content="Simple text with #hashtags and links: https://example.com"
-      />
+      <PlainTextExample {ndk} />
     </CodePreview>
   </section>
 </div>
@@ -202,18 +171,5 @@ https://www.youtube.com/watch?v=dQw4w9WgXcQ`,
     background: white;
     border: 1px solid #e5e7eb;
     border-radius: 0.75rem;
-  }
-
-  :global(.custom-link) {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    color: #7c3aed;
-    text-decoration: none;
-    font-weight: 500;
-  }
-
-  :global(.custom-link:hover) {
-    text-decoration: underline;
   }
 </style>

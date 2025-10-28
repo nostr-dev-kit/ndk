@@ -2,16 +2,21 @@
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createThreadView } from '@nostr-dev-kit/svelte';
-  import { EventCard, ReplyAction, ReactionAction, RepostAction } from '$lib/ndk/event-card';
   import CodePreview from '$lib/components/code-preview.svelte';
+
+  import ThreadCompleteExample from '$lib/ndk/event-card/examples/thread-complete.svelte';
+  import ThreadCompleteExampleRaw from '$lib/ndk/event-card/examples/thread-complete.svelte?raw';
+
+  import ThreadLinesExample from '$lib/ndk/event-card/examples/thread-lines.svelte';
+  import ThreadLinesExampleRaw from '$lib/ndk/event-card/examples/thread-lines.svelte?raw';
+
+  import ThreadCompactExample from '$lib/ndk/event-card/examples/thread-compact.svelte';
+  import ThreadCompactExampleRaw from '$lib/ndk/event-card/examples/thread-compact.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
-  // Default nevent from the user
   const DEFAULT_NEVENT = 'nevent1qvzqqqqqqypzqzw53gd9m0sngp98993578tt5u3dgpgng6xawy7gaguv4xmmduk8qyg8wumn8ghj7mn0wd68ytnddakj7qghwaehxw309aex2mrp0yhxummnw3ezucnpdejz7qpqghp3frrq7j7ja6xqj40x4yrwvux7ymev27e2pvrgjd4gvzj7maassk7g7w';
 
-  // Create thread view builder - handles everything automatically
-  // This needs to be at the top level because it uses $state internally
   const thread = createThreadView({
     ndk,
     focusedEvent: DEFAULT_NEVENT
@@ -31,264 +36,37 @@
       <div class="text-muted-foreground">Loading thread...</div>
     </div>
   {:else}
-    <!-- Thread View Example -->
     <section class="mb-16">
       <CodePreview
         title="Complete Thread View"
         description="Full thread view showing parent context, main event (highlighted), and replies. Uses EventCard components with threading metadata."
-        code={`<script lang="ts">
-  import { getContext } from 'svelte';
-  import { createThreadView } from '@nostr-dev-kit/svelte';
-  import { EventCard, ReplyAction, ReactionAction, RepostAction } from '$lib/ndk/event-card';
-
-  const ndk = getContext<NDKSvelte>('ndk');
-
-  // Create thread view builder - handles everything automatically
-  const thread = createThreadView({
-    ndk,
-    focusedEvent: 'nevent1...'  // Can be nevent string or NDKEvent
-  });
-</script>
-
-<!-- Linear Thread Chain -->
-{#each thread.events as node}
-  {#if node.event}
-    <EventCard.Root
-      {ndk}
-      event={node.event}
-      threading={node.threading}
-    >
-      <!-- Highlight the focused event -->
-      {#if node.event.id === thread.focusedEventId}
-        <div class="focused-event">
-          <EventCard.Header variant="default" />
-          <EventCard.Content />
-          <EventCard.Actions>
-            <ReplyAction />
-            <RepostAction />
-            <ReactionAction />
-          </EventCard.Actions>
-        </div>
-      {:else}
-        <EventCard.ThreadLine />
-        <EventCard.Header variant="compact" />
-        <EventCard.Content />
-      {/if}
-    </EventCard.Root>
-  {:else}
-    <!-- Missing event placeholder -->
-    <div class="missing-event">
-      Event {node.id} not found
-      {#if node.relayHint}(hint: {node.relayHint}){/if}
-    </div>
-  {/if}
-{/each}
-
-<!-- Replies to Focused Event -->
-{#each thread.replies as reply}
-  <EventCard.Root {ndk} event={reply}>
-    <EventCard.Header variant="compact" />
-    <EventCard.Content />
-    <EventCard.Actions>
-      <ReplyAction />
-      <RepostAction />
-      <ReactionAction />
-    </EventCard.Actions>
-  </EventCard.Root>
-{/each}
-
-<!-- Replies to Other Events in Thread -->
-{#each thread.otherReplies as reply}
-  <EventCard.Root {ndk} event={reply}>
-    <EventCard.Header variant="compact" />
-    <EventCard.Content />
-    <EventCard.Actions>
-      <ReplyAction />
-      <RepostAction />
-      <ReactionAction />
-    </EventCard.Actions>
-  </EventCard.Root>
-{/each}`}
+        code={ThreadCompleteExampleRaw}
       >
-        <div class="border border-border rounded-lg overflow-hidden">
-          <!-- Linear Thread Chain -->
-          {#each thread.events as node, index}
-            {#if node.event}
-            {#key node.event.id}
-              <!-- Check if this is the focused event -->
-              {#if node.event.id === thread.focusedEventId}
-                <!-- Focused Event (Highlighted) -->
-                <div class="bg-accent/10 border-l-4 border-primary">
-                  <EventCard.Root {ndk} event={node.event}>
-                    <div
-                      class="bg-background cursor-pointer"
-                      onclick={() => thread.focusOn(node.event)}
-                      role="button"
-                      tabindex="0"
-                    >
-                      <EventCard.Header variant="default" />
-                      <div class="text-lg">
-                        <EventCard.Content class="text-xl" />
-                      </div>
-                      <EventCard.Actions>
-                        <ReplyAction />
-                        <RepostAction />
-                        <ReactionAction />
-                      </EventCard.Actions>
-                    </div>
-                  </EventCard.Root>
-                </div>
-              {:else}
-                <!-- Thread Event (Parent or Continuation) -->
-                <EventCard.Root
-                  {ndk}
-                  event={node.event}
-                  threading={node.threading}
-                >
-                  <div
-                    class="relative border-b border-border bg-background hover:bg-accent/5 transition-colors cursor-pointer"
-                    onclick={() => thread.focusOn(node.event)}
-                    role="button"
-                    tabindex="0"
-                  >
-                    <EventCard.ThreadLine />
-                    <div class="p-4">
-                      <EventCard.Header variant="compact" />
-                      <EventCard.Content />
-                    </div>
-                  </div>
-                </EventCard.Root>
-              {/if}
-              {/key}
-            {:else}
-              <div class="border-b border-border p-4 bg-background text-muted-foreground text-sm">
-                Missing event: {node.id.slice(0, 8)}...
-                {#if node.relayHint}(hint: {node.relayHint}){/if}
-              </div>
-            {/if}
-          {/each}
-
-          <!-- Replies to Focused Event -->
-          {#if thread.replies.length > 0}
-            <div class="border-t border-border bg-purple-50 px-4 py-3">
-              <h3 class="text-sm font-semibold text-purple-700">
-                {thread.replies.length} {thread.replies.length === 1 ? 'Reply' : 'Replies'} to Focused Event
-              </h3>
-            </div>
-            {#each thread.replies as reply}
-              <EventCard.Root {ndk} event={reply}>
-                <div
-                  class="border-t border-border bg-background hover:bg-accent/5 transition-colors p-4 cursor-pointer"
-                  onclick={() => thread.focusOn(reply)}
-                  role="button"
-                  tabindex="0"
-                >
-                  <EventCard.Header variant="compact" />
-                  <EventCard.Content />
-                  <EventCard.Actions>
-                    <ReplyAction />
-                    <RepostAction />
-                    <ReactionAction />
-                  </EventCard.Actions>
-                </div>
-              </EventCard.Root>
-            {/each}
-          {/if}
-
-          <!-- Replies to Other Events in Thread -->
-          {#if thread.otherReplies.length > 0}
-            <div class="border-t border-border bg-orange-50 px-4 py-3">
-              <h3 class="text-sm font-semibold text-orange-700">
-                {thread.otherReplies.length} {thread.otherReplies.length === 1 ? 'Reply' : 'Replies'} to Other Thread Events
-              </h3>
-            </div>
-            {#each thread.otherReplies as reply}
-              <EventCard.Root {ndk} event={reply}>
-                <div
-                  class="border-t border-border bg-background hover:bg-accent/5 transition-colors p-4 cursor-pointer"
-                  onclick={() => thread.focusOn(reply)}
-                  role="button"
-                  tabindex="0"
-                >
-                  <EventCard.Header variant="compact" />
-                  <EventCard.Content />
-                  <EventCard.Actions>
-                    <ReplyAction />
-                    <RepostAction />
-                    <ReactionAction />
-                  </EventCard.Actions>
-                </div>
-              </EventCard.Root>
-            {/each}
-          {/if}
-        </div>
+        <ThreadCompleteExample {ndk} nevent={DEFAULT_NEVENT} />
       </CodePreview>
     </section>
 
-    <!-- Thread Line Example -->
     <section class="mb-16">
       <CodePreview
         title="Thread Lines"
         description="EventCard.ThreadLine component shows visual connection between events in a thread."
-        code={`<EventCard.Root {ndk} {event} threading={{ showLineToNext: true }}>
-  <EventCard.ThreadLine />
-  <EventCard.Header />
-  <EventCard.Content />
-</EventCard.Root>`}
+        code={ThreadLinesExampleRaw}
       >
-        <div class="border border-border rounded-lg overflow-hidden">
-          {#each thread.events as node}
-            {#if node.event}
-              <EventCard.Root
-                {ndk}
-                event={node.event}
-                threading={node.threading}
-                class="!rounded-none !shadow-none !overflow-visible border-b border-border last:border-b-0"
-              >
-                <div class="relative bg-background hover:bg-accent/5 transition-colors p-4">
-                  <EventCard.ThreadLine />
-                  <EventCard.Header variant="compact" class="!p-0 !border-0 !mb-2" />
-                  <EventCard.Content />
-                </div>
-              </EventCard.Root>
-            {/if}
-          {/each}
-        </div>
+        <ThreadLinesExample {ndk} nevent={DEFAULT_NEVENT} />
       </CodePreview>
     </section>
 
-    <!-- Compact Thread View -->
     <section class="mb-16">
       <CodePreview
         title="Compact Thread View"
         description="Space-efficient thread view with compact headers, perfect for mobile or sidebar views."
-        code={`<EventCard.Root {ndk} {event}>
-  <EventCard.Header variant="compact" />
-  <EventCard.Content />
-  <EventCard.Actions variant="compact" />
-</EventCard.Root>`}
+        code={ThreadCompactExampleRaw}
       >
-        <div class="border border-border rounded-lg overflow-hidden max-w-md">
-          {#each thread.events as node}
-            {#if node.event}
-              <EventCard.Root {ndk} event={node.event}>
-                <div class="border-b border-border last:border-b-0 bg-background hover:bg-accent/5 transition-colors p-3">
-                  <EventCard.Header variant="compact" />
-                  <EventCard.Content />
-                  <EventCard.Actions variant="compact">
-                    <ReplyAction />
-                    <ReactionAction />
-                  </EventCard.Actions>
-                </div>
-              </EventCard.Root>
-            {/if}
-          {/each}
-        </div>
+        <ThreadCompactExample {ndk} nevent={DEFAULT_NEVENT} />
       </CodePreview>
     </section>
   {/if}
 
-  <!-- Component API -->
   <section class="mb-16">
     <h2 class="text-2xl font-bold mb-4">Threading API</h2>
 

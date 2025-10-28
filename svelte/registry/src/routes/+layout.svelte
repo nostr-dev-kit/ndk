@@ -85,7 +85,7 @@
           follows: true,
           mutes: true,
           wallet: false,
-          eventConstructors: [
+          monitor: [
             NDKInterestList
           ]
         }
@@ -164,7 +164,7 @@
     // Only create profile fetcher if we have both currentUser and currentPubkey
     // Don't try to access user.pubkey as it may throw if not set
     if (!ndk.$currentUser || !ndk.$currentPubkey) return null;
-    return createProfileFetcher({ ndk, user: () => ndk.$currentUser! });
+    return createProfileFetcher({ user: () => ndk.$currentUser! }, ndk;
   });
 
   const avatarUrl = $derived(currentUserProfile?.profile?.picture);

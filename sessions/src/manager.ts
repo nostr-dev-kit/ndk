@@ -296,6 +296,19 @@ export class NDKSessionManager {
     }
 
     /**
+     * Add monitors to the active session
+     *
+     * @example
+     * ```typescript
+     * // Add monitors to active session
+     * sessions.addMonitor([NDKInterestList, 10050, 10051]);
+     * ```
+     */
+    addMonitor(monitor: import("./types").MonitorItem[]): void {
+        this.getCurrentState().addMonitor(monitor);
+    }
+
+    /**
      * Enable wallet fetching for a session
      *
      * @param pubkey - Session to enable wallet for. If not provided, uses active session.
@@ -318,13 +331,13 @@ export class NDKSessionManager {
         state.updatePreferences(targetPubkey, { walletEnabled: true });
 
         // If wallet is not already being fetched, restart the session with wallet enabled
-        const currentSubscription = session.subscription;
-        if (currentSubscription) {
-            // Stop current subscription and restart with wallet
+        const currentSubscriptions = session.subscriptions;
+        if (currentSubscriptions && currentSubscriptions.length > 0) {
+            // Stop current subscriptions and restart with wallet
             state.stopSession(targetPubkey);
             state.startSession(targetPubkey, { ...this.options.fetches, wallet: true });
         } else {
-            // No active subscription, just update preference
+            // No active subscriptions, just update preference
             // Will be used when session starts
         }
     }
@@ -352,8 +365,8 @@ export class NDKSessionManager {
         state.updatePreferences(targetPubkey, { walletEnabled: false });
 
         // If session is running, restart without wallet
-        const currentSubscription = session.subscription;
-        if (currentSubscription) {
+        const currentSubscriptions = session.subscriptions;
+        if (currentSubscriptions && currentSubscriptions.length > 0) {
             state.stopSession(targetPubkey);
             state.startSession(targetPubkey, { ...this.options.fetches, wallet: false });
         }

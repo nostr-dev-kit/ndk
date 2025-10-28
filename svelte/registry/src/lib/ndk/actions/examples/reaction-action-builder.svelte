@@ -10,7 +10,7 @@
 
   let { ndk, event }: Props = $props();
 
-  const reaction = createReactionAction(() => ({ ndk, event }));
+  const reaction = createReactionAction(() => ({ event }), ndk);
 </script>
 
 <div class="demo-event-card">

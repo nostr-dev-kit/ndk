@@ -54,8 +54,8 @@
     setTimeout(() => (lastEvent = ''), 5000);
   }
 
-  const customUserFollow = createFollowAction(() => ({ ndk, target: exampleUser }));
-  const customHashtagFollow = createFollowAction(() => ({ ndk, target: hashtagInput }));
+  const customUserFollow = createFollowAction(() => ({ target: exampleUser }), ndk);
+  const customHashtagFollow = createFollowAction(() => ({ target: hashtagInput }), ndk);
 
   async function handleCustomToggle(type: 'user' | 'hashtag') {
     try {
@@ -335,7 +335,11 @@
       </p>
       <pre><code>{`import { createFollowAction } from '@nostr-dev-kit/svelte';
 
-const followButton = createFollowAction(() => ({ ndk, target: user }));
+// NDK from context
+const followButton = createFollowAction(() => ({ target: user }));
+
+// Or with explicit NDK
+const followButton = createFollowAction(() => ({ target: user }), ndk);
 
 // Access reactive state
 followButton.isFollowing // boolean

@@ -45,25 +45,33 @@ NDK-svelte separates concerns into two layers:
 
 ### Builder Signature Pattern
 
-All builders follow a consistent signature pattern:
+**NEW in v3.0:** All builders follow a consistent signature pattern:
 
 ```typescript
-// Pattern: create[Feature](props: Create[Feature]Props): [Feature]State
+// Pattern: create[Feature](config: () => Config, ndk?: NDKSvelte): State
 
-export function createFeature(props: CreateFeatureProps): FeatureState
-export function createProfileFetcher(props: CreateProfileFetcherProps): ProfileFetcherState
-export function createFollowAction(config: () => FollowActionConfig) // Note: Actions use config function
+export function createFeature(config: () => FeatureConfig, ndk?: NDKSvelte): FeatureState
+export function createProfileFetcher(config: () => ProfileFetcherConfig, ndk?: NDKSvelte): ProfileFetcherState
+export function createFollowAction(config: () => FollowActionConfig, ndk?: NDKSvelte): FollowActionState
 ```
 
-**Props Interface Pattern:**
+**Config Interface Pattern** (NO `ndk` field):
 ```typescript
-export interface CreateFeatureProps {
-    ndk: NDKSvelte;                    // Always required
-    event?: () => NDKEvent | undefined; // Functions for reactivity!
-    user?: () => NDKUser | undefined;   // Functions for reactivity!
-    // NOT: event?: NDKEvent (won't be reactive)
+export interface FeatureConfig {
+    event: NDKEvent;              // Direct values, not functions!
+    user?: NDKUser;               // Direct values, not functions!
+    showReplies?: boolean;        // Optional config
+    // NO ndk field - it's a separate parameter!
 }
 ```
+
+**Key Changes from v2.x:**
+- ✅ Config is now a **function**: `() => Config`
+- ✅ NDK is **separate parameter**: `ndk?: NDKSvelte`
+- ✅ Config values are **direct**: `event: NDKEvent` (not `event: () => NDKEvent`)
+- ✅ NDK **auto-resolves from context** if not provided
+
+> **Migration Status**: Some builders still use the old API. See `BUILDER_REFACTOR_PLAN.md` for progress.
 
 **Return Shape Pattern:**
 ```typescript
@@ -99,21 +107,40 @@ return {
 - ❌ Never `event: NDKEvent` (not reactive)
 - ❌ Never `return state` directly (not encapsulated)
 
-**Why Functions for Props?**
+**Why Config as Function?**
 ```typescript
+let currentEvent = $state(event1);
+
 // ❌ BAD - Not reactive
-const card = createEventCard({ ndk, event: myEvent });
-myEvent = anotherEvent; // Builder won't update!
+const card = createEventCard({ event: currentEvent }, ndk);
+currentEvent = event2; // Builder won't update!
 
 // ✅ GOOD - Reactive
-const card = createEventCard({ ndk, event: () => myEvent });
-myEvent = anotherEvent; // Builder tracks change via $effect
+const card = createEventCard(() => ({ event: currentEvent }), ndk);
+currentEvent = event2; // Builder tracks change via $effect
+```
+
+**Why NDK from Context?**
+```svelte
+<!-- Set once in root layout -->
+<script>
+  import { setContext } from 'svelte';
+  const ndk = createNDK({ /* ... */ });
+  setContext('ndk', ndk);
+</script>
+
+<!-- Use anywhere without passing ndk -->
+<script>
+  // Auto-resolves from context!
+  const card = createEventCard(() => ({ event }));
+  const profile = createProfileFetcher(() => ({ user }));
+</script>
 ```
 
 **Why Getters for Return?**
 ```typescript
 // Getters allow lazy evaluation and fine-grained reactivity
-const card = createEventCard({ ndk, event: () => event });
+const card = createEventCard(() => ({ event }));
 
 // This subscription only starts when you access the getter:
 const count = card.replies.count; // ← Subscription starts here
@@ -148,6 +175,7 @@ svelte/src/lib/builders/
 // svelte/src/lib/builders/feature/index.svelte.ts
 import type { NDKSvelte } from '$lib/ndk-svelte.svelte.js';
 import type { NDKEvent, NDKUser } from '@nostr-dev-kit/ndk';
+import { resolveNDK } from '../resolve-ndk.svelte.js';
 
 // 1. Define State Interface (what the builder returns)
 export interface FeatureState {
@@ -156,21 +184,27 @@ export interface FeatureState {
     error: string | null;
 }
 
-// 2. Define Props Interface (configuration)
-export interface CreateFeatureProps {
-    ndk: NDKSvelte;
-    // Use FUNCTIONS for reactive inputs
-    event?: () => NDKEvent | undefined;
-    user?: () => NDKUser | undefined;
+// 2. Define Config Interface (NO ndk field!)
+export interface FeatureConfig {
+    event: NDKEvent;           // Direct values
+    user?: NDKUser;            // Direct values
+    showDetails?: boolean;     // Optional config
 }
 
 // 3. Builder Function
 /**
  * Description of what this builder does
  *
+ * @param config - Function returning configuration
+ * @param ndk - Optional NDK instance (uses context if not provided)
+ *
  * @example
  * ```ts
- * const feature = createFeature({ ndk, event: () => event });
+ * // NDK from context
+ * const feature = createFeature(() => ({ event }));
+ *
+ * // Or with explicit NDK
+ * const feature = createFeature(() => ({ event }), customNDK);
  *
  * // Access reactive state
  * feature.data     // Your data
@@ -178,8 +212,14 @@ export interface CreateFeatureProps {
  * feature.error    // Error state
  * ```
  */
-export function createFeature(props: CreateFeatureProps): FeatureState {
-    // 4. Create internal reactive state
+export function createFeature(
+    config: () => FeatureConfig,
+    ndk?: NDKSvelte
+): FeatureState {
+    // 4. Resolve NDK from parameter or context
+    const resolvedNDK = resolveNDK(ndk);
+
+    // 5. Create internal reactive state
     const state = $state<{
         data: YourData | null;
         loading: boolean;
@@ -190,20 +230,20 @@ export function createFeature(props: CreateFeatureProps): FeatureState {
         error: null
     });
 
-    // 5. Implement logic with $effect for reactivity
+    // 6. Implement logic with $effect for reactivity
     $effect(() => {
-        const currentEvent = props.event?.();
-        if (!currentEvent) return;
+        const { event, user, showDetails } = config();
+        if (!event) return;
 
         // Your logic here
-        fetchData(currentEvent);
+        fetchData(event);
     });
 
     async function fetchData(event: NDKEvent) {
         state.loading = true;
         try {
-            // Use NDK methods directly - NO wrappers!
-            const result = await props.ndk.fetchEvent(...);
+            // Use resolvedNDK methods directly - NO wrappers!
+            const result = await resolvedNDK.fetchEvent(...);
             state.data = result;
         } catch (err) {
             state.error = err.message;
@@ -212,7 +252,7 @@ export function createFeature(props: CreateFeatureProps): FeatureState {
         }
     }
 
-    // 6. Return object with getters
+    // 7. Return object with getters
     return {
         get data() {
             return state.data;

@@ -1,12 +1,12 @@
 <script lang="ts">
   import { RelayCard } from '$lib/ndk/relay-card';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import type { BookmarkedRelayList } from '@nostr-dev-kit/svelte';
+  import type { BookmarkedRelayListState } from '@nostr-dev-kit/svelte';
 
   interface Props {
     ndk: NDKSvelte;
-    followsBookmarks: BookmarkedRelayList;
-    bookmarksWithToggle: BookmarkedRelayList;
+    followsBookmarks: BookmarkedRelayListState;
+    bookmarksWithToggle: BookmarkedRelayListState;
   }
 
   let { ndk, followsBookmarks, bookmarksWithToggle }: Props = $props();

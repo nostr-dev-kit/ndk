@@ -9,10 +9,10 @@
     user: NDKUser;
     pubkey: string | undefined;
     onfollowsuccess: (e: Event) => void;
-    onfollowonerror: (e: Event) => void;
+    onfollowerror: (e: Event) => void;
   }
 
-  let { ndk, user, pubkey, onfollowsuccess, onfollowonerror }: Props = $props();
+  let { ndk, user, pubkey, onfollowsuccess, onfollowerror }: Props = $props();
 </script>
 
 <UserProfile.Root {ndk} {pubkey}>
@@ -25,7 +25,7 @@
         target={user}
         showIcon={false}
         {onfollowsuccess}
-        {onfollowonerror}
+        {onfollowerror}
       />
     </div>
   </div>

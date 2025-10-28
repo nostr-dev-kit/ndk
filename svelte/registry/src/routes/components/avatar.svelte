@@ -44,7 +44,7 @@
 
   // Fetch profile if we have a user
   const profileFetcher = $derived(
-    ndkUser && ndk ? createProfileFetcher({ ndk, user: () => ndkUser! }) : null
+    ndkUser && ndk ? createProfileFetcher(() => ({ user: ndkUser! }), ndk) : null
   );
 
   const imageUrl = $derived(profileFetcher?.profile?.picture || fallback);

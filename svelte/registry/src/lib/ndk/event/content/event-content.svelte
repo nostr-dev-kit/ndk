@@ -37,12 +37,11 @@
     imageGrid,
   }: EventContentProps = $props();
 
-  const parsed = createEventContent({
-    ndk,
-    event: () => event,
-    content: () => contentProp,
-    emojiTags: () => emojiTags
-  });
+  const parsed = createEventContent(() => ({
+    event,
+    content: contentProp,
+    emojiTags
+  }), ndk);
 </script>
 
 <div class="event-content {className}">
@@ -50,22 +49,28 @@
     {#if segment.type === 'text'}
       {segment.content}
     {:else if segment.type === 'npub' || segment.type === 'nprofile'}
-      {#if mention}
-        {@render mention({ bech32: segment.data as string })}
-      {:else}
-        <Mention {ndk} bech32={segment.data as string} />
+      {#if segment.data && typeof segment.data === 'string'}
+        {#if mention}
+          {@render mention({ bech32: segment.data })}
+        {:else}
+          <Mention {ndk} bech32={segment.data} />
+        {/if}
       {/if}
     {:else if segment.type === 'event-ref'}
-      {#if eventRef}
-        {@render eventRef({ bech32: segment.data as string })}
-      {:else}
-        <EmbeddedEvent {ndk} bech32={segment.data as string} />
+      {#if segment.data && typeof segment.data === 'string'}
+        {#if eventRef}
+          {@render eventRef({ bech32: segment.data })}
+        {:else}
+          <EmbeddedEvent {ndk} bech32={segment.data} />
+        {/if}
       {/if}
     {:else if segment.type === 'hashtag'}
-      {#if hashtag}
-        {@render hashtag({ tag: segment.data as string })}
-      {:else}
-        <Hashtag tag={segment.data as string} />
+      {#if segment.data && typeof segment.data === 'string'}
+        {#if hashtag}
+          {@render hashtag({ tag: segment.data })}
+        {:else}
+          <Hashtag tag={segment.data} />
+        {/if}
       {/if}
     {:else if segment.type === 'link'}
       {#if link}
@@ -100,20 +105,22 @@
         {/if}
       {/if}
     {:else if segment.type === 'emoji'}
-      {#if emoji}
-        {@render emoji({ shortcode: segment.content, url: segment.data as string })}
-      {:else}
+      {#if emoji && typeof segment.data === 'string'}
+        {@render emoji({ shortcode: segment.content, url: segment.data })}
+      {:else if typeof segment.data === 'string'}
         <img src={segment.data} alt=":{segment.content}:" class="custom-emoji" />
       {/if}
     {:else if segment.type === 'image-grid'}
-      {#if imageGrid}
-        {@render imageGrid({ urls: segment.data as string[] })}
-      {:else}
-        <div class="image-grid">
-          {#each segment.data as url, j (j)}
-            <img src={url} alt="" class="grid-image" />
-          {/each}
-        </div>
+      {#if segment.data && Array.isArray(segment.data)}
+        {#if imageGrid}
+          {@render imageGrid({ urls: segment.data })}
+        {:else}
+          <div class="image-grid">
+            {#each segment.data as url, j (j)}
+              <img src={url} alt="" class="grid-image" />
+            {/each}
+          </div>
+        {/if}
       {/if}
     {/if}
   {/each}

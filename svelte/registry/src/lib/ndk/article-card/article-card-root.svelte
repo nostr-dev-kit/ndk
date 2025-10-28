@@ -52,7 +52,7 @@
 
   // Fetch author profile (reactive to article changes)
   const authorProfile = $derived(
-    article.author ? createProfileFetcher({ ndk, user: () => article.author! }) : null
+    article.author ? createProfileFetcher(() => ({ user: article.author! }), ndk) : null
   );
 
   // Create reactive context with getters

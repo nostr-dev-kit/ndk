@@ -72,7 +72,7 @@
   const profileFetcher = $derived(
     propProfile !== undefined
       ? null // Don't fetch if profile was provided
-      : (ndkUser && ndk ? createProfileFetcher({ ndk, user: () => ndkUser! }) : null)
+      : (ndkUser && ndk ? createProfileFetcher(() => ({ user: ndkUser! }), ndk) : null)
   );
 
   const profile = $derived(propProfile !== undefined ? propProfile : profileFetcher?.profile);

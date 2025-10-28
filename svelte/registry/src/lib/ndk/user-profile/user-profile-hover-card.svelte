@@ -45,7 +45,7 @@
   // Get user and fetch profile
   const user = $derived(ndk.getUser({ pubkey }));
   const profileFetcher = $derived(
-    user && isVisible ? createProfileFetcher({ ndk, user: () => user! }) : null
+    user && isVisible ? createProfileFetcher(() => ({ user: user! }), ndk) : null
   );
 
   const profile = $derived(profileFetcher?.profile);

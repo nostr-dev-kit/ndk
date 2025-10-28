@@ -11,7 +11,7 @@
 
   let { ndk, bech32, class: className = '' }: MentionProps = $props();
 
-  const profileFetcher = $derived.by(() => createProfileFetcher({ ndk, user: () => bech32 }));
+  const profileFetcher = $derived.by(() => createProfileFetcher(() => ({ user: bech32 }), ndk));
 </script>
 
 <span class="mention {className}" role="button" tabindex="0">

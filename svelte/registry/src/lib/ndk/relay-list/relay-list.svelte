@@ -1,10 +1,10 @@
 <script lang="ts">
-  import type { EnrichedRelayInfo } from '@nostr-dev-kit/svelte';
+  import type { BookmarkedRelayWithStats } from '@nostr-dev-kit/svelte';
   import type { Snippet } from 'svelte';
   import RelayCard from '$lib/ndk/relay-card/relay-card.svelte';
 
   interface Props {
-    relays: EnrichedRelayInfo[];
+    relays: BookmarkedRelayWithStats[];
     onFetchInfo?: (url: string) => void;
     onRemove?: (url: string) => void;
     onBlacklist?: (url: string) => void;

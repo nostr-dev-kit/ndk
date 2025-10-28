@@ -1,4 +1,4 @@
-import type NDKEvent from '@nostr-dev-kit/ndk';
+import type { NDKEvent } from '@nostr-dev-kit/ndk';
 import type { NDKSvelte } from '$lib/ndk-svelte.svelte.js';
 import { resolveNDK } from '../resolve-ndk.svelte.js';
 import {
@@ -49,25 +49,29 @@ export function createEventContent(
     config: () => EventContentConfig,
     ndk?: NDKSvelte
 ): EventContentState {
-    const actualContent = $derived(config().event?.content ?? config().content ?? '');
-    const actualEmojiTags = $derived(
-        config().event ? config().event.tags.filter(t => t[0] === 'emoji') : (config().emojiTags ?? [])
-    );
-
-    const cleanedContent = $derived(actualContent.replace(/\[Image #\d+\]/gi, '').trim());
-    const emojiMap = $derived(buildEmojiMap(actualEmojiTags));
-    const parsedSegments = $derived(parseContentToSegments(cleanedContent, emojiMap));
-    const segments = $derived(groupConsecutiveImages(parsedSegments));
-
     return {
         get segments() {
-            return segments;
+            const actualContent = String(config().event?.content ?? config().content ?? '');
+            const event = config().event;
+            const actualEmojiTags = (event?.tags && Array.isArray(event.tags))
+                ? event.tags.filter(t => t[0] === 'emoji')
+                : (config().emojiTags ?? []);
+
+            const cleanedContent = actualContent.replace(/\[Image #\d+\]/gi, '').trim();
+            const emojiMap = buildEmojiMap(actualEmojiTags);
+            const parsedSegments = parseContentToSegments(cleanedContent, emojiMap);
+            return groupConsecutiveImages(parsedSegments);
         },
         get content() {
-            return cleanedContent;
+            const actualContent = String(config().event?.content ?? config().content ?? '');
+            return actualContent.replace(/\[Image #\d+\]/gi, '').trim();
         },
         get emojiMap() {
-            return emojiMap;
+            const event = config().event;
+            const actualEmojiTags = (event?.tags && Array.isArray(event.tags))
+                ? event.tags.filter(t => t[0] === 'emoji')
+                : (config().emojiTags ?? []);
+            return buildEmojiMap(actualEmojiTags);
         },
     };
 }

@@ -1,25 +1,11 @@
-<!--
-  @component UserProfile.Field
-  Displays any field from a user's Nostr profile (about, website, nip05, etc.).
-
-  Supports both context mode (within UserProfile.Root) and standalone mode (with direct props).
-  Renders nothing if the field has no data.
-
-  @example
-  ```svelte
-  <!-- Context mode -->
-  <UserProfile.Root {ndk} {pubkey}>
-    <UserProfile.Field field="about" />
-    <UserProfile.Field field="website" />
-    <UserProfile.Field field="nip05" />
-  </UserProfile.Root>
-
-  <!-- Standalone mode -->
-  <UserProfile.Field {ndk} {user} field="about" />
-  <UserProfile.Field {ndk} {user} {profile} field="website" />
-  ```
--->
 <script lang="ts">
+  /**
+   * @component UserProfile.Field
+   * Displays any field from a user's Nostr profile (about, website, nip05, etc.).
+   *
+   * Supports both context mode (within UserProfile.Root) and standalone mode (with direct props).
+   * Renders nothing if the field has no data.
+   */
   import { getContext } from 'svelte';
   import { USER_PROFILE_CONTEXT_KEY, type UserProfileContext } from './context.svelte.js';
   import type { NDKUser, NDKUserProfile } from '@nostr-dev-kit/ndk';
@@ -79,7 +65,7 @@
   const profileFetcher = $derived(
     propProfile !== undefined
       ? null // Don't fetch if profile was provided
-      : (ndkUser && ndk ? createProfileFetcher({ ndk, user: () => ndkUser! }) : null)
+      : (ndkUser && ndk ? createProfileFetcher(() => ({ user: ndkUser! }), ndk) : null)
   );
 
   const profile = $derived(propProfile !== undefined ? propProfile : profileFetcher?.profile);

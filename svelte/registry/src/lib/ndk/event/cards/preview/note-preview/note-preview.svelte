@@ -10,7 +10,7 @@
 <script lang="ts">
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import Avatar from '$lib/ndk/user/avatar/avatar.svelte';
+  import Avatar from '$lib/ndk/user-profile/user-profile-avatar.svelte';
   import EventContent from '$lib/ndk/event/content/event-content.svelte';
 
   interface Props {

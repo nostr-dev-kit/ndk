@@ -37,7 +37,7 @@ describe("createMuteAction", () => {
         it("should return false when target is undefined", () => {
             let action: any;
             cleanup = $effect.root(() => {
-                action = createMuteAction(() => ({ ndk, target: undefined }));
+                action = createMuteAction(() => ({ target: undefined }), ndk);
             });
 
             expect(action.isMuted).toBe(false);
@@ -49,7 +49,7 @@ describe("createMuteAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createMuteAction(() => ({ ndk, target: bob }));
+                action = createMuteAction(() => ({ target: bob }), ndk);
             });
 
             expect(action.isMuted).toBe(false);
@@ -62,7 +62,7 @@ describe("createMuteAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createMuteAction(() => ({ ndk, target: bob }));
+                action = createMuteAction(() => ({ target: bob }), ndk);
             });
 
             expect(action.isMuted).toBe(true);
@@ -75,7 +75,7 @@ describe("createMuteAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createMuteAction(() => ({ ndk, target: bob.pubkey }));
+                action = createMuteAction(() => ({ target: bob.pubkey }), ndk);
             });
 
             expect(action.isMuted).toBe(true);
@@ -87,7 +87,7 @@ describe("createMuteAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createMuteAction(() => ({ ndk, target: userWithoutPubkey }));
+                action = createMuteAction(() => ({ target: userWithoutPubkey }), ndk);
             });
 
             // Accessing isMuted will throw because user.pubkey throws when not set
@@ -99,7 +99,7 @@ describe("createMuteAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createMuteAction(() => ({ ndk, target: bob }));
+                action = createMuteAction(() => ({ target: bob }), ndk);
             });
 
             expect(action.isMuted).toBe(false);
@@ -112,7 +112,7 @@ describe("createMuteAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createMuteAction(() => ({ ndk, target: undefined }));
+                action = createMuteAction(() => ({ target: undefined }), ndk);
             });
 
             await action.mute();
@@ -125,7 +125,7 @@ describe("createMuteAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createMuteAction(() => ({ ndk, target: bob }));
+                action = createMuteAction(() => ({ target: bob }), ndk);
             });
 
             await expect(action.mute()).rejects.toThrow("User must be logged in to mute");
@@ -136,7 +136,7 @@ describe("createMuteAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createMuteAction(() => ({ ndk, target: bob }));
+                action = createMuteAction(() => ({ target: bob }), ndk);
             });
 
             await action.mute();
@@ -149,7 +149,7 @@ describe("createMuteAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createMuteAction(() => ({ ndk, target: bob.pubkey }));
+                action = createMuteAction(() => ({ target: bob.pubkey }), ndk);
             });
 
             await action.mute();
@@ -163,7 +163,7 @@ describe("createMuteAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createMuteAction(() => ({ ndk, target: bob }));
+                action = createMuteAction(() => ({ target: bob }), ndk);
             });
 
             expect(action.isMuted).toBe(false);
@@ -179,7 +179,7 @@ describe("createMuteAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createMuteAction(() => ({ ndk, target: bob }));
+                action = createMuteAction(() => ({ target: bob }), ndk);
             });
 
             expect(action.isMuted).toBe(true);
@@ -198,7 +198,7 @@ describe("createMuteAction", () => {
 
             let action: any;
             cleanup = $effect.root(() => {
-                action = createMuteAction(() => ({ ndk, target: bob }));
+                action = createMuteAction(() => ({ target: bob }), ndk);
             });
 
             await waitForEffects();

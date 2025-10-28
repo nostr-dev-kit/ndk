@@ -32,15 +32,17 @@ export class ReactiveSessionsStore {
                 sessionsObj[pubkey] = session;
             });
             this.sessions = sessionsObj;
-            this.activePubkey = state.activePubkey;
 
-            // Sync signer to NDK
+            // Sync signer to NDK BEFORE setting activePubkey
+            // This prevents race conditions where reactive code runs before signer is ready
             if (state.activePubkey) {
                 const signer = state.signers.get(state.activePubkey);
                 if (signer && state.ndk) {
                     state.ndk.signer = signer;
                 }
             }
+
+            this.activePubkey = state.activePubkey;
         });
 
         // Restore sessions on init
@@ -259,6 +261,19 @@ export class ReactiveSessionsStore {
      */
     stop(pubkey: Hexpubkey): void {
         this.#manager.stopSession(pubkey);
+    }
+
+    /**
+     * Add monitors to the active session
+     *
+     * @example
+     * ```ts
+     * // Add monitors to active session
+     * ndk.$sessions.addMonitor([NDKInterestList, 10050, 10051]);
+     * ```
+     */
+    addMonitor(monitor: import("@nostr-dev-kit/sessions").MonitorItem[]): void {
+        this.#manager.addMonitor(monitor);
     }
 
     /**

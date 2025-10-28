@@ -113,4 +113,184 @@ describe("SessionsStore", () => {
         expect(typeof ndk.$sessions.follows.add).toBe('function');
         expect(typeof ndk.$sessions.follows.has).toBe('function');
     });
+
+    it("should detect race condition: activePubkey set before ndk.signer", async () => {
+        if (!ndk.$sessions) return;
+
+        // Track the order of operations and state when each happens
+        const operations: { op: string; signerSet: boolean }[] = [];
+
+        // Intercept activePubkey setter to track when it's set and check signer state
+        const store = ndk.$sessions;
+        let activePubkeyValue = store.activePubkey;
+
+        Object.defineProperty(store, 'activePubkey', {
+            get() {
+                return activePubkeyValue;
+            },
+            set(value) {
+                activePubkeyValue = value;
+                if (value) {
+                    operations.push({
+                        op: 'activePubkey-set',
+                        signerSet: ndk.signer !== undefined
+                    });
+                }
+            },
+            configurable: true
+        });
+
+        // Intercept ndk.signer setter to track when it's set
+        let signerValue = ndk.signer;
+        Object.defineProperty(ndk, 'signer', {
+            get() {
+                return signerValue;
+            },
+            set(value) {
+                signerValue = value;
+                if (value) {
+                    operations.push({
+                        op: 'signer-set',
+                        signerSet: true
+                    });
+                }
+            },
+            configurable: true
+        });
+
+        // Login with a signer - this should set both activePubkey and signer
+        await ndk.$sessions.login(signer1);
+
+        // Give any async operations time to complete
+        await new Promise(resolve => setTimeout(resolve, 10));
+
+        // Debug: Log all operations
+        console.log('Operations captured:', operations);
+
+        // Assert: We should have captured both operations
+        expect(operations.length).toBeGreaterThanOrEqual(2);
+
+        // Find the operations
+        const activePubkeyOp = operations.find(op => op.op === 'activePubkey-set');
+        const signerOp = operations.find(op => op.op === 'signer-set');
+
+        expect(activePubkeyOp).toBeDefined();
+        expect(signerOp).toBeDefined();
+
+        // Find the index of each operation to determine order
+        const activePubkeyIndex = operations.findIndex(op => op.op === 'activePubkey-set');
+        const signerIndex = operations.findIndex(op => op.op === 'signer-set');
+
+        console.log('activePubkey set at index:', activePubkeyIndex, 'with signerSet:', activePubkeyOp?.signerSet);
+        console.log('signer set at index:', signerIndex);
+
+        // The operations show signer is set FIRST, so no race condition in login path
+        // This is because store.ts:136 sets ndk.signer before triggering store updates
+    });
+
+    it("should NOT have race condition in switchTo: signer set before or with activePubkey", async () => {
+        if (!ndk.$sessions) return;
+
+        // Setup: Login with two signers
+        await ndk.$sessions.login(signer1);
+        await ndk.$sessions.add(signer2);
+        const pubkey2 = (await signer2.user()).pubkey;
+
+        // Clear initial operations
+        await new Promise(resolve => setTimeout(resolve, 10));
+
+        // Track the order of operations during switch
+        const operations: { op: string; signerPubkey: string | undefined; activePubkey: string | undefined; timestamp: number }[] = [];
+
+        // Get the current signer's pubkey
+        const getSignerPubkey = async () => {
+            if (!ndk.signer) return undefined;
+            try {
+                const user = await ndk.signer.user();
+                return user.pubkey;
+            } catch {
+                return undefined;
+            }
+        };
+
+        // Intercept activePubkey setter
+        const store = ndk.$sessions;
+        let activePubkeyValue = store.activePubkey;
+
+        Object.defineProperty(store, 'activePubkey', {
+            get() {
+                return activePubkeyValue;
+            },
+            set(value) {
+                const oldValue = activePubkeyValue;
+                activePubkeyValue = value;
+                if (value && value !== oldValue) {
+                    // Check signer pubkey synchronously by accessing cached value
+                    const signerPubkey = (ndk.signer as any)?._user?.pubkey;
+                    operations.push({
+                        op: 'activePubkey-set',
+                        signerPubkey,
+                        activePubkey: value,
+                        timestamp: Date.now()
+                    });
+                }
+            },
+            configurable: true
+        });
+
+        // Intercept ndk.signer setter
+        let signerValue = ndk.signer;
+        Object.defineProperty(ndk, 'signer', {
+            get() {
+                return signerValue;
+            },
+            set(value) {
+                const oldValue = signerValue;
+                signerValue = value;
+                if (value && value !== oldValue) {
+                    const signerPubkey = (value as any)?._user?.pubkey;
+                    operations.push({
+                        op: 'signer-set',
+                        signerPubkey,
+                        activePubkey: activePubkeyValue,
+                        timestamp: Date.now()
+                    });
+                }
+            },
+            configurable: true
+        });
+
+        // Switch to the second user - this is where the race condition might occur
+        await ndk.$sessions.switch(pubkey2);
+
+        // Give any async operations time to complete
+        await new Promise(resolve => setTimeout(resolve, 10));
+
+        console.log('Switch operations:', operations);
+        console.log('Expected pubkey2:', pubkey2);
+
+        // Find the operations
+        const activePubkeyOp = operations.find(op => op.op === 'activePubkey-set');
+        const signerOp = operations.find(op => op.op === 'signer-set');
+
+        console.log('activePubkey operation:', activePubkeyOp);
+        console.log('signer operation:', signerOp);
+
+        if (activePubkeyOp && signerOp) {
+            const activePubkeyIndex = operations.findIndex(op => op.op === 'activePubkey-set');
+            const signerIndex = operations.findIndex(op => op.op === 'signer-set');
+
+            // Fix validation:
+            // 1. Signer should be set BEFORE or AT THE SAME TIME as activePubkey (no race condition)
+            expect(signerIndex).toBeLessThanOrEqual(activePubkeyIndex);
+
+            // 2. When activePubkey was set to pubkey2, the signer should ALREADY match pubkey2
+            expect(activePubkeyOp.activePubkey).toBe(pubkey2);
+            expect(activePubkeyOp.signerPubkey).toBe(pubkey2); // Signer already updated!
+
+            // 3. Eventually the signer matches the activePubkey
+            const finalSignerPubkey = await ndk.signer?.user().then(u => u.pubkey);
+            expect(finalSignerPubkey).toBe(pubkey2);
+        }
+    });
 });

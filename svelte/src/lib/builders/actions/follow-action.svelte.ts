@@ -1,22 +1,27 @@
 import type { NDKUser } from "@nostr-dev-kit/ndk";
 import { NDKInterestList } from "@nostr-dev-kit/ndk";
 import type { NDKSvelte } from "../../ndk-svelte.svelte.js";
+import { resolveNDK } from "../resolve-ndk.svelte.js";
 
 export interface FollowActionConfig {
-    ndk: NDKSvelte;
     target: NDKUser | string | undefined;
 }
 
 /**
  * Creates a reactive follow action state manager
  *
- * @param config - Function returning configuration with ndk and target
+ * @param config - Function returning configuration with target
+ * @param ndk - Optional NDK instance (uses context if not provided)
  * @returns Object with isFollowing state and follow function
  *
  * @example
  * ```svelte
  * <script>
- *   const followAction = createFollowAction(() => ({ ndk, target: user }));
+ *   // NDK from context
+ *   const followAction = createFollowAction(() => ({ target: user }));
+ *
+ *   // Or with explicit NDK
+ *   const followAction = createFollowAction(() => ({ target: user }), ndk);
  * </script>
  *
  * <button onclick={followAction.follow}>
@@ -25,15 +30,18 @@ export interface FollowActionConfig {
  * ```
  */
 export function createFollowAction(
-    config: () => FollowActionConfig
+    config: () => FollowActionConfig,
+    ndk?: NDKSvelte
 ) {
+    const resolvedNDK = resolveNDK(ndk);
+
     const isFollowing = $derived.by(() => {
-        const { ndk, target } = config();
+        const { target } = config();
         if (!target) return false;
 
         // String = hashtag
         if (typeof target === 'string') {
-            const interestList = ndk.$sessionEvent<NDKInterestList>(NDKInterestList);
+            const interestList = resolvedNDK.$sessionEvent<NDKInterestList>(NDKInterestList);
             if (!interestList) return false;
             return interestList.hasInterest(target.toLowerCase());
         }
@@ -41,7 +49,7 @@ export function createFollowAction(
         // NDKUser = user
         try {
             const pubkey = target.pubkey;
-            return ndk.$follows.has(pubkey);
+            return resolvedNDK.$follows.has(pubkey);
         } catch {
             // User doesn't have pubkey set yet (e.g., from createFetchUser before loaded)
             return false;
@@ -49,12 +57,12 @@ export function createFollowAction(
     });
 
     async function follow(): Promise<void> {
-        const { ndk, target } = config();
+        const { target } = config();
         if (!target) return;
 
         // String = hashtag
         if (typeof target === 'string') {
-            const interestList = ndk.$sessionEvent<NDKInterestList>(NDKInterestList);
+            const interestList = resolvedNDK.$sessionEvent<NDKInterestList>(NDKInterestList);
             if (!interestList) {
                 throw new Error("No interest list found. User may not be logged in.");
             }
@@ -80,9 +88,9 @@ export function createFollowAction(
         }
 
         if (isFollowing) {
-            await ndk.$follows.remove(pubkey);
+            await resolvedNDK.$follows.remove(pubkey);
         } else {
-            await ndk.$follows.add(pubkey);
+            await resolvedNDK.$follows.add(pubkey);
         }
     }
 

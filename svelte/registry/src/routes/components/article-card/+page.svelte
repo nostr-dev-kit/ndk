@@ -67,6 +67,7 @@
     <CodePreview
       title="Portrait Layout"
       description="Vertical card layout with image on top. Perfect for grid displays and featured content."
+      component="article-card-portrait"
       code={`<ArticleCard.Portrait {ndk} {article} />
 
 <!-- With custom sizing -->
@@ -94,6 +95,7 @@
     <CodePreview
       title="Medium Layout"
       description="Horizontal card layout with image on right. Ideal for list views and article feeds."
+      component="article-card-medium"
       code={`<ArticleCard.Medium {ndk} {article} />
 
 <!-- With different image sizes -->
@@ -136,6 +138,7 @@
     <CodePreview
       title="Medium with Stats"
       description="Medium layout with engagement stats (reactions and replies). Stats footer is interactive while card content navigates to article."
+      component="article-card-medium-with-stats"
       code={`<ArticleCard.MediumWithStats {ndk} {article} />
 
 <!-- With custom image size -->

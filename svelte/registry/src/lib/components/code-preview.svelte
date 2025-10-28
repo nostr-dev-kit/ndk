@@ -1,17 +1,19 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { codeToHtml } from 'shiki';
+	import InstallCommand from './install-command.svelte';
 
 	interface Props {
 		code: string;
 		title?: string;
 		description?: string;
+		component?: string;
 		children?: import('svelte').Snippet;
 	}
 
-	let { code, title, description, children }: Props = $props();
+	let { code, title, description, component, children }: Props = $props();
 
-	let activeTab = $state<'preview' | 'code'>('preview');
+	let activeTab = $state<'preview' | 'code' | 'install'>('preview');
 	let highlightedCode = $state<string>('');
 	let isLoading = $state(true);
 	let copySuccess = $state(false);
@@ -65,12 +67,25 @@
 		<button class="tab" class:active={activeTab === 'code'} onclick={() => (activeTab = 'code')}>
 			Code
 		</button>
+		{#if component}
+			<button
+				class="tab"
+				class:active={activeTab === 'install'}
+				onclick={() => (activeTab = 'install')}
+			>
+				Install
+			</button>
+		{/if}
 	</div>
 
 	<div class="content">
 		{#if activeTab === 'preview'}
 			<div class="preview">
 				{@render children?.()}
+			</div>
+		{:else if activeTab === 'install'}
+			<div class="install-tab">
+				<InstallCommand componentName={component} />
 			</div>
 		{:else if isLoading}
 			<div class="loading">
@@ -123,8 +138,8 @@
 
 <style>
 	.code-preview-card {
-		background: hsl(var(--color-card));
-		border: 1px solid hsl(var(--color-border));
+		background: var(--color-card);
+		border: 1px solid var(--color-border);
 		border-radius: 0.5rem;
 		overflow: hidden;
 	}
@@ -148,7 +163,7 @@
 		display: flex;
 		gap: 0.25rem;
 		padding: 1rem 1.5rem 0;
-		border-bottom: 1px solid hsl(var(--color-border));
+		border-bottom: 1px solid var(--color-border);
 	}
 
 	.tab {
@@ -183,7 +198,11 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		background: hsl(var(--color-muted));
+		background: var(--color-muted);
+	}
+
+	.install-tab {
+		padding: 2rem 1.5rem;
 	}
 
 	.loading {
@@ -224,8 +243,8 @@
 		align-items: center;
 		gap: 0.5rem;
 		padding: 0.5rem 0.75rem;
-		background: hsl(var(--color-card));
-		border: 1px solid hsl(var(--color-border));
+		background: var(--color-card);
+		border: 1px solid var(--color-border);
 		border-radius: 0.375rem;
 		color: hsl(var(--color-foreground));
 		font-size: 0.875rem;

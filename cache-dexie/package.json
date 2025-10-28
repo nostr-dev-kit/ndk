@@ -1,63 +1,63 @@
 {
-    "name": "@nostr-dev-kit/cache-dexie",
-    "version": "2.7.8-beta.14",
-    "description": "NDK Dexie Cache Adapter",
-    "license": "MIT",
-    "docs": "typedoc",
-    "bugs": {
-        "url": "https://github.com/nostr-dev-kit/cache-dexie/issues"
+  "name": "@nostr-dev-kit/cache-dexie",
+  "version": "2.7.8-beta.15",
+  "description": "NDK Dexie Cache Adapter",
+  "license": "MIT",
+  "docs": "typedoc",
+  "bugs": {
+    "url": "https://github.com/nostr-dev-kit/cache-dexie/issues"
+  },
+  "homepage": "https://github.com/nostr-dev-kit/cache-dexie#readme",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "exports": {
+    "import": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
     },
-    "homepage": "https://github.com/nostr-dev-kit/cache-dexie#readme",
-    "main": "./dist/index.js",
-    "module": "./dist/index.mjs",
-    "exports": {
-        "import": {
-            "types": "./dist/index.d.mts",
-            "default": "./dist/index.mjs"
-        },
-        "require": {
-            "types": "./dist/index.d.ts",
-            "default": "./dist/index.js"
-        }
-    },
-    "files": [
-        "dist",
-        "README.md"
-    ],
-    "scripts": {
-        "dev": "bun run build --watch",
-        "build": "tsup src/index.ts src/performance-test.ts --format cjs,esm --dts",
-        "clean": "rm -rf dist",
-        "lint": "prettier --check . && eslint .",
-        "format": "prettier --write .",
-        "test": "vitest",
-        "perf-test": "bun run build && node dist/performance-test.js"
-    },
-    "keywords": [
-        "nostr",
-        "dexie",
-        "cache"
-    ],
-    "authors": [
-        "pablof7z",
-        "erskingardner"
-    ],
-    "devDependencies": {
-        "@types/debug": "^4.1.12",
-        "@types/node": "^24.9.0",
-        "fake-indexeddb": "^6.0.0",
-        "prettier": "^3.3.3",
-        "ts-node": "^10.9.2",
-        "tsup": "^8.4.0",
-        "typedoc": "^0.28.14",
-        "typedoc-plugin-markdown": "^4.9.0",
-        "vitest": "^3.2.4"
-    },
-    "dependencies": {
-        "@nostr-dev-kit/ndk": "3.0.0-beta.14",
-        "debug": "^4.3.7",
-        "dexie": "^4.0.8",
-        "nostr-tools": "^2.17.0",
-        "typescript-lru-cache": "^2.0.0"
+    "require": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "dev": "bun run build --watch",
+    "build": "tsup src/index.ts src/performance-test.ts --format cjs,esm --dts",
+    "clean": "rm -rf dist",
+    "lint": "prettier --check . && eslint .",
+    "format": "prettier --write .",
+    "test": "vitest",
+    "perf-test": "bun run build && node dist/performance-test.js"
+  },
+  "keywords": [
+    "nostr",
+    "dexie",
+    "cache"
+  ],
+  "authors": [
+    "pablof7z",
+    "erskingardner"
+  ],
+  "devDependencies": {
+    "@types/debug": "^4.1.12",
+    "@types/node": "^24.9.0",
+    "fake-indexeddb": "^6.0.0",
+    "prettier": "^3.3.3",
+    "ts-node": "^10.9.2",
+    "tsup": "^8.4.0",
+    "typedoc": "^0.28.14",
+    "typedoc-plugin-markdown": "^4.9.0",
+    "vitest": "^3.2.4"
+  },
+  "dependencies": {
+    "@nostr-dev-kit/ndk": "3.0.0-beta.15",
+    "debug": "^4.3.7",
+    "dexie": "^4.0.8",
+    "nostr-tools": "^2.17.0",
+    "typescript-lru-cache": "^2.0.0"
+  }
 }

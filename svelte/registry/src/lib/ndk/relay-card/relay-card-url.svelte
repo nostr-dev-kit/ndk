@@ -32,6 +32,9 @@
   }: Props = $props();
 
   const context = getContext<RelayCardContext>(RELAY_CARD_CONTEXT_KEY);
+  if (!context) {
+    throw new Error('RelayCard.Url must be used within RelayCard.Root');
+  }
 </script>
 
 <span class={cn('relay-card-url', size, truncate && 'relay-card-url-truncate', className)}>

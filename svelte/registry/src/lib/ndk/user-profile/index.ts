@@ -47,25 +47,29 @@
 // Core components
 import Root from './user-profile-root.svelte';
 import Avatar from './user-profile-avatar.svelte';
-import AvatarGroup from './avatar-group.svelte';
 import Name from './user-profile-name.svelte';
 import Field from './user-profile-field.svelte';
 import Handle from './user-profile-handle.svelte';
 import Bio from './user-profile-bio.svelte';
+import Banner from './user-profile-banner.svelte';
+import Nip05 from './user-profile-nip05.svelte';
 import HoverCard from './user-profile-hover-card.svelte';
-import Horizontal from './user-profile-horizontal.svelte';
+import AvatarName from './user-profile-avatar-name.svelte';
+import Follow from './user-profile-follow.svelte';
 
 // Export as namespace for dot notation
 export const UserProfile = {
   Root,
   Avatar,
-  AvatarGroup,
   Name,
   Field,
   Handle,
   Bio,
+  Banner,
+  Nip05,
   HoverCard,
-  Horizontal,
+  AvatarName,
+  Follow,
 };
 
 // Export types

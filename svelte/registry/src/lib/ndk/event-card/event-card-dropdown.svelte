@@ -31,6 +31,9 @@
   }: Props = $props();
 
   const context = getContext<EventCardContext>(EVENT_CARD_CONTEXT_KEY);
+  if (!context) {
+    throw new Error('EventCard.Dropdown must be used within EventCard.Root');
+  }
 
   // UI state
   let showMenu = $state(false);

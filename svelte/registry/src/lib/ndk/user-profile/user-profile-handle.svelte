@@ -37,10 +37,20 @@
   }: Props = $props();
 
   const context = getContext<UserProfileContext>(USER_PROFILE_CONTEXT_KEY);
+  if (!context) {
+    throw new Error('UserProfile.Handle must be used within UserProfile.Root');
+  }
 
-  const handle = $derived(
-    context.profileFetcher?.profile?.name || context.pubkey?.slice(0, 8) || 'unknown'
-  );
+  const handle = $derived.by(() => {
+    if (context.profile?.name) return context.profile.name;
+
+    // Fallback to pubkey
+    try {
+      return context.ndkUser?.pubkey?.slice(0, 8) || 'unknown';
+    } catch {
+      return 'unknown';
+    }
+  });
 
   const displayText = $derived(showAt ? `@${handle}` : handle);
 </script>

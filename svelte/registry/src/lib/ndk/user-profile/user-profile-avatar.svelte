@@ -3,7 +3,7 @@
   import { USER_PROFILE_CONTEXT_KEY, type UserProfileContext } from './context.svelte.js';
   import type { NDKUser, NDKUserProfile } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { createProfileFetcher } from '@nostr-dev-kit/svelte';
+  import { createProfileFetcher, deterministicPubkeyGradient } from '@nostr-dev-kit/svelte';
 
   interface Props {
     /** NDK instance (required for standalone mode) */
@@ -12,11 +12,11 @@
     /** User instance (required for standalone mode) */
     user?: NDKUser;
 
+    /** User's pubkey (alternative to user, for standalone mode) */
+    pubkey?: string;
+
     /** Pre-loaded profile (optional, avoids fetch) */
     profile?: NDKUserProfile | null;
-
-    /** User's pubkey (alternative to user in standalone mode) */
-    pubkey?: string;
 
     /** Size in pixels */
     size?: number;
@@ -34,37 +34,49 @@
   let {
     ndk: propNdk,
     user: propUser,
-    profile: propProfile,
     pubkey: propPubkey,
+    profile: propProfile,
     size = 48,
     class: className = '',
     fallback,
     alt
   }: Props = $props();
 
-  // Try to get context (will be null if used standalone)
-  const context = getContext<UserProfileContext | null>(USER_PROFILE_CONTEXT_KEY, { optional: true });
+  // Try to get context (will be undefined if used standalone)
+  const context = getContext<UserProfileContext | undefined>(USER_PROFILE_CONTEXT_KEY);
 
   // Resolve NDK and user from props or context
   const ndk = $derived(propNdk || context?.ndk);
   const ndkUser = $derived(
     propUser ||
     context?.ndkUser ||
-    (ndk && propPubkey ? ndk.getUser({ pubkey: propPubkey }) : null)
+    (propPubkey && ndk ? ndk.getUser({ pubkey: propPubkey }) : undefined)
   );
 
-  // Use provided profile or fetch if needed
+  // Use provided profile, context profile, or fetch if needed
   const profileFetcher = $derived(
-    propProfile !== undefined
-      ? null // Don't fetch if profile was provided
+    propProfile !== undefined || context?.profile !== undefined
+      ? null // Don't fetch if profile was provided via prop or context
       : (ndkUser && ndk ? createProfileFetcher(() => ({ user: ndkUser! }), ndk) : null)
   );
 
-  const profile = $derived(propProfile !== undefined ? propProfile : profileFetcher?.profile);
+  const profile = $derived(
+    propProfile !== undefined
+      ? propProfile
+      : context?.profile !== undefined
+        ? context.profile
+        : profileFetcher?.profile
+  );
 
   const imageUrl = $derived(profile?.picture || fallback);
   const displayName = $derived(
     alt || profile?.displayName || profile?.name || 'Anon'
+  );
+
+  const avatarGradient = $derived(
+    ndkUser?.pubkey
+      ? deterministicPubkeyGradient(ndkUser.pubkey)
+      : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
   );
 </script>
 
@@ -78,7 +90,7 @@
 {:else}
   <div
     class="user-profile-avatar user-profile-avatar-fallback {className}"
-    style="width: {size}px; height: {size}px;"
+    style="width: {size}px; height: {size}px; background: {avatarGradient};"
   >
     {displayName.slice(0, 2).toUpperCase()}
   </div>
@@ -95,9 +107,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     font-weight: 600;
     font-size: 0.875rem;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   }
 </style>

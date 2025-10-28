@@ -10,10 +10,9 @@
 
   let { ndk, nevent }: Props = $props();
 
-  const thread = createThreadView({
-    ndk,
+  const thread = createThreadView(() => ({
     focusedEvent: nevent
-  });
+  }), ndk);
 </script>
 
 {#if thread.focusedEventId}

@@ -1,6 +1,3 @@
-<script lang="ts">
-</script>
-
 <div class="docs-page">
   <header class="docs-header">
     <h1>Builders</h1>
@@ -52,37 +49,20 @@ currentEvent = events[1]; // Builder automatically updates`}</code></pre>
 
     <h3>Event Builders</h3>
 
-    <p><code>createEventCard({ ndk, event })</code> - Engagement metrics (replies, zaps, reactions, reposts).</p>
+    <p><code>createThreadView(() => ({ focusedEvent, maxDepth }), ndk)</code> - Thread navigation with parent chain and replies.</p>
     <details>
       <summary>Show details</summary>
-      <pre><code>{`const card = createEventCard({ ndk, event: () => event });
+      <pre><code>{`const thread = createThreadView(() => ({ focusedEvent: event, maxDepth: 20 }), ndk);
 
-card.replies.count        // Number of replies
-card.replies.hasReplied   // Did current user reply?
-card.zaps.totalAmount     // Total sats
-card.reactions.byEmoji    // Map<string, { count, hasReacted }>`}</code></pre>
+thread.events         // Array<ThreadNode> - complete linear chain
+thread.replies        // Array<NDKEvent> - replies to focused event only
+thread.otherReplies   // Array<NDKEvent> - replies to other thread events
+thread.allReplies     // Array<NDKEvent> - all replies (replies + otherReplies)
+thread.focusedEventId // string | null - ID of focused event
+thread.focusOn(event) // Navigate to different event`}</code></pre>
     </details>
 
-    <p><code>createEventContent({ ndk, event })</code> - Parses content into segments (text, mentions, hashtags, media).</p>
-    <details>
-      <summary>Show details</summary>
-      <pre><code>{`const content = createEventContent({ ndk, event: () => event });
-
-content.segments  // Array of ParsedSegment
-content.emojiMap  // Map of emoji shortcodes → URLs`}</code></pre>
-    </details>
-
-    <p><code>createThreadView({ ndk, focusedEvent, maxDepth })</code> - Thread navigation with parent chain and replies.</p>
-    <details>
-      <summary>Show details</summary>
-      <pre><code>{`const thread = createThreadView({ ndk, focusedEvent: event, maxDepth: 20 });
-
-thread.parents  // Array<ThreadNode>
-thread.main     // The focused event
-thread.replies  // Array<NDKEvent>`}</code></pre>
-    </details>
-
-    <p><code>createEmbeddedEvent({ ndk, bech32 })</code> - Fetches event from bech32 reference (note1, nevent1, naddr1).</p>
+    <p><code>createEmbeddedEvent(() => ({ bech32 }), ndk)</code> - Fetches event from bech32 reference (note1, nevent1, naddr1).</p>
     <details>
       <summary>Show details</summary>
       <pre><code>{`const embedded = createEmbeddedEvent({ ndk, bech32: () => 'note1...' });
@@ -171,7 +151,7 @@ relays.relays  // Array<BookmarkedRelayWithStats>`}</code></pre>
     <h2>Example: Custom Feed</h2>
     <p>Building a feed from scratch with builders:</p>
 
-    <pre><code>{`<script>
+    <pre><code>{`<`+`script>
   import { createEventCard } from '@nostr-dev-kit/svelte';
 
   const feed = ndk.$subscribe(() => ({
@@ -190,7 +170,7 @@ relays.relays  // Array<BookmarkedRelayWithStats>`}</code></pre>
       state: createEventCard({ ndk, event: () => event })
     }))
   );
-</script>
+</`+`script>
 
 <div class="feed">
   {#each cards as { event, state }}

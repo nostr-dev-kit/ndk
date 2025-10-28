@@ -36,6 +36,11 @@ export const PATTERNS = {
 export function buildEmojiMap(tags: string[][]): Map<string, string> {
     const emojiMap = new Map();
 
+    if (!Array.isArray(tags)) {
+        console.warn('[buildEmojiMap] Expected tags to be an array, got:', typeof tags);
+        return emojiMap;
+    }
+
     for (const [type, shortcode, url] of tags) {
         if (type === "emoji" && shortcode && url) {
             emojiMap.set(shortcode, url);

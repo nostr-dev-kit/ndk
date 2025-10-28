@@ -28,6 +28,9 @@
   }: Props = $props();
 
   const context = getContext<ArticleCardContext>(ARTICLE_CARD_CONTEXT_KEY);
+  if (!context) {
+    throw new Error('ArticleCard.Date must be used within ArticleCard.Root');
+  }
   const timestamp = $derived(context.article.published_at || context.article.created_at);
 
   const formattedDate = $derived.by(() => {

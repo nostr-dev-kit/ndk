@@ -6,7 +6,7 @@
   @example
   ```svelte
   <EventCard.Content />
-  <EventCard.Content truncate={280} />
+  <EventCard.Content truncate={3} />
   ```
 -->
 <script lang="ts">
@@ -16,7 +16,7 @@
   import { cn } from '$lib/utils';
 
   interface Props {
-    /** Maximum characters to display (truncates with ellipsis) */
+    /** Maximum number of lines to display before truncating (uses CSS line-clamp) */
     truncate?: number;
 
     /** Whether to show media attachments */
@@ -41,40 +41,57 @@
   }: Props = $props();
 
   const context = getContext<EventCardContext>(EVENT_CARD_CONTEXT_KEY);
+  if (!context) {
+    throw new Error('EventCard.Content must be used within EventCard.Root');
+  }
 
-  // Truncate content if needed
-  const displayContent = $derived.by(() => {
-    if (!truncate || !context.event.content) return context.event.content;
+  let contentElement: HTMLDivElement | undefined = $state();
+  let expanded = $state(false);
+  let isOverflowing = $state(false);
 
-    if (context.event.content.length <= truncate) return context.event.content;
-
-    // Find a good break point (word boundary)
-    let truncateAt = truncate;
-    const lastSpace = context.event.content.lastIndexOf(' ', truncate);
-    if (lastSpace > truncate * 0.8) {
-      truncateAt = lastSpace;
+  $effect(() => {
+    if (!truncate || !contentElement) {
+      isOverflowing = false;
+      return;
     }
 
-    return context.event.content.slice(0, truncateAt) + '...';
+    // Check if content is overflowing
+    const checkOverflow = () => {
+      if (contentElement && !expanded) {
+        // Add a small threshold to avoid false positives from rounding
+        isOverflowing = contentElement.scrollHeight > contentElement.clientHeight + 1;
+      }
+    };
+
+    // Use requestAnimationFrame to ensure layout is complete
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        checkOverflow();
+      });
+    });
+
+    // Recheck on window resize
+    window.addEventListener('resize', checkOverflow);
+    return () => window.removeEventListener('resize', checkOverflow);
   });
+
+  const toggleExpanded = () => {
+    expanded = !expanded;
+  };
 </script>
 
-<div
-  class={cn(
-    'event-card-content',
-    'p-4',
-    'text-[15px] text-foreground',
-    'whitespace-pre-wrap break-words',
-    className
-  )}
->
-  {#if truncate && displayContent !== context.event.content}
-    <!-- Show truncated content as plain text when truncating -->
-    <div class="event-content-truncated">
-      {displayContent}
-    </div>
-  {:else}
-    <!-- Use EventContent for full rendering -->
+<div class="event-card-content-wrapper">
+  <div
+    bind:this={contentElement}
+    class={cn(
+      'event-card-content',
+      'text-[15px] text-foreground',
+      'whitespace-pre-wrap break-words',
+      truncate && !expanded && 'truncated',
+      className
+    )}
+    style={truncate && !expanded ? `--line-clamp: ${truncate}; --line-height: 1.5;` : undefined}
+  >
     {#key context.event.id}
       <EventContent
         ndk={context.ndk}
@@ -84,20 +101,63 @@
         {highlightMentions}
       />
     {/key}
+  </div>
+
+  {#if truncate && (isOverflowing || expanded)}
+    <button
+      onclick={toggleExpanded}
+      class="read-more-button"
+      type="button"
+    >
+      {expanded ? 'Show less' : 'Read more'}
+    </button>
   {/if}
 </div>
 
 <style>
+  .event-card-content-wrapper {
+    position: relative;
+  }
+
   .event-card-content {
     /* Prevent huge content from breaking layout */
     word-break: break-word;
     overflow-wrap: break-word;
-    line-height: 1.5;
+    line-height: var(--line-height, 1.5);
   }
 
-  .event-content-truncated {
-    /* Simple text display for truncated content */
-    white-space: pre-wrap;
+  .event-card-content.truncated {
+    max-height: calc(var(--line-clamp, 3) * var(--line-height, 1.5) * 1em);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .event-card-content.truncated::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 1.5em;
+    background: linear-gradient(to bottom, transparent, white);
+    pointer-events: none;
+  }
+
+  .read-more-button {
+    margin-top: 0.5rem;
+    color: var(--primary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: opacity 0.2s;
+  }
+
+  .read-more-button:hover {
+    opacity: 0.8;
+    text-decoration: underline;
   }
 
   /* Custom styles for EventContent children */

@@ -25,7 +25,7 @@
       .catch(err => console.error('Failed to fetch sample event:', err));
   });
 
-  const replyState = $derived(sampleEvent ? createReplyAction(() => ({ ndk, event: sampleEvent! })) : null);
+  const replyState = $derived(sampleEvent ? createReplyAction(() => ({ event: sampleEvent! }), ndk) : null);
 </script>
 
 <div class="component-page">

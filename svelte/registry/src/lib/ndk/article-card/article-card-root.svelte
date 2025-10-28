@@ -1,18 +1,3 @@
-<!--
-  @component ArticleCard.Root
-  Root container that provides context for ArticleCard subcomponents.
-
-  Fetches the article author's profile and shares it via context to all child components.
-
-  @example
-  ```svelte
-  <ArticleCard.Root {ndk} {article}>
-    <ArticleCard.Image />
-    <ArticleCard.Title />
-    <ArticleCard.Summary />
-  </ArticleCard.Root>
-  ```
--->
 <script lang="ts">
   import { setContext } from 'svelte';
   import type { NDKArticle } from '@nostr-dev-kit/ndk';
@@ -52,7 +37,7 @@
 
   // Fetch author profile (reactive to article changes)
   const authorProfile = $derived(
-    article.author ? createProfileFetcher(() => ({ user: article.author! }), ndk) : null
+    article.author ? createProfileFetcher(() => ({ user: article.author }), ndk) : null
   );
 
   // Create reactive context with getters

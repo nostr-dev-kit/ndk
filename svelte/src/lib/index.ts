@@ -108,6 +108,29 @@ export {
 } from "./builders/profile/index.svelte.js";
 
 // ============================================================================
+// User Input Builder
+// ============================================================================
+
+export {
+    createUserInput,
+    type UserInputConfig,
+    type UserInputResult,
+} from "./builders/user-input/index.js";
+
+// ============================================================================
+// Highlight Builder
+// ============================================================================
+
+export {
+    createHighlight,
+    type HighlightConfig,
+    type HighlightState,
+    type HighlightPosition,
+    type SourceInfo,
+    type UrlMetadata,
+} from "./builders/highlight/index.svelte.js";
+
+// ============================================================================
 // Relay Builders
 // ============================================================================
 
@@ -122,6 +145,16 @@ export {
     type BookmarkedRelayListState,
     type BookmarkedRelayWithStats,
 } from "./builders/relay/bookmarks.svelte.js";
+
+// ============================================================================
+// Avatar Group Builder
+// ============================================================================
+
+export {
+    createAvatarGroup,
+    type AvatarGroupConfig,
+    type AvatarGroupState,
+} from "./builders/avatar-group/index.svelte.js";
 
 // ============================================================================
 // Action Builders
@@ -162,6 +195,9 @@ export {
     PATTERNS,
     type ParsedSegment,
 } from "./builders/event-content/utils.js";
+
+// Utilities
+export { deterministicPubkeyGradient } from "./utils/deterministic-gradient.js";
 
 // Note: UI components are now available via the registry (shadcn-style)
 // Users should copy components from registry/ndk/* into their projects

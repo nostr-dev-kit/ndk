@@ -1,65 +1,65 @@
 {
-    "name": "@nostr-dev-kit/messages",
-    "version": "2.0.0-beta.14",
-    "description": "High-level messaging library for NDK supporting NIP-17 and NIP-EE",
-    "main": "./dist/index.js",
-    "module": "./dist/index.mjs",
-    "types": "./dist/index.d.ts",
-    "exports": {
-        ".": {
-            "types": "./dist/index.d.ts",
-            "import": "./dist/index.mjs",
-            "require": "./dist/index.js"
-        },
-        "./storage": {
-            "types": "./dist/storage/index.d.ts",
-            "import": "./dist/storage/index.mjs",
-            "require": "./dist/storage/index.js"
-        }
+  "name": "@nostr-dev-kit/messages",
+  "version": "2.0.0-beta.15",
+  "description": "High-level messaging library for NDK supporting NIP-17 and NIP-EE",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
     },
-    "files": [
-        "dist"
-    ],
-    "scripts": {
-        "build": "tsup",
-        "prepare": "tsup",
-        "dev": "tsup --watch",
-        "clean": "rm -rf dist",
-        "test": "vitest",
-        "test:run": "vitest run",
-        "typecheck": "tsc --noEmit"
-    },
-    "dependencies": {
-        "eventemitter3": "^5.0.1"
-    },
-    "peerDependencies": {
-        "@nostr-dev-kit/ndk": "3.0.0-beta.14",
-        "nostr-tools": "^2.17.0"
-    },
-    "devDependencies": {
-        "@types/node": "^24.9.0",
-        "tsup": "^8.4.0",
-        "typescript": "^5.9.3",
-        "vitest": "^3.2.4"
-    },
-    "author": "Nostr Dev Kit",
-    "license": "MIT",
-    "keywords": [
-        "nostr",
-        "ndk",
-        "messages",
-        "nip17",
-        "nip-ee",
-        "mls",
-        "encryption",
-        "dm"
-    ],
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/nostr-dev-kit/ndk.git",
-        "directory": "messages"
-    },
-    "publishConfig": {
-        "access": "public"
+    "./storage": {
+      "types": "./dist/storage/index.d.ts",
+      "import": "./dist/storage/index.mjs",
+      "require": "./dist/storage/index.js"
     }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "prepare": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rm -rf dist",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "eventemitter3": "^5.0.1"
+  },
+  "peerDependencies": {
+    "@nostr-dev-kit/ndk": "3.0.0-beta.15",
+    "nostr-tools": "^2.17.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.9.0",
+    "tsup": "^8.4.0",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  },
+  "author": "Nostr Dev Kit",
+  "license": "MIT",
+  "keywords": [
+    "nostr",
+    "ndk",
+    "messages",
+    "nip17",
+    "nip-ee",
+    "mls",
+    "encryption",
+    "dm"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nostr-dev-kit/ndk.git",
+    "directory": "messages"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
 }

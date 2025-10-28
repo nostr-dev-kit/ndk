@@ -33,8 +33,11 @@
   }: Props = $props();
 
   const context = getContext<UserProfileContext>(USER_PROFILE_CONTEXT_KEY);
+  if (!context) {
+    throw new Error('UserProfile.Bio must be used within UserProfile.Root');
+  }
 
-  const bio = $derived(context.profileFetcher?.profile?.about || '');
+  const bio = $derived(context.profile?.about || '');
 </script>
 
 {#if bio}

@@ -54,7 +54,7 @@ export {
 };
 
 // Export types
-export type { EventCardContext, ThreadingMetadata } from './context.svelte.js';
+export type { EventCardContext } from './context.svelte.js';
 
 // Re-export preset components once created
 // export { default as SimpleEventCard } from './presets/simple-event-card.svelte';

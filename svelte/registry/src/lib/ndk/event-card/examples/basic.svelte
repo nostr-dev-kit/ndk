@@ -12,12 +12,7 @@
 </script>
 
 <EventCard.Root {ndk} {event}>
-  <div class="flex items-center justify-between p-4 border-b" style="border-bottom-color: #f0f0f0;">
-    <div class="flex items-center gap-3 flex-1">
-      <EventCard.Header showMenu={false} class="!p-0 !border-0" />
-    </div>
-    <EventCard.Dropdown />
-  </div>
+  <EventCard.Header />
   <EventCard.Content />
   <EventCard.Actions>
     <ReplyAction />

@@ -1,0 +1,12 @@
+packages:
+  - 'core'
+  - 'svelte'
+  - 'svelte/registry2'
+  - 'wallet'
+  - 'sessions'
+  - 'sync'
+  - 'wot'
+  - 'cache-*'
+  - 'mobile'
+  - 'blossom'
+  - 'react'

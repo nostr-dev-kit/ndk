@@ -26,6 +26,8 @@
 		"vite": "^7.1.7"
 	},
 	"dependencies": {
+		"@hugeicons/core-free-icons": "^1.2.1",
+		"@hugeicons/svelte": "^1.0.2",
 		"@nostr-dev-kit/cache-sqlite-wasm": "beta",
 		"@nostr-dev-kit/ndk": "beta",
 		"@nostr-dev-kit/svelte": "link:../",

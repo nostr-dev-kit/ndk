@@ -7,6 +7,29 @@
   import NDKCacheAdapterSqliteWasm from '@nostr-dev-kit/cache-sqlite-wasm';
   import { setContext } from 'svelte';
   import { LocalStorage } from '@nostr-dev-kit/sessions';
+  import { HugeiconsIcon } from '@hugeicons/svelte';
+  import {
+    Home01Icon,
+    Book02Icon,
+    Building01Icon,
+    Layers01Icon,
+    CodeIcon,
+    UserAdd01Icon,
+    FavouriteIcon,
+    MailReply01Icon,
+    RepeatIcon,
+    VolumeMute01Icon,
+    ZapIcon,
+    Calendar01Icon,
+    Chat01Icon,
+    File01Icon,
+    UserCircleIcon,
+    Tag01Icon,
+    IdentificationIcon,
+    UserIcon,
+    NewsIcon,
+    ServerStack01Icon
+  } from '@hugeicons/core-free-icons';
 
   let isDark = $state(false);
 
@@ -82,51 +105,51 @@
   });
 
   const docs = [
-    { name: 'Introduction', path: '/docs' },
-    { name: 'Architecture', path: '/docs/architecture' },
-    { name: 'Builders', path: '/docs/builders' },
-    { name: 'Components', path: '/docs/components' },
+    { name: 'Introduction', path: '/docs', icon: Book02Icon },
+    { name: 'Architecture', path: '/docs/architecture', icon: Building01Icon },
+    { name: 'Builders', path: '/docs/builders', icon: Layers01Icon },
+    { name: 'Components', path: '/docs/components', icon: CodeIcon },
   ];
 
   const componentCategories = [
     {
       title: 'Actions',
       items: [
-        { name: 'Follow', path: '/components/follow-action' },
-        { name: 'Reaction', path: '/components/reaction-action' },
-        { name: 'Reply', path: '/components/reply-action' },
-        { name: 'Repost', path: '/components/repost-action' },
-        { name: 'Mute', path: '/components/mute-action' },
-        { name: 'Zap', path: '/components/zap-action' },
+        { name: 'Follow', path: '/components/follow-action', icon: UserAdd01Icon },
+        { name: 'Reaction', path: '/components/reaction-action', icon: FavouriteIcon },
+        { name: 'Reply', path: '/components/reply-action', icon: MailReply01Icon },
+        { name: 'Repost', path: '/components/repost-action', icon: RepeatIcon },
+        { name: 'Mute', path: '/components/mute-action', icon: VolumeMute01Icon },
+        { name: 'Zap', path: '/components/zap-action', icon: ZapIcon },
       ]
     },
     {
       title: 'Events',
       items: [
-        { name: 'EventCard', path: '/components/event-card' },
-        { name: 'EventCard Thread', path: '/components/event-card-thread' },
-        { name: 'EventContent', path: '/components/event-content' },
+        { name: 'EventCard', path: '/components/event-card', icon: Calendar01Icon },
+        { name: 'EventCard Thread', path: '/components/event-card-thread', icon: Chat01Icon },
+        { name: 'EventContent', path: '/components/event-content', icon: File01Icon },
       ]
     },
     {
       title: 'User',
       items: [
-        { name: 'Avatar', path: '/components/avatar' },
-        { name: 'Name', path: '/components/name' },
-        { name: 'UserCard', path: '/components/user-card' },
-        { name: 'UserProfile', path: '/components/user-profile' },
+        { name: 'Avatar', path: '/components/avatar', icon: UserCircleIcon },
+        { name: 'Name', path: '/components/name', icon: Tag01Icon },
+        { name: 'UserCard', path: '/components/user-card', icon: IdentificationIcon },
+        { name: 'UserProfile', path: '/components/user-profile', icon: UserIcon },
       ]
     },
     {
       title: 'Content',
       items: [
-        { name: 'ArticleCard', path: '/components/article-card' },
+        { name: 'ArticleCard', path: '/components/article-card', icon: NewsIcon },
       ]
     },
     {
       title: 'Relay',
       items: [
-        { name: 'RelayCard', path: '/components/relay-card' },
+        { name: 'RelayCard', path: '/components/relay-card', icon: ServerStack01Icon },
       ]
     },
   ];
@@ -217,6 +240,7 @@
       <div class="nav-section">
         <h2 class="nav-title">Getting Started</h2>
         <a href="/" class:active={$page.url.pathname === '/'}>
+          <HugeiconsIcon icon={Home01Icon} size={16} strokeWidth={2} />
           Home
         </a>
       </div>
@@ -228,6 +252,7 @@
             href={doc.path}
             class:active={$page.url.pathname === doc.path}
           >
+            <HugeiconsIcon icon={doc.icon} size={16} strokeWidth={2} />
             {doc.name}
           </a>
         {/each}
@@ -241,6 +266,7 @@
               href={component.path}
               class:active={$page.url.pathname === component.path}
             >
+              <HugeiconsIcon icon={component.icon} size={16} strokeWidth={2} />
               {component.name}
             </a>
           {/each}
@@ -491,7 +517,9 @@
   }
 
   .nav a {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
     align-self: flex-start;
     padding: 0.25rem 0.5rem;
     border-radius: 0.375rem;

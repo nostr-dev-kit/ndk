@@ -43,6 +43,84 @@ NDK-svelte separates concerns into two layers:
 
 ## Creating Builders
 
+### Builder Signature Pattern
+
+All builders follow a consistent signature pattern:
+
+```typescript
+// Pattern: create[Feature](props: Create[Feature]Props): [Feature]State
+
+export function createFeature(props: CreateFeatureProps): FeatureState
+export function createProfileFetcher(props: CreateProfileFetcherProps): ProfileFetcherState
+export function createFollowAction(config: () => FollowActionConfig) // Note: Actions use config function
+```
+
+**Props Interface Pattern:**
+```typescript
+export interface CreateFeatureProps {
+    ndk: NDKSvelte;                    // Always required
+    event?: () => NDKEvent | undefined; // Functions for reactivity!
+    user?: () => NDKUser | undefined;   // Functions for reactivity!
+    // NOT: event?: NDKEvent (won't be reactive)
+}
+```
+
+**Return Shape Pattern:**
+```typescript
+export interface FeatureState {
+    // Data fields
+    data: YourData | null;
+
+    // Status fields (common)
+    loading: boolean;
+    error: string | null;
+
+    // Computed/derived fields
+    count: number;
+
+    // Methods (for actions)
+    execute?: () => Promise<void>;
+}
+
+// Implementation returns object with getters:
+return {
+    get data() { return state.data; },
+    get loading() { return state.loading; },
+    get error() { return state.error; },
+    get count() { return computed.count; },
+    execute  // Methods don't need getters
+};
+```
+
+**Key Rules:**
+- ✅ Props use **functions** for reactive values: `event: () => NDKEvent`
+- ✅ Return uses **getters** for reactive access: `get data() { return state.data; }`
+- ✅ Export both the function AND TypeScript interfaces
+- ❌ Never `event: NDKEvent` (not reactive)
+- ❌ Never `return state` directly (not encapsulated)
+
+**Why Functions for Props?**
+```typescript
+// ❌ BAD - Not reactive
+const card = createEventCard({ ndk, event: myEvent });
+myEvent = anotherEvent; // Builder won't update!
+
+// ✅ GOOD - Reactive
+const card = createEventCard({ ndk, event: () => myEvent });
+myEvent = anotherEvent; // Builder tracks change via $effect
+```
+
+**Why Getters for Return?**
+```typescript
+// Getters allow lazy evaluation and fine-grained reactivity
+const card = createEventCard({ ndk, event: () => event });
+
+// This subscription only starts when you access the getter:
+const count = card.replies.count; // ← Subscription starts here
+
+// Not accessed = no subscription = better performance
+```
+
 ### File Structure
 
 Place builders in feature-based directories:

@@ -23,6 +23,41 @@
 └─────────────────────────────────────────────────────┘
 ```
 
+## Builder Signature Pattern
+
+**All builders follow this pattern:**
+
+```typescript
+// Signature: create[Feature](props: Create[Feature]Props): [Feature]State
+export function createFeature(props: CreateFeatureProps): FeatureState
+
+// Props: Functions for reactive inputs
+export interface CreateFeatureProps {
+    ndk: NDKSvelte;           // Always required
+    event?: () => NDKEvent;   // ← Function!
+    user?: () => NDKUser;     // ← Function!
+}
+
+// Return: Object with getters
+export interface FeatureState {
+    data: Data | null;        // Data fields
+    loading: boolean;         // Status fields
+    count: number;            // Computed fields
+    execute?: () => Promise<void>; // Methods
+}
+
+// Implementation
+return {
+    get data() { return state.data; },     // ← Getter!
+    get loading() { return state.loading; }, // ← Getter!
+    execute  // Methods don't need getters
+};
+```
+
+**Why?**
+- Props are functions → Reactive tracking with `$effect`
+- Return has getters → Lazy evaluation + fine-grained reactivity
+
 ## Builder Template (Copy & Modify)
 
 ```typescript
@@ -128,6 +163,25 @@ import Display from './feature-display.svelte';
 
 export const Feature = { Root, Display };
 export type { FeatureContext } from './context.svelte.js';
+```
+
+## Key Patterns Summary
+
+### Builder Signature
+```typescript
+create[Feature](props: Create[Feature]Props): [Feature]State
+```
+- **Props:** Functions for reactivity (`event: () => NDKEvent`)
+- **Return:** Object with getters (`get data() { return state.data; }`)
+- **Interfaces:** Export both `Create[Feature]Props` and `[Feature]State`
+
+### Component Pattern
+```svelte
+<!-- Root: Creates builder, sets context -->
+<Feature.Root> → createFeature() → setContext()
+
+<!-- Children: Get context, render UI -->
+<Feature.Display> → getContext() → render
 ```
 
 ## Key Rules

@@ -35,6 +35,9 @@
   }: Props = $props();
 
   const context = getContext<EventCardContext>(EVENT_CARD_CONTEXT_KEY);
+  if (!context) {
+    throw new Error('EventCard.ThreadLine must be used within EventCard.Root');
+  }
 
   // Determine if we should show the line
   // Read directly from context.threading to maintain reactivity
@@ -78,15 +81,14 @@
     top: 48px; /* Start below avatar (40px height + 8px margin) */
     bottom: 0;
     width: 2px;
-    background: hsl(var(--border));
+    background: var(--color-border);
     pointer-events: none;
     z-index: 0;
   }
 
   /* Self-thread (same author) - different color/style */
   .thread-line--self {
-    background: hsl(var(--primary));
-    opacity: 0.6;
+    background: var(--color-border);
     width: 2px;
   }
 

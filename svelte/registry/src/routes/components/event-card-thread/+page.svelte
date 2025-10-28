@@ -17,10 +17,9 @@
 
   const DEFAULT_NEVENT = 'nevent1qvzqqqqqqypzqzw53gd9m0sngp98993578tt5u3dgpgng6xawy7gaguv4xmmduk8qyg8wumn8ghj7mn0wd68ytnddakj7qghwaehxw309aex2mrp0yhxummnw3ezucnpdejz7qpqghp3frrq7j7ja6xqj40x4yrwvux7ymev27e2pvrgjd4gvzj7maassk7g7w';
 
-  const thread = createThreadView({
-    ndk,
+  const thread = createThreadView(() => ({
     focusedEvent: DEFAULT_NEVENT
-  });
+  }), ndk);
 </script>
 
 <div class="container mx-auto p-8 max-w-7xl">
@@ -78,12 +77,11 @@
         </p>
         <div class="bg-muted p-4 rounded-lg">
           <code class="text-sm">
-            const thread = createThreadView(&#123;<br/>
-            &nbsp;&nbsp;ndk,<br/>
+            const thread = createThreadView(() => (&#123;<br/>
             &nbsp;&nbsp;focusedEvent: 'nevent1...' | NDKEvent,<br/>
             &nbsp;&nbsp;maxDepth?: 20,<br/>
             &nbsp;&nbsp;kinds?: [1, 9802]<br/>
-            &#125;);<br/><br/>
+            &#125;), ndk);<br/><br/>
             // Returns:<br/>
             thread.events          // ThreadNode[] - complete linear chain<br/>
             thread.replies         // NDKEvent[] - replies to focused event only<br/>

@@ -60,8 +60,26 @@
           "type": "registry:component"
         },
         {
+          "path": "registry/ndk/event-card/presets/simple-event-card.svelte",
+          "type": "registry:component"
+        },
+        {
           "path": "registry/ndk/event-card/index.ts",
           "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "event-card-simple",
+      "type": "registry:component",
+      "title": "Event Card Simple",
+      "description": "Simple ready-to-use event card preset",
+      "registryDependencies": ["event-card"],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
+      "files": [
+        {
+          "path": "registry/ndk/event-card/presets/simple-event-card.svelte",
+          "type": "registry:ui"
         }
       ]
     },
@@ -94,6 +112,86 @@
       ]
     },
     {
+      "name": "user-profile",
+      "type": "registry:block",
+      "title": "User Profile",
+      "description": "Composable user profile components with Context API - mix and match Root, Avatar, Name, Bio, Follow, and more",
+      "registryDependencies": [],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
+      "files": [
+        {
+          "path": "registry/ndk/user-profile/context.svelte.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "registry/ndk/user-profile/user-profile-root.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/user-profile/user-profile-avatar.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/user-profile/avatar-group.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/user-profile/user-profile-name.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/user-profile/user-profile-field.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/user-profile/user-profile-handle.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/user-profile/user-profile-bio.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/user-profile/user-profile-banner.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/user-profile/user-profile-nip05.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/user-profile/user-profile-hover-card.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/user-profile/user-profile-avatar-name.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/user-profile/user-profile-follow.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/user-profile/index.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "user-profile-avatar-name",
+      "type": "registry:component",
+      "title": "User Profile Avatar Name",
+      "description": "Horizontal layout with avatar and name, with optional meta field (handle, about, or custom text)",
+      "registryDependencies": ["user-profile"],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
+      "files": [
+        {
+          "path": "registry/ndk/user-profile/user-profile-avatar-name.svelte",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "user-card",
       "type": "registry:block",
       "title": "User Card",
@@ -104,6 +202,40 @@
         {
           "path": "registry/ndk/user/user-card/user-card.svelte",
           "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "user-input",
+      "type": "registry:block",
+      "title": "User Input",
+      "description": "Composable user search and selection components - search cached profiles, supports NIP-05/npub/nprofile lookups",
+      "registryDependencies": [],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
+      "files": [
+        {
+          "path": "registry/ndk/user-input/context.svelte.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "registry/ndk/user-input/user-input-root.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/user-input/user-input-search.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/user-input/user-input-results.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/user-input/user-input-result-item.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/user-input/index.ts",
+          "type": "registry:lib"
         }
       ]
     },
@@ -131,7 +263,7 @@
       "files": [
         {
           "path": "registry/ndk/event/content/event-content.svelte",
-          "type": "registry:component"
+          "type": "registry:ui"
         }
       ]
     },
@@ -324,8 +456,188 @@
           "type": "registry:component"
         },
         {
+          "path": "registry/ndk/article-card/presets/medium-with-stats.svelte",
+          "type": "registry:component"
+        },
+        {
           "path": "registry/ndk/article-card/index.ts",
           "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "article-card-portrait",
+      "type": "registry:component",
+      "title": "Article Card Portrait",
+      "description": "Vertical article card layout preset",
+      "registryDependencies": ["article-card"],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
+      "files": [
+        {
+          "path": "registry/ndk/article-card/presets/portrait.svelte",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "article-card-medium",
+      "type": "registry:component",
+      "title": "Article Card Medium",
+      "description": "Horizontal article card layout preset",
+      "registryDependencies": ["article-card"],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
+      "files": [
+        {
+          "path": "registry/ndk/article-card/presets/medium.svelte",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "article-card-medium-with-stats",
+      "type": "registry:component",
+      "title": "Article Card Medium with Stats",
+      "description": "Horizontal article card with engagement statistics",
+      "registryDependencies": ["article-card"],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
+      "files": [
+        {
+          "path": "registry/ndk/article-card/presets/medium-with-stats.svelte",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "user-header",
+      "type": "registry:block",
+      "title": "User Header",
+      "description": "User profile header components with full and compact variants for profile pages",
+      "registryDependencies": [],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
+      "files": [
+        {
+          "path": "registry/ndk/user-header/user-header-full.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/user-header/user-header-compact.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/user-header/index.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "user-header-full",
+      "type": "registry:component",
+      "title": "User Header Full",
+      "description": "Full user profile header with banner, avatar, bio, and stats",
+      "registryDependencies": ["user-profile"],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
+      "files": [
+        {
+          "path": "registry/ndk/user-header/user-header-full.svelte",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "user-header-compact",
+      "type": "registry:component",
+      "title": "User Header Compact",
+      "description": "Compact user profile header for smaller spaces",
+      "registryDependencies": ["user-profile"],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
+      "files": [
+        {
+          "path": "registry/ndk/user-header/user-header-compact.svelte",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "highlight-card",
+      "type": "registry:block",
+      "title": "Highlight Card",
+      "description": "Display Nostr highlight events (kind 9802) with feed, compact, and grid layouts",
+      "registryDependencies": [],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
+      "files": [
+        {
+          "path": "registry/ndk/highlight-card/context.svelte.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "registry/ndk/highlight-card/highlight-card-root.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/highlight-card/highlight-card-content.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/highlight-card/highlight-card-source.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/highlight-card/highlight-card-feed.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/highlight-card/highlight-card-compact.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/highlight-card/highlight-card-grid.svelte",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/ndk/highlight-card/index.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "highlight-card-feed",
+      "type": "registry:component",
+      "title": "Highlight Card Feed",
+      "description": "Feed layout preset for highlight cards",
+      "registryDependencies": ["highlight-card"],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
+      "files": [
+        {
+          "path": "registry/ndk/highlight-card/highlight-card-feed.svelte",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "highlight-card-compact",
+      "type": "registry:component",
+      "title": "Highlight Card Compact",
+      "description": "Compact layout preset for highlight cards",
+      "registryDependencies": ["highlight-card"],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
+      "files": [
+        {
+          "path": "registry/ndk/highlight-card/highlight-card-compact.svelte",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "highlight-card-grid",
+      "type": "registry:component",
+      "title": "Highlight Card Grid",
+      "description": "Grid layout preset for highlight cards",
+      "registryDependencies": ["highlight-card"],
+      "dependencies": ["@nostr-dev-kit/ndk", "@nostr-dev-kit/svelte"],
+      "files": [
+        {
+          "path": "registry/ndk/highlight-card/highlight-card-grid.svelte",
+          "type": "registry:ui"
         }
       ]
     }

@@ -10,7 +10,7 @@
 
   let { ndk, bech32, class: className = '' }: EmbeddedEventProps = $props();
 
-  const embedded = createEmbeddedEvent({ ndk, bech32: () => bech32 });
+  const embedded = createEmbeddedEvent(() => ({ bech32 }), ndk);
 </script>
 
 <div class="embedded-event {className}">
@@ -62,7 +62,6 @@
   }
 
   .event-content {
-    color: #111827;
     line-height: 1.5;
     max-height: 150px;
     overflow: hidden;

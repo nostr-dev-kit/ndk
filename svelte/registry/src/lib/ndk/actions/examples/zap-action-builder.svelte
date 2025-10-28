@@ -10,7 +10,7 @@
 
   let { ndk, event }: Props = $props();
 
-  const zapState = createZapAction(() => ({ ndk, target: event }));
+  const zapState = createZapAction(() => ({ target: event }), ndk);
 </script>
 
 <div class="demo-event-card">

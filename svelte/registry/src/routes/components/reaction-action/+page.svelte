@@ -139,7 +139,7 @@
       <div>
         <strong>Builder API:</strong>
         <ul>
-          <li><code>createReactionAction(() => ({ ndk, event }))</code> - Create reactive reaction manager</li>
+          <li><code>createReactionAction(() => ({ event }), ndk)</code> - Create reactive reaction manager</li>
           <li><code>reaction.all</code> - Array of EmojiReaction objects, sorted by count descending:
             <ul style="margin-top: 0.5rem;">
               <li><code>emoji</code> - The reaction emoji</li>

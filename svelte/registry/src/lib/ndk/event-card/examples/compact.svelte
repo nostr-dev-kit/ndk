@@ -12,7 +12,7 @@
 </script>
 
 <EventCard.Root {ndk} {event}>
-  <EventCard.Header variant="compact" showMenu={false} />
+  <EventCard.Header variant="compact" showDropdown={false} />
   <EventCard.Content truncate={100} />
   <EventCard.Actions>
     <ReactionAction emoji="🤙" />

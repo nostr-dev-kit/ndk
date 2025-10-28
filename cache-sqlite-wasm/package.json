@@ -1,39 +1,39 @@
 {
-    "name": "@nostr-dev-kit/cache-sqlite-wasm",
-    "version": "1.0.0-beta.14",
-    "description": "SQLite WASM cache adapter for NDK, compatible with browser and JS environments.",
-    "main": "dist/index.mjs",
-    "module": "dist/index.mjs",
-    "types": "dist/index.d.ts",
-    "exports": {
-        ".": {
-            "import": "./dist/index.mjs",
-            "require": "./dist/index.mjs",
-            "types": "./dist/index.d.ts"
-        },
-        "./sql-wasm.wasm": "./dist/sql-wasm.wasm"
+  "name": "@nostr-dev-kit/cache-sqlite-wasm",
+  "version": "1.0.0-beta.15",
+  "description": "SQLite WASM cache adapter for NDK, compatible with browser and JS environments.",
+  "main": "dist/index.mjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
     },
-    "files": [
-        "dist",
-        "dist/sql-wasm.wasm",
-        "docs"
-    ],
-    "scripts": {
-        "build": "tsc --emitDeclarationOnly && bun build ./src/index.ts --outfile ./dist/index.mjs --format esm --target browser && bun build ./src/worker.ts --outfile ./dist/worker.js --format esm --target browser && cp ./example/sql-wasm.wasm ./dist/sql-wasm.wasm",
-        "prepare": "bun run build",
-        "test": "vitest",
-        "prepublishOnly": "bun run build"
-    },
-    "dependencies": {
-        "sql.js": "^1.8.0"
-    },
-    "devDependencies": {
-        "@nostr-dev-kit/ndk": "3.0.0-beta.14",
-        "@types/node": "^24.9.0",
-        "@types/sql.js": "^1.4.9",
-        "jsdom": "^27.0.1",
-        "typescript": "^5.9.3",
-        "vitest": "^3.2.4"
-    },
-    "license": "MIT"
+    "./sql-wasm.wasm": "./dist/sql-wasm.wasm"
+  },
+  "files": [
+    "dist",
+    "dist/sql-wasm.wasm",
+    "docs"
+  ],
+  "scripts": {
+    "build": "tsc --emitDeclarationOnly && bun build ./src/index.ts --outfile ./dist/index.mjs --format esm --target browser && bun build ./src/worker.ts --outfile ./dist/worker.js --format esm --target browser && cp ./example/sql-wasm.wasm ./dist/sql-wasm.wasm",
+    "prepare": "bun run build",
+    "test": "vitest",
+    "prepublishOnly": "bun run build"
+  },
+  "dependencies": {
+    "sql.js": "^1.8.0"
+  },
+  "devDependencies": {
+    "@nostr-dev-kit/ndk": "3.0.0-beta.15",
+    "@types/node": "^24.9.0",
+    "@types/sql.js": "^1.4.9",
+    "jsdom": "^27.0.1",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  },
+  "license": "MIT"
 }

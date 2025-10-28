@@ -43,7 +43,7 @@
   }: Props = $props();
 
   // Fetch relay info (NIP-11) - reactive to relayUrl changes
-  const relayInfo = createRelayInfo({ ndk, relayUrl: () => relayUrl });
+  const relayInfo = createRelayInfo(() => ({ relayUrl }), ndk);
 
   // Create reactive context with getters
   const context = {

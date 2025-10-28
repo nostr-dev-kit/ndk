@@ -28,6 +28,9 @@
   }: Props = $props();
 
   const context = getContext<RelayCardContext>(RELAY_CARD_CONTEXT_KEY);
+  if (!context) {
+    throw new Error('RelayCard.Icon must be used within RelayCard.Root');
+  }
 
   const icon = $derived(context.relayInfo.nip11?.icon);
   const name = $derived(context.relayInfo.nip11?.name || context.relayInfo.url);
@@ -45,9 +48,7 @@
     class={cn('relay-card-icon relay-card-icon-fallback', className)}
     style="width: {size}px; height: {size}px;"
   >
-    <svg viewBox="0 0 24 24" fill="currentColor" class="relay-card-icon-svg">
-      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-    </svg>
+    <i class="hugeicons-stroke-rounded relay-card-icon-svg">&#984839;</i>
   </div>
 {/if}
 

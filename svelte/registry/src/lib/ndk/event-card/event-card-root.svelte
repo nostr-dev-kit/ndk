@@ -75,9 +75,10 @@
 <article
   class={cn(
     'event-card',
+    'p-4',
     'relative',
     'rounded-xl',
-    'bg-card',
+    'bg-background',
     'overflow-hidden',
     isClickable && 'cursor-pointer transition-all',
     className
@@ -101,6 +102,7 @@
   .event-card {
     /* Modern card shadow */
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
+    background: var(--background) !important;
   }
 
   .event-card:hover {

@@ -32,6 +32,9 @@
   }: Props = $props();
 
   const context = getContext<RelayCardContext>(RELAY_CARD_CONTEXT_KEY);
+  if (!context) {
+    throw new Error('RelayCard.Name must be used within RelayCard.Root');
+  }
 
   const displayName = $derived(
     context.relayInfo.nip11?.name ||

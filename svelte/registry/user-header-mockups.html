@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Header Variations - Mock Proposals</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 p-8">
+    <div class="max-w-6xl mx-auto">
+        <h1 class="text-4xl font-bold mb-8">User Header Variations</h1>
+        <p class="text-gray-600 mb-12">
+            Mock proposals for extracting the ProfileHeader component from Voces app to NDK-svelte library.
+            The component displays user profile information at the top of user profile pages.
+        </p>
+
+        <!-- Variation 1: Full (Original Style with Banner) -->
+        <section class="mb-16">
+            <h2 class="text-2xl font-bold mb-4">Variation 1: Full (Original - Twitter/X Style)</h2>
+            <p class="text-gray-600 mb-4">
+                Complete profile header with banner, large avatar, bio, stats, and actions. Best for dedicated profile pages.
+            </p>
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden max-w-3xl">
+                <!-- Cover image -->
+                <div class="h-48 sm:h-64 relative bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
+                    <!-- Banner image would go here -->
+                </div>
+
+                <!-- Profile info -->
+                <div class="px-6 pb-4 relative z-10">
+                    <!-- Avatar and Actions Row -->
+                    <div class="flex gap-4 items-start -mt-16 sm:-mt-20 mb-4">
+                        <!-- Avatar -->
+                        <div class="shrink-0">
+                            <div class="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-white bg-gradient-to-br from-blue-400 to-purple-500"></div>
+                        </div>
+
+                        <!-- Name, NIP-05, and Actions -->
+                        <div class="flex-1 mt-16 sm:mt-20 min-w-0">
+                            <div class="flex items-start justify-between gap-4 flex-wrap">
+                                <div class="flex-1 min-w-0">
+                                    <h1 class="text-2xl font-bold text-gray-900">Alice Johnson</h1>
+                                    <div class="flex items-center gap-2 mt-1">
+                                        <p class="text-gray-600">@alice</p>
+                                        <button class="p-1 text-gray-500 hover:text-gray-700 transition-colors">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div class="mt-2">
+                                        <span class="inline-flex items-center gap-1 text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+                                            </svg>
+                                            Invited by @bob
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button class="px-4 py-2 rounded-full font-medium transition-colors bg-blue-600 text-white hover:bg-blue-700 text-sm">
+                                        Follow
+                                    </button>
+                                    <button class="p-2 rounded-full border border-gray-300 text-gray-600 hover:bg-gray-100 transition-colors">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bio -->
+                    <div class="mb-4">
+                        <p class="text-gray-700">
+                            Building decentralized social protocols. Former tech lead @startup. Passionate about open-source and privacy. 🌐🔓
+                        </p>
+                    </div>
+
+                    <!-- Meta info -->
+                    <div class="flex flex-wrap gap-4 text-sm text-gray-600 mb-4">
+                        <a href="https://alice.com" target="_blank" class="flex items-center gap-1 hover:text-blue-600">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                            </svg>
+                            <span>alice.com</span>
+                        </a>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="flex gap-6">
+                        <div>
+                            <span class="font-semibold text-gray-900">342</span>
+                            <span class="text-gray-600 ml-1">Notes</span>
+                        </div>
+                        <div>
+                            <span class="font-semibold text-gray-900">1.2K</span>
+                            <span class="text-gray-600 ml-1">Following</span>
+                        </div>
+                        <div>
+                            <span class="font-semibold text-gray-900">3.4K</span>
+                            <span class="text-gray-600 ml-1">Followers</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Variation 2: Compact (No Banner) -->
+        <section class="mb-16">
+            <h2 class="text-2xl font-bold mb-4">Variation 2: Compact (No Banner)</h2>
+            <p class="text-gray-600 mb-4">
+                Simplified header without banner image. Good for modals, cards, or when screen space is limited.
+            </p>
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 max-w-2xl">
+                <div class="flex gap-4">
+                    <!-- Avatar -->
+                    <div class="shrink-0">
+                        <div class="w-20 h-20 rounded-full bg-gradient-to-br from-green-400 to-blue-500"></div>
+                    </div>
+
+                    <!-- Info -->
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-start justify-between gap-4 mb-3">
+                            <div class="flex-1 min-w-0">
+                                <h2 class="text-xl font-bold text-gray-900">Bob Smith</h2>
+                                <p class="text-gray-600 text-sm">@bob</p>
+                                <span class="inline-flex items-center gap-1 text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-full mt-1">
+                                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+                                    </svg>
+                                    Invited by @alice
+                                </span>
+                            </div>
+                            <button class="px-4 py-2 rounded-full font-medium transition-colors bg-blue-600 text-white hover:bg-blue-700 text-sm shrink-0">
+                                Follow
+                            </button>
+                        </div>
+
+                        <!-- Bio -->
+                        <p class="text-gray-700 text-sm mb-3">
+                            Developer advocate. Writing about Nostr and the future of social media.
+                        </p>
+
+                        <!-- Stats -->
+                        <div class="flex gap-6 text-sm">
+                            <div>
+                                <span class="font-semibold text-gray-900">89</span>
+                                <span class="text-gray-600 ml-1">Notes</span>
+                            </div>
+                            <div>
+                                <span class="font-semibold text-gray-900">456</span>
+                                <span class="text-gray-600 ml-1">Following</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Variation 3: Minimal (Card Header Style) -->
+        <section class="mb-16">
+            <h2 class="text-2xl font-bold mb-4">Variation 3: Minimal (Card Header Style)</h2>
+            <p class="text-gray-600 mb-4">
+                Ultra-compact header for use within cards, lists, or as event author display.
+            </p>
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 max-w-lg space-y-4">
+                <!-- Example 1 -->
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-orange-400 to-red-500 shrink-0"></div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2">
+                            <h3 class="font-semibold text-gray-900 truncate">Carol White</h3>
+                            <span class="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full shrink-0">Following</span>
+                        </div>
+                        <p class="text-sm text-gray-600 truncate">@carol • 3h ago</p>
+                    </div>
+                    <button class="text-gray-500 hover:text-gray-700 shrink-0">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Example 2 (with follow button) -->
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 shrink-0"></div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="font-semibold text-gray-900 truncate">David Chen</h3>
+                        <p class="text-sm text-gray-600 truncate">@david • 1d ago</p>
+                    </div>
+                    <button class="px-3 py-1.5 rounded-full text-xs font-medium bg-blue-600 text-white hover:bg-blue-700 shrink-0">
+                        Follow
+                    </button>
+                </div>
+
+                <!-- Example 3 (with stats) -->
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 shrink-0"></div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2">
+                            <h3 class="font-semibold text-gray-900 truncate">Eve Martinez</h3>
+                            <svg class="w-4 h-4 text-blue-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div class="flex items-center gap-3 text-xs text-gray-600">
+                            <span>234 notes</span>
+                            <span>•</span>
+                            <span>1.5K followers</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Variation 4: Horizontal (Inline Style) -->
+        <section class="mb-16">
+            <h2 class="text-2xl font-bold mb-4">Variation 4: Horizontal (Inline Style)</h2>
+            <p class="text-gray-600 mb-4">
+                Single-line horizontal layout. Perfect for sidebars, dropdowns, or suggestion lists.
+            </p>
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 divide-y divide-gray-100 max-w-md">
+                <!-- Example 1 -->
+                <div class="p-3 hover:bg-gray-50 cursor-pointer transition-colors">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 shrink-0"></div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2">
+                                <h4 class="font-medium text-gray-900 text-sm truncate">Frank Wilson</h4>
+                                <span class="text-xs text-gray-500 shrink-0">• 12K</span>
+                            </div>
+                            <p class="text-xs text-gray-600 truncate">Building the future of web3</p>
+                        </div>
+                        <button class="px-3 py-1 rounded-full text-xs font-medium border border-gray-300 text-gray-700 hover:bg-gray-100 shrink-0">
+                            Follow
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Example 2 -->
+                <div class="p-3 hover:bg-gray-50 cursor-pointer transition-colors">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 shrink-0"></div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2">
+                                <h4 class="font-medium text-gray-900 text-sm truncate">Grace Lee</h4>
+                                <svg class="w-3.5 h-3.5 text-blue-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                                <span class="text-xs text-gray-500 shrink-0">• 8.3K</span>
+                            </div>
+                            <p class="text-xs text-gray-600 truncate">Product designer @ startup</p>
+                        </div>
+                        <span class="px-2 py-1 rounded text-xs bg-green-100 text-green-800 shrink-0">Following</span>
+                    </div>
+                </div>
+
+                <!-- Example 3 -->
+                <div class="p-3 hover:bg-gray-50 cursor-pointer transition-colors">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-red-400 to-pink-500 shrink-0"></div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2">
+                                <h4 class="font-medium text-gray-900 text-sm truncate">Henry Taylor</h4>
+                                <span class="text-xs text-gray-500 shrink-0">• 5.7K</span>
+                            </div>
+                            <p class="text-xs text-gray-600 truncate">Crypto researcher & writer</p>
+                        </div>
+                        <button class="px-3 py-1 rounded-full text-xs font-medium border border-gray-300 text-gray-700 hover:bg-gray-100 shrink-0">
+                            Follow
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Variation 5: Vertical (Centered Card) -->
+        <section class="mb-16">
+            <h2 class="text-2xl font-bold mb-4">Variation 5: Vertical (Centered Card)</h2>
+            <p class="text-gray-600 mb-4">
+                Centered vertical layout. Good for user discovery, suggestions, or profile previews.
+            </p>
+            <div class="flex gap-4">
+                <!-- Card 1 -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 flex-1 max-w-xs">
+                    <div class="text-center">
+                        <div class="w-20 h-20 rounded-full bg-gradient-to-br from-teal-400 to-green-500 mx-auto mb-3"></div>
+                        <div class="mb-3">
+                            <div class="flex items-center justify-center gap-1.5">
+                                <h3 class="font-bold text-gray-900">Ivy Parker</h3>
+                                <svg class="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <p class="text-sm text-gray-600">@ivy</p>
+                        </div>
+                        <p class="text-sm text-gray-700 mb-4">
+                            Full-stack developer passionate about decentralization and privacy.
+                        </p>
+                        <div class="flex justify-center gap-4 text-sm mb-4">
+                            <div>
+                                <span class="font-semibold text-gray-900">156</span>
+                                <span class="text-gray-600 ml-1">Notes</span>
+                            </div>
+                            <div>
+                                <span class="font-semibold text-gray-900">2.1K</span>
+                                <span class="text-gray-600 ml-1">Followers</span>
+                            </div>
+                        </div>
+                        <button class="w-full px-4 py-2 rounded-full font-medium bg-blue-600 text-white hover:bg-blue-700 text-sm">
+                            Follow
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card 2 (already following) -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 flex-1 max-w-xs">
+                    <div class="text-center">
+                        <div class="w-20 h-20 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 mx-auto mb-3"></div>
+                        <div class="mb-3">
+                            <h3 class="font-bold text-gray-900">Jack Brown</h3>
+                            <p class="text-sm text-gray-600">@jack</p>
+                        </div>
+                        <p class="text-sm text-gray-700 mb-4">
+                            Writer, podcaster, and Nostr enthusiast.
+                        </p>
+                        <div class="flex justify-center gap-4 text-sm mb-4">
+                            <div>
+                                <span class="font-semibold text-gray-900">891</span>
+                                <span class="text-gray-600 ml-1">Notes</span>
+                            </div>
+                            <div>
+                                <span class="font-semibold text-gray-900">4.5K</span>
+                                <span class="text-gray-600 ml-1">Followers</span>
+                            </div>
+                        </div>
+                        <button class="w-full px-4 py-2 rounded-full font-medium bg-gray-200 text-gray-700 hover:bg-gray-300 text-sm">
+                            Following
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="mb-16 bg-blue-50 p-6 rounded-lg">
+            <h2 class="text-2xl font-bold mb-4">Proposed Component Structure</h2>
+            <div class="space-y-3 text-gray-700">
+                <p><strong>Component Name:</strong> <code class="bg-white px-2 py-1 rounded">UserHeader</code> or <code class="bg-white px-2 py-1 rounded">UserProfile</code></p>
+                <p><strong>Variants:</strong></p>
+                <ul class="list-disc list-inside pl-4 space-y-1">
+                    <li><code>full</code> - Complete header with banner, large avatar, bio, stats, and actions (Twitter/X style)</li>
+                    <li><code>compact</code> - Medium-sized header without banner, good for modals/cards</li>
+                    <li><code>minimal</code> - Small header for event cards and lists</li>
+                    <li><code>horizontal</code> - Single-line layout for sidebars and dropdowns</li>
+                    <li><code>vertical</code> - Centered card layout for user discovery</li>
+                </ul>
+                <p><strong>Key Features:</strong></p>
+                <ul class="list-disc list-inside pl-4 space-y-1">
+                    <li>Display user avatar (with optional banner)</li>
+                    <li>Show display name, NIP-05, and pubkey preview</li>
+                    <li>Optional bio/about section with rich text support</li>
+                    <li>Optional stats (notes count, following, followers)</li>
+                    <li>Action buttons (Follow/Unfollow, Edit Profile, Share, More options)</li>
+                    <li>Optional "Invited by" badge</li>
+                    <li>Optional verification badge</li>
+                    <li>Website/social links</li>
+                    <li>Fully composable with Root + Children pattern</li>
+                </ul>
+                <p><strong>Composable Parts:</strong></p>
+                <ul class="list-disc list-inside pl-4 space-y-1">
+                    <li><code>UserHeader.Root</code> - Container with user data fetching</li>
+                    <li><code>UserHeader.Banner</code> - Cover image with fallback gradient</li>
+                    <li><code>UserHeader.Avatar</code> - Profile picture with size variants</li>
+                    <li><code>UserHeader.Name</code> - Display name with optional verification badge</li>
+                    <li><code>UserHeader.Identifier</code> - NIP-05 or pubkey display</li>
+                    <li><code>UserHeader.Bio</code> - About/bio section with rich content</li>
+                    <li><code>UserHeader.Stats</code> - Notes, following, followers counts</li>
+                    <li><code>UserHeader.Actions</code> - Follow button and action menu</li>
+                    <li><code>UserHeader.Badges</code> - Verification, invited by, etc.</li>
+                    <li><code>UserHeader.Links</code> - Website and social links</li>
+                </ul>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

@@ -1,6 +1,3 @@
-<script lang="ts">
-</script>
-
 <div class="docs-page">
   <header class="docs-header">
     <h1>Architecture</h1>
@@ -42,10 +39,10 @@ card.reactions.byEmoji`}</code></pre>
     </p>
 
     <pre><code>{`<!-- Copied to your project -->
-<script>
+<`+`script>
   import { createEventCard } from '@nostr-dev-kit/svelte';
   const state = createEventCard({ ndk, event: () => event });
-</script>
+</`+`script>
 
 <article>
   <!-- Your UI using builder state -->
@@ -95,7 +92,7 @@ card.reactions.byEmoji`}</code></pre>
     <pre><code>{`import { createEventCard, createProfileFetcher } from '@nostr-dev-kit/svelte';
 
 const card = createEventCard({ ndk, event: () => event });
-const profile = createProfileFetcher({ ndk, user: () => event.author });
+const profile = createProfileFetcher({ user: () => event.author }, ndk;
 
 // Build your own UI
 <div class="my-design">

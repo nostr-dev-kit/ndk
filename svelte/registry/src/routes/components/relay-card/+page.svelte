@@ -28,17 +28,15 @@
   ];
 
   // Create bookmarks tracker (excludes current user for stats)
-  const followsBookmarks = createBookmarkedRelayList({
-    ndk,
-    authors: () => Array.from(ndk.$sessions?.follows || []),
+  const followsBookmarks = createBookmarkedRelayList(() => ({
+    authors: Array.from(ndk.$sessions?.follows || []),
     includeCurrentUser: false
-  });
+  }), ndk);
 
   // Create bookmarks with current user (for toggle capability)
-  const bookmarksWithToggle = createBookmarkedRelayList({
-    ndk,
-    authors: () => Array.from(ndk.$sessions?.follows || [])
-  });
+  const bookmarksWithToggle = createBookmarkedRelayList(() => ({
+    authors: Array.from(ndk.$sessions?.follows || [])
+  }), ndk);
 </script>
 
 <div class="component-page">

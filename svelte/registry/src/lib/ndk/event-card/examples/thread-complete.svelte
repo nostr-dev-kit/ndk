@@ -10,10 +10,9 @@
 
   let { ndk, nevent }: Props = $props();
 
-  const thread = createThreadView({
-    ndk,
+  const thread = createThreadView(() => ({
     focusedEvent: nevent
-  });
+  }), ndk);
 </script>
 
 {#if thread.focusedEventId}
@@ -49,7 +48,7 @@
             threading={node.threading}
           >
             <div
-              class="relative border-b border-border bg-background hover:bg-accent/5 transition-colors cursor-pointer"
+              class="relative border-b border-border transition-colors cursor-pointer"
               onclick={() => thread.focusOn(node.event)}
               role="button"
               tabindex="0"

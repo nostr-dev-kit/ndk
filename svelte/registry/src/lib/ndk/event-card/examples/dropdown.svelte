@@ -12,21 +12,11 @@
 </script>
 
 <EventCard.Root {ndk} {event}>
-  <div class="header-with-dropdown">
-    <EventCard.Header showMenu={false} />
-    <EventCard.Dropdown />
-  </div>
+  <!-- Dropdown is now part of Header by default -->
+  <EventCard.Header />
   <EventCard.Content />
   <EventCard.Actions>
     <ReplyAction />
     <ReactionAction />
   </EventCard.Actions>
 </EventCard.Root>
-
-<style>
-  .header-with-dropdown {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-</style>

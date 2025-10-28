@@ -14,7 +14,7 @@
 -->
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { createProfileFetcher } from '@nostr-dev-kit/svelte';
+  import { createProfileFetcher, deterministicPubkeyGradient } from '@nostr-dev-kit/svelte';
   import { cn } from '$lib/utils';
 
   interface Props {
@@ -87,6 +87,7 @@
   const displayName = $derived(profile?.displayName || profile?.name || 'Anonymous');
   const imageUrl = $derived(profile?.picture || profile?.image);
   const bio = $derived(profile?.about);
+  const gradient = $derived(deterministicPubkeyGradient(pubkey));
 </script>
 
 {#if isVisible}
@@ -96,7 +97,7 @@
   >
     <div class="user-profile-hover-card">
       <!-- Banner section -->
-      <div class="user-profile-hover-card-banner">
+      <div class="user-profile-hover-card-banner" style="background: {gradient};">
         {#if profile?.banner}
           <img
             src={profile.banner}
@@ -117,7 +118,7 @@
               class="user-profile-hover-card-avatar"
             />
           {:else}
-            <div class="user-profile-hover-card-avatar user-profile-hover-card-avatar-fallback">
+            <div class="user-profile-hover-card-avatar user-profile-hover-card-avatar-fallback" style="background: {gradient};">
               {displayName[0]?.toUpperCase() || '?'}
             </div>
           {/if}
@@ -198,7 +199,6 @@
   .user-profile-hover-card-banner {
     position: relative;
     height: 5rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   }
 
   .user-profile-hover-card-banner-image {
@@ -233,10 +233,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     font-weight: 600;
     font-size: 1.5rem;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   }
 
   .user-profile-hover-card-info {

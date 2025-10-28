@@ -31,6 +31,9 @@
   }: Props = $props();
 
   const context = getContext<ArticleCardContext>(ARTICLE_CARD_CONTEXT_KEY);
+  if (!context) {
+    throw new Error('ArticleCard.Image must be used within ArticleCard.Root');
+  }
   const imageUrl = $derived(context.article.image);
 </script>
 
@@ -47,9 +50,7 @@
     {/if}
   {:else}
     <div class="w-full h-full flex items-center justify-center bg-primary/10">
-      <svg class="{iconSize} text-primary/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-      </svg>
+      <i class="hugeicons-stroke-rounded text-6xl text-primary/30 leading-none">&#985549;</i>
     </div>
   {/if}
 </div>

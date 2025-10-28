@@ -21,6 +21,7 @@
   import { onDestroy } from 'svelte';
   import type { NDKUser } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { deterministicPubkeyGradient } from '@nostr-dev-kit/svelte';
   import { cn } from '$lib/utils';
 
   interface Props {
@@ -115,6 +116,8 @@
   const bio = $derived(
     profile?.about || profile?.bio
   );
+
+  const avatarGradient = $derived(deterministicPubkeyGradient(user.pubkey));
 </script>
 
 <article
@@ -135,7 +138,7 @@
           loading="lazy"
         />
       {:else}
-        <div class="ndk-user-card__avatar ndk-user-card__avatar--placeholder">
+        <div class="ndk-user-card__avatar ndk-user-card__avatar--placeholder" style="background: {avatarGradient}">
           {displayName[0]?.toUpperCase() || '?'}
         </div>
       {/if}
@@ -273,13 +276,13 @@
   }
 
   .ndk-user-card__avatar--placeholder {
-    background: var(--ndk-accent, hsl(262.1 83.3% 57.8%));
     color: var(--ndk-accent-foreground, hsl(0 0% 100%));
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 600;
     font-size: 1.25rem;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   }
 
   /* Follow button */

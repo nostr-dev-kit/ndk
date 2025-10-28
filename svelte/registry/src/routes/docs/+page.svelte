@@ -1,5 +1,3 @@
-<script lang="ts">
-</script>
 
 <div class="docs-page">
   <header class="docs-header">
@@ -29,11 +27,11 @@
     <h2>Quick Start</h2>
 
     <h3>Using Builders</h3>
-    <pre><code>{`<script>
+    <pre><code>{`<`+`script>
   import { createEventCard } from '@nostr-dev-kit/svelte';
 
   const card = createEventCard({ ndk, event: () => event });
-</script>
+</`+`script>
 
 <article>
   <img src={card.profile?.picture} alt="" />
@@ -46,9 +44,9 @@
 </article>`}</code></pre>
 
     <h3>Using Components</h3>
-    <pre><code>{`<script>
+    <pre><code>{`<`+`script>
   import { EventCard } from '$lib/components/ui/event-card';
-</script>
+</`+`script>
 
 <EventCard.Root {ndk} {event}>
   <EventCard.Header />
@@ -98,6 +96,10 @@
       <a href="/docs/components" class="next-card">
         <h3>Components</h3>
         <p>Customize and compose UI templates</p>
+      </a>
+      <a href="/docs/utilities" class="next-card">
+        <h3>Utilities</h3>
+        <p>Helper functions for working with Nostr data</p>
       </a>
     </div>
   </section>

@@ -10,7 +10,7 @@
 
   let { ndk, user }: Props = $props();
 
-  const muteState = createMuteAction(() => ({ ndk, target: user }));
+  const muteState = createMuteAction(() => ({ target: user }), ndk);
 </script>
 
 <div class="demo-card">

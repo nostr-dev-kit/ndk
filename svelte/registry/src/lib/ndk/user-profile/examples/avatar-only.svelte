@@ -10,6 +10,4 @@
   let { ndk, pubkey }: Props = $props();
 </script>
 
-<UserProfile.Root {ndk} {pubkey}>
-  <UserProfile.Avatar size={40} />
-</UserProfile.Root>
+<UserProfile.Avatar {ndk} {pubkey} size={40} />

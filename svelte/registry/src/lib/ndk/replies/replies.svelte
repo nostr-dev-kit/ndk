@@ -53,7 +53,7 @@
   }: Props = $props();
 
   // Create replies state
-  const replies = createReplies({ ndk, event });
+  const replies = createReplies(() => ({ event }), ndk);
 
   // Composer state
   let composerOpen = $state(false);

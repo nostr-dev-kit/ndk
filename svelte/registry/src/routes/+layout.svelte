@@ -3,7 +3,7 @@
   import { page } from '$app/stores';
   import { browser } from '$app/environment';
   import { NDKSvelte, createProfileFetcher } from '@nostr-dev-kit/svelte';
-  import { NDKInterestList, NDKNip07Signer, NDKPrivateKeySigner } from '@nostr-dev-kit/ndk';
+  import { NDKInterestList, NDKNip07Signer, NDKPrivateKeySigner, NDKRelayFeedList } from '@nostr-dev-kit/ndk';
   import NDKCacheAdapterSqliteWasm from '@nostr-dev-kit/cache-sqlite-wasm';
   import { setContext } from 'svelte';
   import { LocalStorage } from '@nostr-dev-kit/sessions';
@@ -28,10 +28,14 @@
     IdentificationIcon,
     UserIcon,
     NewsIcon,
-    ServerStack01Icon
+    ServerStack01Icon,
+    UserIdVerificationIcon,
+    Search01Icon,
+    PaintBoardIcon
   } from '@hugeicons/core-free-icons';
 
   let isDark = $state(false);
+  let isInitialized = $state(false);
 
   // Initialize dark mode from system preference or localStorage
   $effect(() => {
@@ -77,18 +81,17 @@
       'wss://nos.lol'
     ],
     cacheAdapter,
-    ...(browser && {
-      session: {
+    session: {
         autoSave: true,
         storage: new LocalStorage(),
         follows: true,
         mutes: true,
         wallet: false,
         monitor: [
-          NDKInterestList
+          NDKInterestList,
+          NDKRelayFeedList
         ]
       }
-    })
   });
 
   setContext('ndk', ndk);
@@ -97,8 +100,13 @@
     Promise.all([
       cacheAdapter.initializeAsync(),
       ndk.connect()
-    ]).catch(err => {
+    ])
+    .then(() => {
+      isInitialized = true;
+    })
+    .catch(err => {
       console.error('Initialization error:', err);
+      isInitialized = true;
     });
   });
 
@@ -107,6 +115,7 @@
     { name: 'Architecture', path: '/docs/architecture', icon: Building01Icon },
     { name: 'Builders', path: '/docs/builders', icon: Layers01Icon },
     { name: 'Components', path: '/docs/components', icon: CodeIcon },
+    { name: 'Utilities', path: '/docs/utilities', icon: PaintBoardIcon },
   ];
 
   const componentCategories = [
@@ -127,6 +136,7 @@
         { name: 'EventCard', path: '/components/event-card', icon: Calendar01Icon },
         { name: 'EventCard Thread', path: '/components/event-card-thread', icon: Chat01Icon },
         { name: 'EventContent', path: '/components/event-content', icon: File01Icon },
+        { name: 'HighlightCard', path: '/components/highlight-card', icon: File01Icon },
       ]
     },
     {
@@ -135,6 +145,9 @@
         { name: 'Avatar', path: '/components/avatar', icon: UserCircleIcon },
         { name: 'Name', path: '/components/name', icon: Tag01Icon },
         { name: 'UserCard', path: '/components/user-card', icon: IdentificationIcon },
+        { name: 'UserInput', path: '/components/user-input', icon: Search01Icon },
+        { name: 'Nip05', path: '/components/nip05', icon: UserIdVerificationIcon },
+        { name: 'UserHeader', path: '/components/user-header', icon: UserCircleIcon },
         { name: 'UserProfile', path: '/components/user-profile', icon: UserIcon },
       ]
     },
@@ -199,6 +212,18 @@
   }
 </script>
 
+{#if !isInitialized}
+  <div class="loading-screen">
+    <div class="loading-content">
+      <svg class="loading-spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+        <path d="M2 17l10 5 10-5"/>
+        <path d="M2 12l10 5 10-5"/>
+      </svg>
+      <p class="loading-text">Initializing...</p>
+    </div>
+  </div>
+{:else}
 <div class="app">
   <aside class="sidebar">
     <div class="sidebar-header">
@@ -405,8 +430,46 @@
     </div>
   </div>
 {/if}
+{/if}
 
 <style>
+  .loading-screen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: hsl(var(--color-background));
+  }
+
+  .loading-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .loading-spinner {
+    width: 3rem;
+    height: 3rem;
+    color: hsl(var(--color-primary));
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .loading-text {
+    font-size: 1rem;
+    color: hsl(var(--color-muted-foreground));
+    margin: 0;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
   :global(body) {
     margin: 0;
     padding: 0;
@@ -416,12 +479,12 @@
   .app {
     display: flex;
     min-height: 100vh;
+    background: var(--color-background);
   }
 
   .sidebar {
     width: 280px;
-    background: hsl(var(--color-background));
-    border-right: 1px solid hsl(var(--color-border));
+    background: var(--color-background);
     display: flex;
     flex-direction: column;
     position: fixed;
@@ -534,15 +597,14 @@
   }
 
   .nav a.active {
-    background: hsl(var(--color-accent));
-    color: hsl(var(--color-foreground));
+    background: var(--muted) !important;
+    color: var(--color-foreground);
     font-weight: 600;
   }
 
   .sidebar-footer {
     margin-top: auto;
     padding: 1rem;
-    border-top: 1px solid hsl(var(--color-border));
   }
 
   .user-info {

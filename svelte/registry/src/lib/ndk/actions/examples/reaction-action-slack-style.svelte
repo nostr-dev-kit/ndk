@@ -28,11 +28,8 @@
         <span class="emoji">{emoji}</span>
         <span class="count">{count}</span>
 
-        <div class="hover-tooltip">
+        <div class="hover-tooltip w-32">
           <AvatarGroup {ndk} pubkeys={pubkeys.slice(0, 3)} max={3} size={24} spacing="tight" />
-          <span class="tooltip-text">
-            {pubkeys.length} follower{pubkeys.length > 1 ? 's' : ''} reacted
-          </span>
         </div>
       </button>
     {/each}

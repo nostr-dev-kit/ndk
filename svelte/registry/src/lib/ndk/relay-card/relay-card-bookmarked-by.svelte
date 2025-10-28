@@ -5,7 +5,7 @@
   @example
   ```svelte
   <script>
-    const bookmarks = createBookmarkedRelayList({ ndk, authors: follows });
+    const bookmarks = createBookmarkedRelayList({ authors: follows }, ndk;
   </script>
 
   <RelayCard.Root {ndk} {relayUrl}>
@@ -17,7 +17,7 @@
   import { getContext } from 'svelte';
   import { RELAY_CARD_CONTEXT_KEY, type RelayCardContext } from './context.svelte.js';
   import type { BookmarkedRelayListState } from '@nostr-dev-kit/svelte';
-  import { UserProfile } from '$lib/ndk/user-profile';
+  import { AvatarGroup } from '$lib/ndk/avatar-group';
   import { cn } from '$lib/utils';
 
   interface Props {
@@ -50,6 +50,9 @@
   }: Props = $props();
 
   const context = getContext<RelayCardContext>(RELAY_CARD_CONTEXT_KEY);
+  if (!context) {
+    throw new Error('RelayCard.BookmarkedBy must be used within RelayCard.Root');
+  }
 
   const stats = $derived(bookmarks.getRelayStats(context.relayInfo.url));
   const pubkeys = $derived(stats?.pubkeys || []);
@@ -57,7 +60,7 @@
 
 {#if pubkeys.length > 0}
   <div class={cn('relay-card-bookmarked-by', className)}>
-    <UserProfile.AvatarGroup ndk={context.ndk} {pubkeys} {max} {size} {spacing} />
+    <AvatarGroup ndk={context.ndk} {pubkeys} {max} {size} {spacing} />
     {#if showCount && stats}
       <span class="relay-card-bookmarked-by-count">
         {stats.count} {stats.count === 1 ? 'follow' : 'follows'}

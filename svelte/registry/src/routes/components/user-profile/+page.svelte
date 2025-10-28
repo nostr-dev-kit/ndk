@@ -6,19 +6,11 @@
 
   // Import examples
   import AvatarOnlyExample from '$lib/ndk/user-profile/examples/avatar-only.svelte';
-  import AvatarOnlyExampleRaw from '$lib/ndk/user-profile/examples/avatar-only.svelte?raw';
   import AvatarNameExample from '$lib/ndk/user-profile/examples/avatar-name.svelte';
-  import AvatarNameExampleRaw from '$lib/ndk/user-profile/examples/avatar-name.svelte?raw';
   import AvatarNameHandleExample from '$lib/ndk/user-profile/examples/avatar-name-handle.svelte';
-  import AvatarNameHandleExampleRaw from '$lib/ndk/user-profile/examples/avatar-name-handle.svelte?raw';
   import AvatarNameBioExample from '$lib/ndk/user-profile/examples/avatar-name-bio.svelte';
-  import AvatarNameBioExampleRaw from '$lib/ndk/user-profile/examples/avatar-name-bio.svelte?raw';
-  import FullProfileCardExample from '$lib/ndk/user-profile/examples/full-profile-card.svelte';
-  import FullProfileCardExampleRaw from '$lib/ndk/user-profile/examples/full-profile-card.svelte?raw';
   import WithHoverCardExample from '$lib/ndk/user-profile/examples/with-hover-card.svelte';
   import WithHoverCardExampleRaw from '$lib/ndk/user-profile/examples/with-hover-card.svelte?raw';
-  import AvatarGroupExample from '$lib/ndk/user-profile/examples/avatar-group.svelte';
-  import AvatarGroupExampleRaw from '$lib/ndk/user-profile/examples/avatar-group.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
@@ -39,12 +31,6 @@
     '82341f882b6eabcd2ba7f1ef90aad961cf074af15b9ef44a09f9d2a8fbfbe6a2', // jack
     'e33fe65f1fde44c6dc17eeb38fdad0fceaf1cae8722084332ed1e32496291d42', // c-otto
     '32e1827635450ebb3c5a7d12c1f8e7b2b514439ac10a67eef3d9fd9c5c68e245', // jb55
-  ];
-
-  const manyPubkeys = [
-    ...examplePubkeys,
-    '91c9a5e1a9744114c6fe2d61ae4de82629eaaa0fb52f48288093c7e7e036f832',
-    '460c25e682fda7832b52d1f22d3d22b3176d972f60dcdc3212ed8c92ef85065c',
   ];
 </script>
 
@@ -69,8 +55,8 @@
   <section class="demo">
     <CodePreview
       title="Avatar Only"
-      description="Just the user's avatar."
-      code={AvatarOnlyExampleRaw}
+      description="Standalone avatar component with pubkey."
+      code={`<UserProfile.Avatar {pubkey} size={40} />`}
     >
       <AvatarOnlyExample {ndk} pubkey={examplePubkey} />
     </CodePreview>
@@ -80,7 +66,13 @@
     <CodePreview
       title="Avatar + Name"
       description="Avatar with display name in a horizontal layout."
-      code={AvatarNameExampleRaw}
+      component="user-profile-avatar-name"
+      code={`<UserProfile.Root {ndk} {pubkey} showHoverCard={true}>
+  <div class="flex items-center gap-3">
+    <UserProfile.Avatar size={40} />
+    <UserProfile.Name class="font-semibold" />
+  </div>
+</UserProfile.Root>`}
     >
       <AvatarNameExample {ndk} pubkey={examplePubkey} />
     </CodePreview>
@@ -89,8 +81,17 @@
   <section class="demo">
     <CodePreview
       title="Avatar + Name + Handle"
-      description="Avatar with display name and handle (@username) in a vertical stack."
-      code={AvatarNameHandleExampleRaw}
+      description="Avatar with display name and handle below."
+      component="user-profile-avatar-name"
+      code={`<UserProfile.Root {ndk} {pubkey} showHoverCard={true}>
+  <div class="flex items-center gap-3">
+    <UserProfile.Avatar size={40} />
+    <div class="flex flex-col">
+      <UserProfile.Name class="font-semibold" />
+      <UserProfile.Handle class="text-sm text-muted-foreground" />
+    </div>
+  </div>
+</UserProfile.Root>`}
     >
       <AvatarNameHandleExample {ndk} pubkey={examplePubkey} />
     </CodePreview>
@@ -100,7 +101,16 @@
     <CodePreview
       title="Avatar + Name + Bio"
       description="Avatar with display name and bio text."
-      code={AvatarNameBioExampleRaw}
+      component="user-profile-avatar-name"
+      code={`<UserProfile.Root {ndk} {pubkey} showHoverCard={true}>
+  <div class="flex items-center gap-3">
+    <UserProfile.Avatar size={48} />
+    <div class="flex flex-col">
+      <UserProfile.Name class="font-semibold" />
+      <UserProfile.Bio class="text-sm text-muted-foreground line-clamp-1" />
+    </div>
+  </div>
+</UserProfile.Root>`}
     >
       <AvatarNameBioExample {ndk} pubkey={examplePubkey} />
     </CodePreview>
@@ -108,31 +118,11 @@
 
   <section class="demo">
     <CodePreview
-      title="Full Profile Card"
-      description="Complete profile layout with all components."
-      code={FullProfileCardExampleRaw}
-    >
-      <FullProfileCardExample {ndk} pubkey={examplePubkey} />
-    </CodePreview>
-  </section>
-
-  <section class="demo">
-    <CodePreview
       title="With Hover Card"
-      description="Hover over the avatars below to see the user profile card. The card appears after a 500ms delay and stays visible while hovering over the card itself."
+      description="UserProfile.Root supports showHoverCard prop to display a profile card on hover. The card appears after a 500ms delay and stays visible while hovering."
       code={WithHoverCardExampleRaw}
     >
       <WithHoverCardExample {ndk} pubkeys={examplePubkeys} />
-    </CodePreview>
-  </section>
-
-  <section class="demo">
-    <CodePreview
-      title="Avatar Group"
-      description="Display multiple user avatars in a stacked layout with overflow count."
-      code={AvatarGroupExampleRaw}
-    >
-      <AvatarGroupExample {ndk} {examplePubkeys} {manyPubkeys} />
     </CodePreview>
   </section>
 </div>
@@ -150,7 +140,6 @@
     font-size: 2.5rem;
     font-weight: 800;
     margin: 0 0 0.5rem 0;
-    color: #111827;
   }
 
   .component-page > header p {

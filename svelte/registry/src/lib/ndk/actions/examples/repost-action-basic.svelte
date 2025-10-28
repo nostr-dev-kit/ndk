@@ -11,7 +11,7 @@
 
   let { ndk, event }: Props = $props();
 
-  const repostState = createRepostAction(() => ({ ndk, event }));
+  const repostState = createRepostAction(() => ({ event }), ndk);
 </script>
 
 <div class="demo-event-card">

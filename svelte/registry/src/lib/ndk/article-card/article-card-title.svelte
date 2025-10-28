@@ -27,6 +27,9 @@
   }: Props = $props();
 
   const context = getContext<ArticleCardContext>(ARTICLE_CARD_CONTEXT_KEY);
+  if (!context) {
+    throw new Error('ArticleCard.Title must be used within ArticleCard.Root');
+  }
   const title = $derived(context.article.title || 'Untitled');
 
   const lineClampClass = $derived(`line-clamp-${lines}`);

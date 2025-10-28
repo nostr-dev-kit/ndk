@@ -22,6 +22,9 @@
   import PlainTextExample from '$lib/ndk/event-content/examples/plain-text.svelte';
   import PlainTextExampleRaw from '$lib/ndk/event-content/examples/plain-text.svelte?raw';
 
+  import TruncatedExample from '$lib/ndk/event-content/examples/truncated.svelte';
+  import TruncatedExampleRaw from '$lib/ndk/event-content/examples/truncated.svelte?raw';
+
   const ndk = getContext<NDKSvelte>('ndk');
 
   const exampleEvent = new NDKEvent(ndk, {
@@ -67,6 +70,22 @@ https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.m
 
 YouTube embed:
 https://www.youtube.com/watch?v=dQw4w9WgXcQ`,
+    pubkey: 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52',
+    created_at: Math.floor(Date.now() / 1000),
+    tags: []
+  } as any);
+
+  const longEvent = new NDKEvent(ndk, {
+    kind: NDKKind.Text,
+    content: `This is a longer piece of content that demonstrates the truncation feature! 🎉
+
+When you use the truncate prop on EventCard.Content, it will limit the visible content to a specific number of lines using CSS line-clamp. If the content exceeds that height, a "Read more" button appears automatically.
+
+This is particularly useful in feed views where you want to show a preview of long posts without taking up too much vertical space. Users can click "Read more" to expand the full content, and then click "Show less" to collapse it again.
+
+The truncation is done using vertical space (lines) rather than character count, which provides a much better user experience. It works great with all types of content including mentions, hashtags, links, and media!
+
+Pretty cool feature, right? #nostr #ux #design`,
     pubkey: 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52',
     created_at: Math.floor(Date.now() / 1000),
     tags: []
@@ -136,6 +155,16 @@ https://www.youtube.com/watch?v=dQw4w9WgXcQ`,
       code={PlainTextExampleRaw}
     >
       <PlainTextExample {ndk} />
+    </CodePreview>
+  </section>
+
+  <section class="demo">
+    <CodePreview
+      title="Truncated Content with Read More"
+      description="Limit content to a specific number of lines with automatic 'Read more' button. Uses EventCard.Content with the truncate prop."
+      code={TruncatedExampleRaw}
+    >
+      <TruncatedExample {ndk} event={longEvent} />
     </CodePreview>
   </section>
 </div>

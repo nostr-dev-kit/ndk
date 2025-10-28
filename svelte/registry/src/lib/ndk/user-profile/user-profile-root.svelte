@@ -1,29 +1,6 @@
-<!--
-  @component UserProfile.Root
-  Root container that provides context for UserProfile subcomponents.
-
-  Fetches the user's profile once and shares it via context to all child components.
-  The profile fetcher is reactive - child components automatically update when the profile loads.
-
-  @example
-  ```svelte
-  <UserProfile.Root {ndk} {pubkey}>
-    <UserProfile.Avatar />
-    <UserProfile.Name />
-  </UserProfile.Root>
-  ```
-
-  @example With hover card:
-  ```svelte
-  <UserProfile.Root {ndk} {pubkey} showHoverCard={true}>
-    <UserProfile.Avatar />
-    <UserProfile.Name />
-  </UserProfile.Root>
-  ```
--->
 <script lang="ts">
   import { setContext } from 'svelte';
-  import type { NDKUser } from '@nostr-dev-kit/ndk';
+  import type { NDKUser, NDKUserProfile } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createProfileFetcher } from '@nostr-dev-kit/svelte';
   import { USER_PROFILE_CONTEXT_KEY, type UserProfileContext } from './context.svelte.js';
@@ -39,6 +16,9 @@
 
     /** User's pubkey (alternative to user) */
     pubkey?: string;
+
+    /** Pre-loaded profile (optional, avoids fetch) */
+    profile?: NDKUserProfile;
 
     /** Show hover card on mouse enter */
     showHoverCard?: boolean;
@@ -57,6 +37,7 @@
     ndk,
     user,
     pubkey,
+    profile: propProfile,
     showHoverCard = false,
     onclick,
     class: className = '',
@@ -88,10 +69,14 @@
     return '';
   });
 
-  // Fetch profile (reactive to ndkUser changes)
+  // Fetch profile if not provided (reactive to ndkUser changes)
   const profileFetcher = $derived(
-    ndkUser ? createProfileFetcher(() => ({ user: ndkUser! }), ndk) : null
+    propProfile !== undefined
+      ? null
+      : (ndkUser ? createProfileFetcher(() => ({ user: ndkUser! }), ndk) : null)
   );
+
+  const profile = $derived(propProfile !== undefined ? propProfile : profileFetcher?.profile);
 
   // Hover card state
   let isHoverCardVisible = $state(false);
@@ -149,9 +134,8 @@
   const context = {
     get ndk() { return ndk; },
     get user() { return user; },
-    get pubkey() { return pubkey; },
     get ndkUser() { return ndkUser; },
-    get profileFetcher() { return profileFetcher; },
+    get profile() { return profile; },
     get showHoverCard() { return showHoverCard; },
     get onclick() { return onclick; }
   };

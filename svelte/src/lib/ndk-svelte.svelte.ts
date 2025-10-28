@@ -2,7 +2,6 @@ import type { NDKConstructorParams, NDKFilter, NDKRelay, NDKUser, NDKUserProfile
 import NDK, { NDKEvent } from "@nostr-dev-kit/ndk";
 import type { SessionManagerOptions } from "@nostr-dev-kit/sessions";
 import { LocalStorage, NDKSessionManager } from "@nostr-dev-kit/sessions";
-import { setContext, hasContext } from "svelte";
 import * as ndkSvelteGuardrails from "./ai-guardrails/constructor.js";
 import * as subscribeGuardrails from "./ai-guardrails/subscribe.js";
 import { createFetchEvents } from "./event.svelte.js";
@@ -194,13 +193,6 @@ export class NDKSvelte extends NDK {
 
         // Initialize with current active user if already set
         this.#activeUser = this.activeUser;
-
-        // Automatically set on Svelte context (only in component context)
-        try {
-            setContext('ndk', this);
-        } catch {
-            // Not in component context - that's fine
-        }
     }
 
     /**

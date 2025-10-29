@@ -2,97 +2,74 @@
 @import "./lib/styles/component-page.css";
 @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
 
-/* Tailwind v4 theme configuration - for utility class generation */
+/* Tailwind v4 theme configuration - defines light mode defaults */
 @theme {
-  --color-background: 0 0% 100%;
-  --color-foreground: 240 10% 3.9%;
-  --color-card: 0 0% 100%;
-  --color-card-foreground: 240 10% 3.9%;
-  --color-popover: 0 0% 100%;
-  --color-popover-foreground: 240 10% 3.9%;
-  --color-primary: 346.8 77.2% 49.8%;
-  --color-primary-foreground: 355.7 100% 97.3%;
-  --color-secondary: 240 4.8% 95.9%;
-  --color-secondary-foreground: 240 5.9% 10%;
-  --color-muted: 240 4.8% 95.9%;
-  --color-muted-foreground: 240 3.8% 46.1%;
-  --color-accent: 240 4.8% 95.9%;
-  --color-accent-foreground: 240 5.9% 10%;
-  --color-destructive: 0 84.2% 60.2%;
-  --color-destructive-foreground: 0 0% 98%;
-  --color-success: 142.1 76.2% 36.3%;
-  --color-success-foreground: 355.7 100% 97.3%;
-  --color-warning: 47.9 95.8% 53.1%;
-  --color-warning-foreground: 26 83.3% 14.1%;
-  --color-border: 240 5.9% 90%;
-  --color-input: 240 5.9% 90%;
-  --color-ring: 346.8 77.2% 49.8%;
-}
-
-/* CSS variables for existing inline styles (using HSL channel values) */
-:root {
   --font-serif: 'Lora', Georgia, serif;
-  --color-background: 0 0% 100%;
-  --color-foreground: 240 10% 3.9%;
-  --color-card: 0 0% 100%;
-  --color-card-foreground: 240 10% 3.9%;
-  --color-popover: 0 0% 100%;
-  --color-popover-foreground: 240 10% 3.9%;
-  --color-primary: 346.8 77.2% 49.8%;
-  --color-primary-foreground: 355.7 100% 97.3%;
-  --color-secondary: 240 4.8% 95.9%;
-  --color-secondary-foreground: 240 5.9% 10%;
-  --color-muted: 240 4.8% 95.9%;
-  --color-muted-foreground: 240 3.8% 46.1%;
-  --color-accent: 240 4.8% 95.9%;
-  --color-accent-foreground: 240 5.9% 10%;
-  --color-destructive: 0 84.2% 60.2%;
-  --color-destructive-foreground: 0 0% 98%;
-  --color-success: 142.1 76.2% 36.3%;
-  --color-success-foreground: 355.7 100% 97.3%;
-  --color-warning: 47.9 95.8% 53.1%;
-  --color-warning-foreground: 26 83.3% 14.1%;
-  --color-border: 240 5.9% 90%;
-  --color-input: 240 5.9% 90%;
-  --color-ring: 346.8 77.2% 49.8%;
+  --color-background: oklch(100% 0 0);
+  --color-foreground: oklch(24.22% 0.006 265.75);
+  --color-card: oklch(100% 0 0);
+  --color-card-foreground: oklch(24.22% 0.006 265.75);
+  --color-popover: oklch(100% 0 0);
+  --color-popover-foreground: oklch(24.22% 0.006 265.75);
+  --color-primary: oklch(59.75% 0.207 13.37);
+  --color-primary-foreground: oklch(97.22% 0.026 15.34);
+  --color-secondary: oklch(96.08% 0.004 265.75);
+  --color-secondary-foreground: oklch(25.31% 0.012 265.75);
+  --color-muted: oklch(96.08% 0.004 265.75);
+  --color-muted-foreground: oklch(59.79% 0.007 265.75);
+  --color-accent: oklch(96.08% 0.004 265.75);
+  --color-accent-foreground: oklch(25.31% 0.012 265.75);
+  --color-destructive: oklch(62.8% 0.223 29.23);
+  --color-destructive-foreground: oklch(97.64% 0 0);
+  --color-success: oklch(56.16% 0.153 163.05);
+  --color-success-foreground: oklch(97.22% 0.026 15.34);
+  --color-warning: oklch(75.8% 0.188 85.51);
+  --color-warning-foreground: oklch(32.94% 0.117 50.32);
+  --color-border: oklch(90.59% 0.005 265.75);
+  --color-input: oklch(90.59% 0.005 265.75);
+  --color-ring: oklch(59.75% 0.207 13.37);
 }
 
 /* Dark mode color overrides */
-.dark {
-  --color-background: 20 14.3% 4.1%;
-  --color-foreground: 0 0% 95%;
-  --color-card: 24 9.8% 10%;
-  --color-card-foreground: 0 0% 95%;
-  --color-popover: 0 0% 9%;
-  --color-popover-foreground: 0 0% 95%;
-  --color-primary: 346.8 77.2% 49.8%;
-  --color-primary-foreground: 355.7 100% 97.3%;
-  --color-secondary: 240 3.7% 15.9%;
-  --color-secondary-foreground: 0 0% 98%;
-  --color-muted: 0 0% 15%;
-  --color-muted-foreground: 240 5% 64.9%;
-  --color-accent: 12 6.5% 15.1%;
-  --color-accent-foreground: 0 0% 98%;
-  --color-destructive: 0 62.8% 30.6%;
-  --color-destructive-foreground: 0 85.7% 97.3%;
-  --color-success: 142.1 70.6% 45.3%;
-  --color-success-foreground: 144.9 80.4% 10%;
-  --color-warning: 47.9 95.8% 53.1%;
-  --color-warning-foreground: 26 83.3% 14.1%;
-  --color-border: 240 3.7% 15.9%;
-  --color-input: 240 3.7% 15.9%;
-  --color-ring: 346.8 77.2% 49.8%;
+@layer base {
+  .dark {
+    --color-background: oklch(27.44% 0.015 56.36);
+    --color-foreground: oklch(94.51% 0 0);
+    --color-card: oklch(32.06% 0.01 56.36);
+    --color-card-foreground: oklch(94.51% 0 0);
+    --color-popover: oklch(20.65% 0 0);
+    --color-popover-foreground: oklch(94.51% 0 0);
+    --color-primary: oklch(59.75% 0.207 13.37);
+    --color-primary-foreground: oklch(97.22% 0.026 15.34);
+    --color-secondary: oklch(38.72% 0.006 265.75);
+    --color-secondary-foreground: oklch(97.64% 0 0);
+    --color-muted: oklch(36.02% 0 0);
+    --color-muted-foreground: oklch(71.19% 0.009 265.75);
+    --color-accent: oklch(38.05% 0.007 19.11);
+    --color-accent-foreground: oklch(97.64% 0 0);
+    --color-destructive: oklch(44.54% 0.145 29.23);
+    --color-destructive-foreground: oklch(97.41% 0.021 16.67);
+    --color-success: oklch(62.03% 0.154 163.05);
+    --color-success-foreground: oklch(30.98% 0.124 163.93);
+    --color-warning: oklch(75.8% 0.188 85.51);
+    --color-warning-foreground: oklch(32.94% 0.117 50.32);
+    --color-border: oklch(38.72% 0.006 265.75);
+    --color-input: oklch(38.72% 0.006 265.75);
+    --color-ring: oklch(59.75% 0.207 13.37);
+  }
 }
 
 /* Base styles */
-* {
-  border-color: hsl(var(--color-border));
-}
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
 
-body {
-  background-color: hsl(var(--color-background));
-  color: hsl(var(--color-foreground));
-  margin: 0;
-  padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  }
 }

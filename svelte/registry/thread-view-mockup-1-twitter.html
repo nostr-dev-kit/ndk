@@ -143,22 +143,33 @@
       fill: currentColor;
     }
 
-    /* Continuation styling - vertical line extends full height */
+    /* Continuation styling - smaller avatar with vertical line through it */
     .event--continuation .event-left {
       position: relative;
     }
     .event--continuation .avatar {
+      width: 20px;
+      height: 20px;
+      margin-top: 4px;
+    }
+    /* Vertical line that extends through the small avatar - extends upward to previous avatar */
+    .event--continuation .event-left::before {
+      content: '';
       position: absolute;
       width: 2px;
-      height: calc(100% + 14px); /* Extend beyond event padding to connect to next */
-      top: -2px;
+      height: calc(100% + 75px); /* Extend up to previous avatar and down to next */
+      top: -46px; /* Start from center of previous 40px avatar */
       left: 50%;
       transform: translateX(-50%);
-      border-radius: 0;
       background: #cfd9de;
+      z-index: 0;
     }
     .event--continuation .event-left::after {
-      display: none; /* Line is the avatar itself */
+      display: none;
+    }
+    .event--continuation .avatar {
+      position: relative;
+      z-index: 1;
     }
     .event--continuation .event-content {
       margin-top: 0;
@@ -193,18 +204,19 @@
       top: 56px; /* Adjust for larger avatar */
     }
 
-    /* Focused continuation */
+    /* Focused continuation - same color as regular continuation */
     .event--focused.event--continuation .avatar {
-      width: 2px;
-      height: calc(100% + 14px);
-      top: -2px;
-      left: 50%;
-      transform: translateX(-50%);
-      border-radius: 0;
-      background: #1d9bf0;
+      width: 24px;
+      height: 24px;
+      margin-top: 4px;
     }
     .event--focused.event--continuation .event-left {
       width: 56px;
+    }
+    .event--focused.event--continuation .event-left::before {
+      background: #cfd9de; /* Keep same gray as non-focused continuation */
+      top: -98px; /* Extend up to center of larger 48px focused avatar */
+      height: calc(100% + 127px);
     }
 
     /* Section Header */

@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import type { NDKUser } from '@nostr-dev-kit/ndk';
-  import { UserInput } from '../index.js';
+  import { UserInput } from '$lib/ndk/user-input/index.js';
 
   interface Props {
     ndk: NDKSvelte;

@@ -4,14 +4,14 @@
   import CodePreview from '$site-components/code-preview.svelte';
 
   // Import examples
-  import CompactListExample from './examples/compact-list.svelte';
-  import CompactListExampleRaw from './examples/compact-list.svelte?raw';
-  import PortraitCardExample from './examples/portrait-card.svelte';
-  import PortraitCardExampleRaw from './examples/portrait-card.svelte?raw';
-  import LandscapeCardExample from './examples/landscape-card.svelte';
-  import LandscapeCardExampleRaw from './examples/landscape-card.svelte?raw';
-  import WithFollowStatesExample from './examples/with-follow-states.svelte';
-  import WithFollowStatesExampleRaw from './examples/with-follow-states.svelte?raw';
+  import CompactListExample from '../user-profile/examples/compact-list.svelte';
+  import CompactListExampleRaw from '../user-profile/examples/compact-list.svelte?raw';
+  import PortraitCardExample from '../user-profile/examples/portrait-card.svelte';
+  import PortraitCardExampleRaw from '../user-profile/examples/portrait-card.svelte?raw';
+  import LandscapeCardExample from '../user-profile/examples/landscape-card.svelte';
+  import LandscapeCardExampleRaw from '../user-profile/examples/landscape-card.svelte?raw';
+  import WithFollowStatesExample from '../user-profile/examples/with-follow-states.svelte';
+  import WithFollowStatesExampleRaw from '../user-profile/examples/with-follow-states.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 </script>

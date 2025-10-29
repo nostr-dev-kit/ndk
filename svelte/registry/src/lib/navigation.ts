@@ -14,12 +14,10 @@ import {
   Chat01Icon,
   File01Icon,
   UserCircleIcon,
-  Tag01Icon,
   IdentificationIcon,
   UserIcon,
   NewsIcon,
   ServerStack01Icon,
-  UserIdVerificationIcon,
   Search01Icon,
   PaintBoardIcon
 } from '@hugeicons/core-free-icons';
@@ -65,13 +63,10 @@ export const componentCategories: NavCategory[] = [
   {
     title: 'User',
     items: [
-      { name: 'Avatar', path: '/components/avatar', icon: UserCircleIcon },
-      { name: 'Name', path: '/components/name', icon: Tag01Icon },
-      { name: 'UserCard', path: '/components/user-card', icon: IdentificationIcon },
+      { name: 'Card', path: '/components/user-card', icon: IdentificationIcon },
       { name: 'UserInput', path: '/components/user-input', icon: Search01Icon },
-      { name: 'Nip05', path: '/components/nip05', icon: UserIdVerificationIcon },
       { name: 'UserHeader', path: '/components/user-header', icon: UserCircleIcon },
-      { name: 'UserProfile', path: '/components/user-profile', icon: UserIcon },
+      { name: 'Profile', path: '/components/user-profile', icon: UserIcon },
     ]
   },
   {

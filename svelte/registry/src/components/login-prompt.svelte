@@ -3,7 +3,8 @@ Centered prompt requiring user login.
 Use for: blocking interactive features that require authentication.
 -->
 <script lang="ts">
-	import { Alert01 } from '@hugeicons/svelte';
+	import { HugeiconsIcon } from '@hugeicons/svelte';
+	import { Alert01Icon } from '@hugeicons/core-free-icons';
 
 	interface Props {
 		message: string;
@@ -16,7 +17,7 @@ Use for: blocking interactive features that require authentication.
 
 <div class="login-prompt {className}">
 	<div class="login-prompt-icon">
-		<Alert01 size={48} />
+		<HugeiconsIcon icon={Alert01Icon} size={48} strokeWidth={2} />
 	</div>
 	<h3 class="login-prompt-title">{title}</h3>
 	<p class="login-prompt-message">{message}</p>

@@ -3,6 +3,7 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKUser } from '@nostr-dev-kit/ndk';
   import CodePreview from '$site-components/code-preview.svelte';
+  import Alert from '$site-components/alert.svelte';
 
   import BasicExample from '$lib/ndk/actions/examples/mute-action-basic.svelte';
   import BasicExampleRaw from '$lib/ndk/actions/examples/mute-action-basic.svelte?raw';
@@ -26,20 +27,9 @@
   </header>
 
   {#if !ndk.$currentUser}
-    <div class="warning-box">
-      <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-        />
-      </svg>
-      <p>
-        <strong>Login required:</strong> You need to be logged in to mute/unmute users.
-        Click "Login" in the sidebar to continue.
-      </p>
-    </div>
+    <Alert variant="warning" title="Login required">
+      <p>You need to be logged in to mute/unmute users. Click "Login" in the sidebar to continue.</p>
+    </Alert>
   {/if}
 
   <section class="demo">
@@ -104,30 +94,6 @@ const count = $derived(ndk.$mutes.size);`}</code></pre>
 </div>
 
 <style>
-  .warning-box {
-    padding: 1rem;
-    background: hsl(40 100% 50% / 0.1);
-    border: 1px solid hsl(40 100% 50% / 0.3);
-    border-radius: 0.5rem;
-    display: flex;
-    gap: 0.75rem;
-    margin-bottom: 2rem;
-  }
-
-  .warning-box .icon {
-    width: 1.25rem;
-    height: 1.25rem;
-    color: hsl(40 100% 40%);
-    flex-shrink: 0;
-    margin-top: 0.125rem;
-  }
-
-  .warning-box p {
-    margin: 0;
-    color: hsl(var(--color-foreground));
-    font-size: 0.875rem;
-  }
-
   .api-docs {
     background: hsl(var(--color-muted) / 0.3);
     border: 1px solid hsl(var(--color-border));

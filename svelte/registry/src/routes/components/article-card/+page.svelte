@@ -3,12 +3,14 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { NDKArticle, NDKKind } from '@nostr-dev-kit/ndk';
   import { ArticleCard } from '$lib/ndk/article-card';
+  import { EditProps } from '$lib/ndk/edit-props';
   import CodePreview from '$site-components/code-preview.svelte';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
   let articles = $state<NDKArticle[]>([]);
   let loading = $state(true);
+  let sampleArticle = $state<NDKArticle | undefined>();
 
   $effect(() => {
     (async () => {
@@ -16,12 +18,21 @@
         // Fetch some real articles from Nostr
         const events = await ndk.fetchEvents({
           kinds: [NDKKind.Article],
+          authors: [
+            "6e468422dfb74a5738702a8823b9b28168abab8655faacb6853cd0ee15deee93",
+            ...(ndk.$follows)
+          ],
           limit: 10
         });
 
         articles = Array.from(events)
           .map(event => NDKArticle.from(event))
           .filter(a => a.title); // Only articles with titles
+
+        // Set initial sample article if not already set by EditProps
+        if (!sampleArticle && articles.length > 0) {
+          sampleArticle = articles[0];
+        }
 
         loading = false;
       } catch (error) {
@@ -31,19 +42,7 @@
     })();
   });
 
-  // Create sample article for demonstration
-  const sampleArticle = $derived.by(() => {
-    if (articles.length > 0) return articles[0];
-
-    // Fallback sample
-    const article = new NDKArticle(ndk);
-    article.title = 'Building zelo.news: First Steps and Early Challenges';
-    article.summary = 'Since announcing zelo.news, I\'ve been deep in implementation mode, wiring up all the pieces that will make this vision a reality...';
-    article.content = 'Full article content would go here...';
-    article.image = 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800&q=80';
-    article.published_at = Math.floor(Date.now() / 1000) - 86400; // 1 day ago
-    return article;
-  });
+  const displayArticle = $derived(sampleArticle);
 </script>
 
 <div class="container mx-auto p-8 max-w-7xl">
@@ -52,6 +51,10 @@
     <p class="text-lg text-muted-foreground mb-6">
       Composable article card components for displaying NDKArticle content with customizable layouts.
     </p>
+
+    <EditProps.Root>
+      <EditProps.Prop name="Sample Article" type="article" bind:value={sampleArticle} />
+    </EditProps.Root>
   </div>
 
   {#if loading}
@@ -82,11 +85,60 @@
 />`}
     >
       <div class="flex gap-6 overflow-x-auto pb-4">
-        {#if sampleArticle}
-          <ArticleCard.Portrait ndk={ndk} article={sampleArticle} />
+        {#if displayArticle}
+          <ArticleCard.Portrait ndk={ndk} article={displayArticle} />
         {/if}
         {#each articles.slice(0, 4) as article}
           <ArticleCard.Portrait ndk={ndk} {article} />
+        {/each}
+      </div>
+    </CodePreview>
+  </section>
+
+  <!-- Hero Preset -->
+  <section class="mb-16">
+    <CodePreview
+      title="Hero Layout"
+      description="Full-width hero card with gradient background and featured badge. Ideal for featured stories and landing page headers."
+      component="article-card-hero"
+      code={`<ArticleCard.Hero {ndk} {article} />
+
+<!-- With custom options -->
+<ArticleCard.Hero
+  {ndk}
+  {article}
+  height="h-[600px]"
+  badgeText="TRENDING NOW"
+/>`}
+    >
+      {#if displayArticle}
+        <ArticleCard.Hero ndk={ndk} article={displayArticle} />
+      {/if}
+    </CodePreview>
+  </section>
+
+  <!-- Neon Preset -->
+  <section class="mb-16">
+    <CodePreview
+      title="Neon Layout"
+      description="Portrait card with subtle glossy white neon top border, full background image, author info and reading time."
+      component="article-card-neon"
+      code={`<ArticleCard.Neon {ndk} {article} />
+
+<!-- With custom sizing -->
+<ArticleCard.Neon
+  {ndk}
+  {article}
+  width="w-[320px]"
+  height="h-[480px]"
+/>`}
+    >
+      <div class="flex gap-6 overflow-x-auto pb-4">
+        {#if displayArticle}
+          <ArticleCard.Neon ndk={ndk} article={displayArticle} />
+        {/if}
+        {#each articles.slice(0, 4) as article}
+          <ArticleCard.Neon ndk={ndk} {article} />
         {/each}
       </div>
     </CodePreview>
@@ -106,8 +158,8 @@
 <ArticleCard.Medium {ndk} {article} imageSize="large" />`}
     >
       <div class="space-y-0 border border-border rounded-lg overflow-hidden">
-        {#if sampleArticle}
-          <ArticleCard.Medium ndk={ndk} article={sampleArticle} />
+        {#if displayArticle}
+          <ArticleCard.Medium ndk={ndk} article={displayArticle} />
         {/if}
         {#each articles.slice(0, 3) as article}
           <ArticleCard.Medium ndk={ndk} {article} />
@@ -126,37 +178,11 @@
 <ArticleCard.Medium {ndk} {article} imageSize="large" />`}
     >
       <div class="space-y-0 border border-border rounded-lg overflow-hidden">
-        {#if sampleArticle}
-          <ArticleCard.Medium ndk={ndk} article={sampleArticle} imageSize="small" />
-          <ArticleCard.Medium ndk={ndk} article={sampleArticle} imageSize="medium" />
-          <ArticleCard.Medium ndk={ndk} article={sampleArticle} imageSize="large" />
+        {#if displayArticle}
+          <ArticleCard.Medium ndk={ndk} article={displayArticle} imageSize="small" />
+          <ArticleCard.Medium ndk={ndk} article={displayArticle} imageSize="medium" />
+          <ArticleCard.Medium ndk={ndk} article={displayArticle} imageSize="large" />
         {/if}
-      </div>
-    </CodePreview>
-  </section>
-
-  <!-- Medium with Stats -->
-  <section class="mb-16">
-    <CodePreview
-      title="Medium with Stats"
-      description="Medium layout with engagement stats (reactions and replies). Stats footer is interactive while card content navigates to article."
-      component="article-card-medium-with-stats"
-      code={`<ArticleCard.MediumWithStats {ndk} {article} />
-
-<!-- With custom image size -->
-<ArticleCard.MediumWithStats
-  {ndk}
-  {article}
-  imageSize="large"
-/>`}
-    >
-      <div class="space-y-0 border border-border rounded-lg overflow-hidden">
-        {#if sampleArticle}
-          <ArticleCard.MediumWithStats ndk={ndk} article={sampleArticle} />
-        {/if}
-        {#each articles.slice(0, 2) as article}
-          <ArticleCard.MediumWithStats ndk={ndk} {article} />
-        {/each}
       </div>
     </CodePreview>
   </section>
@@ -177,8 +203,8 @@
   </div>
 </ArticleCard.Root>`}
     >
-      {#if sampleArticle}
-        <ArticleCard.Root ndk={ndk} article={sampleArticle}>
+      {#if displayArticle}
+        <ArticleCard.Root ndk={ndk} article={displayArticle}>
           <div class="border border-border rounded-xl overflow-hidden bg-card max-w-2xl">
             <ArticleCard.Image class="h-64" showGradient={true} />
             <div class="p-6">
@@ -283,19 +309,29 @@
       </div>
 
       <div class="border border-border rounded-lg p-6">
-        <h3 class="text-xl font-semibold mb-3">ArticleCard.Medium</h3>
+        <h3 class="text-xl font-semibold mb-3">ArticleCard.Hero</h3>
         <p class="text-muted-foreground mb-4">
-          Preset: Horizontal card with image on right.
+          Preset: Full-width hero card with gradient background and optional badge (shown if badgeText provided).
         </p>
         <div class="bg-muted p-4 rounded-lg">
-          <code class="text-sm">imageSize?: "small" | "medium" | "large"</code>
+          <code class="text-sm">height?: string, badgeText?: string</code>
         </div>
       </div>
 
       <div class="border border-border rounded-lg p-6">
-        <h3 class="text-xl font-semibold mb-3">ArticleCard.MediumWithStats</h3>
+        <h3 class="text-xl font-semibold mb-3">ArticleCard.Neon</h3>
         <p class="text-muted-foreground mb-4">
-          Preset: Horizontal card with image on right and engagement stats footer.
+          Preset: Portrait card with subtle glossy white neon top border effect, full background image, author info and reading time.
+        </p>
+        <div class="bg-muted p-4 rounded-lg">
+          <code class="text-sm">width?: string, height?: string</code>
+        </div>
+      </div>
+
+      <div class="border border-border rounded-lg p-6">
+        <h3 class="text-xl font-semibold mb-3">ArticleCard.Medium</h3>
+        <p class="text-muted-foreground mb-4">
+          Preset: Horizontal card with image on right.
         </p>
         <div class="bg-muted p-4 rounded-lg">
           <code class="text-sm">imageSize?: "small" | "medium" | "large"</code>

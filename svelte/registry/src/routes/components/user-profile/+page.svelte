@@ -1,6 +1,8 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import type { NDKUser } from '@nostr-dev-kit/ndk';
+  import { EditProps } from '$lib/ndk/edit-props';
   import CodePreview from '$site-components/code-preview.svelte';
 
   // Import examples
@@ -13,18 +15,9 @@
 
   const ndk = getContext<NDKSvelte>('ndk');
 
-  let npubInput = $state('npub1l2vyl2xd4j0g97thetkkxkqhqh4ejy42kxc70yevjv90jlak3p6sjegwrc'); // pablo
-  let examplePubkey = $state('fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52'); // default
+  let exampleUser = $state<NDKUser | undefined>();
 
-  $effect(() => {
-    ndk.fetchUser(npubInput).then(user => {
-      if (user) {
-        examplePubkey = user.pubkey;
-      }
-    }).catch(() => {
-      examplePubkey = 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52';
-    });
-  });
+  const examplePubkey = $derived(exampleUser?.pubkey || 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52');
 
   const examplePubkeys = [
     'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52', // pablo
@@ -39,19 +32,16 @@
   <header>
     <h1>UserProfile</h1>
     <p>Composable user profile display components with multiple layout variants.</p>
-  </header>
 
-  <section class="controls">
-    <label>
-      <span class="label-text">Test with different user (npub):</span>
-      <input
-        type="text"
-        bind:value={npubInput}
-        placeholder="npub1..."
-        class="npub-input"
+    <EditProps.Root>
+      <EditProps.Prop
+        name="Example User"
+        type="user"
+        default="npub1l2vyl2xd4j0g97thetkkxkqhqh4ejy42kxc70yevjv90jlak3p6sjegwrc"
+        bind:value={exampleUser}
       />
-    </label>
-  </section>
+    </EditProps.Root>
+  </header>
 
   <section class="demo">
     <CodePreview

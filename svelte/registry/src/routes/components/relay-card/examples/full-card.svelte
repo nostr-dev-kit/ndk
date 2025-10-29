@@ -14,50 +14,16 @@
 </script>
 
 <RelayCard.Root {ndk} {relayUrl}>
-  <div class="card-with-description">
-    <div class="card-header">
+  <div class="p-4 bg-card border border-border rounded-lg">
+    <div class="flex items-center gap-3 mb-3">
       <RelayCard.Icon size={64} />
-      <div class="card-content">
-        <RelayCard.Name class="card-name" />
-        <RelayCard.Url class="card-url" />
+      <div class="flex-1">
+        <RelayCard.Name class="font-semibold text-foreground" />
+        <RelayCard.Url class="text-sm text-muted-foreground" />
       </div>
       <RelayCard.BookmarkButton bookmarks={bookmarksWithToggle} size="lg" />
     </div>
-    <RelayCard.Description maxLines={3} class="card-description" />
+    <RelayCard.Description maxLines={3} class="mt-3" />
     <RelayCard.BookmarkedBy bookmarks={followsBookmarks} />
   </div>
 </RelayCard.Root>
-
-<style>
-  :global(.card-with-description) {
-    padding: 1rem;
-    background: hsl(var(--color-card));
-    border: 1px solid hsl(var(--color-border));
-    border-radius: 0.5rem;
-  }
-
-  :global(.card-header) {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.75rem;
-  }
-
-  :global(.card-content) {
-    flex: 1;
-  }
-
-  :global(.card-name) {
-    font-weight: 600;
-    color: hsl(var(--color-foreground));
-  }
-
-  :global(.card-url) {
-    font-size: 0.875rem;
-    color: hsl(var(--color-muted-foreground));
-  }
-
-  :global(.card-description) {
-    margin-top: 0.75rem;
-  }
-</style>

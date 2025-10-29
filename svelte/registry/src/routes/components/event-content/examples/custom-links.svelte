@@ -13,23 +13,8 @@
 
 <EventContent {ndk} {event}>
   {#snippet link({ url })}
-    <a href={url} target="_blank" rel="noopener noreferrer" class="custom-link">
+    <a href={url} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-violet-600 no-underline font-medium hover:underline">
       🔗 {url}
     </a>
   {/snippet}
 </EventContent>
-
-<style>
-  :global(.custom-link) {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    color: #7c3aed;
-    text-decoration: none;
-    font-weight: 500;
-  }
-
-  :global(.custom-link:hover) {
-    text-decoration: underline;
-  }
-</style>

@@ -34,8 +34,8 @@
   import { cn } from '$lib/utils';
 
   interface Props {
-    /** NDK instance */
-    ndk: NDKSvelte;
+    /** NDK instance (optional, falls back to context) */
+    ndk?: NDKSvelte;
 
     /** User instance */
     user?: NDKUser;
@@ -71,7 +71,7 @@
   }: Props = $props();
 </script>
 
-<Root {ndk} {user} {pubkey} {showHoverCard} {onclick} class={className}>
+<Root ndk={ndk} {user} {pubkey} {showHoverCard} {onclick} class={className}>
   <div class={cn('flex items-center gap-3', className)}>
     <Avatar size={avatarSize} />
     {#if meta}

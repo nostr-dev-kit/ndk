@@ -11,26 +11,14 @@
   let { ndk, event }: Props = $props();
 </script>
 
-<EventCard.Root {ndk} {event} class="custom-card">
-  <div class="custom-layout">
+<EventCard.Root {ndk} {event}>
+  <div class="p-4">
     <EventCard.Header variant="minimal" showTimestamp={false} />
     <EventCard.Content />
-    <div class="custom-actions">
+    <div class="flex gap-2 px-4 py-3">
       <ReactionAction emoji="🔥" />
       <ReactionAction emoji="💯" />
       <ReactionAction emoji="🚀" />
     </div>
   </div>
 </EventCard.Root>
-
-<style>
-  :global(.custom-card .custom-layout) {
-    padding: 1rem;
-  }
-
-  .custom-actions {
-    display: flex;
-    gap: 0.5rem;
-    padding: 0.75rem 1rem;
-  }
-</style>

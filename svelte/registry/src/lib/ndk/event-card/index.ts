@@ -3,9 +3,11 @@
  *
  * A flexible system for displaying any NDKEvent with customizable layout and actions.
  *
- * @example Basic usage:
+ * The `ndk` prop is optional on Root components - if not provided, it will be retrieved from Svelte context.
+ *
+ * @example Basic usage (ndk from context):
  * ```svelte
- * <EventCard.Root {ndk} {event}>
+ * <EventCard.Root {event}>
  *   <EventCard.Header />
  *   <EventCard.Content />
  *   <EventCard.Actions>

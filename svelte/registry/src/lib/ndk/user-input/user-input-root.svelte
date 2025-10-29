@@ -4,11 +4,12 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createUserInput } from '@nostr-dev-kit/svelte';
   import { USER_INPUT_CONTEXT_KEY, type UserInputContext } from './context.svelte.js';
+  import { getNDKFromContext } from '../ndk-context.svelte.js';
   import type { Snippet } from 'svelte';
 
   interface Props {
-    /** NDK instance */
-    ndk: NDKSvelte;
+    /** NDK instance (optional, falls back to context) */
+    ndk?: NDKSvelte;
 
     /** Callback when user is selected */
     onSelect?: (user: NDKUser) => void;
@@ -24,12 +25,14 @@
   }
 
   let {
-    ndk,
+    ndk: providedNdk,
     onSelect,
     debounceMs = 300,
     class: className = '',
     children
   }: Props = $props();
+
+  const ndk = getNDKFromContext(providedNdk);
 
   // Local query state
   let query = $state('');

@@ -4,12 +4,23 @@
  * A flexible system for displaying user profiles with customizable layout.
  * Components support both context mode (within UserProfile.Root) and standalone mode (with direct props).
  *
- * @example Context mode:
+ * The `ndk` prop is optional on Root components - if not provided, it will be retrieved from Svelte context.
+ * Ensure NDK is set in context via `setContext('ndk', ndk)` in a parent component (e.g., +layout.svelte).
+ *
+ * @example Context mode (ndk from context):
+ * ```svelte
+ * <UserProfile.Root {pubkey}>
+ *   <UserProfile.Avatar />
+ *   <UserProfile.Name field="displayName" />
+ *   <UserProfile.Field field="about" />
+ * </UserProfile.Root>
+ * ```
+ *
+ * @example Context mode (explicit ndk):
  * ```svelte
  * <UserProfile.Root {ndk} {pubkey}>
  *   <UserProfile.Avatar />
  *   <UserProfile.Name field="displayName" />
- *   <UserProfile.Field field="about" />
  * </UserProfile.Root>
  * ```
  *
@@ -22,23 +33,10 @@
  *
  * @example Avatar + Name variant:
  * ```svelte
- * <UserProfile.Root {ndk} {pubkey}>
+ * <UserProfile.Root {pubkey}>
  *   <div class="flex items-center gap-3">
  *     <UserProfile.Avatar size={40} />
  *     <UserProfile.Name />
- *   </div>
- * </UserProfile.Root>
- * ```
- *
- * @example Avatar + Name + Handle variant:
- * ```svelte
- * <UserProfile.Root {ndk} {pubkey}>
- *   <div class="flex items-center gap-3">
- *     <UserProfile.Avatar size={40} />
- *     <div class="flex flex-col">
- *       <UserProfile.Name />
- *       <UserProfile.Handle />
- *     </div>
  *   </div>
  * </UserProfile.Root>
  * ```

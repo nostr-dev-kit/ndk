@@ -1,6 +1,8 @@
 /**
  * HighlightCard components for displaying Nostr highlight events (kind 9802)
  *
+ * The `ndk` prop is optional on Root components - if not provided, it will be retrieved from Svelte context.
+ *
  * @example Basic usage
  * ```svelte
  * <script>
@@ -17,9 +19,9 @@
  * <HighlightCard.Grid {ndk} event={highlightEvent} />
  * ```
  *
- * @example Custom composition
+ * @example Custom composition (ndk from context)
  * ```svelte
- * <HighlightCard.Root {ndk} {event} variant="feed">
+ * <HighlightCard.Root {event} variant="feed">
  *   <HighlightCard.Content />
  *   <HighlightCard.Source />
  * </HighlightCard.Root>

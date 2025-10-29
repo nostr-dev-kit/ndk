@@ -4,11 +4,12 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createProfileFetcher } from '@nostr-dev-kit/svelte';
   import { ARTICLE_CARD_CONTEXT_KEY, type ArticleCardContext } from './context.svelte.js';
+  import { getNDKFromContext } from '../ndk-context.svelte.js';
   import type { Snippet } from 'svelte';
 
   interface Props {
-    /** NDK instance */
-    ndk: NDKSvelte;
+    /** NDK instance (optional, falls back to context) */
+    ndk?: NDKSvelte;
 
     /** Article instance */
     article: NDKArticle;
@@ -27,13 +28,15 @@
   }
 
   let {
-    ndk,
+    ndk: providedNdk,
     article,
     interactive = true,
     onclick,
     class: className = '',
     children
   }: Props = $props();
+
+  const ndk = getNDKFromContext(providedNdk);
 
   // Fetch author profile (reactive to article changes)
   const authorProfile = $derived(

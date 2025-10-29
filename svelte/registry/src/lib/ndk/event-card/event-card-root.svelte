@@ -17,12 +17,13 @@
   import { type NDKSvelte, type ThreadingMetadata } from '@nostr-dev-kit/svelte';
   import { setContext } from 'svelte';
   import { EVENT_CARD_CONTEXT_KEY, type EventCardContext } from './context.svelte.js';
+  import { getNDKFromContext } from '../ndk-context.svelte.js';
   import { cn } from '$lib/utils';
   import type { Snippet } from 'svelte';
 
   interface Props {
-    /** NDK instance */
-    ndk: NDKSvelte;
+    /** NDK instance (optional, falls back to context) */
+    ndk?: NDKSvelte;
 
     /** The event to display (any kind) */
     event: NDKEvent;
@@ -41,13 +42,15 @@
   }
 
   let {
-    ndk,
+    ndk: providedNdk,
     event,
     threading,
     interactive = false,
     class: className = '',
     children
   }: Props = $props();
+
+  const ndk = getNDKFromContext(providedNdk);
 
   // Create a reactive context object that updates when props change
   const context: EventCardContext = {

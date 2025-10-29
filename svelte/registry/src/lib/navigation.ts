@@ -60,8 +60,6 @@ export const componentCategories: NavCategory[] = [
     items: [
       { name: 'EventCard', path: '/components/event-card', icon: Calendar01Icon },
       { name: 'EventCard Thread', path: '/components/event-thread', icon: Chat01Icon },
-      { name: 'EventContent', path: '/components/event-content', icon: File01Icon },
-      { name: 'HighlightCard', path: '/components/highlight-card', icon: File01Icon },
     ]
   },
   {
@@ -77,15 +75,28 @@ export const componentCategories: NavCategory[] = [
     ]
   },
   {
-    title: 'Content',
+    title: 'Relay',
     items: [
-      { name: 'ArticleCard', path: '/components/article-card', icon: NewsIcon },
+      { name: 'Card', path: '/components/relay-card', icon: ServerStack01Icon },
+    ]
+  },
+  // NIP/Kind-specific components are organized as: [Title] (NIP-XX or Kind:xx) > {Card, Content, ...}
+  {
+    title: 'Note (Kind:1)',
+    items: [
+      { name: 'Content', path: '/components/event-content', icon: File01Icon },
     ]
   },
   {
-    title: 'Relay',
+    title: 'Article (NIP-23)',
     items: [
-      { name: 'RelayCard', path: '/components/relay-card', icon: ServerStack01Icon },
+      { name: 'Card', path: '/components/article-card', icon: NewsIcon },
+    ]
+  },
+  {
+    title: 'Highlight (NIP-84)',
+    items: [
+      { name: 'Card', path: '/components/highlight-card', icon: File01Icon },
     ]
   },
 ];

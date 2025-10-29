@@ -5,14 +5,10 @@
 
   interface Props {
     ndk: NDKSvelte;
-    articles: NDKArticle[];
+    article: NDKArticle;
   }
 
-  let { ndk, articles }: Props = $props();
+  let { ndk, article }: Props = $props();
 </script>
 
-<div class="space-y-0 border border-border rounded-lg overflow-hidden">
-  {#each articles as article}
-    <ArticleCard.MediumWithStats {ndk} {article} />
-  {/each}
-</div>
+<ArticleCard.Hero {ndk} {article} />

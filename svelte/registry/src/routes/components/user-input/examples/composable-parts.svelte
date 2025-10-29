@@ -36,35 +36,4 @@
   </UserInput.Root>
 </div>
 
-<style>
-  .example-container {
-    max-width: 24rem;
-  }
 
-  .empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 2rem 1rem;
-    text-align: center;
-  }
-
-  .empty-state svg {
-    width: 3rem;
-    height: 3rem;
-    color: hsl(var(--muted-foreground));
-    opacity: 0.5;
-  }
-
-  .empty-state p {
-    margin: 0;
-    color: hsl(var(--muted-foreground));
-    font-size: 0.875rem;
-  }
-
-  .empty-state .hint {
-    font-size: 0.75rem;
-    opacity: 0.7;
-  }
-</style>

@@ -40,7 +40,7 @@
     user,
     pubkey,
     profile: propProfile,
-    showHoverCard = false,
+    showHoverCard = true,
     onclick,
     class: className = '',
     children

@@ -23,189 +23,57 @@
   }), ndk);
 </script>
 
-<div class="example-container">
-  <div class="input-wrapper">
+<div class="relative max-w-96">
+  <div class="relative">
     <input
       type="text"
       bind:value={query}
       placeholder="Search users by name, NIP-05, npub..."
-      class="search-input"
+      class="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground text-sm focus:outline-none focus:border-ring"
     />
     {#if userInput.loading}
-      <span class="loading-indicator">Loading...</span>
+      <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">Loading...</span>
     {/if}
   </div>
 
   {#if userInput.results.length > 0}
-    <div class="results-list">
+    <div class="absolute top-[calc(100%+0.25rem)] left-0 right-0 z-50 max-h-80 overflow-y-auto bg-popover border border-border rounded-md shadow-md">
       {#each userInput.results as result (result.user.pubkey)}
         <button
           type="button"
-          class="result-item"
+          class="flex items-center gap-3 w-full p-3 border-none bg-transparent text-left cursor-pointer hover:bg-accent"
           onclick={() => userInput.selectUser(result.user)}
         >
-          <div class="avatar">
+          <div class="w-10 h-10 rounded-full overflow-hidden bg-muted">
             {#if result.profile?.picture}
-              <img src={result.profile.picture} alt="" />
+              <img src={result.profile.picture} alt="" class="w-full h-full object-cover" />
             {:else}
-              <div class="avatar-placeholder">
+              <div class="w-full h-full flex items-center justify-center bg-primary text-primary-foreground font-semibold">
                 {(result.profile?.displayName || result.profile?.name || 'U').charAt(0).toUpperCase()}
               </div>
             {/if}
           </div>
-          <div class="user-info">
-            <div class="name">
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 font-medium text-foreground text-sm">
               {result.profile?.displayName || result.profile?.name || result.user.npub.slice(0, 12) + '...'}
               {#if result.isFollowing}
-                <span class="badge">Following</span>
+                <span class="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs">Following</span>
               {/if}
             </div>
             {#if result.profile?.nip05}
-              <div class="nip05">{result.profile.nip05}</div>
+              <div class="text-muted-foreground text-xs">{result.profile.nip05}</div>
             {/if}
           </div>
         </button>
       {/each}
     </div>
   {:else if query && !userInput.loading}
-    <div class="no-results">No users found</div>
+    <div class="p-4 text-center text-muted-foreground text-sm">No users found</div>
   {/if}
 
   {#if userInput.selectedUser}
-    <div class="selected">
+    <div class="mt-4 p-2 bg-muted rounded-md text-sm">
       Last selected: {userInput.selectedUser.npub.slice(0, 16)}...
     </div>
   {/if}
 </div>
-
-<style>
-  .example-container {
-    position: relative;
-    max-width: 24rem;
-  }
-
-  .input-wrapper {
-    position: relative;
-  }
-
-  .search-input {
-    width: 100%;
-    padding: 0.5rem 0.75rem;
-    border: 1px solid hsl(var(--border));
-    border-radius: 0.375rem;
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
-    font-size: 0.875rem;
-  }
-
-  .search-input:focus {
-    outline: none;
-    border-color: hsl(var(--ring));
-  }
-
-  .loading-indicator {
-    position: absolute;
-    right: 0.75rem;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 0.75rem;
-    color: hsl(var(--muted-foreground));
-  }
-
-  .results-list {
-    position: absolute;
-    top: calc(100% + 0.25rem);
-    left: 0;
-    right: 0;
-    z-index: 50;
-    max-height: 20rem;
-    overflow-y: auto;
-    background-color: hsl(var(--popover));
-    border: 1px solid hsl(var(--border));
-    border-radius: 0.375rem;
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-  }
-
-  .result-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    width: 100%;
-    padding: 0.75rem;
-    border: none;
-    background: transparent;
-    text-align: left;
-    cursor: pointer;
-  }
-
-  .result-item:hover {
-    background-color: hsl(var(--accent));
-  }
-
-  .avatar {
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 9999px;
-    overflow: hidden;
-    background-color: hsl(var(--muted));
-  }
-
-  .avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .avatar-placeholder {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: hsl(var(--primary));
-    color: hsl(var(--primary-foreground));
-    font-weight: 600;
-  }
-
-  .user-info {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .name {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: 500;
-    color: hsl(var(--foreground));
-    font-size: 0.875rem;
-  }
-
-  .badge {
-    padding: 0.125rem 0.5rem;
-    border-radius: 9999px;
-    background-color: hsl(var(--primary) / 0.1);
-    color: hsl(var(--primary));
-    font-size: 0.75rem;
-  }
-
-  .nip05 {
-    color: hsl(var(--muted-foreground));
-    font-size: 0.75rem;
-  }
-
-  .no-results {
-    padding: 1rem;
-    text-align: center;
-    color: hsl(var(--muted-foreground));
-    font-size: 0.875rem;
-  }
-
-  .selected {
-    margin-top: 1rem;
-    padding: 0.5rem;
-    background-color: hsl(var(--muted));
-    border-radius: 0.375rem;
-    font-size: 0.875rem;
-  }
-</style>

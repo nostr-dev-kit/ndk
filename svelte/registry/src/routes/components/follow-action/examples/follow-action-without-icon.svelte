@@ -16,9 +16,9 @@
 </script>
 
 <UserProfile.Root {ndk} {pubkey}>
-  <div class="user-display">
+  <div class="flex items-center gap-4">
     <UserProfile.Avatar size={48} />
-    <div class="user-info">
+    <div class="flex flex-col gap-2">
       <UserProfile.Name />
       <FollowAction
         {ndk}
@@ -31,16 +31,3 @@
   </div>
 </UserProfile.Root>
 
-<style>
-  .user-display {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  .user-info {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-</style>

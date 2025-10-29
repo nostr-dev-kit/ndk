@@ -83,7 +83,7 @@
 			<div class="preview">
 				{@render children?.()}
 			</div>
-		{:else if activeTab === 'install'}
+		{:else if activeTab === 'install' && component}
 			<div class="install-tab">
 				<InstallCommand componentName={component} />
 			</div>

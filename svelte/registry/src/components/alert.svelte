@@ -4,7 +4,13 @@ Use for: login requirements, deprecation notices, important information.
 -->
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { Alert01, InformationCircle, CancelCircle, CheckmarkCircle02 } from '@hugeicons/svelte';
+	import { HugeiconsIcon } from '@hugeicons/svelte';
+	import {
+		Alert01Icon,
+		InformationCircleIcon,
+		CancelCircleIcon,
+		CheckmarkCircle02Icon
+	} from '@hugeicons/core-free-icons';
 
 	interface Props {
 		variant?: 'warning' | 'info' | 'error' | 'success';
@@ -16,18 +22,18 @@ Use for: login requirements, deprecation notices, important information.
 	let { variant = 'info', title, children, class: className = '' }: Props = $props();
 
 	const icons = {
-		warning: Alert01,
-		info: InformationCircle,
-		error: CancelCircle,
-		success: CheckmarkCircle02
+		warning: Alert01Icon,
+		info: InformationCircleIcon,
+		error: CancelCircleIcon,
+		success: CheckmarkCircle02Icon
 	};
 
-	const IconComponent = icons[variant];
+	const icon = icons[variant];
 </script>
 
 <div class="alert alert-{variant} {className}">
 	<div class="alert-icon">
-		<IconComponent size={20} />
+		<HugeiconsIcon {icon} size={20} strokeWidth={2} />
 	</div>
 	<div class="alert-content">
 		{#if title}

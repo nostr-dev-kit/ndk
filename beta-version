@@ -209,18 +209,23 @@ echo -e "${GREEN}✓ Changes committed${NC}"
 
 echo ""
 echo -e "${YELLOW}Step 6: Publishing to npm with beta tag...${NC}"
-echo -e "${BLUE}Running: bun changeset publish --tag beta${NC}"
 echo ""
 
 read -p "Continue with publish? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    bun changeset publish --tag beta
+    for pkg in "${PACKAGES[@]}"; do
+        if [ -d "$pkg" ]; then
+            echo -e "${BLUE}Publishing ${pkg}...${NC}"
+            (cd "$pkg" && npm publish --tag beta)
+            echo -e "${GREEN}✓ Published ${pkg}${NC}"
+        fi
+    done
     echo ""
     echo -e "${GREEN}================================================${NC}"
     echo -e "${GREEN}  ✓ Successfully published beta.${BETA_NUM}${NC}"
     echo -e "${GREEN}================================================${NC}"
 else
-    echo -e "${YELLOW}Publish cancelled. You can publish later with:${NC}"
-    echo -e "${BLUE}  bun changeset publish --tag beta${NC}"
+    echo -e "${YELLOW}Publish cancelled. You can publish later by running:${NC}"
+    echo -e "${BLUE}  cd <package> && npm publish --tag beta${NC}"
 fi

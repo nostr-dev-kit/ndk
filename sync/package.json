@@ -1,6 +1,6 @@
 {
   "name": "@nostr-dev-kit/sync",
-  "version": "0.4.0-beta.22",
+  "version": "0.4.0-beta.23",
   "description": "NIP-77 Negentropy sync protocol implementation for NDK",
   "type": "module",
   "main": "dist/index.cjs",
@@ -35,16 +35,16 @@
     "example:relay-check": "bun run examples/check-relay-support.ts"
   },
   "peerDependencies": {
-    "@nostr-dev-kit/ndk": "3.0.0-beta.22"
+    "@nostr-dev-kit/ndk": "3.0.0-beta.23"
   },
   "dependencies": {
     "nostr-tools": "^2.17.0",
     "tseep": "^1.3.1"
   },
   "devDependencies": {
-    "@nostr-dev-kit/cache-memory": "2.7.8-beta.22",
-    "@nostr-dev-kit/cache-dexie": "2.7.8-beta.22",
-    "@nostr-dev-kit/cache-nostr": "0.1.66-beta.22",
+    "@nostr-dev-kit/cache-memory": "2.7.8-beta.23",
+    "@nostr-dev-kit/cache-dexie": "2.7.8-beta.23",
+    "@nostr-dev-kit/cache-nostr": "0.1.66-beta.23",
     "tsup": "^8.4.0",
     "typescript": "^5.9.3",
     "vitest": "^3.2.4",

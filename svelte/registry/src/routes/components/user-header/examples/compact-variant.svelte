@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { UserHeader } from '../index.js';
+  import { UserHeader } from '$lib/ndk/user-header/index.js';
 
   interface Props {
     ndk: NDKSvelte;

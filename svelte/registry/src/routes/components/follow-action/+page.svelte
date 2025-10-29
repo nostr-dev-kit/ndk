@@ -3,6 +3,10 @@
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createFollowAction, createFetchUser } from '@nostr-dev-kit/svelte';
   import CodePreview from '$site-components/code-preview.svelte';
+  import Alert from '$site-components/alert.svelte';
+  import Toast from '$site-components/toast.svelte';
+  import ExampleGrid from '$site-components/example-grid.svelte';
+  import ApiTable from '$site-components/api-table.svelte';
 
   // Import examples
   import DefaultExample from '$lib/ndk/actions/examples/follow-action-default.svelte';
@@ -38,20 +42,21 @@
 
   let hashtagInput = $state('bitcoin');
 
-  let lastEvent = $state<string>('');
+  let toastMessage = $state<string>('');
+  let toastVisible = $state(false);
 
   function handleFollowSuccess(e: Event) {
     const detail = (e as CustomEvent).detail;
-    lastEvent = `Success: ${detail.isFollowing ? 'Followed' : 'Unfollowed'} ${
+    toastMessage = `Success: ${detail.isFollowing ? 'Followed' : 'Unfollowed'} ${
       detail.isHashtag ? `#${detail.target}` : 'user'
     }`;
-    setTimeout(() => (lastEvent = ''), 3000);
+    toastVisible = true;
   }
 
   function handleFollowError(e: Event) {
     const detail = (e as CustomEvent).detail;
-    lastEvent = `Error: ${detail.error.message}`;
-    setTimeout(() => (lastEvent = ''), 5000);
+    toastMessage = `Error: ${detail.error.message}`;
+    toastVisible = true;
   }
 
   const customUserFollow = createFollowAction(() => ({ target: exampleUser }), ndk);
@@ -61,15 +66,15 @@
     try {
       if (type === 'user') {
         await customUserFollow.follow();
-        lastEvent = `Builder: ${customUserFollow.isFollowing ? 'Followed' : 'Unfollowed'} user`;
+        toastMessage = `Builder: ${customUserFollow.isFollowing ? 'Followed' : 'Unfollowed'} user`;
       } else {
         await customHashtagFollow.follow();
-        lastEvent = `Builder: ${customHashtagFollow.isFollowing ? 'Followed' : 'Unfollowed'} #${hashtagInput}`;
+        toastMessage = `Builder: ${customHashtagFollow.isFollowing ? 'Followed' : 'Unfollowed'} #${hashtagInput}`;
       }
-      setTimeout(() => (lastEvent = ''), 3000);
+      toastVisible = true;
     } catch (error) {
-      lastEvent = `Error: ${error instanceof Error ? error.message : 'Unknown error'}`;
-      setTimeout(() => (lastEvent = ''), 5000);
+      toastMessage = `Error: ${error instanceof Error ? error.message : 'Unknown error'}`;
+      toastVisible = true;
     }
   }
 </script>
@@ -84,25 +89,12 @@
   </header>
 
   {#if !ndk.$currentUser}
-    <div class="warning-box">
-      <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-        />
-      </svg>
-      <p>
-        <strong>Login required:</strong> You need to be logged in to see and use the follow button.
-        Click "Login" in the sidebar to continue.
-      </p>
-    </div>
+    <Alert variant="warning" title="Login required">
+      <p>You need to be logged in to see and use the follow button. Click "Login" in the sidebar to continue.</p>
+    </Alert>
   {/if}
 
-  {#if lastEvent}
-    <div class="event-toast">{lastEvent}</div>
-  {/if}
+  <Toast bind:visible={toastVisible} message={toastMessage} duration={3000} />
 
   <section class="showcase-section">
     <h2>Following Users</h2>
@@ -123,7 +115,7 @@
       </label>
     </div>
 
-    <div class="example-grid">
+    <ExampleGrid>
       <CodePreview
         title="Default Variant"
         description="Simple text link style, perfect for inline use."
@@ -155,7 +147,7 @@
       >
         <CustomStylingExample {ndk} user={exampleUser} pubkey={examplePubkey} onfollowsuccess={handleFollowSuccess} onfollowerror={handleFollowError} />
       </CodePreview>
-    </div>
+    </ExampleGrid>
   </section>
 
   <section class="showcase-section">
@@ -176,7 +168,7 @@
       </label>
     </div>
 
-    <div class="example-grid">
+    <ExampleGrid>
       <CodePreview
         title="Default Hashtag"
         description="Simple hashtag follow button."
@@ -208,7 +200,7 @@
       >
         <HashtagCustomLabelExample {ndk} hashtag={hashtagInput} onfollowsuccess={handleFollowSuccess} onfollowerror={handleFollowError} />
       </CodePreview>
-    </div>
+    </ExampleGrid>
   </section>
 
   <section class="showcase-section">
@@ -219,7 +211,7 @@
       state management.
     </p>
 
-    <div class="example-grid">
+    <ExampleGrid>
       <CodePreview
         title="Custom User Button"
         description="Build your own button UI using the builder's reactive state."
@@ -251,7 +243,7 @@
       >
         <BuilderIntegrationExample {ndk} user={exampleUser} onToggle={() => handleCustomToggle('user')} />
       </CodePreview>
-    </div>
+    </ExampleGrid>
   </section>
 
   <section class="showcase-section">

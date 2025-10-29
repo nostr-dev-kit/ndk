@@ -137,8 +137,9 @@ export {
 export {
     createRelayInfo,
     type RelayInfoState,
-    type RelayNIP11Info,
 } from "./builders/relay/info.svelte.js";
+
+export type { NDKRelayInformation } from "@nostr-dev-kit/ndk";
 
 export {
     createBookmarkedRelayList,

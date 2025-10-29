@@ -20,6 +20,7 @@
   import { cn } from '$lib/utils';
   import { getContext } from 'svelte';
   import { ARTICLE_CARD_CONTEXT_KEY, type ArticleCardContext } from '../article-card/context.svelte.js';
+  import TimeAgo from '$lib/ndk/time-ago/time-ago.svelte';
 
   interface Props {
     /** NDK instance */
@@ -57,25 +58,6 @@
       const naddr = article.encode();
       window.location.href = `/a/${naddr}`;
     }
-  }
-
-  function formatRelativeTime(timestamp: number): string {
-    const now = Date.now() / 1000;
-    const diff = now - timestamp;
-
-    if (diff < 60) return 'just now';
-    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-    if (diff < 604800) {
-      const days = Math.floor(diff / 86400);
-      return days === 1 ? 'yesterday' : `${days}d ago`;
-    }
-
-    return new Date(timestamp * 1000).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    });
   }
 </script>
 
@@ -154,9 +136,7 @@
           </span>
           <div class="flex items-center gap-2 text-sm">
             {#if publishedAt}
-              <time datetime={new Date(publishedAt * 1000).toISOString()}>
-                Published {formatRelativeTime(publishedAt)}
-              </time>
+              <span>Published <TimeAgo timestamp={publishedAt} element="time" /></span>
               <span>•</span>
             {/if}
             <ReadingTime />

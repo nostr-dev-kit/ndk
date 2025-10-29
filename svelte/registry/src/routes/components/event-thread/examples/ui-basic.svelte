@@ -1,14 +1,9 @@
 <script lang="ts">
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { createThreadView } from '@nostr-dev-kit/svelte';
-  import { EventCard } from '$lib/ndk/event-card';
+  import { EventCard, ReplyAction, ReactionAction, RepostAction } from '$lib/ndk/event-card';
 
-  interface Props {
-    ndk: NDKSvelte;
-    nevent: string;
-  }
-
-  let { ndk, nevent }: Props = $props();
+  let { ndk, nevent }: { ndk: NDKSvelte; nevent: string } = $props();
 
   const thread = createThreadView(() => ({
     focusedEvent: nevent
@@ -19,15 +14,9 @@
   <div class="border border-border rounded-lg overflow-hidden">
     {#each thread.events as node}
       {#if node.event}
-        <EventCard.Root
-          {ndk}
-          event={node.event}
-          threading={node.threading}
-          class="!rounded-none !shadow-none !overflow-visible border-b border-border last:border-b-0"
-        >
-          <div class="relative bg-background hover:bg-accent/5 transition-colors p-4">
-            <EventCard.ThreadLine />
-            <EventCard.Header variant="compact" class="!p-0 !border-0 !mb-2" />
+        <EventCard.Root {ndk} event={node.event} threading={node.threading}>
+          <div class="border-b border-border p-4">
+            <EventCard.Header variant="compact" />
             <EventCard.Content />
           </div>
         </EventCard.Root>

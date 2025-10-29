@@ -1,272 +1,404 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
-  import { NDKEvent } from '@nostr-dev-kit/ndk';
+  import { NDKHighlight, NDKKind } from '@nostr-dev-kit/ndk';
+  import { HighlightCard } from '$lib/ndk/highlight-card';
+  import {
+    HighlightCardFeed,
+    HighlightCardElegant,
+    HighlightCardCompact,
+    HighlightCardGrid
+  } from '$lib/ndk/blocks';
   import { EditProps } from '$lib/ndk/edit-props';
-  import CodePreview from '$site-components/code-preview.svelte';
-  import InstallCommand from '$site-components/install-command.svelte';
+  import BlockExample from '$site-components/block-example.svelte';
+  import UIExample from '$site-components/ui-example.svelte';
+  import ComponentAPI from '$site-components/component-api.svelte';
 
-  // Import examples
-  import FeedVariantExample from './examples/feed-variant.svelte';
-  import FeedVariantExampleRaw from './examples/feed-variant.svelte?raw';
-  import CustomCompositionExample from './examples/custom-composition.svelte';
-  import CustomCompositionExampleRaw from './examples/custom-composition.svelte?raw';
+  // Code examples for blocks
+  import FeedCodeRaw from './examples/feed-code.svelte?raw';
+  import ElegantCodeRaw from './examples/elegant-code.svelte?raw';
+  import CompactCodeRaw from './examples/compact-code.svelte?raw';
+  import GridCodeRaw from './examples/grid-code.svelte?raw';
+
+  // UI component examples
+  import UIBasic from './examples/ui-basic.svelte';
+  import UIBasicRaw from './examples/ui-basic.svelte?raw';
+  import UIComposition from './examples/custom-composition.svelte';
+  import UICompositionRaw from './examples/custom-composition.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
-  let highlightContent = $state<string>(
-    'The most important thing is to keep the most important thing the most important thing.'
-  );
-  let highlightContext = $state<string>(
-    'In productivity, we often get distracted by urgent but unimportant tasks. The most important thing is to keep the most important thing the most important thing. This requires constant vigilance and prioritization.'
-  );
-  let highlightUrl = $state<string>('https://example.com/article-about-productivity');
+  let highlights = $state<NDKHighlight[]>([]);
+  let loading = $state(true);
+  let highlight1 = $state<NDKHighlight | undefined>();
+  let highlight2 = $state<NDKHighlight | undefined>();
+  let highlight3 = $state<NDKHighlight | undefined>();
+  let highlight4 = $state<NDKHighlight | undefined>();
+  let highlight5 = $state<NDKHighlight | undefined>();
 
-  const mockHighlightEvent = $derived(
-    new NDKEvent(ndk, {
-      kind: 9802,
-      pubkey: 'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52',
-      created_at: Math.floor(Date.now() / 1000) - 3600,
-      content: highlightContent,
-      tags: [
-        ['context', highlightContext],
-        ['r', highlightUrl],
-      ],
-    })
-  );
+  $effect(() => {
+    (async () => {
+      try {
+        const events = await ndk.fetchEvents({
+          kinds: [NDKKind.Highlight],
+          authors: [
+            'fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52',
+            ...ndk.$follows
+          ],
+          limit: 10
+        });
+
+        highlights = Array.from(events)
+          .map((event) => NDKHighlight.from(event))
+          .filter((h) => h.content);
+
+        // Initialize display highlights from fetched highlights
+        if (highlights.length > 0) {
+          if (!highlight1) highlight1 = highlights[0];
+          if (!highlight2 && highlights.length > 1) highlight2 = highlights[1];
+          if (!highlight3 && highlights.length > 2) highlight3 = highlights[2];
+          if (!highlight4 && highlights.length > 3) highlight4 = highlights[3];
+          if (!highlight5 && highlights.length > 4) highlight5 = highlights[4];
+        }
+
+        loading = false;
+      } catch (error) {
+        console.error('Failed to fetch highlights:', error);
+        loading = false;
+      }
+    })();
+  });
+
+  const displayHighlights = $derived([highlight1, highlight2, highlight3, highlight4, highlight5].filter(Boolean) as NDKHighlight[]);
 </script>
 
-<div class="component-page">
-  <header>
-    <h1>HighlightCard</h1>
-    <p>
-      Display Nostr highlight events (kind 9802) with support for feed, compact, and grid
+<div class="container mx-auto p-8 max-w-7xl">
+  <!-- Header -->
+  <div class="mb-12">
+    <h1 class="text-4xl font-bold mb-4">HighlightCard</h1>
+    <p class="text-lg text-muted-foreground mb-6">
+      Composable highlight card components for displaying NDKHighlight content (kind 9802) with customizable
       layouts. Automatically extracts and displays source references.
     </p>
 
-    <EditProps.Root>
-      <EditProps.Prop name="Highlight content" type="text" bind:value={highlightContent} />
-      <EditProps.Prop name="Context text" type="text" bind:value={highlightContext} />
-      <EditProps.Prop name="Source URL" type="text" bind:value={highlightUrl} />
-    </EditProps.Root>
+    {#key highlights}
+      <EditProps.Root>
+        <EditProps.Prop name="Highlight 1" type="highlight" bind:value={highlight1} options={highlights} />
+        <EditProps.Prop name="Highlight 2" type="highlight" bind:value={highlight2} options={highlights} />
+        <EditProps.Prop name="Highlight 3" type="highlight" bind:value={highlight3} options={highlights} />
+        <EditProps.Prop name="Highlight 4" type="highlight" bind:value={highlight4} options={highlights} />
+        <EditProps.Prop name="Highlight 5" type="highlight" bind:value={highlight5} options={highlights} />
+      </EditProps.Root>
+    {/key}
+  </div>
 
-    <div class="border border-border rounded-lg p-6 bg-card mt-6">
-      <h2 class="text-xl font-semibold mb-3">Installation</h2>
-      <InstallCommand
-        componentName="highlight-card"
-        note="This installs all HighlightCard variants (Feed, Compact, Grid) and composable components (Root, Content, Actions, Source, Meta)."
-      />
+  {#if loading}
+    <div class="flex items-center justify-center py-12">
+      <div class="text-muted-foreground">Loading highlights...</div>
     </div>
-  </header>
+  {:else if highlights.length === 0}
+    <div class="flex items-center justify-center py-12">
+      <div class="text-muted-foreground">No highlights found. Try following more users or create your own highlights!</div>
+    </div>
+  {/if}
 
-  <section class="demo space-y-8">
-    <h2 class="text-2xl font-semibold mb-4">Examples</h2>
-
-    <CodePreview
-      title="Feed Variant"
-      description="Full-width card with header, large highlighted text in a book-page style, source badge, and action buttons. Best for main feed displays."
-      code={FeedVariantExampleRaw}
-    >
-      <FeedVariantExample {ndk} event={mockHighlightEvent} />
-    </CodePreview>
-
-    <CodePreview
-      title="Custom Composition"
-      description="Build your own layout using HighlightCard.Root and child components."
-      code={CustomCompositionExampleRaw}
-    >
-      <CustomCompositionExample {ndk} event={mockHighlightEvent} />
-    </CodePreview>
-  </section>
-
-  <section class="usage">
-    <h2>Usage</h2>
-    <h3>Basic Usage</h3>
-    <pre><code>{`<script>
-  import { HighlightCardFeed, HighlightCardCompact, HighlightCardGrid } from '$lib/ndk/blocks';
-</script>
-
-<!-- Feed variant -->
-<HighlightCardFeed {ndk} event={highlightEvent} />
-
-<!-- Compact variant -->
-<HighlightCardCompact {ndk} event={highlightEvent} />
-
-<!-- Grid variant -->
-<HighlightCardGrid {ndk} event={highlightEvent} />
-
-<!-- With custom actions -->
-<HighlightCardFeed {ndk} event={highlightEvent}>
-  {#snippet actions()}
-    <ReplyAction {ndk} {event} />
-    <ReactionAction {ndk} {event} />
-  {/snippet}
-</HighlightCardFeed>`}</code></pre>
-
-    <h3>Components</h3>
-    <ul>
-      <li><code>HighlightCard.Root</code> - Container with context for child components</li>
-      <li><code>HighlightCard.Content</code> - Displays highlighted text with context</li>
-      <li><code>HighlightCard.Source</code> - Shows source reference badge</li>
-      <li><code>HighlightCardFeed</code> - Pre-composed feed layout</li>
-      <li><code>HighlightCardCompact</code> - Pre-composed compact layout</li>
-      <li><code>HighlightCardGrid</code> - Pre-composed grid layout</li>
-    </ul>
-
-    <h3>Props</h3>
-    <h4>HighlightCardFeed</h4>
-    <table>
-      <thead>
-        <tr>
-          <th>Prop</th>
-          <th>Type</th>
-          <th>Default</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><code>ndk</code></td>
-          <td><code>NDKSvelte</code></td>
-          <td>-</td>
-          <td>NDK instance (required)</td>
-        </tr>
-        <tr>
-          <td><code>event</code></td>
-          <td><code>NDKEvent</code></td>
-          <td>-</td>
-          <td>Highlight event kind 9802 (required)</td>
-        </tr>
-        <tr>
-          <td><code>showHeader</code></td>
-          <td><code>boolean</code></td>
-          <td><code>true</code></td>
-          <td>Show author header</td>
-        </tr>
-        <tr>
-          <td><code>showActions</code></td>
-          <td><code>boolean</code></td>
-          <td><code>true</code></td>
-          <td>Show action buttons</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <h4>HighlightCardCompact</h4>
-    <table>
-      <thead>
-        <tr>
-          <th>Prop</th>
-          <th>Type</th>
-          <th>Default</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><code>ndk</code></td>
-          <td><code>NDKSvelte</code></td>
-          <td>-</td>
-          <td>NDK instance (required)</td>
-        </tr>
-        <tr>
-          <td><code>event</code></td>
-          <td><code>NDKEvent</code></td>
-          <td>-</td>
-          <td>Highlight event kind 9802 (required)</td>
-        </tr>
-        <tr>
-          <td><code>showAuthor</code></td>
-          <td><code>boolean</code></td>
-          <td><code>true</code></td>
-          <td>Show author name</td>
-        </tr>
-        <tr>
-          <td><code>showTimestamp</code></td>
-          <td><code>boolean</code></td>
-          <td><code>true</code></td>
-          <td>Show timestamp</td>
-        </tr>
-        <tr>
-          <td><code>showSource</code></td>
-          <td><code>boolean</code></td>
-          <td><code>true</code></td>
-          <td>Show source info</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <h4>HighlightCardGrid</h4>
-    <table>
-      <thead>
-        <tr>
-          <th>Prop</th>
-          <th>Type</th>
-          <th>Default</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><code>ndk</code></td>
-          <td><code>NDKSvelte</code></td>
-          <td>-</td>
-          <td>NDK instance (required)</td>
-        </tr>
-        <tr>
-          <td><code>event</code></td>
-          <td><code>NDKEvent</code></td>
-          <td>-</td>
-          <td>Highlight event kind 9802 (required)</td>
-        </tr>
-        <tr>
-          <td><code>showAuthor</code></td>
-          <td><code>boolean</code></td>
-          <td><code>true</code></td>
-          <td>Show author info below card</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <h3>Builder</h3>
-    <p>The component uses the <code>createHighlight</code> builder internally:</p>
-    <pre><code>{`import { createHighlight } from '@nostr-dev-kit/svelte';
-
-const highlight = createHighlight(() => ({
-  event: highlightEvent
-}), ndk);
-
-// Access state
-highlight.content       // The highlight text
-highlight.context       // Full context text
-highlight.position      // { before, highlight, after }
-highlight.source        // Source info (web/article/event)
-highlight.article       // Referenced NDKArticle (if any)
-highlight.urlMetadata   // URL metadata (if web source)
-highlight.loading       // Loading state`}</code></pre>
-
-    <h3>Source Types</h3>
-    <p>HighlightCard automatically detects and displays source references from event tags:</p>
-    <ul>
-      <li><code>r</code> tag - Web URL with metadata fetching</li>
-      <li><code>a</code> tag - Nostr article reference (kind 30023)</li>
-      <li><code>e</code> tag - Nostr event reference</li>
-    </ul>
-
-    <h3>Context Tag</h3>
-    <p>
-      The <code>context</code> tag provides surrounding text for the highlight. The builder
-      automatically calculates and displays the highlight position within the context.
+  <!-- Blocks Section -->
+  <section class="mb-16">
+    <h2 class="text-3xl font-bold mb-2">Blocks</h2>
+    <p class="text-muted-foreground mb-8">
+      Pre-composed layouts ready to use. Install with a single command.
     </p>
 
-    <h3>Styling</h3>
-    <p>Components use CSS custom properties for theming:</p>
-    <ul>
-      <li><code>--card</code> - Card background color</li>
-      <li><code>--card-foreground</code> - Card text color</li>
-      <li><code>--primary</code> - Primary accent color (marker, icon)</li>
-      <li><code>--muted-foreground</code> - Secondary text color</li>
-      <li><code>--border</code> - Border color</li>
-    </ul>
+    <div class="space-y-12">
+      <!-- Feed -->
+      <BlockExample
+        title="Feed"
+        description="Full-width card with header, large highlighted text in a book-page style, source badge, and action buttons. Best for main feed displays."
+        component="highlight-card-feed"
+        code={FeedCodeRaw}
+      >
+        {#if highlight1}
+          <HighlightCardFeed {ndk} event={highlight1} />
+        {/if}
+      </BlockExample>
+
+      <!-- Elegant -->
+      <BlockExample
+        title="Elegant"
+        description="Square-sized elegant card with gradient background. Context text is muted while the highlight is bright with primary foreground color."
+        component="highlight-card-elegant"
+        code={ElegantCodeRaw}
+      >
+        <div class="flex gap-6 overflow-x-auto pb-4">
+          {#each displayHighlights as highlight}
+            <HighlightCardElegant {ndk} event={highlight} />
+          {/each}
+        </div>
+      </BlockExample>
+
+      <!-- Compact -->
+      <BlockExample
+        title="Compact"
+        description="Small horizontal card layout. Ideal for compact lists and sidebars."
+        component="highlight-card-compact"
+        code={CompactCodeRaw}
+      >
+        <div class="space-y-0 border border-border rounded-lg overflow-hidden max-w-2xl">
+          {#each displayHighlights.slice(0, 4) as highlight}
+            <HighlightCardCompact {ndk} event={highlight} />
+          {/each}
+        </div>
+      </BlockExample>
+
+      <!-- Grid -->
+      <BlockExample
+        title="Grid"
+        description="Square card perfect for grid layouts. Shows highlight with optional author info below."
+        component="highlight-card-grid"
+        code={GridCodeRaw}
+      >
+        <div class="flex gap-6 overflow-x-auto pb-4">
+          {#each displayHighlights as highlight}
+            <HighlightCardGrid {ndk} event={highlight} />
+          {/each}
+        </div>
+      </BlockExample>
+    </div>
   </section>
+
+  <!-- UI Components Section -->
+  <section class="mb-16">
+    <h2 class="text-3xl font-bold mb-2">UI Components</h2>
+    <p class="text-muted-foreground mb-8">
+      Primitive components for building custom highlight card layouts. Compose them together to
+      create your own designs.
+    </p>
+
+    <div class="space-y-8">
+      <!-- Basic Usage -->
+      <UIExample
+        title="Basic Usage"
+        description="Minimal example with HighlightCard.Root and essential primitives."
+        code={UIBasicRaw}
+      >
+        {#if highlight1}
+          <UIBasic {ndk} event={highlight1} />
+        {/if}
+      </UIExample>
+
+      <!-- Full Composition -->
+      <UIExample
+        title="Full Composition"
+        description="All available primitives composed together."
+        code={UICompositionRaw}
+      >
+        {#if highlight1}
+          <UIComposition {ndk} event={highlight1} />
+        {/if}
+      </UIExample>
+    </div>
+  </section>
+
+  <!-- Component API -->
+  <ComponentAPI
+    components={[
+      {
+        name: 'HighlightCard.Root',
+        description:
+          'Root container that provides context to child components. Uses createHighlight builder internally.',
+        importPath: "import { HighlightCard } from '$lib/ndk/highlight-card'",
+        props: [
+          {
+            name: 'ndk',
+            type: 'NDKSvelte',
+            description:
+              'NDK instance. Optional if NDK is available in Svelte context (from parent components).',
+            required: false
+          },
+          {
+            name: 'event',
+            type: 'NDKEvent',
+            description: 'The highlight event (kind 9802) to display',
+            required: true
+          }
+        ]
+      },
+      {
+        name: 'HighlightCard.Content',
+        description: 'Display highlighted text with context.',
+        importPath: "import { HighlightCard } from '$lib/ndk/highlight-card'",
+        props: [
+          {
+            name: 'fontSize',
+            type: 'string',
+            default: '"text-base"',
+            description: 'Tailwind classes for font size',
+            required: false
+          },
+          {
+            name: 'class',
+            type: 'string',
+            description: 'Additional CSS classes',
+            required: false
+          }
+        ]
+      },
+      {
+        name: 'HighlightCard.Source',
+        description: 'Display source reference badge.',
+        importPath: "import { HighlightCard } from '$lib/ndk/highlight-card'",
+        props: [
+          {
+            name: 'position',
+            type: '"top-right" | "bottom-right" | "inline"',
+            default: '"inline"',
+            description: 'Source badge position',
+            required: false
+          },
+          {
+            name: 'class',
+            type: 'string',
+            description: 'Additional CSS classes',
+            required: false
+          }
+        ]
+      },
+      {
+        name: 'HighlightCardFeed',
+        description:
+          'Preset: Full-width feed layout with header, book-style text, and actions. Import from $lib/ndk/blocks.',
+        importPath: "import { HighlightCardFeed } from '$lib/ndk/blocks'",
+        props: [
+          {
+            name: 'ndk',
+            type: 'NDKSvelte',
+            description: 'NDK instance',
+            required: true
+          },
+          {
+            name: 'event',
+            type: 'NDKEvent',
+            description: 'The highlight event to display',
+            required: true
+          },
+          {
+            name: 'showHeader',
+            type: 'boolean',
+            default: 'true',
+            description: 'Show author header',
+            required: false
+          },
+          {
+            name: 'showActions',
+            type: 'boolean',
+            default: 'true',
+            description: 'Show action buttons',
+            required: false
+          }
+        ]
+      },
+      {
+        name: 'HighlightCardElegant',
+        description:
+          'Preset: Square elegant card with gradient background. Import from $lib/ndk/blocks.',
+        importPath: "import { HighlightCardElegant } from '$lib/ndk/blocks'",
+        props: [
+          {
+            name: 'ndk',
+            type: 'NDKSvelte',
+            description: 'NDK instance',
+            required: true
+          },
+          {
+            name: 'event',
+            type: 'NDKEvent',
+            description: 'The highlight event to display',
+            required: true
+          },
+          {
+            name: 'width',
+            type: 'string',
+            default: '"w-[320px]"',
+            description: 'Card width (Tailwind classes)',
+            required: false
+          },
+          {
+            name: 'height',
+            type: 'string',
+            default: '"h-[320px]"',
+            description: 'Card height (Tailwind classes)',
+            required: false
+          }
+        ]
+      },
+      {
+        name: 'HighlightCardCompact',
+        description:
+          'Preset: Compact horizontal card. Import from $lib/ndk/blocks.',
+        importPath: "import { HighlightCardCompact } from '$lib/ndk/blocks'",
+        props: [
+          {
+            name: 'ndk',
+            type: 'NDKSvelte',
+            description: 'NDK instance',
+            required: true
+          },
+          {
+            name: 'event',
+            type: 'NDKEvent',
+            description: 'The highlight event to display',
+            required: true
+          },
+          {
+            name: 'showAuthor',
+            type: 'boolean',
+            default: 'true',
+            description: 'Show author name',
+            required: false
+          },
+          {
+            name: 'showTimestamp',
+            type: 'boolean',
+            default: 'true',
+            description: 'Show timestamp',
+            required: false
+          },
+          {
+            name: 'showSource',
+            type: 'boolean',
+            default: 'true',
+            description: 'Show source info',
+            required: false
+          }
+        ]
+      },
+      {
+        name: 'HighlightCardGrid',
+        description:
+          'Preset: Square card for grid layouts. Import from $lib/ndk/blocks.',
+        importPath: "import { HighlightCardGrid } from '$lib/ndk/blocks'",
+        props: [
+          {
+            name: 'ndk',
+            type: 'NDKSvelte',
+            description: 'NDK instance',
+            required: true
+          },
+          {
+            name: 'event',
+            type: 'NDKEvent',
+            description: 'The highlight event to display',
+            required: true
+          },
+          {
+            name: 'showAuthor',
+            type: 'boolean',
+            default: 'true',
+            description: 'Show author info below card',
+            required: false
+          }
+        ]
+      }
+    ]}
+  />
 </div>

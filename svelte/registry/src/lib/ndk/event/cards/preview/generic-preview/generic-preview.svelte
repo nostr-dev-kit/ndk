@@ -12,6 +12,7 @@
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import Avatar from '$lib/ndk/user-profile/user-profile-avatar.svelte';
+  import TimeAgo from '$lib/ndk/time-ago/time-ago.svelte';
 
   interface Props {
     ndk: NDKSvelte;
@@ -29,30 +30,6 @@
 
   const eventLabel = $derived(
     kindLabel || `Event (kind ${event.kind})`
-  );
-
-  // Format timestamp
-  function formatTime(timestamp: number): string {
-    const date = new Date(timestamp * 1000);
-    const now = new Date();
-    const diff = now.getTime() - date.getTime();
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-
-    if (days > 7) {
-      return date.toLocaleDateString();
-    } else if (days > 0) {
-      return `${days}d ago`;
-    } else {
-      const hours = Math.floor(diff / (1000 * 60 * 60));
-      if (hours > 0) return `${hours}h ago`;
-      const minutes = Math.floor(diff / (1000 * 60));
-      if (minutes > 0) return `${minutes}m ago`;
-      return 'just now';
-    }
-  }
-
-  const formattedTime = $derived(
-    formatTime(event.created_at || 0)
   );
 
   // Get a preview of the content or tags
@@ -95,7 +72,7 @@
         <span class="event-kind">{eventLabel}</span>
       </div>
     </div>
-    <span class="timestamp">{formattedTime}</span>
+    <TimeAgo timestamp={event.created_at || 0} class="timestamp" />
   </div>
 
   {#if contentPreview()}

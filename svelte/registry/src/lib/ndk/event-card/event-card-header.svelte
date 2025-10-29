@@ -3,9 +3,13 @@
   import { getContext } from 'svelte';
   import Avatar from '$lib/ndk/user-profile/user-profile-avatar.svelte';
   import Name from '$lib/ndk/user-profile/user-profile-name.svelte';
+  import Field from '$lib/ndk/user-profile/user-profile-field.svelte';
+  import Nip05 from '$lib/ndk/user-profile/user-profile-nip05.svelte';
   import { EVENT_CARD_CONTEXT_KEY, type EventCardContext } from './context.svelte.js';
   import { createProfileFetcher } from '@nostr-dev-kit/svelte';
   import { cn } from '$lib/utils';
+  import TimeAgo from '$lib/ndk/time-ago/time-ago.svelte';
+    import { UserProfile } from '../user-profile/index.js';
 
   interface Props {
     /** Display variant */
@@ -47,30 +51,6 @@
 
   // Fetch author profile directly
   const profileFetcher = createProfileFetcher(() => ({ user: context.event.author }), context.ndk);
-
-  // Format timestamp
-  const timestamp = $derived.by(() => {
-    if (!context.event.created_at) return '';
-
-    const date = new Date(context.event.created_at * 1000);
-    const now = new Date();
-    const diff = now.getTime() - date.getTime();
-    const hours = Math.floor(diff / (1000 * 60 * 60));
-
-    if (hours < 1) {
-      const mins = Math.floor(diff / (1000 * 60));
-      if (mins < 1) return 'now';
-      return `${mins}m`;
-    } else if (hours < 24) {
-      return `${hours}h`;
-    } else if (hours < 168) { // 7 days
-      const days = Math.floor(hours / 24);
-      return `${days}d`;
-    } else {
-      // Show date for older posts
-      return date.toLocaleDateString();
-    }
-  });
 
   // Dropdown state
   let showMenu = $state(false);
@@ -145,7 +125,6 @@
   class={cn(
     'event-card-header',
     'flex items-center gap-3',
-    'border-b',
     className
   )}
 >
@@ -172,17 +151,18 @@
             field="displayName"
             class="font-semibold text-[15px] text-foreground truncate"
           />
-          <Name
+          <Field
             ndk={context.ndk}
             user={context.event.author}
             profile={profileFetcher.profile}
-            field="name"
+            field="nip05"
             class="text-sm text-muted-foreground truncate"
           />
         </div>
       {:else if variant === 'compact'}
         <!-- Compact: name and handle inline -->
         <div class="flex items-center gap-2 min-w-0">
+          <UserProfile.Root user={context.event.author}>
           <Name
             ndk={context.ndk}
             user={context.event.author}
@@ -190,13 +170,10 @@
             field="displayName"
             class="font-semibold text-[15px] text-foreground truncate"
           />
-          <Name
-            ndk={context.ndk}
-            user={context.event.author}
-            profile={profileFetcher.profile}
-            field="name"
-            class="text-sm text-muted-foreground truncate"
+          <Nip05
+            class="text-xs text-muted-foreground truncate"
           />
+          </UserProfile.Root>
         </div>
       {:else}
         <!-- Minimal: just name -->
@@ -213,13 +190,12 @@
 
   <!-- Timestamp and Dropdown -->
   <div class="flex items-center gap-3">
-    {#if showTimestamp && timestamp}
-      <time
-        datetime={new Date(context.event.created_at! * 1000).toISOString()}
+    {#if showTimestamp}
+      <TimeAgo
+        timestamp={context.event.created_at}
+        element="time"
         class="text-sm text-muted-foreground/70"
-      >
-        {timestamp}
-      </time>
+      />
     {/if}
 
     {#if showDropdown}

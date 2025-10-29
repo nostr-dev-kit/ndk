@@ -3,8 +3,6 @@ Toast notification that slides in from a corner.
 Use for: temporary notifications, success messages, status updates.
 -->
 <script lang="ts">
-	import { onMount } from 'svelte';
-
 	interface Props {
 		message: string;
 		visible: boolean;

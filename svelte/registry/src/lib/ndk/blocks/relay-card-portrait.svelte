@@ -12,6 +12,8 @@
 <script lang="ts">
 	import type { NDKSvelte } from '@nostr-dev-kit/svelte';
 	import { createBookmarkedRelayList } from '@nostr-dev-kit/svelte';
+	import { getContext } from 'svelte';
+	import { RELAY_CARD_CONTEXT_KEY, type RelayCardContext } from '../relay-card/context.svelte.js';
 	import Root from '../relay-card/relay-card-root.svelte';
 	import Icon from '../relay-card/relay-card-icon.svelte';
 	import Name from '../relay-card/relay-card-name.svelte';
@@ -86,16 +88,31 @@
 			className
 		)}
 	>
-		<!-- Background Icon with Gradient - covers entire card -->
+		{@const context = getContext<RelayCardContext>(RELAY_CARD_CONTEXT_KEY)}
+		{@const banner = context?.relayInfo.nip11?.banner}
+		{@const hasBanner = banner != null && banner !== ''}
+
+		<!-- Background with Banner or Icon fallback - covers entire card -->
 		<div class="absolute inset-0 overflow-hidden pointer-events-none rounded-2xl">
-			<!-- Large faded icon as background - centered and covering full height -->
-			<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-50 scale-[2.5]">
-				<Icon size={200} />
-			</div>
-			<!-- Gradient overlay for color effect -->
-			<div class="absolute inset-0 bg-gradient-to-br from-primary/15 via-primary/5 to-accent/15"></div>
-			<!-- Subtle texture overlay -->
-			<div class="absolute inset-0 bg-gradient-to-b from-transparent via-card/30 to-card/60"></div>
+			{#if hasBanner}
+				<!-- Banner image as background -->
+				<img
+					src={banner}
+					alt="Relay banner"
+					class="absolute inset-0 w-full h-full object-cover"
+				/>
+				<!-- Gradient overlay for better text readability -->
+				<div class="absolute inset-0 bg-gradient-to-b from-card/40 via-card/60 to-card/80"></div>
+			{:else}
+				<!-- Fallback: Large faded icon as background - centered and covering full height -->
+				<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-50 scale-[2.5]">
+					<Icon size={200} />
+				</div>
+				<!-- Gradient overlay for color effect -->
+				<div class="absolute inset-0 bg-gradient-to-br from-primary/15 via-primary/5 to-accent/15"></div>
+				<!-- Subtle texture overlay -->
+				<div class="absolute inset-0 bg-gradient-to-b from-transparent via-card/30 to-card/60"></div>
+			{/if}
 			<!-- Glassmorphism overlay covering entire card -->
 			<div class="absolute inset-0 backdrop-blur-sm"></div>
 		</div>

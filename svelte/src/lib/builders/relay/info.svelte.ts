@@ -1,57 +1,19 @@
 import type { NDKSvelte } from '../../ndk-svelte.svelte.js';
-import { normalizeRelayUrl } from '@nostr-dev-kit/ndk';
+import { normalizeRelayUrl, type NDKRelayInformation } from '@nostr-dev-kit/ndk';
 import { SvelteMap } from 'svelte/reactivity';
-
-/**
- * NIP-11 Relay Information Document
- * https://github.com/nostr-protocol/nips/blob/master/11.md
- */
-export interface RelayNIP11Info {
-    name?: string;
-    description?: string;
-    pubkey?: string;
-    contact?: string;
-    supported_nips?: number[];
-    software?: string;
-    version?: string;
-    icon?: string;
-    limitation?: {
-        max_message_length?: number;
-        max_subscriptions?: number;
-        max_filters?: number;
-        max_limit?: number;
-        max_subid_length?: number;
-        max_event_tags?: number;
-        min_prefix?: number;
-        max_content_length?: number;
-        min_pow_difficulty?: number;
-        auth_required?: boolean;
-        payment_required?: boolean;
-    };
-    relay_countries?: string[];
-    language_tags?: string[];
-    tags?: string[];
-    posting_policy?: string;
-    payments_url?: string;
-    fees?: {
-        admission?: { amount?: number; unit?: string };
-        subscription?: { amount?: number; unit?: string; period?: number };
-        publication?: { kinds?: number[]; amount?: number; unit?: string }[];
-    };
-}
 
 export interface RelayInfoState {
     readonly url: string;
-    readonly nip11: RelayNIP11Info | null;
+    readonly nip11: NDKRelayInformation | null;
     readonly loading: boolean;
     readonly error: Error | null;
 }
 
 // Cache for NIP-11 info
-const relayInfoCache = new SvelteMap<string, { info: RelayNIP11Info; timestamp: number }>();
+const relayInfoCache = new SvelteMap<string, { info: NDKRelayInformation; timestamp: number }>();
 const CACHE_TTL = 1000 * 60 * 60; // 1 hour
 
-async function fetchRelayInfo(relayUrl: string): Promise<RelayNIP11Info> {
+async function fetchRelayInfo(relayUrl: string): Promise<NDKRelayInformation> {
     // Check cache first
     const cached = relayInfoCache.get(relayUrl);
     if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
@@ -124,7 +86,7 @@ export function createRelayInfo(
     ndk?: NDKSvelte
 ): RelayInfoState {
     const normalizedUrl = $derived(normalizeRelayUrl(config().relayUrl));
-    let nip11 = $state<RelayNIP11Info | null>(null);
+    let nip11 = $state<NDKRelayInformation | null>(null);
     let loading = $state(true);
     let error = $state<Error | null>(null);
 

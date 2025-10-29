@@ -27,6 +27,7 @@
   import type { NDKEvent } from '@nostr-dev-kit/ndk';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
   import { cn } from '$lib/utils';
+  import TimeAgo from '$lib/ndk/time-ago/time-ago.svelte';
 
   interface Props {
     /** NDKSvelte instance */
@@ -113,24 +114,6 @@
       picture: profile?.image || profile?.picture,
       nip05: profile?.nip05
     };
-  }
-
-  // Format timestamp
-  function formatTime(timestamp: number) {
-    const date = new Date(timestamp * 1000);
-    const now = new Date();
-    const diff = now.getTime() - date.getTime();
-    const hours = Math.floor(diff / (1000 * 60 * 60));
-
-    if (hours < 1) {
-      const mins = Math.floor(diff / (1000 * 60));
-      return `${mins}m`;
-    } else if (hours < 24) {
-      return `${hours}h`;
-    } else {
-      const days = Math.floor(hours / 24);
-      return `${days}d`;
-    }
   }
 </script>
 
@@ -230,9 +213,7 @@
             {/if}
           </div>
 
-          <time class="ndk-replies__item-time">
-            {formatTime(reply.created_at || 0)}
-          </time>
+          <TimeAgo timestamp={reply.created_at || 0} element="time" class="ndk-replies__item-time" />
         </header>
 
         <!-- Reply content -->

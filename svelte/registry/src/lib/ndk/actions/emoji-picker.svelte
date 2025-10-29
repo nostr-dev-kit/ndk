@@ -152,7 +152,7 @@
   }
 
   .emoji-picker {
-    background: var(--card);
+    background: var(--color-card);
     border-radius: 12px;
     box-shadow: 0 10px 40px color-mix(in srgb, var(--foreground) 20%, transparent);
     width: 90%;

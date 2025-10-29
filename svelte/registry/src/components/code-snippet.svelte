@@ -3,7 +3,6 @@ Simple syntax-highlighted code snippet with copy button.
 Use for inline documentation code examples (not for Preview/Code/Install tabs - use CodePreview for that).
 -->
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { codeToHtml } from 'shiki';
 
 	interface Props {
@@ -20,30 +19,32 @@ Use for inline documentation code examples (not for Preview/Code/Install tabs - 
 	let isLoading = $state(true);
 	let copySuccess = $state(false);
 
-	onMount(async () => {
-		try {
-			highlightedCode = await codeToHtml(code, {
-				lang,
-				themes: {
-					light: 'github-light',
-					dark: 'github-dark'
-				},
-				...(showLineNumbers && {
-					decorations: [
-						{
-							start: 0,
-							end: code.length,
-							properties: { class: 'line-numbers' }
-						}
-					]
-				})
-			});
-			isLoading = false;
-		} catch (error) {
-			console.error('Failed to highlight code:', error);
-			highlightedCode = `<pre><code>${code}</code></pre>`;
-			isLoading = false;
-		}
+	$effect(() => {
+		(async () => {
+			try {
+				highlightedCode = await codeToHtml(code, {
+					lang,
+					themes: {
+						light: 'github-light',
+						dark: 'github-dark'
+					},
+					...(showLineNumbers && {
+						decorations: [
+							{
+								start: 0,
+								end: code.length,
+								properties: { class: 'line-numbers' }
+							}
+						]
+					})
+				});
+				isLoading = false;
+			} catch (error) {
+				console.error('Failed to highlight code:', error);
+				highlightedCode = `<pre><code>${code}</code></pre>`;
+				isLoading = false;
+			}
+		})();
 	});
 
 	async function copyCode() {

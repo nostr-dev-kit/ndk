@@ -1,74 +1,50 @@
 <script lang="ts">
   import { getContext } from 'svelte';
   import type { NDKSvelte } from '@nostr-dev-kit/svelte';
+  import { EditProps } from '$lib/ndk/edit-props';
   import CodePreview from '$site-components/code-preview.svelte';
-  import UserInputControl from '$site-components/user-input-control.svelte';
   import ApiTable from '$site-components/api-table.svelte';
 
   // Import examples
   import Nip05DefaultExample from '../user-profile/examples/nip05-default.svelte';
   import Nip05DefaultExampleRaw from '../user-profile/examples/nip05-default.svelte?raw';
-  import Nip05VerifiedExample from '../user-profile/examples/nip05-verified.svelte';
-  import Nip05VerifiedExampleRaw from '../user-profile/examples/nip05-verified.svelte?raw';
-  import Nip05NoVerificationExample from '../user-profile/examples/nip05-no-verification.svelte';
-  import Nip05NoVerificationExampleRaw from '../user-profile/examples/nip05-no-verification.svelte?raw';
   import Nip05StandaloneExample from '../user-profile/examples/nip05-standalone.svelte';
   import Nip05StandaloneExampleRaw from '../user-profile/examples/nip05-standalone.svelte?raw';
 
   const ndk = getContext<NDKSvelte>('ndk');
 
-  let examplePubkey = $state<string | undefined>('fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52');
+  let examplePubkey = $state<string>('fa984bd7dbb282f07e16e7ae87b26a2a7b9b90b7246a44771f0cf5ae58018f52');
 </script>
 
 <div class="component-page">
   <header>
     <h1>UserProfile.Nip05</h1>
     <p>Display and validate user NIP-05 identifiers with optional verification badges and clickable links.</p>
+
+    <EditProps.Root>
+      <EditProps.Prop name="User pubkey" type="text" bind:value={examplePubkey} />
+    </EditProps.Root>
   </header>
 
-  <UserInputControl {ndk} onUserChange={(pubkey) => examplePubkey = pubkey} />
+  <section class="demo space-y-8">
+    <h2 class="text-2xl font-semibold mb-4">Examples</h2>
 
-  {#if examplePubkey}
-    <section class="demo">
-      <CodePreview
-        title="Default (With Verification)"
-        description="Shows NIP-05 identifier with verification badge. Default identifiers (_@domain) show only the domain. Verification is enabled by default."
-        code={Nip05DefaultExampleRaw}
-      >
-        <Nip05DefaultExample {ndk} pubkey={examplePubkey} />
-      </CodePreview>
-    </section>
+    <CodePreview
+      title="Default (With Verification)"
+      description="Shows NIP-05 identifier with verification badge. Default identifiers (_@domain) show only the domain. Verification is enabled by default and shows: ⋯ (verifying), ✓ (verified), or ✗ (invalid). Use showVerified={false} to disable verification."
+      code={Nip05DefaultExampleRaw}
+    >
+      <Nip05DefaultExample {ndk} pubkey={examplePubkey} />
+    </CodePreview>
 
-    <section class="demo">
-      <CodePreview
-        title="Same as Default"
-        description="Explicitly showing both showNip05 and showVerified props (both default to true). Shows: ⋯ (verifying), ✓ (verified), or ✗ (invalid)."
-        code={Nip05VerifiedExampleRaw}
-      >
-        <Nip05VerifiedExample {ndk} pubkey={examplePubkey} />
-      </CodePreview>
-    </section>
-
-    <section class="demo">
-      <CodePreview
-        title="Without Verification"
-        description="Shows only the NIP-05 identifier without verifying it."
-        code={Nip05NoVerificationExampleRaw}
-      >
-        <Nip05NoVerificationExample {ndk} pubkey={examplePubkey} />
-      </CodePreview>
-    </section>
-
-    <section class="demo">
-      <CodePreview
-        title="Standalone Mode"
-        description="Use without UserProfile.Root context by passing ndk and user directly."
-        code={Nip05StandaloneExampleRaw}
-      >
-        <Nip05StandaloneExample {ndk} pubkey={examplePubkey} />
-      </CodePreview>
-    </section>
-  {/if}
+    <CodePreview
+      title="Standalone Mode"
+      description="Use without UserProfile.Root context by passing ndk and user directly. Useful when building custom components outside the UserProfile system."
+      code={Nip05StandaloneExampleRaw}
+    >
+      <Nip05StandaloneExample {ndk} pubkey={examplePubkey} />
+    </CodePreview>
+  </section>
 
   <section class="info">
     <h2>Features</h2>

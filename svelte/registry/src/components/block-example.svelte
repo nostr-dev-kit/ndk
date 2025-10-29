@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { codeToHtml } from 'shiki';
 	import InstallCommand from './install-command.svelte';
 
@@ -30,21 +29,23 @@
 	let isLoading = $state(true);
 	let copySuccess = $state(false);
 
-	onMount(async () => {
-		try {
-			highlightedCode = await codeToHtml(code, {
-				lang: 'svelte',
-				themes: {
-					light: 'github-light',
-					dark: 'github-dark'
-				}
-			});
-			isLoading = false;
-		} catch (error) {
-			console.error('Failed to highlight code:', error);
-			highlightedCode = `<pre><code>${code}</code></pre>`;
-			isLoading = false;
-		}
+	$effect(() => {
+		(async () => {
+			try {
+				highlightedCode = await codeToHtml(code, {
+					lang: 'svelte',
+					themes: {
+						light: 'github-light',
+						dark: 'github-dark'
+					}
+				});
+				isLoading = false;
+			} catch (error) {
+				console.error('Failed to highlight code:', error);
+				highlightedCode = `<pre><code>${code}</code></pre>`;
+				isLoading = false;
+			}
+		})();
 	});
 
 	async function copyCode() {

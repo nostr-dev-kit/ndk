@@ -129,38 +129,38 @@
     <h2>Usage</h2>
     <h3>Basic Usage</h3>
     <pre><code>{`<script>
-  import { HighlightCard } from '$lib/ndk/highlight-card';
+  import { HighlightCardFeed, HighlightCardCompact, HighlightCardGrid } from '$lib/ndk/blocks';
 </script>
 
 <!-- Feed variant -->
-<HighlightCard.Feed {ndk} event={highlightEvent} />
+<HighlightCardFeed {ndk} event={highlightEvent} />
 
 <!-- Compact variant -->
-<HighlightCard.Compact {ndk} event={highlightEvent} />
+<HighlightCardCompact {ndk} event={highlightEvent} />
 
 <!-- Grid variant -->
-<HighlightCard.Grid {ndk} event={highlightEvent} />
+<HighlightCardGrid {ndk} event={highlightEvent} />
 
 <!-- With custom actions -->
-<HighlightCard.Feed {ndk} event={highlightEvent}>
+<HighlightCardFeed {ndk} event={highlightEvent}>
   {#snippet actions()}
     <ReplyAction {ndk} {event} />
     <ReactionAction {ndk} {event} />
   {/snippet}
-</HighlightCard.Feed>`}</code></pre>
+</HighlightCardFeed>`}</code></pre>
 
     <h3>Components</h3>
     <ul>
       <li><code>HighlightCard.Root</code> - Container with context for child components</li>
       <li><code>HighlightCard.Content</code> - Displays highlighted text with context</li>
       <li><code>HighlightCard.Source</code> - Shows source reference badge</li>
-      <li><code>HighlightCard.Feed</code> - Pre-composed feed layout</li>
-      <li><code>HighlightCard.Compact</code> - Pre-composed compact layout</li>
-      <li><code>HighlightCard.Grid</code> - Pre-composed grid layout</li>
+      <li><code>HighlightCardFeed</code> - Pre-composed feed layout</li>
+      <li><code>HighlightCardCompact</code> - Pre-composed compact layout</li>
+      <li><code>HighlightCardGrid</code> - Pre-composed grid layout</li>
     </ul>
 
     <h3>Props</h3>
-    <h4>HighlightCard.Feed</h4>
+    <h4>HighlightCardFeed</h4>
     <table>
       <thead>
         <tr>
@@ -198,7 +198,7 @@
       </tbody>
     </table>
 
-    <h4>HighlightCard.Compact</h4>
+    <h4>HighlightCardCompact</h4>
     <table>
       <thead>
         <tr>
@@ -242,7 +242,7 @@
       </tbody>
     </table>
 
-    <h4>HighlightCard.Grid</h4>
+    <h4>HighlightCardGrid</h4>
     <table>
       <thead>
         <tr>

@@ -217,7 +217,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     for pkg in "${PACKAGES[@]}"; do
         if [ -d "$pkg" ]; then
             echo -e "${BLUE}Publishing ${pkg}...${NC}"
-            (cd "$pkg" && npm publish --tag beta)
+            (cd "$pkg" && npm publish --tag beta --otp $(2fa npm))
             echo -e "${GREEN}✓ Published ${pkg}${NC}"
         fi
     done
@@ -227,5 +227,5 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo -e "${GREEN}================================================${NC}"
 else
     echo -e "${YELLOW}Publish cancelled. You can publish later by running:${NC}"
-    echo -e "${BLUE}  cd <package> && npm publish --tag beta${NC}"
+    echo -e "${BLUE}  cd <package> && npm publish --tag beta --otp \$(2fa npm)${NC}"
 fi

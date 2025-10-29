@@ -18,6 +18,18 @@
     </div>
   </header>
 
+  <section class="bg-black w-[500px] h-[500px] p-8 border border-red-500">
+    <div class="bg-background w-[300px] h-[300px] border-4">
+      <span class="text-white">this should be in color bg-background</span>
+    </div>
+  </section>
+
+  <section class="bg-white w-[500px] h-[500px] p-8 border border-red-500">
+    <div class="bg-background w-[300px] h-[300px] border-4">
+      <span class="text-black">this should be in color bg-background</span>
+    </div>
+  </section>
+
   <section class="intro">
     <h2>Getting Started</h2>
     <p>

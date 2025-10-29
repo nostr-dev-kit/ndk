@@ -1,6 +1,6 @@
 {
   "name": "@nostr-dev-kit/wallet",
-  "version": "0.8.11-beta.21",
+  "version": "0.8.11-beta.22",
   "description": "NDK Wallet",
   "type": "module",
   "main": "./dist/index.js",
@@ -52,8 +52,8 @@
   "peerDependencies": {
     "@cashu/cashu-ts": "^2.1",
     "@cashu/crypto": "*",
-    "@nostr-dev-kit/ndk": "3.0.0-beta.21",
-    "@nostr-dev-kit/sync": "0.4.0-beta.21"
+    "@nostr-dev-kit/ndk": "3.0.0-beta.22",
+    "@nostr-dev-kit/sync": "0.4.0-beta.22"
   },
   "dependencies": {
     "debug": "^4.3.7",

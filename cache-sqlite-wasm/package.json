@@ -20,7 +20,6 @@
   ],
   "scripts": {
     "build": "tsc --emitDeclarationOnly && bun build ./src/index.ts --outfile ./dist/index.mjs --format esm --target browser && bun build ./src/worker.ts --outfile ./dist/worker.js --format esm --target browser && cp ./example/sql-wasm.wasm ./dist/sql-wasm.wasm",
-    "prepare": "bun run build",
     "test": "vitest",
     "prepublishOnly": "bun run build"
   },

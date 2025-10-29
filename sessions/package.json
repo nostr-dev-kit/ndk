@@ -24,7 +24,6 @@
   ],
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
-    "prepare": "bun run build",
     "dev": "bun run build --watch",
     "lint": "biome check .",
     "format": "biome format . --write",

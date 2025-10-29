@@ -71,6 +71,11 @@
 </script>
 
 <Root {ndk} {relayUrl}>
+	{#snippet cardContent()}
+		{@const context = getContext<RelayCardContext>(RELAY_CARD_CONTEXT_KEY)}
+		{@const banner = context?.relayInfo.nip11?.banner}
+		{@const hasBanner = banner != null && banner !== ''}
+
 	<button
 		type="button"
 		onclick={handleClick}
@@ -88,9 +93,6 @@
 			className
 		)}
 	>
-		{@const context = getContext<RelayCardContext>(RELAY_CARD_CONTEXT_KEY)}
-		{@const banner = context?.relayInfo.nip11?.banner}
-		{@const hasBanner = banner != null && banner !== ''}
 
 		<!-- Background with Banner or Icon fallback - covers entire card -->
 		<div class="absolute inset-0 overflow-hidden pointer-events-none rounded-2xl">
@@ -155,4 +157,7 @@
 			</div>
 		</div>
 	</button>
+	{/snippet}
+
+	{@render cardContent()}
 </Root>

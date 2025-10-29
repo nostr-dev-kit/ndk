@@ -31,7 +31,7 @@ interface VersionManifest {
   }>;
 }
 
-const REGISTRY_URL = process.env.NDK_REGISTRY_URL || 'https://ndk.fyi';
+const REGISTRY_URL = process.env.NDK_REGISTRY_URL || 'https://shadcn.ndk.fyi';
 
 // Common paths where shadcn-svelte installs components
 const POSSIBLE_PATHS = [

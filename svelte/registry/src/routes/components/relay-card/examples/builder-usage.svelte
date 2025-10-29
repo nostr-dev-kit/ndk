@@ -12,7 +12,7 @@
 	// Create bookmarked relay list for user's follows
 	const bookmarks = createBookmarkedRelayList(
 		() => ({
-			authors: Array.from(ndk.$sessions?.follows || [])
+			authors: ndk.$follows
 		}),
 		ndk
 	);

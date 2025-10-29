@@ -36,9 +36,9 @@ const LOCKFILE_PATH = join(process.cwd(), 'components.lock.json');
 /**
  * Initialize a new lock file
  */
-function createLockfile(registryUrl: string = 'https://ndk.fyi'): ComponentLockfile {
+function createLockfile(registryUrl: string = 'https://shadcn.ndk.fyi'): ComponentLockfile {
   return {
-    $schema: 'https://ndk.fyi/schema/components-lock.json',
+    $schema: 'https://shadcn.ndk.fyi/schema/components-lock.json',
     registry: {
       name: 'ndk-svelte',
       url: registryUrl,

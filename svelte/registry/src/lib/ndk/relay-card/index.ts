@@ -18,7 +18,7 @@
  * @example With bookmarks:
  * ```svelte
  * <script>
- *   const follows = Array.from(ndk.$sessions?.follows || []);
+ *   const follows = ndk.$follows;
  *   const bookmarks = createBookmarkedRelayList(() => ({
  *     authors: [...follows, ndk.$currentUser.pubkey]
  *   }), ndk);

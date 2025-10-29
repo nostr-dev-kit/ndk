@@ -45,7 +45,7 @@ npx ndk-svelte add event-card --overwrite
 - `-o, --overwrite` - Overwrite existing files
 - `-y, --yes` - Skip confirmation prompts
 - `-p, --path <path>` - Custom installation path
-- `--registry <url>` - Custom registry URL (default: https://ndk.fyi)
+- `--registry <url>` - Custom registry URL (default: https://shadcn.ndk.fyi)
 
 ### `upgrade`
 
@@ -64,7 +64,7 @@ npx ndk-svelte upgrade --registry https://custom-registry.com
 
 **Options:**
 - `-y, --yes` - Auto-upgrade all components without prompting
-- `--registry <url>` - Custom registry URL (default: https://ndk.fyi)
+- `--registry <url>` - Custom registry URL (default: https://shadcn.ndk.fyi)
 
 ## How It Works
 
@@ -89,7 +89,7 @@ npx ndk-svelte upgrade --registry https://custom-registry.com
   📦 user-profile v0.15.0 (13 file(s))
   📦 zap-button v0.5.0 (1 file(s))
 
-📡 Checking for updates from https://ndk.fyi...
+📡 Checking for updates from https://shadcn.ndk.fyi...
 
 ✓ Registry version: 4.0.0-beta.22
 

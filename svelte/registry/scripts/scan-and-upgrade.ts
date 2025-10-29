@@ -35,7 +35,7 @@ interface InstalledComponent {
   files: string[];
 }
 
-const REGISTRY_URL = process.env.NDK_REGISTRY_URL || 'https://ndk.fyi';
+const REGISTRY_URL = process.env.NDK_REGISTRY_URL || 'https://shadcn.ndk.fyi';
 
 // For local testing, check if local versions.json exists
 const LOCAL_VERSIONS_PATH = '.vercel/output/static/versions.json';

@@ -74,11 +74,17 @@
   });
 
   // Fetch profile if not provided (reactive to ndkUser changes)
-  const profileFetcher = $derived(
-    propProfile !== undefined
-      ? null
-      : (ndkUser ? createProfileFetcher(() => ({ user: ndkUser! }), ndk) : null)
-  );
+  let profileFetcher = $state<ReturnType<typeof createProfileFetcher> | null>(null);
+
+  $effect(() => {
+    if (propProfile !== undefined) {
+      profileFetcher = null;
+    } else if (ndkUser) {
+      profileFetcher = createProfileFetcher(() => ({ user: ndkUser! }), ndk);
+    } else {
+      profileFetcher = null;
+    }
+  });
 
   const profile = $derived(propProfile !== undefined ? propProfile : profileFetcher?.profile);
 

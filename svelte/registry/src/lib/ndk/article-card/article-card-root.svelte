@@ -39,9 +39,15 @@
   const ndk = getNDKFromContext(providedNdk);
 
   // Fetch author profile (reactive to article changes)
-  const authorProfile = $derived(
-    article.author ? createProfileFetcher(() => ({ user: article.author }), ndk) : null
-  );
+  let authorProfile = $state<ReturnType<typeof createProfileFetcher> | null>(null);
+
+  $effect(() => {
+    if (article.author) {
+      authorProfile = createProfileFetcher(() => ({ user: article.author }), ndk);
+    } else {
+      authorProfile = null;
+    }
+  });
 
   // Create reactive context with getters
   const context = {

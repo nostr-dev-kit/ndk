@@ -54,11 +54,17 @@
   );
 
   // Use provided profile, context profile, or fetch if needed
-  const profileFetcher = $derived(
-    propProfile !== undefined || context?.profile !== undefined
-      ? null // Don't fetch if profile was provided via prop or context
-      : (ndkUser && ndk ? createProfileFetcher(() => ({ user: ndkUser! }), ndk) : null)
-  );
+  let profileFetcher = $state<ReturnType<typeof createProfileFetcher> | null>(null);
+
+  $effect(() => {
+    if (propProfile !== undefined || context?.profile !== undefined) {
+      profileFetcher = null;
+    } else if (ndkUser && ndk) {
+      profileFetcher = createProfileFetcher(() => ({ user: ndkUser! }), ndk);
+    } else {
+      profileFetcher = null;
+    }
+  });
 
   const profile = $derived(
     propProfile !== undefined

@@ -59,11 +59,17 @@
   });
 
   // Use provided profile, context profile, or fetch if needed
-  const profileFetcher = $derived(
-    propProfile !== undefined || context?.profile !== undefined
-      ? null // Don't fetch if profile was provided via prop or context
-      : (ndkUser && ndk ? createProfileFetcher(() => ({ user: ndkUser! }), ndk) : null)
-  );
+  let profileFetcher = $state<ReturnType<typeof createProfileFetcher> | null>(null);
+
+  $effect(() => {
+    if (propProfile !== undefined || context?.profile !== undefined) {
+      profileFetcher = null;
+    } else if (ndkUser && ndk) {
+      profileFetcher = createProfileFetcher(() => ({ user: ndkUser! }), ndk);
+    } else {
+      profileFetcher = null;
+    }
+  });
 
   const profile = $derived(
     propProfile !== undefined
@@ -90,20 +96,6 @@
   });
 </script>
 
-<span class={cn('user-profile-name', size, truncate && 'user-profile-name-truncate', className)}>
+<span class={cn(size, truncate && 'truncate inline-block max-w-full', className)}>
   {displayText}
 </span>
-
-<style>
-  .user-profile-name {
-    color: var(--foreground, #111827);
-  }
-
-  .user-profile-name-truncate {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    display: inline-block;
-    max-width: 100%;
-  }
-</style>
